@@ -29,7 +29,7 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}} [B{{$BUILD_NUMBER}}]');
+define('DEPLOY_FRAMEWORK_VERSION', '1.5.6_0 [B${env.BUILD_NUMBER}]');
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);
@@ -63,10 +63,30 @@ require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 require_once($mwrootDir.'/deployment/languages/DF_Language.php');
 // output format of smwadmin as a console app is text
 
+$dfgLogToFile=false;
+$dfgOutputFormat="text";
+$args = $_SERVER['argv'];
+for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
+	if ($arg == '--logtofile') {
+		$dfgLogToFile = next($args);
+		continue;
+	} else if ($arg == '--outputformat') {
+		$dfgOutputFormat = next($args);
+		continue;
+	}
+}
+
 dffInitLanguage();
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 $dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
+if ($dfgLogToFile !== false) {
+	$dfgOut->start(DF_OUTPUT_TARGET_FILE, $dfgLogToFile);
+}
+
+if ($dfgOutputFormat != "text") {
+	$dfgOut->setMode($dfgOutputFormat);
+}
 
 // check PHP version
 $phpver = str_replace(".","",phpversion());
@@ -85,20 +105,18 @@ if (!in_array("--nocheck", $_SERVER['argv'])) {
 		dffExitOnFatalError($check);
 	}
 
-
-	// check required tools
-	$check = Tools::checkEnvironment();
-	if ($check !== true) {
-		dffExitOnFatalError($check);
-	}
-
-
 	// check if LocalSettings.php is writeable
 
 	@$success = touch("$rootDir/../LocalSettings.php");
 	if ($success === false) {
 		dffExitOnFatalError("LocalSettings.php is not accessible. Missing rights or file locked?");
 	}
+}
+
+// check required tools
+$check = Tools::checkEnvironment();
+if ($check !== true) {
+	dffExitOnFatalError($check);
 }
 
 $packageToInstall = array();
@@ -122,8 +140,7 @@ $dfgCheckInst=false;
 $dfgInstallPackages=false;
 $dfgRestoreList=false;
 $dfgCreateRestorePoint=false;
-$dfgLogToFile=false;
-$dfgOutputFormat="text";
+$dfgRemoveRestorePoint=false;
 $dfgListpages="no";
 $dfgRemoveReferenced=false;
 $dfgRemoveStillUsed=false;
@@ -241,6 +258,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgCreateRestorePoint = true;
 		$dfgRestorePoint = next($args);
 		continue;
+	} else if ($arg == '--rremove') {
+		$dfgRemoveRestorePoint = true;
+		$dfgRestorePoint = next($args);
+		continue;
 	} else if ($arg == '--noask') {
 		$dfgNoAsk = true;
 		continue;
@@ -269,9 +290,9 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgRemoveStillUsed = true;
 		continue;
 	} else if ($arg == '--bundleid') {
-        $dfgBundleID = next($args);
-        continue;
-    } else if ($arg == '--nocheck') {
+		$dfgBundleID = next($args);
+		continue;
+	} else if ($arg == '--nocheck') {
 		// ignore
 		continue;
 	} else {
@@ -281,13 +302,7 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 }
 
 
-if ($dfgLogToFile !== false) {
-	$dfgOut->start(DF_OUTPUT_TARGET_FILE, $dfgLogToFile);
-}
 
-if ($dfgOutputFormat != "text") {
-	$dfgOut->setMode($dfgOutputFormat);
-}
 
 try {
 	$logger = Logger::getInstance();
@@ -301,8 +316,8 @@ if ($dfgInstallPackages) {
 	// include commandLine.inc to be in maintenance mode
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-    $dfgOut->setMode($dfgOutputFormat);
-    
+	$dfgOut->setMode($dfgOutputFormat);
+
 	dffInitLanguage();
 	// include the resource installer
 	require_once('DF_ResourceInstaller.php');
@@ -375,6 +390,23 @@ if ($dfgCreateRestorePoint) {
 	$logger->info("Restore point created");
 	$dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
+}
+
+if($dfgRemoveRestorePoint) {
+	if (empty($dfgRestorePoint)) {
+		dffExitOnFatalError("Name of restore point missing.");
+	}
+	try {
+		$success = $rollback->removeRestorePoint($dfgRestorePoint);
+		if ($success) {
+			$dfgOut->outputln('__OK__');
+			die(DF_TERMINATION_WITHOUT_FINALIZE);
+		} else {
+			dffExitOnFatalError("Removing of restore point '$dfgRestorePoint' failed.");
+		}
+	} catch(InstallationError $e) {
+		dffExitOnFatalError($e->getMsg());
+	}
 }
 
 if ($dfgRestoreList) {
@@ -562,7 +594,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
 			require_once('DF_OntologyInstaller.php');
-            $dfgOut->setMode($dfgOutputFormat);
+			$dfgOut->setMode($dfgOutputFormat);
 			// include commandLine.inc to be in maintenance mode
 			dffCheckWikiContext();
 
@@ -715,7 +747,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
 	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
 	//$dfgOut->outputln( "\t--checkdump <bundle>: Check only dumps for changes but do not install.");
-	$dfgOut->outputln( "\t--nocheck: Skips the environment checks");
+	$dfgOut->outputln( "\t--nocheck: Skips checks for appropriate rights.");
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional bundles");
 	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
 	$dfgOut->outputln( "\t\t--removeTemplates: Removes all templates referenced used by a bundle. Used with -d");
@@ -800,7 +832,7 @@ function dffHandleInstallOrUpdate($packageID, $version) {
 
 		// include the resource installer
 		require_once('DF_ResourceInstaller.php');
-        $dfgOut->setMode($dfgOutputFormat);
+		$dfgOut->setMode($dfgOutputFormat);
 		$res_installer = ResourceInstaller::getInstance($mwrootDir);
 		$res_installer->checkWikidump($packageID, $version);
 		$dfgOut->outputln("\n");

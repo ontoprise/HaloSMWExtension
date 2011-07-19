@@ -7,6 +7,7 @@ require_once 'testcases/TestPackageRepository.php';
 require_once 'testcases/TestResourceInstaller.php';
 require_once 'testcases/TestOntologyMerger.php';
 require_once 'testcases/TestNamespaceMappings.php';
+require_once 'testcases/TestVersions.php';
 
 class DeployTests
 {
@@ -20,7 +21,7 @@ class DeployTests
         $suite->addTestSuite("TestResourceInstaller");
         $suite->addTestSuite("TestOntologyMerger");
         $suite->addTestSuite("TestNamespaceMappings");
-        
+        $suite->addTestSuite("TestVersions");
         return $suite;
     }
 }

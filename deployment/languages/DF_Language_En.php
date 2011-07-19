@@ -94,6 +94,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_creationdate' => 'Creation date',
 	'df_webadmin_version' => 'Version',
 	'df_webadmin_upload' => 'Upload',
+	'df_webadmin_restore' => 'Restore',
+	'df_webadmin_removerestore' => 'Remove',
 	'df_webadmin_file' => 'File',
 	'df_webadmin_nothingfound' => 'No matching bundles for <b>"{{search-value}}"</b> found!',
 	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: ',
@@ -101,6 +103,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_nouploadedfiles' => 'No uploaded files found.',
 	
 	'df_restore_warning' => 'Restoring will REPLACE both the wiki setup and its ENTIRE contents by a previous version. YOU WILL LOOSE YOUR CURRENT WIKI CONTENT!. Do you wish to continue?',
+	'df_remove_restore_warning' => 'Restore point will be REMOVED!',
 	'df_uninstall_warning' => 'The following extensions will be uninstalled. Are you sure?',
 	'df_globalupdate_warning' => 'Perform global update?',
 	'df_inspectextension_heading' => 'Inspect extension',

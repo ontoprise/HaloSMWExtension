@@ -60,6 +60,14 @@ Tools::mkpath($uploadDirectory);
 
 // move file
 $filename = $_FILES['datei']['name'];
+if (file_exists("$uploadDirectory/$filename")) {
+	// if it already exists, add a counting number
+	$i = 1;
+	$file_wo_ending = Tools::removeFileEnding($filename);
+	$file_ext = Tools::getFileExtension($filename);
+	while(file_exists("$uploadDirectory/$file_wo_ending($i).$file_ext")) $i++;
+	$filename = "$file_wo_ending($i).$file_ext";
+}
 $uploadDone = move_uploaded_file($_FILES['datei']['tmp_name'], "$uploadDirectory/$filename");
 if (!$uploadDone) {
 	echo "<h1>Problem occured</h1>";

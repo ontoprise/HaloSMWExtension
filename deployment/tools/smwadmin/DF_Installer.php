@@ -32,6 +32,7 @@ define('DEPLOY_FRAMEWORK_ONTOLOGYCONVERSION_FAILED', 13);
 define('DEPLOY_FRAMEWORK_WRONG_VERSION', 14);
 define('DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR', 15);
 define('DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR', 16);
+define('DEPLOY_FRAMEWORK_INVALID_RESTOREPOINT', 17);
 
 
 require_once 'DF_PackageRepository.php';
@@ -756,12 +757,12 @@ class Installer {
 		}
 		$dfgOut->outputln("unzip into $unzipDirectory");
 		$dfgOut->outputln("[unzip ".$id."-$version.zip...");
-		if (Tools::isWindows()) {
-			global $rootDir;
-			exec($rootDir.'/tools/unzip.exe -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-		} else {
-			exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-		}
+	    if (Tools::isWindows()) {
+            global $rootDir;
+            exec($rootDir.'/tools/unzip.exe -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+        } else {
+            exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+        }
 		$dfgOut->output("done.]");
 	}
 
@@ -791,12 +792,12 @@ class Installer {
 		}
 
 		$dfgOut->outputln("[unzip ".$filePath."...");
-		if (Tools::isWindows()) {
-			global $rootDir;
-			exec($rootDir.'/tools/unzip.exe -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
-		} else {
-			exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
-		}
+	    if (Tools::isWindows()) {
+            global $rootDir;
+            exec($rootDir.'/tools/unzip.exe -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+        } else {
+            exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+        }
 		$dfgOut->output("done.]");
 
 	}
@@ -965,8 +966,9 @@ class Installer {
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependency($dd->getID());
 			if ($dep == NULL) continue;
-			list($id, $from, $to) = $dep;
-
+			list($id, $from, $to, $optional) = $dep;
+            if ($optional) continue;
+            
 			// if $dd's version exceeds the limit of the installed,
 			// try to find an update
 			if ($dd->getVersion() > $to) {

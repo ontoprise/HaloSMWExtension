@@ -66,7 +66,10 @@ class DFMaintenanceTab {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-
+        
+		$restoreButtonText = $dfgLang->getLanguageString('df_webadmin_restore');
+		$restoreRemoveButtonText = $dfgLang->getLanguageString('df_webadmin_removerestore');
+		
 		if (count($restorepoints) == 0) {
 			$html .= "</table></div><br/>";
 			$html .= $dfgLang->getLanguageString('df_webadmin_norestorepoints');
@@ -86,7 +89,8 @@ class DFMaintenanceTab {
 			$html .= date ("m/d/Y", $lastMod);
 			$html .= "</td>";
 			$html .= "<td>";
-			$html .= "<input type=\"button\" class=\"df_restore_button\" value=\"Restore\" id=\"df_restore__$name\"></input>";
+			$html .= "<input type=\"button\" class=\"df_restore_button\" value=\"$restoreButtonText\" id=\"df_restore__$name\"></input>";
+			$html .= "<input type=\"button\" class=\"df_remove_restore_button\" value=\"$restoreRemoveButtonText\" id=\"df_remove_restore__$name\"></input>";
 			$html .= "</td>";
 			$html .= "</tr>";
 		}

@@ -185,7 +185,7 @@ function dffCheckEnvironment() {
 
 	// check if external processes can be run
 	$phpExe = 'php';
-	if (array_key_exists('df_php_executable', DF_Config::$settings)) {
+	if (array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
 		$phpExe = DF_Config::$settings['df_php_executable'];
 	}
 	@exec("$phpExe --version", $out, $ret);
@@ -210,7 +210,6 @@ function dffCheckEnvironment() {
 		$result .= "<li>Could not open deployment/tools/repositories for writing.</li>";
 	}
 
-	
 	// check homedir/tempdir
 	require_once($mwrootDir.'/deployment/io/DF_Log.php');
 	require_once($mwrootDir.'/deployment/tools/smwadmin/DF_Rollback.php');

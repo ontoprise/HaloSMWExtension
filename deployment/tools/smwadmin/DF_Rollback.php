@@ -31,8 +31,8 @@ class Rollback {
 	// installation directory of Mediawiki
 	var $rootDir;
 
-	// temporary directory where rollback data is stored.
-	var $tmpDir;
+	// restoreDir directory where rollback data is stored.
+	var $restoreDir;
 
 
 	static $instance;
@@ -55,7 +55,7 @@ class Rollback {
 			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
 		}
 		$wikiname = DF_Config::$df_wikiName;
-		$this->tmpDir = "$homeDir/$wikiname/df_restore";
+		$this->restoreDir = "$homeDir/$wikiname/df_restore";
 
 	}
 
@@ -65,8 +65,8 @@ class Rollback {
 	 * @return array of string
 	 */
 	public function getAllRestorePoints() {
-		if (!file_exists($this->tmpDir."/")) return array();
-		$dirs = Tools::get_all_dirs($this->tmpDir."/");
+		if (!file_exists($this->restoreDir."/")) return array();
+		$dirs = Tools::get_all_dirs($this->restoreDir."/");
 		return $dirs;
 	}
 
@@ -89,10 +89,10 @@ class Rollback {
 		}
 
 		$logger = Logger::getInstance();
-		$logger->info("Save installation to ".$this->tmpDir."/$name");
+		$logger->info("Save installation to ".$this->restoreDir."/$name");
 		$dfgOut->outputln("[Save installation...");
-		$success = Tools::mkpath($this->tmpDir."/$name");
-		$success = $success && Tools::copy_dir($this->rootDir, $this->tmpDir."/$name", array($this->rootDir."/deployment"));
+		$success = Tools::mkpath($this->restoreDir."/$name");
+		$success = $success && Tools::copy_dir($this->rootDir, $this->restoreDir."/$name", array($this->rootDir."/deployment"));
 		$dfgOut->output("done.]");
 		$savedInstallation = true;
 		if (!$success) {
@@ -131,7 +131,7 @@ class Rollback {
 		if ($savedDataBase) return true;
 
 		$logger = Logger::getInstance();
-		$logger->info("Save database to ".$this->tmpDir."/$name/dump.sql");
+		$logger->info("Save database to ".$this->restoreDir."/$name/dump.sql");
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		$dfgOut->outputln("[Saving database...");
@@ -141,8 +141,8 @@ class Rollback {
 			$mysqlDump = DF_Config::$settings['df_mysql_dir']."/bin/mysqldump";
 		}
 		
-		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/$name/dump.sql");
-		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
+		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->restoreDir."/$name/dump.sql");
+		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		$dfgOut->output("done.]");
 		$savedDataBase = true;
 
@@ -152,6 +152,38 @@ class Rollback {
 		}
 		return $ret == 0;
 	}
+	
+	/**
+	 * Removes the restore point with the given name.
+	 * 
+	 * @param string $name
+	 * @throws InstallationError
+	 */
+	public function removeRestorePoint($name) {
+		global $dfgOut;
+		$logger = Logger::getInstance();
+		
+		// make sure $name points to a subdirectory below df_restore
+		// and is not something like this: ../../xyz
+		$pathNormalized = realpath($this->restoreDir."/$name");
+		$pathNormalized = Tools::makeUnixPath($pathNormalized);
+		$pathRestoreDir =  Tools::makeUnixPath(realpath($this->restoreDir));
+		if (strpos($pathNormalized, $pathRestoreDir) !== 0) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_INVALID_RESTOREPOINT, "Invalid restore point: $name",$name);
+		}
+		
+		// remove restore point
+		$dfgOut->outputln("[Remove restore point...");
+        $success = Tools::remove_dir_native($this->restoreDir."/$name");
+        if (!$success) {
+            $logger->error("Could not remove restore point: '$name'.");
+        } else {
+        	$logger->info("Restore point removed: $name");
+        }
+        $dfgOut->output("done.]");
+        
+        return $success;
+	}
 
 	/**
 	 * Rolls back from the latest rollback point.
@@ -160,7 +192,7 @@ class Rollback {
 	 * @return bool true on success.
 	 */
 	public function restore($name) {
-		if (!file_exists($this->tmpDir."/$name")) return false;
+		if (!file_exists($this->restoreDir."/$name")) return false;
 		$this->restoreInstallation($name);
 		$this->restoreDatabase($name);
 		return true;
@@ -207,10 +239,10 @@ class Rollback {
 		$name = $namedStored;
 
 		// clear if it already exists
-		if (file_exists($this->tmpDir."/".$name)) {
-			Tools::remove_dir($this->tmpDir."/".$name);
+		if (file_exists($this->restoreDir."/".$name)) {
+			Tools::remove_dir($this->restoreDir."/".$name);
 		}
-		Tools::mkpath($this->tmpDir."/".$name);
+		Tools::mkpath($this->restoreDir."/".$name);
 		$answer = true;
 		return $answer;
 
@@ -239,7 +271,7 @@ class Rollback {
 			}
 
 			// clear if it already exists
-			if (file_exists($this->tmpDir.$name)) {
+			if (file_exists($this->restoreDir.$name)) {
 				$dfgOut->outputln("A restore point with this name already exists. Overwrite? (y/n) ");
 				$line = trim(fgets(STDIN));
 				if (strtolower($line) == 'n') {
@@ -269,9 +301,9 @@ class Rollback {
 
 		$logger->info("Restore old installation");
 		$dfgOut->outputln("[Restore old installation...");
-		$success = Tools::copy_dir($this->tmpDir."/$name", $this->rootDir);
+		$success = Tools::copy_dir($this->restoreDir."/$name", $this->rootDir);
 		if (!$success) {
-			$logger->error("Restore old installation faild. Could not copy from ".$this->tmpDir."/$name");
+			$logger->error("Restore old installation faild. Could not copy from ".$this->restoreDir."/$name");
 		}
 		$dfgOut->output("done.]");
 	}
@@ -292,7 +324,7 @@ class Rollback {
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
 		}
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
-		if (!file_exists($this->tmpDir."/$name/dump.sql")) return false; // nothing to restore
+		if (!file_exists($this->restoreDir."/$name/dump.sql")) return false; // nothing to restore
 
 		global $dfgNoAsk;
 		if (isset($dfgNoAsk) && $dfgNoAsk == true) {
@@ -307,8 +339,8 @@ class Rollback {
         if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
             $mysqlExec = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
         }
-        $logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"");
-		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->tmpDir."/$name/dump.sql\"", $out, $ret);
+        $logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"");
+		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");
 			$dfgOut->outputln("Could not restore database. See log for details.", DF_PRINTSTREAM_TYPE_ERROR);

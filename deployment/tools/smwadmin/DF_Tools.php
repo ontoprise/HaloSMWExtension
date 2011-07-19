@@ -42,7 +42,7 @@ class Tools {
 		}
 
 		ob_start();
-		phpinfo();
+		@phpinfo();
 		$info = ob_get_contents();
 		ob_end_clean();
 		//Get Systemstring
@@ -94,6 +94,28 @@ class Tools {
 			closedir($dir);
 			@rmdir($current_dir); // do not warn cause it may contain excluded files and dirs.
 		}
+	}
+	
+	/**
+	 * Removes a directory using native OS commands.
+	 * 
+	 * @param string $dir
+	 */
+	public static function remove_dir_native($dir) {
+		if (Tools::isWindows()) {
+			$dir = self::makeWindowsPath($dir);
+			exec("rmdir $dir /S /Q", $out, $ret);
+			if ($ret != 0) return false;
+		} else {
+			$dir = self::makeUnixPath($dir);
+            if (substr(trim($dir), -1) != '/') $dir = trim($dir)."/";
+            exec("rm -rf $dir*", $out, $ret);
+            if ($ret != 0) return false;
+            exec("rmdir $dir", $out, $ret);
+            if ($ret != 0) return false;
+            
+		}
+		return true;
 	}
 
 
@@ -199,6 +221,10 @@ class Tools {
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
 	}
+	
+    public static function makeWindowsPath($path) {
+        return str_replace("/", "\\", $path);
+    }
 
 	/**
 	 * Normalizes a path, ie. uses unix file separators (/) and removes a trailing slash.
@@ -225,26 +251,38 @@ class Tools {
 
 		$nullDevice = Tools::isWindows() ? "null" : "/dev/null";
 
-		// check for unzipping tool
-		$found_unzip = false;
-		exec("unzip > $nullDevice", $out, $ret);
-		$found_unzip = ($ret == 0);
-		if (!$found_unzip) return("Cannot find GNU unzip.exe. Please install and include path to unzip.exe into PATH-variable.");
+		if (!Tools::isWindows()) {
+			
+			// both tools are delivered with the Windows version.
+			
+			// check for unzipping tool
+			$found_unzip = false;
+			exec("unzip > $nullDevice", $out, $ret);
+			$found_unzip = ($ret == 0);
+			if (!$found_unzip) return("Cannot find GNU unzip. Please install and include path to unzip into PATH-variable.");
 
-		// check for GNU-patch tool
-		exec("patch -version > $nullDevice", $out, $ret);
-		$found_patch = ($ret == 0);
-		if (!$found_patch) return("Cannot find GNU patch.exe. Please install and include path to patch.exe into PATH-variable.");
-
+			// check for GNU-patch tool
+			exec("patch -version > $nullDevice", $out, $ret);
+			$found_patch = ($ret == 0);
+			if (!$found_patch) return("Cannot find GNU patch. Please install and include path to patch into PATH-variable.");
+		}
 		// check if PHP is in path
-		exec("php -version > $nullDevice", $out, $ret);
+		$phpExe = 'php';
+		if (array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
+			$phpExe = DF_Config::$settings['df_php_executable'];
+		}
+		exec("\"$phpExe\" -version > $nullDevice", $out, $ret);
 		$phpInPath = ($ret == 0);
-		if (!$phpInPath) return("Cannot find php.exe. Please include path to php.exe into PATH-variable.");
+		if (!$phpInPath) return("Cannot find php. Please include path to php executable into PATH-variable.");
 
 		// check for mysql, mysqldump
-		exec("mysql --version > $nullDevice", $out, $ret);
+		$mysqlExe = 'mysql';
+		if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
+			$mysqlExe = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
+		}
+		exec("\"$mysqlExe\" --version > $nullDevice", $out, $ret);
 		$mysql_binaries = ($ret == 0);
-		if (!$mysql_binaries) return("Cannot find mysql.exe. Please include path to mysql.exe into PATH-variable.");
+		if (!$mysql_binaries) return("Cannot find mysql. Please include path to mysql executable into PATH-variable.");
 
 		// check if socket functions are available
 		if (!function_exists("socket_create")) {
@@ -255,14 +293,14 @@ class Tools {
 	}
 
 	public static function checkPriviledges($mwrootDir) {
-		
+
 		// check for root/admin access
 		$errorOccured = false;
-        $result = "";
+		$result = "";
 		if (self::isWindows()) {
 			exec("fsutil", $output, $ret); // fsutil is only accessible as administrator
 			if  ($ret == 0) return true;
-            $errorOccured = true; // no admin, we require this for windows
+			$errorOccured = true; // no admin, we require this for windows
 		} else {
 			exec('who am i', $out);
 			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is (most likely) root, ok
@@ -416,11 +454,11 @@ class Tools {
 	}
 
 	public static function getXSDValue($dataValue) {
-        $dbKeys= $dataValue->getDBkeys();
+		$dbKeys= $dataValue->getDBkeys();
 		return array_shift($dbKeys);
 	}
 
-	
+
 
 
 
@@ -480,7 +518,7 @@ class Tools {
 				if (empty($tmpdir)) return '/tmp'; // fallback
 				$parts = explode(":", $tmpdir);
 				$tmpdir = reset($parts);
-                return trim($tmpdir);
+				return trim($tmpdir);
 			} else {
 				return '/tmp'; // fallback if echo fails for some reason
 			}
@@ -661,11 +699,11 @@ class Tools {
 		for($i = 0; $i < $n; $i++) {
 			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
 			&& (stripos($out[$i], $programname) !== false || $programname == '')) {
-				while ($i+1 < count($out) 
-				        && stripos($out[$i+1], "(Standard)") === false 
-				        && stripos($out[$i+1], "<NO NAME>") === false 
-				        && stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false 
-				        ) $i++;
+				while ($i+1 < count($out)
+				&& stripos($out[$i+1], "(Standard)") === false
+				&& stripos($out[$i+1], "<NO NAME>") === false
+				&& stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false
+				) $i++;
 				if (stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false) continue;
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);

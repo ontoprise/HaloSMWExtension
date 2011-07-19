@@ -38,8 +38,21 @@ $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 
-require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $mwrootDir);
+$mwrootDir = realpath($mwrootDir."/../../../");
 
+if(file_exists($rootDir.'/settings.php'))
+{
+    require_once($rootDir.'/settings.php');
+}
+
+require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
+require_once($rootDir.'/languages/DF_Language.php');
+
+dffInitLanguage();
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);

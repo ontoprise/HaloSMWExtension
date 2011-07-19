@@ -566,6 +566,11 @@ class PackageRepository {
 				if (file_exists($ext_dir.$entry.'/init$.ext')) {
 					$init_ext_file = trim(file_get_contents($ext_dir.$entry.'/init$.ext'));
 					list($id, $fromVersion) = explode(",", $init_ext_file);
+					if (!file_exists($ext_dir.$entry.'/deploy.xml')) {
+						// this should not happen but you never know. 
+						// anyway do nothing in this case.
+						continue;
+					} 
 					$dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
 					self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
 

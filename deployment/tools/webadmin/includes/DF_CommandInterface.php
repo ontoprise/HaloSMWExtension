@@ -46,7 +46,7 @@ class DFCommandInterface {
 	 */
 	public function __construct() {
 		$this->phpExe = 'php';
-		if (array_key_exists('df_php_executable', DF_Config::$settings)) {
+		if (array_key_exists('df_php_executable', DF_Config::$settings)  && !empty(DF_Config::$settings['df_php_executable'])) {
 			$this->phpExe = DF_Config::$settings['df_php_executable'];
 		}
 	}
@@ -121,8 +121,8 @@ class DFCommandInterface {
 		$result['resources'] = $dd->getResources();
 		$result['onlycopyresources'] = $dd->getOnlyCopyResources();
 
-
-		$runCommand = "php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --listpages $extid --outputformat json --nocheck --noask";
+		$php = $this->phpExe;
+		$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --listpages $extid --outputformat json --nocheck --noask";
 		exec($runCommand, $out, $ret);
 
 		$outText = implode("",$out);
@@ -138,9 +138,9 @@ class DFCommandInterface {
 
 	public function getDeployDescriptor($extid, $version = '') {
 		global $mwrootDir, $dfgOut;
-        
+
 		if (empty($version)) {
-		    $dd = PackageRepository::getLatestDeployDescriptor($extid);
+			$dd = PackageRepository::getLatestDeployDescriptor($extid);
 		} else{
 			$dd = PackageRepository::getDeployDescriptor($extid, $version);
 		}
@@ -344,6 +344,28 @@ class DFCommandInterface {
 
 		} else {
 			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$nullResult = `$runCommand &`;
+		}
+		return $filename;
+	}
+
+	public function removeRestorePoint($restorepoint) {
+		global $mwrootDir, $dfgOut;
+
+		$filename = uniqid().".log";
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
+
+		chdir($mwrootDir.'/deployment/tools');
+		$php = $this->phpExe;
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+
+		} else {
+			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
