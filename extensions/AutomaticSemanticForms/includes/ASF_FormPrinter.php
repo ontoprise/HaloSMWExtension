@@ -23,7 +23,15 @@ class ASFFormPrinter extends SFFormPrinter {
 			parent::__construct();
 		}
 
-		$this->setInputTypeHook( 'datapicker', array( 'ASFDataPickerInputType', 'getHTML' ), array());
+		//initialize datapicker input types only if data import extension is installed
+		if(defined('SMW_DI_VERSION')){
+			global $dapi_instantiations;
+			foreach($dapi_instantiations as $dpId => $dC){
+				$this->setInputTypeHook( $dpId, array( 'ASFDataPickerInputType', 'getHTML' ), array());
+			}
+		}
+		
+		//echo('<pre>'.print_r($this->mInputTypeHooks, true).'</pre>');
 	}
 
 

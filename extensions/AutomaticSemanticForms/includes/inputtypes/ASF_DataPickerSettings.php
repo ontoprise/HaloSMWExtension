@@ -2,7 +2,7 @@
 
 global $dapi_instantiations;
 
-$dapi_instantiations['RxnormLookup'] = array(
+$dapi_instantiations['rxnormlookup'] = array(
 	'ws-name' => 'RXNormLookup',
 	'param' => 'name',
 	'label' => 'name',

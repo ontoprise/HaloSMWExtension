@@ -58,8 +58,8 @@ class ASFDataPickerInputType {
 	public static function getHTML($currentValue, $inputName, $isMandatory, $isDisabled, $otherArgs){
 		
 		$dataPickerId = '';
-		if(array_key_exists('datapicker id', $otherArgs)){
-			$dataPickerId = $otherArgs['datapicker id'];
+		if(array_key_exists('input type', $otherArgs)){
+			$dataPickerId = $otherArgs['input type'];
 		}
 		
 		global $dapi_instantiations;
@@ -181,12 +181,12 @@ class ASFDataPickerInputType {
 			'class' => $className,
 			'multiple' => 'multiple',
 			'width' => '50%',
-			'style' => 'max-width: 80%',
-			'style' => "width: 100%",
+			'size' => '6',
+			'style' => "width: 90%",
 			'onmouseover' => "dapi_showRefreshdControls(event)"
 		);
 		if(!is_null($size)){
-			$attributes['size'] = $size;
+			//$attributes['size'] = $size;
 		}
 		if ($isDisabled ) {
 			$attributes['disabled'] = 'disabled';
