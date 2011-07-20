@@ -79,7 +79,7 @@ class ASFPropertyFormData {
 		$this->defaultValue = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_DEFAULT_VALUE);
 		$this->hideProperty = 
-			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_HIDE_PROP, false, false);
+			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT, false, false);
 			
 	}
 	
