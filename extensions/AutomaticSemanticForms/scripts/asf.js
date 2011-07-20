@@ -281,9 +281,20 @@ function asf_hideFreeText(){
 	}
 }
 
+
+function asf_makeReadOnly(){
+jQuery('.asf-write-protected').parent().each( function (){
+		jQuery('*', this).attr('readonly', 'true');
+		jQuery('*', this).attr('disabled', 'true');
+	});
+}
+
+
 jQuery(document).ready( function($) {
 	initializeNiceASFTooltips();
 	asf_hideFreeText();	
+	asf_makeReadOnly();
+	
 });
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;

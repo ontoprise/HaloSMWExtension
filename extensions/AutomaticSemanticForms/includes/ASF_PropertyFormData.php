@@ -188,6 +188,10 @@ class ASFPropertyFormData {
 		
 		$syntax .= '}}}';
 		
+		if($this->isWriteProtected()){
+			$syntax .= '<span class="asf-write-protected">wpaaaaaaaaaaaaaaaaaaaaaa</span>';			
+		}
+		
 		//deal with form input help
 		if($this->helpText){
 			$syntax .= '{{#qTipHelp:';
@@ -392,5 +396,27 @@ class ASFPropertyFormData {
 	public function isHiddenProperty(){
 		return strtolower($this->hideProperty) == 'true' ? true : false;	
 	}
+	
+	protected function isWriteProtected(){
+		if(defined('HACL_HALOACL_VERSION')){
+			
+			global $wgUser;
+				
+			$propertyId = $this->titleObject->getArticleID();
+				 	
+			$isWriteProtected = !HACLEvaluator::hasPropertyRight($propertyId, 
+				$wgUser->getId(), HACLRight::CREATE);
+						
+			$isEditProtected = !HACLEvaluator::hasPropertyRight($propertyId, 
+				$wgUser->getId(), HACLRight::EDIT);
 
+			if($isWriteProtected || $isEditProtected){
+			return true;
+		}
+		
+		return false;
+		}
+	}
+
+	
 }
