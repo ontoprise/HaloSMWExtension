@@ -157,7 +157,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_noinclude.gif' ) + ');' +
                 'background-position: 0 center;' +
                 'background-repeat: no-repeat;' +
-                'background-color: yellow;' +
+                'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
                 'padding-left: 70px;' +
             '}\n' +
@@ -166,7 +166,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_onlyinclude.gif' ) + ');' +
                 'background-position: 0 center;' +
                 'background-repeat: no-repeat;' +
-                'background-color: yellow;' +
+                'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
                 'padding-left: 70px;' +
             '}\n' +
@@ -175,7 +175,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_includeonly.gif' ) + ');' +
                 'background-position: 0 center;' +
                 'background-repeat: no-repeat;' +
-                'background-color: yellow;' +
+                'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
                 'padding-left: 70px;' +
             '}\n'
@@ -431,7 +431,6 @@ CKEDITOR.customprocessor.prototype =
             if (window.parent.popup &&
                 window.parent.popup.parent.wgCKeditorInstance &&
                 window.parent.popup.parent.wgCKeditorCurrentMode != 'wysiwyg') {
-
                 window.parent.popup.parent.wgCKeditorInstance.setData(result.responseText);
                 window.parent.popup.parent.wgCKeditorCurrentMode = 'wysiwyg';
             }
@@ -481,8 +480,10 @@ CKEDITOR.customprocessor.prototype =
 	 */
     toDataFormat : function( data, fixForBody ){
         if ( (window.parent.showFCKEditor &&
-            !(window.parent.showFCKEditor & window.parent.RTE_VISIBLE)) )
-            return window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value;
+            !(window.parent.showFCKEditor & window.parent.RTE_VISIBLE)) ){
+//                alert('value:\n' + window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value)
+                return window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value;
+            }
 
         if (window.parent.wgCKeditorCurrentMode)
             window.parent.wgCKeditorCurrentMode = 'source';
@@ -491,7 +492,7 @@ CKEDITOR.customprocessor.prototype =
         
         if (CKEDITOR.env.ie) {
             data = this.ieFixHTML(data);
-        }
+        }       
 
         data = '<body xmlns:x="http://excel">' + data.htmlEntities()+ '</body>';
         // fix <img> tags
@@ -510,7 +511,6 @@ CKEDITOR.customprocessor.prototype =
         // when inserting data with Excel an unmatched <col> element exists, thus remove it
         data = data.replace(/<col[^>]*>/gi, '' );
 		
-
         var rootNode = this._getNodeFromHtml( data );
         // rootNode is <body>.
         // Normalize the document for text node processing (except IE - #1586).
@@ -525,18 +525,26 @@ CKEDITOR.customprocessor.prototype =
     },
 
     _getNodeFromHtml : function( data ) {
+        var xmlDoc;
         if (window.DOMParser) {
-            parser=new DOMParser();
-            var xmlDoc=parser.parseFromString(data,"text/xml");
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(data,"text/xml");   
+            data = this.ieFixHTML(data);
         }
         else // Internet Explorer
         {
             data = this.ieFixHTML(data);
-            var xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.async="false";
-            xmlDoc.loadXML(data);
-        }
 
+            xmlDoc = new ActiveXObject('Microsoft.XMLDOM');            
+            xmlDoc.async = false;
+            xmlDoc.loadXML(data);
+            
+            //Xml validation. Change to true for debugging purposes
+            xmlDoc.validateOnParse = false;
+            if (xmlDoc.parseError.errorCode != 0) {
+               alert(xmlDoc.parseError.reason + ':\n' + xmlDoc.xml);
+            }  
+        }
         var rootNode = xmlDoc.documentElement;
         return rootNode;
     },
@@ -546,9 +554,9 @@ CKEDITOR.customprocessor.prototype =
     //		1 : Suffix
     //		2 : Ignore children
     _BasicElements : {
-        body	: [ ],
+        body            : [ ],
         b		: [ "'''", "'''" ],
-        strong	: [ "'''", "'''" ],
+        strong          : [ "'''", "'''" ],
         i		: [ "''", "''" ],
         em		: [ "''", "''" ],
         p		: [ '\n', '\n' ],
@@ -572,11 +580,13 @@ CKEDITOR.customprocessor.prototype =
             case 1 :
 
                 // Mozilla insert custom nodes in the DOM.
-                if ( CKEDITOR.env.gecko && htmlNode.hasAttribute( '_moz_editor_bogus_node' ) )
+                if ( CKEDITOR.env.gecko && htmlNode.hasAttribute( '_moz_editor_bogus_node' ) ){
                     return;
+                }
                 // Avoid any firebug nodes in the code, This also applies to Mozilla only
-                if ( CKEDITOR.env.gecko && htmlNode.hasAttribute( 'firebugversion' ) )
+                if ( CKEDITOR.env.gecko && htmlNode.hasAttribute( 'firebugversion' ) ){
                     return;
+                }
 
                 // get real element from fake element
                 //			    if ( htmlNode.getAttribute( 'data-cke-realelement' ) ) {
@@ -587,7 +597,6 @@ CKEDITOR.customprocessor.prototype =
 
                 // Get the element name.
                 var sNodeName = htmlNode.tagName.toLowerCase();
-
                 if ( CKEDITOR.env.ie ){
                     // IE doens't include the scope name in the nodeName. So, add the namespace.
                     if ( htmlNode.scopeName && htmlNode.scopeName != 'HTML' && htmlNode.scopeName != 'FCK' )
@@ -695,9 +704,7 @@ CKEDITOR.customprocessor.prototype =
                                     stringBuilder.push(' style="' + listStyle + '"');
                                 stringBuilder.push('>\n');
                             }
-
                             this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-
                             if (this.preserveLiNode)
                                 stringBuilder.push('</' + sNodeName + '>');
 
@@ -708,7 +715,6 @@ CKEDITOR.customprocessor.prototype =
                             break;
 
                         case 'li' :
-
                             if (this.preserveLiNode) {
                                 stringBuilder.push('<li>');
                                 this._AppendChildNodes( htmlNode, stringBuilder, prefix );
@@ -721,7 +727,6 @@ CKEDITOR.customprocessor.prototype =
                                 if ( sLastStr != ";" && sLastStr != ":" && sLastStr != "#" && sLastStr != "*" )
                                     stringBuilder.push( '\n' + prefix );
                             }
-
                             var parent = htmlNode.parentNode;
                             var listType = "*";
 
@@ -741,7 +746,6 @@ CKEDITOR.customprocessor.prototype =
 
                             stringBuilder.push( listType );
                             this._AppendChildNodes( htmlNode, stringBuilder, prefix + listType );
-
                             break;
 
                         case 'a' :
@@ -1486,7 +1490,10 @@ CKEDITOR.customprocessor.prototype =
 	
         ieFixHTML: function(html, convertToLowerCase){
             var zz = html;
-            var z = zz.match(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g);
+//            var z = zz.match(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g);
+            
+            //regex to match all existing tags with or without attributes
+            var z = zz.match(/<\/?\w+\s*([\w-]+\s*=[\"\']*[\w:;\s\/\.]+[\"\']*\s*)*\/?>/g);
 		
             if (z) {
                 for (var i = 0; i < z.length; i++) {
