@@ -64,7 +64,7 @@ class LODMappingsPage extends SpecialPage {
 	/**
 	 * Path to R2Redit, relative to $lodgScriptPath
 	 */
-	static $r2rEditPath = "/libs/R2REdit";
+	static $r2rEditPath = "/libs/R2Redit";
 
     /**
      * Constructor
