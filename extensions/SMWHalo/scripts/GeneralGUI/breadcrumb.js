@@ -76,6 +76,8 @@ Breadcrumb.prototype = {
         var showArray0 = [];
 		var showArray1 = [];
 		var showArray2 = [];
+		var articlePath1 = [];
+		var articlePath2 = [];
 		
         for (var index = 0, len = breadcrumbArray.length; index < len; ++index) {
             var breadcrumb = breadcrumbArray[index];
@@ -95,6 +97,7 @@ Breadcrumb.prototype = {
             	var articlePath = wgArticlePath.replace("$1", encURI) + breadcrumb.queryString;
             }	
            showArray0[index] = show;
+		   articlePath1[index] = articlePath
            var len0 = showArray0.length;		   
         };
 		
@@ -125,10 +128,28 @@ Breadcrumb.prototype = {
 		   dup = false;
 		}
 		
+		//read articlePath'S
+		var e = 0;
+		var d = 0;
+		var dup = false;
+		for(var s = 0, len1 = articlePath1.length; s < len1; ++s){
+		  for(var e = 0, len2 = articlePath2.length ; e < len2; ++e){
+		   if(articlePath1[s] == articlePath2[e]){
+		      dup = true;
+		    }
+		  }	
+		   if(dup == false){
+		     articlePath2[d] = articlePath1[s];
+			   ++d;
+		   }
+		   dup = false;
+		}
+		
+		
 		//add all previous visited pages as link
 		    for(var i = 0, len2 = showArray2.length; i < len2; ++i){ 
                if(showArray2[i] != null){			
-                html += '<a href="'+wgServer+articlePath+'">'+showArray2[i]+' &gt; </a>';
+                html += '<a href="'+wgServer+articlePath2[i]+'">'+showArray2[i]+' &gt; </a>';
 				}
 		    }	
         // add current page as normal text
