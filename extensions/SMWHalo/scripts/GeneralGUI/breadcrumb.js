@@ -73,7 +73,10 @@ Breadcrumb.prototype = {
     
     pasteInHTML: function(breadcrumbArray) {
         var html = "";
-
+        var showArray0 = [];
+		var showArray1 = [];
+		var showArray2 = [];
+		
         for (var index = 0, len = breadcrumbArray.length; index < len; ++index) {
             var breadcrumb = breadcrumbArray[index];
             // remove namespace and replace underscore by whitespace
@@ -90,18 +93,46 @@ Breadcrumb.prototype = {
            	    encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
            	    encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
             	var articlePath = wgArticlePath.replace("$1", encURI) + breadcrumb.queryString;
-            }
-            //add all previous visited pages as link
-            if (index < len -1){
-                html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>';
-            }
-            //add current page as normal text
-            else {
-               html += '<span id="smwh_breadcrumb_currentpage">'+show+'</span>';
-            }
-            
+            }	
+           showArray0[index] = show;
+           var len0 = showArray0.length;		   
         };
-        //add the last item (current page) not as link
+		
+		//checks if the current crumb is duplicated
+		var currentShow = showArray0[len0 -1];
+		var j = 0;
+		for(var i = 0; i < len0 -1; ++i){
+		   if(showArray0[i] != currentShow){
+		        showArray1[j] = showArray0[i];
+			    ++j;
+		    }
+		}
+		
+		// checks if there a duplicated crumb other than current crumb
+		var e = 0;
+		var d = 0;
+		var dup = false;
+		for(var s = 0, len1 = showArray1.length; s < len1; ++s){
+		  for(var e = 0, len2 = showArray2.length ; e < len2; ++e){
+		   if(showArray1[s] == showArray2[e]){
+		      dup = true;
+		    }
+		  }	
+		   if(dup == false){
+		     showArray2[d] = showArray1[s];
+			   ++d;
+		   }
+		   dup = false;
+		}
+		
+		//add all previous visited pages as link
+		    for(var i = 0, len2 = showArray2.length; i < len2; ++i){ 
+               if(showArray2[i] != null){			
+                html += '<a href="'+wgServer+articlePath+'">'+showArray2[i]+' &gt; </a>';
+				}
+		    }	
+        // add current page as normal text
+            html += '<span id="smwh_breadcrumb_currentpage">'+currentShow+'</span>';
 
         //Check if breadcrumb-div exists
         var bc_div = $('breadcrumb');
