@@ -492,7 +492,7 @@ class ConsistencyChecker {
 							}
 							break;
 						case 'Semantic Result Formats':
-							if (strpos($ls, '/*start-semanticresultsformats*/') === false) {
+							if (strpos($ls, '/*start-semanticresultformats*/') === false) {
 								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Semantic Result Formats Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
