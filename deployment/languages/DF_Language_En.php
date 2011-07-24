@@ -82,6 +82,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_update' => 'Update',
 	'df_webadmin_checkdependency' => 'Check dependencies',
 	'df_webadmin_remove' => 'Remove file',
+	'df_webadmin_addrepository' => 'Add repository',
+	'df_webadmin_removerepository' => 'Remove repository',
 	
 	'df_webadmin_statustab' => 'Status',
 	'df_webadmin_searchtab' => 'Find extensions',
@@ -102,6 +104,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_norestorepoints' => 'No restore points found.',
 	'df_webadmin_nouploadedfiles' => 'No uploaded files found.',
 	
+	'df_webadmin_maintenancetext' => 'The system restore tab allows creating and restoring restore points. Restore points are snapshots of a wiki installation (including database content).',
+	'df_webadmin_settingstext' =>  'The repositories tab allows adding or removing repositories. A repository is denoted by its URL.',
 	'df_restore_warning' => 'Restoring will REPLACE both the wiki setup and its ENTIRE contents by a previous version. YOU WILL LOOSE YOUR CURRENT WIKI CONTENT!. Do you wish to continue?',
 	'df_remove_restore_warning' => 'Restore point will be REMOVED!',
 	'df_uninstall_warning' => 'The following extensions will be uninstalled. Are you sure?',

@@ -81,6 +81,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_update' => 'Aktualisieren',
 	'df_webadmin_checkdependency' => 'Prüfe auf Abhängigkeiten',
     'df_webadmin_remove' => 'Datei entfernen',
+	'df_webadmin_addrepository' => 'Repository hinzufügen',
+	'df_webadmin_removerepository' => 'Repository löschen',
 
 	'df_webadmin_statustab' => 'Status',
     'df_webadmin_searchtab' => 'Suche Extensions',
@@ -100,6 +102,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_norestorepoints' => 'Keine Wiederherstellungspunkte gefundend.',
 	'df_webadmin_nouploadedfiles' => 'Keine Dateien gefunden.',
 
+	'df_webadmin_maintenancetext' => 'Dieser Tab erlaubt das Erzeugen und Wiederherstellen von Wiederherstellungspunkt. Wiederherstellungspunkte speichern den Zustand einer Wiki-Installation inkl. Daten..',
+	'df_webadmin_settingstext' =>  'Dieser Tab erlaubt das Hinzufügen und Löschen von Repository-URLs.',
 	'df_restore_warning' => 'Ein Rücksetzen bewirkt sowohl die Zurücksetzung der Installation wie auch des Inhalts des Wikis. Wollen Sie fortfahren?',
 	'df_remove_restore_warning' => 'Wiederherstellungspunkt wird gelöscht!',
     'df_uninstall_warning' => 'Die folg. Extensions werden de-installiert. Wollen Sie fortfahren?',

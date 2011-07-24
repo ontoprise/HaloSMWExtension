@@ -46,8 +46,9 @@ class DFMaintenanceTab {
 	}
 
 	public function getHTML() {
-
-		$html = "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_restorepoint\"></input>";
+		global $dfgLang;
+		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_maintenancetext')."</div>";
+		$html .= "<input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_restorepoint\"></input>";
 		$html .= "<input type=\"button\" value=\"Create\" id=\"df_create_restorepoint\"></input>";
 		$html .= "<br/>";
 		$html .= $this->serializeRestorePoints($this->getAllRestorePoints());
@@ -56,6 +57,7 @@ class DFMaintenanceTab {
 
 	public function serializeRestorePoints($restorepoints) {
 		global $dfgLang;
+		
 		$html = "<div class=\"df_restorepoints\"><table id=\"df_restorepoint_table\" cellspacing=\"0\" cellpadding=\"0\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_restorepoint');
