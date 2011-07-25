@@ -788,12 +788,11 @@ class OB_StorageTS extends OB_Storage {
 			// query
 			if ($onlyAssertedCategories) {
 				$allSubCategories = smwfGetSemanticStore()->getSubCategories(Title::newFromText($categoryName, NS_CATEGORY));
-				$categoryDisjuction = '';
+				$categoryDisjuction = $categoryName;
 				foreach($allSubCategories as $sc) {
 					list($c, $isLeaf) = $sc;
 					$categoryDisjuction .= '||'.$c->getText();
 				}
-				$categoryDisjuction = substr($categoryDisjuction, 2);
 				$response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
 			} else {
 				$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
