@@ -1,6 +1,6 @@
 Index: extensions/SemanticResultFormats/SRF_Messages.php
 ===================================================================
---- extensions/SemanticResultFormats/SRF_Messages.php	(revision 9982)
+--- extensions/SemanticResultFormats/SRF_Messages.php	(revision 11678)
 +++ extensions/SemanticResultFormats/SRF_Messages.php	(working copy)
 @@ -87,6 +87,16 @@
  	'srf_paramdesc_minsize' => 'The size of the smallest tags in percent (default: 77)',
@@ -17,11 +17,37 @@ Index: extensions/SemanticResultFormats/SRF_Messages.php
 +	'srf_paramdesc_graphcolor' => 'Graph color'
 +
  );
-
+ 
  /** Message documentation (Message documentation)
+Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
+===================================================================
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 11678)
++++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
+@@ -422,7 +422,7 @@
+ 							$textstack[] = $object->getWikiValue();
+ 							break;
+ 						default:
+-							$textstack[] = $object->getLongHTMLText( $outputmode, $this->getLinker( 0 ) );
++							$textstack[] = $object->getLongHTMLText( $this->getLinker( 0 ) );
+ 					}
+ 				}
+ 
+Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit2.php
+===================================================================
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit2.php	(revision 11678)
++++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit2.php	(working copy)
+@@ -348,7 +348,7 @@
+ 							}
+ 							break;
+ 						default:
+-							$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
++							$tmp = $object->getLongHTMLText($this->getLinker(0));
+ 					}
+ 					if($object->getTypeID() == '_num') {
+ 						$textstack[] = '"' . $colstack[$col] . '": ' . str_replace('"', '\"', $tmp);
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 9982)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 11678)
 +++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(working copy)
 @@ -28,6 +28,11 @@
  		$this->isHTML = true;
@@ -37,7 +63,7 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
  		$count = 0; // How many bars will they be? Needed to calculate the height of the image
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 9982)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 11678)
 +++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(working copy)
 @@ -34,6 +34,11 @@
  		$this->isHTML = true;
@@ -53,7 +79,7 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
  		$max = 0; // the biggest value. needed for scaling
 Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
 ===================================================================
---- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 9982)
+--- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 11678)
 +++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(working copy)
 @@ -151,4 +151,16 @@
  		}
@@ -74,7 +100,7 @@ Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
  }
 Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 ===================================================================
---- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 9982)
+--- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 11678)
 +++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
 @@ -231,7 +231,7 @@
  
@@ -87,7 +113,7 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
  
 Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 ===================================================================
---- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 9982)
+--- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 11678)
 +++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(working copy)
 @@ -383,4 +383,27 @@
  
@@ -117,9 +143,28 @@ Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 +	}
 +	
  }
+Index: extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php
+===================================================================
+--- extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php	(revision 11678)
++++ extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php	(working copy)
+@@ -173,10 +173,12 @@
+ 		foreach ( $tags as &$tag ) {
+ 			switch ( $this->sizeMode ) {
+ 				case 'linear':
+-					$tag = $this->minTagSize + $maxSizeIncrease * ( $tag -$min ) / ( $max -$min );
++					$divisor = ($max == $min) ? 1 : $max - $min;
++					$tag = $this->minTagSize + $maxSizeIncrease * ( $tag -$min ) / $divisor;
+ 					break;
+ 				case 'log' : default :
+-					$tag = $this->minTagSize + $maxSizeIncrease * ( log( $tag ) -log( $min ) ) / ( log( $max ) -log( $min ) );
++					$divisor = ($max == $min) ? 1 : log( $max ) - log( $min );
++					$tag = $this->minTagSize + $maxSizeIncrease * ( log( $tag ) - log( $min ) ) / $divisor ;
+ 					break;
+ 			}
+ 		}
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 9982)
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 11678)
 +++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
 @@ -148,6 +148,7 @@
  							$objectlabel = $object->getLongText( $outputmode, $l );
@@ -141,22 +186,3 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +	}
 +	
  }
-Index: extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php
-===================================================================
---- extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php	(Original)
-+++ extensions/SemanticResultFormats/TagCloud/SRF_TagCloud.php	(Patched version)
-@@ -173,10 +173,12 @@
- 		foreach ( $tags as &$tag ) {
- 			switch ( $this->sizeMode ) {
- 				case 'linear':
--					$tag = $this->minTagSize + $maxSizeIncrease * ( $tag -$min ) / ( $max -$min );
-+					$divisor = ($max == $min) ? 1 : $max - $min;
-+					$tag = $this->minTagSize + $maxSizeIncrease * ( $tag -$min ) / $divisor;
- 					break;
- 				case 'log' : default :
--					$tag = $this->minTagSize + $maxSizeIncrease * ( log( $tag ) -log( $min ) ) / ( log( $max ) -log( $min ) );
-+					$divisor = ($max == $min) ? 1 : log( $max ) - log( $min );
-+					$tag = $this->minTagSize + $maxSizeIncrease * ( log( $tag ) - log( $min ) ) / $divisor ;
- 					break;
- 			}
- 		}
