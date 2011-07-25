@@ -292,9 +292,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
 
 		global $dfgLang;
-		//$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty('Part_of_bundle'));
-		echo($partOfBundlePropertyID.'<br><br><br>');
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
 		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
