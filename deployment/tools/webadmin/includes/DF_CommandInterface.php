@@ -208,7 +208,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -230,7 +230,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -252,7 +252,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -274,7 +274,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -317,7 +317,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -339,7 +339,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -361,7 +361,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -383,7 +383,7 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /K START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
+			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
