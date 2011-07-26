@@ -89,5 +89,8 @@ CKEDITOR.editorConfig = function( config )
     config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre;div';
     // use fontsizes only that do not harm the skin
     config.fontSize_sizes = 'smaller;larger;xx-small;x-small;small;medium;large;x-large;xx-large';
-
+   
+    //remove unnecessary plugins
+    //list style is not preserved in wikitext
+    config.removePlugins = 'liststyle';
 };

@@ -13,7 +13,7 @@ CKEDITOR.plugins.add( 'mediawiki',
     requires : [ 'fakeobjects', 'htmlwriter', 'dialog' ],
 
     init : function( editor )
-    {
+    {                
         // add the CSS for general styles of Mediawiki elements
         editor.addCss(
             'img.fck_mw_frame' +
@@ -481,7 +481,6 @@ CKEDITOR.customprocessor.prototype =
     toDataFormat : function( data, fixForBody ){
         if ( (window.parent.showFCKEditor &&
             !(window.parent.showFCKEditor & window.parent.RTE_VISIBLE)) ){
-//                alert('value:\n' + window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value)
                 return window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value;
             }
 
@@ -539,11 +538,11 @@ CKEDITOR.customprocessor.prototype =
             xmlDoc.async = false;
             xmlDoc.loadXML(data);
             
-            //Xml validation. Change to true for debugging purposes
-            xmlDoc.validateOnParse = false;
-            if (xmlDoc.parseError.errorCode != 0) {
-               alert(xmlDoc.parseError.reason + ':\n' + xmlDoc.xml);
-            }  
+            //Xml validation. Uncomment and change to true for debugging purposes
+//            xmlDoc.validateOnParse = false;
+//            if (xmlDoc.parseError.errorCode != 0) {
+//               alert(xmlDoc.parseError.reason + ':\n' + xmlDoc.xml);
+//            }  
         }
         var rootNode = xmlDoc.documentElement;
         return rootNode;
@@ -1490,10 +1489,10 @@ CKEDITOR.customprocessor.prototype =
 	
         ieFixHTML: function(html, convertToLowerCase){
             var zz = html;
-//            var z = zz.match(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g);
             
-            //regex to match all existing tags with or without attributes
-            var z = zz.match(/<\/?\w+\s*([\w-]+\s*=[\"\']*[\w:;\s\/\.]+[\"\']*\s*)*\/?>/g);
+            //bugfix 15244: regex to match all existing tags with or without attributes
+            //var z = zz.match(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g);
+            var z = zz.match(/<\/?\w+\s*([\w\-]+\s*=[\"\']*[\w:;\-\s\/\.]+[\"\']*\s*)*\/?>/g);
 		
             if (z) {
                 for (var i = 0; i < z.length; i++) {
