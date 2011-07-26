@@ -141,7 +141,7 @@
 				query="SELECT s.smw_id as smwID
                FROM smw_ids s
                WHERE s.smw_namespace='${pages.pns}' AND 
-                     s.smw_title='${pages.pt}'">
+                     s.smw_title='${dataimporter.functions.escapeSql(pages.pt)}'">
 				<field column="smwID" name="smwh_smw_id" />
 
   			<!-- Store all subject, predicate and object names for each subject of a
