@@ -21,3 +21,10 @@ $smwhgAutoCompletionTSC=true;
 enableQueryResultsCache();
 
 $wgParserCacheType = CACHE_NONE; //disable parse cache for query results cache tests
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################

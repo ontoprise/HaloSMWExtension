@@ -25,3 +25,10 @@ $wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templ
 $smwgNamespacesWithSemanticLinks[300] = true;
 $smwgNamespacesWithSemanticLinks[NS_USER_TALK] = true;
 
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################

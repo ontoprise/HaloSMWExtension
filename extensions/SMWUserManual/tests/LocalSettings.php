@@ -13,3 +13,10 @@ include_once('extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.
 #UserManual extension
 require_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
 enableSMWUserManual();
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################

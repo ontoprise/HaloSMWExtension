@@ -11,3 +11,10 @@ enableSMWHalo('SMWHaloStore2', "SMWTripleStore");
 $smwgWebserviceEndpoint='localhost:8090';
 $smwgEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################

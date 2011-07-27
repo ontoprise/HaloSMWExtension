@@ -17,3 +17,10 @@ include_once('extensions/Collaboration/includes/CE_Initialize.php');
 enableCollaboration();
 
 $cegEnableRatingForArticles = true;
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################

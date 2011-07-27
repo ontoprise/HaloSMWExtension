@@ -11,3 +11,10 @@ require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunct
 
 include_once('extensions/SemanticForms/includes/SF_Settings.php');
 include_once('extensions/SemanticConnector/includes/SC_Initialize.php');
+
+###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####
+require_once('deployment/Deployment.php');
+require_once("extensions/ScriptManager/SM_Initialize.php");
+include_once('extensions/ARCLibrary/ARCLibrary.php');
+enableARCLibrary();
+################################################################################################################
