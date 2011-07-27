@@ -377,7 +377,17 @@
 				</xsl:if>
 			</td>
 			<td>
-				<xsl:if test="count(child::category) > 0">
+			     <xsl:if test="count(child::category) = 1">
+			     <a style="margin-left:5px;">
+                    <xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template
+                        name="replace-string"><xsl:with-param name="text" select="child::category" /><xsl:with-param
+                        name="from" select="$var-simple-quote" /><xsl:with-param
+                        name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
+                    <xsl:variable name="superCategory" select="." />
+                    <xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>
+                </a>
+                </xsl:if>
+				<xsl:if test="count(child::category) > 1">
 				<select name="selector">
 				
 				<xsl:for-each select="child::category">
