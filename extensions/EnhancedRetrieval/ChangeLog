@@ -4,6 +4,7 @@ Enhanced Retrieval extension ChangeLog
 VERSION 1.6
   BUGFIXES:
 	15201 - Create index failed single quotes are not escaped
+	15322 - Missing language spec in SOLR configuration
 	
 VERSION 1.5.6
 

@@ -7,7 +7,7 @@
 		password="{{wgDBpassword}}"
 		batchSize="-1" 
 		/>
-	<script>
+	<script language="JavaScript">
         <![CDATA[
         	function Relations(row) {
         	  // The values of all properties are stored as string.
