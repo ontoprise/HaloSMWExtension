@@ -130,29 +130,21 @@ function smwgHaloSetupExtension() {
 	if (!defined('DF_VERSION')) {
 		$msg = "Deployment framework is not installed.";
 		trigger_error($msg);
-		echo $msg;
-		die();
 	}
 
 	if (!defined('SCM_VERSION')) {
 		$msg = "ScriptManager is not installed.";
 		trigger_error($msg);
-		echo $msg;
-		die();
 	}
 
 	if (!defined('SMW_VERSION')) {
 		$msg = 'SMW is not installed.';
 		trigger_error($msg);
-		echo $msg;
-		die();
 	}
 
 	if (!defined('ARCLIB_ARCLIBRARY_VERSION')) {
 		$msg = 'ArcLibrary is not installed.';
 		trigger_error($msg);
-		echo $msg;
-		die();
 	}
 
 	global $smwgWebserviceProtocol;
