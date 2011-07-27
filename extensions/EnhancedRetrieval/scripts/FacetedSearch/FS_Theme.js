@@ -348,6 +348,12 @@
 			// Main namespace
 			name = lang.getMessage('mainNamespace');
 		}
+		
+		if (typeof name === 'undefined') {
+			// The namespace may be undefined if the extension that defines it
+			// was disabled after the creation of the index.
+			return '';
+		}
 		var tooltip = 'title="' + lang.getMessage('namespaceTooltip', count) + '" ';
 		name = name.replace(/ /g, '&nbsp;')
 		var emptyNamespace = count === 0 ? " xfsEmptyNamespace" : "";
