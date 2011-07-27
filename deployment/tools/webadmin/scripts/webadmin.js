@@ -438,7 +438,7 @@ $(function() {
 				var id = parts[1];
 				var version = parts[2].split("_")[0];
 				var patchlevel = parts[2].split("_")[1];
-				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id+"-"+version);
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id)+"&rsargs[]="+encodeURIComponent(version);
 				var callbackForExtensions = function(xhr, status) {
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
 					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id+"-"+version);
