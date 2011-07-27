@@ -233,6 +233,11 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	 * 		The current query string. It may be the name of an existing article.
 	 */
 	updateCreateArticleWidget: function (query) {
+		
+		if (query.length === 0) {
+			// Ignore empty queries
+			return;
+		}
 		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
 		
 		// Does the search term start with a valid namespace?

@@ -5,6 +5,7 @@ VERSION 1.6
   BUGFIXES:
 	15201 - Create index failed single quotes are not escaped
 	15322 - Missing language spec in SOLR configuration
+	15323 - Parse error in SOLR request for empty search term
 	
 VERSION 1.5.6
 
