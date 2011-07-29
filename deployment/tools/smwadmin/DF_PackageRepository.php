@@ -582,30 +582,7 @@ class PackageRepository {
 	}
 
 	private static function createMWDeployDescriptor($rootDir, $fromVersion = NULL) {
-		$version = Tools::getMediawikiVersion($rootDir);
-		$version = intval(str_replace(".","", $version));
-		$xml = '<?xml version="1.0" encoding="UTF-8"?>
-				<deploydescriptor>
-				    <global>
-				        <version>'.$version.'</version>
-				        <id>mw</id>
-				        <vendor>Ontoprise GmbH</vendor>
-				        <maintainer>Wikimedia foundation</maintainer>
-				        <instdir/>
-				        <description>MediaWiki is a free software open source wiki package written in PHP, originally for use on Wikipedia.</description>
-				        <helpurl>http://www.mediawiki.org/wiki/MediaWiki</helpurl>
-				        <license>GPL-v2</license>
-    			    </global>
-				    <codefiles/>
-				    <wikidumps/>
-				    <resources/>
-				    <configs>
-				    	<update>
-				    		<script file="maintenance/update.php"/>
-				    	</update>
-				    </configs>
-				    </deploydescriptor>';
-
+		list($xml, $fromVersion) = Tools::createMWDeployDescriptor($rootDir, $fromVersion);
 		return new DeployDescriptor($xml, $fromVersion);
 	}
 

@@ -80,7 +80,8 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 }
 
-if (!isset($repositoryDir) || !isset($bundlePath) || !isset($repositoryURL)) {
+
+if (!isset($repositoryDir) || (!(isset($bundlePath) || isset($mediawiki))) || !isset($repositoryURL)) {
 	echo "\nUsage: php addBundle2Repository.php -r <repository-dir> -b <bundle file or dir> --url <repository-url>\n";
 	die(1);
 }
@@ -97,9 +98,12 @@ if (Tools::isWindows($os) && $latest) {
 Tools::mkpath($repositoryDir."/bin");
 
 // read bundles and extract the deploy descriptors
+$descriptors = array();
+if (isset($bundlePath)) { 
 echo "\nExtract deploy descriptors";
 $descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains);
 echo "..done.";
+}
 
 // load existing repository
 echo "\nLoading repository...";
@@ -151,36 +155,8 @@ foreach($descriptors as $tuple) {
 }
 
 if ($mediawiki) {
-	$version = Tools::getMediawikiVersion(realpath($rootDir."/../"));
-	$version = str_replace(".", "", $version);
-	$xml = <<<ENDS
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<deploydescriptor>
-    <global>
-        <version>$version</version>
-        <id>mw</id>
-        <instdir></instdir>
-        <vendor>Mediawiki</vendor>
-        <description>Mediawiki</description>
-
-        <dependencies>
-    </dependencies>
-    </global>
-    <wikidumps>
-    
-    </wikidumps>
-    <resources>
-    
-    </resources>
-    <configs>
-     <update>
-       <script file="maintenance/update.php" />
-     </update>
-    </configs>
-</deploydescriptor>
+	list($xml, $fromVersion) = Tools::createMWDeployDescriptor(realpath($rootDir."/../"));
 	
-
-ENDS;
 	$id = 'mw';
 	Tools::mkpath($repositoryDir."/extensions/$id");
 	$handle = fopen($repositoryDir."/extensions/$id/deploy-$version.xml", "w");
