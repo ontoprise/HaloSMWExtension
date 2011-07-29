@@ -108,6 +108,28 @@
 	}
 	
 	/**
+	 * A text that is displayed in the UI may contain HTML or script code which
+	 * may enable cross-site-scripting. This function escapes special HTML
+	 * characters. 
+	 * Find further information at:
+	 * https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet
+	 * 
+	 * @param {string} text
+	 * 		The string to be escaped.
+	 * @return {string}
+	 * 		The escaped string
+	 */
+	function escapeHTML(text) {
+		var escText = text.replace(/&/g, '&amp;')
+						  .replace(/</g, '&lt;')
+		                  .replace(/>/g, '&gt;')
+		                  .replace(/"/g, '&quot;')
+		                  .replace(/'/g, '&#x27;')
+		                  .replace(/\//g, '&#x2F;');
+		return escText;
+	}
+	
+	/**
 	 * Some strings are too long for displaying them in the UI. This function
 	 * shortens them and appends an ellipsis (...) .
 	 * @param {String} longName
@@ -507,6 +529,8 @@
 		
 	AjaxSolr.theme.prototype.createArticle = function(articleName, link) {
 		var lang = FacetedSearch.singleton.Language;
+		link = escapeHTML(link);
+		articleName = escapeHTML(articleName);
 		var html = lang.getMessage('nonexArticle', '<em>'+articleName+'</em>') + 
 					' <a href="' + link + '" class="xfsRedLink">' + 
 						articleName + 

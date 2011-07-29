@@ -148,7 +148,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
         
 		// Insert the search term into the input field of the UI
 		$html = self::SPECIAL_PAGE_HTML;
-		$html = str_replace('{{searchTerm}}', $search, $html);
+		$html = str_replace('{{searchTerm}}', htmlspecialchars($search), $html);
 		
 		$wgOut->addHTML($this->replaceLanguageStrings($html));
 		$this->addJSLanguageScripts();
