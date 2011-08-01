@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>300</version>
+		<id>newusermessage</id>
+		<license>GPL-v2</license>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>A. Dunkley, Siebrand</maintainer>
+		<instdir>extensions/NewUserMessage</instdir>
+		<description>
+			Usually after a new user registers on a MediaWiki, the message in MediaWiki:Welcomecreation is displayed. This extensions allows a message in a specified template to be added into the new users talk page instead.
+        </description>
+		<helpurl></helpurl>
+		<dependencies>
+            <dependency from="1110">mw</dependency>
+		</dependencies>
+		<notice></notice>
+	</global>
+	<codefiles>
+		<!-- external codes files -->
+		<!-- TODO: add others in skins/commons/images/icons -->
+	</codefiles>
+	<wikidumps>
+
+	</wikidumps>
+	<resources>
+
+	</resources>
+
+	<configs>
+		<new>
+			<require name="num_init" file="extensions/NewUserMessage/NewUserMessage.php" />
+		</new>
+
+		<uninstall>
+
+		</uninstall>
+	</configs>
+</deploydescriptor>
+
