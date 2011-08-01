@@ -215,6 +215,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		
 		// query
 		if ($object instanceof SMWWikiPageValue) {
+			if (is_null($object->getTitle())) { 
+				// should not happen but anyway
+				return array();
+			}
 			$objectNode =  $this->tsNamespace->getFullIRI($object->getTitle());
 		} else {
 			$typeID = $value->getTypeID();
@@ -256,7 +260,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
             } else {
 
 				$title = TSHelper::getTitleFromURI((string) $sv);
-				$properties[] = SMWPropertyValue::makeUserProperty($title->getText());
+				if (!is_null($title) && $title instanceof Title) $properties[] = SMWPropertyValue::makeUserProperty($title->getText());
 			}
 		}
 
