@@ -175,6 +175,8 @@ $wgGroupPermissions['sysop']['gardening']=true;
 $wgGroupPermissions['sysop']['userrights']=true;
 $wgGroupPermissions['sysop']['ontologyediting'] = true; 
 
+$wgVerifyMimeType=false;
+array_push($wgFileExtensions, "xml");
 
 // ontologies
 /*start-baseontologybundle*/
