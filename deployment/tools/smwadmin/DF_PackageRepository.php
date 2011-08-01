@@ -582,7 +582,7 @@ class PackageRepository {
 	}
 
 	private static function createMWDeployDescriptor($rootDir, $fromVersion = NULL) {
-		list($xml, $fromVersion) = Tools::createMWDeployDescriptor($rootDir, $fromVersion);
+		$xml = Tools::createMWDeployDescriptor($rootDir);
 		return new DeployDescriptor($xml, $fromVersion);
 	}
 

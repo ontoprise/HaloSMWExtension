@@ -26,6 +26,7 @@
  *                  --url <repository-url>      The download base URL
  *                  [--latest]                  Latest version?
  *                  [--mediawiki]               Include Mediawiki?
+ *                  [--mwversion]               Mediawiki version (if missing it is read from the underlying installation)
  *                  [--contains <substring> ]   File name contains a substring
  *
  * @author: Kai Kühn / ontoprise / 2011
@@ -73,6 +74,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$mediawiki = true;
 		continue;
 	}
+	
+    if ($arg == '--mwversion') {
+        $mwversion =next($argv);
+        continue;
+    }
 
 	if ($arg == '--contains') {
 		$fileNamecontains = next($argv);
@@ -155,7 +161,7 @@ foreach($descriptors as $tuple) {
 }
 
 if ($mediawiki) {
-	list($xml, $fromVersion) = Tools::createMWDeployDescriptor(realpath($rootDir."/../"));
+	$xml = Tools::createMWDeployDescriptor(realpath($rootDir."/../"), isset($mwversion) ? $mwversion : NULL);
 	
 	$id = 'mw';
 	Tools::mkpath($repositoryDir."/extensions/$id");

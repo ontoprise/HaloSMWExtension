@@ -743,12 +743,12 @@ class Tools {
 	 * Creates a MW deploy descriptor analyzing the current installation.
 	 *  
 	 * @param string $rootDir MW root directory
-	 * @param int $fromVersion
+	 * @param string $ver Version (if missing if will be read from the underlying MW)
 	 * 
 	 * @return string (xml)
 	 */
-    public static function createMWDeployDescriptor($rootDir, $fromVersion = NULL) {
-        $version = self::getMediawikiVersion($rootDir);
+    public static function createMWDeployDescriptor($rootDir, $ver = NULL) {
+        $version = is_null($ver) ? self::getMediawikiVersion($rootDir) : $ver;
         $version = intval(str_replace(".","", $version));
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
                 <deploydescriptor>
@@ -772,7 +772,7 @@ class Tools {
                     </configs>
                     </deploydescriptor>';
 
-        return array($xml, $fromVersion);
+        return $xml;
     }
 
 }
