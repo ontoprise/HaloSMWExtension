@@ -129,7 +129,10 @@ $messages['en'] = array(
 	'lod_sp_source_import' => 'Import',
 	'lod_sp_source_reimport' => '(Re-)Import',
 	'lod_sp_source_update' => 'Update',
-	'lod_sp_isimported' => 'Imported',
+        'lod_sp_source_options' => 'Options',
+        'lod_sp_schema_translation' => 'R2R',
+        'lod_sp_identity_resolution' => 'Silk',
+    	'lod_sp_isimported' => 'Imported',
 	'lod_sp_statusmsg' => 'Status message',
     //--- LOD Policy editor
 	'lodtrust'	=> 'LOD Trust Policies',

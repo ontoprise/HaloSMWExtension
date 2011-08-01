@@ -72,6 +72,7 @@ class LODSourcesPage extends SpecialPage {
 		$html .= "<th>".wfMsg('lod_sp_source_source')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_lastimport')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_source_changefreq')."</th>";
+		$html .= "<th colspan=\"2\">".wfMsg('lod_sp_source_options')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_isimported')."</th>";
 		$html .= "<th>".wfMsg('lod_sp_statusmsg')."</th>";
 		
@@ -91,9 +92,15 @@ class LODSourcesPage extends SpecialPage {
             $html .= $ldSource->getChangeFreq() == '' ? "-" : $ldSource->getChangeFreq();
             $html .="</td>";
             $html .="<td>";
+            $html .= wfMsg('lod_sp_schema_translation')."<input type=\"checkbox\" checked id=\"runSchemaTranslation_".$s."\" value=\"true\" title=\"Include schema translation\" />";
+            $html .="</td>";
+            $html .="<td>";
+            $html .= wfMsg('lod_sp_identity_resolution')."<input type=\"checkbox\" checked id=\"runIdentityResolution_".$s."\" true\" value=\"true\" title=\"Include identity resolution\" />";
+            $html .="</td>";
+            $html .="<td>";
             $html .= $ldSource->isImported() === false ? "-" : "yes";
             $html .="</td>";
-              $html .="<td>";
+            $html .="<td>";
             $html .= $ldSource->getErrorMessagesFromLastImport();
             $html .="</td>";
             
@@ -103,10 +110,10 @@ class LODSourcesPage extends SpecialPage {
             	$disabled = '';
             }
             $html .="<td>";
-            $html .= "<input type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', false);\" value=\"".($ldSource->isImported() ? wfMsg('lod_sp_source_reimport') : wfMsg('lod_sp_source_import'))."\"/>";
+            $html .= "<input type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', false, jQuery('#runSchemaTranslation_".$s."').attr('checked'), jQuery('#runIdentityResolution_".$s."').attr('checked'))\" value=\"".($ldSource->isImported() ? wfMsg('lod_sp_source_reimport') : wfMsg('lod_sp_source_import'))."\"/>";
             $html .="</td>";
             $html .="<td>";
-            $html .= "<input $disabled type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', true);\" value=\"".wfMsg('lod_sp_source_update')."\"/>";
+            $html .= "<input $disabled type=\"button\" onclick=\"LOD.sources.doImportOrUpdate(this, '$s', true, jQuery('#runSchemaTranslation_".$s."').attr('checked'), jQuery('#runIdentityResolution_".$s."').attr('checked'))\" value=\"".wfMsg('lod_sp_source_update')."\"/>";
             $html .="</td>";
 			$html .= "</tr>";
 			

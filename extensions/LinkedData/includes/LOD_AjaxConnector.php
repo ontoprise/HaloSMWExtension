@@ -158,14 +158,14 @@ function lodafGetRatingsForTriple($triple) {
  * @return AjaxResponse true if successful. Otherwise an error message.
  *       
  */
-function lodImportOrUpdate($dataSource, $update) {
+function lodImportOrUpdate($dataSource, $update, $synchronous, $runSchemaTranslation ,$runIdentityResolution) {
     $response = new AjaxResponse();
     $response->setContentType("text/plain");
 
     try {
         $con = TSConnection::getConnector();
         $con->connect();
-        $con->runImport($dataSource, $update);
+        $con->runImport($dataSource, $update, $synchronous, $runSchemaTranslation, $runIdentityResolution);
         $response->addText("true");
     } catch(Exception $e) {
     	$response->setResponseCode($e->getCode());

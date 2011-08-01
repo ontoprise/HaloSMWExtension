@@ -32,7 +32,7 @@ if (typeof LOD == "undefined") {
 LOD.classes.SpecialSources = function () {
 	var that = {};
 	
-	that.doImportOrUpdate = function (elem, dataSourceID, update) {
+	that.doImportOrUpdate = function (elem, dataSourceID, update, translate, resolve) {
 		var url = wgServer + wgScriptPath + "/index.php?action=ajax";
 		
 		// callback for successful import
@@ -60,7 +60,10 @@ LOD.classes.SpecialSources = function () {
 					  data: "rs=lodImportOrUpdate&rsargs[]="
 						  	+ encodeURIComponent(dataSourceID)
 						  	+ "&rsargs[]="
-						  	+ (update ? "true" : "false"),
+						  	+ (update ? "true" : "false")
+						  	+ "&rsargs[]=false"
+						  	+ "&rsargs[]="+(translate ? "true" : "false")
+						  	+ "&rsargs[]="+(resolve ? "true" : "false"),
 					  success: importOrUpdateSuccess,
 					  error: showErrorMessage
 					});

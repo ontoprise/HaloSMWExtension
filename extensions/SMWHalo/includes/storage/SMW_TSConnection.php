@@ -119,7 +119,7 @@ abstract class TSConnection {
 	 * @param string $datasource ID
 	 * @param boolean $update true for update, false for initial import
 	 */
-	public abstract function runImport($datasource, $update = false);
+	public abstract function runImport($datasource, $update = false, $synchronous = false , $runSchemaTranslation = true, $runIdentityResolution = true);
 
 	public static function getConnector() {
 		if (is_null(self::$_instance)) {
@@ -350,8 +350,9 @@ class TSConnectorRESTWebservice extends TSConnection {
         return $result;
     }
 
-	public function runImport($datasourceID, $update = false) {
-		$payload = "dataSourceId=".urlencode($datasourceID)."&update=".urlencode($update);
+	public function runImport($datasourceID, $update = false, $synchronous = false, $runSchemaTranslation = true ,$runIdentityResolution = true) {
+		$payload = "dataSourceId=".urlencode($datasourceID)."&update=".urlencode($update)."&synchronous=".urlencode($synchronous)
+                        ."&runSchemaTranslation=".urlencode($runSchemaTranslation)."&runIdentityResolution=".urlencode($runIdentityResolution);
 		list($header, $status, $result) = $this->ldImportClient->send($payload, "/runImport");
 		if ($status != 200) {
 			throw new Exception(strip_tags($result), $status);

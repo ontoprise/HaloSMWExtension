@@ -46,8 +46,9 @@ class LODImporter {
 	 * @param	bool	$update
 	 * @return	bool	true, if successful
 	 */
-	public function runImport(LODSourceDefinition $dataSource, $update) {
-		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update);
+	public function runImport(LODSourceDefinition $dataSource, $update, $synchronous, $runSchemaTranslation ,$runIdentityResolution) {
+		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update,  "synchronous" =>$synchronous,
+                    "runSchemaTranslation" => $runSchemaTranslation, "runIdentityResolution" => $runIdentityResolution);
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->send($payload, "/runImport");
 		if ($status != 200) {
