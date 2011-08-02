@@ -26,6 +26,7 @@ var wgUserLanguageStrings = {
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)The selection must not be empty!',
 	'INVALID_FORMAT_OF_VALUE' : '(e)The value has an invalid format.',
 	'INVALID_VALUES'          : 'Invalid values.',
+	'EditProperty'            : 'Edit property :',
 	'NAME'                    : 'Name:',
 	'ENTER_NAME'              : 'Please enter a name.',
 	'ADD'                     : 'Add',
@@ -205,8 +206,10 @@ var wgUserLanguageStrings = {
 	'OB_DELETE'	  			  : 'Delete',
 	'OB_PREVIEW' 			  : 'Preview',
 	'OB_TITLE_EXISTS'		  : 'Element exists!',
-	'OB_TITLE_NOTEXISTS'	  : 'Element does not exist!',
+	'OB_TITLE_NOTEXISTS'		  : 'Element does not exist!',
 	'OB_ENTER_TITLE'		  : 'Enter title',
+	'OB_SAVE_CHANGES'         : 'Save changes',
+	'OB_ENTER_RANGE'          : 'Enter Range',
 	'OB_SELECT_CATEGORY'	  : 'Select category first',
 	'OB_SELECT_PROPERTY'	  : 'Select property first',
 	'OB_SELECT_INSTANCE'	  : 'Select instance first',
@@ -371,6 +374,7 @@ var wgUserLanguageStrings = {
 	'PROPERTY_NS_WOC'         : 'Property', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
 	'CATEGORY_NS_WOC'         : 'Category', // Category namespace without colon
+	'PROPERTY_TYPE'           : 'Type',
 	
 	'CATEGORY'                : "Category:",
 	'PROPERTY'                : "Property:",
