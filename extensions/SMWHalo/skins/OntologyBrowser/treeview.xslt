@@ -660,7 +660,14 @@
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
 				</a>
-
+                 <a class="attribute" title="Edit {$title}" style="margin-left:5px;">
+					<xsl:attribute name="onclick">schemaEditPropertyListener.showSubMenuProperty(1, this,'<xsl:call-template
+						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
+						name="from" select="$var-simple-quote" /><xsl:with-param
+						name="to" select="$var-slash-quote" /></xsl:call-template>','<xsl:value-of select="@minCard" />','<xsl:value-of
+								select="child::rangeType[1]" />')</xsl:attribute>				
+					{{SMW_OB_EDIT}}
+				</a>
 
 			</td>
 			<td>
