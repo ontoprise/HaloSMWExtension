@@ -41,6 +41,7 @@ $wgAjaxExportList[] = 'smwf_om_RelationSchemaData';
 $wgAjaxExportList[] = 'smwf_om_GetWikiText';
 $wgAjaxExportList[] = 'smwf_om_DeleteArticle';
 $wgAjaxExportList[] = 'smwf_om_RenameArticle';
+$wgAjaxExportList[] = 'smwf_om_EditProperty';
 $wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
@@ -478,7 +479,7 @@ function smwf_om_MultipleRelationInfo($relations) {
 				// Type info for value exists
 				if ($relSchema[$i] == '_wpg') {
 					// Value should be a page
-					$val = $relDescr->values[$i];
+				$val = $relDescr->values[$i];
 					if (empty($val)) { 
 						$valuePageInfo[] = "no page";
 					} else {
@@ -624,6 +625,89 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 	} 
 	return "true"; 
 }
+
+/**
+ * Edit property's properties. This function is invoked by an ajax call.
+ * 
+ * @param string $pagename The name of the property.
+ * @param string $newTypename The new typename of the property.
+ * @param string $reason A reason why it was renamed.
+ * @param string $user The name of the user who requested this action.
+ */
+function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $oldType, $oldCard, $oldRange, $reason, $user) {
+	$newtypename = strip_tags($newtypename);
+	if ($newtypename == '') return "false";
+	
+	if (smwf_om_userCan($pagename, 'move') === "false") {
+		return "false,denied,$pagename";
+	}	
+	
+	$titleObj = Title::newFromText($pagename);
+	$oldType = Title::newFromText($oldType);
+	$oldCard = Title::newFromText($oldCard);
+	$oldRange = Title::newFromText($oldRange);
+	$oldRange = strtolower($oldRange);
+	$newType = Title::newFromText($newtypename);
+	$newCard = Title::newFromText($newCard);
+	$newRange = Title::newFromText($newRange);
+	
+	$Card = 'Has min cardinality::'.$oldCard;
+	$nCard = 'Has min cardinality::'.$newCard;
+
+	$type = 'Has type::Type:'.$oldType;
+	$nType = 'Has type::Type:'.$newType;	
+	
+	$range = 'Category:'.$oldRange;
+	$nRange = 'Category:'.$newRange;	
+	
+	$article = new Article($titleObj);
+	
+	$text = $article->getContent();
+	// get property's category
+	$cat = preg_split('/Has domain and range::Category:/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+	$cat = preg_split('/]]/', $cat[1], -1, PREG_SPLIT_NO_EMPTY);
+    $cat = preg_split('/[^A-Za-z0-9_]/', $cat[0], -1, PREG_SPLIT_NO_EMPTY);
+    $category = $cat[0];
+	
+	//category and range
+	if($oldRange == ''){
+	   if($newRange != ''){
+	     $hasDom    = '[[Has domain and range::Category:'.$category.']]';
+	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.']]';
+	    }
+    }
+	if($oldRange != ''){
+	   if($newRange == ''){
+	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.']]';
+	     $newHasDom = '[[Has domain and range::Category:'.$category.']]';
+	    }
+	   if($newRange != ''){
+	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.']]';
+	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.']]';
+	    }
+	}
+	
+	// write new property's properties
+	    $newContent = $text;
+	    if($oldType != $newType){
+		  $newContent = str_replace($type, $nType, $newContent);
+		}
+		if($newType != 'Page' ){
+		  $newContent = str_replace($hasDom, $newHasDom, $newContent);
+		}
+	    if($oldCard != $newCard){
+		  $newContent = str_replace($Card, $nCard, $newContent);
+		}
+		if($oldRange != $newRange){
+		  $newContent = str_replace($hasDom, $newHasDom, $newContent);
+		}
+	
+	if ($article->exists()) {		
+		$article->doEdit($newContent, $reason);
+	} 
+	return $newContent; 
+}
+
 
 /**
  * Rename an article. This function is invoked by an ajax call.
