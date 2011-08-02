@@ -26,6 +26,7 @@ var wgUserLanguageStrings = {
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)Die Auswahl darf nicht leer sein!',
 	'INVALID_FORMAT_OF_VALUE' : '(e)Der Wert hat ein ungültiges Format.',
 	'INVALID_VALUES'          : 'Ungültige Werte.',
+	'EditProperty'            : 'Property editieren :',
 	'NAME'                    : 'Name:',
 	'ENTER_NAME'              : 'Bitte Name eingeben.',
 	'ADD'                     : 'Hinzufügen',
@@ -94,7 +95,7 @@ var wgUserLanguageStrings = {
 	'DOMAIN'                  : 'Domain:',
 	'RANGE'                   : 'Range:',
 	'INVERSE_OF'              : 'Inverse von:',
-	'Mandatory'               : 'Pflicht:',
+    'Mandatory'               : 'Pflicht:',
 	'TRANSITIVE'              : 'Transitiv',
 	'SYMMETRIC'               : 'Symmetrisch',
 	'RETRIEVING_DATATYPES'    : 'Ermittele Datentypen...',
@@ -177,6 +178,7 @@ var wgUserLanguageStrings = {
 	'AC_ASF' : 'Kategorien für die Automatic Semantic Forms generiert werden können',
 	'AC_FROM_BUNDLE' : 'Seiten aus dem Bundle: ',
 
+
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Zusätzliche Ergebnisse der Combined-Search.',
 	'COMBINED_SEARCH'         : 'Combined-Search',
@@ -202,9 +204,11 @@ var wgUserLanguageStrings = {
 	'OB_DELETE'	  			  : 'Löschen',
 	'OB_PREVIEW' 			  : 'Preview',
 	'OB_TITLE_EXISTS'		  : 'Existiert bereits',
+	'OB_SAVE_CHANGES'         : 'Save changes',
 	'OB_TITLE_NOTEXISTS'		  : 'Existiert noch nicht!',
 	'OB_ENTER_TITLE'		  : 'Seitennamen eingeben',
 	'OB_SELECT_CATEGORY'	  : 'Erst Kategorie auswählen',
+	'OB_SAVE_CHANGES'         : 'Änderungen speichern',
 	'OB_SELECT_PROPERTY'	  : 'Erst Property auswählen',
 	'OB_SELECT_INSTANCE'	  : 'Erst Instanz auswählen',
 	'OB_WRONG_MAXCARD'		  : 'Falsche Max-Kardinalität',
