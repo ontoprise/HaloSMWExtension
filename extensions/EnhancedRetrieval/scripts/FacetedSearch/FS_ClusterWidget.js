@@ -101,7 +101,8 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 			}
 		}
 		
-		$(this.target).empty();
+		var target = $(this.target);
+		target.empty();
 		for (var range in ranges) {
 			var matches = range.match(regex);
 			if (matches) {
@@ -116,7 +117,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 				var count = ranges[range];
 				if (count > 0) {
 					// Create the HTML for the cluster
-					$(this.target).append(AjaxSolr.theme('cluster', 
+					target.append(AjaxSolr.theme('cluster', 
 						displayFrom, displayTo, count, 
 						self.clickClusterHandler({
 							from: from,
@@ -142,8 +143,7 @@ FacetedSearch.classes.ClusterWidget = AjaxSolr.AbstractWidget.extend({
 		}
 				
 		// Show the cluster title
-		$(this.target)
-			.prepend(AjaxSolr.theme('cluster', minValue, maxValue, 
+		target.prepend(AjaxSolr.theme('cluster', minValue, maxValue, 
 								   data.response.numFound, 
 								   this.clickRemoveRangeHandler(this.statisticsFieldName),
 								   true, rangeRestricted));

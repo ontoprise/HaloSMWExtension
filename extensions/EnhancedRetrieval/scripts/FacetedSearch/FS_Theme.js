@@ -130,6 +130,25 @@
 	}
 	
 	/**
+	 * Generates an HTML-ID for a facet. The HTML-IDs are used as IDs for HTML 
+	 * elements and in jQuery selectors. Some characters like / or % are not valid
+	 * for use in jQuery selectors. So all characters in the facet are converted
+	 * to a hexadecimal string.
+	 * 
+	 * @param {String} facet
+	 * 		Name of the facet
+	 * @return {String}
+	 * 		ID for the given facet.
+	 */
+	function facet2HTMLID(facet) {
+		var f = "";
+		for (var i = 0, l = facet.length; i < l; ++i) {
+			f += facet.charCodeAt(i).toString(16);
+		}
+		return f;
+	}
+	
+	/**
 	 * Some strings are too long for displaying them in the UI. This function
 	 * shortens them and appends an ellipsis (...) .
 	 * @param {String} longName
@@ -200,6 +219,18 @@
 	 */
 	function isRelation(name) {
 		return name.match(RELATION_REGEX) && !name.match(ATTRIBUTE_REGEX);
+	}
+	
+	/**
+	 * Generates an HTML ID for a property value facet with the name {facet}.
+	 * 
+	 * @param {String} facet
+	 * 		Name of the facet
+	 * @return {String} 
+	 * 		HTML ID for the given facet.
+	 */
+	AjaxSolr.theme.prototype.getPropertyValueHTMLID = function (facet) {
+		return 'property_' + facet2HTMLID(facet) + "_value";	
 	}
 	
 	/**
@@ -431,7 +462,7 @@
 			var facetsExpanded = FacetedSearch.singleton.FacetedSearchInstance.isExpandedFacet(facet);
 			var img1Visible = facetsExpanded ? ' style="display:none" ' : '';
 			var img2Visible = facetsExpanded ? '' : ' style="display:none" ';
-			var divID = 'property_' + facet + '_values';
+			var divID = AjaxSolr.theme.prototype.getPropertyValueHTMLID(facet);
 			var img1ID = 'show_details' + divID;
 			var img2ID = 'hide_details' + divID;
 			

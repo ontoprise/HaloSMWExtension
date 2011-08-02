@@ -70,7 +70,7 @@ FacetedSearch.classes.StringFacetClusterer = function (facetName, plainName) {
 		
 		var fpvw = new FacetedSearch.classes.FacetPropertyValueWidget({
 			id : 'fsf' + facet,
-			target : '#property_'+facet+'_values',
+			target : '#'+AjaxSolr.theme.prototype.getPropertyValueHTMLID(facet),
 			field : queryFacet
 		});
 		fpvw.initObject();

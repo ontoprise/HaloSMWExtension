@@ -40,7 +40,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	var that = {};
 	
 	//--- Constants ---
-	// The field with this name is used on SOLR queries
+	// The numer of clusters that are generated for a facet.
 	that.NUM_CLUSTERS = 5;
 	
 	
@@ -165,7 +165,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ClusterWidget({
 				id: 'fsc'+mFacetName,
-				target: '#property_' + mFacetName + '_values',
+				target: '#'+AjaxSolr.theme.prototype.getPropertyValueHTMLID(mFacetName),
 				facetName: mFacetName,
 				statisticsFieldName: facet,
 				clusterer: that
