@@ -62,6 +62,7 @@ OBDataAccess.prototype = {
 		globalActionListener = new OBGlobalActionListener();
 		annotationActionListener = new OBAnnotationActionListener();
 		schemaActionPropertyListener = new OBSchemaPropertyActionListener();
+		schemaEditPropertyListener = new OBEditPropertyActionListener();
 		
 		// One global instance of OBPendingIndicator for each container. 
 		// The tree container has only one for the categoryTree (or any other tree)
