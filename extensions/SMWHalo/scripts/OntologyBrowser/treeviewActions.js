@@ -31,6 +31,8 @@
  */
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
+var editOpened = false;
+var addOpened = false;
 
 // Logging on close does not work, because window shuts down. What to do?
 // window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
@@ -1044,6 +1046,229 @@ OBInstanceActionListener.prototype = {
 
 }
 
+var OBEditPropertyActionListener = Class.create();
+OBEditPropertyActionListener.prototype = {
+	initialize : function() {
+		this.selectedCategory = null; // initially none is selected
+		this.oldSelectedProperty = null;
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+	},
+
+	selectionChanged : function(id, title, ns, node) {
+		if (ns == SMW_CATEGORY_NS) {
+			this.selectedCategory = title;
+			var anchor = $('currentSelectedCategory');
+			if (anchor != null) {
+				if (title == null) {
+					anchor.innerHTML = '...';
+				} else {
+					anchor.innerHTML = "'" + title + "'";
+				}
+			}
+		} else if (ns == SMW_PROPERTY_NS) {
+			this.oldSelectedProperty = GeneralBrowserTools.toggleHighlighting(
+					this.oldSelectedProperty, node);
+		}
+	},
+
+	showSubMenu : function(commandID) {
+		if (this.selectedCategory == null) {
+			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+			return;
+		}
+		obEditPropertiesMenuProvider.showContent(commandID, 'relattributes');
+	},
+	
+	showSubMenuProperty : function(commandID,node,propertyname,minCard,type) {
+		if (this.selectedCategory == null) {
+			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+			return;
+		}	
+		if(addOpened == true){
+		obSchemaPropertiesMenuProvider.cancel();		
+		}
+		editOpened = true;
+		obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);
+	},
+
+	navigateToEntity : function(event, node, attributeName, editmode) {
+		smwhgLogger.log(attributeName, "OB", "inspect_entity");
+		GeneralBrowserTools.navigateToPage(gLanguage
+				.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
+	},
+
+	selectProperty : function(event, node, attributeName) {
+		var categoryDIV = $("categoryTree");
+		var instanceDIV = $("instanceList");
+
+		selectionProvider.fireSelectionChanged(null, attributeName,
+				SMW_PROPERTY_NS, node);
+		smwhgLogger.log(attributeName, "OB", "clicked");
+
+		function callbackOnPropertySelectForCategory(request) {
+			OB_tree_pendingIndicator.hide();
+			if (categoryDIV.firstChild) {
+				GeneralBrowserTools.purge(categoryDIV.firstChild);
+				categoryDIV.removeChild(categoryDIV.firstChild);
+			}
+			dataAccess.OB_cachedCategoryTree = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(
+					request.responseText, categoryDIV);
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS,
+					null);
+		}
+
+		function callbackOnPropertySelectForInstance(request) {
+			OB_instance_pendingIndicator.hide();
+			if (instanceDIV.firstChild) {
+				GeneralBrowserTools.purge(instanceDIV.firstChild);
+				instanceDIV.removeChild(instanceDIV.firstChild);
+			}
+
+			var xmlFragmentInstanceList = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformResultToHTML(request, instanceDIV, true);
+			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS,
+					null);
+		}
+		// if Ctrl is pressed: navigation mode
+		if (event["ctrlKey"]) {
+			GeneralBrowserTools.navigateToPage(gLanguage
+					.getMessage('PROPERTY_NS_WOC'), attributeName);
+		} else {
+			if (OB_LEFT_ARROW == 1) {
+				OB_tree_pendingIndicator.show();
+				// TODO: externalize in dataAccess
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
+						'getCategoryForProperty', attributeName,
+						obAdvancedOptions.getDataSource() ],
+						callbackOnPropertySelectForCategory);
+			}
+			if (OB_RIGHT_ARROW == 1) {
+				OB_instance_pendingIndicator.show();
+
+				dataAccess.getInstancesUsingProperty(attributeName, 0,
+						callbackOnPropertySelectForInstance);
+			}
+		}
+	},
+
+	selectRangeInstance : function(event, node, categoryName) {
+		if (event["ctrlKey"]) {
+			GeneralBrowserTools.navigateToPage(gLanguage
+					.getMessage('CATEGORY_NS_WOC'), categoryName);
+		}
+	},
+	
+	selectedNavigationSwitch: function(event, node, propertyURI, propertyTitle, valueURI, mode, valueString) {
+		var categoryDIV = $("categoryTree");
+		var instanceDIV = $("instanceList");
+	
+		
+		function callbackOnPropertySelectForCategory(request) {
+			OB_tree_pendingIndicator.hide();
+			if (categoryDIV.firstChild) {
+				GeneralBrowserTools.purge(categoryDIV.firstChild);
+				categoryDIV.removeChild(categoryDIV.firstChild);
+			}
+			dataAccess.OB_cachedCategoryTree = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(
+					request.responseText, categoryDIV);
+			selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS,
+					null);
+		}
+		function callbackOnPropertySelectForInstance(request) {
+			OB_instance_pendingIndicator.hide();
+			if (instanceDIV.firstChild) {
+				GeneralBrowserTools.purge(instanceDIV.firstChild);
+				instanceDIV.removeChild(instanceDIV.firstChild);
+			}
+
+			var xmlFragmentInstanceList = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedInstances = xmlFragmentInstanceList;
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformResultToHTML(request, instanceDIV, true);
+			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null, null, SMW_INSTANCE_NS,
+					null);
+		}
+		if (mode== 0) {
+			if (OB_LEFT_ARROW == 1) {
+				OB_tree_pendingIndicator.show();
+				// TODO: externalize in dataAccess
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
+						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource() ],
+						callbackOnPropertySelectForCategory);
+			}
+			if (OB_RIGHT_ARROW == 1) {
+				OB_instance_pendingIndicator.show();
+
+				dataAccess.getInstancesUsingProperty(propertyTitle, 0,
+						callbackOnPropertySelectForInstance);
+			}
+		} else if (mode== 1) {
+			if (OB_LEFT_ARROW == 1) {
+				OB_tree_pendingIndicator.show();
+				// TODO: externalize in dataAccess
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', [
+						'getCategoryForProperty', propertyTitle,
+						obAdvancedOptions.getDataSource() ],
+						callbackOnPropertySelectForCategory);
+			}
+			if (OB_RIGHT_ARROW == 1) {
+				OB_instance_pendingIndicator.show();
+
+				dataAccess.getInstanceUsingPropertyValue(propertyTitle, valueURI == "null" ? valueString : valueURI, 0,
+						callbackOnPropertySelectForInstance);
+			}
+		}
+	},
+	
+	/**
+	 * Reloads the propery column (for schema data).
+	 * 
+	 */
+	reloadProperties: function(e) {
+		// callback for properties of a category
+		function callbackOnCategorySelect2(request) {
+			OB_relatt_pendingIndicator.hide();
+			if (relattDIV.firstChild) {
+				GeneralBrowserTools
+						.purge(relattDIV.firstChild);
+				relattDIV.removeChild(relattDIV.firstChild);
+			}
+			var xmlFragmentPropertyList = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			dataAccess.OB_cachedProperties = xmlFragmentPropertyList;
+			selectionProvider.fireBeforeRefresh();
+			transformer.transformResultToHTML(request,
+					relattDIV);
+			selectionProvider.fireRefresh();
+			selectionProvider.fireSelectionChanged(null,
+					null, SMW_PROPERTY_NS, null);
+		}
+		var relattDIV = document
+		.getElementById("relattributes");
+		
+		OB_relatt_pendingIndicator.show();
+		var onlyDirect = !$('directPropertySwitch').checked;
+		var dIndex = $('showForRange').checked ? '_2'
+				: '_1';
+		dataAccess.getProperties(this.selectedCategory,
+				onlyDirect, dIndex,
+				callbackOnCategorySelect2);
+	}
+	
+}
+
+
 /**
  * Action Listener for attributes in the attribute tree
  */
@@ -1449,6 +1674,10 @@ OBSchemaPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}
+		if(editOpened == true){
+		obEditPropertiesMenuProvider.cancel();
+		}
+		addOpened = true;
 		obSchemaPropertiesMenuProvider.showContent(commandID, 'relattributes');
 	},
 
