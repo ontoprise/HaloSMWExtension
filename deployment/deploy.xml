@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>
-		<license>GPL-v2</license> 
+		<license>GPL-v2</license>
 		<dependencies>
 			<dependency from="1120" to="1169">mw</dependency>
 		</dependencies>
@@ -30,14 +30,14 @@
 		<successor ext="smwhalo"/>
 		<new>
 			<require name="deploymentframework" file="deployment/Deployment.php" />
-
-			<!-- Normally exluding files is only for updates but in this case it is 
-				ok, because you must have DF when you install it (forced) new. -->
 				
+		</new>
+
+		<update from="patchlevel">
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/settings.php" />
 			<exclude file="deployment/tools/unzip.exe" />
-		</new>
+		</update>
 
 		<update from="131">
 			<exclude file="deployment/tools/repositories" />
