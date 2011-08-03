@@ -31,6 +31,7 @@ class RMEmbedWindow extends UnlistedSpecialPage {
  * Entry point
  */
 function doSpecialEmbedWindow() {
+	wfProfileIn( __METHOD__ . ' [Rich Media]' );
 	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgXhtmlDefaultNamespace;
 
 	// disable $wgOut - we'll print out the page manually, taking the
@@ -78,6 +79,7 @@ $body_scripts
 
 END;
 	print $text;
+	wfProfileOut( __METHOD__ . ' [Rich Media]' );
 }
 
 /**
@@ -105,16 +107,19 @@ class EmbedWindowForm {
 	 * @access public
 	 */
 	function execute(){
+		wfProfileIn( __METHOD__ . ' [Rich Media]' );
 		global $wgOut, $wgUser, $smwgRMScriptPath, 
 			$smwgRMEWEnableResizing, $smwgRMEWAllowScroll,
 			$smwgRMEWMinWidth, $smwgRMEWMinHeight,
 			$wgServer, $wgJsMimeType;
+
 		if (isset( $this->mTarget ) && $this->mTarget != "" ) {
 			$nt = Title::newFromText($this->mTarget);
 		}
 		else {
 			$errorText = wfMsg('smw_rm_embed_notarget');
 			$this->showError($errorText);
+			wfProfileOut( __METHOD__ . ' [Rich Media]' );
 			return;
 		}
 
@@ -221,6 +226,7 @@ END;
 		$html .= $embedObject;
 		$wgOut->addHTML($html);
 
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
 	}
 	
 	/**

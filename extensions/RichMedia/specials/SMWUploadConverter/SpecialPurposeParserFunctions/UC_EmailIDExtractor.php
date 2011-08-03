@@ -48,6 +48,7 @@ function extractEmailID_Magic( &$magicWords, $langCode ) {
 }
 
 function extractEmailID_Render( &$parser) {
+	wfProfileIn( __METHOD__ . ' [Rich Media]' );
 	$parameters = func_get_args();
 
 	// the string in which we have to search for entities must be the first parameter
@@ -56,6 +57,7 @@ function extractEmailID_Render( &$parser) {
 	// the name of the property which we use to search for real names must be the second parameter
 	$propertyName = trim($parameters[2]);
 	if(strlen($propertyName) == 0){
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
 		return ("A property name must be specified");
 	}
 	
@@ -91,6 +93,8 @@ function extractEmailID_Render( &$parser) {
 			$result[] = $email;
 		}
 	}
+
+	wfProfileOut( __METHOD__ . ' [Rich Media]' );
 	return implode(",", $result);
 }
 	

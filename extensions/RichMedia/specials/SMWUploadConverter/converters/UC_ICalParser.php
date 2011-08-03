@@ -14,6 +14,8 @@
 class ICalParser {
 
 	public function parse($iCalString){
+		wfProfileIn( __METHOD__ . ' [Rich Media]' );
+
 		$lines = nl2br($iCalString);
 		$lines = explode("<br />", $lines);
 		$iCals = array();
@@ -193,6 +195,8 @@ class ICalParser {
 					}
 			}
 		}
+
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
 		return $iCals;
 	}
 

@@ -4,6 +4,7 @@ Rich Media extension ChangeLog
 VERSION 1.5.2
 
   FEATURES:
+	* Added  profiling information to trace code execution time
 
   CHANGES:
 	* The inclusion of namespace for SF can be handled with the setting "$smwgRMPasteNSForFiles"
@@ -11,11 +12,11 @@ VERSION 1.5.2
 	* Migrate upload functionality from PrototypeJS to jQuery.
 
   BUGFIXES:
-	15037 - Fatal error in RM_Form.php
-	14956 - Wrong jQuery selector broke upload process.
-	14592 - SemanticForms uses "for ... in" loops in its JavaScript (moved patch part from RM to SF)
-	14570 - Refresh Error after installation of the richmedia extension
-	14991 - Add style version to css and js includes to improve (loading) performance
+	* 15037 - Fatal error in RM_Form.php
+	* 14956 - Wrong jQuery selector broke upload process.
+	* 14592 - SemanticForms uses "for ... in" loops in its JavaScript (moved patch part from RM to SF)
+	* 14570 - Refresh Error after installation of the richmedia extension
+	* 14991 - Add style version to css and js includes to improve (loading) performance
 
 
 VERSION 1.5.1
@@ -34,7 +35,7 @@ VERSION 1.5.1
 	* Issue 11339 - Updated XPdf to 3.02pl5
 
 
-VERSION 1.5
+VERSION 1.5.0
 
   CHANGES:
 	* Issue 12237 - Text "Description page" changed to "File details"
@@ -63,7 +64,7 @@ VERSION 1.4.1
 	-none-
 
 
-VERSION 1.4
+VERSION 1.4.0
 
   FEATURES:
 	-none-

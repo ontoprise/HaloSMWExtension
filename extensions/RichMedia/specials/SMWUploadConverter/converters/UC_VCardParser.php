@@ -54,6 +54,7 @@ class VCard
      */
     function parse(&$lines)
     {
+        wfProfileIn( __METHOD__ . ' [Rich Media]' );
         $this->_map = null;
         $property = new VCardProperty();
         while ($property->parse($lines)) {
@@ -72,6 +73,8 @@ class VCard
             // (PHP5)
             $property = new VCardProperty();
         }
+
+        wfProfileOut( __METHOD__ . ' [Rich Media]' );
         return $this->_map != null;
     }
 
@@ -119,12 +122,16 @@ class VCard
      */
     function inCategories(&$categories)
     {
+        wfProfileIn( __METHOD__ . ' [Rich Media]' );
         $our_categories = $this->getCategories();
         foreach ($categories as $category) {
             if (in_array_case($category, $our_categories)) {
+                wfProfileOut( __METHOD__ . ' [Rich Media]' );
                 return true;
             }
         }
+
+        wfProfileOut( __METHOD__ . ' [Rich Media]' );
         return false;
     }
 }
@@ -149,6 +156,7 @@ class VCardProperty
      */
     function parse(&$lines)
     {
+        wfProfileIn( __METHOD__ . ' [Rich Media]' );
         while (list(, $line) = each($lines)) {
             $line = rtrim($line);
             $tmp = split_quoted_string(":", $line, 2);
@@ -171,9 +179,11 @@ class VCardProperty
 	                    $this->value = utf8_decode($this->value);
 	                }
                 }
+                wfProfileOut( __METHOD__ . ' [Rich Media]' );
                 return true;
             }
         }
+        wfProfileOut( __METHOD__ . ' [Rich Media]' );
         return false;
     }
 
@@ -255,6 +265,7 @@ class VCardProperty
      */
     function _decodeQuotedPrintable(&$lines)
     {
+        wfProfileIn( __METHOD__ . ' [Rich Media]' );
         $value = &$this->value;
         while ($value[strlen($value) - 1] == "=") {
             $value = substr($value, 0, strlen($value) - 1);
@@ -264,6 +275,7 @@ class VCardProperty
             $value .= rtrim($line);
         }
         $value = quoted_printable_decode($value);
+        wfProfileOut( __METHOD__ . ' [Rich Media]' );
     }
 }
 
@@ -275,6 +287,7 @@ class VCardProperty
  */
 function split_quoted_string($d, $s, $n = 0)
 {
+    wfProfileIn( __METHOD__ . ' [Rich Media]' );
     $quote = false;
     $len = strlen($s);
     for ($i = 0; $i < $len && ($n == 0 || $n > 1); $i++) {
@@ -288,5 +301,7 @@ function split_quoted_string($d, $s, $n = 0)
             }
         }
     }
+
+    wfProfileOut( __METHOD__ . ' [Rich Media]' );
     return explode("\x00", $s);
 }

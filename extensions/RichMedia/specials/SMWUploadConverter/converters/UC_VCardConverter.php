@@ -18,11 +18,13 @@ class UCVCardConverter {
 	}
 	
 	public function getConvertedText(){
+		wfProfileIn( __METHOD__ . ' [Rich Media]' );
+		global $wgUploadConverterTemplateMapping;
+
 		$vCardParser = new VCard();
 		$explodedText = explode("\n", $this->text);
 		$vCardParser->parse($explodedText);
 
-		global $wgUploadConverterTemplateMapping;
 		$result = "{{".$wgUploadConverterTemplateMapping['TemplateName'];
 		unset($wgUploadConverterTemplateMapping['TemplateName']);
 		foreach ($wgUploadConverterTemplateMapping as $attribute => $param){
@@ -58,6 +60,8 @@ class UCVCardConverter {
 			}
 		}
 		$result .= "}}";
+
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
 		return $result;
 	}
 }

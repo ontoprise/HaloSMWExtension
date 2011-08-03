@@ -19,7 +19,9 @@ class UCICalConverter {
 	}
 	
 	public function getConvertedText(){
+		wfProfileIn( __METHOD__ . ' [Rich Media]' );
 		global $wgUploadConverterTemplateMapping;
+
 		$completeResult = "";
 		$iCalParser = new ICalParser();
 		$iCals = $iCalParser->parse($this->text);
@@ -38,6 +40,8 @@ class UCICalConverter {
 			$result .= "}}";
 			$completeResult .= $result."\n";	
 		}
+
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
 		return $completeResult;
 	}
 }
