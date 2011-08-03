@@ -99,6 +99,7 @@ class  HACLQueryRewriter  {
 	 * 		Returns <true> to keep the chain of hooks running.
 	 */
 	public static function rewriteQuery(SMWQuery &$query, &$queryEmpty) {
+		wfProfileIn('HACLQueryRewriter::rewriteQuery (HaloACL)');
 		$qr = new HACLQueryRewriter();
 		$descr = $query->getDescription();
 		$queryEmpty = false;
@@ -132,7 +133,7 @@ class  HACLQueryRewriter  {
 		if ($qr->mModified) {
 			$query->addErrors(array(wfMsgForContent('hacl_sp_query_modified')));
 		}
-	
+		wfProfileOut('HACLQueryRewriter::rewriteQuery (HaloACL)');
 		return true;
 	}
 

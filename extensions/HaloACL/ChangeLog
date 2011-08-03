@@ -3,7 +3,8 @@ HaloACL extension ChangeLog
 Version 1.5
 
   FEATURE:
-  	
+    - Added profiling information to important functions of HaloACL 
+    	
   CHANGES:
     - Added support (i.e. patch) for MW 1.16.4
   	

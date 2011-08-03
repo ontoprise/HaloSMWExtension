@@ -86,12 +86,15 @@ class  HACLResultFilter  {
 	 * 
 	 */
 	public static function filterResult(SMWQueryResult &$qr, array $properties = null) {
+		wfProfileIn('HACLResultFilter::filterResult (HaloACL)');
 		if (self::$mDisabled) {
+			wfProfileOut('HACLResultFilter::filterResult (HaloACL)');
 			return true;
 		}
 		
 		if ($qr instanceof SMWHaloQueryResult) {
 			self::filterSPARQLQueryResult($qr, $properties);
+			wfProfileOut('HACLResultFilter::filterResult (HaloACL)');
 			return true;
 		}
 		// Retrieve all subjects of a query result
@@ -116,10 +119,10 @@ class  HACLResultFilter  {
 			$qr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
 		}
 
+		wfProfileOut('HACLResultFilter::filterResult (HaloACL)');
 		return true;
 	}
 	
-	//--- Private methods ---
 	
 	/**
 	 * This function removes all protected pages from a SPARQL query result. 
@@ -142,6 +145,8 @@ class  HACLResultFilter  {
 	 * 		row is removed. This applies only to SPARQL queries.
 	 */
 	public static function filterSPARQLQueryResult(SMWHaloQueryResult &$qr, array $properties = null) {
+		wfProfileIn('HACLResultFilter::filterSPARQLQueryResult (HaloACL)');
+		
 		global $wgUser;
 		$results = $qr->getFullResults();
 		$valuesRemoved = false;
@@ -213,7 +218,10 @@ class  HACLResultFilter  {
 			$qr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
 		}
 
+		wfProfileOut('HACLResultFilter::filterSPARQLQueryResult (HaloACL)');
 		return true;
 		
 	}
+	
+	//--- Private methods ---
 }

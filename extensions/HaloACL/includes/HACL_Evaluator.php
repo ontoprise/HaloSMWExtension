@@ -100,6 +100,7 @@ class HACLEvaluator {
 	 * 		true
 	 */
 	public static function userCan($title, $user, $action, &$result) {
+		wfProfileIn( 'HACLEvaluator::userCan (HaloACL)' );
 		global $wgRequest;
 
 		self::startLog($title, $user, $action);
@@ -109,6 +110,7 @@ class HACLEvaluator {
 		if ($title == null) {
 // let other hooks decide			$result = true;
 			self::finishLog("Title is <null>.", $result, true);
+			wfProfileOut( 'HACLEvaluator::userCan (HaloACL)' );
 			return true;
 		}
 		$etc = haclfDisableTitlePatch();
@@ -128,6 +130,7 @@ class HACLEvaluator {
 					//$r = wfMsg('hacl_ad_access_denied');
 					$r = false;
 				} 
+				wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 				return $r;
 			}
 		}
@@ -146,6 +149,7 @@ class HACLEvaluator {
 			// unknown action => nothing can be said about this
 			haclfRestoreTitlePatch($etc);
 			self::finishLog("Unknown action.", true, true);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return true;
 		}
 		
@@ -159,6 +163,7 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 			self::finishLog('Special handling of "Permission denied" page.', $r, $r);
 			$result = $r;
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return $r;
 	    }
 		
@@ -181,6 +186,7 @@ class HACLEvaluator {
 					haclfRestoreTitlePatch($etc);
 					$result = $r;
 					self::finishLog("Checked right for creating the default user template.", $r, $r);
+					wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 					return $r;
 				}
 										
@@ -190,6 +196,7 @@ class HACLEvaluator {
 					haclfRestoreTitlePatch($etc);
 					$result = false;
 					self::finishLog("Checked right for creating a security descriptor.", $result, false);
+					wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 					return false;
 				}
 				
@@ -198,6 +205,7 @@ class HACLEvaluator {
 				if ($title->isSubpage() && $title->getNamespace() != HACL_NS_ACL) {
 					$parentTitleText = $title->getBaseText();
 					$parentTitle = Title::newFromText($parentTitleText, $title->getNamespace());
+					wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 					return self::userCan($parentTitle, $user, $action, $result);
 				}
 				
@@ -214,6 +222,7 @@ class HACLEvaluator {
 				//$r = wfMsg('hacl_ad_create_namespace', $ns);
 			}
 			self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 		    return $r;
 		}
 		
@@ -226,6 +235,7 @@ class HACLEvaluator {
 				$result = $r;
 			}
 			self::finishLog("Checked if user can modify an access control entity (SD, right or group).", $r, $r);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return $r;
 		}
 		
@@ -261,6 +271,7 @@ class HACLEvaluator {
 			// Can not return an error msg because of MW-bug: 
 			// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
 			//			return $edit ? wfMsg('hacl_ad_access_denied') : false;
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return false;
 		}
 		
@@ -287,6 +298,7 @@ class HACLEvaluator {
 				haclfRestoreTitlePatch($etc);
 // let other hooks decide				$result = true;
 				self::finishLog("Found an appropriate access right.", $result, true);
+				wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 				return true;
 			}
 		}
@@ -306,6 +318,7 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 // let other hooks decide			$result = true;
 			self::finishLog("Action allowed by a namespace right.", $result, true);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return true;
 		}
 	
@@ -325,6 +338,7 @@ class HACLEvaluator {
 			haclfRestoreTitlePatch($etc);
 // let other hooks decide			$result = true;
 			self::finishLog("Action allowed by a category right.", $result, true);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return true;
 		}
 
@@ -332,6 +346,7 @@ class HACLEvaluator {
 		if ($title->isSubpage()) {
 			$parentTitleText = $title->getBaseText();
 			$parentTitle = Title::newFromText($parentTitleText, $title->getNamespace());
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return self::userCan($parentTitle, $user, $action, $result);	
 		}
 		
@@ -347,6 +362,7 @@ class HACLEvaluator {
 				//$r = wfMsg('hacl_ad_access_denied');
 			}
 			self::finishLog("Read access was determined by the Whitelist.", $result, true);
+			wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 			return $r;
 		}
 		
@@ -360,6 +376,7 @@ class HACLEvaluator {
 				// prohibit access.
 				self::finishLog("No security descriptor for article found. HaloACL is configured to Open Wiki Access.", true, true);
 // let other hooks decide				$result = true;
+				wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 				return true;
 			}
 		}
@@ -373,6 +390,7 @@ class HACLEvaluator {
 		// http://www.mediawiki.org/wiki/Manual:Hooks/userCan#Risk_of_returning_a_string_value
 		//return wfMsg('hacl_ad_access_denied');
 		
+		wfProfileOut('HACLEvaluator::userCan (HaloACL)');
 		return false;
 	}
 
@@ -400,6 +418,8 @@ class HACLEvaluator {
 	 * 		<false>, otherwise
 	 */
 	public static function hasRight($titleID, $type, $userID, $actionID) {
+		wfProfileIn('HACLEvaluator::hasRight (HaloACL)');
+		
 		// retrieve all appropriate rights from the database
 		$rightIDs = HACLStorage::getDatabase()->getRights($titleID, $type, $actionID);
 		
@@ -407,10 +427,12 @@ class HACLEvaluator {
 		foreach ($rightIDs as $r) {
 			$right = HACLRight::newFromID($r);
 			if ($right->grantedForUser($userID)) {
+				wfProfileOut('HACLEvaluator::hasRight (HaloACL)');
 				return true; 
 			}
 		}
 		
+		wfProfileOut('HACLEvaluator::hasRight (HaloACL)');
 		return false;
 		
 	}
@@ -432,12 +454,14 @@ class HACLEvaluator {
 	 * 		<false>, otherwise
 	 */
 	public static function hasPropertyRight($propertyTitle, $userID, $actionID) {
+		wfProfileIn('HACLEvaluator::hasPropertyRight (HaloACL)');
 		global $haclgProtectProperties;
 		if (!$haclgProtectProperties 
 		    || $propertyTitle == null 
 		    || (self::$mMode == self::ALLOW_PROPERTY_READ 
 		        && $actionID == HACLRight::READ)) {
 			// Protection of properties is disabled or property has no page.
+			wfProfileOut('HACLEvaluator::hasPropertyRight (HaloACL)');
 			return true;
 		}
 		
@@ -451,8 +475,11 @@ class HACLEvaluator {
 			global $haclgOpenWikiAccess;
 			// Properties with no SD are not protected if $haclgOpenWikiAccess is
 			// true. Otherwise access is denied
+			wfProfileOut('HACLEvaluator::hasPropertyRight (HaloACL)');
 			return $haclgOpenWikiAccess;
 		}
+		
+		wfProfileOut('HACLEvaluator::hasPropertyRight (HaloACL)');
 		return self::hasRight($propertyTitle, 
 							  HACLSecurityDescriptor::PET_PROPERTY,
 		                      $userID, $actionID);
@@ -477,6 +504,7 @@ class HACLEvaluator {
 	 * 		true
 	 */ 
 	 public static function onEditFilter($editor, $text, $section, &$error) {
+	 	wfProfileIn('HACLEvaluator::onEditFilter (HaloACL)');
 		global $wgParser, $wgUser;
 		$article = $editor->mArticle;
 		$options = new ParserOptions;
@@ -522,6 +550,7 @@ class HACLEvaluator {
 			global $haclgProtectProperties;
 			$haclgProtectProperties = false;
 			self::$mSavePropertiesAllowed = true;
+			wfProfileOut('HACLEvaluator::onEditFilter (HaloACL)');
 			return true;
 		}
 		
@@ -542,9 +571,11 @@ class HACLEvaluator {
 				// => abort with an error message
 				global $wgOut;
 				$wgOut->addWikiText($error);
+				wfProfileOut('HACLEvaluator::onEditFilter (HaloACL)');
 				return false;
 			}
 		}
+		wfProfileOut('HACLEvaluator::onEditFilter (HaloACL)');
 		return true;
 	}
 	
@@ -561,6 +592,7 @@ class HACLEvaluator {
 	 * @return boolean true
 	 */
 	public static function onDiffViewHeader(DifferenceEngine $diffEngine, $oldRev, $newRev) {
+		wfProfileIn('HACLEvaluator::onDiffViewHeader (HaloACL)');
 		global $wgUser;
 		
 		$newText = $diffEngine->mNewtext;
@@ -581,6 +613,7 @@ class HACLEvaluator {
 					$prop = $prop->getTitle();
 					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+						wfProfileOut('HACLEvaluator::onDiffViewHeader (HaloACL)');
 						return true;
 					}
 				}
@@ -596,12 +629,14 @@ class HACLEvaluator {
 					$prop = $prop->getTitle();
 					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+						wfProfileOut('HACLEvaluator::onDiffViewHeader (HaloACL)');
 						return true;
 					}
 				}
 			}
 		}
 		
+		wfProfileOut('HACLEvaluator::onDiffViewHeader (HaloACL)');
 		return true;
 	}	
 	
@@ -618,6 +653,7 @@ class HACLEvaluator {
 	 * 		function.
 	 */
 	public static function onPropertyBeforeOutput(SMWDataValue &$propertyValue, &$text) {
+		wfProfileIn('HACLEvaluator::onPropertyBeforeOutput (HaloACL)');
 		global $wgUser;
 		
 		$protected = false;
@@ -641,6 +677,7 @@ class HACLEvaluator {
 			$errMsg = wfMsgForContent('hacl_protected_property_error');
 			$propertyValue->addError($errMsg);
 		}
+		wfProfileOut('HACLEvaluator::onPropertyBeforeOutput (HaloACL)');
 		return true;
 	}
 	
@@ -655,14 +692,17 @@ class HACLEvaluator {
 	 * @param unknown_type $id
 	 */
 	public static function onBeforeParserFetchTemplateAndtitle($parser, $title, $skip, $id) {
+		wfProfileIn('HACLEvaluator::onBeforeParserFetchTemplateAndtitle (HaloACL)');
 		// Check if the title is accessible (read) for the current user
 		global $wgUser;
 		$allowed = true;
 		self::userCan($title, $wgUser, "read", $allowed);
 		if ($allowed) {
+			wfProfileOut('HACLEvaluator::onBeforeParserFetchTemplateAndtitle (HaloACL)');
 			return true;
 		}
 		$skip = true;
+		wfProfileOut('HACLEvaluator::onBeforeParserFetchTemplateAndtitle (HaloACL)');
 		return true;
 		// Template or page must not be included => return permission denied page.
 //		global $haclgContLang;
@@ -685,10 +725,12 @@ class HACLEvaluator {
 	 * 		if it is.
 	 */
 	public static function onSfUserCanEditPage($title, &$userCanEdit) {
+		wfProfileIn('HACLEvaluator::onSfUserCanEditPage (HaloACL)');
 		global $wgUser;
 		$allowed = true;
 		self::userCan($title, $wgUser, "formedit", $allowed);
 		$userCanEdit = $allowed;
+		wfProfileOut('HACLEvaluator::onSfUserCanEditPage (HaloACL)');
 		return true;
 	}
 	
@@ -715,8 +757,10 @@ class HACLEvaluator {
 	 * 		"n/a", if this method is not applicable for the given article creation 
 	 */
 	public static function checkSDCreation($title, $user) {
+		wfProfileIn('HACLEvaluator::checkSDCreation (HaloACL)');
 		if ($title->getNamespace() != HACL_NS_ACL) {
 			// The title is not in the ACL namespace => not applicable
+			wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 			return "n/a";
 		}
 		
@@ -730,6 +774,7 @@ class HACLEvaluator {
 		    $peType == HACLSecurityDescriptor::PET_CATEGORY) {
 			list ($r, $hasSD) = self::hasCategorySDCreationRight($peName, $user->getId());
 			if ($r === false && $hasSD === true) {
+				wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 				return false;
 			}
 		}
@@ -739,6 +784,7 @@ class HACLEvaluator {
 		if ($peType == HACLSecurityDescriptor::PET_PAGE) {
 			list ($r, $hasSD) = self::checkNamespaceSDCreationRight($t, $user->getId());		
 			if ($r === false && $hasSD === true) {
+				wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 				return false;
 			}
 		}
@@ -756,6 +802,7 @@ class HACLEvaluator {
 				if ($parentTitle->exists()) {
 					list($r, $hasSD) = self::checkACLManager($parentTitle, $user, HACLRight::EDIT);
 					if ($r === true && $hasSD === true) {
+						wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 						return $r;
 					}
 				}
@@ -765,9 +812,11 @@ class HACLEvaluator {
 					// no explicit rights found for parents
 					if ($hasSD) {
 						// The current right does not allow modification of the SD
+						wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 						return false;
 					}
 				}
+				wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 				return $allowed;
 			}
 		}
@@ -775,11 +824,13 @@ class HACLEvaluator {
 		global $haclgOpenWikiAccess;
 		if ($haclgOpenWikiAccess) {
 			// the wiki is open => not applicable
+			wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 			return "n/a";
 		}
 		if ($peType != HACLSecurityDescriptor::PET_PAGE &&
 		    $peType != HACLSecurityDescriptor::PET_PROPERTY) {
 		    // only applicable to pages and properties
+		    wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 		    return "n/a";
 		}
 		
@@ -787,10 +838,12 @@ class HACLEvaluator {
 		$article = new Article($t);
 		if (!$article->exists()) {
 			// article does not exist => no applicable
+			wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 			return "n/a";
 		}
 		$authors = $article->getLastNAuthors(1);
 		
+		wfProfileOut('HACLEvaluator::checkSDCreation (HaloACL)');
 		return $authors[0] == $user->getName();
 		
 	}
