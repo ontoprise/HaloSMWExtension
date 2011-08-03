@@ -59,7 +59,7 @@ class CECommentUtils {
 	 *
 	 * @return string The XML string.
 	 */
-	public static function createXMLResponse($message, $statusCode = 0, $pageName){
+	public static function createXMLResponse( $message, $statusCode = 0, $pageName = '' ){
 		
 		$xmlString = CE_COM_RESP_START;
 		$xmlString .= $statusCode;

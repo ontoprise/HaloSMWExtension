@@ -1,11 +1,12 @@
 Collaboration extension ChangeLog
 =================================
 
-VERSION 1.40a
+VERSION 1.40
   FEATURES:
 	FR #13053: Included an option to completely delete a comment
 	FR #14882: Provide PHS with a new release of collaboration extension that supports attaching links to comments
 	FR #14934: Direct upload of files in the comment form is now possible (with Rich media installed)
+	Added  profiling information to trace code execution time
   CHANGES:
 	Issue  #14358: Removed localization of parser functions
   BUGFIXES:

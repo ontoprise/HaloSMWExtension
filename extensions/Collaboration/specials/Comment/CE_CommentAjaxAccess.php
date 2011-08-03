@@ -68,6 +68,7 @@ function cef_comment_editPage( $pageName, $pageContent) {
 
 
 function cef_comment_deleteComment( $pageName ) {
+	wfProfileIn( __METHOD__ . ' [Collaboration]' );
 	global $wgUser;
 	$pageName = CECommentUtils::unescape( $pageName );
 	$result = wfMsg( 'ce_nothing_deleted' );
@@ -90,17 +91,22 @@ function cef_comment_deleteComment( $pageName ) {
 			$article->doEdit( $articleContent, wfMsg( 'ce_comment_delete_reason' ) );
 			CEComment::updateRelatedArticle( $articleContent );
 			$result = wfMsg( 'ce_comment_deletion_successful' );
+			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse( $result, '0', $pageName );
 		} catch( Exception $e ) {
 			$result .= wfMsg( 'ce_comment_deletion_error' );
 			$success = false;
+			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse( $result, '1', $pageName );
 		}
 	}
+
+	wfProfileOut( __METHOD__ . ' [Collaboration]' );
 	return CECommentUtils::createXMLResponse( 'sth went wrong here', '1', $pageName );
 }
 
 function cef_comment_fullDeleteComments( $pageNames ) {
+	wfProfileIn( __METHOD__ . ' [Collaboration]' );
 	global $wgUser;
 	$pageNames = CECommentUtils::unescape( $pageNames );
 	$pageNames = explode( ',', $pageNames );
@@ -119,14 +125,17 @@ function cef_comment_fullDeleteComments( $pageNames ) {
 		} catch( Exception $e ) {
 			$result .= wfMsg( 'ce_comment_deletion_error' );
 			$success = false;
+			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse( $result, '1', $pageName);
 		}
 	}
 	if( $success ) {
 		$result = wfMsg( 'ce_comment_massdeletion_successful' );
+		wfProfileOut( __METHOD__ . ' [Collaboration]' );
 		return CECommentUtils::createXMLResponse( $result, '0', $pageNames[0] );
 	} else {
 		$pageNames = json_encode($pageNames);
+		wfProfileOut( __METHOD__ . ' [Collaboration]' );
 		return CECommentUtils::createXMLResponse( 'sth went wrong here', '1', $pageNames );
 	}
 }

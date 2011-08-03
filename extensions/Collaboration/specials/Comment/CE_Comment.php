@@ -50,6 +50,7 @@ class CEComment {
 	 * @param bool $editMode
 	 */
 	public static function createComment( $pageName, $pageContent, $editMode = false ) {
+		wfProfileIn( __METHOD__ . ' [Collaboration]' );
 		global $wgUser, $cegEnableComment, $cegEnableCommentFor;
 
 		$title = Title::newFromText( $pageName );
@@ -60,6 +61,7 @@ class CEComment {
 		
 		# check if comments are enabled #
 		if ( !isset( $cegEnableComment ) || !$cegEnableComment ) {
+			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse(
 				wfMsg( 'ce_cf_disabled' ),
 				self::PERMISSION_ERROR, $pageName
@@ -70,6 +72,7 @@ class CEComment {
 			|| ( $cegEnableCommentFor == CE_COMMENT_NOBODY )
 			|| ( ( $cegEnableCommentFor == CE_COMMENT_AUTH_ONLY ) && !$wgUser->isAnon() ) )
 		{
+			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse(
 				wfMsg( 'ce_cf_disabled' ),
 				self::PERMISSION_ERROR, $pageName
@@ -77,12 +80,14 @@ class CEComment {
 		} else {
 			//user is allowed
 			if ( $article->exists() && !$editMode ) {
+				wfProfileOut( __METHOD__ . ' [Collaboration]' );
 				return CECommentUtils::createXMLResponse(
 					wfMsg( 'ce_comment_exists', $pageName),
 					self::COMMENT_ALREADY_EXISTS, $pageName
 				);
 			}
 			if( !$title->userCan( 'edit' ) ) {
+				wfProfileOut( __METHOD__ . ' [Collaboration]' );
 				return CECommentUtils::createXMLResponse(
 					wfMsg( 'ce_cf_you_not_allowed' ),
 					self::PERMISSION_ERROR, $pageName);
@@ -120,10 +125,12 @@ class CEComment {
 
 				if( $article->exists() ) {
 					self::updateRelatedArticle( $pageContent );
+					wfProfileOut( __METHOD__ . ' [Collaboration]' );
 					return CECommentUtils::createXMLResponse(
 						$responseText, self::SUCCESS, $pageName
 					);
 				} else {
+					wfProfileOut( __METHOD__ . ' [Collaboration]' );
 					return CECommentUtils::createXMLResponse(
 						wfMsg( 'ce_com_edit_not_exists' ),
 						self::PERMISSION_ERROR, $pageName
@@ -139,6 +146,7 @@ class CEComment {
 	 * @param string $commentContent
 	 */
 	public static function updateRelatedArticle( $commentContent ) {
+		wfProfileIn( __METHOD__ . ' [Collaboration]' );
 		global $wgParser;
 		$commentHasRating = preg_match('/CommentRating=/', $commentContent);
 		$find = preg_match('/CommentRelatedArticle=(.*?)\|/', $commentContent, $extract);
@@ -159,5 +167,6 @@ class CEComment {
 				$store->updateData( $output->mSMWData );
 			}
 		}
+		wfProfileOut( __METHOD__ . ' [Collaboration]' );
 	}
 }

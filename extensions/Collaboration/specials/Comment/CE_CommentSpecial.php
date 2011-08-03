@@ -26,6 +26,7 @@ class CECommentSpecial extends SpecialPage {
 
 
 	function execute($query) {
+		wfProfileIn( __METHOD__ . ' [Collaboration]' );
 		global $wgRequest, $wgOut, $wgScriptPath, $wgUser, $wgParser, $wgTitle, $smwIP;
 
 		$wgOut->setPageTitle(wfMsg('collaboration'));
@@ -54,5 +55,6 @@ class CECommentSpecial extends SpecialPage {
 		$pout = $wgParser->parse($queryText, $wgTitle, $popt);
 		$result = $pout->getText();
 		$wgOut->addHTML($result);
+		wfProfileOut( __METHOD__ . ' [Collaboration]' );
 	}
 }
