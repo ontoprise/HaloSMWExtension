@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>testHtmlToWikiConversion</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">testHtmlToWikiConversion</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/mediawiki/index.php?title=Testhtmltowiki&amp;action=edit&amp;mode=wysiwyg</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>CKEDITOR.instances.wpTextbox1.setData('');</td>
+	<td></td>
+</tr>
+<tr>
+	<td>setSpeed</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>CKEDITOR.instances.wpTextbox1.insertHtml('&lt;p&gt;The main change for SMW &lt;SPAN class=&quot;fck_mw_property&quot; property=&quot;deployment&quot;&gt;extension &lt;/span&gt;developers is to revisit all uses of datavalues and decide whether to replace them by data items, or whether to convert between datavalues and data items as appropriate (it is possible to create a datavalue for every data item by calling&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;SPAN _fcknotitle=&quot;true&quot; class=&quot;fck_mw_category&quot; sort=&quot;Appropriate&quot;&gt;Appropriate&lt;/span&gt; &lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;SPAN class=&quot;fck_mw_noinclude&quot; _fck_mw_customtag=&quot;true&quot; _fck_mw_tagname=&quot;noinclude&quot; _fck_mw_tagtype=&quot;t&quot;&gt;not included text&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;ul&gt;&lt;LI&gt;list item 1&lt;br&gt;&lt;/li&gt;&lt;LI&gt;list item 2&lt;br&gt;&lt;/li&gt;&lt;LI&gt;list item 3&lt;br&gt;&lt;/li&gt;&lt;/UL&gt;&lt;table style=&quot;width: 500px;&quot; border=&quot;1&quot; cellpadding=&quot;1&quot; cellspacing=&quot;1&quot;&gt;&lt;caption&gt;table caption&lt;/caption&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;col 1&lt;br&gt;&lt;/td&gt;&lt;td&gt;col 2&lt;br&gt;&lt;/td&gt;&lt;td&gt;col 3&lt;br&gt;&lt;/td&gt;&lt;td&gt;col 4&lt;br&gt;&lt;/td&gt;&lt;td&gt;col 5&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;row 1&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;row 2&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;td&gt;&lt;br&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;');</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>ToggleCKEditor('toggle','wpTextbox1');</td>
+	<td></td>
+</tr>
+<tr>
+	<td>setSpeed</td>
+	<td>0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertNotValue</td>
+	<td>id=wpTextbox1</td>
+	<td>''</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

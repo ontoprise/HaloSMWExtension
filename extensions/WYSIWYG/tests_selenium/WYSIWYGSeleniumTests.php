@@ -15,6 +15,9 @@ require_once 'testcases/TestQueryInterfaceInWysiwyg.php';
 require_once 'testcases/TestTransformationOfSemanticData.php';
 require_once 'testcases/TestAddingExternalImages.php';
 require_once 'testcases/TestWikiMarkup.php';
+require_once 'testcases/TestHtmlToWikitextConverion1.php';
+require_once 'testcases/TestHtmlToWikitextConverion2.php';
+require_once 'testcases/TestHtmlToWikitextConverion3.php';
 
 class WYSIWYGSeleniumTests
 {
@@ -27,6 +30,9 @@ class WYSIWYGSeleniumTests
 		$suite->addTestSuite("TestTransformationOfSemanticData");
 		$suite->addTestSuite("TestAddingExternalImages");
 		$suite->addTestSuite("TestWikiMarkup");
+                $suite->addTestSuite("TestHtmlToWikitextConverion1");
+                $suite->addTestSuite("TestHtmlToWikitextConverion2");
+                $suite->addTestSuite("TestHtmlToWikitextConverion3");
 		return $suite;
 	}
 }
