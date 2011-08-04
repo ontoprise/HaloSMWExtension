@@ -479,13 +479,8 @@ function smwf_om_MultipleRelationInfo($relations) {
 				// Type info for value exists
 				if ($relSchema[$i] == '_wpg') {
 					// Value should be a page
-				$val = $relDescr->values[$i];
-					if (empty($val)) { 
-						$valuePageInfo[] = "no page";
-					} else {
-						$exists = smwf_om_ExistsArticle($relDescr->values[$i]);
-						$valuePageInfo[] = $exists == 'true' ? "exists" : "redlink";
-					}
+					$exists = smwf_om_ExistsArticle($relDescr->values[$i]);
+					$valuePageInfo[] = $exists == 'true' ? "exists" : "redlink";
 				} else {
 					// value is of another type
 					$valuePageInfo[] = "no page";
@@ -627,30 +622,32 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 }
 
 /**
- * Edit property's properties. This function is invoked by an ajax call.
+ * Rename a type. This function is invoked by an ajax call.
  * 
  * @param string $pagename The name of the property.
  * @param string $newTypename The new typename of the property.
  * @param string $reason A reason why it was renamed.
  * @param string $user The name of the user who requested this action.
  */
-function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $oldType, $oldCard, $oldRange, $reason, $user) {
+function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $oldType, $oldCard, $oldRange, $category, $ID) {
 	$newtypename = strip_tags($newtypename);
 	if ($newtypename == '') return "false";
 	
 	if (smwf_om_userCan($pagename, 'move') === "false") {
 		return "false,denied,$pagename";
 	}	
-	
+	$reason = '';
+	$category = Title::newFromText($category);
 	$titleObj = Title::newFromText($pagename);
 	$oldType = Title::newFromText($oldType);
 	$oldCard = Title::newFromText($oldCard);
 	$oldRange = Title::newFromText($oldRange);
 	$oldRange = strtolower($oldRange);
+	$oldR = ''.$oldRange;
 	$newType = Title::newFromText($newtypename);
 	$newCard = Title::newFromText($newCard);
 	$newRange = Title::newFromText($newRange);
-	
+	$newR = ''.$newRange;
 	$Card = 'Has min cardinality::'.$oldCard;
 	$nCard = 'Has min cardinality::'.$newCard;
 
@@ -663,30 +660,25 @@ function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $old
 	$article = new Article($titleObj);
 	
 	$text = $article->getContent();
-	// get property's category
-	$cat = preg_split('/Has domain and range::Category:/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-	$cat = preg_split('/]]/', $cat[1], -1, PREG_SPLIT_NO_EMPTY);
-    $cat = preg_split('/[^A-Za-z0-9_]/', $cat[0], -1, PREG_SPLIT_NO_EMPTY);
-    $category = $cat[0];
 	
 	//category and range
-	if($oldRange == ''){
-	   if($newRange != ''){
+	if($oldR == ''){
+	   if($newR != ''){
 	     $hasDom    = '[[Has domain and range::Category:'.$category.']]';
-	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.']]';
+	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.'| ]]';
 	    }
     }
-	if($oldRange != ''){
-	   if($newRange == ''){
-	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.']]';
+	if($oldR != ''){
+	   if($newR == ''){
+	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.'| ]]';
 	     $newHasDom = '[[Has domain and range::Category:'.$category.']]';
 	    }
-	   if($newRange != ''){
-	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.']]';
-	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.']]';
+	   if($newR != ''){
+	     $hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.'| ]]';
+	     $newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.'| ]]';
 	    }
 	}
-	
+
 	// write new property's properties
 	    $newContent = $text;
 	    if($oldType != $newType){
@@ -698,16 +690,15 @@ function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $old
 	    if($oldCard != $newCard){
 		  $newContent = str_replace($Card, $nCard, $newContent);
 		}
-		if($oldRange != $newRange){
+		if($oldR != $newRange){
 		  $newContent = str_replace($hasDom, $newHasDom, $newContent);
 		}
-	
+
 	if ($article->exists()) {		
 		$article->doEdit($newContent, $reason);
 	} 
-	return $newContent; 
+	return $newContent;
 }
-
 
 /**
  * Rename an article. This function is invoked by an ajax call.
