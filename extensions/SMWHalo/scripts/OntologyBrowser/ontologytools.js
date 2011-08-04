@@ -422,14 +422,13 @@ OBArticleCreator.prototype = {
 	 * @param node
 	 *            HTML node used for displaying a pending indicator.
 	 */
-	editArticle : function(title, newType, newCard, newRange, oldType, oldCard, oldRange,propertyID,reason, callback) {
+	editArticle : function(title, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID,reason, callback) {
     		
-		 function callback() {  
-            //this.pendingIndicator.show(propertyID);		 
+		 function callback() { 			 
 		    categoryActionListener.select1(this, obInstanceMenuProvider.selectedCategoryTitle);
 		 }
 
-		sajax_do_call('smwf_om_EditProperty', [title, newType, newCard, newRange, oldType, oldCard, oldRange, reason,
+		sajax_do_call('smwf_om_EditProperty', [title, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID,
 				wgUserName ], callback.bind(this));
 	},
 /**
@@ -912,12 +911,12 @@ OBOntologyModifier.prototype = {
 	 * @param propertyID
 	 *            ID of property in OB data model (XML)
 	 */
-	editProperties : function(propertyTitle, newType, newCard, newRange, oldType, oldCard, oldRange, propertyID) {
+	editProperties : function(propertyTitle, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID) {
 		function callback() {
 		
 		}
 		articleCreator.editArticle(gLanguage.getMessage('PROPERTY_NS')
-				+ propertyTitle, newType, newCard, newRange, oldType, oldCard, oldRange,propertyID, "OB", callback.bind(this));		
+				+ propertyTitle, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID, "OB", callback.bind(this));		
 	},
 
 	/**
@@ -2978,16 +2977,26 @@ OBEditPropertySubMenu.prototype = Object
 					},
 
 					doCommand : function() {
+					       var category = obInstanceMenuProvider.selectedCategoryTitle;
 						   var title = this.propertyName;
 						   var newTitle = this.newTitle;
 						   var reason = 'Other reason';
 						   var oldType = this.typeOrRange;
 						   var oldCard = this.propertyMinCard; 
-						   var oldRange = this.propertyRange;
+						   
+						   if(this.propertyRange != null){
+						     var oldRange = this.propertyRange;
+						   }else{
+						     var oldRange = '';
+						   }
 						   var Card = this.propertyMinCard;
 						   var Type = this.typeOrRange;
-						   var Range = this.propertyRange;
 						   
+						   if(this.propertyRange != null){
+						     var Range = this.propertyRange;
+						   }else{
+						     var Range = '';
+						   }
 						   if(typeChanged == true){
 						    Type = this.newType;
 						   }
@@ -3004,10 +3013,8 @@ OBEditPropertySubMenu.prototype = Object
 						   }
 						   
                            //saves changes
-						   
-						     if(cardChanged == true || typeChanged == true || rangeChanged == true){
-                             
-							 ontologyTools.editProperties(title, Type, Card, Range, oldType, oldCard, oldRange, this.selectedID);
+						     if(cardChanged == true || typeChanged == true || rangeChanged == true){   							 
+							 ontologyTools.editProperties(title, Type, Card, Range, oldType, oldCard, oldRange, category, this.selectedID);
 							  typeChanged = false;
 							  rangeChanged = false;
 							  cardChanged = false;
