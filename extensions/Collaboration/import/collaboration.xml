@@ -1183,4 +1183,69 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
+  <page>
+    <title>Widget:Facebook Like Button</title>
+    <id>353</id>
+    <revision>
+      <id>495</id>
+      <timestamp>2011-06-27T15:58:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
+This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
+
+Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
+
+== Using this widget ==
+For information on how to use this widget, see [http://www.mediawikiwidgets.org/Facebook_Like_Box widget description page on MediaWikiWidgets.org].
+
+==Copy to your site==
+To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{PAGENAME}}''' article.
+
+=Attributes=
+
+href - the URL to like. The XFBML version defaults to the current page.
+send - specifies whether to include a Send button with the Like button. This only works with the XFBML version.
+layout - there are three options.
+standard - displays social text to the right of the button and friends' profile photos below. Minimum width: 225 pixels. Default width: 450 pixels. Height: 35 pixels (without photos) or 80 pixels (with photos).
+button_count - displays the total number of likes to the right of the button. Minimum width: 90 pixels. Default width: 90 pixels. Height: 20 pixels.
+box_count - displays the total number of likes above the button. Minimum width: 55 pixels. Default width: 55 pixels. Height: 65 pixels.
+show_faces - specifies whether to display profile photos below the button (standard layout only)
+width - the width of the Like button.
+action - the verb to display on the button. Options: 'like', 'recommend'
+font - the font to display in the button. Options: 'arial', 'lucida grande', 'segoe ui', 'tahoma', 'trebuchet ms', 'verdana'
+colorscheme - the color scheme for the like button. Options: 'light', 'dark'
+ref - a label for tracking referrals; must be less than 50 characters and can contain alphanumeric characters and some punctuation (currently +/=-.:_). The ref attribute causes two parameters to be added to the referrer URL when a user clicks a link from a stream story about a Like action:
+fb_ref - the ref parameter
+fb_source - the stream type ('home', 'profile', 'search', 'other') in which the click occurred and the story type ('oneline' or 'multiline'), concatenated with an underscore.
+
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.facebook.com/plugins/like.php?href=&lt;!--{$profile}--&gt;&amp;amp;width=&lt;!--{$width|default:300|escape:'urlpathinfo'}--&gt;&amp;amp;colorscheme=&lt;!--{$theme|default:light|escape:'urlpathinfo'}--&gt;&amp;amp;show_faces=&lt;!--{$faces|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;stream=&lt;!--{$stream|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;header=false&amp;amp; height=&lt;!--{$height|default:556|escape:'urlpathinfo'}--&gt;&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:&lt;!--{$width|default:300|escape:'html'}--&gt;px; height:&lt;!--{$height|default:556|escape:'html'}--&gt;px&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Widget:Facebook Like Box</title>
+    <id>444</id>
+    <revision>
+      <id>489</id>
+      <timestamp>2011-06-27T15:10:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;&lt;noinclude&gt;__NOTOC__ This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wik...&quot;</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
+This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
+
+Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
+
+== Using this widget ==
+For information on how to use this widget, see [http://www.mediawikiwidgets.org/Facebook_Like_Box widget description page on MediaWikiWidgets.org].
+
+==Copy to your site==
+To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{PAGENAME}}''' article.
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.facebook.com/plugins/likebox.php?href=&lt;!--{$profile}--&gt;&amp;amp;width=&lt;!--{$width|default:300|escape:'urlpathinfo'}--&gt;&amp;amp;colorscheme=&lt;!--{$theme|default:light|escape:'urlpathinfo'}--&gt;&amp;amp;show_faces=&lt;!--{$faces|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;stream=&lt;!--{$stream|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;header=false&amp;amp; height=&lt;!--{$height|default:556|escape:'urlpathinfo'}--&gt;&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:&lt;!--{$width|default:300|escape:'html'}--&gt;px; height:&lt;!--{$height|default:556|escape:'html'}--&gt;px&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
 </mediawiki>
