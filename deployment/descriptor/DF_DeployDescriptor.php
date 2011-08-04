@@ -179,7 +179,7 @@ class DeployDescriptor {
 					// if not appropriate patchlevel update exists, try without patchlevel constraint
 					$path = "//update[@from='$from']";
 					$update = $this->dom->xpath($path);
-					if (count($update) === 0 && $from == $this->getID()) {
+					if (count($update) === 0 && $from == $this->getVersion()) {
 						// if no explicit update section exists, check if updating the 
 						// currently installed version only to another patchlevel
 						$path = "//update[@from='patchlevel']";
