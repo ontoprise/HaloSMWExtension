@@ -704,6 +704,7 @@ class Tools {
 				&& stripos($out[$i+1], "<NO NAME>") === false
 				&& stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false
 				) $i++;
+				if ($i+1 == $n) break;
 				if (stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false) continue;
 				$defValue = $out[$i+1];
 				$parts = explode("   ", $defValue);
