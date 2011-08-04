@@ -3016,9 +3016,6 @@ OBEditPropertySubMenu.prototype = Object
 							 ontologyTools.renameProperty1(newTitle,title, this.selectedID);
 							 titleChanged = false;
 							 }		
-                             this.pendingIndicator.show(node);							 
-							 // this.showContentProperty(this.commandID, this.envContainerID, this.propertyName,this.propertyMinCard,this.propertyTypetype);
-							 //this.cancel();
 					},
 
 
