@@ -51,7 +51,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  </script>
  
  END;
-@@ -77,6 +110,36 @@
+@@ -77,6 +110,34 @@
  	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
  	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
  	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
@@ -79,10 +79,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$smwhgLogger_include = "<script type=\"{$wgJsMimeType}\"
 +			src=\"{$smwgHaloScriptPath}/scripts/Logger/smw_logger.js?$wgStyleVersion\"></script>";
 +	} else {
-+		// SMWHalo is missing. We only have to provide prototype.
-+		$prototype_include = "<script type=\"{$wgJsMimeType}\"
-+			src=\"{$smwgRMScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
-+		$wick_include = $ajaxhalo_include = $smwhgLogger_include = $generalBrowserTools_include = '';
++		// SMWHalo is missing. Include nothing.
++		$prototype_include = $wick_include = $ajaxhalo_include = $smwhgLogger_include = $generalBrowserTools_include = '';
 +	}
 +
  	$text = <<<END
@@ -1466,7 +1464,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		// disable $wgOut - we'll print out the page manually,
  		// taking the body created by the form, plus the necessary
  		// Javascript files, and turning them into an HTML page
-@@ -972,6 +1354,36 @@
+@@ -972,6 +1354,34 @@
  		$sk->initPage( $wgOut ); // need to call this to set skin name correctly
  		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
  
@@ -1477,8 +1475,6 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 +		global $smwgRMScriptPath, $sfgScriptPath, $wgStyleVersion, $wgJsMimeType;
 +		$richmedia_upload_include = '<script type="text/javascript" 
 +			src="' . $smwgRMScriptPath . '/scripts/richmedia_upload.js"></script>' . "\n";
-+		$prototype_include = "<script type=\"{$wgJsMimeType}\"
-+			src=\"{$smwgRMScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
 +		$css_include = <<<END
 +<script type="{$wgJsMimeType}">
 +var headID = document.getElementsByTagName("head")[0];
@@ -1503,11 +1499,9 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  		if ( method_exists( $wgOut, 'addModules' ) ) {
  			$head_scripts = '';
  			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
-@@ -1004,7 +1416,11 @@
- 
+@@ -1005,6 +1415,9 @@
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
  <head>
-+$prototype_include
  $head_scripts
 +$css_include
 +$remove_uploadbutton
