@@ -315,6 +315,11 @@ class Installer {
 
 			try {
 				$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
+				if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
+				|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+					$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
+					$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
+				}
 			}  catch(RepositoryError $e) {
 				if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST) {
 					// local bundle (e.g. ontology). ignore it.
@@ -322,11 +327,6 @@ class Installer {
 			}
 
 
-			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
-			|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
-				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
-				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
-			}
 
 		}
 
