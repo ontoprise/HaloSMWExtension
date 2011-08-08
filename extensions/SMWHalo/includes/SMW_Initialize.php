@@ -98,13 +98,15 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	global $smwgHaloIP;
 	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
 
-	global $wgAutoloadClasses;
-	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
+	global $smwgQRCEnabled;
+	if (isset($smwgQRCEnabled) && $smwgQRCEnabled === true) {
+		global $wgAutoloadClasses;
+		$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
 		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
 
-	$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
-	$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
-
+		$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
+		$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
+	}
 }
 
 /**
@@ -421,7 +423,7 @@ function smwgHaloSetupExtension() {
 			case '_ts_' :
 				smwfHaloInitMessages();
 				break; // contained in this file
-				
+
 			case '_na_' :   //create new article feature.
 				smwfHaloInitMessages();
 				require_once $smwgHaloIP . '/includes/SMW_CreateNewArticle.php';
@@ -857,8 +859,8 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	}
 	// call now the general function of SF that creates the <input> field
 	//	$html = SFFormInput::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
-    // as of SF 2.1.2 the method name has changed from getHTML to getText
-    $sfMethodName = (method_exists('SFTextInput', 'getHTML')) ? 'getHTML' : 'getText';
+	// as of SF 2.1.2 the method name has changed from getHTML to getText
+	$sfMethodName = (method_exists('SFTextInput', 'getHTML')) ? 'getHTML' : 'getText';
 	if($method == 'textEntryHTML') {
 		$html = SFTextInput::$sfMethodName($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	} else {
