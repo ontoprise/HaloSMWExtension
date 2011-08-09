@@ -8,6 +8,7 @@ VERSION 1.6
 	15323 - Parse error in SOLR request for empty search term
 	15299 - XSS Injection
 	15237 - Slash in property name breaks FacetedSearch
+	15236 - Slash in title seems to break Faceted Search
 	
 VERSION 1.5.6
 
