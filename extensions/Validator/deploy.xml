@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>049</version>
+		<id>validator</id>
+		<license>GPL-v2</license>
+		<vendor>Ontoprise</vendor>
+		<maintainer>Jeroen De Dauw - jeroendedauw@gmail.com</maintainer>
+		<instdir>extensions/Validator</instdir>
+		<description>
+			Validator is a parameter handling framework which aims to facilitate common
+			parameter handling tasks, such as parsing, validation, and error
+			handling, for other MediaWiki extensions.
+        </description>
+		<helpurl>http://www.mediawiki.org/wiki/Extension:Validator</helpurl>
+		<dependencies>
+		</dependencies>
+		<notice></notice>
+	</global>
+	<codefiles>
+		<file loc="deploy.xml" />
+		<!-- TODO: add others -->
+	</codefiles>
+
+	<configs>
+	    <successor ext="smw"/>
+		<new>
+			<require name="validator_init" file="extensions/Validator/Validator.php" />
+		</new>
+	</configs>
+</deploydescriptor>
