@@ -6,7 +6,7 @@
  * @defgroup SMWHaloJobs SMWHalo jobs
  * @ingroup SMWHalo
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 /* The SMW_UpdateCategoriesAfterMoveJob
@@ -23,7 +23,7 @@
  */
 
 global $IP;
-require_once ("$IP/includes/JobQueue.php");
+require_once ("$IP/includes/job/JobQueue.php");
 
 class SMW_UpdateCategoriesAfterMoveJob extends Job {
 

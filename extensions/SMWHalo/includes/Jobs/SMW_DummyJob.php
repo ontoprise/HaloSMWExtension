@@ -4,7 +4,7 @@
  * @file
  * @ingroup SMWHaloJobs
  *  
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 /* The DummyJob Class
  * - SemanticMediaWiki Extension -
@@ -18,7 +18,7 @@
  */
 
 global $IP;
-require_once ("$IP/includes/JobQueue.php");
+require_once ("$IP/includes/job/JobQueue.php");
 
 class SMW_DummyJob extends Job {
 

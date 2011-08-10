@@ -3,7 +3,7 @@
  * @file
  * @ingroup SMWHaloJobs
  *  
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 /* The SMW_UpdateLinksAfterMoveJob
@@ -24,7 +24,7 @@
  */
 
 global $IP;
-require_once ("$IP/includes/JobQueue.php");
+require_once ("$IP/includes/job/JobQueue.php");
 
 class SMW_UpdateLinksAfterMoveJob extends Job {
 
