@@ -386,10 +386,10 @@ Section "SMW+ Setup" smwplussetup
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\settings.php" "'df_mysql_dir' =>" "'$INSTDIR\mysql'" $R0
 
   DetailPrint "Install bundles into wiki"
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplus.zip'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f -i Smwplussandbox.zip'
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck -f --finalize'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f -i Smwplus.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f --finalize'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f -i Smwplussandbox.zip'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f --finalize'
 
 SectionEnd
 

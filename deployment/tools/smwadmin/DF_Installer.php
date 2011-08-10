@@ -57,9 +57,9 @@ class Installer {
 
 	static $instance = NULL; // singleton
 
-	public static function getInstance($rootDir = NULL, $force = false, $noRollback = false) {
+	public static function getInstance($rootDir = NULL, $force = false) {
 		if (!is_null(self::$instance)) return self::$instance;
-		self::$instance = new Installer($rootDir, $force, $noRollback);
+		self::$instance = new Installer($rootDir, $force);
 		return self::$instance;
 	}
 	/*
@@ -91,7 +91,7 @@ class Installer {
 	 *
 	 * @param string $rootDir Explicit root dir. Only necessary for testing
 	 */
-	private function __construct($rootDir = NULL, $force = false, $noRollback = false) {
+	private function __construct($rootDir = NULL, $force = false) {
 		// create temp folder
 		$this->errors = array();
 		$wikiname = DF_Config::$df_wikiName;
@@ -110,8 +110,7 @@ class Installer {
 		$this->rollback = Rollback::getInstance($this->rootDir);
 
 		$this->force = $force;
-
-		$this->noRollback = $noRollback;
+		
 		$this->logger = Logger::getInstance();
 	}
 
@@ -531,7 +530,10 @@ class Installer {
 			if (!is_null($fromVersion)) {
 				$desc->createConfigElements($fromVersion, $fromPatchlevel);
 			}
-			if (!$this->noRollback) {
+			
+			global $dfgNoAsk;
+			   
+			if (!$dfgNoAsk) {
 				$success = $this->rollback->saveInstallation();
 				if (!$success) {
 					throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not copy the installation");
