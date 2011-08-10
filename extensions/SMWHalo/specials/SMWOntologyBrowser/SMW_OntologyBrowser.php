@@ -195,7 +195,7 @@ if(!smwfIsTripleStoreConfigured()) {
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button>
-		  <div><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\" $showAssertedCategoriesSwitch/>".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
+		  <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\">".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">
