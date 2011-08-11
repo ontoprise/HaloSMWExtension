@@ -148,9 +148,11 @@ class SMWFullSemanticData {
 				$allCategories = $derivedValues;
 				$assertCategories = $subject->getTitle()->getParentCategories();
 				foreach($allCategories as $c) {
-					$title = $c->getTitle();
-					if (!in_array($title->getText(), $assertCategories)) {
-						$derivedCategories[] = $title;
+					if ($c instanceof SMWWikiPageValue) {
+						$title = $c->getTitle();
+						if (!in_array($title->getText(), $assertCategories)) {
+							$derivedCategories[] = $title;
+						}
 					}
 				}
 			
