@@ -30,7 +30,7 @@
 
 	<configs>
 		<new>
-            <patch file="patch_for_MW_1.16.x.txt" ext="mw" from="1160" to="1164"/>
+            <patch file="patch_for_MW_1.16.x.txt" ext="mw" from="1160" to="1170"/>
             <patch file="patch_for_SF_2.0.8.txt" ext="semanticforms" from="208" to="208"/>
             <patch file="patch_for_SF_2.1.2.txt" ext="semanticforms" from="212" to="212"/>
             <require name="wysiwygtab" file="extensions/WYSIWYG/WYSIWYG.php"/>
