@@ -294,18 +294,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   SectionIn 1 2 RO
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
-  ${If} $0 == 0 
-  ; check for AdminSettings.php
-    tryagain:
-    IfFileExists $INSTDIR\htdocs\mediawiki\AdminSettings.php 0 as_noexists
-        goto setpath
-        as_noexists:
-            MessageBox MB_OK|MB_ICONSTOP  "Could not find AdminSettings.php. \
-            Please create one using AdminSettingsTemplate.php and continue afterwards."
-            goto tryagain
-            
-  setpath:
-  ${EndIf}
+ 
   ; Set output path 
   
   
@@ -332,7 +321,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
       !ifndef NOFILES
             
             File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x .buildpath /x .project /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php *
-            File /oname=AdminSettings.php AdminSettingsTemplate.php
+            
             File /oname=deployment\tools\Smwplus.zip Smwplus.zip
             File /oname=deployment\tools\Smwplussandbox.zip Smwplussandbox.zip
             File /oname=deployment\tools\patch.exe deployment\tools\patch.exe
