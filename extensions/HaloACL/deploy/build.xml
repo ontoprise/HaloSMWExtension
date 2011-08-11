@@ -208,7 +208,7 @@
 				<arg value="-d" />
 				<arg value="${basedir}/../../../" />
 				<arg value="-p" />
-				<arg value="../patch_for_MW_1.16.4.txt" />
+				<arg value="../patch_for_MW_1.17.0.txt" />
 				<arg value="--patchtool" />
 				<arg value="${patchtool}" />
 			</exec>
