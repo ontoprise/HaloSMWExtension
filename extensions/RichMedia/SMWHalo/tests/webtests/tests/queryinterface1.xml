@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface1">
+    
+    <target name="testQueryInterface1">
+
+        <webtest name="Query Interface basic tests">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 10 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="11"
+            />  
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Located In"
+              htmlId="input_p0"
+              value="Located In"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input_p0"
+            />
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
+            />
+            <clickElement
+              description="Click radion button to specify value"
+              xpath="//input[@name='input_r0' and @value='-2']"
+            />
+            <setInputField
+              description="set value to USA"
+              htmlId="input_r1"
+              value="USA"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 2 result + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="3"
+            />  
+            <clickLink
+              description="Open Query Layout Manager"
+              htmlId="layouttitle-link"
+            />
+            <setSelectField
+              description="Select format list"
+              xpath="//select[@id='layout_format']"
+              value="list"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 4 links in a list"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="6"
+            />  
+            <clickLink
+              description="Click on property in Tree"
+              label="Located In"
+            />
+            <setInputField
+              description="set value Austria"
+              htmlId="input_r1"
+              value="Austria"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview has 3 results"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="9"
+            />
+            <clickLink
+              description="Click on Category City in Tree"
+              label="City"
+            />
+            <clickElement
+              description="and click delete to remove the category"
+              xpath="//span[@class='qibutton' and @id='qidelete']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview still has 3 results"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="9"
+            />
+
+        </webtest>
+        
+    </target>
+</project>

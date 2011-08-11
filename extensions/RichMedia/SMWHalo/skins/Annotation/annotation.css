@@ -1,0 +1,122 @@
+.aam_prop_highlight{
+	background-color: #ff9602;
+}
+
+.aam_page_link_highlight{
+	border: 1px solid #00aa00;
+}
+
+.aam_new_anno_prop_highlight{
+	background-color: #ff9602;
+	border: 1px solid #000000;
+}
+
+.aam_selection_highlight{
+	background-color: #ffff00;
+}
+
+.aam_new_category_highlight{
+	background-color: #94B0F3;
+	border: 1px solid #000000;
+}
+
+.aam_template_highlight{
+	background-color: #9999ff;
+}
+
+
+#contentcol1 {
+	width: 100%;
+	vertical-align: top;
+}
+#contentcol2 {
+	width: 0%;
+	visibility: hidden;
+	vertical-align: top;
+}
+
+#ontomenuanchor {
+	position: fixed;
+	width: 300px;
+	visibility: visible;
+	bottom: 10px;
+	right: 10px;
+	margin-top: 0px;
+}
+
+#tabcontainer {
+	margin-bottom: 0px;
+}
+
+#contextmenu{
+	width: 250px;
+	position: fixed;
+	z-index: 2;
+	background-color:#DDDDDD;
+	border:1px solid #000000;
+}
+
+#cmPropertyHeader{
+	background-color: #ff9602;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #ff9602;
+	margin-top: 3px;
+	cursor: pointer;
+}
+#cmPropertyContent{
+	background-color: #ffcd87;
+	border: 1px solid #ff9602;
+	overflow: auto;
+	font-size: 11px;
+}
+#cmCategoryHeader{
+	background-color: #064df3;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #064df3;
+	margin-top: 3px;
+	cursor: pointer;
+}
+
+#cmCategoryContent{
+	border: 1px solid #064df3;
+	background-color: #94b0f3;
+	overflow: auto;
+	font-size: 11px;
+}
+
+#cmAnnotationHintHeader{
+	background-color: #064df3;
+	font-weight: bold;
+	color: #FFF;
+/*	padding-top: 1px; */
+	padding-left: 3px;
+	border: 1px solid #064df3;
+	margin-top: 3px;
+}
+
+#cmAnnotationHintContent{
+	border: 1px solid #064df3;
+	background-color: #94b0f3;
+	overflow: auto;
+	font-size: 11px;
+}
+
+/*z-index fixes so toolbar will be above elements*/
+#p-logo{
+	z-index: 0;
+}
+#p-navigation {
+	z-index: 0;
+}
+#p-search {
+	z-index: 0;
+}
+#p-cactions li.selected a {
+	z-index: 0;
+}

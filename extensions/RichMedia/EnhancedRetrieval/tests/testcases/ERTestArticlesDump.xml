@@ -1,0 +1,3525 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.1</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Property:Located in</title>
+    <id>784</id>
+    <revision>
+      <id>786</id>
+      <timestamp>2011-02-22T11:42:00Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Located in state</title>
+    <id>785</id>
+    <revision>
+      <id>787</id>
+      <timestamp>2011-02-22T11:42:00Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Image</title>
+    <id>786</id>
+    <revision>
+      <id>1023</id>
+      <timestamp>2011-02-24T11:39:21Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Height stories</title>
+    <id>787</id>
+    <revision>
+      <id>789</id>
+      <timestamp>2011-02-22T11:42:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Building name</title>
+    <id>788</id>
+    <revision>
+      <id>790</id>
+      <timestamp>2011-02-22T11:42:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Year built</title>
+    <id>789</id>
+    <revision>
+      <id>791</id>
+      <timestamp>2011-02-22T11:42:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:Date| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Description</title>
+    <id>1021</id>
+    <revision>
+      <id>1024</id>
+      <timestamp>2011-02-24T11:39:22Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[has type::Type:Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>1201 Third Avenue</title>
+    <id>790</id>
+    <revision>
+      <id>1025</id>
+      <timestamp>2011-02-24T11:39:23Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _1201_Third_Avenue.]]
+	[[Description::This is the description of _1201_Third_Avenue.]]
+	[[Category:_1988_architecture]]
+	[[Category:Building]]
+	[[Category:Kohn_Pedersen_Fox_buildings]]
+	[[Category:Office_buildings_in_Seattle,_Washington]]
+	[[Category:Postmodern_architecture_in_Washington_(U.S._state)]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Seattle,_Washington]]
+	[[Category:Wright_Runstad_%26_Company]]
+	[[Located_in::Seattle]]
+	[[Image::Seattle_Washington_Mutual_Tower_2004-08-30.jpg]]
+	[[Height_stories::55]]
+	[[Building_name::1201 Third Avenue Tower]]
+	[[Year_built::1/1/1988]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>1801 California Street</title>
+    <id>791</id>
+    <revision>
+      <id>1026</id>
+      <timestamp>2011-02-24T11:39:23Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _1801_California_Street.]]
+	[[Category:Buildings_and_structures_completed_in_1982]]
+	[[Category:Office_buildings_in_Denver,_Colorado]]
+	[[Category:Qwest]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Denver,_Colorado]]
+	[[Category:Telecommunications_company_headquarters_in_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>191 Peachtree Tower</title>
+    <id>792</id>
+    <revision>
+      <id>1027</id>
+      <timestamp>2011-02-24T11:39:24Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _191_Peachtree_Tower.]]
+	[[Category:Atlanta,_Georgia_stubs]]
+	[[Category:Buildings_and_structures_completed_in_1990]]
+	[[Category:Georgia_(U.S._state)_building_and_structure_stubs]]
+	[[Category:Headquarters_in_the_United_States]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Office_buildings_in_Atlanta,_Georgia]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Atlanta,_Georgia]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>20 Exchange Place</title>
+    <id>793</id>
+    <revision>
+      <id>1028</id>
+      <timestamp>2011-02-24T11:39:24Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _20_Exchange_Place.]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Buildings_and_structures_completed_in_1931]]
+	[[Category:Buildings_and_structures_in_Manhattan]]
+	[[Category:Condominiums_in_New_York_City]]
+	[[Category:Landmarks_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>300 North LaSalle</title>
+    <id>794</id>
+    <revision>
+      <id>1029</id>
+      <timestamp>2011-02-24T11:39:24Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _300_North_LaSalle.]]
+	[[Category:Leadership_in_Energy_and_Environmental_Design_gold_certified_buildings]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>311 South Wacker Drive</title>
+    <id>795</id>
+    <revision>
+      <id>1030</id>
+      <timestamp>2011-02-24T11:39:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _311_South_Wacker_Drive.]]
+	[[Category:Buildings_and_structures_completed_in_1990]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>383 Madison Avenue</title>
+    <id>796</id>
+    <revision>
+      <id>1031</id>
+      <timestamp>2011-02-24T11:39:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _383_Madison_Avenue.]]
+	[[Category:Bear_Stearns]]
+	[[Category:Buildings_and_structures_completed_in_2002]]
+	[[Category:Financial_services_company_headquarters_in_the_United_States]]
+	[[Category:JPMorgan_Chase_buildings]]
+	[[Category:Kohn_Pedersen_Fox_buildings]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>40 Wall Street</title>
+    <id>797</id>
+    <revision>
+      <id>1032</id>
+      <timestamp>2011-02-24T11:39:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _40_Wall_Street.]]
+	[[Category:_1930_architecture]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Wall_Street]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>500 Fifth Avenue</title>
+    <id>798</id>
+    <revision>
+      <id>1033</id>
+      <timestamp>2011-02-24T11:39:26Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _500_Fifth_Avenue.]]
+	[[Category:_1931_architecture]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:New_York_building_and_structure_stubs]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>555 California Street</title>
+    <id>799</id>
+    <revision>
+      <id>1034</id>
+      <timestamp>2011-02-24T11:39:26Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _555_California_Street.]]
+	[[Category:_1969_architecture]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Office_buildings_in_San_Francisco,_California]]
+	[[Category:Pietro_Belluschi_buildings]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_San_Francisco,_California]]
+	[[Image::Bank_of_America_Tower_San_Francisco.jpg]]
+	[[Located_in::San_Francisco]]
+	[[Building_name::555 California Street]]
+	[[Height_stories::52]]
+	[[Year_built::1/1/1969]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>60 Wall Street</title>
+    <id>800</id>
+    <revision>
+      <id>1035</id>
+      <timestamp>2011-02-24T11:39:27Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _60_Wall_Street.]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Wall_Street]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>777 Tower</title>
+    <id>801</id>
+    <revision>
+      <id>1036</id>
+      <timestamp>2011-02-24T11:39:27Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _777_Tower.]]
+	[[Category:Buildings_and_structures_completed_in_1991]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>7 World Trade Center</title>
+    <id>802</id>
+    <revision>
+      <id>1037</id>
+      <timestamp>2011-02-24T11:39:28Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _7_World_Trade_Center.]]
+	[[Category:Buildings_and_structures_completed_in_1987]]
+	[[Category:Buildings_and_structures_completed_in_2006]]
+	[[Category:Buildings_destroyed_in_the_September_11_attacks]]
+	[[Category:Emery_Roth_buildings]]
+	[[Category:Leadership_in_Energy_and_Environmental_Design_gold_certified_buildings]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Use_mdy_dates_from_August_2010]]
+	[[Category:World_Trade_Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>8 Spruce Street</title>
+    <id>803</id>
+    <revision>
+      <id>1038</id>
+      <timestamp>2011-02-24T11:39:28Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _8_Spruce_Street.]]
+	[[Category:Buildings_and_structures_in_Manhattan]]
+	[[Category:Buildings_and_structures_under_construction_in_the_United_States]]
+	[[Category:Frank_Gehry_buildings]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>900 North Michigan</title>
+    <id>804</id>
+    <revision>
+      <id>1039</id>
+      <timestamp>2011-02-24T11:39:28Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of _900_North_Michigan.]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:Condo-hotels_in_the_United_States]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Shopping_centers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>AXA Center</title>
+    <id>805</id>
+    <revision>
+      <id>1040</id>
+      <timestamp>2011-02-24T11:39:29Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of AXA_Center.]]
+	[[Category:_1986_architecture]]
+	[[Category:AXA]]
+	[[Category:Seventh_Avenue_(Manhattan)]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Times_Square]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Alabama</title>
+    <id>806</id>
+    <revision>
+      <id>1041</id>
+      <timestamp>2011-02-24T11:39:29Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Alabama.]]
+	[[Category:Alabama]]
+	[[Category:Former_British_colonies]]
+	[[Category:States_and_territories_established_in_1819]]
+	[[Category:States_of_the_Confederate_States_of_America]]
+	[[Category:States_of_the_Southern_United_States]]
+	[[Category:States_of_the_United_States]]
+	[[Category:Alabama_navigational_boxes]]
+	[[Category:United_States_State]]
+//------------------------------------------------------------------------------	
+			'American_International_Building' =&gt;
+&lt;&lt;&lt;ARTICLE
+	[[Description::This is the description of American_International_Building.]]
+	[[Category:_1932_architecture]]
+	[[Category:American_International_Group]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Building]]
+	[[Category:Insurance_company_headquarters_in_the_United_States]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Located_in::New_York_City]]
+	[[Image::American_International_Building3.JPG]]
+	[[Height_stories::66]]
+	[[Building_name::American International Building]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Aon Center</title>
+    <id>807</id>
+    <revision>
+      <id>1042</id>
+      <timestamp>2011-02-24T11:39:30Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Aon_Center.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Aon Center (Chicago)</title>
+    <id>808</id>
+    <revision>
+      <id>1043</id>
+      <timestamp>2011-02-24T11:39:30Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Aon_Center_(Chicago).]]
+	[[Category:Amoco]]
+	[[Category:BP_buildings_and_structures]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1973]]
+	[[Category:Edward_Durell_Stone_buildings]]
+	[[Category:Insurance_company_headquarters_in_the_United_States]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Located_in::Chicago]]
+	[[Image::Aon_and_Blue_Cross_Blue_Shield.jpg]]
+	[[Height_stories::83]]
+	[[Building_name::Aon Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Aon Center (Los Angeles)</title>
+    <id>809</id>
+    <revision>
+      <id>1044</id>
+      <timestamp>2011-02-24T11:39:30Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Aon_Center_(Los_Angeles).]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1973]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]
+	[[Image::Aon_Center_LA.jpg]]
+	[[Located_in::Los_Angeles]]
+	[[Height_stories::62]]
+	[[Building_name::Aon Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Aqua</title>
+    <id>810</id>
+    <revision>
+      <id>1045</id>
+      <timestamp>2011-02-24T11:39:31Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Aqua.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Aqua (skyscraper)</title>
+    <id>811</id>
+    <revision>
+      <id>1046</id>
+      <timestamp>2011-02-24T11:39:31Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Aqua_(skyscraper).]]
+	[[Category:Apartments_in_Chicago,_Illinois]]
+	[[Category:Building]]
+	[[Category:Condo-hotels_in_the_United_States]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Hotels_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Image::AquaChicago071209.JPG]]
+	[[Located_in::Chicago]]
+	[[Height_stories::86]]
+	[[Building_name::Aqua]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Atlanta</title>
+    <id>812</id>
+    <revision>
+      <id>1047</id>
+      <timestamp>2011-02-24T11:39:32Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Atlanta.]]
+	[[Category:Atlanta,_Georgia]]
+	[[Category:Atlanta_metropolitan_area]]
+	[[Category:Cities_in_Georgia_(U.S._state)]]
+	[[Category:County_seats_in_Georgia_(U.S._state)]]
+	[[Category:Host_cities_of_the_Summer_Olympic_Games]]
+	[[Category:Populated_places_established_in_1845]]
+	[[Category:Populated_places_in_Georgia_(U.S._state)_with_African_American_majority_populations]]
+	[[Category:Summer_Paralympic_Games]]
+	[[Category:United_States_places_with_Orthodox_Jewish_communities]]
+	[[Located_in_state::Georgia]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Atlantic City, New Jersey</title>
+    <id>813</id>
+    <revision>
+      <id>1048</id>
+      <timestamp>2011-02-24T11:39:32Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Atlantic_City,_New_Jersey.]]
+	[[Category:Atlantic_City,_New_Jersey]]
+	[[Category:Cities_in_New_Jersey]]
+	[[Category:Culture_of_Philadelphia,_Pennsylvania]]
+	[[Category:Faulkner_Act_Mayor-Council]]
+	[[Category:Gambling_in_the_United_States]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Populated_places_established_in_1854]]
+	[[Category:Populated_places_in_Atlantic_County,_New_Jersey]]
+	[[Category:Seaside_resorts_in_the_United_States]]
+	[[Category:Tourism_in_New_Jersey]]
+	[[Category:Unverifiable_lists]]
+	[[Located_in_state::New_Jersey]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Center</title>
+    <id>814</id>
+    <revision>
+      <id>1049</id>
+      <timestamp>2011-02-24T11:39:33Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Center.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Center (Houston)</title>
+    <id>815</id>
+    <revision>
+      <id>1050</id>
+      <timestamp>2011-02-24T11:39:33Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Center_(Houston).]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1983]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]
+	[[Located_in::Houston]]
+	[[Image::Bank_of_America_Center_Houston_1.jpg]]
+	[[Height_stories::56]]
+	[[Building_name::Bank of America Center]]
+	[[Year_built::1/1/1983]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Corporate Center</title>
+    <id>816</id>
+    <revision>
+      <id>1051</id>
+      <timestamp>2011-02-24T11:39:34Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Corporate_Center.]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Buildings_and_structures_completed_in_1992]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:Office_buildings_in_North_Carolina]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Charlotte,_North_Carolina]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Plaza</title>
+    <id>817</id>
+    <revision>
+      <id>1052</id>
+      <timestamp>2011-02-24T11:39:34Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Plaza.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Plaza (Atlanta)</title>
+    <id>818</id>
+    <revision>
+      <id>1053</id>
+      <timestamp>2011-02-24T11:39:35Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Plaza_(Atlanta).]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1992]]
+	[[Category:Office_buildings_in_Atlanta,_Georgia]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Atlanta,_Georgia]]
+	[[Located_in::Atlanta]]
+	[[Image::Bankofamerica-atlanta-feb09.jpg]]
+	[[Height_stories::55]]
+	[[Building_name::Bank of America Plaza]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Plaza (Dallas)</title>
+    <id>819</id>
+    <revision>
+      <id>1054</id>
+      <timestamp>2011-02-24T11:39:35Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Plaza_(Dallas).]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1985]]
+	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
+	[[Category:Office_buildings_in_Dallas,_Texas]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Dallas,_Texas]]
+	[[Image::Bank_of_America_Plaza_-_Dallas.jpg]]
+	[[Located_in::Dallas]]
+	[[Height_stories::72]]
+	[[Building_name::Bank of America Plaza]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Tower</title>
+    <id>820</id>
+    <revision>
+      <id>1055</id>
+      <timestamp>2011-02-24T11:39:36Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank of America Tower (New York City)</title>
+    <id>821</id>
+    <revision>
+      <id>1056</id>
+      <timestamp>2011-02-24T11:39:36Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bank_of_America_Tower_(New_York_City).]]
+	[[Category:Bank_of_America]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_2009]]
+	[[Category:Leadership_in_Energy_and_Environmental_Design_certified_buildings]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Skyscrapers_over_350_meters]]
+	[[Located_in::New_York_City]]
+	[[Image::OBP_-_Ext_-_42nd_East.jpg]]
+	[[Height_stories::58]]
+	[[Building_name::Bank of America Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bell Atlantic Tower</title>
+    <id>822</id>
+    <revision>
+      <id>1057</id>
+      <timestamp>2011-02-24T11:39:36Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bell_Atlantic_Tower.]]
+	[[Category:_1991_architecture]]
+	[[Category:Pennsylvania_building_and_structure_stubs]]
+	[[Category:Philadelphia_stubs]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Philadelphia,_Pennsylvania]]
+	[[Category:Verizon_Communications]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bertelsmann Building</title>
+    <id>823</id>
+    <revision>
+      <id>1058</id>
+      <timestamp>2011-02-24T11:39:37Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bertelsmann_Building.]]
+	[[Category:Bertelsmann_AG]]
+	[[Category:Buildings_and_structures_completed_in_1990]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Times_Square]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bloomberg Tower</title>
+    <id>824</id>
+    <revision>
+      <id>1059</id>
+      <timestamp>2011-02-24T11:39:37Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Bloomberg_Tower.]]
+	[[Category:Bloomberg_L.P.]]
+	[[Category:Buildings_and_structures_completed_in_2005]]
+	[[Category:Condominiums_in_New_York_City]]
+	[[Category:Media_company_headquarters_in_the_United_States]]
+	[[Category:New_York_City_building_and_structure_stubs]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Residential_skyscrapers_in_New_York_City]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Blue Cross Blue Shield Tower</title>
+    <id>825</id>
+    <revision>
+      <id>1060</id>
+      <timestamp>2011-02-24T11:39:37Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Blue_Cross_Blue_Shield_Tower.]]
+	[[Category:Chicago,_Illinois_stubs]]
+	[[Category:Insurance_company_headquarters_in_the_United_States]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Boston</title>
+    <id>826</id>
+    <revision>
+      <id>1061</id>
+      <timestamp>2011-02-24T11:39:38Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Boston.]]
+	[[Category:Boston,_Massachusetts]]
+	[[Category:Cities_in_Massachusetts]]
+	[[Category:County_seats_in_Massachusetts]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Irish-American_culture]]
+	[[Category:Irish_American_history]]
+	[[Category:Populated_coastal_places_in_Massachusetts]]
+	[[Category:Populated_places_established_in_1630]]
+	[[Category:Populated_places_in_Suffolk_County,_Massachusetts]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:University_towns_in_the_United_States]]
+	[[Located_in_state::Massachusetts]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>California</title>
+    <id>827</id>
+    <revision>
+      <id>1062</id>
+      <timestamp>2011-02-24T11:39:38Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of California.]]
+	[[Category:California_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:All_pages_needing_factual_verification]]
+	[[Category:California]]
+	[[Category:Former_Spanish_colonies]]
+	[[Category:States_and_territories_established_in_1850]]
+	[[Category:States_of_the_United_States]]
+	[[Category:West_Coast_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Capella Tower</title>
+    <id>828</id>
+    <revision>
+      <id>1063</id>
+      <timestamp>2011-02-24T11:39:39Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Capella_Tower.]]
+	[[Category:Buildings_and_structures_completed_in_1992]]
+	[[Category:James_Ingo_Freed_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Minneapolis,_Minnesota]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Carnegie Hall Tower</title>
+    <id>829</id>
+    <revision>
+      <id>1064</id>
+      <timestamp>2011-02-24T11:39:39Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Carnegie_Hall_Tower.]]
+	[[Category:_1991_architecture]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:New_York_City_building_and_structure_stubs]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Charlotte, North Carolina</title>
+    <id>830</id>
+    <revision>
+      <id>1065</id>
+      <timestamp>2011-02-24T11:39:39Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Charlotte,_North_Carolina.]]
+	[[Category:Charlotte,_North_Carolina]]
+	[[Category:Charlotte_metropolitan_area]]
+	[[Category:Cities_in_North_Carolina]]
+	[[Category:County_seats_in_North_Carolina]]
+	[[Category:Populated_places_established_in_1755]]
+	[[Category:North_Carolina_navigational_boxes]]
+	[[Located_in_state::North_Carolina]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Chase Tower (Chicago)</title>
+    <id>831</id>
+    <revision>
+      <id>1066</id>
+      <timestamp>2011-02-24T11:39:40Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Chase_Tower_(Chicago).]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1969]]
+	[[Category:JPMorgan_Chase_buildings]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Located_in::Chicago]]
+	[[Image::Chase_Tower,_Chicago.jpg]]
+	[[Height_stories::60]]
+	[[Building_name::Chase Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Chase Tower (Indianapolis)</title>
+    <id>832</id>
+    <revision>
+      <id>1067</id>
+      <timestamp>2011-02-24T11:39:40Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Chase_Tower_(Indianapolis).]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1990]]
+	[[Category:JPMorgan_Chase_buildings]]
+	[[Category:Office_buildings_in_Indianapolis,_Indiana]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Indianapolis,_Indiana]]
+	[[Image::ChaseTowerIndianapolis.jpg]]
+	[[Located_in::Indianapolis]]
+	[[Height_stories::48]]
+	[[Building_name::Chase Tower]]
+	[[Year_built::1/1/1990]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Chicago</title>
+    <id>833</id>
+    <revision>
+      <id>1068</id>
+      <timestamp>2011-02-24T11:39:41Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Chicago.]]
+	[[Category:Chicago,_Illinois]]
+	[[Category:Chicago_metropolitan_area]]
+	[[Category:Cities_in_Illinois]]
+	[[Category:Communities_on_U.S._Route_66]]
+	[[Category:County_seats_in_Illinois]]
+	[[Category:Irish-American_culture]]
+	[[Category:Polish_American_history]]
+	[[Category:Populated_places_established_in_1833]]
+	[[Category:Populated_places_in_Cook_County,_Illinois]]
+	[[Category:Populated_places_in_DuPage_County,_Illinois]]
+	[[Category:Populated_places_on_the_Great_Lakes]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:United_States_places_with_Orthodox_Jewish_communities]]
+	[[Category:Chicago_templates]]
+	[[Category:Illinois_navigational_boxes]]
+	[[Category:United_States_City]]
+	[[Located_in_state::Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Chicago Title and Trust Center</title>
+    <id>834</id>
+    <revision>
+      <id>1069</id>
+      <timestamp>2011-02-24T11:39:41Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Chicago_Title_and_Trust_Center.]]
+	[[Category:Buildings_and_structures_completed_in_1992]]
+	[[Category:Chicago,_Illinois_stubs]]
+	[[Category:Kohn_Pedersen_Fox_buildings]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Chrysler Building</title>
+    <id>835</id>
+    <revision>
+      <id>1070</id>
+      <timestamp>2011-02-24T11:39:42Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Chrysler_Building.]]
+	[[Category:_1930_architecture]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Art_Deco_skyscrapers]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Chrysler]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:Modernist_architecture_in_New_York]]
+	[[Category:National_Historic_Landmarks_in_New_York_City]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Vague_or_ambiguous_time_from_January_2011]]
+	[[Located_in::New_York_City]]
+	[[Image::Chrysler_Building_by_David_Shankbone_Retouched.jpg]]
+	[[Height_stories::77]]
+	[[Building_name::Chrysler Building]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Citigroup Center</title>
+    <id>836</id>
+    <revision>
+      <id>1071</id>
+      <timestamp>2011-02-24T11:39:42Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Citigroup_Center.]]
+	[[Category:_1977_architecture]]
+	[[Category:Bank_buildings_in_the_United_States]]
+	[[Category:Citigroup_buildings]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>CitySpire Center</title>
+    <id>837</id>
+    <revision>
+      <id>1072</id>
+      <timestamp>2011-02-24T11:39:43Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of CitySpire_Center.]]
+	[[Category:_1987_architecture]]
+	[[Category:Apartments_in_New_York_City]]
+	[[Category:Buildings_and_structures_in_Manhattan]]
+	[[Category:Residential_skyscrapers_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Cleveland</title>
+    <id>838</id>
+    <revision>
+      <id>1073</id>
+      <timestamp>2011-02-24T11:39:43Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Cleveland.]]
+	[[Category:Cities_in_Ohio]]
+	[[Category:Cleveland,_Ohio]]
+	[[Category:County_seats_in_Ohio]]
+	[[Category:Cuyahoga_County,_Ohio]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Populated_places_established_in_1796]]
+	[[Category:Populated_places_in_Ohio_with_African_American_majority_populations]]
+	[[Category:Populated_places_on_the_Great_Lakes]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Cleveland_templates]]
+	[[Located_in_state::Ohio]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Colorado</title>
+    <id>839</id>
+    <revision>
+      <id>1074</id>
+      <timestamp>2011-02-24T11:39:43Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Colorado.]]
+	[[Category:Colorado_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Colorado]]
+	[[Category:States_and_territories_established_in_1876]]
+	[[Category:States_of_the_United_States]]
+	[[Category:Use_mdy_dates_from_August_2010]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Columbia Center</title>
+    <id>840</id>
+    <revision>
+      <id>1075</id>
+      <timestamp>2011-02-24T11:39:44Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Columbia_Center.]]
+	[[Category:Bank_of_America_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1985]]
+	[[Category:Office_buildings_in_Seattle,_Washington]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Seattle,_Washington]]
+	[[Image::Columbia_center_from_smith_tower.jpg]]
+	[[Located_in::Seattle]]
+	[[Building_name::Columbia Center]]
+	[[Height_stories::76]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Comcast Center</title>
+    <id>841</id>
+    <revision>
+      <id>1076</id>
+      <timestamp>2011-02-24T11:39:44Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Comcast_Center.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Comcast Center (office building)</title>
+    <id>842</id>
+    <revision>
+      <id>1077</id>
+      <timestamp>2011-02-24T11:39:45Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Comcast_Center_(office_building).]]
+	[[Category:_2008_architecture]]
+	[[Category:_2008_establishments]]
+	[[Category:Building]]
+	[[Category:Comcast_Corporation]]
+	[[Category:Leadership_in_Energy_and_Environmental_Design_gold_certified_buildings]]
+	[[Category:Modernist_architecture_in_Pennsylvania]]
+	[[Category:Postmodern_architecture_in_the_United_States]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Philadelphia,_Pennsylvania]]
+	[[Category:Telecommunications_company_headquarters_in_the_United_States]]
+	[[Located_in::Philadelphia]]
+	[[Image::Comcast_Philly.JPG]]
+	[[Building_name::Comcast Center]]
+	[[Height_stories::58]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Comerica Bank Tower</title>
+    <id>843</id>
+    <revision>
+      <id>1078</id>
+      <timestamp>2011-02-24T11:39:45Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Comerica_Bank_Tower.]]
+	[[Category:Bank_buildings_in_the_United_States]]
+	[[Category:Buildings_and_structures_completed_in_1987]]
+	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Office_buildings_in_Dallas,_Texas]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Dallas,_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Dallas</title>
+    <id>844</id>
+    <revision>
+      <id>1079</id>
+      <timestamp>2011-02-24T11:39:46Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Dallas.]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:Cities_in_Texas]]
+	[[Category:Collin_County,_Texas]]
+	[[Category:County_seats_in_Texas]]
+	[[Category:Dallas,_Texas]]
+	[[Category:Dallas_County,_Texas]]
+	[[Category:Dallas_%E2%80%93_Fort_Worth_Metroplex]]
+	[[Category:Denton_County,_Texas]]
+	[[Category:Kaufman_County,_Texas]]
+	[[Category:Populated_places_established_in_1841]]
+	[[Category:Rockwall_County,_Texas]]
+	[[Category:Vague_or_ambiguous_time_from_January_2010]]
+	[[Category:Texas_city_templates]]
+	[[Located_in_state::Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Denver</title>
+    <id>845</id>
+    <revision>
+      <id>1080</id>
+      <timestamp>2011-02-24T11:39:46Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Denver.]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:Cities_in_Colorado]]
+	[[Category:Colorado_counties]]
+	[[Category:County_seats_in_Colorado]]
+	[[Category:Denver,_Colorado]]
+	[[Category:Denver_metropolitan_area]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Populated_places_established_in_1858]]
+	[[Category:Vague_or_ambiguous_time]]
+	[[Category:United_States_City]]
+	[[Located_in_state::Colorado]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Detroit</title>
+    <id>846</id>
+    <revision>
+      <id>1081</id>
+      <timestamp>2011-02-24T11:39:47Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Detroit.]]
+	[[Category:Cities_in_Michigan]]
+	[[Category:County_seats_in_Michigan]]
+	[[Category:Detroit,_Michigan]]
+	[[Category:Former_United_States_state_capitals]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Metro_Detroit]]
+	[[Category:Michigan_Neighborhood_Enterprise_Zone]]
+	[[Category:Populated_places_established_in_1701]]
+	[[Category:Populated_places_in_Michigan_with_African_American_majority_populations]]
+	[[Category:Populated_places_on_the_Great_Lakes]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Underground_Railroad_locations]]
+	[[Category:Wayne_County,_Michigan]]
+	[[Category:Michigan_navigational_boxes]]
+	[[Category:United_States_City]]
+	[[Located_in_state::Michigan]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Duke Energy Center</title>
+    <id>847</id>
+    <revision>
+      <id>1082</id>
+      <timestamp>2011-02-24T11:39:47Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Duke_Energy_Center.]]
+	[[Category:_2006_architecture]]
+	[[Category:Buildings_and_structures_under_construction_in_the_United_States]]
+	[[Category:Office_buildings_in_North_Carolina]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Charlotte,_North_Carolina]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Empire State Building</title>
+    <id>848</id>
+    <revision>
+      <id>1083</id>
+      <timestamp>2011-02-24T11:39:48Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Empire_State_Building.]]
+	[[Category:_1931_architecture]]
+	[[Category:Accidents_involving_fog]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Art_Deco_skyscrapers]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Family_businesses]]
+	[[Category:Fifth_Avenue_(Manhattan)]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:National_Historic_Landmarks_in_New_York_City]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Skyscrapers_over_350_meters]]
+	[[Category:Visitor_attractions_in_Manhattan]]
+	[[Category:Visitor_attractions_in_New_York_City]]
+	[[Located_in::New_York_City]]
+	[[Image::Empire_State_Building_all.jpg]]
+	[[Height_stories::102]]
+	[[Building_name::Empire State Building]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Enterprise Plaza</title>
+    <id>849</id>
+    <revision>
+      <id>1084</id>
+      <timestamp>2011-02-24T11:39:48Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Enterprise_Plaza.]]
+	[[Category:_1980_architecture_in_the_United_States]]
+	[[Category:Buildings_and_structures_completed_in_1980]]
+	[[Category:Hines_Interests_Limited_Partnership]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Figueroa at Wilshire</title>
+    <id>850</id>
+    <revision>
+      <id>1085</id>
+      <timestamp>2011-02-24T11:39:49Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Figueroa_at_Wilshire.]]
+	[[Category:_1990_architecture]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Florida</title>
+    <id>851</id>
+    <revision>
+      <id>1086</id>
+      <timestamp>2011-02-24T11:39:49Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Florida.]]
+	[[Category:Florida_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:Florida]]
+	[[Category:Former_British_colonies]]
+	[[Category:Former_Spanish_colonies]]
+	[[Category:Peninsulas_of_the_United_States]]
+	[[Category:States_and_territories_established_in_1845]]
+	[[Category:States_of_the_Confederate_States_of_America]]
+	[[Category:States_of_the_Southern_United_States]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Fontainebleau Resort Las Vegas</title>
+    <id>852</id>
+    <revision>
+      <id>1087</id>
+      <timestamp>2011-02-24T11:39:49Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Fontainebleau_Resort_Las_Vegas.]]
+	[[Category:Buildings_and_structures_in_Paradise,_Nevada]]
+	[[Category:Casinos_in_Las_Vegas]]
+	[[Category:Companies_that_have_filed_for_Chapter_11_bankruptcy]]
+	[[Category:Las_Vegas_Strip]]
+	[[Category:Resorts_in_Las_Vegas]]
+	[[Category:Skyscraper_hotels_in_the_Las_Vegas_metropolitan_area]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Unfinished_buildings_and_structures]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Fountain Place</title>
+    <id>853</id>
+    <revision>
+      <id>1088</id>
+      <timestamp>2011-02-24T11:39:50Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Fountain_Place.]]
+	[[Category:_1986_architecture]]
+	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
+	[[Category:I._M._Pei_buildings]]
+	[[Category:Office_buildings_in_Dallas,_Texas]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Dallas,_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Franklin Center (Chicago)</title>
+    <id>854</id>
+    <revision>
+      <id>1089</id>
+      <timestamp>2011-02-24T11:39:50Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Franklin_Center_(Chicago).]]
+	[[Category:AT%26T_buildings]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Telecommunications_company_headquarters_in_the_United_States]]
+	[[Located_in::Chicago]]
+	[[Image::_2010-07-12_1240x1860_chicago_at%26t_corporate_center.jpg]]
+	[[Height_stories::60]]
+	[[Building_name::Franklin Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>GE Building</title>
+    <id>855</id>
+    <revision>
+      <id>1090</id>
+      <timestamp>2011-02-24T11:39:51Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of GE_Building.]]
+	[[Category:_1933_architecture]]
+	[[Category:Art_Deco_buildings_in_New_York_City]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Landmarks_in_Manhattan]]
+	[[Category:Media_company_headquarters_in_the_United_States]]
+	[[Category:NBC_buildings]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Rockefeller_Center]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Gas Company Tower</title>
+    <id>856</id>
+    <revision>
+      <id>1091</id>
+      <timestamp>2011-02-24T11:39:51Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Gas_Company_Tower.]]
+	[[Category:Headquarters_in_the_United_States]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Georgia</title>
+    <id>857</id>
+    <revision>
+      <id>1092</id>
+      <timestamp>2011-02-24T11:39:51Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Georgia.]]
+	[[Category:Georgia_(U.S._state)_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]
+	[[Category:Place_name_disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Goldman Sachs Tower</title>
+    <id>858</id>
+    <revision>
+      <id>1093</id>
+      <timestamp>2011-02-24T11:39:52Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Goldman_Sachs_Tower.]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_2004]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:Leadership_in_Energy_and_Environmental_Design_certified_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Jersey_City,_New_Jersey]]
+	[[Located_in::Jersey_City,_New_Jersey]]
+	[[Image::_30hudson.jpg]]
+	[[Height_stories::42]]
+	[[Building_name::Goldman Sachs Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Heritage Plaza</title>
+    <id>859</id>
+    <revision>
+      <id>1094</id>
+      <timestamp>2011-02-24T11:39:53Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Heritage_Plaza.]]
+	[[Category:_1987_architecture]]
+	[[Category:Chevron_Corporation]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Oil_company_headquarters_in_the_United_States]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Houston</title>
+    <id>860</id>
+    <revision>
+      <id>1095</id>
+      <timestamp>2011-02-24T11:39:53Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Houston.]]
+	[[Category:Cities_in_Texas]]
+	[[Category:Houston,_Texas]]
+	[[Category:Populated_coastal_places_in_Texas]]
+	[[Category:Populated_places_established_in_1836]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Located_in_state::Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>IDS Center</title>
+    <id>861</id>
+    <revision>
+      <id>1096</id>
+      <timestamp>2011-02-24T11:39:53Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of IDS_Center.]]
+	[[Category:Buildings_and_structures_completed_in_1974]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Postmodern_architecture]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Minneapolis,_Minnesota]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Illinois</title>
+    <id>862</id>
+    <revision>
+      <id>1097</id>
+      <timestamp>2011-02-24T11:39:54Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Illinois.]]
+	[[Category:Illinois_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Illinois]]
+	[[Category:States_and_territories_established_in_1818]]
+	[[Category:States_of_the_United_States]]
+	[[Category:Use_mdy_dates_from_January_2011]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Indiana</title>
+    <id>863</id>
+    <revision>
+      <id>1098</id>
+      <timestamp>2011-02-24T11:39:54Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Indiana.]]
+	[[Category:Indiana_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Indiana]]
+	[[Category:States_and_territories_established_in_1816]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Indianapolis</title>
+    <id>864</id>
+    <revision>
+      <id>1099</id>
+      <timestamp>2011-02-24T11:39:55Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Indianapolis.]]
+	[[Category:Cities_in_Indiana]]
+	[[Category:Consolidated_city%E2%80%93counties_in_the_United_States]]
+	[[Category:County_seats_in_Indiana]]
+	[[Category:Indianapolis,_Indiana]]
+	[[Category:Indianapolis_metropolitan_area]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Marion_County,_Indiana]]
+	[[Category:National_Road]]
+	[[Category:Planned_cities_in_the_United_States]]
+	[[Category:Populated_places_established_in_1821]]
+	[[Category:Indiana_city_templates]]
+	[[Category:Indianapolis,_Indiana_navigational_boxes]]
+	[[Category:Indianapolis,_Indiana_templates]]
+	[[Located_in_state::Indiana]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>JPMorgan Chase Tower (Houston)</title>
+    <id>865</id>
+    <revision>
+      <id>1100</id>
+      <timestamp>2011-02-24T11:39:55Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of JPMorgan_Chase_Tower_(Houston).]]
+	[[Category:_1981_architecture]]
+	[[Category:Building]]
+	[[Category:I._M._Pei_buildings]]
+	[[Category:JPMorgan_Chase_buildings]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]
+	[[Image::Chase_Tower,_a_block_away.jpg]]
+	[[Located_in::Houston]]
+	[[Height_stories::75]]
+	[[Building_name::JPMorgan Chase Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Jersey City, New Jersey</title>
+    <id>866</id>
+    <revision>
+      <id>1101</id>
+      <timestamp>2011-02-24T11:39:56Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Jersey_City,_New_Jersey.]]
+	[[Category:Cities_in_New_Jersey]]
+	[[Category:County_seats_in_New_Jersey]]
+	[[Category:Faulkner_Act_Mayor-Council]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Jersey_City,_New_Jersey]]
+	[[Category:New_Jersey_Meadowlands_District]]
+	[[Category:New_Jersey_Urban_Enterprise_Zones]]
+	[[Category:Populated_places_established_in_1633]]
+	[[Category:Populated_places_in_Hudson_County,_New_Jersey]]
+	[[Category:Populated_places_on_the_Hudson_River]]
+	[[Located_in_state::New_Jersey]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>John Hancock Center</title>
+    <id>867</id>
+    <revision>
+      <id>1102</id>
+      <timestamp>2011-02-24T11:39:56Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of John_Hancock_Center.]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1970]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Located_in::Chicago]]
+	[[Image::Hancock_tower_2006.jpg]]
+	[[Building_name::John Hancock Center]]
+	[[Height_stories::100]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Key Tower</title>
+    <id>868</id>
+    <revision>
+      <id>1103</id>
+      <timestamp>2011-02-24T11:39:57Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Key_Tower.]]
+	[[Category:_1991_architecture]]
+	[[Category:Building]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Cleveland,_Ohio]]
+	[[Located_in::Cleveland]]
+	[[Image::Key_tower.jpg]]
+	[[Height_stories::57]]
+	[[Building_name::Key Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Las Vegas</title>
+    <id>869</id>
+    <revision>
+      <id>1104</id>
+      <timestamp>2011-02-24T11:39:57Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Las_Vegas.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Las Vegas, Nevada</title>
+    <id>870</id>
+    <revision>
+      <id>1105</id>
+      <timestamp>2011-02-24T11:39:57Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Las_Vegas,_Nevada.]]
+	[[Category:Cities_in_Nevada]]
+	[[Category:Cities_in_the_Mojave_Desert]]
+	[[Category:Clark_County,_Nevada]]
+	[[Category:County_seats_in_Nevada]]
+	[[Category:Gambling_in_the_United_States]]
+	[[Category:Las_Vegas,_Nevada]]
+	[[Category:Populated_places_established_in_1905]]
+	[[Category:Semi-protected_portals]]
+	[[Category:Use_mdy_dates_from_February_2011]]
+	[[Located_in_state::Nevada]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Legacy Tower</title>
+    <id>871</id>
+    <revision>
+      <id>1106</id>
+      <timestamp>2011-02-24T11:39:58Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Legacy_Tower.]]
+	[[Category:Building]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Category:University_and_college_academic_buildings_in_the_United_States]]
+	[[Image::Legacytowerchicago.jpg]]
+	[[Located_in::Chicago]]
+	[[Height_stories::72]]
+	[[Building_name::The Legacy at Millennium Park]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Los Angeles</title>
+    <id>872</id>
+    <revision>
+      <id>1107</id>
+      <timestamp>2011-02-24T11:39:58Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Los_Angeles.]]
+	[[Category:All_accuracy_disputes]]
+	[[Category:Cities_in_California]]
+	[[Category:Cities_in_Los_Angeles_County,_California]]
+	[[Category:Communities_on_U.S._Route_66]]
+	[[Category:County_seats_in_California]]
+	[[Category:Host_cities_of_the_Summer_Olympic_Games]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Los_Angeles,_California]]
+	[[Category:Populated_places_established_in_1781]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Semi-protected_portals]]
+	[[Category:Use_mdy_dates_from_December_2010]]
+	[[Category:California_city_templates]]
+	[[Category:Los_Angeles_navbox_templates]]
+	[[Located_in_state::California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Massachusetts</title>
+    <id>873</id>
+    <revision>
+      <id>1108</id>
+      <timestamp>2011-02-24T11:39:59Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Massachusetts.]]
+	[[Category:Massachusetts_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Former_British_colonies]]
+	[[Category:Massachusetts]]
+	[[Category:New_England]]
+	[[Category:Northeastern_United_States]]
+	[[Category:States_and_territories_established_in_1788]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>MetLife Building</title>
+    <id>874</id>
+    <revision>
+      <id>1109</id>
+      <timestamp>2011-02-24T11:39:59Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of MetLife_Building.]]
+	[[Category:_1963_architecture]]
+	[[Category:Aviation_in_New_York_City]]
+	[[Category:Heliports_in_New_York]]
+	[[Category:Insurance_company_headquarters_in_the_United_States]]
+	[[Category:Metropolitan_Life_Insurance_Company]]
+	[[Category:Modernist_architecture_in_New_York]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Pan_Am]]
+	[[Category:Pietro_Belluschi_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Walter_Gropius_buildings]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Metropolitan Life Insurance Company Tower</title>
+    <id>875</id>
+    <revision>
+      <id>1110</id>
+      <timestamp>2011-02-24T11:39:59Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Metropolitan_Life_Insurance_Company_Tower.]]
+	[[Category:_1909_architecture]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Clock_towers_in_the_United_States]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:Metropolitan_Life_Insurance_Company]]
+	[[Category:National_Historic_Landmarks_in_New_York_City]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Proposed_buildings_and_structures_in_the_United_States]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Towers_in_New_York]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Metropolitan Tower</title>
+    <id>876</id>
+    <revision>
+      <id>1111</id>
+      <timestamp>2011-02-24T11:40:00Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Metropolitan_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Miami</title>
+    <id>877</id>
+    <revision>
+      <id>1112</id>
+      <timestamp>2011-02-24T11:40:00Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Miami.]]
+	[[Category:Bermuda_Triangle]]
+	[[Category:Cities_in_Miami-Dade_County,_Florida]]
+	[[Category:County_seats_in_Florida]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Miami,_Florida]]
+	[[Category:Populated_places_established_in_1896]]
+	[[Category:Populated_places_in_the_United_States_with_Hispanic_majority_populations]]
+	[[Category:Port_cities_in_Florida]]
+	[[Category:Seaside_resorts_in_Florida]]
+	[[Category:Tropics]]
+	[[Category:Use_mdy_dates_from_August_2010]]
+	[[Category:Florida_city_navigational_boxes]]
+	[[Category:WikiProject_Miami]]
+	[[Located_in_state::Florida]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Michigan</title>
+    <id>878</id>
+    <revision>
+      <id>1113</id>
+      <timestamp>2011-02-24T11:40:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Michigan.]]
+	[[Category:Michigan_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Michigan]]
+	[[Category:States_and_territories_established_in_1837]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Minneapolis</title>
+    <id>879</id>
+    <revision>
+      <id>1114</id>
+      <timestamp>2011-02-24T11:40:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Minneapolis.]]
+	[[Category:Cities_in_Minnesota]]
+	[[Category:County_seats_in_Minnesota]]
+	[[Category:Hennepin_County,_Minnesota]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Minneapolis,_Minnesota]]
+	[[Category:Minneapolis_%E2%80%93_Saint_Paul]]
+	[[Category:Populated_places_established_in_1856]]
+	[[Category:Populated_places_on_the_Mississippi_River]]
+	[[Located_in_state::Minnesota]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Minnesota</title>
+    <id>880</id>
+    <revision>
+      <id>1115</id>
+      <timestamp>2011-02-24T11:40:01Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Minnesota.]]
+	[[Category:Minnesota_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Minnesota]]
+	[[Category:States_and_territories_established_in_1858]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Mobile, Alabama</title>
+    <id>881</id>
+    <revision>
+      <id>1116</id>
+      <timestamp>2011-02-24T11:40:02Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Mobile,_Alabama.]]
+	[[Category:Cities_in_Alabama]]
+	[[Category:County_seats_in_Alabama]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Mobile,_Alabama]]
+	[[Category:Populated_places_established_in_1702]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:United_States_colonial_and_territorial_capitals]]
+	[[Located_in_state::Alabama]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Nevada</title>
+    <id>882</id>
+    <revision>
+      <id>1117</id>
+      <timestamp>2011-02-24T11:40:02Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Nevada.]]
+	[[Category:Former_Spanish_colonies]]
+	[[Category:Nevada]]
+	[[Category:States_and_territories_established_in_1864]]
+	[[Category:States_of_the_United_States]]
+	[[Category:Western_United_States]]
+	[[Category:Nevada_navigational_boxes]]
+	[[Category:United_States_State]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>New Jersey</title>
+    <id>883</id>
+    <revision>
+      <id>1118</id>
+      <timestamp>2011-02-24T11:40:03Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of New_Jersey.]]
+	[[Category:Former_British_colonies]]
+	[[Category:New_Jersey]]
+	[[Category:Peninsulas_of_the_United_States]]
+	[[Category:Semi-protected_portals]]
+	[[Category:States_and_territories_established_in_1787]]
+	[[Category:States_of_the_United_States]]
+	[[Category:New_Jersey_navigational_boxes]]
+	[[Category:United_States_State]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>New York</title>
+    <id>884</id>
+    <revision>
+      <id>1119</id>
+      <timestamp>2011-02-24T11:40:03Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of New_York.]]
+	[[Category:New_York_templates]]
+	[[Category:United_States_State]]
+	[[Category:Former_British_colonies]]
+	[[Category:New_York]]
+	[[Category:Semi-protected_portals]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>New York City</title>
+    <id>885</id>
+    <revision>
+      <id>1120</id>
+      <timestamp>2011-02-24T11:40:03Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of New_York_City.]]
+	[[Category:_1624_establishments_in_the_Thirteen_Colonies]]
+	[[Category:Cities_in_New_York]]
+	[[Category:Former_United_States_state_capitals]]
+	[[Category:Former_capitals_of_the_United_States]]
+	[[Category:Former_national_capitals]]
+	[[Category:Government_of_New_York_City]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Metropolitan_areas_of_the_United_States]]
+	[[Category:New_York_City]]
+	[[Category:Populated_places_established_in_1624]]
+	[[Category:Populated_places_on_the_Hudson_River]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Summer_Paralympic_Games]]
+	[[Category:New_York_City_templates]]
+	[[Category:New_York_government_navigational_boxes]]
+	[[Located_in_state::New_York]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>North Carolina</title>
+    <id>886</id>
+    <revision>
+      <id>1121</id>
+      <timestamp>2011-02-24T11:40:04Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of North_Carolina.]]
+	[[Category:Former_British_colonies]]
+	[[Category:North_Carolina]]
+	[[Category:Spanish_colonization_of_the_Americas]]
+	[[Category:States_and_territories_established_in_1789]]
+	[[Category:States_of_the_Confederate_States_of_America]]
+	[[Category:States_of_the_Southern_United_States]]
+	[[Category:States_of_the_United_States]]
+	[[Category:North_Carolina_navigational_boxes]]
+	[[Category:United_States_State]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Ohio</title>
+    <id>887</id>
+    <revision>
+      <id>1122</id>
+      <timestamp>2011-02-24T11:40:04Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Ohio.]]
+	[[Category:Ohio_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Midwestern_United_States]]
+	[[Category:Ohio]]
+	[[Category:States_and_territories_established_in_1803]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Olympia Centre</title>
+    <id>888</id>
+    <revision>
+      <id>1123</id>
+      <timestamp>2011-02-24T11:40:05Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Olympia_Centre.]]
+	[[Category:_1986_architecture]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Astor Plaza</title>
+    <id>889</id>
+    <revision>
+      <id>1124</id>
+      <timestamp>2011-02-24T11:40:05Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Astor_Plaza.]]
+	[[Category:Buildings_and_structures_completed_in_1972]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Times_Square]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Atlantic Center</title>
+    <id>890</id>
+    <revision>
+      <id>1125</id>
+      <timestamp>2011-02-24T11:40:05Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Atlantic_Center.]]
+	[[Category:Buildings_and_structures_completed_in_1987]]
+	[[Category:Hines_Interests_Limited_Partnership]]
+	[[Category:IBM_facilities]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Office_buildings_in_Atlanta,_Georgia]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Postmodern_architecture_in_the_United_States]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Chase Manhattan Plaza</title>
+    <id>891</id>
+    <revision>
+      <id>1126</id>
+      <timestamp>2011-02-24T11:40:06Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Chase_Manhattan_Plaza.]]
+	[[Category:_1961_architecture]]
+	[[Category:Buildings_associated_with_the_Rockefeller_family]]
+	[[Category:JPMorgan_Chase_buildings]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Liberty Place</title>
+    <id>892</id>
+    <revision>
+      <id>1127</id>
+      <timestamp>2011-02-24T11:40:06Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Liberty_Place.]]
+	[[Category:_1987_architecture]]
+	[[Category:Building]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Philadelphia,_Pennsylvania]]
+	[[Located_in::Philadelphia]]
+	[[Image::One_liberty_place.JPG]]
+	[[Height_stories::63]]
+	[[Building_name::One Liberty Place]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Liberty Plaza</title>
+    <id>893</id>
+    <revision>
+      <id>1128</id>
+      <timestamp>2011-02-24T11:40:07Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Liberty_Plaza.]]
+	[[Category:Buildings_and_structures_completed_in_1973]]
+	[[Category:New_York_City_stubs]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Museum Park</title>
+    <id>894</id>
+    <revision>
+      <id>1129</id>
+      <timestamp>2011-02-24T11:40:07Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Museum_Park.]]
+	[[Category:_2007_architecture]]
+	[[Category:_2010_establishments]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Museum_places]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Penn Plaza</title>
+    <id>895</id>
+    <revision>
+      <id>1130</id>
+      <timestamp>2011-02-24T11:40:07Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Penn_Plaza.]]
+	[[Category:Buildings_and_structures_completed_in_1972]]
+	[[Category:Pennsylvania_Plaza]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Prudential Plaza</title>
+    <id>896</id>
+    <revision>
+      <id>1131</id>
+      <timestamp>2011-02-24T11:40:08Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Prudential_Plaza.]]
+	[[Category:_1955_architecture]]
+	[[Category:Insurance_company_headquarters_in_the_United_States]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Prudential_Financial_buildings]]
+	[[Category:Skyscrapers_between_150_and_199_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Shell Plaza</title>
+    <id>897</id>
+    <revision>
+      <id>1132</id>
+      <timestamp>2011-02-24T11:40:08Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Shell_Plaza.]]
+	[[Category:_1971_architecture]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Oil_company_headquarters_in_the_United_States]]
+	[[Category:Royal_Dutch_Shell_buildings_and_structures]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>One Worldwide Plaza</title>
+    <id>898</id>
+    <revision>
+      <id>1133</id>
+      <timestamp>2011-02-24T11:40:09Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of One_Worldwide_Plaza.]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Park Tower</title>
+    <id>899</id>
+    <revision>
+      <id>1134</id>
+      <timestamp>2011-02-24T11:40:09Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Park_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Park Tower (Chicago)</title>
+    <id>900</id>
+    <revision>
+      <id>1135</id>
+      <timestamp>2011-02-24T11:40:09Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Park_Tower_(Chicago).]]
+	[[Category:Condo-hotels_in_the_United_States]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Pennsylvania</title>
+    <id>901</id>
+    <revision>
+      <id>1136</id>
+      <timestamp>2011-02-24T11:40:10Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Pennsylvania.]]
+	[[Category:Pennsylvania_navigational_boxes]]
+	[[Category:United_States_State]]
+	[[Category:Former_British_colonies]]
+	[[Category:Northeastern_United_States]]
+	[[Category:Pennsylvania]]
+	[[Category:States_and_territories_established_in_1787]]
+	[[Category:States_of_the_United_States]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Philadelphia</title>
+    <id>902</id>
+    <revision>
+      <id>1137</id>
+      <timestamp>2011-02-24T11:40:10Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Philadelphia.]]
+	[[Category:_1682_establishments_in_the_Thirteen_Colonies]]
+	[[Category:All_pages_needing_cleanup]]
+	[[Category:Cities_in_Pennsylvania]]
+	[[Category:Consolidated_city%E2%80%93counties_in_the_United_States]]
+	[[Category:County_seats_in_Pennsylvania]]
+	[[Category:Former_United_States_state_capitals]]
+	[[Category:Former_capitals_of_the_United_States]]
+	[[Category:Former_national_capitals]]
+	[[Category:Greek_loanwords]]
+	[[Category:Philadelphia,_Pennsylvania]]
+	[[Category:Planned_cities_in_the_United_States]]
+	[[Category:Populated_places_established_in_1682]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Semi-protected_portals]]
+	[[Category:Vague_or_ambiguous_time_from_May_2010]]
+	[[Category:Pennsylvania_city_navigational_boxes]]
+	[[Category:Pennsylvania_navigational_boxes]]
+	[[Located_in_state::Pennsylvania]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Pittsburgh</title>
+    <id>903</id>
+    <revision>
+      <id>1138</id>
+      <timestamp>2011-02-24T11:40:10Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Pittsburgh.]]
+	[[Category:_1794_establishments]]
+	[[Category:Cities_in_Pennsylvania]]
+	[[Category:County_seats_in_Pennsylvania]]
+	[[Category:Early_American_industrial_centers]]
+	[[Category:Pittsburgh,_Pennsylvania]]
+	[[Category:Pittsburgh_metropolitan_area]]
+	[[Category:Populated_places_established_in_1758]]
+	[[Category:Populated_places_in_Allegheny_County,_Pennsylvania]]
+	[[Category:Populated_places_on_the_Ohio_River]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:Pennsylvania_templates]]
+	[[Located_in_state::Pennsylvania]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Prudential Tower</title>
+    <id>904</id>
+    <revision>
+      <id>1139</id>
+      <timestamp>2011-02-24T11:40:11Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Prudential_Tower.]]
+	[[Category:_1964_architecture]]
+	[[Category:Back_Bay,_Boston]]
+	[[Category:Landmarks_in_Boston,_Massachusetts]]
+	[[Category:Office_buildings_in_Boston,_Massachusetts]]
+	[[Category:Prudential_Financial_buildings]]
+	[[Category:Revolving_restaurants]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Boston,_Massachusetts]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>RSA Battle House Tower</title>
+    <id>905</id>
+    <revision>
+      <id>1140</id>
+      <timestamp>2011-02-24T11:40:11Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of RSA_Battle_House_Tower.]]
+	[[Category:Buildings_and_structures_completed_in_2007]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Mobile,_Alabama]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Renaissance Tower</title>
+    <id>906</id>
+    <revision>
+      <id>1141</id>
+      <timestamp>2011-02-24T11:40:11Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Renaissance_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Renaissance Tower (Dallas)</title>
+    <id>907</id>
+    <revision>
+      <id>1142</id>
+      <timestamp>2011-02-24T11:40:12Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Renaissance_Tower_(Dallas).]]
+	[[Category:_1974_architecture]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_in_Dallas,_Texas]]
+	[[Category:Office_buildings_in_Dallas,_Texas]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Dallas,_Texas]]
+	[[Located_in::Dallas]]
+	[[Image::Dallas_Renaissance_Tower_1.jpg]]
+	[[Height_stories::56]]
+	[[Year_built::1/1/1974]]
+	[[Building_name::Renaissance Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Republic Plaza</title>
+    <id>908</id>
+    <revision>
+      <id>1143</id>
+      <timestamp>2011-02-24T11:40:12Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Republic_Plaza.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Place_name_disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>San Francisco</title>
+    <id>909</id>
+    <revision>
+      <id>1144</id>
+      <timestamp>2011-02-24T11:40:13Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of San_Francisco.]]
+	[[Category:California_counties]]
+	[[Category:Consolidated_city%E2%80%93counties_in_the_United_States]]
+	[[Category:County_seats_in_California]]
+	[[Category:Hudson%27s_Bay_Company_trading_posts]]
+	[[Category:Infobox_Settlement_US_maintenance]]
+	[[Category:Populated_coastal_places_in_California]]
+	[[Category:Populated_places_established_in_1776]]
+	[[Category:Port_settlements_in_the_United_States]]
+	[[Category:San_Francisco,_California]]
+	[[Category:California_city_templates]]
+	[[Category:California_county_navigational_boxes]]
+	[[Category:Northern_California_navigational_boxes]]
+	[[Located_in_state::California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Seattle</title>
+    <id>910</id>
+    <revision>
+      <id>1145</id>
+      <timestamp>2011-02-24T11:40:13Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Seattle.]]
+	[[Category:Cities_in_Washington_(U.S._state)]]
+	[[Category:Cities_in_the_Seattle_metropolitan_area]]
+	[[Category:County_seats_in_Washington_(U.S._state)]]
+	[[Category:Geography_of_Seattle,_Washington]]
+	[[Category:Isthmuses]]
+	[[Category:King_County,_Washington]]
+	[[Category:Neighborhoods_in_Seattle,_Washington]]
+	[[Category:Populated_places_established_in_1853]]
+	[[Category:Port_settlements_in_Washington_(U.S._state)]]
+	[[Category:Seattle,_Washington]]
+	[[Located_in_state::Washington_(state)]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Seattle Municipal Tower</title>
+    <id>911</id>
+    <revision>
+      <id>1146</id>
+      <timestamp>2011-02-24T11:40:14Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Seattle_Municipal_Tower.]]
+	[[Category:_1990_architecture]]
+	[[Category:Building]]
+	[[Category:Office_buildings_in_Seattle,_Washington]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Seattle,_Washington]]
+	[[Image::Seattle_Municipal_Tower.JPG]]
+	[[Located_in::Seattle]]
+	[[Building_name::Seattle Municipal Tower]]
+	[[Height_stories::62]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>SunTrust Plaza</title>
+    <id>912</id>
+    <revision>
+      <id>1147</id>
+      <timestamp>2011-02-24T11:40:14Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of SunTrust_Plaza.]]
+	[[Category:Bank_company_headquarters_in_the_United_States]]
+	[[Category:Buildings_and_structures_completed_in_1992]]
+	[[Category:John_C._Portman,_Jr._buildings]]
+	[[Category:Office_buildings_in_Atlanta,_Georgia]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Terminal Tower</title>
+    <id>913</id>
+    <revision>
+      <id>1148</id>
+      <timestamp>2011-02-24T11:40:15Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Terminal_Tower.]]
+	[[Category:Forest_City_Enterprises]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Cleveland,_Ohio]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Texas</title>
+    <id>914</id>
+    <revision>
+      <id>1149</id>
+      <timestamp>2011-02-24T11:40:15Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Texas.]]
+	[[Category:United_States_State]]
+	[[Category:Former_Spanish_colonies]]
+	[[Category:States_and_territories_established_in_1845]]
+	[[Category:States_of_the_Confederate_States_of_America]]
+	[[Category:States_of_the_Southern_United_States]]
+	[[Category:States_of_the_United_States]]
+	[[Category:Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>The New York Times Building</title>
+    <id>915</id>
+    <revision>
+      <id>1150</id>
+      <timestamp>2011-02-24T11:40:15Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of The_New_York_Times_Building.]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_2007]]
+	[[Category:Eighth_Avenue_(Manhattan)]]
+	[[Category:Forest_City_Enterprises]]
+	[[Category:Media_company_headquarters_in_the_United_States]]
+	[[Category:Modernist_architecture_in_New_York]]
+	[[Category:Office_buildings_in_Manhattan]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Renzo_Piano_buildings]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:The_New_York_Times]]
+	[[Category:Times_Square]]
+	[[Located_in::New_York_City]]
+	[[Image::Ny-times-tower.jpg]]
+	[[Height_stories::52]]
+	[[Building_name::The New York Times Building]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Three First National Plaza</title>
+    <id>916</id>
+    <revision>
+      <id>1151</id>
+      <timestamp>2011-02-24T11:40:16Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Three_First_National_Plaza.]]
+	[[Category:_1981_architecture]]
+	[[Category:Chicago,_Illinois_stubs]]
+	[[Category:Illinois_building_and_structure_stubs]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Three World Financial Center</title>
+    <id>917</id>
+    <revision>
+      <id>1152</id>
+      <timestamp>2011-02-24T11:40:16Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Three_World_Financial_Center.]]
+	[[Category:_1985_architecture]]
+	[[Category:American_Express]]
+	[[Category:Lehman_Brothers]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:World_Financial_Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Times Square Tower</title>
+    <id>918</id>
+    <revision>
+      <id>1153</id>
+      <timestamp>2011-02-24T11:40:17Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Times_Square_Tower.]]
+	[[Category:Buildings_and_structures_completed_in_2004]]
+	[[Category:New_York_City_building_and_structure_stubs]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Transamerica Pyramid</title>
+    <id>919</id>
+    <revision>
+      <id>1154</id>
+      <timestamp>2011-02-24T11:40:17Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Transamerica_Pyramid.]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1972]]
+	[[Category:Headquarters_in_the_United_States]]
+	[[Category:Modernist_architecture_in_California]]
+	[[Category:Office_buildings_in_San_Francisco,_California]]
+	[[Category:Pyramids]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_San_Francisco,_California]]
+	[[Category:William_Pereira_buildings]]
+	[[Located_in::San_Francisco]]
+	[[Image::SF_Transamerica_full_CA.jpg]]
+	[[Height_stories::48]]
+	[[Building_name::Transamerica Pyramid]]
+	[[Year_built::1/1/1972]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Trump International Hotel and Tower</title>
+    <id>920</id>
+    <revision>
+      <id>1155</id>
+      <timestamp>2011-02-24T11:40:17Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Trump_International_Hotel_and_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Trump International Hotel and Tower (Chicago)</title>
+    <id>921</id>
+    <revision>
+      <id>1156</id>
+      <timestamp>2011-02-24T11:40:18Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Trump_International_Hotel_and_Tower_(Chicago).]]
+	[[Category:_2009_architecture]]
+	[[Category:Building]]
+	[[Category:Condo-hotels_in_the_United_States]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:Hotels_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscraper_hotels_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_over_350_meters]]
+	[[Located_in::Chicago]]
+	[[Image::_20090518_Trump_International_Hotel_and_Tower,_Chicago.jpg]]
+	[[Height_stories::98]]
+	[[Building_name::Trump International Hotel and Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Trump World Tower</title>
+    <id>922</id>
+    <revision>
+      <id>1157</id>
+      <timestamp>2011-02-24T11:40:18Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Trump_World_Tower.]]
+	[[Category:Buildings_and_structures_in_Manhattan]]
+	[[Category:Condominiums_in_New_York_City]]
+	[[Category:Residential_skyscrapers_in_New_York_City]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Two California Plaza</title>
+    <id>923</id>
+    <revision>
+      <id>1158</id>
+      <timestamp>2011-02-24T11:40:19Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Two_California_Plaza.]]
+	[[Category:_1992_architecture]]
+	[[Category:Arthur_Erickson_buildings]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skyscrapers_between_100_and_149_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Two Liberty Place</title>
+    <id>924</id>
+    <revision>
+      <id>1159</id>
+      <timestamp>2011-02-24T11:40:19Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Two_Liberty_Place.]]
+	[[Category:_1987_architecture]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Philadelphia,_Pennsylvania]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Two Prudential Plaza</title>
+    <id>925</id>
+    <revision>
+      <id>1160</id>
+      <timestamp>2011-02-24T11:40:19Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Two_Prudential_Plaza.]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1990]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Prudential_Financial_buildings]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Image::_2006-08-16_1580x2800_chicago_two_pru.jpg]]
+	[[Located_in::Chicago]]
+	[[Building_name::Two Prudential Plaza]]
+	[[Height_stories::64]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>U.S. Bank Tower</title>
+    <id>926</id>
+    <revision>
+      <id>1161</id>
+      <timestamp>2011-02-24T11:40:20Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of U.S._Bank_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>U.S. Bank Tower (Los Angeles)</title>
+    <id>927</id>
+    <revision>
+      <id>1162</id>
+      <timestamp>2011-02-24T11:40:20Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of U.S._Bank_Tower_(Los_Angeles).]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:Office_buildings_in_Los_Angeles,_California]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Los_Angeles,_California]]
+	[[Category:U.S._Bank_buildings]]
+	[[Image::Los_Angeles_Library_Tower_(small)_crop.jpg]]
+	[[Located_in::Los_Angeles]]
+	[[Height_stories::73]]
+	[[Building_name::U.S. Bank Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>U.S. Steel Tower</title>
+    <id>928</id>
+    <revision>
+      <id>1163</id>
+      <timestamp>2011-02-24T11:40:21Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of U.S._Steel_Tower.]]
+	[[Category:_1970_architecture]]
+	[[Category:Buildings_and_structures_completed_in_1970]]
+	[[Category:Headquarters_in_the_United_States]]
+	[[Category:Office_buildings_in_Pittsburgh,_Pennsylvania]]
+	[[Category:Pittsburgh,_Pennsylvania]]
+	[[Category:Pittsburgh_metropolitan_area]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Pittsburgh,_Pennsylvania]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Union Square (Seattle)</title>
+    <id>929</id>
+    <revision>
+      <id>1164</id>
+      <timestamp>2011-02-24T11:40:21Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Union_Square_(Seattle).]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_completed_in_1981]]
+	[[Category:Buildings_and_structures_completed_in_1989]]
+	[[Category:NBBJ_buildings]]
+	[[Category:Office_buildings_in_Seattle,_Washington]]
+	[[Category:Skyscrapers_between_100_and_149_meters]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Seattle,_Washington]]
+	[[Category:Twin_towers]]
+	[[Image::Two_Union_Square_2.jpg]]
+	[[Located_in::Seattle]]
+	[[Year_built::1/1/1989]]
+	[[Height_stories::56]]
+	[[Building_name::Union Square]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wachovia Financial Center</title>
+    <id>930</id>
+    <revision>
+      <id>1165</id>
+      <timestamp>2011-02-24T11:40:22Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wachovia_Financial_Center.]]
+	[[Category:_1984_architecture]]
+	[[Category:Bank_buildings_in_the_United_States]]
+	[[Category:Office_buildings_in_Miami,_Florida]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Miami,_Florida]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Washington</title>
+    <id>931</id>
+    <revision>
+      <id>1166</id>
+      <timestamp>2011-02-24T11:40:22Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Washington.]]
+	[[Category:United_States_State]]
+	[[Category:Washington_(U.S._state)_navigational_boxes]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]
+	[[Category:Place_name_disambiguation_pages]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Water Tower Place</title>
+    <id>932</id>
+    <revision>
+      <id>1167</id>
+      <timestamp>2011-02-24T11:40:22Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Water_Tower_Place.]]
+	[[Category:_1975_architecture]]
+	[[Category:Condo-hotels_in_the_United_States]]
+	[[Category:Condominiums_in_Chicago,_Illinois]]
+	[[Category:General_Growth_Properties]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Residential_skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Shopping_centers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Visitor_attractions_in_Chicago,_Illinois]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wells Fargo Center</title>
+    <id>933</id>
+    <revision>
+      <id>1168</id>
+      <timestamp>2011-02-24T11:40:23Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wells_Fargo_Center.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]
+	[[Category:Wells_Fargo_buildings]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wells Fargo Center (Minneapolis)</title>
+    <id>934</id>
+    <revision>
+      <id>1169</id>
+      <timestamp>2011-02-24T11:40:23Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wells_Fargo_Center_(Minneapolis).]]
+	[[Category:_1988_architecture]]
+	[[Category:Art_Deco_architecture_in_Minnesota]]
+	[[Category:Building]]
+	[[Category:C%C3%A9sar_Pelli_buildings]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_Minneapolis,_Minnesota]]
+	[[Category:Wells_Fargo_buildings]]
+	[[Located_in::Minneapolis]]
+	[[Image::Wells_Fargo_Center_from_Foshay.jpg]]
+	[[Height_stories::57]]
+	[[Building_name::Wells Fargo Center]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wells Fargo Plaza</title>
+    <id>935</id>
+    <revision>
+      <id>1170</id>
+      <timestamp>2011-02-24T11:40:23Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wells_Fargo_Plaza.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]
+	[[Category:Wells_Fargo_buildings]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wells Fargo Plaza (Houston)</title>
+    <id>936</id>
+    <revision>
+      <id>1171</id>
+      <timestamp>2011-02-24T11:40:24Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wells_Fargo_Plaza_(Houston).]]
+	[[Category:_1983_architecture]]
+	[[Category:Building]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Skyscrapers_between_300_and_349_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]
+	[[Category:Wells_Fargo_buildings]]
+	[[Located_in::Houston]]
+	[[Image::Wells_Fargo_Bank_Plaza,_Houston,_from_base.jpg]]
+	[[Height_stories::71]]
+	[[Year_built::1/1/1979]]
+	[[Building_name::Wells Fargo Plaza]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wells Fargo Tower</title>
+    <id>937</id>
+    <revision>
+      <id>1172</id>
+      <timestamp>2011-02-24T11:40:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Wells_Fargo_Tower.]]
+	[[Category:All_article_disambiguation_pages]]
+	[[Category:All_disambiguation_pages]]
+	[[Category:Disambiguation_pages]]
+	[[Category:Wells_Fargo_buildings]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Westin Peachtree Plaza Hotel</title>
+    <id>938</id>
+    <revision>
+      <id>1173</id>
+      <timestamp>2011-02-24T11:40:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Westin_Peachtree_Plaza_Hotel.]]
+	[[Category:Buildings_and_structures_completed_in_1976]]
+	[[Category:Hotels_established_in_1976]]
+	[[Category:Hotels_in_Atlanta,_Georgia]]
+	[[Category:John_C._Portman,_Jr._buildings]]
+	[[Category:Revolving_restaurants]]
+	[[Category:Skyscraper_hotels_in_the_United_States]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Westin_hotels]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Williams Tower</title>
+    <id>939</id>
+    <revision>
+      <id>1174</id>
+      <timestamp>2011-02-24T11:40:25Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Williams_Tower.]]
+	[[Category:_1983_architecture]]
+	[[Category:John_Burgee_buildings]]
+	[[Category:Office_buildings_in_Houston,_Texas]]
+	[[Category:Philip_Johnson_buildings]]
+	[[Category:Skyscrapers_between_250_and_299_meters]]
+	[[Category:Skyscrapers_in_Houston,_Texas]]
+	[[Category:Skyscrapers_in_Texas]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Willis Tower</title>
+    <id>940</id>
+    <revision>
+      <id>1175</id>
+      <timestamp>2011-02-24T11:40:26Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Willis_Tower.]]
+	[[Category:_1973_architecture]]
+	[[Category:Building]]
+	[[Category:Buildings_and_structures_on_U.S._Route_66]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:Landmarks_in_Chicago,_Illinois]]
+	[[Category:Office_buildings_in_Chicago,_Illinois]]
+	[[Category:Retail_company_headquarters_in_the_United_States]]
+	[[Category:Skidmore,_Owings_and_Merrill_buildings]]
+	[[Category:Skyscrapers_in_Chicago,_Illinois]]
+	[[Category:Skyscrapers_over_350_meters]]
+	[[Category:United_Airlines]]
+	[[Category:Visitor_attractions_along_U.S._Route_66]]
+	[[Category:Visitor_attractions_in_Chicago,_Illinois]]
+	[[Located_in::Chicago]]
+	[[Image::Sears_Tower_ss.jpg]]
+	[[Height_stories::108]]
+	[[Building_name::Willis Tower]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Woolworth Building</title>
+    <id>941</id>
+    <revision>
+      <id>1176</id>
+      <timestamp>2011-02-24T11:40:27Z</timestamp>
+      <contributor>
+        <username>U1</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created for test case</comment>
+      <text xml:space="preserve">	[[Description::This is the description of Woolworth_Building.]]
+	[[Category:_1913_architecture]]
+	[[Category:Buildings_and_structures_on_the_National_Register_of_Historic_Places_in_Manhattan]]
+	[[Category:Cass_Gilbert_buildings]]
+	[[Category:F._W._Woolworth_Company_buildings_and_structures]]
+	[[Category:Fordham_University]]
+	[[Category:Former_world%27s_tallest_buildings]]
+	[[Category:Gothic_Revival_architecture_in_New_York]]
+	[[Category:National_Historic_Landmarks_in_New_York_City]]
+	[[Category:Neo-Gothic_skyscrapers]]
+	[[Category:Office_buildings_in_New_York_City]]
+	[[Category:Retail_company_headquarters_in_the_United_States]]
+	[[Category:Skyscrapers_between_200_and_249_meters]]
+	[[Category:Skyscrapers_in_New_York_City]]
+	[[Category:Terracotta]]
+	[[Category:Visitor_attractions_in_Manhattan]]</text>
+    </revision>
+  </page>
+</mediawiki>

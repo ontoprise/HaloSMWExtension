@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>156</version>
+		<id>unifiedsearch</id>
+		<vendor>ontoprise GmbH</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
+		<license>GPL-v2</license>
+		<instdir>extensions/EnhancedRetrieval</instdir>
+		<description>A client for the lucene wiki server.</description>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
+		</helpurl>
+		<dependencies>
+			<dependency from="1150" to="1169">mw</dependency>
+			<dependency from="101">scriptmanager</dependency>
+            <depencency from="156">smwhalo</depencency>
+		</dependencies>
+	</global>
+	<codefiles>
+
+		<file loc="deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+
+		<new>
+			<variable name="wgSearchType">
+				<string name="wgSearchType" description="Search engine type">LuceneSearch</string>
+			</variable>
+			<variable name="wgLuceneHost">
+				<string name="wgLuceneHost" description="Host">localhost</string>
+			</variable>
+			<variable name="wgLucenePort">
+				<string name="wgLucenePort" description="Port">8123</string>
+			</variable>
+			<variable name="wgLuceneSearchVersion">
+				<string name="wgLuceneSearchVersion" description="Version">2.1</string>
+			</variable>
+			<variable name="wgLuceneSearchTimeout">
+				<string name="wgLuceneSearchTimeout" description="HTTP-Timeout in s">5</string>
+			</variable>
+
+			<require name="us_init"
+				file="extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php" />
+			<script file="maintenance/setup.php" params="" />
+		</new>
+		<update from="136">
+		    <replace>
+		      <search>extensions/UnifiedSearch/OAI/OAIRepo.php</search>
+		      <replacement>extensions/EnhancedRetrieval/OAI/OAIRepo.php</replacement>
+		    </replace>
+			<replace>
+              <search>extensions/UnifiedSearch/includes/UnifiedSearch.php</search>
+              <replacement>extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php</replacement>
+            </replace>
+		</update>
+		<uninstall>
+			<script file="maintenance/setup.php" params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>
+

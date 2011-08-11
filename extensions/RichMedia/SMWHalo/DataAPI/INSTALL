@@ -1,0 +1,22 @@
+Installation instructions.
+
+Requirements: 
+    MediaWiki 1.13 or higher
+  
+The following lines must be added to LocalSettings.php:
+
+For PCP-API (Page-CRUD-Plus):
+$pcpWSServer=true;
+include_once('extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
+
+For POM-API (Page-Object-Model):   
+$pomWSServer=true;
+include_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
+
+For SF-API (Semantic Forms API)
+include_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
+
+Dependencies of the API layers:
+MW API < PCP 
+MW API < POM < SF API
+

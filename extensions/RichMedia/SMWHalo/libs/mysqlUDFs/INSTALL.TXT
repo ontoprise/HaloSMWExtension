@@ -1,0 +1,39 @@
+Installation instructions for MySQL SMW UDFs:
+SMW will also run *without* this enhancement, but with less functionality.
+
+Files:
+
+=========
+Windows =
+=========
+libhalowiki-mysql5.dll for MySQL 5.x
+
+=======
+Linux =
+=======
+libhalowiki-mysql5.so for MySQL 5.x
+libhalowiki-mysql5-amd64.so for MySQL 5.x on 64bit machines
+
+TODOs:
+
+1.) The .ddl needs to be copied to a location that is accessible to the MySQL Server. 
+For MySQL versions lower than 5.1.19, the bin and/or lib directories right beneath the 
+MySQL installation directory should work. For MySQL version 5.1.19 and beyond, you are
+required to copy the dll to the plugin_dir. The plugin_dir can be determined by running 
+the following query:
+
+mysql> show variables like 'plugin_dir';
++---------------+-----------------------------+
+| Variable_name | Value                       |
++---------------+-----------------------------+
+| plugin_dir    | C:\MySQL Server 5.1.21\lib/ |
++---------------+-----------------------------+
+1 row in set (0.00 sec)
+
+2.) Connect to your mysql database using the GUI-tool (e.g. the query browser) or the command line interface
+    and execute the following command: (replace the DLL's/shared object lib's name if necessary)
+
+    CREATE FUNCTION editdistance RETURNS INTEGER SONAME 'libhalowiki-mysql5.dll';
+    CREATE FUNCTION jarowinkler RETURNS REAL SONAME 'libhalowiki-mysql5.so';
+
+3.) Done.

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>File Source for InfModelF.php</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+						
+<h1>Source for file InfModelF.php</h1>
+<p>Documentation is available at <a href="../infModel/_infModel_InfModelF_php.html">InfModelF.php</a></p>
+<div class="src-code">
+<pre><ol><li><a name="a1"></a><span class="src-php">&lt;?PHP</span></li>
+<li><a name="a2"></a>&nbsp;</li>
+<li><a name="a3"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a4"></a><span class="src-comm">// Class: InfModelF</span></li>
+<li><a name="a5"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a6"></a>&nbsp;</li>
+<li><a name="a5"></a>&nbsp;</li>
+<li><a name="a6"></a>&nbsp;</li>
+<li><a name="a7"></a><span class="src-doc">/**</span></li>
+<li><a name="a8"></a><span class="src-doc">* A InfModelF extends the InfModel Class, with a forward chaining algorithm.</span></li>
+<li><a name="a9"></a><span class="src-doc">* If a new statement is added, it is enferd at</span></li>
+<li><a name="a10"></a><span class="src-doc">* once and all the entailed statements are added too.</span></li>
+<li><a name="a11"></a><span class="src-doc">* When adding or removing a statement, that produced a new inference rule,</span></li>
+<li><a name="a12"></a><span class="src-doc">* all entailed statements are discarded and the whole base model is infered</span></li>
+<li><a name="a13"></a><span class="src-doc">* again.</span></li>
+<li><a name="a14"></a><span class="src-doc">* The InfModelF is safe for loops in Ontologies, that would cause infinite loops.</span></li>
+<li><a name="a15"></a><span class="src-doc">*</span></li>
+<li><a name="a16"></a><span class="src-doc">* &lt;BR&gt;&lt;BR&gt;History:&lt;UL&gt;</span></li>
+<li><a name="a17"></a><span class="src-doc">* &lt;LI&gt;09-10-2004                : First version of this class.&lt;/LI&gt;</span></li>
+<li><a name="a18"></a><span class="src-doc">* &lt;LI&gt;09-15-2004                : Added Index over InRule Triggers</span></li>
+<li><a name="a19"></a><span class="src-doc">*                                  to increase performance</span></li>
+<li><a name="a20"></a><span class="src-doc">*&lt;/UL&gt;</span></li>
+<li><a name="a21"></a><span class="src-doc">* </span><span class="src-doc-coretag">@version</span><span class="src-doc">  V0.9.1</span></li>
+<li><a name="a22"></a><span class="src-doc">* </span><span class="src-doc-coretag">@author</span><span class="src-doc"> Daniel Westphal &lt;mail at d-westphal dot de&gt;</span></li>
+<li><a name="a23"></a><span class="src-doc">*</span></li>
+<li><a name="a24"></a><span class="src-doc">* </span><span class="src-doc-coretag">@package</span><span class="src-doc"> infModel</span></li>
+<li><a name="a25"></a><span class="src-doc">* </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a27"></a><span class="src-doc">***/</span></li>
+<li><a name="a28"></a>&nbsp;</li>
+<li><a name="a29"></a><span class="src-key">class </span><a href="../infModel/InfModelF.html">InfModelF</a> <span class="src-key">extends </span><a href="../infModel/InfModel.html#methodInfModel">InfModel</a> </li>
+<li><a name="a30"></a><span class="src-sym">{</span></li>
+<li><a name="a31"></a>&nbsp;</li>
+<li><a name="a32"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a33"></a><span class="src-doc">    * Array that holds the position of the infered statements in the model</span></li>
+<li><a name="a34"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@var </span><span class="src-doc">       </span><span class="src-doc-type">array </span></li>
+<li><a name="a35"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a36"></a><span class="src-doc">    */    </span></li>
+<li><a name="a37"></a>    <span class="src-key">var </span><span class="src-var">$infPos</span><span class="src-sym">;</span></li>
+<li><a name="a38"></a>    </li>
+<li><a name="a39"></a>    </li>
+<li><a name="a40"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a41"></a><span class="src-doc">    * Variable that influences the habbit when adding statements.</span></li>
+<li><a name="a42"></a><span class="src-doc">    * Used by the loadModel method to increase performance.</span></li>
+<li><a name="a43"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@var </span><span class="src-doc">       </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a44"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a45"></a><span class="src-doc">    */</span></li>
+<li><a name="a46"></a>    <span class="src-key">var </span><span class="src-var">$inferenceEnabled</span><span class="src-sym">;</span></li>
+<li><a name="a47"></a>    </li>
+<li><a name="a48"></a>        </li>
+<li><a name="a49"></a>       <span class="src-doc">/**</span></li>
+<li><a name="a50"></a><span class="src-doc">    * Constructor</span></li>
+<li><a name="a51"></a><span class="src-doc">    * You can supply a base_uri</span></li>
+<li><a name="a52"></a><span class="src-doc">    *</span></li>
+<li><a name="a53"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc-type">string </span><span class="src-doc-var">$baseURI </span></li>
+<li><a name="a54"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a55"></a><span class="src-doc">    */        </span></li>
+<li><a name="a56"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodInfModelF">InfModelF</a><span class="src-sym">(</span><span class="src-var">$baseURI </span>= <span class="src-id">NULL</span><span class="src-sym">)</span></li>
+<li><a name="a57"></a>    <span class="src-sym">{</span></li>
+<li><a name="a58"></a>        <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodInfModel">InfModel</a><span class="src-sym">(</span><span class="src-var">$baseURI</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a59"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span>=<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a60"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span>=<span class="src-id">true</span><span class="src-sym">;    </span></li>
+<li><a name="a61"></a>    <span class="src-sym">}</span></li>
+<li><a name="a62"></a>&nbsp;</li>
+<li><a name="a63"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a64"></a><span class="src-doc">    * Adds a new triple to the MemModel without checking if the statement</span></li>
+<li><a name="a65"></a><span class="src-doc">    * is already in the MemModel.</span></li>
+<li><a name="a66"></a><span class="src-doc">    * So if you want a duplicate free MemModel use the addWithoutDuplicates()</span></li>
+<li><a name="a67"></a><span class="src-doc">    * function (which is slower then add())</span></li>
+<li><a name="a68"></a><span class="src-doc">    * The statement is infered and all entailed statements are added.</span></li>
+<li><a name="a69"></a><span class="src-doc">    *</span></li>
+<li><a name="a70"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc">   </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a71"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a72"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@throws</span><span class="src-doc">    PhpError</span></li>
+<li><a name="a73"></a><span class="src-doc">    */</span></li>
+<li><a name="a74"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodadd">add</a> <span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a75"></a>    <span class="src-sym">{</span></li>
+<li><a name="a76"></a>        <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a77"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span><span class="src-sym">)</span></li>
+<li><a name="a78"></a>        <span class="src-sym">{</span></li>
+<li><a name="a79"></a>            <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../infModel/InfModelF.html#methodentailStatement">entailStatement</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$state</span><span class="src-sym">)</span></li>
+<li><a name="a80"></a>            <span class="src-sym">{</span></li>
+<li><a name="a81"></a>                <span class="src-comm">//a addWithoutDublicates construct</span></li>
+<li><a name="a82"></a>                <span class="src-key">if</span><span class="src-sym">(</span><span class="src-sym">!</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$state</span><span class="src-sym">))</span></li>
+<li><a name="a83"></a>                <span class="src-sym">{</span></li>
+<li><a name="a84"></a>            </li>
+<li><a name="a85"></a>                    <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$state</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a86"></a>                    <span class="src-comm">//save the position of the infered statements</span></li>
+<li><a name="a87"></a>                    <a href="http://www.php.net/end">end</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a88"></a>                    <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">[</span><span class="src-sym">]</span>=<a href="http://www.php.net/key">key</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a89"></a>                <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a90"></a>            <span class="src-sym">}</span><span class="src-sym">; </span></li>
+<li><a name="a91"></a>        <span class="src-comm">//apply the complete inference to the model, if the added statement was able to add a rule</span></li>
+<li><a name="a92"></a>        <span class="src-key">if </span><span class="src-sym">(</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getLabelPredicate</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">supportedInference</span><span class="src-sym">))</span></li>
+<li><a name="a93"></a>            <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a94"></a>        <span class="src-sym">}</span></li>
+<li><a name="a95"></a>    <span class="src-sym">}</span></li>
+<li><a name="a96"></a>    </li>
+<li><a name="a97"></a> </li>
+<li><a name="a98"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a99"></a><span class="src-doc">    * Checks if a new statement is already in the MemModel and adds</span></li>
+<li><a name="a100"></a><span class="src-doc">    * the statement, if it is not in the MemModel.</span></li>
+<li><a name="a101"></a><span class="src-doc">    * addWithoutDuplicates() is significantly slower then add().</span></li>
+<li><a name="a102"></a><span class="src-doc">    * Retruns TRUE if the statement is added.</span></li>
+<li><a name="a103"></a><span class="src-doc">    * FALSE otherwise.</span></li>
+<li><a name="a104"></a><span class="src-doc">    * The statement is infered and all entailed statements are added.</span></li>
+<li><a name="a105"></a><span class="src-doc">    *</span></li>
+<li><a name="a106"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">       </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc">   </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a107"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a108"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a109"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@throws</span><span class="src-doc">    PhpError</span></li>
+<li><a name="a110"></a><span class="src-doc">    */    </span></li>
+<li><a name="a111"></a>     <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodaddWithoutDuplicates">addWithoutDuplicates</a><span class="src-sym">(</span><span class="src-sym">&amp; </span><span class="src-var">$statement</span><span class="src-sym">) </span></li>
+<li><a name="a112"></a>     <span class="src-sym">{</span></li>
+<li><a name="a113"></a>        <span class="src-key">if</span><span class="src-sym">(</span><span class="src-sym">!</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">))</span></li>
+<li><a name="a114"></a>        <span class="src-sym">{</span></li>
+<li><a name="a115"></a>             <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a116"></a>             <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span><span class="src-sym">)</span></li>
+<li><a name="a117"></a>             <span class="src-sym">{</span></li>
+<li><a name="a118"></a>                <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../infModel/InfModelF.html#methodentailStatement">entailStatement</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a119"></a>                <span class="src-sym">{</span></li>
+<li><a name="a120"></a>                    <span class="src-key">if</span><span class="src-sym">(</span><span class="src-sym">!</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">))</span></li>
+<li><a name="a121"></a>                        <span class="src-sym">{</span></li>
+<li><a name="a122"></a>                            <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a123"></a>                            <span class="src-comm">//save the position of the infered statements</span></li>
+<li><a name="a124"></a>                            <a href="http://www.php.net/end">end</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a125"></a>                            <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">[</span><span class="src-sym">]</span>=<a href="http://www.php.net/key">key</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a126"></a>                        <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a127"></a>                <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a128"></a>            <span class="src-key">if </span><span class="src-sym">(</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getLabelPredicate</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">supportedInference</span><span class="src-sym">))</span></li>
+<li><a name="a129"></a>                <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a130"></a>             <span class="src-sym">}</span></li>
+<li><a name="a131"></a>            <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a132"></a>         <span class="src-sym">}</span></li>
+<li><a name="a133"></a>         <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a134"></a>     <span class="src-sym">}</span></li>
+<li><a name="a135"></a>&nbsp;</li>
+<li><a name="a136"></a>    </li>
+<li><a name="a137"></a>&nbsp;</li>
+<li><a name="a138"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a139"></a><span class="src-doc">    * Entails every statement and adds the entailments if not already</span></li>
+<li><a name="a140"></a><span class="src-doc">    * in the model.</span></li>
+<li><a name="a141"></a><span class="src-doc">    *</span></li>
+<li><a name="a142"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a143"></a><span class="src-doc">    */        </span></li>
+<li><a name="a144"></a>    <span class="src-key">function </span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a145"></a>    <span class="src-sym">{</span></li>
+<li><a name="a146"></a>        <span class="src-comm">//check every statement in the model</span></li>
+<li><a name="a147"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples </span><span class="src-key">as </span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a148"></a>        <span class="src-sym">{</span></li>
+<li><a name="a149"></a>            <span class="src-comm">//gat all statements, that it recursively entails</span></li>
+<li><a name="a150"></a>            <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../infModel/InfModelF.html#methodentailStatement">entailStatement</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a151"></a>            <span class="src-sym">{</span></li>
+<li><a name="a152"></a>                <span class="src-key">if </span><span class="src-sym">(</span><span class="src-sym">!</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">))</span></li>
+<li><a name="a153"></a>                <span class="src-sym">{</span></li>
+<li><a name="a154"></a>                    <span class="src-id">parent</span><span class="src-sym">::</span><a href="../infModel/InfModel.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a155"></a>                    <span class="src-comm">//add the InfStatement position to the index</span></li>
+<li><a name="a156"></a>                    <a href="http://www.php.net/end">end</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a157"></a>                    <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">[</span><span class="src-sym">]</span>=<a href="http://www.php.net/key">key</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a158"></a>                <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a159"></a>            <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a160"></a>        <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a161"></a>    <span class="src-sym">}</span></li>
+<li><a name="a162"></a>    </li>
+<li><a name="a163"></a> </li>
+<li><a name="a164"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a165"></a><span class="src-doc">    * Entails a statement by recursively using the _entailStatementRec</span></li>
+<li><a name="a166"></a><span class="src-doc">    * method.</span></li>
+<li><a name="a167"></a><span class="src-doc">    * </span></li>
+<li><a name="a168"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc">   </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a169"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc">  </span><span class="src-doc-type">array </span><span class="src-doc">of statements</span></li>
+<li><a name="a170"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a171"></a><span class="src-doc">    */            </span></li>
+<li><a name="a172"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodentailStatement">entailStatement</a> <span class="src-sym">(</span><span class="src-sym">&amp; </span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a173"></a>    <span class="src-sym">{</span></li>
+<li><a name="a174"></a>        <span class="src-var">$infStatementsIndex</span>=<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a175"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_entailStatementRec</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">,</span><span class="src-var">$infStatementsIndex</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a176"></a>    <span class="src-sym">}</span></li>
+<li><a name="a177"></a>&nbsp;</li>
+<li><a name="a178"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a179"></a><span class="src-doc">    * Recursive method, that checks the statement with the trigger of</span></li>
+<li><a name="a180"></a><span class="src-doc">    * every rule. If the trigger matches and entails new statements,</span></li>
+<li><a name="a181"></a><span class="src-doc">    * those statements are recursively infered too.</span></li>
+<li><a name="a182"></a><span class="src-doc">    * The $infStatementsIndex array holds lready infered statements</span></li>
+<li><a name="a183"></a><span class="src-doc">    * to prevent infinite loops.</span></li>
+<li><a name="a184"></a><span class="src-doc">    *</span></li>
+<li><a name="a185"></a><span class="src-doc">    * </span></li>
+<li><a name="a186"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a187"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">array </span><span class="src-doc-var">$infStatementsIndex </span></li>
+<li><a name="a188"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc">  </span><span class="src-doc-type">array </span><span class="src-doc">of statements</span></li>
+<li><a name="a189"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a190"></a><span class="src-doc">    */</span></li>
+<li><a name="a191"></a>    <span class="src-key">function </span><span class="src-id">_entailStatementRec </span><span class="src-sym">( </span><span class="src-var">$statement</span><span class="src-sym">,</span><span class="src-sym">&amp; </span><span class="src-var">$infStatementsIndex</span><span class="src-sym">)</span></li>
+<li><a name="a192"></a>    <span class="src-sym">{</span></li>
+<li><a name="a193"></a>        <span class="src-var">$infStatements </span>= <span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a194"></a>        <span class="src-var">$return </span>= <span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a195"></a>        </li>
+<li><a name="a196"></a>        <span class="src-comm">//dont entail statements about the supported inference-schema</span></li>
+<li><a name="a197"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-sym">!</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getLabelPredicate</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">supportedInference</span><span class="src-sym">))</span></li>
+<li><a name="a198"></a>        <span class="src-sym">{</span></li>
+<li><a name="a199"></a>            <span class="src-comm">//check only the rules, that were returned by the index</span></li>
+<li><a name="a200"></a>            <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_findRuleTriggerInIndex</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$key </span><span class="src-sym">)</span></li>
+<li><a name="a201"></a>            <span class="src-sym">{</span></li>
+<li><a name="a202"></a>                <span class="src-var">$infRule</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infRules</span><span class="src-sym">[</span><span class="src-var">$key</span><span class="src-sym">]</span><span class="src-sym">;</span></li>
+<li><a name="a203"></a>    </li>
+<li><a name="a204"></a>                <span class="src-var">$stateString</span>=<span class="src-var">$key</span>.<a href="http://www.php.net/serialize">serialize</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a205"></a>                <span class="src-comm">//If the statement wasn't infered before</span></li>
+<li><a name="a206"></a>                <span class="src-key">if </span><span class="src-sym">(</span><span class="src-sym">!</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$stateString</span><span class="src-sym">,</span><span class="src-var">$infStatementsIndex</span><span class="src-sym">))</span></li>
+<li><a name="a207"></a>                <span class="src-sym">{</span></li>
+<li><a name="a208"></a>                    <span class="src-var">$infStatementsIndex</span><span class="src-sym">[</span><span class="src-sym">]</span>=<span class="src-var">$stateString</span><span class="src-sym">;</span></li>
+<li><a name="a209"></a>                    <span class="src-comm">//Check, if the Statements triggers this rule</span></li>
+<li><a name="a210"></a>                    <span class="src-key">if</span><span class="src-sym">(</span><span class="src-var">$infRule</span><span class="src-sym">-&gt;</span><span class="src-id">checkTrigger</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">))</span></li>
+<li><a name="a211"></a>                    <span class="src-sym">{</span></li>
+<li><a name="a212"></a>                        <span class="src-var">$infStatement</span>=<span class="src-var">$infRule</span><span class="src-sym">-&gt;</span><span class="src-id">entail</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a213"></a>                        <span class="src-comm">#if(!$this-&gt;contains($infStatement))</span></li>
+<li><a name="a214"></a>                        <span class="src-sym">{</span></li>
+<li><a name="a215"></a>                            <span class="src-var">$return</span><span class="src-sym">[</span><span class="src-sym">]</span>=<span class="src-var">$infStatement</span><span class="src-sym">;</span></li>
+<li><a name="a216"></a>                            <span class="src-var">$return</span>=<a href="http://www.php.net/array_merge">array_merge</a><span class="src-sym">(</span><span class="src-var">$return</span><span class="src-sym">,</span></li>
+<li><a name="a217"></a>                                                <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_entailStatementRec</span><span class="src-sym">(</span><span class="src-var">$infStatement</span><span class="src-sym">, </span></li>
+<li><a name="a218"></a>                                                                            <span class="src-var">$infStatementsIndex</span><span class="src-sym">))</span><span class="src-sym">;</span></li>
+<li><a name="a219"></a>                        <span class="src-sym">}</span><span class="src-sym">;    </span></li>
+<li><a name="a220"></a>                                                                        </li>
+<li><a name="a221"></a>                    <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a222"></a>                <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a223"></a>            <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a224"></a>        <span class="src-sym">}</span><span class="src-sym">;    </span></li>
+<li><a name="a225"></a>        <span class="src-key">return </span><span class="src-var">$return</span><span class="src-sym">;</span></li>
+<li><a name="a226"></a>    <span class="src-sym">}</span></li>
+<li><a name="a227"></a>    </li>
+<li><a name="a228"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a229"></a><span class="src-doc">    * Removes all infered statements from the model but keeps the</span></li>
+<li><a name="a230"></a><span class="src-doc">    * infernece rules.</span></li>
+<li><a name="a231"></a><span class="src-doc">    *</span></li>
+<li><a name="a232"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a233"></a><span class="src-doc">    */     </span></li>
+<li><a name="a234"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodremoveInfered">removeInfered</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a235"></a>    <span class="src-sym">{</span></li>
+<li><a name="a236"></a>        <span class="src-var">$indexTmp</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">indexed</span><span class="src-sym">;</span></li>
+<li><a name="a237"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodindex">index</a><span class="src-sym">(</span>-<span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a238"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos </span><span class="src-key">as </span><span class="src-var">$key</span><span class="src-sym">)</span></li>
+<li><a name="a239"></a>        <span class="src-sym">{</span></li>
+<li><a name="a240"></a>            unset<span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples</span><span class="src-sym">[</span><span class="src-var">$key</span><span class="src-sym">]</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a241"></a>        <span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a242"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span>=<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a243"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodindex">index</a><span class="src-sym">(</span><span class="src-var">$indexTmp</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a244"></a>    <span class="src-sym">}    </span></li>
+<li><a name="a245"></a>     </li>
+<li><a name="a246"></a>     </li>
+<li><a name="a247"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a248"></a><span class="src-doc">    * Load a model from a file containing RDF, N3 or N-Triples.</span></li>
+<li><a name="a249"></a><span class="src-doc">    * This function recognizes the suffix of the filename (.n3 or .rdf) and</span></li>
+<li><a name="a250"></a><span class="src-doc">    * calls a suitable parser, if no $type is given as string</span></li>
+<li><a name="a251"></a><span class="src-doc">    * (&quot;rdf&quot; &quot;n3&quot; &quot;nt&quot;);</span></li>
+<li><a name="a252"></a><span class="src-doc">    * If the model is not empty, the contents of the file is added to</span></li>
+<li><a name="a253"></a><span class="src-doc">    * this DbModel.</span></li>
+<li><a name="a254"></a><span class="src-doc">    *</span></li>
+<li><a name="a255"></a><span class="src-doc">    * While loading the model, the inference entailing is disabled, but</span></li>
+<li><a name="a256"></a><span class="src-doc">    * new inference rules are added to increase performance.</span></li>
+<li><a name="a257"></a><span class="src-doc">    * </span></li>
+<li><a name="a258"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">    </span><span class="src-doc-type">string </span><span class="src-doc">    </span><span class="src-doc-var">$filename </span></li>
+<li><a name="a259"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">    </span><span class="src-doc-type">string </span><span class="src-doc">    </span><span class="src-doc-var">$type </span></li>
+<li><a name="a260"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a261"></a><span class="src-doc">    */</span></li>
+<li><a name="a262"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodload">load</a><span class="src-sym">(</span><span class="src-var">$filename</span><span class="src-sym">, </span><span class="src-var">$type </span>= <span class="src-id">NULL</span><span class="src-sym">) </span></li>
+<li><a name="a263"></a>    <span class="src-sym">{</span></li>
+<li><a name="a264"></a>        <span class="src-comm">//Disable entailing to increase performance</span></li>
+<li><a name="a265"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span>=<span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a266"></a>         <span class="src-id">parent</span><span class="src-sym">::</span><span class="src-id">load</span><span class="src-sym">(</span><span class="src-var">$filename</span><span class="src-sym">, </span><span class="src-var">$type</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a267"></a>         <span class="src-comm">//Enable entailing</span></li>
+<li><a name="a268"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span>=<span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a269"></a>         <span class="src-comm">//Entail all statements</span></li>
+<li><a name="a270"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a271"></a>     <span class="src-sym">}</span></li>
+<li><a name="a272"></a>    </li>
+<li><a name="a273"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a274"></a><span class="src-doc">    * Short Dump of the InfModelF.</span></li>
+<li><a name="a275"></a><span class="src-doc">    *</span></li>
+<li><a name="a276"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a277"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">string </span></li>
+<li><a name="a278"></a><span class="src-doc">    */  </span></li>
+<li><a name="a279"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodtoString">toString</a><span class="src-sym">(</span><span class="src-sym">) </span><span class="src-sym">{</span></li>
+<li><a name="a280"></a>       <span class="src-key">return </span><span class="src-str">'InfModelF[baseURI=' </span>. <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/Model.html#methodgetBaseURI">getBaseURI</a><span class="src-sym">(</span><span class="src-sym">) </span>. <span class="src-str">';  </span></li>
+<li><a name="a281"></a><span class="src-str">                   size=' </span>. <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodsize">size</a><span class="src-sym">(</span><span class="src-id">true</span><span class="src-sym">) </span>. <span class="src-str">']'</span><span class="src-sym">;</span></li>
+<li><a name="a282"></a>    <span class="src-sym">}</span></li>
+<li><a name="a283"></a>        </li>
+<li><a name="a284"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a285"></a><span class="src-doc">    * Create a MemModel containing all the triples (including inferred</span></li>
+<li><a name="a286"></a><span class="src-doc">    * statements) of the current InfModelF</span></li>
+<li><a name="a287"></a><span class="src-doc">    *</span></li>
+<li><a name="a288"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc-type">object </span><span class="src-doc-type">MemModel </span></li>
+<li><a name="a289"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc"> public</span></li>
+<li><a name="a290"></a><span class="src-doc">    */</span></li>
+<li><a name="a291"></a>    <span class="src-key">function </span><span class="src-sym">&amp; </span><a href="../infModel/InfModelF.html#methodgetMemModel">getMemModel</a><span class="src-sym">(</span><span class="src-sym">) </span></li>
+<li><a name="a292"></a>    <span class="src-sym">{</span></li>
+<li><a name="a293"></a>        <span class="src-var">$return</span>= <span class="src-key">new </span><a href="../model/MemModel.html#methodMemModel">MemModel</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a294"></a>        <span class="src-var">$return</span><span class="src-sym">-&gt;</span><span class="src-id">setBaseURI</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">baseURI</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a295"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples </span><span class="src-key">as </span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a296"></a>            <span class="src-var">$return</span><span class="src-sym">-&gt;</span><span class="src-id">add</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a297"></a>        </li>
+<li><a name="a298"></a>        <span class="src-var">$return</span><span class="src-sym">-&gt;</span><span class="src-id">addParsedNamespaces</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodgetParsedNamespaces">getParsedNamespaces</a><span class="src-sym">(</span><span class="src-sym">))</span><span class="src-sym">;    </span></li>
+<li><a name="a299"></a>        <span class="src-key">return </span><span class="src-var">$return</span><span class="src-sym">;</span></li>
+<li><a name="a300"></a>    <span class="src-sym">}</span></li>
+<li><a name="a301"></a>      </li>
+<li><a name="a302"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a303"></a><span class="src-doc">    * Create a MemModel containing only the base triples</span></li>
+<li><a name="a304"></a><span class="src-doc">    * (without inferred statements) of the current InfModelF</span></li>
+<li><a name="a305"></a><span class="src-doc">    *</span></li>
+<li><a name="a306"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc-type">object </span><span class="src-doc-type">MemModel </span></li>
+<li><a name="a307"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc"> public</span></li>
+<li><a name="a308"></a><span class="src-doc">    */</span></li>
+<li><a name="a309"></a>    <span class="src-key">function  </span><a href="../infModel/InfModelF.html#methodgetBaseMemModel">getBaseMemModel</a><span class="src-sym">(</span><span class="src-sym">) </span></li>
+<li><a name="a310"></a>    <span class="src-sym">{</span></li>
+<li><a name="a311"></a>        <span class="src-var">$return</span>= <span class="src-key">new </span><a href="../model/MemModel.html#methodMemModel">MemModel</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a312"></a>        <span class="src-var">$return</span><span class="src-sym">-&gt;</span><span class="src-id">setBaseURI</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">baseURI</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a313"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">triples </span><span class="src-key">as </span><span class="src-var">$key </span>=&gt; <span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a314"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-sym">!</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$key</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">))</span></li>
+<li><a name="a315"></a>                <span class="src-var">$return</span><span class="src-sym">-&gt;</span><span class="src-id">add</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a316"></a>        <span class="src-var">$retun</span><span class="src-sym">-&gt;</span><span class="src-id">addParsedNamespaces</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodgetParsedNamespaces">getParsedNamespaces</a><span class="src-sym">(</span><span class="src-sym">))</span><span class="src-sym">;</span></li>
+<li><a name="a317"></a>        <span class="src-key">return </span><span class="src-var">$return</span><span class="src-sym">;</span></li>
+<li><a name="a318"></a>    <span class="src-sym">}</span></li>
+<li><a name="a319"></a>    </li>
+<li><a name="a320"></a>    </li>
+<li><a name="a321"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a322"></a><span class="src-doc">    * Removes the triple from the MemModel.</span></li>
+<li><a name="a323"></a><span class="src-doc">    * TRUE if the triple is removed.</span></li>
+<li><a name="a324"></a><span class="src-doc">    * FALSE otherwise.</span></li>
+<li><a name="a325"></a><span class="src-doc">    *</span></li>
+<li><a name="a326"></a><span class="src-doc">    * Checks, if it touches any statements, that added inference rules</span></li>
+<li><a name="a327"></a><span class="src-doc">    * to the model</span></li>
+<li><a name="a328"></a><span class="src-doc">    *</span></li>
+<li><a name="a329"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc">   </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a330"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@return </span><span class="src-doc">  </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a331"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a332"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@throws</span><span class="src-doc">    PhpError</span></li>
+<li><a name="a333"></a><span class="src-doc">    */</span></li>
+<li><a name="a334"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodremove">remove</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span></li>
+<li><a name="a335"></a>    <span class="src-sym">{</span></li>
+<li><a name="a336"></a>        <span class="src-comm">//If the statement is in the model</span></li>
+<li><a name="a337"></a>        <span class="src-key">if</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../model/MemModel.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">))</span></li>
+<li><a name="a338"></a>        <span class="src-sym">{</span></li>
+<li><a name="a339"></a>            <span class="src-var">$inferenceRulesWereTouched</span>=<span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a340"></a>            <span class="src-comm">//If the statement was able to add inference rules</span></li>
+<li><a name="a341"></a>            <span class="src-key">if </span><span class="src-sym">(</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getLabelPredicate</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">supportedInference</span><span class="src-sym">))</span></li>
+<li><a name="a342"></a>            <span class="src-sym">{</span></li>
+<li><a name="a343"></a>                <span class="src-var">$statementPositions</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_removeFromInference</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a344"></a>                <span class="src-var">$inferenceRulesWereTouched</span>=<span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a345"></a>            <span class="src-sym">} </span><span class="src-key">else </span></li>
+<li><a name="a346"></a>            <span class="src-comm">//get the position of all matching statements</span></li>
+<li><a name="a347"></a>            <span class="src-sym">{</span></li>
+<li><a name="a348"></a>                <span class="src-var">$statementPositions</span>=<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a349"></a>                <span class="src-comm">//find the positions of the statements</span></li>
+<li><a name="a350"></a>                <span class="src-var">$statementPosition</span>=-<span class="src-num">1</span><span class="src-sym">;</span></li>
+<li><a name="a351"></a>                do</li>
+<li><a name="a352"></a>                <span class="src-sym">{</span></li>
+<li><a name="a353"></a>                    </li>
+<li><a name="a354"></a>                    <span class="src-var">$statementPosition </span>=</li>
+<li><a name="a355"></a>                    <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">findFirstMatchOff</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getSubject</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span></li>
+<li><a name="a356"></a>                                                <span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getPredicate</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span></li>
+<li><a name="a357"></a>                                                <span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getObject</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">,</span></li>
+<li><a name="a358"></a>                                                <span class="src-var">$statementPosition</span>+<span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a359"></a>                                                </li>
+<li><a name="a360"></a>                    <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$statementPosition</span>!=-<span class="src-num">1</span><span class="src-sym">)</span></li>
+<li><a name="a361"></a>                        <span class="src-var">$statementPositions</span><span class="src-sym">[</span><span class="src-sym">]</span>=<span class="src-var">$statementPosition</span><span class="src-sym">;                            </span></li>
+<li><a name="a362"></a>                                                </li>
+<li><a name="a363"></a>                <span class="src-sym">}    </span><span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$statementPosition </span>!= -<span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">;            </span></li>
+<li><a name="a364"></a>            <span class="src-sym">}</span></li>
+<li><a name="a365"></a>            </li>
+<li><a name="a366"></a>            <span class="src-comm">//remove matching statements</span></li>
+<li><a name="a367"></a>            <span class="src-id">parent</span><span class="src-sym">::</span><span class="src-id">remove</span><span class="src-sym">(</span><span class="src-var">$statement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a368"></a>            <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$statementPositions </span><span class="src-key">as </span><span class="src-var">$statementPosition</span><span class="src-sym">)</span></li>
+<li><a name="a369"></a>            <span class="src-sym">{</span></li>
+<li><a name="a370"></a>                <span class="src-comm">//if the statement was infered, remove it from the index of the infered statements.</span></li>
+<li><a name="a371"></a>                <span class="src-key">if </span><span class="src-sym">(</span><a href="http://www.php.net/in_array">in_array</a><span class="src-sym">(</span><span class="src-var">$statementPosition</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">))</span></li>
+<li><a name="a372"></a>                    unset <span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">infPos</span><span class="src-sym">[</span><span class="src-var">$statementPosition</span><span class="src-sym">]</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a373"></a>            <span class="src-sym">}</span></li>
+<li><a name="a374"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$inferenceRulesWereTouched</span><span class="src-sym">)</span></li>
+<li><a name="a375"></a>            <span class="src-sym">{</span></li>
+<li><a name="a376"></a>                <span class="src-comm">//remove the statement and re-entail the model</span></li>
+<li><a name="a377"></a>                <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../infModel/InfModelF.html#methodremoveInfered">removeInfered</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a378"></a>                <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a379"></a>            <span class="src-sym">}</span></li>
+<li><a name="a380"></a>            <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a381"></a>        <span class="src-sym">} </span><span class="src-key">else </span></li>
+<li><a name="a382"></a>        <span class="src-sym">{</span></li>
+<li><a name="a383"></a>            <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;    </span></li>
+<li><a name="a384"></a>        <span class="src-sym">}</span></li>
+<li><a name="a385"></a>    <span class="src-sym">}</span></li>
+<li><a name="a386"></a>    </li>
+<li><a name="a387"></a>    <span class="src-doc">/** </span></li>
+<li><a name="a388"></a><span class="src-doc">    * Adds another model to this MemModel.</span></li>
+<li><a name="a389"></a><span class="src-doc">    * Duplicate statements are not removed.</span></li>
+<li><a name="a390"></a><span class="src-doc">    * If you don't want duplicates, use unite().</span></li>
+<li><a name="a391"></a><span class="src-doc">    * If any statement of the model to be added to this model contains a blankNode</span></li>
+<li><a name="a392"></a><span class="src-doc">    * with an identifier already existing in this model, a new blankNode is generated.</span></li>
+<li><a name="a393"></a><span class="src-doc">    *</span></li>
+<li><a name="a394"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Model </span><span class="src-doc">   </span><span class="src-doc-var">$model </span></li>
+<li><a name="a395"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a396"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@throws</span><span class="src-doc"> phpErrpr</span></li>
+<li><a name="a397"></a><span class="src-doc">    *</span></li>
+<li><a name="a398"></a><span class="src-doc">    */</span></li>
+<li><a name="a399"></a>    <span class="src-key">function </span><a href="../infModel/InfModelF.html#methodaddModel">addModel</a><span class="src-sym">(</span><span class="src-sym">&amp;</span><span class="src-var">$model</span><span class="src-sym">)  </span></li>
+<li><a name="a400"></a>    <span class="src-sym">{</span></li>
+<li><a name="a401"></a>        <span class="src-comm">//Disable entailing to increase performance</span></li>
+<li><a name="a402"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span>=<span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a403"></a>         <span class="src-id">parent</span><span class="src-sym">::</span><span class="src-id">addModel</span><span class="src-sym">(</span><span class="src-var">$model</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a404"></a>         <span class="src-comm">//Enable entailing</span></li>
+<li><a name="a405"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">inferenceEnabled</span>=<span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a406"></a>         <span class="src-comm">//Entail all statements</span></li>
+<li><a name="a407"></a>         <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">applyInference</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a408"></a>    <span class="src-sym">}</span></li>
+<li><a name="a409"></a><span class="src-sym">}</span><span class="src-sym">;</span></li>
+<li><a name="a410"></a><span class="src-php">?&gt;</span></li>
+</ol></pre>
+</div>
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 17 Dec 2004 16:15:20 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</body>
+</html>

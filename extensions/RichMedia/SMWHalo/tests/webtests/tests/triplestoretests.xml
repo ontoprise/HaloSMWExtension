@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testTriplestore">
+	&goToLogin;
+	<target name="testTriplestore">
+
+		<webtest name="Initialize">
+			<antcall target="goToLogin" />
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:TSA"
+				description="Go to triplestore administration page" />
+			<verifyTitle text="Triple store administration - Halo3wiki" />
+
+			<clickButton name="init" />
+			<sleep description="4s pause" seconds="4" />
+		</webtest>
+
+		<webtest name="checkASKQueries">
+			
+			<invoke
+				url="http://localhost/${wikipath}/index.php/QueryTestASK"
+				description="Check basic ASK queries" />
+			<verifyTitle text="QueryTestASK - Halo3wiki" />
+
+			<verifyXPath
+				xpath="//div[@id='bodyContent']/p[1]/a[@title='Audi TT']"
+				description="Check if first query result appears" />
+			<verifyXPath
+				xpath="//div[@id='bodyContent']//table[1]//a[@title='Audi TT']"
+				description="Check if second query result appears" />
+			<verifyXPath
+				xpath="//div[@id='bodyContent']/p[2]/a[@title='Audi TT']"
+				description="Check if third query result appears" />
+			<verifyXPath
+				xpath="//div[@id='bodyContent']//table[2]//a[@title='5 cylinder']"
+				description="Check if fourth query result appears" />
+		</webtest>
+		
+		<webtest name="checkASKQueries2">
+            
+            <invoke
+                url="http://localhost/${wikipath}/index.php/QueryTestASK2"
+                description="Check ASK queries with several parameters" />
+            <verifyTitle text="QueryTestASK2 - Halo3wiki" />
+
+            <verifyXPath
+                xpath="//div[@id='bodyContent']//table[1]/tbody/tr[2]/td" text="Audi TT"
+                description="Check if first query result appears (as non link)" />
+                   <verifyXPath
+                xpath="//div[@id='bodyContent']/p[1]//a[@title='Kai']" 
+                description="Check if second query result appears" />
+           <verifyXPath
+                xpath="//div[@id='bodyContent']/p[2]" text="No results" regex="true"
+                description="Check if third query result appears" />
+            <verifyXPath
+                xpath="//div[@id='bodyContent']/ul//a[@title='Audi TT']"
+                description="Check if fourth query result appears" />
+              <verifyXPath
+                xpath="//div[@id='bodyContent']/ul[2]//a[@title='Audi TT']"
+                description="Check if fifth query result appears" />
+                    
+            <verifyXPath
+                xpath="//div[@id='bodyContent']//table[2]//a[@title='Peugeot']"
+                description="Check if sixth query result appears" />
+                  <verifyXPath
+                xpath="//div[@id='bodyContent']//table[3]//th/span" text="Car"
+                description="Check if seventh query result appears" />
+        </webtest>
+		
+		<webtest name="checkSPARQLQueries">
+         
+            <invoke
+                url="http://localhost/${wikipath}/index.php/QueryTestSPARQL"
+                description="Go to page containing some SPARQL queries" />
+            <verifyTitle text="QueryTestSPARQL - Halo3wiki" />
+
+            <verifyXPath
+                xpath="//div[@id='bodyContent']/p[1]/a[@title='Audi TT']"
+                description="Check if first query result appears" />
+            <verifyXPath
+                xpath="//div[@id='bodyContent']//table[1]//a[@title='Audi TT']"
+                description="Check if second query result appears" />
+           <verifyXPath
+                xpath="//div[@id='bodyContent']//table[2]//a[@title='Audi TT']"
+                description="Check if second query result appears" />
+            <verifyXPath
+                xpath="//div[@id='bodyContent']//table[3]//a[@title='5 cylinder']"
+                description="Check if fourth query result appears" />
+            
+        </webtest>
+	</target>
+</project>
+

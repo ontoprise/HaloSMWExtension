@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testBasic">
+    
+	&goToOntologyBrowser;
+	
+	<target name="testBasic">
+
+		<webtest name="LoadMainPage">
+			<invoke url="http://localhost/${wikipath}/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page" />
+			<verifyTitle text="Main Page - Halo3wiki" />
+			<!--<setInputField name="search" value="WebTest" />
+			<clickButton label="Search" />
+			<verifyTitle text="Search results - Halo3wiki" />-->
+		</webtest>
+		<webtest name="LoadOntologyBrowser">
+			<antcall target="goToOntologyBrowser"/>
+			<verifyXPath description="Check if the heading element exists" xpath="//span[@id='smwh_breadcrumb_currentpage']" text="OntologyBrowser" />
+
+		</webtest>
+		
+	</target>
+</project>

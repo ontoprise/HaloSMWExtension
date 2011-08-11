@@ -1,0 +1,7 @@
+<target name="goToOntologyBrowser">
+	<invoke
+		url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+		description="Run the export bot" />
+	<verifyTitle text="OntologyBrowser - Halo3wiki" />
+	<sleep description="4s pause" seconds="4" />
+</target>

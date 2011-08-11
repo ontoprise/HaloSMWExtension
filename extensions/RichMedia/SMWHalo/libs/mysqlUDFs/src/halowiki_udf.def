@@ -1,0 +1,11 @@
+LIBRARY		HALO_UDFS
+VERSION		1.0
+EXPORTS
+  editdistance_init
+  editdistance
+  editdistance_dl_init
+  editdistance_dl
+  jarowinkler_init
+  jarowinkler
+  jaro_init
+  jaro

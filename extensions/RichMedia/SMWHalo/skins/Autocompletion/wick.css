@@ -1,0 +1,140 @@
+/*
+WICK: Web Input Completion Kit
+http://wick.sourceforge.net/
+Copyright (c) 2004, Christopher T. Holland,
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the Christopher T. Holland, nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Modified by Ontoprise GmbH 2007 (KK)
+*/
+
+.pendingElement {
+position:fixed;
+z-index:12000;
+top:0px;
+left:0px;
+display:none;
+}
+.floater {
+position:absolute;
+z-index:12000;
+top:0px;
+/*left:0px;*/
+display:none;
+padding:0;
+border: 1px solid #AAA;
+}
+
+.floater td {
+font-family: Gill, Helvetica, sans-serif;
+font-size:10px;
+border:1px inset #979797;
+color:black;
+background-color:#FBFBBA;
+}
+
+.matchedSmartInputItem {
+font-size:12px;
+padding: 5px 10px 1px 5px;
+margin:0;
+cursor:pointer;
+}
+
+.selectedSmartInputItem {
+color:white;
+background-color:#3875D7;
+}
+
+.extraDataSmartInputItem {
+	background-color: inherit;
+	display:block;
+	margin-left:10px;
+	font-size:85%;
+}
+
+.inferredSmartInputItem {
+font-style:italic;
+background-color:#D9D998;
+}
+
+#smartInputResults {
+padding:0;margin:0;
+}
+
+.siwCredit {
+margin:0;padding:0;margin-top:10px;font-size:0.7em;color:black;
+}
+
+.MWFloater {
+position:fixed;
+top:0px;
+left:0;
+width:350px;
+height:350px;
+
+border-style:groove;
+background-color:#FBFBBA;
+display:none;
+visibility:hidden;
+z-index: 1000;
+}
+
+.MWFloaterContent {
+position:relative;
+overflow:scroll;
+left:0;
+width:350px;
+height:330px;
+
+}
+
+.MWFloaterContentHeader {
+position:relative;
+text-align:left;
+font-weight:bold;
+top:0px;
+left:0;
+width:350px;
+height:20px;
+background-color:#B3B31A;
+color:white;
+cursor: move;
+}
+
+.closeFloater {
+cursor: default;
+}
+
+.acMessage {
+text-align:left;
+font-weight:bold;
+color:white;
+background-color:#B3B31A;
+/* width: 97%; */
+}
+
+.obpendingElement {
+position:fixed;
+z-index:200;
+top:0px;
+left:0px;
+display:none;
+}
+
+#content span.smwexplanation a{
+ padding-right: 16px;
+ margin-right: 2px;
+ color: #888888;
+ background: url(lightbulb.png) center right no-repeat;
+}
+
+#ac_toomuchresults {
+ border-top: 1px solid #000;
+ margin-top: 5px;	
+}

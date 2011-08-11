@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<smw:smw xmlns:smw="urn:PCP.SMW" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:PCP.SMW PCP-schema.xsd">
+  <smw:userCredentials editToken="" id="" loginToken="" pwd="" un=""/>
+  <smw:page bt="" lrID="" ns="" pageID="" summary="" text="" title="" urID=""/>
+</smw:smw>

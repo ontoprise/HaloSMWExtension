@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="testAskQueriesNary">
+    <target name="testAskQueriesNary">
+
+        <webtest name="ask queries with nary property">
+            <enableJavaScript description="Disable javascript to avoid bugs" enable="false"/>
+
+            <createPage title="Property:MyNaryProperty" text="[[has type::Record]][[Has fields::Type:String; Type:String; Type:Date; Type:Number]]" />
+            <createPage
+                title="Mister_X"
+                text="[[MyNaryProperty::Father; hallo; 1980-08-05; 40]]"
+            />
+
+            <execQuery
+                query="[[MyNaryProperty::?]]"
+                printout="MyNaryProperty"
+                description="check for pages with any values for MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Mister X"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;hallo1;?;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with string hallo1 in MyNaryProperty"
+            />
+            <not>
+                <verifyXPath
+                    description=""
+                    xpath="//table[@id='querytable0']"
+                />
+            </not>
+            <execQuery
+                query="[[MyNaryProperty::?;hallo;?;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with string hallo in MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Mister X"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;?;?;&gt;50]]"
+                printout="MyNaryProperty"
+                description="check for pages number greater than 50"
+            />
+            <not>
+                <verifyXPath
+                    description=""
+                    xpath="//table[@id='querytable0']"
+                />
+            </not>
+            <execQuery
+                query="[[MyNaryProperty::?;?;?;&lt;50]]"
+                printout="MyNaryProperty"
+                description="check for pages with number lower that 50"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Mister X"
+            />
+            <editPage
+                title="Christina_Aguilera"
+                text="[[MyNaryProperty::jajasoso; tschüß; 1981-05-16; 666]]"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;?;?;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with any values for MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Christina Aguilera"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[3]/td/a"
+                text="Mister X"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;&lt;tschü;?;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with string before tschü in MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Mister X"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;&lt;tschüß;?;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with string before tschüß in MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Christina Aguilera"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[3]/td/a"
+                text="Mister X"
+            />
+            <execQuery
+                query="[[MyNaryProperty::?;?;&gt;1980-08-05;?]]"
+                printout="MyNaryProperty"
+                description="check for pages with date 5.8.80 and greater in MyNaryProperty"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Christina Aguilera"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[3]/td/a"
+                text="Mister X"
+            />
+        </webtest>
+    </target>
+</project>

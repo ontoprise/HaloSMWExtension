@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" 
+           xmlns:smw="urn:PCP.SMW" 
+           xmlns:mstns="http://tempuri.org/XMLSchema.xsd" 
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="urn:PCP.SMW">
+  <xs:attributeGroup name="UserCredentials.attributes">
+    <xs:attribute name="un" type="xs:string" use="required" />
+    <xs:attribute name="pwd" type="xs:string" />
+    <xs:attribute name="id" type="xs:string" />
+    <xs:attribute name="loginToken" type="xs:string" />
+    <xs:attribute name="editToken" type="xs:string" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="Page.attributes">
+    <xs:attribute name="title" type="xs:string" use="required" />
+    <xs:attribute name="pageID" type="xs:string" use="required" />
+    <xs:attribute name="ns" type="xs:string" use="required" />
+    <xs:attribute name="bt" type="xs:string" use="required" />
+    <xs:attribute name="lrID" type="xs:string" use="required" />
+    <xs:attribute name="urID" type="xs:string" use="required" />
+    <xs:attribute name="text" type="xs:string" use="required" />
+    <xs:attribute name="summary" type="xs:string" use="required" />
+  </xs:attributeGroup>
+  <!-- ########### type definition: PCP_UserCredentials ########### -->
+  <xs:complexType name="UserCredentials">
+    <xs:attributeGroup ref="smw:UserCredentials.attributes" />
+  </xs:complexType>
+  <!-- ########### type definition: PCP_Page ########### -->
+  <xs:complexType name="Page">
+    <xs:attributeGroup ref="smw:Page.attributes" />
+  </xs:complexType>
+  <!-- ########### element definition: PCP_UserCredentials ########### -->
+  <xs:element name="userCredentials" type="smw:UserCredentials" />
+  <!-- ########### element definition: PCP_Page ########### -->
+  <xs:element name="page" type="smw:Page" />
+  <!-- ########### element definition: smw ########### -->
+  <xs:element name="smw">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="smw:userCredentials" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="smw:page" minOccurs="1" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

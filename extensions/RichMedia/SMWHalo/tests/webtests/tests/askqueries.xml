@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testAskQueries">
+    &goToLogin;
+    <target name="testAskQueries">
+
+        <webtest name="some ask queries">
+            <enableJavaScript description="Disable javascript to avoid bugs" enable="false"/>
+
+            <!-- ask with additional printout -->
+            <execQuery query="[[Category:City]]" printout="" description="ask for all cities"/>
+            <verifyXPath
+                description=""
+                xpath="//tr[5]/td/a"
+                text="Boston"
+            />
+
+            <execQuery query="[[Category:City]]" printout="Located In" description="with printout Located in"/>
+            <verifyXPath
+                description=""
+                xpath="//tr[5]/td[2]/a"
+                text="USA"
+            />
+
+            <!-- ask after page has been moved -->
+            <createPage title="Property:Has_phone_number" text="[[has type::Type:string]]" />
+            <createPage title="Property:Has_private_number" text="[[has type::Type:string]]" />
+            <createPage title="Property:Has_secret_number" text="[[has type::Type:string]]" />
+            <createPage title="Britney_Spears" text="Phone number: [[has phone number::1111111]].
+               Secret Number: [[has secret number::1234567]].
+               Private Number: [[has private number::99999999]]."/>
+
+            <execQuery
+                query="[[Britney Spears]]"
+                printout="has private number"
+                description="private number of Britney Spears"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td"
+                text="99999999"
+            />
+
+            <antcall target="goToLogin" />
+
+            <invoke
+                url="${wgServer}${wgScript}/Britney_Spears"
+                description="go back to Britney Spears"
+            />
+            <clickLink
+                xpath="//a[@href='${wgScript}/Special:MovePage/Britney_Spears']"
+                description="Click move"
+            />
+            <setInputField htmlId="wpNewTitle" value="Christina Aguilera"/>
+            <clickButton name="wpMove" />
+
+            <execQuery
+                query="[[Britney Spears]]"
+                printout=""
+                description="query must follow redirect"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Christina Aguilera"
+            />
+
+            <!-- ask with categories and subcategories -->
+            <editPage title="Christina_Aguilera" text="[[Category:Man]]" />
+
+            <execQuery
+                query="[[Category:Person]]"
+                printout=""
+                description="check if instances of subcategories are found"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Christina Aguilera"
+            />
+
+            <!-- ask with subproperty -->
+            <createPage title="Property:Is_parent_of" text="[[has type::Type:Page]]" />
+            <createPage
+                title="Property:Is_father_of"
+                text="[[subproperty of::Property:is parent of]] [[has type::Type:Page]]"
+            />
+            <createPage
+                title="Son"
+                text="This is Jonny, the sunny boy. [[Category:Person]]"
+            />
+            <createPage
+                title="Daughter"
+                text="This is Emy, the little girl. [[Category:Person]]"
+            />
+
+            <createPage
+                title="Father"
+                text="The father is father of [[is father of::daughter]]
+                      and is father of [[is father of::son]]. [[Category:Person]]"
+            />
+            <execQuery
+                query="[[is parent of::Son]]"
+                printout=""
+                description="check if sub property instance is found"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Father"
+            />
+
+        </webtest>
+    </target>
+</project>

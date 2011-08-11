@@ -1,0 +1,101 @@
+Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_ParserFunctions.php	(original)
++++ extensions/SemanticForms/includes/SF_ParserFunctions.php	(patched version)
+@@ -246,6 +246,17 @@
+ 				$inAutocompletionSource = $value;
+ 				$autocompletion_type = 'namespace';
+ 			}
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|start*/
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HaloAC_in_forminput_parser_function*/
++			elseif ( defined('SMW_HALO_VERSION') && $param_name == 'useHaloAC' ) {
++				$useHaloAC='';
++				$inAutocompletionSource = '';
++			}
++			elseif ( $param_name == 'constraints' && isset($useHaloAC) ) {
++				$inAutocompletionSource = '';
++				$useHaloAC = $value;
++			}
++			/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|end*/
+ 			elseif ( $i == 0 )
+ 				$inFormName = $param;
+ 			elseif ( $i == 1 )
+@@ -277,7 +288,18 @@
+
+ 		$fs = SpecialPage::getPage( 'FormStart' );
+ 		$fs_url = $fs->getTitle()->getLocalURL();
+-		if ( empty( $inAutocompletionSource ) ) {
++		/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|start*/
++		if (  defined('SMW_HALO_VERSION') && isset($useHaloAC) && !empty($useHaloAC) ) {
++			$useHaloAC = str_replace(';', '|', $useHaloAC); // turn escaped pipes back to original
++			$useHaloAC = str_replace('"', '\"', $useHaloAC); // escape any quotes to not break the html
++			$str = <<<END
++			<form name="createbox" action="$fs_url" method="get">
++			<p><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue" autocomplete="OFF" class="wickEnabled formInput" constraints="$useHaloAC" />
++
++END;
++		}
++		elseif ( empty( $inAutocompletionSource ) ) {
++		/*op-patch|SR|2011-03-17|SF|HaloAC in #forminput|end*/
+ 			$str = <<<END
+ 			<form action="$fs_url" method="get">
+ 			<p><input type="text" name="page_name" size="$inSize" value="$inValue" class="formInput" />
+Index: extensions/SemanticForms/skins/SemanticForms.css
+===================================================================
+--- extensions/SemanticForms/skins/SemanticForms.css	(revision 9639)
++++ extensions/SemanticForms/skins/SemanticForms.css	(working copy)
+@@ -8,20 +8,33 @@
+ }
+ textarea.mandatoryField {
+ 	width: auto;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SF_style_for_Halo*/
++	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
++	background: none no-repeat scroll 0 0 #FFFFFF;
++	border-color: #959595 #CCCCCC #CCCCCC #959595;
++	border-style: solid;
++	border-width: 1px;
++	padding:3px;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|end*/
+ }
+ 
+ /* Used in 'create template' page */
+ .fieldBox {
+-        border: 1px black solid;
+-        background: #dddddd;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
++        border: 1px #a9c5d9 solid;
++        background: #edf2f6;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|end*/
+         padding: 10px 20px 10px 20px;
+         margin: 0px 20px 20px 20px;
+ }
+ 
+ /* Used in 'create form' page */
+ .templateForm {
+-        border: 1px black solid;
+-        background: #dddddd;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
++        border: 1px #a9c5d9 solid;
++        background: #edf2f6;
++	/*op-patch|SR|2011-03-30|SF|Style for Halo|end*/
+         padding: 0px 20px 10px 20px;
+         margin-bottom: 20px;
+ }
+@@ -67,6 +80,16 @@
+ 	/* border: 1px #d72227 solid;
+ 	padding: 4px; */
+ }
++/*op-patch|SR|2011-03-30|SF|Style for Halo|start*/
++fieldset {
++	border: 1px #a9c5d9 solid;
++	background: #ffffff;
++	display: block;
++	margin-left: 2px;
++	margin-right: 2px;
++	padding: 0.35em 0.625em 0.75em;
++}
++/*op-patch|SR|2011-03-30|SF|Style for Halo|end*/
+ 
+ div.infoMessage {
+ 	border: 1px solid #777777;

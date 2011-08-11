@@ -1,0 +1,28 @@
+/* 
+    Document   : SimplePopup
+    Created on : 13.11.2009, 12:31:50
+    Author     : stephan
+    Description:
+        Styles for the SimplePopup class and divs
+*/
+
+#SimplePopup_overlay {
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    background-color: #000000;
+    opacity: 0.3;
+}
+
+#SimplePopup {
+    display: block;
+    position: fixed;
+    background-color: #FFFFFF;
+}
+
+#SimplePopup_content {
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+}

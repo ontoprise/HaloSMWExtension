@@ -1,0 +1,28 @@
+<macrodef name="showFullAsk" description="show full ask query">
+    <attribute name="query" />
+    <sequential>
+        <verifyXPath
+            xpath="//div[@id='showAsk']/@style"
+            regex="display:\s?none"
+        />
+        <clickElement xpath="//td[@id='qiDefTab3']" />
+        <retry maxcount="10">
+            <sleep seconds="1"/>
+            <verifyXPath
+              xpath="//textarea[@id='fullAskText']/text()"
+              regex="\s*@{query}\s*"
+            />  
+        </retry>
+        <!-- this doen't really work with the webtest at the moment        
+        <not>
+            <verifyXPath
+                xpath="//div[@id='showAsk']/@style"
+                regex="display:\s?none"
+            />
+        </not>
+        -->
+        
+    </sequential>   
+</macrodef>
+
+

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>File Source for FOAF_RES.php</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+						
+<h1>Source for file FOAF_RES.php</h1>
+<p>Documentation is available at <a href="../default/_vocabulary_FOAF_RES_php.html">FOAF_RES.php</a></p>
+<div class="src-code">
+<pre><ol><li><a name="a1"></a><span class="src-php">&lt;?PHP</span></li>
+<li><a name="a2"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a3"></a><span class="src-comm">// Friend of a Friend (FOAF) Vocabulary (ResResource)</span></li>
+<li><a name="a4"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a5"></a><span class="src-comm">// Version                   : 0.9</span></li>
+<li><a name="a6"></a><span class="src-comm">// Authors                   : Tobias Gauß (tobias.gauss@web.de)</span></li>
+<li><a name="a7"></a><span class="src-comm">//</span></li>
+<li><a name="a8"></a><span class="src-comm">// Description               : Wrapper, defining resources for all terms of the</span></li>
+<li><a name="a9"></a><span class="src-comm">//                               Friend of a Friend project (FOAF).</span></li>
+<li><a name="a10"></a><span class="src-comm">//                               For details about FOAF see: http://xmlns.com/foaf/0.1/.</span></li>
+<li><a name="a11"></a><span class="src-comm">//                                Using the wrapper allows you to define all aspects of</span></li>
+<li><a name="a12"></a><span class="src-comm">//                             the vocabulary in one spot, simplifing implementation and</span></li>
+<li><a name="a13"></a><span class="src-comm">//                             maintainence. </span></li>
+<li><a name="a14"></a><span class="src-comm">//</span></li>
+<li><a name="a15"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a16"></a><span class="src-comm">// History:</span></li>
+<li><a name="a17"></a><span class="src-comm">// 11-08-2003                 : Initial version</span></li>
+<li><a name="a18"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a19"></a>&nbsp;</li>
+<li><a name="a20"></a>&nbsp;</li>
+<li><a name="a21"></a>&nbsp;</li>
+<li><a name="a18"></a>&nbsp;</li>
+<li><a name="a19"></a>&nbsp;</li>
+<li><a name="a20"></a>&nbsp;</li>
+<li><a name="a21"></a>&nbsp;</li>
+<li><a name="a22"></a><span class="src-key">class </span><a href="../default/FOAF_RES.html">FOAF_RES</a><span class="src-sym">{</span></li>
+<li><a name="a23"></a>&nbsp;</li>
+<li><a name="a24"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodAGENT">AGENT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a25"></a>    <span class="src-sym">{</span></li>
+<li><a name="a26"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Agent'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a27"></a>&nbsp;</li>
+<li><a name="a28"></a>    <span class="src-sym">}</span></li>
+<li><a name="a29"></a>&nbsp;</li>
+<li><a name="a30"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodDOCUMENT">DOCUMENT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a31"></a>    <span class="src-sym">{</span></li>
+<li><a name="a32"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Document'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a33"></a>&nbsp;</li>
+<li><a name="a34"></a>    <span class="src-sym">}</span></li>
+<li><a name="a35"></a>&nbsp;</li>
+<li><a name="a36"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodGROUP">GROUP</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a37"></a>    <span class="src-sym">{</span></li>
+<li><a name="a38"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Group'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a39"></a>&nbsp;</li>
+<li><a name="a40"></a>    <span class="src-sym">}</span></li>
+<li><a name="a41"></a>&nbsp;</li>
+<li><a name="a42"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodIMAGE">IMAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a43"></a>    <span class="src-sym">{</span></li>
+<li><a name="a44"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Image'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a45"></a>&nbsp;</li>
+<li><a name="a46"></a>    <span class="src-sym">}</span></li>
+<li><a name="a47"></a>&nbsp;</li>
+<li><a name="a48"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodONLINE_ACCOUNT">ONLINE_ACCOUNT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a49"></a>    <span class="src-sym">{</span></li>
+<li><a name="a50"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'OnlineAccount'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a51"></a>&nbsp;</li>
+<li><a name="a52"></a>    <span class="src-sym">}</span></li>
+<li><a name="a53"></a>&nbsp;</li>
+<li><a name="a54"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodONLINE_CHAT_ACCOUNT">ONLINE_CHAT_ACCOUNT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a55"></a>    <span class="src-sym">{</span></li>
+<li><a name="a56"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'OnlineChatAccount'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a57"></a>&nbsp;</li>
+<li><a name="a58"></a>    <span class="src-sym">}</span></li>
+<li><a name="a59"></a>&nbsp;</li>
+<li><a name="a60"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodONLINE_ECOMMERCE_ACCOUNT">ONLINE_ECOMMERCE_ACCOUNT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a61"></a>    <span class="src-sym">{</span></li>
+<li><a name="a62"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'OnlineEcommerceAccount'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a63"></a>&nbsp;</li>
+<li><a name="a64"></a>    <span class="src-sym">}</span></li>
+<li><a name="a65"></a>&nbsp;</li>
+<li><a name="a66"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodONLINE_GAMING_ACCOUNT">ONLINE_GAMING_ACCOUNT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a67"></a>    <span class="src-sym">{</span></li>
+<li><a name="a68"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'OnlineGamingAccount'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a69"></a>&nbsp;</li>
+<li><a name="a70"></a>    <span class="src-sym">}</span></li>
+<li><a name="a71"></a>&nbsp;</li>
+<li><a name="a72"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodORGANIZATION">ORGANIZATION</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a73"></a>    <span class="src-sym">{</span></li>
+<li><a name="a74"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Organization'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a75"></a>&nbsp;</li>
+<li><a name="a76"></a>    <span class="src-sym">}</span></li>
+<li><a name="a77"></a>&nbsp;</li>
+<li><a name="a78"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPERSON">PERSON</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a79"></a>    <span class="src-sym">{</span></li>
+<li><a name="a80"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Person'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a81"></a>&nbsp;</li>
+<li><a name="a82"></a>    <span class="src-sym">}</span></li>
+<li><a name="a83"></a>&nbsp;</li>
+<li><a name="a84"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPERSONAL_PROFILE_DOCUMENT">PERSONAL_PROFILE_DOCUMENT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a85"></a>    <span class="src-sym">{</span></li>
+<li><a name="a86"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'PersonalProfileDocument'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a87"></a>&nbsp;</li>
+<li><a name="a88"></a>    <span class="src-sym">}</span></li>
+<li><a name="a89"></a>&nbsp;</li>
+<li><a name="a90"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPROJECT">PROJECT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a91"></a>    <span class="src-sym">{</span></li>
+<li><a name="a92"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'Project'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a93"></a>&nbsp;</li>
+<li><a name="a94"></a>    <span class="src-sym">}</span></li>
+<li><a name="a95"></a>&nbsp;</li>
+<li><a name="a96"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodACCOUNT_NAME">ACCOUNT_NAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a97"></a>    <span class="src-sym">{</span></li>
+<li><a name="a98"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'accountName'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a99"></a>&nbsp;</li>
+<li><a name="a100"></a>    <span class="src-sym">}</span></li>
+<li><a name="a101"></a>&nbsp;</li>
+<li><a name="a102"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodACCOUNT_SERVICE_HOMEPAGE">ACCOUNT_SERVICE_HOMEPAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a103"></a>    <span class="src-sym">{</span></li>
+<li><a name="a104"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'accountServiceHomepage'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a105"></a>&nbsp;</li>
+<li><a name="a106"></a>    <span class="src-sym">}</span></li>
+<li><a name="a107"></a>&nbsp;</li>
+<li><a name="a108"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodAIM_CHAT_ID">AIM_CHAT_ID</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a109"></a>    <span class="src-sym">{</span></li>
+<li><a name="a110"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'aimChatID'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a111"></a>&nbsp;</li>
+<li><a name="a112"></a>    <span class="src-sym">}</span></li>
+<li><a name="a113"></a>&nbsp;</li>
+<li><a name="a114"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodBASED_NEAR">BASED_NEAR</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a115"></a>    <span class="src-sym">{</span></li>
+<li><a name="a116"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'based_near'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a117"></a>&nbsp;</li>
+<li><a name="a118"></a>    <span class="src-sym">}</span></li>
+<li><a name="a119"></a>&nbsp;</li>
+<li><a name="a120"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodCURRENT_PROJECT">CURRENT_PROJECT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a121"></a>    <span class="src-sym">{</span></li>
+<li><a name="a122"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'currentProject'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a123"></a>&nbsp;</li>
+<li><a name="a124"></a>    <span class="src-sym">}</span></li>
+<li><a name="a125"></a>&nbsp;</li>
+<li><a name="a126"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodDEPICTION">DEPICTION</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a127"></a>    <span class="src-sym">{</span></li>
+<li><a name="a128"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'depiction'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a129"></a>&nbsp;</li>
+<li><a name="a130"></a>    <span class="src-sym">}</span></li>
+<li><a name="a131"></a>&nbsp;</li>
+<li><a name="a132"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodDEPICTS">DEPICTS</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a133"></a>    <span class="src-sym">{</span></li>
+<li><a name="a134"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'depicts'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a135"></a>&nbsp;</li>
+<li><a name="a136"></a>    <span class="src-sym">}</span></li>
+<li><a name="a137"></a>&nbsp;</li>
+<li><a name="a138"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodDNA_CHECKSUM">DNA_CHECKSUM</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a139"></a>    <span class="src-sym">{</span></li>
+<li><a name="a140"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'dnaChecksum'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a141"></a>&nbsp;</li>
+<li><a name="a142"></a>    <span class="src-sym">}</span></li>
+<li><a name="a143"></a>&nbsp;</li>
+<li><a name="a144"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodFAMILY_NAME">FAMILY_NAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a145"></a>    <span class="src-sym">{</span></li>
+<li><a name="a146"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'family_name'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a147"></a>&nbsp;</li>
+<li><a name="a148"></a>    <span class="src-sym">}</span></li>
+<li><a name="a149"></a>&nbsp;</li>
+<li><a name="a150"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodFIRST_NAME">FIRST_NAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a151"></a>    <span class="src-sym">{</span></li>
+<li><a name="a152"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'firstName'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a153"></a>&nbsp;</li>
+<li><a name="a154"></a>    <span class="src-sym">}</span></li>
+<li><a name="a155"></a>&nbsp;</li>
+<li><a name="a156"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodFUNDED_BY">FUNDED_BY</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a157"></a>    <span class="src-sym">{</span></li>
+<li><a name="a158"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'fundedBy'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a159"></a>&nbsp;</li>
+<li><a name="a160"></a>    <span class="src-sym">}</span></li>
+<li><a name="a161"></a>&nbsp;</li>
+<li><a name="a162"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodGEEKCODE">GEEKCODE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a163"></a>    <span class="src-sym">{</span></li>
+<li><a name="a164"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'geekcode'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a165"></a>&nbsp;</li>
+<li><a name="a166"></a>    <span class="src-sym">}</span></li>
+<li><a name="a167"></a>&nbsp;</li>
+<li><a name="a168"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodGENDER">GENDER</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a169"></a>    <span class="src-sym">{</span></li>
+<li><a name="a170"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'gender'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a171"></a>&nbsp;</li>
+<li><a name="a172"></a>    <span class="src-sym">}</span></li>
+<li><a name="a173"></a>&nbsp;</li>
+<li><a name="a174"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodGIVENNAME">GIVENNAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a175"></a>    <span class="src-sym">{</span></li>
+<li><a name="a176"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'givenname'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a177"></a>&nbsp;</li>
+<li><a name="a178"></a>    <span class="src-sym">}</span></li>
+<li><a name="a179"></a>&nbsp;</li>
+<li><a name="a180"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodHOLDS_ACCOUNT">HOLDS_ACCOUNT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a181"></a>    <span class="src-sym">{</span></li>
+<li><a name="a182"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'holdsAccount'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a183"></a>&nbsp;</li>
+<li><a name="a184"></a>    <span class="src-sym">}</span></li>
+<li><a name="a185"></a>&nbsp;</li>
+<li><a name="a186"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodHOMEPAGE">HOMEPAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a187"></a>    <span class="src-sym">{</span></li>
+<li><a name="a188"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'homepage'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a189"></a>&nbsp;</li>
+<li><a name="a190"></a>    <span class="src-sym">}</span></li>
+<li><a name="a191"></a>&nbsp;</li>
+<li><a name="a192"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodICQ_CHAT_ID">ICQ_CHAT_ID</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a193"></a>    <span class="src-sym">{</span></li>
+<li><a name="a194"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'icqChatID'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a195"></a>&nbsp;</li>
+<li><a name="a196"></a>    <span class="src-sym">}</span></li>
+<li><a name="a197"></a>&nbsp;</li>
+<li><a name="a198"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodIMG">IMG</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a199"></a>    <span class="src-sym">{</span></li>
+<li><a name="a200"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'img'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a201"></a>&nbsp;</li>
+<li><a name="a202"></a>    <span class="src-sym">}</span></li>
+<li><a name="a203"></a>&nbsp;</li>
+<li><a name="a204"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodINTEREST">INTEREST</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a205"></a>    <span class="src-sym">{</span></li>
+<li><a name="a206"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'interest'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a207"></a>&nbsp;</li>
+<li><a name="a208"></a>    <span class="src-sym">}</span></li>
+<li><a name="a209"></a>&nbsp;</li>
+<li><a name="a210"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodJABBER_ID">JABBER_ID</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a211"></a>    <span class="src-sym">{</span></li>
+<li><a name="a212"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'jabberID'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a213"></a>&nbsp;</li>
+<li><a name="a214"></a>    <span class="src-sym">}</span></li>
+<li><a name="a215"></a>&nbsp;</li>
+<li><a name="a216"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodKNOWS">KNOWS</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a217"></a>    <span class="src-sym">{</span></li>
+<li><a name="a218"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'knows'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a219"></a>&nbsp;</li>
+<li><a name="a220"></a>    <span class="src-sym">}</span></li>
+<li><a name="a221"></a>&nbsp;</li>
+<li><a name="a222"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodLOGO">LOGO</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a223"></a>    <span class="src-sym">{</span></li>
+<li><a name="a224"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'logo'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a225"></a>&nbsp;</li>
+<li><a name="a226"></a>    <span class="src-sym">}</span></li>
+<li><a name="a227"></a>&nbsp;</li>
+<li><a name="a228"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMADE">MADE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a229"></a>    <span class="src-sym">{</span></li>
+<li><a name="a230"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'made'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a231"></a>&nbsp;</li>
+<li><a name="a232"></a>    <span class="src-sym">}</span></li>
+<li><a name="a233"></a>&nbsp;</li>
+<li><a name="a234"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMAKER">MAKER</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a235"></a>    <span class="src-sym">{</span></li>
+<li><a name="a236"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'maker'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a237"></a>&nbsp;</li>
+<li><a name="a238"></a>    <span class="src-sym">}</span></li>
+<li><a name="a239"></a>&nbsp;</li>
+<li><a name="a240"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMBOX">MBOX</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a241"></a>    <span class="src-sym">{</span></li>
+<li><a name="a242"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'mbox'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a243"></a>&nbsp;</li>
+<li><a name="a244"></a>    <span class="src-sym">}</span></li>
+<li><a name="a245"></a>&nbsp;</li>
+<li><a name="a246"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMBOX_SHA1SUM">MBOX_SHA1SUM</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a247"></a>    <span class="src-sym">{</span></li>
+<li><a name="a248"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'mbox_sha1sum'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a249"></a>&nbsp;</li>
+<li><a name="a250"></a>    <span class="src-sym">}</span></li>
+<li><a name="a251"></a>&nbsp;</li>
+<li><a name="a252"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMEMBER">MEMBER</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a253"></a>    <span class="src-sym">{</span></li>
+<li><a name="a254"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'member'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a255"></a>&nbsp;</li>
+<li><a name="a256"></a>    <span class="src-sym">}</span></li>
+<li><a name="a257"></a>&nbsp;</li>
+<li><a name="a258"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMEMBERSHIP_CLASS">MEMBERSHIP_CLASS</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a259"></a>    <span class="src-sym">{</span></li>
+<li><a name="a260"></a>        <span class="src-key">return </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'membershipClass'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a261"></a>&nbsp;</li>
+<li><a name="a262"></a>    <span class="src-sym">}</span></li>
+<li><a name="a263"></a>&nbsp;</li>
+<li><a name="a264"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMSN_CHAT_ID">MSN_CHAT_ID</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a265"></a>    <span class="src-sym">{</span></li>
+<li><a name="a266"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'msnChatID'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a267"></a>&nbsp;</li>
+<li><a name="a268"></a>    <span class="src-sym">}</span></li>
+<li><a name="a269"></a>&nbsp;</li>
+<li><a name="a270"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodMYERS_BRIGGS">MYERS_BRIGGS</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a271"></a>    <span class="src-sym">{</span></li>
+<li><a name="a272"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'myersBriggs'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a273"></a>&nbsp;</li>
+<li><a name="a274"></a>    <span class="src-sym">}</span></li>
+<li><a name="a275"></a>&nbsp;</li>
+<li><a name="a276"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodNAME">NAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a277"></a>    <span class="src-sym">{</span></li>
+<li><a name="a278"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'name'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a279"></a>&nbsp;</li>
+<li><a name="a280"></a>    <span class="src-sym">}</span></li>
+<li><a name="a281"></a>&nbsp;</li>
+<li><a name="a282"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodNICK">NICK</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a283"></a>    <span class="src-sym">{</span></li>
+<li><a name="a284"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'nick'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a285"></a>&nbsp;</li>
+<li><a name="a286"></a>    <span class="src-sym">}</span></li>
+<li><a name="a287"></a>&nbsp;</li>
+<li><a name="a288"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPAGE">PAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a289"></a>    <span class="src-sym">{</span></li>
+<li><a name="a290"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'page'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a291"></a>&nbsp;</li>
+<li><a name="a292"></a>    <span class="src-sym">}</span></li>
+<li><a name="a293"></a>&nbsp;</li>
+<li><a name="a294"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPAST_PROJECT">PAST_PROJECT</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a295"></a>    <span class="src-sym">{</span></li>
+<li><a name="a296"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'pastProject'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a297"></a>&nbsp;</li>
+<li><a name="a298"></a>    <span class="src-sym">}</span></li>
+<li><a name="a299"></a>&nbsp;</li>
+<li><a name="a300"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPHONE">PHONE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a301"></a>    <span class="src-sym">{</span></li>
+<li><a name="a302"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'phone'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a303"></a>&nbsp;</li>
+<li><a name="a304"></a>    <span class="src-sym">}</span></li>
+<li><a name="a305"></a>&nbsp;</li>
+<li><a name="a306"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPLAN">PLAN</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a307"></a>    <span class="src-sym">{</span></li>
+<li><a name="a308"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'plan'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a309"></a>&nbsp;</li>
+<li><a name="a310"></a>    <span class="src-sym">}</span></li>
+<li><a name="a311"></a>&nbsp;</li>
+<li><a name="a312"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPRIMARY_TOPIC">PRIMARY_TOPIC</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a313"></a>    <span class="src-sym">{</span></li>
+<li><a name="a314"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'primaryTopic'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a315"></a>&nbsp;</li>
+<li><a name="a316"></a>    <span class="src-sym">}</span></li>
+<li><a name="a317"></a>&nbsp;</li>
+<li><a name="a318"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodPUBLICATIONS">PUBLICATIONS</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a319"></a>    <span class="src-sym">{</span></li>
+<li><a name="a320"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'publications'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a321"></a>&nbsp;</li>
+<li><a name="a322"></a>    <span class="src-sym">}</span></li>
+<li><a name="a323"></a>&nbsp;</li>
+<li><a name="a324"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodSCHOOL_HOMEPAGE">SCHOOL_HOMEPAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a325"></a>    <span class="src-sym">{</span></li>
+<li><a name="a326"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a> </span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'schoolHomepage'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a327"></a>&nbsp;</li>
+<li><a name="a328"></a>    <span class="src-sym">}</span></li>
+<li><a name="a329"></a>&nbsp;</li>
+<li><a name="a330"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodSHA1">SHA1</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a331"></a>    <span class="src-sym">{</span></li>
+<li><a name="a332"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a> </span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'sha1'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a333"></a>&nbsp;</li>
+<li><a name="a334"></a>    <span class="src-sym">}</span></li>
+<li><a name="a335"></a>&nbsp;</li>
+<li><a name="a336"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodSURNAME">SURNAME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a337"></a>    <span class="src-sym">{</span></li>
+<li><a name="a338"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a> </span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'surname'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a339"></a>&nbsp;</li>
+<li><a name="a340"></a>    <span class="src-sym">}</span></li>
+<li><a name="a341"></a>&nbsp;</li>
+<li><a name="a342"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTHEME">THEME</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a343"></a>    <span class="src-sym">{</span></li>
+<li><a name="a344"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'theme'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a345"></a>&nbsp;</li>
+<li><a name="a346"></a>    <span class="src-sym">}</span></li>
+<li><a name="a347"></a>&nbsp;</li>
+<li><a name="a348"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTHUMBNAIL">THUMBNAIL</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a349"></a>    <span class="src-sym">{</span></li>
+<li><a name="a350"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'thumbnail'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a351"></a>&nbsp;</li>
+<li><a name="a352"></a>    <span class="src-sym">}</span></li>
+<li><a name="a353"></a>&nbsp;</li>
+<li><a name="a354"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTIPJAR">TIPJAR</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a355"></a>    <span class="src-sym">{</span></li>
+<li><a name="a356"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'tipjar'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a357"></a>&nbsp;</li>
+<li><a name="a358"></a>    <span class="src-sym">}</span></li>
+<li><a name="a359"></a>&nbsp;</li>
+<li><a name="a360"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTITLE">TITLE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a361"></a>    <span class="src-sym">{</span></li>
+<li><a name="a362"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'title'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a363"></a>&nbsp;</li>
+<li><a name="a364"></a>    <span class="src-sym">}</span></li>
+<li><a name="a365"></a>&nbsp;</li>
+<li><a name="a366"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTOPIC">TOPIC</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a367"></a>    <span class="src-sym">{</span></li>
+<li><a name="a368"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'topic'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a369"></a>&nbsp;</li>
+<li><a name="a370"></a>    <span class="src-sym">}</span></li>
+<li><a name="a371"></a>&nbsp;</li>
+<li><a name="a372"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodTOPIC_INTEREST">TOPIC_INTEREST</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a373"></a>    <span class="src-sym">{</span></li>
+<li><a name="a374"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'topic_interest'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a375"></a>&nbsp;</li>
+<li><a name="a376"></a>    <span class="src-sym">}</span></li>
+<li><a name="a377"></a>&nbsp;</li>
+<li><a name="a378"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodWEBLOG">WEBLOG</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a379"></a>    <span class="src-sym">{</span></li>
+<li><a name="a380"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'weblog'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a381"></a>&nbsp;</li>
+<li><a name="a382"></a>    <span class="src-sym">}</span></li>
+<li><a name="a383"></a>&nbsp;</li>
+<li><a name="a384"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodWORK_INFO_HOMEPAGE">WORK_INFO_HOMEPAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a385"></a>    <span class="src-sym">{</span></li>
+<li><a name="a386"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'workInfoHomepage'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a387"></a>&nbsp;</li>
+<li><a name="a388"></a>    <span class="src-sym">}</span></li>
+<li><a name="a389"></a>&nbsp;</li>
+<li><a name="a390"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodWORKPLACE_HOMEPAGE">WORKPLACE_HOMEPAGE</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a391"></a>    <span class="src-sym">{</span></li>
+<li><a name="a392"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'workplaceHomepage'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a393"></a>&nbsp;</li>
+<li><a name="a394"></a>    <span class="src-sym">}</span></li>
+<li><a name="a395"></a>&nbsp;</li>
+<li><a name="a396"></a>    <span class="src-key">function </span><a href="../default/FOAF_RES.html#methodYAHOO_CHAT_ID">YAHOO_CHAT_ID</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a397"></a>    <span class="src-sym">{</span></li>
+<li><a name="a398"></a>        <span class="src-key">return  </span><span class="src-key">new </span><span class="src-id"><a href="../resModel/ResResource.html">ResResource</a></span><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineFOAF_NS">FOAF_NS</a> </span>. <span class="src-str">'yahooChatID'</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a399"></a>    <span class="src-sym">}</span></li>
+<li><a name="a400"></a><span class="src-sym">}</span></li>
+<li><a name="a401"></a>&nbsp;</li>
+<li><a name="a402"></a>&nbsp;</li>
+<li><a name="a403"></a>&nbsp;</li>
+<li><a name="a404"></a>&nbsp;</li>
+<li><a name="a405"></a><span class="src-php">?&gt;</span></li>
+</ol></pre>
+</div>
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 17 Dec 2004 16:14:57 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</body>
+</html>

@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface2">
+    
+    <target name="testQueryInterface2">
+
+        <webtest name="Query Layout Manager">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+
+            <checkAjaxResponseXpathText
+              description="Preview must contain 10 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="11"
+            />  
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <clickLink
+              description="Open Query Layout Manager"
+              htmlId="layouttitle-link"
+            />
+            <setSelectField
+              description="Select format ol"
+              xpath="//select[@id='layout_format']"
+              value="ol"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain ordered list, 4th element is Boston"
+              xpath="//div[@id='previewcontent']/ol/li[4]/a"
+              text="Boston"
+            />  
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ol\s*\| link=all\s*\|\}\}" />
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="Select format ul"
+              xpath="//select[@id='layout_format']"
+              value="ul"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain ordered list, 8th element is Linz"
+              xpath="//div[@id='previewcontent']/ul/li[8]/a"
+              text="Linz"
+            />  
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ul\s*\| link=all\s*\|\}\}" />
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="Select format embedded"
+              xpath="//select[@id='layout_format']"
+              value="embedded"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain text, 2nd item is Berlin"
+              xpath="//div[@id='previewcontent']/h1[2]/span/a"
+              text="Berlin"
+            />
+            <verifyXPath
+              description="Check that the short text exists as well"
+              xpath="//div[@id='previewcontent']/p[2]/text()"
+              regex="\s*This is the city of Berlin\s*"
+            />  
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=embedded\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="Select format count"
+              xpath="//select[@id='layout_format']"
+              value="count"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Must be 10 cities"
+              xpath="//div[@id='previewcontent']/p"
+              regex="\s*10\s*"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=count\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="Select format broadtable"
+              xpath="//select[@id='layout_format']"
+              value="broadtable"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 10th row (+1) is Vienna"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
+              text="Vienna"
+            />
+            <verifyXPath
+              description="Check table width"
+              xpath="//div[@id='previewcontent']/table/@width"
+              text="100%"
+            />  
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+        	
+            <setInputField
+              description="set mainlabel Cities"
+              htmlId="qp_param_mainlabel"
+              value="Cities"
+            />
+            <checkAjaxResponseXpathText
+              description="Check table header row"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[1]/th"
+              text="Cities"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| mainlabel=Cities\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setInputField
+              description="set intro List of all cities"
+              htmlId="qp_param_intro"
+              value="List of all cities"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Check table header row"
+              xpath="//div[@id='previewcontent']/text()"
+              regex="\sList of all cities\s"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="change order to descending"
+              htmlId="qp_param_order"
+              value="descending"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 10th row (+1) is Baltimore"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
+              text="Baltimore"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setSelectField
+              description="no links for elements"
+              xpath="//select[@id='qp_param_link']"
+              value="none"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 9th row (+1) is Berlin"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[10]/td"
+              text="Berlin"
+            />
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=none\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
+            <clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
+            />
+
+            <setInputField
+              description="set a limit of 5"
+              htmlId="qp_param_limit"
+              value="5"
+            />
+            <setSelectField
+              description="change layout format to list"
+              xpath="//select[@id='layout_format']"
+              value="list"
+            />
+
+            <checkAjaxResponseXpathRegex
+              description="Check text up to link further results"
+              xpath="//div[@id='previewcontent']/p/text()"
+              regex="\s*Vienna, Stuttgart, Linz, Hamburg, and Graz.*"
+            />
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=list\s*\| link=none\s*\| intro=List of all cities\s*\| limit=5\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
+        </webtest>
+        
+    </target>
+</project>

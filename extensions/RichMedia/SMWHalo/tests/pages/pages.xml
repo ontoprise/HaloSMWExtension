@@ -1,0 +1,1282 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.3</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>1</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2009-10-16T10:39:23Z</timestamp>
+      <contributor>
+        <ip>MediaWiki default</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;big&gt;'''MediaWiki has been successfully installed.'''&lt;/big&gt;
+
+Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
+
+== Getting started ==
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has domain and range</title>
+    <id>2</id>
+    <revision>
+      <id>3</id>
+      <timestamp>2009-05-12T10:01:33Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
+
+[[Has type::Type:Record]]
+[[Has fields::Type:Page; Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has max cardinality</title>
+    <id>3</id>
+    <revision>
+      <id>4</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has max cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has max cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has min cardinality</title>
+    <id>4</id>
+    <revision>
+      <id>5</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has min cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has min cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is inverse of</title>
+    <id>5</id>
+    <revision>
+      <id>6</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Is inverse of&quot;</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Is inverse of&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is equal to</title>
+    <id>6</id>
+    <revision>
+      <id>7</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Is equal to&quot;</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Is equal to&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Transitive properties</title>
+    <id>7</id>
+    <revision>
+      <id>8</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Transitive properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Symmetrical properties</title>
+    <id>8</id>
+    <revision>
+      <id>9</id>
+      <timestamp>2009-05-12T10:01:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Symmetrical properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Question</title>
+    <id>9</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2009-05-12T10:01:35Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Description</title>
+    <id>10</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2009-05-12T10:01:35Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:Text]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:DiscourseState</title>
+    <id>11</id>
+    <revision>
+      <id>12</id>
+      <timestamp>2009-05-12T10:01:35Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>NoAnnotation</title>
+    <id>12</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2009-04-21T13:48:10Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: No annotations on it</comment>
+      <text xml:space="preserve">No annotations on it</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:GardeningLog</title>
+    <id>13</id>
+    <revision>
+      <id>14</id>
+      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This is the Gardening log category</comment>
+      <text xml:space="preserve">This is the Gardening log category</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Glossary</title>
+    <id>14</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Glossary&quot;  [[has type::Type:Glossary Term]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Glossary&quot;
+
+[[has type::Type:Glossary Term]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Car</title>
+    <id>15</id>
+    <revision>
+      <id>16</id>
+      <timestamp>2008-09-05T09:48:28Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Car</comment>
+      <text xml:space="preserve">Car</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Sports car</title>
+    <id>16</id>
+    <revision>
+      <id>17</id>
+      <timestamp>2008-09-05T09:49:00Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Category:Car]]</comment>
+      <text xml:space="preserve">[[Category:Car]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Electric car</title>
+    <id>17</id>
+    <revision>
+      <id>18</id>
+      <timestamp>2008-09-05T09:49:22Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Category:Car]]</comment>
+      <text xml:space="preserve">[[Category:Car]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Engine</title>
+    <id>18</id>
+    <revision>
+      <id>19</id>
+      <timestamp>2008-09-05T09:49:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Engine</comment>
+      <text xml:space="preserve">Engine</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Person</title>
+    <id>19</id>
+    <revision>
+      <id>20</id>
+      <timestamp>2008-09-05T10:22:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Person
+[[Category:Young man]] // cycle</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Engine</title>
+    <id>20</id>
+    <revision>
+      <id>21</id>
+      <timestamp>2008-09-05T09:50:24Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Car; Category:Engine]][[has type::Type:page]][[Has max cardinality::1]][[Has min cardinality::1]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Car; Category:Engine]][[has type::Type:page]][[Has max cardinality::1]][[Has min cardinality::1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Gears</title>
+    <id>21</id>
+    <revision>
+      <id>22</id>
+      <timestamp>2008-09-05T09:51:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Has gears</comment>
+      <text xml:space="preserve">Has gears</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Body Form</title>
+    <id>22</id>
+    <revision>
+      <id>23</id>
+      <timestamp>2008-11-14T14:43:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[has domain and range::Category:Car]][[has type::Type:page]]jhfdvddsfdgfgfhghghg</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Electric engine</title>
+    <id>23</id>
+    <revision>
+      <id>24</id>
+      <timestamp>2008-09-05T10:27:51Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::0]][[Subproperty of::Property:Has Engine]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Child</title>
+    <id>24</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2008-09-05T09:54:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::1]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Son</title>
+    <id>25</id>
+    <revision>
+      <id>26</id>
+      <timestamp>2008-09-05T09:54:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[Subproperty of::Property:Has Child]]</comment>
+      <text xml:space="preserve">[[Subproperty of::Property:Has Child]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Daughter</title>
+    <id>26</id>
+    <revision>
+      <id>27</id>
+      <timestamp>2008-09-05T09:55:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[Subproperty of::Property:Has Child]][[has type::Type:String]][[Has max cardinality::0]][[Has min cardinality::-1]]</comment>
+      <text xml:space="preserve">[[Subproperty of::Property:Has Child]][[has type::Type:String]][[Has max cardinality::0]][[Has min cardinality::-1]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Kai</title>
+    <id>27</id>
+    <revision>
+      <id>84</id>
+      <timestamp>2010-06-14T15:18:21Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has Engine::3 cylinder]]
+[[Has adress::Rintheimer Hauptstrasse 70]]
+[[Height::175cm]]
+[[category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Audi TT</title>
+    <id>28</id>
+    <revision>
+      <id>29</id>
+      <timestamp>2008-10-02T13:37:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Has Engine::4 cylinder]][[Has Engine::5 cylinder]]
+[[has owner::Kai]]
+[[category:Sports car]]
+[[category:Coupé]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Peugeot</title>
+    <id>29</id>
+    <revision>
+      <id>30</id>
+      <timestamp>2009-08-28T09:13:50Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has Engine::kai]]
+[[Category:Electric car]]
+[[Has Voltage::200]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has name</title>
+    <id>30</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2008-11-24T09:05:41Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[has type::Type:String]][[Has max cardinality::2]][[Has min cardinality::1]][[has type::Type:Number]][[Has max cardinality::3]][[Has min cardinality::4]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Man</title>
+    <id>31</id>
+    <revision>
+      <id>32</id>
+      <timestamp>2008-09-05T10:21:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[Category:Person]]</comment>
+      <text xml:space="preserve">[[Category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Young man</title>
+    <id>32</id>
+    <revision>
+      <id>33</id>
+      <timestamp>2008-09-05T10:21:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[Category:Man]]</comment>
+      <text xml:space="preserve">[[Category:Man]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Type:Force</title>
+    <id>33</id>
+    <revision>
+      <id>34</id>
+      <timestamp>2009-05-14T15:05:41Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Corresponds to::1 N]]
+[[Corresponds to::1 Newton]]
+[[Corresponds to::1 kg*m/s²]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has torsional moment</title>
+    <id>34</id>
+    <revision>
+      <id>35</id>
+      <timestamp>2008-09-05T12:47:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[has domain and range::Category:Engine]][[has type::Type:Force]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>5 cylinder</title>
+    <id>35</id>
+    <revision>
+      <id>36</id>
+      <timestamp>2008-09-05T12:47:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Has torsional moment::100 Nm]]
+[[category:Engine]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has adress</title>
+    <id>36</id>
+    <revision>
+      <id>37</id>
+      <timestamp>2008-09-05T15:41:50Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Has type::Type:String;Type:String]]</comment>
+      <text xml:space="preserve">[[Has type::Type:String;Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is parent of</title>
+    <id>37</id>
+    <revision>
+      <id>38</id>
+      <timestamp>2008-09-05T16:31:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: [[has type::Type:page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</comment>
+      <text xml:space="preserve">[[has type::Type:page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Parent of</title>
+    <id>38</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2008-09-05T16:35:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Redirecting to [[Property:Is parent of]]</comment>
+      <text xml:space="preserve">#REDIRECT [[Property:Is parent of]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Ancestor</title>
+    <id>39</id>
+    <revision>
+      <id>40</id>
+      <timestamp>2008-09-26T12:14:17Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[has type::Type:page]]
+[[Subproperty of::Property:Has Father]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Father</title>
+    <id>40</id>
+    <revision>
+      <id>41</id>
+      <timestamp>2008-09-26T12:14:41Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has type::Type:page]] [[Subproperty of::Property:Has Ancestor]]</comment>
+      <text xml:space="preserve">[[has type::Type:page]]
+[[Subproperty of::Property:Has Ancestor]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 2 26 12 49 45</title>
+    <id>41</id>
+    <revision>
+      <id>42</id>
+      <timestamp>2009-02-26T11:49:45Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-2-26 12:49:45</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/release15/extensions/SMWHalo/wikiexport/wikiexport_233649a681d912d70.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/release15/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Hybrid car</title>
+    <id>42</id>
+    <revision>
+      <id>43</id>
+      <timestamp>2009-04-23T14:14:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Create &quot;$-title&quot; and make &quot;OntologyBrowser&quot; sub-category of &quot;$-title&quot;</comment>
+      <text xml:space="preserve">[[Category:Electric_car]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 5 13 16 59 55</title>
+    <id>43</id>
+    <revision>
+      <id>44</id>
+      <timestamp>2009-05-13T14:59:55Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-5-13 16:59:55</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/mediawiki/extensions/SemanticGardening/wikiexport/wikiexport_24a0ae06a32870.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 5 13 17 1 50</title>
+    <id>44</id>
+    <revision>
+      <id>45</id>
+      <timestamp>2009-05-13T15:01:50Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-5-13 17:1:50</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/mediawiki/extensions/SemanticGardening/wikiexport/wikiexport_126874a0ae0dda2113.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 5 13 17 2 14</title>
+    <id>45</id>
+    <revision>
+      <id>46</id>
+      <timestamp>2009-05-13T15:02:14Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-5-13 17:2:14</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/mediawiki/extensions/SemanticGardening/wikiexport/wikiexport_86694a0ae0f5e5a44.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 5 13 17 2 38</title>
+    <id>46</id>
+    <revision>
+      <id>47</id>
+      <timestamp>2009-05-13T15:02:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-5-13 17:2:38</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/mediawiki/extensions/SemanticGardening/wikiexport/wikiexport_277824a0ae10e8127e.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw exportontologybot at 2009 5 13 17 3 12</title>
+    <id>47</id>
+    <revision>
+      <id>48</id>
+      <timestamp>2009-05-13T15:03:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_exportontologybot at 2009-5-13 17:3:12</comment>
+      <text xml:space="preserve">
+
+Export was successful! Click [http://localhost/mediawiki/extensions/SemanticGardening/wikiexport/wikiexport_76364a0ae1305f298.owl here] to download the wiki export as OWL file.
+
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_exportontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Testontology.owl</title>
+    <id>48</id>
+    <revision>
+      <id>49</id>
+      <timestamp>2009-05-13T15:08:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" />
+    </revision>
+  </page>
+  <page>
+    <title>Category:Animal</title>
+    <id>49</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2009-05-13T15:09:59Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>&amp;lt;smw_oi_importedfromontology&amp;gt;</comment>
+      <text xml:space="preserve" />
+    </revision>
+  </page>
+  <page>
+    <title>Category:Dog</title>
+    <id>50</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2009-05-13T15:09:59Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>&amp;lt;smw_oi_importedfromontology&amp;gt;</comment>
+      <text xml:space="preserve">[[Category:Animal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Elephant</title>
+    <id>51</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2009-05-13T15:10:00Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>&amp;lt;smw_oi_importedfromontology&amp;gt;</comment>
+      <text xml:space="preserve">[[Category:Animal]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Smw importontologybot at 2009 5 13 17 10 0</title>
+    <id>52</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2009-05-13T15:10:00Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Logging of smw_importontologybot at 2009-5-13 17:10:0</comment>
+      <text xml:space="preserve">
+*Importing: Category:Animal
+*Importing: Category:Dog
+*Importing: Category:Elephant
+Model was successfully translated and imported!
+
+
+Also take a look at [http://localhost/mediawiki/index.php?title=Special:GardeningLog&amp;bot=smw_importontologybot GardeningLog] special page for further logs.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Gender</title>
+    <id>53</id>
+    <revision>
+      <id>54</id>
+      <timestamp>2009-05-14T15:09:21Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Allows value::Male]] [[Allows value::Female]]</comment>
+      <text xml:space="preserve">[[Allows value::Male]]
+[[Allows value::Female]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Baltimore</title>
+    <id>54</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2009-07-24T12:31:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Baltimore.  [[Category:City]] [[Located In::USA]] [[Population::640000]]</comment>
+      <text xml:space="preserve">This is the city of Baltimore.
+
+[[Category:City]]
+[[Located In::USA]]
+[[Population::640000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Berlin</title>
+    <id>55</id>
+    <revision>
+      <id>56</id>
+      <timestamp>2009-07-24T12:33:09Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Berlin.  [[Category:City]] [[Located In::Germany]] [[Population::3450000]]</comment>
+      <text xml:space="preserve">This is the city of Berlin.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::3450000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bern</title>
+    <id>56</id>
+    <revision>
+      <id>57</id>
+      <timestamp>2009-07-24T12:33:58Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Bern.  [[Category:City]] [[Located In::Switzerland]] [[Population::122600]]</comment>
+      <text xml:space="preserve">This is the city of Bern.
+
+[[Category:City]]
+[[Located In::Switzerland]]
+[[Population::122600]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Boston</title>
+    <id>57</id>
+    <revision>
+      <id>58</id>
+      <timestamp>2009-07-24T12:34:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Boston.  [[Category:City]] [[Located In::USA]]</comment>
+      <text xml:space="preserve">This is the city of Boston.
+
+[[Category:City]]
+[[Located In::USA]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bremen</title>
+    <id>58</id>
+    <revision>
+      <id>59</id>
+      <timestamp>2009-07-24T12:35:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Bremen.  [[Category:City]] [[Located In::Germany]] [[Population::548000]]</comment>
+      <text xml:space="preserve">This is the city of Bremen.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::548000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Graz</title>
+    <id>59</id>
+    <revision>
+      <id>60</id>
+      <timestamp>2009-07-24T12:36:24Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Graz.  [[Category:City]] [[Located In::Austria]] [[Population::253000]]</comment>
+      <text xml:space="preserve">This is the city of Graz.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::253000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Hamburg</title>
+    <id>60</id>
+    <revision>
+      <id>61</id>
+      <timestamp>2009-07-24T12:37:22Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Hamburg.  [[Category:City]] [[Located In::Germany]] [[Population::1773000]]</comment>
+      <text xml:space="preserve">This is the city of Hamburg.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::1773000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Linz</title>
+    <id>61</id>
+    <revision>
+      <id>62</id>
+      <timestamp>2009-07-24T12:38:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Linz.  [[Category:City]] [[Located In::Austria]] [[Population::189500]]</comment>
+      <text xml:space="preserve">This is the city of Linz.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::189500]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Stuttgart</title>
+    <id>62</id>
+    <revision>
+      <id>63</id>
+      <timestamp>2009-07-24T12:38:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Stuttgart.  [[Category:City]] [[Located In::Germany]] [[Population::597000]]</comment>
+      <text xml:space="preserve">This is the city of Stuttgart.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::597000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Vienna</title>
+    <id>63</id>
+    <revision>
+      <id>64</id>
+      <timestamp>2009-07-24T12:39:44Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Vienna.  [[Category:City]] [[Located In::Austria]] [[Population::1691000]]</comment>
+      <text xml:space="preserve">This is the city of Vienna.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::1691000]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Austria</title>
+    <id>64</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2009-07-24T12:40:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is Austria  [[Category:Country]] [[Located In::Europe]] [[Has Capital::Vienna]]</comment>
+      <text xml:space="preserve">This is Austria
+
+[[Category:Country]]
+[[Located In::Europe]]
+[[Has Capital::Vienna]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Europe</title>
+    <id>65</id>
+    <revision>
+      <id>66</id>
+      <timestamp>2009-07-24T12:41:09Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is Europe.  [[Category:Continent]]</comment>
+      <text xml:space="preserve">This is Europe.
+
+[[Category:Continent]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Continent</title>
+    <id>66</id>
+    <revision>
+      <id>67</id>
+      <timestamp>2009-07-24T12:41:24Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Continent</comment>
+      <text xml:space="preserve">Continent</text>
+    </revision>
+  </page>
+  <page>
+    <title>Germany</title>
+    <id>67</id>
+    <revision>
+      <id>68</id>
+      <timestamp>2009-07-24T12:42:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is Germany.  [[Category:Country]] [[Located In::Europe]] [[Has Capital::Berlin]]</comment>
+      <text xml:space="preserve">This is Germany.
+
+[[Category:Country]]
+[[Located In::Europe]]
+[[Has Capital::Berlin]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Located In</title>
+    <id>68</id>
+    <revision>
+      <id>69</id>
+      <timestamp>2009-07-24T12:44:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page:  [[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:City; Category:Country| ]][[has domain and range::Category:Country; Category:Continent| ]][[has ty...</comment>
+      <text xml:space="preserve">
+[[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:City; Category:Country| ]][[has domain and range::Category:Country; Category:Continent| ]][[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>USA</title>
+    <id>69</id>
+    <revision>
+      <id>70</id>
+      <timestamp>2009-07-24T12:44:54Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the USA.  [[Category:Country]] [[Located In::America]] [[Has Capital::Washington DC]]</comment>
+      <text xml:space="preserve">This is the USA.
+
+[[Category:Country]]
+[[Located In::America]]
+[[Has Capital::Washington DC]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>America</title>
+    <id>70</id>
+    <revision>
+      <id>71</id>
+      <timestamp>2009-07-24T12:45:17Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is America.  [[Category:Continent]]</comment>
+      <text xml:space="preserve">This is America.
+
+[[Category:Continent]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Capital</title>
+    <id>71</id>
+    <revision>
+      <id>72</id>
+      <timestamp>2009-07-24T12:46:25Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:County; Category:City| ]][[has type::Type:Page| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:County; Category:City| ]][[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Population</title>
+    <id>72</id>
+    <revision>
+      <id>73</id>
+      <timestamp>2009-07-24T12:47:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has type::Type:Number| ]]</comment>
+      <text xml:space="preserve">[[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:City</title>
+    <id>73</id>
+    <revision>
+      <id>74</id>
+      <timestamp>2009-07-24T12:48:27Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: City</comment>
+      <text xml:space="preserve">City</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Country</title>
+    <id>74</id>
+    <revision>
+      <id>75</id>
+      <timestamp>2009-07-24T12:48:52Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Country</comment>
+      <text xml:space="preserve">Country</text>
+    </revision>
+  </page>
+  <page>
+    <title>Switzerland</title>
+    <id>75</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-07-24T12:52:22Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is Switzerland.  [[Category:Country]] [[Has Capital::Bern]] [[Located In::Europe]]</comment>
+      <text xml:space="preserve">This is Switzerland.
+
+[[Category:Country]]
+[[Has Capital::Bern]]
+[[Located In::Europe]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestSPARQL</title>
+    <id>76</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-07-27T06:46:21Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}  {{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}  {{#sparql: SELECT ?X ?Has_owner...</comment>
+      <text xml:space="preserve">{{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}
+
+{{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }|?Has Engine=Engine|?X=Car  }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK</title>
+    <id>77</id>
+    <revision>
+      <id>78</id>
+      <timestamp>2009-07-27T06:47:45Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: [[Category:Car]] }}  {{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}  {{#sparql: [[Has Engine::+]] }}  {{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}
+
+{{#sparql: [[Has Engine::+]] }}
+
+{{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK2</title>
+    <id>78</id>
+    <revision>
+      <id>79</id>
+      <timestamp>2009-07-27T06:48:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|link=none }}  {{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|mainlabel=- }}  {{#sparql: [[Category:Car]][[Has own...</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|link=none }}
+
+{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|mainlabel=- }}
+
+{{#sparql: [[Category:Car]][[Has owner::Stefan]]|?Has owner=Owner|mainlabel=-|default=No results }}
+
+{{#sparql: [[Category:Car]]|format=ul }}
+
+{{#sparql: format=ul|limit=1|[[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|sort=Has Engine|order=desc }}
+
+{{#sparql: [[Category:Car]][[Has Engine::+]]|?Has owner=Owner|mainlabel=Car }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Voltage</title>
+    <id>79</id>
+    <revision>
+      <id>80</id>
+      <timestamp>2009-08-28T09:03:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Joe</title>
+    <id>80</id>
+    <revision>
+      <id>81</id>
+      <timestamp>2009-08-28T09:38:44Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Has Son::Jack]]</comment>
+      <text xml:space="preserve">[[Has Son::Jack]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Type:Height</title>
+    <id>81</id>
+    <revision>
+      <id>82</id>
+      <timestamp>2010-06-14T15:16:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '[[Corresponds to::1 cm, Zentimeter]] [[Corresponds to::0.01 m, Meter]] [[Corresponds to::0.3937 inch, Zoll]]'</comment>
+      <text xml:space="preserve">[[Corresponds to::1 cm, Zentimeter]]
+[[Corresponds to::0.01 m, Meter]]
+[[Corresponds to::0.3937 inch, Zoll]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Height</title>
+    <id>82</id>
+    <revision>
+      <id>86</id>
+      <timestamp>2010-06-14T15:24:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has type::Type:Height]]
+[[Has domain and range::Category:Person;]]
+[[Has max cardinality::1| ]]
+[[Has min cardinality::0| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Hans</title>
+    <id>83</id>
+    <revision>
+      <id>85</id>
+      <timestamp>2010-06-14T15:19:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'Hans is [[Height::187cm]] tall. [[Category:Person]]'</comment>
+      <text xml:space="preserve">Hans is [[Height::187cm]] tall.
+[[Category:Person]]</text>
+    </revision>
+  </page>
+</mediawiki>

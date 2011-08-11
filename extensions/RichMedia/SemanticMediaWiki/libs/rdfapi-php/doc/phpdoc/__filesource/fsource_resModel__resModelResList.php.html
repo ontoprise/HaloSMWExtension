@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>File Source for ResList.php</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+						
+<h1>Source for file ResList.php</h1>
+<p>Documentation is available at <a href="../resModel/_resModel_ResList_php.html">ResList.php</a></p>
+<div class="src-code">
+<pre><ol><li><a name="a1"></a><span class="src-php">&lt;?PHP</span></li>
+<li><a name="a2"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a3"></a><span class="src-comm">// Class: ResList</span></li>
+<li><a name="a4"></a><span class="src-comm">// ----------------------------------------------------------------------------------</span></li>
+<li><a name="a5"></a>&nbsp;</li>
+<li><a name="a4"></a>&nbsp;</li>
+<li><a name="a5"></a>&nbsp;</li>
+<li><a name="a6"></a><span class="src-doc">/**</span></li>
+<li><a name="a7"></a><span class="src-doc">* Implementation of an rdf:Collection (rdf:List)</span></li>
+<li><a name="a8"></a><span class="src-doc">* Provides a convenience encapsulation for lists formed from</span></li>
+<li><a name="a9"></a><span class="src-doc">* chains of RDF statements arranged to form a head/tail cons-cell</span></li>
+<li><a name="a10"></a><span class="src-doc">* structure.</span></li>
+<li><a name="a11"></a><span class="src-doc">* </span></li>
+<li><a name="a12"></a><span class="src-doc">* A well-formed list has cells that are made up of three statements:</span></li>
+<li><a name="a13"></a><span class="src-doc">* one denoting the rdf:type of the list cell, one denoting the link</span></li>
+<li><a name="a14"></a><span class="src-doc">* to the value of the list at that point, and one pointing to the</span></li>
+<li><a name="a15"></a><span class="src-doc">* list tail. If a list cell is not well-formed, list operations may</span></li>
+<li><a name="a16"></a><span class="src-doc">* fail in unpredictable ways. However, to explicitly check that the</span></li>
+<li><a name="a17"></a><span class="src-doc">* list is well-formed at all times is expensive, but you can call</span></li>
+<li><a name="a18"></a><span class="src-doc">* the isValid() method to manually check, if the list is well formed.</span></li>
+<li><a name="a19"></a><span class="src-doc">*</span></li>
+<li><a name="a20"></a><span class="src-doc">*</span></li>
+<li><a name="a21"></a><span class="src-doc">* &lt;BR&gt;&lt;BR&gt;History:&lt;UL&gt;</span></li>
+<li><a name="a22"></a><span class="src-doc">* &lt;LI&gt;10-01-2004                : First version of this class.&lt;/LI&gt;</span></li>
+<li><a name="a23"></a><span class="src-doc">*</span></li>
+<li><a name="a24"></a><span class="src-doc">* </span><span class="src-doc-coretag">@version</span><span class="src-doc">  V0.9.1</span></li>
+<li><a name="a25"></a><span class="src-doc">* </span><span class="src-doc-coretag">@author</span><span class="src-doc"> Daniel Westphal &lt;mail at d-westphal dot de&gt;</span></li>
+<li><a name="a26"></a><span class="src-doc">*</span></li>
+<li><a name="a27"></a><span class="src-doc">* </span><span class="src-doc-coretag">@package</span><span class="src-doc"> resModel</span></li>
+<li><a name="a28"></a><span class="src-doc">* </span><span class="src-doc-coretag">@todo</span><span class="src-doc"> nothing</span></li>
+<li><a name="a29"></a><span class="src-doc">* </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a31"></a><span class="src-doc">*/</span></li>
+<li><a name="a32"></a><span class="src-key">class </span><a href="../resModel/ResList.html">ResList</a> <span class="src-key">extends </span><a href="../resModel/ResResource.html#methodResResource">ResResource</a> </li>
+<li><a name="a33"></a><span class="src-sym">{</span></li>
+<li><a name="a34"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a35"></a><span class="src-doc">    * Holds a ResResource with the uri rdf:rest</span></li>
+<li><a name="a36"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@var </span><span class="src-doc">       </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a37"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a38"></a><span class="src-doc">    */</span></li>
+<li><a name="a39"></a>    <span class="src-key">var </span><span class="src-var">$rdfRestResource</span><span class="src-sym">;</span></li>
+<li><a name="a40"></a>    </li>
+<li><a name="a41"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a42"></a><span class="src-doc">    * Holds a ResResource with the uri rdf:first</span></li>
+<li><a name="a43"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@var </span><span class="src-doc">       </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a44"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a45"></a><span class="src-doc">    */</span></li>
+<li><a name="a46"></a>    <span class="src-key">var </span><span class="src-var">$rdfFirstResource</span><span class="src-sym">;</span></li>
+<li><a name="a47"></a>        </li>
+<li><a name="a48"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a49"></a><span class="src-doc">    * Holds a ResResource with the uri rdf:nil</span></li>
+<li><a name="a50"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@var </span><span class="src-doc">       </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a51"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a52"></a><span class="src-doc">    */</span></li>
+<li><a name="a53"></a>    <span class="src-key">var </span><span class="src-var">$rdfNilResource</span><span class="src-sym">;</span></li>
+<li><a name="a54"></a>    </li>
+<li><a name="a55"></a>    </li>
+<li><a name="a56"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a57"></a><span class="src-doc">    * Constructor</span></li>
+<li><a name="a58"></a><span class="src-doc">    * You can supply a URI</span></li>
+<li><a name="a59"></a><span class="src-doc">    *</span></li>
+<li><a name="a60"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc-type">string </span><span class="src-doc-var">$uri </span></li>
+<li><a name="a61"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a62"></a><span class="src-doc">    */        </span></li>
+<li><a name="a63"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodResList">ResList</a><span class="src-sym">(</span><span class="src-var">$uri </span>= <span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a64"></a>    <span class="src-sym">{</span></li>
+<li><a name="a65"></a>        <span class="src-comm">//call the parent's constructor</span></li>
+<li><a name="a66"></a>        <span class="src-id">parent</span><span class="src-sym">::</span><a href="../resModel/ResResource.html#methodResResource">ResResource</a><span class="src-sym">(</span><span class="src-var">$uri</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a67"></a>        <span class="src-comm">//initialize vars</span></li>
+<li><a name="a68"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource </span>= <span class="src-key">new </span><a href="../resModel/ResResource.html#methodResResource">ResResource</a><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_REST">RDF_REST</a></span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a69"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource </span>= <span class="src-key">new </span><a href="../resModel/ResResource.html#methodResResource">ResResource</a><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_FIRST">RDF_FIRST</a></span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a70"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfNilResource </span>= <span class="src-key">new </span><a href="../resModel/ResResource.html#methodResResource">ResResource</a><span class="src-sym">(</span><span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NIL">RDF_NIL</a></span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a71"></a>    <span class="src-sym">}</span></li>
+<li><a name="a72"></a>&nbsp;</li>
+<li><a name="a73"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a74"></a><span class="src-doc">    * Returns the value of the list element at the specified position or null.</span></li>
+<li><a name="a75"></a><span class="src-doc">    *</span></li>
+<li><a name="a76"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">integer </span><span class="src-doc">   </span><span class="src-doc-var">$position </span></li>
+<li><a name="a77"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a78"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a79"></a><span class="src-doc">       */</span></li>
+<li><a name="a80"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodget">get</a><span class="src-sym">(</span><span class="src-var">$position</span><span class="src-sym">)</span></li>
+<li><a name="a81"></a>    <span class="src-sym">{</span></li>
+<li><a name="a82"></a>        <span class="src-comm">//init</span></li>
+<li><a name="a83"></a>        <span class="src-var">$listElement</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a84"></a>        <span class="src-comm">//walk through the list until the position in the list is reached</span></li>
+<li><a name="a85"></a>        <span class="src-key">for </span><span class="src-sym">(</span><span class="src-var">$i</span>=<span class="src-num">0</span><span class="src-sym">;</span><span class="src-var">$i</span>&lt;<span class="src-var">$position</span><span class="src-sym">;</span><span class="src-var">$i</span>++<span class="src-sym">)</span></li>
+<li><a name="a86"></a>        <span class="src-sym">{</span></li>
+<li><a name="a87"></a>            <span class="src-var">$listElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$listElement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a88"></a>            <span class="src-key">if</span><span class="src-sym">(</span><span class="src-var">$listElement</span>===<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a89"></a>                <span class="src-key">return </span><span class="src-id">null</span><span class="src-sym">;    </span></li>
+<li><a name="a90"></a>        <span class="src-sym">}</span></li>
+<li><a name="a91"></a>        <span class="src-comm">//return the associated value</span></li>
+<li><a name="a92"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$listElement</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a93"></a>    <span class="src-sym">}    </span></li>
+<li><a name="a94"></a>&nbsp;</li>
+<li><a name="a95"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a96"></a><span class="src-doc">    *  Add the given value to the end of the list.</span></li>
+<li><a name="a97"></a><span class="src-doc">    *  it is only defined if this is not the empty list.</span></li>
+<li><a name="a98"></a><span class="src-doc">    *</span></li>
+<li><a name="a99"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$resource </span></li>
+<li><a name="a100"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a101"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a102"></a><span class="src-doc">       */</span></li>
+<li><a name="a103"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodadd">add</a><span class="src-sym">(</span><span class="src-var">$resource</span><span class="src-sym">)</span></li>
+<li><a name="a104"></a>    <span class="src-sym">{</span></li>
+<li><a name="a105"></a>        <span class="src-comm">//return false if this list is the empty list</span></li>
+<li><a name="a106"></a>        <span class="src-key">if</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">uri</span>==<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NIL">RDF_NIL</a></span><span class="src-sym">)</span></li>
+<li><a name="a107"></a>            <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a108"></a>        </li>
+<li><a name="a109"></a>        <span class="src-comm">//if this is the first value    </span></li>
+<li><a name="a110"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodisEmpty">isEmpty</a><span class="src-sym">(</span><span class="src-sym">))</span></li>
+<li><a name="a111"></a>        <span class="src-sym">{</span></li>
+<li><a name="a112"></a>            <span class="src-var">$newLastElement </span>=<span class="src-sym">&amp; </span><span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a113"></a>        <span class="src-sym">} </span><span class="src-key">else</span></li>
+<li><a name="a114"></a>        <span class="src-comm">//if there are other values in the list </span></li>
+<li><a name="a115"></a>        <span class="src-sym">{</span></li>
+<li><a name="a116"></a>            <span class="src-comm">//get the last list element</span></li>
+<li><a name="a117"></a>            <span class="src-var">$lastElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getListElement</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a118"></a>            <span class="src-comm">//remove the rdf:rest property</span></li>
+<li><a name="a119"></a>            <span class="src-var">$lastElement</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a120"></a>            <span class="src-comm">//create a new list element</span></li>
+<li><a name="a121"></a>            <span class="src-var">$newLastElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">createResource</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a122"></a>            <span class="src-comm">//concatenate the new list element with the list</span></li>
+<li><a name="a123"></a>            <span class="src-var">$lastElement</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$newLastElement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a124"></a>        <span class="src-sym">}</span></li>
+<li><a name="a125"></a>        <span class="src-comm">//add the value</span></li>
+<li><a name="a126"></a>        <span class="src-var">$newLastElement</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">,</span><span class="src-var">$resource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a127"></a>        <span class="src-comm">//ad the rdf:nil property to the last list element</span></li>
+<li><a name="a128"></a>        <span class="src-var">$newLastElement</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfNilResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a129"></a>        </li>
+<li><a name="a130"></a>        <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a131"></a>    <span class="src-sym">}</span></li>
+<li><a name="a132"></a>    </li>
+<li><a name="a133"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a134"></a><span class="src-doc">    *  Update the head of the list to have the given value,</span></li>
+<li><a name="a135"></a><span class="src-doc">    *  and return the previous value.</span></li>
+<li><a name="a136"></a><span class="src-doc">    *</span></li>
+<li><a name="a137"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$value </span></li>
+<li><a name="a138"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a139"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a140"></a><span class="src-doc">       */</span></li>
+<li><a name="a141"></a>    <span class="src-comm">//todo: error handling, when empty list</span></li>
+<li><a name="a141"></a>    </li>
+<li><a name="a142"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodsetHead">setHead</a><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a143"></a>    <span class="src-sym">{    </span></li>
+<li><a name="a144"></a>        <span class="src-comm">//save the old value    </span></li>
+<li><a name="a145"></a>        <span class="src-var">$oldValue</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodgetHead">getHead</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a146"></a>        <span class="src-comm">//remove the old value</span></li>
+<li><a name="a147"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodremoveAll">removeAll</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a148"></a>        <span class="src-comm">//add the new value</span></li>
+<li><a name="a149"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodaddProperty">addProperty</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">,</span><span class="src-var">$value</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a150"></a>        </li>
+<li><a name="a151"></a>        <span class="src-comm">//return the old value</span></li>
+<li><a name="a152"></a>        <span class="src-key">return </span><span class="src-var">$oldValue</span><span class="src-sym">;</span></li>
+<li><a name="a153"></a>    <span class="src-sym">}</span></li>
+<li><a name="a154"></a>    </li>
+<li><a name="a155"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a156"></a><span class="src-doc">    * Get the value that is associated with the head of the list.</span></li>
+<li><a name="a157"></a><span class="src-doc">    *</span></li>
+<li><a name="a158"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a159"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a160"></a><span class="src-doc">       */</span></li>
+<li><a name="a161"></a>    <span class="src-comm">//todo: error handling, falls empty list</span></li>
+<li><a name="a161"></a>    </li>
+<li><a name="a162"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodgetHead">getHead</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a163"></a>    <span class="src-sym">{</span></li>
+<li><a name="a164"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a165"></a>    <span class="src-sym">}</span></li>
+<li><a name="a166"></a>    </li>
+<li><a name="a167"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a168"></a><span class="src-doc">    *  Remove the head of the list. The tail of the list</span></li>
+<li><a name="a169"></a><span class="src-doc">    *  remains in the model. Note that no changes are made to</span></li>
+<li><a name="a170"></a><span class="src-doc">    *  list cells that point to this list cell as their tail.</span></li>
+<li><a name="a171"></a><span class="src-doc">    *</span></li>
+<li><a name="a172"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a173"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a174"></a><span class="src-doc">       */</span></li>
+<li><a name="a175"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodremoveHead">removeHead</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a176"></a>    <span class="src-sym">{</span></li>
+<li><a name="a177"></a>        <span class="src-comm">//get the second list element</span></li>
+<li><a name="a178"></a>        <span class="src-var">$rest</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a179"></a>        <span class="src-comm">//remove the first element</span></li>
+<li><a name="a180"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodremoveAll">removeAll</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a181"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodremoveAll">removeAll</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a182"></a>        <span class="src-comm">//change this Resource URI to that of the second list element</span></li>
+<li><a name="a183"></a>        <span class="src-comm">//thus makin it the fist element</span></li>
+<li><a name="a184"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">uri</span>=<span class="src-var">$rest</span><span class="src-sym">-&gt;</span><span class="src-id">getURI</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a185"></a>        </li>
+<li><a name="a186"></a>        <span class="src-comm">//return the new list</span></li>
+<li><a name="a187"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a188"></a>    <span class="src-sym">}    </span></li>
+<li><a name="a189"></a>&nbsp;</li>
+<li><a name="a190"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a191"></a><span class="src-doc">    * Get the Position of the first occurrence of the given value in the list,</span></li>
+<li><a name="a192"></a><span class="src-doc">    * or -1 if the value is not in the list.</span></li>
+<li><a name="a193"></a><span class="src-doc">    * You can supply an offset to search for values. (First element has offset 0)</span></li>
+<li><a name="a194"></a><span class="src-doc">    * Default is 0</span></li>
+<li><a name="a195"></a><span class="src-doc">    *</span></li>
+<li><a name="a196"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$resource </span></li>
+<li><a name="a197"></a><span class="src-doc">    * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">integer </span><span class="src-doc">   </span><span class="src-doc-var">$offset </span></li>
+<li><a name="a198"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">integer </span></li>
+<li><a name="a199"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a200"></a><span class="src-doc">       */</span></li>
+<li><a name="a201"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodindexOf">indexOf</a><span class="src-sym">(</span><span class="src-var">$resource</span><span class="src-sym">, </span><span class="src-var">$offset </span>= <span class="src-num">0</span><span class="src-sym">)</span></li>
+<li><a name="a202"></a>    <span class="src-sym">{</span></li>
+<li><a name="a203"></a>        <span class="src-comm">//init</span></li>
+<li><a name="a204"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a205"></a>        <span class="src-var">$actualIndex</span>=<span class="src-num">0</span><span class="src-sym">;</span></li>
+<li><a name="a206"></a>&nbsp;</li>
+<li><a name="a207"></a>        <span class="src-comm">//walk through the list until the value is found and the position is higher than</span></li>
+<li><a name="a208"></a>        <span class="src-comm">//the offset</span></li>
+<li><a name="a209"></a>        <span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$actualIndex </span>&lt; <span class="src-var">$offset </span>|| <span class="src-sym">!</span><span class="src-var">$resource</span><span class="src-sym">-&gt;</span><span class="src-id">equals</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)))</span></li>
+<li><a name="a210"></a>        <span class="src-sym">{</span></li>
+<li><a name="a211"></a>            <span class="src-comm">//get next list element</span></li>
+<li><a name="a212"></a>            <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a213"></a>            <span class="src-var">$actualIndex</span>++<span class="src-sym">;</span></li>
+<li><a name="a214"></a>            </li>
+<li><a name="a215"></a>            <span class="src-comm">//if the end of the list is reached and the value isn't found</span></li>
+<li><a name="a216"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$element</span>===<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a217"></a>                <span class="src-key">return </span><span class="src-id">null</span><span class="src-sym">;</span></li>
+<li><a name="a218"></a>        <span class="src-sym">}</span></li>
+<li><a name="a219"></a>        <span class="src-comm">//return the index value</span></li>
+<li><a name="a220"></a>        <span class="src-key">return </span><span class="src-var">$actualIndex</span><span class="src-sym">;    </span></li>
+<li><a name="a221"></a>    <span class="src-sym">}</span></li>
+<li><a name="a222"></a>    </li>
+<li><a name="a223"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a224"></a><span class="src-doc">    * Replace the value at the i'th position in the list with the given value</span></li>
+<li><a name="a225"></a><span class="src-doc">    *</span></li>
+<li><a name="a226"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">integer </span><span class="src-doc">               </span><span class="src-doc-var">$index </span></li>
+<li><a name="a227"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$resource </span></li>
+<li><a name="a228"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a229"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a230"></a><span class="src-doc">       */</span></li>
+<li><a name="a231"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodreplace">replace</a><span class="src-sym">(</span><span class="src-var">$index</span><span class="src-sym">, </span><span class="src-var">$resource</span><span class="src-sym">)</span></li>
+<li><a name="a232"></a>    <span class="src-sym">{</span></li>
+<li><a name="a233"></a>        <span class="src-comm">//get the list element at the $index position</span></li>
+<li><a name="a234"></a>        <span class="src-var">$listElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getListElement</span><span class="src-sym">(</span><span class="src-var">$index</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a235"></a>        <span class="src-comm">//get the old value</span></li>
+<li><a name="a236"></a>        <span class="src-var">$oldValue</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$listElement</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a237"></a>        <span class="src-comm">//remove the old value</span></li>
+<li><a name="a238"></a>        <span class="src-var">$listElement</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a239"></a>        <span class="src-comm">//add the new value</span></li>
+<li><a name="a240"></a>        <span class="src-var">$listElement</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">,</span><span class="src-var">$resource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a241"></a>        <span class="src-comm">//return the old value</span></li>
+<li><a name="a242"></a>        <span class="src-key">return </span><span class="src-var">$oldValue</span><span class="src-sym">;</span></li>
+<li><a name="a243"></a>    <span class="src-sym">}</span></li>
+<li><a name="a244"></a>    </li>
+<li><a name="a245"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a246"></a><span class="src-doc">    * Answer true if the given node appears as the value of a value</span></li>
+<li><a name="a247"></a><span class="src-doc">    * of any of the cells of this list.</span></li>
+<li><a name="a248"></a><span class="src-doc">    *</span></li>
+<li><a name="a249"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$value </span></li>
+<li><a name="a250"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a251"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a252"></a><span class="src-doc">       */</span></li>
+<li><a name="a253"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodcontains">contains</a><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a254"></a>    <span class="src-sym">{</span></li>
+<li><a name="a255"></a>        <span class="src-comm">//return true, if a position was found.</span></li>
+<li><a name="a256"></a>        <span class="src-var">$result</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodindexOf">indexOf</a><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a257"></a>        <span class="src-key">return </span><span class="src-sym">(</span><span class="src-var">$result</span>!==<span class="src-id">null</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a258"></a>    <span class="src-sym">}</span></li>
+<li><a name="a259"></a>    </li>
+<li><a name="a260"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a261"></a><span class="src-doc">    * Get the list that is the tail of this list.</span></li>
+<li><a name="a262"></a><span class="src-doc">    *</span></li>
+<li><a name="a263"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a264"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a265"></a><span class="src-doc">       */</span></li>
+<li><a name="a266"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodgetTail">getTail</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a267"></a>    <span class="src-sym">{</span></li>
+<li><a name="a268"></a>        <span class="src-comm">//get the second list element</span></li>
+<li><a name="a269"></a>        <span class="src-var">$nextListElement</span>= <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a270"></a>        <span class="src-comm">//return the second element as new list</span></li>
+<li><a name="a271"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">createList</span><span class="src-sym">(</span><span class="src-var">$nextListElement</span><span class="src-sym">-&gt;</span><span class="src-id">getURI</span><span class="src-sym">(</span><span class="src-sym">))</span><span class="src-sym">;    </span></li>
+<li><a name="a272"></a>    <span class="src-sym">}</span></li>
+<li><a name="a273"></a>    </li>
+<li><a name="a274"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a275"></a><span class="src-doc">    * Remove all of the components of this list from the model.</span></li>
+<li><a name="a276"></a><span class="src-doc">    * Note that this is operation is only removing the list cells</span></li>
+<li><a name="a277"></a><span class="src-doc">    * themselves, not the resources referenced by the list -</span></li>
+<li><a name="a278"></a><span class="src-doc">    * unless being the object of an rdf:first  statement is the</span></li>
+<li><a name="a279"></a><span class="src-doc">    * only mention of that resource in the model.</span></li>
+<li><a name="a280"></a><span class="src-doc">    *</span></li>
+<li><a name="a281"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a282"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a283"></a><span class="src-doc">       */</span></li>
+<li><a name="a284"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodremoveList">removeList</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a285"></a>    <span class="src-sym">{</span></li>
+<li><a name="a286"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a287"></a>&nbsp;</li>
+<li><a name="a288"></a>        <span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$element</span>!==<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a289"></a>        <span class="src-sym">{</span></li>
+<li><a name="a290"></a>            <span class="src-var">$nextElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a291"></a>            </li>
+<li><a name="a292"></a>            <span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a293"></a>            <span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a294"></a>                    </li>
+<li><a name="a295"></a>            <span class="src-key">if </span><span class="src-sym">((</span><span class="src-var">$nextElement </span>!== <span class="src-id">null</span><span class="src-sym">) </span>&amp;&amp; <span class="src-sym">(</span><span class="src-var">$nextElement</span><span class="src-sym">-&gt;</span><span class="src-id">getURI</span><span class="src-sym">(</span><span class="src-sym">)</span>!==<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NIL">RDF_NIL</a></span><span class="src-sym">))</span></li>
+<li><a name="a296"></a>            <span class="src-sym">{</span></li>
+<li><a name="a297"></a>                <span class="src-var">$element</span>=<span class="src-var">$nextElement</span><span class="src-sym">;</span></li>
+<li><a name="a298"></a>            <span class="src-sym">} </span><span class="src-key">else </span></li>
+<li><a name="a299"></a>            <span class="src-sym">{</span></li>
+<li><a name="a300"></a>                <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a301"></a>            <span class="src-sym">}</span></li>
+<li><a name="a302"></a>        <span class="src-sym">}</span></li>
+<li><a name="a303"></a>        <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a304"></a>    <span class="src-sym">}</span></li>
+<li><a name="a305"></a>    </li>
+<li><a name="a306"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a307"></a><span class="src-doc">    * Returns true, if this list is empty</span></li>
+<li><a name="a308"></a><span class="src-doc">    *</span></li>
+<li><a name="a309"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Statement </span><span class="src-doc">   </span><span class="src-doc-var">$statement </span></li>
+<li><a name="a310"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">integer </span></li>
+<li><a name="a311"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a312"></a><span class="src-doc">       */</span></li>
+<li><a name="a313"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodisEmpty">isEmpty</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a314"></a>    <span class="src-sym">{</span></li>
+<li><a name="a315"></a>        <span class="src-key">return </span><span class="src-sym">!</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodhasProperty">hasProperty</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a316"></a>    <span class="src-sym">}</span></li>
+<li><a name="a317"></a>    </li>
+<li><a name="a318"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a319"></a><span class="src-doc">    * Get all values in the list as an array of ResResources</span></li>
+<li><a name="a320"></a><span class="src-doc">    *</span></li>
+<li><a name="a321"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">array </span></li>
+<li><a name="a322"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a323"></a><span class="src-doc">       */</span></li>
+<li><a name="a324"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodgetContentInArray">getContentInArray</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a325"></a>    <span class="src-sym">{</span></li>
+<li><a name="a326"></a>        <span class="src-var">$result</span>=<span class="src-key">array</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a327"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a328"></a>&nbsp;</li>
+<li><a name="a329"></a>        <span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$element</span>!==<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a330"></a>        <span class="src-sym">{</span></li>
+<li><a name="a331"></a>            <span class="src-comm">//add the value of the current element to the result if is set.</span></li>
+<li><a name="a332"></a>            <span class="src-var">$value</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a333"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$value</span>!==<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a334"></a>                <span class="src-var">$result</span><span class="src-sym">[</span><span class="src-sym">]</span>=<span class="src-var">$value</span><span class="src-sym">;</span></li>
+<li><a name="a335"></a>            </li>
+<li><a name="a336"></a>            <span class="src-comm">//walk through the list until it's end        </span></li>
+<li><a name="a337"></a>            <span class="src-var">$nextElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a338"></a>            <span class="src-key">if </span><span class="src-sym">((</span><span class="src-var">$nextElement </span>!== <span class="src-id">null</span><span class="src-sym">) </span>&amp;&amp; <span class="src-sym">(</span><span class="src-var">$nextElement</span><span class="src-sym">-&gt;</span><span class="src-id">getURI</span><span class="src-sym">(</span><span class="src-sym">)</span>!==<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NIL">RDF_NIL</a></span><span class="src-sym">))</span></li>
+<li><a name="a339"></a>            <span class="src-sym">{</span></li>
+<li><a name="a340"></a>                <span class="src-var">$element</span>=<span class="src-var">$nextElement</span><span class="src-sym">;</span></li>
+<li><a name="a341"></a>            <span class="src-sym">} </span><span class="src-key">else </span></li>
+<li><a name="a342"></a>            <span class="src-sym">{</span></li>
+<li><a name="a343"></a>                <span class="src-key">break</span><span class="src-sym">;</span></li>
+<li><a name="a344"></a>            <span class="src-sym">}</span></li>
+<li><a name="a345"></a>        <span class="src-sym">}</span></li>
+<li><a name="a346"></a>        <span class="src-comm">//return the result</span></li>
+<li><a name="a347"></a>        <span class="src-key">return </span><span class="src-var">$result</span><span class="src-sym">;</span></li>
+<li><a name="a348"></a>    <span class="src-sym">}</span></li>
+<li><a name="a349"></a>    </li>
+<li><a name="a350"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a351"></a><span class="src-doc">    * Change the tail of this list to point to the given list, so that this list</span></li>
+<li><a name="a352"></a><span class="src-doc">    * becomes the list of the concatenation of the elements of</span></li>
+<li><a name="a353"></a><span class="src-doc">    * both lists. This is a side-effecting operation on this list;</span></li>
+<li><a name="a354"></a><span class="src-doc">    * for a non side-effecting alternative, see append.</span></li>
+<li><a name="a355"></a><span class="src-doc">    * </span></li>
+<li><a name="a356"></a><span class="src-doc">    *</span></li>
+<li><a name="a357"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$ResList </span></li>
+<li><a name="a358"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a359"></a><span class="src-doc">       */</span></li>
+<li><a name="a360"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodconcatenate">concatenate</a><span class="src-sym">(</span><span class="src-var">$ResList</span><span class="src-sym">)</span></li>
+<li><a name="a361"></a>    <span class="src-sym">{</span></li>
+<li><a name="a362"></a>        <span class="src-comm">//get the last list element</span></li>
+<li><a name="a363"></a>        <span class="src-var">$lastElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getListElement</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a364"></a>        <span class="src-comm">//remove the old tail (rdf:nil)</span></li>
+<li><a name="a365"></a>        <span class="src-var">$lastElement</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a366"></a>        <span class="src-comm">//add the $ResList as new tail</span></li>
+<li><a name="a367"></a>        <span class="src-var">$lastElement</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$ResList</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a368"></a>    <span class="src-sym">}</span></li>
+<li><a name="a369"></a>    </li>
+<li><a name="a370"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a371"></a><span class="src-doc">    * Answer a new list that is formed by adding each element of</span></li>
+<li><a name="a372"></a><span class="src-doc">    * this list to the head of the given list. This is a non</span></li>
+<li><a name="a373"></a><span class="src-doc">    * side-effecting operation on either this list or the given</span></li>
+<li><a name="a374"></a><span class="src-doc">    * list, but generates a copy of this list. For a more storage</span></li>
+<li><a name="a375"></a><span class="src-doc">    * efficient alternative, see concatenate</span></li>
+<li><a name="a376"></a><span class="src-doc">    *</span></li>
+<li><a name="a377"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$ResList </span></li>
+<li><a name="a378"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a379"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a380"></a><span class="src-doc">       */</span></li>
+<li><a name="a381"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodappend">append</a><span class="src-sym">(</span><span class="src-var">$resList</span><span class="src-sym">)</span></li>
+<li><a name="a382"></a>    <span class="src-sym">{</span></li>
+<li><a name="a383"></a>        <span class="src-comm">//get a copy of this list</span></li>
+<li><a name="a384"></a>        <span class="src-var">$newList</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodcopy">copy</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a385"></a>        </li>
+<li><a name="a386"></a>        <span class="src-comm">//add all values from the $resList to the new list</span></li>
+<li><a name="a387"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$resList</span><span class="src-sym">-&gt;</span><span class="src-id">getContentInArray</span><span class="src-sym">(</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a388"></a>        <span class="src-sym">{</span></li>
+<li><a name="a389"></a>            <span class="src-var">$newList</span><span class="src-sym">-&gt;</span><span class="src-id">add</span><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a390"></a>        <span class="src-sym">}</span></li>
+<li><a name="a391"></a>        <span class="src-comm">//return the new list</span></li>
+<li><a name="a392"></a>        <span class="src-key">return </span><span class="src-var">$newList</span><span class="src-sym">;</span></li>
+<li><a name="a393"></a>    <span class="src-sym">}</span></li>
+<li><a name="a394"></a>    </li>
+<li><a name="a395"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a396"></a><span class="src-doc">    * Answer a list that contains all of the elements of this</span></li>
+<li><a name="a397"></a><span class="src-doc">    * list in the same order, but is a duplicate copy in the</span></li>
+<li><a name="a398"></a><span class="src-doc">    * underlying model.</span></li>
+<li><a name="a399"></a><span class="src-doc">    *</span></li>
+<li><a name="a400"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a401"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a402"></a><span class="src-doc">       */</span></li>
+<li><a name="a403"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodcopy">copy</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a404"></a>    <span class="src-sym">{</span></li>
+<li><a name="a405"></a>        <span class="src-comm">//create a new list in the model</span></li>
+<li><a name="a406"></a>        <span class="src-var">$newList</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">createList</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a407"></a>        <span class="src-comm">//add all values from this list to the new list</span></li>
+<li><a name="a408"></a>        <span class="src-key">foreach </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodgetContentInArray">getContentInArray</a><span class="src-sym">(</span><span class="src-sym">) </span><span class="src-key">as </span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a409"></a>        <span class="src-sym">{</span></li>
+<li><a name="a410"></a>            <span class="src-var">$newList</span><span class="src-sym">-&gt;</span><span class="src-id">add</span><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a411"></a>        <span class="src-sym">}</span></li>
+<li><a name="a412"></a>        <span class="src-comm">//return the new list</span></li>
+<li><a name="a413"></a>        <span class="src-key">return </span><span class="src-var">$newList</span><span class="src-sym">;</span></li>
+<li><a name="a414"></a>    <span class="src-sym">}</span></li>
+<li><a name="a415"></a>    </li>
+<li><a name="a416"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a417"></a><span class="src-doc">    * Return a reference to a new list cell whose head is value</span></li>
+<li><a name="a418"></a><span class="src-doc">    * and whose tail is this list.</span></li>
+<li><a name="a419"></a><span class="src-doc">    *</span></li>
+<li><a name="a420"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$value </span></li>
+<li><a name="a421"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a422"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a423"></a><span class="src-doc">       */</span></li>
+<li><a name="a424"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodcons">cons</a><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a425"></a>    <span class="src-sym">{</span></li>
+<li><a name="a426"></a>        <span class="src-comm">//create a new list</span></li>
+<li><a name="a427"></a>        <span class="src-var">$newList</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">createList</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a428"></a>        <span class="src-comm">//add the new value</span></li>
+<li><a name="a429"></a>        <span class="src-var">$newList</span><span class="src-sym">-&gt;</span><span class="src-id">add</span><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a430"></a>        <span class="src-comm">//set this list as the tail of the new list</span></li>
+<li><a name="a431"></a>        <span class="src-var">$newList</span><span class="src-sym">-&gt;</span><span class="src-id">setTail</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a432"></a>        </li>
+<li><a name="a433"></a>        <span class="src-comm">//return the new list</span></li>
+<li><a name="a434"></a>        <span class="src-key">return </span><span class="src-var">$newList</span><span class="src-sym">;</span></li>
+<li><a name="a435"></a>    <span class="src-sym">}</span></li>
+<li><a name="a436"></a>    </li>
+<li><a name="a437"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a438"></a><span class="src-doc">    * Update the list cell at the front of the list to have the</span></li>
+<li><a name="a439"></a><span class="src-doc">    * given list as tail. The old tail is returned, and remains</span></li>
+<li><a name="a440"></a><span class="src-doc">    * in the model.</span></li>
+<li><a name="a441"></a><span class="src-doc">    *</span></li>
+<li><a name="a442"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$resList </span></li>
+<li><a name="a443"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">Reslist </span></li>
+<li><a name="a444"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a445"></a><span class="src-doc">       */</span></li>
+<li><a name="a446"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodsetTail">setTail</a><span class="src-sym">(</span><span class="src-var">$resList</span><span class="src-sym">)</span></li>
+<li><a name="a447"></a>    <span class="src-sym">{</span></li>
+<li><a name="a448"></a>        <span class="src-comm">//save the old tail</span></li>
+<li><a name="a449"></a>        <span class="src-var">$oldTail</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodgetTail">getTail</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a450"></a>        <span class="src-comm">//remove the old tail</span></li>
+<li><a name="a451"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodremoveAll">removeAll</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a452"></a>        <span class="src-comm">//add the $resList as new Tail</span></li>
+<li><a name="a453"></a>        <span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResResource.html#methodaddProperty">addProperty</a><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$resList</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a454"></a>        </li>
+<li><a name="a455"></a>        <span class="src-comm">//return the old tail</span></li>
+<li><a name="a456"></a>        <span class="src-key">return </span><span class="src-var">$oldTail</span><span class="src-sym">;</span></li>
+<li><a name="a457"></a>    <span class="src-sym">}</span></li>
+<li><a name="a458"></a>    </li>
+<li><a name="a459"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a460"></a><span class="src-doc">    * Answer true if this list has the same elements in the</span></li>
+<li><a name="a461"></a><span class="src-doc">    * same order as the given list. Note that the standard equals</span></li>
+<li><a name="a462"></a><span class="src-doc">    * test just tests for equality of two given list cells.</span></li>
+<li><a name="a463"></a><span class="src-doc">    * While such a test is sufficient for many purposes, this</span></li>
+<li><a name="a464"></a><span class="src-doc">    * test provides a broader equality definition, but is</span></li>
+<li><a name="a465"></a><span class="src-doc">    * correspondingly more expensive to test.</span></li>
+<li><a name="a466"></a><span class="src-doc">    *</span></li>
+<li><a name="a467"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$resList </span></li>
+<li><a name="a468"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a469"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a470"></a><span class="src-doc">       */</span></li>
+<li><a name="a471"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodsameListAs">sameListAs</a><span class="src-sym">(</span><span class="src-var">$resList</span><span class="src-sym">)</span></li>
+<li><a name="a472"></a>    <span class="src-sym">{</span></li>
+<li><a name="a473"></a>        <span class="src-comm">//init</span></li>
+<li><a name="a474"></a>        <span class="src-var">$indexPos</span>=<span class="src-num">0</span><span class="src-sym">;</span></li>
+<li><a name="a475"></a>        do</li>
+<li><a name="a476"></a>        <span class="src-sym">{</span></li>
+<li><a name="a477"></a>            <span class="src-comm">//get the values for both lists at the actual position</span></li>
+<li><a name="a478"></a>            <span class="src-var">$thisValue</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodget">get</a><span class="src-sym">(</span><span class="src-var">$indexPos</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a479"></a>            <span class="src-var">$thatValue</span>=<span class="src-var">$resList</span><span class="src-sym">-&gt;</span><span class="src-id">get</span><span class="src-sym">(</span><span class="src-var">$indexPos</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a480"></a>            <span class="src-comm">//if the values aren't equal, return false</span></li>
+<li><a name="a481"></a>            <span class="src-key">if </span><span class="src-sym">((</span><span class="src-var">$thisValue </span>!== <span class="src-id">null</span><span class="src-sym">) </span>&amp;&amp; <span class="src-sym">!</span><span class="src-var">$thisValue</span><span class="src-sym">-&gt;</span><span class="src-id">equals</span><span class="src-sym">(</span><span class="src-var">$thatValue</span><span class="src-sym">))</span></li>
+<li><a name="a482"></a>                <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a483"></a>                </li>
+<li><a name="a484"></a>            <span class="src-var">$indexPos</span>++<span class="src-sym">;</span></li>
+<li><a name="a485"></a>            <span class="src-comm">//walk until this list reaches a null value (end)    </span></li>
+<li><a name="a486"></a>        <span class="src-sym">} </span><span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$thisValue</span>!==<span class="src-id">null</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a487"></a>        </li>
+<li><a name="a488"></a>        <span class="src-comm">//if the other list has a null value at this position too, return true</span></li>
+<li><a name="a489"></a>        <span class="src-comm">//else return false</span></li>
+<li><a name="a490"></a>        <span class="src-key">return </span><span class="src-sym">(</span><span class="src-var">$thatValue</span>===<span class="src-id">null</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a491"></a>    <span class="src-sym">}</span></li>
+<li><a name="a492"></a>    </li>
+<li><a name="a493"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a494"></a><span class="src-doc">    * Remove the given value from this list.</span></li>
+<li><a name="a495"></a><span class="src-doc">    * If value does not occur in the list, no action is taken. Since removing the</span></li>
+<li><a name="a496"></a><span class="src-doc">    * head of the list will invalidate the list head cell, in</span></li>
+<li><a name="a497"></a><span class="src-doc">    * general the list must return the list that results from</span></li>
+<li><a name="a498"></a><span class="src-doc">    * this operation. However, in many cases the return value</span></li>
+<li><a name="a499"></a><span class="src-doc">    * will be the same as the object that this method is invoked</span></li>
+<li><a name="a500"></a><span class="src-doc">    * on.</span></li>
+<li><a name="a501"></a><span class="src-doc">    *</span></li>
+<li><a name="a502"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span><span class="src-doc">   </span><span class="src-doc-var">$value </span></li>
+<li><a name="a503"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a504"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a505"></a><span class="src-doc">       */</span></li>
+<li><a name="a506"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodremove">remove</a><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">)</span></li>
+<li><a name="a507"></a>    <span class="src-sym">{</span></li>
+<li><a name="a508"></a>        <span class="src-comm">//if the value is the value of the first list element(head)</span></li>
+<li><a name="a509"></a>        <span class="src-comm">//call the remove head position and return the new head</span></li>
+<li><a name="a510"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$value</span><span class="src-sym">-&gt;</span><span class="src-id">equals</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)))</span></li>
+<li><a name="a511"></a>            <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><a href="../resModel/ResList.html#methodremoveHead">removeHead</a><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a512"></a>    </li>
+<li><a name="a513"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a514"></a>        do</li>
+<li><a name="a515"></a>        <span class="src-sym">{    </span></li>
+<li><a name="a516"></a>            <span class="src-var">$newElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a517"></a>            </li>
+<li><a name="a518"></a>            <span class="src-comm">//if the value equals the value of the current list element</span></li>
+<li><a name="a519"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$newElement </span>!== <span class="src-id">null </span>&amp;&amp; <span class="src-var">$value</span><span class="src-sym">-&gt;</span><span class="src-id">equals</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$newElement</span><span class="src-sym">)))</span></li>
+<li><a name="a520"></a>            <span class="src-sym">{</span></li>
+<li><a name="a521"></a>                <span class="src-comm">//remove the link to the list element to be removed</span></li>
+<li><a name="a522"></a>                <span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a523"></a>                <span class="src-comm">//add a link to the list element AFTER the element to be deleted</span></li>
+<li><a name="a524"></a>                <span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">addProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$newElement</span><span class="src-sym">))</span><span class="src-sym">;</span></li>
+<li><a name="a525"></a>                <span class="src-comm">//remove the list element with values</span></li>
+<li><a name="a526"></a>                <span class="src-var">$newElement</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a527"></a>                <span class="src-var">$newElement</span><span class="src-sym">-&gt;</span><span class="src-id">removeAll</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a528"></a>                <span class="src-comm">//return this ResList</span></li>
+<li><a name="a529"></a>                <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">;    </span></li>
+<li><a name="a530"></a>            <span class="src-sym">}</span></li>
+<li><a name="a531"></a>            <span class="src-var">$element</span>=<span class="src-var">$newElement</span><span class="src-sym">;</span></li>
+<li><a name="a532"></a>        <span class="src-sym">} </span><span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$element</span>!==<span class="src-id">null</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a533"></a>        <span class="src-comm">//return this list</span></li>
+<li><a name="a534"></a>        <span class="src-key">return </span><span class="src-var">$this</span><span class="src-sym">;    </span></li>
+<li><a name="a535"></a>    <span class="src-sym">}</span></li>
+<li><a name="a536"></a>    </li>
+<li><a name="a537"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a538"></a><span class="src-doc">    * Answer true if the list is well-formed, by checking that each</span></li>
+<li><a name="a539"></a><span class="src-doc">    * node is correctly typed, and has a head and tail pointer from</span></li>
+<li><a name="a540"></a><span class="src-doc">    * the correct vocabulary</span></li>
+<li><a name="a541"></a><span class="src-doc">    *</span></li>
+<li><a name="a542"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">boolean </span></li>
+<li><a name="a543"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    public</span></li>
+<li><a name="a544"></a><span class="src-doc">       */</span></li>
+<li><a name="a545"></a>    <span class="src-key">function </span><a href="../resModel/ResList.html#methodisValid">isValid</a><span class="src-sym">(</span><span class="src-sym">)</span></li>
+<li><a name="a546"></a>    <span class="src-sym">{</span></li>
+<li><a name="a547"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;    </span></li>
+<li><a name="a548"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">)</span>=== <span class="src-id">null </span>&amp;&amp; <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">) </span>=== <span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a549"></a>            <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a550"></a>        do </li>
+<li><a name="a551"></a>        <span class="src-sym">{</span></li>
+<li><a name="a552"></a>            <span class="src-comm">//return true if the last element is a rdf:nil</span></li>
+<li><a name="a553"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">getURI</span><span class="src-sym">(</span><span class="src-sym">) </span>== <span class="src-id"><a href="../default/_constants_php.html#defineRDF_NAMESPACE_URI">RDF_NAMESPACE_URI</a></span>.<span class="src-id"><a href="../default/_constants_php.html#defineRDF_NIL">RDF_NIL</a></span><span class="src-sym">)</span></li>
+<li><a name="a554"></a>                <span class="src-key">return </span><span class="src-id">true</span><span class="src-sym">;</span></li>
+<li><a name="a555"></a>            <span class="src-comm">//return false, if the current element has no associated value</span></li>
+<li><a name="a556"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">) </span>=== <span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a557"></a>                <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a558"></a>                        </li>
+<li><a name="a559"></a>            <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a560"></a>        <span class="src-sym">} </span><span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$element </span>!== <span class="src-id">null</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a561"></a>        <span class="src-comm">//return false, if the current element has no rdf:rest property</span></li>
+<li><a name="a562"></a>        <span class="src-key">return </span><span class="src-id">false</span><span class="src-sym">;</span></li>
+<li><a name="a563"></a>    <span class="src-sym">}</span></li>
+<li><a name="a564"></a>    </li>
+<li><a name="a565"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a566"></a><span class="src-doc">    * Get the associated rdf:rest Resource from the suplied ResList element</span></li>
+<li><a name="a567"></a><span class="src-doc">    *</span></li>
+<li><a name="a568"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$listElement </span></li>
+<li><a name="a569"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span></li>
+<li><a name="a570"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a571"></a><span class="src-doc">       */</span></li>
+<li><a name="a572"></a>    <span class="src-key">function </span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$listElement</span><span class="src-sym">)</span></li>
+<li><a name="a573"></a>    <span class="src-sym">{</span></li>
+<li><a name="a574"></a>        <span class="src-comm">//get the rdf:rest property</span></li>
+<li><a name="a575"></a>        <span class="src-var">$statement</span>= <span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">getProperty</span><span class="src-sym">(</span><span class="src-var">$listElement</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a576"></a>        <span class="src-comm">//return null, if this property isn't set</span></li>
+<li><a name="a577"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$statement </span>=== <span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a578"></a>            <span class="src-key">return </span><span class="src-id">null</span><span class="src-sym">;</span></li>
+<li><a name="a579"></a>            </li>
+<li><a name="a580"></a>        <span class="src-comm">//return the value of the rdf:rest property    </span></li>
+<li><a name="a581"></a>        <span class="src-key">return </span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getObject</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a582"></a>    <span class="src-sym">}</span></li>
+<li><a name="a583"></a>    </li>
+<li><a name="a584"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a585"></a><span class="src-doc">    * Returns the list element at the $index position.</span></li>
+<li><a name="a586"></a><span class="src-doc">    *</span></li>
+<li><a name="a587"></a><span class="src-doc">    * If to $index is suplied, the last list element will be returned</span></li>
+<li><a name="a588"></a><span class="src-doc">    </span></li>
+<li><a name="a589"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">integer </span><span class="src-doc">   </span><span class="src-doc-var">$index </span></li>
+<li><a name="a590"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a591"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a592"></a><span class="src-doc">       */</span></li>
+<li><a name="a593"></a>    <span class="src-key">function </span><span class="src-id">_getListElement</span><span class="src-sym">(</span><span class="src-var">$index </span>= <span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a594"></a>    <span class="src-sym">{</span></li>
+<li><a name="a595"></a>        <span class="src-var">$element</span>=<span class="src-var">$this</span><span class="src-sym">;</span></li>
+<li><a name="a596"></a>        <span class="src-var">$actualIndex</span>=<span class="src-num">0</span><span class="src-sym">;</span></li>
+<li><a name="a597"></a>&nbsp;</li>
+<li><a name="a598"></a>        <span class="src-key">while </span><span class="src-sym">(</span><span class="src-var">$element</span>!=<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a599"></a>        <span class="src-sym">{</span></li>
+<li><a name="a600"></a>            <span class="src-comm">//return the current element if index matches the current index</span></li>
+<li><a name="a601"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$actualIndex </span>=== <span class="src-var">$index</span><span class="src-sym">)</span></li>
+<li><a name="a602"></a>                <span class="src-key">return </span><span class="src-var">$element</span><span class="src-sym">;</span></li>
+<li><a name="a603"></a>            </li>
+<li><a name="a604"></a>            <span class="src-comm">//return the current element if it the last one        </span></li>
+<li><a name="a605"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">-&gt;</span><span class="src-id">hasProperty</span><span class="src-sym">(</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfRestResource</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfNilResource</span><span class="src-sym">))</span></li>
+<li><a name="a606"></a>                <span class="src-key">return </span><span class="src-var">$element</span><span class="src-sym">;</span></li>
+<li><a name="a607"></a>            </li>
+<li><a name="a608"></a>            <span class="src-var">$nextElement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-id">_getRestElement</span><span class="src-sym">(</span><span class="src-var">$element</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a609"></a>            </li>
+<li><a name="a610"></a>            <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$nextElement</span>!==<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a611"></a>            <span class="src-sym">{</span></li>
+<li><a name="a612"></a>                <span class="src-var">$element</span>=<span class="src-var">$nextElement</span><span class="src-sym">;</span></li>
+<li><a name="a613"></a>                <span class="src-var">$actualIndex</span>++<span class="src-sym">;</span></li>
+<li><a name="a614"></a>            <span class="src-sym">} </span><span class="src-key">else </span></li>
+<li><a name="a615"></a>            <span class="src-sym">{</span></li>
+<li><a name="a616"></a>                <span class="src-key">break</span><span class="src-sym">;</span></li>
+<li><a name="a617"></a>            <span class="src-sym">}</span></li>
+<li><a name="a618"></a>        <span class="src-sym">}</span></li>
+<li><a name="a619"></a>        <span class="src-key">return </span><span class="src-var">$element</span><span class="src-sym">;</span></li>
+<li><a name="a620"></a>    <span class="src-sym">}</span></li>
+<li><a name="a621"></a>    </li>
+<li><a name="a622"></a>    <span class="src-doc">/**</span></li>
+<li><a name="a623"></a><span class="src-doc">    * Get the value associated to the $listResource by the rdf:first property</span></li>
+<li><a name="a624"></a><span class="src-doc">    *</span></li>
+<li><a name="a625"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@param </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResList </span><span class="src-doc">   </span><span class="src-doc-var">$listResource </span></li>
+<li><a name="a626"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@return </span><span class="src-doc">   </span><span class="src-doc-type">object </span><span class="src-doc-type">ResResource </span></li>
+<li><a name="a627"></a><span class="src-doc">       * </span><span class="src-doc-coretag">@access</span><span class="src-doc">    private</span></li>
+<li><a name="a628"></a><span class="src-doc">       */</span></li>
+<li><a name="a629"></a>    <span class="src-key">function </span><span class="src-id">_getValue</span><span class="src-sym">(</span><span class="src-var">$listResource</span><span class="src-sym">)</span></li>
+<li><a name="a630"></a>    <span class="src-sym">{</span></li>
+<li><a name="a631"></a>        <span class="src-comm">//Return the value of the rdf:first property or null, if it isn't set</span></li>
+<li><a name="a632"></a>        <span class="src-var">$statement</span>=<span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">model</span><span class="src-sym">-&gt;</span><span class="src-id">getProperty</span><span class="src-sym">(</span><span class="src-var">$listResource</span><span class="src-sym">,</span><span class="src-var">$this</span><span class="src-sym">-&gt;</span><span class="src-var">rdfFirstResource</span><span class="src-sym">)</span><span class="src-sym">;</span></li>
+<li><a name="a633"></a>        <span class="src-key">if </span><span class="src-sym">(</span><span class="src-var">$statement</span>===<span class="src-id">null</span><span class="src-sym">)</span></li>
+<li><a name="a634"></a>            <span class="src-key">return </span><span class="src-id">null</span><span class="src-sym">;</span></li>
+<li><a name="a635"></a>&nbsp;</li>
+<li><a name="a636"></a>        <span class="src-key">return </span><span class="src-var">$statement</span><span class="src-sym">-&gt;</span><span class="src-id">getObject</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;    </span></li>
+<li><a name="a637"></a>    <span class="src-sym">}</span></li>
+<li><a name="a638"></a><span class="src-sym">}</span></li>
+<li><a name="a639"></a><span class="src-php">?&gt;</span></li>
+</ol></pre>
+</div>
+	<p class="notes" id="credit">
+		Documentation generated on Fri, 17 Dec 2004 16:17:53 +0100 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.3.0RC3</a>
+	</p>
+	</body>
+</html>

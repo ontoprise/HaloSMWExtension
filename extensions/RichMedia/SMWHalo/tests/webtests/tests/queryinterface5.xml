@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface5">
+    
+    <target name="testQueryInterface5">
+
+        <webtest name="Ajax calls for Query Interface page">
+            
+            <callQiViaAjax rsargs="" description="call QI without params"/>
+            <previewIsVisible />
+            <layoutManagerIsVisible />
+            <buttonCopyToClipboardIsVisible />
+
+            <!-- call QI without preview and layout box -->
+            <callQiViaAjax
+              rsargs="rsargs[]=noPreview%26noLayout"
+              description="Call QI with params noPreview and noLayout"
+            />
+
+            <previewIsNotVisible />
+            <layoutManagerIsNotVisible />
+            <buttonCopyToClipboardIsVisible />
+
+            <!-- call QI with query -->
+            <callQiViaAjax
+              rsargs="rsargs[]=query%3D%255B%255BCategory%253ACity%255D%255D"
+              description="Call Query Interface with param query"
+            />
+            <verifyXPath
+                description="Check existing link to City in navtree" 
+                xpath="//div[@id='treeanchor']//a[1]/text()"
+                regex="\s*City\s*"
+            />
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
+        </webtest>
+        
+        <!-- call QI as done by the Excel Client -->
+        <webtest name="Pretend being the Excel Bridge">
+            <config>
+                <header name="User-Agent" value="Excel Bridge EB112"/>
+            </config>
+
+            <callQiViaAjax
+              rsargs=""
+              description="Call Query Interface without params"
+            />
+
+            <previewIsNotVisible />
+            <layoutManagerIsNotVisible />
+            <buttonCopyToClipboardIsNotVisible />
+
+            <showFullAsk query="Your query is empty\." />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+            
+            <!-- call QI and preload a query -->            
+            <callQiViaAjax
+              rsargs="rsargs[]=query%3D%255B%255BCategory%253ACity%255D%255D"
+              description="Call Query Interface with param query"
+            />
+            
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+            <!-- doesn't work in Webtest, but successfully tested with Firefox -->
+            <!--<verifyXPath
+                description="Check existing link to City in navtree" 
+                xpath="//a[@class='leaf']/text()"
+                regex="\s*City\s*"
+            />-->
+             
+        </webtest>
+        
+    </target>
+</project>

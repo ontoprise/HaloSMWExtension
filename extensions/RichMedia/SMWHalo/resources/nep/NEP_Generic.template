@@ -1,0 +1,43 @@
+This resource is stored in the underlying knowledge-base with the following URI: <$uri$>
+
+''$name$'' belongs to the following categories:
+{{#sparql:
+ SELECT DISTINCT ?cat
+ WHERE { 
+  
+     <$uri$> rdf:type ?cat .
+   }
+ | format=list
+ | merge=true
+ | default=none
+}}
+
+{|width="100%" border=1
+|-
+! Facts about ''$name$'' !! References to ''$name$''
+|-
+|
+ {{#sparql:
+ SELECT ?P ?O
+ WHERE {
+    
+         <$uri$> ?P ?O .
+     }
+ 
+ | format=table
+ | merge=true
+ | default=no facts found
+ }}
+|
+ {{#sparql:
+ SELECT ?S ?P
+ WHERE {
+   
+         ?S ?P <$uri$> .
+     
+ }
+ | format=table
+ | merge=true
+ | default=no references to ''$name$'' found
+ }}
+|}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<definitions name="com.ontoprise.semanticwiki.EQI"
+targetNamespace="com.ontoprise.semanticwiki.EQI/" 
+xmlns:tns="com.ontoprise.semanticwiki.EQI/"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<message name="queryRequest">
+  <part name="queryText" type="xsd:string" /> 
+  
+</message>
+<message name="queryResponse">
+  <part name="sparql-xml" type="xsd:string" /> 
+</message>
+    <message name="query_faultMsg">
+    	<part name="fault" type="xsd:string"></part>
+    </message>
+    <portType name="com.ontoprise.semanticwiki.EQIPortType">
+  <operation name="query" parameterOrder="queryText">
+    <input message="tns:queryRequest" /> 
+    <output message="tns:queryResponse" /> 
+    <fault name="MalformedQuery" message="tns:query_faultMsg"></fault>
+  </operation>
+</portType>
+<binding name="com.ontoprise.semanticwiki.EQIBinding" 
+type="tns:com.ontoprise.semanticwiki.EQIPortType">
+<soap:binding style="rpc"
+transport="http://schemas.xmlsoap.org/soap/http" />
+  <operation name="query">
+  <soap:operation soapAction="urn:com.ontoprise.semanticwiki.EQI#query" /> 
+    <input>
+      <soap:body use="encoded" namespace="urn:com.ontoprise.semanticwiki.EQI"
+      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /> 
+    </input>
+    <output>
+      <soap:body use="encoded" namespace="urn:com.ontoprise.semanticwiki.EQI"
+      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" /> 
+    </output>
+  </operation>
+</binding>
+<service name="com.ontoprise.semanticwiki.EQIService">
+  <documentation>
+  com.ontoprise.semanticwiki.EQI web service
+  </documentation> 
+  <port name="com.ontoprise.semanticwiki.EQIPort"
+  binding="tns:com.ontoprise.semanticwiki.EQIBinding">
+    <soap:address location="{{wiki-path}}?action=wsmethod" /> 
+  </port>
+</service>
+</definitions>

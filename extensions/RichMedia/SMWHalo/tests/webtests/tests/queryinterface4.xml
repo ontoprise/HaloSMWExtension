@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface4">
+    
+    <target name="testQueryInterface4">
+
+        <webtest name="Query Interface show value of properties">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <!-- add category City and property Located In -->
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 10 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="11"
+            />  
+
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+
+            <setInputField
+              description="set property Located In"
+              htmlId="input_p0"
+              value="Located In"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input_p0"
+            />
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
+            />
+            <setCheckbox
+              description="click on add show in results"
+              htmlId="input_c1"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+
+            <checkAjaxResponseXpathRegex
+              description="Preview contains now table with two columns"
+              xpath="//div[@id='previewcontent']/table/tbody/tr/th[2]"
+              regex="\s*Located In\s*"
+            />
+            <verifyXPath
+              description="Bern is ..."
+              xpath="//div[@id='previewcontent']/table/tbody/tr[4]/td"
+              text="Bern"
+            />  
+            <verifyXPath
+              description="... located in"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[4]/td[2]"
+              text="Switzerland"
+            />  
+
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Population"
+              htmlId="input_p0"
+              value="Population"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input_p0"
+            />
+            <checkAjaxResponseXpathRegex
+              description="field type must change to number"
+              xpath="//tbody[@id='dialoguecontent']//tr/td[2]"
+              regex="Type: Number"
+            />
+            <setCheckbox
+              description="click on add show in results"
+              htmlId="input_c1"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+
+            <checkAjaxResponseXpathRegex
+              description="Preview contains now table with 3 columns"
+              xpath="//div[@id='previewcontent']/table/tbody/tr/th[3]"
+              regex="\s*Population\s*"
+            />
+            <verifyXPath
+              description="Berlin is ..."
+              xpath="//div[@id='previewcontent']/table/tbody/tr[3]/td"
+              text="Berlin"
+            />  
+            <verifyXPath
+              description="... located in"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[3]/td[2]"
+              text="Germany"
+            />  
+            <verifyXPath
+              description="... and Population"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[3]/td[3]/text()"
+              text="3,450,000"
+            />
+            <storeXPath
+              description="remember the number of results"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              property="numberOfCities"
+            />
+
+            <clickLink
+              description="Click on property Population in the Navtree"
+              label="Population"
+            />
+            <setCheckbox
+              description="click on value must be set"
+              htmlId="input_c2"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Preview contains now on result less than before"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr) + 1"
+              regex="#{numberOfCities}"
+            />
+
+            <clickLink
+              description="Click on property Population in the Navtree"
+              label="Population"
+            />
+            <setInputField
+              description="set column name for Population"
+              htmlId="input_c3"
+              value="Inhabitants"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Column population contains now Inhabitants"
+              xpath="//div[@id='previewcontent']//th[2]/a"
+              regex="Inhabitants"
+            />
+        	
+        </webtest>
+        
+    </target>
+</project>

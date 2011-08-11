@@ -1,0 +1,81 @@
+SMWHalo extension ChangeLog
+===========================
+VERSION 1.5.6
+	FEATURES:
+	
+	CHANGES:
+	
+	BUGFIXES:
+		14752 - Fatal error from LODNonExistingPage::getFile() when opening a .doc
+		15007 - Category annotation tool in STB does not allow slashes in 
+				category names
+		14827 - clicking outside an error message does not always close the error
+		        message	
+		14493 - SMWhalo special properties Creator, Creation date, Last modified
+		        by are not available in articles which have been created with 
+		        tabular forms.
+		13781 - Viewing red-links from properties (type:Page, no range) in STB: 
+		        property values must be displayed in red
+		        
+		        
+VERSION 1.5.3
+ 	FEATURES:
+	    FR #12720 added parameter to SPARQL parser function to turn inferencing off/on 
+    		 *infer=true/false
+     
+    	FR #13018 Syntax of Halo Autocompletion: constraints-parameter shall support "namespace:Form"
+    	
+    	TABULAR FORMS New query result printer, which enables users to edit the query result and thus the corresponding instances.
+    	
+    	QUERY LIST New special page that displays all queries that are used in the Wiki. SPARQL queries are also include.
+    	  
+	CHANGES:
+
+	BUGFIXES
+		14068 - Special:Version must list SMWhalo as Semantic Extension
+		14108 - Auto-completion not as expected
+    
+
+VERSION 1.5.2
+    CHANGES:
+        The prefixes category, property, a can be used in both the wiki and on the
+        remote console. The prefixes cat, prop, a still exist for compatibility in the
+        wiki.
+        
+	BUGFIXES
+		Bugfix 12370 - Create Super/Subproperty missing
+		
+		
+VERSION 1.5.1 PATCH LEVEL 1
+
+
+  FEATURES:
+  
+
+  CHANGES:
+  
+
+  BUGFIXES:
+    *  QueryResultsCache cannot be enabled.  (edit)  
+    ** http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12613
+
+
+VERSION 1.5.1
+
+
+  FEATURES:
+  * Query Results Cache added.
+
+
+  CHANGES:
+    * Dependency is set to SMW 1.5.1 and changes are applied to use the latest
+      SMW version.
+    * Improved Query Interface that makes query building easier and that
+      supports the latest features of SMW.
+    * Enhanced Ontology Browser with seamless integration of linked open data
+      sources
+
+  BUGFIXES:
+    * Many bugfixes that where reported since SMWHalo 1.5.0.
+
+

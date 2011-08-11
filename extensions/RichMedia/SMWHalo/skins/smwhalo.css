@@ -1,0 +1,16 @@
+/* 
+    Document   : smwhalo
+    Created on : 18.11.2009, 16:00:01
+    Author     : Benjamin (based on csh.css from Stephan)
+    Description: different styles for SMWHalo core functions
+*/
+
+.smw-category-schema-table {
+	width: 100%;
+	border: 1px solid #116988;;
+	border-collapse: collapse;
+}
+.smw-category-schema-table th, .smw-category-schema-table td {
+	border: 1px solid #116988;;
+	padding: 2px;
+}

@@ -1,0 +1,158 @@
+<project name="imports for qi page ajax calls">
+
+    <macrodef name="callQiViaAjax">
+    	<attribute name="rsargs" />
+    	<attribute name="description"/>
+        <sequential>
+            <invoke
+                url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage&amp;@{rsargs}"
+            	description="@{description}"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+            <verifyXPath
+                description="Page content contains the globalWrapper at the begining"
+                xpath="//body/div[2]/@id"
+                text="globalWrapper"
+            />
+       		<verifyXPath
+       		    description="and in the globalWrapper the content follows"
+        	    xpath="//body/div[@id='globalWrapper']/div/@id"
+        	    text="content"
+        	/>
+            <verifyXPath
+       		    description="and in the content div the qicontent div follows"
+        	    xpath="//body/div[@id='globalWrapper']/div[@id='content']/div/@id"
+        	    text="qicontent"
+        	/>
+         </sequential>
+    </macrodef>
+
+    <macrodef name="buttonCopyToClipboardIsVisible">
+        <sequential>
+            <verifyXPath
+                description="Copy to clipboard button must exist"
+                xpath="//button[@onclick='qihelper.copyToClipboard()']"
+            />
+            <not>
+                <verifyXPath
+                    description="and is viewable"
+                    xpath="//button[@onclick='qihelper.copyToClipboard()']/@style"
+                    text="display: none;"
+                />
+            </not>
+         </sequential>
+    </macrodef>
+
+    <macrodef name="buttonCopyToClipboardIsNotVisible">
+        <sequential>
+            <verifyXPath
+                description="Copy to clipboard button must exist"
+                xpath="//button[@onclick='qihelper.copyToClipboard()']"
+            />
+            <verifyXPath
+                description="but is not viewable"
+                xpath="//button[@onclick='qihelper.copyToClipboard()']/@style"
+                text="display: none;"
+            />
+         </sequential>
+    </macrodef>
+
+    <macrodef name="previewIsVisible">
+        <sequential>
+            <verifyXPath
+                description="Preview window must exist"
+                xpath="//div[@id='previewlayout']"
+            />
+            <not>
+                <verifyXPath
+                    description="and is visible"
+                    xpath="//div[@id='previewlayout']/@style"
+                    text="display: none;"
+                />
+            </not>
+         </sequential>
+    </macrodef>
+
+    <macrodef name="previewIsNotVisible">
+        <sequential>
+            <verifyXPath
+                description="Preview window must exist"
+                xpath="//div[@id='previewlayout']"
+            />
+            <verifyXPath
+                description="but is not visible"
+                xpath="//div[@id='previewlayout']/@style"
+                text="display: none;"
+            />
+         </sequential>
+    </macrodef>
+
+    <macrodef name="layoutManagerIsVisible">
+        <sequential>
+            <verifyXPath
+                description="Query Layout Manager window must exist"
+                xpath="//div[@id='previewlayout']"
+            />
+            <not>
+                <verifyXPath
+                    description="and is visible"
+                    xpath="//div[@id='previewlayout']/@style"
+                    text="display: none;"
+                />
+            </not>
+         </sequential>
+    </macrodef>
+
+    <macrodef name="layoutManagerIsNotVisible">
+        <sequential>
+            <verifyXPath
+                description="Query Layout Manager window must exist"
+                xpath="//div[@id='querylayout']"
+            />
+            <verifyXPath
+                description="but is not visible"
+                xpath="//div[@id='querylayout']/@style"
+                text="display: none;"
+            />
+         </sequential>
+    </macrodef>
+
+    <macrodef name="execQuery">
+      	<attribute name="query" />
+        <attribute name="printout" />
+    	<attribute name="description"/>
+        <sequential>
+            <invoke
+                url="${wgServer}${wgScript}?title=Special:Ask&amp;po=@{printout}&amp;q=@{query}&amp;p=format%3Dtable"
+            	description="@{description}"
+            />
+         </sequential>
+    </macrodef>
+
+    <macrodef name="createPage">
+      	<attribute name="title" />
+        <attribute name="text" />
+        <sequential>
+            <invoke url="${wgServer}${wgScript}?title=@{title}&amp;action=edit"/>
+            <setInputField htmlId="wpTextbox1" value="@{text}" />
+            <clickButton htmlId="wpSave" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="editPage">
+      	<attribute name="title" />
+        <attribute name="text" />
+        <sequential>
+            <invoke url="${wgServer}${wgScript}?title=@{title}&amp;action=edit"/>
+            <storeXPath
+                description="Get existing content"
+                xpath="//textarea[@id='wpTextbox1']/."
+                property="oldContent"
+            />
+            <setInputField htmlId="wpTextbox1" value="#{oldContent} @{text}" />
+            <clickButton htmlId="wpSave" />
+        </sequential>
+    </macrodef>
+
+
+</project>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<project name="testHalo" default="testAll">
+	<property name="wikipath" value="mediawiki"/>
+
+	<!-- set here some typical wiki wariables which will be used later some tests -->
+    <property name="wgServer" value="http://localhost" />
+    <property name="wgScriptPath" value="/${wikipath}" />
+    <property name="wgSitename" value="Halo3wiki" />
+    <property name="wgScript" value="${wgScriptPath}/index.php" />
+
+	<target name="testAll" description="runs all the tests">
+		<!-- Set triplestore tests at the beginning to make sure triplestore is in sync -->
+		<ant antfile="triplestoretests.xml"/>
+		<ant antfile="basictests.xml"/>
+		<ant antfile="ontologybrowsertests.xml"/>
+		<ant antfile="queryinterface1.xml"/>
+		<ant antfile="queryinterface2.xml"/>
+		<ant antfile="queryinterface3.xml"/>
+		<ant antfile="queryinterface4.xml"/>
+		<ant antfile="queryinterface5.xml"/>
+        <ant antfile="askqueries.xml"/>
+        <ant antfile="askqueriesNary.xml"/>
+	</target>
+</project>

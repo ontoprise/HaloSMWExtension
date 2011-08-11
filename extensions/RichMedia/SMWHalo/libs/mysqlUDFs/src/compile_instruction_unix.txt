@@ -1,0 +1,12 @@
+You need:
+ g++
+ mysql developement files
+
+Debian: 
+ apt-get install g++
+ apt-get install libmysqlclient15-dev
+
+Compile:
+ change directory to ./HaloSMWExtension/extensions/SMWHalo/libs/mysqlUDFs/src
+ execute the following command. Include path could be different on your system.
+ g++ -shared -I/usr/include/mysql/ -o libhalowiki-mysql5.so halowiki_udf.cpp algorithms.cpp

@@ -1,0 +1,148 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>MyWiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">MyWiki</namespace>
+      <namespace key="5">MyWiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Template:Term</title>
+    <id>684</id>
+    <revision>
+      <id>3031</id>
+      <timestamp>2009-02-04T13:22:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: &lt;noinclude&gt; This is the 'Term' template. It should be called in the following format: &lt;pre&gt; {{Term |also known as= |rarely labeled as= |definition= |example= |broader term= |narrower term= }} &lt;/pre&gt; Edit the page to see the template...</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Term' template.
+It should be called in the following format:
+&lt;pre&gt;
+{{Term
+|also known as=
+|rarely labeled as=
+|definition=
+|example=
+|broader term=
+|narrower term=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| class=&quot;wikitable&quot;
+! also known as
+| {{#arraymap:{{{also known as|}}}|,|x|[[also known as::x]]}}
+|-
+! rarely labeled as
+| {{#arraymap:{{{rarely labeled as|}}}|,|x|[[rarely labeled as::x]]}}
+|-
+! definition
+| {{#arraymap:{{{definition|}}}|,|x|[[definition::x]]}}
+|-
+! example
+| {{#arraymap:{{{example|}}}|,|x|[[example::x]]}}
+|-
+! broader term
+| {{#arraymap:{{{broader term|}}}|,|x|[[broader term::x]]}}
+|-
+! narrower term
+| {{#arraymap:{{{narrower term|}}}|,|x|[[narrower term::x]]}}
+|}
+
+[[Category:Term]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+   <page>
+    <title>Form:Term</title>
+    <id>685</id>
+    <revision>
+      <id>3032</id>
+      <timestamp>2009-02-04T13:27:19Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: &lt;noinclude&gt; This is the 'Term' form. To add a page with this form, enter the page name below; if a page with that name already exists, you will be sent to a form to edit that page.  {{#for...</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'Term' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:Term}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|Term}}}
+{| class=&quot;formtable&quot;
+! also known as:
+| {{{field|also known as}}}
+|-
+! rarely labeled as:
+| {{{field|rarely labeled as}}}
+|-
+! definition:
+| {{{field|definition}}}
+|-
+! example:
+| {{{field|example}}}
+|-
+! broader term:
+| {{{field|broader term}}}
+|-
+! narrower term:
+| {{{field|narrower term}}}
+|}
+{{{end template}}}
+
+'''Free text:'''
+
+{{{standard input|free text}}}
+
+
+{{{standard input|summary}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+</mediawiki>
