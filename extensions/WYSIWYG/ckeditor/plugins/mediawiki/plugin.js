@@ -267,6 +267,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             noImgFound      : 'no images found',
             oneImgFound     : 'one image found',
             manyImgFound    : ' images found',
+            manyPagesFound  : ' pages found',
             caption         : 'Caption',
             imgType         : 'Special type',
             alignCenter     : 'Center',
@@ -284,7 +285,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             emailLink       : 'e-mail link... no search for it',
             anchorLink      : 'anchor link... no search for it',
             defineTarget    : 'Define the wiki page for the link target:',
-            chooseTarget    : 'Choose an existing wikipage for the link target:'
+            chooseTarget    : 'Choose an existing wikipage for the link target:',
+            imgLinkLabel    : 'Target page or URL'
         }
 
         MWpluginLang['de'] = {
@@ -302,6 +304,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             noImgFound      : 'keine Bilder gefunden',
             oneImgFound     : '1 Bild gefunden',
             manyImgFound    : ' Bilder gefunden',
+            
             caption         : 'Beschreibung',
             imgType         : 'Bildtyp',
             alignCenter     : 'Mitte',
@@ -426,20 +429,6 @@ CKEDITOR.customprocessor.prototype =
 
     toHtml : function( data, fixForBody )
     {
-        // all converting to html (like: data = data.replace( /</g, '&lt;' );)
-        var loadHTMLFromAjax = function( result ){
-            if (window.parent.popup &&
-                window.parent.popup.parent.wgCKeditorInstance &&
-                window.parent.popup.parent.wgCKeditorCurrentMode != 'wysiwyg') {
-                window.parent.popup.parent.wgCKeditorInstance.setData(result.responseText);
-                window.parent.popup.parent.wgCKeditorCurrentMode = 'wysiwyg';
-            }
-            else if (window.parent.wgCKeditorInstance &&
-                window.parent.wgCKeditorCurrentMode != 'wysiwyg') {
-                window.parent.wgCKeditorInstance.setData(result.responseText);
-                window.parent.wgCKeditorCurrentMode = 'wysiwyg';
-            }
-        }
         // Hide the textarea to avoid seeing the code change.
         //textarea.hide();
         var loading = document.createElement( 'span' );
@@ -450,15 +439,15 @@ CKEDITOR.customprocessor.prototype =
 
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
-        if (!(data.indexOf('<p>') == 0 &&
-            data.match(/<.*?_fck_mw/) || data.match(/class="fck_mw_\w+"/i)) ) {
-
-            // Use Ajax to transform the Wikitext to HTML.
-            if( window.parent.popup ){
-                window.parent.popup.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data, window.parent.popup.wgPageName], loadHTMLFromAjax );
-            } else {
-                window.parent.FCK_sajax( 'wfSajaxWikiToHTML', [data, window.parent.wgPageName], loadHTMLFromAjax );
-            }
+        // transform only if
+        // 1. there are no html attributes in data string starting with "_fck" or "_cke"
+        // 2. the data string doesn't start with "<p>"
+        // 3. the data string doesn't contain html tags except for <span>, <br>, <p>, <sup|ul|ol|li|u|div> (those are also used in wikitext-html) 
+        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|ul|ol|li|u)[^\/>]*\/?>/ig, '');
+        var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
+        if (data.indexOf('<p>') != 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
+            data = sajax_do_call_jq('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
+            
         }
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
         writer = new CKEDITOR.htmlParser.basicWriter();
@@ -467,7 +456,7 @@ CKEDITOR.customprocessor.prototype =
         data = writer.getHtml( true );
        
         return data;
-    },
+     },
 
     /*
 	 * Converts a DOM (sub-)tree to a string in the data format.
@@ -1636,5 +1625,16 @@ if (!String.prototype.htmlEntities) {
         }
         string = string.replace(/&nbsp;/g, '&#160;');
         return string;
+    }
+    
+    CKEDITOR.regex = {
+        htmlTag : {
+            NameStartChar : '":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]',
+            NameChar : 'NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]',
+            Name : 'NameStartChar (NameChar)*',
+            Names : 'Name (#x20 Name)*',
+            Nmtoken : '(NameChar)+',
+            Nmtokens : 'Nmtoken (#x20 Nmtoken)*'
+        }
     }
 }

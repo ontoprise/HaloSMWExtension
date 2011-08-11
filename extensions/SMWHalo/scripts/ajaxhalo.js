@@ -223,3 +223,37 @@ function sajax_do_call(func_name, args, target, type) {
     return true;
 }
 
+/**
+ * jQuery implementation of #sajax_do_call function
+ *  func_name - the name of the server side function to call. Must be registered in $wgAjaxExportList
+*   args - an array of arguments to that function
+*   target - the name of the function that will handle the result of the call. If not defined - the call will be synchronous.
+ */
+function sajax_do_call_jq(func_name, args, target){
+    var result, 
+    isAsync = typeof(target) !== 'undefined';  
+    
+    //init request and
+    //send async request if target is defined or sync otherwise
+    jQuery.ajax({
+       type: "POST",
+       url: wgServer + wgScriptPath + "/index.php?action=ajax",
+       data : {rs : func_name, 'rsargs[]' : args},  
+       dataType : 'html',
+       async: isAsync,
+       success: function(data, textStatus, jqXHR){
+           if(isAsync){
+               target(jqXHR);
+           }
+           else{
+               result = data;
+           }
+         
+       }
+     });
+    
+    return result;
+    
+   
+}
+
