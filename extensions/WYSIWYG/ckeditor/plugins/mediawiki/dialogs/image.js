@@ -1,6 +1,5 @@
 CKEDITOR.dialog.add( 'MWImage', function( editor ) {    
-    {
-        
+    {       
         // Load image preview.
         var IMAGE = 1,
         LINK = 2,
@@ -55,7 +54,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             CKEDITOR.document.getById( imagePreviewLoaderId ).setStyle( 'display', 'none' );
         };
 
-        var searchTimer,
+        var searchTimer, searchPagesTimer,
         searchLabel = editor.lang.mwplugin.searchLabel,
         numbering = function( id )
         {
@@ -70,7 +69,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
     
         var GetImageUrl = function( dialog, img ) {
             var LoadPreviewImage = function(result) {
-                var url = result.responseText.Trim();
+                var url = result.responseText.Trim();                                
                 if (! url)
                     url = CKEDITOR.getUrl( editor.skinPath + 'images/noimage.png' );
                 SrcInWiki = url;
@@ -78,6 +77,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 previewPreloader.setAttribute( 'src', url );
                 dialog.preview.setAttribute( 'src', previewPreloader.$.src );
                 updatePreview( dialog );
+                dialog.originalElement.setAttribute( 'src', url );                
             }
             window.parent.sajax_request_type = 'GET' ;
             window.parent.sajax_do_call( 'wfSajaxGetImageUrl', [img], LoadPreviewImage ) ;
@@ -143,10 +143,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     for ( var i = 0 ; i < results.length ; i++ ) {
                         if (results[i] == '___TOO__MANY__RESULTS___')
                             select.add ( editor.lang.mwplugin.tooManyResults );
-                        else
-                            select.add ( results[i].replace(/_/g, ' '), results[i] );
+                        else{                           
+                            select.add( results[i].replace(/_/g, ' '), results[i]);
+                        }
+                     }
 
-                    }
+                     
                 }
 
             }
@@ -187,6 +189,68 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             return 0;
 
         }
+        
+        var OnImageLinkChange = function( dialog ) {
+           if ( searchPagesTimer )
+                    window.clearTimeout( searchPagesTimer ) ;
+                
+           var imageLinkElement = dialog.getContentElement( 'info', 'imageLink' );
+           var pageListElement = dialog.getContentElement( 'info', 'pageList' );
+           
+            var StartPageSearch = function() {
+                var link = imageLinkElement.getValue().Trim();               
+            
+                // Make an Ajax search for the pages.
+                window.parent.sajax_request_type = 'GET' ;
+                window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], LoadSearchResults ) ;
+                ClearSearch() ;
+                SetSearchMessage( editor.lang.mwplugin.searching ) ;
+            }
+            
+            var ClearSearch = function() {     
+                pageListElement.clear();               
+            }
+            
+            var SetSearchMessage = function ( message ) {
+                message = editor.lang.mwplugin.searchLabel.replace(/%s/, message);
+                label = document.getElementById(pageListElement.domId).getElementsByTagName('label')[0];
+                pageListElement.html = message;
+                label.innerHTML = message;
+            }
+
+            var LoadSearchResults = function(result) {
+                
+            
+                var results = [];
+                if(result && result.responseText.trim()){  
+			results = result.responseText.split( '\n' ); 
+                    if(results.length){
+                        if(results.length > 1)
+                            SetSearchMessage( results.length + editor.lang.mwplugin.manyPagesFound ) ;
+                        else
+                            SetSearchMessage( editor.lang.mwplugin.onePageFound ) ;
+                        for ( var i = 0 ; i < results.length ; i++ ) {
+                            if (results[i] == '___TOO__MANY__RESULTS___')
+                                pageListElement.add ( editor.lang.mwplugin.tooManyResults );
+                            else{
+                                pageListElement.add ( results[i].replace(/_/g, ' '), results[i] );  
+                            }
+                            
+                        }
+                    }
+                    else{
+                        SetSearchMessage( editor.lang.mwplugin.noPagesFound ) ;
+                    }                    
+                }
+                else{
+                    SetSearchMessage( editor.lang.mwplugin.noPagesFound ) ;                                    
+                }
+            }
+            
+            searchPagesTimer = window.setTimeout( StartPageSearch, 500 ) ;
+        
+
+        }
         return {
             
             title : editor.lang.mwplugin.imgTitle,
@@ -199,7 +263,8 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                 elements :
                 [
                 {
-                    type : 'hbox',                            
+                    type : 'hbox', 
+                    style : 'width: 60%;',
                     children: [
                     {
                         type: 'vbox',
@@ -214,6 +279,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             onKeyUp: function () {
                                 OnUrlChange( this.getDialog() );
                             },
+                       
                             setup : function( type, element )
                             {
                                 if ( type == IMAGE )
@@ -221,13 +287,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                     var url = element.getAttribute( '_fck_mw_filename' ) ||
                                     element.getAttribute( '_cke_saved_src' ) ||
                                     element.getAttribute( 'src' );
-                                    var field = this;
-
+                                    
                                     this.getDialog().dontResetSize = true;
 
-                                    field.setValue( url );		// And call this.onChange()
+                                    this.setValue( url );		// And call this.onChange()
                                     // Manually set the initial value.(#4191)
-                                    field.setInitValue();
+                                    this.setInitValue();
                                 }
                             },
                             commit : function( type, element )
@@ -257,42 +322,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             },
                             validate : CKEDITOR.dialog.validate.notEmpty( editor.lang.image.urlMissing )
                         },
-                                        
-                        ///////Image Link text input definition/////////
-                        {
-                            id: 'imgLink',
-                            type: 'text',
-                            label: 'Target page or URL',
-                            title: 'image link',
-                            style: 'border: 1px;',
-                                            
-                          
-                            setup : function( type, element )
-                            {
-                                if ( type == IMAGE )
-                                {                                                                                                
-                                    this.setValue(element.getAttribute('link'));	
-                                    this.getInputElement().setAttribute('class', 'wickEnabled'); 
-                                    this.getInputElement().setAttribute('constraints', 'all');   
-                                    this.getInputElement().setAttribute('pastens', 'true');                                  
-                                }
-                            },
-                            commit : function( type, element )
-                            {
-                                if ( type == IMAGE && (this.getValue() || this.isChanged()))
-                                {
-                                    element.setAttribute('link', decodeURI(this.getValue()));                                                    
-                                }                                            
-                            }                                          
-                        },
-
-                        //////////////////////////////////////////////////
-
+                        
                         {
                             id: 'imgList',
                             type: 'select',
-                            size: 5,
-                            label: editor.lang.mwplugin.startSearch,
+                            size: 6,
+                            label: editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping),
                             title: 'image list',
                             required: false,
                             style: 'border: 1px; width:100%;',
@@ -301,7 +336,8 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                 var dialog = this.getDialog(),
                                 newImg = this.getValue(),
                                 e = dialog.getContentElement( 'info', 'imgFilename' );
-                                if ( newImg == editor.lang.mwplugin.tooManyResults ) return;
+                                if ( newImg == editor.lang.mwplugin.tooManyResults ) 
+                                    return;
 
                                 e.setValue(newImg.replace(/_/g, ' '));
                                 GetImageUrl( dialog, newImg );
@@ -319,14 +355,65 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                                 original.on( 'load', onImgLoadEvent, dialog );
                                 original.on( 'error', onImgLoadErrorEvent, dialog );
                                 original.on( 'abort', onImgLoadErrorEvent, dialog );
-                                original.setAttribute( 'src', newImg );
+//                                dialog.originalElement.setAttribute( 'src', newImg );
 
                             }
-                        }
+                        },
+                                        
+                        ///////Image Link text input definition/////////
+                        {
+                            id   : 'imageLink',
+                            title: 'image link',
+                            style: 'width:100%;',                                     
+                            type : 'text',
+                            label: editor.lang.mwplugin.imgLinkLabel,
+                           
+                            onKeyUp: function () {
+                              OnImageLinkChange( this.getDialog() );  
+                            },
+                                               
+                            setup : function( type, element )
+                            {
+                                if ( type == IMAGE )
+                                {                                                                                                
+                                    this.setValue(element.getAttribute('link'));                                   
+                                }
+                            },
+                            commit : function( type, element )
+                            {
+                                if ( type == IMAGE && (this.getValue() || this.isChanged()))
+                                {
+                                    element.setAttribute('link', decodeURI(this.getValue()));                                                    
+                                }                                            
+                            }                                          
+                        },
+
+                        //////////////////////////////////////////////////
+
+                        {
+                            id: 'pageList',
+                            type: 'select',
+                            label: editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping),
+                            size: 6,
+                            title: 'page list',
+                            required: false,
+                            style: 'border: 1px; width:100%;',
+                            items: [  ],
+                            onChange: function () {
+                                var dialog = this.getDialog(),
+                                selectedPage = this.getValue(),
+                                imageLinkElement = dialog.getContentElement( 'info', 'imageLink' );
+                                if ( selectedPage == editor.lang.mwplugin.tooManyResults ) 
+                                    return;
+
+                                imageLinkElement.setValue(selectedPage.replace(/_/g, ' '));                         
+                            }
+                        },
                         ]
                     },
                     {
-                        type : 'hbox',                                     
+                        type : 'hbox', 
+                        style : 'height:100%; important!',
                         children :
                         [
                         {
@@ -337,7 +424,13 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                             '<div id="' + imagePreviewBoxId + '" class="ImagePreviewBox"><table><tr><td>'+
                             '<a href="javascript:void(0)" target="_blank" onclick="return false;" id="' + previewLinkId + '">'+
                             '<img id="' + previewImageId + '" alt="" /></a>' +
-                            '</td></tr></table></div></div>'
+                            '</td></tr></table></div></div>',
+                            setup : function( type, element ) {
+                                if(element){
+                                    var imgSrc = element.getAttribute('src');
+                                    CKEDITOR.document.getById( previewImageId ).setAttribute('src', imgSrc);
+                                }
+                            }
                         }
                         ]
                     }
@@ -349,10 +442,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     type: 'text',
                     label: editor.lang.mwplugin.caption,
                     style: 'border: 1px;',
-                    onChange : function()
-                    {
-                    //updatePreview( this.getDialog() );
-                    },
+                    
                     setup : function( type, element ) {
                         if ( type == IMAGE )
                             this.setValue( element.getAttribute( 'alt' ) );
@@ -596,23 +686,21 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             },
 
             onShow : function()
-            {
+            {             
+                
                 this.imageEditMode = false;
                 this.dontResetSize = false;
                 
                 // clear old selection list from a previous call
-                var	e = this.getContentElement( 'info', 'imgList' );
-                e.items = [];
-                var div = document.getElementById(e.domId),
-                select = div.getElementsByTagName('select')[0];
-                while ( select.options.length > 0 )
-                    select.remove( 0 );
+                var imageListElement = this.getContentElement( 'info', 'imgList' );
+                imageListElement.clear();
+                var pageListElement = this.getContentElement( 'info', 'pageList' );
+                pageListElement.clear();
+              
                 // and set correct label for image list
-                e = this.getContentElement( 'info', 'imgList' ),
-                label = document.getElementById(e.domId).getElementsByTagName('label')[0];
+                label = document.getElementById(imageListElement.domId).getElementsByTagName('label')[0];
                 var editor = this.getParentEditor(),
                 message = editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping);
-                e.html = message;
                 label.innerHTML = message;
 
                 var selection = editor.getSelection(),
@@ -636,9 +724,9 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     this.imageElement = element;
                     SrcInWiki = element.getAttribute( 'src' );
                 }
-                else {
-                    OnUrlChange( this );
-                }
+//                else {
+//                    OnUrlChange( this );
+//                }
 
                 if ( this.imageEditMode )
                 {
@@ -655,12 +743,17 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     this.imageElement =  editor.document.createElement( 'img' );
 
                 // Dont show preview if no URL given.
-                if ( !CKEDITOR.tools.trim( this.getValueOf( 'info', 'imgFilename' ) ) )
+                var imgValue = CKEDITOR.tools.trim( this.getValueOf( 'info', 'imgFilename' ));
+                if (imgValue)
                 {
-                    this.preview.removeAttribute( 'src' );
-                    this.preview.setStyle( 'display', 'none' );
+                    OnUrlChange( this );                             
+                } 
+                var imgLinkValue = CKEDITOR.tools.trim( this.getValueOf( 'info', 'imageLink' ));
+                if(imgLinkValue){
+                    OnImageLinkChange( this );
                 }
-
+                
+                
             },
             onHide : function()
             {
@@ -676,10 +769,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                     this.originalElement = false;		// Dialog is closed.
                 }
 
-                delete this.imageElement;
+                delete this.imageElement;                
+              
+                
             }
 
 
         }
     }
-} );
+});
