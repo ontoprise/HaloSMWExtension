@@ -41,10 +41,14 @@ echo "\nInsertings LocalSettings.php ...";
 copyLocalSettingsTest();
 echo "\ndone!\n";
 
-require_once( $mw_dir.'maintenance/commandLine.inc' );
-echo "\nInitializing database for use with MW 1.16.1 ...";
+/* NOTE: These credentials MUST be set according to LocalSettingsForTest.php ! */
+$wgDBuser="root";
+$wgDBpassword="T9saG9MtwejYySj6";
+
+echo "\nInitializing database for use with MW ...";
 tstInitializeDatabase();
 echo "\ndone!\n";
+require_once( $mw_dir.'maintenance/commandLine.inc' );
 
 echo "\nSetup required extensions ...\n";
 checkSetupSteps();
