@@ -1,31 +1,27 @@
--- MySQL Administrator dump 1.4
+-- MySQL dump 10.13  Distrib 5.1.49, for Win32 (ia32)
 --
+-- Host: localhost    Database: empty_mw117
 -- ------------------------------------------------------
 -- Server version	5.1.49-community
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-
-
---
--- Create schema empty_mw117
---
-
-CREATE DATABASE IF NOT EXISTS empty_mw117;
-USE empty_mw117;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Definition of table `archive`
+-- Table structure for table `archive`
 --
 
 DROP TABLE IF EXISTS `archive`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `archive` (
   `ar_namespace` int(11) NOT NULL DEFAULT '0',
   `ar_title` varbinary(255) NOT NULL DEFAULT '',
@@ -46,20 +42,24 @@ CREATE TABLE `archive` (
   KEY `usertext_timestamp` (`ar_user_text`,`ar_timestamp`),
   KEY `ar_revid` (`ar_rev_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `archive`
 --
 
+LOCK TABLES `archive` WRITE;
 /*!40000 ALTER TABLE `archive` DISABLE KEYS */;
 /*!40000 ALTER TABLE `archive` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `category`
+-- Table structure for table `category`
 --
 
 DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
   `cat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cat_title` varbinary(255) NOT NULL,
@@ -71,20 +71,24 @@ CREATE TABLE `category` (
   UNIQUE KEY `cat_title` (`cat_title`),
   KEY `cat_pages` (`cat_pages`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `category`
 --
 
+LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `categorylinks`
+-- Table structure for table `categorylinks`
 --
 
 DROP TABLE IF EXISTS `categorylinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `categorylinks` (
   `cl_from` int(10) unsigned NOT NULL DEFAULT '0',
   `cl_to` varbinary(255) NOT NULL DEFAULT '',
@@ -98,20 +102,24 @@ CREATE TABLE `categorylinks` (
   KEY `cl_timestamp` (`cl_to`,`cl_timestamp`),
   KEY `cl_collation` (`cl_collation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `categorylinks`
 --
 
+LOCK TABLES `categorylinks` WRITE;
 /*!40000 ALTER TABLE `categorylinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `categorylinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `change_tag`
+-- Table structure for table `change_tag`
 --
 
 DROP TABLE IF EXISTS `change_tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `change_tag` (
   `ct_rc_id` int(11) DEFAULT NULL,
   `ct_log_id` int(11) DEFAULT NULL,
@@ -123,40 +131,48 @@ CREATE TABLE `change_tag` (
   UNIQUE KEY `change_tag_rev_tag` (`ct_rev_id`,`ct_tag`),
   KEY `change_tag_tag_id` (`ct_tag`,`ct_rc_id`,`ct_rev_id`,`ct_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `change_tag`
 --
 
+LOCK TABLES `change_tag` WRITE;
 /*!40000 ALTER TABLE `change_tag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `change_tag` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `external_user`
+-- Table structure for table `external_user`
 --
 
 DROP TABLE IF EXISTS `external_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `external_user` (
   `eu_local_id` int(10) unsigned NOT NULL,
   `eu_external_id` varbinary(255) NOT NULL,
   PRIMARY KEY (`eu_local_id`),
   UNIQUE KEY `eu_external_id` (`eu_external_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `external_user`
 --
 
+LOCK TABLES `external_user` WRITE;
 /*!40000 ALTER TABLE `external_user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `external_user` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `externallinks`
+-- Table structure for table `externallinks`
 --
 
 DROP TABLE IF EXISTS `externallinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `externallinks` (
   `el_from` int(10) unsigned NOT NULL DEFAULT '0',
   `el_to` blob NOT NULL,
@@ -165,25 +181,25 @@ CREATE TABLE `externallinks` (
   KEY `el_to` (`el_to`(60),`el_from`),
   KEY `el_index` (`el_index`(60))
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `externallinks`
 --
 
+LOCK TABLES `externallinks` WRITE;
 /*!40000 ALTER TABLE `externallinks` DISABLE KEYS */;
-INSERT INTO `externallinks` (`el_from`,`el_to`,`el_index`) VALUES 
- (1,0x687474703A2F2F6D6574612E77696B696D656469612E6F72672F77696B692F48656C703A436F6E74656E7473,0x687474703A2F2F6F72672E77696B696D656469612E6D6574612E2F77696B692F48656C703A436F6E74656E7473),
- (1,0x687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F4D616E75616C3A436F6E66696775726174696F6E5F73657474696E6773,0x687474703A2F2F6F72672E6D6564696177696B692E7777772E2F77696B692F4D616E75616C3A436F6E66696775726174696F6E5F73657474696E6773),
- (1,0x687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F4D616E75616C3A464151,0x687474703A2F2F6F72672E6D6564696177696B692E7777772E2F77696B692F4D616E75616C3A464151),
- (1,0x68747470733A2F2F6C697374732E77696B696D656469612E6F72672F6D61696C6D616E2F6C697374696E666F2F6D6564696177696B692D616E6E6F756E6365,0x68747470733A2F2F6F72672E77696B696D656469612E6C697374732E2F6D61696C6D616E2F6C697374696E666F2F6D6564696177696B692D616E6E6F756E6365);
+INSERT INTO `externallinks` VALUES (1,'http://meta.wikimedia.org/wiki/Help:Contents','http://org.wikimedia.meta./wiki/Help:Contents'),(1,'http://www.mediawiki.org/wiki/Manual:Configuration_settings','http://org.mediawiki.www./wiki/Manual:Configuration_settings'),(1,'http://www.mediawiki.org/wiki/Manual:FAQ','http://org.mediawiki.www./wiki/Manual:FAQ'),(1,'https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce','https://org.wikimedia.lists./mailman/listinfo/mediawiki-announce');
 /*!40000 ALTER TABLE `externallinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `filearchive`
+-- Table structure for table `filearchive`
 --
 
 DROP TABLE IF EXISTS `filearchive`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `filearchive` (
   `fa_id` int(11) NOT NULL AUTO_INCREMENT,
   `fa_name` varbinary(255) NOT NULL DEFAULT '',
@@ -212,37 +228,45 @@ CREATE TABLE `filearchive` (
   KEY `fa_deleted_timestamp` (`fa_deleted_timestamp`),
   KEY `fa_user_timestamp` (`fa_user_text`,`fa_timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `filearchive`
 --
 
+LOCK TABLES `filearchive` WRITE;
 /*!40000 ALTER TABLE `filearchive` DISABLE KEYS */;
 /*!40000 ALTER TABLE `filearchive` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `hitcounter`
+-- Table structure for table `hitcounter`
 --
 
 DROP TABLE IF EXISTS `hitcounter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `hitcounter` (
   `hc_id` int(10) unsigned NOT NULL
 ) ENGINE=MEMORY DEFAULT CHARSET=latin1 MAX_ROWS=25000;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `hitcounter`
 --
 
+LOCK TABLES `hitcounter` WRITE;
 /*!40000 ALTER TABLE `hitcounter` DISABLE KEYS */;
 /*!40000 ALTER TABLE `hitcounter` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `image`
+-- Table structure for table `image`
 --
 
 DROP TABLE IF EXISTS `image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `image` (
   `img_name` varbinary(255) NOT NULL DEFAULT '',
   `img_size` int(10) unsigned NOT NULL DEFAULT '0',
@@ -264,40 +288,48 @@ CREATE TABLE `image` (
   KEY `img_timestamp` (`img_timestamp`),
   KEY `img_sha1` (`img_sha1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `image`
 --
 
+LOCK TABLES `image` WRITE;
 /*!40000 ALTER TABLE `image` DISABLE KEYS */;
 /*!40000 ALTER TABLE `image` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `imagelinks`
+-- Table structure for table `imagelinks`
 --
 
 DROP TABLE IF EXISTS `imagelinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `imagelinks` (
   `il_from` int(10) unsigned NOT NULL DEFAULT '0',
   `il_to` varbinary(255) NOT NULL DEFAULT '',
   UNIQUE KEY `il_from` (`il_from`,`il_to`),
   UNIQUE KEY `il_to` (`il_to`,`il_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `imagelinks`
 --
 
+LOCK TABLES `imagelinks` WRITE;
 /*!40000 ALTER TABLE `imagelinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `imagelinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `interwiki`
+-- Table structure for table `interwiki`
 --
 
 DROP TABLE IF EXISTS `interwiki`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `interwiki` (
   `iw_prefix` varbinary(32) NOT NULL,
   `iw_url` blob NOT NULL,
@@ -307,114 +339,25 @@ CREATE TABLE `interwiki` (
   `iw_trans` tinyint(4) NOT NULL DEFAULT '0',
   UNIQUE KEY `iw_prefix` (`iw_prefix`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `interwiki`
 --
 
+LOCK TABLES `interwiki` WRITE;
 /*!40000 ALTER TABLE `interwiki` DISABLE KEYS */;
-INSERT INTO `interwiki` (`iw_prefix`,`iw_url`,`iw_api`,`iw_wikiid`,`iw_local`,`iw_trans`) VALUES 
- (0x6163726F6E796D,0x687474703A2F2F7777772E6163726F6E796D66696E6465722E636F6D2F61662D71756572792E6173703F537472696E673D6578616374264163726F6E796D3D2431,'','',0,0),
- (0x6164766F6761746F,0x687474703A2F2F7777772E6164766F6761746F2E6F72672F2431,'','',0,0),
- (0x616E6E6F746174696F6E77696B69,0x687474703A2F2F7777772E7365656477696B692E636F6D2F706167652E63666D3F77696B6969643D33363826646F633D2431,'','',0,0),
- (0x6172786976,0x687474703A2F2F7777772E61727869762E6F72672F6162732F2431,'','',0,0),
- (0x633266696E64,0x687474703A2F2F63322E636F6D2F6367692F77696B693F46696E64506167652676616C75653D2431,'','',0,0),
- (0x6361636865,0x687474703A2F2F7777772E676F6F676C652E636F6D2F7365617263683F713D63616368653A2431,'','',0,0),
- (0x636F6D6D6F6E73,0x687474703A2F2F636F6D6D6F6E732E77696B696D656469612E6F72672F77696B692F2431,'','',0,0),
- (0x636F72706B6E6F777065646961,0x687474703A2F2F636F72706B6E6F7770656469612E6F72672F77696B692F696E6465782E7068702F2431,'','',0,0),
- (0x64696374696F6E617279,0x687474703A2F2F7777772E646963742E6F72672F62696E2F446963743F44617461626173653D2A26466F726D3D44696374312653747261746567793D2A2651756572793D2431,'','',0,0),
- (0x646973696E666F7065646961,0x687474703A2F2F7777772E646973696E666F70656469612E6F72672F77696B692E7068746D6C3F7469746C653D2431,'','',0,0),
- (0x646F63626F6F6B,0x687474703A2F2F77696B692E646F63626F6F6B2E6F72672F746F7069632F2431,'','',0,0),
- (0x646F69,0x687474703A2F2F64782E646F692E6F72672F2431,'','',0,0),
- (0x6472756D636F72707377696B69,0x687474703A2F2F7777772E6472756D636F72707377696B692E636F6D2F696E6465782E7068702F2431,'','',0,0),
- (0x64776A77696B69,0x687474703A2F2F7777772E737562657269632E6E65742F6367692D62696E2F64776A2F77696B692E6367693F2431,'','',0,0),
- (0x656C69627265,0x687474703A2F2F656E6369636C6F70656469612E75732E65732F696E6465782E7068702F2431,'','',0,0),
- (0x656D61637377696B69,0x687474703A2F2F7777772E656D61637377696B692E6F72672F6367692D62696E2F77696B692E706C3F2431,'','',0,0),
- (0x666F6C646F63,0x687474703A2F2F666F6C646F632E6F72672F3F2431,'','',0,0),
- (0x666F7877696B69,0x687474703A2F2F666F782E77696B69732E636F6D2F77632E646C6C3F57696B697E2431,'','',0,0),
- (0x667265656273646D616E,0x687474703A2F2F7777772E467265654253442E6F72672F6367692F6D616E2E6367693F6170726F706F733D312671756572793D2431,'','',0,0),
- (0x67656A,0x687474703A2F2F7777772E6573706572616E746F2E64652F6367692D62696E2F616B746976696B696F2F77696B692E706C3F2431,'','',0,0),
- (0x67656E746F6F2D77696B69,0x687474703A2F2F67656E746F6F2D77696B692E636F6D2F2431,'','',0,0),
- (0x676F6F676C65,0x687474703A2F2F7777772E676F6F676C652E636F6D2F7365617263683F713D2431,'','',0,0),
- (0x676F6F676C6567726F757073,0x687474703A2F2F67726F7570732E676F6F676C652E636F6D2F67726F7570733F713D2431,'','',0,0),
- (0x68616D6D6F6E6477696B69,0x687474703A2F2F7777772E64616972696B692E6F72672F48616D6D6F6E6457696B692F2431,'','',0,0),
- (0x686577696B69736F75726365,0x687474703A2F2F68652E77696B69736F757263652E6F72672F77696B692F2431,'','',1,0),
- (0x687277696B69,0x687474703A2F2F7777772E687277696B692E6F72672F696E6465782E7068702F2431,'','',0,0),
- (0x696D6462,0x687474703A2F2F75732E696D64622E636F6D2F5469746C653F2431,'','',0,0),
- (0x6A6172676F6E66696C65,0x687474703A2F2F73756E69722E6F72672F617070732F6D6574612E706C3F77696B693D4A6172676F6E46696C652672656469726563743D2431,'','',0,0),
- (0x6A737077696B69,0x687474703A2F2F7777772E6A737077696B692E6F72672F77696B692F2431,'','',0,0),
- (0x6B65696B69,0x687474703A2F2F6B65692E6B692F656E2F2431,'','',0,0),
- (0x6B6D77696B69,0x687474703A2F2F6B6D77696B692E77696B697370616365732E636F6D2F2431,'','',0,0),
- (0x6C696E757877696B69,0x687474703A2F2F6C696E757877696B692E64652F2431,'','',0,0),
- (0x6C6F6A62616E,0x687474703A2F2F7777772E6C6F6A62616E2E6F72672F74696B692F74696B692D696E6465782E7068703F706167653D2431,'','',0,0),
- (0x6C7177696B69,0x687474703A2F2F77696B692E6C696E75787175657374696F6E732E6F72672F77696B692F2431,'','',0,0),
- (0x6C75676B72,0x687474703A2F2F6C75672D6B722E736F75726365666F7267652E6E65742F6367692D62696E2F6C756777696B692E706C3F2431,'','',0,0),
- (0x6D617468736F6E677377696B69,0x687474703A2F2F5365656457696B692E636F6D2F706167652E63666D3F77696B6969643D32333726646F633D2431,'','',0,0),
- (0x6D65617462616C6C,0x687474703A2F2F7777772E7573656D6F642E636F6D2F6367692D62696E2F6D622E706C3F2431,'','',0,0),
- (0x6D6564696177696B6977696B69,0x687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F2431,'','',0,0),
- (0x6D656469617A696C6C61,0x68747470733A2F2F6275677A696C6C612E77696B696D656469612E6F72672F2431,'','',1,0),
- (0x6D656D6F7279616C706861,0x687474703A2F2F7777772E6D656D6F72792D616C7068612E6F72672F656E2F696E6465782E7068702F2431,'','',0,0),
- (0x6D65746177696B69,0x687474703A2F2F73756E69722E6F72672F617070732F6D6574612E706C3F2431,'','',0,0),
- (0x6D65746177696B697065646961,0x687474703A2F2F6D6574612E77696B696D656469612E6F72672F77696B692F2431,'','',0,0),
- (0x6D6F696E6D6F696E,0x687474703A2F2F7075726C2E6E65742F77696B692F6D6F696E2F2431,'','',0,0),
- (0x6D6F7A696C6C6177696B69,0x687474703A2F2F77696B692E6D6F7A696C6C612E6F72672F696E6465782E7068702F2431,'','',0,0),
- (0x6D77,0x687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F2431,'','',0,0),
- (0x6F656973,0x687474703A2F2F7777772E72657365617263682E6174742E636F6D2F6367692D62696E2F6163636573732E6367692F61732F6E6A61732F73657175656E6365732F656973412E6367693F416E756D3D2431,'','',0,0),
- (0x6F70656E6661637473,0x687474703A2F2F6F70656E66616374732E6265726C696F732E64652F696E6465782E7068746D6C3F7469746C653D2431,'','',0,0),
- (0x6F70656E77696B69,0x687474703A2F2F6F70656E77696B692E636F6D2F3F2431,'','',0,0),
- (0x706D6567,0x687474703A2F2F7777772E62657274696C6F772E636F6D2F706D65672F24312E706870,'','',0,0),
- (0x707072,0x687474703A2F2F63322E636F6D2F6367692F77696B693F2431,'','',0,0),
- (0x707974686F6E696E666F,0x687474703A2F2F77696B692E707974686F6E2E6F72672F6D6F696E2F2431,'','',0,0),
- (0x726663,0x687474703A2F2F7777772E7266632D656469746F722E6F72672F7266632F72666324312E747874,'','',0,0),
- (0x73323377696B69,0x687474703A2F2F69732D726F6F742E64652F77696B692F696E6465782E7068702F2431,'','',0,0),
- (0x73656174746C6577696B69,0x687474703A2F2F73656174746C652E77696B69612E636F6D2F77696B692F2431,'','',0,0),
- (0x73656174746C65776972656C657373,0x687474703A2F2F73656174746C65776972656C6573732E6E65742F3F2431,'','',0,0),
- (0x73656E736569736C696272617279,0x687474703A2F2F73656E736569732E786D702E6E65742F3F2431,'','',0,0),
- (0x736F75726365666F726765,0x687474703A2F2F736F75726365666F7267652E6E65742F2431,'','',0,0),
- (0x73717565616B,0x687474703A2F2F77696B692E73717565616B2E6F72672F73717565616B2F2431,'','',0,0),
- (0x7375736E696E67,0x687474703A2F2F7777772E7375736E696E672E6E752F2431,'','',0,0),
- (0x73766777696B69,0x687474703A2F2F77696B692E7376672E6F72672F2431,'','',0,0),
- (0x74617669,0x687474703A2F2F746176692E736F75726365666F7267652E6E65742F2431,'','',0,0),
- (0x74656A6F,0x687474703A2F2F7777772E74656A6F2E6F72672F76696B696F2F2431,'','',0,0),
- (0x7468656F7065646961,0x687474703A2F2F7777772E7468656F70656469612E636F6D2F2431,'','',0,0),
- (0x746D6277,0x687474703A2F2F7777772E746D62772E6E65742F77696B692F2431,'','',0,0),
- (0x746D6E6574,0x687474703A2F2F7777772E746563686E6F6D616E69666573746F732E6E65742F3F2431,'','',0,0),
- (0x746D77696B69,0x687474703A2F2F7777772E45617379546F7069634D6170732E636F6D2F3F706167653D2431,'','',0,0),
- (0x7477696B69,0x687474703A2F2F7477696B692E6F72672F6367692D62696E2F766965772F2431,'','',0,0),
- (0x756561,0x687474703A2F2F7777772E74656A6F2E6F72672F7565612F2431,'','',0,0),
- (0x756E7265616C,0x687474703A2F2F77696B692E6265796F6E64756E7265616C2E636F6D2F77696B692F2431,'','',0,0),
- (0x7573656D6F64,0x687474703A2F2F7777772E7573656D6F642E636F6D2F6367692D62696E2F77696B692E706C3F2431,'','',0,0),
- (0x76696E69736D6F,0x687474703A2F2F76696E69736D6F2E636F6D2F656E2F2431,'','',0,0),
- (0x776562736569747A77696B69,0x687474703A2F2F776562736569747A2E666C7578656E742E636F6D2F77696B692F2431,'','',0,0),
- (0x776879,0x687474703A2F2F636C75626C65742E636F6D2F632F632F7768793F2431,'','',0,0),
- (0x77696B69,0x687474703A2F2F63322E636F6D2F6367692F77696B693F2431,'','',0,0),
- (0x77696B6961,0x687474703A2F2F7777772E77696B69612E636F6D2F77696B692F2431,'','',0,0),
- (0x77696B69626F6F6B73,0x687474703A2F2F656E2E77696B69626F6F6B732E6F72672F77696B692F2431,'','',1,0),
- (0x77696B69636974696573,0x687474703A2F2F7777772E77696B69612E636F6D2F77696B692F2431,'','',0,0),
- (0x77696B696631,0x687474703A2F2F7777772E77696B6966312E6F72672F2431,'','',0,0),
- (0x77696B69686F77,0x687474703A2F2F7777772E77696B69686F772E636F6D2F2431,'','',0,0),
- (0x77696B696D65646961,0x687474703A2F2F77696B696D65646961666F756E646174696F6E2E6F72672F77696B692F2431,'','',0,0),
- (0x77696B696E657773,0x687474703A2F2F656E2E77696B696E6577732E6F72672F77696B692F2431,'','',1,0),
- (0x77696B696E666F,0x687474703A2F2F7777772E77696B696E666F2E6F72672F696E6465782E7068702F2431,'','',0,0),
- (0x77696B697065646961,0x687474703A2F2F656E2E77696B6970656469612E6F72672F77696B692F2431,'','',1,0),
- (0x77696B6971756F7465,0x687474703A2F2F656E2E77696B6971756F74652E6F72672F77696B692F2431,'','',1,0),
- (0x77696B69736F75726365,0x687474703A2F2F77696B69736F757263652E6F72672F77696B692F2431,'','',1,0),
- (0x77696B6973706563696573,0x687474703A2F2F737065636965732E77696B696D656469612E6F72672F77696B692F2431,'','',1,0),
- (0x77696B6974726176656C,0x687474703A2F2F77696B6974726176656C2E6F72672F656E2F2431,'','',0,0),
- (0x77696B6976657273697479,0x687474703A2F2F656E2E77696B69766572736974792E6F72672F77696B692F2431,'','',1,0),
- (0x77696B74,0x687474703A2F2F656E2E77696B74696F6E6172792E6F72672F77696B692F2431,'','',1,0),
- (0x77696B74696F6E617279,0x687474703A2F2F656E2E77696B74696F6E6172792E6F72672F77696B692F2431,'','',1,0),
- (0x776C7567,0x687474703A2F2F7777772E776C75672E6F72672E6E7A2F2431,'','',0,0),
- (0x7A77696B69,0x687474703A2F2F7A77696B692E6F72672F2431,'','',0,0),
- (0x7A7A7A2077696B69,0x687474703A2F2F77696B692E7A7A7A2E65652F696E6465782E7068702F2431,'','',0,0);
+INSERT INTO `interwiki` VALUES ('acronym','http://www.acronymfinder.com/af-query.asp?String=exact&Acronym=$1','','',0,0),('advogato','http://www.advogato.org/$1','','',0,0),('annotationwiki','http://www.seedwiki.com/page.cfm?wikiid=368&doc=$1','','',0,0),('arxiv','http://www.arxiv.org/abs/$1','','',0,0),('c2find','http://c2.com/cgi/wiki?FindPage&value=$1','','',0,0),('cache','http://www.google.com/search?q=cache:$1','','',0,0),('commons','http://commons.wikimedia.org/wiki/$1','','',0,0),('corpknowpedia','http://corpknowpedia.org/wiki/index.php/$1','','',0,0),('dictionary','http://www.dict.org/bin/Dict?Database=*&Form=Dict1&Strategy=*&Query=$1','','',0,0),('disinfopedia','http://www.disinfopedia.org/wiki.phtml?title=$1','','',0,0),('docbook','http://wiki.docbook.org/topic/$1','','',0,0),('doi','http://dx.doi.org/$1','','',0,0),('drumcorpswiki','http://www.drumcorpswiki.com/index.php/$1','','',0,0),('dwjwiki','http://www.suberic.net/cgi-bin/dwj/wiki.cgi?$1','','',0,0),('elibre','http://enciclopedia.us.es/index.php/$1','','',0,0),('emacswiki','http://www.emacswiki.org/cgi-bin/wiki.pl?$1','','',0,0),('foldoc','http://foldoc.org/?$1','','',0,0),('foxwiki','http://fox.wikis.com/wc.dll?Wiki~$1','','',0,0),('freebsdman','http://www.FreeBSD.org/cgi/man.cgi?apropos=1&query=$1','','',0,0),('gej','http://www.esperanto.de/cgi-bin/aktivikio/wiki.pl?$1','','',0,0),('gentoo-wiki','http://gentoo-wiki.com/$1','','',0,0),('google','http://www.google.com/search?q=$1','','',0,0),('googlegroups','http://groups.google.com/groups?q=$1','','',0,0),('hammondwiki','http://www.dairiki.org/HammondWiki/$1','','',0,0),('hewikisource','http://he.wikisource.org/wiki/$1','','',1,0),('hrwiki','http://www.hrwiki.org/index.php/$1','','',0,0),('imdb','http://us.imdb.com/Title?$1','','',0,0),('jargonfile','http://sunir.org/apps/meta.pl?wiki=JargonFile&redirect=$1','','',0,0),('jspwiki','http://www.jspwiki.org/wiki/$1','','',0,0),('keiki','http://kei.ki/en/$1','','',0,0),('kmwiki','http://kmwiki.wikispaces.com/$1','','',0,0),('linuxwiki','http://linuxwiki.de/$1','','',0,0),('lojban','http://www.lojban.org/tiki/tiki-index.php?page=$1','','',0,0),('lqwiki','http://wiki.linuxquestions.org/wiki/$1','','',0,0),('lugkr','http://lug-kr.sourceforge.net/cgi-bin/lugwiki.pl?$1','','',0,0),('mathsongswiki','http://SeedWiki.com/page.cfm?wikiid=237&doc=$1','','',0,0),('meatball','http://www.usemod.com/cgi-bin/mb.pl?$1','','',0,0),('mediawikiwiki','http://www.mediawiki.org/wiki/$1','','',0,0),('mediazilla','https://bugzilla.wikimedia.org/$1','','',1,0),('memoryalpha','http://www.memory-alpha.org/en/index.php/$1','','',0,0),('metawiki','http://sunir.org/apps/meta.pl?$1','','',0,0),('metawikipedia','http://meta.wikimedia.org/wiki/$1','','',0,0),('moinmoin','http://purl.net/wiki/moin/$1','','',0,0),('mozillawiki','http://wiki.mozilla.org/index.php/$1','','',0,0),('mw','http://www.mediawiki.org/wiki/$1','','',0,0),('oeis','http://www.research.att.com/cgi-bin/access.cgi/as/njas/sequences/eisA.cgi?Anum=$1','','',0,0),('openfacts','http://openfacts.berlios.de/index.phtml?title=$1','','',0,0),('openwiki','http://openwiki.com/?$1','','',0,0),('pmeg','http://www.bertilow.com/pmeg/$1.php','','',0,0),('ppr','http://c2.com/cgi/wiki?$1','','',0,0),('pythoninfo','http://wiki.python.org/moin/$1','','',0,0),('rfc','http://www.rfc-editor.org/rfc/rfc$1.txt','','',0,0),('s23wiki','http://is-root.de/wiki/index.php/$1','','',0,0),('seattlewiki','http://seattle.wikia.com/wiki/$1','','',0,0),('seattlewireless','http://seattlewireless.net/?$1','','',0,0),('senseislibrary','http://senseis.xmp.net/?$1','','',0,0),('sourceforge','http://sourceforge.net/$1','','',0,0),('squeak','http://wiki.squeak.org/squeak/$1','','',0,0),('susning','http://www.susning.nu/$1','','',0,0),('svgwiki','http://wiki.svg.org/$1','','',0,0),('tavi','http://tavi.sourceforge.net/$1','','',0,0),('tejo','http://www.tejo.org/vikio/$1','','',0,0),('theopedia','http://www.theopedia.com/$1','','',0,0),('tmbw','http://www.tmbw.net/wiki/$1','','',0,0),('tmnet','http://www.technomanifestos.net/?$1','','',0,0),('tmwiki','http://www.EasyTopicMaps.com/?page=$1','','',0,0),('twiki','http://twiki.org/cgi-bin/view/$1','','',0,0),('uea','http://www.tejo.org/uea/$1','','',0,0),('unreal','http://wiki.beyondunreal.com/wiki/$1','','',0,0),('usemod','http://www.usemod.com/cgi-bin/wiki.pl?$1','','',0,0),('vinismo','http://vinismo.com/en/$1','','',0,0),('webseitzwiki','http://webseitz.fluxent.com/wiki/$1','','',0,0),('why','http://clublet.com/c/c/why?$1','','',0,0),('wiki','http://c2.com/cgi/wiki?$1','','',0,0),('wikia','http://www.wikia.com/wiki/$1','','',0,0),('wikibooks','http://en.wikibooks.org/wiki/$1','','',1,0),('wikicities','http://www.wikia.com/wiki/$1','','',0,0),('wikif1','http://www.wikif1.org/$1','','',0,0),('wikihow','http://www.wikihow.com/$1','','',0,0),('wikimedia','http://wikimediafoundation.org/wiki/$1','','',0,0),('wikinews','http://en.wikinews.org/wiki/$1','','',1,0),('wikinfo','http://www.wikinfo.org/index.php/$1','','',0,0),('wikipedia','http://en.wikipedia.org/wiki/$1','','',1,0),('wikiquote','http://en.wikiquote.org/wiki/$1','','',1,0),('wikisource','http://wikisource.org/wiki/$1','','',1,0),('wikispecies','http://species.wikimedia.org/wiki/$1','','',1,0),('wikitravel','http://wikitravel.org/en/$1','','',0,0),('wikiversity','http://en.wikiversity.org/wiki/$1','','',1,0),('wikt','http://en.wiktionary.org/wiki/$1','','',1,0),('wiktionary','http://en.wiktionary.org/wiki/$1','','',1,0),('wlug','http://www.wlug.org.nz/$1','','',0,0),('zwiki','http://zwiki.org/$1','','',0,0),('zzz wiki','http://wiki.zzz.ee/index.php/$1','','',0,0);
 /*!40000 ALTER TABLE `interwiki` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `ipblocks`
+-- Table structure for table `ipblocks`
 --
 
 DROP TABLE IF EXISTS `ipblocks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ipblocks` (
   `ipb_id` int(11) NOT NULL AUTO_INCREMENT,
   `ipb_address` tinyblob NOT NULL,
@@ -440,20 +383,24 @@ CREATE TABLE `ipblocks` (
   KEY `ipb_timestamp` (`ipb_timestamp`),
   KEY `ipb_expiry` (`ipb_expiry`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `ipblocks`
 --
 
+LOCK TABLES `ipblocks` WRITE;
 /*!40000 ALTER TABLE `ipblocks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `ipblocks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `iwlinks`
+-- Table structure for table `iwlinks`
 --
 
 DROP TABLE IF EXISTS `iwlinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `iwlinks` (
   `iwl_from` int(10) unsigned NOT NULL DEFAULT '0',
   `iwl_prefix` varbinary(20) NOT NULL DEFAULT '',
@@ -461,20 +408,24 @@ CREATE TABLE `iwlinks` (
   UNIQUE KEY `iwl_from` (`iwl_from`,`iwl_prefix`,`iwl_title`),
   UNIQUE KEY `iwl_prefix_title_from` (`iwl_prefix`,`iwl_title`,`iwl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `iwlinks`
 --
 
+LOCK TABLES `iwlinks` WRITE;
 /*!40000 ALTER TABLE `iwlinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `iwlinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `job`
+-- Table structure for table `job`
 --
 
 DROP TABLE IF EXISTS `job`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `job` (
   `job_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `job_cmd` varbinary(60) NOT NULL DEFAULT '',
@@ -484,40 +435,48 @@ CREATE TABLE `job` (
   PRIMARY KEY (`job_id`),
   KEY `job_cmd` (`job_cmd`,`job_namespace`,`job_title`,`job_params`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `job`
 --
 
+LOCK TABLES `job` WRITE;
 /*!40000 ALTER TABLE `job` DISABLE KEYS */;
 /*!40000 ALTER TABLE `job` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `l10n_cache`
+-- Table structure for table `l10n_cache`
 --
 
 DROP TABLE IF EXISTS `l10n_cache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `l10n_cache` (
   `lc_lang` varbinary(32) NOT NULL,
   `lc_key` varbinary(255) NOT NULL,
   `lc_value` mediumblob NOT NULL,
   KEY `lc_lang_key` (`lc_lang`,`lc_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `l10n_cache`
 --
 
+LOCK TABLES `l10n_cache` WRITE;
 /*!40000 ALTER TABLE `l10n_cache` DISABLE KEYS */;
 /*!40000 ALTER TABLE `l10n_cache` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `langlinks`
+-- Table structure for table `langlinks`
 --
 
 DROP TABLE IF EXISTS `langlinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `langlinks` (
   `ll_from` int(10) unsigned NOT NULL DEFAULT '0',
   `ll_lang` varbinary(20) NOT NULL DEFAULT '',
@@ -525,20 +484,24 @@ CREATE TABLE `langlinks` (
   UNIQUE KEY `ll_from` (`ll_from`,`ll_lang`),
   KEY `ll_lang` (`ll_lang`,`ll_title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `langlinks`
 --
 
+LOCK TABLES `langlinks` WRITE;
 /*!40000 ALTER TABLE `langlinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `langlinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `log_search`
+-- Table structure for table `log_search`
 --
 
 DROP TABLE IF EXISTS `log_search`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `log_search` (
   `ls_field` varbinary(32) NOT NULL,
   `ls_value` varbinary(255) NOT NULL,
@@ -546,20 +509,24 @@ CREATE TABLE `log_search` (
   UNIQUE KEY `ls_field_val` (`ls_field`,`ls_value`,`ls_log_id`),
   KEY `ls_log_id` (`ls_log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `log_search`
 --
 
+LOCK TABLES `log_search` WRITE;
 /*!40000 ALTER TABLE `log_search` DISABLE KEYS */;
 /*!40000 ALTER TABLE `log_search` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `logging`
+-- Table structure for table `logging`
 --
 
 DROP TABLE IF EXISTS `logging`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `logging` (
   `log_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `log_type` varbinary(32) NOT NULL DEFAULT '',
@@ -581,20 +548,24 @@ CREATE TABLE `logging` (
   KEY `log_user_type_time` (`log_user`,`log_type`,`log_timestamp`),
   KEY `log_page_id_time` (`log_page`,`log_timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `logging`
 --
 
+LOCK TABLES `logging` WRITE;
 /*!40000 ALTER TABLE `logging` DISABLE KEYS */;
 /*!40000 ALTER TABLE `logging` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `math`
+-- Table structure for table `math`
 --
 
 DROP TABLE IF EXISTS `math`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `math` (
   `math_inputhash` varbinary(16) NOT NULL,
   `math_outputhash` varbinary(16) NOT NULL,
@@ -603,40 +574,48 @@ CREATE TABLE `math` (
   `math_mathml` blob,
   UNIQUE KEY `math_inputhash` (`math_inputhash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `math`
 --
 
+LOCK TABLES `math` WRITE;
 /*!40000 ALTER TABLE `math` DISABLE KEYS */;
 /*!40000 ALTER TABLE `math` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `module_deps`
+-- Table structure for table `module_deps`
 --
 
 DROP TABLE IF EXISTS `module_deps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `module_deps` (
   `md_module` varbinary(255) NOT NULL,
   `md_skin` varbinary(32) NOT NULL,
   `md_deps` mediumblob NOT NULL,
   UNIQUE KEY `md_module_skin` (`md_module`,`md_skin`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `module_deps`
 --
 
+LOCK TABLES `module_deps` WRITE;
 /*!40000 ALTER TABLE `module_deps` DISABLE KEYS */;
 /*!40000 ALTER TABLE `module_deps` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `msg_resource`
+-- Table structure for table `msg_resource`
 --
 
 DROP TABLE IF EXISTS `msg_resource`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `msg_resource` (
   `mr_resource` varbinary(255) NOT NULL,
   `mr_lang` varbinary(32) NOT NULL,
@@ -644,39 +623,47 @@ CREATE TABLE `msg_resource` (
   `mr_timestamp` binary(14) NOT NULL,
   UNIQUE KEY `mr_resource_lang` (`mr_resource`,`mr_lang`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `msg_resource`
 --
 
+LOCK TABLES `msg_resource` WRITE;
 /*!40000 ALTER TABLE `msg_resource` DISABLE KEYS */;
 /*!40000 ALTER TABLE `msg_resource` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `msg_resource_links`
+-- Table structure for table `msg_resource_links`
 --
 
 DROP TABLE IF EXISTS `msg_resource_links`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `msg_resource_links` (
   `mrl_resource` varbinary(255) NOT NULL,
   `mrl_message` varbinary(255) NOT NULL,
   UNIQUE KEY `mrl_message_resource` (`mrl_message`,`mrl_resource`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `msg_resource_links`
 --
 
+LOCK TABLES `msg_resource_links` WRITE;
 /*!40000 ALTER TABLE `msg_resource_links` DISABLE KEYS */;
 /*!40000 ALTER TABLE `msg_resource_links` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `objectcache`
+-- Table structure for table `objectcache`
 --
 
 DROP TABLE IF EXISTS `objectcache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `objectcache` (
   `keyname` varbinary(255) NOT NULL DEFAULT '',
   `value` mediumblob,
@@ -684,23 +671,25 @@ CREATE TABLE `objectcache` (
   PRIMARY KEY (`keyname`),
   KEY `exptime` (`exptime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `objectcache`
 --
 
+LOCK TABLES `objectcache` WRITE;
 /*!40000 ALTER TABLE `objectcache` DISABLE KEYS */;
-INSERT INTO `objectcache` (`keyname`,`value`,`exptime`) VALUES 
- (0x656D7074795F6D773131373A7063616368653A6964686173683A312D30212A21302121656E212A,0xA5566D6FE24610BECFFC8AC51F5AE924B04D48B82CC6D5294A934821A13ADAFB505568B1075865BDB6BCEB102EBAFFDE99C57086A4559B44289667679E79765E7DCFC31EF726A23450DE57B6A8ACC77B03FE6CF829F7B2293C596F6850E7F48C7B511147F3780CA9145FE583642B61D81C403353250918B3A894DA30A98D154A41DA8DFC79DC8A7CB42AE28B5C9B4A596657C022C156252C46DECADA82FB7E065674D788981174372F973EBDF9D7A00A8E8616B4351E4B943066E4212528B550CC123956821A793A5FE44AE56B8F59512EC18EBCD95C09FDE0C5BFE3BD7E36ECAA922944BE88D9222F9122FECF8495B966F8AB8CD44BC78CDC32932FEC5A94D075DC5BD1AA1747A6107A4F2095D64042D65EFCE7FE325BCE52A7F0D42D56C52F565A05A3B1907A36114BF84964C55038AB1121B8F71A66142271A7EE5DE211ABC59C5D81B5C40D235A5A48BD982CE91A7F453E518AD901B36CDD59814895D4E031998EBCDA7EB6B73F4664354EE4E32D5B51A5E248C9F84586D6EB75D72587EEF8234163A12BA128450BB9AC4A17D099D97A786BC20EC0D80E8C2969DCC5312748F00D247FFDFCDB1B19FD2878C4F8370E0649104F7354CC99902A13DA9D51E9F97B961DA1755EE904DE4D0D15411860E48BF27B142F1F33DB6A45ED4E87B5EE603D99A042869556429197B635C16799530F6377E83C0596202DCBD9891F06EEAF35C98DEDC013164B8AFD93A80A958CFC069C057E2F381F84A73D36DF5830AD29648512161892AD32ECDD7FD0BB7C2A401BF908AC70E3872D30122EEBB5F3809CB73A9D1DF32FE211C8F94E3F1189EB59BB620FB061E8D66E66D93A0C07BC70675CA638A3563CEC04ED8FEDA0DD06DDFEC8E80616D3832D9015AC178461F0290CC293FEE02464E4CD4DBC3E8EBF5BA19715F6EEADD40FC61B0A1EF0E7EF7816E2D905DE709997129A0701CD4C6AE4DDE03CE71E4D00461380DECF08F508CD19D5316BCA7B0DF94DDA3819E0C14D86884D6DE27B5917CFDE439F06791F8FFED7A41D4A1E22D7D373FEAEFEAF61FAC17F84A10EAD6DCE4EF8BB3BCA4151646891DDE0D54A3A7F2D95D8105FEA793E9CF36058DB5CE3CA78E588D275975FD18A2B3707D26B9CBD3716B206FE27148FF3B4522F32BB5DB6D779DEA48311CFBE8A526FE3D794D62C9C34E4CF12BD0A447F762E6C9E287804B5CF1CF7EA7774C6BD1E3DB108DC5EA86F77BC59B6B5A9AB6C0E656D167A5B28B7D29A32E4B328F3CC6DAC4691CF76454EC1A016CF170B2C0647EA6CB0752074B2CACB2312FBF534FCBE4BC9A4CC0B28ED4177512CA7F717D7D3F12D01A0137AF410F543F3FBE503261B094F7225934D43F12478A1F8D97DB6407A5FEC637B4221A566DA8682D6E9361973175922D7DCFFB518A955888B4379B915D574FF80D2383517C8B07BD6EDEF0284030427D4148B7A376E0E27D1F6B36BA787B35252B5DD9194FA9F9A15636EEE553A164B991C14E27437DD5E850E30CE7F03,'2011-08-11 13:47:31'),
- (0x656D7074795F6D773131373A7063616368653A69646F7074696F6E733A31,0x458FC10E82400C44FFA51F60B6B002768FC6A3E1A2DE5768B0892C86AE8986F0EFB218E3AD9937ED4C6BDA11EC7D73E393F40CB4A549A922E82F3CAA0C019C2E1AE0A6D8D834A359D8DF9F144B90194453A1C1DC9639AE6AF6F31D5E0F19DFE084AAC21A935899D810A297A0F5BD3DFA4E1A705732BFC5B3725B3FE292AFE03CE534C9172E59E1D95F79BCB16F25749AEE622248C0AD44E526AEB58532B77EF2541EEF3E74E0E6F903,'2011-08-11 13:47:31');
+INSERT INTO `objectcache` VALUES ('empty_mw117:pcache:idhash:1-0!*!0!!en!*','•Vmo‚Fæœ¸ä≈ZÈ$∞MH∏,∆’)JìH!°:⁄˚PUh±XeΩ∂ºÎ.∫ˇﬁô≈pÜ§UõD(ñggûyv^}œ√˜&¢4PﬁW∂®¨«{˛l¯)˜≤)<YohPÁÙå{QGÛx©_ÂÉd+aÿ@3S%	≥®î⁄0©çJA⁄ç¸y‹ä|¥*‚ã\\õJYfW¿\"¡V%,Fﬁ ⁄Ç˚~Vt◊àòt7/ó>Ω˘◊†\néÜ¥5Kî0f‰!%(µPÃ9VÇ\Zy:_‰JÂkèYQ.¡éºŸ\\	˝‡≈ø„Ω~6Ï™í)DæàŸ\"/ë\"˛œÑïπf¯´å‘K«å‹2ì/ÏZî–u‹[—™G¶zO ï÷@B÷^¸Á˛2[ŒRß‘-V≈/VZ£±êz6K¯Id≈P8´!∏˜\Zf\"qßÓ]‚´≈ú]Åµƒ\r#ZZHΩò,È\ZE>QäŸ≥l›YÅHï‘‡1ôéº⁄~∂∑?Fd5N‰„-[Q•‚H…¯EÜ÷Îu◊%áÓ¯#Ac°+°(Eπ¨J–ôŸzxk¬¿ÿå)i‹≈1\'H\r$˝¸€˝(xƒ¯7IOsTÃôê*⁄ùQÈ˘{ñ°u^ÈﬁM\rA`‰ãÚ{/3€jEÌNáµÓ`=ô†BÜïVBëó∂5¡gôScwË<ñ -ÀŸâÓØ5…çÌ¿Kä˝ì®\nïå¸ú~/8Ñß=6ﬂX0≠)dÖí≠2Ï›–ª|*@˘¨p„á-0.ÎµÛÄú∑:ùÛ/‚»˘N?âÎYªb∞aË÷nfŸ:ºpg\\¶8£V<ÏÌèÌ†››˛»Ë”É-ê¨Ña)¬ì˛‡$d‰ÕMº>éø[°óˆÓ≠‘∆\nÁÔx‚ŸﬁpôóöÕLj‰›‡<ÁM\0FÄﬁœıÕ’1k {\r˘M⁄8‡¡MÜàMm‚{YœﬁCüyè˛◊§J\"◊”s˛Æ˛Øa˙¡Ñ°≠mŒN¯ª; AQdhë›‡’J:-ïÿ_Íy>úÛ`X€\\„ xÂà“uó_—ä+7“kúΩ7≤˛\'èÛ¥R/2ª]∂◊yﬁ§ÉœæäRo„◊î÷,ú4‰œΩ\nDv.lû(xµœ˜Íwt∆Ω=±‹^®owºY∂µ©´lemz[(∑“ö2‰≥(ÛÃm¨FëœvEN¡†œ,GÍl∞u t≤ À#˚ı4¸æK…§Ã(ÌAwQ,ß˜◊”Ò-†zÙıCÛ˚Â&	Or%ìMCÒ$x°¯Ÿ}∂@z_Ïc{B!•f⁄ÜÇ÷È6sY\"◊‹ˇµ©UàãCyπ’tˇÄ“85»∞{÷ÌÔÑ\'‘ãz7n\'—ˆ≥kßá≥RRµ›ëî˙üöcnÓU:Kô‚t7›^Ö0Œ','2011-08-11 13:47:31'),('empty_mw117:pcache:idoptions:1','Eè¡Ç@Dˇ•`∂∞vè∆£·¢ﬁWh∞â,ÜÆâÜÔ≤„≠ô7ÌLk⁄Ï}s„ìÙ¥•I©\"Ë/<™ú.\Z‡¶ÿÿ4£YÿﬂüKêDS°¡‹ñ9ÆjˆÛ^ﬂ‡Ñ™¬\ZìXôÿ¢ó†ıΩ=˙N\ZpW2ø≈≥r[?‚íØ‡<Â4….Y·Ÿ_yº±o%töÓb\"H¿≠DÂ&ÆµÖ2∑~ÚTÔ>t‡Ê˘','2011-08-11 13:47:31');
 /*!40000 ALTER TABLE `objectcache` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `oldimage`
+-- Table structure for table `oldimage`
 --
 
 DROP TABLE IF EXISTS `oldimage`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `oldimage` (
   `oi_name` varbinary(255) NOT NULL DEFAULT '',
   `oi_archive_name` varbinary(255) NOT NULL DEFAULT '',
@@ -723,20 +712,24 @@ CREATE TABLE `oldimage` (
   KEY `oi_name_archive_name` (`oi_name`,`oi_archive_name`(14)),
   KEY `oi_sha1` (`oi_sha1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `oldimage`
 --
 
+LOCK TABLES `oldimage` WRITE;
 /*!40000 ALTER TABLE `oldimage` DISABLE KEYS */;
 /*!40000 ALTER TABLE `oldimage` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `page`
+-- Table structure for table `page`
 --
 
 DROP TABLE IF EXISTS `page`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `page` (
   `page_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `page_namespace` int(11) NOT NULL,
@@ -754,42 +747,49 @@ CREATE TABLE `page` (
   KEY `page_random` (`page_random`),
   KEY `page_len` (`page_len`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `page`
 --
 
+LOCK TABLES `page` WRITE;
 /*!40000 ALTER TABLE `page` DISABLE KEYS */;
-INSERT INTO `page` (`page_id`,`page_namespace`,`page_title`,`page_restrictions`,`page_counter`,`page_is_redirect`,`page_is_new`,`page_random`,`page_touched`,`page_latest`,`page_len`) VALUES 
- (1,0,0x4D61696E5F50616765,'',0,0,1,0.512769789783,0x3230313130383130313334373330,1,438);
+INSERT INTO `page` VALUES (1,0,'Main_Page','',0,0,1,0.512769789783,'20110810134730',1,438);
 /*!40000 ALTER TABLE `page` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `page_props`
+-- Table structure for table `page_props`
 --
 
 DROP TABLE IF EXISTS `page_props`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `page_props` (
   `pp_page` int(11) NOT NULL,
   `pp_propname` varbinary(60) NOT NULL,
   `pp_value` blob NOT NULL,
   UNIQUE KEY `pp_page_propname` (`pp_page`,`pp_propname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `page_props`
 --
 
+LOCK TABLES `page_props` WRITE;
 /*!40000 ALTER TABLE `page_props` DISABLE KEYS */;
 /*!40000 ALTER TABLE `page_props` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `page_restrictions`
+-- Table structure for table `page_restrictions`
 --
 
 DROP TABLE IF EXISTS `page_restrictions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `page_restrictions` (
   `pr_page` int(11) NOT NULL,
   `pr_type` varbinary(60) NOT NULL,
@@ -804,20 +804,24 @@ CREATE TABLE `page_restrictions` (
   KEY `pr_level` (`pr_level`),
   KEY `pr_cascade` (`pr_cascade`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `page_restrictions`
 --
 
+LOCK TABLES `page_restrictions` WRITE;
 /*!40000 ALTER TABLE `page_restrictions` DISABLE KEYS */;
 /*!40000 ALTER TABLE `page_restrictions` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `pagelinks`
+-- Table structure for table `pagelinks`
 --
 
 DROP TABLE IF EXISTS `pagelinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pagelinks` (
   `pl_from` int(10) unsigned NOT NULL DEFAULT '0',
   `pl_namespace` int(11) NOT NULL DEFAULT '0',
@@ -825,20 +829,24 @@ CREATE TABLE `pagelinks` (
   UNIQUE KEY `pl_from` (`pl_from`,`pl_namespace`,`pl_title`),
   UNIQUE KEY `pl_namespace` (`pl_namespace`,`pl_title`,`pl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `pagelinks`
 --
 
+LOCK TABLES `pagelinks` WRITE;
 /*!40000 ALTER TABLE `pagelinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pagelinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `protected_titles`
+-- Table structure for table `protected_titles`
 --
 
 DROP TABLE IF EXISTS `protected_titles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `protected_titles` (
   `pt_namespace` int(11) NOT NULL,
   `pt_title` varbinary(255) NOT NULL,
@@ -850,20 +858,24 @@ CREATE TABLE `protected_titles` (
   UNIQUE KEY `pt_namespace_title` (`pt_namespace`,`pt_title`),
   KEY `pt_timestamp` (`pt_timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `protected_titles`
 --
 
+LOCK TABLES `protected_titles` WRITE;
 /*!40000 ALTER TABLE `protected_titles` DISABLE KEYS */;
 /*!40000 ALTER TABLE `protected_titles` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `querycache`
+-- Table structure for table `querycache`
 --
 
 DROP TABLE IF EXISTS `querycache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `querycache` (
   `qc_type` varbinary(32) NOT NULL,
   `qc_value` int(10) unsigned NOT NULL DEFAULT '0',
@@ -871,39 +883,47 @@ CREATE TABLE `querycache` (
   `qc_title` varbinary(255) NOT NULL DEFAULT '',
   KEY `qc_type` (`qc_type`,`qc_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `querycache`
 --
 
+LOCK TABLES `querycache` WRITE;
 /*!40000 ALTER TABLE `querycache` DISABLE KEYS */;
 /*!40000 ALTER TABLE `querycache` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `querycache_info`
+-- Table structure for table `querycache_info`
 --
 
 DROP TABLE IF EXISTS `querycache_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `querycache_info` (
   `qci_type` varbinary(32) NOT NULL DEFAULT '',
   `qci_timestamp` binary(14) NOT NULL DEFAULT '19700101000000',
   UNIQUE KEY `qci_type` (`qci_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `querycache_info`
 --
 
+LOCK TABLES `querycache_info` WRITE;
 /*!40000 ALTER TABLE `querycache_info` DISABLE KEYS */;
 /*!40000 ALTER TABLE `querycache_info` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `querycachetwo`
+-- Table structure for table `querycachetwo`
 --
 
 DROP TABLE IF EXISTS `querycachetwo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `querycachetwo` (
   `qcc_type` varbinary(32) NOT NULL,
   `qcc_value` int(10) unsigned NOT NULL DEFAULT '0',
@@ -915,20 +935,24 @@ CREATE TABLE `querycachetwo` (
   KEY `qcc_title` (`qcc_type`,`qcc_namespace`,`qcc_title`),
   KEY `qcc_titletwo` (`qcc_type`,`qcc_namespacetwo`,`qcc_titletwo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `querycachetwo`
 --
 
+LOCK TABLES `querycachetwo` WRITE;
 /*!40000 ALTER TABLE `querycachetwo` DISABLE KEYS */;
 /*!40000 ALTER TABLE `querycachetwo` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `recentchanges`
+-- Table structure for table `recentchanges`
 --
 
 DROP TABLE IF EXISTS `recentchanges`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `recentchanges` (
   `rc_id` int(11) NOT NULL AUTO_INCREMENT,
   `rc_timestamp` varbinary(14) NOT NULL DEFAULT '',
@@ -965,22 +989,25 @@ CREATE TABLE `recentchanges` (
   KEY `rc_ns_usertext` (`rc_namespace`,`rc_user_text`),
   KEY `rc_user_text` (`rc_user_text`,`rc_timestamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `recentchanges`
 --
 
+LOCK TABLES `recentchanges` WRITE;
 /*!40000 ALTER TABLE `recentchanges` DISABLE KEYS */;
-INSERT INTO `recentchanges` (`rc_id`,`rc_timestamp`,`rc_cur_time`,`rc_user`,`rc_user_text`,`rc_namespace`,`rc_title`,`rc_comment`,`rc_minor`,`rc_bot`,`rc_new`,`rc_cur_id`,`rc_this_oldid`,`rc_last_oldid`,`rc_type`,`rc_moved_to_ns`,`rc_moved_to_title`,`rc_patrolled`,`rc_ip`,`rc_old_len`,`rc_new_len`,`rc_deleted`,`rc_logid`,`rc_log_type`,`rc_log_action`,`rc_params`) VALUES 
- (1,0x3230313130383130313334373330,0x3230313130383130313334373330,0,0x4D6564696157696B692064656661756C74,0,0x4D61696E5F50616765,'',0,0,1,1,1,0,1,0,'',0,0x3132372E302E302E31,0,438,0,0,NULL,'','');
+INSERT INTO `recentchanges` VALUES (1,'20110810134730','20110810134730',0,'MediaWiki default',0,'Main_Page','',0,0,1,1,1,0,1,0,'',0,'127.0.0.1',0,438,0,0,NULL,'','');
 /*!40000 ALTER TABLE `recentchanges` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `redirect`
+-- Table structure for table `redirect`
 --
 
 DROP TABLE IF EXISTS `redirect`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `redirect` (
   `rd_from` int(10) unsigned NOT NULL DEFAULT '0',
   `rd_namespace` int(11) NOT NULL DEFAULT '0',
@@ -990,20 +1017,24 @@ CREATE TABLE `redirect` (
   PRIMARY KEY (`rd_from`),
   KEY `rd_ns_title` (`rd_namespace`,`rd_title`,`rd_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `redirect`
 --
 
+LOCK TABLES `redirect` WRITE;
 /*!40000 ALTER TABLE `redirect` DISABLE KEYS */;
 /*!40000 ALTER TABLE `redirect` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `revision`
+-- Table structure for table `revision`
 --
 
 DROP TABLE IF EXISTS `revision`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `revision` (
   `rev_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `rev_page` int(10) unsigned NOT NULL,
@@ -1023,22 +1054,25 @@ CREATE TABLE `revision` (
   KEY `user_timestamp` (`rev_user`,`rev_timestamp`),
   KEY `usertext_timestamp` (`rev_user_text`,`rev_timestamp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=binary MAX_ROWS=10000000 AVG_ROW_LENGTH=1024;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `revision`
 --
 
+LOCK TABLES `revision` WRITE;
 /*!40000 ALTER TABLE `revision` DISABLE KEYS */;
-INSERT INTO `revision` (`rev_id`,`rev_page`,`rev_text_id`,`rev_comment`,`rev_user`,`rev_user_text`,`rev_timestamp`,`rev_minor_edit`,`rev_deleted`,`rev_len`,`rev_parent_id`) VALUES 
- (1,1,1,'',0,0x4D6564696157696B692064656661756C74,0x3230313130383130313334373330,0,0,438,0);
+INSERT INTO `revision` VALUES (1,1,1,'',0,'MediaWiki default','20110810134730',0,0,438,0);
 /*!40000 ALTER TABLE `revision` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `searchindex`
+-- Table structure for table `searchindex`
 --
 
 DROP TABLE IF EXISTS `searchindex`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `searchindex` (
   `si_page` int(10) unsigned NOT NULL,
   `si_title` varchar(255) NOT NULL DEFAULT '',
@@ -1047,22 +1081,25 @@ CREATE TABLE `searchindex` (
   FULLTEXT KEY `si_title` (`si_title`),
   FULLTEXT KEY `si_text` (`si_text`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `searchindex`
 --
 
+LOCK TABLES `searchindex` WRITE;
 /*!40000 ALTER TABLE `searchindex` DISABLE KEYS */;
-INSERT INTO `searchindex` (`si_page`,`si_title`,`si_text`) VALUES 
- (1,'main page','  mediawiki hasu800 been successfully installed.  consult theu800 user user\'su800 guide foru800 information onu800 using theu800 wiki software. getting started getting started getting started configuration settings list mediawiki faqu800 mediawiki release mailing list ');
+INSERT INTO `searchindex` VALUES (1,'main page','  mediawiki hasu800 been successfully installed.  consult theu800 user user\'su800 guide foru800 information onu800 using theu800 wiki software. getting started getting started getting started configuration settings list mediawiki faqu800 mediawiki release mailing list ');
 /*!40000 ALTER TABLE `searchindex` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `site_stats`
+-- Table structure for table `site_stats`
 --
 
 DROP TABLE IF EXISTS `site_stats`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `site_stats` (
   `ss_row_id` int(10) unsigned NOT NULL,
   `ss_total_views` bigint(20) unsigned DEFAULT '0',
@@ -1075,22 +1112,25 @@ CREATE TABLE `site_stats` (
   `ss_images` int(11) DEFAULT '0',
   UNIQUE KEY `ss_row_id` (`ss_row_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `site_stats`
 --
 
+LOCK TABLES `site_stats` WRITE;
 /*!40000 ALTER TABLE `site_stats` DISABLE KEYS */;
-INSERT INTO `site_stats` (`ss_row_id`,`ss_total_views`,`ss_total_edits`,`ss_good_articles`,`ss_total_pages`,`ss_users`,`ss_active_users`,`ss_admins`,`ss_images`) VALUES 
- (1,0,1,0,1,1,-1,0,0);
+INSERT INTO `site_stats` VALUES (1,0,1,0,1,1,-1,0,0);
 /*!40000 ALTER TABLE `site_stats` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `tag_summary`
+-- Table structure for table `tag_summary`
 --
 
 DROP TABLE IF EXISTS `tag_summary`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tag_summary` (
   `ts_rc_id` int(11) DEFAULT NULL,
   `ts_log_id` int(11) DEFAULT NULL,
@@ -1100,20 +1140,24 @@ CREATE TABLE `tag_summary` (
   UNIQUE KEY `tag_summary_log_id` (`ts_log_id`),
   UNIQUE KEY `tag_summary_rev_id` (`ts_rev_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `tag_summary`
 --
 
+LOCK TABLES `tag_summary` WRITE;
 /*!40000 ALTER TABLE `tag_summary` DISABLE KEYS */;
 /*!40000 ALTER TABLE `tag_summary` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `templatelinks`
+-- Table structure for table `templatelinks`
 --
 
 DROP TABLE IF EXISTS `templatelinks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `templatelinks` (
   `tl_from` int(10) unsigned NOT NULL DEFAULT '0',
   `tl_namespace` int(11) NOT NULL DEFAULT '0',
@@ -1121,42 +1165,49 @@ CREATE TABLE `templatelinks` (
   UNIQUE KEY `tl_from` (`tl_from`,`tl_namespace`,`tl_title`),
   UNIQUE KEY `tl_namespace` (`tl_namespace`,`tl_title`,`tl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `templatelinks`
 --
 
+LOCK TABLES `templatelinks` WRITE;
 /*!40000 ALTER TABLE `templatelinks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `templatelinks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `text`
+-- Table structure for table `text`
 --
 
 DROP TABLE IF EXISTS `text`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `text` (
   `old_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `old_text` mediumblob NOT NULL,
   `old_flags` tinyblob NOT NULL,
   PRIMARY KEY (`old_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=binary MAX_ROWS=10000000 AVG_ROW_LENGTH=10240;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `text`
 --
 
+LOCK TABLES `text` WRITE;
 /*!40000 ALTER TABLE `text` DISABLE KEYS */;
-INSERT INTO `text` (`old_id`,`old_text`,`old_flags`) VALUES 
- (1,0x2727274D6564696157696B6920686173206265656E207375636365737366756C6C7920696E7374616C6C65642E2727270A0A436F6E73756C7420746865205B687474703A2F2F6D6574612E77696B696D656469612E6F72672F77696B692F48656C703A436F6E74656E7473205573657227732047756964655D20666F7220696E666F726D6174696F6E206F6E207573696E67207468652077696B6920736F6674776172652E0A0A3D3D2047657474696E672073746172746564203D3D0A2A205B687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F4D616E75616C3A436F6E66696775726174696F6E5F73657474696E677320436F6E66696775726174696F6E2073657474696E6773206C6973745D0A2A205B687474703A2F2F7777772E6D6564696177696B692E6F72672F77696B692F4D616E75616C3A464151204D6564696157696B69204641515D0A2A205B68747470733A2F2F6C697374732E77696B696D656469612E6F72672F6D61696C6D616E2F6C697374696E666F2F6D6564696177696B692D616E6E6F756E6365204D6564696157696B692072656C65617365206D61696C696E67206C6973745D,0x7574662D38);
+INSERT INTO `text` VALUES (1,'\'\'\'MediaWiki has been successfully installed.\'\'\'\n\nConsult the [http://meta.wikimedia.org/wiki/Help:Contents User\'s Guide] for information on using the wiki software.\n\n== Getting started ==\n* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]\n* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]\n* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]','utf-8');
 /*!40000 ALTER TABLE `text` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `trackbacks`
+-- Table structure for table `trackbacks`
 --
 
 DROP TABLE IF EXISTS `trackbacks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `trackbacks` (
   `tb_id` int(11) NOT NULL AUTO_INCREMENT,
   `tb_page` int(11) DEFAULT NULL,
@@ -1167,59 +1218,71 @@ CREATE TABLE `trackbacks` (
   PRIMARY KEY (`tb_id`),
   KEY `tb_page` (`tb_page`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `trackbacks`
 --
 
+LOCK TABLES `trackbacks` WRITE;
 /*!40000 ALTER TABLE `trackbacks` DISABLE KEYS */;
 /*!40000 ALTER TABLE `trackbacks` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `transcache`
+-- Table structure for table `transcache`
 --
 
 DROP TABLE IF EXISTS `transcache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `transcache` (
   `tc_url` varbinary(255) NOT NULL,
   `tc_contents` blob,
   `tc_time` binary(14) NOT NULL,
   UNIQUE KEY `tc_url_idx` (`tc_url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `transcache`
 --
 
+LOCK TABLES `transcache` WRITE;
 /*!40000 ALTER TABLE `transcache` DISABLE KEYS */;
 /*!40000 ALTER TABLE `transcache` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `updatelog`
+-- Table structure for table `updatelog`
 --
 
 DROP TABLE IF EXISTS `updatelog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `updatelog` (
   `ul_key` varbinary(255) NOT NULL,
   `ul_value` blob,
   PRIMARY KEY (`ul_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `updatelog`
 --
 
+LOCK TABLES `updatelog` WRITE;
 /*!40000 ALTER TABLE `updatelog` DISABLE KEYS */;
 /*!40000 ALTER TABLE `updatelog` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `user`
+-- Table structure for table `user`
 --
 
 DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varbinary(255) NOT NULL DEFAULT '',
@@ -1240,45 +1303,50 @@ CREATE TABLE `user` (
   UNIQUE KEY `user_name` (`user_name`),
   KEY `user_email_token` (`user_email_token`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user`
 --
 
+LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`user_id`,`user_name`,`user_real_name`,`user_password`,`user_newpassword`,`user_newpass_time`,`user_email`,`user_options`,`user_touched`,`user_token`,`user_email_authenticated`,`user_email_token`,`user_email_token_expires`,`user_registration`,`user_editcount`) VALUES 
- (1,0x57696B695379736F70,'',0x3A423A30333238356130613A6434333137303664656466643566313634313564323937386463643830646133,'',NULL,0x6B61692E6B7565686E407765622E6465,'',0x3230313130383130313334373335,0x6338613334353061613037383333323462303662636437336264613533373531,NULL,0x0000000000000000000000000000000000000000000000000000000000000000,NULL,0x3230313130383130313334373330,0);
+INSERT INTO `user` VALUES (1,'WikiSysop','',':B:03285a0a:d431706dedfd5f16415d2978dcd80da3','',NULL,'kai.kuehn@web.de','','20110810134735','c8a3450aa0783324b06bcd73bda53751',NULL,'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',NULL,'20110810134730',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `user_groups`
+-- Table structure for table `user_groups`
 --
 
 DROP TABLE IF EXISTS `user_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_groups` (
   `ug_user` int(10) unsigned NOT NULL DEFAULT '0',
   `ug_group` varbinary(16) NOT NULL DEFAULT '',
   UNIQUE KEY `ug_user_group` (`ug_user`,`ug_group`),
   KEY `ug_group` (`ug_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user_groups`
 --
 
+LOCK TABLES `user_groups` WRITE;
 /*!40000 ALTER TABLE `user_groups` DISABLE KEYS */;
-INSERT INTO `user_groups` (`ug_user`,`ug_group`) VALUES 
- (1,0x62757265617563726174),
- (1,0x7379736F70);
+INSERT INTO `user_groups` VALUES (1,'bureaucrat'),(1,'sysop');
 /*!40000 ALTER TABLE `user_groups` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `user_newtalk`
+-- Table structure for table `user_newtalk`
 --
 
 DROP TABLE IF EXISTS `user_newtalk`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_newtalk` (
   `user_id` int(11) NOT NULL DEFAULT '0',
   `user_ip` varbinary(40) NOT NULL DEFAULT '',
@@ -1286,20 +1354,24 @@ CREATE TABLE `user_newtalk` (
   KEY `user_id` (`user_id`),
   KEY `user_ip` (`user_ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user_newtalk`
 --
 
+LOCK TABLES `user_newtalk` WRITE;
 /*!40000 ALTER TABLE `user_newtalk` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user_newtalk` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `user_properties`
+-- Table structure for table `user_properties`
 --
 
 DROP TABLE IF EXISTS `user_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_properties` (
   `up_user` int(11) NOT NULL,
   `up_property` varbinary(32) NOT NULL,
@@ -1307,38 +1379,46 @@ CREATE TABLE `user_properties` (
   UNIQUE KEY `user_properties_user_property` (`up_user`,`up_property`),
   KEY `user_properties_property` (`up_property`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user_properties`
 --
 
+LOCK TABLES `user_properties` WRITE;
 /*!40000 ALTER TABLE `user_properties` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user_properties` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `valid_tag`
+-- Table structure for table `valid_tag`
 --
 
 DROP TABLE IF EXISTS `valid_tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `valid_tag` (
   `vt_tag` varbinary(255) NOT NULL,
   PRIMARY KEY (`vt_tag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `valid_tag`
 --
 
+LOCK TABLES `valid_tag` WRITE;
 /*!40000 ALTER TABLE `valid_tag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `valid_tag` ENABLE KEYS */;
-
+UNLOCK TABLES;
 
 --
--- Definition of table `watchlist`
+-- Table structure for table `watchlist`
 --
 
 DROP TABLE IF EXISTS `watchlist`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `watchlist` (
   `wl_user` int(10) unsigned NOT NULL,
   `wl_namespace` int(11) NOT NULL DEFAULT '0',
@@ -1347,16 +1427,17 @@ CREATE TABLE `watchlist` (
   UNIQUE KEY `wl_user` (`wl_user`,`wl_namespace`,`wl_title`),
   KEY `namespace_title` (`wl_namespace`,`wl_title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=binary;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `watchlist`
 --
 
+LOCK TABLES `watchlist` WRITE;
 /*!40000 ALTER TABLE `watchlist` DISABLE KEYS */;
 /*!40000 ALTER TABLE `watchlist` ENABLE KEYS */;
-
-
-
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
@@ -1364,4 +1445,6 @@ CREATE TABLE `watchlist` (
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2011-08-12 10:45:13
