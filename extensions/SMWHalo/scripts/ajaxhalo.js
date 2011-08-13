@@ -249,6 +249,17 @@ function sajax_do_call_jq(func_name, args, target){
                result = data;
            }
          
+       },
+       error: function(jqXHR, textStatus, errorThrown){
+           if(isAsync){
+               target(jqXHR);
+           }
+           else{
+               result = textStatus;
+               if(errorThrown){
+                   result += ':' + errorThrown;
+               }
+           }
        }
      });
     
