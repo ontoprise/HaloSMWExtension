@@ -760,6 +760,35 @@ Index: includes/filerepo/FileRepo.php
  		return false;
  	}
  
+Index: includes/filerepo/RepoGroup.php
+===================================================================
+--- includes/filerepo/RepoGroup.php	(revision 11822)
++++ includes/filerepo/RepoGroup.php	(working copy)
+@@ -100,8 +100,22 @@
+ 			}
+ 		}
+ 
+-		if ( $title->getNamespace() != NS_MEDIA && $title->getNamespace() != NS_FILE ) {
+-			throw new MWException( __METHOD__ . ' recieved an Title object with incorrect namespace' );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/AdditionalNamespaceCheck */
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			$tmpNS = $title->getNamespace();
++			RMNamespace::isImage( $tmpNS, $rMresult );
++			if( $title->getNamespace() != NS_MEDIA && !$rMresult ) {
++				throw new MWException( __METHOD__ . ' recieved an Title object with incorrect namespace' );
++			}
++		} else {
++			if ( $title->getNamespace() != NS_MEDIA && $title->getNamespace() != NS_FILE ) {
++				throw new MWException( __METHOD__ . ' recieved an Title object with incorrect namespace' );
++			}
+ 		}
+ 
+ 		# Check the cache
 Index: includes/filerepo/ArchivedFile.php
 ===================================================================
 --- includes/filerepo/ArchivedFile.php	(revision 11822)
