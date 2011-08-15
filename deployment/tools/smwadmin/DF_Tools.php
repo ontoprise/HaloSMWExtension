@@ -681,7 +681,7 @@ class Tools {
 	public static function getOntopriseSoftware($id = '') {
 		if (!Tools::isWindows($os)) return NULL;
 
-		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s", $out, $res);
+		exec("reg QUERY \"HKEY_CURRENT_USER\Software\Ontoprise\" /s 2>&1", $out, $res);
 
 		if ($res != 0) return NULL;
 
