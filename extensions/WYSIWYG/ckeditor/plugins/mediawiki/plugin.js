@@ -10,7 +10,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 CKEDITOR.plugins.add( 'mediawiki',
 {
-    requires : [ 'fakeobjects', 'htmlwriter', 'dialog' ],
+    requires : [ 'fakeobjects', 'htmlwriter', 'dialog', 'ajax' ],
 
     init : function( editor )
     {                
@@ -329,24 +329,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             editor.lang.mwplugin = MWpluginLang['en'];
 
         // define commands and dialogues
-        editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
-        CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
-        editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
-        CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
-        editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
-        CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
-        editor.addCommand( 'MWSignature', signatureCommand);
-        if (editor.addMenuItem) {
-            // A group menu is required
-            // order, as second parameter, is not required
-            editor.addMenuGroup('mediawiki');
-            // Create a menu item
-            editor.addMenuItem('MWSpecialTags', {
-                label: editor.lang.mwplugin.specialTags,
-                command: 'MWSpecialTags',
-                group: 'mediawiki'
-            });
-        }
+        //keep the buttons even if some extension is not installed
         if ( editor.ui.addButton )
         {
             editor.ui.addButton( 'MWSpecialTags',
@@ -363,7 +346,31 @@ CKEDITOR.plugins.add( 'mediawiki',
             });
 
         }
-       
+        editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
+        CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
+        editor.addCommand( 'MWSignature', signatureCommand);    
+        
+        // if SMWHalo is not installed use original image and link dialogs
+        if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+            editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
+            CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
+            editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
+            CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );  
+        }   
+        
+        if (editor.addMenuItem) {
+            // A group menu is required
+            // order, as second parameter, is not required
+            editor.addMenuGroup('mediawiki');
+            // Create a menu item
+            editor.addMenuItem('MWSpecialTags', {
+                label: editor.lang.mwplugin.specialTags,
+                command: 'MWSpecialTags',
+                group: 'mediawiki'
+            });
+        }
+            
+
         // context menu
         if (editor.contextMenu) {
             editor.contextMenu.addListener(function(element, selection) {
@@ -384,14 +391,27 @@ CKEDITOR.plugins.add( 'mediawiki',
                     };
             });
         }
+        
         editor.on( 'doubleclick', function( evt )
         {
             var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
 
-            if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) )
-                evt.data.dialog = 'MWLink';
-            else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) )
-                evt.data.dialog = 'MWImage';
+            if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){
+                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+                    evt.data.dialog = 'MWLink';
+                }
+                else{
+                    evt.data.dialog = 'link';
+                }
+            }
+            else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){
+                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+                    evt.data.dialog = 'MWImage';
+                }
+                else{
+                    evt.data.dialog = 'image';
+                }
+            }
             else if ( element.getAttribute( 'class' ) &&
                 element.getAttribute( 'class' ).InArray( [
                     'FCK__MWSpecial',
@@ -405,12 +425,34 @@ CKEDITOR.plugins.add( 'mediawiki',
                     'fck_mw_includeonly'
                     ])
                     )
-                evt.data.dialog = 'MWSpecialTags';		
+            {
+                   
+                    evt.data.dialog = 'MWSpecialTags';	
+                    
+            }
+                	
             
                 
         })
+        
+//add method loadXmlHalo to CKEDITOR.ajax for calling server side funcrions over ajax
+//   func_name - the name of the server side function to call. Must be registered in $wgAjaxExportList
+//   args - an array of arguments to that function
+//   target - the name of the callback function that will process the result of the call i.e. target(resultText). If not defined - the call will be synchronous and
+//   the result will be returned by this method. 
+CKEDITOR.ajax.loadHalo = function(func_name, args, target){
+    //build url
+    var uri = wgServer + wgScriptPath + "/index.php?action=ajax";
+    uri += '&rs=' + encodeURIComponent(func_name);
+    for(i = 0; i < args.length; i++){
+        uri += '&rsargs[]=' + encodeURIComponent(args[i]);
     }
+    
+    //call CKEDITOR.loadXml
+    return CKEDITOR.ajax.load(uri, target);
+};
 
+ }
 });
 
 CKEDITOR.customprocessor = function( editor )
@@ -445,8 +487,7 @@ CKEDITOR.customprocessor.prototype =
         var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|ul|ol|li|u)[^\/>]*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
         if (data.indexOf('<p>') != 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
-            data = sajax_do_call_jq('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
-            
+            data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);          
         }
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
         writer = new CKEDITOR.htmlParser.basicWriter();
