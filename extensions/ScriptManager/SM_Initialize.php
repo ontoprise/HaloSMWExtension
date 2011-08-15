@@ -58,6 +58,7 @@ function smfAddHTMLHeader(& $out) {
     if (isset($outputSend) || !is_array($smgJSLibs)) return true;
 	$smgJSLibs = array_unique($smgJSLibs);
 	$smgJSLibs = smfSortScripts($smgJSLibs);
+	$out->addScript("<script type=\"text/javascript\">var wgScriptPath=\"/mediawiki\";\nvar wgServer=\"http://localhost\";\nvar wgArticlePath=\"/mediawiki/index.php/\$1\";");
 	foreach($smgJSLibs as $lib_id) {
 
 		switch($lib_id) {
