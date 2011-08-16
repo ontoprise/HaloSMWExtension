@@ -2,7 +2,7 @@
 <deploydescriptor>
     <global>
         <version>153</version>
-        <patchlevel>1</patchlevel>
+        <patchlevel>2</patchlevel>
         <id>semanticresultformats</id>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH</vendor>
