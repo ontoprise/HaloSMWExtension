@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>156</version>
+                <patchlevel>1</patchlevel>
 		<id>wysiwyg</id>
         <license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
