@@ -122,7 +122,7 @@ class DFCommandInterface {
 		$result['onlycopyresources'] = $dd->getOnlyCopyResources();
 
 		$php = $this->phpExe;
-		$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --listpages $extid --outputformat json --nocheck --noask";
+		$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --listpages $extid --outputformat json --nocheck --noask";
 		exec($runCommand, $out, $ret);
 
 		$outText = implode("",$out);
@@ -208,11 +208,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i $extid";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -230,11 +230,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d $extid";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -252,11 +252,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u $extid";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u $extid";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -274,11 +274,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --finalize";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --finalize";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --finalize";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -317,11 +317,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -u";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -339,11 +339,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -r $restorepoint";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -361,11 +361,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --rremove $restorepoint";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -383,11 +383,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd /C START $php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
+			$runCommand = "cmd /C START \"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "$php $mwrootDir/deployment/tools/smwadmin/smwadmin.php --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --rcreate $restorepoint";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;

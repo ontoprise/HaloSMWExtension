@@ -188,7 +188,7 @@ function dffCheckEnvironment() {
 	if (array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
 		$phpExe = DF_Config::$settings['df_php_executable'];
 	}
-	@exec("$phpExe --version", $out, $ret);
+	@exec("\"$phpExe\" --version", $out, $ret);
 	if ($ret != 0 || stripos($out[0], "PHP") === false) {
 		$result .= "<li>Could not run external processes: <pre>".implode("\n",$out)."</pre></li>";
 	} else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
