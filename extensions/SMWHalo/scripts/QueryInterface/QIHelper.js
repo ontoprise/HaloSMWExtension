@@ -55,7 +55,8 @@ QIHelper.prototype = {
         this.DS_SELECTED = 0;
         this.TPEE_SELECTED = 1;
         this.propertyAddClicked = false;
-        
+        this.colNameEntered = false;     
+                
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
         this.sourceChanged = 0;
@@ -1033,22 +1034,32 @@ QIHelper.prototype = {
         btn.innerHTML = 
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		autoCompleter.registerAllInputs();
-        btn.disabled = true;
-        enableBtn = function(event){
-            if(Event.element(event).getValue()){
-                btn.disabled = false;
-                $('input0').stopObserving('change', enableBtn);
-            }
-            else{
-                btn.disabled = true;
-            }
-        };
-        $('input0').observe('change', enableBtn);
-        $('input0').observe('keyup', enableBtn);
+        
         if (reset)
                 $('input0').focus();
         this.updateHeightBoxcontent();
+        this.enableButton();
+        this.setListeners();
 	},
+        
+        enableButton: function(){
+            var inputs = $$('#dialoguecontent input[type="text"]');    
+            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            btn.disabled = false; 
+            for ( var i = 0; i < inputs.length; i++) {
+                if(!inputs[i].getValue()){
+                   btn.disabled = true; 
+                }                        
+            }            
+        },
+    
+        
+        setListeners: function(){
+            var inputs = $$('#dialoguecontent input[type="text"]');            
+            for ( var i = 0; i < inputs.length; i++) {
+                inputs[i].observe('keyup', this.enableButton);                                        
+            }          
+        },
 
 	/**
 	 * Creates a new dialogue for adding instances to the query
@@ -1089,24 +1100,16 @@ QIHelper.prototype = {
             + gLanguage.getMessage('QI_BC_ADD_OTHER_INSTANCE') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
         var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+        
         btn.innerHTML =
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
-		autoCompleter.registerAllInputs();
-        btn.disabled = true;
-        enableBtn = function(event){
-            if(Event.element(event).getValue()){
-                btn.disabled = false;
-                $('input0').stopObserving('change', enableBtn);
-            }
-            else{
-                btn.disabled = true;
-            }
-        };
-        $('input0').observe('change', enableBtn);
-        $('input0').observe('keyup', enableBtn);
-		if (reset)
-			$('input0').focus();
+                autoCompleter.registerAllInputs();
+        
+        if (reset)
+                $('input0').focus();
         this.updateHeightBoxcontent();
+        this.enableButton();
+        this.setListeners();
 	},
 
 	/**
@@ -1135,22 +1138,31 @@ QIHelper.prototype = {
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		this.proparity = 2;
 		autoCompleter.registerAllInputs();
-        btn.disabled = true;
-        enableBtn = function(event){
-            if(Event.element(event).getValue()){
-                btn.disabled = false;
-                $('input0').stopObserving('change', enableBtn);
-            }
-            else{
-                btn.disabled = true;
-            }
-        };
-        $('input_p0').observe('change', enableBtn);
-        $('input_p0').observe('keyup', enableBtn);
-		if (reset)
-			$('input_p0').focus();
+       
+        if (reset)
+                $('input_p0').focus();
         this.updateHeightBoxcontent();
-	},
+        this.enableButton();
+        this.setListeners();
+        
+        var propLabelInput = $('input_c3');
+        propLabelInput.observe('keyup', function(event){
+               if(Event.element(event).getValue()){
+                    qihelper.colNameEntered = true;
+               }
+               else{
+                    qihelper.colNameEntered = false;
+               }
+            });
+        propLabelInput.observe('keyup', function(){
+            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            btn.disabled = true; 
+            if(propLabelInput.getValue()){
+                btn.disabled = false; 
+                }
+            });
+	},      
+     
 
     getCategoryConstraints : function() {
 		// fetch category constraints:
@@ -1164,6 +1176,7 @@ QIHelper.prototype = {
         constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
 							'cont')
 							+ catconstraint;
+                                                                
         return constraintsCategories;
     },
 
@@ -1194,14 +1207,15 @@ QIHelper.prototype = {
 		cell = newrow.insertCell(1);
         cell.style.textAlign="left";
         cell.style.verticalAlign="middle";
+    
         var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
-            + 'onblur="qihelper.getPropertyInformation()" '
-            + 'onchange="qihelper.clearPropertyType('+idx+');" '
+            + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '           
             + ((propName) ? 'value="'+propName+'" ' : '')
             + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"'
             + '/>';
+        
         if (idx > 0)
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
         cell.innerHTML = tmpHTML;
@@ -1239,6 +1253,8 @@ QIHelper.prototype = {
         autoCompleter.registerAllInputs();
 		if (!propName) $('input_p' + idx).focus(); // focus created input
         this.toggleAddchain(false);
+        this.enableButton();
+        this.setListeners();
     },
 
     setPropertyRestriction : function () {
@@ -1381,6 +1397,8 @@ QIHelper.prototype = {
                 .getElementsByTagName('input').item(0).style.fontWeight = "bold";
         }
         this.toggleAddchain(true);
+        this.enableButton();
+        this.setListeners();
     },
 
 	/**
@@ -1437,8 +1455,10 @@ QIHelper.prototype = {
 		cell.innerHTML = '<img src="'
 				+ this.imgpath
 				+ 'delete.png" alt="deleteInput" onclick="qihelper.removeInput(this);"/>';
-		$('input' + id).focus(); // focus created input
+		$('input' + id).focus(); // focus created input                
 		autoCompleter.registerAllInputs();
+                this.setListeners();
+                this.enableButton();
 	},
 
 	/**
@@ -1451,6 +1471,8 @@ QIHelper.prototype = {
 	removeInput : function(el) {
         var tr = el.parentNode.parentNode;
         tr.parentNode.removeChild(tr);
+        this.setListeners();
+        this.enableButton();
 	},
 
     /**
@@ -1493,10 +1515,14 @@ QIHelper.prototype = {
             this.pendingElement = new OBPendingIndicator(cell);
             this.pendingElement.show();
             */
-			sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
-					escapeQueryHTML(propname) ], this.adaptDialogueToProperty
-					.bind(this));
-		}
+           if(window.timeoutId){
+               window.clearTimeout(timeoutId);
+           }
+           window.timeoutId = window.setTimeout(function(){                  
+                    sajax_do_call('smwf_qi_QIAccess', [ 'getPropertyInformation', escapeQueryHTML(propname) ], qihelper.adaptDialogueToProperty.bind(qihelper))
+               }, 500);
+	   }           
+           
 	},
 
 	/**
@@ -1695,8 +1721,8 @@ QIHelper.prototype = {
 					}
 				}
 			}
-			// default value for column name if not yet set at all
-            if ( !('input_c3').value ) {
+			// set the column name if there is nothing typed in yet
+            if ( !qihelper.colNameEntered ) {
                 $('input_c3').value = this.propname;
             }
             // runtime issue: if the user selected radio for specific value
@@ -3099,9 +3125,9 @@ handleQueryString : function(args, queryId, pMustShow) {
                         if (op[1].length > 0) {
                             if (operators.inArray(op[1])) {
                                 switch (op[1]) {
-                                    case '≤': restriction= '<'; break
-                                    case '≥': restriction= '>'; break
-                                    default : restriction= op[1];
+                                    case '≤':restriction= '<';break
+                                    case '≥':restriction= '>';break
+                                    default :restriction= op[1];
                                 }
                             }
                             else
@@ -3140,9 +3166,9 @@ handleQueryString : function(args, queryId, pMustShow) {
                         if (op[1].length > 0) {
                             if (operators.inArray(op[1])) {
                                 switch (op[1]) {
-                                    case '≤': restriction= '<'; break
-                                    case '≥': restriction= '>'; break
-                                    default : restriction= op[1];
+                                    case '≤':restriction= '<';break
+                                    case '≥':restriction= '>';break
+                                    default :restriction= op[1];
                                 }
                             }
                             else
