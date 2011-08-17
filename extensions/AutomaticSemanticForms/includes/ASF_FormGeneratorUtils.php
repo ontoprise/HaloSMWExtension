@@ -128,9 +128,38 @@ class ASFFormGeneratorUtils {
 	 * for this article
 	 */
 	public static function canFormForArticleBeCreated(Title $title, $createInNSCategory = false){
-		list($response, $dC)
-			= ASFFormGenerator::getInstance()->generateFromTitle($title, false, true);
-		return $response;
+		//Do not create forms in NS_Category if not explicitly stated
+		if($title->getNamespace() == NS_CATEGORY && !$createInNSCategory){
+			return false;
+		}
+
+		$categories = $title->getParentCategories();
+		
+		//do not use ASF if the instance has no category annotations
+		if(count($categories) == 0){
+			return false;
+		}
+		
+		//check if there is a category that has no 'no automatic formedit' annotation
+		$store = smwfNewBaseStore();
+		global $wgLang;
+		foreach($categories as $category => $dC){
+			
+			if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
+				$category = substr($category, strpos($category, ":") +1);
+			}
+			$categoryObject = Category::newFromName($category);
+			$categoryTitle = $categoryObject->getTitle();
+			
+			//ASF can be created if there is one category with no 'no automatic formedit' annotation
+			$semanticData = $store->getSemanticData($categoryTitle);
+			if(ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT)!= 'true'){
+				return true;					
+			}
+		}
+			
+		//all categories had a 'no automatic formedit' annotation and the ASF cannot be created
+		return false;
 	}
 	
 	/*

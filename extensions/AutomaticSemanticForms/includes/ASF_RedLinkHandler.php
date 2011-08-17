@@ -10,7 +10,7 @@ class ASFRedLinkHandler {
 	public static function handleRedLinks( $linker, $target, $options, $text, &$attribs, &$ret ) {
 		
 		if(in_array('broken', $options)){
-			if(strpos($attribs['href'], 'Special:FormEdit') === 0){
+			if(strpos($attribs['href'], 'Special:FormEdit') == 0){
 				$link = self::createLinkedPage($target);
 			 	if($link){
 					$attribs['href'] = $link; 	
@@ -24,7 +24,14 @@ class ASFRedLinkHandler {
 	
 	static function createLinkedPage( $title ) {
 		
-		$store = smwfGetStore();
+		//do not create ASFs for instances in NS category
+		if($title->getNamespace() == NS_CATEGORY){
+			return false;
+		}
+		
+		$store = smwfNewBaseStore();
+		
+		//first compute all category annotations of the new instance
 		$title_text = self::titleString( $title );
 		$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $title_text );
 		$incoming_properties = $store->getInProperties( $value );
@@ -43,43 +50,49 @@ class ASFRedLinkHandler {
 			}
 		}
 		
+		//Check if categories have default forms defined and if they have 'No automeatic formedit' annotations
+		$catWithNoNoASFEditFound = false;
 		foreach(array_keys($categories) as $category){
 			$categoryTitle = Title::newFromText($category);
 
-			if($categoryTitle && $categoryTitle->exists()){
-				$semanticData = $store->getSemanticData($categoryTitle);
+			$semanticData = $store->getSemanticData($categoryTitle);
 				
-				$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
-					$semanticData, 'Has_default_form');
+			$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
+				$semanticData, 'Has_default_form');
 				
-				if($defaultForm) return false;
+			//do not create ASFs for instances with a default form
+			if($defaultForm) return false;
+			
+			//Check if ASF has a 'No automatic formedit' annotation
+			if(ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT) != 'true'){
+				$catWithNoNoASFEditFound = true;					
 			}
 		}
 		
-		list($createLink, $dC) = ASFFormGenerator::getInstance()
-			->generateFormForCategories(array_keys($categories), null, true); 
-		if($createLink){
-			$link = SpecialPage::getPage( 'FormEdit' );
-			$link = $link->getTitle()->getLocalURL();
-			
-			if(strpos($link, '?') > 0){
-				$link .= '&';
-			} else {
-				$link .= '?';
-			}
-			
-			$link .= 'categories=';
-			$first = true;
-			foreach(array_keys($categories) as $category){
-				if(!$first) $link .= ',';
-				$link .= urlencode($category);
-				$first = false;
-			}
-			$link .= '&target='.$title_text;
-			return $link;
-		}else {
+		//No Cat with no 'No automatic formedit' annotation found and ASF cannot be created
+		if(!$catWithNoNoASFEditFound){
 			return false;
 		}
+		
+		//Create the link
+		$link = SpecialPage::getPage( 'FormEdit' );
+		$link = $link->getTitle()->getLocalURL();
+			
+		if(strpos($link, '?') > 0){
+			$link .= '&';
+		} else {
+			$link .= '?';
+		}
+			
+		$link .= 'categories=';
+		$first = true;
+		foreach(array_keys($categories) as $category){
+			if(!$first) $link .= ',';
+			$link .= urlencode($category);
+			$first = false;
+		}
+		$link .= '&target='.$title_text;
+		return $link;
 	}
 	
 	

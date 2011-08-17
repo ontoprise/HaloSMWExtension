@@ -61,7 +61,7 @@ class ASFFormGenerator {
 	 * Generates a Semantic Form based on a given
 	 * title object and its category annotations
 	 */
-	public function generateFromTitle(Title $title, $createInNSCategory = false, $justCheck = false){
+	public function generateFromTitle(Title $title, $createInNSCategory = false){
 		$categories = $title->getParentCategories();
 
 		//Do not create forms in NS_Category if not explicitly stated
@@ -69,13 +69,13 @@ class ASFFormGenerator {
 			return false;
 		}
 
-		return $this->generateFormForCategories(array_keys($categories), $title, $justCheck);
+		return $this->generateFormForCategories(array_keys($categories), $title);
 	}
 
 	/*
 	 * Generate form for an instance based on some given category names
 	 */
-	public function generateFormForCategories($categories, $instanceTitle = null, $justCheck = false){
+	public function generateFormForCategories($categories, $instanceTitle = null){
 
 		//check if an automatic form can be created
 		if(count($categories) == 0) return false;
@@ -84,13 +84,10 @@ class ASFFormGenerator {
 		$categories = $this->removeSuperCategories(array_flip($categories));
 
 		list($categories, $categoriesWithNoProperties, $categoriesWithNoFormEdit)
-		= $this->initializeCategoryFormData($categories);
+			= $this->initializeCategoryFormData($categories);
 
 		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0)
-		return array(false, $categoriesWithNoFormEdit);
-
-		if($justCheck)
-		return array(true, $categoriesWithNoFormEdit);
+			return array(false, $categoriesWithNoFormEdit);
 
 		if(!is_null($instanceTitle)){
 			$unresolvedAnnotationsSection =
@@ -168,10 +165,6 @@ class ASFFormGenerator {
 	 */
 	private function initializeCategoryFormData($categories){
 		
-		//global $asfDoEnhancedCategorySectionProcessing;
-		//if($asfDoEnhancedCategorySectionProcessing){
-		//let the category section structure processor compute which
-		//sections to create
 		list($categorySections, $categoriesWithNoProperties, $categoriesWithNoFormEdit) =
 			ASFCategorySectionStructureProcessor::getInstance()->getCategorySectionStructure($categories);
 
@@ -192,22 +185,6 @@ class ASFFormGenerator {
 			}
 		}
 			
-		//	} else {
-		//		//this is not supported in this mode
-		//		$categoriesWithNoProperties = array();
-		//		$categoriesWithNoFormEdit = array();
-		//
-		//		//create section for each category annotation and then deal with duplicate properties
-		//		global $wgLang;
-		//		foreach($categories as $key => $category){
-		//			if(strpos($category, $wgLang->getNSText(NS_CATEGORY).":") === 0){
-		//				$category = substr($category, strpos($category, ":") +1);
-		//			}
-		//
-		//		}
-		//		$categories = $this->dealWithDuplicateProperties($categories);
-		//	}
-
 		return array($categories, $categoriesWithNoProperties, $categoriesWithNoFormEdit);
 	}
 

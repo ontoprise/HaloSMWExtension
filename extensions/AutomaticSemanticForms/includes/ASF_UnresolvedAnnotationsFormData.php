@@ -85,6 +85,10 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 			return '';
 		}
 		
+		if($this->isEmptyCategory()){
+			return '';
+		}
+		
 		//create collapsed version of section
 		$intro = "\n{{#collapsableFieldSetStart:";
 		$intro .= wfMsg('asf_unresolved_annotations');
