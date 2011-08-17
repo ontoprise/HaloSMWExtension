@@ -633,6 +633,7 @@ $(function() {
 				return;
 			}
 			$('#df_repository_list').append($('<option>'+newrepositoryURL+'</option>'));
+			window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=4";
 		};
 		$('#df_settings_progress_indicator').show();
 		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=addToRepository&rsargs[]="+encodeURIComponent($('#df_newrepository_input').val());
@@ -659,6 +660,7 @@ $(function() {
 						return;
 					}
 					entry.remove();
+					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=4";
 			};
 			$('#df_settings_progress_indicator').show();
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=removeFromRepository&rsargs[]="+encodeURIComponent(entry.val());
