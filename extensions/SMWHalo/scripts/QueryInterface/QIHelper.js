@@ -1038,27 +1038,56 @@ QIHelper.prototype = {
         if (reset)
                 $('input0').focus();
         this.updateHeightBoxcontent();
-        this.enableButton();
-        this.setListeners();
+        this.enableButton(this.getInputs());
+        this.setListeners(this, this.getInputs());
 	},
         
-        enableButton: function(){
-            var inputs = $$('#dialoguecontent input[type="text"]');    
-            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
-            btn.disabled = false; 
-            for ( var i = 0; i < inputs.length; i++) {
-                if(!inputs[i].getValue()){
-                   btn.disabled = true; 
-                }                        
-            }            
+        enableButton: function(inputsArray){   
+            if(inputsArray){
+                var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+                btn.disabled = false; 
+                $(inputsArray).each(function(inputElement){
+                    if(!inputElement.getValue()){
+                       btn.disabled = true; 
+                    }                        
+                });  
+            }  
         },
     
         
-        setListeners: function(){
-            var inputs = $$('#dialoguecontent input[type="text"]');            
-            for ( var i = 0; i < inputs.length; i++) {
-                inputs[i].observe('keyup', this.enableButton);                                        
-            }          
+        setListeners: function(thisObj, inputsArray){
+            if(inputsArray){               
+                $(inputsArray).each(function(inputElement){
+                    inputElement.observe('keyup', function(event){
+                        thisObj.enableButton(inputsArray);
+                    }); 
+                    inputElement.observe('change', function(event){
+                        thisObj.enableButton(inputsArray);
+                    });  
+                });
+            }
+        },
+        
+        getPropertyDialogInputs: function(){
+            var inputs = this.getInputs();  
+            if($('dialoguecontent_pvalues').visible()){
+                inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));  
+            }
+            return inputs;
+        },
+        
+        getInputs: function(){
+            return $$('#dialoguecontent input[type="text"]');            
+        },
+        
+        observeRadioBtnClick: function(thisObj){
+            var radioBtns = $$('#dialoguecontent_pradio input[type="radio"][name="input_r0"]');
+            radioBtns.each(function(radioBtnElement){
+                radioBtnElement.observe('change', function(event){
+                    thisObj.enableButton(thisObj.getPropertyDialogInputs());
+                    thisObj.setListeners(thisObj, thisObj.getPropertyDialogInputs());
+                });
+            });
         },
 
 	/**
@@ -1108,8 +1137,8 @@ QIHelper.prototype = {
         if (reset)
                 $('input0').focus();
         this.updateHeightBoxcontent();
-        this.enableButton();
-        this.setListeners();
+        this.enableButton(this.getInputs());
+        this.setListeners(this, this.getInputs());
 	},
 
 	/**
@@ -1142,10 +1171,11 @@ QIHelper.prototype = {
         if (reset)
                 $('input_p0').focus();
         this.updateHeightBoxcontent();
-        this.enableButton();
-        this.setListeners();
+        this.enableButton(this.getPropertyDialogInputs());
+        this.setListeners(this, this.getPropertyDialogInputs());
         
         var propLabelInput = $('input_c3');
+        
         propLabelInput.observe('keyup', function(event){
                if(Event.element(event).getValue()){
                     qihelper.colNameEntered = true;
@@ -1154,13 +1184,22 @@ QIHelper.prototype = {
                     qihelper.colNameEntered = false;
                }
             });
-        propLabelInput.observe('keyup', function(){
+        propLabelInput.observe('keyup', function(event){
             var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
             btn.disabled = true; 
             if(propLabelInput.getValue()){
                 btn.disabled = false; 
                 }
             });
+        propLabelInput.observe('change', function(event){
+            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            btn.disabled = true; 
+            if(propLabelInput.getValue()){
+                btn.disabled = false; 
+                }
+            });
+            
+        this.observeRadioBtnClick(this);
 	},      
      
 
@@ -1375,11 +1414,17 @@ QIHelper.prototype = {
         if ($('dialoguecontent_pvalues').style.display != 'none')
             $('input_r' + newRowIndex).focus(); // focus created input
 		autoCompleter.registerAllInputs();
+                
+        this.enableButton(this.getPropertyDialogInputs());
+        this.setListeners(this, this.getPropertyDialogInputs());        
     },
 
     removeRestrictionInput : function(element) {
         var tr = element.parentNode.parentNode;
         tr.parentNode.removeChild(tr);
+        
+        this.enableButton(this.getPropertyDialogInputs());
+        this.setListeners(this, this.getPropertyDialogInputs());     
     },
 
     removePropertyChainInput : function() {
@@ -1397,8 +1442,8 @@ QIHelper.prototype = {
                 .getElementsByTagName('input').item(0).style.fontWeight = "bold";
         }
         this.toggleAddchain(true);
-        this.enableButton();
-        this.setListeners();
+        this.enableButton(this.getPropertyDialogInputs());
+        this.setListeners(this, this.getPropertyDialogInputs());
     },
 
 	/**
@@ -1457,8 +1502,8 @@ QIHelper.prototype = {
 				+ 'delete.png" alt="deleteInput" onclick="qihelper.removeInput(this);"/>';
 		$('input' + id).focus(); // focus created input                
 		autoCompleter.registerAllInputs();
-                this.setListeners();
-                this.enableButton();
+                this.setListeners(this, this.getInputs());
+                this.enableButton(this.getInputs());
 	},
 
 	/**
@@ -1471,8 +1516,8 @@ QIHelper.prototype = {
 	removeInput : function(el) {
         var tr = el.parentNode.parentNode;
         tr.parentNode.removeChild(tr);
-        this.setListeners();
-        this.enableButton();
+        this.setListeners(this, this.getInputs());
+        this.enableButton(this.getInputs());
 	},
 
     /**
