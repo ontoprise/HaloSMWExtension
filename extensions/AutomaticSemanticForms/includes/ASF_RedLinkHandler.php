@@ -10,7 +10,7 @@ class ASFRedLinkHandler {
 	public static function handleRedLinks( $linker, $target, $options, $text, &$attribs, &$ret ) {
 		
 		if(in_array('broken', $options)){
-			if(strpos($attribs['href'], 'Special:FormEdit') == 0){
+			if(strpos($attribs['href'], 'Special:FormEdit') === false){
 				$link = self::createLinkedPage($target);
 			 	if($link){
 					$attribs['href'] = $link; 	
