@@ -1072,9 +1072,11 @@ Function installAsWindowsService
        
     # Do not install Lucene as service (does not work) but register it in Autostart folder
     DetailPrint "Start Lucene automatically via AutoStart folder."
+    SetOutPath "$INSTDIR\lucene"
     CreateShortCut "$SMSTARTUP\LuceneForSMWPlus.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
     # Do not install Solr as service (does not work) but register it in Autostart folder
     DetailPrint "Start Solr automatically via AutoStart folder."
+    SetOutPath "$INSTDIR\solr\wiki"
     CreateShortCut "$SMSTARTUP\SolrForSMWPlus.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
 
 FunctionEnd
