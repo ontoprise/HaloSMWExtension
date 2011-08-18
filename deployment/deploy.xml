@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>156</version>
+		<version>160</version>
 		<patchlevel>0</patchlevel>
 		<id>deployment</id>
 		<vendor>ontoprise GmbH</vendor>
@@ -14,7 +14,7 @@
 		</helpurl>
 		<license>GPL-v2</license>
 		<dependencies>
-			<dependency from="1120" to="1169">mw</dependency>
+			<dependency from="1160" to="1179">mw</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
@@ -37,11 +37,13 @@
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/settings.php" />
 			<exclude file="deployment/tools/unzip.exe" />
+			<exclude file="deployment/tools/smwadmin.sh" />
 		</update>
 
 		<update from="131">
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/tools/unzip.exe" />
+			<exclude file="deployment/tools/smwadmin.sh" />
 		</update>
 		
 		<update from="130">
