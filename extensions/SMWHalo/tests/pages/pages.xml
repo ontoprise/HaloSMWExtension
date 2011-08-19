@@ -53,143 +53,6 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     </revision>
   </page>
   <page>
-    <title>Property:Has domain and range</title>
-    <id>2</id>
-    <revision>
-      <id>3</id>
-      <timestamp>2009-05-12T10:01:33Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
-
-[[Has type::Type:Record]]
-[[Has fields::Type:Page; Type:Page]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has max cardinality</title>
-    <id>3</id>
-    <revision>
-      <id>4</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined property &quot;Has max cardinality&quot;  [[Has type::Type:Number]]</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Has max cardinality&quot;
-
-[[Has type::Type:Number]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has min cardinality</title>
-    <id>4</id>
-    <revision>
-      <id>5</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined property &quot;Has min cardinality&quot;  [[Has type::Type:Number]]</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Has min cardinality&quot;
-
-[[Has type::Type:Number]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Is inverse of</title>
-    <id>5</id>
-    <revision>
-      <id>6</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined property &quot;Is inverse of&quot;</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Is inverse of&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Is equal to</title>
-    <id>6</id>
-    <revision>
-      <id>7</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined property &quot;Is equal to&quot;</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Is equal to&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Category:Transitive properties</title>
-    <id>7</id>
-    <revision>
-      <id>8</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined category &quot;Transitive properties&quot;</comment>
-      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Category:Symmetrical properties</title>
-    <id>8</id>
-    <revision>
-      <id>9</id>
-      <timestamp>2009-05-12T10:01:34Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined category &quot;Symmetrical properties&quot;</comment>
-      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Question</title>
-    <id>9</id>
-    <revision>
-      <id>10</id>
-      <timestamp>2009-05-12T10:01:35Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[Has type::Type:String]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Description</title>
-    <id>10</id>
-    <revision>
-      <id>11</id>
-      <timestamp>2009-05-12T10:01:35Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[Has type::Type:Text]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:DiscourseState</title>
-    <id>11</id>
-    <revision>
-      <id>12</id>
-      <timestamp>2009-05-12T10:01:35Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[Has type::Type:String]]</text>
-    </revision>
-  </page>
-  <page>
     <title>NoAnnotation</title>
     <id>12</id>
     <revision>
@@ -224,10 +87,10 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Glossary&quot;  [[has type::Type:Glossary Term]]</comment>
+      <comment></comment>
       <text xml:space="preserve">This is the predefined property &quot;Glossary&quot;
 
-[[has type::Type:Glossary Term]]</text>
+</text>
     </revision>
   </page>
   <page>
@@ -305,8 +168,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[has domain and range::Category:Car; Category:Engine]][[has type::Type:page]][[Has max cardinality::1]][[Has min cardinality::1]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:Car; Category:Engine]][[has type::Type:page]][[Has max cardinality::1]][[Has min cardinality::1]]</text>
+      <comment>New page: [[has domain and range::Category:Car; Category:Engine]][[has type::page]][[Has max cardinality::1]][[Has min cardinality::1]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Car; Category:Engine]][[has type::page]][[Has max cardinality::1]][[Has min cardinality::1]]</text>
     </revision>
   </page>
   <page>
@@ -333,7 +196,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">[[has domain and range::Category:Car]][[has type::Type:page]]jhfdvddsfdgfgfhghghg</text>
+      <text xml:space="preserve">[[has domain and range::Category:Car]][[has type::page]]jhfdvddsfdgfgfhghghg</text>
     </revision>
   </page>
   <page>
@@ -346,7 +209,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::0]][[Subproperty of::Property:Has Engine]]</text>
+      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::page]][[Has max cardinality::2]][[Has min cardinality::0]][[Subproperty of::Property:Has Engine]]</text>
     </revision>
   </page>
   <page>
@@ -359,8 +222,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: [[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::1]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::Type:page]][[Has max cardinality::2]][[Has min cardinality::1]]</text>
+      <comment>New page: [[has domain and range::Category:Person; Category:Person]][[has type::page]][[Has max cardinality::2]][[Has min cardinality::1]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Person; Category:Person]][[has type::page]][[Has max cardinality::2]][[Has min cardinality::1]]</text>
     </revision>
   </page>
   <page>
@@ -387,8 +250,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: [[Subproperty of::Property:Has Child]][[has type::Type:String]][[Has max cardinality::0]][[Has min cardinality::-1]]</comment>
-      <text xml:space="preserve">[[Subproperty of::Property:Has Child]][[has type::Type:String]][[Has max cardinality::0]][[Has min cardinality::-1]]</text>
+      <comment>New page: [[Subproperty of::Property:Has Child]][[has type::String]][[Has max cardinality::0]][[Has min cardinality::-1]]</comment>
+      <text xml:space="preserve">[[Subproperty of::Property:Has Child]][[has type::String]][[Has max cardinality::0]][[Has min cardinality::-1]]</text>
     </revision>
   </page>
   <page>
@@ -446,7 +309,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">[[has type::Type:String]][[Has max cardinality::2]][[Has min cardinality::1]][[has type::Type:Number]][[Has max cardinality::3]][[Has min cardinality::4]]</text>
+      <text xml:space="preserve">[[has type::String]][[Has max cardinality::2]][[Has min cardinality::1]][[has type::Number]][[Has max cardinality::3]][[Has min cardinality::4]]</text>
     </revision>
   </page>
   <page>
@@ -477,20 +340,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <text xml:space="preserve">[[Category:Man]]</text>
     </revision>
   </page>
-  <page>
-    <title>Type:Force</title>
-    <id>33</id>
-    <revision>
-      <id>34</id>
-      <timestamp>2009-05-14T15:05:41Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <text xml:space="preserve">[[Corresponds to::1 N]]
-[[Corresponds to::1 Newton]]
-[[Corresponds to::1 kg*m/s²]]</text>
-    </revision>
-  </page>
+  
   <page>
     <title>Property:Has torsional moment</title>
     <id>34</id>
@@ -501,7 +351,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">[[has domain and range::Category:Engine]][[has type::Type:Force]]</text>
+      <text xml:space="preserve">[[has domain and range::Category:Engine]][[has type::Quantity]][[Corresponds to:: 1 Nm]]</text>
     </revision>
   </page>
   <page>
@@ -527,8 +377,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[Has type::Type:String;Type:String]]</comment>
-      <text xml:space="preserve">[[Has type::Type:String;Type:String]]</text>
+      <comment></comment>
+      <text xml:space="preserve">[[Has type::Record]][[Has fields::HasName;Lives in]]</text>
     </revision>
   </page>
   <page>
@@ -541,8 +391,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: [[has type::Type:page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</comment>
-      <text xml:space="preserve">[[has type::Type:page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</text>
+      <comment>New page: [[has type::page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</comment>
+      <text xml:space="preserve">[[has type::page]][[Is inverse of::Property:Has Child]][[has domain and range::Category:Car; Category:Car]]</text>
     </revision>
   </page>
   <page>
@@ -568,7 +418,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">[[has type::Type:page]]
+      <text xml:space="preserve">[[has type::page]]
 [[Subproperty of::Property:Has Father]]</text>
     </revision>
   </page>
@@ -581,8 +431,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[has type::Type:page]] [[Subproperty of::Property:Has Ancestor]]</comment>
-      <text xml:space="preserve">[[has type::Type:page]]
+      <comment>New page: [[has type::page]] [[Subproperty of::Property:Has Ancestor]]</comment>
+      <text xml:space="preserve">[[has type::page]]
 [[Subproperty of::Property:Has Ancestor]]</text>
     </revision>
   </page>
@@ -1042,7 +892,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       </contributor>
       <comment>New page:  [[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:City; Category:Country| ]][[has domain and range::Category:Country; Category:Continent| ]][[has ty...</comment>
       <text xml:space="preserve">
-[[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:City; Category:Country| ]][[has domain and range::Category:Country; Category:Continent| ]][[has type::Type:Page| ]]</text>
+[[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:City; Category:Country| ]][[has domain and range::Category:Country; Category:Continent| ]][[has type::Page| ]]</text>
     </revision>
   </page>
   <page>
@@ -1086,8 +936,8 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[has domain and range::Category:County; Category:City| ]][[has type::Type:Page| ]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:County; Category:City| ]][[has type::Type:Page| ]]</text>
+      <comment>New page: [[has domain and range::Category:County; Category:City| ]][[has type::Page| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:County; Category:City| ]][[has type::Page| ]]</text>
     </revision>
   </page>
   <page>
@@ -1099,8 +949,8 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[has type::Type:Number| ]]</comment>
-      <text xml:space="preserve">[[has type::Type:Number| ]]</text>
+      <comment>New page: [[has type::Number| ]]</comment>
+      <text xml:space="preserve">[[has type::Number| ]]</text>
     </revision>
   </page>
   <page>
@@ -1218,8 +1068,8 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: [[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</text>
+      <comment>New page: [[has domain and range::Category:Electric car; | ]][[has type::Number| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Electric car; | ]][[has type::Number| ]]</text>
     </revision>
   </page>
   <page>
@@ -1235,21 +1085,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <text xml:space="preserve">[[Has Son::Jack]]</text>
     </revision>
   </page>
-  <page>
-    <title>Type:Height</title>
-    <id>81</id>
-    <revision>
-      <id>82</id>
-      <timestamp>2010-06-14T15:16:43Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>Created page with '[[Corresponds to::1 cm, Zentimeter]] [[Corresponds to::0.01 m, Meter]] [[Corresponds to::0.3937 inch, Zoll]]'</comment>
-      <text xml:space="preserve">[[Corresponds to::1 cm, Zentimeter]]
-[[Corresponds to::0.01 m, Meter]]
-[[Corresponds to::0.3937 inch, Zoll]]</text>
-    </revision>
-  </page>
+  
   <page>
     <title>Property:Height</title>
     <id>82</id>
@@ -1259,7 +1095,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <text xml:space="preserve">[[Has type::Type:Height]]
+      <text xml:space="preserve">[[Has type::Quantity]][[Corresponds to:: 1 cm]]
 [[Has domain and range::Category:Person;]]
 [[Has max cardinality::1| ]]
 [[Has min cardinality::0| ]]</text>

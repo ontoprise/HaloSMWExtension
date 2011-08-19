@@ -4,7 +4,7 @@
  * @ingroup SMWHaloQueryPrinters
  * 
  * Print query results in tables.
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * @file
  * @ingroup SMWQuery
  */
@@ -20,7 +20,7 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
 		return "SMWProvenanceResultPrinter";
 	}
 
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
@@ -47,7 +47,7 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
 			foreach ($row as $field) {
 				$result .= "\t\t<td>";
 				$first = true;
-				while ( ($object = $field->getNextObject()) !== false ) {
+				while ( ($object = $field->getNextDataValue()) !== false ) {
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
 						
 						$provURL = $object->getProvenance();

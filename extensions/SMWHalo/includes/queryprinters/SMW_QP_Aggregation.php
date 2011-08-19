@@ -57,7 +57,7 @@ class SMWAggregationResultPrinter extends SMWResultPrinter {
 		}
 	}
 
-	protected function getResultText($res,$outputmode) {
+	protected function getResultText(SMWQueryResult $res,$outputmode) {
 		$values = array();
 		$dvs = array();
 

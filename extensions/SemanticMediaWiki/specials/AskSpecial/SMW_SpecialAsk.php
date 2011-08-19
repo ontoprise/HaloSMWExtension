@@ -49,7 +49,7 @@ class SMWAskPage extends SpecialPage {
 				$format = $wgRequest->getVal( 'showformatoptions' );
 				$params = $wgRequest->getArray( 'params' );
 				$wgOut->disable();
-				echo self::showFormatOptions( $format, $params );
+				echo $this->showFormatOptions( $format, $params );
 			} else {
 				$this->extractQueryParameters( $p );
 				$this->makeHTMLResult();
@@ -72,7 +72,6 @@ class SMWAskPage extends SpecialPage {
 
 		// First make all inputs into a simple parameter list that can again be parsed into components later.
 		if ( $wgRequest->getCheck( 'q' ) ) { // called by own Special, ignore full param string in that case
-			$query_values = $wgRequest->getArray( 'p' );
 			$query_val = $wgRequest->getVal( 'p' );
 
 			if ( !empty( $query_val ) )
@@ -180,7 +179,8 @@ class SMWAskPage extends SpecialPage {
 
 	/**
 	 * Creates and adds the JavaScript and JS needed for autocompletion to $wgOut.
-	 *
+	 * Uses the MW API to get suggestions for properties.
+	 * @TODO Test for non-english wikis, add caching on client to improve performance
 	 * @since 1.5.2
 	 */
 	protected static function addAutocompletionJavascriptAndCSS() {
@@ -192,7 +192,8 @@ class SMWAskPage extends SpecialPage {
 		$scripts = array();
 
 		if ( !$smwgJQueryIncluded ) {
-			if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+			$realFunction = array( 'OutputPage', 'includeJQuery' );
+			if ( is_callable( $realFunction ) ) {
 				$wgOut->includeJQuery();
 			} else {
 				$scripts[] = "$smwgScriptPath/libs/jquery-1.4.2.min.js";
@@ -212,32 +213,7 @@ class SMWAskPage extends SpecialPage {
 		foreach ( $scripts as $js ) {
 			$wgOut->addScriptFile( $js );
 		}
-
-		/* collect property names for autocomplete */
-		$propertyNames[] = array();
-		$results = smwfGetStore()->getPropertiesSpecial();
-
-		foreach ( $results as $result ) {
-			$propertyNames[] = $result[0]->getWikiValue();
-		}
-
-		$results = smwfGetStore()->getUnusedPropertiesSpecial();
-
-		foreach ( $results as $result ) {
-			$propertyNames[] = $result->getWikiValue();
-		}
-
-		sort( $propertyNames );
-
-		$properties_po = "[";
-		foreach ( $propertyNames as $i => $property ) {
-			if ( $i > 0 ) {
-				$properties_po .= ", ";
-			}
-			$properties_po .= "'?" . $property . "'";
-		}
-		$properties_po .= "]";
-
+		
 		$javascript_autocomplete_text = <<<END
 <script type="text/javascript">
 function split(val) {
@@ -283,10 +259,16 @@ jQuery.extend( jQuery.ui.autocomplete, {
 
 jQuery(document).ready(function(){
 	jQuery("#add_property").autocomplete({
-		minLength: 1,
+		minLength: 2,
 		source: function(request, response) {
-			// delegate back to autocomplete, but extract the last term
-			response(jQuery.ui.autocomplete.filter({$properties_po}, escapeQuestion(extractLast(request.term))));
+			request.term=request.term.substr(request.term.lastIndexOf("\\n")+1);
+			url=wgScriptPath+'/api.php?action=opensearch&limit=10&namespace='+wgNamespaceIds['property']+'&format=jsonfm&search=';
+
+			jQuery.getJSON(url+request.term, function(data){
+				//remove the namespace prefix 'Property:' from returned data and add prefix '?'
+				for(i=0;i<data[1].length;i++) data[1][i]="?"+data[1][i].substr(data[1][i].indexOf(':')+1); 
+				response(jQuery.ui.autocomplete.filter(data[1], escapeQuestion(extractLast(request.term))));
+			});
 		},
 		focus: function() {
 			// prevent value inserted on focus
@@ -421,7 +403,7 @@ END;
 				}
 
 				if ( !isset( $this->m_params[$desckey] ) ) {
-					$dv = end( smwfGetStore()->getPropertyValues( SMWWikiPageValue::makePageFromTitle( $concept ), SMWPropertyValue::makeProperty( '_CONC' ) ) );
+					$dv = end( smwfGetStore()->getPropertyValues( SMWWikiPageValue::makePageFromTitle( $concept ), new SMWDIProperty( '_CONC' ) ) );
 					if ( $dv instanceof SMWConceptValue ) {
 						$this->m_params[$desckey] = $dv->getDocu();
 					}
@@ -489,7 +471,7 @@ END;
 	}
 
 	/**
-	 * TODO: document
+	 * Generates the Search Box UI
 	 *
 	 * @param string $printoutstring
 	 * @param string $urltail
@@ -497,9 +479,8 @@ END;
 	 * @return string
 	 */
 	protected function getInputForm( $printoutstring, $urltail ) {
-		global $wgUser, $smwgQSortingSupport, $wgLang, $smwgResultFormats;
+		global $smwgQSortingSupport, $smwgResultFormats;
 
-		$skin = $wgUser->getSkin();
 		$result = '';
 
 		if ( $this->m_editquery ) {
@@ -546,7 +527,7 @@ END;
 			}
 
 			$printer = SMWQueryProcessor::getResultPrinter( 'broadtable', SMWQueryProcessor::SPECIAL_PAGE );
-			$url = $skin->makeSpecialUrl( 'Ask', "showformatoptions=' + this.value + '" );
+			$url = SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( "showformatoptions=' + this.value + '" );
 
 			foreach ( $this->m_params as $param => $value ) {
 				if ( $param !== 'format' ) {
@@ -577,27 +558,38 @@ END;
 
 			$result .= "</select></p>\n";
 			$result .= '<fieldset><legend>' . wfMsg( 'smw_ask_otheroptions' ) . "</legend>\n";
-			$result .= "<div id=\"other_options\">" . self::showFormatOptions( $this->m_params['format'], $this->m_params ) . "</div>";
+			$result .= "<div id=\"other_options\">" . $this->showFormatOptions( $this->m_params['format'], $this->m_params ) . "</div>";
 			$result .= "</fieldset>\n";
 			$urltail = str_replace( '&eq=yes', '', $urltail ) . '&eq=no';
 
 			$result .= '<br /><input type="submit" value="' . wfMsg( 'smw_ask_submit' ) . '"/>' .
 				'<input type="hidden" name="eq" value="yes"/>' .
-					' <a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', $urltail ) ) . '" rel="nofollow">' . wfMsg( 'smw_ask_hidequery' ) . '</a> ' .
+					Html::element(
+						'a',
+						array(
+							'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( $urltail ),
+							'rel' => 'nofollow'
+						),
+						wfMsg( 'smw_ask_hidequery' )
+					) .
 					'| ' . SMWAskPage::getEmbedToggle() .
 					'| <a href="' . htmlspecialchars( wfMsg( 'smw_ask_doculink' ) ) . '">' . wfMsg( 'smw_ask_help' ) . '</a>' .
 				"\n</form>";
 		} else { // if $this->m_editquery == false
 			$urltail = str_replace( '&eq=no', '', $urltail ) . '&eq=yes';
-			$result .= '<p><a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', $urltail ) ) . '" rel="nofollow">' . wfMsg( 'smw_ask_editquery' ) . '</a> ' .
-				'| ' . SMWAskPage::getEmbedToggle() . '</p>';
-				'<input type="hidden" name="eq" value="yes"/>' .
-					' <a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', $urltail ) ) . '" rel="nofollow">' . wfMsg( 'smw_ask_hidequery' ) . '</a> ' .
-					'| ' . SMWAskPage::getEmbedToggle() .
-					'| <a href="' . htmlspecialchars( wfMsg( 'smw_ask_doculink' ) ) . '">' . wfMsg( 'smw_ask_help' ) . '</a>' .
-				"\n</form>";
+			$result .= '<p>' .
+				Html::element(
+					'a',
+					array(
+						'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( $urltail ),
+						'rel' => 'nofollow'
+					),
+					wfMsg( 'smw_ask_editquery' )
+				) .
+				'| ' . SMWAskPage::getEmbedToggle() .
+				'</p>';
 		}
-
+	//show|hide inline embed code
 		$result .= '<div id="inlinequeryembed" style="display: none"><div id="inlinequeryembedinstruct">' . wfMsg( 'smw_ask_embed_instr' ) . '</div><textarea id="inlinequeryembedarea" readonly="yes" cols="20" rows="6" onclick="this.select()">' .
 			'{{#ask:' . htmlspecialchars( $this->m_querystring ) . "\n";
 
@@ -642,23 +634,48 @@ END;
 	 * @return string
 	 */
 	protected function getNavigationBar( SMWQueryResult $res, $urltail ) {
-		global $wgUser, $smwgQMaxInlineLimit;
+		global $smwgQMaxInlineLimit;
 
-		$skin = $wgUser->getSkin();
 		$offset = $this->m_params['offset'];
 		$limit  = $this->m_params['limit'];
 
 		// Prepare navigation bar.
 		if ( $offset > 0 ) {
-			$navigation = '<a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', 'offset=' . max( 0, $offset - $limit ) . '&limit=' . $limit . $urltail ) ) . '" rel="nofollow">' . wfMsg( 'smw_result_prev' ) . '</a>';
+			$navigation = Html::element(
+				'a',
+				array(
+					'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( array(
+						'offset' => max( 0, $offset - $limit ), 
+						'limit' => $limit . $urltail
+					) ),
+					'rel' => 'nofollow'
+				),
+				wfMsg( 'smw_result_prev' )
+			);
+
 		} else {
 			$navigation = wfMsg( 'smw_result_prev' );
 		}
 
-		$navigation .= '&#160;&#160;&#160;&#160; <b>' . wfMsg( 'smw_result_results' ) . ' ' . ( $offset + 1 ) . '&#150; ' . ( $offset + $res->getCount() ) . '</b>&#160;&#160;&#160;&#160;';
+		$navigation .=
+			'&#160;&#160;&#160;&#160; <b>' .
+				wfMsg( 'smw_result_results' ) . ' ' . ( $offset + 1 ) .
+			'&#150; ' .
+				( $offset + $res->getCount() ) .
+			'</b>&#160;&#160;&#160;&#160;';
 
 		if ( $res->hasFurtherResults() ) {
-			$navigation .= ' <a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', 'offset=' . ( $offset + $limit ) . '&limit=' . $limit . $urltail ) ) . '" rel="nofollow">' . wfMsg( 'smw_result_next' ) . '</a>';
+			$navigation .= Html::element(
+				'a',
+				array(
+					'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( array(
+						'offset' => ( $offset + $limit ), 
+						'limit' => $limit . $urltail 
+					) ),
+					'rel' => 'nofollow'
+				),
+				wfMsg( 'smw_result_next' )
+			);
 		} else {
 			$navigation .= wfMsg( 'smw_result_next' );
 		}
@@ -676,7 +693,17 @@ END;
 			}
 
 			if ( $limit != $l ) {
-				$navigation .= '<a href="' . htmlspecialchars( $skin->makeSpecialUrl( 'Ask', 'offset=' . $offset . '&limit=' . $l . $urltail ) ) . '" rel="nofollow">' . $l . '</a>';
+				$navigation .= Html::element(
+					'a',
+					array(
+						'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( array(
+							'offset' => $offset,
+							'limit' => $l . $urltail
+						) ),
+						'rel' => 'nofollow'
+					),
+					$l
+				);
 			} else {
 				$navigation .= '<b>' . $l . '</b>';
 			}
@@ -692,107 +719,104 @@ END;
 	 * based on the getParameters() value for that format's query printer.
 	 *
 	 * @param string $format
-	 * @param array $paramValues
+	 * @param array $paramValues The current values for the parameters (name => value)
 	 *
 	 * @return string
 	 */
 	protected function showFormatOptions( $format, array $paramValues ) {
-		$text = '';
-
 		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::SPECIAL_PAGE );
 
-		$params = method_exists( $printer, 'getParameters' ) ? $printer->getParameters() : array();
+		$params = method_exists( $printer, 'getValidatorParameters' ) ? $printer->getValidatorParameters() : array();
 
-		foreach ( $params as $i => $param ) {
-			$param_name = $param['name'];
-			$type = $param['type'];
-			$desc = $param['description'];
+		$optionsHtml = array();
 
-			$cur_value = ( array_key_exists( $param_name, $paramValues ) ) ? $paramValues[$param_name] : '';
-
-			// 3 values per row, with alternating colors for rows
-			if ( $i % 3 == 0 ) {
-				$bgcolor = ( $i % 6 ) == 0 ? '#dddddd' : 'white';
-				$text .= "<div style=\"background: $bgcolor;\">";
+		foreach ( $params as $param ) {
+			// Ignore the format parameter, as we got a special control in the GUI for it already.
+			if ( $param->getName() == 'format' ) {
+				continue;
 			}
+			
+			$currentValue = array_key_exists( $param->getName(), $paramValues ) ? $paramValues[$param->getName()] : false;
 
-			$text .= "<div style=\"width: 30%; padding: 5px; float: left;\">$param_name:\n";
+			$optionsHtml[] =
+				Html::rawElement(
+					'div',
+					array(
+						'style' => 'width: 30%; padding: 5px; float: left;'
+					),
+					htmlspecialchars( $param->getName() ) . ': ' .
+					$this->showFormatOption( $param, $currentValue ) .
+					'<br />' .
+					Html::element( 'em', array(), $param->getDescription() )
+				);
+		}
 
-			$this->addOptionInput( $text, $type, $param_name, $cur_value, $param, $paramValues );
-
-			$text .= "\n	<br /><em>$desc</em>\n</div>\n";
-
-			if ( $i % 3 == 2 || $i == count( $params ) - 1 ) {
-				$text .= "<div style=\"clear: both\";></div></div>\n";
+		for ( $i = 0, $n = count( $optionsHtml ); $i < $n; $i++ ) {
+			if ( $i % 3 == 2 || $i == $n - 1 ) {
+				$optionsHtml[$i] .= "<div style=\"clear: both\";></div>\n";
 			}
 		}
 
-		return $text;
+		$i = 0;
+		$rowHtml = '';
+		$resultHtml = '';
+
+		while ( $option = array_shift( $optionsHtml ) ) {
+			$rowHtml .= $option;
+			$i++;
+
+			$resultHtml .= Html::rawElement(
+				'div',
+				array(
+					'style' => 'background: ' . ( $i % 6 == 0 ? 'white' : '#dddddd' ) . ';'
+				),
+				$rowHtml
+			);
+			
+			$rowHtml = '';
+		}
+
+		return $resultHtml;
 	}
+
+
 
 	/**
-	 * Adds a an input for a result format parameter to $text.
+	 * Get the HTML for a single parameter input.
 	 *
-	 * @since 1.5.3
+	 * @since 1.6
 	 *
-	 * @param string $text
-	 * @param string $type
-	 * @param string $param_name
-	 * @param string $cur_value
-	 * @param array $param
-	 * @param array $paramValues
+	 * @param Parameter $parameter
+	 * @param mixed $currentValue
+	 *
+	 * @return string
 	 */
-	protected function addOptionInput( &$text, $type, $param_name, $cur_value, array $param, array $paramValues ) {
-		switch ( $type ) {
-			case 'int':
-				$text .= Html::input(
-					"p[$param_name]",
-					$cur_value,
-					'text',
-					array(
-						'size' => 6
-					)
-				);
-				break;
-			case 'string':
-				$text .= Html::input(
-					"p[$param_name]",
-					$cur_value,
-					'text',
-					array(
-						'size' => 32
-					)
-				);
-				break;
-			case 'enumeration':
-				$text .= '<select name="p[' . htmlspecialchars( $param_name ) . ']">';
-				$text .= "\n	<option value=''></option>\n";
+	protected function showFormatOption( Parameter $parameter, $currentValue ) {
+		$input = new ParameterInput( $parameter );
+		$input->setInputName( 'p[' . $parameter->getName() . ']' );
 
-				$parts = array();
-				foreach ( $param['values'] as $value ) {
-					$parts[] = '<option value="' . htmlspecialchars( $value ) . '"' .
-					( $cur_value == $value ? ' selected' : '' ) . '>' .
-					htmlspecialchars( $value ) . '</option>';
-				}
-
-				$text .= implode( "\n", $parts ) . "\n</select>";
-				break;
-			case 'enum-list':
-				$cur_values = explode( ',', $cur_value );
-
-				foreach ( $param['values'] as $val ) {
-					$text .= '<span style="white-space: nowrap; padding-right: 5px;"><input type="checkbox" name="p[' .
-					htmlspecialchars( $param_name ) . '][' . htmlspecialchars( $val ). ']" value="true"' .
-					( in_array( $val, $cur_values ) ? ' checked' : '' ) . '/> <tt>' . htmlspecialchars( $val ) . "</tt></span>\n";
-				}
-				break;
-			case 'boolean':
-				$text .=
-					'<input type="checkbox" name="p[' . htmlspecialchars( $param_name ) . ']" value="true" ' .
-					array_key_exists( $param_name, $paramValues ) ? 'checked' : '' .
-					' />';
-				break;
+		if ( $currentValue !== false ) {
+			$input->setCurrentValue( $currentValue );
 		}
+
+		return $input->getHtml();
 	}
+
+    /**
+     * Compatibility method to get the skin; MW 1.18 introduces a getSkin method in SpecialPage.
+     *
+     * @since 1.6
+     *
+     * @return Skin
+     */
+    public function getSkin() {
+        if ( method_exists( 'SpecialPage', 'getSkin' ) ) {
+            return parent::getSkin();
+        }
+        else {
+            global $wgUser;
+            return $wgUser->getSkin();
+        }
+    }
 
 }

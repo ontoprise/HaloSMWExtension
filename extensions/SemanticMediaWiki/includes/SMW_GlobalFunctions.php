@@ -231,11 +231,26 @@ function smwfNumberFormat( $value, $decplaces = 3 ) {
 function smwfEncodeMessages( array $messages, $icon = 'warning', $seperator = ' <!--br-->', $escape = true ) {
 	if ( count( $messages ) > 0 ) {
 		SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
+		
 		if ( $escape ) {
 			$messages = array_map( 'htmlspecialchars', $messages );
 		}
-		return '<span class="smwttpersist"><span class="smwtticon">' . htmlspecialchars( $icon )
-			. '.png</span><span class="smwttcontent">' . implode( $seperator, $messages ) . '</span> </span>';
+		
+		if ( count( $messages ) == 1 )  {
+			$errorList = $messages[0];
+		}
+		else {
+			foreach ( $messages as &$message ) {
+				$message = '<li>' . $message . '</li>';
+			}
+			
+			$errorList = '<ul>' . implode( $seperator, $messages ) . '</ul>';
+		}
+		
+		return '<span class="smwttpersist">' .
+					'<span class="smwtticon">' . htmlspecialchars( $icon ) . '.png</span>' .
+					'<span class="smwttcontent">' . $errorList . '</span>' . 
+				'</span>';
 	} else {
 		return '';
 	}
@@ -271,15 +286,52 @@ function smwfLoadExtensionMessages( $extensionName ) {
 function &smwfGetStore() {
 	global $smwgMasterStore, $smwgDefaultStore, $smwgIP;
 
-	// No autoloading for RAP store, since autoloaded classes are in rare cases loaded by MW even if not used in code.
-	// This is not possible for RAPstore, which depends on RAP being installed.
-	if ( $smwgDefaultStore == 'SMWRAPStore2' ) {
-		include_once( $smwgIP . 'includes/storage/SMW_RAPStore2.php' );
-	}
-
 	if ( $smwgMasterStore === null ) {
 		$smwgMasterStore = new $smwgDefaultStore();
 	}
 
 	return $smwgMasterStore;
+}
+
+/**
+ * Get the SMWSparqlDatabase object to use for connecting to a SPARQL store,
+ * or null if no SPARQL backend has been set up.
+ *
+ * Currently, it just returns one globally defined object, but the
+ * infrastructure allows to set up load balancing and task-dependent use of
+ * stores (e.g. using other stores for fast querying than for storing new
+ * facts), somewhat similar to MediaWiki's DB implementation.
+ *
+ * @since 1.6
+ *
+ * @return SMWSparqlDatabase or null
+ */
+function &smwfGetSparqlDatabase() {
+	global $smwgSparqlDatabase, $smwgSparqlQueryEndpoint, $smwgSparqlUpdateEndpoint,
+	       $smwgSparqlDataEndpoint, $smwgSparqlDatabaseMaster;
+	if ( !isset( $smwgSparqlDatabaseMaster ) ) {
+		$smwgSparqlDatabaseMaster = new $smwgSparqlDatabase( $smwgSparqlQueryEndpoint, $smwgSparqlUpdateEndpoint, $smwgSparqlDataEndpoint );
+	}
+	return $smwgSparqlDatabaseMaster;
+}
+
+/**
+ * Compatibility helper for using Linker methods.
+ * MW 1.16 has a Linker with non-static methods,
+ * where in MW 1.19 they are static, and a DummyLinker
+ * class is introduced, which can be instantaited for
+ * compat reasons. 
+ * 
+ * @since 1.6
+ * 
+ * @return Linker or DummyLinker
+ */
+function smwfGetLinker() {
+	static $linker = false;
+	
+	if ( $linker === false ) {
+		$linker = class_exists( 'DummyLinker' ) ? new DummyLinker() : new Linker();
+	}
+	
+	return $linker;
 }

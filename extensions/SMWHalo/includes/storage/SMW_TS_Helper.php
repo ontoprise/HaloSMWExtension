@@ -8,6 +8,34 @@
  */
 class WikiTypeToXSD {
 
+
+	public static function getXSDTypeFromTypeID($wikiTypeID) {
+		switch($wikiTypeID) {
+
+			// direct supported types
+			case SMWDataItem::TYPE_BLOB:
+			case SMWDataItem::TYPE_STRING : return 'xsd:string';
+
+			case SMWDataItem::TYPE_NUMBER : return 'xsd:double';
+			case SMWDataItem::TYPE_BOOLEAN : return 'xsd:boolean';
+			case SMWDataItem::TYPE_TIME : return 'xsd:dateTime';
+
+			// not supported by TS. Take xsd:string
+			case SMWDataItem::TYPE_GEO : return 'xsd:string';
+			 
+			case SMWDataItem::TYPE_URI : return 'xsd:anyURI';
+
+			case SMWDataItem::TYPE_PROPERTY:
+			case SMWDataItem::TYPE_WIKIPAGE : return 'tsctype:page' ;
+
+			case SMWDataItem::TYPE_CONTAINER : return 'tsctype:record';
+
+			// unknown or composite type
+			default:
+				return 'xsd:string';
+		}
+
+	}
 	/**
 	 * Map primitve types or units to XSD values
 	 *
@@ -57,6 +85,38 @@ class WikiTypeToXSD {
 
 	}
 
+	/**
+	 * Map primitve types or units to XSD values
+	 *
+	 * @param unknown_type $wikiTypeID
+	 * @return unknown
+	 */
+	public static function getDIType($wikiTypeID) {
+		switch($wikiTypeID) {
+
+			// direct supported types
+			case '_str' : return SMWDataItem::TYPE_STRING;
+			case '_txt' : return SMWDataItem::TYPE_STRING;
+			case '_num' : return SMWDataItem::TYPE_NUMBER;
+			case '_boo' : return SMWDataItem::TYPE_BOOLEAN;
+			case '_dat' : return SMWDataItem::TYPE_TIME;
+
+			// not supported by TS. Take xsd:string
+			case '_geo' : return SMWDataItem::TYPE_GEO;
+			 
+			case '_uri' : return SMWDataItem::TYPE_URI;
+			case '_wpg' : return SMWDataItem::TYPE_WIKIPAGE;
+
+			case '_rec' : return SMWDataItem::TYPE_CONTAINER;
+
+			// unknown or composite type
+			default:
+				return SMWDataItem::TYPE_STRING;
+		}
+
+	}
+
+
 	public static function isPageType($wikiType) {
 		switch($wikiType) {
 			//only relevant for schema import
@@ -97,6 +157,60 @@ class WikiTypeToXSD {
 
 class TSHelper {
 
+	public static function serializeDataItem(SMWDataItem $di) {
+		switch($di->getDIType()) {
+			case SMWDataItem::TYPE_GEO:
+				$text = implode(",",$object->getCoordinateSet());
+				break;
+			case SMWDataItem::TYPE_NUMBER:
+				$text = $di->getNumber();
+				break;
+			case SMWDataItem::TYPE_BLOB:
+			case SMWDataItem::TYPE_STRING:
+				$text = $di->getString();
+				break;
+			case SMWDataItem::TYPE_TIME:
+				$year = $di->getYear();
+				$month = $di->getMonth();
+				$day = $di->getDay();
+				$hour = $di->getHour();
+				$minute = $di->getMinute();
+				$second = $di->getSecond();
+				$month = $month < 10 ? "0$month" : $month;
+				$day = $day < 10 ? "0$day" : $day;
+				$hour = $hour < 10 ? "0$hour" : $hour;
+				$minute = $minute < 10 ? "0$minute" : $minute;
+				$second = $second < 10 ? "0$second" : $second;
+				
+				return "$year-$month-$day"."T"."$hour:$minute:$second";
+				break;
+			case SMWDataItem::TYPE_URI:
+				$text = $di->getURI();
+				break;
+
+			case SMWDataItem::TYPE_BOOLEAN:
+				$text = $di->getBoolean() ? "true" : "false";
+				break;
+			case SMWDataItem::TYPE_CONTAINER:
+				$record = array();
+				$sd = $di->getSemanticData();
+				$properties = $sd->getProperties();
+				foreach($properties as $p) {
+					$values = $sd->getPropertyValues($p);
+					foreach($values as $v) {
+						$record[] = self::serializeDataItem($v);
+					}
+				}
+				$text = implode(";",$record);
+				break;
+
+			default:
+				// use default serialization if DataItem type is unknown
+				$text = $di->getSerialization();
+				break;
+		}
+		return $text;
+	}
 	/**
 	 * Checks via heuristic if the given parameters contain a SPARQL query.
 	 *
@@ -276,7 +390,7 @@ class TSHelper {
 	 * @param SMWDataValue $v
 	 * @param array of SimpleXMLElement $metadata
 	 */
-	public static function setMetadata(SMWDataValue $v, $metadata) {
+	public static function setMetadata(SMWDataItem $v, $metadata) {
 		if (!is_null($metadata) && $metadata !== '') {
 			foreach($metadata as $m) {
 				$name = (string) $m->attributes()->name;
@@ -407,9 +521,9 @@ class TSNamespaces {
 
 	// MW + SMW + SF namespaces (including talk namespaces)
 	public static $ALL_NAMESPACE_KEYS = array(NS_CATEGORY, SMW_NS_PROPERTY,SF_NS_FORM, SMW_NS_CONCEPT, NS_MAIN ,
-	SMW_NS_TYPE,NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
+	NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
 	SF_NS_FORM_TALK,NS_TALK, NS_USER_TALK, NS_PROJECT_TALK, NS_FILE_TALK, NS_MEDIAWIKI_TALK,
-	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK, SMW_NS_TYPE_TALK);
+	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK);
 
 	public static $EMPTY_SPARQL_XML = '<?xml version="1.0"?><sparql></sparql>';
 	public static $DEFAULT_VALUE_URI = 'http://__defaultvalue__/doesnotexist';
@@ -472,12 +586,12 @@ class TSNamespaces {
 		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
 							   "\nPREFIX prop:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
 
-        // add prefixes defined on Mediawiki:NamespaceMappings
-        $allNSMappings = smwfGetSemanticStore()->getAllNamespaceMappings();
-        foreach($allNSMappings as $prefix => $uri) {
-        	self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
-        }
-      
+		// add prefixes defined on Mediawiki:NamespaceMappings
+		$allNSMappings = smwfGetSemanticStore()->getAllNamespaceMappings();
+		foreach($allNSMappings as $prefix => $uri) {
+			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
+		}
+
 		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
@@ -553,13 +667,24 @@ class TSNamespaces {
 	}
 
 	/**
+	 * Returns the full IRI used by the TS for $p
+	 *
+	 * @param SMWPropertyValue $t
+	 */
+	public function getFullIRIFromDIProperty(SMWDIProperty $p) {
+		global $smwgTripleStoreGraph;
+		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getKey().">";
+	}
+
+
+	/**
 	 * Converts $input from into a prefixed or full URI, if necessary.
 	 *
 	 *  (1) may be already a full URI, then returned unchanged.
 	 *  (2) may be a prefix form a#MyInstance, cat#MyInstance. Then returned as prefix form
 	 *      unlesss it is not possible because of forbidden characters.
-	 *  (3) may be a title form, e.g. Category:Person 
-	 *  (4) may be something else, consider as instance and return as 
+	 *  (3) may be a title form, e.g. Category:Person
+	 *  (4) may be something else, consider as instance and return as
 	 *      prefix form (if possible) or as full URI.
 	 *
 	 * @param string $input
@@ -570,7 +695,7 @@ class TSNamespaces {
 		$input = str_replace(" ", "_", $input);
 		$parsedURL = parse_url($input);
 		if (array_key_exists('scheme', $parsedURL)) {
-			// full URI or title form 
+			// full URI or title form
 			foreach(self::$ALL_NAMESPACE_KEYS as $nsKey) {
 				$suffix = strtolower($this->getNSPrefix($nsKey));
 				$prefix = strtolower($parsedURL['scheme']);

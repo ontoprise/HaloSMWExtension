@@ -47,35 +47,26 @@ abstract class TestEQI extends PHPUnit_Framework_TestCase {
 
 	function testASKCategory() {
 		$res = $this->makeCall("[[Category:Person]]", $this->params);
-		echo $res;
-
 		$this->assertContains('<uri>http://publicbuild/ob/a/Hans</uri>', $res);
 		$this->assertContains('<uri>http://publicbuild/ob/a/Kai</uri>', $res);
 	}
 
 	function testASKPropertyContraint() {
 		$res = $this->makeCall("[[Category:Person]][[Height::+]]|?Height", $this->params);
-		echo $res;
-
 		$this->assertContains('<uri>http://publicbuild/ob/a/Hans</uri>', $res);
 		$this->assertContains('<uri>http://publicbuild/ob/a/Kai</uri>', $res);
 		$this->assertContains('175', $res);
-		$this->assertContains('cm', $res);
 		$this->assertContains('187', $res);
 	}
 
 	function testASKPropertyContraint2() {
 		$res = $this->makeCall("[[Category:Sports car]][[Has Engine::<q>[[Has torsional moment::+]]</q>]]", $this->params);
-		echo $res;
-
 		$this->assertContains('<uri>http://publicbuild/ob/a/Audi_TT</uri>', $res);
 		 
 	}
 
 	function testASKPropertyContraint3() {
 		$res = $this->makeCall("[[Category:Person]]|?Has Engine", $this->params);
-		echo $res;
-
 		$this->assertContains('<uri>http://publicbuild/ob/a/Hans</uri>', $res);
 		$this->assertContains('<uri>http://publicbuild/ob/a/Kai</uri>', $res);
 		$this->assertContains('<uri>http://publicbuild/ob/a/3_cylinder</uri>', $res);
@@ -83,19 +74,9 @@ abstract class TestEQI extends PHPUnit_Framework_TestCase {
 
 	function testASKInstance() {
 		$res = $this->makeCall("[[Kai]]|?Height");
-		echo $res;
-		$this->assertContains('175 cm', $res);
+		$this->assertContains('175', $res);
 	}
 
-	function testASKInstance2() {
-		$res = $this->makeCall("[[Type:Height]]|?Corresponds to", $this->params);
-		echo $res;
-		$this->assertContains('1 cm', $res);
-		$this->assertContains('Zentimeter', $res);
-		$this->assertContains('0.01 m', $res);
-		$this->assertContains('Meter', $res);
-		$this->assertContains('Zoll', $res);
-		$this->assertContains('0.3937 inch', $res);
-	}
+	
 
 }

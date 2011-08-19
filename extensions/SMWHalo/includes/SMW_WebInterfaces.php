@@ -20,7 +20,9 @@ $wgAjaxExportList[] = 'smwf_ws_RDFRequest';
 function smwf_ws_callEQI($query) {
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	return smwhExternalQuery($query, "exceltable");
+	$result= new AjaxResponse( smwhExternalQuery($query, "exceltable") );
+    $result->setContentType( "text/html" );
+    return $result;
 }
 
 # same as smwf_ws_callEQI except that XML is returned

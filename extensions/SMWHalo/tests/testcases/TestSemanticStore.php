@@ -51,7 +51,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 								   "Is parent of",
 								   "Question", "Gender",
 		                             "Has Capital", "Located In", "Population",
-		                             "Torsional moment", "Has Voltage");
+		                             "Torsional moment", "Has Voltage", "Has domain", "Has range", "Ontology URI");
 
 		$rootProperties = smwfGetSemanticStore()->getRootProperties();
 
@@ -120,9 +120,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 
 	public function testPropertiesWithSchemaByCategory() {
 		$exp_properties = array("Body Form" , "Is parent of", "Has Engine");
-		$exp_schema = array("Has Engine" => array(1,1,'_wpg',NULL,NULL,'Engine', false),
-		                    "Is parent of" => array(0,2147483647,'_wpg',NULL,NULL,'Car', false), 
-		                    "Body Form" => array(0,2147483647,'_wpg',NULL,NULL,NULL, false));
+		$exp_schema = array("Has Engine" => array(1,1,'http://semantic-mediawiki.org/swivt/1.0#_wpg',NULL,NULL,'Engine', false),
+		                    "Is parent of" => array(0,2147483647,'http://semantic-mediawiki.org/swivt/1.0#_wpg',NULL,NULL,'Car', false), 
+		                    "Body Form" => array(0,2147483647,'http://semantic-mediawiki.org/swivt/1.0#_wpg',NULL,NULL,NULL, false));
 
 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory(Title::newFromText("Car", NS_CATEGORY));
 		foreach ($properties as $prop) {
@@ -141,7 +141,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 
 	public function testPropertiesWithSchemaByName() {
 		$exp_properties = array("Is parent of");
-		$exp_schema = array("Is parent of" => array(0,2147483647,'_wpg',NULL,NULL,'Car', false));
+		$exp_schema = array("Is parent of" => array(0,2147483647,'http://semantic-mediawiki.org/swivt/1.0#_wpg',NULL,NULL,'Car', false));
 		$requestoptions = new SMWAdvRequestOptions();
 		$requestoptions->addStringCondition("parent", SMWStringCondition::STRCOND_MID);
 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByName($requestoptions);
@@ -254,8 +254,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testNumberOfPropertiesForTarget() {
-		$exp_usage = 2;
+		$exp_usage = 3;
 		$usage = smwfGetSemanticStore()->getNumberOfPropertiesForTarget(Title::newFromText("Kai", NS_MAIN));
+		
 		$this->assertEquals($exp_usage, $usage);
 			
 	}

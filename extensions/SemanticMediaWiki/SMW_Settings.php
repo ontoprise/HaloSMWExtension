@@ -45,8 +45,40 @@ $smwgIP = dirname( __FILE__ ) . '/';
 $smwgDefaultStore = "SMWSQLStore2";
 ##
 
+###
+# Configure SPARQL database connection for Semantic MediaWiki. This is used
+# when SPARQL-based features are enabled, e.g. when using SMWSparqlStore as
+# the $smwgDefaultStore.
+#
+# The default class SMWSparqlDatabase works with many databases that support
+# SPARQL and SPARQL Update. Three different endpoints (service URLs) are given
+# for query (reading queries like SELECT), update (SPARQL Update queries), and
+# data (SPARQL HTTP Protocol for Graph Management). The query endpoint is
+# necessary, but the update and data endpoints can be omitted if not supported.
+# This will lead to reduced functionality (e.g. the SMWSparqlStore will not
+# work if Update is not available). The data endpoint is always optional, but
+# in some SPARQL databases this method is more efficient than update.
+##
+$smwgSparqlDatabase = 'SMWSparqlDatabase';
+$smwgSparqlQueryEndpoint = 'http://localhost:8080/sparql/';
+$smwgSparqlUpdateEndpoint = 'http://localhost:8080/update/';
+$smwgSparqlDataEndpoint = 'http://localhost:8080/data/';
+##
+
 // load global constants and setup functions
 require_once( 'includes/SMW_Setup.php' );
+
+###
+# Setting this option to true before including this file to enable the old
+# Type: namespace that SMW used up to version 1.5.*. This should only be
+# done to make the pages of this namespace temporarily accessible in order to
+# move their content to other pages. If the namespace is not registered, then
+# existing pages in this namespace cannot be found in the wiki.
+##
+if ( !isset( $smwgHistoricTypeNamespace ) ) {
+	$smwgHistoricTypeNamespace = false;
+}
+##
 
 ###
 # If you already have custom namespaces on your site, insert
@@ -63,9 +95,9 @@ smwfInitNamespaces();
 # __HIDEFACTBOX__ can be used to control Factbox display for individual pages.
 # Other options for this setting include:
 ##
-// $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
+ $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
 // $smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
-$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
+//$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
 // $smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
 ##
 
@@ -153,6 +185,7 @@ $smwgBrowseShowAll = true;
 # performance problems.
 ##
 $smwgSearchByPropertyFuzzy = true;
+##
 
 ###
 # Number results shown in the listings on pages in the namespaces Property,
@@ -295,6 +328,7 @@ $smwgResultFormats = array(
 	'debug'      => 'SMWListResultPrinter',
 	'rss'        => 'SMWRSSResultPrinter',
 	'csv'        => 'SMWCsvResultPrinter',
+	'dsv'        => 'SMWDSVResultPrinter',
 	'json'       => 'SMWJSONResultPrinter',
 	'rdf'        => 'SMWRDFResultPrinter'
 );
@@ -460,6 +494,7 @@ $smwgAutocompleteInSpecialAsk = true;
 
 ###
 # Sets whether or not to refresh the pages of which semantic data is stored.
+# Introduced in SMW 1.5.6
 ##
 $smwgAutoRefreshSubject = true;
 ##

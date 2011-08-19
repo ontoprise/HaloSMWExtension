@@ -22,6 +22,7 @@
  * @ingroup SpecialPage
  */
 class SMWAdmin extends SpecialPage {
+	
 	/**
 	 * Constructor
 	 */
@@ -31,7 +32,7 @@ class SMWAdmin extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgOut, $wgRequest, $wgServer, $wgArticlePath, $wgScript, $wgUser, $smwgAdminRefreshStore;
+		global $wgOut, $wgRequest, $wgServer, $wgArticlePath, $wgUser, $smwgAdminRefreshStore;
 
 		if ( !$this->userCanExecute( $wgUser ) ) {
 			// If the user is not authorized, show an error.

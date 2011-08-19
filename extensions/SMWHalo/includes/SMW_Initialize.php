@@ -19,6 +19,8 @@ define('SMW_SSP_HAS_MIN_CARD', 3);
 define('SMW_SSP_IS_INVERSE_OF', 4);
 define('SMW_SSP_IS_EQUAL_TO', 5);
 define('SMW_SSP_ONTOLOGY_URI', 6);
+define('SMW_SSP_HAS_DOMAIN', 7);
+define('SMW_SSP_HAS_RANGE', 8);
 
 // constants for special categories
 define('SMW_SC_TRANSITIVE_RELATIONS', 0);
@@ -170,10 +172,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
-	$wgAutoloadClasses['SMWChemicalFormulaTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemFormula.php';
-	$wgAutoloadClasses['SMWChemicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_ChemEquation.php';
-	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
-	$wgAutoloadClasses['SMWURIIntegrationValue'] = $smwgHaloIP . '/includes/storage/SMW_DV_IntegrationLink.php';
+	$wgAutoloadClasses['SMWURIIntegrationValue'] = $smwgHaloIP . '/includes/datavalues/SMW_DV_IntegrationLink.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
 	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
@@ -574,7 +573,6 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[SMW_NS_PROPERTY]="/extensions/SMWHalo/skins/property.gif";
 	$namespaceMappings[NS_MAIN]= "/extensions/SMWHalo/skins/instance.gif";
 	$namespaceMappings[NS_TEMPLATE]="/extensions/SMWHalo/skins/template.gif";
-	$namespaceMappings[SMW_NS_TYPE]= "/extensions/SMWHalo/skins/type.gif";
 	$namespaceMappings[NS_HELP]= "/extensions/SMWHalo/skins/help.gif";
 	$namespaceMappings[NS_IMAGE]= "/extensions/SMWHalo/skins/image.gif";
 	$namespaceMappings[NS_USER]= "/extensions/SMWHalo/skins/user.gif";
@@ -741,9 +739,9 @@ function smwf_ts_getWikiNamespaces() {
 	global $wgExtraNamespaces, $wgContLang;
 
 	$allNS = array(NS_CATEGORY, SMW_NS_PROPERTY,SF_NS_FORM, SMW_NS_CONCEPT, NS_MAIN ,
-	SMW_NS_TYPE,NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
+	NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,	SMW_NS_PROPERTY_TALK,
 	SF_NS_FORM_TALK,NS_TALK, NS_USER_TALK, NS_PROJECT_TALK, NS_FILE_TALK, NS_MEDIAWIKI_TALK,
-	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK, SMW_NS_TYPE_TALK);
+	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK);
 
 	$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), $allNS);
 	$allNS = array_merge($allNS, $extraNamespaces);
@@ -888,8 +886,11 @@ function smwfHaloFormInputTextarea($cur_value, $input_name, $is_mandatory, $is_d
  */
 function smwfHaloShowListPage(&$title, &$article){
 	global $smwgHaloIP;
+
 	if ( $title->getNamespace() == NS_CATEGORY ) {
+
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
+
 		$article = new SMWCategoryPage($title);
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
 		global $smwgPropertyPageFromTSC;
@@ -1960,48 +1961,51 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
  */
 function smwfAddDerivedFacts(& $text, $semdata) {
 	global $smwgHaloScriptPath, $wgContLang;
-
+	 
 	wfLoadExtensionMessages('SemanticMediaWiki');
 	SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
-	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getWikiValue(), 'rdflink');
+	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getTitle()->getDBkey(), 'rdflink');
 
-	$browselink = SMWInfolink::newBrowsingLink($semdata->getSubject()->getText(), $semdata->getSubject()->getWikiValue(), 'swmfactboxheadbrowse');
+	$browselink = SMWInfolink::newBrowsingLink($semdata->getSubject()->getTitle()->getText(), $semdata->getSubject()->getTitle()->getDBkey(), 'swmfactboxheadbrowse');
 	$fbText = '<div class="smwfact">' .
 						'<span class="smwfactboxhead">' . wfMsgForContent('smw_factbox_head', $browselink->getWikiText() ) . '</span>' .
 					'<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' .
 					'<table class="smwfacttable">' . "\n";
-	foreach($semdata->getProperties() as $property) {
-		if (!$property->isShown()) { // showing this is not desired, hide
+
+	foreach($semdata->getProperties() as $propertyDi) {
+		$propertyDv = SMWDataValueFactory::newDataItemValue( $propertyDi, null );
+		if ( !$propertyDi->isShown() ) { // showing this is not desired, hide
 			continue;
-		} elseif ($property->isUserDefined()) { // user defined property
-			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+		} elseif ( $propertyDi->isUserDefined() ) { // user defined property
+			$propertyDv->setCaption( preg_replace( '/[ ]/u', '&#160;', $propertyDv->getWikiValue(), 2 ) );
 			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
-			$fbText .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
-		} elseif ($property->isVisible()) { // predefined property
-			$fbText .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
+			$fbText .= '<tr><td class="smwpropname">' . $propertyDv->getLongWikiText( true ) . '</td><td class="smwprops">';
+		} elseif ( $propertyDv->isVisible() ) { // predefined property
+			$fbText .= '<tr><td class="smwspecname">' . $propertyDv->getLongWikiText( true ) . '</td><td class="smwspecs">';
 		} else { // predefined, internal property
 			continue;
 		}
 
-		$propvalues = $semdata->getPropertyValues($property);
-		$l = count($propvalues);
-		$i=0;
-		foreach ($propvalues as $propvalue) {
-			if ($i!=0) {
-				if ($i>$l-2) {
-					$fbText .= wfMsgForContent('smw_finallistconjunct') . ' ';
-				} else {
-					$fbText .= ', ';
-				}
+		$propvalues = $semdata->getPropertyValues( $propertyDi );
+
+		$valuesHtml = array();
+
+		foreach ( $propvalues as $dataItem ) {
+			$dataValue = SMWDataValueFactory::newDataItemValue( $dataItem, $propertyDi );
+
+			if ( $dataValue->isValid() ) {
+				$valuesHtml[] = $dataValue->getLongWikiText( true ) . $dataValue->getInfolinkText( SMW_OUTPUT_WIKI );
 			}
-			$i+=1;
-			$fbText .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
 		}
+
+		$fbText .= $GLOBALS['wgLang']->listToText( $valuesHtml );
+
 		$fbText .= '</td></tr>';
 	}
 	$fbText .= '</table></div>';
 
-
+	// $text = "Test";
+	 
 	$text =
 '<div id="smw_dft_rendered_boxcontent"> <br />'.
 	'<table>'.
@@ -2091,11 +2095,11 @@ function enableQueryResultsCache(){
  * Checks if the given property is predefined by SMWHalo
  * @param SMWPropertyValue $property
  */
-function smwfCheckIfPredefinedSMWHaloProperty(SMWPropertyValue $property) {
-	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getDBkey()
-	|| smwfGetSemanticStore()->minCard->getDBkey() == $property->getDBkey()
-	|| smwfGetSemanticStore()->maxCard->getDBkey() == $property->getDBkey()
-	|| smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getDBkey()) {
+function smwfCheckIfPredefinedSMWHaloProperty(SMWDIProperty $property) {
+	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getKey()
+	|| smwfGetSemanticStore()->minCard->getDBkey() == $property->getKey()
+	|| smwfGetSemanticStore()->maxCard->getDBkey() == $property->getKey()
+	|| smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getKey()) {
 		return true;
 	}
 	return false;

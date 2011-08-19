@@ -748,10 +748,10 @@ OBCategoryTreeActionListener.prototype = Object
 							if (OB_RIGHT_ARROW == 0) {
 								OB_relatt_pendingIndicator.show();
 								var onlyDirect = !$('directPropertySwitch').checked;
-								var dIndex = $('showForRange').checked ? '_2'
-										: '_1';
+								var domainOrRange = $('showForRange').checked ? 'range'
+										: 'domain';
 								dataAccess.getProperties(categoryName,
-										onlyDirect, dIndex,
+										onlyDirect, domainOrRange,
 										callbackOnCategorySelect2);
 							}
 
@@ -1259,10 +1259,10 @@ OBEditPropertyActionListener.prototype = {
 		
 		OB_relatt_pendingIndicator.show();
 		var onlyDirect = !$('directPropertySwitch').checked;
-		var dIndex = $('showForRange').checked ? '_2'
-				: '_1';
+		var domainOrRange = $('showForRange').checked ? 'range'
+				: 'domain';
 		dataAccess.getProperties(this.selectedCategory,
-				onlyDirect, dIndex,
+				onlyDirect, domainOrRange,
 				callbackOnCategorySelect2);
 	}
 	
@@ -1852,10 +1852,10 @@ OBSchemaPropertyActionListener.prototype = {
 		
 		OB_relatt_pendingIndicator.show();
 		var onlyDirect = !$('directPropertySwitch').checked;
-		var dIndex = $('showForRange').checked ? '_2'
-				: '_1';
+		var domainOrRange = $('showForRange').checked ? 'range'
+				: 'domain';
 		dataAccess.getProperties(this.selectedCategory,
-				onlyDirect, dIndex,
+				onlyDirect, domainOrRange,
 				callbackOnCategorySelect2);
 	}
 	

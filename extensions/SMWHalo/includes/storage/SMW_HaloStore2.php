@@ -72,18 +72,17 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 
 		// addOntologyURI mappings, if any
 		$ontologyURIMappingAdded = false;
-		foreach($data->getProperties() as $key => $property) {
+		foreach($data->getProperties() as $property) {
 				
 			// only if OntologyURI property
-			if ($ontologyURIProperty == $property->getDBkey()) {
+			if ($ontologyURIProperty == $property->getKey()) {
 
 				$propertyValueArray = $data->getPropertyValues($property);
 
 				if (count($propertyValueArray) == 0) continue;
 				// should be only one, otherwise out of spec)
 				$uriValue = reset($propertyValueArray);
-				$uriDBkeys = $uriValue->getDBkeys();
-				$tscURI = array_shift($uriDBkeys);
+				$tscURI = $uriValue->getURI();
 					
 				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs
 				// This is crucial for OBL functional terms!

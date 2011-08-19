@@ -112,11 +112,11 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$onlyAssertedCategories = $p_array[3] == 'true';
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
-		
-		
+
+
 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
 			
-		
+
 
 		$ts = TSNamespaces::getInstance();
 		$results = array();
@@ -151,18 +151,20 @@ class OB_Storage {
 		$propertyAnnotations = array();
 
 		$instance = Title::newFromText($p_array[0]);
+		$instanceDi = SMWDIWikiPage::newFromTitle($instance);
 
-		$properties = smwfGetStore()->getProperties($instance, $reqfilter, true);
+		$properties = smwfGetStore()->getProperties($instanceDi, $reqfilter, true);
 
 		$ts = TSNamespaces::getInstance();
 		$instanceListElement = new InstanceListElement($instance,  $ts->getFullURI($instance), NULL);
 			
 		foreach($properties as $property) {
-			if (!$property->isShown() || !$property->isVisible()) continue;
-			$values = smwfGetStore()->getPropertyValues($instance, $property, $reqfilter, '', true);
+			if (!$property->isShown() || !$property->isUserDefined()) continue;
+			$values = smwfGetStore()->getPropertyValues($instanceDi, $property, $reqfilter, '', true);
 			$values_tuple = array();
-			foreach($values as $v) {
-				$values_tuple[] = array($v, NULL);
+			foreach($values as $di) {
+				$dv = SMWDataValueFactory::newDataItemValue($di, null);
+				$values_tuple[] = array($dv, NULL);
 			}
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
 			$propertyAnnotations[] = new Annotation($propertyElement, $values_tuple);
@@ -178,14 +180,15 @@ class OB_Storage {
 		$reqfilter->sort = true;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
-		$dIndex = $p_array[2];
+		$domainOrRange = $p_array[2];
+		$domainOrRange = $domainOrRange == "domain" ? SMW_SSP_HAS_DOMAIN : SMW_SSP_HAS_RANGE;
 
-		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $domainOrRange, $reqfilter, $this->bundleID);
 
 		$propertySchemaElement = array();
 		foreach($properties as $p) {
 			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
-			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), NULL, $schemaData);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWDIProperty::newFromUserLabel($p[0]->getText()), NULL, $schemaData);
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
@@ -251,7 +254,7 @@ class OB_Storage {
 		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
-			$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter, true);
+			$attinstances = smwfGetStore()->getAllPropertySubjects(SMWDIProperty::newFromUserLabel($prop->getDBkey()),  $reqfilter, true);
 		} else {
 			$attinstances = array();
 		}
@@ -275,7 +278,7 @@ class OB_Storage {
 		$partitionNum = isset($p_array[3]) ? intval($p_array[3]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
-		$property = SMWPropertyValue::makeUserProperty($prop->getDBkey());
+		$property = SMWDIProperty::newFromUserLabel($prop->getDBkey());
 		$value = SMWDataValueFactory::newPropertyObjectValue($property, $p_array[1]);
 
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
@@ -306,7 +309,7 @@ class OB_Storage {
 		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
-			$property = SMWPropertyValue::makeUserProperty($prop->getDBkey());
+			$property = SMWDIProperty::newFromUserLabel($prop->getDBkey());
 			$attvalues = smwfGetStore()->getPropertyValues(NULL, $property ,  $reqfilter, '', true);
 
 		} else {
@@ -315,9 +318,10 @@ class OB_Storage {
 
 
 		$propertyAnnotations = array();
-		foreach($attvalues as $v) {
+		foreach($attvalues as $di) {
+			$dv = SMWDataValueFactory::newDataItemValue($di, null);
 			$attvalues_tuple = array();
-			$attvalues_tuple[] = array($v, NULL);
+			$attvalues_tuple[] = array($dv, NULL);
 			$propertyElement = new PropertySchemaElement($property, NULL, NULL);
 			$propertyAnnotations[] = new Annotation($propertyElement, $attvalues_tuple);
 		}
@@ -529,7 +533,7 @@ class OB_Storage {
 		$propertySchemaElement = array();
 		foreach($foundProperties as $p) {
 			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
-			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), NULL, $schemaData);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWDIProperty::newFromUserLabel($p[0]->getText()), NULL, $schemaData);
 		}
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
 	}
@@ -751,15 +755,17 @@ class OB_StorageTS extends OB_Storage {
 		$reqfilter->sort = true;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
-		$dIndex = $p_array[2];
+		$domainOrRange = $p_array[2];
+		$domainOrRange = $domainOrRange == "domain" ? SMW_SSP_HAS_DOMAIN : SMW_SSP_HAS_RANGE;
 
-		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter, $this->bundleID);
+
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $domainOrRange, $reqfilter, $this->bundleID);
 
 		$ts = TSNamespaces::getInstance();
 		$propertySchemaElement = array();
 		foreach($properties as $p) {
 			$schemaData = new SchemaData($p[0], $p[1], $p[2], $p[3], $p[4], $p[5], $p[6], $p[7] == true);
-			$propertySchemaElement[] = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($p[0]->getText()), $ts->getFullURI($p[0]), $schemaData);
+			$propertySchemaElement[] = new PropertySchemaElement(SMWDIProperty::newFromUserLabel($p[0]->getText()), $ts->getFullURI($p[0]), $schemaData);
 		}
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($propertySchemaElement);
@@ -849,7 +855,7 @@ class OB_StorageTS extends OB_Storage {
 
 			$categories = array();
 			$assertedCategories = smwfGetSemanticStore()->getCategoriesForInstance($title);
-				
+
 			if (count($children->binding) > 1) {
 				// category binding node exists
 				$b = $children->binding[1]; // categories
@@ -883,8 +889,8 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	private function containsTitle($titleSet, $title) {
-        if (! is_object($title)) return false;
-        foreach($titleSet as $t) {
+		if (! is_object($title)) return false;
+		foreach($titleSet as $t) {
 			if ($title->equals($t)) return true;
 		}
 		return false;
@@ -896,29 +902,15 @@ class OB_StorageTS extends OB_Storage {
 		if (!empty($literalValue)) {
 
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
-			if ($predicate instanceof SMWPropertyValue ) {
-				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $literalValue);
+			if ($predicate instanceof SMWDIProperty ) {
+				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $literalValue)->getDataItem();
+				
 			} else {
-				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
+				$value = SMWDataValueFactory::newTypeIdValue(WikiTypeToXSD::getWikiType($literalType), $literalValue)->getDataItem();
 			}
-			if ($value->getTypeID() == '_dat') { // exception for dateTime
-				if ($literalValue != '') $value->setDBkeys(array(str_replace("-","/", $literalValue)));
-			} else if ($value->getTypeID() == '_ema') { // exception for email
-				$value->setDBkeys(array($literalValue));
-			} else if ($value->getTypeID() == '__tls') { // exception for email
-				$value->setDBkeys(array($literalValue));
-			} else {
-				$value->setUserValue($literalValue);
-			}
+				
 		} else {
-
-			if ($predicate instanceof SMWPropertyValue ) {
-				$value = SMWDataValueFactory::newPropertyObjectValue($predicate);
-			} else {
-				$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-
-			}
-
+			$value = SMWDataValueFactory::newTypeIdValue("_str", "")->getDataItem();
 		}
 		return $value;
 	}
@@ -971,11 +963,12 @@ class OB_StorageTS extends OB_Storage {
 
 		$instanceTitle = TSHelper::getTitleFromURI($instanceURI);
 		if ($instanceTitle instanceof Title) {
-			$semData = smwfGetStore()->getSemanticData($instanceTitle);
+			$semData = smwfGetStore()->getSemanticData(SMWDIWikiPage::newFromTitle($instanceTitle));
 
 		} else {
 			$assertedValues = array();
 		}
+		
 		foreach ($results as $r) {
 
 			$children = $r->children(); // binding nodes
@@ -985,7 +978,7 @@ class OB_StorageTS extends OB_Storage {
 			if (TSNamespaces::$RDF_NS."type" === (string) $sv) continue; // ignore rdf:type annotations
 			$title = TSHelper::getTitleFromURI((string) $sv);
 			if (is_null($title)) continue;
-			$predicate = SMWPropertyValue::makeUserProperty($title->getText());
+			$predicate = SMWDIProperty::newFromUserLabel($title->getText());
 			$predicateURI=(string) $sv;
 
 			$categories = array();
@@ -994,10 +987,10 @@ class OB_StorageTS extends OB_Storage {
 			foreach($b->children()->uri as $sv) {
 				$object = TSHelper::getTitleFromURI((string) $sv);
 				if (TSHelper::isLocalURI((string) $sv) || TSHelper::isFunctionalOBLTerm((string) $sv)) {
-					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+					$value = SMWDIWikiPage::newFromTitle($object);
 					$uri = (string) $sv;
 				} else {
-					$value = SMWDataValueFactory::newTypeIDValue('_uri', (string) $sv);
+					$value = SMWDIUri::doUnserialize((string) $sv);
 					$uri = (string) $sv;
 				}
 				// add metadata
@@ -1021,15 +1014,17 @@ class OB_StorageTS extends OB_Storage {
 				$values[] = array($value, NULL);
 			}
 
-			//echo print_r($assertedValues, true);die();
+			
 			$assertedValues = $semData->getPropertyValues($predicate);
 			$derivedValuesResult=array();
 			$assertedValuesResult=array();
-			SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $predicate, $derivedValuesResult, $assertedValuesResult);
+			SMWFullSemanticData::getDataValueDiff($values, $assertedValues, $derivedValuesResult, $assertedValuesResult);
 
 			if ($onlyDirect) {
 				$derivedValuesResult=array();
 			}
+				
+
 			$annotations[] = new Annotation(new PropertySchemaElement($predicate, $predicateURI), $assertedValuesResult, $derivedValuesResult);
 		}
 
@@ -1788,7 +1783,7 @@ class SchemaData {
 class PropertySchemaElement {
 
 	/*
-	 * SMWPropertyValue
+	 * SMWDIProperty
 	 * property
 	 */
 	private $property;
@@ -1813,7 +1808,7 @@ class PropertySchemaElement {
 	public function __construct($property, $uri, $schemadata = NULL) {
 		$this->property = $property;
 		$this->uri = $uri;
-		$this->url = $property->getWikiPageValue()->getTitle()->getFullURL();
+		$this->url = $property->getDiWikiPage()->getTitle()->getFullURL();
 		$this->schemadata = $schemadata;
 	}
 
@@ -1824,7 +1819,7 @@ class PropertySchemaElement {
 	}
 
 	public function getPropertyTitle() {
-		return $this->property->getWikiPageValue()->getTitle();
+		return $this->property->getDiWikiPage()->getTitle();
 	}
 
 	public function getURI() {

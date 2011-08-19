@@ -271,10 +271,11 @@ class SMWQueryParser {
 			if ( $chunk == '+' ) {
 				// wildcard, ignore for categories (semantically meaningless, everything is in some class)
 			} else { // assume category/concept title
-				/// NOTE: use m_c...prefix to prevent problems with, e.g., [[Category:Template:Test]]
-				$class = Title::newFromText( ( $category ? $this->m_categoryprefix : $this->m_conceptprefix ) . $chunk );
-				if ( $class !== null ) {
-					$desc = $category ? new SMWClassDescription( $class ) : new SMWConceptDescription( $class );
+				/// NOTE: we add m_c...prefix to prevent problems with, e.g., [[Category:Template:Test]]
+				$title = Title::newFromText( ( $category ? $this->m_categoryprefix : $this->m_conceptprefix ) . $chunk );
+				if ( $title !== null ) {
+					$diWikiPage = new SMWDIWikiPage( $title->getDBkey(), $title->getNameSpace(), '' );
+					$desc = $category ? new SMWClassDescription( $diWikiPage ) : new SMWConceptDescription( $diWikiPage );
 					$result = $this->addDescription( $result, $desc, false );
 				}
 			}
@@ -315,7 +316,7 @@ class SMWQueryParser {
 				return null; ///TODO: read some more chunks and try to finish [[ ]]
 			}
 
-			$typeid = $property->getPropertyTypeID();
+			$typeid = $property->getDataItem()->findPropertyTypeID();
 			$inverse = $property->isInverse();
 			$prevname = $name;
 			$properties[] = $property;
@@ -377,7 +378,7 @@ class SMWQueryParser {
 						}
 					} ///NOTE: at this point, we normally already read one more chunk behind the value
 
-					$dv = SMWDataValueFactory::newPropertyObjectValue( $property );
+					$dv = SMWDataValueFactory::newPropertyObjectValue( $property->getDataItem() );
 					$vd = $dv->getQueryDescription( $value );
 					$innerdesc = $this->addDescription( $innerdesc, $vd, false );
 					$this->m_errors = $this->m_errors + $dv->getErrors();
@@ -395,7 +396,7 @@ class SMWQueryParser {
 		$properties = array_reverse( $properties );
 
 		foreach ( $properties as $property ) {
-			$innerdesc = new SMWSomeProperty( $property, $innerdesc );
+			$innerdesc = new SMWSomeProperty( $property->getDataItem(), $innerdesc );
 		}
 
 		$result = $innerdesc;
@@ -431,16 +432,16 @@ class SMWQueryParser {
 			}
 			if ( ( count( $list ) == 2 ) && ( $list[1] == '+' ) ) { // try namespace restriction
 				global $wgContLang;
-				$idx = $wgContLang->getNsIndex( $list[0] );
+				
+				$idx = $wgContLang->getNsIndex( str_replace( ' ', '_', $list[0] ) );
 
 				if ( $idx !== false ) {
 					$result = $this->addDescription( $result, new SMWNamespaceDescription( $idx ), false );
 				}
 			} else {
 				$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $chunk );
-
 				if ( $value->isValid() ) {
-					$result = $this->addDescription( $result, new SMWValueDescription( $value ), false );
+					$result = $this->addDescription( $result, new SMWValueDescription( $value->getDataItem(), null ), false );
 				}
 			}
 

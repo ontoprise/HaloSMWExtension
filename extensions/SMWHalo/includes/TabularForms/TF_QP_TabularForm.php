@@ -55,7 +55,7 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	/*
 	 * Returns the HTML output of this query printer
 	 */
-	protected function getResultText( $queryResult, $outputMode ) {
+	protected function getResultText(SMWQueryResult $queryResult, $outputMode ) {
 		$this->isHTML = true;
 
 		//echo('<pre>'.print_r($queryResult, true).'</pre>');

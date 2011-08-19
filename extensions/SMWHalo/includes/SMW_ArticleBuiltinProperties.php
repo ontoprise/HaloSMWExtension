@@ -86,35 +86,40 @@ class SMWArticleBuiltinProperties  {
 		}
 
 		$thisRevId = $rev->getId();
-		$pcreator = SMWPropertyValue::makeProperty('___CREA');
-		$pcreationDate = SMWPropertyValue::makeProperty('___CREADT');
-		$dvCreator = null;
-		$dvCreationDate = null;
+		$pcreator = SMWDIProperty::newFromUserLabel('___CREA');
+		$pcreationDate = SMWDIProperty::newFromUserLabel('___CREADT');
+		$diCreator = null;
+		$diCreationDate = null;
 		if ($title->getPreviousRevisionID($thisRevId) === false) {
 			// Article is about to be created
 			// => add creator and creation date
-			$dvCreator = SMWDataValueFactory::newPropertyObjectValue($pcreator, $user->getUserPage()->getFullText());
-			$dvCreationDate = SMWDataValueFactory::newPropertyObjectValue($pcreationDate, $wgContLang->sprintfDate('d M Y G:i:s',$article->getTimestamp()));
+			$userTitle = Title::newFromText($user->getUserPage()->getFullText());
+			$diCreator = new SMWDIWikiPage($userTitle->getDBkey(), $userTitle->getNamespace(),"");
+			$date = getdate(wfTimestamp(TS_UNIX,$article->getTimestamp()));
+			$diCreationDate = new SMWDITime(SMWDITime::CM_GREGORIAN, $date['year'],$date['mon'],$date['mday'],$date['hours'],$date['minutes'],$date['seconds']);
 		} else {
 			// Article already exists but creation properties do not change
 			// => get them from the first revision of the article
 			$firstRev = $article->getTitle()->getFirstRevision();
 			$cuser = User::newFromId($firstRev->getUser(Revision::RAW));
-			$dvCreator = SMWDataValueFactory::newPropertyObjectValue($pcreator, $cuser->getUserPage()->getFullText());
-			$dvCreationDate = SMWDataValueFactory::newPropertyObjectValue($pcreationDate, $wgContLang->sprintfDate('d M Y G:i:s',$firstRev->getTimestamp()));
+			$userTitle = Title::newFromText($cuser->getUserPage()->getFullText());
+            $diCreator = new SMWDIWikiPage($userTitle->getDBkey(), $userTitle->getNamespace(),"");
+			$date = getdate(wfTimestamp(TS_UNIX,$firstRev->getTimestamp()));
+            $diCreationDate = new SMWDITime(SMWDITime::CM_GREGORIAN, $date['year'],$date['mon'],$date['mday'],$date['hours'],$date['minutes'],$date['seconds']);
 		}
-		if ($dvCreator) {
-			$semdata->addPropertyObjectValue($pcreator, $dvCreator);
+		if ($diCreator) {
+			$semdata->addPropertyObjectValue($pcreator, $diCreator);
 		}
 
-		if ($dvCreationDate) {
-			$semdata->addPropertyObjectValue($pcreationDate, $dvCreationDate);
+		if ($diCreationDate) {
+			$semdata->addPropertyObjectValue($pcreationDate, $diCreationDate);
 		}
 
 		// store who modified the article
-		$pmod = SMWPropertyValue::makeProperty('___MOD');
-		$dv = SMWDataValueFactory::newPropertyObjectValue($pmod,  $user->getUserPage()->getFullText());
-		$semdata->addPropertyObjectValue($pmod,$dv);
+		$pmod = SMWDIProperty::newFromUserLabel('___MOD');
+		$userTitle = Title::newFromText($user->getUserPage()->getFullText());
+		$di = new SMWDIWikiPage($userTitle->getDBkey(), $userTitle->getNamespace(), "");
+		$semdata->addPropertyObjectValue($pmod,$di);
 
 		return true;
 	}

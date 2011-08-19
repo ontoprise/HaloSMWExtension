@@ -465,6 +465,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 	var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Heeft domein en waardenbereik',
+	SMW_SSP_HAS_DOMAIN => 'Has domain',
+    SMW_SSP_HAS_RANGE => 'Has range',
 	SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
 	SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
 	SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
@@ -499,8 +501,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 		SMW_NS_RELATION_TALK  => 'Relatie_talk',
 		SMW_NS_PROPERTY       => 'Eigenschap',
 		SMW_NS_PROPERTY_TALK  => 'Eigenschap_talk',
-		SMW_NS_TYPE           => 'Type',
-		SMW_NS_TYPE_TALK      => 'Type_talk'
+		SMW_NS_TYPE           => 'Type', // @deprecated
+		SMW_NS_TYPE_TALK      => 'Type_talk' // @deprecated
 		);
 	}
 

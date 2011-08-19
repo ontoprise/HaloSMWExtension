@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloSemanticStorage
- * 
+ *
  * @author: Kai
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -17,28 +17,27 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
-		
+
 		global $dfgLang;
-        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
-        $bundleID = ucfirst($bundleID);
-        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_rels2 = $db->tableName('smw_rels2');
-        
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
-		
+
 		$bundleSql = empty($bundleID) ? '' : ' AND page_id IN (SELECT pc.page_id FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
-        
-		 
+
+			
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
 		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.') UNION '.
+        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND  EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.') UNION '.
         '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
         ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.')'.$sqlOptions);
-        
-		
-   
+
+
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
@@ -46,8 +45,8 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 				}
 			}
 		}
-		
-		
+
+
 		$db->freeResult($res);
 		return $result;
 	}
@@ -59,21 +58,21 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
-		
+
 		global $dfgLang;
-        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
-        //$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-        $bundleID = ucfirst($bundleID);
-        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_rels2 = $db->tableName('smw_rels2');
-        
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$bundleID = ucfirst($bundleID);
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
-		
+
 		$bundleSql = empty($bundleID) ? '' : ' AND smw_id IN (SELECT smw_id FROM '.$smw_ids.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
-		
+
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
 
 		$res = $db->query('(SELECT s.smw_title AS subject_title, "true" AS has_subproperties FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
@@ -90,7 +89,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 			}
 		}
-		
+
 		$db->freeResult($res);
 		//usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
 		return $result;
@@ -121,8 +120,8 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		return $result;
 	}
 
-	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $dIndex = '_1') {
-        
+	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $subProperty = SMW_SSP_HAS_DOMAIN) {
+
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_ids = $db->tableName('smw_ids');
@@ -143,6 +142,12 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
+
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$subPropertyID = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => str_replace(" ", "_", $ssp[$subProperty])) );
+		$subPropertyID = $subPropertyID->smw_id;
+
 		$category = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => $categoryTitle->getDBkey(), 'smw_namespace' => $categoryTitle->getNamespace() ) );
 		if ($category == NULL) {
 			$categoryID = -1; // does never exist
@@ -150,7 +155,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$categoryID = $category->smw_id;
 		}
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, \'no\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "'.$dIndex.'" AND r.smw_id = '.$categoryID.')');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND m.p_id = "'.$subPropertyID.'" AND r.smw_id = '.$categoryID.')');
 
 
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryID).')');
@@ -171,7 +176,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 				// insert direct properties of current supercategory level
 				$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property,  \'yes\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "'.$dIndex.'" AND r.smw_id IN (SELECT * FROM smw_ob_properties_super))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND m.p_id = "'.$subPropertyID.'" AND r.smw_id IN (SELECT * FROM smw_ob_properties_super))');
 
 
 				// copy supercatgegories to subcategories of next iteration
@@ -214,10 +219,14 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_rels2 = $db->tableName('smw_rels2');
 
 		// set SMW IDs
-		$domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->domainRangeHintRelation->getDBkey()));
-		$minCardID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->minCard->getDBkey()));
-		$maxCardID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($this->maxCard->getDBkey()));
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+		$domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->domainRangeHintRelation->getDBkey()));
+		$minCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->minCard->getDBkey()));
+		$maxCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->maxCard->getDBkey()));
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_TYPE"));
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$rangePropertyID = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => str_replace(" ", "_", $ssp[SMW_SSP_HAS_RANGE])) );
+		$rangePropertyID = $rangePropertyID->smw_id;
 
 		$resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_atts2.' ON smw_id = s_id AND p_id ='.$minCardID.
                              ' GROUP BY property ORDER BY property');
@@ -230,7 +239,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$resTransCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN '.$smw_rels2.' n ON id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id
-                     WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "_2" GROUP BY property ORDER BY property');
+                     WHERE n.p_id = '.$domainAndRangeID.' AND m.p_id = "'.$rangePropertyID.'" GROUP BY property ORDER BY property');
 			
 		// rewrite result as array
 		$result = array();
@@ -249,7 +258,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		if($db->numRows( $resMaxCard ) > 0) {
 			while($row = $db->fetchObject($resMaxCard)) {
 				$property = $row->property;
-    			$maxCardArray[$property] = $row->maxCard;
+				$maxCardArray[$property] = $row->maxCard;
 			}
 		}
 		if($db->numRows( $resTypes ) > 0) {
@@ -325,7 +334,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		return $num;
 	}
 
-	protected function getNarySubjects(Title $object, $pos) {
+	protected function getNarySubjects(Title $object, SMWDIProperty $property) {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
@@ -336,11 +345,13 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
 		$results = array();
-        
-		$pos = "_".($pos+1); // FIX: SMW update 1.5
-		$res = $db->query('SELECT q.smw_title AS subject_title, q.smw_namespace AS subject_namespace FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "'.mysql_real_escape_string($pos).'" AND r.smw_title = '.$db->addQuotes($object->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY);
 
+
+		$res = $db->query('SELECT q.smw_title AS subject_title, q.smw_namespace AS subject_namespace FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_title = "'.$property->getKey().'" AND r.smw_title = '.$db->addQuotes($object->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY);
+
+		//echo print_r('SELECT q.smw_title AS subject_title, q.smw_namespace AS subject_namespace FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+		//                    ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_title = "'.$property->getKey().'" AND r.smw_title = '.$db->addQuotes($object->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY, true);
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -377,7 +388,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_spec2 = $db->tableName('smw_spec2');
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_TYPE"));
 
 		$res = $db->query(  'SELECT DISTINCT a.value_unit FROM '.$smw_atts2.' a JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.p_id = '.$hasTypePropertyID.' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()));
 
@@ -401,7 +412,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_spec2 = $db->tableName('smw_spec2');
 
 		$result = array();
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_TYPE"));
 		$res = $db->query('SELECT DISTINCT i.smw_title AS subject_title, i.smw_namespace AS subject_namespace, i2.smw_title AS attribute_title FROM '.$smw_ids.' i JOIN '.$smw_atts2.' a ON i.smw_id = a.s_id JOIN '.$smw_spec2.' s ON a.p_id = s.s_id AND s.p_id = '.$hasTypePropertyID.' JOIN '.$smw_ids.' i2 ON i2.smw_id = a.p_id '.
                             ' WHERE s.value_string = '.$db->addQuotes($type->getDBkey()).' AND a.value_unit = '.$db->addQuotes($unit));
 

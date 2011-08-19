@@ -32,7 +32,6 @@ class SMWTestStore extends SMWStore {
 		} elseif ( $specialprop === SMW_SP_REDIRECTS_TO ) {
 			return array(); // TODO: any better idea?
 		} elseif ( $specialprop === SMW_SP_HAS_TYPE ) {
-			global $smwgContLang;
 			$name = mb_strtoupper( $subject->getText() );
 			if ( mb_substr_count( $name, 'INT' ) > 0 ) {
 				return array( SMWDataValueFactory::newTypeIDValue( '__typ', 'Integer' ) );
@@ -67,7 +66,7 @@ class SMWTestStore extends SMWStore {
 		}
 	}
 
-	function getPropertyValues( $subject, SMWPropertyValue $property, $requestoptions = null, $outputformat = '' ) {
+	function getPropertyValues( $subject, SMWDIProperty $property, $requestoptions = null, $outputformat = '' ) {
 		$type = $this->getSpecialValues( $property, SMW_SP_HAS_TYPE );
 		$type = $type[0];
 		$valarray = array();
@@ -98,14 +97,14 @@ class SMWTestStore extends SMWStore {
 		return $result;
 	}
 
-	function getPropertySubjects( SMWPropertyValue $property, $value, $requestoptions = null ) {
+	function getPropertySubjects( SMWDIProperty $property, $value, $requestoptions = null ) {
 		if ( !$value->isValid() ) {
 			return array();
 		}
 		return $this->getTestTitles( $requestoptions );
 	}
 
-	function getAllPropertySubjects( SMWPropertyValue $property, $requestoptions = null ) {
+	function getAllPropertySubjects( SMWDIProperty $property, $requestoptions = null ) {
 		return $this->getTestTitles( $requestoptions );
 	}
 

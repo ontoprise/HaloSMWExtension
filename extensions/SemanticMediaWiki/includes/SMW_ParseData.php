@@ -53,7 +53,7 @@ class SMWParseData {
 	 * This function retrieves the SMW data from a given parser, and creates
 	 * a new empty container if it is not initiated yet.
 	 *
-	 * @retun SMWSemanticData
+	 * @return SMWSemanticData
 	 */
 	static public function getSMWdata( $parser ) {
 		$output = self::getOutput( $parser );
@@ -66,7 +66,7 @@ class SMWParseData {
 
 		// No data container yet.
 		if ( !isset( $output->mSMWData ) ) {
-			$output->mSMWData = new SMWSemanticData( SMWWikiPageValue::makePageFromTitle( $title ) );
+			$output->mSMWData = new SMWSemanticData( new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), $title->getInterwiki() ) );
 		}
 
 		return $output->mSMWData;
@@ -85,7 +85,7 @@ class SMWParseData {
 			return;
 		}
 
-		$output->mSMWData = new SMWSemanticData( SMWWikiPageValue::makePageFromTitle( $title ) );
+		$output->mSMWData = new SMWSemanticData( new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), $title->getInterwiki() ) );
 	}
 
 	/**
@@ -105,21 +105,19 @@ class SMWParseData {
 	static public function addProperty( $propertyName, $value, $caption, Parser $parser, $storeAnnotation = true ) {
 		wfProfileIn( 'SMWParseData::addProperty (SMW)' );
 
-		global $smwgContLang;
-
 		// See if this property is a special one, such as e.g. "has type".
-		$property = SMWPropertyValue::makeUserProperty( $propertyName );
-		$result = SMWDataValueFactory::newPropertyObjectValue( $property, $value, $caption );
+		$propertyDv = SMWPropertyValue::makeUserProperty( $propertyName );
+		$propertyDi = $propertyDv->getDataItem();
+		$result = SMWDataValueFactory::newPropertyObjectValue( $propertyDi, $value, $caption );
 
-		if ( $property->isInverse() ) {
+		if ( $propertyDi->isInverse() ) {
 			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$result->addError( wfMsgForContent( 'smw_noinvannot' ) );
 		} elseif ( $storeAnnotation && ( self::getSMWData( $parser ) !== null ) ) {
-			self::getSMWData( $parser )->addPropertyObjectValue( $property, $result );
-
+			self::getSMWData( $parser )->addPropertyObjectValue( $propertyDi, $result->getDataItem() );
 			// Take note of the error for storage (do this here and not in storage, thus avoiding duplicates).
 			if ( !$result->isValid() ) {
-				self::getSMWData( $parser )->addPropertyObjectValue( SMWPropertyValue::makeProperty( '_ERRP' ), $property->getWikiPageValue() );
+				self::getSMWData( $parser )->addPropertyObjectValue( new SMWDIProperty( '_ERRP' ), $propertyDi->getDiWikiPage() );
 			}
 		}
 
@@ -149,23 +147,25 @@ class SMWParseData {
 	 * @todo FIXME: Some job generations here might create too many jobs at once on a large wiki. Use incremental jobs instead.
 	 */
 	static public function storeData( $parseroutput, Title $title, $makejobs = true ) {
-		global $smwgEnableUpdateJobs, $wgContLang, $smwgMW_1_14, $smwgDeclarationProperties;
+		global $smwgEnableUpdateJobs, $smwgDeclarationProperties;
 
 		$semdata = $parseroutput->mSMWData;
 		$namespace = $title->getNamespace();
 		$processSemantics = smwfIsSemanticsProcessed( $namespace );
 
 		if ( !isset( $semdata ) ) { // no data at all?
-			$semdata = new SMWSemanticData( SMWWikiPageValue::makePageFromTitle( $title ) );
+			$semdata = new SMWSemanticData( SMWDIWikiPage::newFromTitle( $title ) );
 		}
 
 		if ( $processSemantics ) {
-			$pmdat = SMWPropertyValue::makeProperty( '_MDAT' );
+			$pmdat = new SMWDIProperty( '_MDAT' );
 
 			if ( count( $semdata->getPropertyValues( $pmdat ) ) == 0  ) { // no article data present yet, add it here
-				$timestamp =  $smwgMW_1_14 ? Revision::getTimeStampFromID( $title, $title->getLatestRevID() ) : Revision::getTimeStampFromID( $title->getLatestRevID() );
-				$dv = SMWDataValueFactory::newPropertyObjectValue( $pmdat,  $wgContLang->sprintfDate( 'd M Y G:i:s', $timestamp ) );
-				$semdata->addPropertyObjectValue( $pmdat, $dv );
+				$timestamp =  Revision::getTimeStampFromID( $title, $title->getLatestRevID() );
+				$di = self::getDataItemFromMWTimestamp( $timestamp );
+				if ( $di !== null ) {
+					$semdata->addPropertyObjectValue( $pmdat, $di );
+				}
 			}
 		} else { // data found, but do all operations as if it was empty
 			$semdata = new SMWSemanticData( $semdata->getSubject() );
@@ -180,15 +180,15 @@ class SMWParseData {
 
 		if ( $makejobs && $smwgEnableUpdateJobs && ( $namespace == SMW_NS_PROPERTY ) ) {
 			// If it is a property, then we need to check if the type or the allowed values have been changed.
-			$ptype = SMWPropertyValue::makeProperty( '_TYPE' );
-			$oldtype = smwfGetStore()->getPropertyValues( $title, $ptype );
+			$ptype = new SMWDIProperty( '_TYPE' );
+			$oldtype = smwfGetStore()->getPropertyValues( $semdata->getSubject(), $ptype );
 			$newtype = $semdata->getPropertyValues( $ptype );
 
 			if ( !self::equalDatavalues( $oldtype, $newtype ) ) {
 				$updatejobflag = true;
 			} else {
 				foreach ( $smwgDeclarationProperties as $prop ) {
-					$pv = SMWPropertyValue::makeProperty( $prop );
+					$pv = new SMWDIProperty( $prop );
 					$oldvalues = smwfGetStore()->getPropertyValues( $semdata->getSubject(), $pv );
 					$newvalues = $semdata->getPropertyValues( $pv );
 					$updatejobflag = !self::equalDatavalues( $oldvalues, $newvalues );
@@ -196,24 +196,30 @@ class SMWParseData {
 			}
 
 			if ( $updatejobflag ) {
-				$prop = SMWPropertyValue::makeProperty( $title->getDBkey() );
+				$prop = new SMWDIProperty( $title->getDBkey() );
 				$subjects = smwfGetStore()->getAllPropertySubjects( $prop );
 
 				foreach ( $subjects as $subject ) {
-					$jobs[] = new SMWUpdateJob( $subject->getTitle() );
+					$subjectTitle = $subject->getTitle();
+					if ( $subjectTitle !== null ) {
+						$jobs[] = new SMWUpdateJob( $subjectTitle );
+					}
 				}
 				wfRunHooks( 'smwUpdatePropertySubjects', array( &$jobs ) );
 
-				$subjects = smwfGetStore()->getPropertySubjects( SMWPropertyValue::makeProperty( '_ERRP' ), $prop->getWikiPageValue() );
+				$subjects = smwfGetStore()->getPropertySubjects( new SMWDIProperty( '_ERRP' ), $semdata->getSubject() );
 
 				foreach ( $subjects as $subject ) {
-					$jobs[] = new SMWUpdateJob( $subject->getTitle() );
+					$subjectTitle = $subject->getTitle();
+					if ( $subjectTitle !== null ) {
+						$jobs[] = new SMWUpdateJob( $subjectTitle );
+					}
 				}
 			}
 		} elseif ( $makejobs && $smwgEnableUpdateJobs && ( $namespace == SMW_NS_TYPE ) ) {
 			// if it is a type we need to check if the conversion factors have been changed
-			$pconv = SMWPropertyValue::makeProperty( '_CONV' );
-			$ptype = SMWPropertyValue::makeProperty( '_TYPE' );
+			$pconv = new SMWDIProperty( '_CONV' );
+			$ptype = new SMWDIProperty( '_TYPE' );
 
 			$oldfactors = smwfGetStore()->getPropertyValues( $semdata->getSubject(), $pconv );
 			$newfactors = $semdata->getPropertyValues( $pconv );
@@ -227,21 +233,30 @@ class SMWParseData {
 				$proppages = $store->getPropertySubjects( $ptype, $dv );
 
 				foreach ( $proppages as $proppage ) {
-					$jobs[] = new SMWUpdateJob( $proppage->getTitle() );
-					$prop = SMWPropertyValue::makeProperty( $proppage->getDBkey() );
+					$propertyTitle = $proppage->getTitle();
+					if ( $propertyTitle !== null ) {
+						$jobs[] = new SMWUpdateJob( $propertyTitle );
+					}
+					$prop = new SMWDIProperty( $proppage->getDBkey() );
 					$subjects = $store->getAllPropertySubjects( $prop );
 
 					foreach ( $subjects as $subject ) {
-						$jobs[] = new SMWUpdateJob( $subject->getTitle() );
+						$subjectTitle = $subject->getTitle();
+						if ( $subjectTitle !== null ) {
+							$jobs[] = new SMWUpdateJob( $subjectTitle );
+						}
 					}
 
 					$subjects = smwfGetStore()->getPropertySubjects(
-						SMWPropertyValue::makeProperty( '_ERRP' ),
+						new SMWDIProperty( '_ERRP' ),
 						$prop->getWikiPageValue()
 					);
 
 					foreach ( $subjects as $subject ) {
-						$jobs[] = new SMWUpdateJob( $subject->getTitle() );
+						$subjectTitle = $subject->getTitle();
+						if ( $subjectTitle !== null ) {
+							$jobs[] = new SMWUpdateJob( $subject->getTitle() );
+						}
 					}
 				}
 			}
@@ -251,7 +266,7 @@ class SMWParseData {
 		if ( $processSemantics ) {
 			smwfGetStore()->updateData( $semdata );
  		} else {
-			smwfGetStore()->clearData( $semdata->getSubject()->getTitle() );
+			smwfGetStore()->clearData( $semdata->getSubject() );
 		}
 
 		// Finally trigger relevant Updatejobs if necessary
@@ -307,8 +322,9 @@ class SMWParseData {
 	}
 
 	/**
-	 * Hook function fetches category information and other final settings from parser output,
-	 * so that they are also replicated in SMW for more efficient querying.
+	 * Hook function fetches category information and other final settings
+	 * from parser output, so that they are also replicated in SMW for more
+	 * efficient querying.
 	 */
 	static public function onParserAfterTidy( &$parser, &$text ) {
 		global $smwgUseCategoryHierarchy, $smwgCategoriesAsInstances;
@@ -318,25 +334,30 @@ class SMWParseData {
 		}
 
 		$categories = $parser->mOutput->getCategoryLinks();
-
-		foreach ( $categories as $name ) {
+		foreach ( $categories as $catname ) {
 			if ( $smwgCategoriesAsInstances && ( self::getSMWData( $parser )->getSubject()->getNamespace() != NS_CATEGORY ) ) {
-				$pinst = SMWPropertyValue::makeProperty( '_INST' );
-				$dv = SMWDataValueFactory::newPropertyObjectValue( $pinst );
-				$dv->setValues( $name, NS_CATEGORY );
-				self::getSMWData( $parser )->addPropertyObjectValue( $pinst, $dv );
+				$pinst = new SMWDIProperty( '_INST' );
+				$categoryDi = new SMWDIWikiPage( $catname, NS_CATEGORY, '' );
+				self::getSMWData( $parser )->addPropertyObjectValue( $pinst, $categoryDi );
 			}
 
 			if ( $smwgUseCategoryHierarchy && ( self::getSMWData( $parser )->getSubject()->getNamespace() == NS_CATEGORY ) ) {
-				$psubc = SMWPropertyValue::makeProperty( '_SUBC' );
-				$dv = SMWDataValueFactory::newPropertyObjectValue( $psubc );
-				$dv->setValues( $name, NS_CATEGORY );
-				self::getSMWData( $parser )->addPropertyObjectValue( $psubc, $dv );
+				$psubc = new SMWDIProperty( '_SUBC' );
+				$categoryDi = new SMWDIWikiPage( $catname, NS_CATEGORY, '' );
+				self::getSMWData( $parser )->addPropertyObjectValue( $psubc, $categoryDi );
 			}
 		}
 
-		$sortkey = ( $parser->mDefaultSort ? $parser->mDefaultSort : self::getSMWData( $parser )->getSubject()->getText() );
-		self::getSMWData( $parser )->getSubject()->setSortkey( $sortkey );
+		$sortkey = $parser->mDefaultSort ? $parser->mDefaultSort : 
+		            str_replace( '_', ' ', self::getSMWData( $parser )->getSubject()->getDBkey() );
+		$pskey = new SMWDIProperty( '_SKEY' );
+		try {
+			$sortkeyDi = new SMWDIString( $sortkey );
+		} catch (SMWStringLengthException $e) { // cut it down to a reasonable length; no further bytes should be needed for sorting
+			$sortkey = substr( $sortkey, 0, $e->getMaxLength() );
+			$sortkeyDi = new SMWDIString( $sortkey );
+		} 
+		self::getSMWData( $parser )->addPropertyObjectValue( $pskey, $sortkeyDi );
 
 		return true;
 	}
@@ -353,8 +374,6 @@ class SMWParseData {
 	 * LinksUpdate.
 	 */
 	static public function onNewRevisionFromEditComplete( $article, $rev, $baseID ) {
-		global $wgContLang, $smwgContLang;
-
 		if ( ( $article->mPreparedEdit ) && ( $article->mPreparedEdit->output instanceof ParserOutput ) ) {
 			$output = $article->mPreparedEdit->output;
 			$title = $article->getTitle();
@@ -363,7 +382,7 @@ class SMWParseData {
 				return true; // nothing we can do
 			}
 			if ( !isset( $output->mSMWData ) ) { // no data container yet, make one
-				$output->mSMWData = new SMWSemanticData( SMWWikiPageValue::makePageFromTitle( $title ) );
+				$output->mSMWData = new SMWSemanticData( new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), $title->getInterwiki() ) );
 			}
 
 			$semdata = $output->mSMWData;
@@ -371,19 +390,12 @@ class SMWParseData {
 			return true;
 		}
 
-		$pmdat = SMWPropertyValue::makeProperty( '_MDAT' );
-
-		// create a date string that is certainly parsable in the current language:
+		$pmdat = new SMWDIProperty( '_MDAT' );
 		$timestamp = $article->getTimestamp();
-
-		$date = $wgContLang->sprintfDate( 'd ', $timestamp ) .
-				$smwgContLang->getMonthLabel( ( $wgContLang->sprintfDate( 'm', $timestamp ) + 0 ) ) .
-				$wgContLang->sprintfDate( ' Y G:i:s', $timestamp );
-		$dv = SMWDataValueFactory::newPropertyObjectValue( $pmdat, $date );
-
-		// The below method is not safe, since "M" as used in MW may not be the month label as used in SMW if SMW falls back to some other language:
-		//   $dv = SMWDataValueFactory::newPropertyObjectValue( $pmdat, $wgContLang->sprintfDate( 'd M Y G:i:s', $article->getTimestamp() ) );
-		$semdata->addPropertyObjectValue( $pmdat, $dv );
+		$di = self::getDataItemFromMWTimestamp( $timestamp );
+		if ( $di !== null ) {
+			$semdata->addPropertyObjectValue( $pmdat, $di );
+		}
 
 		return true;
 	}
@@ -398,7 +410,11 @@ class SMWParseData {
 			$output = self::$mPrevOutput;
 
 			if ( !isset( $output ) ) {
-				smwfGetStore()->clearData( $links_update->mTitle, SMWFactbox::isNewArticle() );
+				smwfGetStore()->clearData( new SMWDIWikiPage(
+					$links_update->mTitle->getDbKey(),
+					$links_update->mTitle->getNamespace(),
+					$links_update->mTitle->getInterwiki()
+				) );
 				return true;
 			}
 		}
@@ -424,6 +440,30 @@ class SMWParseData {
 	static public function onTitleMoveComplete( &$old_title, &$new_title, &$user, $pageid, $redirid ) {
 		smwfGetStore()->changeTitle( $old_title, $new_title, $pageid, $redirid );
 		return true; // always return true, in order not to stop MW's hook processing!
+	}
+
+	/**
+	 * Create an SMWDITime object from a MediaWiki timestamp. A timestamp
+	 * is a 14 character string YYYYMMDDhhmmss.
+	 *
+	 * @param $timestamp string MediaWiki timestamp
+	 * @return SWMDITime object or null if errors occurred
+	 */
+	static protected function getDataItemFromMWTimestamp( $timestamp ) {
+		$year  = intval( substr( $timestamp, 0, 4 ) );
+		$month = intval( substr( $timestamp, 4, 2 ) );
+		$day   = intval( substr( $timestamp, 6, 2 ) );
+		$hour  = intval( substr( $timestamp, 8, 2 ) );
+		$min   = intval( substr( $timestamp, 10, 2 ) );
+		$sec   = intval( substr( $timestamp, 12, 2 ) );
+		try {
+			return new SMWDITime( SMWDITime::CM_GREGORIAN, $year, $month, $day, $hour, $min, $sec );
+		} catch ( SMWDataItemException $e ) {
+			// we rely on MW timestamp format above -- if it ever changes,
+			// exceptions might possibly occur but this should not prevent editing
+			trigger_error( $e.getMessage(), E_USER_NOTICE );
+			return null;
+		}
 	}
 
 }

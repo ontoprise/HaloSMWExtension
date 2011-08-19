@@ -232,8 +232,8 @@ getInstances: function(categoryName, partition, onlyAssertedCategories, callback
 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+onlyAssertedCategories+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
-getProperties: function(categoryName, onlyDirect, dIndex, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+dIndex, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], callback);
+getProperties: function(categoryName, onlyDirect, domainOrRange, callback) {
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+domainOrRange, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], callback);
 },
 
 getAnnotations: function(instanceName, onlyDirect, callback) {

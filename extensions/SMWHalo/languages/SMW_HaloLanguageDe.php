@@ -518,6 +518,8 @@ protected $smwSpecialProperties = array(
 
 var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT  => 'Hat Domain und Range',
+	SMW_SSP_HAS_DOMAIN => 'Hat Domain',
+	SMW_SSP_HAS_RANGE => 'Hat Range',
 	SMW_SSP_HAS_MAX_CARD => 'Hat max Kardinalität',
 	SMW_SSP_HAS_MIN_CARD => 'Hat min Kardinalität',
 	SMW_SSP_IS_INVERSE_OF => 'Ist invers zu',
@@ -554,8 +556,8 @@ protected $smwHaloNamespaceAliases = array(
 			SMW_NS_RELATION_TALK  => "Relation_Diskussion",
 			SMW_NS_PROPERTY       => "Eigenschaft",
 			SMW_NS_PROPERTY_TALK  => "Eigenschaft_Diskussion",
-			SMW_NS_TYPE           => "Datentyp",
-			SMW_NS_TYPE_TALK      => "Datentyp_Diskussion"
+			SMW_NS_TYPE           => "Datentyp", // @deprecated
+			SMW_NS_TYPE_TALK      => "Datentyp_Diskussion" // @deprecated
 		);
 	}
 

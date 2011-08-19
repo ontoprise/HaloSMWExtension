@@ -145,7 +145,7 @@ public function getQueryLink($caption = false) {
  *
  */
 class SMWHaloResultArray extends SMWResultArray {
-    public function SMWHaloResultArray(SMWWikiPageValue $resultpage, SMWPrintRequest $printrequest, SMWStore $store, $results) {
+    public function SMWHaloResultArray(SMWDIWikiPage $resultpage, SMWPrintRequest $printrequest, SMWStore $store, $results) {
         parent::__construct($resultpage, $printrequest, $store);
         $this->mContent = $results; // do not reload
     }

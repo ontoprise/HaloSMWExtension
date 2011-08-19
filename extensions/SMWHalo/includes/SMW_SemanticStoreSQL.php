@@ -170,10 +170,10 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$page = $db->tableName('page');
@@ -219,10 +219,10 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 
@@ -249,7 +249,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$bundleSql1 = 'AND page_id IN '.$bundleSql;
 			$bundleSql2 = 'AND page_id IN '.$bundleSql;
 			$bundleSql3 = 'AND c.cl_to IN '.$bundleSql;
-			
+				
 			$noRootCategoryBundles = ' UNION DISTINCT (SELECT subcat.page_title, "false" AS has_subcategories FROM '.$page.' subcat '.
                                  'JOIN '.$categorylinks.' c ON c.cl_from = subcat.page_id '.
                                  'JOIN '.$page.' supercat ON c.cl_to = supercat.page_title AND supercat.page_namespace = '.NS_CATEGORY.' '.
@@ -269,7 +269,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 							'UNION DISTINCT (SELECT c.cl_to, "true" AS has_subcategories FROM '.$categorylinks.' c LEFT JOIN '.$page.' p '.$sql3.' '.$bundleSql3.') '. $noRootCategoryBundles . 
 		DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
 
-		 
+			
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -277,7 +277,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories != 'true');
 				}
 			}
-		} 
+		}
 
 		$db->freeResult($res);
 		return $result;
@@ -292,10 +292,10 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
 
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 
@@ -377,10 +377,10 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		$db =& wfGetDB( DB_SLAVE );
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		//$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$page = $db->tableName('page');
@@ -563,13 +563,13 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	}
 
 
-	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL,$bundleID= '') {
+	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $subProperty = SMW_SSP_HAS_DOMAIN, $requestoptions = NULL,$bundleID= '') {
 		$db =& wfGetDB( DB_SLAVE );
 
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$bundleID = ucfirst($bundleID);
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 
@@ -579,7 +579,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$bundleSql = empty($bundleID) ? '' : ' WHERE property IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
 
 
-		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect, $dIndex);
+		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect, $subProperty);
 
 		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.$bundleSql.' '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property')));
 
@@ -784,33 +784,19 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 
 	function getPropertiesWithDomain(Title $category) {
-		return $this->getNarySubjects($category, 0);
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		return $this->getNarySubjects($category, SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_DOMAIN]));
 	}
 
 	function getPropertiesWithRange(Title $category) {
-		return $this->getNarySubjects($category, 1);
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		return $this->getNarySubjects($category, SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
 	}
 
-	protected function getNarySubjects(Title $object, $pos) {
-		$db =& wfGetDB( DB_SLAVE );
-		$smw_nary = $db->tableName('smw_nary');
-		$smw_nary_relations = $db->tableName('smw_nary_relations');
-		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
-		$results = array();
-		$res = $db->query('SELECT subject_title, subject_namespace FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id ' .
- 	 						'WHERE n.attribute_title = '.$db->addQuotes($domainRangeRelation->getDBkey()).
- 	 						' AND r.object_title = '.$db->addQuotes($object->getDBkey()).
-							' AND r.object_namespace = '.NS_CATEGORY. 
-							' AND r.nary_pos = '.mysql_real_escape_string($pos));
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->subject_title, 'read', subject_namespace) === "true") {
-					$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
-				}
-			}
-		}
-		$db->freeResult($res);
-		return $results;
+	protected function getNarySubjects(Title $object, SMWDIProperty $property) {
+		// no impl. outdated
 	}
 
 	/**
@@ -819,14 +805,21 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	function getDomainCategories($propertyTitle, $reqfilter = NULL, $bundleID = '') {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
-		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
-		$categories = smwfGetStore()->getPropertyValues($propertyTitle, smwfGetSemanticStore()->domainRangeHintProp, $reqfilter);
+		$domainRangePropertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+		$categories = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($propertyTitle), $domainRangePropertyDi, $reqfilter);
 
 		$result = array();
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+
 		foreach($categories as $value) {
-			$dvs = $value->getDVs();
-			if ($dvs[0] instanceof SMWWikiPageValue) {
-				$t = $dvs[0]->getTitle();
+			$sd = $value->getSemanticData();
+				
+			$domain = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_DOMAIN]));
+			$domainDi = reset($domain);
+				
+			if ($domainDi instanceof SMWDIWikiPage) {
+				$t = $domainDi->getTitle();
 				if (!empty($bundleID)) {
 					if (!DFBundleTools::isPartOfBundle($t, $bundleID)) continue;
 				}
@@ -841,19 +834,26 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 */
 	function getRangeCategories($propertyTitle, $reqfilter = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
-		$page = $db->tableName('page');
-		$domainRangeRelation = smwfGetSemanticStore()->domainRangeHintRelation;
+        $page = $db->tableName('page');
+        $domainRangePropertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+        $categories = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($propertyTitle), $domainRangePropertyDi, $reqfilter);
 
-		$categories = smwfGetStore()->getPropertyValues($propertyTitle, smwfGetSemanticStore()->domainRangeHintProp, $reqfilter);
-		$result = array();
-		foreach($categories as $value) {
-			$dvs = $value->getDVs();
-			if ($dvs[1] instanceof SMWWikiPageValue) {
-				$t = $dvs[1]->getTitle();
-				if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t;
-			}
-		}
-		return $result;
+        $result = array();
+        global $smwgHaloContLang;
+        $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+
+        foreach($categories as $value) {
+            $sd = $value->getSemanticData();
+                
+            $domain = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
+            $domainDi = reset($domain);
+                
+            if ($domainDi instanceof SMWDIWikiPage) {
+                $t = $domainDi->getTitle();
+                if (!SMWSemanticStoreSQL::isRedirect($t, $page, $db)) $result[] = $t;
+            }
+        }
+        return $result;
 	}
 
 	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
@@ -1132,19 +1132,19 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$article = new Article($t);
 			if (!$t->exists()) {
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) {
-					$text = "\n\n[[".$propertyLabels['_TYPE']."::Type:Record]]";
+					$text = "\n\n[[".$propertyLabels['_TYPE']."::Record]]"; //FIXME: localize Record
 					$text .= wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_LIST']."::".
-					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]";
+					$ssp[SMW_SSP_HAS_DOMAIN]."; ".$ssp[SMW_SSP_HAS_RANGE]."]]";
 					$article->insertNewArticle($text, "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
-					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
+					$datatypeLabels["_num"]."]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MIN_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
-					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
+					$datatypeLabels["_num"]."]]", "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_ONTOLOGY_URI]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MIN_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
-					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_uri"]."]]", "", false, false);
+					$datatypeLabels["_uri"]."]]", "", false, false);
 				} else {
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText()), "", false, false);
 				}
@@ -1203,7 +1203,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$title = Title::newFromText("Question", SMW_NS_PROPERTY);
 		$article = new Article($title);
 		if (!($title->exists())){
-			$articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_str"]."]]";
+			$articleContent = "[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
 			$wgArticle = new Article( $title );
 			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
 			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
@@ -1215,7 +1215,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$title = Title::newFromText("Description", SMW_NS_PROPERTY);
 		$article = new Article($title);
 		if (!($title->exists())){
-			$articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_txt"]."]]";
+			$articleContent = "[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_txt"]."]]";
 			$wgArticle = new Article( $title );
 			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
 			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);
@@ -1227,7 +1227,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$title = Title::newFromText("DiscourseState", SMW_NS_PROPERTY);
 		$article = new Article($title);
 		if (!($title->exists())){
-			$articleContent = "[[".$propertyLabels['_TYPE']."::".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_str"]."]]";
+			$articleContent = "[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
 			$wgArticle = new Article( $title );
 			$wgArticle->doEdit( $articleContent, "New attribute added", EDIT_NEW);
 			DBHelper::reportProgress(" Create page ".$title->getNsText().":".$title->getText()."...\n",$verbose);

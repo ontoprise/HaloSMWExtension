@@ -20,7 +20,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		return 'text/xml';
 	}
 
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		$variables = array();
 		$result = $this->printHeader();
 		$result .= $this->printVariables($res->getPrintRequests(), $variables);
@@ -60,34 +60,21 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 			$i = -1;
 			foreach ($row as $field) {
 				$i++;
-				
+
 				$content = $field->getContent();
 				if (count($content) === 0) continue; // do not serialize null bindings
 
 				$result .= "\t\t\t<binding name=\"$variables[$i]\">";
 
-				while ( ($object = $field->getNextObject()) !== false ) {
-					if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
+				while ( ($object = $field->getNextDataValue()) !== false ) {
+					if ($object->getDataItem()->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {  // print whole title with prefix in this case
 
-						$uri = TSNamespaces::getInstance()->getFullURI($object->getTitle());
+						$uri = TSNamespaces::getInstance()->getFullURI($object->getDataItem()->getTitle());
 						$uri_enc = htmlspecialchars($uri);
 						$result .= "<uri>$uri_enc</uri>";
 					} else {
-						switch($object->getTypeID()) {
-							case '_geo':
-								// TODO: add all datatypes which have more than
-								// one DBkey
-								$text = implode(",",$object->getDBkeys());
-								break;
-							
-							default:
-								$text = array_shift($object->getDBkeys());
-								$unit = $object->getUnit();
-								if (!is_null($unit)) $text .= " $unit";
-								
-								break;
-						}
-                        $text_enc = htmlspecialchars($text);
+                        $text = TSHelper::serializeDataItem($object->getDataItem());
+						$text_enc = htmlspecialchars($text);
 						$datatype = WikiTypeToXSD::getXSDType($object->getTypeID());
 						$datatype = str_replace("xsd:", "http://www.w3.org/2001/XMLSchema#", $datatype);
 						$datatype = str_replace("tsctype:", "http://www.ontoprise.de/smwplus/tsc/unittype#", $datatype);
@@ -102,6 +89,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		$result .= "\t</results>\n";
 		return $result;
 	}
+	
 
 	private function printHeader() {
 		return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";

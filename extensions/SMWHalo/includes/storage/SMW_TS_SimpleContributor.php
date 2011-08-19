@@ -7,9 +7,9 @@
  *
  * Called when property annotations get updated in a triple store.
  *
- * @param $semData All semantic data (for context)
- * @param $property Currently processed property
- * @param $propertyValueArray Values of current property
+ * @param SemanticData $semData All semantic data (for context)
+ * @param SMWDIProperty $property  Currently processed property
+ * @param SMWDataItem [] $propertyValueArray Values of current property
  * @param $triplesFromHook Triples which are returned.
  *
  * @return Array of triples or false. If return value is a non-empty array processing stops for this property. Same if it is explicitly false.
@@ -17,7 +17,7 @@
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
 	global $smwgTripleStoreGraph;
-	if (!($property instanceof SMWPropertyValue)) {
+	if (!($property instanceof SMWDIProperty)) {
 		// error. should not happen
 		trigger_error("Triple store update: property is not SMWPropertyValue");
 		return true;
@@ -30,41 +30,44 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	$tsNamespace = TSNamespaces::getInstance();
 	$subj_iri = $tsNamespace->getFullIRI($data->getSubject()->getTitle());
 	$allProperties = $data->getProperties();
-	$dbkeys = $property->getDBkeys();
-	$propertyName = array_shift($dbkeys);
-	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $propertyName) {
+	global $smwgHaloContLang;
+	$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	
+	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getKey()) {
 		foreach($propertyValueArray as $inv) {
 			if (count($propertyValueArray) == 1) {
 				$invprop_iri = $tsNamespace->getFullIRI($inv->getTitle());
 				$triplesFromHook[] = array($subj_iri, "owl:inverseOf", $invprop_iri);
 			}
 		}
-	} elseif (smwfGetSemanticStore()->domainRangeHintProp->getDBkey() == $propertyName) {
+	} elseif (smwfGetSemanticStore()->domainRangeHintProp->getDBkey() == $property->getKey()) {
 
 		if (count($propertyValueArray) > 0) {
-			$datavalues = reset($propertyValueArray);
-			$dvs = $datavalues->getDVs();
-			$domain = reset($dvs);
-			if ($domain) {
+			$dataItemContainer = reset($propertyValueArray);
+			$sd = $dataItemContainer->getSemanticData();
+            $domainCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN]));        
+            $rangeCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_RANGE]));
+			if (count($domainCatValues) > 0) {
+				$domain = reset($domainCatValues);
 				$domain_iri = $tsNamespace->getFullIRI($domain->getTitle());
 				$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
 				$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
 			}
 			$range = next($dvs);
 				
-			if ($range !== false) {
+			if (count($rangeCatValues) > 0) {
+				$range = reset($rangeCatValues);
 				$range_iri = $tsNamespace->getFullIRI($range->getTitle());
 				$triplesFromHook[] = array("_:1", "haloprop:range", $range_iri);
 			}
 		}
 
-	} elseif ($property->getPropertyID() == "_TYPE") {
+	} elseif ($property->getKey() == "_TYPE") {
 
 		$hasType_iri = $tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, "Has_type");
 
 		foreach($propertyValueArray as $value) {
-			$dbkeys = $value->getDBkeys();
-			$typeID = array_shift($dbkeys);
+			$typeID = $value->getFragment();
 			if ($typeID != '_wpg') {
 				$triplesFromHook[] = array($subj_iri, $hasType_iri, WikiTypeToXSD::getXSDType($typeID));
 			} elseif ($typeID == '_wpg' || $typeID == '_wpp' || $typeID == '_wpc' ||$typeID == '_wpf') {

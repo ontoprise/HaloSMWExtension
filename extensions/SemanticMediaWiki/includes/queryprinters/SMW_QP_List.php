@@ -26,7 +26,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 	protected $mOutroTemplate = '';
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 
 		if ( array_key_exists( 'sep', $params ) ) {
 			$this->mSep = str_replace( '_', ' ', $params['sep'] );
@@ -61,7 +61,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		return wfMsg( 'smw_printername_' . $this->mFormat );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		if ( ( $this->mFormat == 'template' ) && ( $this->mTemplate == false ) ) {
 			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$res->addErrors( array( wfMsgForContent( 'smw_notemplategiven' ) ) );
@@ -70,9 +70,9 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		
 		// Determine mark-up strings used around list items:
 		if ( ( $this->mFormat == 'ul' ) || ( $this->mFormat == 'ol' ) ) {
-			$header = '<' . $this->mFormat . '>';
-			$footer = '</' . $this->mFormat . '>';
-			$rowstart = '<li>';
+			$header = "<" . $this->mFormat . ">\n";
+			$footer = "</" . $this->mFormat . ">\n";
+			$rowstart = "\t<li>";
 			$rowend = "</li>\n";
 			$plainlist = false;
 			$finallistsep = '';
@@ -112,7 +112,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		}
 
 		if ( $header != '' ) {
-			$result .= "\t\t\t\t$header\n";
+			$result .= $header;
 		} 
 		
 		if ( $this->mIntroTemplate != '' ) {
@@ -139,15 +139,15 @@ class SMWListResultPrinter extends SMWResultPrinter {
 
 		// Print footer
 		if ( $footer != '' ) {
-			$result .= "\t\t\t\t$footer\n";
+			$result .= $footer;
 		}
 		
 		if ( $this->mColumns > 1 ) {
-			$result .= "\t\t\t\t</div>\n";
+			$result .= "</div>\n";
 		}
 		
 		if ( $this->mColumns > 1 ) {
-			$result .= '<br style="clear: both">' . "\n";
+			$result .= '<br style="clear: both" />' . "\n";
 		}
 
 		return $result;
@@ -225,7 +225,7 @@ END;
 						$found_values = true;
 					} elseif ( $found_values || !$first_value ) {
 						// any value after '(' or non-first values on first column
-						$result .= ', ';
+						$result .= "$listsep ";
 					}
 					
 					if ( $first_value ) { // first value in any column, print header
@@ -292,29 +292,42 @@ END;
 			$link->setParameter( $this->mOutroTemplate, 'outrotemplate' );
 		}
 		
-		$result .= "\t\t\t\t" . $rowstart . $link->getText( SMW_OUTPUT_WIKI, $this->mLinker ) . $rowend  . "\n";
+		$result .= $rowstart . ' '. $link->getText( SMW_OUTPUT_WIKI, $this->mLinker ) . $rowend;
 	}
 
 	public function getParameters() {
-		$params = parent::getParameters();
-		$params = array_merge( $params, parent::textDisplayParameters() );
+		$params = array_merge( parent::getParameters(), parent::textDisplayParameters() );
 		
 		$plainlist = ( $this->mFormat != 'ul' && $this->mFormat != 'ol' );
 		
 		if ( $plainlist ) {
-			$params[] = array( 'name' => 'sep', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_sep' ) );
+			$params['sep'] = new Parameter( 'sep' );
+			$params['sep']->setDescription( wfMsg( 'smw_paramdesc_sep' ) );
+			$params['sep']->setDefault( '' );
 		}
 		
-		$params[] = array( 'name' => 'template', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_template' ) );
+		$params['template'] = new Parameter( 'template' );
+		$params['template']->setDescription( wfMsg( 'smw_paramdesc_template' ) );
+		$params['template']->setDefault( '' );	
 		
-		if ( ! $plainlist ) {
-			$params[] = array( 'name' => 'columns', 'type' => 'int', 'description' => wfMsg( 'smw_paramdesc_columns', 1 ) );
+		if ( !$plainlist ) {
+			$params['columns'] = new Parameter( 'columns', Parameter::TYPE_INTEGER );
+			$params['columns']->setDescription( wfMsg( 'smw_paramdesc_columns', 1 ) );
+			$params['columns']->setDefault( '', false );		
 		}
 		
-		$params[] = array( 'name' => 'userparam', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_userparam' ) );
-		$params[] = array( 'name' => 'introtemplate', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_introtemplate' ) );
-		$params[] = array( 'name' => 'outrotemplate', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_outrotemplate' ) );
-
+		$params['userparam'] = new Parameter( 'userparam' );
+		$params['userparam']->setDescription( wfMsg( 'smw_paramdesc_userparam' ) );		
+		$params['userparam']->setDefault( '' );
+		
+		$params['introtemplate'] = new Parameter( 'introtemplate' );
+		$params['introtemplate']->setDescription( wfMsg( 'smw_paramdesc_introtemplate' ) );		
+		$params['introtemplate']->setDefault( '' );
+		
+		$params['outrotemplate'] = new Parameter( 'outrotemplate' );
+		$params['outrotemplate']->setDescription( wfMsg( 'smw_paramdesc_outrotemplate' ) );		
+		$params['outrotemplate']->setDefault( '' );
+		
 		return $params;
 	}
 

@@ -466,13 +466,13 @@ class AutoCompletionRequester {
 			return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
 		} else if (stripos(strtolower($userContext),strtolower($specialProperties["_TYPE"])) > 0) {
 			// has type relation. First check for user types
-			$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_TYPE));
+			$pages = array();
 			// then check builtin types
 			$typeLabels = array_values(SMWDataValueFactory::getKnownTypeLabels());
 			$lower_match = strtolower($match);
 			foreach($typeLabels as $l) {
 				if (strpos(strtolower($l), $lower_match) !== false) {
-					$pages[] = Title::newFromText($l, SMW_NS_TYPE);
+					$pages[] = Title::newFromText($l);
 				}
 
 			}

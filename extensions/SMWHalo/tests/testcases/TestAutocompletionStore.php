@@ -8,7 +8,7 @@ require_once($smwgHaloIP.'/includes/SMW_Autocomplete.php');
  * @ingroup SMWHaloTests
  *
  * Tests the auto-completion storage layer
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 
@@ -26,7 +26,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$exp_units = array("N", "Newton");
 		$p = Title::newFromText("Has_torsional_moment", SMW_NS_PROPERTY);
 		$units = smwfGetAutoCompletionStore()->getUnits($p, "N");
-
+   
 		foreach ($units as $u) {
 			$this->assertContains($u, $exp_units, $u." missing");
 		}
@@ -54,9 +54,9 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetPagesWithNamespace() {
-		$exp_values = array("Kai","Main Page");
+		$exp_values = array("Has domain", "Has domain and range");
 
-		$values = smwfGetAutoCompletionStore()->getPages("ai", array(NS_MAIN));
+		$values = smwfGetAutoCompletionStore()->getPages("ai", array(SMW_NS_PROPERTY));
 
 		foreach ($values as $v) {
 			$title = $this->getTitle($v);
@@ -79,8 +79,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	function testGetInstanceAsTarget() {
 			
 		$exp_values = array("Kai");
-
-		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(Title::newFromText("Has Child", SMW_NS_PROPERTY), smwfGetSemanticStore()->domainRangeHintProp);
+        $propertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText("Has Child", SMW_NS_PROPERTY)), $propertyDi);
 		$values = smwfGetAutoCompletionStore()->getInstanceAsTarget("K", $domainRangeAnnotations);
 
 		foreach ($values as $v) {
@@ -134,7 +134,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Electric car", NS_CATEGORY));
 		 
 		foreach ($values as $v) {
-			list($t, $inferred) = $v;
+			$t = $v['title'];
+			$inferred = $v['inferred'];
 			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
 			$this->assertEquals($exp_values2[$t->getText()], $inferred);
 		}
@@ -147,7 +148,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Hybrid car", NS_CATEGORY));
 		 
 		foreach ($values as $v) {
-			list($t, $inferred) = $v;
+			$t = $v['title'];
+            $inferred = $v['inferred'];
 			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
 			$this->assertEquals($exp_values2[$t->getText()], $inferred);
 		}
@@ -157,9 +159,10 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	function testGetValueForAnnotation() {
 		$exp_values = array("3 cylinder", "4 cylinder", "5 cylinder");
 		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("cyl", Title::newFromText("Has Engine", SMW_NS_PROPERTY));
-		foreach ($values as $tuple) {
-			list($v, $inferred) = $tuple;
-			$text = is_string($v) ? $v : $v->getText();
+		foreach ($values as $v) {
+			$t = $v['title'];
+            $inferred = $v['inferred'];
+			$text = is_string($v) ? $v : $t->getText();
 			$this->assertContains($text, $exp_values, $text." missing");
 		}
 
@@ -168,9 +171,10 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	function testGetValueForAnnotationInferred() {
 		$exp_values = array("Jack");
 		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("jack", Title::newFromText("Has Child", SMW_NS_PROPERTY));
-		foreach ($values as $tuple) {
-			list($v, $inferred) = $tuple;
-			$text = is_string($v) ? $v : $v->getText();
+		foreach ($values as $v) {
+			$t = $v['title'];
+            $inferred = $v['inferred'];
+			$text = is_string($v) ? $v : $t->getText();
 			$this->assertContains($text, $exp_values, $text." missing");
 		}
 
@@ -180,7 +184,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		if ($acResult instanceof Title) {
 			$title = $acResult;
 		} else {
-			list($title, $inf, $pasteContent, $extraData) = $acResult;
+			return $acResult['title'];
 		}
 		return $title;
 	}

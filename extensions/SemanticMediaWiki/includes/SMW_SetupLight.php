@@ -14,7 +14,7 @@
  * @ingroup SMW
  */
 
-define( 'SMW_VERSION', '1.5.6-light' );
+define( 'SMW_VERSION', '1.6-light' );
 
 require_once( 'SMW_GlobalFunctions.php' );
 
@@ -36,7 +36,7 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	global $smwgIP, $wgServer, $smwgNamespace, $wgExtensionFunctions;
 	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
 	global $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
-	global $wgResourceModules;
+	global $wgResourceModules, $smwgScriptPath;
 	
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
@@ -89,32 +89,48 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	// Set up autoloading; essentially all classes should be autoloaded!
 	$wgAutoloadClasses['SMWParserExtensions']       = $smwgIP . 'includes/SMW_ParserExtensions.php';
 	$wgAutoloadClasses['SMWInfolink']               = $smwgIP . 'includes/SMW_Infolink.php';
+	$wgAutoloadClasses['SMWCompatibilityHelpers']   = $incDir . 'SMW_CompatibilityHelpers.php';
+	$wgAutoloadClasses['SMWDataValueFactory']   	= $incDir . 'SMW_DataValueFactory.php';
 // 	$wgAutoloadClasses['SMWFactbox']                = $smwgIP . 'includes/SMW_Factbox.php';
 	$wgAutoloadClasses['SMWParseData']              = $smwgIP . 'includes/SMW_ParseData.php';
 	$wgAutoloadClasses['SMWOutputs']                = $smwgIP . 'includes/SMW_Outputs.php';
 	$wgAutoloadClasses['SMWSemanticData']           = $smwgIP . 'includes/SMW_SemanticData.php';
 	$wgAutoloadClasses['SMWOrderedListPage']        = $smwgIP . 'includes/articlepages/SMW_OrderedListPage.php';
-// 	$wgAutoloadClasses['SMWTypePage']               = $smwgIP . 'includes/articlepages/SMW_TypePage.php';
 	$wgAutoloadClasses['SMWPropertyPage']           = $smwgIP . 'includes/articlepages/SMW_PropertyPage.php';
 // 	$wgAutoloadClasses['SMWConceptPage']            = $smwgIP . 'includes/articlepages/SMW_ConceptPage.php';
 	$wgAutoloadClasses['SMWQueryLanguage']          = $smwgIP . 'includes/SMW_QueryLanguage.php';
 
+	// Data items
+	$diDir = $smwgIP . 'includes/dataitems/';
+	$wgAutoloadClasses['SMWDataItem']		= $diDir . 'SMW_DataItem.php';
+	$wgAutoloadClasses['SMWDataItemException']	= $diDir . 'SMW_DataItem.php';
+	$wgAutoloadClasses['SMWDIProperty']		= $diDir . 'SMW_DI_Property.php';
+// 	$wgAutoloadClasses['SMWDIBoolean']		= $diDir . 'SMW_DI_Bool.php';
+	$wgAutoloadClasses['SMWDINumber']		= $diDir . 'SMW_DI_Number.php';
+	$wgAutoloadClasses['SMWDIBlob']			= $diDir . 'SMW_DI_Blob.php';
+	$wgAutoloadClasses['SMWDIString']		= $diDir . 'SMW_DI_String.php';
+	$wgAutoloadClasses['SMWStringLengthException']	= $diDir . 'SMW_DI_String.php';
+	$wgAutoloadClasses['SMWDIUri']			= $diDir . 'SMW_DI_URI.php';
+	$wgAutoloadClasses['SMWDIWikiPage']		= $diDir . 'SMW_DI_WikiPage.php';
+	$wgAutoloadClasses['SMWDITime']			= $diDir . 'SMW_DI_Time.php';
+// 	$wgAutoloadClasses['SMWDIConcept']		= $diDir . 'SMW_DI_Concept.php';
+	$wgAutoloadClasses['SMWDIError']		= $diDir . 'SMW_DI_Error.php';
+
 	// Datavalues
 	$dvDir = $smwgIP . 'includes/datavalues/';
-	$wgAutoloadClasses['SMWContainerValue']			= $dvDir . 'SMW_DV_Container.php';
+	$wgAutoloadClasses['SMWDataValue']           	= $dvDir . 'SMW_DataValue.php';
+	$wgAutoloadClasses['SMWContainerValue']		= $dvDir . 'SMW_DV_Container.php';
 //	$wgAutoloadClasses['SMWRecordValue']         	= $dvDir . 'SMW_DV_Record.php';
-	$wgAutoloadClasses['SMWErrorvalue']          	= $dvDir . 'SMW_DV_Error.php';
+	$wgAutoloadClasses['SMWErrorValue']          	= $dvDir . 'SMW_DV_Error.php';
 	$wgAutoloadClasses['SMWStringValue']         	= $dvDir . 'SMW_DV_String.php';
 	$wgAutoloadClasses['SMWWikiPageValue']       	= $dvDir . 'SMW_DV_WikiPage.php';
-	$wgAutoloadClasses['SMWSimpleWikiPageValue'] 	= $dvDir . 'SMW_DV_SimpleWikiPage.php';
 	$wgAutoloadClasses['SMWPropertyValue']       	= $dvDir . 'SMW_DV_Property.php';
 	$wgAutoloadClasses['SMWURIValue']            	= $dvDir . 'SMW_DV_URI.php';
 	$wgAutoloadClasses['SMWTypesValue']          	= $dvDir . 'SMW_DV_Types.php';
 //	$wgAutoloadClasses['SMWTypeListValue']      	= $dvDir . 'SMW_DV_TypeList.php';
-	$wgAutoloadClasses['SMWErrorValue']         	= $dvDir . 'SMW_DV_Error.php';
 	$wgAutoloadClasses['SMWNumberValue']         	= $dvDir . 'SMW_DV_Number.php';
 //	$wgAutoloadClasses['SMWTemperatureValue']    	= $dvDir . 'SMW_DV_Temperature.php';
-//	$wgAutoloadClasses['SMWLinearValue']         	= $dvDir . 'SMW_DV_Linear.php';
+//	$wgAutoloadClasses['SMWQuantityValue']         	= $dvDir . 'SMW_DV_Quantity.php';
 	$wgAutoloadClasses['SMWTimeValue']           	= $dvDir . 'SMW_DV_Time.php';
 //	$wgAutoloadClasses['SMWBoolValue']           	= $dvDir . 'SMW_DV_Bool.php';
 //	$wgAutoloadClasses['SMWConceptValue']        	= $dvDir . 'SMW_DV_Concept.php';
@@ -161,8 +177,6 @@ function enableSemantics( $namespace = null, $complete = false ) {
 // 	$wgAutoloadClasses['SMWConjunction']            = $smwgIP . 'includes/storage/SMW_Description.php';
 // 	$wgAutoloadClasses['SMWDisjunction']            = $smwgIP . 'includes/storage/SMW_Description.php';
 // 	$wgAutoloadClasses['SMWSomeProperty']           = $smwgIP . 'includes/storage/SMW_Description.php';
-// 	$wgAutoloadClasses['SMWRecordDescription']      = $smwgIP . 'includes/SMW_Record_Descriptions.php';
-// 	$wgAutoloadClasses['SMWRecordFieldDescription'] = $smwgIP . 'includes/SMW_Record_Descriptions.php';
 // 	$wgAutoloadClasses['SMWSQLStore2']              = $smwgIP . 'includes/storage/SMW_SQLStore2.php';
 	$wgAutoloadClasses['SMWSQLStoreLight']          = $smwgIP . 'includes/storage/SMW_SQLStoreLight.php';
 	$wgAutoloadClasses['SMWSQLStore2Table']         = $smwgIP . 'includes/storage/SMW_SQLStore2Table.php';
@@ -172,59 +186,56 @@ function enableSemantics( $namespace = null, $complete = false ) {
 	if ( !class_exists( 'Html' ) ) {
 		$wgAutoloadClasses['Html'] = $smwgIP . 'compat/Html.php';
 	}	
-	
-	// Do not autoload RAPStore, since some special pages load all autoloaded classes, which causes
-	// troubles with RAP store if RAP is not installed (require_once fails).
-	// $wgAutoloadClasses['SMWRAPStore']             = $smwgIP . 'includes/storage/SMW_RAPStore.php';
+
 	$wgAutoloadClasses['SMWTestStore']              = $smwgIP . 'includes/storage/SMW_TestStore.php';
 
 	///// Register specials, do that early on in case some other extension calls "addPage" /////
 	$wgAutoloadClasses['SMWQueryPage']              = $smwgIP . 'specials/QueryPages/SMW_QueryPage.php';
 // 	$wgAutoloadClasses['SMWAskPage']                = $smwgIP . 'specials/AskSpecial/SMW_SpecialAsk.php';
-// 	$wgSpecialPages['Ask']                          = array( 'SMWAskPage' );
+// 	$wgSpecialPages['Ask']                          = 'SMWAskPage';
 // 	$wgSpecialPageGroups['Ask']                     = 'smw_group';
 
 	$wgAutoloadClasses['SMWSpecialBrowse']          = $smwgIP . 'specials/SearchTriple/SMW_SpecialBrowse.php';
-	$wgSpecialPages['Browse']                       = array( 'SMWSpecialBrowse' );
+	$wgSpecialPages['Browse']                       = 'SMWSpecialBrowse';
 	$wgSpecialPageGroups['Browse']                  = 'smw_group';
 
 	$wgAutoloadClasses['SMWPageProperty']           = $smwgIP . 'specials/SearchTriple/SMW_SpecialPageProperty.php';
-	$wgSpecialPages['PageProperty']                 = array( 'SMWPageProperty' );
+	$wgSpecialPages['PageProperty']                 = 'SMWPageProperty';
 	$wgSpecialPageGroups['PageProperty']            = 'smw_group';
 
 	$wgAutoloadClasses['SMWSearchByProperty']       = $smwgIP . 'specials/SearchTriple/SMW_SpecialSearchByProperty.php';
-	$wgSpecialPages['SearchByProperty']             = array( 'SMWSearchByProperty' );
+	$wgSpecialPages['SearchByProperty']             = 'SMWSearchByProperty';
 	$wgSpecialPageGroups['SearchByProperty']        = 'smw_group';
 
 // 	$wgAutoloadClasses['SMWURIResolver']            = $smwgIP . 'specials/URIResolver/SMW_SpecialURIResolver.php';
-// 	$wgSpecialPages['URIResolver']                  = array( 'SMWURIResolver' );
+// 	$wgSpecialPages['URIResolver']                  = 'SMWURIResolver';
 
 	$wgAutoloadClasses['SMWAdmin']                  = $smwgIP . 'specials/SMWAdmin/SMW_SpecialSMWAdmin.php';
-	$wgSpecialPages['SMWAdmin']                     = array( 'SMWAdmin' );
+	$wgSpecialPages['SMWAdmin']                     = 'SMWAdmin';
 	$wgSpecialPageGroups['SMWAdmin']                = 'smw_group';
 
 // 	$wgAutoloadClasses['SMWSpecialSemanticStatistics'] = $smwgIP . 'specials/Statistics/SMW_SpecialStatistics.php';
-// 	$wgSpecialPages['SemanticStatistics']           = array( 'SMWSpecialSemanticStatistics' );
+// 	$wgSpecialPages['SemanticStatistics']           = 'SMWSpecialSemanticStatistics';
 // 	$wgSpecialPageGroups['SemanticStatistics']      = 'wiki'; // Similar to Special:Statistics
 //
 // 	$wgAutoloadClasses['SMWSpecialOWLExport']       = $smwgIP . 'specials/Export/SMW_SpecialOWLExport.php';
-// 	$wgSpecialPages['ExportRDF']                    = array( 'SMWSpecialOWLExport' );
+// 	$wgSpecialPages['ExportRDF']                    = 'SMWSpecialOWLExport';
 // 	$wgSpecialPageGroups['ExportRDF']               = 'smw_group';
 //
 // 	$wgAutoloadClasses['SMWSpecialProperties']      = $smwgIP . 'specials/QueryPages/SMW_SpecialProperties.php';
-// 	$wgSpecialPages['Properties']                   = array( 'SMWSpecialProperties' );
+// 	$wgSpecialPages['Properties']                   = 'SMWSpecialProperties';
 // 	$wgSpecialPageGroups['Properties']              = 'pages';
 //
 // 	$wgAutoloadClasses['SMWSpecialTypes']           = $smwgIP . 'specials/QueryPages/SMW_SpecialTypes.php';
-// 	$wgSpecialPages['Types']                        = array( 'SMWSpecialTypes' );
+// 	$wgSpecialPages['Types']                        = 'SMWSpecialTypes';
 // 	$wgSpecialPageGroups['Types']                   = 'pages';
 //
 // 	$wgAutoloadClasses['SMWSpecialUnusedProperties'] = $smwgIP . 'specials/QueryPages/SMW_SpecialUnusedProperties.php';
-// 	$wgSpecialPages['UnusedProperties']             = array( 'SMWSpecialUnusedProperties' );
+// 	$wgSpecialPages['UnusedProperties']             = 'SMWSpecialUnusedProperties';
 // 	$wgSpecialPageGroups['UnusedProperties']        = 'maintenance';
 //
 // 	$wgAutoloadClasses['SMWSpecialWantedProperties'] = $smwgIP . 'specials/QueryPages/SMW_SpecialWantedProperties.php';
-// 	$wgSpecialPages['WantedProperties']             = array( 'SMWSpecialWantedProperties' );
+// 	$wgSpecialPages['WantedProperties']             = 'SMWSpecialWantedProperties';
 // 	$wgSpecialPageGroups['WantedProperties']        = 'maintenance';
 
 	// Register Jobs
@@ -246,7 +257,7 @@ function enableSemantics( $namespace = null, $complete = false ) {
  */
 function smwfSetupExtension() {
 	wfProfileIn( 'smwfSetupExtension (SMW)' );
-	global $smwgIP, $wgHooks, $wgParser, $wgExtensionCredits, $smwgEnableTemplateSupport, $smwgMasterStore, $smwgIQRunningNumber, $wgLanguageCode, $wgVersion, $smwgToolboxBrowseLink, $smwgMW_1_14;
+	global $wgHooks, $smwgMasterStore, $smwgIQRunningNumber;
 
 	$smwgMasterStore = null;
 	$smwgIQRunningNumber = 0;
@@ -265,18 +276,6 @@ function smwfSetupExtension() {
 	$wgHooks['ArticleFromTitle'][] = 'smwfOnArticleFromTitle'; // special implementations for property/type articles
 	$wgHooks['ParserFirstCallInit'][] = 'smwfRegisterParserFunctions';
 
-	$smwgMW_1_14 = true; // assume latest 1.14 API
-
-	///// credits (see "Special:Version") /////
-	$wgExtensionCredits['parserhook'][] = array(
-		'path' => __FILE__,
-		'name' => 'Semantic&#160;MediaWiki light',
-		'version' => SMW_VERSION,
-		'author' => "[http://korrekt.org Markus&#160;Krötzsch], [http://simia.net Denny&#160;Vrandecic] and [http://www.ohloh.net/p/smw/contributors others]. Maintained by [http://www.aifb.kit.edu/web/Wissensmanagement/en AIFB Karlsruhe].",
-		'url' => 'http://semantic-mediawiki.org',
-		'descriptionmsg' => 'smw-desc'
-	);
-
 	wfProfileOut( 'smwfSetupExtension (SMW)' );
 	return true;
 }
@@ -294,7 +293,6 @@ function smwfUnregisterDatatypes() {
 	SMWDataValueFactory::registerDatatype('_rec', 'SMWErrorValue');
 	SMWDataValueFactory::registerDatatype('__tls', 'SMWErrorValue');
 	SMWDataValueFactory::registerDatatype('__con', 'SMWErrorValue');
-	SMWDataValueFactory::registerDatatype('__lin', 'SMWErrorValue');
 	SMWDataValueFactory::registerDatatype('__imp', 'SMWErrorValue');
 	return true;
 }
@@ -341,7 +339,6 @@ function smwfAddToAdminLinks( &$admin_links_tree ) {
  * pages.
  */
 function smwfOnArticleFromTitle( &$title, &$article ) {
-	global $smwgIP;
 	if ( $title->getNamespace() == SMW_NS_PROPERTY ) {
 		$article = new SMWPropertyPage( $title );
 	}

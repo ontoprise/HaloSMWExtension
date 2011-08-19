@@ -486,6 +486,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
 
     var $smwSpecialSchemaProperties = array (
     SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'A pour domaine et champ de valeur',
+    SMW_SSP_HAS_DOMAIN => 'A puor domain',
+    SMW_SSP_HAS_RANGE => 'A puor valeur',
     SMW_SSP_HAS_MAX_CARD => 'A pour cardinalité max',
     SMW_SSP_HAS_MIN_CARD => 'A pour cardinalité min',
     SMW_SSP_IS_INVERSE_OF => 'Est l\'inverse de',
@@ -520,8 +522,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
         SMW_NS_RELATION_TALK  => 'Relation_discussion',
         SMW_NS_PROPERTY       => 'Property',
         SMW_NS_PROPERTY_TALK  => 'Property_discussion',
-        SMW_NS_TYPE           => 'Type',
-        SMW_NS_TYPE_TALK      => 'Type_discussion'
+        SMW_NS_TYPE           => 'Type', // @deprecated
+        SMW_NS_TYPE_TALK      => 'Type_discussion' // @deprecated
         );
     }
 

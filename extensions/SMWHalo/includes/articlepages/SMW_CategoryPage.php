@@ -73,6 +73,8 @@ class SMWCategoryPage extends CategoryPage {
 
 		$viewer = new SMWCategoryViewer( $this->mTitle, $from, $until );
 		$wgOut->addHTML( $viewer->getHTML() );
+	
+		
 	}
 }
 
@@ -83,6 +85,7 @@ class SMWCategoryViewer extends CategoryViewer {
 
 	function __construct( $title, $from = '', $until = '' ) {
 		parent::__construct($title, $from, $until);
+		
 	}
 	
 	/**
@@ -94,6 +97,7 @@ class SMWCategoryViewer extends CategoryViewer {
 	 * @private
 	 */
 	function getHTML() {
+	
 		global $wgOut, $wgCategoryMagicGallery, $wgCategoryPagingLimit;
 		wfProfileIn( __METHOD__ );
 
@@ -213,14 +217,14 @@ class SMWCategoryViewer extends CategoryViewer {
 	private function getPropertyList($ns, $properties, $domain) {
 		global $wgContLang;
 		global $smwgHaloContLang;
-		
+	
 		$props = array();
 		$store = smwfGetStore();
 		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
-		$relationDV = SMWPropertyValue::makeProperty($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-		$hastypeDV = SMWPropertyValue::makeProperty("_TYPE");          
-		                              
+		$domainRangePropertyDI = SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
+		$typePropertyDI = SMWDIProperty::newFromUserLabel("_TYPE");          
+		                            
 		foreach ($properties as $prop) {
 			if (!$prop) {
 				// $prop may be undefined
@@ -258,25 +262,24 @@ class SMWCategoryViewer extends CategoryViewer {
 			if ($propFound) {
 				// Find the range of the property
 				$range = null;
-				$type = $store->getPropertyValues($prop, $hastypeDV);
+				$propertyDI = SMWDIWikiPage::newFromTitle($prop);
+				$type = $store->getPropertyValues($propertyDI, $typePropertyDI);
 				if (count($type) > 0) {
-					$type = $type[0];
-					$dbkeys = $type->getDBkeys();
-					$xsd = array_shift($dbkeys);
-					if ($xsd != '_wpg') {
+					$type = reset($type);
+					if ($type->getFragment() != '_wpg') {
 						$range = $type;
 					}
 				}
 					
 				if ($range == null) {
-					$range = $store->getPropertyValues($prop, $relationDV);
+					$propertyDI = SMWDIWikiPage::newFromTitle($prop);
+					$domainAndRanges = $store->getPropertyValues($propertyDI, $domainRangePropertyDI);
 					$rangePageContainers = array();
-					foreach($range as $c) {
-						$h = $c->getDVs();
-						 
-						$domainCatValue = reset($h);
-						$rangeCatValue = next($h);
-						if ($rangeCatValue != NULL) $rangePageContainers[] = $rangeCatValue;
+					foreach($domainAndRanges as $dr) {
+						$sd = $dr->getSemanticData();
+					
+						$rangeCatValue = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_RANGE]));
+						if ($rangeCatValue != NULL) $rangePageContainers[] = reset($rangeCatValue);
 					}
 					$range = $rangePageContainers;
 				}
@@ -354,21 +357,17 @@ class SMWCategoryViewer extends CategoryViewer {
 			}
 			// Show the range
 			if (is_array($props[$index+1])) {
-				$range = $props[$index+1];
-				if (count($range) > 0) { ///FIXME this check is just for compatibility reasons and as catch for obscure and buggy code; the class of $range[0] should not vary between different possibilities.
-					if ($range[0] instanceof SMWWikiPageValue) {
-						$r .= $this->getSkin()->makeKnownLinkObj($range[0]->getTitle(), 
-				                                                 $wgContLang->convert($range[0]->getTitle()->getText()));
-					} elseif ($range[0] instanceof SMWDataValue) {
-						$r .= $range[0]->getShortHTMLText();
-					} else {
-						$r .= $range[0];
-					}
+				$range = reset($props[$index+1]);
+				if ($range !== false) { ///FIXME this check is just for compatibility reasons and as catch for obscure and buggy code; the class of $range[0] should not vary between different possibilities.
+					if ($range instanceof SMWDIWikiPage) {
+						$r .= $this->getSkin()->makeKnownLinkObj($range->getTitle(), 
+				                                                 $wgContLang->convert($range->getTitle()->getText()));
+					} 
 				}
-			} else if ($props[$index+1] instanceof SMWTypesValue) {
-				$t = $props[$index+1];
-				$t = $t->getTypeLabels();
-				$r .= $t[0];
+			} else {
+				global $smwgContLang;
+				$allTypes = $smwgContLang->getDatatypeLabels();
+				$r .= $allTypes[$props[$index+1]->getFragment()];
 			}
 			$r .= "</td></tr>\n";
 		}

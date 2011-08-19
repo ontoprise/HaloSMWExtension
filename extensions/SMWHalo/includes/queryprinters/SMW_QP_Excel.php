@@ -14,7 +14,7 @@
  */
 class SMWExcelResultPrinter extends SMWResultPrinter {
 
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
@@ -56,7 +56,7 @@ class SMWExcelResultPrinter extends SMWResultPrinter {
 				$result .= "\t\t<td>";
 				$first = true;
 				
-				while ( ($object = $field->getNextObject()) !== false ) {
+				while ( ($object = $field->getNextDataValue()) !== false ) {
 				
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
 						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));

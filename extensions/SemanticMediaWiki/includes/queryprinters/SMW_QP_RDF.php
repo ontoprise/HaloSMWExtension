@@ -18,7 +18,7 @@ class SMWRDFResultPrinter extends SMWResultPrinter {
 	protected $syntax;
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'syntax', $params ) ) {
 			$this->syntax = $params['syntax'];
 		} else {
@@ -43,13 +43,14 @@ class SMWRDFResultPrinter extends SMWResultPrinter {
 		return wfMsg( 'smw_printername_rdf' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make RDF file
 			$serializer = $this->syntax == 'turtle' ? new SMWTurtleSerializer() : new SMWRDFXMLSerializer();
 			$serializer->startSerialization();
 			$serializer->serializeExpData( SMWExporter::getOntologyExpData( '' ) );
 			while ( $row = $res->getNext() ) {
-				$data = SMWExporter::makeExportDataForSubject( reset( $row )->getResultSubject() );
+				$subjectDi = reset( $row )->getResultSubject();
+				$data = SMWExporter::makeExportDataForSubject( $subjectDi );
 				foreach ( $row as $resultarray ) {
 					$printreq = $resultarray->getPrintRequest();
 					$property = null;
@@ -58,7 +59,7 @@ class SMWRDFResultPrinter extends SMWResultPrinter {
 							$property = $printreq->getData();
 						break;
 						case SMWPrintRequest::PRINT_CATS:
-							$property = SMWPropertyValue::makeProperty( '_TYPE' );
+							$property = new SMWDIProperty( '_TYPE' );
 						break;
 						case SMWPrintRequest::PRINT_CCAT:
 							// not serialised right now
@@ -68,7 +69,7 @@ class SMWRDFResultPrinter extends SMWResultPrinter {
 						break;
 					}
 					if ( $property !== null ) {
-						SMWExporter::addPropertyValues( $property, $resultarray->getContent() , $data );
+						SMWExporter::addPropertyValues( $property, $resultarray->getContent() , $data, $subjectDi );
 					}					
 				}
 				$serializer->serializeExpData( $data );
@@ -97,8 +98,14 @@ class SMWRDFResultPrinter extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		$syntaxparam = array( 'name' => 'syntax', 'type' => 'enumeration', 'description' => wfMsg( 'smw_paramdesc_rdfsyntax' ), 'values' =>array( 'rdfxml', 'turtle' ) ); 
-		return array_merge( parent::exportFormatParameters(), array( $syntaxparam ) );
+		$params = array();
+		
+		$params['syntax'] = new Parameter( 'syntax' );
+		$params['syntax']->setDescription( wfMsg( 'smw_paramdesc_rdfsyntax' ) );
+		$params['syntax']->addCriteria( new CriterionInArray( 'rdfxml', 'turtle' ) );
+		$params['syntax']->setDefault( 'rdfxml' );
+		
+		return array_merge( parent::getParameters(), $this->exportFormatParameters(), $params );
 	}
 
 }

@@ -15,7 +15,7 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 	protected $m_sep;
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'sep', $params ) ) {
 			$this->m_sep = str_replace( '_', ' ', $params['sep'] );
 		} else {
@@ -40,30 +40,37 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 		return wfMsg( 'smw_printername_csv' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		$result = '';
+		
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make CSV file
 			$csv = fopen( 'php://temp', 'r+' );
-			if ( $this->mShowHeaders == true ) {
+			
+			if ( $this->mShowHeaders ) {
 				$header_items = array();
+				
 				foreach ( $res->getPrintRequests() as $pr ) {
 					$header_items[] = $pr->getLabel();
 				}
+				
 				fputcsv( $csv, $header_items, $this->m_sep );
 			}
+			
 			while ( $row = $res->getNext() ) {
 				$row_items = array();
-				foreach ( $row as $field ) {
+				
+				foreach ( $row as /* SMWResultArray */ $field ) {
 					$growing = array();
-					while ( ( $object = $field->getNextObject() ) !== false ) {
-						$text = Sanitizer::decodeCharReferences( $object->getWikiValue() );
-						// decode: CSV knows nothing of possible HTML entities
-						$growing[] = $text;
-					} // while...
+					
+					while ( ( $object = $field->getNextDataValue() ) !== false ) {
+						$growing[] = Sanitizer::decodeCharReferences( $object->getWikiValue() );
+					} 
+					
 					$row_items[] = implode( ',', $growing );
-				} // foreach...
+				}
+				
 				fputcsv( $csv, $row_items, $this->m_sep );
-			} // while...
+			}
 
 			rewind( $csv );
 			$result .= stream_get_contents( $csv );
@@ -78,17 +85,19 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 			$link = $res->getQueryLink( $label );
 			$link->setParameter( 'csv', 'format' );
 			$link->setParameter( $this->m_sep, 'sep' );
-			if ( array_key_exists( 'mainlabel', $this->m_params ) )
+			
+			if ( array_key_exists( 'mainlabel', $this->m_params ) && $this->m_params['mainlabel'] !== false ) {
 				$link->setParameter( $this->m_params['mainlabel'], 'mainlabel' );
-			if ( $this->mShowHeaders )
-				$link->setParameter( 'show', 'headers' );
-			else
-				$link->setParameter( 'hide', 'headers' );
+			}
+				
+			$link->setParameter( $this->mShowHeaders ? 'show' : 'hide', 'headers' );
+			
 			if ( array_key_exists( 'limit', $this->m_params ) ) {
 				$link->setParameter( $this->m_params['limit'], 'limit' );
 			} else { // use a reasonable default limit
 				$link->setParameter( 100, 'limit' );
 			}
+			
 			$result .= $link->getText( $outputmode, $this->mLinker );
 			$this->isHTML = ( $outputmode == SMW_OUTPUT_HTML ); // yes, our code can be viewed as HTML if requested, no more parsing needed
 		}
@@ -96,7 +105,13 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		return parent::exportFormatParameters();
+		$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
+		
+		$params['sep'] = new Parameter( 'sep' );
+		$params['sep']->setDescription( wfMsg( 'smw-paramdesc-csv-sep' ) );
+		$params['sep']->setDefault( $this->m_sep );
+		
+		return $params;
 	}
 
 }

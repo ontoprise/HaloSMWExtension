@@ -17,7 +17,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 	protected $m_description = '';
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'title', $this->m_params ) ) {
 			$this->m_title = trim( $this->m_params['title'] );
 		// for backward compatibiliy
@@ -45,7 +45,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 		return wfMsg( 'smw_printername_rss' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $smwgRSSEnabled, $wgRequest;
 		$result = '';
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make RSS feed
@@ -64,17 +64,17 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			while ( $row !== false ) {
 				$creators = array();
 				$dates = array();
-				$wikipage = $row[0]->getNextObject(); // get the object
+				$wikipage = $row[0]->getNextDataValue(); // get the object
 				foreach ( $row as $field ) {
 					// for now we ignore everything but creator and date, later we may
 					// add more things like geolocs, categories, and even a generic
 					// mechanism to add whatever you want :)
 					$req = $field->getPrintRequest();
-					if ( strtolower( $req->getLabel() ) == "creator" ) {
+					if ( strtolower( $req->getLabel() ) == 'creator' ) {
 						foreach ( $field->getContent() as $entry ) {
 							$creators[] = $entry->getShortWikiText();
 						}
-					} elseif ( ( strtolower( $req->getLabel() ) == "date" ) && ( $req->getTypeID() == "_dat" ) ) {
+					} elseif ( ( strtolower( $req->getLabel() ) == 'date' ) && ( $req->getTypeID() == '_dat' ) ) {
 						foreach ( $field->getContent() as $entry ) {
 							$dates[] = $entry->getXMLSchemaDate();
 						}
@@ -96,9 +96,9 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			$result .= "\txmlns=\"http://purl.org/rss/1.0/\">\n";
 			$result .= "\t<channel rdf:about=\"" . str_replace( '&', '&amp;', $wgRequest->getFullRequestURL() ) . "\">\n";
 			$result .= "\t\t<admin:generatorAgent rdf:resource=\"http://semantic-mediawiki.org/wiki/Special:URIResolver/Semantic_MediaWiki\"/>\n";
-			$result .= "\t\t<title>" . $this->m_title . "</title>\n";
+			$result .= "\t\t<title>" . smwfXMLContentEncode( $this->m_title ) . "</title>\n";
 			$result .= "\t\t<link>$wgServer</link>\n";
-			$result .= "\t\t<description>" . $this->m_description . "</description>\n";
+			$result .= "\t\t<description>" . smwfXMLContentEncode( $this->m_description ) . "</description>\n";
 			if ( count( $items ) > 0 ) {
 				$result .= "\t\t<items>\n";
 				$result .= "\t\t\t<rdf:Seq>\n";
@@ -112,7 +112,7 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			foreach ( $items as $item ) {
 				$result .= $item->text();
 			}
-			$result .= "</rdf:RDF>";
+			$result .= '</rdf:RDF>';
 		} else { // just make link to feed
 			if ( $this->getSearchLabel( $outputmode ) ) {
 				$label = $this->getSearchLabel( $outputmode );
@@ -149,9 +149,14 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		$params = parent::exportFormatParameters();
-		$params[] = array( 'name' => 'title', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_rsstitle' ) );
-		$params[] = array( 'name' => 'description', 'type' => 'string', 'description' => wfMsg( 'smw_paramdesc_rssdescription' ) );
+		$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
+		
+		$params['title'] = new Parameter( 'title' );
+		$params['title']->setDescription( wfMsg( 'smw_paramdesc_rsstitle' ) );
+		
+		$params['description'] = new Parameter( 'title' );
+		$params['description']->setDescription( wfMsg( 'smw_paramdesc_rssdescription' ) );
+		
 		return $params;
 	}
 
@@ -224,8 +229,8 @@ class SMWRSSItem {
 		$smwgShowFactbox = SMW_FACTBOX_HIDDEN; // just hide factbox; no need to restore this setting, I hope that nothing comes after FILE outputs
 
 		$text  = "\t<item rdf:about=\"$this->uri\">\n";
-		$text .= "\t\t<title>$this->label</title>\n";
-		$text .= "\t\t<link>$this->uri</link>\n";
+		$text .= "\t\t<title>" . smwfXMLContentEncode( $this->label ) . "</title>\n";
+		$text .= "\t\t<link>" . smwfXMLContentEncode( $this->uri ) . "</link>\n";
 		foreach ( $this->date as $date )
 			$text .= "\t\t<dc:date>$date</dc:date>\n";
 		foreach ( $this->creator as $creator )
@@ -238,20 +243,11 @@ class SMWRSSItem {
 			// Make absolute URLs out of the local ones:
 			///TODO is there maybe a way in the parser options to make the URLs absolute?
 			$content = str_replace( '<a href="/', '<a href="' . $wgServer . '/', $content );
-			$text .= "\t\t<description>" . $this->clean( $content ) . "</description>\n";
+			$text .= "\t\t<description>" . smwfXMLContentEncode( $content ) . "</description>\n";
 			$text .= "\t\t<content:encoded  rdf:datatype=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral\"><![CDATA[$content]]></content:encoded>\n";
 		}
 		$text .= "\t</item>\n";
 		return $text;
-	}
-
-	/**
-	 * Descriptions are unescaped simple text. The content is given in HTML. This should
-	 * clean the description.
-	 */
-	private function clean( $t ) {
-		return trim( smwfXMLContentEncode( $t ) );
-		// return trim(str_replace(array('&','<','>'), array('&amp;','&lt;','&gt;'), strip_tags(html_entity_decode($t, null, 'UTF-8'))));
 	}
 
 }

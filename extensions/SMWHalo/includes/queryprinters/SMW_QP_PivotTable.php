@@ -18,7 +18,7 @@ class SMWPivotTableResultPrinter extends SMWResultPrinter {
 		return wfMsg( 'smw_printername_' . $this->mFormat );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText(SMWQueryResult $res, $outputmode ) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem( SMW_HEADER_SORTTABLE );
 
@@ -53,7 +53,7 @@ class SMWPivotTableResultPrinter extends SMWResultPrinter {
 				$result .= ">";
 
 				$first = true;
-				while ( ( $object = $field->getNextObject() ) !== false ) {
+				while ( ( $object = $field->getNextDataValue() ) !== false ) {
 					if ( $first ) {
 						if ( $object->isNumeric() ) { // additional hidden sortkey for numeric entries
 							$result .= '<span class="smwsortkey">' . $object->getValueKey() . '</span>';

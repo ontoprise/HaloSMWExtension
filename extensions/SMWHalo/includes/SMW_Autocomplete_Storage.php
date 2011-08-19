@@ -150,22 +150,16 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$substring = str_replace("_", " ",$substring);
 
 		// get all types of a property (normally 1)
-		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
-		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
-		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
-		foreach($types as $t) {
-			$dbkeys = $t->getDBkeys();
-			$subtypes = explode(";", array_shift($dbkeys));
-
-			foreach($subtypes as $st) {
-				// get all units registered for a given type
-				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
-				$units = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
-				$units_si = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
-				$all_units = array_merge($all_units, $units, $units_si);
-			}
+		$conversionFactorProperty = SMWDIProperty::newFromUserLabel("_CONV");
+		$propertySubjectDi = SMWDIWikiPage::newFromTitle($property);
+		$conversionFactors = smwfGetStore()->getPropertyValues($propertySubjectDi, $conversionFactorProperty);
+		$units = array();
+		foreach($conversionFactors as $di) {
+			$units[] = $di->getString();
 		}
+		$all_units = array_merge($all_units, $units);
+
+
 		$result = array();
 
 		// regexp for a measure (=number + unit)
@@ -177,8 +171,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		// collect all units which match the substring (if non empty, otherwise all)
 		foreach($all_units as $u) {
-			$dbkeys = $u->getDBkeys();
-			$s_units = explode(",", array_shift($dbkeys));
+			$s_units = explode(",", $u);
 			foreach($s_units as $su) {
 				if ($substring != '') {
 					if (strpos(strtolower($su), $substring) > 0) {
@@ -196,12 +189,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getPossibleValues(Title $property) {
-		$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
-		$poss_values = smwfGetStore()->getPropertyValues($property, $possibleValueDV);
+		$propertySubjectDi = SMWDIWikiPage::newFromTitle($property);
+		$possibleValuePropertyDi = SMWDIProperty::newFromUserLabel("_PVAL");
+		$possibleValuesDi = smwfGetStore()->getPropertyValues($propertySubjectDi, $possibleValuePropertyDi);
 		$result = array();
-		foreach($poss_values as $v) {
-			$dbkeys = $v->getDBkeys();
-			$result[] = array_shift($dbkeys);
+		foreach($possibleValuesDi as $di) {
+			$result[] = $di->getString();
 		}
 		return $result;
 	}
@@ -212,10 +205,10 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$sql = "";
 		$page = $db->tableName('page');
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 
 		$bundleID = str_replace(" ","_",ucfirst($bundleID));
-		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$page = $db->tableName('page');
@@ -228,8 +221,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
 			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title) UNION ';
-            $sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') ORDER BY page_title) ';
-            
+			$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') ORDER BY page_title) ';
+
 		} else {
 
 			//wanted and unwanted namespace
@@ -295,34 +288,18 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 	public function getPropertyWithType($match, $typeLabel) {
-		$db =& wfGetDB( DB_SLAVE );
-		$smw_spec2 = $db->tableName('smw_spec2');
-		$smw_ids = $db->tableName('smw_ids');
-		$page = $db->tableName('page');
+
 		$result = array();
 		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
-		$res = $db->query('(SELECT i2.smw_title AS title FROM '.$smw_ids.' i2 '.
-                               'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
-                               'JOIN '.$smw_ids.' i ON s1.value_string = i.smw_title AND i.smw_namespace = '.SMW_NS_TYPE.' '.
-                               'JOIN '.$smw_spec2.' s2 ON s2.s_id = i.smw_id AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
-                               'WHERE i2.smw_namespace = '.SMW_NS_PROPERTY.' AND UPPER('.DBHelper::convertColumn('i2.smw_title').') LIKE UPPER(' . $db->addQuotes("%$match%").'))'.
-                            ' UNION (SELECT smw_title AS title FROM smw_ids i '.
-                               'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
-                               'WHERE UPPER('.DBHelper::convertColumn('i.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
-                               'UPPER('.DBHelper::convertColumn('s1.value_string').') = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
-                            'ORDER BY title LIMIT '.SMW_AC_MAX_RESULTS);
-
-			
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->title, 'read', SMW_NS_PROPERTY) == 'true') {
-					$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
-				}
+		$hasTypePropertyDi = SMWDIProperty::newFromUserLabel("_TYPE");
+		$properties = smwfGetStore()->getPropertySubjects($hasTypePropertyDi, SMWDIUri::doUnserialize("http://semantic-mediawiki.org/swivt/1.0#$typeID"));
+		foreach($properties as $di) {
+			$title = $di->getTitle();
+			if (smwf_om_userCan($title->getText(), 'read', SMW_NS_PROPERTY) == 'true') {
+				$result[] = $title;
 			}
-		}
 
-		$db->freeResult($res);
+		}
 
 		return $result;
 	}
@@ -335,7 +312,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
-			
+
 
 		$nary_pos = $matchDomainOrRange ? '"_1"' : '"_2"';
 
@@ -414,7 +391,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
-			
+
 
 		$nary_pos = '"_1"';
 
@@ -434,7 +411,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
-			
+
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
                      ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
@@ -494,7 +471,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$smw_ids = $db->tableName('smw_ids');
-			
+
 
 		$nary_pos = 0;
 
@@ -514,13 +491,13 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
-			
+
 		$db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
                      ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 		$db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
                      ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
-			
+
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
 
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
@@ -637,16 +614,11 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$result = array();
 
 		// deactivated code which considers users preferred date format
-		$prop = SMWPropertyValue::makeUserProperty($property);
-		$dbkeys = $prop->getTypesValue()->getDBkeys();
-		if (array_shift($dbkeys) == '_dat') {
-			$dateformat = "dmy"; // set "25 April 1980 00:00:00" as default dateFormat (the time is optional)
-			// This would consider user prefs for date format.
-			//global $wgUser;
-			//$dateformat = !is_null($wgUser) ? $wgUser->getOption('date') : "ISO 8601";
+		$typeID = SMWDIProperty::newFromUserLabel($property->getText())->findPropertyTypeID();
+		if ($typeID == '_dat') {
+			$dateformat = "dmy";
 		}
 
-			
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if ($row->namespace == -1) {
@@ -665,7 +637,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$db->query('DROP TEMPORARY TABLE smw_cc_properties_super');
 		$db->query('DROP TEMPORARY TABLE smw_cc_properties_sub');
-			
+
 		$db->query('DROP TEMPORARY TABLE smw_cc_propertyinst');
 
 		return $result;
@@ -690,15 +662,20 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		// initialize with direct instances
-		foreach($domainRangeAnnotations as $dr) {
-			$dvs = $dr->getDVs();
-			if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
+		global $smwgHaloContLang;
+        $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		foreach($domainRangeAnnotations as $value) {
+			$sd = $value->getSemanticData();
+
+                $range = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
+                $rangeDi = reset($range);
+			if (is_null($rangeDi) || $rangeDi === false) continue;
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-                        'WHERE page_is_redirect = 0 AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                        'WHERE page_is_redirect = 0 AND cl_to = '.$db->addQuotes($rangeDi->getTitle()->getDBkey()).' AND UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 
-			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).')');
+			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($rangeDi->getTitle()->getDBkey()).')');
 
 		}
 
@@ -732,7 +709,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances_super');
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
 
-			
+
 		$res = $db->query('SELECT DISTINCT instance, namespace FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
 
 		$results = array();
@@ -827,8 +804,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
 			return $image_urls[$categoryTitle->getPrefixedDBkey()];
 		}
-		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
-		$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '');
+		$catHasIconProperty = SMWDIProperty::newFromUserLabel(wfMsg('smw_ac_category_has_icon'));
+		$iconValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($categoryTitle), $catHasIconProperty, NULL, '');
 		$iconValue = reset($iconValues); // consider only first
 		if ($iconValue === false) return NULL;
 
@@ -852,35 +829,34 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	 */
 	protected function getPropertyData(Title $property) {
 		$ranges = array();
-		$pv = SMWPropertyValue::makeUserProperty($property->getText());
-		$typesValue = $pv->getTypesValue();
-		$typeString = implode(',', $typesValue->getTypeLabels());
-		$hasWikiPageType = false;
-		$typeValues = $typesValue->getTypeValues();
-		foreach($typeValues as $tv) {
-			$dbkeys = $tv->getDBkeys();
-			$typeID = array_shift($dbkeys);
-			$hasWikiPageType |= WikiTypeToXSD::isPageType($typeID) || $typeID ==  '__tls'; // __tls = list of types
+		$propDi = SMWDIProperty::newFromUserLabel($property->getText());
+		$typeString = $propDi->findPropertyTypeId();
+		if ($typeString == '_rec') {
+			$fieldsDi = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), SMWDIProperty::newFromUserLabel('_LIST'));
+			$first = reset($fieldsDi);
+			$typeString = $first->getString();
 		}
 
-		$rangeString = NULL;
-		if ($hasWikiPageType) {
-			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
-			foreach($domainRangeAnnotations as $a) {
 
-				$dvs = $a->getDVs();
-				$domain = reset($dvs);
-				$range = next($dvs);
-				if (!is_null($range) && $range !== false) $ranges[] = $range->getTitle()->getText();
+		global $smwgHaloContLang;
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$rangeString = NULL;
+		if ($typeString == '_wpg') {
+			$domainRangeProperty = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), $domainRangeProperty);
+			foreach($domainRangeAnnotations as $value) {
+
+				$sd = $value->getSemanticData();
+
+				$range = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
+				$rangeDi = reset($range);
+
+
+				if (!is_null($rangeDi) && $rangeDi !== false) {
+					$ranges[] = $rangeDi->getTitle()->getText();
+				}
 
 			}
-
-			global $smwgContLang;
-			$datatypeLabels = $smwgContLang->getDatatypeLabels();
-			// FIXME: There is no proper label for 'spf','wpp' and 'tls', so replace it by default Page type label.
-			$typeString = str_replace('spf', $datatypeLabels['_wpg'], $typeString);
-			$typeString = str_replace('wpp', $datatypeLabels['_wpg'], $typeString);
-			$typeString = str_replace('tls', wfMsg('smw_ac_tls'), $typeString);
 
 			$rangeString = implode(',', array_unique($ranges));
 		}
@@ -1065,8 +1041,8 @@ class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
 		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
 			return $image_urls[$categoryTitle->getPrefixedDBkey()];
 		}
-		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
-		$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '', true);
+		$catHasIconPropertyDi = SMWDIProperty::newFromUserLabel(wfMsg('smw_ac_category_has_icon'));
+		$iconValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($categoryTitle), $catHasIconPropertyDi, NULL, '', true);
 		$iconValue = reset($iconValues); // consider only first
 
 		$im_file = wfLocalFile($iconValue->getTitle());
