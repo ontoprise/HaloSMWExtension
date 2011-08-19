@@ -133,6 +133,13 @@ class OntologyInstaller {
 			}
 		}
 
+		// update prefixes (comes from onto2mwxml)
+		$dfgOut->outputln("[Update prefixes...");
+
+		DFBundleTools::storeRegisteredPrefixes($outputFromOnto2mwxml->ns_mappings);
+		unlink($settingsFile);
+		$dfgOut->output("done.]");
+
 		// do actual ontology install/update
 		$dfgOut->outputln("[Installing/updating ontology $inputfile...");
 		$this->installOrUpdateOntologyXML($outputfile_rel, $verificationLog, $bundleID);
@@ -145,12 +152,6 @@ class OntologyInstaller {
 			$dfgOut->output("done.]");
 		}
 
-		// update prefixes (comes from onto2mwxml)
-		$dfgOut->outputln("[Update prefixes...");
-
-		DFBundleTools::storeRegisteredPrefixes($outputFromOnto2mwxml->ns_mappings);
-		unlink($settingsFile);
-		$dfgOut->output("done.]");
 
 		return $bundleID;
 	}
