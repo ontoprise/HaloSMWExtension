@@ -27,6 +27,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 * Also called by Halo Initialize
 	 */
 	public function getScripts() {
+		
+		//todo:deal with query interface
+		
 		global $smwgHaloScriptPath;
 		$scripts=array();
 		global $smwgHaloStyleVersion;
@@ -39,6 +42,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 * Also called by Halo Initialize
 	 */
 	function getStylesheets() {
+		
+		//todo:deal with query interface
+		
 		global $smwgHaloScriptPath;
 		global $smwgHaloStyleVersion;
 		$css = array();
@@ -73,13 +79,9 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 			$html = $tabularFormData->getAjaxLoaderHTML();
 
 			//Add script
-			foreach($this->getScripts() as $key => $script) {
-				SMWOutputs::requireHeadItem("tf-script".$key, $script);
-			}
+			global $wgOut;
+			$wgOut->addModules( array('ext.tabularforms.main' ));
 
-			foreach($this->getStylesheets() as $key => $css) {
-				SMWOutputs::requireHeadItem("tabularform-css".$key, '<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
-			}
 		}
 
 		$this->mShowErrors = false;
