@@ -545,6 +545,19 @@ function smwgHaloSetupExtension() {
 		$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
 		$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
 
+		global $wgResourceModules, $smwgHaloIP;
+		$commonProperties = array(
+			'localBasePath' => $smwgHaloIP,
+			'remoteExtPath' => 'SMWHalo'
+		);
+	
+		$wgResourceModules['ext.tabularforms.main'] = 
+			$commonProperties + 
+			array(
+				'scripts' => array('scripts/TabularForms/tabularforms.js'),
+				'styles' => array('skins/TabularForms/tabularforms.css'),
+			);
+		
 		define('TF_IS_QC_CMP', 'qc_');
 		define('TF_IS_EXISTS_CMP', 'plus_');
 		define('TF_CATEGORY_KEYWORD', '__Category__');
