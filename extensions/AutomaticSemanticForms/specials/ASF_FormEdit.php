@@ -158,9 +158,8 @@ function execute($query) {
 		$smgJSLibs[] = 'jquery'; 
 		$smgJSLibs[] = 'qtip';
 		
-		global $asfHeaders;
-		$asfHeaders['asf.js'] = true;
-		$asfHeaders['asf.css'] = true;		
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.main' );		
 	}
 	
 	

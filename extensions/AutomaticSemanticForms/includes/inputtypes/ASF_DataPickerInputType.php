@@ -121,8 +121,8 @@ class ASFDataPickerInputType {
 			$size = $otherArgs['size'];
 		}
 		
-		global $asfHeaders;
-		$asfHeaders['datapicker.js'] = true;
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.datapicker' );
 				
 		$html = '<span class="dapi-form-field-container" id="dapi-container-'.$sfgFieldNum.'" 
 			onmouseover="dapi_showRefreshdControls(event)" onmouseout="dapi_hideRefreshdControls(event)" 

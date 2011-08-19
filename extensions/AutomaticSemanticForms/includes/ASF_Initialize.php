@@ -13,17 +13,13 @@ global $asfIP, $asfScriptPath;
 $asfIP = $IP . '/extensions/AutomaticSemanticForms';
 $asfScriptPath = $wgScriptPath . '/extensions/AutomaticSemanticForms';
 
-global $smwgASFStyleVersion;
-$smwgASFStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
-if (strlen($smwgASFStyleVersion) > 0)
-    $smwgASFStyleVersion = '?'.$smwgASFStyleVersion;
 	
 /*
  * This method must be called in Local Settings
  * 
  * It sets up the Automatic Semantic Forms Extension
  */
-	function enableAutomaticSemanticForms() {
+function enableAutomaticSemanticForms() {
 	global $asfIP, $wgExtensionFunctions, $asfEnableAutomaticSemanticForms;
 
 	define('ASF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
@@ -84,6 +80,28 @@ if (strlen($smwgASFStyleVersion) > 0)
 	//initialize input type ajac access poiints
 	require_once($asfIP . '/includes/inputtypes/ASF_DataPickerInputType.php');
 	require_once($asfIP . '/includes/inputtypes/ASF_DataPickerSettings.php');
+	
+	//introduce resource modules
+	global $wgResourceModules, $asfScriptPath;
+	
+	$commonProperties = array(
+		'localBasePath' => $asfIP,
+		'remoteExtPath' => 'AutomaticsemanticForms'
+	);
+	
+	$wgResourceModules['ext.automaticsemanticforms.main'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('/scripts/asf.js'),
+			'styles' => array('/skins/asf.css'),
+		);
+	
+	$wgResourceModules['ext.automaticsemanticforms.datapicker'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('/scripts/datapicker.js'),
+			'dependencies' => array('ext.automaticsemanticforms.main')
+		);
 }
 
 /*
@@ -105,18 +123,15 @@ function asfSetupExtension(){
 	global $sfgFormPrinter;
 	$sfgFormPrinter = new ASFFormPrinter();
 	
-	//Add hook for ASF scripts and css
-	$wgHooks['BeforePageDisplay'][]='asfAddHeaders';
-	global $asfHeaders;
-	$asfHeaders = array();
-	
 	global $wgRequest, $wgContLang;
 	if(strpos($wgRequest->getVal('title'), $wgContLang->getNsText(NS_SPECIAL).':') !== 0){
-		global $smgJSLibs, $asfHeaders; 
+		global $smgJSLibs; 
 		$smgJSLibs[] = 'jquery'; 
 		$smgJSLibs[] = 'qtip';
 		
-		$asfHeaders['asf.js'] = true;
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+		
 	}
 	
 	return true;
@@ -180,32 +195,6 @@ function asfInitContentLanguage($langcode) {
 }
 
 
-/*
- * Adds ASF scripts and stylesheets
- */
-function asfAddHeaders(& $out){
-	global $asfHeaders, $asfScriptPath;
-	global $smwgASFStyleVersion;
-	
-	foreach($asfHeaders as $script => $dc){
-		switch($script){
-			case 'asf.js' :
-				$scriptFile = $asfScriptPath . "/scripts/asf.js".$smwgASFStyleVersion;
-				$out->addScriptFile( $scriptFile );
-				break ;
-			case 'asf.css' :
-				$cssFile = $asfScriptPath . "/skins/asf.css".$smwgASFStyleVersion;
-				$out->addExtensionStyle($cssFile);
-				break ;
-			case 'datapicker.js' :
-				$scriptFile = $asfScriptPath . "/scripts/datapicker.js".$smwgASFStyleVersion;
-				$out->addScriptFile( $scriptFile );
-				break ;
-		}
-	}
-	
-	return true;
-}
 
 
 

@@ -96,9 +96,8 @@ class ASFAdminSpecial extends SpecialPage {
 		$smgJSLibs[] = 'jquery'; 
 		$smgJSLibs[] = 'qtip';
 		
-		global $asfHeaders;
-		$asfHeaders['asf.js'] = true;
-		$asfHeaders['asf.css'] = true;		
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
 	}
 	
 	
