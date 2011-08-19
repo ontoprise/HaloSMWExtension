@@ -613,8 +613,12 @@ class Tools {
 			exec("whereis.bat $name", $out, $ret);
 			return str_replace("\\", "/", reset($out));
 		} else {
+			//FIXME: can not handle whitespaces in path
 			exec("whereis $name", $out, $ret);
-			return reset($out);
+			$result = reset($out);
+			list($prg, $pathstr) = explode(":", $result);
+			$paths = explode(" ", trim($pathstr));
+			return reset($paths);	
 		}
 	}
 
