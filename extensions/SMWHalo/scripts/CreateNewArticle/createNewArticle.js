@@ -10,6 +10,8 @@ var CREATENEWARTICLE = {
 	BIND_CONTROL_ID : '#createNewArticleCtrl',
 	imgPath : wgScriptPath + '/extensions/SMWHalo/skins/CreateNewArticle/',
 	articleExists : false,
+        articleTimeoutId : 0,
+        categoryTimeoutId : 0,
 	fancyBoxContent : function(){
 		return '<form action=\"\" method=\"get\">\
 			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\">Create New Article</td></tr>\
@@ -63,7 +65,7 @@ var CREATENEWARTICLE = {
 				form.append('<input type="hidden" name="mode" value="wysiwyg">');
 				break;
 				
-			default: 
+			default:
 				if(creationMathod.indexOf(this.CATEGORY_STR) > 0){
 					var category = jQuery("#listOfTemplatesAndCategories option:selected").val();
 					category = category.substring(0, category.indexOf(this.CATEGORY_STR));
@@ -100,8 +102,12 @@ var CREATENEWARTICLE = {
 			}
 //			else if(keycode !== 37 && keycode !== 39){
 			else{
-				CREATENEWARTICLE.showActivity();	
-				sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
+				CREATENEWARTICLE.showActivity();
+                                if(CREATENEWARTICLE.articleTimeoutId){
+                                    window.clearTimeout(CREATENEWARTICLE.articleTimeoutId);
+                                }
+                                CREATENEWARTICLE.articleTimeoutId = window.setTimeout(function(){
+                                    sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
 					var articleExists = request.responseText;
 					articleExists = articleExists.split(';');
 					if(jQuery('#newArticleName').val() === articleExists[1]){
@@ -126,14 +132,14 @@ var CREATENEWARTICLE = {
 				
 						CREATENEWARTICLE.hideActivity();
 					}
-				});
+				})}, 500);
 			}
 	},
 	
 	setRationaleDescription : function(selectedValue){
 		switch(selectedValue){
 			case this.EMPTY_IN_WIKITEXT:
-				jQuery('#selectedTitleTd').html(selectedValue + ':');
+				jQuery('#selectedTitleTd').html(this.selectedValue + ':');
 				jQuery('#selectedDescTd').text('Create an empty article in WikiText editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 				jQuery('#listOfTemplatesAndCategories').focus();
@@ -142,7 +148,7 @@ var CREATENEWARTICLE = {
 				break;
 				
 			case this.EMPTY_IN_WYSIWYG:
-				jQuery('#selectedTitleTd').html(selectedValue + ':');
+				jQuery('#selectedTitleTd').html(this.selectedValue + ':');
 				jQuery('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
 				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 				jQuery('#listOfTemplatesAndCategories').focus();
@@ -164,7 +170,11 @@ var CREATENEWARTICLE = {
 				}
 				CREATENEWARTICLE.showActivity();
 				jQuery('#newArticleName').attr('disabled', 'disabled');
-				sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
+                                if(CREATENEWARTICLE.categoryTimeoutId){
+                                    window.clearTimeout(CREATENEWARTICLE.categoryTimeoutId);
+                                }
+                                CREATENEWARTICLE.categoryTimeoutId = window.setTimeout(function(){
+                                    sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
 					var responseText = request.responseText.split(';');
 					var title = responseText[1];
 					var formIndex = title.indexOf(formStr);
@@ -175,7 +185,7 @@ var CREATENEWARTICLE = {
 						title = title.substr(categoryStr.length, title.length - 1);
 					
 					if(jQuery('#listOfTemplatesAndCategories option:selected').val().indexOf(title) == 0){
-						jQuery('#selectedTitleTd').html(selectedValue + ':');
+						jQuery('#selectedTitleTd').html(CREATENEWARTICLE.shorterString(selectedValue, 55) + ':');
 						jQuery('#selectedDescTd').html(responseText[0]);
 						jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
 	//					jQuery.fancybox.resize();
@@ -185,7 +195,7 @@ var CREATENEWARTICLE = {
 					CREATENEWARTICLE.validate();
 					jQuery('#listOfTemplatesAndCategories').focus();
 					
-				});
+				})}, 500);
 				break;
 			}
 	},
@@ -235,9 +245,18 @@ var CREATENEWARTICLE = {
 	},
 	
 	shorterString : function(theString, numOfLetters){
-		if(theString && jQuery.trim(theString).length > numOfLetters){
-			theString = theString.substr(0, numOfLetters - 3);
-			theString += '...';
+		if(theString && jQuery.trim(theString).length > numOfLetters){                    
+                    if(theString.indexOf(this.CATEGORY_STR) == theString.length - this.CATEGORY_STR.length){
+                        theString = theString.substr(0, numOfLetters - 3 - this.CATEGORY_STR.length);
+                        theString += '...';
+                        theString += this.CATEGORY_STR;
+                    }
+                    else if(theString.indexOf(this.FORM_STR) == theString.length - this.FORM_STR.length){
+                        theString = theString.substr(0, numOfLetters - 3 - this.FORM_STR.length);
+                        theString += '...';
+                        theString += this.FORM_STR;
+                    }	
+                    
 		}
 		return theString;
 	},
@@ -267,7 +286,7 @@ var CREATENEWARTICLE = {
 
 jQuery(document).ready(function() {
 	if(jQuery.query.get('todo').toLowerCase() === 'createnewarticle'){
-		jQuery.fancybox({ 
+            jQuery.fancybox({ 
 			'content'  : CREATENEWARTICLE.fancyBoxContent(),
 			'modal'  : true,
 			'width'		: '75%',
@@ -317,11 +336,24 @@ jQuery(document).ready(function() {
 				{
 					jQuery.fancybox.close();
 				});
+                                
+                                jQuery('#newArticleName').keypress(function(event) {
+                                    if (event.which == 13 && !jQuery('#cna_submitBtn').attr('disabled')) {
+                                        jQuery('#cna_submitBtn').click();
+                                    }
+                                });
+
+                                jQuery('#listOfTemplatesAndCategories').keypress(function(event) {
+                                    if (event.which == 13 && !jQuery('#cna_submitBtn').attr('disabled')) {
+                                        jQuery('#cna_submitBtn').click();
+                                    }
+                                });
 				
 				jQuery.fancybox.resize();
 				jQuery.fancybox.center();
 				
-				articleTitleTextBox.trigger('focus');
+				articleTitleTextBox.trigger('focus');                               
+                                
 				}
 		}).click();
 	}
@@ -332,4 +364,6 @@ jQuery(document).ready(function() {
 		document.location.search = jQuery.query.set('todo', 'createnewarticle');
 		event.preventDefault();
 	});
+        
+        
 });
