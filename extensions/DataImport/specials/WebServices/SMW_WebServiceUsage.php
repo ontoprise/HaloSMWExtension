@@ -505,10 +505,12 @@ public static function processSMWQueryASWSCall($parameters){
 		
 		//create print requests
 		foreach($wsReturnValues as $id => $label){
+			
 			$id = ucfirst(substr($id, strpos($id, '.')+1));
 			if(!$label) $label = $id;
+			
 			$printRequests[$id] = 
-				new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $label, $id);
+				new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $label,null);
 		}
 		
 		//transpose ws result
@@ -517,18 +519,22 @@ public static function processSMWQueryASWSCall($parameters){
 				$queryResultColumnValues = array();
 				
 				$resultInstance = SMWDataValueFactory::newTypeIDValue('_wpg');
-				$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), '');
+				$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'));
 				$resultInstance->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID(), false, '', $title->getFragment());
+				$resultInstance = $resultInstance->getDataItem();
 				
 				$dataValue = SMWDataValueFactory::newTypeIDValue($typeIds[$columnLabel]);
 				$dataValue->setUserValue($value);
-				$queryResultColumnValues[] = $dataValue;
+				$dataItem = $dataValue->getDataItem();
+				
+				$queryResultColumnValues[] = $dataItem;
 				
 				//this is necessary, because one can edit with the properties
 				//parameter of the LDConnector additional columns
 				if(!array_key_exists(ucfirst($columnLabel), $printRequests)){
 					$printRequests[ucfirst($columnLabel)] = 
-						new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $columnLabel, ucfirst($columnLabel));
+						//new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $columnLabel, ucfirst($columnLabel));
+						new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, $columnLabel, null);
 				}
 				
 				$queryResultColumnValues = 

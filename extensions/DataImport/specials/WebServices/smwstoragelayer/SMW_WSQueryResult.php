@@ -72,7 +72,7 @@ class SMWWSQueryResult extends SMWQueryResult {
  */
 class SMWWSResultArray extends SMWResultArray {
     
-	public function SMWWSResultArray(SMWWikiPageValue $resultPage, SMWPrintRequest $printRequest, $results) {
+	public function SMWWSResultArray(SMWDIWikiPage $resultPage, SMWPrintRequest $printRequest, $results) {
         parent::__construct($resultPage, $printRequest, new SMWWSSMWStore());
         $this->mContent = $results; // do not reload
     }
