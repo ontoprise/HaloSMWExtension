@@ -42,9 +42,9 @@ class SkinOntoSkin3 extends SkinTemplate {
             $this->skinname  = 'ontoskin3';
             $this->stylename = 'ontoskin3';
             $this->template  = 'OntoSkin3Template';
-          
-    }
 
+    }
+    
     function getSkinName() {
 	return 'ontoskin3';
     }
@@ -81,7 +81,7 @@ class SkinOntoSkin3 extends SkinTemplate {
         // Append to the print styles...
         $out->addStyle( 'ontoskin3/css/skin-printable.css', 'print' );
         
-        
+	        
     }
 }
 
@@ -129,10 +129,10 @@ class OntoSkin3Template extends QuickTemplate {
 
                  <?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
-                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
+<!--             <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>  -->
                  
                  <!-- Head Scripts -->
-                 <?php $this->html('headscripts') ?>
+<!--                 <?php $this->html('headscripts') ?> -->
                  <?php	if($this->data['jsvarurl']) { ?>
                  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl') ?>"><!-- site js --></script>
                  <?php	} ?>
@@ -151,8 +151,9 @@ class OntoSkin3Template extends QuickTemplate {
                  if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
 
                  <!-- Ontoskin3 javascripts -->
-                 
-                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
+<!--                  
+                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"></script>
+-->                 
     </head>
     <body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
@@ -280,6 +281,10 @@ class OntoSkin3Template extends QuickTemplate {
             </div>
             <?php endif; // page != 'plain' ?>
         <div id="ontomenuanchor"></div>
+
+		<!-- Javascript for Ontoskin3 -->
+        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"></script>
+        
     </body></html>
         <?php
         wfRestoreWarnings();
