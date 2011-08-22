@@ -395,7 +395,7 @@
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Aitpmatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
+      <text xml:space="preserve">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Automatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
 &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;B&lt;/span&gt;elow you can play around with the Automatic Semantic Forms extension. This is easy and works like follows:
 
 #Enter an article name in the input field. Use the name of an article that does not yet exist.
