@@ -61,11 +61,10 @@ class DFBundleTools {
 			$bundleTitle = $object->getTitle();
 
 			$externalGraphs = array();
-			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURIProperty));
+			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($ontologyURIProperty));
 			if (count($values) > 0) {
 				$value = reset($values);
-				$dbkeys = $value->getDBkeys();
-				$ontologyURI = reset($dbkeys);
+				$ontologyURI = $value->getURI();
 				$results[] = array($fileTitle, $ontologyURI);
 			}
 
@@ -77,48 +76,44 @@ class DFBundleTools {
 		global $dfgLang;
 		$ontologyURI = $dfgLang->getLanguageString('df_ontologyuri');
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($ontologyURI));
+		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($ontologyURI));
 		if (count($values) > 0) {
 			$value = reset($values);
-			$dbkeys = $value->getDBkeys();
-			$ontologyURI = reset($dbkeys);
+			$ontologyURI = $value->getURI();
 			return $ontologyURI;
 		}
 
-
-
 		return NULL;
 	}
-	
+
 	/**
 	 * Returns bundleID of given page title.
-	 * 
+	 *
 	 * Note: If more than one bundle ID exist, the result is not defined.
-	 * 
+	 *
 	 * @param $title
-	 * 
+	 *
 	 * @return string
 	 */
-    public static function getBundleID($title) {
-        global $dfgLang;
-        $partOfBundle = $dfgLang->getLanguageString('df_partofbundle');
-        $bundleTitle = $title;
-        $values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($partOfBundle));
-        if (count($values) > 0) {
-            $value = reset($values);
-            $dbkeys = $value->getDBkeys();
-            $bundleID = reset($dbkeys);
-            return strtolower($bundleID);
-        }
-        return NULL;
-    }
+	public static function getBundleID($title) {
+		global $dfgLang;
+		$partOfBundle = $dfgLang->getLanguageString('df_partofbundle');
+		$bundleTitle = $title;
+		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($partOfBundle));
+		if (count($values) > 0) {
+			$value = reset($values);
+			$bundleID = $value->getString();
+			return strtolower($bundleID);
+		}
+		return NULL;
+	}
 
 	/**
 	 * Returns namespace prefixes which are used by $bundleID
-	 * 
+	 *
 	 * @param string $bundleID
 	 * @param boolean $only Find those prefies ONLY used by $bundleID
-	 * 
+	 *
 	 * @return string[]
 	 */
 	public static function getPrefixesUsedBy($bundleID, $only = true) {
@@ -127,16 +122,15 @@ class DFBundleTools {
 		// find prefixes used for $bundleID
 		$usesprefixPropertyName = $dfgLang->getLanguageString('df_usesprefix');
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWPropertyValue::makeUserProperty($usesprefixPropertyName));
+		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($usesprefixPropertyName));
 		$results = array();
 		foreach($values as $value) {
-			$dbkeys = $value->getDBkeys();
-			$prefix = reset($dbkeys);
+			$prefix = $value->getString();
 			$results[] = strtolower($prefix);
 		}
 
 		if (!$only) return $results;
-		
+
 		// find those ONLY used for $bundleID
 		$prefixesOnlyUsedBy = array();
 		foreach($results as $prefix) {
@@ -236,28 +230,28 @@ class DFBundleTools {
 		}
 		return 'OBL'; // assume ObjectLogic per default.
 	}
-    
+
 	/**
 	 * Checks if $title is part of bundle $bundleID.
-	 * 
+	 *
 	 * @param Title $title
 	 * @param string $bundleID
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static function isPartOfBundle($title, $bundleID) {
 		global $dfgLang;
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$bundleID = ucfirst($bundleID);
-        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
-        $db =& wfGetDB( DB_SLAVE );
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_rels2 = $db->tableName('smw_rels2');
+		$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "");
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
 		$bundleSql = 'SELECT smw_id FROM '.$smw_ids.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.' WHERE smw_title = '.$db->addQuotes($title->getDBkey()).' AND smw_namespace = '.$title->getNamespace();
 		$res = $db->query($bundleSql);
 		return $db->numRows( $res ) > 0;
 	}
-	
+
 	/**
 	 * Removes articles belonging to a bundle. If $removeReferenced == true, it is assumed that everything other than instances of categories of a bundle
 	 * and templates used by such is marked with the 'Part of bundle' annotation. Otherwise _everything_ must be marked with 'Part of bundle'.
@@ -286,9 +280,9 @@ class DFBundleTools {
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_templates_must_persist (title  VARCHAR(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
-		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "", "");
 
 		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by
 		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
@@ -382,9 +376,9 @@ class DFBundleTools {
 		global $dfgLang;
 		global $dfgOut;
 		$db =& wfGetDB( DB_SLAVE );
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
-		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "", "");
 
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
@@ -438,9 +432,9 @@ class DFBundleTools {
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_images_must_persist (title  VARCHAR(255) NOT NULL)
                     TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
-		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "", "");
 
 		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by
 		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
@@ -491,35 +485,33 @@ class DFBundleTools {
 		$db->query('DROP TEMPORARY TABLE df_page_of_images_used');
 		$db->query('DROP TEMPORARY TABLE df_page_of_images_must_persist');
 	}
-	
+
 	/**
-     * Checks if all bundle properties exist and if they have correct types.
-     * 
-     * @param DFPrintoutStream 
+	 * Checks if all bundle properties exist and if they have correct types.
+	 *
+	 * @param DFPrintoutStream
 	 */
 	public static function checkBundleProperties($dfgOut) {
 		global $dfgLang;
 		global $wgContLang;
-		
+
 		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
 		// check if the required properties exist
 		$check = true;
 		// Property:Dependecy
 		$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
-		$pDependency = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
-		$pDependencyTypeValue = $pDependency->getTypesValue();
+		$pDependency = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_dependencies'));
+		$pDependencyType = $pDependency->findPropertyTypeID();
 
-        $dbKeys=$pDependencyTypeValue->getDBkeys();
-		if (reset($dbKeys) != '_rec') {
+		if ($pDependencyType != '_rec') {
 			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
 			$check = false;
 		}
 
-        $dbKeys= smwfGetStore()->getPropertyValues( $pDependency->getWikiPageValue(), SMWPropertyValue::makeProperty( '_LIST' ) );
-		$pDependencyTypes = reset($dbKeys);
-		if ($pDependencyTypes !== false) {
-            $dbKeys= $pDependencyTypes->getDBkeys();
-			$typeIDs = explode(";",reset($dbKeys));
+		$di = smwfGetStore()->getPropertyValues( $pDependency->getDiWikiPage(), SMWDIProperty::newFromUserLabel( '_LIST' ) );
+		if (count($di) > 0) {
+			$list = reset($di)->getString();
+			$typeIDs = explode(";",$list);
 			if (count($typeIDs) != 3) {
 				$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
 				$check = false;
@@ -528,60 +520,74 @@ class DFBundleTools {
 			$dfgOut->outputln("\nCould not read fields of '".$pDependencyTitle->getPrefixedText());
 			$check = false;
 		}
-		list($ext_id, $from, $to) = $typeIDs;
-		if ($ext_id != '_str' || $from != '_num' || $to != '_num') {
+		
+		// check sub object types of Dependency
+		$propertyDiWikiPage = $pDependency->getDiWikiPage();
+		if ( !is_null( $propertyDiWikiPage ) ) {
+			$listDiProperty = new SMWDIProperty( '_LIST' );
+			$dataItems = smwfGetStore()->getPropertyValues( $propertyDiWikiPage, $listDiProperty );
+
+			if ( count( $dataItems ) == 1 ) {
+				$propertyListValue = new SMWPropertyListValue( '__pls' );
+				$propertyListValue->setDataItem( reset($dataItems) );
+
+				if ( $propertyListValue->isValid() ) {
+					$subObjectProperties = $propertyListValue->getPropertyDataItems();
+					$partOfBundlePropertyType = reset($subObjectProperties)->findPropertyTypeID();
+					$minversionType = next($subObjectProperties)->findPropertyTypeID();
+					$maxversionType = next($subObjectProperties)->findPropertyTypeID();
+				}
+			}
+		}
+				
+		if ($partOfBundlePropertyType != '_wpg' || $minversionType != '_num' || $maxversionType != '_num') {
 			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.");
 			$check = false;
 		}
 
 		// Ontology version
 		$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
-		$pOntologyVersion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-		$pOntologyVersionValue = $pOntologyVersion->getTypesValue();
-        $dbKeys= $pOntologyVersionValue->getDBkeys();
-		if (reset($dbKeys) != '_num') {
+		$pOntologyVersion = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion'));
+		$pOntologyVersionType = $pOntologyVersion->findPropertyTypeID();
+		if ($pOntologyVersionType != '_num') {
 			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
 			$check = false;
 		}
 
 		// Installation dir
 		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
-		$pInstallationDir = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-		$pInstallationDirValue = $pInstallationDir->getTypesValue();
-        $dbKeys= $pInstallationDirValue->getDBkeys();
-		if (reset($dbKeys) != '_str') {
+		$pInstallationDir = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir'));
+		$pInstallationDirType = $pInstallationDir->findPropertyTypeID();
+		if ($pInstallationDirType != '_str') {
 			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 
 		// Vendor
 		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
-		$pVendor = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
-		$pVendorValue = $pVendor->getTypesValue();
-        $dbKeys= $pVendorValue->getDBkeys();
-		if (reset($dbKeys) != '_str') {
+		$pVendor = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_vendor'));
+		$pVendorType = $pVendor->findPropertyTypeID();
+		if ($pVendorType != '_str') {
 			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 
 		// Rationale
 		$pRationaleTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
-		$pRationale = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
-		$pRationaleValue = $pRationale->getTypesValue();
-        $dbKeys= $pRationaleValue->getDBkeys();
-		$typeID = reset($dbKeys);
-		if ($typeID != '_str' && $typeID != '_txt') {
+		$pRationale = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_rationale'));
+		$pRationaleType = $pRationale->findPropertyTypeID();
+		if ($pRationaleType != '_str' && $pRationaleType != '_txt') {
 			$dfgOut->outputln("'".$pRationaleTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 
 		// Maintainer
 		$pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
-		$pMaintainer = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
-		$pMaintainerValue = $pMaintainer->getTypesValue();
-        $dbKeys= $pMaintainerValue->getDBkeys();
-		$typeID = reset($dbKeys);
-		if ($typeID != '_str') {
+		$pMaintainer = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maintainer'));
+		$pMaintainerType = $pMaintainer->findPropertyTypeID();
+
+
+		if ($pMaintainerType != '_str') {
 			$dfgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
 			// ignore maintainer
 			//$check = false;
@@ -589,22 +595,18 @@ class DFBundleTools {
 
 		// Help URL
 		$pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-		$pHelpURL = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
-		$pHelpURLValue = $pHelpURL->getTypesValue();
-        $dbKeys= $pHelpURLValue->getDBkeys();
-		$typeID = reset($dbKeys);
-		if ($typeID != '_str') {
+		$pHelpURL = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_helpurl'));
+		$pHelpURLType = $pHelpURL->findPropertyTypeID();
+		if ($pHelpURLType != '_str') {
 			$dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
 			$check = false;
 		}
 
 		// License
 		$pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
-		$pLicense = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
-		$pLicenseValue = $pLicense->getTypesValue();
-        $dbKeys= $pLicenseValue->getDBkeys();
-		$typeID = reset($dbKeys);
-		if ($typeID != '_wpg') {
+		$pLicense = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_license'));
+		$pLicenseType = $pLicense->findPropertyTypeID();
+		if ($pLicenseType != '_wpg') {
 			$dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
 			$check = false;
 		}

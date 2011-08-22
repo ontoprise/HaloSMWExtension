@@ -77,7 +77,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		list($option, $value) = explode("=", $arg);
 		if (!isset($value)) $value = next($argv);
 		$includeImages = ($value == 'true' || $value == '1' || $value == 'yes');
-		 
+			
 		continue;
 	}
 }
@@ -97,25 +97,26 @@ dumpDescriptor($bundleToExport, $output, $dumpFile);
 
 function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml") {
 	global $dfgLang, $includeInstances, $includeImages;
-	$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
+	$dependencies_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_dependencies'));
 
-	$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-	$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-	$rationale_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_rationale'));
-	$maintainer_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_maintainer'));
-	$vendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_vendor'));
-	$helpURL_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_helpurl'));
-	$license_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_license'));
+	$instdir_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir'));
+	$ontologyversion_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion'));
+	$rationale_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_rationale'));
+	$maintainer_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maintainer'));
+	$vendor_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_vendor'));
+	$helpURL_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_helpurl'));
+	$license_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_license'));
 
-	$bundlePage = Title::newFromText($bundeID);
-	$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
-	$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
-	$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
-	$rationale = smwfGetStore()->getPropertyValues($bundlePage, $rationale_p);
-	$maintainer = smwfGetStore()->getPropertyValues($bundlePage, $maintainer_p);
-	$vendor = smwfGetStore()->getPropertyValues($bundlePage, $vendor_p);
-	$helpurl = smwfGetStore()->getPropertyValues($bundlePage, $helpURL_p);
-	$license = smwfGetStore()->getPropertyValues($bundlePage, $license_p);
+	$bundleTitle = Title::newFromText($bundeID);
+	$bundlePageDi = SMWDIWikiPage::newFromTitle($bundleTitle);
+	$dependencies = smwfGetStore()->getPropertyValues($bundlePageDi, $dependencies_p);
+	$version = smwfGetStore()->getPropertyValues($bundlePageDi, $ontologyversion_p);
+	$instdir = smwfGetStore()->getPropertyValues($bundlePageDi, $instdir_p);
+	$rationale = smwfGetStore()->getPropertyValues($bundlePageDi, $rationale_p);
+	$maintainer = smwfGetStore()->getPropertyValues($bundlePageDi, $maintainer_p);
+	$vendor = smwfGetStore()->getPropertyValues($bundlePageDi, $vendor_p);
+	$helpurl = smwfGetStore()->getPropertyValues($bundlePageDi, $helpURL_p);
+	$license = smwfGetStore()->getPropertyValues($bundlePageDi, $license_p);
 
 	if ( count($version) == 0) {
 		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_ontologyversion')."]] annotation on $bundeID" . "\n" );
@@ -140,13 +141,13 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	}
 
 
-	$versionText = count($version) > 0 ? Tools::getXSDValue(reset($version)) : "100";
-	$vendorText = count($vendor) > 0 ? Tools::getXSDValue(reset($vendor)) : "no vendor";
-	$instdirText = count($instdir) > 0 ? Tools::getXSDValue(reset($instdir)) : "extensions/$bundeID";
-	$rationaleText = count($rationale) > 0 ? Tools::getXSDValue(reset($rationale)) : "no description";
-	$maintainerText = count($maintainer) > 0 ? Tools::getXSDValue(reset($maintainer)) : "no maintainer";
-	$helpurlText = count($helpurl) > 0 ? Tools::getXSDValue(reset($helpurl)) : "no help url";
-	$licenseText = count($license) > 0 ? Tools::getXSDValue(reset($license)) : "no license specified";
+	$versionText = count($version) > 0 ? reset($version)->getNumber() : "100";
+	$vendorText = count($vendor) > 0 ? reset($vendor)->getString() : "no vendor";
+	$instdirText = count($instdir) > 0 ? reset($instdir)->getString() : "extensions/$bundeID";
+	$rationaleText = count($rationale) > 0 ? reset($rationale)->getString() : "no description";
+	$maintainerText = count($maintainer) > 0 ? reset($maintainer)->getString() : "no maintainer";
+	$helpurlText = count($helpurl) > 0 ? reset($helpurl)->getString() : "no help url";
+	$licenseText = count($license) > 0 ? reset($license)->getString() : "no license specified";
 
 	$handle = fopen("$output", "w");
 	$src = dirname(__FILE__)."/../../../";
@@ -171,19 +172,41 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<license>'.$licenseText.'</license>'."\n";
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
-		$dvs = $dep->getDVs();
+		$sd = $dep->getSemanticData();
 		if (count($dvs) == 0) {
 			print "\nWarning: Wrong dependency annotation. Ignore it.";
 			continue;
 		}
+		
 		// id must be there
-		$id = Tools::getXSDValue(reset($dvs));
+		$bundleID = NULL;
+		$minversion = false;
+		$maxversion = false;
+		$properties = $sd->getProperties();
+		foreach($properties as $p) {
+			switch($p->getKey()) {
+				case $dfgLang->getLanguageString('df_partofbundle'):
+					$bundleIDDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')));
+					$bundleID = reset($bundleIDDi)->getString();
+					break;
+				case $dfgLang->getLanguageString('df_minversion'):
+					$minversionDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_minversion')));
+                    $minversion = reset($minversionDi)->getString();
+					break;
+				case $dfgLang->getLanguageString('df_maxversion'):
+					$maxversionDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maxversion')));
+                    $maxversion = reset($maxversionDi)->getString();
+					break;
+			}
+		}
+		if (is_null($bundleID)) {
+			Tools::exitOnFatalError("\n\nDependency annotation lacks bundle ID. It is mandatory.\n");
+		}
+		
+		$minversion = $minversion !== false ? 'from="'.$minversion.'"' : "";
 
-		$minVersionValue = next($dvs);
-		$minVersion = $minVersionValue !== false ? 'from="'.Tools::getXSDValue($minVersionValue).'"' : "";
-
-		$maxVersionValue = next($dvs);
-		$maxVersion = $maxVersionValue !== false ? 'to="'.Tools::getXSDValue($maxVersionValue).'"' : "";
+	
+		$maxversion = $maxversion !== false ? 'to="'.$maxversion.'"' : "";
 
 		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$id</dependency>\n";
 	}

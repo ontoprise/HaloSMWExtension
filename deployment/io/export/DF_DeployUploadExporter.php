@@ -121,8 +121,8 @@ class DeployUploadExporter {
 		$image = $dbr->tableName( 'image' );
 		$imagelinks = $dbr->tableName( 'imagelinks' );
 
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
-		$partOfBundleID = smwfGetStore()->getSMWPageID($this->bundleID, NS_MAIN, "");
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundleID = smwfGetStore()->getSMWPageID($this->bundleID, NS_MAIN, "", "");
 
 		// get all image pages beloning to pages of bundle
 		if ($this->includeImages) {

@@ -240,15 +240,15 @@ class OntologyInstaller {
 	public function createDeployDescriptor($bundleID, $inputfile) {
 		global $dfgLang;
 
-		$ontologyBundlePage = Title::newFromText($bundleID);
-		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion')));
-		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundlePage, SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir')));
+		$ontologyBundleTitle = Title::newFromText($bundleID);
+		$ontologyBundleDi = SMWDIWikiPage::newFromTitle($ontologyBundleTitle);
+		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundleDi, SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion')));
+		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundleDi, SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir')));
 		$ontologyVersion = reset($ontologyVersion);
 		$installationDir = reset($installationDir);
-		$versionDBkeys = $ontologyVersion->getDBkeys();
-		$version = reset($versionDBkeys);
-		$installDirDBkeys = $installationDir->getDBkeys();
-		$installDir = reset($installDirDBkeys);
+		
+		$version = $ontologyVersion->getNumber();
+		$installDir = $installationDir->getString();
 		$installDir = strtolower($installDir);
 		$filename = basename($inputfile);
 
@@ -345,7 +345,7 @@ ENDS
 			$pagesToImport[] = $title->getPrefixedText();
 		}
 		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
 		$existingPages = array();
 		foreach($pageValuesOfOntology as $pv) {
 			$existingPages[] = $pv->getTitle()->getPrefixedText();

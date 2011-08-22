@@ -453,15 +453,7 @@ class Tools {
 		return substr($ls, 0, $i+1)."\n";
 	}
 
-	public static function getXSDValue($dataValue) {
-		$dbKeys= $dataValue->getDBkeys();
-		return array_shift($dbKeys);
-	}
-
-
-
-
-
+	
 	/**
 	 * Converts an array of string to a string.
 	 *

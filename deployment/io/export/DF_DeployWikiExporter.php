@@ -151,8 +151,8 @@ class DeployWikiExporter extends WikiExporter {
 	function exportBundle($bundeID, $includeInstances, $includeTemplates) {
 		global $dfgLang;
 
-		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
-		$partOfBundleID = smwfGetStore()->getSMWPageID($bundeID, NS_MAIN, "");
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundleID = smwfGetStore()->getSMWPageID($bundeID, NS_MAIN, "", "");
 		$smwids     = $this->db->tableName( 'smw_ids' );
 		$smwrels     = $this->db->tableName( 'smw_rels2' );
 		$categorylinks     = $this->db->tableName( 'categorylinks' );
@@ -323,7 +323,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	function openStream() {
 		global $wgContLanguageCode;
 		$ver = $this->schemaVersion();
-		return wfElement( 'mediawiki', array(
+		return Xml::element( 'mediawiki', array(
             'xmlns'              => "http://www.mediawiki.org/halowikiexport/",
             'xmlns:xsi'          => "http://www.w3.org/2001/XMLSchema-instance",
             'xsi:schemaLocation' => "http://www.ontoprise.de/halowikiexport-$ver.xsd",
@@ -337,10 +337,10 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	function openPage( $row ) {
 		$out = "  <page>\n";
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-		$out .= '    ' . wfElementClean( 'title', array(), $title->getPrefixedText() ) . "\n";
-		$out .= '    ' . wfElement( 'id', array(), strval( $row->page_id ) ) . "\n";
+		$out .= '    ' . Xml::elementClean( 'title', array(), $title->getPrefixedText() ) . "\n";
+		$out .= '    ' . Xml::element( 'id', array(), strval( $row->page_id ) ) . "\n";
 		if( '' != $row->page_restrictions ) {
-			$out .= '    ' . wfElement( 'restrictions', array(),
+			$out .= '    ' . Xml::element( 'restrictions', array(),
 			strval( $row->page_restrictions ) ) . "\n";
 		}
 		$this->currentTitle = $title;
@@ -364,7 +364,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		$out .= $this->writeTimestamp( $row->rev_timestamp );
 
 		if( $row->rev_deleted & Revision::DELETED_USER ) {
-			$out .= "      " . wfElement( 'contributor', array( 'deleted' => 'deleted' ) ) . "\n";
+			$out .= "      " . Xml::element( 'contributor', array( 'deleted' => 'deleted' ) ) . "\n";
 		} else {
 			$out .= $this->writeContributor( $row->rev_user, $row->rev_user_text );
 		}
@@ -373,9 +373,9 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 			$out .=  "      <minor/>\n";
 		}
 		if( $row->rev_deleted & Revision::DELETED_COMMENT ) {
-			$out .= "      " . wfElement( 'comment', array( 'deleted' => 'deleted' ) ) . "\n";
+			$out .= "      " . Xml::element( 'comment', array( 'deleted' => 'deleted' ) ) . "\n";
 		} elseif( $row->rev_comment != '' ) {
-			$out .= "      " . wfElementClean( 'comment', null, strval( $row->rev_comment ) ) . "\n";
+			$out .= "      " . Xml::elementClean( 'comment', null, strval( $row->rev_comment ) ) . "\n";
 		}
 
 		if( $row->rev_deleted & Revision::DELETED_TEXT ) {
@@ -383,12 +383,12 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		} elseif( isset( $row->old_text ) ) {
 			// Raw text from the database may have invalid chars
 			$text = strval( Revision::getRevisionText( $row ) );
-			$out .= "      " . wfElementClean( 'text',
+			$out .= "      " . Xml::elementClean( 'text',
 			array( 'xml:space' => 'preserve' ),
 			strval( $text ) ) . "\n";
 		} else {
 			// Stub output
-			$out .= "      " . wfElement( 'text',
+			$out .= "      " . Xml::element( 'text',
 			array( 'id' => $row->rev_text_id ),
                 "" ) . "\n";
 		}
@@ -420,26 +420,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		$out .= "    <hash>".md5($text)."</hash>\n";
 	}
 
-	/**
-	 * Returns exactly one property value or null if $title does not have any
-	 * or more than 1 annotation of the given property.
-	 *
-	 * @param Title $title
-	 * @param SMWPropertyValue $property
-	 * @return SMWDataValue
-	 */
-	private function getPropertyValue($title, $property) {
-		global $dumper;
-		$values = $this->semstore->getPropertyValues($title, $property);
-		if (count($values) === 0) {
-			$dumper->progress($title->getText()." contains no annotation of ".$property->getDBkey());
-		} else if (count($values) > 1) {
-			$dumper->progress($title->getText()." contains more than 1 annotation of ".$property->getDBkey());
-		} else {
-			return reset($values);
-		}
-		return NULL;
-	}
+	
 }
 
 

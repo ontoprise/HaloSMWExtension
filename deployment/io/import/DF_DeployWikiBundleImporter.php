@@ -250,9 +250,10 @@ class DeployWikiRevision extends WikiRevision {
                 
 				// revision already exists. 
 				// that means we have to check if the page was changed in the meantime.
-				$contenthashProperty = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
-				$values = smwfGetStore()->getPropertyValues($this->title, $contenthashProperty);
-				if (count($values) > 0) $exp_hash = strtolower(Tools::getXSDValue(reset($values))); else $exp_hash = NULL;
+				$contenthashProperty = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_contenthash'));
+				$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($this->title), $contenthashProperty);
+				$contentHashString = reset($values)->getString();
+				if (count($values) > 0) $exp_hash = strtolower($contentHashString); else $exp_hash = NULL;
 				$rawtext = preg_replace('/\{\{\s*'.$dfgLang->getLanguageString('df_contenthash').'\s*\|\s*value\s*=\s*\w*(\s*\|)?[^}]*\}\}/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 

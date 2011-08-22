@@ -37,6 +37,8 @@ class DF_Language_De extends DF_Language {
 	'df_contentbundle' => 'Content bundle',
     'df_ontologyuri' => 'Ontologie URI',
 	'df_usesprefix' => 'Bundle benutzt Namensraumpräfix',
+	'df_minversion' => 'Minversion',
+    'df_maxversion' => 'Maxversion',
 
 	'checkinstallation' => 'Prüfe Installation',
 	'category' => 'Kategorie',

@@ -204,8 +204,8 @@ class DeployWikiRevisionDetector extends WikiRevision {
 
                 // revision already exists.
 
-                $partOfOntology = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle'));
-                $values = smwfGetStore()->getPropertyValues($this->title, $partOfOntology);
+                $partOfOntology = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle'));
+                $values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($this->title), $partOfOntology);
                 
                 // FIXME: deal also with pages in MediaWiki namespace as possible conflict
                 if ($this->title->getNamespace() == NS_MEDIAWIKI) {
@@ -214,7 +214,7 @@ class DeployWikiRevisionDetector extends WikiRevision {
                 }
                 if (count($values) > 0) {
                     $v = reset($values);
-                    $ontologyID = $v->getDBkey();
+                    $ontologyID = $v->getString();
                     if ($ontologyID == ucfirst($this->ontologyID)) {
                         // same ontology, no conflict but merging necessary
                     
