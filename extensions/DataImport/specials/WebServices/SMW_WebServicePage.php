@@ -66,7 +66,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	 * Fill the internal arrays with the set of articles to be displayed (possibly plus one additional
 	 * article that indicates further results).
 	 */
-	protected function doQuery() {
+	protected function getHTML() {
 		global $wgContLang;
 
 		// ask for the list of articles that use the web service
