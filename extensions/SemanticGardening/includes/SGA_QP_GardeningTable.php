@@ -28,7 +28,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		return $scripts;
 	}
 	
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
