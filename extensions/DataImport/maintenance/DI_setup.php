@@ -14,7 +14,8 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-$diIP = "$mediaWikiLocation/extensions/DataImport";
+global $smwgDIIP; 
+$smwgDIIP = "$mediaWikiLocation/extensions/DataImport";
 
 $help = array_key_exists("h", $options);
 $delete = array_key_exists("delete", $options) || array_key_exists("d", $options);
@@ -25,8 +26,8 @@ if ($help) {
 	die();
 }
 
-require_once ($diIP."/specials/WebServices/SMW_WSStorage.php");
-require_once ($diIP."/specials/Materialization/SMW_MaterializationStorageAccess.php");
+require_once ($smwgDIIP."/specials/WebServices/SMW_WSStorage.php");
+require_once ($smwgDIIP."/specials/Materialization/SMW_MaterializationStorageAccess.php");
 
 if ($delete) {
 	WSStorage::getDatabase()->deleteDatabaseTables();

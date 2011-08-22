@@ -52,9 +52,7 @@ class WSStorage {
 	 *
 	 */
 	private function __construct() {
-        global $smwgHaloIP;
         if (self::$mDatabase == NULL) {
-            global $smwgBaseStore;
             global $smwgDIIP;
             require_once($smwgDIIP . '/specials/WebServices/storage/SMW_WSStorageSQL.php');
             self::$mDatabase = new WSStorageSQL();
