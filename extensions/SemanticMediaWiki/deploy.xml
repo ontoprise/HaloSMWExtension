@@ -11,6 +11,7 @@
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
             <dependency from="1154" to="1179">MW</dependency>
+            <dependency from="040" >validator</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
