@@ -1275,6 +1275,7 @@ class WebService {
 				$flatParams[] = $fname;
 			}
 		}
+		
 		return $flatParams;
 	}
 

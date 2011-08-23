@@ -46,10 +46,10 @@ require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
  */
 global $wsClient;
 
-function smwf_ws_processStep1($uri){
+function smwf_ws_processStep1($uri, $authenticationType, $user, $pw){
 	global $wsClient;
 	
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
+	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
 	if(is_array($wsClient)){
 		return "false";
 	} else {
@@ -66,11 +66,12 @@ function smwf_ws_processStep1($uri){
  * @return string ";"-separated list of parameters that have to be specified
  * 			for this method
  */
-function smwf_ws_processStep2($uri, $methodName){
+function smwf_ws_processStep2($uri, $authenticationType, $user, $pw, $methodName){
 	global $wsClient;
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
+	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
 	
 	$rawParameters = $wsClient->getOperation($methodName);
+	
 	$parameters = array();
 	
 	$numParam = count($rawParameters);
@@ -79,6 +80,7 @@ function smwf_ws_processStep2($uri, $methodName){
 			return "##no params required##";
 		}
 	}
+	$typePath = null;
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
@@ -103,8 +105,10 @@ function smwf_ws_processStep2($uri, $methodName){
  * @return string ";"-separated list of return types that have to be specified
  * 			for this method
  */
-function smwf_ws_processStep3($uri, $methodName){
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri);
+function smwf_ws_processStep3($uri, $authenticationType, $user, $pw, $methodName){
+	
+	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
+	
 	$rawResult = $wsClient->getOperation($methodName);
 	
 	$flatResult = WebService::flattenParam("", $rawResult[0], $wsClient, $typePath);
@@ -149,7 +153,7 @@ class DefineWebServiceSpecialAjaxAccess{
 	 * @return ws-client
 	 */
 	
-	public static function createWSClient($uri) {
+	public static function createWSClient($uri, $authenticationType, $user, $pw) {
 		global $smwgDIIP;
 
 		try {
@@ -160,7 +164,7 @@ class DefineWebServiceSpecialAjaxAccess{
 			if (!class_exists($classname)) {
 				return array(wfMsg("smw_wws_invalid_protocol"));
 			}
-			$wsClient = new $classname($uri);
+			$wsClient = new $classname($uri, $authenticationType, $user, $pw);
 		} catch (Exception $e) {
 			return array(wfMsg("smw_wws_invalid_wwsd"));
 		}

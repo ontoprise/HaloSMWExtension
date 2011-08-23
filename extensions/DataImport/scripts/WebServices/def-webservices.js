@@ -48,7 +48,17 @@ DefineWebServiceSpecial.prototype = {
 
 		this.step = "step2";
 		var uri = $("step1-uri").value;
-		sajax_do_call("smwf_ws_processStep1", [ uri ],
+
+		var authenticationType = '';
+		var user = '';
+		var pw = '';
+		if ($("step1-auth-yes").checked) {
+			authenticationType = 'http';
+			user = $("step1-username").value;
+			pw = $("step1-password").value;
+		}		
+		
+		sajax_do_call("smwf_ws_processStep1", [ uri, authenticationType, user, pw ],
 				this.processStep1CallBack.bind(this));
 	},
 
@@ -162,10 +172,20 @@ DefineWebServiceSpecial.prototype = {
 		this.step = "step3+";
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
+		
+		var authenticationType = '';
+		var user = '';
+		var pw = '';
+		if ($("step1-auth-yes").checked) {
+			authenticationType = 'http';
+			user = $("step1-username").value;
+			pw = $("step1-password").value;
+		}
 
+		
 		this.showPendingIndicator("step2-go");
 
-		sajax_do_call("smwf_ws_processStep2", [ uri, method ],
+		sajax_do_call("smwf_ws_processStep2", [ uri, authenticationType, user, pw, method ],
 				this.processStep2CallBack.bind(this));
 	},
 
@@ -648,10 +668,19 @@ DefineWebServiceSpecial.prototype = {
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
 		var parameters = "";
-
+		
+		var authenticationType = '';
+		var user = '';
+		var pw = '';
+		if ($("step1-auth-yes").checked) {
+			authenticationType = 'http';
+			user = $("step1-username").value;
+			pw = $("step1-password").value;
+		}
+		
 		this.showPendingIndicator("step3-go");
 
-		sajax_do_call("smwf_ws_processStep3", [ uri, method ],
+		sajax_do_call("smwf_ws_processStep3", [ uri, authenticationType, user, pw, method ],
 				this.processStep3CallBack.bind(this));
 	},
 
@@ -2558,6 +2587,8 @@ DefineWebServiceSpecial.prototype = {
 	 * appears
 	 */
 	showPendingIndicator : function(onElement) {
+		return;
+		
 		this.hidePendingIndicator();
 		$(onElement + "-img").style.visibility = "hidden";
 		this.pendingIndicator = new OBPendingIndicator($(onElement));
@@ -2569,6 +2600,8 @@ DefineWebServiceSpecial.prototype = {
 	 * Hides the pending indicator.
 	 */
 	hidePendingIndicator : function() {
+		return;
+		
 		if (this.pendingIndicator != null) {
 			$(this.pendingIndicator.onElement + "-img").style.visibility = "visible";
 			this.pendingIndicator.hide();
@@ -3289,6 +3322,10 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	addACFeatureToInput : function(input){
+		
+		//todo:deal with this one
+		return input;
+		
 		input.className = "wickEnabled";
 		input.setAttribute('constraints' , 'namespace: ' + $('di_ns_id').firstChild.nodeValue);
 		var acIndex = autoCompleter.allInputs.length - 1;

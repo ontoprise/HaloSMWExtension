@@ -82,8 +82,7 @@ class SMWSoapClient implements IWebServiceClient {
 		$this->mAuthenticationType = $authenticationType;
 		$this->mAuthenticationLogin = $authenticationLogin;
 		$this->mAuthenticationPassword = $authenticationPassword;
-
-
+		
 		$this->mClient = null;
 		
 		if (!$this->getWSDL()) {
@@ -228,9 +227,14 @@ class SMWSoapClient implements IWebServiceClient {
 			return false;
 		}
 		
-		
+		$options = array('exceptions' => true);
+		if($this->mAuthenticationType == 'http'){
+			$options['login'] = $this->mAuthenticationLogin;
+			$options['password'] = $this->mAuthenticationPassword;
+		}
+				
 		try {
-			$this->mClient = new SoapClient($this->mURI, array('exceptions' => true));
+			$this->mClient = new SoapClient($this->mURI, $options);
 			
 			$functions = $this->mClient->__getFunctions();
 			
@@ -544,6 +548,16 @@ class SMWSoapClient implements IWebServiceClient {
 	 * is enabled.
 	 */
 	private function validateWSDLURI($uri){
+		
+		//todo: implement a better validation method, thsi one does not work with the bzc
+		return true;
+		
+		if($this->mAuthenticationType == "http"){
+			$protocol = substr($uri, 0, strpos($uri, "://") +3 );
+			$host = substr($uri, strpos($uri, "://") +3 );
+			$uri = $protocol.$this->mAuthenticationLogin.":".$this->mAuthenticationPassword."@".$host;
+		}
+		
 		$params = array('http' => array('method' => 'GET'));
 		
 		$ctx = stream_context_create($params);
