@@ -395,7 +395,7 @@ OBArticleCreator.prototype = {
 					// alert(gLanguage.getMessage('ERROR_RENAMING_ARTICLE'));
 				// }
 			}
-           categoryActionListener.select1(this, obInstanceMenuProvider.selectedCategoryTitle);
+                 schemaEditPropertyListener.reloadProperties();
 		   
 		}
 
@@ -424,8 +424,8 @@ OBArticleCreator.prototype = {
 	 */
 	editArticle : function(title, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID,reason, callback) {
     		
-		 function callback() { 			 
-		    categoryActionListener.select1(this, obInstanceMenuProvider.selectedCategoryTitle);
+		 function callback() {
+                    schemaEditPropertyListener.reloadProperties();		 
 		 }
 
 		sajax_do_call('smwf_om_EditProperty', [title, newType, newCard, newRange, oldType, oldCard, oldRange, category, propertyID,
@@ -3022,7 +3022,8 @@ OBEditPropertySubMenu.prototype = Object
 						     if(titleChanged == true){
 							 ontologyTools.renameProperty1(newTitle,title, this.selectedID);
 							 titleChanged = false;
-							 }		
+							 }	
+                                                this.cancel();							 
 					},
 
 
