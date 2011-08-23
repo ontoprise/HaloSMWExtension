@@ -29,7 +29,13 @@
  *
  */
 
+// The script is loaded by the resource loader and executed in a closure where
+// $ is an alias for jQuery. However we need prototype's $ here.
+jQuery.noConflict();
+$ = window.$;
+
 // Globals
+
 YAHOO.namespace("haloacl");
 YAHOO.namespace("haloaclrights");
 YAHOO.namespace ("haloacl.constants");

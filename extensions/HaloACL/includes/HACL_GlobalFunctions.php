@@ -171,16 +171,18 @@ function haclfSetupExtension() {
 		SMWParserExtensions::registerParserFunctions( $wgParser );
 		}
 		*/
-
+    
+    haclfSetupScriptAndStyleModule();
     $spns_text = $wgContLang->getNsText(NS_SPECIAL);
     // register AddHTMLHeader functions for special pages
     // to include javascript and css files (only on special page requests).
     if (stripos($wgRequest->getRequestURL(), $spns_text.":HaloACL") !== false
         || stripos($wgRequest->getRequestURL(), $spns_text."%3AHaloACL") !== false) {
         $wgHooks['BeforePageDisplay'][]='haclAddHTMLHeader';
-    }else {
+		global $wgOut;
+		$wgOut->addModules('ext.HaloACL.SpecialPage');
+    } else {
         $wgHooks['BeforePageDisplay'][]='addNonSpecialPageHeader';
-
     }
     
     //-- Hooks for ACL toolbar--
@@ -217,8 +219,164 @@ function haclfSetupExtension() {
 
     // Handle input fields of Semantic Forms
     $wgHooks['sfCreateFormField'][] = 'haclfHandleFormField';
+    
     wfProfileOut('haclfSetupExtension');
     return true;
+}
+
+/**
+ * Creates a module for the resource loader that contains all scripts and styles
+ * that are needed for this extension. 
+ */
+function haclfSetupScriptAndStyleModule() {
+	global $wgResourceModules;
+//	$wgResourceModules['ext.common.json'] = array(
+//		'scripts' => array(
+//			"scripts/lib/json2.js",
+//		),
+//		'localBasePath' => dirname(__FILE__).'/../',
+//		'remoteExtPath' => 'HaloACL'
+//    );
+	
+	$wgResourceModules['ext.HaloACL.yui'] = array(
+		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+	       '/yui/yahoo-min.js',
+		   '/yui/yahoo-min.binding.js',
+	       '/yui/yuiloader-min.js',
+	       '/yui/event-min.js',
+	       '/yui/dom-min.js',
+	       '/yui/treeview-min.js',
+	       '/yui/logger-min.js',
+	       '/yui/element-min.js',
+	       '/yui/button-min.js',
+	       '/yui/connection-min.js',
+	       '/yui/json-min.js',
+	       '/yui/yahoo-dom-event.js',
+	       '/yui/animation-min.js',
+	       '/yui/tabview-min.js',
+	       '/yui/datasource-min.js',
+	       '/yui/datatable-min.js',
+	       '/yui/paginator-min.js',
+	       '/yui/container-min.js',
+	       '/yui/dragdrop-min.js',
+	       '/yui/autocomplete-min.js'
+		),
+			
+		'styles' => array(
+            '/yui/container.css',
+            '/yui/autocomplete.css'
+		),
+		    
+		// When your module is loaded, these messages will be available through mw.msg()
+//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
+		     
+		// ResourceLoader needs to know where your files are; specify your
+		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'HaloACL'
+    );
+	
+    
+	$wgResourceModules['ext.HaloACL.SpecialPage'] = array(
+		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+			"scripts/haloacl.js",
+			"scripts/groupuserTree.js",
+			"scripts/rightsTree.js",
+			"scripts/userTable.js",
+			"scripts/pageTable.js",
+			"scripts/manageUserTree.js",
+			"scripts/whitelistTable.js",
+			"scripts/autoCompleter.js",
+			"scripts/notification.js",
+			"scripts/quickaclTable.js",
+			"scripts/jsTree.v.0.9.9a/jquery.tree.min.js",
+			"scripts/HACL_GroupTree.js",
+			"scripts/HACL_GroupPermission.js",
+	        "scripts/HACL_GroupTree.js",
+	        "scripts/HACL_GroupPermission.js"
+		),
+		'styles' => array(
+            'skins/haloacl.css',
+            'skins/haloacl_group_permissions.css',
+            'scripts/jsTree.v.0.9.9a/themes/haloacl/style.css'
+		),
+		    
+		// When your module is loaded, these messages will be available through mw.msg()
+//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
+		     
+		// If your scripts need code from other modules, list their identifiers as dependencies
+		// and ResourceLoader will make sure they're loaded before you.
+		// You don't need to manually list 'mediawiki' or 'jquery', which are always loaded.
+		'dependencies' => array( 'ext.HaloACL.Language', 'ext.HaloACL.yui'),
+		     
+		// ResourceLoader needs to know where your files are; specify your
+		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'HaloACL'
+    );
+    
+    
+	$wgResourceModules['ext.HaloACL.Toolbar'] = array(
+		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+			"yui/yahoo-min.js",
+			"yui/yahoo-min.binding.js",
+			"yui/event-min.js",
+        	"scripts/toolbar.js",
+			"yui/yuiloader-min.js",
+			"yui/event-min.js",
+			"yui/dom-min.js",
+			"yui/treeview-min.js",
+			"yui/element-min.js",
+			"yui/button-min.js",
+			"yui/connection-min.js",
+			"yui/json-min.js",
+			"yui/yahoo-dom-event.js",
+			"yui/animation-min.js",
+			"yui/tabview-min.js",
+			"yui/datasource-min.js",
+			"yui/datatable-min.js",
+			"yui/paginator-min.js",
+			"yui/container-min.js",
+			"yui/dragdrop-min.js",
+	        "scripts/haloacl.js",
+	        "scripts/groupuserTree.js",
+	        "scripts/userTable.js",
+	        "scripts/notification.js"
+			),
+		'styles' => array(
+			'skins/haloacl.css',
+            'skins/haloacl_toolbar.css',
+            'yui/container.css'
+		),
+		    
+		// When your module is loaded, these messages will be available through mw.msg()
+//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
+		     
+		// If your scripts need code from other modules, list their identifiers as dependencies
+		// and ResourceLoader will make sure they're loaded before you.
+		// You don't need to manually list 'mediawiki' or 'jquery', which are always loaded.
+		'dependencies' => array( 'ext.HaloACL.Language' ),
+		     
+		// ResourceLoader needs to know where your files are; specify your
+		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'HaloACL'
+    );
+	
+//        if(get_class($wgUser->getSkin()) == "SkinMonoBook") {
+//            $out->addLink(array(
+//                'rel'   => 'stylesheet',
+//                'type'  => 'text/css',
+//                'media' => 'screen, projection',
+//                'href'  => $haclgHaloScriptPath . '/skins/mono-fix.css'
+//            ));
+//        }
+
+	haclAddJSLanguageScripts();
+    
 }
 
 /**
@@ -230,7 +388,7 @@ function haclfSetupExtension() {
  * @return <type>
  */
 function addNonSpecialPageHeader(&$out) {
-	global $wgRequest, $wgContLang;
+	global $wgRequest, $wgContLang, $wgOut;
 	// scripts are needed at Special:FormEdit
     $spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	if ( ($wgRequest->getText('action', 'view') == 'view') 
@@ -238,61 +396,8 @@ function addNonSpecialPageHeader(&$out) {
         && stripos($wgRequest->getRequestURL(), $spns_text."%3AFormEdit") == false ) {
 		return true;
 	}
-    global $haclgHaloScriptPath, $smwgDeployVersion;
-    haclAddJSLanguageScripts($out);
-    if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
-
-        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl.css', 'screen, projection');
-        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl_toolbar.css', 'screen, projection');
-        $out->addStyle($haclgHaloScriptPath . '/yui/container.css', 'screen, projection');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
-
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
-
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
-
-    } else {
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/hacl-packed.js"></script>');
-        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl.css', 'screen, projection');
-        $out->addStyle($haclgHaloScriptPath . '/skins/haloacl_toolbar.css', 'screen, projection');
-        $out->addStyle($haclgHaloScriptPath . '/yui/container.css', 'screen, projection');
-
-    }
-    // -------------------
-
+	
+	$wgOut->addModules('ext.HaloACL.Toolbar');
     return true;
 }
 
@@ -317,124 +422,36 @@ function haclAddHTMLHeader(&$out) {
     				   . (($haclgAllowLDAPGroupMembers == true) ? 'true' : 'false')
     				   .';';
     	
-    	$out->addScript('<script type="text/javascript">'.$globalJSVar.'</script>');
+    	$out->addHeadItem('HaloACLGlobalVar',"\n".'<script type="text/javascript">'.$globalJSVar.'</script>'."\n");
     	
-    	
-    	// Add language files
-        haclAddJSLanguageScripts($out);
-
-		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-			// ---- SPECIAL-PAGE related stuff ---
-	
-	
-	        // -------------------
-	        // YAHOO Part
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
-	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
-	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
-	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
-	
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
-	
-	        // -------------------
-	        // -------------------
-	
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
-	        
-	        //--- jQuery part ---
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/jsTree.v.0.9.9a/jquery.tree.min.js"></script>');
-	        
-	        //--- HACL ---
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/HACL_GroupTree.js"></script>');
-	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/HACL_GroupPermission.js"></script>');
-	        
-	        
-		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/specialhacl-packed.js\"></script>");
-		}
-
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
-
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath.'/yui/autocomplete.css'
-        ));
-
-
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-        ));
-        
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath . '/skins/haloacl_group_permissions.css'
-        ));
-        
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath . '/scripts/jsTree.v.0.9.9a/themes/haloacl/style.css'
-        ));
-        
-        if(get_class($wgUser->getSkin()) == "SkinMonoBook") {
-            $out->addLink(array(
-                'rel'   => 'stylesheet',
-                'type'  => 'text/css',
-                'media' => 'screen, projection',
-                'href'  => $haclgHaloScriptPath . '/skins/mono-fix.css'
-            ));
-        }
-
-
-        //<!-- Sam Skin CSS for TabView -->
-
+		// ---- SPECIAL-PAGE related stuff ---
+		haclfAddScriptsLinks($out, 'Prototype', 
+		                     $haclgHaloScriptPath."/scripts/lib/", array(
+			                     	'prototype.js'));
         return true;
     }
+}
+
+/**
+ * Adds the given scripts as link to the output. Each script is prepended with the
+ * given base path.
+ * 
+ * @param {OutputPage} $out
+ * 		The output object
+ * @param {String} $baseID
+ * 		An ID for naming the given group of scripts
+ * @param {String} $basePath
+ * 		This path is prepended to each script in $scripts
+ * @param {array(String)} $scripts
+ * 		All scripts that shall be added.
+ * 
+ */
+function haclfAddScriptsLinks($out, $baseID, $basePath, $scripts) {
+	$scriptsHTML = '';
+	foreach ($scripts as $script) {
+		$scriptsHTML .= Html::linkedScript("$basePath$script")."\n";
+	}
+	$out->addHeadItem($baseID, "\n".$scriptsHTML."\n");
 }
 
 /**********************************************/
@@ -723,23 +740,32 @@ function haclfOnSmwhNewBaseStore(&$store) {
 /**
  * Add appropriate JS language script
  */
-function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-    global $haclgIP, $haclgHaloScriptPath, $wgUser;
+function haclAddJSLanguageScripts() {
+    global $haclgIP, $haclgHaloScriptPath, $wgUser, $wgResourceModules;
 
     // content language file
-    $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_Language.js'.  '"></script>', $mode, $namespace, $pages);
+    $lngScript = '/scripts/Language/HaloACL_LanguageEn.js';
     $lng = '/scripts/Language/HaloACL_Language';
     if (isset($wgUser)) {
         $lng .= ucfirst($wgUser->getOption('language')).'.js';
         if (file_exists($haclgIP . $lng)) {
-            $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
-        } else {
-            $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
+            $lngScript = $lng;
         }
-    } else {
-        $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
     }
-
+    
+	$wgResourceModules['ext.HaloACL.Language'] = array(
+		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+			"scripts/Language/HaloACL_Language.js",
+			$lngScript
+		),
+		     
+		// ResourceLoader needs to know where your files are; specify your
+		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'HaloACL'
+    );
+    
 }
 
 /**
@@ -751,16 +777,37 @@ function haclfAddToolbarForEditPage ($content_actions) {
     if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
         return $content_actions;
     }
-    global $haclgIP;
+    
+    global $wgHooks, $wgOut,$haclgHaloScriptPath;
+    // Add some scripts to the bottom of the document
+    $wgHooks['SkinAfterBottomScripts'][] = 'haclfAddToolbarForEditPageAfterBottomScripts';
+	$wgOut->addModules('ext.HaloACL.Toolbar');
+	
+	haclfAddScriptsLinks($wgOut, 'Prototype', 
+	                     $haclgHaloScriptPath."/scripts/lib/", array(
+	                     	'prototype.js'));
+    return true;
+}
+
+/**
+ * Adds script code for the HaloACL toolbar to the bottom of the document.
+ * 
+ * @param $skin
+ * @param $bottomScriptText
+ */
+function haclfAddToolbarForEditPageAfterBottomScripts($skin, &$bottomScriptText) {
+	
+	global $wgOut;
+	$title = $wgOut->getTitle();
+	$title = $title->getText();
     $html = <<<HTML
         <script>
-            YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
-            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'{$content_actions->mTitle}'});
+            YAHOO.haloacl.toolbar.actualTitle = '$title';
+            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:"$title"});
         </script>
 HTML;
-    $content_actions->editFormTextBeforeContent .= $html;
-
-    return true;
+	$bottomScriptText .= $html;
+	return true;
 }
 
 /**
@@ -769,14 +816,15 @@ HTML;
 *  
 */
 function haclfAddToolbarForSemanticForms($pageTitle, $html) {
-    global $haclgIP;
-    if (empty($pageTitle)) return true;
-    $html = <<<HTML
-    		<script>
-	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
-	            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'$pageTitle'});
-	        </script>
-HTML;
+	
+    global $wgHooks, $wgOut,$haclgHaloScriptPath;
+    // Add some scripts to the bottom of the document
+    $wgHooks['SkinAfterBottomScripts'][] = 'haclfAddToolbarForEditPageAfterBottomScripts';
+	$wgOut->addModules('ext.HaloACL.Toolbar');
+	
+	haclfAddScriptsLinks($wgOut, 'Prototype', 
+	                     $haclgHaloScriptPath."/scripts/lib/", array(
+	                     	'prototype.js'));
 
     return true;
 }

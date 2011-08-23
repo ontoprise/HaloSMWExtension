@@ -71,24 +71,50 @@ HTML;
 
 
     }
-
-    private function createMainTabContainer() {
-        global $wgOut;
-        global $wgRequest;
-        global $wgUser;
-
-        global $haclWhitelistGroups;
-
-
+    
+    public static function onSkinAfterBottomScripts($skin, &$bottomScriptText) {
         $spt = SpecialPage::getTitleFor("HaloACL");
         $url = $spt->getFullURL();
 
-        // checking if user can access whitelist
-        if(array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null) {
-            $showWhitelist = "true";
-        }else {
-            $showWhitelist = "false";
+        global $wgRequest, $wgUser, $haclWhitelistGroups;
+        $articleTitle = $wgRequest->getVal('articletitle');
+        $activeTab = $wgRequest->getVal('activetab', 'createACL');
+        $activeSubTab = $wgRequest->getVal('activesubtab');
+
+        $activeSubTabHTML = '';
+        if ($activeSubTab != null) {
+            $activeSubTabHTML .= "
+           		YAHOO.haloacl.activeSubTab = '$activeSubTab';
+                ";
         }
+        // checking if user can access whitelist
+        $showWhitelist = (array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null)
+							? "true"
+							: "false";
+        
+    	$script = <<<HTML
+
+<script type="text/javascript">
+
+	// bugfix for ontoskin 3
+	jQuery("bodyContent").attr("style","overflow:visible");
+
+	YAHOO.haloacl.specialPageUrl = "$url";
+	$activeSubTabHTML
+	YAHOO.haloacl.buildMainTabView('haloaclmainView','$articleTitle','$showWhitelist','$activeTab');
+	try{
+		//var myLogReader = new YAHOO.widget.LogReader();
+	} catch(e) {}
+</script>
+HTML;
+    	
+		$bottomScriptText .= $script;
+		return true;
+    	
+    }
+
+    private function createMainTabContainer() {
+        global $wgOut;
 
         $html = <<<HTML
             <div id="haloaclContent" class="yui-skin-sam">
@@ -96,34 +122,11 @@ HTML;
 
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
-<script type="text/javascript">
-    // bugfix for ontoskin 3
-    $("bodyContent").setAttribute("style","overflow:visible");
 
-    YAHOO.haloacl.specialPageUrl = "$url";
-
-HTML;
-        $articleTitle = $wgRequest->getVal('articletitle');
-        $activeTab = $wgRequest->getVal('activetab', 'createACL');
-        $activeSubTab = $wgRequest->getVal('activesubtab');
-
-        if($activeSubTab != null) {
-            $html .="
-            YAHOO.haloacl.activeSubTab = '$activeSubTab';
-                ";
-        }
-
-        $html .="
-            YAHOO.haloacl.buildMainTabView('haloaclmainView','$articleTitle','$showWhitelist','$activeTab');
-            ";
-
-        $html .= <<<HTML
-            try{
-                //var myLogReader = new YAHOO.widget.LogReader();
-            }catch(e){}
-            </script>
 HTML;
         $wgOut->addHTML($html);
+        global $wgHooks;
+        $wgHooks['SkinAfterBottomScripts'][] = 'HaloACLSpecial::onSkinAfterBottomScripts';
     }
 
     private function testPage() {

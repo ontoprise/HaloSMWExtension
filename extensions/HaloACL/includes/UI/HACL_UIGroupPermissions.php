@@ -223,10 +223,10 @@ HTML;
 			 
 			$json .= <<<JSON
 			{
-			attributes: { 
-				id : "haclgt-$id" 
+			"attributes": { 
+				"id" : "haclgt-$id" 
 			}, 
-			data: "$name$pf<span class=\"tree-haloacl-check$permissionState\"></span>"
+			"data": "$name$pf<span class=\"tree-haloacl-check$permissionState\"></span>"
 			$state
 			}$comma
 JSON;

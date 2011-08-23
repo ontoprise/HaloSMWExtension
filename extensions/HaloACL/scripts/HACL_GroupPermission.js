@@ -27,6 +27,7 @@ if (typeof HACL == "undefined") {
 		classes : {}
 	};
 }
+window.HACL = HACL;
 
 /**
  * @class GroupPermission

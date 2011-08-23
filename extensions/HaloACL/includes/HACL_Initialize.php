@@ -377,8 +377,3 @@ $wgAvailableRights[] = 'propertyedit';
 // The logout page must always be accessible
 $wgWhitelistRead[] = "Special:UserLogout";
 
-// Tell the script manager, that we need prototype
-global $smgJSLibs; 
-$smgJSLibs[] = 'prototype';
-$smgJSLibs[] = 'jquery'; 
-$smgJSLibs[] = 'json'; 

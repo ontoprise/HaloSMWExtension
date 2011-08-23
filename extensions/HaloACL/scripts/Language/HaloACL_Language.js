@@ -28,7 +28,8 @@
 *
 */
 
-var HACLLanguage = Class.create();
+//var HACLLanguage = Class.create();
+var HACLLanguage = function () {};
 
 /**
  * This class provides language dependent strings for an identifier.
@@ -93,4 +94,4 @@ HACLLanguage.prototype = {
 
 // Singleton of this class
 
-var gHACLLanguage = new HACLLanguage();
+window.gHACLLanguage = new HACLLanguage();

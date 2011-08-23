@@ -27,6 +27,7 @@ if (typeof HACL == "undefined") {
 		classes : {}
 	};
 }
+window.HACL = HACL;
 
 /**
  * This is the class of the group tree.
@@ -128,8 +129,8 @@ HACL.classes.GroupTree = function (container, feature) {
 		
 		mGroupTree.destroy();
 		// jsTree forgets to delete these live events:
-		$("#" + mTreeContainer + " li").die();
-		$("#" + mTreeContainer + " li a").die();
+		$(mTreeContainer + " li").die();
+		$(mTreeContainer + " li a").die();
 	};
 	
 	/**
