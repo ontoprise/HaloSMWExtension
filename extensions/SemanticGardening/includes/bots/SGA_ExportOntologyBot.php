@@ -728,7 +728,7 @@ class ExportOntologyBot extends GardeningBot {
 			$conv = &smwfGetStore()->getPropertyValues($dttitle, $conversionFactorSIDV);
 			if ( !empty($conv) ) {
 				$dv = SMWDataValueFactory::newPropertyValue(GardeningBot::getXSDValue($pt), GardeningBot::getXSDValue($value) . " " . $value->getUnit());
-				list($sivalue, $siunit) = $this->convertToSI($dv->getValueKey(), GardeningBot::getXSDValue($conv[0]));
+				list($sivalue, $siunit) = $this->convertToSI($dv->getDataItem->getSortKey(), GardeningBot::getXSDValue($conv[0]));
 				$dv->setUserValue($sivalue . " " . $dv->getUnit()); // in order to translate to XSD
 				if (GardeningBot::getXSDValue($dv) != null && GardeningBot::getXSDValue($dv) != '') {
 					return "\t\t<prop:" . ExportOntologyBot::makeXMLExportId(GardeningBot::getXSDValue($pt)) . ' rdf:datatype="&xsd;float">' .

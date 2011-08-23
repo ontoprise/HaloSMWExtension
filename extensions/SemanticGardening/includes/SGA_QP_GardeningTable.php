@@ -112,7 +112,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 					}
 					if ($first) {
 						if ($object->isNumeric()) { // use numeric sortkey
-							$result .= '<span class="smwsortkey">' . $object->getValueKey() . '</span>';
+							$result .= '<span class="smwsortkey">' . $object->getDataItem()->getSortKey() . '</span>';
 						}
 						$first = false;
 					} else {
