@@ -34,7 +34,7 @@ class SMWQPWSSimpleTable extends SMWResultPrinter {
 				while ( ( $object = $field->getNextObject() ) !== false ) {
 					if ( $first ) {
 						if ( $object->isNumeric() ) { // additional hidden sortkey for numeric entries
-							$result .= '<span class="smwsortkey">' . $object->getValueKey() . '</span>';
+							$result .= '<span class="smwsortkey">' . $object->getDataItem()->getSortKey() . '</span>';
 						}
 						$first = false;
 					} else {
