@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>156</version>
-		<id>unifiedsearch</id>
+		<version>160</version>
+		<id>enhancedretrieval</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
@@ -11,9 +11,9 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
 		</helpurl>
 		<dependencies>
-			<dependency from="1150" to="1169">mw</dependency>
+			<dependency from="1150" to="1179">mw</dependency>
 			<dependency from="101">scriptmanager</dependency>
-            <depencency from="156">smwhalo</depencency>
+            <depencency from="160">smwhalo</depencency>
 		</dependencies>
 	</global>
 	<codefiles>

@@ -14,7 +14,7 @@
 		<license>GPL v2</license>
 		<dependencies>
 		    <dependency from="1170" to="1179">mw</dependency>
-			<dependency from="156">smw</dependency>
+			<dependency from="160">smw</dependency>
 			<dependency from="101">scriptmanager</dependency>
             <dependency from="100" to="100">arclibrary</dependency>
             <dependency from="160">deployment</dependency>

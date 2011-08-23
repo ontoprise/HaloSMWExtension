@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>156</version>
+		<version>160</version>
                 <patchlevel>1</patchlevel>
 		<id>wysiwyg</id>
         <license>GPL-v2</license>
@@ -14,7 +14,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_Extension</helpurl>
 		<dependencies>
             <dependency from="1170" to="1170">mw</dependency>
-			<dependency from="150" optional="true">smwhalo</dependency>
+			<dependency from="160" optional="true">smwhalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

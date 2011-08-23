@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>156</version>
+        <version>160</version>
         <patchlevel>0</patchlevel>
         <id>smw</id>
         <vendor>ontoprise GmbH</vendor>
@@ -10,7 +10,7 @@
         <description>Enhances the wiki with semantic annotations.</description>
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
-            <dependency from="1120" to="1170">MW</dependency>
+            <dependency from="1154" to="1179">MW</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
