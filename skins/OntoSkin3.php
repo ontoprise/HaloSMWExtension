@@ -132,7 +132,7 @@ class OntoSkin3Template extends QuickTemplate {
 <!--             <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>  -->
                  
                  <!-- Head Scripts -->
-<!--                 <?php $this->html('headscripts') ?> -->
+                 <?php $this->html('headscripts') ?>
                  <?php	if($this->data['jsvarurl']) { ?>
                  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl') ?>"><!-- site js --></script>
                  <?php	} ?>
