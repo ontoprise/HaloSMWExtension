@@ -20,7 +20,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'SRF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+define( 'SRF_VERSION', '1.6.1' );
 
 // Require the settings file.
 require dirname( __FILE__ ) . '/SRF_Settings.php';
@@ -63,6 +63,7 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other']
 		'[http://simia.net Denny Vrandecic]',
 		'Hans-Jörg Happel',
 		'Rowan Rodrik van der Molen',
+		'[http://www.mediawiki.org/wiki/User:Danwe Daniel Werner]',
 		'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]'
 	),
 	'url' => 'http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats',
@@ -96,6 +97,8 @@ function srffInitFormats() {
 	$wgAutoloadClasses['SRFPloticusVBar'] = $formatDir . 'Ploticus/SRF_PloticusVBar.php';
 	$wgAutoloadClasses['SRFGallery'] = $formatDir . 'Gallery/SRF_Gallery.php';
 	$wgAutoloadClasses['SRFTagCloud'] = $formatDir . 'TagCloud/SRF_TagCloud.php';
+	$wgAutoloadClasses['SRFArray'] = $formatDir . 'Array/SRF_Array.php';
+	$wgAutoloadClasses['SRFHash'] = $formatDir . 'Array/SRF_Array.php';
 	
 	$formatClasses = array(
 		'timeline' => 'SRFTimeline',
@@ -106,9 +109,11 @@ function srffInitFormats() {
 		'calendar' => 'SRFCalendar',
 		'outline' => 'SRFOutline',
 		'sum' => 'SRFMath',
+		'product' => 'SRFMath',
 		'average' => 'SRFMath',
 		'min' => 'SRFMath',
 		'max' => 'SRFMath',
+		'median' => 'SRFMath',
 		'exhibit' => 'SRFExhibit',
 		'googlebar' => 'SRFGoogleBar',
 		'googlepie' => 'SRFGooglePie',
@@ -119,6 +124,8 @@ function srffInitFormats() {
 		'ploticusvbar' => 'SRFPloticusVBar',
 		'gallery' => 'SRFGallery',
 		'tagcloud' => 'SRFTagCloud',
+		'array' => 'SRFArray',
+		'hash' => 'SRFHash',
 	);
 
 	$formatAliases = array(
@@ -129,7 +136,8 @@ function srffInitFormats() {
 		if ( array_key_exists( $format, $formatClasses ) ) {
 			$smwgResultFormats[$format] = $formatClasses[$format];
 			
-			if ( method_exists( $formatClasses[$format], 'registerResourceModules' ) ) {
+			// Register the resource loader modules for when they are supported.
+			if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && method_exists( $formatClasses[$format], 'registerResourceModules' ) ) {
 				call_user_func( array( $formatClasses[$format], 'registerResourceModules' ) );
 			}
 			
@@ -140,7 +148,7 @@ function srffInitFormats() {
 		else {
 			wfDebug( "There is not result format class associated with the format '$format'." );
 		}
-	}
+	}		
 }
 
 /**
@@ -177,4 +185,18 @@ function srffAddToAdminLinks( &$admin_links_tree ) {
 	$smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats', $srf_docu_label ) );
 	
 	return true;
+}
+
+/**
+ * Backwards compatibility helper to get the next data value from a SMWResultArray.
+ * SMW 1.6 introduces the getNextDataValue and deprecates the getNextObject one.
+ * 
+ * @since 1.6
+ * 
+ * @param SMWResultArray $resArray
+ * 
+ * @return SMWDataValue or false
+ */
+function efSRFGetNextDV( SMWResultArray &$resArray ) {
+	return method_exists( $resArray, 'getNextDataValue' ) ? $resArray->getNextDataValue(): $resArray->getNextObject(); 
 }

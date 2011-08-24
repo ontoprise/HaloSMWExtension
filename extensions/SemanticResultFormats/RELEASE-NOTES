@@ -2,6 +2,34 @@ For a documentation of all features, see
 http://semantic-mediawiki.org/wiki/Semantic_Result_Formats
 
 
+== SRF 1.6.1 ==
+
+Released on August 20, 2011.
+
+* Fixed rendering bug in the tagcloud format occuring for inline queries.
+* Fixed jqPlotBar and jqPlotPie rendering on Special:Ask and other special pages. 
+* Cleaned up the jqPlotBar format somewhat.
+* Dropped compatibility with SMW < 1.6 for the tagcloud format.
+
+== SRF 1.6 ==
+
+Released on July 30, 2011.
+
+Changes in this version:
+* Added compatibility with SMW 1.6.
+* Rewrote math formats for efficiency, correct recursion and handling of multiple numerical properties.
+* Cleaned up the graph format.
+* Fixed division by zero issue (oh shii~) in the tagcloud format.
+* Added parameter descriptions to the graph and ploticus formats. 
+* Added support for SMW 1.6 style parameter handling to the tagcloud format.
+* Somewhat cleaned up the BibTeX format.
+* Fixed double HTML escaping issue in the tagcloud format.
+* Added fileextensions parameter to the Gallery format and added missing parameter description messages.
+
+New formats in this version are:
+* product (written by Jeroen De Dauw)
+* median (written by Jeroen De Dauw)
+
 == SRF 1.5.3 ==
 
 Released on February 9, 2011.
@@ -9,7 +37,7 @@ Released on February 9, 2011.
 Changes in this version:
 * Support for images specified by properties in the gallery format.
 * Fixes to the calendar and jqplot formats.
-* Improvents to the timeline and eventline formats.
+* Improvements to the timeline and eventline formats.
 
 New formats in this version are:
 * tagcloud (written by Jeroen De Dauw)
@@ -21,7 +49,7 @@ Released on January 11 2011.
 Changes in this version:
 * Handling for ResourceLoader in MediaWiki 1.17+ added for
   'timeline', 'eventline', 'jqplotbar' and 'jqplotpie' formats.
-* Visualization improvments for 'process' format.
+* Visualization improvements for 'process' format.
 
 == SRF 1.5.1 ==
 
