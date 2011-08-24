@@ -85,7 +85,7 @@ class SRFOutline extends SMWResultPrinter {
 	protected $mInnerFormat = '';
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 
 		if ( array_key_exists( 'outlineproperties', $params ) ) {
 			$this->mOutlineProperties = array_map( 'trim', explode( ',', $params['outlineproperties'] ) );
@@ -105,7 +105,8 @@ class SRFOutline extends SMWResultPrinter {
 		$result = "";
 		foreach ( $item->mRow as $orig_ra ) {
 			// handling is somewhat simpler for SMW 1.5+
-			if ( method_exists( 'SMWQueryResult', 'getResults' ) ) {
+			$realFunction = array( 'SMWQueryResult', 'getResults' );
+			if ( is_callable( $realFunction ) ) {
 				// make a new copy of this, so that the call to
 				// getNextText() will work again
 				$ra = clone ( $orig_ra );
@@ -177,7 +178,7 @@ class SRFOutline extends SMWResultPrinter {
 		return $text;
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		$print_fields = array();
 		foreach ( $res->getPrintRequests() as $pr ) {
 			$field_name = $pr->getText( $outputmode, $this->mLinker );
@@ -198,7 +199,7 @@ class SRFOutline extends SMWResultPrinter {
 				$first = true;
 				$field_name = $field->getPrintRequest()->getText( SMW_OUTPUT_HTML );
 				if ( in_array( $field_name, $this->mOutlineProperties ) ) {
-					while ( ( $object = $field->getNextObject() ) !== false ) {
+					while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
 						$field_val = $object->getLongWikiText( $this->mLinker );
 						$item->addFieldValue( $field_name, $field_val );
 					}

@@ -6,10 +6,6 @@
  * @author Yaron Koren
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 'Not an entry point.' );
-}
-
 class SRFjqPlotBar extends SMWResultPrinter {
 	protected $m_width = '150';
 	protected $m_height = '400';
@@ -20,7 +16,7 @@ class SRFjqPlotBar extends SMWResultPrinter {
 	static protected $m_barchartnum = 1;
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'width', $this->m_params ) ) {
 			$this->m_width = $this->m_params['width'];
 		}
@@ -85,7 +81,7 @@ class SRFjqPlotBar extends SMWResultPrinter {
 		);
 	}
 
-	protected function loadJavascriptAndCSS() {
+	protected static function loadJavascriptAndCSS() {
 		global $wgOut;
 		$wgOut->addModules( 'ext.srf.jqplot' );
 		$wgOut->addModules( 'ext.srf.jqplotbar' );
@@ -107,7 +103,8 @@ class SRFjqPlotBar extends SMWResultPrinter {
 
 		$scripts = array();
 		if ( !$smwgJQueryIncluded ) {
-			if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+			$realFunction = array( $wgOut, 'includeJQuery' );
+			if ( is_callable( $realFunction ) ) {
 				$wgOut->includeJQuery();
 			} else {
 				$scripts[] = "$srfgScriptPath/jqPlot/jquery-1.4.2.min.js";
@@ -134,10 +131,8 @@ class SRFjqPlotBar extends SMWResultPrinter {
 		$wgOut->addExtensionStyle( "$srfgScriptPath/jqPlot/jquery.jqplot.css" );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
-		global $wgOut, $wgParser;
-
-		$wgParser->disableCache();
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
+		global $wgOut;
 
 		self::addJavascriptAndCSS();
 
@@ -145,54 +140,57 @@ class SRFjqPlotBar extends SMWResultPrinter {
 
 		$numbers = array();
 		$labels = array();
+		
 		// print all result rows
-		$count = 0;
-		$max_number = 0;
-		$min_number = 0;
+		$maxValue = 0;
+		$minValue = 0;
+		
 		while ( $row = $res->getNext() ) {
-			$name = $row[0]->getNextObject()->getShortWikiText();
-			$name = str_replace( "'", "\'", $name );
+			$name = efSRFGetNextDV( $row[0] )->getShortWikiText();
+			$name = str_replace( "'", "\'", $name ); // FIXME: fail escaping is fail
+			
 			foreach ( $row as $field ) {
-					while ( ( $object = $field->getNextObject() ) !== false ) {
-					if ( $object->isNumeric() ) { // use numeric sortkey
-						if ( method_exists( $object, 'getValueKey' ) ) {
-							$nr = $object->getValueKey();
+				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
+					if ( $object->isNumeric() ) {
+						// getDataItem was introduced in SMW 1.6, getValueKey was deprecated in the same version.
+						if ( method_exists( $object, 'getDataItem' ) ) {
+							$numbers[] = $object->getDataItem()->getSortKey();
 						} else {
-							$nr = $object->getNumericValue();
+							$numbers[] = $object->getValueKey();
 						}
-						$count++;
-						if ( $nr > $max_number ) {
-							$max_number = $nr;
-						}
-						if ( $nr < $min_number ) {
-							$min_number = $nr;
-						}
-
-						if ( $this->m_bardirection == 'horizontal' ) {
-							$numbers[] = "[$nr, $count]";
-						} else {
-							$numbers[] = "$nr";
-						}
+						
 						$labels[] = "'$name'";
 					}
 				}
 			}
 		}
+		
+		$maxValue = count( $numbers ) == 0 ? 0 : max( $numbers );
+		$minValue = count( $numbers ) == 0 ? 0 : min( $numbers );
+		
+		foreach ( $numbers as $i => &$nr ) {
+			$nr = $this->m_bardirection == 'horizontal' ? "[$nr, $i]" : "$nr";
+		}
+		
 		$barID = 'bar' . self::$m_barchartnum;
 		self::$m_barchartnum++;
 		
 		$labels_str = implode( ', ', $labels );
 		$numbers_str = implode( ', ', $numbers );
-		$labels_axis ="xaxis";
-		$numbers_axis = "yaxis";
+		
+		$labels_axis = 'xaxis';
+		$numbers_axis = 'yaxis';
+		
 		$angle_val = -40;
 		$barmargin = 6;
+		
 		if ( $this->m_bardirection == 'horizontal' ) {
-			$labels_axis ="yaxis";
-			$numbers_axis ="xaxis";
+			$labels_axis = 'yaxis';
+			$numbers_axis = 'xaxis';
 			$angle_val = 0;
 			$barmargin = 8 ;
 		}
+		
 		$barwidth = 20; // width of each bar
 		$bardistance = 4; // distance between two bars
 
@@ -202,34 +200,37 @@ class SRFjqPlotBar extends SMWResultPrinter {
 		// currently (September 2010) fails for numbers less than 1,
 		// and negative numbers.
 		// If both max and min are 0, just escape now.
-		if ( $max_number == 0 && $min_number == 0 ) {
+		if ( $maxValue == 0 && $minValue == 0 ) {
 			return null;
 		}
 		// Make the max and min slightly larger and bigger than the
 		// actual max and min, so that the bars don't directly touch
 		// the top and bottom of the graph
-		if ( $max_number > 0 ) { $max_number += .001; }
-		if ( $min_number < 0 ) { $min_number -= .001; }
-		if ( $max_number == 0 ) {
+		if ( $maxValue > 0 ) { $maxValue += .001; }
+		if ( $minValue < 0 ) { $minValue -= .001; }
+		if ( $maxValue == 0 ) {
 			$multipleOf10 = 0;
 			$maxAxis = 0;
 		} else {
-			$multipleOf10 = pow( 10, floor( log( $max_number, 10 ) ) );
-			$maxAxis = ceil( $max_number / $multipleOf10 ) * $multipleOf10;
+			$multipleOf10 = pow( 10, floor( log( $maxValue, 10 ) ) );
+			$maxAxis = ceil( $maxValue / $multipleOf10 ) * $multipleOf10;
 		}
-		if ( $min_number == 0 ) {
+		
+		if ( $minValue == 0 ) {
 			$negativeMultipleOf10 = 0;
 			$minAxis = 0;
 		} else {
-			$negativeMultipleOf10 = -1 * pow( 10, floor( log( -1 * $min_number, 10 ) ) );
-			$minAxis = ceil( $min_number / $negativeMultipleOf10 ) * $negativeMultipleOf10;
+			$negativeMultipleOf10 = -1 * pow( 10, floor( log( $minValue, 10 ) ) );
+			$minAxis = ceil( $minValue / $negativeMultipleOf10 ) * $negativeMultipleOf10;
 		}
+		
 		$numbers_ticks = '';
 		$biggerMultipleOf10 = max( $multipleOf10, -1 * $negativeMultipleOf10 );
 		$lowestTick = floor( $minAxis / $biggerMultipleOf10 + .001 );
 		$highestTick = ceil( $maxAxis / $biggerMultipleOf10 - .001 );
+		
 		for ( $i = $lowestTick; $i <= $highestTick; $i++ ) {
-			$numbers_ticks .= ($i * $biggerMultipleOf10) . ", ";
+			$numbers_ticks .= ($i * $biggerMultipleOf10) . ', ';
 		}
 
 		$js_bar =<<<END
@@ -287,4 +288,5 @@ END;
 			array( 'name' => 'width', 'type' => 'int', 'description' => wfMsg( 'srf_paramdesc_chartwidth' ) ),
 		);
 	}
+	
 }

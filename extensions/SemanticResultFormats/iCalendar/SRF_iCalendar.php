@@ -19,7 +19,7 @@ class SRFiCalendar extends SMWResultPrinter {
 	protected $m_description = '';
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		
 		if ( array_key_exists( 'title', $this->m_params ) ) {
 			$this->m_title = trim( $this->m_params['title'] );
@@ -49,14 +49,14 @@ class SRFiCalendar extends SMWResultPrinter {
 	}
 
 	public function getQueryMode( $context ) {
-		return ( $context == SMWQueryProcessor::SPECIAL_PAGE ) ? SMWQuery::MODE_INSTANCES:SMWQuery::MODE_NONE;
+		return ( $context == SMWQueryProcessor::SPECIAL_PAGE ) ? SMWQuery::MODE_INSTANCES : SMWQuery::MODE_NONE;
 	}
 
 	public function getName() {
 		return wfMsg( 'srf_printername_icalendar' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		return $outputmode == SMW_OUTPUT_FILE ? $this->getIcal( $res ) : $this->getIcalLink( $res, $outputmode );
 	}
 	
@@ -156,33 +156,38 @@ class SRFiCalendar extends SMWResultPrinter {
 		$result = '';
 		
 		$wikipage = $row[0]->getResultSubject(); // get the object
+		
+		// As of SMW 1.6, a SMWDiWikiPage object will be provided instead of a SMWWikiPageValue.
+		if ( class_exists( 'SMWDiWikiPage' ) && $wikipage instanceof SMWDiWikiPage ) {
+			$wikipage = SMWDataValueFactory::newDataItemValue( $wikipage, null );
+		}
+		
 		$startdate = false;
 		$enddate = false;
 		$location = '';
 		$description = '';
 		
-		foreach ( $row as $field ) {
+		foreach ( $row as /* SMWResultArray */ $field ) {
 			// later we may add more things like a generic
 			// mechanism to add whatever you want :)
 			// could include funny things like geo, description etc. though
 			$req = $field->getPrintRequest();
-			if ( ( strtolower( $req->getLabel() ) == "start" ) && ( $req->getTypeID() == "_dat" ) ) {
-				$startdate = current( $field->getContent() ); // save only the first
-			}
+			$label = strtolower( $req->getLabel() );
 			
-			if ( ( strtolower( $req->getLabel() ) == 'end' ) && ( $req->getTypeID() == '_dat' ) ) {
-				$enddate = current( $field->getContent() ); // save only the first
+			if ( $label == 'start' && $req->getTypeID() == '_dat' ) {
+				$startdate = efSRFGetNextDV( $field ); // save only the first
 			}
-			
-			if ( strtolower( $req->getLabel() ) == 'location' ) {
-				$value = current( $field->getContent() ); // save only the first
+			else if ( $label == 'end' && $req->getTypeID() == '_dat' ) {
+				$enddate = efSRFGetNextDV( $field ); // save only the first
+			}
+			else if ( $label == 'location' ) {
+				$value = efSRFGetNextDV( $field ); // save only the first
 				if ( $value !== false ) {
 					$location = $value->getShortWikiText();
 				}
 			}
-			
-			if ( strtolower( $req->getLabel() ) == 'description' ) {
-				$value = current( $field->getContent() ); // save only the first
+			else if ( $label == 'description' ) {
+				$value = efSRFGetNextDV( $field ); // save only the first
 				if ( $value !== false ) {
 					$description = $value->getShortWikiText();
 				}
@@ -239,10 +244,24 @@ class SRFiCalendar extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		$params = parent::exportFormatParameters();
-		
-		$params[] = array( 'name' => 'icalendartitle', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendartitle' ) );
-		$params[] = array( 'name' => 'icalendardescription', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendardescription' ) );
+		if ( defined( 'SMW_SUPPORTS_VALIDATOR' ) ) {
+			$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
+			
+			$params['title'] = new Parameter( 'title' );
+			$params['title']->setDescription( wfMsg( 'srf_paramdesc_icalendartitle' ) );
+			$params['title']->setDefault( '' );
+			
+			$params['description'] = new Parameter( 'description' );
+			$params['description']->setDescription( wfMsg( 'srf_paramdesc_icalendardescription' ) );
+			$params['description']->setDefault( '' );
+		}
+		else {
+			// This if for b/c with SMW 1.5.x; SMW 1.6 directly accepts Parameter objects.
+			$params = parent::exportFormatParameters();
+			
+			$params[] = array( 'name' => 'title', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendartitle' ) );
+			$params[] = array( 'name' => 'description', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendardescription' ) );				
+		}
 		
 		return $params;
 	}

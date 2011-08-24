@@ -14,7 +14,7 @@ class SRFGooglePie extends SMWResultPrinter {
 	protected $m_heighth = 250;
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'width', $this->m_params ) ) {
 			$this->m_width = $this->m_params['width'];
 		}
@@ -29,26 +29,35 @@ class SRFGooglePie extends SMWResultPrinter {
 		return wfMsg( 'srf_printername_googlepie' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
-		global $smwgIQRunningNumber;
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		$this->isHTML = true;
 
 		$t = "";
+		$n = "";
+		
+		// if there is only one column in the results then stop right away
+		if ($res->getColumnCount() == 1) return "";
+		                
 		// print all result rows
 		$first = true;
 		$max = 0; // the biggest value. needed for scaling
+		
 		while ( $row = $res->getNext() ) {
-			$name = $row[0]->getNextObject()->getShortWikiText();
+			$name = efSRFGetNextDV( $row[0] )->getShortWikiText();
+			
 			foreach ( $row as $field ) {
-					while ( ( $object = $field->getNextObject() ) !== false ) {
-					if ( $object->isNumeric() ) { // use numeric sortkey
-						if ( method_exists( $object, 'getValueKey' ) ) {
+				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
+					// use numeric sortkey
+					if ( $object->isNumeric() ) {
+						// getDataItem was introduced in SMW 1.6, getValueKey was deprecated in the same version.
+						if ( method_exists( $object, 'getDataItem' ) ) {
+							$nr = $object->getDataItem()->getSortKey();
+						} else {
 							$nr = $object->getValueKey();
 						}
-						else {
-							$nr = $object->getNumericValue();
-						}
+						
 						$max = max( $max, $nr );
+						
 						if ( $first ) {
 							$first = false;
 							$t .= $nr;

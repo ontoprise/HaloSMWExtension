@@ -6,10 +6,6 @@
  * @author Yaron Koren
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-    die( 'Not an entry point.' );
-}
-
 class SRFjqPlotPie extends SMWResultPrinter {
 	protected $m_width = 400;
 	protected $m_height = 400;
@@ -17,7 +13,7 @@ class SRFjqPlotPie extends SMWResultPrinter {
 	static protected $m_piechartnum = 1;
 
 	protected function readParameters( $params, $outputmode ) {
-		SMWResultPrinter::readParameters( $params, $outputmode );
+		parent::readParameters( $params, $outputmode );
 		if ( array_key_exists( 'width', $this->m_params ) ) {
 			$this->m_width = $this->m_params['width'];
 		}
@@ -76,14 +72,15 @@ class SRFjqPlotPie extends SMWResultPrinter {
 
 		// MW 1.17 +
 		if ( class_exists( 'ResourceLoader' ) ) {
-			self::loadJavascriptAndCSS();
+			$this->loadJavascriptAndCSS();
 			return;
 		}
 		global $wgOut, $srfgScriptPath;
 		global $smwgJQueryIncluded, $srfgJQPlotIncluded;
 
-                if ( !$smwgJQueryIncluded ) {
-			if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+		if ( !$smwgJQueryIncluded ) {
+			$realFunction = array( $wgOut, 'includeJQuery' );
+			if ( is_callable( $realFunction ) ) {
 				$wgOut->includeJQuery();
 			} else {
 				$scripts[] = "$srfgScriptPath/jqPlot/jquery-1.4.2.min.js";
@@ -103,12 +100,10 @@ class SRFjqPlotPie extends SMWResultPrinter {
 		$wgOut->addExtensionStyle( "$srfgScriptPath/jqPlot/jquery.jqplot.css" );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
-		global $wgOut, $wgParser;
-	
-		$wgParser->disableCache();
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
+		global $wgOut;
 
-		self::addJavascriptAndCSS();
+		$this->addJavascriptAndCSS();
 
 		$this->isHTML = true;
 
@@ -116,23 +111,29 @@ class SRFjqPlotPie extends SMWResultPrinter {
 		$pie_data = array();
 		// print all result rows
 		while ( $row = $res->getNext() ) {
-			$name = $row[0]->getNextObject()->getShortWikiText();
+			$name = efSRFGetNextDV( $row[0] )->getShortWikiText();
 			$name = str_replace( "'", "\'", $name );
+			
 			foreach ( $row as $field ) {
-				while ( ( $object = $field->getNextObject() ) !== false ) {
+				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
 					if ( $object->isNumeric() ) { // use numeric sortkey
-						if ( method_exists( $object, 'getValueKey' ) ) {
-							$nr = $object->getValueKey();
+						
+						// getDataItem was introduced in SMW 1.6, getValueKey was deprecated in the same version.
+						if ( method_exists( $object, 'getDataItem' ) ) {
+							$nr = $object->getDataItem()->getSortKey();
 						} else {
-							$nr = $object->getNumericValue();
+							$nr = $object->getValueKey();
 						}
+						
 						$pie_data[] .= "['$name', $nr]";
 					}
 				}
 			}
 		}
+		
 		$pie_data_str = "[[" . implode( ', ', $pie_data ) . "]]";
 		$pieID = 'pie' . self::$m_piechartnum;
+		
 		self::$m_piechartnum++;
 
 		$js_pie =<<<END
