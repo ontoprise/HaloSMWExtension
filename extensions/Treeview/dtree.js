@@ -38,17 +38,14 @@ function smwhf_loadNavTree(){
 
 /**
  *  Inserts NavTree into the html document
- *  @param ajax xml returnvalue
+ *  @param param ajax xml returnvalue
  *  
  */
 function smwhf_insertNavTree(param){
-    if(param.status!=200){
+    if(param.status != 200){
         //Something went wrong with the ajax call
-		// alert is realy annoying here
-//        alert('NavTree insertion  failed. \n'
-//            + 'param.status: ' + param.status + '\n'
-//            + 'param.statusText: ' + param.statusText +'\n'
-//            + 'param.responseText: ' + param.responseText);
+        //fix for 14585: don't display error mgs, just don't load the tree.
+	
     } else {
        //get return value
        var tree = param.responseText;
