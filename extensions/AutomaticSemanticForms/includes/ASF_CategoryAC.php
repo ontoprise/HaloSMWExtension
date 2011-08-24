@@ -23,8 +23,9 @@ class ASFCategoryAC {
 		
 		foreach($categoryCandidates as $c) {
 			if (empty($userInput) || stripos(str_replace(" ", "_", (string) $c[0]), $userInput) !== false) {
+				
 				$titleText = (string)TSHelper::getTitleFromURI((string)$c[0], true);
-				if(Title::newFromText($titleText)->exists()){
+				if(Title::newFromText($titleText, NS_CATEGORY)->exists()){
 					$textTitles[] = (string)$c[0];
 					if (count($textTitles) >= $maxResults) break;
 				}
@@ -75,6 +76,7 @@ class ASFCategoryAC {
 	
 	
 	private static function getSubCategoryCandidates($category){
+		
 		global $wgLang;
 		if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
 				$category = substr($category, strpos($category, ":") +1);
@@ -82,6 +84,7 @@ class ASFCategoryAC {
 		$category = Title::newFromText($category, NS_CATEGORY);
 		
 		if(!($category instanceof Title)){
+			error();
 			return array();
 		}
 		
@@ -98,6 +101,10 @@ class ASFCategoryAC {
 			
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');
+			
+			echo('<br>'.$noASF);
+			echo('<bbr>'.$hasDefaultForm);
+			
 			if(strtolower($noASF) != 'true' && strlen($hasDefaultForm) == 0){
 				$categories[$candidate[0]->getText()] = array($candidate[0]->getText()); 
 			}
