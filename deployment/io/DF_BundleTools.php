@@ -76,7 +76,7 @@ class DFBundleTools {
 		global $dfgLang;
 		$ontologyURI = $dfgLang->getLanguageString('df_ontologyuri');
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($ontologyURI));
+		$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($bundleTitle), SMWDIProperty::newFromUserLabel($ontologyURI));
 		if (count($values) > 0) {
 			$value = reset($values);
 			$ontologyURI = $value->getURI();
@@ -99,10 +99,10 @@ class DFBundleTools {
 		global $dfgLang;
 		$partOfBundle = $dfgLang->getLanguageString('df_partofbundle');
 		$bundleTitle = $title;
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($partOfBundle));
+		$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($bundleTitle), SMWDIProperty::newFromUserLabel($partOfBundle));
 		if (count($values) > 0) {
 			$value = reset($values);
-			$bundleID = $value->getString();
+			$bundleID = $value->getTitle()->getDBkey();
 			return strtolower($bundleID);
 		}
 		return NULL;
@@ -122,7 +122,7 @@ class DFBundleTools {
 		// find prefixes used for $bundleID
 		$usesprefixPropertyName = $dfgLang->getLanguageString('df_usesprefix');
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($usesprefixPropertyName));
+		$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($bundleTitle), SMWDIProperty::newFromUserLabel($usesprefixPropertyName));
 		$results = array();
 		foreach($values as $value) {
 			$prefix = $value->getString();
@@ -489,22 +489,21 @@ class DFBundleTools {
 	/**
 	 * Checks if all bundle properties exist and if they have correct types.
 	 *
-	 * @param DFPrintoutStream
+	 * @param DFPrintoutStream $dfgOut (may be null)
 	 */
-	public static function checkBundleProperties($dfgOut) {
+	public static function checkBundleProperties($dfgOut = NULL) {
 		global $dfgLang;
-		global $wgContLang;
 
-		$propNSText = $wgContLang->getNsText(SMW_NS_PROPERTY);
-		// check if the required properties exist
+		// indicates if everything is as expected
 		$check = true;
+
 		// Property:Dependecy
 		$pDependencyTitle = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
 		$pDependency = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_dependencies'));
 		$pDependencyType = $pDependency->findPropertyTypeID();
 
 		if ($pDependencyType != '_rec') {
-			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' is not a record type.");
 			$check = false;
 		}
 
@@ -513,16 +512,18 @@ class DFBundleTools {
 			$list = reset($di)->getString();
 			$typeIDs = explode(";",$list);
 			if (count($typeIDs) != 3) {
-				$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
+				if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
 				$check = false;
 			}
 		} else {
-			$dfgOut->outputln("\nCould not read fields of '".$pDependencyTitle->getPrefixedText());
 			$check = false;
 		}
-		
+
 		// check sub object types of Dependency
 		$propertyDiWikiPage = $pDependency->getDiWikiPage();
+		$partOfBundlePropertyType=NULL;
+		$minversionType=NULL;
+		$maxversionType=NULL;
 		if ( !is_null( $propertyDiWikiPage ) ) {
 			$listDiProperty = new SMWDIProperty( '_LIST' );
 			$dataItems = smwfGetStore()->getPropertyValues( $propertyDiWikiPage, $listDiProperty );
@@ -539,78 +540,114 @@ class DFBundleTools {
 				}
 			}
 		}
-				
+
 		if ($partOfBundlePropertyType != '_wpg' || $minversionType != '_num' || $maxversionType != '_num') {
-			$dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field types.");
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types [Page, Number, Number]");
 			$check = false;
 		}
 
 		// Ontology version
-		$pOntologyVersionTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
-		$pOntologyVersion = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion'));
-		$pOntologyVersionType = $pOntologyVersion->findPropertyTypeID();
-		if ($pOntologyVersionType != '_num') {
-			$dfgOut->outputln("'".$pOntologyVersionTitle->getPrefixedText()."' is not a number type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_num");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Number.");
 			$check = false;
 		}
 
 		// Installation dir
-		$pInstallationDirTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
-		$pInstallationDir = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir'));
-		$pInstallationDirType = $pInstallationDir->findPropertyTypeID();
-		if ($pInstallationDirType != '_str') {
-			$dfgOut->outputln("'".$pInstallationDirTitle->getPrefixedText()."' is not a string type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
 
 		// Vendor
-		$pVendorTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
-		$pVendor = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_vendor'));
-		$pVendorType = $pVendor->findPropertyTypeID();
-		if ($pVendorType != '_str') {
-			$dfgOut->outputln("'".$pVendorTitle->getPrefixedText()."' is not a string type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
 
 		// Rationale
-		$pRationaleTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
-		$pRationale = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_rationale'));
-		$pRationaleType = $pRationale->findPropertyTypeID();
-		if ($pRationaleType != '_str' && $pRationaleType != '_txt') {
-			$dfgOut->outputln("'".$pRationaleTitle->getPrefixedText()."' is not a string type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
 
 		// Maintainer
-		$pMaintainerTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
-		$pMaintainer = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maintainer'));
-		$pMaintainerType = $pMaintainer->findPropertyTypeID();
-
-
-		if ($pMaintainerType != '_str') {
-			$dfgOut->outputln("'".$pMaintainerTitle->getPrefixedText()."' is not a string type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			// ignore maintainer
 			//$check = false;
 		}
 
 		// Help URL
-		$pHelpURLTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-		$pHelpURL = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_helpurl'));
-		$pHelpURLType = $pHelpURL->findPropertyTypeID();
-		if ($pHelpURLType != '_str') {
-			$dfgOut->outputln("'".$pHelpURLTitle->getPrefixedText()."' is not a string type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
 
 		// License
-		$pLicenseTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
-		$pLicense = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_license'));
-		$pLicenseType = $pLicense->findPropertyTypeID();
-		if ($pLicenseType != '_wpg') {
-			$dfgOut->outputln("'".$pLicenseTitle->getPrefixedText()."' is not a page type.");
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_wpg");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Page.");
 			$check = false;
 		}
 
+		// Prefix
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_usesprefix'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
+			$check = false;
+		}
+
+		// Content hash
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_contenthash'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
+			$check = false;
+		}
+		
+	    // Ontology URI
+        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
+        $correct = self::checkPropertyType($pTitle->getText(), "_uri");
+        if (!$correct) {
+            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type URL.");
+            $check = false;
+        }
+        
+	    // Part of bundle URI
+        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), SMW_NS_PROPERTY);
+        $correct = self::checkPropertyType($pTitle->getText(), "_wpg");
+        if (!$correct) {
+            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Page.");
+            $check = false;
+        }
+
 		return $check;
 	}
+    
+	/**
+	 * Checks if property with name $propertyName has the expected type 
+	 * 
+	 * @param string $propertyName
+	 * @param string $expectedType (e.g. _str, _num, _boo, ...)
+	 */
+	private static function checkPropertyType($propertyName, $expectedType) {
+		$pProperty = SMWDIProperty::newFromUserLabel($propertyName);
+		$pType = $pProperty->findPropertyTypeID();
+		return ($pType == $expectedType);
+	}
+
 }

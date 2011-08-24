@@ -148,6 +148,7 @@ $dfgIncludeImages=false;
 $dfgIncludeImages=false;
 $dfgIncludeInstances=false;
 $dfgBundleID = "";
+$dfgNoAsk=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -168,7 +169,9 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		if ($package === false) dffExitOnFatalError("No package found");
 
 		if (file_exists($package)) {
-			$file_ext = reset(array_reverse(explode(".", $package)));
+			$help1 = explode(".", $package);
+			$help2 = array_reverse($help1);
+			$file_ext = reset($help2);
 			if (Tools::checkIfOntologyFile($package)) {
 				// import ontology
 				$ontologiesToInstall[] = $package;
@@ -491,7 +494,13 @@ if (count($ontologiesToInstall) > 0) {
 	if (!array_key_exists('smw', $localpackages)) {
 		dffExitOnFatalError("Ontology import needs at least SMW installed.");
 	}
+	
 	global $rootDir, $dfgOut;
+	$requiredPropertiesExist = DFBundleTools::checkBundleProperties($dfgOut);
+	if (!$requiredPropertiesExist) {
+		dffExitOnFatalError("Some properties do not exist or have wrong types.");
+	}
+	
 	foreach($ontologiesToInstall as $filePath) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
@@ -668,7 +677,7 @@ if ($dfgListpages != "no") {
 	foreach($dd->getWikidumps() as $loc) {
 		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc", 'rt' );
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $dd->getID(), '', 1, NULL );
+		$importer = new DeployWikiImporterDetector( $source, $dd->getID() );
 
 		$importer->setDebug( false );
 
@@ -686,7 +695,7 @@ if ($dfgListpages != "no") {
 	foreach($dd->getOntologies() as $loc) {
 		$handle = fopen( $mwrootDir."/".$dd->getInstallationDirectory()."/$loc.xml", 'rt' );
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $dd->getID(), '', 1, NULL );
+		$importer = new DeployWikiImporterDetector( $source, $dd->getID());
 
 		$importer->setDebug( false );
 

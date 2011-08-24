@@ -71,6 +71,7 @@ class OntologyInstaller {
 			$dfgOut->outputln("[Get used prefixes...");
 			$prefixNamespaceMappings = DFBundleTools::getRegisteredPrefixes();
 			$settingsFile = $inputfile.".settings";
+			$settings = new stdClass();
 			$settings->ns_mappings = $prefixNamespaceMappings;
 			$settings->base_uri = $smwgTripleStoreGraph;
 			if (!empty($bundleID)) {
@@ -344,7 +345,7 @@ ENDS
 			list($title, $command)=$log;
 			$pagesToImport[] = $title->getPrefixedText();
 		}
-		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+		$bundleIDValue = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
 		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
 		$existingPages = array();
 		foreach($pageValuesOfOntology as $pv) {
@@ -394,7 +395,7 @@ ENDS
 	 */
 	private function verifyFromHandle( $handle, $bundleID) {
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporterDetector( $source, $bundleID, 1);
+		$importer = new DeployWikiImporterDetector( $source, $bundleID);
 
 		$importer->setDebug( false );
 

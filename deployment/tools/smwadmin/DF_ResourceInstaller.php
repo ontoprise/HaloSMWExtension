@@ -404,7 +404,7 @@ class ResourceInstaller {
     private function getPagesFromImport( $dumpPath, $bundleID ) {
         $handle = fopen( $dumpPath, 'rt' );
         $source = new ImportStreamSource( $handle );
-        $importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, DFUserInput::getInstance() );
+        $importer = new DeployWikiImporterDetector( $source, $bundleID);
 
         $importer->setDebug( false );
 

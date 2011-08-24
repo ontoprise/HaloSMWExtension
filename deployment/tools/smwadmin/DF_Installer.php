@@ -914,8 +914,10 @@ class Installer {
 						$updatesNeeded[] = array($id, $from, $to);
 					}
 					if ($p->getVersion() > $to) {
-
-						throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators(array($to,0)).". Downgrades are not supported.");
+						global $dfgForce;
+                        if (!$dfgForce) {
+						  throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators(array($to,0)).". Downgrades are not supported.");
+                        }
 					}
 				}
 			}

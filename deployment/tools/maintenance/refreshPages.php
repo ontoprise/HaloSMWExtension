@@ -79,7 +79,7 @@ if (!isset($dumpFilePath) || !isset($bundleID)) {
 
 $handle = fopen( $dumpFilePath, 'rt' );
 $source = new ImportStreamSource( $handle );
-$importer = new DeployWikiImporterDetector( $source, $bundleID, '', 1, DFUserInput::getInstance() );
+$importer = new DeployWikiImporterDetector( $source, $bundleID);
 
 $importer->setDebug( false );
 
