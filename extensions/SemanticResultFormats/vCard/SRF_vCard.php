@@ -36,8 +36,8 @@ class SRFvCard extends SMWResultPrinter {
 		return wfMsg( 'srf_printername_vcard' );
 	}
 
-	protected function getResultText( $res, $outputmode ) {
-		global $smwgIQRunningNumber, $wgSitename, $wgServer, $wgRequest;
+	protected function getResultText( SMWQueryResult $res, $outputmode ) {
+		global $wgSitename;
 		$result = '';
 		$items = array();
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make vCard file
@@ -334,7 +334,12 @@ class SRFvCard extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		return parent::exportFormatParameters();
+		if ( defined( 'SMW_SUPPORTS_VALIDATOR' ) ) {
+			return array_merge( parent::getParameters(), $this->exportFormatParameters() );
+		}
+		else {
+			return parent::exportFormatParameters();
+		}
 	}
 }
 
@@ -367,7 +372,6 @@ class SRFvCardEntry {
 	 * Constructor for a single item in the vcard. Requires the URI of the item.
 	 */
 	public function __construct( Title $t, $prefix, $firstname, $lastname, $additionalname, $suffix, $fullname, $tels, $addresses, $emails, $birthday, $jobtitle, $role, $organization, $department, $category, $url, $note ) {
-		global $wgServer;
 		$this->uri = $t->getFullURL();
 		$this->url = $url;
 		// read fullname or guess it in a simple way from other names that are given

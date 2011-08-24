@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>153</version>
+        <version>161</version>
         <patchlevel>2</patchlevel>
         <id>semanticresultformats</id>
         <license>GPL-v2</license>
@@ -13,7 +13,7 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Result_Formats</helpurl>
         <dependencies>
-            <dependency from="152" to="156">smw</dependency>
+            <dependency from="160" to="160">smw</dependency>
         </dependencies>
     </global>
     <codefiles></codefiles>
