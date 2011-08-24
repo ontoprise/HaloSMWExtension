@@ -95,10 +95,10 @@ class Tools {
 			@rmdir($current_dir); // do not warn cause it may contain excluded files and dirs.
 		}
 	}
-	
+
 	/**
 	 * Removes a directory using native OS commands.
-	 * 
+	 *
 	 * @param string $dir
 	 */
 	public static function remove_dir_native($dir) {
@@ -108,12 +108,12 @@ class Tools {
 			if ($ret != 0) return false;
 		} else {
 			$dir = self::makeUnixPath($dir);
-            if (substr(trim($dir), -1) != '/') $dir = trim($dir)."/";
-            exec("rm -rf $dir*", $out, $ret);
-            if ($ret != 0) return false;
-            exec("rmdir $dir", $out, $ret);
-            if ($ret != 0) return false;
-            
+			if (substr(trim($dir), -1) != '/') $dir = trim($dir)."/";
+			exec("rm -rf $dir*", $out, $ret);
+			if ($ret != 0) return false;
+			exec("rmdir $dir", $out, $ret);
+			if ($ret != 0) return false;
+
 		}
 		return true;
 	}
@@ -221,10 +221,10 @@ class Tools {
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
 	}
-	
-    public static function makeWindowsPath($path) {
-        return str_replace("/", "\\", $path);
-    }
+
+	public static function makeWindowsPath($path) {
+		return str_replace("/", "\\", $path);
+	}
 
 	/**
 	 * Normalizes a path, ie. uses unix file separators (/) and removes a trailing slash.
@@ -252,9 +252,9 @@ class Tools {
 		$nullDevice = Tools::isWindows() ? "null" : "/dev/null";
 
 		if (!Tools::isWindows()) {
-			
+
 			// both tools are delivered with the Windows version.
-			
+
 			// check for unzipping tool
 			$found_unzip = false;
 			exec("unzip > $nullDevice", $out, $ret);
@@ -453,7 +453,7 @@ class Tools {
 		return substr($ls, 0, $i+1)."\n";
 	}
 
-	
+
 	/**
 	 * Converts an array of string to a string.
 	 *
@@ -610,7 +610,35 @@ class Tools {
 			$result = reset($out);
 			list($prg, $pathstr) = explode(":", $result);
 			$paths = explode(" ", trim($pathstr));
-			return reset($paths);	
+			return reset($paths);
+		}
+	}
+
+	/**
+	 * Detects if a particular process is running.
+	 * 
+	 * @param string $name Program name (e.g. php)
+	 * 
+	 * @return boolean
+	 */
+	public static function isProcessRunning($name) {
+		if (self::isWindows()) {
+			exec("tasklist /NH /V $name", $out, $ret);
+			foreach($out as $l) {
+				if (strpos($l, "$name.exe") !== false) return true;
+			}
+			return false;
+		} else {
+			$path = self::whereis($name);
+			@exec("ps ax | grep $path", $out, $ret);
+			foreach($out as $l) {
+				$l = preg_replace("/\\s+|\t+/", " ", $l);
+				$parts = explode(" ", trim($l));
+				if ($parts[4] == $path) {
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
@@ -735,19 +763,19 @@ class Tools {
 		// stop installation
 		die(DF_TERMINATION_ERROR);
 	}
-	
+
 	/**
 	 * Creates a MW deploy descriptor analyzing the current installation.
-	 *  
+	 *
 	 * @param string $rootDir MW root directory
 	 * @param string $ver Version (if missing if will be read from the underlying MW)
-	 * 
+	 *
 	 * @return string (xml)
 	 */
-    public static function createMWDeployDescriptor($rootDir, $ver = NULL) {
-        $version = is_null($ver) ? self::getMediawikiVersion($rootDir) : $ver;
-        $version = intval(str_replace(".","", $version));
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+	public static function createMWDeployDescriptor($rootDir, $ver = NULL) {
+		$version = is_null($ver) ? self::getMediawikiVersion($rootDir) : $ver;
+		$version = intval(str_replace(".","", $version));
+		$xml = '<?xml version="1.0" encoding="UTF-8"?>
                 <deploydescriptor>
                     <global>
                         <version>'.$version.'</version>
@@ -769,7 +797,7 @@ class Tools {
                     </configs>
                     </deploydescriptor>';
 
-        return $xml;
-    }
+		return $xml;
+	}
 
 }
