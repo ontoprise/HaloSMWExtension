@@ -1,5 +1,5 @@
 <?php
-define( 'DF_VERSION', '1.5.6_0 [B${env.BUILD_NUMBER}]' );
+define( 'DF_VERSION', '{{$VERSION}} [B${env.BUILD_NUMBER}]' );
 define ('DF_WIKICONTEXT', 1);
 
 $wgExtensionFunctions[] = 'dfgSetupExtension';
