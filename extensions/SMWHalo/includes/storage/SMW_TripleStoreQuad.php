@@ -28,9 +28,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		parent::__construct();
 	}
 
-	function getSemanticData(SMWDIWikiPage $subject, $filter = false, $forceSMWStore = false ) {
+	function getSemanticData(SMWDIWikiPage $subject, $filter = false) {
 
-		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return $this->smwstore->getSemanticData($subject, $filter);
 		}
 
@@ -113,20 +113,20 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 
 		if ($naryPropertiesPresent) {
-			$naryProps = $this->readRecordPropertyValues($subject);
-			foreach($naryProps as $tuple) {
-				list($property, $value) = $tuple;
-				$semanticData->addPropertyObjectValue($property, $value);
-			}
+			$this->readRecordPropertyValues($subject, $semanticData);
+			
 		}
 
 		return $semanticData;
 	}
 
-	function getProperties(SMWDIWikiPage $subject, $requestoptions = null, $forceSMWStore = false ) {
+	function getProperties(SMWDIWikiPage $subject, $requestoptions = null) {
 
-		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
-			return $this->smwstore->getProperties($subject, $requestoptions);
+		if (  $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+			$this->setLocalRequest(true);
+			$result = $this->smwstore->getProperties($subject, $requestoptions);
+				
+			return $result;
 		}
 
 
@@ -185,10 +185,13 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $properties;
 	}
 
-	function getInProperties( SMWDataItem $object, $requestoptions = null , $forceSMWStore = false) {
+	function getInProperties( SMWDataItem $object, $requestoptions = null ) {
 
-		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
-			return $this->smwstore->getInProperties($object, $requestoptions);
+		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+			$this->setLocalRequest(true);
+			$result =  $this->smwstore->getInProperties($object, $requestoptions);
+				
+			return $result;
 		}
 
 
@@ -245,9 +248,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $properties;
 	}
 
-	function getAllPropertyAnnotations(SMWDIProperty $property, $requestoptions = NULL, $forceSMWStore = false) {
+	function getAllPropertyAnnotations(SMWDIProperty $property, $requestoptions = NULL) {
 
-		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			return array();
 		}
 
@@ -267,7 +270,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		} else if ($propertyID == '_SUBP') {
 			$property_iri = "<".TSNamespaces::$RDFS_NS."subPropertyOf>";
 		} else {
-			$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
+			$propertyName = $property->getDiWikiPage()->getTitle()->getDBkey();
 
 			$property_iri =  $this->tsNamespace->getFullIRI($property->getDiWikiPage()->getTitle());
 		}
@@ -332,20 +335,31 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 
-	function getPropertyValues($subject, SMWDIProperty $property, $requestoptions = NULL, $outputformat = '', $forceSMWStore = false ) {
+	function getPropertyValues($subject, SMWDIProperty $property, $requestoptions = NULL ) {
 			
 		if (is_null($subject)) {
-			return $this->getAllPropertyAnnotations($property, $requestoptions, $forceSMWStore);
+			return $this->getAllPropertyAnnotations($property, $requestoptions);
 		}
 
-		if ( $forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
-			return $this->smwstore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+			$this->setLocalRequest(true);
+			$result = $this->smwstore->getPropertyValues($subject, $property, $requestoptions);
+				
+			return $result;
 		}
+
+
 		if (!$property->isUserDefined()) {
-			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
+				
+			$result = parent::getPropertyValues($subject,$property,$requestoptions);
+				
+			return $result;
 		}
 		if (smwfCheckIfPredefinedSMWHaloProperty($property)) {
-			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
+
+			$result = parent::getPropertyValues($subject,$property,$requestoptions);
+				
+			return $result;
 		}
 
 
@@ -355,7 +369,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$values = array();
 
 		$subjctName = $subject->getDBkey();
-		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
+		$propertyName = $property->getDiWikiPage()->getTitle()->getDBkey();
 
 		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
 		$offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
@@ -432,16 +446,25 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 
-	function getPropertySubjects(SMWDIProperty $property, $value, $requestoptions = NULL, $forceSMWStore=false) {
+	function getPropertySubjects(SMWDIProperty $property, $value, $requestoptions = NULL) {
 
-		if ($forceSMWStore || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
-			return $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
+		if ($this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
+			$this->setLocalRequest(true);
+			$result = $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
+				
+			return $result;
 		}
 		if (!$property->isUserDefined()) {
-			return parent::getPropertySubjects($property, $value, $requestoptions);
+				
+			$result = parent::getPropertySubjects($property, $value, $requestoptions);
+				
+			return $result;
 		}
 		if (smwfCheckIfPredefinedSMWHaloProperty($property)) {
-			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
+
+			$result = parent::getPropertySubjects($property,$value,$requestoptions);
+				
+			return $result;
 		}
 
 		$client = TSConnection::getConnector();
@@ -535,11 +558,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $values;
 	}
 
-	function getAllPropertySubjects(SMWDIProperty $property, $requestoptions = NULL, $forceSMWStore=false) {
-		return $this->getPropertySubjects($property,NULL,$requestoptions,$forceSMWStore);
+	function getAllPropertySubjects(SMWDIProperty $property, $requestoptions = NULL) {
+		return $this->getPropertySubjects($property,NULL,$requestoptions);
 	}
 
-	private function readRecordPropertyValues(SMWDIWikiPage $subject) {
+	private function readRecordPropertyValues(SMWDIWikiPage $subject, $semanticData) {
 
 		$client = TSConnection::getConnector();
 		$client->connect();
@@ -552,7 +575,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		try {
 
-			$response = $client->query("SELECT DISTINCT ?p ?b ?sp $v WHERE { GRAPH ?G {  $subj_iri ?p ?b. ?b ?sp ?v . FILTER(isBlank(?b)) ORDER BY ASC(?p) } } ",  "merge=false");
+			$response = $client->query("SELECT DISTINCT ?p ?b ?sp ?v WHERE { GRAPH ?G {  $subj_iri ?p ?b. ?b ?sp ?v . FILTER(isBlank(?b)) } } ORDER BY ASC(?p) ",  "merge=false");
 		} catch(Exception $e) {
 			wfDebug("Triplestore does probably not run.\n");
 			$response = TSNamespaces::$EMPTY_SPARQL_XML;
@@ -579,6 +602,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 			$b = $children->binding[1];
 			if (!isset($b->children()->bnode)) continue;
+			$bnodeName = (string) $b->children()->bnode[0];
 
 			// property of sub object
 			$b = $children->binding[2];
@@ -588,9 +612,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 			// value
 			$v = $this->getResultValue($children->binding[3]);
-
-			$bnodeName = (string) $b->children()->bnode;
-			if (!array_key_exists($bnodeName, $bnodes) ) {
+				
+			if (!array_key_exists($bnodeName, $bnodes2Values) ) {
 				$bnodes2Values[$bnodeName] = array();
 				$bnodes2Values[$bnodeName][] = array($propertyDi, $v);
 			} else {
@@ -599,8 +622,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		}
-
-		$semanticData = new SMWContainerSemanticData();
+		 
+		
+		$visitedBNodes = array();
 		foreach ($results as $r) {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
@@ -612,15 +636,17 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 			if (!is_null($naryPropertyDi)) {
 				$bnodeName = (string) $children->binding[1]->children()->bnode;
-
-				list($propertyDi, $propertyValueDi) = $bnodes2Values[$bnodeName];
-
-				$semanticData->addPropertyObjectValue( $propertyDi, $diV );
-				$naryProps[] = array($naryPropertyDi, $semanticData);
+				if (in_array($bnodeName, $visitedBNodes)) continue;
+                $visitedBNodes[] = $bnodeName;
+				foreach($bnodes2Values[$bnodeName] as $v) {
+					list($propertyDi, $propertyValueDi) = $v;
+					$semanticData->addPropertyObjectValue( $propertyDi, $propertyValueDi );
+				}
+				
 			}
 		}
 
-		return $naryProps;
+		
 	}
 
 	private function getResultValue($b) {
@@ -629,18 +655,18 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$sv = reset($b->children()->uri);
 			if ($sv == "http://__defaultvalue__/doesnotexist") return "";
 			$title = TSHelper::getTitleFromURI($sv, false);
-			if (is_null($title) || $title instanceof Title) {
-				return $title->getPrefixedDBkey();
-			} else {
-				return (string) $sv;
+			if (is_null($title)) {
+				return new SMWErrorValue(SMWDataItem::TYPE_ERROR);
+			} else if ($title instanceof Title) {
+				return SMWDIWikiPage::newFromTitle($title);
 			}
 
 		} else if (isset($b->children()->literal)) {
 			$sv = reset($b->children()->literal);
 			$literalValue = (string) $sv;
-			return $literalValue;
+			return SMWCompatibilityHelpers::dataItemFromDBKeys(SMWDataItem::TYPE_STRING, array($literalValue));
 		}
-		return "";
+		return new SMWErrorValue(SMWDataItem::TYPE_ERROR);
 	}
 
 }

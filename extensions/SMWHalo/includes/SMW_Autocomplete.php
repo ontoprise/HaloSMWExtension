@@ -64,7 +64,7 @@ require_once( $smwgHaloIP . "/includes/SMW_Autocomplete_Storage.php");
 function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $constraints) {
 	global $wgLang;
 
-	
+
 	// remove common namespaces from user input
 	$namespaceDelimiter = strpos($userInputToMatch, ":");
 	$namespaceText = $namespaceDelimiter !== false ? substr($userInputToMatch, 0, $namespaceDelimiter) : NULL;
@@ -236,7 +236,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		}
 		$separatorIndex = max(array($indexOfPipe, $indexOfQM));
 		if ($separatorIndex == -1) {
-			
+				
 			// template name
 			global $wgLang;
 			$namespace = NS_TEMPLATE;
@@ -249,7 +249,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
 			return $result;
 		} else {
-			
+				
 			// template paramters
 			$templateParameters = explode("|", $userContext);
 			$templateName = trim(substr(reset($templateParameters), 2));
@@ -327,6 +327,7 @@ class AutoCompletionRequester {
 	 * @param hash array $matches
 	 */
 	public static function attachImageURL(& $matches) {
+		smwfGetStore()->setLocalRequest(true);
 		for($i = 0; $i < count($matches); $i++) {
 			$title = is_array($matches[$i])? $matches[$i]['title'] : $matches[$i];
 			if (!($title instanceof Title)) continue;
@@ -341,7 +342,7 @@ class AutoCompletionRequester {
 				}
 			}
 		}
-
+		smwfGetStore()->setLocalRequest(false);
 	}
 
 	/**
@@ -353,6 +354,7 @@ class AutoCompletionRequester {
 	 * @param hash array $matches
 	 */
 	public static function attachCategoryHints(& $matches) {
+		smwfGetStore()->setLocalRequest(true);
 		$options = new SMWRequestOptions();
 		$options->limit = SMW_AC_MAX_INSTANCE_SAMPLES;
 		for($i = 0; $i < count($matches); $i++) {
@@ -395,8 +397,8 @@ class AutoCompletionRequester {
 				}
 				$matches[$i]['parentCategories'] = array_reverse($matches[$i]['parentCategories']);
 			}
-
 		}
+		smwfGetStore()->setLocalRequest(false);
 	}
 
 	/**
@@ -407,6 +409,7 @@ class AutoCompletionRequester {
 	 * @return array of string
 	 */
 	public static function getSyntaxSamples($propertyText) {
+		smwfGetStore()->setLocalRequest(true);
 		$pv = SMWPropertyValue::makeUserProperty($propertyText);
 		$typeID = $pv->getPropertyTypeID();
 		// returns syntax examples for several datatypes
@@ -416,10 +419,13 @@ class AutoCompletionRequester {
 			$monthLabel = $smwgContLang->getMonthLabel($currentDate['mon']);
 			$dayLabel = $currentDate['mday'];
 			$yearLabel = $currentDate['year'];
+			smwfGetStore()->setLocalRequest(false);
 			return array_merge(array("$monthLabel $dayLabel, $yearLabel"), explode("|",(wfMsg('smw_ac_datetime_proposal'))));
 		} else if ($typeID == '_boo') {
+			smwfGetStore()->setLocalRequest(false);
 			return (array_merge(explode(",",wfMsg('smw_true_words')), explode(",",wfMsg('smw_false_words'))));
 		} else if ($typeID == '_geo') {
+			smwfGetStore()->setLocalRequest(false);
 			return (explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
 		} else if ($typeID == '_rec') {
 
@@ -433,15 +439,19 @@ class AutoCompletionRequester {
 				$proposal .= $tv->getWikiValue();
 				if ($i < count($typeValues)-1) $proposal .= "; ";
 			}
-
+			smwfGetStore()->setLocalRequest(false);
 			return (array($proposal));
 		} else if ($typeID == '_ema') {
+			smwfGetStore()->setLocalRequest(false);
 			return (array(wfMsg('smw_ac_email_proposal')));
 		} else if ($typeID == '_tem') {
+			smwfGetStore()->setLocalRequest(false);
 			return (explode(",",wfMsg('smw_ac_temperature_proposal')));
 		} else if ($typeID == '_tel') {
+			smwfGetStore()->setLocalRequest(false);
 			return (array(wfMsg('smw_ac_telephone_proposal')));
 		}
+		smwfGetStore()->setLocalRequest(false);
 		return NULL;
 	}
 
@@ -1007,15 +1017,15 @@ class AutoCompletionHandler {
 				self::mergeResults($result, $inf);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if($commandText == "from-bundle"){
-              
-                if (empty($params[0]) || is_null($params[0])) continue;
-                $bundleID = $params[0];
-                
-                $titles = smwfGetAutoCompletionStore()->getPages($userInput, NULL, $bundleID);
-                $inf = self::setInferred($titles, !$first);
-                self::mergeResults($result, $inf);
-                if (count($result) >= SMW_AC_MAX_RESULTS) break;
-            }
+
+				if (empty($params[0]) || is_null($params[0])) continue;
+				$bundleID = $params[0];
+
+				$titles = smwfGetAutoCompletionStore()->getPages($userInput, NULL, $bundleID);
+				$inf = self::setInferred($titles, !$first);
+				self::mergeResults($result, $inf);
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+			}
 
 			$first = false;
 		}

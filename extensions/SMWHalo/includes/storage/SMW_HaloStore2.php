@@ -115,6 +115,10 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 	public function getMapping() {
 		return $this->mapping;
 	}
+	
+	public function setLocalRequest($local) {
+		// dummy
+	}
 }
 
 

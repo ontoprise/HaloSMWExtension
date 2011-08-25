@@ -146,6 +146,7 @@ abstract class AutoCompletionStorage {
 class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 	public function getUnits(Title $property, $substring) {
+		smwfGetStore()->setLocalRequest(true);
 		$all_units = array();
 		$substring = str_replace("_", " ",$substring);
 
@@ -184,11 +185,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				}
 			}
 		}
-
+		smwfGetStore()->setLocalRequest(false);
 		return array_unique($result);   // make sure all units appear only once.
 	}
 
 	public function getPossibleValues(Title $property) {
+		smwfGetStore()->setLocalRequest(true);
 		$propertySubjectDi = SMWDIWikiPage::newFromTitle($property);
 		$possibleValuePropertyDi = SMWDIProperty::newFromUserLabel("_PVAL");
 		$possibleValuesDi = smwfGetStore()->getPropertyValues($propertySubjectDi, $possibleValuePropertyDi);
@@ -196,6 +198,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		foreach($possibleValuesDi as $di) {
 			$result[] = $di->getString();
 		}
+		smwfGetStore()->setLocalRequest(false);
 		return $result;
 	}
 
@@ -663,12 +666,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		// initialize with direct instances
 		global $smwgHaloContLang;
-        $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		foreach($domainRangeAnnotations as $value) {
 			$sd = $value->getSemanticData();
 
-                $range = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
-                $rangeDi = reset($range);
+			$range = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
+			$rangeDi = reset($range);
 			if (is_null($rangeDi) || $rangeDi === false) continue;
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
@@ -797,6 +800,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	}
 
 	public function getImageURL($categoryTitle) {
+		smwfGetStore()->setLocalRequest(true);
 		static $image_urls = array();
 
 		if (is_null($categoryTitle)) return NULL;
@@ -805,7 +809,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			return $image_urls[$categoryTitle->getPrefixedDBkey()];
 		}
 		$catHasIconProperty = SMWDIProperty::newFromUserLabel(wfMsg('smw_ac_category_has_icon'));
-		$iconValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($categoryTitle), $catHasIconProperty, NULL, '');
+		$iconValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($categoryTitle), $catHasIconProperty, NULL);
 		$iconValue = reset($iconValues); // consider only first
 		if ($iconValue === false) return NULL;
 
@@ -815,7 +819,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		if (!is_null($url)) {
 			$image_urls[$categoryTitle->getPrefixedDBkey()] = $url;
 		}
-
+		smwfGetStore()->setLocalRequest(false);
 		return $url;
 	}
 
@@ -828,11 +832,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	 * @return array(types, range categories)
 	 */
 	protected function getPropertyData(Title $property) {
+		smwfGetStore()->setLocalRequest(true);
 		$ranges = array();
 		$propDi = SMWDIProperty::newFromUserLabel($property->getText());
 		$typeString = $propDi->findPropertyTypeId();
 		if ($typeString == '_rec') {
-			$fieldsDi = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), SMWDIProperty::newFromUserLabel('_LIST'));
+			$fieldsDi = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), SMWDIProperty::newFromUserLabel('_LIST'), NULL);
 			$first = reset($fieldsDi);
 			$typeString = $first->getString();
 		}
@@ -843,7 +848,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$rangeString = NULL;
 		if ($typeString == '_wpg') {
 			$domainRangeProperty = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
-			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), $domainRangeProperty);
+			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), $domainRangeProperty, NULL);
 			foreach($domainRangeAnnotations as $value) {
 
 				$sd = $value->getSemanticData();
@@ -860,6 +865,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 			$rangeString = implode(',', array_unique($ranges));
 		}
+		smwfGetStore()->setLocalRequest(false);
 		return array($typeString, $rangeString);
 	}
 }

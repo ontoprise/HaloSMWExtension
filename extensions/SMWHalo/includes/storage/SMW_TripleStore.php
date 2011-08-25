@@ -34,7 +34,7 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
  *
  * Configuration in LocalSettings.php:
  *
- *  $smwgMessageBroker: The name or IP of the message broker
+ *  
  *  $smwgWebserviceEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
  *
  * @author: Kai
@@ -43,10 +43,30 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 class SMWTripleStore extends SMWStore {
 
 
-
+	/**
+	 * Collects semantic data which is not covered by SMW
+	 *
+	 * @var SMWFullSemanticData
+	 */
 	public static $fullSemanticData;
+
+	/**
+	 * Namespace helper class
+	 *
+	 * @var TSNamespace
+	 */
 	protected $tsNamespace;
 
+	/**
+	 * Indicates if a request should be handled via the local store.
+	 *
+	 * @var string
+	 */
+	protected $localRequest;
+
+	public function setLocalRequest($local) {
+		$this->localRequest = $local;
+	}
 
 	/**
 	 * Creates and initializes Triple store connector.
@@ -57,6 +77,8 @@ class SMWTripleStore extends SMWStore {
 		global $smwgBaseStore;
 		$this->smwstore = new $smwgBaseStore;
 		$this->tsNamespace = TSNamespaces::getInstance();
+		$this->localRequest = false;
+		
 	}
 
 
@@ -329,11 +351,11 @@ class SMWTripleStore extends SMWStore {
 				}
 				continue;
 			} elseif ($property->getKey() == "_ERRP") {
-//				foreach($propertyValueArray as $value) {
-//					$title = $value->getTitle();
-//					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
-//				}
-//				continue;
+				//				foreach($propertyValueArray as $value) {
+				//					$title = $value->getTitle();
+				//					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
+				//				}
+				//				continue;
 			} elseif ($property->getKey() == "_CONC") {
 				foreach($propertyValueArray as $value) {
 					$string = $value->getString();
@@ -367,7 +389,7 @@ class SMWTripleStore extends SMWStore {
 					foreach($properties as $p) {
 						$values = $sdata->getPropertyValues($p);
 						foreach($values as $v) {
-								
+
 							$xsdType = WikiTypeToXSD::getXSDTypeFromTypeID($v->getDIType());
 							if ($v->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {
 								$object = $this->tsNamespace->getFullIRI(Title::newFromDBkey($v->getTitle()));
@@ -419,7 +441,7 @@ class SMWTripleStore extends SMWStore {
 
 				}
 			}
-				
+
 
 
 
@@ -750,7 +772,7 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
-    
+
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
@@ -892,9 +914,9 @@ class SMWTripleStore extends SMWStore {
 
 
 			// generate PrintRequests for all bindings (if they do not exist already)
- 
+
 			foreach ($variables as $var) {
-				
+
 				$var_name = ucfirst((string) $var->attributes()->name);
 
 				// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
@@ -907,7 +929,7 @@ class SMWTripleStore extends SMWStore {
 				$var_path = explode(".", $var_name);
 				$sel_var = ucfirst($var_path[count($var_path)-1]);
 				$data = SMWPropertyValue::makeUserProperty($sel_var);
-				
+
 				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
 
 				if (array_key_exists($var_name, $mapPRTOColumns)) {
@@ -925,7 +947,7 @@ class SMWTripleStore extends SMWStore {
 			$qresults = array();
 			$rowIndex = 0;
 			foreach ($results as $r) {
-				
+
 				$row = array();
 				$bindingNodeIndex = 0; // column = n-th XML binding node
 
@@ -1156,7 +1178,7 @@ class SMWTripleStore extends SMWStore {
 
 	/**
 	 *
-	 * Creates primitive SMWDataItem object (ie. no SMWDIWikiPage). 
+	 * Creates primitive SMWDataItem object (ie. no SMWDIWikiPage).
 	 *
 	 * @param $property
 	 * @param $literalValue
@@ -1401,7 +1423,7 @@ class SMWTripleStore extends SMWStore {
 					$label = $po->getData()->getDBkey() ;
 				} else {
 					$label = $po->getData()->getDataItem()->getKey();
-					
+						
 				}
 				$contains |= strtolower($label) == strtolower($var_name);
 			} else {
