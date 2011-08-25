@@ -1082,7 +1082,7 @@ class SMWTripleStore extends SMWStore {
 				list($sv, $metadata) = $uri;
 
 				if ($sv == TSNamespaces::$RDF_NS."type") {
-					$allValues[] = SMWPropertyValue::makeProperty('_INST');
+					$allValues[] = SMWDIProperty::newFromUserLabel('_INST');
 				} else {
 					$title = TSHelper::getTitleFromURI($sv, false);
 
