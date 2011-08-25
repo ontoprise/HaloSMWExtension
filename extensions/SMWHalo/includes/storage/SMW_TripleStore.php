@@ -946,6 +946,7 @@ class SMWTripleStore extends SMWStore {
 			// iterate over SPARQL-XML result nodes and add an SMWResultArray object for each result
 			$qresults = array();
 			$rowIndex = 0;
+			$totalResults = 0;
 			foreach ($results as $r) {
 
 				$row = array();
@@ -986,7 +987,7 @@ class SMWTripleStore extends SMWStore {
 
 				// create result row. iterate over variable set and convert binding nodes to SMWDataValue objects
 				$maxResultsInColumn = 0;
-				$totalResults = 0;
+				
 				foreach ($variableSet as $var) {
 					$var = ucfirst($var);
 					if ($bindingNodeIndex < count($bindingSet)) {
@@ -1036,7 +1037,7 @@ class SMWTripleStore extends SMWStore {
 			}
 
 			// create query result object
-			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, ($totalResults == $query->getLimit()));
+			$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, ($totalResults >= $query->getLimit()));
 			$qResultSet[$s] = $queryResult;
 		}
 		// consider multiple results
