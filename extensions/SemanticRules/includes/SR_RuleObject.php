@@ -231,10 +231,9 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
 				$tmp .="->";
 				if (!($args[$i] instanceof SMWVariable)) {
-					$property = SMWPropertyValue::makeUserProperty(ucfirst($args[$i]->getName()));
-					$propertyType = $property->getTypesValue();
-					$dbkeys=$propertyType->getDBkeys();
-					$wikiType = reset($dbkeys);
+					$property = SMWDIProperty::newFromUserLabel(ucfirst($args[$i]->getName()));
+					$wikiType = $property->findPropertyTypeID();
+					
 				}
 			} else if ($i == 2) {
 				if ($args[$i] instanceof SMWConstant && $rulePart == "BODY") {
