@@ -43,8 +43,10 @@ SmwhgLogger.prototype = {
 		if (!smwghLoggerEnabled) {
 			return;
 		}
-		//Default values
-		var logmsg = (logmsg == null) ? "" : logmsg; 
+		
+		// Completely deactivated.
+		
+		/*var logmsg = (logmsg == null) ? "" : logmsg; 
 		var type = (type == null) ? "" : type; 
 			//Get Timestamp
 			var time = new Date();
@@ -55,7 +57,7 @@ SmwhgLogger.prototype = {
 		
 		sajax_do_call('smwLog', 
 		              [logmsg,type,func,locationURL,timestamp], 
-		              this.logcallback.bind(this));	
+		              this.logcallback.bind(this));	*/
 	},
 	
 	/**
