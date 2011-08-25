@@ -623,9 +623,10 @@ class Tools {
 	 */
 	public static function isProcessRunning($name) {
 		if (self::isWindows()) {
-			exec("tasklist /NH /V $name", $out, $ret);
+			@exec("tasklist /NH /V /FO CSV", $out, $ret);
 			foreach($out as $l) {
-				if (strpos($l, "$name.exe") !== false) return true;
+				$parts = explode(",", trim($l));
+				if (strpos($parts[0], "$name.exe") !== false) return true;
 			}
 			return false;
 		} else {

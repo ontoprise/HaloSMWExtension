@@ -573,6 +573,7 @@ class DFBundleTools {
 		// Rationale
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
 		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		$correct |= self::checkPropertyType($pTitle->getText(), "_txt");
 		if (!$correct) {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;

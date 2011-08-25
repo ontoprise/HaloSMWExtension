@@ -463,7 +463,7 @@ class DeployDescriptor {
 	 * Returns patches which are suitable for the given local packages.
 	 *
 	 * @param $localPackages array of DeployDescriptor
-	 * @return array of string (patch file paths)
+	 * @return array of (string $patchfilePath, boolean $mayFail) 
 	 */
 	function getPatches($localPackages) {
 			
