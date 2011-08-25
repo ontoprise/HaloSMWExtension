@@ -92,9 +92,6 @@ function ruleSetupExtension() {
 
 	}
 
-	/*$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
-	 $wgSpecialPages['Explanations'] = array('SRExplanations');
-	 $wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
 
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Rule&nbsp;knowledge&nbsp;extension', 'version'=>SEMANTIC_RULES_VERSION,
             'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
