@@ -4,7 +4,7 @@ require_once ('deployment/descriptor/DF_Version.php');
  * Tests the DFVersion class
  *
  */
-class TestDFVersion extends PHPUnit_Framework_TestCase {
+class TestVersions extends PHPUnit_Framework_TestCase {
 
 
 

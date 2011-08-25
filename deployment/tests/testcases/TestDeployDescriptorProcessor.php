@@ -1,5 +1,8 @@
 <?php
 
+require_once ('deployment/settings.php');
+require_once ('deployment/io/DF_Log.php');
+require_once ('deployment/io/DF_PrintoutStream.php');
 require_once ('deployment/descriptor/DF_DeployDescriptor.php');
 
 
@@ -18,6 +21,8 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
     
 
 	function setUp() {
+		global $dfgOut;
+		$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 		$this->xml_variables = file_get_contents('testcases/resources/test_deploy_variables.xml');
 		$this->xml_function = file_get_contents('testcases/resources/test_deploy_function.xml');
 		$this->xml_function2 = file_get_contents('testcases/resources/test_deploy_function2.xml');

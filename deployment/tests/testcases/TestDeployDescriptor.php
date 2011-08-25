@@ -87,9 +87,9 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 	function testPatches() {
 		$patches = $this->ddp->getPatches(array('smwhalo' => $this->ddp));
+        list($path, $mayFail) = $patches[0];
 
-
-		$this->assertEquals("patch.txt", $patches[0]);
+		$this->assertEquals("patch.txt", $path);
 
 	}
 

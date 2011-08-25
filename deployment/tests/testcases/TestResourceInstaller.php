@@ -9,7 +9,7 @@ $rootDir = realpath($rootDir."/../../");
 
 require_once $rootDir.'/descriptor/DF_DeployDescriptor.php';
 require_once $rootDir.'/tools/smwadmin/DF_ResourceInstaller.php';
-
+require_once ($rootDir.'/io/DF_PrintoutStream.php');
 
 /**
  * Tests the resource installer
@@ -21,6 +21,8 @@ class TestResourceInstaller extends PHPUnit_Framework_TestCase {
 	
 	
     function setUp() {
+    	   global $dfgOut;
+        $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
         $xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
         $this->ddp = new DeployDescriptor($xml);
         $path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/" : "testcases/resources/installer/";
