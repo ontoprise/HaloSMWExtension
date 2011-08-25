@@ -108,8 +108,8 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 		$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
 		
 		$params['sep'] = new Parameter( 'sep' );
-		$params['sep']->setDescription( wfMsg( 'smw-paramdesc-csv-sep' ) );
-		$params['sep']->setDefault( $this->m_sep );
+		$params['sep']->setMessage( 'smw-paramdesc-csv-sep' );
+		$params['sep']->setDefault( ',' );
 		
 		return $params;
 	}

@@ -15,6 +15,15 @@
 class SMWSMWDoc extends ParserHook {
 	
 	/**
+	 * Field to store the value of the language parameter.
+	 * 
+	 * @since 1.6.1
+	 * 
+	 * @var string
+	 */
+	protected $language;
+	
+	/**
 	 * No LSB in pre-5.3 PHP *sigh*.
 	 * This is to be refactored as soon as php >=5.3 becomes acceptable.
 	 */
@@ -57,7 +66,11 @@ class SMWSMWDoc extends ParserHook {
 		
 		$params['format'] = new Parameter( 'format' );
 		$params['format']->addCriteria( new CriterionInArray( array_keys( $GLOBALS['smwgResultFormats'] ) ) );
-		$params['format']->setDescription( wfMsg( 'smw-smwdoc-par-format' ) );
+		$params['format']->setMessage( 'smw-smwdoc-par-format' );
+		
+		$params['language'] = new Parameter( 'language' );
+		$params['language']->setDefault( $GLOBALS['wgLanguageCode'] );
+		$params['language']->setMessage( 'smw-smwdoc-par-language' );
 		
 		return $params;
 	}
@@ -71,7 +84,7 @@ class SMWSMWDoc extends ParserHook {
 	 * @return array
 	 */
 	protected function getDefaultParameters( $type ) {
-		return array( 'format' );
+		return array( 'format', 'language' );
 	}
 	
 	/**
@@ -85,6 +98,8 @@ class SMWSMWDoc extends ParserHook {
 	 * @return string
 	 */
 	public function render( array $parameters ) {
+		$this->language = $parameters['language'];
+		
 		$params = $this->getFormatParameters( $parameters['format'] );
 		
 		return $this->getParameterTable( $params );		
@@ -101,20 +116,28 @@ class SMWSMWDoc extends ParserHook {
 	 */
 	protected function getParameterTable( array $parameters ) {
 		$tableRows = array();
-
+		$hasAliases = false;
+		
 		foreach ( $parameters as $parameter ) {
-			$tableRows[] = $this->getDescriptionRow( $parameter );
+			$hasAliases = count( $parameter->getAliases() ) != 0;
+			if ( $hasAliases ) break; 
+		}
+		
+		foreach ( $parameters as $parameter ) {
+			if ( $parameter->getName() != 'format' ) {
+				$tableRows[] = $this->getDescriptionRow( $parameter, $hasAliases );
+			}
 		}
 
 		$table = '';
 
 		if ( count( $tableRows ) > 0 ) {
 			$tableRows = array_merge( array(
-			'!' . wfMsg( 'validator-describe-header-parameter' ) ."\n" .
-			'!' . wfMsg( 'validator-describe-header-aliases' ) ."\n" .
-			'!' . wfMsg( 'validator-describe-header-type' ) ."\n" .
-			'!' . wfMsg( 'validator-describe-header-default' ) ."\n" .
-			'!' . wfMsg( 'validator-describe-header-description' )
+			'!' . $this->msg( 'validator-describe-header-parameter' ) ."\n" .
+			( $hasAliases ? '!' . $this->msg( 'validator-describe-header-aliases' ) ."\n" : '' ) .
+			'!' . $this->msg( 'validator-describe-header-type' ) ."\n" .
+			'!' . $this->msg( 'validator-describe-header-default' ) ."\n" .
+			'!' . $this->msg( 'validator-describe-header-description' )
 			), $tableRows );
 
 			$table = implode( "\n|-\n", $tableRows );
@@ -134,19 +157,29 @@ class SMWSMWDoc extends ParserHook {
 	 * @since 1.6
 	 *
 	 * @param Parameter $parameter
+	 * @param boolean $hasAliases
 	 *
 	 * @return string
 	 */
-	protected function getDescriptionRow( Parameter $parameter ) {
-		$aliases = $parameter->getAliases();
-		$aliases = count( $aliases ) > 0 ? implode( ', ', $aliases ) : '-';
+	protected function getDescriptionRow( Parameter $parameter, $hasAliases ) {
+		if ( $hasAliases ) {
+			$aliases = $parameter->getAliases();
+			$aliases = count( $aliases ) > 0 ? implode( ', ', $aliases ) : '-';
+		}
 
-		$description = $parameter->getDescription();
-		if ( $description === false ) $description = '-';
+
+		$description = $parameter->getMessage();
+		if ( $description === false ) {
+			$description = $parameter->getDescription();
+			if ( $description === false ) $description = '-';
+		}
+		else {
+			$description = $this->msg( $description );
+		}
 
 		$type = $parameter->getTypeMessage();
 
-		$default = $parameter->isRequired() ? "''" . wfMsg( 'validator-describe-required' ) . "''" : $parameter->getDefault();
+		$default = $parameter->isRequired() ? "''" . $this->msg( 'validator-describe-required' ) . "''" : $parameter->getDefault();
 		if ( is_array( $default ) ) {
 			$default = implode( ', ', $default );
 		}
@@ -154,11 +187,11 @@ class SMWSMWDoc extends ParserHook {
 			$default = $default ? 'yes' : 'no';
 		}
 		
-		if ( $default === '' ) $default = "''" . wfMsg( 'validator-describe-empty' ) . "''";
+		if ( $default === '' ) $default = "''" . $this->msg( 'validator-describe-empty' ) . "''";
 
-		return <<<EOT
-| {$parameter->getName()}
-| {$aliases}
+		return "| {$parameter->getName()}\n"
+. ( $hasAliases ? '| ' . $aliases . "\n" : '' ) .
+<<<EOT
 | {$type}
 | {$default}
 | {$description}
@@ -175,12 +208,28 @@ EOT;
 	}
 	
 	/**
-	 * @see ParserHook::getDescription()
+	 * @see ParserHook::getMessage()
 	 * 
-	 * @since 1.6
+	 * @since 1.6.1
 	 */
-	public function getDescription() {
-		return wfMsg( 'smw-smwdoc-description' );
-	}	
+	public function getMessage() {
+		return 'smw-smwdoc-description';
+	}
+	
+	/**
+	 * Message function that takes into account the language parameter.
+	 * 
+	 * @since 1.6.1
+	 * 
+	 * @param string $key
+	 * @param array $args
+	 * 
+	 * @return string
+	 */
+	protected function msg( $key ) {
+		$args = func_get_args();
+		$key = array_shift( $args );
+		return wfMsgReal( $key, $args, true, $this->language );
+	}
 	
 }

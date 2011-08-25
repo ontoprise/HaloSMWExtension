@@ -132,8 +132,8 @@ abstract class SMWLanguage {
 	 * should also have a primary label defined in m_DatatypeLabels.
 	 */
 	function getDatatypeAliases() {
-		return $this->m_useEnDefaultAliases  ?
-		      $this->m_DatatypeAliases + SMWLanguage::$enDatatypeAliases :
+		return $this->m_useEnDefaultAliases ?
+		       $this->m_DatatypeAliases + SMWLanguage::$enDatatypeAliases :
 		       $this->m_DatatypeAliases;
 	}
 

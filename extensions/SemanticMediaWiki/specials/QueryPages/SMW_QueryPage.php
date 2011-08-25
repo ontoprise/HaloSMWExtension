@@ -46,7 +46,7 @@ abstract class SMWQueryPage extends QueryPage {
 	 * @param $offset database query offset
 	 * @param $limit database query limit
 	 */
-	function doQuery( $offset = false, $limit = false, $shownavigation=true ) {
+	function doQuery( $offset = false, $limit = false, $shownavigation = true ) {
 		global $wgOut, $wgContLang;
 
 		$options = new SMWRequestOptions();

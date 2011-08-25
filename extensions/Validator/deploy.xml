@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>049</version>
+        <patchlevel>1</patchlevel>
 		<id>validator</id>
 		<license>GPL-v2</license>
 		<vendor>Ontoprise</vendor>

@@ -64,6 +64,7 @@ place listerrors at or near the bottom of the page to get all errors.',
 	'validator-describe-bothhooks' => 'Implemented as both parser function and as tag extension.',
 	'validator-describe-par-hooks' => 'The parser hooks for which to display documentation.',
 	'validator-describe-par-pre' => 'Allows you to get the actual wikitext for the documentation, without it being rendered on the page.',
+	'validator-describe-par-language' => 'The language to display the descriptions in',
 	'validator-describe-listtype' => 'List of $1 items',
 	'validator-describe-empty' => 'empty',
 	'validator-describe-required' => 'required',
@@ -252,6 +253,7 @@ $messages['be-tarask'] = array(
 	'validator-describe-bothhooks' => 'Рэалізаваная як функцыя парсэру і як пашырэньне тэгу.',
 	'validator-describe-par-hooks' => 'Працэдура-перахопнік парсэра, для якой паказваць дакумэнтацыю.',
 	'validator-describe-par-pre' => 'Дазваляе Вам атрымліваць актуальны вікі-тэкст для дакумэнтацыі, без паказу на старонцы.',
+	'validator-describe-par-language' => 'Мова, на якой паказваць апісаньні',
 	'validator-describe-listtype' => 'Сьпіс элемэнтаў $1',
 	'validator-describe-empty' => 'пуста',
 	'validator-describe-required' => 'абавязкова',
@@ -480,6 +482,7 @@ Zeigt sie lediglich bezüglich der Parserhooks an, die über dem Element „list
 	'validator-describe-bothhooks' => 'Sowohl als Parserfunktion wie auch Elementerweiterung implementiert.',
 	'validator-describe-par-hooks' => 'Die Parserhooks für welche die Dokumentation angezeigt werden soll.',
 	'validator-describe-par-pre' => 'Ermöglicht die Ausgabe der Dokumentation in Wikitext ohne dass dieser bei der Darstellung der Seite genutzt wird.',
+	'validator-describe-par-language' => 'Die Sprache in der die Beschreibungen angezeigt werden sollen',
 	'validator-describe-listtype' => 'Liste von $1 {{PLURAL:$1|Elemente|Elementen}}',
 	'validator-describe-empty' => 'leer',
 	'validator-describe-required' => 'erforderlich',
@@ -1022,6 +1025,7 @@ $messages['he'] = array(
 	'validator-describe-bothhooks' => 'מיושם הן בתור פונקציית מפענח והן בתור הרחבת תג.',
 	'validator-describe-par-hooks' => 'מילות הפעלה של מפענח שעבורן יש להציג תיעוד.',
 	'validator-describe-par-pre' => 'מאפשר לייצר את קוד הוויקי עבור התיעוד מבלי להציג אותו על הדף.',
+	'validator-describe-par-language' => 'באיזו שפה להציג את התיאורים',
 	'validator-describe-listtype' => 'רשימה של פריטים מסוג "$1"',
 	'validator-describe-empty' => 'ריק',
 	'validator-describe-required' => 'נדרש',
@@ -1238,6 +1242,7 @@ mitte "listerrors" al fin del pagina, o proxime al fin, pro obtener tote le erro
 	'validator-describe-bothhooks' => 'Implementate como function del analysator syntactic e como extension de etiquetta.',
 	'validator-describe-par-hooks' => 'Le uncinos del analysator syntactic pro le quales presentar documentation.',
 	'validator-describe-par-pre' => 'Permitte obtener le ver wikitexto pro le documentation, sin render lo in le pagina.',
+	'validator-describe-par-language' => 'Le lingua in que presentar le descriptiones',
 	'validator-describe-listtype' => 'Lista de $1 elementos',
 	'validator-describe-empty' => 'vacue',
 	'validator-describe-required' => 'requirite',
@@ -1501,6 +1506,7 @@ $messages['ksh'] = array(
  * @author George Animal
  */
 $messages['ku-latn'] = array(
+	'validator-error' => 'Çewtî:$1',
 	'validator-type-boolean' => 'erê/na',
 	'validator-listerrors-high' => 'bilind',
 	'validator-describe-header-type' => 'Cure',
@@ -1604,6 +1610,7 @@ $messages['mk'] = array(
 	'validator-type-boolean' => 'да/не',
 	'validator-type-char' => 'знак',
 	'validator-listerrors-errors' => 'Грешки',
+	'validator-listerrors-severity-message' => '($1) $2',
 	'validator-listerrors-minor' => 'Ситни',
 	'validator-listerrors-low' => 'Малку',
 	'validator-listerrors-normal' => 'Нормално',
@@ -1622,6 +1629,7 @@ $messages['mk'] = array(
 	'validator-describe-bothhooks' => 'Се применува во својство на парсерска функција и додаток за означување (обете).',
 	'validator-describe-par-hooks' => 'Парсерските куки за кои сакате да се прикаже документација.',
 	'validator-describe-par-pre' => 'Ви овозможува да го добиете самиот викитекст за документацијата, без да се испише на страницата',
+	'validator-describe-par-language' => 'На кој јазик да се прикажуваат описите',
 	'validator-describe-listtype' => 'Список на $1 ставки',
 	'validator-describe-empty' => 'празно',
 	'validator-describe-required' => 'задолжително',
@@ -1676,6 +1684,7 @@ $messages['ms'] = array(
 
 /** Dutch (Nederlands)
  * @author Jeroen De Dauw
+ * @author SPQRobin
  * @author Siebrand
  */
 $messages['nl'] = array(
@@ -1716,6 +1725,7 @@ plaats fouten onderaan of bijna onderaan pagina's om alle fouten weer te geven."
 	'validator-describe-bothhooks' => 'Als parserfunctie en labeluitbreiding geïmplementeerd.',
 	'validator-describe-par-hooks' => 'Parserhooks waarvoor documentatie weergegeven moet worden.',
 	'validator-describe-par-pre' => 'Maakt het mogelijk de wikitekst voor de documentatie weer te geven zonder dat deze wordt verwerkt.',
+	'validator-describe-par-language' => 'De taal om de beschrijvingen in weer te geven',
 	'validator-describe-listtype' => 'Lijst met $1 items',
 	'validator-describe-empty' => 'leeg',
 	'validator-describe-required' => 'verplicht',
@@ -1830,6 +1840,7 @@ $messages['oc'] = array(
 /** Polish (Polski)
  * @author Fizykaa
  * @author Sp5uhe
+ * @author Woytecr
  */
 $messages['pl'] = array(
 	'validator-desc' => 'Dostarcza innym rozszerzeniom ogólną obsługę parametrów',
@@ -1856,6 +1867,15 @@ $messages['pl'] = array(
 	'validator-listerrors-normal' => 'Typowy',
 	'validator-listerrors-high' => 'Istotny',
 	'validator-listerrors-fatal' => 'Krytyczny',
+	'validator-describe-empty' => 'puste',
+	'validator-describe-required' => 'wymagane',
+	'validator-describe-header-parameter' => 'Parametr',
+	'validator-describe-header-aliases' => 'Aliasy',
+	'validator-describe-header-type' => 'Typ',
+	'validator-describe-header-default' => 'Domyślnie',
+	'validator-describe-header-description' => 'Opis',
+	'validator-describe-parameters' => 'Parametry',
+	'validator-describe-syntax' => 'Składnia',
 	'validator_error_empty_argument' => 'Parametr $1 nie może być pusty.',
 	'validator_error_must_be_number' => 'Parametr $1 musi być liczbą.',
 	'validator_error_must_be_integer' => 'Parametr $1 musi być liczbą całkowitą.',
@@ -2025,6 +2045,7 @@ para obter todos os erros, coloque listerrors ao fundo da página.',
 	'validator-describe-bothhooks' => 'Implementada como função do analisador sintáctico e como extensão de tag.',
 	'validator-describe-par-hooks' => 'Os hooks do analisador sintáctico para os quais será mostrada documentação.',
 	'validator-describe-par-pre' => 'Permite obter o texto wiki real da documentação, sem que este seja formatado na página.',
+	'validator-describe-par-language' => 'A língua em que as descrições serão apresentadas',
 	'validator-describe-listtype' => 'Lista de $1 elementos',
 	'validator-describe-empty' => 'vazio',
 	'validator-describe-required' => 'necessário',

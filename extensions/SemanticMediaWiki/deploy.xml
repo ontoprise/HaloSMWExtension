@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>160</version>
+        <version>161</version>
         <patchlevel>0</patchlevel>
         <id>smw</id>
         <vendor>ontoprise GmbH</vendor>

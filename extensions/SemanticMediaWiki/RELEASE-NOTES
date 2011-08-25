@@ -1,5 +1,19 @@
 For a documentation of all features, see http://semantic-mediawiki.org
 
+
+== SMW 1.6.1 ==
+
+Released on August 20, 2011.
+
+* #ask queries now allow printouts (table columns) that are exactly the same.
+  In previous versions, multiple printouts with the same label would be
+  collapsed (e.g. {{#ask: [[Catgegory:City]] |?|?|?}} now shows four columns).
+* Fixed continue and limit escaping issues on Special:Ask. 
+* Fixed error occurring for invalid queries with count or debug formats.
+* Fixed several small issues with the table format and cleaned it up somewhat.
+* Fixed parsing of years for data properties.
+* Internationalization improvements and layout tweaks to #smwdoc.
+
 == SMW 1.6 ==
 
 Released on July 30, 2011.
@@ -39,7 +53,7 @@ Released on July 30, 2011.
 * Added UNIX-style DSV (Delimiter-separated values) result format.
 * Reworked internal data model, cleaning up and re-implementing SMWDataValue and
   all of its subclasses, and introducing new data item classes to handle data.
-  The class SMWCompatibilityHelpers provides temporal help for extensions that
+  The class SMWCompatibilityHelpers provides temporary help for extensions that
   still depend on the old format and APIs.
 * Fixed PostgreSQL issues with the installation and upgrade code.
 * Added API module (smwinfo) via which statistics about the semantic data can

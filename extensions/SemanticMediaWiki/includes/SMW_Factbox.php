@@ -19,7 +19,6 @@ class SMWFactbox {
 	 */
 	static public function getFactboxText( SMWSemanticData $semdata, $showfactbox = SMW_FACTBOX_NONEMPTY ) {
 		global $wgContLang;
-		
 		wfProfileIn( 'SMWFactbox::printFactbox (SMW)' );
 		switch ( $showfactbox ) {
 			case SMW_FACTBOX_HIDDEN: // never show
@@ -41,7 +40,6 @@ class SMWFactbox {
 		}
 
 		// actually build the Factbox text:
-		
 		$text = '';
 		if ( wfRunHooks( 'smwShowFactbox', array( &$text, $semdata ) ) ) {
 			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
