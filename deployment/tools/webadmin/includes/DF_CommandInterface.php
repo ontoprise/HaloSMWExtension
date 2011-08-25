@@ -208,11 +208,11 @@ class DFCommandInterface {
         $php = $this->phpExe;
         if (Tools::isWindows()) {
             $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i \"$extid\"";
             $oExec = $wshShell->Run("$runCommand", 7, false);
 
         } else {
-            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i $extid";
+            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -i \"$extid\"";
             $nullResult = `$runCommand &`;
         }
         return $filename;
@@ -230,11 +230,11 @@ class DFCommandInterface {
         $php = $this->phpExe;
         if (Tools::isWindows()) {
             $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d \"$extid\"";
             $oExec = $wshShell->Run("$runCommand", 7, false);
 
         } else {
-            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d $extid";
+            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -d \"$extid\"";
             $nullResult = `$runCommand &`;
         }
         return $filename;
@@ -252,10 +252,10 @@ class DFCommandInterface {
         $php = $this->phpExe;
         if (Tools::isWindows()) {
             $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+            $runCommand = "cmd /C START ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u \"$extid\"";
             $oExec = $wshShell->Run("$runCommand", 7, false);
         } else {
-            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u $extid";
+            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask -u \"$extid\"";
             $nullResult = `$runCommand &`;
         }
         return $filename;
