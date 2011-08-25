@@ -588,7 +588,7 @@ var TF = Class.create({
 			
 			//deal with hidden preload values
 			if(jQuery(this).attr('isNew') == 'true'){
-				jQuery('#tf-hidden-preload-values > div', jQuery('#' + tabularFormId)).each( function(){
+				jQuery('.tf-hidden-preload-values > div', jQuery('#' + tabularFormId)).each( function(){
 					var modifiedValue = new Object();
 					modifiedValue['newValue'] = jQuery(this).html();
 					modifiedValue['originalValue'] = '';
