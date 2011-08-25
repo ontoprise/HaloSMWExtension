@@ -38,6 +38,8 @@
 			<exclude file="deployment/settings.php" />
 			<exclude file="deployment/tools/unzip.exe" />
 			<exclude file="deployment/tools/smwadmin.sh" />
+			<exclude file="deployment/tools/onto2mwxml/onto2mwxml.bat" />
+			<exclude file="deployment/tools/onto2mwxml/onto2mwxml.sh" />
 		</update>
 
 		<update from="131">
