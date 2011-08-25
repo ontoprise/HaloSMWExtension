@@ -470,11 +470,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
 	}
 
-	// include SMW logger (exported as ajax function but also used locally)
-	require_once($smwgHaloIP . '/includes/SMW_Logger.php');
-
-
-
+	
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');

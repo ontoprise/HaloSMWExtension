@@ -51,7 +51,6 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 	function setup($verbose) {
 		DBHelper::reportProgress("Setting up smwhalo storage ...\n",$verbose);
-		$this->setupLogging($verbose);
 		$this->setupURIMapping($verbose);
 		$this->createPreDefinedPages($verbose);
 		DBHelper::reportProgress(" ... done!\n",$verbose);
@@ -1132,7 +1131,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$article = new Article($t);
 			if (!$t->exists()) {
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) {
-					$text = "\n\n[[".$propertyLabels['_TYPE']."::Record]]"; //FIXME: localize Record
+					$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_rec"]."]]"; 
 					$text .= wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_LIST']."::".
 					$ssp[SMW_SSP_HAS_DOMAIN]."; ".$ssp[SMW_SSP_HAS_RANGE]."]]";
 					$article->insertNewArticle($text, "", false, false);
@@ -1240,34 +1239,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 
 
-	/**
-	 * Initializes the logging component
-	 */
-	protected function setupLogging($verbose) {
-			
-			
-		DBHelper::reportProgress("   ... Creating logging database \n",$verbose);
-		global $wgDBname;
-		$db =& wfGetDB( DB_MASTER );
-
-		// create gardening table
-		$smw_logging = $db->tableName('smw_logging');
-		$fname = 'SMW::setupLogging';
-
-		// create relation table
-		DBHelper::setupTable($smw_logging, array(
-				  'id'				=>	'INT(10) UNSIGNED NOT NULL auto_increment PRIMARY KEY' ,
-				  'timestamp'      	=>  'TIMESTAMP DEFAULT CURRENT_TIMESTAMP' ,
-				  'user'      		=>  'VARBINARY(255)' ,
-				  'location'		=>	'VARBINARY(255)' ,
-				  'type'			=>	'VARBINARY(255)' ,
-				  'function'		=>	'VARBINARY(255)' ,
-				  'remotetimestamp'	=>	'VARBINARY(255)' ,
-				  'text'			=>  'LONGTEXT' 
-				  ), $db, $verbose);
-
-				  DBHelper::reportProgress("   ... done!\n",$verbose);
-	}
+	
 
 	protected function setupURIMapping($verbose = false) {
 

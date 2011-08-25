@@ -64,7 +64,7 @@ require_once( $smwgHaloIP . "/includes/SMW_Autocomplete_Storage.php");
 function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $constraints) {
 	global $wgLang;
 
-	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
+	
 	// remove common namespaces from user input
 	$namespaceDelimiter = strpos($userInputToMatch, ":");
 	$namespaceText = $namespaceDelimiter !== false ? substr($userInputToMatch, 0, $namespaceDelimiter) : NULL;
