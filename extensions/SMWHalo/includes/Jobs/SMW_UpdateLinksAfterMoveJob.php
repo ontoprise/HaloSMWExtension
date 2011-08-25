@@ -50,11 +50,10 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 
 		$linkCache = & LinkCache :: singleton();
 		$linkCache->clear();
-		smwLog("start", "RF", "link refactoring");
+		
 		$article = new Article($this->updatetitle);
 		$latestrevision = Revision :: newFromTitle($this->updatetitle);
-		smwLog("oldtitle: ".$this->oldtitle, "RF", "link refactoring");
-		smwLog("newtitle: ".$this->newtitle, "RF", "link refactoring");
+		
 		
 		if ( !$latestrevision ) {
 			$this->error = "SMW_UpdateLinksAfterMoveJob: Article not found " . $this->updatetitle->getPrefixedDBkey() . " ";
@@ -131,11 +130,11 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		// save and parse article
 		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateLinksAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
 		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
-		smwLog("finished editing article", "RF", "link refactoring");
+		
 		
 		$options = new ParserOptions;
 		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
-		smwLog("finished parsing semantic data", "RF", "link refactoring");
+		
 		
 		return true;
 	}

@@ -49,11 +49,10 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 
 		$linkCache = & LinkCache :: singleton();
 		$linkCache->clear();
-		smwLog("start", "RF", "category refactoring");
+		
 		$article = new Article($this->updatetitle);
 		$latestrevision = Revision :: newFromTitle($this->updatetitle);
-		smwLog("oldtitle: ".$this->oldtitle, "RF", "category refactoring");
-		smwLog("newtitle: ".$this->newtitle, "RF", "category refactoring");
+		
 		
 		if ( !$latestrevision ) {
 			$this->error = "SMW_UpdateCategoriesAfterMoveJob: Article not found " . $this->updatetitle->getPrefixedDBkey() . " ";
@@ -101,11 +100,11 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 			
 		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateCategoriesAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
 		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
-		smwLog("finished editing article", "RF", "category refactoring");
+		
 		
 		$options = new ParserOptions;
 		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
-		smwLog("finished parsing semantic data", "RF", "category refactoring");
+		
 		
 		return true;
 	}

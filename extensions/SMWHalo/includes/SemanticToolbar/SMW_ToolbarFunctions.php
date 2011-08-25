@@ -99,10 +99,7 @@ function smwf_tb_AskQuestion($namespace, $action, $question){
 	}
 
 
-	/*STARTLOG*/
-	$logmsg = "Added question '$question'";
-	smwLog($logmsg, "CSH", "help_addednew", wfTimestampNow());
-	/*ENDLOG*/
+	
 
 
 	$discourseState = "$namespace:$action";
