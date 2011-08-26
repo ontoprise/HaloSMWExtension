@@ -2,8 +2,8 @@
 /**
  * Helper script for build process.
  * 
- * Replaces the token {{$VERSION}} by the version and patchlevel
- * read from deploy descriptor 
+ * Replaces the token {{$VERSION}} by the version and patchlevel provided by the deploy descriptor 
+ * Replaces the token {{$BUILDNUMBER}} by the build number provided to this script
  * 
  * Arg0: this script
  * Arg1: deploy descriptor file location
