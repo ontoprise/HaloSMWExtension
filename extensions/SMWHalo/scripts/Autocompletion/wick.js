@@ -105,7 +105,7 @@ AutoCompleter.prototype = {
         this.ignorePending = false;
 
          // regex which matches the user input which is used to query the database
-        this.articleRegEx = /((([\w\d])+\:)?([\w\d][\w\d\.\(\)\-\s]*)|(([\w\d])+\:))$/;
+        this.articleRegEx = /((([\w\d])+\:)?([\w\d][\w\d\.\(\)\-\/\s]*)|(([\w\d])+\:))$/;
 
          // timer which triggers ajax call
         this.timer = null;
