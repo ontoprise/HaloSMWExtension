@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>059</version>
+		<patchlevel>0</patchlevel>
+		<id>approvedrevs</id>
+        <vendor>Yaron Koren</vendor>
+        <maintainer>Yaron Koren</maintainer>
+		<instdir>extensions/ApprovedRevs</instdir>
+		<description>
+			Approved Revs is an extension that lets administrators mark a certain revision of a page as "approved". 
+			The approved revision is the one displayed when users view the page at its main URL.
+		</description>
+		<helpurl>http://www.mediawiki.org/wiki/Extension:Approved_Revs</helpurl>
+		<dependencies>
+			<dependency from="1140">mw</dependency>
+		</dependencies>
+		<license>GPL</license>
+	</global>
+	<codefiles>
+		<file loc="deploy.xml" />
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+		<new>
+			<require name="approvedrevs"
+				file="extensions/ApprovedRevs/ApprovedRevs.php" />
+            <script file="../../maintenance/update.php"/>
+		</new>
+
+		<uninstall>
+		</uninstall>
+	</configs>
+</deploydescriptor>
+
