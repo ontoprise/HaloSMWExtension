@@ -28,11 +28,9 @@
  * Date: 07.10.2009
  *
  */
-
 // The script is loaded by the resource loader and executed in a closure where
 // $ is an alias for jQuery. However we need prototype's $ here.
-jQuery.noConflict();
-$ = window.$;
+var $ = window.$P;
 
 // Globals
 

@@ -230,13 +230,6 @@ function haclfSetupExtension() {
  */
 function haclfSetupScriptAndStyleModule() {
 	global $wgResourceModules;
-//	$wgResourceModules['ext.common.json'] = array(
-//		'scripts' => array(
-//			"scripts/lib/json2.js",
-//		),
-//		'localBasePath' => dirname(__FILE__).'/../',
-//		'remoteExtPath' => 'HaloACL'
-//    );
 	
 	$wgResourceModules['ext.HaloACL.yui'] = array(
 		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
@@ -268,11 +261,6 @@ function haclfSetupScriptAndStyleModule() {
             '/yui/autocomplete.css'
 		),
 		    
-		// When your module is loaded, these messages will be available through mw.msg()
-//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
-		     
-		// ResourceLoader needs to know where your files are; specify your
-		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
 		'localBasePath' => dirname(__FILE__).'/../',
 		'remoteExtPath' => 'HaloACL'
     );
@@ -303,16 +291,8 @@ function haclfSetupScriptAndStyleModule() {
             'scripts/jsTree.v.0.9.9a/themes/haloacl/style.css'
 		),
 		    
-		// When your module is loaded, these messages will be available through mw.msg()
-//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
+		'dependencies' => array( 'ext.ScriptManager.prototype', 'ext.HaloACL.Language', 'ext.HaloACL.yui'),
 		     
-		// If your scripts need code from other modules, list their identifiers as dependencies
-		// and ResourceLoader will make sure they're loaded before you.
-		// You don't need to manually list 'mediawiki' or 'jquery', which are always loaded.
-		'dependencies' => array( 'ext.HaloACL.Language', 'ext.HaloACL.yui'),
-		     
-		// ResourceLoader needs to know where your files are; specify your
-		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
 		'localBasePath' => dirname(__FILE__).'/../',
 		'remoteExtPath' => 'HaloACL'
     );
@@ -351,17 +331,8 @@ function haclfSetupScriptAndStyleModule() {
             'skins/haloacl_toolbar.css',
             'yui/container.css'
 		),
-		    
-		// When your module is loaded, these messages will be available through mw.msg()
-//		'messages' => array( 'myextension-hello-world', 'myextension-goodbye-world' ),
-		     
-		// If your scripts need code from other modules, list their identifiers as dependencies
-		// and ResourceLoader will make sure they're loaded before you.
-		// You don't need to manually list 'mediawiki' or 'jquery', which are always loaded.
-		'dependencies' => array( 'ext.HaloACL.Language' ),
-		     
-		// ResourceLoader needs to know where your files are; specify your
-		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'dependencies' => array( 'ext.ScriptManager.prototype', 'ext.HaloACL.Language' ),
+
 		'localBasePath' => dirname(__FILE__).'/../',
 		'remoteExtPath' => 'HaloACL'
     );
@@ -425,9 +396,9 @@ function haclAddHTMLHeader(&$out) {
     	$out->addHeadItem('HaloACLGlobalVar',"\n".'<script type="text/javascript">'.$globalJSVar.'</script>'."\n");
     	
 		// ---- SPECIAL-PAGE related stuff ---
-		haclfAddScriptsLinks($out, 'Prototype', 
-		                     $haclgHaloScriptPath."/scripts/lib/", array(
-			                     	'prototype.js'));
+//		haclfAddScriptsLinks($out, 'Prototype', 
+//		                     $haclgHaloScriptPath."/scripts/lib/", array(
+//			                     	'prototype.js'));
         return true;
     }
 }
@@ -783,9 +754,9 @@ function haclfAddToolbarForEditPage ($content_actions) {
     $wgHooks['SkinAfterBottomScripts'][] = 'haclfAddToolbarForEditPageAfterBottomScripts';
 	$wgOut->addModules('ext.HaloACL.Toolbar');
 	
-	haclfAddScriptsLinks($wgOut, 'Prototype', 
-	                     $haclgHaloScriptPath."/scripts/lib/", array(
-	                     	'prototype.js'));
+//	haclfAddScriptsLinks($wgOut, 'Prototype', 
+//	                     $haclgHaloScriptPath."/scripts/lib/", array(
+//	                     	'prototype.js'));
     return true;
 }
 
@@ -822,9 +793,9 @@ function haclfAddToolbarForSemanticForms($pageTitle, $html) {
     $wgHooks['SkinAfterBottomScripts'][] = 'haclfAddToolbarForEditPageAfterBottomScripts';
 	$wgOut->addModules('ext.HaloACL.Toolbar');
 	
-	haclfAddScriptsLinks($wgOut, 'Prototype', 
-	                     $haclgHaloScriptPath."/scripts/lib/", array(
-	                     	'prototype.js'));
+//	haclfAddScriptsLinks($wgOut, 'Prototype', 
+//	                     $haclgHaloScriptPath."/scripts/lib/", array(
+//	                     	'prototype.js'));
 
     return true;
 }
