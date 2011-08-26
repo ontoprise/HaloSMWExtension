@@ -285,6 +285,7 @@ function Smwh_Skin() {
 var smwh_Skin;
 
 //Initialize Skin functions if page is loaded
+$jq = jQuery;
 $jq(document).ready(
     function(){
         smwh_Skin = new Smwh_Skin();
