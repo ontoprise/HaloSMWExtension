@@ -69,7 +69,8 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
  * @return RDF/XML all triples about the subject
  */
 function smwhRDFRequest($subject) {
-	
+	global $wgLanguageCode;
+	smwfHaloInitContentLanguage($wgLanguageCode);
 	if (!smwfIsTripleStoreConfigured()) throw Exception("TS not configured");
 	global $smwgTripleStoreGraph;
 	
@@ -83,7 +84,6 @@ function smwhRDFRequest($subject) {
 	$con = TSConnection::getConnector();
 	$con->connect();
 	$rdf = $con->queryRDF("CONSTRUCT { $iri ?p ?o. $iri owl:sameAs ?source. } WHERE { GRAPH ?g { $iri ?p ?o. } OPTIONAL { GRAPH ?g2 { $iri prop:Imported_from ?source. } } }");
-    	
 	return $rdf;
 }
 

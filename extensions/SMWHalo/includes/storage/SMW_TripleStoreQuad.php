@@ -114,7 +114,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		if ($naryPropertiesPresent) {
 			$this->readRecordPropertyValues($subject, $semanticData);
-			
+
 		}
 
 		return $semanticData;
@@ -125,7 +125,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if (  $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			$this->setLocalRequest(true);
 			$result = $this->smwstore->getProperties($subject, $requestoptions);
-				
+
 			return $result;
 		}
 
@@ -190,7 +190,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			$this->setLocalRequest(true);
 			$result =  $this->smwstore->getInProperties($object, $requestoptions);
-				
+
 			return $result;
 		}
 
@@ -204,8 +204,17 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
 		// query
-		$serialization = TSHelper::serializeDataItem($object);
-		$objectNode = '"'.TSHelper::escapeForStringLiteral($serialization).'"^^'.$xsdType;
+
+
+		if (is_null($object)) {
+			$objectNode = "?o";
+		} else if ($object instanceof SMWDIWikiPage) {
+			$objectNode = $this->tsNamespace->getFullIRI($object->getTitle());
+		} else {
+			$serialization = TSHelper::serializeDataItem($object);
+			$xsdType = WikiTypeToXSD::getXSDTypeFromTypeID($object->getDIType());
+			$objectNode = '"'.TSHelper::escapeForStringLiteral($serialization).'"^^'.$xsdType;
+		}
 
 
 		try {
@@ -310,7 +319,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 				$title = TSHelper::getTitleFromURI($sv, false);
 				if (is_null($title) || $title instanceof Title) {
-					$value = $this->createSMWDataItem($title, $sv->metadata);
+					$value = $this->createSMWPageDataItem($title, $sv->metadata);
 				} else {
 					// external URI
 					$value = SMWDIUri::doUnserialize((string) $sv);
@@ -344,21 +353,21 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if ( $this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			$this->setLocalRequest(true);
 			$result = $this->smwstore->getPropertyValues($subject, $property, $requestoptions);
-				
+
 			return $result;
 		}
 
 
 		if (!$property->isUserDefined()) {
-				
+
 			$result = parent::getPropertyValues($subject,$property,$requestoptions);
-				
+
 			return $result;
 		}
 		if (smwfCheckIfPredefinedSMWHaloProperty($property)) {
 
 			$result = parent::getPropertyValues($subject,$property,$requestoptions);
-				
+
 			return $result;
 		}
 
@@ -451,19 +460,19 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		if ($this->localRequest || (defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE')) ) {
 			$this->setLocalRequest(true);
 			$result = $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
-				
+
 			return $result;
 		}
 		if (!$property->isUserDefined()) {
-				
+
 			$result = parent::getPropertySubjects($property, $value, $requestoptions);
-				
+
 			return $result;
 		}
 		if (smwfCheckIfPredefinedSMWHaloProperty($property)) {
 
 			$result = parent::getPropertySubjects($property,$value,$requestoptions);
-				
+
 			return $result;
 		}
 
@@ -477,16 +486,19 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		$limit =  (!is_null($requestoptions) && $requestoptions->limit > -1) ? " LIMIT ".$requestoptions->limit : "";
 		$offset = (!is_null($requestoptions) && $requestoptions->offset > 0) ? " OFFSET ".$requestoptions->offset : "";
 
-		if ( $requestoptions->ascending ) {
-			$op = $requestoptions->include_boundary ? ' >= ' : ' > ';
-		} else {
-			$op = $requestoptions->include_boundary ? ' <= ' : ' < ';
+		if ( isset($requestoptions) ) {
+			if ($requestoptions->ascending ) {
+				$op = $requestoptions->include_boundary ? ' >= ' : ' > ';
+			} else {
+				$op = $requestoptions->include_boundary ? ' <= ' : ' < ';
+			}
 		}
 
 		// FIXME: filter only for instances in the wiki main namespace.
 		// SPARQL builtin required for selecting localname
 		$nsMainPrefix = TSNamespaces::getInstance()->getNSURI(NS_MAIN);
-		$boundaryFilter = !is_null($requestoptions->boundary) ? "FILTER (str(?s) $op \"".$nsMainPrefix.TSHelper::escapeForStringLiteral($requestoptions->boundary)."\")" : "";
+
+		$boundaryFilter = isset($requestoptions) && !is_null($requestoptions->boundary) ? "FILTER (str(?s) $op \"".$nsMainPrefix.TSHelper::escapeForStringLiteral($requestoptions->boundary)."\")" : "";
 
 		if ($property->getKey() == '_INST') {
 			$propertyIRI = "<".TSNamespaces::$RDF_NS."type>";
@@ -500,15 +512,18 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		try {
 			if (is_null($value)) {
+
 				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI ?o. $boundaryFilter } } $limit $offset",  "merge=false");
 
-			} else if ($value instanceof SMWWikiPageValue) {
+			} else if ($value instanceof SMWDIWikiPage) {
 
 				$objectIRI = $this->tsNamespace->getFullIRI($value->getTitle());
 				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectIRI. $boundaryFilter } } $limit $offset",  "merge=false");
 
 			} else {
+
 				$serialization = TSHelper::serializeDataItem($value);
+				$xsdType = WikiTypeToXSD::getXSDTypeFromTypeID($value->getDIType());
 				$objectValue = '"'.TSHelper::escapeForStringLiteral($serialization).'"^^'.$xsdType;
 
 				$response = $client->query("SELECT ?s WHERE { GRAPH ?G {  ?s $propertyIRI $objectValue. $boundaryFilter } } $limit $offset",  "merge=false");
@@ -612,7 +627,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 			// value
 			$v = $this->getResultValue($children->binding[3]);
-				
+
 			if (!array_key_exists($bnodeName, $bnodes2Values) ) {
 				$bnodes2Values[$bnodeName] = array();
 				$bnodes2Values[$bnodeName][] = array($propertyDi, $v);
@@ -622,8 +637,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 		}
-		 
-		
+			
+
 		$visitedBNodes = array();
 		foreach ($results as $r) {
 			$children = $r->children(); // binding nodes
@@ -637,16 +652,16 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			if (!is_null($naryPropertyDi)) {
 				$bnodeName = (string) $children->binding[1]->children()->bnode;
 				if (in_array($bnodeName, $visitedBNodes)) continue;
-                $visitedBNodes[] = $bnodeName;
+				$visitedBNodes[] = $bnodeName;
 				foreach($bnodes2Values[$bnodeName] as $v) {
 					list($propertyDi, $propertyValueDi) = $v;
 					$semanticData->addPropertyObjectValue( $propertyDi, $propertyValueDi );
 				}
-				
+
 			}
 		}
 
-		
+
 	}
 
 	private function getResultValue($b) {

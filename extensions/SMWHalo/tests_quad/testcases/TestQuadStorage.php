@@ -1,4 +1,5 @@
 <?php
+if (!defined("SMWH_FORCE_TS_UPDATE")) define("SMWH_FORCE_TS_UPDATE","1");
 class TestQuadStorage extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
@@ -10,115 +11,127 @@ class TestQuadStorage extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetAllPropertyAnnotations() {
+
+		$exp_values = array("Austria", "Baltimore", "Berlin", "Bern", "Boston",
+	"Bremen", "Germany", "Graz", "Hamburg", "Linz", "Stuttgart", "Switzerland",
+	"USA", "Vienna");
 		$annotations = smwfGetStore()->getAllPropertyAnnotations(
-		SMWPropertyValue::makeUserProperty("Located In"));
+		SMWDIProperty::newFromUserLabel("Located In"));
 
 		$this->assertEquals(14, count($annotations));
-		$this->assertEquals("Austria", reset($annotations[0])->getTitle()->getText());
-		$this->assertEquals("Baltimore", reset($annotations[1])->getTitle()->getText());
-		$this->assertEquals("Berlin", reset($annotations[2])->getTitle()->getText());
-		$this->assertEquals("Bern", reset($annotations[3])->getTitle()->getText());
-		$this->assertEquals("Boston", reset($annotations[4])->getTitle()->getText());
-		$this->assertEquals("Bremen", reset($annotations[5])->getTitle()->getText());
-		$this->assertEquals("Germany", reset($annotations[6])->getTitle()->getText());
-		$this->assertEquals("Graz", reset($annotations[7])->getTitle()->getText());
-		$this->assertEquals("Hamburg", reset($annotations[8])->getTitle()->getText());
-		$this->assertEquals("Linz", reset($annotations[9])->getTitle()->getText());
-		$this->assertEquals("Stuttgart", reset($annotations[10])->getTitle()->getText());
-		$this->assertEquals("Switzerland", reset($annotations[11])->getTitle()->getText());
-		$this->assertEquals("USA", reset($annotations[12])->getTitle()->getText());
-		$this->assertEquals("Vienna", reset($annotations[13])->getTitle()->getText());
+
+		foreach($annotations as $a) {
+			$title = reset($a);
+			$this->assertContains($title->getTitle()->getText(), $exp_values, $title->getTitle()->getText()." missing");
 		}
 
-		function testGetPropertyValues() {
-		$annotations = smwfGetStore()->getPropertyValues(Title::newFromText("Berlin"),
-		SMWPropertyValue::makeUserProperty("Located In"));
+
+	}
+
+	function testGetPropertyValues() {
+		$annotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText("Berlin")),
+		SMWDIProperty::newFromUserLabel("Located In"));
 
 		$this->assertEquals(1, count($annotations));
 		$this->assertEquals("Germany", $annotations[0]->getTitle()->getText());
-		}
+	}
 
-		function testGetPropertySubjectsWithWikiPageValue() {
-		$property = SMWPropertyValue::makeUserProperty("Located In");
+	function testGetPropertySubjectsWithWikiPageValue() {
+		$expected = array("Berlin", "Bremen", "Hamburg", "Stuttgart");
+		$property = SMWDIProperty::newFromUserLabel("Located In");
 		$subjects = smwfGetStore()->getPropertySubjects(
-		$property, SMWDataValueFactory::newPropertyObjectValue($property, "Germany"));
-		$this->assertEquals("Berlin", $subjects[0]->getTitle()->getText());
-		$this->assertEquals("Bremen", $subjects[1]->getTitle()->getText());
-		$this->assertEquals("Hamburg", $subjects[2]->getTitle()->getText());
-		$this->assertEquals("Stuttgart", $subjects[3]->getTitle()->getText());
-		}
+		SMWDIProperty::newFromUserLabel("Located In"), SMWDIWikiPage::newFromTitle(Title::newFromText("Germany")));
 
-		function testGetPropertySubjectsWithNumericValue() {
-		$property = SMWPropertyValue::makeUserProperty("Population");
+		foreach($subjects as $di) {
+
+			$this->assertContains($di->getTitle()->getText(), $expected, $di->getTitle()->getText()." missing");
+		}
+	}
+
+	function testGetPropertySubjectsWithNumericValue() {
+		$property = SMWDIProperty::newFromUserLabel("Population");
 		$subjects = smwfGetStore()->getPropertySubjects(
-		$property, SMWDataValueFactory::newPropertyObjectValue($property, "548000"));
+		$property, new SMWDINumber(548000));
+
 		$this->assertEquals("Bremen", $subjects[0]->getTitle()->getText());
-		}
+	}
 
-		function testGetAllPropertySubjectsWithNumericValue() {
-		$property = SMWPropertyValue::makeUserProperty("Population");
+	function testGetAllPropertySubjectsWithNumericValue() {
+		$expected = array("Baltimore", "Berlin", "Bern",
+	"Bremen",  "Graz", "Hamburg", "Linz", "Stuttgart", "Vienna");
+
+		$property = SMWDIProperty::newFromUserLabel("Population");
 		$subjects = smwfGetStore()->getAllPropertySubjects(
 		$property);
-			
-		$this->assertEquals("Baltimore", $subjects[0]->getTitle()->getText());
-		$this->assertEquals("Berlin", $subjects[1]->getTitle()->getText());
-		$this->assertEquals("Bern", $subjects[2]->getTitle()->getText());
-		$this->assertEquals("Bremen", $subjects[3]->getTitle()->getText());
-		$this->assertEquals("Graz", $subjects[4]->getTitle()->getText());
-		$this->assertEquals("Hamburg", $subjects[5]->getTitle()->getText());
-		$this->assertEquals("Linz", $subjects[6]->getTitle()->getText());
-		$this->assertEquals("Stuttgart", $subjects[7]->getTitle()->getText());
-		$this->assertEquals("Vienna", $subjects[8]->getTitle()->getText());
-		}
 
-		function testGetInProperties() {
-		$property = SMWPropertyValue::makeUserProperty("Located In");
+		foreach($subjects as $di) {
+
+			$this->assertContains($di->getTitle()->getText(), $expected, $di->getTitle()->getText()." missing");
+		}
+	}
+
+	function testGetInProperties() {
+		$property = SMWDIProperty::newFromUserLabel("Located In");
 		$properties = smwfGetStore()->getInProperties(
-		SMWDataValueFactory::newPropertyObjectValue($property, "Germany"));
-		$this->assertEquals("Located In", $properties[0]->getWikiPageValue()->getTitle()->getText());
-		} 
+		SMWDIWikiPage::newFromTitle(Title::newFromText("Germany")));
+
+
+		$this->assertEquals("Located In", $properties[0]->getDIWikiPage()->getTitle()->getText());
+	}
 
 
 	function testGetProperties() {
+		$expected = array("Located_In", "_MDAT", "Population", "_INST" );
 		$subject = Title::newFromText("Berlin");
-		$properties = smwfGetStore()->getProperties($subject);
-		
-		$this->assertEquals("Located In", $properties[0]->getWikiPageValue()->getTitle()->getText());
-		$this->assertEquals("Modification date", $properties[1]->getWikiPageValue()->getTitle()->getText());
-		$this->assertEquals("Population", $properties[2]->getWikiPageValue()->getTitle()->getText());
-		
+		$properties = smwfGetStore()->getProperties(SMWDIWikiPage::newFromTitle($subject));
+
+		foreach($properties as $p) {
+			$title = reset($p);
+			$this->assertContains($p->getKey(), $expected, $p->getKey()." missing");
+		}
+
+
+
 	}
-	
+
 	function testGetSemanticData() {
 		$subject = Title::newFromText("Berlin");
-        $sd = smwfGetStore()->getSemanticData($subject);
-        $this->assertTrue(array_key_exists('Located_In', $sd->getProperties()));
-        $this->assertTrue(array_key_exists('Modification_date', $sd->getProperties()));
-        $this->assertTrue(array_key_exists('Population', $sd->getProperties()));
-        $properties = $sd->getProperties();
-        $locatedIn = $properties['Located_In'];
-        $values = $sd->getPropertyValues($locatedIn);
-        $this->assertEquals("Germany", $values[0]->getTitle()->getText());
-        
-        $population = $properties['Population'];
-        $values = $sd->getPropertyValues($population);
-        $dbkey = $values[0]->getDBkeys();
-        $this->assertEquals("3450000.0", $dbkey[0]);
-       
+		$sd = smwfGetStore()->getSemanticData(SMWDIWikiPage::newFromTitle($subject));
+		$this->assertTrue(array_key_exists('Located_In', $sd->getProperties()));
+		$this->assertTrue(array_key_exists('_MDAT', $sd->getProperties()));
+		$this->assertTrue(array_key_exists('Population', $sd->getProperties()));
+		$properties = $sd->getProperties();
+		$locatedIn = $properties['Located_In'];
+		$values = $sd->getPropertyValues($locatedIn);
+
+
+		$this->assertEquals("Germany", reset($values)->getTitle()->getText());
+
+		$population = $properties['Population'];
+		$values = $sd->getPropertyValues($population);
+		$number = reset($values)->getNumber();
+		$this->assertEquals("3450000.0", $number);
+			
 	}
-	
-    function testGetSemanticData2() {
-        $subject = Title::newFromText("Body Form", SMW_NS_PROPERTY);
-        $sd = smwfGetStore()->getSemanticData($subject);
-        $this->assertTrue(array_key_exists('Has_domain_and_range', $sd->getProperties()));
-        $properties = $sd->getProperties();
-        $dmr = $properties['Has_domain_and_range'];
-        $values = $sd->getPropertyValues($dmr);
-        $recordValue = reset($values);
-        $dvs = $recordValue->getDVs();
-        $_1 = reset($dvs);
-        $this->assertEquals("Category:Car", $_1->getTitle()->getPrefixedText());
-     
-       
-    }
+
+	function testGetSemanticData2() {
+		$subject = Title::newFromText("Body Form", SMW_NS_PROPERTY);
+		$sd = smwfGetStore()->getSemanticData(SMWDIWikiPage::newFromTitle($subject));
+		$this->assertTrue(array_key_exists('Has_domain', $sd->getProperties()));
+		$properties = $sd->getProperties();
+		$dmr = $properties['Has_domain'];
+		$values = $sd->getPropertyValues($dmr);
+		if (count($values) > 0) {
+			$domain = reset($values);
+				
+			$this->assertEquals("Category:Car", $domain->getTitle()->getPrefixedText());
+
+		} else {
+			$this->assertTrue(false);
+		}
+
+
+			
+			
+	}
 }
