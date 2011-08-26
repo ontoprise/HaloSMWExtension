@@ -22,7 +22,7 @@ var Prototype = {
   BrowserFeatures: {
     XPath: !!document.evaluate,
     SelectorsAPI: !!document.querySelector,
-    ElementExtensions: !!window.HTMLElement,
+    ElementExtensions: !!HTMLElement,
     SpecificElementExtensions:
       document.createElement('div')['__proto__'] &&
       document.createElement('div')['__proto__'] !==
@@ -1534,7 +1534,7 @@ if (Prototype.BrowserFeatures.XPath) {
 
 /*--------------------------------------------------------------------------*/
 
-if (!window.Node) var Node = { };
+if (!Node) var Node = { };
 
 if (!Node.ELEMENT_NODE) {
   // DOM level 2 ECMAScript Language Binding
@@ -2550,8 +2550,8 @@ Object.extend(Element, Element.Methods);
 
 if (!Prototype.BrowserFeatures.ElementExtensions &&
     document.createElement('div')['__proto__']) {
-  window.HTMLElement = { };
-  window.HTMLElement.prototype = document.createElement('div')['__proto__'];
+  HTMLElement = { };
+  HTMLElement.prototype = document.createElement('div')['__proto__'];
   Prototype.BrowserFeatures.ElementExtensions = true;
 }
 
@@ -3782,7 +3782,7 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
     return Form.serialize(this.element);
   }
 });
-if (!window.Event) var Event = { };
+if (!Event) var Event = { };
 
 Object.extend(Event, {
   KEY_BACKSPACE: 8,

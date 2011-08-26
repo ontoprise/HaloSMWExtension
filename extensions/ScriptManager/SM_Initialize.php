@@ -35,7 +35,8 @@ if (strlen($smgStyleVersion) > 0) {
     $smgStyleVersion= '?'.$smgStyleVersion;
 }
 
-global $wgExtensionFunctions, $wgScriptPath;;
+global $wgExtensionFunctions, $wgScriptPath;
+$smgSMIP = $IP . '/extensions/ScriptManager';
 $smgSMPath = $wgScriptPath . '/extensions/ScriptManager';
 
 $wgExtensionFunctions[] = 'smgSetupExtension';
@@ -50,6 +51,42 @@ function smgSetupExtension() {
             'author'=>"Kai&nbsp;K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
             'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension',
             'description' => 'Organizes javascript libraries.');
+    
+    global $wgResourceModules, $smgSMIP, $smgSMPath;
+    
+	$moduleTemplate = array(
+		'localBasePath' => $smgSMIP,
+		'remoteBasePath' => $smgSMPath,
+		'group' => 'ext.ScriptManager'
+	);
+    
+    $wgResourceModules['ext.ScriptManager.prototype'] = $moduleTemplate + array(
+		'scripts' => array(
+    			'scripts/prototype.js',
+    			'scripts/prototype.binding.js'
+				),
+		'styles' => array(
+				)
+	);
+	
+    $wgResourceModules['ext.jquery.qtip'] = $moduleTemplate + array(
+		'scripts' => array(
+    			"scripts/qTip/jquery.qtip-1.0.0-rc3.min.js"
+//    			"scripts/qTip/jquery.qtip-1.0.0-rc3.js"
+				),
+		'styles' => array(
+				)
+	);
+	
+    $wgResourceModules['ext.jquery.fancybox'] = $moduleTemplate + array(
+		'scripts' => array(
+    			'scripts/fancybox/jquery.fancybox-1.3.1.js'
+				),
+		'styles' => array(
+				'/scripts/fancybox/jquery.fancybox-1.3.1.css'
+				)
+	);
+    
 }
 
 function smfAddHTMLHeader(& $out) {
@@ -62,24 +99,21 @@ function smfAddHTMLHeader(& $out) {
 
 		switch($lib_id) {
 			case 'prototype':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/prototype.js$smgStyleVersion\" id=\"Prototype_script_inclusion\"></script>");
+				$out->addModules('ext.ScriptManager.prototype');
 				break;
 			case 'jquery':
-				if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
-					$out->includeJQuery();
-					//make it not conflicting with other libraries like prototype
-					$out->addScript("<script type=\"text/javascript\">var \$jq = jQuery.noConflict();</script>");
-				} else {
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js$smgStyleVersion\"></script>");
-					global $smwgJQueryIncluded;
-					$smwgJQueryIncluded = true;
-				}
+//				if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+//					$out->includeJQuery();
+//					//make it not conflicting with other libraries like prototype
+//					$out->addScript("<script type=\"text/javascript\">var \$jq = jQuery.noConflict();</script>");
+//				} else {
+//					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/jquery.js$smgStyleVersion\"></script>");
+//					global $smwgJQueryIncluded;
+//					$smwgJQueryIncluded = true;
+//				}
 				break;
 			case 'qtip':
-					if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.min.js$smgStyleVersion\"></script>");
-                else
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/qTip/jquery.qtip-1.0.0-rc3.js$smgStyleVersion\"></script>");
+				$out->addModules('ext.jquery.qtip');
 				break;
 			case 'json':
                 if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
@@ -88,8 +122,7 @@ function smfAddHTMLHeader(& $out) {
 					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js$smgStyleVersion\"></script>");
 				break;
 			case 'fancybox':
-				$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/fancybox/jquery.fancybox-1.3.1.js$smgStyleVersion\"></script>");
-				$out->addStyle($smgSMPath."/scripts/fancybox/jquery.fancybox-1.3.1.css$smgStyleVersion", 'screen, projection');
+				$out->addModules('ext.jquery.fancybox');
 				break;
 			case 'ext':
 				$out->addLink($smgSMPath.'/scripts/extjs/resources/css/ext-all.css'.$smgStyleVersion, 'screen, projection');
