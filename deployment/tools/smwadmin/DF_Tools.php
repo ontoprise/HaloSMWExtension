@@ -550,7 +550,9 @@ class Tools {
 		}
 		if (!isset($out)) return NULL;
 		$tempFile = $tempFolder."/".uniqid();
-		$dd_path = reset(array_reverse(explode(" ", $out)));
+		$help1 = explode(" ", $out);
+        $help2 = array_reverse($help1);
+        $dd_path = reset($help2);
 		exec('unzip -o -j "'.$filePath.'" "'.$dd_path.'" -d "'.$tempFile.'"', $output, $res);
 		$dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
 		return $dd;
