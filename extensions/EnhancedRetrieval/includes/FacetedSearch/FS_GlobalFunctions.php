@@ -68,5 +68,87 @@ function fsfSetupFacetedSearch() {
     $wgSpecialPageGroups['FacetedSearch'] = 'facetedsearch_group';
     $wgSpecialPageGroups['FacetedSearch'] = 'smwplus_group';
 	
+	fsfInitResourceLoaderModules();
+}
+
+/**
+ * Initializes all modules for the resource loader.
+ */
+function fsfInitResourceLoaderModules() {
+	global $wgResourceModules, $fsgIP, $fsgScriptPath;
+	
+	$moduleTemplate = array(
+		'localBasePath' => $fsgIP,
+		'remoteBasePath' => $fsgScriptPath,
+		'group' => 'ext.facetedSearch'
+	);
+
+	// Scripts and styles for all actions
+	$wgResourceModules['ext.facetedSearch.special'] = $moduleTemplate + array(
+		'scripts' => array(
+			"scripts/ajax-solr/lib/core/Core.js",      
+			"scripts/ajax-solr/lib/core/AbstractManager.js",      
+			"scripts/ajax-solr/lib/managers/Manager.jquery.js",      
+			"scripts/ajax-solr/lib/core/Parameter.js",      
+			"scripts/ajax-solr/lib/core/ParameterStore.js",      
+			"scripts/ajax-solr/lib/core/AbstractWidget.js",      
+			"scripts/ajax-solr/lib/core/AbstractFacetWidget.js",      
+			"scripts/ajax-solr/lib/core/ParameterStore.js",      
+			"scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js",      
+			"scripts/ajax-solr/lib/widgets/jquery/PagerWidget.js",      
+			
+			"scripts/FacetedSearch/FS_Theme.js",      
+			"scripts/FacetedSearch/FS_ResultWidget.js",      
+			"scripts/FacetedSearch/FS_PagerWidget.js",      
+			"scripts/FacetedSearch/FS_FacetWidget.js",      
+			"scripts/FacetedSearch/FS_ArticlePropertiesWidget.js",      
+			"scripts/FacetedSearch/FS_CreateArticleWidget.js",      
+			"scripts/FacetedSearch/FS_NamespaceFacetWidget.js",      
+			"scripts/FacetedSearch/FS_FacetPropertyValueWidget.js",      
+			"scripts/FacetedSearch/FS_CurrentSearchWidget.js",
+			"scripts/FacetedSearch/FS_FacetedSearch.js",
+			"scripts/FacetedSearch/FS_FacetClusterer.js",
+			"scripts/FacetedSearch/FS_NumericFacetClusterer.js",
+			"scripts/FacetedSearch/FS_StringFacetClusterer.js",
+			"scripts/FacetedSearch/FS_DateFacetClusterer.js",
+			"scripts/FacetedSearch/FS_ClusterWidget.js",
+			"scripts/FacetedSearch/FS_FacetClustererFactory.js"
+			
+			),
+		'styles' => array(
+				'/skin/faceted_search.css',
+				),
+		'dependencies' => array(
+				'ext.facetedSearch.Language'
+				)
+				
+	);
+	fsfAddJSLanguageScripts();
 	
 }
+
+/**
+ * Add appropriate JS language script
+ */
+function fsfAddJSLanguageScripts() {
+	global $fsgIP, $wgUser, $wgResourceModules;
+	// user language file
+    $ulngScript = '/scripts/FacetedSearch/Language/FS_Language.js';
+	$lng = '/scripts/FacetedSearch/Language/FS_Language';
+	if (isset($wgUser)) {
+		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($fsgIP. $lng)) {
+			$ulngScript = $lng;
+		}
+	}
+	$wgResourceModules['ext.facetedSearch.Language'] = array(
+		'scripts' => array(
+			"scripts/FacetedSearch/Language/FS_Language.js",
+			$ulngScript
+		),
+		'localBasePath' => $fsgIP,
+		'remoteExtPath' => 'EnhancedRetrieval'
+    );
+	
+}
+

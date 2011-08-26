@@ -37,6 +37,7 @@ require_once( $IP . "/includes/SpecialPage.php" );
 $dir = dirname(__FILE__).'/';
 require_once( $dir."../includes/FacetedSearch/FS_Settings.php" );
 
+
 /*
  * Standard class that is responsible for the creation of the Special Page
  */
@@ -107,7 +108,6 @@ class FSFacetedSearchSpecial extends SpecialPage {
         parent::__construct('Search');
 		global $wgHooks;
 		$wgHooks['MakeGlobalVariablesScript'][] = "FSFacetedSearchSpecial::addJavaScriptVariables";
-        
     }
 
     /**
@@ -151,43 +151,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$html = str_replace('{{searchTerm}}', htmlspecialchars($search), $html);
 		
 		$wgOut->addHTML($this->replaceLanguageStrings($html));
-		$this->addJSLanguageScripts();
-		
-		global $fsgScriptPath;
-           
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/Core.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractManager.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/managers/Manager.jquery.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/Parameter.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/ParameterStore.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/AbstractFacetWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/core/ParameterStore.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/ajax-solr/lib/widgets/jquery/PagerWidget.js\"></script>");        
-		
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_Theme.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ResultWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_PagerWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ArticlePropertiesWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CreateArticleWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NamespaceFacetWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetPropertyValueWidget.js\"></script>");        
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_CurrentSearchWidget.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetedSearch.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClusterer.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_NumericFacetClusterer.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_StringFacetClusterer.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_DateFacetClusterer.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_ClusterWidget.js\"></script>");
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath .  "/scripts/FacetedSearch/FS_FacetClustererFactory.js\"></script>");
-
-		$wgOut->addStyle($fsgScriptPath . '/skin/faceted_search.css', 'screen, projection');
-						
-        global $smgJSLibs;
-        $smgJSLibs[] = 'jquery';
-
+		$wgOut->addModules('ext.facetedSearch.special');
     }
 
 	/**
@@ -236,27 +200,5 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		return $text;
 	}
     
-	/**
-	 * Add appropriate JS language script
-	 */
-	function addJSLanguageScripts() {
-		global $fsgScriptPath, $fsgIP, $wgUser, $wgOut;
-		$path = '/scripts/FacetedSearch/Language/';
-		$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_Language.js\"></script>");        
-
-		$lng = $path . 'FS_Language';
-		if (isset($wgUser)) {
-			$lng .= ucfirst($wgUser->getOption('language')).'.js';
-			if (file_exists($fsgIP . $lng)) {
-				$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $lng."\"></script>");        
-			} else {
-				$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_LanguageEn.js\"></script>");        
-			}
-		} else {
-			$wgOut->addScript("<script type=\"text/javascript\" src=\"". $fsgScriptPath . $path . "FS_LanguageEn.js\"></script>");        
-		}
-
-	}
-
 }
 

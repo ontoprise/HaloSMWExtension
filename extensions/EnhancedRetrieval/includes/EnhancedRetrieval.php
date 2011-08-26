@@ -19,6 +19,9 @@ define('US_EXACTMATCH', 2);
 
 require_once 'FacetedSearch/FS_GlobalFunctions.php';
 
+$ergIP = $IP . '/extensions/EnhancedRetrieval';
+$ergScriptPath = $wgScriptPath . '/extensions/EnhancedRetrieval';
+
 $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension',
 		'version' => US_SEARCH_EXTENSION_VERSION,
@@ -51,47 +54,25 @@ if (isset($wgUSPathSearch) && $wgUSPathSearch) {
  * @return unknown
  */
 function wfUSAddHeader(& $out) {
-	global $wgScriptPath, $wgServer, $wgTitle, $wgRequest, $wgContLang;
-	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+	global $wgTitle, $wgRequest, $wgServer, $wgContLang, $wgOut, $wgScriptPath;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) {
+		return true;
+	}
 
 	$pagetitle = $wgRequest->getVal("title");
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
-	if ($pagetitle != "$spec_ns:Search" && $pagetitle != "$spec_ns:EnhancedRetrievalStatistics") return true;
+	if ($pagetitle != "$spec_ns:Search" && 
+	    $pagetitle != "$spec_ns:EnhancedRetrievalStatistics") {
+		return true;
+	}
 
-	$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/skin/enhanced_retrieval.css'
-                    ));
-                   
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/enhanced_retrieval.js"></script>');
-
-                    // add SimplePopup
-                    $out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/scripts/SimplePopup/SimplePopup.css'
-                    ));
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/SimplePopup/SimplePopup.js"></script>');
-                    $out->addScript('<script type="text/javascript">/*<![CDATA[*/
+    $wgOut->addHeadItem('ERScript1', '<script type="text/javascript">/*<![CDATA[*/
                         var SIMPLE_POPUP_DIR = "'.$wgScriptPath.'/extensions/EnhancedRetrieval/scripts/SimplePopup/";
                     /*]]>*/</script>');
-
-                    // add GreyBox
-                    $out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/gb_styles.css'
-                    ));
-                    $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/EnhancedRetrieval/scripts/GreyBox/";</script>'."\n");
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/AJS.js"></script>');
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/AJS_fx.js"></script>');
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/EnhancedRetrieval/scripts/GreyBox/gb_scripts.js"></script>');
-
-                    return true;
+	$wgOut->addHeadItem('ERScript2', '<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/EnhancedRetrieval/scripts/GreyBox/";</script>'."\n");
+    
+	$wgOut->addModules('ext.enhancedRetrieval.special');
+	return true;
 }
 
 /**
@@ -155,6 +136,8 @@ function wfUSSetupExtension() {
 	
 	// Set up Faceted Search
 	fsfSetupFacetedSearch();
+	
+	wfUSinitResourceLoaderModules();
 	
 	return true;
 }
@@ -260,6 +243,38 @@ function wfUSInitializeSKOSOntology() {
 	}
 }
 
+/**
+ * Initializes all modules for the ResourceLoader
+ */
+function wfUSinitResourceLoaderModules() {
+	global $wgResourceModules, $ergIP, $ergScriptPath;
+	
+	$moduleTemplate = array(
+		'localBasePath' => $ergIP,
+		'remoteBasePath' => $ergScriptPath,
+		'group' => 'ext.enhancedRetrieval'
+	);
+
+	// Scripts and styles for all actions
+	$wgResourceModules['ext.enhancedRetrieval.special'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/initPrototype.js',
+			'scripts/enhanced_retrieval.js',
+			'scripts/GreyBox/AJS.js',
+			'scripts/GreyBox/AJS_fx.js',
+			'scripts/GreyBox/gb_scripts.js',
+			),
+		'styles' => array(
+			'skin/enhanced_retrieval.css',
+			'scripts/SimplePopup/SimplePopup.css',
+			'scripts/GreyBox/gb_styles.css'
+			),
+		'dependencies' => array(
+			'ext.ScriptManager.prototype'
+			)
+				
+	);
+}
 
 function smwf_us_retrieveMimeType($func, & $mimeType) {
 	if ($func == 'smwf_ca_GetHTMLBody') $mimeType = 'text/html; charset=utf-8';

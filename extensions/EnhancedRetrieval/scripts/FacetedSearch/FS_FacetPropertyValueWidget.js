@@ -21,9 +21,9 @@
  * @author: Thomas Schweitzer
  */
 
-if (typeof FacetedSearch == "undefined") {
+if (typeof window.FacetedSearch == "undefined") {
 //	Define the FacetedSearch module	
-	var FacetedSearch = { 
+	window.FacetedSearch = { 
 			classes : {}
 	};
 }
