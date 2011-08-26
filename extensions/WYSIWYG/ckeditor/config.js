@@ -5,11 +5,11 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 if (!String.prototype.InArray) {
 	String.prototype.InArray = function(arr) {
-		for(var i=0;i<arr.length;i++) {
-            if (arr[i] == this)
-                return true;
-        }
-		return false;
+            for(var i=0;i<arr.length;i++) {
+                if (arr[i] == this)
+                    return true;
+            }
+            return false;
 	}
 }
 
@@ -26,6 +26,7 @@ CKEDITOR.editorConfig = function( config )
     // Remove the link plugin because it's replaced with the mediawiki plugin
     //CKEDITOR.config.plugins = CKEDITOR.config.plugins.replace( /(?:^|,)link(?=,|$)/, '' );
 	var extraPlugins = "mediawiki,mwtemplate";
+//        var extraPlugins = "mediawiki,mwtemplate,myplugin";
 
 	config.toolbar = 'Wiki';
     // var origToolbar = CKEDITOR.config.toolbar_Full
@@ -93,4 +94,8 @@ CKEDITOR.editorConfig = function( config )
     //remove unnecessary plugins
     //list style is not preserved in wikitext
     config.removePlugins = 'liststyle';
+    
+      //don't remove empty format elements when loading HTML
+    CKEDITOR.dtd.$removeEmpty['span'] = 0
+    
 };

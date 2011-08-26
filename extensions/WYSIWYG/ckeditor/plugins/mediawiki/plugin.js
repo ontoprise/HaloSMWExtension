@@ -557,7 +557,6 @@ CKEDITOR.customprocessor.prototype =
         if (window.DOMParser) {
             parser = new DOMParser();
             xmlDoc = parser.parseFromString(data,"text/xml");   
-            data = this.ieFixHTML(data);
         }
         else // Internet Explorer
         {
