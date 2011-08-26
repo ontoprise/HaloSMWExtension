@@ -1105,6 +1105,7 @@ OBOntologyModifier.prototype = {
 		var localURL = GeneralTools.makeWikiURL(instanceTitle);
 		var uri = GeneralTools.makeTSCURI(instanceTitle);
 		var uri_att = uri != false ? 'uri="'+uri+'"' : '';
+		if (uri != false) localURL += "?"+'uri='+uri;
 		return '<instance '+uri_att+' title_url="' + instanceTitle_esc
 				+ '" namespace= "" localurl="'+localURL+'" title="' + instanceTitle
 				+ '"  id="ID_'
