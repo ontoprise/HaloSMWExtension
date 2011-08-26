@@ -269,6 +269,6 @@ setNewAskQuery:function() {
 
 };// End of Class
 
-var smwhgASKQuery = new ASKQuery();
+window.smwhgASKQuery = new ASKQuery();
 if (typeof FCKeditor == 'undefined')
 	Event.observe(window, 'load', smwhgASKQuery.createContainer.bindAsEventListener(smwhgASKQuery));

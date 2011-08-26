@@ -632,12 +632,14 @@ GeneralTools._URL_Histogram = function() {
  	return histogram;
 }
 
-var OBPendingIndicator = Class.create();
+window.OBPendingIndicator = Class.create();
 OBPendingIndicator.prototype = {
 	initialize: function(container) {
 		this.container = container;
 		this.pendingIndicator = document.createElement("img");
 		Element.addClassName(this.pendingIndicator, "obpendingElement");
+		var wgServer = window.mediaWiki.config.get('wgServer');
+		var wgScriptPath = window.mediaWiki.config.get('wgScriptPath');
 		this.pendingIndicator.setAttribute("src", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif");
 		//this.pendingIndicator.setAttribute("id", "pendingAjaxIndicator_OB");
 		//this.pendingIndicator.style.left = (Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";

@@ -72,4 +72,4 @@ SmwhgLogger.prototype = {
 	
 }
 
-var smwhgLogger = new SmwhgLogger();
+window.smwhgLogger = new SmwhgLogger();

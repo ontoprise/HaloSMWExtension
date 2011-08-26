@@ -14,7 +14,7 @@
  */
 
 
-var qihelper = null;
+window.qihelper = null;
 var QIHelperSavedQuery;
 
 var QIHelper = Class.create();
@@ -56,7 +56,7 @@ QIHelper.prototype = {
         this.TPEE_SELECTED = 1;
         this.propertyAddClicked = false;
         this.colNameEntered = false;     
-                
+        
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch) this.switchTab(1, true);
         this.sourceChanged = 0;
@@ -1034,9 +1034,8 @@ QIHelper.prototype = {
         btn.innerHTML = 
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		autoCompleter.registerAllInputs();
-        
-        if (reset)
-                $('input0').focus();
+		if (reset)
+			$('input0').focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
@@ -1078,8 +1077,8 @@ QIHelper.prototype = {
         
         getInputs: function(){
             return $$('#dialoguecontent input[type="text"]');            
-        },
-        
+	},
+
         observeRadioBtnClick: function(thisObj){
             var radioBtns = $$('#dialoguecontent_pradio input[type="radio"][name="input_r0"]');
             radioBtns.each(function(radioBtnElement){
@@ -1132,10 +1131,9 @@ QIHelper.prototype = {
         
         btn.innerHTML =
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
-                autoCompleter.registerAllInputs();
-        
-        if (reset)
-                $('input0').focus();
+		autoCompleter.registerAllInputs();
+		if (reset)
+			$('input0').focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
@@ -1167,9 +1165,8 @@ QIHelper.prototype = {
             gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		this.proparity = 2;
 		autoCompleter.registerAllInputs();
-       
-        if (reset)
-                $('input_p0').focus();
+		if (reset)
+			$('input_p0').focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getPropertyDialogInputs());
         this.setListeners(this, this.getPropertyDialogInputs());
@@ -1200,8 +1197,7 @@ QIHelper.prototype = {
             });
             
         this.observeRadioBtnClick(this);
-	},      
-     
+	},
 
     getCategoryConstraints : function() {
 		// fetch category constraints:
@@ -1215,7 +1211,6 @@ QIHelper.prototype = {
         constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
 							'cont')
 							+ catconstraint;
-                                                                
         return constraintsCategories;
     },
 
@@ -1246,7 +1241,6 @@ QIHelper.prototype = {
 		cell = newrow.insertCell(1);
         cell.style.textAlign="left";
         cell.style.verticalAlign="middle";
-    
         var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
             + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
             + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
@@ -1254,7 +1248,6 @@ QIHelper.prototype = {
             + ((propName) ? 'value="'+propName+'" ' : '')
             + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"'
             + '/>';
-        
         if (idx > 0)
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
         cell.innerHTML = tmpHTML;
@@ -1500,7 +1493,7 @@ QIHelper.prototype = {
 		cell.innerHTML = '<img src="'
 				+ this.imgpath
 				+ 'delete.png" alt="deleteInput" onclick="qihelper.removeInput(this);"/>';
-		$('input' + id).focus(); // focus created input                
+		$('input' + id).focus(); // focus created input
 		autoCompleter.registerAllInputs();
                 this.setListeners(this, this.getInputs());
                 this.enableButton(this.getInputs());
@@ -1566,8 +1559,7 @@ QIHelper.prototype = {
            window.timeoutId = window.setTimeout(function(){                  
                     sajax_do_call('smwf_qi_QIAccess', [ 'getPropertyInformation', escapeQueryHTML(propname) ], qihelper.adaptDialogueToProperty.bind(qihelper))
                }, 500);
-	   }           
-           
+		}
 	},
 
 	/**
@@ -3170,9 +3162,9 @@ handleQueryString : function(args, queryId, pMustShow) {
                         if (op[1].length > 0) {
                             if (operators.inArray(op[1])) {
                                 switch (op[1]) {
-                                    case '≤':restriction= '<';break
-                                    case '≥':restriction= '>';break
-                                    default :restriction= op[1];
+                                    case '≤': restriction= '<'; break
+                                    case '≥': restriction= '>'; break
+                                    default : restriction= op[1];
                                 }
                             }
                             else
@@ -3211,9 +3203,9 @@ handleQueryString : function(args, queryId, pMustShow) {
                         if (op[1].length > 0) {
                             if (operators.inArray(op[1])) {
                                 switch (op[1]) {
-                                    case '≤':restriction= '<';break
-                                    case '≥':restriction= '>';break
-                                    default :restriction= op[1];
+                                    case '≤': restriction= '<'; break
+                                    case '≥': restriction= '>'; break
+                                    default : restriction= op[1];
                                 }
                             }
                             else

@@ -23,28 +23,28 @@
  *  framework for menu container handling of STB++
  */
 
-var ToolbarFramework = Class.create();
+window.ToolbarFramework = Class.create();
 
-var FACTCONTAINER = 0; // contains already annotated facts
-var EDITCONTAINER = 1; // contains Linklist
-var TYPECONTAINER = 2; // contains datatype selector on attribute pages
-var CATEGORYCONTAINER = 3; // contains categories
-var ATTRIBUTECONTAINER = 4; // contains attrributes
-var RELATIONCONTAINER = 5; // contains relations
-var PROPERTIESCONTAINER = 6; // contains the properties of attributes and relations
-var RULESCONTAINER = 7; // contains rules
-var CBSRCHCONTAINER = 8; // contains combined search functions
-var COMBINEDSEARCHCONTAINER = 9;
-var WEBSERVICECONTAINER = 10;
-var HELPCONTAINER = 11; // contains help
-var ANNOTATIONHINTCONTAINER = 12; // gardening hints in AAM
-var SAVEANNOTATIONSCONTAINER = 13; // save annotations in AAM
-var DBGCONTAINER = 14; // contains debug information
-var ASKQUERYCONTAINER = 15; // contains query informations with links to QI
-var LASTCONTAINERIDX = 15;
+window.FACTCONTAINER = 0; // contains already annotated facts
+window.EDITCONTAINER = 1; // contains Linklist
+window.TYPECONTAINER = 2; // contains datatype selector on attribute pages
+window.CATEGORYCONTAINER = 3; // contains categories
+window.ATTRIBUTECONTAINER = 4; // contains attrributes
+window.RELATIONCONTAINER = 5; // contains relations
+window.PROPERTIESCONTAINER = 6; // contains the properties of attributes and relations
+window.RULESCONTAINER = 7; // contains rules
+window.CBSRCHCONTAINER = 8; // contains combined search functions
+window.COMBINEDSEARCHCONTAINER = 9;
+window.WEBSERVICECONTAINER = 10;
+window.HELPCONTAINER = 11; // contains help
+window.ANNOTATIONHINTCONTAINER = 12; // gardening hints in AAM
+window.SAVEANNOTATIONSCONTAINER = 13; // save annotations in AAM
+window.DBGCONTAINER = 14; // contains debug information
+window.ASKQUERYCONTAINER = 15; // contains query informations with links to QI
+window.LASTCONTAINERIDX = 15;
 
-var STBIMGMINUS = '/extensions/SMWHalo/skins/Annotation/images/minus.gif'
-var STBIMGPLUS = '/extensions/SMWHalo/skins/Annotation/images/plus.gif'
+window.STBIMGMINUS = '/extensions/SMWHalo/skins/Annotation/images/minus.gif'
+window.STBIMGPLUS = '/extensions/SMWHalo/skins/Annotation/images/plus.gif'
 
 ToolbarFramework.prototype = {
 
@@ -483,7 +483,7 @@ ToolbarFramework.prototype = {
 	}
 }
 
-var stb_control = new ToolbarFramework();
+window.stb_control = new ToolbarFramework();
 if (typeof FCKeditor == 'undefined' 
     && (typeof wgHideSemanticToolbar === 'undefined'
 	    ||  wgHideSemanticToolbar !== true)) {

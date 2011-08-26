@@ -19,7 +19,7 @@
 var AA_RELATION = 0;
 var AA_CATEGORY = 1;
 	
-var AdvancedAnnotation = Class.create();
+window.AdvancedAnnotation = Class.create();
 
 /**
  * @file

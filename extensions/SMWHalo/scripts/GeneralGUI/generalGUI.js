@@ -20,7 +20,7 @@
  * @file
  * @ingroup SMWHaloMiscellaneous
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  */
 var GeneralGUI = Class.create();
@@ -64,5 +64,5 @@ GeneralGUI.prototype = {
     }
    
 }
-var smwhg_generalGUI = new GeneralGUI();
+window.smwhg_generalGUI = new GeneralGUI();
 Event.observe(window, 'load', smwhg_generalGUI.update.bind(smwhg_generalGUI));

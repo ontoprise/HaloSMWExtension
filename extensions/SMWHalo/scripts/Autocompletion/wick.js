@@ -19,19 +19,19 @@
  */
 
 
-var SMW_CATEGORY_NS = 14;
-var SMW_PROPERTY_NS = 102;
-var SMW_INSTANCE_NS = 0;
+window.SMW_CATEGORY_NS = 14;
+window.SMW_PROPERTY_NS = 102;
+window.SMW_INSTANCE_NS = 0;
 
 
 // special 
-var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
+window.SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
 
 // time intervals for triggering
-var SMW_AC_MANUAL_TRIGGERING_TIME = 500;
-var SMW_AC_AUTO_TRIGGERING_TIME = 800;
+window.SMW_AC_MANUAL_TRIGGERING_TIME = 500;
+window.SMW_AC_AUTO_TRIGGERING_TIME = 800;
 
-var SMW_AJAX_AC = 1;
+window.SMW_AJAX_AC = 1;
 
 function autoCompletionsOptions(request) {
 	processAutoCompletionOptions(request.responseText);

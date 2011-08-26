@@ -669,6 +669,6 @@ getselectedItem: function(selindex) {
 }
 };// End of Class
 
-var catToolBar = new CategoryToolBar();
+window.catToolBar = new CategoryToolBar();
 if (typeof FCKeditor == 'undefined')
     Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar));

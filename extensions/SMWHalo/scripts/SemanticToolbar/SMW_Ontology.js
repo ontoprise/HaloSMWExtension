@@ -25,7 +25,7 @@
 *
 */
 
-var OntologyModifier = Class.create();
+window.OntologyModifier = Class.create();
 
 /**
  * Class for modifying the ontology. It supports

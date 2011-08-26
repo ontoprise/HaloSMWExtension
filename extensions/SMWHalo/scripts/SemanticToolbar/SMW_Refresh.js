@@ -175,6 +175,6 @@ RefreshSemanticToolBar.prototype = {
 	}
 }
 
-var refreshSTB = new RefreshSemanticToolBar();
+window.refreshSTB = new RefreshSemanticToolBar();
 if (typeof FCKeditor == 'undefined')
     Event.observe(window, 'load', refreshSTB.register.bindAsEventListener(refreshSTB));

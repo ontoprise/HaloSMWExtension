@@ -21,7 +21,7 @@
 *  @ingroup SMWHaloLanguage
 */
 
-var wgUserLanguageStrings = {
+window.wgUserLanguageStrings = {
 	'MUST_NOT_BE_EMPTY'       : '(e)Dit veld moet ingevuld worden.',
 	'VALUE_IMPROVES_QUALITY'  : '(i)Een waarde in dit inputveld verbetert de kwaliteit van de kennisbasis.',
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)De selectie mag niet leeg zijn!',

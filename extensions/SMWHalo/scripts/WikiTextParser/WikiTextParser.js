@@ -114,9 +114,9 @@ var WTP_EDITAREA_MODE = 2;
  * - add annotations
  * - remove annotations.
  */
-var WikiTextParser = Class.create();
+window.WikiTextParser = Class.create();
 
-var gEditInterface = null;
+window.gEditInterface = null;
 
 WikiTextParser.prototype = {
 	/**

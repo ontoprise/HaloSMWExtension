@@ -121,6 +121,6 @@ createToolbar: function(attributes) {
 
 };// End of Class
 
-var smwhgGardeningHints = new GardeningHints();
+window.smwhgGardeningHints = new GardeningHints();
 if (typeof FCKeditor == 'undefined')
     Event.observe(window, 'load', smwhgGardeningHints.createContainer.bindAsEventListener(smwhgGardeningHints));

@@ -29,7 +29,7 @@
 *
 */
 
-var Language = Class.create();
+var Language = function () {};
 
 /**
  * This class provides language dependent strings for an identifier.
@@ -59,7 +59,7 @@ Language.prototype = {
 	getMessage: function(id, type) {
 		switch (type) {
 			case "user":
-				var msg = wgUserLanguageStrings[id];
+				var msg = window.wgUserLanguageStrings[id];
 				if (!msg) {
 					msg = id;
 				} 
@@ -72,7 +72,7 @@ Language.prototype = {
 				} 
 				break;
 			default: 
-				var msg = wgUserLanguageStrings[id];
+				var msg = window.wgUserLanguageStrings[id];
 				if (!msg) {
 					var msg = wgContLanguageStrings[id];
 					if (!msg) {
@@ -95,4 +95,4 @@ Language.prototype = {
 
 // Singleton of this class
 
-var gLanguage = new Language();
+window.gLanguage = new Language();

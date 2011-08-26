@@ -81,6 +81,6 @@ hideHints: function() {
 
 };// End of Class
 
-var smwhgAnnotationHints = new AnnotationHints();
+window.smwhgAnnotationHints = new AnnotationHints();
 
 

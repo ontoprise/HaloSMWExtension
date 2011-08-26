@@ -470,7 +470,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
 	}
 
-	
+
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
@@ -573,6 +573,8 @@ function smwgHaloSetupExtension() {
 			}
 		}
 
+		$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
+				
 		return true;
 }
 
@@ -895,11 +897,8 @@ function smwfHaloFormInputTextarea($cur_value, $input_name, $is_mandatory, $is_d
  */
 function smwfHaloShowListPage(&$title, &$article){
 	global $smwgHaloIP;
-
 	if ( $title->getNamespace() == NS_CATEGORY ) {
-
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
-
 		$article = new SMWCategoryPage($title);
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
 		global $smwgPropertyPageFromTSC;
@@ -1056,35 +1055,6 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$wgOut->addScript('<script type="text/javascript">var smwghTripleStoreGraph="'.$smwgTripleStoreGraph.'"</script>');
 	}
 
-	$skin = $wgUser->getSkin();
-	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
-	$jsm = SMWResourceManager::SINGLETON();
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/smwhalo.css');
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "edit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "annotate");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "formedit");
-	if ($allowStbOnSubmit) $jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "submit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/lightbulb.css');
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "edit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "formedit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "submit");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
-	//create new article css
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/CreateNewArticle/createNewArticle.css');
-
-	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
-
-	// serialize the css
-	$jsm->serializeCSS($out);
-
 	/*
 	 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 *
@@ -1099,180 +1069,36 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 	$isQIF = ($pagetitle == "$spec_ns:QueryInterface");
 	// end of hack
-
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-		//$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js');
-
-		// The above id is essential for the JavaScript to find out the $smwgHaloScriptPath to
-		// include images. Changes in the above must always be coordinated with the script!
-
-		//global $smwgEnableLogging;
-		//if($smwgEnableLogging  === true){
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Logger/smw_logger.js', "all");
-		//}
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/breadcrumb.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/contentSlider.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/generalGUI.js');
-
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js');
-
-		smwfHaloAddJSLanguageScripts($jsm);
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Autocompletion/wick.js');
-
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/WikiTextParser.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/WikiTextParser.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/WikiTextParser.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/WikiTextParser.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/WikiTextParser.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ASKQuery.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ASKQuery.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ASKQuery.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ASKQuery.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "edit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "formedit");
-		if ($allowStbOnSubmit) $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "submit");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
-
-	} else {
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-		//$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
-
-		smwfHaloAddJSLanguageScripts($jsm);
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
-		if ($wgRequest->getText('action') != 'submit' || $allowStbOnSubmit) {
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/GeneralGUI/STB_Framework.js');
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/GeneralGUI/STB_Divcontainer.js');
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js');
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js');
-		}
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralScripts.js');
-
-
+	
+	// Load modules
+	$wgOut->addModules('ext.smwhalo.general');
+	$wgOut->addModules('ext.smwhalo.styles');
+	$wgOut->addModules('ext.smwhalo.createNewArticle');
+	
+	switch ($action) {
+		case 'edit':
+			$wgOut->addModules('ext.smwhalo.edit');
+			break;
+		case 'annotate':
+			$wgOut->addModules('ext.smwhalo.annotate');
+			break;
+		case 'formedit':
+			$wgOut->addModules('ext.smwhalo.formedit');
+			break;
+		case 'submit':
+			if ($allowStbOnSubmit) {
+				$wgOut->addModules('ext.smwhalo.submit');
+			}
+			break;
 	}
-	//create new article scripts
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/CreateNewArticle/createNewArticle.js');
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/CreateNewArticle/jquery.query-2.1.7.js');
-
-
-	// serialize the scripts
-	$jsm->serializeScripts($out);
+	
+	// Load modules for special pages
+	if ($pagetitle == "$spec_ns:AddData"
+	    || $pagetitle == "$spec_ns:EditData"
+	    || $pagetitle == "$spec_ns:FormEdit") {
+		$wgOut->addModules('ext.smwhalo.sfSpecialPages');
+	}
+	
 	// for additinal scripts which are dependant of Halo scripts (e.g. ACL extension)
 	wfRunHooks("SMW_AddScripts", array (& $out));
 
@@ -1282,34 +1108,42 @@ function smwfHaloAddHTMLHeader(&$out) {
 /**
  * Add appropriate JS language script
  */
-function smwfHaloAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-	global $smwgHaloIP, $wgLanguageCode, $smwgHaloScriptPath, $wgUser;
+function smwfHaloAddJSLanguageScripts() {
+	global $smwgHaloIP, $wgUser, $wgResourceModules;
 
 	// content language file
-	$lng = '/scripts/Language/SMW_Language';
-	if (!empty($wgLanguageCode)) {
-		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($smwgHaloIP . $lng)) {
-			$jsm->addScriptIf($smwgHaloScriptPath . $lng, $mode, $namespace, $pages);
-		} else {
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
-		}
-	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageEn.js', $mode, $namespace, $pages);
-	}
-
+    $clngScript = '/scripts/Language/SMW_LanguageEn.js';
+    $lng = '/scripts/Language/SMW_Language';
+    if (isset($wgUser)) {
+        $lng .= ucfirst($wgUser->getOption('language')).'.js';
+        if (file_exists($smwgHaloIP . $lng)) {
+            $clngScript = $lng;
+        }
+    }
+	
 	// user language file
-	$lng = '/scripts/Language/SMW_Language';
+    $ulngScript = '/scripts/Language/SMW_LanguageUserEn.js';
+	$lng = '/scripts/Language/SMW_LanguageUser';
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($smwgHaloIP . $lng)) {
-			$jsm->addScriptIf($smwgHaloScriptPath . $lng, $mode, $namespace, $pages);
-		} else {
-			$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageUserEn.js', $mode, $namespace, $pages);
+			$ulngScript = $lng;
 		}
-	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
+	$wgResourceModules['ext.smwhalo.Language'] = array(
+		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+			"scripts/Language/SMW_Language.js",
+			$clngScript,
+			$ulngScript
+		),
+		     
+		// ResourceLoader needs to know where your files are; specify your
+		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'SMWHalo'
+    );
+	
 }
 
 /**
@@ -1555,60 +1389,27 @@ function smwfAnnotateAction($action, $article) {
 // OntologyBrowser scripts callback
 // includes necessary script and css files.
 function smwOBAddHTMLHeader(&$out) {
-	global $wgTitle;
+	global $wgTitle, $wgOut, $wgContLang;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+	
+	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
-
-	$jsm = SMWResourceManager::SINGLETON();
-
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
-
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/ontologytools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeview.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewActions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewData.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/advancedOptions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/deployOntologyBrowser.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+	if ($wgTitle->getFullText() == "$spec_ns:OntologyBrowser") {
+		$wgOut->addModules('ext.smwhalo.ontologyBrowser');
 	}
-
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/OntologyBrowser/treeview.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
-	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":OntologyBrowser");
-
+	
 	return true;
 }
 
 function smwPRAddHTMLHeader(&$out) {
-	global $wgTitle;
+	global $wgTitle, $wgOut, $wgContLang;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgHaloIP, $wgLanguageCode, $smwgScriptPath;
+	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 
-	$jsm = SMWResourceManager::SINGLETON();
-
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":Properties");
-	} else {
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Properties");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":Properties");
-
+	if ($wgTitle->getFullText() == "$spec_ns:Properties") {
+		$wgOut->addModules(array('ext.smw.tooltips', 'ext.smw.style'));
 	}
-
-	$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":Properties");
 
 	return true;
 }
@@ -1618,65 +1419,13 @@ function smwPRAddHTMLHeader(&$out) {
 // QueryInterface scripts callback
 // includes necessary script and css files.
 function smwfQIAddHTMLHeader(&$out){
-	global $wgTitle;
+	global $wgTitle, $wgOut, $wgContLang;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgScriptPath, $srfgScriptPath;
-
-
-	$jsm = SMWResourceManager::SINGLETON();
-
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Logger/smw_logger.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QueryList.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
-
-	} else {
-
-		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
-
-
+	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
+	if ($wgTitle->getFullText() == "$spec_ns:QueryInterface") {
+		$wgOut->addModules(array('ext.smwhalo.queryInterface'));
 	}
-
-	// add scripts required by query printers
-	$canonicalName = SpecialPage::resolveAlias( $wgTitle->getDBkey() );
-	if ($canonicalName == 'QueryInterface') {
-
-		global $smwgResultFormats, $wgOut;
-		if (isset($smwgResultFormats)) {
-			$resultFormatsUnique = array_unique($smwgResultFormats);
-
-			foreach($resultFormatsUnique as $format => $formatclass) {
-
-				try {
-					$rc = new ReflectionClass($formatclass);
-					if ($rc->hasMethod("getScripts")) {
-						$qp = new $formatclass($format, false);
-						$scriptsToLoad = $qp->getScripts();
-						foreach($scriptsToLoad as $script) $wgOut->addScript($script);
-					}
-					if ($rc->hasMethod("getStylesheets")) {
-						$qp = new $formatclass($format, false);
-						$styleSheetsToLoad = $qp->getStylesheets();
-						foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
-					}
-				} catch(ReflectionException $e) {
-					// igore
-				}
-			}
-		}
-	}
-	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");
-	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
 
 	return true; // do not load other scripts or CSS
 }
@@ -1970,7 +1719,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
  */
 function smwfAddDerivedFacts(& $text, $semdata) {
 	global $smwgHaloScriptPath, $wgContLang;
-	 
+
 	wfLoadExtensionMessages('SemanticMediaWiki');
 	SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
 	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getTitle()->getDBkey(), 'rdflink');
@@ -2004,8 +1753,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 
 			if ( $dataValue->isValid() ) {
 				$valuesHtml[] = $dataValue->getLongWikiText( true ) . $dataValue->getInfolinkText( SMW_OUTPUT_WIKI );
+				}
 			}
-		}
 
 		$fbText .= $GLOBALS['wgLang']->listToText( $valuesHtml );
 
@@ -2013,8 +1762,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	}
 	$fbText .= '</table></div>';
 
-	// $text = "Test";
-	 
+
 	$text =
 '<div id="smw_dft_rendered_boxcontent"> <br />'.
 	'<table>'.
@@ -2177,5 +1925,233 @@ $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId
 			smwfGetSemanticStore()->addNamespaceMapping($prefix, $uri);
 		}
 	}
+	return true;
+}
+
+/**
+ * This function defines all modules for the resource loader.
+ */
+function smwhfRegisterResourceLoaderModules() {
+	global $wgResourceModules, $smwgHaloIP, $smwgHaloScriptPath, $wgUser;
+	
+	$moduleTemplate = array(
+		'localBasePath' => $smwgHaloIP,
+		'remoteBasePath' => $smwgHaloScriptPath,
+		'group' => 'ext.smwhalo'
+	);
+
+	// Scripts and styles for all actions
+	$wgResourceModules['ext.smwhalo.general'] = $moduleTemplate + array(
+		'scripts' => array(
+				'scripts/initPrototype.js',
+				'scripts/ajaxhalo.js',
+				'scripts/scriptaculous/effects.js',
+				'scripts/scriptaculous/slider.js',
+				'scripts/scriptaculous/dragdrop.js',
+				'scripts/scriptaculous/scriptaculous.binding.js',
+				'scripts/Logger/smw_logger.js',
+				'scripts/OntologyBrowser/generalTools.js',
+				'scripts/GeneralGUI/breadcrumb.js',
+				'scripts/GeneralGUI/contentSlider.js',
+				'scripts/GeneralGUI/generalGUI.js',
+				'scripts/Autocompletion/wick.js',
+				'scripts/SMW_DerivedFactsTab.js'
+				),
+		'styles' => array(
+				'/skins/smwhalo.css',
+				'/skins/Autocompletion/wick.css',
+				'/skins/derivedFactsTab.css'
+				),
+		'dependencies' => array(
+				'ext.smwhalo.Language',
+				)
+				
+	);
+	
+	// Scripts and styles for the create new article feature
+	$wgResourceModules['ext.smwhalo.createNewArticle'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/CreateNewArticle/createNewArticle.js',
+			'scripts/CreateNewArticle/jquery.query-2.1.7.js'
+		),
+		'styles' => array(
+			'/skins/CreateNewArticle/createNewArticle.css'
+		)
+	);
+	
+	
+	global $IP,$wgStylePath, $wgDefaultSkin;
+	$skinName = $wgUser !== NULL 
+					? $wgUser->getSkin()->getSkinName() 
+					: $wgDefaultSkin;
+	// Scripts and styles for all actions
+	$wgResourceModules['ext.smwhalo.styles'] = array(
+		'styles' => array(
+				"/$skinName/lightbulb.css",
+				),
+		'localBasePath' => $IP."/skins",
+		'group' => 'ext.smwhalo'
+	);
+	
+	// Scripts and styles for edit action
+	$wgResourceModules['ext.smwhalo.edit'] = $moduleTemplate + array(
+		'scripts' => array(
+		),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar',
+			'ext.smwhalo.allButAnnotate'
+		)
+	);
+	
+	// Scripts and styles for annotate action
+	$wgResourceModules['ext.smwhalo.annotate'] = $moduleTemplate + array(
+		'scripts' => array(
+				'scripts/initPrototype.js',
+				'scripts/AdvancedAnnotation/SMW_SaveAnnotations.js'
+				),
+		'styles' => array(
+				),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar'
+		)
+	);
+	
+	// Scripts and styles for formedit action
+	$wgResourceModules['ext.smwhalo.formedit'] = $moduleTemplate + array(
+		'scripts' => array(
+				),
+		'styles' => array(
+				),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar',
+			'ext.smwhalo.allButAnnotate'
+		)
+	);
+	
+	// Scripts and styles for submit action
+	$wgResourceModules['ext.smwhalo.submit'] = $moduleTemplate + array(
+		'scripts' => array(
+				),
+		'styles' => array(
+				),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar',
+			'ext.smwhalo.allButAnnotate'
+		)
+	);
+	
+	// Scripts and styles for semantic forms special pages
+	// Special:AddData, Special:EditData, Special:FormEdit
+	$wgResourceModules['ext.smwhalo.sfSpecialPages'] = $moduleTemplate + array(
+		'scripts' => array(
+				),
+		'styles' => array(
+				),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar',
+			'ext.smwhalo.allButAnnotate'
+		)
+	);
+	
+	// Scripts and styles for all modes but annotate
+	$wgResourceModules['ext.smwhalo.allButAnnotate'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/initPrototype.js',
+			'scripts/SemanticToolbar/SMW_ASKQuery.js',
+			'scripts/SemanticToolbar/SMWEditInterface.js',
+			'scripts/OntologyBrowser/obSemToolContribution.js'
+			),
+		'styles' => array(
+				),
+		'dependencies' => array(
+			'ext.smwhalo.semanticToolbar'
+		)
+	);
+	
+	// Scripts and styles for the semantic toolbar
+	$wgResourceModules['ext.smwhalo.semanticToolbar'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/initPrototype.js',
+			'scripts/GeneralGUI/STB_Framework.js',
+			'scripts/GeneralGUI/STB_Divcontainer.js',
+			'scripts/SemanticToolbar/SMW_Links.js',
+			'scripts/WikiTextParser/Annotation.js',
+			'scripts/WikiTextParser/WikiTextParser.js',
+			'scripts/SemanticToolbar/SMW_Ontology.js',
+			'scripts/SemanticToolbar/SMW_DataTypes.js',
+			'scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js',
+			'scripts/SemanticToolbar/SMW_Container.js',
+			'scripts/SemanticToolbar/SMW_Marker.js',
+			'scripts/SemanticToolbar/SMW_Category.js',
+			'scripts/AdvancedAnnotation/SMW_AnnotationHints.js',
+			'scripts/AdvancedAnnotation/SMW_GardeningHints.js',
+			'scripts/SemanticToolbar/SMW_Relation.js',
+			'scripts/SemanticToolbar/SMW_Properties.js',
+			'scripts/SemanticToolbar/SMW_Refresh.js',
+			'scripts/SemanticToolbar/SMW_DragAndResize.js',
+			'scripts/SemanticToolbar/SMW_ContextMenu.js',
+			'scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js'
+				),
+		'styles' => array(
+				'/skins/semantictoolbar.css',
+				'/skins/Annotation/annotation.css'
+				)
+	);
+	
+	// Module for the Ontology Browser
+	$wgResourceModules['ext.smwhalo.ontologyBrowser'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/initPrototype.js',
+			'scripts/ajaxhalo.js',
+			'scripts/scriptaculous/effects.js',
+			'scripts/scriptaculous/dragdrop.js',
+			'scripts/OntologyBrowser/generalTools.js',
+			'scripts/Language/SMW_Language.js',
+			'/scripts/OntologyBrowser/ontologytools.js',
+			'/scripts/OntologyBrowser/treeview.js',
+			'/scripts/OntologyBrowser/treeviewActions.js',
+			'/scripts/OntologyBrowser/treeviewData.js',
+			'/scripts/OntologyBrowser/advancedOptions.js',
+			),
+		'styles' => array(
+			'/skins/OntologyBrowser/treeview.css'
+			),
+		'dependencies' => array(
+			'ext.smw.tooltips',
+			'ext.smw.style'
+		)
+	);
+	
+	// Module for the Query Interface
+	// The QI depends on all SemanticResultFormats
+	$dependencies = array(
+			'ext.smw.tooltips',
+			'ext.smw.style'
+			);
+	// Add all modules ext.srf.*
+	foreach ($wgResourceModules as $rid => $mod) {
+		if (strpos($rid, 'ext.srf.') === 0) {
+			$dependencies[] = $rid;
+		}
+	}
+	
+	$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
+		'scripts' => array(
+			'scripts/initPrototype.js',
+			'/scripts/Language/SMW_Language.js',
+			'/scripts/Logger/smw_logger.js',
+			'/scripts/OntologyBrowser/generalTools.js',
+			'/scripts/QueryInterface/Query.js',
+			'/scripts/QueryInterface/QueryList.js',
+			'/scripts/QueryInterface/QIHelper.js',
+			),
+		'styles' => array(
+			'/skins/QueryInterface/qi.css'
+			),
+		'dependencies' => $dependencies
+	);
+		
+	smwfHaloAddJSLanguageScripts();
+	
 	return true;
 }

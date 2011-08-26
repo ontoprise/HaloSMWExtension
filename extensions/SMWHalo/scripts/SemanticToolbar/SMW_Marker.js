@@ -342,6 +342,6 @@ Marker.prototype = {
 
 
 //var smwhg_marker = new Marker('innercontent');
-var smwhg_marker = new Marker('smwh_AAM');
+window.smwhg_marker = new Marker('smwh_AAM');
 Event.observe(window, 'load', smwhg_marker.markNodes.bind(smwhg_marker));
 Event.observe(window, 'resize', smwhg_marker.markNodes.bind(smwhg_marker));

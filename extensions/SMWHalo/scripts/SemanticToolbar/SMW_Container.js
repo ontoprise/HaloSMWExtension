@@ -23,7 +23,7 @@
  *  framework for menu container handling of STB++
  */
 
-var ContainerToolBar = Class.create();
+window.ContainerToolBar = Class.create();
 ContainerToolBar.prototype = {
 
 /**

@@ -21,7 +21,7 @@
 *  @ingroup SMWHaloLanguage
 */
 
-var wgContLanguageStrings = {
+window.wgContLanguageStrings = {
 	'PROPERTY_NS_WOC'         : 'Pagina', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon
 	'CATEGORY_NS_WOC'         : 'Category', // Category namespace without colon

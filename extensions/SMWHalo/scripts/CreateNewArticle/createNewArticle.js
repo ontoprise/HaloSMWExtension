@@ -65,16 +65,16 @@ var CREATENEWARTICLE = {
 				form.append('<input type="hidden" name="mode" value="wysiwyg">');
 				break;
 				
-			default:
+			default: 
 				if(creationMathod.indexOf(this.CATEGORY_STR) > 0){
-					var category = jQuery("#listOfTemplatesAndCategories option:selected").val();
+					var category = $("#listOfTemplatesAndCategories option:selected").val();
 					category = category.substring(0, category.indexOf(this.CATEGORY_STR));
 					form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit');
 					form.append('<input type="hidden" name="target" value="' + articleTitle + '">');
 					form.append('<input type="hidden" name="categories" value="' + category + '">');
 				}
 				else if(creationMathod.indexOf(this.FORM_STR) > 0){
-					var formName = jQuery("#listOfTemplatesAndCategories option:selected").val();
+					var formName = $("#listOfTemplatesAndCategories option:selected").val();
 					formName = formName.substring(0, formName.indexOf(this.FORM_STR));
 					form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormStart');
 					form.append('<input type="hidden" name="page_name" value="' + articleTitle + '">');
@@ -85,10 +85,10 @@ var CREATENEWARTICLE = {
 	},
 	
 	articleTitleChange : function(){
-		var articleExistsErrorMsgSpan = jQuery('#errorMsg');
-		var articleExistsErrorLinkSpan = jQuery('#errorLink');
-		var articleExistsErrorImgTd = jQuery('#errorImgTd');
-		var articleTitleTextBox = jQuery('#newArticleName');
+		var articleExistsErrorMsgSpan = $('#errorMsg');
+		var articleExistsErrorLinkSpan = $('#errorLink');
+		var articleExistsErrorImgTd = $('#errorImgTd');
+		var articleTitleTextBox = $('#newArticleName');
 //			var keycode = event.which;
 			CREATENEWARTICLE.validate();
 			var articleTitle = articleTitleTextBox.val();
@@ -102,15 +102,15 @@ var CREATENEWARTICLE = {
 			}
 //			else if(keycode !== 37 && keycode !== 39){
 			else{
-				CREATENEWARTICLE.showActivity();
+				CREATENEWARTICLE.showActivity();	
                                 if(CREATENEWARTICLE.articleTimeoutId){
                                     window.clearTimeout(CREATENEWARTICLE.articleTimeoutId);
                                 }
                                 CREATENEWARTICLE.articleTimeoutId = window.setTimeout(function(){
-                                    sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
+				sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
 					var articleExists = request.responseText;
 					articleExists = articleExists.split(';');
-					if(jQuery('#newArticleName').val() === articleExists[1]){
+					if($('#newArticleName').val() === articleExists[1]){
 						if(articleExists[0] !== 'false'){
 							CREATENEWARTICLE.articleExists = true;
 							articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
@@ -139,21 +139,21 @@ var CREATENEWARTICLE = {
 	setRationaleDescription : function(selectedValue){
 		switch(selectedValue){
 			case this.EMPTY_IN_WIKITEXT:
-				jQuery('#selectedTitleTd').html(this.selectedValue + ':');
-				jQuery('#selectedDescTd').text('Create an empty article in WikiText editor');
-				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-				jQuery('#listOfTemplatesAndCategories').focus();
+				$('#selectedTitleTd').html(this.selectedValue + ':');
+				$('#selectedDescTd').text('Create an empty article in WikiText editor');
+				$('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
+				$('#listOfTemplatesAndCategories').focus();
 				CREATENEWARTICLE.hideActivity();
-				jQuery('#newArticleName').removeAttr('disabled');
+				$('#newArticleName').removeAttr('disabled');
 				break;
 				
 			case this.EMPTY_IN_WYSIWYG:
-				jQuery('#selectedTitleTd').html(this.selectedValue + ':');
-				jQuery('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
-				jQuery('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
-				jQuery('#listOfTemplatesAndCategories').focus();
+				$('#selectedTitleTd').html(this.selectedValue + ':');
+				$('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
+				$('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
+				$('#listOfTemplatesAndCategories').focus();
 				CREATENEWARTICLE.hideActivity();
-				jQuery('#newArticleName').removeAttr('disabled');
+				$('#newArticleName').removeAttr('disabled');
 				break;
 				
 			default:
@@ -169,12 +169,12 @@ var CREATENEWARTICLE = {
 					titleString = formStr + selectedValue.substr(0, formIndex);
 				}
 				CREATENEWARTICLE.showActivity();
-				jQuery('#newArticleName').attr('disabled', 'disabled');
-                                if(CREATENEWARTICLE.categoryTimeoutId){
-                                    window.clearTimeout(CREATENEWARTICLE.categoryTimeoutId);
-                                }
-                                CREATENEWARTICLE.categoryTimeoutId = window.setTimeout(function(){
-                                    sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
+				$('#newArticleName').attr('disabled', 'disabled');
+                if(CREATENEWARTICLE.categoryTimeoutId){
+	                window.clearTimeout(CREATENEWARTICLE.categoryTimeoutId);
+                }
+                CREATENEWARTICLE.categoryTimeoutId = window.setTimeout(function(){
+				sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
 					var responseText = request.responseText.split(';');
 					var title = responseText[1];
 					var formIndex = title.indexOf(formStr);
@@ -184,16 +184,16 @@ var CREATENEWARTICLE = {
 					else if(categoryIndex === 0)
 						title = title.substr(categoryStr.length, title.length - 1);
 					
-					if(jQuery('#listOfTemplatesAndCategories option:selected').val().indexOf(title) == 0){
-						jQuery('#selectedTitleTd').html(CREATENEWARTICLE.shorterString(selectedValue, 55) + ':');
-						jQuery('#selectedDescTd').html(responseText[0]);
-						jQuery('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-	//					jQuery.fancybox.resize();
+					if($('#listOfTemplatesAndCategories option:selected').val().indexOf(title) == 0){
+						$('#selectedTitleTd').html(CREATENEWARTICLE.shorterString(selectedValue, 55) + ':');
+						$('#selectedDescTd').html(responseText[0]);
+						$('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
+	//					$.fancybox.resize();
 						CREATENEWARTICLE.hideActivity();
-						jQuery('#newArticleName').removeAttr('disabled');
+						$('#newArticleName').removeAttr('disabled');
 					}
 					CREATENEWARTICLE.validate();
-					jQuery('#listOfTemplatesAndCategories').focus();
+					$('#listOfTemplatesAndCategories').focus();
 					
 				})}, 500);
 				break;
@@ -204,14 +204,14 @@ var CREATENEWARTICLE = {
 	buildListOfFormsAndCategories : function(){
 		var forms;
 		var categories;
-		var listBox = jQuery('#listOfTemplatesAndCategories');
+		var listBox = $('#listOfTemplatesAndCategories');
 		
 		//ajax call to get a list of forms
 		CREATENEWARTICLE.showActivity();	
 		sajax_do_call('smwf_na_getForms', [''], function(request){
 			forms = request.responseText;
 			forms = forms.split(',');
-			forms = jQuery.grep(forms, function(element, index){
+			forms = $.grep(forms, function(element, index){
 				  return (element);
 				});
 			for(i = 0; forms && i < forms.length; i++){
@@ -221,13 +221,13 @@ var CREATENEWARTICLE = {
 			sajax_do_call('smwf_na_getCategories', [''], function(request){
 				categories = request.responseText;
 				categories = categories.split('Category:');
-				categories = jQuery.grep(categories, function(element, index){
+				categories = $.grep(categories, function(element, index){
 					  return (element);
 					});
 				for(i = 0; categories && i < categories.length; i++){
 					categories[i] += '  (Category)';
 				}
-				var mergedArray = jQuery.merge(forms, categories);
+				var mergedArray = $.merge(forms, categories);
 				mergedArray.sort(function(a, b) {
 					   var compA = a.toUpperCase();
 					   var compB = b.toUpperCase();
@@ -245,7 +245,7 @@ var CREATENEWARTICLE = {
 	},
 	
 	shorterString : function(theString, numOfLetters){
-		if(theString && jQuery.trim(theString).length > numOfLetters){                    
+		if(theString && $.trim(theString).length > numOfLetters){
                     if(theString.indexOf(this.CATEGORY_STR) == theString.length - this.CATEGORY_STR.length){
                         theString = theString.substr(0, numOfLetters - 3 - this.CATEGORY_STR.length);
                         theString += '...';
@@ -253,7 +253,7 @@ var CREATENEWARTICLE = {
                     }
                     else if(theString.indexOf(this.FORM_STR) == theString.length - this.FORM_STR.length){
                         theString = theString.substr(0, numOfLetters - 3 - this.FORM_STR.length);
-                        theString += '...';
+			theString += '...';
                         theString += this.FORM_STR;
                     }	
                     
@@ -262,31 +262,31 @@ var CREATENEWARTICLE = {
 	},
 	
 	validate : function(){
-		if(jQuery('#newArticleName').val() && jQuery('#listOfTemplatesAndCategories option:selected').val() &&
+		if($('#newArticleName').val() && $('#listOfTemplatesAndCategories option:selected').val() &&
 				!CREATENEWARTICLE.articleExists){
-			jQuery('#cna_submitBtn').removeAttr('disabled');
+			$('#cna_submitBtn').removeAttr('disabled');
 		}
 		else{
-			jQuery('#cna_submitBtn').attr('disabled', 'disabled');
+			$('#cna_submitBtn').attr('disabled', 'disabled');
 		}
 	},
 	
 	showActivity : function(){
-		jQuery('#cna_submitBtn').attr('disabled', 'disabled');
-		jQuery.fancybox.showActivity();	
+		$('#cna_submitBtn').attr('disabled', 'disabled');
+		$.fancybox.showActivity();	
 	},
 	
 	hideActivity : function(){
 		CREATENEWARTICLE.validate();
-		jQuery.fancybox.hideActivity();	
+		$.fancybox.hideActivity();	
 	}
 }
 
 
 
-jQuery(document).ready(function() {
-	if(jQuery.query.get('todo').toLowerCase() === 'createnewarticle'){
-            jQuery.fancybox({ 
+$(document).ready(function() {
+	if($.query.get('todo').toLowerCase() === 'createnewarticle'){
+		$.fancybox({ 
 			'content'  : CREATENEWARTICLE.fancyBoxContent(),
 			'modal'  : true,
 			'width'		: '75%',
@@ -297,16 +297,16 @@ jQuery(document).ready(function() {
 			'scrolling' : 'no',
 			'titleShow'  : false,
 			'onCleanup'  : function(){
-				document.location.search = jQuery.query.remove('todo');
+				document.location.search = $.query.remove('todo');
 			},
 			'onComplete'  : function(){
-				jQuery('#fancybox-close').css('background-image','url("' + CREATENEWARTICLE.imgPath + 'fancy_close.png")').css('display', 'inline');
+				$('#fancybox-close').css('background-image','url("' + CREATENEWARTICLE.imgPath + 'fancy_close.png")').css('display', 'inline');
 				
-				var articleTitleTextBox = jQuery('#newArticleName');
+				var articleTitleTextBox = $('#newArticleName');
 				//build list of forms and categories
 				CREATENEWARTICLE.buildListOfFormsAndCategories();
 				//set article title from url parameter
-				articleTitleTextBox.val(jQuery.query.get('newarticletitle'));
+				articleTitleTextBox.val($.query.get('newarticletitle'));
 				
 				articleTitleTextBox.change(function(){
 					articleTitleTextBox.trigger('keyup');
@@ -318,52 +318,49 @@ jQuery(document).ready(function() {
 				
 				articleTitleTextBox.trigger('keyup');
 				
-				jQuery('#cna_cancelBtn').click(function() {
-					jQuery.fancybox.close();
+				$('#cna_cancelBtn').click(function() {
+					$.fancybox.close();
 				});
 				
-				jQuery('#cna_submitBtn').click(function() {
-					CREATENEWARTICLE.initForm(jQuery('form'), jQuery('#newArticleName').val(), jQuery('#listOfTemplatesAndCategories option:selected').val());
+				$('#cna_submitBtn').click(function() {
+					CREATENEWARTICLE.initForm($('form'), $('#newArticleName').val(), $('#listOfTemplatesAndCategories option:selected').val());
 					return true;
 				});
 				
-				jQuery('#listOfTemplatesAndCategories').change(function()
+				$('#listOfTemplatesAndCategories').change(function()
 				{
-					CREATENEWARTICLE.setRationaleDescription(jQuery('#listOfTemplatesAndCategories option:selected').val());
+					CREATENEWARTICLE.setRationaleDescription($('#listOfTemplatesAndCategories option:selected').val());
 				});
 				
-				jQuery('#fancyboxTitleTable img').click(function()
+				$('#fancyboxTitleTable img').click(function()
 				{
-					jQuery.fancybox.close();
+					$.fancybox.close();
 				});
-                                
-                                jQuery('#newArticleName').keypress(function(event) {
-                                    if (event.which == 13 && !jQuery('#cna_submitBtn').attr('disabled')) {
-                                        jQuery('#cna_submitBtn').click();
+
+                                $('#newArticleName').keypress(function(event) {
+                                    if (event.which == 13 && !$('#cna_submitBtn').attr('disabled')) {
+                                        $('#cna_submitBtn').click();
                                     }
                                 });
 
-                                jQuery('#listOfTemplatesAndCategories').keypress(function(event) {
-                                    if (event.which == 13 && !jQuery('#cna_submitBtn').attr('disabled')) {
-                                        jQuery('#cna_submitBtn').click();
+                                $('#listOfTemplatesAndCategories').keypress(function(event) {
+                                    if (event.which == 13 && !$('#cna_submitBtn').attr('disabled')) {
+                                        $('#cna_submitBtn').click();
                                     }
                                 });
 				
-				jQuery.fancybox.resize();
-				jQuery.fancybox.center();
+				$.fancybox.resize();
+				$.fancybox.center();
 				
-				articleTitleTextBox.trigger('focus');                               
-                                
+				articleTitleTextBox.trigger('focus');
 				}
 		}).click();
 	}
 		
 	
 
-	jQuery(CREATENEWARTICLE.BIND_CONTROL_ID).click(function(event) {
-		document.location.search = jQuery.query.set('todo', 'createnewarticle');
+	$(CREATENEWARTICLE.BIND_CONTROL_ID).click(function(event) {
+		document.location.search = $.query.set('todo', 'createnewarticle');
 		event.preventDefault();
 	});
-        
-        
 });

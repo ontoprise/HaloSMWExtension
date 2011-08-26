@@ -20,7 +20,7 @@
  * @ingroup SMWHaloSemanticToolbar
  * @author Thomas Schweitzer
  */
-var GenericToolBar = Class.create();
+window.GenericToolBar = Class.create();
 
 GenericToolBar.prototype = {
 

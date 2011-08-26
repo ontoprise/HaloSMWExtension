@@ -20,7 +20,7 @@
 *  @ingroup SMWHaloLanguage
 */
 
-var wgUserLanguageStrings = {
+window.wgUserLanguageStrings = {
     'MUST_NOT_BE_EMPTY'       : '(e)Ce champ ne doit pas être vide.',
     'VALUE_IMPROVES_QUALITY'  : '(i)Une valeur dans ce champ améliore la qualité de la base de connaissance.',
     'SELECTION_MUST_NOT_BE_EMPTY' : '(e)La sélection ne doit pas être vide !',

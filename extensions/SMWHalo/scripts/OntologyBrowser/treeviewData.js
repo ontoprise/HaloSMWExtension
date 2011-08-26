@@ -26,9 +26,9 @@
 
 
 // action listeners are global.
-var categoryActionListener = null;
-var instanceActionListener = null;
-var globalActionListener = null;
+window.categoryActionListener = null;
+window.instanceActionListener = null;
+window.globalActionListener = null;
 
 // standard partition size
 var OB_partitionSize = 80;

@@ -155,4 +155,4 @@ DataTypes.prototype = {
 
 }
 
-var gDataTypes = new DataTypes();
+window.gDataTypes = new DataTypes();

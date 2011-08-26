@@ -1864,7 +1864,7 @@ OBSchemaPropertyActionListener.prototype = {
 /**
  * Action Listener for global Ontology Browser events, e.g. switch tree
  */
-var OBGlobalActionListener = Class.create();
+window.OBGlobalActionListener = Class.create();
 OBGlobalActionListener.prototype = {
 	initialize : function() {
 		this.activeTreeName = 'categoryTree';

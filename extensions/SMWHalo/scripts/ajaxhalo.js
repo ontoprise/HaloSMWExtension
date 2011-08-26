@@ -57,7 +57,7 @@ AjaxRequestManager.prototype = {
     }
 };
 
-var ajaxRequestManager = new AjaxRequestManager();
+window.ajaxRequestManager = new AjaxRequestManager();
 ajaxRequestManager.initialize();
 
 var sajax_debug_mode = false;

@@ -386,7 +386,7 @@ Resizeable.prototype = {
 }
 
 //Initialize dragging and resizing functions of stb
-smwhg_dragresizetoolbar = new DragResizeHandler();
+window.smwhg_dragresizetoolbar = new DragResizeHandler();
 Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
 
 /*

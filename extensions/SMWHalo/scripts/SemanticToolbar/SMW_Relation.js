@@ -1294,7 +1294,7 @@ getselectedItem: function(selindex) {
 
 };// End of Class
 
-var relToolBar = new RelationToolBar();
+window.relToolBar = new RelationToolBar();
 if (typeof FCKeditor == 'undefined')
     Event.observe(window, 'load', relToolBar.callme.bindAsEventListener(relToolBar));
 
