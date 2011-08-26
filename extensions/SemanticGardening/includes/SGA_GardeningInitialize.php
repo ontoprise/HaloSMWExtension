@@ -20,6 +20,7 @@ define('SGA_GARDENING_EXTENSION_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 global $wgExtensionFunctions, $sgagIP, $IP;
 $wgExtensionFunctions[] = 'sgagGardeningSetupExtension';
 $sgagIP = $IP."/extensions/SemanticGardening";
+$sgagScriptPath = $wgScriptPath . '/extensions/SemanticGardening';
 
 $wgExtensionCredits['other'][] = array(
         'name' => 'Semantic Gardening extension',
@@ -56,9 +57,6 @@ function sgagGardeningSetupExtension() {
 	$smwgResultFormats['smwtable'] = 'SMWTableResultPrinter'; // keep old printer
 	$smwgResultFormats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
 	$smwgResultFormats['broadtable'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
-
-
-
 
 	global $sgagLocalGardening, $wgJobClasses, $sgagIP;
 	//XXX: deactivated because of Performance
@@ -99,6 +97,8 @@ function sgagGardeningSetupExtension() {
 	}
 	//XXX: deactivated because of Performance
 	//require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
+	
+	sgafRegisterResourceLoaderModules();
 	return true;
 }
 
@@ -221,52 +221,70 @@ function sgafHaloSaveHook(&$article, &$user, $text) {
 // Gardening scripts callback
 // includes necessary script and css files.
 function sgafGAAddHTMLHeader(&$out) {
-	global $wgTitle;
+	global $wgTitle, $wgOut;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
-	global $smwgSGAStyleVersion;
-	global $wgScriptPath;
-
-	$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardening.css'.$smwgSGAStyleVersion
-                    ));
-                    $out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/gardeningLog.css'
-                    ));
-                     
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/gardening.js'.$smwgSGAStyleVersion.'"></script>');
-
-                     
-                    return true;
+	$wgOut->addModules('ext.semanticgardening.gardening');
+	return true;
 }
 
 // FindWork page callback
 // includes necessary script and css files.
 function sgaFWAddHTMLHeader(& $out) {
-	global $wgTitle;
+	global $wgTitle, $wgOut;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
-	global $smwgSGAStyleVersion;
-	global $wgScriptPath;
-	$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/SemanticGardening/skins/findwork.css'.$smwgSGAStyleVersion
-                    ));
-                     
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath .  '/extensions/SemanticGardening/scripts/findwork.js'.$smwgSGAStyleVersion.'"></script>');
-                    return true;
+	$wgOut->addModules('ext.semanticgardening.findwork');
+	return true;
 }
 
 function sgafGetAjaxMethodPrefix() {
 	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
 	if ($func_name == NULL) return NULL;
 	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
+}
+
+
+/**
+ * Initialize all resource loader modules for SemanticGardening
+ */
+function sgafRegisterResourceLoaderModules() {
+	global $wgResourceModules, $sgagIP, $sgagScriptPath;
+	
+	$moduleTemplate = array(
+		'localBasePath' => $sgagIP,
+		'remoteBasePath' => $sgagScriptPath,
+		'group' => 'ext.semanticgardening'
+	);
+
+	// Scripts and styles gardening
+	$wgResourceModules['ext.semanticgardening.gardening'] = $moduleTemplate + array(
+		'scripts' => array(
+				'scripts/gardening.js'
+				),
+		'styles' => array(
+				'skins/gardening.css',
+				'skins/gardeningLog.css'
+				),
+		'dependencies' => array(
+				'ext.ScriptManager.prototype',
+				'ext.smwhalo.general'
+				)
+				
+	);
+	
+	// Scripts and styles findwork
+	$wgResourceModules['ext.semanticgardening.findwork'] = $moduleTemplate + array(
+		'scripts' => array(
+				'scripts/findwork.js'
+				),
+		'styles' => array(
+				'skins/findwork.css'
+				),
+		'dependencies' => array(
+				'ext.ScriptManager.prototype'
+				)
+				
+	);
+	
 }

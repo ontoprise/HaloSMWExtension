@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
-*   Author: Kai Kühn
+*   Author: Kai Kï¿½hn
 *   This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  * @file
  * @ingroup SemanticGardening
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 var SMW_AJAX_GARDLOG = 2;
@@ -147,7 +147,7 @@ GardeningPage.prototype = {
 
 } 
 
-var gardeningPage = new GardeningPage();
+window.gardeningPage = new GardeningPage();
 
 
 // Gardening Log special page
