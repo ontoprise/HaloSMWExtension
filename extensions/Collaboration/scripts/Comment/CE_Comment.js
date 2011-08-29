@@ -15,8 +15,6 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//@TODO: Do file attachments need to be validated?
-
 /**
  * The CommentForm "class"
  * 
@@ -185,29 +183,31 @@ function CECommentForm() {
 	};
 
 	/**
-	 * This function deletes a single comment page.
+	 * Delete comment page(s).
 	 * 
 	 * @param pageName
 	 * @param container
 	 */
 	this.deleteComment = function( pageName, container ) {
+		var	deletingMsg = '',
+			commentsToDelete = $jq( '#' + pageName + ' > .collabComPlain' ).html(),
+			fullDelete = false,
+			comEl = $jq( '#' + container ),
+			hasReplies = false,
+			replyComment;
 		this.overlayName = container;
-		var deletingMsg = '';
-		var commentsToDelete = '';
-		var fullDelete = false;
-		var comEl = $jq( '#' + container );
+
 		$jq( '*:input', comEl ).attr( 'disabled', 'disabled' );
 		if ( $jq( '.ceOverlayFullDeleteCheckbox:checked', comEl ).length === 1 ) {
 			fullDelete = true;
 			deletingMsg = ceLanguage.getMessage( 'ce_full_deleting' );
-			commentsToDelete += pageName;
-			var hasReplies = true;
-			var replyComment = replyComment = $jq( '#' + pageName ).next( '.comRearranged' );
+			hasReplies = true;
+			replyComment = $jq( '#' + pageName ).next( '.comRearranged' );
 			while( hasReplies ) {
 				if( replyComment.length === 0) {
 					hasReplies = false;
 				} else {
-					commentsToDelete += ', ' + replyComment.attr( 'id' );
+					commentsToDelete += ', ' + $jq( '.collabComPlain', replyComment ).html();
 				}
 				replyComment = replyComment.next( '.comRearranged' )
 			}
@@ -220,21 +220,22 @@ function CECommentForm() {
 		var pendingSpan = this.createDOMElement( 'span', 'collabComDelPending', null, null, '&nbsp;' );
 		$jq( '.ceOverlayDetails', comEl ).append( pendingSpan );
 		if ( typeof( this.pendingIndicatorDel ) === 'undefined'
-			|| this.pendingIndicatorDel === null)
+			|| this.pendingIndicatorDel === null )
 		{
 			this.pendingIndicatorDel = new CPendingIndicator( $jq( '#collabComDelPending' ) );
 		}
 		this.pendingIndicatorDel.show();
 		if ( fullDelete ) {
 			sajax_do_call( 'cef_comment_fullDeleteComments', 
-				[commentsToDelete], this.deleteCommentCallback.bindToFunction(this)
+				[escape( commentsToDelete )],
+				this.deleteCommentCallback.bindToFunction(this)
 			);
 		} else {
 			sajax_do_call( 'cef_comment_deleteComment', 
-				[pageName], this.deleteCommentCallback.bindToFunction(this)
+				[escape( commentsToDelete )],
+				this.deleteCommentCallback.bindToFunction(this)
 			);
 		}
-		
 	};
 
 	/**
@@ -301,7 +302,7 @@ function CECommentForm() {
 			textarea, fileAttachField, buttonBox, submitButton, cancelSpan, cancelText, msgDiv,
 			fileAttachUploadLink = '', fileAttachSpan = '';
 		this.editCommentName = pageName;
-		elemSelector = '#' + pageName.replace( /(:|\.)/g, '\\$1' );
+		elemSelector = '#' + pageName;
 		this.editCommentRelatedComment = $jq( elemSelector +
 			' .collabComResInfoSuper' ).html();
 		if ( this.editMode ) {
@@ -463,8 +464,7 @@ function CECommentForm() {
 	 */
 	this.editExistingComment = function() {
 		//1. disable form tools
-		$jq( '#' + this.editCommentName.replace( /(:|\.)/g, '\\$1' )
-			+ ' *:input').attr( 'disabled', 'disabled' );
+		$jq( '#' + this.editCommentName + ' *:input').attr( 'disabled', 'disabled' );
 
 		//2. and add pending indicator
 		if ( typeof( this.pendingIndicatorEF ) === 'undefined' 
@@ -491,7 +491,7 @@ function CECommentForm() {
 		textArea = this.textEncode( textArea );
 		// change the comment person?
 		var commentPerson= $jq( '.collabComResUsername > a',
-			$jq( '#' + this.editCommentName.replace( /(:|\.)/g, '\\$1' ) ) ).html();
+			$jq( '#' + this.editCommentName ) ).html();
 		if ( !commentPerson ) {
 			commentPerson = '';
 		} else {
@@ -524,7 +524,9 @@ function CECommentForm() {
 			relatedComment + 
 			editorString + 
 			fileAttachString + '|}}';
-		this.currentPageName = escape( this.editCommentName );
+		this.currentPageName = escape(
+			$jq( '.collabComPlain', $jq( '#' + this.editCommentName ) ).html()
+		);
 		this.currentPageContent = escape( pageContent );
 		//do ajax call
 		sajax_do_call( 'cef_comment_editPage',
@@ -539,7 +541,7 @@ function CECommentForm() {
 	 * @param: request
 	 */
 	this.editExistingCommentCallback = function( request ) {
-		var elemSelector = '#' + this.editCommentName.replace( /(:|\.)/g, '\\$1' );
+		var elemSelector = '#' + this.editCommentName;
 		var resultDOM = this.XMLResult = CollaborationXMLTools.createDocumentFromString( request.responseText );	
 		var valueEl = resultDOM.getElementsByTagName( 'value' )[0];
 		var htmlmsg = resultDOM.getElementsByTagName( 'message' )[0].firstChild.nodeValue;
@@ -593,7 +595,7 @@ function CECommentForm() {
 		this.editCommentName = null;
 		this.editCommentRelatedComment = null;
 		this.editRatingValue = null;
-		var elemSelector = '#' + pageName.replace( /(:|\.)/g, '\\$1' );
+		var elemSelector = '#' + pageName;
 		$jq( elemSelector ).css( 'background-color', '' );
 		$jq( elemSelector + ' .collabComResText' ).toggle();
 		$jq( elemSelector + ' .collabComResText' ).html(this.savedCommentContent);
@@ -609,8 +611,8 @@ function CECommentForm() {
 	 * 
 	 */
 	this.replyCommentForm = function( pageName ) {
-		this.replyCommentName = ceLanguage.getMessage( 'COMMENT_NS' ) + pageName;
-		var container = $jq( '#' + pageName.replace( /(:|\.)/g, '\\$1' ) );
+		var container = $jq( '#' + pageName );
+		this.replyCommentName = $jq( '.collabComPlain', container ).html();
 		var commentForm = $jq( '#collabComForm' );
 		$jq( '#collabComFormResetbuttonID' ).bind( 'click', function() {
 			commentForm.hide();
@@ -827,22 +829,20 @@ function CECommentForm() {
 		// rebind events
 		var resultComments = $jq( '.collabComRes' );
 		$jq.each( resultComments, function( i, resCom ) {
-			var resComInfo = $jq( '.collabComResInfo', resCom );
-			// name of actual comment
-			var resComName = resComInfo.html();
+			var resComID = $jq( resCom ).attr( 'id' );
 			// deletion
 			$jq( '.collabComDel', resCom ).bind( 'click', function() {
-				$jq( '#' + resComName.replace( /(:|\.)/g, '\\$1' ) ).css(
+				$jq( '#' + resComID ).css(
 					'background-color', '#FAFAD2'
 				);
 			});
 			// edit
 			$jq( '.collabComEdit', resCom ).bind( 'click', function() {
-				ceCommentForm.editCommentForm( resComName );
+				ceCommentForm.editCommentForm( resComID );
 			});
 			// reply
 			$jq( '.collabComReply', resCom ).bind( 'click', function() {
-				ceCommentForm.replyCommentForm( resComName );
+				ceCommentForm.replyCommentForm( resComID );
 			});
 		});
 		this.currentView = 1;
@@ -864,27 +864,21 @@ function CECommentForm() {
 	this.showThreaded = function() {
 		// format comments
 		$jq( '.collabComRes' ).each( function( i, resCom ) {
-			var resComInfo = $jq( '.collabComResInfo', resCom );
-			var superComInfo = $jq( '.collabComResInfoSuper', resCom );
-			// name of the comment, the actual comment is related to (if there's one)
-			var superComName = superComInfo.html();
-			if ( typeof superComName !== 'undefined'
-				&& superComName !== null && superComName !== false 
-				&& superComName !== '')
-			{
-				var resMargin = $jq( '#' + superComName.replace( /(:|\.)/g, '\\$1' ) ).css( 'margin-left' );
+			var superComID = $jq( '.collabComResInfoSuper', resCom ).html();
+			if ( superComID ) {
+				var resMargin = $jq( '#' + superComID ).css( 'margin-left' );
 				var newMargin = '30';
 				if ( typeof( resMargin ) !== 'undefined' ) {
 					newMargin = ( parseInt( resMargin ) + 30 );
 				}
 				// check if there are "child" comments
-				var name = ceCommentForm.getLastChildComment( superComName );
-				if ( name !== superComName ) {
+				var name = ceCommentForm.getLastChildComment( superComID );
+				if ( name !== superComID ) {
 					// child found. add behind.
-					$jq( '#' + name.replace( /(:|\.)/g, '\\$1' ) ).after( $jq( resCom ) );
+					$jq( '#' + name ).after( $jq( resCom ) );
 				} else {
 					// no child found
-					$jq( '#' + superComName.replace( /(:|\.)/g, '\\$1' ) ).after( $jq( resCom ) );
+					$jq( '#' + superComID ).after( $jq( resCom ) );
 				}
 				$jq( resCom ).css( 'margin-left', newMargin + 'px' );
 				$jq( resCom ).addClass( 'comRearranged' );
@@ -899,16 +893,17 @@ function CECommentForm() {
 	 * This is not actually a real child because all comments are siblings.
 	 * It's more like the deepest related comment.
 	 */
-	this.getLastChildComment = function( commentName ) {
-		var childComments = $jq( '.comRearranged' ).filter( function( index ) {
-			var indSuperComName = $jq( '.collabComResInfoSuper', this );
-			return indSuperComName.html() == commentName;
+	this.getLastChildComment = function( commentID ) {
+		var lastChildComment;
+		var childComments = $jq( '.comRearranged' ).filter( function() {
+			var indSuperComID = $jq( '.collabComResInfoSuper', this );
+			return indSuperComID.html() == commentID;
 		});
 		if ( childComments.length > 0 ) {
 			lastChildComment = childComments[childComments.length-1];
 			return this.getLastChildComment( $jq( lastChildComment ).attr( 'id' ) );
 		} else {
-			return commentName;
+			return commentID;
 		}
 	};
 	
@@ -1015,7 +1010,7 @@ function CECommentForm() {
 	/**
 	 * This function adds the toggle element for the comment form.
 	 * 
-	 * @param (boolean) withPipe Indicates if the Text should be extended with a leading pipe symbol
+	 * @param {boolean} withPipe Indicates if the Text should be extended with a leading pipe symbol
 	 */
 	this.addFormToggler = function( withPipe ) {
 		var toggleSpan ='';
@@ -1177,7 +1172,7 @@ function CECommentForm() {
 		// cancel button
 		var cancelButtonDiv = this.createDOMElement( 'div', null, ['ceOverlayCancelButtonDiv'] );
 		$jq( cancelButtonDiv ).bind( 'click', function() {
-			$jq( '#' + pageName.replace( /(:|\.)/g, '\\\\$1' ) ).css( 'background-color', '' );
+			$jq( '#' + pageName ).css( 'background-color', '' );
 		});
 		var cancelButton = this.createDOMElement( 'input',
 			null,
@@ -1304,7 +1299,6 @@ function CECommentForm() {
 		return el;
 	};
 }
-
 //Set global variable for accessing comment form functions
 var ceCommentForm;
 
@@ -1332,9 +1326,7 @@ $jq(document).ready(
 		var resultComments = $jq( '.collabComRes' );
 		var overlayID = 0;
 		$jq.each( resultComments, function( i, resCom ) {
-			var resComInfo = $jq( '.collabComResInfo', resCom );
-			// name of actual comment
-			var resComName = resComInfo.html();
+			var resComID = $jq( resCom ).attr( 'id' );
 			var resComDeleted = $jq( '.collabComResDeletion', resCom );
 			if ( resComDeleted.html() === 'true' ) {
 				$jq( '.collabComResText', resCom ).addClass( 'collabComDeleted' );
@@ -1366,15 +1358,15 @@ $jq(document).ready(
 				|| (wgUserName !== null && commentPerson == wgUserName ) )
 			{
 				//Overlay for deleting comments
-				var overlayDiv = ceCommentForm.createOverlay( overlayID, resComName );
+				var overlayDiv = ceCommentForm.createOverlay( overlayID, resComID );
 				domElement = ceCommentForm.createDOMElement( 'span',
-					'ceDel' + escape(resComName),
+					'ceDel' + resComID,
 					['collabComDel'],
 					[['title', ceLanguage.getMessage( 'ce_delete_title' )],
 					['rel', '#overlay_' + overlayID++]]
 				);
 				$jq( domElement ).bind( 'click', function() {
-					$jq( '#' + resComName.replace( /(:|\.)/g, '\\$1' ) ).addClass( 'collabComDelSelected' );
+					$jq( '#' + resComID ).addClass( 'collabComDelSelected' );
 				});
 				var delImgEl = ceCommentForm.createDOMElement( 'img',
 					null,
@@ -1395,7 +1387,7 @@ $jq(document).ready(
 						[['title', ceLanguage.getMessage( 'ce_edit_title' )]]
 					);
 					$jq( domElement ).bind( 'click', function() {
-						ceCommentForm.editCommentForm( resComName );
+						ceCommentForm.editCommentForm( resComID );
 					});
 					var imgEl = ceCommentForm.createDOMElement( 'img',
 						null,
@@ -1411,7 +1403,7 @@ $jq(document).ready(
 						[['title', ceLanguage.getMessage( 'ce_edit_cancel_title' )]]
 					);
 					$jq( domElement ).bind( 'click', function() {
-						ceCommentForm.cancelCommentEditForm( resComName );
+						ceCommentForm.cancelCommentEditForm( resComID );
 					});
 					var imgCancelEl = ceCommentForm.createDOMElement( 'img',
 						null,
@@ -1435,7 +1427,7 @@ $jq(document).ready(
 					ceLanguage.getMessage( 'ce_com_reply' )
 				);
 				$jq( domElement ).bind( 'click', function() {
-					ceCommentForm.replyCommentForm( resComName );
+					ceCommentForm.replyCommentForm( resComID );
 				});
 
 				var replyImgEl = ceCommentForm.createDOMElement( 'img',

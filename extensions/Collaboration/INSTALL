@@ -5,14 +5,15 @@ Requirements:
 =============
 
 	Deployment Framework (optional)
-	SMW Plus ontology bundle 1.5.3
-	Rich media (optional)
+	SMW Plus ontology bundle 1.5.6
+	Rich Media extension (optional)
+	Widgets extension (optional)
 
 
 Installation:
 =============
 
-The easiest way to install CE is using the deployment framework:
+The easiest way to install CE is using the Deployment Framework:
 
  smwadmin -i collaboration
 
@@ -56,10 +57,3 @@ Options:
 All configuration options are defined and described in /includes/CE_Initialize.php.
 
 To reformat the style of existing comments or of the comment form, use the provided Cascading Style Sheet in '/skins' directory.
-
-
-Notice
-======
-It's highly recommended that you do not change the css definitions for 'div.ce_result_user'
-and img#ce-cf-user-img. They are among others used to downscale the user icon. Changing or deleting
-these values could lead to unintended GUI results.

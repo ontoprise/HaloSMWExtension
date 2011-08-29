@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>140</version>
+		<version>150</version>
 		<id>collaboration</id>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
-			<dependency from="153" to="156">smwplus</dependency>
+			<dependency from="156" to="156">smwplus</dependency>
 			<dependency from="092" optional="true">widgets</dependency>
 			<dependency from="152" optional="true">richmedia</dependency>
 		</dependencies>

@@ -1,11 +1,14 @@
 Collaboration extension ChangeLog
+(numbers according to BugZilla entries at smwforum.ontoprise.com/smwbugs)
 =================================
 
 VERSION 1.40
   FEATURES:
 	FR #13053: Included an option to completely delete a comment
-	FR #14882: Provide PHS with a new release of collaboration extension that supports attaching links to comments
-	FR #14934: Direct upload of files in the comment form is now possible (with Rich media installed)
+	FR #14882: Support attaching links (to files or any other article in the wiki) to comments
+	FR #14934: Direct upload of files in the comment form is now possible (with Extension:RichMedia installed)
+	Added  profiling information to trace code execution time
+	Added a Parser Function to convert binary strings to hex equivalents (to fix HTML ID and jQuery selector issues)
 	Added  profiling information to trace code execution time
   CHANGES:
 	Issue  #14358: Removed localization of parser functions
@@ -13,6 +16,8 @@ VERSION 1.40
 	14481 - Editing of comments was not possible in IE 8
 	14559 - Wiki slows considerable down after installing Collaboration extension
 	14991 - Add style version to css and js includes to improve (loading) performance
+	15104 - Positioning issues when replying on two comments
+	15285 - Comment was replicated not edited
 
 VERSION 1.31
   FEATURES:

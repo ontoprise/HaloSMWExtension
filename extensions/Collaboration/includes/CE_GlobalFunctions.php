@@ -305,7 +305,7 @@ function cefInitContentLanguage($langcode) {
 function cefInitMessages() {
 	global $cegMessagesInitialized;
 	if( isset( $cegMessagesInitialized ) ) {
-		return; // prevent double init
+		return true; // prevent double init
 	}
 
 	cefInitUserMessages(); // lazy init for ajax calls
@@ -324,22 +324,25 @@ function cefInitUserMessages() {
 	cefInitContentLanguage($wgLanguageCode);
 
 	global $cegIP, $cegLang;
-	if (!empty($cegLang)) { return; }
+	if( !empty( $cegLang ) ) {
+		wfProfileOut( __METHOD__ . ' [Collaboration]' );
+		return true;
+	}
 	global $wgMessageCache, $wgLang;
 	$cegLangClass = 'CELanguage' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
-	if (file_exists($cegIP . '/languages/'. $cegLangClass . '.php')) {
+	if( file_exists( $cegIP . '/languages/'. $cegLangClass . '.php' ) ) {
 		include_once( $cegIP . '/languages/'. $cegLangClass . '.php' );
 	}
 	// fallback if language not supported
-	if ( !class_exists($cegLangClass)) {
+	if( !class_exists( $cegLangClass ) ) {
 		global $cegContLang;
 		$cegLang = $cegContLang;
 	} else {
 		$cegLang = new $cegLangClass();
 	}
 
-	$wgMessageCache->addMessages($cegLang->getUserMsgArray(), $wgLang->getCode());
+	$wgMessageCache->addMessages( $cegLang->getUserMsgArray(), $wgLang->getCode() );
 
 	wfProfileOut( __METHOD__ . ' [Collaboration]' );
 	return true;
@@ -418,7 +421,7 @@ function cefAddGlobalJSVariables( &$vars ) {
 	$ns = MWNamespace::getCanonicalName( NS_USER );
 
 	$vars['wgCEScriptPath'] = $cegScriptPath;
-	$vars['wgCEUserNS'] = $ns;
+	$vars['wgCEUserNS'] = $ns = MWNamespace::getCanonicalName( NS_USER );
 	$vars['wgCEEnableFullDeletion'] = $cegEnableRatingForArticles;
 	$vars['wgCEShowCommentsExpanded'] = $cegShowCommentsExpanded;
 	if( isset( $cegEnableFileAttachments ) && $cegEnableFileAttachments ) {

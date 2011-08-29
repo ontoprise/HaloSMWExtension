@@ -47,6 +47,8 @@ function cefInitCommentParserfunctions() {
 	$wgParser->setFunctionHook( 'showcommentform', array( 'CECommentParserFunctions', 'showcommentform' ) );
 	$wgParser->setFunctionHook( 'averagerating', array( 'CECommentParserFunctions', 'getAverageRating' ) );
 	$wgParser->setFunctionHook( 'arraymapce', array( 'CECommentParserFunctions', 'renderArrayMap' ) );
+	$wgParser->setFunctionHook( 'bin2hex', array( 'CECommentParserFunctions', 'ceBin2Hex' ) );
+	
 	return true;
 }
 
@@ -55,6 +57,7 @@ function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 	$magicWords['showcommentform'] = array(0, 'showcommentform' );
 	$magicWords['averagerating'] = array( 0, 'averagerating' );
 	$magicWords['arraymapce'] = array ( 0, 'arraymapce' );
+	$magicWords['bin2hex'] = array ( 0, 'bin2hex' );
 
 	return true;
 }
@@ -371,7 +374,17 @@ class CECommentParserFunctions {
 		wfProfileOut( __METHOD__ . ' [Collaboration]' );
 		return $sum / $count;
 	}
-	
+
+	/**
+	 * Function to convert binary strings to hex equivalents.
+	 * 
+	 * @param Parser $parser
+	 * @param String $str
+	 */
+	public static function ceBin2Hex ( &$parser, $str = '' ) {
+		return bin2hex( $str );
+	}
+
 	/**
 	 * This function is equal to Semantic Form's parser function 'arraymap'
 	 * to store attached articles as property values.
