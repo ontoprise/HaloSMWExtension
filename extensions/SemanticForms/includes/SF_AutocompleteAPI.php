@@ -1,9 +1,13 @@
 <?php
+/**
+ * @file
+ * @ingroup SF
+ */
 
 /**
  * Adds and handles the 'sfautocomplete' action to the MediaWiki API.
  *
- * @ingroup API
+ * @ingroup SF
  *
  * @author Sergey Chernyshev
  * @author Yaron Koren
@@ -15,8 +19,6 @@ class SFAutocompleteAPI extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgContLang;
-
 		$params = $this->extractRequestParams();
 		$substr = $params['substr'];
 		$namespace = $params['namespace'];
@@ -59,10 +61,16 @@ class SFAutocompleteAPI extends ApiBase {
 		}
 		 */
 
+		// Format data as the API requires it.
+		$formattedData = array();
+		foreach ( $data as $value ) {
+			$formattedData[] = array( 'title' => $value );
+		}
+
 		// Set top-level elements.
 		$result = $this->getResult();
-		$result->setIndexedTagName( $data, 'p' );
-		$result->addValue( null, $this->getModuleName(), $data );
+		$result->setIndexedTagName( $formattedData, 'p' );
+		$result->addValue( null, $this->getModuleName(), $formattedData );
 	}
 
 	protected function getAllowedParams() {
@@ -145,7 +153,7 @@ class SFAutocompleteAPI extends ApiBase {
 			
 		while ( $row = $db->fetchRow( $res ) ) {
 			if ( $substring != null ) {
-				$values[] = array( 'title' => str_replace( '_', ' ', $row[0] ) );
+				$values[] = str_replace( '_', ' ', $row[0] );
 			} else {
 				$cur_value = str_replace( "'", "\'", $row[0] );
 				$values[] = str_replace( '_', ' ', $cur_value );

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>212</version>
-        <patchlevel>1</patchlevel>
+        <version>221</version>
+        <patchlevel>0</patchlevel>
         <id>semanticforms</id>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH / Yaron Koren</vendor>
@@ -13,13 +13,12 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
         <dependencies>
-            <dependency from="1130" to="1169">mw</dependency>
-            <dependency from="142" to="156">smw</dependency>
+            <dependency from="1130" to="1179">mw</dependency>
+            <dependency from="142" to="160">smw</dependency>
         </dependencies>
     </global>
     <codefiles>
-
-        <file loc="deploy.xml" />
+		<file loc="deploy.xml" />
         <!-- TODO: add all others -->
     </codefiles>
     <wikidumps>

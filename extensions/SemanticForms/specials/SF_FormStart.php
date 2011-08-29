@@ -5,9 +5,13 @@
  *
  * @author Yaron Koren
  * @author Jeffrey Stuckman
+ * @file
+ * @ingroup SF
  */
-if ( !defined( 'MEDIAWIKI' ) ) die();
 
+/**
+ * @ingroup SFSpecialPages
+ */
 class SFFormStart extends SpecialPage {
 
 	/**
@@ -19,7 +23,7 @@ class SFFormStart extends SpecialPage {
 	}
 
 	function execute( $query ) {
-		global $wgOut, $wgRequest, $sfgScriptPath;
+		global $wgOut, $wgRequest;
 
 		$this->setHeaders();
 
@@ -37,7 +41,7 @@ class SFFormStart extends SpecialPage {
 			// redirect to 'FormEdit' for this target page.
 			if ( isset( $queryparts[1] ) ) {
 				$target_name = $queryparts[1];
-				self::doRedirect( $form_name, $target_name, $params );
+				$this->doRedirect( $form_name, $target_name, $params );
 			}
 
 			// Get namespace from the URL, if it's there.
@@ -78,7 +82,7 @@ class SFFormStart extends SpecialPage {
 					$wgOut->addHTML( htmlspecialchars( wfMsg( 'sf_formstart_badtitle', $page_name ) ) );
 					return;
 				} else {
-					self::doRedirect( $form_name, $page_name, $params );
+					$this->doRedirect( $form_name, $page_name, $params );
 					return;
 				}
 			}
@@ -106,9 +110,9 @@ END;
 				$text .= SFUtils::formDropdownHTML();
 
 			$text .= "\t</p>\n";
-			$text .= "\t" . Xml::hidden( 'namespace', $target_namespace ) . "\n";
-			$text .= "\t" . Xml::hidden( 'super_page', $super_page ) . "\n";
-			$text .= "\t" . Xml::hidden( 'params', $params ) . "\n";
+			$text .= SFFormUtils::hiddenFieldHTML( 'namespace', $target_namespace );
+			$text .= SFFormUtils::hiddenFieldHTML( 'super_page', $super_page );
+			$text .= SFFormUtils::hiddenFieldHTML( 'params', $params );
 			$text .= "\t" . Xml::element( 'input', array( 'type' => 'submit', 'value' => wfMsg( 'sf_formstart_createoredit' ) ) ) . "\n";
 			$text .= "\t</form>\n";
 		}

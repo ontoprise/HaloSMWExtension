@@ -6,13 +6,15 @@
  * a few changes to remove skin CSS and HTML, and to populate the relevant
  * field in the form with the name of the uploaded form.
  *
- * @ingroup SpecialPage
- *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
-
-class SFUploadWindow2 extends UnlistedSpecialPage {
+/**
+ * @ingroup SFSpecialPages
+ */
+class SFUploadWindow2Proto extends UnlistedSpecialPage {
 	/**
 	 * Constructor : initialise object
 	 * Get data POSTed through the form and assign them to the object
@@ -103,22 +105,10 @@ class SFUploadWindow2 extends UnlistedSpecialPage {
 	}
 
 	/**
-	 * This page can be shown if uploading is enabled.
-	 * Handle permission checking elsewhere in order to be able to show
-	 * custom error messages.
-	 *
-	 * @param User $user
-	 * @return bool
-	 */
-	public function userCanExecute( $user ) {
-		return UploadBase::isEnabled() && parent::userCanExecute( $user );
-	}
-
-	/**
 	 * Special page entry point
 	 */
 	public function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest;
+		global $wgUser, $wgOut;
 		// Disable $wgOut - we'll print out the page manually, taking
 		// the body created by the form, plus the necessary Javascript
 		// files, and turning them into an HTML page.
@@ -294,11 +284,7 @@ class SFUploadWindow2 extends UnlistedSpecialPage {
 	 * @param array $warnings
 	 */
 	protected function uploadWarning( $warnings ) {
-		global $wgUser;
-
 		$sessionKey = $this->mUpload->stashSession();
-
-		$sk = $wgUser->getSkin();
 
 		$warningHtml = '<h2>' . wfMsgHtml( 'uploadwarning' ) . "</h2>\n"
 			. '<ul class="warning">';
@@ -580,7 +566,7 @@ END;
 	 * consisting of one or more <li> elements if there is a warning.
 	 */
 	public static function getExistsWarning( $exists ) {
-		global $wgUser, $wgContLang;
+		global $wgUser;
 
 		if ( !$exists )
 			return '';
@@ -709,8 +695,6 @@ class SFUploadForm extends HTMLForm {
 	protected $mSourceIds;
 
 	public function __construct( $options = array() ) {
-		global $wgLang;
-
 		$this->mWatch = !empty( $options['watch'] );
 		$this->mForReUpload = !empty( $options['forreupload'] );
 		$this->mSessionKey = isset( $options['sessionkey'] )
@@ -926,8 +910,6 @@ class SFUploadForm extends HTMLForm {
 	 * @return array Descriptor array
 	 */
 	protected function getOptionsSection() {
-		global $wgOut;
-
 		$descriptor = array(
 			'Watchthis' => array(
 				'type' => 'check',
@@ -974,7 +956,7 @@ class SFUploadForm extends HTMLForm {
 
 		if ( method_exists( $wgOut, 'addModules' ) ) {
 			$head_scripts = '';
-			$wgOut->addModules( array( 'mediawiki.legacy.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
+			$wgOut->addModules( array( 'mediawiki.action.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
 			$body_scripts = $wgOut->getHeadScripts( $sk );
 		} else {
 			global $wgJsMimeType, $wgStylePath, $wgStyleVersion;
@@ -1028,9 +1010,6 @@ END;
 		global $wgStrictFileExtensions;
 		global $wgEnableFirefogg, $wgEnableJS2system;
 		global $wgOut;
-
-		$useAjaxDestCheck = $wgUseAjax && $wgAjaxUploadDestCheck;
-		$useAjaxLicensePreview = $wgUseAjax && $wgAjaxLicensePreview;
 
 		$scriptVars = array(
 			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
@@ -1104,4 +1083,54 @@ class SFUploadSourceField extends HTMLTextField {
 			: 60;
 	}
 	
+}
+
+global $wgVersion;
+$uceMethod = new ReflectionMethod( 'SpecialPage', 'userCanExecute' );
+$uceParams = $uceMethod->getParameters();
+// @TODO The "User" class was added to the function header
+// for SpecialPage::userCanExecute in MW 1.18 (r86407) - somehow
+// both the old and new signatures need to be supported. When support
+// is dropped for MW below 1.18 this should be reintegrated into one
+// class.
+if ( $uceParams[0]->getClass() ) { // found a class definition for param $user
+
+	/**
+	 * Class variant for MW 1.18+
+	 */
+	class SFUploadWindow2 extends SFUploadWindow2Proto {
+		/**
+		 * This page can be shown if uploading is enabled.
+		 * Handle permission checking elsewhere in order to be able to show
+		 * custom error messages.
+		 *
+		 * @param User $user
+		 * @return bool
+		 */
+		public function userCanExecute( User $user ) {
+			return UploadBase::isEnabled() && parent::userCanExecute( $user );
+		}
+
+
+	}
+
+} else {
+
+	/**
+	 * Class variant for MW up to 1.17
+	 */
+	class SFUploadWindow2 extends SFUploadWindow2Proto {
+		/**
+		 * This page can be shown if uploading is enabled.
+		 * Handle permission checking elsewhere in order to be able to show
+		 * custom error messages.
+		 *
+		 * @param User $user
+		 * @return bool
+		 */
+		public function userCanExecute( $user ) {
+			return UploadBase::isEnabled() && parent::userCanExecute( $user );
+		}
+	}
+
 }

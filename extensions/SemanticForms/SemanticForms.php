@@ -1,10 +1,42 @@
 <?php
 /**
  * Default settings for Semantic Forms.
+ *
+ * @file
+ * @ingroup SF
  */
+
+/**
+ * Forms for adding and editing semantic data
+ *
+ * @defgroup SF Semantic Forms
+ */
+
+/**
+ * The module Form Inputs contains form input classes
+ * @defgroup SFFormInput Form Inputs
+ * @ingroup SF
+ */
+
+/**
+ * The module Special Pages contains all Special Pages defined by
+ * Semantic Forms.
+ *
+ * @defgroup SFSpecialPages Special Pages
+ * @ingroup SF
+ */
+
+/**
+ * The module Language contains all language-related classes.
+ *
+ * @defgroup SFLanguage Language
+ * @ingroup SF
+ */
+
+
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define( 'SF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+define( 'SF_VERSION', '2.2.1' );
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'specialpage'][] = array(
 	'path' => __FILE__,
@@ -40,7 +72,7 @@ define( 'SF_SP_CREATES_PAGES_WITH_FORM', 3 );
 define( 'SF_SP_PAGE_HAS_DEFAULT_FORM', 4 );
 define( 'SF_SP_HAS_FIELD_LABEL_FORMAT', 5 );
 
-$wgExtensionFunctions[] = 'sfgSetupExtension';
+$wgExtensionFunctions[] = 'sffSetupExtension';
 
 // FIXME: Can be removed when new style magic words are used (introduced in r52503)
 $wgHooks['LanguageGetMagic'][] = 'SFParserFunctions::languageGetMagic';
@@ -50,12 +82,21 @@ $wgHooks['UnknownAction'][] = 'SFFormEditTab::displayForm';
 $wgHooks['SkinTemplateTabs'][] = 'SFFormEditTab::displayTab';
 $wgHooks['SkinTemplateNavigation'][] = 'SFFormEditTab::displayTab2';
 $wgHooks['smwInitProperties'][] = 'SFUtils::initProperties';
-$wgHooks['AdminLinks'][] = 'sffAddToAdminLinks';
+$wgHooks['AdminLinks'][] = 'SFUtils::addToAdminLinks';
 $wgHooks['ParserBeforeStrip'][] = 'SFUtils::cacheFormDefinition';
 $wgHooks['ParserFirstCallInit'][] = 'SFParserFunctions::registerFunctions';
 $wgHooks['MakeGlobalVariablesScript'][] = 'SFFormUtils::setGlobalJSVariables';
 
+//PSSchema Hooks
+$wgHooks['PageSchemasGetObject'][] = 'SFUtils::createPageSchemasObject' ; //Hook for  returning PageSchema(extension)  object from a given xml 
+$wgHooks['PageSchemasGeneratePages'][] = 'SFUtils::generatePages' ; //Hook for  creating Pages
+$wgHooks['PSParseFieldElements'][] = 'SFUtils::parseFieldElements' ; //Hook for  creating Pages
+$wgHooks['PageSchemasGetPageList'][] = 'SFUtils::getPageList' ; //Hook for  creating Pages
+$wgHooks['getHtmlTextForFieldInputs'][] = 'SFUtils::getHtmlTextForPS' ; //Hook for  retuning html text to PS schema
+
+
 $wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
+$wgAPIModules['sfautoedit'] = 'SFAutoeditAPI';
 
 // register all special pages and other classes
 $wgSpecialPages['Forms'] = 'SFForms';
@@ -101,20 +142,6 @@ $wgAutoloadClasses['SFForm'] = $sfgIP . '/includes/SF_FormClasses.php';
 $wgAutoloadClasses['SFTemplateInForm'] = $sfgIP . '/includes/SF_FormClasses.php';
 $wgAutoloadClasses['SFFormField'] = $sfgIP . '/includes/SF_FormField.php';
 $wgAutoloadClasses['SFFormPrinter'] = $sfgIP . '/includes/SF_FormPrinter.php';
-$wgAutoloadClasses['SFTextInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFTextAreaInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFTextWithAutocompleteInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFTextAreaWithAutocompleteInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFCheckboxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFDateInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFDateTimeInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFDropdownInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFRadioButtonInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFListBoxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFCheckboxesInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFComboBoxInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFCategoryInput'] = $sfgIP . '/includes/SF_FormInputs.php';
-$wgAutoloadClasses['SFCategoriesInput'] = $sfgIP . '/includes/SF_FormInputs.php';
 $wgAutoloadClasses['SFFormUtils'] = $sfgIP . '/includes/SF_FormUtils.php';
 $wgAutoloadClasses['SFFormEditTab'] = $sfgIP . '/includes/SF_FormEditTab.php';
 $wgAutoloadClasses['SFFormEditPage'] = $sfgIP . '/includes/SF_FormEditPage.php';
@@ -122,9 +149,33 @@ $wgAutoloadClasses['SFUtils'] = $sfgIP . '/includes/SF_Utils.php';
 $wgAutoloadClasses['SFFormLinker'] = $sfgIP . '/includes/SF_FormLinker.php';
 $wgAutoloadClasses['SFParserFunctions'] = $sfgIP . '/includes/SF_ParserFunctions.php';
 $wgAutoloadClasses['SFAutocompleteAPI'] = $sfgIP . '/includes/SF_AutocompleteAPI.php';
+$wgAutoloadClasses['SFAutoeditAPI'] = $sfgIP . '/includes/SF_AutoeditAPI.php';
+
+// FormInputs
+$wgAutoloadClasses['SFFormInput'] = $sfgIP . '/includes/forminputs/SF_FormInput.php';
+$wgAutoloadClasses['SFTextInput'] = $sfgIP . '/includes/forminputs/SF_TextInput.php';
+$wgAutoloadClasses['SFTextWithAutocompleteInput'] = $sfgIP . '/includes/forminputs/SF_TextWithAutocompleteInput.php';
+$wgAutoloadClasses['SFTextAreaInput'] = $sfgIP . '/includes/forminputs/SF_TextAreaInput.php';
+$wgAutoloadClasses['SFTextAreaWithAutocompleteInput'] = $sfgIP . '/includes/forminputs/SF_TextAreaWithAutocompleteInput.php';
+$wgAutoloadClasses['SFEnumInput'] = $sfgIP . '/includes/forminputs/SF_EnumInput.php';
+$wgAutoloadClasses['SFMultiEnumInput'] = $sfgIP . '/includes/forminputs/SF_MultiEnumInput.php';
+$wgAutoloadClasses['SFCheckboxInput'] = $sfgIP . '/includes/forminputs/SF_CheckboxInput.php';
+$wgAutoloadClasses['SFCheckboxesInput'] = $sfgIP . '/includes/forminputs/SF_CheckboxesInput.php';
+$wgAutoloadClasses['SFRadioButtonInput'] = $sfgIP . '/includes/forminputs/SF_RadioButtonInput.php';
+$wgAutoloadClasses['SFDropdownInput'] = $sfgIP . '/includes/forminputs/SF_DropdownInput.php';
+$wgAutoloadClasses['SFListBoxInput'] = $sfgIP . '/includes/forminputs/SF_ListBoxInput.php';
+$wgAutoloadClasses['SFComboBoxInput'] = $sfgIP . '/includes/forminputs/SF_ComboBoxInput.php';
+$wgAutoloadClasses['SFDateInput'] = $sfgIP . '/includes/forminputs/SF_DateInput.php';
+$wgAutoloadClasses['SFDateTimeInput'] = $sfgIP . '/includes/forminputs/SF_DateTimeInput.php';
+$wgAutoloadClasses['SFYearInput'] = $sfgIP . '/includes/forminputs/SF_YearInput.php';
+$wgAutoloadClasses['SFCategoryInput'] = $sfgIP . '/includes/forminputs/SF_CategoryInput.php';
+$wgAutoloadClasses['SFCategoriesInput'] = $sfgIP . '/includes/forminputs/SF_CategoriesInput.php';
+
 $wgJobClasses['createPage'] = 'SFCreatePageJob';
 $wgAutoloadClasses['SFCreatePageJob'] = $sfgIP . '/includes/SF_CreatePageJob.php';
 require_once( $sfgIP . '/languages/SF_Language.php' );
+
+$wgAjaxExportList[] = 'SFAutoeditAPI::handleAutoEdit';
 
 $wgExtensionMessagesFiles['SemanticForms'] = $sfgIP . '/languages/SF_Messages.php';
 $wgExtensionAliasesFiles['SemanticForms'] = $sfgIP . '/languages/SF_Aliases.php';
@@ -154,8 +205,8 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 			),
 		),
 		'ext.semanticforms.fancybox' => $sfgResourceTemplate + array(
-			'scripts' => 'libs/jquery.fancybox-1.3.1.js',
-			'styles' => 'skins/jquery.fancybox-1.3.1.css',
+			'scripts' => 'libs/jquery.fancybox.js',
+			'styles' => 'skins/jquery.fancybox.css',
 		),
 		'ext.semanticforms.autogrow' => $sfgResourceTemplate + array(
 			'scripts' => 'libs/SF_autogrow.js',
@@ -163,6 +214,21 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 		'ext.semanticforms.popupformedit' => $sfgResourceTemplate + array(
 			'scripts' => 'libs/SF_popupform.js',
 			'styles' => 'skins/SF_popupform.css',
+			'dependencies' => array( 'jquery' ),
+		),
+		'ext.semanticforms.autoedit' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_autoedit.js',
+			'styles' => 'skins/SF_autoedit.css',
+			'dependencies' => array( 'jquery' ),
+		),
+		'ext.semanticforms.submit' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_submit.js',
+			'styles' => 'skins/SF_submit.css',
+			'dependencies' => array( 'jquery' ),
+		),
+		'ext.semanticforms.collapsible' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_collapsible.js',
+			'styles' => 'skins/SF_collapsible.css',
 			'dependencies' => array( 'jquery' ),
 		),
 	);
@@ -261,5 +327,3 @@ $wgPageProps['formdefinition'] = 'Definition of the semantic form used on the pa
 # ##
 $sfgShowOnSelect = array();
 $sfgAutocompleteValues = array();
-$sfgInitJSFunctions = array();
-$sfgValidationJSFunctions = array();

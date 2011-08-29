@@ -3,10 +3,13 @@
  * Shows list of all forms on the site.
  *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) die();
-
+/**
+ * @ingroup SFSpecialPages
+ */
 class SFForms extends SpecialPage {
 
 	/**
@@ -30,6 +33,9 @@ class SFForms extends SpecialPage {
 	}
 }
 
+/**
+ * @ingroup SFSpecialPages
+ */
 class FormsPage extends QueryPage {
 	public function __construct( $name = 'Forms' ) {
 		// For MW <= 1.17
@@ -90,6 +96,6 @@ class FormsPage extends QueryPage {
 
 	function formatResult( $skin, $result ) {
 		$title = Title::makeTitle( SF_NS_FORM, $result->value );
-		return $skin->makeLinkObj( $title, $title->getText() );
+		return $skin->makeLinkObj( $title, htmlspecialchars( $title->getText() ) );
 	}
 }

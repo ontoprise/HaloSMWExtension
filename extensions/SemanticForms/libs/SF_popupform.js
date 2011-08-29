@@ -230,7 +230,10 @@ window.ext.popupform = new function() {
 			minWidth: "0px",
 			minHeight:"0px",
 			overflow: "visible",
-			position: "absolute"
+			position: "absolute",
+			top: "0",
+			left: "0",
+			border: "none"
 		} )
 		.parents().css( {
 			margin: 0,
@@ -501,9 +504,10 @@ window.ext.popupform = new function() {
 		// find the dimensions of the document
 
 		var html = content.closest('html');
-		var scrollTgt = html;
 
-		if( jQuery.browser.webkit || jQuery.browser.safari ){
+		var scrollTgt = html;
+			
+		if ( jQuery.browser.webkit || jQuery.browser.safari ) {
 			scrollTgt = content.closest('body');
 		}
 
@@ -532,15 +536,13 @@ window.ext.popupform = new function() {
 		.width( oldContW )
 		.height( oldContH );
 
-		var docW, docH;
-
 		if ( jQuery.browser.msie ) {
 			docW += 20;
 			docH += 20;
 		}
 
-		docpW = docW + 2 * padding;
-		docpH = docH + 2 * padding;
+		var docpW = docW + 2 * padding;
+		var docpH = docH + 2 * padding;
 
 		// Flags
 
@@ -601,8 +603,11 @@ window.ext.popupform = new function() {
 
 		if ( frameW != oldFrameW || frameH != oldFrameH ) {
 
-			iframe[0].style.overflow="hidden";
-			html[0].style.overflow="hidden";
+			if ( jQuery.browser.safari ) {
+				html[0].style.overflow="hidden";
+			} else {
+				iframe[0].style.overflow="hidden";
+			}
 
 			if ( animate ) {
 
@@ -619,12 +624,12 @@ window.ext.popupform = new function() {
 					duration: 500,
 					complete: function() {
 
-						if ( jQuery.browser.msie ) {
+						if ( jQuery.browser.safari ) {
+							html[0].style.overflow="visible";
+						} else if ( jQuery.browser.msie ) {
 							iframe[0].style.overflow="auto";
-							html[0].style.overflow="auto";
 						} else {
 							iframe[0].style.overflow="visible";
-							html[0].style.overflow="visible";
 						}
 
 						if ( jQuery.browser.mozilla ) {
@@ -651,13 +656,15 @@ window.ext.popupform = new function() {
 				}
 
 				setTimeout(function(){
-					if ( jQuery.browser.msie ) {
-						iframe[0].style.overflow="auto";
-						html[0].style.overflow="auto";
-					} else {
-						iframe[0].style.overflow="visible";
-						html[0].style.overflow="visible";
-					}
+
+						if ( jQuery.browser.safari ) {
+							html[0].style.overflow="visible";
+						} else if ( jQuery.browser.msie ) {
+							iframe[0].style.overflow="auto";
+						} else {
+							iframe[0].style.overflow="visible";
+						}
+
 				}, 100);
 
 				if ( jQuery.browser.mozilla ) {
@@ -679,9 +686,9 @@ window.ext.popupform = new function() {
 			if ( jQuery.browser.safari ) { // Google chrome needs a kick
 
 				// turn scrollbars off and on again to really only show them when needed
-				html[0].style.overflow="hidden";
+					html[0].style.overflow="hidden";
 
-				setTimeout(function(){
+					setTimeout(function(){
 						html[0].style.overflow="visible";
 				}, 1);
 			}

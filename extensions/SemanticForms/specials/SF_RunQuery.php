@@ -3,10 +3,13 @@
  * Displays a pre-defined form that a user can run a query with.
  *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) die();
-
+/**
+ * @ingroup SFSpecialPages
+ */
 class SFRunQuery extends IncludableSpecialPage {
 
 	/**
@@ -27,7 +30,7 @@ class SFRunQuery extends IncludableSpecialPage {
 	}
 
 	static function printPage( $form_name, $embedded = false ) {
-		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $wgParser;
+		global $wgOut, $wgRequest, $sfgFormPrinter, $wgParser;
 
 		// Get contents of form-definition page.
 		$form_title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
@@ -79,8 +82,12 @@ class SFRunQuery extends IncludableSpecialPage {
 			global $wgUser, $wgTitle, $wgOut;
 			$wgParser->mOptions = new ParserOptions();
 			$wgParser->mOptions->initialiseFromUser( $wgUser );
+			// @TODO - fix RunQuery's parsing so that this check
+			// isn't needed.
+			if ( $wgParser->getOutput() == null ) {
+				$headItems = array();
 			// method was added in MW 1.16
-			if ( method_exists( $wgParser->getOutput(), 'getHeadItems' ) ) {
+			} elseif ( method_exists( $wgParser->getOutput(), 'getHeadItems' ) ) {
 				$headItems = $wgParser->getOutput()->getHeadItems();
 			} else {
 				$headItems = $wgParser->getOutput()->mHeadItems;
@@ -108,7 +115,7 @@ class SFRunQuery extends IncludableSpecialPage {
 	<form id="sfForm" name="createbox" action="$action" method="post" class="createbox">
 
 END;
-			$text .= "\t" . Xml::hidden( 'query', 'true' ) . "\n";
+			$text .= SFFormUtils::hiddenFieldHTML( 'query', 'true' );
 			$text .= $form_text;
 		}
 		if ( $embedded ) {
@@ -125,7 +132,9 @@ END;
 			$wgParser->getOutput()->addHeadItem( $script );
 		} else {
 			$wgOut->addScript( $script );
-			$wgOut->addParserOutputNoText( $wgParser->getOutput() );
+			if ($wgParser->getOutput()) {
+				$wgOut->addParserOutputNoText( $wgParser->getOutput() );
+			}
 		}
 
 		// Finally, set the page title - for MW <= 1.16, this has to be

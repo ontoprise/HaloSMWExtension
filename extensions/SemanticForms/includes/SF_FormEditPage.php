@@ -1,11 +1,17 @@
 <?php
 /**
- * Form Edit Page inheriting from EditPage
+ * Contains Form Edit Page inheriting from EditPage
  * 
  * @author Daniel Friesen
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * Form Edit Page inheriting from EditPage
+ * @ingroup SF
+ */
 class SFFormEditPage extends EditPage {
 
 	protected $form, $form_name;
@@ -43,7 +49,6 @@ class SFFormEditPage extends EditPage {
 	}
 	
 	protected function showContentForm() {
-		global $sfgIP;
 		$target_title = $this->mArticle->getTitle();
 		$target_name = SFUtils::titleString( $target_title );
 		if ( $target_title->exists() ) {

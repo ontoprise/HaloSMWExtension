@@ -321,6 +321,13 @@ function showDiv(div_id, instanceWrapperDiv) {
 // Hide a div due to "show on select". The CSS class is there so that SF can
 // ignore the div's contents when the form is submitted.
 function hideDiv(div_id, instanceWrapperDiv) {
+	// IDs can't contain spaces, and jQuery won't work with such IDs - if
+	// this one has a space, display an alert.
+	if ( div_id.indexOf( ' ' ) > -1 ) {
+		// TODO - this should probably be a language value, instead of
+		// hardcoded in English.
+		alert( "Warning: this form has \"show on select\" pointing to an invalid element ID (\"" + div_id + "\") - IDs in HTML cannot contain spaces." );
+	}
 	if (instanceWrapperDiv != null) {
 		instanceWrapperDiv.find('[origID=' + div_id + ']').find("span, div").addClass('hiddenBySF');
 		instanceWrapperDiv.find('[origID=' + div_id + ']').hide();
@@ -333,11 +340,11 @@ function hideDiv(div_id, instanceWrapperDiv) {
 // Show this div if the current value is any of the relevant options -
 // otherwise, hide it.
 function showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv) {
-	for (var j in options) {
+	for ( var i = 0; i < options.length; i++ ) {
 		// If it's a listbox and the user has selected more than one
 		// value, it'll be an array - handle either case.
-		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[j], inputVal) >= 0) ||
-		    (!jQuery.isArray(inputVal) && (inputVal == options[j]))) {
+		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[i], inputVal) >= 0) ||
+		    (!jQuery.isArray(inputVal) && (inputVal == options[i]))) {
 			showDiv(div_id, instanceWrapperDiv);
 			return;
 		}
@@ -355,17 +362,19 @@ jQuery.fn.showIfSelected = function(partOfMultiple) {
 		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
 		var instanceWrapperDiv = null;
 	}
-	for (i in showOnSelectVals) {
-		var options = showOnSelectVals[i][0];
-		var div_id = showOnSelectVals[i][1];
-		showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv);
+	if ( showOnSelectVals !== undefined ) {
+		for ( var i = 0; i < showOnSelectVals.length; i++ ) {
+			var options = showOnSelectVals[i][0];
+			var div_id = showOnSelectVals[i][1];
+			showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv);
+		}
 	}
 }
 
 // Show this div if any of the relevant selections are checked -
 // otherwise, hide it.
 jQuery.fn.showDivIfChecked = function(options, div_id, instanceWrapperDiv) {
-	for (var i in options) {
+	for ( var i = 0; i < options.length; i++ ) {
 		if (jQuery(this).find('[value="' + options[i] + '"]').is(":checked")) {
 			showDiv(div_id, instanceWrapperDiv);
 			return;
@@ -384,10 +393,12 @@ jQuery.fn.showIfChecked = function(partOfMultiple) {
 		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
 		var instanceWrapperDiv = null;
 	}
-	for (i in showOnSelectVals) {
-		var options = showOnSelectVals[i][0];
-		var div_id = showOnSelectVals[i][1];
-		this.showDivIfChecked(options, div_id, instanceWrapperDiv);
+	if ( showOnSelectVals !== undefined ) {
+		for ( var i = 0; i < showOnSelectVals.length; i++ ) {
+			var options = showOnSelectVals[i][0];
+			var div_id = showOnSelectVals[i][1];
+			this.showDivIfChecked(options, div_id, instanceWrapperDiv);
+		}
 	}
 }
 
@@ -577,7 +588,7 @@ window.validateAll = function () {
 	if ( sfdata && sfdata.validationFunctions.length > 0 ) { // found data object?
 
 		// for every registered input
-		for ( var i = 0; i < sfdata.validationFunctions.length; ++i ) {
+		for ( var i = 0; i < sfdata.validationFunctions.length; i++ ) {
 
 			// if input is not part of multipleTemplateStarter
 			if ( jQuery("#" + sfdata.validationFunctions[i].input).closest(".multipleTemplateStarter").length == 0 ) {
@@ -651,12 +662,12 @@ jQuery.fn.addInstance = function() {
 				// register initialization and validation methods for new inputs
 
 				var sfdata = jQuery("#sfForm").data('SemanticForms');
-				if (sfdata) { // found data object?
+				if ( sfdata && sfdata.initFunctions[old_id] ) { // found data object?
 
 					// For every initialization method for
 					// input with id old_id, register the
 					// method for the new input.
-					for ( var i in sfdata.initFunctions[old_id] ) {
+					for ( var i = 0; i < sfdata.initFunctions[old_id].length; i++ ) {
 
 						jQuery(this).SemanticForms_registerInputInit(
 							sfdata.initFunctions[old_id][i].initFunction,
@@ -668,7 +679,7 @@ jQuery.fn.addInstance = function() {
 					// For every validation method for the
 					// input with ID old_id, register it
 					// for the new input.
-					for ( var i = 0; i < sfdata.validationFunctions.length; ++i ) {
+					for ( var i = 0; i < sfdata.validationFunctions.length; i++ ) {
 
 						if ( sfdata.validationFunctions[i].input == old_id ) {
 
@@ -731,10 +742,10 @@ jQuery.fn.addInstance = function() {
 			if (this.id) {
 
 				var sfdata = jQuery("#sfForm").data('SemanticForms');
-				if (sfdata) { // if anything registered at all
+				if ( sfdata && sfdata.initFunctions[this.id] ) { // if anything registered at all
 					// Call every initialization method
 					// for this input
-					for ( var i in sfdata.initFunctions[this.id] ) {
+					for ( var i = 0; i < sfdata.initFunctions[this.id].length; i++ ) {
 						sfdata.initFunctions[this.id][i].initFunction(
 							this.id,
 							sfdata.initFunctions[this.id][i].parameters
@@ -800,6 +811,7 @@ var num_elements = 0;
 jQuery(document).ready(function() {
 	jQuery('body').initializeJSElements(false);
 
+	jQuery('.multipleTemplateInstance').initializeJSElements(true);
 	jQuery('.multipleTemplateAdder').click( function() { jQuery(this).addInstance(); } );
 	jQuery('.multipleTemplateList').sortable({
 		axis: 'y',
@@ -821,6 +833,7 @@ jQuery(document).ready(function() {
 			var name= select[0].name;
 			var id = select[0].id;
 			var curval = select[0].options[0].value;
+			curval = curval.replace('"', '&quot;' );
 			var input = jQuery("<input id=\"" + id + "\" type=\"text\" name=\" " + name + " \" value=\"" + curval + "\">")
 				.insertAfter(select)
 				.attr("tabIndex", select.attr("tabIndex"))

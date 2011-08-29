@@ -2,26 +2,35 @@
 /**
  * Defines a class, SFTemplateField, that represents a field in a template,
  * including any possible semantic aspects it may have. Used in both creating
- * templates and displaying user-created forms
+ * templates and displaying user-created forms.
  *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
 class SFTemplateField {
-	var $field_name;
-	var $value_labels;
-	var $label;
-	var $semantic_property;
-	var $field_type;
-	var $field_type_id;
-	var $possible_values;
-	var $is_list;
-	var $input_type;
+	private $mFieldName;
+	private $mValueLabels;
+	private $mLabel;
+	private $mSemanticProperty;
+	private $mPropertyType;
+	private $mPossibleValues;
+	private $mIsList;
+	private $mDelimiter;
+	private $mInputType;
 
-	static function create( $name, $label ) {
+	static function create( $name, $label, $semanticProperty = null, $isList = null, $delimiter = null ) {
 		$f = new SFTemplateField();
-		$f->field_name = trim( str_replace( '\\', '', $name ) );
-		$f->label = trim( str_replace( '\\', '', $label ) );
+		$f->mFieldName = trim( str_replace( '\\', '', $name ) );
+		$f->mLabel = trim( str_replace( '\\', '', $label ) );
+		$f->setSemanticProperty( $semanticProperty );
+		$f->mIsList = $isList;
+		$f->mDelimiter = $delimiter;
+		// Delimiter should default to ','.
+		if ( !empty( $isList ) && empty( $delimiter ) ) {
+			$f->mDelimiter = ',';
+		}
 		return $f;
 	}
 
@@ -30,14 +39,14 @@ class SFTemplateField {
 	 * in the template definition (which we first have to find)
 	 */
 	static function createFromList( $field_name, $all_fields, $strict_parsing ) {
-		// see if this field matches one of the fields defined for
+		// See if this field matches one of the fields defined for
 		// the template it's part of - if it is, use all available
 		// information about that field; if it's not, either create
 		// an object for it or not, depending on whether the
-		// template has a 'strict' setting in the form definition
+		// template has a 'strict' setting in the form definition.
 		$the_field = null;
 		foreach ( $all_fields as $cur_field ) {
-			if ( $field_name == $cur_field->field_name ) {
+			if ( $field_name == $cur_field->mFieldName ) {
 				$the_field = $cur_field;
 				break;
 			}
@@ -52,50 +61,96 @@ class SFTemplateField {
 	}
 
 	function setTypeAndPossibleValues() {
-		$propValue = SMWPropertyValue::makeUserProperty( $this->semantic_property );
-		$proptitle = Title::makeTitleSafe( SMW_NS_PROPERTY, $this->semantic_property );
-		if ( $proptitle === NULL )
+		$proptitle = Title::makeTitleSafe( SMW_NS_PROPERTY, $this->mSemanticProperty );
+		if ( $proptitle === null ) {
 			return;
-		$store = smwfGetStore();
-		$types = $store->getPropertyValues( $proptitle, SMWPropertyValue::makeUserProperty( "Has type" ) );
-		// this returns an array of objects
-		$allowed_values = $store->getPropertyValues( $proptitle, SMWPropertyValue::makeUserProperty( "Allows value" ) );
-		$label_formats = $store->getPropertyValues( $proptitle, SMWPropertyValue::makeUserProperty( "Has field label format" ) );
-		// TODO - need handling for the case of more than one type
-		$this->field_type_id = $propValue->getPropertyTypeID();
-		if ( count( $types ) > 0 ) {
-			$this->field_type = $types[0]->getWikiValue();
 		}
 
-		foreach ( $allowed_values as $value ) {
+		$store = smwfGetStore();
+		// this returns an array of objects
+		$allowed_values = SFUtils::getSMWPropertyValues( $store, $proptitle, "Allows value" );
+		$label_formats = SFUtils::getSMWPropertyValues( $store, $proptitle, "Has field label format" );
+		if ( class_exists( 'SMWDIProperty' ) ) {
+			// SMW 1.6+
+			$propValue = SMWDIProperty::newFromUserLabel( $this->mSemanticProperty );
+			$this->mPropertyType = $propValue->findPropertyTypeID();
+		} else {
+			$propValue = SMWPropertyValue::makeUserProperty( $this->mSemanticProperty );
+			$this->mPropertyType = $propValue->getPropertyTypeID();
+		}
+
+		foreach ( $allowed_values as $allowed_value ) {
 			// HTML-unencode each value
-			$wiki_value = html_entity_decode( $value->getWikiValue() );
-			$this->possible_values[] = $wiki_value;
+			$this->mPossibleValues[] = html_entity_decode( $allowed_value );
 			if ( count( $label_formats ) > 0 ) {
-				$label_format = $label_formats[0]->getWikiValue();
-				$prop_instance = SMWDataValueFactory::findTypeID( $this->field_type );
+				$label_format = $label_formats[0];
+				$prop_instance = SMWDataValueFactory::findTypeID( $this->mPropertyType );
 				$label_value = SMWDataValueFactory::newTypeIDValue( $prop_instance, $wiki_value );
 				$label_value->setOutputFormat( $label_format );
-				$this->value_labels[$wiki_value] = html_entity_decode( $label_value->getWikiValue() );
+				$this->mValueLabels[$wiki_value] = html_entity_decode( $label_value->getWikiValue() );
 			}
 		}
 
-		// HACK - if there were any possible values, set the field
+		// HACK - if there were any possible values, set the property
 		// type to be 'enumeration', regardless of what the actual type is
-		if ( count( $this->possible_values ) > 0 ) {
-			$this->field_type = 'enumeration';
-			$this->field_type_id = 'enumeration';
+		if ( count( $this->mPossibleValues ) > 0 ) {
+			$this->mPropertyType = 'enumeration';
 		}
 	}
 
 	/**
-	 * Called when template is parsed during the creation of a form
+	 * Called if a matching property is found for a template field when
+	 * a template is parsed during the creation of a form.
 	 */
 	function setSemanticProperty( $semantic_property ) {
-		$this->semantic_property = str_replace( '\\', '', $semantic_property );
-		$this->possible_values = array();
+		$this->mSemanticProperty = str_replace( '\\', '', $semantic_property );
+		$this->mPossibleValues = array();
 		// set field type and possible values, if any
 		$this->setTypeAndPossibleValues();
+	}
+
+	function getFieldName() {
+		return $this->mFieldName;
+	}
+
+	function getValueLabels() {
+		return $this->mValueLabels;
+	}
+
+	function getLabel() {
+		return $this->mLabel;
+	}
+
+	function getSemanticProperty() {
+		return $this->mSemanticProperty;
+	}
+
+	function getPropertyType() {
+		return $this->mPropertyType;
+	}
+
+	function getPossibleValues() {
+		return $this->mPossibleValues;
+	}
+
+	function isList() {
+		return $this->mIsList;
+	}
+
+	function getInputType() {
+		return $this->mInputType;
+	}
+
+	function setTemplateField( $templateField ) {
+		$this->mTemplateField = $templateField;
+	}
+
+	function setLabel( $label ) {
+		$this->mLabel = $label;
+	}
+
+	function setInputType( $inputType ) {
+		$this->mInputType = $inputType;
 	}
 
 	/**
@@ -116,7 +171,7 @@ END;
 		$text .= '{{' . $template_name;
 		if ( count( $template_fields ) > 0 ) { $text .= "\n"; }
 		foreach ( $template_fields as $field ) {
-			$text .= "|" . $field->field_name . "=\n";
+			$text .= "|" . $field->mFieldName . "=\n";
 		}
 		$template_footer = wfMsgForContent( 'sf_template_docufooter' );
 		$text .= <<<END
@@ -134,7 +189,7 @@ END;
 			$setInternalText = null;
 		}
 
-  		// Topmost part of table depends on format
+ 		// Topmost part of table depends on format.
 		if ( $template_format == 'infobox' ) {
 			// A CSS style can't be used, unfortunately, since most
 			// MediaWiki setups don't have an 'infobox' or
@@ -153,35 +208,35 @@ END;
 			if ( $i > 0 ) {
 				$tableText .= "|-\n";
 			}
-			$tableText .= "! " . $field->label . "\n";
-			if ( $field->semantic_property == null || $field->semantic_property == '' ) {
-				$tableText .= "| {{{" . $field->field_name . "|}}}\n";
+			$tableText .= "! " . $field->mLabel . "\n";
+			if ( empty( $field->mSemanticProperty ) ) {
+				$tableText .= "| {{{" . $field->mFieldName . "|}}}\n";
 				// if this field is meant to contain a list,
 				// add on an 'arraymap' function, that will
 				// call this semantic markup tag on every
 				// element in the list
 			} elseif ( !is_null( $setInternalText ) ) {
-				if ( $field->is_list ) {
-					$setInternalText .= '|' . $field->semantic_property . '#list={{{' . $field->field_name . '|}}}';
+				if ( $field->mIsList ) {
+					$setInternalText .= '|' . $field->mSemanticProperty . '#list={{{' . $field->mFieldName . '|}}}';
 				} else {
-					$setInternalText .= '|' . $field->semantic_property . '={{{' . $field->field_name . '|}}}';
+					$setInternalText .= '|' . $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}';
 				}
-			} elseif ( $field->is_list ) {
+			} elseif ( $field->mIsList ) {
 				// find a string that's not in the semantic
 				// field call, to be used as the variable
 				$var = "x"; // default - use this if all the attempts fail
-				if ( strstr( $field->semantic_property, $var ) ) {
+				if ( strstr( $field->mSemanticProperty, $var ) ) {
 					$var_options = array( 'y', 'z', 'xx', 'yy', 'zz', 'aa', 'bb', 'cc' );
 					foreach ( $var_options as $option ) {
-						if ( ! strstr( $field->semantic_property, $option ) ) {
+						if ( ! strstr( $field->mSemanticProperty, $option ) ) {
 							$var = $option;
 							break;
 						}
 					}
 				}
-				$tableText .= "| {{#arraymap:{{{" . $field->field_name . "|}}}|,|$var|[[" . $field->semantic_property . "::$var]]}}\n";
+				$tableText .= "| {{#arraymap:{{{" . $field->mFieldName . "|}}}|" . $field->mDelimiter . "|$var|[[" . $field->mSemanticProperty . "::$var]]}}\n";
 			} else {
-				$tableText .= "| [[" . $field->semantic_property . "::{{{" . $field->field_name . "|}}}]]\n";
+				$tableText .= "| [[" . $field->mSemanticProperty . "::{{{" . $field->mFieldName . "|}}}]]\n";
 			}
 		}
 

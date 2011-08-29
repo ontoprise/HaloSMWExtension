@@ -6,6 +6,8 @@
  * MediaWiki data store.
  *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
@@ -31,12 +33,22 @@ class SFFormLinker {
 			die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
 		}
 		$store = smwfGetStore();
-		$title_text = SFUtils::titleString( $title );
-		$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $title_text );
+		// SMW 1.6+
+		if ( class_exists( 'SMWDataItem' ) ) {
+			$value = SMWDIWikiPage::newFromTitle( $title );
+		} else {
+			$title_text = SFUtils::titleString( $title );
+			$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $title_text );
+		}
 		$properties = $store->getInProperties( $value );
 		$propertyNames = array();
 		foreach( $properties as $property ) {
-			$property_name = $property->getWikiValue();
+			// SMW 1.6+
+			if ( $property instanceof SMWDIProperty ) {
+				$property_name = $property->getKey();
+			} else {
+				$property_name = $property->getWikiValue();
+			}
 			if ( !empty( $property_name ) ) {
 				$propertyNames[] = $property_name;
 			}
@@ -121,24 +133,15 @@ class SFFormLinker {
 		}
 			
 		$store = smwfGetStore();
-		$title = Title::makeTitleSafe( $page_namespace, $page_name );
-		$property = SMWPropertyValue::makeProperty( $prop_smw_id );
-		$res = $store->getPropertyValues( $title, $property );
-		$form_names = array();
-		foreach ( $res as $wiki_page_value ) {
-			$form_title = $wiki_page_value->getTitle();
-			if ( ! is_null( $form_title ) ) {
-				$form_names[] = $form_title->getText();
-			}
-		}
-		// if we're using a non-English language, check for the English string as well
+		$subject = Title::makeTitleSafe( $page_namespace, $page_name );
+		$form_names = SFUtils::getSMWPropertyValues( $store, $subject, $prop_smw_id );
+		
+		// If we're using a non-English language, check for the English
+		// string as well.
 		if ( ! class_exists( 'SF_LanguageEn' ) || ! $sfgContLang instanceof SF_LanguageEn ) {
-			$backup_property = SMWPropertyValue::makeProperty( $backup_prop_smw_id );
-			$res = $store->getPropertyValues( $title, $backup_property );
-			foreach ( $res as $wiki_page_value )
-				$form_names[] = $wiki_page_value->getTitle()->getText();
+			$backup_form_names = SFUtils::getSMWPropertyValues( $store, $subject, $backup_prop_smw_id );
+			$form_names = array_merge( $form_names, $backup_form_names );
 		}
-		$form_names = array_unique( $form_names );
 		// Add this data to the "cache".
 		self::$mLinkedForms[$page_key][$form_connection_type] = $form_names;
 		return $form_names;
@@ -283,8 +286,9 @@ class SFFormLinker {
 		// See if the page itself has a default form (or forms), and
 		// return it/them if so.
 		$default_forms = self::getFormsThatPagePointsTo( $title->getText(), $title->getNamespace(), self::PAGE_DEFAULT_FORM );
-		if ( count( $default_forms ) > 0 )
+		if ( count( $default_forms ) > 0 ) {
 			return $default_forms;
+		}
 		// If this is not a category page, look for a default form
 		// for its parent category or categories.
 		$namespace = $title->getNamespace();
