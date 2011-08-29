@@ -291,7 +291,11 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		$annotationValues, $queryConditions, $cssSelector, $fieldNr, $articleName){
 
 	//first check type
-	$property = SMWPropertyValue::makeUserProperty($annotationName);
+	if($annotationName != TF_CATEGORY_KEYWORD){	
+		$property = SMWPropertyValue::makeUserProperty('a'.$annotationName);
+	} else {
+		$property = null;
+	}
 	
 	//test with record data type
 	
@@ -299,7 +303,11 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 	if(strlen(trim($annotationValue)) == 0){
 		$isValid = true;
 	} else {
-		$nDV = SMWDataValueFactory::newPropertyObjectValue($property, $annotationValue);
+		if(!is_null($property)){
+			$nDV = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $annotationValue);
+		} else {
+			$nDV = SMWDataValueFactory::newTypeIdValue('_wpg', $annotationValue);
+		}
 		$isValid = $nDV->isValid();
 	}
 	$invalidValueMsg = '';
@@ -330,16 +338,17 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		}
 		
 		$queryConditions = json_decode($queryConditions, true);
-		
-		
-		
 		foreach($queryConditions as $comparator => $compareValues){
 			
 			foreach($compareValues as $i => $compareValue){
 				
-				$cDV = SMWDataValueFactory::newPropertyObjectValue($property, $compareValue);
-				$cdbKeys = $cDV->getDBkeys();
-				$cVal = $cdbKeys[$cDV->getValueIndex()];
+				if($property != null){
+					$cDV = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $compareValue);
+				} else {
+					$cDV = SMWDataValueFactory::newTypeIdValue('_wpg', $compareValue);
+				}
+				
+				$cVal = $cDV->getDataItem()->getSortKey();
 				
 				if($cDV instanceof SMWWikiPageValue ){
 					if($annotationName != TF_CATEGORY_KEYWORD){
@@ -367,11 +376,14 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 					}
 				} else {
 					foreach($annotationValues as $key => $annotationValue){
-					
-						$aDV = SMWDataValueFactory::newPropertyObjectValue(
-							$property, str_replace('++##/##++', ';', $annotationValue));
-						$adbKeys = $aDV->getDBkeys();
-						$aVal = $adbKeys[$aDV->getValueIndex()];
+						
+						if($property != null){
+							$aDV = SMWDataValueFactory::newPropertyObjectValue(
+								$property->getDataItem(), str_replace('++##/##++', ';', $annotationValue));
+						} else {
+							$aDV = SMWDataValueFactory::newTypeIdValue('_wpg', $annotationValue);
+						}
+						$aVal = $aDV->getDataItem()->getSortKey();
 						
 						if($aDV instanceof SMWWikiPageValue){
 							if($annotationName != TF_CATEGORY_KEYWORD){
@@ -463,6 +475,7 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		
 	$result = array('isValid' => $isValid, 'lost' => $getsLost, 'looseWarnings' => $warnings,
 		'cssSelector' => $cssSelector, 'fieldNr' => $fieldNr, 'invalidValueMsg' => $invalidValueMsg);
+	
 	$result = json_encode($result);
 
 	return '--##starttf##--' . $result . '--##endtf##--';

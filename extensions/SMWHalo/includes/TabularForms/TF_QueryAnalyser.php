@@ -46,7 +46,7 @@ class TFQueryAnalyser {
 		//check if there is a manual instance name preload value
 		foreach($querySerialization as $part){
 			if(strpos($part, 'instance name preload value') === 0
-					&& strpos($part, '=') > ß){
+					&& strpos($part, '=') > 0){
 				$part = explode('=', $part, 2);
 				$instanceNamePreloadValue = trim($part[1]);
 			}
@@ -56,7 +56,7 @@ class TFQueryAnalyser {
 		if($isSPARQL){
 			$conditions = array();
 		} else {
-			$conditions = self::getQueryConditions($querySerialization);
+			$conditions = self::getQueryConditions($querySerialization, $isSPARQL);
 		}
 		
 		//combine manual and automatic preload values
@@ -97,11 +97,9 @@ class TFQueryAnalyser {
 		} else {
 			//first create query objectt in irder to retrieve query description
 			$queryObject = self::getQueryObject($querySerialization);
-	
+			
 			$conditions = self::doGetQueryConditions($queryObject->getDescription());
 	
-			//file_put_contents("d://tf_conditions.rtf", print_r($conditions, true));
-
 			return $conditions;
 		}
 	}
@@ -125,11 +123,11 @@ class TFQueryAnalyser {
 		
 			if($desc instanceof SMWClassDescription){ //one or more category conditions
 				
-				$categoryTitles = $desc->getCategories();
-				foreach($categoryTitles as $title){
-					if($title instanceof Title){			
-						if(@ !in_array($title->getText(), $conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ])){
-							$conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ][] = $title->getText(); 
+				$categoryItems = $desc->getCategories();
+				foreach($categoryItems as $item){
+					if($item instanceof SMWDIWikiPage){			
+						if(@ !in_array($item->getTitle()->getText(), $conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ])){
+							$conditions[TF_CATEGORY_KEYWORD][SMW_CMP_EQ][] = $item->getTitle()->getText(); 
 						}
 					}
 				}

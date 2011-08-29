@@ -255,9 +255,9 @@ class TFTabularFormData {
 			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization(), $this->isSPARQLQuery);
 
 		$this->annotationQueryConditions =
-			TFQueryAnalyser::getQueryConditions($this->getQuerySerialization());
-
-		$this->checkEnableAddInstance();
+			TFQueryAnalyser::getQueryConditions($this->getQuerySerialization(), $this->isSPARQLQuery);
+			
+				$this->checkEnableAddInstance();
 
 		// process each query result row
 		while ( $row = $this->queryResult->getNext() ) {
@@ -344,7 +344,7 @@ class TFTabularFormData {
 			$displayNotificationSystem = ' style="display: none" ';
 		}
 		
-		$html .= '<div class="tabf_notification_system" '.$displayNotificationSystem.'>';
+		$html = '<div class="tabf_notification_system" '.$displayNotificationSystem.'>';
 
 		$numberOfWarnings = count($this->addInstanceBlockers) + count($this->queryResult->getErrors());
 
@@ -423,6 +423,7 @@ class TFTabularFormData {
 
 				$prop = Title::newFromText($this->annotationPrintRequests[$key]['title'], SMW_NS_PROPERTY);
 				if($prop->exists()){
+					$prop = SMWWikiPageValue::makePageFromTitle($prop)->getDataItem();
 					$store = smwfNewBaseStore();
 					$semanticData = $store->getSemanticData($prop);
 					$annotations = $semanticData->getProperties();
@@ -474,7 +475,7 @@ class TFTabularFormData {
 			return;
 		}
 
-		foreach(TFQueryAnalyser::getQueryConditions($this->getQuerySerialization()) as $name => $conditions){
+		foreach(TFQueryAnalyser::getQueryConditions($this->getQuerySerialization(), $this->isSPARQLQuery) as $name => $conditions){
 
 			if($name == TF_INSTANCENAME_KEYWORD){
 				continue;

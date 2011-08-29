@@ -111,7 +111,9 @@ class TFDataAPIACCESS {
 				if($element instanceof POMProperty){
 					$annotations->setWritable($element->name, $element->value);
 				} else if($element instanceof POMCategory){
-					$annotations->setWritable(TF_CATEGORY_KEYWORD, $element->value);
+					global $wgContLang;
+					$annotations->setWritable(TF_CATEGORY_KEYWORD, 
+						$wgContLang->getNSText(NS_CATEGORY).':'.$element->value);
 				} else if ($element instanceof POMExtensionParserFunction){
 					if(strpos($element->nodeText, '{{#set:') === 0){
 						$sets = trim(substr($element->nodeText, strlen('{{#set:')));
@@ -535,21 +537,26 @@ class TFDataAPIACCESS {
 		}
 		
 		$store = smwfNewBaseStore();
-		$semanticData = $store->getSemanticData($title);
+		$semanticData = $store->getSemanticData(
+			SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
 		$properties = $semanticData->getProperties();
 		
 		$maxCardinality = false;
 		if(array_key_exists('Has_max_cardinality', $properties)){
 			$pVals = $semanticData->getPropertyValues($properties['Has_max_cardinality']);
+			
 			$idx = array_keys($pVals);
-			$maxCardinality = $pVals[$idx[0]]->getShortWikiText();
+			$delimiter =
+				SMWDataValueFactory::newDataItemValue($pVals[$idx[0]], null)->getShortWikiText();
 		}
 		
 		$delimiter = false;
 		if(array_key_exists('Delimiter', $properties)){
 			$pVals = $semanticData->getPropertyValues($properties['Delimiter']);
+			
 			$idx = array_keys($pVals);
-			$delimiter = $pVals[$idx[0]]->getShortWikiText();
+			$delimiter =
+				SMWDataValueFactory::newDataItemValue($pVals[$idx[0]], null)->getShortWikiText(); 
 		}
 			
 		if($maxCardinality != 1 || $delimiter){
