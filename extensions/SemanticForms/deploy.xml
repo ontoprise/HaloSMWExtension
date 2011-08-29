@@ -13,7 +13,7 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
         <dependencies>
-            <dependency from="1130" to="1179">mw</dependency>
+            <dependency from="1140" to="1179">mw</dependency>
             <dependency from="142" to="160">smw</dependency>
         </dependencies>
     </global>
