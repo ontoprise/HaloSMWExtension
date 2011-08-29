@@ -12,6 +12,7 @@ VERSION 1.5.2
 	* Migrate upload functionality from PrototypeJS to jQuery.
 
   BUGFIXES:
+	* 15028 - Duplicate warnings in upload window are ignored
 	* 15037 - Fatal error in RM_Form.php
 	* 14956 - Wrong jQuery selector broke upload process.
 	* 14592 - SemanticForms uses "for ... in" loops in its JavaScript (moved patch part from RM to SF)
