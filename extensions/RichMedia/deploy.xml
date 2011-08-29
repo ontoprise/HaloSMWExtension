@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>152</version>
+		<version>153</version>
 		<id>richmedia</id>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
