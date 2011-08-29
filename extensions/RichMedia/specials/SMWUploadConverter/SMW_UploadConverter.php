@@ -88,8 +88,8 @@ class UploadConverter {
 			if (file_exists($textFile)) {
 				// a temporary file has been written 
 				// => add its content into the article 
-				//$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
-				$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
+				$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+				//$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
 				// delete temp. file
 				unlink($textFile);
 			} else {
