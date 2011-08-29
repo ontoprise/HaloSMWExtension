@@ -1546,7 +1546,7 @@
 ! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Metainformation 
 ! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Delete
 |-
-{{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]OR[[ICalendar:+]]OR[[VCard:+]]&lt;/q&gt;
+{{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]]
   | ?HasFilename
   | ?HasUploader
   | ?HasCreationDate
@@ -1554,7 +1554,6 @@
   | template=RMListInnerTable
   | link=none
   | limit=250
-  | source=wiki
 }}
 |}
 {| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
