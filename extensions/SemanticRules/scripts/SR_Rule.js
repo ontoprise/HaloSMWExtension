@@ -26,6 +26,7 @@
  *
  */
 
+var $=$P;
 var RuleToolBar = Class.create();
 
 var SMW_RULE_VALID_RULE_NAME =
@@ -333,9 +334,7 @@ getRuleTypes: function() {
 
 };// End of Class
 
-if (smwgEnableFlogicRules) {
-	var ruleToolBar = new RuleToolBar();
-        if (typeof FCKeditor == 'undefined')
-            Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
-}
+window.ruleToolBar = new RuleToolBar();
+if (typeof FCKeditor == 'undefined')
+Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
 

@@ -233,81 +233,8 @@
 		</exec>
 	</target>
 
-
-	<target name="deployscripts">
-		<echo>General Tools</echo>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--js=../../SMWHalo/scripts/ajaxhalo.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/generalTools.js" />
-			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/breadcrumb.js" />
-			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/generalGUI.js" />
-			<arg value="--js=../../SMWHalo/scripts/GeneralGUI/contentSlider.js" />
-			<arg value="--js=../../SMWHalo/scripts/Logger/smw_logger.js" />
-			<arg value="--js=../../SMWHalo/scripts/Language/SMW_Language.js" />
-			<arg value="--js=../../SMWHalo/scripts/SMW_DerivedFactsTab.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/deployGeneralTools.js" />
-		</java>
-
-		<echo>General Scripts</echo>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--js=../../SMWHalo/scripts/scriptaculous/effects.js" />
-			<arg value="--js=../../SMWHalo/scripts/scriptaculous/slider.js" />
-			<arg value="--js=../../SMWHalo/scripts/scriptaculous/dragdrop.js" />
-			<arg value="--js=../../SMWHalo/scripts/Autocompletion/wick.js" />
-			<arg value="--js=../../SMWHalo/scripts/WikiTextParser/Annotation.js" />
-			<arg value="--js=../../SMWHalo/scripts/WikiTextParser/WikiTextParser.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Ontology.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_DataTypes.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Container.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Marker.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Relation.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Properties.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Refresh.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_DragAndResize.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_ContextMenu.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Category.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Help.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_Links.js" />
-			<arg value="--js=../../SMWHalo/scripts/SemanticToolbar/SMW_ASKQuery.js" />
-			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js" />
-			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_AnnotationHints.js" />
-			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_GardeningHints.js" />
-			<arg value="--js=../../SMWHalo/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js" />
-			<arg value="--js=../../SMWHalo/scripts/SMW_DerivedFactsTab.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/deployGeneralScripts.js" />
-		</java>
-
-		<echo>OntologyBrowser</echo>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--js=../../SMWHalo/scripts/scriptaculous/effects.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/ontologytools.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeview.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeviewActions.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/treeviewData.js" />
-			<arg value="--js=../../SMWHalo/scripts/OntologyBrowser/advancedOptions.js" />
-			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js" />
-		</java>
-
-		<echo>QueryInterface</echo>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--compilation_level=WHITESPACE_ONLY" />
-			<arg value="--js=../../SMWHalo/scripts/QueryInterface/Query.js" />
-			<arg value="--js=../../SMWHalo/scripts/QueryInterface/QueryList.js" />
-			<arg value="--js=../../SMWHalo/scripts/QueryInterface/QIHelper.js" />
-			<arg value="--js=../../SMWHalo/scripts/QueryInterface/qi_tooltip.js" />
-			<arg value="--js=../../SemanticMediaWiki/skins/SMW_tooltip.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deployQueryInterface.js" />
-		</java>
-		<java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
-			<arg value="--js=../../SMWHalo/scripts/QueryInterface/qi_tooltip.js" />
-			<arg value="--js_output_file=../../SMWHalo/scripts/QueryInterface/deploy_qi_tooltip.js" />
-		</java>
-
-	</target>
-
-	<target name="versionhint" depends="deployscripts">
+	
+	<target name="versionhint">
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />

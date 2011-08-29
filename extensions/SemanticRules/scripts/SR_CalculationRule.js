@@ -909,4 +909,4 @@ parseRule: function(ruleText) {
 
 
 //  
-var smwhgCreateCalculationRule = null;
+window.smwhgCreateCalculationRule = null;

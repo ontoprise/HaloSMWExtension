@@ -24,6 +24,7 @@
  * 
  */
 
+var $=$P;
 var SRRuleActionListener = Class.create();
 SRRuleActionListener.prototype = {
 	initialize : function() {
@@ -471,8 +472,8 @@ SRRuleActionListener.prototype = {
 }
 }
 
-var ruleActionListener = new SRRuleActionListener();
-var sr_transformer = new TreeTransformer(
+window.ruleActionListener = new SRRuleActionListener();
+window.sr_transformer = new TreeTransformer(
 		"/extensions/SemanticRules/skins/ruleTree.xslt");
 sr_transformer.addLanguageProvider(function(id) {
 	return gsrLanguage.getMessage(id, "user");

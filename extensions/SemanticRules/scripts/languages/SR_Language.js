@@ -91,4 +91,4 @@ SR_Language.prototype = {
 
 // Singleton of this class
 
-var gsrLanguage = new SR_Language();
+window.gsrLanguage = new SR_Language();

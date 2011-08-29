@@ -24,6 +24,7 @@
  * 
  */
 
+var $=$P;
 
 var SRRuleWidget = Class.create();
 SRRuleWidget.prototype = {

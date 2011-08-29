@@ -1904,10 +1904,23 @@ OBGlobalActionListener.prototype = {
 	},
 
 	refresh : function() {
-		_smw_hideAllTooltips();
+		//_smw_hideAllTooltips();
 		// re-initialize tooltips when content has changed.
-		smw_tooltipInit();
-
+		//smw_tooltipInit();
+	
+		jQuery(".smwh_ob_tooltip")
+		.each(
+				function() {
+					var html = jQuery("<span>MyTest</span>");
+					
+					jQuery(this).qtip( {
+						 content: 'This is an active list element',
+						   show: 'mouseover',
+						   hide: 'mouseout'
+					});
+				}
+		);
+		
 		// re-initialize LOD tooltips
 
 		// register the tool-tips for metadata switch

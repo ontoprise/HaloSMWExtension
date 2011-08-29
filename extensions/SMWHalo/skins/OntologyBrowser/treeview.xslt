@@ -786,35 +786,33 @@
 
 						<xsl:choose>
 							<xsl:when test="count(gissues/gi[@modified]) > 0">
-								<span class="smwtticon">modified.png</span>
-								<span class="smwttcontent">
-									{{SMW_OB_MODIFIED}}
-									<ul>
-										<xsl:for-each select="gissues/gi">
-											<xsl:if test="@type &lt; 100000">
-												<li>
-													<xsl:value-of select="." />
-												</li>
-											</xsl:if>
-										</xsl:for-each>
-									</ul>
-								</span>
+								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png">
+								{{SMW_OB_MODIFIED}}
+                                    <ul>
+                                        <xsl:for-each select="gissues/gi">
+                                            <xsl:if test="@type &lt; 100000">
+                                                <li>
+                                                    <xsl:value-of select="." />
+                                                </li>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                    </ul>
+								</img>
+							
 							</xsl:when>
 							<xsl:otherwise>
-								<span class="smwtticon">warning.png</span>
-								<span class="smwttcontent">
-
-									<ul>
-										<xsl:for-each select="gissues/gi">
-											<xsl:if test="@type &lt; 100000">
-												<li>
-													<xsl:value-of select="." />
-												</li>
-											</xsl:if>
-										</xsl:for-each>
-									</ul>
-
-								</span>
+								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png">
+                                {{SMW_OB_MODIFIED}}
+                                    <ul>
+                                        <xsl:for-each select="gissues/gi">
+                                            <xsl:if test="@type &lt; 100000">
+                                                <li>
+                                                    <xsl:value-of select="." />
+                                                </li>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                    </ul>
+                                </img>
 							</xsl:otherwise>
 						</xsl:choose>
 

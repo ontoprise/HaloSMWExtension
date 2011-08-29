@@ -343,4 +343,4 @@ PropertyChain.prototype = {
 }
 
 
-var smwhgPropertyChain = null;
+window.smwhgPropertyChain = null;

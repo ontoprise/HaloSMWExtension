@@ -40,14 +40,14 @@ var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
-var OB_SELECTIONLISTENER = 'selectionChanged';
-var OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
-var OB_TREETABCHANGELISTENER = 'treeTabChanged'
-var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
-var OB_REFRESHLISTENER = 'refresh';
-var OB_FILTERTREE = 'filterTree';
-var OB_FILTERBROWSING = 'filterBrowsing';
-var OB_RESET = 'reset';
+window.OB_SELECTIONLISTENER = 'selectionChanged';
+window.OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
+window.OB_TREETABCHANGELISTENER = 'treeTabChanged';
+window.OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
+window.OB_REFRESHLISTENER = 'refresh';
+window.OB_FILTERTREE = 'filterTree';
+window.OB_FILTERBROWSING = 'filterBrowsing';
+window.OB_RESET = 'reset';
 
 /**
  * Event Provider. Supports following events:
@@ -221,7 +221,7 @@ OBEventProvider.prototype = {
 }
 
 // create instance of event provider
-var selectionProvider = new OBEventProvider();
+window.selectionProvider = new OBEventProvider();
 
 /**
  * Class which allows modification of wiki articles via AJAX calls.

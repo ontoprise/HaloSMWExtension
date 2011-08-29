@@ -1267,5 +1267,5 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 /*
  * The singleton instance of the semantic toolbar event action handler.
  */
-var gSTBEventActions = new STBEventActions();
+window.gSTBEventActions = new STBEventActions();
 

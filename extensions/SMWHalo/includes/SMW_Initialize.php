@@ -2118,7 +2118,8 @@ function smwhfRegisterResourceLoaderModules() {
 			),
 		'dependencies' => array(
 			'ext.smw.tooltips',
-			'ext.smw.style'
+			'ext.smw.style',
+			'ext.jquery.qtip'
 		)
 	);
 	

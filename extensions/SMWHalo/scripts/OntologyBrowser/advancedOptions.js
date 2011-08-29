@@ -159,6 +159,6 @@ OBAdvancedOptions.prototype = {
 		$('aoContent').hide();
 	}
 }
-var obAdvancedOptions = new OBAdvancedOptions();
+window.obAdvancedOptions = new OBAdvancedOptions();
 Event.observe(window, 'load', obAdvancedOptions.onLoad
 		.bindAsEventListener(obAdvancedOptions));

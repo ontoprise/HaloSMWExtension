@@ -36,7 +36,7 @@
 // --- Original idea by : D.D. de Kerf --
 // --- Updated by Jean-Michel Garnier, garnierjm@yahoo.fr --
 // ---------------------------------------------------------------------------
-var TreeTransformer = Class.create();
+window.TreeTransformer = Class.create();
 TreeTransformer.prototype = {
 
 	initialize : function(styleSheetPath) {

@@ -21,7 +21,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  * Contributions from OntologyBrowser for Semantic Toolbar
  */

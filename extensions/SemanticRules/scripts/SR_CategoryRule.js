@@ -1158,4 +1158,4 @@ checkRule: function() {
 
 };// End of Class
 
-var smwhgCreateDefinitionRule = null;
+window.smwhgCreateDefinitionRule = null;

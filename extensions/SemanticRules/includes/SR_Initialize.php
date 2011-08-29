@@ -21,7 +21,7 @@ if (!defined("SMW_HALO_VERSION")) {
 // buildnumber index for MW to define a script's version.
 $srgStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
 if (strlen($srgStyleVersion) > 0) {
-    $srgStyleVersion= '?'.$srgStyleVersion;
+	$srgStyleVersion= '?'.$srgStyleVersion;
 }
 
 global $smwgDefaultStore;
@@ -51,7 +51,7 @@ $smwgEnableObjectLogicRules=true;
  * @return boolean (MW Hook)
  */
 function ruleSetupExtension() {
-	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
+	global $srgSRIP, $wgScriptPath, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='srfAddOBContent';
 	$wgHooks['smw_ob_attachtoresource'][] = 'srAttachToResource';
@@ -68,7 +68,7 @@ function ruleSetupExtension() {
 
 
 
-    $wgAutoloadClasses['SRRuleWidget'] = $srgSRIP . '/includes/SR_RuleWidget.php';
+	$wgAutoloadClasses['SRRuleWidget'] = $srgSRIP . '/includes/SR_RuleWidget.php';
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
 	$wgAutoloadClasses['SRRuleEndpoint'] = $srgSRIP . '/includes/SR_RuleEndpoint.php';
 
@@ -92,6 +92,8 @@ function ruleSetupExtension() {
 
 	}
 
+	global $wgOut;
+	srfRegisterJSModules($wgOut);
 
 	$wgExtensionCredits['parserhook'][]= array('name'=>'Rule&nbsp;knowledge&nbsp;extension', 'version'=>SEMANTIC_RULES_VERSION,
             'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
@@ -197,12 +199,12 @@ function srfSRInitUserMessages() {
 }
 
 /**
- * Register SR javascript user/content messages
+ * Register language JS modules
  *
  * @param $out
  */
-function srfAddJSLanguageScripts(& $out) {
-	global $srgSRIP, $wgLanguageCode, $wgUser, $wgScriptPath, $srgStyleVersion;
+function srfRegisterJSLanguageModules(& $out) {
+	global $srgSRIP, $wgLanguageCode, $wgUser, $wgScriptPath, $srgStyleVersion, $wgResourceModules;
 
 	// content language file
 	$lng = '/scripts/languages/SR_Language';
@@ -217,22 +219,107 @@ function srfAddJSLanguageScripts(& $out) {
 		// add english default content language script file
 	}
 
+
 	// user language file
-	$lng = '/scripts/languages/SR_Language';
+	$lng = '';
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($srgSRIP . $lng)) {
-			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. $lng .$srgStyleVersion.'"></script>');
+			$userLanguageFile = 'SemanticRules'. $lng;
 		} else {
-			$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js'.$srgStyleVersion.'"></script>');
+			$userLanguageFile = 'SR_LanguageUserEn.js';
 
 		}
 	} else {
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_LanguageUserEn.js'.$srgStyleVersion.'"></script>');
+		$userLanguageFile = 'SR_LanguageUserEn.js';
 	}
 
-	// base language script
-	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath .'/extensions/SemanticRules'. '/scripts/languages/SR_Language.js'.$srgStyleVersion.'"></script>');
+	$moduleTemplate = array(
+        'localBasePath' => $srgSRIP,
+        'remoteBasePath' => $wgScriptPath . '/extensions/SemanticRules',
+        'group' => 'ext.semanticrules'
+        );
+        
+    $wgResourceModules['ext.semanticrules.language'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/languages/'.$userLanguageFile,
+            'scripts/languages/SR_Language.js'
+            
+            ),
+        'styles' => array(
+
+            ),
+        'dependencies' => array(
+             'ext.smwhalo.semanticToolbar'
+             )
+             );
+
+
+
+}
+
+/**
+ * Register JS modules
+ *
+ * @param $out
+ */
+function srfRegisterJSModules(& $out) {
+	global $wgResourceModules, $moduleTemplate, $wgScriptPath, $srgSRIP;
+	$moduleTemplate = array(
+        'localBasePath' => $srgSRIP,
+        'remoteBasePath' => $wgScriptPath . '/extensions/SemanticRules',
+        'group' => 'ext.semanticrules'
+        );
+
+    // Module for the Ruleditor
+    $wgResourceModules['ext.semanticrules.ruleditor'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/SR_Rule.js',
+            'scripts/SR_CategoryRule.js',
+            'scripts/SR_CalculationRule.js',
+            'scripts/SR_PropertyChain.js'
+          
+            ),
+        'styles' => array(
+
+            ),
+        'dependencies' => array(
+            'ext.semanticrules.rulewidget'
+            )
+            );
+
+     // Module for the Rule widget
+     $wgResourceModules['ext.semanticrules.rulewidget'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/SR_Rulewidget.js'
+            ),
+        'styles' => array(
+            'skins/rules.css',
+            'skins/prettyPrinterForRules.css'
+            ),
+        'dependencies' => array(
+            'ext.smwhalo.general',
+            'ext.smwhalo.semanticToolbar',
+            'ext.semanticrules.language'
+            )
+            );
+
+            $wgResourceModules['ext.semanticrules.obruleextension'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/SR_OB_extensions.js'
+            ),
+        'styles' => array(
+           'skins/rules.css',
+            ),
+        'dependencies' => array(
+            'ext.semanticrules.language',
+            'ext.semanticrules.rulewidget',
+            'ext.smwhalo.ontologyBrowser'
+            )
+            );
+
+
+      srfRegisterJSLanguageModules($out);
 }
 
 /**
@@ -242,50 +329,18 @@ function srfAddJSLanguageScripts(& $out) {
  * @return boolean (MW hook)
  */
 function srfAddHTMLHeader(& $out) {
-	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle, $srgStyleVersion;
+	global $srgSRIP, $wgScriptPath, $wgRequest, $wgTitle, $srgStyleVersion, $wgResourceModules;
 
-	
+	// load this module on every page
+	$out->addModules(array('ext.semanticrules.rulewidget'));
 
-	global $smwgDeployVersion;
-	if (isset($smwgDeployVersion) && $smwgDeployVersion === true) {
-		srfAddJSLanguageScripts($out);
-		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'.$srgStyleVersion));
-        $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'.$srgStyleVersion));
-		
+	$SF = ($wgTitle->getNamespace() == -1 &&
+	in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
+	$action = $wgRequest->getVal('action');
+	if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
-		$rulesEnabled = isset($smwgEnableObjectLogicRules)
-		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
-		: 'false';
-		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/deployRulescripts.js'.$srgStyleVersion.'"></script>');
-	} else {
-        // load these two on every page
-		srfAddJSLanguageScripts($out);
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js'.$srgStyleVersion.'"></script>');
-		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'.$srgStyleVersion));
-        $out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/prettyPrinterForRules.css'.$srgStyleVersion));
-        
-		$SF = ($wgTitle->getNamespace() == -1 &&
-		in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
-		$action = $wgRequest->getVal('action');
-		if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
-
-
-		$rulesEnabled = isset($smwgEnableObjectLogicRules)
-		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
-		: 'false';
-		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
-
-
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js'.$srgStyleVersion.'"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js'.$srgStyleVersion.'"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js'.$srgStyleVersion.'"></script>');
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js'.$srgStyleVersion.'"></script>');
-	}
+	// load this only when in editmode
+	$out->addModules(array('ext.semanticrules.ruleditor'));
 
 	return true;
 
@@ -294,17 +349,10 @@ function srfAddHTMLHeader(& $out) {
 function srfAddOBContent(& $out) {
 	$localname = SpecialPage::getLocalNameFor("OntologyBrowser");
 
-	global $wgTitle, $smwgEnableObjectLogicRules, $wgScriptPath;
+	global $wgTitle, $wgScriptPath, $wgResourceModules;
 	if ($wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == $localname) {
-		srfAddJSLanguageScripts($out);
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_OB_extensions.js"></script>');
-		$rulesEnabled = isset($smwgEnableObjectLogicRules)
-		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
-		: 'false';
-		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
-
-		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
+		// load only on OntoloyBrowser special page
+		$out->addModules(array('ext.semanticrules.obruleextension'));
 
 	}
 	return true;
@@ -340,7 +388,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$native = false;
 			$active = true;
 			$type="USER_DEFINED";
-		    $tsc_uri = "";
+			$tsc_uri = "";
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'native') {
 					$native = trim($matchesheader[2][$j]) == 'true';
@@ -351,9 +399,9 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 				if (trim($matchesheader[1][$j]) == 'type') {
 					$type = $matchesheader[2][$j];
 				}
-			    if (trim($matchesheader[1][$j]) == 'uri') {
-                    $tsc_uri = $matchesheader[2][$j];
-                }
+				if (trim($matchesheader[1][$j]) == 'uri') {
+					$tsc_uri = $matchesheader[2][$j];
+				}
 			}
 
 			// normalize $type which is given in content language to TSC internal constants.
@@ -385,7 +433,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$allNamespaces = TSNamespaces::getAllNamespaces();
 
 					$uri = $tsNamespaces->getNSURI($ns) . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
-                
+
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
 
@@ -397,11 +445,11 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$rules[] = $ruleTuple;
 				}
 			}
-		  
-			
+
+
 			$rw = new SRRuleWidget($uri, $ruletext, $active, $native);
-			$replaceBy = $rw->asHTML(); 
-   
+			$replaceBy = $rw->asHTML();
+
 			$text = str_replace($matches[0][$i], $replaceBy, $text);
 		}
 

@@ -47,7 +47,7 @@ function BrowserDetectLite() {
 }
 
 // one global instance of Browser detector 
-var OB_bd = new BrowserDetectLite();
+window.OB_bd = new BrowserDetectLite();
 
 GeneralBrowserTools = new Object();
 
