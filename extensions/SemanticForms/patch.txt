@@ -1,12 +1,31 @@
+Index: extensions/SemanticForms/SemanticForms.php
+===================================================================
+--- extensions/SemanticForms/SemanticForms.php	(revision 11973)
++++ extensions/SemanticForms/SemanticForms.php	(working copy)
+@@ -231,6 +231,13 @@
+ 			'styles' => 'skins/SF_collapsible.css',
+ 			'dependencies' => array( 'jquery' ),
+ 		),
++		/*op-patch|BL|2009-09-16|CollapsingForms|AddJS|start*/
++		/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
++		'ext.semanticforms.op-collapse' => $sfgResourceTemplate + array(
++			'scripts' => 'libs/collapse.js',
++			'dependencies' => array( 'jquery' ),
++		),
++		/*op-patch|BL|2009-09-16|end*/
+ 	);
+ }
+ 
 Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 10879)
+--- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 11973)
 +++ extensions/SemanticForms/includes/SF_FormEditTab.php	(working copy)
-@@ -137,9 +137,20 @@
+@@ -145,8 +145,19 @@
  		}
  		if ( count( $form_names ) > 1 ) {
  			SFUtils::loadMessages();
--			$warning_text = '    <div class="warningMessage">' . wfMsg( 'sf_formedit_morethanoneform' ) . "</div>\n";
+-			$warning_text = "\t" . '<div class="warningMessage">' . wfMsg( 'sf_formedit_morethanoneform' ) . "</div>\n";
+-			$wgOut->addHTML( $warning_text );
 +			/*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
 +			/*op-patch|SR|2010-01-15|selection when several default forms exist|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Choose_form_for_several_default_forms*/
 +			global $wgContLang;
@@ -16,70 +35,18 @@ Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 +			$selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'
 +				.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
 +			for ($i =0, $is=count($form_names); $i < $is; $i++)
-+				$selection .= "<option>".$form_names[$i]."</option>\n";
++			$selection .= "<option>".$form_names[$i]."</option>\n";
 +			$selection.="</select>\n";
- 			global $wgOut;
--			$wgOut->addHTML( $warning_text );
 +			$wgOut->addHTML( $selection );
 +			/*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
  		}
  		$form_name = $form_names[0];
  
-Index: extensions/SemanticForms/includes/SF_FormInputs.php
-===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.php	(revision 10879)
-+++ extensions/SemanticForms/includes/SF_FormInputs.php	(working copy)
-@@ -235,6 +235,16 @@
- 		if ( array_key_exists( 'maxlength', $other_args ) ) {
- 			$inputAttrs['maxlength'] = $other_args['maxlength'];
- 		}
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
-+		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
-+		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
-+		'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property' );
-+		foreach (array_keys($other_args) as $key ) {
-+			if ($key && !in_array($key, $known_other_args))
-+			$inputAttrs[$key] = $other_args[$key];
-+		}
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
- 		$text = Xml::element( 'input', $inputAttrs );
- 
- 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
-@@ -339,6 +349,16 @@
- 			$textarea_attrs['onKeyDown'] = $maxLengthJSCheck;
- 			$textarea_attrs['onKeyUp'] = $maxLengthJSCheck;
- 		}
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
-+		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
-+		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
-+        'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property', 'rows', 'cols', 'autogrow' );
-+		foreach (array_keys($other_args) as $key ) {
-+			if ( $key && ! in_array($key, $known_other_args))
-+			$textarea_attrs[$key] = $other_args[$key];
-+		}
-+		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
- 		$text = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
- 		$spanClass = "inputSpan";
- 		if ( $is_mandatory ) { $spanClass .= " mandatoryFieldSpan"; }
 Index: extensions/SemanticForms/includes/SF_FormLinker.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 10879)
+--- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 11973)
 +++ extensions/SemanticForms/includes/SF_FormLinker.php	(working copy)
-@@ -8,6 +8,11 @@
-  * @author Yaron Koren
-  */
- 
-+// patches included:
-+// 1. "edit with form"-tab for Categories. DH Apr 22 09
-+//    tag of patch: op-patch|DH|2009-04-22|"edit with form"-tab for Categories
-+//    doc: op-patch|DH|2009-04-22|"edit with form"-tab for Categories|doc|
-+
- if ( !defined( 'MEDIAWIKI' ) ) die();
- 
- class SFFormLinker {
-@@ -288,7 +293,10 @@
+@@ -292,7 +292,10 @@
  		// If this is not a category page, look for a default form
  		// for its parent category or categories.
  		$namespace = $title->getNamespace();
@@ -91,7 +58,7 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
  			$default_forms = array();
  			$categories = SFUtils::getCategoriesForPage( $title );
  			foreach ( $categories as $category ) {
-@@ -297,7 +305,10 @@
+@@ -301,7 +304,10 @@
  			if ( count( $default_forms ) > 0 ) {
  				return $default_forms;
  			}
@@ -105,37 +72,37 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
  		if ( NS_MAIN === $namespace ) {
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 10879)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 11973)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
-@@ -273,6 +273,16 @@
+@@ -279,6 +279,16 @@
+ 		$new_text = "";
  		// flag for placing "<onlyinclude>" tags in form output
  		$onlyinclude_free_text = false;
-
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +		$includeonly_free_text = false;
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-+
++		
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
 +		global $wgContLang;
 +		$namespace_labels = $wgContLang->getNamespaces();
 +		$user_namespace = $namespace_labels[NS_USER];
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
+ 		
  		// If we have existing content and we're not in an active replacement
  		// situation, preserve the original content. We do this because we want
- 		// to pass the original content on IF this is a partial form.
-@@ -420,6 +420,10 @@
- 			$tif = new SFTemplateInForm();
+@@ -422,6 +432,10 @@
+ 		for ( $section_num = 0; $section_num < count( $form_def_sections ); $section_num++ ) {
  			$start_position = 0;
  			$template_text = "";
 +			/*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|start*/
-+			/*op-patch|BL|2009-10-09|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-+			$collapsible = false;
-+			/*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|end*/
- 			// the append is there to ensure that the original array doesn't get
- 			// modified; is it necessary?
+++			/*op-patch|BL|2009-10-09|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
+++			$collapsible = false;
+++			/*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|end*/
+ 			// the append is there to ensure that the original
+ 			// array doesn't get modified; is it necessary?
  			$section = " " . $form_def_sections[$section_num];
-@@ -441,11 +445,19 @@
+@@ -443,11 +457,19 @@
  					// Also replace periods with underlines, since that's what
  					// POST does to strings anyway.
  					$query_template_name = str_replace( '.', '_', $query_template_name );
@@ -152,10 +119,10 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							$collapsible = true;
 +						}
 +						/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|end*/
- 						$sub_components = explode( '=', $component, 2 );
+ 						$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
  						if ( count( $sub_components ) == 2 ) {
  							if ( $sub_components[0] == 'label' ) {
-@@ -453,6 +465,13 @@
+@@ -455,6 +477,13 @@
  							} elseif ( $sub_components[0] == 'add button text' ) {
  								$add_button_text = $sub_components[1];
  							}
@@ -169,7 +136,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						}
  					}
  					// If this is the first instance, add the label into the form, if
-@@ -461,7 +480,43 @@
+@@ -463,7 +492,43 @@
  					if ( $old_template_name != $template_name ) {
  						if ( isset( $template_label ) ) {
  							$form_text .= "<fieldset>\n";
@@ -214,7 +181,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						}
  						if ($allow_multiple) {
  							$form_text .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
-@@ -1090,10 +1154,13 @@
+@@ -1089,10 +1154,13 @@
  								// if the date is hidden, cur_value will already be set
  								// to the default value
  								( $cur_value == '' || $cur_value == 'current user' ) ) {
@@ -229,8 +196,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
  						}
  						$new_text = $this->formFieldHTML( $form_field, $cur_value );
-
-@@ -1213,9 +1280,16 @@
+ 
+@@ -1215,9 +1283,16 @@
  							$form_is_partial = true;
  							// replacement pages may have minimal matches...
  							$source_page_matches_this_form = true;
@@ -248,7 +215,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  					}
  					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
  				// =====================================================
-@@ -1299,7 +1354,11 @@
+@@ -1310,7 +1385,11 @@
  			} else {
  				$form_text .= $section;
  			}
@@ -261,7 +228,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		} // end for
  
  		// if it wasn't included in the form definition, add the
-@@ -1340,6 +1417,17 @@
+@@ -1351,6 +1430,17 @@
  		} else {
  			$free_text = null;
  		}
@@ -279,40 +246,95 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		if ( $onlyinclude_free_text ) {
  			// modify free text and data text to insert <onlyinclude> tags
  			$free_text = str_replace( "<onlyinclude>", '', $free_text );
-Index: extensions/SemanticForms/includes/SF_FormUtils.php
+Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 10879)
-+++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
-@@ -333,15 +333,21 @@
- 		global $wgUser, $wgDefaultUserOptions;
+--- extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php	(revision 11974)
++++ extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php	(working copy)
+@@ -87,6 +87,16 @@
+ 		if ( is_null( $cur_value ) ) {
+ 			$cur_value = '';
+ 		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++        'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property', 'rows', 'cols', 'autogrow' );
++		foreach (array_keys($other_args) as $key ) {
++			if ( $key && ! in_array($key, $known_other_args))
++			$textarea_attrs[$key] = $other_args[$key];
++		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+ 		$text = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
+ 		$spanClass = 'inputSpan';
+ 		if ( $is_mandatory ) {
+Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php
+===================================================================
+--- extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php	(revision 11974)
++++ extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php	(working copy)
+@@ -99,6 +99,16 @@
+ 		if ( is_null( $cur_value ) ) {
+ 			$cur_value = '';
+ 		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++        'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property', 'rows', 'cols', 'autogrow' );
++		foreach (array_keys($other_args) as $key ) {
++			if ( $key && ! in_array($key, $known_other_args))
++			$textarea_attrs[$key] = $other_args[$key];
++		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+ 		$textarea_input = Xml::element( 'textarea', $textarea_attrs, $cur_value, false );
+ 		$text .= $textarea_input;
  
- 		$showFCKEditor = 0;
--		if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
-+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|start*/
-+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|doc http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Eliminate_warnings_of_empty_settings_variables */
-+		$defaultOption = in_array('riched_start_disabled', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_start_disabled'] : null;
-+		if ( !$wgUser->getOption( 'riched_start_disabled', $defaultOption ) ) {
- 			$showFCKEditor += RTE_VISIBLE;
+Index: extensions/SemanticForms/includes/forminputs/SF_TextInput.php
+===================================================================
+--- extensions/SemanticForms/includes/forminputs/SF_TextInput.php	(revision 11974)
++++ extensions/SemanticForms/includes/forminputs/SF_TextInput.php	(working copy)
+@@ -126,6 +126,16 @@
+ 		if ( array_key_exists( 'maxlength', $other_args ) ) {
+ 			$inputAttrs['maxlength'] = $other_args['maxlength'];
  		}
--		if ( $wgUser->getOption( 'riched_use_popup', $wgDefaultUserOptions['riched_use_popup'] ) ) {
-+		$defaultOption = in_array('riched_use_popup', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_popup'] : null;
-+		if ( $wgUser->getOption( 'riched_use_popup', $defaultOption ) ) {
- 			$showFCKEditor += RTE_POPUP;
- 		}
--		if ( $wgUser->getOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] ) ) {
-+		$defaultOption = in_array('riched_use_toggle', array_keys($wgDefaultUserOptions)) ? $wgDefaultUserOptions['riched_use_toggle'] : null;
-+		if ( $wgUser->getOption( 'riched_use_toggle', $defaultOption ) ) {
- 			$showFCKEditor += RTE_TOGGLE_LINK;
- 		}
-+		/*op-patch|SR|2009-10-19|FCKeditor|eliminate some warnings|end*/
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++		'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property' );
++		foreach (array_keys($other_args) as $key ) {
++			if ($key && !in_array($key, $known_other_args))
++			$inputAttrs[$key] = $other_args[$key];
++		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+ 		$text = Xml::element( 'input', $inputAttrs );
  
- 		if ( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state' ) ) )
- 		{
+ 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+Index: extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php
+===================================================================
+--- extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php	(revision 11974)
++++ extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php	(working copy)
+@@ -177,6 +177,16 @@
+ 		if ( array_key_exists( 'maxlength', $other_args ) ) {
+ 			$inputAttrs['maxlength'] = $other_args['maxlength'];
+ 		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
++		// fix bug http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13984
++		$known_other_args = array('class', 'field_type', 'size', 'maxlength', 'is_uploadable', 'possible_values',
++		'is_list', 'delimiter', 'autocomplete field type', 'value_labels', 'semantic_property' );
++		foreach (array_keys($other_args) as $key ) {
++			if ($key && !in_array($key, $known_other_args))
++			$inputAttrs[$key] = $other_args[$key];
++		}
++		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
+ 		$text = "\n\t" . Xml::element( 'input', $inputAttrs ) . "\n";
+ 
+ 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
 Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
---- extensions/SemanticForms/languages/SF_Messages.php	(revision 10879)
+--- extensions/SemanticForms/languages/SF_Messages.php	(revision 11973)
 +++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
-@@ -16,6 +16,10 @@
+@@ -17,6 +17,10 @@
   */
  $messages['en'] = array(
  	// user messages
@@ -323,116 +345,6 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
-Index: extensions/SemanticForms/libs/SemanticForms.js
-===================================================================
---- extensions/SemanticForms/libs/SemanticForms.js	(revision 10879)
-+++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
-@@ -333,7 +333,16 @@
- // Show this div if the current value is any of the relevant options -
- // otherwise, hide it.
- function showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv) {
--	for (var j in options) {
-+	/* op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start */
-+	/*
-+	 * op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+	 * http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF
-+	 */
-+	// Reverted "for ... in" back to vanilla loops.
-+	// content was:
-+	// for (var j in options) {
-+	for ( var j = 0; j < options.length; j++ ) {
-+	/* op-patch|BL|2011-05-10|end */
- 		// If it's a listbox and the user has selected more than one
- 		// value, it'll be an array - handle either case.
- 		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[j], inputVal) >= 0) ||
-@@ -355,7 +364,19 @@
- 		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
- 		var instanceWrapperDiv = null;
- 	}
--	for (i in showOnSelectVals) {
-+	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|start*/
-+	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|doc|
-+	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_undefined_show_on_select */
-+	if (! showOnSelectVals ) return;
-+	/*op-patch|SR|2011-06-16|SemanticForms|FixShowOnSelect|end*/
-+	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
-+	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
-+	// Reverted "for ... in" back to vanilla loops.
-+	// content was:
-+	//	for (i in showOnSelectVals) {
-+	for ( var i = 0; i < showOnSelectVals.length; i++ ) {
-+	/*op-patch|BL|2011-05-10|end*/
- 		var options = showOnSelectVals[i][0];
- 		var div_id = showOnSelectVals[i][1];
- 		showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv);
-@@ -365,7 +386,14 @@
- // Show this div if any of the relevant selections are checked -
- // otherwise, hide it.
- jQuery.fn.showDivIfChecked = function(options, div_id, instanceWrapperDiv) {
--	for (var i in options) {
-+	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
-+	/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+	 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
-+	// Reverted "for ... in" back to vanilla loops.
-+	// content was:
-+	//	for (var i in options) {
-+	for ( var i = 0; i < options.length; i++ ) {
-+	/*op-patch|BL|2011-05-10|end*/
- 		if (jQuery(this).find('[value="' + options[i] + '"]').is(":checked")) {
- 			showDiv(div_id, instanceWrapperDiv);
- 			return;
-@@ -384,7 +412,16 @@
- 		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
- 		var instanceWrapperDiv = null;
- 	}
--	for (i in showOnSelectVals) {
-+	/* op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start */
-+	/*
-+	 * op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+	 * http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF
-+	 */
-+	// Reverted "for ... in" back to vanilla loops.
-+	// content was:
-+	// for (i in showOnSelectVals) {
-+	for ( var i = 0; i < showOnSelectVals.length; i++ ) {
-+	/* op-patch|BL|2011-05-10|end */
- 		var options = showOnSelectVals[i][0];
- 		var div_id = showOnSelectVals[i][1];
- 		this.showDivIfChecked(options, div_id, instanceWrapperDiv);
-@@ -656,8 +693,14 @@
- 					// For every initialization method for
- 					// input with id old_id, register the
- 					// method for the new input.
--					for ( var i in sfdata.initFunctions[old_id] ) {
--
-+					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
-+					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
-+					// Reverted "for ... in" back to vanilla loops.
-+					// content was:
-+					// for ( var i in sfdata.initFunctions[old_id] ) {
-+					for ( var i = 0; i < sfdata.initFunctions[old_id].length; i++ ) {
-+					/*op-patch|BL|2011-05-10|end*/
- 						jQuery(this).SemanticForms_registerInputInit(
- 							sfdata.initFunctions[old_id][i].initFunction,
- 							sfdata.initFunctions[old_id][i].parameters,
-@@ -734,7 +777,14 @@
- 				if (sfdata) { // if anything registered at all
- 					// Call every initialization method
- 					// for this input
--					for ( var i in sfdata.initFunctions[this.id] ) {
-+					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|start*/
-+					/*op-patch|BL|2011-05-10|SemanticForms|ForInLoops|doc|
-+					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/For_in_loops_in_SF */
-+					// Reverted "for ... in" back to vanilla loops.
-+					// content was:
-+					// for ( var i in sfdata.initFunctions[this.id] ) {
-+					for ( var i = 0; i < sfdata.initFunctions[this.id].length; i++ ) {
-+					/*op-patch|BL|2011-05-10|end*/
- 						sfdata.initFunctions[this.id][i].initFunction(
- 							this.id,
- 							sfdata.initFunctions[this.id][i].parameters
 Index: extensions/SemanticForms/libs/collapse.js
 ===================================================================
 --- extensions/SemanticForms/libs/collapse.js	(revision 0)
@@ -547,32 +459,32 @@ Index: extensions/SemanticForms/libs/collapse.js
 +	}
 +);
 \ No newline at end of file
-
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 10879)
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 11973)
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
-@@ -120,6 +120,11 @@
+@@ -149,7 +149,12 @@
  		} elseif ( $target_name == '' && $page_name_formula == '' ) {
  			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
  		} else {
+-
 +			/*op-patch|BL|2009-09-16|CollapsingForms|SaveFormnameGlobally|start*/
 +			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
 +			global $smwgRMActFormName;
 +			$smwgRMActFormName = $form_name;
 +			/*op-patch|BL|2009-09-16|end*/
- 			$form_article = new Article( $form_title );
- 			$form_definition = $form_article->getContent();
- 
-@@ -261,6 +266,11 @@
++			
+ 			$save_page = $wgRequest->getCheck( 'wpSave' );
+ 			$preview_page = $wgRequest->getCheck( 'wpPreview' );
+ 			$diff_page = $wgRequest->getCheck( 'wpDiff' );
+@@ -354,6 +359,10 @@
  				$text .= $pre_form_html;
  				$text .= $form_text;
  			}
 +			/*op-patch|BL|2009-09-16|CollapsingForms|AddJS|start*/
 +			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-+			global $sfgScriptPath, $wgJsMimeType;
-+			$wgOut->addHTML("<script type=\"{$wgJsMimeType}\" src=\"{$sfgScriptPath}/libs/collapse.js\"></script>");
++			$wgOut->addModules( 'ext.semanticforms.op-collapse' );
 +			/*op-patch|BL|2009-09-16|end*/
  		}
- 		// instead of adding the Javascript using addScript(), which is
- 		// the standard approach, we add it using addHTML(), below the
+ 
+ 		SFUtils::addJavascriptAndCSS();
