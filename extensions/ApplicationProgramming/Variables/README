@@ -1,0 +1,114 @@
+'''Variables''' is a very simple MediaWiki extension that allows you to define a variable on a page, use it later in that same page, change its value, possibly to a value given by an expression in terms of the old value, etc.
+
+It's much like a template, only very lightweight and scoped to only a single page, so you can use many variables on a page without polluting the wiki with huge numbers of templates. Combine with the [[ParserFunctions]] extension for best results.
+
+This dead simple extension was written by Rob Adams, and he has released it into the public domain. It was ported to MediaWiki version 1.8 by [[m:User:Hempel|Hempel]]. It was ported to MediaWiki 1.10 by Rob Adams. <tt>#vardefineecho</tt> was added by [[User:Xiloynaha|Xiloynaha]], <tt>#varexists</tt> and <tt>#var</tt> with an optional default value by [[User:Danwe|Danwe]].
+
+==Assigning a value to a variable==
+===#vardefine===
+:<nowiki>{{#vardefine:</nowiki>''variablename''|''specifiedvalue''}}
+
+assigns the value ''specifiedvalue'' to the (already existing or hereby introduced) variable ''variablename''.
+
+===#vardefineecho===
+:<nowiki>{{#vardefineecho:</nowiki>''variablename''|''specifiedvalue''}}
+
+works exactly as <tt>#vardefine</tt>, but the affected value is printed.
+
+==Retrieving the value of a variable (#var)==
+The value of the variable ''variablename'' is produced by
+:<nowiki>{{#var:</nowiki>''variablename''}}
+
+If undefined, this produces the empty string; it does not give an error message.
+
+It's possible to define a value for the case that the variable is undefined or void:
+:<nowiki>{{#var:</nowiki>''variablename'' <nowiki>|</nowiki>''defaultvalue''<nowiki>}}</nowiki>
+This is equivalent to:
+:<nowiki>{{#if:</nowiki> <nowiki>{{#var</nowiki>:''variablename''}} |<nowiki>{{#var</nowiki>:''variablename''}} |''defaultvalue''}}
+but it's much shorter and better arranged.
+
+The value can be used in parser functions, etc.
+
+==#varexists==
+:<nowiki>{{#varexists:</nowiki>''variablename''}} returns ''1'' if the variable is already defined (also when the value is a void string). If the variable is not defined the return value is void.
+
+==Examples==
+:''Note that the [[Extension:ParserFunctions|ParserFunctions extension]] must also be installed to use #expr''
+
+Compute 2*a + b:
+:<nowiki>{{#expr:2*{{#var:a}}+{{#var:b}}}}</nowiki>
+Add one to n:
+:<nowiki>{{#vardefine:n|{{#expr:{{#var:n}}+1}}}}</nowiki>
+
+==Variables and conditional parser functions==
+This section only applies to MediaWiki versions below 1.12.
+
+===[[Extension:ParserFunctions|ParserFunctions]]===
+It must be noted that everything in conditional parser functions such as #ifexpr gets executed (though only one result gets displayed), regardless of the condition, see [[Help:Extension:ParserFunctions]]. This applies also to #vardefine. Thus: 
+ <nowiki>{{#ifexpr:..|
+    {{#vardefine:a|b}}|
+    {{#vardefine:a|c}}
+}}</nowiki>
+
+first assigns b and then c (hence effectively just c) regardless of the condition, while 
+
+ <nowiki>{{#vardefine:a | {{#ifexpr:..|b|c}} }}</nowiki>
+
+assigns only the applicable value.
+
+Similarly
+ <nowiki>{{#ifexpr:..| {{#vardefine:a|b}}|}}</nowiki>
+
+assigns b regardless of the condition, while 
+
+ <nowiki>{{#vardefine:a | {{#ifexpr:..|b|{{#var:a}} }} }}</nowiki>
+
+conditionally assigns value b to variable a (a dummy assignment of the value of a to a is done if the condition is not fulfilled).
+
+===[[Extension:Control Structure Functions|Control Structure Functions]]===
+Another way around the aforementioned limitation is to use the [[Extension:Control Structure Functions|Control Structure Functions]] extension, which allows one to delay the parsing of wiki markup through the use of [[Extension:Control Structure Functions#Character Escapes|character escape sequences]].  So, the first above example becomes this:
+
+ <nowiki>{{#ifexpr:..|
+    \o#vardefine:a\pb\c|
+    \o#vardefine:a\pc\c
+}}</nowiki>
+
+Alternatively, the [[Extension:Character Escapes|Character Escapes]] extension can be used to automate the escape sequences:
+
+ <nowiki>{{#ifexpr:..|
+    <esc>{{#vardefine:a|b}}</esc>|
+    <esc>{{#vardefine:a|c}}</esc>
+}}</nowiki>
+
+The [[Extension:Control Structure Functions|Control Structure Functions]] extension also has loop functions that support character escape sequences.  The wiki markup:
+
+ <nowiki>{{ #vardefine: i | 0 }}{{
+  #while: expr
+  | <esc>{{ #var: i }} < 3</esc>
+  | <esc>
+* {{ #var: i }}{{ #vardefine: i | {{ #expr: {{ #var: i }} + 1 }} }}</esc>
+}}</nowiki>
+
+produces the following:
+
+* 0
+* 1
+* 2
+
+==Installation==
+See GIT.
+
+=== LocalSettings.php ===
+Then add 
+<source lang="php">require_once( "$IP/extensions/Variables/Variables.php" );</source>
+to the end of LocalSettings.php.
+
+==See also==
+*[[Extension:DynamicFunctions##arg:]]
+*[[bugzilla:7865]] - Enable VariablesExtension on Wikimedia wikis (status: wontfix)
+*[[Extension:Variables]] - creates new variables in the MediaWiki sense.
+*[[Extension:Control Structure Functions]] - [[meta:Help:ParserFunctions|ParserFunctions]] extension rehashed with loop functionality added.
+*[[Extension:Loops]]
+*[[Extension:ArrayExtension]] - create an array and provide array functions (such as search, split, and sort) and set operations (such as intersect, union and diff). 
+*[[Extension:HashTables]] - new parser functions for handling hash tables in MediaWiki.
+

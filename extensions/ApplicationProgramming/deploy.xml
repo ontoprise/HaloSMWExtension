@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>103</version>
+		<version>110</version>
 		<id>ApplicationProgramming</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,7 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
 		<dependencies>
-            <dependency from="1120" to="1169">mw</dependency>
+            <dependency from="1151">mw</dependency>
         </dependencies>
 	</global>
 	<codefiles>
@@ -30,8 +30,6 @@
 		<new>
 			<require name="pf"
 				file="extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" />
-			<require name="sf"
-				file="extensions/ApplicationProgramming/StringFunctions/StringFunctions.php" />
 			<require name="urlarg"
 				file="extensions/ApplicationProgramming/URLArguments/URLArguments.php" />
 			<require name="variables"
