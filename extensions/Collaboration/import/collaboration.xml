@@ -1111,7 +1111,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <hash>dd3ffcb498fe1901eba39fd62738c55a</hash>
     </revision>
   </page>
-<<<<<<< .working
     <page>
     <title>Template:Content hash</title>
     <id>248</id>
@@ -1208,17 +1207,17 @@ To use this widget on your site, just install [http://www.mediawiki.org/wiki/Ext
     <title>Collaboration Sandbox/Widget examples</title>
     <id>2270</id>
     <revision>
-      <timestamp>2011-08-24T15:58:48Z</timestamp>
+      <timestamp>2011-08-30T08:29:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">This is a small example page that contains recommended widgets from the '''Widgets extension''' that work without further configuration effort. 
+      <text xml:space="preserve">This is a small example page that contains recommended widgets from the '''Widgets extension'''. 
 
-There are a lot of other very interesting widgets that my be worthwhile for you but they require underlying changes to your file system (write access for a sub folder in extension directory). Please consider [http://www.mediawiki.org/wiki/Extension:Widgets the official extension instructions] from Mediawiki.org for a detailed explanation about how to achieve that on your system.
+There are a lot of other very interesting widgets that my be worthwhile for you.
 
-For example just have a look at the amasing [http://www.mediawikiwidgets.org/SlideShare SlideShare widget] or [http://www.mediawikiwidgets.org/Twitter Twitter widget] that can be embedded if you were able to achieve the additional configuration.
-
+For example just have a look at the amasing [http://www.mediawikiwidgets.org/SlideShare SlideShare widget] or [http://www.mediawikiwidgets.org/Twitter Twitter widget] that can also be embedded in any page.
+An extensive list of available widgets can be found at [http://www.mediawikiwidgets.org/Widgets_Catalog the official Widgets Catalog].
 
 We have taken our SMW+ Facebook page as an example to provide you with a simple use case.
 Feel free to modify these parser functions and use them in any wiki page you want to.
@@ -1265,7 +1264,7 @@ and looks like this:
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>0b30c9783bf12cb87678e50f6ce31555</hash>
+    <hash>4e2a96aba49d8b31798baba9cb3f1258</hash>
     </revision>
   </page>
   <page>
