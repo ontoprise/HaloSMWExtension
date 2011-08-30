@@ -1904,19 +1904,41 @@ OBGlobalActionListener.prototype = {
 	},
 
 	refresh : function() {
-		//_smw_hideAllTooltips();
-		// re-initialize tooltips when content has changed.
-		//smw_tooltipInit();
-	
+		
+		
 		jQuery(".smwh_ob_tooltip")
 		.each(
 				function() {
-					var html = jQuery("<span>MyTest</span>");
+					var html = jQuery(this)[0].innerHTML;
 					
 					jQuery(this).qtip( {
-						 content: 'This is an active list element',
-						   show: 'mouseover',
-						   hide: 'mouseout'
+						content : html,
+						show : {
+							effect : {
+								length : 500
+							},
+							when : {
+								event : 'mouseover'
+							}
+						},
+						hide : {
+							when : {
+								event : 'mouseout'
+							},
+							fixed : true
+						},
+						position : {
+							corner : {
+								target : 'topLeft',
+								tooltip : 'bottomLeft'
+							}
+						},
+						style : {
+							tip : 'bottomLeft',
+							width : {
+								max : 500
+							}
+						}
 					});
 				}
 		);
