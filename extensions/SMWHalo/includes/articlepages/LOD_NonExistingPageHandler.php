@@ -29,7 +29,7 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
-	die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
+    die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
 //--- Includes ---
@@ -48,81 +48,81 @@ $wgAutoloadClasses['TSHelper'] = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.
  */
 class  LODNonExistingPageHandler  {
 
-	//--- Public methods ---
+    //--- Public methods ---
 
-	/**
-	 * This method is called when a new article object is created. It can decide
-	 * which sub-class of Article is created.
-	 * If the article does not exist yet, an instance of LODNonExistingPage
-	 * is returned.
-	 *
-	 * @param Title $title
-	 * 		The title is the basis for the article
-	 * @param Article $article
-	 * 		This variable is modified if the article does not exist, the action
-	 * 		is "view" and the title is part of the request.
-	 *
-	 */
-	public static function onArticleFromTitle(Title &$title, &$article) {
-		global $wgRequest, $mediaWiki;
+    /**
+     * This method is called when a new article object is created. It can decide
+     * which sub-class of Article is created.
+     * If the article does not exist yet, an instance of LODNonExistingPage
+     * is returned.
+     *
+     * @param Title $title
+     *      The title is the basis for the article
+     * @param Article $article
+     *      This variable is modified if the article does not exist, the action
+     *      is "view" and the title is part of the request.
+     *
+     */
+    public static function onArticleFromTitle(Title &$title, &$article) {
+        global $wgRequest, $mediaWiki;
 
-		$action = $wgRequest->getVal('action', 'view');
-		$isView = $action === 'view';
-		$isRedlink = $wgRequest->getVal('redlink', '') === '1';
-		$uri = $wgRequest->getVal('uri', '');
+        $action = $wgRequest->getVal('action', 'view');
+        $isView = $action === 'view';
+        $isRedlink = $wgRequest->getVal('redlink', '') === '1';
+        $uri = $wgRequest->getVal('uri', '');
         
-		// ignore NEP on NS_FILE pages and other namespaces that expect an Image
-		// article
-		$ns = $title->getNamespace();
-		if ($ns === NS_FILE) {
-			return true;
-		}
-		global $smwgEnableRichMedia;
-		if ($smwgEnableRichMedia) {
-			RMNamespace::isImage($ns, $isRMns);
-			if ($isRMns) {
-				return true;
-			}
-		}
-		
-		if (!$title->exists()
-			&& ($isView || $isRedlink)
-			&& $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
-			$article = new LODNonExistingPage($title, $uri);
-			// Overwrite the edit mode in case of a redlink
-			if ($action === 'edit') {
-				$action = 'view';
-				$mediaWiki->setVal('action', $action);
-			}
-		}
+        // ignore NEP on NS_FILE pages and other namespaces that expect an Image
+        // article
+        $ns = $title->getNamespace();
+        if ($ns === NS_FILE) {
+            return true;
+        }
+        global $smwgEnableRichMedia;
+        if ($smwgEnableRichMedia) {
+            RMNamespace::isImage($ns, $isRMns);
+            if ($isRMns) {
+                return true;
+            }
+        }
+        
+        if (!$title->exists()
+            && ($isView || $isRedlink)
+            && $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
+            $article = new LODNonExistingPage($title, $uri);
+            // Overwrite the edit mode in case of a redlink
+            if ($action === 'edit') {
+                $action = 'view';
+                $mediaWiki->setVal('action', $action);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Called when edit page for new article is shown. If the request contains
-	 * the parameter 'preloadNEP' with value <true>, the edit field is filled
-	 * with the content that is displayed for non-empty pages.
-	 *
-	 * @param string $text
-	 * @param Title $title
-	 */
-	public static function onEditFormPreloadText(&$text, Title &$title) {
-		global $wgRequest;
-		if ($wgRequest->getVal('preloadNEP') === 'true') {
-			$text = LODNonExistingPage::getContentOfNEP(new Article($title));
-			$uri = $wgRequest->getVal('uri', '');
-			if ($uri != '') {
-				// if URI is set add an ontology URI link
-				global $smwgHaloContLang;
-				$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-				$ontologyURIProperty = $ssp[SMW_SSP_ONTOLOGY_URI];
-				$text = "[[$ontologyURIProperty::$uri |]]\n\n".$text;
-			}
-		}
-		return true;
-	}
+    /**
+     * Called when edit page for new article is shown. If the request contains
+     * the parameter 'preloadNEP' with value <true>, the edit field is filled
+     * with the content that is displayed for non-empty pages.
+     *
+     * @param string $text
+     * @param Title $title
+     */
+    public static function onEditFormPreloadText(&$text, Title &$title) {
+        global $wgRequest;
+        if ($wgRequest->getVal('preloadNEP') === 'true') {
+            $uri = $wgRequest->getVal('uri', '');
+            $text = LODNonExistingPage::getContentOfNEP(new Article($title), $uri);
+            if ($uri != '') {
+                // if URI is set add an ontology URI link
+                global $smwgHaloContLang;
+                $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+                $ontologyURIProperty = $ssp[SMW_SSP_ONTOLOGY_URI];
+                $text = "[[$ontologyURIProperty::$uri |]]\n\n".$text;
+            }
+        }
+        return true;
+    }
 
-	//--- Private methods ---
+    //--- Private methods ---
 
 }

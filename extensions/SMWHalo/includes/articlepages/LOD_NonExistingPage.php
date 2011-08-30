@@ -29,7 +29,7 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
-	die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
+    die( "This file is part of the LinkedData extension. It is not a valid entry point.\n" );
 }
 
 //--- Includes ---
@@ -44,307 +44,404 @@ global $haclgIP;
  */
 class  LODNonExistingPage extends Article {
 
-	private $mUri;
+    private $mUri;
 
-	public function LODNonExistingPage($title, $uri = '') {
-		parent::__construct($title);
-		$this->mUri = $uri;
-	}
+    public function LODNonExistingPage($title, $uri = '') {
+        parent::__construct($title);
+        $this->mUri = $uri;
+    }
 
-	//--- Constants ---
+    //--- Constants ---
 
-	//--- Private fields ---
-	private $mArticleID = 0; // ID of this article
-
-
-	//--- getter/setter ---
-
-	//--- Public methods ---
-
-	/**
-	 * This function overwrites Article::getID() and pretends that the article
-	 * exists while the method view() is being processed.
-	 */
-	public function getID() {
-		return $this->mArticleID;
-	}
-
-	/**
-	 * This method is called when an article will be displayed. In this phase the
-	 * articles content is fetched. This class replaces the content of non-existing
-	 * pages, which would normally be an error message. Unfortunately, replacing
-	 * the content is not enough for non-existing pages. The original method
-	 * Article::view() first fetches the content and then the error message, if
-	 * the ID of the article is 0. Because of this, this method temporarily pretends
-	 * that the ID is not 0.
-	 */
-	public function view() {
-		$this->mArticleID = -1;
-		parent::view();
-		$this->mArticleID = 0;
-
-		// We do not want to show the Semantic Toolbar on non-existing pages
-		global $wgHooks;
-		$wgHooks['MakeGlobalVariablesScript'][] = "LODNonExistingPage::hideSemanticToolbar";
-	}
-
-	/**
-	 * Returns the content of non-existing pages.
-	 *
-	 * @return string
-	 * 		Content of the page.
-	 */
-	public function getContent() {
-		$text = self::getCreateLink($this, $this->mUri);
-		$text .= self::getContentOfNEP($this, $this->mUri);
-		return $text;
-	}
-
-	/**
-	 * Generates the content of the non-existing page which is specified by
-	 * $article.
-	 *
-	 * @param Article $article
-	 * 		Description of the non-existing page.
-	 * @return string
-	 * 		The wiki text for the page
-	 *
-	 */
-	public static function getContentOfNEP(Article $article, $uri = '') {
-		$t = $article->getTitle();
-		$name = $t->getText();
-		$uri = $uri != '' ? $uri : TSHelper::getUriFromTitle($t);
-		$ns = $t->getNamespace();
-
-			
-		$content = array();
-		if ($ns == NS_CATEGORY) {
-			// add content for category pages
-			self::addCategoryPageContent($content);
-		} else if (defined('SMW_NS_PROPERTY') && $ns == SMW_NS_PROPERTY) {
-			// add content for property pages
-			self::addPropertyPageContent($content);
-		} else {
-			// add content for all other pages
-			self::addCategoryContent($uri, $content);
-			self::addGenericContent(!empty($content), $content);
-		}
-
-		// Replace variables in wiki text
-		// $name$ will be replaced by the name of the article
-		// $uri" will be replaced by the URI that is associated with the article
-		foreach ($content as $key => $wikiText) {
-			if (isset($wikiText)) {
-				$wikiText = str_replace('$name$', $name, $wikiText);
-				$content[$key] = str_replace('$uri$', $uri, $wikiText);
-			}
-		}
+    //--- Private fields ---
+    private $mArticleID = 0; // ID of this article
 
 
-		// Assemble the complete content
-		$text = "";
-		foreach ($content as $wikiText) {
-			$text .= $wikiText;
-		}
+    //--- getter/setter ---
 
-		return $text;
+    //--- Public methods ---
 
-	}
+    /**
+     * This function overwrites Article::getID() and pretends that the article
+     * exists while the method view() is being processed.
+     */
+    public function getID() {
+        return $this->mArticleID;
+    }
 
-	/**
-	 * We do not want to show the Semantic Toolbar on non-existing pages. Add a
-	 * global javascript variable that suppresses the STB.
-	 * @param $vars
-	 * 		This array of global variables is enhanced with "wgHideSemanticToolbar"
-	 */
-	public static function hideSemanticToolbar(&$vars) {
-		$vars['wgHideSemanticToolbar'] = true;
+    /**
+     * This method is called when an article will be displayed. In this phase the
+     * articles content is fetched. This class replaces the content of non-existing
+     * pages, which would normally be an error message. Unfortunately, replacing
+     * the content is not enough for non-existing pages. The original method
+     * Article::view() first fetches the content and then the error message, if
+     * the ID of the article is 0. Because of this, this method temporarily pretends
+     * that the ID is not 0.
+     */
+    public function view() {
+        $this->mArticleID = -1;
+        parent::view();
+        $this->mArticleID = 0;
 
-		return true;
-	}
+        // We do not want to show the Semantic Toolbar on non-existing pages
+        global $wgHooks;
+        $wgHooks['MakeGlobalVariablesScript'][] = "LODNonExistingPage::hideSemanticToolbar";
+    }
 
-	//--- Private methods ---
+    /**
+     * Returns the content of non-existing pages.
+     *
+     * @return string
+     *      Content of the page.
+     */
+    public function getContent() {
+        $text = self::getCreateLink($this, $this->mUri);
+        $text .= self::getContentOfNEP($this, $this->mUri);
+        return $text;
+    }
 
+    /**
+     * Generates the content of the non-existing page which is specified by
+     * $article.
+     *
+     * @param Article $article
+     *      Description of the non-existing page.
+     * @return string
+     *      The wiki text for the page
+     *
+     */
+    public static function getContentOfNEP(Article $article, $uri = '') {
+        $t = $article->getTitle();
+        $name = $t->getText();
+        $uri = $uri != '' ? $uri : TSHelper::getUriFromTitle($t);
+        $ns = $t->getNamespace();
 
-	/**
-	 * Adds the content of the generic template for non-existing pages with the
-	 * key "Generic" to the array $content.
-	 *
-	 * @param boolean $categoryContentAdded
-	 * 		<true>, if content for categories has been added before. In this case
-	 * 		the generic content can possibly be omitted.
-	 * @param array<string => string> $content
-	 * 		This array contains key/values pairs for the content. This method
-	 * 		adds the content of the generic template with the key "Generic".
-	 *
-	 */
-	private static function addGenericContent($categoryContentAdded, &$content) {
-		global $lodgNEPUseGenericTemplateIfCategoryMember;
-		if (!$lodgNEPUseGenericTemplateIfCategoryMember && $categoryContentAdded) {
-			// No generic content wanted for items with a type
-			return;
-		}
+            
+        $content = array();
+        if ($ns == NS_CATEGORY) {
+            // add content for category pages
+            self::addCategoryPageContent($content);
+        } else if (defined('SMW_NS_PROPERTY') && $ns == SMW_NS_PROPERTY) {
+            // add content for property pages
+            self::addPropertyPageContent($content);
+        } else {
+            // add content for all other pages
+            self::addCategoryContent($uri, $content);
+            self::addCategoryAnnotations($uri, $content);
+            self::addGenericContent(false, $content);
+        }
 
-		global $lodgNEPGenericTemplate;
-		if (!isset($lodgNEPGenericTemplate)) {
-			// no template for generic content defined
-			return;
-		}
-
-		// Get the content of the generic template
-		$content["Generic"] = self::getContentOfArticle($lodgNEPGenericTemplate);
-
-	}
-
-	/**
-	 * Adds the content of the property page template for non-existing property
-	 * pages (e.g. Property:MyProperty) with the key "PropertyPage" to the array
-	 * $content.
-	 *
-	 * @param array<string => string> $content
-	 * 		This array contains key/values pairs for the content. This method
-	 * 		adds the content of the generic template with the key "PropertyPage".
-	 *
-	 */
-	private static function addPropertyPageContent(&$content) {
-		global $lodgNEPPropertyPageTemplate;
-		if (!isset($lodgNEPPropertyPageTemplate)) {
-			// no template for property page content defined
-			return;
-		}
-
-		// Get the content of the property page template
-		$content["PropertyPage"] = self::getContentOfArticle($lodgNEPPropertyPageTemplate);
-
-	}
-
-	/**
-	 * Adds the content of the category page template for non-existing category
-	 * pages (e.g. Category:MyCategory) with the key "CategoryPage" to the array
-	 * $content.
-	 *
-	 * @param array<string => string> $content
-	 * 		This array contains key/values pairs for the content. This method
-	 * 		adds the content of the generic template with the key "CategoryPage".
-	 *
-	 */
-	private static function addCategoryPageContent(&$content) {
-		global $lodgNEPCategoryPageTemplate;
-		if (!isset($lodgNEPCategoryPageTemplate)) {
-			// no template for category page content defined
-			return;
-		}
-
-		// Get the content of the category page template
-		$content["CategoryPage"] = self::getContentOfArticle($lodgNEPCategoryPageTemplate);
-
-	}
+        // Replace variables in wiki text
+        // $name$ will be replaced by the name of the article
+        // $uri" will be replaced by the URI that is associated with the article
+        foreach ($content as $key => $wikiText) {
+            if (isset($wikiText)) {
+                $wikiText = str_replace('$name$', $name, $wikiText);
+                $content[$key] = str_replace('$uri$', $uri, $wikiText);
+            }
+        }
 
 
-	/**
-	 * Adds the content of each category template for non-existing pages.
-	 * The Linked Data item with the URI $uri can have several types that are
-	 * associated with mediawiki categories. For each of them a template can be
-	 * defined and its content (wiki text) is added to the array $content.
-	 *
-	 * @param string $uri
-	 * 		URI of the Linked Data item that can have types (rdf:type)
-	 * @param array<string => string> $content
-	 * 		This array contains key/values pairs for the content. This method
-	 * 		adds the content of the category templates with the key
-	 * 		"Category:<category name>".
-	 *
-	 */
-	private static function addCategoryContent($uri, &$content) {
-		global $lodgNEPCategoryTemplatePattern;
-		if (!isset($lodgNEPCategoryTemplatePattern)) {
-			// no category articles defined
-			return;
-		}
+        // Assemble the complete content
+        $text = "";
+        foreach ($content as $wikiText) {
+            $text .= $wikiText;
+        }
 
-		// get the categories of the entity
+        return $text;
 
-		if (!class_exists("LODTripleStoreAccess")) return;
+    }
 
-		$tsa = new LODTripleStoreAccess();
-		$query = <<<SPARQL
-			PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-			SELECT ?C
-			WHERE {
-				GRAPH ?G {
-					<$uri> rdf:type ?C .
-				}
-			}
+    /**
+     * We do not want to show the Semantic Toolbar on non-existing pages. Add a
+     * global javascript variable that suppresses the STB.
+     * @param $vars
+     *      This array of global variables is enhanced with "wgHideSemanticToolbar"
+     */
+    public static function hideSemanticToolbar(&$vars) {
+        $vars['wgHideSemanticToolbar'] = true;
+
+        return true;
+    }
+
+    //--- Private methods ---
+
+
+    /**
+     * Adds the content of the generic template for non-existing pages with the
+     * key "Generic" to the array $content.
+     *
+     * @param boolean $categoryContentAdded
+     *      <true>, if content for categories has been added before. In this case
+     *      the generic content can possibly be omitted.
+     * @param array<string => string> $content
+     *      This array contains key/values pairs for the content. This method
+     *      adds the content of the generic template with the key "Generic".
+     *
+     */
+    private static function addGenericContent($categoryContentAdded, &$content) {
+        global $lodgNEPUseGenericTemplateIfCategoryMember;
+        if (!$lodgNEPUseGenericTemplateIfCategoryMember && $categoryContentAdded) {
+            // No generic content wanted for items with a type
+            return;
+        }
+
+        global $lodgNEPGenericTemplate;
+        if (!isset($lodgNEPGenericTemplate)) {
+            // no template for generic content defined
+            return;
+        }
+
+        // Get the content of the generic template
+        $content["Generic"] = self::getContentOfArticle($lodgNEPGenericTemplate);
+
+    }
+
+    /**
+     * Adds the content of the property page template for non-existing property
+     * pages (e.g. Property:MyProperty) with the key "PropertyPage" to the array
+     * $content.
+     *
+     * @param array<string => string> $content
+     *      This array contains key/values pairs for the content. This method
+     *      adds the content of the generic template with the key "PropertyPage".
+     *
+     */
+    private static function addPropertyPageContent(&$content) {
+        global $lodgNEPPropertyPageTemplate;
+        if (!isset($lodgNEPPropertyPageTemplate)) {
+            // no template for property page content defined
+            return;
+        }
+
+        // Get the content of the property page template
+        $content["PropertyPage"] = self::getContentOfArticle($lodgNEPPropertyPageTemplate);
+
+    }
+
+    /**
+     * Adds the content of the category page template for non-existing category
+     * pages (e.g. Category:MyCategory) with the key "CategoryPage" to the array
+     * $content.
+     *
+     * @param array<string => string> $content
+     *      This array contains key/values pairs for the content. This method
+     *      adds the content of the generic template with the key "CategoryPage".
+     *
+     */
+    private static function addCategoryPageContent(&$content) {
+        global $lodgNEPCategoryPageTemplate;
+        if (!isset($lodgNEPCategoryPageTemplate)) {
+            // no template for category page content defined
+            return;
+        }
+
+        // Get the content of the category page template
+        $content["CategoryPage"] = self::getContentOfArticle($lodgNEPCategoryPageTemplate);
+
+    }
+
+
+    /**
+     * Adds the categories as annotations. Note: Will not work with LOD.  
+     *
+     * @param string $uri
+     *      URI of the Linked Data item that can have types (rdf:type)
+     * @param array<string => string> $content
+     *      This array contains key/values pairs for the content. This method
+     *      adds the content of the category templates with the key
+     *      "Category:<category name>".
+     *
+     */
+    private static function addCategoryAnnotations($uri, &$content) {
+
+        // get the categories of the entity
+
+        $query = <<<SPARQL
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT ?C
+            WHERE {
+                
+                <$uri> rdf:type ?C .
+                
+            }
+SPARQL;
+        global $smwgTripleStoreGraph;
+        $result = self::queryTripleStore($query, $smwgTripleStoreGraph);
+        $result = self::parseSparqlXMLResult($result);
+        if (!$result) {
+            // No categories found for the given URI
+            return;
+        }
+        
+        $categories = array();
+        foreach ($result as $catURI) {
+            $t = TSHelper::getTitleFromURI($catURI);
+            $categories[] = $t->getText();
+        }
+
+        global $wgContLang;
+        $content['Categories'] = ''; // category string
+        $catNsText = $wgContLang->getNsText(NS_CATEGORY);
+
+        // Fetch templates from categories of the entity
+        foreach ($categories as $cat) {
+            $content['Categories'] .= "\n[[$catNsText:".$cat."]]\n";
+        }
+    }
+    
+    /**
+     * Adds the content of each category template for non-existing pages.
+     * The Linked Data item with the URI $uri can have several types that are
+     * associated with mediawiki categories. For each of them a template can be
+     * defined and its content (wiki text) is added to the array $content.
+     *
+     * @param string $uri
+     *      URI of the Linked Data item that can have types (rdf:type)
+     * @param array<string => string> $content
+     *      This array contains key/values pairs for the content. This method
+     *      adds the content of the category templates with the key
+     *      "Category:<category name>".
+     *
+     */
+    private static function addCategoryContent($uri, &$content) {
+        global $lodgNEPCategoryTemplatePattern;
+        if (!isset($lodgNEPCategoryTemplatePattern)) {
+            // no category articles defined
+            return;
+        }
+
+        // get the categories of the entity
+
+        if (!class_exists("LODTripleStoreAccess")) return;
+
+        $tsa = new LODTripleStoreAccess();
+        $query = <<<SPARQL
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            SELECT ?C
+            WHERE {
+                GRAPH ?G {
+                    <$uri> rdf:type ?C .
+                }
+            }
 SPARQL;
 
-		$result = $tsa->queryTripleStore($query);
-		if (!$result) {
-			// No categories found for the given URI
-			return;
-		}
-		$rows = $result->getRows();
-		$categories = array();
-		foreach ($rows as $r) {
-			$catURI = $r->getResult("C")->getValue();
-			$t = TSHelper::getTitleFromURI($catURI);
-			$categories[] = $t->getText();
-		}
+        $result = $tsa->queryTripleStore($query);
+        if (!$result) {
+            // No categories found for the given URI
+            return;
+        }
+        $rows = $result->getRows();
+        $categories = array();
+        foreach ($rows as $r) {
+            $catURI = $r->getResult("C")->getValue();
+            $t = TSHelper::getTitleFromURI($catURI);
+            $categories[] = $t->getText();
+        }
 
-		// Fetch templates from categories of the entity
-		foreach ($categories as $cat) {
-			$catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
-			$con = self::getContentOfArticle($catTemplate);
-			if (!is_null($con)) {
-				$content["Category:$cat"] = $con;
-			}
-		}
-	}
+        // Fetch templates from categories of the entity
+        foreach ($categories as $cat) {
+            $catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
+            $con = self::getContentOfArticle($catTemplate);
+            if (!is_null($con)) {
+                $content["Category:$cat"] = $con;
+            }
+        }
+    }
 
-	/**
-	 * Retrieves the content (wiki text) of the article with the name $articleName.
-	 * @param string $articleName
-	 * 		Name of the article whose wiki text is retrieved.
-	 *
-	 * @return string
-	 * 		Returns the wiki text of the specified article or <null> if the
-	 * 		article does not exist.
-	 */
-	private static function getContentOfArticle($articleName) {
-		$titleObj = Title::newFromText($articleName);
-		$article = new Article($titleObj);
+    /**
+     * Retrieves the content (wiki text) of the article with the name $articleName.
+     * @param string $articleName
+     *      Name of the article whose wiki text is retrieved.
+     *
+     * @return string
+     *      Returns the wiki text of the specified article or <null> if the
+     *      article does not exist.
+     */
+    private static function getContentOfArticle($articleName) {
+        $titleObj = Title::newFromText($articleName);
+        $article = new Article($titleObj);
 
-		return ($article->exists())
-		? $article->getContent()
-		: null;
+        return ($article->exists())
+        ? $article->getContent()
+        : null;
 
-	}
+    }
 
-	/**
-	 * Generates the HTML for a link that creates the article with the displayed
-	 * content.
-	 *
-	 * @param Article $article
-	 * 		The article for which the link is generated.
-	 * @param string URI of entity this article describes
-	 */
-	private static function getCreateLink(Article $article, $uri = '') {
+    /**
+     * Generates the HTML for a link that creates the article with the displayed
+     * content.
+     *
+     * @param Article $article
+     *      The article for which the link is generated.
+     * @param string URI of entity this article describes
+     */
+    private static function getCreateLink(Article $article, $uri = '') {
 
 
-		$t = $article->getTitle();
-		if ($uri == '') {
-			$link = $t->getFullUrl(array('action' => 'edit',
-									 'preloadNEP' => 'true',
-									 'mode' => 'wysiwyg'));
-		} else {
-			$link = $t->getFullUrl(array('action' => 'edit',
+        $t = $article->getTitle();
+        if ($uri == '') {
+            $link = $t->getFullUrl(array('action' => 'edit',
+                                     'preloadNEP' => 'true',
+                                     'mode' => 'wysiwyg'));
+        } else {
+            $link = $t->getFullUrl(array('action' => 'edit',
                                      'preloadNEP' => 'true',
                                      'mode' => 'wysiwyg',
-			                         'uri' => $uri));
-		}
-		$name = $t->getFullText();
-		$message = wfMsg('lod_nep_link', $name);
-		$link = "[$link $message] <br />";
-		return $link;
+                                     'uri' => $uri));
+        }
+        $name = $t->getFullText();
+        $message = wfMsg('lod_nep_link', $name);
+        $link = "[$link $message] <br />";
+        return $link;
 
-	}
+    }
+
+    public static function queryTripleStore($query, $graph = "", $params = null) {
+        try {
+            $con = TSConnection::getConnector();
+            $con->connect();
+            $p = "merge=false";
+            if (isset($params)) {
+                $p .= "|$params";
+            }
+            $result = $con->query($query, $p, $graph);
+            $con->disconnect();
+        } catch (Exception $e) {
+            // An exception occurred => no result
+            return null;
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Parses a result of categories
+     * @param string SPARQL-XML
+     * 
+     * @return string[] Category URIs
+     */
+    private static function parseSparqlXMLResult($sparqlXMLResult) {
+        $dom = simplexml_load_string($sparqlXMLResult);
+        $dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
+        if ($dom === FALSE) {
+            return null;
+        }
+
+        // add all rows to the query result
+        $results = $dom->xpath('//sparqlxml:result');
+        $categoryURIs = array();
+        foreach ($results as $r) {
+            $binding = $r->binding;
+            $b = $binding[0];
+
+            if (isset($b->uri)) {
+                $categoryURIs[] = (string) $b->uri;
+            }
+        }
+
+        return $categoryURIs;
+
+    }
+
 }
