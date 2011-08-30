@@ -1,0 +1,297 @@
+/* Overview */
+
+.r2redit-mappingTable {
+	border: 1px solid #000000;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.r2redit-mappingTable thead {
+	height: 28px;
+}
+
+.r2redit-mappingTable td {
+	 border: 1px solid #AAAAAA;
+}
+
+.r2redit-mappingTableClickable {
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.r2redit-mappingTableAction {
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+}
+
+.r2redit-mappingTableProperty {
+	width: 30%;
+	padding: 1px 5px;
+}
+
+.r2redit-arrow-collapsed {
+	background: url(../images/arrow-collapsed.png) no-repeat 50% 50%;
+}
+
+.r2redit-arrow-expanded {
+	background: url(../images/arrow-expanded.png) no-repeat 50% 50%;
+}
+
+.r2redit-mappingTableEdit {
+	background: url(../images/blue-document-pencil.png) no-repeat 50% 50%;
+}
+
+.r2redit-mappingTableClassMapping .r2redit-mappingTableName {
+	background: url(../images/class.png) no-repeat 5px 50%;
+	padding-left: 25px;
+}
+
+.r2redit-mappingTablePropertyMapping .r2redit-mappingTableName {
+	background: url(../images/property.png) no-repeat 15px 50%;
+	padding-left: 35px;
+}
+
+.r2redit-mappingTableAddClassMapping .r2redit-mappingTableProperty {
+	padding-left: 5px;
+}
+
+.r2redit-mappingTableAddPropertyMapping .r2redit-mappingTableProperty {
+	padding-left: 15px;
+}
+
+.r2redit-mappingTablePropertyMapping .r2redit-mappingTableProperty, .r2redit-mappingTablePropertyMapping .r2redit-mappingTableEdit {
+	background-color: #fafafa;
+}
+
+.ui-button-text-icon-primary .ui-button-icon-primary, .ui-button-text-icons .ui-button-icon-primary, .ui-button-icons-only .ui-button-icon-primary {
+    left: 3px;
+}
+
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text {
+	padding: 4px 6px 4px 23px;
+}
+
+.ui-icon-add {
+	background: url(../images/add.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-icon-minus-small-circle {
+	background: url(../images/minus-small-circle.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+/* Editor */
+.treeview li span {
+	padding-left: 20px;
+}
+
+.treeview li .ui-icon-minus-small-circle {
+	visibility: hidden;
+}
+
+.treeview li:hover .ui-icon-minus-small-circle {
+	visibility: visible;
+}
+
+.ui-icon-arrow-transition {
+	background: url(../images/arrow-transition.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-icon-block-arrow {
+	background: url(../images/block-arrow.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-icon-block-arrow-in {
+	background: url(../images/block-arrow-in.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-icon-colon {
+	background: url(../images/colon.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-icon-filter {
+	background: url(../images/filter.png) no-repeat 0px 50% !important;
+	background-position: 0px 0px;
+}
+
+.ui-widget {
+	font-size: 11px;
+}
+
+.r2redit-hoverInput {
+	border: 1px solid #ffffff;
+}
+
+.r2redit-input, .r2redit-hoverInput:hover {
+	border: 1px solid #AAAAAA;
+}
+
+#r2redit-controlbar {
+	padding: 5px;
+	margin-bottom: 5px;
+}
+
+#r2redit-controlbar .ui-button {
+	margin-right: 5px;
+}
+
+#r2redit-controlbar .ui-button .ui-button-text {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#r2redit-bottomPane {
+	border-top: none;
+	padding: 0.5em 1.4em;
+}
+
+#r2redit-bottomPane .ui-button {
+	margin-right: 5px;
+}
+
+/* Dialogs */
+
+.r2redit-dialog fieldset {
+	border: 0;
+	padding: 5px 0;
+}
+
+.r2redit-dialog label, .r2redit-dialog input {
+	display: block;
+}
+
+.r2redit-dialog textarea {
+	display: block;
+	width: 100%;
+	height: 185px;
+}
+
+.r2redit-dialog p span.ui-icon {
+	float: left; margin: 0pt 7px 20px 0pt;
+}
+
+.r2redit-dialog-loading .ui-dialog-titlebar-close {
+	display: none;
+}
+
+.r2redit-dialog-loading-image {
+	background-image: url(../images/loading.gif);
+	width: 220px;
+	height: 20px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.r2redit-mappingTable thead th {
+	padding: 1px 10px;
+}
+
+/* Editor */
+
+.r2redit-editor-transformation-dialog fieldset, .r2redit-editor-transformation-dialog .r2redit-editor-transformation-reference {
+	width: 48%;
+	height: 250px;
+	padding: 0;
+}
+
+.r2redit-editor-transformation-dialog fieldset {
+	margin-top: 5px;
+	float: left;
+}
+
+.r2redit-editor-transformation-dialog .r2redit-editor-transformation-reference {
+	margin-top: 5px;
+	float: right;
+}
+
+.r2redit-editor-transformation-dialog textarea {
+	height: 100%;
+	margin: 0;
+}
+
+#r2redit-editor-transformation-functions {
+	width: 100%;
+	height: 130px;
+	padding-left: 3px;
+}
+
+#r2redit-editor-transformation-search {
+	width: 100%;
+	background: url(../images/magnifier.png) no-repeat 4px 50%;
+	height: 24px;
+}
+
+#r2redit-editor-transformation-search input {
+	position: relative;
+	left: 25px;
+	top: 2px;
+	width: 250px;
+	border: none;
+}
+
+#r2redit-editor-transformation-description {
+	height: 85px;
+	padding: 4px;
+	font-weight: normal;
+	overflow: auto;
+}
+
+.r2redit-editor-description {
+	padding: 4px 30px 4px 4px;
+	font-weight: normal;
+}
+
+.r2redit-editor-helplink {
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	right: 20px;
+	margin-left: 10px;
+	margin-bottom: 30px;
+	background: url(../images/question-white.png) no-repeat 50% 50%;
+}
+
+.r2redit-editor-prefix-dialog-line {
+	width: 100%;
+	height: 18px;
+	clear: both;
+}
+
+.r2redit-editor-prefix-dialog-prefix {
+	width: 80px;
+	float: left;
+	margin-right: 5px;
+}
+
+.r2redit-editor-prefix-dialog-uri {
+	width: 350px;
+	float: left;
+	margin-right: 5px;
+}
+
+.r2redit-editor-prefix-dialog-remove {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+	float: left;
+	visibility: hidden;
+}
+
+.r2redit-editor-prefix-dialog-line:hover .r2redit-editor-prefix-dialog-remove {
+	visibility: visible;
+}
+
+
+.placeholder {
+	color: #bbbbbb;
+}
