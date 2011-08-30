@@ -25,11 +25,11 @@ class HaloACLTests
     	$suite->addTestSuite("TestParserFunctionsSuite");
     	$suite->addTestSuite("TestUserCanHookSuite");
     	$suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
-    	$suite->addTestSuite("TestLDAPStorageSuite");
-    	$suite->addTestSuite("TestSMWStoreSuite");
-    	$suite->addTestSuite("TestGroupPermissionsSuite");
-    	$suite->addTestSuite("TestDynamicHaloACLSuite");
-    	$suite->addTestSuite("TestRenderArticlesSuite");
+////    	$suite->addTestSuite("TestLDAPStorageSuite");
+//    	$suite->addTestSuite("TestSMWStoreSuite");
+//    	$suite->addTestSuite("TestGroupPermissionsSuite");
+//    	$suite->addTestSuite("TestDynamicHaloACLSuite");
+//    	$suite->addTestSuite("TestRenderArticlesSuite");
         
         return $suite;
     }

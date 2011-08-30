@@ -92,7 +92,7 @@ class TestDatabaseSuite extends PHPUnit_Framework_TestSuite
 			'ACL:Category/B',
 			'ACL:Group/G1',
 			'ACL:Group/G2',
-			'ACL:Group/G3',
+			"ACL:Group/G'3",
 			'ACL:Group/G4',
 			'ACL:Group/G5',
 			'ACL:Page/A',
@@ -126,7 +126,7 @@ ACL
 <<<ACL
 Manage: U1
 
-Groups:Group/G2, Group/G3
+Groups:Group/G2, Group/G'3
 
 Users:
 ACL
@@ -140,7 +140,7 @@ Users:
 ACL
 ,
 //------------------------------------------------------------------------------		
-			'ACL:Group/G3' =>
+			"ACL:Group/G'3" =>
 <<<ACL
 Manage: U1
 
@@ -334,7 +334,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$g1->save();
 			$g2 = new HACLGroup(null, "Group/G2", null, array("U1"));
 			$g2->save();
-			$g3 = new HACLGroup(null, "Group/G3", null, array("U1"));
+			$g3 = new HACLGroup(null, "Group/G'3", null, array("U1"));
 			$g3->save();
 			$g5 = new HACLGroup(null, "Group/G5", null, array("U1","U4","U5"));
 			$g5->save();
@@ -342,7 +342,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$g4->save();
 			
 			$g1->addGroup("Group/G2");
-			$g1->addGroup("Group/G3");
+			$g1->addGroup("Group/G'3");
 			
 			$g2->addGroup("Group/G4");
 			$g2->addGroup("Group/G5");
@@ -361,7 +361,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			// Read groups from the database
 			$g1 = HACLGroup::newFromName("Group/G1");
 			$g2 = HACLGroup::newFromName("Group/G2");
-			$g3 = HACLGroup::newFromName("Group/G3");
+			$g3 = HACLGroup::newFromName("Group/G'3");
 			$g4 = HACLGroup::newFromName("Group/G4");
 			$g5 = HACLGroup::newFromName("Group/G5");
 			$this->assertNotNull($g1, "Test TD1a failed in ".basename($file));
@@ -378,7 +378,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$g1g = $g1->getGroups(HACLGroup::NAME);
 			$this->assertTrue(count($g1g) == 2, "Test TD3 failed in ".basename($file));
 			$this->assertContains("Group/G2", $g1g, "Test TD3 failed in ".basename($file));
-			$this->assertContains("Group/G3", $g1g, "Test TD3 failed in ".basename($file));
+			$this->assertContains("Group/G'3", $g1g, "Test TD3 failed in ".basename($file));
 			
 			// TD4: U2 is not allowed to modify "Group/G1"
 			$exceptionCaught = false;
@@ -405,11 +405,11 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			$this->assertTrue($mg[0] == HACLGroup::idForGroup("Group/G5"), $mg, "Test TD5 failed in ".basename($file));
 			
 			// TD 7: Check group membership
-			$this->checkGroupMembers("TD 7-G1", $g1, "group", array("Group/G1", false, "Group/G2", true, "Group/G3", true, "Group/G4", true, "Group/G5", true));
-			$this->checkGroupMembers("TD 7-G2", $g2, "group", array("Group/G1", false, "Group/G2", false, "Group/G3", false, "Group/G4", true, "Group/G5", true));
-			$this->checkGroupMembers("TD 7-G3", $g3, "group", array("Group/G1", false, "Group/G2", false, "Group/G3", false, "Group/G4", true, "Group/G5", false));
-			$this->checkGroupMembers("TD 7-G4", $g4, "group", array("Group/G1", false, "Group/G2", false, "Group/G3", false, "Group/G4", false, "Group/G5", false));
-			$this->checkGroupMembers("TD 7-G5", $g5, "group", array("Group/G1", false, "Group/G2", false, "Group/G3", false, "Group/G4", false, "Group/G5", false));
+			$this->checkGroupMembers("TD 7-G1", $g1, "group", array("Group/G1", false, "Group/G2", true, "Group/G'3", true, "Group/G4", true, "Group/G5", true));
+			$this->checkGroupMembers("TD 7-G2", $g2, "group", array("Group/G1", false, "Group/G2", false, "Group/G'3", false, "Group/G4", true, "Group/G5", true));
+			$this->checkGroupMembers("TD 7-G3", $g3, "group", array("Group/G1", false, "Group/G2", false, "Group/G'3", false, "Group/G4", true, "Group/G5", false));
+			$this->checkGroupMembers("TD 7-G4", $g4, "group", array("Group/G1", false, "Group/G2", false, "Group/G'3", false, "Group/G4", false, "Group/G5", false));
+			$this->checkGroupMembers("TD 7-G5", $g5, "group", array("Group/G1", false, "Group/G2", false, "Group/G'3", false, "Group/G4", false, "Group/G5", false));
 
 			// TD 8: Check user membership
 			$this->checkGroupMembers("TD 8-G1", $g1, "user", array("U1", false, "U2", true, "U3", true, "U4", true, "U5", true, "U6", true));
@@ -447,13 +447,13 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
     	$this->checkGroupsOfMember("U3", true, array("Group/G5", "Group/G2", "Group/G1"));
 
     	$this->checkGroupsOfMember("U4", false, array("Group/G4", "Group/G5"));
-    	$this->checkGroupsOfMember("U4", true, array("Group/G5", "Group/G2", "Group/G1", "Group/G4", "Group/G3"));
+    	$this->checkGroupsOfMember("U4", true, array("Group/G5", "Group/G2", "Group/G1", "Group/G4", "Group/G'3"));
 
     	$this->checkGroupsOfMember("U5", false, array("Group/G4"));
-    	$this->checkGroupsOfMember("U5", true, array("Group/G1", "Group/G2", "Group/G3", "Group/G4"));
+    	$this->checkGroupsOfMember("U5", true, array("Group/G1", "Group/G2", "Group/G'3", "Group/G4"));
     	
-    	$this->checkGroupsOfMember("U6", false, array("Group/G3"));
-    	$this->checkGroupsOfMember("U6", true, array("Group/G3", "Group/G1"));
+    	$this->checkGroupsOfMember("U6", false, array("Group/G'3"));
+    	$this->checkGroupsOfMember("U6", true, array("Group/G'3", "Group/G1"));
     	
     }
 
@@ -1118,7 +1118,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
     	try {
 			$g1 = HACLGroup::newFromName("Group/G1");
 			$g2 = HACLGroup::newFromName("Group/G2");
-			$g3 = HACLGroup::newFromName("Group/G3");
+			$g3 = HACLGroup::newFromName("Group/G'3");
 			$g4 = HACLGroup::newFromName("Group/G4");
 			$g5 = HACLGroup::newFromName("Group/G5");
    			
@@ -1168,7 +1168,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 
 		$exceptionCaught = false;
 		try {
-			$wl = new HACLWhitelist(array('ACL:Group/G2', 'ACL:Group/G3', 'ACL:Group/G7'));
+			$wl = new HACLWhitelist(array('ACL:Group/G2', "ACL:Group/G'3", 'ACL:Group/G7'));
 			$wl->save();
 		} catch (HACLWhitelistException $e) {
 			if ($e->getCode() == HACLWhitelistException::PAGE_DOES_NOT_EXIST) {
@@ -1294,6 +1294,8 @@ class TestDatabaseGroups extends PHPUnit_Framework_TestCase {
     	$ps->save();
     	$ds = new HACLGroup(49, "Group/DilettantishServices", null, array("U1"));
     	$ds->save();
+    	$ds = new HACLGroup(50, "Group/Peter's Group", null, array("U1"));
+    	$ds->save();
     	
     	
     	$c->addGroup("Group/Marketing");
@@ -1309,7 +1311,8 @@ class TestDatabaseGroups extends PHPUnit_Framework_TestCase {
     	$this->mGroupNames = array(
     		"Group/Company", "Group/Marketing",	"Group/Development",
     		"Group/HaloDev", "Group/DevNull",	"Group/Services",
-    		"Group/ProfessionalServices", "Group/DilettantishServices"
+    		"Group/ProfessionalServices", "Group/DilettantishServices",
+    		"Group/Peter's Group"
     	);
     	
     }
@@ -1325,10 +1328,11 @@ class TestDatabaseGroups extends PHPUnit_Framework_TestCase {
     function testSearchGroups() {
     	$this->doSearchGroups('e');
     	$this->doSearchGroups('o');
-    	$this->doSearchGroups('Dev');
     	$this->doSearchGroups('dev');
     	$this->doSearchGroups('services');
     	$this->doSearchGroups('group');
+    	$this->doSearchGroups("Peter's");
+		$this->doSearchGroups('Dev');
     }
 
     /**

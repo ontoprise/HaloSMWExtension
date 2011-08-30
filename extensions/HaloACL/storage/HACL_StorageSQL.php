@@ -217,7 +217,7 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
 		$sql = "SELECT group_name FROM $gt ".
-            "WHERE group_id = '$groupID';";
+            "WHERE group_id = {$db->addQuotes($groupID)};";
 		$groupName = null;
 
 		$res = $db->query($sql);
@@ -323,7 +323,7 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
 		$sql = "SELECT * FROM $gt ".
-            "WHERE group_name = '$groupName';";
+            "WHERE group_name = {$db->addQuotes($groupName)};";
 		$group = null;
 
 		$res = $db->query($sql);
@@ -356,8 +356,9 @@ class HACLStorageSQL {
 	public function searchMatchingGroups($search) {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
+		$search = $db->addQuotes("%$search%");
 		$sql = "SELECT group_name, group_id FROM $gt ".
-               "WHERE lower(group_name) LIKE lower('%$search%');";
+               "WHERE lower(group_name) LIKE lower(CONVERT($search USING utf8));";
 		$group = null;
 
 		$res = $db->query($sql);
@@ -388,7 +389,7 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
 		$sql = "SELECT * FROM $gt ".
-            "WHERE group_id = '$groupID';";
+            "WHERE group_id = {$db->addQuotes($groupID)};";
 		$group = null;
 
 		$res = $db->query($sql);
@@ -541,8 +542,8 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_group_members');
 		$sql = "SELECT child_id FROM $gt ".
-            "WHERE parent_group_id = '$groupID' AND ".
-            "child_type='$memberType';";
+            "WHERE parent_group_id = {$db->addQuotes($groupID)} AND ".
+            "child_type={$db->addQuotes($memberType)};";
 
 		$res = $db->query($sql);
 
