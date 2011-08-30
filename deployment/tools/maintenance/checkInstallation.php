@@ -47,12 +47,14 @@ if(file_exists($rootDir.'/settings.php'))
     require_once($rootDir.'/settings.php');
 }
 
+require_once($rootDir."/io/DF_PrintoutStream.php");
+$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
+
 require_once($rootDir."/tools/maintenance/maintenanceTools.inc");
 require_once($rootDir.'/languages/DF_Language.php');
 
 dffInitLanguage();
-$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
-$dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
 $mwRootDir = dirname(__FILE__);
 $mwRootDir = str_replace("\\", "/", $mwRootDir);
