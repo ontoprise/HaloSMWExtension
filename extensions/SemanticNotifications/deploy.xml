@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>130</version>
 		<id>semanticnotifications</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,11 +12,8 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Notifications_Extension</helpurl>
 		<dependencies>
-			<dependency from="1132" to="1169">mw</dependency>
-			<dependency from="140" to="156">smw</dependency>
-			<dependency from="142" to="156">smwhalo</dependency>
-			<dependency from="100" to="140">semanticgardening</dependency>
-			<dependency from="101">scriptmanager</dependency>
+			<dependency from="160">smwhalo</dependency>
+			<dependency from="136">semanticgardening</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 	</global>

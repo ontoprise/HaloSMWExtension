@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>143</version>
+		<version>144</version>
 		<id>dataimport</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -11,13 +11,9 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
-			<dependency from="1150" to="1169">mw</dependency>
-			<dependency from="150" to="156">smw</dependency>
-			<dependency from="150" to="156">smwhalo</dependency>
+			<dependency from="160">smwhalo</dependency>
 			<dependency from="132" to="140">semanticgardening</dependency>
-			<dependency from="100" to="199">scriptmanager</dependency>
-			<dependency from="100" to="199">arclibrary</dependency>
-			<dependency from="100" to="120" optional="true">linkeddata</dependency>
+			<dependency from="120" optional="true">linkeddata</dependency>
 		</dependencies>
 		<patchlevel>0</patchlevel>
 		<license>GPL v2</license>

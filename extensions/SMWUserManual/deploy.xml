@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <deploydescriptor>
 	<global>
-		<version>104</version>
+		<version>105</version>
 		<id>smwusermanual</id>
 		<instdir>extensions/SMWUserManual</instdir>
 		<vendor>ontoprise GmbH</vendor>
@@ -10,8 +10,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_extension </helpurl>
 		<license>GPL_v2</license>
 		<dependencies>
-			<dependency from="156" to="156">smwhalo</dependency>
-			<dependency from="103" to="103">applicationprogramming</dependency>
+			<dependency from="160">smwhalo</dependency>
 			<dependency from="156" to="156">Smwplus</dependency>
 	</dependencies>
 <notice>"Your Wiki contains now new pages. Since existing pages can make

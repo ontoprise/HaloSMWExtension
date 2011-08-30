@@ -14,7 +14,7 @@
 		<dependencies>
 			<dependency from="156" to="156">smwplus</dependency>
 			<dependency from="092" optional="true">widgets</dependency>
-			<dependency from="152" optional="true">richmedia</dependency>
+			<dependency from="153" optional="true">richmedia</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

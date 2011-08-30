@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>102</version>
+        <version>160</version>
         <patchlevel>0</patchlevel>
         <id>scriptmanager</id>
         <vendor>ontoprise GmbH</vendor>
@@ -12,7 +12,7 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>
-            <dependency from="1120" to="1179">mw</dependency>
+            <dependency from="1120">mw</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>

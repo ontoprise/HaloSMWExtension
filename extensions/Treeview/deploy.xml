@@ -12,8 +12,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension</helpurl>
 		<dependencies>
-			<dependency from="146">smwhalo</dependency>
-            <dependency from="101">scriptmanager</dependency>
+			<dependency from="160">smwhalo</dependency>
             <dependency from="156" to="156">Smwplus</dependency>
 		</dependencies>
 		<notice>"Your Wiki contains now new pages. Since existing pages can make

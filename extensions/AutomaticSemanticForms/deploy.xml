@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>130</version>
 		<id>automaticsemanticforms</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,8 +12,8 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
         <license>GPL-v2</license>
 		<dependencies>
-			<dependency from="152" to="156">smwhalo</dependency>
-			<dependency from="200" to="212">semanticforms</dependency>
+			<dependency from="160">smwhalo</dependency>
+			<dependency from="221">semanticforms</dependency>
 			<dependency from="153" to="156" optional="true">smwplus</dependency>
 			<dependency from="100" to="100" optional="true">smwplussandbox</dependency>
 		</dependencies>

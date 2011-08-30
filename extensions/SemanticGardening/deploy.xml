@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>135</version>
+		<version>136</version>
 		<id>semanticgardening</id>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -9,7 +9,7 @@
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension</helpurl>
 		<dependencies>
-			<dependency from="152" to="156">smwhalo</dependency>
+			<dependency from="160">smwhalo</dependency>
 		</dependencies>
 		<license>GPL v2</license>
 	</global>

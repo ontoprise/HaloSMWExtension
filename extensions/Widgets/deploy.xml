@@ -4,7 +4,7 @@
 		<version>092</version>
 		<id>widgets</id>
 		<license>GPL</license>
-		<vendor>Ontoprise</vendor>
+		<vendor>ontoprise GmbH</vendor>
 		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>
 		<instdir>extensions/Widgets</instdir>
 		<description>
@@ -13,7 +13,14 @@
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
 		</dependencies>
-		<notice></notice> 
+		<notice>
+For the correct behaviour of the Widgets extension it is necessary 
+to make the sub folder 'compiled_templates' writable for your web server.
+
+Please check 
+  http://www.mediawiki.org/wiki/Extension:Widgets#Configuration
+for more detailed instructions about this.
+		</notice> 
 	</global>
 	<codefiles>
 		<file loc="deploy.xml" />
