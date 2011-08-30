@@ -83,7 +83,7 @@
 			<fileset dir="../../../patches/">
 				<include name="patch.php" />
 			</fileset>
-            <fileset dir="../../../deployment/tools">
+			<fileset dir="../../../deployment/tools">
 				<include name="patch.exe" />
 				<include name="patch.exe.manifest" />
 			</fileset>
@@ -140,7 +140,7 @@
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-bundled.zip" basedir="bin/zip" />
- 
+
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
@@ -193,14 +193,14 @@
 			<fileset dir="bin" includes="smwplus-source*.zip" />
 		</delete>
 
-        <ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
+		<ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
 		</ant>
 		<ant antfile="../../EnhancedRetrieval/deploy/build.xml" inheritall="true" dir="../../EnhancedRetrieval/deploy" target="enhancedretrieval">
 		</ant>
 		<ant antfile="../../SemanticMediaWiki/deploy/build.xml" inheritall="true" dir="../../SemanticMediaWiki/deploy" target="smw_build">
 		</ant>
 
-        <copy todir="bin/zip/extensions/WYSIWYG">
+		<copy todir="bin/zip/extensions/WYSIWYG">
 			<fileset dir="../../WYSIWYG/">
 				<exclude name="**/.svn, **/CVS" />
 				<exclude name="**/deploy/**" />
@@ -208,7 +208,7 @@
 			</fileset>
 		</copy>
 
-        <copy todir="bin/zip/extensions/EnhancedRetrieval">
+		<copy todir="bin/zip/extensions/EnhancedRetrieval">
 			<fileset dir="../../EnhancedRetrieval/">
 				<exclude name="**/.svn, **/CVS" />
 				<exclude name="**/deploy/**" />
@@ -216,7 +216,7 @@
 			</fileset>
 		</copy>
 
-        <copy todir="bin/zip/extensions/SemanticMediaWiki">
+		<copy todir="bin/zip/extensions/SemanticMediaWiki">
 			<fileset dir="../../SemanticMediaWiki/">
 				<exclude name="**/.svn, **/CVS" />
 				<exclude name="**/deploy/**" />
@@ -233,7 +233,7 @@
 		</exec>
 	</target>
 
-	
+
 	<target name="versionhint">
 		<property environment="env" />
 		<exec executable="php">
@@ -259,7 +259,7 @@
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patch_for_MW1.16.4.txt" />
+			<arg value="../patch_for_MW1.17.0.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
@@ -270,6 +270,16 @@
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
 			<arg value="../patch_for_SF2.1.2.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch_for_SMW1.6.1.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
