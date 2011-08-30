@@ -40,6 +40,7 @@
 			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
             <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_SMW1.5.5.txt" ext="smw" from="155" to="155"/>
+            <patch file="patch_for_SMW1.6.1.txt" ext="smw" from="160" to="161"/>
             
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
@@ -76,15 +77,13 @@
             </variable>
 			<script file="maintenance/SMW_setup.php" />
 		</new>
-		<update from="151">
-		    <patch file="patch.txt" />
-            <patch file="patch_for_MW1.16.0.txt"/>
-		</update>
+		
 		<uninstall>
 			<patch file="patch_for_SMW1.5.2.txt" ext="smw" from="152" to="152"/>
             <patch file="patch_for_SMW1.5.4.txt" ext="smw" from="154" to="154"/>
             <patch file="patch_for_SMW1.5.5.txt" ext="smw" from="155" to="155"/>
-            
+            <patch file="patch_for_SMW1.6.1.txt" ext="smw" from="160" to="161"/>
+             
             <patch file="patch_for_MW1.15.3.txt"
                 ext="mw" from="1153" to="1153" />
             <patch file="patch_for_MW1.16.0.txt"

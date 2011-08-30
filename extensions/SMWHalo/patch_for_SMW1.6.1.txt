@@ -1,0 +1,123 @@
+Index: extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php	(revision 11971)
++++ extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php	(working copy)
+@@ -18,7 +18,7 @@
+ 
+ /**
+  * Exception to be thrown when data items are created from unsuitable inputs.
+- * 
++ *
+  * @since 1.6
+  */
+ class SMWDataItemException extends MWException {
+@@ -30,7 +30,7 @@
+  * the stored data, and are thus at the core of SMW's data model. Data items
+  * are always immutable, i.e. they must not be changed after creation (and this
+  * is mostly enforced by the API with some minor exceptions).
+- * 
++ *
+  * The set of available data items is fixed and cannot be extended. These are
+  * the kinds of information that SMW can process. Their concrete use and
+  * handling might depend on the context in which they are used. In particular,
+@@ -70,6 +70,28 @@
+ 	///  Data item ID for SMWDIError
+ 	const TYPE_ERROR     = 12;
+ 
++	/// Patch:KK|Metadata data|Start
++	private $m_metadata = array();
++	private $m_metadataTypes = array();
++
++	public function setMetadata($mdProperty, $mdType, $mdValue) {
++		$this->m_metadata[$mdProperty] = $mdValue;
++		$this->m_metadataTypes[$mdProperty] = $mdType;
++	}
++
++	public function getMetadata($mdProperty) {
++		return array_key_exists($mdProperty, $this->m_metadata) ? $this->m_metadata[$mdProperty] : '';
++	}
++
++	public function getMetadataType($mdProperty) {
++		return array_key_exists($mdProperty, $this->m_metadataTypes) ? $this->m_metadataTypes[$mdProperty] : '';
++	}
++
++	public function getMetadataMap() {
++		return $this->m_metadata;
++	}
++	/// Patch:KK|Metadata data|End
++
+ 	/**
+ 	 * Convenience method that returns a constant that defines the concrete
+ 	 * class that implements this data item. Used to switch when processing
+@@ -83,9 +105,9 @@
+ 	 * If the data is of a numerical type, the sorting must be done in
+ 	 * numerical order. If the data is a string, the data must be sorted
+ 	 * alphabetically.
+-	 * 
++	 *
+ 	 * @note Every data item returns a sort key, even if there is no
+-	 * natural linear order for the type. SMW must order listed data 
++	 * natural linear order for the type. SMW must order listed data
+ 	 * in some way in any case. If there is a natural order (e.g. for
+ 	 * Booleans where false < true), then the sortkey must agree with
+ 	 * this order (e.g. for Booleans where false maps to 0, and true
+@@ -95,7 +117,7 @@
+ 	 * sortkey that is assigned to them as a property value. When pages are
+ 	 * sorted, this data should be used if possible.
+ 	 *
+-	 * @return float or string 
++	 * @return float or string
+ 	 */
+ 	abstract public function getSortKey();
+ 
+@@ -126,8 +148,8 @@
+ 
+ 	/**
+ 	 * Get a hash string for this data item. Might be overwritten in
+-	 * subclasses to obtain shorter or more efficient hashes. 
+-	 * 
++	 * subclasses to obtain shorter or more efficient hashes.
++	 *
+ 	 * @return string
+ 	 */
+ 	public function getHash() {
+@@ -141,7 +163,7 @@
+ 	 * @param $diType integer dataitem ID
+ 	 * @param $serialization string
+ 	 * @param $typeid string SMW type ID (optional)
+-	 * 
++	 *
+ 	 * @return SMWDataItem
+ 	 */
+ 	public static function newFromSerialization( $diType, $serialization ) {
+@@ -151,11 +173,11 @@
+ 
+ 	/**
+ 	 * Gets the class name of the data item that has the provided type id.
+-	 * 
++	 *
+ 	 * @param integer $diType Element of the SMWDataItem::TYPE_ enum
+-	 * 
++	 *
+ 	 * @throws InvalidArgumentException
+-	 * 
++	 *
+ 	 * @return string
+ 	 */
+ 	public static function getDataItemClassNameForId( $diType ) {
+Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
+===================================================================
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 11971)
++++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
+@@ -104,9 +104,8 @@
+ 				return spans[i].innerHTML;
+ 			}
+ 		}
+-	} else {
+-		return el.innerHTML;
+-	}
++	} 
++	return el.innerHTML;
+ }
+ 
+ function smw_resortTable( lnk, clid ) {
