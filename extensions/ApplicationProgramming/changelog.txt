@@ -1,7 +1,7 @@
 
 ==Application Programming== 
 
-v 1.1.0 / August 2011
+v 1.6.0 / August 2011
 * updated to ParserFunctions v1.4.0 (r87170)
 * removed StringFunctions: they are subsumed by ParserFunctions now
 * updated to Variable extension v1.3.1
