@@ -71,8 +71,8 @@ function smgSetupExtension() {
 	
     $wgResourceModules['ext.jquery.qtip'] = $moduleTemplate + array(
 		'scripts' => array(
-    			"scripts/qTip/jquery.qtip-1.0.0-rc3.min.js"
-//    			"scripts/qTip/jquery.qtip-1.0.0-rc3.js"
+    			"scripts/qTip/jquery.qtip-1.0.min.js"
+//    			"scripts/qTip/jquery.qtip-1.0.js"
 				),
 		'styles' => array(
 				)
