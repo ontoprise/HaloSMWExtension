@@ -34,14 +34,15 @@ class ASFRedLinkHandler {
 		//first compute all category annotations of the new instance
 		$title_text = self::titleString( $title );
 		$value = SMWDataValueFactory::newTypeIDValue( '_wpg', $title_text );
-		$incoming_properties = $store->getInProperties( $value );
+		$incoming_properties = $store->getInProperties( $value->getDataItem() );
 		$categories = array();
 		foreach ( $incoming_properties as $property ) {
-			$property_title = $property->getWikiValue();
+			$property_title = $property->getLabel();
 			$property_title = Title::newFromText($property_title, SMW_NS_PROPERTY);
 			
 			if($property_title && $property_title->exists()){
-				$semanticData = $store->getSemanticData($property_title);
+				$semanticData = $store->getSemanticData(
+					SMWDIWikiPage::newFromTitle($property_title));	
 				
 				$range = ASFFormGeneratorUtils::getPropertyValueOfTypeRecord(
 					$semanticData, ASF_PROP_HAS_DOMAIN_AND_RANGE,1);
@@ -55,7 +56,8 @@ class ASFRedLinkHandler {
 		foreach(array_keys($categories) as $category){
 			$categoryTitle = Title::newFromText($category);
 
-			$semanticData = $store->getSemanticData($categoryTitle);
+			$semanticData = $store->getSemanticData(
+				SMWDIWikiPage::newFromTitle($categoryTitle));
 				
 			$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
 				$semanticData, 'Has_default_form');
