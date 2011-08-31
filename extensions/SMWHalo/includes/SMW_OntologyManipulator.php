@@ -625,80 +625,96 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
  * Rename a type. This function is invoked by an ajax call.
  *
  * @param string $pagename The name of the property.
- * @param string $newTypename The new typename of the property.
- * @param string $reason A reason why it was renamed.
- * @param string $user The name of the user who requested this action.
+ * @param string $newTypename The new type of the property (without type prefix).
+ * @param int $newCard New cardinality
+ * @param string $newRange The new range category (without category prefix)
+ * @param string $oldType The old type of the property (without type prefix).
+ * @param int $oldCard Old cardinality.
+ * @param string $oldRange The old range category
+ * @param string domainCategory The old (and new) domain category (without category prefix).
  */
-function smwf_om_EditProperty($pagename, $newtypename, $newCard, $newRange, $oldType, $oldCard, $oldRange, $category, $ID) {
-	$newtypename = strip_tags($newtypename);
-	if ($newtypename == '') return "false";
+function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType, $oldCard, $oldRange, $domainCategory, $ID) {
+	
+	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
+	
+    $newType = strip_tags($newType);
+    if ($newType == '') return "false";
 
-	if (smwf_om_userCan($pagename, 'move') === "false") {
-		return "false,denied,$pagename";
-	}
-	$reason = '';
-	$category = Title::newFromText($category);
-	$titleObj = Title::newFromText($pagename);
-	$oldType = Title::newFromText($oldType);
-	$oldCard = Title::newFromText($oldCard);
-	$oldRange = Title::newFromText($oldRange);
-	$oldRange = strtolower($oldRange);
-	$oldR = ''.$oldRange;
-	$newType = Title::newFromText($newtypename);
-	$newCard = Title::newFromText($newCard);
-	$newRange = Title::newFromText($newRange);
-	$newR = ''.$newRange;
-	$Card = 'Has min cardinality::'.$oldCard;
-	$nCard = 'Has min cardinality::'.$newCard;
+    if (smwf_om_userCan($pagename, 'move') === "false") {
+        return "false,denied,$pagename";
+    }
+    
 
-	$type = 'Has type::Type:'.$oldType;
-	$nType = 'Has type::Type:'.$newType;
+    $titleObj = Title::newFromText($pagename);
+    $article = new Article($titleObj);
+    $text = $article->getContent();
 
-	$range = 'Category:'.$oldRange;
-	$nRange = 'Category:'.$newRange;
+    global $smwgHaloContLang;
+    $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+    $hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
 
-	$article = new Article($titleObj);
+    // Replace "Has domain range range" annotations
+    $oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
+    if ($oldRange != '') {
+        $oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
+        if ($newRange != '') {
+            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+        } else {
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+        }
+    } else {
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
+        if ($newRange != '') {
+            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+        } else {
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+        }
+    }
 
-	$text = $article->getContent();
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
 
-	//category and range
-	if($oldR == ''){
-		if($newR != ''){
-			$hasDom    = '[[Has domain and range::Category:'.$category.']]';
-			$newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.'| ]]';
-		}
-	}
-	if($oldR != ''){
-		if($newR == ''){
-			$hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.'| ]]';
-			$newHasDom = '[[Has domain and range::Category:'.$category.']]';
-		}
-		if($newR != ''){
-			$hasDom    = '[[Has domain and range::Category:'.$category.'; '.$range.'| ]]';
-			$newHasDom = '[[Has domain and range::Category:'.$category.'; '.$nRange.'| ]]';
-		}
-	}
+    // Replace "has type" annotations
+    global $smwgContLang;
+    $propertyLabels = $smwgContLang->getPropertyLabels();
+    
+    $search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^|]+)\s*(\|)?\s*\]\])/i';
+    $newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
+    $replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
 
-	// write new property's properties
-	$newContent = $text;
-	if($oldType != $newType){
-		$newContent = str_replace($type, $nType, $newContent);
-	}
-	if($newType != 'Page' ){
-		$newContent = str_replace($hasDom, $newHasDom, $newContent);
-	}
-	if($oldCard != $newCard){
-		$newContent = str_replace($Card, $nCard, $newContent);
-	}
-	if($oldR != $newRange){
-		$newContent = str_replace($hasDom, $newHasDom, $newContent);
-	}
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
 
-	if ($article->exists()) {
-		$article->doEdit($newContent, $reason);
-	}
-	return $newContent;
+
+    // Replace "has min cardinality" annotations
+    $hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
+    $search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^|]+\s*(\|)?\s*\]\])/i';
+    $replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
+
+    if ($article->exists()) {
+        $reason = '';
+        $article->doEdit($text, $reason);
+    }
+    return $text;
 }
+
 
 /**
  * Rename an article. This function is invoked by an ajax call.

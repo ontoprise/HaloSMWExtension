@@ -3362,6 +3362,8 @@ OBEditPropertySubMenu.prototype = Object
 						  this.propertyRange = this.propertyType;
 						  this.newRange = this.propertyRange;
 						  this.typeOrRange = 'Page';
+						 }  else {
+							 this.propertyRange = '';
 						 }
 						var toReplace = '<select id="typeRange' + this.count
 								+ '_ontologytools" name="types' + this.count
