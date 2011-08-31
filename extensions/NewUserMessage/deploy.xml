@@ -5,12 +5,12 @@
 		<id>newusermessage</id>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
-		<maintainer>A. Dunkley, Siebrand</maintainer>
+               <maintainer>Siebrand A. Dunkley</maintainer>
 		<instdir>extensions/NewUserMessage</instdir>
 		<description>
-			Usually after a new user registers on a MediaWiki, the message in MediaWiki:Welcomecreation is displayed. This extensions allows a message in a specified template to be added into the new users talk page instead.
+                       Usually after a new user registers on a MediaWiki, the message in MediaWiki:Welcomecreation is displayed. This extensions allows a message in a specified template to be added into the new user's talk page instead.
         </description>
-		<helpurl></helpurl>
+               <helpurl>http://www.mediawiki.org/wiki/Extension:NewUserMessage</helpurl>
 		<dependencies>
             <dependency from="1110">mw</dependency>
 		</dependencies>

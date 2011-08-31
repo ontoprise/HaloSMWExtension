@@ -2,11 +2,12 @@
 <deploydescriptor>
 	<global>
 		<version>049</version>
-        <patchlevel>1</patchlevel>
+		<patchlevel>1</patchlevel>
+
 		<id>validator</id>
 		<license>GPL-v2</license>
 		<vendor>Ontoprise</vendor>
-		<maintainer>Jeroen De Dauw - jeroendedauw@gmail.com</maintainer>
+		<maintainer>Jeroen De Dauw</maintainer>
 		<instdir>extensions/Validator</instdir>
 		<description>
 			Validator is a parameter handling framework which aims to facilitate common

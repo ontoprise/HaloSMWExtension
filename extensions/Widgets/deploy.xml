@@ -8,7 +8,7 @@
 		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>
 		<instdir>extensions/Widgets</instdir>
 		<description>
-			Extension:Widgets
+                       The Widgets extension allows the creation of raw HTML pages that can be embedded (similarly to templates) in normal wiki pages.
 		</description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
