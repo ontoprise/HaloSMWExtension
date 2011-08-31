@@ -110,7 +110,7 @@ class DFCommandInterface {
         $dd = $localPackages[$extid];
         $result=array();
         $result['id'] = $dd->getID();
-        $result['version'] = $dd->getVersion();
+        $result['version'] = $dd->getVersion()->toVersionString();
         $result['patchlevel'] = $dd->getPatchlevel();
         $result['dependencies'] = $dd->getDependencies();
         $result['maintainer'] = $dd->getMaintainer();
@@ -150,7 +150,7 @@ class DFCommandInterface {
 
         $result=array();
         $result['id'] = $dd->getID();
-        $result['version'] = $dd->getVersion();
+        $result['version'] = $dd->getVersion()->toVersionString();
         $result['patchlevel'] = $dd->getPatchlevel();
         $result['dependencies'] = $dd->getDependencies();
         $result['maintainer'] = $dd->getMaintainer();
@@ -179,7 +179,7 @@ class DFCommandInterface {
         try {
             $dfgOut->setVerbose(false);
             $installer = Installer::getInstance($mwrootDir);
-            $dependencies = $installer->getExtensionsToInstall($extid, $version);
+            $dependencies = $installer->getExtensionsToInstall($extid, new DFVersion($version));
 
             $dfgOut->setVerbose(true);
             return json_encode($dependencies);

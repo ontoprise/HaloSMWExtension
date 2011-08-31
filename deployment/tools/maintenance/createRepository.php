@@ -82,22 +82,22 @@ $localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepo
 echo "\nCreate new repository ".$outputDir."repository.xml";
 
 
-$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root>\n<extensions>\n";
+$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root version=\"".DEPLOY_FRAMEWORK_REPOSITORY_VERSION."\">\n<extensions>\n";
 foreach($localPackages as $lp) {
 	$id = $lp->getID();
 	if ($id == 'mw') continue; // special handling for mw
 	$installdir = $lp->getInstallationDirectory();
 	$new_ser .= "<extension id=\"$id\">";
-	$branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";
-	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".Tools::addSeparators($lp->getVersion(),$lp->getPatchlevel()).".zip";
-	$ver = $lp->getVersion();
+	$branch = isset($head) ? "smwhalo" : "smwhalo_".$release."_release";
+	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel().".zip";
+	$ver = $lp->getVersion()->toVersionString();
 	$newPatchlevel = $lp->getPatchlevel();
 	if ($newPatchlevel == '') $newPatchlevel = 0;
 	$maintainer = Tools::escapeForXMLAttribute($lp->getMaintainer());
 	$helpurl = Tools::escapeForXMLAttribute($lp->getHelpURL());
 	$description = Tools::escapeForXMLAttribute($lp->getDescription());
-
-	$new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
+    $verWithoutDots = str_replace(".","",$ver); // for compatibility to old version numbers
+	$new_ser .= "<version ver=\"$verWithoutDots\" version=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
 
 	$new_ser .= "</extension>\n";
 }
@@ -149,7 +149,7 @@ print "\nDONE.\n\n";
  * @param boolean $createSymlinks
  */
 function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
-	$version = $dd->getVersion();
+	$version = $dd->getVersion()->toVersionString();
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
 	Tools::mkpath($outputDir.$dd->getID());
 	copy($dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
@@ -157,7 +157,7 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
     
     // creates links
     $id = $dd->getID();
-    $version = $dd->getVersion();
+    $version = $dd->getVersion()->toVersionString();
     if ($createSymlinks && $latest) {
         // remove symbolic link if existing
         if (file_exists($outputDir."/$id/deploy.xml")) {
@@ -176,11 +176,4 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
 	
 }
 
-function addSeparators($version, $sep = ".") {
-    $sep_version = "";
-    for($i = 0; $i < strlen($version); $i++) {
-        if ($i>0) $sep_version .= $sep;
-        $sep_version .= $version[$i];
-    }
-    return $sep_version;
-}
+

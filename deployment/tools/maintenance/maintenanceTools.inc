@@ -78,8 +78,8 @@ class MaintenanceTools {
 
 				// check if dependant package has correct version
 				$ext = $localPackages[$id];
-				if ($ext->getVersion() < $min || $ext->getVersion() > $max) {
-					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion().". \n\t\tExpected range $min-$max";
+				if ($ext->getVersion()->isLower($min) || $ext->getVersion()->isHigher($max)) {
+					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion()->getVersionString().". \n\t\tExpected range $min-$max";
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;
@@ -202,8 +202,8 @@ class ConsistencyChecker {
 			if ($tuple === false) continue;
 			list($latestVersion, $latestPatchlevel) = $tuple;
 
-			if ($latestVersion > $localPackages[$tl_ext->getID()]->getVersion()
-			|| ($latestVersion == $localPackages[$tl_ext->getID()]->getVersion() 
+			if ($latestVersion->isHigher($localPackages[$tl_ext->getID()]->getVersion())
+			|| ($latestVersion->isEqual($localPackages[$tl_ext->getID()]->getVersion())
 			&& $latestPatchlevel > $localPackages[$tl_ext->getID()]->getPatchlevel())) {
 				
 				$updatesNeeded[$tl_ext->getID()] = array($tl_ext->getID(), $latestVersion, $latestPatchlevel) ;

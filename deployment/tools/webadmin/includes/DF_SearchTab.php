@@ -96,7 +96,7 @@ class DFSearchTab {
 						
 				}
 				$html .= "<td class=\"df_version\" extid=\"$id\" version=\"$v\">";
-				$html .= Tools::addVersionSeparators(explode("_", $v));
+				$html .= $v;
 				$html .= "</td>";
 				if ($first) {
 					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_description\">"; // FIXME: consider that descriptions for different version can be different
@@ -112,17 +112,18 @@ class DFSearchTab {
 					list($ver, $patchlevel) = explode("_", $v);
 
 					// already installed
-					if ($dd->getVersion() == $ver && $dd->getPatchlevel() == $patchlevel) {
+					$versionObj = new DFVersion($ver);
+					if ($dd->getVersion()->isEqual($versionObj) && $dd->getPatchlevel() == $patchlevel) {
 						$html .= "Installed";
 					}
 
 					// mark as updateable
-					if ($dd->getVersion() < $ver || ($dd->getVersion() == $ver && $dd->getPatchlevel() < $patchlevel)) {
+					if ($dd->getVersion()->isLower($versionObj) || ($dd->getVersion()->isEqual($versionObj) && $dd->getPatchlevel() < $patchlevel)) {
 						$html .= "<input type=\"button\" class=\"df_update_button_search\" value=\"$updateText\" id=\"df_update__".$id."__$v\"></input>";
 					}
 
 					// downgrades are not possible
-					if ($dd->getVersion() > $v) {
+					if ($dd->getVersion()->isHigher($versionObj)) {
 						$html .= "n/a";
 					}
 				}

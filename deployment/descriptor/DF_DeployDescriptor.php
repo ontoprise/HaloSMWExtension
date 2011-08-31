@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once ('DF_Version.php');
 require_once ('DF_DeployDescriptorProcessor.php');
 
 /**
@@ -151,7 +152,7 @@ class DeployDescriptor {
 	 * Creates/Updates the config element data depending on the given version.
 	 * Can be called as often as needed.
 	 *
-	 * @param int $from Version to update from (if NULL the new config is assumed)
+	 * @param mixed string / DFVersion $from Version to update from (if NULL the new config is assumed)
 	 * @param int $fromPatchlevel Version to update from (if NULL the patchlevel 0 is assumed)
 	 */
 	public function createConfigElements($from = NULL, $fromPatchlevel = NULL) {
@@ -170,6 +171,7 @@ class DeployDescriptor {
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
+			$fromVersion = $from instanceof DFVersion ? $from : new DFVersion($from);
 			if ($fromPatchlevel == NULL || $fromPatchlevel == 0) {
 			 $path = "//update[@from='$from']";
 			} else {
@@ -179,7 +181,7 @@ class DeployDescriptor {
 					// if not appropriate patchlevel update exists, try without patchlevel constraint
 					$path = "//update[@from='$from']";
 					$update = $this->dom->xpath($path);
-					if (count($update) === 0 && $from == $this->getVersion()) {
+					if (count($update) === 0 && $fromVersion->isEqual($this->getVersion())) {
 						// if no explicit update section exists, check if updating the 
 						// currently installed version only to another patchlevel
 						$path = "//update[@from='patchlevel']";
@@ -310,7 +312,8 @@ class DeployDescriptor {
 	// global properties
 	// GETTER
 	function getVersion() {
-		return trim((string) $this->globalElement[0]->version);
+		$version_string = trim((string) $this->globalElement[0]->version);
+		return new DFVersion($version_string);
 	}
 
 	/**
@@ -411,12 +414,21 @@ class DeployDescriptor {
 
 		foreach($dependencies as $dep) {
 			$depID = strtolower(trim((string) $dep[0]));
-			$depFrom = intval((string) $dep->attributes()->from);
-			$depTo = intval((string) $dep->attributes()->to);
+			$depFrom = (string) $dep->attributes()->from;
+			$depTo = (string) $dep->attributes()->to;
 			$optional = (string) $dep->attributes()->optional;
 			$optional = $optional == "true";
 			$message = (string) $dep->attributes()->message;
-			if ($depTo == 0) $depTo = 9999; // if to attribute is missing
+			if ($depFrom == '') {
+				$depFrom = new DFVersion("0.0.0");// if "from" attribute is missing
+			}  else {
+				$depFrom = new DFVersion($depFrom);
+			}
+			if ($depTo == '') {
+				$depTo = new DFVersion("99.99.99"); // if "to" attribute is missing
+			} else {
+				$depTo = new DFVersion($depTo);
+			}
 			$this->dependencies[] = array($depID, $depFrom, $depTo, $optional, $message);
 		}
 		return $this->dependencies;
@@ -476,7 +488,9 @@ class DeployDescriptor {
 					$patches[] = $pf;
 					continue;
 				}
-				if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
+				$fromVersion = new DFVersion($from);
+				$toVersion = new DFVersion($to);
+				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($to)) {
 					$patches[] = $pf;
 				}
 			}
@@ -501,7 +515,9 @@ class DeployDescriptor {
 					$patches[] = $pf;
 					continue;
 				}
-				if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
+				$fromVersion = new DFVersion($from);
+                $toVersion = new DFVersion($to);
+				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($to)) {
 					$patches[] = $pf;
 				}
 			}

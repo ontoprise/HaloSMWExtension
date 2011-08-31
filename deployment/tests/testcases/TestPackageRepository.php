@@ -126,7 +126,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 			print $e->getHeader();
 		}
 		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(144, $dd->getVersion());
+		$this->assertEquals(new DFVersion("1.4.4"), $dd->getVersion());
 	}
 
 	function testGetLatestDeployDescriptor2() {
@@ -136,14 +136,14 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
 		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(150, $dd->getVersion());
+		$this->assertEquals(new DFVersion("1.5.0"), $dd->getVersion());
 	}
 
 
 	function testGetDeployDescriptor() {
 		$dd = PackageRepository::getDeployDescriptor("smwhalo", 144);
 		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(144, $dd->getVersion());
+		$this->assertEquals(new DFVersion("1.4.4"), $dd->getVersion());
 	}
 
 	function testGetDeployDescriptor2() {
@@ -155,7 +155,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		$dd = PackageRepository::getDeployDescriptor("smwhalo", 150);
 		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(150, $dd->getVersion());
+		$this->assertEquals(new DFVersion("1.5.0"), $dd->getVersion());
 	}
 
 	function testLocalPackageRepository() {

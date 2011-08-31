@@ -54,6 +54,8 @@ class ResourceInstaller {
      * Installs wiki dumps and other resources.
      *
      * @param DeployDescriptor $dd
+     * @param DFVersion $fromVersion 
+     * @param int $mode
      */
     public function installOrUpdateWikidumps($dd, $fromVersion, $mode) {
         global $wgUser, $dfgOut;

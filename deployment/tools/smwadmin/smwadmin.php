@@ -457,11 +457,11 @@ foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
 	$packageID = $parts[0];
-	$version = count($parts) > 1 ? $parts[1] : NULL;
+	$version = count($parts) > 1 ? new DFVersion($parts[1]) : NULL;
 	try {
-		$logger->info("Start install package '$packageID'".(is_null($version) ? "" : "-$version"));
+		$logger->info("Start install package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
 		dffHandleInstallOrUpdate($packageID, $version);
-		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-$version"));
+		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
 		dffExitOnFatalError($e);
@@ -608,7 +608,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 			dffCheckWikiContext();
 
 			$packageID = $dd->getID();
-			$version = $dd->getVersion();
+			$version = $dd->getVersion()->toVersionString();
 			$logger->info("Start un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
 			$installer->deinitializePackages($dd);
 			$logger->info("End un-install package '$packageID'".(is_null($version) ? "" : "-$version"));
@@ -794,7 +794,7 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 				$dfgOut->outputln("\nThe following extensions would get updated:\n");
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
-					$dfgOut->outputln( "\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
+					$dfgOut->outputln( "\t*$id-".$min->toVersionString()."_".$desc->getPatchlevel());
 				}
 
 
@@ -854,7 +854,7 @@ function dffHandleInstallOrUpdate($packageID, $version) {
 		foreach($extensions_to_update as $etu) {
 			list($desc, $min, $max) = $etu;
 			$id = $desc->getID();
-			$dfgOut->outputln("\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel())));
+			$dfgOut->outputln("\t*$id-".$min->toVersionString()."_".$desc->getPatchlevel());
 		}
 
 
@@ -921,7 +921,7 @@ function dffExitOnFatalError($e) {
 			case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
 				$package = $e->getArg1();
 				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL);
-				$dfgOut->outputln("\t*".$package->getID()."-".$package->getVersion(), DF_PRINTSTREAM_TYPE_FATAL);
+				$dfgOut->outputln("\t*".$package->getID()."-".$package->getVersion()->toVersionString(), DF_PRINTSTREAM_TYPE_FATAL);
 				break;
 
 			default: $dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_FATAL); break;

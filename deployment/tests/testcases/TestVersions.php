@@ -18,7 +18,7 @@ class TestVersions extends PHPUnit_Framework_TestCase {
 
 	function testVersionMajorMinor() {
 		$v = new DFVersion("1.0");
-		$this->assertEquals($v->toVersionString(), '1.0');
+		$this->assertEquals($v->toVersionString(), '1.0.0');
 	}
 
 	function testVersionMajorMinorSubMinor() {

@@ -348,22 +348,7 @@ class Tools {
 		return $version;
 	}
 
-	/**
-	 * Add separators (.) to distinguish between minor and major version.
-	 *
-	 * @param string $version
-	 * @return string
-	 */
-	public static function addVersionSeparators($version) {
-		list($v, $patchlevel) = $version;
-		$patchlevel = $patchlevel === 0 ? "" : "_".$patchlevel;
-		$v = trim($v);
-		if (strlen($v) == 3) {
-			return substr($v, 0, 1).".".substr($v, 1, 1).".".substr($v, 2).$patchlevel;
-		} else {
-			return substr($v, 0, 1).".".substr($v, 1,2).".".substr($v,3).$patchlevel;
-		}
-	}
+	
 
 	/**
 	 * Provides a shortend (non-functional) form of the URL
@@ -401,14 +386,14 @@ class Tools {
 
 				list($ver1, $pl1) = $versions[$j];
 				list($ver2, $pl2) = $versions[$j+1];
-				if ($ver1 === $ver2) {
+				if ($ver1->isEqual($ver2)) {
 					if ($pl1 < $pl2) {
 						$help = $versions[$j];
 						$versions[$j] = $versions[$j+1];
 						$versions[$j+1] = $help;
 					}
 				}
-				if ($ver1 < $ver2) {
+				if ($ver1->isLower($ver2)) {
 					$help = $versions[$j];
 					$versions[$j] = $versions[$j+1];
 					$versions[$j+1] = $help;
@@ -435,7 +420,12 @@ class Tools {
 
 		}
 
-		$versions = array_diff($versions, array(NULL));
+		//$versions = array_diff($versions, array(NULL));
+		$vresult = array();
+		foreach($versions as $v) {
+			if (!is_null($v)) $vresult[] = $v;
+		}
+		return $vresult;
 	}
 
 	/**
@@ -777,7 +767,7 @@ class Tools {
 	 */
 	public static function createMWDeployDescriptor($rootDir, $ver = NULL) {
 		$version = is_null($ver) ? self::getMediawikiVersion($rootDir) : $ver;
-		$version = intval(str_replace(".","", $version));
+		
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
                 <deploydescriptor>
                     <global>

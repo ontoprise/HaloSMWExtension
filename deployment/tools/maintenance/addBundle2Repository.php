@@ -154,7 +154,7 @@ foreach($descriptors as $tuple) {
 	echo "..done.";
 
 	// 3. copy binary package
-	$targetPackageFile = $repositoryDir."/bin/$id-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
+	$targetPackageFile = $repositoryDir."/bin/$id-".$dd->getVersion()->toVersionString()."_".$dd->getPatchlevel().".zip";
 	echo "\nCopy package $id to $targetPackageFile";
 	copy($zipFilepath, $targetPackageFile);
 	echo "..done.";
@@ -164,6 +164,7 @@ if ($mediawiki) {
 	$xml = Tools::createMWDeployDescriptor(realpath($rootDir."/../"), isset($mwversion) ? $mwversion : NULL);
 	
 	$id = 'mw';
+	$version = Tools::getMediawikiVersion(realpath($rootDir."/../"));
 	Tools::mkpath($repositoryDir."/extensions/$id");
 	$handle = fopen($repositoryDir."/extensions/$id/deploy-$version.xml", "w");
 	fwrite($handle, $xml);
@@ -226,7 +227,9 @@ function saveRepository($filePath, $doc) {
  */
 function loadRepository($filePath) {
 	$xml = file_get_contents($filePath);
-	return DOMDocument::loadXML($xml);
+	$dom = new DOMDocument("1.0");
+	$dom->loadXML($xml);
+	return $dom;
 }
 
 /**
@@ -294,12 +297,16 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 	$newExt->appendChild($newVer);
 
 	$urlAttr = $repoDoc->createAttribute("url");
-	$urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".Tools::addSeparators($dd->getVersion(), $dd->getPatchlevel()).".zip";
+	$urlAttr->value = $repositoryURL."/bin/".$dd->getID()."-".$dd->getVersion()->toVersionString()."_".$dd->getPatchlevel().".zip";
 	$newVer->appendChild($urlAttr);
 
-	$versionAttr = $repoDoc->createAttribute("ver");
-	$versionAttr->value = $dd->getVersion();
+	$versionAttr = $repoDoc->createAttribute("version");
+	$versionAttr->value = $dd->getVersion()->toVersionString();
 	$newVer->appendChild($versionAttr);
+	
+	$versionOldAttr = $repoDoc->createAttribute("ver");
+    $versionOldAttr->value = str_replace(".", "", $dd->getVersion()->toVersionString());
+    $newVer->appendChild($versionOldAttr);
 
 
 	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");

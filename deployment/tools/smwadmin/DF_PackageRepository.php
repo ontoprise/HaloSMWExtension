@@ -15,6 +15,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+define('DEPLOY_FRAMEWORK_REPOSITORY_VERSION', 1);
 
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 define('DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR', 2);
@@ -149,11 +150,25 @@ class PackageRepository {
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
 				self::$repo_dom[$url] = simplexml_load_string($res);
+			    $repo_version = self::$repo_dom[$url]->xpath("/root[@version]");
+                if (count($repo_version) > 0) {
+                    $repo_version_value = (string) $repo_version[0]->attributes()->version;
+                } else {
+                    $repo_version_value = 1; // must be version 1 in this case
+                }
+                if ($repo_version_value != DEPLOY_FRAMEWORK_REPOSITORY_VERSION) {
+                    throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION, "Try to access an incompatible repository at [$url]. Expected version was ".DEPLOY_FRAMEWORK_REPOSITORY_VERSION." but actually it was $repo_version_value. Please update DF manually.");
+                }
 			} catch(HttpError $e) {
 				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_ERROR);
 				$dfgOut->outputln();
 					
-			} catch(Exception $e) {
+			} catch(RepositoryError $e) {
+                if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION) {
+                    // exit if repository is incompatible
+                    dffExitOnFatalError($e);
+                }
+            } catch(Exception $e) {
 				$dfgOut->outputln($e->getMessage(), DF_PRINTSTREAM_TYPE_ERROR);
 				$dfgOut->outputln();
 			}
@@ -202,13 +217,17 @@ class PackageRepository {
 			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version");
 			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
 			foreach($versions as $v) {
-				$results[$url] = (string) $v->attributes()->ver;
+				$results[$url] = new DFVersion((string) $v->attributes()->version);
 			}
 		}
-		asort($results, SORT_NUMERIC);
-		$results = array_reverse($results, true);
-		$rpURLs = array_keys($results);
-		$url = reset($rpURLs);
+
+		$maxVersion = new DFVersion("0.0.0");
+		foreach($results as $key => $version) {
+			if ($version->isHigher($maxVersion)) {
+				$maxVersion = $version;
+				$url = $key;
+			}
+		}
 
 
 		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id. Missing repository?");
@@ -228,14 +247,21 @@ class PackageRepository {
 		return $dd;
 	}
 
+	/**
+	 * Gets a deploy descriptor in the given range.
+	 *
+	 * @param string $ext_id
+	 * @param DFVersion $minversion
+	 * @param DFVersion $maxversion
+	 * @throws RepositoryError
+	 * @return DeployDescriptor
+	 */
 	public static function getDeployDescriptorFromRange($ext_id, $minversion, $maxversion) {
-		if ($minversion > $maxversion)  throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR, "Invalid range of versions: $minversion-$maxversion");
-		for($i = $minversion; $i <= $maxversion; $i++) {
-			try {
-				$dd = self::getDeployDescriptor($ext_id, $i);
-				return $dd;
-			} catch(RepositoryError $e) {
-				// try next version
+		if ($minversion->isHigher($maxversion))  throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR, "Invalid range of versions: $minversion-$maxversion");
+		$versions = self::getAllVersions($ext_id);
+		for($i = reset($versions); $i !== false; $i = next($versions)) {
+			if ($minversion->isLowerOrEqual($i) && $i->isLowerOrEqual($maxversion)) {
+				return self::getDeployDescriptor($ext_id, $i);
 			}
 		}
 		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id in version range $minversion-$maxversion");
@@ -245,18 +271,19 @@ class PackageRepository {
 	 * Returns deploy descriptor of package $ext_id in version $version
 	 *
 	 * @param string $ext_id
-	 * @param int $version
+	 * @param DFVersion $version
 	 * @return DeployDescriptor
 	 */
 	public static function getDeployDescriptor($ext_id, $version) {
-		if (strlen((string)$version) == 2) $version = "0$version";
+
 		if (is_null($ext_id) || is_null($version)) throw new IllegalArgument("version or ext must not null");
+		$version = $version->toVersionString();
 		if (array_key_exists($ext_id.$version, self::$deploy_descs)) return self::$deploy_descs[$ext_id.$version];
 
 		// get latest version in the available repositories
 		$results = array();
 		foreach(self::getPackageRepository() as $url => $repo) {
-			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version[@ver='$version']");
+			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version[@version='$version']");
 			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
 			$v = reset($versions);
 			$repourl = $url;
@@ -295,14 +322,14 @@ class PackageRepository {
 
 			if ($versions !== false) {
 				foreach($versions as $v) {
-					$results[] = (string) $v->attributes()->ver;
+					$results[] = new DFVersion((string) $v->attributes()->version);
 				}
 			}
 		}
 
-		sort($results, SORT_NUMERIC);
-
-		return array_reverse(array_unique($results));
+		Tools::sortVersions($results);
+		//FIXME: filter doubles?
+		return $results;
 	}
 
 	/**
@@ -319,7 +346,7 @@ class PackageRepository {
 				if (!array_key_exists($id, $results)) $results[$id] = array();
 				$versions = $p->xpath("version");
 				foreach($versions as $v) {
-					$version = (string) $v->attributes()->ver;
+					$version = new DFVersion((string) $v->attributes()->version);
 					$patchlevel = (string) $v->attributes()->patchlevel;
 					$patchlevel = empty($patchlevel) ? 0 : $patchlevel;
 					$results[$id][] = array($version, $patchlevel, $repo_url);
@@ -367,7 +394,7 @@ class PackageRepository {
 							$results[$id] = array();
 						}
 						foreach($versions as $v) {
-							$ver = (string) $v->attributes()->ver;
+							$ver = (string) $v->attributes()->version;
 							$patchlevel = (string) $v->attributes()->patchlevel;
 							if (empty($patchlevel)) $patchlevel = 0;
 							$description = (string) $v->attributes()->description;
@@ -394,31 +421,36 @@ class PackageRepository {
 			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
 			if (count($package) == 0) continue;
 			$download_url = trim((string) $package[0]->attributes()->url);
-			$version = (string) $package[0]->attributes()->ver;
+			$version = (string) $package[0]->attributes()->version;
 			$results[$version] = array($download_url, $url);
 
 		}
 		if (count($results) == 0) return NULL;
-		ksort($results, SORT_NUMERIC); // sort for versions
-		$results = array_reverse($results, true); // highest version on top
-		$keys = array_keys($results);
-		$version = reset($keys); // get highest version
-		$values = array_values($results);
-		list($download_url, $repo_url) = reset($values); // get its download url and repo
-		return array($download_url, $version, $repo_url);
+		$maxVersion = new DFVersion("0.0.0");
+		foreach($results as $version => $tuple ) {
+			if ($version->isHigher($maxVersion)) {
+				$maxVersion = $version;
+				$maxTuple = $tuple;
+			}
+		}
+
+
+		list($download_url, $repo_url) = $maxTuple; // get its download url and repo
+		return array($download_url, new DFVersion($maxVersion), $repo_url);
 	}
 
 	/**
 	 * Returns the URL of the requested version of the package if available or NULL if not.
 	 *
 	 * @param string $packageID
-	 * @param number $version
+	 * @param DFVersion $version
 	 * @return array (url, repo_url)
 	 */
 	public static function getVersion($packageID, $version) {
 		$results = array();
 		foreach(self::getPackageRepository() as $url => $repo) {
-			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
+			$versionStr = $version->toVersionString();
+			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@version='$versionStr']");
 
 			if (is_null($package) || $package === false || count($package) == 0) continue;
 			$repo_url = $url;
@@ -434,14 +466,15 @@ class PackageRepository {
 	 * Checks if the package with the given version exists or not.
 	 *
 	 * @param string $packageID
-	 * @param number $version Optional
+	 * @param DFVersion $version Optional
 	 * @return boolean
 	 */
-	public static function existsPackage($packageID, $version = 0) {
+	public static function existsPackage($packageID, $version = NULL) {
 		$results = array();
 		foreach(self::getPackageRepository() as $repo) {
-			if ($version > 0) {
-				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
+			if (!is_null($version)) {
+				$versionStr = $version->toVersionString();
+				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@version='$versionStr']");
 			} else {
 				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']");
 			}
@@ -567,10 +600,10 @@ class PackageRepository {
 					$init_ext_file = trim(file_get_contents($ext_dir.$entry.'/init$.ext'));
 					list($id, $fromVersion) = explode(",", $init_ext_file);
 					if (!file_exists($ext_dir.$entry.'/deploy.xml')) {
-						// this should not happen but you never know. 
+						// this should not happen but you never know.
 						// anyway do nothing in this case.
 						continue;
-					} 
+					}
 					$dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
 					self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
 

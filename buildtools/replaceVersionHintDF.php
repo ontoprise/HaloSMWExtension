@@ -20,7 +20,7 @@ $file_to_replaceHints = next($argv);
 $buildnumber = next($argv);
 
 $dd = new DeployDescriptor(file_get_contents($dd_file));
-$version = addSeparatorsForVersionNumber($dd->getVersion());
+$version = $dd->getVersion()->toVersionString();
 $patchlevel = $dd->getPatchlevel();
 
 $content = file_get_contents($file_to_replaceHints);
@@ -30,11 +30,3 @@ $handle = fopen($file_to_replaceHints, "w");
 fwrite($handle, $content);
 fclose($handle);
 
-function addSeparatorsForVersionNumber($version) {
-    $sep_version = "";
-    for($i = 0; $i < strlen($version); $i++) {
-        if ($i>0) $sep_version .= ".";
-        $sep_version .= $version[$i];
-    }
-    return $sep_version;
-}

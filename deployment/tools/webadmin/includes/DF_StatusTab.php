@@ -86,7 +86,7 @@ class DFStatusTab {
 			$html .= $id;
 			$html .= "</td>";
 			$html .= "<td class=\"df_extension_version\">";
-			$html .= Tools::addVersionSeparators(array($p->getVersion(), $p->getPatchlevel()));
+			$html .= $p->getVersion()->toVersionString().'_'.$p->getPatchlevel();
 			$html .= "</td>";
 			$html .= "<td class=\"df_description\">";
 			$html .= $p->getDescription();

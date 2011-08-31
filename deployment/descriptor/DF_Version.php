@@ -55,14 +55,29 @@ class DFVersion {
 
 	private function parseVersions($version_string) {
 		$parts = explode(".", $version_string);
-		if (count($parts) > 3) {
-			// invalid format
-			throw new Exception();
+		if (count($parts) < 2 || count($parts) > 3) {
+			if (strlen($version_string) == 3 && is_numeric($version_string)) {
+				// interprete it as old version number (before DF 1.6, for downwards compatibility)
+				$this->major = $version_string[0];
+				$this->minor = $version_string[1];
+				$this->subminor = $version_string[2];
+				return;
+			} else if (strlen($version_string) == 4 && is_numeric($version_string)) {
+                // interprete it as old version number (before DF 1.6, for downwards compatibility)
+                $this->major = $version_string[0];
+                $this->minor = $version_string[1].$version_string[2];
+                $this->subminor = $version_string[3];
+                return;
+            } else {
+				// invalid format
+				throw new Exception("Invalid DF version format: $version_string");
+			}
 		}
 		$major = reset($parts);
 		$minor = next($parts);
 		$subminor = next($parts);
-
+        
+		if ($subminor === false) $subminor = 0;
 
 		$this->major = $major;
 		$this->minor = $minor;
@@ -70,7 +85,7 @@ class DFVersion {
 	}
 
 	public function toVersionString() {
-		return $this->subminor === false ? "$this->major.$this->minor" : "$this->major.$this->minor.$this->subminor";
+		return "$this->major.$this->minor.$this->subminor";
 	}
 
 	public function isEqual(DFVersion $v) {
@@ -82,8 +97,8 @@ class DFVersion {
 	public function isLower(DFVersion $v) {
 		if ($this->major === $v->getMajor()) {
 			if ($this->minor === $v->getMinor()) {
-				return (is_numeric($this->subminor) && is_numeric($v->getSubminor()) 
-				        && $this->subminor < $v->getSubMinor());
+				return (is_numeric($this->subminor) && is_numeric($v->getSubminor())
+				&& $this->subminor < $v->getSubMinor());
 			} else {
 				return $this->minor < $v->getMinor();
 			}
@@ -91,12 +106,12 @@ class DFVersion {
 			return $this->major < $v->getMajor();
 		}
 	}
-	
+
 	public function isLowerOrEqual(DFVersion $v) {
 		return $this->isEqual($v) || $this->isLower($v);
 	}
 
 	public function isHigher(DFVersion $v) {
-		return !$this->Equal($v) && !$this->isLower($v);
+		return !$this->isEqual($v) && !$this->isLower($v);
 	}
 }

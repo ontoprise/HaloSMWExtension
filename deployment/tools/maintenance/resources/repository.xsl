@@ -31,7 +31,7 @@
           <xsl:value-of select="@id"/>
         </a>
       </td>
-      <td><xsl:value-of select="version/@ver"/></td>
+      <td><xsl:value-of select="version/@version"/></td>
       <td><xsl:value-of select="version/@patchlevel"/></td>
 
       <td><xsl:value-of select="version/@maintainer"/></td>

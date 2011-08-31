@@ -118,7 +118,7 @@ class Installer {
 	 * Installs or updates a package.
 	 *
 	 * @param string $packageID
-	 * @param int $version If omitted (or NULL), the latest version is installed.
+	 * @param DFVersion $version If omitted (or NULL), the latest version is installed.
 	 */
 	public function installOrUpdate($packageID, $version = NULL) {
 		global $dfgOut;
@@ -130,7 +130,7 @@ class Installer {
 		$dfgOut->outputln("The following packages need to be installed");
 		foreach($extensions_to_update as $etu) {
 			list($dd, $min, $max) = $etu;
-			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion());
+			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion()->toVersionString());
 		}
 
 		if (count($contradictions) > 0) {
@@ -179,7 +179,7 @@ class Installer {
 		$dfgOut->outputln( "The following packages need to be installed");
 		foreach($extensions_to_update as $etu) {
 			list($deployd, $min, $max) = $etu;
-			$dfgOut->outputln( "- ".$deployd->getID()."-".$deployd->getVersion());
+			$dfgOut->outputln( "- ".$deployd->getID()."-".$deployd->getVersion()->toVersionString());
 		}
 
 		if (count($contradictions) > 0) {
@@ -314,8 +314,8 @@ class Installer {
 
 			try {
 				$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
-				if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
-				|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+				if ($dd->getVersion()->isHigher($localPackages[$dd->getID()]->getVersion())
+				|| ($dd->getVersion()->isEqual($localPackages[$dd->getID()]->getVersion()) && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
 					$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
 					$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 				}
@@ -374,7 +374,7 @@ class Installer {
 			}
 			if (array_key_exists($p_id, $localPackages)) {
 				$patchlevel = $localPackages[$p_id]->getPatchlevel();
-				$instTag = "[installed ".Tools::addVersionSeparators(array($localPackages[$p_id]->getVersion(), $patchlevel))."]";
+				$instTag = "[installed ".$localPackages[$p_id]->getVersion()->toVersionString()."_$patchlevel]";
 
 			} else {
 				$instTag = str_repeat(" ", 16);
@@ -384,10 +384,13 @@ class Installer {
 			$id_shown .= str_repeat(" ", 22-strlen($p_id) >= 0 ? 22-strlen($p_id) : 0);
 			$instTag .= str_repeat(" ", 20-strlen($instTag) >= 0 ? 20-strlen($instTag) : 0);
 			$sep_v = array();
-			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
+			foreach($versions as $tuple) {
+				list($v, $p, $rUrl) = $tuple;
+				$sep_v[] = $v->toVersionString()."_".$p;
+			} 
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
-			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($v[2], 70));
+			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($rUrl, 70));
 
 			if ($showDescription && array_key_exists($p_id, $localPackages)) {
 				$dfgOut->outputln( " ".$localPackages[$p_id]->getDescription()."\n\n");
@@ -400,7 +403,7 @@ class Installer {
 			$dfgOut->outputln( "\nThe following bundles exist only locally:\n");
 			foreach($onlyLocalPackages as $id) {
 				$lp = $localPackages[$id];
-				$display = "[installed ".Tools::addVersionSeparators(array($lp->getVersion(), $lp->getPatchlevel()))."]";
+				$display = "[installed ".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel()."]";
 				$display .= str_repeat(" ", 20-strlen($display) >= 0 ? 20-strlen($display) : 0);
 				$display .= $lp->getID();
 				$dfgOut->outputln( " ".$display);
@@ -413,7 +416,7 @@ class Installer {
 	 * Checks dependencies when installing the given package.
 	 *
 	 * @param string $packageID
-	 * @param int $version
+	 * @param DFVersion $version
 	 * @return array($new_package, $old_package, $extensions_to_update)
 	 */
 	public function collectPackagesToInstall($packageID, $version = NULL) {
@@ -462,11 +465,11 @@ class Installer {
 		}
 
 		// 5. check if update is neccessary
-		if (!is_null($old_package) && $old_package->getVersion() > $new_package->getVersion()) {
+		if (!is_null($old_package) && $old_package->getVersion()->isHigher($new_package->getVersion())) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
 		}
 
-		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion() && $old_package->getPatchlevel() == $new_package->getPatchlevel()) && !$this->force) {
+		if (!is_null($old_package) && ($old_package->getVersion()->isEqual($new_package->getVersion()) && $old_package->getPatchlevel() == $new_package->getPatchlevel()) && !$this->force) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 
@@ -550,14 +553,14 @@ class Installer {
 			list($url,$repo_url) = PackageRepository::getVersion($id, $desc->getVersion());
 			$credentials = PackageRepository::getCredentials($repo_url);
 
-			$this->logger->info("Download $id-".$desc->getVersion().".zip");
-			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-".$desc->getVersion().".zip", $credentials);
+			$this->logger->info("Download $id-".$desc->getVersion()->toVersionString().".zip");
+			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-".$desc->getVersion()->toVersionString().".zip", $credentials);
 
 			// unzip
-			$this->logger->info("Unzip $id-".$desc->getVersion().".zip");
+			$this->logger->info("Unzip $id-".$desc->getVersion()->toVersionString().".zip");
 			$this->unzip($desc);
 
-			$this->logger->info("Apply configs for $id-".$desc->getVersion().".zip");
+			$this->logger->info("Apply configs for $id-".$desc->getVersion()->toVersionString().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, DFUserInput::getInstance());
 			$this->errors = array_merge($this->errors, $desc->getLastErrors());
 
@@ -757,13 +760,14 @@ class Installer {
 			}
 			Tools::mkpath($unzipDirectory);
 		}
+		$versionStr = $version->toVersionString();
 		$dfgOut->outputln("unzip into $unzipDirectory");
-		$dfgOut->outputln("[unzip ".$id."-$version.zip...");
+		$dfgOut->outputln("[unzip ".$id."-".$versionStr."zip...");
 	    if (Tools::isWindows()) {
             global $rootDir;
-            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
         } else {
-            exec('unzip -o "'.$this->tmpFolder."/".$id."-$version.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+            exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
         }
 		$dfgOut->output("done.]");
 	}
@@ -909,14 +913,14 @@ class Installer {
 			foreach($localPackages as $p) {
 				if ($id === $p->getID()) {
 					$packageFound = true;
-					if ($p->getVersion() < $from) {
+					if ($p->getVersion()->isLower($from)) {
 
 						$updatesNeeded[] = array($id, $from, $to);
 					}
-					if ($p->getVersion() > $to) {
+					if ($p->getVersion()->isHigher($to)) {
 						global $dfgForce;
                         if (!$dfgForce) {
-						  throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".Tools::addVersionSeparators(array($to,0)).". Downgrades are not supported.");
+						  throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".$to->toVersionString().". Downgrades are not supported.");
                         }
 					}
 				}
@@ -948,7 +952,7 @@ class Installer {
 
 		foreach($packagesToUpdate as $ptu) {
 			list($desc, $minVersion, $maxVersion) = $ptu;
-			if ($desc->getID() == $dd->getID() && $desc->getVersion() == $dd->getVersion() && $desc->getPatchlevel() == $dd->getPatchlevel()) {
+			if ($desc->getID() == $dd->getID() && $desc->getVersion()->isEqual($dd->getVersion()) && $desc->getPatchlevel() == $dd->getPatchlevel()) {
 				return true;
 			}
 		}
@@ -975,14 +979,14 @@ class Installer {
             
 			// if $dd's version exceeds the limit of the installed,
 			// try to find an update
-			if ($dd->getVersion() > $to) {
+			if ($dd->getVersion()->isHigher($to)) {
 				$versions = PackageRepository::getAllVersions($p->getID());
 				// iterate through the available versions
 				$updateFound = false;
 				foreach($versions as $v) {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($p->getID());
-					if ($from_ptu <= $dd->getVersion() && $to_ptu >= $dd->getVersion()) {
+					if ($from_ptu->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($to_ptu)) {
 
 						$packagesToUpdate[] = array($p, $from_ptu, $to_ptu);
 						$updateFound = true;
@@ -1009,7 +1013,7 @@ class Installer {
 	 * Returns all extensions which get installed when installing a particular package.
 	 *
 	 * @param string $packageID
-	 * @param int $version (default is latest)
+	 * @param DFVersion $version (default is latest)
 	 */
 	public function getExtensionsToInstall($packageID, $version = NULL) {
 		global $dfgOut;
@@ -1045,8 +1049,8 @@ class Installer {
 
 			try {
 				$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
-				if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
-				|| ($dd->getVersion() == $localPackages[$dd->getID()]->getVersion() && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
+				if ($dd->getVersion()->isHigher($localPackages[$dd->getID()]->getVersion())
+				|| ($dd->getVersion()->isEqual($localPackages[$dd->getID()]->getVersion()) && $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel())) {
 					$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages, true);
 					$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 				}
