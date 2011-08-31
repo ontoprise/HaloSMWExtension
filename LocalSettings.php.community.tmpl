@@ -235,7 +235,7 @@ $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 $smwgNamespacesWithSemanticLinks[NS_MEDIAWIKI] = true;
 
 
-/*start-unifiedsearch*/
+/*start-enhancedretrieval*/
 if (file_exists($IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php'))
     require_once $IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php';
 /*start-variable-wgSearchType*/$wgSearchType = 'LuceneSearch';/*end-variable-wgSearchType*/
@@ -251,10 +251,14 @@ $fsgFacetedSearchConfig = array(
     'host'    => $solrIP,
     'port'    => 8983
 );
-/*end-unifiedsearch*/
+/*end-enhancedretrieval*/
 
 // enable Form ns when SF is not installed
 if (! isset($wgExtraNamespaces[SF_NS_FORM]) ) {
   $wgExtraNamespaces[SF_NS_FORM] = 'Form';
   $wgExtraNamespaces[SF_NS_FORM_TALK] = 'Form_talk';
 }
+
+/*start-newusermessage*/
+require_once($IP.'/extensions/NewUserMessage/NewUserMessage.php');
+/*end-newusermessage*/
