@@ -13,14 +13,11 @@
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
 		</dependencies>
-		<notice>
-For the correct behaviour of the Widgets extension it is necessary 
+		<notice>For the correct behavior of the Widgets extension it is necessary 
 to make the sub folder 'compiled_templates' writable for your web server.
-
 Please check 
   http://www.mediawiki.org/wiki/Extension:Widgets#Configuration
-for more detailed instructions about this.
-		</notice> 
+for more detailed instructions about this.</notice> 
 	</global>
 	<codefiles>
 		<file loc="deploy.xml" />

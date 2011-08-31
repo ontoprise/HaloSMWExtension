@@ -16,7 +16,10 @@
 			<dependency from="160">smwhalo</dependency>
 			<dependency from="160">tsc</dependency>
 		</dependencies>
-		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). Please check smwforum.ontoprise.com for help.</notice>
+		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). 
+Please check 
+  http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_extension 
+for help.</notice>
 	</global>
 	<codefiles></codefiles>
 	<wikidumps>
