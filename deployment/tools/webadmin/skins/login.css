@@ -1,7 +1,10 @@
 
 #df_login {
 	text-align: center;
-	background:  no-repeat scroll center center, -moz-linear-gradient(center top , #FFFFFF, #F6A828) repeat scroll 0 0 transparent
+/* Firefox */   
+    background:  no-repeat scroll center center, -moz-linear-gradient(center top , #FFFFFF, #F6A828) repeat scroll 0 0 transparent;
+/* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F6A828');
 }
 
 #df_login_failed {
