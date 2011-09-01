@@ -98,9 +98,9 @@ class DFVersion {
         
 		if ($subminor === false) $subminor = 0;
 
-		$this->major = $major;
-		$this->minor = $minor;
-		$this->subminor = $subminor;
+		$this->major = intval($major);
+		$this->minor = intval($minor);
+		$this->subminor = intval($subminor);
 	}
 
 	public function toVersionString() {
@@ -186,7 +186,11 @@ class DFVersion {
 		foreach($versions as $v) {
 			if (!is_null($v)) $vresult[] = $v;
 		}
-		return $vresult;
+		
+		// set result array
+		$versions = array();
+		foreach($vresult as $v) $versions[] = $v;
+		
 	}
 	
 	/**
@@ -202,7 +206,7 @@ class DFVersion {
 		foreach($versions as $tuple) {
 			list($v,$p) = $tuple;
 			if ($v->isHigher($maxVersion)) {
-				$maxVersion = $version;
+				$maxVersion = $v;
 				$maxPatchlevel = $p;
 				$maxTuple = $tuple;
 			} else if ($v->isEqual($maxVersion)) {
