@@ -243,7 +243,7 @@ class  LODNonExistingPage extends Article {
 
 
     /**
-     * Adds the categories as annotations. Note: Will not work with LOD.  
+     * Adds the categories as annotations. Note: Will not work with LOD.
      *
      * @param string $uri
      *      URI of the Linked Data item that can have types (rdf:type)
@@ -257,6 +257,23 @@ class  LODNonExistingPage extends Article {
 
         // get the categories of the entity
 
+        $categories = self::getCategoriesForURI($uri);
+        $content['Categories'] = ''; // category string
+
+        // Fetch templates from categories of the entity
+        foreach ($categories as $cat) {
+            $content['Categories'] .= "\n[[".$cat->getPrefixedText()."]]\n";
+        }
+    }
+
+    /**
+     * Gets all categories of a given page given by URI.
+     * 
+     * @param string $uri
+     * 
+     * @return Title []
+     */
+    private static function getCategoriesForURI($uri) {
         $query = <<<SPARQL
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             SELECT ?C
@@ -273,23 +290,15 @@ SPARQL;
             // No categories found for the given URI
             return;
         }
-        
+
         $categories = array();
         foreach ($result as $catURI) {
             $t = TSHelper::getTitleFromURI($catURI);
-            $categories[] = $t->getText();
+            $categories[] = $t;
         }
-
-        global $wgContLang;
-        $content['Categories'] = ''; // category string
-        $catNsText = $wgContLang->getNsText(NS_CATEGORY);
-
-        // Fetch templates from categories of the entity
-        foreach ($categories as $cat) {
-            $content['Categories'] .= "\n[[$catNsText:".$cat."]]\n";
-        }
+        return $categories;
     }
-    
+
     /**
      * Adds the content of each category template for non-existing pages.
      * The Linked Data item with the URI $uri can have several types that are
@@ -385,10 +394,21 @@ SPARQL;
                                      'preloadNEP' => 'true',
                                      'mode' => 'wysiwyg'));
         } else {
-            $link = $t->getFullUrl(array('action' => 'edit',
+            $categoriesAsText = array();
+            $categories = self::getCategoriesForURI($uri);
+            foreach($categories as $c) $categoriesAsText[] = $c->getText();
+            $link = ASFFormGeneratorUtils::getCreateNewInstanceLink($article->getTitle()->getPrefixedDBkey(), $categoriesAsText);
+            if ($link === false) {
+                $link = $t->getFullUrl(array('action' => 'edit',
                                      'preloadNEP' => 'true',
                                      'mode' => 'wysiwyg',
                                      'uri' => $uri));
+            } else {
+                $queryString = wfArrayToCGI(array('preloadNEP' => 'true',
+                                     'mode' => 'wysiwyg',
+                                     'uri' => $uri));
+                $link .= "&$queryString";
+            }
         }
         $name = $t->getFullText();
         $message = wfMsg('lod_nep_link', $name);
@@ -411,14 +431,14 @@ SPARQL;
             // An exception occurred => no result
             return null;
         }
-        
+
         return $result;
     }
 
     /**
      * Parses a result of categories
      * @param string SPARQL-XML
-     * 
+     *
      * @return string[] Category URIs
      */
     private static function parseSparqlXMLResult($sparqlXMLResult) {

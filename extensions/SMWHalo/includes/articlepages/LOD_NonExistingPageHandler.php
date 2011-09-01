@@ -107,7 +107,7 @@ class  LODNonExistingPageHandler  {
      * @param string $text
      * @param Title $title
      */
-    public static function onEditFormPreloadText(&$text, Title &$title) {
+    public static function onEditFormPreloadText(&$text, Title $title) {
         global $wgRequest;
         if ($wgRequest->getVal('preloadNEP') === 'true') {
             $uri = $wgRequest->getVal('uri', '');
