@@ -20,11 +20,13 @@ class ASFFormGeneratorUtils {
 			if(!$getAll){
 				$idx = array_keys($values);
 				$idx = $idx[0];
-				$result = $values[$idx]->getShortWikiText();
+				$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
+					->getShortWikiText();
 			} else {
 				$result = array();
 				foreach($values as $v){
-					$result[] = $v->getShortWikiText();
+					$result[] = SMWDataValueFactory::newDataItemValue($v, null)
+						->getShortWikiText();
 				}
 			}
 		}
@@ -40,13 +42,16 @@ class ASFFormGeneratorUtils {
 		
 		if(array_key_exists($propertyName, $properties)){
 			$vals = $semanticData->getPropertyValues($properties[$propertyName]);
+			echo('<pre>'.print_r($vals, true).'</pre>');
 			if(!$getAll){
 				$idx = array_keys($vals);
 				$idx = $idx[0];
-				$values[] = $vals[$idx]->getShortWikiText();
+				$values[] = SMWDataValueFactory::newDataItemValue($vals[$idx], null)
+					->getShortWikiText();
 			} else {
 				foreach($vals as $v){
-					$values[] = $v->getShortWikiText();
+					$values[] = SMWDataValueFactory::newDataItemValue($v, null)
+						->getShortWikiText();
 				}
 			}
 		} else {
@@ -58,7 +63,8 @@ class ASFFormGeneratorUtils {
 			
 			$store = smwfNewBaseStore();
 			foreach($superCategories as $c => $dc){
-				$semanticData = $store->getSemanticData(Title::newFromText($c, NS_CATEGORY));
+				$semanticData = $store->getSemanticData(
+					SMWDIWikiPage::newFromTitle(Title::newFromText($c, NS_CATEGORY)));
 				$values = self::getInheritedPropertyValue($semanticData, $propertyName, $getAll, $values);
 			}
 		}
@@ -152,7 +158,8 @@ class ASFFormGeneratorUtils {
 			$categoryTitle = $categoryObject->getTitle();
 			
 			//ASF can be created if there is one category with no 'no automatic formedit' annotation
-			$semanticData = $store->getSemanticData($categoryTitle);
+			$semanticData = $store->getSemanticData(
+				SMWDIWikiPage::newFromTitle($categoryTitle));
 			if(ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT)!= 'true'){
 				return true;					
 			}
@@ -244,13 +251,16 @@ class ASFFormGeneratorUtils {
 		
 		foreach($categoryTitles as $cT){
 			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){
+				echo('>pre>'.print_r($p, true).'</pre>');
+				error();
 				$properties[] = $p;
 			} 
 		}
 		
 		//filter properties with no automatic form edit
 		foreach($properties as $k => $p){
-			$semanticData = smwfNewBaseStore()->getSemanticData($p);
+			$semanticData = smwfNewBaseStore()->getSemanticData(
+				SMWDIWikiPage::newFromTitle($p));
 			$noAutomaticFormEdit =
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT); 
 			
@@ -275,6 +285,68 @@ class ASFFormGeneratorUtils {
 		return $text;
 	}
 	
+	
+/*
+	 * Return a link to Special:FormEdit if the the article has to be created eith SF or ASF and False if the
+	 * normal editor should be used
+	 * 
+	 * @param string articleName
+	 * @param array of categorynames for the new instance. (category names without namespace prefixes.)
+	 * 
+	 * @return string link or false
+	 */
+	public static function getCreateNewInstanceLink($articleName, $categories){
+		
+		$store = smwfNewBaseStore();
+
+		//todo: consider namespace when detecting if there is a manually created semantic form
+		
+		$defaultForm = false;
+		$catWithNoNoASFEditFound = false;
+		foreach($categories as $category){
+			$categoryTitle = Title::newFromText($category, NS_CATEGORY);
+
+			$semanticData = $store->getSemanticData(
+				SMWDIWikiPage::newFromTitle($categoryTitle));
+				
+			$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
+				$semanticData, 'Has_default_form');
+				
+			if($defaultForm) break;
+			
+			//Check if ASF has a 'No automatic formedit' annotation
+			if(ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT) != 'true'){
+				$catWithNoNoASFEditFound = true;					
+			}
+		}
+		
+		//Do not use ASF for instances in Category NS
+		$inCategoryNS = false;
+		$nsId = Title::newFromText($articleName)->getNamespace();
+		if($nsId == NS_CATEGORY){
+			$inCategoryNS = true;	
+		}
+		
+		$link = SpecialPage::getPage( 'FormEdit' );
+		$link = $link->getTitle()->getFullURL();
+		
+		if(strpos($link, '?') > 0) $link .= '&';
+		else $link .= '?';
+		$link .= 'target='.$articleName;
+		
+		if($defaultForm){ //SF
+			$link .= '&form='.$defaultForm;
+		} else if($catWithNoNoASFEditFound && !$inCategoryNS){ //ASF
+			$link .= '&categories=';
+			$link .= urlencode(implode(',', $categories));
+		} else { //Wikitext editor
+			$link = false;
+		}
+		
+		return $link;
+	}
+	
+	 
 } 
 
 
