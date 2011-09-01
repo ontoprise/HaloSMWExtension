@@ -534,7 +534,7 @@ class ConsistencyChecker {
 							}
 							break;
 						case 'Enhanced Retrieval extension':
-							if (strpos($ls, '/*start-unifiedsearch*/') === false) {
+							if (strpos($ls, '/*start-enhancedretrieval*/') === false) {
 								$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","UnifiedSearch Extension is already installed but not visible to DF."));
 								$errorFound=true;
 							}
