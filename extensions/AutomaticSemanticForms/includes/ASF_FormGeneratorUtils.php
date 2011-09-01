@@ -42,7 +42,6 @@ class ASFFormGeneratorUtils {
 		
 		if(array_key_exists($propertyName, $properties)){
 			$vals = $semanticData->getPropertyValues($properties[$propertyName]);
-			echo('<pre>'.print_r($vals, true).'</pre>');
 			if(!$getAll){
 				$idx = array_keys($vals);
 				$idx = $idx[0];
@@ -251,8 +250,6 @@ class ASFFormGeneratorUtils {
 		
 		foreach($categoryTitles as $cT){
 			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($cT) as $p){
-				echo('>pre>'.print_r($p, true).'</pre>');
-				error();
 				$properties[] = $p;
 			} 
 		}
