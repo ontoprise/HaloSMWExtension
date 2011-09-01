@@ -124,7 +124,7 @@ foreach($descriptors as $tuple) {
 
 	// 1. create extensions substructure
 	$id = $dd->getID();
-	$version = $dd->getVersion();
+	$version = $dd->getVersion()->toVersionString();
 	$id = strtolower($id);
 	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");

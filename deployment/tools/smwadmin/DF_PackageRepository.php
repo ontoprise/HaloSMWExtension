@@ -213,24 +213,19 @@ class PackageRepository {
 		// get latest version in the available repositories
 		$results = array();
 
-		foreach(self::getPackageRepository() as $url => $repo) {
+		foreach(self::getPackageRepository() as $repo_url => $repo) {
 			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version");
 			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
 			foreach($versions as $v) {
-				$results[$url] = new DFVersion((string) $v->attributes()->version);
+				$results[] = array(new DFVersion((string) $v->attributes()->version), (string) $v->attributes()->patchlevel, $repo_url);
 			}
 		}
 
-		$maxVersion = new DFVersion("0.0.0");
-		foreach($results as $key => $version) {
-			if ($version->isHigher($maxVersion)) {
-				$maxVersion = $version;
-				$url = $key;
-			}
-		}
+		$max = DFVersion::getMaxVersion($results);
+		if (is_null($max)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id. Missing repository?");
+		
+		list($maxVersion, $maxPatchlevel, $url) = $max;
 
-
-		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id. Missing repository?");
 
 		// download descriptor
 		$d = new HttpDownload();
@@ -327,8 +322,8 @@ class PackageRepository {
 			}
 		}
 
-		Tools::sortVersions($results);
-		//FIXME: filter doubles?
+		DFVersion::sortVersions($results);
+		
 		return $results;
 	}
 
@@ -356,7 +351,7 @@ class PackageRepository {
 		}
 		$sortedResults = array();
 		foreach($results as $id => $versions) {
-			Tools::sortVersions($versions);
+			DFVersion::sortVersions($versions);
 			$sortedResults[$id] = $versions;
 		}
 
@@ -412,31 +407,25 @@ class PackageRepository {
 	 * Returns latest available version of a package
 	 *
 	 * @param string $packageID The package ID
-	 * @return array (URL (as string), version, repo_url)
+	 * @return array (string download URL, DFVersion, string repo URL)
 	 */
 	public static function getLatestVersion($packageID) {
 		$results = array();
 		foreach(self::getPackageRepository() as $url => $repo) {
 
-			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
+			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version");
 			if (count($package) == 0) continue;
 			$download_url = trim((string) $package[0]->attributes()->url);
-			$version = (string) $package[0]->attributes()->version;
-			$results[$version] = array($download_url, $url);
+			$version = new DFVersion((string) $package[0]->attributes()->version);
+			$patchlevel = (string) $package[0]->attributes()->patchlevel;
+			$results[] = array($version, $patchlevel, $download_url, $url);
 
 		}
 		if (count($results) == 0) return NULL;
-		$maxVersion = new DFVersion("0.0.0");
-		foreach($results as $version => $tuple ) {
-			if ($version->isHigher($maxVersion)) {
-				$maxVersion = $version;
-				$maxTuple = $tuple;
-			}
-		}
-
-
-		list($download_url, $repo_url) = $maxTuple; // get its download url and repo
-		return array($download_url, new DFVersion($maxVersion), $repo_url);
+		$max = DFVersion::getMaxVersion($results);
+		
+		list($maxVersion, $maxPatchlevel, $download_url, $repo_url) = $max; 
+		return array($download_url, $maxVersion, $repo_url);
 	}
 
 	/**

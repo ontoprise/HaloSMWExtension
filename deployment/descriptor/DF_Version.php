@@ -52,7 +52,26 @@ class DFVersion {
 	public function getSubMinor() {
 		return $this->subminor;
 	}
-
+    
+	/**
+	 * Parses a version string.
+	 * 
+	 * Format: major.minor.subminor
+	 * 
+	 * Examples: 
+	 *     * 1.40
+	 *     * 1.10.4
+	 *     * 4.3.10
+	 *     * 1.4  -> is extended to 1.4.0
+	 * 
+	 * Note: Backwards compatible to old version number format with 3 or 4 digits:
+	 * 
+	 *  130 -> 1.3.0
+	 *  1164 -> 1.16.4
+	 *  
+	 * @param string $version_string
+	 * @throws Exception
+	 */
 	private function parseVersions($version_string) {
 		$parts = explode(".", $version_string);
 		if (count($parts) < 2 || count($parts) > 3) {
@@ -113,5 +132,86 @@ class DFVersion {
 
 	public function isHigher(DFVersion $v) {
 		return !$this->isEqual($v) && !$this->isLower($v);
+	}
+	
+	/**
+	 * Sorts and compacts versions. That means it filters out all doubles.
+	 *
+	 * @param array of tuples(DFVersion, patchlevel, ...) $versions
+	 */
+	public static function sortVersions(& $versions) {
+
+		// sort
+		for($i = 0; $i < count($versions); $i++) {
+			for($j = 0; $j < count($versions)-1; $j++) {
+
+				list($ver1, $pl1) = $versions[$j];
+				list($ver2, $pl2) = $versions[$j+1];
+				if ($ver1->isEqual($ver2)) {
+					if ($pl1 < $pl2) {
+						$help = $versions[$j];
+						$versions[$j] = $versions[$j+1];
+						$versions[$j+1] = $help;
+					}
+				}
+				if ($ver1->isLower($ver2)) {
+					$help = $versions[$j];
+					$versions[$j] = $versions[$j+1];
+					$versions[$j+1] = $help;
+				}
+			}
+		}
+
+		// remove doubles
+		$result = array();
+		$last = NULL;
+		for($i = 0; $i < count($versions); $i++) {
+			if (is_null($last)) {
+				$last = $versions[$i];
+				continue;
+			}
+
+			list($ver1, $pl1) = $last;
+			list($ver2, $pl2) = $versions[$i];
+			if($ver1->isEqual($ver2) && $pl1 === $pl2) {
+				$versions[$i] = NULL;
+			} else {
+				$last = $versions[$i];
+			}
+
+		}
+
+		// remove NULLs
+		$vresult = array();
+		foreach($versions as $v) {
+			if (!is_null($v)) $vresult[] = $v;
+		}
+		return $vresult;
+	}
+	
+	/**
+	 * Returns the maximum version. 
+	 *
+	 * @param array of tuples(DFVersion, patchlevel, ...) $versions
+	 * 
+	 * @return tuples(DFVersion, patchlevel, ...)
+	 */
+	public static function getMaxVersion(& $versions) {
+		$maxTuple = NULL;
+		$maxVersion = new DFVersion("0.0.0");
+		foreach($versions as $tuple) {
+			list($v,$p) = $tuple;
+			if ($v->isHigher($maxVersion)) {
+				$maxVersion = $version;
+				$maxPatchlevel = $p;
+				$maxTuple = $tuple;
+			} else if ($v->isEqual($maxVersion)) {
+				if ($p > $maxPatchlevel) {
+					$maxPatchlevel = $p;
+					$maxTuple = $tuple;
+				}
+			}
+		}
+		return $maxTuple;
 	}
 }

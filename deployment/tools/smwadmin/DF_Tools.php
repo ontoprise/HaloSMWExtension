@@ -373,60 +373,7 @@ class Tools {
 		return substr($s, 0, 10)."...".substr($s, -12);
 	}
 
-	/**
-	 * Sorts and compacts versions. That means it filters out all doubles.
-	 *
-	 * @param array of tuples(version, patchlevel) $versions
-	 */
-	public static function sortVersions(& $versions) {
-
-		// sort
-		for($i = 0; $i < count($versions); $i++) {
-			for($j = 0; $j < count($versions)-1; $j++) {
-
-				list($ver1, $pl1) = $versions[$j];
-				list($ver2, $pl2) = $versions[$j+1];
-				if ($ver1->isEqual($ver2)) {
-					if ($pl1 < $pl2) {
-						$help = $versions[$j];
-						$versions[$j] = $versions[$j+1];
-						$versions[$j+1] = $help;
-					}
-				}
-				if ($ver1->isLower($ver2)) {
-					$help = $versions[$j];
-					$versions[$j] = $versions[$j+1];
-					$versions[$j+1] = $help;
-				}
-			}
-		}
-
-		// remove doubles
-		$result = array();
-		$last = NULL;
-		for($i = 0; $i < count($versions); $i++) {
-			if (is_null($last)) {
-				$last = $versions[$i];
-				continue;
-			}
-
-			list($ver1, $pl1) = $last;
-			list($ver2, $pl2) = $versions[$i];
-			if($ver1 === $ver2 || $pl1 === $pl2) {
-				$versions[$i] = NULL;
-			} else {
-				$last = $versions[$i];
-			}
-
-		}
-
-		//$versions = array_diff($versions, array(NULL));
-		$vresult = array();
-		foreach($versions as $v) {
-			if (!is_null($v)) $vresult[] = $v;
-		}
-		return $vresult;
-	}
+	
 
 	/**
 	 * Removes trailing whitespaces at the end (LF, CR, TAB, SPACE)
@@ -635,25 +582,7 @@ class Tools {
 		}
 	}
 
-	/**
-	 * Add Separaters for version number. Default is dot.
-	 *
-	 * @param $version
-	 * @param $patchlevel
-	 * @param $sep default is dot
-	 *
-	 * @return string
-	 */
-	public static function addSeparators($version, $patchlevel = 0, $sep = ".") {
-		$sep_version = "";
-		for($i = 0; $i < strlen($version); $i++) {
-			if ($i>0) $sep_version .= $sep;
-			$sep_version .= $version[$i];
-		}
-		$sep_version .= "_$patchlevel";
-		return $sep_version;
-	}
-
+	
 	/**
 	 * Returns file extension
 	 *

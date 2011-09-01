@@ -52,7 +52,7 @@ class SMWCheckInstallation extends SpecialPage {
 				$html .= "<table>";
 				foreach($updates as $tuple) {
                     list($id, $version, $patchlevel) = $tuple;
-					$html .= "<tr><td>$id</td><td>".Tools::addSeparators($version, $patchlevel)."</td></tr>";
+					$html .= "<tr><td>$id</td><td>".$version->toVersionString()."_".$patchlevel."</td></tr>";
 				}
 				$html .= "</table>";
 			}
