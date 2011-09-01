@@ -1324,12 +1324,12 @@ class SMWTripleStore extends SMWStore {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
 				$label = $printout->getLabel();
-				global $wgContLang;
-				if ($label == $wgContLang->getNsText(NS_CATEGORY)) {
-					$result .= "?$label"; // category printout
-				} else {
-					$result .= "?=$label";
-				}
+			    global $wgContLang;
+                if ($printout->getMode() == SMWPrintRequest::PRINT_CATS) {
+                    $result .= "?".$wgContLang->getNsText(NS_CATEGORY);
+                } else {
+                    $result .= "?=$label";
+                }
 			} else if ($printout->getData() instanceof Title) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
 				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();
