@@ -605,9 +605,9 @@ class TermImportBot extends GardeningBot {
 			
 		
 		if(count($this->importErrors) > 0){
-			$result .= "\n Was successfull: [[wasImportedSuccessfully::false]]";
+			$result .= "\n Was success: [[wasImportedSuccessfully::false]] (Please see errors below)";
 		} else {
-			$result .= "\n Was successfull: [[wasImportedSuccessfully::true]]";
+			$result .= "\n Was successful: [[wasImportedSuccessfully::true]]";
 		}
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
@@ -644,7 +644,7 @@ class TermImportBot extends GardeningBot {
 		$result .= "\n Import date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			
-		$result .= "\n Was successfull: [[wasImportedSuccessfully::false]] (Check [[Special:Gardening]] if Term Import is finished.)";
+		$result .= "\n Was successful: [[wasImportedSuccessfully::false]] (Check [[Special:Gardening]] if Term Import is finished.)";
 		
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
