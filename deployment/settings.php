@@ -44,7 +44,7 @@ class DF_Config  {
 	//public static $df_webadmin_user = "root";
 	//public static $df_webadmin_pass = "pass";
 
-
+    
 	/*
 	 * Genernal settings for smwadmin/webadmin
 	 */
@@ -67,6 +67,8 @@ class DF_Config  {
 	
 // set MYSQL directory (only if it is not in PATH)
 'df_mysql_dir' => '',
+	
+'df_keep_cmd_window' => false	
 
 	);
 	public static function getValue($identifier){
