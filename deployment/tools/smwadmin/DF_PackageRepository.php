@@ -259,7 +259,7 @@ class PackageRepository {
 				return self::getDeployDescriptor($ext_id, $i);
 			}
 		}
-		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id in version range $minversion-$maxversion");
+		throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id in version range ".$minversion->toVersionString()."-".$maxversion->toVersionString());
 	}
 
 	/**

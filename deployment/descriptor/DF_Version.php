@@ -77,15 +77,15 @@ class DFVersion {
 		if (count($parts) < 2 || count($parts) > 3) {
 			if (strlen($version_string) == 3 && is_numeric($version_string)) {
 				// interprete it as old version number (before DF 1.6, for downwards compatibility)
-				$this->major = $version_string[0];
-				$this->minor = $version_string[1];
-				$this->subminor = $version_string[2];
+				$this->major = intval($version_string[0]);
+				$this->minor = intval($version_string[1]);
+				$this->subminor = intval($version_string[2]);
 				return;
 			} else if (strlen($version_string) == 4 && is_numeric($version_string)) {
                 // interprete it as old version number (before DF 1.6, for downwards compatibility)
-                $this->major = $version_string[0];
-                $this->minor = $version_string[1].$version_string[2];
-                $this->subminor = $version_string[3];
+                $this->major = intval($version_string[0]);
+                $this->minor = intval($version_string[1].$version_string[2]);
+                $this->subminor = intval($version_string[3]);
                 return;
             } else {
 				// invalid format

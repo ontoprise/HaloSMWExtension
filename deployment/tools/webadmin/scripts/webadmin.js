@@ -40,6 +40,7 @@ $(function() {
 		var timer;
 		
 		var oldLength = 0;
+		var processCounter = 0;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
@@ -78,6 +79,20 @@ $(function() {
 				$('.ui-dialog-titlebar-close').show();
 			} });
 			
+			// this call checks periodically if there is at least on PHP process running
+			var isProcessRunningUrl = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=isProcessRunning&rsargs[]=php";
+			$.ajax( { url : isProcessRunningUrl, dataType:"json", complete : function(xhr3, status3) {
+				if (xhr3.responseText == "false") {
+					processCounter++;
+					if (processCounter > 5) {
+						processCounter=0;
+						$('.ui-dialog-titlebar-close').show();
+						var dialog = $('#df_install_dialog');
+						dialog[0].innerHTML += "<br/>Seems that operation is not running anymore... You might close the window.";
+						dialog[0].scrollTop = dialog[0].scrollHeight;
+					}
+				}
+			} });
 			
 		};
 		setTimeout( periodicLogLoad, 3000);

@@ -100,6 +100,7 @@ class DFStatusTab {
 			}
 			if (array_key_exists($id, $updates)) {
 				list( $tmpid, $tmpversion, $tmppatchlevel) = $updates[$id];
+				$tmpversion = $tmpversion->toVersionString();
 				$html .= "<input type=\"button\" class=\"df_update_button\" value=\"$updateText\" id=\"df_update__$id"."__$tmpversion"."_$tmppatchlevel\"></input>";
 				$html .= "<input type=\"button\" class=\"df_deinstall_button\" value=\"$deinstallText\" id=\"df_deinstall__$id\" $disabledDeInstall></input>";
 			} else {

@@ -563,6 +563,7 @@ class Tools {
 	public static function isProcessRunning($name) {
 		if (self::isWindows()) {
 			@exec("tasklist /NH /V /FO CSV", $out, $ret);
+			if ($ret != 0) return false;
 			foreach($out as $l) {
 				$parts = explode(",", trim($l));
 				if (strpos($parts[0], "$name.exe") !== false) return true;
@@ -574,7 +575,7 @@ class Tools {
 			foreach($out as $l) {
 				$l = preg_replace("/\\s+|\t+/", " ", $l);
 				$parts = explode(" ", trim($l));
-				if ($parts[4] == $path) {
+				if ($parts[4] == $path || strpos($parts[4], $name) !== false) {
 					return true;
 				}
 			}

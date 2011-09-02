@@ -447,6 +447,10 @@ class DFCommandInterface {
 
     }
     
+    public function isProcessRunning($processName) {
+    	return Tools::isProcessRunning($processName) ? "true" : "false";
+    }
+    
     /**
      * Special quoting for cmd /c START ....
      * Quotes only if necessary and then like this:  d:\"my folder"

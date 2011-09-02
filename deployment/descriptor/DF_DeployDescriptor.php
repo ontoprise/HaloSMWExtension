@@ -490,7 +490,7 @@ class DeployDescriptor {
 				}
 				$fromVersion = new DFVersion($from);
 				$toVersion = new DFVersion($to);
-				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($to)) {
+				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
 					$patches[] = $pf;
 				}
 			}

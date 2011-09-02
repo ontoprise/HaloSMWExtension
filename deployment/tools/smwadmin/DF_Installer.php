@@ -459,7 +459,7 @@ class Installer {
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
 
 		} else {
-			$dfgOut->outputln("[Read deploy descriptor of $packageID-$version...");
+			$dfgOut->outputln("[Read deploy descriptor of $packageID-".$version->toVersionString()."...");
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
 
 		}
