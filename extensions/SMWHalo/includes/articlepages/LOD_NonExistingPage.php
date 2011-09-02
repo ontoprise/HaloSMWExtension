@@ -258,6 +258,7 @@ class  LODNonExistingPage extends Article {
         // get the categories of the entity
 
         $categories = self::getCategoriesForURI($uri);
+        
         $content['Categories'] = ''; // category string
 
         // Fetch templates from categories of the entity
@@ -274,21 +275,32 @@ class  LODNonExistingPage extends Article {
      * @return Title []
      */
     private static function getCategoriesForURI($uri) {
+    	
+    	global $smwgDefaultStore, $smwgTripleStoreGraph;
+    	
+    	if ($smwgDefaultStore == 'SMWTripleStoreQuad') {
+    		$where = "GRAPH ?G { <$uri> rdf:type ?C . }";
+    		$defaultGraph = "";
+    	} else {
+    		$where = "GRAPH <$smwgTripleStoreGraph> { <$uri> rdf:type ?C . }";
+    		$defaultGraph = $smwgTripleStoreGraph;
+    	}
+    	
         $query = <<<SPARQL
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             SELECT ?C
             WHERE {
                 
-                <$uri> rdf:type ?C .
+                $where
                 
             }
 SPARQL;
-        global $smwgTripleStoreGraph;
-        $result = self::queryTripleStore($query, $smwgTripleStoreGraph);
+      
+        $result = self::queryTripleStore($query, $defaultGraph);
         $result = self::parseSparqlXMLResult($result);
         if (!$result) {
             // No categories found for the given URI
-            return;
+            return array();
         }
 
         $categories = array();
@@ -322,38 +334,14 @@ SPARQL;
 
         // get the categories of the entity
 
-        if (!class_exists("LODTripleStoreAccess")) return;
-
-        $tsa = new LODTripleStoreAccess();
-        $query = <<<SPARQL
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT ?C
-            WHERE {
-                GRAPH ?G {
-                    <$uri> rdf:type ?C .
-                }
-            }
-SPARQL;
-
-        $result = $tsa->queryTripleStore($query);
-        if (!$result) {
-            // No categories found for the given URI
-            return;
-        }
-        $rows = $result->getRows();
-        $categories = array();
-        foreach ($rows as $r) {
-            $catURI = $r->getResult("C")->getValue();
-            $t = TSHelper::getTitleFromURI($catURI);
-            $categories[] = $t->getText();
-        }
-
+       $categories = self::getCategoriesForURI($uri);
+       
         // Fetch templates from categories of the entity
         foreach ($categories as $cat) {
-            $catTemplate = str_replace("{cat}", $cat, $lodgNEPCategoryTemplatePattern);
+            $catTemplate = str_replace("{cat}", $cat->getText(), $lodgNEPCategoryTemplatePattern);
             $con = self::getContentOfArticle($catTemplate);
             if (!is_null($con)) {
-                $content["Category:$cat"] = $con;
+                $content["Category:".$cat->getText()] = $con;
             }
         }
     }

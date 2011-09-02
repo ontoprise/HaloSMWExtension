@@ -898,10 +898,10 @@ function smwfHaloFormInputTextarea($cur_value, $input_name, $is_mandatory, $is_d
  */
 function smwfHaloShowListPage(&$title, &$article){
 	global $smwgHaloIP;
-	if ( $title->getNamespace() == NS_CATEGORY ) {
+	if ( $title->exists() && $title->getNamespace() == NS_CATEGORY ) {
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
 		$article = new SMWCategoryPage($title);
-	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
+	} elseif ( $title->exists() && $title->getNamespace() == SMW_NS_PROPERTY ) {
 		global $smwgPropertyPageFromTSC;
 		if (!isset($smwgPropertyPageFromTSC) || $smwgPropertyPageFromTSC === false) return true;
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_TS_PropertyPage.php');
