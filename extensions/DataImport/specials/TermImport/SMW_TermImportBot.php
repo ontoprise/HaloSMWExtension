@@ -598,16 +598,16 @@ class TermImportBot extends GardeningBot {
 	private function createTermImportResultContent($termImportName){
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
-		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
+		$result .= "\nTerm Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
 			.$termImportName."]]"." [[belongsToTermImportWithLabel::".$termImportName."| ]]";
-		$result .= "\n Import date: [[hasImportDate::";
+		$result .= "\nImport date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			
 		
 		if(count($this->importErrors) > 0){
-			$result .= "\n Was success: [[wasImportedSuccessfully::false]] (Please see errors below)";
+			$result .= "\nResult: Some errors occured.[[wasImportedSuccessfully::false| ]] (Please see errors below.)";
 		} else {
-			$result .= "\n Was successful: [[wasImportedSuccessfully::true]]";
+			$result .= "\nResult: Term import has been completed successfully.[[wasImportedSuccessfully::true| ]]";
 		}
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
@@ -639,12 +639,12 @@ class TermImportBot extends GardeningBot {
 	private function createTermImportResultContentPreview($termImportName){
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
-		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
+		$result .= "\nTerm Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
 			.$termImportName."]]"." [[belongsToTermImportWithLabel::".$termImportName."| ]]";
-		$result .= "\n Import date: [[hasImportDate::";
+		$result .= "\nImport date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			
-		$result .= "\n Was successful: [[wasImportedSuccessfully::false]] (Check [[Special:Gardening]] if Term Import is finished.)";
+		$result .= "\nResult: Some errors occured.[[wasImportedSuccessfully::false| ]] (Check [[Special:Gardening]] if Term Import is finished.)";
 		
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
