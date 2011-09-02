@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>049</version>
-		<patchlevel>1</patchlevel>
-
+		<version>0.4.10</version>
 		<id>validator</id>
 		<license>GPL-v2</license>
 		<vendor>Ontoprise</vendor>
@@ -16,6 +14,7 @@
         </description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Validator</helpurl>
 		<dependencies>
+		  <dependency from="1.16.0">mw</dependency>
 		</dependencies>
 		<notice></notice>
 	</global>
