@@ -103,6 +103,9 @@ class ASFParserFunctions {
 		$result .= '</span>';
 		$result .= '</span>';
 		
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+		
 		return $parser->insertStripItem( $result, $parser->mStripState );
 	}
 	
@@ -190,11 +193,6 @@ class ASFParserFunctions {
 		$result .= '</legend>';
 		$result .= '<span class="asf_fieldset_content" style="display: '.$unCollapsedDisplay.'">';
 		
-		//Add javascript and css
-		global $smgJSLibs; 
-		$smgJSLibs[] = 'jquery'; 
-		$smgJSLibs[] = 'qtip';
-		
 		return $parser->insertStripItem( $result, $parser->mStripState );
 	}
 	
@@ -238,6 +236,8 @@ class ASFParserFunctions {
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_HAS_MAX_CARDINALITY);
 			$delimiter = 
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Delimiter');
+			$isUploadable = 
+				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_IS_UPLOADABLE);
 			
 			global $wgContLang;
 			if($maxCardinality != 1 || $delimiter){

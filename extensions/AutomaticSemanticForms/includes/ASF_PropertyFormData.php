@@ -41,7 +41,8 @@ class ASFPropertyFormData {
 		$this->titleObject = $propertyTitleObject;
 		
 		$store = smwfNewBaseStore();
-		$this->semanticData = $store->getSemanticData($this->titleObject);
+		$this->semanticData = $store->getSemanticData(
+			SMWDIWikiPage::newFromTitle($this->titleObject));
 		
 		$this->initializeFormCreationMetadata();
 	}
@@ -52,8 +53,14 @@ class ASFPropertyFormData {
 	private function initializeFormCreationMetadata(){
 		$this->objectType = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_HAS_TYPE);
+		if(strlen($this->objectType) > 0){	
+			$this->objectType = SMWDataValueFactory::findTypeLabel(
+				SMWDIUri::doUnserialize($this->objectType)->getFragment());	
+		}
+			
 		$this->autocompletionRange = 
-			ASFFormGeneratorUtils::getPropertyValueOfTypeRecord($this->semanticData, ASF_PROP_HAS_DOMAIN_AND_RANGE,1);
+			ASFFormGeneratorUtils::getPropertyValueOfTypeRecord($this->semanticData, ASF_PROP_HAS_DOMAIN_AND_RANGE,ASF_PROP_HAS_RANGE);
+		
 		$this->minCardinality = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_HAS_MIN_CARDINALITY);
 		$this->maxCardinality = 
@@ -80,7 +87,6 @@ class ASFPropertyFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_DEFAULT_VALUE);
 		$this->hideProperty = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT, false, false);
-			
 	}
 	
 	

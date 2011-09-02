@@ -1,11 +1,12 @@
 <?php
 
 //define form metadata properties for properties
-define('ASF_PROP_HAS_TYPE', 'Has_type');
+define('ASF_PROP_HAS_TYPE', '_TYPE');
 define('ASF_PROP_HAS_DOMAIN_AND_RANGE', 'Has_domain_and_range');
+define('ASF_PROP_HAS_RANGE', 'Has_range');
 define('ASF_PROP_HAS_MIN_CARDINALITY', 'Has_min_cardinality');
 define('ASF_PROP_HAS_MAX_CARDINALITY', 'Has_max_cardinality');
-define('ASF_PROP_ALLOWS_VALUES', 'Allows_value');
+define('ASF_PROP_ALLOWS_VALUES', '_PVAL');
 define('ASF_PROP_FORM_INPUT_LABEL', 'Form_input_label');
 define('ASF_PROP_USE_INPUT_TYPE', 'Use_input_type');
 define('ASF_PROP_IS_UPLOADABLE', 'Is_uploadable');
@@ -86,6 +87,8 @@ class ASFFormGenerator {
 		list($categories, $categoriesWithNoProperties, $categoriesWithNoFormEdit)
 			= $this->initializeCategoryFormData($categories);
 
+		//echo('<pre>'.print_r($categoriesWithNoProperties, true).'</pre>');
+			
 		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0)
 			return array(false, $categoriesWithNoFormEdit);
 
@@ -95,6 +98,11 @@ class ASFFormGenerator {
 
 			$categories[] = $unresolvedAnnotationsSection;
 		}
+		
+		//now we can scripts, since we know that form will be displayed
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+		
 			
 		//deal with duplicate properties
 		$formDefinition = $this->getFormDefinition($categories, $categoriesWithNoProperties);
@@ -363,21 +371,6 @@ class ASFFormGenerator {
 		}
 
 		return $categories;
-	}
-
-	/*
-	 * Adds the javascript libraries, which are required by
-	 * the Automatic Semantic Forms extension
-	 */
-	private function addJavascriptFiles(){
-		// Tell the script manager, that we need jQuery
-		global $smgJSLibs;
-		$smgJSLibs[] = 'jquery';
-		$smgJSLibs[] = 'qtip';
-
-		global $wgOut, $asfScriptPath;
-		$scriptFile = $asfScriptPath . "/scripts/automatic_semantic_forms.js";
-		$wgOut->addScriptFile( $scriptFile );
 	}
 
 }

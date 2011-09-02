@@ -21,6 +21,9 @@ class ASFAdminSpecial extends SpecialPage {
 	function execute( $query ) {
 		global $wgOut;
 		
+		global $wgOut;
+		$wgOut->addModules( 'ext.automaticsemanticforms.admin' );
+		
 		SFUtils::addJavascriptAndCSS();
 		
 		global $sfgScriptPath;
@@ -83,25 +86,12 @@ class ASFAdminSpecial extends SpecialPage {
 		
 		$wgOut->addHTML($html);
 		
-		$this->addHeaders();
-		
 		return true;
 	}
 	
-	/*
-	 * Add javascript and CSS files
-	 */
-	private function addHeaders(){
-		global $smgJSLibs; 
-		$smgJSLibs[] = 'jquery'; 
-		$smgJSLibs[] = 'qtip';
-		
-		global $wgOut;
-		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
-	}
 	
 	
 	
-	
+
 	
 }

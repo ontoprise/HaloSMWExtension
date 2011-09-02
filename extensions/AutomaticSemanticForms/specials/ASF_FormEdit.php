@@ -13,9 +13,7 @@ class ASFFormEdit extends SFFormEdit {
 	 * 
 	 * It adds some ASF features and then calls its parent method
 	 */
-function execute($query) {
-		$this->addHeaders();	
-	
+function execute($query, $redirectOnError = true) {
 		//get get parameters
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
@@ -150,17 +148,6 @@ function execute($query) {
 	}
 	
 	
-/*
-	 * Add javascript and CSS files
-	 */
-	private function addHeaders(){
-		global $smgJSLibs; 
-		$smgJSLibs[] = 'jquery'; 
-		$smgJSLibs[] = 'qtip';
-		
-		global $wgOut;
-		$wgOut->addModules( 'ext.automaticsemanticforms.main' );		
-	}
 	
 	
 }

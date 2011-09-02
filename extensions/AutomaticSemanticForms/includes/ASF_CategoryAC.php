@@ -97,7 +97,7 @@ class ASFCategoryAC {
 		$store = smwfNewBaseStore();
 		$categories = array();
 		foreach($categoryCandidates as $candidate){
-			$semanticData = $store->getSemanticData($candidate[0]);
+			$semanticData = $store->getSemanticData(SMWDIWikiPage::newFromTitle($candidate[0]));
 			
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');

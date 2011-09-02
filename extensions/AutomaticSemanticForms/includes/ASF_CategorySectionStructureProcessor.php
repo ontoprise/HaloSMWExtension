@@ -50,7 +50,7 @@ class ASFCategorySectionStructureProcessor {
 		
 		$this->finalizeCategorySectionStructure();
 		
-		echo('<pre>'.print_r($this->categorySectionStructure, true).'</pre>');
+		//echo('<pre>'.print_r($this->categorySectionStructure, true).'</pre>');
 		
 		return array($this->categorySectionStructure, $this->categoriesWithNoProperties, $this->categoriesWithNoFormEdit);
 	}
@@ -79,7 +79,8 @@ class ASFCategorySectionStructureProcessor {
 				//continue;
 			}
 			
-			$semanticData = $store->getSemanticData($categoryTitle);
+			$semanticData = $store->getSemanticData(
+				SMWDIWikiPage::newFromTitle($categoryTitle));
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			if(strtolower($noASF) == 'true'){
 				$this->categoriesWithNoFormEdit[$categoryTitle->getText()] = true;

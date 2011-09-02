@@ -94,8 +94,18 @@ function enableAutomaticSemanticForms() {
 		array(
 			'scripts' => array('/scripts/asf.js'),
 			'styles' => array('/skins/asf.css'),
+			'dependencies' => array('ext.jquery.qtip'),
 		);
 	
+	$wgResourceModules['ext.automaticsemanticforms.admin'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('/scripts/asf-admin.js'),
+			'styles' => array('/skins/asf.css'),
+			'dependencies' => array('ext.automaticsemanticforms.main'),
+		);	
+		
+		
 	$wgResourceModules['ext.automaticsemanticforms.datapicker'] = 
 		$commonProperties + 
 		array(
@@ -122,17 +132,6 @@ function asfSetupExtension(){
 	//replace SFFormPrinter with its ASF implementation
 	global $sfgFormPrinter;
 	$sfgFormPrinter = new ASFFormPrinter();
-	
-	global $wgRequest, $wgContLang;
-	if(strpos($wgRequest->getVal('title'), $wgContLang->getNsText(NS_SPECIAL).':') !== 0){
-		global $smgJSLibs; 
-		$smgJSLibs[] = 'jquery'; 
-		$smgJSLibs[] = 'qtip';
-		
-		global $wgOut;
-		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
-		
-	}
 	
 	return true;
 }

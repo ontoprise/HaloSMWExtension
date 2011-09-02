@@ -74,7 +74,7 @@ class ASFFormGeneratorUtils {
 	/*
 	 * Helper method for initializeFormCreationMetadata
 	 */
-	public static function getPropertyValueOfTypeRecord($semanticData, $propertyName, $index, $defaultValue = ''){
+	public static function getPropertyValueOfTypeRecord($semanticData, $propertyName, $subPropertyName, $defaultValue = ''){
 		$result = $defaultValue;
 		
 		$properties = $semanticData->getProperties();
@@ -85,13 +85,10 @@ class ASFFormGeneratorUtils {
 			if(is_array($values)){
 				$idx = array_keys($values);
 				$idx = $idx[0];
-				if($values[$idx] instanceof SMWRecordValue){
-					$dVs = $values[$idx]->getDVs();
-					if(count($dVs) >= $index+1){
-						$idx = array_keys($dVs);
-						$idx = $idx[$index];
-						$result = $dVs[$idx]->getShortWikiText();
-					}
+				if($values[$idx] instanceof SMWDIContainer){
+					$semanticData = $values[$idx]->getSemanticData(); 
+					
+					$result = self::getPropertyValue($semanticData, $subPropertyName, false, $defaultValue);
 				}
 			}
 		}
