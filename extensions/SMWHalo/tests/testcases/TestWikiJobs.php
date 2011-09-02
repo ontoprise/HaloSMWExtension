@@ -1,57 +1,85 @@
 <?php
 /**
  * @file
- * @ingroup SMWHaloTests 
- * 
- * @author Kai Kühn
- * 
+ * @ingroup SMWHaloTests
+ *
+ * @author Kai Kï¿½hn
+ *
  */
 class TestWikiJobs extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		
+
 	}
 
 	function tearDown() {
 
 	}
-	
-	function testRunJobsForPropertyRenaming() {
-		$property = Title::newFromText("Has torsional moment", SMW_NS_PROPERTY);
-        $new_property = Title::newFromText("Torsional moment", SMW_NS_PROPERTY);
 
-        $property->moveTo($new_property, false, "Automatic test");
+	function testJobForPropertyRenaming() {
+		$text = <<<ENDS
+This is a test text: [[HasName:: Kai]] , [[Lives in :: Karlsruhe ]]
+ENDS;
+		$dummyTitle = Title::newFromText("dummy");
+		$job = new SMW_UpdatePropertiesAfterMoveJob($dummyTitle, array("HasName", "HasFullName"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[HasFullName:: Kai]]") !== false);
 
-        // must be called explicitly, because hook works only on Special:Move
-        smwfGenerateUpdateAfterMoveJob($moveForm, $property, $new_property);
+		$job = new SMW_UpdatePropertiesAfterMoveJob($dummyTitle, array("Lives in", "Lives at"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[Lives at :: Karlsruhe ]]") !== false);
 
-       
-        $this->assertTrue(true);
+	}
+
+	function testJobForLinkUpdating() {
+		$text = <<<ENDS
+This is a test text: [[HasName:: Kai]] , [[Lives in :: Karlsruhe ]]
+    [[ has adress:: Musterstrasse; 34; 0721 / 43743437463; 76131 ]]
+    [[ has domain and range:: Category:Test1; Category:Test2 ]]
+ENDS;
+		$dummyTitle = Title::newFromText("dummy");
+		$job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Karlsruhe", "Adelsheim"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[Lives in ::Adelsheim]]") !== false);
+		
+		$job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Musterstrasse", "Neue Musterstrasse"));
+        $newtext = $job->modifyPageContent($text);
+        $this->assertTrue(strpos($newtext, "[[ has adress::Neue Musterstrasse;  34;  0721 / 43743437463;  76131]]") !== false);
+        
+        $job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Category:Test1", "Category:NewTest1"));
+        $newtext = $job->modifyPageContent($text);
+        $this->assertTrue(strpos($newtext, "[[ has domain and range::Category:NewTest1;  Category:Test2]]") !== false);
 	}
 
 
-	
-	
-    function testRunJobsForCategoryRenaming() {
-        $category = Title::newFromText("Sports car", NS_CATEGORY);
-        $new_category = Title::newFromText("Sports coupe", NS_CATEGORY);
 
-        $category->moveTo($new_category, false, "Automatic test");
 
-        // must be called explicitly, because hook works only on Special:Move
-        smwfGenerateUpdateAfterMoveJob($moveForm, $category, $new_category);
+	function testJobForCategoryRenaming() {
+		$text = <<<ENDS
+This is a test text: [[Category: Test1]] , [[category : Test2 ]]
+    [[category : Test3 |]] [[category : Test4 | Test ]]
+ENDS;
+		$dummyTitle = Title::newFromText("dummy");
+		$job = new SMW_UpdateCategoriesAfterMoveJob($dummyTitle, array("Test1", "NewTest1"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[Category: NewTest1]]") !== false);
 
-     
-        $this->assertTrue(true);
-    }
-    
-    function testRunJobs() {
-    	global $IP;
-    	exec("php $IP/maintenance/runJobs.php", $out, $ret);
-    	
-    	$this->assertTrue(true);
-    }
+		$job = new SMW_UpdateCategoriesAfterMoveJob($dummyTitle, array("Test2", "NewTest2"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[category : NewTest2 ]]") !== false);
 
-    
+		$job = new SMW_UpdateCategoriesAfterMoveJob($dummyTitle, array("Test3", "NewTest3"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[category : NewTest3 |]]") !== false);
+
+		$job = new SMW_UpdateCategoriesAfterMoveJob($dummyTitle, array("Test4", "NewTest4"));
+		$newtext = $job->modifyPageContent($text);
+			
+		$this->assertTrue(strpos($newtext, "[[category : NewTest4 | Test ]]") !== false);
+	}
+
+
+
+
 }

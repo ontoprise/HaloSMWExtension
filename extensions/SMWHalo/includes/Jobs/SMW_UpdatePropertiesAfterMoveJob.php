@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloJobs
- *  
+ *
  * @author Kai K�hn
  */
 
@@ -46,11 +46,11 @@ class SMW_UpdatePropertiesAfterMoveJob extends Job {
 
 		$linkCache = & LinkCache :: singleton();
 		$linkCache->clear();
-	
+
 		$article = new Article($this->updatetitle);
 		$latestrevision = Revision :: newFromTitle($this->updatetitle);
-		
-		
+
+
 		if ( !$latestrevision ) {
 			$this->error = "SMW_UpdatePropertiesAfterMoveJob: Article not found " . $this->updatetitle->getPrefixedDBkey() . " ";
 			wfDebug($this->error);
@@ -58,14 +58,24 @@ class SMW_UpdatePropertiesAfterMoveJob extends Job {
 		}
 
 		$oldtext = $latestrevision->getRawText();
+		$newtext = $this->modifyPageContent($oldtext);
+		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdatePropertiesAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
+		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
 
+		$options = new ParserOptions;
+		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
+
+		return true;
+	}
+
+	public function modifyPageContent($oldtext) {
 		//Page X moved to Y
 		// Links changed accordingly:
 
 		// [[X::m]]  -> [[Y::m]]
 		$search[0] = '(\[\[(\s*)' . $this->oldtitle . '(\s*)::([^]]*)\]\])';
 		$replace[0] = '[[${1}' . $this->newtitle . '${2}::${3}]]';
-		
+
 		// [[X:=m]]  -> [[Y:=m]]
 		$search[1] = '(\[\[(\s*)' . $this->oldtitle . '(\s*):=([^]]*)\]\])';
 		$replace[1] = '[[${1}' . $this->newtitle . '${2}:=${3}]]';
@@ -77,19 +87,13 @@ class SMW_UpdatePropertiesAfterMoveJob extends Job {
 		// [[x::m]]  -> [[Y::m]]
 		$search[2] = '(\[\[(\s*)' . $oldtitlelcfirst . '(\s*)::([^]]*)\]\])';
 		$replace[2] = '[[${1}' . $this->newtitle . '${2}::${3}]]';
-		
+
 		// [[x:=m]]  -> [[Y:=m]]
 		$search[3] = '(\[\[(\s*)' . $oldtitlelcfirst . '(\s*):=([^]]*)\]\])';
 		$replace[3] = '[[${1}' . $this->newtitle . '${2}:=${3}]]';
 
 		$newtext = preg_replace($search, $replace, $oldtext);
-		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdatePropertiesAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
-		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
-	
-		$options = new ParserOptions;
-		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
-		
-		return true;
+		return $newtext;
 	}
 }
 

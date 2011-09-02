@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SMWHaloJobs
- *  
+ *
  * @author Kai K�hn
  */
 
@@ -50,11 +50,11 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 
 		$linkCache = & LinkCache :: singleton();
 		$linkCache->clear();
-		
+
 		$article = new Article($this->updatetitle);
 		$latestrevision = Revision :: newFromTitle($this->updatetitle);
-		
-		
+
+
 		if ( !$latestrevision ) {
 			$this->error = "SMW_UpdateLinksAfterMoveJob: Article not found " . $this->updatetitle->getPrefixedDBkey() . " ";
 			wfDebug($this->error);
@@ -63,42 +63,57 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 
 		$oldtext = $latestrevision->getRawText();
 
+        $newtext = $this->modifyPageContent($oldtext);
+
+		// save and parse article
+		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateLinksAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
+		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
+
+
+		$options = new ParserOptions;
+		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
+
+
+		return true;
+	}
+	
+	public function modifyPageContent($oldtext) {
 		//Page X moved to Y
 		// Links changed accordingly:
 
-		// [[X]] 			-> [[Y|X]]
+		// [[X]]            -> [[Y|X]]
 		$search[0] = '(\[\[(\s*)' . $this->oldtitle . '(\s*)\]\])';
 		$replace[0] = '[[${1}' . $this->newtitle . '${2}|'.$this->oldtitle.']]';
 
-		// [[X|blabla]]]	-> [[Y|blabla]]
+		// [[X|blabla]]]    -> [[Y|blabla]]
 		$search[1] = '(\[\[(\s*)' . $this->oldtitle . '(\s*)\|([^]]*)?\]\])';
 		$replace[1] = '[[${1}' . $this->newtitle . '${2}|${3}]]';
 
-		
-		
+
+
 		// pattern to get all anntations (including n-aries!)
-		$semanticLinkPattern = '/\[\[' .  	// Beginning of the link
-						'([^]:]+):[:=]' .  	// Property name
-						'(' .
-						'(?:[^|\[\]] |' .  	// either normal text (without |, [ or ])
-						'\[\[[^]]*\]\] |' . // or a [[link]]
-						'\[[^]]*\]' .		// or a [external link]
-						')*)' .				// all this zero or more times
-						'(\|[^]]*)?' .		// Display text (like "text" in [[link|text]]), optional
-						'\]\]' .			// End of link
-						'/x';				// ignore whitespaces
-		
-		
-		// search object links				
+		$semanticLinkPattern = '/\[\[' .    // Beginning of the link
+                        '([^]:]+):[:=]' .   // Property name
+                        '(' .
+                        '(?:[^|\[\]] |' .   // either normal text (without |, [ or ])
+                        '\[\[[^]]*\]\] |' . // or a [[link]]
+                        '\[[^]]*\]' .       // or a [external link]
+                        ')*)' .             // all this zero or more times
+                        '(\|[^]]*)?' .      // Display text (like "text" in [[link|text]]), optional
+                        '\]\]' .            // End of link
+                        '/x';               // ignore whitespaces
+
+
+		// search object links
 		preg_match_all($semanticLinkPattern, $oldtext, $matches);
-		
-			
+
+
 		// identify object links to oldtitle
 		// save the index and the (changed) link
 		$indicesToReplace = array();
 		for($i= 0, $n = count($matches[2]); $i < $n; $i++) {
 			$updated = false;
-			
+
 			$frgs = explode(";", $matches[2][$i]);
 			for($j = 0, $m = count($frgs); $j < $m; $j++) {
 				if (trim($frgs[$j]) == $this->oldtitle) {
@@ -106,8 +121,8 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 					$updated = true;
 				}
 			}
-			
-			if ($updated) { 
+
+			if ($updated) {
 				if ($frgs === false) {
 					$indicesToReplace[$i] = "";
 				} else {
@@ -115,28 +130,14 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 				}
 			}
 		}
-		
+
 		// replace object links
 		$newtext = $oldtext;
 		foreach($indicesToReplace as $i => $l) {
 			$newtext = preg_replace('(\[\['.$matches[1][$i].':[:=]'.$matches[2][$i].$matches[3][$i].'\]\])', '[['.$matches[1][$i].'::'.$l.$matches[3][$i].']]', $newtext);
 		}
-		
-		
-		
-		// search and replace normal links
-		$newtext = preg_replace($search, $replace, $newtext);
-		
-		// save and parse article
-		$summary = 'Link(s) to ' . $this->newtitle . ' updated after page move by SMW_UpdateLinksAfterMoveJob. ' . $this->oldtitle . ' has been moved to ' . $this->newtitle;
-		$article->doEdit($newtext, $summary, EDIT_FORCE_BOT);
-		
-		
-		$options = new ParserOptions;
-		$wgParser->parse($newtext, $this->updatetitle, $options, true, true, $latestrevision->getId());
-		
-		
-		return true;
+        $newtext = preg_replace($search, $replace, $newtext);
+		return $newtext;
 	}
 }
 
