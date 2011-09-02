@@ -1,4 +1,4 @@
-CKEDITOR.dialog.add( 'MWImage', function( editor ) {    
+CKEDITOR.dialog.add( 'MWImage', function( editor )    
     {       
         // Load image preview.
         var IMAGE = 1,
@@ -408,7 +408,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
 
                                 imageLinkElement.setValue(selectedPage.replace(/_/g, ' '));                         
                             }
-                        },
+                        }
                         ]
                     },
                     {
@@ -526,7 +526,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                         ],
                         setup : function( type, element ) {
                             var className = element.getAttribute( 'class') || '',
-                            align = className.replace(/fck_mw_(right|left|center)/, '$1');
+                            align = className.replace(/[\w\s]*fck_mw_(right|left|center)[\w\s]*/, '$1');
                             if ( type == IMAGE && align )
                                 this.setValue( align.FirstToUpper() );
                         },
@@ -562,9 +562,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                         setup : function( type, element ) {
                             var imgStyle = element.getAttribute( 'style') || '',
                             match = /(?:^|\s)width\s*:\s*(\d+)/i.exec( imgStyle ),
-                            imgStyleWidth = match && match[1] || 0;
-                            if ( type == IMAGE && imgStyleWidth )
-                                this.setValue( imgStyleWidth );
+							imgWidth = match && match[1] || 0;
+                            if(!imgWidth){
+                                imgWidth = element.getAttribute('_fck_mw_width');
+                            }
+                            if ( type == IMAGE && imgWidth )
+                                this.setValue( imgWidth );                            
                         },
                         commit : function( type, element, internalCommit ) {
                             var value = this.getValue();
@@ -604,9 +607,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
                         setup : function( type, element ) {
                             var imgStyle = element.getAttribute( 'style') || '',
                             match = /(?:^|\s)height\s*:\s*(\d+)/i.exec( imgStyle ),
-                            imgStyleWidth = match && match[1] || 0;
-                            if ( type == IMAGE && imgStyleWidth )
-                                this.setValue( imgStyleWidth );
+							imgHeight = match && match[1] || 0;
+                            if(!imgHeight){
+                                imgHeight = element.getAttribute('_fck_mw_height');
+                            }
+                            if ( type == IMAGE && imgHeight )
+                                this.setValue( imgHeight );
                         },
                         commit : function( type, element, internalCommit )
                         {
@@ -775,6 +781,5 @@ CKEDITOR.dialog.add( 'MWImage', function( editor ) {
             }
 
 
-        }
-    }
+        }    
 });
