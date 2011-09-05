@@ -50,10 +50,11 @@ function wfURLArgumentsLanguageGetMagic( &$magicWords, $langCode ) {
 function wfURLArgumentsPageRenderingHash($hash) {
 
 	global $wgRequest;
-	$urlArgs = $wgRequest->getValues();
+	//$wgRequest->getValues();
+	$urlArgs = $_GET;
 	ksort($urlArgs);
 	$hash .= "!args=";
-	$ignoreArgs = array("action", "submit");
+	$ignoreArgs = array("action", "submit", "title");
     foreach ($urlArgs as $key => $value) {
     	if (!in_array($key, $ignoreArgs)) {
 			$hash .= "$key+$value+";
@@ -67,8 +68,8 @@ function wfURLArgumentsPageRenderingHash($hash) {
 class ExtURLArguments {
  
 	function arg( &$parser, $name = '', $default = '' ) {
-		global $wgRequest;
-		return $wgRequest->getVal($name, $default);
+//		global $wgRequest;
+//		return $wgRequest->getVal($name, $default);
+		return (isset($_GET[$name])) ? $_GET[$name] : $default;		
 	}
 }
-
