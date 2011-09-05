@@ -61,7 +61,7 @@ class DFBundleTools {
 			$bundleTitle = $object->getTitle();
 
 			$externalGraphs = array();
-			$values = smwfGetStore()->getPropertyValues($bundleTitle, SMWDIProperty::newFromUserLabel($ontologyURIProperty));
+			$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($bundleTitle), SMWDIProperty::newFromUserLabel($ontologyURIProperty));
 			if (count($values) > 0) {
 				$value = reset($values);
 				$ontologyURI = $value->getURI();
