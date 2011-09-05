@@ -53,7 +53,6 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 				$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
 				$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
 			}
-			$range = next($dvs);
 				
 			if (count($rangeCatValues) > 0) {
 				$range = reset($rangeCatValues);
