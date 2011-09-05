@@ -54,8 +54,8 @@ class ExportObjectLogicBot extends GardeningBot {
 
 	private function exportCategories($bundleID) {
 		global $dfgLang;
-		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$bundleIDDi = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDDi);
 		$store = smwfGetSemanticStore();
 		$ts = TSNamespaces::getInstance();
 		$obl = "";
@@ -83,8 +83,8 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 	private function exportProperties($bundleID) {
 		global $dfgLang;
-		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$bundleIDDi = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDDi);
 
 		$store = smwfGetSemanticStore();
 		$ts = TSNamespaces::getInstance();
@@ -97,7 +97,7 @@ class ExportObjectLogicBot extends GardeningBot {
 				// get domain and range/type
 				$domains = $store->getDomainCategories($title);
 
-				$typeValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeProperty('_TYPE'));
+				$typeValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel('_TYPE'));
 				if (count($typeValues) == 0) {
 					// relation
 					// NOTE: There MUST be only one range category for OBL-Export. So use first
@@ -106,7 +106,7 @@ class ExportObjectLogicBot extends GardeningBot {
 					$range = reset($ranges);
 				} else{
 					$typeValue = reset($typeValues);
-					$id = $typeValue->getDBkey();
+					$id = $typeValue->getFragment();
 					if (WikiTypeToXSD::isPageType($id)) {
 						// relation
 						// NOTE: There MUST be only one range category for OBL-Export. So use first
@@ -122,7 +122,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 				// get inverse
 				$inverseOfIRI = NULL;
-				$inverseOfValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->inverseOf->getDBkey()));
+				$inverseOfValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->inverseOf->getDBkey()));
 				$inverseOfValue = reset($inverseOfValues); // must be only 1
 				if ($inverseOfValue !== false) {
 					$inverseOfTitle = $inverseOfValue->getTitle();
@@ -135,10 +135,10 @@ class ExportObjectLogicBot extends GardeningBot {
 
 
 				// get cardinalities
-				$minCardValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->minCard->getDBkey()));
+				$minCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->minCard->getDBkey()));
 				$minCardValue = reset($minCardValues); // must be only 1
 
-				$maxCardValues = smwfGetStore()->getPropertyValues($title, SMWPropertyValue::makeUserProperty($store->maxCard->getDBkey()));
+				$maxCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->maxCard->getDBkey()));
 				$maxCardValue = reset($maxCardValues); // must be only 1
 
 				if ($minCardValue !== false) {
@@ -213,10 +213,10 @@ class ExportObjectLogicBot extends GardeningBot {
 
 	private function exportInstances($bundleID) {
 		global $dfgLang;
-		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$bundleIDDi = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDDi);
 		$store = smwfGetSemanticStore();
-		$internalProperties = array($dfgLang->getLanguageString('df_partofbundle'),
+		$internalProperties = array(str_replace(" ","_",$dfgLang->getLanguageString('df_partofbundle')),
 		$dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_contenthash'),
 		$dfgLang->getLanguageString('df_instdir'),$dfgLang->getLanguageString('df_dependencies'),
 		$dfgLang->getLanguageString('df_ontologyvendor'),$dfgLang->getLanguageString('df_description'), $store->ontologyURI->getText());
@@ -232,15 +232,16 @@ class ExportObjectLogicBot extends GardeningBot {
 
 			if ($title->getNamespace() == NS_MAIN) {
 				$instanceIRI = $this->getTSCIRI($title);
-				$sd = smwfGetStore()->getSemanticData($title);
+				$sd = smwfGetStore()->getSemanticData(SMWDIWikiPage::newFromTitle($title));
 				$properties = $sd->getProperties();
 				foreach($properties as $p) {
 					$values = $sd->getPropertyValues($p);
 
-					if (in_array($p->getText(), $internalProperties) ) {
+					if (in_array($p->getKey(), $internalProperties)) {
+						// internal property of DF
 						continue;
 					}
-					if ($p->getPropertyID() == '_INST') {
+					if ($p->getKey() == '_INST') {
 						$value = reset($values);
 						if (in_array($value->getTitle()->getText(), $internalCategories)) {
 							continue;
@@ -249,27 +250,28 @@ class ExportObjectLogicBot extends GardeningBot {
 						$obl .= "\n$instanceIRI : $objectIRI. ";
 						continue;
 					}
-					$propertyTitle= Title::newFromText($p->getText(), SMW_NS_PROPERTY);
+					if (!$p->isUserDefined()) {
+						continue;
+					}
+					$propertyTitle= Title::newFromText($p->getKey(), SMW_NS_PROPERTY);
 					if (!($propertyTitle instanceof Title)) continue;
 					$propertyIRI = $this->getTSCIRI($propertyTitle);
 					foreach($values as $v) {
-						$typeID = $v->getTypeID();
-						if (WikiTypeToXSD::isPageType($typeID)) {
+						$typeID = $v->getDIType();
+						if ($typeID == SMWDataItem::TYPE_WIKIPAGE) {
 							if (!($v->getTitle() instanceof Title)) continue;
 							$objectIRI = $this->getTSCIRI($v->getTitle());
 							$obl .= "\n$instanceIRI [ $propertyIRI -> $objectIRI ]. ";
 						} else {
-							$dbkeys = $v->getDBkeys();
-							$dbkey = reset($dbkeys);
+							$ser = TSHelper::serializeDataItem($v);
+								
+							$value = str_replace('"','\"', $ser);
+							$value = '"'.$this->fixType($value, $typeID).'"';
 
-							if ($dbkey !== false) {
-								$value = str_replace('"','\"', $dbkey);
-								$value = '"'.$this->fixType($value, $typeID).'"';
-
-								$type = WikiTypeToXSD::getXSDType($typeID);
-								$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
-								$obl .= "\n$instanceIRI [ $propertyIRI -> $value^^$typeIRI ]. ";
-							}
+							$type = WikiTypeToXSD::getXSDTypeFromTypeID($typeID);
+							$typeIRI = "<".str_replace("xsd:", TSNamespaces::$XSD_NS, $type).">";
+							$obl .= "\n$instanceIRI [ $propertyIRI -> $value^^$typeIRI ]. ";
+								
 						}
 					}
 				}
@@ -292,8 +294,8 @@ class ExportObjectLogicBot extends GardeningBot {
 		}
 
 		global $dfgLang;
-		$bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
-		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
+		$bundleIDDi = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
+		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDDi);
 		$obl = "";
 		$ruleTagPattern = '/<rule(.*?>)(.*?.)<\/rule>/ixus';
 		foreach($pageValuesOfOntology as $pv) {
@@ -346,7 +348,7 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 
 	private function fixType($value, $typeID) {
-		if ($typeID == '_dat') {
+		if ($typeID == SMWDataItem::TYPE_TIME) {
 			$date = str_replace("/","-",$value);
 			$datearray = date_parse($date);
 			$year = $datearray['year'];
@@ -364,7 +366,7 @@ class ExportObjectLogicBot extends GardeningBot {
 			if (empty($second)) $second = 0;
 			if ($second < 10) $second = "0$second";
 			return "$year-$month-$day"."T"."$hour:$minute:$second";
-		} else if ($typeID == '_boo') {
+		} else if ($typeID == SMWDataItem::TYPE_BOOLEAN) {
 			if ($value == "0") return "false";
 			if ($value == "1") return "true";
 		}
@@ -417,13 +419,13 @@ class ExportObjectLogicBot extends GardeningBot {
 ENDS;
 		return $header;
 	}
-	
+
 	private function getNamespacePrefixes($bundleName) {
 		$prefixString = "";
 		$prefixes = DFBundleTools::getPrefixesUsedBy($bundleName, false);
 		foreach($prefixes as $prefix) {
-		  $uri = smwfGetSemanticStore()->getNamespaceMapping($prefix);
-		  $prefixString .= "\n:- prefix $prefix = \"$uri\".";
+			$uri = smwfGetSemanticStore()->getNamespaceMapping($prefix);
+			$prefixString .= "\n:- prefix $prefix = \"$uri\".";
 		}
 		return $prefixString;
 	}
@@ -453,7 +455,7 @@ ENDS;
 			$this->setNumberOfTasks(3);
 			$bundleName = $paramArray['GARD_OBLEXPORT_BUNDLE'];
 
-				
+
 			$this->addSubTask(4);
 			echo "\nCreate OBL export from bundle $bundleName...";
 			$obl = "";
@@ -500,13 +502,13 @@ ENDS;
 				$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleName");
 			}
 			$f = "export".uniqid().".obl";
-			
+				
 			if (empty($oblExt)) {
 				$oblExt .= $this->createOBLHeader($ontologyURI, $bundleName);
 			}
-			
+				
 			$prefixString = $this->getNamespacePrefixes($bundleName);
-			
+				
 			$obl = $oblExt . $prefixString. "\n\n" . $obl;
 
 			// save temporarily
