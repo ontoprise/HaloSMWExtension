@@ -175,6 +175,7 @@ class DeployUploadExporter {
 			$filename = $file->getFullPath();
 			$rel = wfRelativePath( $filename, $this->mBasePath );
 			if (!is_null($this->filehandle)) {
+				$rel = Tools::makeUnixPath($rel);
 				fwrite($this->filehandle, "\t\t<file loc=\"$rel\"/>\n");
 				if (!is_null($this->src) && !is_null($this->dest) ) {
 
