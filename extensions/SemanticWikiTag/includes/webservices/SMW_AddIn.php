@@ -11,6 +11,15 @@ if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
 	smwgWTregisterParserFunctions( $wgParser );
 }
 
+function wfAddInStrencode( $s, $dbi = DB_LAST ) {
+	$db = wfGetDB( $dbi );
+	if ( $db !== false ) {
+		return $db->strencode( $s );
+	} else {
+		return false;
+	}
+}
+
 function smwfProcessInlineQueryParserFunctionGTP(&$parser) {
 	global $smwgQEnabled, $smwgIQRunningNumber;
 	if ($smwgQEnabled) {
@@ -181,7 +190,7 @@ class AddIn {
 			$categorylinks = $db->tableName('categorylinks');
 			$cates = '\'\'';
 			foreach($categoryTitles as $cate){
-				$cates .= ',\''.mysql_real_escape_string(Title::makeTitle(NS_CATEGORY, $cate)->getDBkey()).'\'';
+				$cates .= ',\''.wfAddInStrencode(Title::makeTitle(NS_CATEGORY, $cate)->getDBkey()).'\'';
 			}
 			$res = $db->query('SELECT p.page_title from '.$page.' p LEFT JOIN '.$categorylinks.' c ON c.cl_from=p.page_id WHERE c.cl_to IN ('.$cates.') AND p.page_namespace=' . NS_MAIN);
 		}
@@ -209,7 +218,7 @@ class AddIn {
 		$is_redirect = 1;
 		while($is_redirect) {
 			$res = $db->select( $db->tableName('page'), array( 'page_id', 'page_is_redirect', 'page_namespace'),
-				'page_title=\''.mysql_real_escape_string(Title::makeTitle( NS_MAIN, $title)->getDBkey()).'\' AND (page_namespace='. NS_MAIN .' or page_namespace='.NS_CATEGORY.')', 'SMW::getTitleProperties');
+				'page_title=\''.wfAddInStrencode(Title::makeTitle( NS_MAIN, $title)->getDBkey()).'\' AND (page_namespace='. NS_MAIN .' or page_namespace='.NS_CATEGORY.')', 'SMW::getTitleProperties');
 			if($db->numRows( $res ) <= 0) {
 				return NULL;
 			}
@@ -300,7 +309,7 @@ class AddIn {
 			$category = Category::newFromTitle( $t_title );
 			$pagecnt = $category->getPageCount() - $category->getSubcatCount() - $category->getFileCount();
 			
-			$categoryText = mysql_real_escape_string(Title::makeTitle( NS_MAIN, $title)->getDBkey());
+			$categoryText = wfAddInStrencode(Title::makeTitle( NS_MAIN, $title)->getDBkey());
 
 			// get default form id
 			$resDefaultForm = $db->doQuery("SELECT s.value_string FROM smw_spec2 s INNER JOIN smw_ids c ON s.s_id=c.smw_id AND c.smw_namespace=14 AND c.smw_title='".$categoryText."' INNER JOIN smw_ids AS f ON f.smw_id=s.p_id WHERE f.smw_namespace=102 AND f.smw_title='Has_default_form'");
@@ -530,7 +539,7 @@ class AddIn {
 		if($title->exists()) {
 			// merge categories
 			extract( $db->tableNames('categorylinks', 'page') );
-			$res = $db->query("SELECT $categorylinks.cl_to FROM $categorylinks LEFT JOIN $page ON $categorylinks.cl_from = $page.page_id WHERE $categorylinks.cl_sortkey = '".mysql_real_escape_string($subject)."' AND $page.page_namespace = ".NS_MAIN, $fname);
+			$res = $db->query("SELECT $categorylinks.cl_to FROM $categorylinks LEFT JOIN $page ON $categorylinks.cl_from = $page.page_id WHERE $categorylinks.cl_sortkey = '".wfAddInStrencode($subject)."' AND $page.page_namespace = ".NS_MAIN, $fname);
 
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -573,7 +582,7 @@ class AddIn {
 		$is_redirect = 1;
 		while($is_redirect) {
 			$res = $db->select( $db->tableName('page'), array( 'page_id', 'page_is_redirect'),
-				'page_title=\''.mysql_real_escape_string(Title::makeTitle( NS_MAIN, $title)->getDBkey()).'\' AND page_namespace='.NS_MAIN, 'SMW::getPageInfo');
+				'page_title=\''.wfAddInStrencode(Title::makeTitle( NS_MAIN, $title)->getDBkey()).'\' AND page_namespace='.NS_MAIN, 'SMW::getPageInfo');
 			if($db->numRows( $res ) <= 0) {
 				return NULL;
 			}

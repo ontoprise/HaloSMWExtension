@@ -549,12 +549,14 @@ class AddIn2 extends AddIn{
 
 		// just overwrite the subject
 		$title = Title::newFromText( $page_name );
+		global $wgTitle;
+		$wgTitle = $title;
 		if($title->exists()) {
 			// merge categories
 			extract( $db->tableNames('categorylinks', 'page') );
 			$res = $db->query("SELECT $categorylinks.cl_to FROM $categorylinks LEFT JOIN $page
 			ON $categorylinks.cl_from = $page.page_id
-			WHERE $categorylinks.cl_sortkey = '".mysql_real_escape_string($title->getText())."' AND $page.page_namespace = ".NS_MAIN, $fname);
+			WHERE $categorylinks.cl_sortkey = '".wfAddInStrencode($title->getText())."' AND $page.page_namespace = ".NS_MAIN, $fname);
 
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
@@ -1266,7 +1268,7 @@ This is a page created by some upload clients. Please edit this page with other 
 				$categorylinks = $db->tableName('categorylinks');
 				$cates = '\'\'';
 				foreach($categoryTitles as $cate){
-					$cates .= ',\''.mysql_real_escape_string(Title::makeTitle(NS_CATEGORY, $cate)->getDBkey()).'\'';
+					$cates .= ',\''.wfAddInStrencode(Title::makeTitle(NS_CATEGORY, $cate)->getDBkey()).'\'';
 				}
 				$res = $db->query('SELECT p.page_title from '.$page.' p LEFT JOIN '.$categorylinks.' c ON c.cl_from=p.page_id WHERE c.cl_to IN ('.$cates.') AND p.page_namespace=' . NS_MAIN);
 			}
@@ -1473,6 +1475,9 @@ This is a page created by some upload clients. Please edit this page with other 
 			return $ret;
 		}
 		
+		global $wgTitle;
+		$wgTitle = $page_title;
+		
 		$pro = explode(".", $prop_id, 2);
 		$idx = intval($pro[0]);
 		
@@ -1516,8 +1521,8 @@ This is a page created by some upload clients. Please edit this page with other 
 
 				if(substr($text, $min + 2, 1) == '#') {
 					$is_parserfunc = true;
-					$pfstart = $min;
 				}
+				$pfstart = $min;
 				
 				$template = AddIn2::parseTemplate($text, $min);
 				$start = $min;
@@ -1530,7 +1535,6 @@ This is a page created by some upload clients. Please edit this page with other 
 						$content = substr($text, 0, $pfstart);
 						$content .= $this->__updateTemplatePropertyValue( $template, $prop_id, $property, $new_value );
 						$content .= substr($text, $min);
-						$result[] = $template;
 					}
 					break;
 				}
