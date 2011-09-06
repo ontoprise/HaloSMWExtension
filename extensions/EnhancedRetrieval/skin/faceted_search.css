@@ -123,7 +123,7 @@ a.xfsFMore, a.xfsFLess {
 
 .xfsSeparatorLine {
   background: none repeat scroll 0 0 #AAAAAA;
-  border: medium none;
+  border-top: medium none;
   height: 1px;
 }
 
@@ -163,4 +163,8 @@ a.xfsFMore, a.xfsFLess {
 
 .xfsRedLink {
 	color: #CC2200 !important;
+}
+
+.xfsCurrentSearchLink {
+	clear: both;
 }

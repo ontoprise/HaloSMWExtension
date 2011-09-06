@@ -50,7 +50,6 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	<div id="header">
 		<h1>{{fs_title}}</h1>
 	</div>
-
 	<div class="facets">
 		<div>
 			<span class="xfsComponentHeader">{{fs_selected}}</span>
@@ -90,8 +89,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		</div>
 		<hr class="xfsSeparatorLine">
 		<div id="navigation">
-			<div id="pager-header">
-			</div>
+			<div id="pager-header"></div>
 		</div>
 		<div id="docs">
 			{{fs_search_results}}
@@ -100,6 +98,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
 			<ul id="pager"></ul>
 		</div>
 	</div>
+</div>
+<div class="xfsCurrentSearchLink">
+	<hr class="xfsSeparatorLine">
+	<div id="current_search_link"></div>
 </div>
 ';
 

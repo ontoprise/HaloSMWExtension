@@ -103,6 +103,7 @@ function fsfInitResourceLoaderModules() {
 			"scripts/FacetedSearch/FS_FacetWidget.js",      
 			"scripts/FacetedSearch/FS_ArticlePropertiesWidget.js",      
 			"scripts/FacetedSearch/FS_CreateArticleWidget.js",      
+			"scripts/FacetedSearch/FS_LinkCurrentSearchWidget.js",      
 			"scripts/FacetedSearch/FS_NamespaceFacetWidget.js",      
 			"scripts/FacetedSearch/FS_FacetPropertyValueWidget.js",      
 			"scripts/FacetedSearch/FS_CurrentSearchWidget.js",

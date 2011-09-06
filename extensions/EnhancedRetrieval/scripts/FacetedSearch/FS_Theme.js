@@ -576,6 +576,17 @@
 		});
 		return list;
 	};
+	
+	AjaxSolr.theme.prototype.currentSearch = function(link) {
+		var lang = FacetedSearch.singleton.Language;
+		link = escapeHTML(link);
+		var html = ' <a href="' + link + '" title="' + 
+						lang.getMessage('searchLinkTT') + '">' + 
+						lang.getMessage('searchLink') + 
+					'</a>';
+		return html;
+	};
+
 
 	/**
 	 * Creates the HTML for a cluster of values of an attribute. A cluster is 

@@ -189,6 +189,11 @@ FacetedSearch.classes.FacetedSearch = function () {
 			solrUrl: wgFSSolrURL
 			});
 		
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.LinkCurrentSearchWidget({
+			id: 'currentSearchLink',
+			target: '#current_search_link'
+		}));
+		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ResultWidget({
 		  id: 'article',
 		  target: '#docs'
@@ -244,32 +249,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 
 		// init
 		mAjaxSolrManager.init();
-
-		// add parametes
-		var params = {
-			facet: true,
-			'facet.field': FACET_FIELDS,
-			'facet.mincount': 1,
-			'json.nl': 'map',
-			fl: QUERY_FIELD_LIST,
-			hl: true,
-			'hl.fl': HIGHLIGHT_FIELD,
-			'hl.simple.pre' : '<b>',
-			'hl.simple.post': '</b>',
-			'hl.fragsize': '250',
-			'sort' : MODIFICATION_DATE_FIELD + ' desc'
-		};
-		for (var name in params) {
-			mAjaxSolrManager.store.addByValue(name, params[name]);
-		}
-
-		mAjaxSolrManager.store.addByValue('q', '*:*');
-		
-		// add facets
-		for (var name in params) {
-			mAjaxSolrManager.store.addByValue(name, params[name]);
-		}
-		
+		initParameterStore();
 		checkSolrPresent();	
 		
 	};
@@ -434,6 +414,74 @@ FacetedSearch.classes.FacetedSearch = function () {
 		return name.match(ATTRIBUTE_REGEX)|| name.match(RELATION_REGEX);
 	}
 	
+	/**
+	 * Initializes the parameter store of the main ajax solr manager. If SOLR
+	 * parameters are given in the URL, these values are used. Otherwise the 
+	 * default values are set.
+	 */
+	function initParameterStore() {
+		
+		if (!initParameterStoreFromURL()) {
+			initParameterStoreDefault();
+		}
+
+	}
+	
+	/**
+	 * Tries to initialize the parameter store of the main ajax solr manager with
+	 * parameters given in the URL. These parameters are given in the value 
+	 * "fssearch". 
+	 * @return {bool}
+	 * 		true: Parameters are given in the URL. Store was initialized.
+	 * 		false: No parameters given. Store was not initialized.
+	 */
+	function initParameterStoreFromURL() {
+		var url = document.URL;
+		var params = url.match(/^.*?fssearch=(.*)$/);
+		if (params) {
+			mAjaxSolrManager.store.parseString(params[1]);
+			// Is a query string given?
+			var qs = mAjaxSolrManager.store.get('q');
+			if (qs) {
+				var val = qs.val();
+				var regEx = new RegExp(QUERY_FIELD + ":(.*?)\\**$");
+				qs = val.match(regEx);
+				if (qs) {
+					// Query found => set it in the search field
+					$('#query').val(qs[1]);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Initializes the parameter store of the main ajax solr manager with default
+	 * values.
+	 */
+	function initParameterStoreDefault() {
+		var params = {
+			facet: true,
+			'facet.field': FACET_FIELDS,
+			'facet.mincount': 1,
+			'json.nl': 'map',
+			fl: QUERY_FIELD_LIST,
+			hl: true,
+			'hl.fl': HIGHLIGHT_FIELD,
+			'hl.simple.pre' : '<b>',
+			'hl.simple.post': '</b>',
+			'hl.fragsize': '250',
+			'sort' : MODIFICATION_DATE_FIELD + ' desc'
+		};
+
+		mAjaxSolrManager.store.addByValue('q', '*:*');
+		
+		// initialize the parameter store
+		for (var name in params) {
+			mAjaxSolrManager.store.addByValue(name, params[name]);
+		}
+	}
 	
 	construct();
 	addEventHandlers();
