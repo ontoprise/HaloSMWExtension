@@ -34,7 +34,7 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
  *
  * Configuration in LocalSettings.php:
  *
- *  
+ *
  *  $smwgWebserviceEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
  *
  * @author: Kai
@@ -78,7 +78,7 @@ class SMWTripleStore extends SMWStore {
 		$this->smwstore = new $smwgBaseStore;
 		$this->tsNamespace = TSNamespaces::getInstance();
 		$this->localRequest = false;
-		
+
 	}
 
 
@@ -987,7 +987,7 @@ class SMWTripleStore extends SMWStore {
 
 				// create result row. iterate over variable set and convert binding nodes to SMWDataValue objects
 				$maxResultsInColumn = 0;
-				
+
 				foreach ($variableSet as $var) {
 					$var = ucfirst($var);
 					if ($bindingNodeIndex < count($bindingSet)) {
@@ -1095,8 +1095,6 @@ class SMWTripleStore extends SMWStore {
 		$bindingsChildren = $b->children();
 		$uris = array();
 
-		$plainFormat = trim($pr->getOutputFormat()) == '-';
-
 		foreach($bindingsChildren->uri as $sv) {
 			$uris[] = array((string) $sv, $sv->metadata);
 		}
@@ -1110,28 +1108,24 @@ class SMWTripleStore extends SMWStore {
 					$title = TSHelper::getTitleFromURI($sv, false);
 
 					if (is_null($title) || $title instanceof Title) {
-						if ($plainFormat) {
-							$allValues[] = $this->createSMWDataItem(NULL, $title->getPrefixedText(), TSNamespaces::$XSD_NS."string", $metadata);
-						} else {
-							$allValues[] = $this->createSMWPageDataItem($title, $metadata);
-						}
+							
+						$allValues[] = $this->createSMWPageDataItem($title, $metadata);
+
 					} else {
 						// external URI
-						if ($plainFormat) {
-							$v = $this->createSMWDataItem(NULL, $sv, TSNamespaces::$XSD_NS."string", $metadata);
-						} else {
-							global $lodgNEPEnabled;
-							if ($lodgNEPEnabled) {
-								// in case the NEP feature is active, create integration links.
-								// guess local name
-								$localname = TSHelper::convertURIToLocalName($sv);
-								$v = $this->createIntegrationLinkDataItem($localname, $localname, $sv, $metadata);
-							} else {
-								// normal URI ouput
-								$v = $this->createSMWDataItem(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
-							}
 
+						global $lodgNEPEnabled;
+						if ($lodgNEPEnabled) {
+							// in case the NEP feature is active, create integration links.
+							// guess local name
+							$localname = TSHelper::convertURIToLocalName($sv);
+							$v = $this->createIntegrationLinkDataItem($localname, $localname, $sv, $metadata);
+						} else {
+							// normal URI ouput
+							$v = $this->createSMWDataItem(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
 						}
+
+
 						$allValues[] = $v;
 
 					}
@@ -1157,13 +1151,7 @@ class SMWTripleStore extends SMWStore {
 
 					list($literalValue, $literalType, $metadata) = $literal;
 					$property = !is_null($pr) ? $pr->getData() : NULL;
-					if ($plainFormat) {
-
-						$value = $this->createSMWDataItem(NULL, $literalValue, TSNamespaces::$XSD_NS."string", $metadata);
-					} else {
-						$value = $this->createSMWDataItem($property, $literalValue, $literalType, $metadata);
-
-					}
+					$value = $this->createSMWDataItem($property, $literalValue, $literalType, $metadata);
 					$allValues[] = $value;
 				}
 			}
@@ -1196,7 +1184,7 @@ class SMWTripleStore extends SMWStore {
 					// fallback if property does not exist, then use tyoe
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 				} else {
-					$value = SMWDataValueFactory::newPropertyObjectValue($property, $literalValue);
+					$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
 				}
 			} else {
 					
@@ -1324,12 +1312,12 @@ class SMWTripleStore extends SMWStore {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
 				$label = $printout->getLabel();
-			    global $wgContLang;
-                if ($printout->getMode() == SMWPrintRequest::PRINT_CATS) {
-                    $result .= "?".$wgContLang->getNsText(NS_CATEGORY);
-                } else {
-                    $result .= "?=$label";
-                }
+				global $wgContLang;
+				if ($printout->getMode() == SMWPrintRequest::PRINT_CATS) {
+					$result .= "?".$wgContLang->getNsText(NS_CATEGORY);
+				} else {
+					$result .= "?=$label";
+				}
 			} else if ($printout->getData() instanceof Title) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
 				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();
@@ -1424,7 +1412,7 @@ class SMWTripleStore extends SMWStore {
 					$label = $po->getData()->getDBkey() ;
 				} else {
 					$label = $po->getData()->getDataItem()->getKey();
-						
+
 				}
 				$contains |= strtolower($label) == strtolower($var_name);
 			} else {
