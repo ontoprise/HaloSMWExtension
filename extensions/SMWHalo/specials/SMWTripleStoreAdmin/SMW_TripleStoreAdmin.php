@@ -26,6 +26,13 @@ class SMWTripleStoreAdmin extends SpecialPage {
 
 	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
+	
+        if ( !$this->userCanExecute( $wgUser ) ) {
+            // If the user is not authorized, show an error.
+            $this->displayRestrictionError();
+            return;
+        }
+        
 		$wgOut->setPageTitle(wfMsg('tsa'));
 		$html = "";
 		if (!smwfIsTripleStoreConfigured()) {
@@ -89,7 +96,11 @@ class SMWTripleStoreAdmin extends SpecialPage {
         $html .= "</table>";
         
         $html .= "<h2>".wfMsg('smw_tsa_synccommands')."</h2>";
-        $html .= '<pre>'.htmlspecialchars(implode("\n",$status['syncCommands'])).'</pre>';
+        $rewrittenCommands = array();
+        foreach($status['syncCommands'] as $c) {
+        	$rewrittenCommands[] = $this->hideCredentials($c);
+        }
+        $html .= '<pre>'.htmlspecialchars(implode("\n",$rewrittenCommands)).'</pre>';
         
       
         
@@ -106,7 +117,23 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		
 		$wgOut->addHTML($html);
 	}
-
-
+    
+	/**
+	 * Eliminates the credentials from a smw://... link
+	 * 
+	 * @param string $sparul
+	 * @return string
+	 */
+    private function hideCredentials($sparul) {
+    	if (strpos($sparul, "smw://") !== false) {
+    		$start = strpos($sparul, "smw://") + strlen("smw://");
+    		$end = strpos($sparul, "@");
+    		
+    		for($i = $start; $i < $end; $i++) {
+    			$sparul[$i] = "X";
+    		}
+    	}
+    	return $sparul;
+    }
 }
 
