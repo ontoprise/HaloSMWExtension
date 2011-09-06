@@ -32,7 +32,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	$allProperties = $data->getProperties();
 	global $smwgHaloContLang;
 	$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-	
+
 	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getKey()) {
 		foreach($propertyValueArray as $inv) {
 			if (count($propertyValueArray) == 1) {
@@ -45,15 +45,15 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 		if (count($propertyValueArray) > 0) {
 			$dataItemContainer = reset($propertyValueArray);
 			$sd = $dataItemContainer->getSemanticData();
-            $domainCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN]));        
-            $rangeCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_RANGE]));
+			$domainCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN]));
+			$rangeCatValues = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_RANGE]));
 			if (count($domainCatValues) > 0) {
 				$domain = reset($domainCatValues);
 				$domain_iri = $tsNamespace->getFullIRI($domain->getTitle());
 				$triplesFromHook[] = array($subj_iri, "haloprop:domainAndRange", "_:1");
 				$triplesFromHook[] = array("_:1", "haloprop:domain", $domain_iri);
 			}
-				
+
 			if (count($rangeCatValues) > 0) {
 				$range = reset($rangeCatValues);
 				$range_iri = $tsNamespace->getFullIRI($range->getTitle());
@@ -67,17 +67,21 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 
 		foreach($propertyValueArray as $value) {
 			$typeID = $value->getFragment();
-			if ($typeID != '_wpg') {
-				$triplesFromHook[] = array($subj_iri, $hasType_iri, WikiTypeToXSD::getXSDType($typeID));
-			} elseif ($typeID == '_wpg' || $typeID == '_wpp' || $typeID == '_wpc' ||$typeID == '_wpf') {
-				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:page");
-			} else if ($typeID === '_rec') {
-				$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:record");
+			switch($typeID) {
+				case '_wpg':
+					$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:page");
+					break;
+				case '_rec':
+					$triplesFromHook[] = array($subj_iri, $hasType_iri, "tsctype:record");
+					break;
+				default:
+					$triplesFromHook[] = array($subj_iri, $hasType_iri, WikiTypeToXSD::getXSDType($typeID));
+					break;
 			}
-
 		}
-
 	}
+
+
 	return true;
 }
 
