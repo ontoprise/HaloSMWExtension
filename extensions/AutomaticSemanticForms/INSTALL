@@ -1,14 +1,13 @@
-Installation instructions for AutomaticSemanticForms extension vX.X
-----------------------------------------------------------
+Installation instructions for Automatic Semantic Forms extension v1.3
+---------------------------------------------------------------------
 
 Requirements: 
 =============
 
 	MediaWiki 1.16
-	Semantic MediaWiki 1.5.2
-	SMWHalo 1.5.2
-	Script Manager 1.0 or higher
-	Semantic Forms 2.0
+	Semantic MediaWiki 1.6
+	SMWHalo 1.6
+	Semantic Forms 2.2.1
 
 
 Installation:

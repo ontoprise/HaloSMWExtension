@@ -7,7 +7,7 @@
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/AutomaticSemanticForms</instdir>
 		<description>
-			Automatically creates Semantic Forms based on the Wiki ontology.
+			Automatically creates Semantic Forms based on the wiki ontology.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
         <license>GPL-v2</license>

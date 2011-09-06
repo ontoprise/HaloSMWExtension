@@ -127,7 +127,7 @@ function asfSetupExtension(){
 			'version'=>ASF_VERSION,
 			'author'=>"Ingo&nbsp;Steinbauer, Sascha&nbsp;Wagner and Stephan&nbsp;Robotta. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
 			'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_extension',
-			'description' => 'Automatically creates Semantic Forms based on the Wiki ontology.');
+			'description' => 'Automatically creates Semantic Forms based on the wiki ontology.');
 	
 	//replace SFFormPrinter with its ASF implementation
 	global $sfgFormPrinter;
