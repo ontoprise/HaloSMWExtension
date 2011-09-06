@@ -1,6 +1,20 @@
+Index: extensions/SemanticMediaWiki/includes/SMW_DataValueFactory.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_DataValueFactory.php	(revision 12092)
++++ extensions/SemanticMediaWiki/includes/SMW_DataValueFactory.php	(working copy)
+@@ -271,7 +271,8 @@
+ 	static public function registerDatatype( $id, $className, $dataItemId, $label = false ) {
+ 		self::$mTypeClasses[$id] = $className;
+ 		self::$mTypeDataItemIds[$id] = $dataItemId;
+-
++        self::$mDefaultDataItemTypeIds[$dataItemId] = $id;
++        
+ 		if ( $label != false ) {
+ 			self::$mTypeLabels[$id] = $label;
+ 		}
 Index: extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php	(revision 11971)
+--- extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php	(revision 12010)
 +++ extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php	(working copy)
 @@ -18,7 +18,7 @@
  
@@ -107,7 +121,7 @@ Index: extensions/SemanticMediaWiki/includes/dataitems/SMW_DataItem.php
  	public static function getDataItemClassNameForId( $diType ) {
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
---- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 11971)
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 12010)
 +++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
 @@ -104,9 +104,8 @@
  				return spans[i].innerHTML;

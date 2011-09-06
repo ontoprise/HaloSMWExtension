@@ -1118,8 +1118,8 @@ class SMWTripleStore extends SMWStore {
 						if ($lodgNEPEnabled) {
 							// in case the NEP feature is active, create integration links.
 							// guess local name
-							$localname = TSHelper::convertURIToLocalName($sv);
-							$v = $this->createIntegrationLinkDataItem($localname, $localname, $sv, $metadata);
+							$articleDBkey = TSHelper::convertURIToLocalName($sv);
+							$v = $this->createIntegrationLinkDataItem($articleDBkey, $sv, $metadata);
 						} else {
 							// normal URI ouput
 							$v = $this->createSMWDataItem(NULL, $sv, TSNamespaces::$XSD_NS."anyURI", $metadata);
@@ -1279,15 +1279,17 @@ class SMWTripleStore extends SMWStore {
 	 * Creates an integration link URI DataValue object, ie. a redlink which has an URI parameter.
 	 * It can be used by the NEP mechanism.
 	 *
-	 * @param $dbkey
-	 * @param $caption
-	 * @param $uri
+	 * @param string $articleDBkey The article's DB key
+	 * @param string $uri
+	 * @param map $metadata
+	 * 
+	 * @return DataItem
 	 */
-	protected function createIntegrationLinkDataItem($dbkey, $caption, $uri, $metadata) {
+	protected function createIntegrationLinkDataItem($articleDBkey, $uri, $metadata) {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
-		$dbkey = urldecode($dbkey);
-
+		$dbkey = urldecode($articleDBkey);
+       
 		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
 		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$dbkey));

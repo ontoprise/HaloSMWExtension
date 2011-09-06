@@ -172,7 +172,8 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
-	$wgAutoloadClasses['SMWURIIntegrationValue'] = $smwgHaloIP . '/includes/datavalues/SMW_DV_IntegrationLink.php';
+	$wgAutoloadClasses['SMWURIIntegrationValue'] = $smwgHaloIP . '/includes/datavalues/SMW_DV_IntegrationURI.php';
+	$wgAutoloadClasses['SMWDIIntegrationUri'] = $smwgHaloIP . '/includes/dataitems/SMW_DI_IntegrationURI.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
 	$wgAutoloadClasses['LODNonExistingPage'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPage.php';
@@ -678,13 +679,7 @@ function smwfInitSpecialPropertyOfSMWHalo() {
  */
 function smwfHaloInitDatatypes() {
 	global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
-	SMWDataValueFactory::registerDatatype('_chf', 'SMWChemicalFormulaTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_formula'));
-	SMWDataValueFactory::registerDatatype('_che', 'SMWChemicalEquationTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_chemical_equation'));
-	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
-	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
-	SMWDataValueFactory::registerDatatype('_ili', 'SMWURIIntegrationValue',
+	SMWDataValueFactory::registerDatatype('_ili', 'SMWURIIntegrationValue', SMWDIIntegrationUri::TYPE_INTEGRATIONURI,
 	$smwgHaloContLang->getHaloDatatype('smw_integration_link'));
 
 	return true;

@@ -4,10 +4,10 @@
  * @ingroup SMWDataValues
  */
 
-if (!defined( 'SMW_URI_MODE_EMAIL')) define( 'SMW_URI_MODE_EMAIL', 1 );
-if (!defined( 'SMW_URI_MODE_URI'))define( 'SMW_URI_MODE_URI', 3 );
-if (!defined( 'SMW_URI_MODE_ANNOURI'))define( 'SMW_URI_MODE_ANNOURI', 4 );
-if (!defined( 'SMW_URI_MODE_TEL'))define( 'SMW_URI_MODE_TEL', 5 );
+define( 'SMWHALO_URI_MODE_EMAIL', 1 );
+define( 'SMWHALO_URI_MODE_URI', 3 );
+define( 'SMWHALO_URI_MODE_ANNOURI', 4 );
+define( 'SMWHALO_URI_MODE_TEL', 5 );
 
 /**
  * This datavalue implements URL/URI/ANNURI/PHONE/EMAIL datavalues suitable for
@@ -18,7 +18,7 @@ if (!defined( 'SMW_URI_MODE_TEL'))define( 'SMW_URI_MODE_TEL', 5 );
  * @ingroup SMWDataValues
  * @bug Correctly create safe HTML and Wiki text.
  */
-class SMWURIValue extends SMWDataValue {
+class SMWURIIntegrationValue extends SMWDataValue {
 
     /**
      * The value as returned by getWikitext() and getLongText().
@@ -36,16 +36,16 @@ class SMWURIValue extends SMWDataValue {
         parent::__construct( $typeid );
         switch ( $typeid ) {
             case '_ema':
-                $this->m_mode = SMW_URI_MODE_EMAIL;
+                $this->m_mode = SMWHALO_URI_MODE_EMAIL;
             break;
             case '_anu':
-                $this->m_mode = SMW_URI_MODE_ANNOURI;
+                $this->m_mode = SMWHALO_URI_MODE_ANNOURI;
             break;
             case '_tel':
-                $this->m_mode = SMW_URI_MODE_TEL;
+                $this->m_mode = SMWHALO_URI_MODE_TEL;
             break;
             case '_uri': case '_url': case '__spu': default:
-                $this->m_mode = SMW_URI_MODE_URI;
+                $this->m_mode = SMWHALO_URI_MODE_URI;
             break;
         }
     }
@@ -61,12 +61,12 @@ class SMWURIValue extends SMWDataValue {
         $scheme = $hierpart = $query = $fragment = '';
         if ( $value == '' ) { // do not accept empty strings
             $this->addError( wfMsgForContent( 'smw_emptystring' ) );
-            $this->m_dataitem = new SMWDIUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
+            $this->m_dataitem = new SMWDIIntegrationUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
             return;
         }
 
         switch ( $this->m_mode ) {
-            case SMW_URI_MODE_URI: case SMW_URI_MODE_ANNOURI:
+            case SMWHALO_URI_MODE_URI: case SMWHALO_URI_MODE_ANNOURI:
                 $parts = explode( ':', $value, 2 ); // try to split "schema:rest"
                 if ( count( $parts ) == 1 ) { // possibly add "http" as default
                     $value = 'http://' . $value;
@@ -79,7 +79,7 @@ class SMWURIValue extends SMWDataValue {
                     $uri = trim( $uri );
                     if ( $uri == mb_substr( $value, 0, mb_strlen( $uri ) ) ) { // disallowed URI!
                         $this->addError( wfMsgForContent( 'smw_baduri', $value ) );
-                        $this->m_dataitem = new SMWDIUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
+                        $this->m_dataitem = new SMWDIIntegrationUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
                         return;
                     }
                 }
@@ -106,7 +106,7 @@ class SMWURIValue extends SMWDataValue {
                 /// NOTE: "+" gets encoded, as it is interpreted as space by most browsers when part of a URL;
                 ///       this prevents tel: from working directly, but we have a datatype for this anyway.
                 break;
-            case SMW_URI_MODE_TEL:
+            case SMWHALO_URI_MODE_TEL:
                 $scheme = 'tel';
                 if ( substr( $value, 0, 4 ) === 'tel:' ) { // accept optional "tel"
                     $value = substr( $value, 4 );
@@ -123,7 +123,7 @@ class SMWURIValue extends SMWDataValue {
                     $this->addError( wfMsgForContent( 'smw_baduri', $this->m_wikitext ) );
                 }
                 break;
-            case SMW_URI_MODE_EMAIL:
+            case SMWHALO_URI_MODE_EMAIL:
                 $scheme = 'mailto';
                 if ( strpos( $value, 'mailto:' ) === 0 ) { // accept optional "mailto"
                     $value = substr( $value, 7 );
@@ -141,10 +141,10 @@ class SMWURIValue extends SMWDataValue {
 
         // Now create the URI data item:
         try {
-            $this->m_dataitem = new SMWDIUri( $scheme, $hierpart, $query, $fragment, $this->m_typeid);
+            $this->m_dataitem = new SMWDIIntegrationUri( $scheme, $hierpart, $query, $fragment, $this->m_typeid);
         } catch ( SMWDataItemException $e ) {
             $this->addError( wfMsgForContent( 'smw_baduri', $this->m_wikitext ) );
-            $this->m_dataitem = new SMWDIUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
+            $this->m_dataitem = new SMWDIIntegrationUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
         }
     }
 
@@ -164,16 +164,17 @@ class SMWURIValue extends SMWDataValue {
      * @return boolean
      */
     protected function loadDataItem( SMWDataItem $dataItem ) {
-        if ( $dataItem->getDIType() == SMWDataItem::TYPE_URI ) {
+        if ( $dataItem->getDIType() == SMWDIIntegrationUri::TYPE_INTEGRATIONURI ) {
             $this->m_dataitem = $dataItem;
-            if ( $this->m_mode == SMW_URI_MODE_EMAIL ) {
+            if ( $this->m_mode == SMWHALO_URI_MODE_EMAIL ) {
                 $this->m_wikitext = substr( $dataItem->getURI(), 7 );
-            } elseif ( $this->m_mode == SMW_URI_MODE_TEL ) {
+            } elseif ( $this->m_mode == SMWHALO_URI_MODE_TEL ) {
                 $this->m_wikitext = substr( $dataItem->getURI(), 4 );
             } else {
                 $this->m_wikitext = $dataItem->getURI();
             }
-            $this->m_caption = $this->m_wikitext;
+            $localname = TSHelper::convertURIToLocalName($this->m_wikitext);
+            $this->m_caption = $localname;
             return true;
         } else {
             return false;
@@ -204,8 +205,10 @@ class SMWURIValue extends SMWDataValue {
         }
         $url = $this->getURL();
         if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url == '' ) ) {
+        	
             return $this->m_wikitext;
         } else {
+        
             return '[' . $url . ' ' . $this->m_wikitext . ']';
         }
     }
@@ -216,8 +219,10 @@ class SMWURIValue extends SMWDataValue {
         }
         $url = $this->getURL();
         if ( ( $linker === null ) || ( $this->m_outformat == '-' ) || ( $url == '' ) ) {
+        	
             return htmlspecialchars( $this->m_wikitext );
         } else {
+        	 
             return $linker->makeExternalLink( $url, $this->m_wikitext );
         }
     }
