@@ -355,7 +355,7 @@ class AddIn2 extends AddIn{
 		// {form}->Appointment
 		// {form}->Outlook Appointment
 
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			$enabledForms = SCProcessor::getEnabledForms($title);
 			if(count($enabledForms) > 0) {
 				$possible_forms = SCProcessor::getPossibleForms($enabledForms, 0);
@@ -386,7 +386,7 @@ class AddIn2 extends AddIn{
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 		$ret->values = array();
 
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			foreach(SCProcessor::getPageMappedFormData($title, $form_name) as $template_field => $val) {
 				$prop = new PropertyPair;
 				$prop->name = $template_field;
@@ -425,7 +425,8 @@ class AddIn2 extends AddIn{
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
 		$ret->info = parent::getPageInfo($title);
-		if(class_exists("SCProcessor")) {
+		
+		if( $this->validSemanticConnector() ) {
 			if($ret->info !== NULL) {
 				$af = SCProcessor::getActivedForm($title);
 				if($af !== NULL) {
@@ -436,6 +437,7 @@ class AddIn2 extends AddIn{
 				}
 			}
 		}
+		
 		return $ret;
 	}
 
@@ -453,10 +455,12 @@ class AddIn2 extends AddIn{
 		$ret->exception = smwgWTExceptionCheck($auth);
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
-		$ret->values = array();
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			$ret->values = SCProcessor::getPossibleForms(array(Title::newFromText($form_name)->getText()), 0);
+		} else {
+			$ret->values = array();
 		}
+		
 		return $ret;
 	}
 
@@ -498,7 +502,7 @@ class AddIn2 extends AddIn{
 		}
 
 		$content = "";
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			SCProcessor::resetPageForms($page_name);
 
 			$templates = SCProcessor::getTemplateField($form_name);
@@ -545,8 +549,6 @@ class AddIn2 extends AddIn{
 
 		// just overwrite the subject
 		$title = Title::newFromText( $page_name );
-		global $wgTitle;
-		$wgTitle = $title;
 		if($title->exists()) {
 			// merge categories
 			extract( $db->tableNames('categorylinks', 'page') );
@@ -578,7 +580,7 @@ class AddIn2 extends AddIn{
 			$article->doEdit($content,'');
 		}
 			
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			SCProcessor::saveEnabledForms($title->getText(), $form_title->getText());
 			$content = SCProcessor::toMappedFormContent($content, $title, Title::newFromText( $active_form, SF_NS_FORM ));
 			$article->doEdit($content,'');
@@ -645,7 +647,7 @@ class AddIn2 extends AddIn{
 			return $ret;
 		}
 
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			$revision = Revision::newFromTitle( $title );
 			$content = $revision->getText();
 
@@ -820,43 +822,18 @@ This is a page created by some upload clients. Please edit this page with other 
 		return $ret;
 	}
 
-	/**
-	 * Get template field type of a form.
-	 *
-	 * template.field => field render type, date / text / textarea / dropdown list:value 1|value 2|...
-	 * param=value, delimiter is set to "|"
-	 *
-	 * disabled
-	 * is_mandatory
-	 * is_list = delimiter
-	 * input_type = input type
-	 *     (
-	 *       text, textarea, combobox, date, datetime, datetime with timezone,
-	 *       radiobutton, checkbox, checkboxes, dropdown and listbox
-	 *     )
-	 * default_value =
-	 * possible_values =
-	 *
-	 * E.g.,
-	 * input_type=dropdown list|is_mandatory|is_list = ,|default_value = test|possible_values = possible,test,good
-	 * for uid
-	 * input type=textbox|disabled|default_value=BUG-001
-	 *
-	 * @param AuthenticationType $auth
-	 * @param string $form_name
-	 * @return PropertyPairsType
-	 */
-	public function getSiteFormSettings($auth, $form_name) {
-		$ret = new PropertyPairsType();
-		$ret->exception = smwgWTExceptionCheck($auth);
-		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+	private function validSemanticForm() {
+//		return (defined( 'SF_VERSION' ) && preg_match('/^1\.[79]/', SF_VERSION));
+		return (defined( 'SF_VERSION' ));
+	}
+	
+	private function validSemanticConnector() {
+		return (defined( 'SMW_CONNECTOR_VERSION' ));
+	}
 
-		if(!defined( 'SF_VERSION' )) {
-			$ret->values = array();
-			return $ret;
-		}
-		
+	private function __getSiteFormSettings($form_name) {
 		$vals = array();
+		if( !$form_name ) return $vals;
 
 		$form_printer = new SFFormPrinter();
 		// based on SF 1.7 source, SF_FormPrinter.inc, function formHTML
@@ -1019,24 +996,24 @@ This is a page created by some upload clients. Please edit this page with other 
 						}
 					}
 
-					$settings = '';
+					$settings = array();
 					if(array_key_exists('uid', $field_args)) {
 						// special case, the uid
-						$settings = "diabled";
+						$settings["diabled"] = true;
 						if (array_key_exists('id_prefix', $field_args)) {
 							$default_value = SFFormInputs::getId($field_args['id_prefix']);
 						} else {
 							global $sfgIdPrefix;
 							$default_value = SFFormInputs::getId($sfgIdPrefix);
 						}
-						$settings .= "|default_value=$default_value";
+						$settings["default_value"] = $default_value;
 					} else {
 						// create an SFFormField instance based on all the
 						// parameters in the form definition, and any information from
 						// the template definition (contained in the $all_fields parameter)
 						$form_field = SFFormField::createFromDefinition($field_name, $input_name,
-						$is_mandatory, $is_hidden, $is_uploadable, $possible_values, $is_disabled,
-						$is_list, $input_type, $field_args, $all_fields, $strict_parsing);
+							$is_mandatory, $is_hidden, $is_uploadable, $possible_values, $is_disabled,
+							$is_list, $input_type, $field_args, $all_fields, $strict_parsing);
 						// if a property was set in the form definition, overwrite whatever
 						// is set in the template field - this is somewhat of a hack, since
 						// parameters set in the form definition are meant to go into the
@@ -1055,8 +1032,8 @@ This is a page created by some upload clients. Please edit this page with other 
 						}
 
 						if ($form_field->input_type != '' &&
-						array_key_exists($form_field->input_type, $form_printer->mInputTypeHooks) &&
-						$form_printer->mInputTypeHooks[$form_field->input_type] != null) {
+							array_key_exists($form_field->input_type, $form_printer->mInputTypeHooks) &&
+							$form_printer->mInputTypeHooks[$form_field->input_type] != null) {
 
 							// last argument to function should be a hash, merging the default
 							// values for this input type with all other properties set in
@@ -1069,8 +1046,8 @@ This is a page created by some upload clients. Please edit this page with other 
 							$field_type = $template_field->field_type;
 							$is_list = ($form_field->is_list || $template_field->is_list);
 							if ($field_type != '' &&
-							array_key_exists($field_type, $form_printer->mSemanticTypeHooks) &&
-							isset($form_printer->mSemanticTypeHooks[$field_type][$is_list])) {
+								array_key_exists($field_type, $form_printer->mSemanticTypeHooks) &&
+								isset($form_printer->mSemanticTypeHooks[$field_type][$is_list])) {
 
 								$hook_values = $form_printer->mSemanticTypeHooks[$field_type][$is_list];
 								$other_args = $form_field->getArgumentsForInputCall($hook_values[1]);
@@ -1082,25 +1059,26 @@ This is a page created by some upload clients. Please edit this page with other 
 								else if($hook_values[0][1] == 'checkboxesHTML') $input_type = 'checkboxes';
 							}
 						}
-						if($is_mandatory) $settings .= "|is_mandatory";
+						if($is_mandatory) $settings["is_mandatory"] = true;
 						if($other_args['is_list']) {
 							if(array_key_exists('delimiter', $field_args)) {
 								$delimiter = $field_args['delimiter'];
 							} else {
 								$delimiter = ",";
 							}
-							$settings .= "|is_list=$delimiter";
+							$settings["is_list"] = $delimiter;
 						}
-						if(isset($input_type)) $settings .= "|input_type=$input_type";
-						if(isset($default_value) && $default_value!='') $settings .= "|default_value=$default_value";
-						if(isset($possible_values)) $settings .= "|possible_values=" . implode(',', $possible_values);
-						if(count($other_args['possible_values']) > 0) $settings .= "|possible_values=" . implode(',', $other_args['possible_values']);
+						if( $form_field->template_field->semantic_property ) {
+							$settings["property"] = $form_field->template_field->semantic_property;
+						}
+						
+						if(isset($input_type)) $settings["input_type"] = $input_type;
+						if(isset($default_value) && $default_value!='') $settings["default_value"] = $default_value;
+						if(isset($possible_values)) $settings["possible_values"] = implode(',', $possible_values);
+						if(count($other_args['possible_values']) > 0) $settings["possible_values"] = implode(',', $other_args['possible_values']);
 					}
 					if($template_name != null && $template_name !== '') {
-						$prop = new PropertyPair;
-						$prop->name = "$template_name.$field_name";
-						$prop->value = $settings;
-						$vals[] = $prop;
+						$vals[] = array( "name" => "$template_name.$field_name", "value" => $settings );
 					}
 
 					$start_position = $brackets_end_loc;
@@ -1115,36 +1093,74 @@ This is a page created by some upload clients. Please edit this page with other 
 			} // end while
 		} // end for
 		
+		return $vals;
+	}
+	
+	/**
+	 * Get template field type of a form.
+	 *
+	 * template.field => field render type, date / text / textarea / dropdown list:value 1|value 2|...
+	 * param=value, delimiter is set to "|"
+	 *
+	 * disabled
+	 * is_mandatory
+	 * is_list = delimiter
+	 * input_type = input type
+	 *     (
+	 *       text, textarea, combobox, date, datetime, datetime with timezone,
+	 *       radiobutton, checkbox, checkboxes, dropdown and listbox
+	 *     )
+	 * default_value =
+	 * possible_values =
+	 *
+	 * E.g.,
+	 * input_type=dropdown list|is_mandatory|is_list = ,|default_value = test|possible_values = possible,test,good
+	 * for uid
+	 * input type=textbox|disabled|default_value=BUG-001
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $form_name
+	 * @return PropertyPairsType
+	 */
+	public function getSiteFormSettings($auth, $form_name) {
+		$ret = new PropertyPairsType();
+		$ret->exception = smwgWTExceptionCheck($auth);
+		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+		
+		$vals = array();
+		if( $this->validSemanticForm() ) {
+			$settings = $this->__getSiteFormSettings($form_name);
+			foreach($settings as $v) {
+				$settings = '';
+				$val = $v["value"];
+				if(isset($val["diabled"])) $settings .= "|diabled";
+				if(isset($val["is_mandatory"])) $settings .= "|is_mandatory";
+				if(isset($val["is_list"])) $settings .= "|is_list=" . $val["is_list"];
+				if(isset($val["input_type"])) $settings .= "|input_type=" . $val["input_type"];
+				if(isset($val["default_value"])) $settings .= "|default_value=" . $val["default_value"];
+				if(isset($val["possible_values"])) $settings .= "|possible_values=" . $val["possible_values"];
+				
+				$prop = new PropertyPair;
+				$prop->name = $v["name"];
+				$prop->value = $settings;
+				$vals[] = $prop;
+			}
+		}
 		$ret->values = $vals;
 
 		return $ret;
 	}
 	
-	/**
-	 * Get current form of specified page
-	 * If no form matched, returned message will be blank
-	 *
-	 * @param AuthenticationType $auth
-	 * @param string $page_name
-	 * @return ExceptionType
-	 */
-	public function getPageCurrentForm($auth, $page_name) {
-		$ret = smwgWTExceptionCheck($auth, true);
-		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
-		
-		if(!defined( 'SF_VERSION' )) {
-			return $ret;
+	private function __getPageCurrentForm($page_name) {
+		if( !$this->validSemanticForm() ) {
+			return NULL;
 		}
 
 		$form_name = "";
 		
 		$page_title = Title::newFromText( $page_name );
 		$article = new Article($page_title);
-		if( class_exists( "SFFormLinker" ) ) {
-			$forms = SFFormLinker::getDefaultFormsForPage( $page_title );
-		} else {
-			$forms = SFLinkUtils::getFormsForArticle($article);
-		}
+		$forms = SFLinkUtils::getFormsForArticle($article);
 		if(count($forms)>0) $form_name = $forms[0];
 		
 //		$revision = Revision::newFromTitle( $page_title );
@@ -1159,6 +1175,25 @@ This is a page created by some upload clients. Please edit this page with other 
 //				}
 //			}
 //		}
+		return $form_name;
+	}
+	
+	/**
+	 * Get current form of specified page
+	 * If no form matched, returned message will be blank
+	 *
+	 * @param AuthenticationType $auth
+	 * @param string $page_name
+	 * @return ExceptionType
+	 */
+	public function getPageCurrentForm($auth, $page_name) {
+		$ret = smwgWTExceptionCheck($auth, true);
+		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
+		
+		$form_name = $this->__getPageCurrentForm($page_name);
+		if($form_name === NULL) {
+			return $ret;
+		}
 		$ret->message = $form_name;
 		
 		return $ret;
@@ -1179,7 +1214,7 @@ This is a page created by some upload clients. Please edit this page with other 
 
 		$vals = array();
 
-		if(class_exists("SCProcessor")) {
+		if( $this->validSemanticConnector() ) {
 			$sStore = SCStorage::getDatabase();
 			$form_name = Title::newFromText($src_form_name)->getText();
 			$res = $sStore->lookupFormMapping($form_name);
@@ -1248,48 +1283,497 @@ This is a page created by some upload clients. Please edit this page with other 
 		return $ret;
 	}
 	
+	private function getPropertyInputType($field) {
+		$form_printer = new SFFormPrinter();
+		$field_type = $field->field_type;
+		if ($field_type != '' &&
+			array_key_exists($field_type, $form_printer->mSemanticTypeHooks) &&
+			isset($form_printer->mSemanticTypeHooks[$field_type][false])) {
+				
+			$hook_values = $form_printer->mSemanticTypeHooks[$field_type][false];
+			if($hook_values[0][1] == 'textAreaHTML') $input_type = 'textarea';
+			else if($hook_values[0][1] == 'checkboxHTML') $input_type = 'checkbox';
+			else if($hook_values[0][1] == 'dateEntryHTML') $input_type = 'date';
+			else if($hook_values[0][1] == 'dropdownHTML') $input_type = 'dropdown';
+			else if($hook_values[0][1] == 'checkboxesHTML') $input_type = 'checkboxes';
+		}
+		return $input_type;
+	}
+	
 	/**
-	 * 
-	 * disabled
-	 * is_mandatory
-	 * is_list = delimiter
-	 * input_type = input type
-	 *     (
-	 *       text, textarea, combobox, date, datetime, datetime with timezone,
-	 *       radiobutton, checkbox, checkboxes, dropdown and listbox
-	 *     )
-	 * default_value =
-	 * possible_values =
-	 *
-	 * E.g.,
-	 * input_type=dropdown list|is_mandatory|is_list = ,|default_value = test|possible_values = possible,test,good
-	 * for uid
-	 * input type=textbox|disabled|default_value=BUG-001
-	 **/
-	public function getTitlePropertyDefinitions($auth, $title) {
+	 * @param AuthenticationType $auth
+	 * @param string $page_name
+	 * @return PropertyPairsType
+	 */
+	public function getTitlePropertyDefinitions($auth, $page_name) {
 		$ret = new PropertyPairsType();
 		$ret->exception = smwgWTExceptionCheck($auth);
 		if($ret->exception->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
 
-		$vals = array();
+		$page_title = Title::newFromText( $page_name );
+		if( !$page_title->exists() ) {
+			$ret->exception = SWT_ADDIN_E_PAGE_NOT_EXIST;
+			return $ret;
+		}
 		
-		// property => flag
-		// id | editable | 
-		$prop = new PropertyPair;
-		$prop->name = '{form}';
-		$prop->value = $possible_form;
-		$ret->values[] = $prop;
-					
-		$ret->values = $vals;
+		$ret->values = array();
+		
+		if( !$this->validSemanticForm() ) {
+			return $ret;
+		}
+		
+//		$form_name = $this->__getPageCurrentForm($page_name);
+//		$form_setting = $this->__getSiteFormSettings($form_name);
+		$template_field = SFTemplateField::create('', ucfirst(''));
+		
+		$article = new Article($page_title);
+		$tfvs = AddIn2::parseToTemplates($article->getContent());
+		
+		// property => flag | ...
+		// id = 
+		// input_type = input type
+		//    (
+		//       text, textarea, combobox, date, datetime, datetime with timezone,
+		//       radiobutton, checkbox, checkboxes, dropdown and listbox
+		//    )
+		// possible_values =
+		
+		foreach($tfvs as $id => $tfv) {
+			if(!is_array($tfv)) {
+				// get semantic data in plain wiki
+				$text = $tfv;
+				$offset = 0;
+				$len = strlen($text);
+				$result = '';
+				do {
+					$min = $len;
+					$type = FALSE;
+					$idx_nowiki = stripos($text, '<nowiki>', $offset);
+					if($idx_nowiki !== FALSE) {
+						$min = $idx_nowiki;
+						$type = 1;
+					}
+					$idx_noinclude = stripos($text, '<noinclude>', $offset);
+					if($idx_noinclude !== FALSE && $idx_noinclude < $min) {
+						$min = $idx_noinclude;
+						$type = 2;
+					}
+					$idx_doublebracket = strpos($text, '{{', $offset);
+					if($idx_doublebracket !== FALSE && $idx_doublebracket < $min) {
+						$min = $idx_doublebracket;
+						$type = 3;
+					}
+					if($type !== FALSE) {
+						$result .= substr($text, $offset, $min - $offset);
+						$offset = $min;
+						if($type == 1) {
+							$offset = stripos($text, '</nowiki>', $offset);
+							$offset += strlen('</nowiki>');
+						}else if($type == 2) {
+							$offset = stripos($text, '</noinclude>', $offset);
+							$offset += strlen('</noinclude>');
+						}else if($type == 3) {
+							$brackets = 2;
+							$offset += 2;
+							$square_brackets = 0;
+							for(;$offset<$len;++$offset) {
+								$c = $text{$offset};
+								if($c == '[') ++$square_brackets;
+								else if($c == ']') --$square_brackets;
+								else if($square_brackets == 0) {
+									if($c == '{') ++$brackets;
+									else if($c == '}') {
+										--$brackets;
+										if($brackets == 0) {
+											++ $offset;
+											break;
+										}
+									}
+								}
+							}
+						}
+						if($offset <= $min) {
+							$offset = $len;
+							$type = FALSE;
+						}
+					}
+				} while ($type !== FALSE);
+				$result .= substr($text, $offset, $len - $offset);
+				if (preg_match_all('/\[\[([^:=\[\]]*:*?[^:=\[\]]*)(:[:=])([^\]\|]*).*?\]\]/mis', $result, $matches)) {
+					foreach ($matches[1] as $i => $semantic_property) {
+						$value = $matches[3][$i];
+						$template_field->setSemanticProperty(ucfirst($semantic_property));
+						
+						$input_type = $this->getPropertyInputType($template_field);
+						
+						$args = "id=$id.$semantic_property.$value";
+						if( $input_type ) $args .= "|input_type=$input_type";
+						if( count($template_field->possible_values) > 0) {
+							$args .= "|possible_values=" . implode(',', $template_field->possible_values);
+						}
+
+						$prop = new PropertyPair;
+						$prop->name = $semantic_property;
+						$prop->value = $args;
+						$ret->values[] = $prop;
+					}
+				}
+				continue;
+			}
+			$tif = new SFTemplateInForm();
+			$tif->template_name = $tfv["name"];
+			$all_fields = $tif->getAllFields();
+
+			foreach($all_fields as $field) {
+				if(!$field->semantic_property) continue;
+				if( isset( $tfv['fields'][$field->field_name] ) ) {
+					// apply multiple controls, TBD!!!
+					$input_type = $this->getPropertyInputType($field, $tfv['fields'][$field->field_name]);
+
+					$args = "id=$id.{$field->semantic_property}.{$tfv['fields'][$field->field_name]}";
+					if( $input_type ) $args .= "|input_type=$input_type";
+					if( count($field->possible_values) > 0) {
+						$args .= "|possible_values=" . implode(',', $field->possible_values);
+					}
+					$prop = new PropertyPair;
+					$prop->name = $field->semantic_property;
+					$prop->value = $args;
+					$ret->values[] = $prop;
+				} else {
+//					// to add new field values, TBD!!!
+//					$this->getPropertyInputType($field, '');
+				}
+			}
+		}
 
 		return $ret;
 	}
 	
-	public function updateTitlePropertyValue($auth, $title, $prop, $original_val, $new_value) {
+	/**
+	 * @param AuthenticationType $auth
+	 * @param string $page_name
+	 * @param string $prop_id
+	 * 		id.property.value
+	 * @param string $property
+	 * @param string $new_value
+	 * @return ExceptionType
+	 */
+	public function updateTitlePropertyValue($auth, $page_name, $prop_id, $property, $new_value) {
 		$ret = smwgWTExceptionCheck($auth, true);
 		if($ret->ret_code != SWT_ADDIN_E_SUCCESS) return $ret;
-
 		$ret->message = '';
+
+		$page_title = Title::newFromText( $page_name );
+		if( !$page_title->exists() ) {
+			$ret->exception = SWT_ADDIN_E_PAGE_NOT_EXIST;
+			return $ret;
+		}
+		
+		if( !$this->validSemanticForm() ) {
+			return $ret;
+		}
+		
+		$pro = explode(".", $prop_id, 2);
+		$idx = intval($pro[0]);
+		
+		$template_field = SFTemplateField::create('', ucfirst(''));
+		
+		$article = new Article($page_title);
+		$text = $article->getContent();
+		$content = '';
+		
+		$idx2 = 0;
+		$start = 0;
+		$offset = 0;
+		$len = strlen($text);
+		do {
+			$min = $len;
+			$type = FALSE;
+			$idx_nowiki = stripos($text, '<nowiki>', $offset);
+			if($idx_nowiki !== FALSE) {
+				$min = $idx_nowiki;
+				$type = 1;
+			}
+			$idx_noinclude = stripos($text, '<noinclude>', $offset);
+			if($idx_noinclude !== FALSE && $idx_noinclude < $min) {
+				$min = $idx_noinclude;
+				$type = 2;
+			}
+			$idx_triplebracket = strpos($text, '{{{', $offset);
+			$idx_doublebracket = strpos($text, '{{', $offset);
+			if($idx_doublebracket !== FALSE && $idx_doublebracket < $min && $idx_doublebracket !== $idx_triplebracket) {
+				$min = $idx_doublebracket;
+				$type = 3;
+				
+				++ $idx2;
+				if( $idx2 > $idx ) {
+					// update property value
+					$content = substr($text, 0, $start);
+					$content .= $this->__updatePropertyValue( substr($text, $start, $min - $start), $prop_id, $property, $new_value );
+					$content .= substr($text, $min);
+					break;
+				}
+
+				if(substr($text, $min + 2, 1) == '#') {
+					$is_parserfunc = true;
+					$pfstart = $min;
+				}
+				
+				$template = AddIn2::parseTemplate($text, $min);
+				$start = $min;
+				++ $idx2;
+				if( $idx2 > $idx ) {
+					// update property value
+					if($is_parserfunc) {
+						$content = $text;
+					} else {
+						$content = substr($text, 0, $pfstart);
+						$content .= $this->__updateTemplatePropertyValue( $template, $prop_id, $property, $new_value );
+						$content .= substr($text, $min);
+						$result[] = $template;
+					}
+					break;
+				}
+			}
+			if($type !== FALSE) {
+				$offset = $min;
+				if($type == 1) {
+					$offset = stripos($text, '</nowiki>', $offset);
+				}else if($type == 2) {
+					$offset = stripos($text, '</noinclude>', $offset);
+				}
+			}
+		} while ($type !== FALSE);
+		if( $idx2 == $idx ) {
+			// update property value
+			$content = substr($text, 0, $start);
+			$content .= substr($text, $start, $min - $start);
+			$content .= substr($text, $min);
+		}
+		$article->doEdit($content, '');
+
+		$ret->message = $page_title->getText();
 		return $ret;
 	}
+	private function __updatePropertyValue( $text, $prop_id, $property, $new_value ) {
+		$offset = 0;
+		$len = strlen($text);
+		
+		$pro = explode(".", $prop_id, 2);
+		
+		do {
+			$min = $len;
+			$type = FALSE;
+			$idx_nowiki = stripos($text, '<nowiki>', $offset);
+			if($idx_nowiki !== FALSE) {
+				$min = $idx_nowiki;
+				$type = 1;
+			}
+			$idx_noinclude = stripos($text, '<noinclude>', $offset);
+			if($idx_noinclude !== FALSE && $idx_noinclude < $min) {
+				$min = $idx_noinclude;
+				$type = 2;
+			}
+			$idx_doublebracket = strpos($text, '{{', $offset);
+			if($idx_doublebracket !== FALSE && $idx_doublebracket < $min) {
+				$min = $idx_doublebracket;
+				$type = 3;
+			}
+			if($type !== FALSE) {
+				$result = substr($text, $offset, $min - $offset);
+				if (preg_match_all('/\[\[([^:=\[\]]*:*?[^:=\[\]]*)(:[:=])([^\]\|]*).*?\]\]/mis', $result, $matches, PREG_OFFSET_CAPTURE)) {
+					foreach ($matches[1] as $i => $semantic_property) {
+						$value = $matches[3][$i][0];
+						if( ("{$semantic_property[0]}.$value" == $pro[1]) && ($semantic_property[0] == $property) ) {
+							$content = substr($text, 0, $offset + $matches[3][$i][1]);
+							$content .= $new_value;
+							$content .= substr($text, $offset + $matches[3][$i][1] + strlen($value));
+							return $content;
+						}
+					}
+				}
+				$offset = $min;
+				if($type == 1) {
+					$offset = stripos($text, '</nowiki>', $offset);
+					$offset += strlen('</nowiki>');
+				}else if($type == 2) {
+					$offset = stripos($text, '</noinclude>', $offset);
+					$offset += strlen('</noinclude>');
+				}else if($type == 3) {
+					$brackets = 2;
+					$offset += 2;
+					$square_brackets = 0;
+					for(;$offset<$len;++$offset) {
+						$c = $text{$offset};
+						if($c == '[') ++$square_brackets;
+						else if($c == ']') --$square_brackets;
+						else if($square_brackets == 0) {
+							if($c == '{') ++$brackets;
+							else if($c == '}') {
+								--$brackets;
+								if($brackets == 0) {
+									++ $offset;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if($offset <= $min) {
+					$offset = $len;
+					$type = FALSE;
+				}
+			}
+		} while ($type !== FALSE);
+		$result = substr($text, $offset, $len - $offset);
+		if (preg_match_all('/\[\[([^:=\[\]]*:*?[^:=\[\]]*)(:[:=])([^\]\|]*).*?\]\]/mis', $result, $matches, PREG_OFFSET_CAPTURE)) {
+			foreach ($matches[1] as $i => $semantic_property) {
+				$value = $matches[3][$i][0];
+				if( ("{$semantic_property[0]}.$value" == $pro[1]) && ($semantic_property[0] == $property) ) {
+					$content = substr($text, 0, $offset + $matches[3][$i][1]);
+					$content .= $new_value;
+					$content .= substr($text, $offset + $matches[3][$i][1] + strlen($value));
+					return $content;
+				}
+			}
+		}
+		return $text;
+	}
+	private function __updateTemplatePropertyValue( $template, $prop_id, $property, $new_value ) {
+		$pro = explode(".", $prop_id, 2);
+		
+		$tif = new SFTemplateInForm();
+		$tif->template_name = $template["name"];
+		$all_fields = $tif->getAllFields();
+		foreach($all_fields as $field) {
+			if(!$field->semantic_property) continue;
+			if( isset( $template['fields'][$field->field_name] ) ) {
+				// apply multiple controls, TBD!!!
+				if( ("{$field->semantic_property}.{$template['fields'][$field->field_name]}" === $pro[1]) && 
+					($field->semantic_property === $property) ) {
+
+					$content .= "{{" . $template['name'] . "\n";
+					foreach($template['fields'] as $f => $v) {
+						if( $field->field_name == $f ) {
+							$content .= "|{$f}={$new_value}\n";
+						} else {
+							$content .= "|{$f}={$v}\n";
+						}
+					}
+					$content .= "}}\n";
+					return $content;
+				}
+			}
+		}
+
+		$content .= "{{" . $template['name'] . "\n";
+		foreach($template['fields'] as $f => $v) $content .= "|{$f}={$v}\n";
+		$content .= "}}\n";
+		return $content;
+	}
+	// code copied from SemanticConnector, SC_ArticleUtils
+	static function parseTemplate( $text, &$offset ) {
+		++ $offset;
+		$start = $offset;
+		$curly_brackets = 1;
+		$square_brackets = 0;
+		$len = strlen($text);
+		$group = array();
+		do {
+			$min = $len;
+			$type = FALSE;
+			$idx_nowiki = stripos($text, '<nowiki>', $offset);
+			if($idx_nowiki !== FALSE) {
+				$min = $idx_nowiki;
+				$type = 1;
+			}
+			$idx_noinclude = stripos($text, '<noinclude>', $offset);
+			if($idx_noinclude !== FALSE && $idx_noinclude < $min) {
+				$min = $idx_noinclude;
+				$type = 2;
+			}
+			for(; $offset < $min && $curly_brackets > 0; ++$offset) {
+				$c = $text{$offset};
+				if($c == '[') ++$square_brackets;
+				else if($c == ']') --$square_brackets;
+				else if($square_brackets == 0) {
+					if($c == '{') ++$curly_brackets;
+					else if($c == '}') --$curly_brackets;
+					else if($curly_brackets == 2 && $c == '|') {
+						$group[] = trim(substr($text, $start + 1, $offset - $start - 1));
+						$start = $offset;
+					}
+				}
+			}
+			if($curly_brackets == 0) break;
+			if($type !== FALSE) {
+				$offset = $min;
+				if($type == 1) {
+					$offset = stripos($text, '</nowiki>', $offset);
+				}else if($type == 2) {
+					$offset = stripos($text, '</noinclude>', $offset);
+				}
+			}
+		} while ($offset < $len);
+		$group[] = trim(substr($text, $start + 1, $offset - $start - 3));
+		
+		$result = array('name' => Title::newFromText($group[0])->getText(), 'fields' => array());
+		foreach($group as $k => $tdata) {
+			if($k > 0) {
+				$f = explode('=', $tdata, 2);
+				$result['fields'][trim($f[0])] = trim($f[1]);
+			}
+		}
+		return $result;
+	}
+	static function parseToTemplates( $text ) {
+		$result = array();
+		$start = 0;
+		$offset = 0;
+		$len = strlen($text);
+		do {
+			$min = $len;
+			$type = FALSE;
+			$idx_nowiki = stripos($text, '<nowiki>', $offset);
+			if($idx_nowiki !== FALSE) {
+				$min = $idx_nowiki;
+				$type = 1;
+			}
+			$idx_noinclude = stripos($text, '<noinclude>', $offset);
+			if($idx_noinclude !== FALSE && $idx_noinclude < $min) {
+				$min = $idx_noinclude;
+				$type = 2;
+			}
+			$idx_triplebracket = strpos($text, '{{{', $offset);
+			$idx_doublebracket = strpos($text, '{{', $offset);
+			if($idx_doublebracket !== FALSE && $idx_doublebracket < $min && $idx_doublebracket !== $idx_triplebracket) {
+				$min = $idx_doublebracket;
+				$type = 3;
+				$result[] = substr($text, $start, $min - $start);
+				if(substr($text, $min + 2, 1) == '#') {
+					$is_parserfunc = true;
+					$pfstart = $min;
+				}
+				$template = AddIn2::parseTemplate($text, $min);
+				$start = $min;
+				if($is_parserfunc) {
+					$result[] = substr($text, $pfstart, $min - $pfstart);
+				} else {
+					$result[] = $template;
+				}
+			}
+			if($type !== FALSE) {
+				$offset = $min;
+				if($type == 1) {
+					$offset = stripos($text, '</nowiki>', $offset);
+				}else if($type == 2) {
+					$offset = stripos($text, '</noinclude>', $offset);
+				}
+			}
+		} while ($type !== FALSE);
+		$result[] = substr($text, $start, $len - $start);
+		
+		return $result;
+	}
+	
 }
