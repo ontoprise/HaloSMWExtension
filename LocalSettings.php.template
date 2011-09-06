@@ -207,12 +207,12 @@ require_once( "{$IP}/extensions/Cite/Cite.php" );
 
 /*start-applicationprogramming*/
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
-require_once( "$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
 require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );
 include_once( $IP.'/extensions/ApplicationProgramming/URLArguments/URLArguments.php');
 /*end-applicationprogramming*/
 
 /*start-smw*/
+require_once( "$IP/extensions/Validator/Validator.php" );
 $smwgIQEnabled=true;
 $smwgOWLFullExport = true;
 include_once($IP.'/extensions/SemanticMediaWiki/SemanticMediaWiki.php');
@@ -257,7 +257,6 @@ require_once($IP.'/extensions/SemanticGardening/includes/SGA_GardeningInitialize
 /*end-semanticgardening*/
 
 /*start-semanticmaps*/
-require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 /*end-semanticmaps*/

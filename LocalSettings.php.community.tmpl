@@ -186,12 +186,12 @@ enableARCLibrary();
 
 /*start-applicationprogramming*/
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
-require_once( "$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
 require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );
-include_once( $IP.'/extensions/ApplicationProgramming/URLArguments/URLArguments.php');
+include_once( "$IP/extensions/ApplicationProgramming/URLArguments/URLArguments.php");
 /*end-applicationprogramming*/
 
 /*start-smw*/
+require_once( "$IP/extensions/Validator/Validator.php" );
 $smwgIQEnabled=true;
 $smwgOWLFullExport = true;
 include_once($IP.'/extensions/SemanticMediaWiki/SemanticMediaWiki.php');
