@@ -186,7 +186,7 @@ class SMWURIIntegrationValue extends SMWDataValue {
         if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url == '' ) || ( $this->m_caption == '' ) ) {
             return $this->m_caption;
         } else {
-            return '[' . $url . ' ' . $this->m_caption . ']';
+        	return '<ilink caption="'.htmlspecialchars($this->m_caption).'">'.$url.'</ilink>';
         }
     }
 
@@ -208,8 +208,7 @@ class SMWURIIntegrationValue extends SMWDataValue {
         	
             return $this->m_wikitext;
         } else {
-        
-            return '[' . $url . ' ' . $this->m_wikitext . ']';
+            return '<ilink caption="'.htmlspecialchars($this->m_wikitext).'">'.$url.'</ilink>';
         }
     }
 
