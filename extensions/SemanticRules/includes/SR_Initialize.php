@@ -24,18 +24,23 @@ if (strlen($srgStyleVersion) > 0) {
 	$srgStyleVersion= '?'.$srgStyleVersion;
 }
 
+// check if quad drive is used. If so, stop here because it is not supported.
 global $smwgDefaultStore;
 if($smwgDefaultStore == 'SMWTripleStoreQuad') {
-	echo "Rule extension will not work with the 'SMWTripleStoreQuad' client. Please deactivate it and replace it by 'SMWTripleStore'.";
+	trigger_error("Rule extension will not work with the 'SMWTripleStoreQuad' client. Please deactivate it and replace it by 'SMWTripleStore'.");
 	die();
 }
 
-// must assume a triplestore is there, so just set the triplestore storage driver
-$smwgDefaultStore = 'SMWTripleStore';
-global $smwgWebserviceEndpoint;
-if (!isset($smwgWebserviceEndpoint)) {
-	// assume defaults if not set
-	$smwgWebserviceEndpoint = "localhost:8080";
+// check if TSC is configured
+global $wgCommandLineMode, $smwgWebserviceEndpoint;
+if ($wgCommandLineMode) {
+	// in command line mode, just print a WARNING, otherwise DF may stop working
+	if (!isset($smwgWebserviceEndpoint) || $smwgDefaultStore != 'SMWTripleStore') {
+		echo "\n\nWARNING: TSC is NOT configured. Take a look here: \n\thttp://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\n";
+	}
+} else {
+	trigger_error("TSC is NOT configured. Take a look here: <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\">SMW-Forum</a>");
+    die();
 }
 
 
@@ -239,8 +244,8 @@ function srfRegisterJSLanguageModules(& $out) {
         'remoteBasePath' => $wgScriptPath . '/extensions/SemanticRules',
         'group' => 'ext.semanticrules'
         );
-        
-    $wgResourceModules['ext.semanticrules.language'] = $moduleTemplate + array(
+
+        $wgResourceModules['ext.semanticrules.language'] = $moduleTemplate + array(
         'scripts' => array(
             'scripts/languages/'.$userLanguageFile,
             'scripts/languages/SR_Language.js'
@@ -271,8 +276,8 @@ function srfRegisterJSModules(& $out) {
         'group' => 'ext.semanticrules'
         );
 
-    // Module for the Ruleditor
-    $wgResourceModules['ext.semanticrules.ruleditor'] = $moduleTemplate + array(
+        // Module for the Ruleditor
+        $wgResourceModules['ext.semanticrules.ruleditor'] = $moduleTemplate + array(
         'scripts' => array(
             'scripts/SR_Rule.js',
             'scripts/SR_CategoryRule.js',
@@ -288,8 +293,8 @@ function srfRegisterJSModules(& $out) {
             )
             );
 
-     // Module for the Rule widget
-     $wgResourceModules['ext.semanticrules.rulewidget'] = $moduleTemplate + array(
+            // Module for the Rule widget
+            $wgResourceModules['ext.semanticrules.rulewidget'] = $moduleTemplate + array(
         'scripts' => array(
             'scripts/SR_Rulewidget.js'
             ),
@@ -319,7 +324,7 @@ function srfRegisterJSModules(& $out) {
             );
 
 
-      srfRegisterJSLanguageModules($out);
+            srfRegisterJSLanguageModules($out);
 }
 
 /**
