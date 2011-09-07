@@ -10,20 +10,29 @@
  *
  * @author Benjamin Langguth
  */
-if (!defined('MEDIAWIKI')) die();
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
+}
 
 class RMEmbedWindow extends UnlistedSpecialPage {
 
 	/**
-	 * Constructor
+	 * Constructor : initialise object
+	 * @param WebRequest $request Data posted.
 	 */
-	function RMEmbedWindow() {
-		UnlistedSpecialPage::UnlistedSpecialPage('EmbedWindow');
+	public function __construct( $request = null ) {
+		parent::__construct( 'EmbedWindow' );
 	}
 
-	function execute($query) {
+	/**
+	 * Overloaded function that is responsible for the creation of the Special Page
+	 */
+	public function execute( $query ) {
 		$this->setHeaders();
+		$this->outputHeader();
+
 		doSpecialEmbedWindow();
+		
 	}
 }
 
@@ -32,28 +41,27 @@ class RMEmbedWindow extends UnlistedSpecialPage {
  */
 function doSpecialEmbedWindow() {
 	wfProfileIn( __METHOD__ . ' [Rich Media]' );
-	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgXhtmlDefaultNamespace;
+	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgXhtmlDefaultNamespace,
+		$wgJsMimeType, $wgStylePath, $wgStyleVersion, $smwgHaloScriptPath, $smwgRMScriptPath;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
 	// and turning them into an HTML page
 	$wgOut->disable();
+
 	$sk = $wgUser->getSkin();
 	$sk->initPage( $wgOut ); // need to call this to set skin name correctly
 	$form = new EmbedWindowForm( $wgRequest );
 	$form->execute();
-	global $smwgHaloScriptPath, $smwgRMScriptPath;
 	if ( method_exists( $wgOut, 'addModules' ) ) {
 		$head_scripts = '';
 		$body_scripts = $wgOut->getHeadScripts( $sk );
 	} else {
-		global $wgJsMimeType, $wgStylePath, $wgStyleVersion;
 		$head_scripts = '';
 		$body_scripts = '';
 	}
 	$user_js =<<<HTML
 	<script type="{$wgJsMimeType}">
-	
 var headID = document.getElementsByTagName("head")[0];
 var cssNode = document.createElement('link');
 	
@@ -87,21 +95,22 @@ END;
  * @addtogroup SpecialPage
  */
 class EmbedWindowForm {
-	/**#@+
-	 * @access private
-	 */
-	var $mTarget, $mfullResSize, $mPdfHeight, $mPdfWidth;
-
 	/**
 	 * Constructor : initialise object
 	 * Get data POSTed through the form and assign them to the object
-	 * @param $request Data posted.
+	 * @param WebRequest $request Data posted.
 	 */
-	function EmbedWindowForm( &$request ) {
+	public function __construct( &$request ) {
 		$this->mTarget = $request->getText( 'target' );
 		$this->mfullResSize = $request->getCheck('fullRes');
 	}
-	
+
+	/**
+	 * Variables
+	 * @access private
+	 */
+	var $mTarget, $mfullResSize, $mPdfHeight, $mPdfWidth;	
+
 	/**
 	 * start doing stuff
 	 * @access public
@@ -115,8 +124,7 @@ class EmbedWindowForm {
 
 		if (isset( $this->mTarget ) && $this->mTarget != "" ) {
 			$nt = Title::newFromText($this->mTarget);
-		}
-		else {
+		} else {
 			$errorText = wfMsg('smw_rm_embed_notarget');
 			$this->showError($errorText);
 			wfProfileOut( __METHOD__ . ' [Rich Media]' );
