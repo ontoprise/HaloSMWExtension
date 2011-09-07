@@ -402,7 +402,7 @@
 #Choose one of the categories in the dropdown box.
 #Hit the 'Try out' button.
 
-&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task]]|link=none}}|Category:Task|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;(i&gt;&lt;(small&gt;|}}
+&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task]]|link=none}}|Category:Task|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;/i&gt;&lt;/small&gt;|}}
 
 [[Rationale::This is the sandbox article for the Automatic Semantic Forms extension.| ]]{{Content hash|value}}{{Part of bundle|value=Automaticsemanticforms}}</text>
     <hash>492196e418213c0aa5c30efcb73d7ed2</hash>
