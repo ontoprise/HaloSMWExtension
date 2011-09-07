@@ -23,19 +23,7 @@ require_once( "SMW_OntologyManipulator.php");
 abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 	public function SMWSemanticStoreSQL() {
-		global $smwgHaloContLang;
-		$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
-
-		$domainRangeHintRelation = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
-		$minCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
-		$maxCard = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
-		$transitiveCat = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
-		$symetricalCat = Title::newFromText($smwSpecialCategories[SMW_SC_SYMMETRICAL_RELATIONS], NS_CATEGORY);
-		$inverseOf = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_IS_INVERSE_OF], SMW_NS_PROPERTY);
-		$ontologyURI = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_ONTOLOGY_URI], SMW_NS_PROPERTY);
-
-		parent::SMWSemanticStore($domainRangeHintRelation, $minCard, $maxCard, $transitiveCat, $symetricalCat, $inverseOf, $ontologyURI);
+		parent::SMWSemanticStore();
 	}
 
 	/**
@@ -78,29 +66,29 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$messages[] = "smw_urimapping does not exist!\n";
 		}
 		$pagesExist = true;
-		if (!$this->domainRangeHintRelation->exists()) {
+		if (!SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->domainRangeHintRelation->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getPrefixedText()." does not exist!\n";
 		}
-		if (!$this->maxCard->exists()) {
+		if (!SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->maxCard->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getPrefixedText()." does not exist!\n";
 		}
-		if (!$this->minCard->exists()) {
+		if (!SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->minCard->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getPrefixedText()." does not exist!\n";
 		}
-		if (!$this->transitiveCat->exists()) {
+		if (!SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->transitiveCat->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY->getPrefixedText()." does not exist!\n";
 		}
-		if (!$this->symetricalCat->exists()) {
+		if (!SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->symetricalCat->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY->getPrefixedText()." does not exist!\n";
 		}
-		if (!$this->inverseOf->exists()) {
+		if (!SMWHaloPredefinedPages::$IS_INVERSE_OF->exists()) {
 			$pagesExist = false;
-			$messages[] = $this->inverseOf->getPrefixedText()." does not exist!\n";
+			$messages[] = SMWHaloPredefinedPages::$IS_INVERSE_OF->getPrefixedText()." does not exist!\n";
 		}
 		if (!$this->ontologyURI->exists()) {
 			$pagesExist = false;
@@ -628,17 +616,17 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 */
 	protected function getSchemaPropertyTuple(array & $properties, & $db) {
 		$resMinCard = $db->query('SELECT property, value_xsd AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
-							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->minCard->getDBKey()). ' GROUP BY property ORDER BY property');
+							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes(SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resMaxCard = $db->query('SELECT property, value_xsd AS maxCard FROM smw_ob_properties  JOIN '.$db->tableName('smw_attributes').
-							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes($this->maxCard->getDBKey()). ' GROUP BY property ORDER BY property');
+							 ' ON subject_title = property WHERE attribute_title = '.$db->addQuotes(SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTypes = $db->query('SELECT property, value_string AS type FROM smw_ob_properties  JOIN '.$db->tableName('smw_specialprops').
 							 ' ON subject_id = id WHERE property_id = '."_TYPE". '  GROUP BY property ORDER BY property');
 		$resSymCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
-							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
+							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes(SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property, cl_to AS minCard FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
-							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
+							 ' ON cl_from = id WHERE cl_to = '.$db->addQuotes(SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resRanges = $db->query('SELECT property, object_title AS rangeinst FROM smw_ob_properties  JOIN '.$db->tableName('smw_nary_relations'). 'r ON r.subject_id = id JOIN '.$db->tableName('smw_nary').'n ON n.subject_id = r.subject_id '.
-							 ' WHERE attribute_title = '.$db->addQuotes($this->domainRangeHintRelation->getDBKey()). ' AND nary_pos = 1 GROUP BY property ORDER BY property');					 
+							 ' WHERE attribute_title = '.$db->addQuotes(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBKey()). ' AND nary_pos = 1 GROUP BY property ORDER BY property');					 
 		// rewrite result as array
 		$result = array();
 
@@ -738,7 +726,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
-					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).' AND p.page_is_redirect = 0)');
+					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()). ' AND r.object_title = ' .$db->addQuotes($categoryTitle->getDBkey()).' AND p.page_is_redirect = 0)');
 
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryTitle->getArticleID()).')');
 
@@ -752,7 +740,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 			// insert direct properties of current supercategory level
 			$db->query('INSERT INTO smw_ob_properties (SELECT n.subject_id AS id, n.subject_title AS property FROM '.$smw_nary.' n JOIN '.$smw_nary_relations.' r ON n.subject_id = r.subject_id JOIN '.$page.' p ON n.subject_id = p.page_id '.
-					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes($this->domainRangeHintRelation->getDBkey()). ' AND p.page_is_redirect = 0 AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
+					' WHERE r.nary_pos = 0 AND n.attribute_title = '. $db->addQuotes(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()). ' AND p.page_is_redirect = 0 AND r.object_id IN (SELECT * FROM smw_ob_properties_super))');
 
 
 			// copy supercatgegories to subcategories of next iteration

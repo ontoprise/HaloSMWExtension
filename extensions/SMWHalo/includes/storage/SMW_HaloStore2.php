@@ -69,7 +69,7 @@ class SMWHaloStore2 extends SMWSQLStore2 {
 		$smw_ids =  $db->tableName('smw_ids');
 		$smw_urimapping = $db->tableName('smw_urimapping');
 		$subjectTitle = $data->getSubject()->getTitle();
-		$ontologyURIProperty = smwfGetSemanticStore()->ontologyURIProp->getDBkey();
+		$ontologyURIProperty = SMWHaloPredefinedPages::$ONTOLOGY_URI->getDBkey();
 
 
 		if (!isset($id)) {

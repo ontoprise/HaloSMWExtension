@@ -136,7 +136,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category INT(8) NOT NULL)
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => $this->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {
@@ -219,9 +219,9 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_rels2 = $db->tableName('smw_rels2');
 
 		// set SMW IDs
-		$domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->domainRangeHintRelation->getDBkey()));
-		$minCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->minCard->getDBkey()));
-		$maxCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($this->maxCard->getDBkey()));
+		$domainAndRangeID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()));
+		$minCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBkey()));
+		$maxCardID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getDBkey()));
 		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_TYPE"));
 		global $smwgHaloContLang;
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
@@ -235,9 +235,9 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$resTypes = $db->query('SELECT property, s1.value_string AS type, s2.value_string AS fields FROM smw_ob_properties  JOIN '.$smw_ids.' ON smw_title = property AND smw_namespace = '.SMW_NS_PROPERTY.' JOIN '.$smw_spec2.' s1 ON smw_id = s1.s_id LEFT JOIN '.$smw_spec2.' s2 ON s1.s_id = s2.s_id AND s2.p_id = 28'.
                              ' WHERE s1.p_id = '.$hasTypePropertyID.' GROUP BY property ORDER BY property');
 		$resSymCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
-                             ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->symetricalCat->getDBKey()). ' GROUP BY property ORDER BY property');
+                             ' ON cl_from = id WHERE cl_to = '.$db->addQuotes(SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resTransCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
-                             ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
+                             ' ON cl_from = id WHERE cl_to = '.$db->addQuotes(SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN '.$smw_rels2.' n ON id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id
                      WHERE n.p_id = '.$domainAndRangeID.' AND m.p_id = "'.$rangePropertyID.'" GROUP BY property ORDER BY property');
 			
@@ -338,7 +338,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => $this->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {

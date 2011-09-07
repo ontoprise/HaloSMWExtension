@@ -364,7 +364,7 @@ GROUP BY i.smw_title, s.value_string";
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$page = $db->tableName('page');
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {

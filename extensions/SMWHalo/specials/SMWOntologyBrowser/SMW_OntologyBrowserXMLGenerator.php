@@ -52,7 +52,7 @@ class SMWOntologyBrowserXMLGenerator {
 		foreach($categoryTreeElements as $e) {
 			$t = $e->getTitle();
 			$isLeaf = $e->isLeaf();
-			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
+			if (smwfCheckIfPredefinedSMWHaloProperty($t)) {
 				continue;
 			}
 			$leaf = $isLeaf ? 'isLeaf="true"' : '';
@@ -219,7 +219,7 @@ class SMWOntologyBrowserXMLGenerator {
 			$propertyURI = $e->getURI();
 			$localURL = $e->getURL();
 
-			if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
+			if (smwfCheckIfPredefinedSMWHaloProperty($t)) {
 				continue;
 			}
 			$leaf = $isLeaf ? 'isLeaf="true"' : '';
@@ -539,18 +539,7 @@ class SMWOntologyBrowserXMLGenerator {
 		return $value;
 	}
 
-	/**
-	 * Returns true, if $t is a pre-defined title of SMWHalo.
-	 */
-	private static function isPredefined($t) {
-		return ($t->getDBkey()== smwfGetSemanticStore()->domainRangeHintRelation->getDBkey())
-
-		||  ($t->getDBkey()== smwfGetSemanticStore()->minCard->getDBkey())
-		|| 	($t->getDBkey()== smwfGetSemanticStore()->maxCard->getDBkey())
-		|| ($t->getDBkey()== smwfGetSemanticStore()->transitiveCat->getDBkey())
-		|| ($t->getDBkey()== smwfGetSemanticStore()->symetricalCat->getDBkey());
-	}
-
+	
 	/**
 	 * Encode URL, but do not escape slashes (/)
 	 *

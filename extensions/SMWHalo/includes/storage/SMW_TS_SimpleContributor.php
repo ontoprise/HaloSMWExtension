@@ -33,7 +33,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	global $smwgHaloContLang;
 	$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
-	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getKey()) {
+	if (SMWHaloPredefinedPages::$IS_INVERSE_OF->getDBkey() == $property->getKey()) {
 		foreach($propertyValueArray as $inv) {
 			if (count($propertyValueArray) == 1) {
 				$invprop_iri = $tsNamespace->getFullIRI($inv->getTitle());
@@ -98,11 +98,12 @@ function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
 	global $smwgTripleStoreGraph;
 	$tsNamespace = TSNamespaces::getInstance();
 	$subj_iri = $tsNamespace->getFullIRI($subject->getTitle());
-	// serialize transitive or symetric property triples
+	// add triples, if page is a property and contains annotations of the predefined 
+	// marker categories Category:Transitive properties or Category:Symmetrical properties 
 	$ns = $subject->getTitle()->getNamespace();
-	if ($ns == SMW_NS_PROPERTY && smwfGetSemanticStore()->transitiveCat->equals($c)) {
+	if ($ns == SMW_NS_PROPERTY && SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY->equals($c)) {
 		$triplesFromHook[] = array($subj_iri, "rdf:type", "owl:TransitiveProperty");
-	} elseif ($ns == SMW_NS_PROPERTY && smwfGetSemanticStore()->symetricalCat->equals($c)) {
+	} elseif ($ns == SMW_NS_PROPERTY && SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY->equals($c)) {
 		$triplesFromHook[] = array($subj_iri, "rdf:type", "owl:SymmetricProperty");
 	}
 	return true;

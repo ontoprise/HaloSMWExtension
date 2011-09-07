@@ -181,6 +181,8 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPivotTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_PivotTable.php';
+	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
+	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 
 
 	//patch Special:Browse in order to hide special Query Management Property
@@ -547,37 +549,37 @@ function smwgHaloSetupExtension() {
 		$commonProperties = array(
 			'localBasePath' => $smwgHaloIP,
 			'remoteExtPath' => 'SMWHalo'
-		);
-	
-		$wgResourceModules['ext.tabularforms.main'] = 
-			$commonProperties + 
+			);
+
+			$wgResourceModules['ext.tabularforms.main'] =
+			$commonProperties +
 			array(
 				'scripts' => array('scripts/TabularForms/tabularforms.js'),
 				'styles' => array('skins/TabularForms/tabularforms.css'),
 			);
-		
-		define('TF_IS_QC_CMP', 'qc_');
-		define('TF_IS_EXISTS_CMP', 'plus_');
-		define('TF_CATEGORY_KEYWORD', '__Category__');
 
-		// Check if qi is called via an curl call and if a token is set
-		if (!is_null($title) && $title->getText() == 'QueryInterface') {
-			global $smwgQueryInterfaceSecret;
-			if (isset($smwgQueryInterfaceSecret)) {
-				global $wgRequest;
-				$token = $wgRequest->getText('s');
-				$hash = $wgRequest->getText('t');
-				require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
-				if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
-					global $wgWhitelistRead;
-					$wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
+			define('TF_IS_QC_CMP', 'qc_');
+			define('TF_IS_EXISTS_CMP', 'plus_');
+			define('TF_CATEGORY_KEYWORD', '__Category__');
+
+			// Check if qi is called via an curl call and if a token is set
+			if (!is_null($title) && $title->getText() == 'QueryInterface') {
+				global $smwgQueryInterfaceSecret;
+				if (isset($smwgQueryInterfaceSecret)) {
+					global $wgRequest;
+					$token = $wgRequest->getText('s');
+					$hash = $wgRequest->getText('t');
+					require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+					if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
+						global $wgWhitelistRead;
+						$wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
+					}
 				}
 			}
-		}
 
-		$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
-				
-		return true;
+			$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
+
+			return true;
 }
 
 function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
@@ -1065,12 +1067,12 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 	$isQIF = ($pagetitle == "$spec_ns:QueryInterface");
 	// end of hack
-	
+
 	// Load modules
 	$wgOut->addModules('ext.smwhalo.general');
 	$wgOut->addModules('ext.smwhalo.styles');
 	$wgOut->addModules('ext.smwhalo.createNewArticle');
-	
+
 	switch ($action) {
 		case 'edit':
 			$wgOut->addModules('ext.smwhalo.edit');
@@ -1087,14 +1089,14 @@ function smwfHaloAddHTMLHeader(&$out) {
 			}
 			break;
 	}
-	
+
 	// Load modules for special pages
 	if ($pagetitle == "$spec_ns:AddData"
-	    || $pagetitle == "$spec_ns:EditData"
-	    || $pagetitle == "$spec_ns:FormEdit") {
+	|| $pagetitle == "$spec_ns:EditData"
+	|| $pagetitle == "$spec_ns:FormEdit") {
 		$wgOut->addModules('ext.smwhalo.sfSpecialPages');
 	}
-	
+
 	// for additinal scripts which are dependant of Halo scripts (e.g. ACL extension)
 	wfRunHooks("SMW_AddScripts", array (& $out));
 
@@ -1108,17 +1110,17 @@ function smwfHaloAddJSLanguageScripts() {
 	global $smwgHaloIP, $wgUser, $wgResourceModules;
 
 	// content language file
-    $clngScript = '/scripts/Language/SMW_LanguageEn.js';
-    $lng = '/scripts/Language/SMW_Language';
-    if (isset($wgUser)) {
-        $lng .= ucfirst($wgUser->getOption('language')).'.js';
-        if (file_exists($smwgHaloIP . $lng)) {
-            $clngScript = $lng;
-        }
-    }
-	
+	$clngScript = '/scripts/Language/SMW_LanguageEn.js';
+	$lng = '/scripts/Language/SMW_Language';
+	if (isset($wgUser)) {
+		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($smwgHaloIP . $lng)) {
+			$clngScript = $lng;
+		}
+	}
+
 	// user language file
-    $ulngScript = '/scripts/Language/SMW_LanguageUserEn.js';
+	$ulngScript = '/scripts/Language/SMW_LanguageUserEn.js';
 	$lng = '/scripts/Language/SMW_LanguageUser';
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
@@ -1127,19 +1129,19 @@ function smwfHaloAddJSLanguageScripts() {
 		}
 	}
 	$wgResourceModules['ext.smwhalo.Language'] = array(
-		// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+	// JavaScript and CSS styles. To combine multiple file, just list them as an array.
 		'scripts' => array(
 			"scripts/Language/SMW_Language.js",
-			$clngScript,
-			$ulngScript
-		),
-		     
-		// ResourceLoader needs to know where your files are; specify your
-		// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+	$clngScript,
+	$ulngScript
+	),
+	 
+	// ResourceLoader needs to know where your files are; specify your
+	// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
 		'localBasePath' => dirname(__FILE__).'/../',
 		'remoteExtPath' => 'SMWHalo'
-    );
-	
+		);
+
 }
 
 /**
@@ -1387,13 +1389,13 @@ function smwfAnnotateAction($action, $article) {
 function smwOBAddHTMLHeader(&$out) {
 	global $wgTitle, $wgOut, $wgContLang;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
-	
+
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 
 	if ($wgTitle->getFullText() == "$spec_ns:OntologyBrowser") {
 		$wgOut->addModules('ext.smwhalo.ontologyBrowser');
 	}
-	
+
 	return true;
 }
 
@@ -1749,8 +1751,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 
 			if ( $dataValue->isValid() ) {
 				$valuesHtml[] = $dataValue->getLongWikiText( true ) . $dataValue->getInfolinkText( SMW_OUTPUT_WIKI );
-				}
 			}
+		}
 
 		$fbText .= $GLOBALS['wgLang']->listToText( $valuesHtml );
 
@@ -1846,16 +1848,20 @@ function enableQueryResultsCache(){
 
 /**
  * Checks if the given property is predefined by SMWHalo
- * @param SMWPropertyValue $property
+ * @param mixed SMWDIProperty/Title $property
  */
-function smwfCheckIfPredefinedSMWHaloProperty(SMWDIProperty $property) {
-	if (smwfGetSemanticStore()->domainRangeHintRelation->getDBkey() == $property->getKey()
-	|| smwfGetSemanticStore()->minCard->getDBkey() == $property->getKey()
-	|| smwfGetSemanticStore()->maxCard->getDBkey() == $property->getKey()
-	|| smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getKey()) {
-		return true;
+function smwfCheckIfPredefinedSMWHaloProperty($property) {
+	if ($property instanceof SMWDIProperty) {
+		$key = $property->getKey();
+	} else {
+		$key = $property->getDBkey();
 	}
-	return false;
+	$result = (SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey() == $key
+				|| SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBkey() == $key
+				|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY == $key
+				|| SMWHaloPredefinedPages::$IS_INVERSE_OF->getDBkey() == $key);
+
+	return $result;
 }
 
 /*
@@ -1929,15 +1935,15 @@ $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId
  */
 function smwhfRegisterResourceLoaderModules() {
 	global $wgResourceModules, $smwgHaloIP, $smwgHaloScriptPath, $wgUser;
-	
+
 	$moduleTemplate = array(
 		'localBasePath' => $smwgHaloIP,
 		'remoteBasePath' => $smwgHaloScriptPath,
 		'group' => 'ext.smwhalo'
-	);
+		);
 
-	// Scripts and styles for all actions
-	$wgResourceModules['ext.smwhalo.general'] = $moduleTemplate + array(
+		// Scripts and styles for all actions
+		$wgResourceModules['ext.smwhalo.general'] = $moduleTemplate + array(
 		'scripts' => array(
 				'scripts/initPrototype.js',
 				'scripts/ajaxhalo.js',
@@ -1961,46 +1967,46 @@ function smwhfRegisterResourceLoaderModules() {
 		'dependencies' => array(
 				'ext.smwhalo.Language',
 				)
-				
-	);
-	
-	// Scripts and styles for the create new article feature
-	$wgResourceModules['ext.smwhalo.createNewArticle'] = $moduleTemplate + array(
+
+				);
+
+				// Scripts and styles for the create new article feature
+				$wgResourceModules['ext.smwhalo.createNewArticle'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/CreateNewArticle/createNewArticle.js',
 			'scripts/CreateNewArticle/jquery.query-2.1.7.js'
-		),
+			),
 		'styles' => array(
 			'/skins/CreateNewArticle/createNewArticle.css'
-		)
-	);
-	
-	
-	global $IP,$wgStylePath, $wgDefaultSkin;
-	$skinName = $wgUser !== NULL 
-					? $wgUser->getSkin()->getSkinName() 
-					: $wgDefaultSkin;
-	// Scripts and styles for all actions
-	$wgResourceModules['ext.smwhalo.styles'] = array(
+			)
+			);
+
+
+			global $IP,$wgStylePath, $wgDefaultSkin;
+			$skinName = $wgUser !== NULL
+			? $wgUser->getSkin()->getSkinName()
+			: $wgDefaultSkin;
+			// Scripts and styles for all actions
+			$wgResourceModules['ext.smwhalo.styles'] = array(
 		'styles' => array(
 				"/$skinName/lightbulb.css",
-				),
+			),
 		'localBasePath' => $IP."/skins",
 		'group' => 'ext.smwhalo'
-	);
-	
-	// Scripts and styles for edit action
-	$wgResourceModules['ext.smwhalo.edit'] = $moduleTemplate + array(
+		);
+
+		// Scripts and styles for edit action
+		$wgResourceModules['ext.smwhalo.edit'] = $moduleTemplate + array(
 		'scripts' => array(
 		),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar',
 			'ext.smwhalo.allButAnnotate'
-		)
-	);
-	
-	// Scripts and styles for annotate action
-	$wgResourceModules['ext.smwhalo.annotate'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for annotate action
+			$wgResourceModules['ext.smwhalo.annotate'] = $moduleTemplate + array(
 		'scripts' => array(
 				'scripts/initPrototype.js',
 				'scripts/AdvancedAnnotation/SMW_SaveAnnotations.js'
@@ -2009,48 +2015,48 @@ function smwhfRegisterResourceLoaderModules() {
 				),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar'
-		)
-	);
-	
-	// Scripts and styles for formedit action
-	$wgResourceModules['ext.smwhalo.formedit'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for formedit action
+			$wgResourceModules['ext.smwhalo.formedit'] = $moduleTemplate + array(
 		'scripts' => array(
-				),
+			),
 		'styles' => array(
-				),
+			),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar',
 			'ext.smwhalo.allButAnnotate'
-		)
-	);
-	
-	// Scripts and styles for submit action
-	$wgResourceModules['ext.smwhalo.submit'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for submit action
+			$wgResourceModules['ext.smwhalo.submit'] = $moduleTemplate + array(
 		'scripts' => array(
-				),
+			),
 		'styles' => array(
-				),
+			),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar',
 			'ext.smwhalo.allButAnnotate'
-		)
-	);
-	
-	// Scripts and styles for semantic forms special pages
-	// Special:AddData, Special:EditData, Special:FormEdit
-	$wgResourceModules['ext.smwhalo.sfSpecialPages'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for semantic forms special pages
+			// Special:AddData, Special:EditData, Special:FormEdit
+			$wgResourceModules['ext.smwhalo.sfSpecialPages'] = $moduleTemplate + array(
 		'scripts' => array(
-				),
+			),
 		'styles' => array(
-				),
+			),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar',
 			'ext.smwhalo.allButAnnotate'
-		)
-	);
-	
-	// Scripts and styles for all modes but annotate
-	$wgResourceModules['ext.smwhalo.allButAnnotate'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for all modes but annotate
+			$wgResourceModules['ext.smwhalo.allButAnnotate'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/SemanticToolbar/SMW_ASKQuery.js',
@@ -2058,14 +2064,14 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/OntologyBrowser/obSemToolContribution.js'
 			),
 		'styles' => array(
-				),
+			),
 		'dependencies' => array(
 			'ext.smwhalo.semanticToolbar'
-		)
-	);
-	
-	// Scripts and styles for the semantic toolbar
-	$wgResourceModules['ext.smwhalo.semanticToolbar'] = $moduleTemplate + array(
+			)
+			);
+
+			// Scripts and styles for the semantic toolbar
+			$wgResourceModules['ext.smwhalo.semanticToolbar'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/GeneralGUI/STB_Framework.js',
@@ -2087,15 +2093,15 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/SemanticToolbar/SMW_DragAndResize.js',
 			'scripts/SemanticToolbar/SMW_ContextMenu.js',
 			'scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js'
-				),
+			),
 		'styles' => array(
 				'/skins/semantictoolbar.css',
 				'/skins/Annotation/annotation.css'
 				)
-	);
-	
-	// Module for the Ontology Browser
-	$wgResourceModules['ext.smwhalo.ontologyBrowser'] = $moduleTemplate + array(
+				);
+
+				// Module for the Ontology Browser
+				$wgResourceModules['ext.smwhalo.ontologyBrowser'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/ajaxhalo.js',
@@ -2108,7 +2114,7 @@ function smwhfRegisterResourceLoaderModules() {
 			'/scripts/OntologyBrowser/treeviewActions.js',
 			'/scripts/OntologyBrowser/treeviewData.js',
 			'/scripts/OntologyBrowser/advancedOptions.js',
-			),
+				),
 		'styles' => array(
 			'/skins/OntologyBrowser/treeview.css'
 			),
@@ -2116,23 +2122,23 @@ function smwhfRegisterResourceLoaderModules() {
 			'ext.smw.tooltips',
 			'ext.smw.style',
 			'ext.jquery.qtip'
-		)
-	);
-	
-	// Module for the Query Interface
-	// The QI depends on all SemanticResultFormats
-	$dependencies = array(
+			)
+			);
+
+			// Module for the Query Interface
+			// The QI depends on all SemanticResultFormats
+			$dependencies = array(
 			'ext.smw.tooltips',
 			'ext.smw.style'
 			);
-	// Add all modules ext.srf.*
-	foreach ($wgResourceModules as $rid => $mod) {
-		if (strpos($rid, 'ext.srf.') === 0) {
-			$dependencies[] = $rid;
-		}
-	}
-	
-	$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
+			// Add all modules ext.srf.*
+			foreach ($wgResourceModules as $rid => $mod) {
+				if (strpos($rid, 'ext.srf.') === 0) {
+					$dependencies[] = $rid;
+				}
+			}
+
+			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'/scripts/Language/SMW_Language.js',
@@ -2146,9 +2152,9 @@ function smwhfRegisterResourceLoaderModules() {
 			'/skins/QueryInterface/qi.css'
 			),
 		'dependencies' => $dependencies
-	);
-		
-	smwfHaloAddJSLanguageScripts();
-	
-	return true;
+			);
+
+			smwfHaloAddJSLanguageScripts();
+
+			return true;
 }

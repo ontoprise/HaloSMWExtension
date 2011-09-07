@@ -329,7 +329,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {
@@ -408,7 +408,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {
@@ -488,7 +488,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARBINARY(255) NOT NULL)
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {
@@ -749,7 +749,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$requestoptions->limit = SMW_AC_MAX_RESULTS;
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 
-		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
 		if ($domainAndRange == NULL) {
 			$domainAndRangeID = -1; // does never exist
 		} else {
