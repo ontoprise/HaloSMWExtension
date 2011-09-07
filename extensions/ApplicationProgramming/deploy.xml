@@ -36,6 +36,12 @@
 				file="extensions/ApplicationProgramming/Variables/Variables.php" />
 			<require name="preloadtext"
 				file="extensions/ApplicationProgramming/PreloadText/PreloadText.php" />
+			<variable name="wgPFEnableStringFunctions">
+				<boolean name="wgPFEnableStringFunctions"
+					description="wgPFEnableStringFunctions">
+					true
+				</boolean>
+			</variable>
 		</new>
 	</configs>
 </deploydescriptor>
