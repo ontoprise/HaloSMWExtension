@@ -60,7 +60,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
             "\$smwgWebserviceEndpoint = \"localhost:8080\";</pre>".
 			wfMsg('smw_tsa_addtoconfig2')." <pre>enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://mywiki');</pre>".
 			wfMsg('smw_tsa_addtoconfig3');
-			$smwForumLink = '<a href="http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_TripleStoreConnector_Basic_1.5.3_manually">SMW-Forum</a>';
+			$smwForumLink = '<a href="http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic">SMW-Forum</a>';
 			$html .= "<br><b>".wfMsg('smw_tsa_addtoconfig4', $smwForumLink)."</b>";
 			$wgOut->addHTML($html);
 			return;
