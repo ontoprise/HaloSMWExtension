@@ -307,7 +307,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
     </revision>
   </page>
   <page>
-    <title>Property:Comment was deleted</title>
+			<title>Property:Comment was deleted</title>
     <id>121</id>
     <revision>
       <timestamp>2011-07-04T13:20:18Z</timestamp>
@@ -1109,32 +1109,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 &lt;/noinclude&gt;</text>
     <hash>dd3ffcb498fe1901eba39fd62738c55a</hash>
-    </revision>
-  </page>
-    <page>
-    <title>Template:Content hash</title>
-    <id>248</id>
-    <revision>
-      <id>257</id>
-      <timestamp>2010-12-21T14:25:49Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Part of bundle</title>
-    <id>247</id>
-    <revision>
-      <id>256</id>
-      <timestamp>2010-12-21T14:25:58Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
   <page>
