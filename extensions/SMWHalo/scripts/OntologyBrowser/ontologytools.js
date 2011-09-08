@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
- *   Author: Kai K�hn
+ *   Author: Kai Kï¿½hn
  *   This file is part of the halo-Extension.
  *
  *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  * 
- * @author Kai K�hn
+ * @author Kai Kï¿½hn
  */
 
 // commandIDs
@@ -40,14 +40,14 @@ var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
-window.OB_SELECTIONLISTENER = 'selectionChanged';
-window.OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
-window.OB_TREETABCHANGELISTENER = 'treeTabChanged';
-window.OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
-window.OB_REFRESHLISTENER = 'refresh';
-window.OB_FILTERTREE = 'filterTree';
-window.OB_FILTERBROWSING = 'filterBrowsing';
-window.OB_RESET = 'reset';
+var OB_SELECTIONLISTENER = 'selectionChanged';
+var OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
+var OB_TREETABCHANGELISTENER = 'treeTabChanged'
+var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
+var OB_REFRESHLISTENER = 'refresh';
+var OB_FILTERTREE = 'filterTree';
+var OB_FILTERBROWSING = 'filterBrowsing';
+var OB_RESET = 'reset';
 
 /**
  * Event Provider. Supports following events:
@@ -221,7 +221,7 @@ OBEventProvider.prototype = {
 }
 
 // create instance of event provider
-window.selectionProvider = new OBEventProvider();
+var selectionProvider = new OBEventProvider();
 
 /**
  * Class which allows modification of wiki articles via AJAX calls.
@@ -979,8 +979,7 @@ OBOntologyModifier.prototype = {
 			}
 		}
 		if (rangeOrTypes.length > 1) {
-			content += "\n[[_TYPE::_rec]]";
-			content += "\n[[_LIST::" + rangeTypeStr + "]]";
+			content += "\n[[_TYPE::Type:Page]]";
 		} else {
 			content += "\n[[_TYPE::" + rangeTypeStr + "]]";
 		}
@@ -2547,7 +2546,7 @@ OBSchemaPropertySubMenu.prototype = Object
 							 var maxCard = '';						
 							}
 							this.MandatoryChecked = false;
-                            var rangeOrTypes1 = [];
+                                                        var rangeOrTypes1 = [];
 							var rangeOrTypes = [];
 
 						
@@ -3362,7 +3361,7 @@ OBEditPropertySubMenu.prototype = Object
 						  this.propertyRange = this.propertyType;
 						  this.newRange = this.propertyRange;
 						  this.typeOrRange = 'Page';
-						 }  else {
+						 } else {
 							 this.propertyRange = '';
 						 }
 						var toReplace = '<select id="typeRange' + this.count
