@@ -611,6 +611,7 @@ class ConsistencyChecker {
 
 				if (array_key_exists('name', $ext)) {
 					$name = $ext['name'];
+					if (!array_key_exists('version', $ext)) continue;
 					list($version) = explode(" ", $ext['version']);
 					$version = str_replace(".","", $version);
 					$version = reset(explode("_", $version));
