@@ -278,8 +278,8 @@ class DeployDescriptor {
 
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 
-				if (empty($from)) $from = 0;
-				if (empty($to)) $to = 9999;
+				if (empty($from)) $from = "0.0.0";
+				if (empty($to)) $to = "99.99.99";
 				$this->patches[] = array(array($ext, $from, $to), array($patchFile, $mayfail));
 			}
 		}
