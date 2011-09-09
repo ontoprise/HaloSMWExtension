@@ -404,7 +404,7 @@ class TFDataAPIACCESS {
 					}
 				}
 			} else {
-				$silentAnnotations = '{{CreateSilentAnnozazions:';
+				$silentAnnotations = '{{CreateSilentAnnotations:';
 				foreach($newAnnotations as $newAnnotation){
 					if($newAnnotation['name'] == TF_CATEGORY_KEYWORD){
 						$text .= '[[Category:'.$newAnnotation['value'].'| ]]';
