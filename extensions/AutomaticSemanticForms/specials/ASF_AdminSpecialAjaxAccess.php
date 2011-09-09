@@ -61,6 +61,8 @@ function asff_getFormPreview($categories){
 		$success = 'false';
 		$skins = '';
 	}
+	
+	$formDefinition = ASFFormGeneratorUtils::retranslateParseSaveLink($formDefinition);
 
 	$response = array('preview' => $formHTML, 'source' => $formDefinition, 'skins' => $skins, 'success' => $success);
 	$response = json_encode($response);

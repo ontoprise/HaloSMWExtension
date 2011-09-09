@@ -106,6 +106,8 @@ class ASFParserFunctions {
 		global $wgOut;
 		$wgOut->addModules( 'ext.automaticsemanticforms.main' );
 		
+		$result = str_replace(array('&lt;', '&gt;'), array('<', '>'), $result);
+		
 		return $parser->insertStripItem( $result, $parser->mStripState );
 	}
 	
