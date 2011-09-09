@@ -21,7 +21,7 @@
  * @author Thomas Schweitzer
  */
 if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', smw_links_callme);
+    Event.observe(window, 'load', window.smw_links_callme);
 
 
 var createLinkList = function() {
@@ -31,7 +31,7 @@ var createLinkList = function() {
 
     
     
-function smw_links_callme(){
+window.smw_links_callme = function(){
 	var url = location.href;
 	var redlink = url.indexOf('redlink=1');
 	if (redlink !== -1) {
