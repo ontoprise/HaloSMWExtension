@@ -543,7 +543,7 @@ Section "Solr" solr
 
     CreateDirectory "$INSTDIR\solr\wiki\logs"
 
-    DetailPrint "Run Solr"
+    DetailPrint "Run Solr. Please be patient this may take a while..."
     ; run the solr server
     Exec '"$INSTDIR\solr\wiki\startSolr.bat"'
 
