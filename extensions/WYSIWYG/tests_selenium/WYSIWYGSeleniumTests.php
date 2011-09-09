@@ -18,6 +18,11 @@ require_once 'testcases/TestWikiMarkup.php';
 require_once 'testcases/TestHtmlToWikitextConverion1.php';
 require_once 'testcases/TestHtmlToWikitextConverion2.php';
 require_once 'testcases/TestHtmlToWikitextConverion3.php';
+require_once 'testcases/TestRule.php';
+require_once 'testcases/TestWebservice.php';
+require_once 'testcases/TestNoinclude.php';
+require_once 'testcases/TestQueries.php';
+
 
 class WYSIWYGSeleniumTests
 {
@@ -33,6 +38,10 @@ class WYSIWYGSeleniumTests
                 $suite->addTestSuite("TestHtmlToWikitextConverion1");
                 $suite->addTestSuite("TestHtmlToWikitextConverion2");
                 $suite->addTestSuite("TestHtmlToWikitextConverion3");
+                $suite->addTestSuite("TestRule");
+                $suite->addTestSuite("TestWebservice");
+                $suite->addTestSuite("TestNoinclude");
+                $suite->addTestSuite("TestQueries");
 		return $suite;
 	}
 }

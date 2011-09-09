@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>testRule</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">testRule</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/mw156/index.php?title=Testrule1&amp;action=edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[@id='toggle_wpTextbox1'][text()='Show RichTextEditor']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>wpTextbox1</td>
+	<td>&lt;rule name=&quot;AgeRule&quot; type=&quot;Calculation&quot; formula=&quot;2010-a&quot; variablespec=&quot;a#prop#BirthYear;&quot;&gt;?_XRES[prop#Age-&gt;?_RESULT] :- ?_XRES[prop#BirthYear-&gt;?A] AND ?_RESULT = (2010 - ?A).&lt;/rule&gt;</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=wpSave</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>setSpeed</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>runScript</td>
+	<td>jQuery('iframe').attr('id', 'mytestiframe')</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectFrame</td>
+	<td>mytestiframe</td>
+	<td></td>
+</tr>
+<tr>
+	<td>setSpeed</td>
+	<td>0</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[@class=&quot;FCK__SMWrule&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=toggle_wpTextbox1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyValue</td>
+	<td>id=wpTextbox1</td>
+	<td>exact:&lt;rule name=&quot;AgeRule&quot; type=&quot;Calculation&quot; formula=&quot;2010-a&quot; variablespec=&quot;a#prop#BirthYear;&quot;&gt;?_XRES[prop#Age-&gt;?_RESULT] :- ?_XRES[prop#BirthYear-&gt;?A] AND ?_RESULT = (2010 - ?A).&lt;/rule&gt;</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=toggle_wpTextbox1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//img[@class=&quot;FCK__SMWrule&quot;]</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>
