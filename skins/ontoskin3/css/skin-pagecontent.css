@@ -18,6 +18,7 @@
 * just add a div to your page around content with class="smwtable"
 */
 
+/* tables */
 
 #content .smwtable{
 	background-color: #ffffff;
@@ -44,6 +45,7 @@
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
+
 
 
 #content h1, #content h2,

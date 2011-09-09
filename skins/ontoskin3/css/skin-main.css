@@ -534,6 +534,14 @@ textarea.smwhCreateboxInput {
     margin: 0px 20px 20px 20px;
 }
 
+/* SF: Used in 'create template' page */
+.smwhFieldBox {
+    border: 1px #a9c5d9 solid;
+    background: #edf2f6;
+    padding: 10px 20px 10px 20px;
+    margin: 0px 20px 20px 20px;
+}
+
 /* SF: Used in 'create form' page */
 .smwhTemplateForm {
     border: 1px #a9c5d9 solid;
@@ -542,6 +550,12 @@ textarea.smwhCreateboxInput {
     margin-bottom: 20px;
 }
 
+table.formtable {
+        background: #edf2f6;
+		border: 1px #a9c5d9 solid;
+}
+
+* SF: Used in 'formedit' mode */
 fieldset {
 	border: 1px #a9c5d9 solid;
 	background: #ffffff;
@@ -551,4 +565,58 @@ fieldset {
 	padding: 0.35em 0.625em 0.75em;
 }
 
+table.formtable input {
+   -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+    background: none no-repeat scroll 0 0 #FFFFFF;
+    border-color: #959595 #CCCCCC #CCCCCC #959595;
+    border-style: solid;
+    border-width: 1px;
+	padding:3px;
+	}
 
+	
+table.formtable select {
+    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+    background: none no-repeat scroll 0 0 #FFFFFF;
+    border-color: #959595 #CCCCCC #CCCCCC #959595;
+    border-style: solid;
+    border-width: 1px;
+	padding:3px;
+}
+	
+textarea.mandatoryField {
+
+   -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+    background: none no-repeat scroll 0 0 #FFFFFF;
+    border-color: #959595 #CCCCCC #CCCCCC #959595;
+    border-style: solid;
+    border-width: 1px;
+	padding:3px;
+
+}	
+	
+table.formtable input input[type="text"]:active, input[type="password"]:active, select:active, input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+   -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+    background: none no-repeat scroll 0 0 #FFFFFF;
+    border-color: #219EB5 #219EB5 #219EB5 #219EB5;
+    border-style: solid;
+    border-width: 1px;
+	padding:3px;
+	}
+	
+	
+
+table.formtable	input[type="radio"], input[type="checkbox"] {
+   -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+    background: none no-repeat scroll 0 0;
+    border-color: none;
+    border-style: solid;
+    border-width: 1px;
+}
+
+
+table.formtable th {
+	text-align: left;
+	vertical-align: top;
+	padding:3px;
+}
