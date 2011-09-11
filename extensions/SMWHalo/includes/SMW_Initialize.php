@@ -578,7 +578,10 @@ function smwgHaloSetupExtension() {
 			}
 
 			$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
-
+			
+			// initialize static members of SMWHaloPredefinedPages
+			new SMWHaloPredefinedPages();
+			
 			return true;
 }
 

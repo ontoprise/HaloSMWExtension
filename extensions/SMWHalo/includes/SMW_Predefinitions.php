@@ -173,5 +173,3 @@ class SMWHaloPredefinedPages {
 	}
 }
 
-// create one instance to initialize static members
-new SMWHaloPredefinedPages();

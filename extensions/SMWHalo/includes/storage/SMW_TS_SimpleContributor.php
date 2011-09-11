@@ -40,7 +40,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 				$triplesFromHook[] = array($subj_iri, "owl:inverseOf", $invprop_iri);
 			}
 		}
-	} elseif (smwfGetSemanticStore()->domainRangeHintProp->getDBkey() == $property->getKey()) {
+	} elseif (SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey() == $property->getKey()) {
 
 		if (count($propertyValueArray) > 0) {
 			$dataItemContainer = reset($propertyValueArray);
