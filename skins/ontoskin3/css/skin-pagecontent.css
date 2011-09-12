@@ -93,6 +93,559 @@ background-color:#FFF;
 background-color:#cde6ea;
 }
 
+
+/* Definitions for "table_zebra" ---------------------------------------------- */
+#content .table_zebra{
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	border-bottom: 2px solid #116988;
+        margin: 8px 5px 10px 5px;
+}
+
+#content .table_zebra th{
+        vertical-align: bottom;
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 2px solid #116988;
+	border-top: 1px solid #116988;
+	padding:3px 3px 2px 8px; 
+}
+
+#content .table_zebra caption {
+        background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+#content .table_zebra td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 2px 3px 1px 8px;
+	border-bottom: 1px solid #98BCC9; 
+        vertical-align: top; 
+}
+
+#content .table_zebra tr:nth-child(odd) td{
+background: white;
+border-bottom: 1px solid white;
+}
+
+#content .table_zebra tr:nth-child(even) td{
+background: #EBEEEF;
+border-bottom: 1px solid #EBEEEF;
+}
+
+#content .table_zebra tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_zebra tr td:last-child {
+    padding-right: 8px;
+} 
+
+/* selects last row */
+#content .table_zebra tr:last-child td {
+    border-bottom: 2px solid #116988;
+} 
+
+/* Definitions for "table_zebra_grid" ---------------------------------------------- */
+
+#content .table_zebra_grid{
+border-collapse:collapse; 
+line-height: 1.5em; 
+border-bottom: 2px solid #b5bda5;
+margin: 8px 5px 8px 5px; 
+}
+
+#content .table_zebra_grid th{
+/* background-color: #ffffff; */
+text-align: left; 
+border-bottom: 2px solid #b5bda5;
+border-left: 1px solid #dae0cc;
+border-right: 1px solid #dae0cc;
+border-top: 1px solid #b5bda5;
+padding-top: 3px;
+padding-right: 3px;
+padding-bottom: 2px;
+padding-left: 8px;
+vertical-align: bottom;
+}
+
+#content .table_zebra_grid caption {
+background-color:#FFFFFF;
+color:#116988; 
+text-align:center; 
+font-size: 11pt; 
+font-weight: bold; 
+margin-bottom: 7px; 
+margin-top: 5px; 
+}
+
+#content .table_zebra_grid td{
+background: #FFFFFF none repeat scroll 0 0;
+padding: 2px 3px 1px 8px; 
+border: 1px solid #dae0cc;
+vertical-align: top;   
+}
+
+#content .table_zebra_grid tr:nth-child(odd) td{
+background: white;
+}
+
+#content .table_zebra_grid tr:nth-child(even) td{
+background: #EBF1DE;
+}
+
+#content .table_zebra_grid tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_zebra_grid tr td:last-child {
+    padding-right: 8px;
+}
+
+/* Definitions for "table_simpleheadlines" ---------------------------------------------- */
+
+#content .table_simpleheadlines{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border: 1px solid #D6D6D6;
+	-moz-border-radius:5px 5px 5px 5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border-spacing:0px 0px;
+}
+
+#content .table_simpleheadlines th{
+	border-bottom: 1px solid #C4C4C4; 
+        padding: 10px 3px 5px 8px;
+        background-color: #F6F6F6; 
+	background: -moz-linear-gradient(top, #FAFAFA, #E3E3E3);      /* FF */
+	filter: progid:DXImageTransform.Microsoft.Gradient(           /* IE */
+                gradientType=0,startColorStr=#FAFAFA,
+                endColorStr=#E3E3E3);
+	background: -webkit-linear-gradient(top, #FAFAFA, #E3E3E3);  /* Safari, Chrome */
+	background: -o-linear-gradient(top, #FAFAFA, #E3E3E3);       /* Opera */
+	vertical-align: bottom;
+	text-align: left;
+}
+
+#content .table_simpleheadlines caption {
+        background-color:#FFFFFF;
+	text-align:center;
+	margin-bottom: 5px;
+	margin-top: 5px;
+        font-size: 1.1em;
+        font-weight: 700;
+}
+
+#content .table_simpleheadlines td{
+	border-bottom: 1px dashed #cccccc;
+	padding: 2px 3px 2px 8px; 
+        vertical-align: top; 
+}
+
+#content .table_simpleheadlines tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:5px;
+	-webkit-border-bottom-left-radius:5px;
+	border-bottom-left-radius:5px
+}
+
+#content .table_simpleheadlines tr:last-child td:last-child {
+        -moz-border-radius-bottomright:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-right-radius:5px
+}
+
+/* selects first item in the first row */
+#content .table_simpleheadlines tr:first-child th:first-child {
+  -moz-border-radius-topleft:5px;
+  -webkit-border-top-left-radius:5px;
+  border-top-left-radius:5px
+}
+
+/* selects last item in the first row */
+ #content .table_simpleheadlines tr:first-child th:last-child {
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-right-radius:5px
+  padding-right: 8px;
+}
+
+#content .table_simpleheadlines tr:hover td{
+	background: #EAEAEA none repeat scroll 0 0;
+}
+
+/* selects last row */
+#content .table_simpleheadlines tr:last-child td {
+    border: none;
+} 
+
+/* selects last column: */
+ #content .table_simpleheadlines tr td:last-child {
+    padding-right: 8px;
+} 
+
+
+/* Definitions for "table_simplecaption" ---------------------------------------------- */
+
+#content .table_simplecaption{
+        background: none;
+	line-height: 1.5em;
+	margin: 0 px 3px 3px 3px;
+	border: 1px solid #D6D6D6;
+	-moz-border-radius:0px 0px 5px 5px;
+	-webkit-border-radius:0px 0px 5px p5x;;
+	border-radius:0px 0px 5px 5px;
+	border-spacing:0px 0px;
+        vertical-align: bottom;
+}
+
+#content .table_simplecaption th{
+   border-bottom: 1px dashed #cccccc;
+   padding: 2px 3px 1px 8px;  
+   color: #4B4B4B;
+   vertical-align: bottom;
+   text-align: left;	
+}
+
+#content .table_simplecaption caption {
+        background-color: #F6F6F6; 
+	background: -moz-linear-gradient(top, #FAFAFA, #E3E3E3);      /* FF */
+	filter: progid:DXImageTransform.Microsoft.Gradient(           /* IE */
+                gradientType=0,startColorStr=#FAFAFA,
+                endColorStr=#E3E3E3);
+	background: -webkit-linear-gradient(top, #FAFAFA, #E3E3E3);  /* Safari, Chrome */
+	background: -o-linear-gradient(top, #FAFAFA, #E3E3E3);       /* Opera */
+        color: #191919;
+        text-shadow: 0 1px 0 #FFFFFF;
+	text-align:left;
+	-moz-border-radius:5px 5px 0px 0px;
+	-webkit-border-radius:5px 5px 0px 0px;
+	border-radius:5px 5px 0px 0px;
+	margin-top: 5px;
+	margin-bottom: 0px;
+	padding: 10px 2px 5px 8px;
+	border: 1px solid #D6D6D6;
+	font-size: 1em;
+        font-weight: 700;
+	text-transform: uppercase;
+}
+
+#content .table_simplecaption td{
+	border-bottom: 1px dashed #cccccc;
+	padding: 2px 3px 1px 8px;  
+	color: #4B4B4B;
+        vertical-align: top; 
+}
+
+#content .table_simplecaption tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:5px;
+	-webkit-border-bottom-left-radius:5px;
+	border-bottom-left-radius:5px
+}
+
+#content .table_simplecaption tr:last-child td:last-child {
+        -moz-border-radius-bottomright:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-right-radius:5px;
+}
+
+#content .table_simplecaption tr:last-child td {
+    border: none;
+} 
+
+#content .table_simplecaption tr:first-child th:first-child {
+  -moz-border-radius-topleft:5px;
+  -webkit-border-top-left-radius:5px;
+  border-top-left-radius:5px;
+}
+
+#content .table_simplecaption tr:first-child th:last-child {
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-right-radius:5px;
+  padding-right: 8px; 
+}
+
+#content .table_simplecaption tr:hover td{
+	background: #EAEAEA  none repeat scroll 0 0;
+}
+
+
+/* selects last column: */
+#content .table_simplecaption tr td:last-child {
+    padding-right: 8px;
+}
+
+
+
+/* Definitions for "table_roundedcorners_zebra" ---------------------------------------------- */
+#content .table_roundedcorners_zebra{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border:#ccc 1px solid;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border-spacing:0px 0px;
+}
+
+#content .table_roundedcorners_zebra th{
+	background-color: #ffffff;
+	text-align: left;
+	background: none; 
+	border-bottom: 3px solid #116988; 
+   padding: 4px 3px 2px 8px;
+   vertical-align: bottom;
+}
+
+#content .table_roundedcorners_zebra caption {
+    background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+#content .table_roundedcorners_zebra td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 4px 3px 1px 8px; 
+	border-bottom: 1px solid #ccc ;
+        vertical-align: top; 
+}
+
+#content .table_roundedcorners_zebra tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:10px;
+	-webkit-border-bottom-left-radius:10px;
+	border-bottom-left-radius:10px
+}
+
+#content .table_roundedcorners_zebra tr:last-child td:last-child {
+   -moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-bottom-right-radius:10px
+}
+
+#content .table_roundedcorners_zebra tr:nth-child(odd) td{
+background: white;
+}
+
+#content .table_roundedcorners_zebra tr:nth-child(even) td{
+background: #EBEEEF;
+} 
+
+#content .table_roundedcorners_zebra tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_roundedcorners_zebra tr td:last-child {
+    padding-right: 8px;
+}
+
+/* selects last row: */
+#content .table_roundedcorners_zebra tr:last-child td {
+	border-bottom: none;       
+} 
+
+
+/* Definitions for "table_roundedcorners" ---------------------------------------------- */
+#content .table_roundedcorners{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border:#ccc 1px solid;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border-spacing:0px 0px;
+}
+
+#content .table_roundedcorners th{
+	background-color: #ffffff;
+	text-align: left;
+	background: none; 
+	border-bottom: 3px solid #116988; 
+   padding: 4px 3px 2px 8px;
+   vertical-align: bottom;
+}
+
+#content .table_roundedcorners caption {
+    background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+#content .table_roundedcorners td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 4px 3px 1px 8px; 
+	border-bottom: 1px solid #ccc ;
+        vertical-align: top; 
+}
+
+#content .table_roundedcorners tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:10px;
+	-webkit-border-bottom-left-radius:10px;
+	border-bottom-left-radius:10px
+}
+
+#content .table_roundedcorners tr:last-child td:last-child {
+   -moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-bottom-right-radius:10px
+}
+
+#content .table_roundedcorners tr:hover td{
+	background: #d2e1e7 none repeat scroll 0 0;
+}
+
+#content .table_roundedcorners tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_roundedcorners tr td:last-child {
+    padding-right: 8px;
+}
+
+/* selects last row: */
+#content .table_roundedcorners tr:last-child td {
+	border-bottom: none;       
+} 
+
+
+/* Definitions for "table_shadow_zebra" ---------------------------------------------- */
+#content .table_shadow_zebra{
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	margin: 17px 8px 8px 8px;
+	-moz-box-shadow: 0 0 7px 3px #CECECE;
+        -webkit-box-shadow:0 0 7px 3px #CECECE;
+	-khtml-box-shadow: 0 0 7px 3px #CECECE; 
+         box-shadow: 0px 0px 7px 3px #CECECE;
+}
+
+#content .table_shadow_zebra th{
+        vertical-align: bottom;
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 2px solid #116988; 
+	padding-top: 4px;
+	padding-right: 3px;
+	padding-bottom: 2px;
+	padding-left: 8px;
+}
+
+#content .table_shadow_zebra caption {
+        background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 8px; 
+	margin-top: 5px;
+}
+
+#content .table_shadow_zebra td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 3px 3px 2px 8px;
+	border-bottom: 1px solid #98BCC9;
+        vertical-align: top; 	
+}
+
+#content .table_shadow_zebra tr:nth-child(odd) td{
+background: white;
+border-bottom: 1px solid white;
+}
+
+#content .table_shadow_zebra tr:nth-child(even) td{
+background: #EBEEEF;
+border-bottom: 1px solid #EBEEEF;
+}
+
+#content .table_shadow_zebra tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_shadow_zebra tr td:last-child {
+    padding-right: 8px;
+}
+
+
+/* Definitions for "table_shadow" ---------------------------------------------- */
+#content .table_shadow{
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	margin: 17px 8px 8px 8px;
+	-moz-box-shadow: 0 0 7px 3px #CECECE;
+        -webkit-box-shadow:0 0 7px 3px #CECECE;
+	-khtml-box-shadow: 0 0 7px 3px #CECECE; 
+         box-shadow: 0px 0px 7px 3px #CECECE;
+}
+
+#content .table_shadow th{
+        vertical-align: bottom;
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 2px solid #116988; 
+	padding-top: 4px;
+	padding-right: 3px;
+	padding-bottom: 2px;
+	padding-left: 8px;
+}
+
+#content .table_shadow caption {
+        background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 8px; 
+	margin-top: 5px;
+}
+
+#content .table_shadow td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 3px 3px 2px 8px;
+	border-bottom: 1px solid #cccccc;
+        vertical-align: top; 
+}
+
+
+#content .table_shadow tr:hover td{
+	background: #EAEAEA none repeat scroll 0 0;
+}
+
+#content .table_shadow tr:first-child th:last-child {
+  padding-right: 8px; 
+}
+
+/* selects last column: */
+#content .table_shadow tr td:last-child {
+    padding-right: 8px;
+
+
 /* images */
 div.floatright, table.floatright {
 	clear: right;
