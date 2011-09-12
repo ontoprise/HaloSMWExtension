@@ -34,12 +34,8 @@ class SMWQRCQueryResultsCache {
 	public function getQueryResult(SMWQuery $query, $force=false, $cacheThis=true){
 		
 		//delegate query processing to the responsible store
-		$defaultStore = smwfGetStore();
-		if ($query instanceof SMWSPARQLQuery && !(defined( 'DO_MAINTENANCE' ) && !defined('SMWH_FORCE_TS_UPDATE'))) {
-			$store = $defaultStore;
-		} else {
-			$store = smwfNewBaseStore();
-		}
+		$store = smwfGetStore();
+		
 		
 		if(array_key_exists('nocaching', $query->params) && $query->params['nocaching'] == 'true'){
 			return $store->doGetQueryResult($query);
@@ -167,8 +163,8 @@ class SMWQRCQueryResultsCache {
 		//echo('<pre>'.print_r($queryResults, true).'</pre>');
 		
 		if(count($queryResults) > 0){ //this query is still in use
-			global $smwgDefaultStore;
-			$defaultStore = new $smwgDefaultStore();
+			
+			$defaultStore = smwfGetStore();
 			$title = $queryResults[0]->getTitle();
 			$semanticData = $defaultStore->getsemanticData($title);
 

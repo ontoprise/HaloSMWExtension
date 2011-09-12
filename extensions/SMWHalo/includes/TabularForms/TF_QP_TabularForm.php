@@ -424,7 +424,7 @@ class TFTabularFormData {
 				$prop = Title::newFromText($this->annotationPrintRequests[$key]['title'], SMW_NS_PROPERTY);
 				if($prop->exists()){
 					$prop = SMWWikiPageValue::makePageFromTitle($prop)->getDataItem();
-					$store = smwfNewBaseStore();
+					$store = smwfGetStore();
 					$semanticData = $store->getSemanticData($prop);
 					$annotations = $semanticData->getProperties();
 

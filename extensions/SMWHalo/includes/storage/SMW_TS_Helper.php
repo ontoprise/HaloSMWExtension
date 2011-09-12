@@ -540,7 +540,7 @@ class TSNamespaces {
 	}
 
 	function __construct() {
-		global $smwgTripleStoreGraph, $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
+		global $smwgTripleStoreGraph, $wgContLang, $wgExtraNamespaces;
 
 		// use initialize flag because PHP classes do not have static initializers.
 		if (self::$initialized) return;

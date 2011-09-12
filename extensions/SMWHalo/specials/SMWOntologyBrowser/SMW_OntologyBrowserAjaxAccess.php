@@ -1339,11 +1339,11 @@ class OB_StorageTS extends OB_Storage {
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bundleID = '') {
 
 	$browseWiki = wfMsg("smw_ob_source_wiki");
-	global $smwgDefaultStore;
-	if ($smwgDefaultStore == 'SMWTripleStoreQuad' && !empty($dataSource) && $dataSource != $browseWiki) {
+	global $smwgQuadMode, $smwgWebserviceEndpoint;
+	if (isset($smwgWebserviceEndpoint) && $smwgQuadMode && !empty($dataSource) && $dataSource != $browseWiki) {
 		// dataspace parameter. so assume quad driver is installed
 		$storage = new OB_StorageTSQuad($dataSource, $bundleID);
-	} else if ($smwgDefaultStore == 'SMWTripleStore') {
+	} else if (isset($smwgWebserviceEndpoint)) {
 		// assume normal (non-quad) TSC is running
 		$storage = new OB_StorageTS($dataSource, $bundleID);
 	} else {

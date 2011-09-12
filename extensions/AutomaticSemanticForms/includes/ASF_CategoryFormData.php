@@ -34,7 +34,7 @@ class ASFCategoryFormData {
 		
 		$this->isLeafCategory = count($categorySectionStructure->children) == 0 ? true : false;
 
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		$this->semanticData = $store->getSemanticData(
 			SMWDIWikiPage::newFromTitle($this->titleObject));
 		

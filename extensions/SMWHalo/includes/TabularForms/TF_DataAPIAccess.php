@@ -536,7 +536,7 @@ class TFDataAPIACCESS {
 			return false;
 		}
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		$semanticData = $store->getSemanticData(
 			SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
 		$properties = $semanticData->getProperties();

@@ -276,9 +276,9 @@ class  LODNonExistingPage extends Article {
      */
     private static function getCategoriesForURI($uri) {
     	
-    	global $smwgDefaultStore, $smwgTripleStoreGraph;
+    	global $smwgQuadMode, $smwgTripleStoreGraph;
     	
-    	if ($smwgDefaultStore == 'SMWTripleStoreQuad') {
+    	if (isset($smwgQuadMode) && $smwgQuadMode == true) {
     		$where = "GRAPH ?G { <$uri> rdf:type ?C . }";
     		$defaultGraph = "";
     	} else {

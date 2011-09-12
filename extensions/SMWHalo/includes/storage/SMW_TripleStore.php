@@ -73,9 +73,8 @@ class SMWTripleStore extends SMWStore {
 	 *
 	 * @param SMWStore $smwstore All calls are delegated to this implementation.
 	 */
-	function __construct() {
-		global $smwgBaseStore;
-		$this->smwstore = new $smwgBaseStore;
+	function __construct($basestore) {
+		$this->smwstore = $basestore;
 		$this->tsNamespace = TSNamespaces::getInstance();
 		$this->localRequest = false;
 

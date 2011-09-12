@@ -60,7 +60,7 @@ class ASFFormGeneratorUtils {
 				unset($superCategories[$title->getFullText()]);
 			}
 			
-			$store = smwfNewBaseStore();
+			$store = smwfGetStore();
 			foreach($superCategories as $c => $dc){
 				$semanticData = $store->getSemanticData(
 					SMWDIWikiPage::newFromTitle(Title::newFromText($c, NS_CATEGORY)));
@@ -143,7 +143,7 @@ class ASFFormGeneratorUtils {
 		}
 		
 		//check if there is a category that has no 'no automatic formedit' annotation
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		global $wgLang;
 		foreach($categories as $category => $dC){
 			
@@ -253,7 +253,7 @@ class ASFFormGeneratorUtils {
 		
 		//filter properties with no automatic form edit
 		foreach($properties as $k => $p){
-			$semanticData = smwfNewBaseStore()->getSemanticData(
+			$semanticData = smwfGetStore()->getSemanticData(
 				SMWDIWikiPage::newFromTitle($p));
 			$noAutomaticFormEdit =
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT); 
@@ -291,7 +291,7 @@ class ASFFormGeneratorUtils {
 	 */
 	public static function getCreateNewInstanceLink($articleName, $categories){
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 
 		//todo: consider namespace when detecting if there is a manually created semantic form
 		

@@ -63,7 +63,7 @@ class ASFCategorySectionStructureProcessor {
 	private function initCategorySectionStructure($categories){
 		$this->categorySectionStructure = array();
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		
 		//init category section structure with data from ontology
 		global $wgLang;

@@ -124,7 +124,7 @@ class SMWQueryInterface extends SpecialPage {
     }
 
     private function addQueryOption() {
-        global $smwgDefaultStore, $smwgTripleStoreGraph;
+        global $smwgWebserviceEndpoint, $smwgTripleStoreGraph;
         $useTS = "";
         $useLodDatasources = "";
         $useLodTrustpolicy = "";
@@ -136,7 +136,7 @@ class SMWQueryInterface extends SpecialPage {
             $useLodTrustpolicy = $this->getLodTrustpolicy();
         }
         // check if triple store is availabe, and offer option do deselect
-        if (isset($smwgDefaultStore) && strpos($smwgDefaultStore, "SMWTripleStore") !== false) {
+        if (isset($smwgWebserviceEndpoint)) {
 			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
         // check if there are any options that will be displayed, If this is not the case

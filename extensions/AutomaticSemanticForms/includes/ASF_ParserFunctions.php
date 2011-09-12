@@ -211,7 +211,7 @@ class ASFParserFunctions {
 	static function renderSilentAnnotationsTemplate( &$parser, $frame, $args) {
 		$result = "";
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		
 		global $asfSilentAnnotations;
 		if(!is_array($asfSilentAnnotations)) $asfSilentAnnotations = array();

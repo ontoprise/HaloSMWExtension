@@ -40,7 +40,7 @@ class ASFPropertyFormData {
 	public function __construct($propertyTitleObject){
 		$this->titleObject = $propertyTitleObject;
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		$this->semanticData = $store->getSemanticData(
 			SMWDIWikiPage::newFromTitle($this->titleObject));
 		

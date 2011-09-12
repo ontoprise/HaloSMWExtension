@@ -46,20 +46,17 @@ $smwgHaloStyleVersion= '?'.$smwgHaloStyleVersion;
 //Disable default mediawiki autocompletion, so it does not interfere with the mw one
 $wgEnableMWSuggest = false;
 
-require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
+
 /**
  * Configures SMW Halo Extension for initialization.
  * Must be called *AFTER* SMW is intialized.
  *
  * @param String $store SMWHaloStore (old) or SMWHaloStore2 (new). Uses old by default.
  */
-function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleStoreGraph = NULL) {
-	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore,
+function enableSMWHalo() {
+	global $wgExtensionFunctions, $smwgOWLFullExport,
 	$smwgSemanticDataClass, $wgHooks, $smwgTripleStoreGraph, $smwgIgnoreSchema;
-	if ($store == 'SMWHaloStore') {
-		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
-		die();
-	}
+
 	global $smwghConvertColoumns;
 	if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
 
@@ -68,14 +65,14 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$smwgQuerySources += array("tsc" => "SMWTripleStore");
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
-	$smwgTripleStoreGraph = $tripleStoreGraph !== NULL ? $tripleStoreGraph : 'http://mywiki';
+	$smwgTripleStoreGraph = isset($tripleStoreGraph) ? $tripleStoreGraph : 'http://mywiki';
 
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store;
 
-	$smwgBaseStore = $store;
-	$smwgSemanticDataClass = $tripleStore !== NULL ? 'SMWFullSemanticData' : 'SMWSemanticData';
+
+
+	$smwgSemanticDataClass = isset($tripleStoreGraph) ? 'SMWFullSemanticData' : 'SMWSemanticData';
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
@@ -119,7 +116,7 @@ function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $wgSpecialPageGroups;
-	global $smwgWebserviceEndpoint, $smwgMessageBroker, $smwgDefaultStore;
+	global $smwgWebserviceEndpoint, $smwgMessageBroker;
 	if (is_array($smwgWebserviceEndpoint) && count($smwgWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
 		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
 		die();
@@ -150,6 +147,8 @@ function smwgHaloSetupExtension() {
 		$msg = 'ArcLibrary is not installed.';
 		trigger_error($msg);
 	}
+
+	
 
 	global $smwgWebserviceProtocol;
 	$smwgWebserviceProtocol="rest";
@@ -187,6 +186,15 @@ function smwgHaloSetupExtension() {
 
 	//patch Special:Browse in order to hide special Query Management Property
 	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
+	
+    global $smwgMasterStore;
+	$oldStore = smwfGetStore(); 
+	$halostore = new SMWHaloStore2($oldStore);
+	if (isset($smwgWebserviceEndpoint)) {
+		$smwgMasterStore = new SMWTripleStore($halostore);
+	} else {
+		$smwgMasterStore = $halostore;
+	}
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
@@ -223,7 +231,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 	$wgHooks['ArticleSaveComplete'][] = 'smwfSavesNamespaceMappings';
 
-	global $smwgDefaultStore, $smwgShowDerivedFacts, $wgRequest;
+	global $smwgShowDerivedFacts, $wgRequest;
 	if ($smwgShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
@@ -359,7 +367,7 @@ function smwgHaloSetupExtension() {
 
 
 	// add triple store hooks if necessary
-	global $smwgDefaultStore,$smwgIgnoreSchema;
+	global $smwgIgnoreSchema;
 	if (smwfIsTripleStoreConfigured()) {
 		if (!isset($smwgIgnoreSchema) || $smwgIgnoreSchema === false) {
 			require_once('storage/SMW_TS_SchemaContributor.php');
@@ -501,7 +509,7 @@ function smwgHaloSetupExtension() {
 		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
 		);
 
-		global $smwgDefaultStore;
+		
 		if (smwfIsTripleStoreConfigured()) {
 			$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 		}
@@ -578,10 +586,10 @@ function smwgHaloSetupExtension() {
 			}
 
 			$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
-			
+				
 			// initialize static members of SMWHaloPredefinedPages
 			new SMWHaloPredefinedPages();
-			
+				
 			return true;
 }
 
@@ -609,8 +617,8 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
  * @return boolean
  */
 function smwfIsTripleStoreConfigured() {
-	global $smwgDefaultStore;
-	return ($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad');
+	global $smwgWebserviceEndpoint;
+	return isset($smwgWebserviceEndpoint);
 }
 
 function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
@@ -651,7 +659,7 @@ function smwfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
  * The {{#sparql }} parser function processing part.
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
-	global $smwgDefaultStore;
+	
 	if (smwfIsTripleStoreConfigured()) {
 		global $smwgIQRunningNumber;
 		$smwgIQRunningNumber++;
@@ -699,7 +707,7 @@ function smwfHaloInitDatatypes() {
 function smwf_ts_getSyncCommands() {
 	global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport,
 	$wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
-	$smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
+	$smwgIgnoreSchema, $smwgNamespaceIndex;
 
 	$sparulCommands = array();
 
@@ -707,7 +715,7 @@ function smwf_ts_getSyncCommands() {
 	$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
 	$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
 	$sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword).
-	"@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore".
+	"@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=SMWHaloStore2".
 	"&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix).
 	"> INTO <$smwgTripleStoreGraph>";
 
@@ -976,38 +984,15 @@ function smwfHaloInitContentMessages() {
  * Returns GeneralStore
  */
 function &smwfGetSemanticStore() {
-	global $smwgMasterGeneralStore, $smwgHaloIP, $smwgBaseStore;
+	global $smwgMasterGeneralStore, $smwgHaloIP;
 	if ($smwgMasterGeneralStore == NULL) {
-		if ($smwgBaseStore != 'SMWHaloStore' && $smwgBaseStore != 'SMWHaloStore2') {
-			trigger_error("The store '$smwgBaseStore' is not implemented for the HALO extension. Please use 'SMWHaloStore'.");
-		} elseif ($smwgBaseStore == 'SMWHaloStore2') {
-			require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL2.php');
+		require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL2.php');
 			$smwgMasterGeneralStore = new SMWSemanticStoreSQL2();
-		}  else {
-			require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL.php');
-			$smwgMasterGeneralStore = new SMWSemanticStoreSQL();
-		}
 	}
 	return $smwgMasterGeneralStore;
 }
 
-/**
- * Creates a new instance of the base store and gives other extensions the
- * a chance to modify the store.
- *
- * @return
- * 		A new base store or NULL if $smwgBaseStore is not defined.
- */
-function &smwfNewBaseStore() {
-	global $smwgBaseStore;
-	if (!isset($smwgBaseStore)) {
-		return NULL;
-	}
-	$store = new $smwgBaseStore();
-	wfRunHooks('SmwhNewBaseStore', array(&$store));
 
-	return $store;
-}
 
 
 /**
@@ -1022,11 +1007,11 @@ function smwfDBSupportsFunction($lib) {
 	// a config variable. However, it may happen that the SimilarEntitiesBot crashes,
 	// because the EDITDISTANCE function is not available.
 	/*
-	 $dbr =& wfGetDB( DB_SLAVE );
-	 $res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
-	 $hasSupport = ($dbr->numRows($res) > 0);
-	 $dbr->freeResult( $res );
-	 return $hasSupport; */
+	$dbr =& wfGetDB( DB_SLAVE );
+	$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
+	$hasSupport = ($dbr->numRows($res) > 0);
+	$dbr->freeResult( $res );
+	return $hasSupport; */
 }
 
 /**
@@ -1138,7 +1123,7 @@ function smwfHaloAddJSLanguageScripts() {
 	$clngScript,
 	$ulngScript
 	),
-	 
+
 	// ResourceLoader needs to know where your files are; specify your
 	// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
 		'localBasePath' => dirname(__FILE__).'/../',
@@ -1860,9 +1845,9 @@ function smwfCheckIfPredefinedSMWHaloProperty($property) {
 		$key = $property->getDBkey();
 	}
 	$result = (SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey() == $key
-				|| SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBkey() == $key
-				|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY == $key
-				|| SMWHaloPredefinedPages::$IS_INVERSE_OF->getDBkey() == $key);
+	|| SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBkey() == $key
+	|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY == $key
+	|| SMWHaloPredefinedPages::$IS_INVERSE_OF->getDBkey() == $key);
 
 	return $result;
 }

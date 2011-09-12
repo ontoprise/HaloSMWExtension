@@ -241,7 +241,7 @@ class TestSMWStore extends PHPUnit_Framework_TestCase {
 	 * Tests that the SMWHalo base store is wrapped by the HACLSMWStore
 	 */
 	function testSmwBaseStore() {
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		$isSMWStore = $store instanceof HACLSMWStore;
 		$this->assertTrue($isSMWStore);
 	}

@@ -5,7 +5,7 @@
  * @ingroup SMWHalo
  * @ingroup SMWHaloSemanticToolbar
  * Basic functions which provide content for the semantic toolbar
- * 
+ *
  * @author Markus Nitsche
  */
 global $wgAjaxExportList;
@@ -99,7 +99,7 @@ function smwf_tb_AskQuestion($namespace, $action, $question){
 	}
 
 
-	
+
 
 
 	$discourseState = "$namespace:$action";
@@ -232,13 +232,13 @@ function smwf_tb_getTripleStoreStatus() {
 		$con->connect();
 		$statusInfo = $con->getStatus($smwgTripleStoreGraph);
 		$response = new AjaxResponse(json_encode($statusInfo));
-        $response->setContentType( "application/json" );
-        $response->setResponseCode(200);
-        $con->disconnect();
+		$response->setContentType( "application/json" );
+		$response->setResponseCode(200);
+		$con->disconnect();
 	} catch(Exception $e) {
 		$response = new AjaxResponse($e->getMessage());
-        $response->setContentType( "application/text" );
-        $response->setResponseCode(500);
+		$response->setContentType( "application/text" );
+		$response->setResponseCode(500);
 	}
 	return $response;
 }
@@ -248,17 +248,11 @@ abstract class SMWToolbarStorage {
 	private static $INSTANCE = NULL;
 
 	public static function getToolbarStorage() {
-		global $smwgBaseStore;
+
 		if (self::$INSTANCE == NULL) {
-			switch ($smwgBaseStore) {
+
+			self::$INSTANCE = new SMWToolbarStorageSQL2();
 				
-				case ('SMWHaloStore2'): default:
-					self::$INSTANCE = new SMWToolbarStorageSQL2();
-					break;
-				case ('SMWHaloStore'): default:
-					self::$INSTANCE = new SMWToolbarStorageSQL();
-					break;
-			}
 		}
 		return self::$INSTANCE;
 	}
@@ -297,13 +291,13 @@ class SMWToolbarStorageSQL extends SMWToolbarStorage {
 			$title = $row->subject_title;
 			$question = htmlspecialchars($row->value_xsd);
 			$dbr->freeResult( $res );
-				
+
 			$res = $dbr->select( $dbr->tableName('smw_longstrings'),
 				'*',
 			array('subject_id =' . $id, 'attribute_title="Description"'));
-				
+
 			$description = '';
-				
+
 			if ($dbr->numRows($res) > 0){
 				$row = $dbr->fetchObject( $res );
 				$description = htmlspecialchars($row->value_blob);
@@ -322,12 +316,12 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$namespace = mysql_real_escape_string($namespace);
 		$action = mysql_real_escape_string($action);
-		
+
 		$discourseState1 =  $namespace. ":" . $action;
 		$discourseState2 =  "ALL:" . $action;
 		$discourseState3 =  $namespace. ":ALL";
 		$discourseState4 =  "ALL:ALL";
-		
+
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$page = $db->tableName('page');
@@ -353,10 +347,10 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 		$db->freeResult( $res );
 		return $helppages;
 	}
-	 
+
 	public function getQuestions($id){
 		$db =& wfGetDB( DB_SLAVE );
-		 
+			
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$smw_text2 = $db->tableName('smw_text2');

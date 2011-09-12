@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup SemanticGardeningStorage
- * 
+ *
  * Created on 26.11.2007
  *
  * Author: kai
@@ -50,9 +50,9 @@ abstract class SMWSuggestStatistics {
 	 * @param $requestoptions
 	 */
 	public abstract function getLastEditPagesOfUndefinedProperties($username, $requestoptions) ;
-    
-	
-    
+
+
+
 	/**
 	 * Setups tables
 	 *
@@ -60,16 +60,12 @@ abstract class SMWSuggestStatistics {
 	public abstract function setup($verbose = true);
 
 	public static function getStore() {
-		global $smwgBaseStore, $sgagIP, $wgUser;
+		global $sgagIP, $wgUser;
 		if (self::$store == NULL) {
-			switch ($smwgBaseStore) {
-				
-				case ('SMWHaloStore2'): default:
-					require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatisticsSQL2.php');
-					self::$store = new SMWSuggestStatisticsSQL2();
-					break;
-				
-			}
+
+			require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatisticsSQL2.php');
+			self::$store = new SMWSuggestStatisticsSQL2();
+
 		}
 		return self::$store;
 	}

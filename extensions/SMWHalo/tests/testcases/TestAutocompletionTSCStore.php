@@ -8,12 +8,11 @@ require_once('TestAutocompletionStore.php');
  * @ingroup SMWHaloTests
  *
  * Tests the auto-completion storage layer
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 class TestAutocompletionTSCStore extends TestAutocompletionStore {
 
 	function setUp() {
-		global $smwgDefaultStore;
-		$smwgDefaultStore='SMWTripleStore';		
+			
 	}
 }

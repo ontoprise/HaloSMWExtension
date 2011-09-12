@@ -84,7 +84,7 @@ class TemplateMaterializerBot extends GardeningBot {
 		do {
 			// get pages using 'dirty' templates
 			$pageTitles = $this->store->getPagesUsingTemplates(NULL, $lastTemplateMaterialization, $requestoptions);
-				
+
 			// update them and write log
 			foreach($pageTitles as $pt) {
 				$this->worked(1);
@@ -120,14 +120,8 @@ class TemplateMaterializerBot extends GardeningBot {
 	private function getTemplateMaterializerStore() {
 
 		if ($this->store == NULL) {
-			global $smwgBaseStore;
-			switch ($smwgBaseStore) {
-
-				case ('SMWHaloStore2'): default:
-
-					$this->store = new TemplateMaterializerStorageSQL();
-					break;
-			}
+			$this->store = new TemplateMaterializerStorageSQL();
+				
 		}
 		return $this->store;
 	}

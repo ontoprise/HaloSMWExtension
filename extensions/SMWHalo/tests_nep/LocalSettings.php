@@ -18,6 +18,6 @@ include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
 enableSemantics('http://wiki', true);
  
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-enableSMWHalo('SMWHaloStore2', "SMWTripleStore");
+enableSMWHalo();
 
 

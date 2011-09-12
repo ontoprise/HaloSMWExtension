@@ -2,10 +2,10 @@
 /**
  * @file
  * @ingroup ConsistencyBot
- * 
+ *
  * @defgroup ConsistencyBot
  * @ingroup SemanticGardeningBots
- * 
+ *
  * Created on 13.03.2007
  *
  * @author Kai K�hn
@@ -74,8 +74,8 @@ class ConsistencyBot extends GardeningBot {
 		// get inheritance graphs
 		$categoryGraph = $this->store->getCategoryInheritanceGraph();
 		$propertyGraph = $this->store->getPropertyInheritanceGraph();
-        
-		
+
+
 		// Replace redirect annotations
 		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
 		smwfGetSemanticStore()->replaceRedirectAnnotations(true);
@@ -159,79 +159,79 @@ require_once("SGA_ConsistencyIssue.php");
 class ConsistencyBotFilter extends GardeningIssueFilter {
 
 
-    public function __construct() {
-        parent::__construct(SMW_CONSISTENCY_BOT_BASE);
-        $this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
-        wfMsg('smw_gardissue_class_covariance'),
-        wfMsg('smw_gardissue_class_undefined'),
-        wfMsg('smw_gardissue_class_missdouble'),
-        wfMsg('smw_gardissue_class_wrongvalue'),
-        wfMsg('smw_gardissue_class_incomp'),
-        wfMsg('smw_gardissue_class_cycles'));
-    }
+	public function __construct() {
+		parent::__construct(SMW_CONSISTENCY_BOT_BASE);
+		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
+		wfMsg('smw_gardissue_class_covariance'),
+		wfMsg('smw_gardissue_class_undefined'),
+		wfMsg('smw_gardissue_class_missdouble'),
+		wfMsg('smw_gardissue_class_wrongvalue'),
+		wfMsg('smw_gardissue_class_incomp'),
+		wfMsg('smw_gardissue_class_cycles'));
+	}
 
-    public function getUserFilterControls($specialAttPage, $request) {
-        $matchString = $request != NULL && $request->getVal('matchString') != NULL ? $request->getVal('matchString') : "";
-        return ' Contains:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
-    }
+	public function getUserFilterControls($specialAttPage, $request) {
+		$matchString = $request != NULL && $request->getVal('matchString') != NULL ? $request->getVal('matchString') : "";
+		return ' Contains:<input name="matchString" type="text" class="wickEnabled" value="'.$matchString.'"/>';
+	}
 
-    public function linkUserParameters(& $wgRequest) {
-        return array('matchString' => $wgRequest->getVal('matchString'), 'pageTitle' => $wgRequest->getVal('pageTitle'));
-    }
+	public function linkUserParameters(& $wgRequest) {
+		return array('matchString' => $wgRequest->getVal('matchString'), 'pageTitle' => $wgRequest->getVal('pageTitle'));
+	}
 
-    public function getData($options, $request) {
-        $matchString = $request->getVal('matchString');
-        $pageTitle = $request->getVal('pageTitle');
+	public function getData($options, $request) {
+		$matchString = $request->getVal('matchString');
+		$pageTitle = $request->getVal('pageTitle');
 
-        if ($pageTitle != NULL) {
-            // show only issue of *ONE* title
-            return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
-        }
-        if ($matchString != NULL && $matchString != '') {
-            // show all issues of title which match
-            $options->addStringCondition($matchString, SMWStringCondition::STRCOND_MID);
-            return $this->getGardeningIssueContainer($options, $request);
-        } else {
-            // default
-            return $this->getGardeningIssueContainer($options, $request);
-        }
-    }
+		if ($pageTitle != NULL) {
+			// show only issue of *ONE* title
+			return $this->getGardeningIssueContainerForTitle($options, $request, Title::newFromText(urldecode($pageTitle)));
+		}
+		if ($matchString != NULL && $matchString != '') {
+			// show all issues of title which match
+			$options->addStringCondition($matchString, SMWStringCondition::STRCOND_MID);
+			return $this->getGardeningIssueContainer($options, $request);
+		} else {
+			// default
+			return $this->getGardeningIssueContainer($options, $request);
+		}
+	}
 
-    private function getGardeningIssueContainer($options, $request) {
+	private function getGardeningIssueContainer($options, $request) {
 
-        $gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
-
-
-        $gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-
-        $gic = array();
-
-        // get issues of the given class. If no class is specified, ignore propagation issues.
-        $titles = $gi_store->getDistinctTitles('smw_consistencybot', NULL, $gi_class != NULL ? $gi_class : -GardeningIssue::getClass(SMW_GARDISSUE_CONSISTENCY_PROPAGATION), SMW_GARDENINGLOG_SORTFORTITLE, $options);
-        foreach($titles as $t) {
-            $gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $t, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
-            $gic[] = new GardeningIssueContainer($t, $gis);
-        }
-
-        return $gic;
-    }
-
-    /**
-     * Returns array of ONE GardeningIssueContainer for a specific title
-     */
-    private function getGardeningIssueContainerForTitle($options, $request, $title) {
-        $gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
 
-        $gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
-        $gic = array();
-        $gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
-        $gic[] = new GardeningIssueContainer($title, $gis);
+		$gic = array();
+
+		// get issues of the given class. If no class is specified, ignore propagation issues.
+		$titles = $gi_store->getDistinctTitles('smw_consistencybot', NULL, $gi_class != NULL ? $gi_class : -GardeningIssue::getClass(SMW_GARDISSUE_CONSISTENCY_PROPAGATION), SMW_GARDENINGLOG_SORTFORTITLE, $options);
+		foreach($titles as $t) {
+			$gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $t, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+			$gic[] = new GardeningIssueContainer($t, $gis);
+		}
+
+		return $gic;
+	}
+
+	/**
+	 * Returns array of ONE GardeningIssueContainer for a specific title
+	 */
+	private function getGardeningIssueContainerForTitle($options, $request, $title) {
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
 
 
-        return $gic;
-    }
+		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+
+		$gic = array();
+		$gis = $gi_store->getGardeningIssues('smw_consistencybot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
+		$gic[] = new GardeningIssueContainer($title, $gis);
+
+
+		return $gic;
+	}
 }
 
 abstract class ConsitencyBotStorage {
@@ -350,15 +350,8 @@ abstract class ConsitencyBotStorage {
 	public static function getConsistencyStorage() {
 			
 		if (self::$store == NULL) {
-			global $smwgBaseStore;
-			switch ($smwgBaseStore) {
+			self::$store = new ConsistencyBotStorageSQL2();
 				
-				case ('SMWHaloStore2'): default:
-
-					self::$store = new ConsistencyBotStorageSQL2();
-					break;
-
-			}
 		}
 		return self::$store;
 	}
@@ -1122,10 +1115,10 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		}
 
 		$db->freeResult($res);
-        $db->query('DROP TEMPORARY TABLE smw_ob_instances');
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances');
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances_super');
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
-		
+
 		return $result;
 	}
 }

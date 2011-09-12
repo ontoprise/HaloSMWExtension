@@ -14,8 +14,8 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		global $smwgDefaultStore;
-		$smwgDefaultStore='SMWHaloStore2';
+		global $smwgWebserviceEndpoint;
+		unset($smwgWebserviceEndpoint);
 	}
 
 	function tearDown() {

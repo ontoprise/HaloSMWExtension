@@ -29,7 +29,7 @@ class ASFRedLinkHandler {
 			return false;
 		}
 		
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		
 		//first compute all category annotations of the new instance
 		$title_text = self::titleString( $title );

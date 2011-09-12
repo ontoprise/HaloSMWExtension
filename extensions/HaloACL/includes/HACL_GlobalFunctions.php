@@ -140,7 +140,7 @@ function haclfSetupExtension() {
     
 
     $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
-    $wgHooks['SmwhNewBaseStore'][] = 'haclfOnSmwhNewBaseStore';
+  
     
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
@@ -697,16 +697,7 @@ function haclfInitSemanticStores() {
 	
 }
 
-/**
- * This function is called when a new base store is created in SMWHalo. The
- * given store is wrapped with a HACLSMWStore.
- * @param SMWStore $store
- * 		This is an instance of a SMWStore. It is wrapped by a HACLSMWStore.
- */
-function haclfOnSmwhNewBaseStore(&$store) {
-	$store = new HACLSMWStore($store);
-	return true;
-}
+
 
 /**
  * Add appropriate JS language script

@@ -700,7 +700,7 @@ class SFDataAPI extends ApiBase {
 	 * @return associativeArray The tree of categories.
 	 */
 	public function getCategoryTree($catName, $sublevels = 1, $substring){
-		global $smwgDefaultStore;
+		
 		$__store = smwfGetSemanticStore();
 
 		$__catHashmap = array(); // the resulting associative array

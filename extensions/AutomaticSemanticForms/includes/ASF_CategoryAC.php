@@ -94,7 +94,7 @@ class ASFCategoryAC {
 		$categoryCandidates[] = array($category);
 		
 		//filter categories
-		$store = smwfNewBaseStore();
+		$store = smwfGetStore();
 		$categories = array();
 		foreach($categoryCandidates as $candidate){
 			$semanticData = $store->getSemanticData(SMWDIWikiPage::newFromTitle($candidate[0]));

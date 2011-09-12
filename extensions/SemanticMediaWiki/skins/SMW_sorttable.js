@@ -104,9 +104,8 @@ function smw_getInnerText( el ) {
 				return spans[i].innerHTML;
 			}
 		}
-	} else {
-		return el.innerHTML;
-	}
+	} 
+	return el.innerHTML;
 }
 
 function smw_resortTable( lnk, clid ) {

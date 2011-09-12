@@ -221,17 +221,12 @@ abstract class AdvPropertySearchStorage {
 	private static $INSTANCE = NULL;
 
 	public static function getAdvPropertySearchStorage() {
-		global $smwgBaseStore;
+
 		if (self::$INSTANCE == NULL) {
-			switch ($smwgBaseStore) {
-				 
-				case ('SMWHaloStore2'): default:
-					self::$INSTANCE = new AdvPropertySearchStorageSQL2();
-					break;
-				case ('SMWHaloStore'): default:
-					self::$INSTANCE = new AdvPropertySearchStorageSQL();
-					break;
-			}
+				
+			self::$INSTANCE = new AdvPropertySearchStorageSQL2();
+				
+
 		}
 		return self::$INSTANCE;
 	}

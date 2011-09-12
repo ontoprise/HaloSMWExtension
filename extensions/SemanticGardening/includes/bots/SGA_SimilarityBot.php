@@ -2,12 +2,12 @@
 /**
  * @file
  * @ingroup SimilarityBot
- * 
+ *
  * @defgroup SimilarityBot
  * @ingroup SemanticGardeningBots
- * 
- * @author Kai Kühn
- * 
+ *
+ * @author Kai Kï¿½hn
+ *
  * Created on 16.03.2007
  *
  * Author: kai
@@ -48,7 +48,7 @@ class SimilarityBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	
+
 
 	/**
 	 * Returns an array of parameter objects
@@ -538,16 +538,11 @@ abstract class SimilarityBotStorage {
 	public abstract function getSharedTypes(Title $title1, Title $title2);
 
 	public static function getSimilarityStorage() {
-	
+
 		if (self::$store == NULL) {
-			global $smwgBaseStore;
-			switch ($smwgBaseStore) {
 				
-				case ('SMWHaloStore2'): default:
-					self::$store = new SimilarityBotStorageSQL2();
-					break;
-				
-			}
+			self::$store = new SimilarityBotStorageSQL2();
+
 		}
 		return self::$store;
 	}
@@ -677,7 +672,7 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedDomainCategories(Title $title1, Title $title2) {
-		
+
 		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintProp);
 		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintProp);
 
@@ -700,7 +695,7 @@ class SimilarityBotStorageSQL extends SimilarityBotStorage {
 	}
 
 	public function getSharedRangeCategories(Title $title1, Title $title2) {
-		
+
 		$domRange1 = smwfGetStore()->getPropertyValues($title1, smwfGetSemanticStore()->domainRangeHintProp);
 		$domRange2 = smwfGetStore()->getPropertyValues($title2, smwfGetSemanticStore()->domainRangeHintProp);
 

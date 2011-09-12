@@ -236,7 +236,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		}
 		$separatorIndex = max(array($indexOfPipe, $indexOfQM));
 		if ($separatorIndex == -1) {
-				
+
 			// template name
 			global $wgLang;
 			$namespace = NS_TEMPLATE;
@@ -249,7 +249,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
 			return $result;
 		} else {
-				
+
 			// template paramters
 			$templateParameters = explode("|", $userContext);
 			$templateName = trim(substr(reset($templateParameters), 2));
@@ -292,23 +292,20 @@ function smwf_ac_AutoCompletionOptions() {
 function &smwfGetAutoCompletionStore() {
 	global $smwhgAutoCompletionStore, $smwgHaloIP;
 	if ($smwhgAutoCompletionStore == NULL) {
-		global $smwgDefaultStore;
-		switch ($smwgDefaultStore) {
-
-			case ('SMWTripleStoreQuad'):
-				global $smwhgAutoCompletionTSC;
-				if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
-					// activate TSC autocompletion only explicitly
-					$smwhgAutoCompletionStore = new AutoCompletionStorageTSCQuad();
-				} else {
-					$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
-				}
-				break;
-			case ('SMWTripleStore'): // do not search in TSC because wiki and TSC are synchronous
-			case ('SMWHaloStore2'):
-			default:
+		global $smwgQuadMode, $smwgWebserviceEndpoint;
+		if (isset($smwgWebserviceEndpoint) && $smwgQuadMode == true) {
+				
+			global $smwhgAutoCompletionTSC;
+			if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
+				// activate TSC autocompletion only explicitly
+				$smwhgAutoCompletionStore = new AutoCompletionStorageTSCQuad();
+			} else {
 				$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
-				break;
+			}
+		} else {
+
+			$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
+			break;
 		}
 	}
 	return $smwhgAutoCompletionStore;
