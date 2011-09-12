@@ -22,7 +22,7 @@ var Prototype = {
   BrowserFeatures: {
     XPath: !!document.evaluate,
     SelectorsAPI: !!document.querySelector,
-    ElementExtensions: !!HTMLElement,
+    ElementExtensions: !!window.HTMLElement,
     SpecificElementExtensions:
       document.createElement('div')['__proto__'] &&
       document.createElement('div')['__proto__'] !==
@@ -2550,8 +2550,8 @@ Object.extend(Element, Element.Methods);
 
 if (!Prototype.BrowserFeatures.ElementExtensions &&
     document.createElement('div')['__proto__']) {
-  HTMLElement = { };
-  HTMLElement.prototype = document.createElement('div')['__proto__'];
+  window.HTMLElement = { };
+  window.HTMLElement.prototype = document.createElement('div')['__proto__'];
   Prototype.BrowserFeatures.ElementExtensions = true;
 }
 
@@ -2667,8 +2667,8 @@ Element.addMethods = function(methods) {
   }
 
   if (F.ElementExtensions) {
-    copy(Element.Methods, HTMLElement.prototype);
-    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
+    copy(Element.Methods, window.HTMLElement.prototype);
+    copy(Element.Methods.Simulated, window.HTMLElement.prototype, true);
   }
 
   if (F.SpecificElementExtensions) {
