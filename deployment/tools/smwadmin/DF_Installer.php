@@ -110,7 +110,7 @@ class Installer {
 		$this->rollback = Rollback::getInstance($this->rootDir);
 
 		$this->force = $force;
-		
+
 		$this->logger = Logger::getInstance();
 	}
 
@@ -157,7 +157,7 @@ class Installer {
 	 */
 	public function installOrUpdateFromFile($filePath) {
 		global $dfgOut;
-		$dd = Tools::unzipDeployDescriptor($filePath, $this->tmpFolder);
+		$dd = Tools::unzipDeployDescriptor($filePath, $this->tmpFolder, $this->rootDir);
 		if (is_null($dd)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR, "Uncompressing $filePath failed.");
 		}
@@ -208,7 +208,12 @@ class Installer {
 
 		// write finalize hint
 		$handle = fopen($this->rootDir."/".$dd->getInstallationDirectory()."/init$.ext", "w");
-		fwrite($handle, "1,".$fromVersion);
+		if (is_null($fromVersion)) {
+			fwrite($handle, "1,");
+		} else {
+			fwrite($handle, "1,".$fromVersion->toVersionString());
+		}
+
 		fclose($handle);
 
 		$dfgOut->outputln( "-------\n");
@@ -358,8 +363,8 @@ class Installer {
 		}
 		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
 		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
-		
-        ksort($allPackages);
+
+		ksort($allPackages);
 		foreach($allPackages as $p_id => $versions) {
 
 
@@ -388,7 +393,7 @@ class Installer {
 			foreach($versions as $tuple) {
 				list($v, $p, $rUrl) = $tuple;
 				$sep_v[] = $v->toVersionString()."_".$p;
-			} 
+			}
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
 			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($rUrl, 70));
@@ -534,9 +539,9 @@ class Installer {
 			if (!is_null($fromVersion)) {
 				$desc->createConfigElements($fromVersion, $fromPatchlevel);
 			}
-			
+
 			global $dfgNoAsk;
-			   
+
 			if (!$dfgNoAsk) {
 				$success = $this->rollback->saveInstallation();
 				if (!$success) {
@@ -572,7 +577,12 @@ class Installer {
 			}
 
 			$handle = fopen($installDirectory."/init$.ext", "w");
-			fwrite($handle, $num.",".$fromVersion);
+			if (is_null($fromVersion)) {
+				fwrite($handle, $num.",");
+			} else {
+				fwrite($handle, $num.",".$fromVersion);
+			}
+				
 			fclose($handle);
 			$num++;
 
@@ -764,12 +774,12 @@ class Installer {
 		$versionStr = $version->toVersionString();
 		$dfgOut->outputln("unzip into $unzipDirectory");
 		$dfgOut->outputln("[unzip ".$id."-".$versionStr."zip...");
-	    if (Tools::isWindows()) {
-            global $rootDir;
-            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-        } else {
-            exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-        }
+		if (Tools::isWindows()) {
+			global $rootDir;
+			exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+		} else {
+			exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+		}
 		$dfgOut->output("done.]");
 	}
 
@@ -799,12 +809,12 @@ class Installer {
 		}
 
 		$dfgOut->outputln("[unzip ".$filePath."...");
-	    if (Tools::isWindows()) {
-            global $rootDir;
-            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
-        } else {
-            exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
-        }
+		if (Tools::isWindows()) {
+			global $rootDir;
+			exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		} else {
+			exec('unzip -o "'.$filePath.'" -d "'.$unzipDirectory.'"');
+		}
 		$dfgOut->output("done.]");
 
 	}
@@ -920,9 +930,9 @@ class Installer {
 					}
 					if ($p->getVersion()->isHigher($to)) {
 						global $dfgForce;
-                        if (!$dfgForce) {
-						  throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".$to->toVersionString().". Downgrades are not supported.");
-                        }
+						if (!$dfgForce) {
+							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".$to->toVersionString().". Downgrades are not supported.");
+						}
 					}
 				}
 			}
@@ -976,8 +986,8 @@ class Installer {
 			$dep = $p->getDependency($dd->getID());
 			if ($dep == NULL) continue;
 			list($id, $from, $to, $optional) = $dep;
-            if ($optional) continue;
-            
+			if ($optional) continue;
+
 			// if $dd's version exceeds the limit of the installed,
 			// try to find an update
 			if ($dd->getVersion()->isHigher($to)) {
