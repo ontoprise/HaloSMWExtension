@@ -74,8 +74,6 @@ class SMWDataValueFactory {
 		//SMWDataItem::TYPE_NOTYPE => '',
 		//SMWDataItem::TYPE_ERROR => '',
 	);
-	
-	static private $mNewDataItemIds = array();
 
 	/**
 	 * Create a value from a type id. If no $value is given, an empty container
@@ -118,9 +116,7 @@ class SMWDataValueFactory {
 	 * @return SMWDataValue
 	 */
 	static public function newDataItemValue( SMWDataItem $dataItem, $property, $caption = false ) {
-		if (array_key_exists($dataItem->getDiType(), self::$mNewDataItemIds)) {
-			$typeid = self::$mNewDataItemIds[$dataItem->getDiType()];
-		} else if ( $property !== null ) {
+		if ( $property !== null ) {
 			$typeid = $property->findPropertyTypeID();
 		} else {
 			$typeid = self::$mDefaultDataItemTypeIds[$dataItem->getDiType()];
@@ -275,8 +271,7 @@ class SMWDataValueFactory {
 	static public function registerDatatype( $id, $className, $dataItemId, $label = false ) {
 		self::$mTypeClasses[$id] = $className;
 		self::$mTypeDataItemIds[$id] = $dataItemId;
-        self::$mNewDataItemIds[$dataItemId] = $id;
-        
+
 		if ( $label != false ) {
 			self::$mTypeLabels[$id] = $label;
 		}
