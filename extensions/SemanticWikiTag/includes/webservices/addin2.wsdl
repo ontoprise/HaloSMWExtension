@@ -400,7 +400,7 @@
     </wsdl:message>
     <wsdl:message name="getTitlePropertyDefinitionsRequest2">
     	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
-    	<wsdl:part name="title" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="page_name" type="xsd:string"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getTitlePropertyDefinitionsResponse2">
     	<wsdl:part name="getTitlePropertyDefinitionsResponse"
@@ -409,9 +409,9 @@
     </wsdl:message>
     <wsdl:message name="updateTitlePropertyValueRequest2">
     	<wsdl:part name="auth" type="typens:AuthenticationType"></wsdl:part>
-    	<wsdl:part name="title" type="xsd:string"></wsdl:part>
-    	<wsdl:part name="prop" type="xsd:string"></wsdl:part>
-    	<wsdl:part name="original_val" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="page_name" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="prop_id" type="xsd:string"></wsdl:part>
+    	<wsdl:part name="property" type="xsd:string"></wsdl:part>
     	<wsdl:part name="new_value" type="xsd:string"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="updateTitlePropertyValueResponse2">
@@ -983,25 +983,31 @@
     		</wsdl:output>
     	</wsdl:operation>
     	<wsdl:operation name="getTitlePropertyDefinitions">
+
     		<soap:operation
     			soapAction="urn:addin/getTitlePropertyDefinitions" />
     		<wsdl:input>
+
     			<soap:body use="encoded" namespace="urn:addin"
     				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
     		</wsdl:input>
     		<wsdl:output>
+
     			<soap:body use="encoded" namespace="urn:addin"
     				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
     		</wsdl:output>
     	</wsdl:operation>
     	<wsdl:operation name="updateTitlePropertyValue">
+
     		<soap:operation
     			soapAction="urn:addin/updateTitlePropertyValue" />
     		<wsdl:input>
+
     			<soap:body use="encoded" namespace="urn:addin"
     				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
     		</wsdl:input>
     		<wsdl:output>
+
     			<soap:body use="encoded" namespace="urn:addin"
     				encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
     		</wsdl:output>

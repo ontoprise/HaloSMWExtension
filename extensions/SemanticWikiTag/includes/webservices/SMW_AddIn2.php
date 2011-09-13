@@ -1314,7 +1314,7 @@ This is a page created by some upload clients. Please edit this page with other 
 
 		$page_title = Title::newFromText( $page_name );
 		if( !$page_title->exists() ) {
-			$ret->exception = SWT_ADDIN_E_PAGE_NOT_EXIST;
+			$ret->exception->ret_code = SWT_ADDIN_E_PAGE_NOT_EXIST;
 			return $ret;
 		}
 		
@@ -1467,7 +1467,7 @@ This is a page created by some upload clients. Please edit this page with other 
 
 		$page_title = Title::newFromText( $page_name );
 		if( !$page_title->exists() ) {
-			$ret->exception = SWT_ADDIN_E_PAGE_NOT_EXIST;
+			$ret->exception->ret_code = SWT_ADDIN_E_PAGE_NOT_EXIST;
 			return $ret;
 		}
 		

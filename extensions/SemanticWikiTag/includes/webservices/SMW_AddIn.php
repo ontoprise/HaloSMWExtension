@@ -11,7 +11,7 @@ if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
 	smwgWTregisterParserFunctions( $wgParser );
 }
 
-function wfAddInStrencode( $s, $dbi = DB_LAST ) {
+function wfAddInStrencode( $s, $dbi = DB_SLAVE ) {
 	$db = wfGetDB( $dbi );
 	if ( $db !== false ) {
 		return $db->strencode( $s );
