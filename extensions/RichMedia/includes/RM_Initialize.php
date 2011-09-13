@@ -109,7 +109,8 @@ function enableRichMediaExtension() {
 	}
 
 	//tell SMW to call this function during initialization
-	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
+	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses,
+		$wgSpecialPages, $smwgEnableRichMedia, $wgResourceModules;
 
 	// clean possibility to disable the extension without any warning/errors
 	// and let other extensions know about Rich Media
@@ -133,21 +134,19 @@ function enableRichMediaExtension() {
 	$wgHooks['LanguageGetMagic'][] = 'RMEmbedWindowLinkUsage_Magic';
 	//Add a hook to initialise the magic word for the additional image attribute preview
 	$wgHooks['LanguageGetMagic'][] = 'RMImagePreviewUsage_Magic';
-	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
-	
-	
+
 	//Change the image links
 	$wgHooks['LinkBegin'][] = 'RMLinkBegin';
 	$wgHooks['LinkEnd'][] = 'RMLinkEnd';
 	$wgHooks['LinkerMakeExternalLink'][] = 'RMLinkerMakeExternalLink';
-	
+
 	//EmbedWindow
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
 	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/specials/RM_EmbedWindow.php';
-	
+
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
-	
+
 	global $smgJSLibs, $sfgFancyBoxIncluded;
 	$smgJSLibs[] = 'jquery';
 	// following can not be in the BeforePageDisplay hook
@@ -155,6 +154,26 @@ function enableRichMediaExtension() {
 		$smgJSLibs[] = 'fancybox';
 		$sfgFancyBoxIncluded = true;
 	}
+
+	$rmResourceTemplate = array(
+		'localBasePath' => $smwgRMIP,
+		'remoteExtPath' => 'RichMedia',
+		'group' => 'ext.richmedia'
+	);
+	$wgResourceModules += array(
+		'ext.richmedia.main' => $rmResourceTemplate + array(
+			'scripts' => array(
+				'scripts/richmedia.js',
+				'scripts/richmedia_links.js',
+			),
+			'styles' => array(
+				'skins/richmedia.css',
+			)
+		),
+		'ext.richmedia.wysiwyg' => $rmResourceTemplate + array(
+			'scripts' => 'scripts/fck_connect.js',
+		)
+	);
 
 	wfProfileOut( __METHOD__ . ' [Rich Media]' );
 	return true;
@@ -186,7 +205,7 @@ function smwfRMSetupExtension() {
 }
 
 function smwfRegisterRMForm( &$parser ) {
-	
+
 	$parser->setFunctionHook( 'RMFormUsage', 'smwfProcessRMFormParserFunction' );
 
 	return true; // always return true, in order not to stop MW's hook processing!	
@@ -377,8 +396,17 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
  */
 function smwRMFormAddHTMLHeader(&$out){
 	wfProfileIn( __METHOD__ . ' [Rich Media]' );
-	global $smwgRMScriptPath;
+	global $smwgRMScriptPath, $smwgRMIP, $wgResourceModules;
 	static $rmScriptLoaded = false;
+
+	// Ressource Loader version
+	if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
+		$out->addModules( 'ext.richmedia.main' );
+		$out->addModules( 'ext.richmedia.wysiwyg' );
+
+		wfProfileOut( __METHOD__ . ' [Rich Media]' );
+		return true;
+	}
 
 	$rmStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
 	if( strlen( $rmStyleVer ) > 0 ) {

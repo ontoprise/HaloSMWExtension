@@ -4,6 +4,17 @@ Rich Media extension ChangeLog
 VERSION 1.5.2
 
   FEATURES:
+	-none-
+
+  CHANGES:
+	* Use ResourceLoader for script loading if available
+
+  BUGFIXES:
+	-none-
+
+VERSION 1.5.2
+
+  FEATURES:
 	* Added  profiling information to trace code execution time
 
   CHANGES:
