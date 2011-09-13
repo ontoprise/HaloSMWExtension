@@ -315,10 +315,11 @@ class SMWQueryProcessor {
 
 		$query->params = $params; // this is a hack
 
-		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) ) {
+		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) && $params["source"] != 'tsc' ) {
+			// this is something else than "tsc" or "wiki"
 			$store = new $smwgQuerySources[$params["source"]]();
 		} else {
-			$store = smwfGetStore(); // default store
+			$store = smwfGetStore(); // default store (with or without TSC)
 		}
 
 		$resultHTML = "";
