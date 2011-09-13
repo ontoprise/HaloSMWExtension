@@ -895,7 +895,7 @@ class SMWTripleStore extends SMWStore {
 							$label =  $data->getDBkey();
 						} else {
 							//SMWDIProperty
-							$label = $data->getKey();
+							$label = $data->getDataItem()->getKey();
 						}
 						if (array_key_exists($label, $mapPRTOColumns)) {
 							$mapPRTOColumns[$label][] = $index;
@@ -1218,7 +1218,7 @@ class SMWTripleStore extends SMWStore {
 						if (!$propertyTitle->exists()) {
 							$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
 						} else {
-							$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property, str_replace("-","/",$literalValue));
+							$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
 						}
 					} else {
 						$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
