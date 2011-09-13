@@ -10,12 +10,14 @@ class ASFCategoryAC {
 	/*
 	 * Get categories for which ASFs can be created.
 	 */
-	public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULTS,
+public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULTS,
 			$rootCategory = '_', $queryLimit = 500){
 		
 		if($rootCategory == '_'){
 			$categoryCandidates = self::getCategoryCandidates($queryLimit);
+			$dealWithURIs = true;
 		} else {
+			$dealWithURIs = false;
 			$categoryCandidates = self::getSubCategoryCandidates($rootCategory);
 		}
 		
@@ -24,15 +26,19 @@ class ASFCategoryAC {
 		foreach($categoryCandidates as $c) {
 			if (empty($userInput) || stripos(str_replace(" ", "_", (string) $c[0]), $userInput) !== false) {
 				
-				$titleText = (string)TSHelper::getTitleFromURI((string)$c[0], true);
+				if($dealWithURIs){
+					$titleText = (string)TSHelper::getTitleFromURI((string)$c[0], true);
+				} else {
+					$titleText =  (string)$c[0];
+				}
 				if(Title::newFromText($titleText, NS_CATEGORY)->exists()){
-					$textTitles[] = (string)$c[0];
+					$textTitles[] = $titleText;
 					if (count($textTitles) >= $maxResults) break;
 				}
 			}
 		}
 		
-			$textTitles = array_unique($textTitles);
+		$textTitles = array_unique($textTitles);
 		$titles = array();
 		foreach($textTitles as $t) {
 			$titles[] = Title::newFromText($t);
