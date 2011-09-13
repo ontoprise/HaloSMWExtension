@@ -75,7 +75,7 @@ Breadcrumb.prototype = {
        var html = "";
 		var IndexCr = 0;
 		var crumbs = []; 
-		var breadcrumb = breadcrumbArray[4];
+		var breadcrumb = breadcrumbArray[breadcrumbArray.length - 1];
 		var title = breadcrumb.pageName.split(":");
         var currentCrumb = title.length == 2 ? title[1] : title[0];
         currentCrumb = currentCrumb.replace(/_/g, " ");
