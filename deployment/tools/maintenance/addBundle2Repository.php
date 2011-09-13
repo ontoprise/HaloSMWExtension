@@ -161,7 +161,7 @@ foreach($descriptors as $tuple) {
 }
 
 if ($mediawiki) {
-	$xml = Tools::createMWDeployDescriptor(realpath($rootDir."/../"), isset($mwversion) ? $mwversion : NULL);
+	$xml = Tools::createMWDeployDescriptor(realpath($rootDir."/../"), isset($mwversion) ? new DFVersion($mwversion) : NULL);
 	
 	$id = 'mw';
 	$version = Tools::getMediawikiVersion(realpath($rootDir."/../"));
