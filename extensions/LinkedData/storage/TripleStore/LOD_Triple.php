@@ -158,7 +158,7 @@ class  LODTriple  {
 		}
 		
 		$subj = $this->mSubject;
-		if (strpos($subj, "http://") === 0) {
+		if (strpos($subj, "http://") === 0 || strpos($subj, "obl:") === 0) {
 			$subj = "<$subj>";
 		}
 		
@@ -169,7 +169,10 @@ class  LODTriple  {
 		
 		switch ($this->mType) {
 		case '__objectURI':
-			$obj = (preg_match("~^http://~i", $this->mObject) ? '<' . $this->mObject . '>' : $this->mObject);
+			$obj = (preg_match("~^http://~i", $this->mObject) ||
+					strpos($this->mObject,'obl:') === 0)
+						? '<' . $this->mObject . '>' 
+						: $this->mObject;
 			break;
 		case '__blankNode':
 			$obj = $this->mObject;
