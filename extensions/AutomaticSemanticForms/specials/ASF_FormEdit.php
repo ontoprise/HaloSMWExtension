@@ -20,12 +20,17 @@ function execute($query, $redirectOnError = true) {
 		$targetName = $wgRequest->getVal('target');
 		
 		if(!$categoryParam && !$targetName){
-			$queryparts = explode( '/', $query, 2 );
+			$queryparts = str_replace('//','--asf-slash-slash--', $query);
+			$queryparts = explode( '/', $queryparts, 2 );
+			
 			if(isset($queryparts[0]) && strpos($queryparts[0], 'categories=') === 0){
 				$categoryParam = substr($queryparts[0], strlen('categories='));
 				$targetName = isset( $queryparts[1] ) ? $queryparts[1] : '';
 			}
 		}
+		
+		$categoryParam = str_replace('--asf-slash-slash--', '/', $categoryParam);
+		$targetName = str_replace('--asf-slash-slash--', '/', $targetName);
 		
 		$formName = $wgRequest->getVal('form');
 		
