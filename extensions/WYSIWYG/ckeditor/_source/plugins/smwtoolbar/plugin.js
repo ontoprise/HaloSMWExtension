@@ -1084,7 +1084,8 @@ CKEDITOR.plugins.add('smwtoolbar', {
 
     beforeInit : function( editor ) {
         // disable STB by default when loading the editor
-        window.parent.AdvancedAnnotation.unload();
+        if(typeof window.parent.AdvancedAnnotation != 'undefined')
+            window.parent.AdvancedAnnotation.unload();
     },
 
 	init : function( editor )
@@ -1117,7 +1118,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
         editor.on("dataReady", function(event) {
             if (plugin.stbIsActive) {
                 gEnewText='';
-                delete gEditInterface;
+                delete gEditInterface;         
 				if (CKEDITOR.env.ie) {
 					window.parent.gEditInterface = null;
 				} else {

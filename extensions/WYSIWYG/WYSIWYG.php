@@ -114,6 +114,7 @@ $oCKeditorExtension = new CKeditor_MediaWiki();
 
 // Hooked functions
 $wgHooks['ParserAfterTidy'][]                   = array( $oCKeditorExtension, 'onParserAfterTidy' );
+$wgHooks['SkinAfterBottomScripts'][]            = array( $oCKeditorExtension, 'onSkinAfterBottomScripts');
 $wgHooks['EditPage::showEditForm:initial'][]    = array( $oCKeditorExtension, 'onEditPageShowEditFormInitial' );
 $wgHooks['EditPage::showEditForm:fields'][]		= array( $oCKeditorExtension, 'onEditPageShowEditFormFields' );
 $wgHooks['EditPageBeforePreviewText'][]         = array( $oCKeditorExtension, 'onEditPageBeforePreviewText' );
@@ -141,5 +142,5 @@ $wgDefaultUserOptions['riched_toggle_remember_state'] = 1;
 // also add setting that the Semantic toobar is loaded by default
 if (defined('SMW_HALO_VERSION')) {
     $wgEditPageFrameOptions = 'SAMEORIGIN';
-    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;
+    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;       
 }

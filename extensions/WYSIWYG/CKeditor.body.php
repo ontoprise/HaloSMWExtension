@@ -41,6 +41,8 @@ class CKeditor_MediaWiki {
 	'riched_disable_ns_category',
 	'riched_disable_ns_category_talk',
 	);
+        
+        private $ckeditorHeadScript;
 
 	function __call( $m, $a ) {
 		print "\n#### " . $m . "\n";
@@ -201,6 +203,7 @@ class CKeditor_MediaWiki {
         }
         return $out;
     }
+ 
 
 	public function onCustomEditor( $article, $user ) {
 		global $wgRequest, $mediaWiki;
@@ -483,8 +486,8 @@ class CKeditor_MediaWiki {
 		// End of CSS trick
 
 		$script = <<<HEREDOC
-<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>
-<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>-->
+<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>-->
+<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
 </script>
@@ -553,12 +556,24 @@ function FCKeditor_OpenPopup(jsID, textareaID){
 }
 HEREDOC;
 }
-$script .= '</script>';
-
-		$wgOut->addScript( $script );
+$script .= '</script>';               
+     
+                
+//                $wgOut->addScript( $script );
+$this->ckeditorHeadScript = $script;
 
 		return true;
 	}
+        
+        
+    public function onSkinAfterBottomScripts($skin, &$bottomScriptText) {  
+          global $wgOut; 
+          $wgOut->addModules(array('mediawiki.legacy.wikibits', 'ext.smwhalo.semanticToolbar', 'ext.smwhalo.queryInterface', 'ext.smwhalo.allButAnnotate'));
+          $bottomScriptText .= $this->ckeditorHeadScript;
+          $this->ckeditorHeadScript = '';
+          return true;
+    }
+     
 
     private static function GetQILoadUrl() {
         global $smwgQueryInterfaceSecret, $smwgHaloIP;
@@ -785,7 +800,7 @@ function ToggleCKEditor( mode, objId ){
             if (typeof smwhgGardeningHints != 'undefined')
                 smwhgGardeningHints.createContainer();
             smw_links_callme();
-            gEditInterface = new SMWEditInterface();
+            window.gEditInterface = new SMWEditInterface();
             obContributor.activateTextArea(SRCtextarea);
             smwhg_dragresizetoolbar.draggable=null;
             smwhg_dragresizetoolbar.callme();

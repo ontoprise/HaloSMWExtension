@@ -1146,7 +1146,8 @@ CKEDITOR.plugins.add('smwtoolbar', {
 
     beforeInit : function( editor ) {
         // disable STB by default when loading the editor
-        window.parent.AdvancedAnnotation.unload();
+        if(window.parent.AdvancedAnnotation)
+            window.parent.AdvancedAnnotation.unload();
     },
 
 	init : function( editor )
@@ -1248,14 +1249,14 @@ CKEDITOR.plugins.add('smwtoolbar', {
 					editCategoryCommmand.categoryName = element.getAttribute('sort');
 					editCategoryCommmand.element = element;
 					removeCategoryCommmand.element = element;
-		 			return { removeCategoryItem: CKEDITOR.TRISTATE_ON,
-		 				/*editCategoryItem  : CKEDITOR.TRISTATE_ON*/};
+		 			return { removeCategoryItem: CKEDITOR.TRISTATE_ON
+		 				/*,editCategoryItem  : CKEDITOR.TRISTATE_ON*/};
 				}
 				else if (element.getAttribute('class') === 'fck_mw_property'){
 					editPropertyCommmand.element = element;
 					removePropertyCommmand.element = element;
-		 			return { removePropertyItem: CKEDITOR.TRISTATE_ON,
-		 				/*editPropertyItem  : CKEDITOR.TRISTATE_ON*/};
+		 			return { removePropertyItem: CKEDITOR.TRISTATE_ON
+		 				/*,editPropertyItem  : CKEDITOR.TRISTATE_ON*/};
 				}
 				return null;
 			});
@@ -1285,7 +1286,7 @@ CKEDITOR.plugins.add('smwtoolbar', {
 			if ( ( ev.data.name == 'wysiwyg' || ev.data.name == 'newpage' ) && editor.mode == 'source' ) {
 				plugin.DisableAnnotationToolbar( editor );
             }
-		});
+		})
         editor.on("dataReady", function(event) {
             if (plugin.stbIsActive) {
                 gEnewText='';

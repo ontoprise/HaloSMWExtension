@@ -1,68 +1,101 @@
 CKEDITOR.dialog.add( 'SMWruleEdit', function( editor ) {
 
-	return {
-		title: editor.lang.smwrule.titleRuleEdit,
+    return {
+        title: editor.lang.smwrule.titleRuleEdit,
 
-		minWidth: 600,
-		minHeight:200,
-
-
-		contents: [
-			{
-				id: 'tab1',
-				label: 'Tab1',
-				title: 'Tab1',
-				elements : [
-                    {
-                        id: 'tagDefinition',
-                        type: 'textarea',
-                        label: editor.lang.smwrule.editRule,
-                        title: 'Edit semantic rule',
-                        className: 'swmf_class',
-                        style: 'border: 1px;'
-                    }
-				 ]
-			}
-		 ],
+        minWidth: 600,
+        minHeight:200,
 
 
-		onOk: function() {
-			var textarea = this.getContentElement( 'tab1', 'tagDefinition'),
-                content = textarea.getValue();
+        contents: [
+        {
+            id: 'tab1',
+            label: 'Tab1',
+            title: 'Tab1',
+            elements : [
+            {
+                id: 'tagDefinition',
+                type: 'textarea',
+                label: editor.lang.smwrule.editRule,
+                title: 'Edit semantic rule',
+                className: 'swmf_class',
+                style: 'border: 1px;'
+            }
+            ]
+        }
+        ],
 
-            content = content.Trim().replace(/\r?\n/, 'fckLR');
-            content = CKEDITOR.tools.htmlEncode(content);
-            content = '<span class="fck_smw_rule">' + content + '</span>';
 
-			var element = CKEDITOR.dom.element.createFromHtml(content, editor.document),
-				newFakeObj = editor.createFakeElement( element, 'FCK__SMWrule', 'span' );
-			if ( this.fakeObj ) {
-				newFakeObj.replace( this.fakeObj );
-				editor.getSelection().selectElement( newFakeObj );
+        onOk: function() {
+            var textarea = this.getContentElement( 'tab1', 'tagDefinition'),
+            rule = textarea.getValue();
+
+            rule = rule.Trim().replace(/\r?\n/, 'fckLR');
+                        
+            var html = '<span class="fck_smw_rule"';
+            
+            var ruleName = rule.match(/name\s*=\s*\"[\w\#\-;]+"/);
+            var ruleType = rule.match(/type\s*=\s*\"[\w\#\-;]+"/);
+            var ruleFormula = rule.match(/formula\s*=\s*\"[\w\#\-;]+"/);
+            var variableSpec = rule.match(/variablespec\s*=\s*\"[\w\#\-;]+"/);
+            var ruleContent = /(?!\-)>(.*?)<\/rule>/.exec(rule);
+            if(ruleName)
+                html += ' ' + ruleName;
+            if(ruleType)
+                html += ' ' + ruleType;
+            if(ruleFormula)
+                html += ' ' + ruleFormula;
+            if(variableSpec)
+                html += ' ' + variableSpec;
+            html += '>';
+            if(ruleContent && ruleContent.length)
+                html += CKEDITOR.tools.htmlEncode(ruleContent[1]);
+            html += '</span>';
+
+            var element = CKEDITOR.dom.element.createFromHtml(html, editor.document);
+            newFakeObj = editor.createFakeElement( element, 'FCK__SMWrule', 'span' );
+            if ( this.fakeObj ) {
+                newFakeObj.replace( this.fakeObj );
+                editor.getSelection().selectElement( newFakeObj );
             } else
-				editor.insertElement( newFakeObj );
-		},
-   		onShow : function() {
-  			this.fakeObj = false;
+                editor.insertElement( newFakeObj );
+        },
+        onShow : function() {
+            this.fakeObj = false;
 
-       		var editor = this.getParentEditor(),
-           		selection = editor.getSelection(),
-               	element = null;
+            var editor = this.getParentEditor(),
+            selection = editor.getSelection(),
+            element = null;
 
-   			// Fill in all the relevant fields if there's already one item selected.
-       		if ( ( element = selection.getSelectedElement() ) && element.is( 'img' )
-           			&& element.getAttribute( 'class' ) == 'FCK__SMWrule'
-               )
+            // Fill in all the relevant fields if there's already one item selected.
+            if ( ( element = selection.getSelectedElement() ) && element.is( 'img' )
+                && element.getAttribute( 'class' ) == 'FCK__SMWrule' )
             {
                 this.fakeObj = element;
- 				element = editor.restoreRealElement( this.fakeObj );
-       			selection.selectElement( this.fakeObj );
-                var content = element.getHtml().replace(/fckLR/g, '\r\n');
-                content = content.htmlDecode().Trim();
+                element = editor.restoreRealElement( this.fakeObj );
+                selection.selectElement( this.fakeObj );
+
+                var content = '<rule';
+                var ruleName = element.getAttribute('name');
+                if(ruleName)
+                    content += ' name="' + ruleName.htmlDecode() + '"';
+                var ruleType = element.getAttribute('type');
+                if(ruleType)
+                    content += ' type="' + ruleType.htmlDecode() + '"';
+                var ruleFormula = element.getAttribute('formula');
+                if(ruleFormula)
+                    content += ' formula="' + ruleFormula.htmlDecode() + '"';
+                var variableSpec = element.getAttribute('variablespec');
+                if(variableSpec)
+                    content += ' variablespec="' + variableSpec.htmlDecode() + '"';
+                var rule = element.getHtml().replace(/fckLR/g, '\r\n');
+                rule = rule.htmlDecode().Trim();
+                content += '>' + rule + '</rule>';
+                
                 var textarea = this.getContentElement( 'tab1', 'tagDefinition');
                 textarea.setValue(content);
             }
         }
-	};
+    };
 
 } );

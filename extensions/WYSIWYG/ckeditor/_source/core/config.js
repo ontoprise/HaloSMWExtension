@@ -184,7 +184,7 @@ CKEDITOR.config =
 	 * @example
 	 * config.shiftEnterMode = CKEDITOR.ENTER_P;
 	 */
-	shiftEnterMode : CKEDITOR.ENTER_BR,
+	shiftEnterMode : CKEDITOR.ENTER_P,
 
 	/**
 	 * A comma separated list of plugins that are not related to editor

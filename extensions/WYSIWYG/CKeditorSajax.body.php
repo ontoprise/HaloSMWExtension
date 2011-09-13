@@ -29,15 +29,15 @@ function wfSajaxGetImageUrl( $term ) {
 	}
 	$parser->setOutputType( OT_HTML );
 	$originalLink = $parser->parse( '[[File:' . $term . ']]', $wgTitle, $options )->getText();
-	if( false == strpos( $originalLink, 'src="' ) ) {
+     	if( false == strpos( $originalLink, 'src="' ) ) {
 		return '';
 	}
 
 	$srcPart = substr( $originalLink, strpos( $originalLink, "src=" )+ 5 );
 	$url = strtok( $srcPart, '"' );
-    if (substr($url, -(strlen($term))) == $term)
-        return $url;
-    return "";
+        if (substr($url, -(strlen($term))) == $term)
+            return $url;
+        return "";
 }
 
 function wfSajaxSearchSpecialTagCKeditor( $empty ) {
@@ -117,12 +117,16 @@ function wfSajaxSearchImageCKeditor( $term ) {
 function wfSajaxSearchArticleCKeditor( $term ) {
 	global $wgContLang, $wgExtraNamespaces;
 	$limit = 30;
-	$ns = array(NS_MAIN, NS_CATEGORY, NS_IMAGE, NS_TEMPLATE, NS_USER);
+	$ns = array(NS_MAIN, NS_CATEGORY, NS_IMAGE, NS_TEMPLATE, NS_USER, NS_HELP);
     if (defined(SF_NS_FORM)) $ns[]= SF_NS_FORM;
     if (defined(SMW_NS_PROPERTY)) $ns[]= SMW_NS_PROPERTY;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
     $prefix = "";
+    
+    if ( ( strlen( str_replace( '_', '', $term ) ) < 1 ) && ( count($ns) > 1 ) ) {
+		return '';
+    }
 
     if ( $term[0] == ':' ) {
         $prefix= ':';
@@ -160,9 +164,7 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 	$term4 = str_replace( ' ', '_', $wgContLang->ucfirst( $term2 ) );
 	$term = $term1;
 
-	if ( ( strlen( str_replace( '_', '', $term ) ) < 1 ) && ( count($ns) > 1 ) ) {
-		return '';
-	}
+	
 
     $dbr = wfGetDB( DB_SLAVE );
 	$res = $dbr->select(
@@ -182,9 +184,9 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 	$i = 0;
 	while ( ( $row = $dbr->fetchObject( $res ) ) && ( ++$i <= $limit ) ) {
         $title = '';
-		if( isset( $prefix ) && !is_null( $prefix ) ) {
+        if( isset( $prefix ) && !empty( $prefix ) ) {
 			$title .= $prefix;
-		}
+	}
         else if ($row->page_namespace != NS_MAIN) {
             $title .= MWNamespace::getCanonicalName($row->page_namespace).':';
         }
@@ -281,7 +283,8 @@ function wfSajaxWikiToHTML( $wiki, $title = '' ) {
 	$parser->setOutputType( OT_HTML );
 
 	wfSajaxToggleCKeditor( 'show' ); // FCKeditor was switched to visible
-	return str_replace( '<!-- Tidy found serious XHTML errors -->', '', $parser->parse( $wiki, $wgTitle, $options )->getText() );
+        $resultText = $parser->parse( $wiki, $wgTitle, $options )->getText();
+	return str_replace( '<!-- Tidy found serious XHTML errors -->', '',  $resultText);
 }
 
 function wfSajaxToggleCKeditor( $data ) {
