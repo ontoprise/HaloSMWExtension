@@ -2,11 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>semanticgardening</id>
+		<title>Semantic Gardening extension</title>
 		<version>1.3.6</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticGardening</instdir>
-		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
+		<description>
+			The Semantic Gardening extension lets you detect and clean inconsistencies in the structure of SMW+ via automatic bots. It further provides an export functionality for OWL ontologies.
+		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension</helpurl>
 		<dependencies>
 			<dependency from="1.6.0">smwhalo</dependency>

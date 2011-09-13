@@ -2,12 +2,15 @@
 <deploydescriptor>
 	<global>
 		<id>enhancedretrieval</id>
+		<title>Enhanced Retrieval extension</title>
 		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
 		<instdir>extensions/EnhancedRetrieval</instdir>
-		<description>A client for the lucene wiki server.</description>
+		<description>
+			The Enhanced Retrieval extension provides the fastest and most precise search engine for MediaWiki based on a SOLR server. The search covers full text contents as well as all elements from the ontology (categories, properties,instances). Search results can be refined stepwise by facets ("Faceted Search").
+		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
 		</helpurl>
 		<dependencies>

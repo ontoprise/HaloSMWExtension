@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>smw</id>
+        <title>Semantic MediaWiki</title>
         <version>1.6.1</version>
         <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>

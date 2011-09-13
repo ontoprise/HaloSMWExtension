@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>1.6</version>
 		<id>haloacl</id>
+		<title>Access Control List extension</title>
+		<version>1.6</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
 		<instdir>extensions/HaloACL</instdir>
 		<description>
-			Protects pages, categories, namespaces and semantic properties.
+			The Access Control List extension provides powerful access control for protecting single wiki pages, articles in categories or namespaces and values of semantic properties. Access can be restricted via a Graphical User Interface for individual users, entire user groups, groups of groups etc. Access rights can also be granted dynamically, i.e. for the duration of certain project.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension</helpurl>
 		<dependencies>

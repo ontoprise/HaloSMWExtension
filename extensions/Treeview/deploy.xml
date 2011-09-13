@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>treeview</id>
+		<title>Semantic Treeview extension</title>
 		<version>1.4.5</version>
         <license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/Treeview</instdir>
 		<description>
-			Treeview which gets populated by semantic data.
+			The Semantic Treeview extension automatically displays a hierarchical view of selected SMW+ elements such as categories, articles or semantically annotated data.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension</helpurl>
 		<dependencies>

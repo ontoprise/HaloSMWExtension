@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>richmedia</id>
+		<title>Rich Media extension</title>
 		<version>1.5.3</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
 		<description>
-                       Store richmedia files in your wiki.
+			The Rich Media extension allows the easy upload and embedding of media files such as documents, images, videos and audio files into the wiki. Media files can be attached to related articles and tagged with an enhanced meta-data set.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>

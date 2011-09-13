@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>deployment</id>
+		<title>Wiki Administration Tool</title>
 		<version>1.6.0</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>deployment</instdir>
 		<description>
-			Simplifies installation and update of extensions
+			The Wiki Administration Tool supports all immportant administration tasks in SMW+. It provides a web based graphical interface for installing, updating and deinstalling the SMW+ Extension Suite as well as bundles and ontologies. It also allows setting up restore points, defining repositories and editing the main textfile with settings for SMW+ (LocalSettings.php).
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>

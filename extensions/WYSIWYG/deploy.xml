@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<id>wysiwyg</id>
+		<title>WYSIWYG extension</title>
 		<version>1.6.0</version>
 		<patchlevel>0</patchlevel>
 		<license>GPL-v2</license>
@@ -9,7 +10,7 @@
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/WYSIWYG</instdir>
 		<description>
-			Use the popular CKEditor for editing Wiki pages in WYSIWYYG mode.
+			The WYSIWYG extension adds a Word-like article creation and editing experience to MediaWiki and SMW+ installations. It includes the well-established toolbar, importing of formated text and tables, a real time spell-checker, undo/redo functions and more. If SMW+ is installed, the WYSIWYG extension also provides buttons for specific functions like the Semantic Toolbar, the Query Interface etc.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WYSIWYG_Extension</helpurl>
 		<dependencies>

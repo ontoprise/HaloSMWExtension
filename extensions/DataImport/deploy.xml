@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>dataimport</id>
+		<title>Data Import extension</title>
 		<version>1.4.4</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/DataImport</instdir>
 		<description>
-			Connects external datasources to your wiki.
+			The Data Import extension integrates external data into the wiki via web services (SOAP or RESTful). Additionally, it allows importing data stored in e.g. CSV files or in email accounts.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>

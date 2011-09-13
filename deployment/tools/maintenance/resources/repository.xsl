@@ -17,38 +17,37 @@
       <th>Version</th>
       <th>Patch Level</th>
       <th>Maintainer</th>
-
       <th>Description</th>
     <th>Dependencies</th>
     <th>License</th>
     </tr>
     <xsl:for-each select="extension">
-    <xsl:sort select="@id"/>
-    <tr>
-      <td>
-        <a>
-          <xsl:attribute name="href"><xsl:value-of select="version/@helpurl"/></xsl:attribute>
-          <xsl:value-of select="@id"/>
-        </a>
-      </td>
-      <td><xsl:value-of select="version/@version"/></td>
-      <td><xsl:value-of select="version/@patchlevel"/></td>
-
-      <td><xsl:value-of select="version/@maintainer"/></td>
-      <td><xsl:value-of select="version/@description"/></td>
-      <td>
-        <xsl:variable name="path">extensions/<xsl:value-of select="@id"/>/deploy.xml</xsl:variable>
-        <xsl:for-each select="document($path)/deploydescriptor/global/dependencies/dependency">
-          <xsl:value-of select="."/> [<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>]
-		<xsl:if test="@optional">(optional)</xsl:if>
- 		<br/>
-        </xsl:for-each>
-      </td>
-       <td>
-        <xsl:variable name="path">extensions/<xsl:value-of select="@id"/>/deploy.xml</xsl:variable>
-        <xsl:value-of select="document($path)/deploydescriptor/global/license"/>
-      </td>
-    </tr>
+	    <xsl:sort select="@title"/>
+	    <tr>
+	      <td>
+	        <a>
+	          <xsl:attribute name="href"><xsl:value-of select="version/@helpurl"/></xsl:attribute>
+	          <xsl:value-of select="@title"/> (<xsl:value-of select="@id"/>
+	        </a>
+	      </td>
+	      <td><xsl:value-of select="version/@version"/></td>
+	      <td><xsl:value-of select="version/@patchlevel"/></td>
+	
+	      <td><xsl:value-of select="version/@maintainer"/></td>
+	      <td><xsl:value-of select="version/@description"/></td>
+	      <td>
+	        <xsl:variable name="path">extensions/<xsl:value-of select="@id"/>/deploy.xml</xsl:variable>
+	        <xsl:for-each select="document($path)/deploydescriptor/global/dependencies/dependency">
+	          <xsl:value-of select="."/> [<xsl:value-of select="@from"/> - <xsl:value-of select="@to"/>]
+			<xsl:if test="@optional">(optional)</xsl:if>
+			<br/>
+	        </xsl:for-each>
+	      </td>
+	       <td>
+	        <xsl:variable name="path">extensions/<xsl:value-of select="@id"/>/deploy.xml</xsl:variable>
+	        <xsl:value-of select="document($path)/deploydescriptor/global/license"/>
+	      </td>
+	    </tr>
     </xsl:for-each>
   </table>
   </body>

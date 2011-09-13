@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>semanticformsinputs</id>
+        <title>Semantic Forms Inputs</title>
         <version>0.4.1</version>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>Stephan Gambke</maintainer>

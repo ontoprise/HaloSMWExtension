@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>semanticresultformats</id>
+        <title>Semantic Result Formats</title>
         <version>1.6.1</version>
         <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
@@ -9,7 +10,7 @@
         <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticResultFormats</instdir>
         <description>
-            Semantic Result Formats provides several new result printer for ASK (and SPARQL).
+            Semantic Result Formats is an extension to MediaWiki and bundles a number of result formats for inline queries. The individual formats such as dynamic bar and pie charts or timelines can be added to the installation independently.
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Result_Formats</helpurl>
         <dependencies>

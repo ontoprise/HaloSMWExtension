@@ -2,13 +2,14 @@
 <deploydescriptor>
     <global>
         <id>scriptmanager</id>
+        <title>Script Manager extension</title>
         <version>1.6.0</version>
         <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/ScriptManager</instdir>
         <description>
-           Javascript managing component. Basis for all Halo plugins.
+			The Script Manager extension organizes JavaScript libraries such that parts of the program code are not stored multiple times. The extension is invisible to common users while improving SMW+ general performance.
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>

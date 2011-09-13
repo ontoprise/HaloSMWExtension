@@ -2,14 +2,15 @@
 <deploydescriptor>
 	<global>
 		<id>linkeddata</id>
+		<title>Linked Data</title>
 		<version>1.3.0</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
-        <maintainer>ontoprise GmbH</maintainer>
+		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
 		<instdir>extensions/LinkedData</instdir>
 		<description>
-			Use Linked Data in your wiki.
+			The Linked Data extension integrates access to data in the Web of Data in SMW+. Data can be imported into the TripleStore and exported via RDF and a SPARQL endpoint.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension</helpurl>
 		<dependencies>
@@ -36,8 +37,8 @@
 		<new>
 			<require name="lod"
 				file="extensions/LinkedData/includes/LOD_Initialize.php" />
-		    <patch file="patch_for_SMW1.5.6.txt" ext="smw" from="1.5.6" to="1.5.6"/>
-            <function name="enableLinkedData">
+			<patch file="patch_for_SMW1.5.6.txt" ext="smw" from="1.5.6" to="1.5.6"/>
+			<function name="enableLinkedData">
 			</function>
 			<script file="maintenance/LOD_Setup.php" />
 		</new>

@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<id>semanticnotifications</id>
+		<title>Semantic Notifications</title>
 		<version>1.3.0</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
@@ -9,7 +10,7 @@
 		<license>GPL-v2</license>
 		<instdir>extensions/SemanticNotifications</instdir>
 		<description>
-			Sends notifications when values of semantic properties change.
+			Semantic Notifications keeps informed about changes in the semantic data of SMW+ and sends notifications via email.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Notifications_Extension</helpurl>
 		<dependencies>

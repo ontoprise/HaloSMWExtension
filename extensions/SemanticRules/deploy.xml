@@ -2,13 +2,13 @@
 <deploydescriptor>
 	<global>
 		<id>semanticrules</id>
+		<title>Rule Knowledge extension</title>
 		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticRules</instdir>
 		<description>
-			Rule provide more expressiveness and more powerful
-			reasoning.
+			The Rule Knowledge extension offers a graphical rule editor for creating logical rules. They allow to state complex interrelations (e.g. between certain property values) and can be exploited for inferring knowledge not given as such in SMW+.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension</helpurl>
 		<license>GPL-v2</license> 

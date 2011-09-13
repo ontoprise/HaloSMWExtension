@@ -2,17 +2,18 @@
 <deploydescriptor>
 	<global>
 		<id>widgets</id>
+		<title>Widgets</title>
 		<version>0.9.2</version>
 		<license>GPL</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>
 		<instdir>extensions/Widgets</instdir>
 		<description>
-                       The Widgets extension allows the creation of raw HTML pages that can be embedded (similarly to templates) in normal wiki pages.
+			The Widgets extension allows the creation of raw HTML pages that can be embedded (similarly to templates) in normal wiki pages.
 		</description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
-	        <!-- empty -->
+			<!-- empty -->
 		</dependencies>
 		<notice>For the correct behavior of the Widgets extension it is necessary 
 to make the sub folder 'compiled_templates' writable for your web server.

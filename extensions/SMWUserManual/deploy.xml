@@ -2,10 +2,13 @@
 <deploydescriptor>
 	<global>
 		<id>smwusermanual</id>
+		<title>User Manual extension</title>
 		<version>1.0.5</version>
 		<instdir>extensions/SMWUserManual</instdir>
 		<vendor>ontoprise GmbH</vendor>
-		<description>This content bundle contains all help articles for the context sensitive help. It also contains some properties to determine which help article to display. These articles are necessary for the User Manual extension.</description>
+		<description>
+			The User Manual extension provides direct access to help and context-sensitive selection of help pages. Users can submit direct feedback (such as bug issues) and ask questions in the online community.
+		</description>
 		<maintainer>ontoprise GmbH</maintainer>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_extension </helpurl>
 		<license>GPL_v2</license>

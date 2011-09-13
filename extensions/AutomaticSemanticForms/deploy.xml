@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>automaticsemanticforms</id>
+		<title>Automatic Semantic Forms</title>
 		<version>1.3.0</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/AutomaticSemanticForms</instdir>
 		<description>
-			Automatically creates Semantic Forms based on the wiki ontology.
+			The Automatic Semantic Forms extension automatically creates Semantic Forms based on the current SMW+ ontology. This eases the addition of semantic data to the wiki especially for non expert users.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
         <license>GPL-v2</license>

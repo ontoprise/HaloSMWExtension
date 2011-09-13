@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>semanticforms</id>
+        <title>Semantic Forms</title>
         <version>2.2.1</version>
         <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
@@ -9,8 +10,8 @@
         <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticForms</instdir>
         <description>
-            Forms for adding and editing semantic data.
-        </description>
+			The Semantic Forms extension is an extension to MediaWiki that lets users add and edit data using forms. It is meant to be used for structured data that has semantic markup. Easy creation of forms can be achieved by using the Automatic Semantic Forms extension.
+		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
         <dependencies>
             <dependency from="1.14.0">mw</dependency>

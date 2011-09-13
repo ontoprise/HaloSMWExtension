@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>ultrapedia</id>
+        <title>Ultrapedia</title>
         <version>1.1.3</version>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH</vendor>

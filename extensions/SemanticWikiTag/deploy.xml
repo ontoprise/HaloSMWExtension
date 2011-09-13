@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <id>semanticwikitag</id>
+        <title>WikiTags</title>
         <version>2.0.0</version>
         <vendor>Vulcan</vendor>
         <maintainer>Vulcan</maintainer>

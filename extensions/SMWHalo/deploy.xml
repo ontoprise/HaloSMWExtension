@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>1.6.0</version>
 		<id>smwhalo</id>
+		<title>Halo extension</title>
+		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>
-			Eases the usage and enhances the benefits of Semantic
-			Mediawiki.
+			The Halo extension provides a core set of functions and user interfaces to MediaWiki or Semantic MediaWiki to improve its usability, data consistency and retrieval-, security- and data processing-capabilities.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual
 		</helpurl>

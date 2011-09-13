@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<id>newusermessage</id>
+		<title>New User Message</title>
 		<version>3.0.0</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>

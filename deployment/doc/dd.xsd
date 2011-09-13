@@ -4,24 +4,7 @@
 
     <include schemaLocation=""></include>
     <element name="deploydescriptor" type="tns:DeployDescriptorType"></element>
-
-	<element name="global" type="tns:GlobalDataType"></element>
-
-	<element name="version" type="int"></element>
-
-	<element name="id" type="string"></element>
-
-	<complexType name="GlobalDataType">
-		<sequence>
-			<element ref="tns:id" maxOccurs="1" minOccurs="1"></element>
-			<element ref="tns:version" maxOccurs="1" minOccurs="1"></element>
-			<element ref="tns:dependencies" maxOccurs="1" minOccurs="0"></element>
-			<element ref="tns:vendor" maxOccurs="1" minOccurs="0"></element>
-			<element ref="tns:installation_dir" maxOccurs="1" minOccurs="1"></element>
-			<element ref="tns:description" maxOccurs="1" minOccurs="0"></element>
-		</sequence>
-	</complexType>
-
+    
 	<complexType name="DeployDescriptorType">
 		<sequence>
 			<element ref="tns:global"></element>
@@ -29,6 +12,24 @@
 			<element ref="tns:wikidumps"></element>
 			<element ref="tns:resources"></element>
 			<element ref="tns:configs"></element>
+		</sequence>
+	</complexType>
+
+	<element name="global" type="tns:GlobalDataType"></element>
+	
+	<element name="version" type="string"></element>
+	<element name="id" type="string"></element>
+	<element name="title" type="string"></element>
+
+	<complexType name="GlobalDataType">
+		<sequence>
+			<element ref="tns:id" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:title" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:version" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:dependencies" maxOccurs="1" minOccurs="0"></element>
+			<element ref="tns:vendor" maxOccurs="1" minOccurs="0"></element>
+			<element ref="tns:installation_dir" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:description" maxOccurs="1" minOccurs="0"></element>
 		</sequence>
 	</complexType>
 

@@ -2,13 +2,14 @@
 <deploydescriptor>
 	<global>
 		<id>arclibrary</id>
+		<title>ARC2 library</title>
 		<version>1.6.0</version>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/ARCLibrary</instdir>
 		<description>
-			Provides the ARC library to other MW extensions.
+			Provides RDF support via the ARC2 library to other MW extensions.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
