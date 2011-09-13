@@ -305,7 +305,7 @@ function &smwfGetAutoCompletionStore() {
 		} else {
 
 			$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
-			break;
+			
 		}
 	}
 	return $smwhgAutoCompletionStore;
