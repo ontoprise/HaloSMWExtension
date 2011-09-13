@@ -152,7 +152,7 @@ class DeployDescriptor {
 	 * Creates/Updates the config element data depending on the given version.
 	 * Can be called as often as needed.
 	 *
-	 * @param mixed string / DFVersion $from Version to update from (if NULL the new config is assumed)
+	 * @param mixed DFVersion $from Version to update from (if NULL the new config is assumed)
 	 * @param int $fromPatchlevel Version to update from (if NULL the patchlevel 0 is assumed)
 	 */
 	public function createConfigElements($from = NULL, $fromPatchlevel = NULL) {
@@ -171,17 +171,17 @@ class DeployDescriptor {
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
-			$fromVersion = $from instanceof DFVersion ? $from : new DFVersion($from);
+			$fromString = $from->toVersionString();
 			if ($fromPatchlevel == NULL || $fromPatchlevel == 0) {
-			 $path = "//update[@from='$from']";
+			 $path = "//update[@from='$fromString']";
 			} else {
-				$path = "//update[@from='$from' and @patchlevel='$fromPatchlevel']";
+				$path = "//update[@from='$fromString' and @patchlevel='$fromPatchlevel']";
 				$update = $this->dom->xpath($path);
 				if (count($update) === 0) {
 					// if not appropriate patchlevel update exists, try without patchlevel constraint
-					$path = "//update[@from='$from']";
+					$path = "//update[@from='$fromString']";
 					$update = $this->dom->xpath($path);
-					if (count($update) === 0 && $fromVersion->isEqual($this->getVersion())) {
+					if (count($update) === 0 && $from->isEqual($this->getVersion())) {
 						// if no explicit update section exists, check if updating the 
 						// currently installed version only to another patchlevel
 						$path = "//update[@from='patchlevel']";
