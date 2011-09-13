@@ -547,7 +547,8 @@ function smwf_om_RelationSchemaData($relationName) {
 				// for all other wikipage parameters, use the range hint as label. If no range hint exists, simply print 'Page'.
 				// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
 				if ($typeValues[$i] instanceof SMWWikiPageValue) {
-					$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, smwfGetSemanticStore()->domainRangeHintProp);
+					$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+					$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeProperty);
 					if (count($rangeHints) > 0) {
 						$dvs = $rangeHints->getDVs();
 						if ($dvs[1] !== NULL) {
@@ -1165,9 +1166,8 @@ function smwf_om_getRelationSchema($relationName) {
 	}
 
 	// Get category names for page values
-	$rangeHints = smwfGetStore()
-	->getPropertyValues($relationTitle,
-	smwfGetSemanticStore()->domainRangeHintProp);
+	$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+	$rangeHints = smwfGetStore()->getPropertyValues($relationTitle,	$domainRangeProperty);
 	$rangeHints = array_values($rangeHints);
 
 	if ($type[0]->getDBkey() == '_rec') {

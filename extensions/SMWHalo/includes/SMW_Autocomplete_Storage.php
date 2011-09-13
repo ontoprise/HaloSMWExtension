@@ -847,7 +847,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		$rangeString = NULL;
 		if ($typeString == '_wpg') {
-			$domainRangeProperty = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+			$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
 			$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), $domainRangeProperty, NULL);
 			foreach($domainRangeAnnotations as $value) {
 

@@ -79,7 +79,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	function testGetInstanceAsTarget() {
 			
 		$exp_values = array("Kai");
-        $propertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+        $propertyDi = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
 		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText("Has Child", SMW_NS_PROPERTY)), $propertyDi);
 		$values = smwfGetAutoCompletionStore()->getInstanceAsTarget("K", $domainRangeAnnotations);
 

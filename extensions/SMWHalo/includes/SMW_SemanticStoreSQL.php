@@ -792,7 +792,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	function getDomainCategories($propertyTitle, $reqfilter = NULL, $bundleID = '') {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
-		$domainRangePropertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+		$domainRangePropertyDi = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
 		$categories = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($propertyTitle), $domainRangePropertyDi, $reqfilter);
 
 		$result = array();
@@ -822,7 +822,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	function getRangeCategories($propertyTitle, $reqfilter = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
         $page = $db->tableName('page');
-        $domainRangePropertyDi = SMWDIProperty::newFromUserLabel(smwfGetSemanticStore()->domainRangeHintProp->getText());
+        $domainRangePropertyDi = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
         $categories = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($propertyTitle), $domainRangePropertyDi, $reqfilter);
 
         $result = array();

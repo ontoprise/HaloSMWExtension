@@ -496,7 +496,8 @@ class AutoCompletionRequester {
 			$propertyTitle = self::getTitleFromContext($userContext);
 			if (!is_null($propertyTitle)) {
 				$property = Title::newFromText($propertyTitle, SMW_NS_PROPERTY);
-				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+				$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeProperty);
 				$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
 					
 			}
@@ -912,8 +913,8 @@ class AutoCompletionHandler {
 							$samples = AutoCompletionRequester::getSyntaxSamples($property->getText());
 							if (!is_null($samples)) return $samples;
 						}
-
-						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+                        $domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeProperty);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
 						$inf = self::setInferred($pages, !$first);
 						$result = self::mergeResults($result, $inf);
