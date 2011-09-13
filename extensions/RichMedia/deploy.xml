@@ -78,10 +78,12 @@
 				from="1.16.1" to="1.16.1" mayfail="Namespace.php" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
 				from="1.16.4" to="1.16.4" mayfail="Namespace.php" />
+			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw"
+				from="1.17.0" to="1.17.0" mayfail="Namespace.php" />
 		</new>
-		<update from="1.5.1">
+		<update from="1.5.2">
 			<patch file="RichMediaPatchForSF2_1_2.txt" />
-			<patch file="RichMediaPatchForMW1_16_4.txt" />
+			<patch file="RichMediaPatchForMW1_17_0.txt" />
 		</update>
 		<uninstall>
 			<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
@@ -102,6 +104,8 @@
 				from="1.16.1" to="1.16.1" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
 				from="1.16.4" to="1.16.4" />
+			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw"
+				from="1.17.0" to="1.17.0" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

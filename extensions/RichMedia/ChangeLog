@@ -8,6 +8,7 @@ VERSION 1.5.2
 
   CHANGES:
 	* Use ResourceLoader for script loading if available
+	* Provided new patch to let Rich Media extension be compatible MW 1.17.0
 
   BUGFIXES:
 	-none-
