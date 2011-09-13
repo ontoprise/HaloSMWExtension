@@ -451,6 +451,11 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	
 		//Querylist Special Page
 		'querylist' => "Saved Queries",
+	
+			
+		//--- fancy table result printer
+		'ftrp_warning' => "Found invalid replace statements with unknown properties:",
+		
 	);
 
 

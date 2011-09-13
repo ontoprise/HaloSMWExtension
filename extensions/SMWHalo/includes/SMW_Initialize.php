@@ -180,6 +180,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPivotTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_PivotTable.php';
+	$wgAutoloadClasses['SMWFancyTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_FancyTable.php';
 	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 
@@ -206,6 +207,7 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
 	$smwgResultFormats['pivottable'] = 'SMWPivotTableResultPrinter';
+	$smwgResultFormats['fancytable'] = 'SMWFancyTableResultPrinter';
 
 	//Set up the IsExtensionInstalled PG
 	$wgHooks['ParserFirstCallInit'][] = 'SMWIsExtensionInstalledPF::registerFunctions';
@@ -642,13 +644,16 @@ function smwfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
 		$parameterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
 		preg_match_all($parameterPattern, $header, $matchesheader);
 
-		$caption = '';
+		$label = '';
+		$wikititle = '';
 		for ($j = 0; $j < count($matchesheader[0]); $j++) {
-			if (trim($matchesheader[1][$j]) == 'caption') {
-				$caption = trim($matchesheader[2][$j]);
+			if (trim($matchesheader[1][$j]) == 'label') {
+				$label = trim($matchesheader[2][$j]);
+			} else if (trim($matchesheader[1][$j]) == 'wikititle') {
+				$wikititle = trim($matchesheader[2][$j]);
 			}
 		}
-		$text = str_replace($matches[0][$i], '<a class="new" href="'.$uri.'">'.$caption.'</a>', $text);
+		$text = str_replace($matches[0][$i], '<a class="new" href="'.$uri.'">'.$label.'</a>', $text);
 			
 	}
 	return true;
@@ -1111,7 +1116,7 @@ function smwfHaloAddJSLanguageScripts() {
 	$ulngScript = '/scripts/Language/SMW_LanguageUserEn.js';
 	$lng = '/scripts/Language/SMW_LanguageUser';
 	if (isset($wgUser)) {
-		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
+		$lng .= ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($smwgHaloIP . $lng)) {
 			$ulngScript = $lng;
 		}

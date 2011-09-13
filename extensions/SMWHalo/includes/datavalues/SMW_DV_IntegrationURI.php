@@ -186,7 +186,8 @@ class SMWURIIntegrationValue extends SMWDataValue {
         if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url == '' ) || ( $this->m_caption == '' ) ) {
             return $this->m_caption;
         } else {
-        	return '<ilink caption="'.htmlspecialchars($this->m_caption).'">'.$url.'</ilink>';
+        	$cap = htmlspecialchars($this->m_caption, ENT_QUOTES);
+        	return "<ilink label=\"$cap\" wikititle=\"$cap\">$url</ilink>";
         }
     }
 

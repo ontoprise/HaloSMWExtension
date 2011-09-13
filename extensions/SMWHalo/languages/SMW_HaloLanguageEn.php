@@ -510,6 +510,8 @@ clicking the big arrows between the columns.',
 	'tabf_nc_icon_title_invalid_value' => "Some annotation values of this instance are invalid.",
 	'tabf_nc_icon_title_save_error' => "Changes for this instance could not be applied because it has been modified by someone else in the meantime.'",
 	
+	//--- fancy table result printer
+	'ftrp_warning' => "Found invalid replace statements with unknown properties:",
 	);
 
 

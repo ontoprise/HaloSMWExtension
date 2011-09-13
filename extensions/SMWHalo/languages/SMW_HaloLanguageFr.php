@@ -472,6 +472,11 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     
     	//Querylist Special Page
 		'querylist' => "Saved Queries",
+    
+	
+	//--- fancy table result printer
+	'ftrp_warning' => "Found invalid replace statements with unknown properties:",
+    
     );
 
 

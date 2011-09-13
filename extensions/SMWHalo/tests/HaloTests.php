@@ -33,7 +33,7 @@ class HaloTests
 		$suite->addTestSuite("TestTSCEQI");
 		$suite->addTestSuite("TestAutocompletionTSCStore");
 		$suite->addTestSuite("TestAutocompletionStore");
-		$suite->addTestSuite("TestQueryPrinters");
+		$suite->addTestSuite("TestQueryPrintersSuite");
 		$suite->addTestSuite("TestWikiJobs");
 		$suite->addTestSuite("TestDataAPI");
 		$suite->addTestSuite("TestQIAjaxAccess");
