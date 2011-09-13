@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>160</version>
 		<id>enhancedretrieval</id>
+		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<license>GPL-v2</license>
@@ -11,23 +11,23 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
 		</helpurl>
 		<dependencies>
-            <depencency from="160">smwhalo</depencency>
+            <depencency from="1.6.0">smwhalo</depencency>
 		</dependencies>
 	</global>
-	<codefiles>
 
+	<codefiles>
 		<file loc="deploy.xml" />
-		<!-- TODO: add all others -->
 	</codefiles>
+
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+
 	<resources>
 		<!-- empty -->
 	</resources>
 
 	<configs>
-
 		<new>
 			<variable name="wgSearchType">
 				<string name="wgSearchType" description="Search engine type">LuceneSearch</string>
@@ -49,7 +49,7 @@
 				file="extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php" />
 			<script file="maintenance/setup.php" params="" />
 		</new>
-		<update from="136">
+		<update from="1.3.6">
 		    <replace>
 		      <search>extensions/UnifiedSearch/OAI/OAIRepo.php</search>
 		      <replacement>extensions/EnhancedRetrieval/OAI/OAIRepo.php</replacement>

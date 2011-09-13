@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>161</version>
-        <patchlevel>0</patchlevel>
         <id>semanticresultformats</id>
+        <version>1.6.1</version>
+        <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
@@ -13,16 +13,22 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Result_Formats</helpurl>
         <dependencies>
-            <dependency from="160">smw</dependency>
+            <dependency from="1.6.0">smw</dependency>
         </dependencies>
     </global>
-    <codefiles></codefiles>
+    
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+    
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+    
     <resources>
         <!-- empty -->
     </resources>
+    
     <configs>
         <precedes ext="smw" />
 
@@ -34,7 +40,7 @@
                 file="extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php" />
         </new>
         <uninstall>
-           
-        </uninstall>
+    		<!-- empty -->
+		</uninstall>
     </configs>
 </deploydescriptor>

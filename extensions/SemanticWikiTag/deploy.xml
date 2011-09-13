@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>200</version>
         <id>semanticwikitag</id>
+        <version>2.0.0</version>
         <vendor>Vulcan</vendor>
         <maintainer>Vulcan</maintainer>
         <instdir>extensions/SemanticWikiTag</instdir>
@@ -11,20 +11,24 @@
         </description>
         <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
         <dependencies>
-            <dependency from="1153">mw</dependency>
-            <dependency from="151">smw</dependency>
+            <dependency from="1.15.3">mw</dependency>
+            <dependency from="1.5.1">smw</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
+    
     <codefiles>
         <!-- empty -->
     </codefiles>
+    
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+    
     <resources>
         <!-- empty -->
     </resources>
+    
     <configs>
         <new>
             <require name="SemanticWikiTag" file="extensions/SemanticWikiTag/includes/SWT_Initialize.php"/>

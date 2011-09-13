@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>0.4.10</version>
 		<id>validator</id>
+		<version>0.4.10</version>
 		<license>GPL-v2</license>
 		<vendor>Ontoprise</vendor>
 		<maintainer>Jeroen De Dauw</maintainer>
@@ -18,9 +18,9 @@
 		</dependencies>
 		<notice></notice>
 	</global>
+
 	<codefiles>
 		<file loc="deploy.xml" />
-		<!-- TODO: add others -->
 	</codefiles>
 
 	<configs>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>150</version>
 		<id>collaboration</id>
+		<version>1.5.0</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,18 +12,20 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
-			<dependency from="156" to="156">smwplus</dependency>
-			<dependency from="092" optional="true">widgets</dependency>
-			<dependency from="153" optional="true">richmedia</dependency>
+			<dependency from="1.5.6" >smwplus</dependency>
+			<dependency from="0.9.2" optional="true">widgets</dependency>
+			<dependency from="1.5.3" optional="true">richmedia</dependency>
 		</dependencies>
 	</global>
+	
 	<codefiles>
 		<file loc="deploy.xml" />
-		<!-- TODO: add others -->
 	</codefiles>
+	
 	<wikidumps>
 		<file loc="import/collaboration.xml"/>
 	</wikidumps>
+	
 	<resources>
 		<file loc="skins/Comment/icons/defaultuser.gif" />
 		<file loc="skins/Comment/icons/good_active.png" />
@@ -32,6 +34,7 @@
 		<file loc="skins/Comment/icons/Comment_icon_crystal.png" />
 		<file loc="skins/Comment/icons/Smw_plus_comment_icon_2_16x16.gif" />
 	</resources>
+	
 	<configs>
 		<new>
 			<require name="ce_init"

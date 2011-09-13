@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>050</version>
         <id>semanticconnector</id>
+        <version>0.5.0</version>
         <vendor>Vulcan</vendor>
         <maintainer>Vulcan</maintainer>
         <instdir>extensions/SemanticConnector</instdir>
@@ -11,45 +11,49 @@
         </description>
         <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Microsoft_Office_Connector</helpurl>
         <dependencies>
-            <dependency from="1160">mw</dependency>
-            <dependency from="151">smw</dependency>
-            <dependency from="208" to="212">semanticforms</dependency>
-            <dependency from="101">scriptmanager</dependency>
-            <dependency from="151" optional="true">smwhalo</dependency>
+            <dependency from="1.16.0">mw</dependency>
+            <dependency from="1.5.1">smw</dependency>
+            <dependency from="2.0.8" to="2.1.2">semanticforms</dependency>
+            <dependency from="1.0.1">scriptmanager</dependency>
+            <dependency from="1.5.1" optional="true">smwhalo</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
+    
     <codefiles>
         <!-- empty -->
     </codefiles>
+    
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+    
     <resources>
         <!-- empty -->
     </resources>
+    
     <configs>
         <new>
             <require name="SemanticConnector" file="extensions/SemanticConnector/includes/SC_Initialize.php"/>
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
-				from="191" to="191" />
+				from="1.9.1" to="1.9.1" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
-				from="200" to="200" />
+				from="2.0.0" to="2.0.0" />
 			<patch file="patch-SF2.0.8.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="2.0.8" to="2.0.8" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
-				from="212" to="212" />
+				from="2.1.2" to="2.1.2" />
 			<script file="maintenance/SC_setup.php" />
         </new>
         <uninstall>
 			<patch file="patch-SF1.9.1.txt" ext="semanticforms"
-				from="191" to="191" />
+				from="1.9.1" to="1.9.1" />
 			<patch file="patch-SF2.txt" ext="semanticforms"
-				from="200" to="200" />
+				from="2.0.0" to="2.0.0" />
 			<patch file="patch-SF2.0.8.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="2.0.8" to="2.0.8" />
 			<patch file="patch-SF2.1.2.txt" ext="semanticforms"
-				from="212" to="212" />
+				from="2.1.2" to="2.1.2" />
 			<script file="maintenance/SC_setup.php"
 				params="--delete" />
         </uninstall>

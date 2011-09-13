@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>160</version>
 		<id>semanticrules</id>
+		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticRules</instdir>
@@ -13,23 +13,26 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension</helpurl>
 		<license>GPL-v2</license> 
 		<dependencies>
-			<dependency from="160">smwhalo</dependency>
-			<dependency from="160">tsc</dependency>
+			<dependency from="1.6.0">smwhalo</dependency>
+			<dependency from="1.6.0">tsc</dependency>
 		</dependencies>
 		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). 
 Please check 
   http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_extension 
 for help.</notice>
 	</global>
+	
 	<codefiles></codefiles>
+	
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+	
 	<resources>
 		<!-- empty -->
 	</resources>
+	
 	<configs>
-		
 		<new>
 			<require name="smwhalo"
 				file="extensions/SemanticRules/includes/SR_Initialize.php" />

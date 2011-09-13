@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>160</version>
-		<patchlevel>0</patchlevel>
 		<id>deployment</id>
+		<version>1.6.0</version>
+		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>deployment</instdir>
@@ -17,20 +17,23 @@
 			<dependency from="1.16.0" to="1.17.9">mw</dependency>
 		</dependencies>
 	</global>
-	<codefiles>
 
+	<codefiles>
+		<!-- empty -->
 	</codefiles>
+	
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+	
 	<resources>
 		<!-- empty -->
 	</resources>
+	
 	<configs>
 		<successor ext="smwhalo"/>
 		<new>
-			<require name="deploymentframework" file="deployment/Deployment.php" />
-				
+			<require name="deploymentframework" file="deployment/Deployment.php" />			
 		</new>
 
 		<update from="patchlevel">
@@ -42,16 +45,15 @@
 			<exclude file="deployment/tools/onto2mwxml/onto2mwxml.sh" />
 		</update>
 
-		<update from="131">
+		<update from="1.3.1">
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/tools/unzip.exe" />
 			<exclude file="deployment/tools/smwadmin.sh" />
 		</update>
 		
-		<update from="130">
+		<update from="1.3.0">
 			<exclude file="deployment/tools/repositories" />
 			<exclude file="deployment/tools/unzip.exe" />
 		</update>
-
 	</configs>
 </deploydescriptor>

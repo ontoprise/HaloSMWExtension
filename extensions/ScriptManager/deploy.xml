@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>160</version>
-        <patchlevel>0</patchlevel>
         <id>scriptmanager</id>
+        <version>1.6.0</version>
+        <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/ScriptManager</instdir>
@@ -12,27 +12,28 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>
-            <dependency from="1120">mw</dependency>
+            <dependency from="1.12.0">mw</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
+
     <codefiles>
-    
+        <!-- empty -->
     </codefiles>
+
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+
     <resources>
         <!-- empty -->
     </resources>
+
     <configs>
         <successor ext="smw"/>
         <new>
-        
             <require name="scriptmanager"
                 file="extensions/ScriptManager/SM_Initialize.php" />
-          
         </new>
-      
-    </configs>
+	</configs>
 </deploydescriptor>

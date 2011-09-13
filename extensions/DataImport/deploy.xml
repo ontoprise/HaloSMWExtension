@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>144</version>
 		<id>dataimport</id>
+		<version>1.4.4</version>
+		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/DataImport</instdir>
@@ -11,36 +12,33 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
-			<dependency from="160">smwhalo</dependency>
-			<dependency from="132" to="140">semanticgardening</dependency>
-			<dependency from="120" optional="true">linkeddata</dependency>
+			<dependency from="1.6.0">smwhalo</dependency>
+			<dependency from="1.3.6">semanticgardening</dependency>
+			<dependency from="1.2.0" optional="true">linkeddata</dependency>
 		</dependencies>
-		<patchlevel>0</patchlevel>
 		<license>GPL v2</license>
 	</global>
+	
 	<codefiles>
-
 		<file loc="deploy.xml" />
-		<!-- TODO: add all others -->
 	</codefiles>
+
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+
 	<resources>
 		<!-- empty -->
 	</resources>
 
 	<configs>
-
 		<new>
 			<require name="di_init"
 				file="extensions/DataImport/includes/DI_Initialize.php" />
-			<function name="enableDataImportExtension">
-			</function>
+			<function name="enableDataImportExtension" />
 			<require name="iai_init"
 				file="extensions/DataImport/IAI/includes/IAI_Initialize.php" />
-			<function name="enableIAI">
-			</function>
+			<function name="enableIAI" />
 			<script file="maintenance/DI_setup.php" params="" />
 		</new>
 		<uninstall>

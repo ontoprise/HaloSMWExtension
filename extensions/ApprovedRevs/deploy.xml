@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>059</version>
-		<patchlevel>0</patchlevel>
 		<id>approvedrevs</id>
+		<version>0.5.9</version>
+		<patchlevel>0</patchlevel>
         <vendor>Yaron Koren</vendor>
         <maintainer>Yaron Koren</maintainer>
 		<instdir>extensions/ApprovedRevs</instdir>
@@ -13,13 +13,15 @@
 		</description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Approved_Revs</helpurl>
 		<dependencies>
-			<dependency from="1140">mw</dependency>
+			<dependency from="1.14.0">mw</dependency>
 		</dependencies>
 		<license>GPL</license>
 	</global>
+
 	<codefiles>
 		<file loc="deploy.xml" />
 	</codefiles>
+
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
@@ -35,6 +37,7 @@
 		</new>
 
 		<uninstall>
+			<!-- empty -->
 		</uninstall>
 	</configs>
 </deploydescriptor>

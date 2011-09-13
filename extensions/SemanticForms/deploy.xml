@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>221</version>
-        <patchlevel>0</patchlevel>
         <id>semanticforms</id>
+        <version>2.2.1</version>
+        <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH / Yaron Koren</vendor>
         <maintainer>ontoprise GmbH</maintainer>
@@ -13,17 +13,19 @@
         </description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
         <dependencies>
-            <dependency from="1140" to="1179">mw</dependency>
-            <dependency from="142" to="160">smw</dependency>
+            <dependency from="1.14.0">mw</dependency>
+            <dependency from="1.4.2">smw</dependency>
         </dependencies>
     </global>
+    
     <codefiles>
 		<file loc="deploy.xml" />
-        <!-- TODO: add all others -->
     </codefiles>
+
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+
     <resources>
         <!-- empty -->
     </resources>
@@ -38,13 +40,13 @@
             <patch file="patches/SMWHalo/patch_for_SF2.1.2.txt" />
             <patch file="patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
         </new>
-        <update from="208">
+        <update from="2.0.8">
             <patch file="patch.txt" />
             <patch file="patches/HaloACL/patch_for_SF_2.1.2.txt" />
             <patch file="patches/SMWHalo/patch_for_SF2.1.2.txt" />
             <patch file="patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
         </update>
-         <update from="191">
+         <update from="1.9.1">
             <patch file="patch.txt" />
          </update>
          <uninstall>

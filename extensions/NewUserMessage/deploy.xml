@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>300</version>
 		<id>newusermessage</id>
+		<version>3.0.0</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
                <maintainer>Siebrand A. Dunkley</maintainer>
@@ -12,28 +12,29 @@
         </description>
                <helpurl>http://www.mediawiki.org/wiki/Extension:NewUserMessage</helpurl>
 		<dependencies>
-            <dependency from="1110">mw</dependency>
+            <dependency from="1.11.0">mw</dependency>
 		</dependencies>
 		<notice></notice>
 	</global>
+	
 	<codefiles>
-		<!-- external codes files -->
-		<!-- TODO: add others in skins/commons/images/icons -->
+		<!-- empty -->
 	</codefiles>
+
 	<wikidumps>
-
+		<!-- empty -->
 	</wikidumps>
-	<resources>
 
+	<resources>
+		<!-- empty -->
 	</resources>
 
 	<configs>
 		<new>
 			<require name="num_init" file="extensions/NewUserMessage/NewUserMessage.php" />
 		</new>
-
 		<uninstall>
-
+			<!-- empty -->
 		</uninstall>
 	</configs>
 </deploydescriptor>

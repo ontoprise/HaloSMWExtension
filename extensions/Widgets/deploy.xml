@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>092</version>
 		<id>widgets</id>
+		<version>0.9.2</version>
 		<license>GPL</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>
@@ -12,6 +12,7 @@
 		</description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Widgets</helpurl>
 		<dependencies>
+	        <!-- empty -->
 		</dependencies>
 		<notice>For the correct behavior of the Widgets extension it is necessary 
 to make the sub folder 'compiled_templates' writable for your web server.
@@ -19,21 +20,24 @@ Please check
   http://www.mediawiki.org/wiki/Extension:Widgets#Configuration
 for more detailed instructions about this.</notice> 
 	</global>
+
 	<codefiles>
 		<file loc="deploy.xml" />
-		<!-- TODO: add others -->
 	</codefiles>
+
 	<!--<wikidumps>
 		<file loc="widgets.xml"/>
 	</wikidumps>-->
+
 	<resources>
+        <!-- empty -->
 	</resources>
+
 	<configs>
 		<new>
 			<require name="widget_init"
 				file="extensions/Widgets/Widgets.php" />
 			<php name="group_permissions">$wgGroupPermissions['sysop']['editwidgets']=true;</php>
-			
 		</new>
 	</configs>
 </deploydescriptor>

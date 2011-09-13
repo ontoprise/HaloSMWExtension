@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>161</version>
-        <patchlevel>0</patchlevel>
         <id>smw</id>
+        <version>1.6.1</version>
+        <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
         <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Enhances the wiki with semantic annotations.</description>
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
-            <dependency from="1154" to="1179">MW</dependency>
-            <dependency from="040" >validator</dependency>
+            <dependency from="1.15.4" to="1.17.9">MW</dependency>
+            <dependency from="0.4.0" >validator</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
+    
     <codefiles>
         <file loc="deploy.xml" />
-    
     </codefiles>
-    <wikidumps>
-        
-    </wikidumps>
-    <resources>
     
+    <wikidumps>
+		<!-- empty -->    
+    </wikidumps>
+    
+    <resources>
+		<!-- empty -->
     </resources>
-    <configs>
 
+    <configs>
         <new>
             <require name="smw"
                 file="extensions/SemanticMediaWiki/SemanticMediaWiki.php" />
@@ -36,7 +38,6 @@
                 </string>
             </function>
             <script file="maintenance/SMW_setup.php"/>
-            
         </new>
         <uninstall>
             <script file="maintenance/SMW_setup.php" params="--delete"/>

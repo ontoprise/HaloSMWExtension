@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>160</version>
 		<id>arclibrary</id>
+		<version>1.6.0</version>
+		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/ARCLibrary</instdir>
@@ -11,19 +12,19 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
-			<dependency from="1160">mw</dependency>
+			<dependency from="1.16.0">mw</dependency>
 		</dependencies>
-		<patchlevel>0</patchlevel>
 		<license>GPL v2</license>
 	</global>
+	
 	<codefiles>
-
 		<file loc="deploy.xml" />
-		<!-- TODO: add all others -->
 	</codefiles>
+	
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+	
 	<resources>
 		<!-- empty -->
 	</resources>
@@ -37,7 +38,7 @@
 			</function>
 		</new>
 		<uninstall>
-
+			<!-- empty -->
 		</uninstall>
 	</configs>
 </deploydescriptor>

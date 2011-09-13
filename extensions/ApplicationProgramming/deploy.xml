@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>160</version>
 		<id>ApplicationProgramming</id>
+		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
         <license>GPL-v2, MIT, Public Domain</license>
@@ -12,19 +12,23 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
 		<dependencies>
-            <dependency from="1151">mw</dependency>
+            <dependency from="1.15.1">mw</dependency>
         </dependencies>
 	</global>
+	
 	<codefiles>
 		<file loc="deploy.xml" />
 		<!-- TODO: add others -->
 	</codefiles>
+
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
+
 	<resources>
 		<!-- empty -->
 	</resources>
+
 	<configs>
 	    <successor ext="smw"/>
 		<new>

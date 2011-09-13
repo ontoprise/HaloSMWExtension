@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>144</version>
 		<id>treeview</id>
+		<version>1.4.5</version>
         <license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,18 +12,20 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:TreeView_Extension</helpurl>
 		<dependencies>
-			<dependency from="160">smwhalo</dependency>
-            <dependency from="156" to="156">Smwplus</dependency>
+			<dependency from="1.6.0">smwhalo</dependency>
+            <dependency from="1.5.6">smwplus</dependency>
 		</dependencies>
 		<notice/>
 	</global>
+
 	<codefiles>
 		<file loc="deploy.xml" />
-		<!-- TODO: add all others -->
 	</codefiles>
+
 	<wikidumps>
 		<file loc="treeview_sandbox.xml" />
 	</wikidumps>
+
 	<resources>
 		<!-- empty -->
 	</resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>153</version>
 		<id>richmedia</id>
+		<version>1.5.3</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
@@ -12,17 +12,19 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
-			<dependency from="212">semanticforms</dependency>
-			<dependency from="156" to="156">smwplus</dependency>
+			<dependency from="2.1.2">semanticforms</dependency>
+			<dependency from="1.5.6">smwplus</dependency>
 		</dependencies>
 	</global>
+
 	<codefiles>
-		<!-- external codes files -->
-		<!-- TODO: add others in skins/commons/images/icons-->
+		<!-- empty -->
 	</codefiles>
+
 	<wikidumps>
 		<file loc="import/richmedia.xml" />
 	</wikidumps>
+
 	<resources>
 		<file loc="skins/vcard.gif" />
 		<file loc="skins/Calendar.gif" />
@@ -53,53 +55,52 @@
 			</variable>
 			<require name="rm_init"
 				file="extensions/RichMedia/includes/RM_Initialize.php" />
-			<function name="enableRichMediaExtension">
-			</function>
+			<function name="enableRichMediaExtension" />
 			<require name="webdav_init"
 				file="extensions/RichMedia/includes/WebDAV/WD_Initialize.php" />
 
 			<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
-				from="190" to="190" />
+				from="1.9.0" to="1.9.0" />
 			<patch file="RichMediaPatchForSF1_9_1.txt" ext="semanticforms"
-				from="191" to="191" />
+				from="1.9.1" to="1.9.1" />
 			<patch file="RichMediaPatchForSF2_0.txt" ext="semanticforms"
-				from="200" to="200" />
+				from="2.0.0" to="2.0.0" />
 			<patch file="RichMediaPatchForSF2_0_8.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="2.0.8" to="2.0.8" />
 			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
-				from="212" to="212" />
+				from="2.1.2" to="2.1.2" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
-				from="1153" to="1153" />
+				from="1.15.3" to="1.15.3" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
-				from="1160" to="1160" mayfail="Namespace.php" />
+				from="1.16.0" to="1.16.0" mayfail="Namespace.php" />
 			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw"
-				from="1161" to="1161" mayfail="Namespace.php" />
+				from="1.16.1" to="1.16.1" mayfail="Namespace.php" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
-				from="1164" to="1164" mayfail="Namespace.php" />
+				from="1.16.4" to="1.16.4" mayfail="Namespace.php" />
 		</new>
-		<update from="151">
+		<update from="1.5.1">
 			<patch file="RichMediaPatchForSF2_1_2.txt" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" />
 		</update>
 		<uninstall>
 			<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
-				from="190" to="190" />
+				from="1.9.0" to="1.9.0" />
 			<patch file="RichMediaPatchForSF1_9_1.txt" ext="semanticforms"
-				from="191" to="191" />
+				from="1.9.1" to="1.9.1" />
 			<patch file="RichMediaPatchForSF2_0.txt" ext="semanticforms"
-				from="200" to="200" />
+				from="2.0.0" to="2.0.0" />
 			<patch file="RichMediaPatchForSF2_0_8.txt" ext="semanticforms"
-				from="208" to="208" />
+				from="2.0.8" to="2.0.8" />
 			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
-				from="212" to="212" />
+				from="2.1.2" to="2.1.2" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
-				from="1153" to="1153" />
+				from="1.15.3" to="1.15.3" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
-				from="1160" to="1160" />
+				from="1.16.0" to="1.16.0" />
 			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw"
-				from="1161" to="1161" />
+				from="1.16.1" to="1.16.1" />
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
-				from="1164" to="1164" />
+				from="1.16.4" to="1.16.4" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

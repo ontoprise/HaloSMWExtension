@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>041</version>
         <id>semanticformsinputs</id>
-        <vendor>Ontoprise GmbH</vendor>
+        <version>0.4.1</version>
+        <vendor>ontoprise GmbH</vendor>
         <maintainer>Stephan Gambke</maintainer>
         <license>GPL-v2</license>
         <instdir>extensions/SemanticFormsInputs</instdir>
@@ -12,15 +12,18 @@
         </description>
         <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Inputs_extension</helpurl>
         <dependencies>
-            <dependency from="208">semanticforms</dependency>
+            <dependency from="2.0.8">semanticforms</dependency>
         </dependencies>
     </global>
+    
     <codefiles>
         <!-- TODO: add all others -->
     </codefiles>
+    
     <wikidumps>
         <!-- empty -->
     </wikidumps>
+    
     <resources>
         <!-- empty -->
     </resources>
