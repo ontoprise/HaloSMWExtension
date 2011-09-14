@@ -575,6 +575,8 @@ CKEDITOR.customprocessor.prototype =
         else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         
+        mediaWiki.log('before fix: \n' + data);
+        
         if (CKEDITOR.env.ie) {
             data = this.ieFixHTML(data);
         }  
@@ -594,8 +596,9 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/class=([^\"\'].*?)(?=[\s*|>])/gi, 'class="$1" ');
 
         data = data.replace(/alt=([^\"\'\s].*?)(?=[\s*|>])/gi, 'alt="$1" ');
-        // when inserting data with Excel an unmatched <col> element exists, thus remove it
-        data = data.replace(/<col[^>]*>/gi, '' );
+        
+        // when inserting data from Excel a mismatched <col> or <colgroup> element exists -so  just remove it
+        data = data.replace(/<\/?col|colgroup[^>]*>/gi, '' );
         
         //fix for invalid entity error in XML parser
         data = data.replace(/&nbsp;/gi, '&#xA0;');       
@@ -626,11 +629,12 @@ CKEDITOR.customprocessor.prototype =
             xmlDoc.async="false";
             xmlDoc.loadXML(data);
             
-            //IE xml validation. Uncomment for debugging purposes
-            //xmlDoc.validateOnParse = true;
-            //if (xmlDoc.parseError.errorCode != 0) {
-                //alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
-            //}  
+            //IE xml validation. Prints errors to MediaWiki log
+            xmlDoc.validateOnParse = true;
+            if (xmlDoc.parseError.errorCode != 0) {
+                var msg = xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data;
+                mediaWiki.log(msg);
+            }  
         }       
         
         return xmlDoc;

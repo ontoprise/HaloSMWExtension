@@ -189,49 +189,63 @@ CKEDITOR.plugins.add( 'mediawiki',
                 {
                     var eClassName = element.attributes['class'] || '';
                     var className = null;
+                    var result;
                     switch ( eClassName ){
                         case 'fck_mw_source' :
                             className = 'FCK__MWSource';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_ref' :
-                            if (className == null)
-                                className = 'FCK__MWRef';
+                            className = 'FCK__MWRef';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_references' :
-                            if ( className == null )
-                                className = 'FCK__MWReferences';
+                            className = 'FCK__MWReferences';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_template' :
-                            if ( className == null ) //YC
-                                className = 'FCK__MWTemplate'; //YC
+                            className = 'FCK__MWTemplate'; //YC
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_magic' :
-                            if ( className == null )
-                                className = 'FCK__MWMagicWord';
-                        case 'fck_mw_special' : //YC
-                            if ( className == null )
-                                className = 'FCK__MWSpecial';
+                            className = 'FCK__MWMagicWord';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
+                        case 'fck_mw_special' :
+                            className = 'FCK__MWSpecial';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_nowiki' :
-                            if ( className == null )
-                                className = 'FCK__MWNowiki';
+                            className = 'FCK__MWNowiki';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_html' :
-                            if ( className == null )
-                                className = 'FCK__MWHtml';                 
+                            className = 'FCK__MWHtml';      
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_gallery' :
-                            if ( className == null )
-                                className = 'FCK__MWGallery';                       
+                            className = 'FCK__MWGallery';                       
+                            result = editor.createFakeParserElement( element, className, 'span' );
                         case 'fck_mw_signature' :
-                            if ( className == null )
-                                className = 'FCK__MWSignature';
+                            className = 'FCK__MWSignature';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_smw_query' :
-                            if ( className == null )
-                                className = 'FCK__SMWquery';
+                            className = 'FCK__SMWquery';
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;                            
                         case 'fck_smw_webservice' :
-                            if ( className == null )
-                                className = 'FCK__SMWwebservice'
+                            className = 'FCK__SMWwebservice'
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_smw_rule' :
-                            if ( className == null )
-                                className = 'FCK__SMWrule'
-                            if ( className )
-                                return editor.createFakeParserElement( element, className, 'span' );
+                            className = 'FCK__SMWrule'
+                            result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
+                        default:
                             break;
                     }
+                    return result;
                 }
             }
         };
@@ -350,7 +364,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
         editor.addCommand( 'MWSignature', signatureCommand);    
         
-        // if SMWHalo is not installed use original image and link dialogs
+        // if SMWHalo is installed use smw image and link dialogs
         if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
             editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
             CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
@@ -433,7 +447,52 @@ CKEDITOR.plugins.add( 'mediawiki',
                 	
             
                 
-        })
+        });
+        
+var createXMLHttpRequest = function()
+	{
+		// In IE, using the native XMLHttpRequest for local files may throw
+		// "Access is Denied" errors.
+		if ( !CKEDITOR.env.ie || location.protocol != 'file:' )
+			try { return new XMLHttpRequest(); } catch(e) {}
+
+		try { return new ActiveXObject( 'Msxml2.XMLHTTP' ); } catch (e) {}
+		try { return new ActiveXObject( 'Microsoft.XMLHTTP' ); } catch (e) {}
+
+		return null;
+	};
+        
+        
+//override the ckeditor ajax call method with one which does POST requests        
+CKEDITOR.ajax.loadPost = function( url, params, callback )
+    {
+            var async = !!callback;
+
+            var xhr = createXMLHttpRequest();
+
+            if ( !xhr )
+                    return null;
+
+            xhr.open( 'POST', url, async );
+
+            if ( async )
+            {
+                    // TODO: perform leak checks on this closure.
+                    /** @ignore */
+                    xhr.onreadystatechange = function()
+                    {
+                            if ( xhr.readyState == 4 )
+                            {
+                                    callback( xhr.responseText );
+                                    xhr = null;
+                            }
+                    };
+            }
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            xhr.send(params);
+
+            return async ? '' : xhr.responseText;
+    };
         
 //add method loadXmlHalo to CKEDITOR.ajax for calling server side funcrions over ajax
 //   func_name - the name of the server side function to call. Must be registered in $wgAjaxExportList
@@ -443,15 +502,13 @@ CKEDITOR.plugins.add( 'mediawiki',
 CKEDITOR.ajax.loadHalo = function(func_name, args, target){
     //build url
     var uri = wgServer + wgScriptPath + "/index.php?action=ajax";
-    uri += '&rs=' + encodeURIComponent(func_name);
+    var params = '&rs=' + encodeURIComponent(func_name);
     for(i = 0; i < args.length; i++){
-        uri += '&rsargs[]=' + encodeURIComponent(args[i]);
-    }
-    
-    //call CKEDITOR.loadXml
-    return CKEDITOR.ajax.load(uri, target);
-};
+        params += '&rsargs[]=' + encodeURIComponent(args[i]);
+    }    
 
+    return CKEDITOR.ajax.loadPost(uri, params, target);
+};
  }
 });
 
@@ -483,8 +540,8 @@ CKEDITOR.customprocessor.prototype =
         // transform only if
         // 1. there are no html attributes in data string starting with "_fck" or "_cke"
         // 2. the data string doesn't start with "<p>"
-        // 3. the data string doesn't contain html tags except for <span>, <br>, <p>, <sup|ul|ol|li|u|div> (those are also used in wikitext-html) 
-        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|ul|ol|li|u)[^\/>]*\/?>/ig, '');
+        // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
+        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule)[^\/>]*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
         if (data.indexOf('<p>') != 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
             data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);          
@@ -518,11 +575,13 @@ CKEDITOR.customprocessor.prototype =
         else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         
+        mediaWiki.log('before fix: \n' + data);
+        
         if (CKEDITOR.env.ie) {
             data = this.ieFixHTML(data);
-        }       
-
-        data = '<body xmlns:x="http://excel">' + data.htmlEntities()+ '</body>';
+        }  
+//        data = '<body xmlns:x="http://excel">' + data.htmlEntities()+ '</body>';
+        data = '<body xmlns:x="http://excel">' + data + '</body>';
         // fix <img> tags
         data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
         // fix <hr> and <br> tags
@@ -537,9 +596,13 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/class=([^\"\'].*?)(?=[\s*|>])/gi, 'class="$1" ');
 
         data = data.replace(/alt=([^\"\'\s].*?)(?=[\s*|>])/gi, 'alt="$1" ');
-        // when inserting data with Excel an unmatched <col> element exists, thus remove it
-        data = data.replace(/<col[^>]*>/gi, '' );
-		
+        
+        // when inserting data from Excel a mismatched <col> or <colgroup> element exists -so  just remove it
+        data = data.replace(/<\/?col|colgroup[^>]*>/gi, '' );
+        
+        //fix for invalid entity error in XML parser
+        data = data.replace(/&nbsp;/gi, '&#xA0;');       
+	
         var rootNode = this._getNodeFromHtml( data );
         // rootNode is <body>.
         // Normalize the document for text node processing (except IE - #1586).
@@ -552,27 +615,48 @@ CKEDITOR.customprocessor.prototype =
         this._AppendNode( rootNode, stringBuilder, '' );
         return stringBuilder.join( '' ).Trim();
     },
-
-    _getNodeFromHtml : function( data ) {
-        var xmlDoc;
-        if (window.DOMParser) {
-            parser = new DOMParser();
-            xmlDoc = parser.parseFromString(data,"text/xml");   
+    
+    loadXMLString: function(data){
+        var xmlDoc = '';
+        if (window.DOMParser)
+        {
+            parser=new DOMParser();
+            xmlDoc=parser.parseFromString(data,"text/xml");
         }
         else // Internet Explorer
         {
-            data = this.ieFixHTML(data);
-
-            xmlDoc = new ActiveXObject('Microsoft.XMLDOM');            
-            xmlDoc.async = false;
+            xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async="false";
             xmlDoc.loadXML(data);
             
-            //Xml validation. Uncomment and change to true for debugging purposes
-//            xmlDoc.validateOnParse = false;
-//            if (xmlDoc.parseError.errorCode != 0) {
-//               alert(xmlDoc.parseError.reason + ':\n' + xmlDoc.xml);
-//            }  
+            //IE xml validation. Prints errors to MediaWiki log
+            xmlDoc.validateOnParse = true;
+            if (xmlDoc.parseError.errorCode != 0) {
+                var msg = xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data;
+                mediaWiki.log(msg);
+            }  
+        }       
+        
+        return xmlDoc;
+    },
+    
+    loadXMLDoc : function( url ) {
+        var xhttp;
+        if (window.XMLHttpRequest)
+        {
+            xhttp=new XMLHttpRequest();
         }
+        else
+        {
+            xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xhttp.open("GET", url, false);
+        xhttp.send();
+        return xhttp.responseXML;
+    },
+
+    _getNodeFromHtml : function( data ) {
+        var xmlDoc = this.loadXMLString(data);          
         var rootNode = xmlDoc.documentElement;
         return rootNode;
     },
@@ -1096,14 +1180,29 @@ CKEDITOR.customprocessor.prototype =
 
                                     case 'fck_mw_template' :
                                     case 'fck_smw_query' :
-                                        var inner= this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n');
+                                        var inner= this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/gi,'\r\n');
                                         if (inner == '{{!}}')
                                             stringBuilder.push( '\n' );
                                         stringBuilder.push( inner );
                                         return;
                                     case 'fck_smw_webservice' :
                                     case 'fck_smw_rule' :
-                                        stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
+                                        stringBuilder.push('<rule');
+                                        var ruleName = htmlNode.getAttribute('name');
+                                        if(ruleName)
+                                            stringBuilder.push(' name="' + ruleName.htmlDecode() + '"');
+                                        var ruleType = htmlNode.getAttribute('type');
+                                        if(ruleType)
+                                            stringBuilder.push(' type="' + ruleType.htmlDecode() + '"');
+                                        var ruleFormula = htmlNode.getAttribute('formula');
+                                        if(ruleFormula)
+                                            stringBuilder.push(' formula="' + ruleFormula.htmlDecode() + '"');
+                                        var variableSpec = htmlNode.getAttribute('variablespec');
+                                        if(variableSpec)
+                                            stringBuilder.push(' variablespec="' + variableSpec.htmlDecode() + '"');
+                                        stringBuilder.push('>');
+                                        stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/gi,'\r\n') );
+                                        stringBuilder.push('</rule>');
                                         return;
                                     case 'fck_mw_magic' :
                                         var magicWord = htmlNode.getAttribute( '_fck_mw_tagname' ) || '';
@@ -1455,6 +1554,12 @@ CKEDITOR.customprocessor.prototype =
             var attributes = element.attributes;
             var realHtml = attributes && attributes.getNamedItem('data-cke-realelement');
             var realNode = realHtml && decodeURIComponent( realHtml.nodeValue );
+            
+            //IE creates invalid html, so we have to fix it before attempting to load it into xml dom
+            if (CKEDITOR.env.ie) {
+                realNode = this.ieFixHTML(realNode);
+            }  
+            
             var realElement = realNode && this._getNodeFromHtml( realNode );
 
             // If we have width/height in the element, we must move it into
