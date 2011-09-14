@@ -15,3 +15,66 @@ Index: includes/AjaxDispatcher.php
  					}
  
  					$result->sendHeaders();
+Index: includes/parser/ParserOptions.php
+===================================================================
+--- includes/parser/ParserOptions.php	(revision 11800)
++++ includes/parser/ParserOptions.php	(working copy)
+@@ -34,6 +34,10 @@
+ 	var $mTemplateCallback;          # Callback for template fetching
+ 	var $mEnableLimitReport;         # Enable limit report in an HTML comment on output
+ 	var $mTimestamp;                 # Timestamp used for {{CURRENTDAY}} etc.
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
++	var $mParsingContext;           # Reason/context why the parser has been invoked
++	/*op-patch|TS|2009-06-19|end*/
+ 	var $mExternalLinkTarget;        # Target attribute for external links
+ 	var $mMath;                      # User math preference (as integer)
+ 	var $mUserLang;                  # Language code of the User language.
+@@ -80,7 +84,12 @@
+ 	function getIsSectionPreview()              { return $this->mIsSectionPreview; }
+ 	function getIsPrintable()                   { $this->optionUsed('printable');
+ 	                                              return $this->mIsPrintable; }
+-
++	                                              
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
++	function getParsingContext()                { return $this->mParsingContext; }
++	/*op-patch|TS|2009-06-19|end*/
++	                                              
+ 	function getSkin( $title = null ) {
+ 		if ( !isset( $this->mSkin ) ) {
+ 			$this->mSkin = $this->mUser->getSkin( $title );
+@@ -142,7 +151,11 @@
+ 	function setIsPreview( $x )                 { return wfSetVar( $this->mIsPreview, $x ); }
+ 	function setIsSectionPreview( $x )          { return wfSetVar( $this->mIsSectionPreview, $x ); }
+ 	function setIsPrintable( $x )               { return wfSetVar( $this->mIsPrintable, $x ); }
+-
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
++	function setParsingContext($pc)             { return wfSetVar( $this->mParsingContext, $pc); }
++	/*op-patch|TS|2009-06-19|end*/
++	
+ 	/**
+ 	 * Extra key that should be present in the parser cache key.
+ 	 */
+Index: includes/Article.php
+===================================================================
+--- includes/Article.php	(revision 11800)
++++ includes/Article.php	(working copy)
+@@ -4410,8 +4410,15 @@
+ 		}
+ 
+ 		$time = - wfTime();
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
++		$parserOptions->setParsingContext("Main article");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$this->mParserOutput = $wgParser->parse( $text, $this->mTitle,
+ 			$parserOptions, true, true, $this->getRevIdFetched() );
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		$parserOptions->setParsingContext("");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$time += wfTime();
+ 
+ 		# Timing hack
+ 	 
