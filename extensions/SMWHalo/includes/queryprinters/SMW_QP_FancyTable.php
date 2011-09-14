@@ -178,11 +178,11 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * print requests e.g. 
 	 * $propertyPrintRequestMap['SomeProperty'] = '1::SomeProperty::'
 	 * 
-	 * @param {SMWHaloQueryResult} $res
+	 * @param {SMWQueryResult} $res
 	 * 		The query result
 	 * @return {array<string> => <string>}
 	 */
-	private function createPropertyPrintRequestMap(SMWHaloQueryResult $res) {
+	private function createPropertyPrintRequestMap(SMWQueryResult $res) {
 		$propertyPrintRequestMap = array();
 		$prs = $res->getPrintRequests();
 		foreach ($prs as $pr) {
@@ -202,7 +202,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	
 	/**
 	 * Creates a map of print requests that are replaced by other print requests
- 	 * @param {SMWHaloQueryResult} $res
+ 	 * @param {SMWQueryResult} $res
 	 * 		The query result
 	 * @param $replacements
 	 * 		A map from property names that are replaced to their replacement 
@@ -212,7 +212,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * @return {array} 
 	 * 		A map of print requests and their replacements
 	 */
-	private function createPrintRequestReplacementMap(SMWHaloQueryResult $res,
+	private function createPrintRequestReplacementMap(SMWQueryResult $res,
 													  array $replacements,
 													  array $propertyPrintRequestMap) {
 		$prReplacements = array();
@@ -289,7 +289,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * @return string
 	 * 		HTML of the column headers
 	 */
-	private function createTableColumnHeaders(SMWHaloQueryResult $res, $outputmode, array $prReplacements) {
+	private function createTableColumnHeaders(SMWQueryResult $res, $outputmode, array $prReplacements) {
 		$result = '';
 		if ( $this->mShowHeaders != SMW_HEADERS_HIDE ) { // building headers
 			$result .= "\t<tr>\n";
@@ -329,7 +329,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * @return string
 	 * 		HTML of the table's body
 	 */
-	private function createTableBody(SMWHaloQueryResult $res, $outputmode, array $prReplacements) {
+	private function createTableBody(SMWQueryResult $res, $outputmode, array $prReplacements) {
 		$result = '';
 		// print all result rows
 		while ( $row = $res->getNext() ) {
@@ -345,7 +345,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * @param $outputmode
 	 * 		The output mode
 	 */
-	private function createTableFooter(SMWHaloQueryResult $res, $outputmode) {
+	private function createTableFooter(SMWQueryResult $res, $outputmode) {
 		$result = '';
 		if ( $this->linkFurtherResults( $res ) ) {
 			$link = $res->getQueryLink();
@@ -442,9 +442,9 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 								? $rowArray[$prReplacements[$fpr->getHash()]]
 								: false;
 		$objIdx = 0;
-		$field->resetContentArray();
 		// Iterate over all objects in the field
-		while ( ( $dv = $field->getNextDataValue() ) !== false ) {
+		$content = $rowArray[$fpr->getHash()];
+		foreach ($content as $dv) {
 			$sortKey = '';
 			
 			if ( $objIdx === 0 ) {
