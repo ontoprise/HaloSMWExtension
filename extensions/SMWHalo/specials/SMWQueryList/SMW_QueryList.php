@@ -11,15 +11,18 @@ class SMWQueryList extends SpecialPage {
 	 * Constructor
 	 */
 	function __construct() {
-		parent::__construct( 'QueryList' );
+		parent::__construct( 'QueryList' );           
 	}
 
 	/*
 	 * Create the special page HTML
 	 */
 	function execute( $query ) {
-		global $wgOut;
-		
+		global $wgOut, $wgHooks;		
+                
+                //add resource modules
+                $this->addResourceModules();
+                
 		//todo: Use Language
 		
 		$html = '';
@@ -29,14 +32,14 @@ class SMWQueryList extends SpecialPage {
 		$html .= '<input id="ql_filterstring-1" style="display: none" type="text" size="50" currentValue=""/> ';
 		$html .= '<input id="ql_filterstring-3" style="display: none" type="text" size="50" class="wickEnabled" constraints="ask: [[:Category:+]]" currentValue=""/> ';
 		$html .= '<input id="ql_filterstring-4" style="display: none" type="text" size="50" class="wickEnabled" constraints="ask: [[:Property:+]]" currentValue=""/> ';
-		$html .= '<select id="ql_filtercol" size="1" currentValue="0" onchange="queryList_updateAC()">';
+		$html .= '<select id="ql_filtercol" size="1" currentValue="0" onchange="window.queryList_updateAC()">';
 		$html .= '<option value="0">All</optionY';
 		$html .= '<option value="1">Name</option>';
 		$html .= '<option value="2">Page</option>';
 		$html .= '<option value="3">Categories</option>';
 		$html .= '<option value="4">Properties</option>';
 		$html .= '</select>';
-		$html .= '  <input type="button" value="Ok" onclick="queryList_filter()"/>';
+		$html .= '  <input type="button" value="Ok" onclick="window.queryList_filter()"/>';
 		$html .= '<br/><br/>';
 		
 		$queryMetadata = new SMWQMQueryMetadata();
@@ -96,22 +99,10 @@ class SMWQueryList extends SpecialPage {
 		
 		$html .= '</table>';
 		
-		global $smwgScriptPath;
-		$html .= '<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>';
-		
-		//todo: Deal with deploy version script
-		global $smwgHaloScriptPath;
-		$html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/QueryList/querylist.js"></script>';
-		
+                $wgOut->addModules(array('ext.smwhalo.queryList'));
 		$wgOut->addHTML($html);
 		
 		return true;
 	}
-	
-	
-	
-	
-	
-	
 	
 }

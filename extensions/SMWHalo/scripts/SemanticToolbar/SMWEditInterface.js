@@ -288,3 +288,5 @@ SMWEditInterface.prototype ={
         setOutputBuffer: function() {},
         flushOutputBuffer: function() {}
 };
+
+window.SMWEditInterface = SMWEditInterface;

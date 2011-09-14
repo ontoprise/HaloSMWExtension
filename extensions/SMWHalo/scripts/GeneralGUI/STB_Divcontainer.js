@@ -23,7 +23,7 @@
  *  framework for menu container handling of STB++
  */
 
-var DivContainer = Class.create();
+window.DivContainer = Class.create();
 
 DivContainer.prototype = {
 

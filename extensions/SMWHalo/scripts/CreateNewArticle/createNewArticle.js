@@ -1,3 +1,4 @@
+(function($){
 var CREATENEWARTICLE = {
 	EMPTY_IN_WIKITEXT : 'Empty Article in WikiText editor',
 	EMPTY_IN_WYSIWYG : 'Empty Article in WYSIWYG editor',
@@ -139,7 +140,7 @@ var CREATENEWARTICLE = {
 	setRationaleDescription : function(selectedValue){
 		switch(selectedValue){
 			case this.EMPTY_IN_WIKITEXT:
-				$('#selectedTitleTd').html(this.selectedValue + ':');
+				$('#selectedTitleTd').html(selectedValue + ':');
 				$('#selectedDescTd').text('Create an empty article in WikiText editor');
 				$('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 				$('#listOfTemplatesAndCategories').focus();
@@ -148,7 +149,7 @@ var CREATENEWARTICLE = {
 				break;
 				
 			case this.EMPTY_IN_WYSIWYG:
-				$('#selectedTitleTd').html(this.selectedValue + ':');
+				$('#selectedTitleTd').html(selectedValue + ':');
 				$('#selectedDescTd').text('Create an empty article in WYSIWYG editor');
 				$('#selectedDescImgTd').html('<img src="' + this.imgPath + 'info.png"/>');
 				$('#listOfTemplatesAndCategories').focus();
@@ -364,3 +365,4 @@ $(document).ready(function() {
 		event.preventDefault();
 	});
 });
+})(jQuery);

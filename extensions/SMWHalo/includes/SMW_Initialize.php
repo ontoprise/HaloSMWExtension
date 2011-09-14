@@ -179,7 +179,6 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $smwgHaloIP . '/includes/articlepages/LOD_NonExistingPageHandler.php';
 	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
-	$wgAutoloadClasses['SMWPivotTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_PivotTable.php';
 	$wgAutoloadClasses['SMWFancyTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_FancyTable.php';
 	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
@@ -206,7 +205,6 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
-	$smwgResultFormats['pivottable'] = 'SMWPivotTableResultPrinter';
 	$smwgResultFormats['fancytable'] = 'SMWFancyTableResultPrinter';
 
 	//Set up the IsExtensionInstalled PG
@@ -2077,7 +2075,7 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js',
 			'scripts/SemanticToolbar/SMW_Container.js',
 			'scripts/SemanticToolbar/SMW_Marker.js',
-			'scripts/SemanticToolbar/SMW_Category.js',
+			'scripts/SemanticToolbar/SMW_Category.js',                        
 			'scripts/AdvancedAnnotation/SMW_AnnotationHints.js',
 			'scripts/AdvancedAnnotation/SMW_GardeningHints.js',
 			'scripts/SemanticToolbar/SMW_Relation.js',
@@ -2090,7 +2088,7 @@ function smwhfRegisterResourceLoaderModules() {
 		'styles' => array(
 				'/skins/semantictoolbar.css',
 				'/skins/Annotation/annotation.css'
-				)
+			)
 				);
 
 				// Module for the Ontology Browser
@@ -2146,6 +2144,12 @@ function smwhfRegisterResourceLoaderModules() {
 			),
 		'dependencies' => $dependencies
 			);
+                        
+                        
+                $wgResourceModules['ext.smwhalo.queryList'] = $moduleTemplate + array(
+                    'scripts' => array('scripts/QueryList/querylist.js'),
+                    'dependencies' => array('ext.smw.sorttable')
+                );
 
 			smwfHaloAddJSLanguageScripts();
 

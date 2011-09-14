@@ -161,7 +161,7 @@ OBSemanticToolbarContributor.prototype = {
 
 // create instance of contributor and register on load event so that the complete document is available
 // when registerContributor is executed.
-var obContributor = new OBSemanticToolbarContributor();
+window.obContributor = new OBSemanticToolbarContributor();
 if (typeof FCKeditor == 'undefined')
     Event.observe(window, 'load', obContributor.registerContributor.bind(obContributor));
 

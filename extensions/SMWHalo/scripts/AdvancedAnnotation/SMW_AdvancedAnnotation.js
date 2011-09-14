@@ -1592,6 +1592,7 @@ AdvancedAnnotation.unload = function() {
 	}
         // Semantic toolbar was called within the FCK editor, disable it
         if (typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined') {
+            if($('ontomenuanchor'))
                 $('ontomenuanchor').innerHTML = '';
                 //stb_control.collapse();
         }

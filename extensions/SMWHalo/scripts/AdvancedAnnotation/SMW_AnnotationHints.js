@@ -27,7 +27,7 @@
  * toolbar (in the Advanced Annotation Mode).
  * 
  */
-var AnnotationHints = Class.create();
+window.AnnotationHints = Class.create();
 
 AnnotationHints.prototype = {
 

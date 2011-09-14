@@ -88,7 +88,7 @@ var PRP_APPLY_LINK =
 	 ['propToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 	];
 
-var PropertiesToolBar = Class.create();
+window.PropertiesToolBar = Class.create();
 
 PropertiesToolBar.prototype = {
 

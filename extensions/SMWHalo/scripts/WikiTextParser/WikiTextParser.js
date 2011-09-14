@@ -169,13 +169,13 @@ WikiTextParser.prototype = {
 					}
         		}
 	
-    			if (gEditInterface == null) {
-                    gEditInterface = new SMWEditInterface();
+    			if (window.gEditInterface == null) {
+                    window.gEditInterface = new SMWEditInterface();
                 } else {
-					gEditInterface.setEditAreaName(txtarea);
+					window.gEditInterface.setEditAreaName(txtarea);
 				}			
             }
-			this.editInterface = gEditInterface || new SMWEditInterface();
+			this.editInterface = window.gEditInterface || new SMWEditInterface();
 			this.text = this.editInterface.getValue();
 			this.parserMode = WTP_EDITAREA_MODE;
 
@@ -1541,3 +1541,4 @@ WikiTextParser.prototype = {
 		return false;
 	}
 };
+

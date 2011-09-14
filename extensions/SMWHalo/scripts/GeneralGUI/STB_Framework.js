@@ -144,11 +144,11 @@ ToolbarFramework.prototype = {
 	
 
 	showSemanticToolbarContainer : function(container) {
-		if (container != null) {
+		if (container) {
             // query container doesn't exist in WYSIWYG editor
             if ( typeof this.contarray[container] == 'undefined') return;
 			if (this.contarray[container].getTab() == this.curtabShown) {
-				if (this.contarray[container].headline != null) {
+				if (this.contarray[container].headline) {
 					$("stb_cont"+container+"-headline").show();
 					document.getElementById("stb_cont" + container + "-link").className='minusplus';
 					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGMINUS;
@@ -165,7 +165,7 @@ ToolbarFramework.prototype = {
 		} else {
 			for(var i=0;i<this.contarray.length;i++) {
 				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
-					if (this.contarray[i].headline != null) {
+					if (this.contarray[i].headline) {
 						$("stb_cont"+i+"-headline").show();
 						document.getElementById("stb_cont" + i + "-link").className='minusplus';
 					}

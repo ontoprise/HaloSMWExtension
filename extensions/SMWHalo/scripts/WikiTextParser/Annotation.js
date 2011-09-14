@@ -31,7 +31,7 @@
  * - start and end position of the string in the wiki text
  * - a reference to the wiki text parser.
  */
-var WtpAnnotation = Class.create();
+window.WtpAnnotation = Class.create();
 
 
 WtpAnnotation.prototype = {

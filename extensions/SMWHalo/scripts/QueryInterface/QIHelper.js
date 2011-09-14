@@ -664,8 +664,9 @@ QIHelper.prototype = {
         
         preview.innerHTML = resultHTML;
         $('fullpreviewbox').width = ''; // clear fixed width if we had a timeline
-        
-        smw_tooltipInit();
+       
+       //this function is called in AddOnLoadHook in SMW_tooltip.js
+//        smw_tooltipInit();
 
         // post processing of javascript for resultprinters:
         switch ($('layout_format').value) {

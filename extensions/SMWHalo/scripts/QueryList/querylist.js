@@ -1,6 +1,4 @@
 
-
-
 var queryList_filter = function(){
 	
 	var filterCol = jQuery('#ql_filtercol').attr('value');
@@ -60,6 +58,8 @@ var queryList_updateAC = function(){
 	jQuery(filterStringId + col).attr('currentValue', currentOrginalValue);
 }
 
+window.queryList_filter = queryList_filter;
+window.queryList_updateAC = queryList_updateAC;
 
 
 

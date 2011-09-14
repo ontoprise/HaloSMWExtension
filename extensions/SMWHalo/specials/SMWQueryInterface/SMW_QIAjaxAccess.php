@@ -201,8 +201,15 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
         $qp = new $formatclass($format, false);
         $params = $qp->getParameters();
         // repair some misplaced parameters
-        for ($i =0; $i < count($params); $i++) {
-            switch ($params[$i]['name']) {
+        foreach ($params as $i => $parameter) {  
+            $name = null;
+            if(is_array($parameter)){
+                $name = $parameter['name'];
+            }
+            else{
+                $name = $parameter->getName();
+            }
+            switch ($name) {
                 case "order" :
                     $order_missing = false;
                     break;
@@ -214,7 +221,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
                     break;
                 case "template" :
                     if ( $format != "template" )
-                        array_splice($params, $i, 1);
+                        unset($params[$i]);
                     break;
                 case "intro" :
                     if (substr($format, 0, 4) != "ofc-")
@@ -226,7 +233,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
                     break;
                 case "headers" :
                     if ( $format != "table" && $format != "broadtable" )
-                        array_splice($params, $i, 1);
+                        unset($params[$i]);
                     break;
             }
         }
@@ -718,16 +725,17 @@ function qiGetPropertyInformation($relationName) {
 
 		// get type definition (if it exists)
 		try {
-			$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
+			$relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
 			if(!($relationTitle instanceof Title)){
 				$relSchema = '<relationSchema name="'.htmlspecialchars($relationName).'" arity="2">'.
 								'<param name="Page"/>'.
 		           	  		 '</relationSchema>';
 				return $relSchema;
 			}
-			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+//			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+                        $hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
 			$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
-			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
+			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
             $range = qiGetPropertyRangeInformation($relationName);
 
 			// if no 'has type' annotation => normal binary relation
