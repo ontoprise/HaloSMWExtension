@@ -20,18 +20,12 @@
  * @ingroup SMWHaloSemanticToolbar
  * @author Thomas Schweitzer
  */
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', window.smw_links_callme);
-
 
 var createLinkList = function() {
 	sajax_do_call('smwf_tb_getLinks', [wgArticleId], addLinks);
 }
-
-
     
-    
-window.smw_links_callme = function(){
+function smw_links_callme(){
 	var url = location.href;
 	var redlink = url.indexOf('redlink=1');
 	if (redlink !== -1) {
@@ -101,3 +95,6 @@ function linklog(link, action){
 	/*ENDLOG*/
 	return true;
 }
+
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', smw_links_callme);
