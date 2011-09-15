@@ -56,6 +56,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/smwtsc">
+		   <fileset dir="../smwtsc/">
+		         <exclude name="**/.svn, **/CVS" />
+		   </fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/SMWHalo/tests">
 			<fileset dir="../tests/">
 				<exclude name="**/.svn, **/CVS" />
