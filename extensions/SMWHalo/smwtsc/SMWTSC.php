@@ -1,5 +1,8 @@
 <?php
 
+// uncomment this if it becomes a real extension
+// define('TSC_EXTENSION_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
+
 $wgExtensionFunctions[] = 'tscSetupExtension';
 $tscgIP = $IP . '/extensions/SMWHalo/smwtsc';
 $tscgScriptPath = $wgScriptPath . '/extensions/SMWHalo/smwtsc';
@@ -11,7 +14,7 @@ $wgHooks['LanguageGetMagic'][] = 'tscfAddMagicWords';
 $wgExtensionMessagesFiles['smwtsc'] = $tscgIP . '/languages/TSC_Messages.php'; // register messages (requires MW=>1.11)
 
 global $wgLanguageCode;
-tscfInitNamespaces();
+tscfInitContentLanguage($wgLanguageCode);
 
 global $smwgQuerySources;
 $smwgQuerySources += array("tsc" => "SMWTripleStore");
@@ -212,23 +215,22 @@ function tscSetupExtension() {
 		$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
 
 		$wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
-	}
-
-	if (smwfIsTripleStoreConfigured()) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
 
-	global $wgAjaxExportList;
-	$wgAjaxExportList[] = 'smwf_ts_getSyncCommands';
-	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
-	$wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
-	$wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
-	$wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
+	
+	
 
+	require_once("$tscgIP/includes/TSC_AjaxFunctions.php");
+	
 	global $wgSpecialPages, $wgSpecialPageGroups;
 	$wgAutoloadClasses['TSCTripleStoreAdmin'] = $tscgIP . '/specials/TripleStoreAdmin/TSC_TripleStoreAdmin.php';
 	$wgSpecialPages['TSA'] = array('TSCTripleStoreAdmin');
 	$wgSpecialPageGroups['TSA'] = 'smwplus_group';
+	
+	$wgAutoloadClasses['TSCSourcesPage']       = $tscgIP . '/specials/Datasources/TSC_Datasources.php';
+    $wgSpecialPages['TSCSources']       = array( 'TSCSourcesPage' );
+    $wgSpecialPageGroups['TSCSources']  = 'smwplus_group';
 	
 	$wgHooks['ResourceLoaderRegisterModules'][]='tscfRegisterResourceLoaderModules';
     $wgHooks['BeforePageDisplay'][]='tscfAddHTMLHeader';
@@ -378,45 +380,6 @@ function tscfAddMagicWords(&$magicWords, $langCode) {
 	return true;
 }
 
-/**
- * Init the additional namespaces used by LinkedData. The
- * parameter denotes the least unused even namespace ID that is
- * greater or equal to 100.
- */
-function tscfInitNamespaces() {
-
-	global $lodgNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
-	$wgNamespacesWithSubpages, $wgLanguageCode, $lodgContLang;
-
-	if (!isset($lodgNamespaceIndex)) {
-		$lodgNamespaceIndex = 500;
-	}
-
-	// Constants for namespace "TSC"
-	define('TSC_NS_TSC',       $lodgNamespaceIndex);
-	define('TSC_NS_TSC_TALK',  $lodgNamespaceIndex+1);
-
-	// Constants for namespace "Mapping"
-	define('TSC_NS_MAPPING',       $lodgNamespaceIndex+2);
-	define('TSC_NS_MAPPING_TALK',  $lodgNamespaceIndex+3);
-
-	tscfInitContentLanguage($wgLanguageCode);
-
-	// Register namespace identifiers
-	if (!is_array($wgExtraNamespaces)) {
-		$wgExtraNamespaces=array();
-	}
-	$namespaces = $lodgContLang->getNamespaces();
-	$namespacealiases = $lodgContLang->getNamespaceAliases();
-	$wgExtraNamespaces = $wgExtraNamespaces + $namespaces;
-	$wgNamespaceAliases = $wgNamespaceAliases + $namespacealiases;
-
-	// Support subpages for the namespace ACL
-	$wgNamespacesWithSubpages = $wgNamespacesWithSubpages + array(
-	TSC_NS_TSC => true,
-	TSC_NS_TSC_TALK => true
-	);
-}
 
 /**
  * Initialise a global language object for content language. This
@@ -535,228 +498,8 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	return false;
 }
 
-/**
- * Returns a list of SPARUL commands which are required to sync
- * with the TSC.
- *
- * @return string
- */
-function smwf_ts_getSyncCommands() {
-	global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport,
-	$wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
-	$smwgIgnoreSchema, $smwgNamespaceIndex;
-
-	$sparulCommands = array();
-
-	// sync wiki module
-	$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
-	$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
-	$sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword).
-    "@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=SMWHaloStore2".
-    "&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix).
-    "> INTO <$smwgTripleStoreGraph>";
-
-	// sync external modules (only if DF is installed)
-	if (defined('DF_VERSION')) {
-
-		$externalArtifacts = DFBundleTools::getExternalArtifacts();
-
-		foreach($externalArtifacts as $extArt) {
-			list($fileTitle, $uri) = $extArt;
-			$sparulCommands[] = "DROP SILENT GRAPH <$uri>"; // drop may fail. don't worry
-			$sparulCommands[] = "CREATE SILENT GRAPH <$uri>";
-
-			$localFile = wfLocalFile($fileTitle);
-			$format = DFBundleTools::guessOntologyFileType($fileTitle->getText());
-			$fileURL = $localFile->getFullUrl();
-			$sparulCommands[] = "LOAD <$fileURL?format=$format> INTO <$uri>";
-			$sparulCommands[] = "IMPORT ONTOLOGY <$uri> INTO <$smwgTripleStoreGraph>";
-		}
 
 
-	}
-
-	return implode("\n", $sparulCommands);
-}
-
-
-
-/**
- * Returns a list of namespace mappings.
- * Exported as ajax call.
- *
- * Need by TSC to get extra namespaces (besides the default of MW + SMW + SF) and required
- * to support other content languages than english.
- *
- * nsText(content language) => nsKey
- *
- * @return string
- */
-function smwf_ts_getWikiNamespaces() {
-	global $wgExtraNamespaces, $wgContLang;
-
-	$allNS = array(NS_CATEGORY, SMW_NS_PROPERTY,SF_NS_FORM, SMW_NS_CONCEPT, NS_MAIN ,
-	NS_FILE, NS_HELP, NS_TEMPLATE, NS_USER, NS_MEDIAWIKI, NS_PROJECT,   SMW_NS_PROPERTY_TALK,
-	SF_NS_FORM_TALK,NS_TALK, NS_USER_TALK, NS_PROJECT_TALK, NS_FILE_TALK, NS_MEDIAWIKI_TALK,
-	NS_TEMPLATE_TALK, NS_HELP_TALK, NS_CATEGORY_TALK, SMW_NS_CONCEPT_TALK);
-
-	$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), $allNS);
-	$allNS = array_merge($allNS, $extraNamespaces);
-	$result = "";
-	$first = true;
-	foreach($allNS as $nsKey) {
-
-		$nsText = $wgContLang->getNSText($nsKey);
-		if (empty($nsText) && $nsKey !== NS_MAIN) continue;
-		$result .= (!$first ? "," : "").$nsText."=".$nsKey;
-		$first = false;
-	}
-	return $result;
-}
-
-/**
- * Maps language constants of special properties/categories to content language.
- * Exported as ajax call.
- *
- * Need by TSC.
- *
- * Language constant representing a special property/category = Name in wiki's content language
- *
- * @return string
- */
-function smwf_ts_getWikiSpecialProperties() {
-
-	global $wgContLang, $smwgHaloContLang, $smwgContLang;
-	$specialProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-	$specialCategories = $smwgHaloContLang->getSpecialCategoryArray();
-	$specialPropertiesSMW = $smwgContLang->getPropertyLabels();
-
-	$result = "HAS_DOMAIN_AND_RANGE=".$specialProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].",".
-                "HAS_MIN_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MIN_CARD].",".
-                "HAS_MAX_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MAX_CARD].",".
-                "IS_INVERSE_OF=".$specialProperties[SMW_SSP_IS_INVERSE_OF].",".
-                "TRANSITIVE_PROPERTIES=".$specialCategories[SMW_SC_TRANSITIVE_RELATIONS].",".
-                "SYMETRICAL_PROPERTIES=".$specialCategories[SMW_SC_SYMMETRICAL_RELATIONS].",".
-                "CORRESPONDS_TO=".$specialPropertiesSMW['_CONV'].",".
-                "HAS_TYPE=".$specialPropertiesSMW['_TYPE'].",".
-                "HAS_FIELDS=".$specialPropertiesSMW['_LIST'].",".
-                "MODIFICATION_DATE=".$specialPropertiesSMW['_MDAT'].",".
-                "EQUIVALENT_URI=".$specialPropertiesSMW['_URI'].",".
-                "DISPLAY_UNITS=".$specialPropertiesSMW['_UNIT'].",".
-                "IMPORTED_FROM=".$specialPropertiesSMW['_IMPO'].",".
-                "PROVIDES_SERVICE=".$specialPropertiesSMW['_SERV'].",".
-                "ALLOWS_VALUE=".$specialPropertiesSMW['_PVAL'].",".
-                "HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'].",";
-
-	// these two namespaces are required for ASK queries
-	$result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";
-	$result .= "CONCEPT=".$wgContLang->getNSText(SMW_NS_CONCEPT);
-
-	return $result;
-}
-
-/**
- * Trigger asynchronous loading operations. Usually called when TSC comes up.
- *
- * @return AjaxRespone object containing JSON encoded data.
- */
-function smwf_ts_triggerAsynchronousLoading() {
-	global $smwgTripleStoreGraph;
-	$result = array();
-	$result['components'] = array();
-	$result['errors'] = array();
-	wfRunHooks("SMWHalo_AsynchronousLoading", array ($smwgTripleStoreGraph, & $result));
-
-	$json = json_encode($result);
-	$response = new AjaxResponse($json);
-	$response->setContentType( "application/json" );
-	return $response;
-}
-
-/**
- * This function retrieves the derived facts of the article with the name
- * $titleName.
- *
- * @param string $titleName
- *
- * @return string
- *      The derived facts as HTML
- */
-function smwf_om_GetDerivedFacts($titleName) {
-	$linker = new Linker();
-
-	$t = Title::newFromText($titleName);
-	if ($t == null) {
-		// invalid title
-		return wfMsg('smw_df_invalid_title');
-	}
-
-	if (!smwfIsTripleStoreConfigured()) {
-		global $wgParser;
-		$parserOutput = $wgParser->parse( wfMsg('smw_df_tsc_advertisment'), $t, new ParserOptions,
-		true, true, 0 );
-		return $parserOutput->getText();
-	}
-
-	$semdata = smwfGetStore()->getSemanticData(new SMWDIWikiPage($t->getDBkey(), $t->getNamespace(), ""));
-	wfLoadExtensionMessages('SemanticMediaWiki');
-	global $wgContLang;
-	list($derivedFacts, $derivedCategories) = SMWFullSemanticData::getDerivedProperties($semdata);
-	$derivedFactsFound = false;
-
-	$text = '<div class="smwfact">' .
-                '<span class="smwfactboxhead">' . 
-	wfMsg('smw_df_derived_facts_about',
-	$derivedFacts->getSubject()->getTitle()->getText()) .
-                '</span>' .
-                '<table class="smwfacttable">' . "\n";
-
-	foreach($derivedFacts->getProperties() as $propertyDi) {
-		$propertyDv = SMWDataValueFactory::newDataItemValue($propertyDi, null);
-
-		if ( !$propertyDi->isShown() ) { // showing this is not desired, hide
-			continue;
-		} elseif ( $propertyDi->isUserDefined() ) { // user defined property
-			$propertyDv->setCaption( preg_replace( '/[ ]/u', '&#160;', $propertyDv->getWikiValue(), 2 ) );
-			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
-			$text .= '<tr><td class="smwpropname">' . $linker->makeLink($propertyDi->getDiWikiPage()->getTitle()->getPrefixedText()) . '</td><td class="smwprops">';
-		} elseif ( $propertyDv->isVisible() ) { // predefined property
-			$text .= '<tr><td class="smwspecname">' . $linker->makeLink($propertyDi->getDiWikiPage()->getTitle()->getPrefixedText()) . '</td><td class="smwspecs">';
-		} else { // predefined, internal property
-			continue;
-		}
-
-		$propvalues = $derivedFacts->getPropertyValues($propertyDi);
-
-		$valuesHtml = array();
-
-		foreach ( $propvalues as $dataItem ) {
-			$dataValue = SMWDataValueFactory::newDataItemValue( $dataItem, $propertyDi );
-
-			if ( $dataValue->isValid() ) {
-				$derivedFactsFound = true;
-				$valuesHtml[] = $dataValue->getLongHTMLText(  );
-			}
-		}
-
-		$text .= $GLOBALS['wgLang']->listToText( $valuesHtml );
-		$text .= '</td></tr>';
-	}
-	$text .= '</table>';
-
-	$categoryLinks=array();
-	foreach($derivedCategories as $c) {
-		$derivedFactsFound=True;
-		$categoryLinks[] = $linker->link($c);
-	}
-	$text .= '<br>'.implode(", ", $categoryLinks);
-	$text .= '</div>';
-
-	if (!$derivedFactsFound) {
-		$text = wfMsg('smw_df_no_df_found');
-	}
-	return $text;
-}
 
 function tscfRegisterResourceLoaderModules() {
 	global $wgResourceModules, $tscgIP, $tscgScriptPath, $wgUser;
@@ -770,10 +513,11 @@ function tscfRegisterResourceLoaderModules() {
         // Scripts and styles for all actions
         $wgResourceModules['ext.smwtsc.general'] = $moduleTemplate + array(
         'scripts' => array(
-               'scripts/TSC_DerivedFactsTab.js'
+               'scripts/TSC_DerivedFactsTab.js',
+               'scripts/TSC_Datasources.js',
                ),
          'messages' => array( 'tsc_derivedfacts_request_failed'),       
-        'styles' => array(),
+        'styles' => array('skins/datasources.css'),
         'dependencies' => array()
 
                );

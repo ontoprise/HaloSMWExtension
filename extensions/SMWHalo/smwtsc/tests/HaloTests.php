@@ -2,10 +2,10 @@
 /**
  * @file
  * @ingroup SMWHaloTests
- * 
+ *
  * @defgroup SMWHaloTests SMWHalo unit tests
  * @ingroup SMWHalo
- * 
+ *
  * @author Kai K�hn
  */
 
@@ -20,10 +20,11 @@ class HaloTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('SMWTSC');
 
-	
 		$suite->addTestSuite("TestTSCEQI");
 		$suite->addTestSuite("TestAutocompletionTSCStore");
-	
+		$suite->addTestSuite("TestLODSourceDefinitionSuite");
+	    $suite->addTestSuite("TestSparqlParserSuite");
+	    $suite->addTestSuite("TestTripleStoreAccessSuite");
 		return $suite;
 	}
 }

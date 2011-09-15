@@ -30,13 +30,11 @@ abstract class TSCLanguage {
 	//-- Constants --
 	
 	//---IDs of parser functions ---
-	const PF_RMAPPING = 1;
+	
 	const PF_LSD	 = 2; // TSC source definition
-	const PF_SMAPPING = 3;
+	
 
-	//---IDs of parser function parameters ---
-	const PFP_MAPPING_TARGET	= 100;
-	const PFP_MAPPING_SOURCE	= 101;
+	
 	
 	const PFP_LSD_ID						= 200;
 	const PFP_LSD_CHANGEFREQ				= 201;
@@ -55,23 +53,16 @@ abstract class TSCLanguage {
 	const PFP_LSD_PREDICATETOCRAWL			= 214;
         const PFP_LSD_LEVELSTOCRAWL			= 215;
 	
-	const PFP_SILK_MAPPING_MINT_NAMESPACE	= 300;
-	const PFP_SILK_MAPPING_MINT_LABEL_PREDICATE	= 301;
+	
 	
 	
 	// the special message arrays ...
-	protected $mNamespaces;
+	
 	protected $mNamespaceAliases = array();
 	protected $mParserFunctions = array();
 	protected $mParserFunctionsParameters = array();
 
-	/**
-	 * Function that returns an array of namespace identifiers.
-	 */
-
-	public function getNamespaces() {
-		return $this->mNamespaces;
-	}
+	
 
 	/**
 	 * Function that returns an array of namespace aliases, if any.

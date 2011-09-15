@@ -38,23 +38,17 @@ include_once($tscgIP . '/languages/TSC_Language.php');
  */
 class TSCLanguageDe extends TSCLanguage {
 
-	protected $mNamespaces = array(
-		TSC_NS_TSC       => 'LOD',
-		TSC_NS_TSC_TALK  => 'LOD_Diskussion',
-		TSC_NS_MAPPING       => 'Mapping',
-		TSC_NS_MAPPING_TALK  => 'Mapping_Diskussion'
-	);
+	
 
 	protected $mParserFunctions = array(
-		TSCLanguage::PF_RMAPPING			=> 'r2rZuordnung',
-		TSCLanguage::PF_LSD				=> 'quelldefinition',
-		TSCLanguage::PF_SMAPPING			=> 'silkZuordnung',
+		
+		TSCLanguage::PF_LSD				=> 'quelldefinition'
+		
 		
 	);
 	
 	protected $mParserFunctionsParameters = array(
-		TSCLanguage::PFP_MAPPING_TARGET				=> 'ziel', 
-		TSCLanguage::PFP_MAPPING_SOURCE				=> 'quelle', 
+	
 		
 		TSCLanguage::PFP_LSD_ID						=> "id",
     	TSCLanguage::PFP_LSD_CHANGEFREQ				=> "änderungsrate",
@@ -70,10 +64,9 @@ class TSCLanguageDe extends TSCLanguage {
 		TSCLanguage::PFP_LSD_SPARQLGRAPHPATTERN		=> "sparqlgraphpattern",
 		TSCLanguage::PFP_LSD_URIREGEXPATTERN		=> "uriregexmuster",
 		TSCLanguage::PFP_LSD_VOCABULARY				=> "vokabular",
-		TSCLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat",
+		TSCLanguage::PFP_LSD_PREDICATETOCRAWL		=> "zufolgendesprÃ¤dikat"
 		
-		TSCLanguage::PFP_SILK_MAPPING_MINT_NAMESPACE				=> 'mintNamespace',
-		TSCLanguage::PFP_SILK_MAPPING_MINT_LABEL_PREDICATE				=> 'mintLabelPredicate',
+		
 		
 	);
 		

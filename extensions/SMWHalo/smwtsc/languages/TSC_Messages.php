@@ -60,8 +60,8 @@ $messages['en'] = array(
         'tsc_lsd_levelstocrawl'			=> "Levels to crawl",
 
 	//--- TSC special pages ---
-	'lodsources'	=> 'TSC sources',
-	'specialpages-group-tsc_group' => 'Linked Data extension',
+	'tscsources'	=> 'TSC sources',
+	
     //--- TSC Source editor
 	'tsc_sp_source_label' => 'Name',
 	'tsc_sp_source_source' => 'Data source',
@@ -142,8 +142,8 @@ $messages['de'] = array(
 	'tsc_lsd_predicatetocrawl'			=> "Beim Crawling zu folgendes Prädikat",
 
 	//--- TSC special pages ---
-    'lodsources'    => 'TSC-Quellen',
-	'specialpages-group-tsc_group' => 'Linked Data extension',
+    'tscsources'    => 'TSC-Quellen',
+	
 	'tsc_sp_source_label' => 'Name',
     'tsc_sp_source_source' => 'Datenquelle',
     'tsc_sp_source_lastimport' => 'Letzter Import',
