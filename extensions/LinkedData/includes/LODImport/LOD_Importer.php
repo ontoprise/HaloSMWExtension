@@ -42,11 +42,11 @@ class LODImporter {
 	}
 
 	/**
-	 * @param	LODSourceDefinition	$dataSource
+	 * @param	TSCSourceDefinition	$dataSource
 	 * @param	bool	$update
 	 * @return	bool	true, if successful
 	 */
-	public function runImport(LODSourceDefinition $dataSource, $update, $synchronous, $runSchemaTranslation ,$runIdentityResolution) {
+	public function runImport(TSCSourceDefinition $dataSource, $update, $synchronous, $runSchemaTranslation ,$runIdentityResolution) {
 		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update,  "synchronous" =>$synchronous,
                     "runSchemaTranslation" => $runSchemaTranslation, "runIdentityResolution" => $runIdentityResolution);
 		$payload = $this->serializeParameters($paramMap);
@@ -58,12 +58,12 @@ class LODImporter {
 	}
 
 	/**
-	 * @param	LODSourceDefinition	$dataSource
+	 * @param	TSCSourceDefinition	$dataSource
 	 * @param	resource or string	$inputHandleOrString
 	 * @param	bool	$update
 	 * @return	string	Temporary graph URI; null on error
 	 */
-	public function loadData(LODSourceDefinition $dataSource, $inputHandleOrString, $inContentType, $update) {
+	public function loadData(TSCSourceDefinition $dataSource, $inputHandleOrString, $inContentType, $update) {
 		$paramMap = array("dataSourceId" => $dataSource->getID(), "update" => $update ? "true" : "false");
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->sendData($payload, "/loadData", $inputHandleOrString, $inContentType);
@@ -74,12 +74,12 @@ class LODImporter {
 	}
 		
 	/**
-	 * @param LODSourceDefinition $dataSource
+	 * @param TSCSourceDefinition $dataSource
 	 * @param	string	$dataDumpLocationURL
 	 * @param	bool	$update
 	 * @return	string	Temporary graph URI; null on error
 	 */
-	public function loadDataFromDump(LODSourceDefinition $dataSource, $dataDumpLocationURL, $update) {
+	public function loadDataFromDump(TSCSourceDefinition $dataSource, $dataDumpLocationURL, $update) {
 		$paramMap = array("dataSourceId" => $dataSource->getID(), "dataDumpLocationURL" => $dataDumpLocationURL, "update" => $update);
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->send($payload, "/loadDataFromDump");
@@ -90,13 +90,13 @@ class LODImporter {
 	}
 	
 	/**
-	 * @param	LODSourceDefinition	$dataSourceIn
-	 * @param	LODSourceDefinition	$dataSourceOut
+	 * @param	TSCSourceDefinition	$dataSourceIn
+	 * @param	TSCSourceDefinition	$dataSourceOut
 	 * @param	string	$temporaryGraphURI
 	 * @param	bool	$dropTemporaryGraph
 	 * @return	string	Import graph URI; null on error
 	 */	
-	public function translate(LODSourceDefinition $dataSourceIn, LODSourceDefinition $dataSourceOut, $temporaryGraphURI, $dropTemporaryGraph) {
+	public function translate(TSCSourceDefinition $dataSourceIn, TSCSourceDefinition $dataSourceOut, $temporaryGraphURI, $dropTemporaryGraph) {
 		$paramMap = array("dataSourceInId" => $dataSourceIn->getID(), "dataSourceOutId" => $dataSourceOut->getID(), "temporaryGraphURI" => $temporaryGraphURI, "dropTemporaryGraph" => $dropTemporaryGraph);
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->send($payload, "/translate");
@@ -107,11 +107,11 @@ class LODImporter {
 	}	
 
 	/**
-	 * @param	LODSourceDefinition	$dataSourceIn
-	 * @param	LODSourceDefinition	$dataSourceOut
+	 * @param	TSCSourceDefinition	$dataSourceIn
+	 * @param	TSCSourceDefinition	$dataSourceOut
 	 * @param	string	$importGraphURI
 	 */	
-	public function resolve(LODSourceDefinition $dataSourceIn, LODSourceDefinition $dataSourceOut, $importGraphURI) {
+	public function resolve(TSCSourceDefinition $dataSourceIn, TSCSourceDefinition $dataSourceOut, $importGraphURI) {
 		$paramMap = array("dataSourceInId" => $dataSourceIn->getID(), "dataSourceOutId" => $dataSourceOut->getID(), "importGraphURI" => $importGraphURI);
 		$payload = $this->serializeParameters($paramMap);
 		list($header, $status, $res) =  $this->_client->send($payload, "/resolve");

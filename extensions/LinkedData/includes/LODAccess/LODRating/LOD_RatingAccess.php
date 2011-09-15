@@ -58,7 +58,7 @@ class LODRatingAccess  {
 	
 	//--- Private fields ---
 	
-	// LODPersistentTripleStoreAccess
+	// TSCPersistentTripleStoreAccess
 	// Used to store the ratings in the triple store.
 	private $mTSA;
 	
@@ -74,7 +74,7 @@ class LODRatingAccess  {
 	 * 		Name of the notification
 	 */		
 	function __construct() {
-		$this->mTSA = new LODPersistentTripleStoreAccess();
+		$this->mTSA = new TSCPersistentTripleStoreAccess();
 	}
 	
 
@@ -89,13 +89,13 @@ class LODRatingAccess  {
 	/**
 	 * Adds a rating for the given triple and stores it in the triple store.
 	 *
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple that is rated.
 	 * @param LODRating $rating
 	 * 		The rating for the triple
 	 * 
 	 */
-	public function addRating(LODTriple $triple, LODRating $rating) {
+	public function addRating(TSCTriple $triple, LODRating $rating) {
 		$hash = $this->makeHashForTriple($triple);
 		$graphName = $this->addGraphWithTriple($triple, $hash);
 		$this->addRatingToRatingGraph($graphName, $rating);
@@ -105,16 +105,16 @@ class LODRatingAccess  {
 	/**
 	 * Returns all ratings for $triple.
 	 * 
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The ratings are retrieved for this triple.
 	 * @return array<LODRating>
 	 * 		An array of ratings. The array is empty, if there are no ratings
 	 * 		for the triple.
 	 */
-	public function getRatings(LODTriple $triple) {
+	public function getRatings(TSCTriple $triple) {
 		$hash = $this->makeHashForTriple($triple);
 		
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		
 		$graphName = "smwGraphs:RatingGraph_$hash";
 		$graphName = $pm->makeAbsoluteURI($graphName);
@@ -165,11 +165,11 @@ SPARQL;
 	/**
 	 * Deletes all ratings of the triple $triple.
 	 * 
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple whose ratings are deleted.
 	 * 
 	 */
-	public function deleteAllRatingsForTriple(LODTriple $triple) {
+	public function deleteAllRatingsForTriple(TSCTriple $triple) {
 		$hash = $this->makeHashForTriple($triple);
 		$this->mTSA->deletePersistentTriples("LODRating", $hash);
 	}
@@ -182,7 +182,7 @@ SPARQL;
 	 * 		The rating key is needed for retrieving information about the query
 	 * 		and its result from the database. Its format is 
 	 * 		"query-ID|row index|variable name" e.g. "42|2|x".
-	 * @return array(array(array(LODTriple), array(LODTriple)))
+	 * @return array(array(array(TSCTriple), array(TSCTriple)))
 	 * 		The resulting array consists of two arrays of triples. The first
 	 * 		array contains "primary" triples, the second "secondary" triples.
 	 * 		Primary triples are those that contain the variable given in
@@ -208,7 +208,7 @@ SPARQL;
 		list($query, $queryParams) = self::getQueryForRatingKey($ratingKey);
 		
 		// Retrieve the complete row of results
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
 		$rowContent = $db->readQueryResultRow($queryID, $row);
 		if (is_null($rowContent)) {
 			throw new LODRatingException(LODRatingException::INVALID_ROW, $row);
@@ -284,7 +284,7 @@ SPARQL;
 	public static function getQueryForRatingKey($ratingKey) {
 		list($queryID, $row, $var) = self::parseRatingKey($ratingKey);
 		
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
 
 		// Retrieve the query
 		$query = $db->getQueryByID($queryID);
@@ -335,7 +335,7 @@ SPARQL;
 		}
 
 		// Store the query and its results in the database
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
 		$params = @$query->params;
 		if (!isset($params)) {
 			$params = array();
@@ -402,7 +402,7 @@ SPARQL;
 	 */
 	public static function onArticleDelete(&$article, &$user, &$reason) {
 		$name = $article->getTitle()->getFullText();
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
     	$db->deleteQueries($name);
     	return true;
 	}
@@ -417,7 +417,7 @@ SPARQL;
 	 */
 	public static function onArticleSave(&$article) {
 		$name = $article->getTitle()->getFullText();
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
     	$db->deleteQueries($name);
 		return true;
 	}
@@ -439,13 +439,13 @@ SPARQL;
 	/**
 	 * Creates a hash value for the given $triple.
 	 * 
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple for which a hash value will be created.
 	 * @return string
 	 * 		The hash value.
 	 */
-	private function makeHashForTriple(LODTriple $triple) {
-		$pm = LODPrefixManager::getInstance();		
+	private function makeHashForTriple(TSCTriple $triple) {
+		$pm = TSCPrefixManager::getInstance();		
 		// get the absolute URIs of the triple's elements
 		$s = $triple->getSubject();
 		$s = $pm->makeAbsoluteURI($s);
@@ -471,17 +471,17 @@ SPARQL;
 	 * - create a rating graph whose name contains the $hash value
 	 * - add the triple to the new graph
 	 * 
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple which is added to the new rating graph
 	 * @param string $hash
 	 * 		The hash value for the given triple
 	 * @return string
 	 * 		The name of the rating graph for the triple.
 	 */
-	private function addGraphWithTriple(LODTriple $triple, $hash) {
+	private function addGraphWithTriple(TSCTriple $triple, $hash) {
 		
 		$graphName = "smwGraphs:RatingGraph_$hash";
-		$graphName = LODPrefixManager::getInstance()->makeAbsoluteURI($graphName, false);
+		$graphName = TSCPrefixManager::getInstance()->makeAbsoluteURI($graphName, false);
 		
 		// Collect all required prefixes
 		$this->mNeededPrefixes["smwGraphs"] = true;
@@ -511,7 +511,7 @@ SPARQL;
 	 */
 	private function addRatingToRatingGraph($graphName, $rating) {
 		$ratingGraphName = "smwGraphs:".self::LOD_RATING_GRAPH;
-		$ratingGraphName = LODPrefixManager::getInstance()->makeAbsoluteURI($ratingGraphName, false);
+		$ratingGraphName = TSCPrefixManager::getInstance()->makeAbsoluteURI($ratingGraphName, false);
 		
 		// Collect all required prefixes
 		$this->mNeededPrefixes["smwGraphs"] = true;
@@ -528,12 +528,12 @@ SPARQL;
 		
 		$triples = array();
 		$bn = "_:1";
-		$triples[] = new LODTriple("smwUsers:$user", self::LOD_PROP_RATES, $bn, "__blankNode");
-		$triples[] = new LODTriple($bn, "rdf:type", self::LOD_TYPE_RATING, "__objectURI");
-		$triples[] = new LODTriple($bn, self::LOD_PROP_RATED_INFORMATION, $graphName, "__objectURI");
-		$triples[] = new LODTriple($bn, self::LOD_PROP_CREATED, $rating->getCreationTime(), "xsd:dateTime");
-		$triples[] = new LODTriple($bn, self::LOD_PROP_VALUE, $rating->getValue(), "xsd:string");
-		$triples[] = new LODTriple($bn, self::LOD_PROP_COMMENT, $rating->getComment(), "xsd:string");
+		$triples[] = new TSCTriple("smwUsers:$user", self::LOD_PROP_RATES, $bn, "__blankNode");
+		$triples[] = new TSCTriple($bn, "rdf:type", self::LOD_TYPE_RATING, "__objectURI");
+		$triples[] = new TSCTriple($bn, self::LOD_PROP_RATED_INFORMATION, $graphName, "__objectURI");
+		$triples[] = new TSCTriple($bn, self::LOD_PROP_CREATED, $rating->getCreationTime(), "xsd:dateTime");
+		$triples[] = new TSCTriple($bn, self::LOD_PROP_VALUE, $rating->getValue(), "xsd:string");
+		$triples[] = new TSCTriple($bn, self::LOD_PROP_COMMENT, $rating->getComment(), "xsd:string");
 
 		$this->mTSA->insertTriples($ratingGraphName, $triples);
 		
@@ -544,7 +544,7 @@ SPARQL;
 	 * prefixes.
 	 */
 	private function addPrefixesToTSA() {
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		$prefixes = array_keys($this->mNeededPrefixes);
 		$prefixSPARQL = $pm->getSPARQLPrefixes($prefixes);
 		$this->mTSA->addPrefixes($prefixSPARQL);

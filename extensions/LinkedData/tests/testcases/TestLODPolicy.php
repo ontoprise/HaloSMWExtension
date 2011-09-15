@@ -66,7 +66,7 @@ class TestLODPolicySuite extends PHPUnit_Framework_TestSuite {
 
     protected function tearDown() {
         // Delete the graph in the triple store that contains the source definitions
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
         $tsa->dropGraph(LODPolicyStore::getTrustGraph());
         $tsa->flushCommands();
     }
@@ -101,7 +101,7 @@ class TestLODPolicySuite extends PHPUnit_Framework_TestSuite {
     public static function checkPersistentTriples($testCase, $id, $expected, $errMsg) {
 
         // Read the generated TriG from the database
-        $store = LODStorage::getDatabase();
+        $store = TSCStorage::getDatabase();
         $trigs = $store->readPersistentTriples("LODPolicy", $id);
         $trig = "";
         foreach ($trigs as $t) {
@@ -135,7 +135,7 @@ class TestLODPolicy extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-        LODStorage::getDatabase()->deleteAllPersistentTriples();
+        TSCStorage::getDatabase()->deleteAllPersistentTriples();
     }
 
     /**

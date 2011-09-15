@@ -51,7 +51,7 @@ abstract class LODMapping {
     //--- Private fields ---
     // string
     // This is the ID of the source of the mapping (see the ID of class
-    // LODSourceDefinition). By convention, the name of the article that defines
+    // TSCSourceDefinition). By convention, the name of the article that defines
     // the mapping is also the source.
     private $mSource;
     // string
@@ -132,7 +132,7 @@ abstract class LODMapping {
     public function getTriples() {
         $triples = array();
 
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         self::$mappingCounter += 1;
         $subject = $this->getSubject();
@@ -141,23 +141,23 @@ abstract class LODMapping {
         $property = self::getTypeProp();
         $object = $this->getMappingType();
         $object = $pm->makeAbsoluteURI($object);
-        $triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+        $triples[] = new TSCTriple($subject, $property, $object, '__objectURI');
 
         //set mapping source
         $property = self::getSourceProp();
         $object = 'smwDatasources:' . $this->getSource();
         $object = $pm->makeAbsoluteURI($object);
-        $triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+        $triples[] = new TSCTriple($subject, $property, $object, '__objectURI');
 
         //set target
         $property = self::getTargetProp();
         $object = 'smwDatasources:' . $this->getTarget();
         $object = $pm->makeAbsoluteURI($object);
-        $triples[] = new LODTriple($subject, $property, $object, '__objectURI');
+        $triples[] = new TSCTriple($subject, $property, $object, '__objectURI');
 
         //Set mapping description
         $property = self::getCodeProp();
-        $triples[] = new LODTriple($subject, $property, $this->getMappingText(), 'xsd:string');
+        $triples[] = new TSCTriple($subject, $property, $this->getMappingText(), 'xsd:string');
 
         return $triples;
     }
@@ -170,7 +170,7 @@ abstract class LODMapping {
         $queryString = "SELECT ?mapping ?p ?o ";
         $queryString .= " WHERE { ?mapping ?p ?o. ";
 
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $where = '';
         if (!is_null($mappingType)) {
@@ -205,7 +205,7 @@ abstract class LODMapping {
      */
 
     public static function createMappingFromSPARQLResult($mappingData, $uri) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $type = null;
         $source = null;
@@ -267,14 +267,14 @@ abstract class LODMapping {
      * get URI of this mapping
      */
     protected function getSubject() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $subject = 'smwDatasourceLinks:' . $this->getSource() . '_to_' . $this->getTarget() . '_Mapping_' . self::$mappingCounter;
         $subject = $pm->makeAbsoluteURI($subject);
         return $subject;
     }
 
     private static function getTypeProp($braced = true) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $prop = 'rdf:type';
         $prop = $pm->makeAbsoluteURI($prop, $braced);
@@ -283,7 +283,7 @@ abstract class LODMapping {
     }
 
     private static function getSourceProp($braced = true) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $prop = 'smw-lde:linksFrom';
         $prop = $pm->makeAbsoluteURI($prop, $braced);
@@ -292,7 +292,7 @@ abstract class LODMapping {
     }
 
     private static function getTargetProp($braced = true) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $prop = 'smw-lde:linksTo';
         $prop = $pm->makeAbsoluteURI($prop, $braced);
@@ -301,7 +301,7 @@ abstract class LODMapping {
     }
 
     private static function getCodeProp($braced = true) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
 
         $prop = 'smw-lde:sourceCode';
         $prop = $pm->makeAbsoluteURI($prop, $braced);
@@ -316,7 +316,7 @@ abstract class LODMapping {
     abstract public function getMappingType();
 
     public static function id2uri($id) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $ns = $pm->getNamespaceURI("smwDatasourceLinks");
         return $ns.$id;
     }

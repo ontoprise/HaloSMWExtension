@@ -4,7 +4,7 @@
  * @ingroup LinkedData_Tests
  */
 
-require_once 'testcases/TestLODSourceDefinition.php';
+require_once 'testcases/TestTSCSourceDefinition.php';
 require_once 'testcases/TestTripleStoreAccess.php';
 require_once 'testcases/TestMapping.php';
 require_once 'testcases/TestSparqlDataspaceRewriter.php';
@@ -27,15 +27,15 @@ class LODTests
 //   msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console 
 //   reasoner=owl restfulws        
         
-        $suite->addTestSuite("TestTripleStoreAccessSuite");
-        $suite->addTestSuite("TestLODSourceDefinitionSuite");
+       
+        
         $suite->addTestSuite("TestMapping");
         $suite->addTestSuite("TestSparqlDataspaceRewriter");
         $suite->addTestSuite("TestOntologyBrowserSparql");
         $suite->addTestSuite("TestMappingLanguageAPI");
         $suite->addTestSuite("TestImporter");
         $suite->addTestSuite("TestMetaDataQueryPrinterSuite");
-        $suite->addTestSuite("TestSparqlParserSuite");
+       
         $suite->addTestSuite("TestLODPolicySuite");
         $suite->addTestSuite("TestLODRatingSuite");
         

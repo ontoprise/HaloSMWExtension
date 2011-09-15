@@ -38,7 +38,6 @@ $wgAjaxExportList[] = "lodafSaveRating";
 $wgAjaxExportList[] = "lodafGetRatingsForTriple";
 $wgAjaxExportList[] = "lodafGetRatingEditorForTriple";
 $wgAjaxExportList[] = "lodImportOrUpdate";
-$wgAjaxExportList[] = "lodGetDataSourceTable";
 $wgAjaxExportList[] = "lodListSources";
 $wgAjaxExportList[] = "lodListR2RMappings";
 $wgAjaxExportList[] = "lodGetR2RMapping";
@@ -91,7 +90,7 @@ function lodafGetRatingEditorForTriple($triple, $value) {
 		$type = $objType[2];
 	}
     
-    $triple = new LODTriple($triple->subject, $triple->predicate, $obj, $type);
+    $triple = new TSCTriple($triple->subject, $triple->predicate, $obj, $type);
     $triples = array(array(array($triple), array()));
     
     $value = urldecode($value);
@@ -113,7 +112,7 @@ function lodafSaveRating($rating) {
 	
 	$ra = new LODRatingAccess();
 	$r = new LODRating($rating->rating, $rating->comment);
-	$t = new LODTriple($rating->triple->subject, 
+	$t = new TSCTriple($rating->triple->subject, 
 					   $rating->triple->predicate,
 					   $rating->triple->object);
 	$ra->addRating($t, $r);
@@ -135,7 +134,7 @@ function lodafSaveRating($rating) {
 function lodafGetRatingsForTriple($triple) {
 	$triple = json_decode($triple);
 	
-	$t = new LODTriple($triple->subject, 
+	$t = new TSCTriple($triple->subject, 
 					   $triple->predicate,
 					   $triple->object);
 					   
@@ -175,33 +174,14 @@ function lodImportOrUpdate($dataSource, $update, $synchronous, $runSchemaTransla
     return $response;
 }
 
-/**
- * Returns the datasource table as HTML
- *  
- * @return AjaxResponse HTML. Otherwise an error message.
- *       
- */
-function lodGetDataSourceTable() {
-    $response = new AjaxResponse();
-    $response->setContentType("text/html");
 
-    try {
-       $lodSourcePage = new LODSourcesPage();
-       $response->addText($lodSourcePage->createSourceTable($lodSourcePage->getAllSources()));
-    } catch(Exception $e) {
-        $response->setResponseCode($e->getCode());
-        $response->addText($e->getMessage());
-    }
-    
-    return $response;
-}
 
 /**
  * Outputs a list of all Linked Data source as JSON
  * @return AjaxResponse
  */
 function lodListSources() {
-	$lodAdminStore = LODAdministrationStore::getInstance();
+	$lodAdminStore = TSCAdministrationStore::getInstance();
     $response = new AjaxResponse();
 	$sources = $lodAdminStore->loadAllSourceDefinitions();
 	$results = array();

@@ -39,7 +39,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * @author Thomas Schweitzer
  * 
  */
-class LODSparqlRatingSerializer extends LODSparqlSerializerVisitor {
+class LODSparqlRatingSerializer extends TSCSparqlSerializerVisitor {
 
 	//--- Public methods ---
 	

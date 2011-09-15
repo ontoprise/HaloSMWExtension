@@ -22,7 +22,7 @@
 */
 
 /**
- * This file contains the class LODStorage that provides access to the database 
+ * This file contains the class TSCStorage that provides access to the database 
  * tables that are used by the Linked Data extension.
  * 
  * @author Thomas Schweitzer
@@ -36,11 +36,11 @@
  * of the actual database access object e.g. the Mediawiki SQL database.
  *
  */
-class LODStorage {
+class TSCStorage {
 
 	//--- Private fields---
 	
-	private static $mInstance; // LODStorage: the only instance of this singleton
+	private static $mInstance; // TSCStorage: the only instance of this singleton
 	private static $mDatabase; // The actual database object
 	
 	//--- Constructor ---
@@ -57,7 +57,7 @@ class LODStorage {
             switch ($lodgBaseStore) {
                 case (LOD_STORE_SQL):
                     require_once("$lodgIP/storage/LOD_StorageSQL.php");
-                    self::$mDatabase = new LODStorageSQL();
+                    self::$mDatabase = new TSCStorageSQL();
                 break;
             }
         }
@@ -69,7 +69,7 @@ class LODStorage {
 	/**
 	 * Returns the single instance of this class.
 	 *
-	 * @return LODStorage
+	 * @return TSCStorage
 	 * 		The single instance of this class.
 	 */
 	public static function getInstance() {

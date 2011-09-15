@@ -100,25 +100,25 @@ class LODSILKMapping  extends LODMapping{
 	public function getTriples(){
 		$triples = parent::getTriples();
 		
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		
 		$subject = $this->getSubject();
 
 		//set uriMintNamespace
 		$property = $this->getMintNamespaceProp();
-		$triples[] = new LODTriple($subject, $property, $this->mMintNamespace, '__objectURI');
+		$triples[] = new TSCTriple($subject, $property, $this->mMintNamespace, '__objectURI');
 		
 		//Set uriMintLabelPredicates
 		$property = $this->getMintLabelPredicateProp();
 		foreach($this->mMintLabelPredicates as $mintLabelPredicate){
-			$triples[] = new LODTriple($subject, $property, $mintLabelPredicate, '__objectURI');
+			$triples[] = new TSCTriple($subject, $property, $mintLabelPredicate, '__objectURI');
 		}
 		
 		return $triples;
 	}
 	
 	private function getMintNamespaceProp($braced = true){
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		
 		$prop = 'smw-lde:uriMintNamespace';
 		$prop = $pm->makeAbsoluteURI($prop, $braced);
@@ -127,7 +127,7 @@ class LODSILKMapping  extends LODMapping{
 	}
 	
 	private function getMintLabelPredicateProp($braced = true){
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		
 		$prop = 'smw-lde:uriMintLabelPredicate';
 		$prop = $pm->makeAbsoluteURI($prop, $braced);

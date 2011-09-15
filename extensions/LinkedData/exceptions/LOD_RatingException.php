@@ -37,7 +37,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * Exceptions for the operations concerning ratings.
  *
  */
-class LODRatingException extends LODException {
+class LODRatingException extends TSCException {
 
 	//--- Constants ---
 	

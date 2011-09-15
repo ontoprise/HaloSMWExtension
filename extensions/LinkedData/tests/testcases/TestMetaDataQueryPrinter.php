@@ -48,7 +48,7 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 
 		$this->dropGraphs();
 
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
 		$tsa->createGraph($this->mGraph3);
@@ -73,7 +73,7 @@ class TestMetaDataQueryPrinterSuite extends PHPUnit_Framework_TestSuite
 	}
 
 	protected function dropGraphs() {
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->dropGraph($this->mGraph1);
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mGraph3);

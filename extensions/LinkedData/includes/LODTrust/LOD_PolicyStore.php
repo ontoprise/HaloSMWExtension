@@ -108,7 +108,7 @@ WHERE {
 }
 QUERY;
 
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
 
         $result = $tsa->queryTripleStore($query, $graph);
 
@@ -123,7 +123,7 @@ QUERY;
         $pattern = NULL;
         $uri = NULL;
         $parameters = array();
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $propNS = $pm->getNamespaceURI("smw-lde");
         $uriNotSet = true;
         foreach ($rows as $row) {
@@ -189,7 +189,7 @@ WHERE {
 }
 QUERY;
 
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
 
         $result = $tsa->queryTripleStore($query, $graph);
         $policies = array();
@@ -223,27 +223,27 @@ QUERY;
         $triples = array();
         $heuristicURI = "smwTrustPolicies:" . $heuristic;
 
-        $triples[] = new LODTriple($uri, "rdf:type", "smw-lde:Policy", "__objectURI");
-        $triples[] = new LODTriple($uri, $propNS . "ID", $id, "xsd:string");
-        $triples[] = new LODTriple($uri, $propNS . "description", $description, "xsd:string");
-        $triples[] = new LODTriple($uri, $propNS . "pattern", $pattern, "xsd:string");
-        $triples[] = new LODTriple($uri, $propNS . "heuristic", $heuristicURI, "__objectURI");
-        $triples[] = new LODTriple($heuristicURI, $rdfsNS . "label", $heuristic, "xsd:string");
+        $triples[] = new TSCTriple($uri, "rdf:type", "smw-lde:Policy", "__objectURI");
+        $triples[] = new TSCTriple($uri, $propNS . "ID", $id, "xsd:string");
+        $triples[] = new TSCTriple($uri, $propNS . "description", $description, "xsd:string");
+        $triples[] = new TSCTriple($uri, $propNS . "pattern", $pattern, "xsd:string");
+        $triples[] = new TSCTriple($uri, $propNS . "heuristic", $heuristicURI, "__objectURI");
+        $triples[] = new TSCTriple($heuristicURI, $rdfsNS . "label", $heuristic, "xsd:string");
 
         if (is_array($parameters)) {
             foreach ($parameters as $parameter) {
                 $parUri = $parameter["uri"];
-                $triples[] = new LODTriple($uri, $propNS . "parameter", $parUri, "__objectURI");
-                $triples[] = new LODTriple($parUri, $propNS . "paramName", $parameter["name"], "xsd:string");
-                $triples[] = new LODTriple($parUri, $rdfsNS . "label", $parameter["label"], "xsd:string");
-                $triples[] = new LODTriple($parUri, $propNS . "description", $parameter["description"], "xsd:string");
+                $triples[] = new TSCTriple($uri, $propNS . "parameter", $parUri, "__objectURI");
+                $triples[] = new TSCTriple($parUri, $propNS . "paramName", $parameter["name"], "xsd:string");
+                $triples[] = new TSCTriple($parUri, $rdfsNS . "label", $parameter["label"], "xsd:string");
+                $triples[] = new TSCTriple($parUri, $propNS . "description", $parameter["description"], "xsd:string");
             }
         }
 
         $graph = $this->getTrustGraph();
 
         $persist = $persistenceID === true || is_string($persistenceID);
-        $tsa = $persist ? new LODPersistentTripleStoreAccess(true) : new LODTripleStoreAccess();
+        $tsa = $persist ? new TSCPersistentTripleStoreAccess(true) : new TSCTripleStoreAccess();
         $tsa->addPrefixes(self::getPolicyPrefixes());
         $tsa->createGraph($graph);
         $tsa->deleteTriples($graph, "<$uri> ?p ?o", "<$uri> ?p ?o");
@@ -276,7 +276,7 @@ QUERY;
      * 		Otherwise the $sourceID	will be used as persistency ID.
      */
     public function deletePolicy($policyID, $persistencyID = NULL) {
-        $tsa = new LODPersistentTripleStoreAccess(true);
+        $tsa = new TSCPersistentTripleStoreAccess(true);
         if (!is_null($policyID)) {
 
             $tsa->addPrefixes(self::getPolicyPrefixes());
@@ -306,7 +306,7 @@ QUERY;
      *
      */
     public function deleteAllPolicies() {
-        $tsa = new LODPersistentTripleStoreAccess();
+        $tsa = new TSCPersistentTripleStoreAccess();
         $tsa->dropGraph($this->getTrustGraph());
         $tsa->flushCommands();
         $tsa->deletePersistentTriples("LODPolicy");
@@ -332,7 +332,7 @@ WHERE {
 }
 QUERY;
 
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
         $qr = $tsa->queryTripleStore($query, $graph);
 
         $result = array();
@@ -354,24 +354,24 @@ QUERY;
      *
      */
     public function getPolicyPrefixes() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getSPARQLPrefixes(array("xsd", "owl", "rdf", "rdfs",
             "smw-lde", "smwGraphs",
             "smwTrustPolicies"));
     }
 
     public function getProvenanceGraphPrefixes() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getSPARQLPrefixes(array("swp"));
     }
 
     public function getSMWGraphsURI() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getNamespaceURI('smwGraphs');
     }
 
     public function getDataSourcesURI() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getNamespaceURI('smwDatasources');
     }
 
@@ -381,7 +381,7 @@ QUERY;
      * 		stored.
      */
     public static function getDataSourcesGraph() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getNamespaceURI('smwGraphs') . self::LOD_SD_GRAPH;
     }
 
@@ -391,7 +391,7 @@ QUERY;
      * 		stored.
      */
     public static function getTrustGraph() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getNamespaceURI('smwGraphs') . self::LOD_TRUST_GRAPH;
     }
 
@@ -400,7 +400,7 @@ QUERY;
      * 		Returns the namespace of the trust policies.
      */
     public static function getTrustPolicyNS() {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         return $pm->getNamespaceURI('smwTrustPolicies');
     }
 
@@ -415,7 +415,7 @@ QUERY;
     }
 
     private static function getHeuristic($uri, $rows) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $propNS = $pm->getNamespaceURI("rdfs");
         $heuristic = new LODHeuristic($uri);
         foreach ($rows as $row) {
@@ -431,7 +431,7 @@ QUERY;
     }
 
     private static function getParameter($uri, $rows) {
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $propNS = $pm->getNamespaceURI("smw-lde");
         $rdfsNS = $pm->getNamespaceURI("rdfs");
         $parameter = new LODParameter($uri);
@@ -471,7 +471,7 @@ WHERE {
 }
 QUERY;
 
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
 
         $result = $tsa->queryTripleStore($query, $graph);
         $heuristics = array();
@@ -513,7 +513,7 @@ WHERE {
 }
 QUERY;
 
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
 
         $result = $tsa->queryTripleStore($query, $graph);
 
@@ -524,7 +524,7 @@ QUERY;
 
         $label = NULL;
         $parameters = array();
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $propNS = $pm->getNamespaceURI("smw-lde");
         $rdfsNS = $pm->getNamespaceURI("rdfs");
         foreach ($rows as $row) {

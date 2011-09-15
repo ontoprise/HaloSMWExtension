@@ -150,7 +150,7 @@ EOT;
 
     private function extractParameters() {
         global $wgOut;
-        $pm = LODPrefixManager::getInstance();
+        $pm = TSCPrefixManager::getInstance();
         $parPrefix = $pm->getNamespaceURI('smwGraphs') . "TrustGraph#Par";
 
         $parr = array();

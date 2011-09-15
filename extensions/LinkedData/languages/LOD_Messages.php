@@ -92,48 +92,12 @@ $messages['en'] = array(
 	'lod_mdpt_rating_created'					=> 'rating_created',
 	'lod_mdpt_rating_assessment'				=> 'rating_assessment',
 							
-	//--- LOD source definition---
-	'lod_lsdparser_expected_at_least'			=> 'The parameter "$2" must occur at least $1 time(s).',
-	'lod_lsdparser_expected_exactly'			=> 'The parameter "$2" must occur exactly $1 time(s).',
-	'lod_lsdparser_expected_between'			=> 'The parameter "$3" must occur between $1 and $2 time(s).',
-	'lod_lsdparser_title'						=> 'Data source definition for',
-	'lod_lsdparser_success'						=> 'The Linked Data source definition was parsed successfully. The following values will be stored:',							
-	'lod_lsdparser_failed'						=> 'The definition of the data source is faulty. It will not be saved.',			
-	'lod_lsdparser_error_intro'					=> 'The following errors were found in the definition of the data source:',				
-							
-	'lod_lsd_id'						=> "ID",
-	'lod_lsd_changefreq'				=> "Change frequency",
-	'lod_lsd_datadumplocation'			=> "Data dump location",
-	'lod_lsd_description'				=> "Description",
-	'lod_lsd_homepage'					=> "Homepage",
-	'lod_lsd_label'						=> "Label",
-	'lod_lsd_lastmod'					=> "Last modification",
-	'lod_lsd_linkeddataprefix'			=> "Linked data prefix",
-	'lod_lsd_sampleuri'					=> "Sample URI",
-	'lod_lsd_sparqlendpointlocation'	=> "SPARQL endpoint location",
-	'lod_lsd_sparqlgraphname'			=> "SPARQL graph name",
-	'lod_lsd_sparqlgraphpattern'		=> "SPARQL graph pattern",
-	'lod_lsd_uriregexpattern'			=> "URI regex pattern",
-	'lod_lsd_vocabulary'				=> "Vocabulary",
-	'lod_lsd_predicatetocrawl'			=> "Predicate to crawl",
-        'lod_lsd_levelstocrawl'			=> "Levels to crawl",
+	
 
 	//--- LOD special pages ---
-	'lodsources'	=> 'LOD sources',
+	
 	'specialpages-group-lod_group' => 'Linked Data extension',
-    //--- LOD Source editor
-	'lod_sp_source_label' => 'Name',
-	'lod_sp_source_source' => 'Data source',
-	'lod_sp_source_lastimport' => 'Last import',
-	'lod_sp_source_changefreq' => 'Change frequency',
-	'lod_sp_source_import' => 'Import',
-	'lod_sp_source_reimport' => '(Re-)Import',
-	'lod_sp_source_update' => 'Update',
-        'lod_sp_source_options' => 'Options',
-        'lod_sp_schema_translation' => 'R2R',
-        'lod_sp_identity_resolution' => 'Silk',
-    	'lod_sp_isimported' => 'Imported',
-	'lod_sp_statusmsg' => 'Status message',
+    
     //--- LOD Policy editor
 	'lodtrust'	=> 'LOD Trust Policies',
     'lod_sp_policy_label' => 'ID',
@@ -244,56 +208,11 @@ $messages['de'] = array(
 	'lod_mdpt_rating_created'					=> 'rating_created',
 	'lod_mdpt_rating_assessment'				=> 'rating_assessment',
 							
-	//--- LOD source definition---
-	'lod_lsdparser_expected_at_least'			=> 'Der Parameter "$2" muss mindestens $1 mal vorkommen.',
-	'lod_lsdparser_expected_exactly'			=> 'Der Parameter "$2" muss genau $1 mal vorkommen.',
-	'lod_lsdparser_expected_between'			=> 'Der Parameter "$3" muss zwischen $1 und $2 mal vorkommen.',
-	'lod_lsdparser_title'						=> 'Datenquellendefinition für',
-	'lod_lsdparser_success'						=> 'Die Linked-Data-Quelldefinition wurde erfolgreich gelesen. Die folgenden Werte werden gespeichert:',
-	'lod_lsdparser_failed'						=> 'Die Definition der Datenquelle ist fehlerhaft. Sie wird nicht gespeichert.',			
-	'lod_lsdparser_error_intro'					=> 'Die folgenden Fehler wurden in der Definition der Datenquelle gefunden:',				
-
-	'lod_lsd_id'						=> "ID",
-	'lod_lsd_changefreq'				=> "Änderungsrate",
-	'lod_lsd_datadumplocation'			=> "Adresse für Datendumps",
-	'lod_lsd_description'				=> "Beschreibung",
-	'lod_lsd_homepage'					=> "Homepage",
-	'lod_lsd_label'						=> "Bezeichnung",
-	'lod_lsd_lastmod'					=> "Letzte Änderung",
-	'lod_lsd_linkeddataprefix'			=> "Linked data Präfix",
-	'lod_lsd_sampleuri'					=> "Beispiel-URI",
-	'lod_lsd_sparqlendpointlocation'	=> "SPARQL-Endpunktadresse",
-	'lod_lsd_sparqlgraphname'			=> "SPARQL-Graphname",
-	'lod_lsd_sparqlgraphpattern'		=> "SPARQL-Graphpattern",
-	'lod_lsd_uriregexpattern'			=> "URI Regex-Muster",
-	'lod_lsd_vocabulary'				=> "Vokabular",
-	'lod_lsd_predicatetocrawl'			=> "Beim Crawling zu folgendes Prädikat",
-
+	
 	//--- LOD special pages ---
-    'lodsources'    => 'LOD-Quellen',
+   
 	'specialpages-group-lod_group' => 'Linked Data extension',
-	'lod_sp_source_label' => 'Name',
-    'lod_sp_source_source' => 'Datenquelle',
-    'lod_sp_source_lastimport' => 'Letzter Import',
-    'lod_sp_source_changefreq' => 'Änderungsfrequenz',
-	'lod_sp_source_import' => 'Importiere',
-    'lod_sp_source_reimport' => '(Re-)Importiere',
-    'lod_sp_source_update' => 'Aktualisiere',
-	'lod_sp_isimported' => 'Ist importiert',
-	'lod_sp_statusmsg' => 'Statusnachricht',
-    //--- LOD Policy editor
-	'lodtrust'	=> 'LOD Trust Policies',
-    'lod_sp_policy_label' => 'ID',
-	'lod_sp_policy_description' => 'Policy',
-    'lod_sp_policy_action_edit' => 'Bearbeiten',
-    'lod_sp_policy_action_duplicate' => 'Duplizieren',
-    'lod_sp_policy_action_remove' => 'Löschen',
-    'lod_sp_policy_action_new' => 'Neu',
-    'lod_sp_policy_action_edit_par' => 'Parameter bearbeiten',
-    'lod_sp_policy_action_remove_par' => 'Parameter löschen',
-    'lod_sp_policy_action_define_par' => 'Parameter definieren',
-    'lod_sp_policy_action_new_par' => 'Neuer Parameter',
-    'lod_sp_policy_action_cancel_edit' => 'Abbrechen',
+	
 								
 	//--- LOD rating ---
 	'lod_rt_heading'			=> 'Ausgewählter Wert:',

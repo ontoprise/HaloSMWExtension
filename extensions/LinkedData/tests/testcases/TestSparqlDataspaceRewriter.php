@@ -28,7 +28,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
 		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
 	    	
-    	$tsa = new LODTripleStoreAccess();
+    	$tsa = new TSCTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
 		$tsa->createGraph($this->mGraph3);
@@ -44,7 +44,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-    	$tsa = new LODTripleStoreAccess();
+    	$tsa = new TSCTripleStoreAccess();
 		$tsa->dropGraph($this->mGraph1);
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mGraph3);
@@ -55,10 +55,10 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Tests the creation a LODSourceDefinition object.
+     * Tests the creation a TSCSourceDefinition object.
      */
     function testQueryForDataspaces() {
-    	$tsa = new LODTripleStoreAccess();
+    	$tsa = new TSCTripleStoreAccess();
 		$query = "
 		  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 		  SELECT ?s ?l ?g
@@ -144,10 +144,10 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     
     
     /**
-     * Tests the creation a LODSourceDefinition object.
+     * Tests the creation a TSCSourceDefinition object.
      */
     function testQueryForMetadata() {
-        $tsa = new LODTripleStoreAccess();
+        $tsa = new TSCTripleStoreAccess();
         $query = "
           PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
           SELECT ?s ?l ?g

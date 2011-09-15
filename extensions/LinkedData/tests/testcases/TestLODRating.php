@@ -41,7 +41,7 @@ class TestLODRatingSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function tearDown() {
-//		$tsa = new LODTripleStoreAccess();
+//		$tsa = new TSCTripleStoreAccess();
 //		$tsa->dropGraph(self::GRAPH);
 //		$tsa->flushCommands();
 	}
@@ -68,7 +68,7 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-		$tsa = new LODPersistentTripleStoreAccess();
+		$tsa = new TSCPersistentTripleStoreAccess();
 		foreach ($this->mPersistenceToDelete as $p) {
 			$tsa->deletePersistentTriples($p[0], $p[1]);
 		}
@@ -123,7 +123,7 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
      * to the constructor of LODRating.
      */
     function testCreateInvalidRating() {
-    	$this->setExpectedException('LODException');
+    	$this->setExpectedException('TSCException');
     	// Create a rating with a wrong time format 
     	$r = new LODRating("true", "comment", null, "2010-10-122T06:07:11Z");
     	
@@ -141,10 +141,10 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
     	$this->mGraphsToDelete[] = "http://www.example.org/smw-lde/smwGraphs/RatingGraph_95b4513ad80be8d1eccaabb17f902534";
     	$this->mPersistenceToDelete[] = array("LODRating", "95b4513ad80be8d1eccaabb17f902534");
     	
-    	$pm = LODPrefixManager::getInstance();
+    	$pm = TSCPrefixManager::getInstance();
     	$pm->addPrefix("ex", "http://example.com/");
 
-    	$triple = new LODTriple("ex:HitchhikersGuide", 
+    	$triple = new TSCTriple("ex:HitchhikersGuide", 
     							"ex:title", 
     							"The Hitchhiker's Guide to the Galaxy", 
     							"xsd:string");
@@ -195,10 +195,10 @@ class TestLODRating extends PHPUnit_Framework_TestCase {
     	$this->mPersistenceToDelete[] = array("LODRating", "95b4513ad80be8d1eccaabb17f902534");
     	
     	
-    	$pm = LODPrefixManager::getInstance();
+    	$pm = TSCPrefixManager::getInstance();
     	$pm->addPrefix("ex", "http://example.com/");
 
-    	$triple = new LODTriple("ex:HitchhikersGuide", 
+    	$triple = new TSCTriple("ex:HitchhikersGuide", 
     							"ex:title", 
     							"The Hitchhiker's Guide to the Galaxy", 
     							"xsd:string");
@@ -713,7 +713,7 @@ SPARQL;
     	$pattern = "ex:HermannHesse ex:nationality ?n";
 		
 		$graph = TestLODRatingSuite::AUTHOR_GRAPH;
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
 		$tsa->deleteTriples($graph, $pattern, $pattern);
 		$tsa->flushCommands();
@@ -966,11 +966,11 @@ SPARQL;
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		
 		// Inserts triples into the triple store
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
 		$tsa->createGraph($graph);
 		$tsa->insertTriples($graph, $triples);
@@ -994,12 +994,12 @@ SPARQL;
     	$triples = array();
 		for ($i = 0; $i < 22; ++$i) {
 			$book = "ex:book$i";
-			$triples[] = new LODTriple("ex:AnAuthor", "ex:authorOf", $book, "__objectURI");
-			$triples[] = new LODTriple($book, "ex:price", "4.2", "xsd:double");
+			$triples[] = new TSCTriple("ex:AnAuthor", "ex:authorOf", $book, "__objectURI");
+			$triples[] = new TSCTriple($book, "ex:price", "4.2", "xsd:double");
 		}
 		
 		// Inserts triples into the triple store
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
 		$tsa->createGraph($graph);
 		$tsa->insertTriples($graph, $triples);
@@ -1015,7 +1015,7 @@ SPARQL;
 		// Needed for tearDown()
     	$this->mGraphsToDelete[] = $graph;
 		
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->createGraph($graph);
 		$tsa->loadFileIntoGraph("{$this->mFilePath}authors.n3", $graph, "n3");
 		$tsa->flushCommands();
@@ -1042,7 +1042,7 @@ class TestLODRatingDatabase extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-    	$db = LODStorage::getDatabase();
+    	$db = TSCStorage::getDatabase();
     	$db->deleteQueries(self::ARTICLE_WITH_QUERIES);
     }
 
@@ -1070,7 +1070,7 @@ SPARQL;
 						 "p" => "some other value");
    		
    		
-    	$db = LODStorage::getDatabase();
+    	$db = TSCStorage::getDatabase();
     	
     	$articleName = self::ARTICLE_WITH_QUERIES;
     	
@@ -1119,7 +1119,7 @@ WHERE {
     ?s ?p ?o .
 }
 SPARQL;
-    	$db = LODStorage::getDatabase();
+    	$db = TSCStorage::getDatabase();
     	
     	$articleName = "AnArticleWithAQuery";
     	

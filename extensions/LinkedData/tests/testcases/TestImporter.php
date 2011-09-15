@@ -23,11 +23,11 @@ class TestImporter extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
 		$this->importer = new LODImporter();
-		$this->store = LODAdministrationStore::getInstance();
+		$this->store = TSCAdministrationStore::getInstance();
 		$this->mappingStore = new LODMappingTripleStore();
 		LODMappingStore::setStore($this->mappingStore);
-		$this->lsd1 = new LODSourceDefinition("ds1");
-		$this->lsd2 = new LODSourceDefinition("ds2");
+		$this->lsd1 = new TSCSourceDefinition("ds1");
+		$this->lsd2 = new TSCSourceDefinition("ds2");
 		$this->store->storeSourceDefinition($this->lsd1);
 		$this->store->storeSourceDefinition($this->lsd2);
 
@@ -59,7 +59,7 @@ END;
 			"http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph",
 		);
 		
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		foreach ($graphs as $g) {
 			$tsa->dropGraph($g);
 		}

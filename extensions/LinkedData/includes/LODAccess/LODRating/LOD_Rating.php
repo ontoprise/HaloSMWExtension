@@ -68,7 +68,7 @@ class LODRating {
 	 * @param string $creationTime
 	 * 		Time of creation of this rating in the format ISO 8601 e.g. 
 	 * 		2010-10-12T06:07:11Z . If <null>, the current time is set.
-	 * @throws LODException
+	 * @throws TSCException
 	 * 		... if the format of $creationTime does not match ISO 8601
 	 */
 	function __construct($value, $comment, $author = null, $creationTime = null) {
@@ -83,7 +83,7 @@ class LODRating {
 		if (!is_null($creationTime)) {
 			// Verify that the format of the time is ISO 8601
 			if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.*\d*)?Z?$/', $creationTime)) {
-				throw new LODException(LODException::INTERNAL_ERROR,
+				throw new TSCException(TSCException::INTERNAL_ERROR,
 										"Wrong time format. Expected ISO 8601 e.g. 2010-10-12T06:07:11Z");
 			}
 		}

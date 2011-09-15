@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
   <testsuite name="PHPUnit" tests="9" assertions="59" failures="0" errors="0" time="11.780553">
-    <testsuite name="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" tests="7" assertions="31" failures="0" errors="0" time="7.408139">
-      <testcase name="testCreateLSD" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="42" assertions="1" time="0.002216"/>
-      <testcase name="testCreateLODAdministrationStore" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="51" assertions="1" time="0.039484"/>
-      <testcase name="testStoreLSD" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="59" assertions="1" time="0.602309"/>
-      <testcase name="testLoadLSD" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="72" assertions="23" time="0.663046"/>
-      <testcase name="testDeleteLSD" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="115" assertions="1" time="1.249804"/>
-      <testcase name="testGetLSDIDs" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="129" assertions="3" time="2.991934"/>
-      <testcase name="testDeleteAllLSDs" class="TestLODSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestLODSourceDefinition.php" line="152" assertions="1" time="1.859346"/>
+    <testsuite name="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" tests="7" assertions="31" failures="0" errors="0" time="7.408139">
+      <testcase name="testCreateLSD" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="42" assertions="1" time="0.002216"/>
+      <testcase name="testCreateTSCAdministrationStore" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="51" assertions="1" time="0.039484"/>
+      <testcase name="testStoreLSD" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="59" assertions="1" time="0.602309"/>
+      <testcase name="testLoadLSD" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="72" assertions="23" time="0.663046"/>
+      <testcase name="testDeleteLSD" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="115" assertions="1" time="1.249804"/>
+      <testcase name="testGetLSDIDs" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="129" assertions="3" time="2.991934"/>
+      <testcase name="testDeleteAllLSDs" class="TestTSCSourceDefinition" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTSCSourceDefinition.php" line="152" assertions="1" time="1.859346"/>
     </testsuite>
     <testsuite name="TestTripleStoreAccess" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTripleStoreAccess.php" tests="2" assertions="28" failures="0" errors="0" time="4.372413">
       <testcase name="testCreateTSA" class="TestTripleStoreAccess" file="C:\Programme\MediaWiki\HaloSMWExtension\extensions\LinkedData\tests\testcases\TestTripleStoreAccess.php" line="32" assertions="1" time="0.000280"/>

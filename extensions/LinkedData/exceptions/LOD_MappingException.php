@@ -37,7 +37,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * Exceptions for the operations Linked Data Mappings.
  *
  */
-class LODMappingException extends LODException {
+class LODMappingException extends TSCException {
 
 	//--- Constants ---
 	

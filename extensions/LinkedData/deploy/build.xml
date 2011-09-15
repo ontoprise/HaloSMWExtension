@@ -40,11 +40,7 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip/extensions/LinkedData/storage">
-			<fileset dir="../storage/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 		<copy todir="bin/zip/extensions/LinkedData/wikidumps">
 			<fileset dir="../wikidumps/">
 				<exclude name="**/.svn, **/CVS" />

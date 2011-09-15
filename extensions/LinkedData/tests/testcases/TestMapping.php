@@ -49,7 +49,7 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 		$store = new LODMappingTripleStore();
 		$store->removeAllMappingsFromPage($articleName);
 		
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->dropGraph("http://www.example.org/smw-lde/smwGraphs/MappingRepository");
 		$tsa->flushCommands();
 	}

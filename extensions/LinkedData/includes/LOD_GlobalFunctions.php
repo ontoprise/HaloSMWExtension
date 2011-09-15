@@ -60,10 +60,9 @@ function enableLinkedData() {
     $wgExtensionAliasesFiles['LinkedData'] = $lodgIP . '/languages/LOD_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
-	$wgAutoloadClasses['LODStorage'] = $lodgIP . '/includes/LOD_Storage.php';
+	$wgAutoloadClasses['TSCStorage'] = $lodgIP . '/includes/LOD_Storage.php';
     
-	$wgAutoloadClasses['LODSourceDefinition'] = $lodgIP . '/includes/LODAdministration/LOD_SourceDefinition.php';
-	$wgAutoloadClasses['LODAdministrationStore'] = $lodgIP . '/includes/LODAdministration/LOD_AdministrationStore.php';
+	
 	$wgAutoloadClasses['LODPolicyStore'] = $lodgIP . '/includes/LODTrust/LOD_PolicyStore.php';
 	$wgAutoloadClasses['LODPolicy'] = $lodgIP . '/includes/LODTrust/LOD_Policy.php';
 	$wgAutoloadClasses['LODHeuristic'] = $lodgIP . '/includes/LODTrust/LOD_Heuristic.php';
@@ -71,13 +70,6 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODResource'] = $lodgIP . '/includes/LODTrust/LOD_Resource.php';
         $wgAutoloadClasses['LODLinkSpecs'] = $lodgIP . '/includes/LODLinkSpecs/LOD_LinkSpecs.php';
 
-	$wgAutoloadClasses['LODSparqlQueryResult']   = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
-	$wgAutoloadClasses['LODSparqlResultURI'] 	 = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
-	$wgAutoloadClasses['LODSparqlResultLiteral'] = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
-	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
-	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
-	$wgAutoloadClasses['LODPersistentTripleStoreAccess'] 
-											   = $lodgIP . '/storage/TripleStore/LOD_PersistentTripleStoreAccess.php';
 	
 	$wgAutoloadClasses['ILODMappingStore']	= $lodgIP . '/includes/LODMapping/ILOD_MappingStore.php';
 	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
@@ -99,9 +91,6 @@ function enableLinkedData() {
 
 	$wgAutoloadClasses['LODImporter'] = $lodgIP . '/includes/LODImport/LOD_Importer.php';
 	
-	//--- Non-existing page handler ---
-	$wgAutoloadClasses['LODNonExistingPageHandler'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPageHandler.php';
-	$wgAutoloadClasses['LODNonExistingPage'] = $lodgIP . '/includes/LODWikiFrontend/LOD_NonExistingPage.php';
 	
 	//--- Meta-data query printers ---
 	$wgAutoloadClasses['LODMetaDataQueryPrinter'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_MetaDataQueryPrinter.php';
@@ -120,9 +109,6 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODTimeValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Time.php';
 	$wgAutoloadClasses['LODBoolValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Bool.php';
 	$wgAutoloadClasses['LODRecordValue'] = $lodgIP . '/includes/LODWikiFrontend/MetaDataQueryPrinter/LOD_DV_Record.php';
-
-	//--- Classes for prefix management ---
-	$wgAutoloadClasses['LODPrefixManager'] = $lodgIP . '/includes/LODAccess/LOD_PrefixManager.php';
 	
 	//--- Classes for rating triples ---
 	$wgAutoloadClasses['LODRatingAccess'] = $lodgIP . '/includes/LODAccess/LODRating/LOD_RatingAccess.php';
@@ -135,16 +121,8 @@ function enableLinkedData() {
 	//--- UI/HTML for rating triples ---
 	$wgAutoloadClasses['LODQueryResultRatingUI'] = $lodgIP . '/includes/LODWikiFrontend/RatingUI/LOD_QueryResultRating.php';
 	
-	//--- SPARQL queries ---
-	$wgAutoloadClasses['LODSparqlQueryVisitor'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlQueryVisitor.php';
-	$wgAutoloadClasses['LODSparqlSerializerVisitor'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlSerializerVisitor.php';
-	$wgAutoloadClasses['LODSparqlQueryParser'] = $lodgIP . '/includes/LODAccess/LODSparql/LOD_SparqlQueryParser.php';
-	
     //--- Autoloading for exception classes ---
-   	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
    	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
-   	$wgAutoloadClasses['LODTSAException']     = $lodgIP . '/exceptions/LOD_TSAException.php';
-   	$wgAutoloadClasses['LODPrefixManagerException'] = $lodgIP . '/exceptions/LOD_PrefixManagerException.php';
    	$wgAutoloadClasses['LODRatingException'] = $lodgIP . '/exceptions/LOD_RatingException.php';
    	
     //--- Autoloading for libraries ---
@@ -155,9 +133,7 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODMetadataTablePrinter'] = $lodgIP . '/includes/LODWikiFrontend/LOD_MetadataTablePrinter.php';
 	
 	// register special pages
-	$wgAutoloadClasses['LODSourcesPage']       = $lodgIP . '/specials/LODSources/LOD_SpecialSources.php';
-    $wgSpecialPages['LODSources']       = array( 'LODSourcesPage' );
-    $wgSpecialPageGroups['LODSources']  = 'lod_group';
+	
 	$wgAutoloadClasses['LODTrustPage']       = $lodgIP . '/specials/LODTrust/LOD_SpecialTrust.php';
     $wgSpecialPages['LODTrust']       = array( 'LODTrustPage' );
     $wgSpecialPageGroups['LODTrust']  = 'lod_group';
@@ -409,18 +385,7 @@ function lodfOnBeforePageDisplayRating(& $out) {
 		));
 			
 		
-//		$script = "jquery.fancybox-1.3.1.js";
-//		$scriptFile = $lodgScriptPath . "/scripts/$script";
-//		$out->addScript('<script type="text/javascript" src="' . $scriptFile . '"></script>');
-//		
-//		$css = "jquery.fancybox-1.3.1.css";
-//		$cssFile = $lodgScriptPath . "/skins/$css";
-//		$out->addLink(array(
-//					'rel'   => 'stylesheet',
-//					'type'  => 'text/css',
-//					'media' => 'screen, projection',
-//					'href'  => $cssFile
-//				));		
+	
 	}
 	
 	return true;

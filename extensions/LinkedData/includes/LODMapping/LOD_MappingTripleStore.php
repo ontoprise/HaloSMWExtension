@@ -27,7 +27,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Fully qualified name of an article
 	 */
 	public function removeAllMappingsFromPage($articleName) {
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
 
 		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
 		if (isset($sourceTargetPairs)) {
@@ -56,8 +56,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 
 	 */
 	public function removeAllMappings($source, $target, $persistencyLayerId) {
-		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
-		$pm = LODPrefixManager::getInstance();
+		$tripleStoreAccess = new TSCPersistentTripleStoreAccess(true);
+		$pm = TSCPrefixManager::getInstance();
 		
 		$property = 'smw-lde:linksFrom';
 		$property = $pm->makeAbsoluteURI($property);
@@ -87,8 +87,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		The uri of the mapping to be removed
 	 */
     public function removeMapping($uri) {
-        $tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
-		$pm = LODPrefixManager::getInstance();
+        $tripleStoreAccess = new TSCPersistentTripleStoreAccess(true);
+		$pm = TSCPrefixManager::getInstance();
 
         $graph = 'smwGraphs:MappingRepository';
 		$graph = $pm->makeAbsoluteURI($graph, false);
@@ -118,8 +118,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	public function addMapping(LODMapping $mapping, $persistencyLayerId) {
 		$triples = $mapping->getTriples();
 		
-		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
-		$pm = LODPrefixManager::getInstance();
+		$tripleStoreAccess = new TSCPersistentTripleStoreAccess(true);
+		$pm = TSCPrefixManager::getInstance();
 		
 		$graph = 'smwGraphs:MappingRepository';
 		$graph = $pm->makeAbsoluteURI($graph, false);
@@ -145,7 +145,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Name of the mapping target
 	 */
 	public function addMappingToPage($articleName, $source, $target) {
-		$db = LODStorage::getDatabase();	
+		$db = TSCStorage::getDatabase();	
 		
 		$db->addMappingToPage($articleName, $source, $target);
 	}
@@ -159,7 +159,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * @return array(array(string source, string $target))
 	 */
 	public function getMappingsInArticle($articleName, $askTSC = false) {
-		$db = LODStorage::getDatabase();
+		$db = TSCStorage::getDatabase();
 		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
 		 
 		if(!$askTSC){
@@ -199,8 +199,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		no such mappings.
 	 */
 	public function getAllMappings($source = null, $target = null, $typeId = null) {
-		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
-		$pm = LODPrefixManager::getInstance();
+		$tripleStoreAccess = new TSCPersistentTripleStoreAccess(true);
+		$pm = TSCPrefixManager::getInstance();
 		
 		$graph = 'smwGraphs:MappingRepository';
 		$graph = $pm->makeAbsoluteURI($graph, false);
@@ -210,7 +210,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 		$queryResult = $tripleStoreAccess->queryTripleStore($query, $graph);
 		
 		$mappings = array();
-		if($queryResult instanceof LODSPARQLQueryResult){
+		if($queryResult instanceof TSCSparqlQueryResult){
 			foreach($queryResult -> getRows() as $row){
 				$mappings[$row->getResult('mapping')->getValue()][$row->getResult('p')->getValue()][] = 
 					$row->getResult('o')->getValue();
@@ -235,8 +235,8 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		The definition of matching mappings or null
 	 */
 	public function getMapping($mappingUri) {
-		$tripleStoreAccess = new LODPersistentTripleStoreAccess(true);
-		$pm = LODPrefixManager::getInstance();
+		$tripleStoreAccess = new TSCPersistentTripleStoreAccess(true);
+		$pm = TSCPrefixManager::getInstance();
 		
 		$graph = 'smwGraphs:MappingRepository';
 		$graph = $pm->makeAbsoluteURI($graph, false);
@@ -246,7 +246,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 		$queryResult = $tripleStoreAccess->queryTripleStore($query, $graph);
 		
 		$mappingData = array();
-		if($queryResult instanceof LODSPARQLQueryResult){
+		if($queryResult instanceof TSCSparqlQueryResult){
 			foreach($queryResult -> getRows() as $row){
 				$mappingData[$row->getResult('p')->getValue()][] = 
 					$row->getResult('o')->getValue();

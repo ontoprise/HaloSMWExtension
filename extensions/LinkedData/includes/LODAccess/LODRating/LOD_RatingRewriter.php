@@ -43,7 +43,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * @author Thomas Schweitzer
  * 
  */
-class LODRatingRewriter extends LODSparqlQueryVisitor {
+class LODRatingRewriter extends TSCSparqlQueryVisitor {
 	
 	//--- Constants ---
 		
@@ -206,7 +206,7 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 			$objValue = null;
 		}
 		
-		$triple = new LODTriple($subjValue ? $subjValue : "?$subjVar",
+		$triple = new TSCTriple($subjValue ? $subjValue : "?$subjVar",
 								$predValue ? $predValue : "?$predVar", 
 								$objValue  ? $objValue  : "?$objVar", 
 								$objType);
@@ -252,7 +252,7 @@ class LODRatingRewriter extends LODSparqlQueryVisitor {
 	 * 		unbound.
 	 * @param int $position
 	 * 		The position of the variable in the triple.
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple that is related to the variable.
 	 * @param bool $unbound
 	 * 		<true>, if the triple contains at least one unbound variable

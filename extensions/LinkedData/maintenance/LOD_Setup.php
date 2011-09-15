@@ -46,10 +46,10 @@ $delete = array_key_exists('delete', $options);
 
 if ($delete) {
 	echo "Deleting database tables for LinkedData...\n";
-	LODStorage::getDatabase()->dropDatabaseTables();
+	TSCStorage::getDatabase()->dropDatabaseTables();
 	echo "done.\n";
 } else {
 	echo "Setting up database tables for LinkedData...\n";
-	LODStorage::getDatabase()->initDatabaseTables();
+	TSCStorage::getDatabase()->initDatabaseTables();
 	echo "done.\n";
 }

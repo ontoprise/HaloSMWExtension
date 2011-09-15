@@ -116,7 +116,7 @@ class LODQueryResultRatingUI  {
 		global $LOD_QRR_RATING_HTML;
 		$html = $LOD_QRR_RATING_HTML;
 		
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 		if (!is_null($ratingKey)) {
 			$query = LODRatingAccess::getQueryForRatingKey($ratingKey);
 			$pm->addPrefixesFromQuery($query[0]);
@@ -150,10 +150,10 @@ class LODQueryResultRatingUI  {
 	
 	/**
 	 * Returns the HTML representation of all ratings of the given $triple.
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The ratings for this triple are retrieved
 	 */
-	public static function getRatingsForTripleHTML(LODTriple $triple) {
+	public static function getRatingsForTripleHTML(TSCTriple $triple) {
 		$ra = new LODRatingAccess();
 		$ratings = $ra->getRatings($triple);
 
@@ -287,7 +287,7 @@ HTML;
 	 * 		HTML elements.
 	 * @param int $primSec
 	 * 		1 or 2 for primary and secondary tripels
-	 * @param array<LODTriple> $triples
+	 * @param array<TSCTriple> $triples
 	 * 		The array of triples
 	 * @return string
 	 * 		The HTML of the table
@@ -306,7 +306,7 @@ HTML;
 	</colgroup>
 HTML;
 		
-		$pm = LODPrefixManager::getInstance();
+		$pm = TSCPrefixManager::getInstance();
 
 		// Sort all triples by subject
 		$tripleTable = array();

@@ -54,10 +54,10 @@ class LODQueryAnalyzer  {
 //	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
-	private $mParser;    		// LODSparqlQueryParser: The parser for the query
+	private $mParser;    		// TSCSparqlQueryParser: The parser for the query
 	private $mRewriter;			// LODRatingRewriter: the rewriter for the query
 	private $mRewrittenQuery;	// string: The rewritten query
-	private $mBindings;			// array<LODSparqlQueryResult>: All known bindings
+	private $mBindings;			// array<TSCSparqlQueryResult>: All known bindings
 	private $mQuery;			// string: The original query
 	private $mQueryParams;		// array: The parameters of the original query
 	
@@ -86,7 +86,7 @@ class LODQueryAnalyzer  {
 		$this->mBindings = $bindings;
 		$this->mQuery = $query;
 		$this->mQueryParams = $queryParams;
-		$this->mParser = new LODSparqlQueryParser($query);
+		$this->mParser = new TSCSparqlQueryParser($query);
 		$this->mRewriter = new LODRatingRewriter($bindings);
 		$this->mParser->visitQuery($this->mRewriter);
 			
@@ -159,7 +159,7 @@ class LODQueryAnalyzer  {
 			}
 			$params .= "$param=$value";
 		}
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$result = $tsa->queryTripleStore($this->mRewrittenQuery, null, $params);
 		
 		$rows = $result->getRows();
@@ -169,7 +169,7 @@ class LODQueryAnalyzer  {
 			$bindings = array_values($row->getResults());
 			$mergedBindings = array_merge($this->mBindings, $bindings);
 			$rewriter = new LODRatingRewriter($mergedBindings);
-			$parser = new LODSparqlQueryParser($this->mQuery);
+			$parser = new TSCSparqlQueryParser($this->mQuery);
 			$parser->visitQuery($rewriter);
 			
 			$result = array();

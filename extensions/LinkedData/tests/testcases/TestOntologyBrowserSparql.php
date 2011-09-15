@@ -35,7 +35,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
 		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
 
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
 		$tsa->createGraph($this->mProvGraph);
@@ -49,7 +49,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	}
 
 	function tearDown() {
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->dropGraph($this->mGraph1);
 		$tsa->dropGraph($this->mGraph2);
 		$tsa->dropGraph($this->mProvGraph);

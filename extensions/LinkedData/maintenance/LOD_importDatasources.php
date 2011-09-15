@@ -59,14 +59,14 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
     }
 }
 
-$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
+$ids = TSCAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
 list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 
 //TODO: add credentials
 $con = new RESTWebserviceConnector($host, $port, "ldimporter");
 
 foreach($ids as $id) {
-    $sd = LODAdministrationStore::getInstance()->loadSourceDefinition($id);
+    $sd = TSCAdministrationStore::getInstance()->loadSourceDefinition($id);
     print ($update ? "Updating " : "Importing ") . $sd->getLabel() . " [$id] ... ";
     $payload = "dataSourceId=$id&update=$update";
     list($header, $status, $res) = $con->send($payload, "/runImport");

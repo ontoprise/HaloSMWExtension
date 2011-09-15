@@ -69,13 +69,13 @@ class LODRatingTripleInfo  {
 	 * 		Position of the variable in the triple
 	 * @param bool $bound
 	 * 		<true> if a value is bound to the variable
-	 * @param LODTriple $triple
+	 * @param TSCTriple $triple
 	 * 		The triple that contains the variable
 	 * @param bool $unboundVarInTriple
 	 * 		<true>, if the triple contains at least one unbound variable
 	 * 
 	 */
-	function __construct($variable, $position, $bound, LODTriple $triple, $unboundVarInTriple) {
+	function __construct($variable, $position, $bound, TSCTriple $triple, $unboundVarInTriple) {
 		$this->mVariable = $variable;
 		$this->mPosition = $position;
 		$this->mBound = $bound;
