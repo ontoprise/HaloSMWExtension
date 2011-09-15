@@ -17,3 +17,5 @@ window.Insertion = Insertion;
 window.PeriodicalExecuter = PeriodicalExecuter;
 window.Position = Position;
 window.Form = Form;
+
+window.$ = jQuery;
