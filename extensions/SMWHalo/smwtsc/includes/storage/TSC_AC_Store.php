@@ -183,7 +183,8 @@ class AutoCompletionStorageTSCQuad extends AutoCompletionStorageSQL2 {
         $catHasIconPropertyDi = SMWDIProperty::newFromUserLabel(wfMsg('smw_ac_category_has_icon'));
         $iconValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($categoryTitle), $catHasIconPropertyDi, NULL, '', true);
         $iconValue = reset($iconValues); // consider only first
-
+        if ($iconValue === false) return NULL;
+        
         $im_file = wfLocalFile($iconValue->getTitle());
         $url = !is_null($im_file) && $im_file instanceof File ? $im_file->getURL(): NULL;
 
