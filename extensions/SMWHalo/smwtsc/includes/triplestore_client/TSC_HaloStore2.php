@@ -6,7 +6,7 @@
  */
 class SMWHaloStore2 extends SMWStore {
 
-	var $smwstore;
+	private $smwstore;
 	var $mURIMappings;
 
 	function __construct($basestore) {

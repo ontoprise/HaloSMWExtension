@@ -47,7 +47,7 @@ class SMWTripleStore extends SMWStore {
 	 * 
 	 * @var SMWStore
 	 */
-    protected $smwstore;
+    private $smwstore;
     
 	/**
 	 * Collects semantic data which is not covered by SMW
@@ -590,7 +590,7 @@ class SMWTripleStore extends SMWStore {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return $this->smwstore->getQueryResult($query);
 		}
-
+       
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -611,7 +611,7 @@ class SMWTripleStore extends SMWStore {
 			$query->params['metadata'] = "SWP2_AUTHORITY_ID";
 		}
 
-
+     
 		if ($query instanceof SMWSPARQLQuery || $toTSC) {
 			// handle only SPARQL queries and delegate all others
 			//          wfRunHooks('RewriteSparqlQuery', array(&$query) );
