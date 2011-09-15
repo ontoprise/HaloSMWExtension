@@ -367,33 +367,7 @@ protected $smwUserMessages = array(
 	'smw_iqgi_missing' => 'fehlt',
 	'smw_iqgi_wrongunit' => 'falsche Einheit',
 	
-	'tsa' => 'Triplestore Administration',
-    'tsc_advertisment' => "'''Diese Spezialseite hilft bei der Administration eines angeschlossenen Triplestores.'''<br><br>''Derzeit ist kein Triplestore am Wiki angeschlossen.''<br><br>Sie können das Wiki intelligenter machen indem sie einen Triplestore anschließen.<br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Klicken Sie hier um mehr über die Vorteile zu erfahren!]'''",
-    'smw_tsa_welcome' => 'Diese Spezialseite hilft ihnen die Wiki/Triplestore Verbindung zu konfiguieren.',
-    'smw_tsa_couldnotconnect' => 'Kann keine Verbindung zu einem Triple store aufbauen.',
-    'smw_tsa_notinitalized' => 'Das Wiki ist nicht mit einem Triple store verbunden.',
-    'smw_tsa_waitsoemtime'=> 'Bitte warten Sie einige Sekunden und klicken dann auf diesen Link.',
-    'smw_tsa_wikiconfigured' => 'Das Wiki ist mit dem Triple store an $1 verbunden.',
-    'smw_tsa_initialize' => 'Initialisieren',
-    'smw_tsa_reinitialize' => 'Re-Initialisieren',
-    'smw_tsa_pressthebutton' => 'Bitte den Knopf unten drücken.',
-    'smw_tsa_addtoconfig' => 'Bitte fügen Sie folgende Zeilen in die LocalSettings.php ein und prüfen Sie ob der Triple store connector läuft.',
-    'smw_tsa_addtoconfig2' => 'Stellen Sie sicher, dass der Triplestore-Treiber aktiviert ist. Wenn nötig, ändern Sie den Aufruf von enableSMWHalo zu: ',
-    'smw_tsa_addtoconfig3' => 'Stellen Sie ebenso sicher, dass die Graph-URL (letzter Parameter von enableSMWHalo) valide ist. Sie darf außerdem kein Hash (#) enthalten.',
-    'smw_tsa_addtoconfig4' => 'Falls das nicht funktioniert, schauen Sie hier: $1.',
-
-    'smw_tsa_driverinfo' => 'Treiberinformation',
-    'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableObjectLogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
-    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgEnableObjectLogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
-
-	'smw_tsa_tscinfo' => 'Triplestore Connector information',
-    'smw_tsa_tscversion' => 'TSC Version',
-
-    'smw_tsa_loadgraphs'=> 'Geladene Graphen',
-    'smw_tsa_autoloadfolder'=> 'Automatisch geladenes Verzeichnis',
-    'smw_tsa_tscparameters'=> 'TSC-Parameter',
-    'smw_tsa_synccommands'=> 'Synchronisationskommandos',
+	
 
 	// SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',

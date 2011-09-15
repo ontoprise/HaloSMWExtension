@@ -292,8 +292,8 @@ function smwf_ac_AutoCompletionOptions() {
 function &smwfGetAutoCompletionStore() {
 	global $smwhgAutoCompletionStore, $smwgHaloIP;
 	if ($smwhgAutoCompletionStore == NULL) {
-		global $smwgQuadMode, $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint) && $smwgQuadMode == true) {
+		global $smwgWebserviceEndpoint;
+		if (isset($smwgWebserviceEndpoint)) {
 				
 			global $smwhgAutoCompletionTSC;
 			if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {

@@ -47,7 +47,6 @@ $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
-$wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
 $wgAjaxExportList[] = 'smwf_om_getDomainProperties';
 
 /**
@@ -944,90 +943,6 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 }
 
 
-/**
- * This function retrieves the derived facts of the article with the name
- * $titleName.
- *
- * @param string $titleName
- *
- * @return string
- * 		The derived facts as HTML
- */
-function smwf_om_GetDerivedFacts($titleName) {
-	$linker = new Linker();
-
-	$t = Title::newFromText($titleName);
-	if ($t == null) {
-		// invalid title
-		return wfMsg('smw_df_invalid_title');
-	}
-
-	if (!smwfIsTripleStoreConfigured()) {
-		global $wgParser;
-		$parserOutput = $wgParser->parse( wfMsg('smw_df_tsc_advertisment'), $t, new ParserOptions,
-		true, true, 0 );
-		return $parserOutput->getText();
-	}
-
-	$semdata = smwfGetStore()->getSemanticData(new SMWDIWikiPage($t->getDBkey(), $t->getNamespace(), ""));
-	wfLoadExtensionMessages('SemanticMediaWiki');
-	global $wgContLang;
-	list($derivedFacts, $derivedCategories) = SMWFullSemanticData::getDerivedProperties($semdata);
-	$derivedFactsFound = false;
-
-	$text = '<div class="smwfact">' .
-				'<span class="smwfactboxhead">' . 
-	wfMsg('smw_df_derived_facts_about',
-	$derivedFacts->getSubject()->getTitle()->getText()) .
-				'</span>' .
-				'<table class="smwfacttable">' . "\n";
-
-	foreach($derivedFacts->getProperties() as $propertyDi) {
-		$propertyDv = SMWDataValueFactory::newDataItemValue($propertyDi, null);
-
-		if ( !$propertyDi->isShown() ) { // showing this is not desired, hide
-			continue;
-		} elseif ( $propertyDi->isUserDefined() ) { // user defined property
-			$propertyDv->setCaption( preg_replace( '/[ ]/u', '&#160;', $propertyDv->getWikiValue(), 2 ) );
-			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
-			$text .= '<tr><td class="smwpropname">' . $linker->makeLink($propertyDi->getDiWikiPage()->getTitle()->getPrefixedText()) . '</td><td class="smwprops">';
-		} elseif ( $propertyDv->isVisible() ) { // predefined property
-			$text .= '<tr><td class="smwspecname">' . $linker->makeLink($propertyDi->getDiWikiPage()->getTitle()->getPrefixedText()) . '</td><td class="smwspecs">';
-		} else { // predefined, internal property
-			continue;
-		}
-
-		$propvalues = $derivedFacts->getPropertyValues($propertyDi);
-
-		$valuesHtml = array();
-
-		foreach ( $propvalues as $dataItem ) {
-			$dataValue = SMWDataValueFactory::newDataItemValue( $dataItem, $propertyDi );
-
-			if ( $dataValue->isValid() ) {
-				$derivedFactsFound = true;
-				$valuesHtml[] = $dataValue->getLongWikiText( true );
-			}
-		}
-
-		$text .= $GLOBALS['wgLang']->listToText( $valuesHtml );
-		$text .= '</td></tr>';
-	}
-	$text .= '</table>';
-
-	$categoryLinks=array();
-	foreach($derivedCategories as $c) {
-		$derivedFactsFound=True;
-		$categoryLinks[] = $linker->link($c);
-	}
-	$text .= '<br>'.implode(", ", $categoryLinks);
-	$text .= '</div>';
-
-	if (!$derivedFactsFound) {
-		$text = wfMsg('smw_df_no_df_found');
-	}
-	return $text;
-}
 
 /**
  * This function retrieves all properties that have one of the given categories as domain

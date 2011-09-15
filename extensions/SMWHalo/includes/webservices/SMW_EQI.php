@@ -18,8 +18,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 
 	global $smwgHaloIP;
-    require_once $smwgHaloIP.'/includes/storage/SMW_TSConnection.php';
-	require_once "$smwgHaloIP/includes/SMW_QueryProcessor.php";
+    
 	require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 
 	global $smwgWebserviceEndpoint;
@@ -35,6 +34,9 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 		// TSC
 		// if webservice endpoint is set, sent to TSC
 		if (smwfIsTripleStoreConfigured()) {
+			global $tscgIP;
+			require_once $tscgIP.'/includes/triplestore_client/SMW_TSConnection.php';
+            require_once "$tscgIP/includes/query_processor/SMW_QueryProcessor.php";
 			return $eqi->answerSPARQL($query, $eqi->serializeParams($params));
 		} else {
 			// fallback, redirect to SMW
