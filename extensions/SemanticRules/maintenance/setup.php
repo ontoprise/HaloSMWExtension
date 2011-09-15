@@ -47,8 +47,8 @@ srfSetupSRTables(true);
  * @param boolean $verbose
  */
 function srfSetupSRTables($verbose) {
-	global $smwgHaloIP;
-	require_once($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
+	global $tscgIP;
+	require_once($tscgIP.'/smwtsc/includes/triplestore_client/SMW_RuleStore.php');
 	SMWRuleStore::getInstance()->setup($verbose);
 }
 
@@ -58,8 +58,8 @@ function srfSetupSRTables($verbose) {
  * @param boolean $verbose
  */
 function srfDropSRTables($verbose) {
-	global $smwgHaloIP;
-	require_once($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
+	global $tscgIP;
+    require_once($tscgIP.'/smwtsc/includes/triplestore_client/SMW_RuleStore.php');
 	SMWRuleStore::getInstance()->drop($verbose);
 }
 

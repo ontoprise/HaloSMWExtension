@@ -23,8 +23,8 @@ class SRRuleEndpoint {
 			if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 				list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 				$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-				global $smwgHaloIP;
-				require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
+				global $tscgIP;
+				require_once( "$tscgIP/smwtsc/includes/triplestore_client/TSC_RESTWebserviceConnector.php" );
 				self::$_client = new RESTWebserviceConnector($host, $port, "ruleparsing", $credentials);
 			} else {
 				trigger_error("SOAP endpoints are no more supported.");
