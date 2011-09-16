@@ -221,7 +221,9 @@ class ResourceInstaller {
     public function installOrUpdateResources($dd) {
         global $dfgOut;
         if (count($dd->getResources()) ==  0) return;
-
+    
+        global $dfgLang;
+        $partOfBundlePropertyName = $dfgLang->getLanguageString('df_partofbundle');
         // resources files
         $this->logger->info("Uploading resources for ".$dd->getID());
         $dfgOut->outputln("[Uploading resources...");
@@ -236,10 +238,10 @@ class ResourceInstaller {
             $this->logger->info("Import ".$resourcePath);
             $dfgOut->outputln("\t[Import ".Tools::shortenPath($resourcePath)."...");
             if (is_dir($resourcePath)) {
-                $this->importResources($resourcePath);
+                $this->importResources($resourcePath, $dd->getID());
             } else {
                 $im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
-                $im_file->upload($resourcePath, "auto-inserted image", "noText");
+                $im_file->upload($resourcePath, "auto-inserted image", "[[".$partOfBundlePropertyName."::".ucfirst($dd->getID())."]]");
             }
             $dfgOut->output("done.]");
 
@@ -352,8 +354,11 @@ class ResourceInstaller {
      * @param $SourceDirectory
 
      */
-    private function importResources($SourceDirectory) {
-
+    private function importResources($SourceDirectory, $bundleID) {
+        
+    	global $dfgLang;
+        $partOfBundlePropertyName = $dfgLang->getLanguageString('df_partofbundle');
+        
         if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
             return;
         }
@@ -378,14 +383,14 @@ class ResourceInstaller {
 
             if (is_dir($SourceDirectory.$entry)) {
                 // Unterverzeichnis
-                $success = $this->importResources($SourceDirectory.$entry);
+                $success = $this->importResources($SourceDirectory.$entry, $bundleID);
 
             } else{
 
 
                 // simulate an upload
                 $im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
-                $im_file->upload($SourceDirectory.$entry, "auto-inserted image", "noText");
+                $im_file->upload($SourceDirectory.$entry, "auto-inserted image", "[[".$partOfBundlePropertyName."::".ucfirst($bundleID)."]]");
 
             }
 
