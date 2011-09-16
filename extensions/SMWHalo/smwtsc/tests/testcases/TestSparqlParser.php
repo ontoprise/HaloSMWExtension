@@ -329,10 +329,10 @@ SPARQL;
 	
 	private function compareSerializedQuery($query, $expected) {
 		// Parse the query
-		$parser = new LODSparqlQueryParser($query);
+		$parser = new TSCSparqlQueryParser($query);
 		
 		// Serialize the parsed query
-		$serializer = new LODSparqlSerializerVisitor();
+		$serializer = new TSCSparqlSerializerVisitor();
 		$parser->visitQuery($serializer);
 		$s = $serializer->getSerialization();
 		

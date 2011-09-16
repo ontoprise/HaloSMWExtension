@@ -43,7 +43,7 @@ class TestTripleStoreAccessSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function tearDown() {
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->dropGraph(self::GRAPH);
 		$tsa->flushCommands();
 	}
@@ -69,10 +69,10 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Tests the creation a LODSourceDefinition object.
+     * Tests the creation a TSCSourceDefinition object.
      */
     function testCreateTSA() {
-    	$tsa = new LODTripleStoreAccess();
+    	$tsa = new TSCTripleStoreAccess();
     	$this->assertNotNull($tsa);
     }
     
@@ -83,7 +83,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
     	global $smwgWebserviceEndpoint;
     	
     	$we = $smwgWebserviceEndpoint;
-    	$tsa = new LODTripleStoreAccess();
+    	$tsa = new TSCTripleStoreAccess();
     	
     	// Verify that connection with TS fails with invalid connections settings 
     	$smwgWebserviceEndpoint = 'localhost:1234'; 
@@ -110,12 +110,12 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		$graph = TestTripleStoreAccessSuite::GRAPH;
 		
 		// Inserts triples into the triple store
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
 		$tsa->createGraph($graph);
 		$tsa->insertTriples($graph, $triples);
@@ -156,12 +156,12 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		// Insert an underspecified book into the graph
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriplesOptional as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		$graph = TestTripleStoreAccessSuite::GRAPH;
 		
 		// Inserts triples into the triple store
-		$tsa = new LODTripleStoreAccess();
+		$tsa = new TSCTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
 		$tsa->insertTriples($graph, $triples);
 		
@@ -260,15 +260,15 @@ class TestPersistentTripleStoreAccess extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-		LODStorage::getDatabase()->deleteAllPersistentTriples();
+		TSCStorage::getDatabase()->deleteAllPersistentTriples();
     }
     
     /**
      * The persistent triple store access is implemented in the class 
-     * LODPersistentTripleStoreAccess. Check if this class can be created.
+     * TSCPersistentTripleStoreAccess. Check if this class can be created.
      */
     function testCreatePTSA() {
-    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$ptsa = new TSCPersistentTripleStoreAccess();
     	$this->assertNotNull($ptsa);
     	
     }
@@ -296,14 +296,14 @@ class TestPersistentTripleStoreAccess extends PHPUnit_Framework_TestCase {
      * database.
      */
     function testPersistTriples() {
-    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$ptsa = new TSCPersistentTripleStoreAccess();
 		
     	$namespace = "http://example.com/";
     	$prefixes = "PREFIX ex:<$namespace> ".
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		$graph = TestTripleStoreAccessSuite::GRAPH;
 		
@@ -345,14 +345,14 @@ EXP;
      * database. Different graphs, sets of triples and IDs are tested
      */
     function testPersistTriples2() {
-    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$ptsa = new TSCPersistentTripleStoreAccess();
 		
     	$namespace = "http://example.com/";
     	$prefixes = "PREFIX ex:<$namespace> ".
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		$graph = TestTripleStoreAccessSuite::GRAPH;
 		
@@ -373,7 +373,7 @@ EXP;
 		// Insert all triples separately
 		$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[0] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[0] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 			$ptsa->insertTriples($graph, $triples);
 		}
 		
@@ -426,14 +426,14 @@ EXP;
      * deleted from the database and the triple store. 
      */
     function testDeletePersistentTriples() {
-    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$ptsa = new TSCPersistentTripleStoreAccess();
 		
     	$namespace = "http://example.com/";
     	$prefixes = "PREFIX ex:<$namespace> ".
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 		}
 		$graph = TestTripleStoreAccessSuite::GRAPH;
 		
@@ -466,7 +466,7 @@ EXP;
 		// Insert all triples separately
 		$triples = array();
 		foreach (TestTripleStoreAccessSuite::$mTriples as $t) {		
-			$triples[0] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
+			$triples[0] = new TSCTriple($t[0], $t[1], $t[2], $t[3]);
 			$ptsa->insertTriples($graph, $triples);
 		}
 		
@@ -568,8 +568,8 @@ EXP;
      * to be thrown.
      */
     function testDeleteTriples() {
-    	$this->setExpectedException('LODTSAException');
-    	$ptsa = new LODPersistentTripleStoreAccess();
+    	$this->setExpectedException('TSCTSAException');
+    	$ptsa = new TSCPersistentTripleStoreAccess();
     	$ptsa->deleteTriples("", "", "");
     	
     }
@@ -581,7 +581,7 @@ EXP;
     private function compareContent($component, $id, $expected, $errMsg) {
 		
 		// Read the generated TriG from the database
-		$store = LODStorage::getDatabase();
+		$store = TSCStorage::getDatabase();
 		$trigs = $store->readPersistentTriples($component, $id);
 		$trig = "";
 		foreach($trigs as $t) {
@@ -618,15 +618,15 @@ class TestPrefixManager extends PHPUnit_Framework_TestCase {
      * Gets the singleton of the prefix manager
      */
     function testGetInstance() {
-    	$pm = LODPrefixManager::getInstance();
-    	$this->assertNotNull($pm, "The instance of LODPrefixManager could not be retrieved.");
+    	$pm = TSCPrefixManager::getInstance();
+    	$this->assertNotNull($pm, "The instance of TSCPrefixManager could not be retrieved.");
     }
     
     /**
      * Tests getting some namespace URIs for prefixes from the prefix manager.
      */
     function testGetNamespaceURIs() {
-    	$pm = LODPrefixManager::getInstance();
+    	$pm = TSCPrefixManager::getInstance();
     	$p = $pm->getNamespaceURI("xsd");
     	$this->assertEquals("http://www.w3.org/2001/XMLSchema#", $p);
     	$p = $pm->getNamespaceURI("unknown");
@@ -639,10 +639,10 @@ class TestPrefixManager extends PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Tests the methof LODPrefixManager::makeAbsoluteURI.
+     * Tests the methof TSCPrefixManager::makeAbsoluteURI.
      */
     function testMakeAbsoluteURI() {
-    	$pm = LODPrefixManager::getInstance();
+    	$pm = TSCPrefixManager::getInstance();
     	$pm->addPrefix("ex", "http://example.com/");
 
     	$auri = $pm->makeAbsoluteURI("ex:HitchhikersGuide");
@@ -651,25 +651,25 @@ class TestPrefixManager extends PHPUnit_Framework_TestCase {
     	$exceptionCaught = false;
     	try {
     		$auri = $pm->makeAbsoluteURI("exa:HitchhikersGuide");
-    	} catch (LODPrefixManagerException $e) {
-			$this->assertEquals(LODPrefixManagerException::UNKNOWN_PREFIX_IN_URI,
+    	} catch (TSCPrefixManagerException $e) {
+			$this->assertEquals(TSCPrefixManagerException::UNKNOWN_PREFIX_IN_URI,
 								$e->getCode(), "Expected exception UNKNOWN_PREFIX_IN_URI");
 			$exceptionCaught = true; 		
     	}
     	if (!$exceptionCaught) {
-    		$this->fail("An expected exception was not caught: LODPrefixManagerException::UNKNOWN_PREFIX");
+    		$this->fail("An expected exception was not caught: TSCPrefixManagerException::UNKNOWN_PREFIX");
     	}
 
     	$exceptionCaught = false;
     	try {
     		$auri = $pm->makeAbsoluteURI("HitchhikersGuide");
-    	} catch (LODPrefixManagerException $e) {
-			$this->assertEquals(LODPrefixManagerException::MISSING_COLON,
+    	} catch (TSCPrefixManagerException $e) {
+			$this->assertEquals(TSCPrefixManagerException::MISSING_COLON,
 								$e->getCode(), "Expected exception MISSING_COLON");    		
 			$exceptionCaught = true; 		
     	}
     	if (!$exceptionCaught) {
-    		$this->fail("An expected exception was not caught: LODPrefixManagerException::MISSING_COLON");
+    		$this->fail("An expected exception was not caught: TSCPrefixManagerException::MISSING_COLON");
     	}
 								    	
     }

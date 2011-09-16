@@ -5,14 +5,14 @@
  */
 
 /**
- * Test suite for LOD source definitions.
+ * Test suite for TSC source definitions.
  * Start the triple store with these options before running the test:
  * msgbroker=none client=MyStore driver=ontobroker-quad wsport=8090 console reasoner=owl restfulws
  * 
  * @author thsc
  *
  */
-class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
+class TestTSCSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 {
 	
 	public static $mLSD = array(
@@ -33,8 +33,8 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 	
 	public static function suite() {
 		
-		$suite = new TestLODSourceDefinitionSuite();
-		$suite->addTestSuite('TestLODSourceDefinition');
+		$suite = new TestTSCSourceDefinitionSuite();
+		$suite->addTestSuite('TestTSCSourceDefinition');
 		$suite->addTestSuite('TestLSDParserFunction');
 		return $suite;
 	}
@@ -43,7 +43,7 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 	 * Loads the LSD from the triple store and checks its content.
 	 */
 	public static function checkLSDinTripleStore($testCase) {
-		$store = LODAdministrationStore::getInstance();
+		$store = TSCAdministrationStore::getInstance();
 		$lsd = $store->loadSourceDefinition(self::$mLSD["id"]);
 		
 		$testCase->assertNotNull($lsd);
@@ -95,8 +95,8 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
 		// Delete the graph in the triple store that contains the source definitions
-		$tsa = new LODTripleStoreAccess();
-		$tsa->dropGraph(LODAdministrationStore::getDataSourcesGraph());
+		$tsa = new TSCTripleStoreAccess();
+		$tsa->dropGraph(TSCAdministrationStore::getDataSourcesGraph());
 		$tsa->flushCommands();
 		
 	}
@@ -104,12 +104,12 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 //--- Helper functions ---
     
 	/**
-	 * Creates a LODSourceDefinition object
-	 * @return LODSourceDefinition
+	 * Creates a TSCSourceDefinition object
+	 * @return TSCSourceDefinition
 	 * 		A sample object
 	 */
 	public static function createLSD() {
-		$sd = new LODSourceDefinition(self::$mLSD["id"]);
+		$sd = new TSCSourceDefinition(self::$mLSD["id"]);
 		$sd->setChangeFreq(self::$mLSD["ChangeFreq"]);
 		$sd->setDataDumpLocations(self::$mLSD["DataDumpLocations"]);
 		$sd->setDescription(self::$mLSD["Description"]);
@@ -133,8 +133,8 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
     public static function checkPersistentTriples($testCase, $id, $expected, $errMsg) {
 		
 		// Read the generated TriG from the database
-		$store = LODStorage::getDatabase();
-		$trigs = $store->readPersistentTriples("LODSourceDefinition", $id);
+		$store = TSCStorage::getDatabase();
+		$trigs = $store->readPersistentTriples("TSCSourceDefinition", $id);
 		$trig = "";
 		foreach($trigs as $t) {
 			$trig .= $t;
@@ -152,7 +152,7 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
 }
 
 /**
- * This test case tests the backend of the class LODSourceDefinition. Source
+ * This test case tests the backend of the class TSCSourceDefinition. Source
  * Definitions are stored in, retrieved and deleted from the triple store.
  * 
  * The triple store must be running.
@@ -160,161 +160,161 @@ class TestLODSourceDefinitionSuite extends PHPUnit_Framework_TestSuite
  * @author thsc
  *
  */
-class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
+class TestTSCSourceDefinition extends PHPUnit_Framework_TestCase {
 
-	protected $backupGlobals = FALSE;
-	
+    protected $backupGlobals = FALSE;
+    
     function setUp() {
     }
 
     function tearDown() {
-		LODStorage::getDatabase()->deleteAllPersistentTriples();
+        TSCStorage::getDatabase()->deleteAllPersistentTriples();
     }
 
     /**
-     * Tests the creation a LODSourceDefinition object.
+     * Tests the creation a TSCSourceDefinition object.
      */
     function testCreateLSD() {
-    	$lsd = new LODSourceDefinition("dbpedia");
-    	$this->assertNotNull($lsd);
+        $lsd = new TSCSourceDefinition("dbpedia");
+        $this->assertNotNull($lsd);
     }
     
     /**
-     * Tests the creation of the LODAdministrationStore object.
+     * Tests the creation of the TSCAdministrationStore object.
      *
      */
-    function testCreateLODAdministrationStore() {
-    	$las = LODAdministrationStore::getInstance();
-    	$this->assertNotNull($las);
+    function testCreateTSCAdministrationStore() {
+        $las = TSCAdministrationStore::getInstance();
+        $this->assertNotNull($las);
     }
     
     /**
-     * Tests storing a LODSourceDefinition object in the triple store.
+     * Tests storing a TSCSourceDefinition object in the triple store.
      */
     function testStoreLSD() {
-		$store = LODAdministrationStore::getInstance();
-		$sd = TestLODSourceDefinitionSuite::createLSD();		
-		$r = $store->storeSourceDefinition($sd);
-		
-		$this->assertTrue($r);
-	}
-		
-	
-	/**
-	 * Tests loading a LODSourceDefinition object from the Triple Store
-	 *
-	 */
-	function testLoadLSD() {
-		TestLODSourceDefinitionSuite::checkLSDinTripleStore($this);
-		
-	}
-	
-	/**
-	 * Tests deleting LODSourceDefinition object from the Triple Store
-	 *
-	 */
-	function testDeleteLSD() {
-		$store = LODAdministrationStore::getInstance();
-		$store->deleteSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]);
-		
-		// Make sure that the source definition is no longer available
-		$lsd = $store->loadSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]);
-		
-		$this->assertEquals(null, $lsd);
-	}
-	
-	/**
-	 * Test retrieving all IDs of source definitions
-	 *
-	 */
-	function testGetLSDIDs() {
-		$store = LODAdministrationStore::getInstance();
-		$lsd = new LODSourceDefinition("LSD-1");
-		$store->storeSourceDefinition($lsd);
-		$lsd = new LODSourceDefinition("LSD-2");
-		$store->storeSourceDefinition($lsd);
-		$lsd = new LODSourceDefinition("LSD-3");
-		$store->storeSourceDefinition($lsd);
-		
-		$ids = $store->getAllSourceDefinitionIDs();
-		$this->assertContains("LSD-1", $ids);
-		$this->assertContains("LSD-2", $ids);
-		$this->assertContains("LSD-3", $ids);
-		
-		// cleanup
-		$store->deleteAllSourceDefinitions();
-	}
-	
-	
-	/**
-	 * Tests deleting all LODSourceDefinition objects from the Triple Store
-	 *
-	 */
-	function testDeleteAllLSDs() {
-		$store = LODAdministrationStore::getInstance();
-		// Create a source definition...
-		$store->storeSourceDefinition(TestLODSourceDefinitionSuite::createLSD());
-		// ... and delete all definitions
-		$store->deleteAllSourceDefinitions();
-		
-		// Make sure that the source definition no longer exists
-		$this->assertEquals(null, $store->loadSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]));
-	}
-	
+        $store = TSCAdministrationStore::getInstance();
+        $sd = TestTSCSourceDefinitionSuite::createLSD();        
+        $r = $store->storeSourceDefinition($sd);
+        
+        $this->assertTrue($r);
+    }
+        
+    
     /**
-     * Tests storing a LODSourceDefinition object in the triple store with help
+     * Tests loading a TSCSourceDefinition object from the Triple Store
+     *
+     */
+    function testLoadLSD() {
+        TestTSCSourceDefinitionSuite::checkLSDinTripleStore($this);
+        
+    }
+    
+    /**
+     * Tests deleting TSCSourceDefinition object from the Triple Store
+     *
+     */
+    function testDeleteLSD() {
+        $store = TSCAdministrationStore::getInstance();
+        $store->deleteSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]);
+        
+        // Make sure that the source definition is no longer available
+        $lsd = $store->loadSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]);
+        
+        $this->assertEquals(null, $lsd);
+    }
+    
+    /**
+     * Test retrieving all IDs of source definitions
+     *
+     */
+    function testGetLSDIDs() {
+        $store = TSCAdministrationStore::getInstance();
+        $lsd = new TSCSourceDefinition("LSD-1");
+        $store->storeSourceDefinition($lsd);
+        $lsd = new TSCSourceDefinition("LSD-2");
+        $store->storeSourceDefinition($lsd);
+        $lsd = new TSCSourceDefinition("LSD-3");
+        $store->storeSourceDefinition($lsd);
+        
+        $ids = $store->getAllSourceDefinitionIDs();
+        $this->assertContains("LSD-1", $ids);
+        $this->assertContains("LSD-2", $ids);
+        $this->assertContains("LSD-3", $ids);
+        
+        // cleanup
+        $store->deleteAllSourceDefinitions();
+    }
+    
+    
+    /**
+     * Tests deleting all TSCSourceDefinition objects from the Triple Store
+     *
+     */
+    function testDeleteAllLSDs() {
+        $store = TSCAdministrationStore::getInstance();
+        // Create a source definition...
+        $store->storeSourceDefinition(TestTSCSourceDefinitionSuite::createLSD());
+        // ... and delete all definitions
+        $store->deleteAllSourceDefinitions();
+        
+        // Make sure that the source definition no longer exists
+        $this->assertEquals(null, $store->loadSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]));
+    }
+    
+    /**
+     * Tests storing a TSCSourceDefinition object in the triple store with help
      * of the persistency layer of the TS. Different persistency IDs are tested,
      * automatic ones and user defined.
      */
     function testStorePersistentLSD() {
-    	$this->checkStorePersistentLSD(true);
-    	$this->checkStorePersistentLSD("MyOwnLSDID");
-	}
-	
-	/**
-	 * Tests deleting all LODSourceDefinition objects from the Triple Store and
-	 * the persistency layer.
-	 *
-	 */
-	function testDeleteAllLPersistentSDs() {
-		$store = LODAdministrationStore::getInstance();
-		// Create a source definition...
-		$store->storeSourceDefinition(TestLODSourceDefinitionSuite::createLSD(), true);
-		// ... and delete all definitions
-		$store->deleteAllSourceDefinitions();
-		
-		// Make sure that the source definition no longer exists in the TS
-		$this->assertEquals(null, $store->loadSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]));
+        $this->checkStorePersistentLSD(true);
+        $this->checkStorePersistentLSD("MyOwnLSDID");
+    }
+    
+    /**
+     * Tests deleting all TSCSourceDefinition objects from the Triple Store and
+     * the persistency layer.
+     *
+     */
+    function testDeleteAllLPersistentSDs() {
+        $store = TSCAdministrationStore::getInstance();
+        // Create a source definition...
+        $store->storeSourceDefinition(TestTSCSourceDefinitionSuite::createLSD(), true);
+        // ... and delete all definitions
+        $store->deleteAllSourceDefinitions();
+        
+        // Make sure that the source definition no longer exists in the TS
+        $this->assertEquals(null, $store->loadSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]));
 
-		// Make sure that the source definition no longer exists in the 
-		// persistency layer
-		TestLODSourceDefinitionSuite::checkPersistentTriples($this, 
-				TestLODSourceDefinitionSuite::$mLSD["id"], "", 
-				"testDeleteAllLPersistentSDs failed.");
-	}
-	
-	
+        // Make sure that the source definition no longer exists in the 
+        // persistency layer
+        TestTSCSourceDefinitionSuite::checkPersistentTriples($this, 
+                TestTSCSourceDefinitionSuite::$mLSD["id"], "", 
+                "testDeleteAllLPersistentSDs failed.");
+    }
+    
+    
         
     /**
-     * Tests storing a LODSourceDefinition object in the triple store with help
+     * Tests storing a TSCSourceDefinition object in the triple store with help
      * of the persistency layer of the TS. 
      * 
      * @param bool/string $persistencyID
-     * 		The persistency ID that is used for storing and deleting the LSD.
+     *      The persistency ID that is used for storing and deleting the LSD.
      */
     private function checkStorePersistentLSD($persistencyID) {
-    	$store = LODAdministrationStore::getInstance();
-		$sd = TestLODSourceDefinitionSuite::createLSD();
-		// Store the LSD and persist it
-		$r = $store->storeSourceDefinition($sd, $persistencyID);
-		
-		$this->assertTrue($r);
-		
-		// Test if the LSD was stored in the TS
-		$this->testLoadLSD();
-		
-		// Test if the LSD was saved in the persistency layer
-		$expected = <<<EXP
+        $store = TSCAdministrationStore::getInstance();
+        $sd = TestTSCSourceDefinitionSuite::createLSD();
+        // Store the LSD and persist it
+        $r = $store->storeSourceDefinition($sd, $persistencyID);
+        
+        $this->assertTrue($r);
+        
+        // Test if the LSD was stored in the TS
+        $this->testLoadLSD();
+        
+        // Test if the LSD was saved in the persistency layer
+        $expected = <<<EXP
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -324,49 +324,49 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 @prefix smwDatasources: <http://www.example.org/smw-lde/smwDatasources/> .
 
 <http://www.example.org/smw-lde/smwGraphs/DataSourceInformationGraph> {
-	smwDatasources:dbpedia rdf:type smw-lde:Datasource . 
-	smwDatasources:dbpedia smw-lde:ID "dbpedia"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:description "This repository contains data supplied from Deep Blue."^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:label "deepblue.rkbexplorer.com Linked Data Repository"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:homepage <http://deepblue.rkbexplorer.com/> . 
-	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Computer_science> . 
-	smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
-	smwDatasources:dbpedia smw-lde:sparqlEndpointLocation <http://deepblue.rkbexplorer.com/sparql/> . 
-	smwDatasources:dbpedia smw-lde:sparqlGraphName <http://example.org/deepblue> . 
-	smwDatasources:dbpedia smw-lde:sparqlGraphPattern "FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"^^xsd:string .
-	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump> . 
-	smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump2> . 
-	smwDatasources:dbpedia smw-lde:lastmod "2007-11-21T14:41:09+12:34"^^xsd:dateTime . 
-	smwDatasources:dbpedia smw-lde:changefreq "daily"^^xsd:string . 
-	smwDatasources:dbpedia smw-lde:vocabulary <http://purl.org/dc/elements/1.1/> . 
-	smwDatasources:dbpedia smw-lde:vocabulary <http://xmlns.com/foaf/0.1/> . 
-	smwDatasources:dbpedia smw-lde:vocabulary <http://www.w3.org/2000/01/rdf-schema#> . 
-	smwDatasources:dbpedia smw-lde:predicateToCrawl <http://dbpedia.org/property/deathdate> . 
-}		
+    smwDatasources:dbpedia rdf:type smw-lde:Datasource . 
+    smwDatasources:dbpedia smw-lde:ID "dbpedia"^^xsd:string . 
+    smwDatasources:dbpedia smw-lde:description "This repository contains data supplied from Deep Blue."^^xsd:string . 
+    smwDatasources:dbpedia smw-lde:label "deepblue.rkbexplorer.com Linked Data Repository"^^xsd:string . 
+    smwDatasources:dbpedia smw-lde:homepage <http://deepblue.rkbexplorer.com/> . 
+    smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Computer_science> . 
+    smwDatasources:dbpedia smw-lde:sampleURI <http://dbpedia.org/resource/Organization> . 
+    smwDatasources:dbpedia smw-lde:sparqlEndpointLocation <http://deepblue.rkbexplorer.com/sparql/> . 
+    smwDatasources:dbpedia smw-lde:sparqlGraphName <http://example.org/deepblue> . 
+    smwDatasources:dbpedia smw-lde:sparqlGraphPattern "FILTER (?p = <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>)"^^xsd:string .
+    smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump> . 
+    smwDatasources:dbpedia smw-lde:dataDumpLocation <http://deepblue.rkbexplorer.com/datadDump2> . 
+    smwDatasources:dbpedia smw-lde:lastmod "2007-11-21T14:41:09+12:34"^^xsd:dateTime . 
+    smwDatasources:dbpedia smw-lde:changefreq "daily"^^xsd:string . 
+    smwDatasources:dbpedia smw-lde:vocabulary <http://purl.org/dc/elements/1.1/> . 
+    smwDatasources:dbpedia smw-lde:vocabulary <http://xmlns.com/foaf/0.1/> . 
+    smwDatasources:dbpedia smw-lde:vocabulary <http://www.w3.org/2000/01/rdf-schema#> . 
+    smwDatasources:dbpedia smw-lde:predicateToCrawl <http://dbpedia.org/property/deathdate> . 
+}       
 EXP;
-		$id = $persistencyID === true ? $sd->getID() : $persistencyID;
-		TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
-				"checkStorePersistentLSD#1 failed for ID $id.");
-		
-		// Delete the LSD and its persistent data
-		$store->deleteSourceDefinition($id);
-		
-		// Verify that the definition no longer exists in the TS
-		$lsd = $store->loadSourceDefinition($id);
-		$this->assertEquals(null, $lsd);
-		
-		// Verify that the definition no longer exists in the persistence layer
-		TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, "", 
-				"testStorePersistentLSD#2 failed for ID $id.");
-		
-    	
+        $id = $persistencyID === true ? $sd->getID() : $persistencyID;
+        TestTSCSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
+                "checkStorePersistentLSD#1 failed for ID $id.");
+        
+        // Delete the LSD and its persistent data
+        $store->deleteSourceDefinition($id);
+        
+        // Verify that the definition no longer exists in the TS
+        $lsd = $store->loadSourceDefinition($id);
+        $this->assertEquals(null, $lsd);
+        
+        // Verify that the definition no longer exists in the persistence layer
+        TestTSCSourceDefinitionSuite::checkPersistentTriples($this, $id, "", 
+                "testStorePersistentLSD#2 failed for ID $id.");
+        
+        
     }
-	
+    
 }
 
 
 /**
- * This test case tests the parser function for LOD source definitions.
+ * This test case tests the parser function for TSC source definitions.
  * 
  * The triple store must be running.
  * 
@@ -404,21 +404,21 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 
     function tearDown() {
     	$this->removeArticles();
-		LODStorage::getDatabase()->deleteAllPersistentTriples();
+		TSCStorage::getDatabase()->deleteAllPersistentTriples();
     }
     
     /**
-     * Stores an article with a LOD source definition and checks if the triple
+     * Stores an article with a TSC source definition and checks if the triple
      * store contains the expected data.
      */
-    function testLODParser() {
-    	$this->createArticle("TestLODSourceDefinition", self::$mArticles["TestLODSourceDefinition"]);
+    function testTSCParser() {
+    	$this->createArticle("TestTSCSourceDefinition", self::$mArticles["TestTSCSourceDefinition"]);
     	
     	// Check the content of the triple store
-    	TestLODSourceDefinitionSuite::checkLSDinTripleStore($this);
+    	TestTSCSourceDefinitionSuite::checkLSDinTripleStore($this);
     	
     	// Check the content of the persistent store
-    	$id = "TestLODSourceDefinition";
+    	$id = "TestTSCSourceDefinition";
     	
 		$expected = <<<EXP
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -450,30 +450,30 @@ class TestLSDParserFunction extends PHPUnit_Framework_TestCase {
 	smwDatasources:dbpedia smw-lde:predicateToCrawl <http://dbpedia.org/property/deathdate> . 
 }
 EXP;
-    	TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
-				"testLODParser failed for ID $id.");
+    	TestTSCSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
+				"testTSCParser failed for ID $id.");
     	
     }
 
     /**
-     * Stores an article with a LOD source definition and then changes the content
+     * Stores an article with a TSC source definition and then changes the content
      * of that article so that the LSD is removed. Verifies that the LSD is
      * removed from the triples store and the persistency layer.
      */
     function testRemoveLSDFromArticle() {
-    	$this->createArticle("TestLODSourceDefinition", self::$mArticles["TestLODSourceDefinition"]);
-    	$this->createArticle("TestLODSourceDefinition", "empty");
+    	$this->createArticle("TestTSCSourceDefinition", self::$mArticles["TestTSCSourceDefinition"]);
+    	$this->createArticle("TestTSCSourceDefinition", "empty");
     	
     	// Check the content of the persistent store
-    	$id = "TestLODSourceDefinition";
+    	$id = "TestTSCSourceDefinition";
     	
 		$expected = "";
-    	TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
+    	TestTSCSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
 				"testRemoveLSDFromArticle failed for ID $id.");
 
     	// Check the content of the triple store. It must be empty.
-		$store = LODAdministrationStore::getInstance();
-		$lsd = $store->loadSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]);
+		$store = TSCAdministrationStore::getInstance();
+		$lsd = $store->loadSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]);
 		// please note that this test will fail until
 		// http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12784
 		// has been implemented.
@@ -482,24 +482,24 @@ EXP;
     }
     
     /**
-     * Stores an article with a LOD source definition and then deletes it. 
+     * Stores an article with a TSC source definition and then deletes it. 
      * Verifies that the LSD is removed from the triples store and the 
      * persistency layer.
      */
     function testDeleteArticleWithLSD() {
-    	$this->createArticle("TestLODSourceDefinition", self::$mArticles["TestLODSourceDefinition"]);
+    	$this->createArticle("TestTSCSourceDefinition", self::$mArticles["TestTSCSourceDefinition"]);
 		$this->removeArticles();
 		    	
     	// Check the content of the persistent store
-    	$id = "TestLODSourceDefinition";
+    	$id = "TestTSCSourceDefinition";
     	
 		$expected = "";
-    	TestLODSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
+    	TestTSCSourceDefinitionSuite::checkPersistentTriples($this, $id, $expected, 
 				"testDeleteArticleWithLSD failed for ID $id.");
 
     	// Check the content of the triple store. It must be empty.
-		$store = LODAdministrationStore::getInstance();
-		$lsd = $store->loadSourceDefinition(TestLODSourceDefinitionSuite::$mLSD["id"]);
+		$store = TSCAdministrationStore::getInstance();
+		$lsd = $store->loadSourceDefinition(TestTSCSourceDefinitionSuite::$mLSD["id"]);
 		// please note that this test will fail until
 		// http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=12784
 		// has been implemented.
@@ -549,13 +549,13 @@ EXP;
         
     private function initArticleContent() {
 		self::$mOrderOfArticleCreation = array(
-			'TestLODSourceDefinition',
+			'TestTSCSourceDefinition',
 		);
 		
 		self::$mArticles = array(
 //------------------------------------------------------------------------------		
-			'TestLODSourceDefinition' =>
-<<<LODMD
+			'TestTSCSourceDefinition' =>
+<<<TSCMD
 {{#sourcedefinition:
  | id = dbpedia
  | ChangeFreq = daily
@@ -575,7 +575,7 @@ EXP;
  | Vocabulary = http://www.w3.org/2000/01/rdf-schema#
  | PredicateToCrawl = http://dbpedia.org/property/deathdate
 }}
-LODMD
+TSCMD
 
 		);
 	}
