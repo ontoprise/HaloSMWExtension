@@ -226,7 +226,12 @@ function smwf_tb_GetUserDatatypes(){
 }
 
 function smwf_tb_getTripleStoreStatus() {
-	global $smwgTripleStoreGraph;
+	global $smwgTripleStoreGraph, $smwgWebserviceEndpoint;
+	
+	if (!isset($smwgWebserviceEndpoint)) {
+		return "false";
+	}
+	
 	$con = TSConnection::getConnector();
 	try {
 		$con->connect();
@@ -236,9 +241,9 @@ function smwf_tb_getTripleStoreStatus() {
 		$response->setResponseCode(200);
 		$con->disconnect();
 	} catch(Exception $e) {
-		$response = new AjaxResponse($e->getMessage());
+		$response = new AjaxResponse("false");
 		$response->setContentType( "application/text" );
-		$response->setResponseCode(500);
+		$response->setResponseCode(200);
 	}
 	return $response;
 }
