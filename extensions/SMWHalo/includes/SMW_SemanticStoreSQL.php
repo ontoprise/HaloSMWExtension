@@ -830,6 +830,9 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
         $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
         foreach($categories as $value) {
+        	if ($value instanceof SMWDIError) {
+        		continue;
+        	}
             $sd = $value->getSemanticData();
                 
             $domain = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
