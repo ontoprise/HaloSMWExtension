@@ -571,18 +571,8 @@ class SMWTripleStore extends SMWStore {
 
 	///// Query answering /////
 
-	public function getQueryResult(SMWQuery $query){
-		global $smwgQRCEnabled;
-		if($smwgQRCEnabled){
-			SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
-			$qrc = new SMWQRCQueryResultsCache();
-			return $qrc->getQueryResult($query);
-		} else {
-			return $this->doGetQueryResult($query);
-		}
-	}
-
-	function doGetQueryResult(SMWQuery $query) {
+	
+	function getQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 
 		wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo)" );

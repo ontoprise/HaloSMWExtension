@@ -38,19 +38,19 @@ $wgHooks['LanguageGetMagic'][] = 'tscfLanguageGetMagic';
 
 
 function tscfInitParserfunctions() {
-    global $wgParser, $lodgContLang;
+    global $wgParser, $tscgContLang;
   
     $inst = TSCParserFunctions::getInstance();
     //Add to install and readme that mapping tag name has been changed
-    $wgParser->setFunctionHook('lodsourcedefinition', array($inst, 'lodSourceDefinition'));
+    $wgParser->setFunctionHook('sourcedefinition', array($inst, 'tscSourceDefinition'));
     
     global $wgHooks;
     $wgHooks['ArticleSave'][] = 'TSCParserFunctions::onArticleSave';
 }
 
 function tscfLanguageGetMagic( &$magicWords, $langCode ) {
-    global $lodgContLang;
-    $magicWords['lodsourcedefinition'] = array( 0, 'lodsourcedefinition'/* $lodgContLang->getParserFunction(TSCLanguage::PF_LSD)*/);
+    global $tscgContLang;
+    $magicWords['sourcedefinition'] = array( 0, 'sourcedefinition'/* $tscgContLang->getParserFunction(TSCLanguage::PF_LSD)*/);
     return true;
 }
 
@@ -177,7 +177,7 @@ class TSCParserFunctions {
 	 * 		Wikitext
 	 *
 	 */
-	public function lodSourceDefinition(&$parser) {
+	public function tscSourceDefinition(&$parser) {
 		// Get the parameters of the parser function
 	 
 		$params = $this->getParameters(func_get_args());
@@ -210,7 +210,6 @@ class TSCParserFunctions {
 	 * 		The reason, why the article is deleted.
 	 */
 	public static function articleDelete(&$article, &$user, &$reason) {
-		self::deleteMappingsForArticle($article);
 		
 		// Delete the triples of TSC source definitions
 		$store = TSCAdministrationStore::getInstance();
@@ -421,8 +420,8 @@ class TSCParserFunctions {
 	 * 	
 	 */
 	private function retrieveParam(array $params, $pfpID, $min, $max, array &$errMsg) {
-		global $lodgContLang;
-		$pfp = $lodgContLang->getParserFunctionParameter($pfpID);
+		global $tscgContLang;
+		$pfp = $tscgContLang->getParserFunctionParameter($pfpID);
 		
 		$value = @$params[$pfp];
 		if (!isset($value)) {

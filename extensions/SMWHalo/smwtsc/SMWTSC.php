@@ -40,10 +40,10 @@ function tscSetupExtension() {
 	$wgAutoloadClasses['TSCSparqlQueryVisitor'] = $tscgIP . '/includes/sparqlparser/TSC_SparqlQueryVisitor.php';
 	$wgAutoloadClasses['TSCSparqlSerializerVisitor'] = $tscgIP . '/includes/sparqlparser/TSC_SparqlSerializerVisitor.php';
 
-	$wgAutoloadClasses['TSCException'] = $tscgIP . '/includes/TSCSparql/TSC_Exception.php';
-	$wgAutoloadClasses['TSCPrefixManagerException'] = $tscgIP . '/includes/TSCSparql/TSC_PrefixManagerException.php';
-	$wgAutoloadClasses['TSCTSAException'] = $tscgIP . '/includes/TSCSparql/TSC_TSAException.php';
-
+	$wgAutoloadClasses['TSCException'] = $tscgIP . '/includes/exceptions/TSC_Exception.php';
+	$wgAutoloadClasses['TSCTSAException'] = $tscgIP . '/includes/exceptions/TSC_TSAException.php';
+	$wgAutoloadClasses['TSCPrefixManagerException'] = $tscgIP . '/includes/exceptions/TSC_PrefixManagerException.php';
+	
 	$wgAutoloadClasses['TSCStorageSQL'] = $tscgIP . '/includes/storage/TSC_StorageSQL.php';
 	$wgAutoloadClasses['TSCStorage'] = $tscgIP . '/includes/storage/TSC_Storage.php';
 
@@ -112,17 +112,17 @@ function tscSetupExtension() {
 	global $smwgResultFormats;
 	$smwgResultFormats['fancytable'] = 'SMWFancyTableResultPrinter';
 
-	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
+	$wgHooks['smwInitDatatypes'][] = 'tscfInitDatatypes';
 
 	global $smwgShowDerivedFacts, $wgRequest;
 	if ($smwgShowDerivedFacts === true) {
-		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
+		$wgHooks['smwShowFactbox'][] = 'tscfAddDerivedFacts';
 	}
 
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
-	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
-	$wgHooks['InternalParseBeforeLinks'][] = 'smwfRegisterIntegrationLink';
+	$wgHooks['ParserBeforeStrip'][] = 'tscfRegisterSPARQLInlineQueries';
+	$wgHooks['InternalParseBeforeLinks'][] = 'tscfRegisterIntegrationLink';
 
 	global $lodgNEPEnabled;
 	if ($lodgNEPEnabled) {
@@ -215,7 +215,7 @@ function tscSetupExtension() {
 		$wgHooks['TripleStorePropertyUpdate'][] = 'smwfTripleStorePropertyUpdate';
 
 		$wgHooks['TripleStoreCategoryUpdate'][] = 'smwfTripleStoreCategoryUpdate';
-		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
+		$wgHooks['InternalParseBeforeLinks'][] = 'tscfTripleStoreParserHook';
 	}
 
 	
@@ -237,14 +237,14 @@ function tscSetupExtension() {
 }
 
 
-function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
+function tscfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
 
 	$parser->setFunctionHook( 'sparql', 'smwfProcessSPARQLInlineQueryParserFunction');
 
 	return true; // always return true, in order not to stop MW's hook processing!
 }
 
-function smwfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
+function tscfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
 	$ilinkPattern = '/&lt;ilink(.*?&gt;)(.*?.)&lt;\/ilink&gt;/ixus';
 	preg_match_all($ilinkPattern, trim($text), $matches);
 
@@ -279,7 +279,7 @@ function smwfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
  *  1. categories
  *  2. rules (optional)
  */
-function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
+function tscfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	global $smwgIP, $smwgTripleStoreGraph;
 	global $wgContLang;
 	include_once($smwgIP . '/includes/SMW_Factbox.php');
@@ -367,7 +367,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 /**
  * Registeres SMW Halo Datatypes. Called from SMW.
  */
-function smwfHaloInitDatatypes() {
+function tscfInitDatatypes() {
 	global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
 	SMWDataValueFactory::registerDatatype('_ili', 'SMWURIIntegrationValue', SMWDIIntegrationUri::TYPE_INTEGRATIONURI,
 	$smwgHaloContLang->getHaloDatatype('smw_integration_link'));
@@ -388,24 +388,24 @@ function tscfAddMagicWords(&$magicWords, $langCode) {
  * can be initialised much later when they are actually needed.
  */
 function tscfInitContentLanguage($langcode) {
-	global $tscgIP, $lodgContLang;
-	if (!empty($lodgContLang)) {
+	global $tscgIP, $tscgContLang;
+	if (!empty($tscgContLang)) {
 		return;
 	}
 	wfProfileIn('tscfInitContentLanguage');
 
-	$lodContLangFile = 'TSC_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
-	$lodContLangClass = 'TSCLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-	if (file_exists($tscgIP . '/languages/'. $lodContLangFile . '.php')) {
-		include_once( $tscgIP . '/languages/'. $lodContLangFile . '.php' );
+	$tscContLangFile = 'TSC_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
+	$tscContLangClass = 'TSCLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+	if (file_exists($tscgIP . '/languages/'. $tscContLangFile . '.php')) {
+		include_once( $tscgIP . '/languages/'. $tscContLangFile . '.php' );
 	}
 
 	// fallback if language not supported
-	if ( !class_exists($lodContLangClass)) {
+	if ( !class_exists($tscContLangClass)) {
 		include_once($tscgIP . '/languages/TSC_LanguageEn.php');
-		$lodContLangClass = 'TSCLanguageEn';
+		$tscContLangClass = 'TSCLanguageEn';
 	}
-	$lodgContLang = new $lodContLangClass();
+	$tscgContLang = new $tscContLangClass();
 
 	wfProfileOut('tscfInitContentLanguage');
 }
@@ -423,7 +423,7 @@ function tscfInitContentLanguage($langcode) {
  * @return bool
  *      <false> : This means that SMW's factbox is completely replaced.
  */
-function smwfAddDerivedFacts(& $text, $semdata) {
+function tscfAddDerivedFacts(& $text, $semdata) {
 	global $smwgHaloScriptPath, $wgContLang;
 
 	wfLoadExtensionMessages('SemanticMediaWiki');
