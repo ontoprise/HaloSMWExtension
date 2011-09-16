@@ -101,7 +101,7 @@ class TestLODPolicySuite extends PHPUnit_Framework_TestSuite {
     public static function checkPersistentTriples($testCase, $id, $expected, $errMsg) {
 
         // Read the generated TriG from the database
-        $store = TSCStorage::getDatabase();
+        $store = LODStorage::getDatabase();
         $trigs = $store->readPersistentTriples("LODPolicy", $id);
         $trig = "";
         foreach ($trigs as $t) {
@@ -135,7 +135,7 @@ class TestLODPolicy extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-        TSCStorage::getDatabase()->deleteAllPersistentTriples();
+        LODStorage::getDatabase()->deleteAllPersistentTriples();
     }
 
     /**

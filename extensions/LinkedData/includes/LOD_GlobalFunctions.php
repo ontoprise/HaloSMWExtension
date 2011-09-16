@@ -60,7 +60,7 @@ function enableLinkedData() {
     $wgExtensionAliasesFiles['LinkedData'] = $lodgIP . '/languages/LOD_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
-	$wgAutoloadClasses['TSCStorage'] = $lodgIP . '/includes/LOD_Storage.php';
+	$wgAutoloadClasses['LODStorage'] = $lodgIP . '/includes/LOD_Storage.php';
     
 	
 	$wgAutoloadClasses['LODPolicyStore'] = $lodgIP . '/includes/LODTrust/LOD_PolicyStore.php';

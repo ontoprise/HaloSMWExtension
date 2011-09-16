@@ -27,7 +27,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Fully qualified name of an article
 	 */
 	public function removeAllMappingsFromPage($articleName) {
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
 
 		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
 		if (isset($sourceTargetPairs)) {
@@ -145,7 +145,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * 		Name of the mapping target
 	 */
 	public function addMappingToPage($articleName, $source, $target) {
-		$db = TSCStorage::getDatabase();	
+		$db = LODStorage::getDatabase();	
 		
 		$db->addMappingToPage($articleName, $source, $target);
 	}
@@ -159,7 +159,7 @@ class LODMappingTripleStore implements ILODMappingStore {
 	 * @return array(array(string source, string $target))
 	 */
 	public function getMappingsInArticle($articleName, $askTSC = false) {
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
 		$sourceTargetPairs = $db->getMappingsInArticle($articleName);
 		 
 		if(!$askTSC){

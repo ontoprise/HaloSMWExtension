@@ -1042,7 +1042,7 @@ class TestLODRatingDatabase extends PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-    	$db = TSCStorage::getDatabase();
+    	$db = LODStorage::getDatabase();
     	$db->deleteQueries(self::ARTICLE_WITH_QUERIES);
     }
 
@@ -1070,7 +1070,7 @@ SPARQL;
 						 "p" => "some other value");
    		
    		
-    	$db = TSCStorage::getDatabase();
+    	$db = LODStorage::getDatabase();
     	
     	$articleName = self::ARTICLE_WITH_QUERIES;
     	
@@ -1119,7 +1119,7 @@ WHERE {
     ?s ?p ?o .
 }
 SPARQL;
-    	$db = TSCStorage::getDatabase();
+    	$db = LODStorage::getDatabase();
     	
     	$articleName = "AnArticleWithAQuery";
     	

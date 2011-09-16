@@ -208,7 +208,7 @@ SPARQL;
 		list($query, $queryParams) = self::getQueryForRatingKey($ratingKey);
 		
 		// Retrieve the complete row of results
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
 		$rowContent = $db->readQueryResultRow($queryID, $row);
 		if (is_null($rowContent)) {
 			throw new LODRatingException(LODRatingException::INVALID_ROW, $row);
@@ -284,7 +284,7 @@ SPARQL;
 	public static function getQueryForRatingKey($ratingKey) {
 		list($queryID, $row, $var) = self::parseRatingKey($ratingKey);
 		
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
 
 		// Retrieve the query
 		$query = $db->getQueryByID($queryID);
@@ -335,7 +335,7 @@ SPARQL;
 		}
 
 		// Store the query and its results in the database
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
 		$params = @$query->params;
 		if (!isset($params)) {
 			$params = array();
@@ -402,7 +402,7 @@ SPARQL;
 	 */
 	public static function onArticleDelete(&$article, &$user, &$reason) {
 		$name = $article->getTitle()->getFullText();
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
     	$db->deleteQueries($name);
     	return true;
 	}
@@ -417,7 +417,7 @@ SPARQL;
 	 */
 	public static function onArticleSave(&$article) {
 		$name = $article->getTitle()->getFullText();
-		$db = TSCStorage::getDatabase();
+		$db = LODStorage::getDatabase();
     	$db->deleteQueries($name);
 		return true;
 	}

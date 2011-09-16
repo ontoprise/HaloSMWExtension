@@ -296,11 +296,6 @@ class LODParserFunctions {
 	public static function articleDelete(&$article, &$user, &$reason) {
 		self::deleteMappingsForArticle($article);
 		
-		// Delete the triples of LOD source definitions
-		$store = TSCAdministrationStore::getInstance();
-		$persistencyID = $article->getTitle()->getFullText();
-		$store->deleteSourceDefinition(NULL, $persistencyID);
-		
 		return true;
 	}
 	
