@@ -89,25 +89,15 @@ function tscSetupExtension() {
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPageHandler.php';
 
 
-	global $smwgMasterStore, $smwgQuadMode;
-	$oldStore = smwfGetStore();
+	global $smwgQuadMode;
 	
-	$qmStorePresent = false;
-	if ($oldStore instanceof SMWQMStore) {
-		$qmStorePresent = true;
-		$oldStore = $oldStore->getStore();
-	}
-	$halostore = new SMWHaloStore2($oldStore);
+	smwfAddStore('SMWHaloStore2');
 	if (isset($smwgWebserviceEndpoint) && $smwgQuadMode === true) {
-		$smwgMasterStore = new SMWTripleStoreQuad($halostore);
+		smwfAddStore('SMWTripleStoreQuad');
 	} else if (isset($smwgWebserviceEndpoint)) {
-		$smwgMasterStore = new SMWTripleStore($halostore);
-	} else {
-		$smwgMasterStore = $halostore;
-	}
-	if ($qmStorePresent) {
-		$smwgMasterStore = new SMWQMStore($smwgMasterStore);
-	}
+		smwfAddStore('SMWTripleStore');
+	} 
+	
 
 	global $smwgResultFormats;
 	$smwgResultFormats['fancytable'] = 'SMWFancyTableResultPrinter';

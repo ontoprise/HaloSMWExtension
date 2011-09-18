@@ -421,7 +421,7 @@ class SMWQMQueryManagementHandler {
 		 SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
-		$store = smwfGetStore()->getStore(); // get the internal store	
+		$store = smwfGetRealStore(); // get the real internal store	
 			
 		$continue = true;
 		$offset = 0;

@@ -104,9 +104,7 @@ function enableSMWHalo() {
 		$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
 		$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
 		
-		global $smwgMasterStore;
-		$oldstore = smwfGetStore();
-		$smwgMasterStore = new SMWQMStore($oldstore);
+		smwfAddStore('SMWQMStore');
 	}
 	
 	
@@ -1658,4 +1656,45 @@ function smwhfRegisterResourceLoaderModules() {
 			smwfHaloAddJSLanguageScripts();
 
 			return true;
+}
+
+/**
+ * Adds a new SMWStore implementation and wraps it around the existing.
+ * 
+ * @param string $store_class Classname of new SMWStore.
+ *         The class must have a constructor which takes exactly a SMWStore argument.
+ *         This is the child store at which everything should be delegated which is 
+ *         not handled by the new store itself.
+ * 
+ * @return SMWStore The current store (also retrieved by smwfGetStore() )
+ */
+function smwfAddStore($store_class) {
+	global $smwgMasterStore;
+    $oldStore = smwfGetStore();
+    
+    $qmStorePresent = false;
+    if ($oldStore instanceof SMWQMStore) {
+        $qmStorePresent = true;
+        $oldStore = $oldStore->getStore();
+    }
+    $smwgMasterStore = new $store_class($oldStore);
+    
+    if ($qmStorePresent) {
+        $smwgMasterStore = new SMWQMStore($smwgMasterStore);
+    }
+    return $smwgMasterStore;
+}
+
+/**
+ * Returns the "real" implementation, ie. not the cache impl. 
+ * 
+ * @return SMWStore
+ */
+function smwfGetRealStore() {
+	global $smwgMasterStore;
+    if ($smwgMasterStore instanceof SMWQMStore) {
+        return $smwgMasterStore->getStore();
+    } else {
+    	return $smwgMasterStore;
+    }
 }
