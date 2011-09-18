@@ -36,8 +36,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 global $lodgIP;
 //require_once("$lodgIP/...");
 
-global $smwgHaloIP;
-$wgAutoloadClasses['TSHelper'] = $smwgHaloIP . '/includes/storage/TSC_Helper.php';
 
 
 /**
