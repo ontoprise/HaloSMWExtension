@@ -157,7 +157,7 @@ function enableLinkedData() {
 function lodfSetupExtension() {
     wfProfileIn('lodfSetupExtension');
     global $lodgIP, $wgHooks, $wgParser, $wgExtensionCredits,
-    	   $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang, $lodgNEPEnabled,
+    	   $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
     	   $lodgEnableMetaDataQueryPrinter;
 
     //--- Register hooks ---

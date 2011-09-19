@@ -248,7 +248,7 @@ class TSCTripleStoreAccess  {
 	 * 		A SPARQL or ASK query.
 	 * @param string $graph
 	 * 		The graph to query. If not set, the graph stored in the global variable
-	 * 		$smwgTripleStoreGraph is queried.
+	 * 		$smwgHaloTripleStoreGraph is queried.
 	 * @param string $params
 	 * 		A string with the parameters for the query in the following format:
 	 * 		parameterName=parameterValue

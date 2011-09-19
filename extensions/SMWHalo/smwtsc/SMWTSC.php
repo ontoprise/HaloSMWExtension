@@ -21,11 +21,11 @@ $smwgQuerySources += array("tsc" => "SMWTripleStore");
 
 global $smwgSemanticDataClass;
 $smwgSemanticDataClass = smwfIsTripleStoreConfigured() ? 'SMWFullSemanticData' : 'SMWSemanticData';
-$smwgTripleStoreGraph = isset($smwgTripleStoreGraph) ? $smwgTripleStoreGraph : 'http://mywiki';
+$smwgHaloTripleStoreGraph = isset($smwgHaloTripleStoreGraph) ? $smwgHaloTripleStoreGraph : 'http://mywiki';
 
 function tscSetupExtension() {
 	// init TSC
-	global $tscgIP, $wgAutoloadClasses, $wgExtensionMessagesFiles, $smwgWebserviceEndpoint, $wgHooks;
+	global $tscgIP, $wgAutoloadClasses, $wgExtensionMessagesFiles, $smwgHaloWebserviceEndpoint, $wgHooks;
 
 	$wgAutoloadClasses['TSCAdministrationStore'] = $tscgIP . '/includes/storage/TSC_AdministrationStore.php';
 	$wgAutoloadClasses['TSCPersistentTripleStoreAccess'] = $tscgIP . '/includes/storage/TSC_PersistentTripleStoreAccess.php';
@@ -53,13 +53,13 @@ function tscSetupExtension() {
 	// TSC client
 
 
-	if (is_array($smwgWebserviceEndpoint) && count($smwgWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
+	if (is_array($smwgHaloWebserviceEndpoint) && count($smwgHaloWebserviceEndpoint) > 1 && !isset($smwgMessageBroker)) {
 		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
 		die();
 	}
 
-	if (smwfIsTripleStoreConfigured() && !isset($smwgWebserviceEndpoint)) {
-		trigger_error('$smwgWebserviceEndpoint is required but not set. Example: $smwgWebserviceEndpoint="localhost:8080";');
+	if (smwfIsTripleStoreConfigured() && !isset($smwgHaloWebserviceEndpoint)) {
+		trigger_error('$smwgHaloWebserviceEndpoint is required but not set. Example: $smwgHaloWebserviceEndpoint="localhost:8080";');
 		die();
 	}
 
@@ -89,12 +89,12 @@ function tscSetupExtension() {
 	$wgAutoloadClasses['LODNonExistingPageHandler'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPageHandler.php';
 
 
-	global $smwgQuadMode;
+	global $smwgHaloQuadMode;
 	
 	smwfAddStore('SMWHaloStore2');
-	if (isset($smwgWebserviceEndpoint) && $smwgQuadMode === true) {
+	if (isset($smwgHaloWebserviceEndpoint) && $smwgHaloQuadMode === true) {
 		smwfAddStore('SMWTripleStoreQuad');
-	} else if (isset($smwgWebserviceEndpoint)) {
+	} else if (isset($smwgHaloWebserviceEndpoint)) {
 		smwfAddStore('SMWTripleStore');
 	} 
 	
@@ -104,8 +104,8 @@ function tscSetupExtension() {
 
 	$wgHooks['smwInitDatatypes'][] = 'tscfInitDatatypes';
 
-	global $smwgShowDerivedFacts, $wgRequest;
-	if ($smwgShowDerivedFacts === true) {
+	global $smwgHaloShowDerivedFacts, $wgRequest;
+	if ($smwgHaloShowDerivedFacts === true) {
 		$wgHooks['smwShowFactbox'][] = 'tscfAddDerivedFacts';
 	}
 
@@ -114,8 +114,8 @@ function tscSetupExtension() {
 	$wgHooks['ParserBeforeStrip'][] = 'tscfRegisterSPARQLInlineQueries';
 	$wgHooks['InternalParseBeforeLinks'][] = 'tscfRegisterIntegrationLink';
 
-	global $lodgNEPEnabled;
-	if ($lodgNEPEnabled) {
+	global $smwgHaloNEPEnabled;
+	if ($smwgHaloNEPEnabled) {
 		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
 		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
 		$wgHooks['sfEditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
@@ -163,10 +163,10 @@ function tscSetupExtension() {
 
 	// Perform content negotiation when invoked with action=ldnegotiate
 	if (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ldnegotiate' ) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$title = Title::newFromText($wgRequest->getVal('title'));
 		// title parameter contains the URI fragement: property/HasName, a/Prius, category/Automobile
-		$uri = $smwgTripleStoreGraph."/".$wgRequest->getVal('title');
+		$uri = $smwgHaloTripleStoreGraph."/".$wgRequest->getVal('title');
 		$title = TSHelper::getTitleFromURI($uri);
 		$location = $title->getLocalURL() . (array_key_exists('HTTP_ACCEPT', $_SERVER) && strpos($_SERVER['HTTP_ACCEPT'], 'application/rdf+xml') !== false ? "?format=rdf" : "");
 
@@ -270,7 +270,7 @@ function tscfRegisterIntegrationLink(&$parser, &$text, &$strip_state = null) {
  *  2. rules (optional)
  */
 function tscfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-	global $smwgIP, $smwgTripleStoreGraph;
+	global $smwgIP, $smwgHaloTripleStoreGraph;
 	global $wgContLang;
 	include_once($smwgIP . '/includes/SMW_Factbox.php');
 

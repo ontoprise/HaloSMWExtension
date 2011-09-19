@@ -106,8 +106,8 @@ EOT;
         global $wgScript;
         $allPolicies = $this->getAllPolicies();
         if (!is_array($allPolicies)) {
-            global $smwgWebserviceEndpoint;
-            $wgOut->addHTML("Error: Triplestore not accessible at: " . $smwgWebserviceEndpoint);
+            global $smwgHaloWebserviceEndpoint;
+            $wgOut->addHTML("Error: Triplestore not accessible at: " . $smwgHaloWebserviceEndpoint);
             return;
         }
         $wgOut->addHTML($this->createPolicyTable($allPolicies));

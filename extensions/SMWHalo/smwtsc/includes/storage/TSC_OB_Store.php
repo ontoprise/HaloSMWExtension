@@ -136,12 +136,12 @@ class OB_StorageTS extends OB_Storage {
 
     public function getInstance($p_array) {
 
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
 
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $categoryName = $p_array[0];
             $limit =  intval($p_array[1]);
@@ -161,9 +161,9 @@ class OB_StorageTS extends OB_Storage {
                     list($c, $isLeaf) = $sc;
                     $categoryDisjuction .= '||'.$c->getText();
                 }
-                $response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+                $response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
             } else {
-                $response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgTripleStoreGraph);
+                $response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
             }
 
             $categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
@@ -172,8 +172,8 @@ class OB_StorageTS extends OB_Storage {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($numOfresults, $titles, $limit, $partition);
@@ -279,11 +279,11 @@ class OB_StorageTS extends OB_Storage {
 
 
     public function getAnnotations($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
             $instanceURI = $p_array[0];
 
             // actually limit and offset is not used
@@ -293,15 +293,15 @@ class OB_StorageTS extends OB_Storage {
             $metadata = isset($p_array[3]) ? $p_array[3] : false;
             $metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
             $onlyDirect = $p_array[4] == "true";
-            global $smwgTripleStoreGraph;
-            $response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
+            global $smwgHaloTripleStoreGraph;
+            $response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgHaloTripleStoreGraph);
             $annotations = array();
             $this->parseAnnotations($response, $instanceURI, $annotations, $onlyDirect);
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, NULL);
@@ -450,11 +450,11 @@ class OB_StorageTS extends OB_Storage {
     }
 
     public function getInstancesUsingProperty($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $propertyName = $p_array[0];
             $limit =  intval($p_array[1]);
@@ -462,14 +462,14 @@ class OB_StorageTS extends OB_Storage {
             $offset = $partition * $limit;
 
             // query
-            $response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
+            $response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgHaloTripleStoreGraph);
 
             $titles = array();
             $numOfResults = $this->parseInstances($response, $titles, NULL);
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         $propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
@@ -477,11 +477,11 @@ class OB_StorageTS extends OB_Storage {
     }
 
     public function getInstanceUsingPropertyValue($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $propertyName = $p_array[0];
             $value = $p_array[1];
@@ -490,14 +490,14 @@ class OB_StorageTS extends OB_Storage {
             $offset = $partition * $limit;
 
             // query
-            $response = $client->query("[[$propertyName::$value]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgTripleStoreGraph);
+            $response = $client->query("[[$propertyName::$value]]",  "?Category|limit=$limit|offset=$offset|merge=false", $smwgHaloTripleStoreGraph);
 
             $titles = array();
             $numOfResults = $this->parseInstances($response, $titles, NULL);
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         $propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
@@ -505,11 +505,11 @@ class OB_StorageTS extends OB_Storage {
     }
 
     public function getPropertyValues($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
             $propertyURI = $p_array[0];
 
             // actually limit and offset is not used
@@ -520,7 +520,7 @@ class OB_StorageTS extends OB_Storage {
             $metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 
-            $response = $client->query("SELECT ?o WHERE { ?s <$propertyURI> ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgTripleStoreGraph);
+            $response = $client->query("SELECT ?o WHERE { ?s <$propertyURI> ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgHaloTripleStoreGraph);
             $annotations = array();
             $property = TSHelper::getTitleFromURI($p_array[0]);
 
@@ -530,8 +530,8 @@ class OB_StorageTS extends OB_Storage {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, NULL);
@@ -541,11 +541,11 @@ class OB_StorageTS extends OB_Storage {
 
 
     public function getCategoryForInstance($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $instanceURI = $p_array[0];
             $bundleSPARQL = "";
@@ -556,15 +556,15 @@ class OB_StorageTS extends OB_Storage {
                 $bundleSPARQL = " ?cat <$partOfBundleURI> <$bundleURI> .";
             }
             // query
-            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat. $bundleSPARQL }",  "", $smwgTripleStoreGraph);
+            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?cat WHERE { <$instanceURI> rdf:type ?cat. $bundleSPARQL }",  "", $smwgHaloTripleStoreGraph);
 
             $categories = array();
             $this->parseCategories($response, $categories);
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
 
@@ -610,11 +610,11 @@ class OB_StorageTS extends OB_Storage {
 
         if ($type != 'instance') return parent::filterBrowse($p_array);
 
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             //query
             for ($i = 0; $i < count($hint); $i++) {
@@ -632,7 +632,7 @@ class OB_StorageTS extends OB_Storage {
             }
 
 
-            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000", $smwgTripleStoreGraph);
+            $response = $client->query(TSNamespaces::getW3CPrefixes()." SELECT ?s ?cat WHERE { ?s ?p ?o. OPTIONAL { ?s rdf:type ?cat. } $filter }",  "limit=1000", $smwgHaloTripleStoreGraph);
 
 
             $titles = array();
@@ -640,8 +640,8 @@ class OB_StorageTS extends OB_Storage {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         // do not show partitions. 1000 instances is maximum here.
@@ -669,8 +669,8 @@ class OB_StorageTS extends OB_Storage {
         $wikiID = wfMsg("smw_ob_source_wiki");
         foreach ($sources as $key => $source) {
             if (trim($source) == $wikiID) {
-                global $smwgTripleStoreGraph;
-                $graph = "|graph=$smwgTripleStoreGraph";
+                global $smwgHaloTripleStoreGraph;
+                $graph = "|graph=$smwgHaloTripleStoreGraph";
                 unset ($sources[$key]);
                 break;
             }
@@ -699,11 +699,11 @@ class OB_StorageTS extends OB_Storage {
 
 class OB_StorageTSQuad extends OB_StorageTS {
     public function getAnnotations($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $instanceURI = $p_array[0];
 
@@ -724,8 +724,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, NULL);
@@ -733,11 +733,11 @@ class OB_StorageTSQuad extends OB_StorageTS {
     }
 
     public function getInstancesUsingProperty($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $propertyURI = TSNamespaces::getInstance()->getNSURI(SMW_NS_PROPERTY).$p_array[0];
             $limit =  intval($p_array[1]);
@@ -754,8 +754,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
             $numOfResults = $this->parseInstances($response, $titles, NULL);
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
             
         $propertyURI = str_replace( array('"'),array('&quot;'),$propertyURI);
@@ -763,11 +763,11 @@ class OB_StorageTSQuad extends OB_StorageTS {
     }
 
     public function getCategoryForInstance($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $instanceURI = $p_array[0];
 
@@ -781,8 +781,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
 
@@ -797,11 +797,11 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
         if ($type != 'instance') return parent::filterBrowse($p_array);
 
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+        global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
         $client = TSConnection::getConnector();
         $client->connect();
         try {
-            global $smwgTripleStoreGraph;
+            global $smwgHaloTripleStoreGraph;
 
             $dataSpace = $this->getDataSourceParameters();
 
@@ -829,8 +829,8 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
         } catch(Exception $e) {
-            global $smwgWebserviceEndpoint;
-            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgWebserviceEndpoint");
+            global $smwgHaloWebserviceEndpoint;
+            return $this->createErrorMessage($e->getCode(), "Error accessing the TSC at $smwgHaloWebserviceEndpoint");
         }
 
         // do not show partitions. 1000 instances is maximum here.

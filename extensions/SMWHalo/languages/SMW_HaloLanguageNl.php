@@ -48,7 +48,7 @@ class SMW_HaloLanguageNl extends SMW_HaloLanguage {
     'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
     'smw_ac_category_has_icon' => 'Category has icon',
 	'smw_ac_tls' => 'List of types',
-	
+
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Geen eenheid in de SI voorstelling. ',
 	'smw_too_many_slashes' => 'Teveel slashes in de SI voorstelling. ',
@@ -74,19 +74,19 @@ class SMW_HaloLanguageNl extends SMW_HaloLanguage {
 	'smw_help_question_added' => "Je vraag werd toegevoegd aan ons helpsysteem\nen kan nu beantwoord worden door andere wiki gebruikers.",
 	// Messages for CSH
     'smw_csh_icon_tooltip' => 'Click here if you need help or if you want to send feeback to the SMW+ developers.'
-	);
+    );
 
 
-	protected $smwUserMessages = array(
+    protected $smwUserMessages = array(
     'specialpages-group-smwplus_group' => 'SMW+',
 	'smw_devel_warning' => 'Dit feature wordt momenteel ontwikkeld, en is mogelijk niet volledig functioneel. Sla je gegevens op vooraleer je het gebruikt.',
-	// Messages for pages of types, relations, and attributes
+    // Messages for pages of types, relations, and attributes
 
 	'smw_relation_header' => 'Pagina´s met de eigenschap "$1"',
 	'smw_subproperty_header' => 'Sub-eigenschappen van "$1"',
 	'smw_subpropertyarticlecount' => '<p>Toont $1 sub-eigenschappen.</p>',
 
-	// Messages for category pages
+    // Messages for category pages
 	'smw_category_schemainfo' => 'Schema informatie voor categorie "$1"',
 	'smw_category_properties' => 'Eigenschappen',
 	'smw_category_properties_range' => 'Eigenschappen met waardenbereik "$1"',
@@ -102,7 +102,7 @@ class SMW_HaloLanguageNl extends SMW_HaloLanguage {
 
 	'smw_exportrdf_all' => 'Alle semantische gegevens exporteren',
 
-	// Messages for Search Triple Special
+    // Messages for Search Triple Special
 	'searchtriple' => 'Eenvoudige semantische zoekfunctie', //name of this special
 	'smw_searchtriple_docu' => "<p>Vul de bovenste of onderste lijn van het invulformulier in om te zoeken naar respectievelijk relaties of attributen. 
 	Sommige velden kunnen leeg gelaten worden of meerdere resultaten bevatten. Maar indien een attribuut-waarde gegeven is, moet de attribuut-naam ook ingevuld worden. Zoals gewoonlijk, kunnen attribuut-waarden ingevuld worden met een maateenheid. </p>\n\n<p>
@@ -117,13 +117,13 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_searchtriple_resultrel' => 'Zoekresultaten (relaties)',
 	'smw_searchtriple_resultatt' => 'Zoekresultaten (attributen)',
 
-	// Messages for Relations Special
+    // Messages for Relations Special
 	'relations' => 'Relaties',
 	'smw_relations_docu' => 'De volgende relaties zijn aanwezig in de wiki.',
-	// Messages for WantedRelations Special
+    // Messages for WantedRelations Special
 	'wantedrelations' => 'Gewenste relaties',
 	'smw_wanted_relations' => 'De volgende relaties hebben nog geen pagina met uitleg, alhoewel ze reeds gebruikt worden om andere pagina´s te beschrijven.',
-	// Messages for Properties Special
+    // Messages for Properties Special
 	'properties' => 'Eigenschappen',
 	'smw_properties_docu' => 'De volgende eigenschappen zijn aanwezig in de wiki.',
 	'smw_attr_type_join' => ' met $1',
@@ -134,15 +134,15 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_properties_sortdatatype' => 'Datatype eigenschappen',
 	'smw_properties_sortwikipage' => 'Wikipagina eigenschappen',
 	'smw_properties_sortnary' => 'N-tellige eigenschappen',
-	// Messages for Unused Relations Special
+    // Messages for Unused Relations Special
 	'unusedrelations' => 'Ongebruikte relaties',
 	'smw_unusedrelations_docu' => 'De volgende relatie-pagina´s bestaan alhoewel geen enkele andere pagina er gebruik van maakt.',
-	// Messages for Unused Attributes Special
+    // Messages for Unused Attributes Special
 	'unusedattributes' => 'Ongebruikte attributen',
 	'smw_unusedattributes_docu' => 'De volgende attribuut-pagina´s bestaan alhoewel geen enkele andere pagina er gebruik van maakt.',
 
 
-	/*Messages for OntologyBrowser*/
+    /*Messages for OntologyBrowser*/
 	'ontologybrowser' => 'Ontologie-browser',
 	'smw_ac_hint' => 'Druk Ctrl+Alt+Space voor auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Categorieënboom',
@@ -179,7 +179,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_hasnumoftempuages' => 'Deze template is $1 maal gebruikt',
 	'smw_ob_invalidtitle' => '!!!invalid title!!!',
 
-	/* Commands for ontology browser */
+    /* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subcategorie toevoegen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Categorie op hetzelfde',
 	'smw_ob_cmd_renamecategory' => 'Hernoemen',
@@ -191,8 +191,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Eigenschappen toevoegen aan domein: ',
 
-	//TODO: Translate strings
-	/* Advanced options in the ontology browser */
+    //TODO: Translate strings
+    /* Advanced options in the ontology browser */
 	'smw_ob_source_wiki' => "-Wiki- (all bundles)" ,
 	'smw_ob_advanced_options' => "Advanced options" ,
 	'smw_ob_select_datasource' => "Select the data source to browse:" ,
@@ -200,7 +200,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_select_multiple' => "To select <b>multiple</b> data sources hold down <b>CTRL</b> and select the items with a <b>mouse click</b>.",
 	'smw_ob_ts_not_connected' => "No triple store found. Please ask your wiki administrator!",
 
-	/* Combined Search*/
+    /* Combined Search*/
 	'smw_combined_search' => 'Gecombineerde zoekfunctie',
 	'smw_cs_entities_found' => 'De volgende elementen werden in de wiki ontologie gevonden:',
 	'smw_cs_attributevalues_found' => 'De volgende entiteiten bevatten eigenschapwaarden die overeenkomen met je zoekaanvraag:',
@@ -220,7 +220,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 
 
-	/*Messages for ContextSensitiveHelp*/
+    /*Messages for ContextSensitiveHelp*/
 	'contextsensitivehelp' => 'Kontext-gevoelige helpfunctie',
 	'smw_contextsensitivehelp' => 'Kontext-gevoelige helpfunctie',
 	'smw_csh_newquestion' => 'Dit is een nieuwe helpvraag. Klik om ze te beantwoorden!',
@@ -234,14 +234,14 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_csh_show_special_help' => 'Zoek hulp voor:',
 	'smw_csh_categories' => 'Categorieën',
 	'smw_csh_properties' => 'Eigenschappen',
-	/* Messages for the CSH discourse state. Do NOT edit or translate these
-	 * otherwise CSH will NOT work correctly anymore
-	 */
+    /* Messages for the CSH discourse state. Do NOT edit or translate these
+     * otherwise CSH will NOT work correctly anymore
+     */
 	'smw_csh_ds_ontologybrowser' => 'Ontologie-browser',
 	'smw_csh_ds_queryinterface' => 'Query-interface',
 	'smw_csh_ds_combinedsearch' => 'Zoek',
 
-	/*Messages for Query Interface*/
+    /*Messages for Query Interface*/
 	'queryinterface' => 'Query-interface',
 	'smw_queryinterface' => 'Query-interface',
 	'smw_qi_add_category' => 'Categorie toevoegen',
@@ -315,7 +315,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_dstpee_selector_0' => 'Select from Datasource',
     'smw_qi_dstpee_selector_1' => 'Select by Trust Policy',
 
-	/*Tooltips for Query Interface*/
+    /*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',
 	'smw_qi_tt_addInstance' => 'Bij het toevoegen van een entiteit, wordt slechts één enkel artikel toegevoegd',
 	'smw_qi_tt_addProperty' => 'Bij het toevoegen van een eigenschap, kan je ofwel alle resultaten tonen, ofwel specifieke waarden zoeken',
@@ -347,24 +347,24 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_maintab_query' => 'Create a new query',
     'smw_qi_tt_maintab_load' => 'Load an existing query',
 
-	/* Annotation */
+    /* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',
 	'smw_annotating'     => '$1 aantekenen',
 	'annotatethispage'   => 'Deze pagina annoteren',
 
 
-	/* Refactor preview */
+    /* Refactor preview */
  	'refactorstatistics' => 'Refactor statistieken',
  	'smw_ob_link_stats' => 'Refactor statistieken openen',
 
 
 
 
-	/* Gardening Issue Highlighting in Inline Queries */
+    /* Gardening Issue Highlighting in Inline Queries */
 	'smw_iqgi_missing' => 'ontbrekend',
 	'smw_iqgi_wrongunit' => 'verkeerde eenheid',
 
-	/* ACL */
+    /* ACL */
 	'acl' => 'Access Control Lists',
 	'acl_welcome' => 'This special page allows to configure the Access Control Lists. They are used to restrict access to the wiki.',
 	'smw_acl_rules' => 'Rules',
@@ -389,7 +389,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_acl_permit' => 'permit',
 	'smw_acl_deny' => 'deny',
 
-	// Simple Rules formula parser
+    // Simple Rules formula parser
 	'smw_srf_expected_factor' => 'Expected a function, variable, constant or braces near $1',
 	'smw_srf_expected_comma' => 'Expected a comma near $1',
 	'smw_srf_expected_(' => 'Expected an opening brace near $1',
@@ -397,119 +397,86 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
 	'smw_srf_missing_operator' => 'Expected an operator near $1',
 
-	// Triple Store Admin
-    'tsa' => 'Triple store administration',
-    'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
-    'smw_tsa_welcome' => 'This special page helps you to administrate the wiki/triplestore connection.',
-    'smw_tsa_couldnotconnect' => 'Could not connect to a triple store.',
-    'smw_tsa_notinitalized' => 'Your wiki is not initialized at the triplestore.',
-    'smw_tsa_waitsoemtime'=> 'Please wait a few seconds and then follow this link.',
-    'smw_tsa_wikiconfigured' => 'Your wiki is properly connected with the triplestore at $1',
-    'smw_tsa_initialize' => 'Initialize',
-    'smw_tsa_reinitialize' => 'Re-Initialize',
-    'smw_tsa_pressthebutton' => 'Please press the button below.',
-    'smw_tsa_addtoconfig' => 'Please add the following lines in your LocalSettings.php and check if the triplestore connector is running.',
-    'smw_tsa_addtoconfig2' => 'Make sure that the triplestore driver is activated. If necessary change enableSMWHalo to',
-    'smw_tsa_addtoconfig3' => 'Also make sure that the graph URL (last parameter of enableSMWHalo) is a valid one and it does not contain a hash (#).',
-	'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
-    'smw_tsa_driverinfo' => 'Driver information',
-    'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableObjectLogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
-    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
-    'smw_tsa_tscinfo' => 'Triplestore Connector information',
-    'smw_tsa_tscversion' => 'TSC Version',
-    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
-'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
-	'smw_tsa_loadgraphs'=> 'Loaded graphs',
-    'smw_tsa_autoloadfolder'=> 'Auto-load folder',
-    'smw_tsa_tscparameters'=> 'TSC parameters',
-    'smw_tsa_synccommands'=> 'Synchronization commands',
 
-	// SMWHaloAdmin
+    // SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
     'smw_haloadmin_databaseinit' => 'Database initialization',
     'smw_haloadmin_description' => 'This special helps you during installation and upgrade of SMWHalo.', 
     'smw_haloadmin_databaseinit_description' => 'The below function ensures that your database is set up properly. Pressing "Initialize" will upgrade the database schema and install some required wiki pages for the use of semantic data. Alternatively you can use the maintenance script SMW_setup.php which is located in the SMWHalo maintenance folder.',
     'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
-	
-	
-	// Derived facts
-	'smw_df_derived_facts_about' => 'Afgeleide feiten $1',
-    'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
-	//skin
+
+    //skin
         'smw_search_this_wiki' => 'Search this wiki',
         'more_functions' => 'more',
         'smw_treeviewleft' => 'Open treeview to the left side',
         'smw_treeviewright' => 'Open treeview to the right side',
 
-		//--- Non-existing pages ---
-	    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 
-		// Tabular Forms
+    // Tabular Forms
 		'smw_tf_paramdesc_add'		=> 'Gebruiker is toegestaan ​​om nieuwe exemplaren toe te voegen aan het resultaat',
 		'smw_tf_paramdesc_delete'	=> 'Gebruiker is toegestaan ​​om gevallen te verwijderen uit het resultaat',
-	
-		//Querylist Special Page
+
+    //Querylist Special Page
 		'querylist' => "Saved Queries",
-	
-			
-		//--- fancy table result printer
+
+    	
+    //--- fancy table result printer
 		'ftrp_warning' => "Found invalid replace statements with unknown properties:",
-		
-	);
+
+    );
 
 
-	protected $smwSpecialProperties = array(
-	//always start upper-case
+    protected $smwSpecialProperties = array(
+    //always start upper-case
 	"___cfsi" => array('_siu', 'Komt overeen met SI'),
 	"___CREA" => array('_wpg', 'Creator'),
 	"___CREADT" => array('_dat', 'Creation date'),
 	"___MOD" => array('_wpg', 'Last modified by')
-	);
+    );
 
 
-	var $smwSpecialSchemaProperties = array (
-	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Heeft domein en waardenbereik',
-	SMW_SSP_HAS_DOMAIN => 'Has domain',
+    var $smwSpecialSchemaProperties = array (
+    SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Heeft domein en waardenbereik',
+    SMW_SSP_HAS_DOMAIN => 'Has domain',
     SMW_SSP_HAS_RANGE => 'Has range',
-	SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
-	SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
-	SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
-	SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan',
-	SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
-	);
+    SMW_SSP_HAS_MAX_CARD => 'Heeft max kardinaliteit',
+    SMW_SSP_HAS_MIN_CARD => 'Heeft min kardinaliteit',
+    SMW_SSP_IS_INVERSE_OF => 'Is het omgekeerde van',
+    SMW_SSP_IS_EQUAL_TO => 'Is gelijk aan',
+    SMW_SSP_ONTOLOGY_URI => 'Ontology URI'
+    );
 
-	var $smwSpecialCategories = array (
-	SMW_SC_TRANSITIVE_RELATIONS => 'Transitieve eigenschappen',
-	SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische eigenschappen'
-	);
+    var $smwSpecialCategories = array (
+    SMW_SC_TRANSITIVE_RELATIONS => 'Transitieve eigenschappen',
+    SMW_SC_SYMMETRICAL_RELATIONS => 'Symmetrische eigenschappen'
+    );
 
-	var $smwHaloDatatypes = array(
+    var $smwHaloDatatypes = array(
 	'smw_hdt_chemical_formula' => 'Chemische formule',
 	'smw_hdt_chemical_equation' => 'Chemische gelijkheid',
 	'smw_hdt_mathematical_equation' => 'Wiskundige gelijkheid',
     'smw_integration_link' => 'Integrations link'
-	);
+    );
 
-	protected $smwHaloNamespaces = array(
-	);
+    protected $smwHaloNamespaces = array(
+    );
 
-	protected $smwHaloNamespaceAliases = array(
-	);
+    protected $smwHaloNamespaceAliases = array(
+    );
 
-	/**
-	 * Function that returns the namespace identifiers.
-	 */
-	public function getNamespaceArray() {
-		return array(
-		SMW_NS_RELATION       => 'Relatie',
-		SMW_NS_RELATION_TALK  => 'Relatie_talk',
-		SMW_NS_PROPERTY       => 'Eigenschap',
-		SMW_NS_PROPERTY_TALK  => 'Eigenschap_talk',
-		SMW_NS_TYPE           => 'Type', // @deprecated
-		SMW_NS_TYPE_TALK      => 'Type_talk' // @deprecated
-		);
-	}
+    /**
+     * Function that returns the namespace identifiers.
+     */
+    public function getNamespaceArray() {
+    	return array(
+    	SMW_NS_RELATION       => 'Relatie',
+    	SMW_NS_RELATION_TALK  => 'Relatie_talk',
+    	SMW_NS_PROPERTY       => 'Eigenschap',
+    	SMW_NS_PROPERTY_TALK  => 'Eigenschap_talk',
+    	SMW_NS_TYPE           => 'Type', // @deprecated
+    	SMW_NS_TYPE_TALK      => 'Type_talk' // @deprecated
+    	);
+    }
 
 
 }

@@ -400,31 +400,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_deletepage_prev' => 'Précédent',
     'smw_deletepage_next' => 'Suivant',
     
-    // Triple Store Admin
-    'tsa' => 'Administration Triple Store',
-    'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
-    'smw_tsa_welcome' => 'Cette page spéciale vous aide à  administrer le wiki/la connection triplestore.',
-    'smw_tsa_couldnotconnect' => 'La connection vers le triple store est impossible.',
-    'smw_tsa_notinitalized' => 'Votre wiki n\'est pas initialisé au triplestore.',
-    'smw_tsa_waitsoemtime'=> 'Veuillez patienter quelques secondes et suivre ce lien.',
-    'smw_tsa_wikiconfigured' => 'Votre wiki est correctement connecté avec le triplestore à  $1',
-    'smw_tsa_initialize' => 'Initialiser',
-    'smw_tsa_pressthebutton' => 'Veuillez cliquer sur le bouton ci-dessous.',
-    'smw_tsa_addtoconfig' => 'Veulliez ajouter les lignes suivantes dans votre LocalSettings.php et vérifier si le connecteur triplestore est en marche.',
-    'smw_tsa_addtoconfig2' => 'Assurez-vous que le driver triplestore est activé. Si nécessaire, modifier enableSMWHalo avec',
-    'smw_tsa_addtoconfig3' => 'Assurez-vous aussi que l\'URL du graphe (dernier paramà¨tre de enableSMWHalo) est valide et qu\'il ne contient pas de dià¨se (#).',
-    'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
-    'smw_tsa_driverinfo' => 'Informations sur le driver',
-    'smw_tsa_status' => 'Statut',
-    'smw_tsa_rulesupport'=> 'Le driver triplestore supporte les rà¨gles ; il vous est conseillé d\'ajouter <pre>$smwgEnableObjectLogicRules=true;</pre> à  votre LocalSettings.php. Sinon, les rà¨gles ne fonctionneront pas.',
-    'smw_tsa_norulesupport'=> 'Le driver triplestore ne supporte pas les rà¨gles, bien qu\'elles soient activées dans le wiki. Veuillez supprimer <pre>$smwgEnableObjectLogicRules=true;</pre> de votre LocalSettings.php, afin de ne pas obtenir d\'erreurs.',
-    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
-    'asktsc' => 'Ask triplestore',
-    'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
-    'smw_tsa_loadgraphs'=> 'Loaded graphs',
-    'smw_tsa_autoloadfolder'=> 'Auto-load folder',
-    'smw_tsa_tscparameters'=> 'TSC parameters',
-    'smw_tsa_synccommands'=> 'Synchronization commands',
+   
     
     // SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
@@ -453,9 +429,6 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_expl_explain_property' => 'Expliquer la tà¢che de la propriété:',
     'smw_expl_error' => 'Malheureusement, des erreurs sont survenues pendant la demande d\'explications:',
     
-    // Derived facts
-    'smw_df_derived_facts_about' => 'Faits dérivés de $1',
-    'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
     
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
@@ -463,8 +436,6 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_treeviewleft' => 'Open treeview to the left side',
     'smw_treeviewright' => 'Open treeview to the right side',
     
-    //--- Non-existing pages ---
-    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
     
     	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'L\'utilisateur est autorisé à ajouter de nouvelles instances pour le résultat',

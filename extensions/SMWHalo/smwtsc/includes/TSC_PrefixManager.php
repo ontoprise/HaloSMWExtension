@@ -98,11 +98,11 @@ class TSCPrefixManager  {
 		$this->mPrefixMap['smwDatasourceLinks']		= self::TSC_BASE_URI.self::TSC_SMW_DATASOURCELINKS;
 		
 		// Add wiki prefixes
-		global $smwgTripleStoreGraph;
-		if (isset($smwgTripleStoreGraph)) {
-			$this->mPrefixMap["a"] 		= "$smwgTripleStoreGraph/a/";
-			$this->mPrefixMap["prop"]	= "$smwgTripleStoreGraph/property/";
-			$this->mPrefixMap["cat"] 	= "$smwgTripleStoreGraph/category/";
+		global $smwgHaloTripleStoreGraph;
+		if (isset($smwgHaloTripleStoreGraph)) {
+			$this->mPrefixMap["a"] 		= "$smwgHaloTripleStoreGraph/a/";
+			$this->mPrefixMap["prop"]	= "$smwgHaloTripleStoreGraph/property/";
+			$this->mPrefixMap["cat"] 	= "$smwgHaloTripleStoreGraph/category/";
 		}		
 	}
 	

@@ -443,13 +443,13 @@ function parseQuery($query, $page) {
  * @return string $html
  */
 function smwf_qi_getPage($args= "") {
-	global $wgServer, $wgScript, $wgLang, $smwgQueryInterfaceHost4Wysiwyg;
+	global $wgServer, $wgScript, $wgLang, $smwgHaloQueryInterfaceHost4Wysiwyg;
         $qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
 
     // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page
-    $host = (isset($smwgQueryInterfaceHost4Wysiwyg))
-        ? $smwgQueryInterfaceHost4Wysiwyg
+    $host = (isset($smwgHaloQueryInterfaceHost4Wysiwyg))
+        ? $smwgHaloQueryInterfaceHost4Wysiwyg
         : $wgServer;
 
 	$page = "";
@@ -661,8 +661,8 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
         }
         else if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
             $authData = qiParseHttpDigest($_SERVER['PHP_AUTH_DIGEST']);
-            global $smwgHttpAuthPassword;
-            curl_setopt($c, CURLOPT_USERPWD, $authData['username'].':'.$smwgHttpAuthPassword);
+            global $smwgHaloHttpAuthPassword;
+            curl_setopt($c, CURLOPT_USERPWD, $authData['username'].':'.$smwgHaloHttpAuthPassword);
             curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         }
 	}
@@ -670,8 +670,8 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 	if (isset($_SERVER['HTTP_USER_AGENT']))
 		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
     // if the secret is set, then create some key and hash it with the secret
-    global $smwgQueryInterfaceSecret;
-    if (isset($smwgQueryInterfaceSecret)) {
+    global $smwgHaloQueryInterfaceSecret;
+    if (isset($smwgHaloQueryInterfaceSecret)) {
         global $wgRequest;
         $token = $wgRequest->getText('s');
         $hash = $wgRequest->getText('t');
@@ -911,13 +911,13 @@ function qiParseHttpDigest($digest) {
 
 // Function to create a hash key
 function qiCreateHash($token= '') {
-    global $smwgQueryInterfaceSecret;
-    if (!isset($smwgQueryInterfaceSecret))
+    global $smwgHaloQueryInterfaceSecret;
+    if (!isset($smwgHaloQueryInterfaceSecret))
         return array(null, null);
     global $smwgHaloScriptPath, $smwgHaloStyleVersion;
     if ($token == '')
         $token = md5(mt_rand().time().$smwgHaloScriptPath.$smwgHaloStyleVersion);
-    $hash = md5($token.$smwgQueryInterfaceSecret);
+    $hash = md5($token.$smwgHaloQueryInterfaceSecret);
     return array($token, $hash);
 }
 

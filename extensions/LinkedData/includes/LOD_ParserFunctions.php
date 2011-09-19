@@ -227,14 +227,14 @@ class LODParserFunctions {
 			if (array_key_exists($mintNamespaceName, $params)) {
 				if(!Http::isValidURI($params[$mintNamespaceName])){
 					$msg .= '<br/>'.wfMsg("lod_mapping_invalid_mintNS");
-					global $smwgTripleStoreGraph;
-					$mintNamespace = '<'.$smwgTripleStoreGraph.'>';	
+					global $smwgHaloTripleStoreGraph;
+					$mintNamespace = '<'.$smwgHaloTripleStoreGraph.'>';	
 				} else { 
 					$mintNamespace = '<'.$params[$mintNamespaceName].'>';
 				}
 			} else {
-				global $smwgTripleStoreGraph;
-				$mintNamespace = '<'.$smwgTripleStoreGraph.'>';
+				global $smwgHaloTripleStoreGraph;
+				$mintNamespace = '<'.$smwgHaloTripleStoreGraph.'>';
 			}
 			
 			//get mintPredicateLabels

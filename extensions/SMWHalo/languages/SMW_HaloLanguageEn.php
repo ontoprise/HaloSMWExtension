@@ -386,16 +386,6 @@ clicking the big arrows between the columns.',
 	'smw_haloadmin_databaseinit_description' => 'The below function ensures that your database is set up properly. Pressing "Initialize" will upgrade the database schema and install some required wiki pages for the use of semantic data. Alternatively you can use the maintenance script SMW_setup.php which is located in the SMWHalo maintenance folder.',
 	'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
-	// Derived facts
-	'smw_df_derived_facts_about' => 'Derived facts about $1',
-	'smw_df_static_tab'			 => 'Static facts',
-	'smw_df_derived_tab'		 => 'Derived facts',
-	'smw_df_static_facts_about'  => 'Static facts about this article',
-	'smw_df_derived_facts_about' => 'Derived facts about this article',
-	'smw_df_loading_df'			 => 'Loading derived facts...',
-	'smw_df_invalid_title'		 => 'Invalid article. No derived facts available.',
-	'smw_df_no_df_found'		 => 'No derived facts found for this article.',
-	'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
 	
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
@@ -412,9 +402,6 @@ clicking the big arrows between the columns.',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
 	'semanticmaps_label_longitude' => 'Longitude:',
-	
-	//--- Non-existing pages ---
-    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
 	
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'User is allowed to add new instances to the result',

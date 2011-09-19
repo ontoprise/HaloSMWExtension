@@ -32,10 +32,10 @@ if($smwgDefaultStore == 'SMWTripleStoreQuad') {
 }
 
 // check if TSC is configured
-global $wgCommandLineMode, $smwgWebserviceEndpoint;
+global $wgCommandLineMode, $smwgHaloWebserviceEndpoint;
 if ($wgCommandLineMode) {
 	// in command line mode, just print a WARNING, otherwise DF may stop working
-	if (!isset($smwgWebserviceEndpoint) || $smwgDefaultStore != 'SMWTripleStore') {
+	if (!isset($smwgHaloWebserviceEndpoint) || $smwgDefaultStore != 'SMWTripleStore') {
 		echo "\n\nWARNING: TSC is NOT configured. Take a look here: \n\thttp://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\n";
 	}
 } else {
@@ -47,8 +47,8 @@ if ($wgCommandLineMode) {
 $wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
 
-global $smwgEnableObjectLogicRules;
-$smwgEnableObjectLogicRules=true;
+global $smwgHaloEnableObjectLogicRules;
+$smwgHaloEnableObjectLogicRules=true;
 
 /**
  * Setups rule extension
@@ -369,13 +369,13 @@ function srfAddOBContent(& $out) {
  * @return boolean (SMWHalo hook)
  */
 function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-	global $smwgEnableObjectLogicRules, $smwgTripleStoreGraph;
+	global $smwgHaloEnableObjectLogicRules, $smwgHaloTripleStoreGraph;
 	// rules
 	// meant to be a hash map $ruleID => $ruleText,
 	// where $ruleID has to be a URI (i.e. containing at least one colon)
 
 	$rules = array();
-	if (isset($smwgEnableObjectLogicRules)) {
+	if (isset($smwgHaloEnableObjectLogicRules)) {
 
 		// search rule tags
 		$ruleTagPattern = '/&lt;rule(.*?&gt;)(.*?.)&lt;\/rule&gt;/ixus';

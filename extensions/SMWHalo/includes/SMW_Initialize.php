@@ -56,7 +56,7 @@ require_once("$smwgHaloIP/smwtsc/SMWTSC.php");
  */
 function enableSMWHalo() {
 	global $wgExtensionFunctions, $smwgOWLFullExport,
-	$smwgSemanticDataClass, $wgHooks, $smwgTripleStoreGraph, $smwgIgnoreSchema;
+	$smwgSemanticDataClass, $wgHooks, $smwgHaloTripleStoreGraph, $smwgIgnoreSchema;
 
 	global $smwghConvertColoumns;
 	if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
@@ -118,7 +118,7 @@ function smwgHaloSetupExtension() {
 	global $smwgIP, $smwgHaloIP, $wgHooks, $smwgMasterGeneralStore, $wgFileExtensions, $wgJobClasses, $wgExtensionCredits;
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $wgSpecialPageGroups;
-	global $smwgWebserviceEndpoint, $smwgMessageBroker;
+	global $smwgHaloWebserviceEndpoint, $smwgMessageBroker;
 	
 
 	// check if dependant extensions are installed
@@ -375,9 +375,9 @@ function smwgHaloSetupExtension() {
 		
 		
 
-		// make hook for red links if $lodgNEPEnabled is disabled (see above)
-		global $smwgRedLinkWithCreateNewPage;
-		if ($smwgRedLinkWithCreateNewPage && !$lodgNEPEnabled)
+		// make hook for red links if $smwgHaloNEPEnabled is disabled (see above)
+		global $smwgHaloRedLinkWithCreateNewPage;
+		if ($smwgHaloRedLinkWithCreateNewPage && !$smwgHaloNEPEnabled)
 		$wgHooks['LinkEnd'][] = 'smwfBrokenLinkForPage';
 
 		// make hook for RichMedia
@@ -429,8 +429,8 @@ function smwgHaloSetupExtension() {
 
 			// Check if qi is called via an curl call and if a token is set
 			if (!is_null($title) && $title->getText() == 'QueryInterface') {
-				global $smwgQueryInterfaceSecret;
-				if (isset($smwgQueryInterfaceSecret)) {
+				global $smwgHaloQueryInterfaceSecret;
+				if (isset($smwgHaloQueryInterfaceSecret)) {
 					global $wgRequest;
 					$token = $wgRequest->getText('s');
 					$hash = $wgRequest->getText('t');
@@ -474,8 +474,8 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
  * @return boolean
  */
 function smwfIsTripleStoreConfigured() {
-	global $smwgWebserviceEndpoint;
-	return isset($smwgWebserviceEndpoint);
+	global $smwgHaloWebserviceEndpoint;
+	return isset($smwgHaloWebserviceEndpoint);
 }
 
 
@@ -591,8 +591,8 @@ function smwfHaloShowListPage(&$title, &$article){
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
 		$article = new SMWCategoryPage($title);
 	} elseif ( $title->exists() && $title->getNamespace() == SMW_NS_PROPERTY ) {
-		global $smwgPropertyPageFromTSC;
-		if (!isset($smwgPropertyPageFromTSC) || $smwgPropertyPageFromTSC === false) return true;
+		global $smwgHaloPropertyPageFromTSC;
+		if (!isset($smwgHaloPropertyPageFromTSC) || $smwgHaloPropertyPageFromTSC === false) return true;
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_TS_PropertyPage.php');
 		$article = new SMWTSPropertyPage($title);
 	}
@@ -718,8 +718,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 	}
 
 	if (smwfIsTripleStoreConfigured()) {
-		global $smwgTripleStoreGraph;
-		$wgOut->addScript('<script type="text/javascript">var smwghTripleStoreGraph="'.$smwgTripleStoreGraph.'"</script>');
+		global $smwgHaloTripleStoreGraph;
+		$wgOut->addScript('<script type="text/javascript">var smwghTripleStoreGraph="'.$smwgHaloTripleStoreGraph.'"</script>');
 	}
 
 	/*

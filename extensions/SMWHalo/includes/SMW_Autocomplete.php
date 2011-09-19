@@ -292,11 +292,11 @@ function smwf_ac_AutoCompletionOptions() {
 function &smwfGetAutoCompletionStore() {
 	global $smwhgAutoCompletionStore, $smwgHaloIP;
 	if ($smwhgAutoCompletionStore == NULL) {
-		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) {
+		global $smwgHaloWebserviceEndpoint;
+		if (isset($smwgHaloWebserviceEndpoint)) {
 				
-			global $smwhgAutoCompletionTSC;
-			if (isset($smwhgAutoCompletionTSC) && $smwhgAutoCompletionTSC === true) {
+			global $smwgHaloAutoCompletionTSC;
+			if (isset($smwgHaloAutoCompletionTSC) && $smwgHaloAutoCompletionTSC === true) {
 				// activate TSC autocompletion only explicitly
 				$smwhgAutoCompletionStore = new AutoCompletionStorageTSCQuad();
 			} else {

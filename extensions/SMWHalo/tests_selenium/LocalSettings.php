@@ -16,8 +16,8 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 //enableSMWHalo('SMWHaloStore2', 'SMWTripleStoreQuad', 'http://mywiki');
 enableSMWHalo('SMWHaloStore2');
-$smwgWebserviceEndpoint="localhost:8092";
-$smwhgAutoCompletionTSC=true;
+$smwgHaloWebserviceEndpoint="localhost:8092";
+$smwgHaloAutoCompletionTSC=true;
 //enableQueryResultsCache();
 
 $wgParserCacheType = CACHE_NONE; //disable parse cache for query results cache tests

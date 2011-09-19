@@ -12,8 +12,8 @@ include_once('extensions/ARCLibrary/ARCLibrary.php');
 enableARCLibrary();
 
 //$smwgMessageBroker='localhost';
-$smwgWebserviceEndpoint='localhost:8092';
-$smwgEnableObjectLogicRules=true;
+$smwgHaloWebserviceEndpoint='localhost:8092';
+$smwgHaloEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
 define('SMWH_FORCE_TS_UPDATE', true);
 

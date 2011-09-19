@@ -640,12 +640,12 @@ class TestSMWStore extends PHPUnit_Framework_TestCase {
 	 * processor.
 	 */
 	function testSPARQLGetQueryResults() {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		
 		$query = <<<QUERY
 SELECT ?s ?o
   WHERE {
-    GRAPH <$smwgTripleStoreGraph> {
+    GRAPH <$smwgHaloTripleStoreGraph> {
       ?s prop:NormalProperty ?o .
     }
   }
@@ -720,7 +720,7 @@ QUERY;
 		$query = <<<QUERY
 SELECT ?s ?o
   WHERE {
-    GRAPH <$smwgTripleStoreGraph> {
+    GRAPH <$smwgHaloTripleStoreGraph> {
       ?s prop:ProtectedProperty ?o .
     }
   }
@@ -807,7 +807,7 @@ QUERY;
 		$query = <<<QUERY
 SELECT ?s ?o
   WHERE {
-    GRAPH <$smwgTripleStoreGraph> {
+    GRAPH <$smwgHaloTripleStoreGraph> {
       { ?s prop:NormalProperty ?o . }
       UNION
       { ?s prop:ProtectedProperty ?o . }

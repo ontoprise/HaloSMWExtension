@@ -18,11 +18,11 @@ class LODImporter {
 
 	function __construct() {
 		// create webservice client
-		global $smwgWebserviceEndpoint, $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceProtocol;
+		global $smwgHaloWebserviceEndpoint, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgWebserviceProtocol;
 
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
-			list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-			$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+			list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
+			$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 			$this->_client = new RESTWebserviceConnector($host, $port, "ldimporter", $credentials);
 		} else {
 			trigger_error("LDImporter endpoint can not be requested by SOAP.");

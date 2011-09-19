@@ -86,16 +86,16 @@ if (!defined('MEDIAWIKI')) die();
 	}
 
 	public function getNamespace() {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		if (sizeof($this->_arguments)>1) {
 			return $this->_arguments[0];
 		} else {
-			return $smwgTripleStoreGraph;
+			return $smwgHaloTripleStoreGraph;
 		}
 	}
 
 	public function getFullQualifiedName(& $resultType) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		if ($this->_arity == 0) {
 			// actually a constant here. Try to interprete it as term.
 			$tsn = TSNamespaces::getInstance();
@@ -107,15 +107,15 @@ if (!defined('MEDIAWIKI')) die();
 		} else {
 			$resultType = "fullURI";
 			if (sizeof($this->_arguments)>1) {
-				if (strpos($this->_arguments[0], $smwgTripleStoreGraph) === 0) {
+				if (strpos($this->_arguments[0], $smwgHaloTripleStoreGraph) === 0) {
 					// full qualified
 					return $this->_arguments[0] . substr($this->_arguments[1],1);
 				} else if (strpos($this->_arguments[0], "obl:default:") === 0) {
 					// no namespace given, assume instance
-					return $smwgTripleStoreGraph."/a/". ucfirst(substr($this->_arguments[1],1));
+					return $smwgHaloTripleStoreGraph."/a/". ucfirst(substr($this->_arguments[1],1));
 				} else {
 					// only suffix given
-					return $smwgTripleStoreGraph.$this->_arguments[0] . ucfirst(substr($this->_arguments[1],1));	
+					return $smwgHaloTripleStoreGraph.$this->_arguments[0] . ucfirst(substr($this->_arguments[1],1));	
 				}
 				
 			} else {

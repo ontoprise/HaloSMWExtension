@@ -26,7 +26,7 @@ $wgAjaxExportList[] = 'smwf_tb_getTripleStoreStatus';
  * @return $html html-string containing help
  */
 function smwf_tb_GetHelp($namespace, $action){
-	global $wgScriptPath, $smwgHaloScriptPath, $smwgAllowNewHelpQuestions;
+	global $wgScriptPath, $smwgHaloScriptPath, $smwgHaloAllowNewHelpQuestions;
 	$html = '';
 	$results = false;
 
@@ -63,7 +63,7 @@ function smwf_tb_GetHelp($namespace, $action){
 	$specialTitle = Title::newFromText('ContextSensitiveHelp', NS_SPECIAL);
 	$html .= '<div id="morehelp"><a href="' . $specialTitle->getFullURL() . '?restriction=all&ds=' . $discourseState .'" target="_new">(more)</a></div><br/>';
 
-	if ($smwgAllowNewHelpQuestions){
+	if ($smwgHaloAllowNewHelpQuestions){
 		$html .= '<a href="javascript:void(0)" onclick="$(\'askHelp\').show()">Ask your own question</a><br/>';
 		$html .= '<div id="askHelp" style="display:none"><input id="question" name="question" type="text" size="20" onKeyPress="return submitenter(this,event)"/>';
 		$html .= '<img id="questionLoaderIcon" src="' . $smwgHaloScriptPath . '/skins/ajax-loader.gif"/><br/>';
@@ -226,16 +226,16 @@ function smwf_tb_GetUserDatatypes(){
 }
 
 function smwf_tb_getTripleStoreStatus() {
-	global $smwgTripleStoreGraph, $smwgWebserviceEndpoint;
+	global $smwgHaloTripleStoreGraph, $smwgHaloWebserviceEndpoint;
 	
-	if (!isset($smwgWebserviceEndpoint)) {
+	if (!isset($smwgHaloWebserviceEndpoint)) {
 		return "false";
 	}
 	
 	$con = TSConnection::getConnector();
 	try {
 		$con->connect();
-		$statusInfo = $con->getStatus($smwgTripleStoreGraph);
+		$statusInfo = $con->getStatus($smwgHaloTripleStoreGraph);
 		$response = new AjaxResponse(json_encode($statusInfo));
 		$response->setContentType( "application/json" );
 		$response->setResponseCode(200);

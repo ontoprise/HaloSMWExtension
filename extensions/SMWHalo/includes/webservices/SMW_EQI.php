@@ -21,7 +21,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
     
 	require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 
-	global $smwgWebserviceEndpoint;
+	global $smwgHaloWebserviceEndpoint;
 	$eqi = new ExternalQueryInterface();
 
 	// source == null means default (SMW reasoner)
@@ -74,7 +74,7 @@ function smwhRDFRequest($subject) {
 	global $wgLanguageCode;
 	smwfHaloInitContentLanguage($wgLanguageCode);
 	if (!smwfIsTripleStoreConfigured()) throw Exception("TS not configured");
-	global $smwgTripleStoreGraph;
+	global $smwgHaloTripleStoreGraph;
 	
 	// get wiki URI from prefixed title
 	$title = Title::newFromText($subject);
@@ -199,13 +199,13 @@ class ExternalQueryInterface {
 	 * @throws Exception, SOAPExeption
 	 */
 	function answerSPARQL($query, $params) {
-		global $smwgTripleStoreGraph, $smwgWebserviceProtocol;
+		global $smwgHaloTripleStoreGraph, $smwgWebserviceProtocol;
 
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 
 			$con = TSConnection::getConnector();
 			$con->connect();
-			return $con->query($query, $params, $smwgTripleStoreGraph);
+			return $con->query($query, $params, $smwgHaloTripleStoreGraph);
 			
 		} else {
 			trigger_error("SOAP requests to TSC are not supported anymore.");

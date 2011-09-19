@@ -1,5 +1,5 @@
 $smwgMessageBroker='localhost';
-$smwgWebserviceEndpoint='localhost:8060';
+$smwgHaloWebserviceEndpoint='localhost:8060';
 
 
 #Import SMW, SMWHalo and the Gardening extension

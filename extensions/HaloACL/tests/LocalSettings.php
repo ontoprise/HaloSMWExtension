@@ -8,8 +8,8 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', "SMWTripleStore");
 
-$smwgWebserviceEndpoint='localhost:8090';
-$smwgEnableObjectLogicRules=true;
+$smwgHaloWebserviceEndpoint='localhost:8090';
+$smwgHaloEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
 
 ###Each extension wich depends on SMWHalo depends also on arclibrary, scriptmanager and deployment framework####

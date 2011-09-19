@@ -81,7 +81,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		$ser_formula = $ruleobject->serializeFormula($formula);
 			
 		// create rule head and always include result variable.
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$oblstring = "";
 		$resultvar = "?_RESULT";
 
@@ -122,7 +122,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	 *
 	 */
 	public function getWikiOblString() {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$oblstring = "";
 
 
@@ -317,10 +317,10 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	}
 
 	private function createPropertyAssignment($intvariable, $prop, $variable) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$f = array();
 		array_push($f, new SMWVariable($intvariable));
-		array_push($f, new SMWTerm(array($smwgTripleStoreGraph.'/property', $prop), 2, false));
+		array_push($f, new SMWTerm(array($smwgHaloTripleStoreGraph.'/property', $prop), 2, false));
 		array_push($f, new SMWVariable($variable));
 		return $f;
 	}

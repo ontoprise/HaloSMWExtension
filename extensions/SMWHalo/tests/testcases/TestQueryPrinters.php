@@ -91,9 +91,9 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 		define('SMWH_FORCE_TS_UPDATE', 1); // We are running in maintenance mode
 										   // which normally disables the TripleStore
 		
-		global $smwgTripleStoreGraph, $IP, $smwgHaloIP,$lodgNEPEnabled;
+		global $smwgHaloTripleStoreGraph, $IP, $smwgHaloIP,$smwgHaloNEPEnabled;
 		
-		$lodgNEPEnabled=true;
+		$smwgHaloNEPEnabled=true;
 		
 		include_once "$IP/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php";
 		include_once "$IP/extensions/LinkedData/storage/TripleStore/LOD_Triple.php";
@@ -132,8 +132,8 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 		// Inserts triples into the triple store
 		$tsa = new LODTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
-		$tsa->createGraph($smwgTripleStoreGraph);
-		$tsa->insertTriples($smwgTripleStoreGraph, $triples);
+		$tsa->createGraph($smwgHaloTripleStoreGraph);
+		$tsa->insertTriples($smwgHaloTripleStoreGraph, $triples);
 		$tsa->flushCommands();
 	}
 

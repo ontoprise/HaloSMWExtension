@@ -36,19 +36,19 @@ function lodGetDataSourceTable() {
  * @return string
  */
 function smwf_ts_getSyncCommands() {
-    global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport,
+    global $smwgMessageBroker, $smwgHaloTripleStoreGraph, $wgDBtype, $wgDBport,
     $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
     $smwgIgnoreSchema, $smwgNamespaceIndex;
 
     $sparulCommands = array();
 
     // sync wiki module
-    $sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
-    $sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
+    $sparulCommands[] = "DROP SILENT GRAPH <$smwgHaloTripleStoreGraph>"; // drop may fail. don't worry
+    $sparulCommands[] = "CREATE SILENT GRAPH <$smwgHaloTripleStoreGraph>";
     $sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword).
     "@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=SMWHaloStore2".
     "&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix).
-    "> INTO <$smwgTripleStoreGraph>";
+    "> INTO <$smwgHaloTripleStoreGraph>";
 
     // sync external modules (only if DF is installed)
     if (defined('DF_VERSION')) {
@@ -64,7 +64,7 @@ function smwf_ts_getSyncCommands() {
             $format = DFBundleTools::guessOntologyFileType($fileTitle->getText());
             $fileURL = $localFile->getFullUrl();
             $sparulCommands[] = "LOAD <$fileURL?format=$format> INTO <$uri>";
-            $sparulCommands[] = "IMPORT ONTOLOGY <$uri> INTO <$smwgTripleStoreGraph>";
+            $sparulCommands[] = "IMPORT ONTOLOGY <$uri> INTO <$smwgHaloTripleStoreGraph>";
         }
 
 
@@ -155,11 +155,11 @@ function smwf_ts_getWikiSpecialProperties() {
  * @return AjaxRespone object containing JSON encoded data.
  */
 function smwf_ts_triggerAsynchronousLoading() {
-    global $smwgTripleStoreGraph;
+    global $smwgHaloTripleStoreGraph;
     $result = array();
     $result['components'] = array();
     $result['errors'] = array();
-    wfRunHooks("SMWHalo_AsynchronousLoading", array ($smwgTripleStoreGraph, & $result));
+    wfRunHooks("SMWHalo_AsynchronousLoading", array ($smwgHaloTripleStoreGraph, & $result));
 
     $json = json_encode($result);
     $response = new AjaxResponse($json);

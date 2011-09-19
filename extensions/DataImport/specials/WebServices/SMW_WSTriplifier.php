@@ -129,8 +129,8 @@ class WSTriplifier {
 	 * Get the base URI of the SMW schema
 	 */
 	public function getWikiNS(){
-		global $IP, $smwgTripleStoreGraph;
-		$wikiNS = $smwgTripleStoreGraph;
+		global $IP, $smwgHaloTripleStoreGraph;
+		$wikiNS = $smwgHaloTripleStoreGraph;
 		$wikiNS .= ($wikiNS[strlen($wikiNS)-1] == "/") ? '' : '/';
 		return $wikiNS;
 	}

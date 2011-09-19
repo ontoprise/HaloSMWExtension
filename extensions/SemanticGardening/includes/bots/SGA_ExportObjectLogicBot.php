@@ -282,7 +282,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 
 	private function exportRules($bundleID) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		// do not export rules if SemanticRules extensions is not available.
 		if (!defined('SEMANTIC_RULES_VERSION')) {
 			return "";
@@ -290,7 +290,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
 		if (is_null($ontologyURI) || empty($ontologyURI)) {
-			$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleID");
+			$ontologyURI = trim($smwgHaloTripleStoreGraph . "/ontology/$bundleID");
 		}
 
 		global $dfgLang;
@@ -443,7 +443,7 @@ ENDS;
 
 		if (array_key_exists('GARD_OBLEXPORT_BUNDLE', $paramArray))  {
 
-			global $wgLanguageCode, $smwgTripleStoreGraph;
+			global $wgLanguageCode, $smwgHaloTripleStoreGraph;
 
 			if (!defined('DF_VERSION')) {
 				return "Bundle export requires the DF to be installed. ".
@@ -499,7 +499,7 @@ ENDS;
 			$this->addSubTask(1);
 			$ontologyURI = DFBundleTools::getOntologyURI($bundleName);
 			if (is_null($ontologyURI) || empty($ontologyURI)) {
-				$ontologyURI = trim($smwgTripleStoreGraph . "/ontology/$bundleName");
+				$ontologyURI = trim($smwgHaloTripleStoreGraph . "/ontology/$bundleName");
 			}
 			$f = "export".uniqid().".obl";
 				
@@ -562,8 +562,8 @@ ENDS;
 		// download files
 		$download = new SGA_HttpDownload();
 
-		global $smwgWebserviceEndpoint;
-		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+		global $smwgHaloWebserviceEndpoint;
+		list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
 		$port += 2;
 
 		// create temp directory

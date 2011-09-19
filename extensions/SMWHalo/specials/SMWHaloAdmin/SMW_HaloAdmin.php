@@ -27,7 +27,7 @@ class SMWHaloAdmin extends SpecialPage {
 	}
 
 	public function execute($par) {
-		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
+		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgHaloWebserviceEndpoint, $wgUser, $smwgHaloEnableObjectLogicRules;
 		$wgOut->setPageTitle(wfMsg('smwhaloadmin'));
 		$adminPage = Title::newFromText("SMWHaloAdmin", NS_SPECIAL);
 		

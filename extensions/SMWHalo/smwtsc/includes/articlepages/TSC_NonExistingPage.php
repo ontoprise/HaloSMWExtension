@@ -276,14 +276,14 @@ class  LODNonExistingPage extends Article {
      */
     private static function getCategoriesForURI($uri) {
     	
-    	global $smwgQuadMode, $smwgTripleStoreGraph;
+    	global $smwgHaloQuadMode, $smwgHaloTripleStoreGraph;
     	
-    	if (isset($smwgQuadMode) && $smwgQuadMode == true) {
+    	if (isset($smwgHaloQuadMode) && $smwgHaloQuadMode == true) {
     		$where = "GRAPH ?G { <$uri> rdf:type ?C . }";
     		$defaultGraph = "";
     	} else {
-    		$where = "GRAPH <$smwgTripleStoreGraph> { <$uri> rdf:type ?C . }";
-    		$defaultGraph = $smwgTripleStoreGraph;
+    		$where = "GRAPH <$smwgHaloTripleStoreGraph> { <$uri> rdf:type ?C . }";
+    		$defaultGraph = $smwgHaloTripleStoreGraph;
     	}
     	
         $query = <<<SPARQL

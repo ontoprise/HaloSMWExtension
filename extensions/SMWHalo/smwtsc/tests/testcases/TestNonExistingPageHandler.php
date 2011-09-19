@@ -30,12 +30,12 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 
 	protected function setUp() {
 		// set variables for the non-existing page handler
-		global $lodgNEPEnabled, $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate,
+		global $smwgHaloNEPEnabled, $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate,
 		$lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember,
-		$lodgNEPCategoryTemplatePattern, $smwgTripleStoreGraph;
+		$lodgNEPCategoryTemplatePattern, $smwgHaloTripleStoreGraph;
 
 		# boolean - Set this variable to <true> to enable non-existing page handling.
-		$lodgNEPEnabled = true;
+		$smwgHaloNEPEnabled = true;
 
 		# string - Article name of the generic template for all non-existing pages but
 		# properties and categories.
@@ -65,7 +65,7 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 		$commands = array();
 		$commands[] = $this->dropGraph($this->mPersonGraph);
 		$commands[] = $this->createGraph($this->mPersonGraph);
-		$commands[] = $this->loadFileIntoGraph("{$this->mFilePath}PersonGraph.n3", $smwgTripleStoreGraph, "n3");
+		$commands[] = $this->loadFileIntoGraph("{$this->mFilePath}PersonGraph.n3", $smwgHaloTripleStoreGraph, "n3");
 		$success = $this->flushCommands($commands);
 		 
 	}

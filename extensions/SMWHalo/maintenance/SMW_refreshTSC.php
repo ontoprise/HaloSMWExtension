@@ -54,7 +54,7 @@ print "done.";
 print "\nChecking status...";
 try {
 	TSConnection::getConnector()->connect();
-	$status = TSConnection::getConnector()->getStatus($smwgTripleStoreGraph);
+	$status = TSConnection::getConnector()->getStatus($smwgHaloTripleStoreGraph);
 	print "\n";
 	print "\nTSC version: ".$status['tscversion'];
 	print "\ndriver info: ".$status['driverInfo'];

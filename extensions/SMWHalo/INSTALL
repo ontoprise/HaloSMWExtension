@@ -1,8 +1,8 @@
-[[SMWHalo 1.5.3]]
+[[SMWHalo 1.6.0]]
 
 Install instructions for the latest version of SMWHalo are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.3
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.6.0
 
 For the full manual of the Halo Extension have a look at:
 
@@ -10,13 +10,22 @@ For the full manual of the Halo Extension have a look at:
 
 For further customizing your installation, take a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B 1.5.3
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B_1.6.0
 
 For install instructions and further information on Semantic MediaWiki, please visit
 
  http://semantic-mediawiki.org/wiki/Help:Administrator_manual
 
+------------------------------------------------------------------------------------------
+IMPORTANT for updators from SMWHalo 1.5.6 or lower
+ 
+ (1) The variable names have CHANGED! The prefix is now $smwgHalo... instead of $smwg...
+     This was done to make them distinguishable from the SMW global variables.
+ 
+ (2) enableSMWHalo() does not take parameters anymore. See in section "Configuring a 
+     triplestore" how triplestores are configured now. 
 
+------------------------------------------------------------------------------------------
 Contents:
 * Disclaimer
 * Requirements
@@ -41,20 +50,20 @@ the authors.
 == Requirements (unbundled) ==
 
  * PHP 5.2 or PHP 5.3
- * MediaWiki 1.16.x (see installation guide)
- * ScriptManager 1.0 (see installation guide)
- * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
- * ARC Library 1.0 (see installation guide)
- * Deployment framework 1.56 (see installation guide)
+ * MediaWiki 1.17.x (see installation guide)
+ * ScriptManager 1.6.0 (see installation guide)
+ * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
+ * ARC Library 1.6.0 (see installation guide)
+ * Deployment framework 1.6.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Requirements (bundled) ==
 
  * PHP 5.2.x or PHP 5.3.x
- * MediaWiki 1.16.x (see installation guide)
- * Semantic MediaWiki 1.5.2 (see installation section in SemanticMediaWiki/INSTALL)
- * Deployment framework 1.56 (see installation guide)
- * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
+ * MediaWiki 1.17.x (see installation guide)
+ * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
+ * Deployment framework 1.6.0 (see installation guide)
+ * Web browser (for clients, recommended Firefox 4/5 or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
 
@@ -93,7 +102,7 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 (7) Add following lines to initialize the Halo Extension after the lines where all the required extensions are loaded:
 
 	include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-	enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
+	enableSMWHalo();
 	$wgUseAjax=true;
 
 (8) Open a command-line interface
@@ -170,49 +179,46 @@ the FAQ section, then contact the user support list (see the Contact section).
 
 === Options ===
 
-1.  Deploy version uses packed version of scripts
-    $smwgDeployVersion=false;
-
-2.  Uses EDITDISTANCE function for near matching.
+1.  Uses EDITDISTANCE function for near matching.
     Take a look in libs/mysqlUDFs/INSTALL.TXT for more information.
     $smwgUseEditDistance = true;
 
-3.  Show derived facts in a tab next to explicit facts. Makes only sense when a
+2.  Show derived facts in a tab next to explicit facts. Makes only sense when a
     TSC is connected. Note that the factbox must be switch on.
     Refer to SemanticMediaWiki/includes/Settings.php
-    $smwgShowDerivedFacts=true;
+    $smwgHaloShowDerivedFacts=true;
 
-4.  $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC,
+3.  $smwgHaloPropertyPageFromTSC: Reads annotations on property pages from the TSC,
     not from the MySQL store.
     
-5.  Enable the Query Results Cache. Please note that the full feature richness
+4.  Enable the Query Results Cache. Please note that the full feature richness
     of the Query Results Cache is only available, if the Query Updator, which is
     deployed together with the Triple Store Connector is installed. The behaviour
     of the Query Results Cache can be configured
     in ./includes/QueryResultsCache/QRC_Settings.php
  	enableQueryResultsCache();
 
-6.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
+5.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
 	rights (in this example for the WikiSysop) for modifying the ontology, otherwise 
 	you can only browse through.
 
 	$wgGroupPermissions['sysop']['ontologyediting'] = true;
 
-7.  If you protect your wiki with a htaccess file and use the Auth Digest method
-    then you need to set the http password in the variable $smwgHttpAuthPassword.
+6.  If you protect your wiki with a htaccess file and use the Auth Digest method
+    then you need to set the http password in the variable $smwgHaloHttpAuthPassword.
     The username will be taken from the http request, and is not set here.
 
-    $smwgHttpAuthPassword='your password';
+    $smwgHaloHttpAuthPassword='your password';
 
-8.  $smwgRedLinkWithCreateNewPage: Boolean, can be set to true, default is false.
+7.  $smwgHaloRedLinkWithCreateNewPage: Boolean, can be set to true, default is false.
     You can allow the wiki to modify the red links so that the user is sent to a
     custom wiki page. This page (called Create_new_page) contains a dialogue where
     the user can select on how he wants to add new content to the wiki. More
     information about this feature can be found at:
     http://smwforum.ontoprise.com/smwforum/index.php/Help:Creating_a_new_page_1.5.3
-    This feature will not be used when $lodgNEPEnabled is set in the LocalSettings.
+    This feature will not be used when $smwgHaloNEPEnabled is set in the LocalSettings.
 
-9.  $smwgQueryInterfaceHost4Wysiwyg: optional string for the hostname, default
+8.  $smwgHaloQueryInterfaceHost4Wysiwyg: optional string for the hostname, default
     is undefined. Use this option when the Query Interface cannot be opened in
     the WYSIWYG editor. This can happen when the URL to access the wiki from
     outside is different as when accessing the wiki from the server itself. The
@@ -220,7 +226,7 @@ the FAQ section, then contact the user support list (see the Contact section).
     openend from within the wiki itself (e.g. the WYSIWYG editor or the Semantic
     Toolbar).
 
-10. $smwgQueryInterfaceSecret: optional string for a hash, default is undefined.
+9. $smwgHaloQueryInterfaceSecret: optional string for a hash, default is undefined.
     This option is needed when you block your wiki for anonymous reading access.
     When opening the Query Interface inside the WYSIWYG extension the access is
     done without sending the authentication token, therefore the access must be
@@ -228,19 +234,22 @@ the FAQ section, then contact the user support list (see the Contact section).
     secret, so that the Query Interface cannot be accessed as an anonymous user.
 
 === Configuring a triplestore ===
-Change the line with 'enableSMWHalo' to:
+Add to LocalSettings.php:
 
- enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'graph-uri');
+    $smwgHaloWebserviceEndpoint="localhost:8080";
+    
+Optional:
+
+    $smwgHaloTripleStoreGraph = 'graph-uri';
 
 graph-uri is an arbitrary URI which works as an identifier for the wiki in the
 TSC. Every URI is possible as long as it does not contain a hash character (#).
-
-Then add:
-    $smwgWebserviceEndpoint="localhost:8080";
+If it is not set 'http://mywiki' is the default.
 
 If the webserver requires (Basic) HTTP authorization, add:
-    $smwgWebserviceUser = "username";
-    $smwgWebservicePassword = "password";
+
+    $smwgHaloWebserviceUser = "username";
+    $smwgHaloWebservicePassword = "password";
 
 You may now initialize the TSC on the page Special:TSA. Refer to the triplestore
 documentation for a better way of initialization.
@@ -253,7 +262,7 @@ can set respective parameters somewhere below the line
 in your LocalSetting.php. For example, one can write
 
  include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
- $smwgAllowNewHelpQuestions = true;
+ $smwgHaloAllowNewHelpQuestions = true;
 
 to allow users to add new help questions to the system. There are various settings
 which are documented here:

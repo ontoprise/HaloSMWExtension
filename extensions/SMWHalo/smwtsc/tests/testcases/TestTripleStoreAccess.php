@@ -80,18 +80,18 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
      * Tests if the triples store is properly connected.
      */
     function testTSConnectionStatus() {
-    	global $smwgWebserviceEndpoint;
+    	global $smwgHaloWebserviceEndpoint;
     	
-    	$we = $smwgWebserviceEndpoint;
+    	$we = $smwgHaloWebserviceEndpoint;
     	$tsa = new TSCTripleStoreAccess();
     	
     	// Verify that connection with TS fails with invalid connections settings 
-    	$smwgWebserviceEndpoint = 'localhost:1234'; 
+    	$smwgHaloWebserviceEndpoint = 'localhost:1234'; 
     	$connected = $tsa->isConnected();
     	$this->assertFalse($connected);
     	
     	// Verify a proper connection
-    	$smwgWebserviceEndpoint = $we; 
+    	$smwgHaloWebserviceEndpoint = $we; 
     	$connected = $tsa->isConnected();
     	$this->assertTrue($connected);
     	

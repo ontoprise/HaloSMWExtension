@@ -64,9 +64,9 @@ function smwf_wt_getWSDL($wsdlID) {
 		$handle = fopen($wsdl, "rb");
 		$contents = fread ($handle, filesize ($wsdl));
 		fclose($handle);
-		global $smwgWebserviceEndpoint;
-		if (isset($smwgWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgWebserviceEndpoint, $contents);
-		else echo "No webservice endpoint defined! Set \$smwgWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgWebserviceEndpoint = \"localhost:8080\"";
+		global $smwgHaloWebserviceEndpoint;
+		if (isset($smwgHaloWebserviceEndpoint)) return str_replace("{{webservice-endpoint}}", $smwgHaloWebserviceEndpoint, $contents);
+		else echo "No webservice endpoint defined! Set \$smwgHaloWebserviceEndpoint in your LocalSettings.php. E.g.: \$smwgHaloWebserviceEndpoint = \"localhost:8080\"";
 		exit;
 	}
 }

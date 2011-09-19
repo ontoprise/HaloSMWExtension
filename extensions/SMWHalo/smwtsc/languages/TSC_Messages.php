@@ -93,8 +93,8 @@ $messages['en'] = array(
     'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
     'smw_tsa_driverinfo' => 'Driver information',
     'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableObjectLogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
-    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
+    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgHaloEnableObjectLogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
+    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgHaloEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
     'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
@@ -105,9 +105,22 @@ $messages['en'] = array(
     'smw_tsa_tscparameters'=> 'TSC parameters',
     'smw_tsa_synccommands'=> 'Synchronization commands',
 
-    'tsc_derivedfacts_request_failed' => 'Request for derived facts failed.'
-  
-														
+    // --- Derived facts---
+    'tsc_derivedfacts_request_failed' => 'Request for derived facts failed.',
+    'smw_df_derived_facts_about' => 'Derived facts about $1',
+    'smw_df_static_tab'          => 'Static facts',
+    'smw_df_derived_tab'         => 'Derived facts',
+    'smw_df_static_facts_about'  => 'Static facts about this article',
+    'smw_df_derived_facts_about' => 'Derived facts about this article',
+    'smw_df_loading_df'          => 'Loading derived facts...',
+    'smw_df_invalid_title'       => 'Invalid article. No derived facts available.',
+    'smw_df_no_df_found'         => 'No derived facts found for this article.',
+    'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
+    
+	
+    //--- Non-existing pages ---
+    'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
+    													
 );
 
 /** 
@@ -172,8 +185,8 @@ $messages['de'] = array(
 
     'smw_tsa_driverinfo' => 'Treiberinformation',
     'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableObjectLogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
-    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgEnableObjectLogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
+    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgHaloEnableObjectLogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
+    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgHaloEnableObjectLogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
 
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
@@ -183,6 +196,111 @@ $messages['de'] = array(
     'smw_tsa_tscparameters'=> 'TSC-Parameter',
     'smw_tsa_synccommands'=> 'Synchronisationskommandos',
     
-    'tsc_derivedfacts_request_failed' => 'Anfrage fehlgeschlagen'
-   
+    // --- Derived facts---
+    'tsc_derivedfacts_request_failed' => 'Anfrage fehlgeschlagen',
+    'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
+    'smw_df_static_tab'          => 'Statische Fakten',
+    'smw_df_derived_tab'         => 'Abgeleitete Fakten',
+    'smw_df_static_facts_about'  => 'Statische Fakten über diesen Artikel',
+    'smw_df_derived_facts_about' => 'Abgeleitete Fakten über diesen Artikel',
+    'smw_df_loading_df'          => 'Abgeleitete Fakten werden geladen ...',
+    'smw_df_invalid_title'       => 'Ungültiger Artikel. Es sind keine abgeleiteten Fakten verfügbar.',
+    'smw_df_no_df_found'         => 'Es wurden keine abgeleiteten Fakten für diesen Artikel gefunden.',
+    'smw_df_tsc_advertisment'    => "''Sie haben keinen Triplestore an diesem Wiki angeschlossen.''\n\nConnecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
+    
+    //--- Non-existing pages ---
+    'lod_nep_link'          => 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
+    
 );
+
+/** 
+ * French (incomplete)
+ */
+$messages['fr'] = array(
+    
+                            
+    //--- TSC source definition---
+    'tsc_lsdparser_expected_at_least'           => 'The parameter "$2" must occur at least $1 time(s).',
+    'tsc_lsdparser_expected_exactly'            => 'The parameter "$2" must occur exactly $1 time(s).',
+    'tsc_lsdparser_expected_between'            => 'The parameter "$3" must occur between $1 and $2 time(s).',
+    'tsc_lsdparser_title'                       => 'Data source definition for',
+    'tsc_lsdparser_success'                     => 'The Linked Data source definition was parsed successfully. The following values will be stored:',                           
+    'tsc_lsdparser_failed'                      => 'The definition of the data source is faulty. It will not be saved.',            
+    'tsc_lsdparser_error_intro'                 => 'The following errors were found in the definition of the data source:',             
+                            
+    'tsc_lsd_id'                        => "ID",
+    'tsc_lsd_changefreq'                => "Change frequency",
+    'tsc_lsd_datadumplocation'          => "Data dump location",
+    'tsc_lsd_description'               => "Description",
+    'tsc_lsd_homepage'                  => "Homepage",
+    'tsc_lsd_label'                     => "Label",
+    'tsc_lsd_lastmod'                   => "Last modification",
+    'tsc_lsd_linkeddataprefix'          => "Linked data prefix",
+    'tsc_lsd_sampleuri'                 => "Sample URI",
+    'tsc_lsd_sparqlendpointlocation'    => "SPARQL endpoint location",
+    'tsc_lsd_sparqlgraphname'           => "SPARQL graph name",
+    'tsc_lsd_sparqlgraphpattern'        => "SPARQL graph pattern",
+    'tsc_lsd_uriregexpattern'           => "URI regex pattern",
+    'tsc_lsd_vocabulary'                => "Vocabulary",
+    'tsc_lsd_predicatetocrawl'          => "Predicate to crawl",
+        'tsc_lsd_levelstocrawl'         => "Levels to crawl",
+
+    //--- TSC special pages ---
+    'tscsources'    => 'TSC sources',
+    
+    //--- TSC Source editor
+    'tsc_sp_source_label' => 'Name',
+    'tsc_sp_source_source' => 'Data source',
+    'tsc_sp_source_lastimport' => 'Last import',
+    'tsc_sp_source_changefreq' => 'Change frequency',
+    'tsc_sp_source_import' => 'Import',
+    'tsc_sp_source_reimport' => '(Re-)Import',
+    'tsc_sp_source_update' => 'Update',
+        'tsc_sp_source_options' => 'Options',
+        'tsc_sp_schema_translation' => 'R2R',
+        'tsc_sp_identity_resolution' => 'Silk',
+        'tsc_sp_isimported' => 'Imported',
+    'tsc_sp_statusmsg' => 'Status message',
+
+  // Triple Store Admin
+    'tsa' => 'Administration Triple Store',
+    'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
+    'smw_tsa_welcome' => 'Cette page spéciale vous aide à  administrer le wiki/la connection triplestore.',
+    'smw_tsa_couldnotconnect' => 'La connection vers le triple store est impossible.',
+    'smw_tsa_notinitalized' => 'Votre wiki n\'est pas initialisé au triplestore.',
+    'smw_tsa_waitsoemtime'=> 'Veuillez patienter quelques secondes et suivre ce lien.',
+    'smw_tsa_wikiconfigured' => 'Votre wiki est correctement connecté avec le triplestore à  $1',
+    'smw_tsa_initialize' => 'Initialiser',
+    'smw_tsa_pressthebutton' => 'Veuillez cliquer sur le bouton ci-dessous.',
+    'smw_tsa_addtoconfig' => 'Veulliez ajouter les lignes suivantes dans votre LocalSettings.php et vérifier si le connecteur triplestore est en marche.',
+    'smw_tsa_addtoconfig2' => 'Assurez-vous que le driver triplestore est activé. Si nécessaire, modifier enableSMWHalo avec',
+    'smw_tsa_addtoconfig3' => 'Assurez-vous aussi que l\'URL du graphe (dernier paramà¨tre de enableSMWHalo) est valide et qu\'il ne contient pas de dià¨se (#).',
+    'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
+    'smw_tsa_driverinfo' => 'Informations sur le driver',
+    'smw_tsa_status' => 'Statut',
+    
+    'smw_tsa_norulesupport'=> 'Le driver triplestore ne supporte pas les rà¨gles, bien qu\'elles soient activées dans le wiki.',
+    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
+    'asktsc' => 'Ask triplestore',
+    'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
+    'smw_tsa_loadgraphs'=> 'Loaded graphs',
+    'smw_tsa_autoloadfolder'=> 'Auto-load folder',
+    'smw_tsa_tscparameters'=> 'TSC parameters',
+    'smw_tsa_synccommands'=> 'Synchronization commands',
+
+    // Derived facts
+    'tsc_derivedfacts_request_failed' => 'Request for derived facts failed.',
+    'smw_df_derived_facts_about' => 'Faits dérivés de $1',
+    'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
+    'smw_df_static_tab'          => 'Statische Fakten',
+    'smw_df_derived_tab'         => 'Abgeleitete Fakten',
+    'smw_df_static_facts_about'  => 'Statische Fakten über diesen Artikel',
+    'smw_df_derived_facts_about' => 'Abgeleitete Fakten über diesen Artikel',
+    'smw_df_loading_df'          => 'Abgeleitete Fakten werden geladen ...',
+    'smw_df_invalid_title'       => 'Ungültiger Artikel. Es sind keine abgeleiteten Fakten verfügbar.',
+    'smw_df_no_df_found'         => 'Es wurden keine abgeleiteten Fakten für diesen Artikel gefunden.',
+   
+                                                        
+);
+
+

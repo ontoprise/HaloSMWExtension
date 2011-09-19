@@ -35,7 +35,7 @@ require_once( "TSC_Helper.php" );
  * Configuration in LocalSettings.php:
  *
  *
- *  $smwgWebserviceEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
+ *  $smwgHaloWebserviceEndpoint: The name or IP of the SPARQL endpoint (with port if not 80)
  *
  * @author: Kai
  */
@@ -135,29 +135,29 @@ class SMWTripleStore extends SMWStore {
 		$subject_iri = $this->tsNamespace->getFullIRI($subject);
 
 		// clear rules
-		global $smwgEnableObjectLogicRules;
-		if (isset($smwgEnableObjectLogicRules)) {
+		global $smwgHaloEnableObjectLogicRules;
+		if (isset($smwgHaloEnableObjectLogicRules)) {
 			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
 		}
-		global $smwgMessageBroker, $smwgTripleStoreGraph;
+		global $smwgMessageBroker, $smwgHaloTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = "DELETE MAPPING $subject_iri";
 
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
-			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b ?sub_prop ?v. } WHERE { $subject_iri ?p ?b. ?b ?sub_prop ?v. FILTER (isBlank(?b)) }";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
+			$naryPropFrag = "<$smwgHaloTripleStoreGraph/$prop_ns";
+			$sparulCommands[] = "DELETE FROM <$smwgHaloTripleStoreGraph> { $subject_iri ?p ?b. ?b ?sub_prop ?v. } WHERE { $subject_iri ?p ?b. ?b ?sub_prop ?v. FILTER (isBlank(?b)) }";
+			$sparulCommands[] = "DELETE FROM <$smwgHaloTripleStoreGraph> { $subject_iri ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty $subject_iri. }";
+				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgHaloTripleStoreGraph> { ?s owl:onProperty $subject_iri. }";
 			}
-			if (isset($smwgEnableObjectLogicRules)) {
+			if (isset($smwgHaloEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
 					$sparulCommands[] = "DELETE MAPPING <$ruleID>";
-					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgTripleStoreGraph>";
+					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgHaloTripleStoreGraph>";
 				}
 			}
 			$con->connect();
@@ -175,8 +175,8 @@ class SMWTripleStore extends SMWStore {
 		// update rules in internal store
 		$subject = $data->getSubject()->getTitle();
 
-		global $smwgEnableObjectLogicRules;
-		if (isset($smwgEnableObjectLogicRules)) {
+		global $smwgHaloEnableObjectLogicRules;
+		if (isset($smwgHaloEnableObjectLogicRules)) {
 			$new_rules = self::$fullSemanticData->getRules();
 			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
@@ -211,7 +211,7 @@ class SMWTripleStore extends SMWStore {
 
 
 		// connect to MessageBroker and send commands
-		global $smwgMessageBroker, $smwgTripleStoreGraph;
+		global $smwgMessageBroker, $smwgHaloTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
@@ -224,22 +224,22 @@ class SMWTripleStore extends SMWStore {
 			}
 			$prefixes = TSNamespaces::$W3C_PREFIXES.TSNamespaces::$TSC_PREFIXES;
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
-			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?b. ?b ?sub_prop ?v. } WHERE { $subject_iri ?p ?b. ?b ?sub_prop ?v. FILTER (isBlank(?b)) }";
-			$sparulCommands[] = "DELETE FROM <$smwgTripleStoreGraph> { $subject_iri ?p ?o. }";
+			$naryPropFrag = "<$smwgHaloTripleStoreGraph/$prop_ns";
+			$sparulCommands[] = "DELETE FROM <$smwgHaloTripleStoreGraph> { $subject_iri ?p ?b. ?b ?sub_prop ?v. } WHERE { $subject_iri ?p ?b. ?b ?sub_prop ?v. FILTER (isBlank(?b)) }";
+			$sparulCommands[] = "DELETE FROM <$smwgHaloTripleStoreGraph> { $subject_iri ?p ?o. }";
 
 			$tripleSerialization = "";
 			foreach($triples as $t) {
 				$tripleSerialization .= implode(" ", $t);
 				$tripleSerialization .= ". ";
 			}
-			$sparulCommands[] =  $prefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$tripleSerialization." }";
+			$sparulCommands[] =  $prefixes."INSERT INTO <$smwgHaloTripleStoreGraph> { ".$tripleSerialization." }";
 
-			if (isset($smwgEnableObjectLogicRules)) {
+			if (isset($smwgHaloEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
 					$sparulCommands[] = "DELETE MAPPING <$ruleID>";
-					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgTripleStoreGraph>";
+					$sparulCommands[] = "DELETE RULE <$ruleID> FROM <$smwgHaloTripleStoreGraph>";
 				}
 				// ...and add new
 				foreach($new_rules as $rule) {
@@ -252,7 +252,7 @@ class SMWTripleStore extends SMWStore {
 					if (!is_null($tsc_uri) && !empty($tsc_uri)) {
 						$sparulCommands[] = "INSERT MAPPING <$ruleID> : <$tsc_uri>";
 					}
-					$sparulCommands[] = "INSERT $nativeText $activeText RULE <$ruleID> INTO <$smwgTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
+					$sparulCommands[] = "INSERT $nativeText $activeText RULE <$ruleID> INTO <$smwgHaloTripleStoreGraph> : \"".TSHelper::escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
 			$con->connect();
@@ -275,7 +275,7 @@ class SMWTripleStore extends SMWStore {
 		$bNodeCounter = 1;
 		$subject = $data->getSubject();
 		$subject_iri = $this->tsNamespace->getFullIRI($subject->getTitle());
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		foreach($data->getProperties() as $property) {
 			$property_iri = $this->tsNamespace->getFullIRIFromDIProperty($property);
 			$propertyValueArray = $data->getPropertyValues($property);
@@ -539,8 +539,8 @@ class SMWTripleStore extends SMWStore {
 		$sparulCommands = array();
 
 		// update local rule store
-		global $smwgEnableObjectLogicRules;
-		if (isset($smwgEnableObjectLogicRules)) {
+		global $smwgHaloEnableObjectLogicRules;
+		if (isset($smwgHaloEnableObjectLogicRules)) {
 			$modifiedRules = SMWRuleStore::getInstance()->updateRules($redirid, $pageid, $newtitle);
 			foreach($modifiedRules as $r) {
 				list($old_rule_uri, $new_rule_uri) = $r;
@@ -549,18 +549,18 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		// update triple store
-		global $smwgMessageBroker, $smwgTripleStoreGraph;
+		global $smwgMessageBroker, $smwgHaloTripleStoreGraph;
 		try {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands[] = "MODIFY MAPPING $old_iri : $new_iri";
 
 			$prop_ns = $this->tsNamespace->getNSPrefix(SMW_NS_PROPERTY);
-			$naryPropFrag = "<$smwgTripleStoreGraph/$prop_ns";
+			$naryPropFrag = "<$smwgHaloTripleStoreGraph/$prop_ns";
 
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { $old_iri ?p ?o. } INSERT { $new_iri ?p ?o. }";
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s $old_iri ?o. } INSERT { ?s $new_iri ?o. }";
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s ?p $old_iri. } INSERT { ?s ?p $new_iri. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgHaloTripleStoreGraph> DELETE  { $old_iri ?p ?o. } INSERT { $new_iri ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgHaloTripleStoreGraph> DELETE  { ?s $old_iri ?o. } INSERT { ?s $new_iri ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgHaloTripleStoreGraph> DELETE  { ?s ?p $old_iri. } INSERT { ?s ?p $new_iri. }";
 			$con->connect();
 			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
@@ -573,7 +573,7 @@ class SMWTripleStore extends SMWStore {
 
 	
 	function getQueryResult(SMWQuery $query) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+		global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
 
 		wfProfileIn( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
 		// make sure that TS is not queried in maintenace mode
@@ -612,12 +612,12 @@ class SMWTripleStore extends SMWStore {
 				return $sqr;
 			}
 			try {
-				global $smwgTripleStoreGraph;
+				global $smwgHaloTripleStoreGraph;
 				$con = TSConnection::getConnector();
 				$con->connect();
 
 				// if graph parameter is set but empty or set and null, no wikigraph is given
-				$wikigraph = array_key_exists('graph', $query->params) && ($query->params['graph'] == 'null' || empty($query->params['graph'])) ? '' : $smwgTripleStoreGraph;
+				$wikigraph = array_key_exists('graph', $query->params) && ($query->params['graph'] == 'null' || empty($query->params['graph'])) ? '' : $smwgHaloTripleStoreGraph;
 				$response = $con->query($query->getQueryString(), $this->serializeParams($query), $wikigraph);
 
 				global $smwgSPARQLResultEncoding;
@@ -647,10 +647,10 @@ class SMWTripleStore extends SMWStore {
 						$sqr = new SMWHaloQueryResult(array(), $query, array(), $this);
 						if ($e->getCode() == 0) {
 							// happens most likely when TSC is not running
-							global $smwgWebserviceEndpoint;
+							global $smwgHaloWebserviceEndpoint;
 							header("Cache-Control: no-cache");
 							header('Pragma: no-cache');
-							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgWebserviceEndpoint)));
+							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgHaloWebserviceEndpoint)));
 
 						} else {
 							header("Cache-Control: no-cache");
@@ -1111,8 +1111,8 @@ class SMWTripleStore extends SMWStore {
 					} else {
 						// external URI
 
-						global $lodgNEPEnabled;
-						if ($lodgNEPEnabled) {
+						global $smwgHaloNEPEnabled;
+						if ($smwgHaloNEPEnabled) {
 							// in case the NEP feature is active, create integration links.
 							// guess local name
 							$articleDBkey = TSHelper::convertURIToLocalName($sv);

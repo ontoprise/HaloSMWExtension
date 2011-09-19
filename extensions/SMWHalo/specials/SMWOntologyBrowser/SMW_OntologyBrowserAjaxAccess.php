@@ -646,11 +646,11 @@ class OB_Storage {
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource = '', $bundleID = '') {
 
 	$browseWiki = wfMsg("smw_ob_source_wiki");
-	global $smwgQuadMode, $smwgWebserviceEndpoint;
-	if (isset($smwgWebserviceEndpoint) && $smwgQuadMode && !empty($dataSource) && $dataSource != $browseWiki) {
+	global $smwgHaloQuadMode, $smwgHaloWebserviceEndpoint;
+	if (isset($smwgHaloWebserviceEndpoint) && $smwgHaloQuadMode && !empty($dataSource) && $dataSource != $browseWiki) {
 		// dataspace parameter. so assume quad driver is installed
 		$storage = new OB_StorageTSQuad($dataSource, $bundleID);
-	} else if (isset($smwgWebserviceEndpoint)) {
+	} else if (isset($smwgHaloWebserviceEndpoint)) {
 		// assume normal (non-quad) TSC is running
 		$storage = new OB_StorageTS($dataSource, $bundleID);
 	} else {

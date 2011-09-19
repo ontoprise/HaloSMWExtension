@@ -16,8 +16,8 @@ include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://publicbuild/ob');
 
 define('SMWH_FORCE_TS_UPDATE', true);
-$smwgWebserviceEndpoint="localhost:8090";
-$smwhgAutoCompletionTSC=true;
+$smwgHaloWebserviceEndpoint="localhost:8090";
+$smwgHaloAutoCompletionTSC=true;
 enableQueryResultsCache();
 
 $wgParserCacheType = CACHE_NONE; //disable parse cache for query results cache tests

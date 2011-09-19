@@ -47,7 +47,7 @@ require_once("$lodgIP/includes/LOD_Storage.php");
 require_once("$lodgIP/includes/LOD_GlobalFunctions.php");
 require_once("$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php");
 
-global $smwgWebserviceEndpoint;
+global $smwgHaloWebserviceEndpoint;
 
 $update = "false";
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -60,7 +60,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 }
 
 $ids = TSCAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
-list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
 
 //TODO: add credentials
 $con = new RESTWebserviceConnector($host, $port, "ldimporter");

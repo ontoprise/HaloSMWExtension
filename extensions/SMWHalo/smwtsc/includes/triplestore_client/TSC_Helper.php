@@ -344,10 +344,10 @@ class TSHelper {
 	 * @return tuple($url, Title)
 	 */
 	public static function makeLocalURL($uri) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 
 		$title = self::getTitleFromURI($uri);
-		if (stripos($uri, $smwgTripleStoreGraph) === 0) {
+		if (stripos($uri, $smwgHaloTripleStoreGraph) === 0) {
 			$uri = $title->getFullURL();
 		}
 
@@ -363,8 +363,8 @@ class TSHelper {
 	 * @return string $uri
 	 */
 	public static function getUriFromTitle($title) {
-		global $smwgTripleStoreGraph;
-		$res= $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
+		$res= $smwgHaloTripleStoreGraph;
 		if (strpos($res, -1) != '/')
 		$res .= '/';
 		$res .= TSNamespaces::getInstance()->getNSPrefix($title->getNamespace())
@@ -503,6 +503,7 @@ class TSNamespaces {
 	public static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
 	public static $TSCTYPE_NS = "http://www.ontoprise.de/smwplus/tsc/unittype#";
 	public static $HALOPROP_NS = "http://www.ontoprise.de/smwplus/tsc/haloprop#";
+	public static $LOD_NS = "http://www.example.org/smw-lde/";
 
 	// collections of namespaces
 	public static $ALL_NAMESPACES;
@@ -540,12 +541,12 @@ class TSNamespaces {
 	}
 
 	function __construct() {
-		global $smwgTripleStoreGraph, $wgContLang, $wgExtraNamespaces;
+		global $smwgHaloTripleStoreGraph, $wgContLang, $wgExtraNamespaces;
 
 		// use initialize flag because PHP classes do not have static initializers.
 		if (self::$initialized) return;
 
-		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
+		self::$UNKNOWN_NS = $smwgHaloTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
 
 		// SET $ALL_PREFIXES constant
 		// add W3C namespaces
@@ -577,14 +578,14 @@ class TSNamespaces {
 			if (isset($matches[0]) && $matches[0] != $prefix) continue;
 
 			$nsText = str_replace(" ","_",strtolower($nsText));
-			$uri = $smwgTripleStoreGraph."/$nsText/";
+			$uri = $smwgHaloTripleStoreGraph."/$nsText/";
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
 			self::$ALL_NAMESPACES[$nsKey] = $uri;
 		}
 
 		// add special prefixes "cat" and "prop" for compatibility with < SMWHalo 1.5.2
-		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
-							   "\nPREFIX prop:<".$smwgTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
+		self::$ALL_PREFIXES .= "\nPREFIX cat:<".$smwgHaloTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(NS_CATEGORY))).'/> '.
+							   "\nPREFIX prop:<".$smwgHaloTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
 
 		// add prefixes defined on Mediawiki:NamespaceMappings
 		$allNSMappings = smwfGetSemanticStore()->getAllNamespaceMappings();
@@ -592,6 +593,9 @@ class TSNamespaces {
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
 		}
 
+		// add LOD prefixes
+		self::$ALL_PREFIXES .= "\nPREFIX source:<".self::$LOD_NS."smwDatasources/> ";
+		
 		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
@@ -599,6 +603,7 @@ class TSNamespaces {
 		// SET $TSC_PREFIXES constant
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
 		self::$TSC_PREFIXES .= "PREFIX haloprop:<".self::$HALOPROP_NS."> ";
+		
 
 	}
 
@@ -620,8 +625,8 @@ class TSNamespaces {
 	 * @param int $namespace index
 	 */
 	public function getNSURI($namespace) {
-		global $smwgTripleStoreGraph;
-		return $smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/";
+		global $smwgHaloTripleStoreGraph;
+		return $smwgHaloTripleStoreGraph."/".$this->getNSPrefix($namespace)."/";
 	}
 
 	/**
@@ -631,9 +636,9 @@ class TSNamespaces {
 	 * @param string $localname
 	 */
 	public function getFullIRIByName($namespace, $localname) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$localname = str_replace(" ", "_", $localname);
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
 	}
 
 	/**
@@ -642,8 +647,8 @@ class TSNamespaces {
 	 * @param Title $t
 	 */
 	public function getFullIRI(Title $t) {
-		global $smwgTripleStoreGraph;
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey().">";
+		global $smwgHaloTripleStoreGraph;
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey().">";
 	}
 
 	/**
@@ -652,8 +657,8 @@ class TSNamespaces {
 	 * @param Title $t
 	 */
 	public function getFullURI(Title $t) {
-		global $smwgTripleStoreGraph;
-		return $smwgTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
+		global $smwgHaloTripleStoreGraph;
+		return $smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
 	}
 
 	/**
@@ -662,8 +667,8 @@ class TSNamespaces {
 	 * @param SMWPropertyValue $t
 	 */
 	public function getFullIRIFromProperty(SMWPropertyValue $p) {
-		global $smwgTripleStoreGraph;
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getDBkey().">";
+		global $smwgHaloTripleStoreGraph;
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getDBkey().">";
 	}
 
 	/**
@@ -672,8 +677,8 @@ class TSNamespaces {
 	 * @param SMWPropertyValue $t
 	 */
 	public function getFullIRIFromDIProperty(SMWDIProperty $p) {
-		global $smwgTripleStoreGraph;
-		return "<".$smwgTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getKey().">";
+		global $smwgHaloTripleStoreGraph;
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getKey().">";
 	}
 
 

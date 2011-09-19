@@ -13,7 +13,7 @@ enableARCLibrary();
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2', 'SMWTripleStoreQuad', 'http://halowiki/ob');
 //enableSMWHalo('SMWHaloStore2');
-$smwgWebserviceEndpoint='localhost:8092';
+$smwgHaloWebserviceEndpoint='localhost:8092';
 
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 

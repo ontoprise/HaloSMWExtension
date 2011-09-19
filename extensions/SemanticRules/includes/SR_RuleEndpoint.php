@@ -16,13 +16,13 @@ class SRRuleEndpoint {
 
 	// implicitly set localhost if no messagebroker was defined.
 	static public function getInstance() {
-		global $wgServer, $wgScript, $smwgWebserviceEndpoint, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgWebserviceProtocol;
+		global $wgServer, $wgScript, $smwgHaloWebserviceEndpoint, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion, $smwgWebserviceProtocol;
 
 		if (self::$instance === NULL) {
 			self::$instance = new self;
 			if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
-				list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-				$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+				list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
+				$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 				global $tscgIP;
 				require_once( "$tscgIP/smwtsc/includes/triplestore_client/TSC_RESTWebserviceConnector.php" );
 				self::$_client = new RESTWebserviceConnector($host, $port, "ruleparsing", $credentials);
@@ -42,10 +42,10 @@ class SRRuleEndpoint {
 	 * @return string XML
 	 */
 	public function getRootRules($urifragment) {
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
         $urifragment = urlencode($urifragment);
         
-		$payload = "graph=".urlencode($smwgTripleStoreGraph);
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph);
 		$payload .= "&urifragment=".urlencode($urifragment);
 		list($header, $status, $res) = self::$_client->send($payload, "/getRootRules");
 
@@ -67,9 +67,9 @@ class SRRuleEndpoint {
 	 */
 	public function getDependantRules($ruleID) {
 		$ruleID = urlencode($ruleID);
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph)."&ruleID=$ruleID";
 		list($header, $status, $res) = self::$_client->send($payload, "/getDependantRules");
 
 		$response = new AjaxResponse($this->encapsulateTreeElementAsXML($res));
@@ -91,9 +91,9 @@ class SRRuleEndpoint {
 	public function getDefiningRules($resourceURIs) {
 		$resources = "";
 		foreach($resourceURIs as $r) $resources .= "&resource=".urlencode($r);
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph).$resources;
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph).$resources;
 		list($header, $status, $res) = self::$_client->send($payload, "/getDefiningRules");
 
 		$attachMap = array();
@@ -122,9 +122,9 @@ class SRRuleEndpoint {
 	 */
 	public function getRule($ruleID) {
 		$ruleID = urlencode($ruleID);
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruleID=$ruleID";
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph)."&ruleID=$ruleID";
 		list($header, $status, $res) = self::$_client->send($payload, "/getRule");
 
 		$response = new AjaxResponse($this->encapsulateMetadataAsXML($res));
@@ -148,9 +148,9 @@ class SRRuleEndpoint {
 	public function searchForRulesByFragment($filter, $asTree, $resultformat = "xml", $ajaxCall = true) {
 		$filter = urlencode($filter);
 		$asTree = urlencode($asTree);
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&fragment=$filter&asTree=$asTree";
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph)."&fragment=$filter&asTree=$asTree";
 		list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
 
 		if (!$ajaxCall) {
@@ -179,9 +179,9 @@ class SRRuleEndpoint {
 		$ruleTuplesObjects = json_decode($ruleTuples);
 		foreach($ruleTuplesObjects as $rt) $encodedRuleTuples[] = urlencode(json_encode($rt));
 		$ruleIDs = implode("&ruletuple=",$encodedRuleTuples);
-		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+		global $smwgWebserviceProtocol, $smwgHaloTripleStoreGraph;
 
-		$payload = "graph=".urlencode($smwgTripleStoreGraph)."&ruletuple=".$ruleIDs;
+		$payload = "graph=".urlencode($smwgHaloTripleStoreGraph)."&ruletuple=".$ruleIDs;
 		list($header, $status, $res) = self::$_client->send($payload, "/serializeRules");
 
 		$response = new AjaxResponse($res);
@@ -199,7 +199,7 @@ class SRRuleEndpoint {
 	 * @param string ontology URI
 	 */
 	public function translateRuleURIs($ruletext, $uri, $ajaxCall = true) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$payload = "ruletext=".urlencode($ruletext)."&graph=".urlencode($uri);
 		list($header, $status, $res) = self::$_client->send($payload, "/translateRuleURIs");
 

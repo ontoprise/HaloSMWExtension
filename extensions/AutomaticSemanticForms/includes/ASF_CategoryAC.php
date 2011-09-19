@@ -70,9 +70,9 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 		$dom = simplexml_load_string($xmlResult);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 		
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		$resultSelector = 'not( ./sparqlxml:binding[@name ="'.ASF_PROP_NO_AUTOMATIC_FORMEDIT
-				.'" and (./sparqlxml:uri/text() = "'.$smwgTripleStoreGraph.'/a/True" or ./sparqlxml:literal/text() = "1 ")])'
+				.'" and (./sparqlxml:uri/text() = "'.$smwgHaloTripleStoreGraph.'/a/True" or ./sparqlxml:literal/text() = "1 ")])'
 			.' and not( ./sparqlxml:binding[@name ="Has_default_form"])';
 		$bindingSelector = '@name ="_var0"';
 		$queryResults = $dom->xpath('//sparqlxml:result['.$resultSelector.']/sparqlxml:binding['.$bindingSelector.']/sparqlxml:uri');

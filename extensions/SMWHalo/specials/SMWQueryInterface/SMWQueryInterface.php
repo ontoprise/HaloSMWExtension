@@ -124,7 +124,7 @@ class SMWQueryInterface extends SpecialPage {
     }
 
     private function addQueryOption() {
-        global $smwgWebserviceEndpoint, $smwgTripleStoreGraph;
+        global $smwgHaloWebserviceEndpoint, $smwgHaloTripleStoreGraph;
         $useTS = "";
         $useLodDatasources = "";
         $useLodTrustpolicy = "";
@@ -136,7 +136,7 @@ class SMWQueryInterface extends SpecialPage {
             $useLodTrustpolicy = $this->getLodTrustpolicy();
         }
         // check if triple store is availabe, and offer option do deselect
-        if (isset($smwgWebserviceEndpoint)) {
+        if (isset($smwgHaloWebserviceEndpoint)) {
 			$useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
         // check if there are any options that will be displayed, If this is not the case
@@ -155,7 +155,7 @@ class SMWQueryInterface extends SpecialPage {
                 wfMsg('smw_qi_dstpee_selector_'.$DS_SELECTED).
                 '<input type="radio" name="qiDsTpeeSelector" value="'.$TPEE_SELECTED.'" onchange="qihelper.selectDsTpee('.$TPEE_SELECTED.')"/>'.
                 wfMsg('smw_qi_dstpee_selector_'.$TPEE_SELECTED).
-                '<span id="qi_tsc_wikigraph" style="display:none">'.$smwgTripleStoreGraph.'</span>'.
+                '<span id="qi_tsc_wikigraph" style="display:none">'.$smwgHaloTripleStoreGraph.'</span>'.
                 '<span id="qi_tsc_userns" style="display:none">'.$user_ns.'</span>';
 
         }

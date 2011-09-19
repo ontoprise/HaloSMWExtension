@@ -25,7 +25,7 @@ class TSCTripleStoreAdmin extends SpecialPage {
 	}
 
 	public function execute($par) {
-		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
+		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgHaloWebserviceEndpoint, $wgUser, $smwgHaloEnableObjectLogicRules;
 	
         if ( !$this->userCanExecute( $wgUser ) ) {
             // If the user is not authorized, show an error.
@@ -47,18 +47,18 @@ class TSCTripleStoreAdmin extends SpecialPage {
 			return;
 		}
 		$html .= "<div style=\"margin-bottom:10px;\">".wfMsg('smw_tsa_welcome')."</div>";
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		TSConnection::getConnector()->connect();
 		try {
-			$status = TSConnection::getConnector()->getStatus($smwgTripleStoreGraph);
+			$status = TSConnection::getConnector()->getStatus($smwgHaloTripleStoreGraph);
 		} catch(Exception $e) {
 				
 			// if no connection could be created
 			$html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_couldnotconnect')."</div>".wfMsg('smw_tsa_addtoconfig').
         	"<pre>".
-        	"\$smwgWebserviceEndpoint = &lt;IP and port of TSC webservice endpoint&gt;\n\nExample:\n\n".
-            "\$smwgWebserviceEndpoint = \"localhost:8080\";</pre>".
-			wfMsg('smw_tsa_addtoconfig2')." <pre>enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://mywiki');</pre>".
+        	"\$smwgHaloWebserviceEndpoint = &lt;IP and port of TSC webservice endpoint&gt;\n\nExample:\n\n".
+            "\$smwgHaloWebserviceEndpoint = \"localhost:8080\";</pre>".
+			wfMsg('smw_tsa_addtoconfig2')." <pre>enableSMWHalo();</pre>".
 			wfMsg('smw_tsa_addtoconfig3');
 			$smwForumLink = '<a href="http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic">SMW-Forum</a>';
 			$html .= "<br><b>".wfMsg('smw_tsa_addtoconfig4', $smwForumLink)."</b>";
@@ -71,10 +71,8 @@ class TSCTripleStoreAdmin extends SpecialPage {
 		$html .= "<h2>".wfMsg('smw_tsa_driverinfo')."</h2>".$status['driverInfo']."";
 		$html .= "<h2>".wfMsg('smw_tsa_tscinfo')."</h2>";
 		$html .= wfMsg('smw_tsa_tscversion').": ".$status['tscversion'];
-		// show warning when rule support is missing or defined although it is not available.
-		//if (in_array('RULES', $status['features']) && (!isset($smwgEnableObjectLogicRules) || $smwgEnableObjectLogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
-		//wfMsg('smw_tsa_rulesupport')."</div>";
-		if (!in_array('RULES', $status['features']) && $smwgEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
+		
+		if (!in_array('RULES', $status['features']) && $smwgHaloEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";
 
 		$html .= "<h2>".wfMsg('smw_tsa_loadgraphs')."</h2>";
@@ -106,7 +104,7 @@ class TSCTripleStoreAdmin extends SpecialPage {
         
 		$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
 		if ($status['isInitialized'] == true) {
-			$html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgWebserviceEndpoint) ? implode(", ", $smwgWebserviceEndpoint) : $smwgWebserviceEndpoint))."</div>";
+			$html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgHaloWebserviceEndpoint) ? implode(", ", $smwgHaloWebserviceEndpoint) : $smwgHaloWebserviceEndpoint))."</div>";
 			$tsaPage = Title::newFromText("TSA", NS_SPECIAL);
 			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
 		} else {

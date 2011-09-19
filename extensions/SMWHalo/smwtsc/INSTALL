@@ -1,1 +1,35 @@
-TODO
+Configure a triplestore
+=======================
+
+Add to LocalSettings.php:
+
+    $smwgHaloWebserviceEndpoint="localhost:8080";  // localhost:8080 is default of TSC
+    
+Optional:
+
+    $smwgHaloTripleStoreGraph = 'graph-uri';
+
+graph-uri is an arbitrary URI which works as an identifier for the wiki in the
+TSC. Every URI is possible as long as it does not contain a hash character (#).
+If it is not set 'http://mywiki' is the default.
+
+If the webserver requires (Basic) HTTP authorization, add:
+
+    $smwgHaloWebserviceUser = "username";
+    $smwgHaloWebservicePassword = "password";
+
+You may now initialize the TSC on the page Special:TSA. Refer to the triplestore
+documentation for a better way of initialization.
+
+Non-existing pages
+==================
+$smwgHaloNEPEnabled=true;
+
+activates a feature which displays facts about an instance only available in the 
+triplestore. It is enabled whenever a red-link is selected.
+
+
+Quad mode
+=========
+$smwgHaloQuadMode=true;
+Activate this if the TS works in quad mode.

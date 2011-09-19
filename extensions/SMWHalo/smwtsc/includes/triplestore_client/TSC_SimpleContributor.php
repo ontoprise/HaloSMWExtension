@@ -16,7 +16,7 @@
  * Otherwise normal processing goes on.
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
-	global $smwgTripleStoreGraph;
+	global $smwgHaloTripleStoreGraph;
 	if (!($property instanceof SMWDIProperty)) {
 		// error. should not happen
 		trigger_error("Triple store update: property is not SMWPropertyValue");
@@ -95,7 +95,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
  * @return Array of triples or false
  */
 function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
-	global $smwgTripleStoreGraph;
+	global $smwgHaloTripleStoreGraph;
 	$tsNamespace = TSNamespaces::getInstance();
 	$subj_iri = $tsNamespace->getFullIRI($subject->getTitle());
 	// add triples, if page is a property and contains annotations of the predefined 

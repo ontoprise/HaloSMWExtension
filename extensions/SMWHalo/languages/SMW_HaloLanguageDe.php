@@ -380,17 +380,7 @@ protected $smwUserMessages = array(
     'asktsc' => 'Ask triplestore',
 	'smw_tsc_query_not_allowed' => 'Leere Query nicht erlaubt.',
 
-	// Derived facts
-	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
-	'smw_df_static_tab'			 => 'Statische Fakten',
-	'smw_df_derived_tab'		 => 'Abgeleitete Fakten',
-	'smw_df_static_facts_about'  => 'Statische Fakten über diesen Artikel',
-	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über diesen Artikel',
-	'smw_df_loading_df'			 => 'Abgeleitete Fakten werden geladen ...',
-	'smw_df_invalid_title'		 => 'Ungültiger Artikel. Es sind keine abgeleiteten Fakten verfügbar.',
-	'smw_df_no_df_found'		 => 'Es wurden keine abgeleiteten Fakten für diesen Artikel gefunden.',
-    'smw_df_tsc_advertisment'    => "''Sie haben keinen Triplestore an diesem Wiki angeschlossen.''\n\nConnecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
-
+	
         //skin
         'smw_search_this_wiki' => 'Wiki durchsuchen',
         'more_functions' => 'Mehr',
@@ -408,9 +398,7 @@ protected $smwUserMessages = array(
 	'semanticmaps_label_longitude' => 'Longitude:',
 
 	
-	//--- Non-existing pages ---
-    'lod_nep_link'          => 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
-
+	
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'Benutzer darf neue Instanzen zum Ergebnis hinzufügen',
 	'smw_tf_paramdesc_delete'	=> 'Benutzer darf Instanzen aus dem Ergebnis löschen',

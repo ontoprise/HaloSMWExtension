@@ -40,8 +40,8 @@ class TSCSourcesPage extends SpecialPage {
 			
 		$allSources = $this->getAllSources();
 		if (!is_array($allSources)) {
-			global $smwgWebserviceEndpoint;
-			$wgOut->addHTML("Error: Triplestore not accessible at: ".$smwgWebserviceEndpoint);
+			global $smwgHaloWebserviceEndpoint;
+			$wgOut->addHTML("Error: Triplestore not accessible at: ".$smwgHaloWebserviceEndpoint);
 			return;
 		}
 		$wgOut->addHTML( $this->createSourceTable($allSources) );

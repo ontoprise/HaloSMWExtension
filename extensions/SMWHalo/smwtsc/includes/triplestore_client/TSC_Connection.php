@@ -60,7 +60,7 @@ abstract class TSConnection {
 	 * @param string query parameters
 	 * @param string $graph
 	 * 		The graph to query. If not set, the graph stored in the global variable
-	 * 		$smwgTripleStoreGraph is queried.
+	 * 		$smwgHaloTripleStoreGraph is queried.
 	 * @return string SPARQL-XML result
 	 */
 	public abstract function query($query, $params = "", $graph = "");
@@ -72,7 +72,7 @@ abstract class TSConnection {
      * @param string query parameters
      * @param string $graph
      *      The graph to query. If not set, the graph stored in the global variable
-     *      $smwgTripleStoreGraph is queried.
+     *      $smwgHaloTripleStoreGraph is queried.
      * @return string SPARQL-XML result
      */
 	public abstract function queryRDF($query, $params = "", $graph = "");
@@ -157,9 +157,9 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
 		$this->updateClient->connect();
 
-		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
-		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+		global $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgHaloWebserviceEndpoint;
+		list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
+		$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
 		$this->manageClient = new RESTWebserviceConnector($host, $port, "management", $credentials);
 		$this->ldImportClient = new RESTWebserviceConnector($host, $port, "ldimporter", $credentials);
@@ -195,12 +195,12 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 class TSConnectorRESTWebservice extends TSConnection {
 
 	public function connect() {
-		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
-	    if (empty($smwgWebserviceEndpoint)) {
-            throw new Exception('Variable $smwgWebserviceEndpoint is not defined for TSC');
+		global $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgHaloWebserviceEndpoint;
+	    if (empty($smwgHaloWebserviceEndpoint)) {
+            throw new Exception('Variable $smwgHaloWebserviceEndpoint is not defined for TSC');
         }
-		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+		list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
+		$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
 		$this->manageClient = new RESTWebserviceConnector($host, $port, "management", $credentials);
@@ -235,7 +235,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 
 	public function query($query, $params = "", $graph = "") {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
@@ -253,7 +253,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 	
 	public function queryRDF($query, $params = "", $graph = "") {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
         
          // SPARQL, attach common prefixes
         $query = TSNamespaces::getAllPrefixes().$query;
@@ -281,9 +281,9 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 
 	public function getStatus($graph) {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 
-		$request = "graph=".urlencode($smwgTripleStoreGraph);
+		$request = "graph=".urlencode($smwgHaloTripleStoreGraph);
 
 		list($header, $status, $result) = $this->manageClient->send($request, "/getTripleStoreStatus");
 		if ($status != 200) {
@@ -319,9 +319,9 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 
 	public function translateASK($query, $params = "", $baseURI = "") {
-		global $smwgTripleStoreGraph;
+		global $smwgHaloTripleStoreGraph;
 		if (empty($baseURI)) {
-			$baseURI = $smwgTripleStoreGraph;
+			$baseURI = $smwgHaloTripleStoreGraph;
 		}
 
 		$queryRequest = "query=".urlencode($query);
