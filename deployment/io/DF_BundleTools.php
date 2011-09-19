@@ -43,6 +43,7 @@ class DFBundleTools {
 		$rawparams = array();
 		$rawparams[] = "[[$fileNsText:+]][[$partOfBundleName::".ucfirst($bundleName)."]]";
 		$rawparams[] = "?$partOfBundleName";
+		$rawparams[] = "source=wiki";
 
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		$query  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
