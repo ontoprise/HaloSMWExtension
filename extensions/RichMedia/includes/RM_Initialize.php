@@ -177,10 +177,6 @@ function enableRichMediaExtension() {
 		'ext.richmedia.upload' => $rmResourceTemplate + array(
 			'scripts' => 'scripts/richmedia_upload.js',
 			'dependencies' => array( 'jquery' )
-		),
-		'ext.richmedia.upload' => $rmResourceTemplate + array(
-			'scripts' => 'scripts/richmedia_upload.js',
-			'dependencies' => array( 'jquery' )
 		)
 	);
 
