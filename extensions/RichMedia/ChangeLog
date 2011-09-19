@@ -1,14 +1,14 @@
 Rich Media extension ChangeLog
 =============================
 
-VERSION 1.5.2
+VERSION 1.5.3
 
   FEATURES:
 	-none-
 
   CHANGES:
 	* Use ResourceLoader for script loading if available
-	* Provided new patch to let Rich Media extension be compatible MW 1.17.0
+	* Provided new patch to let Rich Media extension be compatible with MW 1.17.0 and SF 2.2.1
 
   BUGFIXES:
 	-none-

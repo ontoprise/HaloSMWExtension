@@ -1,4 +1,7 @@
 jQuery(document).ready(function() {
+	// remove the upload button
+	jQuery("input.mw-htmlform-submit").remove();
+
 	//add functionality to (type=submit)
 	jQuery("#mw-upload-form").submit(function() {
 		richMediaPage.doUpload("#mw-upload-form");

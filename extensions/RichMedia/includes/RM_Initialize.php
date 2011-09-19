@@ -33,7 +33,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
 
-define('SMW_RM_VERSION', '{{$VERSION}}-for-SMW-1.5.x [B{{$BUILDNUMBER}}]');
+define('SMW_RM_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 global $smwgRMIP, $wgHooks; 
 $smwgRMIP = $IP . '/extensions/RichMedia';
@@ -168,10 +168,19 @@ function enableRichMediaExtension() {
 			),
 			'styles' => array(
 				'skins/richmedia.css',
-			)
+			),
+			'dependencies' => array( 'jquery' )
 		),
 		'ext.richmedia.wysiwyg' => $rmResourceTemplate + array(
 			'scripts' => 'scripts/fck_connect.js',
+		),
+		'ext.richmedia.upload' => $rmResourceTemplate + array(
+			'scripts' => 'scripts/richmedia_upload.js',
+			'dependencies' => array( 'jquery' )
+		),
+		'ext.richmedia.upload' => $rmResourceTemplate + array(
+			'scripts' => 'scripts/richmedia_upload.js',
+			'dependencies' => array( 'jquery' )
 		)
 	);
 

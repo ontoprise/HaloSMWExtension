@@ -47,7 +47,6 @@
 				<include name="INSTALL" />
 				<include name="RichMediaPatchForSF*.txt" />
 				<include name="RichMediaPatchForMW*.txt" />
-
 				<include name="deploy.xml" />
 			</fileset>
 			<fileset dir="../../../patches/">
@@ -132,17 +131,17 @@
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
-<!--
+
 		<exec executable="php">
 			<arg value="../../../patches/patch.php" />
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../RichMediaPatchForSF2_0_8.txt" />
-			<arg value="        - -        patchtool" />
+			<arg value="../RichMediaPatchForSF2_2_1.txt" />
+			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
--->
+
 	</target>
 
 	<target name="checkos">

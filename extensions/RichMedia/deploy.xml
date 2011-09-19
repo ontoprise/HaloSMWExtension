@@ -13,7 +13,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
-			<dependency from="2.1.2">semanticforms</dependency>
+			<dependency from="2.2.1">semanticforms</dependency>
 			<dependency from="1.5.6">smwplus</dependency>
 		</dependencies>
 	</global>
@@ -70,6 +70,8 @@
 				from="2.0.8" to="2.0.8" />
 			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
 				from="2.1.2" to="2.1.2" />
+			<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
+				from="2.2.1" to="2.2.1" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
 				from="1.15.3" to="1.15.3" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
@@ -82,7 +84,7 @@
 				from="1.17.0" to="1.17.0" mayfail="Namespace.php" />
 		</new>
 		<update from="1.5.2">
-			<patch file="RichMediaPatchForSF2_1_2.txt" />
+			<patch file="RichMediaPatchForSF2_2_1.txt" />
 			<patch file="RichMediaPatchForMW1_17_0.txt" />
 		</update>
 		<uninstall>
@@ -96,6 +98,8 @@
 				from="2.0.8" to="2.0.8" />
 			<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
 				from="2.1.2" to="2.1.2" />
+			<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
+				from="2.2.1" to="2.2.1" />
 			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
 				from="1.15.3" to="1.15.3" />
 			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
