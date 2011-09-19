@@ -168,15 +168,13 @@ function enableRichMediaExtension() {
 			),
 			'styles' => array(
 				'skins/richmedia.css',
-			),
-			'dependencies' => array( 'jquery' )
+			)
 		),
 		'ext.richmedia.wysiwyg' => $rmResourceTemplate + array(
 			'scripts' => 'scripts/fck_connect.js',
 		),
 		'ext.richmedia.upload' => $rmResourceTemplate + array(
-			'scripts' => 'scripts/richmedia_upload.js',
-			'dependencies' => array( 'jquery' )
+			'scripts' => 'scripts/richmedia_upload.js'
 		)
 	);
 
