@@ -212,23 +212,12 @@
 				<arg value="--patchtool" />
 				<arg value="${patchtool}" />
 			</exec>
-<!--
 			<exec executable="php">
 				<arg value="../../../patches/patch.php" />
 				<arg value="-d" />
 				<arg value="${basedir}/../../../" />
 				<arg value="-p" />
-				<arg value="../patch_for_SF_2.1.2.txt" />
-__FIX_THIS_LINE_WHEN_COMMENT_REMOVED__			<arg value="        - -        patchtool" />
-				<arg value="${patchtool}" />
-			</exec>
--->
-			<exec executable="php">
-				<arg value="../../../patches/patch.php" />
-				<arg value="-d" />
-				<arg value="${basedir}/../../../" />
-				<arg value="-p" />
-				<arg value="../patch_for_SMW_1.5.6.txt" />
+				<arg value="../patch_for_SMW_1.6.1.txt" />
 				<arg value="--patchtool" />
 				<arg value="${patchtool}" />
 			</exec>
