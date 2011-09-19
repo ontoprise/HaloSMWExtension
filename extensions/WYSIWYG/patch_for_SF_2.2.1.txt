@@ -2,7 +2,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.php	(original)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php    (patched version)
-@@ -258,6 +258,10 @@
+@@ -267,6 +267,10 @@
  		global $sfgFieldNum; // used for setting various HTML IDs
 
  		// initialize some variables
@@ -15,11 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		$source_page_matches_this_form = false;
 @@ -827,9 +831,19 @@
  							$new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
- 						} else {
- 							if ( ! array_key_exists( 'rows', $field_args ) )
--								$field_args['rows'] = 5;
--							if ( ! array_key_exists( 'cols', $field_args ) )
--								$field_args['cols'] = 80;
+ 						} else { 							
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
 +								$fck_options['rows'] = 5;
@@ -37,7 +33,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  							$sfgFieldNum++;
  							if ( $cur_value == '' ) {
 @@ -1387,7 +1401,11 @@
- 		// add Javascript code for form-wide use
+ 		// @TODO The FCKeditor Javascript should be handled within
+		// the FCKeditor extension itself, using the hook.
  		$javascript_text = "";
  		if ( $free_text_was_included && $showFCKEditor > 0 ) {
 -			$javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor );
@@ -53,7 +50,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormUtils.php	(original)
 +++ extensions/SemanticForms/includes/SF_FormUtils.php	(patched version)
-@@ -355,19 +355,32 @@
+@@ -355,19 +361,32 @@
 
  	static function prepareTextForFCK( $text ) {
  		global $wgTitle;
@@ -78,18 +75,6 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		return $text;
  	}
 
--	static function mainFCKJavascript( $showFCKEditor ) {
-+	static function mainFCKJavascript( $showFCKEditor, $rowsHeight= 5 ) {
- 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
- 		global $wgHooks, $wgExtensionFunctions;
-
-+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-+		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;
-+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
- 		$newWinMsg = wfMsg( 'rich_editor_new_window' );
- 		$javascript_text = '
- var showFCKEditor = ' . $showFCKEditor . ';
 @@ -386,7 +405,10 @@
  		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
  			$wgFCKEditorDir .= '/';
@@ -120,43 +105,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  //IE hack to call func from popup
  function FCK_sajax(func_name, args, target) {
  	sajax_request_type = 'POST' ;
-@@ -408,7 +441,36 @@
- 		}
- 	);
- }
-+/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-+// if the rows attribute was defined in the form, use fontsize to calculate the editor window height
-+function getfontsize(el) {
-+	var x = document.getElementById(el);
-+ 	if (x.currentStyle) {
-+		// IE
-+		var y = x.currentStyle['lineheight'];
-+ 	} else if (window.getComputedStyle) {
-+		// FF, Opera
-+  		var y = document.defaultView.getComputedStyle(x,null).getPropertyValue('line-height');
-+ 	}
-+ 	return y;
-+}
-+function getWindowHeight4editor() {
-+	var fsize = getfontsize('free_text');
-+	// if value was not determined, return default val from $wgFCKEditorHeight
-+	if (!fsize) return $FCKEditorHeight;
-+	if (fsize.indexOf('px') == -1)  // we didn't get pixels
-+		// arbitary value, don't hassle with caluclating
-+		return $FCKEditorHeight;
-+	var px = parseFloat(fsize.replace(/\w{2}$/, ''));
-+	// the text in the edit window is slightly larger than the determined value
-+	px = px * 1.25;
-+	return Math.round (px * $rowsHeight);
-+}
-+/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 
-+END;
-+        if ($RichEditor == 'fck') {
-+        $javascript_text .= <<<END
- function onLoadFCKeditor()
- {
- 	if (!(showFCKEditor & RTE_VISIBLE))
 @@ -418,14 +480,15 @@
  	if ( realTextarea )
  	{
@@ -180,21 +129,21 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		oFCKeditor.ReplaceTextarea() ;
 
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -606,11 +669,15 @@
+@@ -702,11 +702,15 @@
  addOnloadHook( initEditor );
-
+  
  END;
 +        } else { // ckeditor
 +            $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
 +        }
  		return $javascript_text;
  	}
-
- 	static function FCKToggleJavascript() {
+ 	
+	static function FCKToggleJavascript() {
  		// add toggle link and handler
 +        if ( class_exists('FCKeditor') ) {
  		$javascript_text = <<<END
-
+ 		
  function ToggleFCKEditor(mode, objId)
 @@ -716,6 +783,9 @@
  }

@@ -39,13 +39,13 @@
             <patch file="patch.txt" />
             <patch file="patches/HaloACL/patch_for_SF_2.1.2.txt" />
             <patch file="patches/SMWHalo/patch_for_SF2.1.2.txt" />
-            <patch file="patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
+            <patch file="patches/WYSIWYG/patch_for_SF_2.2.1.txt" />
         </new>
         <update from="2.0.8">
             <patch file="patch.txt" />
             <patch file="patches/HaloACL/patch_for_SF_2.1.2.txt" />
             <patch file="patches/SMWHalo/patch_for_SF2.1.2.txt" />
-            <patch file="patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
+            <patch file="patches/WYSIWYG/patch_for_SF_2.2.1.txt" />
         </update>
          <update from="1.9.1">
             <patch file="patch.txt" />
@@ -54,7 +54,7 @@
             <patch file="patch.txt" />
             <patch file="patches/HaloACL/patch_for_SF_2.1.2.txt" />
             <patch file="patches/SMWHalo/patch_for_SF2.1.2.txt" />
-            <patch file="patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
+            <patch file="patches/WYSIWYG/patch_for_SF_2.2.1.txt" />
          </uninstall>
     </configs>
 
