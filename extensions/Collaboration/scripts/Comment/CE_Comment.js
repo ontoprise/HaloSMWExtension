@@ -949,7 +949,6 @@ function CECommentForm() {
 	 * Builds the header for handling comments 
 	 */
 	this.buildHeader = function() {
-		//var comHeader = $('.collabComInternHeader');
 		this.setCommentQuantities();
 		var expandedHead = this.addHeaderText();
 		if ( expandedHead === true ) {
@@ -1098,7 +1097,7 @@ function CECommentForm() {
 	 */
 	this.addFileToggler = function() {
 		// we can skip this if there are no file attachments at all.
-		if ( $('.collabComResFileAttach').length === 0 ) {
+		if ( $( '.collabComResFileAttach' ).length === 0 ) {
 			return false;
 		}
 		var fileSpan = $( '<span>', {
@@ -1106,7 +1105,7 @@ function CECommentForm() {
 			'text' : ' | ' + ceLanguage.getMessage( 'ce_com_file_toggle' ) + ': '
 		})
 		var checked = null;
-		if ( $('.collabComResFileAttach:first').filter(':visible') ) {
+		if ( $( '.collabComResFileAttach:first' ).filter( ':visible' ) ) {
 			checked = ['checked', 'checked'];
 		}
 		var tmp = document.createElement( 'input' );
@@ -1215,10 +1214,10 @@ function CECommentForm() {
 	 *
 	 */
 	this.bindOverlays = function() {
-		var overlays = $('.collabComDel');
+		var overlays = $( '.collabComDel' );
 		$.each( overlays, function( i, overlay ) {
-			var overlayID = $(overlay).attr('id');
-			$(overlay).overlay({
+			var overlayID = $( overlay ).attr( 'id' );
+			$( overlay ).overlay({
 				api: true,
 				// when overlay is closed, remove color highlighting
 				onClose: function() {
@@ -1264,13 +1263,11 @@ function CECommentForm() {
 		}
 	};
 }
-//Set global variable for accessing comment form functions
-var ceCommentForm;
 
 //Initialize Comment functions if page is loaded
 $(document).ready(
 	function() {
-		ceCommentForm = new CECommentForm();
+		window.ceCommentForm = new CECommentForm();
 	}
 );
 
@@ -1550,7 +1547,7 @@ function CollaborationBrowserDetectLite() {
 	this.isGeckoOrSafari = this.isGecko || this.isSafari;
 }
 //one global instance of Collaboration Browser detector 
-var C_bd = new CollaborationBrowserDetectLite();
+window.C_bd = new CollaborationBrowserDetectLite();
 
 /*
  * XML Tools
