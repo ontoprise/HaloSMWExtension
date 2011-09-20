@@ -121,25 +121,18 @@ class SMWQMStore {
 		return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw, $subobjectName);
 	}
 	
+	public function doDataUpdate(SMWSemanticData $data) {
+		$this->smwstore->doDataUpdate($data);
+	}
+	
 	/*
-	 * This method is overwritten in order to hook in
-	 * the Query Results Cache and the Query Management
+	 * Stores query metadata for QueryManagement
 	 */
 	public function getQueryResult(SMWQuery $query){
 
 		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
-		$qrc = new SMWQRCQueryResultsCache($this->smwstore);
-		return $qrc->getQueryResult($query);
+		return $this->smwstore->getQueryResult($query);
 
 	}
-
 	 
-
-	function doDataUpdate(SMWSemanticData $data) {
-		
-		$qrc = new SMWQRCQueryResultsCache();
-		$qrc->updateData($data, $this);
-		$this->smwstore->doDataUpdate($data);
-
-	}
 }
