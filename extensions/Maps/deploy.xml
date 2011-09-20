@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <id>maps</id>
+        <title>Maps</title>
+        <version>1.0.3</version>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
+        <license>GPL-v2</license>
+        <instdir>extensions/Maps</instdir>
+        <description>Displays Google maps in the wiki</description>
+        <helpurl></helpurl>
+        <dependencies>
+            <dependency from="1.15.0">mw</dependency>
+        </dependencies>
+    </global>
+    
+    <codefiles>
+        <file loc="deploy.xml" />
+        <!-- TODO: add others -->
+    </codefiles>
+
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+        <new>
+            <require name="maps"
+                file="extensions/Maps/Maps.php" />
+        </new>
+    </configs>
+</deploydescriptor>
