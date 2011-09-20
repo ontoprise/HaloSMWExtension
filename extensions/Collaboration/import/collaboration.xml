@@ -101,7 +101,7 @@
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
     <hash>86a08e3062c2d893f69a2c14880d2e64</hash>
     </revision>
   </page>
@@ -128,7 +128,7 @@
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:Date| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::Date| ]]</text>
     <hash>80be7c6ff7794007516a2f727e41c904</hash>
     </revision>
   </page>
@@ -155,7 +155,7 @@
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::Text| ]]</text>
     <hash>3bb02ff4761246a107d5a6a9bdbdc92f</hash>
     </revision>
   </page>
@@ -182,7 +182,7 @@
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
     <hash>23c7ffc586c58115fd337f8139df01ef</hash>
     </revision>
   </page>
@@ -255,7 +255,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 
 {{Part of bundle|value=Collaboration}}
 
-[[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
+[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
     <hash>620b59b1f1ed5bc5f6415f95fa976aa6</hash>
     </revision>
   </page>
@@ -329,7 +329,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:Boolean| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::Boolean| ]]</text>
     <hash>8cc26b8f3f600df31c0eb8d2f982ac21</hash>
     </revision>
   </page>
@@ -356,7 +356,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 
 {{Part of bundle|value=Collaboration}}
 
-[[has type::Type:Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
+[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
     <hash>fa4f9ceb457c33fef4daf4b2014b28ca</hash>
     </revision>
   </page>
@@ -703,7 +703,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 {{Part of bundle|value=Collaboration}}
 
-[[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
+[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
     <hash>0b6d1b542e8459fe9b3f4e9f63cbce79</hash>
     </revision>
   </page>
@@ -730,7 +730,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 {{Part of bundle|value=Collaboration}}
 
-[[has type::Type:Number| ]]</text>
+[[has type::Number| ]]</text>
     <hash>9db3cd7a1e32f29c9f743c5a8ffb5574</hash>
     </revision>
   </page>
@@ -1039,7 +1039,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Collaboration}}
 
 [[Has domain and range::Category:Comment;]]
-[[Has type::Type:Page]]
+[[Has type::Page]]
 [[Category:Property]]</text>
     <hash>01d24503212f33dea2e06a4171f717ee</hash>
     </revision>

@@ -19,7 +19,7 @@
 * 
 * A class that reads language strings from the server by an ajax call.
 * 
-* @author Thomas Schweitzer
+* @author Thomas Schweitzer, Benjamin Langguth
 *
 */
 
@@ -49,31 +49,12 @@ function CELanguage() {
 	 * @return string
 	 * 			The language dependent message for the given ID.
 	 */
-	this.getMessage = function(id, type) {
-		switch (type) {
-			case "user":
-				var msg = wgCEUserLanguageStrings[id];
-				if (!msg) {
-					msg = id;
-				} 
-				break;
-				
-			case "cont":
-				var msg = wgCEContLanguageStrings[id];
-				if (!msg) {
-					msg = id;
-				} 
-				break;
-			default: 
-				var msg = wgCEUserLanguageStrings[id];
-				if (!msg) {
-					var msg = wgCEContLanguageStrings[id];
-					if (!msg) {
-						msg = id;
-					}
-				}
-		} 
-			
+	this.getMessage = function( id) {
+		var msg = mw.msg( id );
+		if (!msg) {
+			msg = id;
+		}
+
 		// Replace variables
 		msg = msg.replace(/\$n/g,wgCanonicalNamespace); 
 		msg = msg.replace(/\$p/g,wgPageName);
@@ -89,7 +70,7 @@ function CELanguage() {
 var ceLanguage;
 
 //Initialize if page is loaded
-$jq(document).ready(
+jQuery(document).ready(
 	function(){
 		ceLanguage = new CELanguage();
 	}

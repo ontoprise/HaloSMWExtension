@@ -19,6 +19,9 @@
  * The CommentForm "class"
  * 
  */
+;( function( $ ) {
+
+
 function CECommentForm() {
 
 	// Variables
@@ -56,19 +59,19 @@ function CECommentForm() {
 	 */
 	this.processForm = function() {
 		//1. disable form
-		$jq( '#collabComForm *:input' ).attr( 'disabled', 'disabled' );
+		$( '#collabComForm *:input' ).attr( 'disabled', 'disabled' );
 
 		//2. and add pending indicator
-		if ( typeof( this.pendingIndicatorCF ) === 'undefined' 
+		if ( typeof this.pendingIndicatorCF === 'undefined' 
 			|| this.pendingIndicatorCF === null ) 
 		{
-			this.pendingIndicatorCF = new CPendingIndicator( $jq( '#collabComFormTextarea' ) );
+			this.pendingIndicatorCF = new CPendingIndicator( $( '#collabComFormTextarea' ) );
 		}
 		this.pendingIndicatorCF.show();
 
 		/* form params */
 		var now = new Date();
-		var pageName = wgPageName + '_' + now.getTime();
+		var pageName = mw.config.get( 'wgPageName' ) + '_' + now.getTime();
 
 		//rating
 		var ratingString = '';
@@ -77,18 +80,18 @@ function CECommentForm() {
 		}
 
 		// textarea
-		var textArea = ( $jq( '#collabComFormTextarea' ).val())? $jq( '#collabComFormTextarea' ).val(): '';
+		var textArea = ( $( '#collabComFormTextarea' ).val())? $( '#collabComFormTextarea' ).val(): '';
 		if ( textArea.length === 0 || this.textareaIsDefault ) {
 			this.pendingIndicatorCF.hide();
-			$jq( '#collabComFormMessage' ).attr( 'class', 'failure' );
-			$jq( '#collabComFormMessage' ).html( ceLanguage.getMessage( 'ce_invalid' ) );
-			$jq( '#collabComFormMessage' ).show( 'slow' );
+			$( '#collabComFormMessage' ).attr( 'class', 'failure' );
+			$( '#collabComFormMessage' ).html( ceLanguage.getMessage( 'ce_invalid' ) );
+			$( '#collabComFormMessage' ).show( 'slow' );
 			// enable form again
-			$jq( '#collabComForm *:input' ).removeAttr( 'disabled' );
+			$( '#collabComForm *:input' ).removeAttr( 'disabled' );
 			return false;
 		} else {
 			// hide possibly shown message div
-			$jq( '#collabComFormMessage' ).hide( 'slow' );
+			$( '#collabComFormMessage' ).hide( 'slow' );
 		}
 		// escape html chars
 		textArea = textArea.replace( /&/g, '&amp;' );
@@ -96,7 +99,7 @@ function CECommentForm() {
 		textArea = textArea.replace( />/g, '&gt;' );
 		textArea = this.textEncode( textArea );
 		// file attachments: process the content from the input field
-		var fileAttach = ( $jq( '#collabComFormFileAttach' ).val())? $jq( '#collabComFormFileAttach' ).val(): '';
+		var fileAttach = ( $( '#collabComFormFileAttach' ).val())? $( '#collabComFormFileAttach' ).val(): '';
 		var fileAttachString = '|AttachedArticles=' + fileAttach;
 
 		var userNameString = '';
@@ -113,7 +116,7 @@ function CECommentForm() {
 
 		var pageContent = '{{Comment' +
 			userNameString +
-			'|CommentRelatedArticle=' + wgPageName +
+			'|CommentRelatedArticle=' + mw.config.get( 'wgPageName' ) +
 			ratingString  +
 			relatedCommentString +
 			'|CommentDatetime=##DATE##' +
@@ -140,24 +143,25 @@ function CECommentForm() {
 		var htmlmsg = resultDOM.getElementsByTagName( 'message' )[0].firstChild.nodeValue;
 
 		this.pendingIndicatorCF.hide();
-		$jq( '#collabComForm' ).get(0).reset();
-		$jq( '#collabComForm' ).hide();
-		$jq( '#collabComForm *:input' ).removeAttr( 'disabled' );
-		var comMessage = $jq( '#collabComFormMessage' );
+		$( '#collabComForm' ).get(0).reset();
+		$( '#collabComForm' ).hide();
+		$( '#collabComForm *:input' ).removeAttr( 'disabled' );
+		var comMessage = $( '#collabComFormMessage' );
 		comMessage.show();
 		if ( valueEl.nodeType === 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue;
 			if ( valueCode === '0' ) {
-				//fine.
-				comMessage.attr( 'class', 'success' );
-				comMessage.html( htmlmsg + ceLanguage.getMessage( 'ce_reload' ) );
-				//add pending span
-				var pendingSpan = this.createDOMElement( 'span', 'collabComFormPending', null, null, '&nbsp;' );
-				comMessage.append( pendingSpan );
-				if (typeof(this.pendingIndicatorMsg) === 'undefined' 
+				comMessage.attr( 'class', 'success' )
+					.html( htmlmsg + ceLanguage.getMessage( 'ce_reload' ) );
+				// add pending span
+				$( '<span>', {
+					'id' : 'collabComFormPending',
+					'text' : ' '
+				}).appendTo( comMessage );
+				if ( typeof this.pendingIndicatorMsg === 'undefined' 
 					|| this.pendingIndicatorMsg === null)
 				{
-					this.pendingIndicatorMsg = new CPendingIndicator( $jq( '#collabComFormPending' ) );
+					this.pendingIndicatorMsg = new CPendingIndicator( $( '#collabComFormPending' ) );
 				}
 				this.pendingIndicatorMsg.show();
 				//to do a page reload with action=purge
@@ -175,8 +179,7 @@ function CECommentForm() {
 			} else if ( valueCode === '1' || valueCode === '2' ) {
 				//error, article already exists or permisson denied.
 				this.pendingIndicatorCF.hide();
-				$jq( '#collabComFormMessage' ).attr( 'class', 'failure' );
-				comMessage.html( htmlmsg );
+				comMessage.attr( 'class', 'failure' ).html( htmlmsg );
 			}
 		}
 		return false;
@@ -190,24 +193,24 @@ function CECommentForm() {
 	 */
 	this.deleteComment = function( pageName, container ) {
 		var	deletingMsg = '',
-			commentsToDelete = $jq( '#' + pageName + ' > .collabComPlain' ).html(),
+			commentsToDelete = $( '#' + pageName + ' > .collabComPlain' ).html(),
 			fullDelete = false,
-			comEl = $jq( '#' + container ),
+			comEl = $( '#' + container ),
 			hasReplies = false,
 			replyComment;
 		this.overlayName = container;
 
-		$jq( '*:input', comEl ).attr( 'disabled', 'disabled' );
-		if ( $jq( '.ceOverlayFullDeleteCheckbox:checked', comEl ).length === 1 ) {
+		$( '*:input', comEl ).attr( 'disabled', 'disabled' );
+		if ( $( '.ceOverlayFullDeleteCheckbox:checked', comEl ).length === 1 ) {
 			fullDelete = true;
 			deletingMsg = ceLanguage.getMessage( 'ce_full_deleting' );
 			hasReplies = true;
-			replyComment = $jq( '#' + pageName ).next( '.comRearranged' );
+			replyComment = $( '#' + pageName ).next( '.comRearranged' );
 			while( hasReplies ) {
-				if( replyComment.length === 0) {
+				if ( replyComment.length === 0) {
 					hasReplies = false;
 				} else {
-					commentsToDelete += ', ' + $jq( '.collabComPlain', replyComment ).html();
+					commentsToDelete += ', ' + $( '.collabComPlain', replyComment ).html();
 				}
 				replyComment = replyComment.next( '.comRearranged' )
 			}
@@ -215,14 +218,17 @@ function CECommentForm() {
 		} else {
 			deletingMsg = ceLanguage.getMessage( 'ce_deleting' )
 		}
-		$jq( '.ceOverlayDetails', comEl ).html( deletingMsg );
+		$( '.ceOverlayDetails', comEl ).html( deletingMsg );
 		// add pending indicator
-		var pendingSpan = this.createDOMElement( 'span', 'collabComDelPending', null, null, '&nbsp;' );
-		$jq( '.ceOverlayDetails', comEl ).append( pendingSpan );
-		if ( typeof( this.pendingIndicatorDel ) === 'undefined'
+		var pendingSpan = $( '<span>', {
+			'id' : 'collabComDelPending',
+			'text' : ' '
+		})
+		$( '.ceOverlayDetails', comEl ).append( pendingSpan );
+		if ( typeof this.pendingIndicatorDel === 'undefined'
 			|| this.pendingIndicatorDel === null )
 		{
-			this.pendingIndicatorDel = new CPendingIndicator( $jq( '#collabComDelPending' ) );
+			this.pendingIndicatorDel = new CPendingIndicator( $( '#collabComDelPending' ) );
 		}
 		this.pendingIndicatorDel.show();
 		if ( fullDelete ) {
@@ -247,8 +253,10 @@ function CECommentForm() {
 		var htmlmsg = resultDOM.getElementsByTagName( 'message' )[0].firstChild.nodeValue;
 		var page = resultDOM.getElementsByTagName( 'article' )[0].firstChild.nodeValue;
 		var divId = '#' + page;
-		var comEditMessage = this.createDOMElement( 'div', 'collabComEditFormMessage' );
-		$jq( divId ).before( $jq( comEditMessage ) );
+		var comEditMessage = $( '<div>', {
+			'id' : 'collabComEditFormMessage'
+		});
+		$( divId ).before( comEditMessage );
 		if ( valueEl.nodeType === 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue;
 			this.pendingIndicatorDel.hide();
@@ -256,15 +264,17 @@ function CECommentForm() {
 				//fine.
 				htmlmsg += ceLanguage.getMessage( 'ce_reload' );
 				// close overlay -> just click the button
-				$jq( '#' + this.overlayName ).hide();
-				$jq( comEditMessage ).addClass( 'success' );
-				$jq( comEditMessage ).html( htmlmsg );
-				var pendingSpan = this.createDOMElement( 'span', 'collabComDelPending', null, null, '&nbsp;' );
-				$jq( comEditMessage ).append( pendingSpan );
-				if ( typeof( this.pendingIndicatorDel2 ) === 'undefined' 
+				$( '#' + this.overlayName ).hide();
+				comEditMessage.addClass( 'success' );
+				comEditMessage.html( htmlmsg );
+				var pendingSpan = $( '<span>', {
+					'id' : 'collabComDelPending',
+					'text' : ' '
+				}).appendTo( comEditMessage );
+				if ( typeof this.pendingIndicatorDel2 === 'undefined' 
 					|| this.pendingIndicatorDel2 === null)
 				{
-					this.pendingIndicatorDel2 = new CPendingIndicator( $jq( '#collabComDelPending' ) );
+					this.pendingIndicatorDel2 = new CPendingIndicator( pendingSpan );
 				}
 				this.pendingIndicatorDel2.show();
 				// do a page reload with action=purge
@@ -281,8 +291,8 @@ function CECommentForm() {
 				return true;
 			} else if ( valueCode === '1' || valueCode === '2' ) {
 				// error, article already exists or permisson denied.
-				$jq( comEditMessage ).addClass( 'failure' );
-				$jq( comEditMessage ).html( htmlmsg );
+				comEditMessage.addClass( 'failure' );
+				comEditMessage.html( htmlmsg );
 				return false;
 			} else {
 				// sthg's really gone wrong
@@ -298,12 +308,11 @@ function CECommentForm() {
 	this.editCommentForm = function( pageName ) {
 		var ratingDiv, elemSelector, container, content, ratingIconSrc,
 			editRatingValue, ratingExistent, ratingText, ratingTextOpt,
-			ratingTextOpt2, ratingSpan, ratingIcons, ratingIcon1, ratingIcon2, ratingIcon3,
-			textarea, fileAttachField, buttonBox, submitButton, cancelSpan, cancelText, msgDiv,
-			fileAttachUploadLink = '', fileAttachSpan = '';
+			ratingTextOpt2, ratingSpan, ratingIcons, tmp,
+			textarea, fileAttachField, buttonBox, msgDiv, fileAttachSpan = '';
 		this.editCommentName = pageName;
 		elemSelector = '#' + pageName;
-		this.editCommentRelatedComment = $jq( elemSelector +
+		this.editCommentRelatedComment = $( elemSelector +
 			' .collabComResInfoSuper' ).html();
 		if ( this.editMode ) {
 			//already editing. cancel first!
@@ -312,18 +321,18 @@ function CECommentForm() {
 		this.editMode = true;
 
 		// create a new form and set all values
-		container = $jq( elemSelector );
-		content = $jq( elemSelector + ' .collabComResText' ).html();
+		container = $( elemSelector );
+		content = $( elemSelector + ' .collabComResText' ).html();
 		container.css( 'background-color', '#F2F2F2' );
 		this.savedCommentContent = content;
 		content = this.textDecode( content );
-		$jq( elemSelector + ' .collabComResText' ).toggle();
-		$jq( elemSelector + ' .collabComResRight' ).css(
+		$( elemSelector + ' .collabComResText' ).toggle();
+		$( elemSelector + ' .collabComResRight' ).css(
 			'width', '85%'
 		);
 		// rating only if rating is enabled
-		if ( typeof( wgCEEnableRating ) !== 'undefined' ) {
-			ratingIconSrc = $jq( elemSelector
+		if ( typeof wgCEEnableRating !== 'undefined' ) {
+			ratingIconSrc = $( elemSelector
 				+ ' .collabComResRatingIcon img' ).attr( 'src' );
 			if ( ratingIconSrc ) {
 				if ( ratingIconSrc.match( 'Bad' ) ) {
@@ -343,119 +352,122 @@ function CECommentForm() {
 			ratingText = document.createTextNode( ceLanguage.getMessage( 'ce_edit_rating_text' ) );
 			ratingTextOpt = document.createTextNode( ceLanguage.getMessage( 'ce_edit_rating_text2' ) );
 			ratingTextOpt2 = document.createTextNode( ':' );
-			ratingSpan = this.createDOMElement( 'span', null, ['collabComFormGrey'] );
-			$jq( ratingSpan ).append( $jq( ratingTextOpt ) );
+			ratingSpan = $( '<span>', {
+				'class' : 'collabComFormGrey'
+			});
+			ratingSpan.append( $( ratingTextOpt ) );
 
-			ratingDiv = this.createDOMElement( 'div', 'collabComEditFormRating' );
-			$jq( ratingDiv ).append( $jq( ratingText ) );
-			$jq( ratingDiv ).append( $jq( ratingSpan ) );
-			$jq( ratingDiv ).append( $jq( ratingTextOpt2 ) );
+			ratingDiv = $( '<div>', {
+				'id' : 'collabComEditFormRating'
+			});
+			ratingDiv.append( $( ratingText ) );
+			ratingDiv.append( ratingSpan );
+			ratingDiv.append( $( ratingTextOpt2 ) );
 
-			ratingIcons = this.createDOMElement( 'span', 'collabComEditFormRadionButtons' );
-
-			ratingIcon1 = this.createDOMElement('img',
-				'collabComEditFormRating1',
-				['collabComEditFormRatingImg'],
-				[['src', wgCEScriptPath + '/skins/Comment/icons/bad_inactive.png']]
-			);
-			$jq(ratingIcon1).bind( 'click', function() {
-				ceCommentForm.switchEditRating( '#collabComEditFormRating1', -1 );
+			ratingIcons = $( '<span>', {
+				'id' : 'collabComEditFormRadioButtons'
 			});
 
-			ratingIcon2 = this.createDOMElement( 'img',
-				'collabComEditFormRating2',
-				['collabComEditFormRatingImg'],
-				[['src', wgCEScriptPath + '/skins/Comment/icons/neutral_inactive.png']]
-			);
-			$jq(ratingIcon2).bind( 'click', function() {
-				ceCommentForm.switchEditRating( '#collabComEditFormRating2', 0 );
-			});
-
-			ratingIcon3 = this.createDOMElement( 'img',
-				'collabComEditFormRating3',
-				['collabComEditFormRatingImg'],
-				[['src', wgCEScriptPath + '/skins/Comment/icons/good_inactive.png']]
-			);
-			$jq(ratingIcon3).bind( 'click', function() {
-				ceCommentForm.switchEditRating( '#collabComEditFormRating3', 1 );
-			});
-
-			$jq( ratingIcons ).append( ratingIcon1 );
-			$jq( ratingIcons ).append( ratingIcon2 );
-			$jq( ratingIcons ).append( ratingIcon3 );
-			$jq( ratingDiv ).append( $jq( ratingIcons ) );
+			$( '<img>', {
+				'id' : 'collabComEditFormRating1',
+				'class' : 'collabComEditFormRatingImg',
+				'src' : wgCEScriptPath + '/skins/Comment/icons/bad_inactive.png',
+				'click' :  function() {
+					ceCommentForm.switchEditRating( '#collabComEditFormRating1', -1 );
+				}
+			}).appendTo( ratingIcons );
+			$( '<img>', {
+				'id' : 'collabComEditFormRating2',
+				'class' : 'collabComEditFormRatingImg',
+				'src' : wgCEScriptPath + '/skins/Comment/icons/neutral_inactive.png',
+				'click' :  function() {
+					ceCommentForm.switchEditRating( '#collabComEditFormRating2', 0 );
+				}
+			}).appendTo( ratingIcons );
+			$( '<img>', {
+				'id' : 'collabComEditFormRating3',
+				'class' : 'collabComEditFormRatingImg',
+				'src' : wgCEScriptPath + '/skins/Comment/icons/good_inactive.png',
+				'click' :  function() {
+					ceCommentForm.switchEditRating( '#collabComEditFormRating3', 1 );
+				}
+			}).appendTo( ratingIcons );
+			ratingDiv.append( ratingIcons );
 		} // end rating
 
 		// textarea
-		textarea = this.createDOMElement( 'textarea',
-			'collabComEditFormTextarea',
-			null, [['rows', '5']], null, content
-		);
+		textarea = $( '<textarea>', {
+			'id' : 'collabComEditFormTextarea',
+			'rows' : '5',
+			'value' : content
+		})
 
 		// file attachments: create input element
-		if( typeof wgCEEnableAttachments !== 'undefined' ) {
-			fileAttachField = this.createDOMElement( 'input',
-				'collabComEditFormFileAttach', ['wickEnabled'],
-				[['pastens', 'true']],
-				null, $jq( elemSelector + ' .collabComResFileAttachSaved' ).html()
-			);
-			if( typeof wgCEEditUploadURL !== 'undefined' ) {
-				fileAttachSpan = this.createDOMElement( 'span', 'collabComEditFormFileAttachLink' );
-				fileAttachUploadLink = this.createDOMElement( 'a',
-					'collabComEditFormFileAttach',
-					['rmAlink'],
-					[['title', 'Upload file'],
-					['href', wgCEEditUploadURL]],
-					'Upload file'
-				);
-				$jq( fileAttachSpan ).append( $jq( fileAttachUploadLink ) );
+		if ( typeof wgCEEnableAttachments !== undefined ) {
+			tmp = document.createElement( 'input' );
+			tmp.setAttribute( 'type', 'text' );
+			fileAttachField = $( tmp ).addClass( 'wickEnabled' )
+				.attr( { 'pastens' : 'true', 'id' : 'collabComEditFormFileAttach' } )
+				.val( $( elemSelector + ' .collabComResFileAttachSaved' ).html() );
+			if ( typeof wgCEEditUploadURL !== 'undefined' ) {
+				fileAttachSpan = $( '<span>', {
+					'id' : 'collabComEditFormFileAttachLink'
+				});
+				$( '<a>', {
+					'id' : 'collabComEditFormFileAttach',
+					'class' : 'rmAlink',
+					'title' : 'Upload file',
+					'href' : wgCEEditUploadURL,
+					'text' : 'Upload file'
+				}).appendTo( fileAttachSpan );
 			}
 		}
-		
+
 		//buttons
-		buttonBox = this.createDOMElement( 'div' );
-		submitButton = this.createDOMElement( 'input',
-			'collabComEditFormSubmit', null, [['type', 'button']],
-			null,  ceLanguage.getMessage( 'ce_edit_button' )
-		);
-		$jq( submitButton ).bind( 'click', function() {
-			ceCommentForm.editExistingComment();
-		});
+		buttonBox = $( '<div>' );
+		tmp = document.createElement( 'input' );
+		tmp.setAttribute( 'type', 'button' );
+		$( tmp ).attr( 'id', 'collabComEditFormSubmit' )
+			.val( ceLanguage.getMessage( 'ce_edit_button' ) )
+			.click( function() {
+				ceCommentForm.editExistingComment();
+			})
+			.appendTo( buttonBox );
 
-		cancelSpan = this.createDOMElement( 'span', 'collabComEditFormCancel' );
-		$jq( cancelSpan ).bind( 'click', function() {
-			ceCommentForm.cancelCommentEditForm( pageName );
-		});
-		cancelText = document.createTextNode( ' | '
-			+ ceLanguage.getMessage( 'ce_cancel_button' ) 
-		);
-		$jq( cancelSpan ).append( $jq( cancelText ) );
-		$jq( buttonBox ).append( submitButton );
-		$jq( buttonBox ).append( cancelSpan );
+		$( '<span>', {
+			'id' : 'collabComEditFormCancel',
+			'text' : ' | ' + ceLanguage.getMessage( 'ce_cancel_button' ),
+			'click' : function() {
+				ceCommentForm.cancelCommentEditForm( pageName );
+			}
+		}).appendTo( buttonBox )
+
 		// message div
-		msgDiv = this.createDOMElement( 'div', 'collabComEditFormMessage' );
-		$jq( msgDiv ).css( 'display', 'none' );
+		msgDiv = $( '<div>', {
+			'id' : 'collabComEditFormMessage',
+			'style': 'display: none'
+		})
 
-		$jq( elemSelector + ' .collabComResText' ).html( '' );
-		if ( typeof( ratingDiv ) !== 'undefined' && ratingDiv !== null ) {
-			$jq( elemSelector + ' .collabComResText' ).append( ratingDiv );
+		$( elemSelector + ' .collabComResText' ).html( '' );
+		if ( typeof ratingDiv !== 'undefined' && ratingDiv !== null ) {
+			$( elemSelector + ' .collabComResText' ).append( ratingDiv );
 		}
-		$jq( elemSelector + ' .collabComResText' ).append( textarea );
-		$jq( elemSelector + ' .collabComResText' ).append( fileAttachField );
-		$jq( elemSelector + ' .collabComResText' ).append( fileAttachSpan );
-		$jq( elemSelector + ' .collabComResText' ).append( buttonBox );
+		$( elemSelector + ' .collabComResText' ).append( textarea );
+		$( elemSelector + ' .collabComResText' ).append( fileAttachField );
+		$( elemSelector + ' .collabComResText' ).append( fileAttachSpan );
+		$( elemSelector + ' .collabComResText' ).append( buttonBox );
 		
-		$jq( elemSelector + ' .collabComResText' ).append( msgDiv );
+		$( elemSelector + ' .collabComResText' ).append( msgDiv );
 
 		if ( ratingExistent ) {
 			ceCommentForm.switchEditRating( '#collabComEditFormRating' 
 				+ (parseInt(editRatingValue) + 2), editRatingValue
 			);
 		}
-		$jq( elemSelector + ' .collabComEditCancel' ).show();
-		$jq( elemSelector + ' .collabComResText' ).show();
-		$jq( elemSelector + ' .collabComEdit' ).hide();
-		$jq( elemSelector + ' .collabComReply' ).hide();
+		$( elemSelector + ' .collabComEditCancel' ).show();
+		$( elemSelector + ' .collabComResText' ).show();
+		$( elemSelector + ' .collabComEdit' ).hide();
+		$( elemSelector + ' .collabComReply' ).hide();
 		return true;
 	};
 	
@@ -464,13 +476,13 @@ function CECommentForm() {
 	 */
 	this.editExistingComment = function() {
 		//1. disable form tools
-		$jq( '#' + this.editCommentName + ' *:input').attr( 'disabled', 'disabled' );
+		$( '#' + this.editCommentName + ' *:input').attr( 'disabled', 'disabled' );
 
 		//2. and add pending indicator
-		if ( typeof( this.pendingIndicatorEF ) === 'undefined' 
+		if ( typeof this.pendingIndicatorEF === 'undefined' 
 			|| this.pendingIndicatorEF === null )
 		{
-			this.pendingIndicatorEF = new CPendingIndicator( $jq( '#collabComEditFormTextarea' ) );
+			this.pendingIndicatorEF = new CPendingIndicator( $( '#collabComEditFormTextarea' ) );
 		}
 		this.pendingIndicatorEF.show();
 
@@ -482,16 +494,16 @@ function CECommentForm() {
 		}
 
 		// textarea
-		var textArea = ( $jq( '#collabComEditFormTextarea' ).val() )?
-			$jq( '#collabComEditFormTextarea' ).val() : '';
+		var textArea = ( $( '#collabComEditFormTextarea' ).val() )?
+			$( '#collabComEditFormTextarea' ).val() : '';
 		// escape html chars
 		textArea.replace( /&/g, '&amp;' );
 		textArea.replace( /</g, '&lt;' );
 		textArea.replace( />/g, '&gt;' );
 		textArea = this.textEncode( textArea );
 		// change the comment person?
-		var commentPerson= $jq( '.collabComResUsername > a',
-			$jq( '#' + this.editCommentName ) ).html();
+		var commentPerson= $( '.collabComResUsername > a',
+			$( '#' + this.editCommentName ) ).html();
 		if ( !commentPerson ) {
 			commentPerson = '';
 		} else {
@@ -506,18 +518,18 @@ function CECommentForm() {
 			relatedComment = '|CommentRelatedComment=' + this.editCommentRelatedComment;
 		}
 		var editorString = '';
-		if ( wgUserName !== null && wgCEUserNS !== null ) {
-			editorString = '|CommentLastEditor=' + wgCEUserNS + ':' + wgUserName;
+		if ( mw.config.get( 'wgUserName' ) !== null && wgCEUserNS !== null ) {
+			editorString = '|CommentLastEditor=' + wgCEUserNS + ':' + mw.config.get( 'wgUserName' );
 		} else {
 			editorString = '|CommentLastEditor=';
 		}
 		// file attachments: process the content from the input field
-		var fileAttach = ( $jq( '#collabComEditFormFileAttach' ).val())? $jq( '#collabComEditFormFileAttach' ).val(): '';
+		var fileAttach = ( $( '#collabComEditFormFileAttach' ).val())? $( '#collabComEditFormFileAttach' ).val(): '';
 		var fileAttachString = '|AttachedArticles=' + fileAttach;
 
 		var pageContent = '{{Comment' +
 			commentPerson +
-			'|CommentRelatedArticle=' + wgPageName +
+			'|CommentRelatedArticle=' + mw.config.get( 'wgPageName' ) +
 			ratingString  +
 			'|CommentDatetime=##DATE##'+
 			'|CommentContent=' + textArea + 
@@ -525,7 +537,7 @@ function CECommentForm() {
 			editorString + 
 			fileAttachString + '|}}';
 		this.currentPageName = escape(
-			$jq( '.collabComPlain', $jq( '#' + this.editCommentName ) ).html()
+			$( '.collabComPlain', $( '#' + this.editCommentName ) ).html()
 		);
 		this.currentPageContent = escape( pageContent );
 		//do ajax call
@@ -549,20 +561,24 @@ function CECommentForm() {
 		this.pendingIndicatorEF.hide();
 		if ( valueEl.nodeType === 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue;
-			var comEditMessage = this.createDOMElement( 'div', 'collabComEditFormMessage' );
-			$jq( elemSelector ).before( $jq( comEditMessage ) );
+			var comEditMessage = $( '<div>', {
+				'id' : 'collabComEditFormMessage'
+			})
+			$( elemSelector ).before( comEditMessage );
 			if ( valueCode === '0' ) {
 				//fine - reset, hide and enable form again
-				$jq( comEditMessage ).show();
-				$jq( comEditMessage ).addClass( 'success' );
-				$jq( comEditMessage ).html( htmlmsg + ceLanguage.getMessage( 'ce_reload' ) );
+				comEditMessage.show();
+				comEditMessage.addClass( 'success' );
+				comEditMessage.html( htmlmsg + ceLanguage.getMessage( 'ce_reload' ) );
 				//add pending span
-				var pendingSpan = this.createDOMElement( 'span', 'collabComEditFormPending' , null, null, '&nbsp;' );
-				$jq( comEditMessage ).append( pendingSpan );
-				if ( typeof( this.pendingIndicatorMsg ) === 'undefined' 
+				$( '<span>', {
+					'id' : 'collabComEditFormPending',
+					'text' :' '
+				}).appendTo( comEditMessage )
+				if ( typeof this.pendingIndicatorMsg === 'undefined' 
 					|| this.pendingIndicatorMsg === null )
 				{
-					this.pendingIndicatorMsg = new CPendingIndicator( $jq( '#collabComEditFormPending' ) );
+					this.pendingIndicatorMsg = new CPendingIndicator( $( '#collabComEditFormPending' ) );
 				}
 				this.pendingIndicatorMsg.show();
 				// do a page reload with action=purge
@@ -579,9 +595,9 @@ function CECommentForm() {
 				return true;
 			} else if ( valueCode === '1' || valueCode === '2' ) {
 				//error, article already exists or permisson denied.
-				$jq( comEditMessage ).addClass( 'failure' );
-				$jq( comEditMessage ).html( htmlmsg );
-				$jq( elemSelector + ' *:input' ).removeAttr( 'disabled' );
+				comEditMessage.addClass( 'failure' );
+				comEditMessage.html( htmlmsg );
+				$( elemSelector + ' *:input' ).removeAttr( 'disabled' );
 			}
 		}
 		return false;
@@ -596,14 +612,14 @@ function CECommentForm() {
 		this.editCommentRelatedComment = null;
 		this.editRatingValue = null;
 		var elemSelector = '#' + pageName;
-		$jq( elemSelector ).css( 'background-color', '' );
-		$jq( elemSelector + ' .collabComResText' ).toggle();
-		$jq( elemSelector + ' .collabComResText' ).html(this.savedCommentContent);
-		$jq( elemSelector + ' .collabComResText' ).toggle();
-		$jq( elemSelector + ' .collabComResRight' ).css( 'width', '' );
-		$jq( elemSelector + ' .collabComEditCancel' ).hide();
-		$jq( elemSelector + ' .collabComEdit' ).toggle();
-		$jq( elemSelector + ' .collabComReply' ).show();
+		$( elemSelector ).css( 'background-color', '' );
+		$( elemSelector + ' .collabComResText' ).toggle();
+		$( elemSelector + ' .collabComResText' ).html(this.savedCommentContent);
+		$( elemSelector + ' .collabComResText' ).toggle();
+		$( elemSelector + ' .collabComResRight' ).css( 'width', '' );
+		$( elemSelector + ' .collabComEditCancel' ).hide();
+		$( elemSelector + ' .collabComEdit' ).toggle();
+		$( elemSelector + ' .collabComReply' ).show();
 		return true;
 	};
 
@@ -611,16 +627,16 @@ function CECommentForm() {
 	 * 
 	 */
 	this.replyCommentForm = function( pageName ) {
-		var container = $jq( '#' + pageName );
-		this.replyCommentName = $jq( '.collabComPlain', container ).html();
-		var commentForm = $jq( '#collabComForm' );
-		$jq( '#collabComFormResetbuttonID' ).bind( 'click', function() {
+		var container = $( '#' + pageName );
+		this.replyCommentName = $( '.collabComPlain', container ).html();
+		var commentForm = $( '#collabComForm' );
+		$( '#collabComFormResetbuttonID' ).bind( 'click', function() {
 			commentForm.hide();
 			commentForm.css( 'marginLeft', '' );
-			$jq( '#collabComFormHeader' ).append( commentForm );
+			$( '#collabComFormHeader' ).append( commentForm );
 		});
 		var resMargin = container.css( 'margin-left' );
-		if ( typeof( resMargin ) !== 'undefined' ) {
+		if ( typeof resMargin !== 'undefined' ) {
 			var newMargin = ( parseInt( resMargin ) + 30 );
 			commentForm.css( 'marginLeft', newMargin );
 		} else {
@@ -681,13 +697,13 @@ function CECommentForm() {
 		this.replyCommentName = null;
 		if (this.ratingValue !== null) {
 			var oldhtmlid = '#collabComFormRating' + String( this.ratingValue + 2 );
-			$jq( oldhtmlid ).attr( 'src', $jq( oldhtmlid ).attr(
+			$( oldhtmlid ).attr( 'src', $( oldhtmlid ).attr(
 				'src' ).replace( /_active/g, '_inactive' )
 			);
 			this.ratingValue = null;
 		}
-		$jq( '#collabComForm' ).get( 0 ).reset();
-		$jq( '#collabComForm' ).toggle( 'slow' );
+		$( '#collabComForm' ).get( 0 ).reset();
+		$( '#collabComForm' ).toggle( 'slow' );
 	};
 
 	/**
@@ -696,7 +712,7 @@ function CECommentForm() {
 	this.selectTextarea = function() {
 		//check if we still have the form default in here
 		if ( this.textareaIsDefault ) {
-			$jq( '#collabComFormTextarea' ).select();
+			$( '#collabComFormTextarea' ).select();
 		}
 	};
 
@@ -711,10 +727,10 @@ function CECommentForm() {
 	 * switch for rating
 	 */
 	this.switchRating = function( htmlid, ratingValue ) {
-		var ratingHTML = $jq( htmlid );
+		var ratingHTML = $( htmlid );
 		var ratingImg = wgCEScriptPath + '/skins/Comment/icons/';
 		var oldhtmlid = '#collabComFormRating' + String( this.ratingValue + 2 );
-		$jq( oldhtmlid ).attr( 'src', $jq( oldhtmlid ).attr(
+		$( oldhtmlid ).attr( 'src', $( oldhtmlid ).attr(
 			'src' ).replace( /_active/g, '_inactive' )
 		);
 		if ( this.ratingValue == ratingValue ) {
@@ -738,10 +754,10 @@ function CECommentForm() {
 	 * switch for rating (in edit mode)
 	 */
 	this.switchEditRating = function( htmlid, ratingValue ) {
-		var ratingHTML = $jq( htmlid );
+		var ratingHTML = $( htmlid );
 		var ratingImg = wgCEScriptPath + '/skins/Comment/icons/';
 		var oldhtmlid = '#collabComEditFormRating' + String( this.editRatingValue + 2 );
-		$jq( oldhtmlid ).attr( 'src', $jq( oldhtmlid ).attr(
+		$( oldhtmlid ).attr( 'src', $( oldhtmlid ).attr(
 			'src' ).replace( /_active/g, '_inactive' )
 		);
 		if ( this.editRatingValue == ratingValue ) {
@@ -766,8 +782,8 @@ function CECommentForm() {
 	 * sets the corresponding text in the comment header
 	 */
 	this.toggleComments = function() {
-		var comToggle = $jq( '#collabComToggle' );
-		var commentResults = $jq( '#collabComResults' );
+		var comToggle = $( '#collabComToggle' );
+		var commentResults = $( '#collabComResults' );
 		var newComToggleText = '';
 		if ( commentResults.css( 'display' ) === 'block' ) {
 			newComToggleText = ceLanguage.getMessage( 'ce_com_show' );
@@ -777,7 +793,7 @@ function CECommentForm() {
 		comToggle.html( ' | ' + newComToggleText );
 		commentResults.toggle( 'slow' );
 		//hide "Add" and "View"
-		$jq( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' ).toggle();
+		$( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' ).toggle();
 		return true;
 	};
 
@@ -786,7 +802,7 @@ function CECommentForm() {
 	 * Determines which view is requested and calls the appropriate function
 	 */
 	this.toggleView = function() {
-		var newView = parseInt( $jq( '#collabComViewToggle option:selected' ).val() );
+		var newView = parseInt( $( '#collabComViewToggle option:selected' ).val() );
 		if ( newView === this.currentView ) {
 			return true;
 		} else {
@@ -807,10 +823,10 @@ function CECommentForm() {
 	 * @return true
 	 */
 	this.toggleFileAttachment = function( commentID ) {
-		if( typeof commentID !== 'string' || commentID === '' ) {
-			$jq( '.collabComResFileAttach' ).toggle( 'slow' );
+		if ( typeof commentID !== 'string' || commentID === '' ) {
+			$( '.collabComResFileAttach' ).toggle( 'slow' );
 		} else {
-			$jq( ' .collanComResFileAttach', $jq( '#' + commentID ) ).toggle( 'slow' );
+			$( ' .collanComResFileAttach', $( '#' + commentID ) ).toggle( 'slow' );
 		}
 		return true;
 	};
@@ -825,33 +841,33 @@ function CECommentForm() {
 		if ( this.editMode ) {
 			this.cancelCommentEditForm( this.editCommentName );
 		}
-		$jq( '#collabComResults' ).html( $jq( this.savedStructure.html() ) );
+		$( '#collabComResults' ).html( $( this.savedStructure.html() ) );
 		// rebind events
-		var resultComments = $jq( '.collabComRes' );
-		$jq.each( resultComments, function( i, resCom ) {
-			var resComID = $jq( resCom ).attr( 'id' );
+		var resultComments = $( '.collabComRes' );
+		$.each( resultComments, function( i, resCom ) {
+			var resComID = $( resCom ).attr( 'id' );
 			// deletion
-			$jq( '.collabComDel', resCom ).bind( 'click', function() {
-				$jq( '#' + resComID ).css(
+			$( '.collabComDel', resCom ).bind( 'click', function() {
+				$( '#' + resComID ).css(
 					'background-color', '#FAFAD2'
 				);
 			});
 			// edit
-			$jq( '.collabComEdit', resCom ).bind( 'click', function() {
+			$( '.collabComEdit', resCom ).bind( 'click', function() {
 				ceCommentForm.editCommentForm( resComID );
 			});
 			// reply
-			$jq( '.collabComReply', resCom ).bind( 'click', function() {
+			$( '.collabComReply', resCom ).bind( 'click', function() {
 				ceCommentForm.replyCommentForm( resComID );
 			});
 		});
 		this.currentView = 1;
 		// overlays
 		this.bindOverlays();
-		if( $jq( '#collabComFileToggle > input' ).attr( 'checked' ) === false
-			&& $jq( '.collabComResFileAttach:first' ).filter( ':visible' ) )
+		if ( $( '#collabComFileToggle > input' ).attr( 'checked' ) === false
+			&& $( '.collabComResFileAttach:first' ).filter( ':visible' ) )
 		{
-			$jq( '.collabComResFileAttach' ).hide();
+			$( '.collabComResFileAttach' ).hide();
 		}
 		return true;
 	};
@@ -863,25 +879,25 @@ function CECommentForm() {
 	 */
 	this.showThreaded = function() {
 		// format comments
-		$jq( '.collabComRes' ).each( function( i, resCom ) {
-			var superComID = $jq( '.collabComResInfoSuper', resCom ).html();
+		$( '.collabComRes' ).each( function( i, resCom ) {
+			var superComID = $( '.collabComResInfoSuper', resCom ).html();
 			if ( superComID ) {
-				var resMargin = $jq( '#' + superComID ).css( 'margin-left' );
+				var resMargin = $( '#' + superComID ).css( 'margin-left' );
 				var newMargin = '30';
-				if ( typeof( resMargin ) !== 'undefined' ) {
+				if ( typeof resMargin !== 'undefined' ) {
 					newMargin = ( parseInt( resMargin ) + 30 );
 				}
 				// check if there are "child" comments
 				var name = ceCommentForm.getLastChildComment( superComID );
 				if ( name !== superComID ) {
 					// child found. add behind.
-					$jq( '#' + name ).after( $jq( resCom ) );
+					$( '#' + name ).after( $( resCom ) );
 				} else {
 					// no child found
-					$jq( '#' + superComID ).after( $jq( resCom ) );
+					$( '#' + superComID ).after( $( resCom ) );
 				}
-				$jq( resCom ).css( 'margin-left', newMargin + 'px' );
-				$jq( resCom ).addClass( 'comRearranged' );
+				$( resCom ).css( 'margin-left', newMargin + 'px' );
+				$( resCom ).addClass( 'comRearranged' );
 			}
 		});
 		this.currentView = 0;
@@ -895,13 +911,13 @@ function CECommentForm() {
 	 */
 	this.getLastChildComment = function( commentID ) {
 		var lastChildComment;
-		var childComments = $jq( '.comRearranged' ).filter( function() {
-			var indSuperComID = $jq( '.collabComResInfoSuper', this );
+		var childComments = $( '.comRearranged' ).filter( function() {
+			var indSuperComID = $( '.collabComResInfoSuper', this );
 			return indSuperComID.html() == commentID;
 		});
 		if ( childComments.length > 0 ) {
 			lastChildComment = childComments[childComments.length-1];
-			return this.getLastChildComment( $jq( lastChildComment ).attr( 'id' ) );
+			return this.getLastChildComment( $( lastChildComment ).attr( 'id' ) );
 		} else {
 			return commentID;
 		}
@@ -912,16 +928,16 @@ function CECommentForm() {
 	 * and the average rating value and stores them in object variables.
 	 */
 	this.setCommentQuantities = function() {
-		this.numOfComments = $jq( '.collabComRes' ).length;
-		this.numOfRatings = $jq( '.collabComResRatingIcon' ).length;
+		this.numOfComments = $( '.collabComRes' ).length;
+		this.numOfRatings = $( '.collabComResRatingIcon' ).length;
 		if ( this.numOfRatings === 0 ) {
 			return true;
 		}
 		var avgRating = 0;
-		$jq( '.collabComResRatingIcon' ).each( function() {
-			if ( $jq( 'img', this ).attr( 'src' ).indexOf( 'Bad' ) >=0 ) {
+		$( '.collabComResRatingIcon' ).each( function() {
+			if ( $( 'img', this ).attr( 'src' ).indexOf( 'Bad' ) >=0 ) {
 				avgRating--;
-			} else if ( $jq( 'img', this ).attr( 'src' ).indexOf( 'Good' ) >=0 ) {
+			} else if ( $( 'img', this ).attr( 'src' ).indexOf( 'Good' ) >=0 ) {
 				avgRating++;
 			}
 		});
@@ -933,12 +949,12 @@ function CECommentForm() {
 	 * Builds the header for handling comments 
 	 */
 	this.buildHeader = function() {
-		//var comHeader = $jq('.collabComInternHeader');
+		//var comHeader = $('.collabComInternHeader');
 		this.setCommentQuantities();
 		var expandedHead = this.addHeaderText();
 		if ( expandedHead === true ) {
 			this.addCommentToggler();
-			if ( typeof( wgCECommentsDisabled ) === 'undefined'
+			if ( typeof wgCECommentsDisabled === 'undefined'
 				|| wgCECommentsDisabled === false )
 			{
 				this.addFormToggler( true ); //remove header
@@ -971,7 +987,7 @@ function CECommentForm() {
 	 */
 	this.addDefaultHeaderText = function() {
 		this.addFormToggler( false );
-		$jq( '#collabComFormToggle' ).css( 'font-weight', 'bold');
+		$( '#collabComFormToggle' ).css( 'font-weight', 'bold');
 		return false;
 	};
 
@@ -981,12 +997,11 @@ function CECommentForm() {
 	 * @returns true
 	 */
 	this.addExtendedHeaderText = function() {
-		var headerText = ceLanguage.getMessage( 'ce_com_ext_header' );
-		headerText = headerText + ' (' + this.numOfComments + ')';
-		var headerSpan = this.createDOMElement( 'span',
-			null, ['collabComInternComment'], null, headerText
-		);
-		$jq( '.collabComInternHeader' ).append( $jq( headerSpan ) );
+		$( '<span>', {
+			'class' : 'collabComInternComment',
+			'text' : ceLanguage.getMessage( 'ce_com_ext_header' ) +
+				' (' + this.numOfComments + ')'
+		}).appendTo( '.collabComInternHeader' );
 		return true;
 	};
 
@@ -994,16 +1009,14 @@ function CECommentForm() {
 	 * This function adds the toggle element for the comments.
 	 */
 	this.addCommentToggler = function() {
-		var toggleSpan = this.createDOMElement( 'span', 
-			'collabComToggle',
-			null,
-			[['title', ceLanguage.getMessage( 'ce_com_toggle_tooltip' )]],
-			' | ' + ceLanguage.getMessage( 'ce_com_hide' ) 
-		);
-		$jq( toggleSpan ).bind( 'click', function() {
-			ceCommentForm.toggleComments();
-		});
-		$jq( '.collabComInternHeader' ).append( $jq( toggleSpan ) );
+		$( '<span>', {
+			'id' : 'collabComToggle',
+			'title' : ceLanguage.getMessage( 'ce_com_toggle_tooltip' ),
+			'text' : ' | ' + ceLanguage.getMessage( 'ce_com_hide' ),
+			'click': function(){
+				ceCommentForm.toggleComments();
+			}
+		}).appendTo( '.collabComInternHeader' );
 		return true;
 	};
 	
@@ -1014,26 +1027,24 @@ function CECommentForm() {
 	 */
 	this.addFormToggler = function( withPipe ) {
 		var toggleSpan ='';
-		if( typeof( wgCEUserCanEdit ) !== 'undefined' && wgCEUserCanEdit === false ) {
-			toggleSpan = this.createDOMElement( 'span',
-				'collabComFormToggle',
-				null,
-				[['style', 'color: grey; cursor: default;'],
-				['title', ceLanguage.getMessage( 'ce_form_toggle_no_edit_tooltip' )]],
-				( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
-			);
+		if ( typeof wgCEUserCanEdit !== 'undefined' && wgCEUserCanEdit === false ) {
+			toggleSpan = $( '<span>', {
+				'id' : 'collabComFormToggle',
+				'style' : 'color: grey; cursor: default;',
+				'title' : ceLanguage.getMessage( 'ce_form_toggle_no_edit_tooltip' ),
+				'text' : ( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
+			});
 		} else {
-			toggleSpan = this.createDOMElement( 'span',
-				'collabComFormToggle',
-				null,
-				[['title', ceLanguage.getMessage( 'ce_form_toggle_tooltip' )]],
-				( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' )
-			);
-			$jq( toggleSpan ).bind( 'click', function() {
-				$jq( '#collabComForm' ).toggle( 'slow' );
+			toggleSpan = $( '<span>', {
+				'id' : 'collabComFormToggle',
+				'title' : ceLanguage.getMessage( 'ce_form_toggle_tooltip' ),
+				'text' : ( withPipe? ' | ' : ' ' ) + ceLanguage.getMessage( 'ce_com_default_header' ),
+				'click' : function() {
+					$( '#collabComForm' ).toggle( 'slow' );
+				}
 			});
 		}
-		$jq( '.collabComInternHeader' ).append( $jq( toggleSpan ) );
+		$( '.collabComInternHeader' ).append( $( toggleSpan ) );
 		return true;
 	};
 
@@ -1044,39 +1055,38 @@ function CECommentForm() {
 	 */
 	this.addHeaderView = function() {
 		// "change view" functionality
-		var viewSpan = this.createDOMElement( 'span',
-			'collabComViewToggle',
-			null,
-			null,
-			' | ' + ceLanguage.getMessage( 'ce_com_view' ) + ': '
-		);
+		var viewSpan = $( '<span>', {
+			'id' : 'collabComViewToggle',
+			'text' : ' | ' + ceLanguage.getMessage( 'ce_com_view' ) + ': '
+		});
 
-		var selectEl = this.createDOMElement( 'select' );
-		$jq( selectEl ).bind( 'change', function() {
-			ceCommentForm.toggleView();
+		var selectEl = $( '<select>', {
+			'change' : function() {
+				ceCommentForm.toggleView();
+			}
 		});
 		try {
-			selectEl.add( new Option(
+			selectEl.get(0).add( new Option(
 				ceLanguage.getMessage( 'ce_com_view_threaded' ),
 				0, true, true), null
 			); // standards compliant; doesn't work in IE
 		} catch(ex) {
-			selectEl.add( new Option(
+			selectEl.get(0).add( new Option(
 				ceLanguage.getMessage( 'ce_com_view_threaded' ),
 				0, true, true)
 			); // IE only
 		}
 		try {
-			selectEl.add( new Option(
+			selectEl.get(0).add( new Option(
 				ceLanguage.getMessage( 'ce_com_view_flat' ), 1 ), null
 			); // standards compliant; doesn't work in IE
 		} catch(ex) {
-			selectEl.add( new Option(
+			selectEl.get(0).add( new Option(
 				ceLanguage.getMessage( 'ce_com_view_flat' ), 1 )
 			); // IE only
 		}
-		$jq( viewSpan ).append( $jq( selectEl ) );
-		$jq( '.collabComInternHeader' ).append( $jq( viewSpan ) );
+		$( viewSpan ).append( $( selectEl ) );
+		$( '.collabComInternHeader' ).append( $( viewSpan ) );
 		this.currentView = 0;
 		return true;
 	};
@@ -1088,29 +1098,25 @@ function CECommentForm() {
 	 */
 	this.addFileToggler = function() {
 		// we can skip this if there are no file attachments at all.
-		if( $jq('.collabComResFileAttach').length === 0 ) {
+		if ( $('.collabComResFileAttach').length === 0 ) {
 			return false;
 		}
-		var fileSpan = this.createDOMElement( 'span',
-			'collabComFileToggle',
-			null,
-			null,
-			' | ' + ceLanguage.getMessage( 'ce_com_file_toggle' ) + ': '
-		);
+		var fileSpan = $( '<span>', {
+			'id' : 'collabComFileToggle',
+			'text' : ' | ' + ceLanguage.getMessage( 'ce_com_file_toggle' ) + ': '
+		})
 		var checked = null;
-		if( $jq('.collabComResFileAttach:first').filter(':visible') ) {
+		if ( $('.collabComResFileAttach:first').filter(':visible') ) {
 			checked = ['checked', 'checked'];
 		}
-		var checkEl = this.createDOMElement( 'input',
-			'id',
-			['classes'],
-			[['type', 'checkbox'], checked]
-		);
-		$jq( fileSpan ).append( $jq( checkEl ) );
-		$jq( checkEl ).bind( 'change', function() {
-			ceCommentForm.toggleFileAttachment();
-		});
-		$jq( '.collabComInternHeader' ).append( $jq( fileSpan ) );
+		var tmp = document.createElement( 'input' );
+		tmp.setAttribute( 'type', 'checkbox' );
+		$( tmp ).attr( 'ckecked', checked )
+			.change( function() {
+				ceCommentForm.toggleFileAttachment();
+			})
+			.appendTo( $( fileSpan ) );
+		$( '.collabComInternHeader' ).append( $( fileSpan ) );
 		return true;
 	};
 
@@ -1119,27 +1125,27 @@ function CECommentForm() {
 	 */
 	this.addHeaderRating = function() {
 		if ( this.numOfRatings > 0 ) {
-			var ratingSpan = this.createDOMElement( 'span',
-				null,
-				['collabComInternAvg'],
-				null,
-				ceLanguage.getMessage( 'ce_com_rating_text' ) + ' ' + 
-				this.numOfRatings + ' ' + ceLanguage.getMessage( 'ce_com_rating_text2' )
-			);
+			var ratingSpan = $( '<span>', {
+				'class' : 'collabComInternAvg',
+				'text' : ceLanguage.getMessage( 'ce_com_rating_text' ) + ' ' + 
+					this.numOfRatings + ' ' + ceLanguage.getMessage( 'ce_com_rating_text2' )
+			});
 
-			var ratingIconDiv = this.createDOMElement( 'div', null, ['collabComInternRatingIcon'] );
-			var ratingIcon = this.createDOMElement( 'img' );
+			var ratingIconDiv = $( '<div>', {
+				'class' : 'collabComInternRatingIcon'
+			});
+			var ratingIcon = $( '<img>' );
 			var ratingIconSrc = wgCEScriptPath + '/skins/Comment/icons/';
 			if ( this.averageRating < -0.33 ) {
-				$jq( ratingIcon ).attr( 'src', ratingIconSrc + 'bad_active.png' );
+				$( ratingIcon ).attr( 'src', ratingIconSrc + 'bad_active.png' );
 			} else if ( this.averageRating >= -0.33 && this.averageRating <= 0.33 ) {
-				$jq( ratingIcon ).attr( 'src', ratingIconSrc + 'neutral_active.png' );
+				$( ratingIcon ).attr( 'src', ratingIconSrc + 'neutral_active.png' );
 			} else if ( this.averageRating > 0.33 ) {
-				$jq( ratingIcon ).attr( 'src', ratingIconSrc + 'good_active.png' );
+				$( ratingIcon ).attr( 'src', ratingIconSrc + 'good_active.png' );
 			}
-			$jq( ratingIconDiv ).append( $jq( ratingIcon ) );
-			$jq( ratingSpan ).append( $jq( ratingIconDiv ) );
-			$jq( '.collabComInternHeader' ).append( $jq( ratingSpan ) );
+			$( ratingIconDiv ).append( $( ratingIcon ) );
+			$( ratingSpan ).append( $( ratingIconDiv ) );
+			$( '.collabComInternHeader' ).append( $( ratingSpan ) );
 		}
 		return true;
 	};
@@ -1148,58 +1154,60 @@ function CECommentForm() {
 	 * Creates the complete overlay structure and returns it.
 	 */
 	this.createOverlay = function( num, pageName ) {
-		var overlayName = 'overlay_' + num;
+		var overlayName = 'overlay_' + num,
+			tmp,
+			overlayDivEl,
+			overlayFullDeleteDiv,
+			overlayFullDeleteDivContent;
 		// divs
-		var overlayDivEl = this.createDOMElement( 'div', overlayName, ['ceOverlay'] );
-		var overlayDivDetailsEl = this.createDOMElement( 'div', null, ['ceOverlayDetails'] );
-		$jq( overlayDivEl ).append( $jq( overlayDivDetailsEl ) );
-		var overlayDivContent = document.createTextNode( ceLanguage.getMessage( 'ce_delete' ) );
-		$jq( overlayDivDetailsEl ).append( $jq( overlayDivContent ) );
-
-		var overlayFullDeleteDiv = this.createDOMElement( 'div', null, ['ceOverlayFullDeleteDiv'] );
-		var overlayFullDeleteCheckBox = this.createDOMElement( 'input',
-			null,
-			['ceOverlayFullDeleteCheckbox'],
-			[['type', 'checkbox'],['name', 'ceFullDelete']]
-		);
-		$jq( overlayFullDeleteDiv ).append( $jq( overlayFullDeleteCheckBox ) );
-		var overlayFullDeleteDivContent = document.createTextNode(
+		overlayDivEl = $( '<div>', {
+			'id' : overlayName,
+			'class' : 'ceOverlay'
+		});
+		$( '<div>', {
+			'class' : 'ceOverlayDetails',
+			'text' : ceLanguage.getMessage( 'ce_delete' )
+		}).appendTo( overlayDivEl );
+		overlayFullDeleteDiv = $( '<div>', {
+			'class' : 'ceOverlayFullDeleteDiv'
+		}).appendTo( overlayDivEl );
+		tmp = document.createElement( 'input' );
+		tmp.setAttribute( 'type', 'checkbox' );
+		$( tmp ).addClass( 'ceOverlayFullDeleteCheckbox')
+			.attr( 'name', 'ceFullDelete' )
+			.appendTo( overlayFullDeleteDiv );
+		overlayFullDeleteDivContent = document.createTextNode(
 			ceLanguage.getMessage( 'ce_full_delete' ) 
 		);
-		$jq( overlayFullDeleteDiv ).append( $jq( overlayFullDeleteDivContent ) );
-		$jq( overlayDivEl ).append( $jq( overlayFullDeleteDiv ) );
+		overlayFullDeleteDiv.append( overlayFullDeleteDivContent );
 
 		// cancel button
-		var cancelButtonDiv = this.createDOMElement( 'div', null, ['ceOverlayCancelButtonDiv'] );
-		$jq( cancelButtonDiv ).bind( 'click', function() {
-			$jq( '#' + pageName ).css( 'background-color', '' );
+		var cancelButtonDiv = $( '<div>', {
+			'class' : 'ceOverlayCancelButtonDiv',
+			'click' : function() {
+				$( '#' + pageName ).css( 'background-color', '' );
+			}
 		});
-		var cancelButton = this.createDOMElement( 'input',
-			null,
-			['ceOverlayCancelButton', 'close'],
-			[['type', 'button']],
-			null,
-			ceLanguage.getMessage( 'ce_cancel_button' )
-		);
-		$jq( cancelButtonDiv ).append( $jq( cancelButton ) );
-		$jq( overlayDivEl ).append( $jq( cancelButtonDiv ) );
+		tmp = document.createElement( 'input' );
+		tmp.setAttribute( 'type', 'button' );
+		$( tmp ).addClass( 'ceOverlayCancelButton close' )
+			.val( ceLanguage.getMessage( 'ce_cancel_button' ) )
+			.appendTo( cancelButtonDiv );
+		overlayDivEl.append( cancelButtonDiv );
 
 		// delete button
-		var deleteButtonDiv = this.createDOMElement( 'div',
-			null, ['ceOverlayDeleteButtonDiv'] 
-		);
-		$jq( deleteButtonDiv ).bind( 'click', function() {
+		var deleteButtonDiv = $( '<div>', {
+			'class' : 'ceOverlayDeleteButtonDiv',
+			'click' : function() {
 			ceCommentForm.deleteComment( escape( pageName ), overlayName );
+			}
 		});
-		var deleteButton = this.createDOMElement( 'input',
-			null,
-			['ceOverlayDeleteButton'],
-			[['type', 'button']],
-			null,
-			ceLanguage.getMessage( 'ce_delete_button' ) 
-		);
-		$jq( deleteButtonDiv ).append( $jq( deleteButton ) );
-		$jq( overlayDivEl ).append( $jq( deleteButtonDiv ) );
+		tmp = document.createElement( 'input' );
+		tmp.setAttribute( 'type', 'button' );
+		$( tmp ).addClass( 'ceOverlayDeleteButton' )
+			.val( ceLanguage.getMessage( 'ce_delete_button' ) )
+			.appendTo( deleteButtonDiv );
+		overlayDivEl.append( deleteButtonDiv );
 		return overlayDivEl;
 	};
 	
@@ -1207,14 +1215,14 @@ function CECommentForm() {
 	 *
 	 */
 	this.bindOverlays = function() {
-		var overlays = $jq('.collabComDel');
-		$jq.each( overlays, function( i, overlay ) {
-			var overlayID = $jq(overlay).attr('id');
-			$jq(overlay).overlay({
+		var overlays = $('.collabComDel');
+		$.each( overlays, function( i, overlay ) {
+			var overlayID = $(overlay).attr('id');
+			$(overlay).overlay({
 				api: true,
 				// when overlay is closed, remove color highlighting
 				onClose: function() {
-					$jq( '.collabComRes' ).removeClass( 'collabComDelSelected' );
+					$( '.collabComRes' ).removeClass( 'collabComDelSelected' );
 				},
 				onBeforeLoad: function() {
 					ceCommentForm.controlFullDeleteOptions( 
@@ -1229,13 +1237,13 @@ function CECommentForm() {
 	 *
 	 */
 	this.controlFullDeleteOptions = function( overlay, overlayNum, commentID ) {
-		if ( typeof( wgCEEnableFullDeletion ) !== 'undefined' && this.currentView === 0
-			&& ( typeof( wgCEUserIsSysop ) !== 'undefined'
+		if ( typeof wgCEEnableFullDeletion !== 'undefined' && this.currentView === 0
+			&& ( typeof wgCEUserIsSysop !== 'undefined'
 			&& wgCEUserIsSysop !== null && wgCEUserIsSysop !== false ) )
 		{
-			$jq( '.ceOverlayFullDeleteDiv', $jq( '#overlay_' + overlayNum ) ).show();
+			var moooo = $( '.ceOverlayFullDeleteDiv', $( '#overlay_' + overlayNum ) ).show();
 		} else {
-			$jq( '.ceOverlayFullDeleteDiv', $jq( '#overlay_' + overlayNum ) ).hide();
+			$( '.ceOverlayFullDeleteDiv', $( '#overlay_' + overlayNum ) ).hide();
 		}
 		return true;
 	}
@@ -1255,55 +1263,12 @@ function CECommentForm() {
 			preloadImage.src = preloadImages[i];
 		}
 	};
-
-	/**
-	 * MW 1.16.x comes with jQuery version 1.3.2
-	 * This framework is missing the fancy way
-	 * of adding new DOM elements as described in 
-	 * http://api.jquery.com/jQuery/#jQuery2.
-	 * So this function takes care about this.
-	 * 
-	 * @param tag string
-	 * @param id string
-	 * @param classes Array
-	 * @param attribs multi-dim Array
-	 * @param htmlcontent string
-	 * @param value string
-	 * 
-	 * @return DOM Element or false if no tag has been passed.
-	 **/
-	this.createDOMElement = function( tag, id, classes, attribs, htmlcontent, value ) {
-		if ( tag === null || typeof( tag ) !== 'string' ) {
-			return false;
-		}
-		var el = document.createElement( tag );
-		if ( id !== null && typeof( id ) === 'string' ) {
-			$jq( el ).attr( 'id', id );
-		}
-		if ( classes !== null && typeof( classes ) === 'object' ) {
-			$jq( classes ).each( function() {
-				$jq( el ).addClass( this );
-			});
-		}
-		if ( attribs !== null && typeof( attribs ) === 'object' ) {
-			$jq( attribs ).each( function() {
-				$jq( el ).attr( this[0], this[1] );
-			});
-		}
-		if ( htmlcontent !== null && typeof( htmlcontent ) === 'string' ) {
-			$jq( el ).html( htmlcontent );
-		}
-		if ( value !== null && typeof( value ) === 'string') {
-			$jq( el ).val( value );
-		}
-		return el;
-	};
 }
 //Set global variable for accessing comment form functions
 var ceCommentForm;
 
 //Initialize Comment functions if page is loaded
-$jq(document).ready(
+$(document).ready(
 	function() {
 		ceCommentForm = new CECommentForm();
 	}
@@ -1315,148 +1280,137 @@ $jq(document).ready(
  * It also creates Edit and Delete links for users that own the appropriate right.
  * The current DOM structure is saved to be reused in "flat view".
  */
-$jq(document).ready(
+$(document).ready(
 	function() {
 		var	domElement,
-			collabFormExists = $jq( '#collabComForm' ).length > 0 ? true : false;
-		if( collabFormExists ) {
+			collabFormExists = $( '#collabComForm' ).length > 0 ? true : false;
+		if ( collabFormExists ) {
 			ceCommentForm.preloadImages();
 		}
 		// format comments
-		var resultComments = $jq( '.collabComRes' );
+		var resultComments = $( '.collabComRes' );
 		var overlayID = 0;
-		$jq.each( resultComments, function( i, resCom ) {
-			var resComID = $jq( resCom ).attr( 'id' );
-			var resComDeleted = $jq( '.collabComResDeletion', resCom );
+		$.each( resultComments, function( i, resCom ) {
+			var resComID = $( resCom ).attr( 'id' );
+			var resComDeleted = $( '.collabComResDeletion', resCom );
 			if ( resComDeleted.html() === 'true' ) {
-				$jq( '.collabComResText', resCom ).addClass( 'collabComDeleted' );
-				$jq( '.collabComResPerson img', resCom ).attr(
+				$( '.collabComResText', resCom ).addClass( 'collabComDeleted' );
+				$( '.collabComResPerson img', resCom ).attr(
 					'src', wgCEScriptPath + '/skins/Comment/icons/DeletedComment.png'
 				);
-				$jq( '.collabComResRating', resCom ).remove();
+				$( '.collabComResRating', resCom ).remove();
 				// this comment has been marked as deleted -> step out
 				return true;
 			}
-			var resComEdit = $jq( '.collabComEditInfo', resCom );
+			var resComEdit = $( '.collabComEditInfo', resCom );
 			if ( resComEdit ) {
-				$jq( '.collabComEditorPre', resCom ).html(
+				$( '.collabComEditorPre', resCom ).html(
 					ceLanguage.getMessage( 'ce_edit_intro' )
 				);
-				$jq( '.collabComEditDatePre', resCom ).html(
+				$( '.collabComEditDatePre', resCom ).html(
 					ceLanguage.getMessage( 'ce_edit_date_intro' )
 				);
 			}
-			var commentPerson= $jq( '.collabComResUsername > a', resCom ).html();
+			var commentPerson= $( '.collabComResUsername > a', resCom ).html();
 			if ( !commentPerson ) {
 				commentPerson = '';
 			} else {
 				commentPerson = commentPerson.split( ':' );
 				commentPerson = commentPerson.pop();
 			}
-			if ( ( typeof( wgCEUserIsSysop ) !== 'undefined'
+			if ( ( typeof wgCEUserIsSysop !== 'undefined'
 				&& wgCEUserIsSysop !== null && wgCEUserIsSysop !== false )
-				|| (wgUserName !== null && commentPerson == wgUserName ) )
+				|| (mw.config.get( 'wgUserName' ) !== null
+				&& commentPerson === mw.config.get( 'wgUserName' ) ) )
 			{
 				//Overlay for deleting comments
 				var overlayDiv = ceCommentForm.createOverlay( overlayID, resComID );
-				domElement = ceCommentForm.createDOMElement( 'span',
-					'ceDel' + resComID,
-					['collabComDel'],
-					[['title', ceLanguage.getMessage( 'ce_delete_title' )],
-					['rel', '#overlay_' + overlayID++]]
-				);
-				$jq( domElement ).bind( 'click', function() {
-					$jq( '#' + resComID ).addClass( 'collabComDelSelected' );
+				domElement = $( '<span>', {
+					'id' : 'ceDel' + resComID,
+					'class' : 'collabComDel',
+					'title' : ceLanguage.getMessage( 'ce_delete_title' ),
+					'rel' : '#overlay_' + overlayID++,
+					'click' : function() {
+						$( '#' + resComID ).addClass( 'collabComDelSelected' );
+					}
 				});
-				var delImgEl = ceCommentForm.createDOMElement( 'img',
-					null,
-					['collabComDeleteImg'],
-					[['src', wgCEScriptPath + '/skins/Comment/icons/Delete_button.png']]
-				);
-				$jq( domElement ).append( $jq( delImgEl ) );
-				$jq( '.collabComResDate', resCom ).after( domElement );
-				$jq( '#collabComResults' ).after( overlayDiv );
+				$( '<img>', {
+					'class' : 'collabComDeleteImg',
+					'src' : wgCEScriptPath + '/skins/Comment/icons/Delete_button.png'
+				}).appendTo( domElement );
+				$( '.collabComResDate', resCom ).after( domElement );
+				$( '#collabComResults' ).after( overlayDiv );
 
-				if ( typeof( wgCECommentsDisabled ) === 'undefined'
+				if ( typeof wgCECommentsDisabled === 'undefined'
 					|| wgCECommentsDisabled === false )
 				{
 					// edit
-					domElement = ceCommentForm.createDOMElement( 'span',
-						null,
-						['collabComEdit'],
-						[['title', ceLanguage.getMessage( 'ce_edit_title' )]]
-					);
-					$jq( domElement ).bind( 'click', function() {
-						ceCommentForm.editCommentForm( resComID );
+					domElement = $( '<span>', {
+						'class' : 'collabComEdit',
+						'title' : ceLanguage.getMessage( 'ce_edit_title' ),
+						'click' : function() {
+							ceCommentForm.editCommentForm( resComID );
+						}
 					});
-					var imgEl = ceCommentForm.createDOMElement( 'img',
-						null,
-						['collabComEditImg'],
-						[['src', wgCEScriptPath + '/skins/Comment/icons/Edit_button2.png']]
-					);
-					$jq( domElement ).append( $jq( imgEl ) );
-					$jq( '.collabComResDate', resCom ).after( domElement );
+					$( '<img>', {
+						'class' : 'collabComEditImg',
+						'src' : wgCEScriptPath + '/skins/Comment/icons/Edit_button2.png'
+					}).appendTo( domElement );
+					$( '.collabComResDate', resCom ).after( domElement );
 					// cancel edit
-					domElement = ceCommentForm.createDOMElement( 'span',
-						null,
-						['collabComEditCancel'],
-						[['title', ceLanguage.getMessage( 'ce_edit_cancel_title' )]]
-					);
-					$jq( domElement ).bind( 'click', function() {
-						ceCommentForm.cancelCommentEditForm( resComID );
+					domElement = $( '<span>', {
+						'class' : 'collabComEditCancel',
+						'title' : ceLanguage.getMessage( 'ce_edit_cancel_title' ),
+						'click' : function() {
+							ceCommentForm.cancelCommentEditForm( resComID );
+						}
 					});
-					var imgCancelEl = ceCommentForm.createDOMElement( 'img',
-						null,
-						['collabComEditCancelImg'],
-						[['src', wgCEScriptPath + '/skins/Comment/icons/Edit_button2_Active.png']]
-					);
-					$jq( domElement ).append( $jq( imgCancelEl ) );
-					$jq( '.collabComResDate', resCom ).after( domElement );
-					$jq( domElement ).hide();
+					$( '<img>', {
+						'class' : 'collabComEditCancelImg',
+						'src' : wgCEScriptPath + '/skins/Comment/icons/Edit_button2_Active.png'
+					}).appendTo( domElement );
+					$( '.collabComResDate', resCom ).after( domElement );
+					domElement.hide();
 				}
 			}
-			if ( ( typeof( wgCECommentsDisabled ) === 'undefined' 
+			if ( ( typeof wgCECommentsDisabled === 'undefined' 
 				|| wgCECommentsDisabled === false )
-				&& ( typeof( wgCEUserCanEdit ) === 'undefined' ) )
+				&& typeof wgCEUserCanEdit === 'undefined' )
 			{
 				// reply
-				domElement = ceCommentForm.createDOMElement( 'span',
-					null,
-					['collabComReply'],
-					[['title', ceLanguage.getMessage( 'ce_reply_title' )]],
-					ceLanguage.getMessage( 'ce_com_reply' )
-				);
-				$jq( domElement ).bind( 'click', function() {
-					ceCommentForm.replyCommentForm( resComID );
-				});
+				domElement = $( '<span>', {
+					'class' : 'collabComReply',
+					'title' : ceLanguage.getMessage( 'ce_reply_title' ),
+					'text' : ceLanguage.getMessage( 'ce_com_reply' ),
+					'click' : function() {
+						ceCommentForm.replyCommentForm( resComID );
+					}
+				}).insertAfter( $( '.collabComResText', resCom ) );
 
-				var replyImgEl = ceCommentForm.createDOMElement( 'img',
-					null,
-					['collabComReplyImg'],
-					[['src', wgCEScriptPath + '/skins/Comment/icons/Reply_Comment.png']]
-				);
-				$jq( domElement ).append( $jq( replyImgEl ) );
-				$jq( '.collabComResText', resCom ).after( domElement );
+				$( '<img>', {
+					'class' : 'collabComReplyImg',
+					'src' : wgCEScriptPath + '/skins/Comment/icons/Reply_Comment.png'
+				}).appendTo( domElement );
 			}
 			return true;
 		});
-		if( collabFormExists ) {
+		if ( collabFormExists ) {
 			// build header
 			ceCommentForm.buildHeader();
 			//clone actual structure without events (bind them again later)
-			ceCommentForm.savedStructure = $jq( '#collabComResults' ).clone();
+			ceCommentForm.savedStructure = $( '#collabComResults' ).clone();
 			ceCommentForm.showThreaded();
 			// toggle one time if there are comments available
 			if ( resultComments.length !== 0 ) {
-				var comToggle = $jq( '#collabComToggle' );
-				var commentResults = $jq( '#collabComResults' );
+				var comToggle = $( '#collabComToggle' );
+				var commentResults = $( '#collabComResults' );
 				var newComToggleText = '';
 				// handling default visibillity of comments
-				if( !wgCEShowCommentsExpanded ) {
+				if ( !wgCEShowCommentsExpanded ) {
 					newComToggleText = ceLanguage.getMessage( 'ce_com_show' );
 					commentResults.hide();
 					//hide "Add" and "View"
-					$jq( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' )
+					$( '#collabComFormToggle, #collabComViewToggle, #collabComFileToggle' )
 						.toggle();
 				} else {
 					newComToggleText = ceLanguage.getMessage( 'ce_com_hide' );
@@ -1469,7 +1423,7 @@ $jq(document).ready(
 	}
 );
 
-$jq(document).ready(
+$(document).ready(
 	function() {
 		// did not work in the same ready function
 		ceCommentForm.bindOverlays();
@@ -1494,9 +1448,9 @@ function CPendingIndicator( container ) {
 	this.constructor = function( container ) {
 		this.container = container;
 		this.pendingIndicator = document.createElement( 'img' );
-		$jq( this.pendingIndicator ).addClass( 'cependingElement' );
-		$jq( this.pendingIndicator ).attr(
-			'src', wgServer + wgScriptPath +
+		$( this.pendingIndicator ).addClass( 'cependingElement' );
+		$( this.pendingIndicator ).attr(
+			'src', mw.config.get( 'wgServer' ) + mw.config.get( 'wgScriptPath' ) +
 			'/extensions/Collaboration/skins/Comment/icons/ajax-loader.gif'
 		);
 		this.contentElement = null;
@@ -1508,18 +1462,18 @@ function CPendingIndicator( container ) {
 	 */
 	this.show = function( container, alignment ) {
 		//check if the content element is there
-		if ( $jq( '#content' ) === null ) {
+		if ( $( '#content' ) === null ) {
 			return;
 		}
 
 		var alignOffset = 0;
-		if ( typeof( alignment ) !== 'undefined' ) {
+		if ( typeof alignment !== 'undefined' ) {
 			switch( alignment ) {
 				case 'right': {
 					if ( !container ) { 
-						alignOffset = $jq( this.container ).offsetWidth - 16;
+						alignOffset = $( this.container ).offsetWidth - 16;
 					} else {
-						alignOffset = $jq( container ).offsetWidth - 16;
+						alignOffset = $( container ).offsetWidth - 16;
 					}
 					break;
 				}
@@ -1530,17 +1484,17 @@ function CPendingIndicator( container ) {
 			
 		//if not already done, append the indicator to the content element so it can become visible
 		if ( this.contentElement === null ) {
-				this.contentElement = $jq( '#content' );
+				this.contentElement = $( '#content' );
 				this.contentElement.append( this.pendingIndicator );
 		}
 		if ( !container ) {
 			var offSet = this.container.offset();
 			this.pendingIndicator.style.left = ( alignOffset + offSet.left ) + 'px';
-			this.pendingIndicator.style.top = ( offSet.top - $jq( document ).scrollTop() ) + 'px';
+			this.pendingIndicator.style.top = ( offSet.top - $( document ).scrollTop() ) + 'px';
 		} else {
-			var offSet = $jq( '#container' ).offset();
+			var offSet = $( '#container' ).offset();
 			this.pendingIndicator.style.left = alignOffset + offSet.left + 'px';
-			this.pendingIndicator.style.top = ( offSet.top - $jq( document ).scrollTop() ) + 'px';
+			this.pendingIndicator.style.top = ( offSet.top - $( document ).scrollTop() ) + 'px';
 		}
 		// hmm, why does Element.show(...) not work here?
 		this.pendingIndicator.style.display = 'block';
@@ -1553,8 +1507,8 @@ function CPendingIndicator( container ) {
 	 */
 	this.showOn = function( element ) {
 		container = element.offsetParent;
-		$jq( container ).insert( {top: this.pendingIndicator} );
-		var pOff = $jq( element ).positionedOffset();
+		$( container ).insert( {top: this.pendingIndicator} );
+		var pOff = $( element ).positionedOffset();
 		this.pendingIndicator.style.left = pOff[0] + 'px';
 		this.pendingIndicator.style.top  = pOff[1] + 'px';
 		this.pendingIndicator.style.display = 'block';
@@ -1563,11 +1517,11 @@ function CPendingIndicator( container ) {
 	};
 	
 	this.hide = function() {
-		$jq( this.pendingIndicator ).hide();
+		$( this.pendingIndicator ).hide();
 	};
 
 	this.remove = function() {
-		$jq( this.pendingIndicator ).remove();
+		$( this.pendingIndicator ).remove();
 	};
 	
 	// Execute initialize on object creation
@@ -1618,3 +1572,4 @@ CollaborationXMLTools.createDocumentFromString = function( xmlText ) {
 	}
 	return xmlDoc;
 }
+})( jQuery );

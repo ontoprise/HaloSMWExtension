@@ -83,7 +83,7 @@ function cefSetupExtension() {
 	global $cegIP, $wgHooks, $wgParser, $wgExtensionCredits,
 		$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
 		$cegEnableComment, $cegEnableCurrentUsers, $wgSpecialPages,
-		$wgSpecialPageGroups;
+		$wgSpecialPageGroups, $wgOut;
 
 	//--- Register hooks ---
 	#global $wgHooks;
@@ -93,21 +93,18 @@ function cefSetupExtension() {
 	///// Register specials pages
 	$wgSpecialPages['Collaboration'] = array('CECommentSpecial');
 
+	celfSetupScriptAndStyleModule();
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
-
-	if(stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") !== false
-		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
-		$wgHooks['BeforePageDisplay'][]='cefAddSpecialPageHeader';
+	if( stripos( $wgRequest->getRequestURL(), $spns_text . ":Collaboration" ) !== false
+		|| stripos( $wgRequest->getRequestURL(), $spns_text . "%3ACollaboration" ) !== false ) {
+//		$wgHooks['BeforePageDisplay'][]='cefAddSpecialPageHeader';
+		$wgOut->addModules( 'ext.collaboration.comment.specialpage' );
 	} else {
-		$wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
+//		$wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
+		$wgOut->addModules( 'ext.collaboration.comment' );
 	}
-
-	/*# B: CurrentUser
-	 if ( $cegEnableCurrentUsers ) {
-		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
-		}*/
 
 	### credits (see Special:Version) ###
 	$wgExtensionCredits['other'][]= array(
@@ -125,6 +122,76 @@ function cefSetupExtension() {
 	return true;
 }
 
+
+/**
+ * Creates a module for the resource loader that contains all scripts and styles
+ * that are needed for this extension.
+ */
+function celfSetupScriptAndStyleModule() {
+	global $wgResourceModules, $cegIP;
+
+	$messages = array(
+		'ce_com_default_header',
+		'ce_com_ext_header',
+		'ce_invalid',
+		'ce_reload',
+		'ce_deleting',
+		'ce_full_deleting',
+		'ce_delete',
+		'ce_delete_button',
+		'ce_cancel_button',
+		'ce_full_delete',
+		'ce_close_button',
+		'ce_delete_title',
+		'ce_edit_title',
+		'ce_edit_cancel_title',
+		'ce_reply_title',
+		'ce_com_reply',
+		'ce_edit_rating_text',
+		'ce_edit_rating_text2',
+		'ce_edit_button',
+		'ce_com_show',
+		'ce_com_hide',
+		'ce_com_view',
+		'ce_com_view_flat',
+		'ce_com_view_threaded',
+		'ce_com_file_toggle',
+		'ce_com_rating_text',
+		'ce_com_rating_text2',
+		'ce_com_toggle_tooltip',
+		'ce_form_toggle_tooltip',
+		'ce_form_toggle_no_edit_tooltip',
+		'ce_edit_intro',
+		'ce_edit_date_intro',
+	);
+
+	$ceResourceTemplate = array(
+		'localBasePath' => $cegIP,
+		'remoteExtPath' => 'Collaboration',
+		'group' => 'ext.collaboration'
+	);
+
+	$wgResourceModules += array(
+		'ext.collaboration.comment' => $ceResourceTemplate + array(
+			'scripts' => array(
+				'scripts/Language/CE_Language.js',
+				'scripts/Comment/CE_Comment.js',
+				'scripts/overlay.js',
+			),
+			'styles' => array(
+				'skins/Comment/collaboration-comment.css',
+				'skins/Comment/collaboration-overlay.css'
+			),
+			'messages' => $messages
+		),
+		'ext.collaboration.comment.specialpage' => $ceResourceTemplate + array(
+			'dependencies' => array( 'ext.smw.sorttable' )
+		)
+	);
+
+	//cefAddJSLanguageScripts();
+}
+
 /**
  * Adding headers for non-special-pages
  * Currently only used by comments
@@ -134,87 +201,12 @@ function cefSetupExtension() {
  */
 function cefAddNonSpecialPageHeader(&$out) {
 	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $cegScriptPath, $wgRequest,$wgContLang, $smwgDeployVersion;
+	global $wgOut;
 
-	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
-	// register AddHTMLHeader functions for special pages
-	// to include javascript and css files (only on special page requests).
-	// That lead to no JS at all.
-//	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") == false
-//		|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") == false
-//		|| ($wgRequest->getText('action', 'view') !== 'view') ) {
-//		return true;
-//	}
-	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
-	if( strlen( $ceStyleVer ) > 0 ) {
-		$ceStyleVer = '?' . $ceStyleVer;
-	}
-	//echo "Style version: " . $ceStyleVer . "\n";
-	cefAddJSLanguageScripts( $out );
-	if( isset( $smwgDeployVersion ) && $smwgDeployVersion === true ) {
-		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/deployCollaboration.js" . $ceStyleVer . "\"></script>" );
-
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css' . $ceStyleVer ,
-			'screen, projection'
-		);
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css' . $ceStyleVer ,
-			'screen, projection'
-		);
-	} else {
-		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/overlay.js" . $ceStyleVer . "\"></script>"
-		);
-		$out->addScript( "<script type=\"text/javascript\" src=\"" . $cegScriptPath .
-			"/scripts/Comment/CE_Comment.js" . $ceStyleVer . "\"></script>"
-		);
-
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-comment.css'. $ceStyleVer,
-			'screen, projection'
-		);
-		$out->addStyle( $cegScriptPath . '/skins/Comment/collaboration-overlay.css' . $ceStyleVer,
-			'screen, projection'
-		);
-	}
+	$wgOut->addModules( 'ext.collaboration.comment' );
 
 	wfProfileOut( __METHOD__ . ' [Collaboration]' );
 	return true;
-}
-
-/**
- * Adding headers for special-pages
- * Currently not used by comments
- *
- * @param OutputPage $out
- * @return bool: true
- */
-function cefAddSpecialPageHeader(&$out) {
-	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $smwgScriptPath, $wgTitle, $wgUser;
-
-	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
-	if( strlen( $ceStyleVer ) > 0 ) {
-		$ceStyleVer = '?' . $ceStyleVer;
-	}
-	//SMW_sorttableto handle table sorting
-	if($wgTitle->getNamespace() != NS_SPECIAL) {
-		wfProfileOut( __METHOD__ . ' [Collaboration]' );
-		return true;
-	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"". $smwgScriptPath . 
-			"/skins/SMW_sorttable.js" . $ceStyleVer . "\"></script>"
-		);
-		//css to format sortkeys
-		$out->addLink( array(
-			'rel'   => 'stylesheet',
-			'type'  => 'text/css',
-			'media' => 'screen, projection',
-			'href'  => $smwgScriptPath. '/skins/SMW_custom.css' . $ceStyleVer
-		));
-
-		wfProfileOut( __METHOD__ . ' [Collaboration]' );
-		return true;
-	}
 }
 
 /*********************************/
@@ -351,14 +343,34 @@ function cefInitUserMessages() {
 /**
  * Add appropriate JS language script
  */
-function cefAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
+function cefAddJSLanguageScripts() {
 	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $wgLanguageCode, $cegIP, $cegScriptPath, $wgUser;
+	global $haclgIP, $haclgHaloScriptPath, $wgUser, $wgResourceModules;
 
-	$ceStyleVer = preg_replace( '/[^\d]/', '', '{{$BUILDNUMBER}}' );
-	if( strlen( $ceStyleVer ) > 0 ) {
-		$ceStyleVer = '?' . $ceStyleVer;
+	// content language file
+	$lngScript = '/scripts/Language/HaloACL_LanguageEn.js';
+	$lng = '/scripts/Language/HaloACL_Language';
+	if (isset($wgUser)) {
+		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($haclgIP . $lng)) {
+			$lngScript = $lng;
+		}
 	}
+
+	$wgResourceModules['ext.HaloACL.Language'] = array(
+	// JavaScript and CSS styles. To combine multiple file, just list them as an array.
+		'scripts' => array(
+			"scripts/Language/HaloACL_Language.js",
+	$lngScript
+	),
+	 
+	// ResourceLoader needs to know where your files are; specify your
+	// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
+		'localBasePath' => dirname(__FILE__).'/../',
+		'remoteExtPath' => 'HaloACL'
+		);
+	
+	global $wgLanguageCode, $cegIP, $cegScriptPath, $wgUser;
 
 	// content language file
 	$lng = '/scripts/Language/CE_Language';

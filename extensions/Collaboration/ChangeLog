@@ -2,7 +2,15 @@ Collaboration extension ChangeLog
 (numbers according to BugZilla entries at smwforum.ontoprise.com/smwbugs)
 =================================
 
-VERSION 1.40
+VERSION 1.5.0
+  FEATURES:
+
+  CHANGES:
+	Migrated to MediaWiki 1.17 and take use of the Resource Loader
+  BUGFIXES:
+
+
+VERSION 1.4.0
   FEATURES:
 	FR #13053: Included an option to completely delete a comment
 	FR #14882: Support attaching links (to files or any other article in the wiki) to comments
@@ -19,7 +27,7 @@ VERSION 1.40
 	15104 - Positioning issues when replying on two comments
 	15285 - Comment was replicated not edited
 
-VERSION 1.31
+VERSION 1.3.1
   FEATURES:
 	FR #13057: Information about last edit of a comment 
   CHANGES:
@@ -29,7 +37,7 @@ VERSION 1.31
   BUGFIXES:
 	Issue 14050: Changed GUI regarding the user edit right.
 
-VERSION 1.30
+VERSION 1.3.0
 
   FEATURES:
 	FR #12230: Added a global var (in CE_Initialize.php) to enable/disable the rating mechanism
@@ -58,7 +66,7 @@ VERSION 1.30
 	Adjusted path for autocompletion icons
 
 
-VERSION 1.20
+VERSION 1.2.0
 
   FEATURES:
 
