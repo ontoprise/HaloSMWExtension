@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <id>semanticmaps</id>
+        <title>Semantic Maps</title>
+        <version>1.0.3</version>
+        <vendor>ontoprise GmbH</vendor>
+        <maintainer>ontoprise GmbH</maintainer>
+        <license>GPL-v2</license>
+        <instdir>extensions/SemanticMaps</instdir>
+        <description>Semantic Maps is an extension that adds semantic capabilities to the Maps extension.</description>
+        <helpurl></helpurl>
+        <dependencies>
+            <dependency from="1.15.0">mw</dependency>
+            <dependency from="1.0.3" to="1.0.3">maps</dependency>
+        </dependencies>
+    </global>
+    
+    <codefiles>
+        <file loc="deploy.xml" />
+        <!-- TODO: add others -->
+    </codefiles>
+
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+        <new>
+            <require name="semanticmaps"
+                file="extensions/SemanticMaps/SemanticMaps.php" />
+        </new>
+    </configs>
+</deploydescriptor>
