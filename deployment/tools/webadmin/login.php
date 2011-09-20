@@ -103,6 +103,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
+/**
+ * Checks if the given user is granted to use DF webadmin.
+ *
+ * @param string $username
+ * @param string $password
+ * @param string $acceptMIME
+ *
+ * @return boolean
+ */
 function authenticateUser($username, $password, $acceptMIME=NULL) {
 	$res = "";
 	$header = "";
@@ -182,6 +191,8 @@ function dffCheckEnvironment() {
 	} else {
 		unlink("$mwrootDir/extensions/test_file_for_webadmin");
 	}
+	checkWritePriviledgesOnExtensions("$mwrootDir/extensions", $result);
+
 
 	// check if external processes can be run
 	$phpExe = 'php';
@@ -193,6 +204,14 @@ function dffCheckEnvironment() {
 		$result .= "<li>Could not run external processes: <pre>".implode("\n",$out)."</pre></li>";
 	} else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
 		$result .= "<li>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)</li>";
+	}
+
+	// check for PHP5 if 'df_php_executable' is not explicitly set.
+	if (!array_key_exists('df_php_executable', DF_Config::$settings) || DF_Config::$settings['df_php_executable'] == 'php') {
+		@exec("php5 --version", $out, $ret);
+		if ($ret == 0) {
+			$result .= "<li>PHP5 executable is available. Please configure in deployment/settings.php: <code>'df_php_executable' => 'php5'</code></li>";
+		}
 	}
 
 	// check if temp folder can be written
@@ -230,6 +249,47 @@ function dffCheckEnvironment() {
 	}
 	return empty($result) ? true : "<ul>$result</ul>";
 }
+
+/**
+ * Checks if the extensions in the extension folder are writeable. The used heuristic
+ * is to check if the deploy descriptors (if any) are writable.
+ *
+ * @param string $ext_dir Extensions folder
+ * @param & $text (out) Messages
+ *
+ * @return boolean True if everything is writable, false otherwise.
+ */
+function checkWritePriviledgesOnExtensions($ext_dir, & $text) {
+	$result = true;
+	if (substr($ext_dir,-1)!='/'){
+		$ext_dir .= '/';
+	}
+	$handle = @opendir($ext_dir);
+	if (!$handle) {
+		return;
+	}
+
+	while ($entry = readdir($handle) ){
+		if ($entry[0] == '.'){
+			continue;
+		}
+
+		if (is_dir($ext_dir.$entry)) {
+			// check if there is a init$.ext
+			if (file_exists($ext_dir.$entry.'/deploy.xml') && !is_writable($ext_dir.$entry.'/deploy.xml')) {
+				$text .= "<li>Make ".$ext_dir.$entry." writeable</li>";
+				$result = false;
+
+			}
+		}
+
+	}
+	@closedir($handle);
+	return $result;
+}
+
+// HTML output
+
 $heading = $dfgLang->getLanguageString('df_webadmin');
 $username = $dfgLang->getLanguageString('df_username');
 $password = $dfgLang->getLanguageString('df_password');
