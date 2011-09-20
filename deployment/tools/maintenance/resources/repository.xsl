@@ -11,7 +11,7 @@
   
   <h2>a DF repository</h2>
     
-  <table border="0" cellpadding="5" style="background-color:#FFFFFF;" width="70%">
+  <table border="1" cellpadding="5" style="background-color:#FFFFFF;" width="70%">
     <tr bgcolor="#9acd32">
       <th>ID</th>
       <th>Version</th>
