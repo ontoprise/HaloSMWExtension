@@ -1673,28 +1673,16 @@ function smwfAddStore($store_class) {
     $oldStore = smwfGetStore();
     
     $qmStorePresent = false;
-    if ($oldStore instanceof SMWQMStore) {
+    if ($oldStore instanceof HACLSMWStore) {
         $qmStorePresent = true;
         $oldStore = $oldStore->getStore();
     }
     $smwgMasterStore = new $store_class($oldStore);
     
     if ($qmStorePresent) {
-        $smwgMasterStore = new SMWQMStore($smwgMasterStore);
+        $smwgMasterStore = new HACLSMWStore($smwgMasterStore);
     }
     return $smwgMasterStore;
 }
 
-/**
- * Returns the "real" implementation, ie. not the cache impl. 
- * 
- * @return SMWStore
- */
-function smwfGetRealStore() {
-	global $smwgMasterStore;
-    if ($smwgMasterStore instanceof SMWQMStore) {
-        return $smwgMasterStore->getStore();
-    } else {
-    	return $smwgMasterStore;
-    }
-}
+
