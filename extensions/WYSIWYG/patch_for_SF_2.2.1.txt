@@ -159,16 +159,14 @@ Index: extensions/SemanticForms/includes/SF_Utils.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_Utils.php	(revision 9578)
 +++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
-@@ -245,7 +245,11 @@
- 		$scripts[] = "$sfgScriptPath/libs/SF_autogrow.js";
+@@ -440,3 +440,6 @@
 
- 		if ( $wgFCKEditorDir )
+ 		if ( $wgFCKEditorDir && class_exists( 'FCKEditor' ) ) {
 -			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
 +            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
 +            $scripts[] = class_exists('CKEditor')
 +                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
 +                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
 +            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
- 		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
 
- 		global $wgOut;
+		foreach ( $scripts as $js ) {
