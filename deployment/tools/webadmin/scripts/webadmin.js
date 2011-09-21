@@ -70,6 +70,8 @@ $(function() {
 					var errorstatus = $dialog.dialog('option', 'errorstatus');
 					if (resultLog.indexOf("$$ERROR$$") != -1 || errorstatus == 'true') {
 						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_failure');
+					} else if (resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_brokenlog');
 					} else {
 						dialog[0].innerHTML += "<br/><br/>"+dfgWebAdminLanguage.getMessage('df_webadmin_'+operation+'_successful');
 					}

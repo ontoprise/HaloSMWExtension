@@ -51,10 +51,13 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_resourcecopyonly' : 'Copy resources',
 	
 	'df_webadmin_install_successful' : 'Installation successfull!',
+	'df_webadmin_install_brokenlog' : 'Install log is broken. Installation may not have succeeded well (problem with access rights?)',
 	'df_webadmin_install_failure' : 'Errors occured during installation',
 	'df_webadmin_deinstall_successful' : 'Deinstallation successfull!',
+	'df_webadmin_deinstall_brokenlog' : 'Install log is broken. Deinstallation may not have succeeded well (problem with access rights?)',
 	'df_webadmin_deinstall_failure' : 'Errors occured during deinstallation',
 	'df_webadmin_update_successful' : 'Update successfull!',
+	'df_webadmin_update_brokenlog' : 'Install log is broken. Update may not have succeeded well (problem with access rights?)',
 	'df_webadmin_update_failure' : 'Errors occured during update',
 	'df_webadmin_select_extension' : 'Select extension',
 	'df_webadmin_fragment_not_found' : 'Section not found',
