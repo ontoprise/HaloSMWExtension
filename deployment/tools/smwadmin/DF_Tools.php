@@ -348,7 +348,7 @@ class Tools {
 		return $version;
 	}
 
-	
+
 
 	/**
 	 * Provides a shortend (non-functional) form of the URL
@@ -373,7 +373,7 @@ class Tools {
 		return substr($s, 0, 10)."...".substr($s, -12);
 	}
 
-	
+
 
 	/**
 	 * Removes trailing whitespaces at the end (LF, CR, TAB, SPACE)
@@ -469,70 +469,70 @@ class Tools {
 		}
 	}
 
-	   /**
-     * Reads a deploy descriptor from a bundle (zip file).
-     *
-     * @param string $filePath bundle as zip file (absolute or relative)
-     * @param string $tempFolder a (writeable) temporary folder
-     * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
-     * @return DeployDescriptor or NULL if it could not be found.
-     */
-    public static function unzipDeployDescriptor($filePath, $tempFolder, $mwrootPath = "") {
-        global $dfgOut;
-        $filePath = Tools::makeUnixPath($filePath);
-        if (!file_exists($filePath)) return NULL;
-        $unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
-        exec($unzipExe.' -l "'.$filePath.'"', $output, $res);
-        foreach($output as $o) {
-            if (strpos($o, "deploy.xml") !== false) {
-                $out = $o;
-                break;
-            }
-        }
-        if (!isset($out)) return NULL;
-        $tempFile = $tempFolder."/".uniqid();
-        $help1 = explode(" ", $out);
-        $help2 = array_reverse($help1);
-        $dd_path = reset($help2);
-        exec($unzipExe.' -o -j "'.$filePath.'" "'.$dd_path.'" -d "'.$tempFile.'"', $output, $res);
-        $dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
-        return $dd;
-    }
+	/**
+	 * Reads a deploy descriptor from a bundle (zip file).
+	 *
+	 * @param string $filePath bundle as zip file (absolute or relative)
+	 * @param string $tempFolder a (writeable) temporary folder
+	 * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
+	 * @return DeployDescriptor or NULL if it could not be found.
+	 */
+	public static function unzipDeployDescriptor($filePath, $tempFolder, $mwrootPath = "") {
+		global $dfgOut;
+		$filePath = Tools::makeUnixPath($filePath);
+		if (!file_exists($filePath)) return NULL;
+		$unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
+		exec($unzipExe.' -l "'.$filePath.'"', $output, $res);
+		foreach($output as $o) {
+			if (strpos($o, "deploy.xml") !== false) {
+				$out = $o;
+				break;
+			}
+		}
+		if (!isset($out)) return NULL;
+		$tempFile = $tempFolder."/".uniqid();
+		$help1 = explode(" ", $out);
+		$help2 = array_reverse($help1);
+		$dd_path = reset($help2);
+		exec($unzipExe.' -o -j "'.$filePath.'" "'.$dd_path.'" -d "'.$tempFile.'"', $output, $res);
+		$dd = new DeployDescriptor(file_get_contents($tempFile."/deploy.xml"));
+		return $dd;
+	}
 
-    /**
-     * Unzips a file from a zip archive.
-     *
-     * @param $zipFile Full path to zip file
-     * @param $filePath File to extract from zip (may be partial if unique)
-     * @param $destDir Destination file dir
-     * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
-     * 
-     * @return boolean True, if succesfull
-     */
-    public static function unzipFile($zipFile, $filePath, $destDir, $mwrootPath = "") {
-        $zipFile = Tools::makeUnixPath($zipFile);
-        if (!file_exists($zipFile)) return NULL;
-        $unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
-        exec($unzipExe.' -l "'.$zipFile.'"', $output, $res);
-        foreach($output as $o) {
-            if (strpos($o, $filePath) !== false) {
-                $out = $o;
-                break;
-            }
-        }
-        if (!isset($out)) return false;
-        $dd_path = reset(array_reverse(explode(" ", $out)));
-        exec($unzipExe.' -o -j "'.$zipFile.'" "'.$dd_path.'" -d "'.$destDir.'"', $output, $res);
-        return $res == 0;
-    }
-    
-    private static function getUnzipPath($mwrootPath) {
-        if (self::isWindows()) {
-            return '"'.$mwrootPath.'/deployment/tools/unzip"';
-        } else {
-            return 'unzip'; // assume it is in path on Linux
-        }
-    }
+	/**
+	 * Unzips a file from a zip archive.
+	 *
+	 * @param $zipFile Full path to zip file
+	 * @param $filePath File to extract from zip (may be partial if unique)
+	 * @param $destDir Destination file dir
+	 * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
+	 *
+	 * @return boolean True, if succesfull
+	 */
+	public static function unzipFile($zipFile, $filePath, $destDir, $mwrootPath = "") {
+		$zipFile = Tools::makeUnixPath($zipFile);
+		if (!file_exists($zipFile)) return NULL;
+		$unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
+		exec($unzipExe.' -l "'.$zipFile.'"', $output, $res);
+		foreach($output as $o) {
+			if (strpos($o, $filePath) !== false) {
+				$out = $o;
+				break;
+			}
+		}
+		if (!isset($out)) return false;
+		$dd_path = reset(array_reverse(explode(" ", $out)));
+		exec($unzipExe.' -o -j "'.$zipFile.'" "'.$dd_path.'" -d "'.$destDir.'"', $output, $res);
+		return $res == 0;
+	}
+
+	private static function getUnzipPath($mwrootPath) {
+		if (self::isWindows()) {
+			return '"'.$mwrootPath.'/deployment/tools/unzip"';
+		} else {
+			return 'unzip'; // assume it is in path on Linux
+		}
+	}
 
 
 
@@ -569,9 +569,9 @@ class Tools {
 
 	/**
 	 * Detects if a particular process is running.
-	 * 
+	 *
 	 * @param string $name Program name (e.g. php)
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static function isProcessRunning($name) {
@@ -597,7 +597,7 @@ class Tools {
 		}
 	}
 
-	
+
 	/**
 	 * Returns file extension
 	 *
@@ -648,30 +648,33 @@ class Tools {
 
 		// convert IDs into program names (as far as known)
 		// TSC is the only registered program for now.
-		// otherwise consider it as program name
-		if ($id == 'tsc') {
-			$programname = "Triplestore Connector";
+		$knownPrograms = DF_Config::$df_knownPrograms;
+	
+		if (array_key_exists($id, $knownPrograms)) {
+			$programs = array($knownPrograms[$id]);
 		} else {
-			$programname = $id;
+			$programs = $knownPrograms;
 		}
 
 		$result=array();
 		$n = count($out);
-		for($i = 0; $i < $n; $i++) {
-			if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
-			&& (stripos($out[$i], $programname) !== false || $programname == '')) {
-				while ($i+1 < count($out)
-				&& stripos($out[$i+1], "(Standard)") === false
-				&& stripos($out[$i+1], "<NO NAME>") === false
-				&& stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false
-				) $i++;
-				if ($i+1 == $n) break;
-				if (stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false) continue;
-				$defValue = $out[$i+1];
-				$parts = explode("   ", $defValue);
-				$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
-				$pathAtFirst = array_reverse($parts);
-				$result[$prgName] = reset($pathAtFirst);
+		foreach($programs as $programname) {
+			for($i = 0; $i < $n; $i++) {
+				if (stripos($out[$i], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false
+				&& (stripos($out[$i], $programname) !== false || $programname == '')) {
+					while ($i+1 < count($out)
+					&& stripos($out[$i+1], "(Standard)") === false
+					&& stripos($out[$i+1], "<NO NAME>") === false
+					&& stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") === false
+					) $i++;
+					if ($i+1 == $n) break;
+					if (stripos($out[$i+1], "HKEY_CURRENT_USER\\Software\\Ontoprise\\") !== false) continue;
+					$defValue = $out[$i+1];
+					$parts = explode("   ", $defValue);
+					$prgName = substr($out[$i], strlen("HKEY_CURRENT_USER\\Software\\Ontoprise\\"));
+					$pathAtFirst = array_reverse($parts);
+					$result[$programname][] = reset($pathAtFirst);
+				}
 			}
 		}
 		return $result;
@@ -711,7 +714,7 @@ class Tools {
 	 */
 	public static function createMWDeployDescriptor($rootDir, $ver = NULL) {
 		$version = is_null($ver) ? new DFVersion(self::getMediawikiVersion($rootDir)) : $ver;
-		
+
 		$xml = '<?xml version="1.0" encoding="UTF-8"?>
                 <deploydescriptor>
                     <global>
@@ -737,4 +740,44 @@ class Tools {
 		return $xml;
 	}
 
+	/**
+	 * Reads the full paths of non-public apps.
+	 *
+	 * @param string $mwroot
+	 * 
+	 * @return array($programName => $path)
+	 */
+	public static function getNonPublicAppPath($mwroot) {
+		$result = array();
+		$content = file_get_contents("$mwroot/deployment/externalapps");
+		if ($content === false) return array();
+		$lines = explode("\n", $content);
+		foreach($lines as $l) {
+			if (empty($l)) continue;
+			list($programName, $path) = explode("=", $l);
+			$result[$programName] = $path;
+		}
+		return $result;
+	}
+
+	/**
+	 * Sets the full path of a non-public app.
+	 *
+	 * @param string $mwroot
+	 * @param string $programName
+	 * @param string $path
+	 * 
+	 * @return boolean True on success
+	 */
+	public static function setNonPublicAppPath($mwroot, $programName, $path) {
+		$result = self::getNonPublicAppPath($mwroot);
+		$result[$programName] = $path;
+		$handle = fopen("$mwroot/deployment/externalapps", "w");
+		if ($handle === false) return false;
+		foreach($result as $programName => $path) {
+			fwrite($handle, "$programName=$path\n");
+		}
+		fclose($handle);
+		return true;
+	}
 }

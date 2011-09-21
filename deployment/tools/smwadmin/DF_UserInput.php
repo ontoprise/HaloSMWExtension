@@ -101,17 +101,7 @@ class DFUserInput {
 		$result = strtolower($line);
 	}
 
-	/**
-	 * Asks for an ontology prefix to make ontologies distinguishable.
-	 *
-	 * @param $result
-	 */
-	public function askForOntologyPrefix(& $result) {
-		global $dfgOut;
-		$dfgOut->outputln("\nOntology conflict. Please enter prefix: ");
-		$line = trim(fgets(STDIN));
-		$result = $line;
-	}
+
 
 	/**
 	 * Callback method which decides what to do on a modified page.
@@ -148,15 +138,39 @@ class DFUserInput {
 			default: $result = false;
 		}
 	}
-	
-    /**
-     * Asks for a confirmation.
-     */
-    public static function consoleConfirm($msg = "") {
-    	global $dfgNoAsk;
-    	if ((isset($dfgNoAsk) && $dfgNoAsk == true)) return true;
-        if ($msg !== '') print "\n$msg";
-        $a = trim(fgets(STDIN));
-        return strtolower($a) === 'y';
-    }
+
+	/**
+	 * Asks for a confirmation.
+	 */
+	public static function consoleConfirm($msg = "") {
+		global $dfgNoAsk;
+		if ((isset($dfgNoAsk) && $dfgNoAsk == true)) return true;
+		if ($msg !== '') print "\n$msg";
+		$a = trim(fgets(STDIN));
+		return strtolower($a) === 'y';
+	}
+
+	/**
+	 * Selects an element from a list. 
+	 * In No-ask mode, it always returns the first.
+	 * 
+	 * @param string[] $elements
+	 * 
+	 * @return int index
+	 */
+	public static function selectElement($msg, $elements) {
+		global $dfgNoAsk;
+		if ((isset($dfgNoAsk) && $dfgNoAsk == true)) return 0;
+		print "\n\n$msg\n";
+		do {
+			$i = 1;
+			foreach($elements as $e) {
+				print "\n($i) $e";
+				$i++;
+			}
+			print "\n\nSelect (1-".count($elements)."): ";
+			$a = trim(fgets(STDIN));
+		} while(!is_numeric($a) || $a < 1 || $a > count($elements));
+		return $a-1;
+	}
 }

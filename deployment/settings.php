@@ -44,7 +44,12 @@ class DF_Config  {
 	//public static $df_webadmin_user = "root";
 	//public static $df_webadmin_pass = "pass";
 
-    
+    /*
+     * External programs which are known to the DF.
+     * (only relevant for Windows)
+     */
+	public static $df_knownPrograms = array('tscprof' => 'Triplestore Connector Professional',
+                                'tsc' => 'Triplestore Connector Basic');
 	/*
 	 * Genernal settings for smwadmin/webadmin
 	 */

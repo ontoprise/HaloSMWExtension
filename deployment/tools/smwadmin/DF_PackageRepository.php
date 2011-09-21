@@ -19,6 +19,7 @@ define('DEPLOY_FRAMEWORK_REPOSITORY_VERSION', 1);
 
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 define('DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR', 2);
+define('DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE', 3);
 
 global $rootDir;
 require_once $rootDir.'/io/DF_HttpDownload.php';
@@ -150,25 +151,25 @@ class PackageRepository {
 			try {
 				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
 				self::$repo_dom[$url] = simplexml_load_string($res);
-			    $repo_version = self::$repo_dom[$url]->xpath("/root[@version]");
-                if (count($repo_version) > 0) {
-                    $repo_version_value = (string) $repo_version[0]->attributes()->version;
-                } else {
-                    $repo_version_value = 1; // must be version 1 in this case
-                }
-                if ($repo_version_value != DEPLOY_FRAMEWORK_REPOSITORY_VERSION) {
-                    throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION, "Try to access an incompatible repository at [$url]. Expected version was ".DEPLOY_FRAMEWORK_REPOSITORY_VERSION." but actually it was $repo_version_value. Please update DF manually.");
-                }
+				$repo_version = self::$repo_dom[$url]->xpath("/root[@version]");
+				if (count($repo_version) > 0) {
+					$repo_version_value = (string) $repo_version[0]->attributes()->version;
+				} else {
+					$repo_version_value = 1; // must be version 1 in this case
+				}
+				if ($repo_version_value != DEPLOY_FRAMEWORK_REPOSITORY_VERSION) {
+					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION, "Try to access an incompatible repository at [$url]. Expected version was ".DEPLOY_FRAMEWORK_REPOSITORY_VERSION." but actually it was $repo_version_value. Please update DF manually.");
+				}
 			} catch(HttpError $e) {
 				$dfgOut->outputln($e->getMsg(), DF_PRINTSTREAM_TYPE_ERROR);
 				$dfgOut->outputln();
 					
 			} catch(RepositoryError $e) {
-                if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION) {
-                    // exit if repository is incompatible
-                    dffExitOnFatalError($e);
-                }
-            } catch(Exception $e) {
+				if ($e->getErrorCode() == DEPLOY_FRAMEWORK_REPO_INCOMPATIBLE_VERSION) {
+					// exit if repository is incompatible
+					dffExitOnFatalError($e);
+				}
+			} catch(Exception $e) {
 				$dfgOut->outputln($e->getMessage(), DF_PRINTSTREAM_TYPE_ERROR);
 				$dfgOut->outputln();
 			}
@@ -223,7 +224,7 @@ class PackageRepository {
 
 		$max = DFVersion::getMaxVersion($results);
 		if (is_null($max)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id. Missing repository?");
-		
+
 		list($maxVersion, $maxPatchlevel, $url) = $max;
 
 
@@ -323,7 +324,7 @@ class PackageRepository {
 		}
 
 		DFVersion::sortVersions($results);
-		
+
 		return $results;
 	}
 
@@ -423,8 +424,8 @@ class PackageRepository {
 		}
 		if (count($results) == 0) return NULL;
 		$max = DFVersion::getMaxVersion($results);
-		
-		list($maxVersion, $maxPatchlevel, $download_url, $repo_url) = $max; 
+
+		list($maxVersion, $maxPatchlevel, $download_url, $repo_url) = $max;
 		return array($download_url, $maxVersion, $repo_url);
 	}
 
@@ -494,8 +495,23 @@ class PackageRepository {
 
 		$OPSoftware = Tools::getOntopriseSoftware();
 		if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-			foreach($OPSoftware as $prgname => $path) {
-				$path = trim($path);
+			// only relevant for Windows
+			$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
+			foreach($OPSoftware as $prgname => $arrayOfPaths) {
+				if (array_key_exists($prgname, $nonPublicAppPaths)) {
+					$path = trim($nonPublicAppPaths[$prgname]);
+				} else {
+					if (count($arrayOfPaths) > 1) {
+						$index = DFUserInput::selectElement("Several installations of '$prgname' were found. Please select the one you want to use with DF.", $arrayOfPaths);
+						$path = trim($arrayOfPaths[$index]);
+						$res = Tools::setNonPublicAppPath($ext_dir, $prgname, $path);
+						if (!$res) {
+							throw new RepositoryError("Could not write deployment/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
+						}
+					} else {
+						$path = trim(reset($arrayOfPaths));
+					}
+				}
 				if (file_exists($path.'/deploy.xml')) {
 					$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
 					if (!array_key_exists($dd->getID(), self::$localPackages)) {

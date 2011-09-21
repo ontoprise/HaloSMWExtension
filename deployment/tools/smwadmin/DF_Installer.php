@@ -564,7 +564,7 @@ class Installer {
 
 			// unzip
 			$this->logger->info("Unzip $id-".$desc->getVersion()->toVersionString().".zip");
-			$this->unzip($desc);
+			$unzipDirectory = $this->unzip($desc);
 
 			$this->logger->info("Apply configs for $id-".$desc->getVersion()->toVersionString().".zip");
 			$desc->applyConfigurations($this->rootDir, false, $fromVersion, DFUserInput::getInstance());
@@ -572,17 +572,17 @@ class Installer {
 
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
 			if ($desc->isNonPublic()) {
-				$installDirectory = Tools::getProgramDir()."/Ontoprise/".$desc->getInstallationDirectory();
-				Tools::mkpath($installDirectory);
+				// in this case use the unzip directory directly.
+				$installDirectory = $unzipDirectory;
 			}
 
 			$handle = fopen($installDirectory."/init$.ext", "w");
 			if (is_null($fromVersion)) {
 				fwrite($handle, $num.",");
 			} else {
-				fwrite($handle, $num.",".$fromVersion);
+				fwrite($handle, $num.",".$fromVersion->toVersionString());
 			}
-				
+
 			fclose($handle);
 			$num++;
 
@@ -744,6 +744,8 @@ class Installer {
 	 *
 	 * @param string $id
 	 * @param int $version
+	 * 
+	 * @return string $unzipDirectory
 	 */
 	private function unzip($dd) {
 		global $dfgOut;
@@ -761,14 +763,20 @@ class Installer {
 			// default location
 			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
 
-			if (file_exists($unzipDirectory)) {
-				// if already somewhere installed, use this (only Windows)
-				$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
-				if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-					$unzipDirectory = trim(reset($OPSoftware));
-				}
 
+			// if already somewhere installed, use this (only Windows)
+			$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
+			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+				$programs = reset($OPSoftware);
+				if (count($programs) > 1) {
+					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
+					$unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
+				} else {
+					$unzipDirectory = trim(reset($programs));
+				}
 			}
+
+
 			Tools::mkpath($unzipDirectory);
 		}
 		$versionStr = $version->toVersionString();
@@ -781,6 +789,7 @@ class Installer {
 			exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
 		}
 		$dfgOut->output("done.]");
+		return $unzipDirectory;
 	}
 
 	/**
@@ -797,13 +806,16 @@ class Installer {
 			// default location
 			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
 
-			if (file_exists($unzipDirectory)) {
-				// if already somewhere installed, use this (only Windows)
-				$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
-				if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-					$unzipDirectory = trim(reset($OPSoftware));
+			// if already somewhere installed, use this (only Windows)
+			$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
+			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+				$programs = reset($OPSoftware);
+				if (count($programs) > 1) {
+					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
+                    $unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
+				} else {
+					$unzipDirectory = trim(reset($programs));
 				}
-
 			}
 			Tools::mkpath($unzipDirectory);
 		}
