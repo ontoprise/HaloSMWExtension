@@ -767,6 +767,8 @@ ShowNewToolbar = function(event, value) {
         ckePopupContextMenu.setPosition(pos[0], pos[1]);
         var relToolBar = new window.parent.RelationToolBar();
         var catToolBar = new window.parent.CategoryToolBar();
+        window.contextMenuRelToolBar = relToolBar;
+        window.catToolBar = new window.parent.CategoryToolBar();
         relToolBar.setWikiTextParser(wtp);
         catToolBar.setWikiTextParser(wtp);
         relToolBar.createContextMenu(ckePopupContextMenu, value, value);

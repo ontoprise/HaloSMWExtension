@@ -542,15 +542,21 @@ recProp: function(propName) {
 },
 
 updateSchema: function(elementID) {
-	relToolBar.toolbarContainer.showSandglass(elementID);
+	var toolbar = relToolBar;
+	if (!relToolBar.toolbarContainer) {
+		// The relation toolbar is running in the context menu of the
+		// WYSIWYG editor
+		toolbar = window.contextMenuRelToolBar;
+	}
+	toolbar.toolbarContainer.showSandglass(elementID);
 	sajax_do_call('smwf_om_RelationSchemaData',
 	              [$('rel-name').value],
-	              relToolBar.updateNewItem.bind(relToolBar));
+	              toolbar.updateNewItem.bind(toolbar));
 },
 
 updateNewItem: function(request) {
 	
-	relToolBar.toolbarContainer.hideSandglass();
+	this.toolbarContainer.hideSandglass();
 	if (request.status != 200) {
 		// call for schema data failed, do nothing.
 		return;
