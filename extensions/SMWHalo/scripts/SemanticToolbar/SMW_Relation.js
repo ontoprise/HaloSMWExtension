@@ -565,7 +565,7 @@ updateNewItem: function(request) {
 		var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
 
 		// read arity and parameter names
-		a = parseInt(schemaData.documentElement.getAttribute("arity"));
+		var a = parseInt(schemaData.documentElement.getAttribute("arity"));
 		if (a > 0) {
 			arity = a;
 			parameterNames = [];
@@ -615,6 +615,7 @@ updateNewItem: function(request) {
 				? oldValues[i]
 				: '');
 		var hint = SMW_REL_HINT_INSTANCE; //(parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
+		var pasteNamespace = "";
 		var pageIdx = parameterNames[i].indexOf("|Page");
 		if (i == 0 &&  pageIdx > 0) {
 			parameterNames[i] = parameterNames[i].substr(0, pageIdx);
@@ -629,12 +630,13 @@ updateNewItem: function(request) {
 				}
 			}
 			hint = 'constraints="'+hint+'"';
+			pasteNamespace = 'pastens="true"';
 		}
 		tb.insert(insertAfter,
 				  tb.createInput('rel-value-'+ i, parameterNames[i], '', '', 
 								 SMW_REL_CHECK_EMPTY_NEV +
 							     SMW_REL_VALID_PROPERTY_VALUE + 
-								 hint,
+								 hint + pasteNamespace,
 		                         true));
 //		console.log("updateNewItem: "+hint);
 		                         
