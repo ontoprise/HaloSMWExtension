@@ -1153,4 +1153,4 @@ function tt_ExtCallFncs(arg, sFnc)
 	return b;
 }
 
-tt_Init();
+

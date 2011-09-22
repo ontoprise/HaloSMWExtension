@@ -168,11 +168,21 @@ class CKeditor_MediaWiki {
         return true;
     }
 
+    private static function addResourceModules(&$out){
+        if(defined('SMW_HALO_VERSION')){
+            $out->addModules('ext.smwhalo.queryInterface');
+            $out->addModules('ext.smwhalo.allButAnnotate');
+        }
+    }
+
     // take content of css files and put this as inline text into the page, instead
     // of using the link elements to fetch css files separate from the server.
     // The latter causes IE to hang when more than 31 style sheets are processed this way.
     public static function onBeforePageDisplay( &$out, &$text ) {
         global $wgRequest, $wgScriptPath;
+
+        CKeditor_MediaWiki::addResourceModules($out);
+        
         //var_dump($out->styles);
         $action = $wgRequest->getText( 'action' );
         if (! in_array($action, array('edit', 'submit'))) return $out;
@@ -406,8 +416,8 @@ class CKeditor_MediaWiki {
 		global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
 		global $wgFCKWikiTextBeforeParse, $wgFCKEditorIsCompatible;
 		global $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorHeight, $wgFCKEditorToolbarSet;
-        global $wgCKEditorUrlparamMode, $wgRequest;
-
+        global $wgCKEditorUrlparamMode, $wgRequest;               
+        
 		if( !isset( $this->showFCKEditor ) ){
 			$this->showFCKEditor = 0;
 			if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
@@ -567,8 +577,7 @@ $this->ckeditorHeadScript = $script;
         
         
     public function onSkinAfterBottomScripts($skin, &$bottomScriptText) {  
-          global $wgOut; 
-          $wgOut->addModules(array('mediawiki.legacy.wikibits', 'ext.smwhalo.semanticToolbar', 'ext.smwhalo.queryInterface', 'ext.smwhalo.allButAnnotate'));
+          global $wgOut;           
           $bottomScriptText .= $this->ckeditorHeadScript;
           $this->ckeditorHeadScript = '';
           return true;
@@ -604,6 +613,8 @@ function FCK_sajax(func_name, args, target) {
 // qi url tokens
 
 function onLoadCKeditor(){
+        CKEDITOR.mw = mw;
+        
 	if( !( showFCKEditor & RTE_VISIBLE ) )
 		showFCKEditor += RTE_VISIBLE;
 	firstLoad = false;
@@ -799,7 +810,7 @@ function ToggleCKEditor( mode, objId ){
             // Annotations toolbar, only if SemanticGardening extension is included
             if (typeof smwhgGardeningHints != 'undefined')
                 smwhgGardeningHints.createContainer();
-            smw_links_callme();
+            window.smw_links_callme();
             window.gEditInterface = new SMWEditInterface();
             obContributor.activateTextArea(SRCtextarea);
             smwhg_dragresizetoolbar.draggable=null;

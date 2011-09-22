@@ -1666,15 +1666,17 @@ function smwhfRegisterResourceLoaderModules() {
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
-			'/scripts/Language/SMW_Language.js',
-			'/scripts/Logger/smw_logger.js',
-			'/scripts/OntologyBrowser/generalTools.js',
-			'/scripts/QueryInterface/Query.js',
-			'/scripts/QueryInterface/QueryList.js',
-			'/scripts/QueryInterface/QIHelper.js',
+			'scripts/Language/SMW_Language.js',
+			'scripts/Logger/smw_logger.js',
+			'scripts/OntologyBrowser/generalTools.js',
+			'scripts/QueryInterface/Query.js',
+			'scripts/QueryInterface/QueryList.js',
+			'scripts/QueryInterface/QIHelper.js',
+       'scripts/QueryInterface/qi_tooltip.js',
+      'scripts/QueryInterface/window.binding.js'
 			),
 		'styles' => array(
-			'/skins/QueryInterface/qi.css'
+			'skins/QueryInterface/qi.css'
 			),
 		'dependencies' => $dependencies
 			);

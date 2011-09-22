@@ -96,5 +96,4 @@ function linklog(link, action){
 	return true;
 }
 
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', smw_links_callme);
+  Event.observe(window, 'load', smw_links_callme);

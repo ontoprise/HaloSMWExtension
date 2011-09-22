@@ -1,7 +1,6 @@
 CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
     {
         return {
-            slectedElement: null,
             title : editor.lang.mwplugin.specialTagTitle,
             minWidth : 350,
             minHeight : 140,
@@ -30,16 +29,13 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                 textarea = this.getContentElement( 'mwSpecialTagDef', 'tagDefinition'),
                 content = textarea.getValue(),
                 wgImgWikitags = ['source', 'ref', 'nowiki', 'html', 'gallery'],
-                wgCKeditorMagicWords = window.parent.wgCKeditorMagicWords || window.parent.parent.wgCKeditorMagicWords,
+                wgCKeditorMagicWords = window.parent.wgCKeditorMagicWords || window.parent.parent.wgCKeditorMagicWords;
 
-                selection = editor.getSelection();
-                this.selectedElement = selection.getSelectedElement() || selection.getStartElement();
-                
                 content.Trim();
-                content = content.replace(/\r?\n/g, 'fckLR');
+                content = content.replace(/\r?\n/g, '<br fckLR="true"/>');
                 // check for a tag
                 if (el = content.match(/^<([\w_-]+)>(.*?)<\/([\w_-]+)>$/)) {
-                    var inner = el[2] || '_',
+                    var inner = el[2] || '_';                    
                     spanClass = 'fck_mw_special';
                     className = 'FCK__MWSpecial';
 
@@ -51,11 +47,15 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                         + inner + '</span>';
                     }
                     else if(el[1].InArray(['noinclude', 'includeonly', 'onlyinclude'])){
-                        tag = '<span class="fck_mw_noinclude" _fck_mw_customtag="true" _fck_mw_tagname="' + el[1] + '" _fck_mw_tagtype="t">'
+                        tag = '<span class="fck_mw_' + el[1] + '" _fck_mw_customtag="true" _fck_mw_tagname="' + el[1] + '" _fck_mw_tagtype="t">'
                          + inner + '</span>';
                         var element = CKEDITOR.dom.element.createFromHtml(tag, editor.document);
-//                        editor.insertElement( element );
-                        element.replace(this.selectedElement);
+                        if(this.selectedElement && !this.selectedElement.is('body')){                            
+                            element.replace(this.selectedElement);
+                        }
+                        else{
+                            editor.insertElement( element );
+                        }
                         return;
                     }                    
                 }
@@ -124,24 +124,28 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
 
                 var editor = this.getParentEditor(),
                 selection = editor.getSelection(),
-                element = selection.getSelectedElement() || selection.getStartElement(),
-                content = '';
+                element = selection.getSelectedElement();
+                if(!element){
+                    element = selection.getStartElement();
+                }    
+                             
+                this.selectedElement = element;
+                
                 // Fill in all the relevant fields if there's already one item selected.
-                if (element && element.is( 'img' )
-                    && element.getAttribute( 'class' ).InArray( [
+                if ( element.is( 'img' ) && element.getAttribute( 'class' ).InArray( [
                         'FCK__MWSpecial',
                         'FCK__MWMagicWord',
-                        'FCK__MWNowiki',
-                        'FCK__MWIncludeonly',
-                        'FCK__MWNoinclude',
-                        'FCK__MWOnlyinclude'
+                        'FCK__MWNowiki'
+//                        'FCK__MWIncludeonly',
+//                        'FCK__MWNoinclude',
+//                        'FCK__MWOnlyinclude'
                         ])
                     )
-                {
+                    {
                     this.fakeObj = element;
                     element = editor.restoreRealElement( this.fakeObj );
                     selection.selectElement( this.fakeObj );
-                    
+                    var content = '',
                     inner = element.getHtml().replace(/_$/, '').replace(/fckLR/g, '\r\n');
                     if ( element.getAttribute( 'class' ) == 'fck_mw_special' ) {
                         var tagName = element.getAttribute('_fck_mw_tagname') || '',
@@ -168,19 +172,23 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                         inner +
                         '</' + element.getAttribute('_fck_mw_tagname') + '>';
                     }
-                    
+                    //editor.document.getById('tagDefinition').setHtml(content);
+                    var textarea = this.getContentElement( 'mwSpecialTagDef', 'tagDefinition');
+                    textarea.setValue(content);
                 }
-                else if(element && element.is('span') && 
-                    element.getAttribute( 'class' ).InArray(['fck_mw_noinclude',
-                                                          'fck_mw_includeonly',
-                                                          'fck_mw_onlyinclude'])){
-                    content = element.getHtml().replace(/_$/, '').replace(/fckLR/g, '\r\n');
-                    var tagName = element.getAttribute('_fck_mw_tagname');
-                    content = '<' + tagName + '>' + content + '</' + tagName + '>'
-                    
-                }
-                var textarea = this.getContentElement( 'mwSpecialTagDef', 'tagDefinition');
-                textarea.setValue(content);
+                //those 3 tags are represented in rich editor as spans and not fake objects as the rest
+                else if ( element.getAttribute( 'class' ) &&
+                    element.getAttribute( 'class' ).InArray( [                        
+                        'fck_mw_noinclude',
+                        'fck_mw_onlyinclude',
+                        'fck_mw_includeonly'
+                        ])
+                    )
+                    {
+                        tagName = element.getAttribute( '_fck_mw_tagname' );
+                        content = element.getHtml();
+                        this.getContentElement( 'mwSpecialTagDef', 'tagDefinition').setValue('<' + tagName + '>' + content + '</' + tagName + '>');
+                    }
             }
 			
         }

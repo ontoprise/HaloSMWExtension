@@ -466,8 +466,9 @@ function smwf_qi_getPage($args= "") {
 	// create the new source code, by removing the wiki stuff,
 	// keep the header (because of all css and javascripts) and the main content part only
 	$newPage = "";
-	mvDataFromPage($page, $newPage, '<body');
-	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
+	mvDataFromPage($page, $newPage, '<body', false);
+//	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
+  $newPage.= '<div id="globalWrapper" style="background-image:none; background-color: #ffffff;"><div id="content">';
 	
 	mvDataFromPage($page, $newPage, "<!-- start content -->", false);
 	mvDataFromPage($page, $newPage, "<!-- end content -->");
