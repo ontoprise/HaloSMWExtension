@@ -7,6 +7,7 @@ $smwgDFIP = $IP . '/deployment';
 
 $wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
 $wgAjaxExportList[] = 'dff_authUser';
+$dfgNoAsk=true;
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();
@@ -15,6 +16,8 @@ function dfgSetupExtension() {
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
 	$wgAutoloadClasses['DFPrintoutStream'] = $smwgDFIP . '/io/DF_PrintoutStream.php';
+	$wgAutoloadClasses['DF_Config'] = $smwgDFIP . '/settings.php';
+	$wgAutoloadClasses['DFUserInput'] = $smwgDFIP . '/tools/smwadmin/DF_UserInput.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
 	

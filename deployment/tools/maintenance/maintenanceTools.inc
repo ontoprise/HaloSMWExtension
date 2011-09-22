@@ -78,7 +78,7 @@ class MaintenanceTools {
 				// check if dependant package has correct version
 				$ext = $localPackages[$id];
 				if ($ext->getVersion()->isLower($dep->getMinVersion()) || $ext->getVersion()->isHigher($dep->getMaxVersion())) {
-					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion()->getVersionString().". \n\t\tExpected range $min-$max";
+					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion()->toVersionString().". \n\t\tExpected range ".$dep->getMinVersion()->toVersionString()." - ".$dep->getMaxVersion()->toVersionString();
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;

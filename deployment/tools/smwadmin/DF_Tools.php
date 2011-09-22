@@ -749,7 +749,7 @@ class Tools {
 	 */
 	public static function getNonPublicAppPath($mwroot) {
 		$result = array();
-		$content = file_get_contents("$mwroot/deployment/externalapps");
+		$content = @file_get_contents("$mwroot/deployment/externalapps");
 		if ($content === false) return array();
 		$lines = explode("\n", $content);
 		foreach($lines as $l) {

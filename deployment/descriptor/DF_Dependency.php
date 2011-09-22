@@ -78,7 +78,7 @@ class DFDependency {
 	
 	public function toString() {
 		$optionalText = $this->optional ? "(optional)" : "";
-		return "one of (".implode(",",$this->ids).") in range $this->from - $this->to; $optionalText";
+		return "one of (".implode(",",$this->ids).") in range ".$this->from->toVersionString()." - ".$this->to->toVersionString()."; $optionalText";
 	}
     
 	/**
