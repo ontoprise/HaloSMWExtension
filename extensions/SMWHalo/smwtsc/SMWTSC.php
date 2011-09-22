@@ -85,8 +85,8 @@ function tscSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $tscgIP . '/includes/queryprocessor/TSC_SPARQLQueryParser.php';
 	$wgAutoloadClasses['SMWURIIntegrationValue'] = $tscgIP . '/includes/datavalues/TSC_DV_IntegrationURI.php';
 	$wgAutoloadClasses['SMWDIIntegrationUri'] = $tscgIP . '/includes/dataitems/TSC_DI_IntegrationURI.php';
-	$wgAutoloadClasses['LODNonExistingPage'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPage.php';
-	$wgAutoloadClasses['LODNonExistingPageHandler'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPageHandler.php';
+	$wgAutoloadClasses['TSCNonExistingPage'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPage.php';
+	$wgAutoloadClasses['TSCNonExistingPageHandler'] = $tscgIP . '/includes/articlepages/TSC_NonExistingPageHandler.php';
 
 
 	global $smwgHaloQuadMode;
@@ -116,9 +116,9 @@ function tscSetupExtension() {
 
 	global $smwgHaloNEPEnabled;
 	if ($smwgHaloNEPEnabled) {
-		$wgHooks['ArticleFromTitle'][]      = 'LODNonExistingPageHandler::onArticleFromTitle';
-		$wgHooks['EditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
-		$wgHooks['sfEditFormPreloadText'][]   = 'LODNonExistingPageHandler::onEditFormPreloadText';
+		$wgHooks['ArticleFromTitle'][]      = 'TSCNonExistingPageHandler::onArticleFromTitle';
+		$wgHooks['EditFormPreloadText'][]   = 'TSCNonExistingPageHandler::onEditFormPreloadText';
+		$wgHooks['sfEditFormPreloadText'][]   = 'TSCNonExistingPageHandler::onEditFormPreloadText';
 
 		global $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate, $lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember, $lodgNEPCategoryTemplatePattern;
 		####

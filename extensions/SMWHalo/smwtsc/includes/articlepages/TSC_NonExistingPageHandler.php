@@ -22,7 +22,7 @@
  */
 
 /**
- * This file contains the class LODNonExistingPageHandler
+ * This file contains the class TSCNonExistingPageHandler
  *
  * @author Thomas Schweitzer
  * Date: 10.09.2010
@@ -44,14 +44,14 @@ global $lodgIP;
  * @author Thomas Schweitzer
  *
  */
-class  LODNonExistingPageHandler  {
+class  TSCNonExistingPageHandler  {
 
     //--- Public methods ---
 
     /**
      * This method is called when a new article object is created. It can decide
      * which sub-class of Article is created.
-     * If the article does not exist yet, an instance of LODNonExistingPage
+     * If the article does not exist yet, an instance of TSCNonExistingPage
      * is returned.
      *
      * @param Title $title
@@ -86,7 +86,7 @@ class  LODNonExistingPageHandler  {
         if (!$title->exists()
             && ($isView || $isRedlink)
             && $wgRequest->getVal('title') === $title->getPrefixedDBkey()) {
-            $article = new LODNonExistingPage($title, $uri);
+            $article = new TSCNonExistingPage($title, $uri);
             // Overwrite the edit mode in case of a redlink
             if ($action === 'edit') {
                 $action = 'view';
@@ -109,7 +109,7 @@ class  LODNonExistingPageHandler  {
         global $wgRequest;
         if ($wgRequest->getVal('preloadNEP') === 'true') {
             $uri = $wgRequest->getVal('uri', '');
-            $text = LODNonExistingPage::getContentOfNEP(new Article($title), $uri);
+            $text = TSCNonExistingPage::getContentOfNEP(new Article($title), $uri);
             if ($uri != '') {
                 // if URI is set add an ontology URI link
                 global $smwgHaloContLang;

@@ -382,7 +382,7 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 		 
 		$this->assertArrayHasKey('EditFormPreloadText', $wgHooks);
 		 
-		$this->assertContains('LODNonExistingPageHandler::onEditFormPreloadText',
+		$this->assertContains('TSCNonExistingPageHandler::onEditFormPreloadText',
 		$wgHooks['EditFormPreloadText']);
 	}
 
@@ -391,7 +391,7 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 	 */
 	function testCheckPageHandlerExists() {
 
-		$ph = new LODNonExistingPageHandler();
+		$ph = new TSCNonExistingPageHandler();
 		$this->assertNotNull($ph);
 	}
 
@@ -468,13 +468,13 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 		switch ($mode) {
 			case 'view':
 				$a = MediaWiki::articleFromTitle($t);
-				// Article must be of type LODNonExistingPage
-				$this->assertTrue($a instanceof LODNonExistingPage,
-    					"Article $articleName is not an instance of LODNonExistingPage.");
+				// Article must be of type TSCNonExistingPage
+				$this->assertTrue($a instanceof TSCNonExistingPage,
+    					"Article $articleName is not an instance of TSCNonExistingPage.");
 				$text = $a->getContent();
 				break;
 			case 'edit':
-				$ph = new LODNonExistingPageHandler();
+				$ph = new TSCNonExistingPageHandler();
 				$ph->onEditFormPreloadText($text, $t);
 				break;
 		}

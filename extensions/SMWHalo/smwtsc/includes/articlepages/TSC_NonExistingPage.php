@@ -42,11 +42,11 @@ global $haclgIP;
  * @author Thomas Schweitzer
  *
  */
-class  LODNonExistingPage extends Article {
+class  TSCNonExistingPage extends Article {
 
     private $mUri;
 
-    public function LODNonExistingPage($title, $uri = '') {
+    public function TSCNonExistingPage($title, $uri = '') {
         parent::__construct($title);
         $this->mUri = $uri;
     }
@@ -85,7 +85,7 @@ class  LODNonExistingPage extends Article {
 
         // We do not want to show the Semantic Toolbar on non-existing pages
         global $wgHooks;
-        $wgHooks['MakeGlobalVariablesScript'][] = "LODNonExistingPage::hideSemanticToolbar";
+        $wgHooks['MakeGlobalVariablesScript'][] = "TSCNonExistingPage::hideSemanticToolbar";
     }
 
     /**
