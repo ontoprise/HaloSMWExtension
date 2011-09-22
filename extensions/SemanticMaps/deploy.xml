@@ -5,7 +5,7 @@
         <title>Semantic Maps</title>
         <version>1.0.3</version>
         <vendor>ontoprise GmbH</vendor>
-        <maintainer>ontoprise GmbH</maintainer>
+        <maintainer>jeroendedauw@gmail.com</maintainer>
         <license>GPL-v2</license>
         <instdir>extensions/SemanticMaps</instdir>
         <description>Semantic Maps is an extension that adds semantic capabilities to the Maps extension.</description>
