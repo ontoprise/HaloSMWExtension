@@ -14,7 +14,7 @@
 		<license>GPL-v2</license> 
 		<dependencies>
 			<dependency from="1.6.0">smwhalo</dependency>
-			<dependency from="1.6.0">tsc</dependency>
+			<dependency from="1.6.0">tsc|tscprof</dependency>
 		</dependencies>
 		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). 
 Please check 
