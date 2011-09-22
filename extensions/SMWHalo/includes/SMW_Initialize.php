@@ -32,7 +32,7 @@ define('CARDINALITY_UNLIMITED', 2147483647); // MAXINT
 
 // max depth of category graph
 define('SMW_MAX_CATEGORY_GRAPH_DEPTH', 10);
-
+define( 'MAG_LINEFEED', 'mycustomlinefeed' );
 $smwgHaloIP = $IP . '/extensions/SMWHalo';
 $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
@@ -62,13 +62,13 @@ function enableSMWHalo() {
 	if (!isset($smwghConvertColoumns)) $smwghConvertColoumns="utf8";
 
 	// Register the triple store as source for a query with the alias "tsc"
-	
+
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
-	
+
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
-	
+
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
 	$wgHooks['MagicWordwgVariableIDs'][]       = 'wfAddCustomVariableID';
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
@@ -103,11 +103,14 @@ function enableSMWHalo() {
 
 		$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
 		$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
-		
+
 		smwfAddStore('SMWQMStore');
 	}
-	
-	
+    
+	// declare a magic word (LINEFEED)
+	$wgHooks['LanguageGetMagic'][] = 'smwfHaloWikiWords';
+	$wgHooks['ParserGetVariableValueSwitch'][] = 'smwfHaloAssignAValue';
+	$wgHooks['MagicWordwgVariableIDs'][] = 'smwfHaloDeclareVarIds';
 }
 
 /**
@@ -119,7 +122,7 @@ function smwgHaloSetupExtension() {
 	global $smwgHaloContLang, $wgAutoloadClasses, $wgSpecialPages, $wgAjaxExportList, $wgGroupPermissions;
 	global $mediaWiki, $wgSpecialPageGroups;
 	global $smwgHaloWebserviceEndpoint, $smwgMessageBroker;
-	
+
 
 	// check if dependant extensions are installed
 	if (!defined('DF_VERSION')) {
@@ -142,13 +145,13 @@ function smwgHaloSetupExtension() {
 		trigger_error($msg);
 	}
 
-	
 
-	
+
+
 	$smwgMasterGeneralStore = NULL;
 
 	// Autoloading. Use it for everything! No include_once or require_once please!
-	
+
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_AdvRequestOptions.php';
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWFancyTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_FancyTable.php';
@@ -174,7 +177,7 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
 	$smwgResultFormats['fancytable'] = 'SMWFancyTableResultPrinter';
-	
+
 
 	//Set up the IsExtensionInstalled PG
 	$wgHooks['ParserFirstCallInit'][] = 'SMWIsExtensionInstalledPF::registerFunctions';
@@ -193,7 +196,7 @@ function smwgHaloSetupExtension() {
 
 	// register SMW hooks
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
-	
+
 	$wgHooks['ArticleSaveComplete'][] = 'smwfSavesNamespaceMappings';
 	$wgHooks['SkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['sfSetTargetName'][]     		= 'smwfOnSfSetTargetName';
@@ -212,7 +215,7 @@ function smwgHaloSetupExtension() {
 
 	}
 
-	
+
 	// Register parser hooks for advanced annotation mode
 
 	$action = $wgRequest->getVal('action');
@@ -242,7 +245,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['NewRevisionFromEditComplete'][] = 'SMWArticleBuiltinProperties::onNewRevisionFromEditComplete'; // fetch some MediaWiki data for replication in SMW's store
 
 
-	
+
 
 
 
@@ -335,7 +338,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
 
 
-		
+
 		$wgAutoloadClasses['SMWHaloAdmin'] = $smwgHaloIP . '/specials/SMWHaloAdmin/SMW_HaloAdmin.php';
 		$wgSpecialPages['SMWHaloAdmin'] = array('SMWHaloAdmin');
 		$wgSpecialPageGroups['SMWHaloAdmin'] = 'smwplus_group';
@@ -371,9 +374,9 @@ function smwgHaloSetupExtension() {
 		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
 		);
 
-		
-		
-		
+
+
+
 
 		// make hook for red links if $smwgHaloNEPEnabled is disabled (see above)
 		global $smwgHaloRedLinkWithCreateNewPage;
@@ -443,11 +446,40 @@ function smwgHaloSetupExtension() {
 			}
 
 			$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
-				
+
 			// initialize static members of SMWHaloPredefinedPages
 			new SMWHaloPredefinedPages();
+
 				
+
+
 			return true;
+}
+
+function smwfHaloWikiWords( &$magicWords, $langCode ) {
+	
+	$magicWords[MAG_LINEFEED] = array( 0, 'Linefeed' );
+
+	// must do this or you will silence every LanguageGetMagic hook after this!
+	return true;
+}
+
+function smwfHaloAssignAValue( &$parser, &$cache, &$magicWordId, &$ret ) {
+	if ( MAG_LINEFEED == $magicWordId ) {
+		// We found a value, return a linefeed
+		$ret = "\n";
+	}
+	return true;
+}
+
+function smwfHaloDeclareVarIds( &$customVariableIds ) {
+	// $customVariableIds is where MediaWiki wants to store its list of custom
+	// variable IDs. We oblige by adding ours:
+	$customVariableIds[] = MAG_LINEFEED;
+
+	// must do this or you will silence every MagicWordwgVariableIds hook
+	// registered after this!
+	return true;
 }
 
 function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
@@ -485,7 +517,7 @@ function smwfIsTripleStoreConfigured() {
  * The {{#sparql }} parser function processing part.
  */
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
-	
+
 	if (smwfIsTripleStoreConfigured()) {
 		global $smwgIQRunningNumber;
 		$smwgIQRunningNumber++;
@@ -668,7 +700,7 @@ function &smwfGetSemanticStore() {
 	global $smwgMasterGeneralStore, $smwgHaloIP;
 	if ($smwgMasterGeneralStore == NULL) {
 		require_once($smwgHaloIP . '/includes/SMW_SemanticStoreSQL2.php');
-			$smwgMasterGeneralStore = new SMWSemanticStoreSQL2();
+		$smwgMasterGeneralStore = new SMWSemanticStoreSQL2();
 	}
 	return $smwgMasterGeneralStore;
 }
@@ -688,11 +720,11 @@ function smwfDBSupportsFunction($lib) {
 	// a config variable. However, it may happen that the SimilarEntitiesBot crashes,
 	// because the EDITDISTANCE function is not available.
 	/*
-	$dbr =& wfGetDB( DB_SLAVE );
-	$res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
-	$hasSupport = ($dbr->numRows($res) > 0);
-	$dbr->freeResult( $res );
-	return $hasSupport; */
+	 $dbr =& wfGetDB( DB_SLAVE );
+	 $res = $dbr->query('SELECT * FROM mysql.func WHERE dl LIKE '.$dbr->addQuotes($lib.'.%'));
+	 $hasSupport = ($dbr->numRows($res) > 0);
+	 $dbr->freeResult( $res );
+	 return $hasSupport; */
 }
 
 /**
@@ -1590,7 +1622,7 @@ function smwhfRegisterResourceLoaderModules() {
 		'styles' => array(
 				'/skins/semantictoolbar.css',
 				'/skins/Annotation/annotation.css'
-			)
+				)
 				);
 
 				// Module for the Ontology Browser
@@ -1646,12 +1678,12 @@ function smwhfRegisterResourceLoaderModules() {
 			),
 		'dependencies' => $dependencies
 			);
-                        
-                        
-                $wgResourceModules['ext.smwhalo.queryList'] = $moduleTemplate + array(
+
+
+			$wgResourceModules['ext.smwhalo.queryList'] = $moduleTemplate + array(
                     'scripts' => array('scripts/QueryList/querylist.js'),
                     'dependencies' => array('ext.smw.sorttable')
-                );
+			);
 
 			smwfHaloAddJSLanguageScripts();
 
@@ -1660,29 +1692,29 @@ function smwhfRegisterResourceLoaderModules() {
 
 /**
  * Adds a new SMWStore implementation and wraps it around the existing.
- * 
+ *
  * @param string $store_class Classname of new SMWStore.
  *         The class must have a constructor which takes exactly a SMWStore argument.
- *         This is the child store at which everything should be delegated which is 
+ *         This is the child store at which everything should be delegated which is
  *         not handled by the new store itself.
- * 
+ *
  * @return SMWStore The current store (also retrieved by smwfGetStore() )
  */
 function smwfAddStore($store_class) {
 	global $smwgMasterStore;
-    $oldStore = smwfGetStore();
-    
-    $qmStorePresent = false;
-    if ($oldStore instanceof HACLSMWStore) {
-        $qmStorePresent = true;
-        $oldStore = $oldStore->getStore();
-    }
-    $smwgMasterStore = new $store_class($oldStore);
-    
-    if ($qmStorePresent) {
-        $smwgMasterStore = new HACLSMWStore($smwgMasterStore);
-    }
-    return $smwgMasterStore;
+	$oldStore = smwfGetStore();
+
+	$qmStorePresent = false;
+	if ($oldStore instanceof HACLSMWStore) {
+		$qmStorePresent = true;
+		$oldStore = $oldStore->getStore();
+	}
+	$smwgMasterStore = new $store_class($oldStore);
+
+	if ($qmStorePresent) {
+		$smwgMasterStore = new HACLSMWStore($smwgMasterStore);
+	}
+	return $smwgMasterStore;
 }
 
 
