@@ -48,7 +48,7 @@ srfSetupSRTables(true);
  */
 function srfSetupSRTables($verbose) {
 	global $tscgIP;
-	require_once($tscgIP.'/smwtsc/includes/triplestore_client/SMW_RuleStore.php');
+	require_once($tscgIP.'/includes/triplestore_client/TSC_RuleStore.php');
 	SMWRuleStore::getInstance()->setup($verbose);
 }
 
@@ -59,7 +59,7 @@ function srfSetupSRTables($verbose) {
  */
 function srfDropSRTables($verbose) {
 	global $tscgIP;
-    require_once($tscgIP.'/smwtsc/includes/triplestore_client/SMW_RuleStore.php');
+    require_once($tscgIP.'/includes/triplestore_client/TSC_RuleStore.php');
 	SMWRuleStore::getInstance()->drop($verbose);
 }
 

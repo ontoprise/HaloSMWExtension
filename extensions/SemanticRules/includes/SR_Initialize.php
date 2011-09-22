@@ -25,8 +25,8 @@ if (strlen($srgStyleVersion) > 0) {
 }
 
 // check if quad drive is used. If so, stop here because it is not supported.
-global $smwgDefaultStore;
-if($smwgDefaultStore == 'SMWTripleStoreQuad') {
+global $smwgHaloQuadMode;
+if($smwgHaloQuadMode == true) {
 	trigger_error("Rule extension will not work with the 'SMWTripleStoreQuad' client. Please deactivate it and replace it by 'SMWTripleStore'.");
 	die();
 }
@@ -35,7 +35,7 @@ if($smwgDefaultStore == 'SMWTripleStoreQuad') {
 global $wgCommandLineMode, $smwgHaloWebserviceEndpoint;
 if ($wgCommandLineMode) {
 	// in command line mode, just print a WARNING, otherwise DF may stop working
-	if (!isset($smwgHaloWebserviceEndpoint) || $smwgDefaultStore != 'SMWTripleStore') {
+	if (!isset($smwgHaloWebserviceEndpoint)) {
 		echo "\n\nWARNING: TSC is NOT configured. Take a look here: \n\thttp://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\n";
 	}
 } else {
