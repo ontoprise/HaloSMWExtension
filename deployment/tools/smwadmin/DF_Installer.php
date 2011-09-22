@@ -256,9 +256,8 @@ class Installer {
 			$dependencies = $p->getDependencies();
 
 			foreach($dependencies as $dep) {
-				list($id, $from, $to, $optional, $message) = $dep;
-				if ($optional) continue;
-				if ($id == $packageID) {
+				if ($dep->isOptional()) continue;
+				if ($dep->matchBundle($packageID)) {
 					$dependantPackages[] = $p->getID();
 					$existDependency = true;
 				}
@@ -744,7 +743,7 @@ class Installer {
 	 *
 	 * @param string $id
 	 * @param int $version
-	 * 
+	 *
 	 * @return string $unzipDirectory
 	 */
 	private function unzip($dd) {
@@ -812,7 +811,7 @@ class Installer {
 				$programs = reset($OPSoftware);
 				if (count($programs) > 1) {
 					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-                    $unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
+					$unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
 				} else {
 					$unzipDirectory = trim(reset($programs));
 				}
@@ -856,8 +855,8 @@ class Installer {
 				$extensions[$dd->getID()] = array($dd, $from, $to);
 			} else {
 				list($dd2, $min, $max) = $extensions[$dd->getID()];
-				if ($from > $min) $min = $from;
-				if ($to < $max) $max = $to;
+				if ($from->isHigher($min)) $min = $from;
+				if ($to->isLower($max)) $max = $to;
 				$extensions[$dd->getID()] = array($dd2, $min, $max);
 			}
 		}
@@ -869,19 +868,20 @@ class Installer {
 			$lastSize = count($removed_extensions);
 			foreach($extensions as $id => $e) {
 				list($un, $min, $max) = $e;
-				if ($min <= $max) {
+				if ($min->isLowerOrEqual($max)) {
 					$deps = $un->getDependencies();
 					foreach($deps as $dep) {
-						list($depID, $from, $to, $optional, $message) = $dep;
-						if ($optional) continue;
-						if (array_key_exists($depID, $removed_extensions)) {
+						if ($dep->isOptional()) continue;
+						//FIXME: if ALL contained should be right here...
+						$id = $dep->isContained($removed_extensions);
+						if ($id !== false) {
 							$removed_extensions[$id] = $un;
 						}
 
 					}
 				} else {
 					$removed_extensions[$id] = $un;
-					$contradictions[] = array($id, $min, $max);
+					$contradictions[] = array($id, $dep->getMinVersion(), $dep->getMaxVersion());
 				}
 			}
 		} while(count($removed_extensions) > $lastSize);
@@ -920,13 +920,17 @@ class Installer {
 		// or installed.
 
 		foreach($dependencies as $dep) {
-			list($id, $from, $to, $optional, $message) = $dep;
-			if ($optional) {
+			
+			if ($dep->isOptional()) {
 				// ask for installation of optional packages
 				// do not ask if it is a global update or if it already exists.
-				if (array_key_exists($id, $localPackages)) {
+				$id = $dep->isContained($localPackages);
+				if ($id !== false) {
 					continue;
 				}
+				$message = $dep->getMessage();
+				$ids = $dep->getIDs();
+				$id = reset($ids); // FIXME: may be alternatives also for optional deps
 				DFUserInput::getInstance()->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
 				if ($globalUpdate || $result != 'y') {
 					continue;
@@ -934,13 +938,13 @@ class Installer {
 			}
 			$packageFound = false;
 			foreach($localPackages as $p) {
-				if ($id === $p->getID()) {
+				if ($dep->matchBundle($p->getID())) {
 					$packageFound = true;
-					if ($p->getVersion()->isLower($from)) {
+					if ($p->getVersion()->isLower($dep->getMinVersion())) {
 
-						$updatesNeeded[] = array($id, $from, $to);
+						$updatesNeeded[] = array($p->getID(), $dep->getMinVersion(), $dep->getMaxVersion());
 					}
-					if ($p->getVersion()->isHigher($to)) {
+					if ($p->getVersion()->isHigher($dep->getMaxVersion())) {
 						global $dfgForce;
 						if (!$dfgForce) {
 							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".$to->toVersionString().". Downgrades are not supported.");
@@ -950,8 +954,15 @@ class Installer {
 			}
 			if (!$packageFound) {
 				// package was not installed at all.
-
-				$updatesNeeded[] = array($id, $from, $to);
+				if (count($dep->getIDs()) > 1) {
+					$index = DFUserInput::selectElement("Which should be installed?", $dep->getIDs());
+					$ids = $dep->getIDs();
+					$id = $ids[$index];
+				} else {
+					$ids = $dep->getIDs();
+					$id = reset($ids);
+				}
+				$updatesNeeded[] = array($id, $dep->getMinVersion(), $dep->getMaxVersion());
 			}
 		}
 
@@ -997,21 +1008,21 @@ class Installer {
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependency($dd->getID());
 			if ($dep == NULL) continue;
-			list($id, $from, $to, $optional) = $dep;
-			if ($optional) continue;
+			
+			if ($dep->isOptional()) continue;
 
 			// if $dd's version exceeds the limit of the installed,
 			// try to find an update
-			if ($dd->getVersion()->isHigher($to)) {
+			if ($dd->getVersion()->isHigher($dep->getMaxVersion())) {
 				$versions = PackageRepository::getAllVersions($p->getID());
 				// iterate through the available versions
 				$updateFound = false;
 				foreach($versions as $v) {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
-					list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($dd->getID());
-					if ($from_ptu->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($to_ptu)) {
+					$depToUpdate = $ptoUpdate->getDependency($dd->getID());
+					if ($depToUpdate->getMinVersion()->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($depToUpdate->getMaxVersion())) {
 
-						$packagesToUpdate[] = array($p, $from_ptu, $to_ptu);
+						$packagesToUpdate[] = array($p, $depToUpdate->getMinVersion(), $depToUpdate->getMaxVersion());
 						$updateFound = true;
 						break;
 					}
@@ -1045,17 +1056,17 @@ class Installer {
 		if (count($extensions_to_update) == 0)
 		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of bundles to install is empty.", $packageID);
 		$result = array();
-		$result['newpackage'] = array($new_package->getID(), $new_package->getVersion(), $new_package->getPatchlevel());;
-		$result['oldpackage'] = is_null($old_package) ? NULL : array($old_package->getID(), $old_package->getVersion(), $old_package->getPatchlevel());;
+		$result['newpackage'] = array($new_package->getID(), $new_package->getVersion()->toVersionString(), $new_package->getPatchlevel());;
+		$result['oldpackage'] = is_null($old_package) ? NULL : array($old_package->getID(), $old_package->getVersion()->toVersionString(), $old_package->getPatchlevel());;
 		$result['extensions'] = array();
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
-			$result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+			$result['extensions'][] = array($desc->getID(), $desc->getVersion()->toVersionString(), $desc->getPatchlevel());
 		}
 		$result['contradictions'] = array();
 		foreach($contradictions as $etu) {
 			list($desc, $min, $max) = $etu;
-			$result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+			$result['contradictions'][] = array($desc->getID(), $desc->getVersion()->toVersionString(), $desc->getPatchlevel());
 		}
 		return $result;
 

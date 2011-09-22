@@ -61,16 +61,15 @@ class MaintenanceTools {
 			$out[$p->getID()]= array();
 			$dependencies = $p->getDependencies();
 			foreach($dependencies as $dep) {
-				list($id, $min, $max, $optional, $message) = $dep;
-
-				if ($optional)  {
+				if ($dep->isOptional())  {
 					// ignore optional extensions
 					continue;
 				}
 
 				// check if dependant package exists
-				if (!array_key_exists($id, $localPackages)) {
-					$out[$p->getID()][]= "Extension missing: ".$id;
+				$id = $dep->isContained($localPackages);
+				if ($id === false) {
+					$out[$p->getID()][]= "Extension missing: ".$dep->toString();
 					$errorInExt = true;
 					$errorFound |= $errorInExt;
 					continue;
@@ -78,7 +77,7 @@ class MaintenanceTools {
 
 				// check if dependant package has correct version
 				$ext = $localPackages[$id];
-				if ($ext->getVersion()->isLower($min) || $ext->getVersion()->isHigher($max)) {
+				if ($ext->getVersion()->isLower($dep->getMinVersion()) || $ext->getVersion()->isHigher($dep->getMaxVersion())) {
 					$out[$p->getID()][]=  "Dependency to '".$id."' has wrong version: ".$ext->getVersion()->getVersionString().". \n\t\tExpected range $min-$max";
 					$errorInExt = true;
 					$errorFound |= $errorInExt;

@@ -701,9 +701,10 @@ class PackageRepository {
 	private static function getAllDependencies($dd, & $descriptorMap, & $depCounterMap, $rootDir) {
 		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
 		foreach($dd->getDependencies() as $dep) {
-			list($id, $min, $max, $optional) = $dep;
-			if ($optional) continue;
-			if (!array_key_exists($id, $descriptorMap)) {
+			
+			if ($dep->isOptional()) continue;
+			$id = $dep->isContained($descriptorMap);
+			if ($id === false) {
 				$desc = is_null($rootDir) ? self::getLatestDeployDescriptor($id) : $localpackages[$id];
 				if (is_null($desc)) {
 					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Bundle not found: $id", $id);
@@ -731,10 +732,10 @@ class PackageRepository {
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependencies();
 			if ($dep == NULL) continue;
-			list($id, $from, $to, $optional) = $dep;
-			if ($optional) continue;
+			
+			if ($dep->isOptional()) continue;
 
-			if ($id == $extID) {
+			if ($dep->matchBundle($extID)) {
 				// $p is a super package
 				$superExtensions[$p->getID()] = $p;
 				self::getLocalSuperExtensions($p, $superExtensions, $rootDir);

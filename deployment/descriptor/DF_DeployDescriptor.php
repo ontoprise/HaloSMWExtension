@@ -16,6 +16,7 @@
  */
 
 require_once ('DF_Version.php');
+require_once ('DF_Dependency.php');
 require_once ('DF_DeployDescriptorProcessor.php');
 
 /**
@@ -182,7 +183,7 @@ class DeployDescriptor {
 					$path = "//update[@from='$fromString']";
 					$update = $this->dom->xpath($path);
 					if (count($update) === 0 && $from->isEqual($this->getVersion())) {
-						// if no explicit update section exists, check if updating the 
+						// if no explicit update section exists, check if updating the
 						// currently installed version only to another patchlevel
 						$path = "//update[@from='patchlevel']";
 					}
@@ -405,7 +406,7 @@ class DeployDescriptor {
 
 	/**
 	 * Returns dependant extensions
-	 * @return Array of ($ext_id, $minVersion, $maxVersion)
+	 * @return DFDependency[]
 	 */
 	function getDependencies() {
 		if (!is_null($this->dependencies)) return $this->dependencies;
@@ -429,7 +430,7 @@ class DeployDescriptor {
 			} else {
 				$depTo = new DFVersion($depTo);
 			}
-			$this->dependencies[] = array($depID, $depFrom, $depTo, $optional, $message);
+			$this->dependencies[] = new DFDependency($depID, $depFrom, $depTo, $optional, $message);
 		}
 		return $this->dependencies;
 	}
@@ -437,14 +438,14 @@ class DeployDescriptor {
 	/**
 	 * Returns the dependency of the given extension.
 	 * @param $ext_id Extension ID
-	 * @return Array of ($ext_id, $minVersion, $maxVersion) or NULL if $ext_id does not occur as dependency.
+	 * @return DFDependency or NULL if $ext_id does not occur as dependency.
 	 */
 	function getDependency($ext_id) {
 		$ext_id = strtolower($ext_id);
 		$dependencies = $this->getDependencies();
 		foreach($dependencies as $d) {
-			list($id, $from, $to) = $d;
-			if ($ext_id === $id) return $d;
+			$id = $d->isContained(array($ext_id));
+			if ($id !== false) return $d;
 		}
 		return NULL;
 	}
@@ -466,8 +467,7 @@ class DeployDescriptor {
 	function isOptionalDependency($ext_id) {
 		$dep = $this->getDependency($ext_id);
 		if (is_null($dep)) return NULL;
-		list($id, $from, $to, $optional) =  $dep;
-		return $optional;
+		return $dep->isOptional();
 	}
 
 
@@ -475,7 +475,7 @@ class DeployDescriptor {
 	 * Returns patches which are suitable for the given local packages.
 	 *
 	 * @param $localPackages array of DeployDescriptor
-	 * @return array of (string $patchfilePath, boolean $mayFail) 
+	 * @return array of (string $patchfilePath, boolean $mayFail)
 	 */
 	function getPatches($localPackages) {
 			
@@ -516,7 +516,7 @@ class DeployDescriptor {
 					continue;
 				}
 				$fromVersion = new DFVersion($from);
-                $toVersion = new DFVersion($to);
+				$toVersion = new DFVersion($to);
 				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($to)) {
 					$patches[] = $pf;
 				}
