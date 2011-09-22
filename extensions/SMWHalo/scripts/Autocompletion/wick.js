@@ -355,7 +355,8 @@ AutoCompleter.prototype = {
              // stop processing and hide floater if no result
             if (request.responseText.indexOf('noResult') != -1) {
             	this.collection = new Array();
-            	this.processSmartInput(inputBox, userInputToMatch);
+            	// do not display empty floater
+            	//this.processSmartInput(inputBox, userInputToMatch); 
                 return;
             }
 
