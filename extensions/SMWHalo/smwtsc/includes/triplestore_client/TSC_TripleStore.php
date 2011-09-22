@@ -1237,7 +1237,7 @@ class SMWTripleStore extends SMWStore {
 
 			// literal value is empty
 			if ($property instanceof SMWPropertyValue ) {
-				$value = SMWDataValueFactory::newPropertyObjectValue($property);
+				$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem());
 			} else {
 				$value = SMWDataValueFactory::newTypeIDValue(is_null($property) ? '_str' :  '_wpg');
 
