@@ -247,6 +247,17 @@ function dffCheckEnvironment() {
 			$result .= "<li>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)</li>";
 		}
 	}
+	
+    // check socket_create (some webhosters provide crappy PHP installations which lacks socket functions)
+    if (function_exists("socket_create")) {
+        @$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        if ($socket === false) {
+            $result .= "<li>Could not create a socket. Are you sure you run a standard PHP installation?</li>";
+        }
+    } else {
+        $result .= "<li>Could not find 'socket_create' PHP-function. Are you sure you run a standard PHP installation?</li>";
+    }
+    
 	return empty($result) ? true : "<ul>$result</ul>";
 }
 
