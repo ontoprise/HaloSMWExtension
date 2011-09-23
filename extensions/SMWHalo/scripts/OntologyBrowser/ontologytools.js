@@ -2765,13 +2765,13 @@ OBSchemaPropertySubMenu.prototype = Object
 							GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
 						}
 
-						function fillUserTypesCallback(request) {
-							var userTypes = request.responseText.split(",");
-							// remove first element
-							userTypes.shift();
-							this.builtinTypes = this.builtinTypes
-									.concat(userTypes);
-						}
+//						function fillUserTypesCallback(request) {
+//							var userTypes = request.responseText.split(",");
+//							// remove first element
+//							userTypes.shift();
+//							this.builtinTypes = this.builtinTypes
+//									.concat(userTypes);
+//						}
 						
 							this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
 							if (this.builtinTypes == null) {
