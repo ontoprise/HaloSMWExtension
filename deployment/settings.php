@@ -47,9 +47,20 @@ class DF_Config  {
     /*
      * External programs which are known to the DF.
      * (only relevant for Windows)
+     * 
+     * Maps name as it appears in registry to DF id.
      */
-	public static $df_knownPrograms = array('tscprof' => 'Triplestore Connector Professional',
-                                'tsc' => 'Triplestore Connector Basic');
+	public static $df_knownPrograms = array('Triplestore Connector Professional' => 'tscprof',
+                                'Triplestore Connector Basic' => 'tsc' );
+	
+	/*
+	 * Automatic check for updates if a sysop user logs in.
+	 * Default is true.
+	 * 
+	 * @var boolean
+	 */
+	public static $df_checkForUpdateOnLogin = true;
+	
 	/*
 	 * Genernal settings for smwadmin/webadmin
 	 */

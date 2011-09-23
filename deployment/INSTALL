@@ -31,6 +31,8 @@ Table of contents
 5. Adding new repositories
 6. Using Deployment Framework with a Proxy
 7. Deployment Framework log
+8. Importing ontologies
+9. Non public apps
 
 #
 # 1. Installation:
@@ -208,4 +210,19 @@ First, take a look into tools/onto2mwxml/README.TXT and install onto2mwxml (requ
 Importing an ontology is as follows:
 
     smwadmin -i <ontology file (full path)>
- 
+
+#
+#9. Non public apps
+#===================
+Apps which are not published by the webservcer (TSC, SOLR,...) are handled separately.
+There is a file deployment/externalapps with the following format:
+
+<ID>=<path>
+
+Example:
+tsc=d:\tsc
+
+Linux users 
+
+
+

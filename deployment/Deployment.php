@@ -5,14 +5,19 @@ define ('DF_WIKICONTEXT', 1);
 $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';
 
-$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
+// read settings.php
+require("settings.php");
+
+if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdateOnLogin !== false) {
+	$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
+}
 $wgAjaxExportList[] = 'dff_authUser';
 $dfgNoAsk=true;
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();
 	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits, $dfgOut;
-	
+
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
 	$wgAutoloadClasses['DFPrintoutStream'] = $smwgDFIP . '/io/DF_PrintoutStream.php';
@@ -20,7 +25,7 @@ function dfgSetupExtension() {
 	$wgAutoloadClasses['DFUserInput'] = $smwgDFIP . '/tools/smwadmin/DF_UserInput.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
-	
+
 
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
@@ -67,10 +72,10 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 /**
  * Checks the credentials for the user and makes sure that it is
  * member of group 'sysop'.
- * 
+ *
  * @param string $username
  * @param string $password
- * 
+ *
  * @return string true/false
  */
 function dff_authUser($username, $password) {

@@ -763,18 +763,27 @@ class Installer {
 			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
 
 
-			// if already somewhere installed, use this (only Windows)
+			// if already somewhere installed, use this (Windows)
 			$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
 			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
 				$programs = reset($OPSoftware);
 				if (count($programs) > 1) {
 					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-					$unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
+					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
 				} else {
 					$unzipDirectory = trim(reset($programs));
+					 Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
 				}
 			}
-
+			// if already somewhere installed, use this (Linux)
+			if (!Tools::isWindows()) {
+				$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
+				if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
+					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
+				} else {
+					Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
+				}
+			}
 
 			Tools::mkpath($unzipDirectory);
 		}
@@ -811,10 +820,19 @@ class Installer {
 				$programs = reset($OPSoftware);
 				if (count($programs) > 1) {
 					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-					$unzipDirectory = $nonPublicAppPaths[DF_Config::$df_knownPrograms[$dd->getID()]];
+					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
 				} else {
 					$unzipDirectory = trim(reset($programs));
+					 Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
 				}
+			}
+			if (!Tools::isWindows()) {
+				$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
+				if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
+					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
+				}  else {
+                    Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
+                }
 			}
 			Tools::mkpath($unzipDirectory);
 		}
@@ -920,7 +938,7 @@ class Installer {
 		// or installed.
 
 		foreach($dependencies as $dep) {
-			
+
 			if ($dep->isOptional()) {
 				// ask for installation of optional packages
 				// do not ask if it is a global update or if it already exists.
@@ -1008,7 +1026,7 @@ class Installer {
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependency($dd->getID());
 			if ($dep == NULL) continue;
-			
+
 			if ($dep->isOptional()) continue;
 
 			// if $dd's version exceeds the limit of the installed,

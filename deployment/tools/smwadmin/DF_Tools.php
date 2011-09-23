@@ -649,7 +649,8 @@ class Tools {
 		// convert IDs into program names (as far as known)
 		// TSC is the only registered program for now.
 		$knownPrograms = DF_Config::$df_knownPrograms;
-	
+	   
+		$knownPrograms = array_flip($knownPrograms);
 		if (array_key_exists($id, $knownPrograms)) {
 			$programs = array($knownPrograms[$id]);
 		} else {
@@ -745,7 +746,7 @@ class Tools {
 	 *
 	 * @param string $mwroot
 	 * 
-	 * @return array($programName => $path)
+	 * @return array($id => $path)
 	 */
 	public static function getNonPublicAppPath($mwroot) {
 		$result = array();
@@ -754,8 +755,8 @@ class Tools {
 		$lines = explode("\n", $content);
 		foreach($lines as $l) {
 			if (empty($l)) continue;
-			list($programName, $path) = explode("=", $l);
-			$result[$programName] = $path;
+			list($id, $path) = explode("=", $l);
+			$result[$id] = $path;
 		}
 		return $result;
 	}
@@ -764,18 +765,18 @@ class Tools {
 	 * Sets the full path of a non-public app.
 	 *
 	 * @param string $mwroot
-	 * @param string $programName
+	 * @param string $id
 	 * @param string $path
 	 * 
 	 * @return boolean True on success
 	 */
-	public static function setNonPublicAppPath($mwroot, $programName, $path) {
+	public static function setNonPublicAppPath($mwroot, $id, $path) {
 		$result = self::getNonPublicAppPath($mwroot);
-		$result[$programName] = $path;
+		$result[$id] = $path;
 		$handle = fopen("$mwroot/deployment/externalapps", "w");
 		if ($handle === false) return false;
-		foreach($result as $programName => $path) {
-			fwrite($handle, "$programName=$path\n");
+		foreach($result as $id => $path) {
+			fwrite($handle, "$id=$path\n");
 		}
 		fclose($handle);
 		return true;
