@@ -392,7 +392,7 @@ class ExportOntologyBot extends GardeningBot {
 					$maxCard = NULL;
 				}
 
-				$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCardProp);
+				$minCards = smwfGetStore()->getPropertyValues($rp, SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY);
 				if ($minCards != NULL || count($minCards) > 0) {
 					$minCard = intval(GardeningBot::getXSDValue($minCards[0]));
 

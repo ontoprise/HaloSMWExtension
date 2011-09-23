@@ -28,13 +28,13 @@ class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
         // initialize with:
         // 1. All (super-/member-)categories of articles having issues with instances or categories
         // 2. All domain categories of property articles having issues. 
-        $domainRangePropertyText = smwfGetSemanticStore()->domainRangeHintRelation->getDBkey();             
+        $domainRangePropertyText = SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText();             
         $db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_title = cl_to ' .
                         'JOIN '.$smw_gardeningissues.' ON p1_id = cl_from ' .
                         'WHERE page_namespace = 14 AND (p1_namespace = 0 OR p1_namespace = 14) AND bot_id = '.$db->addQuotes($botID).')');
         
-        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getDBkey()) );
         if ($domainAndRange == NULL) {
             $domainAndRangeID = -1; // does never exist
         } else {

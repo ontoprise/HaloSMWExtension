@@ -3,7 +3,7 @@
  * @file
  * @ingroup ConsistencyBot
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Created on 29.05.2007
  *
@@ -33,6 +33,7 @@
  		$this->bot->addSubTask($totalWork);
  		
  		foreach($inverseRelations as $r) {
+ 			
  			if ($this->delay > 0) {
  				if ($this->bot->isAborted()) break;
  				usleep($this->delay);
@@ -44,8 +45,10 @@
  			
  			
  			list($s, $t) = $r;
- 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues($s, smwfGetSemanticStore()->domainRangeHintProp);
- 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues($t, smwfGetSemanticStore()->domainRangeHintProp);
+ 			$domainAndRangeOfSource = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($s), 
+ 				SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
+ 			$domainAndRangeOfTarget = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($t), 
+ 				SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
  			
  			if (count($domainAndRangeOfSource) == 0) {
  				continue;
@@ -54,23 +57,28 @@
  				continue;
  			}
  		 	
- 		 	$dv_source = $domainAndRangeOfSource[0]->getDVs();
- 		 	$dv_target = $domainAndRangeOfTarget[0]->getDVs();
+ 			$domain_source = $domainAndRangeOfSource[0]->getSemanticData()->getPropertyValues(
+ 		 		SMWDIProperty::newFromUserLabel('Has domain'));
+ 		 	$range_target = $domainAndRangeOfTarget[0]->getSemanticData()->getPropertyValues(
+ 		 		SMWDIProperty::newFromUserLabel('Has range'));
  		 	
- 		 	if (count($dv_source) > 0 && count($dv_target) > 1 && $dv_source[0] != NULL && $dv_target[1] != NULL) {
- 		 		if (!$dv_source[0]->getTitle()->equals($dv_target[1]->getTitle())) {
- 			
+ 		 	if (count($domain_source) > 0 && count($range_target) > 0 && $domain_source[0] != NULL && $range_target[0] != NULL) {
+ 		 		if (!$domain_source[0]->getTitle()->equals($range_target[0]->getTitle())) {
  					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $s, $t);
  				
  				} 
  		 	}
  		 	
- 		 	if (count($dv_source) > 1 && count($dv_target) > 0 && $dv_source[1] != NULL && $dv_target[0] != NULL) {
- 		 		 if (!$dv_source[1]->getTitle()->equals($dv_target[0]->getTitle())) {
- 				
+ 		 	$domain_target = $domainAndRangeOfTarget[0]->getSemanticData()->getPropertyValues(
+ 		 		SMWDIProperty::newFromUserLabel('Has domain'));
+ 		 	$range_source = $domainAndRangeOfSource[0]->getSemanticData()->getPropertyValues(
+ 		 		SMWDIProperty::newFromUserLabel('Has range'));
+ 		 	
+ 		 	if (count($domain_target) > 0 && count($range_source) > 0 && $domain_target[0] != NULL && $range_source[0] != NULL) {
+ 		 		if (!$domain_target[0]->getTitle()->equals($range_source[0]->getTitle())) {
  					$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_DOMAIN_NOT_RANGE, $t, $s);
- 					
- 				}
+ 				
+ 				} 
  		 	}  
  		 	
  			

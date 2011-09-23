@@ -5,7 +5,7 @@
  * 
  * Created on 23.05.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  
  class GraphHelper {
@@ -110,7 +110,7 @@
  		$diff = $diff % 2 == 0 ? $diff/2 : intval($diff/2);
  		$cs = $lowerBound + $diff;
  		if ($sortedGraph[$cs]->from == $from) {
- 			return GraphHelper::getAllEdges($sortedGraph, $cs);
+			return GraphHelper::getAllEdges($sortedGraph, $cs);
 	 	} else {
  			if ($sortedGraph[$cs]->from < $from) {
  				$lowerBound = $cs;

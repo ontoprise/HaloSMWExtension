@@ -74,10 +74,10 @@ class AnnotationLevelConsistency {
 					}
 				}
 
-				if (smwfGetSemanticStore()->domainRangeHintRelation->equals($p)
-				|| smwfGetSemanticStore()->minCard->equals($p)
-				|| smwfGetSemanticStore()->maxCard->equals($p)
-				|| smwfGetSemanticStore()->inverseOf->equals($p)) {
+				if (SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->equals($p)
+				|| SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->equals($p)
+				|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->equals($p)
+				|| SMWHaloPredefinedPages::$IS_INVERSE_OF->equals($p)) {
 					// ignore builtin halo properties
 					continue;
 				}
@@ -87,7 +87,7 @@ class AnnotationLevelConsistency {
 				$p_DV = SMWPropertyValue::makeUserProperty($p->getDBkey());
 				if (!$p_DV->isUserDefined()) continue;
 				if (is_null($restrictToCategories) || empty($restrictToCategories)) {
-					$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV);
+					$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV->getDataItem());
 					foreach ($allPropertySubjects as $dv) {
 						$subjects[] = $dv->getTitle();
 					};
@@ -106,23 +106,25 @@ class AnnotationLevelConsistency {
 	public function checkPropertyAnnotations(& $subjects, $property) {
 		// get domain and range categories of property
 
-		$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($property), 
+			SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
 
 
 		if (empty($domainRangeAnnotations)) {
 			// if there are no range categories defined, try to find a super relation with defined range categories
 			$domainRangeAnnotations = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $property);
 		}
+		
+		$this->checkForMissingParams($subjects, $property);			
 
 		if (empty($domainRangeAnnotations)) {
 			// if it's still empty, there's no domain or range defined at all. In this case, simply skip it in order not to pollute the consistency log.
 			// but check for missing params of n-ary relations before.
 
-			$this->checkForMissingParams($subjects, $property);
+			
 			return;
 		}
-
-
+		
 		// iterate over all property subjects
 		foreach($subjects as $subject) {
 
@@ -140,12 +142,13 @@ class AnnotationLevelConsistency {
 
 			// get property value for a given instance
 			$propertyDV = SMWPropertyValue::makeUserProperty($property->getDBkey());
-			$relationTargets = smwfGetStore()->getPropertyValues($subject, $propertyDV);
+			$relationTargets = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($subject), 
+				$propertyDV->getDataItem());
 
 			foreach($relationTargets as $target) {
 
 				// decide which type and do consistency checks
-				if ($target instanceof SMWWikiPageValue) {  // binary relation
+				if ($target instanceof SMWDIWikiPage) {  // binary relation
 					$rd_target = smwfGetSemanticStore()->getRedirectTarget($target->getTitle());
 					if (!$rd_target->exists()) continue;
 					$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
@@ -158,7 +161,7 @@ class AnnotationLevelConsistency {
 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $property, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
 					}
 
-				} else if ($target instanceof SMWRecordValue) { // n-ary relation
+				} else if ($target instanceof SMWDIContainer) { // n-ary relation
 
 					$explodedValues = $target->getDVs();
 					//$explodedTypes = explode(";", $target->getDVTypeIDs());
@@ -231,10 +234,10 @@ class AnnotationLevelConsistency {
 			}
 
 			// ignore builtin properties
-			if (smwfGetSemanticStore()->minCard->equals($a)
-			|| smwfGetSemanticStore()->maxCard->equals($a)
-			|| smwfGetSemanticStore()->domainRangeHintRelation->equals($a)
-			|| smwfGetSemanticStore()->inverseOf->equals($a)) {
+			if (SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY ->equals($a)
+			|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->equals($a)
+			|| SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->equals($a)
+			|| SMWHaloPredefinedPages::$IS_INVERSE_OF->equals($a)) {
 				continue;
 			}
 
@@ -249,7 +252,8 @@ class AnnotationLevelConsistency {
 	public function checkAnnotationCardinalities($a, $restrictToCategories = array()) {
 		// get minimum cardinality
 
-		$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
+		$minCardArray = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), 
+			SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getText()));
 
 		if (empty($minCardArray)) {
 			// if it does not exist, get minimum cardinality from superproperty
@@ -261,12 +265,12 @@ class AnnotationLevelConsistency {
 
 		// get maximum cardinality
 
-		$maxCardsArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCardProp);
+		$maxCardsArray = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), 
+			SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getText()));
 
 		if (empty($maxCardsArray)) {
 			// if it does not exist, get maximum cardinality from superproperty
 			$maxCards = CARDINALITY_UNLIMITED;
-
 		} else {
 			// assume there's only one defined. If not it will be found in co-variance checker anyway
 			$maxCards = intval(GardeningBot::getXSDValue($maxCardsArray[0]));
@@ -308,13 +312,15 @@ class AnnotationLevelConsistency {
 
 		if ($minCards == CARDINALITY_MIN) {
 			// check if minCard > 0 is inherited
+
 			$minCards = $this->cc_store->getMinCardinalityOfSuperProperty($this->propertyGraph, $a);
 			if ($minCards == CARDINALITY_MIN) return; // do nothing for default cardinality
 		}
 
 		// get domains
 
-		$domainRangeAnnotations = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->domainRangeHintProp);
+		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), 
+			SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
 
 		if (empty($domainRangeAnnotations)) {
 			// if there are no domain categories defined, this check can not be applied.
@@ -322,10 +328,9 @@ class AnnotationLevelConsistency {
 		}
 
 		foreach($domainRangeAnnotations as $domRan) {
-			$dvs = $domRan->getDVs();
-			$domain = reset($dvs);
-			if ($domain === false) continue; // ignore annotations with missing domain
-			$domainCategory = $domain->getTitle();
+			$domain = $domRan->getSemanticData()->getPropertyValues(SMWDIProperty::newFromUserLabel('Has range'));
+			if (count($domain) == 0) continue; // ignore annotations with missing domain
+			$domainCategory = $domain[0]->getTitle();
 			if (count($restrictToCategories) > 0) {
 				// check if domain categories appear in the categories to restrict.
 				if (count(array_filter($restrictToCategories,
@@ -335,6 +340,7 @@ class AnnotationLevelConsistency {
 
 
 			$results = $this->cc_store->getMissingPropertyInstantiations($a, $instances);
+			
 			foreach($results as $title) {
 
 
@@ -356,7 +362,7 @@ class AnnotationLevelConsistency {
 		foreach($properties as $a) {
 			// get minimum cardinality
 			$aTitle = Title::newFromDBkey(GardeningBot::getXSDValue($a), SMW_NS_PROPERTY);
-			$minCardArray = smwfGetStore()->getPropertyValues($aTitle, smwfGetSemanticStore()->minCardProp);
+			$minCardArray = smwfGetStore()->getPropertyValues($aTitle, SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY);
 
 			if (empty($minCardArray)) {
 				// if it does not exist, get minimum cardinality from superproperty
@@ -414,7 +420,7 @@ class AnnotationLevelConsistency {
 		foreach($domainProperties as $domainProperty) {
 
 			// get minimum cardinality
-			$minCardArray = smwfGetStore()->getPropertyValues($domainProperty, smwfGetSemanticStore()->minCardProp);
+			$minCardArray = smwfGetStore()->getPropertyValues($domainProperty, SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY);
 
 			if (empty($minCardArray)) {
 				// if it does not exist, get minimum cardinality from superproperty
@@ -467,7 +473,7 @@ class AnnotationLevelConsistency {
 
 	public function checkUnits($type) {
 		// get all *used* units for a given datatype
-		$units = smwfGetSemanticStore()->getDistinctUnits($type);
+		$units = smwfGetSemanticStore()->a($type);
 
 		// get all *defined* units for a given datatype
 		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
@@ -622,34 +628,36 @@ class AnnotationLevelConsistency {
 	private function checkForMissingParams(array & $subjects, $property) {
 
 		$hasTypeDV = SMWPropertyValue::makeProperty("_LIST");
-		$type = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
-		$firstType = reset($type);
-		if (count($type) == 0 || !($firstType instanceof SMWTypeListValue)) return;
+		$type = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($property), 
+			$hasTypeDV->getDataItem());
+		
+		if (count($type) == 0) return;
+		
+		$types = array();
+		foreach(explode(';', $type[0]->getSortKey()) as $k => $t){
+			if(array_key_exists($t, $types)){
+				$types[$t]['count'] += 1;
+			} else {
+				$types[$t]['prop'] = SMWPropertyValue::makeProperty($t)->getDataItem(); 
+				$types[$t]['count'] = 1;
+			} 
+		}		
+		$propertyDataItem = SMWDIProperty::newFromUserLabel($property->getText());
+		
 		foreach($subjects as $subject) {
-			$propertyDV = SMWPropertyValue::makeUserProperty($property->getDBkey());
-			$values = smwfGetStore()->getPropertyValues($subject, $propertyDV);
-				
+			$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($subject), 
+				$propertyDataItem);
+
 			foreach($values as $v) {
-				if ($v instanceof SMWRecordValue) { // n-ary relation
+				if ($v instanceof SMWDIContainer) { 
 
-					$explodedValues = $v->getDVs();
-					$explodedTypes = $v->getTypeValues();
-					$eType = reset($explodedTypes);
-					$i=0;
-					foreach($explodedValues as $dv) {
-						$typeID = $dv->getTypeID();
-						 
-						if ($eType === false || $eType->getDBkey() != $typeID) {
+					foreach($types as $k => $t){
+						$recordVals = $v->getSemanticData()->getPropertyValues($t['prop']);
+						if(count($recordVals) != $t['count']){
+							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, 1);
 							break;
-						}
-						$i++;
-						$eType = next($explodedTypes);
+						} 
 					}
-					if (count($explodedTypes) > count($explodedValues)) {
-						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
-
-					}
-						
 				}
 			}
 		}
@@ -666,11 +674,10 @@ class AnnotationLevelConsistency {
 
 
 				$rangeCorrect = false;
-				$dvs = $domRanVal->getDVs();
-
-				$domain = reset($dvs);
-				$range = next($dvs);
-				$rangeCat  = $range != NULL && $range !== false ? $range->getTitle() : NULL;
+				
+				$range = $domRanVal->getSemanticData()->getPropertyValues(
+					SMWDIProperty::newFromUserLabel('Has range'));
+				$rangeCat  = (count($range) > 0) ? $range[0]->getTitle() : NULL;
 
 
 				if ($rangeCat == NULL) {
@@ -693,16 +700,14 @@ class AnnotationLevelConsistency {
 			for($domRanVal = reset($domainRange), $dvr = reset($domain_cov_results); $domRanVal !== false && $dvr !== false;$dvr = next($domain_cov_results), $domRanVal = next($domainRange) ) {
 
 				if ($domain_cov_results != NULL && !$dvr) {
-
 					continue;
 				}
 
 				$rangeCorrect = false;
-				$dvs = $domRanVal->getDVs();
-
-				$domain = reset($dvs);
-				$range = next($dvs);
-				$rangeCat  = $range != NULL && $range !== false ? $range->getTitle() : NULL;
+				
+				$range = $domRanVal->getSemanticData()->getPropertyValues(
+					SMWDIProperty::newFromUserLabel('Has range'));
+				$rangeCat  = count($range) > 0 ? $range[0]->getTitle() : NULL;
 
 
 				if ($rangeCat == NULL) {
@@ -735,9 +740,9 @@ class AnnotationLevelConsistency {
 		foreach($domainRange as $domRanVal) {
 			$domainCorrect = false;
 
-			$dvs = $domRanVal->getDVs();
-			$domain = reset($dvs);
-			$domainCat = $domain !== false && !is_null($domain) ? $domain->getTitle() : NULL;
+			$domain = $domRanVal->getSemanticData()->getPropertyValues(
+				SMWDIProperty::newFromUserLabel('Has domain'));;
+			$domainCat = count($domain) > 0 ? $domain[0]->getTitle() : NULL;
 
 			if ($domainCat == NULL) {
 				$domainCorrect = true;

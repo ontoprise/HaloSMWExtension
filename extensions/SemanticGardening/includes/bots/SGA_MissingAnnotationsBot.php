@@ -2,12 +2,12 @@
 /**
  * @file
  * @ingroup MissingAnnotationsBot
- *
+ * 
  * @defgroup MissingAnnotationsBot
  * @ingroup SemanticGardeningBots
- *
+ * 
  * @author Kai K�hn
- *
+ * 
  * Created on 18.06.2007
  *
  * Author: kai
@@ -38,7 +38,7 @@ class MissingAnnotationsBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-
+	
 
 	/**
 	 * Returns an array of parameter objects
@@ -87,11 +87,9 @@ class MissingAnnotationsBot extends GardeningBot {
 	}
 
 	private function getMissingAnnotationsStore() {
-
+		
 		if ($this->store == NULL) {
-				
 			$this->store = new MissingAnnotationStorageSQL2();
-
 		}
 		return $this->store;
 	}
@@ -300,8 +298,8 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 		$result = array();
 		$excludeAtts = $this->excludePreProperties("a.p_id");
 		$excludeRels = $this->excludePreProperties("r.p_id");
-
-
+		
+		
 		if ($categories == NULL) {
 			if ($term == NULL) {
 				$sql = 'SELECT DISTINCT p.page_title FROM '.$mw_page.' p JOIN '.$smw_ids.' i ON p.page_title = i.smw_title AND p.page_namespace = i.smw_namespace  LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id AND '.$excludeAtts.' LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id AND '.$excludeRels.' ' .
@@ -375,12 +373,12 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
                         'LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id AND '.$excludeAtts.' LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id AND '.$excludeRels.' '.
                         'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND p.page_id = c.cl_from AND p.page_is_redirect = 0 AND cl_to IN (SELECT * FROM smw_ob_categories)';
 
-				 
+                 
 			} else {
 				$sql = 'SELECT DISTINCT page_title FROM '.$categorylinks.' c, '.$mw_page.' p JOIN '.$smw_ids.' i ON i.smw_title=p.page_title AND i.smw_namespace=p.page_namespace ' .
                         'LEFT JOIN '.$smw_atts2.' a ON i.smw_id=a.s_id AND '.$excludeAtts.' LEFT JOIN '.$smw_rels2.' r ON i.smw_id=r.s_id AND '.$excludeRels.' '.
                         'WHERE p.page_is_redirect = 0 AND p.page_namespace = '.NS_MAIN.' AND (a.s_id IS NULL AND r.s_id IS NULL) AND p.page_id = c.cl_from AND p.page_is_redirect = 0 AND cl_to IN (SELECT * FROM smw_ob_categories) AND p.page_title LIKE \'%'.mysql_real_escape_string($term).'%\'';
-
+                
 			}
 			$res = $db->query($sql);
 
@@ -397,7 +395,7 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 		}
 		return $result;
 	}
-
+    
 	/**
 	 * Returns a conjunction of predfined property IDs using $column as variable.
 	 *
@@ -407,20 +405,20 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
 	private function excludePreProperties($column) {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
-		$res = $db->select($smw_ids, 'smw_id', 'smw_namespace = '.SMW_NS_PROPERTY.' AND smw_iw = ":smw-preprop"');
-		$preprops = "";
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
+        $res = $db->select($smw_ids, 'smw_id', 'smw_namespace = '.SMW_NS_PROPERTY.' AND smw_iw = ":smw-preprop"');
+        $preprops = "";
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
 
-				$preprops .= "$column != $row->smw_id AND ";
+                $preprops .= "$column != $row->smw_id AND ";
 
-			}
-			$preprops .= "TRUE ";
-		}
+            }
+             $preprops .= "TRUE ";
+        }
 
-		$db->freeResult($res);
-
-		return $preprops;
+        $db->freeResult($res);
+        
+        return $preprops;
 	}
 }
 

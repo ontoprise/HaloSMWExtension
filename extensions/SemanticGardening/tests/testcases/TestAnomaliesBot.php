@@ -17,7 +17,7 @@ class TestAnomaliesBot extends PHPUnit_Framework_TestCase {
 
 	function testCategoryLeaf() {
 		$db = wfGetDB(DB_SLAVE);
-		$res = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_anomaliesbot', 'gi_type'=>SMW_GARDISSUE_CATEGORY_LEAF, 'p1_title'=>'Transitive_properties'));
+		$res = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_anomaliesbot', 'gi_type'=>SMW_GARDISSUE_CATEGORY_LEAF, 'p1_title'=>'Transitive_properties_Duplicate'));
 		$res2 = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_anomaliesbot', 'gi_type'=>SMW_GARDISSUE_CATEGORY_LEAF, 'p1_title'=>'Symmetrical_properties'));
 		$res3 = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_anomaliesbot', 'gi_type'=>SMW_GARDISSUE_CATEGORY_LEAF, 'p1_title'=>'GardeningLog'));
 		$this->assertNotEquals($res, false);

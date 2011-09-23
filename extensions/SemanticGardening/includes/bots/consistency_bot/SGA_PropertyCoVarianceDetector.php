@@ -1,9 +1,9 @@
-<?php
+isDomainRangeCovariant<?php
 /**
  * @file
  * @ingroup ConsistencyBot
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Created on 14.05.2007
  * 
@@ -84,12 +84,11 @@ class PropertyCoVarianceDetector {
                         GardeningBot::printProgress($workDone/$totalWork);
                     }
                 }
-
-                if (smwfGetSemanticStore()->domainRangeHintRelation->equals($a)
-
-                || smwfGetSemanticStore()->minCard->equals($a)
-                || smwfGetSemanticStore()->maxCard->equals($a)
-                || smwfGetSemanticStore()->inverseOf->equals($a) ) {
+				
+                if (SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->equals($a)
+						|| SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->equals($a)
+                		|| SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->equals($a)
+                		|| SMWHaloPredefinedPages::$IS_INVERSE_OF->equals($a) ) {
                     // ignore builtin properties
                     continue;
                 }
@@ -123,7 +122,8 @@ class PropertyCoVarianceDetector {
 
         
      
-        $minCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
+        $prop = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getText());
+    	$minCard = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), $prop);
       
         if (!empty($minCard)) {
             // otherwise check min cardinality of parent for co-variance.
@@ -174,9 +174,10 @@ class PropertyCoVarianceDetector {
 
 
         
-        $maxCard = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->maxCardProp);
+        $maxCard = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), 
+        	SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getText()));
 
-        if (!empty($maxCard)) {
+         if (!empty($maxCard)) {
             // check for doubles
             if (count($maxCard) > 1) {
                 $firstMaxCard = GardeningBot::getXSDValue(reset($maxCard));
@@ -218,15 +219,27 @@ class PropertyCoVarianceDetector {
      */
     private function checkDomainAndRangeCovariance($p) {
     	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-        $type = smwfGetStore()->getPropertyValues($p, $hasTypeDV);
+        $type = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($p), 
+        	SMWDIProperty::newFromUserLabel($hasTypeDV->getText()));
       
-        
         $firstType = reset($type);
-        if (count($type) == 0 || GardeningBot::getXSDValue($firstType) == '_wpg' || GardeningBot::getXSDValue($firstType) == '__nry') {
-            // default property (type wikipage), explicitly defined wikipage or nary property
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintProp);
+    	$hasTypePage = false;
+        if (count($type) == 0){
+        	$hasTypePage = true;
+        } else {
+        	$typeId = GardeningBot::getXSDValue($firstType);
+        	$typeId = substr($typeId, strlen($typeId) - 4);
+        	if($typeId == '_wpg' || $typeId == '_nry'){
+        		$hasTypePage = true;
+        	} 
+        }
+		if($hasTypePage) {
+			
+			// default property (type wikipage), explicitly defined wikipage or nary property
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($p), 
+            	SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
 
-            if (empty($domainRangeAnnotations)) {
+			if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_AND_RANGES_NOT_DEFINED, $p);
                 return;
             }
@@ -236,7 +249,8 @@ class PropertyCoVarianceDetector {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
             }
 
-            if (count($type) > 0 && GardeningBot::getXSDValue($firstType) == '__nry') {
+            if (count($type) > 0 
+            		&& substr(GardeningBot::getXSDValue($firstType), strlen(GardeningBot::getXSDValue($firstType)) - 5) == '__nry') {
                 // n-ary relation
                 // only complain about missing range if it contains at least one Type:Page
                 if ($this->containsPageType($firstType) && !$this->containsRange($domainRangeAnnotations)) {
@@ -252,23 +266,27 @@ class PropertyCoVarianceDetector {
             }
 
             $res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations);
-            if ($res === true) return;
+            
+        	if ($res === true) return;
             foreach($res as $cov) {
-                $domRanAnnot = $cov[2]->getDVs();
-                $domain = reset($domRanAnnot);
-                $range = next($domRanAnnot);
-                if (!$cov[0]) {
-                    // log domain cov error for annot
-                    $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domain->getTitle());
+                $domain = $cov[2]->getSemanticData()->getPropertyValues(
+                	SMWDIProperty::newFromUserLabel('Has domain'));
+                $range = $cov[2]->getSemanticData()->getPropertyValues(
+                	SMWDIProperty::newFromUserLabel('Has range'));
+                if (!$cov[0] ) {
+                	// log domain cov error for annot
+                    $this->gi_store->addGardeningIssueAboutArticles(
+                    	$this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domain[0]->getTitle());
                 }
                 if (!$cov[1]) {
                     // log range cov error for annot
-                    $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p, $range->getTitle());
+                    $this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_RANGES_NOT_COVARIANT, $p, $range[0]->getTitle());
                 }
             }
         } else {
             // attribute
-            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($p, smwfGetSemanticStore()->domainRangeHintProp);
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($p), 
+            	SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText()));
 
             if (empty($domainRangeAnnotations)) {
                 $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_DEFINED, $p);
@@ -281,10 +299,11 @@ class PropertyCoVarianceDetector {
             }
 
             $res = $this->isDomainRangeCovariant($p, $domainRangeAnnotations, true);
-            if ($res === true) return;
+            
+        	if ($res === true) return;
             foreach($res as $cov) {
-                $domRanAnnot = $cov[2]->getDVs();
-                $domain = reset($domRanAnnot);
+                $domain = $cov[2]->getSemanticData()->getPropertyValues(SMWDIProperty::newFromUserLabel('Has domain'));
+                $domain = $domain[0];
                 if (!$cov[0]) {
                     // log domain cov error for annot
                     $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_DOMAINS_NOT_COVARIANT, $p, $domain->getTitle());
@@ -298,36 +317,37 @@ class PropertyCoVarianceDetector {
 
     private function isDomainRangeCovariant($p, $domainRangeAnnotations, $isAttribute = false) {
 
-
         $domainRangeAnnotationsOfSuperProperty = $this->cc_store->getDomainsAndRangesOfSuperProperty($this->propertyGraph, $p);
 
         if (empty($domainRangeAnnotationsOfSuperProperty)) {
             return true;
         }
-        $results = array();
+        
+    	$results = array();
 
         foreach($domainRangeAnnotations as $dra) {
             $current = array(false, false, $dra);
-            $domRanVal = $dra->getDVs();
-            $domain = reset($domRanVal);
-            $range = next($domRanVal);
-            $domainCat = $domain !== false && $domain !== NULL ? $domain->getTitle() : NULL;
-            $rangeCat  = $range !== false && $range !== NULL ? $range->getTitle() : NULL;
+            $domain = $dra->getSemanticData()->getPropertyValues(
+            	SMWDIProperty::newFromUserLabel('Has domain'));
+            $range = $dra->getSemanticData()->getPropertyValues(
+            	SMWDIProperty::newFromUserLabel('Has range'));
+            $domainCat =  count($domain) > 0 ? $domain[0]->getTitle() : NULL;
+            $rangeCat =  count($range) > 0 ? $range[0]->getTitle() : NULL;
 
-            foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
-                $domRanValOfSuperProperty = $drosp->getDVs();
-                
-                $domainOfSuperProperty = reset($domRanValOfSuperProperty);
-                $rangeOfSuperProperty = next($domRanValOfSuperProperty);
-                $domainCatOfSuperProperty = $domainOfSuperProperty !== false && $domainOfSuperProperty !== NULL ? $domainOfSuperProperty->getTitle() : NULL;
-                $rangeCatOfSuperProperty  = $rangeOfSuperProperty !== false && $rangeOfSuperProperty !== NULL ? $rangeOfSuperProperty->getTitle() : NULL;
-                if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
+        	foreach($domainRangeAnnotationsOfSuperProperty as $drosp) {
+                $domainOfSuperProperty = $drosp->getSemanticData()->getPropertyValues(
+            		SMWDIProperty::newFromUserLabel('Has domain'));
+            	$rangeOfSuperProperty = $drosp->getSemanticData()->getPropertyValues(
+            		SMWDIProperty::newFromUserLabel('Has range'));
+            	$domainCatOfSuperProperty =  count($domainOfSuperProperty) > 0 ? $domainOfSuperProperty[0]->getTitle() : NULL;
+            	$rangeCatOfSuperProperty =  count($rangeOfSuperProperty) > 0 ? $rangeOfSuperProperty[0]->getTitle() : NULL;
+            	
+            	if ($domainCat != NULL && $domainCatOfSuperProperty != NULL) {
 
-                    $domainCovariant = $rangeCovariant = false;
 
                     $domainCovariant = GraphHelper::checkForPath($this->categoryGraph, $domainCat->getArticleID(), $domainCatOfSuperProperty->getArticleID());
 
-                    if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
+            		if (!$isAttribute && ($rangeCat != NULL && $rangeCatOfSuperProperty != NULL)) {
                         $rangeCovariant = (GraphHelper::checkForPath($this->categoryGraph, $rangeCat->getArticleID(), $rangeCatOfSuperProperty->getArticleID()));
 
                     } else {
@@ -359,7 +379,8 @@ class PropertyCoVarianceDetector {
             }
             $results[] = $current;
         }
-        return $results;
+        
+    	return $results;
     }
 
 
@@ -369,16 +390,18 @@ class PropertyCoVarianceDetector {
      */
     private function checkTypeEquality($a) {
         global $smwgContLang;
-
+        
         $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-        $types = smwfGetStore()->getPropertyValues($a, $hasTypeDV);
+        $types = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($a), 
+        	$hasTypeDV->getDataItem());
         if (empty($types)) {
             $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_DEFINED, $a, count($types));
         } else {
             if (count($types) > 1) {
-                $this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_TYPE, $a, count($types));
+				$this->gi_store->addGardeningIssueAboutValue($this->bot->getBotID(), SMW_GARDISSUE_DOUBLE_TYPE, $a, count($types));
                 return;
             }
+            
             $typesOfSuperAttribute = $this->cc_store->getTypeOfSuperProperty($this->propertyGraph, $a);
             $typesAsString = array();
             foreach($typesOfSuperAttribute as $t) {
@@ -398,7 +421,7 @@ class PropertyCoVarianceDetector {
                 }
             }
             if (!$covariant && $firstType != null) {
-                $this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_COVARIANT, $a);
+            	$this->gi_store->addGardeningIssueAboutArticle($this->bot->getBotID(), SMW_GARDISSUE_TYPES_NOT_COVARIANT, $a);
             }
         }
     }
@@ -454,12 +477,13 @@ class PropertyCoVarianceDetector {
      * Otherwise false.
      */
     private function containsDomain($domainRangeAnnotations) {
-        $containsDomain = false;
         foreach($domainRangeAnnotations as $dra) {
-            $dv = $dra->getDVs();
-            if(reset($dv) !== false) $containsDomain |= true;
+            $semData = $dra->getSemanticData();
+            $domainAnnotations = $semData->getPropertyValues(
+            	SMWDIProperty::newFromUserLabel('Has domain')); 
+        	if(count($domainAnnotations) > 0) return true;
         }
-        return $containsDomain;
+        return false;
     }
 
     /**
@@ -467,14 +491,13 @@ class PropertyCoVarianceDetector {
      * Otherwise false.
      */
     private function containsRange($domainRangeAnnotations) {
-        $containsRange = false;
-        foreach($domainRangeAnnotations as $dra) {
-            $dv = $dra->getDVs();
-            reset($dv);
-            $range = next($dv);
-            if($range !== false && $range != NULL) $containsRange |= true;
+         foreach($domainRangeAnnotations as $dra) {
+            $semData = $dra->getSemanticData();
+            $rangeAnnotations = $semData->getPropertyValues(
+            	SMWDIProperty::newFromUserLabel('Has range')); 
+        	if(count($rangeAnnotations) > 0) return true;
         }
-        return $containsRange;
+        return false;
     }
 
     /**
