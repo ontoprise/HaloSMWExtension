@@ -11,7 +11,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 CKEDITOR.plugins.add( 'mediawiki',
 {
     requires : [ 'fakeobjects', 'htmlwriter', 'dialog', 'ajax' ],
-
     init : function( editor )
     {                
         // add the CSS for general styles of Mediawiki elements
@@ -155,29 +154,35 @@ CKEDITOR.plugins.add( 'mediawiki',
             'span.fck_mw_noinclude' +
             '{' +
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_noinclude.gif' ) + ');' +
-                'background-position: 0 center;' +
+                'background-position: center center;' +
                 'background-repeat: no-repeat;' +
                 'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
-                'padding-left: 70px;' +
+                'width: 66px !important;' +
+                'height: 15px !important;' +
+                'display: block' + 
             '}\n' +
             'span.fck_mw_onlyinclude' +
             '{' +
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_onlyinclude.gif' ) + ');' +
-                'background-position: 0 center;' +
+                'background-position: center center;' +
                 'background-repeat: no-repeat;' +
                 'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
-                'padding-left: 70px;' +
+                'width: 66px !important;' +
+                'height: 15px !important;' +
+                'display: block' +
             '}\n' +
             'span.fck_mw_includeonly' +
             '{' +
                 'background-image: url(' + CKEDITOR.getUrl( this.path + 'images/icon_includeonly.gif' ) + ');' +
-                'background-position: 0 center;' +
+                'background-position: center center;' +
                 'background-repeat: no-repeat;' +
                 'background-color: #FFF799;' +
                 'border: 1px solid #a9a9a9;' +
-                'padding-left: 70px;' +
+                'width: 66px !important;' +
+                'height: 15px !important;' +
+                'display: block' +
             '}\n'
                     
             );
@@ -243,6 +248,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                             result = editor.createFakeParserElement( element, className, 'span' );
                             break;
                         default:
+                            result = element
                             break;
                     }
                     return result;
@@ -396,9 +402,9 @@ CKEDITOR.plugins.add( 'mediawiki',
                         'FCK__MWSpecial',
                         'FCK__MWMagicWord',
                         'FCK__MWNowiki',
-                        'FCK__MWIncludeonly',
-                        'FCK__MWNoinclude',
-                        'FCK__MWOnlyinclude'
+//                        'FCK__MWIncludeonly',
+//                        'FCK__MWNoinclude',
+//                        'FCK__MWOnlyinclude'
                         ])
                         ) return {
                         MWSpecialTags: CKEDITOR.TRISTATE_ON
@@ -409,7 +415,6 @@ CKEDITOR.plugins.add( 'mediawiki',
         editor.on( 'doubleclick', function( evt )
         {
             var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
-
             if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){
                 if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
                     evt.data.dialog = 'MWLink';
@@ -419,7 +424,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 }
             }
             else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){
-                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){                
                     evt.data.dialog = 'MWImage';
                 }
                 else{
@@ -431,25 +436,22 @@ CKEDITOR.plugins.add( 'mediawiki',
                     'FCK__MWSpecial',
                     'FCK__MWMagicWord',
                     'FCK__MWNowiki',
-                    'FCK__MWIncludeonly',
-                    'FCK__MWNoinclude',
-                    'FCK__MWOnlyinclude',
-                    'fck_mw_noinclude',
-                    'fck_mw_onlyinclude',
-                    'fck_mw_includeonly'
+//                    'FCK__MWIncludeonly',
+//                    'FCK__MWNoinclude',
+//                    'FCK__MWOnlyinclude',
+//                    'fck_mw_noinclude',
+//                    'fck_mw_onlyinclude',
+//                    'fck_mw_includeonly'
                     ])
                     )
             {
-                   
                     evt.data.dialog = 'MWSpecialTags';	
                     
             }
-                	
-            
-                
+                	   
         });
         
-var createXMLHttpRequest = function()
+        var createXMLHttpRequest = function()
 	{
 		// In IE, using the native XMLHttpRequest for local files may throw
 		// "Access is Denied" errors.
@@ -509,6 +511,7 @@ CKEDITOR.ajax.loadHalo = function(func_name, args, target){
 
     return CKEDITOR.ajax.loadPost(uri, params, target);
 };
+
  }
 });
 
@@ -523,29 +526,27 @@ CKEDITOR.customprocessor = function( editor )
 CKEDITOR.customprocessor.prototype =
 {
     _inPre : false,
-    _inLSpace : false,
+    _inLSpace : false,   
+  
 
     toHtml : function( data, fixForBody )
     {
-        // Hide the textarea to avoid seeing the code change.
-        //textarea.hide();
-        var loading = document.createElement( 'span' );
-        loading.innerHTML = '&nbsp;'+ 'Loading Wikitext. Please wait...' + '&nbsp;';
-        loading.style.position = 'absolute';
-        loading.style.left = '5px';
-        //textarea.parentNode.appendChild( loading, textarea );
-
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         // transform only if
         // 1. there are no html attributes in data string starting with "_fck" or "_cke"
         // 2. the data string doesn't start with "<p>"
         // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
-        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule)[^\/>]*\/?>/ig, '');
+        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife)[^>]*\s*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
         if (data.indexOf('<p>') != 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
-            data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);          
+            data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
         }
+        //replace only "fcklr" which are not preceded by "<br "
+        data = data.replace(/(\<br\s+)?fckLR/gi, function($0, $1){
+          return $1 ? $0 : '<br fckLR="true">';
+        });
+        
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
         writer = new CKEDITOR.htmlParser.basicWriter();
 
@@ -553,7 +554,7 @@ CKEDITOR.customprocessor.prototype =
         data = writer.getHtml( true );
        
         return data;
-     },
+     }, 
 
     /*
 	 * Converts a DOM (sub-)tree to a string in the data format.
@@ -575,8 +576,6 @@ CKEDITOR.customprocessor.prototype =
         else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
             window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
         
-        mediaWiki.log('before fix: \n' + data);
-        
         if (CKEDITOR.env.ie) {
             data = this.ieFixHTML(data);
         }  
@@ -593,15 +592,16 @@ CKEDITOR.customprocessor.prototype =
         // also remove <br/> before nested lists
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
         // in IE the values of the class and alt attribute are not quoted
+
         data = data.replace(/class=([^\"\'].*?)(?=[\s*|>])/gi, 'class="$1" ');
 
         data = data.replace(/alt=([^\"\'\s].*?)(?=[\s*|>])/gi, 'alt="$1" ');
-        
+       
         // when inserting data from Excel a mismatched <col> or <colgroup> element exists -so  just remove it
         data = data.replace(/<\/?col|colgroup[^>]*>/gi, '' );
         
         //fix for invalid entity error in XML parser
-        data = data.replace(/&nbsp;/gi, '&#xA0;');       
+        data = data.replace(/&nbsp;/gi, '&#xA0;');
 	
         var rootNode = this._getNodeFromHtml( data );
         // rootNode is <body>.
@@ -629,12 +629,11 @@ CKEDITOR.customprocessor.prototype =
             xmlDoc.async="false";
             xmlDoc.loadXML(data);
             
-            //IE xml validation. Prints errors to MediaWiki log
-            xmlDoc.validateOnParse = true;
-            if (xmlDoc.parseError.errorCode != 0) {
-                var msg = xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data;
-                mediaWiki.log(msg);
-            }  
+            //IE xml validation. Uncomment for debugging purposes
+            //xmlDoc.validateOnParse = true;
+            //if (xmlDoc.parseError.errorCode != 0) {
+                //alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
+            //}  
         }       
         
         return xmlDoc;
@@ -1029,8 +1028,7 @@ CKEDITOR.customprocessor.prototype =
                                         }
                                         // not a <tr> found, then we only accept templates and special functions
                                         // which then probably build the table row in the wiki text
-                                        else if (currentTagName == "img") {
-                                            //alert('class: ' + currentNode.className);
+                                        else if (currentTagName == "img") {                                            
                                             switch (currentNode.className) {
                                                 case "FCK__MWSpecial" :
                                                 case "FCK__MWTemplate" :
@@ -1186,6 +1184,8 @@ CKEDITOR.customprocessor.prototype =
                                         stringBuilder.push( inner );
                                         return;
                                     case 'fck_smw_webservice' :
+                                        stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
+                                        return;
                                     case 'fck_smw_rule' :
                                         stringBuilder.push('<rule');
                                         var ruleName = htmlNode.getAttribute('name');
@@ -1253,21 +1253,23 @@ CKEDITOR.customprocessor.prototype =
                                         sNodeName = 'html';
                                         break;
 
-                                    case 'fck_mw_includeonly' :
-                                        sNodeName = 'includeonly';
-                                        break;
-
-                                    case 'fck_mw_noinclude' :
-                                        sNodeName = 'noinclude';
-                                        break;
+                                    case 'fck_mw_includeonly' :                                     
+                                    case 'fck_mw_noinclude' :                                    
+                                    case 'fck_mw_onlyinclude' :
+                                        sNodeName = htmlNode.getAttribute( '_fck_mw_tagname' );                                    
+                                        if(htmlNode.getAttribute( 'starttag' )){
+                                          stringBuilder.push('<' + sNodeName + '>');
+                                        }
+                                        else if(htmlNode.getAttribute( 'endtag' )){
+                                          stringBuilder.push('</' + sNodeName + '>');
+                                        }
+                                        return;                        
 
                                     case 'fck_mw_gallery' :
                                         sNodeName = 'gallery';
                                         break;
 
-                                    case 'fck_mw_onlyinclude' :
-                                        sNodeName = 'onlyinclude';
-                                        break;
+                                   
                                     case 'fck_mw_property' :
                                     case 'fck_mw_category' :
                                         stringBuilder.push( this._formatSemanticValues( htmlNode ) ) ;
@@ -1275,7 +1277,7 @@ CKEDITOR.customprocessor.prototype =
                                 }
 
                                 // Change the node name and fell in the "default" case.
-                                if ( htmlNode.getAttribute( '_fck_mw_customtag' ) )
+                                if (!sNodeName && htmlNode.getAttribute( '_fck_mw_customtag' ) )
                                     sNodeName = htmlNode.getAttribute( '_fck_mw_tagname' );
                                 this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix )
                                 break;
