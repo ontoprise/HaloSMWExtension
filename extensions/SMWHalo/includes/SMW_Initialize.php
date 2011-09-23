@@ -712,8 +712,8 @@ function &smwfGetSemanticStore() {
  * Checks if a database function is available (considers only UDF functions).
  */
 function smwfDBSupportsFunction($lib) {
-	global $smwgUseEditDistance;
-	return isset($smwgUseEditDistance) ? $smwgUseEditDistance : false;
+	global $smwgHaloUseEditDistance;
+	return isset($smwgHaloUseEditDistance) ? $smwgHaloUseEditDistance : false;
 
 	// KK: this causes problems for many users since they do not
 	// always have access to system tables. This is why it is better to return

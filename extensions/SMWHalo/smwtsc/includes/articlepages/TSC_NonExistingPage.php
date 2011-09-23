@@ -180,20 +180,20 @@ class  TSCNonExistingPage extends Article {
      *
      */
     private static function addGenericContent($categoryContentAdded, &$content) {
-        global $lodgNEPUseGenericTemplateIfCategoryMember;
-        if (!$lodgNEPUseGenericTemplateIfCategoryMember && $categoryContentAdded) {
+        global $smwgHaloNEPUseGenericTemplateIfCategoryMember;
+        if (!$smwgHaloNEPUseGenericTemplateIfCategoryMember && $categoryContentAdded) {
             // No generic content wanted for items with a type
             return;
         }
 
-        global $lodgNEPGenericTemplate;
-        if (!isset($lodgNEPGenericTemplate)) {
+        global $smwgHaloNEPGenericTemplate;
+        if (!isset($smwgHaloNEPGenericTemplate)) {
             // no template for generic content defined
             return;
         }
 
         // Get the content of the generic template
-        $content["Generic"] = self::getContentOfArticle($lodgNEPGenericTemplate);
+        $content["Generic"] = self::getContentOfArticle($smwgHaloNEPGenericTemplate);
 
     }
 
@@ -208,14 +208,14 @@ class  TSCNonExistingPage extends Article {
      *
      */
     private static function addPropertyPageContent(&$content) {
-        global $lodgNEPPropertyPageTemplate;
-        if (!isset($lodgNEPPropertyPageTemplate)) {
+        global $smwgHaloNEPPropertyPageTemplate;
+        if (!isset($smwgHaloNEPPropertyPageTemplate)) {
             // no template for property page content defined
             return;
         }
 
         // Get the content of the property page template
-        $content["PropertyPage"] = self::getContentOfArticle($lodgNEPPropertyPageTemplate);
+        $content["PropertyPage"] = self::getContentOfArticle($smwgHaloNEPPropertyPageTemplate);
 
     }
 
@@ -230,14 +230,14 @@ class  TSCNonExistingPage extends Article {
      *
      */
     private static function addCategoryPageContent(&$content) {
-        global $lodgNEPCategoryPageTemplate;
-        if (!isset($lodgNEPCategoryPageTemplate)) {
+        global $smwgHaloNEPCategoryPageTemplate;
+        if (!isset($smwgHaloNEPCategoryPageTemplate)) {
             // no template for category page content defined
             return;
         }
 
         // Get the content of the category page template
-        $content["CategoryPage"] = self::getContentOfArticle($lodgNEPCategoryPageTemplate);
+        $content["CategoryPage"] = self::getContentOfArticle($smwgHaloNEPCategoryPageTemplate);
 
     }
 
@@ -326,8 +326,8 @@ SPARQL;
      *
      */
     private static function addCategoryContent($uri, &$content) {
-        global $lodgNEPCategoryTemplatePattern;
-        if (!isset($lodgNEPCategoryTemplatePattern)) {
+        global $smwgHaloNEPCategoryTemplatePattern;
+        if (!isset($smwgHaloNEPCategoryTemplatePattern)) {
             // no category articles defined
             return;
         }
@@ -338,7 +338,7 @@ SPARQL;
        
         // Fetch templates from categories of the entity
         foreach ($categories as $cat) {
-            $catTemplate = str_replace("{cat}", $cat->getText(), $lodgNEPCategoryTemplatePattern);
+            $catTemplate = str_replace("{cat}", $cat->getText(), $smwgHaloNEPCategoryTemplatePattern);
             $con = self::getContentOfArticle($catTemplate);
             if (!is_null($con)) {
                 $content["Category:".$cat->getText()] = $con;
@@ -431,14 +431,14 @@ SPARQL;
      * Parses a result of categories
      * @param string SPARQL-XML
      *
-     * @return string[] Category URIs
+     * @return string[]/boolean Category URIs or false
      */
     private static function parseSparqlXMLResult($sparqlXMLResult) {
         $dom = simplexml_load_string($sparqlXMLResult);
-        $dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
         if ($dom === FALSE) {
-            return null;
+            return false;
         }
+        $dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
 
         // add all rows to the query result
         $results = $dom->xpath('//sparqlxml:result');

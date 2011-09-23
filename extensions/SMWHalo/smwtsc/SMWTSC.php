@@ -120,31 +120,31 @@ function tscSetupExtension() {
 		$wgHooks['EditFormPreloadText'][]   = 'TSCNonExistingPageHandler::onEditFormPreloadText';
 		$wgHooks['sfEditFormPreloadText'][]   = 'TSCNonExistingPageHandler::onEditFormPreloadText';
 
-		global $lodgNEPGenericTemplate, $lodgNEPPropertyPageTemplate, $lodgNEPCategoryPageTemplate, $lodgNEPUseGenericTemplateIfCategoryMember, $lodgNEPCategoryTemplatePattern;
+		global $smwgHaloNEPGenericTemplate, $smwgHaloNEPPropertyPageTemplate, $smwgHaloNEPCategoryPageTemplate, $smwgHaloNEPUseGenericTemplateIfCategoryMember, $smwgHaloNEPCategoryTemplatePattern;
 		####
 		# string - Article name of the generic template for all non-existing pages but
 		# properties and categories.
-		$lodgNEPGenericTemplate = "MediaWiki:NEP/Generic";
+		$smwgHaloNEPGenericTemplate = "MediaWiki:NEP/Generic";
 
 		####
 		# string - Article name of the template for property pages
-		$lodgNEPPropertyPageTemplate = "MediaWiki:NEP/Property";
+		$smwgHaloNEPPropertyPageTemplate = "MediaWiki:NEP/Property";
 
 		####
 		# string - Article name of the template for category pages
-		$lodgNEPCategoryPageTemplate = "MediaWiki:NEP/Category";
+		$smwgHaloNEPCategoryPageTemplate = "MediaWiki:NEP/Category";
 
 		####
 		# boolean - If <true>, the generic NEP template is used, even if the Linked Data
 		# item has a type.
-		$lodgNEPUseGenericTemplateIfCategoryMember = false;
+		$smwgHaloNEPUseGenericTemplateIfCategoryMember = false;
 
 		####
 		# string - The Linked Data item can have several types which are mapped to wiki
 		# categories. A template can be used for each category according to the template
 		# pattern. The variable {cat} is replaced by the category that is associated with
 		# a type.
-		$lodgNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
+		$smwgHaloNEPCategoryTemplatePattern = "MediaWiki:NEP/Category/{cat}";
 	}
 
 

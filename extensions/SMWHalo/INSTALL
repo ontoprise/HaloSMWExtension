@@ -181,7 +181,7 @@ the FAQ section, then contact the user support list (see the Contact section).
 
 1.  Uses EDITDISTANCE function for near matching.
     Take a look in libs/mysqlUDFs/INSTALL.TXT for more information.
-    $smwgUseEditDistance = true;
+    $smwgHaloUseEditDistance = true;
 
 2.  Show derived facts in a tab next to explicit facts. Makes only sense when a
     TSC is connected. Note that the factbox must be switch on.
