@@ -1,4 +1,4 @@
-isDomainRangeCovariant<?php
+<?php
 /**
  * @file
  * @ingroup ConsistencyBot
