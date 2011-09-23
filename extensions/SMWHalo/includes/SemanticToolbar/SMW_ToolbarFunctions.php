@@ -14,7 +14,6 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_tb_GetHelp';
 $wgAjaxExportList[] = 'smwf_tb_getLinks';
 $wgAjaxExportList[] = 'smwf_tb_GetBuiltinDatatypes';
-$wgAjaxExportList[] = 'smwf_tb_GetUserDatatypes';
 $wgAjaxExportList[] = 'smwf_tb_AskQuestion';
 $wgAjaxExportList[] = 'smwf_tb_getTripleStoreStatus';
 
@@ -182,48 +181,6 @@ function smwf_tb_GetBuiltinDatatypes(){
 	return $result;
 }
 
-/**
- * function smwfGetUserDatatypes
- * This function returns a comma separated list of all user defined data types
- */
-function smwf_tb_GetUserDatatypes(){
-	$result = "User defined types:";
-
-	$db =& wfGetDB( DB_SLAVE );
-
-	$NStype = SMW_NS_TYPE;
-	$page = $db->tableName( 'page' );
-	$sql = "SELECT 'Types' as type,
-	{$NStype} as namespace,
-	page_title as title,
-	page_title as value,
-	1 as count
-	FROM $page
-	WHERE page_namespace = $NStype";
-
-	$res = $db->query($sql);
-
-	// Builtin types may appear in the list of user types (if there is an
-	// article for them). They have to be removed from the user types
-	$builtinTypes = SMWDataValueFactory::getKnownTypeLabels();
-
-	$userTypes = array();
-
-	if ($db->numRows($res) > 0) {
-		while($row = $db->fetchObject($res)) {
-			$userTypes[] = str_replace("_", " ", $row->title);
-		}
-	}
-	$db->freeResult($res);
-
-	$userTypes = array_diff($userTypes, $builtinTypes);
-
-	foreach($userTypes as $key => $type) {
-		$result .= ",".$type;
-	}
-
-	return $result;
-}
 
 function smwf_tb_getTripleStoreStatus() {
 	global $smwgHaloTripleStoreGraph, $smwgHaloWebserviceEndpoint;

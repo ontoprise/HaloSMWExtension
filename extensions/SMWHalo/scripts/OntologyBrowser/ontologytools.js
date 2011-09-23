@@ -2782,8 +2782,8 @@ OBSchemaPropertySubMenu.prototype = Object
 							}
 						
 						
-						sajax_do_call('smwf_tb_GetUserDatatypes', [],
-								fillUserTypesCallback.bind(this));
+//No user types since SMW 1.6						sajax_do_call('smwf_tb_GetUserDatatypes', [],
+//								fillUserTypesCallback.bind(this));
 					},
 					
                     onchangeTypeSelector: function(event) {
@@ -3291,8 +3291,8 @@ OBEditPropertySubMenu.prototype = Object
 							}
 						
 						
-						sajax_do_call('smwf_tb_GetUserDatatypes', [],
-								fillUserTypesCallback.bind(this));
+//No user types since SMW 1.6						sajax_do_call('smwf_tb_GetUserDatatypes', [],
+//								fillUserTypesCallback.bind(this));
 					},
 					
 					/**
