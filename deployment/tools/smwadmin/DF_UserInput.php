@@ -47,6 +47,21 @@ class DFUserInput {
 			// copy proposals
 			foreach($userParams as $name => $up) {
 				list($type, $description, $proposal) = $up;
+				if (!is_null($proposal) && $proposal != '') {
+					$parts = explode(":", $proposal);
+					if (count($parts) > 1) {
+						switch($parts[0]) {
+							case "search": {
+								$proposal = Tools::whereis(trim($parts[1]));
+								$proposal = trim($proposal);
+								break;
+							}
+							default:
+								$proposal = '';
+								break;
+						}
+					}
+				}
 				$mapping[$name] = $proposal;
 			}
 			return;
@@ -151,11 +166,11 @@ class DFUserInput {
 	}
 
 	/**
-	 * Selects an element from a list. 
+	 * Selects an element from a list.
 	 * In No-ask mode, it always returns the first.
-	 * 
+	 *
 	 * @param string[] $elements
-	 * 
+	 *
 	 * @return int index
 	 */
 	public static function selectElement($msg, $elements) {
