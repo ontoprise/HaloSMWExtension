@@ -194,8 +194,11 @@ include_once( "$IP/extensions/ApplicationProgramming/URLArguments/URLArguments.p
 $wgPFEnableStringFunctions = true;
 /*end-applicationprogramming*/
 
-/*start-smw*/
+/*start-validator*/
 require_once( "$IP/extensions/Validator/Validator.php" );
+/*end-validator*/
+
+/*start-smw*/
 $smwgIQEnabled=true;
 $smwgOWLFullExport = true;
 include_once($IP.'/extensions/SemanticMediaWiki/SemanticMediaWiki.php');
