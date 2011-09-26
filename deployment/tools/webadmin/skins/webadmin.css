@@ -115,3 +115,11 @@
 .onto2mwxml_error {
 	color: red;
 }
+
+.df_running_process {
+	color: green;
+}
+
+.df_not_running_process {
+    color: red;
+}

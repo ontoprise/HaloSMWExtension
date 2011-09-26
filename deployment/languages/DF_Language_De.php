@@ -92,6 +92,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_uploadtab' => 'Hochladen von lokalen Bundles/Ontologien',
 	'df_webadmin_settingstab' => 'Paketquellen',
 	'df_webadmin_localsettingstab' => 'LocalSettings',
+	'df_webadmin_serverstab' => 'Server',
 
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
 	'df_webadmin_creationdate' => 'Datum der Erzeugung',
@@ -112,6 +113,13 @@ class DF_Language_De extends DF_Language {
     'df_globalupdate_warning' => 'Global Update durchführen?',
 	'df_checkextension_heading' => 'Extension-Details',
 	'df_select_extension' => 'Wähle Extension',
-	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt."
+	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt.",
+	
+	'df_webadmin_configureservers' => 'Hier können Sie die Server ihrer Wiki-Installation neu starten oder stoppen.',
+	'df_webadmin_process_runs' => 'läuft',
+    'df_webadmin_process_doesnot_run' => 'läuft nicht',
+	'df_webadmin_server_execute' => 'Ausführen',
+    'df_webadmin_server_start' => 'starten',
+    'df_webadmin_server_end' => 'beenden'
 	);
 }

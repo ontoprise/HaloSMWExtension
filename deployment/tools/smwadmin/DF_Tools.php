@@ -597,6 +597,51 @@ class Tools {
 		}
 	}
 
+	/**
+	 * Detects if a processes are running.
+	 *
+	 * @param string[] $names Program name (e.g. php)
+	 *
+	 * @return boolean
+	 */
+	public static function areProcessesRunning($names) {
+		if (self::isWindows()) {
+			@exec("tasklist /NH /V /FO CSV", $out, $ret);
+			if ($ret != 0) return false;
+			$results = array();
+			foreach($names as $name) {
+				$found = false;
+				foreach($out as $l) {
+					$parts = explode(",", trim($l));
+					if (strpos($parts[0], "$name.exe") !== false) {
+						$results[] = true;
+						$found = true;
+						break;
+					}
+				}
+				if (!$found) $results[] = false;
+			}
+		} else {
+			$path = self::whereis($name);
+			@exec("ps ax | grep $path", $out, $ret);
+			$results = array();
+			foreach($names as $name) {
+				$found = false;
+				foreach($out as $l) {
+					$l = preg_replace("/\\s+|\t+/", " ", $l);
+					$parts = explode(" ", trim($l));
+					if ($parts[4] == $path || strpos($parts[4], $name) !== false) {
+						$results[] = true;
+						$found = true;
+						break;
+					}
+				}
+				if (!$found) $results[] = false;
+			}
+		}
+		return $results;
+	}
+
 
 	/**
 	 * Returns file extension
@@ -649,7 +694,7 @@ class Tools {
 		// convert IDs into program names (as far as known)
 		// TSC is the only registered program for now.
 		$knownPrograms = DF_Config::$df_knownPrograms;
-	   
+
 		$knownPrograms = array_flip($knownPrograms);
 		if (array_key_exists($id, $knownPrograms)) {
 			$programs = array($knownPrograms[$id]);
@@ -745,7 +790,7 @@ class Tools {
 	 * Reads the full paths of non-public apps.
 	 *
 	 * @param string $mwroot
-	 * 
+	 *
 	 * @return array($id => $path)
 	 */
 	public static function getNonPublicAppPath($mwroot) {
@@ -767,7 +812,7 @@ class Tools {
 	 * @param string $mwroot
 	 * @param string $id
 	 * @param string $path
-	 * 
+	 *
 	 * @return boolean True on success
 	 */
 	public static function setNonPublicAppPath($mwroot, $id, $path) {
