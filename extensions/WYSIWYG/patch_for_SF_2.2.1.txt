@@ -1,10 +1,10 @@
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(original)
-+++ extensions/SemanticForms/includes/SF_FormPrinter.php    (patched version)
-@@ -267,6 +267,10 @@
- 		global $sfgFieldNum; // used for setting various HTML IDs
-
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12300)
++++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
+@@ -265,6 +265,10 @@
+ 		wfProfileIn( __METHOD__ );
+ 
  		// initialize some variables
 +		/*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
 +		/*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
@@ -13,9 +13,10 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		$sfgTabIndex = 1;
  		$sfgFieldNum = 1;
  		$source_page_matches_this_form = false;
-@@ -827,9 +831,19 @@
+@@ -847,6 +851,19 @@
+ 						if ( $is_hidden ) {
  							$new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
- 						} else { 							
+ 						} else {
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
 +								$fck_options['rows'] = 5;
@@ -32,26 +33,29 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  							$sfgTabIndex++;
  							$sfgFieldNum++;
  							if ( $cur_value == '' ) {
-@@ -1387,7 +1401,11 @@
- 		// @TODO The FCKeditor Javascript should be handled within
-		// the FCKeditor extension itself, using the hook.
- 		$javascript_text = "";
- 		if ( $free_text_was_included && $showFCKEditor > 0 ) {
--			$javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor );
-+			/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-+			/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
-+			$rowParam = isset( $fck_options['rows'] ) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
-+			$javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor, $rowParam );
-+			/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
- 			if ( $showFCKEditor & ( RTE_TOGGLE_LINK | RTE_POPUP ) ) {
- 				$javascript_text .= SFFormUTils::FCKToggleJavascript();
- 			}
+Index: extensions/SemanticForms/includes/SF_Utils.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_Utils.php	(revision 12300)
++++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
+@@ -438,7 +438,11 @@
+ 		// modules yet, so we have to call the scripts directly.
+ 		// @TODO Move this code into the FCKeditor extension.
+ 		if ( $wgFCKEditorDir && class_exists( 'FCKEditor' ) ) {
+-			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
++            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
++            $scripts[] = class_exists('CKEditor')
++                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
++                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
++            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
+ 		}
+ 
+ 		foreach ( $scripts as $js ) {
 Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(original)
-+++ extensions/SemanticForms/includes/SF_FormUtils.php	(patched version)
-@@ -355,19 +361,32 @@
-
+--- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12300)
++++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
+@@ -409,10 +409,19 @@
+ 
  	static function prepareTextForFCK( $text ) {
  		global $wgTitle;
 -
@@ -73,9 +77,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		$parser->setOutputType( OT_HTML );
  		$text = $parser->parse( $text, $wgTitle, $options )->getText();
  		return $text;
- 	}
-
-@@ -386,7 +405,10 @@
+@@ -456,7 +465,10 @@
  		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
  			$wgFCKEditorDir .= '/';
  		}
@@ -86,11 +88,11 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
 +        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
  		$javascript_text .= <<<END
  var oFCKeditor = new FCKeditor( "free_text" );
-
-@@ -399,6 +421,17 @@
+ 
+@@ -469,6 +481,17 @@
  oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet";
  oFCKeditor.ready = true;
-
+ 
 +END;
 +        } else {
 +   		$javascript_text .= <<<END
@@ -105,8 +107,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  //IE hack to call func from popup
  function FCK_sajax(func_name, args, target) {
  	sajax_request_type = 'POST' ;
-
-@@ -418,14 +480,15 @@
+@@ -514,14 +537,15 @@
  	if ( realTextarea )
  	{
  		// Create the editor instance and replace the textarea.
@@ -127,46 +128,15 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		oFCKeditor.Height = height;
 +		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
  		oFCKeditor.ReplaceTextarea() ;
-
+ 
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -702,11 +702,15 @@
+@@ -702,6 +726,9 @@
  addOnloadHook( initEditor );
-  
+ 
  END;
 +        } else { // ckeditor
 +            $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
 +        }
  		return $javascript_text;
  	}
- 	
-	static function FCKToggleJavascript() {
- 		// add toggle link and handler
-+        if ( class_exists('FCKeditor') ) {
- 		$javascript_text = <<<END
- 		
- function ToggleFCKEditor(mode, objId)
-@@ -716,6 +783,9 @@
- }
-
- END;
-+        } else { // ckeditor
-+            $javascript_text = CKeditor_MediaWiki::ToggleScript();
-+        }
- 		return $javascript_text;
- 	}
-
-Index: extensions/SemanticForms/includes/SF_Utils.php
-===================================================================
---- extensions/SemanticForms/includes/SF_Utils.php	(revision 9578)
-+++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
-@@ -440,3 +440,6 @@
-
- 		if ( $wgFCKEditorDir && class_exists( 'FCKEditor' ) ) {
--			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
-+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+            $scripts[] = class_exists('CKEditor')
-+                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
-+                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
-+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
-
-		foreach ( $scripts as $js ) {
+ 
