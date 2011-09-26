@@ -1007,7 +1007,7 @@ $(function() {
 		}
 		setTimeout( periodicProcessPoll, 10000);
 		
-		// server path selection
+		// server command change listener
 		$('.df_servers_command').change(function(e) {
 			var process = $(e.currentTarget).attr('id').split("_")[2];
 			var runCommand = $('#df_servers_'+process+'_command').val();
@@ -1015,7 +1015,15 @@ $(function() {
 			selectedId.attr("value", runCommand);
 		});
 		
-		// load current settings
+		// show selected server command
+		$('.df_action_selector').change(function(e) {
+			var process = $(e.currentTarget).attr('id').split("_")[0];
+			var selectedId = $("#"+process+"_selector option:selected");
+			var runCommand = selectedId.attr("value");
+			$('#df_servers_'+process+'_command').val(runCommand);
+		});
+		
+		// load current server command settings
 		var loadServerSettings =  function(xhr, status) {
 			var result = xhr.responseText;
 			if (result == "false") return;
@@ -1036,7 +1044,7 @@ $(function() {
 		var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=loadServerSettings&rsargs[]=";
 		$.ajax( { url : url, dataType:"json", complete : loadServerSettings  });
 		
-		// save server settings button
+		// save current server command settings
 		$('#df_servers_save_settings').click(function(e2) {
 			var settings = { };
 			$('.df_action_selector').each(function(index, e) { 
@@ -1048,7 +1056,7 @@ $(function() {
 			$.ajax( { url : url, dataType:"json" });
 		});
 		
-		// execute command button
+		// execute server command button
 		var executeCommand = function(e) {
 			var process = $(e.currentTarget).attr('id').split("_")[2];
 			var runCommand = $('#df_servers_'+process+'_command').val();
