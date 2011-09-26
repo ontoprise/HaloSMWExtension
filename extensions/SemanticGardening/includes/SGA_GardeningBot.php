@@ -81,7 +81,7 @@ abstract class GardeningBot {
 
 	protected function GardeningBot($id) {
 		$this->id = $id;
-			
+		
 		// registering bot
 		global $registeredBots;
 		$registeredBots[$id] = $this;

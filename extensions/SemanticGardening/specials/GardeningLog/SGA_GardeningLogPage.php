@@ -5,7 +5,7 @@
  * 
  * Created on 19.10.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if (!defined('MEDIAWIKI')) die();
 global $sgagIP;
@@ -55,11 +55,11 @@ class SGAGardeningLogPage extends SMWQueryPage {
 		return $html.$this->filter->getFilterControls($specialAttPage, $wgRequest);
 	}
 	
-	function doQuery( $offset, $limit, $shownavigation=true ) {
+	function doQuery( $offset = false, $limit = false, $shownavigation = true ) {
 		global $wgRequest, $wgOut;
 		if ($wgRequest->getVal('limit') == NULL) $limit = 20;
 		parent::doQuery($offset, $limit, $shownavigation);
-		$wgOut->addHTML("<button type=\"button\" id=\"showall\" onclick=\"gardeningLogPage.toggleAll()\">Expand All</button>");
+		$wgOut->addHTML("<button type=\"button\" id=\"showall\" onclick=\"window.gardeningLogPage.toggleAll()\">Expand All</button>");
 	}
 	
 	function linkParameters() {
@@ -86,7 +86,7 @@ class SGAGardeningLogPage extends SMWQueryPage {
 					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:'.($this->showAll ? "block" : "none").';">';
 			} else {
 				$escapedDBkey = preg_replace("/'/", "&quot;", htmlspecialchars($bound->getPrefixedDBkey()));
-				$text = $skin->makeLinkObj($bound).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
+				$text = $skin->makeLinkObj($bound).': <img class="clickable" src="'.$wgServer.$wgScriptPath.'/extensions/SMWHalo/skins/info.gif" onclick="window.gardeningLogPage.toggle(\''.$escapedDBkey.'\')"/>' .
 					'<div class="gardeningLogPageBox" id="'.$escapedDBkey.'" style="display:'.($this->showAll ? "block" : "none").';">';
 			}
 						

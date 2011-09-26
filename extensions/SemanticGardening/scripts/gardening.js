@@ -23,6 +23,8 @@
  * @author Kai K�hn
  */
 
+var $ = $P;
+
 var SMW_AJAX_GARDLOG = 2;
 
 var GardeningPage = Class.create();
@@ -157,12 +159,14 @@ GardeningLogPage.prototype = {
 	
 	initialize: function() {
 		if (wgCanonicalSpecialPageName != 'GardeningLog') return;
-		this.pendingIndicator = new OBPendingIndicator();
 		this.showAll = false;
 	},
 	
 	selectBot: function(event) {
 		var selectTag = Event.element(event);
+		if (this.pendingIndicator == null) {
+			this.pendingIndicator = new OBPendingIndicator();
+		}
 		this.pendingIndicator.show($('issueClasses'));
 		var selectedIndex = selectTag.selectedIndex;
 		var bot_id = selectTag.options[selectedIndex].value;
@@ -187,6 +191,6 @@ GardeningLogPage.prototype = {
 		divs.each(function(d) { if (showAll) d.show(); else d.hide(); });
 		$('showall').innerHTML = showAll ? gLanguage.getMessage('GARDENING_LOG_COLLAPSE_ALL') : gLanguage.getMessage('GARDENING_LOG_EXPAND_ALL'); 
 	}
-}
+};
 
-var gardeningLogPage = new GardeningLogPage();
+window.gardeningLogPage = new GardeningLogPage();

@@ -5,7 +5,7 @@
  * 
  * @defgroup SemanticGardening Semantic Gardening extension
  * 
- * @defgroup SemanticGardeningBots
+ * @defgroup SemanticGardeningBotsQ
  * @ingroup SemanticGardening
  * 
  * @author Kai K�hn
@@ -268,7 +268,7 @@ function sgafRegisterResourceLoaderModules() {
 				),
 		'dependencies' => array(
 				'ext.ScriptManager.prototype',
-				'ext.smwhalo.general'
+				//'ext.smwhalo.general'
 				)
 				
 	);
