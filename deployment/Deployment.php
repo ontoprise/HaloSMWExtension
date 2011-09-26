@@ -6,7 +6,9 @@ $wgExtensionFunctions[] = 'dfgSetupExtension';
 $smwgDFIP = $IP . '/deployment';
 
 // read settings.php
-require("settings.php");
+
+require_once("$smwgDFIP/settings.php");
+
 
 if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdateOnLogin !== false) {
 	$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
@@ -26,7 +28,12 @@ function dfgSetupExtension() {
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
 
-
+	if (defined('SGA_GARDENING_EXTENSION_VERSION')) {
+		// create one instance for registration at Gardening framework
+		require_once($smwgDFIP.'/bots/SGA_ImportOntologyBot.php');
+		new ImportOntologyBot();
+	}
+	
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
         'name' => 'Deployment framework',
@@ -35,6 +42,8 @@ function dfgSetupExtension() {
         'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework',
 	    'description' => 'Eases the installation and updating of extensions.'
 	    );
+
+
 }
 
 function dffInitializeLanguage() {

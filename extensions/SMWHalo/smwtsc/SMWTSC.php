@@ -224,6 +224,13 @@ function tscSetupExtension() {
 	
 	$wgHooks['ResourceLoaderRegisterModules'][]='tscfRegisterResourceLoaderModules';
     $wgHooks['BeforePageDisplay'][]='tscfAddHTMLHeader';
+    
+	// create instance of ExportObjectLogic bot 
+	// (only if DF and SGA are installed and registered in LocalSettings.php)
+	if (defined('DF_VERSION') && defined('SGA_GARDENING_EXTENSION_VERSION')) {
+		$wgAutoloadClasses['ExportObjectLogicBot'] = $tscgIP . '/includes/bots/SGA_ExportObjectLogicBot.php';
+	    new ExportObjectLogicBot();
+	}
 }
 
 

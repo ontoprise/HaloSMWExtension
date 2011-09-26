@@ -16,6 +16,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 global $sgagIP;
 require_once("$sgagIP/includes/SGA_GardeningBot.php");
 require_once("$sgagIP/includes/SGA_ParameterObjects.php");
+require_once("$sgagIP/includes/SGA_GardeningIssues.php");
 
 define('XML_SCHEMA_NS', 'http://www.w3.org/2001/XMLSchema#');
 
@@ -149,8 +150,7 @@ class ImportOntologyBotFilter extends GardeningIssueFilter {
 	}
 }
 
-// create one instance for registration at Gardening framework
- new ImportOntologyBot();
+
 
 // For importing an ontology please do not use the ImportBot any longer.
 // Instead use the deployment framework: smwadmin -i <ontology-file>

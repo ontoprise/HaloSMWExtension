@@ -706,10 +706,7 @@ class ExportObjectLogicBotFilter extends GardeningIssueFilter {
 	}
 }
 
-// create instance (only if DF is installed and registered in LocalSettings.php)
-if (defined('DF_VERSION')) {
-	new ExportObjectLogicBot();
-}
+
 
 /**
  * @file

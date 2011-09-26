@@ -10,6 +10,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		  <copy todir="bin/zip/deployment/bots">
+		            <fileset dir="../bots/">
+		                <exclude name="**/.svn, **/CVS" />
+		            </fileset>
+		        </copy>
 		<copy todir="bin/zip/deployment/io">
 			<fileset dir="../io/">
 				<exclude name="**/.svn, **/CVS" />
