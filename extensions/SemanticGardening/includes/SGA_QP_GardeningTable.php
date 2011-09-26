@@ -153,7 +153,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 			$messages = array();
 			for($j = 0; $j<sizeof($gIssues); $j++){
 				if($gIssues[$j]->getRepresentation() != wfMsg('smw_gard_issue_contains_further_problems'))
-				array_push($messages, '<ul><li>' . $gIssues[$j]->getRepresentation() . '</li></ul>');
+				array_push($messages, '' . $gIssues[$j]->getRepresentation() . '');
 			}
 			if(count($messages)>0){
 				$messages = array_unique($messages);
