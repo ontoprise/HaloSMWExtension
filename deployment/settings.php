@@ -62,10 +62,13 @@ class DF_Config  {
 	public static $df_checkForUpdateOnLogin = true;
 	
 	/*
-	 * Genernal settings for smwadmin/webadmin
+	 * General settings for smwadmin/webadmin
 	 */
 	public static $settings = array(
 
+// keep cmd window on Windows when using DF-GUI
+'df_keep_cmd_window' => false,
+	  
 //Proxy server e.g. "proxy.example.com:8080"
 //'df_proxy' => '', 
 
@@ -83,8 +86,6 @@ class DF_Config  {
 	
 // set MYSQL directory (only if it is not in PATH)
 'df_mysql_dir' => '',
-	
-'df_keep_cmd_window' => false	
 
 	);
 	public static function getValue($identifier){
