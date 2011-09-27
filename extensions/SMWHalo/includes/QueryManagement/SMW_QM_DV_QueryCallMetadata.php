@@ -17,7 +17,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	
 	public function __construct($typeid) {
 		parent::__construct($typeid);
-		$this->m_data = new SMWSemanticData(null);
+		$this->m_data = new SMWContainerSemanticData();
 	}
 	
 	/*
@@ -25,8 +25,8 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function setQueryId($queryId){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQID_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryId);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $queryId);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	/*
@@ -34,8 +34,8 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function setQueryString($queryString){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQS_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryString);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $queryString);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 /*
@@ -43,8 +43,8 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function setQueryLimit($queryLimit){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQL_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryLimit);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $queryLimit);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 /*
@@ -52,8 +52,8 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function setQueryOffset($queryOffset){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQO_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryOffset);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $queryOffset);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	/*
@@ -61,8 +61,8 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function addPropertyDependency($propertyName){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_DOP_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $propertyName);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $propertyName);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	/*
@@ -70,50 +70,50 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 */
 	public function addCategoryDependency($categoryName){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_DOC_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $categoryName);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $categoryName);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function addExtraPropertyPrintouts($epp){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HEPP_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $epp);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $epp);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setExtraCategoryPrintouts($hasECP){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HECP_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $hasECP);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $hasECP);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setIsSPQRQLQuery($isSPARQL){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_ISQ_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $isSPARQL);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $isSPARQL);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setusesASKSyntax($isASK){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_UAS_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $isASK);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $isASK);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setUsedInArticle($uia){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QM_UIA_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $uia);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $uia);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setUsedQueryPrinter($uqp){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QM_UQP_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $uqp);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $uqp);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function setQueryName($hqn){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QM_HQN_LABEL);
-		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $hqn);
-		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $hqn);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
 	public function parseUserValue($value){
@@ -143,4 +143,13 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	public function getSignature() {
 		return 'c';
 	}
+	
+	protected function loadDataItem( SMWDataItem $dataItem ){
+		error();	
+	}
+	
+	public function getDataItem(){
+		return new SMWDIContainer($this->m_data);
+	}
+	
 }

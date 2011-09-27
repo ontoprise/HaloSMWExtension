@@ -89,24 +89,8 @@ function enableSMWHalo() {
 		$sfgFancyBoxIncluded = true;
 	}
 
-	//initialize query management
-	global $smwgHaloIP;
-	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
-
-	global $smwgQRCEnabled;
-	if (isset($smwgQRCEnabled) && $smwgQRCEnabled === true) {
-		global $wgAutoloadClasses;
-		$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
-		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
-		$wgAutoloadClasses['SMWQMStore'] =
-        "$smwgHaloIP/includes/QueryManagement/SMW_QM_Store.php";
-
-		$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
-		$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
-
-		smwfAddStore('SMWQMStore');
-	}
-    
+	smwfInitializeQueryManagement();
+	
 	// declare a magic word (LINEFEED)
 	$wgHooks['LanguageGetMagic'][] = 'smwfHaloWikiWords';
 	$wgHooks['ParserGetVariableValueSwitch'][] = 'smwfHaloAssignAValue';
@@ -158,7 +142,6 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
 	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
-	$wgAutoloadClasses['SMWQueryList'] = $smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
@@ -295,10 +278,6 @@ function smwgHaloSetupExtension() {
 			require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
 			break;
 
-			case '_qc_' :  smwfHaloInitMessages();
-			require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
-			break;
-
 			case '_ts_' :
 				smwfHaloInitMessages();
 				break; // contained in this file
@@ -342,9 +321,6 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWHaloAdmin'] = $smwgHaloIP . '/specials/SMWHaloAdmin/SMW_HaloAdmin.php';
 		$wgSpecialPages['SMWHaloAdmin'] = array('SMWHaloAdmin');
 		$wgSpecialPageGroups['SMWHaloAdmin'] = 'smwplus_group';
-
-		$wgSpecialPages['QueryList'] = array('SMWQueryList');
-		$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
 	}
 
 
@@ -450,8 +426,7 @@ function smwgHaloSetupExtension() {
 			// initialize static members of SMWHaloPredefinedPages
 			new SMWHaloPredefinedPages();
 
-				
-
+			smwfEnableQueryManagement();
 
 			return true;
 }
@@ -1358,18 +1333,6 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
 	return true;
 }
 
-/*
- * Call this method in LocalSettings in order to enable the Query Results Cache
- */
-function enableQueryResultsCache(){
-	global $smwgHaloIP, $smwgQRCEnabled, $wgHooks;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
-
-	$smwgQRCEnabled = true;
-
-	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';
-}
 
 /**
  * Checks if the given property is predefined by SMWHalo
@@ -1389,16 +1352,6 @@ function smwfCheckIfPredefinedSMWHaloProperty($property) {
 	return $result;
 }
 
-/*
- * Set up the Query Results Cache Tables
- */
-function smwfQRCInitializeTables(){
-	global $smwgHaloIP;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
-	SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
-
-	return true;
-}
 
 /**
  * This function is called from the hook 'sfSetTargetName' in SemanticForms. It adds a
@@ -1720,3 +1673,32 @@ function smwfAddStore($store_class) {
 }
 
 
+/*
+ * Initialize query management hooks
+ */
+function smwfInitializeQueryManagement(){
+	global $smwgHaloIP, $wgHooks;
+	require_once( "$smwgHaloIP/includes/QueryManagement/SMW_QM_QueryManagementHandler.php" );
+
+	$wgHooks['smwInitDatatypes'][] = 'SMWQMQueryManagementHandler::initQRCDataTypes';
+	$wgHooks['smwInitProperties'][] = 'SMWQMQueryManagementHandler::initProperties';
+}
+
+/*
+ * Enable query management
+ */
+function smwfEnableQueryManagement(){
+	global $smwgHaloIP, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
+	
+	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
+		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
+	$wgAutoloadClasses['SMWQMStore'] =
+   		"$smwgHaloIP/includes/QueryManagement/SMW_QM_Store.php";
+	$wgAutoloadClasses['SMWQueryList'] = 
+		$smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
+
+	$wgSpecialPages['QueryList'] = array('SMWQueryList');
+	$wgSpecialPageGroups['QueryList'] = 'smwplus_group';	
+		
+	smwfAddStore('SMWQMStore');	
+}

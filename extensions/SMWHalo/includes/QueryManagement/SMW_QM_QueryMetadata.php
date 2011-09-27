@@ -170,21 +170,46 @@ class SMWQMQueryMetadata {
 		}
 	}
 	
-	public function fillFromPropertyValues($pVs){
-		foreach($pVs as $pV){
-			if($pV[0] == QRC_HQS_LABEL) $this->queryString = $pV[1][0];
-			if($pV[0] == QRC_HQL_LABEL) $this->limit = $pV[1][0];
-			if($pV[0] == QRC_HQO_LABEL) $this->offset = $pV[1][0];
-			if($pV[0] == QRC_HEPP_LABEL) $this->propertyPrintRequests[$pV[1][0]] = true;
-			if($pV[0] == QRC_HECP_LABEL) $this->hasCategoryPrintRequest = $pV[1][0];
-			if($pV[0] == QRC_ISQ_LABEL) $this->isSparqlQuery = $pV[1][0];
-			if($pV[0] == QRC_UAS_LABEL) $this->usesASKSyntax = $pV[1][0];
-			if($pV[0] == QRC_DOP_LABEL) $this->propertyConditions[$pV[1][0]] = true;
-			if($pV[0] == QRC_DOC_LABEL) $this->categoryConditions[$pV[1][0]] = true;
-			if($pV[0] == QM_UIA_LABEL) $this->usedInArticle = $pV[1][0];
-			if($pV[0] == QM_UQP_LABEL) $this->queryPrinter = $pV[1][0];
-			if($pV[0] == QM_HQN_LABEL) $this->queryName = $pV[1][0];
+	public function fillFromPropertyValues($container){
+		
+		$properties = array(
+			'queryString' => QRC_HQS_LABEL,
+			'limit' => QRC_HQL_LABEL,
+			'offset' => QRC_HQO_LABEL,
+			'hasCategoryPrintRequest' => QRC_HECP_LABEL,
+			'isSparqlQuery' => QRC_ISQ_LABEL,
+			'usesASKSyntax' => QRC_UAS_LABEL,
+			'usedInArticle' => QM_UIA_LABEL,
+			'queryPrinter' => QM_UQP_LABEL,
+			'queryName' => QM_HQN_LABEL
+		);
+
+		foreach($properties as $attr => $propLabel){
+			$property = SMWDIProperty::newFromUserLabel($propLabel);
+			$vals = $container->getSemanticData()->getPropertyValues($property);
+			if(count($vals) > 0){
+				$this->$attr = $vals[0]->getSortKey();
+			}
 		}
+		
+		$properties = array(
+			'propertyPrintRequests' => QRC_HEPP_LABEL,
+			'propertyConditions' => QRC_DOP_LABEL,
+			'categoryConditions' => QRC_DOC_LABEL
+		);
+		
+		foreach($properties as $attr => $propLabel){
+			$property = SMWDIProperty::newFromUserLabel($propLabel);
+			$vals = $container->getSemanticData()->getPropertyValues($property);
+			if(count($vals) > 0){
+				$this->$attr = array();
+				foreach($vals as $v){
+					array_push($this->$attr, $v->getSortKey());
+				}
+				$this->$attr = array_flip($this->$attr);
+			}
+		}
+	
 	}
 	
 }

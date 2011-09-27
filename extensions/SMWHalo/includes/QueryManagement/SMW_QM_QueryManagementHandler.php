@@ -52,7 +52,7 @@ class SMWQMQueryManagementHandler {
 	 * Called by the smwInitProperties Hook. Registers some queries
 	 */
 	public static function initProperties(){
-		SMWPropertyValue::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQID', '_str', QRC_HQID_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
@@ -78,7 +78,8 @@ class SMWQMQueryManagementHandler {
 	 */
 	public static function initQRCDataTypes(){
 		global $smwgHaloIP, $smwgHaloContLang;
-		SMWDataValueFactory::registerDatatype('_qcm', 'SMWQueryCallMetadataValue');	
+		SMWDataValueFactory::registerDatatype('_qcm', 'SMWQueryCallMetadataValue',
+			SMWDataItem::TYPE_CONTAINER);	
 	
 		return true;
 	}
@@ -88,11 +89,13 @@ class SMWQMQueryManagementHandler {
 	 * It appends query related metadata to the article which contains the query.
 	 */
 	public function storeQueryMetadata($query){
+		
 		if (!isset($query->params) || !is_array($query->params)) {
 			// No parameters set 
 			// => set an empty array to avoid errors due to E_STRICT
 			$query->params = array();
 		}
+		
 		//check if query should be stored
 		if(array_key_exists('noquerymanagement', $query->params) && $query->params['noquerymanagement'] == 'true'){
 			return;
@@ -113,9 +116,8 @@ class SMWQMQueryManagementHandler {
 		// initialize a new semdata object and append it to parser output if this was not yet done.
 		// the semdata object will then be stored to the db by smw at the end of the parse process
 		if (!isset($wgParser->getOutput()->mSMWData)) {
-			$wgParser->getOutput()->mSMWData = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($title));
+			$wgParser->getOutput()->mSMWData = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
 		}
-		
 		$semanticData = $wgParser->getOutput()->mSMWData;
 		
 		$propertyValue = SMWPropertyValue::makeProperty('___QRC_UQC');
@@ -173,7 +175,7 @@ class SMWQMQueryManagementHandler {
 				$dataValue->setQueryName($query->params['queryname']);
 			}
 		}
-		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
+		$semanticData->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 		$wgParser->getOutput()->mSMWData = $semanticData;
 		
 	}
@@ -247,10 +249,10 @@ class SMWQMQueryManagementHandler {
 		}
 		
 		if($description instanceof SMWSomeProperty){
-			$properties[$description->getProperty()->getText()] = null;
+			$properties[$description->getProperty()->getLabel()] = null;
 		} else if ($description instanceof SMWClassDescription){
 			foreach($description->getCategories() as $title)
-			$categories[$title->getText()] = null;
+				$categories[$title->getTitle()->getText()] = null;
 		}
 		
 		return array($properties, $categories);
@@ -454,12 +456,14 @@ class SMWQMQueryManagementHandler {
 			$semanticData = $store->getSemanticData($queryResult);
 			
 			$property = SMWPropertyValue::makeProperty('___QRC_UQC');
-			$propVals = $semanticData->getPropertyValues($property);
+			$propVals = $semanticData->getPropertyValues($property->getDataItem());
+			
+			//echo('<pre>'.print_r($propVals, true).'</pre>');
 			
 			foreach($propVals as $pVs){
-				$pVs = $pVs->getDBKeys();
-				$pVs = $pVs[0];
-			
+
+				if(!($pVs instanceof SMWDIContainer)) continue;
+				
 				$queryMetadataResult = new SMWQMQueryMetadata();
 				$queryMetadataResult->fillFromPropertyValues($pVs);
 				
@@ -468,6 +472,8 @@ class SMWQMQueryManagementHandler {
 				}
 			}
 		}
+		
+		//echo('<pre>'.print_r($queryMetadataResults, true).'</pre>');
 		
 		return $queryMetadataResults;
 	}
