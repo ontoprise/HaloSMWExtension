@@ -11,7 +11,7 @@ VERSION 1.5.3
 	* Provided new patch to let Rich Media extension be compatible with MW 1.17.0 and SF 2.2.1
 
   BUGFIXES:
-	-none-
+	* 15709 - Cannot edit exiting files because "has default form" annotation missing
 
 VERSION 1.5.2
 

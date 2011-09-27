@@ -49,6 +49,8 @@
       <namespace key="203" case="first-letter">TermImport talk</namespace>
       <namespace key="220" case="first-letter">E-mail</namespace>
       <namespace key="221" case="first-letter">E-mail talk</namespace>
+      <namespace key="274" case="first-letter">Widget</namespace>
+      <namespace key="275" case="first-letter">Widget talk</namespace>
       <namespace key="300" case="first-letter">ACL</namespace>
       <namespace key="301" case="first-letter">ACL talk</namespace>
       <namespace key="400" case="first-letter">IAI</namespace>
@@ -63,7 +65,6 @@
     <title>Template:RMListInnerTable</title>
     <id>58</id>
     <revision>
-      <id>5028</id>
       <timestamp>2011-07-06T13:47:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -95,7 +96,6 @@
     <title>Template:RMCategoryLinkIcon</title>
     <id>59</id>
     <revision>
-      <id>5022</id>
       <timestamp>2011-07-06T13:42:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -134,7 +134,6 @@
     <title>Form:RMUpload</title>
     <id>60</id>
     <revision>
-      <id>5044</id>
       <timestamp>2011-07-06T14:30:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -205,7 +204,6 @@
     <title>Form:RMImage</title>
     <id>61</id>
     <revision>
-      <id>5043</id>
       <timestamp>2011-07-06T14:30:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -289,7 +287,6 @@
     <title>Form:RMPdf</title>
     <id>62</id>
     <revision>
-      <id>5047</id>
       <timestamp>2011-07-06T14:36:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -377,7 +374,6 @@
     <title>Form:RMDocument</title>
     <id>63</id>
     <revision>
-      <id>5041</id>
       <timestamp>2011-07-06T14:28:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -470,7 +466,6 @@
     <title>Form:RMAudio</title>
     <id>64</id>
     <revision>
-      <id>5040</id>
       <timestamp>2011-07-06T14:27:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -553,7 +548,6 @@
     <title>Form:RMVideo</title>
     <id>65</id>
     <revision>
-      <id>5046</id>
       <timestamp>2011-07-06T14:34:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -635,7 +629,6 @@
     <title>Property:HasCreationDate</title>
     <id>66</id>
     <revision>
-      <id>5001</id>
       <timestamp>2011-07-06T13:17:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -661,7 +654,6 @@
     <title>Property:HasFilename</title>
     <id>67</id>
     <revision>
-      <id>5003</id>
       <timestamp>2011-07-06T13:18:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -687,7 +679,6 @@
     <title>Property:HasUploadDate</title>
     <id>68</id>
     <revision>
-      <id>5007</id>
       <timestamp>2011-07-06T13:19:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -713,7 +704,6 @@
     <title>Property:HasUploader</title>
     <id>69</id>
     <revision>
-      <id>5009</id>
       <timestamp>2011-07-06T13:21:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -739,7 +729,6 @@
     <title>Property:HasCopyrightBy</title>
     <id>70</id>
     <revision>
-      <id>5000</id>
       <timestamp>2011-07-06T13:16:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -766,7 +755,6 @@
     <title>Property:HasDescription</title>
     <id>71</id>
     <revision>
-      <id>5002</id>
       <timestamp>2011-07-06T13:17:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -792,7 +780,6 @@
     <title>Category:Media</title>
     <id>72</id>
     <revision>
-      <id>4975</id>
       <timestamp>2011-07-06T12:40:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -814,8 +801,7 @@
     <title>Category:Image</title>
     <id>73</id>
     <revision>
-      <id>4974</id>
-      <timestamp>2011-07-06T12:40:01Z</timestamp>
+      <timestamp>2011-09-27T11:51:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -823,21 +809,21 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMImage| ]]
 [[Rationale::This category is used to identify all images]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Image]]</text>
-    <hash>903eae239e3588348ed5ef1bf1c68ff2</hash>
+    <hash>34d19ca04d308dde9ca002ee132842be</hash>
     </revision>
   </page>
   <page>
     <title>Category:Pdf</title>
     <id>74</id>
     <revision>
-      <id>4976</id>
-      <timestamp>2011-07-06T12:41:32Z</timestamp>
+      <timestamp>2011-09-27T11:52:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -845,21 +831,21 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMPdf| ]]
 [[Rationale::This category is used to identify all PDF documents.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Media]]</text>
-    <hash>a15f041167636e9c463896b8e6ee7940</hash>
+    <hash>d1261289b3d8fbe381c81e15335bd044</hash>
     </revision>
   </page>
   <page>
     <title>Category:Document</title>
     <id>75</id>
     <revision>
-      <id>4972</id>
-      <timestamp>2011-07-06T12:38:45Z</timestamp>
+      <timestamp>2011-09-27T11:53:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -867,21 +853,21 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMDocument| ]]
 [[Rationale::This category is used to identify all documents.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Document]]</text>
-    <hash>b30807e50de8d0ca3b581776cb01cf4e</hash>
+    <hash>fc27a9eb765e0efb948bb91924bdd785</hash>
     </revision>
   </page>
   <page>
     <title>Category:Audio</title>
     <id>76</id>
     <revision>
-      <id>4971</id>
-      <timestamp>2011-07-06T12:37:50Z</timestamp>
+      <timestamp>2011-09-27T11:50:28Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -889,21 +875,21 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMAudio| ]]
 [[Rationale::This category is used to identify all audio documents.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Media]]</text>
-    <hash>3728b103b269475b050bce5d1d1e3674</hash>
+    <hash>7e24943540cd38cc4585986e3cd5a599</hash>
     </revision>
   </page>
   <page>
     <title>Category:Video</title>
     <id>77</id>
     <revision>
-      <id>4978</id>
-      <timestamp>2011-07-06T12:42:46Z</timestamp>
+      <timestamp>2011-09-27T11:53:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -911,20 +897,20 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMVideo| ]]
 [[Rationale::This category is used to identify video files.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Video]]</text>
-    <hash>bb0256583b62f61231173b6b1ee375cc</hash>
+    <hash>97c290e7845ad30b73e4d50d7e5873ac</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMMedia</title>
     <id>79</id>
     <revision>
-      <id>5030</id>
       <timestamp>2011-07-06T13:50:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -981,7 +967,6 @@
     <title>Property:HasRelatedArticle</title>
     <id>82</id>
     <revision>
-      <id>5006</id>
       <timestamp>2011-07-06T13:19:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1007,7 +992,6 @@
     <title>Form:RMICalendar</title>
     <id>88</id>
     <revision>
-      <id>5042</id>
       <timestamp>2011-07-06T14:29:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1095,7 +1079,6 @@
     <title>Template:RMVCard</title>
     <id>89</id>
     <revision>
-      <id>5035</id>
       <timestamp>2011-07-06T13:56:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1133,7 +1116,6 @@
     <title>Template:RMICalendar</title>
     <id>90</id>
     <revision>
-      <id>5024</id>
       <timestamp>2011-07-06T13:44:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1172,8 +1154,7 @@
     <title>Category:ICalendar</title>
     <id>91</id>
     <revision>
-      <id>4973</id>
-      <timestamp>2011-07-06T12:39:25Z</timestamp>
+      <timestamp>2011-09-27T11:56:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1181,21 +1162,21 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMICalendar| ]]
 [[Rationale::This category is used to identify all calendars.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|ICalendar]]</text>
-    <hash>42e5908545783b6e778a9c5adb08f065</hash>
+    <hash>c8b6cd7d83bd55c6cca1b7c8d14f9b24</hash>
     </revision>
   </page>
   <page>
     <title>Category:VCard</title>
     <id>92</id>
     <revision>
-      <id>4977</id>
-      <timestamp>2011-07-06T12:42:01Z</timestamp>
+      <timestamp>2011-09-27T11:55:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1203,20 +1184,20 @@
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
+[[Has default form::Form:RMVCard| ]]
 [[Rationale::This category is used to identify all VCards.]]
 [[No automatic formedit::true]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|VCard]]</text>
-    <hash>8e2d17d9994665d5ca6dbf40a67d2f4c</hash>
+    <hash>0af6012379c99d7e2ad06b6e441cd9a3</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasFormat</title>
     <id>93</id>
     <revision>
-      <id>5008</id>
       <timestamp>2011-07-06T13:20:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1242,7 +1223,6 @@
     <title>Property:HasKeywords</title>
     <id>94</id>
     <revision>
-      <id>5005</id>
       <timestamp>2011-07-06T13:18:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1268,7 +1248,6 @@
     <title>Template:RMUpload</title>
     <id>154</id>
     <revision>
-      <id>5033</id>
       <timestamp>2011-07-06T13:52:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1306,7 +1285,6 @@
     <title>Template:RMImage</title>
     <id>155</id>
     <revision>
-      <id>5026</id>
       <timestamp>2011-07-06T13:45:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1345,7 +1323,6 @@
     <title>Template:RMPdf</title>
     <id>156</id>
     <revision>
-      <id>5032</id>
       <timestamp>2011-07-06T13:51:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1383,7 +1360,6 @@
     <title>Template:RMDocument</title>
     <id>157</id>
     <revision>
-      <id>5023</id>
       <timestamp>2011-07-06T13:43:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1421,7 +1397,6 @@
     <title>Template:RMAudio</title>
     <id>158</id>
     <revision>
-      <id>5021</id>
       <timestamp>2011-07-06T13:39:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1459,7 +1434,6 @@
     <title>Template:RMVideo</title>
     <id>159</id>
     <revision>
-      <id>5034</id>
       <timestamp>2011-07-06T13:53:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1497,7 +1471,6 @@
     <title>Template:RMList</title>
     <id>160</id>
     <revision>
-      <id>5027</id>
       <timestamp>2011-07-06T13:46:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1523,8 +1496,7 @@
     <title>Template:RMListOuterTable</title>
     <id>161</id>
     <revision>
-      <id>5029</id>
-      <timestamp>2011-07-06T13:49:24Z</timestamp>
+      <timestamp>2011-08-29T16:35:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1570,14 +1542,13 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>8b9d978523dde9d5ace85dd70e485601</hash>
+    <hash>b87615a85cce229007182035fc0ebd94</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVCard</title>
     <id>164</id>
     <revision>
-      <id>5045</id>
       <timestamp>2011-07-06T14:31:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1665,7 +1636,6 @@
     <title>Template:DataRMICal</title>
     <id>187</id>
     <revision>
-      <id>5018</id>
       <timestamp>2011-07-06T13:35:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1714,7 +1684,6 @@
     <title>Template:DataRMVCard</title>
     <id>188</id>
     <revision>
-      <id>5020</id>
       <timestamp>2011-07-06T13:37:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1767,7 +1736,6 @@
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <id>5053</id>
       <timestamp>2011-07-06T14:53:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1814,7 +1782,6 @@ More information about the RichMedia extension and how to use it can be found in
     <title>Template:RMNoNamespace</title>
     <id>216</id>
     <revision>
-      <id>5031</id>
       <timestamp>2011-07-06T13:51:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1838,7 +1805,6 @@ More information about the RichMedia extension and how to use it can be found in
     <title>Property:Attachment</title>
     <id>283</id>
     <revision>
-      <id>4985</id>
       <timestamp>2011-07-06T13:09:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1866,7 +1832,6 @@ More information about the RichMedia extension and how to use it can be found in
     <title>Richmedia Sandbox</title>
     <id>284</id>
     <revision>
-      <id>297</id>
       <timestamp>2011-04-01T11:38:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1892,7 +1857,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Document:Richmedia Sandbox.doc</title>
     <id>286</id>
     <revision>
-      <id>5050</id>
       <timestamp>2011-07-06T14:47:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1921,7 +1885,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Pdf:Richmedia Sandbox.pdf</title>
     <id>287</id>
     <revision>
-      <id>5051</id>
       <timestamp>2011-07-06T14:47:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1950,7 +1913,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>File:Richmedia Sandbox.png</title>
     <id>288</id>
     <revision>
-      <id>5052</id>
       <timestamp>2011-07-06T14:48:31Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -1979,7 +1941,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Property:Related to</title>
     <id>442</id>
     <revision>
-      <id>5013</id>
       <timestamp>2011-07-06T13:22:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -2000,32 +1961,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 [[Has type::Type:Page| ]] [[Has domain and range::Category:Content| ]]
 [[Category:Transitive properties|Transitive_properties]]</text>
     <hash>fb7c90b1524ec7faddc9d0935509248b</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Content hash</title>
-    <id>248</id>
-    <revision>
-      <id>257</id>
-      <timestamp>2010-12-21T14:25:49Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Part of bundle</title>
-    <id>247</id>
-    <revision>
-      <id>256</id>
-      <timestamp>2010-12-21T14:25:58Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
 </mediawiki>
