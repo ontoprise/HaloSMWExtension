@@ -56,7 +56,6 @@ class SMW_OntologyBrowser extends SpecialPage {
 		} else {
 		
 		}
-		
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
 		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );
@@ -165,8 +164,11 @@ if(!smwfIsTripleStoreConfigured()) {
 			$html .= "</span>";
 			if ($showMenuBar)
 			{
-				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY.")\">".wfMsg('smw_ob_cmd_createsubcategory')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_renamecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
-			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY.")\">".wfMsg('smw_ob_cmd_createsubproperty')."</a> | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_renameproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
+				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_editcategory')."</a><div id=\"categoryTreeMenu\"></div></span>
+			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> 
+                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY.")\">".wfMsg('smw_ob_cmd_createsubproperty')."</a> 
+			
+			| <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_renameproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
 				$html .= $menu;
 			}
 
@@ -195,7 +197,7 @@ if(!smwfIsTripleStoreConfigured()) {
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button>
-		  <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\">".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
+		   <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\">".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">
