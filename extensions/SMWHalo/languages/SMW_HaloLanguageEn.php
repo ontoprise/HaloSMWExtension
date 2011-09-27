@@ -44,7 +44,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
     'smw_ac_typehint'=> 'Type: $1',
     'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
 	'smw_ac_datetime_proposal'=>'<Month> <day>, <year>|<year>-<month>-<day>',
-	'smw_ac_geocoord_proposal'=>'<latitude>° N, <longitude>° W|<latitude>, <longitude>',
+'smw_ac_geocoord_proposal'=>'<latitude>° N, <longitude>° W|<latitude>, <longitude>',
 	'smw_ac_email_proposal'=>'somebody@somewhere.com',
 	'smw_ac_temperature_proposal'=>'<number> K, <number> °C, <number> °F, <number> °R',
 	'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
@@ -149,7 +149,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_ob_attributeTree' => 'Property Tree',
 
 	'smw_ob_instanceList' => 'Instances',
-
+       
 	'smw_ob_att' => 'Properties',
 	'smw_ob_relattValues' => 'Values',
 	'smw_ob_relattRangeType' => 'Type/Range',
@@ -187,6 +187,7 @@ clicking the big arrows between the columns.',
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category',
+	'smw_ob_cmd_editcategory' => 'Edit Category',
 	'smw_ob_cmd_renamecategory' => 'Rename',
 	'smw_ob_cmd_createsubproperty' => 'Add subproperty',
 	'smw_ob_cmd_createsubpropertysamelevel' => 'Add property',
@@ -387,6 +388,7 @@ clicking the big arrows between the columns.',
 	'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
 	
+	
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
     'more_functions' => 'More',
@@ -402,6 +404,7 @@ clicking the big arrows between the columns.',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
 	'semanticmaps_label_longitude' => 'Longitude:',
+	
 	
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'User is allowed to add new instances to the result',
@@ -470,8 +473,6 @@ clicking the big arrows between the columns.',
 	'tabf_nc_icon_title_invalid_value' => "Some annotation values of this instance are invalid.",
 	'tabf_nc_icon_title_save_error' => "Changes for this instance could not be applied because it has been modified by someone else in the meantime.'",
 	
-	//--- fancy table result printer
-	'ftrp_warning' => "Found invalid replace statements with unknown properties:",
 	);
 
 
@@ -486,8 +487,6 @@ clicking the big arrows between the columns.',
 
 	var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Has domain and range',
-	SMW_SSP_HAS_DOMAIN => 'Has domain',
-    SMW_SSP_HAS_RANGE => 'Has range',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
@@ -522,8 +521,8 @@ clicking the big arrows between the columns.',
 		SMW_NS_RELATION_TALK  => 'Relation_talk',
 		SMW_NS_PROPERTY       => 'Property',
 		SMW_NS_PROPERTY_TALK  => 'Property_talk',
-		SMW_NS_TYPE           => 'Type', // @deprecated
-		SMW_NS_TYPE_TALK      => 'Type_talk' // @deprecated
+		SMW_NS_TYPE           => 'Type',
+		SMW_NS_TYPE_TALK      => 'Type_talk'
 		);
 	}
 
