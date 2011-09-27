@@ -33,6 +33,10 @@ var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
 var editOpened = false;
 var addOpened = false;
+var addCategoryForm = false;
+var editCategoryForm = false;
+var editCategoryOpened = false;
+var addCategoryOpened = false;
 
 // Logging on close does not work, because window shuts down. What to do?
 // window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
@@ -517,7 +521,7 @@ OBCategoryTreeActionListener.prototype = Object
 						selectionProvider.addListener(this, OB_REFRESHLISTENER);
 						selectionProvider.addListener(this,
 								OB_BEFOREREFRESHLISTENER);
-
+                                                
 						this.ignoreNextSelection = false;
 						Draggables.addObserver(this);
 						Droppables.add('categoryTreeSwitch', {
@@ -535,21 +539,34 @@ OBCategoryTreeActionListener.prototype = Object
 
 					navigateToEntity : function(event, node, categoryName,
 							editmode) {
+							
 						smwhgLogger.log(categoryName, "OB", "inspect_entity");
 						GeneralBrowserTools.navigateToPage(gLanguage
 								.getMessage('CATEGORY_NS_WOC'), categoryName,
 								editmode);
+					// obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);						
+				                // if(addEditCategoryForm == true){
+					           // categoryActionListener.showSubMenu();	
+                                                // }					
 					},
 
+					cancel : function(){
+					 addCategoryOpened = false;
+					 editCategoryOpened = false;
+					},
 					selectionChanged : function(id, title, ns, node) {
 						if (ns == SMW_CATEGORY_NS) {
-
 							this.selectedCategory = title;
 							this.selectedCategoryID = id;
 							this.oldSelectedNode = GeneralBrowserTools
 									.toggleHighlighting(this.oldSelectedNode,
 											node);
-
+                                                if(addCategoryForm == true && addCategoryOpened == true){
+					           categoryActionListener.showSubMenu(2);	
+                                                 }	
+						 if(editCategoryForm == true && editCategoryOpened == true){
+					           categoryActionListener.showSubMenu(3);						   
+                                                 }
 						}
 					},
 
@@ -618,15 +635,29 @@ OBCategoryTreeActionListener.prototype = Object
 								droppedCategoryID);
 					},
 
+					superCategories : function(selectedCategory){
+					  obCategoryMenuProvider.superCategories(selectedCategory);
+					},
+					
 					showSubMenu : function(commandID) {
-						if (this.selectedCategory == null) {
+						if (this.selectedCategory == null){
 							alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 							return;
 						}
-
-						obCategoryMenuProvider.showContent(commandID,
-								'categoryTree');
-					},
+						if(commandID == 2){
+                                                 addCategoryForm = true;
+						 editCategoryForm = false;
+						 addCategoryOpened = true;
+						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
+						}
+						if(commandID == 3){
+						 editCategoryForm = true;
+						 addCategoryForm = false;
+						 editCategoryOpened = true;
+						 categoryActionListener.superCategories(this.selectedCategory,'3');
+						}	
+                                           					    
+                                 	},
 
 					// ---- Selection methods. Called when the entity is
 					// selected ---------------------
@@ -647,7 +678,7 @@ OBCategoryTreeActionListener.prototype = Object
 					 *            Title of category
 					 */
 					select : function(event, node, categoryID, categoryName) {
-
+                                                // categoryActionListener.superCategories(categoryName);
 						if (this.ignoreNextSelection && OB_bd.isGecko) {
 							this.ignoreNextSelection = false;
 							return;
@@ -1904,8 +1935,6 @@ OBGlobalActionListener.prototype = {
 	},
 
 	refresh : function() {
-		
-		
 		jQuery(".smwh_ob_tooltip")
 		.each(
 				function() {
@@ -1942,7 +1971,7 @@ OBGlobalActionListener.prototype = {
 					});
 				}
 		);
-		
+
 		// re-initialize LOD tooltips
 
 		// register the tool-tips for metadata switch
