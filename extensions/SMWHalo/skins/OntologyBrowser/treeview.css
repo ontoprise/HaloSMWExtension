@@ -95,6 +95,7 @@ a.navigationLink {
 .categoryTreeColors {
 	background-color: #DDEEFF;
 }
+.categoryTreeColors:hover {background-color: #BBCCDD;}
 
 .instanceListColors {
 	background-color: #FFDDDD;
