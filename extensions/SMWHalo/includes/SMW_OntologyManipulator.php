@@ -48,6 +48,11 @@ $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
 $wgAjaxExportList[] = 'smwf_om_getDomainProperties';
+$wgAjaxExportList[] = 'smwf_om_getSuperCategories';
+$wgAjaxExportList[] = 'smwf_om_getSuperCategories2';
+$wgAjaxExportList[] = 'smwf_om_CategoriesHandler';
+$wgAjaxExportList[] = 'smwf_om_RenameAndMoveCategory';
+
 
 /**
  * Creates a new article or appends some text if it already
@@ -621,6 +626,11 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 	return "true";
 }
 
+function smwf_om_getSuperCategoryTitles($categoryTitle){
+$directSuperCategeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
+return $directSuperCategeoryTitles;
+}
+
 /**
  * Rename a type. This function is invoked by an ajax call.
  *
@@ -637,83 +647,83 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	
 	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
 	
-    $newType = strip_tags($newType);
-    if ($newType == '') return "false";
+	$newType = strip_tags($newType);
+	if ($newType == '') return "false";
 
-    if (smwf_om_userCan($pagename, 'move') === "false") {
-        return "false,denied,$pagename";
-    }
-    
+	if (smwf_om_userCan($pagename, 'move') === "false") {
+		return "false,denied,$pagename";
+	}
+	
 
-    $titleObj = Title::newFromText($pagename);
-    $article = new Article($titleObj);
-    $text = $article->getContent();
+	$titleObj = Title::newFromText($pagename);
+	$article = new Article($titleObj);
+	$text = $article->getContent();
 
-    global $smwgHaloContLang;
-    $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-    $hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
+	global $smwgHaloContLang;
+	$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	$hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
 
-    // Replace "Has domain range range" annotations
-    $oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
-    if ($oldRange != '') {
-        $oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
-        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
-        if ($newRange != '') {
-            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-        } else {
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-        }
-    } else {
-        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
-        if ($newRange != '') {
-            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-        } else {
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-        }
-    }
+	// Replace "Has domain range range" annotations
+	$oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
+	if ($oldRange != '') {
+		$oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
+		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
+		if ($newRange != '') {
+			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+		} else {
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+		}
+	} else {
+		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
+		if ($newRange != '') {
+			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+		} else {
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+		}
+	}
 
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
-    // Replace "has type" annotations
-    global $smwgContLang;
-    $propertyLabels = $smwgContLang->getPropertyLabels();
-    
-    $search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
-    $replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newType.']]';
+	// Replace "has type" annotations
+	global $smwgContLang;
+	$propertyLabels = $smwgContLang->getPropertyLabels();
+	
+	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
+	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
+	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
 
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
 
-    // Replace "has min cardinality" annotations
-    $hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
-    $search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
-    $replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	// Replace "has min cardinality" annotations
+	$hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
+	$search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
+	$replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
-    if ($article->exists()) {
-        $reason = '';
-        $article->doEdit($text, $reason);
-    }
-    return $text;
+	if ($article->exists()) {
+		$reason = '';
+		$article->doEdit($text, $reason);
+	}
+	return $text;
 }
-
 
 /**
  * Rename an article. This function is invoked by an ajax call.
@@ -762,7 +772,7 @@ function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCate
 	}
 
 	$newSuperCategory = strip_tags($newSuperCategory);
-	if ($newSuperCategory == '') return "false";
+	//if ($newSuperCategory == '') return "false";
 
 	$draggedOnRootLevel = $oldSuperCategory == 'null' || $oldSuperCategory == NULL;
 	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
@@ -944,6 +954,7 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 
 
 
+
 /**
  * This function retrieves all properties that have one of the given categories as domain
  *
@@ -1032,7 +1043,8 @@ function smwf_om_getDomainProperties($categoryNames) {
  * @return:
  * 	 An array of Title objects
  */
-function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+ 
+ function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
 	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
 	if($asTree){
 		$superCategoryTitles[$categoryTitle->getText()] = array();
@@ -1041,13 +1053,75 @@ function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCateg
 		if($asTree){
 			$superCategoryTitles[$categoryTitle->getText()] =
 			smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-		} else {
+		 } else {
 			$superCategoryTitles[$dSCT->getText()] = $dSCT;
 			$superCategoryTitles = smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
 	}
 	return $superCategoryTitles;
 }
+
+function smwf_om_getSuperCategories2($categoryTitle){
+	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories(Title::newFromText($categoryTitle, NS_CATEGORY));
+	
+	if($directSuperCatgeoryTitles == null){
+          $supeCategories ='';
+        }else{
+	   $supeCategories = $directSuperCatgeoryTitles[0]->getText();
+	   if(sizeof($directSuperCatgeoryTitles) > 1){
+	     for($i = 1, $n = sizeof($directSuperCatgeoryTitles); $i < $n; $i++) {
+	       $supeCategories .= ','.$directSuperCatgeoryTitles[$i]->getText();	
+	     }
+	   }
+	}
+	return $supeCategories;
+}
+
+function smwf_om_CategoriesHandler($categoryTitle, $newSupCategories){
+   $directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories(Title::newFromText($categoryTitle, NS_CATEGORY));
+   $newSupCat = array();
+   $newSupCat = Title::newFromText($newSupCategories);
+   $success = 'false';
+    if($directSuperCatgeoryTitles == null){
+        $directSuperCatgeoryTitles[0] == "";
+    }
+
+    if($newSupCat != null){
+         $newSupCat = preg_split('/[,|;]+/', $newSupCat);      
+          // move from main level to the given supercategory
+	     for($i = 0, $n = sizeof($newSupCat); $i < $n; $i++) {
+	        smwf_om_MoveCategory($categoryTitle,"", $newSupCat[$i]);		
+	     }	  
+	  // delete the parent which is not on the new supercategory list 
+	     for($i = 0, $n = sizeof($directSuperCatgeoryTitles); $i < $n; $i++) {
+	         $toDelete = 'true';
+	         for($j = 0, $m = sizeof($newSupCat); $j < $m; $j++) {
+		    if($directSuperCatgeoryTitles[$i]->getText() == $newSupCat[$j]){
+	              $toDelete = 'false';
+		    }
+		    $superCatToDelete = $directSuperCatgeoryTitles[$i]->getText();
+		    $moveTo = $newSupCat[$j];
+                  }
+		 if($toDelete == 'true'){
+                    smwf_om_MoveCategory($categoryTitle,$superCatToDelete, $moveTo);
+                 }		
+	     }
+	     $success = 'true';
+    }else{ // the new supercategory is empty, also move the category to mainlevel
+         for($i = 0, $n = sizeof($directSuperCatgeoryTitles); $i <= $n; $i++) {
+	     smwf_om_MoveCategory($categoryTitle, $directSuperCatgeoryTitles[$i]->getText(), "");
+	 }
+	$success = 'true'; 
+    } 
+    return $success;
+}
+
+function smwf_om_RenameAndMoveCategory($categoryTitle,$newpagename, $reason, $user, $newSupCategories){
+  smwf_om_RenameArticle($categoryTitle, $newpagename, $reason, $user);
+  smwf_om_CategoriesHandler($newpagename, $newSupCategories);
+  return $success === true ? "true" : "false"; 
+}
+
 
 /**
  * Retrieves the schema of the relation with the given name.
