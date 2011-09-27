@@ -32,23 +32,16 @@ if ($delete) {
 	print "\Drop SMWHalo.\n\n";
 	smwfGetSemanticStore()->drop(true);
 	
-	//deal with the query results cache
-	global $smwgHaloIP;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
-	SMWQRCStore::getInstance()->getDB()->dropTables();
 	TSCStorage::getDatabase()->dropDatabaseTables();
 	die();
 }
 
 print "\nSetup SMWHalo.\n\n";
-global $smwgHaloIP;
-require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
-SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
+
 
 TSCStorage::getDatabase()->initDatabaseTables();
 smwfGetSemanticStore()->setup(true);
 
-//deal with the query results cache
 
 
 
