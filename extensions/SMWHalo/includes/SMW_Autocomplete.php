@@ -496,6 +496,7 @@ class AutoCompletionRequester {
 			$propertyTitle = self::getTitleFromContext($userContext);
 			if (!is_null($propertyTitle)) {
 				$property = Title::newFromText($propertyTitle, SMW_NS_PROPERTY);
+				$property = SMWDIWikiPage::newFromTitle($property);
 				$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
 				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeProperty);
 				$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
