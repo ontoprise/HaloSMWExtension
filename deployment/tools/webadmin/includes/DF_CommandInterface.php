@@ -454,31 +454,39 @@ class DFCommandInterface {
 	public function isProcessRunning($processName) {
 		return Tools::isProcessRunning($processName) ? "true" : "false";
 	}
-	
+
 	public function areProcessesRunning($processNames) {
 		$doesRun = Tools::areProcessesRunning(explode(",",$processNames));
 		return implode(",", $doesRun);
 	}
-	
-	public function startProcess($path) {
-		@exec($path, $out, $ret);
-		return $ret == 0 ? "true" : "false";
+
+	public function startProcess($path, $async) {
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "$path";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+			return "true";
+		} else {
+			@chdir(dirname($path));
+			@exec($path, $out, $ret);
+			return $ret == 0 ? implode("\n", $out) : "false";
+		}
 	}
-	
+
 	public function loadServerSettings() {
 		global $mwrootDir;
 		$server_settings = @file_get_contents($mwrootDir."/deployment/tools/webadmin/server_settings");
 		return $server_settings !== false ? $server_settings : "false";
 	}
-	
-    public function storeServerSettings($jsondata) {
-        global $mwrootDir;
-        $server_settings = fopen($mwrootDir."/deployment/tools/webadmin/server_settings","w");
-        if ($server_settings === false) return "false";
-        fwrite($server_settings, $jsondata);
-        fclose($server_settings);
-        return "true";
-    }
+
+	public function storeServerSettings($jsondata) {
+		global $mwrootDir;
+		$server_settings = fopen($mwrootDir."/deployment/tools/webadmin/server_settings","w");
+		if ($server_settings === false) return "false";
+		fwrite($server_settings, $jsondata);
+		fclose($server_settings);
+		return "true";
+	}
 
 	/**
 	 * Special quoting for cmd /c START ....

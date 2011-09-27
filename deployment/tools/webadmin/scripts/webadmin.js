@@ -981,31 +981,31 @@ $(function() {
 		var timer;
 		var periodicProcessPoll = function() {
 			if (timer) clearTimeout(timer);
-			timer = setTimeout( periodicProcessPoll, 10000);
+			timer = setTimeout( periodicProcessPoll, 20000);
 			
 			var servers = ["httpd","mysqld","solr","tsc","memcached"];
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areProcessesRunning&rsargs[]="+servers.join(",");
 			var updateProcessDisplay = function(xhr, status) {
 				var result = xhr.responseText.split(",");
 				var i = 0;
-				result.each(function(index, s) {
-					var flag = $('df_run_flag_'+servers[i]);
-					if (s == "true") {
-						flag.addClass('df_running_process');
-						flag.removeClass('df_running_process');
+				$(result).each(function(index, s) {
+					var flag = $('#df_run_flag_'+servers[i]);
+					if (s == "1") {
 						flag.text("running");  
+						flag.addClass('df_running_process');
+						flag.removeClass('df_not_running_process');
 					} else {
+						flag.text("not running")
 						flag.addClass('df_not_running_process');
 						flag.removeClass('df_running_process');
-						flag.text("not running")
 					}
 					i++;
 				});
 				
 			};
-			$.ajax( { url : url, dataType:"json", complete : updateProcessDisplay  });
+			$.ajax( { url : url, dataType:"json", complete : updateProcessDisplay, timeout: 10000  });
 		}
-		setTimeout( periodicProcessPoll, 10000);
+		setTimeout( periodicProcessPoll, 20000);
 		
 		// server command change listener
 		$('.df_servers_command').change(function(e) {
@@ -1013,6 +1013,7 @@ $(function() {
 			var runCommand = $('#df_servers_'+process+'_command').val();
 			var selectedId = $("#"+process+"_selector option:selected");
 			selectedId.attr("value", runCommand);
+			$('#df_servers_save_settings').attr('disabled', false);
 		});
 		
 		// show selected server command
@@ -1054,16 +1055,21 @@ $(function() {
 			});
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=storeServerSettings&rsargs[]="+encodeURIComponent($.toJSON(settings));
 			$.ajax( { url : url, dataType:"json" });
+			$('#df_servers_save_settings').attr('disabled', true);
 		});
 		
 		// execute server command button
 		var executeCommand = function(e) {
+			var commandExecuted = function(xhr, status) {
+				$(e.currentTarget).attr('disabled', false);
+			};
 			var process = $(e.currentTarget).attr('id').split("_")[2];
 			var runCommand = $('#df_servers_'+process+'_command').val();
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=startProcess&rsargs[]="+encodeURIComponent(runCommand);
-			$.ajax( { url : url, dataType:"json" });
+			$.ajax( { url : url, dataType:"json" , complete: commandExecuted });
+			$(e.currentTarget).attr('disabled', true);
 		};
-		$('#df_servers_httpd_execute').click(executeCommand);
+		$('.df_servers_execute').click(executeCommand);
 	});
 	
 	

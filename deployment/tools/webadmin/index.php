@@ -31,7 +31,7 @@
 
 // uncomment the lines to get detailed error information
 // DO NOT use error reporting in production use.
- 
+
 // error_reporting(E_ALL);
 // ini_set('display_errors', "On");
 
@@ -154,40 +154,13 @@ switch( $mode ) {
 		break;
 }
 
-// initialize tabs
-try {
-	$dfgStatusTab = new DFStatusTab();
-	$statusTabName = $dfgStatusTab->getTabName();
-	$statusTabHtml = $dfgStatusTab->getHTML();
-
-	$dfgSearchTab = new DFSearchTab();
-	$searchTabName = $dfgSearchTab->getTabName();
-	$searchTabHtml = $dfgSearchTab->getHTML();
-
-	$dfgMaintenanceTab = new DFMaintenanceTab();
-	$maintenanceTabName = $dfgMaintenanceTab->getTabName();
-	$maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
-
-	$dfgUploadTab = new DFUploadTab();
-	$dfgUploadTabName = $dfgUploadTab->getTabName();
-	$dfgUploadTabHtml = $dfgUploadTab->getHTML();
-
-	$dfgSettingsTab = new DFSettingsTab();
-	$dfgSettingsTabName = $dfgSettingsTab->getTabName();
-	$dfgSettingsTabHtml = $dfgSettingsTab->getHTML();
-	
-	$dfgLocalSettingsTab = new DFLocalSettingsTab();
-	$dfgLocalSettingsTabName = $dfgLocalSettingsTab->getTabName();
-	$dfgLocalSettingsTabHtml = $dfgLocalSettingsTab->getHTML();
-	
-	$dfgServersTab = new DFServersTab();
-    $dfgServersTabName = $dfgServersTab->getTabName();
-    $dfgServersTabHtml = $dfgServersTab->getHTML();
-	
-} catch(DF_SettingError $e) {
-	echo $e->getMsg();
-	die();
-}
+$dfgStatusTab = new DFStatusTab();
+$dfgSearchTab = new DFSearchTab();
+$dfgMaintenanceTab = new DFMaintenanceTab();
+$dfgUploadTab = new DFUploadTab();
+$dfgSettingsTab = new DFSettingsTab();
+$dfgLocalSettingsTab = new DFLocalSettingsTab();
+$dfgServersTab = new DFServersTab();
 
 // for ajax calls
 if (isset($func_name)) {
@@ -197,6 +170,36 @@ if (isset($func_name)) {
 	if (is_string($ret)) echo $ret;
 	die();
 }
+
+// initialize tabs
+try {
+	$statusTabName = $dfgStatusTab->getTabName();
+	$statusTabHtml = $dfgStatusTab->getHTML();
+
+	$searchTabName = $dfgSearchTab->getTabName();
+	$searchTabHtml = $dfgSearchTab->getHTML();
+
+	$maintenanceTabName = $dfgMaintenanceTab->getTabName();
+	$maintenanceTabHtml = $dfgMaintenanceTab->getHTML();
+
+	$dfgUploadTabName = $dfgUploadTab->getTabName();
+	$dfgUploadTabHtml = $dfgUploadTab->getHTML();
+
+	$dfgSettingsTabName = $dfgSettingsTab->getTabName();
+	$dfgSettingsTabHtml = $dfgSettingsTab->getHTML();
+
+	$dfgLocalSettingsTabName = $dfgLocalSettingsTab->getTabName();
+	$dfgLocalSettingsTabHtml = $dfgLocalSettingsTab->getHTML();
+
+	$dfgServersTabName = $dfgServersTab->getTabName();
+	$dfgServersTabHtml = $dfgServersTab->getHTML();
+
+} catch(DF_SettingError $e) {
+	echo $e->getMsg();
+	die();
+}
+
+
 
 if (!isset(DF_Config::$df_lang)) {
 	$dfgLangCode = "En";
