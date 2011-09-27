@@ -548,24 +548,25 @@ class Tools {
 	}
 
 	/**
-	 * Returns the location of a file (first occurence if more than on exist).
-	 *
-	 * @param string $name
-	 *
-	 */
-	public static function whereis($name) {
-		if (self::isWindows()) {
-			exec("whereis.bat $name", $out, $ret);
-			return str_replace("\\", "/", reset($out));
-		} else {
-			//FIXME: can not handle whitespaces in path
-			exec("whereis $name", $out, $ret);
-			$result = reset($out);
-			list($prg, $pathstr) = explode(":", $result);
-			$paths = explode(" ", trim($pathstr));
-			return reset($paths);
-		}
-	}
+     * Returns the location of a file (first occurence if more than on exist).
+     *
+     * @param string $name
+     * @param string rootdir MW root folder
+     */
+    public static function whereis($name, $rootDir = NULL) {
+        if (self::isWindows()) {
+            if (!is_null($rootDir)) chdir("$rootDir/deployment/tools");
+            exec("whereis.bat $name", $out, $ret);
+            return str_replace("\\", "/", reset($out));
+        } else {
+            //FIXME: can not handle whitespaces in path
+            exec("whereis $name", $out, $ret);
+            $result = reset($out);
+            list($prg, $pathstr) = explode(":", $result);
+            $paths = explode(" ", trim($pathstr));
+            return reset($paths);   
+        }
+    }
 
 	/**
 	 * Detects if a particular process is running.

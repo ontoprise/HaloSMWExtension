@@ -52,7 +52,8 @@ class DFUserInput {
 					if (count($parts) > 1) {
 						switch($parts[0]) {
 							case "search": {
-								$proposal = Tools::whereis(trim($parts[1]));
+								global $mwrootDir;
+                                $proposal = Tools::whereis(trim($parts[1]), $mwrootDir);
 								$proposal = trim($proposal);
 								break;
 							}
@@ -76,7 +77,8 @@ class DFUserInput {
 				if (count($parts) > 1) {
 					switch($parts[0]) {
 						case "search": {
-							$proposal = Tools::whereis(trim($parts[1]));
+							global $mwrootDir;
+                            $proposal = Tools::whereis(trim($parts[1]), $mwrootDir);
 							$proposal = trim($proposal);
 							break;
 						}
