@@ -39,7 +39,6 @@
         <delete dir="LinkedData" />
         <delete dir="ImageMap" />
 		<delete dir="Maps" />
-		<delete dir="NewUserMessage" />
 		<delete dir="RichMedia" />
 		<delete dir="SemanticConnector" />
 		<delete dir="SemanticForms" />

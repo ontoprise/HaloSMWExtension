@@ -41,7 +41,7 @@
 !ifdef COMMUNITY_EDITION
   !define PRODUCT "SMW+ Community Edition"
   !define LOCALSETTINGS "LocalSettings.php.community.tmpl"
-  !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw16_1_db.sql"
+  !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw17_db.sql"
 !endif
 
 ; ----------------------------------------------------------
