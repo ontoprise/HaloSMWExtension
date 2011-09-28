@@ -82,7 +82,7 @@
     <title>Property:Has comment rating</title>
     <id>105</id>
     <revision>
-      <timestamp>2011-07-04T13:24:54Z</timestamp>
+      <timestamp>2011-09-28T15:14:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -102,14 +102,14 @@
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>86a08e3062c2d893f69a2c14880d2e64</hash>
+    <hash>c3fe2d6805e948ff12255010393b9327</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment date</title>
     <id>106</id>
     <revision>
-      <timestamp>2011-07-04T13:23:30Z</timestamp>
+      <timestamp>2011-09-28T15:14:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -129,14 +129,14 @@
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::Date| ]]</text>
-    <hash>80be7c6ff7794007516a2f727e41c904</hash>
+    <hash>5f2bab85d628eada3448c892a4ea056a</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment text</title>
     <id>107</id>
     <revision>
-      <timestamp>2011-07-04T13:25:22Z</timestamp>
+      <timestamp>2011-09-28T15:14:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -156,14 +156,14 @@
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::Text| ]]</text>
-    <hash>3bb02ff4761246a107d5a6a9bdbdc92f</hash>
+    <hash>3bfff841e586a36d738e80dfd3ae38ad</hash>
     </revision>
   </page>
   <page>
     <title>Property:Has comment person</title>
     <id>108</id>
     <revision>
-      <timestamp>2011-07-04T13:24:23Z</timestamp>
+      <timestamp>2011-09-28T15:12:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -183,7 +183,7 @@
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
-    <hash>23c7ffc586c58115fd337f8139df01ef</hash>
+    <hash>d3b4d57768c923b8882eaa43e274925b</hash>
     </revision>
   </page>
   <page>
@@ -236,7 +236,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
     <title>Property:Belongs to article</title>
     <id>110</id>
     <revision>
-      <timestamp>2011-07-04T13:26:42Z</timestamp>
+      <timestamp>2011-09-28T15:16:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -256,7 +256,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 {{Part of bundle|value=Collaboration}}
 
 [[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>620b59b1f1ed5bc5f6415f95fa976aa6</hash>
+    <hash>379a715212d2ae3e34d1dba50196c4db</hash>
     </revision>
   </page>
   <page>
@@ -307,10 +307,10 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
     </revision>
   </page>
   <page>
-			<title>Property:Comment was deleted</title>
+    <title>Property:Comment was deleted</title>
     <id>121</id>
     <revision>
-      <timestamp>2011-07-04T13:20:18Z</timestamp>
+      <timestamp>2011-09-28T15:15:36Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -330,14 +330,14 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::Boolean| ]]</text>
-    <hash>8cc26b8f3f600df31c0eb8d2f982ac21</hash>
+    <hash>9019ab70f5b89fe23ffbddeb08f1a538</hash>
     </revision>
   </page>
   <page>
     <title>Property:Belongs to comment</title>
     <id>122</id>
     <revision>
-      <timestamp>2011-07-04T13:27:18Z</timestamp>
+      <timestamp>2011-09-28T15:18:12Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -357,7 +357,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 {{Part of bundle|value=Collaboration}}
 
 [[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>fa4f9ceb457c33fef4daf4b2014b28ca</hash>
+    <hash>bdb8a3fcf36abd9f50e2c45246f325b5</hash>
     </revision>
   </page>
   <page>
@@ -556,7 +556,7 @@ More information about the Collaboration extension and how to use it can be foun
     <title>Collaboration Sandbox</title>
     <id>262</id>
     <revision>
-      <timestamp>2011-08-24T16:05:21Z</timestamp>
+      <timestamp>2011-09-27T14:43:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -570,13 +570,13 @@ Have a look at [[User:Collaboration|the article of our sandbox user]] to discove
 }}
 &lt;/pre&gt; to these articles.
 
-We also created [[/Collaboration_best_articles|a sample article to display the best rated articles]] in this wiki that calls [[Template:Show best rated articles]]. You can use this template call in any other pages, too. &lt;pre&gt;
+We also created [[Collaboration_Sandbox/Collaboration_best_articles|a sample article to display the best rated articles]] in this wiki that calls [[Template:Show best rated articles]]. You can use this template call in any other pages, too. &lt;pre&gt;
 {{Show best rated articles
 |show=True
 }}
 &lt;/pre&gt;
 
-Since version 1.4.0 the Collaboration extension recommends to install the [http://www.mediawiki.org/wiki/Extension:Widgets Widgets extensions]. If you accepted this, [[/Widget examples|these widget examples]] would make a quick impression about ''how to embed widgets'' to a page.
+Since version 1.4.0 the Collaboration extension recommends to install the [http://www.mediawiki.org/wiki/Extension:Widgets Widgets extensions]. If you accepted this, [[Collaboration_Sandbox/Widget examples|these widget examples]] would make a quick impression about ''how to embed widgets'' to a page.
 
 More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Using_the_Collaboration_extension_1.4&amp;context=Help%3ACollaboration+extension+1.4 Collaboration extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
 
@@ -587,7 +587,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 }}
 &lt;noinclude&gt;{{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}&lt;/noinclude&gt;</text>
-    <hash>918118ae5c791df418d145a75158f20a</hash>
+    <hash>f6ece3339f06f10fa9fc7ed97fc7752e</hash>
     </revision>
   </page>
   <page>
@@ -684,7 +684,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Property:Has comment editor</title>
     <id>276</id>
     <revision>
-      <timestamp>2011-07-04T13:23:58Z</timestamp>
+      <timestamp>2011-09-28T15:13:40Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -704,7 +704,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Collaboration}}
 
 [[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
-    <hash>0b6d1b542e8459fe9b3f4e9f63cbce79</hash>
+    <hash>77394f0fcedcf01846eace884580b8ab</hash>
     </revision>
   </page>
   <page>
@@ -730,7 +730,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 {{Part of bundle|value=Collaboration}}
 
-[[has type::Number| ]]</text>
+[[has type::Type:Number| ]]</text>
     <hash>9db3cd7a1e32f29c9f743c5a8ffb5574</hash>
     </revision>
   </page>
@@ -1039,7 +1039,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Collaboration}}
 
 [[Has domain and range::Category:Comment;]]
-[[Has type::Page]]
+[[Has type::Type:Page]]
 [[Category:Property]]</text>
     <hash>01d24503212f33dea2e06a4171f717ee</hash>
     </revision>
@@ -1181,11 +1181,12 @@ To use this widget on your site, just install [http://www.mediawiki.org/wiki/Ext
     <title>Collaboration Sandbox/Widget examples</title>
     <id>2270</id>
     <revision>
-      <timestamp>2011-08-30T08:29:17Z</timestamp>
+      <timestamp>2011-09-02T11:29:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>fixed typo</comment>
       <text xml:space="preserve">This is a small example page that contains recommended widgets from the '''Widgets extension'''. 
 
 There are a lot of other very interesting widgets that my be worthwhile for you.
@@ -1238,7 +1239,7 @@ and looks like this:
 {{Part of bundle|value=Collaboration}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>4e2a96aba49d8b31798baba9cb3f1258</hash>
+    <hash>54131fc84aef2b912dbb537e1cebaa92</hash>
     </revision>
   </page>
   <page>
@@ -1295,96 +1296,6 @@ To use this widget on your site, just install [http://www.mediawiki.org/wiki/Ext
     </revision>
   </page>
   <page>
-    <title>Comment:Collaboration Sandbox 1295602691794</title>
-    <id>263</id>
-    <revision>
-      <timestamp>2011-04-14T12:45:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>cb546e04b624a3cb2e1b07ed1067086e</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295602913516</title>
-    <id>264</id>
-    <revision>
-      <timestamp>2011-04-14T12:45:33Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>76c354a3478aa2d2bda1c500b02a69e6</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295602948268</title>
-    <id>265</id>
-    <revision>
-      <timestamp>2011-04-14T12:06:43Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>805daee6005bee77b252ca0ec0b3646f</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295603031029</title>
-    <id>266</id>
-    <revision>
-      <timestamp>2011-04-14T12:05:22Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>363d82900dc5c2f336bb5b2ce8594251</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295603163565</title>
-    <id>267</id>
-    <revision>
-      <timestamp>2011-04-14T12:05:14Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>cc8a19a41ca12f284ae6865def786843</hash>
-    </revision>
-  </page>
-  <page>
     <title>Template:Content hash</title>
     <id>248</id>
     <revision>
@@ -1410,5 +1321,4 @@ To use this widget on your site, just install [http://www.mediawiki.org/wiki/Ext
     <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
->>>>>>> .merge-right.r11977
 </mediawiki>
