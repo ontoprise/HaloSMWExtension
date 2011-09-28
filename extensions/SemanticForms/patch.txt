@@ -1,21 +1,3 @@
-Index: extensions/SemanticForms/SemanticForms.php
-===================================================================
---- extensions/SemanticForms/SemanticForms.php	(revision 11973)
-+++ extensions/SemanticForms/SemanticForms.php	(working copy)
-@@ -231,6 +231,13 @@
- 			'styles' => 'skins/SF_collapsible.css',
- 			'dependencies' => array( 'jquery' ),
- 		),
-+		/*op-patch|BL|2009-09-16|CollapsingForms|AddJS|start*/
-+		/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-+		'ext.semanticforms.op-collapse' => $sfgResourceTemplate + array(
-+			'scripts' => 'libs/collapse.js',
-+			'dependencies' => array( 'jquery' ),
-+		),
-+		/*op-patch|BL|2009-09-16|end*/
- 	);
- }
- 
 Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 11973)
@@ -72,9 +54,9 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
  		if ( NS_MAIN === $namespace ) {
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 11973)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12233)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
-@@ -279,6 +279,16 @@
+@@ -279,7 +279,17 @@
  		$new_text = "";
  		// flag for placing "<onlyinclude>" tags in form output
  		$onlyinclude_free_text = false;
@@ -82,66 +64,71 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +		$includeonly_free_text = false;
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-+		
+ 		
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
 +		global $wgContLang;
 +		$namespace_labels = $wgContLang->getNamespaces();
 +		$user_namespace = $namespace_labels[NS_USER];
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
- 		
++		
  		// If we have existing content and we're not in an active replacement
  		// situation, preserve the original content. We do this because we want
+ 		// to pass the original content on IF this is a partial form.
 @@ -422,6 +432,10 @@
  		for ( $section_num = 0; $section_num < count( $form_def_sections ); $section_num++ ) {
  			$start_position = 0;
  			$template_text = "";
-+			/*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|start*/
-++			/*op-patch|BL|2009-10-09|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-++			$collapsible = false;
-++			/*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|end*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
++			$collapsible = false;
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  			// the append is there to ensure that the original
  			// array doesn't get modified; is it necessary?
  			$section = " " . $form_def_sections[$section_num];
-@@ -443,11 +457,19 @@
+@@ -443,11 +457,21 @@
  					// Also replace periods with underlines, since that's what
  					// POST does to strings anyway.
  					$query_template_name = str_replace( '.', '_', $query_template_name );
-+					/*op-patch|BL|2009-08-28|CollapsingForms|AddForceOpen|start*/
++					/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++					/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +					$force_open = false;
-+					/*op-patch|BL|2009-10-09|CollapsingForms|AddForceOpen|end*/
++					/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  					// Cycle through the other components.
  					for ( $i = 2; $i < count( $tag_components ); $i++ ) {
  						$component = $tag_components[$i];
  						if ( $component == 'multiple' ) $allow_multiple = true;
  						if ( $component == 'strict' ) $strict_parsing = true;
-+						/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|start*/
++						/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++						/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +						if ( $component == 'collapsible' ) {
 +							$collapsible = true;
 +						}
-+						/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|end*/
++						/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  						$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
  						if ( count( $sub_components ) == 2 ) {
  							if ( $sub_components[0] == 'label' ) {
-@@ -455,6 +477,13 @@
+@@ -455,6 +479,14 @@
  							} elseif ( $sub_components[0] == 'add button text' ) {
  								$add_button_text = $sub_components[1];
  							}
-+							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|start*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +							elseif( $sub_components[0] == 'forceopen' ) {
 +								if( $sub_components[1] && strtolower( $sub_components[1] == 'true' ) ) {
 +									$force_open = true;
 +								}
 +							}
-+							/*op-patch|BL|2009-09-16|CollapsingForms|AddForceopenTag|end*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  						}
  					}
  					// If this is the first instance, add the label into the form, if
-@@ -463,7 +492,43 @@
+@@ -463,7 +495,44 @@
  					if ( $old_template_name != $template_name ) {
  						if ( isset( $template_label ) ) {
  							$form_text .= "<fieldset>\n";
 -							$form_text .= "<legend>$template_label</legend>\n";
-+							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|start*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +							// Add Javascript, curser style and sfgTabIndex for each legend
 +							// content was:
 +							// $form_text .= "<legend>$template_label</legend>\n";
@@ -177,11 +164,11 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							} else {
 +								$form_text .= "<legend>$template_label</legend>\n";
 +							}
-+							/*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|end*/
++							/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  						}
  						if ($allow_multiple) {
  							$form_text .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
-@@ -1089,10 +1154,13 @@
+@@ -1089,10 +1158,13 @@
  								// if the date is hidden, cur_value will already be set
  								// to the default value
  								( $cur_value == '' || $cur_value == 'current user' ) ) {
@@ -197,7 +184,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						}
  						$new_text = $this->formFieldHTML( $form_field, $cur_value );
  
-@@ -1215,9 +1283,16 @@
+@@ -1215,9 +1287,16 @@
  							$form_is_partial = true;
  							// replacement pages may have minimal matches...
  							$source_page_matches_this_form = true;
@@ -215,20 +202,21 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  					}
  					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
  				// =====================================================
-@@ -1310,7 +1385,11 @@
+@@ -1310,7 +1389,12 @@
  			} else {
  				$form_text .= $section;
  			}
 -
-+			/*op-patch|BL|2009-08-14|CollapsingForms|AddDivForCollapsingForms|start*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +			if( $collapsible ) {
 +				$form_text .= "</div>"; //closing div for collapsing
 +			}
-+			/*op-patch|BL|2009-08-14|end*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  		} // end for
  
  		// if it wasn't included in the form definition, add the
-@@ -1351,6 +1430,17 @@
+@@ -1351,6 +1435,17 @@
  		} else {
  			$free_text = null;
  		}
@@ -461,30 +449,122 @@ Index: extensions/SemanticForms/libs/collapse.js
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 11973)
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12233)
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
 @@ -149,7 +149,12 @@
  		} elseif ( $target_name == '' && $page_name_formula == '' ) {
  			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
  		} else {
 -
-+			/*op-patch|BL|2009-09-16|CollapsingForms|SaveFormnameGlobally|start*/
-+			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +			global $smwgRMActFormName;
 +			$smwgRMActFormName = $form_name;
-+			/*op-patch|BL|2009-09-16|end*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
 +			
  			$save_page = $wgRequest->getCheck( 'wpSave' );
  			$preview_page = $wgRequest->getCheck( 'wpPreview' );
  			$diff_page = $wgRequest->getCheck( 'wpDiff' );
-@@ -354,6 +359,10 @@
- 				$text .= $pre_form_html;
+@@ -355,7 +360,6 @@
  				$text .= $form_text;
  			}
-+			/*op-patch|BL|2009-09-16|CollapsingForms|AddJS|start*/
-+			/*op-patch|BL|2009-09-16|CollapsingForms|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/CollapsingForms*/
-+			$wgOut->addModules( 'ext.semanticforms.op-collapse' );
-+			/*op-patch|BL|2009-09-16|end*/
  		}
- 
+-
  		SFUtils::addJavascriptAndCSS();
+ 		if ( ! empty( $javascript_text ) ) {
+ 			$wgOut->addScript( '		<script type="text/javascript">' . "\n$javascript_text\n" . '</script>' . "\n" );
+Index: extensions/SemanticForms/libs/SemanticForms.js
+===================================================================
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 12233)
++++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
+@@ -900,3 +900,89 @@
+ 	});
+ 
+ })(jQuery);
++
++/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
++function CollapsingForm() {
++
++	this.closedContainers = {};
++
++	/**
++	 * Switch the visbility of the element with the given id.
++	 * 
++	 * @param: id 
++	 *		jquery selector string
++	 */
++	this.switchVisibilityWithImg = function( id ) {
++		var	openedimg = '',
++			closedimg = '',
++			visible,
++			jQId = '#' + id;
++
++		if( jQuery( jQId ).is( ':visible' ) ) {
++			visible = false;
++			closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus.gif')\" onmouseover=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus-act.gif')\" src=\""+
++				wgScriptPath + "/extensions/SemanticForms/skins/plus.gif\"/>";
++			jQuery( jQId + '_img' ).replaceWith( closedimg );
++		} else {
++			visible = true;
++			openedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='" +
++				wgScriptPath + "/extensions/SemanticForms/skins/minus.gif')\" onmouseover=\"(src='"+
++				wgScriptPath + "/extensions/SemanticForms/skins/minus-act.gif')\" src=\""+
++				wgScriptPath + "/extensions/SemanticForms/skins/minus.gif\"/>";
++			jQuery( jQId + '_img').replaceWith( openedimg )
++		}
++		jQuery( jQId ).toggle();
++		document.cookie = 'CollapsingForm' + "=" + 
++			'{"' + id + '" : ' + visible + '}';
++		this.closedContainers[id] = visible;
++	}
++
++	//-- cookie functions for collapsing forms -- //
++	// taken out of the generalTools.js from SMWHalo
++
++	/**
++	 * Returns the cookie value for the given key
++	 */
++	this.getCookie = function( name ) {
++		var value = null;
++		if( document.cookie !== '' ) {
++			var kk = document.cookie.indexOf( name + '=' );
++			if( kk >= 0 ) {
++				kk = kk + name.length+1;
++				var ll = document.cookie.indexOf( ';', kk );
++				if( ll < 0 ) {
++					ll = document.cookie.length;
++				}
++				value = document.cookie.substring( kk, ll );
++				value = unescape( value ); 
++			}
++		}
++		return value;
++	}
++
++	// set the cookie object
++	if( this.getCookie( 'CollapsingForm' ) ) {
++		this.closedContainers = this.getCookie( 'CollapsingForm' );
++	}
++}
++
++// Initialize Collapsing Form functions if page is loaded and preload
++jQuery( document ).ready(
++	function() {
++		window.smwCollapsingForm = new CollapsingForm();
++		// image preload
++		var preloadImages = new Array();
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/plus.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/plus-act.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/minus.gif' );
++		preloadImages.push( wgScriptPath + '/extensions/SemanticForms/skins/minus-act.gif' );
++		for ( i = 0; i < preloadImages.length; i++ ) {
++			var preloadImage = new Image();
++			preloadImage.src = preloadImages[i];
++		}
++	}
++);
++/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
+\ No newline at end of file
