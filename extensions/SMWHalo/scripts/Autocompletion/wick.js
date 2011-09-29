@@ -1258,7 +1258,12 @@ AutoCompleter.prototype = {
         $$('input.wickEnabled').each(function(t) {
         		
         		jQuery(t).qtip( {
-					content : "",
+					content: {
+              text: function(api) {
+                 var constraints = t.getAttribute('constraints');
+                 return autoCompleter.translateACHint(constraints);
+              }
+           },
 					show : {
 						effect : {
 							length : 500
@@ -1266,14 +1271,6 @@ AutoCompleter.prototype = {
 						when : {
 							event : 'mouseover'
 						}
-					},
-					api: {
-						// read current state
-						beforeShow: function(s) {
-		        			var constraints = s.target.getAttribute('constraints');
-		        			constraints = autoCompleter.translateACHint(constraints);
-		        			this.updateContent(constraints);
-		        		}
 					},
 					hide : {
 						when : {
