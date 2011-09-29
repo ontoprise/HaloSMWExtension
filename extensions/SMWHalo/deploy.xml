@@ -18,7 +18,7 @@
 			<dependency from="1.6.0">smw</dependency>
 			<dependency from="1.0.1">scriptmanager</dependency>
             <dependency from="1.0.0" to="2.0.0">arclibrary</dependency>
-			<dependency from="1.6.0">deployment</dependency>
+			<dependency from="1.6.0">wikiadmintool</dependency>
 		</dependencies>
 	</global>
 	
