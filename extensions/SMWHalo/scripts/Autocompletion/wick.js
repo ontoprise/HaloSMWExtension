@@ -1282,14 +1282,12 @@ AutoCompleter.prototype = {
 						fixed : true
 					},
 					position : {
-						corner : {
-							target : 'topLeft',
-							tooltip : 'bottomLeft'
-						}
+            my: 'bottom left',
+            at: 'top left'
 					},
 					style : {
-						tip : 'bottomLeft',
-						width : 300
+						width : 300,
+            classes: 'ui-tooltip-blue ui-tooltip-shadow'
 					}
 				});
         	
