@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="semanticrules" name="Semantic Rules">
-	<target name="semanticrules" depends="versionhint">
+<project basedir="." default="ruleknowledge" name="Semantic Rules">
+	<target name="ruleknowledge" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
-			<fileset dir="bin" includes="smwhalo-rules*.zip" />
+			<fileset dir="bin" includes="ruleknowledge*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
 
@@ -46,12 +46,12 @@
 			</fileset>
 
 		</copy>
-		<zip destfile="bin/semanticrules.zip" basedir="bin/zip" />
+		<zip destfile="bin/ruleknowledge.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/semanticrules.zip" />
+			<arg value="bin/ruleknowledge.zip" />
 		</exec>
 	</target>
 	
