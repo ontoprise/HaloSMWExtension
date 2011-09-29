@@ -19,7 +19,7 @@
 		<notice>The Semantic rules extension requires the installation of the Triplestore connector (TSC). 
 Please check 
   http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_extension 
-for help.</notice>
+for help. Be aware that this bundle has been renamed from 'semanticrules' to 'ruleknowledge'.</notice>
 	</global>
 	
 	<codefiles></codefiles>
