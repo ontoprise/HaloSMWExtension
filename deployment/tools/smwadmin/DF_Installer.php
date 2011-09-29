@@ -289,7 +289,13 @@ class Installer {
 		// remove extension code
 		$this->logger->info("Remove code of ".$ext->getID());
 		$dfgOut->outputln( "[Removing code for ".$ext->getID()."...");
-		Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
+		if ($ext->isNonPublic()) {
+			$dir = $this->getNonPublicDirectory($ext);
+			$dfgOut->output( $dir );
+			Tools::remove_dir($dir);
+		} else {
+			Tools::remove_dir($this->rootDir."/".$ext->getInstallationDirectory());
+		}
 		$dfgOut->output( "done.]");
 
 		// may contain files which are not located in the installation directory
@@ -626,7 +632,7 @@ class Installer {
 		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-			
+
 			$ont_installer->installOntologies($desc);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
@@ -755,31 +761,7 @@ class Installer {
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
 
-			// default location
-			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
-
-
-			// if already somewhere installed, use this (Windows)
-			$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
-			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-				$programs = reset($OPSoftware);
-				if (count($programs) > 1) {
-					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
-				} else {
-					$unzipDirectory = trim(reset($programs));
-					 Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
-				}
-			}
-			// if already somewhere installed, use this (Linux)
-			if (!Tools::isWindows()) {
-				$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-				if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
-					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
-				} else {
-					Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
-				}
-			}
+			$unzipDirectory = $this->getNonPublicDirectory($dd);
 
 			Tools::mkpath($unzipDirectory);
 		}
@@ -797,6 +779,27 @@ class Installer {
 	}
 
 	/**
+	 * Gets the installation directory of non-public extensions.
+	 * If the location can not be determined unambigously (because it
+	 * is installed twice) it expects the location in the file defined by
+	 * Tools::getNonPublicAppPath.
+	 *
+	 * @param $dd
+	 */
+	private function getNonPublicDirectory($dd) {
+		// default location
+		$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
+
+		// if already somewhere installed, use this 
+		$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
+		if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
+			$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
+		} 
+
+		return $unzipDirectory;
+	}
+
+	/**
 	 * Unzips the given bundle.
 	 *
 	 * @param $filePath of bundle (absolute or relative)
@@ -807,29 +810,7 @@ class Installer {
 		$unzipDirectory = $this->rootDir;
 		if ($dd->isNonPublic()) {
 
-			// default location
-			$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
-
-			// if already somewhere installed, use this (only Windows)
-			$OPSoftware = Tools::getOntopriseSoftware($dd->getID());
-			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-				$programs = reset($OPSoftware);
-				if (count($programs) > 1) {
-					$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
-				} else {
-					$unzipDirectory = trim(reset($programs));
-					 Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
-				}
-			}
-			if (!Tools::isWindows()) {
-				$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
-				if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
-					$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
-				}  else {
-                    Tools::setNonPublicAppPath($this->rootDir, $dd->getID(),$unzipDirectory);
-                }
-			}
+			$unzipDirectory = $this->getNonPublicDirectory($dd);
 			Tools::mkpath($unzipDirectory);
 		}
 

@@ -495,37 +495,40 @@ class PackageRepository {
 		self::readDirectoryForDD($ext_dir."extensions");
 		self::readDirectoryForDD(Tools::getProgramDir()."/Ontoprise");
 
-		// add non public apps for Windows
-		$OPSoftware = Tools::getOntopriseSoftware();
-		if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
-			
-			$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
-			foreach($OPSoftware as $prgname => $arrayOfPaths) {
-				if (array_key_exists($prgname, DF_Config::$df_knownPrograms) &&
-				array_key_exists(DF_Config::$df_knownPrograms[$prgname], $nonPublicAppPaths)) {
-					$path = trim($nonPublicAppPaths[DF_Config::$df_knownPrograms[$prgname]]);
-				} else {
-					if (count($arrayOfPaths) > 1) {
-						$index = DFUserInput::selectElement("Several installations of '$prgname' were found. Please select the one you want to use with DF.", $arrayOfPaths);
-						$path = trim($arrayOfPaths[$index]);
-						$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
-						if (!$res) {
-							throw new RepositoryError("Could not write deployment/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
-						}
+		if (Tools::isWindows()) {
+			// add non public apps for Windows
+			$OPSoftware = Tools::getOntopriseSoftware();
+			if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+					
+				$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
+				foreach($OPSoftware as $prgname => $arrayOfPaths) {
+					if (array_key_exists($prgname, DF_Config::$df_knownPrograms) &&
+					array_key_exists(DF_Config::$df_knownPrograms[$prgname], $nonPublicAppPaths)) {
+						$path = trim($nonPublicAppPaths[DF_Config::$df_knownPrograms[$prgname]]);
 					} else {
-						$path = trim(reset($arrayOfPaths));
+						if (count($arrayOfPaths) > 1) {
+							// if ambiguous ask user (if --noask, just take first)
+							$index = DFUserInput::selectElement("Several installations of '$prgname' were found. Please select the one you want to use with DF.", $arrayOfPaths);
+							$path = trim($arrayOfPaths[$index]);
+							$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
+							if (!$res) {
+								throw new RepositoryError("Could not write deployment/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
+							}
+						} else {
+							$path = trim(reset($arrayOfPaths));
+							$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
+						}
 					}
-				}
-				if (file_exists($path.'/deploy.xml')) {
-					$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
-					if (!array_key_exists($dd->getID(), self::$localPackages)) {
-						self::$localPackages[$dd->getID()] = $dd;
+					if (file_exists($path.'/deploy.xml')) {
+						$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+						if (!array_key_exists($dd->getID(), self::$localPackages)) {
+							self::$localPackages[$dd->getID()] = $dd;
+						}
 					}
 				}
 			}
-		}
 
-		if (!Tools::isWindows()) {
+		} else {
 			// add non public apps for Linux
 			$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
 			foreach($nonPublicAppPaths as $id => $path) {
@@ -718,7 +721,7 @@ class PackageRepository {
 	private static function getAllDependencies($dd, & $descriptorMap, & $depCounterMap, $rootDir) {
 		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
 		foreach($dd->getDependencies() as $dep) {
-				
+
 			if ($dep->isOptional()) continue;
 			$id = $dep->isContained($descriptorMap);
 			if ($id === false) {
@@ -749,7 +752,7 @@ class PackageRepository {
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependencies();
 			if ($dep == NULL) continue;
-				
+
 			if ($dep->isOptional()) continue;
 
 			if ($dep->matchBundle($extID)) {
