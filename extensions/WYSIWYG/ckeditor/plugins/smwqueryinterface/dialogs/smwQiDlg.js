@@ -1,11 +1,14 @@
 CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
   var wgScript = window.parent.wgScript;
   //Workaround for issue 15679. smwghQiLoadUrl var is not initialized when action = formedit
-  var qiUrl = window.parent.smwghQiLoadUrl || '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE';
+  var qiUrl = window.parent.smwghQiLoadUrl || '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE&showQIContentOnly=true';
+  //var qiUrl = '/Special:QueryInterface?id=qicontent';
   var locationQi =  wgScript + qiUrl;
-  var querySource, qihelper;
-  var height = (window.outerHeight == undefined) ? 400 : parseInt(window.outerHeight * 0.6);
-  var oldSkin;
+  var querySource, Tip;
+  var height = window.outerHeight || window.screen.availHeight || 500;
+  height = parseInt(height * 0.6);
+
+  
     
   return {
     title: 'Query Interface',
@@ -23,12 +26,8 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
         id: 'qiframe',
         type: 'html',
         label: "Text",
-        style: 'width:100%; height:'+height+'px;',
-                                               
-        html: CKEDITOR.ajax.load(locationQi)
-      //						html: '<iframe name="CKeditorQueryInterface" \
-      //                                       style="width:100%; height://'+height+'px;" \
-      //                                       scrolling="auto" src="//'+locationQi+'"></iframe>'
+        style: 'width:100%; height:'+height+'px;',                                              
+        html: '<iframe name="CKeditorQueryInterface" id="CKeditorQueryInterface" style="border:0; width:100%; height:'+height+'px;" scrolling="auto" src="'+locationQi+'"></iframe>'
       }
       ]
     }
@@ -67,46 +66,59 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
       }
     },
 
-    onShow : function() {
-      console.log('################  window.qihelper = ' + window.qihelper + ' ###############');
-      oldSkin = CKEDITOR.config.skin;
-      CKEDITOR.config.skin = 'v2';
-                 
-        qihelper = window.qihelper;
-        Tip = window.Tip;
-             
-      this.fakeObj = false;
+  
+    onShow : function() {    
+      var thisDialog = this;  
 
-      var editor = this.getParentEditor(),
+      thisDialog.fakeObj = false;
+
+      var editor = thisDialog.getParentEditor(),
       selection = editor.getSelection(),
       element = null;
-      //                qiDocument = window.frames['CKeditorQueryInterface'];
                 
       // Fill in all the relevant fields if there's already one item selected.
-      if( editor.mode == 'wysiwyg' &&
-        ( element = selection.getSelectedElement() ) && element.is( 'img' )
+      if( editor.mode == 'wysiwyg' 
+        && (element = selection.getSelectedElement())
+        && element.is( 'img' )
         && element.getAttribute( 'class' ) == 'FCK__SMWquery' )
         {
-        this.fakeObj = element;
-        element = editor.restoreRealElement( this.fakeObj );
-        selection.selectElement( this.fakeObj );
+        thisDialog.fakeObj = element;
+        element = editor.restoreRealElement( thisDialog.fakeObj );
+        selection.selectElement( thisDialog.fakeObj );
         querySource = element.getHtml().replace(/_$/, '');
         // decode HTML entities in the encoded query source
         querySource = jQuery("<div/>").html(querySource).text();
         querySource = querySource.replace(/fckLR/g, '\r\n');
-
-        qihelper.initFromQueryString(querySource);
-
-      }
-      else {
-        qihelper.doReset();
-      }
       
+        if(window.qihelper)
+          window.qihelper.initFromQueryString(querySource);
+        else{
+          var initFromQueryStringIntervalId = window.setInterval(function(){
+            if(window.qihelper){
+              window.clearInterval(initFromQueryStringIntervalId);
+              window.qihelper.initFromQueryString(querySource);
+            }
+              
+          }, 1000)
+        }
+      }
+      else {      
+        if(window.qihelper)
+          window.qihelper.doReset();
+        else
+          var resetIntervalId = window.setInterval(function(){
+            if(window.qihelper){
+              window.clearInterval(resetIntervalId);
+              window.qihelper.doReset();
+            }
+
+          }, 1000)
+      }
     },
 
     onOk: function() {
       //			var qiDocument = window.frames['CKeditorQueryInterface'];
-      var ask = qihelper.getAskQueryFromGui();
+      var ask = window.qihelper.getAskQueryFromGui();
       ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
       ask = ask.replace(/>\[\[/g, ">\n[[");
       ask = ask.replace(/\]\]</g, "]]\n<");
@@ -137,8 +149,6 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
       else {
         this.InsertDataInTextarea(ask);
       }
-
-      CKEDITOR.config.skin = oldSkin;
     }
 
   };

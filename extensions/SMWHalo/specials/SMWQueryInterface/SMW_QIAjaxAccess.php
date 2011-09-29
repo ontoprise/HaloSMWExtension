@@ -466,12 +466,15 @@ function smwf_qi_getPage($args= "") {
 	// create the new source code, by removing the wiki stuff,
 	// keep the header (because of all css and javascripts) and the main content part only
 	$newPage = "";
-	mvDataFromPage($page, $newPage, '<body', false);
-//	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
-  $newPage.= '<div id="globalWrapper" style="background-image:none; background-color: #ffffff;"><div id="content">';
+//	mvDataFromPage($page, $newPage, '<body');
+	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
+//  $newPage.= '<div id="globalWrapper" style="background-image:none; background-color: #ffffff;"><div id="content">';
 	
-	mvDataFromPage($page, $newPage, "<!-- start content -->", false);
-	mvDataFromPage($page, $newPage, "<!-- end content -->");
+//	mvDataFromPage($page, $newPage, "<!-- start content -->");
+//	mvDataFromPage($page, $newPage, "<!-- end content -->");
+//  mvDataFromPage($page, $newPage, "<script>", false);
+//  mvDataFromPage($page, $newPage, "<!-- Served in");
+
 	$newPage.="</div></div></body></html>";
 
 	// remove the Switch to Semantic Notification button, incase it's there
@@ -519,9 +522,18 @@ function smwf_qi_getPage($args= "") {
         $newPage = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $newPage);
     
     // remove unnecessary scripts
-    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
+//    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
+    $newPage .= '<script type="text/javascript">
+    jQuery(document).ready(function(){
+      if ( window.mediaWiki ) {        
+        window.mediaWiki.loader.load("ext.smwhalo.queryInterface");
+        window.mediaWiki.loader.go();
+      }
+    });
+    </script>';
 
-	return $newPage;
+//	return $newPage;
+    return $page;
 		
 }
 
@@ -598,7 +610,7 @@ function smwf_qi_CheckValidResult ($printRequest, $format, $mainlabel) {
 function smwf_qi_deleteScriptsCallback($match) {
 	
 	
-	 /* // positive list
+	  // positive list
 	 $keepScripts = array("wgServer","generalTools","SMW_sortable", "SMW_tooltip", "ajax","language",
 	                     "wick", "prototype", "QIHelper.js", "qi_tooltip", "Query", 
 	                     "deployQueryInterface", "deploy_qi_tooltip");
@@ -607,7 +619,7 @@ function smwf_qi_deleteScriptsCallback($match) {
 	   $contains = stripos($match[0], $script);
 	   if ($contains !== false) break;
 	}
-	return ($contains !== false) ? $match[0] : '';*/
+	return ($contains !== false) ? $match[0] : '';
 	
 	// negative list
 	$removeScripts = array('acl', 'richmedia');

@@ -1534,7 +1534,7 @@ if (Prototype.BrowserFeatures.XPath) {
 
 /*--------------------------------------------------------------------------*/
 
-if (!window.Node) var Node = { };
+if (!Node) var Node = { };
 
 if (!Node.ELEMENT_NODE) {
   // DOM level 2 ECMAScript Language Binding
@@ -2667,8 +2667,8 @@ Element.addMethods = function(methods) {
   }
 
   if (F.ElementExtensions) {
-    copy(Element.Methods, HTMLElement.prototype);
-    copy(Element.Methods.Simulated, HTMLElement.prototype, true);
+    copy(Element.Methods, window.HTMLElement.prototype);
+    copy(Element.Methods.Simulated, window.HTMLElement.prototype, true);
   }
 
   if (F.SpecificElementExtensions) {

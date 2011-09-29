@@ -71,10 +71,10 @@ function smgSetupExtension() {
 	
     $wgResourceModules['ext.jquery.qtip'] = $moduleTemplate + array(
 		'scripts' => array(
-    			"scripts/qTip/jquery.qtip-1.0.min.js"
-//    			"scripts/qTip/jquery.qtip-1.0.js"
+    			'scripts/qTip/qtip2/jquery.qtip.js'
 				),
 		'styles' => array(
+        'scripts/qTip/qtip2/jquery.qtip.css'
 				)
 	);
 	
@@ -86,6 +86,20 @@ function smgSetupExtension() {
 				'/scripts/fancybox/jquery.fancybox-1.3.1.css'
 				)
 	);
+
+    $wgResourceModules['ext.jquery.query'] = $moduleTemplate + array(
+		'scripts' => array(
+    			'scripts/query/jquery.query-2.1.7.js'
+				)
+	);
+    
+    $wgResourceModules['ext.smwhalo.json2'] = $moduleTemplate + array(
+		'scripts' => array(
+    			'scripts/json2.js'
+				)
+	);
+
+
     
 }
 
@@ -116,10 +130,11 @@ function smfAddHTMLHeader(& $out) {
 				$out->addModules('ext.jquery.qtip');
 				break;
 			case 'json':
-                if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js$smgStyleVersion\"></script>");
-                else
-					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js$smgStyleVersion\"></script>");
+        $out->addModules('ext.smwhalo.json2');
+//                if (isset($smwgDeployVersion) && $smwgDeployVersion !== false)
+//					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.min.js$smgStyleVersion\"></script>");
+//                else
+//					$out->addScript("<script type=\"text/javascript\" src=\"". "$smgSMPath/scripts/json2.js$smgStyleVersion\"></script>");
 				break;
 			case 'fancybox':
 				$out->addModules('ext.jquery.fancybox');

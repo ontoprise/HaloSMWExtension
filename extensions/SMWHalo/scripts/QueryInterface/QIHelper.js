@@ -1059,6 +1059,7 @@ QIHelper.prototype = {
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
+        initToolTips();
     },
         
     enableButton: function(inputsArray){
@@ -1105,6 +1106,7 @@ QIHelper.prototype = {
             radioBtnElement.observe('change', function(event){
                 thisObj.enableButton(thisObj.getPropertyDialogInputs());
                 thisObj.setListeners(thisObj, thisObj.getPropertyDialogInputs());
+                initToolTips();
             });
         });
     },
@@ -1157,6 +1159,7 @@ QIHelper.prototype = {
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
+        initToolTips();
     },
 
     /**
@@ -1190,6 +1193,7 @@ QIHelper.prototype = {
         this.updateHeightBoxcontent();
         this.enableButton(this.getPropertyDialogInputs());
         this.setListeners(this, this.getPropertyDialogInputs());
+        initToolTips();
         
         var propLabelInput = $('input_c3');
         
@@ -1431,7 +1435,8 @@ QIHelper.prototype = {
         autoCompleter.registerAllInputs();
                 
         this.enableButton(this.getPropertyDialogInputs());
-        this.setListeners(this, this.getPropertyDialogInputs());        
+        this.setListeners(this, this.getPropertyDialogInputs());
+        initToolTips();
     },
 
     removeRestrictionInput : function(element) {
@@ -1459,6 +1464,7 @@ QIHelper.prototype = {
         this.toggleAddchain(true);
         this.enableButton(this.getPropertyDialogInputs());
         this.setListeners(this, this.getPropertyDialogInputs());
+        initToolTips();
     },
 
     /**
@@ -1522,6 +1528,7 @@ QIHelper.prototype = {
         autoCompleter.registerAllInputs();
         this.setListeners(this, this.getInputs());
         this.enableButton(this.getInputs());
+        initToolTips();
     },
 
     /**
@@ -1536,6 +1543,7 @@ QIHelper.prototype = {
         tr.parentNode.removeChild(tr);
         this.setListeners(this, this.getInputs());
         this.enableButton(this.getInputs());
+        initToolTips();
     },
 
     /**
@@ -2210,7 +2218,7 @@ QIHelper.prototype = {
         autoCompleter.registerAllInputs();
     //this.pendingElement.hide();
     },
-
+    
     /**
 	 * Deletes the currently shown dialogue from the query
 	 */

@@ -1458,6 +1458,7 @@ function smwhfRegisterResourceLoaderModules() {
 				),
 		'dependencies' => array(
 				'ext.smwhalo.Language',
+        'ext.ScriptManager.prototype'
 				)
 
 				);
@@ -1584,11 +1585,12 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/SemanticToolbar/SMW_Refresh.js',
 			'scripts/SemanticToolbar/SMW_DragAndResize.js',
 			'scripts/SemanticToolbar/SMW_ContextMenu.js',
-			'scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js'
+			'scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js',
+      'scripts/SemanticToolbar/window.binding.js'
 			),
 		'styles' => array(
-				'/skins/semantictoolbar.css',
-				'/skins/Annotation/annotation.css'
+				'skins/semantictoolbar.css',
+				'skins/Annotation/annotation.css'
 				)
 				);
 
@@ -1621,7 +1623,10 @@ function smwhfRegisterResourceLoaderModules() {
 			// The QI depends on all SemanticResultFormats
 			$dependencies = array(
 			'ext.smw.tooltips',
-			'ext.smw.style'
+			'ext.smw.style',
+      'ext.jquery.query',
+      'ext.ScriptManager.prototype',
+      'ext.jquery.qtip'
 			);
 			// Add all modules ext.srf.*
 			foreach ($wgResourceModules as $rid => $mod) {
@@ -1639,7 +1644,6 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/QueryInterface/Query.js',
 			'scripts/QueryInterface/QueryList.js',
 			'scripts/QueryInterface/QIHelper.js',
-       'scripts/QueryInterface/qi_tooltip.js',
       'scripts/QueryInterface/window.binding.js'
 			),
 		'styles' => array(

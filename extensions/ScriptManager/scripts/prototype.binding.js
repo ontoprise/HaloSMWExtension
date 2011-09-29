@@ -19,3 +19,4 @@ window.Position = Position;
 window.Form = Form;
 
 window.$ = jQuery;
+//window.HTMLElement = HTMLElement;
