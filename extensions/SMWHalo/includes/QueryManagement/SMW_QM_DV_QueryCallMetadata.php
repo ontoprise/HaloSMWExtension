@@ -145,7 +145,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	}
 	
 	protected function loadDataItem( SMWDataItem $dataItem ){
-		error();	
+		$this->m_data = $dataItem->getSemanticData();
 	}
 	
 	public function getDataItem(){
