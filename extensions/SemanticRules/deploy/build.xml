@@ -54,23 +54,8 @@
 			<arg value="bin/ruleknowledge.zip" />
 		</exec>
 	</target>
-	
-	<target name="deployscripts" >
-        <echo>Pack javascripts for Semantic Rules</echo>
-        <java
-            fork="true"
-            jar="../../../buildtools/closure/compiler.jar"
-            failonerror="true">
-	        <arg value="--js=../../SemanticRules/scripts/SR_Rulewidget.js" />
-	        <arg value="--js=../../SemanticRules/scripts/SR_Rule.js" />
-	        <arg value="--js=../../SemanticRules/scripts/SR_CalculationRule.js" />
-	        <arg value="--js=../../SemanticRules/scripts/SR_CategoryRule.js" />
-            <arg value="--js=../../SemanticRules/scripts/SR_PropertyChain.js" />
-            <arg value="--js_output_file=../../SemanticRules/scripts/deployRulescripts.js" />
-        </java>
-	</target>
 
-	<target name="versionhint" depends="deployscripts">
+	<target name="versionhint">
         <property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
