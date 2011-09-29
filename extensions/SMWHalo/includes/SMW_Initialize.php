@@ -374,61 +374,75 @@ function smwgHaloSetupExtension() {
 		//Initialize Tabular Forms
 		require_once($smwgHaloIP.'/includes/TabularForms/TF_AjaxAccess.php');
 		$wgAutoloadClasses['TFTabularFormQueryPrinter'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_QP_TabularForm.php';
 		$wgAutoloadClasses['TFDataAPIAccess'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 		$wgAutoloadClasses['TFAnnotationData'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 		$wgAutoloadClasses['TFAnnotationData'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 		$wgAutoloadClasses['TFAnnotationDataCollection'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 		$wgAutoloadClasses['TFTemplateParameterCollection'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_DataAPIAccess.php';
 		$wgAutoloadClasses['TFQueryAnalyser'] =
-		$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
+			$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
 		$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
-
+		
 		global $wgResourceModules, $smwgHaloIP;
 		$commonProperties = array(
 			'localBasePath' => $smwgHaloIP,
 			'remoteExtPath' => 'SMWHalo'
 			);
 
-			$wgResourceModules['ext.tabularforms.main'] =
+		$wgResourceModules['ext.tabularforms.main'] =
 			$commonProperties +
 			array(
 				'scripts' => array('scripts/TabularForms/tabularforms.js'),
 				'styles' => array('skins/TabularForms/tabularforms.css'),
 			);
 
-			define('TF_IS_QC_CMP', 'qc_');
-			define('TF_IS_EXISTS_CMP', 'plus_');
-			define('TF_CATEGORY_KEYWORD', '__Category__');
-
-			// Check if qi is called via an curl call and if a token is set
-			if (!is_null($title) && $title->getText() == 'QueryInterface') {
-				global $smwgHaloQueryInterfaceSecret;
-				if (isset($smwgHaloQueryInterfaceSecret)) {
-					global $wgRequest;
-					$token = $wgRequest->getText('s');
-					$hash = $wgRequest->getText('t');
-					require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
-					if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
-						global $wgWhitelistRead;
-						$wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
-					}
+		define('TF_IS_QC_CMP', 'qc_');
+		define('TF_IS_EXISTS_CMP', 'plus_');
+		define('TF_CATEGORY_KEYWORD', '__Category__');
+		
+		
+		//initialize ajax result printer
+		require_once($smwgHaloIP.'/includes/LiveQueries/SMW_LiveQueriesAjaxAccess.php');
+		$wgAutoloadClasses['SMWLiveQueryPrinter'] =
+			$smwgHaloIP.'/includes/LiveQueries/SMW_QP_Live.php';
+		$smwgResultFormats['live'] = 'SMWLiveQueryPrinter';
+		
+		$wgResourceModules['ext.smwhalo.livequeries'] =
+			$commonProperties +
+			array(
+				'scripts' => array('scripts/LiveQueries/livequeries.js.'),
+				'dependencies' => array( 'ext.smw.sorttable', 'ext.smw.tooltips')
+			);
+			
+		// Check if qi is called via an curl call and if a token is set
+		if (!is_null($title) && $title->getText() == 'QueryInterface') {
+			global $smwgHaloQueryInterfaceSecret;
+			if (isset($smwgHaloQueryInterfaceSecret)) {
+				global $wgRequest;
+				$token = $wgRequest->getText('s');
+				$hash = $wgRequest->getText('t');
+				require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+				if (!empty ($token) && !empty($hash) && qiCheckHash( $token, $hash)) {
+					global $wgWhitelistRead;
+					$wgWhitelistRead[]= MWNamespace::getCanonicalName(-1).':QueryInterface';
 				}
 			}
+		}
 
-			$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
+		$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
 
-			// initialize static members of SMWHaloPredefinedPages
-			new SMWHaloPredefinedPages();
+		// initialize static members of SMWHaloPredefinedPages
+		new SMWHaloPredefinedPages();
 
-			smwfEnableQueryManagement();
+		smwfEnableQueryManagement();
 
-			return true;
+		return true;
 }
 
 function smwfHaloWikiWords( &$magicWords, $langCode ) {
