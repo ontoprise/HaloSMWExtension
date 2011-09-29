@@ -6,7 +6,7 @@ Instead a variable in the start script is used. See below.
 
 ------------------- !IMPORTANT! ------------------------------------------------------------
 
-The tool "onto2mwxml" is not shipped with the Deployment Framework but with the TripleStore Connector (TSC).
+The tool "onto2mwxml" is not shipped with the Wiki Administration Tool but with the TripleStore Connector (TSC).
 
 However, the DF is fully functional without this tool except that ontology import won't work. Note that
 you need Java 1.6 to be installed when using the "onto2mwxml" tool.
