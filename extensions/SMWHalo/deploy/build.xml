@@ -113,7 +113,7 @@
 		</ant>
 		<ant antfile="../../ScriptManager/deploy/build.xml" inheritall="true" dir="../../ScriptManager/deploy" target="scriptmanager_build">
 		</ant>
-		<ant antfile="../../deployment/deploy/build.xml" inheritall="true" dir="../../../deployment/deploy" target="deploymentframework">
+		<ant antfile="../../deployment/deploy/build.xml" inheritall="true" dir="../../../deployment/deploy" target="wikiadmintool">
 		</ant>
 		<delete>
 			<fileset dir="bin" includes="smwhalo-bundled*.zip" />
