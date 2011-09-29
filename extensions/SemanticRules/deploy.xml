@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<id>semanticrules</id>
+		<id>ruleknowledge</id>
 		<title>Rule Knowledge extension</title>
 		<version>1.6.0</version>
 		<vendor>ontoprise GmbH</vendor>
