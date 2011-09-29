@@ -50,9 +50,9 @@ class DFSettingsTab {
 		$addRepositoryText = $dfgLang->getLanguageString('df_webadmin_addrepository');
 		$removeRepositoryText = $dfgLang->getLanguageString('df_webadmin_removerepository');
 		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_settingstext')."</div>";
-		$html .= "<div id=\"df_addrepository_section\">Add new repository: <input type=\"text\" style=\"width: 450px;\" value=\"\" id=\"df_newrepository_input\"></input>";
+		$html .= "<div id=\"df_addrepository_section\">Add new repository: <input type=\"text\" style=\"width: 100%;\" value=\"\" id=\"df_newrepository_input\"></input>";
 		$html .= "<input type=\"button\"  value=\"$addRepositoryText\" id=\"df_addrepository\"></input>'<img id=\"df_settings_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/></div>";
-		$html .= "<div id=\"df_existingrepository_section\">Existing repositories<br/><select size=\"5\" id=\"df_repository_list\">".$this->getRepositoriesAsHTMLOptions()."</select></div>";
+		$html .= "<div id=\"df_existingrepository_section\">Existing repositories<br/><select size=\"5\" style=\"width: 100%\" id=\"df_repository_list\">".$this->getRepositoriesAsHTMLOptions()."</select></div>";
 		$html .= "<input type=\"button\"  value=\"$removeRepositoryText\" id=\"df_removerepository\"></input>";
 		return $html;
 	}
