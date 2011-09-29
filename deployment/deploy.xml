@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<id>deployment</id>
+		<id>wikiadmintool</id>
 		<title>Wiki Administration Tool</title>
 		<version>1.6.0</version>
 		<patchlevel>0</patchlevel>
