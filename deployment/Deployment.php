@@ -36,10 +36,10 @@ function dfgSetupExtension() {
 	
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
-        'name' => 'Deployment framework',
+        'name' => 'Wiki Administration Tool',
         'version' => DF_VERSION,
         'author' => "Kai K&uuml;hn. Owned by [http://www.ontoprise.de ontoprise GmbH].",
-        'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework',
+        'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Wiki_Administration_Tool',
 	    'description' => 'Eases the installation and updating of extensions.'
 	    );
 

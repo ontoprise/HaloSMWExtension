@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DF_Config::$df_authorizeByWiki) {
 		$isAuthorized = authenticateUser($username, $passwort);
 		if ($isAuthorized === 400) {
-			echo "Authentication by Wiki sysop-users requires Deployment framework to be included in LocalSettings.php";
+			echo "Authentication by Wiki sysop-users requires Wiki Administration Tool to be included in LocalSettings.php";
 			echo "<br>please add: <pre>require_once('deployment/Deployment.php');</pre>";
 			exit;
 		}

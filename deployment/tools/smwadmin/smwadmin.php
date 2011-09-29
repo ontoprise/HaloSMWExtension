@@ -36,10 +36,8 @@ define('DF_TERMINATION_WITH_FINALIZE', 0);
 define('DF_TERMINATION_ERROR', 1);
 define('DF_TERMINATION_WITHOUT_FINALIZE', 2);
 
-// 3 modes for handling ontology import conflicts.
-define('DF_ONTOLOGYIMPORT_ASKINTERACTIVELY', 0);
-define('DF_ONTOLOGYIMPORT_STOPONCONFLICT', 1);
-define('DF_ONTOLOGYIMPORT_FORCEOVERWRITE', 2);
+// Setting constants (FIXME: must be merged from settings.php)
+define('DF_HOME_DIR_NOT_WRITEABLE', 3);
 
 global $rootDir;
 $rootDir = dirname(__FILE__);
@@ -511,12 +509,7 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		global $dfgForce;
-		if ($dfgForce) {
-			$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
-		} else {
-			$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
-		}
-
+		
 		try {
 
 			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false, $dfgBundleID);
@@ -733,7 +726,7 @@ if (count($installer->getErrors()) === 0) {
 
 function dffShowHelp() {
 	global $dfgOut;
-	$dfgOut->outputln( "smwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
+	$dfgOut->outputln( "Wiki administration tool utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]");

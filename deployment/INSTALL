@@ -1,17 +1,13 @@
-Installation instructions for Deployment Framework
+Installation instructions for Wiki Administration Tool
 ------------------------------------------------------
 
-Install instructions for the latest version of the Deployment Framework are also online:
+Install instructions for the latest version of the Wiki Administration Tool are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework_Extension
- 
-For the full manual of the Deployment Framework have a look at:
-
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Deployment_Framework_1.3
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Wiki_Administration_Tool
 
 Third party tools
 ==================
-The deployment framework uses:
+The Wiki Administration Tool uses:
 
     - GNU unzip (GPL)
     - GNU patch (GPL)
@@ -19,18 +15,18 @@ The deployment framework uses:
     
 Requirements: 
 =============
-    MediaWiki 1.16 installed
+    MediaWiki 1.17 installed
     
 Table of contents
 =================
 1. Installation
 1a. Settings
 2. I already have SMW installed. Can I use the DF though?
-3. HowTo use the deployment framework
+3. HowTo use the Wiki Administration Tool
 4. Restore wiki from restore point
 5. Adding new repositories
-6. Using Deployment Framework with a Proxy
-7. Deployment Framework log
+6. Using Wiki Administration Tool with a Proxy
+7. Wiki Administration Tool log
 8. Importing ontologies
 9. Non public apps
 
@@ -50,13 +46,13 @@ Table of contents
       administrator user in your MYSQL installation. If you are using SMW+
       then your default name and passwort is: 'root', 'm8nix'.
 (3) On Linux: make smwadmin.sh executable 
-      Open the installation directory of the deployment framework in the 
+      Open the installation directory of the Wiki Administration Tool in the 
       commandline interface: "<mediawiki-install-dir>/deployment/tools/"
       and call: "chmod +x smwadmin.sh"
 (4) Include the path to the php binary to PATH variable (either Windows or Linux) 
 (5) Include the path to mysql.exe to the PATH variable (either Windows or Linux)
 (6) Test your installation
-  Open the installation directory of the deployment framework in the 
+  Open the installation directory of the Wiki Administration Tool in the 
   commandline interface in <mediawiki-install-dir>/deployment/tools/
   and call: smwadmin.bat/sh. You should see the help screen.
   
@@ -66,7 +62,7 @@ Table of contents
  
     It enables a special page for checking the integrity of the MW installation. 
     
-    Be careful: Up to DF 1.31 this step was optional. It is not anymmore.
+    Be careful: Up to DF 1.31 this step was optional. It is NOT anymmore.
     
 (8) Webadmin console. !This is OPTIONAL! 
 	There is a web-based version of DF called 'webadmin console'
@@ -109,7 +105,7 @@ The lifting should also work with the SemanticBundle. It is a bundle of several
 semantic extensions containing SMW + SF among others. 
 
 #
-# 3. HowTo use the deployment framework
+# 3. HowTo use the Wiki Administration Tool
 # ======================================
 
 smwhalo admin utility v1.5.6_0 [B525], Ontoprise 2009-2011
@@ -153,7 +149,7 @@ Examples:       smwadmin -i smwhalo Installs the given bundles
 #
 # 4. Restore wiki from restore point
 # ===================================
-Whenever the Deployment Framework performs one the following actions,
+Whenever the Wiki Administration Tool performs one the following actions,
 it offers to create a "Wiki Restore Point":
 * Installing a package: smwadmin -i <package>
 * De-installing a package: smwadmin -d <package>
@@ -172,7 +168,7 @@ save your wiki periodically.
 Call "smwadmin -r [name]" to bring your Wiki back to a Wiki Restore Point. If name
 is missing, you will be prompted which should be restored.
 
-Simply said, the Deployment Framework can undo your previous action and bring
+Simply said, the Wiki Administration Tool can undo your previous action and bring
 your Wiki back to previous state (including the data, articles and
 configuration).
 
@@ -187,14 +183,14 @@ File for repository links:
 You may add new repositories here, the Ontoprise repo is already configured.
 
 #
-# 6. Using Deployment Framework with a Proxy
+# 6. Using Wiki Administration Tool with a Proxy
 # ===========================================
 
 Open <mediawiki-install-dir>/deployment/settings.php and set the proxy server address for
 'df_proxy'. For Example: 'df_proxy' => 'proxy.example.com:8080'
 
 #
-# 7. Deployment Framework log
+# 7. Wiki Administration Tool log
 # ============================
 The DF writes a log about the operations. It is stored in $HOME/$wikiname/df_log
 Both $HOME and $wikiname can be configured in <mediawiki-install-dir>/deployment/settings.php
@@ -222,7 +218,7 @@ There is a file deployment/externalapps with the following format:
 Example:
 tsc=d:\tsc
 
-Linux users 
-
-
-
+The file makes sure that the Wiki Administration Tool finds the applications. It is able 
+to find existing installations by itself but this works only for Windows if it is properly 
+registered in the Windows registry. Linux users should configure their applications if they
+were not installed via the Wiki Administration Tool in the first place.

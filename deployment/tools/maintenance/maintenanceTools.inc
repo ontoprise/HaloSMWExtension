@@ -131,7 +131,7 @@ class ConsistencyChecker {
 
 	public function checkInstallation($format, $addChecks = true) {
         global $dfgOut;
-		$this->statusLog[] = $dfgOut->getln(array("\n","The checkInstallation tool helps you with identifying some common problems which may occur with the Deployment Framework, e.g. missing dependencies. It verifies that your installation is stable and configured correctly. You should use this tool after the installation of SMW+, when installing a Halo extension and also if there are any problems with your installation.","\n"));
+		$this->statusLog[] = $dfgOut->getln(array("\n","The checkInstallation tool helps you with identifying some common problems which may occur with the Wiki Administration Tool, e.g. missing dependencies. It verifies that your installation is stable and configured correctly. You should use this tool after the installation of SMW+, when installing a Halo extension and also if there are any problems with your installation.","\n"));
 		$errorFound = false;
 		$errorFound |= $this->checkDependencies($format);
 		$errorFound |= $this->checkLocalSettings($format);

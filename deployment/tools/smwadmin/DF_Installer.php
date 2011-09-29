@@ -626,11 +626,7 @@ class Installer {
 		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-			if ($dfgForce) {
-				$mode = DF_ONTOLOGYIMPORT_FORCEOVERWRITE;
-			} else {
-				$mode = DF_ONTOLOGYIMPORT_ASKINTERACTIVELY;
-			}
+			
 			$ont_installer->installOntologies($desc);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);

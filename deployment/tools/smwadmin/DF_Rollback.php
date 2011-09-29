@@ -54,6 +54,9 @@ class Rollback {
 			$homeDir = Tools::getHomeDir();
 			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
 		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
 		$wikiname = DF_Config::$df_wikiName;
 		$this->restoreDir = "$homeDir/$wikiname/df_restore";
 
@@ -117,7 +120,7 @@ class Rollback {
 			// possible since MW 1.16
 			$wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
-			
+				
 			if (empty($wgDBadminuser) || empty($wgDBadminpassword)) {
 				$dfgOut->outputln('$wgDBadminuser and $wgDBadminpassword is empty! Please set.', DF_PRINTSTREAM_TYPE_WARN);
 			}
@@ -135,12 +138,12 @@ class Rollback {
 
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		$dfgOut->outputln("[Saving database...");
-		
+
 		$mysqlDump = "mysqldump";
 		if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
 			$mysqlDump = DF_Config::$settings['df_mysql_dir']."/bin/mysqldump";
 		}
-		
+
 		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->restoreDir."/$name/dump.sql");
 		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		$dfgOut->output("done.]");
@@ -152,17 +155,17 @@ class Rollback {
 		}
 		return $ret == 0;
 	}
-	
+
 	/**
 	 * Removes the restore point with the given name.
-	 * 
+	 *
 	 * @param string $name
 	 * @throws InstallationError
 	 */
 	public function removeRestorePoint($name) {
 		global $dfgOut;
 		$logger = Logger::getInstance();
-		
+
 		// make sure $name points to a subdirectory below df_restore
 		// and is not something like this: ../../xyz
 		$pathNormalized = realpath($this->restoreDir."/$name");
@@ -171,18 +174,18 @@ class Rollback {
 		if (strpos($pathNormalized, $pathRestoreDir) !== 0) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INVALID_RESTOREPOINT, "Invalid restore point: $name",$name);
 		}
-		
+
 		// remove restore point
 		$dfgOut->outputln("[Remove restore point...");
-        $success = Tools::remove_dir_native($this->restoreDir."/$name");
-        if (!$success) {
-            $logger->error("Could not remove restore point: '$name'.");
-        } else {
-        	$logger->info("Restore point removed: $name");
-        }
-        $dfgOut->output("done.]");
-        
-        return $success;
+		$success = Tools::remove_dir_native($this->restoreDir."/$name");
+		if (!$success) {
+			$logger->error("Could not remove restore point: '$name'.");
+		} else {
+			$logger->info("Restore point removed: $name");
+		}
+		$dfgOut->output("done.]");
+
+		return $success;
 	}
 
 	/**
@@ -335,11 +338,11 @@ class Rollback {
 		$dfgOut->outputln("[Restore database...");
 		$logger = Logger::getInstance();
 		$logger->info("Restore database");
-	    $mysqlExec = "mysql";
-        if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
-            $mysqlExec = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
-        }
-        $logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"");
+		$mysqlExec = "mysql";
+		if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
+			$mysqlExec = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
+		}
+		$logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"");
 		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");

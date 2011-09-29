@@ -35,7 +35,7 @@ class SMWCheckInstallation extends SpecialPage {
 		global $rootDir;
 		$rootDir = "$IP/deployment";
 		if (!file_exists("$IP/deployment/tools/maintenance/maintenanceTools.inc")) {
-			$wgOut->addHTML("No deployment framework installed! Please install to use this feature.");
+			$wgOut->addHTML("No Wiki Administration Tool installed! Please install to use this feature.");
 		}
 		require_once "$IP/deployment/tools/maintenance/maintenanceTools.inc";
 		$cc = new ConsistencyChecker($IP);

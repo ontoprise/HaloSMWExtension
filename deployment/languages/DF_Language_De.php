@@ -63,7 +63,7 @@ class DF_Language_De extends DF_Language {
     'df_ok' => 'OK',
 
 	// webadmin
-	'df_webadmin' => 'Deployment Framework WebAdmin',
+	'df_webadmin' => 'Wiki Administration Tool',
 	'df_username' => 'Benutzername',
 	'df_password' => 'Passwort',
 	'df_login' => 'Einloggen',

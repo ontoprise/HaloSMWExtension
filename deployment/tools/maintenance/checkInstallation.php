@@ -91,7 +91,7 @@ if (isset($dfHelp)) {
 	print "\nUsage";
 	print "\n\t <no option> : Shows all common problems";
 	print "\n\t --nowiki : Do not initialize the wiki (less checks if wiki is broken).";
-	print "\n\t --lift : Tries to make the existing installation compatible to the deployment framework.";
+	print "\n\t --lift : Tries to make the existing installation compatible to the Wiki Administration Tool.";
 	print "\n\t --onlydep : Checks only dependencies of deploy descriptors.";
 	print "\n\n";
 	die();

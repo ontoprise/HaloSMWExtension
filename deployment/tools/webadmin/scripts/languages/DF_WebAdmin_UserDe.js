@@ -34,7 +34,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_cancel' : 'Abbrechen',
 	'df_yes' : 'Ja',
 	'df_no' : 'Nein',
-	'df_webadmin_about_desc' : 'Das ist die Deployment framework Webadmin-Konsole',
+	'df_webadmin_about_desc' : 'Das ist das Wiki Administration Tool',
 	'df_webadmin_about_title' : 'Über',
 
 

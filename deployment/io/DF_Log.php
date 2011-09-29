@@ -72,7 +72,7 @@ class Logger {
 			}
 			$this->logFileHandle = fopen($this->logDir."/df_$i.log", "a");
 		} else {
-			$this->logFileHandle = NULL;
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
 		}
 	}
 
