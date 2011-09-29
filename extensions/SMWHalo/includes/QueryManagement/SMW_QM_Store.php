@@ -152,6 +152,9 @@ class SMWQMStore extends SMWStore {
 		return $this->wrappedStore->clearData($di);
 	}
 	
+    public function setLocalRequest($local) {
+       // dummy
+    }
 }
 
 
