@@ -57,6 +57,7 @@ class DeployDescriptor {
 	var $patchlevel; // patchlevel of an version
 
 	// xml
+	var $xml;
 	var $dom;
 	var $wikidumps_xml;
 	var $ontologies_xml;
@@ -81,6 +82,7 @@ class DeployDescriptor {
 	 */
 	function __construct($xml, $fromVersion = NULL, $fromPatchlevel = NULL) {
 
+		$this->xml = $xml;
 		// parse xml results
 		$this->dom = simplexml_load_string($xml);
 
@@ -616,6 +618,32 @@ class DeployDescriptor {
 			$this->oc_resources[$loc] = $dest;
 		}
 		return $this->oc_resources;
+	}
+	
+	/**
+	 * Returns XML representation 
+	 * 
+	 * @param string $newID Replace original ID. May be null of course.
+	 * 
+	 * @return string (XML)
+	 */
+	function getXML($newID = NULL) {
+		if (is_null($newID)) {
+			return $this->xml;
+		} else {
+			$dom = new DOMDocument("1.0");
+			$dom->loadXML($this->xml);
+			
+			// replace ID node
+			$oldIDNode = $dom->getElementsByTagName("id")->item(0);
+			$newIDNode = $dom->createElement("id");
+			$newIDNode->appendChild($dom->createTextNode($newID));
+			$globalNode = $dom->getElementsByTagName("global")->item(0);
+			$globalNode->replaceChild($newIDNode, $oldIDNode);
+			
+			return $dom->saveXML();
+			
+		}
 	}
 
 	/**

@@ -28,6 +28,7 @@
  *                  [--mediawiki]               Include Mediawiki?
  *                  [--mwversion]               Mediawiki version (if missing it is read from the underlying installation)
  *                  [--contains <substring> ]   File name contains a substring
+ *                  [--transient <ID> ]			Creates a transient bundle entry with the given ID. 
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
@@ -38,6 +39,10 @@ $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
 $rootDir = realpath($rootDir."/../../");
 
+$mwrootDir = dirname(__FILE__);
+$mwrootDir = str_replace("\\", "/", $mwrootDir);
+$mwrootDir = realpath($mwrootDir."/../../../");
+
 require_once($rootDir."/descriptor/DF_DeployDescriptor.php");
 require_once($rootDir."/tools/smwadmin/DF_PackageRepository.php");
 require_once($rootDir."/tools/smwadmin/DF_Tools.php");
@@ -46,6 +51,7 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 $latest = false;
 $createSymlinks = true;
 $fileNamecontains = false;
+$transientID=false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-r => repository directory
@@ -74,14 +80,19 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$mediawiki = true;
 		continue;
 	}
-	
-    if ($arg == '--mwversion') {
-        $mwversion =next($argv);
-        continue;
-    }
+
+	if ($arg == '--mwversion') {
+		$mwversion =next($argv);
+		continue;
+	}
 
 	if ($arg == '--contains') {
 		$fileNamecontains = next($argv);
+		continue;
+	}
+
+	if ($arg == '--transient') {
+		$transientID = next($argv);
 		continue;
 	}
 }
@@ -105,10 +116,10 @@ Tools::mkpath($repositoryDir."/bin");
 
 // read bundles and extract the deploy descriptors
 $descriptors = array();
-if (isset($bundlePath)) { 
-echo "\nExtract deploy descriptors";
-$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains);
-echo "..done.";
+if (isset($bundlePath)) {
+	echo "\nExtract deploy descriptors";
+	$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains);
+	echo "..done.";
 }
 
 // load existing repository
@@ -128,7 +139,17 @@ foreach($descriptors as $tuple) {
 	$id = strtolower($id);
 	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");
-	Tools::unzipFile($zipFilepath, "deploy.xml", $repositoryDir."/extensions/$id");
+
+	@unlink($repositoryDir."/extensions/$id/deploy-$version.xml");
+	@unlink($repositoryDir."/extensions/$id/deploy.xml");
+	
+	// write deploy descriptor
+	$xml = $dd->getXML();
+	$handle = fopen($repositoryDir."/extensions/$id/deploy.xml", "w");
+	fwrite($handle, $xml);
+	fclose($handle);
+
+    
 	rename($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
 	if ($createSymlinks && $latest) {
 		// remove symbolic link if existing
@@ -148,7 +169,7 @@ foreach($descriptors as $tuple) {
 	echo "\n..done.";
 
 	// 2. Add to repository.xml
-	echo "\nAdd to repository: ".$dd->getID();
+	echo "\nAdd to repository: ".$id;
 	list($newExt, $extAlreadyExists) = createRepositoryEntry($repoDoc, $dd, $repositoryURL);
 	if (!$extAlreadyExists) $extensionsNode->appendChild($newExt);
 	echo "..done.";
@@ -162,7 +183,7 @@ foreach($descriptors as $tuple) {
 
 if ($mediawiki) {
 	$xml = Tools::createMWDeployDescriptor(realpath($rootDir."/../"), isset($mwversion) ? new DFVersion($mwversion) : NULL);
-	
+
 	$id = 'mw';
 	$version = Tools::getMediawikiVersion(realpath($rootDir."/../"));
 	Tools::mkpath($repositoryDir."/extensions/$id");
@@ -240,7 +261,9 @@ function loadRepository($filePath) {
  * @return array of (DeployDescriptor, Bundle file path)
  */
 function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
+	global $transientID, $mwrootDir;
 	$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
+	Tools::mkpath($tmpFolder);
 	if (is_dir($bundlePath)) {
 		$result = array();
 		$dirHandle=opendir($bundlePath);
@@ -252,28 +275,39 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
 					if (strpos($file, $fileNamecontains) === false) continue;
 				}
 				$__file=$bundlePath."/".$file;
-				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder);
+				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder, $mwrootDir);
 				if (is_null($dd)) {
 					print "\nWARNING: $__file does not contain a deploy descriptor. It is skipped.";
 					continue;
+				}
+				if ($transientID !== false) {
+					$xml = $dd->getXML($transientID);
+					$dd = new DeployDescriptor($xml);
 				}
 				$result[] = array($dd, $__file);
 			}
 		}
 		return $result;
 	} else {
-		$dd = Tools::unzipDeployDescriptor($bundlePath, $tmpFolder);
+		$dd = Tools::unzipDeployDescriptor($bundlePath, $tmpFolder, $mwrootDir);
+
+		if ($transientID !== false) {
+			$xml = $dd->getXML($transientID);
+			$dd = new DeployDescriptor($xml);
+		}
 		return array(array($dd, $bundlePath));
 	}
 }
 
+
+
 function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
-	
+
 	// find existing extension
 	$nodeList = $repoDoc->getElementsByTagName("extension");
 	$i=0;
 	$newExt = NULL;
-	
+
 	while($i < $nodeList->length) {
 		$ext = $nodeList->item($i);
 		$id = $ext->getAttribute("id");
@@ -282,8 +316,8 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 		}
 		$i++;
 	}
-	
-    $extAlreadyExists = true;
+
+	$extAlreadyExists = true;
 	if (is_null($newExt)) {
 		// create new extension node
 		$extAlreadyExists = false;
@@ -303,10 +337,10 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 	$versionAttr = $repoDoc->createAttribute("version");
 	$versionAttr->value = $dd->getVersion()->toVersionString();
 	$newVer->appendChild($versionAttr);
-	
+
 	$versionOldAttr = $repoDoc->createAttribute("ver");
-    $versionOldAttr->value = str_replace(".", "", $dd->getVersion()->toVersionString());
-    $newVer->appendChild($versionOldAttr);
+	$versionOldAttr->value = str_replace(".", "", $dd->getVersion()->toVersionString());
+	$newVer->appendChild($versionOldAttr);
 
 
 	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");
