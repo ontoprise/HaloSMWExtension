@@ -14,7 +14,7 @@ Installation of the webadmin console:
         - LocalSettings.php
         - extensions folder (and all extensions contained)
         - deployment/tools/webadmin
-        - deployment/tools/repositories
+        - deployment/config/repositories
         - /usr/share/local/Ontoprise (optional, only required if you plan to install external apps like TSC)
         
     It is recommended to make the user which runs the webserver the owner of
@@ -44,6 +44,11 @@ You get a warning if something is missing when you first access the webadmin con
 
 There is a settings file located at deployment/settings.php. Take a look in it,
 it is documented. It contains some configuration concerning the webadmin console.
+
+Starting stopping process using the Wiki Administration tool
+============================================================
+
+TODO: write this
 
 Troubleshooting:
 ================

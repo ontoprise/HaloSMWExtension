@@ -9,7 +9,12 @@
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>deployment</instdir>
 		<description>
-			The Wiki Administration Tool supports all immportant administration tasks in SMW+. It provides a web based graphical interface for installing, updating and deinstalling the SMW+ Extension Suite as well as bundles and ontologies. It also allows setting up restore points, defining repositories and editing the main textfile with settings for SMW+ (LocalSettings.php).
+			The Wiki Administration Tool supports all immportant
+			administration tasks in SMW+. It provides a web based graphical
+			interface for installing, updating and deinstalling the SMW+
+			Extension Suite as well as bundles and ontologies. It also allows
+			setting up restore points, defining repositories and editing the main
+			textfile with settings for SMW+ (LocalSettings.php).
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
 		</helpurl>
@@ -22,38 +27,44 @@
 	<codefiles>
 		<!-- empty -->
 	</codefiles>
-	
+
 	<wikidumps>
 		<!-- empty -->
 	</wikidumps>
-	
+
 	<resources>
 		<!-- empty -->
 	</resources>
-	
+
 	<configs>
-		<successor ext="smwhalo"/>
+		<successor ext="smwhalo" />
 		<new>
-			<require name="deploymentframework" file="deployment/Deployment.php" />			
+			<require name="deploymentframework" file="deployment/Deployment.php" />
 		</new>
 
 		<update from="patchlevel">
-			<exclude file="deployment/tools/repositories" />
-			<exclude file="deployment/settings.php" />
+		    <exclude file="deployment/config/repositories" />
 			<exclude file="deployment/tools/unzip.exe" />
 			<exclude file="deployment/tools/smwadmin.sh" />
 			<exclude file="deployment/tools/onto2mwxml/onto2mwxml.bat" />
 			<exclude file="deployment/tools/onto2mwxml/onto2mwxml.sh" />
 		</update>
+		
+		<update from="1.5.6">
+            <exclude file="deployment/tools/unzip.exe" />
+            <exclude file="deployment/tools/smwadmin.sh" />
+            <exclude file="deployment/tools/onto2mwxml/onto2mwxml.bat" />
+            <exclude file="deployment/tools/onto2mwxml/onto2mwxml.sh" />
+        </update>
 
 		<update from="1.3.1">
-			<exclude file="deployment/tools/repositories" />
+
 			<exclude file="deployment/tools/unzip.exe" />
 			<exclude file="deployment/tools/smwadmin.sh" />
 		</update>
-		
+
 		<update from="1.3.0">
-			<exclude file="deployment/tools/repositories" />
+
 			<exclude file="deployment/tools/unzip.exe" />
 		</update>
 	</configs>

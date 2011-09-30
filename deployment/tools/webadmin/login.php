@@ -223,10 +223,10 @@ function dffCheckEnvironment() {
 		unlink("$tempFolder/test_file_for_webadmin");
 	}
 
-	// check if deployment/tools/repositories is writeable
-	$repositoryFileWritable = is_writable("$mwrootDir/deployment/tools/repositories");
+	// check if deployment/config/repositories is writeable
+	$repositoryFileWritable = is_writable("$mwrootDir/deployment/config/repositories");
 	if ($repositoryFileWritable === false) {
-		$result .= "<li>Could not open deployment/tools/repositories for writing.</li>";
+		$result .= "<li>Could not open deployment/config/repositories for writing.</li>";
 	}
 
 	// check homedir/tempdir

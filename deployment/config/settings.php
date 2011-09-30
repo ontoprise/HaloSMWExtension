@@ -15,6 +15,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * IMPORTANT: configure it and copy this file in the root folder of the admin tool!
+ */
+
 class DF_Config  {
 
 	// MANDATORY setting!

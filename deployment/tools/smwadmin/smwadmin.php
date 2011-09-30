@@ -49,10 +49,10 @@ $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
 //Load Settings
-if(file_exists($rootDir.'/settings.php'))
-{
-	require_once($rootDir.'/settings.php');
+if(!file_exists($rootDir.'/settings.php')) {
+	dffExitOnFatalError("settings.php not found! Forgot to copy it from config/settings.php?");
 }
+require_once($rootDir.'/settings.php');
 require_once('DF_Tools.php');
 require_once('DF_UserInput.php');
 require_once('DF_Installer.php');
@@ -492,13 +492,13 @@ if (count($ontologiesToInstall) > 0) {
 	if (!array_key_exists('smw', $localpackages)) {
 		dffExitOnFatalError("Ontology import needs at least SMW installed.");
 	}
-	
+
 	global $rootDir, $dfgOut;
 	$requiredPropertiesExist = DFBundleTools::checkBundleProperties($dfgOut);
 	if (!$requiredPropertiesExist) {
 		dffExitOnFatalError("Some properties do not exist or have wrong types.");
 	}
-	
+
 	foreach($ontologiesToInstall as $filePath) {
 
 		$oInstaller = OntologyInstaller::getInstance(realpath($rootDir."/../"));
@@ -509,7 +509,7 @@ if (count($ontologiesToInstall) > 0) {
 		}
 
 		global $dfgForce;
-		
+
 		try {
 
 			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false, $dfgBundleID);

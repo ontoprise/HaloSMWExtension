@@ -56,7 +56,10 @@ $mwrootDir = dirname(__FILE__);
 $mwrootDir = str_replace("\\", "/", $mwrootDir);
 $mwrootDir = realpath($mwrootDir."/../../../");
 
-
+if(!file_exists($rootDir.'/settings.php')) {
+	echo "settings.php not found! Forgot to copy it from config/settings.php?";
+	die();
+}
 require_once($mwrootDir.'/deployment/settings.php');
 $wgScriptPath=isset(DF_Config::$scriptPath) ? DF_Config::$scriptPath : "/mediawiki";
 

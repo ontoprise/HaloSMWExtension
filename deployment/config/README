@@ -1,0 +1,23 @@
+This folder contains settings files for the wiki administration tool.
+
+repositories: A list of repositories which should be requested. It is excluded if
+                you install an update of the wiki admin tool.
+
+               Note: This file was previously located at deployment/tools. Copy 
+               it from there if necessary.
+               
+settings.php: This is a pre-configured template of the setting file. It must be copied 
+                into the root folder of the wiki admin tool to work. On every update
+                it is overwritten with the latest possible settings. The acually used
+                settings.php file in the root folder is untouched!
+                
+externalapps:  Store paths of external applications (ie. applications which are not 
+                published by the webserver). Usually non-PHP applications.
+                 
+                Is never overwritten by an update
+                
+serversettings: Stores paths for server scripts which start/stop services on the server.
+
+                Is never overwritten by an update            
+                
+                 

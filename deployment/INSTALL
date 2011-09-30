@@ -5,6 +5,12 @@ Install instructions for the latest version of the Wiki Administration Tool are 
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Wiki_Administration_Tool
 
+---------------------------------------
+Important!  
+---------------------------------------
+The new template of settings.php file is delivered in the config folder. Take a look in it and check if
+you need to set additional parameters.
+
 Third party tools
 ==================
 The Wiki Administration Tool uses:
@@ -178,7 +184,7 @@ configuration).
 # ===========================
         
 File for repository links:
-/deployment/tools/repositories
+/deployment/config/repositories
 
 You may add new repositories here, the Ontoprise repo is already configured.
 
@@ -211,7 +217,7 @@ Importing an ontology is as follows:
 #9. Non public apps
 #===================
 Apps which are not published by the webservcer (TSC, SOLR,...) are handled separately.
-There is a file deployment/externalapps with the following format:
+There is a file deployment/config/externalapps with the following format:
 
 <ID>=<path>
 

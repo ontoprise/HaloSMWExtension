@@ -419,17 +419,17 @@ class DFCommandInterface {
 
 	public function removeFromRepository($url) {
 		global $rootDir;
-		if (!file_exists("$rootDir/tools/repositories")) {
+		if (!file_exists("$rootDir/config/repositories")) {
 			throw new Exception("Could not find repositories file", 500);
 		}
-		if (!is_writable("$rootDir/tools/repositories")) {
-			throw new Exception("$rootDir/tools/repositories is not writeable!", 500);
+		if (!is_writable("$rootDir/config/repositories")) {
+			throw new Exception("$rootDir/config/repositories is not writeable!", 500);
 		}
-		$contents = file_get_contents("$rootDir/tools/repositories");
+		$contents = file_get_contents("$rootDir/config/repositories");
 
 		//FIXME: consider credentials
 		$contents = str_replace($url, "", $contents);
-		$handle = fopen("$rootDir/tools/repositories", "w");
+		$handle = fopen("$rootDir/config/repositories", "w");
 		fwrite($handle, $contents);
 		fclose($handle);
 		return;
@@ -439,12 +439,12 @@ class DFCommandInterface {
 
 	public function addToRepository($url) {
 		global $rootDir;
-		if (!is_writable("$rootDir/tools/repositories")) {
-			throw new Exception("$rootDir/tools/repositories is not writeable!", 500);
+		if (!is_writable("$rootDir/config/repositories")) {
+			throw new Exception("$rootDir/config/repositories is not writeable!", 500);
 		}
-		$contents = file_get_contents("$rootDir/tools/repositories");
+		$contents = file_get_contents("$rootDir/config/repositories");
 		$contents .= "\n$url";
-		$handle = fopen("$rootDir/tools/repositories", "w");
+		$handle = fopen("$rootDir/config/repositories", "w");
 		fwrite($handle, $contents);
 		fclose($handle);
 		return;
@@ -518,13 +518,13 @@ class DFCommandInterface {
 
 	public function loadServerSettings() {
 		global $mwrootDir;
-		$server_settings = @file_get_contents($mwrootDir."/deployment/tools/webadmin/server_settings");
+		$server_settings = @file_get_contents($mwrootDir."/deployment/config/serversettings");
 		return $server_settings !== false ? $server_settings : "false";
 	}
 
 	public function storeServerSettings($jsondata) {
 		global $mwrootDir;
-		$server_settings = fopen($mwrootDir."/deployment/tools/webadmin/server_settings","w");
+		$server_settings = fopen($mwrootDir."/deployment/config/serversettings","w");
 		if ($server_settings === false) return "false";
 		fwrite($server_settings, $jsondata);
 		fclose($server_settings);

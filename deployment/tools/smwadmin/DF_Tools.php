@@ -796,7 +796,7 @@ class Tools {
 	 */
 	public static function getNonPublicAppPath($mwroot) {
 		$result = array();
-		$content = @file_get_contents("$mwroot/deployment/externalapps");
+		$content = @file_get_contents("$mwroot/deployment/config/externalapps");
 		if ($content === false) return array();
 		$lines = explode("\n", $content);
 		foreach($lines as $l) {
@@ -819,7 +819,7 @@ class Tools {
 	public static function setNonPublicAppPath($mwroot, $id, $path) {
 		$result = self::getNonPublicAppPath($mwroot);
 		$result[$id] = $path;
-		$handle = fopen("$mwroot/deployment/externalapps", "w");
+		$handle = fopen("$mwroot/deployment/config/externalapps", "w");
 		if ($handle === false) return false;
 		foreach($result as $id => $path) {
 			fwrite($handle, "$id=$path\n");

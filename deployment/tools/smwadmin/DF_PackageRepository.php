@@ -63,9 +63,9 @@ class PackageRepository {
 	public static function getRepositoryURLs() {
 		global $smwgDFIP, $rootDir;
 		if (isset($smwgDFIP)) {
-			$repositoriesFile = "$smwgDFIP/tools/repositories";
+			$repositoriesFile = "$smwgDFIP/config/repositories";
 		} else if (isset($rootDir)) {
-			$repositoriesFile = "$rootDir/tools/repositories";
+			$repositoriesFile = "$rootDir/config/repositories";
 		} else {
 			$repositoriesFile =  "repositories";
 		}
@@ -98,9 +98,9 @@ class PackageRepository {
 		$rep_urls = array();
 		global $smwgDFIP, $rootDir;
 		if (isset($smwgDFIP)) {
-			$repositoriesFile = "$smwgDFIP/tools/repositories";
+			$repositoriesFile = "$smwgDFIP/config/repositories";
 		} else if (isset($rootDir)) {
-			$repositoriesFile = "$rootDir/tools/repositories";
+			$repositoriesFile = "$rootDir/config/repositories";
 		} else {
 			$repositoriesFile =  "repositories";
 		}
@@ -512,7 +512,7 @@ class PackageRepository {
 							$path = trim($arrayOfPaths[$index]);
 							$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
 							if (!$res) {
-								throw new RepositoryError("Could not write deployment/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
+								throw new RepositoryError("Could not write deployment/config/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
 							}
 						} else {
 							$path = trim(reset($arrayOfPaths));
