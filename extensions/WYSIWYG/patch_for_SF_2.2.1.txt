@@ -1,6 +1,8 @@
+### Eclipse Workspace Patch 1.0
+#P HaloSMWExtension
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12300)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12352)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
 @@ -265,6 +265,10 @@
  		wfProfileIn( __METHOD__ );
@@ -13,12 +15,13 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  		$sfgTabIndex = 1;
  		$sfgFieldNum = 1;
  		$source_page_matches_this_form = false;
-@@ -847,6 +851,19 @@
+@@ -847,6 +851,20 @@
  						if ( $is_hidden ) {
  							$new_text = SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
  						} else {
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
 +							/*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Use_rows_parameter_for_FCK_editor_window_height_in_SF*/
++							if (! array_key_exists('rows', $field_args))
 +								$fck_options['rows'] = 5;
 +							else
 +								$fck_options['rows'] = $field_args['rows'];
@@ -35,7 +38,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  							if ( $cur_value == '' ) {
 Index: extensions/SemanticForms/includes/SF_Utils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.php	(revision 12300)
+--- extensions/SemanticForms/includes/SF_Utils.php	(revision 12352)
 +++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
 @@ -438,7 +438,11 @@
  		// modules yet, so we have to call the scripts directly.
@@ -52,7 +55,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.php
  		foreach ( $scripts as $js ) {
 Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12300)
+--- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12352)
 +++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
 @@ -409,10 +409,19 @@
  
@@ -130,13 +133,12 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		oFCKeditor.ReplaceTextarea() ;
  
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -702,6 +726,9 @@
+@@ -702,6 +726,8 @@
  addOnloadHook( initEditor );
  
  END;
-+        } else { // ckeditor
-+            $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
-+        }
++      
++        $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
  		return $javascript_text;
  	}
  
