@@ -459,19 +459,62 @@ class DFCommandInterface {
 		$doesRun = Tools::areProcessesRunning(explode(",",$processNames));
 		return implode(",", $doesRun);
 	}
-
-	public function startProcess($path, $async) {
+    
+	/**
+	 * Starts a process. Optionally it can be run under a certain account,
+	 * if this is configured in settings.php
+	 * 
+	 * If you run on a particular account:
+	 * 
+	 * Windows:
+	 * 
+	 *    You have to diable the UAC, otherwise a dialog pops up on the server
+	 * 
+	 * Linux:
+	 * 
+	 * You have to disable the password check for the account 
+	 * in the sudoers file with this entry (assuming your account is 'wiki'):
+	 *  
+	 * wiki    ALL = NOPASSWD: ALL
+	 * 
+	 * @param string $commandLineToStart Command to start (with parameters)
+	 */
+	public function startProcess($commandLineToStart) {
+		$runAsUser = DF_Config::$df_runas_user;
+		$password = DF_Config::$df_runas_password;
+		
+		
 		if (Tools::isWindows()) {
-			$wshShell = new COM("WScript.Shell");
-			$runCommand = "$path";
-			$oExec = $wshShell->Run("$runCommand", 7, false);
-			return "true";
+			if (!is_null($runAsUser)) {
+				global $mwrootDir;
+				
+				//@chdir("D:\wikis\smwplus156_b662\solr\wiki");
+				$command = $mwrootDir."/deployment/tools/internal/pcwrunas/pcwRunAs4.exe ";
+				$command .= "/u $runAsUser /p $password /app cmd /arg \"/c $commandLineToStart\"";
+          
+				@exec($command, $out, $ret);
+				return $ret == 0 ? implode("\n", $out) : "false";
+			} else {
+				$wshShell = new COM("WScript.Shell");
+				$runCommand = "$commandLineToStart";
+				$oExec = $wshShell->Run("$runCommand", 7, false);
+				return "true";
+			}
 		} else {
-			@chdir(dirname($path));
-			@exec($path, $out, $ret);
-			return $ret == 0 ? implode("\n", $out) : "false";
+			if (!is_null($runAsUser)) {
+				$command = "sudo -u $runAsUser \"$commandLineToStart\"";
+				@chdir(dirname($commandLineToStart));
+				@exec($command, $out, $ret);
+				return $ret == 0 ? implode("\n", $out) : "false";
+			} else {
+				@chdir(dirname($commandLineToStart));
+				@exec($commandLineToStart, $out, $ret);
+				return $ret == 0 ? implode("\n", $out) : "false";
+			}
 		}
 	}
+	
+	
 
 	public function loadServerSettings() {
 		global $mwrootDir;

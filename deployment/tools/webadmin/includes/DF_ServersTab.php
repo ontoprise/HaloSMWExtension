@@ -175,7 +175,7 @@ class DFServersTab {
 					break;
 				case "solr":
 					return $action == "start" ?  self::quotePath($guessedInstallDir."\\solr\\wiki\\startSolr.bat")
-					: self::quotePath($guessedInstallDir."\\solr_stop.exe");
+					: self::quotePath($guessedInstallDir."\\stopSolr.bat");
 					break;
 				case "tsc":
 					return $action == "start" ?  self::quotePath($guessedTSCInstallDir."\\tsc.exe")
@@ -190,8 +190,8 @@ class DFServersTab {
 			$initd = "etc/init.d";
 			switch($program) {
 				case "apache":
-					return $action == "start" ?  $initd."/apache start"
-					: $initd."/apache stop";
+					return $action == "start" ?  $initd."/apache2 restart"
+					: "should not be used!";
 					break;
 				case "mysql":
 					return $action == "start" ?  $initd."/mysql start"

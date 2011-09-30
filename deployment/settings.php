@@ -61,6 +61,14 @@ class DF_Config  {
 	 */
 	public static $df_checkForUpdateOnLogin = true;
 	
+	/**
+	 * Account which is used to run commands on server for webadmin tool.
+	 * If not set, the account on which the webserver runs is used.
+	 * @var string
+	 */
+	public static $df_runas_user = NULL;
+	public static $df_runas_password = NULL;
+	
 	/*
 	 * General settings for smwadmin/webadmin
 	 */

@@ -270,21 +270,22 @@ $html .= <<<ENDS
 <div id="tabs">
 
 			<ul>
-				<li><a href="#tabs-1">$statusTabName</a></li>
-				<li><a href="#tabs-2">$searchTabName</a></li>
-				<li><a href="#tabs-3">$dfgUploadTabName</a></li>
-				<li><a href="#tabs-4">$maintenanceTabName</a></li>
-				<li><a href="#tabs-5">$dfgSettingsTabName</a></li>
-				<li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
-				
-				
-			</ul>
-			<div id="tabs-1">$statusTabHtml</div>
-			<div id="tabs-2">$searchTabHtml</div>
-			<div id="tabs-3">$dfgUploadTabHtml</div>
-			<div id="tabs-4">$maintenanceTabHtml</div>
-			<div id="tabs-5">$dfgSettingsTabHtml</div>
-			<div id="tabs-6">$dfgLocalSettingsTabHtml</div>
+                <li><a href="#tabs-1">$statusTabName</a></li>
+                <li><a href="#tabs-2">$searchTabName</a></li>
+                <li><a href="#tabs-3">$dfgUploadTabName</a></li>
+                <li><a href="#tabs-4">$maintenanceTabName</a></li>
+                <li><a href="#tabs-5">$dfgSettingsTabName</a></li>
+                <li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
+                <li><a href="#tabs-7">$dfgServersTabName</a></li>
+                
+            </ul>
+            <div id="tabs-1">$statusTabHtml</div>
+            <div id="tabs-2">$searchTabHtml</div>
+            <div id="tabs-3">$dfgUploadTabHtml</div>
+            <div id="tabs-4">$maintenanceTabHtml</div>
+            <div id="tabs-5">$dfgSettingsTabHtml</div>
+            <div id="tabs-6">$dfgLocalSettingsTabHtml</div>
+            <div id="tabs-7">$dfgServersTabHtml</div>
 			
 			
 </div>
