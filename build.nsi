@@ -328,6 +328,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             File /oname=deployment\tools\unzip.exe deployment\tools\unzip.exe
             File /oname=deployment\tools\maintenance\export\7za.exe deployment\tools\maintenance\export\7za.exe
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
+            CopyFiles $INSTDIR\htdocs\mediawiki\deployment\config\settings.php $INSTDIR\htdocs\mediawiki\deployment
             !ifndef COMMUNITY_EDITION
                 File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
                 File /oname=extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe
@@ -535,7 +536,7 @@ Section "Solr" solr
     ${WriteToFile} "<?php$\r$\n$$solrIP='$IP';" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
     ;${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
     
-    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=startSolr.bat out=startSolr.bat noslash=true php-exe="$PHP" install-dir="$INSTDIR\solr\wiki"'
+    nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=startSolr.bat out=startSolr.bat noslash=true php-exe="$PHP" install-dir="$INSTDIR\solr\wiki" drive=true'
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\smwdb-data-config.xml" "$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\schema.xml" "$INSTDIR\solr\wiki\solr\conf\schema.xml"
     CopyFiles "$INSTDIR\htdocs\mediawiki\extensions\EnhancedRetrieval\SOLR\solrconfig.xml" "$INSTDIR\solr\wiki\solr\conf\solrconfig.xml"
