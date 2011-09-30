@@ -417,6 +417,10 @@ createContextMenu: function(contextMenuContainer, value, repr, name) {
 	
 	//Sets Focus on first Element
 	setTimeout("if ($('rel-name')) $('rel-name').focus();",250);
+
+  mw.loader.using('jquery.ui.draggable', function(){
+    jQuery('#contextmenu').draggable();
+  });
 	
 },
 

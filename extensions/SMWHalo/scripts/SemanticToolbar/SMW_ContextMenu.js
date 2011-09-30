@@ -17,7 +17,13 @@ initialize: function() {
                                     : 30;
                         // because of Ontoskin3 set zIndex at least to 30
                         if (zindex < 30) zindex = 30;
-			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
+			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar"><img src="'
+        + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/expanded-close.gif"/></div></div>';
+
+        var self = this;
+      jQuery('#topToolbar img').live('click', function(){
+        self.remove();
+      });
 			if ($('smwh_AAM'))
 //			    new Insertion.After($('smwh_AAM'), menu );
 			    new Insertion.After($('ontomenuanchor'), menu );
@@ -141,13 +147,13 @@ setPosition: function(posX,posY){
 		//Check if it fits left to the coordinates
 		if( posX < toolbarWidth){
 			// if not place it on the left side of the window
-			element.setStyle({right: '' });
+			element.setStyle({right: ''});
 			element.setStyle({left: '10px'});
 			
 		} else {
 			//if it fits position it left to the coordinates
 			var pos = width - posX;
-			element.setStyle({right: pos + 'px' });
+			element.setStyle({right: pos + 'px'});
 			element.setStyle({left: ''});
 		}
 	} else {
@@ -163,13 +169,13 @@ setPosition: function(posX,posY){
 		//Check if it fits top to the coordinates
 		if(posY < toolbarHeight){
 			// if not place it on the top side of the window	
-			element.setStyle({bottom: '' });
+			element.setStyle({bottom: ''});
 			element.setStyle({top: '10px'});
 			
 		} else {
 		var pos = window.innerHeight - posY;
 			//if it fits position it top to the coordinates
-			element.setStyle({bottom: pos + 'px' });
+			element.setStyle({bottom: pos + 'px'});
 			element.setStyle({top: ''});
 		}
 	}else {
