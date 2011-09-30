@@ -47,7 +47,6 @@ DataTypes.prototype = {
 	 */
 	initialize: function() {
 		this.builtinTypes = null;
-		this.userTypes = null;
 		this.callback = new Array();
 		this.refresh();
 		this.refreshPending = false;
@@ -65,19 +64,7 @@ DataTypes.prototype = {
 	getBuiltinTypes: function() {
 		return this.builtinTypes;
 	},
-	
-	/**
-	 * Returns the array of user defined types.
-	 * 
-	 * @return array<string> 
-	 * 			List of user defined types or <null> if there was no answer from
-	 * 			the server yet.
-	 *         
-	 */
-	getUserDefinedTypes: function() {
-		return this.userTypes;
-	},
-	
+		
 	/**
 	 * @public
 	 * 
@@ -89,9 +76,7 @@ DataTypes.prototype = {
 		if (callback) {
 			this.callback.push(callback);
 		}
-		if (this.builtinTypes && this.userTypes) {
-// Change request (Bug 7077): Do not update the user types every time they are
-// needed.
+		if (this.builtinTypes) {
 			for (var i = 0; i < this.callback.length; ++i) {
 				this.callback[i]();
 			}
@@ -101,9 +86,6 @@ DataTypes.prototype = {
 		}
 		if (!this.refreshPending) {
 			this.refreshPending = true;
-			sajax_do_call('smwf_tb_GetUserDatatypes', 
-			              [], 
-			              this.ajaxResponseGetDatatypes.bind(this));
 			if (!this.builtinTypes) {
 				this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
 				if (this.builtinTypes == null) {
@@ -129,21 +111,13 @@ DataTypes.prototype = {
 		}
 		var types = request.responseText.split(",");
 
-		if (types[0].indexOf("User defined types") >= 0) {
-			// received user defined types
-			this.userTypes = new Array(types.length-1);
-			for (var i = 1, len = types.length; i < len; ++i) {
-				this.userTypes[i-1] = types[i];
-			}
-		} else {
-			// received builtin types
-			this.builtinTypes = new Array(types.length-1);
-			for (var i = 1, len = types.length; i < len; ++i) {
-				this.builtinTypes[i-1] = types[i];
-			}
-			GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
+		// received builtin types
+		this.builtinTypes = new Array(types.length-1);
+		for (var i = 1, len = types.length; i < len; ++i) {
+			this.builtinTypes[i-1] = types[i];
 		}
-		if (this.userTypes && this.builtinTypes) {
+		GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
+		if (this.builtinTypes) {
 			
 			for (var i = 0; i < this.callback.length; ++i) {
 				this.callback[i]();

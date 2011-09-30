@@ -701,6 +701,9 @@ OBPendingIndicator.prototype = {
 	 */
 	showOn: function(element) {
 		container = element.offsetParent;
+		if (container === null) {
+			return;
+		}
 		$(container).insert({top: this.pendingIndicator});
 		var pOff = $(element).positionedOffset();
 		this.pendingIndicator.style.left = pOff[0]+"px";

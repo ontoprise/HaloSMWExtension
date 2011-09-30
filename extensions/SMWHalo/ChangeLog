@@ -4,6 +4,11 @@ VERSION 1.6.0
 	FEATURES:
 		15442 - Allow to specify a property that is displayed as label for the main result column	
 		15333 - Add stylesheet support to inline queries
+		
+	Bugfixes:
+		14108 - Auto-completion not as expected
+		15683 - AC in tagging floatbox does not propose range-instances
+		
 	
 
 VERSION 1.5.6
@@ -12,7 +17,7 @@ VERSION 1.5.6
 	CHANGES:
 	
 	BUGFIXES:
-		14752 - Fatal error from TSCNonExistingPage::getFile() when opening a .doc
+		14752 - Fatal error from LODNonExistingPage::getFile() when opening a .doc
 		15007 - Category annotation tool in STB does not allow slashes in 
 				category names
 		14827 - clicking outside an error message does not always close the error

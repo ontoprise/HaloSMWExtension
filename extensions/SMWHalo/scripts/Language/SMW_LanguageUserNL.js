@@ -90,8 +90,8 @@ window.wgUserLanguageStrings = {
 	'CREATE_SUB_PROPERTY'     : 'Creëer "$-title" en maak "$sftt" sub-eigenschap van "$-title"',
 	'MAKE_SUPER_PROPERTY'     : 'Maak "$sftt" super-eigenschap van "$-title"',
 	'MAKE_SUB_PROPERTY'       : 'Maak "$sftt" sub-eigenschap van "$-title"',
-	'ADD_TYPE'                : 'Add Type',
-	'ADD_RANGE'               : 'Add Range',
+	'ADD_RECORD_FIELD'        : 'Add property to record',
+	'ADD_DOMAIN_RANGE'        : 'Add domain and range',
 	'DOMAIN'                  : 'Domein:',
 	'RANGE'                   : 'Waardenbereik:',
 	'INVERSE_OF'              : 'Omgekeerde van:',
@@ -101,6 +101,9 @@ window.wgUserLanguageStrings = {
 	'RETRIEVING_DATATYPES'    : 'Datatypes worden opgevraagd...',
 	'TYPE'                    : 'Type:', //also used as namespace identifier with colon
 	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
+	'REMOVE_DOMAIN_RANGE'	  : 'Remove this domain and range',
+	'DUPLICATE_RECORD_FIELD'  : '(w)This property appears several times in the record. The order of annotated values will not be deterministic.',
+	
 	'PROPERTY_PROPERTIES'     : "Eigenschap karakteristieken",
 	'CATEGORY'                : "Categorie:",	//also used as namespace identifier with colon
 	'PROPERTY'                : "Eigenschap:",	//also used as namespace identifier with colon
@@ -111,9 +114,9 @@ window.wgUserLanguageStrings = {
 	'SPECIFY_PROPERTY'		  : "Specifieer deze eigenschap.",
 	'PC_DUPLICATE'			  : "Minstens één eigenschap werd verschillende keren gespecifieerd. Verwijder de duplicaten.",
 	'PC_HAS_TYPE'			  : "heeft type", 
-	'PC_HAS_FIELDS'			  : "has fields", // TODO: translate
-	'PC_MAX_CARD'			  : "Heeft max kardinaliteit",
-	'PC_MIN_CARD'			  : "Heeft min kardinaliteit",
+	'PC_HAS_FIELDS'			  : "Eigenschap", // TODO: translate
+	'PC_MAX_CARD'			  : "Max. kardinaliteit",
+	'PC_MIN_CARD'			  : "Min. kardinaliteit",
 	'PC_INVERSE_OF'			  : "Is het omgekeerde van", 
 	'PC_INVERSE'			  : "inverse", 
 	'PC_TRANSITIVE'			  : "transitive", 

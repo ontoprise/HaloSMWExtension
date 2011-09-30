@@ -90,8 +90,8 @@ window.wgUserLanguageStrings = {
     'CREATE_SUB_PROPERTY'     : 'Créer "$-title" et faire de "$sftt" une sous-propriété de "$-title"',
     'MAKE_SUPER_PROPERTY'     : 'Faire de "$sftt" une sur-propriété de  "$-title"',
     'MAKE_SUB_PROPERTY'       : 'Faire de "$sftt" une sous-propriété de "$-title"',
-    'ADD_TYPE'                : 'Add Type',
-    'ADD_RANGE'               : 'Add Range',
+	'ADD_RECORD_FIELD'        : 'Add property to record',
+	'ADD_DOMAIN_RANGE'        : 'Add domain and range',
     'DOMAIN'                  : 'Domaine:',
     'RANGE'                   : 'Champ de valeurs:',
     'INVERSE_OF'              : 'Inverse de:',
@@ -100,18 +100,20 @@ window.wgUserLanguageStrings = {
     'SYMMETRIC'               : 'Symétrique',
     'RETRIEVING_DATATYPES'    : 'Récupération des types de données...',
     'NARY_ADD_TYPES'          : '(e) Veuillez ajouter des types ou des champs de valeurs',
+	'REMOVE_DOMAIN_RANGE'	  : 'Remove this domain and range',
+	'DUPLICATE_RECORD_FIELD'  : '(w)This property appears several times in the record. The order of annotated values will not be deterministic.',
     
     'PROPERTY_PROPERTIES'     : "Charactéristiques de la propriété",
     
     
     'PAGE_TYPE'               : "page",     // name of the page data type
     'NARY_TYPE'               : "arité n",       // name of the n-ary data type
-    'SPECIFY_PROPERTY'        : "Spécifier cette porpriété.",
+    'SPECIFY_PROPERTY'        : "Spécifier cette propriété.",
     'PC_DUPLICATE'            : "Au moins une propriété est spécifiée plusieurs fois. Veuillez supprimer les doublons.",
     'PC_HAS_TYPE'             : "A pour type", 
-	'PC_HAS_FIELDS'			  : "has fields", //TODO: translate
-    'PC_MAX_CARD'             : "A pour cardinalité max",
-    'PC_MIN_CARD'             : "A pour cardinalité min",
+	'PC_HAS_FIELDS'			  : "Propriété", 
+    'PC_MAX_CARD'             : "Cardinalité max",
+    'PC_MIN_CARD'             : "Cardinalité min",
     'PC_INVERSE_OF'           : "Est l\'inverse de", 
     'PC_INVERSE'              : "inverse", 
     'PC_TRANSITIVE'           : "transitif", 

@@ -92,8 +92,8 @@ window.wgUserLanguageStrings = {
 	'CREATE_SUB_PROPERTY'     : 'Create "$-title" and make "$sftt" sub-property of "$-title"',
 	'MAKE_SUPER_PROPERTY'     : 'Make "$sftt" super-property of "$-title"',
 	'MAKE_SUB_PROPERTY'       : 'Make "$sftt" sub-property of "$-title"',
-	'ADD_TYPE'                : 'Add Type',
-	'ADD_RANGE'               : 'Add Range',
+	'ADD_RECORD_FIELD'        : 'Add property to record',
+	'ADD_DOMAIN_RANGE'        : 'Add domain and range',
 	'DOMAIN'                  : 'Domain:',
 	'RANGE'                   : 'Range:',
 	'INVERSE_OF'              : 'Inverse of:',
@@ -102,6 +102,8 @@ window.wgUserLanguageStrings = {
 	'SYMMETRIC'               : 'Symmetric',
 	'RETRIEVING_DATATYPES'    : 'Retrieving data types...',
 	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
+	'REMOVE_DOMAIN_RANGE'	  : 'Remove this domain and range',
+	'DUPLICATE_RECORD_FIELD'  : '(w)This property appears several times in the record. The order of annotated values will not be deterministic.',
 	
 	'PROPERTY_PROPERTIES'     : "Property Characteristics",
 	
@@ -111,9 +113,9 @@ window.wgUserLanguageStrings = {
 	'SPECIFY_PROPERTY'		  : "Specify this property.",
 	'PC_DUPLICATE'			  : "At least one property is specified several times. Please remove the duplicates.",
 	'PC_HAS_TYPE'			  : "has type", 
-	'PC_HAS_FIELDS'			  : "has fields", 
-	'PC_MAX_CARD'			  : "Has max cardinality",
-	'PC_MIN_CARD'			  : "Has min cardinality",
+	'PC_HAS_FIELDS'			  : "Property", 
+	'PC_MAX_CARD'			  : "Min. cardinality",
+	'PC_MIN_CARD'			  : "Max. cardinality",
 	'PC_INVERSE_OF'			  : "Is inverse of", 
 	'PC_INVERSE'			  : "inverse", 
 	'PC_TRANSITIVE'			  : "transitive", 
@@ -195,6 +197,7 @@ window.wgUserLanguageStrings = {
 	// Ontology browser
 	'OB_ID'					  : 'OntologyBrowser',
 	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
+	
 	'KS_NOT_SUPPORTED'        : 'Konqueror is not supported currently!',
 	'SHOW_INSTANCES'          : 'Show instances',
 	'HIDE_INSTANCES'          : 'Hide instances',

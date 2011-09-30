@@ -602,7 +602,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 */
 	initialCheck: function(target) {
 
-		var children = target.descendants();
+		var children = target.getElementsBySelector('[stbInteractiveElement="true"]');
 		
 		var elem;
 		for (var i = 0, len = children.length; i < len; ++i) {
@@ -623,6 +623,33 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 			}
 		}
 		this.doFinalCheck(elem);
+		
+	},
+	
+	/**
+	 * @public
+	 * Applies the checks on a certain target and its sub-elements.
+	 * 
+	 * @param {Object} target
+	 */
+	checkElement: function (target) {
+
+		var children = target.getElementsBySelector('[stbInteractiveElement="true"]');
+		if (target.readAttribute('stbInteractiveElement')) {
+			children.push(target);
+		}		
+		var elem;
+		for (var i = 0, len = children.length; i < len; ++i) {
+			elem = children[i];
+			if (!elem.visible()) {
+				continue;
+			}
+			if (this.checkIfEmpty(elem) == false
+				&& this.handleValidValue(elem)) {
+				this.handleCheck(elem);
+				this.handleAccessControl(target);
+			}
+		}
 		
 	},
 	
@@ -837,54 +864,56 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		}
 		
 		var allValidCndtl = parentDiv.getAttribute("smwAllValid");
-		if (allValidCndtl) {
-			var children = parentDiv.descendants();
-			
-			var allValid = true;
-			for (var i = 0, len = children.length; i < len; ++i) {
-				var elem = children[i];
-				var e = elem;
-				var visible = true;
-				while (e != parentDiv) {
-					if (!e.visible()) {
-						visible = false;
-						break;
-					}
-					e = e.up();
+		if (!allValidCndtl) {
+			return;
+		}
+		var children = parentDiv.getElementsBySelector('[smwValid]');
+		
+		var allValid = true;
+		for (var i = 0, len = children.length; i < len; ++i) {
+			var elem = children[i];
+			var valid = elem.getAttribute("smwValid");
+			if (!valid) {
+				continue;
+			}				
+			var e = elem;
+			var visible = true;
+			while (e != parentDiv) {
+				if (!e.visible()) {
+					visible = false;
+					break;
 				}
-				if (visible == false) {
-					continue;
-				}
-				var valid = elem.getAttribute("smwValid");
-				if (valid) {
-					if (valid == "false") {
-						allValid = false;
+				e = e.up();
+			}
+			if (visible == false) {
+				continue;
+			}
+			if (valid == "false") {
+				allValid = false;
 //						break;
-					} else if (valid != "true") {
-						// is the term a conditional?
-						var qPos = valid.indexOf('?');
-						var func = valid;
-						var cond = null;
-						if (qPos > -1) {
-							func = valid.substring(0, qPos);
-							cond = this.parseConditional(func, valid);
-						}
-						// call a function
-						valid = eval(func+'("'+elem.id+'")');
-						if (cond) {
-							this.performActions(valid ? cond[0] : cond[1], elem);
-						}
-						if (!valid) {
-							allValid = false;
+			} else if (valid != "true") {
+				// is the term a conditional?
+				var qPos = valid.indexOf('?');
+				var func = valid;
+				var cond = null;
+				if (qPos > -1) {
+					func = valid.substring(0, qPos);
+					cond = this.parseConditional(func, valid);
+				}
+				// call a function
+				valid = eval(func+'("'+elem.id+'")');
+				if (cond) {
+					this.performActions(valid ? cond[0] : cond[1], elem);
+				}
+				if (!valid) {
+					allValid = false;
 //							break;
-						}
-					}
 				}
 			}
-			
-			var c = this.parseConditional("allValid", allValidCndtl);
-			this.performActions(allValid ? c[0] : c[1], parentDiv);
 		}
+		
+		var c = this.parseConditional("allValid", allValidCndtl);
+		this.performActions(allValid ? c[0] : c[1], parentDiv);
 	},
 
 	/*

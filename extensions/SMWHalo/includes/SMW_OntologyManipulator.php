@@ -53,7 +53,6 @@ $wgAjaxExportList[] = 'smwf_om_getSuperCategories2';
 $wgAjaxExportList[] = 'smwf_om_CategoriesHandler';
 $wgAjaxExportList[] = 'smwf_om_RenameAndMoveCategory';
 
-
 /**
  * Creates a new article or appends some text if it already
  * exists. This function is invoked by an ajax call.
@@ -447,6 +446,9 @@ function smwf_om_IsRedirect(Title $title) {
  *                                                      value is  missing
  *		- rangeCategories (array): The categories of each page value of the property
  *      - relationSchema (array): The type IDs for each type of the property values
+ *      - recordProperties (array): Empty, if the property is NOT a record. Otherwise
+ *      						the name of each property in the record and if a
+ *      						page for this property exists ("true" or "false")
  *
  */
 function smwf_om_MultipleRelationInfo($relations) {
@@ -468,9 +470,10 @@ function smwf_om_MultipleRelationInfo($relations) {
 		$relDescr->accessGranted = smwf_om_userCan($relDescr->name, $relDescr->accessRequest);
 
 		// Check if values of the relation are valid pages
-		list($relSchema, $categories) = $relDescr->relationExists === 'true'
-		? smwf_om_getRelationSchema($relDescr->name)
-		: array(array('_wpg'), array(null));
+		list($relSchema, $categories, $recordProperties) 
+			= $relDescr->relationExists === 'true'
+								? smwf_om_getRelationSchema($relDescr->name)
+								: array(array('_wpg'), array(null), array());
 		// Store for each value of the property if it is the name of an article
 		// and if it exists. This is encoded as follows:
 		// "exists"  => Value is an existing page
@@ -493,9 +496,17 @@ function smwf_om_MultipleRelationInfo($relations) {
 				$valuePageInfo[] = "missing type info";
 			}
 		}
+		
+		$recProp = array();
+		foreach ($recordProperties as $propName => $propExists) {
+			$recProp[] = $propName;
+			$recProp[] = $propExists;
+		}
+		
 		$relDescr->valuePageInfo = $valuePageInfo;
 		$relDescr->rangeCategories = $categories;
 		$relDescr->relationSchema = $relSchema;
+		$relDescr->recordProperties = $recProp;
 		$results[] = $relDescr;
 	}
 
@@ -647,83 +658,84 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	
 	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
 	
-	$newType = strip_tags($newType);
-	if ($newType == '') return "false";
+    $newType = strip_tags($newType);
+    if ($newType == '') return "false";
 
-	if (smwf_om_userCan($pagename, 'move') === "false") {
-		return "false,denied,$pagename";
-	}
-	
+    if (smwf_om_userCan($pagename, 'move') === "false") {
+        return "false,denied,$pagename";
+    }
+    
 
-	$titleObj = Title::newFromText($pagename);
-	$article = new Article($titleObj);
-	$text = $article->getContent();
+    $titleObj = Title::newFromText($pagename);
+    $article = new Article($titleObj);
+    $text = $article->getContent();
 
-	global $smwgHaloContLang;
-	$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-	$hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
+    global $smwgHaloContLang;
+    $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+    $hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
 
-	// Replace "Has domain range range" annotations
-	$oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
-	if ($oldRange != '') {
-		$oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
-		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
-		if ($newRange != '') {
-			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-		} else {
-			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-		}
-	} else {
-		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
-		if ($newRange != '') {
-			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-		} else {
-			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-		}
-	}
+    // Replace "Has domain range range" annotations
+    $oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
+    if ($oldRange != '') {
+        $oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
+        if ($newRange != '') {
+            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+        } else {
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+        }
+    } else {
+        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
+        if ($newRange != '') {
+            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+        } else {
+            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+        }
+    }
 
-	if (preg_match($search, $text) === 0) {
-		// replacement does not yet exist, so add it simply
-		$text .= "\n$replace";
-	} else {
-		$text = preg_replace($search, $replace, $text);
-	}
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
 
-	// Replace "has type" annotations
-	global $smwgContLang;
-	$propertyLabels = $smwgContLang->getPropertyLabels();
-	
-	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
+    // Replace "has type" annotations
+    global $smwgContLang;
+    $propertyLabels = $smwgContLang->getPropertyLabels();
+    
+    $search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
 	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
 	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
 
-	if (preg_match($search, $text) === 0) {
-		// replacement does not yet exist, so add it simply
-		$text .= "\n$replace";
-	} else {
-		$text = preg_replace($search, $replace, $text);
-	}
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
 
 
-	// Replace "has min cardinality" annotations
-	$hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
-	$search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
-	$replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
-	if (preg_match($search, $text) === 0) {
-		// replacement does not yet exist, so add it simply
-		$text .= "\n$replace";
-	} else {
-		$text = preg_replace($search, $replace, $text);
-	}
+    // Replace "has min cardinality" annotations
+    $hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
+    $search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
+    $replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
+    if (preg_match($search, $text) === 0) {
+        // replacement does not yet exist, so add it simply
+        $text .= "\n$replace";
+    } else {
+        $text = preg_replace($search, $replace, $text);
+    }
 
-	if ($article->exists()) {
-		$reason = '';
-		$article->doEdit($text, $reason);
-	}
-	return $text;
+    if ($article->exists()) {
+        $reason = '';
+        $article->doEdit($text, $reason);
+    }
+    return $text;
 }
+
 
 /**
  * Rename an article. This function is invoked by an ajax call.
@@ -1043,8 +1055,7 @@ function smwf_om_getDomainProperties($categoryNames) {
  * @return:
  * 	 An array of Title objects
  */
- 
- function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
 	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
 	if($asTree){
 		$superCategoryTitles[$categoryTitle->getText()] = array();
@@ -1053,7 +1064,7 @@ function smwf_om_getDomainProperties($categoryNames) {
 		if($asTree){
 			$superCategoryTitles[$categoryTitle->getText()] =
 			smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-		 } else {
+		} else {
 			$superCategoryTitles[$dSCT->getText()] = $dSCT;
 			$superCategoryTitles = smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
@@ -1134,70 +1145,62 @@ function smwf_om_RenameAndMoveCategory($categoryTitle,$newpagename, $reason, $us
 function smwf_om_getRelationSchema($relationName) {
 	// get type definition (if it exists)
 	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-	$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
+	$relationDI = SMWDIWikiPage::newFromTitle($relationTitle);
+	$hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
+	
+	$type = smwfGetStore()->getPropertyValues($relationDI, $hasTypeDI);
 
 	// if no 'has type' annotation => normal binary relation
 	if (count($type) == 0) {
 		// return binary schema with the default type 'page'
 		$relSchema = array('_wpg');
 		$categories = array(null);
-		return array($relSchema, $categories);
+		$recordProperties = array();
+		return array($relSchema, $categories, $recordProperties);
 	}
 	$type = array_values($type);
-	$typeLabels = $type[0]->getTypeLabels();
-	$typeValues = $type[0]->getTypeValues();
 	$relSchema = array();
 	$categories = array();
+	$recordProperties = array();
 
-	if (!($type[0] instanceof SMWTypesValue)) {
-		return array($relSchema, $categories);
+	if (!($type[0] instanceof SMWDIUri)) {
+		return array($relSchema, $categories, $recordProperties);
 	}
 
-	// Get category names for page values
-	$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
-	$rangeHints = smwfGetStore()->getPropertyValues($relationTitle,	$domainRangeProperty);
-	$rangeHints = array_values($rangeHints);
-
-	if ($type[0]->getDBkey() == '_rec') {
-		// This is an n-ary property
-		// => the property "has fields" contains the actual types
-		$fieldsProp = SMWPropertyValue::makeProperty("_LIST");
-		$fields = smwfGetStore()->getPropertyValues($relationTitle, $fieldsProp);
-		$fields = array_values($fields);
-		$typeValues = $fields[0]->getTypeValues();
-		foreach ($typeValues as $tv) {
-			$relSchema[] = $tv->getDBkey();
+	if ($type[0]->getFragment() == '_rec') {
+		// This is a record (an n-ary property)
+		// => the property "has fields" contains properties
+		$fieldsProp = SMWDIProperty::newFromUserLabel("_LIST");
+		$fields = smwfGetStore()->getPropertyValues($relationDI, $fieldsProp);
+		$fields = array_keys($fields);
+		// get the names of all properties in record
+		$recordProperties = explode(';',$fields[0]);
+		
+		// get the types of all record properties and their range categories
+		global $wgContLang;
+		$relPageExists = array();
+		$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
+		foreach ($recordProperties as $recProp) {
+			$exists = smwf_om_ExistsArticle($propPrefix.$recProp);
+			$relPageExists[] = $exists;
+			list($recPropSchema, $recPropCategories) = $exists === 'true'
+									? smwf_om_getRelationSchema($recProp)
+									: array(array('_wpg'), array(NULL));
+			$relSchema[] = $recPropSchema[0];
+			$categories[] = $recPropCategories[0];
 		}
-
-		// Assign the range hints to array $categories
-		$i = 0;
-		foreach ($relSchema as $valueType) {
-			$cat = null;
-			if ($valueType == '_wpg' && count($rangeHints) > $i) {
-				$dvs = $rangeHints[$i]->getDVs();
-				if ($dvs[1] !== NULL) {
-					$cat = htmlspecialchars($dvs[1]->getTitle()->getText());
-				}
-				++$i;
-			}
-			$categories[] = $cat;
-		}
-			
+		$recordProperties = array_combine($recordProperties, $relPageExists);
 	} else {
 		// A simple property
-		$relSchema[] = $type[0]->getDBkey();
-		$cat = null;
-		if ($relSchema[0] == '_wpg') {
-			if (count($rangeHints) > 0) {
-				$dvs = $rangeHints[0]->getDVs();
-				if ($dvs[1] !== NULL) {
-					$cat = htmlspecialchars($dvs[1]->getTitle()->getText());
-				}
-			}
+		$store = smwfGetSemanticStore();
+		$cats = $store->getRangeCategories($relationTitle);
+		$relSchema[] = $type[0]->getFragment();
+		if (count($cats) > 0) {
+			$categories[] = htmlspecialchars($cats[0]->getText());
+		} else {
+			$categories[] = NULL;
 		}
-		$categories[] = $cat;
 	}
-	return array($relSchema, $categories);
+	return array($relSchema, $categories, $recordProperties);
 
 }

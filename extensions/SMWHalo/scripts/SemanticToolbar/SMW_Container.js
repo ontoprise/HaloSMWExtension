@@ -152,6 +152,7 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
 			'<input class="' + ac + ' stb-delinput ' + this.id + '-delinput" ' +
             'id="'+ id + '" ' +
             attributes + 
+			' stbInteractiveElement="true"' +
             ' type="text" ' +
             ' alignfloater="right" ' +
             'value="' + initialContent + '" '+
@@ -167,6 +168,7 @@ createInput: function(id, description, initialContent, deleteCallback, attribute
 			'<input class="' + ac + ' stb-input ' + this.id + '-input" ' +
 			'id="'+ id + '" '+
 			attributes + 
+			' stbInteractiveElement="true"' +
 			' type="text" ' +
             ' alignfloater="right" ' +
             'value="' + initialContent + '" '+
@@ -214,11 +216,30 @@ createDropDown: function(id, description, options, deleteCallback, selecteditem,
  				//Selectbox
  				'<td class="stb-select-col2 ' + this.id + '-select-col2">';
 	//if deletable change classes
-	if(deleteCallback){
-		containercontent += '<select class="stb-delselect ' + this.id + '-delselect" id="' + id + '"  ' + attributes + ' tabindex="'+ this.lastindex++ +'">';
-		 	
+	if (deleteCallback) {
+		containercontent += 
+			'<select class="stb-delselect ' + 
+				this.id + 
+				'-delselect" id="' + 
+				id + 
+				'"  ' + 
+				attributes + 
+				' stbInteractiveElement="true"' +
+				' tabindex="' + 
+				this.lastindex++ + 
+			'">';
 	} else {
- 		containercontent += '<select class="stb-select ' + this.id + '-select" id="' + id + '"  ' + attributes + ' tabindex="'+ this.lastindex++ +'">';
+ 		containercontent += 
+			'<select class="stb-select ' + 
+				this.id + 
+				'-select" id="' + 
+				id + 
+				'"  ' + 
+				attributes + 
+				' stbInteractiveElement="true"' +
+				' tabindex="' + 
+				this.lastindex++ +
+			'">';
  	}
 	//Generate Options from the aray				
 	for( var i = 0; i < options.length; i++ ){
@@ -277,7 +298,10 @@ createRadio: function(id, description, options, selecteditem, attributes, visibi
 			'</tr><tr>'+
  				//Radiobuttons
  				'<td class="stb-radio-col2 ' + this.id + '-radio-col2">' +
-					'<form class="stb-radio ' + this.id + '-radio" id="'+ id +'"  ' + attributes + ' tabindex="'+ this.lastindex++ +'">';
+					'<form class="stb-radio ' + this.id + '-radio" id="'+ id +
+						'"  ' + attributes + 
+						' stbInteractiveElement="true"' +
+						' tabindex="'+ this.lastindex++ +'">';
 	
 	//Generate Options from the aray				
 	for( var i = 0; i < options.length; i++ ){
@@ -332,7 +356,11 @@ createCheckBox: function(id, description, options, selecteditems, attributes, vi
 			'</tr><tr>'+
  				//checkboxes
  				'<td class="stb-checkbox-col2 ' + this.id + '-checkbox-col2">' +
-					'<form class="stb-checkbox ' + this.id + '-checkbox" id="' + id +'"  ' + attributes + '>';
+					'<form class="stb-checkbox ' + this.id + 
+						'-checkbox" id="' + id +'"  ' + 
+						attributes + 
+						' stbInteractiveElement="true"' +
+					'>';
 	
 	//Generate Options from the aray				
 	for( var i = 0; i < options.length; i++ ){
@@ -430,6 +458,29 @@ createText: function(id, description, attributes ,visibility){
 				'</td>' +
  			'</tr>' +
  			'</table>';
+			
+	return containercontent;
+
+},
+
+/**
+ * @public
+ * 
+ * Creates a horizontal line.
+ * 
+ * @param string id
+ * 		id of the element
+ * @param string attributes
+ *		attributes which will be passed to the specific element
+ * @param boolean visibility
+ * 		if false the element will be visible initially
+ */
+createHorizontalLine: function(id, attributes ,visibility){
+		
+	var containercontent = 
+		'<hr class="stb-horizontal-line" ' +
+			(visibility ? '' : 'style="display:none;"')  + 
+			'id="' + this.id + '-table-' + id +'" ' + attributes + ' />';
 			
 	return containercontent;
 
@@ -608,6 +659,28 @@ remove: function(element){
 },
 
 /**
+ * @public
+ * Returns all children of this container whose ID matches the given regular
+ * expression.
+ * 
+ * @param {RegExp} idRegex
+ * 		A regular expression that describes the IDs
+ * @return {array}
+ * 		An array of extended elements matching the reg exp.
+ */
+getElementsWithID: function (idRegex) {
+	var desc = $(this.id + '-box').descendants();
+	var elems = [];
+	for (var i = 0, len = desc.length; i < len; ++i) {
+		var id = desc[i].readAttribute('id');
+		if (id && id.match(idRegex)) {
+			elems.push(desc[i]);
+		}
+	}
+	return elems;
+},
+
+/**
  * @public Checks all child nodes for the attribute tabindex and rebuilt the correct order
  * 
  * @param object rootnode 
@@ -723,7 +796,7 @@ show: function(id, visibility){
  * 		true, if the element is visible and
  * 		false otherwise
  */
- isVisible: function(id) {
+isVisible: function(id) {
 	var obj = $(this.id + '-table-' + id);
 	if (!obj) {
 		obj = $(id);
@@ -731,6 +804,20 @@ show: function(id, visibility){
 	return (obj) ? obj.visible() : false;
  	
  },
+ 
+ /**
+  * Checks if an element with the given "id" exists.
+  * 
+  * @param {String} id
+  * 	Element-ID to check
+  * @return {bool}
+  * 	true, the element exists
+  * 	false, the element does not exist
+  */
+existsElement: function (id) {
+ 	var obj = $(this.id + '-table-' + id);
+	return obj !== null;
+},
  
 /**
  * This function must be called after the last element has been added or after

@@ -848,11 +848,16 @@ a.menulink{
  * the last class defined in this css-file will dominate
  *
  */
-/* input */
+/* table */
 .stb-table{
     width: 100%;
 }
 
+/* horizontal line */
+.stb-horizontal-line {
+	margin:    0px;
+	background-color: lightgray;
+}
 
 /* input */
 .stb-input{
