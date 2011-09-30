@@ -45,6 +45,7 @@ $smwgHaloStyleVersion= '?'.$smwgHaloStyleVersion;
 
 //Disable default mediawiki autocompletion, so it does not interfere with the mw one
 $wgEnableMWSuggest = false;
+$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 
 // include SMWTSC (which is actually a real separate extension)
 require_once("$smwgHaloIP/smwtsc/SMWTSC.php");
@@ -66,7 +67,7 @@ function enableSMWHalo() {
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 
-	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
+	
 	$smwgOWLFullExport = true;
 
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
@@ -135,7 +136,7 @@ function smwgHaloSetupExtension() {
 	$smwgMasterGeneralStore = NULL;
 
 	// Autoloading. Use it for everything! No include_once or require_once please!
-
+    $wgAutoloadClasses['SMWStoreAdapter'] = $smwgHaloIP . '/includes/SMW_SMWStoreAdapter.php';
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_AdvRequestOptions.php';
 	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
 	$wgAutoloadClasses['SMWFancyTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_FancyTable.php';

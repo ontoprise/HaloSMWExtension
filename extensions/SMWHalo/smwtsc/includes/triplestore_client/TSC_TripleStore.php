@@ -40,14 +40,9 @@ require_once( "TSC_Helper.php" );
  * @author: Kai
  */
 
-class SMWTripleStore extends SMWStore {
+class SMWTripleStore extends SMWStoreAdapter {
     
-	/**
-	 * Wrapped SMWStore implementation
-	 * 
-	 * @var SMWStore
-	 */
-    private $smwstore;
+	
     
 	/**
 	 * Collects semantic data which is not covered by SMW
@@ -63,12 +58,7 @@ class SMWTripleStore extends SMWStore {
 	 */
 	protected $tsNamespace;
 
-	/**
-	 * Indicates if a request should be handled via the local store.
-	 *
-	 * @var string
-	 */
-	protected $localRequest;
+	
 
 	
 
@@ -84,43 +74,11 @@ class SMWTripleStore extends SMWStore {
 
 	}
 
-	public function setLocalRequest($local) {
-		$this->localRequest = $local;
-	}
+	
 	
 
 
-	///// Reading methods /////
-	// delegate to default implementation
-
-	function getSemanticData(SMWDIWikiPage $subject, $filter = false) {
-		return $this->smwstore->getSemanticData($subject, $filter);
-	}
-
-
-	function getPropertyValues($subject, SMWDIProperty $property, $requestoptions = NULL) {
-		return $this->smwstore->getPropertyValues($subject, $property, $requestoptions);
-	}
-
-	function getPropertySubjects(SMWDIProperty $property, $value, $requestoptions = NULL) {
-		return $this->smwstore->getPropertySubjects($property, $value, $requestoptions);
-	}
-
-	function getAllPropertySubjects(SMWDIProperty $property, $requestoptions = NULL) {
-		return $this->smwstore->getAllPropertySubjects($property, $requestoptions);
-	}
-
-	function getProperties(SMWDIWikiPage $subject, $requestoptions = NULL) {
-		return $this->smwstore->getProperties($subject, $requestoptions);
-	}
-
-	function getInProperties(SMWDataItem $object, $requestoptions = NULL) {
-		return $this->smwstore->getInProperties($object, $requestoptions);
-	}
-
-	function getSMWPropertyID(SMWDIProperty $property) {
-		return $this->smwstore->getSMWPropertyID($property);
-	}
+	
 
 	///// Writing methods /////
 
@@ -697,30 +655,8 @@ class SMWTripleStore extends SMWStore {
 		}
 	}
 
-	///// Special page functions /////
-	// delegate to default implementation
-	function getPropertiesSpecial($requestoptions = NULL) {
-		return $this->smwstore->getPropertiesSpecial($requestoptions);
-	}
-
-	function getUnusedPropertiesSpecial($requestoptions = NULL) {
-		return $this->smwstore->getUnusedPropertiesSpecial($requestoptions);
-	}
-
-	function getWantedPropertiesSpecial($requestoptions = NULL) {
-		return $this->smwstore->getWantedPropertiesSpecial($requestoptions);
-	}
-
-	function getStatistics() {
-		return $this->smwstore->getStatistics();
-	}
 
 	///// Setup store /////
-
-	function setup($verbose = true) {
-		$this->smwstore->setup($verbose);
-
-	}
 
 	function initialize($verbose = true) {
 
@@ -734,30 +670,6 @@ class SMWTripleStore extends SMWStore {
 
 		}
 	}
-
-
-	function drop($verbose = true) {
-		$this->smwstore->drop($verbose);
-	}
-
-	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
-		$this->smwstore->refreshData($index, $count, $namespaces, $usejobs);
-	}
-
-	public function getSMWPageID($title, $namespace, $iw, $canonical=true) {
-		return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
-	}
-
-	public function cacheSMWPageID($id, $title, $namespace, $iw) {
-		return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw);
-	}
-
-
-	public function getSMWPageIDandSort( $title, $namespace, $iw, &$sort, $canonical ) {
-		return $this->smwstore->getSMWPageIDandSort($title, $namespace, $iw, $sort, $canonical);
-	}
-
-
 
 	/**
 	 * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
