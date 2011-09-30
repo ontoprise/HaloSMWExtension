@@ -487,6 +487,8 @@ clicking the big arrows between the columns.',
 
 	var $smwSpecialSchemaProperties = array (
 	SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT => 'Has domain and range',
+	SMW_SSP_HAS_DOMAIN => 'Has domain',
+    SMW_SSP_HAS_RANGE => 'Has range',
 	SMW_SSP_HAS_MAX_CARD => 'Has max cardinality',
 	SMW_SSP_HAS_MIN_CARD => 'Has min cardinality',
 	SMW_SSP_IS_INVERSE_OF => 'Is inverse of',
@@ -521,8 +523,8 @@ clicking the big arrows between the columns.',
 		SMW_NS_RELATION_TALK  => 'Relation_talk',
 		SMW_NS_PROPERTY       => 'Property',
 		SMW_NS_PROPERTY_TALK  => 'Property_talk',
-		SMW_NS_TYPE           => 'Type',
-		SMW_NS_TYPE_TALK      => 'Type_talk'
+		SMW_NS_TYPE           => 'Type', // @deprecated
+		SMW_NS_TYPE_TALK      => 'Type_talk' // @deprecated
 		);
 	}
 
