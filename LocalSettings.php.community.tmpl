@@ -160,8 +160,10 @@ $wgGroupPermissions['*']['edit']=false;
 
 $wgGroupPermissions['user']['annotate']=true;
 $wgGroupPermissions['user']['edit']=true;
-$wgGroupPermissions['user']['wysiwyg']=false;
-$wgGroupPermissions['user']['move']=false;
+$wgGroupPermissions['user']['wysiwyg']=true;
+$wgGroupPermissions['user']['move']=true;
+$wgGroupPermissions['user']['ontologyediting'] = true; 
+$wgGroupPermissions['user']['delete'] = true; 
 
 $wgGroupPermissions['sysop']['wysiwyg']=true;
 $wgGroupPermissions['sysop']['userrights']=true;
