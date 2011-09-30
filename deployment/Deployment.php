@@ -7,6 +7,10 @@ $smwgDFIP = $IP . '/deployment';
 
 // read settings.php
 
+if(!file_exists($smwgDFIP.'/settings.php')) {
+    echo "settings.php not found! Forgot to copy it from config/settings.php?";
+    die();
+}
 require_once("$smwgDFIP/settings.php");
 
 
