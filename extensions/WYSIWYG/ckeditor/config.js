@@ -10,7 +10,7 @@ if (!String.prototype.InArray) {
                     return true;
             }
             return false;
-	}
+	};
 }
 
 CKEDITOR.editorConfig = function( config )
@@ -20,8 +20,8 @@ CKEDITOR.editorConfig = function( config )
 	// config.uiColor = '#AADC6E';
     var showTbButton = (typeof window.parent.wgCKEditorHideDisabledTbutton == 'undefined');
     
-    CKEDITOR.plugins.addExternal( 'mediawiki', CKEDITOR.basePath + 'plugins/mediawiki/' );
-    CKEDITOR.plugins.addExternal( 'mwtemplate', CKEDITOR.basePath + 'plugins/mwtemplate/' );
+//    CKEDITOR.plugins.addExternal( 'mediawiki', CKEDITOR.basePath + 'plugins/mediawiki/' );
+//    CKEDITOR.plugins.addExternal( 'mwtemplate', CKEDITOR.basePath + 'plugins/mwtemplate/' );
     
     // Remove the link plugin because it's replaced with the mediawiki plugin
     //CKEDITOR.config.plugins = CKEDITOR.config.plugins.replace( /(?:^|,)link(?=,|$)/, '' );
@@ -35,7 +35,7 @@ CKEDITOR.editorConfig = function( config )
     var qiButton, stbButton;
     if ( ('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
         CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
+//        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
         extraPlugins += ",smw_qi,smwtoolbar";
         qiButton = 'SMWqi';
         stbButton = 'SMWtoolbar';
@@ -81,7 +81,6 @@ CKEDITOR.editorConfig = function( config )
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
-    config.resize_dir = 'vertical';
     config.language = window.parent.wgUserLanguage || 'en';
 
     config.WikiSignature = '--~~~~';
@@ -93,9 +92,11 @@ CKEDITOR.editorConfig = function( config )
    
     //remove unnecessary plugins
     //list style is not preserved in wikitext
-    config.removePlugins = 'liststyle';
+//    config.removePlugins = 'liststyle';
     
       //don't remove empty format elements when loading HTML
     CKEDITOR.dtd.$removeEmpty['span'] = 0
+
     
+
 };

@@ -9,7 +9,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 
 CKEDITOR.plugins.add( 'mediawiki',
-{
+{    
     requires : [ 'fakeobjects', 'htmlwriter', 'dialog', 'ajax' ],
     init : function( editor )
     {                
@@ -231,6 +231,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                         case 'fck_mw_gallery' :
                             className = 'FCK__MWGallery';                       
                             result = editor.createFakeParserElement( element, className, 'span' );
+                            break;
                         case 'fck_mw_signature' :
                             className = 'FCK__MWSignature';
                             result = editor.createFakeParserElement( element, className, 'span' );
@@ -240,15 +241,15 @@ CKEDITOR.plugins.add( 'mediawiki',
                             result = editor.createFakeParserElement( element, className, 'span' );
                             break;                            
                         case 'fck_smw_webservice' :
-                            className = 'FCK__SMWwebservice'
+                            className = 'FCK__SMWwebservice';
                             result = editor.createFakeParserElement( element, className, 'span' );
                             break;
                         case 'fck_smw_rule' :
-                            className = 'FCK__SMWrule'
+                            className = 'FCK__SMWrule';
                             result = editor.createFakeParserElement( element, className, 'span' );
                             break;
                         default:
-                            result = element
+                            result = element;
                             break;
                     }
                     return result;
@@ -258,6 +259,9 @@ CKEDITOR.plugins.add( 'mediawiki',
 
         var dataProcessor = editor.dataProcessor = new CKEDITOR.customprocessor( editor );
         dataProcessor.dataFilter.addRules( wikiFilterRules );
+
+        //fix: when this script is minified quotes are stripped from 'SMW_HALO_VERSION' string
+        var SMW_HALO_VERSION = 'SMW_HALO_VERSION';
 
         var signatureCommand =
         {
@@ -271,7 +275,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         };
 
         // language logic for additional messages
-        var MWpluginLang = []
+        var MWpluginLang = [];
         MWpluginLang['en'] = {
             invalidContent  : 'invalid content',
             searching       : 'searching...',
@@ -306,7 +310,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             defineTarget    : 'Define the wiki page for the link target:',
             chooseTarget    : 'Choose an existing wikipage for the link target:',
             imgLinkLabel    : 'Target page or URL'
-        }
+        };
 
         MWpluginLang['de'] = {
             invalidContent  : 'invalid content',
@@ -342,7 +346,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             anchorLink      : 'anchor link... es wird nicht danach gesucht',
             defineTarget    : 'Definiere eine Wikiseite als Linkziel:',
             chooseTarget    : 'Wähle eine existierende Wikiseite als Linkziel:'
-        }
+        };
+        
         if (typeof MWpluginLang[editor.langCode] != 'undefined' )
             editor.lang.mwplugin = MWpluginLang[editor.langCode];
         else
@@ -371,7 +376,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         editor.addCommand( 'MWSignature', signatureCommand);    
         
         // if SMWHalo is installed use smw image and link dialogs
-        if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+        if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
             editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
             CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
             editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
@@ -401,7 +406,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                     element.getAttribute( 'class' ).InArray( [
                         'FCK__MWSpecial',
                         'FCK__MWMagicWord',
-                        'FCK__MWNowiki',
+                        'FCK__MWNowiki'
 //                        'FCK__MWIncludeonly',
 //                        'FCK__MWNoinclude',
 //                        'FCK__MWOnlyinclude'
@@ -416,7 +421,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         {
             var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
             if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){
-                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
+                if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
                     evt.data.dialog = 'MWLink';
                 }
                 else{
@@ -424,7 +429,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 }
             }
             else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){
-                if (('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)){                
+                if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
                     evt.data.dialog = 'MWImage';
                 }
                 else{
@@ -435,7 +440,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 element.getAttribute( 'class' ).InArray( [
                     'FCK__MWSpecial',
                     'FCK__MWMagicWord',
-                    'FCK__MWNowiki',
+                    'FCK__MWNowiki'
 //                    'FCK__MWIncludeonly',
 //                    'FCK__MWNoinclude',
 //                    'FCK__MWOnlyinclude',
@@ -490,7 +495,8 @@ CKEDITOR.ajax.loadPost = function( url, params, callback )
                             }
                     };
             }
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.send(params);
 
             return async ? '' : xhr.responseText;
@@ -505,7 +511,7 @@ CKEDITOR.ajax.loadHalo = function(func_name, args, target){
     //build url
     var uri = wgServer + wgScriptPath + "/index.php?action=ajax";
     var params = '&rs=' + encodeURIComponent(func_name);
-    for(i = 0; i < args.length; i++){
+    for(var i = 0; i < args.length; i++){
         params += '&rsargs[]=' + encodeURIComponent(args[i]);
     }    
 
@@ -539,7 +545,7 @@ CKEDITOR.customprocessor.prototype =
         // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
         var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife)[^>]*\s*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
-        if (data.indexOf('<p>') != 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
+        if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
             data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
         }
         //replace only "fcklr" which are not preceded by "<br "
@@ -582,11 +588,11 @@ CKEDITOR.customprocessor.prototype =
 //        data = '<body xmlns:x="http://excel">' + data.htmlEntities()+ '</body>';
         data = '<body xmlns:x="http://excel">' + data + '</body>';
         // fix <img> tags
-        data = data.replace(/(<img[^>]*)([^/])>/gi, '$1$2/>' );
+        data = data.replace(/(<img[^>]*)([^\/])>/gi, '$1$2/>' );
         // fix <hr> and <br> tags
         data = data.replace(/<(hr|br)>/gi, '<$1/>' );
         // and the same with attributes
-        data = data.replace(/<(hr|br)([^>]*)([^/])>/gi, '<$1$2$3/>' );
+        data = data.replace(/<(hr|br)([^>]*)([^\/])>/gi, '<$1$2$3/>' );
         // remove some unncessary br tags that are followed by a </p> or </li>
         data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
         // also remove <br/> before nested lists
@@ -620,7 +626,7 @@ CKEDITOR.customprocessor.prototype =
         var xmlDoc = '';
         if (window.DOMParser)
         {
-            parser=new DOMParser();
+            var parser=new DOMParser();
             xmlDoc=parser.parseFromString(data,"text/xml");
         }
         else // Internet Explorer
@@ -762,7 +768,7 @@ CKEDITOR.customprocessor.prototype =
                                 this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix);
                                 return;
                             }
-                        } catch (e) {};
+                        } catch (e) {}
                     }
 
                     if ( ( basicElement[0] == "''" || basicElement[0] == "'''" ) && stringBuilder.length > 2 ){
@@ -869,12 +875,12 @@ CKEDITOR.customprocessor.prototype =
                             var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || '';
 
                             // this is still the old style, thats used in the parser (should be fixed soon)
-                            if ( href == null ) {
+                            if (!href) {
                                 href = htmlNode.getAttribute( '_fcksavedurl' );
                                 hrefType = htmlNode.getAttribute( '_fck_mw_type' ) || '';
                             }
 
-                            if ( href == null ) {
+                            if (!href) {
                                 href = htmlNode.getAttribute( 'href' ) || '';
                             }
 							
@@ -903,7 +909,7 @@ CKEDITOR.customprocessor.prototype =
                                 stringBuilder.push( '[[' );
                                 isWikiUrl = true;
                             } else {
-                                isWikiUrl = !( href.StartsWith( 'mailto:' ) || /^\w+:\/\//.test( href ) || /\{\{[^\}]*\}\}/.test( href ) );
+                                isWikiUrl = !( href.StartsWith( 'mailto:' ) || (/^\w+:\/\//.test( href )) || (/\{\{[^\}]*\}\}/.test( href )) );
                                     stringBuilder.push( isWikiUrl ? '[[' : '[' );
                                 }
                                 // #2223
@@ -924,7 +930,7 @@ CKEDITOR.customprocessor.prototype =
                                 }
                                 if ( isWikiUrl ) href = decodeURIComponent(href);
                                 stringBuilder.push( href );
-                                var innerHTML = this._GetNodeText(htmlNode) 
+                                var innerHTML = this._GetNodeText(htmlNode);
                                 if ( pipeline && innerHTML != '[n]' && ( !isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
                                     stringBuilder.push( isWikiUrl? '|' : ' ' );
                                     this._AppendChildNodes( htmlNode, stringBuilder, prefix );
@@ -936,7 +942,7 @@ CKEDITOR.customprocessor.prototype =
                             case 'dl' :
 
                                 this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-                                var isFirstLevel = !htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dd', 'dt' );
+                                isFirstLevel = !htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dd', 'dt' );
                                 if ( isFirstLevel && stringBuilder[ stringBuilder.length - 1 ] != "\n" )
                                     stringBuilder.push( '\n' );
 
@@ -945,7 +951,7 @@ CKEDITOR.customprocessor.prototype =
                             case 'dt' :
 
                                 if( stringBuilder.length > 1 ){
-                                    var sLastStr = stringBuilder[ stringBuilder.length - 1 ];
+                                    sLastStr = stringBuilder[ stringBuilder.length - 1 ];
                                     if ( sLastStr != ";" && sLastStr != ":" && sLastStr != "#" && sLastStr != "*" )
                                         stringBuilder.push( '\n' + prefix );
                                 }
@@ -957,7 +963,7 @@ CKEDITOR.customprocessor.prototype =
                             case 'dd' :
 
                                 if( stringBuilder.length > 1 ){
-                                    var sLastStr = stringBuilder[ stringBuilder.length - 1 ];
+                                    sLastStr = stringBuilder[ stringBuilder.length - 1 ];
                                     if ( sLastStr != ";" && sLastStr != ":" && sLastStr != "#" && sLastStr != "*" )
                                         stringBuilder.push( '\n' + prefix );
                                 }
@@ -1039,6 +1045,10 @@ CKEDITOR.customprocessor.prototype =
                                                     this._AppendNode( currentNode, stringBuilder, prefix ) ;
                                                     this._IsInsideCell = false ;
                                                     stringBuilder.push( '\n' ) ;
+                                                    break;
+
+                                                default:
+                                                 break;
                                             }
                                         }
                                     }
@@ -1214,7 +1224,7 @@ CKEDITOR.customprocessor.prototype =
                                         var tagName = htmlNode.getAttribute( '_fck_mw_tagname' ) || '';
                                         switch (tagType) {
                                             case 't' :
-                                                var attribs = this._GetAttributesStr( htmlNode ) ;
+                                                attribs = this._GetAttributesStr( htmlNode ) ;
                                                 stringBuilder.push( '<' + tagName ) ;
 
                                                 if ( attribs.length > 0 )
@@ -1240,6 +1250,9 @@ CKEDITOR.customprocessor.prototype =
                                                 break;
                                             case 'sf' :
                                                 stringBuilder.push( this._GetNodeText(htmlNode).htmlDecode().replace(/fckLR/g,'\r\n') );
+                                                break;
+
+                                            default:
                                                 break;
                                         }
                                         return;
@@ -1279,17 +1292,17 @@ CKEDITOR.customprocessor.prototype =
                                 // Change the node name and fell in the "default" case.
                                 if (!sNodeName && htmlNode.getAttribute( '_fck_mw_customtag' ) )
                                     sNodeName = htmlNode.getAttribute( '_fck_mw_tagname' );
-                                this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix )
+                                this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix );
                                 break;
                             case 'pre' :
-                                var attribs = this._GetAttributesStr( htmlNode );
-                                var eClassName = htmlNode.getAttribute('class')
+                                attribs = this._GetAttributesStr( htmlNode );
+                                eClassName = htmlNode.getAttribute('class');
                                 if ( eClassName == "_fck_mw_lspace" ){
                                     stringBuilder.push( "\n " );
                                     this._inLSpace = true;
                                     this._AppendChildNodes( htmlNode, stringBuilder, prefix );
                                     this._inLSpace = false;
-                                    var len = stringBuilder.length;
+                                    len = stringBuilder.length;
                                     if ( len > 1 ) {
                                         var tail = stringBuilder[len-2] + stringBuilder[len-1];
                                         if ( len > 2 ) {
@@ -1323,7 +1336,7 @@ CKEDITOR.customprocessor.prototype =
 
                                 break;
                             default :
-                                this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix )
+                                this._AppendTextNode( htmlNode, stringBuilder, sNodeName, prefix );
                                 break;
                         }
                     }
@@ -1372,9 +1385,9 @@ CKEDITOR.customprocessor.prototype =
                             textValue = textValue + " ";
 
                         if ( !this._inLSpace && !this._inPre && textValue == " " ) {
-                            var len = stringBuilder.length;
+                            len = stringBuilder.length;
                             if( len > 1 ) {
-                                var tail = stringBuilder[len-2] + stringBuilder[len-1];
+                                tail = stringBuilder[len-2] + stringBuilder[len-1];
                                 if ( tail.toString().EndsWith( "\n" ) )
                                     textValue = '';
                             }
@@ -1382,7 +1395,7 @@ CKEDITOR.customprocessor.prototype =
 
                         if ( this._IsInsideCell ) {
                             var result, linkPattern = new RegExp( "\\[\\[.*?\\]\\]", "g" );
-                            while( result = linkPattern.exec( textValue ) ) {
+                            while( (result = linkPattern.exec( textValue )) ) {
                                 textValue = textValue.replace( result, result.toString().replace( /\|/g, "<!--LINK_PIPE-->" ) );
                             }
                             textValue = textValue.replace( /\|/g, '&#124;' );
@@ -1547,7 +1560,7 @@ CKEDITOR.customprocessor.prototype =
                         return '[[' + labelCategory + ':' + text + '|' + sort + ']]';
                     }
                     if (emptyVal.exec(text)) return '';
-                    return '[[' + labelCategory + ':' + text + ']]'
+                    return '[[' + labelCategory + ':' + text + ']]';
             }
         },
         // Get real element from a fake element.
@@ -1611,12 +1624,12 @@ CKEDITOR.customprocessor.prototype =
                 else break;
             }
             // escape <> of any html or wiki tag
-            text = text.replace( /<(\/?[^>]+)>/g, "&lt;$1&gt;")
+            text = text.replace( /<(\/?[^>]+)>/g, "&lt;$1&gt;");
             // replace any __MAGICWORD__ with &#95;&#95;MAGICWORD&#95;&#95; - check first if there is any
             if (text.match(/__[A-Z]+__/)) {
-                for (var i = 0; i < window.parent.wgCKeditorMagicWords.magicwords.length; i++) {
+                for (i = 0; i < window.parent.wgCKeditorMagicWords.magicwords.length; i++) {
                     pattern = new RegExp('__(' + window.parent.wgCKeditorMagicWords.magicwords[i] + ')__', 'g');
-                    text = text.replace( pattern, "&#95;&#95;$1&#95;&#95;")
+                    text = text.replace( pattern, "&#95;&#95;$1&#95;&#95;");
                 }
             }
         
@@ -1638,7 +1651,7 @@ CKEDITOR.customprocessor.prototype =
                     });
                     y = z[i].match(attrRE);//deze match
                     if (y) {
-                        var j = 0, len = y.length
+                        var j = 0, len = y.length;
                         while (j < len) {
                             var replaceRE = /(\=)([a-zA-Z\.\:\[\]_\(\)\&\$\%#\@\!0-9]+)?([\s+|?>])/g, replacer = function(){
                                 var args = Array.prototype.slice.call(arguments);
@@ -1663,28 +1676,28 @@ if (!String.prototype.InArray) {
                 return true;
         }
         return false;
-    }
+    };
 }
 
 if (!String.prototype.StartsWith) {
     String.prototype.StartsWith = function(str)
     {
-        return (this.match("^"+str)==str)
-    }
+        return (this.match("^"+str)==str);
+    };
 }
 
 if (!String.prototype.EndsWith) {
     String.prototype.EndsWith = function(str)
     {
-        return (this.match(str+"$")==str)
-    }
+        return (this.match(str+"$")==str);
+    };
 }
 
 if (!String.prototype.Trim) {
     String.prototype.Trim = function()
     {
-        return this.replace(/^\s*/, '').replace(/\s*$/, '')
-    }
+        return this.replace(/^\s*/, '').replace(/\s*$/, '');
+    };
 }
 if (!String.prototype.IEquals) {
     String.prototype.IEquals = function() {
@@ -1692,13 +1705,13 @@ if (!String.prototype.IEquals) {
             if (String.prototype.IEquals.arguments[i] == this ) return true;
         }
         return false;
-    }
+    };
 }
 if (!String.prototype.FirstToUpper) {
     String.prototype.FirstToUpper = function() {
-        string = this;
+        var string = this;
         return string.substr(0,1).toUpperCase() + string.substr(1);
-    }
+    };
 }
 
 if (!String.prototype.htmlDecode) {
@@ -1707,12 +1720,12 @@ if (!String.prototype.htmlDecode) {
         var chars = new Array ('&', '"', '\'', '<', '>');
         string = this;
         for (var i = 0; i < entities.length; i++) {
-            myRegExp = new RegExp();
+            var myRegExp = new RegExp();
             myRegExp.compile('&' + entities[i]+';','g');
             string = string.replace (myRegExp, chars[i]);
         }
         return string;
-    }
+    };
 }
 
 if (!String.prototype.htmlEntities) {
@@ -1772,7 +1785,7 @@ if (!String.prototype.htmlEntities) {
         }
         string = string.replace(/&nbsp;/g, '&#160;');
         return string;
-    }
+    };
     
     CKEDITOR.regex = {
         htmlTag : {
@@ -1783,5 +1796,5 @@ if (!String.prototype.htmlEntities) {
             Nmtoken : '(NameChar)+',
             Nmtokens : 'Nmtoken (#x20 Nmtoken)*'
         }
-    }
+    };
 }

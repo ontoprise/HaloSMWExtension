@@ -204,7 +204,13 @@ packages :
 					'_source/plugins/dialogui/plugin.js',
 					'_source/plugins/panel/plugin.js',
 					'_source/plugins/listblock/plugin.js',
-					'_source/themes/default/theme.js'
+					'_source/themes/default/theme.js',
+					'_source/plugins/mediawiki/plugin.js'
+//					'_source/plugins/smwtoolbar/plugin.js'
+//					'_source/plugins/smwqueryinterface/plugin.js',
+//					'_source/plugins/smwrichmedia/plugin.js',
+//					'_source/plugins/smwrule/plugin.js',
+//					'_source/plugins/smwwebservice/plugin.js',					
 				]
 		}
 
