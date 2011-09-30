@@ -30,8 +30,6 @@ class HaloTests
 
 		$suite->addTestSuite("TestSemanticStore");
 		$suite->addTestSuite("TestWikiEQI");
-		$suite->addTestSuite("TestTSCEQI");
-		$suite->addTestSuite("TestAutocompletionTSCStore");
 		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestQueryPrintersSuite");
 		$suite->addTestSuite("TestWikiJobs");
