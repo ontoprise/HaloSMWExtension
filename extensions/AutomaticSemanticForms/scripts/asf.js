@@ -37,28 +37,23 @@ function initializeNiceASFTooltips(){
 		if(ttContent.length > 0){
 			
 			//add tooltips if form input labels are links
-			$('*:first-child', this).qtip({ 
-				
+			$('*:first-child', this).qtip({ 			
 				
 				content: ttContent,
 				show: {
-					effect: { length: 500 },
 					when:   { event:  'mouseover' }
 				},
 				hide: {
-					effect: { length: 500 },
 					when:   { event: 'mouseout' },
 					fixed: true
 				},
-				position: {
-					corner: {
-						target: 'topLeft',
-						tooltip: 'bottomLeft'
-					}
-				},
-				style: { 
-    				tip: 'bottomLeft',
-					width: { max: 500 }
+        position: {
+          my: 'bottom left',
+          at: 'top left',
+          target: 'mouse'
+        },
+        style : {
+            classes: 'ui-tooltip-blue ui-tooltip-shadow'
 				}
 			});
 			

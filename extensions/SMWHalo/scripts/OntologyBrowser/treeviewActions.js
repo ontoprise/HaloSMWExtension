@@ -1529,32 +1529,21 @@ OBPropertyTreeActionListener.prototype = Object
 											// install the tool-tip on the current DOM element
 											jQuery(this).qtip( {
 												content : html,
-												show : {
-													effect : {
-														length : 500
-													},
-													when : {
-														event : 'mouseover'
-													}
+												show : {													
+													when : { event : 'mouseover' }
 												},
 												hide : {
-													when : {
-														event : 'mouseout'
-													},
+													when : { event : 'mouseout' },
 													fixed : true
 												},
-												position : {
-													corner : {
-														target : 'topLeft',
-														tooltip : 'bottomLeft'
-													}
-												},
+												position: {
+                          my: 'bottom left',
+                          at: 'top left',
+                          target: 'mouse'
+                        },
 												style : {
-													tip : 'bottomLeft',
-													width : {
-														max : 500
-													}
-												}
+                            classes: 'ui-tooltip-blue ui-tooltip-shadow'
+                        }
 											});
 										});
 							}

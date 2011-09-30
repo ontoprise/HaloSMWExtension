@@ -465,25 +465,10 @@
 			}).removeClass("ui-corner-all");
 			/* Init qTips */
 			base.editor.find("[title]").qtip({
-				position: {
-					corner: {
-						target: "rightMiddle",
-						tooltip: "leftMiddle"
-					}
-				},
-				style: {
-					background: '#feff9d',
-					border: {
-						width: 1,
-						radius: 3,
-						color: '#feff9d'
-					},
-					padding: 3, 
-					textAlign: 'left',
-					fontSize: '12px',
-					tip: true, // Give it a speech bubble tip with automatic corner detection
-					name: 'cream' // Style it according to the preset 'cream' style
-				}
+        position : {
+            my: 'left center',
+            at: 'right center'
+					}		
 			});
 		}
 		

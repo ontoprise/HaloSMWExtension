@@ -40,23 +40,19 @@ jQuery(document).ready( function ($) {
 		$(this).qtip({
 				content: content,
 				show: {
-					effect: { length: 500 },
 					when:   { event:  'mouseover' }
 				},
 				hide: {
-					effect: { length: 500 },
 					when:   { event: 'mouseout' },
 					fixed: true
 				},
 				position: {
-					corner: {
-						target: 'topLeft',
-						tooltip: 'bottomLeft'
-					}
-				},
+          my: 'bottom left',
+          at: 'top left',
+          target: 'mouse'
+        },
 				style: { 
-    				tip: 'bottomLeft',
-					width: { max: 500 }
+    				classes: 'ui-tooltip-blue ui-tooltip-shadow'
 				}
 		});
 	});
