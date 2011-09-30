@@ -75,6 +75,7 @@ function tscSetupExtension() {
 	$wgAutoloadClasses['AutoCompletionStorageTSCQuad'] = $tscgIP . '/includes/storage/TSC_AC_Store.php';
 
 	$wgAutoloadClasses['SMWHaloStore2'] = $tscgIP . '/includes/triplestore_client/TSC_HaloStore2.php';
+	$wgAutoloadClasses['TSCMappingStore'] = $tscgIP . '/includes/triplestore_client/TSC_MappingStore.php';
 	$wgAutoloadClasses['TSConnection']            = $tscgIP . '/includes/triplestore_client/TSC_Connection.php';
 	$wgAutoloadClasses['TSNamespaces']            = $tscgIP . '/includes/triplestore_client/TSC_Helper.php';
 	$wgAutoloadClasses['TSHelper']            = $tscgIP . '/includes/triplestore_client/TSC_Helper.php';

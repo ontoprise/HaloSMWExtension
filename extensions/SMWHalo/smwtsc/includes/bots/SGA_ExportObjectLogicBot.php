@@ -122,7 +122,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 				// get inverse
 				$inverseOfIRI = NULL;
-				$inverseOfValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->inverseOf->getDBkey()));
+				$inverseOfValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$IS_INVERSE_OF->getDBkey()));
 				$inverseOfValue = reset($inverseOfValues); // must be only 1
 				if ($inverseOfValue !== false) {
 					$inverseOfTitle = $inverseOfValue->getTitle();
@@ -135,10 +135,10 @@ class ExportObjectLogicBot extends GardeningBot {
 
 
 				// get cardinalities
-				$minCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->minCard->getDBkey()));
+				$minCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MIN_CARDINALITY->getDBkey()));
 				$minCardValue = reset($minCardValues); // must be only 1
 
-				$maxCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel($store->maxCard->getDBkey()));
+				$maxCardValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_MAX_CARDINALITY->getDBkey()));
 				$maxCardValue = reset($maxCardValues); // must be only 1
 
 				if ($minCardValue !== false) {
@@ -159,10 +159,10 @@ class ExportObjectLogicBot extends GardeningBot {
 				$symetrical = false;
 				$categories = $store->getCategoriesForInstance($title);
 				foreach($categories as $c) {
-					if ($c->equals($store->transitiveCat)) {
+					if ($c->equals(SMWHaloPredefinedPages::$TRANSITIVE_PROPERTY)) {
 						$transitive = true;
 					}
-					if ($c->equals($store->symetricalCat)) {
+					if ($c->equals(SMWHaloPredefinedPages::$SYMMETRICAL_PROPERTY)) {
 						$symetrical = true;
 					}
 				}
@@ -215,11 +215,11 @@ class ExportObjectLogicBot extends GardeningBot {
 		global $dfgLang;
 		$bundleIDDi = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
 		$pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDDi);
-		$store = smwfGetSemanticStore();
+		
 		$internalProperties = array(str_replace(" ","_",$dfgLang->getLanguageString('df_partofbundle')),
 		$dfgLang->getLanguageString('df_ontologyversion'), $dfgLang->getLanguageString('df_contenthash'),
 		$dfgLang->getLanguageString('df_instdir'),$dfgLang->getLanguageString('df_dependencies'),
-		$dfgLang->getLanguageString('df_ontologyvendor'),$dfgLang->getLanguageString('df_description'), $store->ontologyURI->getText());
+		$dfgLang->getLanguageString('df_ontologyvendor'),$dfgLang->getLanguageString('df_description'), SMWHaloPredefinedPages::$ONTOLOGY_URI->getText());
 
 		$internalCategories = array($dfgLang->getLanguageString('df_contentbundle'));
 
@@ -374,9 +374,9 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 
 	private function getTSCIRI($title) {
-		$store = smwfGetSemanticStore();
+		
 		$ts = TSNamespaces::getInstance();
-		$uri = $store->getTSCURI($title);
+		$uri = TSCMappingStore::getTSCURI($title);
 		if (is_null($uri)) {
 			return $ts->getFullIRI($title);
 		}
@@ -384,9 +384,9 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 
 	private function getTSCURI($title) {
-		$store = smwfGetSemanticStore();
+		
 		$ts = TSNamespaces::getInstance();
-		$uri = $store->getTSCURI($title);
+		$uri = TSCMappingStore::getTSCURI($title);
 		if (is_null($uri)) {
 			return $ts->getFullURI($title);
 		}
@@ -424,7 +424,7 @@ ENDS;
 		$prefixString = "";
 		$prefixes = DFBundleTools::getPrefixesUsedBy($bundleName, false);
 		foreach($prefixes as $prefix) {
-			$uri = smwfGetSemanticStore()->getNamespaceMapping($prefix);
+			$uri = TSCMappingStore::getNamespaceMapping($prefix);
 			$prefixString .= "\n:- prefix $prefix = \"$uri\".";
 		}
 		return $prefixString;

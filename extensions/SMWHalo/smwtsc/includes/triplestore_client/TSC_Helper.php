@@ -588,7 +588,7 @@ class TSNamespaces {
 							   "\nPREFIX prop:<".$smwgHaloTripleStoreGraph."/".str_replace(" ","_",strtolower($wgContLang->getNSText(SMW_NS_PROPERTY))).'/> ';
 
 		// add prefixes defined on Mediawiki:NamespaceMappings
-		$allNSMappings = smwfGetSemanticStore()->getAllNamespaceMappings();
+		$allNSMappings = TSCMappingStore::getAllNamespaceMappings();
 		foreach($allNSMappings as $prefix => $uri) {
 			self::$ALL_PREFIXES .= "\nPREFIX $prefix:<$uri> ";
 		}

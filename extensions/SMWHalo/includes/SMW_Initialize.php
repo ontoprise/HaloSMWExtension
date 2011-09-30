@@ -1415,9 +1415,9 @@ $minoredit, $watchthis, $sectionanchor, &$flags, $revision, &$status, $baseRevId
 	if ($article->getTitle()->getText() == $dfgLang->getLanguageString('df_namespace_mappings_page')
 	&& $article->getTitle()->getNamespace() == NS_MEDIAWIKI) {
 		$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
-		smwfGetSemanticStore()->clearNamespaceMappings();
+		TSCMappingStore::clearNamespaceMappings();
 		foreach($namespaceMappings as $prefix => $uri) {
-			smwfGetSemanticStore()->addNamespaceMapping($prefix, $uri);
+			TSCMappingStore::addNamespaceMapping($prefix, $uri);
 		}
 	}
 	return true;

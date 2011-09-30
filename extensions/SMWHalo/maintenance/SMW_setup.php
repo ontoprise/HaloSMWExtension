@@ -31,15 +31,16 @@ if ($help) {
 if ($delete) {
 	print "\Drop SMWHalo.\n\n";
 	smwfGetSemanticStore()->drop(true);
-	
+	//FIXME: SMWTSC de-initialization must be removed if SMWTSC is externlized
+	TSCMappingStore::drop(true);
 	TSCStorage::getDatabase()->dropDatabaseTables();
 	die();
 }
 
 print "\nSetup SMWHalo.\n\n";
-
-
+//FIXME: SMWTSC initialization must be removed if SMWTSC is externlized 
 TSCStorage::getDatabase()->initDatabaseTables();
+TSCMappingStore::setup(true);
 smwfGetSemanticStore()->setup(true);
 
 

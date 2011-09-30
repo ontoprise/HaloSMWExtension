@@ -89,7 +89,7 @@ class SMWHaloStore2 extends SMWStoreAdapter {
 		}
 		if (!$ontologyURIMappingAdded) {
 			// that means ontology URL might be implicitly defined by a prefix in the title: Category:Foaf/Person
-			$namespaceMapping = smwfGetSemanticStore()->getAllNamespaceMappings();
+			$namespaceMapping = TSCMappingStore::getAllNamespaceMappings();
 			$parts = explode("/", $subjectTitle->getText());
 			$prefix = strtolower($parts[0]);
 			if (array_key_exists($prefix, $namespaceMapping)) {
