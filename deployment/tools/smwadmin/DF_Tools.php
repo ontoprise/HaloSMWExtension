@@ -623,10 +623,10 @@ class Tools {
 				if (!$found) $results[] = false;
 			}
 		} else {
-			$path = self::whereis($name);
-			@exec("ps ax | grep $path", $out, $ret);
 			$results = array();
 			foreach($names as $name) {
+				$path = self::whereis($name);
+				@exec("ps ax | grep $path", $out, $ret);
 				$found = false;
 				foreach($out as $l) {
 					$l = preg_replace("/\\s+|\t+/", " ", $l);

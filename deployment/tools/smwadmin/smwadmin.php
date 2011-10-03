@@ -50,7 +50,8 @@ $mwrootDir = realpath($mwrootDir."/../../../");
 
 //Load Settings
 if(!file_exists($rootDir.'/settings.php')) {
-	dffExitOnFatalError("settings.php not found! Forgot to copy it from config/settings.php?");
+	print "\nsettings.php not found! Forgot to copy it from config/settings.php?\n";
+	die();
 }
 require_once($rootDir.'/settings.php');
 require_once('DF_Tools.php');

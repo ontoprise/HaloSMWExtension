@@ -171,7 +171,7 @@ class DFServersTab {
 					break;
 				case "mysql":
 					return $action == "start" ?  self::quotePath($guessedInstallDir."\\mysql_start.bat")
-                    : self::quotePath($guessedInstallDir."\\mysql_stop.exe");
+					: self::quotePath($guessedInstallDir."\\mysql_stop.exe");
 					break;
 				case "solr":
 					return $action == "start" ?  self::quotePath($guessedInstallDir."\\solr\\wiki\\startSolr.bat")
@@ -187,6 +187,16 @@ class DFServersTab {
 					break;
 			}
 		} else {
+			global $smwgDFIP, $mwrootDir;
+			$guessedInstallDir = realpath($smwgDFIP."/../../../");
+			$nonPublicApps = Tools::getNonPublicAppPath($mwrootDir);
+			if (array_key_exists("tsc", $nonPublicApps)) {
+				$guessedTSCInstallDir = $nonPublicApps["tsc"];
+			} else if (array_key_exists("tscprof", $nonPublicApps)) {
+				$guessedTSCInstallDir = $nonPublicApps["tscprof"];
+			} else {
+				$guessedTSCInstallDir = Tools::getProgramDir();
+			}
 			$initd = "etc/init.d";
 			switch($program) {
 				case "apache":
