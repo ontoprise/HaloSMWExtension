@@ -172,6 +172,7 @@ TreeTransformer.prototype = {
 			var regex = new RegExp("\{\{(\\w+)\}\}");
 			var lp = this.languageProvider;
 			languageNodes.each(function(n) {
+				var replaced = false;
 				var vars;
 				var text = n.textContent;
 				while (vars = regex.exec(text)) {
@@ -180,19 +181,24 @@ TreeTransformer.prototype = {
 					// use local language data
 					var msg = gLanguage.getMessage(vars[1])
 					if (msg != vars[1]) {
+						replaced = true;
 						text = text.replace(reg_exp, msg);
 					} else {
+						// use other language providers
+						lp.each(function(provider) {
+							var msg = provider(vars[1]);
+							if (msg != vars[1])
+								replaced = true;
+							text = text.replace(reg_exp, msg);
+
+						});
+
+					}
+					if (!replaced) {
 						// probably missing language constant
 						text = text.replace(reg_exp, "!!" + msg + "!!");
 					}
 
-					// use other language providers
-					lp.each(function(provider) {
-						var msg = provider(vars[1]);
-						if (msg != vars[1])
-							text = text.replace(reg_exp, msg);
-
-					});
 				}
 				n.textContent = text;
 
@@ -279,18 +285,18 @@ var transformer = new TreeTransformer(
 		"/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
 
 function resetOntologyBrowser() {
-	
+
 	// set content of category and property view invalid
 	dataAccess.OB_categoriesInitialized = false;
 	dataAccess.OB_attributesInitialized = false;
-	
+
 	// refresh the currently visible tree
 	if (globalActionListener.activeTreeName == 'categoryTree') {
 		dataAccess.initializeRootCategories(0, true);
-	} else if (globalActionListener.activeTreeName == 'propertyTree'){
+	} else if (globalActionListener.activeTreeName == 'propertyTree') {
 		dataAccess.initializeRootProperties(0, true);
 	}
-	
+
 	if ($('instanceList') != null && $('instanceList').down() != null) {
 		$('instanceList').down().remove();
 	}
