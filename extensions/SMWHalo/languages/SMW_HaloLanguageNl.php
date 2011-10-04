@@ -143,7 +143,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 
     /*Messages for OntologyBrowser*/
-	'ontologybrowser' => 'Ontologie-browser',
+	'dataexplorer' => 'Ontologie-browser',
 	'smw_ac_hint' => 'Druk Ctrl+Alt+Space voor auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Categorieënboom',
 	'smw_ob_attributeTree' => 'Eigenschappenboom',
@@ -179,7 +179,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_hasnumoftempuages' => 'Deze template is $1 maal gebruikt',
 	'smw_ob_invalidtitle' => '!!!invalid title!!!',
 
-    /* Commands for ontology browser */
+    /* Commands for Data Explorer */
 	'smw_ob_cmd_createsubcategory' => 'Subcategorie toevoegen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Categorie op hetzelfde',
 	'smw_ob_cmd_renamecategory' => 'Hernoemen',
@@ -192,7 +192,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_cmd_addpropertytodomain' => 'Eigenschappen toevoegen aan domein: ',
 
     //TODO: Translate strings
-    /* Advanced options in the ontology browser */
+    /* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (all bundles)" ,
 	'smw_ob_advanced_options' => "Advanced options" ,
 	'smw_ob_select_datasource' => "Select the data source to browse:" ,

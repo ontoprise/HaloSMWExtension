@@ -191,7 +191,7 @@ window.wgUserLanguageStrings = {
     'GARDENING_LOG_EXPAND_ALL'   : 'Tout agrandir',
     'BOT_WAS_STARTED'           : 'Le bot a été démarré!',
     
-    // Ontology browser
+    // Data Explorer
     'OB_ID'                   : 'NavigateurOntologies',
     'ONTOLOGY_BROWSER'        : 'Navigateur d\'ontologies',
     
@@ -221,7 +221,7 @@ window.wgUserLanguageStrings = {
     'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contient des problèmes supplémentaires',
     'SMW_OB_MODIFIED'         : 'La page a été modifiée. Les problèmes suivants de Gardening auraient déjà  dà»s être résolus:',
     
-    // Ontology Browser metadata
+    // Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
 	'SMW_OB_META_COMMAND_SHOW'  : 'Show metadata',

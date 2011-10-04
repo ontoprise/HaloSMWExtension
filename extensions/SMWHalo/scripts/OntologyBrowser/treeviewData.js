@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
  * Treeview Data
  */

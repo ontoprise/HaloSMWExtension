@@ -6,9 +6,9 @@
  *
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  
  class SMWOntologyBrowserErrorHighlighting {

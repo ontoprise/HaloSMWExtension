@@ -17,7 +17,7 @@
 		</webtest>
 		<webtest name="LoadOntologyBrowser">
 			<antcall target="goToOntologyBrowser"/>
-			<verifyXPath description="Check if the heading element exists" xpath="//span[@id='smwh_breadcrumb_currentpage']" text="OntologyBrowser" />
+			<verifyXPath description="Check if the heading element exists" xpath="//span[@id='smwh_breadcrumb_currentpage']" text="DataExplorer" />
 
 		</webtest>
 		

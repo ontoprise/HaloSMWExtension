@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
  * TreeView actions 
  *  
@@ -1882,7 +1882,7 @@ OBSchemaPropertyActionListener.prototype = {
 }
 
 /**
- * Action Listener for global Ontology Browser events, e.g. switch tree
+ * Action Listener for global Data Explorer events, e.g. switch tree
  */
 window.OBGlobalActionListener = Class.create();
 OBGlobalActionListener.prototype = {

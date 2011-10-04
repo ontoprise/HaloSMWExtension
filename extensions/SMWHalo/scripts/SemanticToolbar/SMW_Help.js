@@ -36,8 +36,8 @@ var smw_help_getNamespace = function() {
     else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "GardeningLog"){
         ns = "Gardening";
     }
-    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "OntologyBrowser"){
-        ns = "OntologyBrowser";
+    else if (wgNamespaceNumber == -1 && wgCanonicalSpecialPageName == "DataExplorer"){
+        ns = "DataExplorer";
     }
     return ns;
 }

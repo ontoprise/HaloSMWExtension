@@ -83,7 +83,7 @@ VERSION 1.5.1
       SMW version.
     * Improved Query Interface that makes query building easier and that
       supports the latest features of SMW.
-    * Enhanced Ontology Browser with seamless integration of linked open data
+    * Enhanced Data Explorer with seamless integration of linked open data
       sources
 
   BUGFIXES:

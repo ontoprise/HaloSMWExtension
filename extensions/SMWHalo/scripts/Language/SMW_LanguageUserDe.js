@@ -190,16 +190,16 @@ window.wgUserLanguageStrings = {
 	'GARDENING_LOG_EXPAND_ALL'   : 'Alles ausklappen',
 	'BOT_WAS_STARTED'			: 'Der Bot wurde gestartet.',
 	
-	// Ontology browser
-	'OB_ID'					  : 'OntologyBrowser',
-	'ONTOLOGY_BROWSER'        : 'Ontology Browser',
+	// Data Explorer
+	'OB_ID'					  : 'DataExplorer',
+	'ONTOLOGY_BROWSER'        : 'Data Explorer',
 	
 	'KS_NOT_SUPPORTED'        : 'Konqueror wird momentan nicht unterstützt.',
 	'SHOW_INSTANCES'          : 'Zeige Instanzen',
 	'HIDE_INSTANCES'          : 'Verstecke Instanzen',
 	'ENTER_MORE_LETTERS'      : "Bitte geben Sie mindestens zwei Buchstaben ein. Sonst erhalten Sie wahrscheinlich zu viele Ergebnisse.",
 	'MARK_A_WORD'             : 'Selektieren Sie etwas...',
-	'OPEN_IN_OB'              : 'Im Ontology Browser öffnen',
+	'OPEN_IN_OB'              : 'Im Data Explorer öffnen',
 	'OPEN_IN_OB_NEW_TAB'      : '... neuer Tab',
 	'OB_CREATE'	  			  : 'Erzeugen',
 	'OB_RENAME'	  			  : 'Umbenennen',
@@ -222,7 +222,7 @@ window.wgUserLanguageStrings = {
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
 	
-	// Ontology Browser metadata
+	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Wert',
 	'SMW_OB_META_COMMAND_SHOW'  : 'Zeige Metadata',

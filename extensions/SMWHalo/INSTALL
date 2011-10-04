@@ -169,7 +169,7 @@ Create a regular wiki page named "TestSMW", and in it enter the wiki text
 
 Then, create the page "Category:Test" and insert some dummy text.
 
-Go to Special:OntologyBrowser. As soon as the interface is loaded, you should see
+Go to Special:DataExplorer. As soon as the interface is loaded, you should see
 "Test" in the category tree. Click on it and you should see "TestSMW" in the
 instance view. Click on it, and you should see "testproperty   Dummypage" in the
 properties view.
@@ -269,11 +269,11 @@ which are documented here:
 
 http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
 
-=== Renaming categories in the Ontology Browser ===
+=== Renaming categories in the Data Explorer ===
 
 By default Mediawiki doesn't allow the move operation on categories. When a
 category is renamed, this is a move operation internally. Therefore if you want
-to rename categories in the Ontology Browser a Mediawiki file must be mdofied to
+to rename categories in the Data Explorer a Mediawiki file must be mdofied to
 achieve this. Please edit the file includes/Namespace.php in your wiki
 installation. Replace the line:
 

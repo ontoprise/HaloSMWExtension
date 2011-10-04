@@ -193,7 +193,7 @@ window.wgUserLanguageStrings = {
 	'GARDENING_LOG_EXPAND_ALL'   : 'Alles uitklappen',
 	'BOT_WAS_STARTED'			: 'De bot is gestart!',
 	
-	// Ontology browser
+	// Data Explorer
 	'OB_ID'					  : 'Ontologie-browser',
 	'ONTOLOGY_BROWSER'        : 'Ontology-browser',
 	'PROPERTY_NS_WOC'         : 'Eigenschap', // Property namespace without colon
@@ -226,7 +226,7 @@ window.wgUserLanguageStrings = {
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Bevat verdere problemen',
 	'SMW_OB_MODIFIED'		  : 'De pagina werd aangepast. De volgende problemen zijn mogelijkerwijze reeds hersteld:',
 	
-	// Ontology Browser metadata
+	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
 	'SMW_OB_META_COMMAND_SHOW'  : 'Show metadata',

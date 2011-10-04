@@ -143,7 +143,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 
 
 	/*Messages for OntologyBrowser*/
-	'ontologybrowser' => 'OntologyBrowser',
+	'dataexplorer' => 'DataExplorer',
 	'smw_ac_hint' => 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Category Tree',
 	'smw_ob_attributeTree' => 'Property Tree',
@@ -165,7 +165,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_ob_no_relations' => 'No relations available.',
 	'smw_ob_no_annotations' => 'No annotations available.',
 	'smw_ob_no_properties' => 'No properties available.',
-	'smw_ob_help' => 'The ontology browser lets you navigate through the ontology to easily find
+	'smw_ob_help' => 'The Data Explorer lets you navigate through the ontology to easily find
 and identify items in the wiki. Use the Filter Mechanism at the upper left
 to search for specific entities in the ontology and the filters below each
 column to narrow down the given results.
@@ -184,7 +184,7 @@ clicking the big arrows between the columns.',
 	'smw_ob_hasnumoftempuages' => 'Template is used $1 times',
     'smw_ob_invalidtitle' => '!!!invalid title!!!',
 
-	/* Commands for ontology browser */
+	/* Commands for Data Explorer */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Add category',
 	'smw_ob_cmd_editcategory' => 'Edit Category',
@@ -197,7 +197,7 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
 	
-	/* Advanced options in the ontology browser */
+	/* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (all bundles)" ,
 	'smw_ob_advanced_options' => "Advanced options" ,
 	'smw_ob_select_datasource' => "Select the data source to browse:" ,
@@ -219,7 +219,7 @@ clicking the big arrows between the columns.',
 	'smw_cs_properties' => 'Properties',
 	'smw_cs_values' => 'Values',
 	'smw_cs_openpage' => 'Open page',
-	'smw_cs_openpage_in_ob' => 'Open in Ontology Browser',
+	'smw_cs_openpage_in_ob' => 'Open in Data Explorer',
 	'smw_cs_openpage_in_editmode' => 'Edit page',
 	'smw_cs_no_triples_found' => 'No triples found!',
 
@@ -245,7 +245,7 @@ clicking the big arrows between the columns.',
 	/* Messages for the CSH discourse state. Do NOT edit or translate these
 	 * otherwise CSH will NOT work correctly anymore
 	 */
-	'smw_csh_ds_ontologybrowser' => 'OntologyBrowser',
+	'smw_csh_ds_ontologybrowser' => 'DataExplorer',
 	'smw_csh_ds_queryinterface' => 'QueryInterface',
 	'smw_csh_ds_combinedsearch' => 'Search',
 

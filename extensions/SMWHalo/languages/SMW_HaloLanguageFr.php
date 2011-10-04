@@ -143,7 +143,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
 
 
     /*Messages for OntologyBrowser*/
-    'ontologybrowser' => 'Navigateur d\'ontologies',
+    'dataexplorer' => 'Navigateur d\'ontologies',
     'smw_ac_hint' => 'Appuyez sur les touches Ctrl+Alt+Espace pour utiliser l\'auto-completion. (Ctrl+Espace sous IE)',
     'smw_ob_categoryTree' => 'Arbre des catégories',
     'smw_ob_attributeTree' => 'Arbre des propriétés',
@@ -184,7 +184,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_hasnumoftempuages' => 'Le modà¨le est utilisé $1 fois',
     'smw_ob_invalidtitle' => '!!!invalid title!!!',
     
-    /* Commands for ontology browser */
+    /* Commands for Data Explorer */
     'smw_ob_cmd_createsubcategory' => 'Ajouter une sous-catégorie',
     'smw_ob_cmd_createsubcategorysamelevel' => 'Ajouter une catégorie',
     'smw_ob_cmd_renamecategory' => 'Renommer',
@@ -197,7 +197,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_cmd_addpropertytodomain' => 'Ajouter la propriété au domaine: ',
 
 //TODO: Translate strings
-	/* Advanced options in the ontology browser */
+	/* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (all bundles)" ,
 	'smw_ob_advanced_options' => "Advanced options" ,
 	'smw_ob_select_datasource' => "Select the data source to browse:" ,

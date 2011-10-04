@@ -306,8 +306,8 @@ function smwgHaloSetupExtension() {
 
 		// Register new or overwrite existing special pages
 		$wgAutoloadClasses['SMW_OntologyBrowser'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowser.php';
-		$wgSpecialPages['OntologyBrowser'] = array('SMW_OntologyBrowser');
-		$wgSpecialPageGroups['OntologyBrowser'] = 'smwplus_group';
+		$wgSpecialPages['DataExplorer'] = array('SMW_OntologyBrowser');
+		$wgSpecialPageGroups['DataExplorer'] = 'smwplus_group';
 
 
 		$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
@@ -1083,8 +1083,8 @@ function smwOBAddHTMLHeader(&$out) {
 
 	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
 
-	if ($wgTitle->getFullText() == "$spec_ns:OntologyBrowser") {
-		$wgOut->addModules('ext.smwhalo.ontologyBrowser');
+	if ($wgTitle->getFullText() == "$spec_ns:DataExplorer") {
+		$wgOut->addModules('ext.smwhalo.dataexplorer');
 	}
 
 	return true;
@@ -1595,8 +1595,8 @@ function smwhfRegisterResourceLoaderModules() {
 				)
 				);
 
-				// Module for the Ontology Browser
-				$wgResourceModules['ext.smwhalo.ontologyBrowser'] = $moduleTemplate + array(
+				// Module for the Data Explorer
+				$wgResourceModules['ext.smwhalo.dataexplorer'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/ajaxhalo.js',

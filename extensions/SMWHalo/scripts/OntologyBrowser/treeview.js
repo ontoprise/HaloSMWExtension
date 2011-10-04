@@ -25,7 +25,7 @@
 /**
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
  * Heaviliy modified by Ontoprise 2007
  * @author Kai K�hn

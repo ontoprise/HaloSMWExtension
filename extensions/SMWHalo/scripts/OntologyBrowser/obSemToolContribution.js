@@ -19,7 +19,7 @@
  * obSemToolContribution.js
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
  * @author Kai K�hn
  *

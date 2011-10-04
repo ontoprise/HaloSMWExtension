@@ -144,7 +144,7 @@ protected $smwUserMessages = array(
 	'smw_unusedattributes_docu' => 'Die folgenden Attributseiten existieren, obwohl sie nicht verwendet werden.',
 
 	/*Messages for OntologyBrowser*/
-	'ontologybrowser' => 'OntologyBrowser',
+	'dataexplorer' => 'DataExplorer',
 	'smw_ac_hint' => 'Drücken Sie Ctrl+Alt+Space für die Auto-Vervollständigung. (Ctrl+Space im IE)',
 	'smw_ob_categoryTree' => 'Kategorie-Baum',
 	'smw_ob_attributeTree' => 'Attribut-Baum',
@@ -183,7 +183,7 @@ protected $smwUserMessages = array(
 	'smw_ob_hasnumoftempuages' => 'Template wurde $1-mal benutzt.',
 	'smw_ob_invalidtitle' => '!!!fehlerhafter Titel!!!',
 	
-	/* Commands for ontology browser */
+	/* Commands for Data Explorer */
 	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Kategorie hinzufügen',
 	'smw_ob_cmd_renamecategory' => 'Umbenennen',
@@ -195,7 +195,7 @@ protected $smwUserMessages = array(
     'smw_ob_cmd_createinstance' => 'Instanz erzeugen',
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
 	
-	/* Advanced options in the ontology browser */
+	/* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (alle Bundles)" ,
 	'smw_ob_advanced_options' => "Einstellungen" ,
 	'smw_ob_select_datasource' => "Zu durchsuchende Datenquellen:" ,
@@ -217,7 +217,7 @@ protected $smwUserMessages = array(
 	'smw_cs_properties' => 'Attribute',
 	'smw_cs_values' => 'Werte',
 	'smw_cs_openpage' => 'Öffne Seite',
-	'smw_cs_openpage_in_ob' => 'Öffne Seite im Ontology Browser',
+	'smw_cs_openpage_in_ob' => 'Öffne Seite im Data Explorer',
 	'smw_cs_openpage_in_editmode' => 'Editiere Seite',
 	'smw_cs_no_triples_found' => 'Keine Tripel gefunden!',
 
@@ -242,7 +242,7 @@ protected $smwUserMessages = array(
 	/* Messages for the CSH discourse state. Do NOT edit or translate these
 	 * otherwise CSH will NOT work correctly anymore
 	 */
-	'smw_csh_ds_ontologybrowser' => 'OntologyBrowser',
+	'smw_csh_ds_ontologybrowser' => 'DataExplorer',
 	'smw_csh_ds_queryinterface' => 'QueryInterface',
 	'smw_csh_ds_combinedsearch' => 'Search',
 

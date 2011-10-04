@@ -3,9 +3,9 @@
  * Created on 01.03.2007
  *
  * @file
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  *
- * @defgroup SMWHaloOntologyBrowser SMWHalo Ontology Browser
+ * @defgroup SMWHaloDataExplorer SMWHalo Data Explorer
  * @ingroup SMWHaloSpecials
  *
  * @author Kai K�hn
@@ -30,23 +30,17 @@ define('SMW_OB_COMMAND_INSTANCE_RENAME', 8);
 
 define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
 
-// standard functions for creating a new special
-//function doSMW_OntologyBrowser() {
-//		SMW_OntologyBrowser::execute();
-//}
-
-//SpecialPage::addPage( new SpecialPage(wfMsg('ontologybrowser'),'',true,'doSMW_OntologyBrowser',false) );
 
 
 class SMW_OntologyBrowser extends SpecialPage {
 
 	public function __construct() {
-		parent::__construct('OntologyBrowser');
+		parent::__construct('DataExplorer');
 	}
 	public function execute($par) {
 		global $wgRequest, $wgOut, $wgScriptPath, $wgUser;
 		//$skin = $wgUser->getSkin();
-		$wgOut->setPageTitle(wfMsg('ontologybrowser'));
+		$wgOut->setPageTitle(wfMsg('dataexplorer'));
 	
 		if ($wgRequest->getVal('src') == 'toolbar') {
 			
@@ -58,7 +52,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		}
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
-		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );
+		
 		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );
 			
 		// add another container

@@ -5,12 +5,12 @@
  * 
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloOntologyBrowser
+ * @ingroup SMWHaloDataExplorer
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
-// define the consistency bot constants, because the ontology browser uses them.
+// define the consistency bot constants, because the Data Explorer uses them.
 
 define('SMW_CONSISTENCY_BOT_BASE', 100);
  // covariance issues
