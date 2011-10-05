@@ -549,11 +549,19 @@ class DFBundleTools {
 
 		// Ontology version
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
-		$correct = self::checkPropertyType($pTitle->getText(), "_num");
+		$correct = self::checkPropertyType($pTitle->getText(), "_str");
 		if (!$correct) {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Number.");
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
+		
+	    // Patchlevel
+        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_patchlevel'), SMW_NS_PROPERTY);
+        $correct = self::checkPropertyType($pTitle->getText(), "_num");
+        if (!$correct) {
+            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Number.");
+            $check = false;
+        }
 
 		// Installation dir
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);

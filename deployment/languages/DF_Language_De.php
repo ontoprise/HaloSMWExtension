@@ -24,6 +24,7 @@ require_once('DF_Language.php');
 class DF_Language_De extends DF_Language {
 	protected $language_constants = array(
 	'df_ontologyversion' => 'Ontologieversion',
+	'df_patchlevel' => 'Patchlevel',
 	'df_partofbundle' => 'Teil des Pakets',
 	
 	'df_dependencies'=> 'Abhängigkeit',

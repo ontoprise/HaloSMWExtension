@@ -101,6 +101,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 
 	$instdir_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir'));
 	$ontologyversion_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion'));
+	$patchlevel_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_patchlevel'));
 	$rationale_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_rationale'));
 	$maintainer_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maintainer'));
 	$vendor_p = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_vendor'));
@@ -111,6 +112,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$bundlePageDi = SMWDIWikiPage::newFromTitle($bundleTitle);
 	$dependencies = smwfGetStore()->getPropertyValues($bundlePageDi, $dependencies_p);
 	$version = smwfGetStore()->getPropertyValues($bundlePageDi, $ontologyversion_p);
+	$patchlevel = smwfGetStore()->getPropertyValues($bundlePageDi, $patchlevel_p);
 	$instdir = smwfGetStore()->getPropertyValues($bundlePageDi, $instdir_p);
 	$rationale = smwfGetStore()->getPropertyValues($bundlePageDi, $rationale_p);
 	$maintainer = smwfGetStore()->getPropertyValues($bundlePageDi, $maintainer_p);
@@ -121,6 +123,9 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	if ( count($version) == 0) {
 		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_ontologyversion')."]] annotation on $bundeID" . "\n" );
 	}
+    if ( count($version) == 0) {
+        fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_patchlevel')."]] annotation on $bundeID" . "\n" );
+    }
 	if ( count($vendor) == 0) {
 		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_vendor')."]] annotation on $bundeID" . "\n" );
 	}
@@ -141,7 +146,8 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	}
 
 
-	$versionText = count($version) > 0 ? reset($version)->getNumber() : "100";
+	$versionText = count($version) > 0 ? reset($version)->getString() : "1.0.0";
+	$patchlevelText = count($patchlevel) > 0 ? reset($patchlevel)->getNumber() : "0";
 	$vendorText = count($vendor) > 0 ? reset($vendor)->getString() : "no vendor";
 	$instdirText = count($instdir) > 0 ? reset($instdir)->getString() : "extensions/$bundeID";
 	$rationaleText = count($rationale) > 0 ? reset($rationale)->getString() : "no description";
@@ -163,6 +169,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= '<deploydescriptor>'."\n";
 	$xml .= "\t".'<global>'."\n";
 	$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
+	$xml .= "\t\t".'<patchlevel>'.$patchlevelText.'</patchlevel>'."\n";
 	$xml .= "\t\t".'<id>'.strtolower($bundeID).'</id>'."\n";
 	$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
 	$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
