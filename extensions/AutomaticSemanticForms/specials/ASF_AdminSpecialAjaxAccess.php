@@ -17,17 +17,12 @@ function asff_getFormPreview($categories){
 
 	$categories = explode(';', $categories);
 
-	list($formDefinition, $dontCare) = ASFFormGenerator::getInstance()
-	->generateFormForCategories($categories);
+	$result = ASFFormGenerator::getInstance()->generateFormForCategories($categories);
 
-	if($formDefinition){
+	if($result){
 		global $asfDummyFormName;
 		$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
 		$form_name = $asfDummyFormName;
-
-		global $asfFormDefData;
-		$asfFormDefData = array();
-		$asfFormDefData['formdef'] = $formDefinition;
 
 		$target_name = SFUtils::titleString( Title::newFromText('xyz'));
 		SFFormEdit::printForm( $form_name, $target_name );
