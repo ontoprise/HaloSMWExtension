@@ -915,7 +915,8 @@ class AutoCompletionHandler {
 							if (!is_null($samples)) return $samples;
 						}
                         $domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
-						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, $domainRangeProperty);
+                        $propertyDI = SMWDIWikiPage::newFromTitle($property);
+						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propertyDI, $domainRangeProperty);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
 						$inf = self::setInferred($pages, !$first);
 						$result = self::mergeResults($result, $inf);
