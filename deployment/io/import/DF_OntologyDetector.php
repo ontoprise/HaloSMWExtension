@@ -768,10 +768,7 @@ class DeployWikiRevisionDetector extends WikiRevision {
 		$linkCache->clear();
 
 		global $dfgLang;
-		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_contenthash')) return false;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
-
-		 
 
 		$article = new Article( $this->title );
 		$pageId = $article->getId();

@@ -436,7 +436,7 @@ class ResourceInstaller {
             list($title, $command)=$log;
             $pagesToImport[] = $title->getPrefixedText();
         }
-        $bundleIDValue = SMWDataValueFactory::newTypeIDValue('_wpg', $bundleID);
+        $bundleIDValue = SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID));
         $pageValuesOfOntology = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')), $bundleIDValue);
         $existingPages = array();
         foreach($pageValuesOfOntology as $pv) {

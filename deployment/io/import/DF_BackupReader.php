@@ -102,7 +102,7 @@ class BackupReader {
 	function importFromHandle( $handle ) {
 		$this->startTime = wfTime();
 
-		$this->importContentHashTemplate();
+		$this->importPredefinedTemplates();
 
 		$source = new ImportStreamSource( $handle );
 		$importer = new DeployWikiImporter( $source, $this->mode, DFUserInput::getInstance() );
@@ -123,17 +123,10 @@ class BackupReader {
 	 * Creates the content hash template if it does not exist.
 	 *
 	 */
-	private function importContentHashTemplate() {
+	private function importPredefinedTemplates() {
 		global $dfgLang;
 		global $dfgOut;
-		$t = Title::newFromText($dfgLang->getLanguageString('df_contenthash'), NS_TEMPLATE);
-		if (!$t->exists()) {
-			$a = new Article($t);
-			$dfgOut->outputln("\tCreating template '".$dfgLang->getLanguageString('df_contenthash')."'...");
-			$a->insertNewArticle("[[".$dfgLang->getLanguageString('df_contenthash')."::{{{value|}}}| ]]", "auto-generated", false, false);
-			$dfgOut->output( "done.");
-		}
-			
+					
 		$t = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), NS_TEMPLATE);
 		if (!$t->exists()) {
 			$a = new Article($t);

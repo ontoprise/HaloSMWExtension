@@ -942,7 +942,7 @@ class Installer {
 					if ($p->getVersion()->isHigher($dep->getMaxVersion())) {
 						global $dfgForce;
 						if (!$dfgForce) {
-							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '$id' to be installed at most in version ".$to->toVersionString().". Downgrades are not supported.");
+							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '".$p->getID()."' to be installed at most in version ".$dep->getMaxVersion()->toVersionString().". Downgrades are not supported.");
 						}
 					}
 				}

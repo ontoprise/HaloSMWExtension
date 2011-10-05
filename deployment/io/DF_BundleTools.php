@@ -612,14 +612,6 @@ class DFBundleTools {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
-
-		// Content hash
-		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_contenthash'), SMW_NS_PROPERTY);
-		$correct = self::checkPropertyType($pTitle->getText(), "_str");
-		if (!$correct) {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
-			$check = false;
-		}
 		
 	    // Ontology URI
         $pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);

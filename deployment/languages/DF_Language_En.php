@@ -27,7 +27,7 @@ class DF_Language_En extends DF_Language {
 	// content
     'df_ontologyversion' => 'Ontology version',
     'df_partofbundle' => 'Part of bundle',
-    'df_contenthash' => 'Content hash',
+   
 	'df_dependencies'=> 'Dependency',
 	'df_instdir' => 'Installation dir',
 	
