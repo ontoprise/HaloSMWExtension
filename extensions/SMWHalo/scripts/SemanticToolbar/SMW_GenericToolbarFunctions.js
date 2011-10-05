@@ -161,7 +161,7 @@ createList: function(list,id) {
 					var recPropName = '';
 					var recPropExists = false;
 							
-					if (recordProps) {
+					if (recordProps && recordProps.length > (j<<1)+1) {
 						recPropName   = recordProps[j<<1];
 						recPropExists = recordProps[(j<<1)+1];
 					}				
@@ -185,7 +185,8 @@ createList: function(list,id) {
 						// This is not a record with several values
 						firstValue = valueLink;
 					} else {
-						if (recPropName) {
+						if (recPropName.length > 0) {
+							// A valid property name is given
 							recPropName = recPropName.replace(/_/g,' ').escapeHTML();
 							if (recPropExists === 'true') {
 								recPropName =
@@ -208,6 +209,9 @@ createList: function(list,id) {
 							var rpClass = j === n-1 ? id + '-col1-record-last'
 													: id + '-col1-record';
 							recPropName = '<td class="'+rpClass+'" >' + recPropName + '&nbsp;&nbsp;</td>';
+						} else {
+							// unknown property name in a record
+							recPropName = '<td class="'+rpClass+'" ></td>';
 						}
 						multiValue += 
 							"<tr>" +

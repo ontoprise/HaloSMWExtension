@@ -305,6 +305,9 @@ function smwf_om_ExistsArticle($title) {
 		$title);
 	}
 	$titleObj = Title::newFromText($title);
+	if (!$titleObj) {
+		return "false";
+	}
 	$article = new Article($titleObj);
 
 	if ($article->exists()) {
@@ -470,7 +473,7 @@ function smwf_om_MultipleRelationInfo($relations) {
 		$relDescr->accessGranted = smwf_om_userCan($relDescr->name, $relDescr->accessRequest);
 
 		// Check if values of the relation are valid pages
-		list($relSchema, $categories, $recordProperties) 
+		list($relSchema, $categories, $recordProperties, $recPropExists) 
 			= $relDescr->relationExists === 'true'
 								? smwf_om_getRelationSchema($relDescr->name)
 								: array(array('_wpg'), array(null), array());
@@ -498,9 +501,9 @@ function smwf_om_MultipleRelationInfo($relations) {
 		}
 		
 		$recProp = array();
-		foreach ($recordProperties as $propName => $propExists) {
+		foreach ($recordProperties as $idx => $propName) {
 			$recProp[] = $propName;
-			$recProp[] = $propExists;
+			$recProp[] = $recPropExists[$idx];
 		}
 		
 		$relDescr->valuePageInfo = $valuePageInfo;
@@ -544,7 +547,6 @@ function smwf_om_RelationSchemaData($relationName) {
 	}
 	list($schema, $categories, $recProperties) 
 		= smwf_om_getRelationSchema($relationName);
-	$recProperties = array_keys($recProperties);
 	$arity = count($schema) + 1; // +1 because of subject
 	$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	// If first parameter is a wikipage, take the property name + "|Page" as
@@ -1138,6 +1140,7 @@ function smwf_om_getRelationSchema($relationName) {
 	$relSchema = array();
 	$categories = array();
 	$recordProperties = array();
+	$recordPropertiesExist = array();
 
 	if (!($type[0] instanceof SMWDIUri)) {
 		return array($relSchema, $categories, $recordProperties);
@@ -1148,7 +1151,6 @@ function smwf_om_getRelationSchema($relationName) {
 		// => the property "has fields" contains properties
 		$fieldsProp = SMWDIProperty::newFromUserLabel("_LIST");
 		$fields = smwfGetStore()->getPropertyValues($relationDI, $fieldsProp);
-		$recordProperties = array();
 		if (count($fields) > 0) {
 			$keys = array_keys($fields); 
 			$fields = $fields[$keys[0]]->getString();
@@ -1157,18 +1159,16 @@ function smwf_om_getRelationSchema($relationName) {
 			
 			// get the types of all record properties and their range categories
 			global $wgContLang;
-			$relPageExists = array();
 			$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
 			foreach ($recordProperties as $recProp) {
 				$exists = smwf_om_ExistsArticle($propPrefix.$recProp);
-				$relPageExists[] = $exists;
+				$recordPropertiesExist[] = $exists;
 				list($recPropSchema, $recPropCategories) = $exists === 'true'
 										? smwf_om_getRelationSchema($recProp)
 										: array(array('_wpg'), array(NULL));
 				$relSchema[] = $recPropSchema[0];
 				$categories[] = $recPropCategories[0];
 			}
-			$recordProperties = array_combine($recordProperties, $relPageExists);
 		}
 	} else {
 		// A simple property
@@ -1181,6 +1181,6 @@ function smwf_om_getRelationSchema($relationName) {
 			$categories[] = NULL;
 		}
 	}
-	return array($relSchema, $categories, $recordProperties);
+	return array($relSchema, $categories, $recordProperties, $recordPropertiesExist);
 
 }
