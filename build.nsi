@@ -182,7 +182,7 @@ ShowInstDetails show
 ; Basic variables for environment
 Var PHP
 Var MEDIAWIKIDIR
-
+Var FART
 
 ;Wiki customizations
 Var WIKINAME 
@@ -343,8 +343,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   
    ; Register scheduled task for services
     SetOutPath "$INSTDIR"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-        StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
+    StrCpy $FART "$INSTDIR\tools\fart.exe"
+       
          ${GetWindowsVersion} $R0
          ${If} $R0 == "7"
          ${OrIf} $R0 == "Vista"
@@ -352,34 +352,34 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
             # Apache
-            nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\apache_restart.bat"'
-            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\runasadmin.xml"'
+            nsExec::ExecToLog 'schtasks /delete /tn "restart_apache"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_restart_apache.txt" {{command}} "\"$INSTDIR\apache_restart.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "restart_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_restart_apache.txt"'
             # We do not need a stop command for apache
             
             # Mysql
             nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
             nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\mysql_start.bat"'
-            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\runasadmin.xml"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\mysql_stop.bat"'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\runasadmin.xml"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_mysql.txt" {{command}} "\"$INSTDIR\mysql_start.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\runas_template_start_mysql.txt"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_mysql.txt" {{command}} "\"$INSTDIR\mysql_stop.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\runas_template_stop_mysql.txt"'
             
             # SOLR
             nsExec::ExecToLog 'schtasks /delete /tn "start_solr"'
             nsExec::ExecToLog 'schtasks /delete /tn "stop_solr"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\solr\wikiStartSolr.bat"'
-            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\runasadmin.xml"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\solr\wikiStopSolr.bat"'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\runasadmin.xml"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStartSolr.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\runas_template_start_solr.txt"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStopSolr.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\runas_template_stop_solr.txt"'
             
             # Memcached
             nsExec::ExecToLog 'schtasks /delete /tn "start_memcached"'
             nsExec::ExecToLog 'schtasks /delete /tn "stop_memcached"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\memcached\memcached -d start"'
-            nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /XML "$INSTDIR\runasadmin.xml"'
-            nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\memcached\memcached -d stop"'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_memcached" /XML "$INSTDIR\runasadmin.xml"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_memcachedservice.txt" {{command}} "\"$INSTDIR\memcached\memcached -d start\""'
+            nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /XML "$INSTDIR\runas_template_start_memcachedservice.txt"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_memcachedservice.txt" {{command}} "\"$INSTDIR\memcached\memcached -d stop\""'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_memcached" /XML "$INSTDIR\runas_template_stop_memcachedservice.txt"'
          ${EndIf}
          
          ${If} $R0 == "XP"
@@ -1125,33 +1125,32 @@ Function installAsWindowsService
     ; Register scheduled task for services to run them in higher runlevel
     ; remove the above registering by ones which uses apache & mysql as services.
     SetOutPath "$INSTDIR"
-    StrCpy $PHP "$INSTDIR\php\php.exe"
-        StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-         ${GetWindowsVersion} $R0
-         ${If} $R0 == "7"
-         ${OrIf} $R0 == "Vista"
-         ${OrIf} $R0 == "2008"
-            DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
+    StrCpy $FART "$INSTDIR\tools\fart.exe"
+    ${GetWindowsVersion} $R0
+    ${If} $R0 == "7"
+    ${OrIf} $R0 == "Vista"
+    ${OrIf} $R0 == "2008"
+           DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
            # Apache (remove others before)
-           nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-           nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="net start apache"'
-           nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\runasadmin.xml"'
+           nsExec::ExecToLog 'schtasks /delete /tn "restart_apache"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_restart_apacheservice.txt" {{command}} "\"net stop apache\" && \"net start apache\""'
+           nsExec::ExecToLog 'schtasks /create /tn "restart_apache" /XML "$INSTDIR\runas_template_restart_apacheservice.txt"'
            # We do not need a stop command for apache
             
            # Mysql (remove others before)
            nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
            nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
-           nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="net start mysql"'
-           nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\runasadmin.xml"'
-           nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="net stop mysql"'
-           nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\runasadmin.xml"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_mysqlservice.txt" {{command}} "\"net start mysql\""'
+           nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\runas_template_start_mysqlservice.txt"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_mysqlservice.txt" {{command}} "\"net stop mysql\""'
+           nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\runas_template_stop_mysqlservice.txt"'
             
         
-         ${EndIf}
+     ${EndIf}
          
-         ${If} $R0 == "XP"
-         ${OrIf} $R0 == "2003"
+     ${If} $R0 == "XP"
+     ${OrIf} $R0 == "2003"
          
          DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
          nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
@@ -1162,7 +1161,7 @@ Function installAsWindowsService
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once /st 00:00'
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once /st 00:00'
             
-         ${EndIf}
+     ${EndIf}
 
 FunctionEnd
 
