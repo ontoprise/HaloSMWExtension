@@ -49,13 +49,16 @@
 }
 
 #contextmenu{
-  width: 250px;
+  width: 260px;
   position: fixed;
   z-index: 2;
-  background-color: #ffffff;
+  background-color: whitesmoke;
   border: 2px solid #aaaaaa;
   border-radius: 5px 5px 5px 5px;
   box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0, 0.3);
+}
+
+#contextmenuContent{
   padding: 3px;
 }
 
@@ -123,21 +126,18 @@
 }
 
 #topToolbar{
-  width: 100%;
-  height: 18px;
+  height: 20px;
   vertical-align: top;
   cursor: move;
-}
-
-#topToolbar div{
   color: #aaaaaa;
   font-weight: bold;
-  padding-left: 2px;
+  border-bottom: 2px solid #aaaaaa;
+  padding-left: 5px;
 }
 
-#topToolbar div img{
+#topToolbar img{
   float: right;
   cursor: pointer;
-  padding: 2px;
+  padding: 4px;
 }
 

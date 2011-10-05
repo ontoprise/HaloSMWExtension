@@ -6,43 +6,53 @@
 //Lightweight Framework for displaying context menu in aam
 window.ContextMenuFramework = Class.create();
 ContextMenuFramework.prototype = {
-/**
+  /**
  * Constructor
  */
-initialize: function() {
-		if(!$("contextmenu")){
-                        // Context menu is supposed to overlap Semantic toolbar
-                        var zindex = ($('ontomenuanchor').getStyle('z-index'))
-                                    ? parseInt($('ontomenuanchor').getStyle('z-index')) + 1
-                                    : 30;
-                        // because of Ontoskin3 set zIndex at least to 30
-                        if (zindex < 30) zindex = 30;
-			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar"><div>' + gLanguage.getMessage('ADD_ANNOTATION') + '<img src="'
-        + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/expanded-close.gif"/><div></div></div>';
+  initialize: function() {
+    if(!$("contextmenu")){
+      // Context menu is supposed to overlap Semantic toolbar
+      var zindex = ($('ontomenuanchor').getStyle('z-index'))
+      ? parseInt($('ontomenuanchor').getStyle('z-index')) + 1
+      : 30;
+      // because of Ontoskin3 set zIndex at least to 30
+      if (zindex < 30) zindex = 30;
+//      var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar"><div>' + gLanguage.getMessage('ADD_ANNOTATION') + '<img src="'
+//      + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/expanded-close.gif"/><div></div></div>';
 
-        var self = this;
+      var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar">'
+        + gLanguage.getMessage('ADD_ANNOTATION')
+        + '<img src="'
+        + mw.config.get('wgServer')
+        + mw.config.get('wgScriptPath')
+        + '/extensions/SMWHalo/skins/expanded-close.gif"/></div>'
+        + '<div id="contextmenuContent"></div></div>';
+
+
+
+      var self = this;
       jQuery('#topToolbar img').live('click', function(){
         self.remove();
       });
-			if ($('smwh_AAM'))
-//			    new Insertion.After($('smwh_AAM'), menu );
-			    new Insertion.After($('ontomenuanchor'), menu );
-			else // in edit mode smwh_AAM doesn't exist.
-			    new Insertion.After($('ontomenuanchor'), menu );
-		}
+      if ($('smwh_AAM'))
+        //			    new Insertion.After($('smwh_AAM'), menu );
+        new Insertion.After($('ontomenuanchor'), menu );
+      else // in edit mode smwh_AAM doesn't exist.
+        new Insertion.After($('ontomenuanchor'), menu );
+    }
 		
-},
+  },
 
-/**
+  /**
  * Removes the context menu from the DOM tree.
  */
-remove: function() {
-	if ($("contextmenu")) {
-		$("contextmenu").remove();
-	}
-},
+  remove: function() {
+    if ($("contextmenu")) {
+      $("contextmenu").remove();
+    }
+  },
 
-/**
+  /**
  * @public positions the STB at the given coordinates considering how it fits best     
  * 
  * @param 	String htmlcontent
@@ -52,84 +62,84 @@ remove: function() {
  * 			String headline 
  * 				text of the shown headline
  */
-setContent: function(htmlcontent,containertype, headline){
-	var header;
-	var content;
-	var contentdiv;
-	switch(containertype){
-		case CATEGORYCONTAINER:
-			if($('cmCategoryHeader')) {
-				$('cmCategoryHeader').remove();
-			}
-			if($('cmCategoryContent')) {
-				$('cmCategoryContent').remove();
-			}
-			header =  '<div id="cmCategoryHeader">'+headline+'</div>';
-			content = '<div id="cmCategoryContent"></div>';
-			contentdiv = 'cmCategoryContent';
-			break;
-		case RELATIONCONTAINER:
-			if($('cmPropertyHeader')) {
-				$('cmPropertyHeader').remove();
-			}
-			if($('cmPropertyContent')) {
-				$('cmPropertyContent').remove();
-			}
-			header =  '<div id="cmPropertyHeader">'+headline+'</div>';
-			content = '<div id="cmPropertyContent"></div>';
-			contentdiv = 'cmPropertyContent'
-			break;
-		case 'ANNOTATIONHINT':
-			if($('cmAnnotationHintHeader')) {
-				$('cmAnnotationHintHeader').remove();
-			}
-			if($('cmAnnotationHintContent')) {
-				$('cmAnnotationHintContent').remove();
-			}
-			header =  '<div id="cmAnnotationHintHeader">'+headline+'</div>';
-			content = '<div id="cmAnnotationHintContent"></div>';
-			contentdiv = 'cmAnnotationHintContent'
-			break;
-		default:
-			if($('cmDefaultHeader')) {
-				$('cmDefaultHeader').remove();
-			}
-			if($('cmDefaultContent')) {
-				$('cmDefaultContent').remove();
-			}
-			header =  '<div id="cmDefaultHeader">'+headline+'</div>';
-			content = '<div id="cmDefaultContent"></div>';
-			contentdiv = 'cmDefaultContent'
-	}
-	new Insertion.Bottom('contextmenu', header );
-	new Insertion.Bottom('contextmenu', content );
-	new Insertion.Bottom(contentdiv, htmlcontent );
-	if ($('cmCategoryHeader') && $('cmPropertyContent')) {
-		Event.observe('cmCategoryHeader', 'click',
-					  function(event) {
-					  	$('cmCategoryContent').show();
-					  	$('cmPropertyContent').hide();
-					  });
-	}
-	if ($('cmPropertyHeader') && $('cmCategoryContent')) {
-		Event.observe('cmPropertyHeader', 'click',
-					  function(event) {
-					  	$('cmCategoryContent').hide();
-					  	$('cmPropertyContent').show();
-					  });
-	}
+  setContent: function(htmlcontent,containertype, headline){
+    var header;
+    var content;
+    var contentdiv;
+    switch(containertype){
+      case CATEGORYCONTAINER:
+        if($('cmCategoryHeader')) {
+          $('cmCategoryHeader').remove();
+        }
+        if($('cmCategoryContent')) {
+          $('cmCategoryContent').remove();
+        }
+        header =  '<div id="cmCategoryHeader">'+headline+'</div>';
+        content = '<div id="cmCategoryContent"></div>';
+        contentdiv = 'cmCategoryContent';
+        break;
+      case RELATIONCONTAINER:
+        if($('cmPropertyHeader')) {
+          $('cmPropertyHeader').remove();
+        }
+        if($('cmPropertyContent')) {
+          $('cmPropertyContent').remove();
+        }
+        header =  '<div id="cmPropertyHeader">'+headline+'</div>';
+        content = '<div id="cmPropertyContent"></div>';
+        contentdiv = 'cmPropertyContent'
+        break;
+      case 'ANNOTATIONHINT':
+        if($('cmAnnotationHintHeader')) {
+          $('cmAnnotationHintHeader').remove();
+        }
+        if($('cmAnnotationHintContent')) {
+          $('cmAnnotationHintContent').remove();
+        }
+        header =  '<div id="cmAnnotationHintHeader">'+headline+'</div>';
+        content = '<div id="cmAnnotationHintContent"></div>';
+        contentdiv = 'cmAnnotationHintContent'
+        break;
+      default:
+        if($('cmDefaultHeader')) {
+          $('cmDefaultHeader').remove();
+        }
+        if($('cmDefaultContent')) {
+          $('cmDefaultContent').remove();
+        }
+        header =  '<div id="cmDefaultHeader">'+headline+'</div>';
+        content = '<div id="cmDefaultContent"></div>';
+        contentdiv = 'cmDefaultContent'
+    }
+    new Insertion.Bottom('contextmenuContent', header );
+    new Insertion.Bottom('contextmenuContent', content );
+    new Insertion.Bottom(contentdiv, htmlcontent );
+    if ($('cmCategoryHeader') && $('cmPropertyContent')) {
+      Event.observe('cmCategoryHeader', 'click',
+        function(event) {
+          $('cmCategoryContent').show();
+          $('cmPropertyContent').hide();
+        });
+    }
+    if ($('cmPropertyHeader') && $('cmCategoryContent')) {
+      Event.observe('cmPropertyHeader', 'click',
+        function(event) {
+          $('cmCategoryContent').hide();
+          $('cmPropertyContent').show();
+        });
+    }
 
-},
+  },
 
-/**
+  /**
  * @public  dummy since changes will be visible on the fly with setContent
  *			this is for compatiblity with the stb_framework
  */
-contentChanged: function(){
+  contentChanged: function(){
 
-},
+  },
 
-/**
+  /**
  * @public positions the STB at the given coordinates considering how it fits best     
  * 
  * @param 	posX
@@ -137,76 +147,100 @@ contentChanged: function(){
  * 			posY 
  * 				desired Y position
  */
-setPosition: function(posX,posY){
-	element = $('contextmenu');
-	//X-Coordinates
-	var toolbarWidth = element.scrollWidth;
-	//Check if it fits right to the coordinates
-	var width = (window.innerWidth) ? window.innerWidth : document.body.clientWidth;
-	if( width - posX < toolbarWidth) {
-		//Check if it fits left to the coordinates
-		if( posX < toolbarWidth){
-			// if not place it on the left side of the window
-			element.setStyle({right: ''});
-			element.setStyle({left: '10px'});
+  setPosition: function(posX,posY){
+    element = $('contextmenu');
+    //X-Coordinates
+    var toolbarWidth = element.scrollWidth;
+    //Check if it fits right to the coordinates
+    var width = (window.innerWidth) ? window.innerWidth : document.body.clientWidth;
+    if( width - posX < toolbarWidth) {
+      //Check if it fits left to the coordinates
+      if( posX < toolbarWidth){
+        // if not place it on the left side of the window
+        element.setStyle({
+          right: ''
+        });
+        element.setStyle({
+          left: '10px'
+        });
 			
-		} else {
-			//if it fits position it left to the coordinates
-			var pos = width - posX;
-			element.setStyle({right: pos + 'px'});
-			element.setStyle({left: ''});
-		}
-	} else {
-		//if it fits position it right to the coordinates
-		var pos = posX;
-		element.setStyle({right: ''});
-		element.setStyle({left: pos  + 'px'});
-	}
-	//Y-Coordinates
-	var toolbarHeight = element.scrollHeight;
-	//Check if it fits bottom to the coordinates
-	if( window.innerHeight - posY < toolbarHeight) {
-		//Check if it fits top to the coordinates
-		if(posY < toolbarHeight){
-			// if not place it on the top side of the window	
-			element.setStyle({bottom: ''});
-			element.setStyle({top: '10px'});
+      } else {
+        //if it fits position it left to the coordinates
+        var pos = width - posX;
+        element.setStyle({
+          right: pos + 'px'
+          });
+        element.setStyle({
+          left: ''
+        });
+      }
+    } else {
+      //if it fits position it right to the coordinates
+      var pos = posX;
+      element.setStyle({
+        right: ''
+      });
+      element.setStyle({
+        left: pos  + 'px'
+        });
+    }
+    //Y-Coordinates
+    var toolbarHeight = element.scrollHeight;
+    //Check if it fits bottom to the coordinates
+    if( window.innerHeight - posY < toolbarHeight) {
+      //Check if it fits top to the coordinates
+      if(posY < toolbarHeight){
+        // if not place it on the top side of the window
+        element.setStyle({
+          bottom: ''
+        });
+        element.setStyle({
+          top: '10px'
+        });
 			
-		} else {
-		var pos = window.innerHeight - posY;
-			//if it fits position it top to the coordinates
-			element.setStyle({bottom: pos + 'px'});
-			element.setStyle({top: ''});
-		}
-	}else {
-		//if it fits position it bottom to the coordinates
-		var pos = posY;
-		element.setStyle({bottom: ''});
-		element.setStyle({top: pos  + 'px'});
-	}
-},
-/**
+      } else {
+        var pos = window.innerHeight - posY;
+        //if it fits position it top to the coordinates
+        element.setStyle({
+          bottom: pos + 'px'
+          });
+        element.setStyle({
+          top: ''
+        });
+      }
+    }else {
+      //if it fits position it bottom to the coordinates
+      var pos = posY;
+      element.setStyle({
+        bottom: ''
+      });
+      element.setStyle({
+        top: pos  + 'px'
+        });
+    }
+  },
+  /**
  * @public  shows menu
  * 
  */
-showMenu: function(){
-	$('contextmenu').show();
-        var numberOfSubContainers = $('contextmenu').immediateDescendants().length;
-	if ($('cmCategoryContent') && numberOfSubContainers > 3) {
-		// The category section is initially folded in
-		$('cmCategoryContent').hide();
-	}
+  showMenu: function(){
+    $('contextmenu').show();
+    var numberOfSubContainers = $('contextmenuContent').immediateDescendants().length;
+    if ($('cmCategoryContent') && numberOfSubContainers > 3) {
+      // The category section is initially folded in
+      $('cmCategoryContent').hide();
+    }
 
-  mw.loader.using('jquery.ui.draggable', function(){
-    jQuery('#contextmenu').draggable();
-  });
-},
-/**
+    mw.loader.using('jquery.ui.draggable', function(){
+      jQuery('#contextmenu').draggable();
+    });
+  },
+  /**
  * @public  hides menu
  */
-hideMenu: function(){
-	$('contextmenu').hide();
-} 
+  hideMenu: function(){
+    $('contextmenu').hide();
+  }
 
 };
 
