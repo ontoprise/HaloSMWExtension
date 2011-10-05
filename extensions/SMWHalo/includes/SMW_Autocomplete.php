@@ -827,6 +827,7 @@ class AutoCompletionHandler {
 		foreach($parsedCommands as $c) {
 
 			list($commandText, $params) = $c;
+			$commandText = trim($commandText);
 
 			if ($commandText == 'values') {
 				foreach($params as $p) {
