@@ -6,9 +6,9 @@ VERSION 1.6.0
 		15333 - Add stylesheet support to inline queries
 		
 	Bugfixes:
+		15726 - Catchable fatal error: Hook mismatch in LOD part on sfFormEdit	
 		14108 - Auto-completion not as expected
 		15683 - AC in tagging floatbox does not propose range-instances
-		
 	
 
 VERSION 1.5.6
