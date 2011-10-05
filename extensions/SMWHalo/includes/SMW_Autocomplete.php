@@ -426,16 +426,11 @@ class AutoCompletionRequester {
 			return (explode("|",(wfMsg('smw_ac_geocoord_proposal'))));
 		} else if ($typeID == '_rec') {
 
-			// request expected types of record property
-			$values = smwfGetStore()->getPropertyValues(Title::newFromText($propertyText, SMW_NS_PROPERTY), SMWPropertyValue::makeProperty("_LIST"));
-			$typeValues = $values[0]->getTypeValues();
-
-			$proposal = "";
-			for($i = 0; $i < count($typeValues); $i++) {
-				$tv = $typeValues[$i];
-				$proposal .= $tv->getWikiValue();
-				if ($i < count($typeValues)-1) $proposal .= "; ";
-			}
+			// request expected properties of record property
+			$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText($propertyText, SMW_NS_PROPERTY)), SMWDIProperty::newFromUserLabel("_LIST"));
+			$stringDi = reset($values);
+			$proposal = $stringDi->getString();
+			
 			smwfGetStore()->setLocalRequest(false);
 			return (array($proposal));
 		} else if ($typeID == '_ema') {
