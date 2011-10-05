@@ -546,7 +546,7 @@ class TFDataAPIACCESS {
 			$pVals = $semanticData->getPropertyValues($properties['Has_max_cardinality']);
 			
 			$idx = array_keys($pVals);
-			$delimiter =
+			$maxCardinality =
 				SMWDataValueFactory::newDataItemValue($pVals[$idx[0]], null)->getShortWikiText();
 		}
 		
@@ -560,10 +560,11 @@ class TFDataAPIACCESS {
 		}
 			
 		if($maxCardinality != 1 || $delimiter){
-				if(!$delimiter) 
+				if(!$delimiter){ 
 					return ',';
-				else
+				} else {
 					return $delimiter;
+				}
 		}
 		
 	}
