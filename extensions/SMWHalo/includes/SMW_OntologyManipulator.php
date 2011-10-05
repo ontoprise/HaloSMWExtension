@@ -522,9 +522,9 @@ function smwf_om_MultipleRelationInfo($relations) {
  * Example: (Note that arity is #params + 1, because of subject)
  *
  * <relationSchema name="hasState" arity="4">
- *  <param name="Pressure"/>
- *  <param name="Temperature"/>
- *  <param name="State"/>
+ *  <param name="has Pressure"/>
+ *  <param name="has Temperature"/>
+ *  <param name="has State"/>
  * </relationSchema>
  *
  * @param relationTitle as String
@@ -532,61 +532,37 @@ function smwf_om_MultipleRelationInfo($relations) {
  * @return xml string
  */
 function smwf_om_RelationSchemaData($relationName) {
-	global $smwgHaloContLang;
-	$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-
-	// get type definition (if it exists)
-	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-	$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-	$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
-
-	// if no 'has type' annotation => normal binary relation
-	if (count($type) == 0) {
-		// return binary schema (arity = 2)
-		$relSchema = '<relationSchema name="'.$relationName.'" arity="0">'.
-           	  		 '</relationSchema>';
-	} else {
-		$typeLabels = $type[0]->getTypeLabels();
-		$typeValues = $type[0]->getTypeValues();
-		if ($type[0] instanceof SMWTypesValue) {
-
-			// get arity
-			$arity = count($typeLabels) + 1;  // +1 because of subject
-			$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
-
-			// If first parameter is a wikipage, take the property name + "|Page" as label, otherwise use type label.
-			$firstParam = $typeValues[0] instanceof SMWWikiPageValue ? $relationName."|Page" : $typeLabels[0];
-			$relSchema .= '<param name="'.$firstParam.'"/>';
-			for($i = 1, $n = $arity-1; $i < $n; $i++) {
-
-				// for all other wikipage parameters, use the range hint as label. If no range hint exists, simply print 'Page'.
-				// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
-				if ($typeValues[$i] instanceof SMWWikiPageValue) {
-					$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
-					$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, $domainRangeProperty);
-					if (count($rangeHints) > 0) {
-						$dvs = $rangeHints->getDVs();
-						if ($dvs[1] !== NULL) {
-							$labelToPaste = htmlspecialchars($dvs[1]->getTitle()->getText());
-						} else {
-							$labelToPaste = 'Page';
-						}
-					} else {
-						$labelToPaste = 'Page';
-					}
-				} else {
-					$labelToPaste = $typeLabels[$i];
-				}
-				$relSchema .= '<param name="'.$labelToPaste.'"/>';
-			}
-			$relSchema .= '</relationSchema>';
-
-		} else { // this should never happen, huh?
-			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-							'<param name="Page"/>'.
-        	   	  		 '</relationSchema>';
-		}
+	global $wgContLang;
+	$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
+	
+	$relSchema = '<relationSchema name="'.$relationName.'" arity="0">'.
+             	 '</relationSchema>';
+	$exists = smwf_om_ExistsArticle($propPrefix.$relationName);
+	if (!$exists) {
+		// There is no such relation
+		return $relSchema;
 	}
+	list($schema, $categories, $recProperties) 
+		= smwf_om_getRelationSchema($relationName);
+	$recProperties = array_keys($recProperties);
+	$arity = count($schema) + 1; // +1 because of subject
+	$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
+	// If first parameter is a wikipage, take the property name + "|Page" as
+	// label, otherwise use the label of the first property in a record.
+	$firstParam = $relationName;
+	if (count($schema) == 1) {
+		if ($schema[0] === '_wpg') {
+			$firstParam .= "|Page";
+		}
+	} else {
+		$firstParam = htmlspecialchars(str_replace( '_', ' ', $recProperties[0]));
+	}
+	$relSchema .= '<param name="'.$firstParam.'"/>';
+	for($i = 1, $n = $arity-1; $i < $n; $i++) {
+		$relSchema .= '<param name="'.htmlspecialchars(str_replace( '_', ' ', $recProperties[$i])).'"/>';
+	}
+	$relSchema .= '</relationSchema>';
+	
 	return $relSchema;
 }
 
@@ -1172,24 +1148,28 @@ function smwf_om_getRelationSchema($relationName) {
 		// => the property "has fields" contains properties
 		$fieldsProp = SMWDIProperty::newFromUserLabel("_LIST");
 		$fields = smwfGetStore()->getPropertyValues($relationDI, $fieldsProp);
-		$fields = array_keys($fields);
-		// get the names of all properties in record
-		$recordProperties = explode(';',$fields[0]);
-		
-		// get the types of all record properties and their range categories
-		global $wgContLang;
-		$relPageExists = array();
-		$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
-		foreach ($recordProperties as $recProp) {
-			$exists = smwf_om_ExistsArticle($propPrefix.$recProp);
-			$relPageExists[] = $exists;
-			list($recPropSchema, $recPropCategories) = $exists === 'true'
-									? smwf_om_getRelationSchema($recProp)
-									: array(array('_wpg'), array(NULL));
-			$relSchema[] = $recPropSchema[0];
-			$categories[] = $recPropCategories[0];
+		$recordProperties = array();
+		if (count($fields) > 0) {
+			$keys = array_keys($fields); 
+			$fields = $fields[$keys[0]]->getString();
+			// get the names of all properties in record
+			$recordProperties = explode(';',$fields);
+			
+			// get the types of all record properties and their range categories
+			global $wgContLang;
+			$relPageExists = array();
+			$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
+			foreach ($recordProperties as $recProp) {
+				$exists = smwf_om_ExistsArticle($propPrefix.$recProp);
+				$relPageExists[] = $exists;
+				list($recPropSchema, $recPropCategories) = $exists === 'true'
+										? smwf_om_getRelationSchema($recProp)
+										: array(array('_wpg'), array(NULL));
+				$relSchema[] = $recPropSchema[0];
+				$categories[] = $recPropCategories[0];
+			}
+			$recordProperties = array_combine($recordProperties, $relPageExists);
 		}
-		$recordProperties = array_combine($recordProperties, $relPageExists);
 	} else {
 		// A simple property
 		$store = smwfGetSemanticStore();

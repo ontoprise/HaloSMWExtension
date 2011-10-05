@@ -16,40 +16,71 @@ class TestOntologyManipulatorSuite extends PHPUnit_Framework_TestSuite
 //------------------------------------------------------------------------------		
 	"Property:STB_string" =>
 <<<ARTICLE
-[[has type::Type:String| ]]
+[[has type::String| ]]
 ARTICLE
 ,
 //------------------------------------------------------------------------------		
 	"Property:STB_page" =>
 <<<ARTICLE
 [[has domain and range::; | ]]
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 ARTICLE
 ,
 //------------------------------------------------------------------------------		
 	"Property:STB_pageWithCat" =>
 <<<ARTICLE
 [[has domain and range::Category:Domain;Category:Range1| ]]
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 ARTICLE
 ,
 //------------------------------------------------------------------------------		
-	"Property:STB_nary" =>
+	"Property:ofState" =>
 <<<ARTICLE
-[[has domain and range::; | ]]
-[[has domain and range::; | ]]
-[[has type::Record| ]]
-[[has fields::Type:Page;Type:Number;Type:String;Type:Page| ]]
+[[has domain and range::;Category:State| ]]
+[[has type::Page| ]]
 ARTICLE
 ,
 //------------------------------------------------------------------------------		
-	"Property:STB_naryWithCat" =>
+	"Property:from" =>
 <<<ARTICLE
-[[has domain and range::Category:Domain; Category:Range1| ]]
-[[has domain and range::Category:Domain; Category:Range2| ]]
-[[has type::Record| ]]
-[[has fields::Type:Page;Type:Number;Type:String;Type:Page| ]]
+[[has type::Number| ]]
 ARTICLE
+,
+//------------------------------------------------------------------------------		
+	"Property:to" =>
+<<<ARTICLE
+[[has type::Number| ]]
+ARTICLE
+,
+//------------------------------------------------------------------------------		
+	"Property:withVicePresident" =>
+<<<ARTICLE
+[[has domain and range::;Category:Person| ]]
+[[has type::Page| ]]
+ARTICLE
+,
+//------------------------------------------------------------------------------		
+	"Property:isPresident" =>
+<<<ARTICLE
+[[has domain and range::Category:Person; | ]]
+[[has type::Record| ]]
+[[has fields::ofState;from;to;withVicePresident| ]]
+ARTICLE
+,
+//------------------------------------------------------------------------------		
+	"Property:isChancellor" =>
+<<<ARTICLE
+[[has domain and range::Category:Person; | ]]
+[[has type::Record| ]]
+[[has fields::ofState;from;to;withViceChancellor| ]]
+ARTICLE
+,
+//------------------------------------------------------------------------------		
+	"USA" =>
+<<<ARTICLE
+[[Category:State]]
+ARTICLE
+,
 
 	); 
 	
@@ -116,25 +147,25 @@ class TestMultipleRelationInfo extends PHPUnit_Framework_TestCase {
 		return array(
 			array(
 				'[{"name": "Property:NonExisting", "values": ["test"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:NonExisting","values":["test"],"accessRequest":"propertyedit","relationExists":"false","accessGranted":"true","valuePageInfo":["redlink"],"rangeCategories":[null],"relationSchema":["_wpg"]}]'),
+				'[{"name":"Property:NonExisting","values":["test"],"accessRequest":"propertyedit","relationExists":"false","accessGranted":"true","valuePageInfo":["redlink"],"rangeCategories":[null],"relationSchema":["_wpg"],"recordProperties":[]}]'),
 			array(
 				'[{"name": "Property:STB_string", "values": ["test"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_string","values":["test"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["no page"],"rangeCategories":[null],"relationSchema":["_str"]}]'),
+				'[{"name":"Property:STB_string","values":["test"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["no page"],"rangeCategories":[null],"relationSchema":["_str"],"recordProperties":[]}]'),
 			array(
 				'[{"name": "Property:STB_page", "values": ["Non existing page"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_page","values":["Non existing page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["redlink"],"rangeCategories":[null],"relationSchema":["_wpg"]}]'),
+				'[{"name":"Property:STB_page","values":["Non existing page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["redlink"],"rangeCategories":[null],"relationSchema":["_wpg"],"recordProperties":[]}]'),
 			array(
 				'[{"name": "Property:STB_page", "values": ["Main Page"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_page","values":["Main Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists"],"rangeCategories":[null],"relationSchema":["_wpg"]}]'),
+				'[{"name":"Property:STB_page","values":["Main Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists"],"rangeCategories":[null],"relationSchema":["_wpg"],"recordProperties":[]}]'),
 			array(
 				'[{"name": "Property:STB_pageWithCat", "values": ["Main Page"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_pageWithCat","values":["Main Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists"],"rangeCategories":["Range1"],"relationSchema":["_wpg"]}]'),
+				'[{"name":"Property:STB_pageWithCat","values":["Main Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists"],"rangeCategories":["Range1"],"relationSchema":["_wpg"],"recordProperties":[]}]'),
 			array(
-				'[{"name": "Property:STB_nary", "values": ["Main Page","1","Some text","Some Page"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_nary","values":["Main Page","1","Some text","Some Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists","no page","no page","redlink"],"rangeCategories":[null,null,null,null],"relationSchema":["_wpg","_num","_str","_wpg"]}]'),
+				'[{"name": "Property:isPresident", "values": ["USA","1961","1969","Lyndon B. Johnson"], "accessRequest": "propertyedit"}]',
+				'[{"name":"Property:isPresident","values":["USA","1961","1969","Lyndon B. Johnson"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists","no page","no page","redlink"],"rangeCategories":["State",null,null,"Person"],"relationSchema":["_wpg","_num","_num","_wpg"],"recordProperties":["OfState","true","From","true","To","true","WithVicePresident","true"]}]'),
 			array(
-				'[{"name": "Property:STB_naryWithCat", "values": ["Main Page","1","Some text","Some Page"], "accessRequest": "propertyedit"}]',
-				'[{"name":"Property:STB_naryWithCat","values":["Main Page","1","Some text","Some Page"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["exists","no page","no page","redlink"],"rangeCategories":["Range1",null,null,"Range2"],"relationSchema":["_wpg","_num","_str","_wpg"]}]'),
+				'[{"name": "Property:isChancellor", "values": ["SomeState","1961","1969","Herr Sowieso"], "accessRequest": "propertyedit"}]',
+				'[{"name":"Property:isChancellor","values":["SomeState","1961","1969","Herr Sowieso"],"accessRequest":"propertyedit","relationExists":"true","accessGranted":"true","valuePageInfo":["redlink","no page","no page","redlink"],"rangeCategories":["State",null,null,null],"relationSchema":["_wpg","_num","_num","_wpg"],"recordProperties":["OfState","true","From","true","To","true","WithViceChancellor","false"]}]'),
 						
 		);	
 	}
