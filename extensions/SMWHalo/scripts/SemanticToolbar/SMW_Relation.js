@@ -426,11 +426,7 @@ createContextMenu: function(contextMenuContainer, value, repr, name) {
 	gSTBEventActions.initialCheck($("relation-content-box"));
 	
 	//Sets Focus on first Element
-	setTimeout("if ($('rel-name')) $('rel-name').focus();",250);
-
-  mw.loader.using('jquery.ui.draggable', function(){
-    jQuery('#contextmenu').draggable();
-  });
+	setTimeout("if ($('rel-name')) $('rel-name').focus();",250);  
 	
 },
 

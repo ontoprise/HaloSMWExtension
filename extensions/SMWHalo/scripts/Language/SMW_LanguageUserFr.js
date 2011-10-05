@@ -77,6 +77,7 @@ window.wgUserLanguageStrings = {
     'PROPERTIES'              : 'Propriétés',
     'RETRIEVE_SCHEMA_DATA'    : 'Echec lors de la récupération du schéma de données !',
     'RECPROP'                 : "Proprieté recommandé",
+    'ADD_ANNOTATION'          : 'Add Annotation',
 
     // Property characteristics toolbar
     'PROPERTY_DOES_NOT_EXIST' : '(w)Cette propriété n\'existe pas.',

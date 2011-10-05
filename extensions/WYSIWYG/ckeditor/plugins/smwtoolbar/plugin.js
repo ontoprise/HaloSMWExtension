@@ -1,12 +1,41 @@
 var SMW_HALO_VERSION = 'SMW_HALO_VERSION';
 if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+
+  /**
+   * Retrieve HTML presentation of the current selected range, require editor
+   * to be focused first.
+   */
+  CKEDITOR.editor.prototype.getSelectedHtml = function()
+  {
+    var selection = this.getSelection();
+    if( selection )
+    {
+      var bookmarks = selection.createBookmarks(),
+      range = selection.getRanges()[ 0 ],
+      fragment = range.clone().cloneContents();
+
+      selection.selectBookmarks( bookmarks );
+
+      var retval = "",
+      childList = fragment.getChildren(),
+      childCount = childList.count();
+      for ( var i = 0; i < childCount; i++ )
+      {
+        var child = childList.getItem( i );
+        retval += ( child.getOuterHtml?
+          child.getOuterHtml() : child.getText() );
+      }
+      return retval;
+    }
+  };
+
   (function(){
     /**
- * Class which has the same functionality as SMWEditInterface except for the fact
- * that this must work for the CKEditor.
- * This class provides access to the edited text, returns a selection, changes
- * the content etc. The class is used in the semantic toolbar.
- */
+     * Class which has the same functionality as SMWEditInterface except for the fact
+     * that this must work for the CKEditor.
+     * This class provides access to the edited text, returns a selection, changes
+     * the content etc. The class is used in the semantic toolbar.
+     */
     // global variable for the edit interface (connector class for the STB to the
     // current used editor)
     var gEditInterface;
@@ -42,35 +71,35 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     CKeditInterface.prototype = {
 
       /**
-    * gets the selected string. This is the  simple string of a selected
-    * text in the editor arrea.
-    *
-    * @access public
-    * @return string selected text or null
-    * */
+       * gets the selected string. This is the  simple string of a selected
+       * text in the editor arrea.
+       *
+       * @access public
+       * @return string selected text or null
+       * */
       getSelectedText: function() {
         this.getSelectionAsArray();
         return (gEselection.length > 0) ? gEselection[0] : null;
       },
 
       /**
-     * returns the error message, if a selection cannot be annotated
-     *
-     * @access public
-     * @return string error message
-     */
+       * returns the error message, if a selection cannot be annotated
+       *
+       * @access public
+       * @return string error message
+       */
       getErrMsgSelection: function() {
         return gEerrMsgSelection;
       },
 
       /**
-     * Get the current selection of the FCKeditor and replace it with the
-     * annotated value. This works on a category or property annotation only.
-     * All other input is ignored and nothing will be replaced.
-     *
-     * @access public
-     * @param  string text wikitext
-     */
+       * Get the current selection of the FCKeditor and replace it with the
+       * annotated value. This works on a category or property annotation only.
+       * All other input is ignored and nothing will be replaced.
+       *
+       * @access public
+       * @param  string text wikitext
+       */
       setSelectedText: function(text) {
         // get the current editor instance
         var ckeditor = window.parent.wgCKeditorInstance;
@@ -91,7 +120,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         // case, oSpan will be null. Then we create a new element. This will be
         // inserted at cursor position.
         var selection = ckeditor.getSelection();
-        var oSpan = (selection) ? selection.getStartElement() : null;
+        var oSpan = selection ? selection.getStartElement() : null;
         if (oSpan && oSpan.$.nodeName.toUpperCase() == 'SPAN')
           ckeditor.getSelection().selectElement( oSpan );
         else
@@ -139,42 +168,42 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       },
 
       /**
-     * returns the text of the edit window. This is wiki text.
-     * If gEnewText is set, then something on the text has changed but the
-     * editarea is not yet updated with the new value. Therefore return this
-     * instead of fetching the text (with still the old value) from the editor
-     * area
-     *
-     * @access public
-     * @return string wikitext of the editors textarea
-     */
+       * returns the text of the edit window. This is wiki text.
+       * If gEnewText is set, then something on the text has changed but the
+       * editarea is not yet updated with the new value. Therefore return this
+       * instead of fetching the text (with still the old value) from the editor
+       * area
+       *
+       * @access public
+       * @return string wikitext of the editors textarea
+       */
       getValue: function() {
         return (gEnewText) ? gEnewText : gEeditor.getData();
       },
 
       /**
-     * set the text in the editor area completely new. The text in the function
-     * argument is wiki text. Therefore an Ajax call must be done, to transform
-     * this text into proper html what is needed by the FCKeditor. To parse the
-     * wiki text, the parser of the FCK extension is used (the same when the
-     * editor is started and when switching between wikitext and html).
-     *
-     * After parsing the text can be set in the editor area. This is done with
-     * FCK.SetData(). When doing this all Event listeners are lost. Therefore
-     * these must be added again. Also the variable gEnewText which contains
-     * the new text (runtime issues), can be flushed again.
-     * In this case the global variable gEditInterface.newText is used to get
-     * the correct instance of the class.
-     *
-     * Since the Semantic toolbar changes text quite frequently, we enable some
-     * kind of output buffering. If this is set (makes sence in the WYSIWYG mode
-     * only) then the text is saved in an internal variable. When output
-     * buffering is not selected, then the text is imediately written to the
-     * editor.
-     *
-     * @access public
-     * @param  string text with wikitext
-     */
+       * set the text in the editor area completely new. The text in the function
+       * argument is wiki text. Therefore an Ajax call must be done, to transform
+       * this text into proper html what is needed by the FCKeditor. To parse the
+       * wiki text, the parser of the FCK extension is used (the same when the
+       * editor is started and when switching between wikitext and html).
+       *
+       * After parsing the text can be set in the editor area. This is done with
+       * FCK.SetData(). When doing this all Event listeners are lost. Therefore
+       * these must be added again. Also the variable gEnewText which contains
+       * the new text (runtime issues), can be flushed again.
+       * In this case the global variable gEditInterface.newText is used to get
+       * the correct instance of the class.
+       *
+       * Since the Semantic toolbar changes text quite frequently, we enable some
+       * kind of output buffering. If this is set (makes sence in the WYSIWYG mode
+       * only) then the text is saved in an internal variable. When output
+       * buffering is not selected, then the text is imediately written to the
+       * editor.
+       *
+       * @access public
+       * @param  string text with wikitext
+       */
       setValue: function(text) {
         if (text) {
           if (gEeditor.mode == 'wysiwyg') {
@@ -189,35 +218,65 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       },
 
       /**
-     * returns the element were the selection is in.
-     *
-     * @access private
-     * @return HtmlNode
-     */
+       * returns the element were the selection is in.
+       *
+       * @access private
+       * @return HtmlNode
+       */
       getSelectedElement: function() {
         return gEselectedElement;
       },
 
       /**
-     * gets the selected text of the current selection from the FCK
-     * and fill up the member variable selection. This is an array of
-     * maximum 4 elements which are:
-     * 0 => selected text
-     * 1 => namespace (14 = category, 102 = property) not existend otherwise
-     * 2 => name of property or not set
-     * 3 => actual value of property if sel. text is representation only not
-     *      existend otherwise
-     * If the selection is valid at least gEselection[0] must be set. The
-     * selection is then returned to the caller
-     *
-     * @access public
-     * @return Array(mixed) selection
-     */
+       * gets the selected text of the current selection from the FCK
+       * and fill up the member variable selection. This is an array of
+       * maximum 4 elements which are:
+       * 0 => selected text
+       * 1 => namespace (14 = category, 102 = property) not existend otherwise
+       * 2 => name of property or not set
+       * 3 => actual value of property if sel. text is representation only not
+       *      existend otherwise
+       * If the selection is valid at least gEselection[0] must be set. The
+       * selection is then returned to the caller
+       *
+       * @access public
+       * @return Array(mixed) selection
+       */
       getSelectionAsArray: function() {
+
+        function handleSelectedSpan(gEeditor, element, selectedText){
+          var resultArray = [],
+          classAttribute = element.getAttribute('class');
+          if(classAttribute == 'fck_mw_property'){
+            //found property
+            resultArray[0] = selectedText.toString();
+            resultArray[1] = 102;
+            var property = element.getAttribute('property');
+            if (property.indexOf('::') > -1) {
+              resultArray[2] = property.substring(0, property.indexOf('::'));
+              resultArray[3] = property.substring(property.indexOf('::') +2);
+            }
+            else{
+              resultArray[2] = property;
+            }
+          }
+
+          else if(classAttribute == 'fck_mw_category'){
+            //found category
+            resultArray[0] = selectedText.toString();
+            resultArray[1] = 14;
+          }
+         
+          return resultArray;
+        }
+
         // flush the selection array
         gEselection = [];
         // remove any previously set error messages
         gEerrMsgSelection = '';
+
+        // (partly) selected text within these elements can be annotated.
+        var goodNodes = ['P', 'B', 'I', 'U', 'S', 'LI', 'DT', 'DIV', 'SPAN'];
 
         // if we are in wikitext mode, return the selection of the textarea
         if (gEeditor.mode != 'wysiwyg' ) {
@@ -226,154 +285,162 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         }
 
         // selection text only without any html mark up etc.
-        var ckSel = gEeditor.getSelection();
-        if (!ckSel) {
-          // nothing selected
-          gEselection[0] = '';
-          return gEselection;
-        }
-		
-        var browserSel = ckSel.getNative(),
-        selTextCont;
+        if (gEeditor.getSelection()) {
+   
+          var selectedHtml = gEeditor.getSelectedHtml();
+          var selectedText = gEeditor.getSelection().getNative();
 
-        if(browserSel.createRange) {
-          var srange = browserSel.createRange();
-          selTextCont = srange.text;
-        } else {
-          srange = browserSel.getRangeAt(ckSel.rangeCount - 1).cloneRange();
-          selTextCont = srange.cloneContents().textContent;
-        }
-        // nothing was really selected, this always happens when a single or
-        // double click is done. The mousup event is fired even though the user
-        // might have positioned the cursor somewhere only.
-        if (selTextCont === '') {
-          gEselection[0] = '';
-          return gEselection;
-        }
-
-        // selected element node
-        gEselectedElement = ckSel.getSelectedElement();
-        // parent element of the selected text (mostly a <p>)
-        var parent = ckSel.getStartElement();
-        // selection with html markup of the imediate parent element, if required
-        var html = this.getSelectionHtml();
-        // (partly) selected text within these elements can be annotated.
-        var goodNodes = ['P', 'B', 'I', 'U', 'S', 'LI', 'DT', 'DIV', 'SPAN'];
-
-        // selection is the same as the innerHTML -> no html was selected
-        // trim strings to compare
-        var tstc = selTextCont.replace(/^\s*(.*?)\s*$/,'$1');
-        var thtml = html.replace(/^\s*(.*?)\s*$/,'$1');
-        if (tstc == thtml) {
-          // if the parent node is <a> or a <span> (property, category) then
-          // we automatically select *all* of the inner html and the annotation
-          // works for the complete node content (this is a must for these nodes)
-          if (parent.$.nodeName.toUpperCase() == 'A') {
-            gEselection[0] = parent.getText();
-            gEselectedElement = parent;
-            return gEselection;
-          }
-          // check category and property that might be in the <span> tag,
-          // ignore all other spans that might exist as well
-          if (parent.$.nodeName.toUpperCase() == 'SPAN') {
-            if (parent.hasClass('fck_mw_property')) {
-              gEselectedElement = parent;
-              gEselection[0] = parent.getText().replace(/&nbsp;/gi, ' ');
-              gEselection[1] = 102;
-              var val = parent.getAttribute('property');
-              // differenciation between displayed representation and
-              // actual value of the property
-              if (val.indexOf('::') != -1) {
-                gEselection[2] = val.substring(0, val.indexOf('::'));
-                gEselection[3] = val.substring(val.indexOf('::') +2);
-              } else
-                gEselection[2] = val;
-              return gEselection;
+          if(selectedHtml && selectedText){
+            if(gEeditor.getSelection().getSelectedElement()){
+              //selected one element with no children e.g. <img/>
+              gEselection[0] = '';
+              return gEselection[0];
             }
-            else if (parent.hasClass('fck_mw_category')) {
-              gEselectedElement = parent;
-              gEselection[0] = parent.getText().replace(/&nbsp;/gi, ' ');
-              gEselection[1] = 14;
-              return gEselection;
-            }
-            gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
-            gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;span&gt;');
-            return null;
-          }
-          // just any text was selected, use this one for the selection
-          // if it was encloded between the "good nodes"
-          for (var i = 0; i < goodNodes.length; i++) {
-            if (parent.$.nodeName.toUpperCase() == goodNodes[i]) {
-              gEselectedElement = parent;
-              gEselection[0] = selTextCont.replace(/&nbsp;/gi, ' ');
-              return gEselection;
-            }
-          }
-          // selection is invalid
-          gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
-          gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;' + parent.$.nodeName + '&gt;');
-          return null;
-        }
-        // the selection is exactly one tag that encloses the selected text
-        var ok = html.match(/^<[^>]*?>[^<>]*<\/[^>]*?>$/g);
-        if (ok && ok.length == 1) {
-          var tag = html.replace(/^<(\w+) .*/, '$1').toUpperCase();
-          var cont = html.replace(/^<[^>]*?>([^<>]*)<\/[^>]*?>$/, '$1');
-          // anchors are the same as formating nodes, we use the selected
-          // node content as the value.
-          goodNodes.push('A');
-          for (i = 0; i < goodNodes.length; i++) {
-            if (tag == goodNodes[i]) {
-              this.MatchSelectedNodeInDomtree(parent, tag, cont);
-              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
-              return gEselection;
-            }
-          }
-          // there are several span tags, we need to find categories and properties
-          if (tag == 'SPAN') {
-            if (html.indexOf('class="fck_mw_property"') != -1 ||
-              html.indexOf('class=fck_mw_property') != -1)  // IE has class like this
-           {
-              this.MatchSelectedNodeInDomtree(parent, tag, cont);
-              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
-              gEselection[1] = 102;
-              val = html.replace(/.*property="(.*?)".*/, '$1');
-              if (val.indexOf('::') != -1) {
-                gEselection[2] = val.substring(0, val.indexOf('::'));
-                gEselection[3] = val.substring(val.indexOf('::') +2);
-              } else {
-                gEselection[2] = val;
+            else{
+              var element = CKEDITOR.dom.element.createFromHtml(selectedHtml);
+              if(element && element.getOuterHtml && CKEDITOR.tools.trim(element.getOuterHtml()) === CKEDITOR.tools.trim(selectedHtml)){
+                if(element.is('span')){
+                  gEselection = handleSelectedSpan(gEeditor, element, selectedText);
+                }
               }
-              return gEselection;
+              if(selectedHtml == selectedText){
+                //check if selected text is inside an annotation and if yes - select the whole annotation element
+                if(element.type == CKEDITOR.NODE_TEXT && gEeditor.getSelection().getStartElement().is('span')){
+                  element = gEeditor.getSelection().getStartElement();
+                  gEselection = handleSelectedSpan(gEeditor, element, element.getText());
+                  gEeditor.getSelection().selectElement(element);
+                  return gEselection;
+                }
+                //allow only text inside specific elements to be annotated
+                else if(element.type == CKEDITOR.NODE_TEXT && gEeditor.getSelection().getStartElement().getName().toUpperCase().InArray(goodNodes)){
+                  gEselection[0] = selectedText.toString();
+                  return gEselection;
+                }                
+              }
+
+              gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+              gEerrMsgSelection = gEerrMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
+              return null;
             }
-            if (html.indexOf('class="fck_mw_category"') != -1 ||
-              html.indexOf('class=fck_mw_property') != -1) {
-              this.MatchSelectedNodeInDomtree(parent, tag, cont);
-              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
-              gEselection[1] = 14;
-              return gEselection;
-            } // below here passing all closing brakets means that the selection
-          // was invalid
           }
-          gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
-          gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;' + tag + '&gt;');
-          return null;
         }
-        gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
-        gEerrMsgSelection = gEerrMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
-        return null;
       },
+        
+      
+
+      //
+      //
+      //
+      //
+      //        // if the parent node is <a> or a <span> (property, category) then
+      //        // we automatically select *all* of the inner html and the annotation
+      //        // works for the complete node content (this is a must for these nodes)
+      //        if (parent.$.nodeName.toUpperCase() == 'A') {
+      //          gEselection[0] = parent.getText();
+      //          gEselectedElement = parent;
+      //          return gEselection;
+      //        }
+      //        // check category and property that might be in the <span> tag,
+      //        // ignore all other spans that might exist as well
+      //        if (parent.$.nodeName.toUpperCase() == 'SPAN') {
+      //          if (parent.hasClass('fck_mw_property')) {
+      //            gEselectedElement = parent;
+      //            gEselection[0] = parent.getText().replace(/&nbsp;/gi, ' ');
+      //            gEselection[1] = 102;
+      //            var val = parent.getAttribute('property');
+      //            // differenciation between displayed representation and
+      //            // actual value of the property
+      //            if (val.indexOf('::') != -1) {
+      //              gEselection[2] = val.substring(0, val.indexOf('::'));
+      //              gEselection[3] = val.substring(val.indexOf('::') +2);
+      //            } else
+      //              gEselection[2] = val;
+      //            return gEselection;
+      //          }
+      //          else if (parent.hasClass('fck_mw_category')) {
+      //            gEselectedElement = parent;
+      //            gEselection[0] = parent.getText().replace(/&nbsp;/gi, ' ');
+      //            gEselection[1] = 14;
+      //            return gEselection;
+      //          }
+      //          gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+      //          gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;span&gt;');
+      //          return null;
+      //        }
+      //        // just any text was selected, use this one for the selection
+      //        // if it was encloded between the "good nodes"
+      //        for (var i = 0; i < goodNodes.length; i++) {
+      //          if (parent.$.nodeName.toUpperCase() == goodNodes[i]) {
+      //            gEselectedElement = parent;
+      //            gEselection[0] = selTextCont.replace(/&nbsp;/gi, ' ');
+      //            return gEselection;
+      //          }
+      //        }
+      //        // selection is invalid
+      //        gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+      //        gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;' + parent.$.nodeName + '&gt;');
+      //        return null;
+      //
+      //        // the selection is exactly one tag that encloses the selected text
+      //        var ok = html.match(/^<[^>]*?>[^<>]*<\/[^>]*?>$/g);
+      //        if (ok && ok.length == 1) {
+      //          var tag = html.replace(/^<(\w+) .*/, '$1').toUpperCase();
+      //          var cont = html.replace(/^<[^>]*?>([^<>]*)<\/[^>]*?>$/, '$1');
+      //          // anchors are the same as formating nodes, we use the selected
+      //          // node content as the value.
+      //          goodNodes.push('A');
+      //          for (i = 0; i < goodNodes.length; i++) {
+      //            if (tag == goodNodes[i]) {
+      //              this.MatchSelectedNodeInDomtree(parent, tag, cont);
+      //              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
+      //              return gEselection;
+      //            }
+      //          }
+      //          // there are several span tags, we need to find categories and properties
+      //          if (tag == 'SPAN') {
+      //            if (html.indexOf('class="fck_mw_property"') != -1 ||
+      //              html.indexOf('class=fck_mw_property') != -1)  // IE has class like this
+      //              {
+      //              this.MatchSelectedNodeInDomtree(parent, tag, cont);
+      //              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
+      //              gEselection[1] = 102;
+      //              val = html.replace(/.*property="(.*?)".*/, '$1');
+      //              if (val.indexOf('::') != -1) {
+      //                gEselection[2] = val.substring(0, val.indexOf('::'));
+      //                gEselection[3] = val.substring(val.indexOf('::') +2);
+      //              } else {
+      //                gEselection[2] = val;
+      //              }
+      //              return gEselection;
+      //            }
+      //            if (html.indexOf('class="fck_mw_category"') != -1 ||
+      //              html.indexOf('class=fck_mw_property') != -1) {
+      //              this.MatchSelectedNodeInDomtree(parent, tag, cont);
+      //              gEselection[0] = cont.replace(/&nbsp;/gi, ' ');
+      //              gEselection[1] = 14;
+      //              return gEselection;
+      //            } // below here passing all closing brakets means that the selection
+      //          // was invalid
+      //          }
+      //          gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+      //          gEerrMsgSelection = gEerrMsgSelection.replace('$1', '&lt;' + tag + '&gt;');
+      //          return null;
+      //        }
+      //        gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+      //        gEerrMsgSelection = gEerrMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
+      //        return null;
+      //      },
 
       /**
-    * from the parent node go over the child nodes and
-    * select the appropriate child based on the string match that was
-    * done before
-    *
-    * @access private
-    * @param  DOMNode parent html element of the node (defined by name and value)
-    * @param  string nodeName tag name
-    * @param  string nodeValue content text of
-    */
+     * from the parent node go over the child nodes and
+     * select the appropriate child based on the string match that was
+     * done before
+     *
+     * @access private
+     * @param  DOMNode parent html element of the node (defined by name and value)
+     * @param  string nodeName tag name
+     * @param  string nodeValue content text of
+     */
       MatchSelectedNodeInDomtree: function (parent, nodeName, nodeValue) {
         for(var i = 0; parent.childNodes && i < parent.childNodes.length; i++) {
           if (parent.childNodes[i].nodeType == 1 &&
@@ -386,14 +453,14 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       },
 
       /**
-    * Checks the current selection and returns the html content of the
-    * selection.
-    * i.e. select: "perty value show" and the returned string would be:
-    * <span class="fck_mw_property property="myName">property value shown</span>
-    *
-    * @access private
-    * @return string html selection including surounding html tags
-    */
+     * Checks the current selection and returns the html content of the
+     * selection.
+     * i.e. select: "property value show" and the returned string would be:
+     * <span class="fck_mw_property property="myName">property value shown</span>
+     *
+     * @access private
+     * @return string html selection including surounding html tags
+     */
       getSelectionHtml: function() {
 
         var ckSel = gEeditor.getSelection(),
@@ -756,12 +823,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     var ckePopupContextMenu;
 
     /**
- * Create a new context menu for annotating a selection that is not yet annotated.
- * Both property and category container will be shown.
- *
- * @param Event event
- * @param string value selected text
- */
+   * Create a new context menu for annotating a selection that is not yet annotated.
+   * Both property and category container will be shown.
+   *
+   * @param Event event
+   * @param string value selected text
+   */
     ShowNewToolbar = function(event, value) {
       var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
@@ -775,22 +842,22 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       //        window.catToolBar = new window.parent.CategoryToolBar();
       relToolBar.setWikiTextParser(wtp);
       catToolBar.setWikiTextParser(wtp);
-      relToolBar.createContextMenu(ckePopupContextMenu, value, value);
+      relToolBar.createContextMenu(ckePopupContextMenu, value, value, value);
       catToolBar.createContextMenu(ckePopupContextMenu, value);
       ckePopupContextMenu.showMenu();
     };
 
     /**
- * Create a new context menu for annotating a property.
- * Only the property container will be shown.
- * The selected text is the representation at least. If value and represenation
- * are equal then the selected text is the value as well.
- *
- * @param Event event
- * @param string name of the property
- * @param string value of the property
- * @param string representation of the property
- */
+   * Create a new context menu for annotating a property.
+   * Only the property container will be shown.
+   * The selected text is the representation at least. If value and represenation
+   * are equal then the selected text is the value as well.
+   *
+   * @param Event event
+   * @param string name of the property
+   * @param string value of the property
+   * @param string representation of the property
+   */
     ShowRelToolbar = function(event, name, value, show) {
       var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
@@ -814,13 +881,13 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     /**
- * Create a new context menu for annotating a category.
- * Only the category container will be shown.
- * The selected text is the category name.
- *
- * @param Event event
- * @param string name selected text
- */
+   * Create a new context menu for annotating a category.
+   * Only the category container will be shown.
+   * The selected text is the category name.
+   *
+   * @param Event event
+   * @param string name selected text
+   */
     ShowCatToolbar = function(event, name) {
       var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
@@ -847,11 +914,11 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
 
     /**
- * Calculate correct x and y coordinates of event in browser window
- *
- * @param Event event
- * @return Array(int, int) coordinates x, y
- */
+   * Calculate correct x and y coordinates of event in browser window
+   *
+   * @param Event event
+   * @return Array(int, int) coordinates x, y
+   */
     CalculateClickPosition = function(event) {
       var offset = GetOffsetFromOuterHtml();
       var pos = [];
@@ -906,11 +973,11 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     /**
- * get offset from elements around the iframe
- *
- * @access public
- * @return array(int, int) offsetX, offsetY
- */
+   * get offset from elements around the iframe
+   *
+   * @access public
+   * @return array(int, int) offsetX, offsetY
+   */
     GetOffsetFromOuterHtml = function() {
       var id = (window.parent.wgAction == "formedit") ? 'cke_free_text' : 'editform';
       var el = window.parent.document.getElementById(id);
@@ -931,8 +998,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     /**
- * reomove the context menu from the DOM tree
- */
+   * reomove the context menu from the DOM tree
+   */
     HideContextPopup = function() {
       if (ckePopupContextMenu) {
         ckePopupContextMenu.remove();
@@ -946,10 +1013,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     /**
- * Get the current frame with the wikipage. Skip the iframe from YUI (this
- * one has set an id).
- * This function should be more robust but's working for now.
- */
+   * Get the current frame with the wikipage. Skip the iframe from YUI (this
+   * one has set an id).
+   * This function should be more robust but's working for now.
+   */
     GetWindowOfEditor = function() {
       var frame;
       for (var i = 0; i < window.frames.length; i++) {
@@ -962,12 +1029,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     /**
- * fetches the current selected text from the gEditInterface (i.e. the FCK editor
- * area) and creates a context menu for annotating the selected text or modifying
- * the selected annotation.
- *
- * @param Event event
- */
+   * fetches the current selected text from the gEditInterface (i.e. the FCK editor
+   * area) and creates a context menu for annotating the selected text or modifying
+   * the selected annotation.
+   *
+   * @param Event event
+   */
     CheckSelectedAndCallPopup = function(event) {
       if (!event) {
         var frame = GetWindowOfEditor();
@@ -975,9 +1042,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       }
       // handle here if the popup box for a selected annotation must be shown
       var selection = gEditInterface.getSelectionAsArray();
-      if (!(selection && selection.length)) {
-        var pos = CalculateClickPosition(event);
-        var msg = gEditInterface.getErrMsgSelection();
+      var msg = gEditInterface.getErrMsgSelection();
+      if (!(selection && selection.length) && msg) {
+        var pos = CalculateClickPosition(event);        
         msg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         window.parent.smwhgAnnotationHints.showMessageAndWikiText(
           msg, '', pos[0], pos[1]);
@@ -985,12 +1052,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       }
       // something is selected, this will be a new annotation,
       // offer both category and property toolbox
-      if (selection.length === 1 && selection[0]) {
+      if (selection && selection.length === 1 && selection[0]) {
         ShowNewToolbar(event, selection[0]);
         return;
       }
       // an existing annotation will be edited
-      if (selection.length > 1) {
+      if (selection && selection.length > 1) {
         if (selection[1] == 102) { // Property
           var show = selection[0];
           var val = show;
@@ -1005,7 +1072,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     var CKEditorTextArea = function(editor) {
-//      return document.getElementById('cke_contents_' + editor.name).getElementsByTagName('textarea')[0];
+      //      return document.getElementById('cke_contents_' + editor.name).getElementsByTagName('textarea')[0];
       return jQuery('#cke_contents_' + editor.name).find('textarea').first();
 
     };
@@ -1036,8 +1103,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           window.parent.smwhgGardeningHints.createContainer();
         window.parent.smw_links_callme();
         // enable draging
-        window.parent.smwhg_dragresizetoolbar.draggable=null;
-        window.parent.smwhg_dragresizetoolbar.callme();
+        //        window.parent.smwhg_dragresizetoolbar.draggable=null;
+        //        window.parent.smwhg_dragresizetoolbar.callme();
         this.SetEventHandler4AnnotationBox( editor );
         editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON);
       },
@@ -1094,13 +1161,13 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           } else {
             window.parent.Event.stopObserving(window.frames[0], 'keyup', this.EditorareaChanges);
             window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-            window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+          //            window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
           }
         } else {
           var Textarea = CKEditorTextArea(editor);
           window.parent.Event.stopObserving(Textarea, 'keyup', this.EditorareaChanges);
           window.parent.Event.stopObserving(Textarea, 'mouseup', CheckSelectedAndCallPopup);
-          window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
+        //          window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
         }
       },
       loadToolbar : function ( editor ) {

@@ -17,8 +17,8 @@ initialize: function() {
                                     : 30;
                         // because of Ontoskin3 set zIndex at least to 30
                         if (zindex < 30) zindex = 30;
-			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar"><img src="'
-        + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/expanded-close.gif"/></div></div>';
+			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"><div id="topToolbar"><div>' + gLanguage.getMessage('ADD_ANNOTATION') + '<img src="'
+        + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/expanded-close.gif"/><div></div></div>';
 
         var self = this;
       jQuery('#topToolbar img').live('click', function(){
@@ -192,10 +192,14 @@ setPosition: function(posX,posY){
 showMenu: function(){
 	$('contextmenu').show();
         var numberOfSubContainers = $('contextmenu').immediateDescendants().length;
-	if ($('cmCategoryContent') && numberOfSubContainers > 2) {
+	if ($('cmCategoryContent') && numberOfSubContainers > 3) {
 		// The category section is initially folded in
 		$('cmCategoryContent').hide();
 	}
+
+  mw.loader.using('jquery.ui.draggable', function(){
+    jQuery('#contextmenu').draggable();
+  });
 },
 /**
  * @public  hides menu

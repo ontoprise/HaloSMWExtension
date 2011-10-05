@@ -79,6 +79,7 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Properties',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
 	'RECPROP'                 : "Recommended properties",
+  'ADD_ANNOTATION'          : 'Add Annotation',
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',

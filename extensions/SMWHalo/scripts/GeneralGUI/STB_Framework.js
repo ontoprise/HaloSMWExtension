@@ -271,10 +271,10 @@ ToolbarFramework.prototype = {
 		// send tab change event
 		this.contarray.each(function (c) { if (c) c.showTabEvent(tabnr); });
 		
-		if (smwhg_dragresizetoolbar != null) {
-			smwhg_dragresizetoolbar.disableDragging();
-			smwhg_dragresizetoolbar.enableDragging();
-		}
+//		if (smwhg_dragresizetoolbar != null) {
+//			smwhg_dragresizetoolbar.disableDragging();
+//			smwhg_dragresizetoolbar.enableDragging();
+//		}
 	},
 
         setCloseFunction: function(func) {
