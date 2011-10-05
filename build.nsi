@@ -352,23 +352,30 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
             # Apache
+            nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\apache_restart.bat"'
             nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\runasadmin.xml"'
             # We do not need a stop command for apache
             
             # Mysql
+            nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\mysql_start.bat"'
             nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\runasadmin.xml"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\mysql_stop.bat"'
             nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\runasadmin.xml"'
             
             # SOLR
+            nsExec::ExecToLog 'schtasks /delete /tn "start_solr"'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_solr"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\solr\wikiStartSolr.bat"'
             nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\runasadmin.xml"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\solr\wikiStopSolr.bat"'
             nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\runasadmin.xml"'
             
             # Memcached
+            nsExec::ExecToLog 'schtasks /delete /tn "start_memcached"'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_memcached"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\memcached\memcached -d start"'
             nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /XML "$INSTDIR\runasadmin.xml"'
             nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="runasadmin_template.xml" out=runasadmin.xml command="$INSTDIR\memcached\memcached -d stop"'
@@ -381,19 +388,19 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
             
             #apache
-            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"$INSTDIR\apache_restart.bat\"" /sc once'
+            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"$INSTDIR\apache_restart.bat\"" /sc once /st 00:00'
             
             #mysql
-            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_start.bat\"" /sc once'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_stop.bat\"" /sc once'
+            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_start.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_stop.bat\"" /sc once /st 00:00'
             
             #solr
-            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStartSolr.bat\"" /sc once'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStopSolr.bat\"" /sc once'
+            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStartSolr.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStopSolr.bat\"" /sc once /st 00:00'
             
             #memcached
-            nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /ru "SYSTEM" /tr "\"$INSTDIR\memcached\memcached -d start\"" /sc once'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_memcached" /ru "SYSTEM" /tr "\"$INSTDIR\memcached\memcached -d stop\"" /sc once'
+            nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /ru "SYSTEM" /tr "\"$INSTDIR\memcached\memcached -d start\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_memcached" /ru "SYSTEM" /tr "\"$INSTDIR\memcached\memcached -d stop\"" /sc once /st 00:00'
             
             
          ${EndIf}
@@ -1148,12 +1155,12 @@ Function installAsWindowsService
          
          DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
          nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start apache\"" /sc once'
+         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start apache\"" /sc once /st 00:00'
               
          nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
          nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
-         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once'
-         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once'
+         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once /st 00:00'
+         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once /st 00:00'
             
          ${EndIf}
 
