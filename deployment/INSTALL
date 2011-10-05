@@ -1,5 +1,5 @@
-Installation instructions for Wiki Administration Tool
-------------------------------------------------------
+Installation instructions for Wiki Administration Tool (formerly known as Deployment framework)
+-----------------------------------------------------------------------------------------------
 
 Install instructions for the latest version of the Wiki Administration Tool are also online:
 
@@ -8,8 +8,10 @@ Install instructions for the latest version of the Wiki Administration Tool are 
 ---------------------------------------
 Important!  
 ---------------------------------------
-The new template of settings.php file is delivered in the config folder. Take a look in it and check if
-you need to set additional parameters.
+The new template of settings.php file is delivered in the config folder. If you install 
+the wiki admin tool for the first time, you have to copy settings.php in the root folder
+(deployment/settings.php). If you update, take a look in it and check if you need to set 
+additional parameters.
 
 Third party tools
 ==================
