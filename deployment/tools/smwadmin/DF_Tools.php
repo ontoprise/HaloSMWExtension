@@ -548,25 +548,25 @@ class Tools {
 	}
 
 	/**
-     * Returns the location of a file (first occurence if more than on exist).
-     *
-     * @param string $name
-     * @param string rootdir MW root folder
-     */
-    public static function whereis($name, $rootDir = NULL) {
-        if (self::isWindows()) {
-            if (!is_null($rootDir)) chdir("$rootDir/deployment/tools");
-            exec("whereis.bat $name", $out, $ret);
-            return str_replace("\\", "/", reset($out));
-        } else {
-            //FIXME: can not handle whitespaces in path
-            exec("whereis $name", $out, $ret);
-            $result = reset($out);
-            list($prg, $pathstr) = explode(":", $result);
-            $paths = explode(" ", trim($pathstr));
-            return reset($paths);   
-        }
-    }
+	 * Returns the location of a file (first occurence if more than on exist).
+	 *
+	 * @param string $name
+	 * @param string rootdir MW root folder
+	 */
+	public static function whereis($name, $rootDir = NULL) {
+		if (self::isWindows()) {
+			if (!is_null($rootDir)) chdir("$rootDir/deployment/tools");
+			exec("whereis.bat $name", $out, $ret);
+			return str_replace("\\", "/", reset($out));
+		} else {
+			//FIXME: can not handle whitespaces in path
+			exec("whereis $name", $out, $ret);
+			$result = reset($out);
+			list($prg, $pathstr) = explode(":", $result);
+			$paths = explode(" ", trim($pathstr));
+			return reset($paths);
+		}
+	}
 
 	/**
 	 * Detects if a particular process is running.
@@ -602,6 +602,13 @@ class Tools {
 	 * Detects if a processes are running.
 	 *
 	 * @param string[] $names Program name (e.g. php)
+	 *                 Single entries can be arrays of alternative process names.
+	 *                 
+	 *  Example:
+	 *                 
+	 *     array( "apache", "mysql", array("tsc","tsc-service"), "memcached")
+	 *                 
+	 *  Detects if "apache", "mysql" , "tsc" OR "tsc-service" and "memcached" are running.
 	 *
 	 * @return boolean
 	 */
@@ -614,10 +621,21 @@ class Tools {
 				$found = false;
 				foreach($out as $l) {
 					$parts = explode(",", trim($l));
-					if (strpos($parts[0], "$name.exe") !== false) {
-						$results[] = true;
-						$found = true;
-						break;
+					if (is_array($name)) {
+						foreach($name as $n) {
+							if (strpos($parts[0], "$n.exe") !== false) {
+								$results[] = true;
+								$found = true;
+								break;
+							}
+						}
+						if ($found) break;
+					} else {
+						if (strpos($parts[0], "$name.exe") !== false) {
+							$results[] = true;
+							$found = true;
+							break;
+						}
 					}
 				}
 				if (!$found) $results[] = false;

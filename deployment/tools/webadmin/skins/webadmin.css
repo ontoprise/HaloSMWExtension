@@ -117,9 +117,19 @@
 }
 
 .df_running_process {
-	color: green;
+	background: green;
+    color: white;
+    width: 150px;
+    text-align: center;
 }
 
 .df_not_running_process {
-    color: red;
+	background: red;
+    color: white;
+    width: 150px;
+    text-align: center;
+}
+
+#df_server_state_table td {
+    height: 40px;
 }

@@ -983,7 +983,7 @@ $(function() {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicProcessPoll, 20000);
 			
-			var servers = ["httpd","mysqld","solr","tsc","memcached"];
+			var servers = ["apache","mysql","solr","tsc","memcached"];
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areProcessesRunning&rsargs[]="+servers.join(",");
 			var updateProcessDisplay = function(xhr, status) {
 				var result = xhr.responseText.split(",");
@@ -1047,6 +1047,14 @@ $(function() {
 		
 		// save current server command settings
 		$('#df_servers_save_settings').click(function(e2) {
+			var storeServerSettingsExecuted = function(xhr, status) {
+				var result = xhr.responseText;
+				if (result == "true") {
+					alert("Server settings are saved!");
+				} else {
+					alert("Error on saving server settings")
+				}
+			}
 			var settings = { };
 			$('.df_action_selector').each(function(index, e) { 
 				var startAction = e.firstChild;
@@ -1054,7 +1062,7 @@ $(function() {
 				settings[$(e).attr("id")] = [ $(startAction).attr("value"), $(endAction).attr("value") ];
 			});
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=storeServerSettings&rsargs[]="+encodeURIComponent($.toJSON(settings));
-			$.ajax( { url : url, dataType:"json" });
+			$.ajax( { url : url, dataType:"json", complete: storeServerSettingsExecuted });
 			$('#df_servers_save_settings').attr('disabled', true);
 		});
 		

@@ -55,9 +55,12 @@ class DFServersTab {
 		$html = $dfgLang->getLanguageString('df_webadmin_configureservers');
 
 		$html .= "<br/><br/>";
-		$html .= "<table>";
-
-		$html .= "<tr>";
+		$html .= "<table id=\"df_server_state_table\">";
+        $html .= "<th>Service</th>";
+        $html .= "<th>Status</th>";
+        $html .= "<th>Operation</th>";
+        $html .= "<th>Command</th>";
+    	$html .= "<tr>";
 		$apacheStart = self::guessPaths("apache", "start");
 		$apacheEnd = self::guessPaths("apache", "end");
 		$html .= "<td>Apache</td>";
@@ -67,8 +70,8 @@ class DFServersTab {
 		} else {
 			$html .= "<td id=\"df_run_flag_httpd\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"httpd_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">$startActionText</option><option value=\"$apacheEnd\">$endActionText</option></select>";
-		$html .= "<input class=\"df_servers_command\" id=\"df_servers_httpd_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
+		$html .= "<td><select id=\"httpd_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">$startActionText</option><option value=\"$apacheEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_httpd_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
 		$html .= "<input id=\"df_servers_httpd_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
@@ -82,8 +85,8 @@ class DFServersTab {
 		} else {
 			$html .= "<td id=\"df_run_flag_mysqld\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"mysqld_selector\" class=\"df_action_selector\"><option value=\"$mysqlStart\">$startActionText</option><option value=\"$mysqlEnd\">$endActionText</option></select>";
-		$html .= "<input class=\"df_servers_command\" id=\"df_servers_mysqld_command\" type=\"text\" size=\"80\" value=\"$mysqlStart\"/>";
+		$html .= "<td><select id=\"mysqld_selector\" class=\"df_action_selector\"><option value=\"$mysqlStart\">$startActionText</option><option value=\"$mysqlEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_mysqld_command\" type=\"text\" size=\"80\" value=\"$mysqlStart\"/>";
 		$html .= "<input id=\"df_servers_mysqld_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
@@ -97,8 +100,8 @@ class DFServersTab {
 		} else {
 			$html .= "<td id=\"df_run_flag_solr\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"solr_selector\" class=\"df_action_selector\"><option value=\"$solrStart\">$startActionText</option><option value=\"$solrEnd\">$endActionText</option></select>";
-		$html .= "<input class=\"df_servers_command\" id=\"df_servers_solr_command\" type=\"text\" size=\"80\" value=\"$solrStart\"/>";
+		$html .= "<td><select id=\"solr_selector\" class=\"df_action_selector\"><option value=\"$solrStart\">$startActionText</option><option value=\"$solrEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_solr_command\" type=\"text\" size=\"80\" value=\"$solrStart\"/>";
 		$html .= "<input id=\"df_servers_solr_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
@@ -112,8 +115,8 @@ class DFServersTab {
 		} else {
 			$html .= "<td id=\"df_run_flag_tsc\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"tsc_selector\" class=\"df_action_selector\"><option value=\"$tscStart\">$startActionText</option><option value=\"$tscEnd\">$endActionText</option></select>";
-		$html .= "<input class=\"df_servers_command\" id=\"df_servers_tsc_command\" type=\"text\" size=\"80\" value=\"$tscStart\"/>";
+		$html .= "<td><select id=\"tsc_selector\" class=\"df_action_selector\"><option value=\"$tscStart\">$startActionText</option><option value=\"$tscEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_tsc_command\" type=\"text\" size=\"80\" value=\"$tscStart\"/>";
 		$html .= "<input id=\"df_servers_tsc_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
@@ -127,8 +130,8 @@ class DFServersTab {
 		} else {
 			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"memcached_selector\" class=\"df_action_selector\"><option value=\"$memcachedStart\">$startActionText</option><option value=\"$memcachedEnd\">$endActionText</option></select>";
-		$html .= "<input class=\"df_servers_command\" id=\"df_servers_memcached_command\" type=\"text\" size=\"80\" value=\"$memcachedStart\"/>";
+		$html .= "<td><select id=\"memcached_selector\" class=\"df_action_selector\"><option value=\"$memcachedStart\">$startActionText</option><option value=\"$memcachedEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_memcached_command\" type=\"text\" size=\"80\" value=\"$memcachedStart\"/>";
 		$html .= "<input id=\"df_servers_memcached_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
@@ -166,24 +169,24 @@ class DFServersTab {
 			}
 			switch($program) {
 				case "apache":
-					return $action == "start" ?  self::quotePath($guessedInstallDir."\\apache_restart.bat")
+					return $action == "start" ?  "schtasks /run /tn start_apache"
 					: "should not be used!";
 					break;
 				case "mysql":
-					return $action == "start" ?  self::quotePath($guessedInstallDir."\\mysql_start.bat")
-					: self::quotePath($guessedInstallDir."\\mysql_stop.exe");
+					return $action == "start" ?  "schtasks /run /tn start_mysql"
+					: "schtasks /run /tn stop_mysql";
 					break;
 				case "solr":
-					return $action == "start" ?  self::quotePath($guessedInstallDir."\\solr\\wiki\\startSolr.bat")
-					: self::quotePath($guessedInstallDir."\\stopSolr.bat");
+					return $action == "start" ?  "schtasks /run /tn start_solr"
+					: "schtasks /run /tn stop_solr";
 					break;
 				case "tsc":
-					return $action == "start" ?  self::quotePath($guessedTSCInstallDir."\\tsc.exe")
-					: self::quotePath($guessedTSCInstallDir."\\stop-triplestore.bat");
+					return $action == "start" ?  "schtasks /run /tn start_tsc"
+					: "schtasks /run /tn stop_tsc";
 					break;
 				case "memcached":
-					return $action == "start" ?  self::quotePath($guessedInstallDir."\\memcached\\memcached.exe")." -d start"
-					: self::quotePath($guessedInstallDir."\\memcached.exe")." -d stop";
+					return $action == "start" ?  "schtasks /run /tn start_memcached"
+					: "schtasks /run /tn stop_memcached";
 					break;
 			}
 		} else {

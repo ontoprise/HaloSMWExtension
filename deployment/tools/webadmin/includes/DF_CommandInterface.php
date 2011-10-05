@@ -452,51 +452,87 @@ class DFCommandInterface {
 	}
 
 	public function isProcessRunning($processName) {
-		return Tools::isProcessRunning($processName) ? "true" : "false";
+		return Tools::isProcessRunning($this->translateProcessName($processName)) ? "true" : "false";
 	}
 
 	public function areProcessesRunning($processNames) {
-		$doesRun = Tools::areProcessesRunning(explode(",",$processNames));
+		$processNames = explode(",",$processNames);
+		$translated=array();
+		foreach($processNames as $name) {
+			$translated[] = $this->translateProcessName($name);
+		}
+		$doesRun = Tools::areProcessesRunning($translated);
 		return implode(",", $doesRun);
 	}
     
 	/**
+	 * Translates the process names to the names (or paths) used by 
+	 * the actual platform.
+	 * 
+	 * @param string $name Processname
+	 * @return string
+	 */
+	private function translateProcessName($name) {
+		global $mwrootDir;
+		if (Tools::isWindows()) {
+			switch($name) {
+				case "apache": return "httpd";
+				case "mysql": return "mysqld";
+				case "solr": return "solr";
+				case "tsc": return array("tsc", "tsc-service");
+				case "memcached": return "memcached";
+				default: return $name;
+			}
+		} else {
+		switch($name) {
+                case "apache": return "apache2";
+                case "mysql": return "mysqld";
+                case "solr":
+                case "tsc": 
+                case "memcached": return Tools::whereis($name, $mwrootDir);
+                default: return $name;
+            }
+		}
+		
+	}
+
+	/**
 	 * Starts a process. Optionally it can be run under a certain account,
 	 * if this is configured in settings.php
-	 * 
+	 *
 	 * If you run on a particular account:
-	 * 
+	 *
 	 * Windows:
-	 * 
+	 *
 	 *    You have to diable the UAC, otherwise a dialog pops up on the server
-	 * 
+	 *
 	 * Linux:
-	 * 
-	 * You have to disable the password check for the account 
+	 *
+	 * You have to disable the password check for the account
 	 * in the sudoers file with this entry (assuming your account is 'wiki'):
-	 *  
+	 *
 	 * wiki    ALL = NOPASSWD: ALL
-	 * 
+	 *
 	 * @param string $commandLineToStart Command to start (with parameters)
 	 */
 	public function startProcess($commandLineToStart) {
 		$runAsUser = DF_Config::$df_runas_user;
 		$password = DF_Config::$df_runas_password;
-		
-		
+
+
 		if (Tools::isWindows()) {
 			if (!is_null($runAsUser)) {
 				global $mwrootDir;
-				
-				//@chdir("D:\wikis\smwplus156_b662\solr\wiki");
+			
 				$command = $mwrootDir."/deployment/tools/internal/pcwrunas/pcwRunAs4.exe ";
 				$command .= "/u $runAsUser /p $password /app cmd /arg \"/c $commandLineToStart\"";
-          
+
 				@exec($command, $out, $ret);
 				return $ret == 0 ? implode("\n", $out) : "false";
 			} else {
 				$wshShell = new COM("WScript.Shell");
 				$runCommand = "$commandLineToStart";
+				
 				$oExec = $wshShell->Run("$runCommand", 7, false);
 				return "true";
 			}
@@ -513,8 +549,8 @@ class DFCommandInterface {
 			}
 		}
 	}
-	
-	
+
+
 
 	public function loadServerSettings() {
 		global $mwrootDir;
