@@ -123,7 +123,7 @@ createList: function(list,id) {
 	  			fn = "relToolBar.getselectedItem(" + i + ")";
 	  			prefix = gLanguage.getMessage('PROPERTY_NS');
 	  		
-	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
+//	  			var rowSpan = 'rowspan="'+(list[i].getArity()-1)+'"';
 	  			var values = list[i].getSplitValues();
 				var valuePageInfo = ['no page'];
 				if (list[i].valuePageInfo) {
@@ -134,43 +134,21 @@ createList: function(list,id) {
 				if (list[i].categoryInfo) {
 					categoryInfo = list[i].categoryInfo;
 				}
-				
-	  			firstValue = values[0].escapeHTML();
-	  			var valueLink;
-				var linkDeco = '';
-				var editArticleURL = '';
-				var categoryNS = wgFormattedNamespaces['14'];
-				var categoryParam = (categoryInfo && 
-									 categoryInfo[0] !== null && 
-									 valuePageInfo[0] === 'redlink')
-									? '&category='+escape(categoryInfo[0]) 
-									  + '&preloadtext=[['
-									  + categoryNS
-									  + escape(':'+categoryInfo[0])+']]'
-									: '';
-				
-				if (valuePageInfo[0] == 'redlink') {
-					linkDeco = redLinkStyle;
-					editArticleURL = '?action=edit';
-				} 
-				if (valuePageInfo[0] == 'exists' || valuePageInfo[0] == 'redlink') {
-					// link to an existing page
-					valueLink = '<a href="'+wgServer+path+firstValue+editArticleURL + categoryParam +
-					            '" target="blank"'+linkDeco+' title="' + firstValue +'">' + firstValue + '</a>';					
-				} else {
-					valueLink = '<span title="' + firstValue + '">' 
-					            + firstValue + '<span>';
+				var recordProps = null;
+				if (list[i].recordProperties) {
+					recordProps = list[i].recordProperties;
 				}
-
-				//firstValue.length > maxlen1 ? maxlen1 = firstValue.length : "";
-
-				firstValue = valueLink;
 				
-	  			// HTML of parameter rows (except first)
-	  			for (var j = 1, n = list[i].getArity()-1; j < n; j++) {
+	  			var valueLink;
+				var categoryNS = wgFormattedNamespaces['14'];
+				firstValue = "";
+				
+	  			// HTML of parameter rows
+	  			for (var j = 0, n = list[i].getArity()-1; j < n; j++) {
 	  				//values[j].length > maxlen1 ? maxlen1 = values[j].length : "";
 	  				var v = values[j].escapeHTML();
 					var linkDeco = '';
+					var editArticleURL = '';
 					var categoryParam = (categoryInfo &&
 										 categoryInfo[j] !== null && 
 										 valuePageInfo[j] === 'redlink')
@@ -179,7 +157,15 @@ createList: function(list,id) {
 									  + categoryNS 
 									  + escape(':'+categoryInfo[j])+']]'
 									: '';
-					editArticleURL = '';
+
+					var recPropName = '';
+					var recPropExists = false;
+							
+					if (recordProps) {
+						recPropName   = recordProps[j<<1];
+						recPropExists = recordProps[(j<<1)+1];
+					}				
+					
 					if (valuePageInfo[j] == 'redlink') {
 						linkDeco = redLinkStyle;
 						editArticleURL = '?action=edit';
@@ -192,15 +178,45 @@ createList: function(list,id) {
 						valueLink = '<span title="' + v + '">' 
 						            + v + '<span>';
 					}
-//					valueLink = 
-//						'<span title="' + v + '">' + v +
-//					    '</span>';
-					multiValue += 
-						"<tr>" +
-							"<td class=\"" + id + "-col2\">" + 
-							valueLink + 
-							" </td>" +
-						"</tr>";
+					
+					// Name of a property in a record
+					 
+					if (firstValue.length === 0 && n == 1) {
+						// This is not a record with several values
+						firstValue = valueLink;
+					} else {
+						if (recPropName) {
+							recPropName = recPropName.replace(/_/g,' ').escapeHTML();
+							if (recPropExists === 'true') {
+								recPropName =
+									'<a href="' +
+										wgServer + path + prefix + recPropName +
+										'" target="blank" title="' + recPropName +'">' + 
+										recPropName + 
+									'</a>';
+							} else {
+								recPropName =
+									'<a href="' +
+										wgServer + path + prefix + recPropName + 
+										'?action=edit' +
+										'" target="blank"' +
+										redLinkStyle +
+										' title="' + recPropName +'">' + 
+										recPropName + 
+									'</a>';
+							}
+							var rpClass = j === n-1 ? id + '-col1-record-last'
+													: id + '-col1-record';
+							recPropName = '<td class="'+rpClass+'" >' + recPropName + '&nbsp;&nbsp;</td>';
+						}
+						multiValue += 
+							"<tr>" +
+								recPropName +
+								"<td class=\"" + id + "-col2\">" +
+									valueLink +
+								" </td>" +
+							"</tr>";
+					}
 	  			}
   			break
 			case "rec-relation":

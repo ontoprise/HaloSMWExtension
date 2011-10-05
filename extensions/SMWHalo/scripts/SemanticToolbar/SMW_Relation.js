@@ -44,7 +44,7 @@ var SMW_REL_CHECK_PROPERTY_ACCESS =
 
 var SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA = 
 	'smwCheckType="property: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true, call:relToolBar.updateSchema, call:relToolBar.updateInstanceTypeHint) ' +
+		'? (color: lightgreen, hideMessage, valid:true, call:relToolBar.updateSchema) ' +
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true, call:relToolBar.resetInstanceTypeHint)" ';
 
 var SMW_REL_SUB_SUPER_CHECK_PROPERTY = 
@@ -215,6 +215,12 @@ fillList: function(forceShowList) {
 				relations[i].categoryInfo = this.categoryInfo[i];
 			}
 		}
+		if (this.recordProperties
+			&& this.recordProperties.length == relations.length) {
+			for (var i = 0; i < relations.length; ++i) {
+				relations[i].recordProperties = this.recordProperties[i];
+			}
+		}
 
 		if( wgAction !== "annotate" ) {
 			// no recommended properties for "Annotation Mode"
@@ -246,6 +252,7 @@ fillList: function(forceShowList) {
 		this.propertyExists = [];
 		this.valuePageInfo = [];
 		this.categoryInfo = [];
+		this.recordProperties = [];
 
 		var containsForbiddenProperties = false;
 		for (var i = 0; i < relationInfo.length; ++i) {
@@ -262,6 +269,9 @@ fillList: function(forceShowList) {
 			
 			relations[i].categoryInfo = relationInfo[i].rangeCategories;
 			this.categoryInfo.push(relationInfo[i].rangeCategories);
+
+			relations[i].recordProperties = relationInfo[i].recordProperties;
+			this.recordProperties.push(relationInfo[i].recordProperties);
 		}
 		
 		refreshSTB.containsForbiddenProperties = containsForbiddenProperties;
@@ -624,31 +634,32 @@ updateNewItem: function(request) {
 			: ((oldValues.length > i)
 				? oldValues[i]
 				: '');
-		var hint = SMW_REL_HINT_INSTANCE; //(parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
 		var pasteNamespace = "";
 		var pageIdx = parameterNames[i].indexOf("|Page");
-		if (i == 0 &&  pageIdx > 0) {
+		if (pageIdx > 0) {
 			parameterNames[i] = parameterNames[i].substr(0, pageIdx);
-			var relation = $('rel-name');
-			hint = 'namespace:' + SMW_INSTANCE_NS;
-			if (relation.value.length > 0) { 
-				if (relation.value == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
-					hint = 'namespace:' + SMW_PROPERTY_NS;
-				} else {
-					hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
-							'| ' + hint;
-				}
-			}
-			hint = 'constraints="'+hint+'"';
-			pasteNamespace = 'pastens="true"';
 		}
+		var relation = $('rel-name');
+		var hint = 'namespace:' + SMW_INSTANCE_NS;
+		if (relation.value.length > 0) { 
+			if (relation.value == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
+				hint = 'namespace:' + SMW_PROPERTY_NS;
+			} else {
+				hint = 'instance-property-range:' +
+						gLanguage.getMessage('PROPERTY_NS') +
+						parameterNames[i] +
+						'| ' + hint;
+			}
+		}
+		hint = 'constraints="'+hint+'"';
+		pasteNamespace = 'pastens="true"';
+		
 		tb.insert(insertAfter,
 				  tb.createInput('rel-value-'+ i, parameterNames[i], '', '', 
 								 SMW_REL_CHECK_EMPTY_NEV +
 							     SMW_REL_VALID_PROPERTY_VALUE + 
 								 hint + pasteNamespace,
 		                         true));
-//		console.log("updateNewItem: "+hint);
 		                         
 		tb.setInputValue('rel-value-'+ i, value);    
 		                         
@@ -846,30 +857,12 @@ updateTypeHint: function(elementID) {
 	
 },
 
-updateInstanceTypeHint: function(elementID) {
-	var relation = $('rel-name');
-	var instance = $('rel-value-0');
-	
-	var hint = 'namespace:' + SMW_INSTANCE_NS;
-	if (relation.value.length > 0) {
-		if (relation.value == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
-			hint = 'namespace:' + SMW_PROPERTY_NS;
-		} else {
-			hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
-					'| ' + hint;
-		}
-	}
-	instance.setAttribute('constraints', hint);
-	instance.setAttribute('pastens', "true");
-	
-//	console.log("updateInstanceTypeHint: "+hint);
-	
-},
 
 resetInstanceTypeHint: function(elementID) {
 	var instance = $('rel-value-0');
 	var hint = 'namespace:' + SMW_INSTANCE_NS;
 	instance.setAttribute('constraints', hint);
+	instance.setAttribute('pastens', "true");
 //	console.log("resetInstanceTypeHint: "+hint);
 },
 

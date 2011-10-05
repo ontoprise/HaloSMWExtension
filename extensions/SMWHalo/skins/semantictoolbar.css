@@ -614,6 +614,21 @@ a.menulink{
     width:60%;
     overflow: hidden;
 }
+.relation-col1-record{
+    border-right: 1px dashed #888888;
+    vertical-align: top;
+    width:60%;
+    overflow: hidden;
+	text-align:right;
+}
+.relation-col1-record-last{
+    border-bottom: 1px dotted #888888;
+    border-right: 1px dashed #888888;
+    vertical-align: top;
+    width:60%;
+    overflow: hidden;
+	text-align:right;
+}
 .relation-col2, .rec-relation-col2 {
 	border-bottom: 1px dotted #888888;
 	vertical-align: top;
