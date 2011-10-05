@@ -232,10 +232,10 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$wantedNamespaces = array();
 			$unwantedNamespaces = array();
 			foreach($namespaces as $ns) {
-				if ($ns > 0) {
+				if ($ns >= 0) {
 					$wantedNamespaces[] = $ns;
 				}
-				if ($ns <= 0) {
+				if ($ns < 0) {
 					$unwantedNamespaces[] = -$ns;
 				}
 			}
