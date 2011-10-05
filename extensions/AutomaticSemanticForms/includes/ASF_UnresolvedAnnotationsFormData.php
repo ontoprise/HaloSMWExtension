@@ -17,10 +17,10 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 			return;
 		}
 		
-		$silentAnnotations = $this->getSilentAnnotations($instanceTitleObject);
+		$allAnnotations = $this->getAllAnnotations($instanceTitleObject);
 		
 		$unresolvedAnnotations = 
-			$this->getUnresolvedAnnotations($categoryFormDataInstances, $silentAnnotations);
+			$this->getUnresolvedAnnotations($categoryFormDataInstances, $allAnnotations);
 		
 		$this->initializePropertiesFormData($unresolvedAnnotations);
 		
@@ -32,16 +32,11 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	/*
 	 * Get all annotations made with the silent annotations parser function
 	 */
-	private function getSilentAnnotations($instanceTitleObject){
-		global $asfSilentAnnotations, $wgParser;
-		$asfSilentAnnotations = array();
-
-		$wgParser->getFunctionHooks();
-		
-		$wgParser->startExternalParse($instanceTitleObject, new ParserOptions(), Parser::OT_HTML);
-		$wgParser->replaceVariables(Article::newFromID($instanceTitleObject->getArticleID())->getContent());
-		
-		return $asfSilentAnnotations;
+	private function getAllAnnotations($instanceTitleObject){
+		$store = smwfGetStore();
+		$allAnnotations = 
+			ASFFormGeneratorUtils::getSemanticData($instanceTitleObject)->getProperties();
+		return $allAnnotations;
 	}
 	
 	
@@ -49,17 +44,24 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	 * Find all silent annotations which are not covered by one
 	 * of the other category form data sections
 	 */
-	private function getUnresolvedAnnotations($categoryFormDataInstances, $silentAnnotations){
+	private function getUnresolvedAnnotations($categoryFormDataInstances, $allAnnotations){
+		
 		foreach($categoryFormDataInstances as $categoryData){
 			foreach($categoryData->propertiesFormData as $propertyFormData){
 				$propertyName = $propertyFormData->titleObject->getText();
-				if(array_key_exists($propertyName, $silentAnnotations)){
-					unset($silentAnnotations[$propertyName]);
+				if(array_key_exists(str_replace(' ', '_', $propertyName), $allAnnotations)){
+					unset($allAnnotations[str_replace(' ', '_', $propertyName)]);
 				}
 			}
 		}
 		
-		return $silentAnnotations;
+		foreach($allAnnotations as $key => $annotation){
+			if(substr($key, 0, 1) == '_'){
+				unset($allAnnotations [$key]);
+			}
+		}
+		
+		return $allAnnotations;
 	}
 	
 	/*

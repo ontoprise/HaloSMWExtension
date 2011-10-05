@@ -232,8 +232,7 @@ class ASFParserFunctions {
 				continue;
 			};
 			
-			$semanticData = $store->getSemanticData(
-				SMWDIWikiPage::newFromTitle($title));
+			$semanticData = ASFFormGeneratorUtils::getSemanticData($title);
 			$maxCardinality = 
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_HAS_MAX_CARDINALITY);
 			$delimiter = 

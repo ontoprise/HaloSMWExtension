@@ -79,8 +79,8 @@ class ASFCategorySectionStructureProcessor {
 				//continue;
 			}
 			
-			$semanticData = $store->getSemanticData(
-				SMWDIWikiPage::newFromTitle($categoryTitle));
+			$semanticData = ASFFormGeneratorUtils::getSemanticData($categoryTitle);
+				
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			if(strtolower($noASF) == 'true'){
 				$this->categoriesWithNoFormEdit[$categoryTitle->getText()] = true;

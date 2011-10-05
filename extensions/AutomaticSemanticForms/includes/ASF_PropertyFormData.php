@@ -41,8 +41,7 @@ class ASFPropertyFormData {
 		$this->titleObject = $propertyTitleObject;
 		
 		$store = smwfGetStore();
-		$this->semanticData = $store->getSemanticData(
-			SMWDIWikiPage::newFromTitle($this->titleObject));
+		$this->semanticData = ASFFormGeneratorUtils::getSemanticData($this->titleObject);
 		
 		$this->initializeFormCreationMetadata();
 	}

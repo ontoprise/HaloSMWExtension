@@ -103,7 +103,7 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 		$store = smwfGetStore();
 		$categories = array();
 		foreach($categoryCandidates as $candidate){
-			$semanticData = $store->getSemanticData(SMWDIWikiPage::newFromTitle($candidate[0]));
+			$semanticData = ASFFormGeneratorUtils::getSemanticData($candidate[0]); 
 			
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');

@@ -41,8 +41,7 @@ class ASFRedLinkHandler {
 			$property_title = Title::newFromText($property_title, SMW_NS_PROPERTY);
 			
 			if($property_title && $property_title->exists()){
-				$semanticData = $store->getSemanticData(
-					SMWDIWikiPage::newFromTitle($property_title));	
+				$semanticData = ASFFormGeneratorUtils::getSemanticData($property_title);
 				
 				$range = ASFFormGeneratorUtils::getPropertyValueOfTypeRecord(
 					$semanticData, ASF_PROP_HAS_DOMAIN_AND_RANGE,1);
@@ -56,8 +55,7 @@ class ASFRedLinkHandler {
 		foreach(array_keys($categories) as $category){
 			$categoryTitle = Title::newFromText($category);
 
-			$semanticData = $store->getSemanticData(
-				SMWDIWikiPage::newFromTitle($categoryTitle));
+			$semanticData = ASFFormGeneratorUtils::getSemanticData($categoryTitle);
 				
 			$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
 				$semanticData, 'Has_default_form');

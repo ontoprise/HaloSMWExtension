@@ -7,6 +7,8 @@
  */
 class ASFFormGeneratorUtils {
 	
+	static private $semanticDataCache = array();
+	
 	/*
 	 * Helper method for initializeFormCreationMetadata
 	 */
@@ -154,8 +156,7 @@ class ASFFormGeneratorUtils {
 			$categoryTitle = $categoryObject->getTitle();
 			
 			//ASF can be created if there is one category with no 'no automatic formedit' annotation
-			$semanticData = $store->getSemanticData(
-				SMWDIWikiPage::newFromTitle($categoryTitle));
+			$semanticData = self::getSemanticData($categoryTitle);
 			if(ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT)!= 'true'){
 				return true;					
 			}
@@ -253,8 +254,7 @@ class ASFFormGeneratorUtils {
 		
 		//filter properties with no automatic form edit
 		foreach($properties as $k => $p){
-			$semanticData = smwfGetStore()->getSemanticData(
-				SMWDIWikiPage::newFromTitle($p));
+			$semanticData = self::getSemanticData($p);
 			$noAutomaticFormEdit =
 				ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT); 
 			
@@ -300,8 +300,7 @@ class ASFFormGeneratorUtils {
 		foreach($categories as $category){
 			$categoryTitle = Title::newFromText($category, NS_CATEGORY);
 
-			$semanticData = $store->getSemanticData(
-				SMWDIWikiPage::newFromTitle($categoryTitle));
+			$semanticData = self::getSemanticData($categoryTitle);
 				
 			$defaultForm = ASFFormGeneratorUtils::getPropertyValue(
 				$semanticData, 'Has_default_form');
@@ -338,6 +337,18 @@ class ASFFormGeneratorUtils {
 		}
 		
 		return $link;
+	}
+	
+	
+	public static function getSemanticData(Title $title){
+		if(!array_key_exists($title->getFullText(), self::$semanticDataCache)){
+			$store = smwfGetStore();
+			$semanticData = $store->getSemanticData(
+				SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
+			self::$semanticDataCache[$title->getFullText()] = $semanticData; 
+		}
+		
+		return self::$semanticDataCache[$title->getFullText()];
 	}
 	
 	 

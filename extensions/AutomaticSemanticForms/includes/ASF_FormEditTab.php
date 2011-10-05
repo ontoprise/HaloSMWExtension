@@ -80,17 +80,12 @@ class ASFFormEditTab {
 		}
 			
 		//Create form definition
-		list($formDefinition, $dC)
-			= ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
-		if($formDefinition){
+		$result = ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
+		if($result){
 			global $asfDummyFormName;
 			$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
 			$form_name = $asfDummyFormName;
 			
-			global $asfFormDefData;
-			$asfFormDefData = array();
-			$asfFormDefData['formdef'] = $formDefinition;
-
 			$target_title = $article->getTitle();
 			$target_name = SFUtils::titleString( $target_title );
 			SFFormEdit::printForm( $form_name, $target_name );

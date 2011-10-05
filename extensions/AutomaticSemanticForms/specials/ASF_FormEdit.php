@@ -71,23 +71,18 @@ function execute($query, $redirectOnError = true) {
 			
 			$targetTitle = Title::newFromText($targetName);
 			
-			list($formDefinition, $categoriesWithNoFormEdit) = 
-				ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
-			if($formDefinition){
+			$result = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
+			if($result){
 				//Set the dummy form name to trick the Semantic Forms extension
 				global $asfDummyFormName;
 				ASFFormGeneratorUtils::createFormDummyIfNecessary();
 				$wgRequest->setVal('form', $asfDummyFormName);
 				$wgRequest->setVal('target', $targetName);
 			
-				global $asfFormDefData;
-				$asfFormDefData = array();		
-				$asfFormDefData['formdef'] = $formDefinition;
-				
 				//deal with additional category annotations
 				$categoryNames = $this->getAdditionalCategoryAnnotations($categoryNames, $targetName);
 				if(count($categoryNames) > 0){
-					$asfFormDefData['additional catehory annotations'] = $categoryNames;
+					ASFFormGenerator::getInstance()->getFormDefinition()->setAdditionalCategoryAnnotations($categoryNames);
 				}
 			} else {
 				global $wgOut;
@@ -105,14 +100,9 @@ function execute($query, $redirectOnError = true) {
 			
 			$title = Title::newFromText($targetName);
 			if($title->exists()){
-				list($formDefinition, $categoriesWithNoFormEdit)
-					= ASFFormGenerator::getInstance()->generateFromTitle($title, true);
+				$result = ASFFormGenerator::getInstance()->generateFromTitle($title, true);
 		
-				if($formDefinition){
-					global $asfFormDefData;
-					$asfFormDefData = array();
-					$asfFormDefData['formdef'] = $formDefinition;
-
+				if($result){
 					global $asfDummyFormName;
 					ASFFormGeneratorUtils::createFormDummyIfNecessary();
 					$wgRequest->setVal('form', $asfDummyFormName); 

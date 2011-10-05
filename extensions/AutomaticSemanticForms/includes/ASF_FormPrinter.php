@@ -44,21 +44,33 @@ class ASFFormPrinter extends SFFormPrinter {
 	 */
 	function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $embedded = false ) {
 
-		global $asfFormDefData;
 		$postProcess = false;
-		if(isset($asfFormDefData) && array_key_exists('formdef', $asfFormDefData) && $asfFormDefData['formdef'] != false){
-			$form_def = $asfFormDefData['formdef'];
+		if($formDefinition = ASFFormGenerator::getInstance()->getFormDefinition()){
 
-			global $asfPageNameTemplate;
-			$page_name_formula = $asfPageNameTemplate;
+			global $wgOut;
+			$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+			
+			if(!$form_submitted){
+				$existing_page_content = 
+					ASFWikiTextManipulator::getInstance()->getWikiTextForSF($page_name, $existing_page_content);
+			}
+			
+			$form_def = $formDefinition->getFormDefinition(); 
+			
+			$page_name_formula = $formDefinition->getPageNameTemplate();
 			
 			$postProcess = true;
 		}
 
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
-		parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
+			parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 
-		if($postProcess){
+		if($form_submitted){
+			$data_text = 
+				ASFWikiTextManipulator::getInstance()->getWikiTextForSaving($generated_page_name, $data_text);
+		}
+		
+		if($postProcess&& !$form_submitted){
 			//remove this if bug has been fixed in sf
 			global $asfDisplayPropertiesAndCategoriesAsLinks;
 			if($asfDisplayPropertiesAndCategoriesAsLinks){
@@ -71,26 +83,19 @@ class ASFFormPrinter extends SFFormPrinter {
 				'<div style="display: inline" class="page_name_auto_complete"', $form_text);
 
 			//deal with additional category annotations
-			if(array_key_exists('additional catehory annotations', $asfFormDefData)){
-				$additionalCategoryAnnotations = "\n";
-				foreach($asfFormDefData['additional catehory annotations'] as $category){
-					$additionalCategoryAnnotations .= "[[".$category."]] ";
+			if($additionalCategoryAnnotations = $formDefinition->getAdditionalCategoryAnnotations()){
+				$additionalCategoryAnnotationsString = '';
+				foreach($additionalCategoryAnnotations  as $category){
+					$additionalCategoryAnnotationsString .= "[[".$category."]] ";
 				}
 
 				$additionalContent = "";
 
 				//deal with preloading
-				global $asfPreloadingArticles;
-				$title = Title::newFromText($page_name);
-				if(is_array($asfPreloadingArticles) && (is_null($title) || !$title->exists())){
-					foreach($asfPreloadingArticles as $articleName => $dC){
-						$asfPreloadingArticles[$articleName] = SFFormUtils::getPreloadedText($articleName);
-					}
-					$additionalContent = implode("\n\n", $asfPreloadingArticles);
-				}
+				$additionalContent .= $formDefinition->getPreloadContent($page_name);
 
-				$additionalContent .= $additionalCategoryAnnotations;
-
+				$additionalContent .= $additionalCategoryAnnotationsString;
+				
 				//render for fck if necessary
 				global $wgFCKEditorDir;
 				if ( $wgFCKEditorDir ) {
