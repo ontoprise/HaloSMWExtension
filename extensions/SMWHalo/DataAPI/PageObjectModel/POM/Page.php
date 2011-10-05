@@ -601,7 +601,8 @@ class POMPage extends PCPPage
 			while($__iterator->hasNext()){
 				$__element = &$__iterator->getNextNodeValueByReference();
 				if( strcmp($__element->id, $element->id) === 0){
-					return $this->children->remove($__element);
+					$result = $this->children->remove($__element); 
+					return $result ;
 				}
 			}
 			return false;

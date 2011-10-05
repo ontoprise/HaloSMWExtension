@@ -50,7 +50,8 @@ class POMCategory extends POMAnnotation {
 	public function POMCategory($text)
 	{
 //		$this->nodeText = $text;
-		$this->name = 'Category';
+		global $wgLang;
+		$this->name = $wgLang->getNSText(NS_CATEGORY);
 		$this->value = $this->parseValue($text);
 		$this->representation = '';
 
@@ -203,7 +204,7 @@ class POMProperty extends POMAnnotation {
 			$__end = strpos($text, ']]');
 			return substr($text, $__start , $__end - $__start);
 		}else{
-			return '';
+			return $this->parseValue($text);
 		}
 	}
 

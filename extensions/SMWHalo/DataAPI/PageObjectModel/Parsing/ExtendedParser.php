@@ -339,18 +339,21 @@ class POMExtendedParser extends POMParser{
 					if ($braceCount > 0) {
 						$braceCount--;
 					}
+					
+					global $wgLang;
 					$markedText .= $part0;
 					$aText = '[['.$aText.']]';
 					if (strpos($aText, '::')){
 						$page->addElement(new POMProperty($aText));
 						$aText = '';
-					}else if (strpos($aText, ':')){
+					}else if (strpos($aText, $wgLang->getNSText(NS_CATEGORY).':')){
 						$page->addElement(new POMCategory($aText));
 						$aText = '';
 					}else{
-						// empty
+						$page->addElement(new POMSimpleText($aText));
+						$aText = '';
 					}
-
+				
 				} else {
 					if ($braceCount > 0) {
 						$markedText .= $part0;
