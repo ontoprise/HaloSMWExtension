@@ -56,12 +56,12 @@ createContent: function() {
 	var html = '<table border="0" class= "saveannotations-innertable"><tr><td>';
 	html += tb.createButton('ah-savewikitext-btn',
 							  gLanguage.getMessage('SA_SAVE_ANNOTATIONS'), 
-							  'smwhgAdvancedAnnotation.saveAnnotations(false)', 
+							  'window.smwhgAdvancedAnnotation.saveAnnotations(false)', 
 							  '' , true);
 	html += "</td><td>";							  
 	html += tb.createButton('ah-savewikitext-and-exit-btn',
 							  gLanguage.getMessage('SA_SAVE_ANNOTATIONS_AND_EXIT'), 
-							  'smwhgAdvancedAnnotation.saveAnnotations(true)', 
+							  'window.smwhgAdvancedAnnotation.saveAnnotations(true)', 
 							  '' , true);						   
 	html += "</td></tr></table>";							  
 

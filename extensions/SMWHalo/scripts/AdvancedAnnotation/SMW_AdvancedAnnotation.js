@@ -1565,7 +1565,7 @@ AdvancedAnnotation.prototype = {
 
 AdvancedAnnotation.create = function() {
 	if (wgAction == "annotate" || this.fck || this.cke ) {
-		smwhgAdvancedAnnotation = new AdvancedAnnotation();
+		window.smwhgAdvancedAnnotation = smwhgAdvancedAnnotation = new AdvancedAnnotation();
 		new PeriodicalExecuter(function(pe) {
 			var content = $('globalWrapper'); //$('smwh_AAM');
 			Event.observe(content, 'mouseup', 
