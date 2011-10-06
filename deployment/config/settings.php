@@ -47,6 +47,14 @@ class DF_Config  {
 	public static $df_authorizeByWiki = true;
 	//public static $df_webadmin_user = "root";
 	//public static $df_webadmin_pass = "pass";
+	
+	/*
+	 * Only for LDAP users  (works with LdapAuthentication extension)
+	 * 
+	 * The domain must be set if in order to access 
+	 * the DF-GUI. 
+	 */
+	public static $df_webadmin_ldap_domain = "";
 
     /*
      * External programs which are known to the DF.
