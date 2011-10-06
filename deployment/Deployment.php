@@ -92,8 +92,17 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
  * @return string true/false
  */
 function dff_authUser($username, $password) {
+	
+	// set LDAP domain (if configured)
+	if (isset(DF_Config::$df_webadmin_ldap_domain) && DF_Config::$df_webadmin_ldap_domain != '') {
+		$_SESSION["wsDomain"] = DF_Config::$df_webadmin_ldap_domain;
+	}
+	
+	// check password 
 	$user = User::newFromName($username);
 	$correct = $user->checkPassword($password);
+	
+	// and group membership
 	$groups = $user->getGroups();
-	return $correct && in_array("sysop", $groups) ? "true" : "false";
+	return $correct && (in_array("sysop", $groups) ||  in_array("administrator", $groups)) ? "true" : "false";
 }
