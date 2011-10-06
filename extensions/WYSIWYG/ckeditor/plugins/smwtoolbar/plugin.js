@@ -300,7 +300,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
               var element = CKEDITOR.dom.element.createFromHtml(selectedHtml);
               if(element && element.getOuterHtml && CKEDITOR.tools.trim(element.getOuterHtml()) === CKEDITOR.tools.trim(selectedHtml)){
                 if(element.is('span')){
-                  gEselection = handleSelectedSpan(gEeditor, element, selectedText);
+                  gEselection = handleSelectedSpan(gEeditor, element, CKEDITOR.tools.trim(selectedText.toString()));
+                  return gEselection;
                 }
               }
               if(selectedHtml == selectedText){
@@ -313,7 +314,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
                 }
                 //allow only text inside specific elements to be annotated
                 else if(element.type == CKEDITOR.NODE_TEXT && gEeditor.getSelection().getStartElement().getName().toUpperCase().InArray(goodNodes)){
-                  gEselection[0] = selectedText.toString();
+                  gEselection[0] = CKEDITOR.tools.trim(selectedText.toString());
                   return gEselection;
                 }                
               }
@@ -863,7 +864,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      var toolBar = new window.parent.RelationToolBar();
+      var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, value, show, name);
       ckePopupContextMenu.showMenu();
@@ -874,7 +875,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      var toolBar = new window.parent.RelationToolBar();
+      var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, propertyValue, displayedText, propertyName);
       ckePopupContextMenu.showMenu();
@@ -893,7 +894,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      var toolBar = new window.parent.CategoryToolBar();
+      var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, name);
       ckePopupContextMenu.showMenu();
@@ -904,7 +905,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      var toolBar = new window.parent.CategoryToolBar();
+      var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, name);
       ckePopupContextMenu.showMenu();
