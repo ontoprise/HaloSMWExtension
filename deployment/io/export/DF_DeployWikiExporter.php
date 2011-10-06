@@ -416,8 +416,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 			return;
 		}
 
-		// export hash
-		$out .= "    <hash>".md5($text)."</hash>\n";
+		// no additional changes. can be removed??
 	}
 
 	
