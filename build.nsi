@@ -343,6 +343,11 @@ Section "${PRODUCT} ${VERSION} core" smwplus
   
    ; Register scheduled task for services
     SetOutPath "$INSTDIR"
+    ${ConfigWrite} "$INSTDIR\apache_start.bat" "SET SMWPLUSDIR=" '$INSTDIR' $R0
+    ${ConfigWrite} "$INSTDIR\apache_stop.bat" "SET SMWPLUSDIR=" '$INSTDIR' $R0
+    ${ConfigWrite} "$INSTDIR\mysql_start.bat" "SET SMWPLUSDIR=" '$INSTDIR' $R0
+    ${ConfigWrite} "$INSTDIR\mysql_stop.bat" "SET SMWPLUSDIR=" '$INSTDIR' $R0
+     
     StrCpy $FART "$INSTDIR\tools\fart.exe"
        
          ${GetWindowsVersion} $R0
@@ -352,10 +357,13 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
             # Apache
-            nsExec::ExecToLog 'schtasks /delete /tn "restart_apache"'
-            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_restart_apache.txt" {{command}} "\"$INSTDIR\apache_restart.bat\""'
-            nsExec::ExecToLog 'schtasks /create /tn "restart_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_restart_apache.txt"'
-            # We do not need a stop command for apache
+            nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apache.txt" {{command}} "\"$INSTDIR\apache_start.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_start_apache.txt"'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_apache.txt" {{command}} "\"$INSTDIR\apache_stop.bat\""'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_apache.txt"'
+           
             
             # Mysql
             nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
@@ -388,7 +396,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
             
             #apache
-            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"$INSTDIR\apache_restart.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"$INSTDIR\apache_start.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /ru "SYSTEM" /tr "\"$INSTDIR\apache_stop.bat\"" /sc once /st 00:00'
             
             #mysql
             nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_start.bat\"" /sc once /st 00:00'
@@ -1133,9 +1142,12 @@ Function installAsWindowsService
            DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
            # Apache (remove others before)
-           nsExec::ExecToLog 'schtasks /delete /tn "restart_apache"'
-           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_restart_apacheservice.txt" {{command}} "\"net stop apache\" && \"net start apache\""'
-           nsExec::ExecToLog 'schtasks /create /tn "restart_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_restart_apacheservice.txt"'
+           nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
+           nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt" {{command}} "\"net start apache\""'
+           nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_apacheservice.txt" {{command}} "\"net stop apache\""'
+           nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_apacheservice.txt"'
            # We do not need a stop command for apache
             
            # Mysql (remove others before)
@@ -1154,7 +1166,9 @@ Function installAsWindowsService
          
          DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
          nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
+         nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start apache\"" /sc once /st 00:00'
+         nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /ru "SYSTEM" /tr "\"net stop apache\"" /sc once /st 00:00'
               
          nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
          nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
