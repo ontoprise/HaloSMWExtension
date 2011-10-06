@@ -44,8 +44,6 @@ function enableCollaboration() {
 		$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions,
 		$wgAutoloadClasses, $wgHooks;
 
-	#global $wgSpecialPages, $wgSpecialPageGroups;
-
 	require_once($cegIP . '/specials/Comment/CE_CommentParserFunctions.php');
 
 	$wgExtensionFunctions[] = 'cefSetupExtension';
@@ -85,9 +83,6 @@ function cefSetupExtension() {
 		$cegEnableComment, $cegEnableCurrentUsers, $wgSpecialPages,
 		$wgSpecialPageGroups, $wgOut;
 
-	//--- Register hooks ---
-	#global $wgHooks;
-
 	wfLoadExtensionMessages('Collaboration');
 
 	///// Register specials pages
@@ -99,10 +94,8 @@ function cefSetupExtension() {
 	// to include javascript and css files (only on special page requests).
 	if( stripos( $wgRequest->getRequestURL(), $spns_text . ":Collaboration" ) !== false
 		|| stripos( $wgRequest->getRequestURL(), $spns_text . "%3ACollaboration" ) !== false ) {
-//		$wgHooks['BeforePageDisplay'][]='cefAddSpecialPageHeader';
 		$wgOut->addModules( 'ext.collaboration.comment.specialpage' );
 	} else {
-//		$wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
 		$wgOut->addModules( 'ext.collaboration.comment' );
 	}
 
@@ -188,25 +181,6 @@ function celfSetupScriptAndStyleModule() {
 			'dependencies' => array( 'ext.smw.sorttable' )
 		)
 	);
-
-	//cefAddJSLanguageScripts();
-}
-
-/**
- * Adding headers for non-special-pages
- * Currently only used by comments
- *
- * @param OutputPage $out
- * @return bool: true
- */
-function cefAddNonSpecialPageHeader(&$out) {
-	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $wgOut;
-
-	$wgOut->addModules( 'ext.collaboration.comment' );
-
-	wfProfileOut( __METHOD__ . ' [Collaboration]' );
-	return true;
 }
 
 /*********************************/
@@ -308,7 +282,7 @@ function cefInitMessages() {
 }
 
 /**
- * Registers Collaboration extension User messages.
+ * Registers Collaboration extension user messages.
  */
 function cefInitUserMessages() {
 	wfProfileIn( __METHOD__ . ' [Collaboration]' );
@@ -341,79 +315,6 @@ function cefInitUserMessages() {
 }
 
 /**
- * Add appropriate JS language script
- */
-function cefAddJSLanguageScripts() {
-	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $haclgIP, $haclgHaloScriptPath, $wgUser, $wgResourceModules;
-
-	// content language file
-	$lngScript = '/scripts/Language/HaloACL_LanguageEn.js';
-	$lng = '/scripts/Language/HaloACL_Language';
-	if (isset($wgUser)) {
-		$lng .= ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($haclgIP . $lng)) {
-			$lngScript = $lng;
-		}
-	}
-
-	$wgResourceModules['ext.HaloACL.Language'] = array(
-	// JavaScript and CSS styles. To combine multiple file, just list them as an array.
-		'scripts' => array(
-			"scripts/Language/HaloACL_Language.js",
-	$lngScript
-	),
-	 
-	// ResourceLoader needs to know where your files are; specify your
-	// subdir relative to "/extensions" (or $wgExtensionAssetsPath)
-		'localBasePath' => dirname(__FILE__).'/../',
-		'remoteExtPath' => 'HaloACL'
-		);
-	
-	global $wgLanguageCode, $cegIP, $cegScriptPath, $wgUser;
-
-	// content language file
-	$lng = '/scripts/Language/CE_Language';
-	$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.".js" . $ceStyleVer . "\"></script>");
-	
-	if (!empty($wgLanguageCode)) {
-		$lng .= ucfirst($wgLanguageCode).'.js';
-		if( file_exists( $cegIP . $lng ) ) {
-			$out->addScript("<script type=\"text/javascript\" src=\"" . $cegScriptPath . $lng . $ceStyleVer .
-				"\"></script>"
-			);
-		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-				"/scripts/Language/CE_LanguageEn.js" . $ceStyleVer . "\"></script>"
-			);
-		}
-	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-			"/scripts/Language/CE_LanguageEn.js" . $ceStyleVer . "\"></script>"
-		);
-	}
-
-	// user language file
-	if (isset($wgUser)) {
-		$lng = '/scripts/Language/CE_LanguageUser'.ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($cegIP . $lng)) {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.$lng.$ceStyleVer."\"></script>");
-		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-				"/scripts/Language/CE_LanguageUserEn.js" . $ceStyleVer . "\"></script>"
-			);
-		}
-	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath.
-			"/scripts/Language/CE_LanguageUserEn.js" . $ceStyleVer . "\"></script>"
-		);
-	}
-
-	wfProfileOut( __METHOD__ . ' [Collaboration]' );
-	return true;
-}
-
-/**
  * Registers the autocompletion icons of the Comment namespace for the SMWHaloAutocompletion.
  * 
  * @param array $namespaceMappings
@@ -424,16 +325,19 @@ function cefRegisterACIcon( &$namespaceMappings) {
 	return true;
 }
 
+/**
+ * Add Collaboration's global JS variables
+ * @param array $vars
+ * @return boolean true 
+ */
 function cefAddGlobalJSVariables( &$vars ) {
 	wfProfileIn( __METHOD__ . ' [Collaboration]' );
-	global $cegScriptPath, $cegEnableRatingForArticles, $wgParser,
+	global $cegScriptPath, $cegEnableRatingForArticles,
 		$cegShowCommentsExpanded, $cegEnableFileAttachments,
 		$cegUseRMUploadFunc, $smwgEnableRichMedia, $cegDefaultDelimiter;
-	
-	$ns = MWNamespace::getCanonicalName( NS_USER );
 
 	$vars['wgCEScriptPath'] = $cegScriptPath;
-	$vars['wgCEUserNS'] = $ns = MWNamespace::getCanonicalName( NS_USER );
+	$vars['wgCEUserNS'] = MWNamespace::getCanonicalName( NS_USER );
 	$vars['wgCEEnableFullDeletion'] = $cegEnableRatingForArticles;
 	$vars['wgCEShowCommentsExpanded'] = $cegShowCommentsExpanded;
 	if( isset( $cegEnableFileAttachments ) && $cegEnableFileAttachments ) {
