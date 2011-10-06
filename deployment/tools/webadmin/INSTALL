@@ -1,5 +1,6 @@
-Installation of the webadmin console:
-=====================================
+==========================================
+ 1. Installation of the webadmin console
+==========================================
 
 (1) Make sure deployment/tools/webadmin is accessible via HTTP
 (2) Set the $scriptPath and $df_lang variable in deployment/settings.php to your wiki location
@@ -45,13 +46,54 @@ You get a warning if something is missing when you first access the webadmin con
 There is a settings file located at deployment/settings.php. Take a look in it,
 it is documented. It contains some configuration concerning the webadmin console.
 
-Starting stopping process using the Wiki Administration tool
-============================================================
+========================================================
+ 2. Server administration with Wiki Administration tool
+========================================================
+The wiki admin tool allows starting and stopping server processes (Server tab). If you are using the Windows installer,
+everything is pre-configured and should work out-of-the-box. If not, you have to do some manual work.
 
-TODO: write this
+Windows:
 
-Troubleshooting:
-================
+    The commands which are executed can be freely chosen in the web interface. However, you should use the Feature 'Planned tasks' on Windows
+    to define tasks to run. The big advantage of this way is that it is possible to run such a task with admin priviledges
+    instead of the priviledges the apache server has. Then it is possible to start/stop Windows services for example.
+    
+    (1) Create a planned task. Don't specify an execution interval. Register it with admin priviledges (checkbox on first tab)
+        Run a script which does the job you want (for stopping memcache for example: net stop memcache). Then name the task, let's say 'stop_memcache'
+        
+    (2) Add the command to run the task in the webinterface:
+    
+        schtasks /run /tn stop_memcache
+         
+    (3) Execute it.
+    
+    You can change the user which is used for executing this requests in settings.php (normally not necessary)
+    
+        public static $df_runas_user = "wikiadmin";
+        public static $df_runas_password = "geheim";
+        
+Linux:
+
+    (1) Change the user (see above) which runs the commands. It must be the user which runs the webserver 
+    or which is in the same group and which can upgrade to the superuser without a password (actually a kind of super-user).
+    
+    (2) Edit the file /etc/sudoers and add this line:
+    
+    ------------
+    www-data ALL= NOPASSWD: /etc/init.d/  
+    ------------
+    
+    It allows a user 'www-data' to run all commands in /etc/init.d/ and it requires no password
+    when obtaining root priviledges.
+    
+    (3) Execute the task. 
+    
+    For more details, take a look here: 
+        http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch09_:_Linux_Users_and_Sudo#The_.2Fetc.2Fsudoers_File
+
+====================
+ 3. Troubleshooting
+====================
 
 If you followed the instructions and it still does not work, try to enable the 
 error reporting by uncommenting the following two lines at the beginning 
