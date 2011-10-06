@@ -161,7 +161,7 @@ class DFServersTab {
 				$opSoftware = Tools::getOntopriseSoftware();
 				if (!is_null($opSoftware)) {
 					// simply take first
-					$first = $reset($opSoftware);
+					$first = reset($opSoftware);
 					$guessedTSCInstallDir = $first[0];
 				} else {
 					$guessedTSCInstallDir = "";
