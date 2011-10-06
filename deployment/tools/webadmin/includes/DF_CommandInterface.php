@@ -531,9 +531,11 @@ class DFCommandInterface {
 				return $ret == 0 ? implode("\n", $out) : "false";
 			} else {
 				$wshShell = new COM("WScript.Shell");
-				$runCommand = "$commandLineToStart";
+				//$runCommand = "$commandLineToStart";
 				
-				$oExec = $wshShell->Run("$runCommand", 7, false);
+				//$oExec = $wshShell->Run("$runCommand", 7, false);
+				@chdir(dirname($commandLineToStart));
+                @exec($commandLineToStart, $out, $ret);
 				return "true";
 			}
 		} else {

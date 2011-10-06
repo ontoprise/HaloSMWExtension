@@ -66,9 +66,9 @@ class DFServersTab {
 		$html .= "<td>Apache</td>";
 
 		if (Tools::isProcessRunning("httpd")) {
-			$html .= "<td id=\"df_run_flag_httpd\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
+			$html .= "<td id=\"df_run_flag_apache\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
-			$html .= "<td id=\"df_run_flag_httpd\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
+			$html .= "<td id=\"df_run_flag_apache\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
 		$html .= "<td><select id=\"httpd_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">$startActionText</option><option value=\"$apacheEnd\">$endActionText</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_httpd_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
@@ -81,13 +81,13 @@ class DFServersTab {
 		$html .= "<td>mySQL</td>";
 
 		if (Tools::isProcessRunning("mysqld")) {
-			$html .= "<td id=\"df_run_flag_mysqld\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
+			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
-			$html .= "<td id=\"df_run_flag_mysqld\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
+			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"mysqld_selector\" class=\"df_action_selector\"><option value=\"$mysqlStart\">$startActionText</option><option value=\"$mysqlEnd\">$endActionText</option></select></td>";
-		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_mysqld_command\" type=\"text\" size=\"80\" value=\"$mysqlStart\"/>";
-		$html .= "<input id=\"df_servers_mysqld_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
+		$html .= "<td><select id=\"mysql_selector\" class=\"df_action_selector\"><option value=\"$mysqlStart\">$startActionText</option><option value=\"$mysqlEnd\">$endActionText</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_mysql_command\" type=\"text\" size=\"80\" value=\"$mysqlStart\"/>";
+		$html .= "<input id=\"df_servers_mysql_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
 		$solrStart = self::guessPaths("solr", "start");
@@ -169,7 +169,7 @@ class DFServersTab {
 			}
 			switch($program) {
 				case "apache":
-					return $action == "start" ?  "schtasks /run /tn start_apache"
+					return $action == "start" ?  "schtasks /run /tn stop_apache && schtasks /end /tn start_apache && schtasks /run /tn start_apache"
 					: "should not be used!";
 					break;
 				case "mysql":
