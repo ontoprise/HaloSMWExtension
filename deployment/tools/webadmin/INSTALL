@@ -52,14 +52,15 @@ it is documented. It contains some configuration concerning the webadmin console
 The wiki admin tool allows starting and stopping server processes (Server tab). If you are using the Windows installer,
 everything is pre-configured and should work out-of-the-box. If not, you have to do some manual work.
 
-Windows:
+Windows 7 (should also work on XP):
 
     The commands which are executed can be freely chosen in the web interface. However, you should use the Feature 'Planned tasks' on Windows
     to define tasks to run. The big advantage of this way is that it is possible to run such a task with admin priviledges
     instead of the priviledges the apache server has. Then it is possible to start/stop Windows services for example.
     
     (1) Create a planned task. Don't specify an execution interval. Register it with admin priviledges (checkbox on first tab)
-        Run a script which does the job you want (for stopping memcache for example: net stop memcache). Then name the task, let's say 'stop_memcache'
+        Run a script which does the job you want (for stopping memcache for example: net stop memcache). Then name the task, 
+        let's say 'stop_memcache'.
         
     (2) Add the command to run the task in the webinterface:
     
@@ -74,19 +75,27 @@ Windows:
         
 Linux:
 
-    (1) Change the user (see above) which runs the commands. It must be the user which runs the webserver 
-    or which is in the same group and which can upgrade to the superuser without a password (actually a kind of super-user).
+    (1) Change the user's sudo rights which runs the webserver. It must be able to 
+    	upgrade to root priviledges without a password.
     
-    (2) Edit the file /etc/sudoers and add this line:
+    (2) Open the file /etc/sudoers via 
     
-    ------------
-    www-data ALL= NOPASSWD: /etc/init.d/  
-    ------------
+     		sudo visudo
+     		
+        and add this line to the end:
+        
+	     	www-data ALL=NOPASSWD: ALL
+	     
+    	(assuming that your webserver's user is "www-data")
+   
+	    It allows a user 'www-data' to run with sudo privileges and it requires no password when obtaining.
+	    
+	    BE CAREFUL: Don't changes anything else unless you know what you do. You can easily lock yourself out.
     
-    It allows a user 'www-data' to run all commands in /etc/init.d/ and it requires no password
-    when obtaining root priviledges.
+    (3) Change the task in the webinterface if necessary. Then execute the task via webinterface.
     
-    (3) Execute the task. 
+    	For example, if you use SOLR via a tomcat application server, you have to change the command for managing the server
+    	because per default it assumes that SOLR is used via a jetty webserver.  
     
     For more details, take a look here: 
         http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch09_:_Linux_Users_and_Sudo#The_.2Fetc.2Fsudoers_File
