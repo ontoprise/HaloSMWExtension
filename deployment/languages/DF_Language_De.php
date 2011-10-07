@@ -120,7 +120,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_process_runs' => 'läuft',
     'df_webadmin_process_doesnot_run' => 'läuft nicht',
 	'df_webadmin_server_execute' => 'Ausführen',
-    'df_webadmin_server_start' => 'starten',
-    'df_webadmin_server_end' => 'beenden'
+    'df_webadmin_server_start' => 'start',
+    'df_webadmin_server_end' => 'stop'
 	);
 }

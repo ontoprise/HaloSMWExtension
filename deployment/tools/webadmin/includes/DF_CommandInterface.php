@@ -451,24 +451,64 @@ class DFCommandInterface {
 
 	}
 
-	public function isProcessRunning($processName) {
-		return Tools::isProcessRunning($this->translateProcessName($processName)) ? "true" : "false";
+	public function isProcessRunning($processName, $script) {
+		if (Tools::isWindows()) {
+			return Tools::isProcessRunning($this->translateProcessName($processName)) ? "true" : "false";
+		} else {
+			if (strpos($script, "/etc/init.d") !== false) {
+				@exec("$script status", $out, $ret);
+			} else {
+				@exec("/sbin/status $script", $out, $ret);
+				if (Tools::inStringArray($out, "$script stop")) {
+					$ret = 1;
+				} 
+			}
+			return ($ret == 0);
+		}
 	}
 
-	public function areProcessesRunning($processNames) {
-		$processNames = explode(",",$processNames);
-		$translated=array();
-		foreach($processNames as $name) {
-			$translated[] = $this->translateProcessName($name);
+	/**
+	 * Checks if certain process/services are running.
+	 *
+	 * On Windows a list of process names is expected.
+	 * On Linux a list of service scripts is expected.
+	 *
+	 * @param string $processNames Comma separated
+	 * @param service scripts $servicescripts Comma separated
+	 */
+	public function areProcessesRunning($processNames, $servicescripts) {
+		if (Tools::isWindows()) {
+			$processNames = explode(",",$processNames);
+			$translated=array();
+			foreach($processNames as $name) {
+				$translated[] = $this->translateProcessName($name);
+			}
+			$doesRun = Tools::areProcessesRunning($translated);
+		} else {
+			$doesRun=array();
+			$servicescripts = explode(",",$servicescripts);
+			foreach($servicescripts as $script) {
+				if (strpos($script, "/etc/init.d") !== false) {
+					@exec("$script status", $out, $ret);
+					$doesRun[] = ($ret == 0);
+				} else {
+					@exec("/sbin/status $script", $out, $ret);
+					if (Tools::inStringArray($out, "$script stop")) {
+						$doesRun[] = false;
+					} else {
+						$doesRun[] = ($ret == 0);
+					}
+				}
+
+			}
 		}
-		$doesRun = Tools::areProcessesRunning($translated);
 		return implode(",", $doesRun);
 	}
-    
+
 	/**
-	 * Translates the process names to the names (or paths) used by 
+	 * Translates the process names to the names (or paths) used by
 	 * the actual platform.
-	 * 
+	 *
 	 * @param string $name Processname
 	 * @return string
 	 */
@@ -484,16 +524,10 @@ class DFCommandInterface {
 				default: return $name;
 			}
 		} else {
-		switch($name) {
-                case "apache": return "apache2";
-                case "mysql": return "mysqld";
-                case "solr":
-                case "tsc": 
-                case "memcached": return Tools::whereis($name, $mwrootDir);
-                default: return $name;
-            }
+			return $name; // not necessary for Linux, because it is checked via init.d scripts.
 		}
-		
+
+
 	}
 
 	/**
@@ -515,7 +549,7 @@ class DFCommandInterface {
 	 *
 	 * @param string $commandLineToStart Command to start (with parameters)
 	 */
-	public function startProcess($commandLineToStart) {
+	public function startProcess($commandLineToStart, $operation) {
 		$runAsUser = DF_Config::$df_runas_user;
 		$password = DF_Config::$df_runas_password;
 
@@ -523,7 +557,7 @@ class DFCommandInterface {
 		if (Tools::isWindows()) {
 			if (!is_null($runAsUser)) {
 				global $mwrootDir;
-			
+
 				$command = $mwrootDir."/deployment/tools/internal/pcwrunas/pcwRunAs4.exe ";
 				$command .= "/u $runAsUser /p $password /app cmd /arg \"/c $commandLineToStart\"";
 
@@ -531,24 +565,22 @@ class DFCommandInterface {
 				return $ret == 0 ? implode("\n", $out) : "false";
 			} else {
 				$wshShell = new COM("WScript.Shell");
-				//$runCommand = "$commandLineToStart";
-				
-				//$oExec = $wshShell->Run("$runCommand", 7, false);
+
 				@chdir(dirname($commandLineToStart));
-                @exec($commandLineToStart, $out, $ret);
+				@exec($commandLineToStart, $out, $ret);
 				return "true";
 			}
 		} else {
-			if (!is_null($runAsUser)) {
-				$command = "sudo -u $runAsUser \"$commandLineToStart\"";
-				@chdir(dirname($commandLineToStart));
-				@exec($command, $out, $ret);
-				return $ret == 0 ? implode("\n", $out) : "false";
+
+			if (strpos($commandLineToStart, "/etc/init.d") !== false) {
+				$command = "sudo $commandLineToStart $operation";
 			} else {
-				@chdir(dirname($commandLineToStart));
-				@exec($commandLineToStart, $out, $ret);
-				return $ret == 0 ? implode("\n", $out) : "false";
+				$command = "sudo /sbin/$operation $commandLineToStart";
 			}
+				
+			@exec($command, $out, $ret);
+				
+			return $ret == 0 ? implode("\n", $out) : "false";
 		}
 	}
 

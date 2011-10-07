@@ -47,7 +47,8 @@ class DFServersTab {
 
 	public function getHTML() {
 		global $dfgLang;
-
+		$dfgCommandInterface = new DFCommandInterface();
+		
 		$executeText = $dfgLang->getLanguageString('df_webadmin_server_execute');
 		$startActionText = $dfgLang->getLanguageString('df_webadmin_server_start');
 		$endActionText = $dfgLang->getLanguageString('df_webadmin_server_end');
@@ -65,14 +66,14 @@ class DFServersTab {
 		$apacheEnd = self::guessPaths("apache", "end");
 		$html .= "<td>Apache</td>";
 
-		if (Tools::isProcessRunning("httpd")) {
+		if ($dfgCommandInterface->isProcessRunning("apache", self::guessPaths("apache"))) {
 			$html .= "<td id=\"df_run_flag_apache\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_apache\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
 		}
-		$html .= "<td><select id=\"httpd_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">$startActionText</option><option value=\"$apacheEnd\">$endActionText</option></select></td>";
-		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_httpd_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
-		$html .= "<input id=\"df_servers_httpd_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
+		$html .= "<td><select id=\"apache_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">restart</option></select></td>";
+		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_apache_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
+		$html .= "<input id=\"df_servers_apache_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
 		$html .= "</td></tr>";
 
 		$mysqlStart = self::guessPaths("mysql", "start");
@@ -80,7 +81,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>mySQL</td>";
 
-		if (Tools::isProcessRunning("mysqld")) {
+		if ($dfgCommandInterface->isProcessRunning("mysqld", self::guessPaths("mysql"))) {
 			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -95,7 +96,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>solr</td>";
 
-		if (Tools::isProcessRunning("solr")) {
+		if ($dfgCommandInterface->isProcessRunning("solr", self::guessPaths("solr"))) {
 			$html .= "<td id=\"df_run_flag_solr\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_solr\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -110,7 +111,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>tsc</td>";
 
-		if (Tools::isProcessRunning("tsc")) {
+		if (Tools::isProcessRunning("tsc", self::guessPaths("tsc"))) {
 			$html .= "<td id=\"df_run_flag_tsc\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_tsc\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -125,7 +126,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>memcached</td>";
 
-		if (Tools::isProcessRunning("memcached")) {
+		if ($dfgCommandInterface->isProcessRunning("memcached", self::guessPaths("memcached"))) {
 			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -148,7 +149,7 @@ class DFServersTab {
 	 *
 	 * @return string
 	 */
-	private static function guessPaths($program, $action) {
+	private static function guessPaths($program, $action = "start") {
 		if (Tools::isWindows()) {
 			global $smwgDFIP, $mwrootDir;
 			$guessedInstallDir = realpath($smwgDFIP."/../../../");
@@ -200,27 +201,27 @@ class DFServersTab {
 			} else {
 				$guessedTSCInstallDir = Tools::getProgramDir();
 			}
-			$initd = "etc/init.d";
+			$initd = "/etc/init.d";
 			switch($program) {
 				case "apache":
-					return $action == "start" ?  $initd."/apache2 restart"
-					: "should not be used!";
+					return $action == "start" ?  $initd."/apache2"
+					: "apache2";
 					break;
 				case "mysql":
-					return $action == "start" ?  $initd."/mysql start"
-					: $initd."/mysql stop";
+					return $action == "start" ?  "mysql"
+					: "mysql";
 					break;
 				case "solr":
-					return $action == "start" ?  $initd."/solr start"
-					: $initd."/solr start";
+					return $action == "start" ?  $initd."/jetty"
+					: $initd."/jetty";
 					break;
 				case "tsc":
-					return $action == "start" ?  $guessedInstallDir."/tsc.exe"
-					: $guessedInstallDir."/stop-triplestore.bat";
+					return $action == "start" ?  $initd."/tsc"
+					: $initd."/tsc";
 					break;
 				case "memcached":
-					return $action == "start" ?  $initd."/memcached start"
-					: $initd."/memcached stop";
+					return $action == "start" ?  $initd."/memcached"
+					: $initd."/memcached";
 					break;
 			}
 		}

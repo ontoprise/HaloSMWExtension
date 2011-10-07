@@ -984,7 +984,11 @@ $(function() {
 			timer = setTimeout( periodicProcessPoll, 20000);
 			
 			var servers = ["apache","mysql","solr","tsc","memcached"];
-			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areProcessesRunning&rsargs[]="+servers.join(",");
+			var commands = [];
+			$(servers).each(function() {
+				 commands.push($('#df_servers_'+this+'_command').val());
+			});
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areProcessesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
 			var updateProcessDisplay = function(xhr, status) {
 				var result = xhr.responseText.split(",");
 				var i = 0;
@@ -1035,7 +1039,7 @@ $(function() {
 				var startAction = selector[0].firstChild;
 				var endAction = startAction.nextSibling;
 				$(startAction).attr("value", values[0]);
-				$(endAction).attr("value", values[1]);
+				if (values.length > 1) $(endAction).attr("value", values[1]);
 				
 				// set start command
 				var process = id.split("_")[0];
@@ -1073,7 +1077,8 @@ $(function() {
 			};
 			var process = $(e.currentTarget).attr('id').split("_")[2];
 			var runCommand = $('#df_servers_'+process+'_command').val();
-			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=startProcess&rsargs[]="+encodeURIComponent(runCommand);
+			var operation = $('#'+process+"_selector option:selected").text();
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=startProcess&rsargs[]="+encodeURIComponent(runCommand)+"&rsargs[]="+operation;
 			$.ajax( { url : url, dataType:"json" , complete: commandExecuted });
 			$(e.currentTarget).attr('disabled', true);
 		};

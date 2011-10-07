@@ -221,6 +221,15 @@ class Tools {
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
 	}
+	
+	public static function inStringArray($arr, $needle) {
+		foreach($arr as $a) {
+			if (strpos($a, $needle) !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static function makeWindowsPath($path) {
 		return str_replace("/", "\\", $path);

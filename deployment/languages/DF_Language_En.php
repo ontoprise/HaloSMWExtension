@@ -123,7 +123,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_process_doesnot_run' => 'not running',
 	'df_webadmin_server_execute' => 'Execute',
 	'df_webadmin_server_start' => 'start',
-	'df_webadmin_server_end' => 'end'
+	'df_webadmin_server_end' => 'stop'
 	);
 
 }
