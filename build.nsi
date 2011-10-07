@@ -357,8 +357,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
             # Apache
-            nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-            nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
+            nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_apache" /F'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apache.txt" {{command}} "\"$INSTDIR\apache_start.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_start_apache.txt"'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_apache.txt" {{command}} "\"$INSTDIR\apache_stop.bat\""'
@@ -366,24 +366,24 @@ Section "${PRODUCT} ${VERSION} core" smwplus
            
             
             # Mysql
-            nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
-            nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
+            nsExec::ExecToLog 'schtasks /delete /tn "start_mysql" /F'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql" /F'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_mysql.txt" {{command}} "\"$INSTDIR\mysql_start.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\scheduled_tasks\runas_template_start_mysql.txt"'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_mysql.txt" {{command}} "\"$INSTDIR\mysql_stop.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_mysql.txt"'
             
             # SOLR
-            nsExec::ExecToLog 'schtasks /delete /tn "start_solr"'
-            nsExec::ExecToLog 'schtasks /delete /tn "stop_solr"'
+            nsExec::ExecToLog 'schtasks /delete /tn "start_solr" /F'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_solr" /F'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStartSolr.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt"'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStopSolr.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt"'
             
             # Memcached
-            nsExec::ExecToLog 'schtasks /delete /tn "start_memcached"'
-            nsExec::ExecToLog 'schtasks /delete /tn "stop_memcached"'
+            nsExec::ExecToLog 'schtasks /delete /tn "start_memcached" /F'
+            nsExec::ExecToLog 'schtasks /delete /tn "stop_memcached" /F'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_memcachedservice.txt" {{command}} "\"$INSTDIR\memcached\memcached -d start\""'
             nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /XML "$INSTDIR\scheduled_tasks\runas_template_start_memcachedservice.txt"'
             nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_memcachedservice.txt" {{command}} "\"$INSTDIR\memcached\memcached -d stop\""'
@@ -436,7 +436,7 @@ Section "SMW+ Setup" smwplussetup
   StrCpy $PHP "$INSTDIR\php\php.exe"
   StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
 
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\maintenance\update.php --quick"'
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\maintenance\update.php" --quick'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SemanticMediaWiki\maintenance\SMW_setup.php"'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\SMWHalo\maintenance\SMW_setup.php"'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\maintenance\setup.php"'
@@ -1142,8 +1142,8 @@ Function installAsWindowsService
            DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
             
            # Apache (remove others before)
-           nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-           nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
+           nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
+           nsExec::ExecToLog 'schtasks /delete /tn "stop_apache" /F'
            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt" {{command}} "\"net start apache\""'
            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt"'
            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_apacheservice.txt" {{command}} "\"net stop apache\""'
@@ -1151,8 +1151,8 @@ Function installAsWindowsService
            # We do not need a stop command for apache
             
            # Mysql (remove others before)
-           nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
-           nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
+           nsExec::ExecToLog 'schtasks /delete /tn "start_mysql" /F'
+           nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql" /F'
            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_mysqlservice.txt" {{command}} "\"net start mysql\""'
            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\scheduled_tasks\runas_template_start_mysqlservice.txt"'
            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_mysqlservice.txt" {{command}} "\"net stop mysql\""'
@@ -1165,13 +1165,13 @@ Function installAsWindowsService
      ${OrIf} $R0 == "2003"
          
          DetailPrint "Add starts scripts as planned task for Windows XP/2003 Server"
-         nsExec::ExecToLog 'schtasks /delete /tn "start_apache"'
-         nsExec::ExecToLog 'schtasks /delete /tn "stop_apache"'
+         nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
+         nsExec::ExecToLog 'schtasks /delete /tn "stop_apache" /F'
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start apache\"" /sc once /st 00:00'
          nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /ru "SYSTEM" /tr "\"net stop apache\"" /sc once /st 00:00'
               
-         nsExec::ExecToLog 'schtasks /delete /tn "start_mysql"'
-         nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql"'
+         nsExec::ExecToLog 'schtasks /delete /tn "start_mysql" /F'
+         nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql" /F'
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once /st 00:00'
          nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once /st 00:00'
             
