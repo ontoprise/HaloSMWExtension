@@ -1,16 +1,18 @@
 <?php
 
+////todo: add documentation
 
+//todo: think about adding preloading content one step earlier
 
 
 class ASFFormDefinition {
 	
-	private $categories;
+	private $categorySections;
 	private $categoriesWithNoProperties;
-	private $additionalCategoryAnnotations;
+	private $additionalCategoryAnnotations = array();
 	
-	public function __construct($categories, $categoriesWithNoProperties){
-		$this->categories = $categories;
+	public function __construct($categorySections, $categoriesWithNoProperties){
+		$this->categorySections = $categorySections;
 		$this->categoriesWithNoProperties = $categoriesWithNoProperties;
 	}
 	
@@ -25,7 +27,7 @@ class ASFFormDefinition {
 	private function getFormDefinitionSyntax(){
 		$formDefinitionSyntax = "";
 
-		foreach($this->categories as $categoty){
+		foreach($this->categorySections as $categoty){
 			$formDefinitionSyntax .= $categoty->getCategorySection();
 		}
 
@@ -56,7 +58,7 @@ class ASFFormDefinition {
 		$outro = "\n\n{{{end template}}}";
 
 		$appendix = array();
-		foreach($this->categories as $categoty){
+		foreach($this->categorySections as $categoty){
 			$appendix = array_merge($appendix, $categoty->getCategorySectionAppendix());
 		}
 		foreach($appendix as $a){
@@ -70,7 +72,7 @@ class ASFFormDefinition {
 		$rows = $wgUser->getIntOption('rows');
 
 		$showFreeText = true;
-		foreach($this->categories as $c){
+		foreach($this->categorySections as $c){
 			if($c->hideFreeText()){
 				$showFreeText = false;
 				break;
@@ -125,7 +127,7 @@ class ASFFormDefinition {
 	public function getPageNameTemplate(){
 		$asfPageNameTemplate = '';
 		$useDefaultTemplate = true;
-		foreach($this->categories as $c){
+		foreach($this->categorySections as $c){
 			list($isDefault, $template) = $c->getPageNameTemplate();
 			if($isDefault){
 				if($useDefaultTemplate){
@@ -166,13 +168,13 @@ class ASFFormDefinition {
 		return $asfPageNameTemplate;
 	}
 	
-	public function getPreloadContent($titleText){
+	private function getPreloadContent($titleText){
 		$result = '';
 		
 		$title = Title::newFromText($titleText);
 		if(is_null($title) || !$title->exists()){
 			$preloadArticles = array();
-			foreach($this->categories as $c){
+			foreach($this->categorySections as $c){
 				foreach($c->getPreloadingArticles() as $articleName => $dC){
 					$preloadArticles[$articleName] = SFFormUtils::getPreloadedText($articleName);
 				}
@@ -184,12 +186,37 @@ class ASFFormDefinition {
 		return $result;
 	}
 	
-	public function setAdditionalCategoryAnnotations($additionalCategoryAnnotations){
-		$this->additionalCategoryAnnotations = $additionalCategoryAnnotations;
+	private function getAdditionalCategoryAnnotations(){
+		return $this->additionalCategoryAnnotations;
 	}
 	
-	public function getAdditionalCategoryAnnotations(){
-		return $this->additionalCategoryAnnotations;
+	public function getAdditionalFreeText($titleText){
+		$additionalContent = '';
+		
+		//deal with preloading
+		$additionalContent .= $this->getPreloadContent($titleText);
+		
+		//deal with addional category annotations
+		foreach($this->additionalCategoryAnnotations  as $category){
+			$additionalContent .= "[[".$category."]] ";
+		}
+
+		return $additionalContent;
+	}
+	
+	
+	public function updateDueToExistingAnnotations($existingAnnotations){
+		$this->addUnresolvedAnnotationsSection($existingAnnotations);
+		
+		foreach($this->categorySections as $cs){
+			$cs->updateDueToExistingAnnotations($existingAnnotations);
+		}
+	}
+	
+	private function addUnresolvedAnnotationsSection($existingAnnotations){
+		$unresolvedAnnotationsSection =
+			new ASFUnresolvedAnnotationsFormData($existingAnnotations, $this->categorySections);
+		$this->categorySections[] = $unresolvedAnnotationsSection;
 	}
 	
 }

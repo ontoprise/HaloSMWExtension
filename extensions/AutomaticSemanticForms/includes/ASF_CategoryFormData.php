@@ -327,6 +327,24 @@ class ASFCategoryFormData {
 		return false;
 	}
 	
+	public function updateDueToExistingAnnotations($existingAnnotations){
+		foreach($existingAnnotations as $propertyName => $values){
+			if(count($values['values']) > 1){
+				echo('<pre>'.print_r(array_keys($this->propertiesFormData), true).'</pre>');
+				foreach($this->propertiesFormData  as $key => $propertyFormData){
+					if($propertyName == $propertyFormData->titleObject->getText()){
+						if(strlen(implode(' ', $values['values'])) > 80){
+							$inputType = 'textarea';
+						} else {
+							$inputType = 'text';
+						}
+						$this->propertiesFormData[$key]->explicitInputType = $inputType;
+						$this->propertiesFormData[$key]->forceList();	
+					}
+				}
+			}
+		}
+	}	
 	
 	
 	

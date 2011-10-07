@@ -92,19 +92,12 @@ class ASFFormGenerator {
 			= $this->initializeCategoryFormData($categories);
 
 		//echo('<pre>'.print_r($categoriesWithNoProperties, true).'</pre>');
-		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0)
+		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0){
 			return false;
-
-		if(!is_null($instanceTitle)){
-			$unresolvedAnnotationsSection =
-			new ASFUnresolvedAnnotationsFormData($instanceTitle, $categories);
-
-			$categories[] = $unresolvedAnnotationsSection;
+		} else {
+			$this->formDefinition = new ASFFormDefinition($categories, $categoriesWithNoProperties);	
+			return true;
 		}
-		
-		$this->formDefinition = new ASFFormDefinition($categories, $categoriesWithNoProperties);
-		
-		return true;
 	}
 	
 	

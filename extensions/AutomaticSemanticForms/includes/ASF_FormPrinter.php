@@ -47,13 +47,29 @@ class ASFFormPrinter extends SFFormPrinter {
 		$postProcess = false;
 		if($formDefinition = ASFFormGenerator::getInstance()->getFormDefinition()){
 
-			global $wgOut;
-			$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+			if(is_null($existing_page_content)){
+				$existing_page_content = '';
+			}
 			
 			if(!$form_submitted){
-				$existing_page_content = 
-					ASFWikiTextManipulator::getInstance()->getWikiTextForSF($page_name, $existing_page_content);
+				global $wgOut;
+				$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+			} else {
+				if(!is_null($page_name)){
+					$title = Title::newFromText($page_name);
+					if($title->exists()){
+						$article = new Article($title);
+						$existing_page_content .= $article->getRawText();
+					}
+				}
 			}
+			
+			$existing_page_content .= $formDefinition->getAdditionalFreeText($page_name);
+			
+			list($existing_page_content, $existingAnnotations) = 
+				ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
+					
+			$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 			
 			$form_def = $formDefinition->getFormDefinition(); 
 			
@@ -65,9 +81,9 @@ class ASFFormPrinter extends SFFormPrinter {
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
 			parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 
-		if($form_submitted){
+		if($postProcess && $form_submitted){
 			$data_text = 
-				ASFWikiTextManipulator::getInstance()->getWikiTextForSaving($generated_page_name, $data_text);
+				ASFWikiTextManipulator::getInstance()->getWikiTextForSaving($generated_page_name, $data_text,  $existingAnnotations);
 		}
 		
 		if($postProcess&& !$form_submitted){
@@ -82,34 +98,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			$form_text = str_replace('<div class="page_name_auto_complete"',
 				'<div style="display: inline" class="page_name_auto_complete"', $form_text);
 
-			//deal with additional category annotations
-			if($additionalCategoryAnnotations = $formDefinition->getAdditionalCategoryAnnotations()){
-				$additionalCategoryAnnotationsString = '';
-				foreach($additionalCategoryAnnotations  as $category){
-					$additionalCategoryAnnotationsString .= "[[".$category."]] ";
-				}
-
-				$additionalContent = "";
-
-				//deal with preloading
-				$additionalContent .= $formDefinition->getPreloadContent($page_name);
-
-				$additionalContent .= $additionalCategoryAnnotationsString;
-				
-				//render for fck if necessary
-				global $wgFCKEditorDir;
-				if ( $wgFCKEditorDir ) {
-					$showFCKEditor = SFFormUtils::getShowFCKEditor();
-					if ( $showFCKEditor & RTE_VISIBLE ) {
-						$additionalContent = SFFormUtils::prepareTextForFCK($additionalContent);
-					}
-				}
-				 
-				$startFreeText = strpos($form_text, 'id="free_text"');
-				$endFreeText = strpos($form_text, '</textarea>', $startFreeText);
-				$form_text = substr($form_text, 0, $endFreeText).$additionalContent.substr($form_text, $endFreeText);
-			}
-				
+			
 			//deal with standard text input with
 			$startPos = strpos($form_text, 'id="free_text"');
 			$startPos = strrpos(substr($form_text, 0, $startPos), '<textare');
@@ -129,8 +118,6 @@ class ASFFormPrinter extends SFFormPrinter {
 				
 	}
 
-	//echo('<pre>'.print_r($form_text, true).'</pre>');
-		
 	return array($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name);
 }
 

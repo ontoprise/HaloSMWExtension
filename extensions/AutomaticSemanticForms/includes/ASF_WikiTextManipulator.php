@@ -1,6 +1,8 @@
 <?php
 
 
+//todo: docu
+
 class ASFWikiTextManipulator {
 	
 	private static $instance;
@@ -14,15 +16,11 @@ class ASFWikiTextManipulator {
 	
 	private function __construct(){}
 	
-	public function getWikiTextForSF($titleString, $text){
-		
-		//todo: What if there are several values for an annotation of type date? Do we display several datepickers?
+	public function getWikiTextAndAnnotationsForSF($titleString, $text){
 		
 		//todo: what about properties of type record
 		
-		//todo: what if an article contains several annotations, but the property has a max cardinality of 1
-		
-		//note that this is all done also if free text is hidden
+		///todo: maybe add notes for glitches in tooltips
 		
 		if($text == null) $text = '';
 		
@@ -118,7 +116,7 @@ class ASFWikiTextManipulator {
 		foreach($collectedAnnotations as $label => $annotation){
 			//todo: get delimiter
 			$delimiter = $this->getSilentAnnotationsDelimiter($label);
-			if(!$delimiter) $delimiter = ' ';
+			if(!$delimiter) $delimiter = ', ';
 			$text .= '|'.ucfirst($label).'='.implode($delimiter, $annotation['values']);
 		}
 		$text .= '}}';
@@ -131,16 +129,16 @@ class ASFWikiTextManipulator {
 			'/<nowiki> <!--asf--> <!--\s*BEGIN ontology:/',
 			'/--> <!--asf--> <\/nowiki>/'); 
 		$replacement = array(
-			'<!-- BEGIN ontology',
+			'<!-- BEGIN ontology:',
 			'-->');
 		$text = preg_replace($pattern, $replacement, $text);
 		
-		return $text;
+		return array($text, $collectedAnnotations );
 	}
 	
 	
-	public function getWikiTextForSaving($titleString, $text){
-		
+	public function getWikiTextForSaving($titleString, $text, $existingAnnotations){
+
 		if($text == null) $text = '';
 		
 		POMElement::$elementCounter = 0;
@@ -162,7 +160,7 @@ class ASFWikiTextManipulator {
 						$silent = explode('=', $silent, 2);
 						if(count($silent) == 2){
 							//check if value must be split with a delimiter
-							if($delimiter = $this->getSilentAnnotationsDelimiter(trim($silent[0]))){
+							if($delimiter = $this->getSilentAnnotationsDelimiter(trim($silent[0]), $existingAnnotations)){
 								$values = explode($delimiter, $silent[1]);
 							} else {
 								$values = array($silent[1]);
@@ -206,7 +204,7 @@ class ASFWikiTextManipulator {
 		}
 	}
 	
-	private function getSilentAnnotationsDelimiter($propertyName){
+	private function getSilentAnnotationsDelimiter($propertyName, $existingAnnotations = array()){
 		
 		$title = Title::newFromText($propertyName, SMW_NS_PROPERTY);
 		if(!($title instanceof Title) || !$title->exists()){
@@ -226,7 +224,12 @@ class ASFWikiTextManipulator {
 			} else {
 				return $delimiter;
 			}
+		} else if (array_key_exists($propertyName, $existingAnnotations)){
+			if(count($existingAnnotations[$propertyName]['values']) > 0){
+				return ',';
+			}
 		}
+		
 		return false;
 	}
 	

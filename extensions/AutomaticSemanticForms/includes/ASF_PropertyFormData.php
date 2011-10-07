@@ -30,6 +30,7 @@ class ASFPropertyFormData {
 	public $fieldSequenceNumber; 	//value of  'Field_sequence_number' property
 	public $defaultValue;					//use a default value
 	public $hideProperty;
+	private $forceList;
 	
 	
 	
@@ -176,7 +177,7 @@ class ASFPropertyFormData {
 		}
 		
 		//deal with multi value input fields
-		if($this->maxCardinality != 1 || $this->delimiter){
+		if($this->maxCardinality != 1 || $this->delimiter || $this->forceList()){
 			$syntax .= ' |list';	
 		}
 		
@@ -424,6 +425,10 @@ private function getFormFieldInputTypeMetadata($forToolTip = false){
 		
 		return false;
 		}
+	}
+	
+	public function forceList(){
+		$this->forceList = true;
 	}
 
 	

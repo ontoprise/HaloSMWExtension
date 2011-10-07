@@ -11,16 +11,10 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	 * Discovers unresolved annotations and initializes the corresponding
 	 * property form fields
 	 */
-	public function __construct($instanceTitleObject, $categoryFormDataInstances = array()){
-		if(!$instanceTitleObject->exists()){
-			$this->propertiesFormData = array();
-			return;
-		}
-		
-		$allAnnotations = $this->getAllAnnotations($instanceTitleObject);
+	public function __construct($existingAnnotations, $categoryFormDataInstances = array()){
 		
 		$unresolvedAnnotations = 
-			$this->getUnresolvedAnnotations($categoryFormDataInstances, $allAnnotations);
+			$this->getUnresolvedAnnotations($categoryFormDataInstances, $existingAnnotations);
 		
 		$this->initializePropertiesFormData($unresolvedAnnotations);
 		
@@ -44,24 +38,18 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	 * Find all silent annotations which are not covered by one
 	 * of the other category form data sections
 	 */
-	private function getUnresolvedAnnotations($categoryFormDataInstances, $allAnnotations){
+	private function getUnresolvedAnnotations($categoryFormDataInstances, $existingAnnotations){
 		
 		foreach($categoryFormDataInstances as $categoryData){
 			foreach($categoryData->propertiesFormData as $propertyFormData){
 				$propertyName = $propertyFormData->titleObject->getText();
-				if(array_key_exists(str_replace(' ', '_', $propertyName), $allAnnotations)){
-					unset($allAnnotations[str_replace(' ', '_', $propertyName)]);
+				if(array_key_exists($propertyName, $existingAnnotations)){
+					unset($existingAnnotations[$propertyName]);
 				}
 			}
 		}
 		
-		foreach($allAnnotations as $key => $annotation){
-			if(substr($key, 0, 1) == '_'){
-				unset($allAnnotations [$key]);
-			}
-		}
-		
-		return $allAnnotations;
+		return $existingAnnotations;
 	}
 	
 	/*
@@ -74,7 +62,6 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 			$this->propertiesFormData[$name] = 
 				new ASFPropertyFormData(Title::newFromText($name, SMW_NS_PROPERTY));
 		}
-		
 	}
 	
 	/*
