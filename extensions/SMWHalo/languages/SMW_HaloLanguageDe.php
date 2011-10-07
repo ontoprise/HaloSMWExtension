@@ -381,11 +381,12 @@ protected $smwUserMessages = array(
 	'smw_tsc_query_not_allowed' => 'Leere Query nicht erlaubt.',
 
 	
-        //skin
-        'smw_search_this_wiki' => 'Wiki durchsuchen',
-        'more_functions' => 'Mehr',
-        'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
-        'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen',
+	//skin
+	'smw_search_this_wiki' => 'Wiki durchsuchen',
+	'smw_last_visited' => 'Zuletzt besucht:',
+	'more_functions' => 'Mehr',
+	'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
+	'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen',
 
 // Geo coord data type
 	'semanticmaps_lonely_unit'     => 'Keine Nummer vor dem "$1" Symbol gefunden.', // $1 is something like Â°

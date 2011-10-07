@@ -406,10 +406,11 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 
     //skin
-        'smw_search_this_wiki' => 'Search this wiki',
-        'more_functions' => 'more',
-        'smw_treeviewleft' => 'Open treeview to the left side',
-        'smw_treeviewright' => 'Open treeview to the right side',
+	'smw_search_this_wiki' => 'Search this wiki',
+	'smw_last_visited' => 'Last visited:',
+	'more_functions' => 'more',
+	'smw_treeviewleft' => 'Open treeview to the left side',
+	'smw_treeviewright' => 'Open treeview to the right side',
 
 
     // Tabular Forms

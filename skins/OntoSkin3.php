@@ -50,9 +50,6 @@ class SkinOntoSkin3 extends SkinTemplate {
     }
 
     function setupSkinUserCss( OutputPage $out ) {
-        global $wgHandheldStyle;
-
-
         parent::setupSkinUserCss( $out );
 
         // Append to the default screen common & print styles...
@@ -218,8 +215,8 @@ class OntoSkin3Template extends QuickTemplate {
             </div>
 
             <div id="smwh_breadcrumbs">
-                <div id="thispage">
-                    <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/breadcrumb_pfeil.gif"/>
+                <div id="smwh_last_visited">
+					<?php $this->msg('smw_last_visited'); ?>
                 </div>
                 <div id="breadcrumb">
 		</div>

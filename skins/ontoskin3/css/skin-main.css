@@ -237,19 +237,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 /* breadcrumbs */
 
-#thispage{
-    background: url("../img/breadcrums.jpg") no-repeat scroll right center transparent;
-	-moz-background-inline-policy: continuous;
+#smwh_last_visited {
     float: left;
-    margin-right: 5px;
-    line-height: 2.5em;
-    padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 8px;
-	padding-right: 8px;
+    padding: 0.9em 0.85em 0.9em 0;
 }
 
-#smwh_breadcrumbs{
+#smwh_breadcrumbs {
     clear: both;
     margin-top: 0.2em;
     margin-left: 1.1em;

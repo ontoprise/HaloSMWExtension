@@ -114,17 +114,10 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 /* breadcrumb */
 
 #breadcrumb a, #breadcrumb span {
-	background: url("../img/breadcrums.jpg") no-repeat scroll right center transparent; 
-	-moz-background-inline-policy: continuous;
-    color: #4187a0;
+    color: grey;
     float: left;
-    padding: 0.9em 0.85em;
+    padding: 0.9em 0.7em;
 }
-
-#breadcrumb span {
-	color: #000;
-}
-
 
 #smwh_breadcrumbs{
     font-size: x-small;

@@ -391,6 +391,7 @@ clicking the big arrows between the columns.',
 	
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
+	'smw_last_visited' => 'Last visited:',
     'more_functions' => 'More',
     'smw_treeviewleft' => 'Open treeview to the left side',
     'smw_treeviewright' => 'Open treeview to the right side',
