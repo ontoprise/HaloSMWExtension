@@ -62,10 +62,10 @@ class SkinOntoSkin3 extends SkinTemplate {
         $out->addStyle( 'ontoskin3/css/skin-pagecontent.css');
 
 
-        if( $wgHandheldStyle ) {
+        //if( $wgHandheldStyle ) {
         // Currently in testing... try 'chick/main.css'
         // $out->addStyle( $wgHandheldStyle, 'handheld' );
-        }
+        //}
 
         $out->addStyle( 'ontoskin3/IE50Fixes.css', 'screen', 'lt IE 5.5000' );
         $out->addStyle( 'ontoskin3/IE55Fixes.css', 'screen', 'IE 5.5000' );
