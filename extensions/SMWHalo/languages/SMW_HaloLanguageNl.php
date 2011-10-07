@@ -314,6 +314,18 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tpee_none' => 'Don\'t use any trust policy',
     'smw_qi_dstpee_selector_0' => 'Select from Datasource',
     'smw_qi_dstpee_selector_1' => 'Select by Trust Policy',
+        'smw_qi_switch_to_sparql' => 'Switch to SPARQL',
+        'smw_qi_add_subject' => 'Add Subject',
+      'smw_qi_category_name' => 'Category name',
+      'smw_qi_add_another_category' => 'Add another category (OR)',
+      'smw_qi_subject_name' => 'Subject name',
+      'smw_qi_column_label' => 'Column label',
+     'smw_qi_add_and_filter' => 'Add new filter',
+      'smw_qi_filters' => 'Filters',
+      'smw_qi_show_in_results' => 'Show in results',
+      'smw_qi_property_name' => 'Property name',
+      'smw_qi_value_must_be_set' => 'Value must be set',
+      'smw_qi_value_name' => 'Value name',
 
     /*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',
@@ -346,6 +358,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_option' => 'Define general settings for how the query is executed',
     'smw_qi_tt_maintab_query' => 'Create a new query',
     'smw_qi_tt_maintab_load' => 'Load an existing query',
+        'smw_qi_tt_addSubject' => 'Add Subject',
 
     /* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',

@@ -6,7 +6,7 @@
   font-variant:normal;
   max-width:100%;
   width: 99%;
-  height:550px;
+  height:750px;
 }
 
 #shade{
@@ -623,4 +623,61 @@ button.btnhov{
   font-size: smaller;
   border: #000 1px solid;
   line-height: normal;
+}
+
+#switchToSparqlBtn{
+  float:right;
+}
+
+#qiTopToolbar, #qiBottomToolbar{
+  height: 30px;
+  background-color: #DDDDDD;
+  border-top: 1px solid gray;
+  border-bottom: 1px solid gray;
+  width: 100%;
+}
+
+#qiTopToolbar button{
+  float: right;
+  margin-right: 10px;
+  margin-bottom: 3px;
+  margin-top: 3px;
+}
+
+#qiBottomToolbar button, #qiBottomToolbar a{
+  float: none;
+  margin-left: 10px;
+  margin-bottom: 3px;
+  margin-top: 3px;
+}
+
+#qiBoxcontent { 
+  vertical-align: top;
+}
+
+#qiDetailsTable{
+  float:left;
+  width:59%;
+  height: 300px;
+  border: 1px solid #AAAAAA;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+#qiBoxcontent table{
+}
+
+#qiBoxcontent table td{
+  width: 180px;
+}
+
+#qiBoxcontent div{
+  vertical-align: top;
+  overflow:auto;
+  padding: 5px;
+  height: 223px;
+}
+
+#qiBoxcontent img{
+  cursor: pointer;
 }

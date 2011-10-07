@@ -23,9 +23,25 @@ jQuery(document).ready(function(){
   }
 });
 
-//get all elements with onmouseover="Tip('...')" attribute and attach qTip tooltip to them
+//get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
 function initToolTips(){
-  jQuery('[onmouseover^="Tip("]').not('#searchInput, #qiLoadConditionTerm').each(function(){
+  var qtipConfig = {
+      content: '',
+      show: {when: {event: 'mouseover'}, delay: 100},
+      hide: {when: {event: 'mouseout'}, delay: 0},
+      style: {
+        classes: 'ui-tooltip-blue ui-tooltip-shadow'
+      },
+      position: {
+        my: 'top left',
+        at: 'bottom center',
+        target: 'mouse',
+        viewport: $(window),
+        adjust: {y: 0, x: 20}
+      }
+    };
+
+  jQuery('[onmouseover^="Tip("]').not('#qiLoadConditionTerm').each(function(){
     var element = jQuery(this);
     var toolTip = element.attr('onmouseover').toString();
     toolTip = /[.\n\r\s]+Tip\(\"([^\"]*?)\"|\'([^\']*?)\'\)[.\n\r\s]*/i.exec(toolTip);
@@ -37,24 +53,24 @@ function initToolTips(){
         toolTip = toolTip[1];
       }
     }
-
-    element.qtip({
-      content: toolTip || '',
-      show: { when: { event: 'mouseover' }, delay: 100},
-      hide: { when: { event: 'mouseout' }, delay: 0},
-      style: {
-        classes: 'ui-tooltip-blue ui-tooltip-shadow'
-      },
-      position: {
-        my: 'top left',
-        at: 'bottom center',
-        target: 'mouse',
-        viewport: $(window),
-        adjust: { y: 0, x: 20 }
-      }      
-    });
+    qtipConfig.content = toolTip;
+    element.qtip(qtipConfig);
     element.removeAttr('onmouseover');
   });
+
+  jQuery('[title]').each(function(){
+    qtipConfig.content = jQuery(this).attr('title') || '';
+      jQuery(this).qtip(qtipConfig);
+  });
+
+  //when elements are added and removed we need to run the qtip setup again
+  //do it when user clicks anywere in the page
+  jQuery('*').live('click', function(){    
+    jQuery('[title]').each(function(){
+      qtipConfig.content = jQuery(this).attr('title') || '';
+      jQuery(this).qtip(qtipConfig);
+    });
+  });  
 }
 
 function init(){

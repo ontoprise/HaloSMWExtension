@@ -319,6 +319,18 @@ protected $smwUserMessages = array(
     'smw_qi_tpee_none' => 'keine trust policy verwenden',
     'smw_qi_dstpee_selector_0' => 'W&auml;hle Datenquellen',
     'smw_qi_dstpee_selector_1' => 'W&auml;hle Trust Policy',
+    'smw_qi_switch_to_sparql' => 'Switch to SPARQL',
+   'smw_qi_add_subject' => 'Add Subject',
+      'smw_qi_category_name' => 'Category name',
+      'smw_qi_add_another_category' => 'Add another category (OR)',
+      'smw_qi_subject_name' => 'Subject name',
+      'smw_qi_column_label' => 'Column label',
+     'smw_qi_add_and_filter' => 'Add new filter',
+      'smw_qi_filters' => 'Filters',
+      'smw_qi_show_in_results' => 'Show in results',
+      'smw_qi_property_name' => 'Property name',
+      'smw_qi_value_must_be_set' => 'Value must be set',
+      'smw_qi_value_name' => 'Value name',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
@@ -351,6 +363,7 @@ protected $smwUserMessages = array(
     'smw_qi_tt_option' => 'Definieren allgemeiner Einstellungen zum Ausf&uuml;hren der Query',
     'smw_qi_tt_maintab_query' => 'Erstellen einer neuen Query',
     'smw_qi_tt_maintab_load' => 'Laden einer im Wiki existierenden Query',
+    'smw_qi_tt_addSubject' => 'Add Subject',
 
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',
