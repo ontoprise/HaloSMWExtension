@@ -33,7 +33,7 @@ class TestFacetedSearchIndexerSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
 		// Temporarily disabled for speeding up tests
-        //$this->mArticleManager->deleteArticles("U1");
+//        $this->mArticleManager->deleteArticles("U1");
         
 	}
 	
@@ -199,7 +199,7 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	$result = $indexer->createFullIndex();
     	$this->assertTrue($result, "SOLR server does not answer.");
     	
-    	sleep(2);
+    	sleep(3);
     	
     	// Send a query for all documents and asserts that all articles were added.
     	$qr = $indexer->sendRawQuery("q=*:*");
@@ -267,18 +267,18 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     public function providerForIndexContent() {
     	return array(
     		array("q=*:*", array('numFound="160"')),
-    		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0",
+    		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0&sort=smwh_title_s%20asc",
     		      array(
-    		      	'"smwh_title":"Main_Page"',
-    		      	'"smwh_title":"Image"',
-    		      	'"smwh_title":"Located_in"',
-    		      	'"smwh_title":"Located_in_state"',
-    		      	'"smwh_title":"Height_stories"',
-    		      	'"smwh_title":"Building_name"',
-    		      	'"smwh_title":"Year_built"',
-    		      	'"smwh_title":"Description"',
     		      	'"smwh_title":"1201_Third_Avenue"',
-    		      	'"smwh_title":"1801_California_Street"'
+    		      	'"smwh_title":"1801_California_Street"',
+    		      	'"smwh_title":"191_Peachtree_Tower"',
+    		      	'"smwh_title":"20_Exchange_Place"',
+    		      	'"smwh_title":"300_North_LaSalle"',
+    		      	'"smwh_title":"311_South_Wacker_Drive"',
+    		      	'"smwh_title":"383_Madison_Avenue"',
+    		      	'"smwh_title":"40_Wall_Street"',
+    		      	'"smwh_title":"500_Fifth_Avenue"',
+    		      	'"smwh_title":"555_California_Street"'
     		      )
     		),
     		array("q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",

@@ -1,6 +1,6 @@
 
 #Import SMW
-include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
+include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
 enableSemantics('http://wiki', true);
 
 #EnhancedRetrieval

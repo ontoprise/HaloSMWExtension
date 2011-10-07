@@ -170,6 +170,9 @@ class ArticleManager {
 	 */
 	public function importArticles($filename) {
 		$source = ImportStreamSource::newFromFile($filename);
+		if ($source->isOK()) {
+			$source = $source->value;
+		}
 		$importer = new WikiImporter($source);
 		$result = $importer->doImport();
 

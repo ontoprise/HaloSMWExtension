@@ -9,9 +9,22 @@
 		/>
 	<script language="JavaScript">
         <![CDATA[
+			var builtinProps = {
+				'_MDAT'     : ['_dat', 'Modification_date'],
+				'___CREA'   : ['_wpg', 'Creator'],
+				'___CREADT' : ['_dat', 'Creation_date'],
+				'___MOD'    : ['_wpg', 'Last_modified_by']
+			};
+          
         	function Relations(row) {
-        	  // The values of all properties are stored as string.
-        		var prop = 'smwh_'+row.get('prop')+'_t';
+				// The values of all properties are stored as string.
+				var prop = row.get('prop');
+				if (builtinProps[prop]) {
+					var bp = builtinProps[prop];
+					prop = bp[1];
+				}
+        	  
+        		prop = 'smwh_'+prop+'_t';
         		var val = row.get('obj');
         		row.remove('prop');
         		row.remove('obj');
@@ -36,21 +49,29 @@
         	}
         	
         	function Attributes(row) {
+				var swivtNS = 'http://semantic-mediawiki.org/swivt/1.0#';
 				var prop    = row.get('prop');
+				var type    = row.get('type');
+				
+				if (builtinProps[prop]) {
+					var bp = builtinProps[prop];
+					prop = bp[1];
+					type = bp[0];
+				} else {
+					if (type.indexOf(swivtNS) === 0) {
+						type = type.substr(swivtNS.length);
+					}
+				}
+        
 				var valXSD  = row.get('valueXSD');
 				var valNum  = row.get('valueNum');
-				var valUnit = row.get('valueUnit');
-				var type    = row.get('type');
 				row.remove('prop');
 				row.remove('valueXSD');
 				row.remove('valueNum');
-				row.remove('valueUnit');
 				row.remove('type');
 				var typeSuffix = 't';
 				var isNumeric = false;
-				if (type == '_dat' ||
-					prop == 'Modification_date' ||
-					prop == 'Creation_date') {
+				if (type == '_dat') {
 					// Given format of a date: 1995/12/31T23:59:59
 					// Required format: 1995-12-31T23:59:59Z
 					var dateTime = valXSD.split("T");
@@ -65,7 +86,7 @@
 					var ymd = date.split('-');
 					var m = parseInt(ymd[1]);
 					m = (m < 10) ? '0'+m : m.toString();
-          var d = parseInt(ymd[2]);
+					var d = parseInt(ymd[2]);
 					d = (d < 10) ? '0'+d : d.toString();
 					time = time.replace(":", '').replace(":", '');
 					var dateTime = ymd[0]+m+d+time;
@@ -95,9 +116,6 @@
 				row.put('smwh_attributes', propXSD);
 				if (isNumeric) {
 					row.put('smwh_'+prop+'_numvalue_d', valNum);
-					if (valUnit.length > 0) {
-						row.put('smwh_'+prop+'_unit_s', valUnit);
-					}
 				}
 				
 				return row;
@@ -167,13 +185,11 @@
   				query="SELECT CAST(pids.smw_title AS CHAR) as prop,
                         CAST(a.value_xsd AS CHAR) as valueXSD,
                         a.value_num as valueNum,
-                        a.value_unit as valueUnit,
                         CAST(spec.value_string AS CHAR) as type
                   FROM smw_atts2 AS a
                   LEFT JOIN (smw_ids as pids) ON (pids.smw_id = a.p_id)
                   LEFT JOIN (smw_spec2 as spec) ON (a.p_id = spec.s_id)
-                  WHERE a.s_id='${smwids.smwID}' AND 
-                        (LEFT(spec.value_string,1) ='_' OR spec.s_id IS NULL)">
+                  WHERE a.s_id='${smwids.smwID}'">
         </entity>
         
         <!-- Store all text values for each subject -->

@@ -219,6 +219,12 @@ SQL;
 			$properties = array();
 			while ($row = $db->fetchObject($res)) {
 				$prop = $row->prop;
+				$predefPropType = SMWDIProperty::getPredefinedPropertyTypeId($prop);
+				if (!empty($predefPropType)) {
+					// This is a predefined property
+					$p = SMWDIProperty::newFromUserLabel($prop);
+					$prop = str_replace(' ', '_', $p->getLabel());
+				}
 				$obj  = $row->obj;
 				
 				// The values of all properties are stored as string.
@@ -251,6 +257,8 @@ SQL;
 	 * 		attribute with the value of the attribute.
 	 */
 	private function retrieveAttributes($db, $smwID, array &$doc) {
+		$swivtNS = SMWExporter::getNamespaceUri('swivt');
+		
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$smw_ids   = $db->tableName('smw_ids');
 		$smw_spec2 = $db->tableName('smw_spec2');
@@ -259,30 +267,36 @@ SQL;
 			SELECT CAST(pids.smw_title AS CHAR) as prop,
                    CAST(a.value_xsd AS CHAR) as valueXSD,
                    a.value_num as valueNum,
-                   a.value_unit as valueUnit,
                    CAST(spec.value_string AS CHAR) as type
             FROM $smw_atts2 AS a
             LEFT JOIN ($smw_ids as pids) ON (pids.smw_id = a.p_id)
             LEFT JOIN ($smw_spec2 as spec) ON (a.p_id = spec.s_id)
-            WHERE a.s_id=$smwID AND 
-                  (LEFT(spec.value_string,1) ='_' OR spec.s_id IS NULL)
+            WHERE a.s_id=$smwID
 SQL;
 		$res = $db->query($sql);
 		if ($db->numRows($res) > 0) {
 			$attributes = array();
 			while ($row = $db->fetchObject($res)) {
 				$prop = $row->prop;
-				$valueXSD  = $row->valueXSD;
-				$valueNum  = $row->valueNum;
-				$valueUnit = $row->valueUnit;
-				$type  = $row->type;
+				$predefPropType = SMWDIProperty::getPredefinedPropertyTypeId($prop);
+				if (!empty($predefPropType)) {
+					// This is a predefined property
+					$type = $predefPropType;
+					$p = SMWDIProperty::newFromUserLabel($prop);
+					$prop = str_replace(' ', '_', $p->getLabel());
+				} else {
+					$type = $row->type;
+					if (strpos($type, $swivtNS) === 0) {
+						$type = substr($type, strlen($swivtNS));
+					}
+				}
+				$valueXSD = $row->valueXSD;
+				$valueNum = $row->valueNum;
 				
 				// The values of all attributes are stored according to their type.
         		$typeSuffix = 't';
         		$isNumeric = false;
-        		if ($type == '_dat' ||
-        			$prop == 'Modification_date' ||
-        			$prop == 'Creation_date') {
+        		if ($type == '_dat') {
         			// Given format of a date: 1995/12/31T23:59:59
         			// Required format: 1995-12-31T23:59:59Z
         			$dateTime = explode("T", $valueXSD);
@@ -336,9 +350,6 @@ SQL;
         				$doc[$propNum] = array();
         			}
         			$doc[$propNum][] = $valueNum;
-        			if (!empty($valueUnit)) {
-        				$doc["smwh_{$prop}_unit_s"] = $valueUnit;
-        			}
         		}
 			}
 			$doc['smwh_attributes'] = array_unique($attributes);
