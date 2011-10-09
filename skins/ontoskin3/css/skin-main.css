@@ -270,52 +270,62 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_tabs{
     height: 25px;
     margin-top: 2.8em;
+    padding-bottom: 0.5em;
+    border-bottom: 2px solid black;
 }
 
 .tab{
-    border-left-width: 1px;
-    border-left-style: solid;
-    border-right-width: 1px;
-    border-right-style: solid;
-    border-top-width: 1px;
-    border-top-style: solid;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #228C9E;
     position: relative;
     top: 1px;
     height: 20px;
-    margin-right: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
+    margin-right: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
-    -moz-border-radius-topleft: 5px;
-    -moz-border-radius-topright: 5px;
-    -khtml-border-top-left-radius: 5px;
-    -khtml-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }
 
 #tabsleft .tab {
     float: left;
 }
 
-#tabsright .tab {
-    float: right;
-    margin-right: 0px;
+#tabsleft .pagetab {
+	float: left;
+	position: relative;
+	margin-right: 30px;
+	font-size:x-large;
 }
 
-#tabsright .righttabelements {
-    float: right;
-    padding-right: 5px;
-    padding-left: 5px;
-    border-right-width: 1px;
-    border-right-style: solid;
+#ca-talk:before {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 15px;
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #228C9E transparent;
 }
 
-.tab.selected{
-    border-bottom: 1px solid #FFF;
+#ca-talk:after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 16px;
+    border-width: 7px 7px 0;
+    border-style: solid;
+    border-color: #fff transparent;
+}
+
+/*.tab.selected{
     z-index: 1;
-}
+    border: 0;
+}*/
 
 #editimage{
     margin-right: 5px;
@@ -326,40 +336,39 @@ ul.smwh_menulist div.smwh_menubody_visible {
     margin-top: 2px;
 }
 
-
-#tabsright ul.smwh_menulist{
+#tabsleft ul.smwh_menulist{
     -moz-padding-start: 0px;
-    margin: 0em;
+    margin: 0;
     z-index: 20;
 }
 
-#tabsright ul.smwh_menulist li {
-	  display: inline;
-	  position: relative;
-          z-index: 20;
+#tabsleft ul.smwh_menulist li {
+	display: inline;
+	position: relative;
+	z-index: 20;
 }
 
-#tabsright ul.smwh_menulist div.smwh_menuhead {
+#tabsleft ul.smwh_menulist div.smwh_menuhead {
     display: inline-block;
     padding-left: 5px;
     padding-right: 15px;
     cursor: pointer;
 }
 
-#tabsright ul.smwh_menulist div.smwh_menubody {
+#tabsleft ul.smwh_menulist div.smwh_menubody {
     display: none;
 }
 
-#tabsright ul.smwh_menulist .hovering div.smwh_menubody {
+#tabsleft ul.smwh_menulist .hovering div.smwh_menubody {
     display: block;
 }
 
-#tabsright ul.smwh_menulist div.smwh_menubody {
+#tabsleft ul.smwh_menulist div.smwh_menubody {
     line-height: 1.5em;
     right: 0em;
 }
 
-#tabsright div.smwh_menubody_visible {
+#tabsleft div.smwh_menubody_visible {
     margin-top: 5px;
 }
 
@@ -368,12 +377,9 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding-right: 0px;
 }
 
-
 #smwh_halopageoptions p{
     margin: 0px;
 }
-
-
 
 #mainpage{
     /*padding-bottom: 25px;*/
@@ -392,8 +398,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 /* Page content */
 
 #column-content{
-    border-width: 1px;
-    border-style: solid;
+    /*border-width: 1px;
+    border-style: solid;*/
     padding: 15px;
 }
 

@@ -1,20 +1,21 @@
 <?php
+
 /*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 //@todo add specific javascript here instead of skin
 //@todo add specific css here instead of the skin
@@ -28,551 +29,548 @@
  */
 class SMWH_Skin {
 
+	/**
+	 * Constructor which calls
+	 *
+	 * @param <type> $skintemplate
+	 * @param <type> $action
+	 */
+	function SMWH_Skin( $skintemplate, $action ) {
+		global $wgRequest, $wgUser;
+		$this->skin = $skin = $skintemplate->data['skin'];
+		$this->skintemplate = $skintemplate;
+		$this->imagepath = "/ontoskin3/img";
+		$this->action = $action;
+	}
 
-    /**
-     * Constructor which calls
-     *
-     * @param <type> $skintemplate
-     * @param <type> $action
-     */
-    function SMWH_Skin($skintemplate,$action) {
-       global $wgRequest, $wgUser;
-       $this->skin = $skin = $skintemplate->data['skin'];
-       $this->skintemplate = $skintemplate;
-       $this->imagepath = "/ontoskin3/img";
-       $this->action =$action;
-    }
+	/**
+	 * Builds the menu and returns html snippet
+	 *
+	 * @return string
+	 *
+	 */
+	public function buildMenuHtml() {
+		$rawmenu = $this->getMenuItems();
 
+		if ( count( $rawmenu ) <= 0 ) {
+			return "<p style=\"margin-left: 30px;\">no menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
+		}
 
+		$index = 0;
+		$menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
+		foreach ( $rawmenu as $menuName => $menuItems ) {
+			$menu.= "<li class=\"smwh_menulistitem\">";
 
-
-    /**
-     * Builds the menu and returns html snippet
-     *
-     * @return string
-     *
-     */
-    public function buildMenuHtml() {
-        $rawmenu = $this->getMenuItems();
-
-        if(count($rawmenu) <= 0){
-           return "<p style=\"margin-left: 30px;\">no menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
-        }
-
-        $index = 0;
-        $menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
-        foreach($rawmenu as $menuName => $menuItems) {
-            $menu.= "<li class=\"smwh_menulistitem\">";
-
-            //Check if submenu exists
-            if ( count($menuItems) > 0)
-            {
-                //If it's a dropdown menu with items in it, add specific css class for traingle as visualization
-                $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead smwh_menudropdown\">".$this->parseWikiText($menuName)."</div>";
-                $menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody\">";
-                $menu.= "<div class=\"smwh_menubody_visible\">";
-                foreach($menuItems as $menuItem) {
-                    $menu.= "<div class=\"smwh_menuitem\">".$this->buildMenuItemHtml($menuItem)."</div>";
-                }
-                $menu.= "</div></div>";
-            } else {
-                //Don't show "dropdowntraingle" when it's only a simple entry without dropdown and subitems
-                $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">".$this->parseWikiText($menuName)."</div>";
-            }
-            $menu.= "</li>";
-            $index++;
-        }
+			//Check if submenu exists
+			if ( count( $menuItems ) > 0 ) {
+				//If it's a dropdown menu with items in it, add specific css class for traingle as visualization
+				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead smwh_menudropdown\">" . $this->parseWikiText( $menuName ) . "</div>";
+				$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody\">";
+				$menu.= "<div class=\"smwh_menubody_visible\">";
+				foreach ( $menuItems as $menuItem ) {
+					$menu.= "<div class=\"smwh_menuitem\">" . $this->buildMenuItemHtml( $menuItem ) . "</div>";
+				}
+				$menu.= "</div></div>";
+			} else {
+				//Don't show "dropdowntraingle" when it's only a simple entry without dropdown and subitems
+				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">" . $this->parseWikiText( $menuName ) . "</div>";
+			}
+			$menu.= "</li>";
+			$index++;
+		}
 
 
-        $menu.= "</ul>";
-        $menu.= "<ul id=\"menuright\" class=\"smwh_menulist\">";
-        $menu.= $this->buildMenuMediaWiki();
-        $menu.= $this->buildTools();
-        $menu.= "</ul>";
+		$menu.= "</ul>";
+		$menu.= "<ul id=\"menuright\" class=\"smwh_menulist\">";
+		$menu.= $this->buildMenuMediaWiki();
+		$menu.= $this->buildTools();
+		$menu.= "</ul>";
 
-        return $menu;
-    }
-    
-    
-    /**
-     * Gets the configured menu elements from MediaWiki:Halomenu
-     *
-     * @global $parserMemc
-     * @global $wgEnableSidebarCache
-     * @global $wgSidebarCacheExpiry
-     * @global $wgLang
-     * @return array
-     */
-     private function getMenuItems() {
+		return $menu;
+	}
 
-        global $parserMemc, $wgEnableSidebarCache, $wgSidebarCacheExpiry;
-        global $wgLang;
-        wfProfileIn( __METHOD__ );
+	/**
+	 * Gets the configured menu elements from MediaWiki:Halomenu
+	 *
+	 * @global $parserMemc
+	 * @global $wgEnableSidebarCache
+	 * @global $wgSidebarCacheExpiry
+	 * @global $wgLang
+	 * @return array
+	 */
+	private function getMenuItems() {
 
-        $key = wfMemcKey( 'halomenu', $wgLang->getCode() );
+		global $parserMemc, $wgEnableSidebarCache, $wgSidebarCacheExpiry;
+		global $wgLang;
+		wfProfileIn( __METHOD__ );
 
-        if ( $wgEnableSidebarCache ) {
-            $cachedsidebar = $parserMemc->get( $key );
-            if ( $cachedsidebar ) {
-                wfProfileOut( __METHOD__ );
-                return $cachedsidebar;
-            }
-        }
+		$key = wfMemcKey( 'halomenu', $wgLang->getCode() );
 
-        $bar = array();
-        $lines = explode( "\n", wfMsgForContent( 'halomenu' ) );
-        $heading = '';
-        foreach ($lines as $line) {
+		if ( $wgEnableSidebarCache ) {
+			$cachedsidebar = $parserMemc->get( $key );
+			if ( $cachedsidebar ) {
+				wfProfileOut( __METHOD__ );
+				return $cachedsidebar;
+			}
+		}
 
-            //Lines starting with * but not **
-            if (strpos($line, '*') === 0 && strpos($line, '**') === false) {
-                $heading = trim($line, '*');
-                $heading = trim($heading);
-                if( !array_key_exists($heading, $bar) ) $bar[$heading] = array();
-                continue;
-            }
+		$bar = array();
+		$lines = explode( "\n", wfMsgForContent( 'halomenu' ) );
+		$heading = '';
+		foreach ( $lines as $line ) {
 
-            //Lines starting with **
-            if (strpos($line, '**') === 0) {
-                $link = trim($line, '**');
-                $link = trim($link);
-                $title = Title::newFromText( $link );
-                if ( $title ) $bar[$heading][] = $title;
-                continue;
-            }
-        }
-        wfRunHooks('SkinBuildSidebar', array($this, &$bar));
-        if ( $wgEnableSidebarCache ) $parserMemc->set( $key, $bar, $wgSidebarCacheExpiry );
-        wfProfileOut( __METHOD__ );
-        return $bar;
-    }
+			//Lines starting with * but not **
+			if ( strpos( $line, '*' ) === 0 && strpos( $line, '**' ) === false ) {
+				$heading = trim( $line, '*' );
+				$heading = trim( $heading );
+				if ( !array_key_exists( $heading, $bar ) )
+					$bar[$heading] = array();
+				continue;
+			}
 
-    /**
-     *
-     * Generates the specific content shown under the menu entries
-     *
-     * @param  $menuItem
-     * @return string
-     */
-    private function buildMenuItemHtml( $menuItem ){
+			//Lines starting with **
+			if ( strpos( $line, '**' ) === 0 ) {
+				$link = trim( $line, '**' );
+				$link = trim( $link );
+				$title = Title::newFromText( $link );
+				if ( $title )
+					$bar[$heading][] = $title;
+				continue;
+			}
+		}
+		wfRunHooks( 'SkinBuildSidebar', array($this, &$bar) );
+		if ( $wgEnableSidebarCache )
+			$parserMemc->set( $key, $bar, $wgSidebarCacheExpiry );
+		wfProfileOut( __METHOD__ );
+		return $bar;
+	}
 
-        //TODO: Check if this can be unified to work with PHP > 5.2 and PHP < 5.1
-        if ($menuItem instanceof Title)
-            $titleId= $menuItem->getArticleID();
-        else
-            $titleId = Title::newFromText(trim($menuItem))->getArticleId();
-        if(!$titleId) return;
-        $menuPage = Article::newFromId($titleId);
+	/**
+	 *
+	 * Generates the specific content shown under the menu entries
+	 *
+	 * @param  $menuItem
+	 * @return string
+	 */
+	private function buildMenuItemHtml( $menuItem ) {
 
-        //This is an workaround to prevent mediawiki using OldId
-        //when doing a diff in the pagehistory. OldId would cause a
-        //false content for page rendering
-        $menuPage->mOldId = 0;
-        
-	if(!isset($menuPage)) return;
-	return $this->parseWikiText($menuPage->getContent());
-    }
+		//TODO: Check if this can be unified to work with PHP > 5.2 and PHP < 5.1
+		if ( $menuItem instanceof Title ) {
+			$titleId = $menuItem->getArticleID();
+		} else {
+			$titleId = Title::newFromText( trim( $menuItem ) )->getArticleId();
+		}
+		if ( !$titleId ) {
+			return "";
+		}
+		$menuPage = Article::newFromId( $titleId );
 
-    /**
-     * Generates the mediawiki menu similar to the menu boxes in monobook and returns the html snippet
-     *
-     * @global $wgStylePath
-     * @return string
-     */
-    private function buildMenuMediaWiki() {
-        global $wgStylePath;
+		//This is an workaround to prevent mediawiki using OldId
+		//when doing a diff in the pagehistory. OldId would cause a
+		//false content for page rendering
+		$menuPage->mOldId = 0;
 
-        //Check if config of ontoskin3 is set to show the mediawiki menu
-        //by default it's disabled
-        $content = wfMsgForContent( 'halomenuconfig' );
-        if(strpos($content,"showmediawikimenu=true")===false){
-            $hidemediawikimenu = 'style="display:none;"';
-        } else {
-            $hidemediawikimenu = '';
-        }
+		if ( !isset( $menuPage ) ) {
+			return "";
+		}
+		return $this->parseWikiText( $menuPage->getContent() );
+	}
 
-        $menu = "<!-- Standardmediawiki Menu -->";
-        $menu.= "<li class=\"smwh_menulistitem\" ".$hidemediawikimenu.">";
-        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead smwh_menudropdown\"><p>MediaWiki";
-        $menu.= "</p></div>";
-        $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
-        $menu.= "<div class=\"smwh_menubody_visible\">";
-        
-        //catch echos from mediawik-skin into a variable
-        ob_start();
-        $sidebar = $this->data['sidebar'];
-        if ( !isset( $sidebar['TOOLBOX'] ) ) $sidebar['TOOLBOX'] = true;
-        if ( !isset( $sidebar['LANGUAGES'] ) ) $sidebar['LANGUAGES'] = true;
-        foreach ($sidebar as $boxName => $cont) {
-            if ( $boxName == 'SEARCH' ) {
-                //$this->searchBox();
-            } elseif ( $boxName == 'TOOLBOX' ) {
-                $this->skintemplate->toolbox();
-            } elseif ( $boxName == 'LANGUAGES' ) {
-                $this->skintemplate->languageBox();
-            } else {
-                $this->skintemplate->customBox( $boxName, $cont );
-            }
-        }
+	/**
+	 * Generates the mediawiki menu similar to the menu boxes in monobook and returns the html snippet
+	 *
+	 * @global $wgStylePath
+	 * @return string
+	 */
+	private function buildMenuMediaWiki() {
+		global $wgStylePath;
 
-        //add output to menu
-        $menu.= ob_get_contents();
-        //stop catching echos
-        ob_end_clean();
+		//Check if config of ontoskin3 is set to show the mediawiki menu
+		//by default it's disabled
+		$content = wfMsgForContent( 'halomenuconfig' );
+		if ( strpos( $content, "showmediawikimenu=true" ) === false ) {
+			$hidemediawikimenu = 'style="display:none;"';
+		} else {
+			$hidemediawikimenu = '';
+		}
 
-        $menu.= "</div></div>";
-        $menu.= "</li>";
-        return $menu;
-    }
+		$menu = "<!-- Standardmediawiki Menu -->";
+		$menu.= "<li class=\"smwh_menulistitem\" " . $hidemediawikimenu . ">";
+		$menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead smwh_menudropdown\"><p>MediaWiki";
+		$menu.= "</p></div>";
+		$menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
+		$menu.= "<div class=\"smwh_menubody_visible\">";
 
-    /**
-     * Generates the administrator menu shown for WikiSysops and returns the html snippet
-     *
-     * @global $wgStylePath
-     * @global $wgUser
-     * @return string
-     */
-    private function buildTools() {
-        global $wgStylePath, $wgUser;
+		//catch echos from mediawik-skin into a variable
+		ob_start();
+		$sidebar = $this->data['sidebar'];
+		if ( !isset( $sidebar['TOOLBOX'] ) )
+			$sidebar['TOOLBOX'] = true;
+		if ( !isset( $sidebar['LANGUAGES'] ) )
+			$sidebar['LANGUAGES'] = true;
+		foreach ( $sidebar as $boxName => $cont ) {
+			if ( $boxName == 'SEARCH' ) {
+				//$this->searchBox();
+			} elseif ( $boxName == 'TOOLBOX' ) {
+				$this->skintemplate->toolbox();
+			} elseif ( $boxName == 'LANGUAGES' ) {
+				$this->skintemplate->languageBox();
+			} else {
+				$this->skintemplate->customBox( $boxName, $cont );
+			}
+		}
 
-        //Get users groups and check for Sysop-Rights
-        $groups = $wgUser->getEffectiveGroups();
-        $isAllowed = false;
-        if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) $isAllowed = true;
-        if($isAllowed == false) return "";
+		//add output to menu
+		$menu .= ob_get_contents();
+		//stop catching echos
+		ob_end_clean();
 
-        $menu = "<!-- Tools Menu -->";
-        $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead smwh_menudropdown\"><p>Administration</p></div>";
-               
-        //Get the content for the administration menu from MediaWiki:haloadministrator
-        $content = wfMsgForContent( 'haloadministration' );
+		$menu.= "</div></div>";
+		$menu.= "</li>";
+		return $menu;
+	}
 
-        if($content!=null && $content!="&lt;haloadministration&gt;"){
-            //parse wiki text and insert the returned html
-            $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
-            $menu.= "<div class=\"smwh_menubody_visible\">";
-            $menu.=  $this->parseWikiText($content);
-            $menu.= "</div></div>";
-        } else {
-            //if the administration menu is not defined, return a link to the help section in smwforum describing how to configure it
-            $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
-            $menu.= "<div class=\"smwh_menubody_visible\">";
-            $menu.= "<p>no administration menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
-            $menu.= "</div></div>";
-        }
-        $menu.= "</li>";
-        return $menu;
-    }
+	/**
+	 * Generates the administrator menu shown for WikiSysops and returns the html snippet
+	 *
+	 * @global $wgStylePath
+	 * @global $wgUser
+	 * @return string
+	 */
+	private function buildTools() {
+		global $wgStylePath, $wgUser;
 
+		//Get users groups and check for Sysop-Rights
+		$groups = $wgUser->getEffectiveGroups();
+		$isAllowed = false;
+		if ( in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1 ) {
+			$isAllowed = true;
+		}
+		if ( $isAllowed == false ) {
+			return "";
+		}
 
-    /**
-     *  Generates the page tabs and returns the html snippet
-     *
-     * @global $IP
-     * @global $wgTitle
-     * @global $wgScriptPath
-     * @global $wgStylePath
-     * @return string
-     */
-    public function buildTabs() {
-        global $IP, $wgTitle, $wgScriptPath, $wgStylePath;
-        $tabs  = "<!-- Tabs -->";
-        $tabsleft = "<div id=\"tabsleft\">";
-        //right tab elements
-        $functionsright = "";
-        $functionsaggregated ="";
-        $functionsright .= $this->buildHelpTab();
-        foreach($this->skintemplate->data['content_actions'] as $key => $tab) {
+		$menu = "<!-- Tools Menu -->";
+		$menu .= "<li class=\"smwh_menulistitem\">";
+		$menu .= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead smwh_menudropdown\"><p>Administration</p></div>";
 
+		//Get the content for the administration menu from MediaWiki:haloadministrator
+		$content = wfMsgForContent( 'haloadministration' );
 
-                                    if( substr($key,0,6) == "nstab-" || $key == "talk" ){
-                                            $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\"tab";
-                                            if( $tab['class'] ) {
-                                                $tabs .= " ".htmlspecialchars($tab['class']);
-                                            }
-                                            $tabs .= "\">";
-                                            $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
-                                            # We don't want to give the watch tab an accesskey if the
-                                            # page is being edited, because that conflicts with the
-                                            # accesskey on the watch checkbox.  We also don't want to
-                                            # give the edit tab an accesskey, because that's fairly su-
-                                            # perfluous and conflicts with an accesskey (Ctrl-E) often
-                                            # used for editing in Safari.
-                                            if( in_array( $this->action, array( 'edit', 'submit' ) )
-                                                && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-                                                $tabs.= $this->skintemplate->skin->tooltip( "ca-$key" );
-                                            } else {
-                                                $tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
-                                            }
-                                            $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
+		if ( $content != null && $content != "&lt;haloadministration&gt;" ) {
+			//parse wiki text and insert the returned html
+			$menu .= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
+			$menu .= "<div class=\"smwh_menubody_visible\">";
+			$menu .= $this->parseWikiText( $content );
+			$menu .= "</div></div>";
+		} else {
+			//if the administration menu is not defined, return a link to the help section in smwforum describing how to configure it
+			$menu .= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
+			$menu .= "<div class=\"smwh_menubody_visible\">";
+			$menu .= "<p>no administration menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
+			$menu .= "</div></div>";
+		}
+		$menu .= "</li>";
+		return $menu;
+	}
 
-                                        $tabsleft .= $tabs;
-                                    } else if ($key == "purge" || $key == "history" || $key == "edit") {
-                                            $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\"tab";
-                                            if( $tab['class'] ) {
-                                                $tabs .= " ".htmlspecialchars($tab['class']);
-                                            }
-                                            $tabs .= "\">";
+	/**
+	 *  Generates the page tabs and returns the html snippet
+	 *
+	 * @global $IP
+	 * @global $wgTitle
+	 * @global $wgScriptPath
+	 * @global $wgStylePath
+	 * @return string
+	 */
+	public function buildTabs() {
+		global $IP, $wgTitle, $wgScriptPath, $wgStylePath;
+		$tabs = "<!-- Tabs -->";
+		$tabsstart = "<div id=\"tabsleft\">";
+		$firstTabs = "";
+		//right tab elements
+		$functionsaggregated = "";
+		$functionsright = $this->buildHelpTab();
 
-                                            # build the edit link
-                                            $link = '';
-                                            # if the SF forms are in use, make the edit with semantic forms
-                                            if (defined('SF_VERSION') && class_exists(SFFormLinker) &&  # SF are included
-                                                isset($wgTitle) && # title obj exists and we are not on a special page
-                                                $wgTitle->getNamespace() != NS_SPECIAL
-                                               ) {
-                                                # check if there are forms available for the current article
-                                                global $asfAutomaticFormExists;
-                                                if (count(SFFormLinker::getDefaultFormsForPage($this->skintemplate->skin->getTitle())) > 0 || isset($asfAutomaticFormExists))
-                        			                $link = htmlspecialchars(
-                                                                str_replace('action=edit',
-                                                                    'action=formedit',
-                                                                    $tab['href']
-                                                                )
-                                                            );
-                                            }
-                                            # if the FCKeditor is available use it. Check this with file_exists,
-                                            # because there are installations where the include is done only if
-                                            # action == edit and mode == wysiwyg. Therefore on page view the FCK
-                                            # might not be included at this moment.
-                                            if (!$link && $key == "edit" && (
-                                                  file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') ||
-                                                  file_exists($IP.'/extensions/WYSIWYG/WYSIWYG.php')
-                                                ) )
-                                                $link = htmlspecialchars($tab['href']).'&mode=wysiwyg';
-                                            # none of the conditions above came into action, then use the normal
-                                            # wiki editor for editing pages.
-                                            if (!$link) $link = htmlspecialchars($tab['href']);
-                                            # add the href $link now to the tabs
-                                            $tabs .= '<a href="'.$link.'"';
+		// page incl. name / edit / discussion
+		// rest in "more"
+		$pageName = htmlspecialchars( $this->skintemplate->data['title'] );
 
-                                            # We don't want to give the watch tab an accesskey if the
-                                            # page is being edited, because that conflicts with the
-                                            # accesskey on the watch checkbox.  We also don't want to
-                                            # give the edit tab an accesskey, because that's fairly su-
-                                            # perfluous and conflicts with an accesskey (Ctrl-E) often
-                                            # used for editing in Safari.
-                                            if( in_array( $this->action, array( 'edit', 'submit' ) )
-                                                && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-                                                $tabs.= $this->skintemplate->skin->tooltip( "ca-$key" );
-                                            } else {
-                                                $tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
-                                            }
-                                            $tabs.= ">";
-                                            if($key == "edit") {
-                                                $tabs.= "<img id=\"editimage\" src=\"".$wgStylePath.$this->imagepath."/button_edit.gif\" alt=\"edit\"/>";
-                                            }
-                                            $tabs.= htmlspecialchars($tab['text'])."</a></div>";
+		foreach ( $this->skintemplate->data['content_actions'] as $key => $tab ) {
 
-                                        $functionsright .= $tabs;
-                                    } else {
-                                            $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\"aggregatedtabelements";
-                                            if( $tab['class'] ) {
-                                                $tabs .= " ".htmlspecialchars($tab['class']);
-                                            }
-                                            $tabs .= "\">";
-                                            $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
-                                            # We don't want to give the watch tab an accesskey if the
-                                            # page is being edited, because that conflicts with the
-                                            # accesskey on the watch checkbox.  We also don't want to
-                                            # give the edit tab an accesskey, because that's fairly su-
-                                            # perfluous and conflicts with an accesskey (Ctrl-E) often
-                                            # used for editing in Safari.
-                                            if( in_array( $this->action, array( 'edit', 'submit' ) )
-                                                && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-                                                $tabs.= $this->skintemplate->skin->tooltip( "ca-$key" );
-                                            } else {
-                                                $tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
-                                            }
-                                            $tabs.= ">".htmlspecialchars(ucfirst($tab['text']))."</a></div>";
-                                       $functionsaggregated .= $tabs;
-                                    }
+			if ( substr( $key, 0, 6 ) == "nstab-" ) {
+				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs .= " class=\"pagetab";
+				if ( $tab['class'] ) {
+					$tabs .= " " . htmlspecialchars( $tab['class'] );
+				}
+				$tabs .= "\">";
+				$tabs .= '<a href="' . $link . '"';
+				$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
+				$tabs .= ">";
+				$tabs .= $pageName . "</a></div>";
+				$firstTabs = $tabs . $firstTabs;
+				continue;
+			} elseif ( $key == "talk" || $key == "edit" ) {
+				if( in_array( $this->action, array('edit') ) && $key == "edit" ) {
+					// no edit button in edit mode
+					continue;
+				}
+				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs .= " class=\"tab";
+				if ( $tab['class'] ) {
+					$tabs .= " " . htmlspecialchars( $tab['class'] );
+				}
+				$tabs .= "\">";
+				# build the edit link
+				$link = '';
+				# if the SF forms are in use, make the edit with semantic forms
+				if ( defined( 'SF_VERSION' ) && class_exists( SFFormLinker ) && # SF are included
+						isset( $wgTitle ) && # title obj exists and we are not on a special page
+						$wgTitle->getNamespace() != NS_SPECIAL ) {
+					# check if there are forms available for the current article
+					global $asfAutomaticFormExists;
+					if ( count( SFFormLinker::getDefaultFormsForPage( $this->skintemplate->skin->getTitle() ) ) > 0 
+							|| isset( $asfAutomaticFormExists ) )
+					{
+						$link = htmlspecialchars(
+							str_replace( 'action=edit', 'action=formedit', $tab['href'] )
+						);
+					}
+				}
+				# if the FCKeditor is available use it. Check this with file_exists,
+				# because there are installations where the include is done only if
+				# action == edit and mode == wysiwyg. Therefore on page view the FCK
+				# might not be included at this moment.
+				if ( !$link && $key == "edit" && (
+						file_exists( $IP . '/extensions/FCKeditor/FCKeditor.php' ) ||
+						file_exists( $IP . '/extensions/WYSIWYG/WYSIWYG.php' )
+						) )
+					$link = htmlspecialchars( $tab['href'] ) . '&mode=wysiwyg';
+				# none of the conditions above came into action, then use the normal
+				# wiki editor for editing pages.
+				if ( !$link )
+					$link = htmlspecialchars( $tab['href'] );
+				# add the href $link now to the tabs
+				$tabs .= '<a href="' . $link . '"';
 
-         }
+				# We don't want to give the watch tab an accesskey if the
+				# page is being edited, because that conflicts with the
+				# accesskey on the watch checkbox.  We also don't want to
+				# give the edit tab an accesskey, because that's fairly su-
+				# perfluous and conflicts with an accesskey (Ctrl-E) often
+				# used for editing in Safari.
+				if ( in_array( $this->action, array('edit', 'submit') )
+						&& in_array( $key, array('edit', 'watch', 'unwatch') ) ) {
+					$tabs .= $this->skintemplate->skin->tooltip( "ca-$key" );
+				} else {
+					$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
+				}
+				$tabs .= ">";
+				if ( $key == "edit" ) {
+					$tabs.= "<img id=\"editimage\" src=\"" . $wgStylePath . $this->imagepath . "/button_edit.gif\" alt=\"edit\"/>";
+				}
+				$tabs .= htmlspecialchars( $tab['text'] ) . "</a></div>";
+				if( $key == "edit" ) { // edit always first
+					$firstTabs .= $tabs;
+				} else {
+					$tabsleft .= $tabs;
+				}
+			} else {
+				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs .= " class=\"aggregatedtabelements";
+				if ( $tab['class'] ) {
+					$tabs .= " " . htmlspecialchars( $tab['class'] );
+				}
+				$tabs .= "\">";
+				$tabs .= '<a href="' . htmlspecialchars( $tab['href'] ) . '"';
+				# We don't want to give the watch tab an accesskey if the
+				# page is being edited, because that conflicts with the
+				# accesskey on the watch checkbox.  We also don't want to
+				# give the edit tab an accesskey, because that's fairly su-
+				# perfluous and conflicts with an accesskey (Ctrl-E) often
+				# used for editing in Safari.
+				if ( in_array( $this->action, array('edit', 'submit') )
+						&& in_array( $key, array('edit', 'watch', 'unwatch') ) ) {
+					$tabs.= $this->skintemplate->skin->tooltip( "ca-$key" );
+				} else {
+					$tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
+				}
+				$tabs.= ">" . htmlspecialchars( ucfirst( $tab['text'] ) ) . "</a></div>";
+				$functionsaggregated .= $tabs;
+			}
+		}
+		$functionsaggregated .= $this->buildPageOptions();
 
-         $tabsleft .=  "</div>";
+		//Check if there were functions added to the more-tab
+		//and don't add the more tab if empty
+		if ( $functionsaggregated != "" ) {
+			//all functions which are aggregated in the right of the right tab
 
-         $functionsaggregated .= $this->buildPageOptions();
+			$tabmore = "<ul id=\"more\" class=\"tab smwh_menulist\"><li class=\"smwh_menulistitem\">";
+			$tabmore .= "<div id=\"smwh_menuhead_more\" class=\"smwh_menuhead\">" . wfMsg( "more_functions" ) . "</div>";
+			$tabmore .= "<div id=\"smwh_menubody_more\" class=\"smwh_menubody\">";
+			$tabmore .= "<div class=\"smwh_menubody_visible\">";
+			$tabmore .= $functionsaggregated . "</div></div></li></ul>";
+		} else {
+			$tabmore = "";
+		}
 
-         //Check if there were functions added to the more-tab
-         //and don't add the more tab if empty
-         if($functionsaggregated != "") {
-         //all functions which are aggregated in the right of the right tab
-             
-             $tabmore = "<ul id=\"more\" class=\"tab smwh_menulist\"><li class=\"smwh_menulistitem\">";
-             $tabmore .= "<div id=\"smwh_menuhead_more\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
-             $tabmore .= "<div id=\"smwh_menubody_more\" class=\"smwh_menubody\">";
-             $tabmore .= "<div class=\"smwh_menubody_visible\">";
-             $tabmore .= $functionsaggregated."</div></div></li></ul>";
-             
-         } else {
-             $tabmore = "";
-         }
+		//Check if there were functions added to the right-tab
+		//and don't add the right tab if it's completly empty
+		if ( $functionsright != "" || $functionsaggregated != "" ) {
+			//right tab holding all functions other than page/talk
+			$tabright .= $tabmore . $functionsright;
+		} else {
+			$tabright = "";
+		}
 
-         //Check if there were functions added to the right-tab
-         //and don't add the right tab if it's completly empty
-         if($functionsright != "" || $functionsaggregated != "" ) {
-         //right tab holding all functions other than page/talk
-             $tabright = "<div id=\"tabsright\"><div id=\"more\" class=\"tab\">";
-             $tabright .=  $tabmore."</div>".$functionsright."</div>";
-             $tabright = "<div id=\"tabsright\">";
-             $tabright .=  $tabmore.$functionsright."</div>";
-         } else {
-             $tabright = "";
-         }
+		//return html for tabs
+		return $tabsstart . $firstTabs . $tabsleft . $tabright . "</div>";
+	}
 
-         //return html for tabs
-         return $tabsleft.$tabright;
-    }
+	/**
+	 * Generates the Help Icon in the tab bar for the context sensitive help
+	 * 
+	 * @return string
+	 */
+	private function buildHelpTab() {
+		global $wgExtensionFunctions;
+		if ( !in_array( 'setupSMWUserManual', $wgExtensionFunctions ) )
+			return;
+		global $wgStylePath;
+		$tab = '<div id="helptab" class="tab">';
+		$tab.= '<div id="smw_csh"><img id="helpimage" src="' . $wgStylePath . $this->imagepath . '/help_icon.png" alt="help" title="' . wfMsg( 'smw_csh_icon_tooltip' ) . '"/></div>';
+		$tab.= "</div>";
+		return $tab;
+	}
 
-    /**
-     * Generates the Help Icon in the tab bar for the context sensitive help
-     * 
-     * @return string
-     */
-    private function buildHelpTab(){
-        global $wgExtensionFunctions;
-        if ( !in_array('setupSMWUserManual', $wgExtensionFunctions) ) return;
-        global $wgStylePath;
-        $tab ='<div id="helptab" class="tab">';
-        $tab.= '<div id="smw_csh"><img id="helpimage" src="'.$wgStylePath.$this->imagepath.'/help_icon.png" alt="help" title="'.wfMsg('smw_csh_icon_tooltip').'"/></div>';
-        $tab.= "</div>";
-        return $tab;
+	/**
+	 * Generates the quicklinks/footer add the page bottom
+	 *
+	 * @return string
+	 */
+	public function buildQuickLinks() {
+		$quicklinks = "<!-- HaloQuickLinks -->";
+		$quicklinks .= "<div id=\"smwh_quicklinks\">";
 
-    }
+		//Get the content for the page options from MediaWiki:halopageoptions
+		$content = wfMsgForContent( 'haloquicklinks' );
 
-    /**
-     * Generates the quicklinks/footer add the page bottom
-     *
-     * @return string
-     */
-    public function buildQuickLinks(){
-        $quicklinks  = "<!-- HaloQuickLinks -->";
-        $quicklinks .= "<div id=\"smwh_quicklinks\">";
+		//TODO: Make if clause consistent with buildPageOptions
+		if ( $content != null && $content != "&lt;haloquicklinks&gt;" ) {
+			//parse wiki text and insert the returned html
+			$quicklinks .= $this->parseWikiText( $content );
+		} else {
+			//if the footer is not defined, return a link to the help section in smwforum describing how to configure it
+			$quicklinks.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
+		}
+		$quicklinks .="</div>";
+		//return the html snippet
+		return $quicklinks;
+	}
 
-        //Get the content for the page options from MediaWiki:halopageoptions
-        $content = wfMsgForContent( 'haloquicklinks' );
+	/**
+	 * Generates the page options shown in the 'more'-tab below the aggregated mediawiki tabs
+	 *
+	 * @return string
+	 */
+	private function buildPageOptions() {
+		$pageoptions = "<!-- HaloPageOptions -->";
+		$pageoptions .= "<div id=\"smwh_halopageoptions\">";
 
-        //TODO: Make if clause consistent with buildPageOptions
-        if($content!=null && $content!="&lt;haloquicklinks&gt;"){
-            //parse wiki text and insert the returned html
-            $quicklinks .=  $this->parseWikiText($content);
+		//Get the content for the page options from MediaWiki:halopageoptions
+		$content = wfMsgForContent( 'halopageoptions' );
 
-        } else {
-            //if the footer is not defined, return a link to the help section in smwforum describing how to configure it
-            $quicklinks.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
-        }
-        $quicklinks .="</div>";
-        //return the html snippet
-        return $quicklinks;
-    }
+		if ( strpos( $content, "halopageoptions" ) == false ) {
+			//parse wiki text and insert the returned html
+			$pageoptions .= $this->parseWikiText( $content );
+		} else {
+			//return nothing if the page options are not defined
+			return "";
+		}
+		$pageoptions .="</div>";
+		//return the html snippet
+		return $pageoptions;
+	}
 
-    /**
-     * Generates the page options shown in the 'more'-tab below the aggregated mediawiki tabs
-     *
-     * @return string
-     */
-    private function buildPageOptions(){
-        $pageoptions  = "<!-- HaloPageOptions -->";
-        $pageoptions .= "<div id=\"smwh_halopageoptions\">";
+	/**
+	 * Parses Wikitext and returns html
+	 *
+	 * @global object $wgParser
+	 * @param  string $text
+	 * @return string
+	 */
+	private function parseWikiText( $text ) {
+		global $wgParser, $wgTitle;
+		$output = $wgParser->parse( $text, $wgTitle, new ParserOptions() );
+		return $output->getText();
+	}
 
-        //Get the content for the page options from MediaWiki:halopageoptions
-        $content = wfMsgForContent( 'halopageoptions' );
+	/**
+	 * Gets the treeview and returns the html code of it.
+	 *
+	 * @global $wgStylePath
+	 * @return string
+	 */
+	public function treeview() {
+		global $wgStylePath;
+		//catch echo of the tree view extension, which consists of the tree
+		ob_start();
+		//Run the hook, where treeview extension is registered
+		wfRunHooks( 'OntoSkinInsertTreeNavigation', array(&$treeview) );
+		//add output to menu
+		$tree.= ob_get_contents();
+		//stop catching echos
+		ob_end_clean();
 
-        if(strpos($content,"halopageoptions")==false){
-            //parse wiki text and insert the returned html
-            $pageoptions .=  $this->parseWikiText($content);
-        } else {
-            //return nothing if the page options are not defined
-            return "";
-        }
-        $pageoptions .="</div>";
-        //return the html snippet
-        return $pageoptions;
-    }
-    /**
-     * Parses Wikitext and returns html
-     *
-     * @global object $wgParser
-     * @param  string $text
-     * @return string
-     */
-    private function parseWikiText($text){
-        global $wgParser, $wgTitle;
-        $output = $wgParser->parse($text,$wgTitle, new ParserOptions());        
-        return $output->getText();
+		//Generate the necessary surrounding html if the return of the treeview
+		//extension is not empty otherwise return an empty string
+		if ( $tree != null && $tree != "" ) {
 
-    }
+			//Add the left treeview button
+			$treeview = '<div id="smwh_treeviewtoggleleft" title="' . wfMsg( 'smw_treeviewleft' ) . '">';
+			$treeview .= '</div>';
 
-    /**
-     * Gets the treeview and returns the html code of it.
-     *
-     * @global $wgStylePath
-     * @return string
-     */
-    public function treeview() {
-        global $wgStylePath;
-        //catch echo of the tree view extension, which consists of the tree
-        ob_start();
-            //Run the hook, where treeview extension is registered
-            wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
-        //add output to menu
-        $tree.= ob_get_contents();
-        //stop catching echos
-        ob_end_clean();
+			//Add the right treeview button
+			$treeview .= '<div id="smwh_treeviewtoggleright" title="' . wfMsg( 'smw_treeviewright' ) . '">';
+			$treeview .= '</div>';
 
-        //Generate the necessary surrounding html if the return of the treeview
-        //extension is not empty otherwise return an empty string
-        if($tree!=null && $tree!=""){
+			//Add the treeview itself
+			$treeview .= '<div id="smwh_treeview">';
+			$treeview .= '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
+			$treeview .= '<div id="smwh_treeview_content">';
+			$treeview .= $tree;
+			$treeview .= "</div>";
+			$treeview .= "</div>";
+			return $treeview;
+		} else {
+			//return empty string, so nothing tree related is added to the skin html
+			return "";
+		}
+	}
 
-            //Add the left treeview button
-            $treeview =  '<div id="smwh_treeviewtoggleleft" title="'.wfMsg('smw_treeviewleft').'">';
-            $treeview .= '</div>';
-
-            //Add the right treeview button
-            $treeview .=  '<div id="smwh_treeviewtoggleright" title="'.wfMsg('smw_treeviewright').'">';
-            $treeview .= '</div>';
-            
-            //Add the treeview itself
-            $treeview .= '<div id="smwh_treeview">';            
-            $treeview .=            '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" title="close" alt="close tree"/></a></div>';
-            $treeview .=    '<div id="smwh_treeview_content">';
-            $treeview .=            $tree;
-            $treeview .=    "</div>";
-            $treeview .= "</div>";
-            return $treeview;
-        } else {
-           //return empty string, so nothing tree related is added to the skin html
-           return "";
-        }
-    }
-    
-    /**
-    * Generate the information about last modification time, views and watching users
-    *
-    * @return string
-    */
-    public function showPageStats(){
-    		//Select footer links
+	/**
+	 * Generate the information about last modification time, views and watching users
+	 *
+	 * @return string
+	 */
+	public function showPageStats() {
+		//Select footer links
 		$footerlinks = array(
 			'lastmod', 'viewcount', 'numberofwatchingusers'
 		);
 
-                $pstats ="";
+		$pstats = "";
 
-                //Get footer links html
-		foreach( $footerlinks as $aLink ) {
-			if( isset( $this->skintemplate->data[$aLink] ) && $this->skintemplate->data[$aLink] ) {
-				$pstats .= $this->skintemplate->html($aLink);
-
+		//Get footer links html
+		foreach ( $footerlinks as $aLink ) {
+			if ( isset( $this->skintemplate->data[$aLink] ) && $this->skintemplate->data[$aLink] ) {
+				$pstats .= $this->skintemplate->html( $aLink );
 			}
 		}
-                //Return html
-                return $pstats;
-    }
+		//Return html
+		return $pstats;
+	}
 
 }

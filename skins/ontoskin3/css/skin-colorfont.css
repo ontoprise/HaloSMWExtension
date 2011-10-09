@@ -96,13 +96,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	font-size: smaller;
 }
 
-ul.smwh_menulist div.smwh_menubody td:hover  {
-	background-color: #cfdce1;
-}
-
 ul.smwh_menulist div.smwh_menubody td:hover  a{
 	background-color: #cfdce1;
-	text-decoration: none;
 	text-decoration: none;
 }
 
@@ -130,18 +125,36 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     background-color: white;
 }
 
-.tab{
-    background-color: #FFF;
-    border-color: #cacac4;
+#tabsleft .pagetab a{
+	color: black;
 }
 
-.tab.selected{   
-    
+.tab{
+    background-color: #FFF;
+}
+
+.tab a{
+	text-decoration: none;
+}
+
+/*.tab.selected{
+    font-size: x-large;
+}*/
+
+.tab#ca-edit{
+	background-color: #228C9E;
+}
+
+.tab#ca-edit a{
+	color: white;
+	text-decoration: none;
+}
+.tab#ca-talk a{
+	text-decoration: none;
 }
 
 #more {
-    background-color: #CCC;
-    color: #FFF;
+    color: #116988;
 }
 
 #mainpage .tab.selected a{
@@ -161,7 +174,7 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 }
 
 #tabsright .smwh_menuhead  {
-    background: url(../img/menu_arrow.gif) right no-repeat;
+
 }
 
 /*#tabsright ul.smwh_menulist div.smwh_menubody {
@@ -170,7 +183,7 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 }*/
 
 #smwh_menuhead_more  {
-    
+    background: url(../img/menu_arrow.gif) right no-repeat;
 }
 
 #column-content{
