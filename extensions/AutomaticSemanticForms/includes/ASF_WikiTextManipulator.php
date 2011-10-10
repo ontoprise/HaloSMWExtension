@@ -22,9 +22,21 @@ class ASFWikiTextManipulator {
 		
 		if($text == null) $text = '';
 		
-		//deal with ontology imjport conflict sections 
-		$pattern = '/<!--\s*BEGIN ontology:([^>]*)-->([^<]*)<!--\s*END ontology([^>]*)-->/';
-		$replacement = '<nowiki> <!--asf--> $0 <!--asf--> </nowiki>';
+		//deal with ontology imjport conflict sections and other tags 
+		$pattern = array(
+			'/<!--\s*BEGIN ontology:([^>]*)-->([^<]*)<!--\s*END ontology([^>]*)-->/',
+			'/<\s*onlyinclude\s*>/',
+			'/<\s*\/onlyinclude\s*>/',
+			'/<\s*includeonly\s*>/',
+			'/<\s*\/includeonly\s*>/'
+			);
+		$replacement = array(
+			'<nowiki> <!--asf--> $0 <!--asf--> </nowiki>',
+			'<nowiki><onlyinclude>',
+			'</onlyinclude></nowiki>',
+			'<nowiki><includeonly>',
+			'</includeonly></nowiki>'
+			);
 		$text = preg_replace($pattern, $replacement, $text);
 		
 		POMElement::$elementCounter = 0;
@@ -121,13 +133,23 @@ class ASFWikiTextManipulator {
 		$pomPage->sync();
 		$text.= trim($pomPage->text);
 		
-		//deal with ontology imjport conflict sections again
+		//deal with ontology imjport conflict sections and other tags again
 		$pattern = array(
 			'/<nowiki> <!--asf--> <!--\s*BEGIN ontology:/',
-			'/--> <!--asf--> <\/nowiki>/'); 
+			'/--> <!--asf--> <\/nowiki>/',
+			'/<nowiki><onlyinclude>/',
+			'/<\/onlyinclude><\/nowiki>/',
+			'/<nowiki><includeonly>/',
+			'/<\/includeonly><\/nowiki>/',
+			); 
 		$replacement = array(
 			'<!-- BEGIN ontology:',
-			'-->');
+			'-->',
+			'<onlyinclude>',
+			'</onlyinclude>',
+			'<includeonly>',
+			'</includeonly>',
+			);
 		$text = preg_replace($pattern, $replacement, $text);
 		
 		return array($text, $collectedAnnotations );
