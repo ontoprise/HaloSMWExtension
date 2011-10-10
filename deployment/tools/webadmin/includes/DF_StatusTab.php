@@ -52,6 +52,7 @@ class DFStatusTab {
 		$cc = new ConsistencyChecker($mwrootDir);
 		
 		$html = $dfgLang->getLanguageString('df_webadmin_status_text');
+		$html .= " <input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refresh_status\"></input>";
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 		$dfgOut->setVerbose(false);
 		$updates = $cc->checksForUpdates();
