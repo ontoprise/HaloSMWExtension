@@ -959,11 +959,8 @@ addTypeInput:function() {
 },
 
 getDatatypeOptions: function() {
-	var options = new Array();
 	var builtinTypes = gDataTypes.getBuiltinTypes();
-	var userTypes    = gDataTypes.getUserDefinedTypes();
-	options = builtinTypes.concat([""], userTypes);
-	return options;
+	return builtinTypes;
 },
 
 removeType: function(id) {
