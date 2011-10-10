@@ -18,8 +18,6 @@ class ASFWikiTextManipulator {
 	
 	public function getWikiTextAndAnnotationsForSF($titleString, $text){
 		
-		//todo: what about properties of type record
-		
 		///todo: maybe add notes for glitches in tooltips
 		
 		if($text == null) $text = '';
@@ -114,7 +112,6 @@ class ASFWikiTextManipulator {
 		
 		$text = '{{CreateSilentAnnotations:';
 		foreach($collectedAnnotations as $label => $annotation){
-			//todo: get delimiter
 			$delimiter = $this->getSilentAnnotationsDelimiter($label);
 			if(!$delimiter) $delimiter = ', ';
 			$text .= '|'.ucfirst($label).'='.implode($delimiter, $annotation['values']);
@@ -189,6 +186,8 @@ class ASFWikiTextManipulator {
 		$pomPage->sync();
 		$text = trim($pomPage->text).trim($text);
 		
+		error();
+		
 		return $text;
 	}
 	
@@ -208,7 +207,7 @@ class ASFWikiTextManipulator {
 		
 		$title = Title::newFromText($propertyName, SMW_NS_PROPERTY);
 		if(!($title instanceof Title) || !$title->exists()){
-			return false;
+			return ',';
 		}
 		
 		$semanticData = ASFFormGeneratorUtils::getSemanticData($title);

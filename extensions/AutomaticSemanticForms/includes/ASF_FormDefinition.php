@@ -2,10 +2,7 @@
 
 ////todo: add documentation
 
-//todo: think about adding preloading content one step earlier
-
-
-class ASFFormDefinition {
+//class ASFFormDefinition {
 	
 	private $categorySections;
 	private $categoriesWithNoProperties;
