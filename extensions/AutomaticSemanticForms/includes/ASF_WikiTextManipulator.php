@@ -186,8 +186,6 @@ class ASFWikiTextManipulator {
 		$pomPage->sync();
 		$text = trim($pomPage->text).trim($text);
 		
-		error();
-		
 		return $text;
 	}
 	
