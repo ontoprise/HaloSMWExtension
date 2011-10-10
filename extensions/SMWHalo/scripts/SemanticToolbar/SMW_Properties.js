@@ -660,11 +660,18 @@ checkRecordFieldDuplicate: function (id) {
  */
 cardinalityChanged: function (id) {
 	var maco = $('prp-max-card');
-	var maxCard = maco.value;
+	var maxCard = parseInt(maco.value);
 	var mico =  $('prp-min-card');
-	var minCard = mico.value;
-	this.propertyDefinition.setMinCardinality(parseInt(minCard));
-	this.propertyDefinition.setMaxCardinality(parseInt(maxCard));
+	var minCard = parseInt(mico.value);
+	if (isNaN(minCard)) {
+		minCard = null;
+	}
+	if (isNaN(maxCard)) {
+		maxCard = null;
+	}
+	
+	this.propertyDefinition.setMinCardinality(minCard);
+	this.propertyDefinition.setMaxCardinality(maxCard);
 },
 
 /**
