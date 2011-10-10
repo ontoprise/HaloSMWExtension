@@ -86,8 +86,9 @@ $new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xs
 foreach($localPackages as $lp) {
 	$id = $lp->getID();
 	if ($id == 'mw') continue; // special handling for mw
+	$title = Tools::escapeForXMLAttribute($lp->getTitle());
 	$installdir = $lp->getInstallationDirectory();
-	$new_ser .= "<extension id=\"$id\">";
+	$new_ser .= "<extension id=\"$id\" title=\"$title\">";
 	$branch = isset($head) ? "smwhalo" : "smwhalo_".$release."_release";
 	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel().".zip";
 	$ver = $lp->getVersion()->toVersionString();
@@ -96,6 +97,7 @@ foreach($localPackages as $lp) {
 	$maintainer = Tools::escapeForXMLAttribute($lp->getMaintainer());
 	$helpurl = Tools::escapeForXMLAttribute($lp->getHelpURL());
 	$description = Tools::escapeForXMLAttribute($lp->getDescription());
+	
     $verWithoutDots = str_replace(".","",$ver); // for compatibility to old version numbers
 	$new_ser .= "<version ver=\"$verWithoutDots\" version=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
 

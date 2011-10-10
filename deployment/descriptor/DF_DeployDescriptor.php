@@ -335,6 +335,14 @@ class DeployDescriptor {
 	function getID() {
 		return strtolower(trim((string) $this->globalElement[0]->id));
 	}
+	
+    /**
+     * Returns title (has only informal function)
+     * @return string
+     */
+    function getTitle() {
+        return strtolower(trim((string) $this->globalElement[0]->title));
+    }
 
 	/**
 	 * Returns vendor

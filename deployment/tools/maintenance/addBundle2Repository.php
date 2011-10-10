@@ -325,6 +325,9 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 		$idAttr = $repoDoc->createAttribute("id");
 		$idAttr->value = $dd->getID();
 		$newExt->appendChild($idAttr);
+		$titleAttr = $repoDoc->createAttribute("title");
+        $titleAttr->value = $dd->getTitle();
+        $newExt->appendChild($titleAttr);
 	}
 
 	$newVer = $repoDoc->createElement("version");
