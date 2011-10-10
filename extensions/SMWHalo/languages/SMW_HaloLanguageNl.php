@@ -142,7 +142,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_unusedattributes_docu' => 'De volgende attribuut-pagina´s bestaan alhoewel geen enkele andere pagina er gebruik van maakt.',
 
 
-    /*Messages for OntologyBrowser*/
+    /*Messages for DataExplorer*/
 	'dataexplorer' => 'Ontologie-browser',
 	'smw_ac_hint' => 'Druk Ctrl+Alt+Space voor auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Categorieënboom',

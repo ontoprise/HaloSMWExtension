@@ -30,7 +30,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
     
 	'smw_derived_property'  => 'This is a derived property.',
 	'smw_sparql_disabled'=> 'No SPARQL support enabled.',
-	'smw_viewinOB' => 'Open in OntologyBrowser',
+	'smw_viewinOB' => 'Open in Data Explorer',
     'smw_wysiwyg' => 'WYSIWYG',
 	'smw_att_head' => 'Attribute values',
 	'smw_rel_head' => 'Relations to other pages',
@@ -133,7 +133,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
-	'smw_properties_sortnary' => 'N-ary properties',
+	'smw_properties_sortnary' => 'Record properties',
 	// Messages for Unused Relations Special
 	'unusedrelations' => 'Unused relations',
 	'smw_unusedrelations_docu' => 'The following relation pages exist although no other page makes use of them.',
@@ -142,7 +142,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_unusedattributes_docu' => 'The following attribute pages exist although no other page makes use of them.',
 
 
-	/*Messages for OntologyBrowser*/
+	/*Messages for DataExplorer*/
 	'dataexplorer' => 'DataExplorer',
 	'smw_ac_hint' => 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
 	'smw_ob_categoryTree' => 'Category Tree',

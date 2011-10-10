@@ -108,7 +108,7 @@ class SMWPropertiesPage extends SMWQueryPage {
 			case 0: { switch($sort) {
 				case 0: return '';
 				case 1: return ' ORDER BY page_touched';
-				case 2: return ' ORDER BY s.value_string';
+				case 2: return ' ORDER BY value';
 			}
 			break;
 			}
@@ -160,17 +160,18 @@ class SMWPropertiesPage extends SMWQueryPage {
 			$attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
 
 			$store = smwfGetStore();
-			$hasTypeDV = SMWPropertyValue::makeProperty("_LIST");
-			$typeValues = $store->getPropertyValues($attrtitle, $hasTypeDV);
+			$hasTypeDV = SMWDIProperty::newFromUserLabel("_LIST");
+			$typeDIs = $store->getPropertyValues(SMWDIWikiPage::newFromTitle($attrtitle), $hasTypeDV);
 
 			$typelink = array();
-			foreach($typeValues as $tv) {
-				$typelink[] = $tv->getLongHTMLText($skin);
+			foreach($typeDIs as $di) {
+				$dv = SMWDataValueFactory::newDataItemValue($di, NULL);
+				$typelink[] = $dv->getLongHTMLText($skin);
 			}
 
 			if (count($typelink) == 0) { // no type defined
-				$errors[] = wfMsg('smw_propertylackstype', "Type:Page");
-				$typelink[] = "Page"; // default
+				$errors[] = wfMsg('smw_propertylackstype', SMWDataValueFactory::findTypeLabel("_wpg"));
+				$typelink[] = SMWDataValueFactory::findTypeLabel("_wpg"); // default
 			}
 
 			return "$attrlink (".$result[5].")" . wfMsg('smw_attr_type_join', implode(";", $typelink)). ' ' . smwfEncodeMessages($errors);
@@ -193,12 +194,15 @@ class SMWPropertiesPage extends SMWQueryPage {
 				$errors[] = wfMsg('smw_propertylackspage');
 			}
 			$attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
-			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-			$typetitle = smwfGetStore()->getPropertyValues($attrtitle, $hasTypeDV);
+			$hasTypeDV = SMWDIProperty::newFromUserLabel("_TYPE");
+			$typetitle = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($attrtitle), $hasTypeDV);
 			if (count($typetitle) == 0) {
-				$typelink = "Page"; // default
+				$typelink = SMWDataValueFactory::findTypeLabel("_wpg"); // default
 			} else {
-				$typelink = $typetitle[0]->getLongHTMLText($skin);
+				$dv = SMWDataValueFactory::newDataItemValue($typetitle[0], NULL);
+				$typeURI = $dv->getURI();
+				$typeID = substr($typeURI, strpos($typeURI, '#')+1);
+				$typelink = SMWDataValueFactory::findTypeLabel($typeID);
 			}
 			return "$attrlink (".$result[5].")" . wfMsg('smw_attr_type_join', $typelink). ' ' . smwfEncodeMessages($errors);
 		}
@@ -331,17 +335,17 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$page = $db->tableName('page');
 		$smw_text2 = $db->tableName('smw_text2');
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_TYPE"));
 		return "SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value,
-i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_atts2 a
-JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=1 AND s.value_string IN ('_str','_num','_boo','_dat','_uri','_ema','_anu','_tel','_tem')
+i.smw_title as title, COUNT(*) as count, '-1' as obns, page_touched FROM $smw_atts2 a
+JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=1 AND NOT LOCATE ('_wpg', s.value_string)  
 JOIN $smw_ids i ON i.smw_id = a.p_id
 JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace
 GROUP BY i.smw_title, s.value_string
 UNION
 SELECT 'Attributes' as type, {$NSatt} as namespace, s.value_string as value,
-i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_text2 t
-JOIN $smw_spec2 s ON s.s_id = t.p_id AND s.p_id=1 AND s.value_string IN ('_txt','_cod')
+i.smw_title as title, COUNT(*) as count, '-1' as obns, page_touched FROM $smw_text2 t
+JOIN $smw_spec2 s ON s.s_id = t.p_id AND s.p_id=1 
 JOIN $smw_ids i ON i.smw_id = t.p_id
 JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace
 GROUP BY i.smw_title, s.value_string";
@@ -415,15 +419,21 @@ GROUP BY i.smw_title, s.value_string";
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_spec2 = $db->tableName('smw_spec2');
 		$smw_rels2 = $db->tableName('smw_rels2');
+		$smw_atts2 = $db->tableName('smw_atts2');
 		$page = $db->tableName('page');
-		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_LIST"));
-		// REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' matches all n-ary properties in special property table. Is there a better way?
-		return "SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value,
-                        i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_rels2 a 
-                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=$hasTypePropertyID AND s.value_string REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' 
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel("_LIST"));
+		return "SELECT type,namespace,value,title,COUNT(*) as count,obns, page_touched from ( 
+		          (SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value,
+                        i.smw_title as title, COUNT(*) as count, '-1' as obns, page_touched FROM $smw_rels2 a 
+                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=$hasTypePropertyID  
                         JOIN $smw_ids i ON i.smw_id = a.p_id
-                        JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace  
-                GROUP BY i.smw_title, s.value_string";
+                        JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace GROUP BY title, value) UNION   
+                 (SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value,
+                        i.smw_title as title, COUNT(*) as count, '-1' as obns, page_touched FROM $smw_atts2 a 
+                        JOIN $smw_spec2 s ON s.s_id = a.p_id AND s.p_id=$hasTypePropertyID  
+                        JOIN $smw_ids i ON i.smw_id = a.p_id
+                        JOIN $page p ON page_title = i.smw_title AND page_namespace = i.smw_namespace GROUP BY title, value) 
+                ) a GROUP BY title, value";
 	}
 }
 

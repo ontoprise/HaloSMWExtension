@@ -133,7 +133,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
 
     'smw_properties_sortdatatype' => 'Propriétés du type de données',
     'smw_properties_sortwikipage' => 'Propriétés de la page wiki',
-    'smw_properties_sortnary' => 'Propriétés d\'arité N',
+    'smw_properties_sortnary' => 'Propriétés de record',
     // Messages for Unused Relations Special
     'unusedrelations' => 'Relations inutilisées',
     'smw_unusedrelations_docu' => 'Les pages suivantes de relations existent bien qu\'aucune autre page ne les utilise.',
@@ -142,7 +142,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
     'smw_unusedattributes_docu' => 'Les pages suivantes d\'attributs existent bien qu\'aucune autre page ne les utilise.',
 
 
-    /*Messages for OntologyBrowser*/
+    /*Messages for DataExplorer*/
     'dataexplorer' => 'Navigateur d\'ontologies',
     'smw_ac_hint' => 'Appuyez sur les touches Ctrl+Alt+Espace pour utiliser l\'auto-completion. (Ctrl+Espace sous IE)',
     'smw_ob_categoryTree' => 'Arbre des catégories',

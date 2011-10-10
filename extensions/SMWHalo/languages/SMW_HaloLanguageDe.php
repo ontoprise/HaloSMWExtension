@@ -135,7 +135,7 @@ protected $smwUserMessages = array(
 
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
-	'smw_properties_sortnary' => 'N-ary properties',
+	'smw_properties_sortnary' => 'Record properties',
 	/*Messages for Unused Relations Special*/
 	'unusedrelations' => 'Verwaiste Relationen',
 	'smw_unusedrelations_docu' => 'Die folgenden Relationenseiten existieren, obwohl sie nicht verwendet werden.',
@@ -143,7 +143,7 @@ protected $smwUserMessages = array(
 	'unusedattributes' => 'Verwaiste Attribute',
 	'smw_unusedattributes_docu' => 'Die folgenden Attributseiten existieren, obwohl sie nicht verwendet werden.',
 
-	/*Messages for OntologyBrowser*/
+	/*Messages for DataExplorer*/
 	'dataexplorer' => 'DataExplorer',
 	'smw_ac_hint' => 'Drücken Sie Ctrl+Alt+Space für die Auto-Vervollständigung. (Ctrl+Space im IE)',
 	'smw_ob_categoryTree' => 'Kategorie-Baum',
