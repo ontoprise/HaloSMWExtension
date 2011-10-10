@@ -115,8 +115,8 @@ window.wgUserLanguageStrings = {
 	'PC_DUPLICATE'			  : "At least one property is specified several times. Please remove the duplicates.",
 	'PC_HAS_TYPE'			  : "has type", 
 	'PC_HAS_FIELDS'			  : "Property", 
-	'PC_MAX_CARD'			  : "Min. cardinality",
-	'PC_MIN_CARD'			  : "Max. cardinality",
+	'PC_MIN_CARD'			  : "Min. cardinality",
+	'PC_MAX_CARD'			  : "Max. cardinality",
 	'PC_INVERSE_OF'			  : "Is inverse of", 
 	'PC_INVERSE'			  : "inverse", 
 	'PC_TRANSITIVE'			  : "transitive", 
@@ -347,7 +347,6 @@ window.wgUserLanguageStrings = {
     'QI_NOT_SPECIFIED'        : 'Not specified',
     'QI_NO_QUERIES_FOUND'     : 'Your search did not match any queries in the wiki',
     'QI_SPARQL_NOT_SUPPORTED' : 'SPARQL queries cannot be edited in Query Interface.',
-
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Thank you for evaluating annotations, ',
