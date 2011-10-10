@@ -215,7 +215,7 @@ class DFServersTab {
 					: $initd."/jetty";
 					break;
 				case "tsc":
-					return $action == "start" ?  $initd."/tsc"
+					return $action == "start" ?  $initd."/tsc.sh"
 					: $initd."/tsc";
 					break;
 				case "memcached":
