@@ -2,7 +2,7 @@
 
 ////todo: add documentation
 
-//class ASFFormDefinition {
+class ASFFormDefinition {
 	
 	private $categorySections;
 	private $categoriesWithNoProperties;
