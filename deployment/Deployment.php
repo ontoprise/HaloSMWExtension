@@ -76,7 +76,8 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 	$updates = $cc->checksForUpdates();
 	$dfgOut->setVerbose(true);
 	if (count($updates) > 0) {
-		$html = $wgUser->getSkin()->makeKnownLinkObj(Title::newFromText("CheckInstallation", NS_SPECIAL), wfMsg('df_updatesavailable'));
+		global $wgServer, $wgScriptPath;
+		$html = '<a href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin">'.wfMsg('df_updatesavailable').'</a>';
 		$injected_html = $html;
 	}
 	return true;
