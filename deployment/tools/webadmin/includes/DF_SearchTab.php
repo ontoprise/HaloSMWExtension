@@ -85,13 +85,14 @@ class DFSearchTab {
 			$first = true;
 			ksort($versions);
 			$versions = array_reverse($versions);
-			foreach($versions as $v => $description) {
+			foreach($versions as $v => $tuple) {
+				list($title, $description) = $tuple;
 				$j = $i % 2;
 				$html .= "<tr class=\"df_row_$j\">";
 
 				if ($first) {
 					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\">";
-					$html .= $id;
+					$html .= !empty($title) ? $title : $id;
 					$html .= "</td>";
 						
 				}

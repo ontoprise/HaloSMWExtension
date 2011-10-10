@@ -341,13 +341,15 @@ class PackageRepository {
 			$packages = $repo->xpath("/root/extensions/extension");
 			foreach($packages as $p) {
 				$id = (string) $p->attributes()->id;
+				$title = (string) $p->attributes()->title;
 				if (!array_key_exists($id, $results)) $results[$id] = array();
 				$versions = $p->xpath("version");
 				foreach($versions as $v) {
 					$version = new DFVersion((string) $v->attributes()->version);
 					$patchlevel = (string) $v->attributes()->patchlevel;
 					$patchlevel = empty($patchlevel) ? 0 : $patchlevel;
-					$results[$id][] = array($version, $patchlevel, $repo_url);
+					
+					$results[$id][] = array($version, $patchlevel, $repo_url, $title);
 				}
 
 			}
@@ -376,7 +378,7 @@ class PackageRepository {
 			$packages = $repo->xpath("/root/extensions/extension");
 			foreach($packages as $p) {
 				$id = (string) $p->attributes()->id;
-
+                $title = (string) $p->attributes()->title;
 				$versions = $p->xpath("version");
 				foreach($versions as $v) {
 					$description = (string) $v->attributes()->description;
@@ -396,7 +398,7 @@ class PackageRepository {
 							$patchlevel = (string) $v->attributes()->patchlevel;
 							if (empty($patchlevel)) $patchlevel = 0;
 							$description = (string) $v->attributes()->description;
-							$results[$id][$ver."_".$patchlevel] = $description;
+							$results[$id][$ver."_".$patchlevel] = array($title, $description);
 						}
 					}
 				}

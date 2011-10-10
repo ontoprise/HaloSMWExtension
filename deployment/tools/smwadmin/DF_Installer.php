@@ -366,8 +366,8 @@ class Installer {
 			$dfgOut->outputln( "\nNo packages found in repositories!\n");
 
 		}
-		$dfgOut->outputln (" Installed           | Bundle               | Av. versions  | Repository");
-		$dfgOut->outputln ("-------------------------------------------------------------------------\n");
+		$dfgOut->outputln (" Installed | Bundle-ID (title)                                  | Av. versions  | Repository");
+		$dfgOut->outputln ("--------------------------------------------------------------------------------------------------------\n");
 
 		ksort($allPackages);
 		foreach($allPackages as $p_id => $versions) {
@@ -385,20 +385,24 @@ class Installer {
 			}
 			if (array_key_exists($p_id, $localPackages)) {
 				$patchlevel = $localPackages[$p_id]->getPatchlevel();
-				$instTag = "[installed ".$localPackages[$p_id]->getVersion()->toVersionString()."_$patchlevel]";
+				$instTag = "[".$localPackages[$p_id]->getVersion()->toVersionString()."_$patchlevel]";
 
 			} else {
-				$instTag = str_repeat(" ", 16);
+				$instTag = str_repeat(" ", 8);
 			}
 
 			$id_shown = $p_id;
-			$id_shown .= str_repeat(" ", 22-strlen($p_id) >= 0 ? 22-strlen($p_id) : 0);
-			$instTag .= str_repeat(" ", 20-strlen($instTag) >= 0 ? 20-strlen($instTag) : 0);
+			$title = reset($versions);
+			$title = $title[3];
+			$id_shown = !empty($title) ? $id_shown . " ($title)" : $id_shown . " (no title)";
+			$id_shown .= str_repeat(" ", 52-strlen($id_shown) >= 0 ? 52-strlen($id_shown) : 0);
+			$instTag .= str_repeat(" ", 10-strlen($instTag) >= 0 ? 10-strlen($instTag) : 0);
 			$sep_v = array();
 			foreach($versions as $tuple) {
 				list($v, $p, $rUrl) = $tuple;
 				$sep_v[] = $v->toVersionString()."_".$p;
 			}
+
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
 			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($rUrl, 70));
@@ -414,7 +418,7 @@ class Installer {
 			$dfgOut->outputln( "\nThe following bundles exist only locally:\n");
 			foreach($onlyLocalPackages as $id) {
 				$lp = $localPackages[$id];
-				$display = "[installed ".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel()."]";
+				$display = "[".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel()."]";
 				$display .= str_repeat(" ", 20-strlen($display) >= 0 ? 20-strlen($display) : 0);
 				$display .= $lp->getID();
 				$dfgOut->outputln( " ".$display);
@@ -790,11 +794,11 @@ class Installer {
 		// default location
 		$unzipDirectory = Tools::getProgramDir()."/Ontoprise/".$dd->getInstallationDirectory();
 
-		// if already somewhere installed, use this 
+		// if already somewhere installed, use this
 		$nonPublicAppPaths = Tools::getNonPublicAppPath($this->rootDir);
 		if (array_key_exists($dd->getID(), $nonPublicAppPaths)) {
 			$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
-		} 
+		}
 
 		return $unzipDirectory;
 	}

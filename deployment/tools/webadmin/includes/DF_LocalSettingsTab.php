@@ -51,6 +51,7 @@ class DFLocalSettingsTab {
 
 		$selectorHTML = "<select id =\"df_settings_extension_selector\">";
 		$selectorHTML .= "<option value=\"_no_value_\">".$dfgLang->getLanguageString('df_select_extension')."</option>";
+		$selectorHTML .= "<option value=\"all\">all</option>";
 		foreach($localPackages as $id => $dd) {
 			$selectorHTML .= "<option value=\"$id\">$id</option>";
 		}

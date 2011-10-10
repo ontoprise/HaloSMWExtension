@@ -82,11 +82,16 @@ class DFCommandInterface {
 	public function getLocalSettingFragment($extid) {
 		global $mwrootDir;
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-		if (!array_key_exists($extid, $localPackages)) {
-			throw new Exception("Extension not found: $extid", 400);
+		if ($extid != 'all') {
+			if (!array_key_exists($extid, $localPackages)) {
+				throw new Exception("Extension not found: $extid", 400);
+			}
+			$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
+			$fragment = $ddproc->getConfigFragment($extid);
+		} else {
+			$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php", NULL);
+			$fragment = $ddproc->getConfigFragment(NULL);
 		}
-		$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
-		$fragment = $ddproc->getConfigFragment($extid);
 		if (is_null($fragment)) {
 			throw new Exception("Fragment not found: $extid", 400);
 		}
@@ -95,9 +100,14 @@ class DFCommandInterface {
 
 	public function saveLocalSettingFragment($extid, $fragment) {
 		global $mwrootDir;
-		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-		$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
-		$content = $ddproc->replaceConfigFragment($extid, $fragment);
+		if ($extid != 'all') {
+			$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+			$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
+			$content = $ddproc->replaceConfigFragment($extid, $fragment);
+		} else {
+			$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php", NULL);
+			$content = $ddproc->replaceConfigFragment(NULL, $fragment);
+		}
 		if ($content === false) {
 			throw new Exception("Replacing fragment for $extid failed!", 500);
 		}
@@ -450,10 +460,10 @@ class DFCommandInterface {
 		return;
 
 	}
-	
+
 	/**
 	 * Checks if the given process is running.
-	 * 
+	 *
 	 * @param string $processName
 	 * @return string true/false
 	 */
@@ -476,7 +486,7 @@ class DFCommandInterface {
 		return implode(",", $doesRun);
 	}
 
-	
+
 
 	/**
 	 * Starts a process. Optionally it can be run under a certain account,
@@ -525,9 +535,9 @@ class DFCommandInterface {
 			} else {
 				$command = "sudo /sbin/$operation $commandLineToStart";
 			}
-				
+
 			@exec($command, $out, $ret);
-				
+
 			return $ret == 0 ? implode("\n", $out) : "false";
 		}
 	}

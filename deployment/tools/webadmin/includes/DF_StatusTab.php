@@ -84,7 +84,7 @@ class DFStatusTab {
 			$html .= "<tr class=\"df_row_$j\">";
 			$i++;
 			$html .= "<td class=\"df_extension_id\">";
-			$html .= $id;
+			$html .= $p->getTitle() != '' ? $p->getTitle() : $id;
 			$html .= "</td>";
 			$html .= "<td class=\"df_extension_version\">";
 			$html .= $p->getVersion()->toVersionString().'_'.$p->getPatchlevel();

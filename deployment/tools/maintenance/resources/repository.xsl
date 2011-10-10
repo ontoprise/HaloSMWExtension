@@ -13,7 +13,7 @@
     
   <table border="1" cellpadding="5" style="background-color:#FFFFFF;" width="70%">
     <tr bgcolor="#9acd32">
-      <th>ID</th>
+      <th>Title (ID)</th>
       <th>Version</th>
       <th>Patch Level</th>
       <th>Maintainer</th>
@@ -27,7 +27,7 @@
 	      <td>
 	        <a>
 	          <xsl:attribute name="href"><xsl:value-of select="version/@helpurl"/></xsl:attribute>
-	          <xsl:value-of select="@title"/> (<xsl:value-of select="@id"/>
+	          <xsl:value-of select="@title"/> (<xsl:value-of select="@id"/>)
 	        </a>
 	      </td>
 	      <td><xsl:value-of select="version/@version"/></td>

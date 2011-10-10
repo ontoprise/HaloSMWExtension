@@ -41,10 +41,10 @@ class DeployDescriptionProcessor {
 	private $errorMessages;
 
 	private $logger;
-    
+
 	// PHP executable
 	private $phpExe;
-	
+
 	/**
 	 * Creates new DeployDescriptorProcessor.
 	 *
@@ -141,6 +141,10 @@ class DeployDescriptionProcessor {
 
 	function getConfigFragment($extid) {
 
+		if (is_null($extid)) {
+			return $this->localSettingsContent;
+		}
+
 		$start = strpos($this->localSettingsContent, "/*start-$extid*/");
 		$end = strpos($this->localSettingsContent, "/*end-$extid*/");
 
@@ -152,9 +156,13 @@ class DeployDescriptionProcessor {
 	}
 
 	function replaceConfigFragment($extid, $replacement) {
-		$fragment = $this->getConfigFragment($extid);
-		if (is_null($fragment)) return false;
-		$this->localSettingsContent = str_replace($fragment, $replacement, $this->localSettingsContent);
+		if (is_null($extid)) {
+			$this->localSettingsContent =$replacement;
+		} else {
+			$fragment = $this->getConfigFragment($extid);
+			if (is_null($fragment)) return false;
+			$this->localSettingsContent = str_replace($fragment, $replacement, $this->localSettingsContent);
+		}
 		return $this->localSettingsContent;
 	}
 
@@ -344,7 +352,7 @@ class DeployDescriptionProcessor {
 			}
 			// do dry-run at first to check for rejected patches
 			// give exact path to patch.exe in Windows, don't do so on linux
-            $patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
+			$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
 			exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
 			$patchFailed = false;
 			foreach($out as $line) {
@@ -391,7 +399,7 @@ class DeployDescriptionProcessor {
 			}
 			// do dry-run at first to check for rejected patches
 			// give exact path to patch.exe in Windows, don't do so on linux
-            $patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
+			$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
 			$dfgOut->outputln("[Check if patch is already applied ".$patch."...");
 			exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
 			$dfgOut->output( "done.]");
