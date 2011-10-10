@@ -246,11 +246,11 @@ class ASFWikiTextManipulator {
 		$res = ASFFormGeneratorUtils::getPropertyValue(
 			$semanticData, ASF_PROP_HAS_TYPE, false, false);
 		
-		if($res== 'http://semantic-mediawiki.org/swivt/1.0#_wpg'){
+		if($res== 'http://semantic-mediawiki.org/swivt/1.0#_wpg' || !$res){
 			return '[['.$value.'| '.$replacement.']]';
 		}
 		
-		return $replacement;
+		return trim($replacement);
 	}
 	
 	
