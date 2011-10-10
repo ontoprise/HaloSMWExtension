@@ -492,7 +492,7 @@ class DeployDescriptor {
 				}
 				$fromVersion = new DFVersion($from);
 				$toVersion = new DFVersion($to);
-				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
+				if ($lp->getID() == $ext_id && $fromVersion->isLowerOrEqual($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
 					$patches[] = $pf;
 				}
 			}
@@ -619,12 +619,12 @@ class DeployDescriptor {
 		}
 		return $this->oc_resources;
 	}
-	
+
 	/**
-	 * Returns XML representation 
-	 * 
+	 * Returns XML representation
+	 *
 	 * @param string $newID Replace original ID. May be null of course.
-	 * 
+	 *
 	 * @return string (XML)
 	 */
 	function getXML($newID = NULL) {
@@ -633,16 +633,16 @@ class DeployDescriptor {
 		} else {
 			$dom = new DOMDocument("1.0");
 			$dom->loadXML($this->xml);
-			
+				
 			// replace ID node
 			$oldIDNode = $dom->getElementsByTagName("id")->item(0);
 			$newIDNode = $dom->createElement("id");
 			$newIDNode->appendChild($dom->createTextNode($newID));
 			$globalNode = $dom->getElementsByTagName("global")->item(0);
 			$globalNode->replaceChild($newIDNode, $oldIDNode);
-			
+				
 			return $dom->saveXML();
-			
+				
 		}
 	}
 
@@ -772,6 +772,14 @@ class DeployDescriptor {
 
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
+	}
+
+	function applyPatches($rootDir, $userCallback = NULL) {
+		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
+		$alreadyApplied = array();
+		$dp->checkIfPatchesAlreadyApplied($alreadyApplied);
+		$dp->applyPatches($userCallback, $alreadyApplied);
+
 	}
 
 	/**

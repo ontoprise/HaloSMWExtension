@@ -148,6 +148,7 @@ $dfgIncludeImages=false;
 $dfgIncludeInstances=false;
 $dfgBundleID = "";
 $dfgNoAsk=false;
+$dfgApplyPatchesFor=NULL;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -297,7 +298,11 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--nocheck') {
 		// ignore
 		continue;
-	} else {
+	}  else if ($arg == '--applypatches') {
+        // ignore
+        $dfgApplyPatchesFor = next($args);
+        continue;
+    } else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
@@ -313,6 +318,16 @@ try {
 } catch(DF_SettingError $e) {
 	dffExitOnFatalError($e);
 }
+
+if (!is_null($dfgApplyPatchesFor)) {
+	$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+	if (!array_key_exists($dfgApplyPatchesFor, $localPackages)) {
+		dffExitOnFatalError("Bundle '".$dfgApplyPatchesFor."' is not installed.");
+	}
+	$dd = $localPackages[$dfgApplyPatchesFor];
+	$dd->applyPatches($mwrootDir, DFUserInput::getInstance());
+	die(DF_TERMINATION_WITHOUT_FINALIZE);
+ }
 
 if ($dfgInstallPackages) {
 	// include commandLine.inc to be in maintenance mode
@@ -757,6 +772,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t\t--removeInstances: Removes all instances referenced used by a bundle. Used with -d");
 	$dfgOut->outputln( "\t\t--removeImages: Removes all images referenced used by a bundle. Used with -d");
 	$dfgOut->outputln( "\t--removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced");
+	$dfgOut->outputln( "\t--applypatches <bundle-ID>: Applies all patches of the given bundle again.");
 
 	$dfgOut->outputln();
 	$dfgOut->outputln('Examples:');
