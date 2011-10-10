@@ -248,7 +248,7 @@ class OntologyInstaller {
 		$ontologyVersion = reset($ontologyVersion);
 		$installationDir = reset($installationDir);
 		
-		$version = $ontologyVersion->getNumber();
+		$version = $ontologyVersion->getString();
 		$installDir = $installationDir->getString();
 		$installDir = strtolower($installDir);
 		$filename = basename($inputfile);
