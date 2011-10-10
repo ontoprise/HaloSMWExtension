@@ -678,6 +678,10 @@ $(function() {
 		smw_makeSortable($('#df_bundlefilelist_table')[0]);
 		smw_makeSortable($('#df_restorepoint_table')[0]);
 		
+		$('#df_refresh_status').click(function(e2) {
+			window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+		});
+		
 		// upload input field
 		$('#df_upload_file_input').change(function(e) { 
 			$('#df_upload_progress_indicator').show();
