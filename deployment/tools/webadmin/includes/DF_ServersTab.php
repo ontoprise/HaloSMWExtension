@@ -47,8 +47,7 @@ class DFServersTab {
 
 	public function getHTML() {
 		global $dfgLang;
-		$dfgCommandInterface = new DFCommandInterface();
-		
+				
 		$executeText = $dfgLang->getLanguageString('df_webadmin_server_execute');
 		$startActionText = $dfgLang->getLanguageString('df_webadmin_server_start');
 		$endActionText = $dfgLang->getLanguageString('df_webadmin_server_end');
@@ -66,7 +65,7 @@ class DFServersTab {
 		$apacheEnd = self::guessPaths("apache", "end");
 		$html .= "<td>Apache</td>";
 
-		if ($dfgCommandInterface->isProcessRunning("apache", self::guessPaths("apache"))) {
+		if (Tools::isServiceRunning("apache", self::guessPaths("apache"))) {
 			$html .= "<td id=\"df_run_flag_apache\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_apache\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -81,7 +80,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>mySQL</td>";
 
-		if ($dfgCommandInterface->isProcessRunning("mysqld", self::guessPaths("mysql"))) {
+		if (Tools::isServiceRunning("mysqld", self::guessPaths("mysql"))) {
 			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -96,7 +95,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>solr</td>";
 
-		if ($dfgCommandInterface->isProcessRunning("solr", self::guessPaths("solr"))) {
+		if (Tools::isServiceRunning("solr", self::guessPaths("solr"))) {
 			$html .= "<td id=\"df_run_flag_solr\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_solr\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
@@ -126,7 +125,7 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>memcached</td>";
 
-		if ($dfgCommandInterface->isProcessRunning("memcached", self::guessPaths("memcached"))) {
+		if (Tools::isServiceRunning("memcached", self::guessPaths("memcached"))) {
 			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
 		} else {
 			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";

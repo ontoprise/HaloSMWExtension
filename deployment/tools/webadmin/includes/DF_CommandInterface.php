@@ -450,21 +450,15 @@ class DFCommandInterface {
 		return;
 
 	}
-
-	public function isProcessRunning($processName, $script) {
-		if (Tools::isWindows()) {
-			return Tools::isProcessRunning($this->translateProcessName($processName)) ? "true" : "false";
-		} else {
-			if (strpos($script, "/etc/init.d") !== false) {
-				@exec("$script status", $out, $ret);
-			} else {
-				@exec("/sbin/status $script", $out, $ret);
-				if (Tools::inStringArray($out, "$script stop")) {
-					$ret = 1;
-				} 
-			}
-			return ($ret == 0);
-		}
+	
+	/**
+	 * Checks if the given process is running.
+	 * 
+	 * @param string $processName
+	 * @return string true/false
+	 */
+	public function isProcessRunning($processName) {
+		return Tools::isProcessRunning($processName) ? "true" : "false";
 	}
 
 	/**
@@ -475,60 +469,14 @@ class DFCommandInterface {
 	 *
 	 * @param string $processNames Comma separated
 	 * @param service scripts $servicescripts Comma separated
+	 * @return string comma separated list.
 	 */
-	public function areProcessesRunning($processNames, $servicescripts) {
-		if (Tools::isWindows()) {
-			$processNames = explode(",",$processNames);
-			$translated=array();
-			foreach($processNames as $name) {
-				$translated[] = $this->translateProcessName($name);
-			}
-			$doesRun = Tools::areProcessesRunning($translated);
-		} else {
-			$doesRun=array();
-			$servicescripts = explode(",",$servicescripts);
-			foreach($servicescripts as $script) {
-				if (strpos($script, "/etc/init.d") !== false) {
-					@exec("$script status", $out, $ret);
-					$doesRun[] = ($ret == 0);
-				} else {
-					@exec("/sbin/status $script", $out, $ret);
-					if (Tools::inStringArray($out, "$script stop")) {
-						$doesRun[] = false;
-					} else {
-						$doesRun[] = ($ret == 0);
-					}
-				}
-
-			}
-		}
+	public function areServicesRunning($processNames, $servicescripts) {
+		$doesRun = Tools::areServicesRunning($processNames, $servicescripts);
 		return implode(",", $doesRun);
 	}
 
-	/**
-	 * Translates the process names to the names (or paths) used by
-	 * the actual platform.
-	 *
-	 * @param string $name Processname
-	 * @return string
-	 */
-	private function translateProcessName($name) {
-		global $mwrootDir;
-		if (Tools::isWindows()) {
-			switch($name) {
-				case "apache": return "httpd";
-				case "mysql": return "mysqld";
-				case "solr": return "solr";
-				case "tsc": return array("tsc", "tsc-service");
-				case "memcached": return "memcached";
-				default: return $name;
-			}
-		} else {
-			return $name; // not necessary for Linux, because it is checked via init.d scripts.
-		}
-
-
-	}
+	
 
 	/**
 	 * Starts a process. Optionally it can be run under a certain account,

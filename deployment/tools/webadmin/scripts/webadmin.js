@@ -988,7 +988,7 @@ $(function() {
 			$(servers).each(function() {
 				 commands.push($('#df_servers_'+this+'_command').val());
 			});
-			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areProcessesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areServicesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
 			var updateProcessDisplay = function(xhr, status) {
 				var result = xhr.responseText.split(",");
 				var i = 0;
