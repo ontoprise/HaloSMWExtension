@@ -163,9 +163,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 				} else {
 					$langString = $sp[$constant];
 				}
-				$optionalText = str_replace($constant,
-				$langString,
-				$optionalText);
+				$optionalText = str_replace($constant, $langString,	$optionalText);
 			}
 		}
 
