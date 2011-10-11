@@ -3,7 +3,7 @@
 	<target name="enhancedretrieval" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
-			<fileset dir="bin" includes="unifiedsearch*.zip" />
+			<fileset dir="bin" includes="enhancedretrieval*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
 
@@ -74,12 +74,12 @@
 				<include name="patch.php" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/unifiedsearch.zip" basedir="bin/zip" />
+		<zip destfile="bin/enhancedretrieval.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/unifiedsearch.zip" />
+			<arg value="bin/enhancedretrieval.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">
