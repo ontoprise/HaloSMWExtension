@@ -364,6 +364,8 @@ protected $smwUserMessages = array(
     'smw_qi_tt_maintab_query' => 'Erstellen einer neuen Query',
     'smw_qi_tt_maintab_load' => 'Laden einer im Wiki existierenden Query',
     'smw_qi_tt_addSubject' => 'Add Subject',
+      'smw_qi_tt_delete' => 'Delete selected tree node',
+      'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
 
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',

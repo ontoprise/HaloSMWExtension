@@ -99,6 +99,15 @@ function smgSetupExtension() {
 				)
 	);
 
+     $wgResourceModules['ext.jquery.tree'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/jstree/jquery.jstree.js',
+            'scripts/jstree/_lib/jquery.hotkeys.js'
+        ),
+        'dependencies' => 'jquery.cookie'
+	);
+
+
 
     
 }

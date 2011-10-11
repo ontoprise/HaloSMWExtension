@@ -359,6 +359,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_qi_tt_maintab_query' => 'Create a new query',
     'smw_qi_tt_maintab_load' => 'Load an existing query',
         'smw_qi_tt_addSubject' => 'Add Subject',
+          'smw_qi_tt_delete' => 'Delete selected tree node',
+      'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
 
     /* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',

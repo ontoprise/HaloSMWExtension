@@ -1627,7 +1627,8 @@ function smwhfRegisterResourceLoaderModules() {
 			'ext.smw.style',
       'ext.jquery.query',
       'ext.ScriptManager.prototype',
-      'ext.jquery.qtip'
+      'ext.jquery.qtip',
+      'ext.jquery.tree'
 			);
 			// Add all modules ext.srf.*
 			foreach ($wgResourceModules as $rid => $mod) {
@@ -1660,6 +1661,7 @@ function smwhfRegisterResourceLoaderModules() {
                     'dependencies' => array('ext.smw.sorttable')
 			);
 
+     
 			smwfHaloAddJSLanguageScripts();
 
 			return true;
