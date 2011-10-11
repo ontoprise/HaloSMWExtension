@@ -293,55 +293,45 @@ OntologyModifier.prototype = {
 	 * 			Name of the new article/relation without the namespace.
 	 * @param string initialContent
 	 * 			Initial content of the article.
+	 * @param string type
+	 * 			Type of the relation.
 	 * @param string domain
 	 * 			Domain of the relation.
 	 * @param string range
 	 * 			Range of the relation.
+	 * @param int minCard
+	 * 			Minimal cardinality
+	 * @param int maxCard
+	 * 			Maximal cardinality
 	 */
-	createRelation : function(title, initialContent, domain, ranges) {
-		var schema = "";
+	createRelation : function(title, initialContent, type, domain, range, minCard, maxCard) {
+		var schemaSpec = '\n[[_TYPE::' + type +']]';
+		
 		if (domain != null && domain != "") {
 			domain = gLanguage.getMessage('CATEGORY_NS')+domain;
 		} else {
 			domain = '';
 		}
-		var domainHintWritten = false;
-		if (ranges != null) {
-			if (ranges.length >= 1) {
-				var rangeStr = (ranges.length > 1)
-									? "\n[[_TYPE::_rec]]\n[[_LIST::"
-									: "\n[[_TYPE::";
-				for(var i = 0, n = ranges.length; i < n; i++) {
-					if (ranges[i].indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
-						rangeStr += ranges[i];
-					} else {
-						rangeStr += gLanguage.getMessage('TYPE_PAGE');
-						domainHintWritten = true;
-						if (ranges[i]) {
-							// Range hint is not empty
-							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-							          + domain + ";" + ranges[i]+"]]";
-						} else {
-							// no range hint. Anyway a hint must be given.
-							schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-							          + domain + ";]]";
-						}
-
-					}
-					if (i < n-1) {
-						rangeStr += ';';
-					}
-			 	}
-			 	schema += rangeStr+"]]";
-			} 
+		if (range != null && range != "") {
+			range = gLanguage.getMessage('CATEGORY_NS')+range;
+		} else {
+			range = '';
 		}
 		
-		if (!domainHintWritten && domain != '') {
-			schema += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-			          + domain + ";]]";
+		if (domain.length > 0 || range.length > 0) {
+			schemaSpec += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
+								          + domain + ";" + range + "]]";
 		}
+		
+		if (typeof minCard === 'number') {
+			schemaSpec += "\n[[SMW_SSP_HAS_MIN_CARD::" + minCard + "]]";
+		}
+		if (typeof maxCard === 'number') {
+			schemaSpec += "\n[[SMW_SSP_HAS_MAX_CARD::" + maxCard + "]]";
+		}
+
 		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
-						   initialContent, schema,
+						   initialContent, schemaSpec,
 						   gLanguage.getMessage('CREATE_PROP_FOR_CAT').replace(/\$cat/g, domain),
 						   false);
 //Bugfix: 10801						   true);

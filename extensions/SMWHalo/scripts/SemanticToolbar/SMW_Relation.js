@@ -879,6 +879,7 @@ newRelation: function() {
 					? wgTitle  // current page is a category
 					: "";
 	var tb = this.createToolbar(SMW_REL_ALL_VALID);	
+	
 	tb.append(tb.createText('rel-help-msg', gLanguage.getMessage('CREATE_NEW_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-name', 
 							 gLanguage.getMessage('PROPERTY'), '', '',
@@ -889,7 +890,18 @@ newRelation: function() {
 	                         true));
 	tb.setInputValue('rel-name', selection);	                         
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
-	
+
+	var page = gLanguage.getMessage('TYPE_PAGE_WONS');
+	var dataTypes = gDataTypes.getBuiltinTypes();
+	var pIdx = dataTypes.indexOf(page);
+	tb.append(tb.createDropDown('rel-type-0', gLanguage.getMessage('TYPE'), 
+	                            dataTypes, 
+	                            null,
+	                            pIdx, 
+	                            SMW_REL_NO_EMPTY_SELECTION +
+	                            SMW_REL_TYPE_CHANGED, true));
+	tb.append(tb.createText('rel-type-0-msg', gLanguage.getMessage('ENTER_TYPE'), '' , true));
+			
 	tb.append(tb.createInput('rel-domain', gLanguage.getMessage('DOMAIN'), '', '', 
 						     SMW_REL_CHECK_CATEGORY +
 						     SMW_REL_VALID_CATEGORY_NAME + 
@@ -899,119 +911,28 @@ newRelation: function() {
 	tb.setInputValue('rel-domain', domain);	                         
 	tb.append(tb.createText('rel-domain-msg', gLanguage.getMessage('ENTER_DOMAIN'), '' , true));
 
-	this.addTypeInput();
-		
-	var links = [['relToolBar.addTypeInput()', gLanguage.getMessage('ADD_TYPE')]];
-	tb.append(tb.createLink('rel-add-links', links, '', true));		
+	tb.append(tb.createInput('rel-range-0', gLanguage.getMessage('RANGE'), '', '',
+						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
+						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
+	                         true));
+	tb.setInputValue('rel-range-0', '');
+	tb.append(tb.createText('rel-range-0-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
+	
+	tb.append(tb.createCheckBox('rel-mandatory', '', [gLanguage.getMessage('Mandatory')], [-1], 'name="mandatory"', true));
+
 			
-	links = [['relToolBar.createNewRelation()',
-			  gLanguage.getMessage('CREATE'), 'rel-confirm', 
-			  gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
-			 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
-			];
+	var links = [['relToolBar.createNewRelation()',
+			     gLanguage.getMessage('CREATE'), 'rel-confirm', 
+			     gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
+			     ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+			    ];
 	tb.append(tb.createLink('rel-links', links, '', true));
 	
 	tb.finishCreation();
 	gSTBEventActions.initialCheck($("relation-content-box"));
-	
 
 	//Sets Focus on first Element
 	setTimeout("$('rel-name').focus();",50);
-
-},
-
-addTypeInput:function() {
-	var i = 0;
-	while($('rel-range-'+i) != null) {
-		i++;
-	}
-	var tb = this.toolbarContainer;
-	var insertAfter = (i==0) ? 'rel-domain-msg' 
-							 : $('rel-range-'+(i-1)+'-msg') 
-							 	? 'rel-range-'+(i-1)+'-msg'
-							 	: 'rel-range-'+(i-1);
-	
-	var datatypes = this.getDatatypeOptions();
-	var page = gLanguage.getMessage('TYPE_PAGE_WONS');
-	var pIdx = datatypes.indexOf(page);
-	tb.insert(insertAfter,
-			  tb.createDropDown('rel-type-'+i, gLanguage.getMessage('TYPE'), 
-	                            this.getDatatypeOptions(), 
-	                            "relToolBar.removeType('rel-type-"+i+"')",
-	                            pIdx, 
-	                            SMW_REL_NO_EMPTY_SELECTION +
-	                            SMW_REL_TYPE_CHANGED, true));
-	var msgID = 'rel-type-'+i+'-msg';                           
-	tb.insert('rel-type-'+i,
-	          tb.createText(msgID, gLanguage.getMessage('ENTER_TYPE'), '' , true));
-
-	tb.insert(msgID,
-			  tb.createInput('rel-range-'+i, gLanguage.getMessage('RANGE'), '', '',
-						     SMW_REL_CHECK_CATEGORY + SMW_REL_CHECK_EMPTY_WIE +
-						     SMW_REL_VALID_CATEGORY_NAME + SMW_REL_HINT_CATEGORY,
-	                         true));
-	tb.setInputValue('rel-range-'+i, '');
-	tb.insert('rel-range-'+i,
-	          tb.createText('rel-range-'+i+'-msg', gLanguage.getMessage('ENTER_RANGE'), '' , true));
-	          
-	tb.finishCreation();
-	gSTBEventActions.initialCheck($("relation-content-box"));
-},
-
-getDatatypeOptions: function() {
-	var builtinTypes = gDataTypes.getBuiltinTypes();
-	return builtinTypes;
-},
-
-removeType: function(id) {
-	var typeInput = $(id);
-	if (typeInput != null) {
-		var tb = this.toolbarContainer;
-		var rowsAfterRemoved = typeInput.parentNode.parentNode.nextSibling;
-
-		// get ID of range input to be removed.
-		var idOfValueInput = typeInput.getAttribute('id');
-		var i = parseInt(idOfValueInput.substr(idOfValueInput.length-1, idOfValueInput.length));
-
-		// remove it
-		tb.remove(id);
-		if ($(id+'-msg')) {
-			tb.remove(id+'-msg');
-		}
-		var rid = id.replace(/type/, 'range');
-		tb.remove(rid);
-		if ($(rid+'-msg')) {
-			tb.remove(rid+'-msg');
-		}
-		
-		// remove gap from IDs
-		id = idOfValueInput.substr(0, idOfValueInput.length-1);
-		var obj;
-		while ((obj = $(id + ++i))) {
-			// is there a delete-button
-			var delBtn = obj.up().up().down('a');
-			if (delBtn) {
-				var action = delBtn.getAttribute("href");
-				var regex = new RegExp(id+i);
-				action = action.replace(regex, id+(i-1));
-				delBtn.setAttribute("href", action);
-			}
-			tb.changeID(obj, id + (i-1));
-			if ((obj = $(id + i + '-msg'))) {
-				tb.changeID(obj, id + (i-1) + '-msg');
-			}
-			var rid = id.replace(/type/, 'range');
-			obj = $(rid + i);
-			tb.changeID(obj, rid + (i-1));
-			if ((obj = $(rid + i + '-msg'))) {
-				tb.changeID(obj, rid + (i-1) + '-msg');
-			}
-			
-		}
-		tb.finishCreation();
-		gSTBEventActions.initialCheck($("relation-content-box"));
-
-	}
 
 },
 
@@ -1041,37 +962,24 @@ createNewRelation: function() {
 		return;
     }
 	// Create an ontology modifier instance
-	var i = 0;
+	var obj = $('rel-type-0');
+	var type = obj.options[obj.selectedIndex].text;
+	var domain = $("rel-domain").value;
+	var range  = (type === gLanguage.getMessage('TYPE_PAGE_WONS'))
+					? $("rel-range-0").value : '';
 
-	// get all ranges and types
-	var rangesAndTypes = new Array();
-	while($('rel-type-'+i) != null) {
-		var obj = $('rel-type-'+i);
-		var value = obj.options[obj.selectedIndex].text;
-		if (value != gLanguage.getMessage('TYPE_PAGE_WONS')) {
-			rangesAndTypes.push(gLanguage.getMessage('TYPE_NS')+value); // add as type
-		} else {
-			var range = $('rel-range-'+i).value;
-			rangesAndTypes.push((range && range != '')
-									? gLanguage.getMessage('CATEGORY_NS')+range 	// add as category
-			                        : "");
-		}
-		i++;
-	}
-	/*STARTLOG*/
-	var signature = "";
-	for (i = 0; i < rangesAndTypes.length; i++) {
-		signature += (rangesAndTypes[i] != '') ? rangesAndTypes[i] : gLanguage.getMessage('TYPE_PAGE');
-		if (i < rangesAndTypes.length-1) {
-			signature += ', ';
+	var minCard = null;
+	var mandatory = $("rel-mandatory") || false;
+	if (mandatory) {
+		mandatory = mandatory.down('input').checked;
+		if (mandatory) {
+			minCard = 1;
 		}
 	}
-    smwhgLogger.log(relName+":"+signature,"STB-Properties","create_added");
-	/*ENDLOG*/
-
+	
 	this.om.createRelation(relName,
 					       gLanguage.getMessage('CREATE_PROPERTY'),
-	                       $("rel-domain").value, rangesAndTypes);
+	                       type, domain, range, minCard);
 	//show list
 	this.fillList(true);
 },
