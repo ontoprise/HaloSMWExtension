@@ -33,6 +33,7 @@ define('DEPLOY_FRAMEWORK_WRONG_VERSION', 14);
 define('DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR', 15);
 define('DEPLOY_FRAMEWORK_ONTOLOGYCONFLICT_ERROR', 16);
 define('DEPLOY_FRAMEWORK_INVALID_RESTOREPOINT', 17);
+define('DEPLOY_FRAMEWORK_UNINSTALLER_EXISTS', 18);
 
 
 require_once 'DF_PackageRepository.php';
@@ -267,6 +268,23 @@ class Installer {
 		if ($existDependency) {
 			$this->logger->error("Can not remove package. Dependency from the following bundles exists: ".implode(",", $dependantPackages));
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove bundle. Dependency from the following bundles exists:", $dependantPackages);
+		}
+
+		// check if there is a Uninstall.exe
+		// in this case automatic de-installation is not possible. The user
+		// has to run Uninstall.exe manually.
+		if ($ext->isNonPublic()) {
+			$dir = $this->getNonPublicDirectory($ext);
+			if (file_exists($dir."/Uninstall.exe")) {
+				$this->logger->error("Can not remove this bundle via this tool. Please run ".$dir."/Uninstall.exe manually.");
+				throw new InstallationError(DEPLOY_FRAMEWORK_UNINSTALLER_EXISTS, "Can not remove this bundle via this tool. Please run ".$dir."/Uninstall.exe manually.");
+			}
+		} else {
+			$dir = $this->rootDir."/".$ext->getInstallationDirectory();
+			if (file_exists($dir."/Uninstall.exe")) {
+				$this->logger->error("Can not remove this bundle via this tool. Please run ".$dir."/Uninstall.exe manually.");
+				throw new InstallationError(DEPLOY_FRAMEWORK_UNINSTALLER_EXISTS, "Can not remove this bundle via this tool. Please run ".$dir."/Uninstall.exe manually.");
+			}
 		}
 
 
