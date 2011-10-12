@@ -10,6 +10,14 @@
 # Author: Kai K�hn / ontoprise / 2011
 #
 
+# check if bundle-id is specified
+if [ -z $1 ]
+then
+echo "Usage: ./exportBundle <bundle-id>"
+exit 0
+fi
+
+
 # Create output dir
 OUTPUTDIR=/tmp/$1/extensions/$1
 if [ ! -e $OUTPUTDIR ];
