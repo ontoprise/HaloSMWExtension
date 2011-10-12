@@ -210,11 +210,7 @@ function initSMWUserManualNamespaces() {
     wfProfileIn(__METHOD__);
     
     if ($umegNamespaceIndex == null) {
-        $nsKeys = array_keys($wgExtraNamespaces);
-        rsort($nsKeys);
-        $umegNamespaceIndex = array_shift($nsKeys) + 1;
-        if ($umegNamespaceIndex % 2)
-            $umegNamespaceIndex++;
+        $umegNamespaceIndex = 750;
     }
     // define the ns constants
     define('SMW_NS_USER_MANUAL', $umegNamespaceIndex);
