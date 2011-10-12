@@ -57,14 +57,14 @@ QIHelper.prototype = {
         this.propertyAddClicked = false;
         this.colNameEntered = false;     
 
-        var qiStatus = $('qistatus');
+        var qiStatus = $$('#askQI #qistatus')[0];
         if(qiStatus)
           qiStatus.innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
         if (! this.noTabSwitch)
           this.switchTab(1, true);
         this.sourceChanged = 0;
         // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
-        var useTripleStore = $('usetriplestore');
+        var useTripleStore = $$('#askQI #usetriplestore')[0];
         if (useTripleStore)
             Event.observe(useTripleStore,'click', this.resetTscOptions.bind(this));
         if (! this.queryList)
@@ -82,63 +82,63 @@ QIHelper.prototype = {
 	 * Called whenever query layout manager is minimized or maximized
 	 */
     switchlayout : function() {
-      var layoutContent = $("layoutcontent");
+      var layoutContent = $$("#askQI #layoutcontent")[0];
       if(layoutContent){
         if (layoutContent.style.display == "none") {
             layoutContent.style.display = "";
-            $("queryprinteroptions").style.display = "";
-            $("layouttitle-link").removeClassName("plusminus");
-            $("layouttitle-link").addClassName("minusplus");
-            this.getSpecialQPParameters($('layout_format').value);
+            $$("#askQI #queryprinteroptions")[0].style.display = "";
+            $$("#askQI #layouttitle-link")[0].removeClassName("plusminus");
+            $$("#askQI #layouttitle-link")[0].addClassName("minusplus");
+            this.getSpecialQPParameters($$('#askQI #layout_format')[0].value);
         } else {
-            $("layoutcontent").style.display = "none";
-            $("queryprinteroptions").style.display = "none";
-            $("layouttitle-link").removeClassName("minusplus");
-            $("layouttitle-link").addClassName("plusminus");
+            $$("#askQI #layoutcontent")[0].style.display = "none";
+            $$("#askQI #queryprinteroptions")[0].style.display = "none";
+            $$("#askQI #layouttitle-link")[0].removeClassName("minusplus");
+            $$("#askQI #layouttitle-link")[0].addClassName("plusminus");
         }
       }
     },
 
     switchDefinition : function() {
-      var qiQueryDefinition = $('qiquerydefinition');
+      var qiQueryDefinition = $$('#askQI #qiquerydefinition')[0];
       if(qiQueryDefinition){
         if (qiQueryDefinition.style.display == "none") {
             qiQueryDefinition.style.display = "";
-            $('definitiontitle-link').removeClassName("plusminus");
-            $('definitiontitle-link').addClassName("minusplus");
-            $('previewcontent').style.height = this.divPreviewcontentHeight + 'px';
+            $$('#askQI #definitiontitle-link')[0].removeClassName("plusminus");
+            $$('#askQI #definitiontitle-link')[0].addClassName("minusplus");
+            $$('#askQI #previewcontent')[0].style.height = this.divPreviewcontentHeight + 'px';
         } else {
             qiQueryDefinition.style.display = "none";
-            $('definitiontitle-link').removeClassName("minusplus");
-            $('definitiontitle-link').addClassName("plusminus");
-            $('previewcontent').style.height = (this.divQiDefTabHeight + this.divPreviewcontentHeight) + 'px';
+            $$('#askQI #definitiontitle-link')[0].removeClassName("minusplus");
+            $$('#askQI #definitiontitle-link')[0].addClassName("plusminus");
+            $$('#askQI #previewcontent')[0].style.height = (this.divQiDefTabHeight + this.divPreviewcontentHeight) + 'px';
         }
       }
     },
 
     switchResult : function() {
-        if ($('qiresultcontent').style.display == "none") {
-            $('qiresultcontent').style.display = "";
-            $('qiresulttitle-link').removeClassName("plusminus");
-            $('qiresulttitle-link').addClassName("minusplus");
+        if ($$('#askQI #qiresultcontent')[0].style.display == "none") {
+            $$('#askQI #qiresultcontent')[0].style.display = "";
+            $$('#askQI #qiresulttitle-link')[0].removeClassName("plusminus");
+            $$('#askQI #qiresulttitle-link')[0].addClassName("minusplus");
             this.updatePreview();
         }else {
-            $('qiresultcontent').style.display = "none";
-            $('qiresulttitle-link').removeClassName("minusplus");
-            $('qiresulttitle-link').addClassName("plusminus");
+            $$('#askQI #qiresultcontent')[0].style.display = "none";
+            $$('#askQI #qiresulttitle-link')[0].removeClassName("minusplus");
+            $$('#askQI #qiresulttitle-link')[0].addClassName("plusminus");
         }
     },
 
     switchOption : function() {
-        if ($('qioptioncontent').style.display == "none") {
-            $('qioptioncontent').style.display = "";
-            $('qioptiontitle-link').removeClassName("plusminus");
-            $('qioptiontitle-link').addClassName("minusplus");
+        if ($$('#askQI #qioptioncontent')[0].style.display == "none") {
+            $$('#askQI #qioptioncontent')[0].style.display = "";
+            $$('#askQI #qioptiontitle-link')[0].removeClassName("plusminus");
+            $$('#askQI #qioptiontitle-link')[0].addClassName("minusplus");
             this.updatePreview();
         }else {
-            $('qioptioncontent').style.display = "none";
-            $('qioptiontitle-link').removeClassName("minusplus");
-            $('qioptiontitle-link').addClassName("plusminus");
+            $$('#askQI #qioptioncontent')[0].style.display = "none";
+            $$('#askQI #qioptiontitle-link')[0].removeClassName("minusplus");
+            $$('#askQI #qioptiontitle-link')[0].addClassName("plusminus");
         }
     },
 
@@ -154,81 +154,81 @@ QIHelper.prototype = {
 
     resetTscOptions : function() {
         // check for linked data options and reset these
-        this.resetSelection( $('qidatasourceselector'), 0);
-        if ( $('qio_showrating') != null )
-            $('qio_showrating').checked = null;
-        if ( $('qio_showmetadata') != null )
-            $('qio_showmetadata').checked = null;
-        if ( $('qio_showdatasource_div') )
-            $('qio_showdatasource_div').style.display = "none";
+        this.resetSelection( $$('#askQI #qidatasourceselector')[0], 0);
+        if ( $$('#askQI #qio_showrating')[0] != null )
+            $$('#askQI #qio_showrating')[0].checked = null;
+        if ( $$('#askQI #qio_showmetadata')[0] != null )
+            $$('#askQI #qio_showmetadata')[0].checked = null;
+        if ( $$('#askQI #qio_showdatasource_div')[0] )
+            $$('#askQI #qio_showdatasource_div')[0].style.display = "none";
         //this.resetSelection( $('qitpeeselector'), 0);
         this.updateSrcAndPreview();
         // check if the TSC has been disabled or enabled and hide DS and TPEE box
-        if ($('usetriplestore').checked)
+        if ($$('#askQI #usetriplestore')[0].checked)
             this.selectDsTpee(this.DS_SELECTED);
         else
             this.selectDsTpee(-1);
     },
 
     clickUseTsc : function () {
-        if ($('usetriplestore')) {
-            $('usetriplestore').checked="checked";
+        if ($$('#askQI #usetriplestore')[0]) {
+            $$('#askQI #usetriplestore')[0].checked="checked";
             this.updateSrcAndPreview();
         }
     },
     clickMetadata : function () {
-        if ( $('qio_showmetadata') && $('qio_showmetadata').checked )
-            $('qio_showdatasource_div').style.display = "block";
+        if ( $$('#askQI #qio_showmetadata')[0] && $$('#askQI #qio_showmetadata')[0].checked )
+            $$('#askQI #qio_showdatasource_div')[0].style.display = "block";
         else
-            $('qio_showdatasource_div').style.display = "none";
+            $$('#askQI #qio_showdatasource_div')[0].style.display = "none";
         this.clickUseTsc();
     },
     clickTpee : function () {
-        for ( var i = 0; i < $('qitpeeselector').options.length; i++ ) {
-            var div = 'qitpeeparams_' + $('qitpeeselector').options[i].value;
+        for ( var i = 0; i < $$('#askQI #qitpeeselector')[0].options.length; i++ ) {
+            var div = 'qitpeeparams_' + $$('#askQI #qitpeeselector')[0].options[i].value;
             $(div).style.display = 'none';
-            if ($('qitpeeselector').options[i].selected)
+            if ($$('#askQI #qitpeeselector')[0].options[i].selected)
                 $(div).style.display = '';
         }
         this.clickUseTsc();
     },
     selectDsTpee : function (val, noupdate) {
         // no datasources or trust policy in use
-        if (! ( $('qiTpeeSelected') && $('qiDsSelected') ) ) return;
-        if (! $('qiTpeeSelected') ) { // only datasources are in use
-            $('qiDsSelected').style.display = ( val == -1 ) ? 'none' : '';
+        if (! ( $$('#askQI #qiTpeeSelected')[0] && $$('#askQI #qiDsSelected')[0] ) ) return;
+        if (! $$('#askQI #qiTpeeSelected')[0] ) { // only datasources are in use
+            $$('#askQI #qiDsSelected')[0].style.display = ( val == -1 ) ? 'none' : '';
             return;
         }
-        var radio = $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]');
+        var radio = $$('#askQI #qioptioncontent')[0].getElementsBySelector('[name="qiDsTpeeSelector"]');
         if (val == this.TPEE_SELECTED) {
-            $('qiDsSelected').style.display = 'none';
-            $('qiTpeeSelected').style.display = '';
+            $$('#askQI #qiDsSelected')[0].style.display = 'none';
+            $$('#askQI #qiTpeeSelected')[0].style.display = '';
             radio[1].checked = 'checked';
             if (! noupdate)
                 this.clickUseTsc();
         }
         else if (val == this.DS_SELECTED) {
-            $('qiDsSelected').style.display = '';
-            $('qiTpeeSelected').style.display = 'none';
+            $$('#askQI #qiDsSelected')[0].style.display = '';
+            $$('#askQI #qiTpeeSelected')[0].style.display = 'none';
             radio[0].checked = 'checked';
             if (! noupdate)
                 this.clickUseTsc();
         }
         else {
-            $('qiDsSelected').style.display = 'none';
-            $('qiTpeeSelected').style.display = 'none';
+            $$('#askQI #qiDsSelected')[0].style.display = 'none';
+            $$('#askQI #qiTpeeSelected')[0].style.display = 'none';
             radio[0].checked = null;
             radio[1].checked = null;
-            $('usetriplestore').checked=null;
+            $$('#askQI #usetriplestore')[0].checked=null;
             if (! noupdate )
                 this.updateSrcAndPreview();
         }
     },
     tpeeOrder : function (move) {
         var policy_id = '';
-        for (var i = 0; i < $('qitpeeselector').options.length; i++) {
-            if ($('qitpeeselector').options[i].selected) {
-                policy_id = $('qitpeeselector').options[i].value;
+        for (var i = 0; i < $$('#askQI #qitpeeselector')[0].options.length; i++) {
+            if ($$('#askQI #qitpeeselector')[0].options[i].selected) {
+                policy_id = $$('#askQI #qitpeeselector')[0].options[i].value;
                 break;
             }
         }
@@ -272,15 +272,15 @@ QIHelper.prototype = {
 	 */
     updatePreview : function() {
         // update result preview
-        if ($("previewcontent").style.display == "" &&
-            $("qiresultcontent").style.display == "") {
+        if ($$("#askQI #previewcontent")[0].style.display == "" &&
+            $$("#askQI #qiresultcontent")[0].style.display == "") {
             this.previewResultPrinter();
         }
     },
 
     updateQuerySource : function() {
         // if query source tab is active
-        if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1)
+        if ($$('#askQI #qiDefTab3')[0].className.indexOf('qiDefTabActive') > -1)
             this.showFullAsk('parser', false);
     },
     
@@ -322,7 +322,7 @@ QIHelper.prototype = {
             });
             html += '</table>';
             autoCompleter.deregisterAllInputs();
-            $('queryprinteroptions').innerHTML = html;
+            $$('#askQI #queryprinteroptions')[0].innerHTML = html;
             autoCompleter.registerAllInputs();
             this.specialQPParameters = qpParameters;
             if (callWhenFinished) callWhenFinished();
@@ -351,7 +351,7 @@ QIHelper.prototype = {
         }
         if (this.parameterPendingElement)
             this.parameterPendingElement.remove();
-        this.parameterPendingElement = new OBPendingIndicator($('querylayout'));
+        this.parameterPendingElement = new OBPendingIndicator($$('#askQI #querylayout')[0]);
         this.parameterPendingElement.show();
         
         sajax_do_call('smwf_qi_QIAccess', [ 'getSupportedParameters', qp ],
@@ -380,16 +380,16 @@ QIHelper.prototype = {
 	 * Called whenever preview result printer is minimized or maximized
 	 */
     switchpreview : function() {
-        if ($("previewcontent").style.display == "none") {
-            $("previewcontent").style.display = "";
-            $("previewtitle-link").removeClassName("plusminus");
-            $("previewtitle-link").addClassName("minusplus");
+        if ($$("#askQI #previewcontent")[0].style.display == "none") {
+            $$("#askQI #previewcontent")[0].style.display = "";
+            $$("#askQI #previewtitle-link")[0].removeClassName("plusminus");
+            $$("#askQI #previewtitle-link")[0].addClassName("minusplus");
             // update preview
             this.previewResultPrinter();
         } else {
-            $("previewcontent").style.display = "none";
-            $("previewtitle-link").removeClassName("minusplus");
-            $("previewtitle-link").addClassName("plusminus");
+            $$("#askQI #previewcontent")[0].style.display = "none";
+            $$("#askQI #previewtitle-link")[0].removeClassName("minusplus");
+            $$("#askQI #previewtitle-link")[0].addClassName("plusminus");
         }
     },
 
@@ -467,8 +467,8 @@ QIHelper.prototype = {
 	 * Shows a confirmation dialogue
 	 */
     resetQuery : function() {
-        $('shade').style.display = "inline";
-        $('resetdialogue').style.display = "inline";
+        $$('#askQI #shade')[0].style.display = "inline";
+        $$('#askQI #resetdialogue')[0].style.display = "inline";
     },
 
     /**
@@ -483,8 +483,8 @@ QIHelper.prototype = {
         /* ENDLOG */
         this.emptyDialogue();
         this.initialize();
-        $('shade').style.display = "none";
-        $('resetdialogue').style.display = "none";
+        $$('#askQI #shade')[0].style.display = "none";
+        $$('#askQI #resetdialogue')[0].style.display = "none";
         this.updatePreview();
     },
 
@@ -502,7 +502,7 @@ QIHelper.prototype = {
             for (var j = 0; j < activeQuery.subqueryIds.length; j++)
                 queryIds.push(activeQuery.subqueryIds[j]);
         }
-        var treeAnchor = $('treeanchor');
+        var treeAnchor = $$('#askQI #treeanchor')[0];
         if(treeAnchor)
             treeAnchor.innerHTML = treeXML;
     },
@@ -518,14 +518,14 @@ QIHelper.prototype = {
             smwhgLogger.log("Preview Query", "QI", "query_preview");
         }
         /* ENDLOG */
-        $('shade').toggle();
+        $$('#askQI #shade')[0].toggle();
         try {
             this.pendingElement.remove();
         } catch(e) {};
-        this.pendingElement = new OBPendingIndicator($('shade'));
+        this.pendingElement = new OBPendingIndicator($$('#askQI #shade')[0]);
         this.pendingElement.show();
-        $('fullpreviewbox').toggle();
-        $('fullpreview').innerHTML = '<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />';
+        $$('#askQI #fullpreviewbox')[0].toggle();
+        $$('#askQI #fullpreview')[0].innerHTML = '<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />';
         if (!this.queries[0].isEmpty()) { // only do this if the query is not
             // empty
             var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
@@ -537,8 +537,8 @@ QIHelper.prototype = {
             var reasonerAndDs = this.getReasonerAndParams();
             if (reasonerAndDs.length > 0)
                 params += reasonerAndDs.replace(/,/g, '%2C') + '|';
-            params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
-            params += 'format=' + $('layout_format').value + '|';
+            params += $$('#askQI #layout_sort')[0].value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $$('#askQI #layout_sort')[0].value + '|';
+            params += 'format=' + $$('#askQI #layout_format')[0].value + '|';
             params += this.serializeSpecialQPParameters("|");
             params += '|merge=false';
             var currentPage = null;
@@ -570,7 +570,7 @@ QIHelper.prototype = {
         try {
             this.pendingElement.remove();
         } catch(e) {};
-        this.pendingElement = new OBPendingIndicator($('previewcontent'));
+        this.pendingElement = new OBPendingIndicator($$('#askQI #previewcontent')[0]);
         this.pendingElement.show();
 
         var ask = this.getQueryFromTree();
@@ -614,8 +614,8 @@ QIHelper.prototype = {
             var reasonerAndDs = this.getReasonerAndParams();
             if (reasonerAndDs.length > 0)
                 params += reasonerAndDs.replace(/,/g, '%2C') + '|';
-            params += "format="+$('layout_format').value + '|';
-            if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
+            params += "format="+$$('#askQI #layout_format')[0].value + '|';
+            if ($$('#askQI #layout_sort')[0].value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$$('#askQI #layout_sort')[0].value + '|';
             params += this.serializeSpecialQPParameters("|");
             params += '|merge=false';
             return params;
@@ -630,7 +630,7 @@ QIHelper.prototype = {
 	 *            Request of AJAX call
 	 */
     openPreview : function(request) {
-        switch ($('layout_format').value) {
+        switch ($$('#askQI #layout_format')[0].value) {
             
             // for certain query printer it is
             // necessary to clear content of preview
@@ -639,10 +639,10 @@ QIHelper.prototype = {
             case 'ofc-bar_3d':
             case 'ofc-line':
             case 'ofc-scatterline':
-                $('previewcontent').innerHTML = '';
+                $$('#askQI #previewcontent')[0].innerHTML = '';
                 break;
         }
-        this.pastePreview(request, $('fullpreview'));
+        this.pastePreview(request, $$('#askQI #fullpreview')[0]);
     },
 
     /**
@@ -652,7 +652,7 @@ QIHelper.prototype = {
 	 *            Request of AJAX call
 	 */
     openResultPreview : function(request) {
-        this.pastePreview(request, $('previewcontent'));
+        this.pastePreview(request, $$('#askQI #previewcontent')[0]);
     },
 	
     pastePreview: function(request, preview) {
@@ -661,7 +661,7 @@ QIHelper.prototype = {
         // pre-processing
         var resultHTML;
         var resultCode;
-        switch ($('layout_format').value) {
+        switch ($$('#askQI #layout_format')[0].value) {
             
             case 'ofc-pie':
             case 'ofc-bar':
@@ -679,18 +679,18 @@ QIHelper.prototype = {
         }
         
         preview.innerHTML = resultHTML;
-        $('fullpreviewbox').width = ''; // clear fixed width if we had a timeline
+        $$('#askQI #fullpreviewbox')[0].width = ''; // clear fixed width if we had a timeline
        
         //this function is called in AddOnLoadHook in SMW_tooltip.js
         //        smw_tooltipInit();
 
         // post processing of javascript for resultprinters:
-        switch ($('layout_format').value) {
+        switch ($$('#askQI #layout_format')[0].value) {
             case "timeline":
             case "eventline":
                 this.parseWikilinks2Html();
                 smw_timeline_init();
-                $('fullpreviewbox').width = '500px';
+                $$('#askQI #fullpreviewbox')[0].width = '500px';
                 break;
             case "exhibit":
                 if (typeof createExhibit == 'function') createExhibit();
@@ -712,7 +712,7 @@ QIHelper.prototype = {
     // ofc stuff can be once at a page only. If the full preview is closed,
     // load the small preview box again
     reloadOfcPreview : function() {
-        if ($('layout_format').value.indexOf('ofc-') == 0)
+        if ($$('#askQI #layout_format')[0].value.indexOf('ofc-') == 0)
             this.updatePreview();
     },
     /**
@@ -721,9 +721,9 @@ QIHelper.prototype = {
 	 */
     parseWikilinks2Html : function() {
 		
-        if ($('layout_link') != null && $('layout_link').value == "none")
+        if ($$('#askQI #layout_link')[0] != null && $$('#askQI #layout_link')[0].value == "none")
             return;
-        var text = $('previewcontent').innerHTML;
+        var text = $$('#askQI #previewcontent')[0].innerHTML;
         var newt = '';
         var seek = '[[';
         var p = text.indexOf(seek);
@@ -750,7 +750,7 @@ QIHelper.prototype = {
             p = text.indexOf(seek);
         }
         newt += text;
-        $('previewcontent').innerHTML = newt;
+        $$('#askQI #previewcontent')[0].innerHTML = newt;
     },
 
     /**
@@ -775,19 +775,19 @@ QIHelper.prototype = {
             html += this.queries[nav[i]].getName() + '</span>';
         }
         if (action) html += ': <b>' + action + '</b>';
-        var breadcrumpDIV = $('treeviewbreadcrumbs');
+        var breadcrumpDIV = $$('#askQI #treeviewbreadcrumbs')[0];
         if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
     },
 
     updateHeightBoxcontent : function() {
         var off = 0;
-        var dim = $('treeviewbreadcrumbs').getDimensions();
+        var dim = $$('#askQI #treeviewbreadcrumbs')[0].getDimensions();
         off += dim.height + 3;
-        dim = $('qistatus').getDimensions();
+        dim = $$('#askQI #qistatus')[0].getDimensions();
         off += dim.height + 3;
-        dim = $('dialoguebuttons').getDimensions();
+        dim = $$('#askQI #dialoguebuttons')[0].getDimensions();
         off += dim.height + 3;
-        $('boxcontent').style.height = (300 - off) + 'px';
+        $$('#askQI #boxcontent')[0].style.height = (300 - off) + 'px';
     },
 
     /**
@@ -812,7 +812,7 @@ QIHelper.prototype = {
                 columns.push(tmparr[i].getName());
             }
         }
-        var layoutSort = $('layout_sort');
+        var layoutSort = $$('#askQI #layout_sort')[0];
         if(layoutSort){
           layoutSort.innerHTML = "";
           for ( var i = 0; i < columns.length; i++) {
@@ -831,10 +831,10 @@ QIHelper.prototype = {
         for ( var i = 0; i < displays.length; i++) {
             fullQuery += "| ?" + displays[i];
         }
-        fullQuery += ' | format=' + $('layout_format').value;
-        fullQuery += $('layout_sort').value == gLanguage
+        fullQuery += ' | format=' + $$('#askQI #layout_format')[0].value;
+        fullQuery += $$('#askQI #layout_sort')[0].value == gLanguage
         .getMessage('QI_ARTICLE_TITLE') ? ""
-        : (' | sort=' + $('layout_sort').value);
+        : (' | sort=' + $$('#askQI #layout_sort')[0].value);
         var qParams = this.serializeSpecialQPParameters("|");
         if (qParams.length > 0) {
             if (! qParams.match(/^\s*\|/))
@@ -843,8 +843,8 @@ QIHelper.prototype = {
         }
         qParams = this.getReasonerAndParams();
         if (qParams.length > 0) fullQuery += "| "+ qParams;
-        if ($('qiQueryName').value)
-            fullQuery += '| queryname=' + $('qiQueryName').value;
+        if ($$('#askQI #qiQueryName')[0].value)
+            fullQuery += '| queryname=' + $$('#askQI #qiQueryName')[0].value;
         fullQuery += "| merge=false|}}";
 
         return fullQuery;
@@ -852,8 +852,8 @@ QIHelper.prototype = {
 
     getAskQueryFromGui : function() {
         // which tab is active? query source or any other
-        if ($('qiDefTab3').className.indexOf('qiDefTabActive') != -1)
-            return $('fullAskText').value;
+        if ($$('#askQI #qiDefTab3')[0].className.indexOf('qiDefTabActive') != -1)
+            return $$('#askQI #fullAskText')[0].value;
         else
             return this.getFullParserAsk();
     },
@@ -862,7 +862,7 @@ QIHelper.prototype = {
         var query = this.getFullParserAsk();
         document.cookie = "NOTIFICATION_QUERY=<snq>" + query + "</snq>";
         if (query != "") {
-            var snPage = $('qi-insert-notification-btn').readAttribute(
+            var snPage = $$('#askQI #qi-insert-notification-btn')[0].readAttribute(
                 'specialpage');
             snPage = unescape(snPage);
             location.href = snPage;
@@ -873,11 +873,11 @@ QIHelper.prototype = {
 
     getReasonerAndParams : function() {
         var args = [];
-        if ( $('usetriplestore') != null && $('usetriplestore').checked )
+        if ( $$('#askQI #usetriplestore')[0] != null && $$('#askQI #usetriplestore')[0].checked )
             args.push('source=tsc');
         var selectedDataSources = [];
-        var selectorDsTpee = ($('qioptioncontent')) ? $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
-        var dataSources = $('qidatasourceselector');
+        var selectorDsTpee = ($$('#askQI #qioptioncontent')[0]) ? $$('#askQI #qioptioncontent')[0].getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
+        var dataSources = $$('#askQI #qidatasourceselector')[0];
         if (selectorDsTpee.length > 0 && selectorDsTpee[0].checked || selectorDsTpee.length == 0 && dataSources) {
             for (var i=0; i < dataSources.options.length; i++) {
                 if (dataSources.options[i].selected) {
@@ -888,21 +888,21 @@ QIHelper.prototype = {
                 selectedDataSources[0] == '-Wiki-'))
                 args.push('dataspace=' + selectedDataSources.join(','));
         }
-        if ( $('qio_showrating') != null && $('qio_showrating').checked )
+        if ( $$('#askQI #qio_showrating')[0] != null && $$('#askQI #qio_showrating')[0].checked )
             args.push('enableRating=true');
-        if ( $('qio_showmetadata') != null && $('qio_showmetadata').checked ) {
-            if ($('qio_showdatasource').checked)
+        if ( $$('#askQI #qio_showmetadata')[0] != null && $$('#askQI #qio_showmetadata')[0].checked ) {
+            if ($$('#askQI #qio_showdatasource')[0].checked)
                 args.push('metadata=(DATASOURCE_LABEL_FROM)');
-            else if ($('qio_showmetadata').value)
-                args.push('metadata=' + $('qio_showmetadata').value);
+            else if ($$('#askQI #qio_showmetadata')[0].value)
+                args.push('metadata=' + $$('#askQI #qio_showmetadata')[0].value);
             else
                 args.push('metadata=*');
         }
         if ( selectorDsTpee.length > 0 && selectorDsTpee[1].checked ) {
             var tpee = '';
-            for (var i=0; i < $('qitpeeselector').options.length; i++) {
-                if ($('qitpeeselector').options[i].selected) {
-                    tpee = $('qitpeeselector').options[i].value;
+            for (var i=0; i < $$('#askQI #qitpeeselector')[0].options.length; i++) {
+                if ($$('#askQI #qitpeeselector')[0].options[i].selected) {
+                    tpee = $$('#askQI #qitpeeselector')[0].options[i].value;
                     args.push('policyid=' + tpee);
                     break;
                 }
@@ -916,7 +916,7 @@ QIHelper.prototype = {
                     ( $('qitpeeparamval_' + tpee + '_' + pname).value || $('qitpeeparamval_' + tpee + '_' + pname).innerHTML);
                     if (pname && val) {
                         if (pname == 'PAR_USER') {
-                            val = $('qi_tsc_wikigraph').innerHTML + '/' + $('qi_tsc_userns').innerHTML + '/' + val;
+                            val = $$('#askQI #qi_tsc_wikigraph')[0].innerHTML + '/' + $$('#askQI #qi_tsc_userns')[0].innerHTML + '/' + val;
                         }
                         if (pname == 'PAR_ORDER') {
                             var vals = [];
@@ -1001,17 +1001,17 @@ QIHelper.prototype = {
     },
 
     resetDialogueContent : function(reset) {
-        $('qidelete').style.display = "none";   // New dialogue, no delete button
-        $('qistatus').innerHTML= '';            // empty status message
+        $$('#askQI #qidelete')[0].style.display = "none";   // New dialogue, no delete button
+        $$('#askQI #qistatus')[0].innerHTML= '';            // empty status message
         autoCompleter.deregisterAllInputs();
         if (reset)
             this.loadedFromId = null;
-        for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
+        for ( var i = 0, n = $$('#askQI #dialoguecontent')[0].rows.length; i < n; i++)
             // empty dialogue table
-            $('dialoguecontent').deleteRow(0);
+            $$('#askQI #dialoguecontent')[0].deleteRow(0);
         // the property dialogue has several tables
         while (1) {
-            var n = $('dialoguecontent').parentNode.nextSibling;
+            var n = $$('#askQI #dialoguecontent')[0].parentNode.nextSibling;
             if (!n) break;
             n.parentNode.removeChild(n);
         }
@@ -1033,7 +1033,7 @@ QIHelper.prototype = {
         this.activeDialogue = "category";
         this.resetDialogueContent(reset);
 
-        var newrow = $('dialoguecontent').insertRow(-1); // create the
+        var newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1); // create the
         // dialogue
         var cell = newrow.insertCell(0);
         cell.innerHTML = gLanguage.getMessage('CATEGORY');
@@ -1043,19 +1043,19 @@ QIHelper.prototype = {
         'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
-        newrow = $('dialoguecontent').insertRow(-1);
+        newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
         cell = newrow.insertCell(0);
         cell.style.textAlign="left";
         cell.setAttribute('colspan', '3');
         cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
         + gLanguage.getMessage('QI_BC_ADD_OTHER_CATEGORY') + '</a>';
-        $('dialoguebuttons').style.display = "inline";
-        var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+        $$('#askQI #dialoguebuttons')[0].style.display = "inline";
+        var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
         btn.innerHTML = 
         gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
         autoCompleter.registerAllInputs();
         if (reset)
-            $('input0').focus();
+            $$('#askQI #input0')[0].focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
@@ -1064,7 +1064,7 @@ QIHelper.prototype = {
         
     enableButton: function(inputsArray){
         if(inputsArray){
-            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
             btn.disabled = false;
             $(inputsArray).each(function(inputElement){
                 if(!inputElement.getValue()){
@@ -1090,7 +1090,7 @@ QIHelper.prototype = {
         
     getPropertyDialogInputs: function(){
         var inputs = this.getInputs();
-        if($('dialoguecontent_pvalues').visible()){
+        if($$('#askQI #dialoguecontent_pvalues')[0].visible()){
             inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));
         }
         return inputs;
@@ -1134,7 +1134,7 @@ QIHelper.prototype = {
             });
             catConstraint += '|';
         }
-        var newrow = $('dialoguecontent').insertRow(-1);
+        var newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
         var cell = newrow.insertCell(0);
         cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
         cell = newrow.insertCell(1);
@@ -1142,20 +1142,20 @@ QIHelper.prototype = {
         'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
-        newrow = $('dialoguecontent').insertRow(-1);
+        newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
         cell = newrow.insertCell(0);
         cell.style.textAlign="left";
         cell.setAttribute('colspan', '3');
         cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
         + gLanguage.getMessage('QI_BC_ADD_OTHER_INSTANCE') + '</a>';
-        $('dialoguebuttons').style.display = "inline";
-        var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+        $$('#askQI #dialoguebuttons')[0].style.display = "inline";
+        var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
         
         btn.innerHTML =
         gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
         autoCompleter.registerAllInputs();
         if (reset)
-            $('input0').focus();
+            $$('#askQI #input0')[0].focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getInputs());
         this.setListeners(this, this.getInputs());
@@ -1182,20 +1182,20 @@ QIHelper.prototype = {
 
         this.completePropertyDialogue();
        
-        $('dialoguebuttons').style.display = "inline";
-        var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+        $$('#askQI #dialoguebuttons')[0].style.display = "inline";
+        var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
         btn.innerHTML =
         gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
         this.proparity = 2;
         autoCompleter.registerAllInputs();
         if (reset)
-            $('input_p0').focus();
+            $$('#askQI #input_p0')[0].focus();
         this.updateHeightBoxcontent();
         this.enableButton(this.getPropertyDialogInputs());
         this.setListeners(this, this.getPropertyDialogInputs());
         initToolTips();
         
-        var propLabelInput = $('input_c3');
+        var propLabelInput = $$('#askQI #input_c3')[0];
         
         propLabelInput.observe('keyup', function(event){
             if(Event.element(event).getValue()){
@@ -1206,14 +1206,14 @@ QIHelper.prototype = {
             }
         });
         propLabelInput.observe('keyup', function(event){
-            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
             btn.disabled = true; 
             if(propLabelInput.getValue()){
                 btn.disabled = false; 
             }
         });
         propLabelInput.observe('change', function(event){
-            var btn = $('dialoguebuttons').getElementsByTagName('button').item(0);
+            var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
             btn.disabled = true; 
             if(propLabelInput.getValue()){
                 btn.disabled = false; 
@@ -1243,7 +1243,7 @@ QIHelper.prototype = {
         // fetch category constraints:
         var constraintsCategories = "";
         // calculate index of current field
-        var idx = $('dialoguecontent').rows.length;
+        var idx = $$('#askQI #dialoguecontent')[0].rows.length;
         if (idx > 0) idx = (idx - 1) / 2;
         
         // check if this is an element of a property chain
@@ -1257,7 +1257,7 @@ QIHelper.prototype = {
             constraintsCategories = this.getCategoryConstraints();
         }
         var constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
-        var newrow = $('dialoguecontent').insertRow(idx*2);
+        var newrow = $$('#askQI #dialoguecontent')[0].insertRow(idx*2);
         // row with input field and remove icon
         var cell = newrow.insertCell(0);
         if (idx == 0) cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
@@ -1276,7 +1276,7 @@ QIHelper.prototype = {
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
         cell.innerHTML = tmpHTML;
         // row with property type
-        newrow = $('dialoguecontent').insertRow(idx*2+1);
+        newrow = $$('#askQI #dialoguecontent')[0].insertRow(idx*2+1);
         newrow.style.lineHeight="1";
         newrow.insertCell(0);
         cell = newrow.insertCell(1);
@@ -1286,7 +1286,7 @@ QIHelper.prototype = {
         cell.innerHTML = gLanguage.getMessage('QI_PROPERTY_TYPE') + ':';
         // link to add property chain
         if (idx == 0) {
-            newrow = $('dialoguecontent').insertRow(-1);
+            newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
             cell = newrow.insertCell(0);
             cell = newrow.insertCell(1);
             cell.style.textAlign="left";
@@ -1296,13 +1296,13 @@ QIHelper.prototype = {
         else {
             // if there is a remove icon in the previous line, remove it.
             try {
-                var img = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('img');
+                var img = $$('#askQI #dialoguecontent')[0].rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('img');
                 if (img.length > 0)
                     img[0].parentNode.removeChild(img[0]);
             } catch (e) {};
             // if the previous input field has bold style, remove that
             try {
-                var input = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('input');
+                var input = $$('#askQI #dialoguecontent')[0].rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('input');
                 input[0].style.fontWeight = 'normal';
             }catch (e) {};
         }
@@ -1315,17 +1315,17 @@ QIHelper.prototype = {
 
     setPropertyRestriction : function () {
         if (this.oldPropertyRestriction == null) this.oldPropertyRestriction = -1;
-        var table = $('dialoguecontent_pradio')
+        var table = $$('#askQI #dialoguecontent_pradio')[0]
         if (!table) return;
         var radio = table.getElementsByTagName('input');
-        $('usesub_text').style.display= (radio[2].checked) ? "block" : "none";
+        $$('#askQI #usesub_text')[0].style.display= (radio[2].checked) ? "block" : "none";
         if (radio[1].checked) {
-            $('dialoguecontent_pvalues').style.display="inline";
-            if ($('dialoguecontent_pvalues').rows.length == 0)
+            $$('#askQI #dialoguecontent_pvalues')[0].style.display="inline";
+            if ($$('#askQI #dialoguecontent_pvalues')[0].rows.length == 0)
                 this.addRestrictionInput();
         }
         else {
-            $('dialoguecontent_pvalues').style.display="none";
+            $$('#askQI #dialoguecontent_pvalues')[0].style.display="none";
         }
         for (var i = 0, n = radio.length; i < n; i++) {
             if (radio[i].checked) {
@@ -1338,12 +1338,12 @@ QIHelper.prototype = {
     addRestrictionInput : function () {
         autoCompleter.deregisterAllInputs();
         var arity= (this.proparity) ? this.proparity : 2;
-        if ($('dialoguecontent_pvalues').rows.length ==  0 || arity > 2)
-            var newrow = $('dialoguecontent_pvalues').insertRow(-1);
+        if ($$('#askQI #dialoguecontent_pvalues')[0].rows.length ==  0 || arity > 2)
+            var newrow = $$('#askQI #dialoguecontent_pvalues')[0].insertRow(-1);
         else
-            var newrow = $('dialoguecontent_pvalues').insertRow($('dialoguecontent_pvalues').rows.length -1);
+            var newrow = $$('#askQI #dialoguecontent_pvalues')[0].insertRow($$('#askQI #dialoguecontent_pvalues')[0].rows.length -1);
         try {
-            var newRowIndex = $('dialoguecontent_pvalues').rows[newrow.rowIndex - 1].id;
+            var newRowIndex = $$('#askQI #dialoguecontent_pvalues')[0].rows[newrow.rowIndex - 1].id;
             newRowIndex = parseInt(newRowIndex.substr(5))+1;
         } catch (e) {
             newRowIndex = 1;
@@ -1416,21 +1416,21 @@ QIHelper.prototype = {
             } catch (e) {};
         }
         if (arity == 2) {
-            if ($('dialoguecontent_pvalues').rows.length > 1) {
+            if ($$('#askQI #dialoguecontent_pvalues')[0].rows.length > 1) {
                 cell = newrow.insertCell(-1);
                 cell.innerHTML = '<img src="'
                 + this.imgpath
                 + 'delete.png" alt="deleteInput" onclick="qihelper.removeRestrictionInput(this)"/>';
             }
             else {
-                newrow = $('dialoguecontent_pvalues').insertRow(-1);
+                newrow = $$('#askQI #dialoguecontent_pvalues')[0].insertRow(-1);
                 cell = newrow.insertCell(-1);
                 cell.setAttribute('colspan', '4');
                 cell.innerHTML = '<a href="javascript:void(0);" onclick="qihelper.addRestrictionInput()">'
                 + gLanguage.getMessage('QI_DC_ADD_OTHER_RESTRICT') + '</a>';
             }
         }
-        if ($('dialoguecontent_pvalues').style.display != 'none')
+        if ($$('#askQI #dialoguecontent_pvalues')[0].style.display != 'none')
             $('input_r' + newRowIndex).focus(); // focus created input
         autoCompleter.registerAllInputs();
                 
@@ -1448,17 +1448,17 @@ QIHelper.prototype = {
     },
 
     removePropertyChainInput : function() {
-        var idx = ($('dialoguecontent').rows.length -1) / 2 -1;
+        var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 -1;
         if (idx == 0) return;
-        $('dialoguecontent').deleteRow(idx*2+1);
-        $('dialoguecontent').deleteRow(idx*2);
+        $$('#askQI #dialoguecontent')[0].deleteRow(idx*2+1);
+        $$('#askQI #dialoguecontent')[0].deleteRow(idx*2);
         if (idx > 1) {
             var img = document.createElement('img');
             img.src=this.imgpath + "delete.png";
             img.alt="deleteInput";
             img.setAttribute('onclick', "qihelper.removePropertyChainInput()");
-            $('dialoguecontent').rows[idx *2 - 2].getElementsByTagName('td')[1].appendChild(img);
-            $('dialoguecontent').rows[idx *2 - 2].getElementsByTagName('td')[1]
+            $$('#askQI #dialoguecontent')[0].rows[idx *2 - 2].getElementsByTagName('td')[1].appendChild(img);
+            $$('#askQI #dialoguecontent')[0].rows[idx *2 - 2].getElementsByTagName('td')[1]
             .getElementsByTagName('input').item(0).style.fontWeight = "bold";
         }
         this.toggleAddchain(true);
@@ -1481,16 +1481,16 @@ QIHelper.prototype = {
         this.propTypename = null;
         this.propTypetype = null;
         this.propUnits = null;
-        var dialogContent = $('dialoguecontent');
+        var dialogContent = $$('#askQI #dialoguecontent')[0];
         if(dialogContent){
           for ( var i = 0, n = dialogContent.rows.length; i < n; i++)
               dialogContent.deleteRow(0);
           while (n = dialogContent.parentNode.nextSibling ) {
               n.parentNode.removeChild(n);
           }
-          $('dialoguebuttons').style.display = "none";
-          $('qistatus').innerHTML = "";
-          $('qidelete').style.display = "none";
+          $$('#askQI #dialoguebuttons')[0].style.display = "none";
+          $$('#askQI #qistatus')[0].innerHTML = "";
+          $$('#askQI #qidelete')[0].style.display = "none";
           this.activeInputs = 0;
         }
         this.updateBreadcrumbs(this.activeQueryId);
@@ -1502,11 +1502,11 @@ QIHelper.prototype = {
     addDialogueInput : function() {
         autoCompleter.deregisterAllInputs();
         // id for input field, increased by one from the last field
-        var inputs = $('dialoguecontent').getElementsByTagName('input');
+        var inputs = $$('#askQI #dialoguecontent')[0].getElementsByTagName('input');
         var id = inputs[inputs.length-1].id;
         id = parseInt(id.substring(5))+1;
-        var newRowId = $('dialoguecontent').rows.length - 1;
-        var newrow = $('dialoguecontent').insertRow(newRowId);
+        var newRowId = $$('#askQI #dialoguecontent')[0].rows.length - 1;
+        var newrow = $$('#askQI #dialoguecontent')[0].insertRow(newRowId);
         var cell = newrow.insertCell(0);
         cell.style.fontWeight = "bold";
         cell.innerHTML = gLanguage.getMessage('QI_OR').toUpperCase();
@@ -1554,7 +1554,7 @@ QIHelper.prototype = {
      *            Integer with the field number that has been changed
      */
     clearPropertyType : function( idx ){
-        $('dialoguecontent').rows[idx * 2 +1].cells[1].innerHTML=
+        $$('#askQI #dialoguecontent')[0].rows[idx * 2 +1].cells[1].innerHTML=
         gLanguage.getMessage('QI_PROPERTY_TYPE') + ':';
     },
     /**
@@ -1563,7 +1563,7 @@ QIHelper.prototype = {
 	 * property (if available)
 	 */
     getPropertyInformation : function() {
-        var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+        var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 - 1;
         var propname = $('input_p'+idx).value;
         if (propname != "" && propname != this.propname) { // only if not empty
             // and name changed
@@ -1574,9 +1574,9 @@ QIHelper.prototype = {
                 } catch (e) {}
             }
             // try to remove blank row that indicates that a property information is loaded
-            if ($('dialoguecontent_pvalues')) {
-                while ($('dialoguecontent_pradio').rows.length > 1)
-                    $('dialoguecontent_pradio').deleteRow(1);
+            if ($$('#askQI #dialoguecontent_pvalues')[0]) {
+                while ($$('#askQI #dialoguecontent_pradio')[0].rows.length > 1)
+                    $$('#askQI #dialoguecontent_pradio')[0].deleteRow(1);
             }
             // clean hidden table with old data and add pending indicator.
             /*
@@ -1609,16 +1609,16 @@ QIHelper.prototype = {
         if (this.activeDialogue != null) { // check if user cancelled the
             // dialogue whilst ajax call
             try {
-                var oldsubid = $('dialoguecontent_pradio').getElementsByTagName('input')[2].value;
+                var oldsubid = $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[2].value;
             } catch (e) {
                 var oldsubid = this.nextQueryId;
             }
-            if ($('dialoguecontent_pvalues')) {
-                while ($('dialoguecontent_pvalues').rows.length > 0)
-                    $('dialoguecontent_pvalues').deleteRow(0);
+            if ($$('#askQI #dialoguecontent_pvalues')[0]) {
+                while ($$('#askQI #dialoguecontent_pvalues')[0].rows.length > 0)
+                    $$('#askQI #dialoguecontent_pvalues')[0].deleteRow(0);
             }
-            if ($('dialoguecontent_pradio'))
-                $('dialoguecontent_pradio').insertRow(-1);
+            if ($$('#askQI #dialoguecontent_pradio')[0])
+                $$('#askQI #dialoguecontent_pradio')[0].insertRow(-1);
             var tmpHTML = "";
             // create standard values in case request fails
             this.proparity = 2;
@@ -1626,7 +1626,7 @@ QIHelper.prototype = {
             var parameterTypes = [];
             var possibleValues = new Array();
             var possibleUnits = new Array();
-            var propertyName= $('dialoguecontent').rows[$('dialoguecontent').rows.length -3]
+            var propertyName= $$('#askQI #dialoguecontent')[0].rows[$$('#askQI #dialoguecontent')[0].rows.length -3]
             .getElementsByTagName('input')[0].value;
 
             if (request.status == 200) {
@@ -1674,19 +1674,19 @@ QIHelper.prototype = {
             }
             // remove additional rows, if these had been added before
             // we got the information that this property is not of the type page
-            var rowCount= origRowCount = $('dialoguecontent').rows.length;
+            var rowCount= origRowCount = $$('#askQI #dialoguecontent')[0].rows.length;
             while (rowCount > 3 && propertyName.length > 0 &&
-                $('dialoguecontent').rows[rowCount -3].cells[1].firstChild.value != propertyName) {
-                $('dialoguecontent').deleteRow(rowCount-2);
-                $('dialoguecontent').deleteRow(rowCount-3);
-                rowCount= $('dialoguecontent').rows.length;
+                $$('#askQI #dialoguecontent')[0].rows[rowCount -3].cells[1].firstChild.value != propertyName) {
+                $$('#askQI #dialoguecontent')[0].deleteRow(rowCount-2);
+                $$('#askQI #dialoguecontent')[0].deleteRow(rowCount-3);
+                rowCount= $$('#askQI #dialoguecontent')[0].rows.length;
             }
             if (rowCount < origRowCount) {
                 var img = document.createElement('img');
                 img.src = this.imgpath + 'delete.png';
                 img.alt = "deleteInput"
                 img.setAttribute('onclick',"qihelper.removePropertyChainInput()");
-                $('dialoguecontent').rows[rowCount - 3].cells[1].appendChild(img);
+                $$('#askQI #dialoguecontent')[0].rows[rowCount - 3].cells[1].appendChild(img);
             }
             // property name with _ for auto completion
             var propNameAC = gLanguage.getMessage('PROPERTY_NS')+propertyName.replace(/\s/g, '_');
@@ -1710,20 +1710,20 @@ QIHelper.prototype = {
                 // set property type
                 this.propTypename = parameterNames[0];
                 this.propTypetype = parameterTypes[0];
-                $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
+                $$('#askQI #dialoguecontent')[0].rows[$$('#askQI #dialoguecontent')[0].rows.length -2].cells[1].innerHTML=
                 gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + parameterNames[0];
 
                 // add units to selection to show property checkbox if there are any
                 if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
                     for (var i = 0; i < possibleUnits[0].length; i++ ) {
-                        $('input_c4').options[i] = new Option(possibleUnits[0][i], possibleUnits[0][i]);
+                        $$('#askQI #input_c4')[0].options[i] = new Option(possibleUnits[0][i], possibleUnits[0][i]);
                     }
                     // runtime issue, check if we display hide values at once
-                    $('input_c4d').style.display = $('input_c1').checked ? null : 'none';
+                    $$('#askQI #input_c4d')[0].style.display = $$('#askQI #input_c1')[0].checked ? null : 'none';
                 }
                 else {
-                    $('input_c4').outerHTML = '<select id="input_c4"></select>';
-                    $('input_c4d').style.display = 'none';
+                    $$('#askQI #input_c4')[0].outerHTML = '<select id="input_c4"></select>';
+                    $$('#askQI #input_c4d')[0].style.display = 'none';
                 }
 				
                 // special input field for enums
@@ -1742,27 +1742,27 @@ QIHelper.prototype = {
                 
                 // if binary property, make an 'insert subquery' checkbox
                 if (parameterTypes[0] == '_wpg') {
-                    $('dialoguecontent_pradio').getElementsByTagName('input')[2].value = oldsubid;
-                    $('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = '';
+                    $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[2].value = oldsubid;
+                    $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[2].disabled = '';
                 } else { // no checkbox for other types
-                    $('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = 'true';
+                    $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[2].disabled = 'true';
                 }
             }else {
                 // properties with arity > 2: attributes or n-ary. no conjunction, no subqueries
-                $('dialoguecontent_pradio').getElementsByTagName('input')[2].disabled = 'true';
+                $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[2].disabled = 'true';
                 // set property type
-                $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
+                $$('#askQI #dialoguecontent')[0].rows[$$('#askQI #dialoguecontent')[0].rows.length -2].cells[1].innerHTML=
                 gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('TYPE_RECORD');
                 this.propTypename = gLanguage.getMessage('TYPE_RECORD');
                 this.propTypetype = '_rec';
                 this.toggleSubqueryAddchain(false);
 
-                var row = $('dialoguecontent_pvalues').insertRow(-1);
+                var row = $$('#askQI #dialoguecontent_pvalues')[0].insertRow(-1);
                 var cell = row.insertCell(-1);
                 cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
                 for ( var i = 0; i < parameterNames.length; i++) {
                     // Label of cell is parameter name (ex.: Integer, Date,...)
-                    row = $('dialoguecontent_pvalues').insertRow(-1);
+                    row = $$('#askQI #dialoguecontent_pvalues')[0].insertRow(-1);
                     cell = row.insertCell(-1);
                     cell.style.textAlign="right";
                     cell.innerHTML = parameterNames[i];
@@ -1795,12 +1795,12 @@ QIHelper.prototype = {
             }
             // set the column name if there is nothing typed in yet
             if ( !qihelper.colNameEntered ) {
-                $('input_c3').value = this.propname;
+                $$('#askQI #input_c3')[0].value = this.propname;
             }
             // runtime issue: if the user selected radio for specific value
             // and the property information is loaded after that, make the new
             // created restriction table visible
-            if ($('dialoguecontent_pradio').getElementsByTagName('input')[1].checked)
+            if ($$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input')[1].checked)
                 this.setPropertyRestriction();
         }
         autoCompleter.registerAllInputs();
@@ -1817,10 +1817,10 @@ QIHelper.prototype = {
      */
     completePropertyDialogue: function() {
         // check if the dialogue is already complete
-        if (this.activeDialogue == "property" && $('input_c1')) return;
+        if (this.activeDialogue == "property" && $$('#askQI #input_c1')[0]) return;
         // hr line
         var node = document.createElement('hr');
-        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        $$('#askQI #dialoguecontent')[0].parentNode.parentNode.appendChild(node);
         // second table with checkbox for display option and value must be set
         node = document.createElement('table');
         var row = node.insertRow(-1);
@@ -1848,18 +1848,18 @@ QIHelper.prototype = {
         + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET')
         + '</span></td><td> </td></tr></table>';
         cell.innerHTML = tmpHTML;
-        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        $$('#askQI #dialoguecontent')[0].parentNode.parentNode.appendChild(node);
         // add event handler when clicking the checkbox "show in result"
         if (this.activeQueryId == 0)
-            $('input_c1').onclick = function() {
+            $$('#askQI #input_c1')[0].onclick = function() {
                 qihelper.toggleShowProperty();
             }
         else
-            $('input_c1').disabled = "disabled";
+            $$('#askQI #input_c1')[0].disabled = "disabled";
             
         // hr line
         node = document.createElement('hr');
-        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        $$('#askQI #dialoguecontent')[0].parentNode.parentNode.appendChild(node);
 
         // property restriction table
         node = document.createElement('table');
@@ -1877,13 +1877,13 @@ QIHelper.prototype = {
         + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" />'
         + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp'
         + '<div id="usesub_text" style="display:none">' + gLanguage.getMessage('QI_SUBQUERY_TEXT') + '</div>';
-        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        $$('#askQI #dialoguecontent')[0].parentNode.parentNode.appendChild(node);
         node = document.createElement('table');
         node.style.display="none";
         node.id = "dialoguecontent_pvalues";
-        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        $$('#askQI #dialoguecontent')[0].parentNode.parentNode.appendChild(node);
         // add onclick handler for changing the value (IE won't accept onchange)
-        var radiobuttons = $('dialoguecontent_pradio').getElementsByTagName('input');
+        var radiobuttons = $$('#askQI #dialoguecontent_pradio')[0].getElementsByTagName('input');
         for (var i = 0; i < radiobuttons.length; i++)
             radiobuttons[i].onclick = function() {
                 qihelper.setPropertyRestriction();
@@ -1908,13 +1908,13 @@ QIHelper.prototype = {
     toggleSubquery : function (op) {
         if (op) {
             try {
-                $('usesub').className = "";
+                $$('#askQI #usesub')[0].className = "";
                 document.getElementsByName('input_r0')[2].disabled = "";
             } catch (e) {};
         }
         else {
             try {
-                $('usesub').className = "qiDisabled";
+                $$('#askQI #usesub')[0].className = "qiDisabled";
                 document.getElementsByName('input_r0')[2].checked = false;
                 document.getElementsByName('input_r0')[2].disabled = true;
             } catch (e) {};
@@ -1925,34 +1925,34 @@ QIHelper.prototype = {
      * toggles the add chain link
      */
     toggleAddchain : function(op) {
-        if (!$('addchain')) return;
+        if (!$$('#askQI #addchain')[0]) return;
         if (op) {
-            var msg = $('dialoguecontent').getElementsByTagName('input').length > 1
+            var msg = $$('#askQI #dialoguecontent')[0].getElementsByTagName('input').length > 1
             ? gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN')
             : gLanguage.getMessage('QI_CREATE_PROPERTY_CHAIN');
-            $('addchain').innerHTML =
+            $$('#askQI #addchain')[0].innerHTML =
             '<a href="javascript:void(0)" '
             + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_ADD_CHAIN') + '\')" '
             + 'onclick="tt_Hide(); qihelper.addPropertyChainInput()">'
             + msg + '</a>';
         }
         else {
-            $('addchain').innerHTML = '';
+            $$('#askQI #addchain')[0].innerHTML = '';
         }
     },
 
     toggleShowProperty : function() {
-        if ($('input_c1').checked) {
+        if ($$('#askQI #input_c1')[0].checked) {
             // default value for column name if not yet set at all
             if ( !('input_c3').value ) {
-                $('input_c3').value = this.propname;
+                $$('#askQI #input_c3')[0].value = this.propname;
             }
-            $('input_c3d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
-            if ($('input_c4').getElementsByTagName('option').length > 0)
-                $('input_c4d').style.display = (Prototype.Browser.IE) ? 'inline' : null;
+            $$('#askQI #input_c3d')[0].style.display = (Prototype.Browser.IE) ? 'inline' : null;
+            if ($$('#askQI #input_c4')[0].getElementsByTagName('option').length > 0)
+                $$('#askQI #input_c4d')[0].style.display = (Prototype.Browser.IE) ? 'inline' : null;
         } else {
-            $('input_c3d').style.display = 'none';
-            $('input_c4d').style.display = 'none'
+            $$('#askQI #input_c3d')[0].style.display = 'none';
+            $$('#askQI #input_c4d')[0].style.display = 'none'
         }
     },
 
@@ -1970,13 +1970,13 @@ QIHelper.prototype = {
         this.loadedFromId = id;
         var cats = this.activeQuery.getCategoryGroup(id); // get the category
         // group
-        $('input0').value = unescapeQueryHTML(cats[0]);
+        $$('#askQI #input0')[0].value = unescapeQueryHTML(cats[0]);
         for ( var i = 1; i < cats.length; i++) {
             this.addDialogueInput();
             $('input' + i).value = unescapeQueryHTML(cats[i]);
         }
         if (focus) $('input' + focus).focus();
-        $('qidelete').style.display = "inline"; // show delete button
+        $$('#askQI #qidelete')[0].style.display = "inline"; // show delete button
     },
 
     /**
@@ -1992,13 +1992,13 @@ QIHelper.prototype = {
         this.newInstanceDialogue(false);
         this.loadedFromId = id;
         var ins = this.activeQuery.getInstanceGroup(id);
-        $('input0').value = unescapeQueryHTML(ins[0]);
+        $$('#askQI #input0')[0].value = unescapeQueryHTML(ins[0]);
         for ( var i = 1; i < ins.length; i++) {
             this.addDialogueInput();
             $('input' + i).value = unescapeQueryHTML(ins[i]);
         }
         if (focus) $('input' + focus).focus();
-        $('qidelete').style.display = "inline";
+        $$('#askQI #qidelete')[0].style.display = "inline";
     },
 
     /**
@@ -2022,9 +2022,9 @@ QIHelper.prototype = {
         var propChain = unescapeQueryHTML(prop.getName()).split('.'); // fill input
         // filed with
         // name
-        $('input_p0').value=propChain[0];
+        $$('#askQI #input_p0')[0].value=propChain[0];
         for (var i = 1, n = propChain.length; i < n; i++) {
-            $('dialoguecontent').rows[i * 2 - 1].cells[1].innerHTML =
+            $$('#askQI #dialoguecontent')[0].rows[i * 2 - 1].cells[1].innerHTML =
             gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' +
             gLanguage.getMessage('QI_PAGE');
             this.addPropertyChainInput(propChain[i]);
@@ -2033,19 +2033,19 @@ QIHelper.prototype = {
         this.propname = propChain[propChain.length - 1];
         this.completePropertyDialogue();
         // check box value must be set
-        $('input_c2').checked = prop.mustBeSet();
+        $$('#askQI #input_c2')[0].checked = prop.mustBeSet();
 
         // set correct property type under last property input
-        var typeRow = $('dialoguecontent').rows.length-2;
+        var typeRow = $$('#askQI #dialoguecontent')[0].rows.length-2;
         if (this.proparity > 2) {
-            $('dialoguecontent').rows[typeRow].cells[1].innerHTML =
+            $$('#askQI #dialoguecontent')[0].rows[typeRow].cells[1].innerHTML =
             gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' +
             gLanguage.getMessage('TYPE_RECORD') ;
             this.toggleSubquery(false);
         } else {
             // get type of property, if it's a subquery then type is page
             this.propTypename = (selector >= 0) ? gLanguage.getMessage('QI_PAGE') : vals[0][0];
-            $('dialoguecontent').rows[typeRow].cells[1].innerHTML =
+            $$('#askQI #dialoguecontent')[0].rows[typeRow].cells[1].innerHTML =
             gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + this.propTypename;
             if (this.propTypename != gLanguage.getMessage('QI_PAGE'))
                 this.toggleSubquery(false);
@@ -2053,9 +2053,9 @@ QIHelper.prototype = {
                 this.toggleAddchain(true);
         }
         // set property is shown and colum name (these are empty for properties in subqueries)
-        $('input_c1').checked = prop.isShown(); // check box if appropriate
-        $('input_c3').value = prop.getColName();
-        $('input_c3d').style.display= prop.isShown()
+        $$('#askQI #input_c1')[0].checked = prop.isShown(); // check box if appropriate
+        $$('#askQI #input_c3')[0].value = prop.getColName();
+        $$('#askQI #input_c3d')[0].style.display= prop.isShown()
         ? (Prototype.Browser.IE) ? 'inline' : null : 'none';
 
         // if we have a subquery set the selector correct and we are done
@@ -2063,29 +2063,29 @@ QIHelper.prototype = {
             document.getElementsByName('input_c1').disabled = "disabled";
             document.getElementsByName('input_r0')[2].checked = true;
             document.getElementsByName('input_r0')[2].value = selector;
-            $('usesub_text').style.display="block";
+            $$('#askQI #usesub_text')[0].style.display="block";
             this.toggleAddchain(false);
         }
         else {
             if (this.activeQueryId == 0) {
                 if (prop.supportsUnits() && this.proparity == 2) {
-                    $('input_c4').value = prop.getShowUnit();
+                    $$('#askQI #input_c4')[0].value = prop.getShowUnit();
                     for (var i = 0; i < this.propUnits[0].length; i++) {
-                        $('input_c4').options[i]= 
+                        $$('#askQI #input_c4')[0].options[i]=
                         new Option(this.propUnits[0][i],this.propUnits[0][i]);
                         if (prop.getShowUnit() == this.propUnits[0][i])
-                            $('input_c4').options[i].selected = "selected";
+                            $$('#askQI #input_c4')[0].options[i].selected = "selected";
                     }
-                    $('input_c4d').style.display= prop.isShown()
+                    $$('#askQI #input_c4d')[0].style.display= prop.isShown()
                     ? Prototype.Browser.IE ? 'inline' : null : 'none';
                 }
             } else {
-                $('input_c1').disabled = "disabled";
+                $$('#askQI #input_c1')[0].disabled = "disabled";
             }
             // if the selector is set to "restict value" then make the restictions visible
             if (selector == -2) {
                 document.getElementsByName('input_r0')[1].checked = true;
-                $('dialoguecontent_pvalues').style.display = "inline";
+                $$('#askQI #dialoguecontent_pvalues')[0].style.display = "inline";
             }
             // load enumeration values
             if (prop.isEnumeration()) {
@@ -2096,7 +2096,7 @@ QIHelper.prototype = {
             var rowOffset = 0;
             // if arity > 2 then add the first row under the radio buttons without input field
             if (this.proparity > 2) {
-                var newrow = $('dialoguecontent_pvalues').insertRow(-1);
+                var newrow = $$('#askQI #dialoguecontent_pvalues')[0].insertRow(-1);
                 var cell = newrow.insertCell(-1);
                 cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
                 rowOffset++;
@@ -2116,7 +2116,7 @@ QIHelper.prototype = {
                     this.propTypetype = '_dat';
                 }
                 this.addRestrictionInput();
-                $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML =
+                $$('#askQI #dialoguecontent_pvalues')[0].rows[currRow].cells[1].innerHTML =
                 this.createRestrictionSelector(vals[i][1], false, numType);
                 // deactivate autocompletion
                 if (!acChange)
@@ -2127,7 +2127,7 @@ QIHelper.prototype = {
                 try {
                     var propUnits = prop.getUnits();
                     var uIdx = (this.proparity == 2) ? 0 : i;
-                    var oSelect = $('dialoguecontent_pvalues').rows[currRow].cells[2]
+                    var oSelect = $$('#askQI #dialoguecontent_pvalues')[0].rows[currRow].cells[2]
                     .firstChild.nextSibling;
                     for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
                         oSelect.options[k] = new Option(propUnits[uIdx][k], propUnits[uIdx][k]);
@@ -2136,21 +2136,21 @@ QIHelper.prototype = {
                     }
                 } catch(e) {};
                 if (this.proparity > 2) {
-                    $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
-                    $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
+                    $$('#askQI #dialoguecontent_pvalues')[0].rows[currRow].cells[0].innerHTML= vals[i][0];
+                    $$('#askQI #dialoguecontent_pvalues')[0].rows[currRow].cells[0].style.fontWeight="normal";
                 }
                 if (vals[i][2] != '*') // if a real value is set and not the placeholder for no value.
                     $('input_r'+(i+1)).value = vals[i][2].unescapeHTML();
             }
             if (acChange) autoCompleter.registerAllInputs();
         }
-        $('qidelete').style.display = "inline";
+        $$('#askQI #qidelete')[0].style.display = "inline";
 		
         if (!prop.isEnumeration()) this.restoreAutocompletionConstraints();
     },
 	
     restoreAutocompletionConstraints : function() {
-        var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+        var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 - 1;
         var propname = $('input_p'+idx).value;
         if (propname != "" && propname != this.propname) { // only if not empty
             // and name changed
@@ -2192,7 +2192,7 @@ QIHelper.prototype = {
                 
             // Special treatment: binary properties support conjunction,
             // therefore we need an "add" button
-            var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+            var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 - 1;
             var propertyName = $('input_p'+idx).value;
             propertyName = gLanguage.getMessage('PROPERTY_NS')+propertyName.replace(/\s/g, '_');
             this.propRange[propertyName.toLowerCase()]= ranges.join(',');
@@ -2302,7 +2302,7 @@ QIHelper.prototype = {
 
     selectNode : function(el, label) {
         // remove any other highlighed nodes
-        var treeAnchor = $('treeanchor');
+        var treeAnchor = $$('#askQI #treeanchor')[0];
         if(treeAnchor){
             var cells = treeAnchor.getElementsByTagName('td');
             for (i = 0; i < cells.length; i++) {
@@ -2421,7 +2421,7 @@ QIHelper.prototype = {
         var tmp = Array();
         var allinputs = true; // checks if all inputs are set for error
         // message
-        var inputs = $('dialoguecontent').getElementsByTagName('input');
+        var inputs = $$('#askQI #dialoguecontent')[0].getElementsByTagName('input');
         for ( var i = 0; i < inputs.length; i++) {
             if (inputs[i].id && inputs[i].id.match(/^input\d+$/))
                 tmp.push(escapeQueryHTML(inputs[i].value));
@@ -2429,7 +2429,7 @@ QIHelper.prototype = {
                 allinputs = false;
         }
         if (!allinputs) { // show error
-            $('qistatus').innerHTML = (this.activeDialogue == "category")
+            $$('#askQI #qistatus')[0].innerHTML = (this.activeDialogue == "category")
             ? gLanguage.getMessage('QI_ENTER_CATEGORY')
             : gLanguage.getMessage('QI_ENTER_INSTANCE');
             this.updateHeightBoxcontent();
@@ -2447,12 +2447,12 @@ QIHelper.prototype = {
             if (this.activeDialogue == "category") {
                 this.activeQuery.addCategoryGroup(tmp, this.loadedFromId);
                 this.emptyDialogue();
-                $('qistatus').innerHTML = gLanguage.getMessage('QI_CAT_ADDED_SUCCESSFUL');
+                $$('#askQI #qistatus')[0].innerHTML = gLanguage.getMessage('QI_CAT_ADDED_SUCCESSFUL');
             }
             else {
                 this.activeQuery.addInstanceGroup(tmp, this.loadedFromId);
                 this.emptyDialogue();
-                $('qistatus').innerHTML = gLanguage.getMessage('QI_INST_ADDED_SUCCESSFUL');
+                $$('#askQI #qistatus')[0].innerHTML = gLanguage.getMessage('QI_INST_ADDED_SUCCESSFUL');
             }
                         			
         }
@@ -2464,37 +2464,37 @@ QIHelper.prototype = {
     addPropertyGroup : function(updateGui) {
         // check if user clicked on add, while prop information is not yet loaded.
         this.propertyAddClicked = true;
-        var typeRow = ($('dialoguecontent').rows.length -2);
-        if ($('dialoguecontent').rows[typeRow].cells[1].innerHTML == gLanguage.getMessage('QI_PROPERTY_TYPE') + ':') return
+        var typeRow = ($$('#askQI #dialoguecontent')[0].rows.length -2);
+        if ($$('#askQI #dialoguecontent')[0].rows[typeRow].cells[1].innerHTML == gLanguage.getMessage('QI_PROPERTY_TYPE') + ':') return
         this.propertyAddClicked = false;
 
         var pname='';
-        var propInputFields = $('dialoguecontent').getElementsByTagName('input');
+        var propInputFields = $$('#askQI #dialoguecontent')[0].getElementsByTagName('input');
         for (var i = 0, n = propInputFields.length; i < n; i++) {
             pname += propInputFields[i].value + '.';
         }
         pname = pname.replace(/\.$/,'');
         var subqueryIds = Array();
         if (pname == "") { // no name entered?
-            $('qistatus').innerHTML = gLanguage
+            $$('#askQI #qistatus')[0].innerHTML = gLanguage
             .getMessage('QI_ENTER_PROPERTY_NAME');
             this.updateHeightBoxcontent();
         } else {
-            var pshow = $('input_c1').checked; // show in results?
+            var pshow = $$('#askQI #input_c1')[0].checked; // show in results?
             // when show in results is checked, add label and unit if they exist
-            var colName = (pshow) ? $('input_c3').value : null;
-            var showUnit = (pshow) ? $('input_c4').value : null;
-            var pmust = $('input_c2').checked; // value must be set?
+            var colName = (pshow) ? $$('#askQI #input_c3')[0].value : null;
+            var showUnit = (pshow) ? $$('#askQI #input_c4')[0].value : null;
+            var pmust = $$('#askQI #input_c2')[0].checked; // value must be set?
             var arity = this.proparity;
             var selector = this.getPropertyValueSelector();
             // create propertyGroup
             var pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
                 pshow, pmust, this.propIsEnum, this.enumValues, selector, showUnit, colName);
             pgroup.setUnits(this.propUnits);
-            var allValueRows = $('dialoguecontent_pvalues').rows.length;
+            var allValueRows = $$('#askQI #dialoguecontent_pvalues')[0].rows.length;
             // there is no value restriction
             if (selector != -2) {
-                var paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
+                var paramname = $$('#askQI #dialoguecontent')[0].rows[$$('#askQI #dialoguecontent')[0].rows.length -2].cells[1].innerHTML;
                 paramname = paramname.replace(gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ', '');
                 // no subquery, so add a dumy value
                 if (selector == -1) {
@@ -2502,7 +2502,7 @@ QIHelper.prototype = {
                         pgroup.addValue(paramname, '=', '*');
                     else {
                         for (s = 1; s < arity; s++) {
-                            pgroup.addValue($('dialoguecontent_pvalues').rows[s].cells[0].innerHTML, '=', '*');
+                            pgroup.addValue($$('#askQI #dialoguecontent_pvalues')[0].rows[s].cells[0].innerHTML, '=', '*');
                         }
                     }
                 }
@@ -2538,7 +2538,7 @@ QIHelper.prototype = {
                     // input4 = 4, input6 = 5
                     try {
                         // works on normal input fiels as well as on selection lists
-                        var paramvalue = $('dialoguecontent_pvalues').rows[i].cells[2].firstChild.value;
+                        var paramvalue = $$('#askQI #dialoguecontent_pvalues')[0].rows[i].cells[2].firstChild.value;
                     } catch (e) {
                         continue;
                     }
@@ -2546,16 +2546,16 @@ QIHelper.prototype = {
                     paramvalue = paramvalue == "" ? "*" : paramvalue;
                     var paramname;
                     if (arity == 2) {
-                        paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
+                        paramname = $$('#askQI #dialoguecontent')[0].rows[$$('#askQI #dialoguecontent')[0].rows.length -2].cells[1].innerHTML;
                         paramname = paramname.replace(gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ', '');
                     }
                     else {
-                        paramname = $('dialoguecontent_pvalues').rows[i].cells[0].innerHTML;
+                        paramname = $$('#askQI #dialoguecontent_pvalues')[0].rows[i].cells[0].innerHTML;
                     }
-                    var restriction = $('dialoguecontent_pvalues').rows[i].cells[1].firstChild.value;
+                    var restriction = $$('#askQI #dialoguecontent_pvalues')[0].rows[i].cells[1].firstChild.value;
                     var unit = null;
                     try {
-                        unit = $('dialoguecontent_pvalues').rows[i].cells[2].firstChild.nextSibling.value;
+                        unit = $$('#askQI #dialoguecontent_pvalues')[0].rows[i].cells[2].firstChild.nextSibling.value;
                     } catch (e) {};
                     // add a value group to the property group
                     pgroup.addValue(paramname, restriction, escapeQueryHTML(paramvalue), unit);
@@ -2571,7 +2571,7 @@ QIHelper.prototype = {
                 this.loadedFromId); // add the property group to the query
             this.emptyDialogue();
             this.updateColumnPreview();
-            $('qistatus').innerHTML = gLanguage.getMessage('QI_PROP_ADDED_SUCCESSFUL')
+            $$('#askQI #qistatus')[0].innerHTML = gLanguage.getMessage('QI_PROP_ADDED_SUCCESSFUL')
             // if the property contains a subquery, set the active query now to this subquery
             if (selector > 0) this.setActiveQuery(selector);
         }
@@ -2591,26 +2591,26 @@ QIHelper.prototype = {
             // user selected the source tab, convert query to source code
             if (id == 3) {
                 this.showFullAsk('parser', false);
-                $('query4DiscardChanges').innerHTML = escapeQueryHTML($('fullAskText').value);
+                $$('#askQI #query4DiscardChanges')[0].innerHTML = escapeQueryHTML($$('#askQI #fullAskText')[0].value);
             }
             // user selected the tree tab, load the query from source
             else {
                 this.loadFromSource();
-                $('query4DiscardChanges').innerHTML = "";
+                $$('#askQI #query4DiscardChanges')[0].innerHTML = "";
             }
         }
         for (var i = 0; i < divcontainer.length; i++) {
             if (divcontainer[i].length == 0) 
               continue;
-            var qiDefTab = $('qiDefTab' + (i+1));
+            var qiDefTab = $$('#askQI #qiDefTab' + (i+1))[0];
             if(qiDefTab){
               if (id == i+1){
                   qiDefTab.className='qiDefTabActive';
-                  $(divcontainer[i]).style.display='inline';
+                  $$('#askQI #' + divcontainer[i])[0].style.display='inline';
               }
               else {
                   qiDefTab.className='qiDefTabInactive';
-                  $(divcontainer[i]).style.display='none';
+                  $$('#askQI #' +divcontainer[i])[0].style.display='none';
               }
            }
         }
@@ -2618,15 +2618,15 @@ QIHelper.prototype = {
 
     switchMainTab : function(noreset) {
         // change the tabs and visibility and copy the query tree at the correct position
-        if ($('qiMainTab1').className == 'qiDefTabActive') {
-            $('qiMainTab1').className = 'qiDefTabInactive';
-            $('qiMainTab2').className = 'qiDefTabActive';
-            $('qiMaintabQueryCont').style.display = 'none';
-            $('qiMaintabLoadCont').style.display = '';
-            var treeContent = $('qiDefTab').innerHTML;
-            $('qiDefTab').innerHTML = '';
-            $('qiDefTabInLoad').innerHTML = treeContent;
-            $('qisourceButtons').style.display = 'none';
+        if ($$('#askQI #qiMainTab1')[0].className == 'qiDefTabActive') {
+            $$('#askQI #qiMainTab1')[0].className = 'qiDefTabInactive';
+            $$('#askQI #qiMainTab2')[0].className = 'qiDefTabActive';
+            $$('#askQI #qiMaintabQueryCont')[0].style.display = 'none';
+            $$('#askQI #qiMaintabLoadCont')[0].style.display = '';
+            var treeContent = $$('#askQI #qiDefTab')[0].innerHTML;
+            $$('#askQI #qiDefTab')[0].innerHTML = '';
+            $$('#askQI #qiDefTabInLoad')[0].innerHTML = treeContent;
+            $$('#askQI #qisourceButtons')[0].style.display = 'none';
             // save original query
             if (!this.queries[0].isEmpty())
                 QIHelperSavedQuery = this.getFullParserAsk();
@@ -2634,17 +2634,17 @@ QIHelper.prototype = {
             // query and tree but keep the results
             if (this.queryList)
                 this.queryList.selectRow();
-            $('qiLoadConditionTerm').focus();
+            $$('#askQI #qiLoadConditionTerm')[0].focus();
         }
         else {
-            $('qiMainTab2').className = 'qiDefTabInactive';
-            $('qiMainTab1').className = 'qiDefTabActive';
-            $('qiMaintabQueryCont').style.display = '';
-            $('qiMaintabLoadCont').style.display = 'none';
-            var treeContent = $('qiDefTabInLoad').innerHTML;
-            $('qiDefTabInLoad').innerHTML = '';
-            $('qiDefTab').innerHTML = treeContent;
-            $('qisourceButtons').style.display = '';
+            $$('#askQI #qiMainTab2')[0].className = 'qiDefTabInactive';
+            $$('#askQI #qiMainTab1')[0].className = 'qiDefTabActive';
+            $$('#askQI #qiMaintabQueryCont')[0].style.display = '';
+            $$('#askQI #qiMaintabLoadCont')[0].style.display = 'none';
+            var treeContent = $$('#askQI #qiDefTabInLoad')[0].innerHTML;
+            $$('#askQI #qiDefTabInLoad')[0].innerHTML = '';
+            $$('#askQI #qiDefTab')[0].innerHTML = treeContent;
+            $$('#askQI #qisourceButtons')[0].style.display = '';
             if (QIHelperSavedQuery)
                 this.initFromQueryString(QIHelperSavedQuery);
             else if (! noreset)
@@ -2660,7 +2660,7 @@ QIHelper.prototype = {
     resetSearch : function() {
         this.queryList = new QIList();
         this.queryList.reset();
-        $('qiLoadConditionTerm').focus();
+        $$('#askQI #qiLoadConditionTerm')[0].focus();
     },
 
     loadSelectedQuery : function() {
@@ -2671,8 +2671,8 @@ QIHelper.prototype = {
 
     updateSearchAc : function() {
         var constraint,
-        oldConstr = $('qiLoadConditionTerm').getAttribute("constraints");
-        switch ($('qiLoadCondition').value) {
+        oldConstr = $$('#askQI #qiLoadConditionTerm')[0].getAttribute("constraints");
+        switch ($$('#askQI #qiLoadCondition')[0].value) {
             case 'p':
             case 's':
                 constraint = 'namespace: 102';
@@ -2690,19 +2690,19 @@ QIHelper.prototype = {
         if (constraint != oldConstr) {
             autoCompleter.deregisterAllInputs();
             if (constraint) {
-                $('qiLoadConditionTerm').setAttribute("constraints", constraint);
-                $('qiLoadConditionTerm').addClassName('wickEnabled');
+                $$('#askQI #qiLoadConditionTerm')[0].setAttribute("constraints", constraint);
+                $$('#askQI #qiLoadConditionTerm')[0].addClassName('wickEnabled');
             }
             else {
-                $('qiLoadConditionTerm').removeAttribute("constraints");
-                $('qiLoadConditionTerm').removeClassName('wickEnabled');
+                $$('#askQI #qiLoadConditionTerm')[0].removeAttribute("constraints");
+                $$('#askQI #qiLoadConditionTerm')[0].removeClassName('wickEnabled');
             }
             autoCompleter.registerAllInputs();
         }
     },
 
     discardChangesOfSource : function() {
-        $('fullAskText').value =   $('query4DiscardChanges').innerHTML.unescapeHTML();
+        $$('#askQI #fullAskText')[0].value =   $$('#askQI #query4DiscardChanges')[0].innerHTML.unescapeHTML();
         this.sourceChanged=1;
         this.loadFromSource(true);
     },
@@ -2715,8 +2715,8 @@ QIHelper.prototype = {
 
         if (this.queries[0].isEmpty()) {
             alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
-        } else if (($('layout_format').value == "template")
-            && ($('template_name').value == "")) {
+        } else if (($$('#askQI #layout_format')[0].value == "template")
+            && ($$('#askQI #template_name')[0].value == "")) {
             alert(gLanguage.getMessage('QI_EMPTY_TEMPLATE'));
         } else {
             /* STARTLOG */
@@ -2775,16 +2775,16 @@ QIHelper.prototype = {
 	 */
     showFullAsk : function(type, toggle) {
         if (toggle) {
-            $('shade').toggle();
-            $('showAsk').toggle();
+            $$('#askQI #shade')[0].toggle();
+            $$('#askQI #showAsk')[0].toggle();
         }
         if (this.queries[0].isEmpty()) {
             //if (!this.isExcelBridge)
-            $('fullAskText').value = '';
+            $$('#askQI #fullAskText')[0].value = '';
             return;
-        } else if (($('layout_format').value == "template")
-            && ($('template_name').value == "")) {
-            $('fullAskText').value = '';
+        } else if (($$('#askQI #layout_format')[0].value == "template")
+            && ($$('#askQI #template_name')[0].value == "")) {
+            $$('#askQI #fullAskText')[0].value = '';
             alert(gLanguage.getMessage('QI_EMPTY_TEMPLATE'));
             return;
         }
@@ -2794,7 +2794,7 @@ QIHelper.prototype = {
         ask = ask.replace(/\]\]</g, "]]\n<");
         if (type == "parser")
             ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
-        $('fullAskText').value = ask;
+        $$('#askQI #fullAskText')[0].value = ask;
         this.queryFormated = true;
     },
 
@@ -2818,17 +2818,17 @@ QIHelper.prototype = {
     },
 
     showSaveDialogue : function() {
-        $('shade').toggle();
-        $('savedialogue').toggle();
+        $$('#askQI #shade')[0].toggle();
+        $$('#askQI #savedialogue')[0].toggle();
     },
 
     doSave : function() {
         if (!this.queries[0].isEmpty()) {
             if (this.pendingElement)
                 this.pendingElement.remove();
-            this.pendingElement = new OBPendingIndicator($('savedialogue'));
+            this.pendingElement = new OBPendingIndicator($$('#askQI #savedialogue')[0]);
             this.pendingElement.show();
-            var params = $('saveName').value + ",";
+            var params = $$('#askQI #saveName')[0].value + ",";
             params += this.getFullParserAsk();
             sajax_do_call('smwf_qi_QIAccess', [ "saveQuery", params ],
                 this.saveDone.bind(this));
@@ -2843,21 +2843,21 @@ QIHelper.prototype = {
         this.pendingElement.hide();
         if (request.responseText == "empty") {
             alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
-            $('shade').toggle();
-            $('savedialogue').toggle();
-            $('saveName').value = "";
+            $$('#askQI #shade')[0].toggle();
+            $$('#askQI #savedialogue')[0].toggle();
+            $$('#askQI #saveName')[0].value = "";
         } else if (request.responseText == "exists") {
             alert(gLanguage.getMessage('QI_QUERY_EXISTS'));
-            $('saveName').value = "";
+            $$('#askQI #saveName')[0].value = "";
         } else if (request.responseText == "true") {
             alert(gLanguage.getMessage('QI_QUERY_SAVED'));
-            $('shade').toggle();
-            $('savedialogue').toggle();
-            $('saveName').value = "";
+            $$('#askQI #shade')[0].toggle();
+            $$('#askQI #savedialogue')[0].toggle();
+            $$('#askQI #saveName')[0].value = "";
         } else { // Unknown error
             alert(gLanguage.getMessage('QI_SAVE_ERROR'));
-            $('shade').toggle();
-            $('savedialogue').toggle();
+            $$('#askQI #shade')[0].toggle();
+            $$('#askQI #savedialogue')[0].toggle();
         }
     },
 
@@ -2865,9 +2865,9 @@ QIHelper.prototype = {
         if (!this.queries[0].isEmpty()) {
             var ask = this.recurseQuery(0);
             var params = ask + ",";
-            params += $('layout_format').value + ',';
-            params += $('layout_sort').value == "" ? ","
-            : $('layout_sort').value + ',';
+            params += $$('#askQI #layout_format')[0].value + ',';
+            params += $$('#askQI #layout_sort')[0].value == "" ? ","
+            : $$('#askQI #layout_sort')[0].value + ',';
             params += this.serializeSpecialQPParameters(",");
             sajax_do_call('smwf_qi_QIAccess', [ "getQueryResultForDownload",
                 params ], this.initializeDownload.bind(this));
@@ -2895,7 +2895,7 @@ QIHelper.prototype = {
     checkFormat : function() {
 		
         // update result preview
-        this.getSpecialQPParameters($('layout_format').value);
+        this.getSpecialQPParameters($$('#askQI #layout_format')[0].value);
         this.updateSrcAndPreview();
     },
     
@@ -2904,12 +2904,12 @@ QIHelper.prototype = {
      */
     loadFromSource : function(noTabSwitch) {
         this.noTabSwitch = noTabSwitch;
-        if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1 &&
-            $('fullAskText').value.length > 0 &&
+        if ($$('#askQI #qiDefTab3')[0].className.indexOf('qiDefTabActive') > -1 &&
+            $$('#askQI #fullAskText')[0].value.length > 0 &&
             this.sourceChanged)
-            this.initFromQueryString($('fullAskText').value);
-        if ($('fullAskText').value.length == 0)
-            $('previewcontent').innerHTML = "";
+            this.initFromQueryString($$('#askQI #fullAskText')[0].value);
+        if ($$('#askQI #fullAskText')[0].value.length == 0)
+            $$('#askQI #previewcontent')[0].innerHTML = "";
     },
 
     initFromQueryString : function(ask) {
@@ -2926,7 +2926,7 @@ QIHelper.prototype = {
                 alert (gLanguage.getMessage('QI_SPARQL_NOT_SUPPORTED'));
                 return;
             }
-            var triplestoreSwitch = $('usetriplestore');
+            var triplestoreSwitch = $$('#askQI #usetriplestore')[0];
             if (triplestoreSwitch) triplestoreSwitch.checked = true;
         }
 
@@ -3366,14 +3366,14 @@ QIHelper.prototype = {
         var options = query.split('|');
         // parameters to show
         var mustShow = [];
-        $('qiQueryName').value = ''; // reset query name
+        $$('#askQI #qiQueryName')[0].value = ''; // reset query name
         var format = "table"; // default format
         var tpeeParamsObj = new Object(); // empty policy params
         var tpeePolicyId = ''; // empty name of TPEE
         var useTscSwitch = false;
         // selector of TPEE or DS
-        var selectorDsTpee = ( $('qioptioncontent') )
-        ? $('qioptioncontent').getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
+        var selectorDsTpee = ( $$('#askQI #qioptioncontent')[0] )
+        ? $$('#askQI #qioptioncontent')[0].getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
         for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?/)
@@ -3403,24 +3403,24 @@ QIHelper.prototype = {
                 else if (key=="sort")
                     this.sortColumn = val;
                 else if (key=='queryname')
-                    $('qiQueryName').value = val;
-                else if ( key == "enableRating" && $('qio_showrating') )
-                    $('qio_showrating').checked = "checked";
-                else if ( key == "metadata" && $('qio_showmetadata') ) {
-                    $('qio_showmetadata').checked = "checked";
-                    $('qio_showmetadata').value = val;
+                    $$('#askQI #qiQueryName')[0].value = val;
+                else if ( key == "enableRating" && $$('#askQI #qio_showrating')[0] )
+                    $$('#askQI #qio_showrating')[0].checked = "checked";
+                else if ( key == "metadata" && $$('#askQI #qio_showmetadata')[0] ) {
+                    $$('#askQI #qio_showmetadata')[0].checked = "checked";
+                    $$('#askQI #qio_showmetadata')[0].value = val;
                 }
                 else if ( key == 'source' ) {
                     useTscSwitch = ( val == 'tsc' ) ? true : false;
                 }
-                else if (key == "dataspace" && $('qidatasourceselector') ) {
+                else if (key == "dataspace" && $$('#askQI #qidatasourceselector')[0] ) {
                     useTscSwitch = true;
                     var dsVals = val.split(',');
-                    for (var s= 0; s < $('qidatasourceselector').length; s++ ) {
-                        $('qidatasourceselector').options[s].selected = null;
+                    for (var s= 0; s < $$('#askQI #qidatasourceselector')[0].length; s++ ) {
+                        $$('#askQI #qidatasourceselector')[0].options[s].selected = null;
                         for (var t= 0; t < dsVals.length; t++) {
-                            if (dsVals[t].replace(/^\s*(.*?)\s*$/, '$1') == $('qidatasourceselector').options[s].value )
-                                $('qidatasourceselector').options[s].selected = "selected";
+                            if (dsVals[t].replace(/^\s*(.*?)\s*$/, '$1') == $$('#askQI #qidatasourceselector')[0].options[s].value )
+                                $$('#askQI #qidatasourceselector')[0].options[s].selected = "selected";
                         }
                     }
                 }
@@ -3429,14 +3429,14 @@ QIHelper.prototype = {
                     useTscSwitch = true;
                     tpeePolicyId = val;
                     this.selectDsTpee(this.TPEE_SELECTED, true);
-                    for (var s= 0; s < $('qitpeeselector').options.length; s++ ) {
-                        if ( val == $('qitpeeselector').options[s].value ) {
-                            $('qitpeeselector').options[s].selected = "selected";
+                    for (var s= 0; s < $$('#askQI #qitpeeselector')[0].options.length; s++ ) {
+                        if ( val == $$('#askQI #qitpeeselector')[0].options[s].value ) {
+                            $$('#askQI #qitpeeselector')[0].options[s].selected = "selected";
                             $('qitpeeparams_'+val).style.display = 'inline';
                         }
                         else {
-                            var divId = 'qitpeeparams_'+$('qitpeeselector').options[s].value;
-                            $('qitpeeselector').options[s].selected = null;
+                            var divId = 'qitpeeparams_'+$$('#askQI #qitpeeselector')[0].options[s].value;
+                            $$('#askQI #qitpeeselector')[0].options[s].selected = null;
                             $(divId).style.display = 'none';
                         }
                     }
@@ -3454,8 +3454,8 @@ QIHelper.prototype = {
             for ( var parname in tpeeParamsObj ) {
                 // PAR_USER -> remove the graph URI from the user name
                 if ( parname == 'PAR_USER' ) {
-                    var wikigraph = $('qi_tsc_wikigraph').innerHTML || '';
-                    var userns = $('qi_tsc_userns').innerHTML || '';
+                    var wikigraph = $$('#askQI #qi_tsc_wikigraph')[0].innerHTML || '';
+                    var userns = $$('#askQI #qi_tsc_userns')[0].innerHTML || '';
                     tpeeParamsObj[parname] = tpeeParamsObj[parname].replace(wikigraph + '/' + userns + '/', '');
                 }
                 else if ( parname == 'PAR_ORDER') {
@@ -3492,8 +3492,8 @@ QIHelper.prototype = {
                     $('qitpeeparamval_' + tpeePolicyId + '_' + parname).value = tpeeParamsObj[parname];
             }
         }
-        if ( $('usetriplestore') )
-            $('usetriplestore').checked= (useTscSwitch) ? "checked" : null;
+        if ( $$('#askQI #usetriplestore')[0] )
+            $$('#askQI #usetriplestore')[0].checked= (useTscSwitch) ? "checked" : null;
 
         // The following callback is called after the query printer parameters were displayed.
         var callback = function() {
@@ -3510,7 +3510,7 @@ QIHelper.prototype = {
                     var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
                     if (key == 'format') {
                         // special handling for format
-                        var layout_format = $('layout_format');
+                        var layout_format = $$('#askQI #layout_format')[0];
                         layout_format.value = val;
                         qpChanged = true;
                     } else {
