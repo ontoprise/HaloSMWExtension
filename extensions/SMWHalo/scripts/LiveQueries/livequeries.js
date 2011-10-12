@@ -17,13 +17,11 @@ var LiveQuery = {
     }
 };
 
-addOnloadHook( lq_init );
-
-function lq_init(){
+addOnloadHook( function lq_init(){
 	jQuery('.lq-container').each(function(){
 		LiveQuery.helper.getResultPrinter(
 			jQuery(this).attr('id'),
 			jQuery('.lq-query', this).html(),
 			jQuery(this).attr('lq-frequency'));
 	});
-}
+});

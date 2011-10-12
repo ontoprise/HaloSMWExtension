@@ -77,8 +77,7 @@ class SMWLiveQueryPrinter extends SMWResultPrinter {
 		$html .= '</span>';
 		$html .= '</div>';
 		
-		global $wgOut;
-		$wgOut->addModules( array('ext.smwhalo.livequeries' ));
+		SMWOutputs::requireResource('ext.smwhalo.livequeries');
 		
 		 return $html;
 	}
