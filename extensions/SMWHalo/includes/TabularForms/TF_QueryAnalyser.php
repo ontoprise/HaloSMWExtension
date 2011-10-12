@@ -169,12 +169,12 @@ class TFQueryAnalyser {
 	private static function getPropertyDescriptionData(SMWDescription $desc){
 		
 		$subDesc = $desc->getDescription();
-		$propertyChain = $desc->getProperty()->getWikiValue();
+		$propertyChain = $desc->getProperty()->getLabel();
 		$propertyName = 'loop ...';
 		$isQueryChain = false;
 			
 		while ( ( $propertyName != '' ) && ( $subDesc instanceof SMWSomeProperty ) ) {
-			$propertyName = $subDesc->getProperty()->getWikiValue();
+			$propertyName = $subDesc->getProperty()->getLabel();
 			if ( $propertyName != '' ) {
 				$isQueryChain = true;
 				$propertyChain .= '.' . $propertyName;
@@ -183,7 +183,7 @@ class TFQueryAnalyser {
 		}
 		
 		if($subDesc instanceof SMWValueDescription){
-			$value = $subDesc->getDataValue()->getWikiValue();
+			$value = $subDesc->getDataValue()->getSortKey();
 			$comparator = $subDesc->getComparator();	
 		} else if($subDesc instanceof SMWThingDescription){ // if exists condition
 			$value = '';
