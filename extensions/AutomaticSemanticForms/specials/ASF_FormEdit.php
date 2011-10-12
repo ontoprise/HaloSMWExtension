@@ -17,6 +17,7 @@ function execute($query, $redirectOnError = true) {
 		//get get parameters
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
+		
 		$targetName = $wgRequest->getVal('target');
 		
 		if(!$categoryParam && !$targetName){
@@ -29,7 +30,10 @@ function execute($query, $redirectOnError = true) {
 			}
 		}
 		
-		$categoryParam = str_replace('--asf-slash-slash--', '/', $categoryParam);
+		if(!is_null($categoryParam)){
+			$categoryParam = str_replace('--asf-slash-slash--', '/', $categoryParam);
+		}
+		
 		$targetName = str_replace('--asf-slash-slash--', '/', $targetName);
 		
 		$formName = $wgRequest->getVal('form');
