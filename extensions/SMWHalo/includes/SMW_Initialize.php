@@ -401,6 +401,7 @@ function smwgHaloSetupExtension() {
 			array(
 				'scripts' => array('scripts/TabularForms/tabularforms.js'),
 				'styles' => array('skins/TabularForms/tabularforms.css'),
+				'dependencies' => array('ext.smwhalo.json2')
 			);
 
 		define('TF_IS_QC_CMP', 'qc_');

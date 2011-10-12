@@ -1,3 +1,4 @@
+
 var TF = Class.create({
 
 	init: function(){ 
@@ -31,9 +32,9 @@ var TF = Class.create({
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_getTabularForm',
-				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId],
+				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId]
 			},
-			success: tf.displayLoadedForm,
+			success: tf.displayLoadedForm
 			
 		});
 	},
@@ -44,7 +45,7 @@ var TF = Class.create({
 	displayLoadedForm : function(data){
 		
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = JSON.parse(data);
+		data = jQuery.parseJSON(data);
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_loader').css('display', 'none');
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').html(data.result);
@@ -542,9 +543,9 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_deleteInstance',
-					'rsargs[]' : [articleTitle, revisionId, rowNr, tabularFormId],
+					'rsargs[]' : [articleTitle, revisionId, rowNr, tabularFormId]
 				},
-				success: tf.saveFormRowDataCallback,
+				success: tf.saveFormRowDataCallback
 				
 			});
 			
@@ -613,10 +614,9 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_updateInstanceData',
-					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId, useSAT],
+					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId, useSAT]
 				},
-				success: tf.saveFormRowDataCallback,
-				
+				success: tf.saveFormRowDataCallback				
 			});
 		}
 	},
@@ -627,7 +627,7 @@ var TF = Class.create({
 	 */
 	saveFormRowDataCallback : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = JSON.parse(data);
+		data = jQuery.parseJSON(data);
 		
 		data.rowNr = (data.rowNr*1) + 1;
 		
@@ -707,17 +707,16 @@ var TF = Class.create({
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_getLostInstances',
-				'rsargs[]' : [querySerialization, isSPARQL, containerId, instanceNames],
+				'rsargs[]' : [querySerialization, isSPARQL, containerId, instanceNames]
 			},
-			success: tf.searchForLostInstancesCallBack
-			
+			success: tf.searchForLostInstancesCallBack			
 		});
 	},
 	
 	
 	searchForLostInstancesCallBack : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = JSON.parse(data);
+		data = jQuery.parseJSON(data);
 		
 		var instances = jQuery(
 				'#'+data.tabularFormId +' .tabf_table_row .tabf_table_cell:first-child a').get();		
@@ -779,10 +778,9 @@ var TF = Class.create({
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_checkArticleName',
-				'rsargs[]' : [articleName, rowNr, tabularFormId],
+				'rsargs[]' : [articleName, rowNr, tabularFormId]
 			},
-			success: tf.checkNewInstanceNameCallBack,
-			
+			success: tf.checkNewInstanceNameCallBack			
 		});
 	},
 	
@@ -792,7 +790,7 @@ var TF = Class.create({
 	 */
 	checkNewInstanceNameCallBack : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = JSON.parse(data);
+		data = jQuery.parseJSON(data);
 		
 		var row =  jQuery('#' + data.tabularFormId + ' table tr:nth-child(' + data.rowNr + ')');
 		if(data.validTitle == true){
@@ -1275,10 +1273,9 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_checkAnnotationValues',
-					'rsargs[]' : [annotationName, annotationLabel, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName],
+					'rsargs[]' : [annotationName, annotationLabel, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName]
 				},
-				success: tf.checkAnnotationValueCallBack,
-				
+				success: tf.checkAnnotationValueCallBack				
 			});
 		}
 	},
@@ -1289,7 +1286,7 @@ var TF = Class.create({
 	checkAnnotationValueCallBack : function(data){
 		
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = JSON.parse(data);
+		data = jQuery.parseJSON(data);
 		
 		var container = jQuery(data.cssSelector).parent().parent().parent().parent();
 		var instanceId = tf.getChildNumber(jQuery(data.cssSelector).parent(), 1);
@@ -1497,8 +1494,7 @@ var TF = Class.create({
 		jQuery('.tabf_notification_system', container).css('display', '');
 		
 		//todo: instance lost messages should only be displayed in edit mode
-	},
-	
+	}	
 });
 
 

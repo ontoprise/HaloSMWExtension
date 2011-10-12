@@ -79,9 +79,7 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 			$html = $tabularFormData->getAjaxLoaderHTML();
 
 			//Add script
-			global $wgOut;
-			$wgOut->addModules( array('ext.tabularforms.main' ));
-
+			SMWOutputs::requireResource('ext.tabularforms.main');
 		}
 
 		$this->mShowErrors = false;
