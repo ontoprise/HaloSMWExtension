@@ -13,7 +13,7 @@
 # check if bundle-id is specified
 if [ -z $1 ]
 then
-echo "Usage: ./exportBundle <bundle-id>"
+echo "Usage: ./exportBundle.sh <bundle-id>"
 exit 0
 fi
 
@@ -51,5 +51,5 @@ cd $PWD
 # Remove temp files
 rm -rf /tmp/$1/extensions/
 echo
-echo The bundle is located at /tmp/$1
+echo The bundle is located at /tmp/$1.zip
 echo 
