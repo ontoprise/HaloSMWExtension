@@ -769,7 +769,7 @@ OBCategoryTreeActionListener.prototype = Object
 
 							if (OB_LEFT_ARROW == 0) {
 								if ($("hideInstancesButton").getAttribute(
-										"hidden") != "true") {
+										"ishidden") != "true") {
 									OB_instance_pendingIndicator.show();
 									var onlyAssertedCategories = $('assertedCategoriesSwitch').checked;
 									dataAccess.getInstances(categoryName, 0, onlyAssertedCategories,
@@ -1045,11 +1045,11 @@ OBInstanceActionListener.prototype = {
 		if ($("instanceContainer").visible()) {
 			$("hideInstancesButton").innerHTML = gLanguage
 					.getMessage('SHOW_INSTANCES');
-			$("hideInstancesButton").setAttribute("hidden", "true");
+			$("hideInstancesButton").setAttribute("ishidden", "true");
 			Effect.Fold("instanceContainer");
 			Effect.Fold($("leftArrow"));
 		} else {
-			$("hideInstancesButton").removeAttribute("hidden");
+			$("hideInstancesButton").removeAttribute("ishidden");
 			new Effect.Grow('instanceContainer');
 			$("hideInstancesButton").innerHTML = gLanguage
 					.getMessage('HIDE_INSTANCES');
