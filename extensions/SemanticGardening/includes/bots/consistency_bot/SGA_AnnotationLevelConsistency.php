@@ -163,33 +163,8 @@ class AnnotationLevelConsistency {
 
 				} else if ($target instanceof SMWDIContainer) { // n-ary relation
 
-					$explodedValues = $target->getDVs();
-					//$explodedTypes = explode(";", $target->getDVTypeIDs());
+					continue; //nothing to check here. Properties, that are used to hold fields within records are evaluated themselves
 					
-					$explodedTypes = $target->getTypeValues();
-					 
-					//get all range instances and check if their categories are subcategories of the range categories.
-					for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
-						if ($explodedValues[$i] == NULL) {
-							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
-
-						} else {
-
-							if ($explodedValues[$i]->getTypeID() == '_wpg') {
-								$rd_target = smwfGetSemanticStore()->getRedirectTarget($explodedValues[$i]->getTitle());
-								if (!$rd_target->exists()) continue;
-								$categoriesOfObject = smwfGetSemanticStore()->getCategoriesForInstance($rd_target);
-								if ($domainCorrect) {
-									$rangeCorrect = $this->checkRange($domain_cov_results, $categoriesOfObject, $domainRangeAnnotations);
-								} else {
-									$rangeCorrect = $this->checkRange(NULL, $categoriesOfObject, $domainRangeAnnotations);
-								}
-								if (!$rangeCorrect) {
-									$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $property, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
-								}
-							}
-						}
-					}
 				} else {
 					// Normally, one would check attribute values here, but they are always correctly validated during SAVE.
 					// Otherwise the annotation would not appear in the database. *Exception*: wrong units
