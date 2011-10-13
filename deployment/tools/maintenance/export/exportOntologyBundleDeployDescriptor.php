@@ -153,7 +153,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$rationaleText = count($rationale) > 0 ? reset($rationale)->getString() : "no description";
 	$maintainerText = count($maintainer) > 0 ? reset($maintainer)->getString() : "no maintainer";
 	$helpurlText = count($helpurl) > 0 ? reset($helpurl)->getString() : "no help url";
-	$licenseText = count($license) > 0 ? reset($license)->getString() : "no license specified";
+	$licenseText = count($license) > 0 ? reset($license)->getTitle()->getPrefixedText() : "no license specified";
 
 	$handle = fopen("$output", "w");
 	$src = dirname(__FILE__)."/../../../";
