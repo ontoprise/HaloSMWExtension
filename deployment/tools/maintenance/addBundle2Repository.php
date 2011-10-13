@@ -152,6 +152,7 @@ foreach($descriptors as $tuple) {
 	fclose($handle);
     
 	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
+	// compatibility fix to DF 1.56 (to be removed in future versions)
 	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy.xml");
 	
@@ -190,10 +191,14 @@ if ($mediawiki) {
 
 	$id = 'mw';
 	$version = Tools::getMediawikiVersion(realpath($rootDir."/../"));
+	$versionNoDots = str_replace(".","", $version);
 	Tools::mkpath($repositoryDir."/extensions/$id");
 	$handle = fopen($repositoryDir."/extensions/$id/deploy-$version.xml", "w");
 	fwrite($handle, $xml);
 	fclose($handle);
+	
+	// compatibility fix to DF 1.56 (to be removed in future versions)
+	copy($repositoryDir."/extensions/$id/deploy-$version.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml")
 
 	// creates links
 	if ($createSymlinks && $latest) {
