@@ -554,14 +554,14 @@ class DFBundleTools {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
-		
-	    // Patchlevel
-        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_patchlevel'), SMW_NS_PROPERTY);
-        $correct = self::checkPropertyType($pTitle->getText(), "_num");
-        if (!$correct) {
-            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Number.");
-            $check = false;
-        }
+
+		// Patchlevel
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_patchlevel'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_num");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Number.");
+			$check = false;
+		}
 
 		// Installation dir
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
@@ -620,29 +620,184 @@ class DFBundleTools {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
 			$check = false;
 		}
-		
-	    // Ontology URI
-        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
-        $correct = self::checkPropertyType($pTitle->getText(), "_uri");
-        if (!$correct) {
-            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type URL.");
-            $check = false;
-        }
-        
-	    // Part of bundle URI
-        $pTitle = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), SMW_NS_PROPERTY);
-        $correct = self::checkPropertyType($pTitle->getText(), "_wpg");
-        if (!$correct) {
-            if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Page.");
-            $check = false;
-        }
+
+		// Ontology URI
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_uri");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type URL.");
+			$check = false;
+		}
+
+		// Part of bundle URI
+		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), SMW_NS_PROPERTY);
+		$correct = self::checkPropertyType($pTitle->getText(), "_wpg");
+		if (!$correct) {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type Page.");
+			$check = false;
+		}
 
 		return $check;
 	}
-    
+
+	public static function createBundleProperties() {
+		global $smwgContLang, $dfgLang;
+
+		$propertyLabels = $smwgContLang->getPropertyLabels();
+		$namespaces = $smwgContLang->getNamespaces();
+		$datatypeLabels = $smwgContLang->getDatatypeLabels();
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_minversion'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+			print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_maxversion'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+		
+		// Property:Dependecy
+		$property = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_rec"]."]]";
+		$text .= "\n\n[[".$propertyLabels['_LIST']."::".
+		$dfgLang->getLanguageString('df_partofbundle')."; ".$dfgLang->getLanguageString('df_minversion')."; ".$dfgLang->getLanguageString('df_maxversion')."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_partofbundle'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_wpg"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_patchlevel'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_num"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_wpg"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_usesprefix'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_uri"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+		}
+	}
+
 	/**
-	 * Checks if property with name $propertyName has the expected type 
-	 * 
+	 * Checks if property with name $propertyName has the expected type
+	 *
 	 * @param string $propertyName
 	 * @param string $expectedType (e.g. _str, _num, _boo, ...)
 	 */

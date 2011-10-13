@@ -57,6 +57,7 @@ require_once($rootDir.'/settings.php');
 require_once('DF_Tools.php');
 require_once('DF_UserInput.php');
 require_once('DF_Installer.php');
+require_once($mwrootDir.'/deployment/io/DF_BundleTools.php');
 require_once($mwrootDir.'/deployment/io/DF_Log.php');
 require_once($mwrootDir.'/deployment/io/DF_PrintoutStream.php');
 require_once($mwrootDir.'/deployment/languages/DF_Language.php');
@@ -149,6 +150,7 @@ $dfgIncludeInstances=false;
 $dfgBundleID = "";
 $dfgNoAsk=false;
 $dfgApplyPatchesFor=NULL;
+$dfgCreateProperties=false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -299,10 +301,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// ignore
 		continue;
 	}  else if ($arg == '--applypatches') {
-        // ignore
-        $dfgApplyPatchesFor = next($args);
-        continue;
-    } else {
+		// ignore
+		$dfgApplyPatchesFor = next($args);
+		continue;
+	}  else if ($arg == '--createproperties') {
+		// ignore
+		$dfgCreateProperties = true;
+		continue;
+	} else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
@@ -319,6 +325,18 @@ try {
 	dffExitOnFatalError($e);
 }
 
+if ($dfgCreateProperties) {
+	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+    require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+    $dfgOut->setMode($dfgOutputFormat);
+
+    dffInitLanguage();
+	DFBundleTools::createBundleProperties();
+	
+	print "\n\nProperties successfully created/updated.\n"
+	die(DF_TERMINATION_WITHOUT_FINALIZE);
+}
+
 if (!is_null($dfgApplyPatchesFor)) {
 	$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 	if (!array_key_exists($dfgApplyPatchesFor, $localPackages)) {
@@ -327,7 +345,7 @@ if (!is_null($dfgApplyPatchesFor)) {
 	$dd = $localPackages[$dfgApplyPatchesFor];
 	$dd->applyPatches($mwrootDir, DFUserInput::getInstance());
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
- }
+}
 
 if ($dfgInstallPackages) {
 	// include commandLine.inc to be in maintenance mode
