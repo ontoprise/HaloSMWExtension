@@ -102,7 +102,7 @@ showToolbar: function(){
 	this.fillList(true);
 },
 
-callme: function(event){
+initToolbox: function(){
 	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit' ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
              wgCanonicalSpecialPageName == 'FormEdit' )
@@ -670,5 +670,5 @@ getselectedItem: function(selindex) {
 };// End of Class
 
 window.catToolBar = new CategoryToolBar();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar));
+//    Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar));
+stb_control.registerToolbox(catToolBar);

@@ -43,7 +43,7 @@ OBSemanticToolbarContributor.prototype = {
 	/**
 	 * Register the contributor and puts a button in the semantic toolbar.
 	 */
-	registerContributor: function() {
+	initToolbox: function() {
 		if (!stb_control.isToolbarAvailable() || 
                     (wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit' &&
                      wgCanonicalSpecialPageName != 'AddData' && wgCanonicalSpecialPageName != 'EditData' &&
@@ -162,7 +162,4 @@ OBSemanticToolbarContributor.prototype = {
 // create instance of contributor and register on load event so that the complete document is available
 // when registerContributor is executed.
 window.obContributor = new OBSemanticToolbarContributor();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', obContributor.registerContributor.bind(obContributor));
-
-
+stb_control.registerToolbox(obContributor);

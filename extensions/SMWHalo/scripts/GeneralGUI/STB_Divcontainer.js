@@ -96,7 +96,10 @@ DivContainer.prototype = {
 	setContent : function(content) {
 		this.content = content;
         try {
-            $("stb_cont"+this.getContainerNr()+"-content").update(content);
+			var obj = $("stb_cont"+this.getContainerNr()+"-content");
+			if (obj) {
+	            obj.update(content);
+			} 
         } catch (e) {}
 	},
 

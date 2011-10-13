@@ -41,7 +41,7 @@ showToolbar: function(request){
 	this.createContent();
 },
 
-createContainer: function(event){
+initToolbox: function(event){
 	if (wgAction == "annotate"
 	    && stb_control.isToolbarAvailable()){
 		this.savehintcontainer = stb_control.createDivContainer(SAVEANNOTATIONSCONTAINER,0);
@@ -142,7 +142,5 @@ createToolbar: function(attributes) {
 };// End of Class
 
 window.smwhgSaveAnnotations = new SaveAnnotations();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', smwhgSaveAnnotations.createContainer.bindAsEventListener(smwhgSaveAnnotations));
-
+stb_control.registerToolbox(smwhgSaveAnnotations);
 

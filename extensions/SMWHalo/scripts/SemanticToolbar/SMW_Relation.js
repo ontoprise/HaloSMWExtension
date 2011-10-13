@@ -135,7 +135,7 @@ showToolbar: function(){
 	this.fillList(true);
 },
 
-callme: function(event){
+initToolbox: function(event){
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit' ||
             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
             wgCanonicalSpecialPageName == 'FormEdit' )
@@ -1201,6 +1201,5 @@ getselectedItem: function(selindex) {
 };// End of Class
 
 window.relToolBar = new RelationToolBar();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', relToolBar.callme.bindAsEventListener(relToolBar));
+stb_control.registerToolbox(relToolBar);	
 

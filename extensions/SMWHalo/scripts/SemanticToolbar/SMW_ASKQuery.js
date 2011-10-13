@@ -52,7 +52,7 @@ showToolbar: function() {
 	this.fillList(true);
 },
 
-createContainer: function(event){
+initToolbox: function(event){
 	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" ||
 			wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
 			wgCanonicalSpecialPageName == 'FormEdit')
@@ -270,5 +270,4 @@ setNewAskQuery:function() {
 };// End of Class
 
 window.smwhgASKQuery = new ASKQuery();
-if (typeof FCKeditor == 'undefined')
-	Event.observe(window, 'load', smwhgASKQuery.createContainer.bindAsEventListener(smwhgASKQuery));
+stb_control.registerToolbox(smwhgASKQuery);

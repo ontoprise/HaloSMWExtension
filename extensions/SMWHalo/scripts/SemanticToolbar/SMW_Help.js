@@ -19,8 +19,6 @@
  * @ingroup SMWHaloSemanticToolbar
  * @author Thomas Schweitzer
  */
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', smw_help_callme);
 
 var smw_help_getNamespace = function() {
 	var ns = wgNamespaceNumber==0?"Main":wgCanonicalNamespace ;
@@ -135,3 +133,5 @@ function helplog(question, action){
 	/*ENDLOG*/
 	return true;
 }
+
+stb_control.registerToolbox(smw_help_callme);

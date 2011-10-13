@@ -38,7 +38,7 @@ RefreshSemanticToolBar.prototype = {
 	},
 
 	//Registers event
-	register: function(event){
+	initToolbox: function(event){
 		if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
                      wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
                      wgCanonicalSpecialPageName == 'FormEdit' )
@@ -176,5 +176,4 @@ RefreshSemanticToolBar.prototype = {
 }
 
 window.refreshSTB = new RefreshSemanticToolBar();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', refreshSTB.register.bindAsEventListener(refreshSTB));
+stb_control.registerToolbox(refreshSTB);

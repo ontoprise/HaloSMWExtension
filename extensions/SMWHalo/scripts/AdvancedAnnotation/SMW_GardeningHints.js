@@ -51,7 +51,7 @@ showToolbar: function() {
 	this.gardeningHintContainer.contentChanged();
 },
 
-createContainer: function(event){
+initToolbox: function(event){
 	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
              wgCanonicalSpecialPageName == 'FormEdit')
@@ -122,5 +122,4 @@ createToolbar: function(attributes) {
 };// End of Class
 
 window.smwhgGardeningHints = new GardeningHints();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', smwhgGardeningHints.createContainer.bindAsEventListener(smwhgGardeningHints));
+stb_control.registerToolbox(smwhgGardeningHints);

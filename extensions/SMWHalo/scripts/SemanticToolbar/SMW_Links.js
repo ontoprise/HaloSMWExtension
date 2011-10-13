@@ -96,4 +96,6 @@ function linklog(link, action){
 	return true;
 }
 
-  Event.observe(window, 'load', smw_links_callme);
+//Event.observe(window, 'load', smw_links_callme);
+stb_control.registerToolbox(smw_links_callme);
+

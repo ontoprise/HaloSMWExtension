@@ -130,7 +130,7 @@ showToolbar: function(request){
 	
 },
 
-callme: function(event){
+initToolbox: function(event){
 	
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
@@ -1679,5 +1679,4 @@ PropertyDefinition.prototype = {
 }; // End of class
 
 window.propToolBar = new PropertiesToolBar();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', propToolBar.callme.bindAsEventListener(propToolBar));
+stb_control.registerToolbox(propToolBar);

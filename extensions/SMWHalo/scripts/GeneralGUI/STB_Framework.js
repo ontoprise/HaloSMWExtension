@@ -110,8 +110,38 @@ ToolbarFramework.prototype = {
 								  gLanguage.getMessage('STB_LINKS'),
 								  gLanguage.getMessage('STB_FACTS'));
 		this.closeFunction;
+		// An array of objects that implements a toolbox for the STB.
+		if (!this.toolboxObjects) {
+			this.toolboxObjects = [];
+		}
 	},
 
+	/**
+	 * Registers a toolbox in the STB.
+	 * 
+	 * @param {Object} or {Function} toolboxObject
+	 * 		An object that implements a toolbox for the STB. It must have a
+	 * 		method named 'initToolbox'.
+	 * 		It can also be a function that is called for the initialization.
+	 */
+	registerToolbox: function (toolboxObject) {
+		if (typeof toolboxObject === 'object') {
+			if (typeof toolboxObject.initToolbox === 'undefined') {
+				alert("Internal error:\n" +
+				      "The given toolbox object is missing the function 'initToolbox'.\n" +
+				      "See registerToolbox in STB_Framework.js");
+			} else {
+				this.toolboxObjects.push(toolboxObject);
+			}  
+		} else if (typeof toolboxObject === 'function') {
+				this.toolboxObjects.push(toolboxObject);
+		} else {
+			alert("Internal error:\n" +
+			      "The given toolbox object is neither a function nor an object.\n" +
+			      "See registerToolbox in STB_Framework.js");
+		}
+	},
+	
 	// create a new div container
 	createDivContainer : function(contnum, tabnr) {
 		// check if we need to add a new tab
@@ -480,6 +510,30 @@ ToolbarFramework.prototype = {
 				'id' : 'ontomenuanchor'} )
 			document.body.appendChild(ontomenuAnchor);
 		}
+	},
+	
+	/**
+	 * Initializes the toolbar framework.
+	 * - Creates the "OntomenuAnchor", i.e. a div in the DOM that contains the 
+	 *   whole toolbar.
+	 * - Creates the HTML skeleton that contains all toolboxes of the STB
+	 * - Calls the init functions of all registered toolboxes.
+	 * 
+	 */
+	initToolbarFramework: function () {
+		this.addOntoMenuAnchor();
+		this.stbconstructor();
+	    Event.observe(window, 'resize', this.resizeToolbar.bindAsEventListener(this));
+		
+		// Call the init functions of all registered toolboxes
+		for (var i = 0, len = this.toolboxObjects.length; i < len; ++i) {
+			var obj = this.toolboxObjects[i];
+			if (typeof obj === 'object') {
+				obj.initToolbox();
+			} else if (typeof obj === 'function') {
+				obj();
+			}
+		}
 	}
 }
 
@@ -487,7 +541,5 @@ window.stb_control = new ToolbarFramework();
 if (typeof FCKeditor == 'undefined' 
     && (typeof wgHideSemanticToolbar === 'undefined'
 	    ||  wgHideSemanticToolbar !== true)) {
-	Event.observe(window, 'load', stb_control.addOntoMenuAnchor.bind(smwhg_generalGUI));
-    Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
-    Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
+	Event.observe(window, 'load', stb_control.initToolbarFramework.bind(stb_control));
 }
