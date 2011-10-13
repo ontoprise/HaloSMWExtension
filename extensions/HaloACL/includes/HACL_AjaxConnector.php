@@ -1254,9 +1254,11 @@ HTML;
     // if we have got users or groups, we set them to the specific array
     $footerextension .= "<script>";
     foreach (explode(",",$users) as $item) {
+		$item = str_replace("'", "\'", $item); // Escape ' so that it works properly
         $footerextension .= "YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].push('$item');";
     }
     foreach (explode(",",$groups) as $item) {
+		$item = str_replace("'", "\'", $item); // Escape ' so that it works properly
         $footerextension .= "YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].push('$item');";
     }
 
