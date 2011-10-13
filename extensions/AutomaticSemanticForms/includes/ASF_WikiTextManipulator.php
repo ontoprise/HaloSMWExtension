@@ -1,5 +1,7 @@
 <?php
 
+include_once('extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
+include_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
 
 //todo: docu
 
