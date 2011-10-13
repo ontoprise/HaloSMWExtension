@@ -198,7 +198,7 @@ if ($mediawiki) {
 	fclose($handle);
 	
 	// compatibility fix to DF 1.56 (to be removed in future versions)
-	copy($repositoryDir."/extensions/$id/deploy-$version.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml")
+	copy($repositoryDir."/extensions/$id/deploy-$version.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 
 	// creates links
 	if ($createSymlinks && $latest) {
