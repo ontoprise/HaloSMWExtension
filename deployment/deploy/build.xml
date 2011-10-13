@@ -62,8 +62,8 @@
 				<include name="Deployment.php" />
 				<include name="deploy.xml" />
 			</fileset>
-
 		</copy>
+		<touch file="bin/zip/deployment/config/externalapps"/>    
 		<zip destfile="bin/wikiadmintool.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
