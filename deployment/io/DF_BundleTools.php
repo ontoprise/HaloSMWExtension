@@ -542,8 +542,8 @@ class DFBundleTools {
 			}
 		}
 
-		if ($partOfBundlePropertyType != '_wpg' || $minversionType != '_num' || $maxversionType != '_num') {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types [Page, Number, Number]");
+		if ($partOfBundlePropertyType != '_wpg' || $minversionType != '_str' || $maxversionType != '_str') {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types [Page, String, String]");
 			$check = false;
 		}
 
