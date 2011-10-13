@@ -567,14 +567,18 @@ class ASFParserFunctions {
 				$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
-				$str .= '<select size="1" name="categories" size="'.$categorySize.'">';
+				$str .= '<select size="1" name="categories" size="'.$categorySize.'" selected="'.$categoryValue.'">';
 				if(strlen($rootCategory) == 0){
 					$categories = ASFCategoryAC::getCategories('', 500);
 				} else {
 					$categories = ASFCategoryAC::getCategories('', 500, $rootCategory);
 				}
 				foreach($categories as $category){
-					$str .= '<option>'.$category->getText().'</option>';
+					$selected = '';
+					if($category == $categoryValu){
+						$selected = ' selected="selected" ';
+					}
+					$str .= '<option'.$selected.'>'.$category->getText().'</option>';
 				}
 				
 				$str .= '</select>'; 
