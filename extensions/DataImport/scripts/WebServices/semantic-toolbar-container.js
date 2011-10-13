@@ -29,7 +29,7 @@ WebServiceToolBar.prototype = {
 		this.toolbarContainer = null;
 	},
 
-	callme : function(event) {
+	initToolbox : function(event) {
 		if (wgAction == "edit" && stb_control.isToolbarAvailable()) {
 			this.wsContainer = stb_control.createDivContainer(WEBSERVICECONTAINER, 0);
 			this.showToolbar();
@@ -110,10 +110,10 @@ WebServiceToolBar.prototype = {
 	
 };
 
-if (typeof FCKeditor == 'undefined'){
-	var wsToolBar = new WebServiceToolBar();
-	Event.observe(window, 'load', wsToolBar.callme.bindAsEventListener(wsToolBar));
-} else {
+var wsToolBar = new WebServiceToolBar();
+stb_control.registerToolbox(wsToolBar);
+
+if (typeof FCKeditor !== 'undefined'){
 	var useWSSpecial = true;
 }
 
