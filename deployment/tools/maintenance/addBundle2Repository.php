@@ -152,7 +152,7 @@ foreach($descriptors as $tuple) {
 	fclose($handle);
     
 	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
-	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml")
+	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy.xml");
 	
 	if ($createSymlinks && $latest) {
