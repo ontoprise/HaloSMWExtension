@@ -333,7 +333,7 @@ if ($dfgCreateProperties) {
     dffInitLanguage();
 	DFBundleTools::createBundleProperties();
 	
-	print "\n\nProperties successfully created/updated.\n"
+	print "\n\nProperties successfully created/updated.\n";
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
