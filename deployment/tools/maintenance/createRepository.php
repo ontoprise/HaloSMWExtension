@@ -155,6 +155,7 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
 	Tools::mkpath($outputDir.$dd->getID());
 	copy($dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
+	copy($dd_file, $outputDir.$dd->getID()."/deploy-".str_replace(".","",$version).".xml");
 	print "\nCreated: $outputDir$targetFile";
     
     // creates links

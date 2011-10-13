@@ -136,11 +136,13 @@ foreach($descriptors as $tuple) {
 	// 1. create extensions substructure
 	$id = $dd->getID();
 	$version = $dd->getVersion()->toVersionString();
+	$versionNoDots = str_replace(".","", $version);
 	$id = strtolower($id);
 	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");
 
 	@unlink($repositoryDir."/extensions/$id/deploy-$version.xml");
+	@unlink($repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy.xml");
 	
 	// write deploy descriptor
@@ -148,9 +150,11 @@ foreach($descriptors as $tuple) {
 	$handle = fopen($repositoryDir."/extensions/$id/deploy.xml", "w");
 	fwrite($handle, $xml);
 	fclose($handle);
-
     
-	rename($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
+	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
+	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml")
+	@unlink($repositoryDir."/extensions/$id/deploy.xml");
+	
 	if ($createSymlinks && $latest) {
 		// remove symbolic link if existing
 		if (file_exists($repositoryDir."/$id/deploy.xml")) {
