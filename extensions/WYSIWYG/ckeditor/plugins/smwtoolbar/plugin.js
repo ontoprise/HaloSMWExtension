@@ -285,13 +285,19 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         }
 
         // selection text only without any html mark up etc.
-        if (gEeditor.getSelection()) {
+		var selection = gEeditor.getSelection();
+        if (selection) {
    
           var selectedHtml = gEeditor.getSelectedHtml();
-          var selectedText = gEeditor.getSelection().getNative();
+			if (CKEDITOR.env.ie) {
+				selection.unlock(true);
+				var selectedText = selection.getNative().createRange().text;
+			} else {
+				var selectedText = selection.getNative();
+			}   
 
           if(selectedHtml && selectedText){
-            if(gEeditor.getSelection().getSelectedElement()){
+            if(selection.getSelectedElement()){
               //selected one element with no children e.g. <img/>
               gEselection[0] = '';
               return gEselection[0];
