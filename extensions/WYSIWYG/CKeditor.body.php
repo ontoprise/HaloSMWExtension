@@ -416,8 +416,8 @@ class CKeditor_MediaWiki {
 		global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
 		global $wgFCKWikiTextBeforeParse, $wgFCKEditorIsCompatible;
 		global $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorHeight, $wgFCKEditorToolbarSet;
-        global $wgCKEditorUrlparamMode, $wgRequest;               
-        
+        global $wgCKEditorUrlparamMode, $wgRequest;
+
 		if( !isset( $this->showFCKEditor ) ){
 			$this->showFCKEditor = 0;
 			if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
@@ -577,7 +577,7 @@ $this->ckeditorHeadScript = $script;
         
         
     public function onSkinAfterBottomScripts($skin, &$bottomScriptText) {  
-          global $wgOut;           
+          global $wgOut; 
           $bottomScriptText .= $this->ckeditorHeadScript;
           $this->ckeditorHeadScript = '';
           return true;
@@ -789,32 +789,10 @@ function ToggleCKEditor( mode, objId ){
 		SRCtextarea.style.display = 'inline';
         SRCtextarea.style.visibility = 'visible';
         if (CKEDITOR.plugins.smwtoolbar) {
-            CKEDITOR.plugins.smwtoolbar.stbIsActive = false;
-            smwhgAnnotationHints = new AnnotationHints();
-            propToolBar = new PropertiesToolBar();
-            AdvancedAnnotation.unload();
-            AdvancedAnnotation.create();
-            stb_control.stbconstructor();
-            stb_control.createForcedHeader();
-            obContributor.registerContributor();
-            relToolBar.callme();
-            catToolBar.callme();
-            propToolBar.callme();
-            smwhgASKQuery.createContainer();
-            // webservice toolbar, only available if DataImport extension is included
-            if (typeof wsToolBar != 'undefined')
-                wsToolBar.callme();
-            // rule toolbar, only available if SemanticRuls extension is included
-            if (typeof ruleToolBar != 'undefined')
-                ruleToolBar.callme();
-            // Annotations toolbar, only if SemanticGardening extension is included
-            if (typeof smwhgGardeningHints != 'undefined')
-                smwhgGardeningHints.createContainer();
-            window.smw_links_callme();
+            CKEDITOR.plugins.smwtoolbar.DisableAnnotationToolbar(oEditorIns);
+            CKEDITOR.plugins.smwtoolbar.EnableAnnotationToolbar(oEditorIns);
             window.gEditInterface = new SMWEditInterface();
             obContributor.activateTextArea(SRCtextarea);
-            smwhg_dragresizetoolbar.draggable=null;
-            smwhg_dragresizetoolbar.callme();
         }
 	} else {
 		// FCKeditor hidden -> visible

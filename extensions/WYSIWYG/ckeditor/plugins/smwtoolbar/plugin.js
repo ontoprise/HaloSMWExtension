@@ -1081,34 +1081,39 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     CKEDITOR.plugins.smwtoolbar = {
       stbIsActive : false,
       stbEditorText : '',
-      EnableAnnotationToolbar : function( editor ) {
+    EnableAnnotationToolbar : function( editor ) {
         this.stbIsActive = true;
-        window.parent.stb_control.initialize();
-        window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
-        window.parent.propToolBar = new window.parent.PropertiesToolBar();
-
-        window.parent.AdvancedAnnotation.create();
-        window.parent.stb_control.stbconstructor();
+		window.parent.stb_control.initialize();
+		window.parent.stb_control.initToolbarFramework();
         window.parent.stb_control.setCloseFunction('wgCKeditorInstance.execCommand(\'SMWtoolbar\')');
-        window.parent.stb_control.createForcedHeader();
-        window.parent.obContributor.registerContributor();
-        window.parent.relToolBar.callme();
-        window.parent.catToolBar.callme();
-        window.parent.propToolBar.callme();
+// DO we need this        window.parent.AdvancedAnnotation.create();
+//        window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
+		
+/*        
+		window.parent.stb_control.initialize();
+//        window.parent.propToolBar = new window.parent.PropertiesToolBar();
+
+        window.parent.stb_control.stbconstructor();
+//        window.parent.stb_control.createForcedHeader();
+//        window.parent.obContributor.registerContributor();
+//        window.parent.relToolBar.callme();
+//        window.parent.catToolBar.callme();
+//        window.parent.propToolBar.callme();
         // rule toolbar, only available if SemanticRuls extension is included
         // disable it for now, because the rule editor doesn't work with the FCK
-        if (window.parent.ruleToolBar)
-          window.parent.ruleToolBar.callme();
+//        if (window.parent.ruleToolBar)
+//            window.parent.ruleToolBar.callme();
         // Annotations toolbar, only if SemanticGardening extension is included
-        if (window.parent.smwhgGardeningHints)
-          window.parent.smwhgGardeningHints.createContainer();
-        window.parent.smw_links_callme();
+//        if (window.parent.smwhgGardeningHints)
+//            window.parent.smwhgGardeningHints.createContainer();
+//        window.parent.smw_links_callme();
+*/        
         // enable draging
-        //        window.parent.smwhg_dragresizetoolbar.draggable=null;
-        //        window.parent.smwhg_dragresizetoolbar.callme();
+        window.parent.smwhg_dragresizetoolbar.draggable=null;
+        window.parent.smwhg_dragresizetoolbar.callme();
         this.SetEventHandler4AnnotationBox( editor );
         editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_ON);
-      },
+    },
       DisableAnnotationToolbar: function( editor ) {
         this.stbIsActive = false;
         HideContextPopup();
