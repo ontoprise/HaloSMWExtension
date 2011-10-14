@@ -268,21 +268,19 @@ class SMWQueryInterface extends SpecialPage {
   private function addTabHeaderForQIDefinitionSparql() {
     $html = '<div id="qiDefTab"><table>
                  <tr>
-                 <td id="qiDefTab1" class="qiDefTabActive" onclick="qihelper.switchTab(1);"
-                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_treeview') . '\')">' . wfMsg('smw_qi_queryastree') . '</td>
+                 <td id="qiDefTab1" class="qiDefTabActive" title="' . wfMsg('smw_qi_tt_treeview') . '">' . wfMsg('smw_qi_queryastree') . '</td>
                  <td class="qiDefTabSpacer"> </td>' .
-              '<td id="qiDefTab3" class="qiDefTabInactive" onclick="qihelper.switchTab(3);"
-                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')">' . wfMsg('smw_qi_querysource') . '</td>
+              '<td id="qiDefTab3" class="qiDefTabInactive" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</td>
                  <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
                  </tr>
                  </table>
                  <div class="qiDefTabContent">' .
             $this->addTreeViewSparql() .
             '<div id="qitextview">Query as text</div>
-                 <div id="qisource"><textarea id="fullAskText" onchange="qihelper.sourceChanged=1"></textarea>' .
+                 <div id="qisource"><textarea id="sparqlQueryText"></textarea>' .
             '<div id="qisourceButtons">' .
-            '<button onclick="qihelper.loadFromSource(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>' .
-            '&nbsp;<span class="qibutton" onclick="qihelper.discardChangesOfSource();">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
+            '<button title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
+            '&nbsp;<span class="qibutton">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
             '</div>' .
             '</div>' .
             '</div></div>
@@ -337,8 +335,8 @@ class SMWQueryInterface extends SpecialPage {
             '</td></tr>' .
             '<tr><td id="qiBottomToolbar">' .
             '<button id="qiUpdateButton">' . wfMsg('smw_qi_update') . '</button>&nbsp;' .
-            '<a href="" title="' . wfMsg('smw_qi_tt_delete') . '">' . wfMsg('smw_qi_delete') . '</a>' .
-            '<a href="" title="' . wfMsg('smw_qi_tt_cancel') . '">' . wfMsg('smw_qi_cancel') . '</a>' .
+            '<a id="qiDeleteLink" href="#" title="' . wfMsg('smw_qi_tt_delete') . '">' . wfMsg('smw_qi_delete') . '</a>' .
+            '<a id="qiCancelLink" href="#" title="' . wfMsg('smw_qi_tt_cancel') . '">' . wfMsg('smw_qi_cancel') . '</a>' .
             '</td></tr>' .
             '</table>';
   }
