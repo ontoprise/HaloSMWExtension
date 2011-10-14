@@ -83,7 +83,7 @@ class DFStatusTab {
 			$j = $i % 2;
 			$html .= "<tr class=\"df_row_$j\">";
 			$i++;
-			$html .= "<td class=\"df_extension_id\">";
+			$html .= "<td class=\"df_extension_id\" ext_id=\"$id\">";
 			$html .= $p->getTitle() != '' ? $p->getTitle() : $id;
 			$html .= "</td>";
 			$html .= "<td class=\"df_extension_version\">";

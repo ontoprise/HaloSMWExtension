@@ -41,8 +41,14 @@ $hostname = $_SERVER['HTTP_HOST'];
 $path = dirname($_SERVER['PHP_SELF']);
 
 if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
-	header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/login.php');
-	exit;
+	if (!empty($_GET["rs"]) || !empty($_POST["rs"])) {
+        // ajax call but no session, deny
+        echo "session: time-out";
+        exit;
+	} else {
+		header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/login.php');
+		exit;
+	}
 }
 
 define("DF_WEBADMIN_TOOL", 1);

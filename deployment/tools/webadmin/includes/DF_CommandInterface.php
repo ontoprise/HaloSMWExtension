@@ -155,7 +155,7 @@ class DFCommandInterface {
 
 	public function getDeployDescriptor($extid, $version = '') {
 		global $mwrootDir, $dfgOut;
-
+		$dfgOut->setVerbose(false);
 		if (empty($version)) {
 			$dd = PackageRepository::getLatestDeployDescriptor($extid);
 		} else{
@@ -164,7 +164,7 @@ class DFCommandInterface {
 		if (is_null($dd)) {
 			return NULL;
 		}
-
+		$dfgOut->setVerbose(true);
 		$result=array();
 		$result['id'] = $dd->getID();
 		$result['version'] = $dd->getVersion()->toVersionString();

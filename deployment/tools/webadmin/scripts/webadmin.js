@@ -35,6 +35,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var finalizeStarted = function(xhr, status) { 
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		// poll until finished
 		var timer;
@@ -107,6 +111,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var installStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		
 		// poll log until finished
@@ -159,6 +167,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var deinstallStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		
 		// poll log until finished
@@ -208,6 +220,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var updateStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		
 		// poll log until finished
@@ -256,6 +272,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var globalUpdateStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		
 		// poll log until finished
@@ -303,6 +323,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var extensionsDetailsStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var dd = $.parseJSON(xhr.responseText);
 		
 		if (dd.error) {
@@ -440,6 +464,10 @@ $(function() {
 				var patchlevel = parts[2].split("_")[1];
 				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id)+"&rsargs[]="+encodeURIComponent(version);
 				var callbackForExtensions = function(xhr, status) {
+					if (xhr.responseText.indexOf('session: time-out') != -1) {
+						alert("Please login again. Session timed-out");
+						return;
+					}
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
 					var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=install&rsargs[]="+encodeURIComponent(id+"-"+version);
 										
@@ -478,7 +506,10 @@ $(function() {
 	  			var patchlevel = parts[2].split("_")[1];
 				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDependencies&rsargs[]="+encodeURIComponent(id)+"&rsargs[]="+encodeURIComponent(version);
 				var callbackForExtensions = function(xhr, status) {
-					
+					if (xhr.responseText.indexOf('session: time-out') != -1) {
+						alert("Please login again. Session timed-out");
+						return;
+					}
 					var extensionsToInstall = $.parseJSON(xhr.responseText);
 					var text = "";
 								
@@ -567,7 +598,7 @@ $(function() {
 			
 			// addhandler for click on extension column
 			$('#df_search_results .df_extension_id').click(function(e2) {
-				var id = $(e2.currentTarget).html();
+				var id = $(e2.currentTarget).attr("ext_id");
 				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getDeployDescriptor&rsargs[]="+encodeURIComponent(id);
 				var $dialog = $('#df_extension_details')
 				.dialog( {
@@ -627,6 +658,10 @@ $(function() {
 		newrepositoryURL = newrepositoryURL.replace('&','&amp;');
 		
 		var addToRepositoryCallack = function(xhr, status) {
+			if (xhr.responseText.indexOf('session: time-out') != -1) {
+				alert("Please login again. Session timed-out");
+				return;
+			}
 			$('#df_settings_progress_indicator').hide();
 			if (xhr.status != 200) {
 				alert(xhr.responseText);
@@ -654,6 +689,10 @@ $(function() {
 		 $('#df_repository_list option:selected').each(function(){
 			 var entry = $(this);
 			 var removeFromRepositoryCallack = function(xhr, status) {
+				 if (xhr.responseText.indexOf('session: time-out') != -1) {
+						alert("Please login again. Session timed-out");
+						return;
+					}
 				 $('#df_settings_progress_indicator').hide();
 					if (xhr.status != 200) {
 						alert(xhr.responseText);
@@ -692,6 +731,10 @@ $(function() {
 		$('#df_settings_save_button').click(function(e2) {
 			// save content
 			var saveLocalSettingsCallback = function(xhr, status) {
+				if (xhr.responseText.indexOf('session: time-out') != -1) {
+					alert("Please login again. Session timed-out");
+					return;
+				}
 				if (xhr.status == 200) {
 					alert(dfgWebAdminLanguage.getMessage('df_webadmin_save_ok'));
 					$('#df_settings_save_button').attr('disabled', true);
@@ -719,6 +762,10 @@ $(function() {
 			// load content
 			
 			var getLocalSettingsCallback = function(xhr, status) {
+				if (xhr.responseText.indexOf('session: time-out') != -1) {
+					alert("Please login again. Session timed-out");
+					return;
+				}
 				if (xhr.status != 200) {
 					$('#df_settings_textfield').val("");
 					$('#df_settings_textfield').attr('disabled', true);
@@ -759,7 +806,7 @@ $(function() {
 		
 		// register every extension in status view for showing extension details on a click event.
 		$('.df_extension_id').click(function(e2) {
-			var id = $(e2.currentTarget).html();
+			var id = $(e2.currentTarget).attr("ext_id");
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=getLocalDeployDescriptor&rsargs[]="+encodeURIComponent(id);
 			var $dialog = $('#df_extension_details')
 			.dialog( {
@@ -884,6 +931,10 @@ $(function() {
 			
 			
 			var checkforGlobalUpdate = function(xhr, status) {
+				if (xhr.responseText.indexOf('session: time-out') != -1) {
+					alert("Please login again. Session timed-out");
+					return;
+				}
 				$('#df_gu_progress_indicator').hide();
 				var extensionsToInstall = $.parseJSON(xhr.responseText);
 				
@@ -994,6 +1045,7 @@ $(function() {
 			});
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin?rs=areServicesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
 			var updateProcessDisplay = function(xhr, status) {
+				
 				var result = xhr.responseText.split(",");
 				var i = 0;
 				$(result).each(function(index, s) {
@@ -1034,6 +1086,10 @@ $(function() {
 		
 		// load current server command settings
 		var loadServerSettings =  function(xhr, status) {
+			if (xhr.responseText.indexOf('session: time-out') != -1) {
+				alert("Please login again. Session timed-out");
+				return;
+			}
 			var result = xhr.responseText;
 			if (result == "false") return;
 			var settings = $.parseJSON(result);
@@ -1056,6 +1112,10 @@ $(function() {
 		// save current server command settings
 		$('#df_servers_save_settings').click(function(e2) {
 			var storeServerSettingsExecuted = function(xhr, status) {
+				if (xhr.responseText.indexOf('session: time-out') != -1) {
+					alert("Please login again. Session timed-out");
+					return;
+				}
 				var result = xhr.responseText;
 				if (result == "true") {
 					alert("Server settings are saved!");
@@ -1077,6 +1137,10 @@ $(function() {
 		// execute server command button
 		var executeCommand = function(e) {
 			var commandExecuted = function(xhr, status) {
+				if (xhr.responseText.indexOf('session: time-out') != -1) {
+					alert("Please login again. Session timed-out");
+					return;
+				}
 				$(e.currentTarget).attr('disabled', false);
 			};
 			var process = $(e.currentTarget).attr('id').split("_")[2];
@@ -1097,6 +1161,10 @@ $(function() {
 	 * @param int status HTTP response code 
 	 */
 	var restoreStarted = function (xhr, status) {
+		if (xhr.responseText.indexOf('session: time-out') != -1) {
+			alert("Please login again. Session timed-out");
+			return;
+		}
 		var logfile = xhr.responseText;
 		
 		// poll log until finished

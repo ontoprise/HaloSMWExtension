@@ -91,7 +91,7 @@ class DFSearchTab {
 				$html .= "<tr class=\"df_row_$j\">";
 
 				if ($first) {
-					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\">";
+					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\" ext_id=\"$id\">";
 					$html .= !empty($title) ? $title : $id;
 					$html .= "</td>";
 						
