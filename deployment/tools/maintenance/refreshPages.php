@@ -90,8 +90,7 @@ $pageTitles = $importer->getResult();
 
 // refresh imported pages
 $logger = Logger::getInstance();
-global $wgParser;
-$wgParser->mOptions = new ParserOptions();
+
 $logger->info("Refreshing ontology: $dumpFilePath");
 print "\n[Refreshing ontology: $dumpFilePath. Total number of pages: ".count($pageTitles);
 
@@ -101,11 +100,8 @@ foreach($pageTitles as $tuple) {
 
 	$i++;
 	if ($t->getNamespace() == NS_FILE) continue;
-	$rev = Revision::newFromTitle($t);
-	if (is_null($rev)) continue;
-
-	$parseOutput = $wgParser->parse($rev->getText(), $t, $wgParser->mOptions);
-	SMWParseData::storeData($parseOutput, $t);
+	
+	smwfGetStore()->refreshData($t->getArticleId(), 1, false, false);
 	$logger->info("($i)". $t->getPrefixedText()." refreshed.");
 	print "\n\t[($i)".$t->getPrefixedText()." refreshed]";
 }
