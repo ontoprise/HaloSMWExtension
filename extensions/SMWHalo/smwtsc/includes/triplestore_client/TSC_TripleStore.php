@@ -717,10 +717,6 @@ class SMWTripleStore extends SMWStoreAdapter {
 			$variables = $dom->xpath('//sparqlxml:variable');
 			$results = $dom->xpath('//sparqlxml:result'.$resultFilter);
 
-
-			// if no results return empty result object
-			if (count($results) == 0) return new SMWHaloQueryResult(array(), $query, array(), $this);
-
 			$variableSet = array();
 			foreach($variables as $var) {
 				$variableSet[] = (string) $var->attributes()->name;
@@ -850,7 +846,9 @@ class SMWTripleStore extends SMWStoreAdapter {
 				$index++;
 			}
 
-
+            // if no results return empty result object
+            if (count($results) == 0) return new SMWHaloQueryResult($prs, $query, array(), $this);
+            
 			// create and add result rows
 			// iterate over SPARQL-XML result nodes and add an SMWResultArray object for each result
 			$qresults = array();
