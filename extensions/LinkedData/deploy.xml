@@ -37,7 +37,7 @@
 		<new>
 			<require name="lod"
 				file="extensions/LinkedData/includes/LOD_Initialize.php" />
-			<patch file="patch_for_SMW1.5.6.txt" ext="smw" from="1.5.6" to="1.5.6"/>
+			
 			<function name="enableLinkedData">
 			</function>
 			<script file="maintenance/LOD_Setup.php" />
