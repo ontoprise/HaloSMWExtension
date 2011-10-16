@@ -1148,8 +1148,9 @@ OBOntologyModifier.prototype = {
 	 * @param instanceTitle
 	 * @param instanceID
 	 *            ID of instance node in OB data model (XML)
+	 * @param selectedBundle (empty string if whole wiki is selected)
 	 */
-	createInstance : function(instanceTitle, categoryTitle, categoryID) {
+	createInstance : function(instanceTitle, categoryTitle, categoryID, selectedBundle) {
 		function callback() {
 			this.addInstanceNode(instanceTitle, categoryTitle);
 			selectionProvider.fireBeforeRefresh();
@@ -1160,8 +1161,14 @@ OBOntologyModifier.prototype = {
 					null)
 			selectionProvider.fireRefresh();
 		}
+		 var partOfBundleProperty = gLanguage
+			.getMessage('PART_OF_BUNDLE');
+		 var partOfBundleAnnotation = "";
+		 if (selectedBundle != '') {
+			 partOfBundleAnnotation = "[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		 }
 		articleCreator.createArticle(instanceTitle, "[[" + gLanguage.getMessage('CATEGORY_NS')
-				+ categoryTitle + "]]", '', gLanguage
+				+ categoryTitle + "]]\n"+partOfBundleAnnotation, '', gLanguage
 				.getMessage('CREATE_OB_ARTICLE'), callback.bind(this),
 				$(categoryID));
 	},
@@ -2765,9 +2772,12 @@ OBInstanceSubMenu.prototype = Object
 							break;
 						}
 						case SMW_OB_COMMAND_INSTANCE_CREATE: {
+							var selectedBundle = $F("bundleSelector");
+							selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
 							ontologyTools.createInstance($F(this.id + '_input_ontologytools'),
 									this.selectedCategoryTitle,
-									this.selectedCategoryID);
+									this.selectedCategoryID,
+									selectedBundle);
 							this.cancel();
 							break;
 						}
@@ -3386,7 +3396,7 @@ var obCategoryMenuProvider = new OBCatgeorySubMenu('categoryTreeMenu',
 		'obCategoryMenuProvider');
 var obPropertyMenuProvider = new OBPropertySubMenu('propertyTreeMenu',
 		'obPropertyMenuProvider');
-var obInstanceMenuProvider = new OBInstanceSubMenu('instanceListMenu',
+window.obInstanceMenuProvider = new OBInstanceSubMenu('instanceListMenu',
 		'obInstanceMenuProvider');
 var obSchemaPropertiesMenuProvider = new OBSchemaPropertySubMenu(
 		'schemaPropertiesMenu', 'obSchemaPropertiesMenuProvider');

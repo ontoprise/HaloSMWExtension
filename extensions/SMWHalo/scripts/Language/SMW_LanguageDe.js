@@ -44,6 +44,8 @@ window.wgContLanguageStrings = {
 	'IS_INVERSE_OF'			  : "Ist invers zu",
 	'TRANSITIVE_RELATION'	  : "Transitive Attribute",
 	'SYMMETRICAL_RELATION'	  : "Symmetrische Attribute",
-	'SUBPROPERTY_OF'		  : "Subproperty of"
+	'SUBPROPERTY_OF'		  : "Subproperty of",
+	
+	'PART_OF_BUNDLE'		  : "Teil des Pakets"
 	
 }
