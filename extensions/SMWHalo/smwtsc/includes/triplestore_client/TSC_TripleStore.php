@@ -41,9 +41,9 @@ require_once( "TSC_Helper.php" );
  */
 
 class SMWTripleStore extends SMWStoreAdapter {
-    
-	
-    
+
+
+
 	/**
 	 * Collects semantic data which is not covered by SMW
 	 *
@@ -58,9 +58,9 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 */
 	protected $tsNamespace;
 
-	
 
-	
+
+
 
 	/**
 	 * Creates and initializes Triple store connector.
@@ -74,11 +74,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 	}
 
-	
-	
 
 
-	
+
+
+
 
 	///// Writing methods /////
 
@@ -529,7 +529,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 	///// Query answering /////
 
-	
+
 	function getQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgDeployVersion;
 
@@ -538,7 +538,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return $this->smwstore->getQueryResult($query);
 		}
-       
+		 
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -559,7 +559,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 			$query->params['metadata'] = "SWP2_AUTHORITY_ID";
 		}
 
-     
+		 
 		if ($query instanceof SMWSPARQLQuery || $toTSC) {
 			// handle only SPARQL queries and delegate all others
 			//          wfRunHooks('RewriteSparqlQuery', array(&$query) );
@@ -833,7 +833,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 				// otherwise create one
 				$var_path = explode(".", $var_name);
 				$sel_var = ucfirst($var_path[count($var_path)-1]);
-				$data = SMWPropertyValue::makeUserProperty($sel_var);
+				if (substr($sel_var,0,1) == '_') {
+					$data = SMWPropertyValue::makeProperty($sel_var);
+				} else {
+					$data = SMWPropertyValue::makeUserProperty($sel_var);
+				}
 
 				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
 
@@ -846,9 +850,9 @@ class SMWTripleStore extends SMWStoreAdapter {
 				$index++;
 			}
 
-            // if no results return empty result object
-            if (count($results) == 0) return new SMWHaloQueryResult($prs, $query, array(), $this);
-            
+			// if no results return empty result object
+			if (count($results) == 0) return new SMWHaloQueryResult($prs, $query, array(), $this);
+
 			// create and add result rows
 			// iterate over SPARQL-XML result nodes and add an SMWResultArray object for each result
 			$qresults = array();
@@ -1068,10 +1072,6 @@ class SMWTripleStore extends SMWStoreAdapter {
 	}
 
 
-
-
-
-
 	/**
 	 *
 	 * Creates primitive SMWDataItem object (ie. no SMWDIWikiPage).
@@ -1087,44 +1087,32 @@ class SMWTripleStore extends SMWStoreAdapter {
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
 			if ($property instanceof SMWPropertyValue ) {
 				$propertyTitle = $property->getWikiPageValue()->getTitle();
-				if (!$propertyTitle->exists()) {
-					// fallback if property does not exist, then use tyoe
-					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
+				if (!$propertyTitle->exists() && $property->getDataItem()->isUserDefined()) {
+					// fallback if property does not exist, then use _wpg (otherwise QPs do not print it)
+					$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+						
 				} else {
 					$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
 				}
 			} else {
-					
 				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 			}
 
 			// set actual value
+			
 			if ($value->getTypeID() == '_dat') {
-					
+				// special handling for _dat
 				// normalize dateTime
 				if ($literalValue != '') {
-
-					// remove time zone (if existing)
-					if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
-						$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
-					}
-
-					// remove miliseconds (if existing)
-					if (substr($literalValue, -4) == '.000') {
-						$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
-					}
-
-					// remove time (if it is 00:00:00, in this case only the date is usually significant)
-					if (substr($literalValue, -9) == 'T00:00:00') {
-						$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
-					}
+					 
+					$literalValue = self::fixDateTime($literalValue);
 
 					// hack: can not use setUserValue for SMW_DV_Time for some reason.
 					if ($property instanceof SMWPropertyValue ) {
 						$propertyTitle = $property->getWikiPageValue()->getTitle();
 							
-						if (!$propertyTitle->exists()) {
-							$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
+						if (!$propertyTitle->exists() && $property->getDataItem()->isUserDefined()) {
+							$valueTemp = SMWDataValueFactory::newTypeIDValue('_wpg', str_replace("-","/",$literalValue));
 						} else {
 							$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
 						}
@@ -1133,12 +1121,6 @@ class SMWTripleStore extends SMWStoreAdapter {
 					}
 					$value->setDataItem($valueTemp->getDataItem());
 				}
-			} else if ($value->getTypeID() == '_ema'
-			|| $value->getTypeID() == '_tel'
-			|| $value->getTypeID() == '_num'
-			|| $value->getTypeID() == '_uri' ) {
-				// set some types as DBkeys for normalization
-				$value->setUserValue($literalValue);
 			} else {
 				// all others, set as user type
 				$value->setUserValue($literalValue);
@@ -1189,14 +1171,14 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 * @param string $articleDBkey The article's DB key
 	 * @param string $uri
 	 * @param map $metadata
-	 * 
+	 *
 	 * @return DataItem
 	 */
 	protected function createIntegrationLinkDataItem($articleDBkey, $uri, $metadata) {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
 		$dbkey = urldecode($articleDBkey);
-       
+		 
 		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
 		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$dbkey));
@@ -1331,6 +1313,24 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 		}
 		return $contains;
+	}
+
+	private static function fixDateTime($literalValue) {
+		// remove time zone (if existing)
+		if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
+			$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
+		}
+
+		// remove miliseconds (if existing)
+		if (substr($literalValue, -4) == '.000') {
+			$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
+		}
+
+		// remove time (if it is 00:00:00, in this case only the date is usually significant)
+		if (substr($literalValue, -9) == 'T00:00:00') {
+			$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
+		}
+		return $literalValue;
 	}
 
 }
