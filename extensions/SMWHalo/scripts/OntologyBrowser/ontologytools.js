@@ -3391,13 +3391,13 @@ OBSchemaPropertySubMenu.prototype = Object
 			}
 				});
 
-var obCategoryMenuProvider = new OBCatgeorySubMenu('categoryTreeMenu',
+window.obCategoryMenuProvider = new OBCatgeorySubMenu('categoryTreeMenu',
 		'obCategoryMenuProvider');
-var obPropertyMenuProvider = new OBPropertySubMenu('propertyTreeMenu',
+window.obPropertyMenuProvider = new OBPropertySubMenu('propertyTreeMenu',
 		'obPropertyMenuProvider');
 window.obInstanceMenuProvider = new OBInstanceSubMenu('instanceListMenu',
 		'obInstanceMenuProvider');
-var obSchemaPropertiesMenuProvider = new OBSchemaPropertySubMenu(
+window.obSchemaPropertiesMenuProvider = new OBSchemaPropertySubMenu(
 		'schemaPropertiesMenu', 'obSchemaPropertiesMenuProvider');
 		
 /**
