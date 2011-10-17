@@ -750,6 +750,8 @@ class DeployWikiRevision extends WikiRevision {
 					if ($this->mode == DEPLOYWIKIREVISION_INFO) {
 						return false;
 					} else {
+						$this->setID($prior->getId()+1);
+                        $this->setTimestamp(0);
 						return $this->importAsNewRevision();
 					}
 				} else {
