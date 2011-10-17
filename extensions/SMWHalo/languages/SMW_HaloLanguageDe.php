@@ -399,6 +399,7 @@ protected $smwUserMessages = array(
 	//skin
 	'smw_search_this_wiki' => 'Wiki durchsuchen',
 	'smw_last_visited' => 'Zuletzt besucht:',
+	'smw_start_discussion' => 'Starte $1',
 	'more_functions' => 'Mehr',
 	'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
 	'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen',

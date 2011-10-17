@@ -311,8 +311,8 @@ class SMWH_Skin {
 				$tabs .= $pageName . "</div>";
 				$firstTabs = $tabs . $firstTabs;
 				continue;
-			} elseif ( $key == "talk" || $key == "edit" ) {
-				if( in_array( $this->action, array('edit') ) && $key == "edit" ) {
+			} elseif ( $key == "edit" ) {
+				if( in_array( $this->action, array('edit') ) ) {
 					// no edit button in edit mode
 					continue;
 				}
@@ -342,7 +342,7 @@ class SMWH_Skin {
 				# because there are installations where the include is done only if
 				# action == edit and mode == wysiwyg. Therefore on page view the FCK
 				# might not be included at this moment.
-				if ( !$link && $key == "edit" && (
+				if ( !$link && (
 						file_exists( $IP . '/extensions/FCKeditor/FCKeditor.php' ) ||
 						file_exists( $IP . '/extensions/WYSIWYG/WYSIWYG.php' )
 						) )
@@ -367,13 +367,37 @@ class SMWH_Skin {
 					$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
 				}
 				$tabs .= ">";
-				if ( $key == "edit" ) {
-					$tabs.= "<img id=\"editimage\" src=\"" . $wgStylePath . $this->imagepath . "/button_edit.gif\" alt=\"edit\"/>";
-				}
+				$tabs.= "<img id=\"editimage\" src=\"" .
+					$wgStylePath . $this->imagepath . "/button_edit.gif\" alt=\"edit\"/>";
 				$tabs .= htmlspecialchars( $tab['text'] ) . "</a></div>";
-				if( $key == "edit" ) { // edit always first
-					$firstTabs .= $tabs;
+				$firstTabs .= $tabs;
+			} elseif ( $key == "talk" ) {
+				if ( strstr( $tab['class'], 'selected' ) ) {
+					// no discussion link when on discussion page
+					continue;
+				} elseif ( strstr( $tab['class'], 'new' ) ) {
+					$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+					$tabs .= " class=\"aggregatedtabelements";
+					if ( $tab['class'] ) {
+						$tabs .= " " . htmlspecialchars( $tab['class'] );
+					}
+					$tabs .= "\">";
+					$tabs .= '<a href="' . htmlspecialchars( $tab['href'] ) . '"';
+					$tabs.= ">" . htmlspecialchars( wfMsg( "smw_start_discussion",
+						$tab['text'] ) ) . "</a></div>";
+					$functionsaggregated .= $tabs;
 				} else {
+					// discussion bubble only if page exists and we're not already on discussion page
+					$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+					$tabs .= " class=\"tab";
+					if ( $tab['class'] ) {
+						$tabs .= " " . htmlspecialchars( $tab['class'] );
+					}
+					$tabs .= "\">";
+					$link = htmlspecialchars( $tab['href'] );
+					# add the href $link now to the tabs
+					$tabs .= '<a href="' . $link . '" >';
+					$tabs .= htmlspecialchars( $tab['text'] ) . "</a></div>";
 					$tabsleft .= $tabs;
 				}
 			} else {

@@ -423,6 +423,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     //skin
 	'smw_search_this_wiki' => 'Search this wiki',
 	'smw_last_visited' => 'Last visited:',
+	'smw_start_discussion' => 'Start $1',
 	'more_functions' => 'more',
 	'smw_treeviewleft' => 'Open treeview to the left side',
 	'smw_treeviewright' => 'Open treeview to the right side',

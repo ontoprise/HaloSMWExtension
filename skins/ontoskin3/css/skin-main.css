@@ -296,7 +296,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
     background-color: #dfdfdf;
 	cursor: pointer;
 }
-#ca-talk:hover:after {
+
+#tabsleft > #ca-talk:hover:after {
     border-color: #dfdfdf transparent;
 }
 
@@ -311,7 +312,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	font-size:x-large;
 }
 
-#ca-talk:before {
+#tabsleft > #ca-talk:before {
     content: "";
     position: absolute;
     bottom: -8px;
@@ -321,7 +322,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-color: #228C9E transparent;
 }
 
-#ca-talk:after {
+#tabsleft > #ca-talk:after {
     content: "";
     position: absolute;
     bottom: -7px;
