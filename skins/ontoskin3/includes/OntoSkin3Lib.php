@@ -305,10 +305,10 @@ class SMWH_Skin {
 					$tabs .= " " . htmlspecialchars( $tab['class'] );
 				}
 				$tabs .= "\">";
-				$tabs .= '<a href="' . $link . '"';
-				$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
-				$tabs .= ">";
-				$tabs .= $pageName . "</a></div>";
+//				$tabs .= '<a href="' . $link . '"';
+//				$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
+//				$tabs .= ">";
+				$tabs .= $pageName . "</div>";
 				$firstTabs = $tabs . $firstTabs;
 				continue;
 			} elseif ( $key == "talk" || $key == "edit" ) {

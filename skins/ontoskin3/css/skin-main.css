@@ -246,6 +246,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     clear: both;
     margin-top: 0.2em;
     margin-left: 1.1em;
+    padding: 0 15px;
 }
 
 #smwh_breadcrumb_currentpage{
@@ -269,7 +270,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_tabs{
     height: 25px;
-    margin-top: 2.8em;
+    margin: 2.8em 15px 0 15px;
     padding-bottom: 0.5em;
     border-bottom: 2px solid black;
 }
@@ -289,6 +290,14 @@ ul.smwh_menulist div.smwh_menubody_visible {
     -moz-border-radius: 5px;
     -khtml-border-radius: 5px;
     -webkit-border-radius: 5px;
+}
+
+.tab:hover{
+    background-color: #dfdfdf;
+	cursor: pointer;
+}
+#ca-talk:hover:after {
+    border-color: #dfdfdf transparent;
 }
 
 #tabsleft .tab {
@@ -365,7 +374,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #tabsleft ul.smwh_menulist div.smwh_menubody {
     line-height: 1.5em;
-    right: 0em;
+    left: 0em;
 }
 
 #tabsleft div.smwh_menubody_visible {

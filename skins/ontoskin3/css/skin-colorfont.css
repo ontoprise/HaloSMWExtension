@@ -143,8 +143,11 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 
 .tab#ca-edit{
 	background-color: #228C9E;
+	padding-right: 13px;
 }
-
+.tab#ca-edit:hover{
+	background-color: #316C77;
+}
 .tab#ca-edit a{
 	color: white;
 	text-decoration: none;
