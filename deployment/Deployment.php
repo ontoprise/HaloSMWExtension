@@ -8,11 +8,11 @@ $smwgDFIP = $IP . '/deployment';
 // read settings.php
 
 if(!file_exists($smwgDFIP.'/settings.php')) {
-    echo "settings.php not found! Forgot to copy it from config/settings.php?";
-    die();
+	echo "settings.php not found! Forgot to copy it from config/settings.php?";
+	die();
 }
 require_once("$smwgDFIP/settings.php");
-
+$wgExtensionMessagesFiles['WikiAdminTool'] = $smwgDFIP . '/languages/DF_Messages.php'; // register messages (requires MW=>1.11)
 
 if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdateOnLogin !== false) {
 	$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
@@ -22,7 +22,7 @@ $dfgNoAsk=true;
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();
-	global $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits, $dfgOut;
+	global $wgOut, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups,$smwgDFIP, $wgExtensionCredits, $dfgOut;
 
 	$wgAutoloadClasses['SMWCheckInstallation'] = $smwgDFIP . '/specials/SMWCheckInstallation/SMW_CheckInstallation.php';
 	$wgAutoloadClasses['DFBundleTools'] = $smwgDFIP . '/io/DF_BundleTools.php';
@@ -31,13 +31,17 @@ function dfgSetupExtension() {
 	$wgAutoloadClasses['DFUserInput'] = $smwgDFIP . '/tools/smwadmin/DF_UserInput.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
+	
+    // register javascript
+	dff_registerScripts();
+	$wgOut->addModules(array('ext.wikiadmintool.language'));
 
 	if (defined('SGA_GARDENING_EXTENSION_VERSION')) {
 		// create one instance for registration at Gardening framework
 		require_once($smwgDFIP.'/bots/SGA_ImportOntologyBot.php');
 		new ImportOntologyBot();
 	}
-	
+
 	$wgExtensionCredits['other'][] = array(
         'path' => __FILE__,
         'name' => 'Wiki Administration Tool',
@@ -49,6 +53,7 @@ function dfgSetupExtension() {
 
 
 }
+
 
 function dffInitializeLanguage() {
 	global $wgLanguageCode, $dfgLang, $wgMessageCache, $wgLang, $wgLanguageCode, $smwgDFIP;
@@ -93,17 +98,45 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
  * @return string true/false
  */
 function dff_authUser($username, $password) {
-	
+
 	// set LDAP domain (if configured)
 	if (isset(DF_Config::$df_webadmin_ldap_domain) && DF_Config::$df_webadmin_ldap_domain != '') {
 		$_SESSION["wsDomain"] = DF_Config::$df_webadmin_ldap_domain;
 	}
-	
-	// check password 
+
+	// check password
 	$user = User::newFromName($username);
 	$correct = $user->checkPassword($password);
-	
+
 	// and group membership
 	$groups = $user->getGroups();
 	return $correct && (in_array("sysop", $groups) ||  in_array("administrator", $groups)) ? "true" : "false";
+}
+
+/**
+ * Registers javascript code via resource loader.
+ */
+function dff_registerScripts() {
+	global $smwgDFIP, $wgScriptPath, $wgResourceModules;
+
+	$moduleTemplate = array(
+        'localBasePath' => $smwgDFIP,
+        'remoteBasePath' => $wgScriptPath . '/deployment',
+        'group' => 'ext.wikiadmintool'
+        );
+
+        $wgResourceModules['ext.wikiadmintool.language'] = $moduleTemplate + array(
+        'scripts' => array(
+        ),
+        'styles' => array(
+
+        ),
+        'messages' => array( 'df_partofbundle' ),
+        
+        'dependencies' => array(
+
+        )
+        );
+
+
 }
