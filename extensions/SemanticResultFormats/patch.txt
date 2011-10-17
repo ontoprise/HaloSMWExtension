@@ -1,6 +1,6 @@
 Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 11903)
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 12494)
 +++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
 @@ -422,7 +422,7 @@
  							$textstack[] = $object->getWikiValue();
@@ -13,7 +13,7 @@ Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
  
 Index: extensions/SemanticResultFormats/Exhibit_/SRF_Exhibit.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit_/SRF_Exhibit.php	(revision 11903)
+--- extensions/SemanticResultFormats/Exhibit_/SRF_Exhibit.php	(revision 12494)
 +++ extensions/SemanticResultFormats/Exhibit_/SRF_Exhibit.php	(working copy)
 @@ -423,7 +423,7 @@
  							$textstack[] = $object->getWikiValue();
@@ -26,18 +26,9 @@ Index: extensions/SemanticResultFormats/Exhibit_/SRF_Exhibit.php
  
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 11900)
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 12495)
 +++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
-@@ -6,6 +6,8 @@
-  * @ingroup SemanticResultFormats
-  * 
-  * @author Markus Krötzsch
-+ * 
-+ * FIXME: this code is just insane; rewrite from 0 is probably the only way to get it right
-  */
- 
- /**
-@@ -21,7 +23,7 @@
+@@ -21,7 +21,7 @@
  	protected $m_tlpos = ''; // position identifier (start, end, today, middle)
  
  	protected function readParameters( $params, $outputmode ) {
@@ -46,7 +37,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  
  		if ( array_key_exists( 'timelinestart', $params ) ) {
  			$this->m_tlstart = smwfNormalTitleDBKey( $params['timelinestart'] );
-@@ -56,37 +58,27 @@
+@@ -56,37 +56,27 @@
  		return wfMsg( 'srf_printername_' . $this->mFormat );
  	}
  
@@ -100,7 +91,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  					}
  					
  					if ( ( $this->m_tlend == '' ) && ( $this->m_tlstart != '' ) &&
-@@ -100,198 +92,316 @@
+@@ -100,198 +90,316 @@
  		}
  
  		// print header
@@ -177,15 +168,15 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  		$positions = array(); // possible positions, collected to select one for centering
 -		$curcolor = 0; // color cycling is used for eventline
 +		$curcolor = 0; // color cycling is used for eventline		
-+		
-+		$result = '';
-+		
-+		$output = false; // true if output for the popup was given on current line
-+		if ( $isEventline ) $events = array(); // array of events that are to be printed
  		
 -		if ( ( $this->m_tlstart != '' ) || $eventline ) {
 -			$output = false; // true if output for the popup was given on current line
 -			if ( $eventline ) $events = array(); // array of events that are to be printed
++		$result = '';
++		
++		$output = false; // true if output for the popup was given on current line
++		if ( $isEventline ) $events = array(); // array of events that are to be printed
++		
 +		while ( $row = $res->getNext() ) { // Loop over the objcts (pages)
 +			$hastime = false; // true as soon as some startdate value was found
 +			$hastitle = false; // true as soon as some label for the event was found
@@ -206,18 +197,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +				$first_value = true;
 +				$pr = $field->getPrintRequest();
 +				$dataValue = $pr->getData();
- 				
--				foreach ( $row as $field ) {
--					$first_value = true;
--					$pr = $field->getPrintRequest();
--					
--					if ( $pr->getData() == '' ) {
--						$date_value = null;
--					} elseif ( method_exists ( $pr->getData(), 'getValueKey' ) ) {
--						$date_value = $pr->getData()->getValueKey();
--					} else {
--						$date_value = $pr->getData()->getXSDValue();
--					}
++				
 +				if ( $dataValue == '' ) {
 +					$date_value = null;
 +				} // SMW >= 1.6
@@ -230,12 +210,25 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +				else {
 +					$date_value = $dataValue->getXSDValue();
 +				}
-+				
+ 				
+-				foreach ( $row as $field ) {
+-					$first_value = true;
+-					$pr = $field->getPrintRequest();
 +				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) { // Loop over property values
 +					$event = $this->handlePropertyValue( 
 +						$object, $outputmode, $pr, $first_col, $hastitle, $hastime,
 +						$first_value, $isEventline, $curmeta, $curdata, $date_value, $output, $positions
 +					);
+ 					
+-					if ( $pr->getData() == '' ) {
+-						$date_value = null;
+-					} elseif ( method_exists ( $pr->getData(), 'getValueKey' ) ) {
+-						$date_value = $pr->getData()->getValueKey();
+-					} else {
+-						$date_value = $pr->getData()->getXSDValue();
++					if ( $event !== false ) {
++						$events[] = $event;
+ 					}
  					
 -					while ( ( $object = $field->getNextObject() ) !== false ) {
 -						$l = $this->getLinker( $first_col );
@@ -328,10 +321,8 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 -							}
 -						}
 -						$first_value = false;
-+					if ( $event !== false ) {
-+						$events[] = $event;
- 					}
- 					
+-					}
+-					
 -					if ( $output ) $curdata .= "<br />";
 -					$output = false;
 -					$first_col = false;
@@ -517,7 +508,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +					),
 +					$objectlabel
 +				);
-+
+ 
 +				if ( $pr->getMode() == SMWPrintRequest::PRINT_THIS ) {
 +					$curarticle = $object->getShortText( $outputmode, false );
 +					$cururl = $object->getTitle()->getFullUrl();
@@ -557,7 +548,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +	
 +		return $event;
 +	}
- 
++
 +	/**
 +	 * @see SMWResultPrinter::getParameters
 +	 * 
@@ -578,7 +569,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  		 return $params;
  	}
  	
-@@ -315,4 +425,11 @@
+@@ -315,4 +423,11 @@
  		);
  	}
  	
