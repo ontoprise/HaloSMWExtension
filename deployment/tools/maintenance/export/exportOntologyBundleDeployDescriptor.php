@@ -192,8 +192,8 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		$properties = $sd->getProperties();
 		foreach($properties as $p) {
 			switch($p->getKey()) {
-				case $dfgLang->getLanguageString('df_partofbundle'):
-					$bundleIDDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_partofbundle')));
+				case $dfgLang->getLanguageString('df_mwextension'):
+					$bundleIDDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_mwextension')));
 					$bundleID = reset($bundleIDDi)->getString();
 					break;
 				case $dfgLang->getLanguageString('df_minversion'):

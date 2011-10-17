@@ -40,6 +40,7 @@ class DF_Language_En extends DF_Language {
 	'df_contentbundle' => 'Content bundle',
 	'df_ontologyuri' => 'Ontology URI',
 	'df_usesprefix' => 'Bundle uses namespace prefix',
+	'df_mwextension' => 'Mwextension',
 	'df_minversion' => 'Minversion',
 	'df_maxversion' => 'Maxversion',
 	
