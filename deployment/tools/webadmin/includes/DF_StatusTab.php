@@ -77,9 +77,10 @@ class DFStatusTab {
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
-		ksort($localPackages);
+		usort($localPackages, 'df_cmpTitles');
 		$i=0;
-		foreach($localPackages as $id => $p) {
+		foreach($localPackages as $p) {
+			$id = $p->getID();
 			$j = $i % 2;
 			$html .= "<tr class=\"df_row_$j\">";
 			$i++;
@@ -96,7 +97,7 @@ class DFStatusTab {
 			$updateText = $dfgLang->getLanguageString('df_webadmin_update');
 			$deinstallText = $dfgLang->getLanguageString('df_webadmin_deinstall');
 			$disabledDeInstall = "";
-			if ($id == 'mw' || $id == 'deployment') {
+			if ($id == 'mw' || $id == 'wikiadmintool') {
 				$disabledDeInstall = 'disabled="true"';
 			}
 			if (array_key_exists($id, $updates)) {
@@ -116,4 +117,18 @@ class DFStatusTab {
 	}
 
 
+}
+
+/**
+ * Compares DeployDescriptors by ID or title (title preferred)
+ * 
+ * @param DeployDescriptors $a
+ * @param DeployDescriptors $b
+ * 
+ * @return int -1, 0, 1
+ */
+function df_cmpTitles($a, $b) {
+    $a = $a->getTitle() == '' ? $a->getID() : $a->getTitle();
+    $b = $b->getTitle() == '' ? $b->getID() : $b->getTitle();
+    return strcmp($a, $b);
 }
