@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12222)
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12489)
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
 @@ -168,9 +168,23 @@
  				}
@@ -28,7 +28,7 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 12222)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 12489)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -41,7 +41,8 @@
  	global $wgRequest, $wgOut, $wgUser, $wgServer;
@@ -947,7 +947,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  }
 Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 12222)
+--- extensions/SemanticForms/specials/SF_UploadWindow2.php	(revision 12489)
 +++ extensions/SemanticForms/specials/SF_UploadWindow2.php	(working copy)
 @@ -72,8 +72,13 @@
  
@@ -1503,25 +1503,25 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
  {$wgOut->getHTML()}
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12222)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12489)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
 @@ -849,6 +849,19 @@
  						} else {
  							$sfgTabIndex++;
  							$sfgFieldNum++;
-+              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
-+              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
-+               *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
-+              // We don't want to have the standard inputs in the UploadWindow
-+              global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-+              if ( $smwgEnableRichMedia && $smwgRMHideStandardInputs) {
-+                $sfgFieldNum++;
-+                $new_text= '';
-+                $free_text_was_included = true;
-+                $section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
-+                continue;
-+              }
-+              /*op-patch|BL|2009-10-12|end*/
++							/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start */
++							/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++							 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++							// We don't want to have the standard inputs in the UploadWindow
++							global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
++							if ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) {
++								$sfgFieldNum++;
++								$new_text = '';
++								$free_text_was_included = true;
++								$section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
++								continue;
++							}
++							/* op-patch|BL|2009-10-12|end */
  							if ( $cur_value == '' ) {
  								$default_value = '!free_text!';
  							} else {
@@ -1530,45 +1530,46 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  					
  					// if it's a query, ignore all standard inputs except run query
 -					if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
-+          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
-+          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
-+           *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
-+          // We don't want to have the standard inputs in the UploadWindow
-+          // content was:
-+          // if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
-+          global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-+          if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) 
-+            || ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) ) {
-+            /*op-patch|BL|2009-10-12|end*/
++					/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start */
++					/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++					 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++					// We don't want to have the standard inputs in the UploadWindow
++					// content was:
++					// if ( ( $is_query && $input_name != 'run query' ) || ( !$is_query && $input_name == 'run query' ) ) {
++					global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
++					if ( ( $is_query && $input_name != 'run query' ) || (!$is_query && $input_name == 'run query' )
++							|| ( $smwgEnableRichMedia && $smwgRMHideStandardInputs ) ) {
++						/* op-patch|BL|2009-10-12|end */
  						$new_text = "";
  						$section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
  						continue;
-@@ -1383,10 +1405,24 @@
+@@ -1383,10 +1405,26 @@
  
  		// add form bottom, if no custom "standard inputs" have been defined
  		if ( !$this->standardInputsIncluded ) {
 -			if ( $is_query )
--				$form_text .= SFFormUtils::queryFormBottom( $form_is_disabled );
++			if ( $is_query ) {
+ 				$form_text .= SFFormUtils::queryFormBottom( $form_is_disabled );
 -			else
 -				$form_text .= SFFormUtils::formBottom( $form_is_disabled );
-+      if ( $is_query ) {
-+         $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
-+      } else {
-+        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start*/
-+        /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
-+         *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
-+        // We don't want to have the standard inputs in the UploadWindow
-+        // Get the upload form name and do not display standard inputs for that
-+        // content was:
-+        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
-+        global $smwgEnableRichMedia, $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
-+        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload']
-+          && !$smwgRMHideStandardInputs )
-+        {
-+          $form_text .= SFFormUtils::formBottom($form_is_disabled);
-+        }
-+        /*op-patch|BL|2009-10-12|end*/
-+      }
++			} else {
++				/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|start */
++				/* op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadOverlay|doc|
++				 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/HideStandardInputsInUploadOverlay */
++				// We don't want to have the standard inputs in the UploadWindow
++				// Get the upload form name and do not display standard inputs for that
++				// content was:
++				// $form_text .= SFFormUtils::formBottom($form_is_disabled);
++				global $smwgEnableRichMedia, $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
++				if( !isset( $query_template_name ) ) {
++					$query_template_name = '';
++				}
++				if ( $query_template_name != $smwgRMFormByNamespace['RMUpload']
++						&& !$smwgRMHideStandardInputs ) {
++					$form_text .= SFFormUtils::formBottom( $form_is_disabled );
++				}
++				/* op-patch|BL|2009-10-12|end */
++			}
  		}
  		$starttime = wfTimestampNow();
  		$page_article = new Article( $this->mPageTitle );
