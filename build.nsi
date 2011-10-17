@@ -376,9 +376,9 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             # SOLR
             nsExec::ExecToLog 'schtasks /delete /tn "start_solr" /F'
             nsExec::ExecToLog 'schtasks /delete /tn "stop_solr" /F'
-            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStartSolr.bat\""'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt" {{command}} "\"$INSTDIR\solr\wiki\StartSolr.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\scheduled_tasks\runas_template_start_solr.txt"'
-            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt" {{command}} "\"$INSTDIR\solr\wikiStopSolr.bat\""'
+            nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt" {{command}} "\"$INSTDIR\solr\wiki\StopSolr.bat\""'
             nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_solr.txt"'
             
             # Memcached
@@ -404,8 +404,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /ru "SYSTEM" /tr "\"$INSTDIR\mysql_stop.bat\"" /sc once /st 00:00'
             
             #solr
-            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStartSolr.bat\"" /sc once /st 00:00'
-            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wikiStopSolr.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "start_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wiki\StartSolr.bat\"" /sc once /st 00:00'
+            nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /ru "SYSTEM" /tr "\"$INSTDIR\solr\wiki\StopSolr.bat\"" /sc once /st 00:00'
             
             #memcached
             nsExec::ExecToLog 'schtasks /create /tn "start_memcached" /ru "SYSTEM" /tr "\"$INSTDIR\memcached\memcached -d start\"" /sc once /st 00:00'
