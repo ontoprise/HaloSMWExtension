@@ -56,7 +56,7 @@ class SRFTimeline extends SMWResultPrinter {
 		return wfMsg( 'srf_printername_' . $this->mFormat );
 	}
 
-	protected function getResultText( SMWQueryResult $res, $outputmode ) {
+	protected function getResultText( $res, $outputmode ) {
 		global $smwgIQRunningNumber, $srfgScriptPath;
 		
 		SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
