@@ -1161,8 +1161,7 @@ OBOntologyModifier.prototype = {
 					null)
 			selectionProvider.fireRefresh();
 		}
-		 var partOfBundleProperty = gLanguage
-			.getMessage('PART_OF_BUNDLE');
+		 var partOfBundleProperty = mw.msg('df_partofbundle');
 		 var partOfBundleAnnotation = "";
 		 if (selectedBundle != '') {
 			 partOfBundleAnnotation = "[["+partOfBundleProperty+"::"+selectedBundle+"]]";
