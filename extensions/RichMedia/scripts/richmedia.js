@@ -120,12 +120,9 @@ function RichMediaPage() {
 	};
 }
 
-// Set global variable for accessing Rich Media functions
-var richMediaPage;
-
 // Initialize Rich Media functions if page is loaded
 jQuery( document ).ready(
 	function() {
-		richMediaPage = new RichMediaPage();
+		window.richMediaPage = new RichMediaPage();
 	}
 );
