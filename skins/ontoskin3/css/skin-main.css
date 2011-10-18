@@ -332,6 +332,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-color: #fff transparent;
 }
 
+#tabsleft .pagetab img{
+	margin-right: 3px;
+	max-height: 24px;
+	max-width: 24px;
+}
+
 /*.tab.selected{
     z-index: 1;
     border: 0;
@@ -564,7 +570,7 @@ table.formtable {
 		border: 1px #a9c5d9 solid;
 }
 
-* SF: Used in 'formedit' mode */
+/* SF: Used in 'formedit' mode */
 fieldset {
 	border: 1px #a9c5d9 solid;
 	background: #ffffff;

@@ -305,9 +305,7 @@ class SMWH_Skin {
 					$tabs .= " " . htmlspecialchars( $tab['class'] );
 				}
 				$tabs .= "\">";
-//				$tabs .= '<a href="' . $link . '"';
-//				$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
-//				$tabs .= ">";
+				$tabs .= $this->buildContentIcons( $pageName );
 				$tabs .= $pageName . "</div>";
 				$firstTabs = $tabs . $firstTabs;
 				continue;
@@ -464,9 +462,53 @@ class SMWH_Skin {
 			return;
 		global $wgStylePath;
 		$tab = '<div id="helptab" class="tab">';
-		$tab.= '<div id="smw_csh"><img id="helpimage" src="' . $wgStylePath . $this->imagepath . '/help_icon.png" alt="help" title="' . wfMsg( 'smw_csh_icon_tooltip' ) . '"/></div>';
+		$tab.= '<div id="smw_csh"><img id="helpimage" src="' . $wgStylePath .
+			$this->imagepath . '/help_icon.png" alt="help" title="' .
+			wfMsg( 'smw_csh_icon_tooltip' ) . '"/></div>';
 		$tab.= "</div>";
 		return $tab;
+	}
+
+	/**
+	 * Generates related category icons for the article
+	 * @param string $pageName
+	 *  Name of the current page
+	 * 
+	 * @return string
+	 */
+	private function buildContentIcons( $pageName = '' ) {
+
+		if( empty( $pageName ) ) {
+			return '';
+		}
+		$store = smwfGetSemanticStore();
+		// determine which categories the page is assigned to
+		$pageCats = $store->getCategoriesForInstance( 
+			Title::newFromText( $pageName )
+		);
+
+		$iconHTML = '';
+		foreach ( $pageCats as $pageCat ) {
+			SMWQueryProcessor::processFunctionParams(
+				array(
+					'[[:' . $pageCat->getFullText() . ']]',
+					'[[Category has icon::+]]',
+					'?Category has icon='
+				),
+				$querystring, $params, $printouts
+			);
+			$queryResult = SMWQueryProcessor::getResultFromQueryString(
+				$querystring,
+				$params,
+				$printouts,
+				SMW_OUTPUT_HTML
+			);
+			// "Category has icon" is of type page so the html returned here
+			// can contain links etc - so get only the img tag.
+			preg_match( '/<img[^>]+>/i', $queryResult, $img );
+			$iconHTML .= $img[0] ? $img[0] : '';
+		}
+		return $iconHTML;
 	}
 
 	/**
