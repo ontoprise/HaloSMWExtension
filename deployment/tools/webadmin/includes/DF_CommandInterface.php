@@ -100,6 +100,11 @@ class DFCommandInterface {
 
 	public function saveLocalSettingFragment($extid, $fragment) {
 		global $mwrootDir;
+		
+		//FIXME: this is necessary for Linux because it escapes quotes in $fragment. why?
+		if (!Tools::isWindows()) {
+		  $fragment = str_replace(array('\"', "\\'"), array('"', "'"), $fragment);
+		}
 		if ($extid != 'all') {
 			$localPackages = PackageRepository::getLocalPackages($mwrootDir);
 			$ddproc = new DeployDescriptionProcessor($mwrootDir."/LocalSettings.php",$localPackages[$extid]);
