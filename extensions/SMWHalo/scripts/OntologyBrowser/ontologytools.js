@@ -612,6 +612,13 @@ OBOntologyModifier.prototype = {
 		   }
 		}
 		
+		var selectedBundle = $F("bundleSelector");
+		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
+		if (selectedBundle != '') {
+			var partOfBundleProperty = mw.msg('df_partofbundle');
+			superCategoryContent += "\n[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		}
+		
 		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')
 				+ subCategoryTitle, superCategoryContent, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
@@ -656,6 +663,14 @@ OBOntologyModifier.prototype = {
 		var content = superCategoryTitle != null ? "[["
 				+ gLanguage.getMessage('CATEGORY_NS') + superCategoryTitle
 				+ "]]" : "";
+				
+		var selectedBundle = $F("bundleSelector");
+		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
+		if (selectedBundle != '') {
+			var partOfBundleProperty = mw.msg('df_partofbundle');
+			content += "\n[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		}		
+		
 		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')
 				+ newCategoryTitle, content, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
@@ -880,10 +895,19 @@ OBOntologyModifier.prototype = {
 					superPropertyTitle, SMW_PROPERTY_NS, $(superPropertyID))
 			selectionProvider.fireRefresh();
 		}
+		
+		var content = "\n[[_SUBP::"
+			+ gLanguage.getMessage('PROPERTY_NS') + superPropertyTitle
+			+ "]]";
+		var selectedBundle = $F("bundleSelector");
+		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
+		if (selectedBundle != '') {
+			var partOfBundleProperty = mw.msg('df_partofbundle');
+			content += "\n[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		}	
+		
 		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
-				+ subPropertyTitle, '', "\n[[_SUBP::"
-				+ gLanguage.getMessage('PROPERTY_NS') + superPropertyTitle
-				+ "]]", gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback
+				+ subPropertyTitle, '', content, gLanguage.getMessage('CREATE_SUB_PROPERTY'), callback
 				.bind(this), $(superPropertyID));
 	},
 
@@ -923,6 +947,13 @@ OBOntologyModifier.prototype = {
 		var content = superPropertyTitle != null ? "\n[[_SUBP::"
 				+ gLanguage.getMessage('PROPERTY_NS') + superPropertyTitle
 				+ "]]" : "";
+		var selectedBundle = $F("bundleSelector");
+		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
+		if (selectedBundle != '') {
+			var partOfBundleProperty = mw.msg('df_partofbundle');
+			content += "\n[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		}
+		
 		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
 				+ newPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
@@ -1049,7 +1080,7 @@ OBOntologyModifier.prototype = {
 
 			selectionProvider.fireRefresh();
 		}
-
+		
 		var content = maxCard != '' ? "\n[[SMW_SSP_HAS_MAX_CARD::" + maxCard
 				+ "]]" : "";
 		content += minCard != '' ? "\n[[SMW_SSP_HAS_MIN_CARD::" + minCard
@@ -1060,8 +1091,7 @@ OBOntologyModifier.prototype = {
 		for ( var i = 0, n = rangeOrTypes.length; i < n; i++) {
 			if (builtinTypes.indexOf(rangeOrTypes[i]) != -1) {
 				// is type
-				rangeTypeStr += gLanguage.getMessage('TYPE_NS')
-						+ rangeOrTypes[i] + (i == n - 1 ? "" : ";");
+				rangeTypeStr += rangeOrTypes[i] + (i == n - 1 ? "" : ";");
 			} else {
 				rangeTypeStr += gLanguage.getMessage('TYPE_PAGE')
 						+ (i == n - 1 ? "" : ";");
@@ -1069,8 +1099,8 @@ OBOntologyModifier.prototype = {
 			}
 		}
 		if (rangeOrTypes.length > 1) {
-				var typeNS = gLanguage.getMessage('TYPE_NS');
-			content += "\n[[_TYPE::"+typeNS+rangeOrTypes[0]+"]]";
+			
+			content += "\n[[_TYPE::"+rangeOrTypes[0]+"]]";
 		} else {
 			content += "\n[[_TYPE::" + rangeTypeStr + "]]";
 		}
@@ -1084,6 +1114,14 @@ OBOntologyModifier.prototype = {
 					+ gLanguage.getMessage('CATEGORY_NS') + domainCategoryTitle
 					+ "]]";
 		}
+		
+		var selectedBundle = $F("bundleSelector");
+		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle : "";
+		if (selectedBundle != '') {
+			var partOfBundleProperty = mw.msg('df_partofbundle');
+			content += "\n[["+partOfBundleProperty+"::"+selectedBundle+"]]";
+		}
+		
 		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
 				+ propertyTitle, '', content, gLanguage
 				.getMessage('CREATE_PROPERTY'), callback.bind(this),
@@ -3237,13 +3275,7 @@ OBSchemaPropertySubMenu.prototype = Object
 							GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
 						}
 
-						function fillUserTypesCallback(request) {
-							var userTypes = request.responseText.split(",");
-							// remove first element
-							userTypes.shift();
-							this.builtinTypes = this.builtinTypes
-									.concat(userTypes);
-						}
+						
 						
 							this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
 							if (this.builtinTypes == null) {
@@ -3254,8 +3286,7 @@ OBSchemaPropertySubMenu.prototype = Object
 							}
 						
 						
-						sajax_do_call('smwf_tb_GetUserDatatypes', [],
-								fillUserTypesCallback.bind(this));
+						
 					},
 					
                     onchangeTypeSelector: function(event) {
@@ -3746,13 +3777,7 @@ OBEditPropertySubMenu.prototype = Object
 							GeneralBrowserTools.setCookieObject("smwh_builtinTypes", this.builtinTypes);
 						}
 
-						function fillUserTypesCallback(request) {
-							var userTypes = request.responseText.split(",");
-							// remove first element
-							userTypes.shift();
-							this.builtinTypes = this.builtinTypes
-									.concat(userTypes);
-						}
+						
 						
 							this.builtinTypes = GeneralBrowserTools.getCookieObject("smwh_builtinTypes");
 							if (this.builtinTypes == null) {
@@ -3763,8 +3788,7 @@ OBEditPropertySubMenu.prototype = Object
 							}
 						
 						
-						sajax_do_call('smwf_tb_GetUserDatatypes', [],
-								fillUserTypesCallback.bind(this));
+						
 					},
 					
 					/**
