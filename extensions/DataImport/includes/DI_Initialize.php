@@ -399,9 +399,11 @@ function smwDITBAddHTMLHeader(&$out){
 		$text = $wgTitle->getText();
 	}
 	
-	$action = $wgRequest->getVal('action');
-	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js".$smwgDIStyleVersion."\"></script>");
+// Bugfix 15862 - Remove the webservice section in STB	
+//	$action = $wgRequest->getVal('action');
+//	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
+	if ($ns == NS_SPECIAL && $text == "FormEdit") {
+//		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js".$smwgDIStyleVersion."\"></script>");
 		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js".$smwgDIStyleVersion."\"></script>");
 	}
 	
