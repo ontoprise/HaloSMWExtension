@@ -46,3 +46,4 @@ $arclibgIP = $IP . '/extensions/ARCLibrary';
 
 # load global functions
 require_once($arclibgIP.'/includes/ARCLIB_GlobalFunctions.php');
+enableARCLibrary();
