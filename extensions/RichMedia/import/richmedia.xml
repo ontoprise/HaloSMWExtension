@@ -671,7 +671,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+[[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     <hash>1d89bcc71238f89c854e0ad65af1cd6b</hash>
     </revision>
   </page>
@@ -696,7 +696,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[Has type::Type:Date| ]] [[has domain and range::Category:Media; | ]]</text>
+[[has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
     <hash>ea9d0bc8c0ccfcda6397a65bf60cd4f6</hash>
     </revision>
   </page>
@@ -721,7 +721,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
+[[has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     <hash>25fce11ee46dec0d8e142092091ce32d</hash>
     </revision>
   </page>
@@ -747,7 +747,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[Has type::Type:Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
+[[has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     <hash>fc4b6f4bb2c2ae5e76e9088c0aea8f91</hash>
     </revision>
   </page>
@@ -772,7 +772,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[Has type::Type:Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
+[[has type::Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
     <hash>dc872b79bcd129f28abca9a1ff1c1321</hash>
     </revision>
   </page>
@@ -1215,7 +1215,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+[[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     <hash>9c2471562eca25a6c2c157fd59cd7325</hash>
     </revision>
   </page>
@@ -1240,7 +1240,7 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Type:String| ]] [[has domain and range::Category:Media; | ]]</text>
+[[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     <hash>33ccd3946c605a0fde2d97c6c33c7f48</hash>
     </revision>
   </page>
@@ -1824,7 +1824,7 @@ More information about the RichMedia extension and how to use it can be found in
 {{Content hash|value=}}
 
 [[Is inverse of::Property:HasRelatedArticle| ]]
-[[has domain and range::; Category:Media| ]][[has type::Type:Page| ]]</text>
+[[has domain and range::; Category:Media| ]][[has type::Page| ]]</text>
     <hash>43919b586faa9004242b3ccce70199ce</hash>
     </revision>
   </page>
@@ -1958,7 +1958,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=	Richmedia}}
 {{Content hash|value=}}
 
-[[Has type::Type:Page| ]] [[Has domain and range::Category:Content| ]]
+[[has type::Page| ]] [[Has domain and range::Category:Content| ]]
 [[Category:Transitive properties|Transitive_properties]]</text>
     <hash>fb7c90b1524ec7faddc9d0935509248b</hash>
     </revision>
