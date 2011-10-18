@@ -54,7 +54,7 @@ the authors.
  * ScriptManager 1.6.0 (see installation guide)
  * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
  * ARC Library 1.6.0 (see installation guide)
- * Deployment framework 1.6.0 (see installation guide)
+ * Wiki Admin tool 1.6.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Requirements (bundled) ==
@@ -62,14 +62,14 @@ the authors.
  * PHP 5.2.x or PHP 5.3.x
  * MediaWiki 1.17.x (see installation guide)
  * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
- * Deployment framework 1.6.0 (see installation guide)
+ * Wiki Admin tool 1.6.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 4/5 or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
 
 We recommend to install the Halo Extension using the SMW+ Administration tool
-which is part of the Deployment Framework Extension (Download: 
-https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download). 
+which is part of the Wiki Admin tool (Download: 
+https://sourceforge.net/projects/halo-extension/files/wikiadmintool-1.6.0_0.zip/download). 
 It empowers the convenient administration and automatic setup of extensions for
 MediaWiki and Semantic MediaWiki. If you upgrade an existing installation of
 SMW+, also read the remarks in the section "Notes on Upgrading" below.
@@ -81,7 +81,7 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 (2) Download and install the ARCLibrary extension into your Mediawiki
     installation. In case you have the bundled version you can skip this step.
     
-(2) Download and install the Deployment framework extension into your Mediawiki
+(2) Download and install the Wiki Admin tool into your Mediawiki
     installation. Extract the ZIP archive to the root directory of MediaWiki.
 
 (3) Extract the smwhalo ZIP archive to the root directory of MediaWiki.
