@@ -76,7 +76,7 @@ showToolbar: function(){
 
 },
 
-callme: function(event){
+initToolbox: function(event){
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" ||
         wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
         wgCanonicalSpecialPageName == 'FormEdit')
@@ -335,6 +335,4 @@ getRuleTypes: function() {
 };// End of Class
 
 window.ruleToolBar = new RuleToolBar();
-if (typeof FCKeditor == 'undefined')
-Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
-
+stb_control.registerToolbox(ruleToolBar);
