@@ -203,7 +203,7 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	
     	// Send a query for all documents and asserts that all articles were added.
     	$qr = $indexer->sendRawQuery("q=*:*");
-    	$expResult = 'numFound="160"';
+    	$expResult = 'numFound="165"';
     	$this->assertContains($expResult, $qr, "The index does not contain the expected number of documents.");
     }
 
@@ -266,7 +266,9 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     
     public function providerForIndexContent() {
     	return array(
-    		array("q=*:*", array('numFound="160"')),
+    		#0
+    		array("q=*:*", array('numFound="165"')),
+    		#1
     		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0&sort=smwh_title_s%20asc",
     		      array(
     		      	'"smwh_title":"1201_Third_Avenue"',
@@ -281,6 +283,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      	'"smwh_title":"555_California_Street"'
     		      )
     		),
+    		#2
     		array("q=smwh_title_s:*Wells*&fl=smwh_title&wt=json&indent=on",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
@@ -291,6 +294,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		        '"numFound":5'
     		      )
     		),
+    		#3
     		array("q=smwh_title:*wells*&fl=smwh_title&wt=json&indent=on",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
@@ -301,12 +305,13 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		        '"numFound":5'
     		      )
     		),
+    		#4
     		array("q=*:*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
     		      array(
     		      	'"smwh_Located_in_t",34',
     		      	'"smwh_Located_in_state_t",22',
-    		        '"numFound":160',
-    		      	'"smwh_Modification_date_xsdvalue_dt",160',
+    		        '"numFound":165',
+    		      	'"smwh_Modification_date_xsdvalue_dt",165',
     		      	'"smwh_Building_name_xsdvalue_t",34',
     		      	'"smwh_Image_xsdvalue_t",34',
     		      	'"smwh_Height_stories_xsdvalue_d",34',
@@ -316,6 +321,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      	'"Bank_of_America_buildings",10',
     		      )
     		),
+    		#5
     		array("q=smwh_title_s:*Wells*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
@@ -336,6 +342,66 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      	'"Bank_of_America_buildings",0',
     		      )
     		),
+    		#6 - Do a search in full text
+    		array("q=smwh_search_field:seattle*&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
+    		      array(
+    		      	"Category:Office_buildings_in_Seattle,_Washington",
+    		      	"Category:Skyscrapers_in_Seattle,_Washington",
+    		      	"Located_in::Seattle",
+    		      	"Image::Seattle_Washington_Mutual_Tower_2004-08-30.jpg",
+    		      	"Description::This is the description of Seattle.",
+    		      	"Category:Cities_in_the_Seattle_metropolitan_area",
+    		      	"Category:Geography_of_Seattle,_Washington",
+    		      	"Category:Neighborhoods_in_Seattle,_Washington",
+    		      	"Category:Seattle,_Washington",
+    		      	"Description::This is the description of Seattle_Municipal_Tower.",
+    		      	"Building_name::Seattle Municipal Tower",
+    		      	"Description::This is the description of Union_Square_(Seattle).",
+    		      	'"numFound":5'
+    		      )
+    		),
+    		#7 - Search for a category with special characters
+    		array("q=*:*&facet=true&fl=smwh_title&fq=smwh_categories%3A%C3%9Cbung&wt=json&indent=on",
+    		      array(
+    		      	'"smwh_title":"Zweite_Übung"',
+    		      	'"smwh_title":"Übung_1"',
+    		      	'"numFound":2'
+    		      )
+    		),
+   			#8 - Search for a attribute with special characters
+    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_attributes%3Asmwh_Hat_%C3%9Cberschrift_xsdvalue_t&wt=json",
+    		      array(
+					'"smwh_title":"Zweite_Übung"',
+					'"smwh_categories":["Übung"]',
+					'smwh_Hat_Überschrift_xsdvalue_t',
+					'"smwh_title":"Übung_1"',
+					'"smwh_categories":["Übung"]',
+					'smwh_Hat_Überschrift_xsdvalue_t',
+					'smwh_Nächste_Übung_t',
+					'numFound":2'
+    		      )
+    		),
+   			#9 - Search for a relation with special characters
+    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_properties:smwh_Nächste_Übung_t&wt=json",
+    		      array(
+					'"smwh_title":"Übung_1"',
+					'"smwh_categories":["Übung"]',
+					'smwh_Hat_Überschrift_xsdvalue_t',
+					'smwh_Nächste_Übung_t',
+					'numFound":1'
+    		      )
+    		),
+    		#10 - Search for full text with special characters
+    		array("q=smwh_search_field:übung*&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
+    		      array(
+					'"smwh_full_text":"Dies ist die zweite Übung.\n[[Hat Überschrift::Übung 2]]\n[[Category:Übung]]"',
+					'"smwh_full_text":"Dies ist Übung 1.\n[[Nächste Übung::Zweite Übung]]\n[[Hat Überschrift::Übung 1]]\n[[Category:Übung]]"',
+					'"smwh_full_text":"Dies ist die Kategorie Übung."',
+					'"smwh_full_text":"Dieses Property verweist auf die nächste Übung.\n\n[[has type::Page]]"',
+					'"numFound":4'
+    		      )
+    		),
+    		
     	);	
     }
     
@@ -557,6 +623,18 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     				'"smwh_Description_xsdvalue_t"]',
     				'"smwh_Description_xsdvalue_s":["Orson Wells was a famous author"]'
     		    )
+    		),
+    		#9
+    		array(
+    			array("edit" =>
+    				  array("Übung 3" => "Dies ist Übung 3.[[Nächste Übung::Übung 1]][[Hat Überschrift::Übung 3]][[Category:Übung]]")),
+    		    "q=*:*&facet=true&fl=smwh_title&fq=smwh_categories%3A%C3%9Cbung&wt=json&indent=on",
+    		    array(
+    		      	'"smwh_title":"Zweite_Übung"',
+    		      	'"smwh_title":"Übung_1"',
+    		      	'"smwh_title":"Übung_3"',
+    		      	'"numFound":3'
+       		    )
     		),
     	);
     }

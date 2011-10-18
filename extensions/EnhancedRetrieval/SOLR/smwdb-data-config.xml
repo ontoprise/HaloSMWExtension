@@ -58,7 +58,7 @@
 					prop = bp[1];
 					type = bp[0];
 				} else {
-					if (type.indexOf(swivtNS) === 0) {
+          if (type && type.indexOf(swivtNS) === 0) {
 						type = type.substr(swivtNS.length);
 					}
 				}
@@ -128,7 +128,7 @@
 			name="pages"
 			query="SELECT p.page_id as pid,
 			              p.page_namespace as pns,
-			              CAST(p.page_title AS CHAR) as pt
+			              CONVERT(p.page_title USING utf8) as pt
              FROM page as p
       ">
 			<field column="pid" name="id" />
@@ -138,7 +138,7 @@
 			<!-- Store the full text of the article -->
 			<entity
 				name="fulltext"
-				query="SELECT CAST(t.old_text AS CHAR) ft
+				query="SELECT CONVERT(t.old_text USING utf8) as ft
 			       FROM text t
 			       LEFT JOIN (revision as r) ON (t.old_id = r.rev_text_id )
 			       LEFT JOIN (page as p) ON ( r.rev_id= p.page_latest)
@@ -149,7 +149,7 @@
 			<!-- Store all categories for each subject -->
 			<entity 
 				name="categories"
-				query="SELECT CAST(c.cl_to AS CHAR) cat
+				query="SELECT CONVERT(c.cl_to USING utf8) as cat
                FROM categorylinks c
                WHERE cl_from='${pages.pid}'">
 				<field column="cat" name="smwh_categories" />
@@ -161,7 +161,7 @@
 				query="SELECT s.smw_id as smwID
                FROM smw_ids s
                WHERE s.smw_namespace='${pages.pns}' AND 
-                     s.smw_title='${dataimporter.functions.escapeSql(pages.pt)}'">
+                     s.smw_title=CONVERT('${dataimporter.functions.escapeSql(pages.pt)}' USING utf8)">
 				<field column="smwID" name="smwh_smw_id" />
 
   			<!-- Store all subject, predicate and object names for each subject of a
@@ -169,8 +169,8 @@
   			<entity 
   				name="rels" 
   				transformer="script:Relations"
-  				query="SELECT CAST(pids.smw_title AS CHAR) as prop, 
-  				              CAST(oids.smw_title AS CHAR) as obj
+  				query="SELECT CONVERT(pids.smw_title USING utf8) as prop, 
+  				              CONVERT(oids.smw_title USING utf8) as obj
   				       FROM smw_rels2 AS r
   				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = r.p_id)
   				       LEFT JOIN (smw_ids as oids) ON (oids.smw_id = r.o_id)
@@ -182,10 +182,10 @@
   			<entity 
   				name="atts" 
   				transformer="script:Attributes"
-  				query="SELECT CAST(pids.smw_title AS CHAR) as prop,
-                        CAST(a.value_xsd AS CHAR) as valueXSD,
+  				query="SELECT CONVERT(pids.smw_title USING utf8) as prop,
+                        CONVERT(a.value_xsd USING utf8) as valueXSD,
                         a.value_num as valueNum,
-                        CAST(spec.value_string AS CHAR) as type
+                        CONVERT(spec.value_string USING utf8) as type
                   FROM smw_atts2 AS a
                   LEFT JOIN (smw_ids as pids) ON (pids.smw_id = a.p_id)
                   LEFT JOIN (smw_spec2 as spec) ON (a.p_id = spec.s_id)
@@ -196,8 +196,8 @@
   			<entity 
   				name="text"
   				transformer="script:TextAttributes"
-  				query="SELECT CAST(pids.smw_title AS CHAR) as attr,
-  				              CAST(t.value_blob AS CHAR) as text
+  				query="SELECT CONVERT(pids.smw_title USING utf8) as attr,
+  				              CONVERT(t.value_blob USING utf8) as text
   				       FROM smw_text2 AS t
   				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = t.p_id)
   				       WHERE t.s_id='${smwids.smwID}'">

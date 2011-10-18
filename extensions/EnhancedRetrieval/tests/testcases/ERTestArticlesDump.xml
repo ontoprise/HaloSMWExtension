@@ -3522,4 +3522,78 @@
 	[[Category:Visitor_attractions_in_Manhattan]]</text>
     </revision>
   </page>
+  <page>
+    <title>Property:Hat Überschrift</title>
+    <id>594</id>
+    <revision>
+      <id>632</id>
+      <timestamp>2011-10-18T06:19:20Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with &quot;[[has type::String]]&quot;</comment>
+      <text xml:space="preserve" bytes="20">[[has type::String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Nächste Übung</title>
+    <id>609</id>
+    <revision>
+      <id>650</id>
+      <timestamp>2011-10-18T08:17:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;Dieses Property verweist auf die nächste Übung.  [[has type::Page]]&quot;</comment>
+      <text xml:space="preserve" bytes="69">Dieses Property verweist auf die nächste Übung.
+
+[[has type::Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Übung</title>
+    <id>595</id>
+    <revision>
+      <id>633</id>
+      <timestamp>2011-10-18T06:20:35Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with &quot;Dies ist die Kategorie Übung.&quot;</comment>
+      <text xml:space="preserve" bytes="30">Dies ist die Kategorie Übung.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Übung 1</title>
+    <id>596</id>
+    <revision>
+      <id>651</id>
+      <timestamp>2011-10-18T08:21:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="104">Dies ist Übung 1.
+[[Nächste Übung::Zweite Übung]]
+[[Hat Überschrift::Übung 1]]
+[[Category:Übung]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Zweite Übung</title>
+    <id>597</id>
+    <revision>
+      <id>635</id>
+      <timestamp>2011-10-18T06:27:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;Dies ist die zweite Übung. [[Hat Überschrift::Übung 2]] [[Category:Übung]]&quot;</comment>
+      <text xml:space="preserve" bytes="78">Dies ist die zweite Übung.
+[[Hat Überschrift::Übung 2]]
+[[Category:Übung]]</text>
+    </revision>
+  </page>
 </mediawiki>
