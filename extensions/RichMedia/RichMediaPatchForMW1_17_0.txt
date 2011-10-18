@@ -1,6 +1,6 @@
 Index: includes/ImageQueryPage.php
 ===================================================================
---- includes/ImageQueryPage.php	(revision 11822)
+--- includes/ImageQueryPage.php	(revision 12489)
 +++ includes/ImageQueryPage.php	(working copy)
 @@ -47,9 +47,24 @@
  	private function prepareImage( $row ) {
@@ -30,7 +30,7 @@ Index: includes/ImageQueryPage.php
  	/**
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 11822)
+--- includes/Article.php	(revision 12489)
 +++ includes/Article.php	(working copy)
 @@ -1836,9 +1836,24 @@
  				$dbw->delete( 'redirect', $where, __METHOD__ );
@@ -131,7 +131,7 @@ Index: includes/Article.php
  			$dbw->update(
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 11822)
+--- includes/parser/Parser.php	(revision 12489)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1739,46 +1739,97 @@
  
@@ -443,7 +443,7 @@ Index: includes/parser/Parser.php
  		# Linker does the rest
 Index: includes/ImagePage.php
 ===================================================================
---- includes/ImagePage.php	(revision 11822)
+--- includes/ImagePage.php	(revision 12489)
 +++ includes/ImagePage.php	(working copy)
 @@ -69,28 +69,62 @@
  		$diff = $wgRequest->getVal( 'diff' );
@@ -622,7 +622,7 @@ Index: includes/ImagePage.php
  			// Standard article deletion
 Index: includes/Linker.php
 ===================================================================
---- includes/Linker.php	(revision 11822)
+--- includes/Linker.php	(revision 12489)
 +++ includes/Linker.php	(working copy)
 @@ -447,7 +447,17 @@
  
@@ -710,7 +710,7 @@ Index: includes/Linker.php
  			if ( $text == '' ) {
 Index: includes/filerepo/FileRepo.php
 ===================================================================
---- includes/filerepo/FileRepo.php	(revision 11822)
+--- includes/filerepo/FileRepo.php	(revision 12489)
 +++ includes/filerepo/FileRepo.php	(working copy)
 @@ -139,16 +139,40 @@
  			return false;
@@ -762,7 +762,7 @@ Index: includes/filerepo/FileRepo.php
  
 Index: includes/filerepo/RepoGroup.php
 ===================================================================
---- includes/filerepo/RepoGroup.php	(revision 11822)
+--- includes/filerepo/RepoGroup.php	(revision 12489)
 +++ includes/filerepo/RepoGroup.php	(working copy)
 @@ -100,8 +100,22 @@
  			}
@@ -791,7 +791,7 @@ Index: includes/filerepo/RepoGroup.php
  		# Check the cache
 Index: includes/filerepo/ArchivedFile.php
 ===================================================================
---- includes/filerepo/ArchivedFile.php	(revision 11822)
+--- includes/filerepo/ArchivedFile.php	(revision 12489)
 +++ includes/filerepo/ArchivedFile.php	(working copy)
 @@ -94,7 +94,23 @@
  		if( !count($conds))
@@ -820,7 +820,7 @@ Index: includes/filerepo/ArchivedFile.php
  				array(
 Index: includes/Export.php
 ===================================================================
---- includes/Export.php	(revision 11822)
+--- includes/Export.php	(revision 12489)
 +++ includes/Export.php	(working copy)
 @@ -596,17 +596,39 @@
  	 * Warning! This data is potentially inconsistent. :(
@@ -872,7 +872,7 @@ Index: includes/Export.php
  
 Index: includes/Wiki.php
 ===================================================================
---- includes/Wiki.php	(revision 11822)
+--- includes/Wiki.php	(revision 12492)
 +++ includes/Wiki.php	(working copy)
 @@ -277,6 +277,23 @@
  			return $article;
@@ -922,7 +922,7 @@ Index: includes/Wiki.php
  			!$request->getVal( 'diff' ) &&    // ... and not when showing diff
 Index: includes/mime.types
 ===================================================================
---- includes/mime.types	(revision 11822)
+--- includes/mime.types	(revision 12489)
 +++ includes/mime.types	(working copy)
 @@ -15,6 +15,12 @@
  application/vnd.mif mif
@@ -980,7 +980,7 @@ Index: includes/mime.types
  application/vnd.ms-word.document.macroEnabled.12 docm
 Index: includes/Title.php
 ===================================================================
---- includes/Title.php	(revision 11822)
+--- includes/Title.php	(revision 12492)
 +++ includes/Title.php	(working copy)
 @@ -280,6 +280,31 @@
  		$t = new Title();
@@ -1014,7 +1014,38 @@ Index: includes/Title.php
  		$t->mNamespace = $ns = intval( $ns );
  		$t->mDbkeyform = str_replace( ' ', '_', $title );
  		$t->mArticleID = ( $ns >= 0 ) ? -1 : 0;
-@@ -487,9 +512,23 @@
+@@ -301,6 +326,30 @@
+ 	 */
+ 	public static function makeTitleSafe( $ns, $title, $fragment = '', $interwiki = '' ) {
+ 		$t = new Title();
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/AdditionalNamespaceCheck */
++		// NS_FILE may not be the correct Namespace for this MIME type
++		// original content is located in else statement.
++		global $smwgEnableRichMedia, $wgNamespaceByExtension;
++		if( $smwgEnableRichMedia ) {
++			$ext = explode( '.', $title ); array_shift($ext);
++			if( count( $ext ) ) {
++				$finalExt = $ext[count( $ext ) - 1];
++			} else {
++				$finalExt = '';
++			}
++			if ( isset( $finalExt ) ) {
++				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
++					// Just change it for FILE namespace... not for specialpages etc
++					RMNamespace::isImage( $ns, $rMresult );
++					if ( $rMresult ) {
++						$ns = $wgNamespaceByExtension[$finalExt];
++					}
++				}
++			}
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 		$t->mDbkeyform = Title::makeName( $ns, $title, $fragment, $interwiki );
+ 		if ( $t->secureAndSplit() ) {
+ 			return $t;
+@@ -487,9 +536,23 @@
  
  		$t = preg_replace( "/\\s+/", ' ', $t );
  
@@ -1040,7 +1071,7 @@ Index: includes/Title.php
  		return trim( $t );
  	}
  
-@@ -1222,9 +1261,24 @@
+@@ -1222,9 +1285,24 @@
  			}
  
  			// Check if user is allowed to move files if it's a file
@@ -1067,7 +1098,7 @@ Index: includes/Title.php
  
  			if ( !$user->isAllowed( 'move' ) ) {
  				// User can't move anything
-@@ -2041,22 +2095,48 @@
+@@ -2041,22 +2119,48 @@
  
  		$dbr = wfGetDB( DB_SLAVE );
  
@@ -1130,7 +1161,7 @@ Index: includes/Title.php
  
  		if ( $getPages ) {
  			$cols = array( 'pr_page', 'page_namespace', 'page_title',
-@@ -2325,12 +2405,30 @@
+@@ -2325,12 +2429,30 @@
  				array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  				__METHOD__
  			);
@@ -1164,7 +1195,7 @@ Index: includes/Title.php
  		}
  		return (int)$n;
  	}
-@@ -2349,12 +2447,30 @@
+@@ -2349,12 +2471,30 @@
  			array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  			__METHOD__
  		);
@@ -1200,7 +1231,7 @@ Index: includes/Title.php
  		return $deleted;
  	}
  
-@@ -2994,29 +3110,65 @@
+@@ -2994,29 +3134,65 @@
  		}
  
  		// Image-specific checks
@@ -1282,7 +1313,7 @@ Index: includes/Title.php
  		if ( $auth ) {
  			$errors = wfMergeErrorArrays( $errors,
  				$this->getUserPermissionsErrors( 'move', $wgUser ),
-@@ -3076,15 +3228,36 @@
+@@ -3076,15 +3252,36 @@
  
  		// If it is a file, move it first. It is done before all other moving stuff is done because it's hard to revert
  		$dbw = wfGetDB( DB_MASTER );
@@ -1325,7 +1356,7 @@ Index: includes/Title.php
  
  		$dbw->begin(); # If $file was a LocalFile, its transaction would have closed our own.
  		$pageid = $this->getArticleID( GAID_FOR_UPDATE );
-@@ -3530,13 +3703,32 @@
+@@ -3530,13 +3727,32 @@
  	 */
  	public function isValidMoveTarget( $nt ) {
  		# Is it an existing file?
@@ -1363,7 +1394,7 @@ Index: includes/Title.php
  		# Is it a redirect with no history?
  		if ( !$nt->isSingleRevRedirect() ) {
  			wfDebug( __METHOD__ . ": not a one-rev redirect\n" );
-@@ -3846,6 +4038,23 @@
+@@ -3846,6 +4062,23 @@
  		if ( $this->mInterwiki != '' ) {
  			return true;  // any interwiki link might be viewable, for all we know
  		}
@@ -1387,7 +1418,7 @@ Index: includes/Title.php
  		switch( $this->mNamespace ) {
  			case NS_MEDIA:
  			case NS_FILE:
-@@ -4192,10 +4401,26 @@
+@@ -4192,10 +4425,26 @@
  	public function getRestrictionTypes() {
  		$types = self::getFilteredRestrictionTypes( $this->exists() );
  		
@@ -1419,7 +1450,7 @@ Index: includes/Title.php
  		
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 11822)
+--- includes/Namespace.php	(revision 12489)
 +++ includes/Namespace.php	(working copy)
 @@ -61,7 +61,19 @@
  	 */
@@ -1444,7 +1475,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/specials/SpecialUndelete.php
 ===================================================================
---- includes/specials/SpecialUndelete.php	(revision 11822)
+--- includes/specials/SpecialUndelete.php	(revision 12492)
 +++ includes/specials/SpecialUndelete.php	(working copy)
 @@ -123,9 +123,18 @@
  	 * @todo Does this belong in Image for fuller encapsulation?
@@ -1579,7 +1610,7 @@ Index: includes/specials/SpecialUndelete.php
  			wfDebug( "Undelete: unknown error...\n" );
 Index: includes/specials/SpecialFilepath.php
 ===================================================================
---- includes/specials/SpecialFilepath.php	(revision 11822)
+--- includes/specials/SpecialFilepath.php	(revision 12492)
 +++ includes/specials/SpecialFilepath.php	(working copy)
 @@ -42,26 +42,58 @@
  
@@ -1657,7 +1688,7 @@ Index: includes/specials/SpecialFilepath.php
  	function showForm( $title ) {
 Index: includes/specials/SpecialSearch.php
 ===================================================================
---- includes/specials/SpecialSearch.php	(revision 11822)
+--- includes/specials/SpecialSearch.php	(revision 12492)
 +++ includes/specials/SpecialSearch.php	(working copy)
 @@ -582,7 +582,21 @@
  		}
@@ -1684,7 +1715,7 @@ Index: includes/specials/SpecialSearch.php
  				$thumb = $img->transform( array( 'width' => 120, 'height' => 120 ) );
 Index: includes/mime.info
 ===================================================================
---- includes/mime.info	(revision 11822)
+--- includes/mime.info	(revision 12489)
 +++ includes/mime.info	(working copy)
 @@ -55,6 +55,12 @@
  model/vrml	[MULTIMEDIA]
@@ -1730,7 +1761,7 @@ Index: includes/mime.info
 +#op-patch|BL|2009-10-07|end
 Index: includes/ImageGallery.php
 ===================================================================
---- includes/ImageGallery.php	(revision 11822)
+--- includes/ImageGallery.php	(revision 12489)
 +++ includes/ImageGallery.php	(working copy)
 @@ -258,11 +258,28 @@
  			$time = $descQuery = false;

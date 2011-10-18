@@ -8,7 +8,7 @@
   will closes itself and the original page will be reloaded. 
  */
 
-function saveRichMediaData(mediaTitle, mediaLink, formInputID) {
+window.saveRichMediaData = function(mediaTitle, mediaLink, formInputID) {
 	// get FCK editor instance
 	var inFormEdit = false;
 	var richEditorType;
