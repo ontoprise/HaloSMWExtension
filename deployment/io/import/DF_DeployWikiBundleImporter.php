@@ -753,8 +753,7 @@ class DeployWikiRevision extends WikiRevision {
 				$bundleDI = reset($bundleDIs);
 				if ($bundleDI !== false) {
 					$anotherBundle = $bundleDI->getTitle()->getText();
-					echo "\nMode : ".$this->mode;
-					 
+										 
 					if ($anotherBundle != ucfirst($this->bundleID)) {
 						switch($this->mode) {
 							case DEPLOYWIKIREVISION_INFO:
