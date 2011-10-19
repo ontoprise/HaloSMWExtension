@@ -64,10 +64,8 @@ class ResourceInstaller {
 
         if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed or at least is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
 
-
-
         // import new wiki pages
-        $reader = new BackupReader($mode);
+        $reader = new BackupReader($mode, $dd->getID());
         $wikidumps = $dd->getWikidumps();
 
         foreach($wikidumps as $file) {

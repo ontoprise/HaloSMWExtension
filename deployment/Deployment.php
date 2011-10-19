@@ -18,7 +18,7 @@ if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdat
 	$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
 }
 $wgAjaxExportList[] = 'dff_authUser';
-$dfgNoAsk=true;
+
 
 function dfgSetupExtension() {
 	dffInitializeLanguage();

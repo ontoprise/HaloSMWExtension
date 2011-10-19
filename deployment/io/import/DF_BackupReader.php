@@ -11,12 +11,14 @@ class BackupReader {
 	var $debug     = false;
 	var $uploads   = false;
 	var $mode = 0;
+	var $bundleID;
 	
 	var $importedPages = array();
 
-	function BackupReader($mode) {
+	function BackupReader($mode, $bundleID) {
 		$this->stderr = fopen( "php://stderr", "wt" );
 		$this->mode = $mode;
+		$this->bundleID = $bundleID;
 	}
 
 	function reportPage( $page ) {
@@ -105,7 +107,7 @@ class BackupReader {
 		$this->importPredefinedTemplates();
 
 		$source = new ImportStreamSource( $handle );
-		$importer = new DeployWikiImporter( $source, $this->mode, DFUserInput::getInstance() );
+		$importer = new DeployWikiImporter( $source, $this->mode, DFUserInput::getInstance(), $this->bundleID );
 
 		$importer->setDebug( $this->debug );
 		$importer->setPageCallback( array( &$this, 'reportPage' ) );
