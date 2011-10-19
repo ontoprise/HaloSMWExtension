@@ -152,7 +152,7 @@ function authenticateUser($username, $password, $acceptMIME=NULL) {
         $bodyBegin = strpos($res, "\r\n\r\n");
         list($header, $res) = $bodyBegin !== false ? array(substr($res, 0, $bodyBegin), substr($res, $bodyBegin+4)) : array($res, "");
         $res = trim($res);
-        return $res == "true";
+        return (strpos($res, "wikiadmintool_authorized") !== false);
 }
 
 

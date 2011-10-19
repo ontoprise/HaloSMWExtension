@@ -95,7 +95,7 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
  * @param string $username
  * @param string $password
  *
- * @return string true/false
+ * @return string "wikiadmintool_authorized" or "false"
  */
 function dff_authUser($username, $password) {
 
@@ -110,7 +110,7 @@ function dff_authUser($username, $password) {
 
 	// and group membership
 	$groups = $user->getGroups();
-	return $correct && (in_array("sysop", $groups) ||  in_array("administrator", $groups)) ? "true" : "false";
+	return $correct && (in_array("sysop", $groups) ||  in_array("administrator", $groups)) ? "wikiadmintool_authorized" : "false";
 }
 
 /**
