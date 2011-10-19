@@ -22,8 +22,10 @@ class ASFFormGeneratorUtils {
 			if(!$getAll){
 				$idx = array_keys($values);
 				$idx = $idx[0];
-				$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
-					->getShortWikiText();
+				if(!is_null($values[$idx])){						
+					$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
+						->getShortWikiText();
+				}
 			} else {
 				$result = array();
 				foreach($values as $v){
