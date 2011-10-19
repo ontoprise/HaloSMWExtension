@@ -408,6 +408,10 @@ function smwgHaloSetupExtension() {
 		define('TF_IS_EXISTS_CMP', 'plus_');
 		define('TF_CATEGORY_KEYWORD', '__Category__');
 		
+		//initialize rss2 result printer
+		$wgAutoloadClasses['SMWRSS2QueryPrinter'] =
+			$smwgHaloIP.'/includes/queryprinters/SMW_QP_RSS2.php';
+		$smwgResultFormats['rss2'] = 'SMWRSS2QueryPrinter';
 		
 		//initialize ajax result printer
 		require_once($smwgHaloIP.'/includes/LiveQueries/SMW_LiveQueriesAjaxAccess.php');
