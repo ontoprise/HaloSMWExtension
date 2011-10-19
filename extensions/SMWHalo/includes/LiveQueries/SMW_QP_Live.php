@@ -66,7 +66,7 @@ class SMWLiveQueryPrinter extends SMWResultPrinter {
 		$params = array_merge($params, $this->getPrintRequests($queryResult, $queryType));
 		 
 		$query = '{{#'.$queryType.':'.implode('|', $params).'}}';
-		$query = str_replace(array('<','>'), array('&lt;', '&gt;'), $query);
+		$query = '<pre>'.str_replace(array('<','>'), array('&lt;', '&gt;'), $query).'</pre>';
 		
 		global $smwgIQRunningNumber, $smwgHaloScriptPath;
 		$id = 'live-query-' . $smwgIQRunningNumber;

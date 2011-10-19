@@ -5,6 +5,7 @@ $wgAjaxExportList[] = 'smwf_lq_refresh';
 
 function smwf_lq_refresh($id, $query){
 	
+			$query = trim(substr($query, 5, strlen($query)-9));
 			$query = str_replace(array('&lt;', '&gt;'), array('<','>'), $query);
 	
 			global $wgParser, $wgOut;
