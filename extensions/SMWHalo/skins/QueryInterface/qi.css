@@ -681,3 +681,11 @@ button.btnhov{
 #qiBoxcontent img{
   cursor: pointer;
 }
+
+.typeLabelTd{
+  font-family: Tahoma, Helvetica, sans-serif;
+  font-size: 9px;
+  color: #999999;
+  width: 200px;
+  overflow: hidden;
+}

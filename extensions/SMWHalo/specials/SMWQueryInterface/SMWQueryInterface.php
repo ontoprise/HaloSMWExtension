@@ -341,15 +341,15 @@ class SMWQueryInterface extends SpecialPage {
             '</table>';
   }
 
-  private function addValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $drawTopLine = false){
+  private function addValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $columnLabelId, $drawTopLine = false){
     return '<table ' . ($drawTopLine ? 'style="border-top: 1px solid gray;"' : '') . ($tableId ? "id=\"$tableId\"" : "") . '><tr>' .
             '<td>' . $nameInputLabel . '</td>' .
             '<td><input ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . ' class="wickEnabled" type="text" autocomplete="OFF" constraints=""></td>' .
             '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox" checked="checked">' .
             '<label ' . ($showInResultsChkBoxId ? "for=\"$showInResultsChkBoxId\"" : "") . '>' . wfMsg('smw_qi_show_in_results') . '</label></td></tr>' .
-            '<tr><td></td><td ' . ($typeLabelId ? "id=\"$typeLabelId\"" : "") . '></td><td></td></tr>' .
+            '<tr><td></td><td ' . ($typeLabelId ? "id=\"$typeLabelId\"" : "") . ' class="typeLabelTd"></td><td></td></tr>' .
             '<tr><td>' . wfMsg('smw_qi_column_label') . '</td>' .
-            '<td><input id="qiSubjectColumnLabel" type="text"></td>' .
+            '<td><input ' . ($columnLabelId ? "id=\"$columnLabelId\"" : "") . ' type="text"></td>' .
             '<td></td></tr><table>';
   }
 
@@ -364,14 +364,14 @@ class SMWQueryInterface extends SpecialPage {
             '<td>' . wfMsg('smw_qi_category_name') . '</td>' .
             '<td><input id="qiCategoryNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 14"></td>' .
             '<td></td></tr>' .
-            '<tr><td></td><td id="qiSubjectTypeLabel"></td><td></td></tr>' .
+            '<tr><td></td><td id="qiCategoryTypeLabel" class="typeLabelTd"></td><td></td></tr>' .
             '<tr><td></td>' .
             '<td><a href="" id="qiAddOrCategoryLink">' . wfMsg('smw_qi_add_another_category') . '</a></td>' .
             '<td></td></tr></table>';
   }
 
   private function addSubjectDialog() {
-    return $this->addValueDialog(wfMsg('smw_qi_subject_name'), 'qiSubjectDialogTable', 'qiSubjectNameInput', 'qiSubjectShowInResultsChkBox', 'qiSubjectColumnLabel') .
+    return $this->addValueDialog(wfMsg('smw_qi_subject_name'), 'qiSubjectDialogTable', 'qiSubjectNameInput', 'qiSubjectShowInResultsChkBox', 'qiSubjectTypeLabel', 'qiSubjectColumnLabelInput') .
             $this->addFiltersDialog('qiSubjectFiltersTable');
   }
 
@@ -382,13 +382,14 @@ class SMWQueryInterface extends SpecialPage {
             '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox" checked="checked">' .
             '<label for="qiPropertyValueMustBeSetChkBox">' . wfMsg('smw_qi_value_must_be_set') . '</label></td>' .
             '</tr><tr>' .
-            '<td></td><td id="qiPropertyTypeLabel"></td><td></td>' .
+            '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd"></td><td></td>' .
             '</tr></table>' .
             $this->addValueDialog(wfMsg('smw_qi_value_name'),
                     'qiPropertyValueTable',
                     'qiPropertyValueNameInput',
                     'qiPropertyValueShowInResultsChkBox',
-                    'qiPropertyValueTypeLabel') .
+                    'qiPropertyValueTypeLabel',
+                    'qiPropertyColumnLabelInput') .
             $this->addFiltersDialog('qiPropertyFiltersTable');
   }
 

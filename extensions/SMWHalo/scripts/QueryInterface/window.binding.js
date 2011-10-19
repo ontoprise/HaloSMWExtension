@@ -26,20 +26,35 @@ jQuery(document).ready(function(){
 //get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
 function initToolTips(){
   var qtipConfig = {
-      content: '',
-      show: {when: {event: 'mouseover'}, delay: 100},
-      hide: {when: {event: 'mouseout'}, delay: 0},
-      style: {
-        classes: 'ui-tooltip-blue ui-tooltip-shadow'
+    content: '',
+    overwrite: false,
+    show: {
+      ready: true,
+      when: {
+        event: 'mouseover'
       },
-      position: {
-        my: 'top left',
-        at: 'bottom center',
-        target: 'mouse',
-        viewport: $(window),
-        adjust: {y: 0, x: 20}
+      delay: 100
+    },
+    hide: {
+      when: {
+        event: 'mouseout'
+      },
+      delay: 0
+    },
+    style: {
+      classes: 'ui-tooltip-blue ui-tooltip-shadow'
+    },
+    position: {
+      my: 'top left',
+      at: 'bottom center',
+      target: 'mouse',
+      viewport: $(window),
+      adjust: {
+        y: 0,
+        x: 20
       }
-    };
+    }
+  };
 
   jQuery('[onmouseover^="Tip("]').not('#qiLoadConditionTerm').each(function(){
     var element = jQuery(this);
@@ -58,19 +73,26 @@ function initToolTips(){
     element.removeAttr('onmouseover');
   });
 
-  jQuery('[title]').each(function(){
+  //  jQuery('[title]').each(function(){
+  //    qtipConfig.content = jQuery(this).attr('title') || '';
+  //    jQuery(this).qtip(qtipConfig);
+  //  });
+
+  jQuery('[title]').live('mouseover', function() {
     qtipConfig.content = jQuery(this).attr('title') || '';
-      jQuery(this).qtip(qtipConfig);
+    jQuery(this).qtip(qtipConfig);
   });
 
-  //when elements are added and removed we need to run the qtip setup again
-  //do it when user clicks anywere in the page
-  jQuery('*').live('click', function(){    
-    jQuery('[title]').each(function(){
-      qtipConfig.content = jQuery(this).attr('title') || '';
-      jQuery(this).qtip(qtipConfig);
-    });
-  });  
+
+//when elements are added and removed we need to run the qtip setup again
+//do it when user clicks anywere in the page  
+//  jQuery('[title]').each(function(){
+//    jQuery(this).live('mouseover', function(){
+//      qtipConfig.content = jQuery(this).attr('title') || '';
+//      jQuery(this).qtip(qtipConfig);
+//    });
+//  });
+ 
 }
 
 function init(){
