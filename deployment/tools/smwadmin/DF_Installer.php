@@ -540,7 +540,7 @@ class Installer {
 			list($desc, $min, $max) = $arr;
 			if ($desc->isNonPublic()) {
 				// check if OP software directory exists and is writable (for external applications like TSC for instance)
-				$opSoftwareDir = Tools::getProgramDir()."/Ontoprise";
+				$opSoftwareDir = $this->getNonPublicDirectory($desc);
 				if (!file_exists($opSoftwareDir)) {
 					$result = "Please create directory and make writable: ".$opSoftwareDir;
 					$errorOccured=true;
@@ -683,7 +683,7 @@ class Installer {
 			list($desc, $fromVersion) = $tupl;
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
 			if ($desc->isNonPublic()) {
-				$installDirectory = Tools::getProgramDir()."/Ontoprise/".$desc->getInstallationDirectory();
+				$installDirectory = $this->getNonPublicDirectory($desc);
 				Tools::mkpath($installDirectory);
 			}
 			$this->logger->info("Mark extension as initialized: ".$desc->getID());
