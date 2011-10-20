@@ -317,7 +317,7 @@ class DFBundleTools {
 				$a = new Article($title);
 				$id = $title->getArticleID( GAID_FOR_UPDATE );
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
+					if( true/*$a->doDeleteArticle( "ontology removed: ".$ext_id )*/ ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
 						$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
@@ -346,7 +346,7 @@ class DFBundleTools {
 				$a = new Article($title);
 				$id = $row->id;
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
+					if( true/*$a->doDeleteArticle( "ontology removed: ".$ext_id )*/ ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
 						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 
@@ -669,11 +669,22 @@ class DFBundleTools {
             print "\n ...created ".$property->getPrefixedText();
 		}
 		
+	    $property = Title::newFromText($dfgLang->getLanguageString('df_mwextension'), SMW_NS_PROPERTY);
+        $text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+        $article = new Article($property);
+        if ($property->exists()) {
+            $article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+            print "\n ...edited ".$property->getPrefixedText();
+        } else {
+            $article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+        }
+		
 		// Property:Dependecy
 		$property = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_rec"]."]]";
 		$text .= "\n\n[[".$propertyLabels['_LIST']."::".
-		$dfgLang->getLanguageString('df_partofbundle')."; ".$dfgLang->getLanguageString('df_minversion')."; ".$dfgLang->getLanguageString('df_maxversion')."]]";
+		$dfgLang->getLanguageString('df_mwextension')."; ".$dfgLang->getLanguageString('df_minversion')."; ".$dfgLang->getLanguageString('df_maxversion')."]]";
 		$article = new Article($property);
 		if ($property->exists()) {
 			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);

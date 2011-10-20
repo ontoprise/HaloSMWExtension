@@ -530,7 +530,8 @@ if (count($ontologiesToInstall) > 0) {
 	global $rootDir, $dfgOut;
 	$requiredPropertiesExist = DFBundleTools::checkBundleProperties($dfgOut);
 	if (!$requiredPropertiesExist) {
-		dffExitOnFatalError("Some properties do not exist or have wrong types.");
+		dffExitOnFatalError("Some bundle-related properties do not exist or have wrong types.".
+		                    "\n\nPlease run: smwadmin --createproperties");
 	}
 
 	foreach($ontologiesToInstall as $filePath) {
