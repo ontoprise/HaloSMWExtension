@@ -599,9 +599,9 @@ class DFBundleTools {
 
 		// Help URL
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-		$correct = self::checkPropertyType($pTitle->getText(), "_str");
+		$correct = self::checkPropertyType($pTitle->getText(), "_uri");
 		if (!$correct) {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type URL.");
 			$check = false;
 		}
 
@@ -751,7 +751,7 @@ class DFBundleTools {
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
-		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_uri"]."]]";
 		$article = new Article($property);
 		if ($property->exists()) {
 			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
