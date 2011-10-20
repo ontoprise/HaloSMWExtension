@@ -37,19 +37,19 @@
 
 		<copy todir="bin/zip/extensions/SemanticForms/patches/RichMedia">
 			<fileset dir="../../RichMedia/">
-				<include name="RichMediaPatchForSF2_1_2.txt" />
+				<include name="RichMediaPatchForSF2_2_1.txt" />
 			</fileset>
 		</copy>
 		
 		<copy todir="bin/zip/extensions/SemanticForms/patches/SMWHalo">
 			<fileset dir="../../SMWHalo/">
-                <include name="patch_for_SF2.1.2.txt" />
+                <include name="patch_for_SF2.2.1.txt" />
 			</fileset>
 		</copy>
 
 		<copy todir="bin/zip/extensions/SemanticForms/patches/WYSIWYG">
 			<fileset dir="../../WYSIWYG/">
-				<include name="patch_for_SF_2.1.2.txt" />
+				<include name="patch_for_SF_2.2.1.txt" />
 			</fileset>
 		</copy>
 
