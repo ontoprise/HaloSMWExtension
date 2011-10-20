@@ -76,7 +76,7 @@ class SMWQueryInterface extends SpecialPage {
             . '<div id="qiMaintabQueryCont">'
             . $this->addQueryOption()
             . $this->addQueryDefinitionSparql()
-            . $this->addResultPart()
+            . $this->addResultPartSparql()
             . $this->addAdditionalStuff()
             . '</div>'
             . '<div id="qiMaintabLoadCont" style="display:none">'
@@ -84,7 +84,6 @@ class SMWQueryInterface extends SpecialPage {
             . '</div>';
     return $result;
   }
-
 
   private function addMainTab() {
     return '<div id="qiMainTab"><table>
@@ -270,7 +269,7 @@ class SMWQueryInterface extends SpecialPage {
                  <tr>
                  <td id="qiDefTab1" class="qiDefTabActive" title="' . wfMsg('smw_qi_tt_treeview') . '">' . wfMsg('smw_qi_queryastree') . '</td>
                  <td class="qiDefTabSpacer"> </td>' .
-              '<td id="qiDefTab3" class="qiDefTabInactive" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</td>
+            '<td id="qiDefTab3" class="qiDefTabInactive" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</td>
                  <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
                  </tr>
                  </table>
@@ -341,7 +340,7 @@ class SMWQueryInterface extends SpecialPage {
             '</table>';
   }
 
-  private function addValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $columnLabelId, $drawTopLine = false){
+  private function addValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $columnLabelId, $drawTopLine = false) {
     return '<table ' . ($drawTopLine ? 'style="border-top: 1px solid gray;"' : '') . ($tableId ? "id=\"$tableId\"" : "") . '><tr>' .
             '<td>' . $nameInputLabel . '</td>' .
             '<td><input ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . ' class="wickEnabled" type="text" autocomplete="OFF" constraints=""></td>' .
@@ -353,7 +352,7 @@ class SMWQueryInterface extends SpecialPage {
             '<td></td></tr><table>';
   }
 
-  private function addFiltersDialog($tableId){
+  private function addFiltersDialog($tableId) {
     return '<table ' . ($tableId ? "id=\"$tableId\"" : "") . '><tr><td>' . wfMsg('smw_qi_filters') . '</td></tr>' .
             '<tr><td><a href="" id="qiAddAndFilterLink">' . wfMsg('smw_qi_add_and_filter') . ' (AND)</a></td></tr>' .
             '</table>';
@@ -384,17 +383,22 @@ class SMWQueryInterface extends SpecialPage {
             '</tr><tr>' .
             '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd"></td><td></td>' .
             '</tr></table>' .
-            $this->addValueDialog(wfMsg('smw_qi_value_name'),
-                    'qiPropertyValueTable',
-                    'qiPropertyValueNameInput',
-                    'qiPropertyValueShowInResultsChkBox',
-                    'qiPropertyValueTypeLabel',
-                    'qiPropertyColumnLabelInput') .
+            $this->addValueDialog(wfMsg('smw_qi_value_name'), 'qiPropertyValueTable', 'qiPropertyValueNameInput', 'qiPropertyValueShowInResultsChkBox', 'qiPropertyValueTypeLabel', 'qiPropertyColumnLabelInput') .
             $this->addFiltersDialog('qiPropertyFiltersTable');
   }
 
-
-  
+  private function addResultPartSparql() {
+    $html = '<div id="qiresulttitle"><span onclick="qihelper.switchResult()" onmouseover="Tip(\''
+            . wfMsg('smw_qi_tt_previewres')
+            . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>'
+            . wfMsg('smw_qi_section_result')
+            . '</span><button id="switchToSparqlBtn">' . wfMsg('smw_qi_switch_to_sparql') . '</button></div>' .
+            '<div id="qiresultcontent">' .
+            $this->addQueryLayoutSparql() .
+            $this->addPreviewResults() .
+            '</div>';
+    return $html;
+  }
 
   private function addResultPart() {
     $html = '<div id="qiresulttitle"><span onclick="qihelper.switchResult()" onmouseover="Tip(\''
@@ -455,6 +459,61 @@ class SMWQueryInterface extends SpecialPage {
                                 </td>
                                 <td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\') ">
                                     Sort by: <select id="layout_sort" onchange="qihelper.updateSrcAndPreview()">
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="queryprinteroptions" style="display:none"></div>
+                </div>';
+  }
+
+  private function addQueryLayoutSparql() {
+
+    global $smwgResultFormats;
+
+    $blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar", "debug", "template", "aggregation",
+        "tixml", "transposed", "simpletable");
+
+    $resultoptionshtml = "";
+    $resultPrinters = array();
+
+    reset($smwgResultFormats);
+    while (current($smwgResultFormats)) {
+      if (!in_array(key($smwgResultFormats), $blacklist)) {
+        $className = $smwgResultFormats[key($smwgResultFormats)];
+        $class = new $className(key($smwgResultFormats), null);
+        // format the OFC printer names a bit, the rest comes with a real name
+        $label = (substr(key($smwgResultFormats), 0, 4) == "ofc-") ? 'OFC ' . str_replace(array('_', '-'), ' ', substr(key($smwgResultFormats), 4)) : ucfirst($class->getName());
+        $label .= ' (' . key($smwgResultFormats) . ')';
+        $resultPrinters[$label] = key($smwgResultFormats);
+      }
+      next($smwgResultFormats);
+    }
+    ksort($resultPrinters);
+    foreach ($resultPrinters as $k => $v) {
+      $selected = ($v == "table") ? 'selected="selected"' : '';
+      $resultoptionshtml .= '<option value="' . $v . '"' . $selected . '>' . $k . '</option>';
+    }
+    $fullPreviewLink = '';
+    global $smwgQIResultPreview;
+    if (isset($smwgQIResultPreview) && $smwgQIResultPreview === false)
+      $fullPreviewLink = '&nbsp;|&nbsp; <a href="#;" onclick="qihelper.previewQuery()" title="' . wfMsg('smw_qi_tt_fullpreview') . '">' . wfMsg('smw_qi_fullpreview') . '</a>';
+    return '<div id="qiQueryFormatDiv" class="querylayout">
+					<div id="qiQueryFormatTitle" class="layouttitle">
+                        <span title="' . wfMsg('smw_qi_tt_qlm') . '"><a id="layouttitle-link" class="plusminus" href="#"></a>' . wfMsg('smw_qi_layout_manager') . '</span>
+                        ' . $fullPreviewLink . '
+					</div>
+					<div id="qiQueryFormatContent" style="display:none" class="layoutcontent">
+                        <table summary="Layout Manager for query">
+                            <tr>
+        						<td width="50%" title="' . wfMsg('smw_qi_tt_format') . '">
+                					Format: <select id="layout_format">
+                                    ' . $resultoptionshtml . '
+                                    </select>
+                                </td>
+                                <td title="' . wfMsg('smw_qi_tt_sort') . '">
+                                    Sort by: <select id="layout_sort">
                                     </select>
                                 </td>
                             </tr>

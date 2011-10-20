@@ -296,6 +296,8 @@ QIHelper.prototype = {
             var html = '<b>' + gLanguage.getMessage('QI_SPECIAL_QP_PARAMS') + "</b> <i>"
             + qp + '</i>:<table style="width: 100%;">';
             var qpParameters = request.responseText.evalJSON();
+//            Object.extend(qpParameters.prototype, Enumerable);
+//            qpParameters = $H(qpParameters);
             var i = 0;
             qpParameters.each(function(e) {
                 var visibleName = gLanguage.getMessage('QI_QP_PARAM_'+e.name);

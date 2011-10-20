@@ -244,7 +244,7 @@ hr {
   height: 25px;
 }
 
-#querylayout{
+#querylayout, .querylayout{
   width:98%;
   float:left;
   margin-top: 10px;
@@ -252,12 +252,12 @@ hr {
 }
 
 
-#layoutcontent, #queryprinteroptions {
+#layoutcontent, #queryprinteroptions, .layoutcontent {
   border:1px solid #AAAAAA;
   background: #FFFFFF;
 }
 
-#layoutcontent > table {
+#layoutcontent > table, .layoutcontent > table {
   width:100%;
 }
 
@@ -272,11 +272,11 @@ hr {
   margin-left: 2%;
 }
 
-#qioptiontitle, #definitiontitle, #qiresulttitle, #layouttitle, #previewtitle {
+#qioptiontitle, #definitiontitle, #qiresulttitle, #layouttitle, #previewtitle, .layouttitle{
   border: none;
   min-height: 20px;
 }
-#qioptiontitle span, #definitiontitle span, #qiresulttitle span, #layouttitle span, #previewtitle span {
+#qioptiontitle span, #definitiontitle span, #qiresulttitle span, #layouttitle span, #previewtitle span, .layouttitle{
   cursor:pointer;
   font-weight: bold;
 }
@@ -688,4 +688,8 @@ button.btnhov{
   color: #999999;
   width: 200px;
   overflow: hidden;
+}
+
+#layout_sort{
+  width: 235px;
 }
