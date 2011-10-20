@@ -41,7 +41,7 @@ class ASFFormGeneratorUtils {
 /*
 	 * Helper method for initializeFormCreationMetadata
 	 */
-	public static function getInheritedPropertyValue($semanticData, $propertyName, $getAll = false, $values = array()){
+	public static function getInheritedPropertyValue($semanticData, $propertyName, $getAll = false, $values = array(), $processedCategories = array()){
 		$properties = $semanticData->getProperties();
 		
 		if(array_key_exists($propertyName, $properties)){
@@ -59,6 +59,14 @@ class ASFFormGeneratorUtils {
 			}
 		} else {
 			$title = $semanticData->getSubject()->getTitle();
+			
+			if(array_key_exists($title->getText(), $processedCategories)){
+				//deal with cyrcles
+				return $values;
+			} else {
+				$processedCategories[$title->getText()] = true;
+			}
+			
 			$superCategories = $title->getParentCategories();
 			if(array_key_exists($title->getFullText(), $superCategories)){
 				unset($superCategories[$title->getFullText()]);
@@ -68,7 +76,7 @@ class ASFFormGeneratorUtils {
 			foreach($superCategories as $c => $dc){
 				$semanticData = $store->getSemanticData(
 					SMWDIWikiPage::newFromTitle(Title::newFromText($c, NS_CATEGORY)));
-				$values = self::getInheritedPropertyValue($semanticData, $propertyName, $getAll, $values);
+				$values = self::getInheritedPropertyValue($semanticData, $propertyName, $getAll, $values, $processedCategories);
 			}
 		}
 		
@@ -103,7 +111,15 @@ class ASFFormGeneratorUtils {
 	/*
 	 * Get all supercategories of a given category
 	 */
-	public static function getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+	public static function getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array(), $processedCategories = array()){
+		
+		if(array_key_exists($categoryTitle->getText(), $processedCategories)){
+			//deal with circles
+			return $superCategoryTitles;
+		}  else {
+			$processedCategories[$categoryTitle->getText()] = true;
+		}
+		
 		$directSuperCatgeories = $categoryTitle->getParentCategories();
 		
 		if($asTree){
@@ -111,19 +127,16 @@ class ASFFormGeneratorUtils {
 		}
 		
 		foreach($directSuperCatgeories as $category => $dC){
-			
-			//if(!array_key_exists($categoryTitle->getText(), $superCategoryTitles)){
-			
-				if($asTree){
-					$superCategoryTitles[$categoryTitle->getText()] = 
-						self::getSuperCategories(Title::newFromText($category), $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-				} else {
-					$superCategoryTitles[substr($category, strpos($category, ':') + 1)] =
-						Title::newFromText($category);
-					$superCategoryTitles = self::getSuperCategories(
-						Title::newFromText($category), $asTree, $superCategoryTitles);
-				}
-			//}
+
+			if($asTree){
+				$superCategoryTitles[$categoryTitle->getText()] = 
+					self::getSuperCategories(Title::newFromText($category), $asTree, $superCategoryTitles[$categoryTitle->getText()], $processedCategories);
+			} else {
+				$superCategoryTitles[substr($category, strpos($category, ':') + 1)] =
+					Title::newFromText($category);
+				$superCategoryTitles = self::getSuperCategories(
+					Title::newFromText($category), $asTree, $superCategoryTitles, $processedCategories);
+			}
 		}
 		
 		return $superCategoryTitles;
