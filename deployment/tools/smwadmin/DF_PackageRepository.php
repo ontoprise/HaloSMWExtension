@@ -504,21 +504,21 @@ class PackageRepository {
 					
 				$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
 				foreach($OPSoftware as $prgname => $arrayOfPaths) {
-					if (array_key_exists($prgname, DF_Config::$df_knownPrograms) &&
-					array_key_exists(DF_Config::$df_knownPrograms[$prgname], $nonPublicAppPaths)) {
-						$path = trim($nonPublicAppPaths[DF_Config::$df_knownPrograms[$prgname]]);
+					if (array_key_exists($prgname, Tools::$df_knownPrograms) &&
+					array_key_exists(Tools::$df_knownPrograms[$prgname], $nonPublicAppPaths)) {
+						$path = trim($nonPublicAppPaths[Tools::$df_knownPrograms[$prgname]]);
 					} else {
 						if (count($arrayOfPaths) > 1) {
 							// if ambiguous ask user (if --noask, just take first)
 							$index = DFUserInput::selectElement("Several installations of '$prgname' were found. Please select the one you want to use with DF.", $arrayOfPaths);
 							$path = trim($arrayOfPaths[$index]);
-							$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
+							$res = Tools::setNonPublicAppPath($ext_dir, Tools::$df_knownPrograms[$prgname], $path);
 							if (!$res) {
 								throw new RepositoryError("Could not write deployment/config/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
 							}
 						} else {
 							$path = trim(reset($arrayOfPaths));
-							$res = Tools::setNonPublicAppPath($ext_dir, DF_Config::$df_knownPrograms[$prgname], $path);
+							$res = Tools::setNonPublicAppPath($ext_dir, Tools::$df_knownPrograms[$prgname], $path);
 						}
 					}
 					if (file_exists($path.'/deploy.xml')) {

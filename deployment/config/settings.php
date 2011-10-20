@@ -56,14 +56,7 @@ class DF_Config  {
 	 */
 	public static $df_webadmin_ldap_domain = "";
 
-    /*
-     * External programs which are known to the DF.
-     * (only relevant for Windows)
-     * 
-     * Maps name as it appears in registry to DF id.
-     */
-	public static $df_knownPrograms = array('Triplestore Connector Professional' => 'tscprof',
-                                'Triplestore Connector Basic' => 'tsc' );
+   
 	
 	/*
 	 * Automatic check for updates if a sysop user logs in.

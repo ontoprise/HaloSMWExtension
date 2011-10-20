@@ -27,6 +27,15 @@
  */
 class Tools {
 
+	 /*
+     * External programs which are known to the DF.
+     * (only relevant for Windows)
+     * 
+     * Maps name as it appears in registry to DF id.
+     */
+    public static $df_knownPrograms = array('Triplestore Connector Professional' => 'tscprof',
+                                'Triplestore Connector Basic' => 'tsc' );
+    
 	/**
 	 * Checks if script runs on a Windows machine or not.
 	 *
@@ -808,7 +817,7 @@ class Tools {
 
 		// convert IDs into program names (as far as known)
 		// TSC is the only registered program for now.
-		$knownPrograms = DF_Config::$df_knownPrograms;
+		$knownPrograms = self::$df_knownPrograms;
 
 		$knownPrograms = array_flip($knownPrograms);
 		if (array_key_exists($id, $knownPrograms)) {
