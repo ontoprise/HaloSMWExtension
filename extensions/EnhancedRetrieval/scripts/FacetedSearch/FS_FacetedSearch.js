@@ -319,13 +319,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 		mExpertQuery = qs.charAt(0) === '(' 
 					   && qs.charAt(mSearch.length-1) === ')';
 		if (!mExpertQuery) {
-			qs = qs.toLowerCase();
-			// Escape the special characters:
-			// + - && || ! ( ) { } [ ] ^ " ~ * ? : \			
-			qs = qs.replace(/([\+\-!\(\)\{\}\[\]\^"~\*\?\\:])/g, '\\$1');
-			qs = qs.replace(/(&&|\|\|)/g,'\\$1');
-			// Match all tokens that start with the search term
-			qs = qs + '*';
+			qs = prepareQueryString(qs);
 		} else {
 			// A colon in the search term must be escaped otherwise SOLR will throw
 			// a parser exception
@@ -334,6 +328,80 @@ FacetedSearch.classes.FacetedSearch = function () {
 		mAjaxSolrManager.store.addByValue('q', QUERY_FIELD+':'+qs);
 		mAjaxSolrManager.doRequest(0);
 		
+	}
+	
+	/**
+	 * Translates a query string that is not an expert query (i.e. not enclosed in
+	 * braces) to a SOLR query string:
+	 * - A * is appended to the last word. 
+	 *   Example: foo -> (+foo*) 
+	 *            Searches for all documents containing words starting with foo
+	 * - Single words are converted to lowercase as the index is also lowercase
+	 *   Example: FOO -> (+foo*)
+	 *            Searches for the lowercase words starting with foo
+	 * - Single words are concatenated with the + operator (AND)
+	 *   Example: foo bar -> (+foo +bar*)
+	 *            Searches for documents containing the word foo and words 
+	 *            starting with bar
+	 * - Preserve phrase expressions:
+	 *   Example: foo "This is bar" "This is foobar" -> (+foo +"This is bar" +"This is foobar")
+	 *            Searches for documents containing the word foo and the phrases 
+	 *            'This is bar' and 'This is foobar'.
+	 * - Escapes all special characters that belong to the SOLR query syntax
+	 *   Example: (foo+bar) "(foo) in a (bar)" -> (\(foo\+bar\) "\(foo\) in a \(bar\)") 
+	 *            Searches for documents containing words starting with (foo+bar)
+	 *            and the phrase '(foo) in a (bar)'
+	 *            
+	 * @param {String} queryString
+	 * 		This query string is prepared for sending to SOLR
+	 * @return {String}
+	 * 		The prepared query string
+	 */
+	function prepareQueryString(queryString) {
+		// Extract all phrases
+		var phrases = queryString.match(/".*?"/g);
+		var endWithPhrase = queryString.charAt(queryString.length-1) === '"';
+		
+		// Remove phrases from the query string and trim it
+		queryString = queryString.replace(/(".*?")/g, '')
+								 .replace(/^\s*(.*?)\s*$/,'$1')
+								 .replace(/\s\s*/g, ' ');
+		
+		// Split the query string at spaces in words
+		var words = queryString.split(' ');
+		
+		var result = "";
+		
+		// Convert words to lower case and escape the special characters:
+		// + - && || ! ( ) { } [ ] ^ " ~ * ? : \			
+		for (var i = 0, numWords = words.length; i < numWords; ++i) {
+			var w = words[i].toLowerCase()
+			                   .replace(/([\+\-!\(\)\{\}\[\]\^"~\*\?\\:])/g, '\\$1')
+					           .replace(/(&&|\|\|)/g,'\\$1');
+			// Add a * to the last word if the query string does not end with a phrase
+			if (!endWithPhrase && i == numWords-1) {
+				w += '*';
+			}
+							   
+			result += "+" + w + " ";
+		}
+		
+		// Escape special characters in phrases
+		if (phrases) {
+			for (i = 0; i < phrases.length; ++i) {
+				var p = phrases[i].substring(1,phrases[i].length-1);
+				var p = '+"' + p.replace(/([\+\-!\(\)\{\}\[\]\^"~\*\?\\:])/g, '\\$1')
+								.replace(/(&&|\|\|)/g,'\\$1') +
+						'" ';
+				result += p;
+			}
+		}
+		
+		if (result.length > 0) {
+			result = '(' + result + ')';
+		}
+		
+		return result;		
 	}
 	
 	/**
