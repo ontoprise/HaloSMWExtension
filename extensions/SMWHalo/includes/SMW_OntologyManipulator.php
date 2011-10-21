@@ -44,14 +44,19 @@ $wgAjaxExportList[] = 'smwf_om_RenameArticle';
 $wgAjaxExportList[] = 'smwf_om_EditProperty';
 $wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
+$wgAjaxExportList[] = 'smwf_om_MoveInstance';
+$wgAjaxExportList[] = 'smwf_om_RenameAndMoveInstance';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
+$wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
 $wgAjaxExportList[] = 'smwf_om_getDomainProperties';
 $wgAjaxExportList[] = 'smwf_om_getSuperCategories';
 $wgAjaxExportList[] = 'smwf_om_getSuperCategories2';
 $wgAjaxExportList[] = 'smwf_om_CategoriesHandler';
 $wgAjaxExportList[] = 'smwf_om_RenameAndMoveCategory';
+$wgAjaxExportList[] = 'smwf_om_getAnnotatedCategories';
+
 
 /**
  * Creates a new article or appends some text if it already
@@ -163,7 +168,9 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 				} else {
 					$langString = $sp[$constant];
 				}
-				$optionalText = str_replace($constant, $langString,	$optionalText);
+				$optionalText = str_replace($constant,
+				$langString,
+				$optionalText);
 			}
 		}
 
@@ -450,7 +457,6 @@ function smwf_om_IsRedirect(Title $title) {
  *      - recordProperties (array): Empty, if the property is NOT a record. Otherwise
  *      						the name of each property in the record and if a
  *      						page for this property exists ("true" or "false")
- *
  */
 function smwf_om_MultipleRelationInfo($relations) {
 	if (empty($relations)) {
@@ -497,7 +503,6 @@ function smwf_om_MultipleRelationInfo($relations) {
 				$valuePageInfo[] = "missing type info";
 			}
 		}
-		
 		$recProp = array();
 		foreach ($recordProperties as $idx => $propName) {
 			$recProp[] = $propName;
@@ -533,7 +538,7 @@ function smwf_om_MultipleRelationInfo($relations) {
  * @return xml string
  */
 function smwf_om_RelationSchemaData($relationName) {
-	global $wgContLang;
+		global $wgContLang;
 	$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
 	
 	$relSchema = '<relationSchema name="'.$relationName.'" arity="0">'.
@@ -634,84 +639,82 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	
 	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
 	
-    $newType = strip_tags($newType);
-    if ($newType == '') return "false";
+	$newType = strip_tags($newType);
+	if ($newType == '') return "false";
 
-    if (smwf_om_userCan($pagename, 'move') === "false") {
-        return "false,denied,$pagename";
-    }
-    
+	if (smwf_om_userCan($pagename, 'move') === "false") {
+		return "false,denied,$pagename";
+	}
 
-    $titleObj = Title::newFromText($pagename);
-    $article = new Article($titleObj);
-    $text = $article->getContent();
+	$titleObj = Title::newFromText($pagename);
+	$article = new Article($titleObj);
+	$text = $article->getContent();
 
-    global $smwgHaloContLang;
-    $ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-    $hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
+	global $smwgHaloContLang;
+	$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+	$hasDomainAndRangeProperty = $ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT];
 
-    // Replace "Has domain range range" annotations
-    $oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
-    if ($oldRange != '') {
-        $oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
-        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
-        if ($newRange != '') {
-            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-        } else {
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-        }
-    } else {
-        $search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
-        if ($newRange != '') {
-            $newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
-        } else {
-            $replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
-        }
-    }
+	// Replace "Has domain range range" annotations
+	$oldDomainCategory = Title::newFromText($domainCategory, NS_CATEGORY);
+	if ($oldRange != '') {
+		$oldRangeCategory = Title::newFromText($oldRange, NS_CATEGORY);
+		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*;\s*'.$oldRangeCategory->getPrefixedText().'\s*(\|)?\s*\]\])/i';
+		if ($newRange != '') {
+			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+		} else {
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+		}
+	} else {
+		$search = '/(\[\[(\s*)' . $hasDomainAndRangeProperty . '(\s*)::\s*'.$oldDomainCategory->getPrefixedText().'\s*(;)?\s*(\|)?\s*\]\])/i';
+		if ($newRange != '') {
+			$newRangeCategory = Title::newFromText($newRange, NS_CATEGORY);
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().'; '.$newRangeCategory->getPrefixedText().']]';
+		} else {
+			$replace = '[[' . $hasDomainAndRangeProperty . '::'.$oldDomainCategory->getPrefixedText().']]';
+		}
+	}
 
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
-    // Replace "has type" annotations
-    global $smwgContLang;
-    $propertyLabels = $smwgContLang->getPropertyLabels();
-    
-    $search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
+	// Replace "has type" annotations
+	global $smwgContLang;
+	$propertyLabels = $smwgContLang->getPropertyLabels();
+	
+	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
 	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
 	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
 
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
 
-    // Replace "has min cardinality" annotations
-    $hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
-    $search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
-    $replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
-    if (preg_match($search, $text) === 0) {
-        // replacement does not yet exist, so add it simply
-        $text .= "\n$replace";
-    } else {
-        $text = preg_replace($search, $replace, $text);
-    }
+	// Replace "has min cardinality" annotations
+	$hasMinCardinalityProperty = $ssp[SMW_SSP_HAS_MIN_CARD];
+	$search = '/(\[\[(\s*)' .$hasMinCardinalityProperty . '(\s*)::\s*[^]|]+\s*(\|)?\s*\]\])/i';
+	$replace = '[[' . $hasMinCardinalityProperty . '::'.$newCard.']]';
+	if (preg_match($search, $text) === 0) {
+		// replacement does not yet exist, so add it simply
+		$text .= "\n$replace";
+	} else {
+		$text = preg_replace($search, $replace, $text);
+	}
 
-    if ($article->exists()) {
-        $reason = '';
-        $article->doEdit($text, $reason);
-    }
-    return $text;
+	if ($article->exists()) {
+		$reason = '';
+		$article->doEdit($text, $reason);
+	}
+	return $text;
 }
-
 
 /**
  * Rename an article. This function is invoked by an ajax call.
@@ -942,7 +945,6 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 
 
 
-
 /**
  * This function retrieves all properties that have one of the given categories as domain
  *
@@ -1031,7 +1033,8 @@ function smwf_om_getDomainProperties($categoryNames) {
  * @return:
  * 	 An array of Title objects
  */
-function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+ 
+ function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
 	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
 	if($asTree){
 		$superCategoryTitles[$categoryTitle->getText()] = array();
@@ -1040,7 +1043,7 @@ function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCateg
 		if($asTree){
 			$superCategoryTitles[$categoryTitle->getText()] =
 			smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-		} else {
+		 } else {
 			$superCategoryTitles[$dSCT->getText()] = $dSCT;
 			$superCategoryTitles = smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
@@ -1109,6 +1112,90 @@ function smwf_om_RenameAndMoveCategory($categoryTitle,$newpagename, $reason, $us
   return $success === true ? "true" : "false"; 
 }
 
+/**
+ * Retrieves the annotated categories of the instance with the given name.
+ *
+ * @param string $relationName  
+ * 		Name of the relation
+ *
+ */
+function smwf_om_getAnnotatedCategories($relationName) {
+	$titleObj = Title::newFromText($relationName);
+	$article = new Article($titleObj);
+	$text = $article->getContent();
+	$Category = "Category";
+	
+	  $search = '/(\[\[(\s*)' . $Category . '(\s*):\s*(.*)\s*(\|)?\s*\]\])/i';
+          $search1 = '/:\s*(.*)/i';
+	  preg_match_all($search,$text,$out, PREG_SET_ORDER);	  	
+	  $annotatedCat = "";
+	  $repl = '/(\[\[(\s*)' . $Category . '(\s*):\s*)/i';
+	 
+	  $weg = array("[[", "]]", ":", " ","Category","category");
+	  for($i = 0, $n = sizeof($out); $i < $n; $i++) { 
+	   for($j = 0, $m = sizeof($out[$j]); $j < $m; $j++) {
+	    $out[$i][$j] = str_replace("]][[", ",", $out[$i][$j]);
+	     if($out[$i][$j] != ""){	     
+	      $annotatedCat .= ','.str_replace($weg, "", $out[$i][$j]);	      
+	     }
+	    }
+	  } 
+	  $annotatedCategories = "";
+	  $annotatedCat1 = preg_split("[,]", $annotatedCat);
+	  for($i = 0, $n = sizeof($annotatedCat1); $i < $n; $i++) {
+	     for($j = 0, $m = sizeof($annotatedCat1); $j < $m; $j++) {
+	       if($annotatedCat1[$i] == $annotatedCat1[$j] && $j != $i){
+                  $annotatedCat1[$j] = "";	       		
+	        }
+	     }
+	     if($annotatedCat1[$i] != ""){
+	       if($annotatedCategories == ""){
+	         $annotatedCategories = $annotatedCat1[$i];
+	       }else{
+	         $annotatedCategories .= ','.$annotatedCat1[$i];
+	       }
+	     }   
+	  }
+	return  $annotatedCategories;	
+}
+
+function smwf_om_MoveInstance($instanceTitle, $newAnnotatedCategories){
+        $titleObj = Title::newFromText($instanceTitle);
+	$article = new Article($titleObj);
+	$text = $article->getContent();
+	$annotatedCategories = Title::newFromText($newAnnotatedCategories);
+	$Category = "Category";
+	$search = '/(\[\[(\s*)' . $Category . '(\s*):\s*(.*)\s*(\|)?\s*\]\])/i';
+	preg_match_all($search,$text,$out, PREG_SET_ORDER);
+
+	 for($i = 0, $n = sizeof($out); $i < $n; $i++) { 
+	   for($j = 0, $m = sizeof($out[$j]); $j < $m; $j++) {
+	     if($out[$i][$j] != ""){
+	       $text = str_replace($out[$i][$j], "", $text);      
+	     }
+	    }
+	  } 
+	$annotatedCategories = preg_split("[,]", $newAnnotatedCategories);
+	
+	for($j = 0, $m = sizeof($annotatedCategories); $j < $m; $j++) {
+	     if($annotatedCategories[$j] != ""){
+	       $text .= "[[Category:".$annotatedCategories[$j]."]]";      
+	     }
+	}
+	
+	if ($article->exists()) {
+		$reason = '';
+		$article->doEdit($text, $reason);
+	}
+  
+     return $text;
+}
+
+function smwf_om_RenameAndMoveInstance($instanceTitle,$newpagename, $reason, $user, $newAnnotatedCategories){
+  smwf_om_RenameArticle($instanceTitle, $newpagename, $reason, $user);
+  smwf_om_MoveInstance($newpagename, $newAnnotatedCategories);
+  return $success === true ? "true" : "false"; 
+}
 
 /**
  * Retrieves the schema of the relation with the given name.
