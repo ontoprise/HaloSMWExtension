@@ -897,6 +897,11 @@
     }
   }
 
+  function deleteSubject(selectedNode){
+    var subjectId = selectedNode.attr('id');
+
+  }
+
   //unselect tree nodes and close the dialogs
   function activateCancelLink(sparqlTree){
     $('#qiCancelLink').live('click', function(event){
@@ -1007,6 +1012,13 @@
     });
   }
 
+  function initTripleStoreGraph(){
+    SPARQL.tripleStoreGraph = window.smwghTripleStoreGraph + SPARQL.iri_delim;
+    SPARQL.category_iri = SPARQL.tripleStoreGraph + 'category';
+    SPARQL.property_iri = SPARQL.tripleStoreGraph + 'property';
+    SPARQL.instance_iri = SPARQL.tripleStoreGraph + 'instance';
+  }
+
   
 
 
@@ -1029,13 +1041,12 @@
       updateSortOptions();
     });
 
+    initTripleStoreGraph();
+
   });
 
   SPARQL = {
-    category_iri: 'http://anything/category',
-    property_iri: 'http://anything/property',
-    instance_iri: 'http://anything/instance',
-    iri_delim: '/',
+    iri_delim: '/',        
     parserFuncString: '',
     queryString: null,
 

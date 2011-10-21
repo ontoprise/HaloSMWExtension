@@ -295,32 +295,31 @@ QIHelper.prototype = {
             var columns = 3;
             var html = '<b>' + gLanguage.getMessage('QI_SPECIAL_QP_PARAMS') + "</b> <i>"
             + qp + '</i>:<table style="width: 100%;">';
-            var qpParameters = request.responseText.evalJSON();
-//            Object.extend(qpParameters.prototype, Enumerable);
-//            qpParameters = $H(qpParameters);
+            var qpParameters = request.responseText.evalJSON();    
             var i = 0;
             qpParameters.each(function(e) {
+              if(e.name !== 'format'){
                 var visibleName = gLanguage.getMessage('QI_QP_PARAM_'+e.name);
                 if (visibleName == 'QI_QP_PARAM_'+ e.name) // no text for argument
                     visibleName = e.name;
                 if (i % columns == 0)
-                    html += "<tr>"
-                html += '<td onmouseover="Tip(\'' + e.description
-                + '\');">' + visibleName + "</td>";
+                    html += '<tr>'
+                html += '<td title="' + e.description + '">' + visibleName + '</td>';
                 if (e.values instanceof Array) {
                     html += '<td>' + createSelectionBox(e.name, e.values)
-                    + "</td>";
-                } else if (e.type == 'string' || e.type == 'int') {
+                    + '</td>';
+                } else if (e.type == 'string' || e.type == 'integer') {
                     html += '<td>' + createInputBox(e.name, e.values, e.constraints)
-                    + "</td>";
+                    + '</td>';
                 } else if (e.type == 'boolean') {
                     html += '<td>' + createCheckBox(e.name, e.defaultValue)
-                    + "</td>";
+                    + '</td>';
                 }
 
                 if (i % columns == 2)
-                    html += "</tr>"
+                    html += '</tr>'
                 i++;
+              }
             });
             html += '</table>';
             autoCompleter.deregisterAllInputs();
@@ -1042,7 +1041,7 @@ QIHelper.prototype = {
         cell = newrow.insertCell(1);
         // input field with autocompletion enabled
         cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF" '+
-        'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
+        'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
         newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
@@ -1141,7 +1140,7 @@ QIHelper.prototype = {
         cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
         cell = newrow.insertCell(1);
         cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + catConstraint + 'namespace: 0" autocomplete="OFF" '+
-        'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
+        'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"/>';
         cell = newrow.insertCell(2);
         // link to add another input for or-ed values
         newrow = $$('#askQI #dialoguecontent')[0].insertRow(-1);
@@ -1272,7 +1271,7 @@ QIHelper.prototype = {
         + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
         + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
         + ((propName) ? 'value="'+propName+'" ' : '')
-        + 'onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"'
+        + 'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"'
         + '/>';
         if (idx > 0)
             tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
@@ -1521,7 +1520,7 @@ QIHelper.prototype = {
             ns = '0';
 
         cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: '+ns+'" autocomplete="OFF" '+
-        'type="text" id="input' + id + '" onmouseover="Tip(\'' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '\');"/>';
+        'type="text" id="input' + id + '" title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"/>';
         cell = newrow.insertCell(-1);
         cell.innerHTML = '<img src="'
         + this.imgpath
@@ -1831,11 +1830,11 @@ QIHelper.prototype = {
         cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
         cell = row.insertCell(1);
         var tmpHTML='<table><tr><td '
-        + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
+        + 'title="' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '">'
         + '<input type="checkbox" id="input_c1"'
         + (this.activeQueryId == 0 ? ' checked="checked"':'')+' />'
         + ' </td><td> '
-        + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '\')">'
+        + '<span title="' + gLanguage.getMessage('QI_TT_SHOW_IN_RES') + '">'
         + gLanguage.getMessage('QI_SHOW_PROPERTY')
         + '</span></td><td> </td></tr>'
         + '<tr id="input_c3d"'+(this.activeQueryId > 0 ? ' style="display:none"':'')+'><td> </td>'
@@ -1844,9 +1843,9 @@ QIHelper.prototype = {
         + '<tr id="input_c4d" style="display:none"><td> </td>'
         + '<td>' + gLanguage.getMessage('QI_SHOWUNIT') + ':</td>'
         + '<td><select id="input_c4"></select></td></tr>'
-        + '<tr><td onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
+        + '<tr><td title="' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '">'
         + '<input type="checkbox" id="input_c2"/></td>'
-        + '<td><span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '\')">'
+        + '<td><span title="' + gLanguage.getMessage('QI_TT_MUST_BE_SET') + '">'
         + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET')
         + '</span></td><td> </td></tr></table>';
         cell.innerHTML = tmpHTML;
@@ -1871,11 +1870,11 @@ QIHelper.prototype = {
         cell = row.insertCell(-1);
         cell.setAttribute('style', 'border-botton: 1px solid #AAAAAA;');
         cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT') + ': '
-        + '<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '\')">'
+        + '<span title="' + gLanguage.getMessage('QI_TT_NO_RESTRICTION') + '">'
         + '<input type="radio" name="input_r0" value="-1" checked="checked" />' + gLanguage.getMessage('QI_NONE')
-        + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_VALUE_RESTRICTION') + '\')">'
+        + '</span>&nbsp;<span title="' + gLanguage.getMessage('QI_TT_VALUE_RESTRICTION') + '">'
         + '<input type="radio" name="input_r0" value="-2" />' + gLanguage.getMessage('QI_SPECIFIC_VALUE')
-        + '</span>&nbsp;<span onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_SUBQUERY') + '\')">'
+        + '</span>&nbsp;<span title="' + gLanguage.getMessage('QI_TT_SUBQUERY') + '">'
         + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" />'
         + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span></span>&nbsp'
         + '<div id="usesub_text" style="display:none">' + gLanguage.getMessage('QI_SUBQUERY_TEXT') + '</div>';
@@ -1934,7 +1933,7 @@ QIHelper.prototype = {
             : gLanguage.getMessage('QI_CREATE_PROPERTY_CHAIN');
             $$('#askQI #addchain')[0].innerHTML =
             '<a href="javascript:void(0)" '
-            + 'onmouseover="Tip(\'' + gLanguage.getMessage('QI_TT_ADD_CHAIN') + '\')" '
+            + 'title="' + gLanguage.getMessage('QI_TT_ADD_CHAIN') + '" '
             + 'onclick="tt_Hide(); qihelper.addPropertyChainInput()">'
             + msg + '</a>';
         }
