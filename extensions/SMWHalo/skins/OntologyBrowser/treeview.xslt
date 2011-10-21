@@ -100,7 +100,7 @@
 
 
 		<table class="categoryTreeColors" border="0" cellspacing="0"
-			cellpadding="0">
+			cellpadding="0" style="width:280px;">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
 			</xsl:if>
@@ -114,6 +114,7 @@
 				<!-- For every level below, shift-->
 				<xsl:if test="$rek_depth>1">
 					<td width="{$param-shift-width}" />
+					
 				</xsl:if>
 				<!-- Shift if it is a leaf, because the plus/minus image is missing-->
 				<!--  <xsl:if test="@isLeaf">
@@ -308,7 +309,7 @@
 					</xsl:with-param>
 				</xsl:call-template>
 			</td>
-			<td style="width: 20%">
+			<td style="width: 22%">
 
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
@@ -328,8 +329,8 @@
 						</xsl:otherwise>
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
-				</a>
-				<a class="navigationLink" style="margin-left:5px;">
+				</a><span style="color: #888"> |</span>
+				<a class="navigationLink" style="margin-left:0px;">
                     <xsl:choose>
                         <xsl:when test="@localurl">
                             <xsl:attribute name="href"><xsl:value-of
@@ -364,7 +365,11 @@
                             </xsl:attribute>
                         </xsl:otherwise>
                     </xsl:choose>
-                    {{SMW_OB_EDIT}}
+                    {{SMW_OB_EDIT}} </a><span style="color: #888"> |</span>
+		<a class="navigationLink" style="margin-left:0px;">
+			<xsl:attribute name="onclick">instanceActionListener.deleteInstance(event, this,'<xsl:value-of select="@id" />','<xsl:value-of select="@title_url" />')</xsl:attribute>
+		
+                    {{SMW_OB_DELETE}}
                 </a>
 				</td>
 				<td>
@@ -378,7 +383,7 @@
 			</td>
 			<td>
 			     <xsl:if test="count(child::category) = 1">
-			     <a style="margin-left:5px;">
+                 <a style="margin-left:5px;">
                     <xsl:attribute name="onclick">instanceActionListener.showSuperCategory(event, this,'<xsl:call-template
                         name="replace-string"><xsl:with-param name="text" select="child::category" /><xsl:with-param
                         name="from" select="$var-simple-quote" /><xsl:with-param
@@ -659,8 +664,8 @@
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
-				</a>
-                 <a class="attribute" title="Edit {$title}" style="margin-left:5px;">
+				</a><span style="color: #888"> |</span>
+                                <a class="attribute" title="Edit {$title}">
 					<xsl:attribute name="onclick">schemaEditPropertyListener.showSubMenuProperty(1, this,'<xsl:call-template
 						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
 						name="from" select="$var-simple-quote" /><xsl:with-param
@@ -668,7 +673,6 @@
 								select="child::rangeType[1]" />')</xsl:attribute>				
 					{{SMW_OB_EDIT}}
 				</a>
-
 			</td>
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
@@ -869,41 +873,43 @@
 
 	<xsl:template name="createTreeNode">
 		<xsl:param name="actionListener" />
-
 		<xsl:param name="typeOfEntity" />
 		<xsl:param name="rek_depth" />
-		<a class="{$typeOfEntity}">
-			<xsl:if test="gissues">
-				<xsl:attribute name="class"><xsl:value-of select="$typeOfEntity" /> gardeningissue</xsl:attribute>
-			</xsl:if>
-			<xsl:if test="@id">
-				<xsl:attribute name="onclick"><xsl:value-of select="$actionListener" />.select(event, this,'<xsl:value-of
+
+		        <span class="ontologyCategorySelection">
+			<!--onMouseOver="document.getElementById(title).style.visibility='visible';"
+ onMouseOut="document.getElementById(title).style.visibility='hidden';"-->
+			        <xsl:if test="gissues">
+				  <xsl:attribute name="class"><xsl:value-of select="$typeOfEntity" /> gardeningissue</xsl:attribute>
+			        </xsl:if>
+			        <xsl:if test="@id">
+				    <xsl:attribute name="onclick"><xsl:value-of select="$actionListener" />.select(event, this,'<xsl:value-of
 					select="@id" />','<xsl:call-template name="replace-string"><xsl:with-param
 					name="text" select="@title" /><xsl:with-param name="from"
 					select="$var-simple-quote" /><xsl:with-param name="to"
 					select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
-				<xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
-			</xsl:if>
-			<xsl:if test="@title">
-				<xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
-			</xsl:if>
-			<xsl:if test="@uri">
-                        <xsl:attribute name="uri"><xsl:value-of
-                            select="@uri" /></xsl:attribute>
-                    </xsl:if>
-			<xsl:if test="@uri">
-                        <xsl:attribute name="uri"><xsl:value-of
-                            select="@uri" /></xsl:attribute>
-                    </xsl:if>
-			<xsl:if test="$rek_depth=1">
-				<xsl:if test="@hidden='true'">
+				    <xsl:attribute name="id"><xsl:value-of select="@id" /></xsl:attribute>
+			        </xsl:if>
+			        <xsl:if test="@title">
+				    <xsl:attribute name="title"><xsl:value-of select="@title" /></xsl:attribute>
+			        </xsl:if>
+			        <xsl:if test="@uri">
+                                <xsl:attribute name="uri"><xsl:value-of
+                                     select="@uri" /></xsl:attribute>
+                                </xsl:if>
+			        <xsl:if test="@uri">
+                                    <xsl:attribute name="uri"><xsl:value-of
+                                    select="@uri" /></xsl:attribute>
+                                </xsl:if>
+			        <xsl:if test="$rek_depth=1">
+				    <xsl:if test="@hidden='true'">
 					<xsl:attribute name="style">display: none;</xsl:attribute>
-				</xsl:if>
-			</xsl:if>
-			<!-- If the treeview is unfold, the image minus (-) is displayed-->
+				    </xsl:if>
+			        </xsl:if>
+			        <!-- If the treeview is unfold, the image minus (-) is displayed-->
 
-			<xsl:if test="@expanded='true'">
-				<xsl:choose>
+			        <xsl:if test="@expanded='true'">
+				    <xsl:choose>
 					<xsl:when test="not (@isLeaf)">
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
@@ -927,11 +933,11 @@
 
 						</img>
 					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:if>
-			<xsl:if test="@expanded='false' or not(@expanded)">
+				    </xsl:choose>
+			        </xsl:if>
+			        <xsl:if test="@expanded='false' or not(@expanded)">
 				<!-- plus (+) otherwise-->
-				<xsl:choose>
+				   <xsl:choose>
 					<xsl:when test="not (@isLeaf)">
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
@@ -955,10 +961,10 @@
 
 						</img>
 					</xsl:otherwise>
-				</xsl:choose>
+				    </xsl:choose>
 
-			</xsl:if>
-			<!--
+			        </xsl:if>
+			        <!--
 				<xsl:if test="not(@expanded)"> <xsl:if test="$param-deploy-treeview
 				= 'true'"> <img
 				src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
@@ -972,9 +978,9 @@
 				select="$actionListener"/>.toggleExpand(event, this.parentNode,
 				'<xsl:value-of select="@id"/>')</xsl:attribute> </xsl:if> </img>
 				</xsl:if> </xsl:if>
-			-->
-			<xsl:if test="$rek_depth>1">
-				<xsl:choose>
+			        -->
+			        <xsl:if test="$rek_depth>1">
+				    <xsl:choose>
 					<xsl:when test="position()=last()">
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif" />
@@ -983,10 +989,10 @@
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif" />
 					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:if>
-			<xsl:if test="$startDepth>1">
-				<xsl:choose>
+				    </xsl:choose>
+			        </xsl:if>
+			        <xsl:if test="$startDepth>1">
+				    <xsl:choose>
 					<xsl:when test="position()=last()">
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif" />
@@ -995,9 +1001,9 @@
 						<img
 							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif" />
 					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:if>
-			<!--
+				    </xsl:choose>
+			        </xsl:if>
+			        <!--
 				<img src="{$param-img-directory}{@img}"> <xsl:if test="@alt">
 
 				<xsl:if test="$param-is-netscape='true'"> <xsl:attribute
@@ -1006,28 +1012,31 @@
 				<xsl:if test="$param-is-netscape='false'"> <xsl:attribute
 				name="alt"><xsl:value-of select="@alt"/></xsl:attribute> </xsl:if>
 				</xsl:if> </img>
-			-->
-			<xsl:variable name="titleWithoutUnderscore" select="@title" />
-			<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
-		</a>
-
-		<xsl:variable name="title" select="@title" />
-		<xsl:for-each select="child::definingRule">
-			<xsl:call-template name="definingRule" />
-		</xsl:for-each>
-		<xsl:call-template name="gissues">
-			<xsl:with-param name="title">
+			        -->
+			        <xsl:variable name="titleWithoutUnderscore" select="@title" />
+			        <xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
+		        
+			</span>
+                      
+		     
+		        <xsl:variable name="title" select="@title" />
+		        <xsl:for-each select="child::definingRule">
+			     <xsl:call-template name="definingRule" />
+		        </xsl:for-each>
+		        <xsl:call-template name="gissues">
+			    <xsl:with-param name="title">
 				<xsl:value-of select="@title" />
-			</xsl:with-param>
-			<xsl:with-param name="actionListener">
+			    </xsl:with-param>
+			    <xsl:with-param name="actionListener">
 				<xsl:value-of select="$actionListener" />
-			</xsl:with-param>
-			<xsl:with-param name="typeOfEntity">
+			    </xsl:with-param>
+			    <xsl:with-param name="typeOfEntity">
 				<xsl:value-of select="$typeOfEntity" />
-			</xsl:with-param>
-		</xsl:call-template>
-		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
-			<xsl:choose>
+			    </xsl:with-param>
+		        </xsl:call-template>
+   
+		        <a  class="openEditLink" title="Goto to {$title}" style="margin-left:5px;">
+			    <xsl:choose>
 				<xsl:when test="$typeOfEntity='concept'">
 					<xsl:attribute name="href"><xsl:value-of
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -1038,9 +1047,18 @@
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 				</xsl:when>
-			</xsl:choose>
-			{{SMW_OB_OPEN}}
-		</a>
+			    </xsl:choose>
+			   {{SMW_OB_OPEN}}
+		        </a><span class="openEditLink" style="color: #888"> |</span>
+			<a class="openEditLink" title="Edit {$title}">
+				<xsl:attribute name="onclick">categoryActionListener.showSubmenu1(3,'<xsl:call-template
+					name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
+					name="from" select="$var-simple-quote" /><xsl:with-param
+					name="to" select="$var-slash-quote" /></xsl:call-template>')
+				</xsl:attribute>				
+			   {{SMW_OB_EDIT}}
+		        </a>  
+
 	</xsl:template>
 
 	<xsl:template name="partitionNode">
