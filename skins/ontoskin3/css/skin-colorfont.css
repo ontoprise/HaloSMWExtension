@@ -88,23 +88,116 @@ dt {
 ul.smwh_menulist div.smwh_menubody_visible {
 	background:url(../img/submenu-background.png) repeat-x scroll center bottom #FFFFFF;
     border-color: #dfdfdc;
+	border-right:3px solid #DFDFDC;
+	border-style:none solid solid;
+	border-width:medium 3px 3px;
 }
 
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible a{
-    color: #116988;
+
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible a, ul.smwh_menulist div.smwh_menubody_visible strong {
+   color: #116988; 
 	vertical-align: middle;
-	font-size: smaller;
+	font-size: 80%;
+	display:list-item;
+	list-style-type:none;
+	list-style-position:inside;
+	font-weight:400;
+	text-shadow:0 1px 0 #FFFFFF;
 }
+
+
+
+ul.smwh_menulist div.smwh_menubody_visible a:hover{
+   color: #FFF; 
+}
+
 
 ul.smwh_menulist div.smwh_menubody td:hover  a{
-	background-color: #cfdce1;
-	text-decoration: none;
+	background-color: #d8e1e2;
+	text-decoration: none; 
+	padding-left:3px; 
+	padding-top: 3px;
+	padding-bottom: 3px;
+	
+}
+
+ul.smwh_menulist div.smwh_menubody td a{
+	padding-left:3px; 
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover {
-	background-color: #cfdce1;
+	/* background-color: #d8e1e2; */ 
 	text-decoration: none;
 }
+
+/* Hover menu items: ----------------------------------------------------------------------------------------------- */
+
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.productsmenu a, ul.smwh_menulist div.smwh_menubody_visible div.productsmenu strong {
+	font-weight:bold;
+	padding-bottom: 0px;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about a {
+   color: grey;
+	vertical-align: middle;
+	font-size: 80%; 
+	display:list-item;
+	list-style-type:none;
+	list-style-position:inside; 
+	text-shadow:0 1px 0 #FFFFFF; 
+	font-weight: normal;
+	padding-top: 0px;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a /*, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink */{
+   background: url("../img/Menu_get_arrow.png") no-repeat scroll left center;
+   color: #4B595C;
+	vertical-align: middle;
+	display:list-item;
+	list-style-type:none;
+	list-style-position:inside; 
+	font-weight:normal;
+	text-shadow:0 1px 0 #FFFFFF; 
+	text-indent:25px;	
+	padding-top:2px;
+	padding-bottom:3px;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a:hover {
+	 background: url("../img/Menu_get_arrow_hover.png") no-repeat scroll left center;
+	 background-color: #d8e1e2;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.MenuThumbButton a
+{
+	width: 145px;
+	height: 106px;
+	padding: 2px;		
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.MenuThumbButton a:hover
+{
+	width: 145px;
+	height: 106px;	
+	background-color: #828282;
+	padding: 2px;
+}
+
+/* selects hover event of the last column of the "Semantic Enterprise Wiki" group in the Products mega menu  */
+ul.smwh_menulist div.smwh_menubody .SemanticEnterpriseWikiGroup tr td:last-child:hover  {
+	background-color:transparent;
+}
+
+/* selects hover event of the last row of the "Semantic Enterprise Wiki" group in the Products mega menu  */
+ul.smwh_menulist div.smwh_menubody .SemanticEnterpriseWikiGroup tr:last-child td:hover a {
+	background-color:transparent;
+}
+
+/* Hover menu items end: ----------------------------------------------------------------------------------------------- */
 
 /* breadcrumb */
 
@@ -117,6 +210,98 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 #smwh_breadcrumbs{
     font-size: x-small;
 }
+
+/* TOC */
+#toc {
+    color: #4B595C;
+    padding: 0px 10px 0px 10px;
+    -moz-box-sizing: border-box;
+    border: 1px solid #E5E5E5;
+	max-width: 615px;
+   }
+   
+  
+   #toc ul, .toc ul {
+    list-style-image: none;
+    list-style-type: none;
+
+}
+	
+/* Pre */
+
+pre {
+	padding: 1em;
+	border: 1px dashed #2f6fab;
+	color: black;
+	background-color: #f9f9f9;
+	line-height: 1.1em;
+
+        /*TODO: find a better solution for linebreaks*/
+        /* width: 870px; */                    /* specify width so long links won't distort the layout - disabled since it causes problems with tables */
+        white-space: pre-wrap;                 /* CSS3 browsers  */
+        white-space: -moz-pre-wrap !important; /* 1999+ Mozilla  */
+        white-space: -pre-wrap;                /* Opera 4 thru 6 */
+        white-space: -o-pre-wrap;              /* Opera 7 and up */
+        word-wrap: break-word;                 /* IE 5.5+ and up */
+        /* overflow-x: auto; */                /* Firefox 2 only */
+        /*width: 99%; /*/         /* only if needed */
+}
+
+/* Thumbnails */
+div.thumb {
+	margin-bottom: .5em;
+	border-style: solid;
+	border-color: white;
+	width: auto;
+	background-color: transparent;
+}
+div.thumbinner {
+    background-color: #E5E5E5;
+    border-bottom: 1px solid #CCCCCC;
+    font-size: 94%;
+    overflow: hidden;
+    padding: 3px !important;
+    text-align: center;
+   font-style: italic;
+}
+html .thumbimage {
+	border: 1px solid #ccc;
+}
+html .thumbcaption {
+	border: none;
+	text-align: left;
+	line-height: 1.4em;
+	padding: 3px !important;
+	font-size: 94%;
+}
+div.magnify {
+	float: right;
+	border: none !important;
+	background: none !important;
+}
+div.magnify a, div.magnify img {
+	display: block;
+	border: none !important;
+	background: none !important;
+}
+div.tright {
+	clear: right;
+	float: right;
+	border-width: .5em 0 .8em 1.4em;
+}
+div.tleft {
+	float: left;
+	clear: left;
+	margin-right: .5em;
+	border-width: .5em 1.4em .8em 0;
+}
+img.thumbborder {
+	border: 1px solid #dddddd;
+}
+.hiddenStructure {
+	display: none;
+}
+
 
 /* mainpage */
 
