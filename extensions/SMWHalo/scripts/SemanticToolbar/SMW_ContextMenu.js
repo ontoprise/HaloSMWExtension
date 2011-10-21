@@ -6,6 +6,11 @@
 //Lightweight Framework for displaying context menu in aam
 window.ContextMenuFramework = Class.create();
 ContextMenuFramework.prototype = {
+	// Stores the last position of the context menu. If it was dragged, it should
+	// be opened at the same position the next time is is opened.
+	mLastPosition : null,
+	mWasDragged   : false,
+	
   /**
  * Constructor
  */
@@ -34,13 +39,27 @@ ContextMenuFramework.prototype = {
       jQuery('#topToolbar img').live('click', function(){
         self.remove();
       });
+	  jQuery(document).keypress(function(event){
+	  	if (event.keyCode === Event.KEY_ESC) {
+	        self.remove();
+		}
+      });
       if ($('smwh_AAM'))
         //			    new Insertion.After($('smwh_AAM'), menu );
         new Insertion.After($('ontomenuanchor'), menu );
       else // in edit mode smwh_AAM doesn't exist.
         new Insertion.After($('ontomenuanchor'), menu );
     }
-		
+	
+	if (ContextMenuFramework.prototype.mWasDragged) {
+		// Restore the position of the menu
+		this.setPosition(ContextMenuFramework.prototype.mLastPosition.left, 
+		                 ContextMenuFramework.prototype.mLastPosition.top);
+	}
+  },
+  
+  wasDragged: function() {
+  	return ContextMenuFramework.prototype.mWasDragged;
   },
 
   /**
@@ -66,6 +85,9 @@ ContextMenuFramework.prototype = {
     var header;
     var content;
     var contentdiv;
+	var minusImg = '/mediawiki/extensions/SMWHalo/skins/Annotation/images/minus.gif';
+	var plusImg  = '/mediawiki/extensions/SMWHalo/skins/Annotation/images/plus.gif';
+	var imgStyle = 'style="padding-right:5px; display:none" border="0"';
     switch(containertype){
       case CATEGORYCONTAINER:
         if($('cmCategoryHeader')) {
@@ -74,7 +96,11 @@ ContextMenuFramework.prototype = {
         if($('cmCategoryContent')) {
           $('cmCategoryContent').remove();
         }
-        header =  '<div id="cmCategoryHeader">'+headline+'</div>';
+        header = '<div id="cmCategoryHeader">' +
+					'<img src="' + minusImg + '" id="cmCategoryHeaderClose" ' + imgStyle + '>' +
+					'<img src="' + plusImg + '" id="cmCategoryHeaderOpen" ' + imgStyle + '>' +
+					headline +
+				 '</div>';
         content = '<div id="cmCategoryContent"></div>';
         contentdiv = 'cmCategoryContent';
         break;
@@ -85,7 +111,11 @@ ContextMenuFramework.prototype = {
         if($('cmPropertyContent')) {
           $('cmPropertyContent').remove();
         }
-        header =  '<div id="cmPropertyHeader">'+headline+'</div>';
+        header = '<div id="cmPropertyHeader">' +
+					'<img src="' + minusImg + '" id="cmPropertyHeaderClose" ' + imgStyle + '>' +
+					'<img src="' + plusImg + '" id="cmPropertyHeaderOpen" ' + imgStyle + '>' +
+					headline +
+				 '</div>';
         content = '<div id="cmPropertyContent"></div>';
         contentdiv = 'cmPropertyContent'
         break;
@@ -114,21 +144,56 @@ ContextMenuFramework.prototype = {
     new Insertion.Bottom('contextmenuContent', header );
     new Insertion.Bottom('contextmenuContent', content );
     new Insertion.Bottom(contentdiv, htmlcontent );
-    if ($('cmCategoryHeader') && $('cmPropertyContent')) {
-      Event.observe('cmCategoryHeader', 'click',
-        function(event) {
-          $('cmCategoryContent').show();
-          $('cmPropertyContent').hide();
-        });
-    }
-    if ($('cmPropertyHeader') && $('cmCategoryContent')) {
-      Event.observe('cmPropertyHeader', 'click',
-        function(event) {
-          $('cmCategoryContent').hide();
-          $('cmPropertyContent').show();
-        });
-    }
+	if ($('cmCategoryHeader') && $('cmPropertyHeader')) {
+		// Both property and category toolbox are present
+		// => add buttons for toggling them
+		this.tooglePropertyAndCategoryToolboxes();
+		this.updateOpenCloseButtons(true);
+		Event.observe('cmCategoryHeader', 'click', 
+					  this.tooglePropertyAndCategoryToolboxes.bindAsEventListener(this));
+		Event.observe('cmPropertyHeader', 'click',
+					  this.tooglePropertyAndCategoryToolboxes.bindAsEventListener(this));
+	}
 
+	
+  },
+  
+  /**
+   * Updates the visibility of the plus/minus buttons in the category and 
+   * property toolbox headers.
+   * 
+   * @param {bool} propertiesAreVisible
+   * 		true if the property toolbox is currently visible.
+   */
+  updateOpenCloseButtons: function (propertiesAreVisible) {
+  	if (propertiesAreVisible) {
+		$('cmCategoryHeaderOpen').show();
+		$('cmCategoryHeaderClose').hide();
+		$('cmPropertyHeaderOpen').hide();
+		$('cmPropertyHeaderClose').show();
+	} else {
+		// Categories are visible
+		$('cmCategoryHeaderOpen').hide();
+		$('cmCategoryHeaderClose').show();
+		$('cmPropertyHeaderOpen').show();
+		$('cmPropertyHeaderClose').hide();
+	}
+  	
+  },
+  
+  tooglePropertyAndCategoryToolboxes: function () {
+  	if ($('cmCategoryContent').visible()) {
+		// The category toolbox is currently visible 
+		// => switch to the property toolbox
+		$('cmCategoryContent').hide();
+		$('cmPropertyContent').show();
+		this.updateOpenCloseButtons(true);
+	} else {
+		$('cmCategoryContent').show();
+		$('cmPropertyContent').hide();
+		this.updateOpenCloseButtons(false);
+	}
+  	
   },
 
   /**
@@ -225,6 +290,11 @@ ContextMenuFramework.prototype = {
  */
   showMenu: function(){
     $('contextmenu').show();
+	var inp = $('contextmenu').select('input');
+	if (inp.length > 0) {
+	    inp[0].focus();
+	}
+	
     var numberOfSubContainers = $('contextmenuContent').immediateDescendants().length;
     if ($('cmCategoryContent') && numberOfSubContainers > 3) {
       // The category section is initially folded in
@@ -232,7 +302,13 @@ ContextMenuFramework.prototype = {
     }
 
     mw.loader.using('jquery.ui.draggable', function(){
-      jQuery('#contextmenu').draggable();
+      jQuery('#contextmenu').draggable({
+	  	stop: function(event,ui) {
+			// Store the last position for the next time
+			ContextMenuFramework.prototype.mLastPosition = ui.offset;
+			ContextMenuFramework.prototype.mWasDragged = true; 
+		}
+	  });
     });
   },
   /**
