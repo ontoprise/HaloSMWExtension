@@ -20,7 +20,7 @@
 *  @ingroup SMWHaloLanguage
 */
 
-window.wgUserLanguageStrings = {
+var wgUserLanguageStrings = {
 	'MUST_NOT_BE_EMPTY'       : '(e)This input field must not be empty.',
 	'VALUE_IMPROVES_QUALITY'  : '(i)A value in this input field improves the quality of the knowledge base.',
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)The selection must not be empty!',
@@ -29,6 +29,7 @@ window.wgUserLanguageStrings = {
 	'EditProperty'            : 'Edit property :',
 	'NAME'                    : 'Name:',
 	'SUBCATEGORYOF'           : 'Subcategory of:',
+	'ANNOTATED_CATEGORIES'     : 'Annotated categories:',
 	'AddCategory'             : 'Add',
 	'ENTER_NAME'              : 'Please enter a name.',
 	'ADD'                     : 'Add',
@@ -79,7 +80,6 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Properties',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
 	'RECPROP'                 : "Recommended properties",
-  'ADD_ANNOTATION'          : 'Add Annotation',
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',
@@ -103,8 +103,6 @@ window.wgUserLanguageStrings = {
 	'SYMMETRIC'               : 'Symmetric',
 	'RETRIEVING_DATATYPES'    : 'Retrieving data types...',
 	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
-	'REMOVE_DOMAIN_RANGE'	  : 'Remove this domain and range',
-	'DUPLICATE_RECORD_FIELD'  : '(w)This property appears several times in the record. The order of annotated values will not be deterministic.',
 	
 	'PROPERTY_PROPERTIES'     : "Property Characteristics",
 	
@@ -224,8 +222,9 @@ window.wgUserLanguageStrings = {
 	'OB_WRONG_MAXCARD'		  : 'Wrong max cardinality',
 	'OB_WRONG_MINCARD'		  : 'Wrong min cardinality',
 	'OB_CONFIRM_INSTANCE_DELETION' : 'Do you really want to remove this article?',
-	'SMW_OB_OPEN' 			  : '(open)',
-	'SMW_OB_EDIT' 			  : '(edit)',
+	'SMW_OB_OPEN' 			  : 'open',
+	'SMW_OB_EDIT' 			  : 'edit',
+	'SMW_OB_DELETE'                   : 'delete',
 	'SMW_OB_ADDSOME'		  : '(add some)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 	'SMW_OB_MODIFIED'		  : 'The page was modified. The following Gardening issues might have already been fixed:',
