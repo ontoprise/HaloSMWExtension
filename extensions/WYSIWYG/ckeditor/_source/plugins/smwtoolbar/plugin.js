@@ -837,10 +837,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
    * @param string value selected text
    */
     ShowNewToolbar = function(event, value) {
-      var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
+	  if (!ckePopupContextMenu.wasDragged()) {
+		var pos = CalculateClickPosition(event);
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
+	  }
       //        var relToolBar = new window.parent.RelationToolBar();
       var relToolBar = window.parent.relToolBar;
       //        var catToolBar = new window.parent.CategoryToolBar();
@@ -866,10 +868,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
    * @param string representation of the property
    */
     ShowRelToolbar = function(event, name, value, show) {
-      var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
+	  if (!ckePopupContextMenu.wasDragged()) {
+		var pos = CalculateClickPosition(event);
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
+	  }
       var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, value, show, name);
@@ -877,10 +881,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     ShowRelToolbarByOffset = function(element, propertyName, propertyValue, displayedText){
-      var pos = CalculateElementPosition(element);
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
+	  if (!ckePopupContextMenu.wasDragged()) {
+		var pos = CalculateClickPosition(event);
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
+	  }
       var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, propertyValue, displayedText, propertyName);
@@ -896,10 +902,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
    * @param string name selected text
    */
     ShowCatToolbar = function(event, name) {
-      var pos = CalculateClickPosition(event);
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
+	  if (!ckePopupContextMenu.wasDragged()) {
+		var pos = CalculateClickPosition(event);
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
+	  }
       var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, name);
@@ -907,10 +915,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     ShowCatToolbarByOffset = function(element, name) {
-      var pos = CalculateElementPosition(element);
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
+	  if (!ckePopupContextMenu.wasDragged()) {
+		var pos = CalculateClickPosition(event);
       ckePopupContextMenu.setPosition(pos[0], pos[1]);
+	  }
       var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
       toolBar.createContextMenu(ckePopupContextMenu, name);
