@@ -1628,13 +1628,15 @@ function smwhfRegisterResourceLoaderModules() {
 			// Module for the Query Interface
 			// The QI depends on all SemanticResultFormats
 			$dependencies = array(
-			'ext.smw.tooltips',
-			'ext.smw.style',
+      'ext.smw.tooltips',
+      'ext.smw.style',
       'ext.jquery.query',
       'ext.ScriptManager.prototype',
       'ext.jquery.qtip',
-      'ext.jquery.tree'
-			);
+      'ext.jquery.tree',
+      'ext.smwhalo.json2',
+      'jquery.ui.dialog'
+     );
 			// Add all modules ext.srf.*
 			foreach ($wgResourceModules as $rid => $mod) {
 				if (strpos($rid, 'ext.srf.') === 0) {
