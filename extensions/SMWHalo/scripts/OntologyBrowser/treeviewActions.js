@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
- *   Author: Kai K�hn
+ *   Author: Kai K?hn
  *   This file is part of the halo-Extension.
  *
  *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup SMWHaloSpecials
- * @ingroup SMWHaloDataExplorer
+ * @ingroup SMWHaloOntologyBrowser
  * 
  * TreeView actions 
  *  
@@ -31,12 +31,12 @@
  */
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
-var editOpened = false;
-var addOpened = false;
+var editExpanded = false;
+var addExpanded = false;
 var addCategoryForm = false;
 var editCategoryForm = false;
-var editCategoryOpened = false;
-var addCategoryOpened = false;
+var editCategoryOpen = false;
+var addCategoryOpen = false;
 
 // Logging on close does not work, because window shuts down. What to do?
 // window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
@@ -551,9 +551,10 @@ OBCategoryTreeActionListener.prototype = Object
 					},
 
 					cancel : function(){
-					 addCategoryOpened = false;
-					 editCategoryOpened = false;
+					 addCategoryOpen = false;
+					 editCategoryOpen = false;
 					},
+					
 					selectionChanged : function(id, title, ns, node) {
 						if (ns == SMW_CATEGORY_NS) {
 							this.selectedCategory = title;
@@ -561,13 +562,22 @@ OBCategoryTreeActionListener.prototype = Object
 							this.oldSelectedNode = GeneralBrowserTools
 									.toggleHighlighting(this.oldSelectedNode,
 											node);
-                                                if(addCategoryForm == true && addCategoryOpened == true){
+                                                if(addCategoryForm == true && addCategoryOpen == true){
 					           categoryActionListener.showSubMenu(2);	
                                                  }	
-						 if(editCategoryForm == true && editCategoryOpened == true){
+						 if(editCategoryForm == true && editCategoryOpen == true){
 					           categoryActionListener.showSubMenu(3);						   
                                                  }
 						}
+					},
+					
+					showSubmenu1 : function(commanID,title){   
+		                          if(addCategoryOpen == true || editCategoryOpen == true){
+                                            addCategoryOpen == false;					    
+		                          }
+		                          editCategoryOpen = true;
+					  editCategoryForm = true;
+                                          categoryActionListener.superCategories(title,'3');
 					},
 
 					beforeRefresh : function() {
@@ -647,13 +657,13 @@ OBCategoryTreeActionListener.prototype = Object
 						if(commandID == 2){
                                                  addCategoryForm = true;
 						 editCategoryForm = false;
-						 addCategoryOpened = true;
+						 addCategoryOpen = true;
 						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
 						}
 						if(commandID == 3){
 						 editCategoryForm = true;
 						 addCategoryForm = false;
-						 editCategoryOpened = true;
+						 editCategoryOpen = true;
 						 categoryActionListener.superCategories(this.selectedCategory,'3');
 						}	
                                            					    
@@ -824,7 +834,10 @@ OBCategoryTreeActionListener.prototype = Object
 var OBInstanceActionListener = Class.create();
 OBInstanceActionListener.prototype = {
 	initialize : function() {
-
+                addInstanceForm = false;
+		editInstanceForm = false;
+		addInstanceOpen = false;
+		editInstanceOpen = false;
 		this.selectedInstance = null;
 		this.oldSelectedInstance = null;
 		this.selectedInstanceURI = null;
@@ -847,6 +860,26 @@ OBInstanceActionListener.prototype = {
 			this.selectedCategory = title;
 
 		}
+		
+		if(addInstanceForm == true && addInstanceOpen == true){
+		     obInstanceMenuProvider.showContent(10, 'instanceList');	
+                    }	
+		if(editInstanceForm == true && editInstanceOpen == true){
+                   instanceActionListener.annotatedCategories(this.selectedInstance,8);		
+                    }
+	},
+	
+	cancel : function(){
+	  addInstanceOpen = false;
+	  editInstanceOpen = false;
+	},
+	
+	deleteInstance : function(event, node, id, instanceName ){
+	  obInstanceMenuProvider.deleteInstance(instanceName,id);
+	},
+	
+	annotatedCategories : function(selectedInstance,commandID){
+	  obInstanceMenuProvider.annotatedCategories(selectedInstance,commandID);
 	},
 
 	showSubMenu : function(commandID) {
@@ -858,10 +891,23 @@ OBInstanceActionListener.prototype = {
 				alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 				return;
 			}
-		}
-
-		obInstanceMenuProvider.showContent(commandID, 'instanceList');
+		}		
+		
+		 if(commandID == SMW_OB_COMMAND_INSTANCE_CREATE){
+                        addInstanceForm = true;
+			editInstanceForm = false;
+			addInstanceOpen = true;
+			obInstanceMenuProvider.showContent(commandID, 'instanceList');
+			}
+		 if(commandID != SMW_OB_COMMAND_INSTANCE_CREATE){
+			editInstanceForm = true;
+			addInstanceForm = false;
+			editInstanceOpen = true;
+			instanceActionListener.annotatedCategories(this.selectedInstance,commandID);
+			 }	
 	},
+	
+	
 	/**
 	 * Called when a supercategory of an instance is selected.
 	 */
@@ -1115,10 +1161,10 @@ OBEditPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}	
-		if(addOpened == true){
-		obSchemaPropertiesMenuProvider.cancel();		
+		if(addExpanded == true || editExpanded == true){
+		 obEditPropertiesMenuProvider.cancel();		
 		}
-		editOpened = true;
+		editExpanded = true;
 		obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);
 	},
 
@@ -1694,10 +1740,10 @@ OBSchemaPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}
-		if(editOpened == true){
+		if(editExpanded == true){
 		obEditPropertiesMenuProvider.cancel();
 		}
-		addOpened = true;
+		addExpanded = true;
 		obSchemaPropertiesMenuProvider.showContent(commandID, 'relattributes');
 	},
 
