@@ -31,10 +31,25 @@ a.concept, a.instance, a.leaf{
 	white-space:nowrap;
 }
 
+a.openEditLink{
+   visibility:visible;
+}
+
+span.openEditLink{
+   visibility:visible;
+}
+
 a.titleNotExists {
 	color: #F00;
 } 
 
+span.selectedItem{
+  background-color: #BBB;
+}
+
+span.selectedItem{
+  background-color: #BBB;
+}
 
 a.selectedItem {
 	padding:0px;
@@ -50,6 +65,9 @@ a.inherited {
 a.navigationLink {
 	color: #666666;
 }
+
+
+
 #ontologybrowser{
 	width: 100%;
 	height:490px;
@@ -59,6 +77,7 @@ a.navigationLink {
 #ontologybrowser table{
     width: 100%;
 }
+
 
 #OBHelp {
 	background-color:#FFFFFF;
@@ -89,13 +108,15 @@ a.navigationLink {
 	float: left;
 	overflow: auto;
 	width: 100%;
-	height: 430px;
+	height: 430px;	
 }
 
 .categoryTreeColors {
 	background-color: #DDEEFF;
 }
-.categoryTreeColors:hover {background-color: #BBCCDD;}
+   .categoryTreeColors:hover {
+	   background-color: #DDD;           
+   }  
 
 .instanceListColors {
 	background-color: #FFDDDD;
@@ -105,12 +126,22 @@ a.navigationLink {
 	background-color: #FFDDAA;
 }
 
+.ontologyCategorySelection{
+        width: 184px; 
+        display:inline-block; 
+        cursor:pointer; 
+        color:#116988;
+}
+
+
+
 #treeContainer, #relattributesContainer {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	float: left;
 	width: 30%;
 }
+
 
 #categoryTreeSwitch , #propertyTreeSwitch {
 	margin-left:2px;
@@ -141,6 +172,13 @@ a.navigationLink {
 	border-bottom: 1px dashed #AAAAAA;
 	padding-left: 2px;
 }
+#instanceList td.selectedSwitch {
+	background-color: #BBB;
+}
+
+#instanceList tr:hover{
+        background-color: #DDD;
+}
 
 
 a.selectedSwitch {
@@ -157,6 +195,10 @@ a.selectedSwitch {
 	vertical-align: top;
 	padding-left: 2px;
 	padding-right: 5px;
+}
+
+#relattributes tr:hover{
+  background-color: #DDD;
 }
 
 #relattributes td.right{
