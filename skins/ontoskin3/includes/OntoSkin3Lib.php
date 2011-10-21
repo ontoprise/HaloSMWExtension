@@ -481,11 +481,13 @@ class SMWH_Skin {
 		if( empty( $pageName ) ) {
 			return '';
 		}
+		$title = Title::newFromText( $pageName );
+		if( $title == null || !( $title instanceof Title )  ){
+			return '';
+		}
 		$store = smwfGetSemanticStore();
 		// determine which categories the page is assigned to
-		$pageCats = $store->getCategoriesForInstance( 
-			Title::newFromText( $pageName )
-		);
+		$pageCats = $store->getCategoriesForInstance( $title );
 
 		$iconHTML = '';
 		foreach ( $pageCats as $pageCat ) {
