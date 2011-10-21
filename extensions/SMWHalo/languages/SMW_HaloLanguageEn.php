@@ -193,6 +193,7 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_createsubpropertysamelevel' => 'Add property',
 	'smw_ob_cmd_renameproperty' => 'Rename',
 	'smw_ob_cmd_renameinstance' => 'Rename',
+	'smw_ob_cmd_editinstance'  => 'Edit instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
 	'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
@@ -333,8 +334,7 @@ clicking the big arrows between the columns.',
       'smw_qi_show_in_results' => 'Show in results',
       'smw_qi_property_name' => 'Property name',
       'smw_qi_value_must_be_set' => 'Value must be set',
-      'smw_qi_value_name' => 'Value name',      
-
+      'smw_qi_value_name' => 'Value name',  
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
@@ -367,7 +367,7 @@ clicking the big arrows between the columns.',
     'smw_qi_tt_option' => 'Define general settings for how the query is executed',
     'smw_qi_tt_maintab_query' => 'Create a new query',
     'smw_qi_tt_maintab_load' => 'Load an existing query',
-      'smw_qi_tt_addSubject' => 'Add Subject',
+ 'smw_qi_tt_addSubject' => 'Add Subject',
       'smw_qi_tt_delete' => 'Delete selected tree node',
       'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
 
@@ -393,7 +393,34 @@ clicking the big arrows between the columns.',
     'smw_deletepage_prev' => 'Prev',
     'smw_deletepage_next' => 'Next',
 	
-   
+    // Triple Store Admin
+    'tsa' => 'Triple store administration',
+	'tsc_advertisment' => "'''This special page helps you to administrate the Wiki to triplestore connection.'''<br><br>''You have no triplestore attached to this Wiki.''<br><br>You make this Wiki smarter by connecting a TripleStore to it!<br><br>Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki. <br><br> '''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Click here to read what your benefits are and to download a TripleStore!]'''",
+    'smw_tsa_welcome' => 'This special page helps you to administrate the wiki/triplestore connection.',
+    'smw_tsa_couldnotconnect' => 'Could not connect to a triple store.',
+    'smw_tsa_notinitalized' => 'Your wiki is not initialized at the triplestore.',
+    'smw_tsa_waitsoemtime'=> 'Please wait a few seconds and then follow this link.',
+    'smw_tsa_wikiconfigured' => 'Your wiki is properly connected with the triplestore at $1',
+    'smw_tsa_initialize' => 'Initialize',
+	'smw_tsa_reinitialize' => 'Re-Initialize',
+    'smw_tsa_pressthebutton' => 'Please press the button below.',
+    'smw_tsa_addtoconfig' => 'Please add the following lines in your LocalSettings.php and check if the triplestore connector is running.',
+	'smw_tsa_addtoconfig2' => 'Make sure that the triplestore driver is activated. If necessary change enableSMWHalo to',
+	'smw_tsa_addtoconfig3' => 'Also make sure that the graph URL (last parameter of enableSMWHalo) is a valid one and it does not contain a hash (#).',
+	'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
+    'smw_tsa_driverinfo' => 'Driver information',
+    'smw_tsa_status' => 'Status',
+    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableObjectLogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
+    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
+    'smw_tsa_tscinfo' => 'Triplestore Connector information',
+	'smw_tsa_tscversion' => 'TSC Version',
+	'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
+	'asktsc' => 'Ask triplestore',
+	'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
+	'smw_tsa_loadgraphs'=> 'Loaded graphs',
+	'smw_tsa_autoloadfolder'=> 'Auto-load folder',
+	'smw_tsa_tscparameters'=> 'TSC parameters',
+	'smw_tsa_synccommands'=> 'Synchronization commands',
 	
 	
 	// SMWHaloAdmin
@@ -403,11 +430,20 @@ clicking the big arrows between the columns.',
 	'smw_haloadmin_databaseinit_description' => 'The below function ensures that your database is set up properly. Pressing "Initialize" will upgrade the database schema and install some required wiki pages for the use of semantic data. Alternatively you can use the maintenance script SMW_setup.php which is located in the SMWHalo maintenance folder.',
 	'smw_haloadmin_ok' => 'SMWHalo extension is correctly installed.',
 	
-	
+	// Derived facts
+	'smw_df_derived_facts_about' => 'Derived facts about $1',
+	'smw_df_static_tab'			 => 'Static facts',
+	'smw_df_derived_tab'		 => 'Derived facts',
+	'smw_df_static_facts_about'  => 'Static facts about this article',
+	'smw_df_derived_facts_about' => 'Derived facts about this article',
+	'smw_df_loading_df'			 => 'Loading derived facts...',
+	'smw_df_invalid_title'		 => 'Invalid article. No derived facts available.',
+	'smw_df_no_df_found'		 => 'No derived facts found for this article.',
+	'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
 	
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
-	'smw_last_visited' => 'Last visited:',
+    'smw_last_visited' => 'Last visited:',
 	'smw_start_discussion' => 'Start $1',
     'more_functions' => 'More',
     'smw_treeviewleft' => 'Open treeview to the left side',
@@ -422,6 +458,7 @@ clicking the big arrows between the columns.',
 	'semanticmaps_abb_west'        => 'W',
 	'semanticmaps_label_latitude'  => 'Latitude:',
 	'semanticmaps_label_longitude' => 'Longitude:',
+	
 	
 	
 	// Tabular Forms
