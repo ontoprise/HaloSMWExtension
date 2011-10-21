@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>imagemap</id>
+		<license>GPL-v2</license>
+		<vendor>ontoprise GmbH / Tim Starling</vendor>
+		<maintainer>ontoprise GmbH</maintainer>
+		<instdir>extensions/ImageMap</instdir>
+		<description>
+Allows client-side clickable image maps using imagemap tag.
+		</description>
+		<helpurl>http://www.mediawiki.org/wiki/Imagemap</helpurl>
+		<dependencies>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="deploy.xml" />
+	</codefiles>
+	<wikidumps>
+        <!-- @TODO: create bundle -->
+	</wikidumps>
+	<resources>
+        <!-- @TODO: add complex example from MW.org -->
+	</resources>
+
+	<configs>
+		<new>
+			<require name="im_init"
+				file="extensions/ImageMap/ImageMap.php" />
+		</new>
+	</configs>
+</deploydescriptor>
+
