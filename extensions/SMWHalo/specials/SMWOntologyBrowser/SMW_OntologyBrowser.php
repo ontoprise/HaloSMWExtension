@@ -30,6 +30,12 @@ define('SMW_OB_COMMAND_INSTANCE_RENAME', 8);
 
 define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
 
+// standard functions for creating a new special
+//function doSMW_OntologyBrowser() {
+//		SMW_OntologyBrowser::execute();
+//}
+
+//SpecialPage::addPage( new SpecialPage(wfMsg('ontologybrowser'),'',true,'doSMW_OntologyBrowser',false) );
 
 
 class SMW_OntologyBrowser extends SpecialPage {
@@ -43,16 +49,17 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('dataexplorer'));
 	
 		if ($wgRequest->getVal('src') == 'toolbar') {
-			
+			smwLog("","OB","opened_from_menu");
 		} else if ($wgRequest->getVal('entitytitle') != '') {
 			$ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
-			
+			smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
 		} else {
-		
+			smwLog("","OB","opened");
 		}
+		/*ENDLOG*/
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
-		
+		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );
 		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );
 			
 		// add another container
@@ -187,11 +194,11 @@ if(!smwfIsTripleStoreConfigured()) {
 			$html .= "<!-- Instance List hook -->
 		<div id=\"instanceContainer\">
 		  <span class=\"OB-header\"><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
-		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a> <div id=\"instanceListMenu\"></div></span>" : "")."			
+		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_editinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			
 		  <div id=\"instanceList\" class=\"instanceListColors\">
 		  </div>
 		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button>
-		   <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\">".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
+		  <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\" $showAssertedCategoriesSwitch/>".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
 		</div>
 			
 		<div id=\"rightArrow\" class=\"pfeil\">
