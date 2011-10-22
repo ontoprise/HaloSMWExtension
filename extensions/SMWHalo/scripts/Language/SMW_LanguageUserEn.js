@@ -20,7 +20,7 @@
 *  @ingroup SMWHaloLanguage
 */
 
-var wgUserLanguageStrings = {
+window.wgUserLanguageStrings = {
 	'MUST_NOT_BE_EMPTY'       : '(e)This input field must not be empty.',
 	'VALUE_IMPROVES_QUALITY'  : '(i)A value in this input field improves the quality of the knowledge base.',
 	'SELECTION_MUST_NOT_BE_EMPTY' : '(e)The selection must not be empty!',

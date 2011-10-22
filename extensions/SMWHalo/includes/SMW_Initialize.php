@@ -1608,7 +1608,6 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/scriptaculous/effects.js',
 			'scripts/scriptaculous/dragdrop.js',
 			'scripts/OntologyBrowser/generalTools.js',
-			'scripts/Language/SMW_Language.js',
 			'/scripts/OntologyBrowser/ontologytools.js',
 			'/scripts/OntologyBrowser/treeview.js',
 			'/scripts/OntologyBrowser/treeviewActions.js',
@@ -1621,13 +1620,15 @@ function smwhfRegisterResourceLoaderModules() {
 		'dependencies' => array(
 			'ext.smw.tooltips',
 			'ext.smw.style',
-			'ext.jquery.qtip'
+			'ext.jquery.qtip',
+      'ext.smwhalo.Language'
 			)
 			);
 
 			// Module for the Query Interface
 			// The QI depends on all SemanticResultFormats
 			$dependencies = array(
+      'ext.smwhalo.Language',
       'ext.smw.tooltips',
       'ext.smw.style',
       'ext.jquery.query',
@@ -1636,6 +1637,7 @@ function smwhfRegisterResourceLoaderModules() {
       'ext.jquery.tree',
       'ext.smwhalo.json2',
       'jquery.ui.dialog'
+      
      );
 			// Add all modules ext.srf.*
 			foreach ($wgResourceModules as $rid => $mod) {
@@ -1647,7 +1649,6 @@ function smwhfRegisterResourceLoaderModules() {
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
-			'scripts/Language/SMW_Language.js',
 			'scripts/Logger/smw_logger.js',
 			'scripts/OntologyBrowser/generalTools.js',
 			'scripts/QueryInterface/Query.js',
