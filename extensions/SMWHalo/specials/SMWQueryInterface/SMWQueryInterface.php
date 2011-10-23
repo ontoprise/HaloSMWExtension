@@ -278,8 +278,8 @@ class SMWQueryInterface extends SpecialPage {
             '<div id="qitextview">Query as text</div>
                  <div id="qisource"><textarea id="sparqlQueryText"></textarea>' .
             '<div id="qisourceButtons">' .
-            '<button title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
-            '&nbsp;<span class="qibutton">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
+            '<button id="qiUpdateSourceBtn" title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
+            '&nbsp;<span class="qibutton" id="discardChangesLink">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
             '</div>' .
             '</div>' .
             '</div></div>
