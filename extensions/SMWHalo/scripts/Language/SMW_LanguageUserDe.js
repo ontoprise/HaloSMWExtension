@@ -57,7 +57,7 @@ window.wgUserLanguageStrings = {
 	'MIN_CARD_INVALID'        : "(e)Min. Kardinalität darf nicht kleiner als die max. Kardinalität sein!",
 	'ASSUME_CARDINALITY_0'    : "(i) Die min. Kardinalität wird als 0 angenommen.",
 	'ASSUME_CARDINALITY_INF'  : "(i) Max. Kardinalität wird als ∞ angenommen.",
-
+	'ANNOTATED_CATEGORIES'     : 'Annotierte Kategorien:',
 
 	// Namespaces
 	'NS_SPECIAL' 			  : 'Special',
