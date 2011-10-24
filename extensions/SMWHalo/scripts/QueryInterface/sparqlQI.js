@@ -57,7 +57,7 @@
       //if this is variable and showInResults then add it to projection_var
       var subject = treeJsonObject[i];
       if(subject.attr.type === 'VAR' && subject.attr.showinresults === 'true'){
-        projection_var.push(subject.attr.name);
+        projection_var.push(fixName(subject.attr.name));
       }
       
       //for each child
@@ -67,10 +67,10 @@
         if(child.attr.gui === 'category'){
           var thisCategoryRestriction = {
             subject: {
-              value: subject.attr.name,
+              value: fixName(subject.attr.name),
               type: subject.attr.type
             },
-            category_iri:[child.attr.iri + SPARQL.iri_delim + child.attr.name]
+            category_iri:[child.attr.iri + SPARQL.iri_delim + fixName(child.attr.name)]
           }
           category_restriction.push(thisCategoryRestriction);
         }
@@ -79,20 +79,20 @@
         if(child.attr.gui === 'property'){
           var thisTriple = {
             subject: {
-              value: subject.attr.type === 'IRI' ? getFullName(subject.attr.name, 'instance') : subject.attr.name,
+              value: subject.attr.type === 'IRI' ? getFullName(fixName(subject.attr.name), 'instance') : fixName(subject.attr.name),
               type: subject.attr.type
             },
             predicate:{},
             object:{}
           }
 
-          thisTriple.predicate.value = child.attr.iri + SPARQL.iri_delim + child.attr.name;
+          thisTriple.predicate.value = child.attr.iri + SPARQL.iri_delim + fixName(child.attr.name);
           thisTriple.predicate.type = child.attr.type;
-          thisTriple.object.value = child.attr.valuename;
+          thisTriple.object.value = fixName(child.attr.valuename);
           thisTriple.object.type = child.attr.valuetype;
           thisTriple.optional = !child.attr.valuemustbeset;
           if(child.attr.showinresults){
-            projection_var.push(child.attr.valuename);
+            projection_var.push(fixName(child.attr.valuename));
           }
           triple.push(thisTriple);
 
@@ -173,7 +173,7 @@
       $('#sparqlQI #qiDefTab1').addClass('qiDefTabInactive');
       $('#sparqlQI #qiDefTab1').removeClass('qiDefTabActive');
 
-      treeToSparql(SPARQL.json.TreeQuery);
+      updateAllFromTree();
 
     });
   }
@@ -346,7 +346,7 @@
     $('#qiSubjectDialog').hide();
     $('#qiPropertyDialog').hide();
     $('#qiCategoryDialog #qiCategoryNameInput').val(categoryName);
-    $('#qiCategoryTypeLabel').html('Type: ' + SPARQL.category_iri);
+    //    $('#qiCategoryTypeLabel').html('Type: ' + SPARQL.category_iri);
 
 
     function changeName(element){
@@ -423,7 +423,7 @@
     
     if(isVar){
       subjectName = '?' + subjectName;
-      $('#qiSubjectTypeLabel').html('Type: variable');
+    //      $('#qiSubjectTypeLabel').html('Type: variable');
     }
     $('#qiCategoryDialog').hide();
     $('#qiSubjectDialog').show();
@@ -449,14 +449,14 @@
         selectedNode.attr('name', element.val());
         selectedNode.attr('type', 'IRI');
         selectedNode.attr('iri', SPARQL.instance_iri);
-        $('#qiSubjectTypeLabel').html('Type: ' + SPARQL.instance_iri);        
+        //        $('#qiSubjectTypeLabel').html('Type: ' + SPARQL.instance_iri);
         style = style.replace('variable_icon', 'instance_icon');
         selectedNode.children('a').children('ins').attr('style', style);
       }
       else{
-        selectedNode.attr('name', element.val().replace(/\?/, ''));
+        selectedNode.attr('name', fixName(element.val()));
         selectedNode.attr('type', 'VAR');
-        $('#qiSubjectTypeLabel').html('Type: variable');
+        //        $('#qiSubjectTypeLabel').html('Type: variable');
         style = selectedNode.children('a').children('ins').attr('style');
         style = style.replace('instance_icon', 'variable_icon');
         selectedNode.children('a').children('ins').attr('style', style);
@@ -487,6 +487,12 @@
 
   }
 
+  function fixName(string){
+    string = string.replace(/\?/, '');
+    string = string.replace(/\s/, '_');
+    return string;
+  }
+
   function openPropertyDialog(selectedNode){
     //unbind event handlers so all other nodes won't be changed
     $('#qiPropertyNameInput').unbind();
@@ -498,36 +504,41 @@
     function changeName(nameElement, valueElement){
       selectedNode.children('a').contents().filter(function(){
         return this.nodeType === 3;
-      }).replaceWith(nameElement.val() || ' ');
+      }).replaceWith(nameElement.val() + ' ' + valueElement.val());
       
-      selectedNode.attr('name', nameElement.val().replace(/\?/, ''));
+      selectedNode.attr('name', fixName(nameElement.val()));
+      selectedNode.attr('valuename', fixName(valueElement.val()));
       if(isVariable(nameElement.val())){
-        $('#qiPropertyTypeLabel').html('Type: variable');
         selectedNode.attr('type', 'VAR');
       }
       else{
-        $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.instance_iri);
         selectedNode.attr('type', 'IRI');
-      }      
-    }
-
-    function changeValue(nameElement, valueElement){
-      var textNode = selectedNode.children('a').contents().filter(function(){
-        return this.nodeType === 3;
-      });
-
-      textNode.replaceWith(nameElement.val() + ' ' + valueElement.val());
-
-      selectedNode.attr('valuename', valueElement.val().replace(/\?/, ''));
+      }
       if(isVariable(valueElement.val())){
-        $('#qiPropertyValueTypeLabel').html('Type: variable');
         selectedNode.attr('valuetype', 'VAR');
       }
       else{
-        $('#qiPropertyValueTypeLabel').html('Type: ' + SPARQL.instance_iri);
         selectedNode.attr('valuetype', 'IRI');
       }
     }
+
+    //    function changeValue(nameElement, valueElement){
+    //      var textNode = selectedNode.children('a').contents().filter(function(){
+    //        return this.nodeType === 3;
+    //      });
+    //
+    //      textNode.replaceWith(nameElement.val() + ' ' + valueElement.val());
+    //
+    //
+    //      if(isVariable(valueElement.val())){
+    ////        $('#qiPropertyValueTypeLabel').html('Type: variable');
+    //        selectedNode.attr('valuetype', 'VAR');
+    //      }
+    //      else{
+    ////        $('#qiPropertyValueTypeLabel').html('Type: ' + SPARQL.instance_iri);
+    //        selectedNode.attr('valuetype', 'IRI');
+    //      }
+    //    }
 
     var propertyValueEmpty = true;
 
@@ -546,19 +557,19 @@
     //bind keyup event to property name inputbox
     $('#qiPropertyNameInput').keyup(function(event){
       changeName($(this), $('#qiPropertyValueNameInput'));
-      updatePropertyValue($(this))
+    //      updatePropertyValue($(this))
     });
     $('#qiPropertyNameInput').change(function(event){
       changeName($(this), $('#qiPropertyValueNameInput'));
-      updatePropertyValue($(this))
+    //      updatePropertyValue($(this))
     });
 
     $('#qiPropertyValueNameInput').keyup(function(event){
-      changeValue($('#qiPropertyNameInput'), $(this));
-      propertyValueEmpty = false;
+      changeName($('#qiPropertyNameInput'), $(this));
+    //      propertyValueEmpty = false;
     });
     $('#qiPropertyValueNameInput').change(function(event){
-      changeValue($('#qiPropertyNameInput'), $(this));
+      changeName($('#qiPropertyNameInput'), $(this));
     });
 
     $('#qiPropertyValueMustBeSetChkBox').change(function(event){
@@ -591,11 +602,11 @@
     $('#qiSubjectDialog').hide();
     $('#qiPropertyDialog').show();
     $('#qiPropertyDialog #qiPropertyNameInput').val(propertyName || '');
-    $('#qiPropertyDialog #qiPropertyValueNameInput').val(valueName || '');
+    $('#qiPropertyDialog #qiPropertyValueNameInput').val(valueName || '?property');
     $('#qiPropertyDialog #qiSubjectColumnLabel').val(columnLabel || '');
-    $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.property_iri);
-    var propValueType = isVariable(propertyName) ? '' : 'Type: ' + SPARQL.instance_iri;
-    $('#qiPropertyValueTypeLabel').html(propValueType);
+    //    $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.property_iri);
+    //    var propValueType = isVariable(propertyName) ? '' : 'Type: ' + SPARQL.instance_iri;
+    //    $('#qiPropertyValueTypeLabel').html(propValueType);
     if(valueMustBeSet){
       $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').attr('checked', true);
     }
@@ -723,16 +734,19 @@
 
   function activateUpdateBtn(){
     $('#qiUpdateButton').live('click', function(){
-      var treeJsonObject = $.jstree._reference('qiTreeDiv').get_json(
-        -1,
-        ['name', 'id', 'gui', 'type', 'showinresults', 'valuemustbeset', 'iri', 'valuename', 'columnlabel', 'valuetype'],
-        null
-        );
-      jstreeToQueryTree(treeJsonObject);
-      showQueryResult();
-      updateSortOptions();
-  
+      updateAllFromTree();
     });
+  }
+
+  function updateAllFromTree(){
+    var treeJsonObject = $.jstree._reference('qiTreeDiv').get_json(
+      -1,
+      ['name', 'id', 'gui', 'type', 'showinresults', 'valuemustbeset', 'iri', 'valuename', 'columnlabel', 'valuetype'],
+      null
+      );
+    jstreeToQueryTree(treeJsonObject);
+    showQueryResult();
+    updateSortOptions();
   }
 
   //  function activateUpdateBtn(sparqlTree){
@@ -1047,7 +1061,7 @@
       "theme" : "apple",
       "dots" : true,
       "icons" : true
-//      "url" : mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/qi_tree.css'
+    //      "url" : mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/qi_tree.css'
     };
     treeJsonConfig.ui = {
       "select_limit" : 1,
@@ -1092,7 +1106,7 @@
         }
       });
 
-      $.jstree._themes = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/themes/';
+    $.jstree._themes = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/themes/';
  
     return tree;
   }
@@ -1250,7 +1264,9 @@
 
   function getQueryResult(queryString){
     queryString = queryString || SPARQL.queryWithParamsString;
-    
+     
+    $('#previewcontent').empty().append('<img src="' + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/ajax-loader.gif"/>');
+  
     var currentPage = null;
     if (window.parent.wgPageName) {
       currentPage = window.parent.wgPageName.wgCanonicalNamespace || '';
@@ -1274,6 +1290,7 @@
         mw.log(textStatus);
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
+        $('#previewcontent').empty();
         showMessageDialog(errorThrown);
 
       }
