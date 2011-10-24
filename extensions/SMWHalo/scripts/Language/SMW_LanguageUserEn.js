@@ -80,6 +80,7 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Properties',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
 	'RECPROP'                 : "Recommended properties",
+  'ADD_ANNOTATION'          : 'Add Annotation',
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',
@@ -103,6 +104,8 @@ window.wgUserLanguageStrings = {
 	'SYMMETRIC'               : 'Symmetric',
 	'RETRIEVING_DATATYPES'    : 'Retrieving data types...',
 	'NARY_ADD_TYPES'		  : '(e) Please add types or ranges.',
+	'REMOVE_DOMAIN_RANGE'	  : 'Remove this domain and range',
+	'DUPLICATE_RECORD_FIELD'  : '(w)This property appears several times in the record. The order of annotated values will not be deterministic.',
 	
 	'PROPERTY_PROPERTIES'     : "Property Characteristics",
 	
@@ -399,7 +402,8 @@ window.wgUserLanguageStrings = {
 	
 	// Semantic Toolbar General
 	'STB_LINKS'				: 'Links to other pages',
-	'STB_TOOLS'				: 'Semantic toolbar', 
+	'STB_TOOLS'				: 'Semantic tools', 
 	'STB_FACTS'				: 'Facts about this Article',
-	'STB_ANNOTATION_HELP' 	: 'Semantic toolbar' 
+	'STB_ANNOTATION_HELP' 	: 'Semantic tools',
+	'STB_TITLE'				: 'SMW+ toolbar'
 };

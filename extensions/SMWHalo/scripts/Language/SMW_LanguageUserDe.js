@@ -397,6 +397,7 @@ window.wgUserLanguageStrings = {
 	'STB_LINKS'		: 'Links zu anderen Seiten',
 	'STB_TOOLS'		: 'Semantische Werkzeuge', 
 	'STB_FACTS'		: 'Fakten zu diesem Artikel',
-	'STB_ANNOTATION_HELP' 	: 'Semantische Werkzeuge' 
+	'STB_ANNOTATION_HELP' 	: 'Semantische Werkzeuge',
+	'STB_TITLE'				: 'SMW+ Werkzeuge'
 	
 };

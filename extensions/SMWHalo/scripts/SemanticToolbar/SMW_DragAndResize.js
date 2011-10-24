@@ -51,9 +51,12 @@ disableDragging: function(){
  */
 enableDragging: function(){
 	if(this.draggable == null) {
+		// Initialize the position of the STB
+		$('ontomenuanchor').setStyle({bottom: '10px'});
+
 		this.draggable = new Draggable('ontomenuanchor', {
 			//TODO: replace handle with proper tab if present	
-			handle: 'tabcontainer', 
+			handle: 'semtoolbartitle', 
 			starteffect: function( ) {
 				stb_control.setDragging(true);
 				smwhg_dragresizetoolbar.storePosition();
@@ -84,13 +87,16 @@ enableDragging: function(){
  * @param
  */
 fixAnchorSize: function(){
-	if($('semtoolbar')){
-		var height = $('semtoolbar').scrollHeight + $('tabcontainer').scrollHeight + $('activetabcontainer').scrollHeight
-		height = height+'px';
-		var obj = new Object();
-		obj.height = height;
-		$('ontomenuanchor').setStyle(obj); 	 	
-	}
+//	if($('semtoolbar')){
+//		var height = $('semtoolbar').scrollHeight 
+//					+ $('semtoolbartitle').scrollHeight 
+//					+ $('tabcontainer').scrollHeight 
+//					+ $('activetabcontainer').scrollHeight
+//		height = height+'px';
+//		var obj = new Object();
+//		obj.height = height;
+//		$('ontomenuanchor').setStyle(obj); 	 	
+//	}
 },
 
 /**
@@ -172,7 +178,7 @@ setPosition: function(posX,posY){
 		} else {
 		var pos = window.innerHeight - posY;
 			//if it fits position it top to the coordinates
-			$('ontomenuanchor').setStyle({bottom: pos + 'px' });
+//			$('ontomenuanchor').setStyle({bottom: pos + 'px' });
 			$('ontomenuanchor').setStyle({top: ''});
 		}
 	}else {

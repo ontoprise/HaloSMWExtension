@@ -1595,6 +1595,7 @@ AdvancedAnnotation.unload = function() {
             if($('ontomenuanchor'))
                 $('ontomenuanchor').innerHTML = '';
                 //stb_control.collapse();
+                $('ontomenuanchor').hide();
         }
 	
 };

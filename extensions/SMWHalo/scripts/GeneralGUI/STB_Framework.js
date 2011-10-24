@@ -72,7 +72,9 @@ ToolbarFramework.prototype = {
 			}
 			this.isCollapsed = false;
 
-			this.var_onto.innerHTML += '<div id="tabcontainer" style="cursor:pointer; cursor:move;"></div>';
+			this.var_onto.innerHTML += this.createToolbarTitle();
+			
+			this.var_onto.innerHTML += '<div id="tabcontainer"></div>';
 			this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
 			this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
 
@@ -140,6 +142,25 @@ ToolbarFramework.prototype = {
 			      "The given toolbox object is neither a function nor an object.\n" +
 			      "See registerToolbox in STB_Framework.js");
 		}
+	},
+	
+	/**
+	 * Creates the HTML of the title section of the toolbar
+	 */
+	createToolbarTitle : function () {
+		var imgHiddenStyle = 'style="display:none"';
+
+		var closeImg = '<img id="semtoolbarclosebtn"/>';
+		var minimizeImg = '<img id="semtoolbarminimizebtn"/>';
+		var maximizeImg = '<img id="semtoolbarmaximizebtn" ' + imgHiddenStyle + '/>';
+		
+		var html = 
+			'<div id="semtoolbartitle" class="semtoolbartitlemaxi">' +
+				'<span>' + gLanguage.getMessage('STB_TITLE') + '</span>' +
+				'<span id="semtoolbartitlebuttons">' + minimizeImg + maximizeImg + closeImg + '</span>' +
+			'</div>';
+			
+		return html;
 	},
 	
 	// create a new div container
@@ -237,13 +258,14 @@ ToolbarFramework.prototype = {
 			{
 				if (this.curtabShown != i) {
 					// inactive tab
+/* Tabs are currently disabled				
 					tabHeader += 
 '<div id="expandable" ' +
       'style="cursor:pointer;cursor:hand;" ' +
       'onclick=stb_control.switchTab('+i+')>' +
-      '<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif" ' +
-           'onmouseover="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable-act.gif\')" ' +
-           'onmouseout="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif\')">' +
+      '<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/plus.gif" ' +
+           'onmouseover="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/plus-act.gif\')" ' +
+           'onmouseout="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/plus.gif\')">' +
  '</div>' +
  '<div id="tab_'+i+'" ' +
 //      'style="cursor:pointer;cursor:move;" ' +
@@ -251,13 +273,14 @@ ToolbarFramework.prototype = {
       '>'
       +this.tabnames[i]+
  '</div>';
+ */
 				} else {
 					// active tab
-             	    var updateStr = '<div id="expandable" ';
-                    updateStr += (this.closeFunction)
-                        ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded-close.gif">'
-                        : '><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded.gif">';
-                    updateStr += "</div><div id=\"tab_"+i+"\" >"+this.tabnames[i]+"</div>";
+// Tabs are currently disabled
+//            	    var updateStr = '<div id="expandable"> ' +
+//									'</div><div id="tab_'+i+'" >'+this.tabnames[i]+'</div>';
+             	    var updateStr = '<div id="expandable"> ' +
+									'</div>';
 					$("activetabcontainer").update(updateStr);
 				}
 			}
@@ -307,10 +330,41 @@ ToolbarFramework.prototype = {
 //		}
 	},
 
-        setCloseFunction: function(func) {
-            if (func) this.closeFunction = func;
-        },
+    setCloseFunction: function(func) {
+        if (func) this.closeFunction = func;
+    },
 
+	closeToolbar: function () {
+		if (this.closeFunction) {
+			if (typeof this.closeFunction === 'string') {
+				eval(this.closeFunction);
+			}
+			else if (typeof this.closeFunction === 'function') {
+				this.closeFunction();
+			}
+		}
+	},
+	
+	minimizeToolbar: function () {
+		$("tabcontainer").hide();
+		$("activetabcontainer").hide();
+		$("semtoolbar").hide();
+		$("semtoolbarminimizebtn").hide();
+		$("semtoolbarmaximizebtn").show();
+		$("semtoolbartitle").addClassName('semtoolbartitlemini');
+		$("semtoolbartitle").removeClassName('semtoolbartitlemaxi');
+	},
+	
+	maximizeToolbar: function () {
+		$("tabcontainer").show();
+		$("activetabcontainer").show();
+		$("semtoolbar").show();
+		$("semtoolbarminimizebtn").show();
+		$("semtoolbarmaximizebtn").hide();
+		$("semtoolbartitle").addClassName('semtoolbartitlemaxi');
+		$("semtoolbartitle").removeClassName('semtoolbartitlemini');
+	},
+	
 	hideSemanticToolbarContainerTab : function(tabnr) {
 		if (tabnr != null) {
 			for(var i=0;i<this.contarray.length;i++) {
@@ -510,6 +564,7 @@ ToolbarFramework.prototype = {
 				'id' : 'ontomenuanchor'} )
 			document.body.appendChild(ontomenuAnchor);
 		}
+		ontomenuAnchor.show();
 	},
 	
 	/**
@@ -524,6 +579,9 @@ ToolbarFramework.prototype = {
 		this.addOntoMenuAnchor();
 		this.stbconstructor();
 	    Event.observe(window, 'resize', this.resizeToolbar.bindAsEventListener(this));
+	    Event.observe('semtoolbarclosebtn', 'click',  this.closeToolbar.bindAsEventListener(this));
+	    Event.observe('semtoolbarminimizebtn', 'click',  this.minimizeToolbar.bindAsEventListener(this));
+	    Event.observe('semtoolbarmaximizebtn', 'click',  this.maximizeToolbar.bindAsEventListener(this));
 		
 		// Call the init functions of all registered toolboxes
 		for (var i = 0, len = this.toolboxObjects.length; i < len; ++i) {

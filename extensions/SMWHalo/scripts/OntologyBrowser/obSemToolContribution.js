@@ -44,10 +44,15 @@ OBSemanticToolbarContributor.prototype = {
 	 * Register the contributor and puts a button in the semantic toolbar.
 	 */
 	initToolbox: function() {
-		if (!stb_control.isToolbarAvailable() || 
-                    (wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit' &&
-                     wgCanonicalSpecialPageName != 'AddData' && wgCanonicalSpecialPageName != 'EditData' &&
-                     wgCanonicalSpecialPageName != 'FormEdit') ) return;
+		if (!stb_control.isToolbarAvailable() ||
+			(wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit' &&
+			 wgCanonicalSpecialPageName != 'AddData' &&
+			 wgCanonicalSpecialPageName != 'EditData' &&
+			 wgCanonicalSpecialPageName != 'FormEdit') ||
+			(typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined')
+			) {
+			return;
+		}
 		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
 		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
 
