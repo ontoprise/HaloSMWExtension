@@ -211,7 +211,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	
 		$maxversion = $maxversion !== false ? 'to="'.$maxversion.'"' : "";
 
-		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$bundleID</dependency>\n";
+		$xml .= "\t\t\t<dependency $minversion $maxversion>$bundleID</dependency>\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
 	$xml .= "<notice>";
