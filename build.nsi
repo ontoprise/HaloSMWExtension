@@ -448,7 +448,10 @@ Section "SMW+ Setup" smwplussetup
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\tools\smwadmin.bat" "SET PHP=" '"$INSTDIR\php\php.exe"' $R0
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\settings.php" "'df_php_executable' =>" "'$INSTDIR\php\php.exe'," $R0
   ${ConfigWrite} "$MEDIAWIKIDIR\deployment\settings.php" "'df_mysql_dir' =>" "'$INSTDIR\mysql'" $R0
-
+  
+  DetailPrint "Create bundle properties"
+  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask --createproperties'
+  
   DetailPrint "Install bundles into wiki"
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f -i Smwplus.zip'
   nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\deployment\tools\smwadmin\smwadmin.php" --nocheck --noask -f --finalize'
