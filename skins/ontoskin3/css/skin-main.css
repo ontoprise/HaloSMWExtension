@@ -312,8 +312,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	font-size:x-large;
 }
 
-#tabsleft .page_createdby{
-	font-size:small;
+.page_createdby{
+	font-size: small;
+	color: #AAA;
+	margin: 0.2em 15px 0 15px;
 }
 
 #tabsleft > #ca-talk:before {
@@ -336,7 +338,13 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-color: #fff transparent;
 }
 
-#tabsleft .pagetab img{
+#cat_icons {
+	float: left;
+	vertical-align: middle;
+}
+
+#cat_icons > img {
+	vertical-align: middle !important;
 	margin-right: 7px;
 	max-height: 24px;
 	max-width:48px;

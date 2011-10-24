@@ -441,13 +441,14 @@ clicking the big arrows between the columns.',
 	'smw_df_no_df_found'		 => 'No derived facts found for this article.',
 	'smw_df_tsc_advertisment'    => "''You have no triplestore attached to this Wiki.''\n\nYou make this Wiki smarter by connecting a TripleStore to it! Connecting the ontoprise products '''TripleStoreConnector Basic''' (free) or '''TripleStoreConnector Professional''' ultimately leads to getting better search results and to making use of data which lives outside this Wiki.\nClick here to read what your benefits are and to download a [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore]!",
 	
-    //skin
-    'smw_search_this_wiki' => 'Search this wiki',
-    'smw_last_visited' => 'Last visited:',
+	//skin
+	'smw_search_this_wiki' => 'Search this wiki',
+	'smw_last_visited' => 'Last visited:',
+	'smw_pagecreation' => 'Created by $1 on $2, at $3',
 	'smw_start_discussion' => 'Start $1',
-    'more_functions' => 'More',
-    'smw_treeviewleft' => 'Open treeview to the left side',
-    'smw_treeviewright' => 'Open treeview to the right side',
+	'more_functions' => 'More',
+	'smw_treeviewleft' => 'Open treeview to the left side',
+	'smw_treeviewright' => 'Open treeview to the right side',
 	
 	// Geo coord data type
 	'semanticmaps_lonely_unit'     => 'No number found before the symbol "$1".', // $1 is something like Â°

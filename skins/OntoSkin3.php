@@ -225,6 +225,7 @@ class OntoSkin3Template extends QuickTemplate {
             <div id="smwh_tabs">
                 <?php echo $this->smwh_Skin->buildTabs(); ?>
             </div>
+				<?php echo $this->smwh_Skin->buildCreatedBy(); ?>
                 <?php endif; // action != 'plainpage' ?>
                 <div id="column-content">
                     <div id="content">

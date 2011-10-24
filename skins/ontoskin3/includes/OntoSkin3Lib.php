@@ -284,7 +284,7 @@ class SMWH_Skin {
 	 * @return string
 	 */
 	public function buildTabs() {
-		global $IP, $wgTitle, $wgScriptPath, $wgStylePath;
+		global $IP, $wgTitle, $wgScriptPath, $wgStylePath, $wgLang;
 		$tabs = "<!-- Tabs -->";
 		$tabsstart = "<div id=\"tabsleft\">";
 		$firstTabs = "";
@@ -299,13 +299,13 @@ class SMWH_Skin {
 		foreach ( $this->skintemplate->data['content_actions'] as $key => $tab ) {
 
 			if ( substr( $key, 0, 6 ) == "nstab-" ) {
-				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs = $this->buildContentIcons( $pageName );
+				$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
 				$tabs .= " class=\"pagetab";
 				if ( $tab['class'] ) {
 					$tabs .= " " . htmlspecialchars( $tab['class'] );
 				}
 				$tabs .= "\">";
-				$tabs .= $this->buildContentIcons( $pageName );
 				$tabs .= $pageName . "</div>";
 				$firstTabs = $tabs . $firstTabs;
 				continue;
@@ -452,6 +452,30 @@ class SMWH_Skin {
 	}
 
 	/**
+	 * Generates the created by <user> at <date>, on <time> string
+	 * 
+	 * @return string
+	 */
+	public function buildCreatedBy() {
+		global $wgTitle, $wgLang;
+
+		$html = '';
+		$rev = $wgTitle->getFirstRevision();
+		if ( $rev ) {
+			$ts = $rev->getTimestamp();
+			$ed = $rev->getUserText();
+			if ( $ts && $ed ) {
+				$d = $wgLang->date( $ts, true );
+				$t = $wgLang->time( $ts, true );
+				$html .= "<div class=\"page_createdby\">" .
+					wfMsg( 'smw_pagecreation', $ed, $d, $t ) .
+					"</div>";
+			}
+		}
+		return $html;
+	}
+
+	/**
 	 * Generates the Help Icon in the tab bar for the context sensitive help
 	 * 
 	 * @return string
@@ -485,11 +509,14 @@ class SMWH_Skin {
 		if( $title == null || !( $title instanceof Title )  ){
 			return '';
 		}
+		if( !function_exists( "smwfGetSemanticStore") ) {
+			return '';
+		}
 		$store = smwfGetSemanticStore();
 		// determine which categories the page is assigned to
 		$pageCats = $store->getCategoriesForInstance( $title );
 
-		$iconHTML = '';
+		$iconHTML = '<div id="cat_icons">';
 		foreach ( $pageCats as $pageCat ) {
 			SMWQueryProcessor::processFunctionParams(
 				array(
@@ -510,6 +537,8 @@ class SMWH_Skin {
 			preg_match( '/<img[^>]+>/i', $queryResult, $img );
 			$iconHTML .= $img[0] ? $img[0] : '';
 		}
+		$iconHTML .= '</div>';
+
 		return $iconHTML;
 	}
 
