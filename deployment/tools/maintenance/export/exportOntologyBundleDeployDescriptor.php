@@ -180,11 +180,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$sd = $dep->getSemanticData();
-		if (count($dvs) == 0) {
-			print "\nWarning: Wrong dependency annotation. Ignore it.";
-			continue;
-		}
-		
+				
 		// id must be there
 		$bundleID = NULL;
 		$minversion = false;
@@ -215,7 +211,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	
 		$maxversion = $maxversion !== false ? 'to="'.$maxversion.'"' : "";
 
-		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$id</dependency>\n";
+		$xml .= "\t\t\t<dependency $minVersion $maxVersion>$bundleID</dependency>\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
 	$xml .= "<notice>";
