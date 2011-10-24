@@ -53,38 +53,39 @@
     //for each subject
     //    var data = treeJsonObject.json_data.data;
     for(var i = 0; i < treeJsonObject.length; i++){
+      
       //if this is variable and showInResults then add it to projection_var
       var subject = treeJsonObject[i];
       if(subject.attr.type === 'VAR' && subject.attr.showinresults === 'true'){
         projection_var.push(subject.attr.name);
       }
-      var thisCategoryRestriction = {
-        subject: {
-          value: subject.attr.name,
-          type: subject.attr.type
-        },
-        category_iri:[]
-      }
-
-      var thisTriple = {
-        subject: {
-          value: subject.attr.name,
-          type: subject.attr.type
-        },
-        predicate:{},
-        object:{}
-      }
-
+      
       //for each child
       for(var j = 0; j < subject.children.length; j++){
         //if this is category then add a category_restriction
         var child = subject.children[j];
         if(child.attr.gui === 'category'){
-          thisCategoryRestriction.category_iri.push(child.attr.iri + SPARQL.iri_delim + child.attr.name);          
+          var thisCategoryRestriction = {
+            subject: {
+              value: subject.attr.name,
+              type: subject.attr.type
+            },
+            category_iri:[child.attr.iri + SPARQL.iri_delim + child.attr.name]
+          }
+          category_restriction.push(thisCategoryRestriction);
         }
 
         //if this is property then add a triple
         if(child.attr.gui === 'property'){
+          var thisTriple = {
+            subject: {
+              value: subject.attr.type === 'IRI' ? getFullName(subject.attr.name, 'instance') : subject.attr.name,
+              type: subject.attr.type
+            },
+            predicate:{},
+            object:{}
+          }
+
           thisTriple.predicate.value = child.attr.iri + SPARQL.iri_delim + child.attr.name;
           thisTriple.predicate.type = child.attr.type;
           thisTriple.object.value = child.attr.valuename;
@@ -94,9 +95,10 @@
             projection_var.push(child.attr.valuename);
           }
           triple.push(thisTriple);
+
         }
       }
-      category_restriction.push(thisCategoryRestriction);
+      
     }
     queryJsonObject.projection_var = projection_var;
     queryJsonObject.category_restriction = category_restriction;
@@ -351,7 +353,7 @@
       var value = element.val() || ' ';
       selectedNode.children('a').contents().filter(function(){
         return this.nodeType === 3;
-      }).replaceWith(value);
+      }).replaceWith(value || ' ');
       
       selectedNode.attr('name', element.val());
     }
@@ -440,7 +442,7 @@
       mw.log('changeName. selected node: ' + selectedNode.attr('id') + ', element: ' + element.attr('id'));
       selectedNode.children('a').contents().filter(function(){
         return this.nodeType === 3;
-      }).replaceWith(element.val());      
+      }).replaceWith(element.val() || ' ');
       
       var style = selectedNode.children('a').children('ins').attr('style');
       if(!isVariable(element.val())){
@@ -489,39 +491,14 @@
     //unbind event handlers so all other nodes won't be changed
     $('#qiPropertyNameInput').unbind();
     $('#qiPropertyValueNameInput').unbind();
+    $('#qiPropertyValueShowInResultsChkBox').unbind();
+    $('#qiPropertyValueMustBeSetChkBox').unbind();   
 
-    var propertyName = selectedNode.attr('name');
-    var valueName = selectedNode.attr('valuename');
-    var columnLabel = selectedNode.attr('columnlabel');
-    var showInResults = selectedNode.attr('showinresults');
-    var valueMustBeSet = selectedNode.attr('valuemustbeset');
     
-    $('#qiCategoryDialog').hide();
-    $('#qiSubjectDialog').hide();
-    $('#qiPropertyDialog').show();
-    $('#qiPropertyDialog #qiPropertyNameInput').val(propertyName || '');
-    $('#qiPropertyDialog #qiPropertyValueNameInput').val(valueName ?  valueName : '');
-    $('#qiPropertyDialog #qiSubjectColumnLabel').val(columnLabel || '');
-    $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.property_iri);
-    var propValueType = isVariable(propertyName) ? '' : 'Type: ' + SPARQL.instance_iri;
-    $('#qiPropertyValueTypeLabel').html(propValueType);
-    if(valueMustBeSet === 'true'){
-      $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').attr('checked', 'checked');
-    }
-    else{
-      $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').removeAttr('checked');
-    }
-    if(showInResults === 'true'){
-      $('#qiPropertyDialog #qiPropertyValueShowInResultsChkBox').attr('checked', 'checked');
-    }
-    else{
-      $('#qiPropertyDialog #qiPropertyValueShowInResultsChkBox').removeAttr('checked');
-    }
-
     function changeName(nameElement, valueElement){
       selectedNode.children('a').contents().filter(function(){
         return this.nodeType === 3;
-      }).replaceWith(nameElement.val());
+      }).replaceWith(nameElement.val() || ' ');
       
       selectedNode.attr('name', nameElement.val().replace(/\?/, ''));
       if(isVariable(nameElement.val())){
@@ -531,8 +508,7 @@
       else{
         $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.instance_iri);
         selectedNode.attr('type', 'IRI');
-      }
-      
+      }      
     }
 
     function changeValue(nameElement, valueElement){
@@ -566,7 +542,6 @@
         $('#qiPropertyValueNameInput').trigger('change');
       }
     }
-
 
     //bind keyup event to property name inputbox
     $('#qiPropertyNameInput').keyup(function(event){
@@ -602,6 +577,37 @@
     $('#qiSubjectColumnLabel').change(function(event){
       selectedNode.attr('columnlabel', $(this).val());
     });
+
+    var propertyName = selectedNode.attr('name');
+    var valueName = selectedNode.attr('valuename');
+    var valueType = selectedNode.attr('valuetype');
+    var columnLabel = selectedNode.attr('columnlabel');
+    var showInResults = (selectedNode.attr('showinresults') === 'true');
+    var valueMustBeSet = (selectedNode.attr('valuemustbeset') === 'true');
+
+    valueName = valueType === 'VAR' ? '?' + valueName : valueName;
+
+    $('#qiCategoryDialog').hide();
+    $('#qiSubjectDialog').hide();
+    $('#qiPropertyDialog').show();
+    $('#qiPropertyDialog #qiPropertyNameInput').val(propertyName || '');
+    $('#qiPropertyDialog #qiPropertyValueNameInput').val(valueName || '');
+    $('#qiPropertyDialog #qiSubjectColumnLabel').val(columnLabel || '');
+    $('#qiPropertyTypeLabel').html('Type: ' + SPARQL.property_iri);
+    var propValueType = isVariable(propertyName) ? '' : 'Type: ' + SPARQL.instance_iri;
+    $('#qiPropertyValueTypeLabel').html(propValueType);
+    if(valueMustBeSet){
+      $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').attr('checked', true);
+    }
+    else{
+      $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').removeAttr('checked');
+    }
+    if(showInResults){
+      $('#qiPropertyDialog #qiPropertyValueShowInResultsChkBox').attr('checked', true);
+    }
+    else{
+      $('#qiPropertyDialog #qiPropertyValueShowInResultsChkBox').removeAttr('checked');
+    }
   }
 
   function activateAddPropertyBtn(){
@@ -636,8 +642,7 @@
       sparqlTree.select_node(sparqlTree.get_selected().parents('li'));
       sparqlTree.create ( null , 'first' , propertyNodeData, function(){}, true );
       sparqlTree.deselect_all();
-      sparqlTree.select_node('#' + propertyNodeData.attr.id);
-      
+      sparqlTree.select_node('#' + propertyNodeData.attr.id);      
     });
   }
 
@@ -1379,7 +1384,7 @@
             gui: 'subject',
             columnlabel: subjectShortName,
             iri: subjectIRI,
-            title: subjectName,
+            title: getShortName(subjectName),
             type: subjectType,
             showinresults: subjectShowInResults
           };         
@@ -1475,7 +1480,7 @@
         var propertyType = triple.predicate.type;
         var propertyValueName = triple.object.value;
         var propertyValueType = triple.object.type;
-        var valueMustBeSet = triple.optional;
+        var valueMustBeSet = !triple.optional;
         var showInResutlts = (triple.object.type === 'VAR' && this.isInProjectionVars(queryJsonObject, propertyValueName));
        
         var propertyIRI = getIRI(propertyName);
@@ -1508,7 +1513,8 @@
               showinresults: showInResutlts,
               gui: 'property',
               iri: propertyIRI,
-              valuetype: propertyValueType
+              valuetype: propertyValueType,
+              type: propertyType
             }
           });
         }
@@ -1552,8 +1558,10 @@
         for (var i = 0; i < category_restrictions.length; i++){
           var category_restriction = category_restrictions[i];
           this.addSubject(treeJsonObject, queryJsonObject, category_restriction);
+          //@TODO add support for multiple categories (OR) in one category_restriction object
           this.addCategoryToSubject(treeJsonObject, category_restriction.subject.value, category_restriction.category_iri[0]);
         }
+        
         SPARQL.json.treeJsonObject = treeJsonObject;
         return treeJsonObject;
       },
