@@ -294,7 +294,7 @@ class SMWRSS2Item {
 				$this->fieldValues['link'] = array($this->title->getFullURL());
 			}
 			
-			//add quid if necessary
+			//add guid if necessary
 			if(!array_key_exists('id', $this->fieldValues)){
 				$this->fieldValues['id'] = array($this->title->getFullURL());
 			}
@@ -316,13 +316,19 @@ class SMWRSS2Item {
 			//add complete page as description  if necessary
 			global $smwgRSSWithPages;
 			if(!array_key_exists('description', $this->fieldValues) && $smwgRSSWithPages){
-				$this->fieldValues['description'] = array($article->getRawText());
+				$this->fieldValues['description'] = array('{{'.$this->title->getFullText().'}}');
 			}
 
 			//parse description if necessary
 			if(array_key_exists('description', $this->fieldValues)){
 				$this->fieldValues['description'] = array($this->renderText($this->fieldValues['description'][0]));
 			}
+		}
+		
+		//convert date format
+		if(array_key_exists('publication date', $this->fieldValues)){
+			$unixTS = strtotime($this->fieldValues['publication date'][0]);
+			$this->fieldValues['publication date'][0] = date('r', $unixTS);
 		}
 		
 		//do xml encoding
@@ -337,12 +343,12 @@ class SMWRSS2Item {
 		$result = "\t\t<item>\n";
 
 		$result .= $this->getTagText('title', 'title');
-		$result .= $this->getTagText('author', 'creator', true);
-		$result .= $this->getTagText('creator', 'creator', true);
+		$result .= $this->getTagText('author', 'author', true);
+		$result .= $this->getTagText('creator', 'author', true);
 		$result .= $this->getTagText('publication date', 'pubDate');
-		$result .= $this->getTagText('category', 'category', true);
+		$result .= $this->getTagText('categories', 'category', true);
 		$result .= $this->getTagText('link', 'link');
-		$result .= $this->getTagText('id', 'quid');
+		$result .= $this->getTagText('id', 'guid');
  		$result .= $this->getTagText('description', 'description');
 		
 		// todo: support these fields
