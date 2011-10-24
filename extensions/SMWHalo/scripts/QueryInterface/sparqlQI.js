@@ -1044,10 +1044,10 @@
     //    }
     treeJsonConfig.plugins = [ "themes", "json_data", "ui", "crrm" ];
     treeJsonConfig.themes = {
-      "theme" : "qi",
+      "theme" : "apple",
       "dots" : true,
-      "icons" : true,
-      "url" : mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/qi_tree.css'
+      "icons" : true
+//      "url" : mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/qi_tree.css'
     };
     treeJsonConfig.ui = {
       "select_limit" : 1,
@@ -1091,6 +1091,8 @@
             break;
         }
       });
+
+      $.jstree._themes = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/themes/';
  
     return tree;
   }
