@@ -383,7 +383,7 @@ OBArticleCreator.prototype = {
 				: "";
 
 		this.pendingIndicator.show(node);
-		sajax_do_call('smwf_om_annotateCategories', [ gLanguage.getMessage('CATEGORY_NS') + title, categoriesString,
+		sajax_do_call('smwf_om_annotateCategories', [ title, categoriesString,
 				reason, wgUserName ], ajaxResponseMoveInstance.bind(this));
 	},
 
@@ -798,7 +798,7 @@ OBOntologyModifier.prototype = {
 			
 			finished();
 		}
-		articleCreator.moveInstanceToCategories(draggedCategory,
+		articleCreator.moveInstanceToCategories(gLanguage.getMessage('CATEGORY_NS')+draggedCategory,
 				targetCategories, "", callback.bind(this), $('categoryTree'));
 	},
 
@@ -2100,7 +2100,8 @@ OBCatgeorySubMenu.prototype = Object
 								
 								ontologyTools.addSubcategory($F(this.id
 										+ '_input_ontologytools'),
-										this.annotatedSuperCategories, this.selectedID);
+										$F('categoryTreeMenu2_input_ontologytools')
+										.split(","), this.selectedID);
 							}
 							this.cancel();
 							break;
@@ -2890,17 +2891,20 @@ OBInstanceSubMenu.prototype = Object
 					 *            message string defined in SMW_LanguageXX.js
 					 */
 					enableCommand : function(b, errorMessage) {
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME ? gLanguage
+								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
+								: gLanguage.getMessage(this
+										.getCommandText());
+								
 						if (b) {
 							$(this.id + '_apply_ontologytools')
 									.replace(
-											'<a style="margin-left: 10px;" id="'
+											'<button style="margin-left: 10px;" id="'
 													+ this.id
 													+ '_apply_ontologytools" onclick="'
 													+ this.objectname
 													+ '.doCommand()">'
-													+ gLanguage.getMessage(this
-															.getCommandText())
-													+ '</a>');
+													+ applyButtonLabel + '</button>');
 						} else {
 							$(this.id + '_apply_ontologytools').replace(
 									'<span style="margin-left: 10px;" id="'

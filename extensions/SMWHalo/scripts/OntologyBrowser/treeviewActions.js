@@ -875,7 +875,7 @@ OBInstanceActionListener.prototype = {
 	},
 	
 	deleteInstance : function(event, node, id, instanceName ){
-	  obInstanceMenuProvider.deleteInstance(instanceName,id);
+	  ontologyTools.deleteInstance(instanceName,id);
 	},
 	
 	annotatedCategories : function(selectedInstance,commandID){
