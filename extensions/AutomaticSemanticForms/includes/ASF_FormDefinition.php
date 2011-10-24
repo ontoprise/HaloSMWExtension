@@ -216,6 +216,10 @@ class ASFFormDefinition {
 		$this->categorySections[] = $unresolvedAnnotationsSection;
 	}
 	
+	public function setAdditionalCategoryAnnotations($categoryNames){
+		$this->additionalCategoryAnnotations = $categoryNames;
+	}
+	
 }
 
 
