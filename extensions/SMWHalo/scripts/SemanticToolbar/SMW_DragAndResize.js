@@ -19,6 +19,7 @@ initialize: function() {
 	this.resizeable = null;
 	this.posX = null;
 	this.posY = null;
+	this.moved = false; // The user has not moved the STB yet
 },
 
 /**
@@ -52,7 +53,9 @@ disableDragging: function(){
 enableDragging: function(){
 	if(this.draggable == null) {
 		// Initialize the position of the STB
-		$('ontomenuanchor').setStyle({bottom: '10px'});
+		if (!this.moved) {
+			$('ontomenuanchor').setStyle({bottom: '10px'});
+		}
 
 		this.draggable = new Draggable('ontomenuanchor', {
 			//TODO: replace handle with proper tab if present	
@@ -107,6 +110,7 @@ storePosition: function(){
 	var pos = this.getPosition();
 	this.posX = pos[0];
 	this.posY = pos[1];
+	this.moved = true;
 },
 
 /**
