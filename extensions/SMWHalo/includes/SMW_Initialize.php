@@ -422,7 +422,7 @@ function smwgHaloSetupExtension() {
 		$wgResourceModules['ext.smwhalo.livequeries'] =
 			$commonProperties +
 			array(
-				'scripts' => array('scripts/LiveQueries/livequeries.js.'),
+				'scripts' => array('scripts/LiveQueries/livequeries.js'),
 				'dependencies' => array( 'ext.smw.sorttable', 'ext.smw.tooltips')
 			);
 			
