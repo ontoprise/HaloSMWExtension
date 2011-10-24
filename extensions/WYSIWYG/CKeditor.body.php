@@ -171,7 +171,7 @@ class CKeditor_MediaWiki {
     private static function addResourceModules(&$out){
         if(defined('SMW_HALO_VERSION')){
 //            $out->addModules('ext.smwhalo.queryInterface');
-            $out->addModules('ext.smwhalo.allButAnnotate');
+// Fix: This causes the STB to appear everywhere           $out->addModules('ext.smwhalo.allButAnnotate');
         }
     }
 
