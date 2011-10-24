@@ -272,7 +272,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     height: 25px;
     margin: 2.8em 15px 0 15px;
     padding-bottom: 0.5em;
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid #AAA;
 }
 
 .tab{
@@ -312,6 +312,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	font-size:x-large;
 }
 
+#tabsleft .page_createdby{
+	font-size:small;
+}
+
 #tabsleft > #ca-talk:before {
     content: "";
     position: absolute;
@@ -333,9 +337,18 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 #tabsleft .pagetab img{
-	margin-right: 3px;
+	margin-right: 7px;
 	max-height: 24px;
-	max-width: 24px;
+	max-width:48px;
+	height:100%;
+	width:auto;
+	-moz-box-shadow: 2px 2px 3px #000;
+	-webkit-box-shadow: 2px 2px 3px #000;
+	box-shadow: 2px 2px 3px #000;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=3, Direction=135, Color='#000000')";
+	/* For IE 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=3, Direction=135, Color='#000000');
 }
 
 /*.tab.selected{
