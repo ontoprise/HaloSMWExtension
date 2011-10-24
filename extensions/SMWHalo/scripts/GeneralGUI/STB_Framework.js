@@ -581,7 +581,7 @@ ToolbarFramework.prototype = {
 	    Event.observe(window, 'resize', this.resizeToolbar.bindAsEventListener(this));
 		// The close button in not available in the wiki text mode
 		if (typeof FCKeditor === 'undefined' && typeof CKEDITOR === 'undefined' ||
-		    (typeof CKEDITOR !== 'undefined' && !$('cke_wpTextbox1').visible() )) {
+		    (typeof CKEDITOR !== 'undefined' && (!$('cke_wpTextbox1') || !$('cke_wpTextbox1').visible() ))) {
 			$('semtoolbarclosebtn').hide();
 		} else {
 		    Event.observe('semtoolbarclosebtn', 'click',  this.closeToolbar.bindAsEventListener(this));
