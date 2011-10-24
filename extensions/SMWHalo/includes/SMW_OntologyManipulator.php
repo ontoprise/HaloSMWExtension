@@ -45,18 +45,14 @@ $wgAjaxExportList[] = 'smwf_om_EditProperty';
 $wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_MoveInstance';
-$wgAjaxExportList[] = 'smwf_om_RenameAndMoveInstance';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
 $wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
 $wgAjaxExportList[] = 'smwf_om_getDomainProperties';
 $wgAjaxExportList[] = 'smwf_om_getSuperCategories';
-$wgAjaxExportList[] = 'smwf_om_getSuperCategories2';
-$wgAjaxExportList[] = 'smwf_om_CategoriesHandler';
-$wgAjaxExportList[] = 'smwf_om_RenameAndMoveCategory';
 $wgAjaxExportList[] = 'smwf_om_getAnnotatedCategories';
-
+$wgAjaxExportList[] = 'smwf_om_annotateCategories';
 
 /**
  * Creates a new article or appends some text if it already
@@ -477,10 +473,10 @@ function smwf_om_MultipleRelationInfo($relations) {
 		$relDescr->accessGranted = smwf_om_userCan($relDescr->name, $relDescr->accessRequest);
 
 		// Check if values of the relation are valid pages
-		list($relSchema, $categories, $recordProperties, $recPropExists) 
-			= $relDescr->relationExists === 'true'
-								? smwf_om_getRelationSchema($relDescr->name)
-								: array(array('_wpg'), array(null), array());
+		list($relSchema, $categories, $recordProperties, $recPropExists)
+		= $relDescr->relationExists === 'true'
+		? smwf_om_getRelationSchema($relDescr->name)
+		: array(array('_wpg'), array(null), array());
 		// Store for each value of the property if it is the name of an article
 		// and if it exists. This is encoded as follows:
 		// "exists"  => Value is an existing page
@@ -508,7 +504,7 @@ function smwf_om_MultipleRelationInfo($relations) {
 			$recProp[] = $propName;
 			$recProp[] = $recPropExists[$idx];
 		}
-		
+
 		$relDescr->valuePageInfo = $valuePageInfo;
 		$relDescr->rangeCategories = $categories;
 		$relDescr->relationSchema = $relSchema;
@@ -538,9 +534,9 @@ function smwf_om_MultipleRelationInfo($relations) {
  * @return xml string
  */
 function smwf_om_RelationSchemaData($relationName) {
-		global $wgContLang;
+	global $wgContLang;
 	$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
-	
+
 	$relSchema = '<relationSchema name="'.$relationName.'" arity="0">'.
              	 '</relationSchema>';
 	$exists = smwf_om_ExistsArticle($propPrefix.$relationName);
@@ -548,8 +544,8 @@ function smwf_om_RelationSchemaData($relationName) {
 		// There is no such relation
 		return $relSchema;
 	}
-	list($schema, $categories, $recProperties) 
-		= smwf_om_getRelationSchema($relationName);
+	list($schema, $categories, $recProperties)
+	= smwf_om_getRelationSchema($relationName);
 	$arity = count($schema) + 1; // +1 because of subject
 	$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	// If first parameter is a wikipage, take the property name + "|Page" as
@@ -567,7 +563,7 @@ function smwf_om_RelationSchemaData($relationName) {
 		$relSchema .= '<param name="'.htmlspecialchars(str_replace( '_', ' ', $recProperties[$i])).'"/>';
 	}
 	$relSchema .= '</relationSchema>';
-	
+
 	return $relSchema;
 }
 
@@ -619,8 +615,8 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 }
 
 function smwf_om_getSuperCategoryTitles($categoryTitle){
-$directSuperCategeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
-return $directSuperCategeoryTitles;
+	$directSuperCategeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
+	return $directSuperCategeoryTitles;
 }
 
 /**
@@ -636,9 +632,9 @@ return $directSuperCategeoryTitles;
  * @param string domainCategory The old (and new) domain category (without category prefix).
  */
 function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType, $oldCard, $oldRange, $domainCategory, $ID) {
-	
+
 	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
-	
+
 	$newType = strip_tags($newType);
 	if ($newType == '') return "false";
 
@@ -685,7 +681,7 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	// Replace "has type" annotations
 	global $smwgContLang;
 	$propertyLabels = $smwgContLang->getPropertyLabels();
-	
+
 	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
 	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
 	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
@@ -794,7 +790,7 @@ function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCate
 
 	} else if ($draggedOnRootLevel) {
 		// dragged category was on root level
-		$newText .= $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
+		$newText = $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
 	} else {
 		// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]
 		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
@@ -997,7 +993,7 @@ function smwf_om_getDomainProperties($categoryNames) {
 			}
 		}
 		// inherited
-		$superCategoryTitles = smwf_om_getSuperCategories($cT);
+		$superCategoryTitles = _smwfGetSuperCategories($cT);
 		foreach($superCategoryTitles as $sCT){
 			foreach(smwfGetSemanticStore()->getPropertiesWithDomain($sCT) as $p){
 				// avoid multiple things
@@ -1033,8 +1029,8 @@ function smwf_om_getDomainProperties($categoryNames) {
  * @return:
  * 	 An array of Title objects
  */
- 
- function smwf_om_getSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
+
+function _smwfGetSuperCategories($categoryTitle, $asTree = false, $superCategoryTitles = array()){
 	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories($categoryTitle);
 	if($asTree){
 		$superCategoryTitles[$categoryTitle->getText()] = array();
@@ -1042,160 +1038,90 @@ function smwf_om_getDomainProperties($categoryNames) {
 	foreach($directSuperCatgeoryTitles as $dSCT){
 		if($asTree){
 			$superCategoryTitles[$categoryTitle->getText()] =
-			smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
-		 } else {
+			_smwfGetSuperCategories($dSCT, $asTree, $superCategoryTitles[$categoryTitle->getText()]);
+		} else {
 			$superCategoryTitles[$dSCT->getText()] = $dSCT;
-			$superCategoryTitles = smwf_om_getSuperCategories($dSCT, $asTree, $superCategoryTitles);
+			$superCategoryTitles = _smwfGetSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
 	}
 	return $superCategoryTitles;
 }
 
-function smwf_om_getSuperCategories2($categoryTitle){
-	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories(Title::newFromText($categoryTitle, NS_CATEGORY));
-	
+/**
+ * Returns all direct super categories
+ * 
+ * @param $categoryTitle
+ * 
+ * @return string comma-separated list of categories
+ */
+function smwf_om_getSuperCategories($articleTitle){
+	$directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories(Title::newFromText($articleTitle, NS_CATEGORY));
+
 	if($directSuperCatgeoryTitles == null){
-          $supeCategories ='';
-        }else{
-	   $supeCategories = $directSuperCatgeoryTitles[0]->getText();
-	   if(sizeof($directSuperCatgeoryTitles) > 1){
-	     for($i = 1, $n = sizeof($directSuperCatgeoryTitles); $i < $n; $i++) {
-	       $supeCategories .= ','.$directSuperCatgeoryTitles[$i]->getText();	
-	     }
-	   }
+		$supeCategories ='';
+	}else{
+		$supeCategories = $directSuperCatgeoryTitles[0]->getText();
+		if(sizeof($directSuperCatgeoryTitles) > 1){
+			for($i = 1, $n = sizeof($directSuperCatgeoryTitles); $i < $n; $i++) {
+				$supeCategories .= ','.$directSuperCatgeoryTitles[$i]->getText();
+			}
+		}
 	}
 	return $supeCategories;
 }
 
-function smwf_om_CategoriesHandler($categoryTitle, $newSupCategories){
-   $directSuperCatgeoryTitles = smwfGetSemanticStore()->getDirectSuperCategories(Title::newFromText($categoryTitle, NS_CATEGORY));
-   $newSupCat = array();
-   $newSupCat = Title::newFromText($newSupCategories);
-   $success = 'false';
-    if($directSuperCatgeoryTitles == null){
-        $directSuperCatgeoryTitles[0] == "";
-    }
 
-    if($newSupCat != null){
-         $newSupCat = preg_split('/[,|;]+/', $newSupCat);      
-          // move from main level to the given supercategory
-	     for($i = 0, $n = sizeof($newSupCat); $i < $n; $i++) {
-	        smwf_om_MoveCategory($categoryTitle,"", $newSupCat[$i]);		
-	     }	  
-	  // delete the parent which is not on the new supercategory list 
-	     for($i = 0, $n = sizeof($directSuperCatgeoryTitles); $i < $n; $i++) {
-	         $toDelete = 'true';
-	         for($j = 0, $m = sizeof($newSupCat); $j < $m; $j++) {
-		    if($directSuperCatgeoryTitles[$i]->getText() == $newSupCat[$j]){
-	              $toDelete = 'false';
-		    }
-		    $superCatToDelete = $directSuperCatgeoryTitles[$i]->getText();
-		    $moveTo = $newSupCat[$j];
-                  }
-		 if($toDelete == 'true'){
-                    smwf_om_MoveCategory($categoryTitle,$superCatToDelete, $moveTo);
-                 }		
-	     }
-	     $success = 'true';
-    }else{ // the new supercategory is empty, also move the category to mainlevel
-         for($i = 0, $n = sizeof($directSuperCatgeoryTitles); $i <= $n; $i++) {
-	     smwf_om_MoveCategory($categoryTitle, $directSuperCatgeoryTitles[$i]->getText(), "");
-	 }
-	$success = 'true'; 
-    } 
-    return $success;
-}
-
-function smwf_om_RenameAndMoveCategory($categoryTitle,$newpagename, $reason, $user, $newSupCategories){
-  smwf_om_RenameArticle($categoryTitle, $newpagename, $reason, $user);
-  smwf_om_CategoriesHandler($newpagename, $newSupCategories);
-  return $success === true ? "true" : "false"; 
-}
 
 /**
  * Retrieves the annotated categories of the instance with the given name.
  *
- * @param string $relationName  
- * 		Name of the relation
+ * @param string $titleString Prefixed title
  *
+ * @return string (comma separated list)
  */
-function smwf_om_getAnnotatedCategories($relationName) {
-	$titleObj = Title::newFromText($relationName);
-	$article = new Article($titleObj);
-	$text = $article->getContent();
-	$Category = "Category";
-	
-	  $search = '/(\[\[(\s*)' . $Category . '(\s*):\s*(.*)\s*(\|)?\s*\]\])/i';
-          $search1 = '/:\s*(.*)/i';
-	  preg_match_all($search,$text,$out, PREG_SET_ORDER);	  	
-	  $annotatedCat = "";
-	  $repl = '/(\[\[(\s*)' . $Category . '(\s*):\s*)/i';
-	 
-	  $weg = array("[[", "]]", ":", " ","Category","category");
-	  for($i = 0, $n = sizeof($out); $i < $n; $i++) { 
-	   for($j = 0, $m = sizeof($out[$j]); $j < $m; $j++) {
-	    $out[$i][$j] = str_replace("]][[", ",", $out[$i][$j]);
-	     if($out[$i][$j] != ""){	     
-	      $annotatedCat .= ','.str_replace($weg, "", $out[$i][$j]);	      
-	     }
-	    }
-	  } 
-	  $annotatedCategories = "";
-	  $annotatedCat1 = preg_split("[,]", $annotatedCat);
-	  for($i = 0, $n = sizeof($annotatedCat1); $i < $n; $i++) {
-	     for($j = 0, $m = sizeof($annotatedCat1); $j < $m; $j++) {
-	       if($annotatedCat1[$i] == $annotatedCat1[$j] && $j != $i){
-                  $annotatedCat1[$j] = "";	       		
-	        }
-	     }
-	     if($annotatedCat1[$i] != ""){
-	       if($annotatedCategories == ""){
-	         $annotatedCategories = $annotatedCat1[$i];
-	       }else{
-	         $annotatedCategories .= ','.$annotatedCat1[$i];
-	       }
-	     }   
-	  }
-	return  $annotatedCategories;	
+function smwf_om_getAnnotatedCategories($titleString) {
+	$titleObj = Title::newFromText($titleString);
+	$categories = smwfGetSemanticStore()->getCategoriesForInstance($titleObj);
+	$result = "";
+	foreach($categories as $c) {
+		$result .= ",".$c->getText();
+	}
+	return $result == '' ? '' : substr($result,1);
 }
 
-function smwf_om_MoveInstance($instanceTitle, $newAnnotatedCategories){
-        $titleObj = Title::newFromText($instanceTitle);
+/**
+ * Annotates a new set of categories and removes the old before.
+ *  
+ * @param $articleTitle
+ * @param $newAnnotatedCategories
+ * 
+ * @return true
+ */
+function smwf_om_annotateCategories($articleTitle, $newAnnotatedCategories){
+	
+	$titleObj = Title::newFromText($articleTitle);
 	$article = new Article($titleObj);
 	$text = $article->getContent();
-	$annotatedCategories = Title::newFromText($newAnnotatedCategories);
-	$Category = "Category";
-	$search = '/(\[\[(\s*)' . $Category . '(\s*):\s*(.*)\s*(\|)?\s*\]\])/i';
-	preg_match_all($search,$text,$out, PREG_SET_ORDER);
 
-	 for($i = 0, $n = sizeof($out); $i < $n; $i++) { 
-	   for($j = 0, $m = sizeof($out[$j]); $j < $m; $j++) {
-	     if($out[$i][$j] != ""){
-	       $text = str_replace($out[$i][$j], "", $text);      
-	     }
-	    }
-	  } 
-	$annotatedCategories = preg_split("[,]", $newAnnotatedCategories);
-	
-	for($j = 0, $m = sizeof($annotatedCategories); $j < $m; $j++) {
-	     if($annotatedCategories[$j] != ""){
-	       $text .= "[[Category:".$annotatedCategories[$j]."]]";      
-	     }
+	global $wgLang;
+	$Category = $wgLang->getNsText(NS_CATEGORY);
+	$search = '/(\[\[\s*' . $Category . '\s*:\s*([^|]+)\s*(\|([^]])*)?\s*\]\])/i';
+	$text = preg_replace($search, "", $text);
+
+	$annotatedCategories = explode(",",$newAnnotatedCategories);
+
+	foreach($annotatedCategories as $c) {
+		$text .= "\n[[$Category:".$c."]]";
 	}
-	
+
 	if ($article->exists()) {
 		$reason = '';
 		$article->doEdit($text, $reason);
 	}
-  
-     return $text;
+
+	return "true";
 }
 
-function smwf_om_RenameAndMoveInstance($instanceTitle,$newpagename, $reason, $user, $newAnnotatedCategories){
-  smwf_om_RenameArticle($instanceTitle, $newpagename, $reason, $user);
-  smwf_om_MoveInstance($newpagename, $newAnnotatedCategories);
-  return $success === true ? "true" : "false"; 
-}
 
 /**
  * Retrieves the schema of the relation with the given name.
@@ -1210,7 +1136,7 @@ function smwf_om_getRelationSchema($relationName) {
 	$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
 	$relationDI = SMWDIWikiPage::newFromTitle($relationTitle);
 	$hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
-	
+
 	$type = smwfGetStore()->getPropertyValues($relationDI, $hasTypeDI);
 
 	// if no 'has type' annotation => normal binary relation
@@ -1237,11 +1163,11 @@ function smwf_om_getRelationSchema($relationName) {
 		$fieldsProp = SMWDIProperty::newFromUserLabel("_LIST");
 		$fields = smwfGetStore()->getPropertyValues($relationDI, $fieldsProp);
 		if (count($fields) > 0) {
-			$keys = array_keys($fields); 
+			$keys = array_keys($fields);
 			$fields = $fields[$keys[0]]->getString();
 			// get the names of all properties in record
 			$recordProperties = explode(';',$fields);
-			
+				
 			// get the types of all record properties and their range categories
 			global $wgContLang;
 			$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
@@ -1249,8 +1175,8 @@ function smwf_om_getRelationSchema($relationName) {
 				$exists = smwf_om_ExistsArticle($propPrefix.$recProp);
 				$recordPropertiesExist[] = $exists;
 				list($recPropSchema, $recPropCategories) = $exists === 'true'
-										? smwf_om_getRelationSchema($recProp)
-										: array(array('_wpg'), array(NULL));
+				? smwf_om_getRelationSchema($recProp)
+				: array(array('_wpg'), array(NULL));
 				$relSchema[] = $recPropSchema[0];
 				$categories[] = $recPropCategories[0];
 			}

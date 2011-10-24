@@ -49,12 +49,12 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('dataexplorer'));
 	
 		if ($wgRequest->getVal('src') == 'toolbar') {
-			smwLog("","OB","opened_from_menu");
+			//smwLog("","OB","opened_from_menu");
 		} else if ($wgRequest->getVal('entitytitle') != '') {
 			$ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
-			smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
+			//smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
 		} else {
-			smwLog("","OB","opened");
+			//smwLog("","OB","opened");
 		}
 		/*ENDLOG*/
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");

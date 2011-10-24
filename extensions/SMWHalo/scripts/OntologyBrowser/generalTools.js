@@ -298,6 +298,7 @@ GeneralXMLTools.importNode = function(parentNode, child, deep) {
 	return appendedChild;
 }
 
+
 /* 
  * Search a node in the xml caching
  * node: root where search begins
@@ -340,6 +341,51 @@ GeneralXMLTools.getNodeById = function (node, id) {
 	}
 	
 	return null;
+	}
+}
+
+GeneralXMLTools.getNodeByTitle = function (node, title) {
+	if (Prototype.BrowserFeatures.XPath) {
+		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
+		var nodeWithID;
+		// distinguish between XML and HTML content (necessary in FF3)
+		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+		  nodeWithID = xmlDOM.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		} else {
+	      nodeWithID = document.evaluate("//*[@title=\""+title+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+		}
+		var result = [];
+		var next = nodeWithID.iterateNext();
+		while(next) {
+			result.push(next);
+			next = nodeWithID.iterateNext();
+		}
+		return result; // there *must* be only one
+	} else if (/*OB_bd.isIE*/false) {
+		// IE supports XPath in a proprietary way
+		//FIXME: must return multiple results
+		return node.selectSingleNode("//*[@title=\""+id+"\"]");
+	} else {
+		// otherwise do a depth first search:
+		var children = node.childNodes;
+		var result = [];
+		if (children.length == 0) { return []; }
+		
+		for (var i=0, n = children.length; i < n;i++) {
+			
+			if (children[i].nodeType == 4) continue; // ignore CDATA sections
+						
+			if (children[i].getAttribute("title") == id) {
+				result.push(children[i]);
+			}
+			
+	    	var r = GeneralXMLTools.getNodeById(children[i], id);
+	    	result = result.concat(r);
+	    	
+		}
+		
+		return r;
 	}
 }
 
