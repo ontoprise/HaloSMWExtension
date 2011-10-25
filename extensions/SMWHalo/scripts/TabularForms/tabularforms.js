@@ -1500,7 +1500,7 @@ var TF = Class.create({
 
 
 
-var tf = new TF();
+window.tf = new TF();
 
 jQuery(document).ready( function($) {
 	tf.loadForms();
