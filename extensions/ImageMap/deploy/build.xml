@@ -2,7 +2,7 @@
 <project basedir="." default="im_build" name="ImageMap">
 	<target name="im_build" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete>
+		<delete failonerror="false">
 			<fileset dir="bin" includes="smwhalo-imagemap*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
