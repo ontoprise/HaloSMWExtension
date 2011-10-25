@@ -573,9 +573,10 @@ class ASFParserFunctions {
 				} else {
 					$categories = ASFCategoryAC::getCategories('', 500, $rootCategory);
 				}
+				
 				foreach($categories as $category){
 					$selected = '';
-					if($category == $categoryValu){
+					if($category->getText() == $categoryValue){
 						$selected = ' selected="selected" ';
 					}
 					$str .= '<option'.$selected.'>'.$category->getText().'</option>';
