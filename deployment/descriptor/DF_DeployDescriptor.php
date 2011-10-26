@@ -293,8 +293,8 @@ class DeployDescriptor {
 				$from = trim((string) $p->attributes()->from);
 				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				if (empty($from)) $from = 0;
-				if (empty($to)) $to = 9999;
+				if (empty($from)) $from = "0.0.0";
+                if (empty($to)) $to = "99.99.99";
 				$this->uninstallpatches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, true); // really mayfail?
 			}
 		}
