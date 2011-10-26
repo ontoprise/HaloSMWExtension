@@ -15,6 +15,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once ('DF_Patch.php');
 require_once ('DF_Version.php');
 require_once ('DF_Dependency.php');
 require_once ('DF_DeployDescriptorProcessor.php');
@@ -197,12 +198,7 @@ class DeployDescriptor {
 				// try general update section (without from)
 				$path = "//update[not(@from)]";
 				$update = $this->dom->xpath($path);
-				if (count($update) === 0) {
-					// if update config is completely missing, use the patches from the new section, nothing else.
-					// this makes sense because users often forget to specify them in an update section.
-					// moreover it is safe, because the patches are checked before they are applied.
-					$patches = $this->dom->xpath('/deploydescriptor/configs/new/patch');
-				}
+				
 
 			}
 
@@ -217,8 +213,8 @@ class DeployDescriptor {
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
-		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
-		if (!isset($patches)) $patches = $this->dom->xpath($path.'/patch');
+		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/patch");
+		$patches = $this->dom->xpath('/deploydescriptor/configs/patch');
 
 
 		// successors, ie. all the extensions which must succeed this one.
@@ -283,7 +279,7 @@ class DeployDescriptor {
 
 				if (empty($from)) $from = "0.0.0";
 				if (empty($to)) $to = "99.99.99";
-				$this->patches[] = array(array($ext, $from, $to), array($patchFile, $mayfail));
+				$this->patches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, $mayfail);
 			}
 		}
 
@@ -299,7 +295,7 @@ class DeployDescriptor {
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 				if (empty($from)) $from = 0;
 				if (empty($to)) $to = 9999;
-				$this->uninstallpatches[] = array(array($ext, $from, $to), $patchFile);
+				$this->uninstallpatches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, true); // really mayfail?
 			}
 		}
 	}
@@ -440,7 +436,7 @@ class DeployDescriptor {
 			} else {
 				$depTo = new DFVersion($depTo);
 			}
-			$this->dependencies[] = new DFDependency($depID, $depFrom, $depTo, $optional, $message);
+			$this->dependencies[$depID] = new DFDependency($depID, $depFrom, $depTo, $optional, $message);
 		}
 		return $this->dependencies;
 	}
@@ -492,16 +488,17 @@ class DeployDescriptor {
 		$patches = array();
 		foreach($this->patches as $patch) {
 			foreach($localPackages as $id => $lp) {
-				list($dep, $pf) = $patch;
-				list($ext_id, $from, $to) = $dep;
+				
+				$ext_id = $patch->getID();
+				$pf = $patch->getPatchfile();
 				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
 					$patches[] = $pf;
 					continue;
 				}
-				$fromVersion = new DFVersion($from);
-				$toVersion = new DFVersion($to);
+				$fromVersion = $patch->getMinversion();
+				$toVersion = $patch->getMaxversion();
 				if ($lp->getID() == $ext_id && $fromVersion->isLowerOrEqual($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
-					$patches[] = $pf;
+					$patches[] = $patch;
 				}
 			}
 		}
@@ -518,19 +515,20 @@ class DeployDescriptor {
 
 		$patches = array();
 		foreach($this->uninstallpatches as $patch) {
-			foreach($localPackages as $id => $lp) {
-				list($dep, $pf) = $patch;
-				list($ext_id, $from, $to) = $dep;
-				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
-					$patches[] = $pf;
-					continue;
-				}
-				$fromVersion = new DFVersion($from);
-				$toVersion = new DFVersion($to);
-				if ($lp->getID() == $ext_id && $fromVersion->isLower($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($to)) {
-					$patches[] = $pf;
-				}
-			}
+		foreach($localPackages as $id => $lp) {
+                
+                $ext_id = $patch->getID();
+                $pf = $patch->getPatchfile();
+                if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
+                    $patches[] = $pf;
+                    continue;
+                }
+                $fromVersion = $patch->getMinversion();
+                $toVersion = $patch->getMaxversion();
+                if ($lp->getID() == $ext_id && $fromVersion->isLowerOrEqual($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
+                    $patches[] = $patch;
+                }
+            }
 		}
 		return $patches;
 	}
@@ -771,12 +769,7 @@ class DeployDescriptor {
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		$dfgOut->output("done.]");
 
-		if (!$dryRun) {
-			$alreadyApplied = array();
-			$dp->checkIfPatchesAlreadyApplied($alreadyApplied);
-			$dp->applyPatches($userCallback, $alreadyApplied);
-
-		}
+		
 
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.

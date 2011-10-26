@@ -25,6 +25,8 @@
  * @author: Kai K�hn / ontoprise / 2009
  *
  */
+
+
 class Tools {
 
 	 /*
@@ -33,8 +35,7 @@ class Tools {
      * 
      * Maps name as it appears in registry to DF id.
      */
-    public static $df_knownPrograms = array('Triplestore Connector Professional' => 'tscprof',
-                                'Triplestore Connector Basic' => 'tsc' );
+    public static $df_knownPrograms;
     
 	/**
 	 * Checks if script runs on a Windows machine or not.
@@ -951,3 +952,6 @@ class Tools {
 		return true;
 	}
 }
+
+Tools::$df_knownPrograms = array('Triplestore Connector Professional' => 'tscprof',
+                                'Triplestore Connector Basic' => 'tsc' );

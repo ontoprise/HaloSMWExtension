@@ -87,8 +87,9 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 	function testPatches() {
 		$patches = $this->ddp->getPatches(array('smwhalo' => $this->ddp));
-        list($path, $mayFail) = $patches[0];
-
+		 
+		$path = $patches[0]->getPatchfile();
+		$mayFail = $patches[0]->mayFail();
 		$this->assertEquals("patch.txt", $path);
 
 	}
@@ -114,7 +115,7 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 		$this->ddp = new DeployDescriptor($xml);
 
 		$mappings = $this->ddp->getMappings();
-		 
+			
 		$this->assertTrue(count($mappings) == 2);
 		list($loc, $target) = $mappings['dbpedia'][0];
 		$this->assertEquals("mappings/mapping1.map", $loc);

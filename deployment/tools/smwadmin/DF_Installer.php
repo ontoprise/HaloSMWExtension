@@ -178,8 +178,10 @@ class Installer {
 
 		// Install/update all dependant and super extensions
 		$dfgOut->outputln( "The following packages need to be installed");
+		$updatedExtensions = array();
 		foreach($extensions_to_update as $etu) {
 			list($deployd, $min, $max) = $etu;
+			$updatedExtensions[] = $deployd->getID();
 			$dfgOut->outputln( "- ".$deployd->getID()."-".$deployd->getVersion()->toVersionString());
 		}
 
@@ -216,6 +218,10 @@ class Installer {
 		}
 
 		fclose($handle);
+
+		// (re-)apply patches
+		$this->logger->info("Apply patches for $filePath");
+		$this->reapplyPatches($updatedExtensions);
 
 		$dfgOut->outputln( "-------\n");
 	}
@@ -555,10 +561,12 @@ class Installer {
 			}
 		}
 
+		$updatedExtensions = array();
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
 			$id = $desc->getID();
-			// log extension for possible rollback
+
+			$updatedExtensions[] = $id;
 
 			// apply deploy descriptor and save local settings
 			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
@@ -613,10 +621,51 @@ class Installer {
 			fclose($handle);
 			$num++;
 
-
+			// (re-)apply patches
+			$this->logger->info("Apply patches for $id");
+			$this->reapplyPatches($updatedExtensions);
 		}
 
 
+
+	}
+
+	/**
+	 * Reapplies patches based on the set of updated extensions.
+	 * Every available patch *for* an updated extension is applied +
+	 * the patches of the updated extensions themselves.
+	 *
+	 * @param string[] $updatedExtensions
+	 */
+	private function reapplyPatches($updatedExtensions) {
+
+		$appliedPatches = array();
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir, true);
+		foreach($localPackages as $lp) {
+			$patches = $lp->getPatches($localPackages);
+
+			foreach($patches as $p) {
+				if (in_array($p->getID(), $updatedExtensions)) {
+					if (in_array($p->getPatchfile(), $appliedPatches)) continue;
+					$dp = new DeployDescriptionProcessor($this->rootDir.'/LocalSettings.php', $lp);
+					$alreadyApplied = array();
+					$dp->checkIfPatchAlreadyApplied($p, $alreadyApplied);
+					$dp->applyPatch($p, DFUserInput::getInstance(), $alreadyApplied);
+					$appliedPatches[] = $p->getPatchfile();
+				}
+			}
+
+			if (in_array($lp->getID(), $updatedExtensions)) {
+				$dp = new DeployDescriptionProcessor($this->rootDir.'/LocalSettings.php', $lp);
+				foreach($patches as $p) {
+					if (in_array($p->getPatchfile(), $appliedPatches)) continue;
+					$alreadyApplied = array();
+					$dp->checkIfPatchAlreadyApplied($p, $alreadyApplied);
+					$dp->applyPatch($p, DFUserInput::getInstance(), $alreadyApplied);
+					$appliedPatches[] = $p->getPatchfile();
+				}
+			}
+		}
 	}
 
 	/**

@@ -238,68 +238,75 @@ class DeployDescriptionProcessor {
 	 * @param callback $userCallback Callback function for user confirmation. Returns 'y' or 'n'.
 	 */
 	function applyPatches($userCallback, $patchesToSkip = array()) {
-		global $dfgOut;
-		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
-		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
-			list($patch, $mayfail) = $tuple;
-			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
-			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$patch = $instDir.self::makeUnixPath($patch);
-			if (in_array($patch, $patchesToSkip)) continue;
-			$patchFailed = false;
-			if (!file_exists($rootDir."/".$patch)) {
-				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
-				$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
-				continue;
-			}
-			// do dry-run at first to check for rejected patches
-			$dfgOut->outputln("[Test patch ".$patch."...");
-			// give exact path to patch.exe in Windows, don't do so on linux
-			$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
-			exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
-			$dfgOut->output( "done.]");
-			$patchFailed = false;
-
-			$out = $this->eliminateWhichMayFail($out, $mayfail);
-			foreach($out as $line) {
-				if (strpos($line, "FAILED") !== false) {
-					$patchFailed = true;
-				}
-			}
-
-			// ask user to continue/rollback in case of failed patches
-			$result = 'y';
-			if (!is_null($userCallback) && $patchFailed) {
-
-				if (count($out) > 0) {
-					foreach($out as $line) $dfgOut->outputln($line); // show failures
-					$dfgOut->outputln();
-					$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
-				}
-			}
-
-			switch($result) {
-
-				case 'y': // apply the patches
-			 	$dfgOut->outputln("[Apply patch...");
-			 	$this->logger->info("Apply patch: $patch");
-			 	exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --onlypatch $patchtool", $out, $ret);
-			 	if ($ret !== 0) {
-			 		$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
-			 	}
-			 	$dfgOut->output( "done.]");
-			 	break;
-				case 'r': throw new RollbackInstallation();
-				case 'n': break; // just ignore the patches completely
-			}
-
-			// clear patch.php output
-			$out = array();
-
-
+		foreach($this->dd_parser->getPatches($localPackages) as $patchObject) {
+			$this->applyPatch($patchObject, $userCallback, $patchesToSkip);
 		}
+	}
+
+	function applyPatch($patchObject, $userCallback, $patchesToSkip = array()) {
+		global $dfgOut;
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$patch = $patchObject->getPatchfile();
+		$mayfail = $patchObject->mayFail();
+		$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
+		if (substr($instDir, -1) != '/') $instDir .= "/";
+		$patch = $instDir.self::makeUnixPath($patch);
+		
+		if (in_array($patchObject->getPatchfile(), $patchesToSkip)) return;
+		$patchFailed = false;
+		if (!file_exists($rootDir."/".$patch)) {
+			$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
+			$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
+			return;
+		}
+		// do dry-run at first to check for rejected patches
+		$dfgOut->outputln("[Test patch ".$patch."...");
+		// give exact path to patch.exe in Windows, don't do so on linux
+		$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
+		exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
+		$dfgOut->output( "done.]");
+		$patchFailed = false;
+
+		$out = $this->eliminateWhichMayFail($out, $mayfail);
+		foreach($out as $line) {
+			if (strpos($line, "FAILED") !== false) {
+				$patchFailed = true;
+			}
+		}
+
+		// ask user to continue/rollback in case of failed patches
+		$result = 'y';
+		if (!is_null($userCallback) && $patchFailed) {
+
+			if (count($out) > 0) {
+				foreach($out as $line) $dfgOut->outputln($line); // show failures
+				$dfgOut->outputln();
+				$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
+			}
+		}
+
+		switch($result) {
+
+			case 'y': // apply the patches
+				$dfgOut->outputln("[Apply patch...");
+				$this->logger->info("Apply patch: $patch");
+				exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --onlypatch $patchtool", $out, $ret);
+				if ($ret !== 0) {
+					$this->logger->warn("Patch failed: '$patch'. Output: ".Tools::arraytostring($out));
+				}
+				$dfgOut->output( "done.]");
+				break;
+			case 'r': throw new RollbackInstallation();
+			case 'n': break; // just ignore the patches completely
+		}
+
+		// clear patch.php output
+		$out = array();
+
+
 	}
 
 	/**
@@ -340,8 +347,8 @@ class DeployDescriptionProcessor {
 		global $dfgOut;
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir);
-		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
-
+		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patchObject) {
+			$patch = $patchObject->getPatchfile();
 			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = $instDir.self::makeUnixPath($patch);
@@ -381,41 +388,49 @@ class DeployDescriptionProcessor {
 	 * @param (out) array & $alreadyApplied List of patch files (paths relative to MW folder).
 	 */
 	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {
-		global $dfgOut;
-		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
-		foreach($this->dd_parser->getPatches($localPackages) as $tuple) {
-			list($patch, $mayfail) = $tuple;
-			$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
-			if (substr($instDir, -1) != '/') $instDir .= "/";
-			$patch = $instDir.self::makeUnixPath($patch);
-			$patchFailed = false;
-			$out = array();
-			if (!file_exists($rootDir."/".$patch)) {
-				$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
-				$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
-				continue;
-			}
-			// do dry-run at first to check for rejected patches
-			// give exact path to patch.exe in Windows, don't do so on linux
-			$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
-			$dfgOut->outputln("[Check if patch is already applied ".$patch."...");
-			exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
-			$dfgOut->output( "done.]");
-			$patchFailed = false;
+		foreach($this->dd_parser->getPatches($localPackages) as $patchObject) {
+			$applied = array();
+			$this->checkIfPatchAlreadyApplied($patchObject, $applied);
+			$alreadyApplied = array_merge($alreadyApplied, $applied);
+		}
+	}
 
-			$out = $this->eliminateWhichMayFail($out, $mayfail);
-			foreach($out as $line) {
-				if (strpos($line, "FAILED") !== false) {
-					$patchFailed = true;
-				}
-			}
+	function checkIfPatchAlreadyApplied($patchObject, & $alreadyApplied) {
+		global $dfgOut;
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$patch = $patchObject->getPatchfile();
+		$mayfail = $patchObject->mayFail();
+		$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
+		if (substr($instDir, -1) != '/') $instDir .= "/";
+		$patch = $instDir.self::makeUnixPath($patch);
+		$patchFailed = false;
+		$out = array();
+		if (!file_exists($rootDir."/".$patch)) {
+			$this->errorMessages[] = "WARNING: patch at '$rootDir/$patch' does not exist";
+			$dfgOut->outputln( "patch at '$rootDir/$patch' does not exist", DF_PRINTSTREAM_TYPE_WARN);
+			return;
+		}
+		// do dry-run at first to check for rejected patches
+		// give exact path to patch.exe in Windows, don't do so on linux
+		$patchtool = Tools::isWindows() ? "--patchtool \"".$rootDir."/deployment/tools/patch.exe\"" : "";
+		$dfgOut->outputln("[Check if patch is already applied ".$patch."...");
+		exec("\"$this->phpExe\" \"".$rootDir."/deployment/tools/patch.php\" -r -p \"".$rootDir."/".$patch."\" -d \"".$rootDir."\" --dry-run --onlypatch $patchtool", $out, $ret);
+		$dfgOut->output( "done.]");
+		$patchFailed = false;
 
-			if (!$patchFailed) {
-				$dfgOut->outputln("[$patch seems to be applied already. Skipped]");
-				$alreadyApplied[] = $patch;
+		$out = $this->eliminateWhichMayFail($out, $mayfail);
+		foreach($out as $line) {
+			if (strpos($line, "FAILED") !== false) {
+				$patchFailed = true;
 			}
+		}
+
+		if (!$patchFailed) {
+			$dfgOut->outputln("[$patch seems to be applied already. Skipped]");
+			$alreadyApplied[] = $patchObject->getPatchfile();
 		}
 	}
 
