@@ -109,6 +109,7 @@ foreach($patches as $p) {
 	/*
 	 * GNU-Patch parameters:
 	 * 
+	 * -N: don't apply patches which seems to be already applied.
 	 * -u: unified format
 	 * -l: ignore whitespaces
 	 * -t: batch (no questions)
@@ -125,7 +126,7 @@ foreach($patches as $p) {
 	//If you do not want the function to append elements, call unset() on the array before passing it to exec().
 	unset($out); 
 	if (!$onlypatch) echo "\nExecute patch:\n ".'patch -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
-	exec('"'.$patchTool.'" -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
+	exec('"'.$patchTool.'" -N -u -l -f -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
 	
 	foreach($out as $line) print "\n".$line;
 	
