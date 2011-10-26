@@ -9,9 +9,13 @@
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
 		<description>
-			The Rich Media extension allows the easy upload and embedding of media files such as documents, images, videos and audio files into the wiki. Media files can be attached to related articles and tagged with an enhanced meta-data set.
+			The Rich Media extension allows the easy upload and
+			embedding of media files such as documents, images, videos and audio
+			files into the wiki. Media files can be attached to related articles
+			and tagged with an enhanced meta-data set.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
+		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension
+		</helpurl>
 		<dependencies>
 			<dependency from="2.2.1">semanticforms</dependency>
 			<dependency from="1.5.6">smwplus</dependency>
@@ -35,22 +39,41 @@
 	</resources>
 
 	<configs>
+		<patch file="RichMediaPatchForSF1_9.txt" ext="semanticforms"
+			from="1.9.0" to="1.9.0" />
+		<patch file="RichMediaPatchForSF1_9_1.txt" ext="semanticforms"
+			from="1.9.1" to="1.9.1" />
+		<patch file="RichMediaPatchForSF2_0.txt" ext="semanticforms"
+			from="2.0.0" to="2.0.0" />
+		<patch file="RichMediaPatchForSF2_0_8.txt" ext="semanticforms"
+			from="2.0.8" to="2.0.8" />
+		<patch file="RichMediaPatchForSF2_1_2.txt" ext="semanticforms"
+			from="2.1.2" to="2.1.2" />
+		<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
+			from="2.2.1" to="2.2.1" />
+		<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" from="1.15.3"
+			to="1.15.3" />
+		<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw" from="1.16.0"
+			to="1.16.0" mayfail="Namespace.php" />
+		<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw" from="1.16.1"
+			to="1.16.1" mayfail="Namespace.php" />
+		<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
+			to="1.16.4" mayfail="Namespace.php" />
+		<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
+			to="1.17.0" mayfail="Namespace.php" />
 		<new>
 			<variable name="wgEnableUploads">
-				<boolean name="wgEnableUploads"
-					description="enables uploads">
+				<boolean name="wgEnableUploads" description="enables uploads">
 					true
 				</boolean>
 			</variable>
 			<variable name="smwgEnableUploadConverter">
-				<boolean name="smwgEnableUploadConverter"
-					description="enables the upload converter">
+				<boolean name="smwgEnableUploadConverter" description="enables the upload converter">
 					true
 				</boolean>
 			</variable>
 			<variable name="wgAllowExternalImagesFrom">
-				<boolean name="wgAllowExternalImagesFrom"
-					description="allows external images">
+				<boolean name="wgAllowExternalImagesFrom" description="allows external images">
 					$wgServer
 				</boolean>
 			</variable>
@@ -72,16 +95,16 @@
 				from="2.1.2" to="2.1.2" />
 			<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
 				from="2.2.1" to="2.2.1" />
-			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
-				from="1.15.3" to="1.15.3" />
-			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
-				from="1.16.0" to="1.16.0" mayfail="Namespace.php" />
-			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw"
-				from="1.16.1" to="1.16.1" mayfail="Namespace.php" />
-			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
-				from="1.16.4" to="1.16.4" mayfail="Namespace.php" />
-			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw"
-				from="1.17.0" to="1.17.0" mayfail="Namespace.php" />
+			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" from="1.15.3"
+				to="1.15.3" />
+			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw" from="1.16.0"
+				to="1.16.0" mayfail="Namespace.php" />
+			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw" from="1.16.1"
+				to="1.16.1" mayfail="Namespace.php" />
+			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
+				to="1.16.4" mayfail="Namespace.php" />
+			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
+				to="1.17.0" mayfail="Namespace.php" />
 		</new>
 		<update from="1.5.2">
 			<patch file="RichMediaPatchForSF2_2_1.txt" />
@@ -100,16 +123,16 @@
 				from="2.1.2" to="2.1.2" />
 			<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
 				from="2.2.1" to="2.2.1" />
-			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" 
-				from="1.15.3" to="1.15.3" />
-			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw"
-				from="1.16.0" to="1.16.0" />
-			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw"
-				from="1.16.1" to="1.16.1" />
-			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw"
-				from="1.16.4" to="1.16.4" />
-			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw"
-				from="1.17.0" to="1.17.0" />
+			<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" from="1.15.3"
+				to="1.15.3" />
+			<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw" from="1.16.0"
+				to="1.16.0" />
+			<patch file="RichMediaPatchForMW1_16_1.txt" ext="mw" from="1.16.1"
+				to="1.16.1" />
+			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
+				to="1.16.4" />
+			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
+				to="1.17.0" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

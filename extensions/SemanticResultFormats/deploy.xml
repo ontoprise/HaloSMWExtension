@@ -31,8 +31,8 @@
     </resources>
     
     <configs>
-        <precedes ext="smw" />
-
+        <successor ext="smw" />
+        <patch file="patch.txt" />
         <new>
             <patch file="patch.txt" />
             <require name="srf"
