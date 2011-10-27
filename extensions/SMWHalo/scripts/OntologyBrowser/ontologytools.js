@@ -529,31 +529,7 @@ OBArticleCreator.prototype = {
 				reason, wgUserName ], ajaxResponseRenameTypeProperty.bind(this));
 	},
 
-	moveCategory : function(draggedCategory, oldSuperCategory,
-			newSuperCategory, callback, node) {
-		function ajaxResponseMoveCategory(request) {
-			this.pendingIndicator.hide();
-			if (request.status != 200) {
-				alert(gLanguage.getMessage('ERROR_MOVING_CATEGORY'));
-				return;
-			}
-			if (request.responseText.indexOf('true') == -1) {
-				alert('Some error occured on category dragging!');
-				return;
-			}
-			if (request.responseText.indexOf('true') != -1) {
-				callback();
-			} else {
-				alert(gLanguage.getMessage('ERROR_MOVING_CATEGORY'));
-			}
-
-		}
-
-		this.pendingIndicator.show(node);
-		sajax_do_call('smwf_om_MoveCategory', [ draggedCategory,
-				oldSuperCategory, newSuperCategory ], ajaxResponseMoveCategory
-				.bind(this));
-	},
+	
 
 	moveProperty : function(draggedProperty, oldSuperProperty,
 			newSuperProperty, callback, node) {
@@ -711,7 +687,7 @@ OBOntologyModifier.prototype = {
 	 */
 	renameCategory : function(newCategoryTitle, categoryTitle, categoryID) {
 		function callback() {
-			this.renameCategoryNode(categoryID, newCategoryTitle);
+			this.renameCategoryNode(categoryTitle, newCategoryTitle);
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree,
 					$('categoryTree'), true);
@@ -749,17 +725,21 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			targetCategories
 					.each(function(title) {
-
-						var id = GeneralXMLTools.getNodeByTitle(dataAccess.OB_cachedCategoryTree, title)[0].getAttribute("id");
+						title = title.replace(/\s/,"_");
+						var nodes = GeneralXMLTools.getNodeByTitle(dataAccess.OB_cachedCategoryTree, title);
+						if (nodes.length > 0) {
+							var id = nodes[0].getAttribute("id");
+							var to_cache = GeneralXMLTools.getNodeById(
+											dataAccess.OB_cachedCategoryTree, id);
+							
+							var to = GeneralXMLTools.getNodeById(
+											dataAccess.OB_currentlyDisplayedTree,
+											id);
+						} else {
+							var to_cache = dataAccess.OB_cachedCategoryTree.documentElement;
+							var to = dataAccess.OB_currentlyDisplayedTree.documentElement;
+						}
 						// categoryTreeSwitch allows dropping on root level
-						var to_cache =  targetCategories.length == 1 && targetCategories[0] == '' ? dataAccess.OB_cachedCategoryTree.documentElement
-								: GeneralXMLTools.getNodeById(
-										dataAccess.OB_cachedCategoryTree, id);
-
-						var to = targetCategories.length == 1 && targetCategories[0] == '' ? dataAccess.OB_currentlyDisplayedTree.documentElement
-								: GeneralXMLTools.getNodeById(
-										dataAccess.OB_currentlyDisplayedTree,
-										id);
 
 						if (to_cache == null || to == null)
 							return;
@@ -782,10 +762,22 @@ OBOntologyModifier.prototype = {
 
 			
 			from_array.each(function(e) { 
-				e.parentNode.removeChild(e);
+				var parent = e.parentNode;
+				parent.removeChild(e);
+				if (!GeneralXMLTools.hasChildNodesWithTag(
+						parent, 'conceptTreeElement')) {
+					parent.setAttribute("isLeaf", "true");
+					parent.setAttribute("expanded", "false");
+				}
 			});
 			from_cache_array.each(function(e) { 
-				e.parentNode.removeChild(e);
+				var parent = e.parentNode;
+				parent.removeChild(e);
+				if (!GeneralXMLTools.hasChildNodesWithTag(
+						parent, 'conceptTreeElement')) {
+					parent.setAttribute("isLeaf", "true");
+					parent.setAttribute("expanded", "false");
+				}
 			});
 
 			selectionProvider.fireBeforeRefresh();
@@ -1426,16 +1418,20 @@ OBOntologyModifier.prototype = {
 	 * Renames a category node in internal OB data model (XML)
 	 * 
 	 */
-	renameCategoryNode : function(categoryID, newCategoryTitle) {
-		var categoryNodeCached = GeneralXMLTools.getNodeById(
-				dataAccess.OB_cachedCategoryTree, categoryID);
-		var categoryNodeDisplayed = GeneralXMLTools.getNodeById(
-				dataAccess.OB_currentlyDisplayedTree, categoryID);
-		categoryNodeCached.removeAttribute("title");
-		categoryNodeDisplayed.removeAttribute("title");
-		categoryNodeCached.setAttribute("title", newCategoryTitle); // TODO:
-		// escape
-		categoryNodeDisplayed.setAttribute("title", newCategoryTitle);
+	renameCategoryNode : function(categoryTitle, newCategoryTitle) {
+		var categoryNodeCached = GeneralXMLTools.getNodeByTitle(
+				dataAccess.OB_cachedCategoryTree, categoryTitle);
+		var categoryNodeDisplayed = GeneralXMLTools.getNodeByTitle(
+				dataAccess.OB_currentlyDisplayedTree, categoryTitle);
+		categoryNodeCached.each(function(node) { 
+			node.removeAttribute("title");
+			node.setAttribute("title", newCategoryTitle.replace(/\s/,"_")); 
+			
+		});
+		categoryNodeDisplayed.each(function(node) { 
+			node.removeAttribute("title");
+			node.setAttribute("title", newCategoryTitle.replace(/\s/,"_"));
+		});
 
 	},
 
@@ -2110,7 +2106,7 @@ OBCatgeorySubMenu.prototype = Object
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'categoryTreeMenu_input_ontologytools')
-									.strip();
+									.strip().replace(/\s/,"_");
 
 							// check if annotated categories are changed
 							var categoriesToUse = $F(
@@ -2135,9 +2131,12 @@ OBCatgeorySubMenu.prototype = Object
 
 							// do actual wiki operations
 							if (doChangeOfCategories) {
+								var selectedTitle = this.selectedTitle;
+								var selectedID = this.selectedID;
+								var newCategoryTitle = $F(this.id+ '_input_ontologytools')
 								ontologyTools
 										.moveCategory(
-												this.selectedID,
+												selectedID,
 												categoriesToUse,
 												
 												function() {
@@ -2151,10 +2150,9 @@ OBCatgeorySubMenu.prototype = Object
 														// categories
 														ontologyTools
 																.renameCategory(
-																		$F(this.id
-																				+ '_input_ontologytools'),
-																		this.selectedTitle,
-																		this.selectedID);
+																		newCategoryTitle,
+																				selectedTitle,
+																				selectedID);
 													}
 												});
 							} else if (doRename) {
@@ -2657,10 +2655,10 @@ OBInstanceSubMenu.prototype = Object
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'instanceListMenu_input_ontologytools')
-									.strip()
+									.strip().replace(/\s/,"_")
 									&& ":" + this.selectedTitle != $F(
 											'instanceListMenu_input_ontologytools')
-											.strip();
+											.strip().replace(/\s/,"_");;
 
 							// check if annotated categories are changed
 							var categoriesToUse = $F(
@@ -2684,6 +2682,9 @@ OBInstanceSubMenu.prototype = Object
 
 							// do actual wiki operations
 							if (doChangeOfCategories) {
+								var newInstanceTitle = $F(this.id	+ '_input_ontologytools');
+								var selectedTitle = this.selectedTitle;
+								var selectedID = this.selectedID;
 								articleCreator
 										.moveInstanceToCategories(
 												this.selectedTitle,
@@ -2699,10 +2700,9 @@ OBInstanceSubMenu.prototype = Object
 														// categories
 														ontologyTools
 																.renameInstance(
-																		$F(this.id
-																				+ '_input_ontologytools'),
-																		this.selectedTitle,
-																		this.selectedID);
+																		newInstanceTitle,
+																		selectedTitle,
+																		selectedID);
 													}
 												}, this.selectedID);
 							} else if (doRename) {

@@ -42,7 +42,6 @@ $wgAjaxExportList[] = 'smwf_om_GetWikiText';
 $wgAjaxExportList[] = 'smwf_om_DeleteArticle';
 $wgAjaxExportList[] = 'smwf_om_RenameArticle';
 $wgAjaxExportList[] = 'smwf_om_EditProperty';
-$wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_MoveInstance';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
@@ -745,60 +744,6 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	return $success === true ? "true" : "false";
 }
 
-/**
- * Moves a category to a new super category.
- *
- * @param $draggedCategory Title of category to move (String)
- * @param $oldSuperCategory Title of old supercategory. (String) May be NULL
- * @param $newSuperCategory Title of new supercategory. (String) May be NULL
- */
-function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
-
-	if (smwf_om_userCan($draggedCategory, 'move') === "false") {
-		return "false";
-	}
-
-	$newSuperCategory = strip_tags($newSuperCategory);
-	//if ($newSuperCategory == '') return "false";
-
-	$draggedOnRootLevel = $oldSuperCategory == 'null' || $oldSuperCategory == NULL;
-	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
-	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
-	$newSuperCategoryTitle = Title::newFromText($newSuperCategory, NS_CATEGORY);
-
-
-	if ($draggedCategoryTitle == NULL) {
-		// invalid titles
-		return "false";
-	}
-
-
-	$draggedCategoryRevision = Revision::newFromTitle($draggedCategoryTitle);
-	$draggedCategoryArticle = new Article($draggedCategoryTitle);
-
-	if ($draggedCategoryRevision == NULL || $draggedCategoryArticle == NULL) {
-		// some problem occured.
-		return "false";
-	}
-
-	$text = $draggedCategoryRevision->getText();
-
-
-	if ($newSuperCategory == NULL || $newSuperCategory == 'null') {
-		// remove all category links
-		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "", $text);
-
-	} else if ($draggedOnRootLevel) {
-		// dragged category was on root level
-		$newText = $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
-	} else {
-		// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]
-		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
-
-	}
-	$draggedCategoryArticle->doEdit($newText, $draggedCategoryRevision->getComment(), EDIT_UPDATE);
-	return "true";
-}
 
 /**
  * Moves a property to a new super property.
@@ -1044,14 +989,16 @@ function _smwfGetSuperCategories($categoryTitle, $asTree = false, $superCategory
 			$superCategoryTitles = _smwfGetSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
 	}
-	return $superCategoryTitles;
+	$response = new AjaxResponse($superCategoryTitles);
+	$response->setResponseCode(200);
+	return $response;
 }
 
 /**
  * Returns all direct super categories
- * 
+ *
  * @param $categoryTitle
- * 
+ *
  * @return string comma-separated list of categories
  */
 function smwf_om_getSuperCategories($articleTitle){
@@ -1086,19 +1033,22 @@ function smwf_om_getAnnotatedCategories($titleString) {
 	foreach($categories as $c) {
 		$result .= ",".$c->getText();
 	}
-	return $result == '' ? '' : substr($result,1);
+	$result =  $result == '' ? '' : substr($result,1);
+	$response = new AjaxResponse($result);
+	$response->setResponseCode(200);
+	return $response;
 }
 
 /**
  * Annotates a new set of categories and removes the old before.
- *  
+ *
  * @param $articleTitle
  * @param $newAnnotatedCategories
- * 
+ *
  * @return true
  */
 function smwf_om_annotateCategories($articleTitle, $newAnnotatedCategories){
-	
+
 	$titleObj = Title::newFromText($articleTitle);
 	$article = new Article($titleObj);
 	$text = $article->getContent();
@@ -1116,10 +1066,18 @@ function smwf_om_annotateCategories($articleTitle, $newAnnotatedCategories){
 
 	if ($article->exists()) {
 		$reason = '';
-		$article->doEdit($text, $reason);
+		$status = $article->doEdit($text, $reason);
+		if ($status->isOK()) {
+			$response = new AjaxResponse("true");
+			$response->setResponseCode(200);
+			return $response;
+		}
+	} else {
+		$response = new AjaxResponse("Title '$articleTitle' does not exist.");
+		$response->setResponseCode(400);
+		return $response;
 	}
 
-	return "true";
 }
 
 
@@ -1167,7 +1125,7 @@ function smwf_om_getRelationSchema($relationName) {
 			$fields = $fields[$keys[0]]->getString();
 			// get the names of all properties in record
 			$recordProperties = explode(';',$fields);
-				
+
 			// get the types of all record properties and their range categories
 			global $wgContLang;
 			$propPrefix = $wgContLang->getNsText(SMW_NS_PROPERTY).":";
