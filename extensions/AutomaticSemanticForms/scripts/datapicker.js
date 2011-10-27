@@ -162,6 +162,11 @@ jQuery(document).ready( function($) {
 	jQuery('#sfForm').submit( function() { return dapi_createsubmitvalues(); } );
 	
 	jQuery('.dapi-refresh-controls input:first-child').keypress(dapi_handleEnterKey);
+	
+	window.dapi_handleEnterKey = dapi_handleEnterKey;
+	window.dapi_hideRefreshdControls = dapi_hideRefreshdControls;
+	window.dapi_doRefresh = dapi_doRefresh;
+	window.dapi_showRefreshdControls = dapi_showRefreshdControls;
 });
 
 

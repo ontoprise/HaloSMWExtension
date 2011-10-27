@@ -103,7 +103,7 @@ function asf_initializeCollapsableSectionsTabIndexes(){
 
 function asf_hideFreeText(){
 	if(jQuery('.asf-hide-freetext').get().length > 0){
-		wgHideSemanticToolbar = true;
+		window.wgHideSemanticToolbar = true;
 		jQuery('#free_text').css('display', 'none');
 	}
 }
@@ -122,6 +122,9 @@ jQuery(document).ready( function($) {
 	asf_hideFreeText();	
 	asf_makeReadOnly();
 	
+	window.asf_hide_category_section = asf_hide_category_section;
+	window.asf_show_category_section = asf_show_category_section;
+	window.asf_hit_category_section = asf_hit_category_section;
 });
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
