@@ -47,7 +47,6 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			$this->m_description = wfMsg( 'smw_rss_description', $wgSitename );
 		}
 		
-		//todo: validate if this must be an e-mail address
 		if ( array_key_exists( 'editor', $this->m_params ) ) {
 			$this->m_editor= trim( $this->m_params['editor'] );
 		}
@@ -93,7 +92,11 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 
 	public function getName() {
 		//todo: use language file
-		return 'RSS2 export';
+		if($this->mFormat == 'rss2'){
+			return 'RSS2 export';
+		} else {
+			return 'Atom export';
+		}
 	}
 
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
@@ -103,49 +106,97 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make RSS feed
 			if ( !$smwgRSSEnabled ) return '';
 			
-			$result .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-			$result .= "<rss version=\"2.0\">\n";
-			$result .= "\t<channel>\n";
-			$result .= "\t\t<title>".smwfXMLContentEncode($this->m_title)."</title>\n";
-			$result .= "\t\t<link>".smwfXMLContentEncode($this->m_link_to)."</link>\n";
-			$result .= "\t\t<description>".smwfXMLContentEncode( $this->m_description)."</description>\n";
-			$result .= "\t\t<generator>http://smwforum.ontoprise.com</generator>\n";
-			$result .= "\t\t<docs>http://blogs.law.harvard.edu/tech/rss</docs>\n";
-			
-			if($this->m_editor !== ''){
-				$result .= "\t\t<managingEditor>".smwfXMLContentEncode( $this->m_editor)."</managingEditor>\n";
-			}
-			
-			if($this->m_copyright !== ''){
-				$result .= "\t\t<copyright>".smwfXMLContentEncode( $this->m_copyright)."</copyright>\n";
-			}
-			
-			if($this->m_ttl !== ''){
-				$result .= "\t\t<ttl>".smwfXMLContentEncode( $this->m_ttl)."</ttl>\n";
-			}
-			
-			if($this->m_image !== ''){
-				$file = Title::newFromText($this->m_image);
-				if($file->exists()){
-					$file = wfLocalFile($file);
+			if($this->mFormat == 'rss2'){
+				$result .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+				$result .= "<rss version=\"2.0\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n";
+				$result .= "\t<channel>\n";
+				$result .= "\t\t<title>".smwfXMLContentEncode($this->m_title)."</title>\n";
+				$result .= "\t\t<link>".smwfXMLContentEncode($this->m_link_to)."</link>\n";
+				$result .= "\t\t<description>".smwfXMLContentEncode( $this->m_description)."</description>\n";
+				$result .= "\t\t<generator>http://smwforum.ontoprise.com</generator>\n";
+				$result .= "\t\t<docs>http://blogs.law.harvard.edu/tech/rss</docs>\n";
+				
+				global $wgRequest; 
+				$result .= "\t\t<atom:link rel=\"self\" type=\"text/html\" href=\"".$wgRequest->getFullRequestURL()."\"/>\n";
+				
+				if($this->m_editor !== ''){
+					$result .= "\t\t<managingEditor>".smwfXMLContentEncode( $this->m_editor)."</managingEditor>\n";
+				}
+				
+				if($this->m_copyright !== ''){
+					$result .= "\t\t<copyright>".smwfXMLContentEncode( $this->m_copyright)."</copyright>\n";
+				}
+				
+				if($this->m_ttl !== ''){
+					$result .= "\t\t<ttl>".smwfXMLContentEncode( $this->m_ttl)."</ttl>\n";
+				}
+				
+				if($this->m_image !== ''){
+					$file = Title::newFromText($this->m_image);
 					if($file->exists()){
-						$result .= "\t\t<image>".smwfXMLContentEncode($file->getFullURL())."</image>\n";		
+						$file = wfLocalFile($file);
+						if($file->exists()){
+							$result .= "\t\t<image>".smwfXMLContentEncode($file->getFullURL())."</image>\n";		
+						}
 					}
 				}
-			}
-			
-			foreach($this->m_categories as $category){
-				$result .= "\t\t<category>".smwfXMLContentEncode( $category)."</category>\n";
+				
+				foreach($this->m_categories as $category){
+					$result .= "\t\t<category>".smwfXMLContentEncode( $category)."</category>\n";
+				}
+			} else { //atom feed
+				$result .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+				$result .= "<feed  xmlns=\"http://www.w3.org/2005/Atom\">\n";
+				$result .= "\t\t<title type=\"text\">".smwfXMLContentEncode($this->m_title)."</title>\n";
+				$result .= "\t\t<link rel=\"alternate\" type=\"text/html\" href=\"".$this->m_link_to."\"/>\n";
+				$result .= "\t\t<subtitle>".smwfXMLContentEncode( $this->m_description)."</subtitle>\n";
+				$result .= "\t\t<generator uri=\"http://smwforum.ontoprise.com\">SMW plus</generator>\n";
+				$result .= "\t\t<updated>".date('c')."</updated>\n";
+
+				global $wgRequest; 
+				$result .= "\t\t<link rel=\"self\" type=\"text/html\" href=\"".$wgRequest->getFullRequestURL()."\"/>\n";
+				$result .= "\t\t<id>".smwfXMLContentEncode($wgRequest->getFullRequestURL())."</id>\n";
+				
+				if($this->m_editor !== ''){
+					$result .= "\t\t<author><name>".smwfXMLContentEncode( $this->m_editor)."</name></author>\n";
+				}
+				
+				if($this->m_copyright !== ''){
+					$result .= "\t\t<rights>".smwfXMLContentEncode( $this->m_copyright)."</rights>\n";
+				}
+				
+				if($this->m_image !== ''){
+					$file = Title::newFromText($this->m_image);
+					if($file->exists()){
+						$file = wfLocalFile($file);
+						if($file->exists()){
+							$result .= "\t\t<logo uri=\"".$file->getFullURL()."\"/>\n";		
+						}
+					}
+				}
+				
+				foreach($this->m_categories as $category){
+					global $wgServer;
+					$result .= "\t\t<category scheme=\"".$wgServer."\" term=\"".$category."\"/>\n";
+				}
 			}
 			
 			//add items
 			while ( $row = $res->getNext() ) {
 				$item = new SMWRSS2Item($row, $this->m_description_template);
-				$result .= $item->getText();
+				if($this->mFormat == 'rss2'){
+					$result .= $item->getRSS2Text();
+				} else {
+					$result .= $item->getAtomText();
+				}
 			}
 			
-			$result .= "\t</channel>\n";
-			$result .= '</rss>';
+			if($this->mFormat == 'rss2'){
+				$result .= "\t</channel>\n";
+				$result .= '</rss>';
+			} else { //atom
+				$result .= '</feed>';
+			}
 		
 		} else { // just make link to feed
 			
@@ -156,8 +207,11 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 				$label = wfMsgForContent( 'smw_rss_link' );
 			}
 			$link = $res->getQueryLink( $label );
-			//todo: change this to rss2
-			$link->setParameter( 'rss2', 'format' );
+			if($this->mFormat == "rss2"){
+				$link->setParameter( 'rss2', 'format' );
+			} else {//atom
+				$link->setParameter( 'atom', 'format' );
+			}
 			if ( $this->m_title !== '' ) {
 				$link->setParameter( $this->m_title, 'title' );
 			}
@@ -339,12 +393,12 @@ class SMWRSS2Item {
 		}
 	}
 	
-	public function getText(){
+	public function getRSS2Text(){
 		$result = "\t\t<item>\n";
 
 		$result .= $this->getTagText('title', 'title');
-		$result .= $this->getTagText('author', 'author', true);
-		$result .= $this->getTagText('creator', 'author', true);
+		$result .= $this->getTagText('author', 'dc:creator', true);
+		$result .= $this->getTagText('creator', 'dc:creator', true);
 		$result .= $this->getTagText('publication date', 'pubDate');
 		$result .= $this->getTagText('categories', 'category', true);
 		$result .= $this->getTagText('link', 'link');
@@ -356,6 +410,60 @@ class SMWRSS2Item {
 		// enclosure
 		
  		$result .= "\t\t</item>\n";
+ 		
+ 		return $result;
+	}
+	
+	public function getAtomText(){
+		$result = "\t\t<entry>\n";
+
+		if(array_key_exists('title', $this->fieldValues)){
+			$result .= "\t\t\t".'<title type="text">'.$this->fieldValues['title'][0].'</title>'."\n";
+		}
+		
+		if(array_key_exists('author', $this->fieldValues)){
+			foreach($this->fieldValues['author'] as $author){
+				$result .= "\t\t\t".'<author><name>'.$author.'</name></author>'."\n";
+			}
+		}
+		
+		if(array_key_exists('creator', $this->fieldValues)){
+			foreach($this->fieldValues['creator'] as $author){
+				$result .= "\t\t\t".'<author><name>'.$author.'</name></author>'."\n";
+			}
+		}
+		
+		if(array_key_exists('publication date', $this->fieldValues)){
+			$unixTS = strtotime($this->fieldValues['publication date'][0]);
+			$this->fieldValues['publication date'][0] = date('c', $unixTS);
+			$result .= "\t\t\t".'<published>'.$this->fieldValues['publication date'][0].'</published>'."\n";
+			$result .= "\t\t\t".'<updated>'.$this->fieldValues['publication date'][0].'</updated>'."\n";
+		}
+		
+		if(array_key_exists('categories', $this->fieldValues)){
+			foreach($this->fieldValues['categories'] as $category){
+				global $wgServer;
+				$result .= "\t\t\t".'<category scheme="'.$wgServer.'" term="'.$category.'"/>'."\n";
+			}
+		}
+		
+		if(array_key_exists('id', $this->fieldValues)){
+			$result .= "\t\t\t".'<id>'.$this->fieldValues['id'][0].'</id>'."\n";
+		}
+		
+		if(array_key_exists('description', $this->fieldValues)){
+			$result .= "\t\t\t".'<content type="html">'.$this->fieldValues['description'][0].'</content>'."\n";
+		}
+		
+		if(array_key_exists('link', $this->fieldValues)){
+			$result .= "\t\t\t".'<link rel="alternate" type="text/html" href="'.$this->fieldValues['link'][0].'"/>'."\n";
+		}
+		
+		// todo: support these fields
+ 		// source
+		// enclosure
+		
+ 		$result .= "\t\t</entry>\n";
  		
  		return $result;
 	}
