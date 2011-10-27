@@ -412,6 +412,7 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['SMWRSS2QueryPrinter'] =
 			$smwgHaloIP.'/includes/queryprinters/SMW_QP_RSS2.php';
 		$smwgResultFormats['rss2'] = 'SMWRSS2QueryPrinter';
+		$smwgResultFormats['atom'] = 'SMWRSS2QueryPrinter';
 		
 		//initialize ajax result printer
 		require_once($smwgHaloIP.'/includes/LiveQueries/SMW_LiveQueriesAjaxAccess.php');
@@ -1570,7 +1571,7 @@ function smwhfRegisterResourceLoaderModules() {
 			);
 
 			// Scripts and styles for the semantic toolbar
-			$wgResourceModules['ext.smwhalo.semanticToolbar'] = $moduleTemplate + array(
+			$wgResourceModules['ext.smwhalo.semanticToolbar2'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/GeneralGUI/STB_Framework.js',
