@@ -114,7 +114,8 @@ SetDateSave on
 SetDatablockOptimize on
 CRCCheck on
 SilentInstall normal
-BGGradient 000000 95F5E2 FFFFFF
+# Removed next line to fix: Issue 14112 - Installer should not block complete screen
+# BGGradient 000000 95F5E2 FFFFFF
 InstallColors FF8080 000030
 ;XPStyle on
 ComponentText "" "" " "
@@ -511,7 +512,7 @@ Section "Lucene search" lucene
     CreateDirectory "$INSTDIR\lucene"
     CreateDirectory "$INSTDIR\lucene\lib"
     CreateDirectory "$INSTDIR\lucene\service"
-    #!ifndef NOFILES
+    !ifndef NOFILES
         SetOutPath "$INSTDIR\lucene\lib"
         File /r "..\..\..\Product__Lucene_server\workspace\lib\*.jar"
         
@@ -533,7 +534,7 @@ Section "Lucene search" lucene
         File "..\..\..\Product__Lucene_server\workspace\smwplus_db.xml"
         File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.exe"
         File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.l4j.ini"
-    #!endif
+    !endif
         
         SetOutPath "$INSTDIR\lucene"
         StrCpy $PHP "$INSTDIR\php\php.exe"
