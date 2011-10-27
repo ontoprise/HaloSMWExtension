@@ -77,7 +77,9 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Attribute',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
 	'RECPROP'                 : "Empfohlene Attribute",
-  'ADD_ANNOTATION'          : 'Annotation hinzuf&uuml;gen',
+	'ADD_ANNOTATION'          : 'Annotation hinzufügen',
+	'ADD_TYPE'          	  : 'Type setzen',
+	'ADD_RANGE'          	  : 'Range-Kategorie setzen',
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)Dieses Attribut existiert nicht.',

@@ -80,7 +80,7 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Properties',
 	'RETRIEVE_SCHEMA_DATA'    : 'Failed to retrieve schema Data!',
 	'RECPROP'                 : "Recommended properties",
-  'ADD_ANNOTATION'          : 'Add Annotation',
+	
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)This property does not exist.',
@@ -231,6 +231,9 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_ADDSOME'		  : '(add some)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 	'SMW_OB_MODIFIED'		  : 'The page was modified. The following Gardening issues might have already been fixed:',
+	'ADD_ANNOTATION'          : 'Add Annotation',
+	'ADD_TYPE'          	  : 'Set type',
+	'ADD_RANGE'          	  : 'Set range',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',
