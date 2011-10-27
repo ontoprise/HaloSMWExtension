@@ -100,7 +100,7 @@
 
 
 		<table class="categoryTreeColors" border="0" cellspacing="0"
-			cellpadding="0" style="width:280px;">
+			cellpadding="0">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
 			</xsl:if>
@@ -120,7 +120,7 @@
 				<!--  <xsl:if test="@isLeaf">
 					<td width="16"/>
 				</xsl:if>-->
-				<td>
+				<td class="conceptTreeRow">
 
 					<xsl:call-template name="createTreeNode">
 						<xsl:with-param name="actionListener" select="'categoryActionListener'" />
@@ -254,7 +254,7 @@
 	</xsl:template>
 
 	<xsl:template match="instance">
-		<tr>
+		<tr class="instanceListRow">
 			<td style="width: 15%"><!-- <img src="{$param-img-directory}instance.gif"/> -->
 				<a class="instance">
 					<xsl:choose>
@@ -309,8 +309,8 @@
 					</xsl:with-param>
 				</xsl:call-template>
 			</td>
-			<td style="width: 22%">
-
+			<td style="width: 170px">
+                <span class="instanceTreeActions">
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
 						<xsl:when test="@localurl">
@@ -371,6 +371,7 @@
 		
                     {{SMW_OB_DELETE}}
                 </a>
+				</span>
 				</td>
 				<td>
 				<xsl:if test="count(metadata/property) > 0">
@@ -877,8 +878,7 @@
 		<xsl:param name="rek_depth" />
 
 		        <span class="ontologyCategorySelection">
-			<!--onMouseOver="document.getElementById(title).style.visibility='visible';"
- onMouseOut="document.getElementById(title).style.visibility='hidden';"-->
+			
 			        <xsl:if test="gissues">
 				  <xsl:attribute name="class"><xsl:value-of select="$typeOfEntity" /> gardeningissue</xsl:attribute>
 			        </xsl:if>
@@ -1034,7 +1034,8 @@
 				<xsl:value-of select="$typeOfEntity" />
 			    </xsl:with-param>
 		        </xsl:call-template>
-   
+                
+                <span class="categoryTreeActions">
 		        <a  class="openEditLink" title="Goto to {$title}" style="margin-left:5px;">
 			    <xsl:choose>
 				<xsl:when test="$typeOfEntity='concept'">
@@ -1050,15 +1051,22 @@
 			    </xsl:choose>
 			   {{SMW_OB_OPEN}}
 		        </a><span class="openEditLink" style="color: #888"> |</span>
-			<a class="openEditLink" title="Edit {$title}">
-				<xsl:attribute name="onclick">categoryActionListener.showSubmenu1(3,'<xsl:call-template
-					name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
-					name="from" select="$var-simple-quote" /><xsl:with-param
-					name="to" select="$var-slash-quote" /></xsl:call-template>')
-				</xsl:attribute>				
-			   {{SMW_OB_EDIT}}
-		        </a>  
-
+			<a  class="openEditLink" title="Edit to {$title}" style="margin-left:5px;">
+                <xsl:choose>
+                <xsl:when test="$typeOfEntity='concept'">
+                    <xsl:attribute name="href"><xsl:value-of
+                        select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                        select="$param-ns-concept" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                </xsl:when>
+                <xsl:when test="$typeOfEntity='property'">
+                    <xsl:attribute name="href"><xsl:value-of
+                        select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                </xsl:when>
+                </xsl:choose>
+               {{SMW_OB_EDIT}}
+                </a>  
+                </span>
 	</xsl:template>
 
 	<xsl:template name="partitionNode">

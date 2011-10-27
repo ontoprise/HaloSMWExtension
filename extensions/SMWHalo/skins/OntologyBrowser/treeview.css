@@ -114,9 +114,33 @@ a.navigationLink {
 .categoryTreeColors {
 	background-color: #DDEEFF;
 }
-   .categoryTreeColors:hover {
+.categoryTreeColors:hover {
 	   background-color: #DDD;           
-   }  
+}
+
+.categoryTreeActions {
+    display:none;
+    margin-left: 50px;
+}
+
+.conceptTreeRow:hover > span {
+      display:inline-block;
+      font-weight:bold;
+      cursor: pointer;        
+}
+
+.instanceTreeActions {
+	visibility:hidden;
+    
+     width: 170px; 
+}
+
+.instanceListRow:hover > td > span {
+	 visibility:visible;
+      font-weight:bold;
+      cursor: pointer;     
+      width: 170px; 
+}
 
 .instanceListColors {
 	background-color: #FFDDDD;
@@ -125,15 +149,6 @@ a.navigationLink {
 .propertyTreeListColors {
 	background-color: #FFDDAA;
 }
-
-.ontologyCategorySelection{
-        width: 184px; 
-        display:inline-block; 
-        cursor:pointer; 
-        color:#116988;
-}
-
-
 
 #treeContainer, #relattributesContainer {
 	font-family: Arial, Helvetica, sans-serif;
