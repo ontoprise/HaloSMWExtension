@@ -1571,7 +1571,7 @@ function smwhfRegisterResourceLoaderModules() {
 			);
 
 			// Scripts and styles for the semantic toolbar
-			$wgResourceModules['ext.smwhalo.semanticToolbar2'] = $moduleTemplate + array(
+			$wgResourceModules['ext.smwhalo.semanticToolbar'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/GeneralGUI/STB_Framework.js',
