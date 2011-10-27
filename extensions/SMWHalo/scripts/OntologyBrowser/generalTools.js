@@ -586,7 +586,7 @@ GeneralTools.makeTSCURI = function(prefixedTitle) {
 		return false;
 	}
 	var parts = prefixedTitle.split(":");
-	var title_esc = encodeURIComponent(parts[0]);
+	var title_esc = parts[0];
 	if (parts.length == 1) {
 		return smwghTripleStoreGraph+"/a/"+ title_esc;
 	} else {
