@@ -525,7 +525,7 @@ class OB_StorageTS extends OB_Storage {
             $property = TSHelper::getTitleFromURI($p_array[0]);
 
 
-            $propertyElement = new PropertySchemaElement(SMWPropertyValue::makeUserProperty($property->getText()), $propertyURI);
+            $propertyElement = new PropertySchemaElement(SMWDIProperty::newFromUserLabel($property->getText()), $propertyURI);
             $this->parseValues($response, $propertyElement , $annotations);
 
 
