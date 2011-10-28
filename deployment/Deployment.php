@@ -58,6 +58,7 @@ function dfgSetupExtension() {
 function dffInitializeLanguage() {
 	global $wgLanguageCode, $dfgLang, $wgMessageCache, $wgLang, $wgLanguageCode, $smwgDFIP;
 	$langCode = ucfirst($wgLanguageCode);
+	$langCode = str_replace( '-', '_', ucfirst( $langCode ));
 	$langClass = "DF_Language_$langCode";
 	if (!file_exists("$smwgDFIP/languages/$langClass.php")) {
 		$langClass = "DF_Language_En";
