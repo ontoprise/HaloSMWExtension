@@ -227,7 +227,7 @@ class ASFParserFunctions {
 			
 			$asfSilentAnnotations[$propertyName] = $value;
 			
-			if(!$title->exists()){
+			if(!$title instanceof Title) || !$title->exists()){
 				$result .= '[['.$propertyName.'::'.$value.'| ]]';
 				continue;
 			};
