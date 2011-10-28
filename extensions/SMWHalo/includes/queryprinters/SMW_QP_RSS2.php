@@ -104,6 +104,9 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 		
 		$result = '';
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make RSS feed
+			
+			//echo('<pre>'.print_r(self::, true).'</pre>');
+			
 			if ( !$smwgRSSEnabled ) return '';
 			
 			if($this->mFormat == 'rss2'){
@@ -207,21 +210,22 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 				$label = wfMsgForContent( 'smw_rss_link' );
 			}
 			$link = $res->getQueryLink( $label );
+			
 			if($this->mFormat == "rss2"){
-				$link->setParameter( 'rss2', 'format' );
+				$link->setParameter( 'format=rss2');
 			} else {//atom
-				$link->setParameter( 'atom', 'format' );
+				$link->setParameter( 'format=atom' );
 			}
 			if ( $this->m_title !== '' ) {
-				$link->setParameter( $this->m_title, 'title' );
+				$link->setParameter( 'title='.$this->m_title);
 			}
 			if ( $this->m_description !== '' ) {
-				$link->setParameter( $this->m_description, 'description' );
-			}
+				$link->setParameter('description='.$this->m_description);
+			}			
 			if ( array_key_exists( 'limit', $this->m_params ) ) {
-				$link->setParameter( $this->m_params['limit'], 'limit' );
+				$link->setParameter('limit='.$this->m_params['limit']);
 			} else { // use a reasonable deafult limit (10 is suggested by RSS)
-				$link->setParameter( 10, 'limit' );
+				$link->setParameter('limit=20');
 			}
 
 			foreach ( $res->getPrintRequests() as $printout ) { // overwrite given "sort" parameter with printout of label "date"
@@ -231,31 +235,31 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			}
 			
 			if($this->m_editor !== '' ) {
-				$link->setParameter( $this->m_editor, 'editor' );
+				$link->setParameter('editor='.$this->m_editor);
 			}
 			
 			if($this->m_image !== '' ) {
-				$link->setParameter( $this->m_image, 'image' );
+				$link->setParameter('image='.$this->m_image);
 			}
 			
 			if($this->m_copyright !== '' ) {
-				$link->setParameter( $this->m_copyright, 'copyright' );
+				$link->setParameter('copyright='.$this->m_copyright);
 			}
 			
 			if(count($this->m_categories) > 0){
-				$link->setParameter( implode(';', $this->m_categories), 'categories' );
+				$link->setParameter('categories='.implode(';', $this->m_categories));
 			}
 			
 			if($this->m_ttl !== '' ) {
-				$link->setParameter( $this->m_ttl, 'ttl' );
+				$link->setParameter('ttl='.$this->m_ttl);
 			}
 			
 			if($this->m_description_template !== '' ) {
-				$link->setParameter( $this->m_description_template, 'description template' );
+				$link->setParameter('description template='.$this->m_description_template );
 			}
 
 			if($this->m_link_to !== '' ) {
-				$link->setParameter( $this->m_link_to, 'link to' );
+				$link->setParameter('link to='.$this->m_link_to);
 			}
 			
 			$result .= $link->getText( $outputmode, $this->mLinker );
