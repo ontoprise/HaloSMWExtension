@@ -43,6 +43,7 @@ function CECommentForm() {
 	this.savedStructure = null;
 	this.currentView = null;
 	this.replyCommentName = null;
+	this.pageToDelete = null;
 	// edit mode
 	this.savedCommentContent = null;
 	this.editCommentName = null;
@@ -156,7 +157,7 @@ function CECommentForm() {
 				// add pending span
 				$( '<span>', {
 					'id' : 'collabComFormPending',
-					'text' : ' '
+					'html' : '&nbsp;'
 				}).appendTo( comMessage );
 				if ( typeof this.pendingIndicatorMsg === 'undefined' 
 					|| this.pendingIndicatorMsg === null)
@@ -199,6 +200,7 @@ function CECommentForm() {
 			hasReplies = false,
 			replyComment;
 		this.overlayName = container;
+		this.pageToDelete = pageName;
 
 		$( '*:input', comEl ).attr( 'disabled', 'disabled' );
 		if ( $( '.ceOverlayFullDeleteCheckbox:checked', comEl ).length === 1 ) {
@@ -222,7 +224,7 @@ function CECommentForm() {
 		// add pending indicator
 		var pendingSpan = $( '<span>', {
 			'id' : 'collabComDelPending',
-			'text' : ' '
+			'html' : '&nbsp;'
 		})
 		$( '.ceOverlayDetails', comEl ).append( pendingSpan );
 		if ( typeof this.pendingIndicatorDel === 'undefined'
@@ -252,7 +254,7 @@ function CECommentForm() {
 		var valueEl = resultDOM.getElementsByTagName( 'value' )[0];
 		var htmlmsg = resultDOM.getElementsByTagName( 'message' )[0].firstChild.nodeValue;
 		var page = resultDOM.getElementsByTagName( 'article' )[0].firstChild.nodeValue;
-		var divId = '#' + page;
+		var divId = '#' + this.pageToDelete;
 		var comEditMessage = $( '<div>', {
 			'id' : 'collabComEditFormMessage'
 		});
@@ -269,7 +271,7 @@ function CECommentForm() {
 				comEditMessage.html( htmlmsg );
 				var pendingSpan = $( '<span>', {
 					'id' : 'collabComDelPending',
-					'text' : ' '
+					'html' : '&nbsp;'
 				}).appendTo( comEditMessage );
 				if ( typeof this.pendingIndicatorDel2 === 'undefined' 
 					|| this.pendingIndicatorDel2 === null)
@@ -573,7 +575,7 @@ function CECommentForm() {
 				//add pending span
 				$( '<span>', {
 					'id' : 'collabComEditFormPending',
-					'text' :' '
+					'html' : '&nbsp;'
 				}).appendTo( comEditMessage )
 				if ( typeof this.pendingIndicatorMsg === 'undefined' 
 					|| this.pendingIndicatorMsg === null )
