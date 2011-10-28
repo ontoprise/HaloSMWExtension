@@ -151,6 +151,7 @@ function celfSetupScriptAndStyleModule() {
 		'ce_com_file_toggle',
 		'ce_com_rating_text',
 		'ce_com_rating_text2',
+		'ce_com_rating_text_short',
 		'ce_com_toggle_tooltip',
 		'ce_form_toggle_tooltip',
 		'ce_form_toggle_no_edit_tooltip',

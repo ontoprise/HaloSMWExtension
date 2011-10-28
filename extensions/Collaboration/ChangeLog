@@ -6,64 +6,67 @@ VERSION 1.5.0
   FEATURES:
 
   CHANGES:
-	Migrated to MediaWiki 1.17 and take use of the Resource Loader
+    Migrated to MediaWiki 1.17 and take use of the Resource Loader
   BUGFIXES:
+    Issue 15551 - Average article quality text out of alignment
 
 
 VERSION 1.4.0
   FEATURES:
-	FR #13053: Included an option to completely delete a comment
-	FR #14882: Support attaching links (to files or any other article in the wiki) to comments
-	FR #14934: Direct upload of files in the comment form is now possible (with Extension:RichMedia installed)
-	Added  profiling information to trace code execution time
-	Added a Parser Function to convert binary strings to hex equivalents (to fix HTML ID and jQuery selector issues)
-	Added  profiling information to trace code execution time
+    FR 13053: Included an option to completely delete a comment
+    FR 14882: Support attaching links (to files or any other article in the wiki) to comments
+    FR 14934: Direct upload of files in the comment form is now possible (with Extension:RichMedia installed)
+    Added  profiling information to trace code execution time
+    Added a Parser Function to convert binary strings to hex equivalents (to fix HTML ID and jQuery selector issues)
+    Added  profiling information to trace code execution time
   CHANGES:
-	Issue  #14358: Removed localization of parser functions
+    Issue  14358: Removed localization of parser functions
   BUGFIXES:
-	14481 - Editing of comments was not possible in IE 8
-	14559 - Wiki slows considerable down after installing Collaboration extension
-	14991 - Add style version to css and js includes to improve (loading) performance
-	15104 - Positioning issues when replying on two comments
-	15285 - Comment was replicated not edited
+    Issue 14481 - Editing of comments was not possible in IE 8
+    Issue 14559 - Wiki slows considerable down after installing Collaboration extension
+    Issue 14991 - Add style version to css and js includes to improve (loading) performance
+    Issue 15104 - Positioning issues when replying on two comments
+    Issue 15285 - Comment was replicated not edited
+
 
 VERSION 1.3.1
   FEATURES:
-	FR #13057: Information about last edit of a comment 
+    FR 13057: Information about last edit of a comment 
   CHANGES:
-	Issue 14351: Added a complete sandbox. "Template:Show comments infobox for user" can be used to display an infobox at user pages.
-	FR #13548: Small GUI improvements
-	Issue 12823: Added average rating per article 
+    Issue 14351: Added a complete sandbox. "Template:Show comments infobox for user" can be used to display an infobox at user pages.
+    FR 13548: Small GUI improvements
+    Issue 12823: Added average rating per article 
   BUGFIXES:
-	Issue 14050: Changed GUI regarding the user edit right.
+    Issue 14050: Changed GUI regarding the user edit right.
+
 
 VERSION 1.3.0
 
   FEATURES:
-	FR #12230: Added a global var (in CE_Initialize.php) to enable/disable the rating mechanism
-	FR #12417: Clicking on the link "Hide comments" will cause all comments to be hidden and only the top "menue" box will be present
-	FR #12420: User can now change the kind of displaying comments. Therefor the views "flat" and "threaded" are implemented.
-	FR #12417: Comments can now be toggled
-	FR #11923: Comment deletion is now done via overlay and ajax without breaking the workflow.
-	FR #12232: Added an "Edit" option. The user is now able to edit existing comments using a fancy form.
-	FR #12231: Added a "Reply" option. The user is now able to reply to existing comments.
+    FR 12230: Added a global var (in CE_Initialize.php) to enable/disable the rating mechanism
+    FR 12417: Clicking on the link "Hide comments" will cause all comments to be hidden and only the top "menue" box will be present
+    FR 12420: User can now change the kind of displaying comments. Therefor the views "flat" and "threaded" are implemented.
+    FR 12417: Comments can now be toggled
+    FR 11923: Comment deletion is now done via overlay and ajax without breaking the workflow.
+    FR 12232: Added an "Edit" option. The user is now able to edit existing comments using a fancy form.
+    FR 12231: Added a "Reply" option. The user is now able to reply to existing comments.
 
   CHANGES:
-	FR #12228: User name in the comment form is now clickable (user page)
-	FR #12230: If no comment is present on the current page only an icon and the "Add comment" link are displayed
-	FR #12230: Line breaks and line feeds are correct interpreted
-	FR #12230: The final comment of the user should be formatted exactly the same as it looks like in the comment creation box
-	FR #12233: Icons are now 16x16 px
-	FR #12233: Reformatted the text block for the overall rating
-	Migrated from Prototype to jQuery library.
-	FR #12229: Removed 'goto comment' link.
-	General Code changes
+    FR 12228: User name in the comment form is now clickable (user page)
+    FR 12230: If no comment is present on the current page only an icon and the "Add comment" link are displayed
+    FR 12230: Line breaks and line feeds are correct interpreted
+    FR 12230: The final comment of the user should be formatted exactly the same as it looks like in the comment creation box
+    FR 12233: Icons are now 16x16 px
+    FR 12233: Reformatted the text block for the overall rating
+    Migrated from Prototype to jQuery library.
+    FR 12229: Removed 'goto comment' link.
+    General Code changes
 
   BUGFIXES:
-	Use 'formatnum' magic word to prevent crashes with different decimal separators 
-	Issue 12226: After selecting a rating i cant deselect it
-	Issue 12768: Format the average rating number to work correctly with german language settings
-	Adjusted path for autocompletion icons
+    Use 'formatnum' magic word to prevent crashes with different decimal separators 
+    Issue 12226: After selecting a rating i cant deselect it
+    Issue 12768: Format the average rating number to work correctly with german language settings
+    Adjusted path for autocompletion icons
 
 
 VERSION 1.2.0
@@ -71,10 +74,8 @@ VERSION 1.2.0
   FEATURES:
 
   CHANGES:
-	* All style definitions are now collected in one CSS file (collaboration-comment.css).
-	This is part of preparations for standardization of GUI elements.
+    All style definitions are now collected in one CSS file (collaboration-comment.css).
+    This is part of preparations for standardization of GUI elements.
 
   BUGFIXES:
-	Issue 12278: IE < version 8 throws errors due to supernumerous comma
-
-
+    Issue 12278: IE < version 8 throws errors due to supernumerous comma

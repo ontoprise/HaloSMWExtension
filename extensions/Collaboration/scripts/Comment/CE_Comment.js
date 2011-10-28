@@ -1126,7 +1126,9 @@ function CECommentForm() {
 		if ( this.numOfRatings > 0 ) {
 			var ratingSpan = $( '<span>', {
 				'class' : 'collabComInternAvg',
-				'text' : ceLanguage.getMessage( 'ce_com_rating_text' ) + ' ' + 
+				'text' : ceLanguage.getMessage( 'ce_com_rating_text_short' ) + ' (' + 
+					this.numOfRatings + ') :',
+				'title' : ceLanguage.getMessage( 'ce_com_rating_text' ) + ' ' + 
 					this.numOfRatings + ' ' + ceLanguage.getMessage( 'ce_com_rating_text2' )
 			});
 

@@ -44,7 +44,7 @@ span#collabComFileToggle > input[type=checkbox] {
 span.collabComInternAvg {
 	color: grey;
 	float: right;
-	padding: 5px;
+/*	padding: 5px;*/
 }
 
 div.collabComInternRatingIcon {
