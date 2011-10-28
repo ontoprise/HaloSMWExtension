@@ -52,6 +52,7 @@ $latest = false;
 $createSymlinks = true;
 $fileNamecontains = false;
 $transientID=false;
+$recursive=false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-r => repository directory
@@ -95,6 +96,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$transientID = next($argv);
 		continue;
 	}
+	
+	if ($arg == '--recursive') {
+		$recursive = true;
+		continue;
+	}
 }
 
 
@@ -118,7 +124,7 @@ Tools::mkpath($repositoryDir."/bin");
 $descriptors = array();
 if (isset($bundlePath)) {
 	echo "\nExtract deploy descriptors";
-	$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains);
+	$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains, $recursive);
 	echo "..done.";
 }
 
@@ -267,9 +273,10 @@ function loadRepository($filePath) {
  *
  * @param string $bundlePath (file or directory)
  * @param string $fileNamecontains Filter for files
+ * @param boolean $recursive Scans the directory recursively for bundles
  * @return array of (DeployDescriptor, Bundle file path)
  */
-function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
+function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recursive = false) {
 	global $transientID, $mwrootDir;
 	$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 	Tools::mkpath($tmpFolder);
@@ -278,12 +285,16 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false) {
 		$dirHandle=opendir($bundlePath);
 		while(false !== ($file=readdir($dirHandle))) {
 			if($file!="." && $file!="..") {
+				$__file=$bundlePath."/".$file;
+				if (is_dir($__file) && $recursive) { 
+					$descriptors = extractDeployDescriptors($__file, $fileNamecontains, $recursive);
+					$result = array_merge($result, $descriptors);
+				}
 				$fileExtension = Tools::getFileExtension($file);
 				if (strtolower($fileExtension) != 'zip') continue;
 				if ($fileNamecontains !== false) {
 					if (strpos($file, $fileNamecontains) === false) continue;
 				}
-				$__file=$bundlePath."/".$file;
 				$dd = Tools::unzipDeployDescriptor($__file, $tmpFolder, $mwrootDir);
 				if (is_null($dd)) {
 					print "\nWARNING: $__file does not contain a deploy descriptor. It is skipped.";
