@@ -293,8 +293,10 @@ createToolbar: function(attributes) {
  * 
  * @param ContextMenuFramework contextMenuContainer
  * 		The container of the context menu.
+ * @param bool editCategory
+ * 		If true, an existing category is to be edited
  */
-createContextMenu: function(contextMenuContainer) {
+createContextMenu: function(contextMenuContainer, editCategory) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
@@ -325,11 +327,20 @@ createContextMenu: function(contextMenuContainer) {
 	tb.setInputValue('cat-name',selection);	                         
 	tb.append(tb.createText('cat-name-msg', 
 							gLanguage.getMessage('ENTER_NAME'), '' , true));
-	var links = [['catToolBar.addItem(false)',gLanguage.getMessage('ADD'), 'cat-confirm',
-	                                     gLanguage.getMessage('INVALID_VALUES'), 'cat-invalid'],
-				 ['catToolBar.addItem(true)',gLanguage.getMessage('ADD_AND_CREATE_CAT'), 'cat-addandcreate']
-	                                     
-				];
+					
+	var label = gLanguage.getMessage(editCategory ? 'CHANGE' : 'ADD');
+	var append = editCategory ? 'false' : 'true';
+	var links = 
+		[
+			['catToolBar.addItem(false,'+append+')',
+			 label, 'cat-confirm',
+			 gLanguage.getMessage('INVALID_VALUES'), 'cat-invalid'
+			],
+			['catToolBar.addItem(true,'+append+')',
+			 gLanguage.getMessage('ADD_AND_CREATE_CAT'), 
+			 'cat-addandcreate'
+			]
+		];
 	tb.append(tb.createLink('cat-links', links, '', true));
 				
 	tb.finishCreation();
@@ -363,15 +374,18 @@ finalCategoryCheck: function(target) {
  * 
  * @param boolean create
  * 		If <true>, the category is created, if it does not already exist.
+ * @param boolean append
+ * 		If <true>, the category annotation is appended to the wiki text, otherwise
+ * 		the current selection is replaced.
  */
-addItem: function(create) {
+addItem: function(create, append) {
 	var catName = $("cat-name");
 	/*STARTLOG*/
     smwhgLogger.log(catName.value,"STB-Categories","annotate_added");
 	/*ENDLOG*/
 	this.wtp.initialize();
 	var name = catName.value;
-	this.wtp.addCategory(name, true);
+	this.wtp.addCategory(name, append);
 	this.fillList(true);
 	
 	// Create the category, if it does not exist.

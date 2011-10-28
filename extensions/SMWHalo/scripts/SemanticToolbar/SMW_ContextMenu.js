@@ -214,75 +214,10 @@ ContextMenuFramework.prototype = {
  */
   setPosition: function(posX,posY){
     element = $('contextmenu');
-    //X-Coordinates
-    var toolbarWidth = element.scrollWidth;
-    //Check if it fits right to the coordinates
-    var width = (window.innerWidth) ? window.innerWidth : document.body.clientWidth;
-    if( width - posX < toolbarWidth) {
-      //Check if it fits left to the coordinates
-      if( posX < toolbarWidth){
-        // if not place it on the left side of the window
-        element.setStyle({
-          right: ''
-        });
-        element.setStyle({
-          left: '10px'
-        });
-			
-      } else {
-        //if it fits position it left to the coordinates
-        var pos = width - posX;
-        element.setStyle({
-          right: pos + 'px'
-          });
-        element.setStyle({
-          left: ''
-        });
-      }
-    } else {
-      //if it fits position it right to the coordinates
-      var pos = posX;
-      element.setStyle({
-        right: ''
-      });
-      element.setStyle({
-        left: pos  + 'px'
-        });
-    }
-    //Y-Coordinates
-    var toolbarHeight = element.scrollHeight;
-    //Check if it fits bottom to the coordinates
-    if( window.innerHeight - posY < toolbarHeight) {
-      //Check if it fits top to the coordinates
-      if(posY < toolbarHeight){
-        // if not place it on the top side of the window
-        element.setStyle({
-          bottom: ''
-        });
-        element.setStyle({
-          top: '10px'
-        });
-			
-      } else {
-        var pos = window.innerHeight - posY;
-        //if it fits position it top to the coordinates
-        element.setStyle({
-          bottom: pos + 'px'
-          });
-        element.setStyle({
-          top: ''
-        });
-      }
-    }else {
-      //if it fits position it bottom to the coordinates
-      var pos = posY;
-      element.setStyle({
-        bottom: ''
-      });
-      element.setStyle({
-        top: pos  + 'px'
-        });
-    }
+	element.setStyle({
+		left: posX + 'px',
+		top:  posY + 'px',
+	});
   },
   /**
  * @public  shows menu
@@ -305,7 +240,7 @@ ContextMenuFramework.prototype = {
       jQuery('#contextmenu').draggable({
 	  	stop: function(event,ui) {
 			// Store the last position for the next time
-			ContextMenuFramework.prototype.mLastPosition = ui.offset;
+			ContextMenuFramework.prototype.mLastPosition = ui.position;
 			ContextMenuFramework.prototype.mWasDragged = true; 
 		}
 	  });

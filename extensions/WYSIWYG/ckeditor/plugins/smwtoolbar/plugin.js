@@ -65,6 +65,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     gEoutputBuffering = false,
     gEeditor,
     gEflushedOnce;
+	
+	var gElastMouseUpEvent = null;
+	
     var CKeditInterface = function( editor ) {
       gEeditor = editor;
     };
@@ -900,8 +903,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
    *
    * @param Event event
    * @param string name selected text
+   * @param bool editCategory
+   * 	If true, an existing category is to be edited
    */
-    ShowCatToolbar = function(event, name) {
+    ShowCatToolbar = function(event, name, editCategory) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
@@ -910,7 +915,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 	  }
       var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
-      toolBar.createContextMenu(ckePopupContextMenu, name);
+      toolBar.createContextMenu(ckePopupContextMenu, name, editCategory);
       ckePopupContextMenu.showMenu();
     };
 
@@ -1057,6 +1062,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         var frame = GetWindowOfEditor();
         event = frame.event;
       }
+	  if (!event) {
+	  	event = gElastMouseUpEvent;
+	  }
+	  gElastMouseUpEvent = event;
       // handle here if the popup box for a selected annotation must be shown
       var selection = gEditInterface.getSelectionAsArray();
       var msg = gEditInterface.getErrMsgSelection();
@@ -1083,10 +1092,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           ShowRelToolbar(event, selection[2], val, show);
         }
         else if (selection[1] == 14) { // Category
-          ShowCatToolbar(event, selection[0]);
+          ShowCatToolbar(event, selection[0], true);
         }
       }
     };
+	
+	
 
     var CKEditorTextArea = function(editor) {
       //      return document.getElementById('cke_contents_' + editor.name).getElementsByTagName('textarea')[0];
@@ -1255,10 +1266,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
             exec: function( editor )
             {
-              var propertyAttr = editPropertyCommmand.element.getAttribute('property');
-              var classAttr = editPropertyCommmand.element.getAttribute('class');
-              var jQueryLocator = '.' + classAttr + '[property=' + propertyAttr + ']';
-              jQuery('iframe').contents().find(jQueryLocator).trigger('dblclick');
+			  var selection = editor.getSelection();
+			  selection.selectElement(editPropertyCommmand.element);
+			  CheckSelectedAndCallPopup();
             }
           };
 			
@@ -1274,10 +1284,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
             exec: function( editor )
             {
-              var sortAttr = editCategoryCommmand.element.getAttribute('sort');
-              var classAttr = editCategoryCommmand.element.getAttribute('class');
-              var jQueryLocator = '.' + classAttr + '[sort=' + sortAttr + ']';
-              jQuery('iframe').contents().find(jQueryLocator).trigger('dblclick');
+			  var selection = editor.getSelection();
+			  selection.selectElement(editCategoryCommmand.element);
+			  CheckSelectedAndCallPopup();
             }
           };
           var removePropertyCommmand =
@@ -1350,15 +1359,15 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
               editCategoryCommmand.element = element;
               removeCategoryCommmand.element = element;
               return {
-                removeCategoryItem: CKEDITOR.TRISTATE_ON
-              /*,editCategoryItem  : CKEDITOR.TRISTATE_ON*/};
+                removeCategoryItem: CKEDITOR.TRISTATE_ON,
+                editCategoryItem  : CKEDITOR.TRISTATE_ON };
             }
             else if (element.getAttribute('class') === 'fck_mw_property'){
               editPropertyCommmand.element = element;
               removePropertyCommmand.element = element;
               return {
-                removePropertyItem: CKEDITOR.TRISTATE_ON
-              /*,editPropertyItem  : CKEDITOR.TRISTATE_ON*/};
+                removePropertyItem: CKEDITOR.TRISTATE_ON,
+                editPropertyItem  : CKEDITOR.TRISTATE_ON};
             }
             return null;
           });
