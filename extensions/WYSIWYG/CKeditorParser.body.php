@@ -560,7 +560,7 @@ class CKeditorParser extends CKeditorParserWrapper {
                   $wgTitle && $wgTitle->getNamespace() == SF_NS_FORM &&
                   $fck_mw_template == 'fck_mw_template') {
             foreach ($this->FCKeditorSFspecialTags as $sfTag) {
-              if (preg_match('/^\{' . $sfTag . '(\s|\}|\|)/', $funcName)) {
+              if (preg_match('/^\{' . $sfTag . '(\s|\}|\|)/', str_replace(array("\r\n", "\n", "\r"), ' ', $funcName))) {
                 $fck_mw_template = 'sf';
                 $funcName = $sfTag;
                 break;
@@ -570,13 +570,13 @@ class CKeditorParser extends CKeditorParserWrapper {
 
           if (strlen($fck_mw_template) > 2) {
             if ($opened <= $closed) { // {{template}} is NOT in [] or [[]]
-              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="' . $fck_mw_template . '">' . str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner) . '</span>';
+              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="' . $fck_mw_template . '">' . str_replace(array("\r\n", "\n", "\r"), ' ', $inner) . '</span>';
             } else {
-              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner);
+              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = str_replace(array("\r\n", "\n", "\r"), ' ', $inner);
             }
           } else if (strlen($fck_mw_template) > 1) { // SF tag
             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="' . $funcName . '" _fck_mw_tagtype="' . $fck_mw_template . '">'
-                    . str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner) . '</span>';
+                    . str_replace(array("\r\n", "\n", "\r"), ' ', $inner) . '</span>';
           } else {
             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="' . $funcName . '" _fck_mw_tagtype="' . $fck_mw_template . '">';
             if (strlen($inner) > strlen($funcName) + 5) {
@@ -742,14 +742,17 @@ class CKeditorParser extends CKeditorParserWrapper {
           $val = $cat;
         }
         if ($val != $title->mTextform) {
-          $appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span> <br/>';
+          $appendString .= '<br/><span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span>';
         } else {
-          $appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span> <br/>';
+          $appendString .= '<br/><span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span>';
         }
       }
       $oldText = $parserOutput->getText();
+
+      /*
       if (!preg_match('/<br ?\/?>\s*<\/p>\s*$/i', $oldText))
         $oldText .= '<br/>';
+       */
       $parserOutput->setText($oldText . $appendString);
     }
 
