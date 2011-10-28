@@ -51,20 +51,20 @@
     <title>ASF sandbox</title>
     <id>317</id>
     <revision>
-      <id>6544</id>
-      <timestamp>2011-10-24T15:23:00Z</timestamp>
+      <id>6591</id>
+      <timestamp>2011-10-28T09:33:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve" bytes="1049">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Automatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
+      <text xml:space="preserve" bytes="1083">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Automatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
 &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;B&lt;/span&gt;elow you can play around with the Automatic Semantic Forms extension. This is easy and works like follows:
 
 #Enter an article name in the input field. Use the name of an article that does not yet exist.
 #Choose one of the categories in the dropdown box.
 #Hit the 'Try out' button.
 
-&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task]]|link=none}}|Category:Task|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;/i&gt;&lt;/small&gt;|}}
+&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task in sandbox]]|link=none|source=wiki}}|Category:Task in sandbox|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;/i&gt;&lt;/small&gt;|}}
 
 [[Rationale::This is the sandbox article for the Automatic Semantic Forms extension.| ]][[Part of bundle::Automaticsemanticforms| ]]</text>
     </revision>
@@ -319,15 +319,15 @@ Please note, that this annotation is not inherited to subcategories. You can als
     <title>Category:Phone call</title>
     <id>318</id>
     <revision>
-      <id>6538</id>
-      <timestamp>2011-10-24T15:11:42Z</timestamp>
+      <id>6584</id>
+      <timestamp>2011-10-28T07:47:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve" bytes="299">{{Category}} __NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__
+      <text xml:space="preserve" bytes="359">{{Category}} __NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__
 == Information about this category ==
-[[Rationale::Use this category for phone calls which you have to do. (This category is used by the Automatic Semantic Forms sandbox.]]
+[[Rationale::Use this category for phone calls which you have to do. (This category is used by the Automatic Semantic Forms sandbox.]] [[Use display template::Phone call|:Phone call]]
 
 [[Part of bundle::Automaticsemanticforms| ]]
 
@@ -335,7 +335,7 @@ Please note, that this annotation is not inherited to subcategories. You can als
 
 
 
-[[Category:Task]]</text>
+[[Category:Task in sandbox]]</text>
     </revision>
   </page>
   <page>
@@ -469,6 +469,41 @@ Please note, that this annotation is not inherited to subcategories. You can als
 [[Part of bundle::automaticsemanticforms| ]]
 
 [[Category:Property]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Phone call</title>
+    <id>2460</id>
+    <revision>
+      <id>6589</id>
+      <timestamp>2011-10-28T09:19:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="1419">&lt;noinclude&gt;{{Template}}
+[[Rationale::This template is used for formating phone call tasks]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! colspan=&quot;2&quot; style=&quot;background: rgb(240, 55, 55) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: white;&quot; | {{FULLPAGENAME}}
+|-
+{{Tablerow|Label=Description:|Value=Call the following telephone number.}}
+|-
+{{Tablesection|Label=Details|Color=#ffb0a6}}
+|-
+{{Tablerow|Label=Responsible person:|Value={{#show:{{FULLPAGENAME}}|?Assigned to=|source=wiki}} }}
+|-
+{{Tablerow|Label=Call:|Value={{#show:{{FULLPAGENAME}}|?Call=|source=wiki}} }}
+|-
+{{Tablerow|Label=Start time:|Value={{#show:{{FULLPAGENAME}}|?Start time=|source=wiki}} }}
+|-
+{{Tablerow|Label=End time:|Value={{#show:{{FULLPAGENAME}}|?End time=|source=wiki}} }}
+|-
+{{Tablerow|Label=Related sandbox project:|Value={{#show:{{FULLPAGENAME}}|?Related to project in sandbox=|source=wiki}} }}
+|-
+|}&lt;/includeonly&gt;&lt;noinclude&gt;[[Part of bundle::Automaticsemanticforms| ]]
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
 </mediawiki>
