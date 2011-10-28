@@ -544,10 +544,7 @@ OBCategoryTreeActionListener.prototype = Object
 						GeneralBrowserTools.navigateToPage(gLanguage
 								.getMessage('CATEGORY_NS_WOC'), categoryName,
 								editmode);
-					// obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);						
-				                // if(addEditCategoryForm == true){
-					           // categoryActionListener.showSubMenu();	
-                                                // }					
+										
 					},
 
 					cancel : function(){
@@ -688,7 +685,7 @@ OBCategoryTreeActionListener.prototype = Object
 					 *            Title of category
 					 */
 					select : function(event, node, categoryID, categoryName) {
-                                                // categoryActionListener.superCategories(categoryName);
+                                               
 						if (this.ignoreNextSelection && OB_bd.isGecko) {
 							this.ignoreNextSelection = false;
 							return;
@@ -1461,10 +1458,17 @@ OBPropertyTreeActionListener.prototype = Object
 							alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
 							return;
 						}
-						obPropertyMenuProvider.showContent(commandID,
-								'propertyTree');
+						
+						if (commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME) {
+							obPropertyMenuProvider.showEditProperties(this.selectedProperty,
+									SMW_OB_COMMAND_SUBPROPERTY_RENAME);
+						} else {
+							obPropertyMenuProvider.showContent(commandID,
+									'propertyTree');
+						}
 					},
-
+					
+					
 					select : function(event, node, propertyID, propertyName) {
 
 						var e = GeneralTools.getEvent(event);

@@ -77,9 +77,7 @@ window.wgUserLanguageStrings = {
 	'PROPERTIES'              : 'Attribute',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
 	'RECPROP'                 : "Empfohlene Attribute",
-	'ADD_ANNOTATION'          : 'Annotation hinzufügen',
-	'ADD_TYPE'          	  : 'Type setzen',
-	'ADD_RANGE'          	  : 'Range-Kategorie setzen',
+	
 
 	// Property characteristics toolbar
 	'PROPERTY_DOES_NOT_EXIST' : '(w)Dieses Attribut existiert nicht.',
@@ -224,6 +222,11 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_ADDSOME'		  : '(Füge hinzu)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
+	'ADD_ANNOTATION'          : 'Annotation hinzufügen',
+	'ADD_TYPE'          	  : 'Type setzen',
+	'ADD_RANGE'          	  : 'Range-Kategorie setzen',
+	'SUBPROPERTYOF'           : 'Subproperty von:',
+	'ADDPROPERTY' 			  : 'Property hinzufügen',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',

@@ -120,7 +120,7 @@
 				<!--  <xsl:if test="@isLeaf">
 					<td width="16"/>
 				</xsl:if>-->
-				<td class="conceptTreeRow">
+				<td class="obTreeRow">
 
 					<xsl:call-template name="createTreeNode">
 						<xsl:with-param name="actionListener" select="'categoryActionListener'" />
@@ -177,7 +177,7 @@
 					<td width="16"/>
 				</xsl:if>-->
 
-				<td>
+				<td class="obTreeRow">
 
 					<xsl:call-template name="createTreeNode">
 						<xsl:with-param name="actionListener" select="'propertyActionListener'" />
@@ -441,7 +441,7 @@
 	</xsl:template>
 
 	<xsl:template match="annotation">
-		<tr>
+		<tr class="annotationListRows">
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
 					select="count(child::param)" /></xsl:attribute>
@@ -487,12 +487,14 @@
 						<xsl:value-of select="'property'" />
 					</xsl:with-param>
 				</xsl:call-template>
+				<span class="annotationListActions">
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="href"><xsl:value-of
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
 				</a>
+				</span>
 				<xsl:if test="count(metadata/property) > 0">
 					<xsl:variable name="metaid" select="child::metadata/@id" />
 					<xsl:variable name="subjectID" select="@id"/>
@@ -610,7 +612,7 @@
 	</xsl:template>
 
 	<xsl:template match="property">
-		<tr>
+		<tr class="propertyListRows">
 			<xsl:variable name="title" select="@title" />
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
@@ -660,6 +662,7 @@
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
 					select="count(child::rangeType)+1" /></xsl:attribute>
+				<span class="propertyListActions">	
 				<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 					<xsl:attribute name="href"><xsl:value-of
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
@@ -674,6 +677,7 @@
 								select="child::rangeType[1]" />')</xsl:attribute>				
 					{{SMW_OB_EDIT}}
 				</a>
+				</span>
 			</td>
 			<td>
 				<xsl:attribute name="rowspan"><xsl:value-of
@@ -877,7 +881,7 @@
 		<xsl:param name="typeOfEntity" />
 		<xsl:param name="rek_depth" />
 
-		        <span class="ontologyCategorySelection">
+		        <span class="obTreeSelection">
 			
 			        <xsl:if test="gissues">
 				  <xsl:attribute name="class"><xsl:value-of select="$typeOfEntity" /> gardeningissue</xsl:attribute>

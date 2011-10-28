@@ -50,7 +50,9 @@ $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
 $wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
 $wgAjaxExportList[] = 'smwf_om_getDomainProperties';
 $wgAjaxExportList[] = 'smwf_om_getSuperCategories';
+$wgAjaxExportList[] = 'smwf_om_getSuperProperties';
 $wgAjaxExportList[] = 'smwf_om_getAnnotatedCategories';
+$wgAjaxExportList[] = 'smwf_om_annotateSubProperties';
 $wgAjaxExportList[] = 'smwf_om_annotateCategories';
 
 /**
@@ -1017,6 +1019,22 @@ function smwf_om_getSuperCategories($articleTitle){
 	return $supeCategories;
 }
 
+function smwf_om_getSuperProperties($articleTitle){
+    $directSuperPropertyTitles = smwfGetSemanticStore()->getDirectSuperProperties(Title::newFromText($articleTitle, SMW_NS_PROPERTY));
+
+    if($directSuperPropertyTitles == null){
+        $superProperties ='';
+    }else{
+        $superProperties = $directSuperPropertyTitles[0]->getText();
+        if(sizeof($directSuperPropertyTitles) > 1){
+            for($i = 1, $n = sizeof($directSuperPropertyTitles); $i < $n; $i++) {
+                $superProperties .= ','.$directSuperPropertyTitles[$i]->getText();
+            }
+        }
+    }
+    return $superProperties;
+}
+
 
 
 /**
@@ -1077,6 +1095,49 @@ function smwf_om_annotateCategories($articleTitle, $newAnnotatedCategories){
 		$response->setResponseCode(400);
 		return $response;
 	}
+
+}
+
+/**
+ * Annotates a new set of subproperties and removes the old before.
+ *
+ * @param $articleTitle
+ * @param $newAnnotatedCategories
+ *
+ * @return true
+ */
+function smwf_om_annotateSubProperties($articleTitle, $newAnnotatedProperties){
+
+    $titleObj = Title::newFromText($articleTitle);
+    $article = new Article($titleObj);
+    $text = $article->getContent();
+
+    global $smwgContLang;
+    $smwPropertyLabels = $smwgContLang->getPropertyLabels();
+    $subPropertyTitle = $smwPropertyLabels['_SUBP'];
+    $search = '/(\[\[\s*' . $subPropertyTitle . '\s*::\s*([^|]+)\s*(\|([^]])*)?\s*\]\])/i';
+    $text = preg_replace($search, "", $text);
+
+    $annotatedProperties = explode(",",$newAnnotatedProperties);
+
+    foreach($annotatedProperties as $p) {
+    	$t = Title::newFromText($p, SMW_NS_PROPERTY);
+        $text .= "\n[[$subPropertyTitle::".$t->getPrefixedText()."]]";
+    }
+
+    if ($article->exists()) {
+        $reason = '';
+        $status = $article->doEdit($text, $reason);
+        if ($status->isOK()) {
+            $response = new AjaxResponse("true");
+            $response->setResponseCode(200);
+            return $response;
+        }
+    } else {
+        $response = new AjaxResponse("Title '$articleTitle' does not exist.");
+        $response->setResponseCode(400);
+        return $response;
+    }
 
 }
 

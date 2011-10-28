@@ -234,6 +234,8 @@ window.wgUserLanguageStrings = {
 	'ADD_ANNOTATION'          : 'Add Annotation',
 	'ADD_TYPE'          	  : 'Set type',
 	'ADD_RANGE'          	  : 'Set range',
+	'SUBPROPERTYOF'           : 'Subproperty of:',
+	'ADDPROPERTY' 			  : 'Add property',	
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',

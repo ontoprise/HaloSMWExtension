@@ -123,7 +123,7 @@ a.navigationLink {
     margin-left: 50px;
 }
 
-.conceptTreeRow:hover > span {
+.obTreeRow:hover > span {
       display:inline-block;
       font-weight:bold;
       cursor: pointer;        
@@ -140,6 +140,29 @@ a.navigationLink {
       font-weight:bold;
       cursor: pointer;     
       width: 170px; 
+}
+
+.annotationListActions {
+    visibility:hidden;
+}
+
+.annotationListRows:hover > td > span {
+     visibility:visible;
+      font-weight:bold;
+      cursor: pointer;     
+     
+}
+
+.propertyListActions  {
+    visibility:hidden;
+     
+}
+
+.propertyListRows:hover > td > span {
+     visibility:visible;
+      font-weight:bold;
+      cursor: pointer;     
+     
 }
 
 .instanceListColors {
