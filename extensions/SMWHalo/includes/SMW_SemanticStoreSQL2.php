@@ -32,16 +32,16 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 			
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
-		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND  EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.') UNION '.
-        '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id) '.$bundleSql.')'.$sqlOptions);
+		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.'  ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY. 
+        ' AND smw_subobject="" AND page_is_redirect = 0 AND smw_id IN (SELECT o_id FROM '.$smw_subs2.') AND NOT smw_id  IN (SELECT s_id FROM '.$smw_subs2.')  '.$bundleSql.') UNION DISTINCT '.
+        '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.'  ON page_title=smw_title AND smw_namespace = '.SMW_NS_PROPERTY.
+        ' AND smw_subobject="" AND page_is_redirect = 0 AND smw_id NOT IN (SELECT o_id FROM '.$smw_subs2.') AND NOT smw_id  IN (SELECT s_id FROM '.$smw_subs2.')   '.$bundleSql.')'.$sqlOptions);
 
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), $row->has_subproperties == 'true');
+					$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), $row->has_subproperties != 'true');
 				}
 			}
 		}
