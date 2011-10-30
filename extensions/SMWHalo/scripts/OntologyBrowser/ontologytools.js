@@ -25,17 +25,16 @@
  */
 
 // commandIDs
-var SMW_OB_COMMAND_ADDSUBCATEGORY = 1;
-var SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL = 2;
-var SMW_OB_COMMAND_SUBCATEGORY_RENAME = 3;
 
-var SMW_OB_COMMAND_ADDSUBPROPERTY = 4;
-var SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL = 5;
-var SMW_OB_COMMAND_SUBPROPERTY_RENAME = 6;
+var SMW_OB_COMMAND_ADDSUBCATEGORY = 2;
+var SMW_OB_COMMAND_SUBCATEGORY_EDIT = 3;
+
+var SMW_OB_COMMAND_ADDSUBPROPERTY = 5;
+var SMW_OB_COMMAND_SUBPROPERTY_EDIT = 6;
 
 var SMW_OB_COMMAND_INSTANCE_DELETE = 7;
 var SMW_OB_COMMAND_INSTANCE_CREATE = 10;
-var SMW_OB_COMMAND_INSTANCE_RENAME = 8;
+var SMW_OB_COMMAND_INSTANCE_EDIT = 8;
 
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
@@ -2138,7 +2137,7 @@ OBCatgeorySubMenu.prototype = Object
 
 						switch (this.commandID) {
 
-						case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: {
+						case SMW_OB_COMMAND_ADDSUBCATEGORY: {
 							if ($F('categoryTreeMenu2_input_ontologytools').strip() == '') {
 								ontologyTools.addSubcategoryOnSameLevel(
 										$F(this.id + '_input_ontologytools'),
@@ -2153,7 +2152,7 @@ OBCatgeorySubMenu.prototype = Object
 							this.cancel();
 							break;
 						}
-						case SMW_OB_COMMAND_SUBCATEGORY_RENAME: {
+						case SMW_OB_COMMAND_SUBCATEGORY_EDIT: {
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'categoryTreeMenu_input_ontologytools')
@@ -2222,24 +2221,11 @@ OBCatgeorySubMenu.prototype = Object
 						}
 					},
 
-					getCommandText : function() {
-						switch (this.commandID) {
-						case SMW_OB_COMMAND_SUBCATEGORY_RENAME:
-							return 'OB_RENAME';
-						case SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL: // fall
-							// through
-						case SMW_OB_COMMAND_ADDSUBCATEGORY:
-							// return 'OB_CREATE';
-
-						default:
-							return 'Unknown command';
-						}
-
-					},
+					
 
 					getUserDefinedControls : function() {
-						this.subChecked = true;
-						var titlevalue = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? this.selectedTitle
+					
+						var titlevalue = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? this.selectedTitle
 								.replace(/_/g, " ")
 								: '';
 						this.categoryTitle = titlevalue;
@@ -2257,11 +2243,11 @@ OBCatgeorySubMenu.prototype = Object
 						}
 						superCategoryContent = superCategoryContent.substr(1);
 
-						var categoryContent = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? superCategoryContent
+						var categoryContent = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? superCategoryContent
 								.replace(/_/g, " ")
 								: this.selectedTitle;
 
-						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? gLanguage
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('AddCategory');
 
@@ -2288,7 +2274,7 @@ OBCatgeorySubMenu.prototype = Object
 								+ '<table style="margin-bottom:3px;"><tr>'
 								+ '<td width="50px;">'
 								+ '</td>'
-								+ '<td><input class="wickEnabled " constraints="ask: [[:Category:+]]" accesskey="f" autocomplete="ON" style="display:block; width:90%; float:left" id="'
+								+ '<td><input class="wickEnabled " constraints="namespace: Category" accesskey="f" autocomplete="ON" style="display:block; width:90%; float:left" id="'
 								+ this.id
 								+ '2_input_ontologytools"'
 								+ 'type="text"'
@@ -2372,39 +2358,30 @@ OBCatgeorySubMenu.prototype = Object
 					 *            message string defined in SMW_LanguageXX.js
 					 */
 					enableCommand : function(b, errorMessage) {
-						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_RENAME ? gLanguage
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('AddCategory');
 						if (b) {
 
 							$(this.id + '_apply_ontologytools')
-									.replace(
-											'<a id="'
-													+ this.id
-													+ '_apply_ontologytools" >'
-													+ '<button id="'
+									.replace('<button id="'
 													+ this.id
 													+ '_apply_ontologytools" type="button"'
 													+ 'onclick="'
 													+ this.objectname
 													+ '.doCommand()">'
 													+ applyButtonLabel
-													+ '</button></a>');
+													+ '</button>');
 						} else {
 							$(this.id + '_apply_ontologytools')
-									.replace(
-
-											'<a id="'
-													+ this.id
-													+ '_apply_ontologytools" >'
-													+ '<button id="'
+									.replace('<button id="'
 													+ this.id
 													+ '_apply_ontologytools" type="button" disabled="true"'
 													+ 'onclick="'
 													+ this.objectname
 													+ '.doCommand()">'
 													+ applyButtonLabel
-													+ '</button></a>');
+													+ '</button>');
 						}
 					},
 
@@ -2422,35 +2399,14 @@ OBCatgeorySubMenu.prototype = Object
 						var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
 								: '#F00';
 
-						this.enableCommand(b, b ? this.getCommandText()
-								: $F(id) == '' ? '' : '');
+						this.enableCommand(b);
 						$(id).setStyle( {
 							backgroundColor : bg_color
 						});
 
 					},
 
-					/**
-					 * @public
-					 * 
-					 * Enables or disables an INPUT field and enables or
-					 * disables command button.
-					 * 
-					 * @param enabled/disable
-					 * @param id
-					 *            ID of input field
-					 */
-					enable1 : function(b, id) {
-						var bg_color = b ? '#FFF' : $F(id) == '' ? '#FFF'
-								: '#FFF';
-
-						this.enableCommand(b, b ? this.getCommandText()
-								: $F(id) == '' ? '' : '');
-						$(id).setStyle( {
-							backgroundColor : bg_color
-						});
-
-					},
+					
 
 					/**
 					 * Resets an input field and disables the command button.
@@ -2502,7 +2458,7 @@ OBPropertySubMenu.prototype = Object
 								this.annotatedSuperProperties[i] = this.annotatedSuperProperties[i]
 										.strip();
 							}
-							obPropertyMenuProvider.showContent(SMW_OB_COMMAND_SUBPROPERTY_RENAME,
+							obPropertyMenuProvider.showContent(SMW_OB_COMMAND_SUBPROPERTY_EDIT,
 									'propertyTree');
 							Form.Element.setValue(
 									$('propertyTreeMenu2_input_ontologytools'),
@@ -2516,7 +2472,7 @@ OBPropertySubMenu.prototype = Object
 					doCommand : function() {
 						switch (this.commandID) {
 						
-						case SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL: {
+						case SMW_OB_COMMAND_ADDSUBPROPERTY: {
 							if ($F('propertyTreeMenu2_input_ontologytools').strip() == '') {
 								ontologyTools.addSubpropertyOnSameLevel(
 										$F(this.id + '_input_ontologytools'),
@@ -2532,7 +2488,7 @@ OBPropertySubMenu.prototype = Object
 							break;
 							
 						}
-						case SMW_OB_COMMAND_SUBPROPERTY_RENAME: {
+						case SMW_OB_COMMAND_SUBPROPERTY_EDIT: {
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'propertyTreeMenu_input_ontologytools')
@@ -2600,24 +2556,11 @@ OBPropertySubMenu.prototype = Object
 						}
 					},
 
-					getCommandText : function() {
-						switch (this.commandID) {
-						case SMW_OB_COMMAND_SUBPROPERTY_RENAME:
-							return 'OB_RENAME';
-						case SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL: // fall
-							// through
-						case SMW_OB_COMMAND_ADDSUBPROPERTY:
-							return 'OB_CREATE';
-
-						default:
-							return 'Unknown command';
-						}
-
-					},
+					
 
 					getUserDefinedControls : function() {
-						this.subChecked = true;
-						var titlevalue = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? this.selectedTitle
+						
+						var titlevalue = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? this.selectedTitle
 								.replace(/_/g, " ")
 								: '';
 						this.propertyTitle = titlevalue;
@@ -2635,11 +2578,11 @@ OBPropertySubMenu.prototype = Object
 						}
 						superpropertyContent = superpropertyContent.substr(1);
 
-						var propertyContent = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? superpropertyContent
+						var propertyContent = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? superpropertyContent
 								.replace(/_/g, " ")
 								: this.selectedTitle.replace(/_/," ");
 
-						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME ? gLanguage
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('ADDPROPERTY');
 
@@ -2736,25 +2679,30 @@ OBPropertySubMenu.prototype = Object
 					 *            message string defined in SMW_LanguageXX.js
 					 */
 					enableCommand : function(b, errorMessage) {
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? gLanguage
+								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
+								: gLanguage.getMessage('ADDPROPERTY');
 						if (b) {
+
 							$(this.id + '_apply_ontologytools')
-									.replace(
-											'<a style="margin-left: 10px;" id="'
+									.replace('<button id="'
 													+ this.id
-													+ '_apply_ontologytools" onclick="'
+													+ '_apply_ontologytools" type="button"'
+													+ 'onclick="'
 													+ this.objectname
 													+ '.doCommand()">'
-													+ gLanguage.getMessage(this
-															.getCommandText())
-													+ '</a>');
+													+ applyButtonLabel
+													+ '</button>');
 						} else {
-							$(this.id + '_apply_ontologytools').replace(
-									'<span style="margin-left: 10px;" id="'
-											+ this.id
-											+ '_apply_ontologytools">'
-											+ gLanguage
-													.getMessage(errorMessage)
-											+ '</span>');
+							$(this.id + '_apply_ontologytools')
+									.replace('<button id="'
+													+ this.id
+													+ '_apply_ontologytools" type="button" disabled="true"'
+													+ 'onclick="'
+													+ this.objectname
+													+ '.doCommand()">'
+													+ applyButtonLabel
+													+ '</button>');
 						}
 					},
 
@@ -2772,9 +2720,7 @@ OBPropertySubMenu.prototype = Object
 						var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
 								: '#F00';
 
-						this.enableCommand(b, b ? this.getCommandText()
-								: $F(id) == '' ? 'OB_ENTER_TITLE'
-										: 'OB_TITLE_EXISTS');
+						this.enableCommand(b);
 						$(id).setStyle( {
 							backgroundColor : bg_color
 						});
@@ -2828,7 +2774,7 @@ OBInstanceSubMenu.prototype = Object
 								: this.commandID
 						switch (commandID) {
 
-						case SMW_OB_COMMAND_INSTANCE_RENAME: {
+						case SMW_OB_COMMAND_INSTANCE_EDIT: {
 
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
@@ -2952,7 +2898,7 @@ OBInstanceSubMenu.prototype = Object
 					getCommandText : function() {
 						switch (this.commandID) {
 
-						case SMW_OB_COMMAND_INSTANCE_RENAME:
+						case SMW_OB_COMMAND_INSTANCE_EDIT:
 							return 'OB_RENAME';
 						case SMW_OB_COMMAND_INSTANCE_CREATE:
 							return 'OB_CREATE';
@@ -2963,14 +2909,14 @@ OBInstanceSubMenu.prototype = Object
 					},
 
 					getUserDefinedControls : function() {
-						if (this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME) {
+						if (this.commandID == SMW_OB_COMMAND_INSTANCE_EDIT) {
 							var titlevalue = this.selectedTitle;
 						}
-						instanceTitle = this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME ? titlevalue
+						instanceTitle = this.commandID == SMW_OB_COMMAND_INSTANCE_EDIT ? titlevalue
 								.replace(/_/g, " ")
 								: '';
 
-						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME ? gLanguage
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_INSTANCE_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('AddCategory');
 
@@ -3069,7 +3015,7 @@ OBInstanceSubMenu.prototype = Object
 					 *            message string defined in SMW_LanguageXX.js
 					 */
 					enableCommand : function(b, errorMessage) {
-						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_INSTANCE_RENAME ? gLanguage
+						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_INSTANCE_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage(this
 										.getCommandText());

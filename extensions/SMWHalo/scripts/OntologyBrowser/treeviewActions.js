@@ -33,10 +33,7 @@ var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
 var editExpanded = false;
 var addExpanded = false;
-var addCategoryForm = false;
-var editCategoryForm = false;
-var editCategoryOpen = false;
-var addCategoryOpen = false;
+
 
 // Logging on close does not work, because window shuts down. What to do?
 // window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
@@ -523,12 +520,8 @@ OBCategoryTreeActionListener.prototype = Object
 								OB_BEFOREREFRESHLISTENER);
                                                 
 						this.ignoreNextSelection = false;
-						Draggables.addObserver(this);
-						Droppables.add('categoryTreeSwitch', {
-							accept : 'concept',
-							hoverclass : 'dragHover',
-							onDrop : this.onDrop.bind(this)
-						});
+						this.addCategoryOpen = false;
+						this.editCategoryOpen = false;
 					},
 
 					toggleExpand : function(event, node, folderCode) {
@@ -548,7 +541,7 @@ OBCategoryTreeActionListener.prototype = Object
 					},
 
 					cancel : function(){
-					 addCategoryOpen = false;
+						this.addCategoryOpen = false;
 					 editCategoryOpen = false;
 					},
 					
@@ -559,23 +552,15 @@ OBCategoryTreeActionListener.prototype = Object
 							this.oldSelectedNode = GeneralBrowserTools
 									.toggleHighlighting(this.oldSelectedNode,
 											node);
-                                                if(addCategoryForm == true && addCategoryOpen == true){
-					           categoryActionListener.showSubMenu(2);	
-                                                 }	
-						 if(editCategoryForm == true && editCategoryOpen == true){
+                            if(this.addCategoryOpen){
+                            	categoryActionListener.showSubMenu(2);	
+                            } else if(this.editCategoryOpen){
 					           categoryActionListener.showSubMenu(3);						   
-                                                 }
+                            }
 						}
 					},
 					
-					showSubmenu1 : function(commanID,title){   
-		                          if(addCategoryOpen == true || editCategoryOpen == true){
-                                            addCategoryOpen == false;					    
-		                          }
-		                          editCategoryOpen = true;
-					  editCategoryForm = true;
-                                          categoryActionListener.superCategories(title,'3');
-					},
+					
 
 					beforeRefresh : function() {
 						if (wgUserGroups == null
@@ -587,14 +572,7 @@ OBCategoryTreeActionListener.prototype = Object
 						if (OB_bd.isIE) {
 							return; // no DnD in IE
 						}
-						this.draggableCategories.each(function(c) {
-							c.destroy();
-
-						});
-						$$('a.concept').each(function(c) {
-							Droppables.remove(c.getAttribute('id'));
-						});
-						this.draggableCategories = [];
+						
 					},
 
 					refresh : function() {
@@ -609,38 +587,12 @@ OBCategoryTreeActionListener.prototype = Object
 							return; // do not activate DnD in IE, because
 							// scriptaculous is very buggy here
 						}
-						function addDragAndDrop(c) {
-							var d = new Draggable(c.getAttribute('id'), {
-								revert : true,
-								ghosting : true
-							});
-							this.draggableCategories.push(d);
-							Droppables.add(c.getAttribute('id'), {
-								accept : 'concept',
-								hoverclass : 'dragHover',
-								onDrop : onDrop_bind
-							});
-						}
-						var addDragAndDrop_bind = addDragAndDrop.bind(this);
-						var onDrop_bind = this.onDrop.bind(this);
-						$$('a.concept').each(addDragAndDrop_bind);
-
+						
+						
+						
 					},
 
-					onStart : function(eventName, draggable, event) {
-						if (draggable.element.hasClassName('concept')) {
-							this.ignoreNextSelection = true;
-						}
-					},
-
-					onDrop : function(dragElement, dropElement, event) {
-						var draggedCategoryID = dragElement.getAttribute('id');
-						var droppedCategoryID = dropElement.getAttribute('id');
-						// alert('Dropped on: '+droppedCategoryID+" from:
-						// "+draggedCategoryID);
-						ontologyTools.moveCategory(draggedCategoryID,
-								droppedCategoryID);
-					},
+					
 
 					superCategories : function(selectedCategory){
 					  obCategoryMenuProvider.superCategories(selectedCategory);
@@ -652,16 +604,14 @@ OBCategoryTreeActionListener.prototype = Object
 							return;
 						}
 						if(commandID == 2){
-                                                 addCategoryForm = true;
-						 editCategoryForm = false;
-						 addCategoryOpen = true;
-						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
+							 this.editCategoryOpen = false;
+							 this.addCategoryOpen = true;
+							 obCategoryMenuProvider.showContent(commandID,'categoryTree');
 						}
 						if(commandID == 3){
-						 editCategoryForm = true;
-						 addCategoryForm = false;
-						 editCategoryOpen = true;
-						 categoryActionListener.superCategories(this.selectedCategory,'3');
+							 this.editCategoryOpen = true;
+							 this.addCategoryOpen = false;
+							 categoryActionListener.superCategories(this.selectedCategory,'3');
 						}	
                                            					    
                                  	},
@@ -1362,13 +1312,7 @@ OBPropertyTreeActionListener.prototype = Object
 						selectionProvider.addListener(this,
 								OB_BEFOREREFRESHLISTENER);
 
-						Draggables.addObserver(this);
-						this.draggableProperties = [];
-						Droppables.add('propertyTreeSwitch', {
-							accept : 'property',
-							hoverclass : 'dragHover',
-							onDrop : this.onDrop.bind(this)
-						});
+						
 					},
 
 					navigateToEntity : function(event, node, propertyName,
@@ -1399,14 +1343,7 @@ OBPropertyTreeActionListener.prototype = Object
 						if (OB_bd.isIE) {
 							return; // no DnD in IE
 						}
-						this.draggableProperties.each(function(c) {
-							c.destroy();
-
-						});
-						$$('a.property').each(function(c) {
-							Droppables.remove(c.getAttribute('id'));
-						});
-						this.draggableProperties = [];
+						
 					},
 
 					refresh : function() {
@@ -1421,37 +1358,11 @@ OBPropertyTreeActionListener.prototype = Object
 							return; // do not activate DnD in IE, because
 							// scriptaculous is very buggy here
 						}
-						function addDragAndDrop(c) {
-							var d = new Draggable(c.getAttribute('id'), {
-								revert : true,
-								ghosting : true
-							});
-							this.draggableProperties.push(d);
-							Droppables.add(c.getAttribute('id'), {
-								accept : 'property',
-								hoverclass : 'dragHover',
-								onDrop : onDrop_bind
-							});
-						}
-						var addDragAndDrop_bind = addDragAndDrop.bind(this);
-						var onDrop_bind = this.onDrop.bind(this);
-						$$('a.property').each(addDragAndDrop_bind);
+						
 
 					},
 
-					onStart : function(eventName, draggable, event) {
-
-					},
-
-					onDrop : function(dragElement, dropElement, event) {
-						var draggedPropertyID = dragElement.getAttribute('id');
-						var droppedPropertyID = dropElement.getAttribute('id');
-						// alert('Dropped on: '+droppedPropertyID+" from:
-						// "+draggedPropertyID);
-						ontologyTools.moveProperty(draggedPropertyID,
-								droppedPropertyID);
-
-					},
+					
 
 					showSubMenu : function(commandID) {
 						if (this.selectedProperty == null) {
@@ -1459,9 +1370,9 @@ OBPropertyTreeActionListener.prototype = Object
 							return;
 						}
 						
-						if (commandID == SMW_OB_COMMAND_SUBPROPERTY_RENAME) {
+						if (commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT) {
 							obPropertyMenuProvider.showEditProperties(this.selectedProperty,
-									SMW_OB_COMMAND_SUBPROPERTY_RENAME);
+									SMW_OB_COMMAND_SUBPROPERTY_EDIT);
 						} else {
 							obPropertyMenuProvider.showContent(commandID,
 									'propertyTree');
