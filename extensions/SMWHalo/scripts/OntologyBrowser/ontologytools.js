@@ -1939,6 +1939,10 @@ OBOntologySubMenu.prototype = {
 		this.menuOpened = false;
 
 	},
+	
+	showContent : function(commandID, envContainerID) {
+		this._showContent(commandID, envContainerID);
+	},
 
 	/**
 	 * @public
@@ -1950,7 +1954,7 @@ OBOntologySubMenu.prototype = {
 	 * @param envContainerID
 	 *            ID of container which contains the menu.
 	 */
-	showContent : function(commandID, envContainerID) {
+	_showContent : function(commandID, envContainerID) {
 		if (this.menuOpened) {
 			this._cancel();
 		}
@@ -2027,9 +2031,11 @@ OBOntologySubMenu.prototype = {
 
 		// reset height
 		var newHeight = (this.oldHeight - 2) + "px";
-		$(this.envContainerID).setStyle( {
-			height : newHeight
-		});
+		if (this.envContainerID) {
+			$(this.envContainerID).setStyle( {
+				height : newHeight
+			});
+		}
 
 		// remove DIV content
 		$(this.id).replace('<div id="' + this.id + '">');
@@ -2107,11 +2113,29 @@ OBCatgeorySubMenu.prototype = Object
 						if (ns == SMW_CATEGORY_NS) {
 							this.selectedTitle = title;
 							this.selectedID = id;
-
+							if (this.menuOpened == true) { 
+								if (this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT) {
+									Form.Element.setValue(
+											$('categoryTreeMenu_input_ontologytools'),
+											this.selectedTitle.replace(/_/, " "));
+									this.updateSuperCategories(this.selectedTitle, this.commandID);
+								} else if (this.commandID == SMW_OB_COMMAND_ADDSUBCATEGORY) {
+									Form.Element.setValue(
+											$('categoryTreeMenu2_input_ontologytools'),
+											this.selectedTitle.replace(/_/, " "));
+								}
+							}
 						}
 					},
+					
+					showContent : function(commandID, envContainerID) {
+						this._showContent(commandID, 'categoryTree');
+						 if(commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT){
+							 this.updateSuperCategories(this.selectedTitle,commandID);
+						 }	
+					},
 
-					superCategories : function(title, commandID) {
+					updateSuperCategories : function(title, commandID) {
 
 						function callback(request) {
 							this.annotatedSuperCategories = request.responseText
@@ -2123,8 +2147,7 @@ OBCatgeorySubMenu.prototype = Object
 								this.annotatedSuperCategories[i] = this.annotatedSuperCategories[i]
 										.strip();
 							}
-							obCategoryMenuProvider.showContent(3,
-									'categoryTree');
+							
 							Form.Element.setValue(
 									$('categoryTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2443,10 +2466,30 @@ OBPropertySubMenu.prototype = Object
 						if (ns == SMW_PROPERTY_NS) {
 							this.selectedTitle = title;
 							this.selectedID = id;
+							if (this.menuOpened == true) { 
+								if (this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT) {
+									Form.Element.setValue(
+											$('propertyTreeMenu_input_ontologytools'),
+											this.selectedTitle.replace(/_/, " "));
+									this.updateEditProperties(this.selectedTitle, this.commandID);
+								} else if (this.commandID == SMW_OB_COMMAND_ADDSUBPROPERTY) {
+									Form.Element.setValue(
+											$('propertyTreeMenu2_input_ontologytools'),
+											this.selectedTitle.replace(/_/, " "));
+								}
+							}
 						}
 					},
 					
-					showEditProperties : function(title, commandID) {
+					showContent : function(commandID, envContainerID) {
+						this._showContent(commandID, 'propertyTree');
+						 if(commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT){
+							 this.updateEditProperties(this.selectedTitle,commandID);
+						 }	
+					},
+					
+					
+					updateEditProperties : function(title, commandID) {
 
 						function callback(request) {
 							this.annotatedSuperProperties = request.responseText
@@ -2458,8 +2501,7 @@ OBPropertySubMenu.prototype = Object
 								this.annotatedSuperProperties[i] = this.annotatedSuperProperties[i]
 										.strip();
 							}
-							obPropertyMenuProvider.showContent(SMW_OB_COMMAND_SUBPROPERTY_EDIT,
-									'propertyTree');
+							
 							Form.Element.setValue(
 									$('propertyTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2751,7 +2793,7 @@ OBInstanceSubMenu.prototype = Object
 				{
 					initialize : function(id, objectname) {
 						this.OBOntologySubMenu(id, objectname);
-
+						
 						this.selectedTitle = null;
 						this.selectedID = null;
 						this.categoriesOfInstance = [];
@@ -2763,10 +2805,22 @@ OBInstanceSubMenu.prototype = Object
 						if (ns == SMW_INSTANCE_NS) {
 							this.selectedTitle = title;
 							this.selectedID = id;
+							if (this.menuOpened == true) { 
+								if (this.commandID == SMW_OB_COMMAND_INSTANCE_EDIT) {
+									this.annotatedCategories(this.selectedTitle, this.commandID);
+								}
+							}
 						} else if (ns == SMW_CATEGORY_NS) {
 							this.selectedCategoryTitle = title;
 							this.selectedCategoryID = id;
 						}
+					},
+					
+					showContent : function(commandID, envContainerID) {
+						this._showContent(commandID, 'instanceList');
+						 if(commandID == SMW_OB_COMMAND_INSTANCE_EDIT){
+							 this.annotatedCategories(this.selectedInstance,commandID);
+						 }	
 					},
 
 					doCommand : function(directCommandID) {
@@ -2870,6 +2924,8 @@ OBInstanceSubMenu.prototype = Object
 							alert('Unknown command!');
 						}
 					},
+					
+					
 
 					annotatedCategories : function(selectedInstance, commandID) {
 						var titleString = this.selectedTitle;
@@ -2884,8 +2940,7 @@ OBInstanceSubMenu.prototype = Object
 								this.categoriesOfInstance[i] = this.categoriesOfInstance[i]
 										.strip();
 							}
-							obInstanceMenuProvider.showContent(commandID,
-									'instanceList');
+							
 							Form.Element.setValue(
 									$('instanceListMenu2_input_ontologytools'),
 									request.responseText);

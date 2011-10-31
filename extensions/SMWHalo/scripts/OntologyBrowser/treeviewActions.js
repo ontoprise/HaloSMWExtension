@@ -31,12 +31,8 @@
  */
 var OB_LEFT_ARROW = 0;
 var OB_RIGHT_ARROW = 0;
-var editExpanded = false;
-var addExpanded = false;
 
 
-// Logging on close does not work, because window shuts down. What to do?
-// window.onbeforeunload = function() { smwhgLogger.log("", "OB","close"); };
 /**
  * 'Abstract' base class for OntologyBrowser trees
  * 
@@ -533,7 +529,7 @@ OBCategoryTreeActionListener.prototype = Object
 					navigateToEntity : function(event, node, categoryName,
 							editmode) {
 							
-						smwhgLogger.log(categoryName, "OB", "inspect_entity");
+						
 						GeneralBrowserTools.navigateToPage(gLanguage
 								.getMessage('CATEGORY_NS_WOC'), categoryName,
 								editmode);
@@ -552,11 +548,7 @@ OBCategoryTreeActionListener.prototype = Object
 							this.oldSelectedNode = GeneralBrowserTools
 									.toggleHighlighting(this.oldSelectedNode,
 											node);
-                            if(this.addCategoryOpen){
-                            	categoryActionListener.showSubMenu(2);	
-                            } else if(this.editCategoryOpen){
-					           categoryActionListener.showSubMenu(3);						   
-                            }
+                           
 						}
 					},
 					
@@ -592,29 +584,16 @@ OBCategoryTreeActionListener.prototype = Object
 						
 					},
 
-					
-
-					superCategories : function(selectedCategory){
-					  obCategoryMenuProvider.superCategories(selectedCategory);
-					},
-					
+										
 					showSubMenu : function(commandID) {
 						if (this.selectedCategory == null){
 							alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 							return;
 						}
-						if(commandID == 2){
-							 this.editCategoryOpen = false;
-							 this.addCategoryOpen = true;
-							 obCategoryMenuProvider.showContent(commandID,'categoryTree');
-						}
-						if(commandID == 3){
-							 this.editCategoryOpen = true;
-							 this.addCategoryOpen = false;
-							 categoryActionListener.superCategories(this.selectedCategory,'3');
-						}	
+						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
+						
                                            					    
-                                 	},
+                   	},
 
 					// ---- Selection methods. Called when the entity is
 					// selected ---------------------
@@ -681,7 +660,7 @@ OBCategoryTreeActionListener.prototype = Object
 								$("relattValues").hide();
 							}
 
-							smwhgLogger.log(categoryName, "OB", "clicked");
+							
 
 							// callback for instances of a category
 							function callbackOnCategorySelect(request) {
@@ -781,10 +760,7 @@ OBCategoryTreeActionListener.prototype = Object
 var OBInstanceActionListener = Class.create();
 OBInstanceActionListener.prototype = {
 	initialize : function() {
-                addInstanceForm = false;
-		editInstanceForm = false;
-		addInstanceOpen = false;
-		editInstanceOpen = false;
+		
 		this.selectedInstance = null;
 		this.oldSelectedInstance = null;
 		this.selectedInstanceURI = null;
@@ -792,7 +768,7 @@ OBInstanceActionListener.prototype = {
 	},
 
 	navigateToEntity : function(event, node, instanceName, editmode) {
-		smwhgLogger.log(instanceName, "OB", "inspect_entity");
+	
 		GeneralBrowserTools.navigateToPage(null, instanceName, editmode);
 
 	},
@@ -807,18 +783,12 @@ OBInstanceActionListener.prototype = {
 			this.selectedCategory = title;
 
 		}
-		
-		if(addInstanceForm == true && addInstanceOpen == true){
-		     obInstanceMenuProvider.showContent(10, 'instanceList');	
-                    }	
-		if(editInstanceForm == true && editInstanceOpen == true){
-                   instanceActionListener.annotatedCategories(this.selectedInstance,8);		
-                    }
+        
 	},
 	
 	cancel : function(){
-	  addInstanceOpen = false;
-	  editInstanceOpen = false;
+	 
+	  
 	},
 	
 	deleteInstance : function(event, node, id, instanceName ){
@@ -840,18 +810,7 @@ OBInstanceActionListener.prototype = {
 			}
 		}		
 		
-		 if(commandID == SMW_OB_COMMAND_INSTANCE_CREATE){
-                        addInstanceForm = true;
-			editInstanceForm = false;
-			addInstanceOpen = true;
-			obInstanceMenuProvider.showContent(commandID, 'instanceList');
-			}
-		 if(commandID != SMW_OB_COMMAND_INSTANCE_CREATE){
-			editInstanceForm = true;
-			addInstanceForm = false;
-			editInstanceOpen = true;
-			instanceActionListener.annotatedCategories(this.selectedInstance,commandID);
-			 }	
+		obInstanceMenuProvider.showContent(commandID, 'instanceList');
 	},
 	
 	
@@ -896,14 +855,14 @@ OBInstanceActionListener.prototype = {
 			var relattDIV = $("relattributes");
 			var categoryDIV = $('categoryTree');
 
-			selectionProvider.fireSelectionChanged(id, instanceNamespace + ":"
+			selectionProvider.fireSelectionChanged(id, instanceNamespace == '' ? instanceName : instanceNamespace + ":"
 					+ instanceName, SMW_INSTANCE_NS, node);
 			this.selectedInstanceURI = node.getAttribute("uri");
 			selectionProvider.fireSelectedTripleChanged(
 					this.selectedInstanceURI, "rdf:type",
 					categoryActionListener.selectedCategoryURI);
 
-			smwhgLogger.log(instanceName, "OB", "clicked");
+			
 
 			function callbackOnInstanceSelectToRight(request) {
 				OB_relatt_pendingIndicator.hide();
@@ -1108,15 +1067,13 @@ OBEditPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}	
-		if(addExpanded == true || editExpanded == true){
-		 obEditPropertiesMenuProvider.cancel();		
-		}
-		editExpanded = true;
+		
+		obSchemaPropertiesMenuProvider.cancel();		
 		obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);
 	},
 
 	navigateToEntity : function(event, node, attributeName, editmode) {
-		smwhgLogger.log(attributeName, "OB", "inspect_entity");
+		
 		GeneralBrowserTools.navigateToPage(gLanguage
 				.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
 	},
@@ -1127,7 +1084,7 @@ OBEditPropertyActionListener.prototype = {
 
 		selectionProvider.fireSelectionChanged(null, attributeName,
 				SMW_PROPERTY_NS, node);
-		smwhgLogger.log(attributeName, "OB", "clicked");
+		
 
 		function callbackOnPropertySelectForCategory(request) {
 			OB_tree_pendingIndicator.hide();
@@ -1317,7 +1274,7 @@ OBPropertyTreeActionListener.prototype = Object
 
 					navigateToEntity : function(event, node, propertyName,
 							editmode) {
-						smwhgLogger.log(propertyName, "OB", "inspect_entity");
+						
 						GeneralBrowserTools.navigateToPage(gLanguage
 								.getMessage('PROPERTY_NS_WOC'), propertyName,
 								editmode);
@@ -1370,13 +1327,7 @@ OBPropertyTreeActionListener.prototype = Object
 							return;
 						}
 						
-						if (commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT) {
-							obPropertyMenuProvider.showEditProperties(this.selectedProperty,
-									SMW_OB_COMMAND_SUBPROPERTY_EDIT);
-						} else {
-							obPropertyMenuProvider.showContent(commandID,
-									'propertyTree');
-						}
+						obPropertyMenuProvider.showContent(commandID,'propertyTree');
 					},
 					
 					
@@ -1412,7 +1363,7 @@ OBPropertyTreeActionListener.prototype = Object
 							selectionProvider.fireSelectionChanged(propertyID,
 									propertyName, SMW_PROPERTY_NS, node);
 
-							smwhgLogger.log(propertyName, "OB", "clicked");
+							
 
 							function callbackOnPropertySelect(request) {
 								OB_instance_pendingIndicator.hide();
@@ -1655,15 +1606,13 @@ OBSchemaPropertyActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}
-		if(editExpanded == true){
+		
 		obEditPropertiesMenuProvider.cancel();
-		}
-		addExpanded = true;
 		obSchemaPropertiesMenuProvider.showContent(commandID, 'relattributes');
 	},
 
 	navigateToEntity : function(event, node, attributeName, editmode) {
-		smwhgLogger.log(attributeName, "OB", "inspect_entity");
+		
 		GeneralBrowserTools.navigateToPage(gLanguage
 				.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
 	},
@@ -1674,7 +1623,7 @@ OBSchemaPropertyActionListener.prototype = {
 
 		selectionProvider.fireSelectionChanged(null, attributeName,
 				SMW_PROPERTY_NS, node);
-		smwhgLogger.log(attributeName, "OB", "clicked");
+		
 
 		function callbackOnPropertySelectForCategory(request) {
 			OB_tree_pendingIndicator.hide();
@@ -2394,7 +2343,7 @@ OBGlobalActionListener.prototype = {
 	 */
 	toogleCatInstArrow : function(event) {
 		var img = Event.element(event);
-		smwhgLogger.log("", "OB", "flipflow_left");
+		
 		if (OB_LEFT_ARROW == 0) {
 			OB_LEFT_ARROW = 1;
 			img
@@ -2417,7 +2366,7 @@ OBGlobalActionListener.prototype = {
 	 */
 	toogleInstPropArrow : function(event) {
 		var img = Event.element(event);
-		smwhgLogger.log("", "OB", "flipflow_right");
+		
 		if (OB_RIGHT_ARROW == 0) {
 			OB_RIGHT_ARROW = 1;
 			img

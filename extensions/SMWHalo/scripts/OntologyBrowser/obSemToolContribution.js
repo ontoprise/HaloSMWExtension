@@ -125,7 +125,7 @@ OBSemanticToolbarContributor.prototype = {
 			var queryString = 'ns='+localURL[0]+'&title='+encodeURI(localURL[1]);
 		}
 
-		smwhgLogger.log(selectedText, "STB-OB", "clicked");
+		
 		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
 		if (newWindow == true)
 			window.open(wgServer + ontoBrowserSpecialPage, "");
