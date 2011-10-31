@@ -544,16 +544,15 @@ class SMWQueryInterface extends SpecialPage {
             stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false)
             );
     return '<div id="qimenubar">' .
-            //'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-            //'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-            //'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
             (($isIE) ? '<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>' : '') .
             $buttons .
             '<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>' .
             '</div>' .
-            '<div id="fullpreviewbox" style="display:none">' .
-            '<div id="fullpreview"></div>' .
-            '<span class="qibutton" onclick="$$(\'#askQI #fullpreviewbox\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle(); qihelper.reloadOfcPreview()"><img src="' . $imagepath . 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>' .
+            '<div id="fullpreviewbox" style="display:none"><table id="fullpreviewboxTable">' .
+            '<tr><td id="fullpreview"></td></tr>' .
+            '<tr><td class="qibutton" onclick="$$(\'#askQI #fullpreviewbox\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle(); qihelper.reloadOfcPreview()"><img src="' . $imagepath . 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</td></tr>' .
+            '</table>' .
+            '</div>' .
             '</div>' .
             '<div id="resetdialogue" class="topDialogue" style="display:none">' .
             'Do you really want to reset your query?<br/>' .

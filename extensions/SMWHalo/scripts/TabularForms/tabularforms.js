@@ -85,7 +85,7 @@ var TF = Class.create({
 		//xyz
 		var instancesWithSaveErrors = jQuery(container).get(0).instancesWithSaveErrors;  
 		if(instancesWithSaveErrors != undefined){
-			jQuery('tr td:firest-child a', container).each( function(){
+			jQuery('tr td:first-child a', container).each( function(){
 				for(var k=0; k < instancesWithSaveErrors.length; k++){
 					if(jQuery(this).html() == instancesWithSaveErrors[k]){
 						jQuery(this).parent().parent().addClass('tabf_table_row_saved_error');

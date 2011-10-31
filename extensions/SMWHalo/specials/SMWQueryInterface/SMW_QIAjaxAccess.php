@@ -194,10 +194,13 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     wfLoadExtensionMessages('SemanticMediaWiki');
 
     $format = $p_array[0];
-    if (array_key_exists($format, $smwgResultFormats))
-      $formatclass = $smwgResultFormats[$format];
-    else
-      $formatclass = "SMWListResultPrinter";
+    //bugfix #15766: use the Validator extension to get available result printer parameters
+    $printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::SPECIAL_PAGE );
+		$params = method_exists( $printer, 'getValidatorParameters' ) ? $printer->getValidatorParameters() : array();
+//    if (array_key_exists($format, $smwgResultFormats))
+//      $formatclass = $smwgResultFormats[$format];
+//    else
+//      $formatclass = "SMWListResultPrinter";
 
     // fix for missing parameter order
     $order_missing = true;
@@ -205,12 +208,11 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     $offset_missing = true;
     $intro_missing = true;
     $outro_missing = true;
-    $qp = new $formatclass($format, false);
-    $params = $qp->getParameters();
+//    $qp = new $formatclass($format, false);
+//    $params = $qp->getParameters();
     // repair some misplaced parameters
-//       for ($i =0; $i < count($params); $i++) {
-    foreach ($params as $name => $parameter) {
-      switch ($name) {
+     for ($i =0; $i < count($params); $i++) {
+      switch ($params[$i]->getName()) {
         case "order" :
           $order_missing = false;
           break;
@@ -222,7 +224,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
           break;
         case "template" :
           if ($format != "template")
-            unset($name);
+            unset($params[$i]);
           break;
         case "intro" :
           if (substr($format, 0, 4) != "ofc-")
@@ -234,7 +236,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
           break;
         case "headers" :
           if ($format != "table" && $format != "broadtable")
-            unset($name);
+            unset($params[$i]);
           break;
       }
     }
@@ -245,10 +247,12 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 //                'description' => wfMsg('smw_qi_tt_order'),
 //                'values' => array('ascending', 'descending'),
 //            );
-      $params['order'] = new Parameter('order', Parameter::TYPE_STRING);
-      $params['order']->setMessage('smw_qi_tt_order');
-      $params['order']->addCriteria(new CriterionInArray('ascending', 'descending'));
-      $params['order']->setDescription(wfMsg('smw_qi_tt_order'));
+      $orderParam = new Parameter('order', Parameter::TYPE_STRING);
+      $orderParam->setMessage('smw_qi_tt_order');
+      $orderParam->addCriteria(new CriterionInArray('ascending', 'descending', 'none'));
+      $orderParam->setDefault('none');
+      $orderParam->setDescription(wfMsg('smw_qi_tt_order'));
+      $params[] = $orderParam;
     }
     if ($limit_missing) {
 //            $params[]= array(
@@ -256,9 +260,10 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 //                'type' => 'int',
 //                'description' => wfMsg('smw_qi_tt_limit')
 //            );
-      $params['limit'] = new Parameter('limit', Parameter::TYPE_INTEGER);
-      $params['limit']->setMessage('smw_qi_tt_limit');
-      $params['limit']->setDescription(wfMsg('smw_qi_tt_limit'));
+      $limitParam = new Parameter('limit', Parameter::TYPE_INTEGER);
+      $limitParam->setMessage('smw_qi_tt_limit');
+      $limitParam->setDescription(wfMsg('smw_qi_tt_limit'));
+      $params[] = $limitParam;
     }
     if ($offset_missing) {
 //            $params[]= array(
@@ -266,9 +271,10 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 //                'type' => 'int',
 //                'description' => wfMsg('smw_qi_tt_offset')
 //            );
-      $params['offset'] = new Parameter('offset', Parameter::TYPE_INTEGER);
-      $params['offset']->setMessage('smw_qi_tt_offset');
-      $params['offset']->setDescription(wfMsg('smw_qi_tt_offset'));
+      $offsetParam = new Parameter('offset', Parameter::TYPE_INTEGER);
+      $offsetParam->setMessage('smw_qi_tt_offset');
+      $offsetParam->setDescription(wfMsg('smw_qi_tt_offset'));
+      $params[] = $offsetParam;
     }
     if ($intro_missing) {
 //            $params[]= array(
@@ -276,9 +282,10 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 //                'type' => 'string',
 //                'description' => wfMsg('smw_qi_tt_intro'),
 //            );
-      $params['intro'] = new Parameter('intro', Parameter::TYPE_STRING);
-      $params['intro']->setMessage('smw_qi_tt_intro');
-      $params['intro']->setDescription(wfMsg('smw_qi_tt_intro'));
+      $introParam = new Parameter('intro', Parameter::TYPE_STRING);
+      $introParam->setMessage('smw_qi_tt_intro');
+      $introParam->setDescription(wfMsg('smw_qi_tt_intro'));
+      $params[] = $introParam;
     }
     if ($outro_missing) {
 //            $params[]= array(
@@ -286,13 +293,15 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 //                'type' => 'string',
 //                'description' => wfMsg('smw_qi_tt_outro'),
 //            );
-      $params['outro'] = new Parameter('outro', Parameter::TYPE_STRING);
-      $params['outro']->setMessage('smw_qi_tt_outro');
-      $params['outro']->setDescription(wfMsg('smw_qi_tt_outro'));
+      $outroParam = new Parameter('outro', Parameter::TYPE_STRING);
+      $outroParam->setMessage('smw_qi_tt_outro');
+      $outroParam->setDescription(wfMsg('smw_qi_tt_outro'));
+      $params[] = $outroParam;
     }
     $jsonEnc = new Services_JSON();
 
     return $jsonEnc->encode(toJsonCompatibleArray($params));
+//    return $jsonEnc->encode($params);
   } else if ($method == "searchQueries") {
     $p_array = func_get_args();
     if (count($p_array) != 3)
@@ -396,9 +405,10 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
  */
 function toJsonCompatibleArray($params) {
   $result = array();
-  $values = null;
+  
   foreach ($params as $name => $paramObject) {
-    if (get_class($paramObject) == 'Parameter') {
+    $values = null;
+    if (is_object($paramObject) && get_class($paramObject) == 'Parameter') {
       foreach ($paramObject->getCriteria() as $key => $value){
         if(gettype($value) == 'object' && get_class($value) == 'CriterionInArray' && is_array($value->getAllowedValues())){
           $values = $value->getAllowedValues();
@@ -408,11 +418,11 @@ function toJsonCompatibleArray($params) {
       $paramArray['name'] = $paramObject->getName();
       $paramArray['type'] = $paramObject->getType();
 
-      if($values)
+      if(isset($values))
         $paramArray['values'] = $values;
-      if($paramObject->getDefault())
+      if(!is_null($paramObject->getDefault()))
         $paramArray['defaultValue'] = $paramObject->getDefault();
-      if($paramObject->getDescription())
+      if($paramObject->getDescription() && is_string($paramObject->getDescription()))
         $paramArray['description'] = $paramObject->getDescription();
       
       $result[] = $paramArray;

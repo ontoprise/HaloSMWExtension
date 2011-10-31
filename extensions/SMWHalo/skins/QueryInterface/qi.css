@@ -44,6 +44,8 @@
   cursor: pointer;
   padding-right: 5px;
   padding-left: 5px;
+  height: 30px;
+  vertical-align: bottom;
 }
 
 .qibuttonEmp {
@@ -358,19 +360,26 @@ a.plusminus{
 }
 
 #fullpreviewbox{
-  position:fixed;
-  z-index:51;
+  position: absolute;
+  z-index: 51;
   top:10%;
   left:10%;
   background:#FFF;
   border: 2px solid #AAAAAA;
-  padding:10px;
 }
 
 #fullpreview{
   padding:5px;
-  max-height:200px;
-  overflow:auto;
+  overflow: auto;
+  width: auto;
+  height: auto;
+  vertical-align: top;
+}
+
+#fullpreviewboxTable{
+  width: 100%;
+  height: 100%;
+  padding: 5px;
 }
 
 .subquerycell{

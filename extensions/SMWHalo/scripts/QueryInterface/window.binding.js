@@ -1,6 +1,6 @@
 var isInit = false;
 
-//document ready some how is not fired in Special:QueryInterface
+//document ready somehow is not fired in Special:QueryInterface
 isInit || init();
 
 jQuery(document).ready(function(){
@@ -68,8 +68,9 @@ function initToolTips(){
         toolTip = toolTip[1];
       }
     }
-    qtipConfig.content = toolTip;
-    element.qtip(qtipConfig);
+//    qtipConfig.content = toolTip;
+//    element.qtip(qtipConfig);
+    element.attr('title', toolTip);
     element.removeAttr('onmouseover');
   });
 
@@ -92,14 +93,16 @@ function initToolTips(){
 //      jQuery(this).qtip(qtipConfig);
 //    });
 //  });
+
  
 }
 
 function init(){
+  isInit = true;
+  
   initialize_qi();
   window.qihelper = qihelper;
-  initToolTips();
-  isInit = true;
+  initToolTips();  
 
   $ = window.$P;
 }
