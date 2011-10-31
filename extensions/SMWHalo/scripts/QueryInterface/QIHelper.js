@@ -557,7 +557,7 @@ QIHelper.prototype = {
       this.openPreview(request);
     }
 
-    jQuery('#askQI #fullpreviewbox').resizable();
+    jQuery('#askQI #fullpreviewbox').resizable({ alsoResize: '#askQI #fullpreview', minHeight: 75, minWidth: 150 });
   },
 
   /**
@@ -685,10 +685,8 @@ QIHelper.prototype = {
         
     preview.innerHTML = resultHTML;
     $$('#askQI #fullpreviewbox')[0].width = ''; // clear fixed width if we had a timeline
-       
-    //this function is called in AddOnLoadHook in SMW_tooltip.js
-    //        smw_tooltipInit();
 
+      
     // post processing of javascript for resultprinters:
     switch ($$('#askQI #layout_format')[0].value) {
       case "timeline":
@@ -696,6 +694,7 @@ QIHelper.prototype = {
         this.parseWikilinks2Html();
         smw_timeline_init();
         $$('#askQI #fullpreviewbox')[0].width = '500px';
+
         break;
       case "exhibit":
         if (typeof createExhibit == 'function') createExhibit();
