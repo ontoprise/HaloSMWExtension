@@ -16,6 +16,7 @@
 
 window.qihelper = null;
 var QIHelperSavedQuery;
+var qiPreviewDialog;
 
 var QIHelper = Class.create();
 QIHelper.prototype = {
@@ -510,6 +511,22 @@ QIHelper.prototype = {
       treeAnchor.innerHTML = treeXML;
   },
 
+  getPreviewDialog: function(){
+    //locate priview dialog
+
+    //if not found then create a new div at #askQI
+  },
+
+  getFullPreviewElement: function(){
+    var element = jQuery('#askQI #fullpreview');
+    if(!jQuery(element).length){
+      jQuery('#askQI').append('<div id="fullpreview"/>');
+      element = jQuery('#askQI').children('#fullpreview');
+    }
+
+    return element;
+  },
+
   /**
 	 * Gets all display parameters and the full ask syntax to perform an ajax
 	 * call which will create the preview
@@ -521,14 +538,29 @@ QIHelper.prototype = {
       smwhgLogger.log("Preview Query", "QI", "query_preview");
     }
     /* ENDLOG */
-    $$('#askQI #shade')[0].toggle();
+//    $$('#askQI #shade')[0].toggle();
     try {
       this.pendingElement.remove();
     } catch(e) {};
-    this.pendingElement = new OBPendingIndicator($$('#askQI #shade')[0]);
-    this.pendingElement.show();
-    $$('#askQI #fullpreviewbox')[0].toggle();
-    $$('#askQI #fullpreview')[0].innerHTML = '<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />';
+//    this.pendingElement = new OBPendingIndicator($$('#askQI #shade')[0]);
+//    this.pendingElement.show();
+//    $$('#askQI #fullpreview')[0].toggle();
+    var qiFullPreviewElement = this.getFullPreviewElement();
+    qiFullPreviewElement.html('<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />');
+    qiPreviewDialog = qiFullPreviewElement.dialog(
+    {
+      title: 'Query result',
+      height: 300,
+      width: 400,
+      closeOnEscape: true,
+      modal: true,
+      buttons: {
+        "Close": function() {
+          jQuery(this).dialog("close");
+        }
+      }
+    });
+    
     if (!this.queries[0].isEmpty()) { // only do this if the query is not
       // empty
       var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
@@ -557,8 +589,9 @@ QIHelper.prototype = {
       this.openPreview(request);
     }
 
-    jQuery('#askQI #fullpreviewbox').resizable({ alsoResize: '#askQI #fullpreview', minHeight: 75, minWidth: 150 });
+    
   },
+
 
   /**
 	 * Gets all display parameters and the full ask syntax to perform an ajax
@@ -647,7 +680,7 @@ QIHelper.prototype = {
         $$('#askQI #previewcontent')[0].innerHTML = '';
         break;
     }
-    this.pastePreview(request, $$('#askQI #fullpreview')[0]);
+    this.pastePreview(request);
   },
 
   /**
@@ -661,7 +694,8 @@ QIHelper.prototype = {
   },
 	
   pastePreview: function(request, preview) {
-    this.pendingElement.hide();
+    if(this.pendingElement)
+      this.pendingElement.hide();
         
     // pre-processing
     var resultHTML;
@@ -682,9 +716,15 @@ QIHelper.prototype = {
         resultHTML = request.responseText;
         resultCode = null;
     }
-        
-    preview.innerHTML = resultHTML;
-    $$('#askQI #fullpreviewbox')[0].width = ''; // clear fixed width if we had a timeline
+    if(!preview){
+      if(qiPreviewDialog && qiPreviewDialog.dialog('isOpen')){
+        qiPreviewDialog.html(resultHTML);
+      }
+    }
+    else{
+      preview.innerHTML = resultHTML;
+    }
+//    $$('#askQI #fullpreviewbox')[0].width = ''; // clear fixed width if we had a timeline
 
       
     // post processing of javascript for resultprinters:
@@ -693,7 +733,7 @@ QIHelper.prototype = {
       case "eventline":
         this.parseWikilinks2Html();
         smw_timeline_init();
-        $$('#askQI #fullpreviewbox')[0].width = '500px';
+//        $$('#askQI #fullpreviewbox')[0].width = '500px';
 
         break;
       case "exhibit":

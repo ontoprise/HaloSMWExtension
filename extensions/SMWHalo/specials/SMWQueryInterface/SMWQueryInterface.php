@@ -548,10 +548,11 @@ class SMWQueryInterface extends SpecialPage {
             $buttons .
             '<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>' .
             '</div>' .
-            '<div id="fullpreviewbox" style="display:none"><table id="fullpreviewboxTable">' .
-            '<tr><td><div id="fullpreview"/></td></tr>' .
-            '<tr><td class="qibutton" onclick="$$(\'#askQI #fullpreviewbox\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle(); qihelper.reloadOfcPreview()"><img src="' . $imagepath . 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</td></tr>' .
-            '</table>' .
+            '<div id="fullpreview" style="display:none">' .
+//            '<table id="fullpreviewboxTable">' .
+//            '<tr><td><div id="fullpreview"/></td></tr>' .
+//            '<tr><td class="qibutton" onclick="$$(\'#askQI #fullpreviewbox\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle(); qihelper.reloadOfcPreview()"><img src="' . $imagepath . 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</td></tr>' .
+//            '</table>' .
             '</div>' .
             '</div>' .
             '<div id="resetdialogue" class="topDialogue" style="display:none">' .
