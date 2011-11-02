@@ -2353,16 +2353,21 @@ QIHelper.prototype = {
         if (cells[i].style.backgroundColor) {
           cells[i].style.backgroundColor = (Prototype.Browser.IE) ? '' : null;
           for (j = 0; j < cells[i].childNodes.length; j++) {
-            if (cells[i].childNodes[j].style)
+            if (cells[i].childNodes[j].style){
               cells[i].childNodes[j].style.color= (Prototype.Browser.IE ) ? '': null;
+              cells[i].childNodes[j].style.fontWeight = 'normal';
+            }
           }
         }
       }
       // now mark the clicked cell as selected
-      el.parentNode.style.backgroundColor='#1122FF';
+//      el.parentNode.style.backgroundColor='#1122FF';
+      el.parentNode.style.backgroundColor='#53bff5';
       for (i = 0; i < el.parentNode.childNodes.length; i++) {
-        if (el.parentNode.childNodes[i].style)
+        if (el.parentNode.childNodes[i].style){
           el.parentNode.childNodes[i].style.color='#FFFFFF';
+          el.parentNode.childNodes[i].style.fontWeight = 'bold';
+        }
       }
       var vals = label.split('-');
       this.setActiveQuery(vals[1]);
