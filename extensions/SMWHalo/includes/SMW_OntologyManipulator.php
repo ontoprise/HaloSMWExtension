@@ -632,9 +632,9 @@ function smwf_om_getSuperCategoryTitles($categoryTitle){
  * @param string $oldRange The old range category
  * @param string domainCategory The old (and new) domain category (without category prefix).
  */
-function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType, $oldCard, $oldRange, $domainCategory, $ID) {
+function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldRange, $domainCategory) {
 
-	//FIXME: (alami) $oldCard, $oldType are redundant. please remove.
+	
 
 	$newType = strip_tags($newType);
 	if ($newType == '') return "false";
@@ -684,8 +684,8 @@ function smwf_om_EditProperty($pagename, $newType, $newCard, $newRange, $oldType
 	$propertyLabels = $smwgContLang->getPropertyLabels();
 
 	$search = '/(\[\[(\s*)' . $propertyLabels['_TYPE'] . '(\s*)::\s*([^]|]+)\s*(\|)?\s*\]\])/i';
-	$newTypeTitle = Title::newFromText($newType, SMW_NS_TYPE);
-	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newTypeTitle->getPrefixedText().']]';
+	
+	$replace = '[[' . $propertyLabels['_TYPE'] . '::'.$newType.']]';
 
 	if (preg_match($search, $text) === 0) {
 		// replacement does not yet exist, so add it simply
@@ -726,10 +726,20 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	if ($newpagename == '') return "false";
 
 	if (smwf_om_userCan($pagename, 'move') === "false") {
-		return "false,denied,$pagename";
+		$response = new AjaxResponse("false,denied,$pagename");
+        $response->setResponseCode(403);
+		return $response;
 	}
 
 	$titleObj = Title::newFromText($pagename);
+
+	if (!MWNamespace::isMovable($titleObj->getNamespace())) {
+		global $wgContLang;
+		$namespace = $wgContLang->getNsText( $titleObj->getNamespace() );
+		$response = new AjaxResponse("Namespace $namespace is not renamable.");
+		$response->setResponseCode(400);
+		return $response;
+	}
 
 	$newTitleObj = Title::newFromText($newpagename);
 	$success = false;
@@ -743,7 +753,10 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
 	}
-	return $success === true ? "true" : "false";
+	$response = new AjaxResponse($success === true ? "true" : "false");
+	$response->setResponseCode(200);
+	return $response;
+
 }
 
 
@@ -1020,19 +1033,19 @@ function smwf_om_getSuperCategories($articleTitle){
 }
 
 function smwf_om_getSuperProperties($articleTitle){
-    $directSuperPropertyTitles = smwfGetSemanticStore()->getDirectSuperProperties(Title::newFromText($articleTitle, SMW_NS_PROPERTY));
+	$directSuperPropertyTitles = smwfGetSemanticStore()->getDirectSuperProperties(Title::newFromText($articleTitle, SMW_NS_PROPERTY));
 
-    if($directSuperPropertyTitles == null){
-        $superProperties ='';
-    }else{
-        $superProperties = $directSuperPropertyTitles[0]->getText();
-        if(sizeof($directSuperPropertyTitles) > 1){
-            for($i = 1, $n = sizeof($directSuperPropertyTitles); $i < $n; $i++) {
-                $superProperties .= ','.$directSuperPropertyTitles[$i]->getText();
-            }
-        }
-    }
-    return $superProperties;
+	if($directSuperPropertyTitles == null){
+		$superProperties ='';
+	}else{
+		$superProperties = $directSuperPropertyTitles[0]->getText();
+		if(sizeof($directSuperPropertyTitles) > 1){
+			for($i = 1, $n = sizeof($directSuperPropertyTitles); $i < $n; $i++) {
+				$superProperties .= ','.$directSuperPropertyTitles[$i]->getText();
+			}
+		}
+	}
+	return $superProperties;
 }
 
 
@@ -1108,36 +1121,36 @@ function smwf_om_annotateCategories($articleTitle, $newAnnotatedCategories){
  */
 function smwf_om_annotateSubProperties($articleTitle, $newAnnotatedProperties){
 
-    $titleObj = Title::newFromText($articleTitle);
-    $article = new Article($titleObj);
-    $text = $article->getContent();
+	$titleObj = Title::newFromText($articleTitle);
+	$article = new Article($titleObj);
+	$text = $article->getContent();
 
-    global $smwgContLang;
-    $smwPropertyLabels = $smwgContLang->getPropertyLabels();
-    $subPropertyTitle = $smwPropertyLabels['_SUBP'];
-    $search = '/(\[\[\s*' . $subPropertyTitle . '\s*::\s*([^|]+)\s*(\|([^]])*)?\s*\]\])/i';
-    $text = preg_replace($search, "", $text);
+	global $smwgContLang;
+	$smwPropertyLabels = $smwgContLang->getPropertyLabels();
+	$subPropertyTitle = $smwPropertyLabels['_SUBP'];
+	$search = '/(\[\[\s*' . $subPropertyTitle . '\s*::\s*([^|]+)\s*(\|([^]])*)?\s*\]\])/i';
+	$text = preg_replace($search, "", $text);
 
-    $annotatedProperties = explode(",",$newAnnotatedProperties);
+	$annotatedProperties = explode(",",$newAnnotatedProperties);
 
-    foreach($annotatedProperties as $p) {
-    	$t = Title::newFromText($p, SMW_NS_PROPERTY);
-        $text .= "\n[[$subPropertyTitle::".$t->getPrefixedText()."]]";
-    }
+	foreach($annotatedProperties as $p) {
+		$t = Title::newFromText($p, SMW_NS_PROPERTY);
+		$text .= "\n[[$subPropertyTitle::".$t->getPrefixedText()."]]";
+	}
 
-    if ($article->exists()) {
-        $reason = '';
-        $status = $article->doEdit($text, $reason);
-        if ($status->isOK()) {
-            $response = new AjaxResponse("true");
-            $response->setResponseCode(200);
-            return $response;
-        }
-    } else {
-        $response = new AjaxResponse("Title '$articleTitle' does not exist.");
-        $response->setResponseCode(400);
-        return $response;
-    }
+	if ($article->exists()) {
+		$reason = '';
+		$status = $article->doEdit($text, $reason);
+		if ($status->isOK()) {
+			$response = new AjaxResponse("true");
+			$response->setResponseCode(200);
+			return $response;
+		}
+	} else {
+		$response = new AjaxResponse("Title '$articleTitle' does not exist.");
+		$response->setResponseCode(400);
+		return $response;
+	}
 
 }
 

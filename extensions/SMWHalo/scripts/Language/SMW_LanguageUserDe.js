@@ -228,6 +228,8 @@ window.wgUserLanguageStrings = {
 	'SUBPROPERTYOF'           : 'Subproperty von:',
 	'ADDPROPERTY' 			  : 'Property hinzufügen',
 	
+	'ERROR_RENAMING_ARTICLE'  : 'Fehler beim Umbennenen',
+	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Wert',

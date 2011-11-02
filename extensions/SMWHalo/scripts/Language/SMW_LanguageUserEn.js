@@ -237,6 +237,8 @@ window.wgUserLanguageStrings = {
 	'SUBPROPERTYOF'           : 'Subproperty of:',
 	'ADDPROPERTY' 			  : 'Add',	
 	
+	'ERROR_RENAMING_ARTICLE'  : 'Error at renaming',
+	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Value',

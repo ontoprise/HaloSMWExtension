@@ -1062,14 +1062,14 @@ OBEditPropertyActionListener.prototype = {
 		obEditPropertiesMenuProvider.showContent(commandID, 'relattributes');
 	},
 	
-	showSubMenuProperty : function(commandID,node,propertyname,minCard,type) {
+	showSubMenuProperty : function(commandID,node,propertyname,minCard,type, rangeCategory) {
 		if (this.selectedCategory == null) {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
 		}	
 		
 		obSchemaPropertiesMenuProvider.cancel();		
-		obEditPropertiesMenuProvider.showContentProperty(commandID, 'relattributes',propertyname,minCard,type);
+		obEditPropertiesMenuProvider.showContent(commandID, 'relattributes',propertyname,minCard,type, rangeCategory);
 	},
 
 	navigateToEntity : function(event, node, attributeName, editmode) {

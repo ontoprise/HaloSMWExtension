@@ -668,15 +668,20 @@
 						select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
-				</a><span style="color: #888"> |</span>
-                                <a class="attribute" title="Edit {$title}">
+				</a><xsl:if test="not(@noedit)">
+				    <span style="color: #888"> |</span>
+                    <a class="attribute" title="Edit {$title}">
 					<xsl:attribute name="onclick">schemaEditPropertyListener.showSubMenuProperty(1, this,'<xsl:call-template
 						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
 						name="from" select="$var-simple-quote" /><xsl:with-param
 						name="to" select="$var-slash-quote" /></xsl:call-template>','<xsl:value-of select="@minCard" />','<xsl:value-of
-								select="child::rangeType[1]" />')</xsl:attribute>				
+								select="child::rangeType[1]" />','<xsl:call-template
+                        name="replace-string"><xsl:with-param name="text" select="child::rangeType[1]/@category" /><xsl:with-param
+                        name="from" select="$var-simple-quote" /><xsl:with-param
+                        name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>				
 					{{SMW_OB_EDIT}}
 				</a>
+				</xsl:if>
 				</span>
 			</td>
 			<td>

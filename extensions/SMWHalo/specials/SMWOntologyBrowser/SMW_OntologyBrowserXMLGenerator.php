@@ -330,8 +330,10 @@ class SMWOntologyBrowserXMLGenerator {
 		$ts = TSNamespaces::getInstance();
 
 		list($ns, $fragment) = explode("#", $type);
+		$noedit = "";
 		if ($fragment == '_rec') {
-			// n-ary
+			// records can not be edited
+			$noedit = "noedit=\"true\"";
 			$subProperties = SMWRecordValue::findPropertyDataItems(SMWDIProperty::newFromUserLabel($title->getText()));
 
 			foreach($subProperties as $subProperty) {
@@ -345,7 +347,7 @@ class SMWOntologyBrowserXMLGenerator {
 
 			$typeList = SMWTypesValue::newFromTypeId($fragment);
 			$propertyName = $typeList->getLongWikiText();
-			$content .= "<rangeType>".$propertyName."</rangeType>";
+			$content .= "<rangeType category=\"".str_replace('"', "&quot;", $range)."\">".$propertyName."</rangeType>";
 
 		}
 
@@ -361,7 +363,7 @@ class SMWOntologyBrowserXMLGenerator {
 		$numberOfUsageAtt = 'num="'.$numberofUsage.'"';
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
 		$uri_att = !is_null($propertySchemaElement->getURI()) ? 'uri="'.htmlspecialchars($propertySchemaElement->getURI()).'"': "";
-		return "<property $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
+		return "<property $noedit $uri_att title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_".$id.$count."\" " .
 					"$minCardText $maxCardText $isSymetricalText $isTransitiveText $numberOfUsageAtt $inherited>".
 		$content.$gi_issues.
 				"</property>";
