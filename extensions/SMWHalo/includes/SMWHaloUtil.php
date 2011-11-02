@@ -28,8 +28,9 @@
 class SMWHaloUtil{
 
   public static function typeToReadableString($type){
-    //TODO 
-    return $type;
+	    global $smwgContLang;
+	    $datatypeLabels = $smwgContLang->getDatatypeLabels();
+	    return array_key_exists($type, $datatypeLabels) ? $datatypeLabels[$type] : NULL;
   }
 
 }

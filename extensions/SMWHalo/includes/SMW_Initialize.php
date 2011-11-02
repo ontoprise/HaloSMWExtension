@@ -146,6 +146,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
+	$wgAutoloadClasses['SMWHaloUtil'] = $smwgHaloIP . '/includes/SMWHaloUtil.php';
 
 
 	//patch Special:Browse in order to hide special Query Management Property

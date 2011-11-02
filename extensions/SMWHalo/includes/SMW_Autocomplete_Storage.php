@@ -832,19 +832,25 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	 * @return array(types, range categories)
 	 */
 	protected function getPropertyData(Title $property) {
+		
+		// get types
 		smwfGetStore()->setLocalRequest(true);
-		$ranges = array();
 		$propDi = SMWDIProperty::newFromUserLabel($property->getText());
 		$typeString = $propDi->findPropertyTypeId();
 		if ($typeString == '_rec') {
 			$fieldsDi = smwfGetStore()->getPropertyValues($propDi->getDiWikiPage(), SMWDIProperty::newFromUserLabel('_LIST'), NULL);
 			$first = reset($fieldsDi);
 			$typeString = $first->getString();
+			$readibleType = str_replace("_", " ", $typeString);
+		} else {
+			$readibleType = SMWHaloUtil::typeToReadableString($typeString);
+			$readibleType = is_null($readibleType) ? "" : $readibleType;
 		}
-
-
+        
+		// get ranges
 		global $smwgHaloContLang;
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+		$ranges = array();
 		$rangeString = NULL;
 		if ($typeString == '_wpg') {
 			$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
@@ -856,7 +862,6 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 				$range = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($ssp[SMW_SSP_HAS_RANGE]));
 				$rangeDi = reset($range);
 
-
 				if (!is_null($rangeDi) && $rangeDi !== false) {
 					$ranges[] = $rangeDi->getTitle()->getText();
 				}
@@ -866,7 +871,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$rangeString = implode(',', array_unique($ranges));
 		}
 		smwfGetStore()->setLocalRequest(false);
-		return array($typeString, $rangeString);
+
+		return array($readibleType, $rangeString);
 	}
 }
 
