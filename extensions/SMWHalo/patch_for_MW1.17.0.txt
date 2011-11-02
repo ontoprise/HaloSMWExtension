@@ -1,6 +1,6 @@
 Index: includes/AjaxDispatcher.php
 ===================================================================
---- includes/AjaxDispatcher.php	(revision 11795)
+--- includes/AjaxDispatcher.php	(revision 12416)
 +++ includes/AjaxDispatcher.php	(working copy)
 @@ -112,6 +112,12 @@
  				} else {
@@ -15,9 +15,54 @@ Index: includes/AjaxDispatcher.php
  					}
  
  					$result->sendHeaders();
+Index: includes/Article.php
+===================================================================
+--- includes/Article.php	(revision 11795)
++++ includes/Article.php	(working copy)
+@@ -4410,8 +4410,15 @@
+ 		}
+ 
+ 		$time = - wfTime();
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
++		$parserOptions->setParsingContext("Main article");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$this->mParserOutput = $wgParser->parse( $text, $this->mTitle,
+ 			$parserOptions, true, true, $this->getRevIdFetched() );
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++		$parserOptions->setParsingContext("");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$time += wfTime();
+ 
+ 		# Timing hack
+Index: includes/Namespace.php
+===================================================================
+--- includes/Namespace.php	(revision 12620)
++++ includes/Namespace.php	(working copy)
+@@ -61,7 +61,19 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/AdditionalNamespaceCheck */
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $index, $rMresult );
++			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
++		} else {
++			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 	}
+ 
+ 	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php	(revision 11800)
+--- includes/parser/ParserOptions.php	(revision 11795)
 +++ includes/parser/ParserOptions.php	(working copy)
 @@ -34,6 +34,10 @@
  	var $mTemplateCallback;          # Callback for template fetching
@@ -57,24 +102,3 @@ Index: includes/parser/ParserOptions.php
  	/**
  	 * Extra key that should be present in the parser cache key.
  	 */
-Index: includes/Article.php
-===================================================================
---- includes/Article.php	(revision 11800)
-+++ includes/Article.php	(working copy)
-@@ -4410,8 +4410,15 @@
- 		}
- 
- 		$time = - wfTime();
-+		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Parsing_context*/
-+		$parserOptions->setParsingContext("Main article");
-+		/*op-patch|TS|2009-06-19|end*/
- 		$this->mParserOutput = $wgParser->parse( $text, $this->mTitle,
- 			$parserOptions, true, true, $this->getRevIdFetched() );
-+		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+		$parserOptions->setParsingContext("");
-+		/*op-patch|TS|2009-06-19|end*/
- 		$time += wfTime();
- 
- 		# Timing hack
- 	 
