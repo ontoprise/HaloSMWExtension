@@ -351,21 +351,28 @@ GeneralXMLTools.getNodeByTitle = function (node, title) {
 		// distinguish between XML and HTML content (necessary in FF3)
 		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
 		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
-		  nodeWithID = xmlDOM.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		  nodesWithTitle = xmlDOM.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
-	      nodeWithID = document.evaluate("//*[@title=\""+title+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+			nodesWithTitle = document.evaluate("//*[@title=\""+title+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
 		}
 		var result = [];
-		var next = nodeWithID.iterateNext();
+		var next = nodesWithTitle.iterateNext();
 		while(next) {
 			result.push(next);
-			next = nodeWithID.iterateNext();
+			next = nodesWithTitle.iterateNext();
 		}
-		return result; // there *must* be only one
-	} else if (/*OB_bd.isIE*/false) {
+		return result; 
+	} else if (OB_bd.isIE) {
 		// IE supports XPath in a proprietary way
-		//FIXME: must return multiple results
-		return node.selectSingleNode("//*[@title=\""+id+"\"]");
+		var xmlDoc = node.documentElement;
+		var nodesWithTitle = xmlDoc.selectNodes("//*[@title=\""+title+"\"]");
+		var result = [];
+		var next = nodesWithTitle.nextNode();
+		while(next) {
+			result.push(next);
+			next = nodesWithTitle.nextNode();
+		}
+		return result;
 	} else {
 		// otherwise do a depth first search:
 		var children = node.childNodes;
@@ -376,11 +383,11 @@ GeneralXMLTools.getNodeByTitle = function (node, title) {
 			
 			if (children[i].nodeType == 4) continue; // ignore CDATA sections
 						
-			if (children[i].getAttribute("title") == id) {
+			if (children[i].getAttribute("title") == title) {
 				result.push(children[i]);
 			}
 			
-	    	var r = GeneralXMLTools.getNodeById(children[i], id);
+	    	var r = GeneralXMLTools.getNodeByTitle(children[i], title);
 	    	result = result.concat(r);
 	    	
 		}
