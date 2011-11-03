@@ -72,6 +72,8 @@ class SMWHaloStore2 extends SMWStoreAdapter {
 				if (count($propertyValueArray) == 0) continue;
 				// should be only one, otherwise out of spec)
 				$uriValue = reset($propertyValueArray);
+				
+				if (!($uriValue instanceof SMWDIUri)) continue;
 				$tscURI = $uriValue->getURI();
 					
 				// make sure to decode "(", ")", ",". Normally they are encoded in SMW URIs
