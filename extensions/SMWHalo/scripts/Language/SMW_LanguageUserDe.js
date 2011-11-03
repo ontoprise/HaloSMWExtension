@@ -28,6 +28,8 @@ window.wgUserLanguageStrings = {
 	'INVALID_VALUES'          : 'Ungültige Werte.',
 	'EditProperty'            : 'Property editieren :',
 	'NAME'                    : 'Name:',
+	'SUBCATEGORYOF'           : 'Subcategorie von:',
+	'ANNOTATED_CATEGORIES'     : 'Annotatierte Kategorien:',
 	'ENTER_NAME'              : 'Bitte Name eingeben.',
 	'ADD'                     : 'Hinzufügen',
 	'CANCEL'                  : 'Abbrechen',
@@ -227,6 +229,7 @@ window.wgUserLanguageStrings = {
 	'ADD_RANGE'          	  : 'Range-Kategorie setzen',
 	'SUBPROPERTYOF'           : 'Subproperty von:',
 	'ADDPROPERTY' 			  : 'Property hinzufügen',
+	'SAVE_CHANGES'            : 'Speichern',
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Fehler beim Umbennenen',
 	
