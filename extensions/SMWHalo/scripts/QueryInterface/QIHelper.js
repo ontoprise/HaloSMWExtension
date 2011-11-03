@@ -1141,16 +1141,27 @@ QIHelper.prototype = {
   },
         
   getInputs: function(){
-    return $$('#dialoguecontent input[type="text"]');
+    return $$('#boxcontent input[type="text"]');
   },
 
   observeRadioBtnClick: function(thisObj){
     var radioBtns = $$('#dialoguecontent_pradio input[type="radio"][name="input_r0"]');
     radioBtns.each(function(radioBtnElement){
-      radioBtnElement.observe('change', function(event){
-        thisObj.enableButton(thisObj.getPropertyDialogInputs());
+      radioBtnElement.observe('change', function(event){        
         thisObj.setListeners(thisObj, thisObj.getPropertyDialogInputs());
+        thisObj.observeSelectBoxChange(thisObj);
+        thisObj.enableButton(thisObj.getInputs());
         initToolTips();
+      });
+    });
+  },
+
+
+  observeSelectBoxChange: function(thisObj){
+    var selectBoxes = $$('#dialoguecontent_pvalues select');
+    selectBoxes.each(function(selectBoxElement){
+      selectBoxElement.observe('change', function(event){
+        thisObj.enableButton(thisObj.getInputs());
       });
     });
   },
@@ -1205,7 +1216,7 @@ QIHelper.prototype = {
     this.setListeners(this, this.getInputs());
     initToolTips();
   },
-
+  
   /**
 	 * Creates a new dialogue for adding properties to the query
 	 * 
@@ -1265,6 +1276,7 @@ QIHelper.prototype = {
     });
             
     this.observeRadioBtnClick(this);
+    this.observeSelectBoxChange(this);
   },
 
   getCategoryConstraints : function() {
@@ -1438,6 +1450,7 @@ QIHelper.prototype = {
         oSelect.options[i+optOff].style.width="100%";
       }
       cell.appendChild(oSelect);
+      this.observeSelectBoxChange(this);
     } else { // no enumeration, no page type, simple input field
       var oInput = document.createElement("INPUT");
       oInput.type = "text";
@@ -1850,6 +1863,9 @@ QIHelper.prototype = {
     autoCompleter.registerAllInputs();
     //this.pendingElement.hide();
     if (this.propertyAddClicked) this.addPropertyGroup(1);
+
+    this.observeRadioBtnClick(this);
+    this.observeSelectBoxChange(this);
   },
 
   /**
@@ -2162,6 +2178,7 @@ QIHelper.prototype = {
         this.addRestrictionInput();
         $$('#askQI #dialoguecontent_pvalues')[0].rows[currRow].cells[1].innerHTML =
         this.createRestrictionSelector(vals[i][1], false, numType);
+        this.observeSelectBoxChange(this);
         // deactivate autocompletion
         if (!acChange)
           autoCompleter.deregisterAllInputs();

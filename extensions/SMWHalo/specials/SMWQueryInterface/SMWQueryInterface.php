@@ -405,7 +405,7 @@ class SMWQueryInterface extends SpecialPage {
             . wfMsg('smw_qi_tt_previewres')
             . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>'
             . wfMsg('smw_qi_section_result')
-            . '</span><button id="switchToSparqlBtn">' . wfMsg('smw_qi_switch_to_sparql') . '</button></div>' .
+            . '</span><button id="switchToSparqlBtn" style="display:none">' . wfMsg('smw_qi_switch_to_sparql') . '</button></div>' .
             '<div id="qiresultcontent">' .
             $this->addQueryLayout() .
             $this->addPreviewResults() .

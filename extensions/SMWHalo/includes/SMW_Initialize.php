@@ -1639,8 +1639,7 @@ function smwhfRegisterResourceLoaderModules() {
       'ext.jquery.tree',
       'ext.smwhalo.json2',
       'jquery.ui.dialog',
-      'ext.tabularforms.main',
-      'jquery.ui.resizable'
+      'ext.tabularforms.main'
       
      );
 			// Add all modules ext.srf.*

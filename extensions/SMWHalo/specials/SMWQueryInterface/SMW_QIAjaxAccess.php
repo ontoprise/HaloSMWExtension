@@ -10,6 +10,10 @@
 if (!defined('MEDIAWIKI'))
   die;
 
+global $smwgHaloIP;
+include_once("$smwgHaloIP/includes/SMWHaloUtil.php");
+
+
 global $wgAjaxExportList, $wgHooks;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 $wgAjaxExportList[] = 'smwf_qi_getPage';
@@ -45,7 +49,8 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     $types = SMWDataValueFactory::getKnownTypeLabels();
     foreach ($types as $v) {
       $id = SMWDataValueFactory::findTypeID($v);
-      if (SMWDataValueFactory::newTypeIDValue($id)->isNumeric())
+      $numericTypes = array('_num', '_boo', '_dat', '_tem');
+      if(in_array($id, $numericTypes) || SMWDataValueFactory::newTypeIDValue($id, $v)->isNumeric())
         array_push($numtypes, strtolower($v));
     }
     return implode(",", $numtypes);
@@ -778,74 +783,120 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
  * @param string $relationName
  * @return string xml
  */
+//function qiGetPropertyInformation($relationName) {
+//  $relationName = htmlspecialchars_decode($relationName);
+//  global $smwgContLang, $smwgHaloContLang;
+//
+//  //$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+//  // get type definition (if it exists)
+//  try {
+//    $relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
+//    if (!($relationTitle instanceof SMWDIWikiPage)) {
+//      $relSchema = '<relationSchema name="' . htmlspecialchars($relationName) . '" arity="2">' .
+//              '<param name="Page"/>' .
+//              '</relationSchema>';
+//      return $relSchema;
+//    }
+////			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+//    $hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
+//
+////    $categories = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
+//
+//
+//    $possibleValueDI = SMWDIProperty::newFromUserLabel("_PVAL");
+//    $type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
+//
+//    $range = qiGetPropertyRangeInformation($relationName);
+//
+//    // if no 'has type' annotation => normal binary relation
+//    if (count($type) == 0) {
+//      // return binary schema (arity = 2)
+//      $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
+//              '<param name="Page" type="_wpg"' . $range . '/>' .
+//              '</relationSchema>';
+//    } else {
+//      $units = "";
+//      if ($type[0] instanceof SMWDIUri) {
+//        $typeValues = $type[0]->getFragment();
+//        // check if the type is a Record
+//        if ($typeValues == "_rec") {
+//          $record = smwfGetStore()->getPropertyValues($relationTitle, SMWDIProperty::newFromUserLabel("_LIST"));
+//          if (count($record) > 0)
+//            $typeValues = $record[0]->getFragment();
+//        }
+//        // check if it's a custom type
+////        else if (!$typeValues[0]->isBuiltIn()) {
+////          $units = qiGetPropertyCustomTypeInformation($typeValues[0]->getText());
+////        }
+//        // get arity
+//        $arity = count($typeValues) + 1;  // +1 because of subject
+//        $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">';
+//
+//        for ($i = 0, $n = $arity - 1; $i < $n; $i++) {
+//          $pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDI);
+//          $relSchema .= '<param name="' . $type[0]->getWikiValue() . '" type="' . $typeValues . '"' . $range . '>';
+//          for ($j = 0; $j < sizeof($pvalues); $j++) {
+//            $dbKeys = $pvalues[$j]->getDBkeys();
+//            $relSchema .= '<allowedValue value="' . array_shift($dbKeys) . '"/>';
+//          }
+//          $relSchema .= $units . '</param>';
+//        }
+//        $relSchema .= '</relationSchema>';
+//      } else { // this should never happen, huh?
+//        $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
+//                '<param name="Page" type="_wpg"' . $range . '/>' .
+//                '</relationSchema>';
+//      }
+//    }
+//    return $relSchema;
+//  } catch (Exception $e) {
+//    echo "c";
+//    $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
+//            '<param name="Page"/>' .
+//            '</relationSchema>';
+//    return $relSchema;
+//  }
+//}
+
+
 function qiGetPropertyInformation($relationName) {
-  $relationName = htmlspecialchars_decode($relationName);
   global $smwgContLang, $smwgHaloContLang;
+  $relationName = htmlspecialchars_decode($relationName);
+  $range = '';
+  $type = '_wpg';
+  $paramName = 'Page';
+  $arity = 2;
 
-  //$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-  // get type definition (if it exists)
-  try {
-    $relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
-    if (!($relationTitle instanceof Title)) {
-      $relSchema = '<relationSchema name="' . htmlspecialchars($relationName) . '" arity="2">' .
-              '<param name="Page"/>' .
-              '</relationSchema>';
-      return $relSchema;
+  //get types
+  $relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
+  $hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
+  $types = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
+  
+  //procede if types is set
+  if(isset($types)){
+    //if type longer than 1
+    //  don't handle at this point
+    if(count($types) > 1){
+      //@TODO add support for type record
     }
-//			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-    $hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
-    $possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
-    $type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
-    $range = qiGetPropertyRangeInformation($relationName);
-
-    // if no 'has type' annotation => normal binary relation
-    if (count($type) == 0) {
-      // return binary schema (arity = 2)
-      $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
-              '<param name="Page" type="_wpg"' . $range . '/>' .
-              '</relationSchema>';
-    } else {
-      $units = "";
-      if ($type[0] instanceof SMWTypesValue) {
-        $typeValues = $type[0]->getTypeValues();
-        // check if the type is a Record
-        if ($typeValues[0]->getDBkey() == "_rec") {
-          $record = smwfGetStore()->getPropertyValues($relationTitle, SMWPropertyValue::makeProperty("_LIST"));
-          if (count($record) > 0)
-            $typeValues = $record[0]->getTypeValues();
-        }
-        // check if it's a custom type
-        else if (!$typeValues[0]->isBuiltIn()) {
-          $units = qiGetPropertyCustomTypeInformation($typeValues[0]->getText());
-        }
-        // get arity
-        $arity = count($typeValues) + 1;  // +1 because of subject
-        $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">';
-
-        for ($i = 0, $n = $arity - 1; $i < $n; $i++) {
-          $pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-          $relSchema .= '<param name="' . $typeValues[$i]->getWikiValue() . '" type="' . $typeValues[$i]->getDBkey() . '"' . $range . '>';
-          for ($j = 0; $j < sizeof($pvalues); $j++) {
-            $dbKeys = $pvalues[$j]->getDBkeys();
-            $relSchema .= '<allowedValue value="' . array_shift($dbKeys) . '"/>';
-          }
-          $relSchema .= $units . '</param>';
-        }
-        $relSchema .= '</relationSchema>';
-      } else { // this should never happen, huh?
-        $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
-                '<param name="Page" type="_wpg"' . $range . '/>' .
-                '</relationSchema>';
+    //if type =_wpg
+    //  output type =_wpg
+    //  look up range and add it to output
+    if(count($types) == 1){
+      $type = $types[0]->getFragment();
+      $paramName = SMWHaloUtil::typeToReadableString($type);
+      if($type == '_wpg'){
+        $range = qiGetPropertyRangeInformation($relationName);
       }
     }
-    return $relSchema;
-  } catch (Exception $e) {
-    echo "c";
-    $relSchema = '<relationSchema name="' . $relationName . '" arity="2">' .
-            '<param name="Page"/>' .
-            '</relationSchema>';
-    return $relSchema;
   }
+  //output type value
+  $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">' .
+              '<param name="' . $paramName . '" type="' . $type .'"' . $range . '/>' .
+              '</relationSchema>';
+
+  return $relSchema;
+
 }
 
 /**
@@ -860,8 +911,8 @@ function qiGetPropertyRangeInformation($relationName) {
   $range = "";
   $title = Title::newFromText($relationName, SMW_NS_PROPERTY);
   $sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-  $prop = SMWPropertyValue::makeProperty($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-  $smwValues = smwfGetStore()->getPropertyValues($title, $prop);
+  $prop = SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
+  $smwValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), $prop);
   if (count($smwValues) > 0) {
     $domainAndRange = $smwValues[0]->getDVs();
     if (count($domainAndRange) > 1) {
