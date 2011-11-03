@@ -1034,6 +1034,12 @@ OBEditPropertyActionListener.prototype = {
 	initialize : function() {
 		this.selectedCategory = null; // initially none is selected
 		this.oldSelectedProperty = null;
+		
+		this.selectedPropertyTitle = "";
+		this.selectedPropertyCardinality = 0;
+		this.selectedPropertyType = "";
+		this.selectedPropertyRange = "";
+		
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 
@@ -1054,15 +1060,7 @@ OBEditPropertyActionListener.prototype = {
 		}
 	},
 
-	showSubMenu : function(commandID) {
-		if (this.selectedCategory == null) {
-			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
-			return;
-		}
-		obEditPropertiesMenuProvider.showContent(commandID, 'relattributes');
-	},
-	
-	showSubMenuProperty : function(commandID,node,propertyname,minCard,type, rangeCategory) {
+	showSubMenu : function(commandID,node,propertyname,minCard,type, rangeCategory) {
 		if (this.selectedCategory == null) {
 			alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
 			return;
@@ -1071,17 +1069,26 @@ OBEditPropertyActionListener.prototype = {
 		obSchemaPropertiesMenuProvider.cancel();		
 		obEditPropertiesMenuProvider.showContent(commandID, 'relattributes',propertyname,minCard,type, rangeCategory);
 	},
-
+	
+	editSelectedProperty: function(commandID, node) {
+		this.showSubMenu(commandID, node, this.selectedPropertyTitle, this.selectedPropertyCardinality, this.selectedPropertyType, this.selectedPropertyRange);
+	},
+	
 	navigateToEntity : function(event, node, attributeName, editmode) {
 		
 		GeneralBrowserTools.navigateToPage(gLanguage
 				.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
 	},
 
-	selectProperty : function(event, node, attributeName) {
+	selectProperty : function(event, node, attributeName, cardinality, type, range) {
 		var categoryDIV = $("categoryTree");
 		var instanceDIV = $("instanceList");
-
+		
+		this.selectedPropertyTitle = attributeName;
+		this.selectedPropertyCardinality = cardinality;
+		this.selectedPropertyType = type;
+		this.selectedPropertyRange = range;
+		
 		selectionProvider.fireSelectionChanged(null, attributeName,
 				SMW_PROPERTY_NS, node);
 		
@@ -1581,6 +1588,12 @@ OBSchemaPropertyActionListener.prototype = {
 	initialize : function() {
 		this.selectedCategory = null; // initially none is selected
 		this.oldSelectedProperty = null;
+		
+		this.selectedPropertyTitle = "";
+		this.selectedPropertyCardinality = 0;
+		this.selectedPropertyType = "";
+		this.selectedPropertyRange = "";
+		
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
 	},
 
@@ -1616,11 +1629,18 @@ OBSchemaPropertyActionListener.prototype = {
 		GeneralBrowserTools.navigateToPage(gLanguage
 				.getMessage('PROPERTY_NS_WOC'), attributeName, editmode);
 	},
+	
+	
 
-	selectProperty : function(event, node, attributeName) {
+	selectProperty : function(event, node, attributeName, cardinality, type, range) {
 		var categoryDIV = $("categoryTree");
 		var instanceDIV = $("instanceList");
-
+		
+		this.selectedPropertyTitle = attributeName;
+		this.selectedPropertyCardinality = cardinality;
+		this.selectedPropertyType = type;
+		this.selectedPropertyRange = range;
+		
 		selectionProvider.fireSelectionChanged(null, attributeName,
 				SMW_PROPERTY_NS, node);
 		

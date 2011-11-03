@@ -29,6 +29,7 @@ define('SMW_OB_COMMAND_INSTANCE_CREATE', 10);
 define('SMW_OB_COMMAND_INSTANCE_RENAME', 8);
 
 define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
+define('SMW_OB_COMMAND_EDITPROPERTY', 10);
 
 // standard functions for creating a new special
 //function doSMW_OntologyBrowser() {
@@ -48,14 +49,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		//$skin = $wgUser->getSkin();
 		$wgOut->setPageTitle(wfMsg('dataexplorer'));
 	
-		if ($wgRequest->getVal('src') == 'toolbar') {
-			//smwLog("","OB","opened_from_menu");
-		} else if ($wgRequest->getVal('entitytitle') != '') {
-			$ns = $wgRequest->getVal('ns') == '' ? '' : $wgRequest->getVal('ns').":";
-			//smwLog($ns.$wgRequest->getVal('entitytitle'),"Factbox","open_in_OB");
-		} else {
-			//smwLog("","OB","opened");
-		}
+		
 		/*ENDLOG*/
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
@@ -207,7 +201,8 @@ if(!smwfIsTripleStoreConfigured()) {
 		<div id=\"relattributesContainer\"><span class=\"OB-header\">
 			<span><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span>
 			<span id=\"relattValues\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
-			".($showMenuBar ? "<span class=\"menuBar menuBarProperties\" id=\"menuBarProperties\"><a onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span></a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
+			".($showMenuBar ? "<span class=\"menuBar menuBarProperties\" id=\"menuBarProperties\"><a onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span>".
+			"</a> | <a onclick=\"schemaEditPropertyListener.editSelectedProperty(".SMW_OB_COMMAND_EDITPROPERTY.", this)\">".wfMsg('smw_ob_cmd_editproperty')."</a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
 			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
 			<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button>
 			<div id=\"propertyRangeSpan\"><div><input type=\"checkbox\" id=\"directPropertySwitch\" checked=\"true\"/>".wfMsg('smw_ob_onlyDirect')."</input></div><div><input type=\"checkbox\" id=\"showForRange\" />".wfMsg('smw_ob_showRange')."</input></div></div></span>		

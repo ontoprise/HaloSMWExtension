@@ -620,10 +620,15 @@
 				<xsl:variable name="icon" select="@img" />
 				<!-- <img src="{$param-img-directory}../../{$icon}"/> -->
 				<a title="{$title}" class="attribute">
-					<xsl:attribute name="onclick">schemaActionPropertyListener.selectProperty(event, this,'<xsl:call-template
-						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
-						name="from" select="$var-simple-quote" /><xsl:with-param
-						name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
+				<xsl:attribute name="onclick">schemaEditPropertyListener.selectProperty(event, this,'<xsl:call-template
+                        name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
+                        name="from" select="$var-simple-quote" /><xsl:with-param
+                        name="to" select="$var-slash-quote" /></xsl:call-template>','<xsl:value-of select="@minCard" />','<xsl:value-of
+                                select="child::rangeType[1]" />','<xsl:call-template
+                        name="replace-string"><xsl:with-param name="text" select="child::rangeType[1]/@category" /><xsl:with-param
+                        name="from" select="$var-simple-quote" /><xsl:with-param
+                        name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
+					
 					<xsl:if test="gissues">
 						<xsl:attribute name="class">attribute gardeningissue</xsl:attribute>
 					</xsl:if>
@@ -671,14 +676,9 @@
 				</a><xsl:if test="not(@noedit)">
 				    <span style="color: #888"> |</span>
                     <a class="attribute" title="Edit {$title}">
-					<xsl:attribute name="onclick">schemaEditPropertyListener.showSubMenuProperty(1, this,'<xsl:call-template
-						name="replace-string"><xsl:with-param name="text" select="@title" /><xsl:with-param
-						name="from" select="$var-simple-quote" /><xsl:with-param
-						name="to" select="$var-slash-quote" /></xsl:call-template>','<xsl:value-of select="@minCard" />','<xsl:value-of
-								select="child::rangeType[1]" />','<xsl:call-template
-                        name="replace-string"><xsl:with-param name="text" select="child::rangeType[1]/@category" /><xsl:with-param
-                        name="from" select="$var-simple-quote" /><xsl:with-param
-                        name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>				
+					<xsl:attribute name="href"><xsl:value-of
+                        select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
+                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>				
 					{{SMW_OB_EDIT}}
 				</a>
 				</xsl:if>
