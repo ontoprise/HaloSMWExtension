@@ -63,7 +63,15 @@ class DFPatch {
 		return $this->mayfail;
 	}
 	
-	public static function containsPatchfile($patches, $patchfile) {
+	/**
+	 * Checks if the $patch is contained in $patches 
+	 * 
+	 * @param DFPatch[] $patches
+	 * @param DFPatch $patch
+	 * 
+	 * @return boolean
+	 */
+	public static function containsPatchfile($patches, $patch) {
 		foreach($patches as $p) {
 			if ($p->getPatchfile() == $patch->getPatchfile()) return true;
 		}
