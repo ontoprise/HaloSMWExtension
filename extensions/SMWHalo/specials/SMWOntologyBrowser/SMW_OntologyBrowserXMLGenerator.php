@@ -347,7 +347,8 @@ class SMWOntologyBrowserXMLGenerator {
 
 			$typeList = SMWTypesValue::newFromTypeId($fragment);
 			$propertyName = $typeList->getLongWikiText();
-			$content .= "<rangeType category=\"".str_replace('"', "&quot;", $range)."\">".$propertyName."</rangeType>";
+			$range_att = $range != '' ? "category=\"".str_replace('"', "&quot;", $range)."\"" : "";
+			$content .= "<rangeType $range_att>".$propertyName."</rangeType>";
 
 		}
 

@@ -691,13 +691,13 @@
 			</td>
 			<td align="right">
 				<xsl:choose>
-					<xsl:when test="child::rangeType[1][@isLink]">
+					<xsl:when test="child::rangeType[1]/@category">
 						<a class="category">
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="$param-ns-concept" />:<xsl:value-of
-								select="child::rangeType[1]" />?action=edit</xsl:attribute>
-							<xsl:value-of select="translate(child::rangeType[1], '_', ' ')" />
+								select="child::rangeType[1]/@category" />?action=edit</xsl:attribute>
+							<xsl:value-of select="translate(child::rangeType[1]/@category, '_', ' ')" />
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
