@@ -39,8 +39,10 @@ if ($wgCommandLineMode) {
 		echo "\n\nWARNING: TSC is NOT configured. Take a look here: \n\thttp://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\n";
 	}
 } else {
-	trigger_error("TSC is NOT configured. Take a look here: <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\">SMW-Forum</a>");
-    die();
+	if (!isset($smwgHaloWebserviceEndpoint)) {
+		trigger_error("TSC is NOT configured. Take a look here: <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:TripleStore_Basic\">SMW-Forum</a>");
+		die();
+	}
 }
 
 
