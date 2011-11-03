@@ -632,7 +632,7 @@ LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation
 LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache, MySQL and/or memcached. You MUST stop them before continuing."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
-LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be installed in directories containing parantheses, like 'Programs (x86)'"
+LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be installed in directories containing parantheses or blanks, like 'Programs (x86)'"
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
