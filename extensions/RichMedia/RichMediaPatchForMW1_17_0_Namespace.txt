@@ -1,0 +1,25 @@
+Index: includes/Namespace.php
+===================================================================
+--- includes/Namespace.php	(revision 12632)
++++ includes/Namespace.php	(working copy)
+@@ -61,7 +61,19 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/AdditionalNamespaceCheck */
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $index, $rMresult );
++			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
++		} else {
++			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 	}
+ 
+ 	/**

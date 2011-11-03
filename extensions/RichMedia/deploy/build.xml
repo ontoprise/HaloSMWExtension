@@ -131,7 +131,10 @@
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
-
+	    
+		<!-- Note: RichMediaPatchForMW1_17_0_Namespace.txt is missing here
+		  because it is assumed that SMWHalo already installed that patch -->
+		
 		<exec executable="php">
 			<arg value="../../../patches/patch.php" />
 			<arg value="-d" />

@@ -60,7 +60,9 @@
 		<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
 			to="1.16.4" mayfail="Namespace.php" />
 		<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
-			to="1.17.0" mayfail="Namespace.php" />
+			to="1.17.0" />
+		<patch file="RichMediaPatchForMW1_17_0_Namespace.txt" ext="mw" from="1.17.0"
+            to="1.17.0" mayfail="Namespace.php" />	
 		<new>
 			<variable name="wgEnableUploads">
 				<boolean name="wgEnableUploads" description="enables uploads">
@@ -104,7 +106,9 @@
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
 				to="1.16.4" mayfail="Namespace.php" />
 			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
-				to="1.17.0" mayfail="Namespace.php" />
+				to="1.17.0" />
+			<patch file="RichMediaPatchForMW1_17_0_Namespace.txt" ext="mw" from="1.17.0"
+            to="1.17.0" mayfail="Namespace.php" />  	
 		</new>
 		<update from="1.5.2">
 			<patch file="RichMediaPatchForSF2_2_1.txt" />
@@ -132,7 +136,9 @@
 			<patch file="RichMediaPatchForMW1_16_4.txt" ext="mw" from="1.16.4"
 				to="1.16.4" />
 			<patch file="RichMediaPatchForMW1_17_0.txt" ext="mw" from="1.17.0"
-				to="1.17.0" />
+                to="1.17.0" />
+            <patch file="RichMediaPatchForMW1_17_0_Namespace.txt" ext="mw" from="1.17.0"
+            to="1.17.0" mayfail="Namespace.php" />  
 		</uninstall>
 	</configs>
 </deploydescriptor>
