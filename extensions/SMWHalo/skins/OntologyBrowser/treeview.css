@@ -114,7 +114,12 @@ a.navigationLink {
 .categoryTreeColors {
 	background-color: #DDEEFF;
 }
-.categoryTreeColors:hover {
+
+.categoryTreeElementColors {
+    background-color: #DDEEFF;
+}
+
+.categoryTreeElementColors:hover {
 	   background-color: #DDD;           
 }
 
@@ -167,6 +172,14 @@ a.navigationLink {
 
 .instanceListColors {
 	background-color: #FFDDDD;
+}
+
+.propertyTreeElementColors {
+    background-color: #FFDDAA;
+}
+
+.propertyTreeElementColors:hover {
+       background-color: #DDD;           
 }
 
 .propertyTreeListColors {

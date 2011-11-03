@@ -99,7 +99,7 @@
 		<xsl:param name="rek_depth" select="1" />
 
 
-		<table class="categoryTreeColors" border="0" cellspacing="0"
+		<table class="categoryTreeElementColors" border="0" cellspacing="0"
 			cellpadding="0">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
@@ -156,7 +156,7 @@
 		<xsl:param name="rek_depth" select="1" />
 
 
-		<table class="propertyTreeListColors" border="0" cellspacing="0"
+		<table class="propertyTreeElementColors" border="0" cellspacing="0"
 			cellpadding="0">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
@@ -214,7 +214,7 @@
 		<xsl:call-template name="partitionNode">
 			<xsl:with-param name="actionListener" select="'categoryActionListener'" />
 			<xsl:with-param name="rek_depth" select="$rek_depth" />
-			<xsl:with-param name="classname" select="'categoryTreeColors'" />
+			<xsl:with-param name="classname" select="'categoryTreeElementColors'" />
 		</xsl:call-template>
 	</xsl:template>
 
@@ -223,7 +223,7 @@
 		<xsl:call-template name="partitionNode">
 			<xsl:with-param name="actionListener" select="'propertyActionListener'" />
 			<xsl:with-param name="rek_depth" select="$rek_depth" />
-			<xsl:with-param name="classname" select="'propertyTreeListColors'" />
+			<xsl:with-param name="classname" select="'propertyTreeElementColors'" />
 		</xsl:call-template>
 	</xsl:template>
 
