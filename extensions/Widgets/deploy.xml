@@ -26,9 +26,9 @@ for more detailed instructions about this.</notice>
 		<file loc="deploy.xml" />
 	</codefiles>
 
-	<!--<wikidumps>
+	<wikidumps>
 		<file loc="widgets.xml"/>
-	</wikidumps>-->
+	</wikidumps>
 
 	<resources>
         <!-- empty -->
