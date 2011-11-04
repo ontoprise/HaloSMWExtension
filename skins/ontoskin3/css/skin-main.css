@@ -293,12 +293,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 .tab:hover{
-    background-color: #dfdfdf;
+    background-color: #A9C5D9;
 	cursor: pointer;
 }
 
 #tabsleft > #ca-talk:hover:after {
-    border-color: #dfdfdf transparent;
+    border-color: #A9C5D9 transparent;
 }
 
 #tabsleft .tab {
@@ -313,7 +313,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 .page_createdby{
-	font-size: small;
+	font-size: x-small;
 	color: #AAA;
 	margin: 0.2em 15px 0 15px;
 }
