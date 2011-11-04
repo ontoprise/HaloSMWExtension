@@ -82,8 +82,8 @@ function smwf_na_getCategories() {
  */
 function smwf_na_getPropertyValue($titleName, $propertyName){
 	$propertyValue = 'no description available';
-	$title = Title::newFromText($titleName);
-	$prop = SMWPropertyValue::makeUserProperty($propertyName);
+	$title = SMWDIWikiPage::newFromTitle(Title::newFromText($titleName));
+	$prop = SMWDIProperty::newFromUserLabel($propertyName);
 	$propValues = smwfGetStore()->getPropertyValues($title, $prop);
 	if($propValues && count($propValues) > 0){
 		$propertyValue = $propValues[0]->getWikiValue();

@@ -134,7 +134,7 @@
               CREATENEWARTICLE.hideActivity();
             }
           })
-          }, 500);
+        }, 500);
       }
     },
 
@@ -202,7 +202,7 @@
               $('#listOfTemplatesAndCategories').focus();
 
             })
-            }, 500);
+          }, 500);
           break;
       }
     },
@@ -362,7 +362,7 @@
 
           articleTitleTextBox.focus();
         }
-      }).click();
+      });
     }
 
 

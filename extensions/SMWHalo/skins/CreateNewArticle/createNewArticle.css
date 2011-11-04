@@ -1,153 +1,153 @@
 @CHARSET "ISO-8859-1";
 
 .pageAlreadyExists{
-	border: 2px solid red;
-    background: #ffc;	
-    cursor: pointer;
-    color: maroon;
-    text-decoration: underline;
+  border: 2px solid red;
+  background: #ffc;
+  cursor: pointer;
+  color: maroon;
+  text-decoration: underline;
 }
 
 .pageDoesntExist{
-	border: 2px solid green;
-    background: #ffc;
+  border: 2px solid green;
+  background: #ffc;
 }
 
 #fancyboxTable{
-	width: 400px;
-	height: 100%;
-	margin: 0;
+  width: 400px;
+  height: 100%;
+  margin: 0;
 }
 
 
 .fancyboxTitleTd, .userInstructionSpan, .articleExistsErrorTd, .layoutDescriptionTd, #selectedTitleTd, .userInstructionTd, .btnTable a{
-	font-family: sans-serif;
-	font-size: 12px;
-	font-weight: bold;	
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .fancyboxTitleTd{
-	border-bottom: 1px solid silver;
-	text-align: center;
-	font-size: larger;
-	vertical-align: top;
+  border-bottom: 1px solid silver;
+  text-align: center;
+  font-size: larger;
+  vertical-align: top;
 }
 
 .userInstructionTd{
-	color: gray;
-	padding-top: 10px;	
+  color: gray;
+  padding-top: 10px;
 }
 
 .userInstructionSpan{
-	
+
 }
 
 #articleExistTableTd{
-	height: 40px;	
+  height: 40px;
 }
 
 #articleExistTable td{
-	color: red;
-	vertical-align: top;
+  color: red;
+  vertical-align: top;
 }
 
 #errorImgTd, .articleExistsErrorTd{
-	
-	
+
+
 }
 
 .articleNameInput{
-	width: 100%;	
+  width: 100%;
 }
 
 .templatesAndCategoriesSelect{
-	width: 100%;	
+  width: 100%;
 }
 
 .layoutDescriptionTd{
-	color: gray;
-	padding-top: 10px;
-	font-weight: normal;
-	border: 0px solid black;
-	height: 100px;
-	vertical-align: bottom;
+  color: gray;
+  padding-top: 10px;
+  font-weight: normal;
+  border: 0px solid black;
+  height: 100px;
+  vertical-align: bottom;
 }
 
 .layoutDescriptionTd table td{
-	border: 0px solid black;
+  border: 0px solid black;
 }
 
 #selectedDescTd{
-    vertical-align: top;
-    width: 100%;
-    height: 100%;
+  vertical-align: top;
+  width: 100%;
+  height: 100%;
 }
 
 .btnTableTd{
-	border-top: 1px solid silver;	
+  border-top: 1px solid silver;
 }
 
 .btnTable td{
-	padding: 5px;	
+  padding: 5px;
 }
 
 .btnTable a{
-	text-decoration: none;
-	cursor: pointer;
-	color: blue;	
-	font-weight: normal;
+  text-decoration: none;
+  cursor: pointer;
+  color: blue;
+  font-weight: normal;
 }
 
 .btnTable input{
-	width: 100px;	
+  width: 100px;
 }
 
 #createNewArticleCtrl{
-	float: left;
-	padding-right: 10px;
-	padding-bottom: 3px;
-	margin-top: 5px;
-	margin-right: 30px;
-	font-size: smaller;
-	cursor: pointer;
-	border: 0px solid black;
-	vertical-align: middle;
+  float: left;
+  padding-right: 10px;
+  padding-bottom: 3px;
+  margin-top: 5px;
+  margin-right: 30px;
+  font-size: smaller;
+  cursor: pointer;
+  border: 0px solid black;
+  vertical-align: middle;
 }
 
 
 #createNewArticleCtrl a{
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #listOfTemplatesAndCategories option {
 }
 
 #selectedDescImgTd{
-	vertical-align: top;	
-	overflow: hidden;
+  vertical-align: top;
+  overflow: hidden;
 }
 
 .greenInputBox{
-	background-color: lightgreen;
-	border: 1px solid gray;	
+  background-color: lightgreen !important;
+  border: 1px solid gray !important;
 }
 
 .redInputBox{
-	background-color: red;
-	border: 1px solid gray;	
+  background-color: red !important;
+  border: 1px solid gray !important;
 }
 
 .whiteInputBox{
-	background-color: white;
-	border: 1px solid gray;		
+  background-color: white !important;
+  border: 1px solid gray !important;
 }
 
 #fancybox-close{
-	display: none;
-	background-position: -32px 0;
-    cursor: pointer;
-    position: absolute;
-    right: -15px;
-    top: -15px;
-    z-index: 1103;
+  display: none;
+  background-position: -32px 0;
+  cursor: pointer;
+  position: absolute;
+  right: -15px;
+  top: -15px;
+  z-index: 1103;
 }
