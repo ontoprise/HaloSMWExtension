@@ -292,18 +292,8 @@ function smwgHaloSetupExtension() {
 				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 				break;		//we have to make sure SMW_Autocomplete.php is not included for this ajax call
 
-			default: // default case just imports everything (should be avoided)
+			default: // do not import anything but load messages
 				smwfHaloInitMessages();
-				require_once($smwgHaloIP . '/includes/SMW_Autocomplete.php');
-
-
-				require_once($smwgHaloIP . '/specials/SMWQueryInterface/SMW_QIAjaxAccess.php' );
-
-
-				require_once($smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxAccess.php');
-				require_once($smwgHaloIP . '/includes/SemanticToolbar/SMW_ToolbarFunctions.php');
-				require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
-				//require_once($smwgHaloIP . '/specials/SMWTermImport/SMW_TermImportSpecial.php');
 		}
 	} else { // otherwise register special pages
 
