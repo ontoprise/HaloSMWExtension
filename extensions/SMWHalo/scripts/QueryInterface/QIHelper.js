@@ -1132,23 +1132,28 @@ QIHelper.prototype = {
     }
   },
         
-  getPropertyDialogInputs: function(){
-    var inputs = this.getInputs();
-    if($$('#askQI #dialoguecontent_pvalues')[0].visible()){
-      inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));
-    }
-    return inputs;
-  },
+//  getPropertyDialogInputs: function(){
+//    var inputs = this.getInputs();
+//    if($$('#askQI #dialoguecontent_pvalues')[0].visible()){
+//      inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));
+//    }
+//    return inputs;
+//  },
         
   getInputs: function(){
-    return $$('#boxcontent input[type="text"]');
+    var visibleTables = $$('#boxcontent table').findAll(function(element) {return element.visible();});
+    var inputs = [];
+    visibleTables.each(function(element){
+      inputs = inputs.concat(element.select('input[type="text"]'));
+    });
+    return inputs;
   },
 
   observeRadioBtnClick: function(thisObj){
     var radioBtns = $$('#dialoguecontent_pradio input[type="radio"][name="input_r0"]');
     radioBtns.each(function(radioBtnElement){
       radioBtnElement.observe('change', function(event){        
-        thisObj.setListeners(thisObj, thisObj.getPropertyDialogInputs());
+        thisObj.setListeners(thisObj, thisObj.getInputs());
         thisObj.observeSelectBoxChange(thisObj);
         thisObj.enableButton(thisObj.getInputs());
         initToolTips();
@@ -1245,12 +1250,10 @@ QIHelper.prototype = {
     autoCompleter.registerAllInputs();
     if (reset)
       $$('#askQI #input_p0')[0].focus();
-    this.updateHeightBoxcontent();
-    this.enableButton(this.getPropertyDialogInputs());
-    this.setListeners(this, this.getPropertyDialogInputs());
-    initToolTips();
+    this.updateHeightBoxcontent();   
         
     var propLabelInput = $$('#askQI #input_c3')[0];
+    var propNameInput = $$('#askQI #input_p0')[0];
         
     propLabelInput.observe('keyup', function(event){
       if(Event.element(event).getValue()){
@@ -1260,23 +1263,24 @@ QIHelper.prototype = {
         qihelper.colNameEntered = false;
       }
     });
-    propLabelInput.observe('keyup', function(event){
-      var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
-      btn.disabled = true;
-      if(propLabelInput.getValue()){
-        btn.disabled = false;
+
+    propNameInput.observe('keyup', function(event){
+      if(!qihelper.colNameEntered){
+        propLabelInput.setValue(propNameInput.getValue());
       }
     });
-    propLabelInput.observe('change', function(event){
-      var btn = $$('#askQI #dialoguebuttons')[0].getElementsByTagName('button').item(0);
-      btn.disabled = true;
-      if(propLabelInput.getValue()){
-        btn.disabled = false;
+
+    propNameInput.observe('change', function(event){
+      if(!qihelper.colNameEntered){
+        propLabelInput.setValue(propNameInput.getValue());
       }
     });
             
     this.observeRadioBtnClick(this);
     this.observeSelectBoxChange(this);
+    this.enableButton(this.getInputs());
+    this.setListeners(this, this.getInputs());
+    initToolTips();
   },
 
   getCategoryConstraints : function() {
@@ -1365,8 +1369,8 @@ QIHelper.prototype = {
     autoCompleter.registerAllInputs();
     if (!propName) $('input_p' + idx).focus(); // focus created input
     this.toggleAddchain(false);
-    this.enableButton();
-    this.setListeners();
+    this.enableButton(this.getInputs());
+    this.setListeners(this.getInputs());
   },
 
   setPropertyRestriction : function () {
@@ -1491,8 +1495,8 @@ QIHelper.prototype = {
       $('input_r' + newRowIndex).focus(); // focus created input
     autoCompleter.registerAllInputs();
                 
-    this.enableButton(this.getPropertyDialogInputs());
-    this.setListeners(this, this.getPropertyDialogInputs());
+    this.enableButton(this.getInputs());
+    this.setListeners(this, this.getInputs());
     initToolTips();
   },
 
@@ -1500,8 +1504,8 @@ QIHelper.prototype = {
     var tr = element.parentNode.parentNode;
     tr.parentNode.removeChild(tr);
         
-    this.enableButton(this.getPropertyDialogInputs());
-    this.setListeners(this, this.getPropertyDialogInputs());
+    this.enableButton(this.getInputs());
+    this.setListeners(this, this.getInputs());
   },
 
   removePropertyChainInput : function() {
@@ -1519,9 +1523,7 @@ QIHelper.prototype = {
       .getElementsByTagName('input').item(0).style.fontWeight = "bold";
     }
     this.toggleAddchain(true);
-    this.enableButton(this.getPropertyDialogInputs());
-    this.setListeners(this, this.getPropertyDialogInputs());
-    initToolTips();
+    this.enableButton(this.getInputs());
   },
 
   /**
@@ -1866,6 +1868,8 @@ QIHelper.prototype = {
 
     this.observeRadioBtnClick(this);
     this.observeSelectBoxChange(this);
+    this.enableButton(this.getInputs());
+    this.setListeners(this, this.getInputs());
   },
 
   /**
@@ -1993,7 +1997,7 @@ QIHelper.prototype = {
       $$('#askQI #addchain')[0].innerHTML =
       '<a href="javascript:void(0)" '
       + 'title="' + gLanguage.getMessage('QI_TT_ADD_CHAIN') + '" '
-      + 'onclick="tt_Hide(); qihelper.addPropertyChainInput()">'
+      + 'onclick="qihelper.addPropertyChainInput()">'
       + msg + '</a>';
     }
     else {
