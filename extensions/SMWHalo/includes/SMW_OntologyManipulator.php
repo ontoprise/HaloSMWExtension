@@ -72,6 +72,10 @@ $wgAjaxExportList[] = 'smwf_om_annotateCategories';
  * 			that are replaced by their representation.
  * @param string creationComment
  * 			This text describes why the article has been created.
+ * @param string $removeRedirect 
+ *          If "true" an existing redirect in an article is removed. Note
+ *          that in this case $content is appended to the existing content,
+ *          although the article already exists.  
  *
  * @return string Comma separated list:
  * 			bool success
@@ -84,7 +88,7 @@ $wgAjaxExportList[] = 'smwf_om_annotateCategories';
  * 				Title of the (new) article
  *
  */
-function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creationComment) {
+function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creationComment, $removeRedirect = "false") {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -135,7 +139,13 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 		if ($text === false) {
 			return "false,false,".$title.getText();
 		}
-		$content = $text;
+		
+		if ($removeRedirect !== "false") {
+			$content = $text."\n$content";
+			$content = preg_replace('/#REDIRECT\s*\[\[[^]]+\]\]/', "", $content);
+		} else {
+		  $content = $text;
+		}
 		$created = false;
 	}
 

@@ -288,7 +288,7 @@ OBArticleCreator.prototype = {
 		}
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwf_om_CreateArticle', [ title, wgUserName, content,
-				optionalText, creationComment ], ajaxResponseCreateArticle
+				optionalText, creationComment, "true" ], ajaxResponseCreateArticle
 				.bind(this));
 
 	},
