@@ -3,7 +3,7 @@ Installation instructions
 
 Install instructions for the latest version of Rich Media are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.1
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.3
  
 For the full manual of the Rich Media have a look at:
 
@@ -24,9 +24,9 @@ If you don't use the deployment framework, you can install it manually. See belo
 #Requirements:
 #
 
-	Semantic Forms 2.1.2
+	Semantic Forms 2.2.1
 	Deployment Framework (optional)
-	SMW Plus ontology bundle 1.5.3
+	SMW Plus ontology bundle 1.6.0
 
 #
 # Installation
@@ -36,19 +36,21 @@ If you don't use the deployment framework, you can install it manually. See belo
 	1.1 The Rich Media extension comes with several patch files, where two must
 	be applied. One file patches Mediawiki and the other the Semantic Forms
 	extension. Depending on the version number choose the correct patch file.
-		* '/extensions/RichMedia/RichMediaPatchForSF2_1_2.txt': 
-			This file provides the necessary patches for Semantic Forms 2.1.2
-		* '/extensions/RichMedia/RichMediaPatchForMW1_16_4.txt': 
-			This is needed to patch MediaWiki in version 1.16.4
+		* '/extensions/RichMedia/RichMediaPatchForSF2_2_1.txt': 
+			This file provides the necessary patches for Semantic Forms 2.2.1
+		* '/extensions/RichMedia/RichMediaPatchForMW1_17_0.txt': 
+			This is needed to patch MediaWiki in version 1.17.0
+		* '/extensions/RichMedia/RichMediaPatchForMW1_17_0_Namespace.txt': 
+			This is needed to patch MediaWiki namespace class in version 1.17.0
 	Please find more detailed information about the patches at:
-http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.1#Notes_on_patches
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.3#Notes_on_patches
 
 
 	Note: We can not ensure that this patch works properly for other versions of
 	      MediaWiki.
 	      
 	These are Eclipse patch files which can be installed using the tool patch.php
-	which itself uses GNU patch. Both tools are included in the zip	archive. 
+	which itself uses GNU patch. Both tools are included in the zip archive. 
 	To install these patches enter the following command in the command line. The 
 	working directory should be the root of the Rich Media extension. Replace 
 	<mw-dir> by the installation directory of MediaWiki.
