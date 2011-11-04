@@ -1,8 +1,8 @@
 Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12489)
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12643)
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
-@@ -168,9 +168,23 @@
+@@ -168,9 +168,24 @@
  				}
  
  			} else {
@@ -16,7 +16,8 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
 +			// $page_contents = null;
 +			$fromRichMedia = $wgRequest->getCheck('SFviaRichMedia');
 +			if ( $fromRichMedia ) {
-+				// do nothing.
++				// always set page as source for upload converter.
++				$page_is_source = true;
 +			} else {
  				$page_is_source = false;
  				$page_contents = null;
