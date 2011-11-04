@@ -796,11 +796,13 @@
 					<!-- Display something in case of propagation -->
 				</xsl:when>
 				<xsl:otherwise>
-					<span class="smwttpersist">
+					
 
 						<xsl:choose>
 							<xsl:when test="count(gissues/gi[@modified]) > 0">
-								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png">
+							    <span>
+								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png"/>
+								<span style="display: none">
 								{{SMW_OB_MODIFIED}}
                                     <ul>
                                         <xsl:for-each select="gissues/gi">
@@ -811,12 +813,13 @@
                                             </xsl:if>
                                         </xsl:for-each>
                                     </ul>
-								</img>
-							
+								</span>
+							    </span>
 							</xsl:when>
 							<xsl:otherwise>
-								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png">
-                                {{SMW_OB_MODIFIED}}
+							<span>
+								<img class="smwh_ob_tooltip" src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png"/>
+                                <span style="display: none">
                                     <ul>
                                         <xsl:for-each select="gissues/gi">
                                             <xsl:if test="@type &lt; 100000">
@@ -826,34 +829,14 @@
                                             </xsl:if>
                                         </xsl:for-each>
                                     </ul>
-                                </img>
+                                </span>
+                                </span>
 							</xsl:otherwise>
 						</xsl:choose>
 
 
-					</span>
-					<a class="navigationLink" title="Edit {$title}" style="margin-left:5px;">
-						<xsl:choose>
-							<xsl:when test="$typeOfEntity='concept'">
-								<xsl:attribute name="href"><xsl:value-of
-									select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-									select="$param-ns-concept" />:<xsl:value-of
-									select="@title_url" />?action=edit</xsl:attribute>
-							</xsl:when>
-							<xsl:when test="$typeOfEntity='property'">
-								<xsl:attribute name="href"><xsl:value-of
-									select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-									select="$param-ns-property" />:<xsl:value-of
-									select="@title_url" />?action=edit</xsl:attribute>
-							</xsl:when>
-							<xsl:when test="$typeOfEntity='instance'">
-								<xsl:attribute name="href"><xsl:value-of
-									select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-									select="@namespace" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
-							</xsl:when>
-						</xsl:choose>
-						{{SMW_OB_EDIT}}
-					</a>
+					
+					
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>

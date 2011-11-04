@@ -772,7 +772,8 @@ OBInstanceActionListener.prototype = {
 		GeneralBrowserTools.navigateToPage(null, instanceName, editmode);
 
 	},
-
+	
+	
 	selectionChanged : function(id, title, ns, node) {
 		if (ns == SMW_INSTANCE_NS) {
 			this.selectedInstance = title;
@@ -1456,13 +1457,13 @@ OBPropertyTreeActionListener.prototype = Object
 													fixed : true
 												},
 												position: {
-                          my: 'bottom left',
-                          at: 'top left',
-                          target: 'mouse'
-                        },
+						                          my: 'bottom left',
+						                          at: 'top left',
+						                          target: 'mouse'
+						                        },
 												style : {
-                            classes: 'ui-tooltip-blue ui-tooltip-shadow'
-                        }
+						                            classes: 'ui-tooltip-blue ui-tooltip-shadow'
+						                        }
 											});
 										});
 							}
@@ -1857,7 +1858,7 @@ OBGlobalActionListener.prototype = {
 		jQuery(".smwh_ob_tooltip")
 		.each(
 				function() {
-					var html = jQuery(this)[0].innerHTML;
+					var html = jQuery(this).next().html();
 					
 					jQuery(this).qtip( {
 						content : html,
@@ -1883,9 +1884,7 @@ OBGlobalActionListener.prototype = {
 						},
 						style : {
 							tip : 'bottomLeft',
-							width : {
-								max : 500
-							}
+							width : 300
 						}
 					});
 				}

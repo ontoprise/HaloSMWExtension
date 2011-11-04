@@ -466,3 +466,7 @@ a.selectedSwitch {
 .aoDataSourceSelector {
 	width: 30em;
 }
+
+.smwh_ob_tooltip {
+	margin-left: 10px
+}
