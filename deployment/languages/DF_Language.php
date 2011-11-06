@@ -26,7 +26,8 @@ abstract class DF_Language {
 	public function getLanguageString($key, $params = array()) {
 		$template = $this->language_constants[$key];
 		foreach($params as $p => $value) {
-			$template = str_replace($p, $value, $template);
+			$num = $p+1;
+			$template = str_replace("$$num", $value, $template);
 		}
 		return $template;
 	}

@@ -102,7 +102,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_upload' => 'Hochladen',
 	'df_webadmin_restore' => 'Wiederherstellen',
     'df_webadmin_removerestore' => 'Lösche',
-	'df_webadmin_nothingfound' => 'Keine passenden Pakete für <b>"{{search-value}}"</b> gefunden!',
+	'df_webadmin_nothingfound' => 'Keine passenden Pakete für <b>"$1"</b> gefunden!',
 	'df_webadmin_searchinfoifnothingfound' => 'Um das Ontoprise-Repository zu browsen klicken Sie hier: ',
 	'df_webadmin_norestorepoints' => 'Keine Wiederherstellungspunkte gefundend.',
 	'df_webadmin_nouploadedfiles' => 'Keine Dateien gefunden.',
@@ -123,6 +123,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_server_execute' => 'Ausführen',
     'df_webadmin_server_start' => 'start',
     'df_webadmin_server_end' => 'stop',
-	'df_webadmin_refresh' => 'Aktualisieren'
+	'df_webadmin_refresh' => 'Aktualisieren',
+	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen'
 	);
 }

@@ -56,7 +56,7 @@ class DFSearchTab {
 		global $dfgLang;
 
 		if (count($results) == 0) {
-			$html = $dfgLang->getLanguageString('df_webadmin_nothingfound', array('{{search-value}}' => $searchValue));
+			$html = $dfgLang->getLanguageString('df_webadmin_nothingfound', array($searchValue));
 			$html .= "<br/><br/>".$dfgLang->getLanguageString('df_webadmin_searchinfoifnothingfound');
 			$html .= '<a href="http://dailywikibuilds.ontoprise.com/repository/repository.xml">Ontoprise repository</a>';
 			return $html;

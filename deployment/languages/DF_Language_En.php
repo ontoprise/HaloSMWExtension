@@ -104,7 +104,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_restore' => 'Restore',
 	'df_webadmin_removerestore' => 'Remove',
 	'df_webadmin_file' => 'File',
-	'df_webadmin_nothingfound' => 'No matching bundles for <b>"{{search-value}}"</b> found!',
+	'df_webadmin_nothingfound' => 'No matching bundles for <b>"$1"</b> found!',
 	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: ',
 	'df_webadmin_norestorepoints' => 'No restore points found.',
 	'df_webadmin_nouploadedfiles' => 'No uploaded files found.',
@@ -125,7 +125,9 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_server_execute' => 'Execute',
 	'df_webadmin_server_start' => 'start',
 	'df_webadmin_server_end' => 'stop',
-	'df_webadmin_refresh' => 'refresh'
+	'df_webadmin_refresh' => 'refresh',
+	
+	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)'
 	);
 
 }

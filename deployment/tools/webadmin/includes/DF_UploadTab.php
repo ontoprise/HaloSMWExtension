@@ -62,8 +62,9 @@ class DFUploadTab {
 
 	public function getHTML() {
 		global $dfgLang;
-
+        $tabHeaderMessage = $dfgLang->getLanguageString('df_webadmin_upload_message', array('*.zip', '*.owl/*.rdf/*.n3/*.ttl/*.ntriple/*.nt/*.obl'));
 		$html = <<<ENDS
+$tabHeaderMessage 
 <form id="df_upload_file_form" action="upload.php" method="post" enctype="multipart/form-data">
 <input id="df_upload_file_input" type="file" name="datei" size="100">
 <img id="df_upload_progress_indicator" src="skins/ajax-loader.gif" style="display:none"/>
@@ -111,6 +112,7 @@ ENDS
 				|| $file_ext == 'rdf'
 				|| $file_ext == 'obl'
 				|| $file_ext == 'nt'
+				|| $file_ext == 'ttl'
 				|| $file_ext == 'ntriple'
 				|| $file_ext == 'n3') {
 					$uploadFilesCounter++;
