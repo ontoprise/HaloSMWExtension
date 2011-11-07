@@ -154,7 +154,7 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_ob_relattValues' => 'Values',
 	'smw_ob_relattRangeType' => 'Type/Range',
 	'smw_ob_filter' => 'Filter',
-	'smw_ob_filterbrowsing' => 'Filter Browsing',
+	'smw_ob_filterbrowsing' => 'Find',
 	'smw_ob_reset' => 'Reset',
 	'smw_ob_cardinality' => 'Cardinality',
 	'smw_ob_transsym' => 'Transitivity/Symetry',

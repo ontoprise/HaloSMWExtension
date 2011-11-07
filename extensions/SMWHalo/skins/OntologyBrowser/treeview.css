@@ -120,7 +120,7 @@ a.navigationLink {
 }
 
 .categoryTreeElementColors:hover {
-	   background-color: #DDD;           
+	   background-color: #99AAFF;           
 }
 
 .categoryTreeActions {
@@ -179,7 +179,7 @@ a.navigationLink {
 }
 
 .propertyTreeElementColors:hover {
-       background-color: #DDD;           
+       background-color: #FFB74A;           
 }
 
 .propertyTreeListColors {
@@ -228,7 +228,7 @@ a.navigationLink {
 }
 
 #instanceList tr:hover{
-        background-color: #DDD;
+        background-color: #FF9999;
 }
 
 
@@ -249,7 +249,7 @@ a.selectedSwitch {
 }
 
 #relattributes tr:hover{
-  background-color: #DDD;
+  background-color: #FFB74A;
 }
 
 #relattributes td.right{
