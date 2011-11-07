@@ -246,7 +246,7 @@ class ASFWikiTextManipulator {
 				return $delimiter;
 			}
 		} else if (array_key_exists($propertyName, $existingAnnotations)){
-			if(count($existingAnnotations[$propertyName]['values']) > 0){
+			if(count($existingAnnotations[$propertyName]['values']) > 1){
 				return ',';
 			}
 		}
