@@ -208,7 +208,7 @@ class TFDataAPIACCESS {
 		 * and adds new ones
 		 */
 		public function updateValues($annotations, $parameters, $revisionId, $useSAT){
-		
+			
 			if(is_null($this->title) || !$this->title->exists()){
 				return wfMsg('tabf_response_deleted'); 
 			}
@@ -247,7 +247,9 @@ class TFDataAPIACCESS {
 						}
 					}
 				} else if($element instanceof POMCategory){
-					if(!is_null($newValue = $annotations->getNewValue(TF_CATEGORY_KEYWORD, $element->value))){
+					global $wgContLang;
+					if(!is_null($newValue = $annotations->getNewValue(TF_CATEGORY_KEYWORD, 
+							$wgContLang->getNSText(NS_CATEGORY).':'.$element->value))){
 						if(strlen($newValue) == 0){
 							$this->pomPage->delete($element);
 						} else {
