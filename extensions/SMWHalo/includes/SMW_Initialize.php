@@ -149,6 +149,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWHaloUtil'] = $smwgHaloIP . '/includes/SMWHaloUtil.php';
 	$wgAutoloadClasses['OB_Storage'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserAjaxImpl.php';
 	$wgAutoloadClasses['SMWOntologyBrowserXMLGenerator'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserXMLGenerator.php';
+	$wgAutoloadClasses['XMLTreeObject'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserXMLGenerator.php';
 
 
 	//patch Special:Browse in order to hide special Query Management Property
