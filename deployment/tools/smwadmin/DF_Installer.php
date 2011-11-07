@@ -390,7 +390,7 @@ class Installer {
 			$dfgOut->outputln( "\nNo packages found in repositories!\n");
 
 		}
-		$dfgOut->outputln (" Installed | Bundle-ID (title)                                  | Av. versions  | Repository");
+		$dfgOut->outputln (" Bundle-ID (title)                                  | Installed | Av. versions  | Repository");
 		$dfgOut->outputln ("--------------------------------------------------------------------------------------------------------\n");
 
 		ksort($allPackages);
@@ -416,8 +416,9 @@ class Installer {
 			}
 
 			$id_shown = $p_id;
-			$title = reset($versions);
-			$title = $title[3];
+			$allVersionsTuple = reset($versions);
+			$title = $allVersionsTuple[3];
+			$description = $allVersionsTuple[4];
 			$id_shown = !empty($title) ? $id_shown . " ($title)" : $id_shown . " (no title)";
 			$id_shown .= str_repeat(" ", 52-strlen($id_shown) >= 0 ? 52-strlen($id_shown) : 0);
 			$instTag .= str_repeat(" ", 10-strlen($instTag) >= 0 ? 10-strlen($instTag) : 0);
@@ -429,10 +430,14 @@ class Installer {
 
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
-			$dfgOut->outputln( " $instTag $id_shown  $versionsShown ".Tools::shortenURL($rUrl, 70));
-
-			if ($showDescription && array_key_exists($p_id, $localPackages)) {
-				$dfgOut->outputln( " ".$localPackages[$p_id]->getDescription()."\n\n");
+			
+			if (!$showDescription) {
+			    $dfgOut->outputln( " $id_shown $instTag $versionsShown ".Tools::shortenURL($rUrl, 70));
+			} else {
+				$dfgOut->outputln( str_repeat("-", 70));
+				$dfgOut->outputln( " $id_shown $instTag $versionsShown ".Tools::shortenURL($rUrl, 70));
+				$dfgOut->outputln( "\n ".$description."\n\n");
+				$dfgOut->outputln( str_repeat("-", 70));
 			}
 		}
 

@@ -768,7 +768,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -r [ <restore point name> ]");
-	$dfgOut->outputln( "       smwadmin -l [--desc ]");
+	$dfgOut->outputln( "       smwadmin [--desc ] -l [ fragment ]");
 	$dfgOut->outputln( "       smwadmin --rcreate [ <restore point name> ]");
 	$dfgOut->outputln( "       smwadmin --rlist");
 	$dfgOut->outputln( "       smwadmin --finalize");
@@ -777,7 +777,8 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\t-d <bundle> ]: De-Install");
 	$dfgOut->outputln( "\t-u <bundle>: Update");
 	$dfgOut->outputln( "\t-l [ pattern ] : List installed bundles.");
-	$dfgOut->outputln( "\t-l --desc: Shows additional description about the bundles.");
+	$dfgOut->outputln( "\t--desc -l : Shows additional description about the bundles.");
+	$dfgOut->outputln( "\t-l smw : Lists only bundles containing 'smw' in the ID.");
 	$dfgOut->outputln( "\t-r [ name ]: Restore from a wiki-restore-point.");
 	$dfgOut->outputln( "\t--rcreate [ name ]: Explicitly creates a wiki-restore-point.");
 	$dfgOut->outputln( "\t--rlist : Shows all existing wiki-restore-points");

@@ -348,8 +348,8 @@ class PackageRepository {
 					$version = new DFVersion((string) $v->attributes()->version);
 					$patchlevel = (string) $v->attributes()->patchlevel;
 					$patchlevel = empty($patchlevel) ? 0 : $patchlevel;
-					
-					$results[$id][] = array($version, $patchlevel, $repo_url, $title);
+					$description = (string) $v->attributes()->description;
+					$results[$id][] = array($version, $patchlevel, $repo_url, $title, $description);
 				}
 
 			}
