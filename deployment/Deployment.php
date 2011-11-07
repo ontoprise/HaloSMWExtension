@@ -8,10 +8,13 @@ $smwgDFIP = $IP . '/deployment';
 // read settings.php
 
 if(!file_exists($smwgDFIP.'/settings.php')) {
-	echo "settings.php not found! Forgot to copy it from config/settings.php?";
-	die();
+	echo '<p style="color:#ff0000">Deployment Framework warning!</p>
+	<p>Could not find deployment/settings.php!<br/>
+	Please copy it from deployment/config/settings.php to deployment/settings.php!</p>';
+	require_once("$smwgDFIP/config/settings.php");
+} else {
+	require_once("$smwgDFIP/settings.php");
 }
-require_once("$smwgDFIP/settings.php");
 $wgExtensionMessagesFiles['WikiAdminTool'] = $smwgDFIP . '/languages/DF_Messages.php'; // register messages (requires MW=>1.11)
 
 if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdateOnLogin !== false) {
