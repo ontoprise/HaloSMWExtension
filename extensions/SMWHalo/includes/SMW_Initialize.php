@@ -417,7 +417,8 @@ function smwgHaloSetupExtension() {
 		$wgResourceModules['ext.smwhalo.livequeries'] =
 			$commonProperties +
 			array(
-				'scripts' => array('scripts/LiveQueries/livequeries.js'),
+				//somehow ressource loader does not work for SMW_tooltips.js
+				'scripts' => array('scripts/LiveQueries/livequeries.js', '/../SemanticMediaWiki/skins/SMW_tooltip.js'),
 				'dependencies' => array( 'ext.smw.sorttable', 'ext.smw.tooltips')
 			);
 			

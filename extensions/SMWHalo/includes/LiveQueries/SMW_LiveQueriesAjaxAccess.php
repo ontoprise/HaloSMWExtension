@@ -9,7 +9,7 @@ function smwf_lq_refresh($id, $query){
 	//this is necessary, since occurences of ' ?' in the first line of the query are replaced by this string
 	$query = str_replace('&nbsp;?', ' ?', $query);
 	
-	$query = trim(substr($query, 5, strlen($query)-9));
+	$query = trim(substr($query, 5, strlen($query)-11));
 	$query = str_replace(array('&lt;', '&gt;'), array('<','>'), $query);
 	
 	global $wgParser, $wgOut;
