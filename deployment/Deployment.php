@@ -77,7 +77,8 @@ function dfgCheckUpdate(&$wgUser, &$injected_html) {
 	global $rootDir;
 	global $dfgOut;
 	$rootDir = "$IP/deployment";
-	global $dfgOut;
+	global $dfgOut, $dfgNoAsk;
+	$dfgNoAsk = true; // make sure it does not block during update check
 	require_once "$IP/deployment/tools/maintenance/maintenanceTools.inc";
 	$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_HTML);
 	$cc = new ConsistencyChecker($IP);
