@@ -26,8 +26,10 @@ SET BUNDLEDIR=%%a
 )
 echo/%%BUNDLEDIR%%=%BUNDLEDIR%
 
+REM Clear existing output directory (if any)
+IF EXIST C:\TEMP\%BUNDLEDIR% RMDIR /S /Q C:\TEMP\%BUNDLEDIR%
 
-REM Set output dir
+REM Create new output dir
 SET OUTPUTDIR=C:\TEMP\%BUNDLEDIR%\extensions\%BUNDLEDIR%
 IF EXIST %OUTPUTDIR% GOTO dump
 mkdir %OUTPUTDIR%
