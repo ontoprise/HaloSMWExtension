@@ -49,6 +49,7 @@ dffInitLanguage();
 $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 $dfgOut->start(DF_OUTPUT_TARGET_STDOUT);
 
+
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-b => Bundle to export
@@ -67,7 +68,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		if ($dumpFile === false) Tools::exitOnFatalError("No dump file given");
 			
 		continue;
-	} else if (strpos($arg, '--includeInstances') === 0) {
+	} else if ($arg == '--stripname') {
+        $stripBundlename = next($argv);
+        if ($stripBundlename === false) Tools::exitOnFatalError("No bundle name given");
+            
+        continue;
+    } else if (strpos($arg, '--includeInstances') === 0) {
 		list($option, $value) = explode("=", $arg);
 		if (!isset($value))  $value = next($argv);
 		$includeInstances = ($value == 'true' || $value == '1' || $value == 'yes');
@@ -80,6 +86,26 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 			
 		continue;
 	}
+}
+
+
+if (isset($stripBundlename)) {
+	
+	$title = preg_replace("/[^A-Z_a-z\\-\\.0-9]/", " ", $stripBundlename);
+	$title = trim($title);
+	if(strlen($title) == 0 || preg_match("/\w/", $title[0]) == 0) {
+		// illegal start character for XML prefixes
+		$title = "_".$title;
+	}
+	$title = preg_replace("/\s/", "_", $title);
+	$title = ucfirst(strtolower($title));
+	echo $title;
+	die();
+}
+
+if (!isset($bundleToExport)) {
+	echo "\nUsage: php exportOntologyBundleDeployDescriptor.php -b <bundlename> -o <outputdir> -d <dumpfile>\n";
+	die();
 }
 
 // check bundle page
@@ -123,9 +149,9 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	if ( count($version) == 0) {
 		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_ontologyversion')."]] annotation on $bundeID" . "\n" );
 	}
-    if ( count($version) == 0) {
-        fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_patchlevel')."]] annotation on $bundeID" . "\n" );
-    }
+	if ( count($version) == 0) {
+		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_patchlevel')."]] annotation on $bundeID" . "\n" );
+	}
 	if ( count($vendor) == 0) {
 		fwrite( STDERR , "No [[".$dfgLang->getLanguageString('df_vendor')."]] annotation on $bundeID" . "\n" );
 	}
@@ -180,7 +206,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$xml .= "\t\t".'<dependencies>'."\n";
 	foreach($dependencies as $dep) {
 		$sd = $dep->getSemanticData();
-				
+
 		// id must be there
 		$bundleID = NULL;
 		$minversion = false;
@@ -194,21 +220,21 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 					break;
 				case $dfgLang->getLanguageString('df_minversion'):
 					$minversionDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_minversion')));
-                    $minversion = reset($minversionDi)->getString();
+					$minversion = reset($minversionDi)->getString();
 					break;
 				case $dfgLang->getLanguageString('df_maxversion'):
 					$maxversionDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maxversion')));
-                    $maxversion = reset($maxversionDi)->getString();
+					$maxversion = reset($maxversionDi)->getString();
 					break;
 			}
 		}
 		if (is_null($bundleID)) {
 			Tools::exitOnFatalError("\n\nDependency annotation lacks bundle ID. It is mandatory.\n");
 		}
-		
+
 		$minversion = $minversion !== false ? 'from="'.$minversion.'"' : "";
 
-	
+
 		$maxversion = $maxversion !== false ? 'to="'.$maxversion.'"' : "";
 
 		$xml .= "\t\t\t<dependency $minversion $maxversion>$bundleID</dependency>\n";
@@ -237,7 +263,16 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 ENDS
 	;
 	$xml .= "</notice>";
-
+	$xml .= "<namespaces>";
+	print "\n$bundeID";
+	$prefixedUsedByBundle = DFBundleTools::getPrefixesUsedBy($bundeID, false);
+	$allPrefixes = DFBundleTools::getRegisteredPrefixes();
+	print_r($prefixedUsedByBundle);
+	foreach($prefixedUsedByBundle as $prefix) {
+		$uri = str_replace("<", "&lt;", $allPrefixes[$prefix]);
+		$xml .= "\n\t<namespace prefix=\"$prefix\">$uri</namespace>";
+	}
+	$xml .= "</namespaces>";
 	$xml .= "\t".'</global>'."\n";
 	$xml .= "\t".'<wikidumps>'."\n";
 	$xml .= "\t\t".'<file loc="'.$dumpFile.'"/>'."\n";

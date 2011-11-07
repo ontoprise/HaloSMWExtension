@@ -17,6 +17,8 @@ echo "Usage: ./exportBundle.sh <bundle-id>"
 exit 0
 fi
 
+# FIXME: convert bundle id in case of URI
+# php exportOntologyBundleDeployDescriptor.php --stripname $1 
 
 # Create output dir
 OUTPUTDIR=/tmp/$1/extensions/$1

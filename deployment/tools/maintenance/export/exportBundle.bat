@@ -18,8 +18,17 @@ SET ZIP=7za
 @%ZIP% > null
 IF %ERRORLEVEL% NEQ 0 GOTO install7z
 
+REM get bundle directory
+FOR /f "tokens=*" %%a in (
+'php exportOntologyBundleDeployDescriptor.php --stripname %1'
+) do (
+SET BUNDLEDIR=%%a
+)
+echo/%%BUNDLEDIR%%=%BUNDLEDIR%
+
+
 REM Set output dir
-SET OUTPUTDIR=C:\TEMP\%1\extensions\%1
+SET OUTPUTDIR=C:\TEMP\%BUNDLEDIR%\extensions\%BUNDLEDIR%
 IF EXIST %OUTPUTDIR% GOTO dump
 mkdir %OUTPUTDIR%
 :dump
@@ -32,13 +41,13 @@ IF %ERRORLEVEL% NEQ 0 GOTO end
 
 REM Zip bundle
 ECHO Zip bundle
-%ZIP% a -r C:\TEMP\%1\%1.zip C:\TEMP\%1\*
+%ZIP% a -r C:\TEMP\%BUNDLEDIR%\%BUNDLEDIR%.zip C:\TEMP\%BUNDLEDIR%\*
 
 REM Remove temp dir
 ECHO Remove temporary directory
-RMDIR /S /Q C:\TEMP\%1\extensions
+RMDIR /S /Q C:\TEMP\%BUNDLEDIR%\extensions
 
-ECHO The output file is at: C:\TEMP\%1
+ECHO The output file is at: C:\TEMP\%BUNDLEDIR%
 GOTO end
 
 :help

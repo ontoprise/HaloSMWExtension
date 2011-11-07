@@ -713,6 +713,7 @@ class Installer {
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);
+			$res_installer->installNamespaces($desc);
 		}
 
 		// print (optional) notices

@@ -198,7 +198,7 @@ class DeployDescriptor {
 				// try general update section (without from)
 				$path = "//update[not(@from)]";
 				$update = $this->dom->xpath($path);
-				
+
 
 			}
 
@@ -294,7 +294,7 @@ class DeployDescriptor {
 				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 				if (empty($from)) $from = "0.0.0";
-                if (empty($to)) $to = "99.99.99";
+				if (empty($to)) $to = "99.99.99";
 				$this->uninstallpatches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, true); // really mayfail?
 			}
 		}
@@ -331,14 +331,14 @@ class DeployDescriptor {
 	function getID() {
 		return strtolower(trim((string) $this->globalElement[0]->id));
 	}
-	
-    /**
-     * Returns title (has only informal function)
-     * @return string
-     */
-    function getTitle() {
-        return strtolower(trim((string) $this->globalElement[0]->title));
-    }
+
+	/**
+	 * Returns title (has only informal function)
+	 * @return string
+	 */
+	function getTitle() {
+		return strtolower(trim((string) $this->globalElement[0]->title));
+	}
 
 	/**
 	 * Returns vendor
@@ -383,6 +383,37 @@ class DeployDescriptor {
 		// license is optional
 		return isset($this->globalElement[0]->license) ? trim((string) $this->globalElement[0]->license) : '';
 	}
+
+	/**
+	 * Returns categories the deploy descriptor is part of.
+	 *
+	 * @return string[]
+	 */
+	function getCategories() {
+		// categories are optional
+		return isset($this->globalElement[0]->categories) ? explode(",",trim((string) $this->globalElement[0]->categories)) : array();
+	}
+
+	/**
+	 * Returns prefix -> namespace mappings.
+	 *
+	 * @return array [prefix] -> namespace
+	 */
+	function getNamespaces() {
+		// categories are optional
+		$result = array();
+		if (isset($this->globalElement[0]->namespaces)) {
+			$namespaces = $this->dom->xpath('/deploydescriptor/global/namespaces/namespace');
+
+			foreach($namespaces as $ns) {
+				$namespaceURI = strtolower(trim((string) $ns[0]));
+				$prefix = (string) $ns->attributes()->prefix;
+				$result[$prefix] = $namespaceURI;
+			}
+		}
+		return $result;
+	}
+
 
 	/**
 	 * Returns installation directory.
@@ -488,10 +519,10 @@ class DeployDescriptor {
 		$patches = array();
 		foreach($this->patches as $patch) {
 			foreach($localPackages as $id => $lp) {
-				
+
 				$ext_id = $patch->getID();
 				$pf = $patch->getPatchfile();
-				if (empty($ext_id) && !DFPatch::containsPatchfile($patches, $patch)) { 
+				if (empty($ext_id) && !DFPatch::containsPatchfile($patches, $patch)) {
 					// add patches without extension constraint
 					$patches[] = $patch;
 					continue;
@@ -516,20 +547,20 @@ class DeployDescriptor {
 
 		$patches = array();
 		foreach($this->uninstallpatches as $patch) {
-		foreach($localPackages as $id => $lp) {
-                
-                $ext_id = $patch->getID();
-                $pf = $patch->getPatchfile();
-                if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
-                    $patches[] = $pf;
-                    continue;
-                }
-                $fromVersion = $patch->getMinversion();
-                $toVersion = $patch->getMaxversion();
-                if ($lp->getID() == $ext_id && $fromVersion->isLowerOrEqual($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
-                    $patches[] = $patch;
-                }
-            }
+			foreach($localPackages as $id => $lp) {
+
+				$ext_id = $patch->getID();
+				$pf = $patch->getPatchfile();
+				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
+					$patches[] = $pf;
+					continue;
+				}
+				$fromVersion = $patch->getMinversion();
+				$toVersion = $patch->getMaxversion();
+				if ($lp->getID() == $ext_id && $fromVersion->isLowerOrEqual($lp->getVersion()) && $lp->getVersion()->isLowerOrEqual($toVersion)) {
+					$patches[] = $patch;
+				}
+			}
 		}
 		return $patches;
 	}
@@ -640,16 +671,16 @@ class DeployDescriptor {
 		} else {
 			$dom = new DOMDocument("1.0");
 			$dom->loadXML($this->xml);
-				
+
 			// replace ID node
 			$oldIDNode = $dom->getElementsByTagName("id")->item(0);
 			$newIDNode = $dom->createElement("id");
 			$newIDNode->appendChild($dom->createTextNode($newID));
 			$globalNode = $dom->getElementsByTagName("global")->item(0);
 			$globalNode->replaceChild($newIDNode, $oldIDNode);
-				
+
 			return $dom->saveXML();
-				
+
 		}
 	}
 
@@ -770,7 +801,7 @@ class DeployDescriptor {
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		$dfgOut->output("done.]");
 
-		
+
 
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.
