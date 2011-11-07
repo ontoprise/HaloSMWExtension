@@ -181,27 +181,6 @@ class ASFFormGeneratorUtils {
 		return false;
 	}
 	
-	/*
-	 * Returns a string of long property values
-	 */
-	public static function getLongPropertyValues($semanticData, $propertyName, $linked=true){
-		$result = '';
-		
-		$properties = $semanticData->getProperties();
-		
-		if(array_key_exists($propertyName, $properties)){
-			$values = $semanticData->getPropertyValues($properties[$propertyName]);
-			
-			$result = array();
-			foreach($values as $v){
-				$result[] = $v->getLongText(SMW_OUTPUT_WIKI, $linked);
-			}
-			$result = implode(',', $result);
-			
-		}
-		
-		return $result;
-	}
 	
 	/*
 	 * Create the form dummy which is used to trick

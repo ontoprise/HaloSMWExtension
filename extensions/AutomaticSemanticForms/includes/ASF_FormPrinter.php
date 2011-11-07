@@ -54,10 +54,15 @@ class ASFFormPrinter extends SFFormPrinter {
 			if(!$form_submitted){
 				global $wgOut;
 				$wgOut->addModules( 'ext.automaticsemanticforms.main' );
+
+				//we have to do this, so that existing page content will not be ignored
+				//we can do this, since all cases in parent::formHTML in which this variable 
+				//occurs do not play a role for ASF
+				//$source_is_page = true;
 			} else {
 				if(!is_null($page_name)){
 					$title = Title::newFromText($page_name);
-					if($title->exists()){
+					if(($title instanceof Title) && $title->exists()){
 						$article = new Article($title);
 						$existing_page_content .= $article->getRawText();
 					}
@@ -66,16 +71,12 @@ class ASFFormPrinter extends SFFormPrinter {
 			
 			$existing_page_content .= $formDefinition->getAdditionalFreeText($page_name);
 			
-			//we have to do this, so that existing page content will not be ignored
-			//we can do this, since all cases in parent::formHTML in which this variable 
-			//occurs do not play a role for ASF
-			$source_is_page = true;
-			
-			list($existing_page_content, $existingAnnotations) = 
-				ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
+			if($source_is_page || $form_submitted){
+				list($existing_page_content, $existingAnnotations) = 
+					ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
+				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
+			}
 
-			$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
-			
 			$form_def = $formDefinition->getFormDefinition(); 
 			
 			$page_name_formula = $formDefinition->getPageNameTemplate();
@@ -114,6 +115,11 @@ class ASFFormPrinter extends SFFormPrinter {
 			} else {
 				$endPos = strpos($form_text, '>', $startPos);
 				$form_text = substr($form_text, 0, $endPos).'style="width: 100%;"'.substr($form_text, $endPos);
+			}
+
+			if(!$source_is_page){
+				$startPos = strpos($form_text, '</textarea>', $startPos);
+				$form_text = substr($form_text, 0, $startPos).$existing_page_content.substr($form_text, $startPos);
 			}
 			
 			$form_text = str_replace(

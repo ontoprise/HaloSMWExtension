@@ -29,9 +29,6 @@ class ASFParserFunctions {
 			array( 'ASFParserFunctions', 'renderQTipHelp'));
 
 			
-		global $wgHooks;
-		$wgHooks['ParserAfterTidy'][] = 'ASFParserFunctions::finallyRenderShowNow';
-		
 		return true;
 	}
 	
@@ -272,36 +269,11 @@ class ASFParserFunctions {
 	static function renderShowNow( &$parser, $frame, $args) {
 		$result = "";
 		
-		$showProperty = array();
-		
 		if(array_key_exists(0, $args)){
-			$result .= "__asf_shownow:";
-			$showProperty['name'] = str_replace(' ', '_' , trim($args[0]));
-			$result .= $showProperty['name'];
+			$result = '{{#show:{{PAGENAME}}|?'.trim($args[0]).'}}';
 		}
 		
-		if(array_key_exists(1, $args)){
-			$showProperty['linked'] = trim($frame->expand($args[1]));
-			if($showProperty['linked'] == 'false') $showProperty['linked'] = false;
-		} else {
-			$showProperty['linked'] = true;
-		}
-		
-		if(array_key_exists(2, $args) && array_key_exists(3, $args)){
-			$showProperty['variable'] = trim($frame->expand($args[2]));
-			
-			$showProperty['evaluate'] = $args[3];
-			$showProperty['frame'] = $frame;
-			
-			//$showProperty['evaluate'] = self::getArgValue($showProperty['evaluate'], 'inner');	
-		}
-		
-		if(count($showProperty) > 0){
-			global $asfShowNowProperties;
-			$asfShowNowProperties[]= $showProperty;
-		}
-		
-		return $result;
+		return array($result, 'noparse' => false);
 	}
 	
 	/*
@@ -312,48 +284,6 @@ class ASFParserFunctions {
 		$value = substr($value[0], 0, strrpos($value[1], '</'.$tag.'>'));
 		$value = trim($value);
 		return $value;
-	}
-	
-	/*
-	 * Finally process the #shownow parser function and replace it
-	 * with data from the semantic store
-	 */
-	public static function finallyRenderShowNow( &$parser, &$text ) {
-		global $asfShowNowProperties;
-		
-		global $asfFinallyRenderShowNowStarted;
-		if($asfFinallyRenderShowNowStarted) return true;
-		$asfFinallyRenderShowNowStarted = true;
-		
-		if(count($asfShowNowProperties) == 0) return true;		
-		
-		$semanticData = $parser->getOutput()->mSMWData;
-		
-		foreach($asfShowNowProperties as $key => $prop){
-			if(strpos($text, "asf_shownow:".$prop['name']) === false) continue;
-			
-			$value = 	
-				ASFFormGeneratorUtils::getLongPropertyValues($semanticData, $prop['name'], $prop['linked']);
-			
-			if($prop['linked'] || (array_key_exists('variable', $prop) && array_key_exists('evaluate', $prop))){
-				$p = new Parser();
-				$popts = new ParserOptions();
-				
-				if(array_key_exists('variable', $prop) && array_key_exists('evaluate', $prop)){
-					$evaluate = $prop['frame']->expand( $prop['evaluate'], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES);
-					$value = str_replace($prop['variable'], $value, $evaluate);
-					$value  = $p->preprocessToDom( $value, $prop['frame']->isTemplate() ? Parser::PTD_FOR_INCLUSION : 0 );
-					$value = trim( $prop['frame']->expand( $value ) );
-				}
-				
-				$value = $p->parse($value, $parser->getTitle(), $popts, false)->getText();
-			}	
-				
-			$text = str_replace('__asf_shownow:'.$prop['name'], $value, $text);
-			unset($asfShowNowProperties[$key]);
-		}
-		
-		return true;
 	}
 	
 	

@@ -1,7 +1,26 @@
 Automatic Semantic Forms extension ChangeLog
 ===============================
 
-VERSION 1.0
+VERsION 1.3
+
+CHANGES
+* The #shownow Parser Function has finally been deprecated. Please use the #show Parser Function instead.
+
+FEATURES
+* ASF now works without templateless. Annotations in the standard syntax are now used to automatically generate  the form and to fill the form input fields with values.
+** The 'CreateSilentAnnotations' Parser Function is not needed anymore, although it still works.
+
+VERSION 1.2
+
+CHANGES
+* Categories now inherit 'Use display template' and 'use preload article' annotations from their super categories. 
+* The 'No automatic formedit' annotation can now also be used for properties.
+
+FEATURES
+* Support for the One-STep-Creation process added.
+* Free text input field can be hidden via the 'Hide free text input' annotation.
+
+VERSION 1.1
 
 FEATURES
 * New special page Special:AutomaticSemanticForms added. Page enables users 
