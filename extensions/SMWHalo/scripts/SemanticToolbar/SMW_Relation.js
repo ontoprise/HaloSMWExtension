@@ -627,6 +627,13 @@ updateNewItem: function(request) {
 	}
 	tb.remove(removeElements);
 	
+	// The initially assumed arity may be wrong. Check if the oldValues contains
+	// a number of values that match the actual arity.
+	if (oldValues.length === 1 && arity > 1) {
+		var rel = new WtpRelation('', 0, 0, null, '', '', oldValues[0], '');
+		oldValues = rel.getSplitValues();
+	}
+	
 	// create new input fields
 	for (var i = 0; i < arity-1; i++) {
 		insertAfter = (i==0) 
