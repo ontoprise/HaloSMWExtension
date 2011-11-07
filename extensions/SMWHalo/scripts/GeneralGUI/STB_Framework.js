@@ -103,7 +103,14 @@ ToolbarFramework.prototype = {
 		}
 		return false;
 	},
-
+	
+	isToolbarVisible: function () {
+		if ($("ontomenuanchor") != null && $("ontomenuanchor").visible()) {
+			return true;
+		}
+		return false;
+	},
+	
 	initialize: function() {
 		this.contarray = new Array();
 		// tab array - how many tabs are there and which one is active?
@@ -111,7 +118,9 @@ ToolbarFramework.prototype = {
 		this.tabnames = new Array(gLanguage.getMessage('STB_TOOLS'), 
 								  gLanguage.getMessage('STB_LINKS'),
 								  gLanguage.getMessage('STB_FACTS'));
-		this.closeFunction;
+		this.closeCallbacks = [];
+		this.closeButtonClickCallbacks = [];
+		
 		// An array of objects that implements a toolbox for the STB.
 		if (!this.toolboxObjects) {
 			this.toolboxObjects = [];
@@ -195,53 +204,61 @@ ToolbarFramework.prototype = {
 	
 
 	showSemanticToolbarContainer : function(container) {
-		if (container) {
-            // query container doesn't exist in WYSIWYG editor
-            if ( typeof this.contarray[container] == 'undefined') return;
-			if (this.contarray[container].getTab() == this.curtabShown) {
-				if (this.contarray[container].headline) {
-					$("stb_cont"+container+"-headline").show();
-					document.getElementById("stb_cont" + container + "-link").className='minusplus';
-					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGMINUS;
-				}
-				if (this.contarray[container].isVisible()) {
-					$("stb_cont"+container+"-content").show();
-					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGMINUS;
-				} else {
-					$("stb_cont"+container+"-content").hide();
-					document.getElementById("stb_cont" + container + "-link").className='plusminus';
-					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGPLUS;
-				}
-			}
-		} else {
-			for(var i=0;i<this.contarray.length;i++) {
-				if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
-					if (this.contarray[i].headline) {
-						$("stb_cont"+i+"-headline").show();
-						document.getElementById("stb_cont" + i + "-link").className='minusplus';
+		try {
+			if (container) {
+				// query container doesn't exist in WYSIWYG editor
+				if (typeof this.contarray[container] == 'undefined') 
+					return;
+				if (this.contarray[container].getTab() == this.curtabShown) {
+					if (this.contarray[container].headline) {
+						$("stb_cont" + container + "-headline").show();
+						document.getElementById("stb_cont" + container + "-link").className = 'minusplus';
+						$("stb_cont" + container + "-icon").src = wgScriptPath + STBIMGMINUS;
 					}
-					if (this.contarray[i].isVisible()) {
-						$("stb_cont"+i+"-content").show();
-					} else {
-						$("stb_cont"+i+"-content").hide();
-						document.getElementById("stb_cont" + i + "-link").className='plusminus';
+					if (this.contarray[container].isVisible()) {
+						$("stb_cont" + container + "-content").show();
+						$("stb_cont" + container + "-icon").src = wgScriptPath + STBIMGMINUS;
+					}
+					else {
+						$("stb_cont" + container + "-content").hide();
+						document.getElementById("stb_cont" + container + "-link").className = 'plusminus';
+						$("stb_cont" + container + "-icon").src = wgScriptPath + STBIMGPLUS;
 					}
 				}
 			}
+			else {
+				for (var i = 0; i < this.contarray.length; i++) {
+					if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown) {
+						if (this.contarray[i].headline) {
+							$("stb_cont" + i + "-headline").show();
+							document.getElementById("stb_cont" + i + "-link").className = 'minusplus';
+						}
+						if (this.contarray[i].isVisible()) {
+							$("stb_cont" + i + "-content").show();
+						}
+						else {
+							$("stb_cont" + i + "-content").hide();
+							document.getElementById("stb_cont" + i + "-link").className = 'plusminus';
+						}
+					}
+				}
+			}
+		} catch (error) {
 		}
 	},
 
 	// refresh content of container
 	contentChanged : function(contnum) {
-		// probably show container
-		this.showSemanticToolbarContainer(contnum);
-		// probably resize toolbar
-		this.resizeToolbar();
-		
-		// send show/hide container event
-        if (typeof this.contarray[contnum] != 'undefined')
-            this.contarray[contnum].showContainerEvent();
-
+		if (this.isToolbarVisible()) {
+			// probably show container
+			this.showSemanticToolbarContainer(contnum);
+			// probably resize toolbar
+			this.resizeToolbar();
+			
+			// send show/hide container event
+			if (typeof this.contarray[contnum] != 'undefined') 
+				this.contarray[contnum].showContainerEvent();
+		}
 	},
 
 	notify : function(container) {
@@ -330,17 +347,56 @@ ToolbarFramework.prototype = {
 //		}
 	},
 
-    setCloseFunction: function(func) {
-        if (func) this.closeFunction = func;
+	/**
+	 * Adds a function (or a piece of JavaScript code) that is executed when the
+	 * toolbar is closed.
+	 * 
+	 * @param {Function} or {String} func
+	 * 		A function or a string containing JavaScript
+	 */
+    onClose: function(func) {
+        if (typeof func === 'function' || typeof func === 'string') {
+			this.closeCallbacks.push(func);
+		}
     },
 
 	closeToolbar: function () {
-		if (this.closeFunction) {
-			if (typeof this.closeFunction === 'string') {
-				eval(this.closeFunction);
+		for (var i = 0, len = this.closeCallbacks.length; i < len; ++i) {
+			var cb = this.closeCallbacks[i];
+			if (typeof cb === 'string') {
+				eval(cb);
+			} else if (typeof cb === 'function') {
+				cb();
 			}
-			else if (typeof this.closeFunction === 'function') {
-				this.closeFunction();
+		}
+		// Hide the toolbar
+		if($('ontomenuanchor')) {
+			$('ontomenuanchor').innerHTML = '';
+			$('ontomenuanchor').hide();
+		}
+		
+	},
+	
+	/**
+	 * Adds a function (or a piece of JavaScript code) that is executed when the
+	 * close button of the toolbar is clicked.
+	 * 
+	 * @param {Function} or {String} func
+	 * 		A function or a string containing JavaScript
+	 */
+	onCloseButtonClick: function (func) {
+        if (typeof func === 'function' || typeof func === 'string') {
+			this.closeButtonClickCallbacks.push(func);
+		}
+	},
+	
+	closeButtonClick: function () {
+		for (var i = 0, len = this.closeButtonClickCallbacks.length; i < len; ++i) {
+			var cb = this.closeButtonClickCallbacks[i];
+			if (typeof cb === 'string') {
+				eval(cb);
+			} else if (typeof cb === 'function') {
+				cb();
 			}
 		}
 	},
@@ -584,7 +640,7 @@ ToolbarFramework.prototype = {
 		    (typeof CKEDITOR !== 'undefined' && (!$('cke_wpTextbox1') || !$('cke_wpTextbox1').visible() ))) {
 			$('semtoolbarclosebtn').hide();
 		} else {
-		    Event.observe('semtoolbarclosebtn', 'click',  this.closeToolbar.bindAsEventListener(this));
+		    Event.observe('semtoolbarclosebtn', 'click',  this.closeButtonClick.bindAsEventListener(this));
 		}
 	    Event.observe('semtoolbarminimizebtn', 'click',  this.minimizeToolbar.bindAsEventListener(this));
 	    Event.observe('semtoolbarmaximizebtn', 'click',  this.maximizeToolbar.bindAsEventListener(this));

@@ -293,25 +293,31 @@ createToolbar: function(attributes) {
  * 
  * @param ContextMenuFramework contextMenuContainer
  * 		The container of the context menu.
+ * @param {string} name
+ * 		Name of the category. If not specified, the current selection in the
+ * 		editor will be used.
  * @param bool editCategory
  * 		If true, an existing category is to be edited
+ * @param {function} confirmFunction
+ * 		An optional function that is called after the operation of the toolbar
+ * 		was completed
  */
-createContextMenu: function(contextMenuContainer, editCategory) {
+createContextMenu: function(contextMenuContainer, name, editCategory, confirmFunction) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
+	this.confirmFunction = confirmFunction ? confirmFunction : null;
 	this.toolbarContainer = new ContainerToolBar('category-content',600,contextMenuContainer);
 	var tb = this.toolbarContainer;
 	tb.createContainerBody(SMW_CAT_ALL_VALID_ANNOTATED, CATEGORYCONTAINER, gLanguage.getMessage('ANNOTATE_CATEGORY'));
 
 	this.currentAction = "annotate";
 	
-        this.wtp.initialize();
-	var selection = this.wtp.getSelection(true);
+	this.wtp.initialize();
+	var selection = name ? name : this.wtp.getSelection(true);
 	selection = selection.replace(/'''''/g,''); // replace bold&italic
 	selection = selection.replace(/'''/g,'');   // replace bold
 	selection = selection.replace(/''/g,'');    // replace italic
-	
 	
 	/*STARTLOG*/
         if (smwhgLogger) smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
@@ -394,6 +400,10 @@ addItem: function(create, append) {
 		/*STARTLOG*/
 	    smwhgLogger.log(name,"STB-Categories","create_added");
 		/*ENDLOG*/
+	}
+	if (this.confirmFunction) {
+		this.confirmFunction();
+		this.confirmFunction = null;
 	}
 },
 

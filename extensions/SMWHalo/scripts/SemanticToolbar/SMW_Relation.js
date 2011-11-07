@@ -340,11 +340,17 @@ createToolbar: function(attributes) {
  * @param string repr (optional)
  * 		The default representation for the property. If it is not given, the current 
  * 		selection of the wiki text parser is used.
+  * @param {function} confirmFunction
+ * 		An optional function that is called after the operation of the toolbar
+ * 		was completed
+* 
  */
-createContextMenu: function(contextMenuContainer, value, repr, name) {
+createContextMenu: function(contextMenuContainer, value, repr, name, confirmFunction) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
+	this.confirmFunction = confirmFunction ? confirmFunction : null;
+	
 	this.toolbarContainer = new ContainerToolBar('relation-content',500,contextMenuContainer);
 	var tb = this.toolbarContainer;
 	tb.createContainerBody(SMW_REL_ALL_VALID, RELATIONCONTAINER, gLanguage.getMessage('SPECIFY_PROPERTY'));
@@ -445,6 +451,11 @@ addItem: function() {
 	}
 	this.wtp.addRelation(name, value, text);
 	this.fillList(true);
+	if (this.confirmFunction) {
+		this.confirmFunction();
+		this.confirmFunction = null;
+	}
+	
 },
 
 getRelationValue: function() {

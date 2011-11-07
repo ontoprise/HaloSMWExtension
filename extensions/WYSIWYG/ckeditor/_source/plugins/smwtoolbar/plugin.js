@@ -65,11 +65,25 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     gEoutputBuffering = false,
     gEeditor,
     gEflushedOnce;
+	
+	var gElastMouseUpEvent = null;
+	
     var CKeditInterface = function( editor ) {
       gEeditor = editor;
     };
     CKeditInterface.prototype = {
 
+      /**
+		 * Sets the annotation element (i.e. the span element that contains a
+		 * category or property annotation) that is currently being edited.
+		 * 
+		 * @param {Object} annotationElement
+		 * 		The DOM element for the annotation.
+		 */
+		setEditAnnotation: function (annotationElement) {
+			this.editAnnotation = annotationElement;
+		},
+		
       /**
        * gets the selected string. This is the  simple string of a selected
        * text in the editor arrea.
@@ -91,7 +105,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       getErrMsgSelection: function() {
         return gEerrMsgSelection;
       },
-
+	  
       /**
        * Get the current selection of the FCKeditor and replace it with the
        * annotated value. This works on a category or property annotation only.
@@ -114,17 +128,16 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           return;
         }
 
-        // WYSIWYG mode: continue using the functions of the FCK editor
-        // Get the ancestor node. If we have a selection of some property
-        // or category text there is a ancestor SPAN node. If this is not the
-        // case, oSpan will be null. Then we create a new element. This will be
-        // inserted at cursor position.
-        var selection = ckeditor.getSelection();
-        var oSpan = selection ? selection.getStartElement() : null;
-        if (oSpan && oSpan.$.nodeName.toUpperCase() == 'SPAN')
-          ckeditor.getSelection().selectElement( oSpan );
-        else
-          oSpan = new CKEDITOR.dom.element( 'span', ckeditor.document );
+        // WYSIWYG mode: Replace the existing annotation
+		var oSpan = this.editAnnotation;
+		var replaceElement = false;
+		if (!oSpan) {
+			// We are not changing an existing annotation.
+			// The current selection will be annotated.
+			oSpan = new CKEDITOR.dom.element( 'span', ckeditor.document );
+			replaceElement = true;
+		}
+		this.editAnnotation = null;
 
         // check the param text, if it's valid wiki text for a property or
         // category information.
@@ -136,13 +149,16 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           if (match[4]) {
             oSpan.setAttribute( 'property',  match[1] + '::' + match[2] );
             oSpan.setHtml( match[4] );
-          } else {
+			}
+			else {
             oSpan.setAttribute( 'property',  match[1] );
             oSpan.setHtml( match[2] );
           }
-          if (oSpan.getHtml().length === 0) oSpan.setHtml('&nbsp;');
+			if (oSpan.getHtml().length === 0) 
+				oSpan.setHtml('&nbsp;');
         // no match for property, check category next
-        } else {
+		}
+		else {
           regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
           match = regex.exec(text);
 
@@ -152,15 +168,18 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           }
           // no category neighter, something else (probably garbage) was in
           // the wikitext, then quit and do not modify the edited wiki page
-          else return;
+			else 
+				return;
         }
-        if ( oSpan ) {
-          if ( ckeditor.mode == 'wysiwyg' )
-            ckeditor.insertElement(oSpan);
-          else
-            ckeditor.insertElement(text);
-        }
-        HideContextPopup();
+		if (replaceElement) {
+			if (ckeditor.mode == 'wysiwyg') {
+				ckeditor.insertElement(oSpan);
+			} else {
+				ckeditor.insertElement(text);
+			}
+		}
+		
+//        HideContextPopup();
       },
 	
       setEditAreaName: function (ean) {
@@ -287,8 +306,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         // selection text only without any html mark up etc.
 		var selection = gEeditor.getSelection();
         if (selection) {
-			
-			var selectedHtml = gEeditor.getSelectedHtml();
+   
+          var selectedHtml = gEeditor.getSelectedHtml();
 			if (CKEDITOR.env.ie) {
 				selection.unlock(true);
 				var selectedText = selection.getNative().createRange().text;
@@ -841,7 +860,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
 		var pos = CalculateClickPosition(event);
-      ckePopupContextMenu.setPosition(pos[0], pos[1]);
+		ckePopupContextMenu.setPosition(pos[0], pos[1]);
 	  }
       //        var relToolBar = new window.parent.RelationToolBar();
       var relToolBar = window.parent.relToolBar;
@@ -851,8 +870,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       //        window.catToolBar = new window.parent.CategoryToolBar();
       relToolBar.setWikiTextParser(wtp);
       catToolBar.setWikiTextParser(wtp);
-      relToolBar.createContextMenu(ckePopupContextMenu, value, value, value);
-      catToolBar.createContextMenu(ckePopupContextMenu, value);
+      relToolBar.createContextMenu(ckePopupContextMenu, value, value, value, HideContextPopup);
+      catToolBar.createContextMenu(ckePopupContextMenu, value, false, HideContextPopup);
       ckePopupContextMenu.showMenu();
     };
 
@@ -872,11 +891,11 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
 		var pos = CalculateClickPosition(event);
-      ckePopupContextMenu.setPosition(pos[0], pos[1]);
+		ckePopupContextMenu.setPosition(pos[0], pos[1]);
 	  }
       var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
-      toolBar.createContextMenu(ckePopupContextMenu, value, show, name);
+      toolBar.createContextMenu(ckePopupContextMenu, value, show, name, HideContextPopup);
       ckePopupContextMenu.showMenu();
     };
 
@@ -885,7 +904,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
 		var pos = CalculateClickPosition(event);
-      ckePopupContextMenu.setPosition(pos[0], pos[1]);
+		ckePopupContextMenu.setPosition(pos[0], pos[1]);
 	  }
       var toolBar = window.parent.relToolBar;
       toolBar.setWikiTextParser(wtp);
@@ -900,17 +919,19 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
    *
    * @param Event event
    * @param string name selected text
+   * @param bool editCategory
+   * 	If true, an existing category is to be edited
    */
-    ShowCatToolbar = function(event, name) {
+    ShowCatToolbar = function(event, name, editCategory) {
       var wtp = new window.parent.WikiTextParser();
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
 		var pos = CalculateClickPosition(event);
-      ckePopupContextMenu.setPosition(pos[0], pos[1]);
+		ckePopupContextMenu.setPosition(pos[0], pos[1]);
 	  }
       var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
-      toolBar.createContextMenu(ckePopupContextMenu, name);
+      toolBar.createContextMenu(ckePopupContextMenu, name, editCategory, HideContextPopup);
       ckePopupContextMenu.showMenu();
     };
 
@@ -919,7 +940,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu = new window.parent.ContextMenuFramework();
 	  if (!ckePopupContextMenu.wasDragged()) {
 		var pos = CalculateClickPosition(event);
-      ckePopupContextMenu.setPosition(pos[0], pos[1]);
+		ckePopupContextMenu.setPosition(pos[0], pos[1]);
 	  }
       var toolBar = window.parent.catToolBar;
       toolBar.setWikiTextParser(wtp);
@@ -1057,6 +1078,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         var frame = GetWindowOfEditor();
         event = frame.event;
       }
+	  if (!event) {
+	  	event = gElastMouseUpEvent;
+	  }
+	  gElastMouseUpEvent = event;
       // handle here if the popup box for a selected annotation must be shown
       var selection = gEditInterface.getSelectionAsArray();
       var msg = gEditInterface.getErrMsgSelection();
@@ -1083,10 +1108,69 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           ShowRelToolbar(event, selection[2], val, show);
         }
         else if (selection[1] == 14) { // Category
-          ShowCatToolbar(event, selection[0]);
+          ShowCatToolbar(event, selection[0], true);
         }
       }
     };
+	
+	/**
+	 * Invokes the tagging floatbox for a property annotation.
+	 * 
+	 * @param editor
+	 * 		The CKeditor object
+	 * @param {Object} annotationElement
+	 * 		This DOM element contains the annotation.
+	 */
+	EditPropertyAnnotation = function (editor, annotationElement) {
+		var aclass = annotationElement.getAttribute('class');
+		if (aclass !== 'fck_mw_property') {
+			// invalid element
+			return;
+		}
+		if (!gEditInterface) {
+			plugin.createEditInterface(editor);
+		}
+		gEditInterface.setEditAnnotation(annotationElement);
+		var property = annotationElement.getAttribute('property');
+		// The property may consist of property and value if separated by ::
+		if (property.indexOf('::') > 0) {
+			// Property and value
+			var propVal = property.split('::');
+			var propertyName = propVal[0];
+			var value = propVal[1];
+			var show = annotationElement.getText();
+			ShowRelToolbar(plugin.mLastMoveEvent, propertyName, value, show);
+		} else {
+			// 'property' contains only the property name
+			var propertyName = property;
+			var value = annotationElement.getText();
+			ShowRelToolbar(plugin.mLastMoveEvent, propertyName, value, value);
+		}
+		
+	}
+	
+	/**
+	 * Invokes the tagging floatbox for a category annotation.
+	 * 
+	 * @param editor
+	 * 		The CKeditor object
+	 * @param {Object} annotationElement
+	 * 		This DOM element contains the annotation.
+	 */
+	EditCategoryAnnotation = function (editor, annotationElement) {
+		var aclass = annotationElement.getAttribute('class');
+		if (aclass !== 'fck_mw_category') {
+			// invalid element
+			return;
+		}
+		if (!gEditInterface) {
+			plugin.createEditInterface(editor);
+		}
+				
+		var cat = annotationElement.getText();
+		gEditInterface.setEditAnnotation(annotationElement);
+		ShowCatToolbar(plugin.mLastMoveEvent, cat, true);
+	}
 
     var CKEditorTextArea = function(editor) {
       //      return document.getElementById('cke_contents_' + editor.name).getElementsByTagName('textarea')[0];
@@ -1097,33 +1181,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     CKEDITOR.plugins.smwtoolbar = {
       stbIsActive : false,
       stbEditorText : '',
+	  mLastMoveEvent : null,
     EnableAnnotationToolbar : function( editor ) {
         this.stbIsActive = true;
 		window.parent.stb_control.initialize();
 		window.parent.stb_control.initToolbarFramework();
-        window.parent.stb_control.setCloseFunction('wgCKeditorInstance.execCommand(\'SMWtoolbar\')');
-// DO we need this        window.parent.AdvancedAnnotation.create();
-//        window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
-		
-/*        
-		window.parent.stb_control.initialize();
-//        window.parent.propToolBar = new window.parent.PropertiesToolBar();
-
-        window.parent.stb_control.stbconstructor();
-//        window.parent.stb_control.createForcedHeader();
-//        window.parent.obContributor.registerContributor();
-//        window.parent.relToolBar.callme();
-//        window.parent.catToolBar.callme();
-//        window.parent.propToolBar.callme();
-        // rule toolbar, only available if SemanticRuls extension is included
-        // disable it for now, because the rule editor doesn't work with the FCK
-//        if (window.parent.ruleToolBar)
-//            window.parent.ruleToolBar.callme();
-        // Annotations toolbar, only if SemanticGardening extension is included
-//        if (window.parent.smwhgGardeningHints)
-//            window.parent.smwhgGardeningHints.createContainer();
-//        window.parent.smw_links_callme();
-*/        
+        window.parent.stb_control.onCloseButtonClick('wgCKeditorInstance.execCommand(\'SMWtoolbar\')');
         // enable draging
         window.parent.smwhg_dragresizetoolbar.draggable=null;
         window.parent.smwhg_dragresizetoolbar.callme();
@@ -1133,7 +1196,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       DisableAnnotationToolbar: function( editor ) {
         this.stbIsActive = false;
         HideContextPopup();
-        window.parent.AdvancedAnnotation.unload();
+		window.parent.stb_control.closeToolbar();
         this.ClearEventHandler4AnnotationBox(editor);
         editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF);
       },
@@ -1180,6 +1243,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             iframeDocument.onkeyup = null;
             iframeDocument.onmouseup = null;
             iframeDocument.onmousedown = null;
+            iframeDocument.onmousemove = null;
           } else {
             window.parent.Event.stopObserving(window.frames[0], 'keyup', this.EditorareaChanges);
             window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
@@ -1192,6 +1256,24 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         //          window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
         }
       },
+	  RegisterMouseTracker: function (editor) {
+		// In the WYSIWYG mode we have to keep track of the current mouse position.
+		// The last mouse move event is stored in plugin.mLastMoveEvent
+		if (editor.mode == 'wysiwyg') {
+			var iframe = GetWindowOfEditor();
+			if (CKEDITOR.env.ie) {
+				var iframeDocument = iframe.document || iframe.contentDocument;
+				iframeDocument.onmousemove = function(){
+					plugin.mLastMoveEvent = iframe.event;
+				};
+			}
+			else {
+				window.parent.Event.observe(iframe, 'mousemove', function(event){
+					plugin.mLastMoveEvent = event;
+				});
+			}
+		}
+	  },
       loadToolbar : function ( editor ) {
         if (this.stbIsActive) {
           delete gEditInterface;
@@ -1201,13 +1283,17 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             delete window.parent.gEditInterface;
           }
           this.DisableAnnotationToolbar(editor);
+		  gEditInterface = null;
         }
         else {
-          gEditInterface = new CKeditInterface(editor);
-          window.parent.gEditInterface = gEditInterface;
+          this.createEditInterface(editor);
           this.EnableAnnotationToolbar(editor);
         }
-      }
+      },
+	  createEditInterface : function(editor) {
+		gEditInterface = new CKeditInterface(editor);
+		window.parent.gEditInterface = gEditInterface;
+	  }
 
     };
 
@@ -1232,15 +1318,15 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
       requires : [ 'mediawiki', 'editingblock' ],
 
-      beforeInit : function( editor ) {
-        // disable STB by default when loading the editor
-        if(window.parent.AdvancedAnnotation)
-          window.parent.AdvancedAnnotation.unload();
-      },
+		beforeInit : function( editor ) {
+			// disable STB by default when loading the editor
+			if (window.parent.stb_control) {
+				window.parent.stb_control.closeToolbar();
+			}
+		},
 
       init : function( editor )
       {
-		
         if (editor.contextMenu)
         {
           var editPropertyCommmand =
@@ -1255,10 +1341,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
             exec: function( editor )
             {
-              var propertyAttr = editPropertyCommmand.element.getAttribute('property');
-              var classAttr = editPropertyCommmand.element.getAttribute('class');
-              var jQueryLocator = '.' + classAttr + '[property=' + propertyAttr + ']';
-              jQuery('iframe').contents().find(jQueryLocator).trigger('dblclick');
+				EditPropertyAnnotation(editor, editPropertyCommmand.element);
             }
           };
 			
@@ -1274,10 +1357,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
             exec: function( editor )
             {
-              var sortAttr = editCategoryCommmand.element.getAttribute('sort');
-              var classAttr = editCategoryCommmand.element.getAttribute('class');
-              var jQueryLocator = '.' + classAttr + '[sort=' + sortAttr + ']';
-              jQuery('iframe').contents().find(jQueryLocator).trigger('dblclick');
+				EditCategoryAnnotation(editor, editCategoryCommmand.element);
             }
           };
           var removePropertyCommmand =
@@ -1350,15 +1430,15 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
               editCategoryCommmand.element = element;
               removeCategoryCommmand.element = element;
               return {
-                removeCategoryItem: CKEDITOR.TRISTATE_ON
-              /*,editCategoryItem  : CKEDITOR.TRISTATE_ON*/};
+                removeCategoryItem: CKEDITOR.TRISTATE_ON,
+                editCategoryItem  : CKEDITOR.TRISTATE_ON };
             }
             else if (element.getAttribute('class') === 'fck_mw_property'){
               editPropertyCommmand.element = element;
               removePropertyCommmand.element = element;
               return {
-                removePropertyItem: CKEDITOR.TRISTATE_ON
-              /*,editPropertyItem  : CKEDITOR.TRISTATE_ON*/};
+                removePropertyItem: CKEDITOR.TRISTATE_ON,
+                editPropertyItem  : CKEDITOR.TRISTATE_ON};
             }
             return null;
           });
@@ -1403,6 +1483,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             window.parent.gEditInterface = gEditInterface;
             plugin.SetEventHandler4AnnotationBox(editor);
           }
+		  // Always keep track of the last mouse position for the annotation
+		  // context menu
+		  plugin.RegisterMouseTracker(editor);
         //            jQuery('iframe').contents().find('.fck_mw_property').dblclick(function(dblClickEvent) {
         //            	var element = jQuery(this);
         //    			var property = element.attr('property').split('::');
