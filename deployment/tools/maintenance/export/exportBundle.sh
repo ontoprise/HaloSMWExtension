@@ -5,9 +5,9 @@
 #
 # Usage: ./exportBundle.sh <bundle-id> 
 #
-# Note: You'll find the created bundle in /tmp/mybundle
+# You'll find the created bundle in /tmp/mybundle
 # 
-# Author: Kai K�hn / ontoprise / 2011
+# Author: Kai Kühn / ontoprise / 2011
 #
 
 # check if bundle-id is specified
@@ -17,11 +17,14 @@ echo "Usage: ./exportBundle.sh <bundle-id>"
 exit 0
 fi
 
-# FIXME: convert bundle id in case of URI
-# php exportOntologyBundleDeployDescriptor.php --stripname $1 
+# convert bundle ID to valid directory name in case of URI
+BUNDLENAME=`php exportOntologyBundleDeployDescriptor.php --stripname $1` 
+
+# Remove old bundles
+rm -rf /tmp/$BUNDLENAME
 
 # Create output dir
-OUTPUTDIR=/tmp/$1/extensions/$1
+OUTPUTDIR=/tmp/$BUNDLENAME/extensions/$BUNDLENAME
 if [ ! -e $OUTPUTDIR ];
 then
  echo "Create directory $OUTPUTDIR..."
@@ -46,12 +49,12 @@ fi
 
 # Zip bundle
 PWD=pwd
-cd /tmp/$1/
-zip -r /tmp/$1/$1.zip *
+cd /tmp/$BUNDLENAME/
+zip -r /tmp/$BUNDLENAME/$BUNDLENAME.zip *
 cd $PWD
 
 # Remove temp files
-rm -rf /tmp/$1/extensions/
+rm -rf /tmp/$BUNDLENAME/extensions/
 echo
-echo The bundle is located at /tmp/$1.zip
+echo The bundle is located at /tmp/$BUNDLENAME.zip
 echo 
