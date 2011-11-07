@@ -264,10 +264,10 @@ ENDS
 	;
 	$xml .= "</notice>";
 	$xml .= "<namespaces>";
-	print "\n$bundeID";
+	
 	$prefixedUsedByBundle = DFBundleTools::getPrefixesUsedBy($bundeID, false);
 	$allPrefixes = DFBundleTools::getRegisteredPrefixes();
-	print_r($prefixedUsedByBundle);
+	
 	foreach($prefixedUsedByBundle as $prefix) {
 		$uri = str_replace("<", "&lt;", $allPrefixes[$prefix]);
 		$xml .= "\n\t<namespace prefix=\"$prefix\">$uri</namespace>";
