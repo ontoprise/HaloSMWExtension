@@ -246,12 +246,6 @@ $smwgNamespacesWithSemanticLinks[NS_MEDIAWIKI] = true;
 /*start-enhancedretrieval*/
 if (file_exists($IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php'))
     require_once $IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php';
-/*start-variable-wgSearchType*/$wgSearchType = 'LuceneSearch';/*end-variable-wgSearchType*/
-/*start-variable-wgLuceneHost*/$wgLuceneHost = 'localhost';/*end-variable-wgLuceneHost*/
-/*start-variable-wgLucenePort*/$wgLucenePort = 8123;/*end-variable-wgLucenePort*/
-/*start-variable-wgLuceneSearchVersion*/$wgLuceneSearchVersion = 2.1;/*end-variable-wgLuceneSearchVersion*/
-/*start-variable-wgUSPathSearch*/$wgUSPathSearch=true;/*end-variable-wgUSPathSearch*/
-$wgLuceneSearchTimeout=5;
 require_once($IP.'/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
 $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
