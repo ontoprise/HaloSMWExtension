@@ -23,17 +23,6 @@ $asfUseSemanticFormsInputsFeatures = true;
 
 
 /*
- * Decide whther to compute the category sections in the
- * form so that no doublicate properties are shown or whether
- * to just display one category section for each category 
- * annotation of the instance
- */
-// THIS OPTION IS DEPRECATED
-//global $asfDoEnhancedCategorySectionProcessing;
-//$asfDoEnhancedCategorySectionProcessing = true;
-
-
-/*
  * Decide whether to display a category section for each
  * category in the category hierarchy of the instance or whether
  * to combine them where possible. 
@@ -62,4 +51,12 @@ $asfUseHaloAutocompletion = true;
  */
 global $asfEnableRedLinkHandler;
 $asfEnableRedLinkHandler = true;
- 
+
+
+
+/*
+ * Set this true ti you want to get some extra information
+ * about the ontology via tooltips in the forms. this is recommendet.
+ */
+global $asfShowTooltips;
+$asfShowTooltips = true;

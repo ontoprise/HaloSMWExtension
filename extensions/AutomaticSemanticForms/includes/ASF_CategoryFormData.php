@@ -149,10 +149,16 @@ class ASFCategoryFormData {
 		//create field input label text
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
 		if($asfDisplayPropertiesAndCategoriesAsLinks){
-			$categoryLabel = '{{#qTip:';
+			global $asfShowTooltips;
+			$categoryLabel = "";
+			if($asfShowTooltips){
+				$categoryLabel .= '{{#qTip:';
+			}
 			$categoryLabel .= ASFFormGeneratorUtils::createParseSaveLink(
 				$this->titleObject->getFullText(), $this->titleObject->getText());
-			$categoryLabel .= '| '.$this->getCategoryTooltip().'}}';
+			if($asfShowTooltips){
+				$categoryLabel .= '| '.$this->getCategoryTooltip().'}}';
+			}
 		} else {
 			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
 		}

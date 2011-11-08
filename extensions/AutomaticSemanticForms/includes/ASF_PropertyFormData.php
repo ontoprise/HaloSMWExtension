@@ -178,7 +178,7 @@ class ASFPropertyFormData {
 		
 		//deal with multi value input fields
 		if($this->maxCardinality != 1 || $this->delimiter || $this->forceList()){
-			$syntax .= ' |list';	
+			$syntax .= ' |list';
 		}
 		
 		//deal with mandatory input fields
@@ -218,7 +218,12 @@ class ASFPropertyFormData {
 		
 		$intro = "\n|-";
 		
-		$intro .= "\n".'| valign="top" |{{#qTip:';
+		$intro .= "\n".'| valign="top" -|';
+		
+		global $asfShowTooltips;
+		if($asfShowTooltips){
+			$intro .= '{{#qTip:';
+		}
 		
 		//add form field label
 		global $asfDisplayPropertiesAndCategoriesAsLinks;
@@ -234,10 +239,12 @@ class ASFPropertyFormData {
 			$intro .= '<span style="color: red">*</span>';
 		}
 		
-		//Create the tooltip:
-		$intro .= "\n| ";
-		$intro .= $this->getPropertyToolTip();
-		$intro .= '}}';
+		if($asfShowTooltips){
+			//Create the tooltip:
+			$intro .= "\n| ";
+			$intro .= $this->getPropertyToolTip();
+			$intro .= '}}';
+		}
 		
 		$intro .= "\n".'| valign="top" |';
 		
