@@ -135,6 +135,11 @@ function authenticateUser($username, $password, $acceptMIME=NULL) {
         	curl_setopt($ch,CURLOPT_USERPWD,trim($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']));
         }
 
+        if ($proto == "https") {
+        	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); // don't verify ssl
+        	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+
         // Execute
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
@@ -247,17 +252,17 @@ function dffCheckEnvironment() {
 			$result .= "<li>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)</li>";
 		}
 	}
-	
-    // check socket_create (some webhosters provide crappy PHP installations which lacks socket functions)
-    if (function_exists("socket_create")) {
-        @$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        if ($socket === false) {
-            $result .= "<li>Could not create a socket. Are you sure you run a standard PHP installation?</li>";
-        }
-    } else {
-        $result .= "<li>Could not find 'socket_create' PHP-function. Are you sure you run a standard PHP installation?</li>";
-    }
-    
+
+	// check socket_create (some webhosters provide crappy PHP installations which lacks socket functions)
+	if (function_exists("socket_create")) {
+		@$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+		if ($socket === false) {
+			$result .= "<li>Could not create a socket. Are you sure you run a standard PHP installation?</li>";
+		}
+	} else {
+		$result .= "<li>Could not find 'socket_create' PHP-function. Are you sure you run a standard PHP installation?</li>";
+	}
+
 	return empty($result) ? true : "<ul>$result</ul>";
 }
 
