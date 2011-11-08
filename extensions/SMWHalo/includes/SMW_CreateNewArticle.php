@@ -31,9 +31,6 @@ $wgAjaxExportList[] = "smwf_na_getCategories";
 $wgAjaxExportList[] = "smwf_na_getPropertyValue";
 $wgAjaxExportList[] = "smwf_na_articleExists";
 
-//hack for bug in ASF category retrieval 
-define('SMW_AC_MAX_RESULTS', 99999999);
-
 /**
  * Get all forms which can be used for creating a new article
  * 
@@ -45,7 +42,16 @@ function smwf_na_getForms() {
 	if (defined('SF_VERSION')) {
 		$forms = SFUtils::getAllForms();
 		
+		$filters = array();
+		if(defined('ASF_VERSION')){
+			//the dummy form should not be used for creating new articles
+			global $asfDummyFormName;
+			$filters[$asfDummyFormName] = true;
+		}
+		
 		for ($i = 0; $i < count($forms); $i++) {
+			if(array_key_exists($forms[$i], $filters))
+				continue;
 			$resultString .= $forms[$i];
 			if($i < count($forms))
 				$resultString .= ',';
@@ -64,7 +70,7 @@ function smwf_na_getCategories() {
 
 	//search for categories only if ASF installed
 	if(defined('ASF_VERSION')){
-		$categories = ASFCategoryAC::getCategories('');
+		$categories = ASFCategoryAC::getCategories('', 99999); 
 		
 		for ($i = 0; $i < count($categories); $i++) {
 			$resultString .= $categories[$i];
