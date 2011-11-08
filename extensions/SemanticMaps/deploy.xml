@@ -13,7 +13,7 @@
         <dependencies>
             <dependency from="1.17.0">mw</dependency>
             <dependency from="1.0.3" to="1.0.3">maps</dependency>
-            <dependency from="1.16.0">smw</dependency>
+            <dependency from="1.6.0">smw</dependency>
             <dependency from="0.4.10">validator</dependency>
         </dependencies>
     </global>
