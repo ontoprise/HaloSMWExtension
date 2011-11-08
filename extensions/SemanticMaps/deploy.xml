@@ -9,10 +9,12 @@
         <license>GPL-v2</license>
         <instdir>extensions/SemanticMaps</instdir>
         <description>Semantic Maps is an extension that adds semantic capabilities to the Maps extension.</description>
-        <helpurl></helpurl>
+        <helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Maps</helpurl>
         <dependencies>
-            <dependency from="1.15.0">mw</dependency>
+            <dependency from="1.17.0">mw</dependency>
             <dependency from="1.0.3" to="1.0.3">maps</dependency>
+            <dependency from="1.16.0">smw</dependency>
+            <dependency from="0.4.10">validator</dependency>
         </dependencies>
     </global>
     
