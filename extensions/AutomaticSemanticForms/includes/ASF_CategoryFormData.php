@@ -48,11 +48,10 @@ class ASFCategoryFormData {
 	 * Initializes the propertiesFormData field
 	 */
 	private function initializePropertiesFormData($includedCategories){
+		
 		if(is_null($includedCategories)){
-			//create property input fields for all super categories
-			
-			//get super categories
-			$superCategoryTitles = ASFFormGeneratorUtils::getSuperCategories($this->titleObject);
+			//this category has no super categories or they all already have their own section
+			$superCategoryTitles = array();
 		} else {
 			//create property input fields for selected categories
 			
