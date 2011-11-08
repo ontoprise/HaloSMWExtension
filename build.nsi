@@ -149,6 +149,7 @@ Var MUI_TEMP
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
+; Issue 15644: still needed!
 Page custom showLuceneParamters checkLuceneParameters
 Page custom showWikiCustomize checkWikiCustomize 
 
@@ -197,11 +198,11 @@ Var DEFAULTLOGO
 Var IP
 Var CHOOSEDIRTEXT
 Var INSTALLTYPE
-Var LUCENE_AS_SERVICE
 
 Function ".onInit"
   InitPluginsDir
   File /oname=$PLUGINSDIR\wikicustomize.ini "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gui\wikicustomize.ini"
+  ; Issue 15644: still needed!
   File /oname=$PLUGINSDIR\lucene.ini "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\gui\lucene.ini"
   
 FunctionEnd
@@ -504,79 +505,6 @@ Section "WYSIWYG" wysiwyg
   ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importWYSIWYG=1 ls=LocalSettings.php'
 SectionEnd
 
-Section "Lucene search" lucene
-    SectionIn 1 RO
-    SectionGetFlags ${xampp} $0
-    IntOp $0 $0 & ${SF_SELECTED}
-    
-    CreateDirectory "$INSTDIR\lucene"
-    CreateDirectory "$INSTDIR\lucene\lib"
-    CreateDirectory "$INSTDIR\lucene\service"
-    !ifndef NOFILES
-        SetOutPath "$INSTDIR\lucene\lib"
-        File /r "..\..\..\Product__Lucene_server\workspace\lib\*.jar"
-        
-        SetOutPath "$INSTDIR\lucene\service"
-        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\service\*"
-        
-        SetOutPath "$INSTDIR\lucene\scripts"
-        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\scripts\*"
-        
-        SetOutPath "$INSTDIR\lucene\template"
-        File /r /x CVS /x .svn "..\..\..\Product__Lucene_server\workspace\template\*"
-        
-        SetOutPath "$INSTDIR\lucene"
-        File "..\..\..\Product__Lucene_server\workspace\LuceneSearch.jar"
-        File "..\..\..\Product__Lucene_server\workspace\*.bat"
-        File "..\..\..\Product__Lucene_server\workspace\linkd.exe"
-        File "..\..\..\Product__Lucene_server\workspace\*.txt"
-        File "..\..\..\Product__Lucene_server\workspace\*.properties"
-        File "..\..\..\Product__Lucene_server\workspace\smwplus_db.xml"
-        File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.exe"
-        File "..\..\..\Product__Lucene_server\workspace\lucene-wiki.l4j.ini"
-    !endif
-        
-        SetOutPath "$INSTDIR\lucene"
-        StrCpy $PHP "$INSTDIR\php\php.exe"
-        StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
-        
-        DetailPrint "Configure Lucene"
-        ; dump db 
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template\dump.bat.template" out=dump.bat noslash=true php-path="$PHP" wiki-path="$MEDIAWIKIDIR" lucene-path="$INSTDIR\lucene"'
-        nsExec::ExecToLog 'dump.bat'
-               
-        ; adapt global.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/global.conf.template" out=global.conf wiki-db=semwiki_en ip=$IP lang=$WIKILANG'
-        ; adapt lsearch.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lsearch.conf.template" out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
-         ; adapt start.bat.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/start.bat.template" out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
-         ; adapt lucene-wiki.l4j.ini.template
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lucene-wiki.l4j.ini.template" out=lucene-wiki.l4j.ini lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
-         ; adapt schtask_desc.xml.template
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/schtask_desc.xml.template" out=schtask_desc.xml noslash=true lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
-        ;adapt startUpdater template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
-        
-        ; Build OAI repository
-        ;nsExec::ExecToLog 'initUpdates.bat "$INSTDIR\mysql" semwiki_en root m8nix'
-        
-        ; Build Lucene index
-        DetailPrint "Build Lucene index"
-        nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
-        
-       
-        ${If} $0 == 1
-            SetOutPath "$INSTDIR\lucene"
-            CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene.lnk" "$INSTDIR\lucene\lucene-wiki.exe"
-            #CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" "$INSTDIR\lucene\startUpdater.bat"
-        ${EndIf}
-        DetailPrint "Starting Lucene"
-        SetOutPath "$INSTDIR\lucene"
-        Exec "$INSTDIR\lucene\lucene-wiki.exe"       
-SectionEnd
-
 Section "Solr" solr
     SectionIn 1 RO
     SectionGetFlags ${xampp} $0
@@ -616,7 +544,6 @@ SectionGroupEnd
 LangString DESC_xampp ${LANG_ENGLISH} "Select XAMPP contains the server infrastructure."
 LangString DESC_smwplus ${LANG_ENGLISH} "${PRODUCT} ${VERSION}"
 LangString DESC_ohelp ${LANG_ENGLISH} "Eclipse-based online help."
-LangString DESC_lucene ${LANG_ENGLISH} "Lucene based full-text index."
 
 LangString DESC_semforms ${LANG_ENGLISH} "Semantic Forms ease the annotation process by providing a simple interface."
 LangString DESC_treeview ${LANG_ENGLISH} "The Treeview extension allows a hierarchical displaying of content or links."
@@ -639,7 +566,6 @@ LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be ins
     !insertmacro MUI_DESCRIPTION_TEXT ${xampp} $(DESC_xampp)
     !insertmacro MUI_DESCRIPTION_TEXT ${smwplus} $(DESC_smwplus)
     #!insertmacro MUI_DESCRIPTION_TEXT ${ohelp} $(DESC_ohelp)
-    !insertmacro MUI_DESCRIPTION_TEXT ${lucene} $(DESC_lucene)
     !insertmacro MUI_DESCRIPTION_TEXT ${semforms} $(DESC_semforms)
     !insertmacro MUI_DESCRIPTION_TEXT ${treeview} $(DESC_treeview)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
@@ -683,15 +609,12 @@ Function checkForApacheAndMySQLAndMemcached
    IntOp $1 $1 + $R0
    FindProcDLL::FindProc "memcached.exe"
    IntOp $2 0 + $R0
-   FindProcDLL::FindProc "lucene-wiki.exe"
-   IntOp $3 0 + $R0
    FindProcDLL::FindProc "solr.exe"
-   IntOp $4 0 + $R0
+   IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
    ${OrIf} $3 == 1
-   ${OrIf} $4 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -746,6 +669,7 @@ Function checkWikiCustomize
   CALL checkForSkype
 FunctionEnd
 
+; Issue 15644: still needed!
 Function showLuceneParamters
     SectionGetFlags ${lucene} $0
     IntOp $0 $0 & ${SF_SELECTED}
@@ -788,6 +712,7 @@ Function showLuceneParamters
     ${EndIf}
 FunctionEnd
 
+; Issue 15644: still needed!
 Function checkLuceneParameters
     ReadINIStr $IP "$PLUGINSDIR\lucene.ini" "Field 2" "state"
     ${If} $IP == "localhost"
@@ -1037,14 +962,13 @@ FunctionEnd*/
 
 
 Function FinishPageShow
-  SectionGetFlags ${lucene} $0
-  IntOp $0 $0 & ${SF_SELECTED}
+  ;SectionGetFlags ${lucene} $0
+  ;IntOp $0 $0 & ${SF_SELECTED}
   
-  ${If} $0 == 0
- 
-    GetDlgItem $R0 $mui.FinishPage 1203
-    ShowWindow $R0 ${SW_HIDE}
-  ${EndIf}
+  ;${If} $0 == 0
+ ;   GetDlgItem $R0 $mui.FinishPage 1203
+ ;   ShowWindow $R0 ${SW_HIDE}
+ ; ${EndIf}
   
   ;write log
    StrCpy $0 "$INSTDIR\install.log"
@@ -1190,9 +1114,6 @@ Function un.uninstallAsWindowsService
     DetailPrint "Stop and uninstall Apache and MySQL as service."
     Exec "$INSTDIR\uninstallApacheMySQLAsService.bat"
     
-    DetailPrint "Delete autostart entry for Lucene"
-    Delete "$SMSTARTUP\LuceneForSMWPlus.lnk"
-
     DetailPrint "Delete autostart entry for solr"
     Delete "$SMSTARTUP\SolrForSMWPlus.lnk"
     
@@ -1209,15 +1130,12 @@ Function un.checkForApacheAndMySQLAndMemcached
    IntOp $1 $1 + $R0
    FindProcDLL::FindProc "memcached.exe"
    IntOp $2 0 + $R0
-   FindProcDLL::FindProc "lucene-wiki.exe"
-   IntOp $3 0 + $R0
    FindProcDLL::FindProc "solr.exe"
-   IntOp $4 0 + $R0
+   IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
    ${OrIf} $2 == 1
    ${OrIf} $3 == 1
-   ${OrIf} $4 == 1
     MessageBox MB_ICONEXCLAMATION|MB_OKCANCEL $(STARTED_SERVERS) IDOK 0 IDCANCEL skipCheck
     goto checkagain
    ${EndIf}
@@ -1246,9 +1164,6 @@ Section "Uninstall"
     Call un.uninstallAsWindowsService
     Call un.uninstallMemcached
     
-    ; Unregister scheduled task for lucene update
-    nsExec::ExecToLog 'schtasks /delete /TN "LuceneIndexUpdate" /F'
-    
     Call un.checkForApacheAndMySQLAndMemcached
     
     # Delete from PATH variable
@@ -1259,11 +1174,8 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT}.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
-    #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene Updater.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Solr.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
-    #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
     ;Delete start menu IF THE MENU IS EMPTY.
     StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
@@ -1282,14 +1194,6 @@ Section "Uninstall"
 
     nsExec::ExecToLog '"$INSTDIR\xampp_stop.exe"'
 
-    ; for some reason there are several lucene-wiki processes
-    KillLucene:
-    KillProcDLL::KillProc "lucene-wiki.exe"
-    FindProcDLL::FindProc "lucene-wiki.exe"
-    ${If} $R0 == 1
-        goto KillLucene
-    ${EndIf}
-    
     KillProcDLL::KillProc "solr.exe"
 
     Delete "$INSTDIR\*"
@@ -1309,7 +1213,6 @@ Section "Uninstall"
     RMDir /r "$INSTDIR\htdocs"
     RMDir /r "$INSTDIR\install"
     RMDir /r "$INSTDIR\licenses"
-    RMDir /r "$INSTDIR\lucene"
     RMDir /r "$INSTDIR\MercuryMail"
     RMDir /r "$INSTDIR\mysql"
     RMDir /r "$INSTDIR\webdav"
