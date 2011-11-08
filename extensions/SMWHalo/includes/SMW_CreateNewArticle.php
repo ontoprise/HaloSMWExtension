@@ -102,6 +102,11 @@ function smwf_na_getPropertyValue($titleName, $propertyName){
  * @param string $titleName
  */
 function smwf_na_articleExists($titleName) {
+  if(preg_match(Title::getTitleInvalidRegex(), $titleName)){
+    return 'invalid_title';
+  }
 	return smwf_om_ExistsArticle($titleName) . ';' .$titleName;
 }
+
+
 

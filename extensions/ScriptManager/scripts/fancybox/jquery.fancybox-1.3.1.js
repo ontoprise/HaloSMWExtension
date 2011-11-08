@@ -11,7 +11,7 @@
  *
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
+ *   http://www.gnu.org/licenses/gpl.htmlfancybox_set_navigation
  */
 
 (function($) {
@@ -177,11 +177,11 @@
 					e.preventDefault();
 					$.fancybox.close();
 
-				} else if (e.keyCode == 37) {
+				} else if (e.keyCode == 37 && !currentOpts.enableNavButtons) {
 					e.preventDefault();
 					$.fancybox.prev();
 
-				} else if (e.keyCode == 39) {
+				} else if (e.keyCode == 39 && !currentOpts.enableNavButtons) {
 					e.preventDefault();
 					$.fancybox.next();
 				}
