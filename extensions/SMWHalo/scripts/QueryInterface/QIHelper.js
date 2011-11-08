@@ -518,11 +518,11 @@ QIHelper.prototype = {
   },
 
   getFullPreviewElement: function(){
-    var element = jQuery('#askQI #fullpreview');
-    if(!jQuery(element).length){
+//    var element = jQuery('#askQI #fullpreview');
+//    if(!jQuery(element).length){
       jQuery('#askQI').append('<div id="fullpreview"/>');
       element = jQuery('#askQI').children('#fullpreview');
-    }
+//    }
 
     return element;
   },
@@ -538,28 +538,13 @@ QIHelper.prototype = {
       smwhgLogger.log("Preview Query", "QI", "query_preview");
     }
     /* ENDLOG */
-//    $$('#askQI #shade')[0].toggle();
+
     try {
       this.pendingElement.remove();
     } catch(e) {};
-//    this.pendingElement = new OBPendingIndicator($$('#askQI #shade')[0]);
-//    this.pendingElement.show();
-//    $$('#askQI #fullpreview')[0].toggle();
     var qiFullPreviewElement = this.getFullPreviewElement();
     qiFullPreviewElement.html('<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />');
-    qiPreviewDialog = qiFullPreviewElement.dialog(
-    {
-      title: 'Query result',
-      height: 300,
-      width: 400,
-      closeOnEscape: true,
-      modal: true,
-      buttons: {
-        "Close": function() {
-          jQuery(this).dialog("close");
-        }
-      }
-    });
+    qiPreviewDialog = qiFullPreviewElement.dialog(this.getDialogConfig());
     
     if (!this.queries[0].isEmpty()) { // only do this if the query is not
       // empty
@@ -590,6 +575,40 @@ QIHelper.prototype = {
     }
 
     
+  },
+
+  getDialogConfig: function(){
+    var config = {
+      title: 'Query result',
+      height: 300,
+      width: 500,
+      closeOnEscape: true,
+      modal: true,
+      buttons: {
+        "Close": function() {
+          jQuery(this).remove();
+        }
+      }
+    };
+
+    //if ie8 and jquery version < 1.4.3
+    //then make it full screen, non-resizable, non-draggable,
+    var jqueryVersionStr = jQuery().jquery;
+    var jqueryVersionNum = parseInt(jqueryVersionStr.replace(/[^\d]/g, ''));
+
+    var browserVersionStr = navigator.userAgent;
+    var msieRegex = /msie\s(\d+)\.\d;/i;
+    var isIE = browserVersionStr.match(msieRegex);
+    var ieVersionNum = isIE ? parseInt(browserVersionStr.match(msieRegex)[1]) : 0;
+
+    if(jqueryVersionNum < 143 && isIE && ieVersionNum < 9){
+      config.resizable = false;
+      config.draggable = false;
+      config.height = jQuery(window).height() - 50;
+      config.width = jQuery(window).width() - 50;
+    }
+
+    return config;
   },
 
 
@@ -724,7 +743,6 @@ QIHelper.prototype = {
     else{
       preview.innerHTML = resultHTML;
     }
-//    $$('#askQI #fullpreviewbox')[0].width = ''; // clear fixed width if we had a timeline
 
       
     // post processing of javascript for resultprinters:
@@ -733,7 +751,6 @@ QIHelper.prototype = {
       case "eventline":
         this.parseWikilinks2Html();
         smw_timeline_init();
-//        $$('#askQI #fullpreviewbox')[0].width = '500px';
 
         break;
       case "exhibit":

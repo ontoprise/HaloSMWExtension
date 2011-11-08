@@ -199,23 +199,18 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     wfLoadExtensionMessages('SemanticMediaWiki');
 
     $format = $p_array[0];
+    
     //bugfix #15766: use the Validator extension to get available result printer parameters
     $printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::SPECIAL_PAGE );
 		$params = method_exists( $printer, 'getValidatorParameters' ) ? $printer->getValidatorParameters() : array();
-//    if (array_key_exists($format, $smwgResultFormats))
-//      $formatclass = $smwgResultFormats[$format];
-//    else
-//      $formatclass = "SMWListResultPrinter";
 
     // fix for missing parameter order
     $order_missing = true;
-    $limit_missibg = true;
+    $limit_missing = true;
     $offset_missing = true;
     $intro_missing = true;
     $outro_missing = true;
-//    $qp = new $formatclass($format, false);
-//    $params = $qp->getParameters();
-    // repair some misplaced parameters
+
      for ($i =0; $i < count($params); $i++) {
       switch ($params[$i]->getName()) {
         case "order" :
@@ -246,12 +241,6 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
       }
     }
     if ($order_missing) {
-//            $params[]= array(
-//                'name' => 'order',
-//                'type' => 'enumeration',
-//                'description' => wfMsg('smw_qi_tt_order'),
-//                'values' => array('ascending', 'descending'),
-//            );
       $orderParam = new Parameter('order', Parameter::TYPE_STRING);
       $orderParam->setMessage('smw_qi_tt_order');
       $orderParam->addCriteria(new CriterionInArray('ascending', 'descending', 'none'));
@@ -260,44 +249,24 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
       $params[] = $orderParam;
     }
     if ($limit_missing) {
-//            $params[]= array(
-//                'name' => 'limit',
-//                'type' => 'int',
-//                'description' => wfMsg('smw_qi_tt_limit')
-//            );
       $limitParam = new Parameter('limit', Parameter::TYPE_INTEGER);
       $limitParam->setMessage('smw_qi_tt_limit');
       $limitParam->setDescription(wfMsg('smw_qi_tt_limit'));
       $params[] = $limitParam;
     }
     if ($offset_missing) {
-//            $params[]= array(
-//                'name' => 'offset',
-//                'type' => 'int',
-//                'description' => wfMsg('smw_qi_tt_offset')
-//            );
       $offsetParam = new Parameter('offset', Parameter::TYPE_INTEGER);
       $offsetParam->setMessage('smw_qi_tt_offset');
       $offsetParam->setDescription(wfMsg('smw_qi_tt_offset'));
       $params[] = $offsetParam;
     }
     if ($intro_missing) {
-//            $params[]= array(
-//                'name' => 'intro',
-//                'type' => 'string',
-//                'description' => wfMsg('smw_qi_tt_intro'),
-//            );
       $introParam = new Parameter('intro', Parameter::TYPE_STRING);
       $introParam->setMessage('smw_qi_tt_intro');
       $introParam->setDescription(wfMsg('smw_qi_tt_intro'));
       $params[] = $introParam;
     }
     if ($outro_missing) {
-//            $params[]= array(
-//                'name' => 'outro',
-//                'type' => 'string',
-//                'description' => wfMsg('smw_qi_tt_outro'),
-//            );
       $outroParam = new Parameter('outro', Parameter::TYPE_STRING);
       $outroParam->setMessage('smw_qi_tt_outro');
       $outroParam->setDescription(wfMsg('smw_qi_tt_outro'));

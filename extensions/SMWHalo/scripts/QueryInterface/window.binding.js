@@ -26,14 +26,16 @@ jQuery(document).ready(function(){
 //get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
 function initToolTips(){
   var qtipConfig = {
-    content: '',
-    overwrite: false,
+    content: {text: ''},
+//    overwrite: false,
+    prerender: true,
     show: {
-      ready: true,
+//      ready: true,
+      solo: true,
       when: {
         event: 'mouseover'
       },
-      delay: 100
+      delay: 0
     },
     hide: {
       when: {
@@ -68,42 +70,23 @@ function initToolTips(){
         toolTip = toolTip[1];
       }
     }
-//    qtipConfig.content = toolTip;
-//    element.qtip(qtipConfig);
     element.attr('title', toolTip);
     element.removeAttr('onmouseover');
   });
 
-  //  jQuery('[title]').each(function(){
-  //    qtipConfig.content = jQuery(this).attr('title') || '';
-  //    jQuery(this).qtip(qtipConfig);
-  //  });
-
   jQuery('[title]').live('mouseover', function() {
-    qtipConfig.content = jQuery(this).attr('title') || '';
+    qtipConfig.content.text = jQuery(this).attr('title');
     jQuery(this).qtip(qtipConfig);
   });
-
-
-//when elements are added and removed we need to run the qtip setup again
-//do it when user clicks anywere in the page  
-//  jQuery('[title]').each(function(){
-//    jQuery(this).live('mouseover', function(){
-//      qtipConfig.content = jQuery(this).attr('title') || '';
-//      jQuery(this).qtip(qtipConfig);
-//    });
-//  });
-
  
 }
 
 function init(){
   isInit = true;
-  
+
+  initToolTips();
   initialize_qi();
   window.qihelper = qihelper;
-  initToolTips();  
-
   $ = window.$P;
 }
   
