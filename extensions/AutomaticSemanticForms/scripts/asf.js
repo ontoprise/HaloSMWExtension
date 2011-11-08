@@ -48,9 +48,8 @@ function initializeNiceASFTooltips(){
 					fixed: true
 				},
         position: {
-          my: 'bottom left',
-          at: 'top left',
-          target: 'mouse'
+        	my: 'bottom left',
+            at: 'top left'
         },
         style : {
             classes: 'ui-tooltip-blue ui-tooltip-shadow'
