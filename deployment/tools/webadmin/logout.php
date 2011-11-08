@@ -35,5 +35,6 @@ $hostname = $_SERVER['HTTP_HOST'];
 $path = dirname($_SERVER['PHP_SELF']);
 $currentDir = dirname(__FILE__);
 @unlink("$currentDir/sessiondata/userloggedin");
-header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/login.php');
+$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
+header('Location: '.$proto.'://'.$hostname.($path == '/' ? '' : $path).'/login.php');
 ?>
