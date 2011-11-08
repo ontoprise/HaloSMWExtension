@@ -19,7 +19,7 @@ class ASFLanguageDe extends ASFLanguage {
 		'asf_tt_autocomplete' => "Dieses Eingabefeld <b>autovervollst&auml;ndigt</b> auf $1.",
 		'asf_tt_delimiter' => "Mehrere Werte sind in diesem Eingabefeld m&ouml;glich. \"$1\" wird als <b>Trennzeichen</b> verwendet.",
 	
-		'asf_categories_with_no_props_section' => "Kategorien für die keine Formular-Eingabefelder erzeugt werden konnten:",
+		'asf_categories_with_no_props_section' => "Kategorien für die keine (zusätzlichen) Formular-Eingabefelder erzeugt werden konnten:",
 	
 		'automaticsemanticforms' => "Automatic Semantic Forms",
 	

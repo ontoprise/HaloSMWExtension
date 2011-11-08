@@ -19,7 +19,7 @@ class ASFLanguageEn extends ASFLanguage {
 		'asf_tt_autocomplete' => "This input field <b>autocompletes</b> on $1.",
 		'asf_tt_delimiter' => "Several values are allowed in this input field. \"$1\" is used as <b>delimiter</b>.",
 	
-		'asf_categories_with_no_props_section' => "Categories for which no form input fields could be created:",
+		'asf_categories_with_no_props_section' => "Categories for which no (extra) form input fields could be created:",
 	
 		'automaticsemanticforms' => "Automatic Semantic Forms",
 		
