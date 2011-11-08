@@ -99,7 +99,7 @@
 		<xsl:param name="rek_depth" select="1" />
 
 
-		<table class="categoryTreeElementColors" border="0" cellspacing="0"
+		<table border="0" cellspacing="0"
 			cellpadding="0">
 			<xsl:if test="$startDepth=1 and $rek_depth=1">
 				<xsl:attribute name="width">1000</xsl:attribute>
@@ -389,7 +389,7 @@
                         name="replace-string"><xsl:with-param name="text" select="child::category" /><xsl:with-param
                         name="from" select="$var-simple-quote" /><xsl:with-param
                         name="to" select="$var-slash-quote" /></xsl:call-template>')</xsl:attribute>
-                    <xsl:variable name="superCategory" select="." />
+                    <xsl:variable name="superCategory" select="child::category" />
                     <xsl:value-of select="translate($superCategory, '_', $var-nonbreakspace)"></xsl:value-of>
                 </a>
                 </xsl:if>
@@ -868,7 +868,8 @@
 		<xsl:param name="actionListener" />
 		<xsl:param name="typeOfEntity" />
 		<xsl:param name="rek_depth" />
-
+                <div>
+                <xsl:attribute name="class"><xsl:value-of select="$typeOfEntity" />TreeElementColors</xsl:attribute>
 		        <span class="obTreeSelection">
 			
 			        <xsl:if test="gissues">
@@ -1059,6 +1060,7 @@
                {{SMW_OB_EDIT}}
                 </a>  
                 </span>
+                </div>
 	</xsl:template>
 
 	<xsl:template name="partitionNode">

@@ -81,7 +81,7 @@ OBTreeActionListener.prototype = {
 		// stop event propagation in Gecko and IE
 		Event.stop(event);
 		// Get the next tag (read the HTML source)
-		var nextDIV = node.nextSibling;
+		var nextDIV = node.parentNode.nextSibling;
 
 		// find the next DIV
 		while (nextDIV.nodeName != "DIV") {
@@ -628,7 +628,7 @@ OBCategoryTreeActionListener.prototype = Object
 									categoryName);
 						} else {
 
-							var nextDIV = node.nextSibling;
+							var nextDIV = node.parentNode.nextSibling;
 
 							// find the next DIV
 							while (nextDIV.nodeName != "DIV") {
@@ -1350,7 +1350,7 @@ OBPropertyTreeActionListener.prototype = Object
 									propertyName);
 						} else {
 
-							var nextDIV = node.nextSibling;
+							var nextDIV = node.parentNode.nextSibling;
 
 							// find the next DIV
 							while (nextDIV.nodeName != "DIV") {
