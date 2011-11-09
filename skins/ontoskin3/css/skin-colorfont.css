@@ -142,7 +142,7 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about a {
-   color: grey;
+    color: grey;
 	vertical-align: middle;
 	font-size: 80%; 
 	display:list-item;
@@ -151,6 +151,25 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 	text-shadow:0 1px 0 #FFFFFF; 
 	font-weight: normal;
 	padding-top: 0px;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon_oneline, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon_oneline img {
+	vertical-align: middle;
+	display:list-item;
+	list-style-type:none;
+	list-style-position:inside; 
+	padding-right: 3px;
+	float:left;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon img {
+	vertical-align: middle;
+	display:list-item;
+	list-style-type:none;
+	list-style-position:inside; 
+	padding-top: 3px;
+	padding-right: 3px;
+	float:left;
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a /*, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink */{
