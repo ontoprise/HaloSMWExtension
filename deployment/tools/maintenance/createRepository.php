@@ -89,6 +89,8 @@ echo "\nCreate new repository ".$outputDir."repository.xml";
 
 $new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root version=\"".DEPLOY_FRAMEWORK_REPOSITORY_VERSION."\">\n<extensions>\n";
 foreach($localPackages as $lp) {
+	
+	$oldPatchlevel = $lp->getPatchlevel();
     // set fixed patchlevel if necessary 
     if (isset($fixedpatchlevel)) {
         $lp = Tools::changeGlobalSection($lp, "patchlevel", $fixedpatchlevel);
@@ -99,7 +101,7 @@ foreach($localPackages as $lp) {
 	$installdir = $lp->getInstallationDirectory();
 	$new_ser .= "<extension id=\"$id\" title=\"$title\">";
 	$branch = isset($head) ? "smwhalo" : "smwhalo_".$release."_release";
-	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".$lp->getVersion()->toVersionString()."_".$lp->getPatchlevel().".zip";
+	$url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".$lp->getVersion()->toVersionString()."_".$oldPatchlevel.".zip";
 	$ver = $lp->getVersion()->toVersionString();
 	$newPatchlevel = $lp->getPatchlevel();
 	if ($newPatchlevel == '') $newPatchlevel = 0;
