@@ -16,6 +16,19 @@
 		<dependencies>
             <depencency from="1.6.0">smwhalo</depencency>
 		</dependencies>
+		<notice>
+			Please copy the files in /EnhancedRetrieval/SOLR/ 
+			(i.e. schema.xml, smwdb-data-config.xml, solrconfig.xml) to you SOLR
+			installation in {your solr installation path}/solr/wiki/solr/conf.
+			Then replace the variables {{wgDBserver}}, {{wgDBport}}, {{wgDBname}}, 
+			{{wgDBuser}} and {{wgDBpassword}} at the beginning of file smwdb-data-config.xml
+			Typical values:
+			{{wgDBserver}} = localhost
+			{{wgDBport}} = 8983
+			{{wgDBname}} = semwiki_en (see LocalSettings.php: $wgDBname)
+			{{wgDBuser}} = root (see LocalSettings.php: $wgDBuser)
+			{{wgDBpassword}}: see LocalSettings.php: $wgDBpassword
+		</notice>
 	</global>
 
 	<codefiles>
