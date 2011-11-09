@@ -101,6 +101,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$recursive = true;
 		continue;
 	}
+	
+    if ($arg == '--fixedpatchlevel') {
+        $fixedpatchlevel = next($argv);
+        continue;
+    }
 }
 
 
@@ -322,7 +327,8 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recur
 
 
 function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
-
+    global $fixedpatchlevel;
+    
 	// find existing extension
 	$nodeList = $repoDoc->getElementsByTagName("extension");
 	$i=0;
@@ -368,6 +374,7 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 
 	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");
 	$patchlevelAttr->value = $dd->getPatchlevel();
+	if (isset($fixedpatchlevel)) $patchlevelAttr->value = $fixedpatchlevel;
 	$newVer->appendChild($patchlevelAttr);
 
 	$maintainerAttr = $repoDoc->createAttribute("maintainer");

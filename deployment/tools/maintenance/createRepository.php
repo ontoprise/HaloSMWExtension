@@ -55,6 +55,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         $emptyRepo = true;
         continue;
     }
+    
+    if ($arg == '--fixedpatchlevel') {
+        $fixedpatchlevel = next($argv);
+        continue;
+    }
 }
 
 if (!isset($outputDir)) {
@@ -94,6 +99,7 @@ foreach($localPackages as $lp) {
 	$ver = $lp->getVersion()->toVersionString();
 	$newPatchlevel = $lp->getPatchlevel();
 	if ($newPatchlevel == '') $newPatchlevel = 0;
+	if (isset($fixedpatchlevel)) $newPatchlevel = $fixedpatchlevel;
 	$maintainer = Tools::escapeForXMLAttribute($lp->getMaintainer());
 	$helpurl = Tools::escapeForXMLAttribute($lp->getHelpURL());
 	$description = Tools::escapeForXMLAttribute($lp->getDescription());
