@@ -971,7 +971,11 @@ class Tools {
 		$newNode = $dom->createElement($tag);
 		$newNode->appendChild($dom->createTextNode($newValue));
 		$globalNode = $dom->getElementsByTagName("global")->item(0);
-		$globalNode->replaceChild($newNode, $oldNode);
+		if (is_null($oldNode)) {
+			$globalNode->appendChild($newNode);
+		} else {
+			$globalNode->replaceChild($newNode, $oldNode);
+		}
 
 		return new DeployDescriptor($dom->saveXML());
 	}
