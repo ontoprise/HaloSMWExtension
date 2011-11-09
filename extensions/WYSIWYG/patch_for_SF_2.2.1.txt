@@ -1,5 +1,3 @@
-### Eclipse Workspace Patch 1.0
-#P HaloSMWExtension
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12352)
