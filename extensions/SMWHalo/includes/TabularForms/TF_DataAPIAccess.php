@@ -242,7 +242,7 @@ class TFDataAPIACCESS {
 							//replace label if a visible lable was originally defined
 							if(is_string($element->representation) && strlen($element->representation) > 0 
 								&& $element->representation != ' '){
-								$element->representation = $newValue;
+								$element->representation = false; //$newValue;
 							}
 						}
 					}
