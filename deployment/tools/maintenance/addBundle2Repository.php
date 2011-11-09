@@ -28,7 +28,7 @@
  *                  [--mediawiki]               Include Mediawiki?
  *                  [--mwversion]               Mediawiki version (if missing it is read from the underlying installation)
  *                  [--contains <substring> ]   File name contains a substring
- *                  [--transient <ID> ]			Creates a transient bundle entry with the given ID. 
+ *                  [--transient <ID> ]			Creates a transient bundle entry with the given ID.
  *
  * @author: Kai Kühn / ontoprise / 2011
  *
@@ -96,16 +96,16 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$transientID = next($argv);
 		continue;
 	}
-	
+
 	if ($arg == '--recursive') {
 		$recursive = true;
 		continue;
 	}
-	
-    if ($arg == '--fixedpatchlevel') {
-        $fixedpatchlevel = next($argv);
-        continue;
-    }
+
+	if ($arg == '--fixedpatchlevel') {
+		$fixedpatchlevel = next($argv);
+		continue;
+	}
 }
 
 
@@ -143,7 +143,12 @@ $extensionsNode = $nodeList->item(0);
 
 foreach($descriptors as $tuple) {
 	list($dd, $zipFilepath) = $tuple;
-
+    
+	// set fixed patchlevel if necessary 
+	if (isset($fixedpatchlevel)) {
+		$dd = Tools::changeGlobalSection($dd, "patchlevel", $fixedpatchlevel);
+	}
+	
 	// 1. create extensions substructure
 	$id = $dd->getID();
 	$version = $dd->getVersion()->toVersionString();
@@ -155,18 +160,18 @@ foreach($descriptors as $tuple) {
 	@unlink($repositoryDir."/extensions/$id/deploy-$version.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy.xml");
-	
+
 	// write deploy descriptor
 	$xml = $dd->getXML();
 	$handle = fopen($repositoryDir."/extensions/$id/deploy.xml", "w");
 	fwrite($handle, $xml);
 	fclose($handle);
-    
+
 	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$version.xml");
 	// compatibility fix to DF 1.56 (to be removed in future versions)
 	copy($repositoryDir."/extensions/$id/deploy.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 	@unlink($repositoryDir."/extensions/$id/deploy.xml");
-	
+
 	if ($createSymlinks && $latest) {
 		// remove symbolic link if existing
 		if (file_exists($repositoryDir."/$id/deploy.xml")) {
@@ -207,7 +212,7 @@ if ($mediawiki) {
 	$handle = fopen($repositoryDir."/extensions/$id/deploy-$version.xml", "w");
 	fwrite($handle, $xml);
 	fclose($handle);
-	
+
 	// compatibility fix to DF 1.56 (to be removed in future versions)
 	copy($repositoryDir."/extensions/$id/deploy-$version.xml", $repositoryDir."/extensions/$id/deploy-$versionNoDots.xml");
 
@@ -291,7 +296,7 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recur
 		while(false !== ($file=readdir($dirHandle))) {
 			if($file!="." && $file!="..") {
 				$__file=$bundlePath."/".$file;
-				if (is_dir($__file) && $recursive) { 
+				if (is_dir($__file) && $recursive) {
 					$descriptors = extractDeployDescriptors($__file, $fileNamecontains, $recursive);
 					$result = array_merge($result, $descriptors);
 				}
@@ -325,10 +330,8 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recur
 }
 
 
-
 function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
-    global $fixedpatchlevel;
-    
+	
 	// find existing extension
 	$nodeList = $repoDoc->getElementsByTagName("extension");
 	$i=0;
@@ -352,8 +355,8 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 		$idAttr->value = $dd->getID();
 		$newExt->appendChild($idAttr);
 		$titleAttr = $repoDoc->createAttribute("title");
-        $titleAttr->value = $dd->getTitle();
-        $newExt->appendChild($titleAttr);
+		$titleAttr->value = $dd->getTitle();
+		$newExt->appendChild($titleAttr);
 	}
 
 	$newVer = $repoDoc->createElement("version");
@@ -374,7 +377,6 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 
 	$patchlevelAttr = $repoDoc->createAttribute("patchlevel");
 	$patchlevelAttr->value = $dd->getPatchlevel();
-	if (isset($fixedpatchlevel)) $patchlevelAttr->value = $fixedpatchlevel;
 	$newVer->appendChild($patchlevelAttr);
 
 	$maintainerAttr = $repoDoc->createAttribute("maintainer");

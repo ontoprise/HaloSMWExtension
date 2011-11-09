@@ -29,14 +29,14 @@
 
 class Tools {
 
-	 /*
-     * External programs which are known to the DF.
-     * (only relevant for Windows)
-     * 
-     * Maps name as it appears in registry to DF id.
-     */
-    public static $df_knownPrograms;
-    
+	/*
+	 * External programs which are known to the DF.
+	 * (only relevant for Windows)
+	 *
+	 * Maps name as it appears in registry to DF id.
+	 */
+	public static $df_knownPrograms;
+
 	/**
 	 * Checks if script runs on a Windows machine or not.
 	 *
@@ -617,12 +617,12 @@ class Tools {
 		}
 	}
 
-    /**
-     * Checks if the given service is running. 
-     * 
-     * @param $processName Process name (Windows)
-     * @param $processScript Process script (Linux)
-     */
+	/**
+	 * Checks if the given service is running.
+	 *
+	 * @param $processName Process name (Windows)
+	 * @param $processScript Process script (Linux)
+	 */
 	public static function isServiceRunning($processName, $processScript) {
 		if (self::isWindows()) {
 			return self::isProcessRunning(self::translateProcessName($processName));
@@ -638,71 +638,71 @@ class Tools {
 			return ($ret == 0);
 		}
 	}
-	
-    /**
-     * Checks if certain process/services are running.
-     *
-     * On Windows a list of process names is expected.
-     * On Linux a list of service scripts is expected.
-     *
-     * @param string $processNames Process names, comma separated
-     * @param string $processScripts Process scripts, comma separated
-     * 
-     * @return boolean[]
-     */
-    public static function areServicesRunning($processNames, $processScripts) {
-        if (self::isWindows()) {
-            $processNames = explode(",",$processNames);
-            $translated=array();
-            foreach($processNames as $name) {
-                $translated[] = self::translateProcessName($name);
-            }
-            $doesRun = self::areProcessesRunning($translated);
-        } else {
-            $doesRun=array();
-            $processScripts = explode(",",$processScripts);
-            foreach($processScripts as $script) {
-                if (strpos($script, "/etc/init.d") !== false) {
-                    @exec("$script status", $out, $ret);
-                    $doesRun[] = ($ret == 0);
-                } else {
-                    @exec("/sbin/status $script", $out, $ret);
-                    if (self::inStringArray($out, "$script stop")) {
-                        $doesRun[] = false;
-                    } else {
-                        $doesRun[] = ($ret == 0);
-                    }
-                }
 
-            }
-        }
-        return $doesRun;
-    }
-	
-    /**
-     * Translates the process names to the names (or paths) used by
-     * the actual platform.
-     *
-     * @param string $name Processname
-     * @return string
-     */
-    private static function translateProcessName($name) {
-        global $mwrootDir;
-        if (Tools::isWindows()) {
-            switch($name) {
-                case "apache": return "httpd";
-                case "mysql": return "mysqld";
-                case "solr": return "solr";
-                case "tsc": return array("tsc", "tsc-service");
-                case "memcached": return "memcached";
-                default: return $name;
-            }
-        } else {
-            return $name; // not necessary for Linux, because it is checked via init.d scripts.
-        }
+	/**
+	 * Checks if certain process/services are running.
+	 *
+	 * On Windows a list of process names is expected.
+	 * On Linux a list of service scripts is expected.
+	 *
+	 * @param string $processNames Process names, comma separated
+	 * @param string $processScripts Process scripts, comma separated
+	 *
+	 * @return boolean[]
+	 */
+	public static function areServicesRunning($processNames, $processScripts) {
+		if (self::isWindows()) {
+			$processNames = explode(",",$processNames);
+			$translated=array();
+			foreach($processNames as $name) {
+				$translated[] = self::translateProcessName($name);
+			}
+			$doesRun = self::areProcessesRunning($translated);
+		} else {
+			$doesRun=array();
+			$processScripts = explode(",",$processScripts);
+			foreach($processScripts as $script) {
+				if (strpos($script, "/etc/init.d") !== false) {
+					@exec("$script status", $out, $ret);
+					$doesRun[] = ($ret == 0);
+				} else {
+					@exec("/sbin/status $script", $out, $ret);
+					if (self::inStringArray($out, "$script stop")) {
+						$doesRun[] = false;
+					} else {
+						$doesRun[] = ($ret == 0);
+					}
+				}
+
+			}
+		}
+		return $doesRun;
+	}
+
+	/**
+	 * Translates the process names to the names (or paths) used by
+	 * the actual platform.
+	 *
+	 * @param string $name Processname
+	 * @return string
+	 */
+	private static function translateProcessName($name) {
+		global $mwrootDir;
+		if (Tools::isWindows()) {
+			switch($name) {
+				case "apache": return "httpd";
+				case "mysql": return "mysqld";
+				case "solr": return "solr";
+				case "tsc": return array("tsc", "tsc-service");
+				case "memcached": return "memcached";
+				default: return $name;
+			}
+		} else {
+			return $name; // not necessary for Linux, because it is checked via init.d scripts.
+		}
 
 
-    }
+	}
 
 	/**
 	 * Detects if a processes are running.
@@ -950,6 +950,30 @@ class Tools {
 		}
 		fclose($handle);
 		return true;
+	}
+    
+	/**
+	 * Changes a node in the global section of the deploy descriptor.
+	 * 
+	 * @param DeployDescriptor $dd
+	 * @param string $tag
+	 * @param string $newValue
+	 * 
+	 * @return DeployDescriptor
+	 */
+	public static function changeGlobalSection($dd, $tag, $newValue) {
+		$xml = $dd->getXML();
+		$dom = new DOMDocument("1.0");
+		$dom->loadXML($xml);
+
+		// replace $tag node
+		$oldNode = $dom->getElementsByTagName($tag)->item(0);
+		$newNode = $dom->createElement($tag);
+		$newNode->appendChild($dom->createTextNode($newValue));
+		$globalNode = $dom->getElementsByTagName("global")->item(0);
+		$globalNode->replaceChild($newNode, $oldNode);
+
+		return new DeployDescriptor($dom->saveXML());
 	}
 }
 
