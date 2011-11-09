@@ -23,11 +23,11 @@
 			Then replace the variables {{wgDBserver}}, {{wgDBport}}, {{wgDBname}}, 
 			{{wgDBuser}} and {{wgDBpassword}} at the beginning of file smwdb-data-config.xml
 			Typical values:
-			{{wgDBserver}} = localhost
-			{{wgDBport}} = 8983
+			{{wgDBserver}} = localhost (see LocalSettings.php: $wgDBserver)
+			{{wgDBport}} = 3306 (see LocalSettings.php: $wgDBport)
 			{{wgDBname}} = semwiki_en (see LocalSettings.php: $wgDBname)
 			{{wgDBuser}} = root (see LocalSettings.php: $wgDBuser)
-			{{wgDBpassword}}: see LocalSettings.php: $wgDBpassword
+			{{wgDBpassword}} = m8nix (see LocalSettings.php: $wgDBpassword)
 		</notice>
 	</global>
 
