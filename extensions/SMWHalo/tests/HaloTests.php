@@ -29,12 +29,12 @@ class HaloTests
 //		$suite->addTestSuite("TestSemanticStore");
 //		$suite->addTestSuite("TestWikiEQI");
 //		$suite->addTestSuite("TestAutocompletionStore");
-//		$suite->addTestSuite("TestQueryPrintersSuite");
+		$suite->addTestSuite("TestQueryPrintersSuite");
 //		$suite->addTestSuite("TestWikiJobs");
 //		$suite->addTestSuite("TestDataAPI");
 //		$suite->addTestSuite("TestQIAjaxAccess");
 //		$suite->addTestSuite("TestBuiltinPropertiesSuite");
-		$suite->addTestSuite("TestOntologyManipulatorSuite");
+//		$suite->addTestSuite("TestOntologyManipulatorSuite");
 		return $suite;
 	}
 }

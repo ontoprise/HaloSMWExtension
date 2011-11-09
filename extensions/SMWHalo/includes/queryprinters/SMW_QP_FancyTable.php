@@ -192,7 +192,9 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 			} else if ($pr->getMode() === SMWPrintRequest::PRINT_PROP) {
 				// PR for a property
 				if ($pr->getData() instanceof SMWPropertyValue) {
-					$propTitle = $pr->getData()->getWikiValue();
+					$propTitle = $pr instanceof SMWChainPrintRequest
+									? $pr->getChainPrintRequest()
+									: $pr->getData()->getWikiValue();
 					$propertyPrintRequestMap[$propTitle] = $pr->getHash();
 				}
 			}

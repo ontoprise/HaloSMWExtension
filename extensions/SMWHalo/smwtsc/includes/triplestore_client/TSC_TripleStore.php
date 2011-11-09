@@ -4,6 +4,7 @@ require_once( "$smwgIP/includes/storage/SMW_Store.php" );
 require_once( "TSC_RuleStore.php" );
 require_once( "TSC_RESTWebserviceConnector.php" );
 require_once( "TSC_HaloQueryResult.php" );
+require_once( "TSC_ChainPrintRequest.php" );
 require_once( "TSC_Helper.php" );
 
 /**
@@ -982,7 +983,14 @@ class SMWTripleStore extends SMWStoreAdapter {
 				$newData = $newtitle;
 			}
 
-			$rewritten_prs = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
+			$rewritten_prs = new SMWChainPrintRequest(
+									$titleText,
+									$newtitle->exists() 
+										? SMWPrintRequest::PRINT_PROP 
+										: SMWPrintRequest::PRINT_THIS, 
+									$newlabel, 
+									$newData, 
+									$pr->getOutputFormat());
 			$rewritten_prs->getHash();
 
 		}

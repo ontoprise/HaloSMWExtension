@@ -1334,4 +1334,32 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <text xml:space="preserve" bytes="22">[[has type::String| ]]</text>
     </revision>
   </page>
+  <page>
+    <title>Property:LastName</title>
+    <id>102</id>
+    <revision>
+      <id>103</id>
+      <timestamp>2011-11-08T16:44:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::String| ]]&quot;</comment>
+      <text xml:space="preserve" bytes="22">[[has type::String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:FirstName</title>
+    <id>101</id>
+    <revision>
+      <id>102</id>
+      <timestamp>2011-11-08T16:44:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::String| ]]&quot;</comment>
+      <text xml:space="preserve" bytes="22">[[has type::String| ]]</text>
+    </revision>
+  </page>
 </mediawiki>

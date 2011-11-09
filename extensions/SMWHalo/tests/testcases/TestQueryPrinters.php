@@ -101,6 +101,8 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 		
 		$hitchhiker = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(HitchhikersGuide)";
 		$lord = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(LordOfTheRings)";
+		$adams = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(Douglas%20Adams)";
+		$tolkien = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(J.R.R%20Tolkien)";
 		
 		$mTriples = array(
 			array($hitchhiker, "prop:Title", "The Hitchhiker's Guide to the Galaxy", "xsd:string"),
@@ -109,7 +111,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 			array($hitchhiker, "prop:ReallyCool", "true", "xsd:boolean"),
 			array($hitchhiker, "prop:Published", "1979-04-02T13:41:09+01:00", "xsd:dateTime"),
 			array($hitchhiker, "prop:Amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI"),
-			array($hitchhiker, "prop:Author", "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(Douglas%20Adams)", "__objectURI"),
+			array($hitchhiker, "prop:Author", $adams, "__objectURI"),
 			array($hitchhiker, "prop:AuthorName", "Douglas Adams", "xsd:string"),
 
 			array($lord, "prop:Title", "The Lord of the Rings", "xsd:string"),
@@ -118,8 +120,14 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 			array($lord, "prop:ReallyCool", "true", "xsd:boolean"),
 			array($lord, "prop:Published", "2005-10-12T14:54:09+01:00", "xsd:dateTime"),
 			array($lord, "prop:Amazon", "http://www.amazon.com/Lord-Rings-50th-Anniversary-Vol/dp/0618640150/", "xsd:anyURI"),
-			array($lord, "prop:Author", "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(J.R.R%20Tolkien)", "__objectURI"),
+			array($lord, "prop:Author", $tolkien, "__objectURI"),
 			array($lord, "prop:AuthorName", "J.R.R. Tolkien", "xsd:string"),
+			
+			array($adams, "prop:FirstName", "Douglas", "xsd:string"),
+			array($adams, "prop:LastName", "Adams", "xsd:string"),
+			
+			array($tolkien, "prop:FirstName", "John", "xsd:string"),
+			array($tolkien, "prop:LastName", "Tolkien", "xsd:string"),
 			
 		);
     	$prefixes = TSNamespaces::getW3CPrefixes()
@@ -169,6 +177,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
     function providerForFancyTablePrinterResult() {
 		global $wgScriptPath;
     	return array(
+#0    	
 //--- A normal query ---
 	    	array(array(
 					'[[author::+]]',
@@ -216,6 +225,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 </table>
 TABLE
     			  ),
+#1    	
 //--- Assigning a new label for the subject column ---
 			array(array(
 					'[[author::+]]',
@@ -264,6 +274,7 @@ TABLE
 </table>
 TABLE
 			),   
+#2
 //--- Assigning a new label for the subject column and replace the subject values and author values ---
 			array(array(
 					'[[author::+]]',
@@ -312,6 +323,7 @@ TABLE
 </table>
 TABLE
 			),  	
+#3
 //--- Assigning a new label for the subject column do some invalid replacements.
 //--- This leads to a warning at the end of the table.
 			array(array(
@@ -373,6 +385,7 @@ Found invalid replace statements with unknown properties:
 TABLE
 			),    			  
 				  
+#4
 //--- Replace the price by pages ---
 			array(array(
 					'[[author::+]]',
@@ -418,7 +431,8 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),       			  
+			),
+#5
 //--- A query for wiki pages. ---
 			array(array(
 					'[[LTRPString::+]]',
@@ -455,7 +469,8 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),    			  
+			),    
+#6			  
 //--- A query for wiki pages with replacement of the subject by a string ---
 			array(array(
 					'[[LTRPString::+]]',
@@ -489,7 +504,8 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),    			  
+			),
+#7  			  
 //--- A query for wiki pages with replacement of the subject by a Number ---
 			array(array(
 					'[[LTRPString::+]]',
@@ -523,7 +539,8 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),    			  
+			),
+#8	  
 //--- A query for wiki pages with replacement of the subject by a Page ---
 			array(array(
 					'[[LTRPString::+]]',
@@ -558,6 +575,7 @@ TABLE
 </table>
 TABLE
 			),
+#9
 //--- A query for wiki pages. Replace the subject by a number and a string by a page---
 			array(array(
 					'[[LTRPString::+]]',
@@ -589,6 +607,7 @@ TABLE
 </table>
 TABLE
 			),
+#10
 //--- A normal query with 'style' parameter ---
 	    	array(array(
 					'[[author::+]]',
@@ -612,8 +631,38 @@ TABLE
 	</tr>
 </table>
 TABLE
+			),
+#11
+//--- A query with a property path i.e. author.FirstName as replacement			
+	    	array(array(
+				'[[author::+]]',
+				'mainlabel=Author',
+				'?author.FirstName',
+				'?author.LastName',
+				'?AuthorName',
+				'replace(?)=?author.FirstName',
+				'format=fancytable'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>Author</th>
+		<th>[[:Property:LastName|LastName]]</th>
+		<th>[[:Property:AuthorName|AuthorName]]</th>
+	</tr>
+	<tr>
+		<td><ilink label="Douglas" wikititle="C(HitchhikersGuide)_8136fa64c0e6a157e87d992e53358f80">http://localhost$wgScriptPath/index.php/C%28HitchhikersGuide%29_8136fa64c0e6a157e87d992e53358f80?action=edit&uri=obl%3Aterm%23%253Chttp%3A%2F%2Fwww.NewOnto1.org%2FdbOntology%2523c%253E%28HitchhikersGuide%29&redlink=1</ilink></td>
+		<td>Adams</td>
+		<td>Douglas Adams</td>
+	</tr>
+	<tr>
+		<td><ilink label="John" wikititle="C(LordOfTheRings)_5732c051f377c01107c32ac5794f60af">http://localhost$wgScriptPath/index.php/C%28LordOfTheRings%29_5732c051f377c01107c32ac5794f60af?action=edit&uri=obl%3Aterm%23%253Chttp%3A%2F%2Fwww.NewOnto1.org%2FdbOntology%2523c%253E%28LordOfTheRings%29&redlink=1</ilink></td>
+		<td>Tolkien</td>
+		<td>J.R.R. Tolkien</td>
+	</tr>
+</table>			
+TABLE
 			)
-			
     	);
     }
 	
@@ -624,8 +673,8 @@ TABLE
 	 *
 	 */
 	function testFancyTablePrinterResult($query, $expResult) {
+		
 		$actualResult = SMWQueryProcessor::getResultFromFunctionParams( $query, SMW_OUTPUT_WIKI );
-
 		// Remove whitespaces for comparison
 		$actualResult = preg_replace("/\s*/", "", $actualResult);
 		$expResult = preg_replace("/\s*/", "", $expResult);
