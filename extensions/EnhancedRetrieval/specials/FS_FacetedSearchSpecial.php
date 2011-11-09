@@ -120,6 +120,12 @@ class FSFacetedSearchSpecial extends SpecialPage {
         global $wgOut, $wgRequest;
         
 		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
+		if ($search === wfMsg('smw_search_this_wiki')) {
+			// If the help text of the search field is passed, assume an empty 
+			// search string
+			$search = '';
+		}
+		
 		$restrict = $wgRequest->getText( 'restrict', '' );
 		$specialPageTitle = $wgRequest->getText( 'title', '' );
 		$t = Title::newFromText( $search );
