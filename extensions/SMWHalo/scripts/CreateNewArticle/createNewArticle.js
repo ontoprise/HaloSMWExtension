@@ -12,39 +12,39 @@
     INVALID_TITLE: 'invalid_title',
     TITLE_HELP_URL: 'http://meta.wikimedia.org/wiki/Help:Page_name#Restrictions',
     MOREINFO: 'more info',
-    imgPath : wgScriptPath + '/extensions/SMWHalo/skins/CreateNewArticle/',
+    imgPath : mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/CreateNewArticle/',
     articleExists : false,
     articleTimeoutId : 0,
     categoryTimeoutId : 0,
     fancyBoxContent : function(){
-      return '<form action=\"\" method=\"get\">\
-			<table id=\"fancyboxTable\">\<tr>\<td colspan=\"2\" class=\"fancyboxTitleTd\">Create New Article</td></tr>\
-		<tr><td colspan=\"2\" class=\"userInstructionTd\"><span>Enter the name for the new article:</span></td></tr>\
-		<tr><td colspan=\"2\"><input type=\"text\" id=\"newArticleName\" class=\"articleNameInput\" autocomplete=\"OFF\"></input></td></tr>\
-		<tr><td id=\"articleExistTableTd\"><table id=\"articleExistTable\"><tr>\
-			<td id=\"errorImgTd\"></td><td class=\"articleExistsErrorTd\"><span id=\"errorMsg\"></span><span id=\"errorLink\"></span></td>\
+      return '<form action="" method="get" id="createNewArticleForm">\
+			<table id="fancyboxTable">\<tr>\<td colspan="2" class="fancyboxTitleTd">Create New Article</td></tr>\
+		<tr><td colspan="2" class="userInstructionTd"><span>Enter the name for the new article:</span></td></tr>\
+		<tr><td colspan="2"><input type="text" id="newArticleName" class="articleNameInput" autocomplete="OFF"></input></td></tr>\
+		<tr><td id="articleExistTableTd"><table id="articleExistTable"><tr>\
+			<td id="errorImgTd"></td><td class="articleExistsErrorTd"><span id="errorMsg"></span><span id="errorLink"></span></td>\
 		</tr></table></td></tr>\
-		<tr><td colspan=\"2\" class=\"userInstructionTd\"><span>Select the layout of the new article:</span></td></tr>\
-		<tr><td colspan=\"2\"><select id=\"listOfTemplatesAndCategories\" size=\"10\" class=\"templatesAndCategoriesSelect\">\
+		<tr><td colspan="2" class="userInstructionTd"><span>Select the layout of the new article:</span></td></tr>\
+		<tr><td colspan="2"><select id="listOfTemplatesAndCategories" size="10" class="templatesAndCategoriesSelect">\
 					<option>' + this.EMPTY_IN_WYSIWYG + '</option>\
 					<option>' + this.EMPTY_IN_WIKITEXT + '</option>\
 					</select></td>\
 		</tr>\
 		<tr>\
-			<td colspan=\"2\" class=\"layoutDescriptionTd\">\
+			<td colspan="2" class="layoutDescriptionTd">\
 			<table><tr>\
-			<td rowspan=\"2\" id=\"selectedDescImgTd\"></td><td id=\"selectedTitleTd\"></td></tr>\
-			<tr><td id=\"selectedDescTd\" class=\"layoutDescriptionTd\"></td>\
+			<td rowspan="2" id="selectedDescImgTd"></td><td id="selectedTitleTd"></td></tr>\
+			<tr><td id="selectedDescTd" class="layoutDescriptionTd"></td>\
 			</tr></table>\
 			</td>\
 		</tr>\
 		<tr>\
-			<td colspan=\"2\" class=\"btnTableTd\">\
-				<table id=\"btnTable\" class=\"btnTable\">\
+			<td colspan="2" class="btnTableTd">\
+				<table id="btnTable" class="btnTable">\
 					<tr>\
-						<td><input type=\"submit\" value=\"OK\" id=\"cna_submitBtn\"/></td>\
+						<td><input type="submit" value="OK" id="cna_submitBtn"/></td>\
 						<td>|</td>\
-						<td><a id=\"cna_cancelBtn\">Cancel</a></td>\
+						<td><a id="cna_cancelBtn">Cancel</a></td>\
 					</tr>\
 				</table>\
 			</td>\
@@ -53,18 +53,30 @@
 	</form>';
     },
 
+    /**
+     * Encode html entities e.g. & => &amp;
+     * For some reason it skips double quots.
+     */
+    encodeHtmlEntities: function(string){
+      var result = '';
+      if(string){
+        result = $('<div/>').text(string).html();
+      }
+      return result.replace(/\"/g, '&quot;');
+    },
+
     initForm : function(form, articleTitle, creationMathod){
       form.remove(':hidden');
       switch(creationMathod){
         case this.EMPTY_IN_WIKITEXT:
           form.attr('action', wgServer + wgScriptPath + '/index.php');
-          form.append('<input type="hidden" name="title" value="' + articleTitle + '"/>');
+          form.append('<input type="hidden" name="title" value="' + this.encodeHtmlEntities(articleTitle) + '"/>');
           form.append('<input type="hidden" name="action" value="edit"/>');
           break;
 
         case this.EMPTY_IN_WYSIWYG:
           form.attr('action', wgServer + wgScriptPath + '/index.php');
-          form.append('<input type="hidden" name="title" value="' + articleTitle + '">');
+          form.append('<input type="hidden" name="title" value="' + this.encodeHtmlEntities(articleTitle) + '">');
           form.append('<input type="hidden" name="action" value="edit"/>');
           form.append('<input type="hidden" name="mode" value="wysiwyg"/>');
           break;
@@ -74,14 +86,14 @@
             var category = $("#listOfTemplatesAndCategories option:selected").val();
             category = category.substring(0, category.indexOf(this.CATEGORY_STR));
             form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit');
-            form.append('<input type="hidden" name="target" value="' + articleTitle + '"/>');
+            form.append('<input type="hidden" name="target" value="' + this.encodeHtmlEntities(articleTitle) + '"/>');
             form.append('<input type="hidden" name="categories" value="' + category + '"/>');
           }
           else if(creationMathod.indexOf(this.FORM_STR) > 0){
             var formName = $("#listOfTemplatesAndCategories option:selected").val();
             formName = formName.substring(0, formName.indexOf(this.FORM_STR));
             form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormStart');
-            form.append('<input type="hidden" name="page_name" value="' + articleTitle + '"/>');
+            form.append('<input type="hidden" name="page_name" value="' + this.encodeHtmlEntities(articleTitle) + '"/>');
             form.append('<input type="hidden" name="form" value="' + formName + '"/>');
           }
           break;
@@ -93,7 +105,7 @@
       var articleExistsErrorLinkSpan = $('#errorLink');
       var articleExistsErrorImgTd = $('#errorImgTd');
       var articleTitleTextBox = $('#newArticleName');
-      //			var keycode = event.which;
+      
       CREATENEWARTICLE.validate();
       var articleTitle = articleTitleTextBox.val();
       if(!articleTitle){
@@ -106,8 +118,9 @@
         articleTitleTextBox.removeClass('redInputBox');
         articleTitleTextBox.removeClass('greenInputBox');
         articleTitleTextBox.addClass('whiteInputBox');
+
+        CREATENEWARTICLE.hideActivity();
       }
-      //			else if(keycode !== 37 && keycode !== 39){
       else{
         CREATENEWARTICLE.showActivity();
         if(CREATENEWARTICLE.articleTimeoutId){
@@ -115,38 +128,44 @@
         }
         CREATENEWARTICLE.articleTimeoutId = window.setTimeout(function(){
           sajax_do_call('smwf_na_articleExists', [articleTitle], function(request){
-            var response = request.responseText;
-            if(response === CREATENEWARTICLE.INVALID_TITLE){
-              CREATENEWARTICLE.articleExists = true;
-              articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
-              articleExistsErrorMsgSpan.html('Invalid characters in title');
-              articleExistsErrorLinkSpan.html(' [<a href=\"' + CREATENEWARTICLE.TITLE_HELP_URL + '\">' + CREATENEWARTICLE.MOREINFO + '</a>]');
-              articleTitleTextBox.removeClass('greenInputBox');
-              articleTitleTextBox.removeClass('whiteInputBox');
-              articleTitleTextBox.addClass('redInputBox');
-            }
-            else{
-              var articleExists = response;
-              articleExists = articleExists.split(';');
-              if($('#newArticleName').val() === articleExists[1]){
-                if(articleExists[0] !== 'false'){
-                  CREATENEWARTICLE.articleExists = true;
-                  articleExistsErrorImgTd.html('<img src=\"' + CREATENEWARTICLE.imgPath + 'warning.png\"/>');
-                  articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
-                  articleExistsErrorLinkSpan.html('<a href=\"' + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php/' + articleTitle + '\">' + CREATENEWARTICLE.shorterString(articleTitle, 20) + '</a>');
-                  articleTitleTextBox.removeClass('greenInputBox');
-                  articleTitleTextBox.removeClass('whiteInputBox');
-                  articleTitleTextBox.addClass('redInputBox');
+            //check if title input is not empty when ajax call returns
+            if(articleTitleTextBox.val()){
+              var response = request.responseText;
+              //handle invalid title
+              if(response === CREATENEWARTICLE.INVALID_TITLE){
+                CREATENEWARTICLE.articleExists = true;
+                articleExistsErrorImgTd.html('<img src="' + CREATENEWARTICLE.imgPath + 'warning.png"/>');
+                articleExistsErrorMsgSpan.html('Invalid characters in title');
+                articleExistsErrorLinkSpan.html(' [<a href="' + CREATENEWARTICLE.TITLE_HELP_URL + '">' + CREATENEWARTICLE.MOREINFO + '</a>]');
+                articleTitleTextBox.removeClass('greenInputBox');
+                articleTitleTextBox.removeClass('whiteInputBox');
+                articleTitleTextBox.addClass('redInputBox');
+              }
+              else{
+                var articleExists = response;
+                articleExists = articleExists.split('}');
+                if($('#newArticleName').val() === articleExists[1]){
+                  //handle title already exists
+                  if(articleExists[0] !== 'false'){
+                    CREATENEWARTICLE.articleExists = true;
+                    articleExistsErrorImgTd.html('<img src="' + CREATENEWARTICLE.imgPath + 'warning.png"/>');
+                    articleExistsErrorMsgSpan.html('This page name already exists. You can enter a different article name or open this article: ');
+                    articleExistsErrorLinkSpan.html('<a href="' + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php/' + articleTitle + '">' + CREATENEWARTICLE.shorterString(articleTitle, 20) + '</a>');
+                    articleTitleTextBox.removeClass('greenInputBox');
+                    articleTitleTextBox.removeClass('whiteInputBox');
+                    articleTitleTextBox.addClass('redInputBox');
+                  }
+                  else{
+                    //handle title doesn't exist
+                    CREATENEWARTICLE.articleExists = false;
+                    articleExistsErrorImgTd.empty();
+                    articleExistsErrorMsgSpan.empty();
+                    articleExistsErrorLinkSpan.empty();
+                    articleTitleTextBox.removeClass('redInputBox');
+                    articleTitleTextBox.removeClass('whiteInputBox');
+                    articleTitleTextBox.addClass('greenInputBox');
+                  }
                 }
-                else{
-                  CREATENEWARTICLE.articleExists = false;
-                  articleExistsErrorImgTd.empty();
-                  articleExistsErrorMsgSpan.empty();
-                  articleExistsErrorLinkSpan.empty();
-                  articleTitleTextBox.removeClass('redInputBox');
-                  articleTitleTextBox.removeClass('whiteInputBox');
-                  articleTitleTextBox.addClass('greenInputBox');
-                }           
               }
             }
             CREATENEWARTICLE.hideActivity();
@@ -195,7 +214,7 @@
           }
           CREATENEWARTICLE.categoryTimeoutId = window.setTimeout(function(){
             sajax_do_call('smwf_na_getPropertyValue', [titleString, 'Rationale'], function(request){
-              var responseText = request.responseText.split(';');
+              var responseText = request.responseText.split('}');
               var title = responseText[1];
               var formIndex = title.indexOf(formStr);
               var categoryIndex = title.indexOf(categoryStr);
@@ -212,7 +231,7 @@
                 $('#selectedTitleTd').html(CREATENEWARTICLE.shorterString(selectedValue, 55) + ':');
                 $('#selectedDescTd').html(responseText[0]);
                 $('#selectedDescImgTd').html('<img src="' + CREATENEWARTICLE.imgPath + 'info.png"/>');
-                //					$.fancybox.resize();
+
                 CREATENEWARTICLE.hideActivity();
                 $('#newArticleName').removeAttr('disabled');
               }
@@ -305,13 +324,9 @@
     hideActivity : function(){
       CREATENEWARTICLE.validate();
       $.fancybox.hideActivity();
-    }
-  }
+    },
 
-
-
-  $(document).ready(function() {
-    if($.query.get('todo').toLowerCase() === 'createnewarticle'){
+    openFancybox: function(){
       $.fancybox({
         'content'  : CREATENEWARTICLE.fancyBoxContent(),
         'modal'  : true,
@@ -325,7 +340,9 @@
         'enableEscapeButton' : true,
         'enableNavButtons' : true,
         'onCleanup'  : function(){
-          document.location.search = $.query.remove('todo');
+          if($.query.get('todo')){
+            document.location.search = $.query.remove('todo');
+          }
         },
         'onComplete'  : function(){
           $('#fancybox-close').css('background-image','url("' + CREATENEWARTICLE.imgPath + 'fancy_close.png")').css('display', 'inline');
@@ -333,28 +350,47 @@
           var articleTitleTextBox = $('#newArticleName');
           //build list of forms and categories
           CREATENEWARTICLE.buildListOfFormsAndCategories();
+          
+          //unbind event before bind to prevent duplicate binding
+          function setFocusOutEvent(){
+            articleTitleTextBox.unbind('focusout').bind('focusout', function(){
+              mw.log('onfocusout');
+              CREATENEWARTICLE.articleTitleChange();
+            });
+          }
+          
+          articleTitleTextBox.unbind('mouseup').bind('mouseup', function(){
+            mw.log('onmouseup');
+            setFocusOutEvent();
+          });
+
+          articleTitleTextBox.unbind('keyup').bind('keyup', function() {
+            mw.log('onkeyup');
+            CREATENEWARTICLE.articleTitleChange();
+            articleTitleTextBox.unbind('focusout');
+          });
+
+          articleTitleTextBox.unbind('input paste').bind('input paste', function(event) {
+            mw.log('onpaste');
+            window.setTimeout(function(){
+              CREATENEWARTICLE.articleTitleChange();
+            }, 0);
+            articleTitleTextBox.unbind('focusout');
+          });
+
+          
+
           //set article title from url parameter
           articleTitleTextBox.val($.query.get('newarticletitle'));
 
-          articleTitleTextBox.mouseup(function(){
-            $(this).change(function(){
-              CREATENEWARTICLE.articleTitleChange();
-            });
-          });
+          CREATENEWARTICLE.articleTitleChange();
 
-          articleTitleTextBox.keyup(function() {
-            CREATENEWARTICLE.articleTitleChange();
-            $(this).unbind('change');
-          });
-
-          articleTitleTextBox.trigger('keyup');
-
-          $('#cna_cancelBtn').click(function() {
+          $('#cna_cancelBtn').unbind('click').bind('click', function() {
             $.fancybox.close();
           });
 
-          $('#cna_submitBtn').click(function() {
-            CREATENEWARTICLE.initForm($('form'), $('#newArticleName').val(), $('#listOfTemplatesAndCategories option:selected').val());
+          $('#cna_submitBtn').unbind('click').bind('click', function() {
+            CREATENEWARTICLE.initForm($('#createNewArticleForm'), $('#newArticleName').val(), $('#listOfTemplatesAndCategories option:selected').val());
             return true;
           });
 
@@ -392,11 +428,19 @@
         }
       });
     }
+  }
+
+
+
+  $(document).ready(function() {
+    if($.query.get('todo').toLowerCase() === 'createnewarticle'){
+      CREATENEWARTICLE.openFancybox();
+    }
 
 
 
     $(CREATENEWARTICLE.BIND_CONTROL_ID).click(function(event) {
-      document.location.search = $.query.set('todo', 'createnewarticle');
+      CREATENEWARTICLE.openFancybox();
       event.preventDefault();
     });
   });

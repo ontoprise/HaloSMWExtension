@@ -94,7 +94,7 @@ function smwf_na_getPropertyValue($titleName, $propertyName){
 	if($propValues && count($propValues) > 0){
 		$propertyValue = $propValues[0]->getWikiValue();
 	}
-	return $propertyValue . ';' . $titleName;
+	return $propertyValue . '}' . $titleName;
 }
 
 /**
@@ -105,7 +105,7 @@ function smwf_na_articleExists($titleName) {
   if(preg_match(Title::getTitleInvalidRegex(), $titleName)){
     return 'invalid_title';
   }
-	return smwf_om_ExistsArticle($titleName) . ';' .$titleName;
+	return smwf_om_ExistsArticle($titleName) . '}' .$titleName;
 }
 
 
