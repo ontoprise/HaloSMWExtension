@@ -142,6 +142,9 @@ if (substr($rootDir, -1) != "/") $rootDir .= "/";
 // create substructure with deploy descriptors
 $localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepository::getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
+    if (isset($fixedpatchlevel)) {
+        $dd = Tools::changeGlobalSection($dd, "patchlevel", $fixedpatchlevel);
+    }
 	$id = $dd->getID();
 	if ($id == 'mw') continue;
 	$instdir = $dd->getInstallationDirectory();
