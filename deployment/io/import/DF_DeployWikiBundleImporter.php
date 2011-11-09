@@ -59,7 +59,7 @@ class DeployWikiImporter {
 		$this->callback = $callback;
 		$this->logger = Logger::getInstance();
 		$this->bundleID = $bundleID;
-		
+
 	}
 
 
@@ -697,7 +697,7 @@ class DeployWikiRevision extends WikiRevision {
 	var $callback;
 
 	var $logger;
-	
+
 	var $bundleID;
 
 	public function __construct($mode = 0, $callback = NULL, $bundleID) {
@@ -705,7 +705,7 @@ class DeployWikiRevision extends WikiRevision {
 		$this->callback = $callback;
 		$this->logger = Logger::getInstance();
 		$this->bundleID = $bundleID;
-		
+
 	}
 
 	function getComment() {
@@ -728,7 +728,8 @@ class DeployWikiRevision extends WikiRevision {
 
 		global $dfgLang;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
-
+        if ($this->title->getNamespace() == NS_FILE) return false;
+        
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 
@@ -740,7 +741,11 @@ class DeployWikiRevision extends WikiRevision {
 			} else {
 				$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 				$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
-				return parent::importOldRevision();
+				$res = parent::importOldRevision();
+				// notify import operation
+				$user = User::newFromName( $this->getUser() );
+				RecentChange::notifyNew($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), false);
+				return $res;
 			}
 		} else {
 
@@ -753,7 +758,7 @@ class DeployWikiRevision extends WikiRevision {
 				$bundleDI = reset($bundleDIs);
 				if ($bundleDI !== false) {
 					$anotherBundle = $bundleDI->getTitle()->getText();
-										 
+						
 					if ($anotherBundle != ucfirst($this->bundleID)) {
 						switch($this->mode) {
 							case DEPLOYWIKIREVISION_INFO:
@@ -831,6 +836,7 @@ class DeployWikiRevision extends WikiRevision {
 			# must create the page...
 			$pageId = $article->insertOn( $dbw );
 			$created = true;
+			
 		} else {
 			$created = false;
 
@@ -841,6 +847,7 @@ class DeployWikiRevision extends WikiRevision {
                     'rev_comment'   => $this->getComment() ),
 			__METHOD__
 			);
+		
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
 				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
@@ -889,6 +896,9 @@ class DeployWikiRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
+		//FIXME: add old id and last timestamp
+		RecentChange::notifyEdit($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), 0, 0, false);
+		
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 		return true;

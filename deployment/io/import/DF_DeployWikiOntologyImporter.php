@@ -42,7 +42,7 @@ class DeployWikiOntologyImporter extends WikiImporter {
 	var $result;
 	var $bundleID;
 	var $mode;
-    var $logger;
+	var $logger;
 
 	private $reader = null;
 	private $mLogItemCallback, $mUploadCallback, $mRevisionCallback, $mPageCallback;
@@ -65,15 +65,15 @@ class DeployWikiOntologyImporter extends WikiImporter {
 		// this class' members initialization
 		$this->mode = $mode;
 
-        $this->bundleID = $bundleID;
+		$this->bundleID = $bundleID;
 
-        $this->logger = Logger::getInstance();
+		$this->logger = Logger::getInstance();
 	}
 
-    public function getResult() {
-        return $this->result;
-    }
-	
+	public function getResult() {
+		return $this->result;
+	}
+
 	private function throwXmlError( $err ) {
 		$this->debug( "FAILURE: $err" );
 		wfDebug( "WikiImporter XML error: $err\n" );
@@ -741,10 +741,20 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 		if( $pageId == 0 ) {
 			// page does not exist
+			
+			// add bundle
 			$om = new OntologyMerger();
-            $emptyText = ""; // there is no initial text, page does not exist
-            $this->setText($om->addBundle($this->bundleID, $emptyText, $this->text));
+			$emptyText = ""; // there is no initial text, page does not exist
+			$this->setText($om->addBundle($this->bundleID, $emptyText, $this->text));
+			
+			// import it
 			$res = parent::importOldRevision();
+			
+			// notify import operation
+			$user = User::newFromName( $this->getUser() );
+			RecentChange::notifyNew($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), false);
+			
+			// log it
 			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 			$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
 			return $res;
@@ -758,10 +768,10 @@ class DeployWikiOntologyRevision extends WikiRevision {
 				$wikitext = $prior->getRawText();
 				$om = new OntologyMerger();
 				if (!$om->containsAnyBundle($wikitext)) {
-						
+
 					// create section for existing content if it belongs to a bundle
 					$existingBundle = DFBundleTools::getBundleID($this->title);
-					
+						
 					if (!is_null($existingBundle)) {
 						$newPageText = "";
 						$newPageText = $om->addBundle($existingBundle, $newPageText, $wikitext);
@@ -769,7 +779,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 						// do not create section if not part of a bundle
 						$newPageText = $wikitext;
 					}
-						
+
 					// add the bundle section of the currently installed ontology
 					$this->setText($om->addBundle($this->bundleID, $newPageText, $this->text));
 				} else {
@@ -817,6 +827,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			# must create the page...
 			$pageId = $article->insertOn( $dbw );
 			$created = true;
+			
 		} else {
 			$created = false;
 
@@ -827,6 +838,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		'rev_comment'   => $this->getComment() ),
 			__METHOD__
 			);
+			
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
 				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
@@ -875,6 +887,9 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			$revId );
 		}
 		$GLOBALS['wgTitle'] = $tempTitle;
+		//FIXME: add old id and last timestamp
+		RecentChange::notifyEdit($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), 0, 0, false);
+		
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 
