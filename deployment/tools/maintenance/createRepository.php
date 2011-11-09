@@ -166,8 +166,15 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
 	$version = $dd->getVersion()->toVersionString();
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
 	Tools::mkpath($outputDir.$dd->getID());
-	copy($dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
-	copy($dd_file, $outputDir.$dd->getID()."/deploy-".str_replace(".","",$version).".xml");
+	
+	$xml = $dd->getXML();
+	$handle = fopen($outputDir.$dd->getID()."/deploy-".$version.".xml", "w");
+    fwrite($handle, $xml);
+    fclose($handle);
+    $handle = fopen($outputDir.$dd->getID()."/deploy-".str_replace(".","",$version).".xml", "w");
+    fwrite($handle, $xml);
+    fclose($handle);
+    	
 	print "\nCreated: $outputDir$targetFile";
     
     // creates links
