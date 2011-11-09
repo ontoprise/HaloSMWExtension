@@ -551,8 +551,8 @@ LangString DESC_wysiwyg ${LANG_ENGLISH} "The WYSIWYG extension allows editing wi
 
 LangString CUSTOMIZE_PAGE_TITLE ${LANG_ENGLISH} "Customize your wiki"
 LangString CUSTOMIZE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set wiki name or logo"
-LangString LUCENE_PAGE_TITLE ${LANG_ENGLISH} "Lucene settings"
-LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Set your IP if possible"
+LangString LUCENE_PAGE_TITLE ${LANG_ENGLISH} "Server settings"
+LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Specify the IP address of the Wiki server"
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
