@@ -302,6 +302,9 @@ class ASFParserFunctions {
 		$useDropDown=false;
 		$queryString = '';
 		$rootCategory = '';
+		$popupClass = '';
+		
+		$hiddenInputFields = '';
 		
 		// assign params - support unlabelled params, for backwards compatibility
 		$unresolvedParameters = array();
@@ -352,7 +355,11 @@ class ASFParserFunctions {
 				$queryString = $paramValue;
 			} else if($paramName == 'category ac root'){
 				$rootCategory = $paramValue;
-			} else { 
+			} else if($paramName == null && $paramValue == 'popup'){
+				SFParserFunctions::loadScriptsForPopupForm( $parser );
+				$popupClass = 'popupforminput';
+				$hiddenInputFields .= '<input type="hidden" name="redirect" value="necessary"/>';
+			}else { 
 				$unresolvedParameters[$i] = $param;
 			}
 		}
@@ -468,7 +475,7 @@ class ASFParserFunctions {
 		//open form tag
 		$formEdit = SpecialPage::getPage( 'FormEdit' );
 		$formEditURL = $formEdit->getTitle()->getLocalURL();
-		$str = '<form action="'.$formEditURL.'" method="get" style="display: inline">';
+		$str = '<form action="'.$formEditURL.'" method="get" style="display: inline" class="'.$popupClass.'">';
 		
 		//create page input field
 		if($type != 'category'){
@@ -476,7 +483,7 @@ class ASFParserFunctions {
 				if(strtolower($autocompletionQuery) != 'all'){
 					$autocompletionQuery = 'ask: '.$autocompletionQuery;
 				}
-				$autocompletionQuery = 'class="wickEnabled" constraints="'.$autocompletionQuery.'"';
+				$autocompletionQuery = ' class="wickEnabled" constraints="'.$autocompletionQuery.'"';
 			}
 			$str .= '<input type="text" name="target" size="'.$pageSize.'" value="'.$pageValue.'" '.$autocompletionQuery.'/>';
 		}
@@ -552,7 +559,9 @@ class ASFParserFunctions {
 		//add submit button
 		wfLoadExtensionMessages( 'SemanticForms' );
 		$buttonLabel = ( $buttonLabel != '' ) ? $buttonLabel : wfMsg( 'sf_formstart_createoredit' );
-		$str .= '   <input type="submit" value="'.$buttonLabel.'" /></p>';
+		$str .= '   <input type="submit" value="'.$buttonLabel.'" />';
+		
+		$str .= $hiddenInputFields;
 		
 		//end form tag
 		$str .= '</form>';

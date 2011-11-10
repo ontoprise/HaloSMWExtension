@@ -13,7 +13,12 @@ class ASFFormEdit extends SFFormEdit {
 	 * 
 	 * It adds some ASF features and then calls its parent method
 	 */
-function execute($query, $redirectOnError = true) {
+	function execute($query, $redirectOnError = true) {
+	
+		if($this->doRedirect()){
+			return true;
+		}
+	
 		//get get parameters
 		global $wgRequest;
 		$categoryParam = $wgRequest->getVal('categories');
@@ -144,6 +149,35 @@ function execute($query, $redirectOnError = true) {
 			}
 		} 
 		return $categoryNames;
+	}
+	
+private function doRedirect(){
+		global $wgOut, $wgRequest;
+		
+		$redirect_url = $wgRequest->getRequestURL();
+		
+		if(strpos($redirect_url, 'redirect=necessary') > 0){
+			$redirect_url = str_replace(
+				array('?redirect=necessary', '&redirect=necessary'),
+				array('', ''), $redirect_url);
+		
+			$wgOut->setArticleBodyOnly( true );
+		
+			global $sfgScriptPath;
+			$text = <<<END
+			<script type="text/javascript">
+			window.onload = function() {
+				window.location="$redirect_url";
+			}
+			</script>
+
+END;
+			$wgOut->addHTML( $text );
+			
+			return true;
+		}  else {
+			return false;
+		}
 	}
 	
 	

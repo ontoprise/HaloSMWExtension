@@ -163,18 +163,20 @@ class ASFCategoryFormData {
 			$categoryLabel = "<i>".$this->titleObject->getText()."</i>";
 		}
 		
+		$intro='<div';
+		if($this->useCSSClass){
+			$intro .= ' class="'.$this->useCSSClass.'"';
+		}
+		$intro.='>';
+		
 		//create collapsed version of section
-		$intro = "{{#collapsableFieldSetStart:";
+		$intro .= "{{#collapsableFieldSetStart:";
 		$intro .= "\n".wfMsg('asf_category_section_label', $categoryLabel);
 		$intro .= "\n}}";
 		
 		$intro .= "\n\n".'{| width="100%" align="center"';
 
-		if($this->useCSSClass){
-			$intro .= ' class="'.$this->useCSSClass.'"';
-		} else {
-			$intro .= ' class="formtable"';
-		}
+		$intro .= ' class="formtable"';
 		
 		$intro .= "\n";
 		$intro .= "|-";
@@ -202,6 +204,8 @@ class ASFCategoryFormData {
 		$outro = "\n|}";
 		
 		$outro .= "{{#collapsableFieldSetEnd:}}";
+		
+		$outro.='</div>';
 		
 		$this->categorySectionOutro = $outro;
 		return $this->categorySectionOutro;

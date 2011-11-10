@@ -166,11 +166,6 @@ class ASFPropertyFormData {
 		$syntax .= $regexp;
 		
 
-		//deal with CSS classes
-		if($this->cssClass){
-			$syntax .= ' |class='.$this->cssClass;
-		}
-		
 		//deal with delimiters
 		if($this->delimiter){
 			$syntax .= ' |delimiter='.$this->delimiter;
@@ -218,7 +213,11 @@ class ASFPropertyFormData {
 		
 		$intro = "\n|-";
 		
-		$intro .= "\n".'| valign="top" -|';
+		if($this->cssClass){
+			$intro .= ' class="'.$this->cssClass.'" ';
+		}
+		
+		$intro .= "\n".'| valign="top" -|';		
 		
 		global $asfShowTooltips;
 		if($asfShowTooltips){

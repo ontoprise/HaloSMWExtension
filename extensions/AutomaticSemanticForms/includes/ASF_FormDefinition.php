@@ -18,6 +18,8 @@ class ASFFormDefinition {
 		$formDefinition .= $this->getFormDefinitionSyntax();
 		$formDefinition .= $this->getFormDefinitionOutro();
 
+		//echo('<pre>'.$formDefinition.'</pre>');
+		
 		return $formDefinition;
 	}
 	

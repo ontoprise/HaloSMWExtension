@@ -5,10 +5,14 @@ VERsION 1.3
 
 CHANGES
 * The #shownow Parser Function has finally been deprecated. Please use the #show Parser Function instead.
+* The 'Use class' property is now used differently:
+** For categories, the CSS class is assigned to a div that surround the complete section for that category, including the table with the form input fiellds.
+** For properties, the class is assigned to the table row, that surrounds the form input field and not to the form input field itself anymore.
 
 FEATURES
 * ASF now works without templateless. Annotations in the standard syntax are now used to automatically generate  the form and to fill the form input fields with values.
 ** The 'CreateSilentAnnotations' Parser Function is not needed anymore, although it still works.
+* The asfforminput parser function now also supports the popup property, which enables you to display an ASF in a popup.
 
 VERSION 1.2
 
