@@ -34,6 +34,40 @@ class SRFOFC extends SMWResultPrinter {
 		);
     }
 
+    public static function registerResourceModules() {
+		global $wgResourceModules, $srfgScriptPath;
+		
+		$moduleTemplate = array(
+			'localBasePath' => dirname( __FILE__ ),
+			'remoteBasePath' => $srfgScriptPath . '/ofc',
+			'group' => 'ext.srf'
+		);
+		
+		$wgResourceModules['ext.srf.ofc'] = $moduleTemplate + array(
+			'scripts' => array( 'js/swfobject.js', 'ofc_render.js' ),
+			'styles' => array( 'css/ofc_style.css' ),
+			'dependencies' => array(
+		      'ext.jquery.query',
+		      'ext.jquery.qtip',
+		      'ext.smwhalo.json2',
+		      'jquery.ui.dialog',
+			)
+		);
+	}
+    
+    protected function includeJS() {
+		SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
+
+		// MediaWiki 1.17 introduces the Resource Loader.
+		$realFunction = array( 'SMWOutputs', 'requireResource' );
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
+			SMWOutputs::requireResource( 'ext.srf.ofc' );
+		}
+		else {
+			$this->setupOFCHeader();
+		}		
+	}
+    
 	function getScripts() {
 		global $srfgScriptPath;
 		$scripts=array();
@@ -41,7 +75,7 @@ class SRFOFC extends SMWResultPrinter {
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n";
-		$scripts [] = '<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n";
+//		$scripts [] = '<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n";
 		return $scripts;
 	}
@@ -186,7 +220,7 @@ class SRFOFC extends SMWResultPrinter {
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 	}
 
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		global $smwgIQRunningNumber;
 		$outputmode = SMW_OUTPUT_HTML;
 //Bugfix 13446:		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed

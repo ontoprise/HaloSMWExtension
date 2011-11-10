@@ -29,3 +29,6 @@ $smwgResultFormats['ofc-bar'] = 'SRFOFC';
 $smwgResultFormats['ofc-bar_3d'] = 'SRFOFC';
 $smwgResultFormats['ofc-line'] = 'SRFOFC';
 //$smwgResultFormats['ofc-scatter_line'] = 'SRFOFC';
+
+
+SRFOFC::registerResourceModules();

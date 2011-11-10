@@ -1,5 +1,7 @@
  //jQuery.noConflict(); EVIL!!!
 
+	var flash_chart_path = wgScriptPath + "/extensions/SemanticResultFormats/ofc/open-flash-chart.swf";
+
 	var ofc_data_objs = [];
 	
 	//default setup
