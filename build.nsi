@@ -530,7 +530,12 @@ Section "Solr" solr
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" out="\"$INSTDIR\solr\wiki\solr\conf\smwdb-data-config.xml\"" wgDBname=semwiki_en wgDBserver=localhost wgDBport=3306 wgDBuser=root wgDBpassword=m8nix'
 
     CreateDirectory "$INSTDIR\solr\wiki\logs"
-
+    
+    ; activating incremental updates
+    DetailPrint "Activating incremental updates on SOLR"
+    StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
+    ${ConfigWrite} "$MEDIAWIKIDIR\LocalSettings.php" "$$fsgEnableIncrementalIndexer=" "true;" $R0
+    
     DetailPrint "Run Solr. Please be patient this may take a while..."
     ; run the solr server
     Exec '"$INSTDIR\solr\wiki\startSolr.bat"'
