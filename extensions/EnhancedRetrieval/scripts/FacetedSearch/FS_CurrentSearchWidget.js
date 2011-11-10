@@ -58,7 +58,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 			if ($.inArray(match[1], facetFields) >= 0
 				&& $.inArray(match[1], ignoreFacets) < 0) {
 				var facetName = match[2];
-				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
+				links.push(AjaxSolr.theme('facet', match[2], -1, self.removeFacet(fq[i]), null, FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
 				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
 				if (nameWithoutType) {
 					// This applies only to properties
@@ -81,7 +81,7 @@ FacetedSearch.classes.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
 				var nameWithoutType = facetName.match(EXTRACT_TYPE_REGEX);
 				nameWithoutType = nameWithoutType[1];
 				if (nameWithoutType && !facetQueries[nameWithoutType]) {
-					links.push(AjaxSolr.theme('facet', facetName, -1, self.removeFacet(fq[i]), FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
+					links.push(AjaxSolr.theme('facet', facetName, -1, self.removeFacet(fq[i]), null, FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, true));
 					facetQueries[facetName] = true;
 				}
 			}

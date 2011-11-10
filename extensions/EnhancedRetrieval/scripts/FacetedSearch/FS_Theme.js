@@ -429,12 +429,18 @@
 	 * 		Number of documents that match the facet
 	 * @param {Function} handler
 	 * 		Click handler for the facet.
+	 * @param {Object} handlerData
+	 * 		This object is passed to the handler function when it is called.
 	 * @param {Function} showPropertyDetailsHandler
 	 * 		This function is called when the details of a property are to be
 	 * 		shown.
+	 * @param {bool} isRemove
+	 * 		If {true}, this facet can only be removed. The icon for removing the
+	 * 		facet is added. Otherwise the facet is rendered as link.
 	 * 		
 	 */
-	AjaxSolr.theme.prototype.facet = function(facet, count, handler, showPropertyDetailsHandler, isRemove) {
+	AjaxSolr.theme.prototype.facet = function(facet, count, handler, handlerData, 
+												showPropertyDetailsHandler, isRemove) {
 		var html;
 		var lang = FacetedSearch.singleton.Language;
 		var plainName = extractPlainName(facet);
@@ -497,16 +503,16 @@
 		}
 		html = $('<div>' + html + '</div>');
 		// Attach the event handlers
-		html.find('.addFacet').click(handler);
-		html.find('.xfsRemoveFacet').click(handler);
+		html.find('.addFacet').bind('click', handlerData, handler);
+		html.find('.xfsRemoveFacet').bind('click', handlerData, handler);
 		if (isProperty(facet)) {
 			html.find('.detailsImage').click(toggleFunc);
 		}
 		return html;
 	};
 
-	AjaxSolr.theme.prototype.propertyValueFacet = function(facet, count, handler, showPropertyDetailsHandler, isRemove){
-		var html = AjaxSolr.theme('facet', facet, count, handler, showPropertyDetailsHandler, isRemove);
+	AjaxSolr.theme.prototype.propertyValueFacet = function(facet, count, handler, handlerData, showPropertyDetailsHandler, isRemove){
+		var html = AjaxSolr.theme('facet', facet, count, handler, handlerData, showPropertyDetailsHandler, isRemove);
 		html = $('<div class="xfsClusterEntry" />').append(html);
 		return html;	
 	};

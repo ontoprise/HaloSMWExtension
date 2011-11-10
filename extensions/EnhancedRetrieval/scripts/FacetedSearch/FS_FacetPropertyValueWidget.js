@@ -90,7 +90,7 @@ FacetedSearch.classes.FacetPropertyValueWidget = FacetedSearch.classes.FacetWidg
 		this.setHideSelectedFacet(false);
 		this.setRemoveFacet(propValRestricted);
 		if (propValRestricted) {
-			this.setClickHandler(this.clickRemoveRangeHandler(this.field));
+			this.setClickHandler(this.clickRemoveRangeHandler);
 		}
 		this.superAfterRequest();
 		
@@ -106,20 +106,19 @@ FacetedSearch.classes.FacetPropertyValueWidget = FacetedSearch.classes.FacetWidg
 	 * @param {string} facet
 	 * 		Name of the facet
 	 */
-	clickRemoveRangeHandler: function (facet) {
-		var self = this;
-		return function() {
-			var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
-			var fq = fsm.store.values('fq');
-			for (var i = 0, l = fq.length; i < l; i++) {
-				if (fq[i].indexOf(facet) == 0) {
-					fsm.store.removeByValue('fq', fq[i]);
-					break;
-				}
+	clickRemoveRangeHandler: function (event) {
+		var facet = event.data;
+		var fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
+		var fq = fsm.store.values('fq');
+		var toRemove = facet.field + ':' + facet.facet;
+		for (var i = 0, l = fq.length; i < l; i++) {
+			if (fq[i] === toRemove) {
+				fsm.store.removeByValue('fq', fq[i]);
+				break;
 			}
-			fsm.doRequest(0);
-			return false;
-		};
+		}
+		fsm.doRequest(0);
+		return false;
 	}
 	
 });

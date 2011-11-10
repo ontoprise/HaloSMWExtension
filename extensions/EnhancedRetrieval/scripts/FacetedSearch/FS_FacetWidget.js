@@ -107,17 +107,21 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			for (var facet in this.manager.response.facet_counts.facet_fields[field]) {
 				var count = parseInt(this.manager.response.facet_counts.facet_fields[field][facet]);
 				
-				if (this.mHideSelectedFacet) {
-					// Do not show facets that are selected 
-					var fullName = field + ':' + facet;
-					if ($.inArray(fullName, fq) >= 0) {
+				// Do not show facets that are selected 
+				var facetSelected = false;
+				var fullName = field + ':' + facet;
+				if ($.inArray(fullName, fq) >= 0) {
+					facetSelected = true;
+					if (this.mHideSelectedFacet) {
 						continue;
 					}
 				}
+				
 				this.mFacetItems.push({
 					field: field,
 					facet: facet,
-					count: count
+					count: count,
+					facetSelected: facetSelected
 				});
 			}
 		}
@@ -163,11 +167,12 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 		var groupDiv = $('<div group="' + group + '" />');
 		contentDiv.append(groupDiv); 
 		for (var i = start, l = end; i < l; i++) {
-			var facet = this.mFacetItems[i].facet;
-			var clickHandler = this.mClickHandler;
+			var facetItem = this.mFacetItems[i];
+			var facet = facetItem.facet;
+			var clickHandler = facetItem.facetSelected ? this.mClickHandler : null;
 			if (!clickHandler) {
 				var widget = this;
-				if (this.mFacetItems[i].field !== this.field) {
+				if (facetItem.field !== this.field) {
 					// Unify handling of attributes and relations
 					widget = FacetedSearch.singleton.FacetedSearchInstance.getRelationWidget();
 				}
@@ -175,10 +180,13 @@ FacetedSearch.classes.FacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 			}
 			
 			var entry = AjaxSolr.theme(this.mFacetTheme, facet, 
-						               this.mFacetItems[i].count, 
-									   clickHandler, 
+						               facetItem.count, 
+									   clickHandler,
+									   facetItem,
 									   FacetedSearch.classes.ClusterWidget.showPropertyDetailsHandler, 
-									   this.mRemoveFacet);			
+									   this.mRemoveFacet 
+									   		? facetItem.facetSelected
+											: false);			
 			groupDiv.append(entry);
 		}
 		
