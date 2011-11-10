@@ -124,6 +124,7 @@ jQuery(document).ready( function($) {
 	window.asf_hide_category_section = asf_hide_category_section;
 	window.asf_show_category_section = asf_show_category_section;
 	window.asf_hit_category_section = asf_hit_category_section;
+	window.initializeNiceASFTooltips = initializeNiceASFTooltips;
 });
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;

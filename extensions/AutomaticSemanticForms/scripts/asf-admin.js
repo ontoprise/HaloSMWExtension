@@ -182,5 +182,6 @@ var ASFAdmin = {
 			jQuery('#asf_create_tab div:nth-child(3) small:nth-child(4)').css('display', 'none');
 		}
 	}
+};
 
-window.ASFAdmin = ASFAdmin;};
+window.ASFAdmin = ASFAdmin;
