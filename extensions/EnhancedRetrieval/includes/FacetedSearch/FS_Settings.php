@@ -72,3 +72,10 @@ $fsgFacetedSearchForMW = true;
 //$fsgCreateNewPageLink = "/Create_new_page?target={article}&redlink=1";
 //$fsgCreateNewPageLink = "/{article}?action=edit";
 $fsgCreateNewPageLink = "?todo=createnewarticle&newarticletitle={article}";
+
+###
+# If this variable is <true>, changed pages will be indexed incrementally i.e.
+# when they are saved, moved or deleted.
+# Setting it to <false> can make sense for example during the installation when
+# SOLR is not yet running. 
+$fsgEnableIncrementalIndexer = true;

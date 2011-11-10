@@ -39,7 +39,7 @@ $wgExtensionMessagesFiles['FacetedSearch'] = $dir . '/languages/FS_Messages.php'
  */
 function fsfSetupFacetedSearch() {
 	global $wgAutoloadClasses, $wgHooks, $wgExtensionMessagesFiles,
-	       $wgExtensionAliasesFiles;
+	       $wgExtensionAliasesFiles, $fsgEnableIncrementalIndexer;
 	$dir = dirname(__FILE__).'/';
 	
     // Register special pages aliases file
@@ -58,9 +58,11 @@ function fsfSetupFacetedSearch() {
 	$wgAutoloadClasses['ERFSException'] = $dir . '../../exceptions/ER_FSException.php';
 	
 	// Register hooks
-	$wgHooks['ArticleSaveComplete'][] = 'FSIncrementalUpdater::onArticleSaveComplete';
-	$wgHooks['TitleMoveComplete'][]   = 'FSIncrementalUpdater::onTitleMoveComplete';
-	$wgHooks['ArticleDelete'][]       = 'FSIncrementalUpdater::onArticleDelete';
+	if ($fsgEnableIncrementalIndexer) {
+		$wgHooks['ArticleSaveComplete'][] = 'FSIncrementalUpdater::onArticleSaveComplete';
+		$wgHooks['TitleMoveComplete'][]   = 'FSIncrementalUpdater::onTitleMoveComplete';
+		$wgHooks['ArticleDelete'][]       = 'FSIncrementalUpdater::onArticleDelete';
+	}
 	
     ///// Register specials pages
     global $wgSpecialPages, $wgSpecialPageGroups;
