@@ -92,11 +92,15 @@ class SMWHaloStore2 extends SMWStoreAdapter {
 		if (!$ontologyURIMappingAdded) {
 			// that means ontology URL might be implicitly defined by a prefix in the title: Category:Foaf/Person
 			$namespaceMapping = TSCMappingStore::getAllNamespaceMappings();
-			$parts = explode("/", $subjectTitle->getText());
+			$prefixMappings=array();
+			foreach($namespaceMapping as $prefix => $uri) {
+				$prefixMappings[strtolower($prefix)] = $prefix;
+			}
+			$parts = explode("/", $subjectTitle->getDBkey());
 			$prefix = strtolower($parts[0]);
-			if (array_key_exists($prefix, $namespaceMapping)) {
-				$local = substr($subjectTitle->getText(), strlen($prefix) + 1);
-				$tscURI = $namespaceMapping[$prefix] . $local;
+			if (array_key_exists($prefix, $prefixMappings)) {
+				$local = substr($subjectTitle->getDBkey(), strlen($prefix) + 1);
+				$tscURI = $namespaceMapping[$prefixMappings[$prefix]] . $local;
 				$db->insert($smw_urimapping, array('smw_id' => $id->smw_id, 'page_id' => $subjectTitle->getArticleID(), 'smw_uri'=>$tscURI));
 				$wikiURI = TSNamespaces::getInstance()->getFullURI($subjectTitle);
 				$this->mURIMappings = array($wikiURI, $tscURI);
