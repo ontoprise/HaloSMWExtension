@@ -107,7 +107,7 @@ class OntologyInstaller {
 		// has only informative character. The only conflicts appearing
 		// now occur if two ontologies use the same entity.
 		$dfgOut->outputln("[Verifying ontology $inputfile...");
-		$bundleID = $outputFromOnto2mwxml->bundle_id;
+		$bundleID = $outputFromOnto2mwxml->ontology_uri;
 		$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID);
 		$conflict = $this->checkForConflict($verificationLog);
 
