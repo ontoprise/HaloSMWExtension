@@ -129,7 +129,7 @@ ul.smwh_menulist div.smwh_menubody td a{
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover {
-	/* background-color: #d8e1e2; */ 
+	background-color: #d8e1e2;
 	text-decoration: none;
 }
 
@@ -141,7 +141,7 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 	padding-bottom: 0px;
 }
 
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about a {
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about a {
     color: grey;
 	vertical-align: middle;
 	font-size: 80%; 
@@ -153,23 +153,9 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 	padding-top: 0px;
 }
 
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon_oneline, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon_oneline img {
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon img {
 	vertical-align: middle;
-	display:list-item;
-	list-style-type:none;
-	list-style-position:inside; 
 	padding-right: 3px;
-	float:left;
-}
-
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon img {
-	vertical-align: middle;
-	display:list-item;
-	list-style-type:none;
-	list-style-position:inside; 
-	padding-top: 3px;
-	padding-right: 3px;
-	float:left;
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a /*, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink */{
