@@ -717,8 +717,9 @@ Function checkLuceneParameters
     ReadINIStr $IP "$PLUGINSDIR\lucene.ini" "Field 2" "state"
     ${If} $IP == "localhost"
     ${OrIf} $IP == "127.0.0.1"
-        MessageBox MB_OK|MB_ICONEXCLAMATION "Not allowed. Please enter a real IP or leave it blank."
-        Abort    
+; Issue 15644
+;        MessageBox MB_OK|MB_ICONEXCLAMATION "Not allowed. Please enter a real IP or leave it blank."
+;        Abort    
     ${EndIf}
     ${If} $IP == ""
         StrCpy $IP "true"
