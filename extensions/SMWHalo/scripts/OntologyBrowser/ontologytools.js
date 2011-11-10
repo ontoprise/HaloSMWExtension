@@ -632,9 +632,9 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var newCategoryXML = GeneralXMLTools.createDocumentFromString(this
 					.createCategoryNode(newCategoryTitle));
-			var superCategoryID = GeneralXMLTools.getNodeById(
+			var superCategoryID = sibligCategoryID != null ? GeneralXMLTools.getNodeById(
 					dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode
-					.getAttribute('id');
+					.getAttribute('id') : null;
 			this.insertCategoryNode(superCategoryID, newCategoryXML);
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree,
@@ -644,9 +644,12 @@ OBOntologyModifier.prototype = {
 					siblingCategoryTitle, SMW_CATEGORY_NS, $(sibligCategoryID))
 			selectionProvider.fireRefresh();
 		}
-		var superCategoryTitle = GeneralXMLTools.getNodeById(
+		var superCategoryTitle = null;
+		if (sibligCategoryID != null) {
+		 superCategoryTitle = GeneralXMLTools.getNodeById(
 				dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode
 				.getAttribute('title');
+		}
 		var content = superCategoryTitle != null ? "[["
 				+ gLanguage.getMessage('CATEGORY_NS') + superCategoryTitle
 				+ "]]" : "";
@@ -663,7 +666,7 @@ OBOntologyModifier.prototype = {
 		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')
 				+ newCategoryTitle, content, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
-				$(sibligCategoryID));
+				sibligCategoryID != null ? $(sibligCategoryID) : $('categoryTree'));
 	},
 
 	/**
@@ -949,9 +952,9 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this
 					.createPropertyNode(newPropertyTitle));
-			var superPropertyID = GeneralXMLTools.getNodeById(
+			var superPropertyID = sibligPropertyID != null ? GeneralXMLTools.getNodeById(
 					dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode
-					.getAttribute('id');
+					.getAttribute('id') : null;
 			this.insertPropertyNode(superPropertyID, subPropertyXML);
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree,
@@ -961,10 +964,13 @@ OBOntologyModifier.prototype = {
 					siblingPropertyTitle, SMW_PROPERTY_NS, $(sibligPropertyID))
 			selectionProvider.fireRefresh();
 		}
-
+		var superPropertyTitle = null;
+		
+		if (sibligPropertyID != null) {
 		var superPropertyTitle = GeneralXMLTools.getNodeById(
 				dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode
 				.getAttribute('title');
+		}
 		var content = superPropertyTitle != null ? "\n[[_SUBP::"
 				+ gLanguage.getMessage('PROPERTY_NS') + superPropertyTitle
 				+ "]]" : "";
@@ -980,7 +986,7 @@ OBOntologyModifier.prototype = {
 		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
 				+ newPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
-				$(sibligPropertyID));
+				sibligPropertyID != null ? $(sibligPropertyID) : $('propertyTree'));
 	},
 
 	/**
@@ -2080,12 +2086,7 @@ OBCatgeorySubMenu.prototype = Object
 								: '';
 						this.categoryTitle = titlevalue;
 						categoryTitle = titlevalue;
-
-						var superCategoryTitle = GeneralXMLTools.getNodeById(
-								dataAccess.OB_cachedCategoryTree,
-								this.selectedID).parentNode
-								.getAttribute('title');
-
+						
 						var superCategoryContent = "";
 						for ( var i = 0; i < this.annotatedSuperCategories.length; i++) {
 							superCategoryContent = ","
@@ -2096,7 +2097,8 @@ OBCatgeorySubMenu.prototype = Object
 						var categoryContent = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? superCategoryContent
 								.replace(/_/g, " ")
 								: this.selectedTitle;
-
+						if (categoryContent == null) categoryContent = "";
+								
 						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('AddCategory');
@@ -2440,21 +2442,16 @@ OBPropertySubMenu.prototype = Object
 						this.propertyTitle = titlevalue;
 						propertyTitle = titlevalue;
 
-						var superpropertyTitle = GeneralXMLTools.getNodeById(
-								dataAccess.OB_cachedPropertyTree,
-								this.selectedID).parentNode
-								.getAttribute('title');
-
 						var superpropertyContent = "";
 						for ( var i = 0; i < this.annotatedSuperProperties.length; i++) {
 							superpropertyContent = ","
-									+ this.annotatedSuperProperties[i];
+									+ this.annotatedSuperProperties[i].replace(/_/g, " ");
 						}
 						superpropertyContent = superpropertyContent.substr(1);
 
 						var propertyContent = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? superpropertyContent
-								.replace(/_/g, " ")
-								: this.selectedTitle.replace(/_/, " ");
+								: this.selectedTitle;
+						if (propertyContent == null) propertyContent = "";
 
 						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")

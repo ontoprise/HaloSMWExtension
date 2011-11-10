@@ -586,10 +586,7 @@ OBCategoryTreeActionListener.prototype = Object
 
 										
 					showSubMenu : function(commandID) {
-						if (this.selectedCategory == null){
-							alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
-							return;
-						}
+						
 						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
 						
                                            					    
@@ -1330,10 +1327,7 @@ OBPropertyTreeActionListener.prototype = Object
 					
 
 					showSubMenu : function(commandID) {
-						if (this.selectedProperty == null) {
-							alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
-							return;
-						}
+						
 						
 						obPropertyMenuProvider.showContent(commandID,'propertyTree');
 					},
