@@ -83,6 +83,7 @@ textarea {
 }
 
 #smwh_search{
+	width: 590px;
     height: 40px;
     float: right;
     position: absolute;
