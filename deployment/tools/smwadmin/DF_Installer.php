@@ -430,9 +430,9 @@ class Installer {
 
 			$versionsShown = "(".implode(", ", $sep_v).")";
 			$versionsShown .= str_repeat(" ", 12-strlen($versionsShown) >= 0 ? 12-strlen($versionsShown) : 0);
-			
+
 			if (!$showDescription) {
-			    $dfgOut->outputln( " $id_shown $instTag $versionsShown ".Tools::shortenURL($rUrl, 70));
+				$dfgOut->outputln( " $id_shown $instTag $versionsShown ".Tools::shortenURL($rUrl, 70));
 			} else {
 				$dfgOut->outputln( str_repeat("-", 70));
 				$dfgOut->outputln( " $id_shown $instTag $versionsShown ".Tools::shortenURL($rUrl, 70));
@@ -702,9 +702,25 @@ class Installer {
 			} catch(RollbackInstallation $e) {
 				// ignore here
 			}
+
+			if (count($desc->getOntologies()) == 0
+			&& count($desc->getResources()) == 0
+			&& count($desc->getWikidumps()) == 0
+			&& count($desc->getMappings()) == 0
+			&& count($desc->getNamespaces()) == 0)  {
+				// mark as initialized
+				$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
+				if ($desc->isNonPublic()) {
+					$installDirectory = $this->getNonPublicDirectory($desc);
+				}
+				$this->logger->info("Mark extension as initialized: ".$desc->getID());
+				$dfgOut->outputln("[Clean up...");
+				unlink($installDirectory."/init$.ext");
+				$dfgOut->output("done.]\n\n");
+			}
 		}
 
-		// do the actual work
+		// do the import operations
 		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
@@ -714,9 +730,20 @@ class Installer {
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$res_installer->installOrUpdateMappings($desc);
 			$res_installer->installNamespaces($desc);
+
+			// mark as initialized
+			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
+			if ($desc->isNonPublic()) {
+				$installDirectory = $this->getNonPublicDirectory($desc);
+			}
+			$this->logger->info("Mark extension as initialized: ".$desc->getID());
+			$dfgOut->outputln("[Clean up...");
+			unlink($installDirectory."/init$.ext");
+			$dfgOut->output("done.]\n\n");
 		}
 
 		// print (optional) notices
+		// FIXME: save notices in file in case some of the operation above crashes
 		$shownNotices=array();
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
@@ -731,20 +758,6 @@ class Installer {
 				}
 			}
 		}
-
-		// remove installation hint files
-		$dfgOut->outputln("[Clean up...");
-		foreach($localPackages as $tupl) {
-			list($desc, $fromVersion) = $tupl;
-			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
-			if ($desc->isNonPublic()) {
-				$installDirectory = $this->getNonPublicDirectory($desc);
-				Tools::mkpath($installDirectory);
-			}
-			$this->logger->info("Mark extension as initialized: ".$desc->getID());
-			unlink($installDirectory."/init$.ext");
-		}
-		$dfgOut->output("done.]\n\n");
 
 	}
 
