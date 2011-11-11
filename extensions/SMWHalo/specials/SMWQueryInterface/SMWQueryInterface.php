@@ -557,17 +557,17 @@ class SMWQueryInterface extends SpecialPage {
             '</div>' .
             '<div id="resetdialogue" class="topDialogue" style="display:none">' .
             'Do you really want to reset your query?<br/>' .
-            '<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$$(\'#askQI #resetdialogue\').toggle(); $$(\'#askQI #shade\').toggle()">' . wfMsg('smw_qi_cancel') . '</span>' .
+            '<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$$(\'#askQI #resetdialogue\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle()">' . wfMsg('smw_qi_cancel') . '</span>' .
             '</div>' .
             '<div id="showAsk" class="topDialogue" style="display:none;">' .
             '<span id="showParserAskButton" class="qibutton">' . wfMsg('smw_qi_parserask') . '</span><br/><hr/>' .
             '<div><textarea id="fullAskTextOld" rows="10" readonly></textarea></div>' .
-            '<span class="qibutton" onclick="$$(\'#askQI #showAsk\').toggle(); $$(\'#askQI #shade\').toggle()">' . wfMsg('smw_qi_close') . '</span>' .
+            '<span class="qibutton" onclick="$$(\'#askQI #showAsk\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle()">' . wfMsg('smw_qi_close') . '</span>' .
             '</div>' .
             '<div id="savedialogue" class="topDialogue" style="display:none">' .
             'Please enter a query name:<br/>' .
             '<input type="text" id="saveName"/><br/>' .
-            '<span class="qibutton" onclick="qihelper.doSave()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$$(\'#askQI #savedialogue\').toggle(); $$(\'#askQI #shade\').toggle()">' . wfMsg('smw_qi_cancel') . '</span>' .
+            '<span class="qibutton" onclick="qihelper.doSave()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$$(\'#askQI #savedialogue\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle()">' . wfMsg('smw_qi_cancel') . '</span>' .
             '</div>' .
             '<div id="query4DiscardChanges" style="display:none"></div>';
   }
