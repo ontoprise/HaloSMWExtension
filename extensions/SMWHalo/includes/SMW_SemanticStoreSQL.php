@@ -1167,7 +1167,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		// create NEP templates
 		global $smwgHaloIP;
-		$contents = file_get_contents("$smwgHaloIP/resources/nep/NEP_Generic.template");
+		$contents = file_get_contents("$smwgHaloIP/resources/nep/NEP_Generic_default.template");
 		$t = Title::newFromText("NEP/Generic", NS_MEDIAWIKI);
 		$article = new Article($t);
 		if (!$t->exists()) {
