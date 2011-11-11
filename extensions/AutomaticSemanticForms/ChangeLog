@@ -13,6 +13,9 @@ FEATURES
 * ASF now works without templateless. Annotations in the standard syntax are now used to automatically generate  the form and to fill the form input fields with values.
 ** The 'CreateSilentAnnotations' Parser Function is not needed anymore, although it still works.
 * The asfforminput parser function now also supports the popup property, which enables you to display an ASF in a popup.
+* 'Autocomplete on' property for overwriting the default autocompletion contraints.
+* 'Use default input' property for customizing the form footer.
+* 'Use autogrow' for using autogrow on textarea form input fields.
 
 VERSION 1.2
 
