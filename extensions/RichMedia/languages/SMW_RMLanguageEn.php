@@ -73,7 +73,8 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_embed_savetext' => 'Save',
 		
 		'smw_rm_wrong_namespace' => 'You have chosen the wrong Namespace for this file. Did you mean $1 ?',
-		'smw_rm_filenotfound' => 'File not found: $1.'
+		'smw_rm_filenotfound' => 'File not found: $1.',
+		'smw_rm_preview'=> 'View the following file in the FileViewer overlay: '
 	);
 
 	protected $smwRMNamespaces = array(

@@ -1770,3 +1770,39 @@ Index: includes/ImageGallery.php
  
  			if( !$img ) {
  				# We're dealing with a non-image, spit out the name and be done with it.
+Index: includes/media/MediaTransformOutput.php
+===================================================================
+--- includes/media/MediaTransformOutput.php	(revision 12711)
++++ includes/media/MediaTransformOutput.php	(working copy)
+@@ -94,6 +94,31 @@
+ 		if ( $title ) {
+ 			$attribs['title'] = $title;
+ 		}
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/AdditionalNamespaceCheck */
++		// NS_FILE is not the only Namespace now, so check them all
++		// This is a combination of two patches!
++		/*op-patch|BL|2009-10-07|RichMedia|FilePreview|start*/
++		/*op-patch|BL|2009-10-07|RichMedia|FilePreview|doc|
++		 *  http://dmwiki.ontoprise.com:8888/dmwiki/index.php/FilePreview */
++		// Redirect image links to 'Special:EmbedWindow' and add overlay functionality.
++		global $wgRequest, $smwgEnableRichMedia, $wgRMImagePreview;
++		$loc = $wgRequest->getText( 'title' );
++		$title = $title ? $title : $this->file->getTitle(); 
++		if ( $smwgEnableRichMedia && $title && method_exists( $title, 'getNamespace' ) ) {
++			$temp_var = $title->getNamespace();
++			RMNamespace::isImage( $temp_var, $rMresult );
++			if ( $rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow' ) {
++				$queryString = "target=".urlencode( $title->getPrefixedText() );
++				$embedWindowPage = SpecialPage::getPage( 'EmbedWindow' );
++				$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL( $queryString );
++				$attribs['href'] = $embedWindowUrl;
++				$attribs['class'] = 'rmAlink';
++				$attribs['title'] = wfMsg('smw_rm_preview') . $title;
++			}
++		}
++		/*op-patch|BL|2010-12-14|end*/
+ 		return $attribs;
+ 	}
+ }
