@@ -345,12 +345,27 @@ class ASFFormGeneratorUtils {
 		return self::$semanticDataCache[$title->getFullText()];
 	}
 	
+	public static function getDisplayTemplateForCategory($category){
+		global $wgLang;
+		if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
+			$category = substr($category, strpos($category, ":") +1);
+		}
+		
+		$category = Title::newFromText($category, NS_CATEGORY);
+		
+		$store = smwfGetStore();
+		$semanticData = self::getSemanticData($category);
+			
+		$displayTemplate = 
+			self::getInheritedPropertyValue($semanticData, ASF_PROP_USE_DISPLAY_TEMPLATE);
+		
+		echo('<pre>'.print_r($displayTemplate, ture).'</pte>');	
+			
+		return $displayTemplate;
+	}
+	
 	 
 } 
-
-
-
-
 
 
 

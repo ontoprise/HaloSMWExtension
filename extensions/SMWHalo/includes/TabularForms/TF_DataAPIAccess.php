@@ -451,10 +451,18 @@ class TFDataAPIACCESS {
 		$text = '';
 		
 		$annotations = $annotations->getNewAnnotations();
-		if($useSAT != 'true'){
+		if(true || $useSAT != 'true'){
 			foreach($annotations as $annotation){
 				if($annotation['name'] == TF_CATEGORY_KEYWORD){
 					$text .= '[[Category:'.$annotation['value'].'| ]]';
+					
+					if(defined('ASF_VERSION')){
+						$displayTemplates = 
+							ASFFormGeneratorUtils::getDisplayTemplateForCategory($annotation['value']);
+						if(count($displayTemplates) > 0){
+							$text .= '{{'.$displayTemplates[0].'}}';
+						}
+					}
 				} else if (strlen($annotation['name']) >0){
 					$text .= '[['.$annotation['name'].'::'.$annotation['value'].'| ]]';
 				}
@@ -498,6 +506,8 @@ class TFDataAPIACCESS {
 				$text .= "\n}}";
 			}
 		}
+		
+		
 		
 		$this->article = new Article($this->title);
 		$this->article->doEdit($text, 'tabular forms');
