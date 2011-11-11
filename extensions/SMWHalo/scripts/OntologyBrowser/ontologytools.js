@@ -1739,8 +1739,8 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
  * Validates if a Subcategory is changed and exists (or does not).
  * 
  */
-var OBSubCatValidator = Class.create();
-OBSubCatValidator.prototype = Object.extend(new OBInputFieldValidator(), {
+var OBObjectListValidator = Class.create();
+OBObjectListValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 
 	/**
 	 * @public Constructor
@@ -2177,7 +2177,7 @@ OBCatgeorySubMenu.prototype = Object
 										.getMessage('CATEGORY_NS_WOC'), false,
 								this);
 
-						this.subInputValidator = new OBSubCatValidator(this.id
+						this.subInputValidator = new OBObjectListValidator(this.id
 								+ '2_input_ontologytools', gLanguage
 								.getMessage('CATEGORY_NS_WOC'), true, this);
 					},
@@ -2544,7 +2544,7 @@ OBPropertySubMenu.prototype = Object
 								this.id + '_input_ontologytools', gLanguage
 										.getMessage('PROPERTY_NS_WOC'), false,
 								this);
-						this.subInputValidator = new OBSubCatValidator(this.id
+						this.subInputValidator = new OBObjectListValidator(this.id
 								+ '2_input_ontologytools', gLanguage
 								.getMessage('PROPERTY_NS_WOC'), true, this);
 
@@ -2815,7 +2815,7 @@ OBInstanceSubMenu.prototype = Object
 								this.categoriesOfInstance[i] = this.categoriesOfInstance[i]
 										.strip();
 							}
-
+							this.categoriesInputValidator.setObjects(this.categoriesOfInstance);
 							Form.Element.setValue(
 									$('instanceListMenu2_input_ontologytools'),
 									request.responseText);
@@ -2901,11 +2901,9 @@ OBInstanceSubMenu.prototype = Object
 								this.id + '_input_ontologytools', '', false,
 								this);
 
-						this.categoriesInputValidator = new OBInputFieldValidator(
-								'instanceListMenu2_input_ontologytools', true,
-								this, function() {
-									return true;
-								});
+						this.categoriesInputValidator = new OBObjectListValidator(this.id
+								+ '2_input_ontologytools', gLanguage
+								.getMessage('CATEGORY_NS_WOC'), true, this);
 
 					},
 
@@ -2959,13 +2957,15 @@ OBInstanceSubMenu.prototype = Object
 											+ applyButtonLabel + '</button>');
 						} else {
 							$(this.id + '_apply_ontologytools').replace(
-									'<span style="margin-left: 10px;" id="'
+									'<button style="margin-left: 10px;" disabled="true" id="'
 											+ this.id
-											+ '_apply_ontologytools">'
-											+ gLanguage
-													.getMessage(errorMessage)
-											+ '</span>');
+											+ '_apply_ontologytools" onclick="'
+											+ this.objectname
+											+ '.doCommand()">'
+											+ applyButtonLabel + '</button>');
 						}
+						
+						
 					},
 
 					/**
@@ -2979,15 +2979,25 @@ OBInstanceSubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					enable : function(b, id) {
-						var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
-								: '#F00';
+						if (id == 'instanceListMenu2_input_ontologytools') {
+							this.categoriesOK = b;
+							this.titleOK = this.titleInputValidator.isValid;
+						}
+						if (id == 'instanceListMenu_input_ontologytools') {
+							this.titleOK = b;
+							this.categoriesOK = this.categoriesInputValidator.isValid;
+							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
+									: '#F00';
 
-						this.enableCommand(b, b ? this.getCommandText()
-								: $F(id) == '' ? 'OB_ENTER_TITLE'
-										: 'OB_TITLE_EXISTS');
-						$(id).setStyle( {
-							backgroundColor : bg_color
-						});
+							
+							$(id).setStyle( {
+								backgroundColor : bg_color
+							});
+						}
+						
+						var titleUnchanged = this.titleInputValidator.initialValue == $F('instanceListMenu_input_ontologytools');
+						
+						this.enableCommand(this.titleOK || ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
 					},
 
 					/**
@@ -2997,10 +3007,9 @@ OBInstanceSubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					reset : function(id) {
-						this.enableCommand(false, 'OB_ENTER_TITLE');
-						$(id).setStyle( {
-							backgroundColor : '#FFF'
-						});
+						this.categoriesOK = false;
+						this.titleOK = false;
+						this.enableCommand(false);
 					}
 				});
 
