@@ -80,10 +80,10 @@ function smgSetupExtension() {
 	
     $wgResourceModules['ext.jquery.fancybox'] = $moduleTemplate + array(
 		'scripts' => array(
-    			'scripts/fancybox/jquery.fancybox-1.3.1.js'
+    			'scripts/fancybox/jquery.fancybox-1.3.4.js'
 				),
 		'styles' => array(
-				'/scripts/fancybox/jquery.fancybox-1.3.1.css'
+				'/scripts/fancybox/jquery.fancybox-1.3.4.css'
 				)
 	);
 
@@ -362,7 +362,7 @@ function smfMergeHeadScripts( $scripts ) {
 	}
 	if ( $js_frameworks['jqueryfancybox'] ) {
 		// jQuery's fancybox plugin
-		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/fancybox/jquery.fancybox-1.3.1.js$scmgStyleVersion\"></script>\n";
+		$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/fancybox/jquery.fancybox-1.3.4.js$scmgStyleVersion\"></script>\n";
 	}
 	if ( $js_frameworks['prototype'] ) {
 		// prototype
