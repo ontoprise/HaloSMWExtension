@@ -139,5 +139,5 @@ SRRuleWidget.prototype = {
 
 }
 
-var sr_rulewidget = new SRRuleWidget();
+window.sr_rulewidget = new SRRuleWidget();
 Event.observe(window, 'load', sr_rulewidget.renderWidgets.bind(sr_rulewidget));
