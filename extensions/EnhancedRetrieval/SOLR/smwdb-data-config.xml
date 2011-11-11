@@ -1,5 +1,5 @@
-<!DOCTYPE document [
-    <!ENTITY DBPREFIX "">
+<!DOCTYPE dataConfig [
+    <!ENTITY DBPREFIX ""> <!-- You can specify a MediaWiki database prefix here. -->
 ]>
 <dataConfig>
 	<dataSource 
