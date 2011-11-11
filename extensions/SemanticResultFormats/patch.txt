@@ -594,16 +594,4 @@ Index: extensions/SemanticResultFormats/ofc/SRF_OFC.php
  		global $smwgIQRunningNumber;
  		$outputmode = SMW_OUTPUT_HTML;
  		$result = "";
-Index: extensions/SemanticResultFormats/ofc/SRF_OFC2.php
-===================================================================
---- extensions/SemanticResultFormats/ofc/SRF_OFC2.php	(revision 12458)
-+++ extensions/SemanticResultFormats/ofc/SRF_OFC2.php	(working copy)
-@@ -186,7 +186,7 @@
- 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
- 	}
- 
--	protected function getResultText($res, $outputmode) {
-+	protected function getResultText(SMWQueryResult $res, $outputmode) {
- 		global $smwgIQRunningNumber;
- 		$outputmode = SMW_OUTPUT_HTML;
- //Bugfix 13446:		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
+
