@@ -208,7 +208,11 @@ getSelectedItem: function(selindex) {
       if(queryImg.getAttribute('class') === 'FCK__SMWquery'){
         var realElement = editorInstance.restoreRealElement(queryImg);
         var realQuery = realElement.getChild(0).getText().replace(/fckLR/g, '').replace(/^{{#ask:\s*/, '').replace(/\s*}}$/, '');
-        if(realQuery === query.trim()){
+        if(realQuery === jQuery.trim(query)){
+          //workaround for null selection object in IE8 if editor is not focused
+          if(CKEDITOR.env.ie8){
+            editorInstance.focus();
+          }
           editorInstance.getSelection().selectElement(queryImg);
           break;
         }

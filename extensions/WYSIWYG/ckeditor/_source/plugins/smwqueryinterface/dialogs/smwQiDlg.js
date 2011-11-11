@@ -2,7 +2,6 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
   var wgScript = window.parent.wgScript;
   //Workaround for issue 15679. smwghQiLoadUrl var is not initialized when action = formedit
   var qiUrl = window.parent.smwghQiLoadUrl || '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE';
-  //var qiUrl = '/Special:QueryInterface?id=qicontent';
   var locationQi =  wgScript + qiUrl;
   var querySource, Tip;
   var height = window.outerHeight || window.screen.availHeight || 500;
@@ -77,7 +76,8 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
       element = null;
                 
       // Fill in all the relevant fields if there's already one item selected.
-      if( editor.mode == 'wysiwyg' 
+      if( editor.mode == 'wysiwyg'
+        && selection
         && (element = selection.getSelectedElement())
         && element.is( 'img' )
         && element.getAttribute( 'class' ) == 'FCK__SMWquery' )
@@ -149,6 +149,8 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
       else {
         this.InsertDataInTextarea(ask);
       }
+
+      window.refreshSTB.refreshToolBar();
     }
 
   };
