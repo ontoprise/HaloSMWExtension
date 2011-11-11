@@ -25,6 +25,10 @@ define('ASF_PROP_NOT_DISJOINT_WITH', 'Not_disjoint_with');
 define('ASF_PROP_PRELOAD', 'Use_preload_article');
 define('ASF_PROP_PAGE_NAME_TEMPLATE', 'Use_page_name_template');
 define('ASF_PROP_HIDE_FREE_TEXT', 'Hide_free_text');
+define('ASF_PROP_AUTOCOMPLETE_ON', 'Autocomplete_on');
+define('ASF_PROP_USE_STANDARD_INPUT', 'Use_standard_input');
+define('ASF_PROP_USE_AUTOGROW', 'Use_autogrow');
+
 
 //define dtata type form input type relations
 define('TEXTDATATYPES', '-page- ');

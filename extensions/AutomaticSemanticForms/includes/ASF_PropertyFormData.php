@@ -31,6 +31,8 @@ class ASFPropertyFormData {
 	public $defaultValue;					//use a default value
 	public $hideProperty;
 	private $forceList;
+	private $userAutocompletionConstraint;
+	private $useAutogrow;
 	
 	
 	
@@ -87,6 +89,10 @@ class ASFPropertyFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_DEFAULT_VALUE);
 		$this->hideProperty = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT, false, false);
+		$this->userAutocompletionConstraint = 
+			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_AUTOCOMPLETE_ON, false, false);
+		$this->useAutogrow = 
+			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_USE_AUTOGROW, false, false);
 	}
 	
 	
@@ -105,6 +111,12 @@ class ASFPropertyFormData {
 		list($inputType, $size, $rows, $cols, $autocompletion, $values) = 
 			$this->getFormFieldInputTypeMetadata();
 			
+		//add special class, so that width=100% can be applied in JS
+		$useClass = '';
+		if($size == ASF_LONG_TEXT_SIZE && $inputType =='text'
+				|| $inputType == 'textarea'){
+			$useClass = '| class=asf-complete-width';
+		}
 			
 		//deal with autocompletion
 		global $asfUseHaloAutocompletion;
@@ -137,6 +149,11 @@ class ASFPropertyFormData {
 			$autocompletion = '';
 		}
 		
+		//overwrite computed AC with user constraint
+		if($asfUseHaloAutocompletion && $this->userAutocompletionConstraint){
+			$autocompletion = ' |constraints='.lcfirst($this->userAutocompletionConstraint);
+		}
+		
 		//deal with validator
 		global $asfUseSemanticFormsInputsFeatures;
 		$regexp = '';
@@ -149,10 +166,12 @@ class ASFPropertyFormData {
 		
 			
 		$syntax .= ' |input type='.$inputType;
+		$syntax .= $useClass;
 		if($size) $syntax .= ' |size='.$size;
 		if($rows) $syntax .= ' |rows='.$rows;
 		if($cols) $syntax .= ' |cols='.$cols;
 		if($values) $syntax .= ' |values='.$values;
+		if($this->useAutogrow) $syntax .= ' |autogrow';
 		
 		//deal with autocompletion
 		$syntax .= $autocompletion;

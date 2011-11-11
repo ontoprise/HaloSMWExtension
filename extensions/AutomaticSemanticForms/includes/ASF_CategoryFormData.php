@@ -27,6 +27,8 @@ class ASFCategoryFormData {
 	
 	public $isLeafCategory; //is this one of the original instance annotations
 	
+	public $standardInputs = array();
+	
 	
 	
 	public function __construct($categoryTitleObject, $categorySectionStructure){
@@ -79,8 +81,8 @@ class ASFCategoryFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 		$this->useCSSClass = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_USE_CLASS);
-		$this->notDisjointWith = 
-			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NOT_DISJOINT_WITH, true);
+		// $this->notDisjointWith = 
+		//	ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_NOT_DISJOINT_WITH, true);
 			
 		if($this->isLeafCategory){
 			$this->useDisplayTemplate = 
@@ -91,6 +93,13 @@ class ASFCategoryFormData {
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_PAGE_NAME_TEMPLATE);
 			$this->hideFreeText = 
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_HIDE_FREE_TEXT);
+			
+			$standardInputs = 
+				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_USE_STANDARD_INPUT, true);
+			foreach($standardInputs as $sI){
+				$this->standardInputs[lcfirst($sI)] = true;
+			}
+				
 		} else {
 			$this->useDisplayTemplate = array();
 			$this->usePreloadArticles = array();

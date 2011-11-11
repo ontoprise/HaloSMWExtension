@@ -1,4 +1,4 @@
-<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.5/ http://www.mediawiki.org/xml/export-0.5.xsd" version="0.5" xml:lang="en">
+mediawiki xmlns="http://www.mediawiki.org/xml/export-0.5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.5/ http://www.mediawiki.org/xml/export-0.5.xsd" version="0.5" xml:lang="en">
   <siteinfo>
     <sitename>Contentwiki</sitename>
     <base>http://dailywikibuilds.ontoprise.com/contentwiki_head/index.php/Main_Page</base>
@@ -504,6 +504,85 @@ Please note, that this annotation is not inherited to subcategories. You can als
 |-
 |}&lt;/includeonly&gt;&lt;noinclude&gt;[[Part of bundle::Automaticsemanticforms| ]]
 &lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use default input</title>
+    <id>2498</id>
+    <revision>
+      <id>6815</id>
+      <timestamp>2011-11-11T13:58:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a category article if you want to custo...&quot;</comment>
+      <text xml:space="preserve" bytes="909">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a category article if you want to customize which standard input fields should be shown in the form footer. If one of the categories of an instance has such an annotation, thae only the chosen default input fields are shown. Otherwise all are shown.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Part of bundle::Automaticsemanticforms| ]]
+
+[[Has type::String| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Category; | ]] [[Allows value::asf message| ]]
+[[Allows value::summary| ]]
+[[Allows value::minor edit| ]]
+[[Allows value::watch| ]]
+[[Allows value::save| ]]
+[[Allows value::preview| ]]
+[[Allows value::changes| ]]
+[[Allows value::cancel| ]]
+[[Allows value::save and continue| ]]
+
+[[Category:Property]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Autocomplete on</title>
+    <id>2495</id>
+    <revision>
+      <id>6813</id>
+      <timestamp>2011-11-11T13:47:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="726">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a property article if you want to overwrite the default autocompletion constraints that are used for this property in Automatic Semantic Forms. You can use the same constraints, that are also allowed for the constraints parameter for form input fields. This only works if Halo Autocompletion is used.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Part of bundle::Automaticsemanticforms| ]]
+
+[[Has type::String| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
+
+[[Category:Property]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use autogrow</title>
+    <id>2494</id>
+    <revision>
+      <id>6804</id>
+      <timestamp>2011-11-11T13:04:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a property article if the property is o...&quot;</comment>
+      <text xml:space="preserve" bytes="602">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a property article if the property is of type text and if you want that the textarea for this property in Automatic Semantic Forms autogrows instead of displaying a scrollbar.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Part of bundle::Automaticsemanticforms| ]]
+
+[[Has type::Boolean| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
+
+[[Category:Property]]</text>
     </revision>
   </page>
 </mediawiki>
