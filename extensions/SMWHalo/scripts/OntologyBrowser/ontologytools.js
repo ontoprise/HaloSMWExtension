@@ -1671,6 +1671,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		this.pendingElement = new OBPendingIndicator();
 		this.hintDIV = document.createElement("div");
 		$(id).parentNode.appendChild(this.hintDIV);
+		this.initialValue = $F(id);
 	},
 
 	/**
@@ -1717,6 +1718,8 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		;
 
 		var pageName = $F(this.id);
+		
+		
 		if (pageName == '') {
 			this.control.enable(false, this.id);
 			return;
@@ -1765,10 +1768,28 @@ OBSubCatValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 	/**
 	 * @private
 	 * 
-	 * Checks if article exists and enables/disables command.
+	 * Checks if set of objects have changed.
 	 */
 	_checkIfValidCategory : function(id) {
-		return true;
+		var objects = $F(this.id).split(",");
+		
+		objects.sort(function(a, b) {
+			return a.strip() < b.strip() ? -1 : 1
+		});
+		if (objects.length != this.objects.length) return true;
+		for ( var i = 0; i < objects.length; i++) {
+			objects[i] = objects[i]
+					.strip();
+			if (objects[i] != this.objects[i]) return true;
+		}
+		return false;
+	},
+	
+	setObjects: function(objects) {
+		this.objects = objects;
+		this.objects.sort(function(a, b) {
+			return a.strip() < b.strip() ? -1 : 1
+		});
 	}
 
 });
@@ -1979,7 +2000,7 @@ OBCatgeorySubMenu.prototype = Object
 								this.annotatedSuperCategories[i] = this.annotatedSuperCategories[i]
 										.strip();
 							}
-
+							this.subInputValidator.setObjects(this.annotatedSuperCategories);
 							Form.Element.setValue(
 									$('categoryTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2250,13 +2271,27 @@ OBCatgeorySubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					enable : function(b, id) {
-						var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
-								: '#F00';
+						
+						if (id == 'categoryTreeMenu2_input_ontologytools') {
+							this.categoriesOK = b;
+							this.titleOK = this.titleInputValidator.isValid;
+						}
+						if (id == 'categoryTreeMenu_input_ontologytools') {
+							this.titleOK = b;
+							this.categoriesOK = this.subInputValidator.isValid;
+							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
+									: '#F00';
 
-						this.enableCommand(b);
-						$(id).setStyle( {
-							backgroundColor : bg_color
-						});
+							
+							$(id).setStyle( {
+								backgroundColor : bg_color
+							});
+						}
+						
+						var titleUnchanged = this.titleInputValidator.initialValue == $F('categoryTreeMenu_input_ontologytools');
+						
+						this.enableCommand(this.titleOK || ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
+					
 
 					},
 
@@ -2267,10 +2302,10 @@ OBCatgeorySubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					reset : function(id) {
-						// this.enableCommand(false, 'OB_ENTER_TITLE');
-						// $(id).setStyle( {
-						// backgroundColor : '#FFF'
-						// });
+						this.categoriesOK = false;
+						this.titleOK = false;
+						this.enableCommand(false);
+						
 					}
 				});
 
@@ -2335,7 +2370,7 @@ OBPropertySubMenu.prototype = Object
 								this.annotatedSuperProperties[i] = this.annotatedSuperProperties[i]
 										.strip();
 							}
-
+							this.subInputValidator.setObjects(this.annotatedSuperProperties);
 							Form.Element.setValue(
 									$('propertyTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2590,13 +2625,25 @@ OBPropertySubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					enable : function(b, id) {
-						var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
-								: '#F00';
+						if (id == 'propertyTreeMenu2_input_ontologytools') {
+							this.propertiesOK = b;
+							this.titleOK = this.titleInputValidator.isValid;
+						}
+						if (id == 'propertyTreeMenu_input_ontologytools') {
+							this.titleOK = b;
+							this.propertiesOK = this.subInputValidator.isValid;
+							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
+									: '#F00';
 
-						this.enableCommand(b);
-						$(id).setStyle( {
-							backgroundColor : bg_color
-						});
+							
+							$(id).setStyle( {
+								backgroundColor : bg_color
+							});
+						}
+						
+						var titleUnchanged = this.titleInputValidator.initialValue == $F('propertyTreeMenu_input_ontologytools');
+						
+						this.enableCommand(this.titleOK || ((this.titleOK && this.propertiesOK) || (titleUnchanged && this.propertiesOK)));
 
 					},
 
@@ -2607,10 +2654,9 @@ OBPropertySubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					reset : function(id) {
-						this.enableCommand(false, 'OB_ENTER_TITLE');
-						$(id).setStyle( {
-							backgroundColor : '#FFF'
-						});
+						this.propertiesOK = false;
+						this.titleOK = false;
+						this.enableCommand(false);
 					}
 				});
 
