@@ -276,7 +276,7 @@ background: #EBF1DE;
  #content .table_simpleheadlines tr:first-child th:last-child {
   -moz-border-radius-topright:5px;
   -webkit-border-top-right-radius:5px;
-  border-top-right-radius:5px
+  border-top-right-radius:5px;
   padding-right: 8px;
 }
 
@@ -644,7 +644,7 @@ border-bottom: 1px solid #EBEEEF;
 /* selects last column: */
 #content .table_shadow tr td:last-child {
     padding-right: 8px;
-
+}
 
 /* images */
 div.floatright, table.floatright {
