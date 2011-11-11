@@ -79,8 +79,10 @@ OBSemanticToolbarContributor.prototype = {
 			Event.observe(this.textArea, 'keyup', this.l3);
 			// intially disabled
 			//if ($("openEntityInOB") != null) Field.disable("openEntityInOB");
-			this.comsrchontainer.setContent(this.getOBLink(false));
-			this.comsrchontainer.contentChanged();
+			if (this.comsrchontainer) {
+				this.comsrchontainer.setContent(this.getOBLink(false));
+				this.comsrchontainer.contentChanged();
+			}
 		}
 	},
 
