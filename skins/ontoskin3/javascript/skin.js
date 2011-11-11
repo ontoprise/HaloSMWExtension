@@ -272,9 +272,28 @@ function Smwh_Skin() {
         $jq(window).resize(this.resizeControl.bind(this));
         //Call it on startup so everything is set right
         this.resizeControl();
+	
+		/**
+		 * Move the [edit] link from the opposite edge to the side of the heading title itself
+		 *
+		 * @source: http://www.mediawiki.org/wiki/Snippets/Editsection_inline
+		 * @rev: 4 (modified)
+		 */
+		if ( $jq.inArray( mw.config.get('editsection-inline'), [ 'no', false ]) !== -1 ) {
+			return;
+		}
+		var img = '<img src="' + mw.config.get('stylepath') + '/' + mw.config.get('skin') +
+			'/img/button_edit.gif" class="editsection-icon" />';
+		mw.util.$content.find( '.editsection' ).each( function() {
+			var	editsec = $jq( this ),
+				$what = editsec.parent().children();
+			$what.first().before( $what.last() );
+			editsec.children().html(img + editsec.children().html());
+			editsec.html(editsec.children());
+		});
 
     }
-
+	
     //Execute constructor on object creation
     this.constructor();
     
@@ -291,4 +310,3 @@ $jq(document).ready(
         smwh_Skin = new Smwh_Skin();
     }
 );
-

@@ -52,7 +52,7 @@
 #content h3, #content h4,
 #content h5, #content h6 {
     border-bottom: 1px solid #000;
-	overflow: hidden;
+/*	overflow: hidden;*/
 }
 
 #content .smwfooter td{
@@ -801,9 +801,20 @@ sup{
     vertical-align: text-top;
 }
 
-h1 .editsection { font-size: 53%; font-weight: normal; }
-h2 .editsection { font-size: 67%; font-weight: normal; }
-h3 .editsection { font-size: 76%; font-weight: normal; }
-h4 .editsection { font-size: 86%; font-weight: normal; }
-h5 .editsection { font-weight: normal; }
-h6 .editsection { font-size: 125%; font-weight: normal; }
+h1 .editsection, h2 .editsection, h3 .editsection,
+h4 .editsection, h5 .editsection, h6 .editsection {
+	float: none !important;
+	margin-left: 1em;
+	font-weight: normal;
+}
+
+h1 .editsection { font-size: 53%; }
+h2 .editsection { font-size: 67%; }
+h3 .editsection { font-size: 76%; }
+h4 .editsection { font-size: 86%; }
+h6 .editsection { font-size: 125%; }
+
+.editsection-icon {
+	vertical-align: middle;
+	margin-right: 3px;
+}
