@@ -1,3 +1,6 @@
+<!DOCTYPE document [
+    <!ENTITY DBPREFIX "">
+]>
 <dataConfig>
 	<dataSource 
 		type="JdbcDataSource" 
@@ -129,7 +132,7 @@
 			query="SELECT p.page_id as pid,
 			              p.page_namespace as pns,
 			              CONVERT(p.page_title USING utf8) as pt
-             FROM page as p
+             FROM &DBPREFIX;page as p
       ">
 			<field column="pid" name="id" />
 			<field column="pns" name="smwh_namespace_id" />
@@ -139,9 +142,9 @@
 			<entity
 				name="fulltext"
 				query="SELECT CONVERT(t.old_text USING utf8) as ft
-			       FROM text t
-			       LEFT JOIN (revision as r) ON (t.old_id = r.rev_text_id )
-			       LEFT JOIN (page as p) ON ( r.rev_id= p.page_latest)
+			       FROM &DBPREFIX;text t
+			       LEFT JOIN (&DBPREFIX;revision as r) ON (t.old_id = r.rev_text_id )
+			       LEFT JOIN (&DBPREFIX;page as p) ON ( r.rev_id= p.page_latest)
 			       WHERE p.page_id='${pages.pid}'">
 				<field column="ft" name="smwh_full_text" />
 			</entity>
@@ -150,7 +153,7 @@
 			<entity 
 				name="categories"
 				query="SELECT CONVERT(c.cl_to USING utf8) as cat
-               FROM categorylinks c
+               FROM &DBPREFIX;categorylinks c
                WHERE cl_from='${pages.pid}'">
 				<field column="cat" name="smwh_categories" />
 			</entity>
@@ -159,7 +162,7 @@
 			<entity 
 				name="smwids" 
 				query="SELECT s.smw_id as smwID
-               FROM smw_ids s
+               FROM &DBPREFIX;smw_ids s
                WHERE s.smw_namespace='${pages.pns}' AND 
                      s.smw_title=CONVERT('${dataimporter.functions.escapeSql(pages.pt)}' USING utf8)">
 				<field column="smwID" name="smwh_smw_id" />
@@ -171,9 +174,9 @@
   				transformer="script:Relations"
   				query="SELECT CONVERT(pids.smw_title USING utf8) as prop, 
   				              CONVERT(oids.smw_title USING utf8) as obj
-  				       FROM smw_rels2 AS r
-  				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = r.p_id)
-  				       LEFT JOIN (smw_ids as oids) ON (oids.smw_id = r.o_id)
+  				       FROM &DBPREFIX;smw_rels2 AS r
+  				       LEFT JOIN (&DBPREFIX;smw_ids as pids) ON (pids.smw_id = r.p_id)
+  				       LEFT JOIN (&DBPREFIX;smw_ids as oids) ON (oids.smw_id = r.o_id)
   				       WHERE r.s_id='${smwids.smwID}'">
   			</entity>
   			
@@ -186,9 +189,9 @@
                         CONVERT(a.value_xsd USING utf8) as valueXSD,
                         a.value_num as valueNum,
                         CONVERT(spec.value_string USING utf8) as type
-                  FROM smw_atts2 AS a
-                  LEFT JOIN (smw_ids as pids) ON (pids.smw_id = a.p_id)
-                  LEFT JOIN (smw_spec2 as spec) ON (a.p_id = spec.s_id)
+                  FROM &DBPREFIX;smw_atts2 AS a
+                  LEFT JOIN (&DBPREFIX;smw_ids as pids) ON (pids.smw_id = a.p_id)
+                  LEFT JOIN (&DBPREFIX;smw_spec2 as spec) ON (a.p_id = spec.s_id)
                   WHERE a.s_id='${smwids.smwID}'">
         </entity>
         
@@ -198,8 +201,8 @@
   				transformer="script:TextAttributes"
   				query="SELECT CONVERT(pids.smw_title USING utf8) as attr,
   				              CONVERT(t.value_blob USING utf8) as text
-  				       FROM smw_text2 AS t
-  				       LEFT JOIN (smw_ids as pids) ON (pids.smw_id = t.p_id)
+  				       FROM &DBPREFIX;smw_text2 AS t
+  				       LEFT JOIN (&DBPREFIX;smw_ids as pids) ON (pids.smw_id = t.p_id)
   				       WHERE t.s_id='${smwids.smwID}'">
   			</entity>
       </entity>
