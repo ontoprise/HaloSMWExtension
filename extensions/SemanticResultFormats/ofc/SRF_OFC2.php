@@ -44,7 +44,7 @@ class SRFOFC extends SMWResultPrinter {
 		);
 		
 		$wgResourceModules['ext.srf.ofc'] = $moduleTemplate + array(
-			'scripts' => array( 'js/swfobject.js', 'ofc_render.js' ),
+			'scripts' => array( 'js/swfobject.js', 'ofc_render2.js' ),
 			'styles' => array( 'css/ofc_style.css' ),
 			'dependencies' => array(
 		      'ext.jquery.query',
@@ -76,7 +76,7 @@ class SRFOFC extends SMWResultPrinter {
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n";
 //		$scripts [] = '<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n";
-		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n";
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render2.js"></script>' . "\n";
 		return $scripts;
 	}
 
@@ -212,8 +212,7 @@ class SRFOFC extends SMWResultPrinter {
 		}
 		$i=0;
 		foreach($this->getScripts() as $script) {
-			//            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
-
+//			if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
 			SMWOutputs::requireHeadItem("ofc-script$i", $script);
 			$i++;
 		}
@@ -231,7 +230,7 @@ class SRFOFC extends SMWResultPrinter {
 		if (defined('SMW_UP_RATING_VERSION')) $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
 
 		if (!$this->m_isAjax) {
-			$this->setupOFCHeader();
+			$this->includeJS();
 		}
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
@@ -534,19 +533,19 @@ class SRFOFC extends SMWResultPrinter {
 			if($this->m_tabview) {
 				$js .= 'jQuery(function() {';
 				foreach($this->m_charts as $chart) {
-					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(tabChart);';
+					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(document.ofc.js.tabChart);';
 				}
 				$js .= '});';
 			} else {
 				$js .= 'jQuery(function() {';
 				foreach($this->m_charts as $chart) {
-					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(showHideChart);';
+					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(document.ofc.js.showHideChart);';
 				}
 				$js .= '});';
 			}
 		}
 		if (!$this->m_isAjax) {
-			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", '<script type="text/javascript">' . $js . '</script>' . "\n");
+			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", '<script type="text/javascript">if(typeof(ofc_data_objs)=="undefined") ofc_data_objs = [];' . $js . '</script>' . "\n");
 		}
 		return !$this->m_isAjax ? $html : $html . '|||' . $js;
 

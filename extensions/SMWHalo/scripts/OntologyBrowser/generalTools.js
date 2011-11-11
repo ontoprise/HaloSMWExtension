@@ -772,6 +772,8 @@ OBPendingIndicator.prototype = {
 	},
 
 	remove: function() {
+	var e=this.pendingIndicator;
+	if($(e).parentNode)
 		Element.remove(this.pendingIndicator);
 	}
 }
