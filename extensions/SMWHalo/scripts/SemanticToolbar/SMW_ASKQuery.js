@@ -143,22 +143,35 @@ newQuery: function() {
 	smwhgLogger.log(selection,"STB-Queries","create_clicked");
 	/*ENDLOG*/
 
-	jQuery.fancybox({
-		'href' : wgScript + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE',
-		'width' : '80%',
-		'height' : '95%',
-		'autoScale' : false,
-		'transitionIn' : 'none',
-		'transitionOut' : 'none',
-		'type' : 'iframe',
-		'overlayColor' : '#222',
-		'overlayOpacity' : '0.8',
-		'hideOnContentClick' : false,
-		'scrolling' : 'auto',
-		'onCleanup' : smwhgASKQuery.setNewAskQuery
-	});
-
+  //if wysiwyg is installed and in rich text mode
+  //then open wysiwyg QI dialog
+  if(CKEDITOR && CKEDITOR.instances.wpTextbox1 && document.getElementById('cke_wpTextbox1').style.display !== 'none' ){
+    CKEDITOR.instances.wpTextbox1.openDialog('SMWqi');
+  }
+  //else open QI fancybox
+  else{
+    this.openQueryInterfaceDialog(mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE', smwhgASKQuery.setNewAskQuery);
+  }
 //	alert(selection,"STB-Queries","create_clicked");
+},
+
+openQueryInterfaceDialog: function(href, onCleanup){
+  jQuery.fancybox({
+      'href' : href,
+      'width' : 977,
+      'height' : 600,
+      'padding': 10,
+      'margin' : 0,
+      'autoScale' : false,
+      'transitionIn' : 'none',
+      'transitionOut' : 'none',
+      'type' : 'iframe',
+      'overlayColor' : '#222',
+      'overlayOpacity' : '0.8',
+      'hideOnContentClick' : false,
+      'scrolling' : 'auto',
+      'onCleanup' : onCleanup
+    });
 },
 
 /**
@@ -181,21 +194,33 @@ getSelectedItem: function(selindex) {
 	smwhgLogger.log(queries[selindex].getName(),"STB-Queries",this.currentAction+"clicked");
 	/*ENDLOG*/
 
-	var queryString = encodeURIComponent('&query='+queries[selindex].getQueryText().replace(/\n|\r/g, ''));
-	var args = '&rsargs[]=CKE' + queryString;
-	jQuery.fancybox({
-		'href' : wgScript + '?action=ajax&rs=smwf_qi_getAskPage'+args,
-		'width' : '80%',
-		'height' : '95%',
-		'autoScale' : false,
-		'transitionIn' : 'none',
-		'transitionOut' : 'none',
-		'type' : 'iframe',
-		'overlayColor' : '#222',
-		'overlayOpacity' : '0.8',
-		'hideOnContentClick' : false,
-		'onCleanup' : smwhgASKQuery.setUpdatedAskQuery
-	});
+  
+	var query = queries[selindex].getQueryText().replace(/\n|\r/g, '');
+	
+  var editorInstance = CKEDITOR.instances.wpTextbox1;
+  if(CKEDITOR && editorInstance && document.getElementById('cke_wpTextbox1').style.display !== 'none' ){
+    //get all images in the editor
+    var queryImages = editorInstance.document.getElementsByTag('img');
+    
+    //find the query we want to edit
+    for(var i = 0; i < queryImages.count(); i++){
+      var queryImg = queryImages.getItem(i);
+      if(queryImg.getAttribute('class') === 'FCK__SMWquery'){
+        var realElement = editorInstance.restoreRealElement(queryImg);
+        var realQuery = realElement.getChild(0).getText().replace(/fckLR/g, '').replace(/^{{#ask:\s*/, '').replace(/\s*}}$/, '');
+        if(realQuery === query.trim()){
+          editorInstance.getSelection().selectElement(queryImg);
+          break;
+        }
+      }
+    }
+    //then open the dialog
+    editorInstance.openDialog('SMWqi');
+  }
+  else{
+    var uri = mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE' + encodeURIComponent('&query=' + query);
+    this.openQueryInterfaceDialog(uri, smwhgASKQuery.setUpdatedAskQuery);
+  }
 },
 
 /**

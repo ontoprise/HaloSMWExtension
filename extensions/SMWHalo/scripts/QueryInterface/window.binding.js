@@ -7,13 +7,22 @@ jQuery(document).ready(function(){
   //initialize QI script objects and vars
   isInit || init();
   //if displayed in dialog hide everything except <div id='qicontent'>
-  if(jQuery.query.get('showQIContentOnly')){
+  var ckeParam = jQuery.query.get('rsargs');
+  var ckeFound = false;
+  jQuery.each(ckeParam, function(index, value){
+    if(value.indexOf('CKE') === 0){
+      ckeFound = true;
+      return false; //break out of jQuery.each loop
+    }
+  });
+
+  if(ckeFound){
     var qiContentDiv = jQuery('#qicontent');
-    qiContentDiv.siblings().each(function(){
+    qiContentDiv.siblings().not('[id^="stb-qi"]').each(function(){
       jQuery(this).css('display', 'none');
     });
     qiContentDiv.parents().not('body, html').each(function(){
-      jQuery(this).siblings().each(function(){
+      jQuery(this).siblings().not('[id^="stb-qi"]').each(function(){
         jQuery(this).css('display', 'none');
       });
     });

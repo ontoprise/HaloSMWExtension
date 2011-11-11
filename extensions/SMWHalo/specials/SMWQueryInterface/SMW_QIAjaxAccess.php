@@ -488,22 +488,22 @@ function smwf_qi_getPage($args= "") {
 
   // create the new source code, by removing the wiki stuff,
   // keep the header (because of all css and javascripts) and the main content part only
-  $newPage = "";
+//  $newPage = "";
 //	mvDataFromPage($page, $newPage, '<body');
-  $newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
+//  $newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
 //  $newPage.= '<div id="globalWrapper" style="background-image:none; background-color: #ffffff;"><div id="content">';
 //	mvDataFromPage($page, $newPage, "<!-- start content -->");
 //	mvDataFromPage($page, $newPage, "<!-- end content -->");
 //  mvDataFromPage($page, $newPage, "<script>", false);
 //  mvDataFromPage($page, $newPage, "<!-- Served in");
 
-  $newPage.="</div></div></body></html>";
+//  $newPage.="</div></div></body></html>";
 
   // remove the Switch to Semantic Notification button, incase it's there
-  $newPage = preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+//  $newPage = preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
 
   // remove smwCSH.js include because we do not want a help link in the query interface popup to appear
-  $newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
+//  $newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
 
   // have a string where to store JS command for onload event
   $onloadArgs = '';
@@ -519,37 +519,37 @@ function smwf_qi_getPage($args= "") {
     $params['noPreview'] = true;
     $params['noLayout'] = true;
     $newPage = str_replace('onclick="qihelper.copyToClipboard()"', 'onclick="qihelper.copyToClipboard()" style="display: none;"', $newPage);
-    $onloadArgs.='initialize_qi_from_excelbridge(); ';
+    $onloadArgs.='window.initialize_qi_from_excelbridge(); ';
   }
   else
     $excelBridge = '';
 
   // check params and change HTML of the Query Interface
   if (isset($params['noPreview']))
-    $newPage = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $newPage);
+    $page = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $page);
   if (isset($params['noLayout']))
-    $newPage = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $newPage);
+    $page = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $page);
   if (isset($params['query'])) {
     $queryString = str_replace('"', '&quot;', $params['query']);
     $queryString = str_replace("'", "\'", $queryString);
-    $onloadArgs .= 'initialize_qi_from_querystring(\'' . $queryString . '\');';
+    $onloadArgs .= 'window.initialize_qi_from_querystring(\'' . $queryString . '\');';
   }
   if (strlen($onloadArgs) > 0)
-    $newPage = str_replace('<body', '<body onload="' . $onloadArgs . '"', $newPage);
+    $page = str_replace('<body', '<body onload="' . $onloadArgs . '"', $page);
   // for the CKEditor we set a smaller font size
-  if (isset($params['CKE']))
-    $newPage = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $newPage);
+//  if (isset($params['CKE']))
+//    $page = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $page);
 
   // remove unnecessary scripts
 //    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
-  $newPage .= '<script type="text/javascript">
-    jQuery(document).ready(function(){
-      if ( window.mediaWiki ) {        
-        window.mediaWiki.loader.load("ext.smwhalo.queryInterface");
-        window.mediaWiki.loader.go();
-      }
-    });
-    </script>';
+//  $newPage .= '<script type="text/javascript">
+//    jQuery(document).ready(function(){
+//      if ( window.mediaWiki ) {
+//        window.mediaWiki.loader.load("ext.smwhalo.queryInterface");
+//        window.mediaWiki.loader.go();
+//      }
+//    });
+//    </script>';
 
 //	return $newPage;
   return $page;
@@ -562,17 +562,15 @@ function smwf_qi_getPage($args= "") {
  * @return string $html
  */
 function smwf_qi_getAskPage($args= "") {
-
   $html = smwf_qi_getPage($args);
-  $html .= '<div id="stb-qi-footer-spacer"></div>';
-  $html .= '<div id="stb-qi-footer-wrap">';
-  $html .= '<div id="stb-qi-footer-container">';
-  $html .= '<div id="stb-qi-footer">';
-  $html .= '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="javascript:qihelper.querySaved=true;parent.jQuery.fancybox.close();" />' .
-          '<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="javascript:qihelper.querySaved=false;parent.jQuery.fancybox.close();" />';
-  $html .= '</div>';
-  $html .= '</div>';
-  $html .= '</div>';
+  $html = str_replace('</body>', '<div id="stb-qi-footer-spacer"></div></body>', $html);
+  $html = str_replace('</body>', '<div id="stb-qi-footer-wrap"></body>', $html);
+  $html = str_replace('</body>', '<div id="stb-qi-footer-container"></body>', $html);
+  $html = str_replace('</body>', '<div id="stb-qi-footer"></body>', $html);
+  $html = str_replace('</body>', '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="javascript:qihelper.querySaved=true;parent.jQuery.fancybox.close();" /></body>', $html);
+  $html = str_replace('</body>', '<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="javascript:qihelper.querySaved=false;parent.jQuery.fancybox.close();" /></body>', $html);
+  $html = str_replace('</body>', '</div></div></div></body>', $html);
+ 
   return $html;
 }
 
