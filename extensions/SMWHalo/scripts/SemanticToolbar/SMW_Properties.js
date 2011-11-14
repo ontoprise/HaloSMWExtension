@@ -1311,8 +1311,12 @@ PropertyDefinition.prototype = {
 			for (var i = 0; i < this.domainAndRangeAnno.length; ++i) {
 				var domRan = this.domainAndRangeAnno[i].getSplitValues();
 				// Trim the values
-				var dom = domRan[0].replace(/^\s*(.*?)\s*$/, "$1");
-				var ran = domRan[1].replace(/^\s*(.*?)\s*$/, "$1");
+				var dom = domRan.length >= 1 
+							? domRan[0].replace(/^\s*(.*?)\s*$/, "$1")
+							: '';
+				var ran = domRan.length == 2 
+							? domRan[1].replace(/^\s*(.*?)\s*$/, "$1")
+							: '';
 				
 				// Strip the category-keyword
 				if (dom.indexOf(catNS) === 0) {
