@@ -102,6 +102,6 @@ foreach($pageTitles as $tuple) {
 	if ($t->getNamespace() == NS_FILE) continue;
 	
 	smwfGetStore()->refreshData($t->getArticleId(), 1, false, false);
-	$logger->info("($i)". $t->getPrefixedText()." refreshed.");
-	print "\n\t[($i)".$t->getPrefixedText()." refreshed]";
+	$logger->info("($i) ". $t->getPrefixedText()." refreshed.");
+	print "\n\t[ ($i) ".$t->getPrefixedText()." refreshed]";
 }
