@@ -238,6 +238,7 @@ window.wgUserLanguageStrings = {
 	'ADDPROPERTY' 			  : 'Add',	
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Error at renaming',
+	'OB_RENAME_WARNING' 	  : 'Renaming operations do not touch the instance data in any way.\nThat means queries with the TSC may not work as expected after the operation.\n\nWould you like to proceed?',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',

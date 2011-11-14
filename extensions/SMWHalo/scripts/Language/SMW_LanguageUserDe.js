@@ -232,6 +232,7 @@ window.wgUserLanguageStrings = {
 	'SAVE_CHANGES'            : 'Speichern',
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Fehler beim Umbennenen',
+	'OB_RENAME_WARNING' 	  : 'Das Umbenennen von Artikeln verändert keine Annotationen.\nDas bedeutet Queries an den TSC könnten nach dem Umbenennen unerwartete Ergebnisse liefern.\n\nMöchten Sie fortfahren?',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',

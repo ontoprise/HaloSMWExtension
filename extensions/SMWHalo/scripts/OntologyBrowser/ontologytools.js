@@ -2059,6 +2059,15 @@ OBCatgeorySubMenu.prototype = Object
 									}
 								}
 							}
+							
+							if (doRename && smwghTripleStoreGraph) {
+								var confirmation = confirm(gLanguage
+										.getMessage('OB_RENAME_WARNING',name));
+								if (!confirmation) {
+									Form.Element.setValue('categoryTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									return;
+								}
+							}
 
 							// do actual wiki operations
 							if (doChangeOfCategories) {
@@ -2429,6 +2438,15 @@ OBPropertySubMenu.prototype = Object
 									}
 								}
 							}
+							
+							if (doRename && smwghTripleStoreGraph) {
+								var confirmation = confirm(gLanguage
+										.getMessage('OB_RENAME_WARNING',name));
+								if (!confirmation) {
+									Form.Element.setValue('propertyTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									return;
+								}
+							}
 
 							// do actual wiki operations
 							if (doChangeOfProperties) {
@@ -2735,6 +2753,15 @@ OBInstanceSubMenu.prototype = Object
 										doChangeOfCategories = true;
 										break;
 									}
+								}
+							}
+							
+							if (doRename && smwghTripleStoreGraph) {
+								var confirmation = confirm(gLanguage
+										.getMessage('OB_RENAME_WARNING',name));
+								if (!confirmation) {
+									Form.Element.setValue('instanceListMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									return;
 								}
 							}
 
@@ -3525,6 +3552,15 @@ OBEditPropertySubMenu.prototype = Object
 
 						var propertyTitleChanged = this
 								.hasPropertyTitleChanged();
+						
+						if (propertyTitleChanged && smwghTripleStoreGraph) {
+							var confirmation = confirm(gLanguage
+									.getMessage('OB_RENAME_WARNING',name));
+							if (!confirmation) {
+								Form.Element.setValue('schemaPropertiesMenu_propertytitle_ontologytools', this.propertyName.replace(/_/, " "));
+								return;
+							}
+						}
 						// saves changes
 						if (this.havePropertyCharacteristicsChanged()) {
 
@@ -3575,7 +3611,7 @@ OBEditPropertySubMenu.prototype = Object
 						} else {
 							propMandatory = 'checked="true"';
 						}
-						var propertyName = this.propertyName;
+						var propertyName = this.propertyName.replace(/_/, " ");
 						var typebox = this.newTypeInputBox();
 						var rangebox = this.newRangeInputBox();
 
@@ -3829,7 +3865,7 @@ OBEditPropertySubMenu.prototype = Object
 
 					newRangeInputBox : function() {
 						var enabled = this.propertyType == gLanguage
-								.getMessage('TYPE_PAGE_WONS');
+								.getMessage('TYPE_PAGE_WONS') || this.propertyType == '';
 						var enabledStr = enabled ? '' : 'disabled="true"';
 
 						var toReplace = '<input class="wickEnabled" constraints="namespace: Category" '
