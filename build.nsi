@@ -27,7 +27,6 @@
 ; --- The following definitions are meant to be changed ---
 
 !define PRODUCTPATH "SMWPLUS"
-#!define PRODUCT "SMW+"
 !define PRODUCT_YEAR "2011"
 #!define VERSION "1.4.3" set by hudson
 #!define BUILD_ID "431" set by hudson
@@ -35,11 +34,13 @@
 
 !ifdef EXTENSIONS_EDITION
   !define PRODUCT "SMW+"
+  !define PRODUCT_SHORT "SMW+"
   !define LOCALSETTINGS "LocalSettings.php.template"
   !define WIKIDB "smwplus_database.sql"
 !endif
 !ifdef COMMUNITY_EDITION
   !define PRODUCT "SMW+ Community Edition"
+  !define PRODUCT_SHORT "SMW+"
   !define LOCALSETTINGS "LocalSettings.php.community.tmpl"
   !define WIKIDB "htdocs\mediawiki\tests\tests_halo\mw17_db.sql"
 !endif
@@ -249,8 +250,8 @@ Section "XAMPP" xampp
     
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
    
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start ${PRODUCT}.lnk" "$INSTDIR\xampp_start.bat"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT}.lnk" "$INSTDIR\xampp_stop.exe"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start ${PRODUCT_SHORT}.lnk" "$INSTDIR\xampp_start.bat"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT_SHORT}.lnk" "$INSTDIR\xampp_stop.exe"
     
 SectionEnd
 
@@ -265,9 +266,9 @@ Section "-CopyInstaller"
     File /r /x CVS /x .svn /x *.exe /x *.nsi "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\*"
     ${If} $0 == 1
     
-    #CreateShortCut "$DESKTOP\${PRODUCT} ${VERSION} Main Page.lnk" "http://localhost/mediawiki/index.php" \
+    #CreateShortCut "$DESKTOP\${PRODUCT_SHORT} Main Page.lnk" "http://localhost/mediawiki/index.php" \
     #"" "$INSTDIR\htdocs\mediawiki\installer\images\smwplus_32.ico" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Main Page.lnk" "http://localhost/mediawiki/index.php" \
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT_SHORT} Main Page.lnk" "http://localhost/mediawiki/index.php" \
     "" "$INSTDIR\htdocs\mediawiki\installer\images\smwplus_32.ico" 0
     ${EndIf}
   !endif
@@ -284,7 +285,7 @@ SectionEnd
         File /r /x CVS ..\com.ontoprise.smwplus.help\compiled\*
         ${If} $0 == 1
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Help.lnk" "$INSTDIR\help\Help.exe"
+            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT_SHORT} Help.lnk" "$INSTDIR\help\Help.exe"
         ${EndIf}
     !endif
 SectionEnd
@@ -516,7 +517,7 @@ Section "Solr" solr
     ${If} $0 == 1
         SetOutPath "$INSTDIR\solr\wiki"
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
@@ -1178,10 +1179,10 @@ Section "Uninstall"
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT}.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT}.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Solr.lnk"
-    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT_SHORT}.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT_SHORT}.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\Start Solr.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT_SHORT} Main Page.lnk"
     
     ;Delete start menu IF THE MENU IS EMPTY.
     StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
