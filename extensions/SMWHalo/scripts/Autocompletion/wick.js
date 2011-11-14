@@ -483,39 +483,14 @@ AutoCompleter.prototype = {
 
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
-         //if (e["ctrlKey"]) {
-         //}
+       
         var elementClicked = Event.element(e);
-        if (this.siw && elementClicked
-            && (Element.hasClassName(elementClicked, "MWFloaterContentHeader")
-                   || (Element.hasClassName(elementClicked.parentNode, "MWFloaterContentHeader")))) {
-            this.mousePressed = true;
-            var xy = this.findElementPosXY(this.siw.inputBox);
-            this.AC_yDiff = (e.pageY - xy[1]) - parseInt(this.siw.floater.style.top);
-            this.AC_xDiff = (e.pageX - xy[0]) - parseInt(this.siw.floater.style.left);
-        }
-        else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent") &&
+       if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent") &&
                  !this.isWithinNodeSimple(elementClicked, (this.siw ? this.siw.getMWFloaterId() : 'undefined'))){
             this.hideSmartInputFloater();        	
         }
     },
-    handleMouseMove: function(event) {
-        this.notMoved = false;
-        if (OB_bd.isIE) return;
-        var e = GeneralTools.getEvent(event);
-        var eL = this.getEventElement(e);
-
-        if (this.mousePressed && this.siw) {
-            var xy = this.findElementPosXY(this.siw.inputBox);
-
-            this.siw.floater.style.top = (e.pageY - xy[1] - this.AC_yDiff) + "px";
-            this.siw.floater.style.left = (e.pageX - xy[0] - this.AC_xDiff) + "px";
-            this.AC_userDefinedY = (e.pageY - xy[1] - this.AC_yDiff);
-            this.AC_userDefinedX = (e.pageX - xy[0] - this.AC_xDiff);
-            document.cookie = "this.AC_userDefinedX=" + this.AC_userDefinedX;
-            document.cookie = "this.AC_userDefinedY=" + this.AC_userDefinedY;
-        }
-    },
+    
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
             if (!this.siw.customFloater) {
@@ -564,56 +539,9 @@ AutoCompleter.prototype = {
                 }
             } else {
                 if (!this.siw.inputBox) return;
-                 //you may
-                 //do additional things for your custom floater
-                 //beyond setting display and visibility
-                 // Browser dependant! only IE ------------------------
-                 
-                 // the following does not work with different skins - deactivated
-                /*if (OB_bd.isIE && this.siw.inputBox.tagName == 'TEXTAREA') {
-                    // put floater at cursor position
-                    // method to calculate floater pos is slightly different in advanced editor
-                   
-                    var textarea = advancedEditor ? $('frame_wpTextbox1') : this.siw.inputBox;
-                    var posY = this.findElementPosY(textarea);
-                    var posX = Position.page(textarea)[0];//this.findElementPosX(textarea);
-                    alert(posY +" : "+ posX);
-                    textarea.focus();
-                    var textScrollTop = textarea.scrollTop;
-                    var documentScrollPos = document.documentElement.scrollTop;
-                    // var selection_range = document.selection.createRange().duplicate();
-                    var selection_range = this.currentIESelection;
-                    selection_range.collapse(true);
-                    
-                    if (advancedEditor) {
-                        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-                        this.siw.floater.style.left = (parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                        this.siw.floater.style.top = (parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-                    }  else {                 
-                        this.siw.floater.style.left = selection_range.boundingLeft - posX;
-                        this.siw.floater.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-                        this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
-                        var left = selection_range.boundingLeft - posX;
-                        alert("Left:"+left);
-                    }
-                 // only IE -------------------------
-
-                }*/
-
+               
                 if ((OB_bd.isGecko || OB_bd.isIE) && this.siw.inputBox.tagName == 'TEXTAREA') {
-                     //TODO: remove the absolute values to the width/height specified in css
-
-                    var x = GeneralBrowserTools.getCookie("this.AC_userDefinedX");
-                    var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
-
-                    
-                    if (x != null && y != null) { // If position cookie defined, use it. 
-                        this.siw.floater.style.left = x + "px";
-                        this.siw.floater.style.top = y + "px";
-                    } else { // Otherwise use standard position: Left top corner.
-                       this.siw.floater.style.left = 0;
-                       this.siw.floater.style.top = 0;
-                    }
+                	this.restorePosition();
                 }
             }
 
@@ -767,8 +695,9 @@ AutoCompleter.prototype = {
              // do default
 
             a = this.siw.inputBox.value;
-            fields = this.siw.inputBox.value.split(",");
-
+            var delimiter = this.siw.inputBox.getAttribute("delimiter");
+            fields = this.siw.inputBox.value.split(delimiter == null ? "," : delimiter);
+            
             if (fields.length > 0) a = fields[fields.length - 1];
 
             return a.strip();
@@ -857,7 +786,9 @@ AutoCompleter.prototype = {
     
     getUserInputBase: function() {
         var s = this.siw.inputBox.value;
-        var lastComma = s.lastIndexOf(",");
+        var delimiter = this.siw.inputBox.getAttribute("delimiter");
+        
+        var lastComma = s.lastIndexOf(delimiter == null ? "," : delimiter);
         return s.substr(0, lastComma+1);
     },  //this.getUserInputBase()
     highlightMatches: function(userInput) {
@@ -1195,6 +1126,96 @@ AutoCompleter.prototype = {
         return result;
     },
 
+    /**
+     * @public buffers the current position so it can later be restored
+     * 
+     */
+    storePosition: function(){
+    	var pos = this.getPosition();
+    	this.posX = pos[0];
+    	this.posY = pos[1];
+    	this.moved = true;
+    },
+
+    /**
+     * @public buffers the current position so it can later be restored
+     *
+     * @return array[0] xposition
+     * 		   array[1]	yposition
+     * 
+     */
+    restorePosition: function(){
+    	if(!isNaN(this.posX) && !isNaN(this.posY)){
+    		this.setPosition(this.posX, this.posY);
+    	}	
+    },
+
+    /**
+     * @public  returns the act. position of the toolbar
+     *
+     * @return array[0] xposition
+     * 		   array[1]	yposition
+     * 
+     */
+    getPosition: function(){
+    	return new Array($('MWFloater0').offsetLeft,$('MWFloater0').offsetTop);	
+    },
+    
+    /**
+     * @public positions the STB at the given coordinates considering how it fits best     
+     * 
+     * @param 	posX
+     * 				desired X position
+     * 			posY 
+     * 				desired Y position
+     */
+    setPosition: function(posX,posY){
+    	//X-Coordinates
+    	var toolbarWidth = $('MWFloater0').scrollWidth;
+    	//Check if it fits right to the coordinates
+    	if( window.innerWidth - posX < toolbarWidth) {
+    		//Check if it fits left to the coordinates
+    		if( posX < toolbarWidth){
+    			// if not place it on the left side of the window
+    			$('MWFloater0').setStyle({right: '' });
+    			$('MWFloater0').setStyle({left: '10px'});
+    			
+    		} else {
+    			//if it fits position it left to the coordinates
+    			var pos = window.innerWidth - posX;
+    			$('MWFloater0').setStyle({right: pos + 'px' });
+    			$('MWFloater0').setStyle({left: ''});
+    		}
+    	} else {
+    		//if it fits position it right to the coordinates
+    		var pos = posX;
+    		$('MWFloater0').setStyle({right: ''});
+    		$('MWFloater0').setStyle({left: pos  + 'px'});
+    	}
+    	//Y-Coordinates
+    	var toolbarHeight = $('MWFloater0').scrollHeight;
+    	//Check if it fits bottom to the coordinates
+    	if( window.innerHeight - posY < toolbarHeight) {
+    		//Check if it fits top to the coordinates
+    		if(posY < toolbarHeight){
+    			// if not place it on the top side of the window	
+    			$('MWFloater0').setStyle({bottom: '' });
+    			$('MWFloater0').setStyle({top: '10px'});
+    			
+    		} else {
+    		var pos = window.innerHeight - posY;
+    			//if it fits position it top to the coordinates
+    			$('MWFloater0').setStyle({top: ''});
+    		}
+    	}else {
+    		//if it fits position it bottom to the coordinates
+    		var pos = posY;
+    		$('MWFloater0').setStyle({bottom: ''});
+    		$('MWFloater0').setStyle({top: pos  + 'px'});
+    	}
+     
+
+    },
 
     /**
      * Initial registration of TEXTAREAs and INPUTs for AC.
@@ -1244,12 +1265,36 @@ AutoCompleter.prototype = {
         Event.observe(document, "keydown", this.handleKeyDown.bindAsEventListener(this), false);
         Event.observe(document, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
         Event.observe(document, "mouseup", this.handleClick.bindAsEventListener(this), false);
-        Event.observe(document, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
 
         if (OB_bd.isGecko || OB_bd.isIE) {
              // needed for draggable floater in FF
              // needed for hiding floater when clicking outside
             Event.observe(document, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
+        	this.draggable = new Draggable('MWFloater0', {
+    			//TODO: replace handle with proper tab if present	
+    			handle: 'mwfloater', 
+    			starteffect: function() {
+	        		//autoCompleter.storePosition();
+	        		//autoCompleter.restorePosition();
+        		}, 
+    			endeffect: function(){} });
+        	
+        	//Adds an Observer which stores the position of the stb after each drag
+    		//this is temporary and probably will be removed if lightweight framework is implemented
+    		var DragObserver = Class.create();
+    		DragObserver.prototype = {
+    			  initialize: function() {
+        			this.element = null;
+        	
+     		 },
+    			onEnd: function(){
+     			 	autoCompleter.storePosition();
+    			}
+    		};
+    		
+    		var dragObserver = new DragObserver();
+    		Draggables.addObserver(dragObserver);
+    		
         }
 
         Event.observe(document, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
@@ -1436,7 +1481,7 @@ AutoCompleter.prototype = {
                 if (OB_bd.isGecko) {    
                      // needed for draggable floater in FF
                     Event.observe(iFrameDocument, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
-                    Event.observe(iFrameDocument, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
+                    
                 }
 
                 Event.observe(iFrameDocument, "mouseover", this.handleMouseOver.bindAsEventListener(this), false);
