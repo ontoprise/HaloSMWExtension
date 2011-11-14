@@ -741,19 +741,27 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 		if( $pageId == 0 ) {
 			// page does not exist
-			
+
 			// add bundle
 			$om = new OntologyMerger();
 			$emptyText = ""; // there is no initial text, page does not exist
 			$this->setText($om->addBundle($this->bundleID, $emptyText, $this->text));
-			
+
 			// import it
 			$res = parent::importOldRevision();
-			
+
 			// notify import operation
 			$user = User::newFromName( $this->getUser() );
 			RecentChange::notifyNew($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), false);
-			
+
+			// refresh semantic data if SMW is available
+			if (defined('SMW_VERSION')) {
+				$article = new Article( $this->title );
+				$pageId = $article->getId();
+				smwfGetStore()->refreshData($pageId, 1, false, false);
+			}
+
+
 			// log it
 			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
 			$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
@@ -771,7 +779,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 					// create section for existing content if it belongs to a bundle
 					$existingBundle = DFBundleTools::getBundleID($this->title);
-						
+
 					if (!is_null($existingBundle)) {
 						$newPageText = "";
 						$newPageText = $om->addBundle($existingBundle, $newPageText, $wikitext);
@@ -827,7 +835,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			# must create the page...
 			$pageId = $article->insertOn( $dbw );
 			$created = true;
-			
+
 		} else {
 			$created = false;
 
@@ -838,7 +846,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		'rev_comment'   => $this->getComment() ),
 			__METHOD__
 			);
-			
+
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
 				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
@@ -889,8 +897,15 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		$GLOBALS['wgTitle'] = $tempTitle;
 		//FIXME: add old id and last timestamp
 		RecentChange::notifyEdit($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), 0, 0, false);
-		
-		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
+
+		// refresh semantic data if SMW is available
+		if (defined('SMW_VERSION')) {
+			$article = new Article( $this->title );
+			$pageId = $article->getId();
+			smwfGetStore()->refreshData($pageId, 1, false, false);
+		}
+
+    	$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 
 		return true;

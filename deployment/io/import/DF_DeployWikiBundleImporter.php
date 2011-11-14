@@ -728,8 +728,8 @@ class DeployWikiRevision extends WikiRevision {
 
 		global $dfgLang;
 		if ($this->title->getNamespace() == NS_TEMPLATE && $this->title->getText() === $dfgLang->getLanguageString('df_partofbundle')) return false;
-        if ($this->title->getNamespace() == NS_FILE) return false;
-        
+		if ($this->title->getNamespace() == NS_FILE) return false;
+
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 
@@ -745,6 +745,14 @@ class DeployWikiRevision extends WikiRevision {
 				// notify import operation
 				$user = User::newFromName( $this->getUser() );
 				RecentChange::notifyNew($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), false);
+                
+				// refresh semantic data if SMW is available
+				if (defined('SMW_VERSION')) {
+					$article = new Article( $this->title );
+                    $pageId = $article->getId();
+					smwfGetStore()->refreshData($pageId, 1, false, false);
+				}
+
 				return $res;
 			}
 		} else {
@@ -758,7 +766,7 @@ class DeployWikiRevision extends WikiRevision {
 				$bundleDI = reset($bundleDIs);
 				if ($bundleDI !== false) {
 					$anotherBundle = $bundleDI->getTitle()->getText();
-						
+
 					if ($anotherBundle != ucfirst($this->bundleID)) {
 						switch($this->mode) {
 							case DEPLOYWIKIREVISION_INFO:
@@ -836,7 +844,7 @@ class DeployWikiRevision extends WikiRevision {
 			# must create the page...
 			$pageId = $article->insertOn( $dbw );
 			$created = true;
-			
+				
 		} else {
 			$created = false;
 
@@ -847,7 +855,7 @@ class DeployWikiRevision extends WikiRevision {
                     'rev_comment'   => $this->getComment() ),
 			__METHOD__
 			);
-		
+
 			if( $prior ) {
 				// FIXME: this could fail slightly for multiple matches :P
 				$this->logger->info("Skipping existing revision: ".$this->title->getPrefixedText());
@@ -899,6 +907,12 @@ class DeployWikiRevision extends WikiRevision {
 		//FIXME: add old id and last timestamp
 		RecentChange::notifyEdit($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), 0, 0, false);
 		
+	    // refresh semantic data if SMW is available
+		if (defined('SMW_VERSION')) {
+			$article = new Article( $this->title );
+            $pageId = $article->getId();
+			smwfGetStore()->refreshData($pageId, 1, false, false);
+		}
 		$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
 		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 		return true;
