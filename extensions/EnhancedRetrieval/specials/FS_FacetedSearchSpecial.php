@@ -73,10 +73,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		<div id="field_namespaces" class="xfsNamespaces">
 		</div>
 		<div class="search">
-	        <input type="text" id="query" name="query" value="{{searchTerm}}" />
-	        <input type="button" id="search_button" name="search" value="{{fs_search}}" />
-	        <span class="xfsSortOrder">
-		        {{fs_sort_by}}
+			<input type="text" id="query" name="query" value="{{searchTerm}}" />
+			<input type="button" id="search_button" name="search" value="{{fs_search}}" />
+			<span class="xfsSortOrder">
+				{{fs_sort_by}}
 				<select id="search_order" name="search_order" size="1">
 					<option value="relevance">{{fs_relevance}}</option>
 					<option value="newest" selected="selected">{{fs_newest_date_first}}</option>
@@ -107,7 +107,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 
     public function __construct() {
 //        parent::__construct('FacetedSearch');
-        parent::__construct('Search');
+		parent::__construct('Search');
 		global $wgHooks;
 		$wgHooks['MakeGlobalVariablesScript'][] = "FSFacetedSearchSpecial::addJavaScriptVariables";
     }
@@ -116,9 +116,11 @@ class FSFacetedSearchSpecial extends SpecialPage {
      * Overloaded function that is responsible for the creation of the Special Page
      */
     public function execute($par) {
-
-        global $wgOut, $wgRequest;
-        
+	
+		global $wgOut, $wgRequest;
+		
+		$wgOut->setPageTitle(wfMsg('fs_title'));
+		
 		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
 		if ($search === wfMsg('smw_search_this_wiki')) {
 			// If the help text of the search field is passed, assume an empty 
@@ -131,12 +133,11 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$t = Title::newFromText( $search );
 
 		$fulltext = $wgRequest->getVal( 'fulltext', '' );
-        $fulltext_x = $wgRequest->getVal( 'fulltext_x', '' );
-        if ($fulltext == NULL && $fulltext_x == NULL) {
+		$fulltext_x = $wgRequest->getVal( 'fulltext_x', '' );
+		if ($fulltext == NULL && $fulltext_x == NULL) {
 			
 			# If the string cannot be used to create a title
 			if(!is_null( $t ) ){
-
 
 				# If there's an exact or very near match, jump right there.
 				$t = SearchEngine::getNearMatch( $search );
