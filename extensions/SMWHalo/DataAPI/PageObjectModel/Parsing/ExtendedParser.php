@@ -192,6 +192,7 @@ class POMExtendedParser extends POMParser{
 	 */
 	public function Parse(POMPage &$page)	{
 		$wikiText = &$page->text;
+		
 		$this->_page = $page;
 
 		// was is ein <ref>-tag?
@@ -254,6 +255,7 @@ class POMExtendedParser extends POMParser{
 
 		for ($i = 0; $i < $numParts; ++$i) {
 			$part = $parts[$i];
+			
 			$len = mb_strlen($part, "UTF-8");
 			if ($part0) {
 				$prevPart = $part0;
@@ -261,9 +263,10 @@ class POMExtendedParser extends POMParser{
 			$part0 = mb_substr($wikiText, $pos, $len, "UTF-8");
 
 			// Is the part a template?
-			if ($templateStart == -1 && $i > $ignoreTemplates) {
+			if ($templateStart == -1 && $i > $ignoreTemplates && $braceCount == 0) {
 				// no template detected yet.
 				$tmplDescr = $this->parseTemplate($parts, $i);
+				
 				if ($tmplDescr[0] == 't') {
 					// a template has been found => store only its start
 					// It may be ahead of the current parser position.
@@ -343,10 +346,11 @@ class POMExtendedParser extends POMParser{
 					global $wgLang;
 					$markedText .= $part0;
 					$aText = '[['.$aText.']]';
+					
 					if (strpos($aText, '::')){
 						$page->addElement(new POMProperty($aText));
 						$aText = '';
-					}else if (strpos($aText, $wgLang->getNSText(NS_CATEGORY).':')){
+					}else if (strpos($aText, $wgLang->getNSText(NS_CATEGORY).':') === 0){
 						$page->addElement(new POMCategory($aText));
 						$aText = '';
 					}else{

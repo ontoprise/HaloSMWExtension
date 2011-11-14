@@ -55,6 +55,7 @@ class ASFWikiTextManipulator {
 				if($this->isPropertyIgnored($element->getName())){
 					continue;
 				} else {
+					
 					$this->rememberAnnotation($element->getName(), $element->getValue(), $collectedAnnotations);
 						
 					$newElement = new POMSimpleText($this->getWikiTextReplacementForAnnotation(
