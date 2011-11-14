@@ -345,7 +345,6 @@
           }
         },
         'onComplete'  : function(){
-          $('#fancybox-close').css('background-image','url("' + CREATENEWARTICLE.imgPath + 'fancy_close.png")').css('display', 'inline');
 
           var articleTitleTextBox = $('#newArticleName');
           //build list of forms and categories
