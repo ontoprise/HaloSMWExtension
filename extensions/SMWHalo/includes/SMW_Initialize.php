@@ -573,6 +573,9 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// pasteNS attribute prints out namespaces too
 	$pasteNS = 'pasteNS="true"';
 	if (array_key_exists('pasteNS', $other_args) && $other_args['pasteNS'] == 'false') $pasteNS = '';
+	
+	$delimiter = "";
+	if (array_key_exists('delimiter', $other_args)) $delimiter = "delimiter=\"$delimiter\"";
 
 	// replace 'current user' by username
 	if ($cur_value == 'current user') {
@@ -592,9 +595,9 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// add the constraints in the result output html. Either in input field or a textarea
 	for($i = 0; $i < count($html); $i++) {
 		if (strpos($html[$i], "/>") !== false) {
-			$html[$i] = str_replace('/>', " $constraints $pasteNS/>", $html[$i]);
+			$html[$i] = str_replace('/>', " $constraints $pasteNS $delimiter/>", $html[$i]);
 		} else {
-			$html[$i] = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS ".' $2', $html[$i]);
+			$html[$i] = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS $delimiter ".' $2', $html[$i]);
 		}
 	}
 
