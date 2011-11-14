@@ -88,6 +88,25 @@ class DFBundleTools {
 	}
 
 	/**
+	 * Returns all pages of a bundle
+	 *
+	 * @param string $bundleID
+	 *
+	 * @return Title[]
+	 */
+	public static function getBundlePages($bundleID) {
+		global $dfgLang;
+		$partOfBundle = $dfgLang->getLanguageString('df_partofbundle');
+		$titles = array();
+		$bundleTitle = Title::newFromText($bundleID);
+		$values = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($partOfBundle));
+		foreach($values as $title) {
+			$titles[] = $title->getTitle();
+		}
+		return $titles;
+	}
+
+	/**
 	 * Returns bundleID of given page title.
 	 *
 	 * Note: If more than one bundle ID exist, the result is not defined.
@@ -666,20 +685,20 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
-		
-	    $property = Title::newFromText($dfgLang->getLanguageString('df_mwextension'), SMW_NS_PROPERTY);
-        $text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
-        $article = new Article($property);
-        if ($property->exists()) {
-            $article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
-            print "\n ...edited ".$property->getPrefixedText();
-        } else {
-            $article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
-        }
-		
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_mwextension'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+			print "\n ...created ".$property->getPrefixedText();
+		}
+
 		// Property:Dependecy
 		$property = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_rec"]."]]";
@@ -691,7 +710,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 
@@ -703,7 +722,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyversion'), SMW_NS_PROPERTY);
@@ -714,7 +733,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_patchlevel'), SMW_NS_PROPERTY);
@@ -725,7 +744,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_instdir'), SMW_NS_PROPERTY);
@@ -736,7 +755,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_vendor'), SMW_NS_PROPERTY);
@@ -747,7 +766,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
@@ -758,7 +777,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_helpurl'), SMW_NS_PROPERTY);
@@ -769,7 +788,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_license'), SMW_NS_PROPERTY);
@@ -780,7 +799,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_usesprefix'), SMW_NS_PROPERTY);
@@ -791,7 +810,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
@@ -802,7 +821,7 @@ class DFBundleTools {
 			print "\n ...edited ".$property->getPrefixedText();
 		} else {
 			$article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
+			print "\n ...created ".$property->getPrefixedText();
 		}
 	}
 
