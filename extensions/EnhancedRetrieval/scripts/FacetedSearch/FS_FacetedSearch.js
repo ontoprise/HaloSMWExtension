@@ -87,7 +87,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	// The instance of this object
 	var that = {};
 	
-	// AjaxSolr.Manager - The manager from the AjaxSolr library.
+	// AjaxSolr.FSManager - The manager from the AjaxSolr library.
 	var mAjaxSolrManager;
 	
 	// string - The current search string
@@ -185,7 +185,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * Constructor for the FacetedSearch class.
 	 */
 	function construct() {
-		mAjaxSolrManager = new AjaxSolr.Manager({
+		mAjaxSolrManager = new AjaxSolr.FSManager({
 			solrUrl: wgFSSolrURL
 			});
 		
@@ -420,7 +420,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 */
 	function checkSolrPresent() {
 		var solrPresent = false;
-		var sm = new AjaxSolr.Manager({
+		var sm = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL,
 			handleResponse : function (data) {
 				solrPresent = true;
@@ -443,7 +443,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * wiki. The namespace widget is initialized with these namespaces.
 	 */
 	function initNamespaces() {
-		var sm = new AjaxSolr.Manager({
+		var sm = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL,
 			handleResponse : function (data) {
 				var namespaces = data.facet_counts.facet_fields[NAMESPACE_FIELD];
@@ -481,7 +481,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	function isProperty(name) {
 		return name.match(ATTRIBUTE_REGEX)|| name.match(RELATION_REGEX);
 	}
-	
+		
 	/**
 	 * Initializes the parameter store of the main ajax solr manager. If SOLR
 	 * parameters are given in the URL, these values are used. Otherwise the 

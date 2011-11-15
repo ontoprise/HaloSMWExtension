@@ -31,11 +31,11 @@ if (typeof window.FacetedSearch == "undefined") {
 (function ($) {
 FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 
-	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
+	// AjaxSolr.FSManager - The manager from the AjaxSolr library. It is used for
 	// retrieving the properties of an article
 	mASMforProperties: null,
 		
-	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
+	// AjaxSolr.FSManager - The manager from the AjaxSolr library. It is used for
 	// checking if the search term is an existing article
 	mASMforTitleCheck: null,
 		
@@ -98,9 +98,11 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 			var highlight = "";
 			if (!emptyQuery) {
 				// Get the highlight information
-				highlight = this.manager.response.highlighting[doc[docIdField]];
-				highlight = highlight[highlightField][0];
-				highlight = AjaxSolr.theme('highlight', highlight);
+				if (this.manager.response.highlighting) {
+					highlight = this.manager.response.highlighting[doc[docIdField]];
+					highlight = highlight[highlightField][0];
+					highlight = AjaxSolr.theme('highlight', highlight);
+				}
 			}			
 			$(this.target).append(AjaxSolr.theme('article', doc, 
 												 AjaxSolr.theme('data', doc),
@@ -115,6 +117,17 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		}
 			
 	},
+	
+	/**
+	 * This function is called when an ajax request fails e.g. because of a server
+	 * error.
+	 * SOLR sends an error 500 - maxClauseCount is set to 1024 if the wildcard
+	 * expansion of a query generates too many clauses. In this case the user has 
+	 * to refine his search. An appropriate message is shown in the result area.
+	 */
+	requestFailed: function () {
+		$(this.target).empty().append(AjaxSolr.theme('underspecified_search'));
+	},
 
 	/**
 	 * Initializes this object.
@@ -123,7 +136,7 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 	init: function () {
 		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
 		// Initialize the AjaxSolrManager for getting properties of the articles
-		this.mASMforProperties = new AjaxSolr.Manager({
+		this.mASMforProperties = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL
 		});
 		this.mASMforProperties.init();
@@ -134,7 +147,7 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		
 		// Initialize the AjaxSolrManager for checking if the search term is an
 		// existing article
-		this.mASMforTitleCheck = new AjaxSolr.Manager({
+		this.mASMforTitleCheck = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL
 		});
 		this.mASMforTitleCheck.init();

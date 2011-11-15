@@ -552,6 +552,12 @@
 		return $('<div class="xfsMinor">').text(lang.getMessage('noFacetFilter'));
 	};
 	
+	AjaxSolr.theme.prototype.underspecified_search = function() {
+		var lang = FacetedSearch.singleton.Language;
+		return $('<div class="xfsUnderspecifiedSearch">')
+				.text(lang.getMessage('underspecifiedSearch'));
+	}
+	
 	AjaxSolr.theme.prototype.remove_all_filters = function(handler) {
 		var lang = FacetedSearch.singleton.Language;
 		return $('<a href="#"/>')

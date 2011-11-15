@@ -62,6 +62,19 @@ FacetedSearch.classes.PagerWidget = AjaxSolr.PagerWidget.extend({
 		
 	},
 	
+	/**
+	 * This function is called when an ajax request fails e.g. because of a server
+	 * error. In this case the pager is hidden.
+	 * 
+	 */
+	requestFailed: function () {
+		var $ = jQuery;
+		$('#pager-header').empty();
+		$(this.target).empty();
+	},
+
+	
+	
 	init: function(){
 		this.superAfterRequest = this.afterRequest;
 		this.afterRequest = this.fpwAfterRequest;

@@ -46,7 +46,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	
 	//--- Private members ---
 
-	// AjaxSolr.Manager - The manager from the AjaxSolr library. It is used for
+	// AjaxSolr.FSManager - The manager from the AjaxSolr library. It is used for
 	// asking the statistics and the clusters for a facet.
 	var mAjaxSolrManager;
 	
@@ -73,7 +73,7 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	 * 		The plain name without prefix and suffix of the facet. 
 	 */
 	function construct(facetName, plainName) {
-		mAjaxSolrManager = new AjaxSolr.Manager({
+		mAjaxSolrManager = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL
 		});
 		mAjaxSolrManager.init();

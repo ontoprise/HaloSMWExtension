@@ -44,6 +44,7 @@ FacetedSearch.classes.FSLanguageEn = function () {
 'more' 				: 'more',
 'less' 				: 'less',
 'noFacetFilter'		: '(no facets selected)',
+'underspecifiedSearch' : 'Your current search may match too many results. Please refine it!',
 'removeFilter'		: 'Remove this facet',
 'removeRestriction'	: 'Remove restriction',
 'removeAllFilters'	: 'Remove all facets',

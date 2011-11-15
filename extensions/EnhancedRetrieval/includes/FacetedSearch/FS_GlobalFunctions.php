@@ -90,7 +90,7 @@ function fsfInitResourceLoaderModules() {
 		'scripts' => array(
 			"scripts/ajax-solr/lib/core/Core.js",      
 			"scripts/ajax-solr/lib/core/AbstractManager.js",      
-			"scripts/ajax-solr/lib/managers/Manager.jquery.js",      
+//			"scripts/ajax-solr/lib/managers/Manager.jquery.js",      
 			"scripts/ajax-solr/lib/core/Parameter.js",      
 			"scripts/ajax-solr/lib/core/ParameterStore.js",      
 			"scripts/ajax-solr/lib/core/AbstractWidget.js",      
@@ -99,6 +99,7 @@ function fsfInitResourceLoaderModules() {
 			"scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js",      
 			"scripts/ajax-solr/lib/widgets/jquery/PagerWidget.js",      
 			
+			"scripts/FacetedSearch/FS_Manager.jquery.js",
 			"scripts/FacetedSearch/FS_Theme.js",      
 			"scripts/FacetedSearch/FS_ResultWidget.js",      
 			"scripts/FacetedSearch/FS_PagerWidget.js",      
@@ -115,7 +116,8 @@ function fsfInitResourceLoaderModules() {
 			"scripts/FacetedSearch/FS_StringFacetClusterer.js",
 			"scripts/FacetedSearch/FS_DateFacetClusterer.js",
 			"scripts/FacetedSearch/FS_ClusterWidget.js",
-			"scripts/FacetedSearch/FS_FacetClustererFactory.js"
+			"scripts/FacetedSearch/FS_FacetClustererFactory.js",
+			"scripts/FacetedSearch/jquery.jsonp-2.1.4.js"
 			
 			),
 		'styles' => array(
