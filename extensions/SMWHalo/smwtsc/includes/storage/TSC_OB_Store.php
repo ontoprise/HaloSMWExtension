@@ -261,7 +261,7 @@ class OB_StorageTS extends OB_Storage {
 
     private function getLiteral($literal, $predicate) {
         list($literalValue, $literalType) = $literal;
-        if (!empty($literalValue)) {
+        if (trim($literalValue) !== '') {
 
             // create SMWDataValue either by property or if that is not possible by the given XSD type
             if ($predicate instanceof SMWDIProperty ) {
@@ -272,7 +272,7 @@ class OB_StorageTS extends OB_Storage {
             }
                 
         } else {
-            $value = SMWDataValueFactory::newTypeIdValue("_str", "")->getDataItem();
+            $value = SMWDataValueFactory::newTypeIdValue("_str", "!!empty value!!")->getDataItem();
         }
         return $value;
     }

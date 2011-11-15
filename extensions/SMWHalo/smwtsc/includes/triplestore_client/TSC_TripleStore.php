@@ -1090,7 +1090,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 * @param $metadata
 	 */
 	protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
-		if (!empty($literalValue)) {
+		 if (trim($literalValue) !== '') {
 
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
 			if ($property instanceof SMWPropertyValue ) {
