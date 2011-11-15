@@ -47,9 +47,6 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	
 	const SPECIAL_PAGE_HTML = '
 <div id="wrapper"> 
-	<div id="header">
-		<h1>{{fs_title}}</h1>
-	</div>
 	<div class="facets">
 		<div>
 			<span class="xfsComponentHeader">{{fs_selected}}</span>
