@@ -518,6 +518,7 @@ Section "Solr" solr
         SetOutPath "$INSTDIR\solr\wiki"
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
+        CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop Solr.lnk" "$INSTDIR\solr\wiki\stopSolr.bat"
     ${EndIf}
 
     DetailPrint "set solr_ip to $IP"
@@ -1182,6 +1183,7 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT_SHORT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT_SHORT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start Solr.lnk"
+    Delete "$SMPROGRAMS\$MUI_TEMP\Stop Solr.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT_SHORT} Main Page.lnk"
     
     ;Delete start menu IF THE MENU IS EMPTY.
