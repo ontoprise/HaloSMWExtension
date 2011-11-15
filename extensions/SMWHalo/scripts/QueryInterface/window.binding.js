@@ -95,7 +95,7 @@ function init(){
 
   initToolTips();
   initialize_qi();
-  window.qihelper = qihelper;
+  window.parent.qihelper = qihelper;
   $ = window.$P;
 }
   

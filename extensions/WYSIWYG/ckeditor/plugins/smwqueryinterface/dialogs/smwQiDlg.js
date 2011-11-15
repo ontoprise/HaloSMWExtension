@@ -6,6 +6,9 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
   var querySource, Tip;
   var height = window.outerHeight || window.screen.availHeight || 500;
   height = parseInt(height * 0.6);
+  var getQIHelper = function(){
+      return window.parent.qihelper;
+    };
 
   
     
@@ -63,7 +66,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
         var after = myArea.value.substr(myArea.selectionStart);
         myArea.value = before + ask + after;
       }
-    },
+    },   
 
   
     onShow : function() {    
@@ -89,27 +92,27 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
         // decode HTML entities in the encoded query source
         querySource = jQuery("<div/>").html(querySource).text();
         querySource = querySource.replace(/fckLR/g, '\r\n');
-      
-        if(window.qihelper)
-          window.qihelper.initFromQueryString(querySource);
+
+        if(window.parent.qihelper && window.parent.qihelper.initFromQueryString)
+          window.parent.qihelper.initFromQueryString(querySource);
         else{
           var initFromQueryStringIntervalId = window.setInterval(function(){
-            if(window.qihelper){
+            if(window.parent.qihelper && window.parent.qihelper.initFromQueryString){
               window.clearInterval(initFromQueryStringIntervalId);
-              window.qihelper.initFromQueryString(querySource);
+              window.parent.qihelper.initFromQueryString(querySource);
             }
               
           }, 1000)
         }
       }
       else {      
-        if(window.qihelper)
-          window.qihelper.doReset();
+        if(window.parent.qihelper && window.parent.qihelper.doReset)
+          window.parent.qihelper.doReset();
         else
           var resetIntervalId = window.setInterval(function(){
-            if(window.qihelper){
+            if(window.parent.qihelper && window.parent.qihelper.doReset){
               window.clearInterval(resetIntervalId);
-              window.qihelper.doReset();
+              window.parent.qihelper.doReset();
             }
 
           }, 1000)
@@ -118,7 +121,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
 
     onOk: function() {
       //			var qiDocument = window.frames['CKeditorQueryInterface'];
-      var ask = window.qihelper.getAskQueryFromGui();
+      var ask = window.parent.qihelper.getAskQueryFromGui();
       ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
       ask = ask.replace(/>\[\[/g, ">\n[[");
       ask = ask.replace(/\]\]</g, "]]\n<");

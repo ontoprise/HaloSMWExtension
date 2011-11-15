@@ -519,7 +519,7 @@ function smwf_qi_getPage($args= "") {
     $params['noPreview'] = true;
     $params['noLayout'] = true;
     $newPage = str_replace('onclick="qihelper.copyToClipboard()"', 'onclick="qihelper.copyToClipboard()" style="display: none;"', $newPage);
-    $onloadArgs.='window.initialize_qi_from_excelbridge(); ';
+    $onloadArgs.='qihelper.setExcelBridge(); ';
   }
   else
     $excelBridge = '';
@@ -532,7 +532,7 @@ function smwf_qi_getPage($args= "") {
   if (isset($params['query'])) {
     $queryString = str_replace('"', '&quot;', $params['query']);
     $queryString = str_replace("'", "\'", $queryString);
-    $onloadArgs .= 'window.initialize_qi_from_querystring(\'' . $queryString . '\');';
+    $onloadArgs .= 'qihelper.initFromQueryString(\'' . $queryString . '\');';
   }
   if (strlen($onloadArgs) > 0)
     $page = str_replace('<body', '<body onload="' . $onloadArgs . '"', $page);
@@ -567,8 +567,8 @@ function smwf_qi_getAskPage($args= "") {
   $html = str_replace('</body>', '<div id="stb-qi-footer-wrap"></body>', $html);
   $html = str_replace('</body>', '<div id="stb-qi-footer-container"></body>', $html);
   $html = str_replace('</body>', '<div id="stb-qi-footer"></body>', $html);
-  $html = str_replace('</body>', '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="javascript:qihelper.querySaved=true;parent.jQuery.fancybox.close();" /></body>', $html);
-  $html = str_replace('</body>', '<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="javascript:qihelper.querySaved=false;parent.jQuery.fancybox.close();" /></body>', $html);
+  $html = str_replace('</body>', '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="window.parent.smwhgASKQuery.saveQuery();" /></body>', $html);
+  $html = str_replace('</body>', '<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="window.parent.smwhgASKQuery.cancelQuery();" /></body>', $html);
   $html = str_replace('</body>', '</div></div></div></body>', $html);
  
   return $html;

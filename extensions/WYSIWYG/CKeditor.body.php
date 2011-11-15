@@ -181,7 +181,7 @@ class CKeditor_MediaWiki {
     public static function onBeforePageDisplay( &$out, &$text ) {
         global $wgRequest, $wgScriptPath;
 
-        CKeditor_MediaWiki::addResourceModules($out);
+//        CKeditor_MediaWiki::addResourceModules($out);
         
         //var_dump($out->styles);
         $action = $wgRequest->getText( 'action' );
@@ -496,8 +496,8 @@ class CKeditor_MediaWiki {
 		// End of CSS trick
 
 		$script = <<<HEREDOC
-<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>
-<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>-->
+<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>-->
+<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
 </script>
@@ -586,7 +586,7 @@ $this->ckeditorHeadScript = $script;
 
     private static function GetQILoadUrl() {
         global $smwgQueryInterfaceSecret, $smwgHaloIP;
-        $qiUrl = '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE&showQIContentOnly=true';
+        $qiUrl = '?action=ajax&rs=smwf_qi_getPage&rsargs[]=CKE';
         if (isset($smwgQueryInterfaceSecret)) {
             require_once $smwgHaloIP.'/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
             list($token, $hash) = qiCreateHash();
