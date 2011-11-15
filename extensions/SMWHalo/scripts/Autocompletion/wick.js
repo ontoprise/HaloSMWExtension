@@ -1266,7 +1266,7 @@ AutoCompleter.prototype = {
         Event.observe(document, "keyup", this.handleKeyPress.bindAsEventListener(this), false);
         Event.observe(document, "mouseup", this.handleClick.bindAsEventListener(this), false);
 
-        if (OB_bd.isGecko || OB_bd.isIE) {
+        if ($('MWFloater0') != null) {
              // needed for draggable floater in FF
              // needed for hiding floater when clicking outside
             Event.observe(document, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
