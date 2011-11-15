@@ -24,7 +24,7 @@ class SRRuleEndpoint {
 				list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
 				$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 				global $tscgIP;
-				require_once( "$tscgIP/smwtsc/includes/triplestore_client/TSC_RESTWebserviceConnector.php" );
+				require_once( "$tscgIP/includes/triplestore_client/TSC_RESTWebserviceConnector.php" );
 				self::$_client = new RESTWebserviceConnector($host, $port, "ruleparsing", $credentials);
 			} else {
 				trigger_error("SOAP endpoints are no more supported.");

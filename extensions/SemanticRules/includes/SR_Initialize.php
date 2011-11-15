@@ -257,7 +257,7 @@ function srfRegisterJSLanguageModules(& $out) {
 
             ),
         'dependencies' => array(
-             'ext.smwhalo.semanticToolbar'
+          
              )
              );
 
@@ -291,7 +291,8 @@ function srfRegisterJSModules(& $out) {
 
             ),
         'dependencies' => array(
-            'ext.semanticrules.rulewidget'
+            'ext.semanticrules.rulewidget',
+            'ext.smwhalo.semanticToolbar'
             )
             );
 
@@ -306,7 +307,6 @@ function srfRegisterJSModules(& $out) {
             ),
         'dependencies' => array(
             'ext.smwhalo.general',
-            'ext.smwhalo.semanticToolbar',
             'ext.semanticrules.language'
             )
             );
@@ -320,8 +320,7 @@ function srfRegisterJSModules(& $out) {
             ),
         'dependencies' => array(
             'ext.semanticrules.language',
-            'ext.semanticrules.rulewidget',
-            'ext.smwhalo.ontologyBrowser'
+            'ext.semanticrules.rulewidget'
             )
             );
 
@@ -354,7 +353,7 @@ function srfAddHTMLHeader(& $out) {
 }
 
 function srfAddOBContent(& $out) {
-	$localname = SpecialPage::getLocalNameFor("OntologyBrowser");
+	$localname = SpecialPage::getLocalNameFor("DataExplorer");
 
 	global $wgTitle, $wgScriptPath, $wgResourceModules;
 	if ($wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == $localname) {
