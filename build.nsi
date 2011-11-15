@@ -1229,6 +1229,8 @@ Section "Uninstall"
     RMDir /r "$INSTDIR\tomcat"
     RMDir /r "$INSTDIR\memcached"
     RMDir /r "$INSTDIR\solr"
+    RMDir /r "$INSTDIR\tools"
+    RMDir /r "$INSTDIR\scheduled_tasks"
     
     ; only remove if empty
     RMDir "$INSTDIR"
