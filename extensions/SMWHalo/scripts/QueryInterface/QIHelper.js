@@ -1144,6 +1144,9 @@ QIHelper.prototype = {
         });
         inputElement.observe('change', function(event){
           thisObj.enableButton(inputsArray);
+        });      
+        inputElement.observe('blur', function(event){
+          thisObj.enableButton(inputsArray);
         });
       });
     }
@@ -1286,8 +1289,12 @@ QIHelper.prototype = {
         propLabelInput.setValue(propNameInput.getValue());
       }
     });
-
     propNameInput.observe('change', function(event){
+      if(!qihelper.colNameEntered){
+        propLabelInput.setValue(propNameInput.getValue());
+      }
+    });
+    propNameInput.observe('blur', function(event){
       if(!qihelper.colNameEntered){
         propLabelInput.setValue(propNameInput.getValue());
       }
