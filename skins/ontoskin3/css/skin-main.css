@@ -630,7 +630,8 @@ table.formtable input[type="password"]:active,
 table.formtable select:active,
 table.formtable input[type="text"]:focus,
 table.formtable input[type="password"]:focus,
-table.formtable select:focus, textarea:focus {
+table.formtable select:focus,
+table.formtable textarea:focus {
    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
     background: none no-repeat scroll 0 0 #FFFFFF;
     border-color: #219EB5;
