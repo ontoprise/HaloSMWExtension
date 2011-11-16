@@ -85,8 +85,8 @@ ContextMenuFramework.prototype = {
     var header;
     var content;
     var contentdiv;
-	var minusImg = '/mediawiki/extensions/SMWHalo/skins/Annotation/images/minus.gif';
-	var plusImg  = '/mediawiki/extensions/SMWHalo/skins/Annotation/images/plus.gif';
+	var minusImg = wgScriptPath + '/extensions/SMWHalo/skins/Annotation/images/minus.gif';
+	var plusImg  = wgScriptPath + '/extensions/SMWHalo/skins/Annotation/images/plus.gif';
 	var imgStyle = 'style="padding-right:5px; display:none" border="0"';
     switch(containertype){
       case CATEGORYCONTAINER:

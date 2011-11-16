@@ -112,7 +112,7 @@ window.wgUserLanguageStrings = {
 	
 	'PAGE_TYPE'               : "page",		// name of the page data type
 	'NARY_TYPE'               : "n-ary",       // name of the n-ary data type
-	'SPECIFY_PROPERTY'		  : "Specify this property.",
+	'SPECIFY_PROPERTY'		  : "Annotate a property",
 	'PC_DUPLICATE'			  : "At least one property is specified several times. Please remove the duplicates.",
 	'PC_HAS_TYPE'			  : "has type", 
 	'PC_HAS_FIELDS'			  : "Property", 
@@ -127,7 +127,7 @@ window.wgUserLanguageStrings = {
 	
 
 	// Category toolbar
-	'ANNOTATE_CATEGORY'       : 'Annotate a category.',
+	'ANNOTATE_CATEGORY'       : 'Annotate a category',
 	'CATEGORY_DOES_NOT_EXIST' : '(w)This category does not exist.',
 	'CATEGORY_ALREADY_EXISTS' : '(w)This category already exists.',
 	'CATEGORY_NAME_TOO_LONG'  : '(e)The name of this category is too long or contains invalid characters.',
