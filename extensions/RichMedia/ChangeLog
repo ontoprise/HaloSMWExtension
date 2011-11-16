@@ -9,9 +9,11 @@ VERSION 1.5.3
   CHANGES:
 	* Use ResourceLoader for script loading if available
 	* Provided new patch to let Rich Media extension be compatible with MW 1.17.0 and SF 2.2.1
+	* 15714 - Move icons from local directory into bundle
 
   BUGFIXES:
 	* 15709 - Cannot edit exiting files because "has default form" annotation missing
+	* 12236 - Display a tooltip that invites the user to open the file via Rich Media extension
 
 VERSION 1.5.2
 

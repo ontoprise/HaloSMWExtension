@@ -74,8 +74,6 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_exte
 	---
 	include_once('extensions/RichMedia/includes/RM_Initialize.php');
 	enableRichMediaExtension();
-
-	$wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates create image links.
 	---
 
 4. Seach for the variable $wgEnableUploads in LocalSettings.php and set this to true.
@@ -86,9 +84,20 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_exte
 
 5. Go to Special:Import, select and upload '/extensions/RichMedia/import/richmedia.xml'
 
-6. Go to Special:Upload, select and upload the following two files:
+6. Go to Special:Upload, select and upload the following files:
 	* '/extensions/RichMedia/skins/Calendar.gif'
 	* '/extensions/RichMedia/skins/vcard.gif'
+	* '/extensions/RichMedia/import/rm_delete_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_document_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_edit_with_forms_icon_16x16.gif'
+	* '/extensions/RichMedia/import/rm_icalendar_icon_16x16.gif'
+	* '/extensions/RichMedia/import/rm_image_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_info_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_music_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_pdf_icon_16x16.png'
+	* '/extensions/RichMedia/import/rm_refresh_icon_16x16.gif'
+	* '/extensions/RichMedia/import/rm_vcard_icon_16x16.gif'
+	* '/extensions/RichMedia/import/rm_video_icon_16x16.png'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files.

@@ -1,8 +1,8 @@
 <mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
   <siteinfo>
     <sitename>Contentwiki</sitename>
-    <base>http://localhost/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.4</generator>
+    <base>http://localhost/contentwiki_head/index.php/Main_Page</base>
+    <generator>MediaWiki 1.17.0</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -25,8 +25,6 @@
       <namespace key="15" case="first-letter">Category talk</namespace>
       <namespace key="102" case="first-letter">Property</namespace>
       <namespace key="103" case="first-letter">Property talk</namespace>
-      <namespace key="104" case="first-letter">Type</namespace>
-      <namespace key="105" case="first-letter">Type talk</namespace>
       <namespace key="106" case="first-letter">Form</namespace>
       <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
@@ -43,102 +41,84 @@
       <namespace key="129" case="first-letter">ICalendar talk</namespace>
       <namespace key="130" case="first-letter">VCard</namespace>
       <namespace key="131" case="first-letter">VCard talk</namespace>
-      <namespace key="200" case="first-letter">WebService</namespace>
-      <namespace key="201" case="first-letter">WebService talk</namespace>
-      <namespace key="202" case="first-letter">TermImport</namespace>
-      <namespace key="203" case="first-letter">TermImport talk</namespace>
-      <namespace key="220" case="first-letter">E-mail</namespace>
-      <namespace key="221" case="first-letter">E-mail talk</namespace>
       <namespace key="274" case="first-letter">Widget</namespace>
       <namespace key="275" case="first-letter">Widget talk</namespace>
-      <namespace key="300" case="first-letter">ACL</namespace>
-      <namespace key="301" case="first-letter">ACL talk</namespace>
-      <namespace key="400" case="first-letter">IAI</namespace>
-      <namespace key="401" case="first-letter">IAI talk</namespace>
       <namespace key="700" case="first-letter">Comment</namespace>
       <namespace key="701" case="first-letter">Comment talk</namespace>
-      <namespace key="702" case="first-letter">UserManual</namespace>
-      <namespace key="703" case="first-letter">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Template:RMListInnerTable</title>
     <id>58</id>
     <revision>
-      <timestamp>2011-07-06T13:47:45Z</timestamp>
+      <timestamp>2011-11-16T16:41:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
 [[Rationale::Template that builds the inner table for the Rich Media list.]]
-[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;
 |-
-| align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;[[File:{{RMCategoryLinkIcon|{{{1}}}}}|link=]]&lt;/span&gt;
 |&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
 |[[{{{3}}}]]
 |&lt;span style=&quot;display: none;&quot;&gt;{{#formatdate:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
-| align=&quot;center&quot; |&lt;span class=&quot;plainlinks rmListInfoIcon&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
-| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks rmListInfoIcon&quot; title=&quot;View the file page.&quot;&gt;[[File:RM_info_icon_16x16.png|link={{fullurl:{{{1}}}}}]]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;Edit the file meta data via Semantic Forms&quot;&gt;[[File:RM_edit_with_forms_icon_16x16.gif|link={{fullurl:{{{1}}}|action=formedit}}]]&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;Delete this file.&quot;&gt;[[File:RM_delete_icon_16x16.png|link={{fullurl:{{{1}}}|action=delete}}]]&lt;/span&gt;
 &lt;/includeonly&gt;&lt;noinclude&gt;
-
 {{Part of bundle|value=Richmedia}}
-
 {{Content hash|value=}}
-
+[[Category:Template]]
 &lt;/noinclude&gt;</text>
-    <hash>658387b9876d1f6d06ff28b9d5901d8d</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMCategoryLinkIcon</title>
     <id>59</id>
     <revision>
-      <timestamp>2011-07-06T13:42:20Z</timestamp>
+      <timestamp>2011-11-16T16:40:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
 [[Rationale::Call this template to detect the right icon for a file.]]
-[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#switch:
   {{#sub:
-    {{lc: {{{1}}} }} 
+    {{lc: {{{1}}} }}
     | 0
-    |{{#pos:{{lc: {{{1}}} }}|:}}  
+    |{{#pos:{{lc: {{{1}}} }}|:}}
   }}
-  | file={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-  | image={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-  | pdf={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
-  | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
-  | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
-  | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
-  | vcard={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_vcard_icon_16x16.gif
-  | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
-  | default {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+| file=RM_image_icon_16x16.png
+| image=RM_image_icon_16x16.png
+| pdf=RM_pdf_icon_16x16.png
+| document=RM_document_icon_16x16.png
+| audio=RM_music_icon_16x16.png
+| video=RM_video_icon_16x16.png
+| vcard=RM_vcard_icon_16x16.gif
+| icalendar=RM_icalendar_icon_16x16.gif
+| default RM_image_icon_16x16.png
 }}&lt;/includeonly&gt;&lt;noinclude&gt;
 
 {{Part of bundle|value=Richmedia}}
 
 {{Content hash|value=}}
 
+[[Category:Template]]
 &lt;/noinclude&gt;</text>
-    <hash>393cdf6586c350bcd495eac056c15a23</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMUpload</title>
     <id>60</id>
     <revision>
-      <timestamp>2011-07-06T14:30:58Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of rm uploads.]]
 [[Category:Form]]
@@ -197,18 +177,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>c30c69178954e7ec8fe0bd23ea9f7b4b</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMImage</title>
     <id>61</id>
     <revision>
-      <timestamp>2011-07-06T14:30:15Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded images.]]
 [[Category:Form]]
@@ -280,18 +260,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>c25678de6737d661ed314a6dd913368f</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMPdf</title>
     <id>62</id>
     <revision>
-      <timestamp>2011-07-06T14:36:22Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded pdf files.]]
 [[Category:Form]]
@@ -367,18 +347,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>6749c58a06f3fb11e3238f597e9fa805</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMDocument</title>
     <id>63</id>
     <revision>
-      <timestamp>2011-07-06T14:28:09Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded documents.]]
 [[Category:Form]]
@@ -459,18 +439,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>78e4baf43ddf9ef794b420be776d880c</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMAudio</title>
     <id>64</id>
     <revision>
-      <timestamp>2011-07-06T14:27:07Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded audio files.]]
 [[Category:Form]]
@@ -541,18 +521,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>514aa7c012db3c355798603d8663e369</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVideo</title>
     <id>65</id>
     <revision>
-      <timestamp>2011-07-06T14:34:15Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded video files.]]
 [[Category:Form]]
@@ -622,18 +602,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>ff80dd822b83e02fbbfa67581f4a858b</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasCreationDate</title>
     <id>66</id>
     <revision>
-      <timestamp>2011-07-06T13:17:15Z</timestamp>
+      <timestamp>2011-10-13T16:18:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
 
 == Information about this property ==
@@ -647,14 +627,13 @@
 {{Content hash|value=}}
 
 [[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>264cce56ea5d59f4f12409588d0f7504</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasFilename</title>
     <id>67</id>
     <revision>
-      <timestamp>2011-07-06T13:18:23Z</timestamp>
+      <timestamp>2011-11-16T17:00:34Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -672,14 +651,13 @@
 {{Content hash|value=}}
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>1d89bcc71238f89c854e0ad65af1cd6b</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasUploadDate</title>
     <id>68</id>
     <revision>
-      <timestamp>2011-07-06T13:19:44Z</timestamp>
+      <timestamp>2011-11-16T17:02:36Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -696,15 +674,14 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>ea9d0bc8c0ccfcda6397a65bf60cd4f6</hash>
+[[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasUploader</title>
     <id>69</id>
     <revision>
-      <timestamp>2011-07-06T13:21:09Z</timestamp>
+      <timestamp>2011-11-16T17:03:15Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -721,15 +698,14 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
-    <hash>25fce11ee46dec0d8e142092091ce32d</hash>
+[[Has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasCopyrightBy</title>
     <id>70</id>
     <revision>
-      <timestamp>2011-07-06T13:16:49Z</timestamp>
+      <timestamp>2011-11-16T16:51:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -747,15 +723,14 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
-    <hash>fc4b6f4bb2c2ae5e76e9088c0aea8f91</hash>
+[[Has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasDescription</title>
     <id>71</id>
     <revision>
-      <timestamp>2011-07-06T13:17:41Z</timestamp>
+      <timestamp>2011-11-16T17:00:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -772,19 +747,19 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>dc872b79bcd129f28abca9a1ff1c1321</hash>
+[[Has type::Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Media</title>
     <id>72</id>
     <revision>
-      <timestamp>2011-07-06T12:40:47Z</timestamp>
+      <timestamp>2011-10-13T16:18:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">{{Category}}
  __NOTOC__  __NOEDITSECTION__
 == Information about this category ==
@@ -794,14 +769,13 @@
 {{Content hash|value=}}
 
 [[Category:Content|Content]]</text>
-    <hash>05a6e635beefaaddb58bf4329e747d0d</hash>
     </revision>
   </page>
   <page>
     <title>Category:Image</title>
     <id>73</id>
     <revision>
-      <timestamp>2011-09-27T11:51:50Z</timestamp>
+      <timestamp>2011-11-16T15:58:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -812,18 +786,18 @@
 [[Has default form::Form:RMImage| ]]
 [[Rationale::This category is used to identify all images]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM image icon 16x16.png]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Image]]</text>
-    <hash>34d19ca04d308dde9ca002ee132842be</hash>
     </revision>
   </page>
   <page>
     <title>Category:Pdf</title>
     <id>74</id>
     <revision>
-      <timestamp>2011-09-27T11:52:42Z</timestamp>
+      <timestamp>2011-11-16T16:00:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -834,18 +808,18 @@
 [[Has default form::Form:RMPdf| ]]
 [[Rationale::This category is used to identify all PDF documents.]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM pdf icon 16x16.png]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Media]]</text>
-    <hash>d1261289b3d8fbe381c81e15335bd044</hash>
     </revision>
   </page>
   <page>
     <title>Category:Document</title>
     <id>75</id>
     <revision>
-      <timestamp>2011-09-27T11:53:21Z</timestamp>
+      <timestamp>2011-11-16T15:56:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -856,18 +830,18 @@
 [[Has default form::Form:RMDocument| ]]
 [[Rationale::This category is used to identify all documents.]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM document icon 16x16.png]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Document]]</text>
-    <hash>fc27a9eb765e0efb948bb91924bdd785</hash>
     </revision>
   </page>
   <page>
     <title>Category:Audio</title>
     <id>76</id>
     <revision>
-      <timestamp>2011-09-27T11:50:28Z</timestamp>
+      <timestamp>2011-11-16T15:59:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -878,18 +852,18 @@
 [[Has default form::Form:RMAudio| ]]
 [[Rationale::This category is used to identify all audio documents.]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM music icon 16x16.png]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Media]]</text>
-    <hash>7e24943540cd38cc4585986e3cd5a599</hash>
     </revision>
   </page>
   <page>
     <title>Category:Video</title>
     <id>77</id>
     <revision>
-      <timestamp>2011-09-27T11:53:51Z</timestamp>
+      <timestamp>2011-11-16T16:02:36Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -900,22 +874,23 @@
 [[Has default form::Form:RMVideo| ]]
 [[Rationale::This category is used to identify video files.]]
 [[No automatic formedit::true]]
+[[¢Category has icon::File:RM video icon 16x16.png]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|Video]]</text>
-    <hash>97c290e7845ad30b73e4d50d7e5873ac</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMMedia</title>
     <id>79</id>
     <revision>
-      <timestamp>2011-07-06T13:50:16Z</timestamp>
+      <timestamp>2011-10-13T16:18:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::This template displays information of media (i.e. document, image, etc) in a box.]]
@@ -960,18 +935,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>09694d7496c02a2653059bfb49406d44</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasRelatedArticle</title>
     <id>82</id>
     <revision>
-      <timestamp>2011-07-06T13:19:16Z</timestamp>
+      <timestamp>2011-10-13T16:18:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
 
 == Information about this property ==
@@ -985,18 +960,18 @@
 {{Content hash|value=}}
 
 [[Is inverse of::Property:Attachment| ]] [[Has domain and range::Category:Media; | ]]</text>
-    <hash>81e850df96e203ca9e600ddd94c72bef</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMICalendar</title>
     <id>88</id>
     <revision>
-      <timestamp>2011-07-06T14:29:14Z</timestamp>
+      <timestamp>2011-10-13T16:18:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded ICalendar files.]]
 [[Category:Form]]
@@ -1072,18 +1047,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>1c33ff61de4f3c5cb6cdbb7f30f47521</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMVCard</title>
     <id>89</id>
     <revision>
-      <timestamp>2011-07-06T13:56:04Z</timestamp>
+      <timestamp>2011-10-13T16:18:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded VCard.]]
@@ -1109,18 +1084,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>11bb5418ad26ecba0390d5adf92761bb</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMICalendar</title>
     <id>90</id>
     <revision>
-      <timestamp>2011-07-06T13:44:23Z</timestamp>
+      <timestamp>2011-10-13T16:18:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded ICalendar.]]
@@ -1147,14 +1122,13 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>357a65970934d7e81e909d7fbdc0cac9</hash>
     </revision>
   </page>
   <page>
     <title>Category:ICalendar</title>
     <id>91</id>
     <revision>
-      <timestamp>2011-09-27T11:56:11Z</timestamp>
+      <timestamp>2011-11-16T15:57:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1165,18 +1139,18 @@
 [[Has default form::Form:RMICalendar| ]]
 [[Rationale::This category is used to identify all calendars.]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM icalendar icon 16x16.gif]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|ICalendar]]</text>
-    <hash>c8b6cd7d83bd55c6cca1b7c8d14f9b24</hash>
     </revision>
   </page>
   <page>
     <title>Category:VCard</title>
     <id>92</id>
     <revision>
-      <timestamp>2011-09-27T11:55:24Z</timestamp>
+      <timestamp>2011-11-16T16:02:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1187,18 +1161,18 @@
 [[Has default form::Form:RMVCard| ]]
 [[Rationale::This category is used to identify all VCards.]]
 [[No automatic formedit::true]]
+[[Category has icon::File:RM vcard icon 16x16.gif]]
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 
 [[Category:Media|VCard]]</text>
-    <hash>0af6012379c99d7e2ad06b6e441cd9a3</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasFormat</title>
     <id>93</id>
     <revision>
-      <timestamp>2011-07-06T13:20:24Z</timestamp>
+      <timestamp>2011-11-16T17:00:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1216,14 +1190,13 @@
 {{Content hash|value=}}
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>9c2471562eca25a6c2c157fd59cd7325</hash>
     </revision>
   </page>
   <page>
     <title>Property:HasKeywords</title>
     <id>94</id>
     <revision>
-      <timestamp>2011-07-06T13:18:47Z</timestamp>
+      <timestamp>2011-11-16T17:01:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1241,18 +1214,18 @@
 {{Content hash|value=}}
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
-    <hash>33ccd3946c605a0fde2d97c6c33c7f48</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMUpload</title>
     <id>154</id>
     <revision>
-      <timestamp>2011-07-06T13:52:37Z</timestamp>
+      <timestamp>2011-10-13T16:18:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::This template displays and annotates the metadata of uploaded media.]]
@@ -1278,18 +1251,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>23af19d4de3ab6586fac74e773240d22</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMImage</title>
     <id>155</id>
     <revision>
-      <timestamp>2011-07-06T13:45:15Z</timestamp>
+      <timestamp>2011-10-13T16:18:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded image.]]
@@ -1316,18 +1289,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>997baaacccfbf093cbd7209ee79f5cfc</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMPdf</title>
     <id>156</id>
     <revision>
-      <timestamp>2011-07-06T13:51:46Z</timestamp>
+      <timestamp>2011-10-13T16:18:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded pdf file.]]
@@ -1353,18 +1326,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>6b35b4df623a7537c7883bb00cabbd4a</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMDocument</title>
     <id>157</id>
     <revision>
-      <timestamp>2011-07-06T13:43:23Z</timestamp>
+      <timestamp>2011-10-13T16:18:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Annotates and displays the metadata of a document.]]
@@ -1390,18 +1363,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>fa4251aef745ab6db5b9bd8e575bac09</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMAudio</title>
     <id>158</id>
     <revision>
-      <timestamp>2011-07-06T13:39:47Z</timestamp>
+      <timestamp>2011-10-13T16:18:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded audio file.]]
@@ -1427,18 +1400,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>ec9989fc283605cd2b65a8a1ee84edbb</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMVideo</title>
     <id>159</id>
     <revision>
-      <timestamp>2011-07-06T13:53:22Z</timestamp>
+      <timestamp>2011-10-13T16:18:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Displays and annotates the metadata of an uploaded video file.]]
@@ -1464,18 +1437,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>358ec4e960847c0fe0b71948c0c86859</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMList</title>
     <id>160</id>
     <revision>
-      <timestamp>2011-07-06T13:46:18Z</timestamp>
+      <timestamp>2011-10-13T16:18:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::This template lists all media which has been uploaded and attached to a particular article.]]
@@ -1489,14 +1462,13 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>05bf97fed4f300ef63627ba8b6f1f02e</hash>
     </revision>
   </page>
   <page>
     <title>Template:RMListOuterTable</title>
     <id>161</id>
     <revision>
-      <timestamp>2011-08-29T16:35:01Z</timestamp>
+      <timestamp>2011-11-16T16:43:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1504,7 +1476,6 @@
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Template that builds the outer table for the Rich Media list.]]
-[[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
 ! class=&quot;rmListInfoText&quot; colspan=&quot;6&quot; |Attached documents, images and media
@@ -1530,7 +1501,7 @@
 |}
 {| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
-| colspan=&quot;2&quot; | Manually refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
+| colspan=&quot;2&quot; | Manually refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[[File:RM_refresh_icon_16x16.gif|link={{fullurl:{{FULLPAGENAME}}|action=purge}}]]&lt;/span&gt; 
 | class=&quot;rmListButton&quot; | {{#rmf: {{FULLPAGENAME}} }}
 |-
 ! class=&quot;rmListTableEnding&quot; colspan=&quot;6&quot; | 
@@ -1541,19 +1512,20 @@
 
 {{Content hash|value=}}
 
+[[Category:Template]]
 &lt;/noinclude&gt;</text>
-    <hash>b87615a85cce229007182035fc0ebd94</hash>
     </revision>
   </page>
   <page>
     <title>Form:RMVCard</title>
     <id>164</id>
     <revision>
-      <timestamp>2011-07-06T14:31:48Z</timestamp>
+      <timestamp>2011-10-13T16:18:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form}}
 [[Rationale::This form is used to edit the information of uploaded VCards.]]
 [[Category:Form]]
@@ -1629,18 +1601,18 @@
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>2fb17f666dc4f3702a2b247db0377761</hash>
     </revision>
   </page>
   <page>
     <title>Template:DataRMICal</title>
     <id>187</id>
     <revision>
-      <timestamp>2011-07-06T13:35:09Z</timestamp>
+      <timestamp>2011-10-13T16:18:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Used for formatting and annotating uploaded iCalendar files (which come into the wiki e.g. via file upload or email import with file attachment).]]
@@ -1677,18 +1649,18 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>703083d387849d8c34c8d5c277624a69</hash>
     </revision>
   </page>
   <page>
     <title>Template:DataRMVCard</title>
     <id>188</id>
     <revision>
-      <timestamp>2011-07-06T13:37:33Z</timestamp>
+      <timestamp>2011-10-13T16:18:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <comment>auto-generated by Wiki admin tool</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
 [[Rationale::Used for formatting and annotating uploaded vCard files (which come into the wiki e.g. via file upload or email import with file attachment).]]
@@ -1729,22 +1701,26 @@
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>5282371b9cc236467c826d216efa18e7</hash>
     </revision>
   </page>
   <page>
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <timestamp>2011-07-06T14:53:04Z</timestamp>
+      <timestamp>2011-11-16T15:23:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle}}[[Vendor::ontoprise GmbH| ]][[Maintainer::ontoprise GmbH| ]][[Ontology version::152| ]][[Installation dir::extensions/RichMedia| ]] [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension | ]]
+      <text xml:space="preserve">{{Content bundle}}
+[[Vendor::ontoprise GmbH| ]]
+[[Maintainer::ontoprise GmbH| ]]
+[[Ontology version::1.5.3| ]]
+[[Installation dir::extensions/RichMedia| ]] 
+[[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension | ]]
 ;dependencies
-:[[Dependency::semanticforms;212;212]]
-:[[Dependency::Smwplus;156;156]]
+:[[Dependency::semanticforms;2.2.1;]]
+:[[Dependency::Smwplus;1.6.0]]
 ;License
 :[[License::GPL v2| ]]
 [[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
@@ -1775,7 +1751,6 @@ More information about the RichMedia extension and how to use it can be found in
 [[Category:Content bundle|Content_bundle]]
 {{Content hash|value=}}
 {{Part of bundle|value=Richmedia}}</text>
-    <hash>30b174f6f6e2af46d1e599e5fb52b978</hash>
     </revision>
   </page>
   <page>
@@ -1798,7 +1773,6 @@ More information about the RichMedia extension and how to use it can be found in
 {{Content hash|value=}}
 
 &lt;/noinclude&gt;</text>
-    <hash>18235edf8aaa46b1b8eada0385ab57ab</hash>
     </revision>
   </page>
   <page>
@@ -1824,8 +1798,7 @@ More information about the RichMedia extension and how to use it can be found in
 {{Content hash|value=}}
 
 [[Is inverse of::Property:HasRelatedArticle| ]]
-[[has domain and range::; Category:Media| ]][[has type::Page| ]]</text>
-    <hash>43919b586faa9004242b3ccce70199ce</hash>
+[[has domain and range::; Category:Media| ]][[has type::Type:Page| ]]</text>
     </revision>
   </page>
   <page>
@@ -1850,7 +1823,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>044c4cde7b3c683873580175df8bfbb8</hash>
     </revision>
   </page>
   <page>
@@ -1878,7 +1850,6 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>5d6492acf277be0f5b4c8a6971ae7300</hash>
     </revision>
   </page>
   <page>
@@ -1906,18 +1877,17 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>df57fac7e3e9c895078c7de7c3cd11ce</hash>
     </revision>
   </page>
   <page>
     <title>File:Richmedia Sandbox.png</title>
     <id>288</id>
     <revision>
-      <timestamp>2011-07-06T14:48:31Z</timestamp>
+      <timestamp>2011-10-13T16:18:18Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Richmedia Sandbox.png]]&amp;quot;: auto-inserted image</comment>
       <text xml:space="preserve">{{RMImage
 |Filename=File:Richmedia Sandbox.png
 |CopyrightBy=Ontoprise GmbH
@@ -1934,14 +1904,13 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=Richmedia}}
 {{Content hash|value=}}
 &lt;/noinclude&gt;</text>
-    <hash>5c0928154c56ce7320124baceb198ddc</hash>
     </revision>
   </page>
   <page>
     <title>Property:Related to</title>
     <id>442</id>
     <revision>
-      <timestamp>2011-07-06T13:22:19Z</timestamp>
+      <timestamp>2011-11-16T17:04:39Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1958,9 +1927,228 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 {{Part of bundle|value=	Richmedia}}
 {{Content hash|value=}}
 
-[[has type::Page| ]] [[Has domain and range::Category:Content| ]]
+[[Has type::Page| ]] [[Has domain and range::Category:Content| ]]
 [[Category:Transitive properties|Transitive_properties]]</text>
-    <hash>fb7c90b1524ec7faddc9d0935509248b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM document icon 16x16.png</title>
+    <id>2841</id>
+    <revision>
+      <timestamp>2011-11-16T15:39:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus document icon 16x16.png]] to [[File:RM document icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Document icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM edit with forms icon 16x16.gif</title>
+    <id>2842</id>
+    <revision>
+      <timestamp>2011-11-16T15:39:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus edit with forms icon 16x16.gif]] to [[File:RM edit with forms icon 16x16.gif]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM icalendar icon 16x16.gif</title>
+    <id>2843</id>
+    <revision>
+      <timestamp>2011-11-16T15:44:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::ICalendar icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM image icon 16x16.png</title>
+    <id>2844</id>
+    <revision>
+      <timestamp>2011-11-16T15:40:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus image icon 16x16.png]] to [[File:RM image icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Image/File icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM info icon 16x16.png</title>
+    <id>2845</id>
+    <revision>
+      <timestamp>2011-11-16T15:40:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus info icon 16x16.png]] to [[File:RM info icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Info icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM music icon 16x16.png</title>
+    <id>2846</id>
+    <revision>
+      <timestamp>2011-11-16T15:40:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus music icon 16x16.png]] to [[File:RM music icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Audio icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM pdf icon 16x16.png</title>
+    <id>2847</id>
+    <revision>
+      <timestamp>2011-11-16T15:40:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus pdf icon 16x16.png]] to [[File:RM pdf icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM refresh icon 16x16.gif</title>
+    <id>2848</id>
+    <revision>
+      <timestamp>2011-11-16T15:41:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus refresh icon 16x16.gif]] to [[File:RM refresh icon 16x16.gif]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Refresh icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM vcard icon 16x16.gif</title>
+    <id>2849</id>
+    <revision>
+      <timestamp>2011-11-16T15:41:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus vcard icon 16x16.gif]] to [[File:RM vcard icon 16x16.gif]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::VCard icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM delete icon 16x16.png</title>
+    <id>2850</id>
+    <revision>
+      <timestamp>2011-11-16T15:36:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[File:Smw plus delete icon 16x16.png]] to [[File:RM delete icon 16x16.png]]</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:RM video icon 16x16.png</title>
+    <id>2851</id>
+    <revision>
+      <timestamp>2011-11-16T15:43:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Part of bundle|value=Richmedia}}
+{{Content hash|value=}}
+[[Rationale::Video icon of the Rich Media extension used in the Media list.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Content hash</title>
+    <id>248</id>
+    <revision>
+      <id>257</id>
+      <timestamp>2010-12-21T14:25:49Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Part of bundle</title>
+    <id>247</id>
+    <revision>
+      <id>256</id>
+      <timestamp>2010-12-21T14:25:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
 </mediawiki>

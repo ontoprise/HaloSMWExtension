@@ -18,7 +18,7 @@
 		</helpurl>
 		<dependencies>
 			<dependency from="2.2.1">semanticforms</dependency>
-			<dependency from="1.5.6">smwplus</dependency>
+			<dependency from="1.6.0">smwplus</dependency>
 		</dependencies>
 	</global>
 
@@ -36,6 +36,17 @@
 		<file loc="import/Richmedia_Sandbox.doc" />
 		<file loc="import/Richmedia_Sandbox.pdf" />
 		<file loc="import/Richmedia_Sandbox.png" />
+		<file loc="import/rm_delete_icon_16x16.png" />
+		<file loc="import/rm_document_icon_16x16.png" />
+		<file loc="import/rm_edit_with_forms_icon_16x16.gif" />
+		<file loc="import/rm_icalendar_icon_16x16.gif" />
+		<file loc="import/rm_image_icon_16x16.png" />
+		<file loc="import/rm_info_icon_16x16.png" />
+		<file loc="import/rm_music_icon_16x16.png" />
+		<file loc="import/rm_pdf_icon_16x16.png" />
+		<file loc="import/rm_refresh_icon_16x16.gif" />
+		<file loc="import/rm_vcard_icon_16x16.gif"/>
+		<file loc="import/rm_video_icon_16x16.png" />
 	</resources>
 
 	<configs>
