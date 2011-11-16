@@ -761,8 +761,8 @@ QIHelper.prototype = {
       case 'ofc-bar_3d':
       case 'ofc-line':
       case 'ofc-scatterline':
-        ofc_data_objs = [];
-        if (resultCode != null) eval(resultCode);alert(100);
+        ofc_data_objs = { data:[] };
+        if (resultCode != null) eval(resultCode);
         document.ofc.js.resetOfc();
         break;
       case 'tabularform':
