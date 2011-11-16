@@ -839,8 +839,12 @@ class SMWTripleStore extends SMWStoreAdapter {
 				} else {
 					$data = SMWPropertyValue::makeUserProperty($sel_var);
 				}
-
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
+                $propertyExists = Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists();
+                if ($propertyExists) {
+					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
+                } else {
+                	$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var));
+                }
 
 				if (array_key_exists($var_name, $mapPRTOColumns)) {
 					$mapPRTOColumns[$var_name][] = $index;
@@ -1024,6 +1028,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 				if ($sv == TSNamespaces::$RDF_NS."type") {
 					$allValues[] = SMWDIProperty::newFromUserLabel('_INST');
 				} else {
+					$internalPropertyID = TSHelper::isInternalProperty($sv);
+					if ($internalPropertyID !== false) {
+						$allValues[] = SMWDIProperty::newFromUserLabel($internalPropertyID);
+						continue;
+					}
 					$title = TSHelper::getTitleFromURI($sv, false);
 
 					if (is_null($title) || $title instanceof Title) {
@@ -1089,66 +1098,52 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 * @param $literalType
 	 * @param $metadata
 	 */
-	protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
-		 if (trim($literalValue) !== '') {
+    protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
+         if (trim($literalValue) !== '') {
 
-			// create SMWDataValue either by property or if that is not possible by the given XSD type
-			if ($property instanceof SMWPropertyValue ) {
-				$propertyTitle = $property->getWikiPageValue()->getTitle();
-				if (!$propertyTitle->exists() && $property->getDataItem()->isUserDefined()) {
-					// fallback if property does not exist, then use _wpg (otherwise QPs do not print it)
-					$value = SMWDataValueFactory::newTypeIDValue('_wpg');
-						
-				} else {
-					$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
-				}
-			} else {
-				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
-			}
+            // create SMWDataValue either by property or if that is not possible by the given XSD type
+            if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem())) {
+                $value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
+            } else {
+                $value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType), $literalValue);
+            }
 
-			// set actual value
-			
-			if ($value->getTypeID() == '_dat') {
-				// special handling for _dat
-				// normalize dateTime
-				if ($literalValue != '') {
-					 
-					$literalValue = self::fixDateTime($literalValue);
+            // set actual value
+            if ($value->getTypeID() == '_dat') {
+                // special handling for _dat
+                // normalize dateTime
+                if ($literalValue != '') {
+                     
+                    $literalValue = self::fixDateTime($literalValue);
 
-					// hack: can not use setUserValue for SMW_DV_Time for some reason.
-					if ($property instanceof SMWPropertyValue ) {
-						$propertyTitle = $property->getWikiPageValue()->getTitle();
-							
-						if (!$propertyTitle->exists() && $property->getDataItem()->isUserDefined()) {
-							$valueTemp = SMWDataValueFactory::newTypeIDValue('_wpg', str_replace("-","/",$literalValue));
-						} else {
-							$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
-						}
-					} else {
-						$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
-					}
-					$value->setDataItem($valueTemp->getDataItem());
-				}
-			} else {
-				// all others, set as user type
-				$value->setUserValue($literalValue);
-			}
-		} else {
+                    // hack: can not use setUserValue for SMW_DV_Time for some reason.
+                    if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem()) ) {
+                        $valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
+                    } else {
+                        $valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
+                    }
+                    $value->setDataItem($valueTemp->getDataItem());
+                }
+            } else {
+                // all others, set as user type
+                $value->setUserValue($literalValue);
+            }
+        } else {
 
-			// literal value is empty
-			if ($property instanceof SMWPropertyValue ) {
-				$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem());
-			} else {
-				$value = SMWDataValueFactory::newTypeIDValue(is_null($property) ? '_str' :  '_wpg');
+            // literal value is empty
+            if ($property instanceof SMWPropertyValue ) {
+                $value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem());
+            } else {
+                $value = SMWDataValueFactory::newTypeIDValue(is_null($property) ? '_str' :  '_wpg');
 
-			}
+            }
 
-		}
-		// set metadata
-		$di = $value->getDataItem();
-		TSHelper::setMetadata($di, $metadata);
-		return $di;
-	}
+        }
+        // set metadata
+        $di = $value->getDataItem();
+        TSHelper::setMetadata($di, $metadata);
+        return $di;
+    }
 
 	/**
 	 * Creates SMWDIWikiPage object.

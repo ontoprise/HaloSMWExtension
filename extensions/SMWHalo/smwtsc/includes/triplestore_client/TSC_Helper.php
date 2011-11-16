@@ -22,7 +22,7 @@ class WikiTypeToXSD {
 
 			// not supported by TS. Take xsd:string
 			case SMWDataItem::TYPE_GEO : return 'xsd:string';
-			 
+
 			case SMWDataItem::TYPE_URI : return 'xsd:anyURI';
 
 			case SMWDataItem::TYPE_PROPERTY:
@@ -103,7 +103,7 @@ class WikiTypeToXSD {
 
 			// not supported by TS. Take xsd:string
 			case '_geo' : return SMWDataItem::TYPE_GEO;
-			 
+
 			case '_uri' : return SMWDataItem::TYPE_URI;
 			case '_wpg' : return SMWDataItem::TYPE_WIKIPAGE;
 
@@ -181,7 +181,7 @@ class TSHelper {
 				$hour = $hour < 10 ? "0$hour" : $hour;
 				$minute = $minute < 10 ? "0$minute" : $minute;
 				$second = $second < 10 ? "0$second" : $second;
-				
+
 				return "$year-$month-$day"."T"."$hour:$minute:$second";
 				break;
 			case SMWDataItem::TYPE_URI:
@@ -371,6 +371,23 @@ class TSHelper {
 		.'/'
 		.str_replace(' ', '_', $title->getText());
 		return $res;
+	}
+    
+	/**
+	 * Returns the ID if the property is internal, otherwise false.
+	 * 
+	 * @param string $uri
+	 * 
+	 * @return mixed
+	 */
+	public static function isInternalProperty($uri) {
+		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
+			if (stripos($uri, $ns) === 0) {
+				$local = substr($uri, strlen($ns));
+				return (strpos($local, "_") === 0) ? $local : false;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -595,7 +612,7 @@ class TSNamespaces {
 
 		// add LOD prefixes
 		self::$ALL_PREFIXES .= "\nPREFIX source:<".self::$LOD_NS."smwDatasources/> ";
-		
+
 		// SET $W3C_PREFIXES constant
 		self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
@@ -603,7 +620,7 @@ class TSNamespaces {
 		// SET $TSC_PREFIXES constant
 		self::$TSC_PREFIXES = "PREFIX tsctype:<".self::$TSCTYPE_NS."> ";
 		self::$TSC_PREFIXES .= "PREFIX haloprop:<".self::$HALOPROP_NS."> ";
-		
+
 
 	}
 
