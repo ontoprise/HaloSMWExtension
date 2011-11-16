@@ -252,6 +252,7 @@ Section "XAMPP" xampp
    
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start ${PRODUCT_SHORT}.lnk" "$INSTDIR\xampp_start.bat"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT_SHORT}.lnk" "$INSTDIR\xampp_stop.exe"
+    ShellLink::SetRunAsAdministrator "$SMPROGRAMS\$STARTMENU_FOLDER\Stop ${PRODUCT_SHORT}.lnk"
     
 SectionEnd
 
