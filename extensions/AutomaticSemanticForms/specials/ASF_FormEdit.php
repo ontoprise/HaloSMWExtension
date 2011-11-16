@@ -21,6 +21,7 @@ class ASFFormEdit extends SFFormEdit {
 	
 		//get get parameters
 		global $wgRequest;
+		
 		$categoryParam = $wgRequest->getVal('categories');
 		
 		$targetName = $wgRequest->getVal('target');
@@ -78,6 +79,11 @@ class ASFFormEdit extends SFFormEdit {
 		if(count($categoryNames) > 0){ 
 			//The given instance will be edited with forms for the given categories
 			
+			//first deal with preloading form input fields
+			if(is_array($wgRequest->getArray('Property', null))){
+				$wgRequest->setVal('CreateSilentAnnotations:', $wgRequest->getArray('Property', null));
+			}
+			
 			$targetTitle = Title::newFromText($targetName);
 			
 			$result = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
@@ -112,6 +118,11 @@ class ASFFormEdit extends SFFormEdit {
 				$result = ASFFormGenerator::getInstance()->generateFromTitle($title, true);
 		
 				if($result){
+					//first deal with preloading form input fields
+					if(is_array($wgRequest->getArray('Property', null))){
+						$wgRequest->setVal('CreateSilentAnnotations:', $wgRequest->getArray('Property', null));
+					}
+					
 					global $asfDummyFormName;
 					ASFFormGeneratorUtils::createFormDummyIfNecessary();
 					$wgRequest->setVal('form', $asfDummyFormName); 
