@@ -417,9 +417,7 @@ function smwgHaloSetupExtension() {
 		$wgResourceModules['ext.smwhalo.livequeries'] =
 			$commonProperties +
 			array(
-				//somehow ressource loader does not work for SMW_tooltips.js
-				'scripts' => array('scripts/LiveQueries/livequeries.js', '/../SemanticMediaWiki/skins/SMW_tooltip.js'),
-				'dependencies' => array( 'ext.smw.sorttable', 'ext.smw.tooltips')
+				'scripts' => array('scripts/LiveQueries/livequeries.js'),
 			);
 			
 		// Check if qi is called via an curl call and if a token is set
@@ -766,7 +764,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	// Load modules
 	$wgOut->addModules('ext.smwhalo.general');
 	$wgOut->addModules('ext.smwhalo.styles');
-	$wgOut->addModules('ext.smwhalo.createNewArticle');
+	//$wgOut->addModules('ext.smwhalo.createNewArticle');
 
 	switch ($action) {
 		case 'edit':

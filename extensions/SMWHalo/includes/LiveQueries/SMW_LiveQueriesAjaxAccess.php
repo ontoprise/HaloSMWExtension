@@ -22,8 +22,14 @@ function smwf_lq_refresh($id, $query){
 		$pout = $wgParser->parse($query . '__NOTOC__', $wgTitle, $popt);
 		// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
 		SMWOutputs::requireFromParserOutput($pout);
-				
+		
 		$result = $pout->getText();
+		
+		$result .= '<script type="text/javascript">';
+		foreach(array_unique($wgParser->getOutput()->getModules()) as $module){
+			$result .= 'mw.loader.load( "'.$module.'");'; 		
+		}
+		$result .= '</script>';
 	}
 	return $result;
 }
