@@ -466,7 +466,7 @@ AutoCompleter.prototype = {
         }
     },  //handleClick()
     handleMouseOver: function(event) {
-        if (this.notMoved) return;
+        
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
 
