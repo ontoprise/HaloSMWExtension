@@ -49,7 +49,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     $types = SMWDataValueFactory::getKnownTypeLabels();
     foreach ($types as $v) {
       $id = SMWDataValueFactory::findTypeID($v);
-      $numericTypes = array('_num', '_boo', '_dat', '_tem');
+      $numericTypes = array('_num', '_boo', '_dat', '_tem', '_qty');
       if(in_array($id, $numericTypes) || SMWDataValueFactory::newTypeIDValue($id, $v)->isNumeric())
         array_push($numtypes, strtolower($v));
     }
@@ -833,6 +833,7 @@ function qiGetPropertyInformation($relationName) {
   $type = '_wpg';
   $paramName = 'Page';
   $arity = 2;
+  $units = '';
 
   //get types
   $relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
@@ -841,7 +842,7 @@ function qiGetPropertyInformation($relationName) {
   
   //procede if types is set
   if(isset($types)){
-    //if type longer than 1
+    //if types is longer than 1
     //  don't handle at this point
     if(count($types) > 1){
       //@TODO add support for type record
@@ -852,14 +853,21 @@ function qiGetPropertyInformation($relationName) {
     if(count($types) == 1){
       $type = $types[0]->getFragment();
       $paramName = SMWHaloUtil::typeToReadableString($type);
+      //if wiki page type then get range info
       if($type == '_wpg'){
         $range = qiGetPropertyRangeInformation($relationName);
+      }
+      //if quantity type then get units info
+      if($type == '_qty'){
+        $units = qiGetPropertyCustomTypeInformation($relationName);
       }
     }
   }
   //output type value
   $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">' .
-              '<param name="' . $paramName . '" type="' . $type .'"' . $range . '/>' .
+              '<param name="' . $paramName . '" type="' . $type .'"' . $range . '>' .
+              $units .
+              '</param>' .
               '</relationSchema>';
 
   return $relSchema;
@@ -906,19 +914,18 @@ function qiGetPropertyCustomTypeInformation($typeName) {
   global $smwgContLang;
   $units = "";
   $conv = array();
-  $title = Title::newFromText($typeName, SMW_NS_TYPE);
+  $title = SMWDIWikiPage::newFromTitle(Title::newFromText($typeName, SMW_NS_PROPERTY));
   $sspa = $smwgContLang->getPropertyLabels();
-  $prop = SMWPropertyValue::makeProperty($sspa['_CONV']);
+  $prop = SMWDIProperty::newFromUserLabel($sspa['_CONV']);
   $smwValues = smwfGetStore()->getPropertyValues($title, $prop);
-  if (count($smwValues) > 0) {
-    for ($i = 0, $is = count($smwValues); $i < $is; $i++) {
-      $un = $smwValues[$i]->getDBkeys();
-      if (preg_match('/([\d\.]+)(.*)/', $un[0], $matches)) {
-        $ulist = explode(',', $matches[2]);
-        $conv[$matches[1]] = trim($ulist[0]);
-      }
+
+  foreach ($smwValues as $quantityUnit){
+    if (preg_match('/([\d\.]+)(.*)/', $quantityUnit->getString(), $matches)) {
+      $ulist = explode(',', $matches[2]);
+      $conv[$matches[1]] = trim($ulist[0]);
     }
   }
+
   if (count($conv) > 0) {
     foreach (array_keys($conv) as $k) {
       $units .= '<unit label="' . $conv[$k] . '"/>';
