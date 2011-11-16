@@ -545,7 +545,7 @@ CKEDITOR.customprocessor.prototype =
         // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
         var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife|tt|dl)[^>]*\s*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
-        if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:_fck|_cke)/) && dataWithoutTags.length === dataWithTags.length) {
+        if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:fck|cke)/) && dataWithoutTags.length === dataWithTags.length) {
             data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
         }
         //replace only "fcklr" which are not preceded by "<br "
