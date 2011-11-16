@@ -52,7 +52,13 @@ class SMWQMQueryManagementHandler {
 	 * Called by the smwInitProperties Hook. Registers some queries
 	 */
 	public static function initProperties(){
-		SMWPropertyValue::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);
+		global $wgTitle, $wgLang;
+		if($wgTitle instanceof Title
+				&& $wgTitle->getText() == 'Browse' && $wgTitle->getNamespace() == NS_SPECIAL){
+			SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', false, false);
+		} else {
+			SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);	
+		}
 		SMWPropertyValue::registerProperty('___QRC_HQID', '_str', QRC_HQID_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);

@@ -90,7 +90,11 @@ class SMWQueryList extends SpecialPage {
 			$sortkey = implode(', ', $properties);
 			foreach($properties as $key => $property){
 				$title = Title::newFromText($property, SMW_NS_PROPERTY);
-				$properties[$key] = $linker->makeLink($title->getFullText(), $title->getText());
+				if($title instanceof Title){
+					$properties[$key] = $linker->makeLink($title->getFullText(), $title->getText());
+				} else {
+					unset($properties[$key]);
+				}
 			}
 			$html .= '<span style="display: none">'.$sortkey.'</span>';
 			$html .= implode('; ', $properties);

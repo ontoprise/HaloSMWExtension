@@ -142,7 +142,6 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWFancyTableResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_FancyTable.php';
 	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWIsExtensionInstalledPF'] = $smwgHaloIP . '/includes/SMW_IsExtensionInstalledPF.php';
-	$wgAutoloadClasses['SMWQMSpecialBrowse'] = $smwgHaloIP.'/specials/SearchTriple/SMW_QM_SpecialBrowse.php';
 	$wgAutoloadClasses['SMWArticleBuiltinProperties'] = $smwgHaloIP . '/includes/SMW_ArticleBuiltinProperties.php';
 	$wgAutoloadClasses['SMWPredefinitions'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
 	$wgAutoloadClasses['SMWHaloPredefinedPages'] = $smwgHaloIP . '/includes/SMW_Predefinitions.php';
@@ -151,9 +150,6 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWOntologyBrowserXMLGenerator'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserXMLGenerator.php';
 	$wgAutoloadClasses['XMLTreeObject'] = $smwgHaloIP . '/specials/SMWOntologyBrowser/SMW_OntologyBrowserXMLGenerator.php';
 
-
-	//patch Special:Browse in order to hide special Query Management Property
-	$wgSpecialPages['Browse']  = array( 'SMWQMSpecialBrowse' );
 
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
