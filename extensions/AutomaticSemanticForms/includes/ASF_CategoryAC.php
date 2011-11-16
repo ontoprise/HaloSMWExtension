@@ -90,7 +90,6 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 		$category = Title::newFromText($category, NS_CATEGORY);
 		
 		if(!($category instanceof Title)){
-			error();
 			return array();
 		}
 		
@@ -107,9 +106,6 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 			
 			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
 			$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');
-			
-			echo('<br>'.$noASF);
-			echo('<bbr>'.$hasDefaultForm);
 			
 			if(strtolower($noASF) != 'true' && strlen($hasDefaultForm) == 0){
 				$categories[$candidate[0]->getText()] = array($candidate[0]->getText()); 

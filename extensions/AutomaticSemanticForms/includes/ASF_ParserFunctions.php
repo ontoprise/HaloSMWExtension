@@ -485,7 +485,7 @@ class ASFParserFunctions {
 				}
 				$autocompletionQuery = ' class="wickEnabled" constraints="'.$autocompletionQuery.'"';
 			}
-			$str .= '<input type="text" name="target" size="'.$pageSize.'" value="'.$pageValue.'" '.$autocompletionQuery.'/>';
+			$str .= '<input type="text" name="target" size="'.$pageSize.'" value="'.$pageValue.'" '.$autocompletionQuery.'></input>';
 		}
 		
 		//create category input field
@@ -504,7 +504,7 @@ class ASFParserFunctions {
 				$str .= '<input type="text" name="categories" size="'.$categorySize.'" value="'.$categoryValue
 					.'" class="wickEnabled" constraints="'.$cACConstraint.'"/>';
 			} else {
-				$str .= '<select size="1" name="categories" size="'.$categorySize.'" selected="'.$categoryValue.'">';
+				$str .= '<select size="1" name="categories"">';
 				if(strlen($rootCategory) == 0){
 					$categories = ASFCategoryAC::getCategories('', 500);
 				} else {
@@ -525,9 +525,9 @@ class ASFParserFunctions {
 		
 		//add constant article creation data
 		if($type == 'page'){
-			$str .= '<input type="hidden" name="categories" value="' .$categoryName. '">';
+			$str .= '<input type="hidden" name="categories" value="' .$categoryName. '"/>';
 		} else if ($type == 'category'){
-			$str .= '<input type="hidden" name="target" value="' .$pageName. '">';
+			$str .= '<input type="hidden" name="target" value="' .$pageName. '"/>';
 		}
 		
 		if ( $queryString != '' ) {
@@ -564,7 +564,7 @@ class ASFParserFunctions {
 		$str .= $hiddenInputFields;
 		
 		//end form tag
-		$str .= '</form>';
+		$str .= '</form><p>';
 			
 		return $parser->insertStripItem( $str, $parser->mStripState );
 	}
