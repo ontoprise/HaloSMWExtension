@@ -428,11 +428,12 @@ class TFTabularFormData {
 
 					//get type
 					$type = null;
-					if(array_key_exists('Has_type', $annotations)){
-						$type = $semanticData->getPropertyValues($annotations['Has_type']);
+					if(array_key_exists('_TYPE', $annotations)){
+						$type = $semanticData->getPropertyValues($annotations['_TYPE']);
 						$idx = array_keys($type);
 						$idx = $idx[0];
-						$type = $type[$idx]->getShortWikiText();
+						$type = SMWDataValueFactory::newDataItemValue($type[$idx], null)
+								->getShortWikiText();
 					}
 
 
@@ -440,12 +441,18 @@ class TFTabularFormData {
 						//check if there is a range defined
 						if(array_key_exists('Has_domain_and_range', $annotations)){
 							$range = $semanticData->getPropertyValues($annotations['Has_domain_and_range']);
-							if(is_array($range) && array_key_exists(0, $range)){
-								if($range[0] instanceof SMWRecordValue){
-									$range = $range[0]->getDVs();
-									if(array_key_exists(1, $range)){
-										$range = $range[1]->getShortWikiText();
-
+							if(is_array($range)){
+								$idx = array_keys($range);
+								$idx = $idx[0];
+								if($range[$idx] instanceof SMWDIContainer){
+									$rProperties = $range[$idx]->getSemanticData()->getProperties();
+									
+									if(array_key_exists('Has_range', $rProperties)){
+										$rVals = $range[$idx]->getSemanticData()->getPropertyValues($rProperties['Has_range']);
+										$idx = array_keys($rVals);
+										$idx = $idx[0];
+										$range = SMWDataValueFactory::newDataItemValue($rVals[$idx], null)
+											->getShortWikiText();
 										$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [['.$range.']]';
 									}
 								}
@@ -614,7 +621,7 @@ class TFTabularFormData {
 			if(array_key_exists($annotation['title'], $this->writeProtectedAnnotations)){
 				$html .= '<div></div>';
 			} else {
-				$autocomplete = '';
+				$autocompletion = '';
 				if(!is_null($annotation['autocomplete'])){
 					$autocompletion = 'class="wickEnabled" constraints="';
 					$autocompletion .= $annotation['autocomplete'];
@@ -1137,7 +1144,7 @@ class TFTabularFormRowData {
 	 * Returns tabular form HTML for this row
 	 */
 	public function getHTML($annotationPrintRequests, $parameterPrintRequests,
-	$enableInstanceDelete, $enableInstanceAdd){
+		$enableInstanceDelete, $enableInstanceAdd){
 
 		$html = '';
 
@@ -1187,7 +1194,7 @@ class TFTabularFormRowData {
 		foreach($annotationPrintRequests as $annotation){
 			$html .= '<td class="tabf_table_cell">';
 
-			$autocomplete = '';
+			$autocompletion = '';
 			if(!is_null($annotation['autocomplete'])){
 				$autocompletion = 'class="wickEnabled" constraints="';
 				$autocompletion .= $annotation['autocomplete'];
