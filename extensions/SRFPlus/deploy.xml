@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <id>srfplus</id>
+        <title>SRFPlus</title>
+        <version>1.0.0</version>
+        <patchlevel>0</patchlevel>
+        <license>GPL-v2</license>
+        <vendor>Vulcan</vendor>
+        <maintainer>Ning Hu</maintainer>
+        <instdir>extensions/SRFPlus</instdir>
+        <description>
+            SRFPlus is an extension to MediaWiki and bundles some result formats for inline queries.
+        </description>
+		<helpurl></helpurl>
+        <dependencies>
+            <dependency from="1.5.0">smw</dependency>
+        </dependencies>
+    </global>
+    
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+    
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    
+    <resources>
+        <!-- empty -->
+    </resources>
+    
+    <configs>
+        <new>
+            <require name="srfplus"
+                file="extensions/SRFPlus/SRFPlus.php" />
+        </new>
+        <uninstall>
+    		<!-- empty -->
+		</uninstall>
+    </configs>
+</deploydescriptor>
