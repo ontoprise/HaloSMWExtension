@@ -514,6 +514,12 @@ class SMWH_Skin {
 		$store = smwfGetSemanticStore();
 		// determine which categories the page is assigned to
 		$pageCats = $store->getCategoriesForInstance( $title );
+		// special case: category pages
+		if( $title->getNamespace() === NS_CATEGORY ) {
+			$pageCats[] = Title::newFromText( 
+				MWNamespace::getCanonicalName(NS_CATEGORY) . ':Category' 
+			);
+		}
 
 		$iconHTML = '<div id="cat_icons">';
 		foreach ( $pageCats as $pageCat ) {
@@ -540,7 +546,7 @@ class SMWH_Skin {
 
 		return $iconHTML;
 	}
-
+	
 	/**
 	 * Generates the quicklinks/footer add the page bottom
 	 *
