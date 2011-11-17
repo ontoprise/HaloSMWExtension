@@ -446,7 +446,7 @@ class OB_StorageTS extends OB_Storage {
 				foreach($metadataMap as $mdProperty => $mdValue) {
 					$value->setMetadata(strtoupper($mdProperty), NULL, $mdValue);
 				}
-				$values[] = array($value, $NULL);
+				$values[] = array($value, NULL);
 			}
 
 
