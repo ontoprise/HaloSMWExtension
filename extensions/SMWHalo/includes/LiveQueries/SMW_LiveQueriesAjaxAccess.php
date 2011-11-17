@@ -27,8 +27,12 @@ function smwf_lq_refresh($id, $query){
 		
 		$result .= '<script type="text/javascript">';
 		foreach(array_unique($wgParser->getOutput()->getModules()) as $module){
-			$result .= 'mw.loader.load( "'.$module.'");'; 		
+			//$result .= 'mw.loader.load( "'.$module.'");'; 		
 		}
+		$result .= 'mw.loader.using(["';
+		$result .= implode('","', array_unique($wgParser->getOutput()->getModules()));
+		$result .= '"], LiveQuery.helper.executeInitMethods);';
+		
 		$result .= '</script>';
 	}
 	return $result;
