@@ -1975,8 +1975,11 @@ OBCatgeorySubMenu.prototype = Object
 													$('categoryTreeMenu2_input_ontologytools'),
 													this.selectedTitle.replace(
 															/_/, " "));
+									this.subInputValidator.setObjects([ this.selectedTitle ]);
 								}
 							}
+							
+							
 						}
 					},
 
@@ -1985,7 +1988,10 @@ OBCatgeorySubMenu.prototype = Object
 						if (commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT) {
 							this.updateSuperCategories(this.selectedTitle,
 									commandID);
+						} else if (this.commandID == SMW_OB_COMMAND_ADDSUBCATEGORY) {
+							this.subInputValidator.setObjects([ this.selectedTitle ]);
 						}
+						
 					},
 
 					updateSuperCategories : function(title, commandID) {
@@ -2354,6 +2360,7 @@ OBPropertySubMenu.prototype = Object
 													$('propertyTreeMenu2_input_ontologytools'),
 													this.selectedTitle.replace(
 															/_/, " "));
+									this.subInputValidator.setObjects([ this.selectedTitle ]);
 								}
 							}
 						}
@@ -2364,6 +2371,8 @@ OBPropertySubMenu.prototype = Object
 						if (commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT) {
 							this.updateEditProperties(this.selectedTitle,
 									commandID);
+						} else if (this.commandID == SMW_OB_COMMAND_ADDSUBPROPERTY) {
+							this.subInputValidator.setObjects([ this.selectedTitle ]);
 						}
 					},
 
@@ -2717,6 +2726,8 @@ OBInstanceSubMenu.prototype = Object
 						if (commandID == SMW_OB_COMMAND_INSTANCE_EDIT) {
 							this.annotatedCategories(this.selectedInstance,
 									commandID);
+						} else if (commandID == SMW_OB_COMMAND_INSTANCE_CREATE) {
+							this.categoriesInputValidator.setObjects([ this.selectedCategoryTitle ]);
 						}
 					},
 

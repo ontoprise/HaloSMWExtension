@@ -28,6 +28,8 @@ window.wgUserLanguageStrings = {
 	'INVALID_VALUES'          : 'Ungültige Werte.',
 	'EditProperty'            : 'Property editieren :',
 	'NAME'                    : 'Name:',
+	'SUBCATEGORYOF'           : 'Subcategorie von: (komma-getrennt)',
+	'ANNOTATED_CATEGORIES'     : 'Annotatierte Kategorien: (komma-getrennt)',
 	'ENTER_NAME'              : 'Bitte Name eingeben.',
 	'ADD'                     : 'Hinzufügen',
 	'CANCEL'                  : 'Abbrechen',
@@ -225,10 +227,12 @@ window.wgUserLanguageStrings = {
 	'ADD_ANNOTATION'          : 'Annotation hinzufügen',
 	'ADD_TYPE'          	  : 'Type setzen',
 	'ADD_RANGE'          	  : 'Range-Kategorie setzen',
-	'SUBPROPERTYOF'           : 'Subproperty von:',
+	'SUBPROPERTYOF'           : 'Subproperty von: (komma-getrennt)',
 	'ADDPROPERTY' 			  : 'Property hinzufügen',
+	'SAVE_CHANGES'            : 'Speichern',
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Fehler beim Umbennenen',
+	'OB_RENAME_WARNING' 	  : 'Das Umbenennen von Artikeln verändert keine Annotationen.\nDas bedeutet Queries an den TSC könnten nach dem Umbenennen unerwartete Ergebnisse liefern.\n\nMöchten Sie fortfahren?',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
