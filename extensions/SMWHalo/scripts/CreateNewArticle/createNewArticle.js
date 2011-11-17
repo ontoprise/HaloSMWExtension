@@ -337,8 +337,6 @@
         'overlayOpacity' : '0.8',
         'scrolling' : 'no',
         'titleShow'  : false,
-        'enableEscapeButton' : true,
-        'enableNavButtons' : true,
         'onCleanup'  : function(){
           if($.query.get('todo')){
             document.location.search = $.query.remove('todo');
@@ -375,9 +373,7 @@
               CREATENEWARTICLE.articleTitleChange();
             }, 0);
             articleTitleTextBox.unbind('focusout');
-          });
-
-          
+          });          
 
           //set article title from url parameter
           articleTitleTextBox.val($.query.get('newarticletitle'));
@@ -443,4 +439,4 @@
       event.preventDefault();
     });
   });
-})(jQuery.noConflict());
+})(jQuery);

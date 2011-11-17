@@ -36,10 +36,10 @@ jQuery(document).ready(function(){
 function initToolTips(){
   var qtipConfig = {
     content: {text: ''},
-//    overwrite: false,
+    //    overwrite: false,
     prerender: true,
     show: {
-//      ready: true,
+      //      ready: true,
       solo: true,
       when: {
         event: 'mouseover'
@@ -83,18 +83,17 @@ function initToolTips(){
     element.removeAttr('onmouseover');
   });
 
-  jQuery('[title]').live('mouseover', function() {
+  jQuery('#qicontent [title]').each(function(){
     qtipConfig.content.text = jQuery(this).attr('title');
     jQuery(this).qtip(qtipConfig);
   });
- 
 }
 
-function init(){
-  isInit = true;
 
-  initToolTips();
+function init(){
+  isInit = true;  
   initialize_qi();
+  initToolTips();
   window.parent.qihelper = qihelper;
   $ = window.$P;
 }

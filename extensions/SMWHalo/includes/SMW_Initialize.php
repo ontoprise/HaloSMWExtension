@@ -760,7 +760,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	// Load modules
 	$wgOut->addModules('ext.smwhalo.general');
 	$wgOut->addModules('ext.smwhalo.styles');
-	//$wgOut->addModules('ext.smwhalo.createNewArticle');
+	$wgOut->addModules('ext.smwhalo.createNewArticle');
 
 	switch ($action) {
 		case 'edit':
@@ -1464,13 +1464,13 @@ function smwhfRegisterResourceLoaderModules() {
 
 				// Scripts and styles for the create new article feature
 				$wgResourceModules['ext.smwhalo.createNewArticle'] = $moduleTemplate + array(
-		'scripts' => array(
-			'scripts/CreateNewArticle/createNewArticle.js',
-			'scripts/CreateNewArticle/jquery.query-2.1.7.js'
-			),
-		'styles' => array(
-			'/skins/CreateNewArticle/createNewArticle.css'
-			)
+        'scripts' => array(
+          'scripts/CreateNewArticle/createNewArticle.js',
+          ),
+        'styles' => array(
+          '/skins/CreateNewArticle/createNewArticle.css'
+          ),
+          'dependencies' => array('ext.jquery.query')
 			);
 
 
@@ -1634,11 +1634,11 @@ function smwhfRegisterResourceLoaderModules() {
       
      );
 			// Add all modules ext.srf.*
-			foreach ($wgResourceModules as $rid => $mod) {
-				if (strpos($rid, 'ext.srf.') === 0) {
-					$dependencies[] = $rid;
-				}
-			}
+//			foreach ($wgResourceModules as $rid => $mod) {
+//				if (strpos($rid, 'ext.srf.') === 0) {
+//					$dependencies[] = $rid;
+//				}
+//			}
 
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
 		'scripts' => array(

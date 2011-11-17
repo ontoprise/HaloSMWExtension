@@ -1176,7 +1176,6 @@ QIHelper.prototype = {
         thisObj.setListeners(thisObj, thisObj.getInputs());
         thisObj.observeSelectBoxChange(thisObj);
         thisObj.enableButton(thisObj.getInputs());
-        initToolTips();
       });
     });
   },
@@ -1626,7 +1625,6 @@ QIHelper.prototype = {
     tr.parentNode.removeChild(tr);
     this.setListeners(this, this.getInputs());
     this.enableButton(this.getInputs());
-    initToolTips();
   },
 
   /**
