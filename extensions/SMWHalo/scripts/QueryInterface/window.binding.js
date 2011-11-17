@@ -44,7 +44,7 @@ function initToolTips(){
       when: {
         event: 'mouseover'
       },
-      delay: 0
+      delay: 100
     },
     hide: {
       when: {

@@ -428,6 +428,13 @@ function parseWikiText($text, $page = '___Dummy_Page___') {
   SMWOutputs::requireFromParserOutput($pout);
   $result = $pout->getText();
 
+  //add script section for resource module loading in QI result preview
+  $result .= '<script type="text/javascript">';
+  foreach(array_unique($parser->getOutput()->getModules()) as $module){
+    $result .= 'mw.loader.load( "'.$module.'");';
+  }
+  $result .= '</script>';
+
   return $result;
 }
 

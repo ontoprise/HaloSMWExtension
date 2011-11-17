@@ -2984,8 +2984,7 @@ QIHelper.prototype = {
     window.open(url, "Download", 'height=1,width=1');
   },
 
-  checkFormat : function() {
-		
+  checkFormat : function() {		
     // update result preview
     this.getSpecialQPParameters($$('#askQI #layout_format')[0].value);
     this.updateSrcAndPreview();
