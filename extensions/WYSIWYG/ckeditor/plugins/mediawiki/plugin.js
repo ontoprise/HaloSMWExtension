@@ -543,7 +543,7 @@ CKEDITOR.customprocessor.prototype =
         // 1. there are no html attributes in data string starting with "_fck" or "_cke"
         // 2. the data string doesn't start with "<p>"
         // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
-        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife)[^>]*\s*\/?>/ig, '');
+        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife|tt|dl)[^>]*\s*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
         if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:fck|cke)/) && dataWithoutTags.length === dataWithTags.length) {
             data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
@@ -561,6 +561,16 @@ CKEDITOR.customprocessor.prototype =
        
         return data;
      }, 
+
+     getInterwikiLink: function(htmlNode){
+		var title = htmlNode.getAttribute('title');
+		var representation = this._GetNodeText(htmlNode);
+		if (representation.length > 0) {
+			representation = '|' + representation;
+		}
+		var link = '[[' + title + representation + ']]';		
+		return link;
+     },
 
     /*
 	 * Converts a DOM (sub-)tree to a string in the data format.
@@ -873,6 +883,7 @@ CKEDITOR.customprocessor.prototype =
                             // Get the actual Link href.
                             var href = htmlNode.getAttribute( '_cke_saved_href' );
                             var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || '';
+                            var testInner = this._GetNodeText(htmlNode) || '';
 
                             // this is still the old style, thats used in the parser (should be fixed soon)
                             if (!href) {
@@ -893,29 +904,24 @@ CKEDITOR.customprocessor.prototype =
                                 hrefType = matches[1]; 
                             }
 							
-                            //						  if ( hrefType == '' && href.indexOf(':') > -1) {
-                            //                            hrefType = href.substring(0, href.indexOf(':')).toLowerCase();
-                            //						  }
-
                             var isWikiUrl = true;
 
                             if ( hrefType != "" && 
                                 hrefType != "http" &&
                                 hrefType != "https" &&
                                 hrefType != "mailto" &&
-                                !href.StartsWith(hrefType.FirstToUpper() + ':') )
+								!href.StartsWith(hrefType.FirstToUpper() + ':')) {
                                 stringBuilder.push( '[[' + hrefType.FirstToUpper() + ':' );
-                            else if ( htmlNode.className == "extiw" ){
-                                stringBuilder.push( '[[' );
-                                isWikiUrl = true;
+							} else if (htmlNode.getAttribute('class') == "extiw") {
+								//convert url back to interwiki link
+								stringBuilder.push(this.getInterwikiLink(htmlNode));
                             } else {
                                 isWikiUrl = !( href.StartsWith( 'mailto:' ) || (/^\w+:\/\//.test( href )) || (/\{\{[^\}]*\}\}/.test( href )) );
                                     stringBuilder.push( isWikiUrl ? '[[' : '[' );
-                                }
                                 // #2223
                                 if( htmlNode.getAttribute( '_fcknotitle' ) && htmlNode.getAttribute( '_fcknotitle' ) == "true" ){
                                     var testHref = decodeURIComponent(htmlNode.getAttribute('href'));
-                                    var testInner = this._GetNodeText(htmlNode) || '';
+									testInner = this._GetNodeText(htmlNode) || '';
                                     if ( href.toLowerCase().StartsWith( 'category:' ) )
                                         testInner = 'Category:' + testInner;
                                     if ( testHref.toLowerCase().StartsWith( 'rtecolon' ) )
@@ -928,7 +934,8 @@ CKEDITOR.customprocessor.prototype =
                                     stringBuilder.push(':');
                                     href = href.substring(8);
                                 }
-                                if ( isWikiUrl ) href = decodeURIComponent(href);
+								if (isWikiUrl) 
+									href = decodeURIComponent(href);
                                 stringBuilder.push( href );
                                 var innerHTML = this._GetNodeText(htmlNode);
                                 if ( pipeline && innerHTML != '[n]' && ( !isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
@@ -936,7 +943,7 @@ CKEDITOR.customprocessor.prototype =
                                     this._AppendChildNodes( htmlNode, stringBuilder, prefix );
                                 }
                                 stringBuilder.push( isWikiUrl ? ']]' : ']' );
-
+							}
                                 break;
 
                             case 'dl' :
@@ -1527,7 +1534,7 @@ CKEDITOR.customprocessor.prototype =
             // remove any &nbsp;
             text = text.replace('&nbsp;', ' ');
             // remove any possible linebreaks
-            text = text.replace('<br>', ' ');
+            text = text.replace(/\<br\/?>/, ' ');
             // and trim leading and trailing whitespaces
             text = text.Trim();
             // no value set, then add an space to fix problems with [[prop:val| ]]
@@ -1605,12 +1612,12 @@ CKEDITOR.customprocessor.prototype =
 
             // wiki links
             var result, pattern = new RegExp( "\\[\\[.*?\\]\\]", "g" );
-            while( result = pattern.exec( text ) ) {
+            while( (result = pattern.exec( text )) ) {
                 text = text.replace( result, result.toString().replace( /\[/g, "&#x5B;" ).replace( /\]/g, "&#x5D;") );
             }
             // parameter names (that are written with three curly brackets)
             pattern = new RegExp( "\\{{3}.*?\\}{3}", "g" );
-            while( result = pattern.exec( text ) ) {
+            while( (result = pattern.exec( text )) ) {
                 text = text.replace( result, result.toString().replace( /\{/g, "&#x7B;" ).replace( /\}/g, "&#x7D;") );
             }
             // all two curly brackets (used for template calls and parser functions)

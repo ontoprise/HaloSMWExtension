@@ -411,6 +411,14 @@ class CKeditorSkin {
 		}
 		return '<a ' . $args . 'href="' . $url . '">' . $text . '</a>';
 	}
+	
+	function link() {
+		$args = func_get_args();
+		if (count($args) > 1 && $args[1] == 'RTENOTITLE') {
+			$args[1] = null;
+		}
+		return call_user_func_array( array( $this->skin, 'link' ), $args );
+	}
 
 	function __call( $m, $a ) {
 		return call_user_func_array( array( $this->skin, $m ), $a );

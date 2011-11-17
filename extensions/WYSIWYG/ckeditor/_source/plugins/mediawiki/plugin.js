@@ -562,8 +562,14 @@ CKEDITOR.customprocessor.prototype =
         return data;
      },
 
-     getInterwikiLink: function(){
-       return 'TODO';
+     getInterwikiLink: function(htmlNode){
+		var title = htmlNode.getAttribute('title');
+		var representation = this._GetNodeText(htmlNode);
+		if (representation.length > 0) {
+			representation = '|' + representation;
+		}
+		var link = '[[' + title + representation + ']]';		
+		return link;
      },
 
     /*
@@ -900,46 +906,45 @@ CKEDITOR.customprocessor.prototype =
 							
                             var isWikiUrl = true;
 
-                            if ( hrefType != "" && 
-                                hrefType != "http" &&
-                                hrefType != "https" &&
-                                hrefType != "mailto" &&
-                                !href.StartsWith(hrefType.FirstToUpper() + ':') )
-                                stringBuilder.push( '[[' + hrefType.FirstToUpper() + ':' );
-                              //interwiki link
-                            else if ( htmlNode.getAttribute('class') == "extiw" ){
-                              //convert url back to interwiki link
-                                stringBuilder.push( this.getInterwikiLink(htmlNode) );
-                            } else {
-                                isWikiUrl = !( href.StartsWith( 'mailto:' ) || (/^\w+:\/\//.test( href )) || (/\{\{[^\}]*\}\}/.test( href )) );
-                                    stringBuilder.push( isWikiUrl ? '[[' : '[' );
-                                }
-                                // #2223
-                                if( htmlNode.getAttribute( '_fcknotitle' ) && htmlNode.getAttribute( '_fcknotitle' ) == "true" ){
-                                    var testHref = decodeURIComponent(htmlNode.getAttribute('href'));
-                                    testInner = this._GetNodeText(htmlNode) || '';
-                                    if ( href.toLowerCase().StartsWith( 'category:' ) )
-                                        testInner = 'Category:' + testInner;
-                                    if ( testHref.toLowerCase().StartsWith( 'rtecolon' ) )
-                                        testHref = testHref.replace( /rtecolon/, ":" );
-                                    testInner = testInner.replace( /&amp;/, "&" );
-                                    if ( testInner == testHref )
-                                        pipeline = false;
-                                }
-                                if( href.toLowerCase().StartsWith( 'rtecolon' ) ){ // change 'rtecolon=' => ':' in links
-                                    stringBuilder.push(':');
-                                    href = href.substring(8);
-                                }
-                                if ( isWikiUrl ) href = decodeURIComponent(href);
-                                stringBuilder.push( href );
-                                var innerHTML = this._GetNodeText(htmlNode);
-                                if ( pipeline && innerHTML != '[n]' && ( !isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
-                                    stringBuilder.push( isWikiUrl? '|' : ' ' );
-                                    this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-                                }
-                                stringBuilder.push( isWikiUrl ? ']]' : ']' );
-
-                                break;
+                            if (hrefType != "" &&
+								hrefType != "http" &&
+								hrefType != "https" &&
+								hrefType != "mailto" &&
+								!href.StartsWith(hrefType.FirstToUpper() + ':')) {
+								stringBuilder.push('[[' + hrefType.FirstToUpper() + ':');
+							} else if (htmlNode.getAttribute('class') == "extiw") {
+								//convert url back to interwiki link
+								stringBuilder.push(this.getInterwikiLink(htmlNode));
+							} else {
+								isWikiUrl = !(href.StartsWith('mailto:') || (/^\w+:\/\//.test(href)) || (/\{\{[^\}]*\}\}/.test(href)));
+								stringBuilder.push(isWikiUrl ? '[[' : '[');
+								// #2223
+								if (htmlNode.getAttribute('_fcknotitle') && htmlNode.getAttribute('_fcknotitle') == "true") {
+									var testHref = decodeURIComponent(htmlNode.getAttribute('href'));
+									testInner = this._GetNodeText(htmlNode) || '';
+									if (href.toLowerCase().StartsWith('category:')) 
+										testInner = 'Category:' + testInner;
+									if (testHref.toLowerCase().StartsWith('rtecolon')) 
+										testHref = testHref.replace(/rtecolon/, ":");
+									testInner = testInner.replace(/&amp;/, "&");
+									if (testInner == testHref) 
+										pipeline = false;
+								}
+								if (href.toLowerCase().StartsWith('rtecolon')) { // change 'rtecolon=' => ':' in links
+									stringBuilder.push(':');
+									href = href.substring(8);
+								}
+								if (isWikiUrl) 
+									href = decodeURIComponent(href);
+								stringBuilder.push(href);
+								var innerHTML = this._GetNodeText(htmlNode);
+								if (pipeline && innerHTML != '[n]' && (!isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith("category:"))) {
+									stringBuilder.push(isWikiUrl ? '|' : ' ');
+									this._AppendChildNodes(htmlNode, stringBuilder, prefix);
+								}
+								stringBuilder.push(isWikiUrl ? ']]' : ']');
+							}
+                            break;
 
                             case 'dl' :
 
