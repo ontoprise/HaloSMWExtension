@@ -2,9 +2,8 @@ window.LiveQuery = {
     helper : {
         getResultPrinter:function(id, query, frequency){
         	var target = function(x) {
-                var node = document.getElementById(id);
                 if (x.status == 200) jQuery('#'+id).html(x.responseText);
-                else node.innerHTML= "<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>";
+                else jQuery('#'+id).html("<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>");
                 
                 if(frequency*1 > 0){
                 	window.setTimeout('LiveQuery.helper.getResultPrinter("' + id + '", "' + query + '", "' + frequency + '")', frequency*1000);
@@ -15,7 +14,7 @@ window.LiveQuery = {
     }
 };
 
-addOnloadHook( function lq_init(){
+jQuery(document).ready( function($) {
 	jQuery('.lq-container').each(function(){
 		LiveQuery.helper.getResultPrinter(
 			jQuery(this).attr('id'),
