@@ -314,12 +314,6 @@ class SMWH_Skin {
 					// no edit button in edit mode
 					continue;
 				}
-				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-				$tabs .= " class=\"tab";
-				if ( $tab['class'] ) {
-					$tabs .= " " . htmlspecialchars( $tab['class'] );
-				}
-				$tabs .= "\">";
 				# build the edit link
 				$link = '';
 				# if the SF forms are in use, make the edit with semantic forms
@@ -350,7 +344,7 @@ class SMWH_Skin {
 				if ( !$link )
 					$link = htmlspecialchars( $tab['href'] );
 				# add the href $link now to the tabs
-				$tabs .= '<a href="' . $link . '"';
+				$tabs = '<a href="' . $link . '"';
 
 				# We don't want to give the watch tab an accesskey if the
 				# page is being edited, because that conflicts with the
@@ -365,37 +359,42 @@ class SMWH_Skin {
 					$tabs .= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
 				}
 				$tabs .= ">";
+				$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs .= " class=\"tab";
+				if ( $tab['class'] ) {
+					$tabs .= " " . htmlspecialchars( $tab['class'] );
+				}
+				$tabs .= "\">";
+				
 				$tabs.= "<img id=\"editimage\" src=\"" .
 					$wgStylePath . $this->imagepath . "/button_edit.gif\" alt=\"edit\"/>";
-				$tabs .= htmlspecialchars( $tab['text'] ) . "</a></div>";
+				$tabs .= htmlspecialchars( $tab['text'] ) . "</div></a>";
 				$firstTabs .= $tabs;
 			} elseif ( $key == "talk" ) {
 				if ( strstr( $tab['class'], 'selected' ) ) {
 					// no discussion link when on discussion page
 					continue;
 				} elseif ( strstr( $tab['class'], 'new' ) ) {
-					$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '" class="tablink" >';
+					$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
 					$tabs .= " class=\"aggregatedtabelements";
 					if ( $tab['class'] ) {
 						$tabs .= " " . htmlspecialchars( $tab['class'] );
 					}
 					$tabs .= "\">";
-					$tabs .= '<a href="' . htmlspecialchars( $tab['href'] ) . '"';
-					$tabs.= ">" . htmlspecialchars( wfMsg( "smw_start_discussion",
-						$tab['text'] ) ) . "</a></div>";
+					$tabs .= htmlspecialchars( wfMsg( "smw_start_discussion",
+						$tab['text'] ) ) . "</div></a>";
 					$functionsaggregated .= $tabs;
 				} else {
 					// discussion bubble only if page exists and we're not already on discussion page
-					$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '" class="tablink" >';
+					$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
 					$tabs .= " class=\"tab";
 					if ( $tab['class'] ) {
 						$tabs .= " " . htmlspecialchars( $tab['class'] );
 					}
 					$tabs .= "\">";
-					$link = htmlspecialchars( $tab['href'] );
-					# add the href $link now to the tabs
-					$tabs .= '<a href="' . $link . '" >';
-					$tabs .= htmlspecialchars( $tab['text'] ) . "</a></div>";
+					$tabs .= htmlspecialchars( $tab['text'] ) . "</div></a>";
 					$tabsleft .= $tabs;
 				}
 			} else {

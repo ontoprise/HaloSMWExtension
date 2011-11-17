@@ -343,12 +343,16 @@ img.thumbborder {
 .tab#ca-edit:hover{
 	background-color: #316C77;
 }
-.tab#ca-edit a{
+.tab#ca-edit {
 	color: white;
 	text-decoration: none;
 }
-.tab#ca-talk a{
+.tab#ca-talk {
 	text-decoration: none;
+}
+
+.tablink {
+	text-decoration: none !important;
 }
 
 #more {
