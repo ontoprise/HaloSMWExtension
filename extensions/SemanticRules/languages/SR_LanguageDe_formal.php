@@ -8,9 +8,9 @@
  * @author: Kai K�hn / ontoprise / 2009
  *
  */
-require_once("SR_Language.php");
+require_once("SR_LanguageDe.php");
 
-class SR_LanguageDe_formal extends SR_Language {
+class SR_LanguageDe_formal extends SR_LanguageDe {
 
    public function __construct() {
         $this->srContentMessages = array_merge($this->srContentMessages, $this->contentMessagesToOverwrite );
