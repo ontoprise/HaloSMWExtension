@@ -93,10 +93,9 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	border-width:medium 3px 3px;
 }
 
-
-
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible a, ul.smwh_menulist div.smwh_menubody_visible strong {
-   color: #116988; 
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible a,
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible strong {
+	color: #116988; 
 	vertical-align: middle;
 	font-size: 80%;
 	display:list-item;
@@ -106,8 +105,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	text-shadow:0 1px 0 #FFFFFF;
 }
 
-
-
 ul.smwh_menulist div.smwh_menubody_visible a:hover{
    color: #FFF; 
 }
@@ -116,10 +113,6 @@ ul.smwh_menulist div.smwh_menubody_visible a:hover{
 ul.smwh_menulist div.smwh_menubody td:hover  a{
 	background-color: #d8e1e2;
 	text-decoration: none; 
-	padding-left:3px; 
-	padding-top: 3px;
-	padding-bottom: 3px;
-	
 }
 
 ul.smwh_menulist div.smwh_menubody td a{
@@ -136,9 +129,35 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 /* Hover menu items: ----------------------------------------------------------------------------------------------- */
 
 
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.productsmenu a, ul.smwh_menulist div.smwh_menubody_visible div.productsmenu strong {
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.productsmenu a,
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.productsmenu strong {
 	font-weight:bold;
 	padding-bottom: 0px;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.table-wrapper {
+	position:relative;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.table {
+	display:table;
+	border-collapse:collapse;
+	border-spacing: 0;
+	width:100%;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.table-row {
+	display:table-row
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.table-cell {
+	display:table-cell;
+}
+
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon-double {
+	position: absolute;
+	top: 0;
+	bottom: 0;
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.about a {
@@ -155,33 +174,19 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.icon img {
 	vertical-align: middle;
-	padding-right: 3px;
 }
 
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a /*, #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink */{
-   background: url("../img/Menu_get_arrow.png") no-repeat scroll left center;
-   color: #4B595C;
-	vertical-align: middle;
-	display:list-item;
-	list-style-type:none;
-	list-style-position:inside; 
-	font-weight:normal;
-	text-shadow:0 1px 0 #FFFFFF; 
-	text-indent:25px;	
-	padding-top:2px;
-	padding-bottom:3px;
-}
-
-#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.iconlink a:hover {
-	 background: url("../img/Menu_get_arrow_hover.png") no-repeat scroll left center;
-	 background-color: #d8e1e2;
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.table-cell > img {
+	padding-left:3px; 
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.MenuThumbButton a
 {
 	width: 145px;
 	height: 106px;
-	padding: 2px;		
+	padding: 2px;
 }
 
 #smwh_menu ul.smwh_menulist div.smwh_menubody_visible div.MenuThumbButton a:hover
