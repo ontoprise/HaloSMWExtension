@@ -723,7 +723,7 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			targetCategories
 					.each(function(title) {
-						title = title.replace(/\s/, "_");
+						title = title.replace(/\s/g, "_");
 						var nodes = GeneralXMLTools.getNodeByTitle(
 								dataAccess.OB_cachedCategoryTree, title);
 						if (nodes.length > 0) {
@@ -820,7 +820,7 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			targetProperties
 					.each(function(title) {
-						title = title.replace(/\s/, "_");
+						title = title.replace(/\s/g, "_");
 						var nodes = GeneralXMLTools.getNodeByTitle(
 								dataAccess.OB_cachedPropertyTree, title);
 						if (nodes.length > 0) {
@@ -1235,7 +1235,9 @@ OBOntologyModifier.prototype = {
 		this.count++;
 		var categoryTitle_esc = encodeURIComponent(subCategoryTitle);
 		categoryTitle_esc = categoryTitle_esc.replace(/%2F/g, "/");
-		return '<conceptTreeElement title_url="' + categoryTitle_esc
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('CATEGORY_NS')+subCategoryTitle);
+		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
+		return '<conceptTreeElement '+uri_att+' title_url="' + categoryTitle_esc
 				+ '" title="' + subCategoryTitle + '" id="ID_'
 				+ (this.date.getTime() + this.count)
 				+ '" isLeaf="true" expanded="true"/>';
@@ -1272,7 +1274,10 @@ OBOntologyModifier.prototype = {
 		this.count++;
 		var propertyTitle_esc = encodeURIComponent(subPropertyTitle);
 		propertyTitle_esc = propertyTitle_esc.replace(/%2F/g, "/");
-		return '<propertyTreeElement title_url="' + propertyTitle_esc
+
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('PROPERTY_NS')+subPropertyTitle);
+		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
+		return '<propertyTreeElement '+uri_att+' title_url="' + propertyTitle_esc
 				+ '" title="' + subPropertyTitle + '" id="ID_'
 				+ (this.date.getTime() + this.count)
 				+ '" isLeaf="true" expanded="true"/>';
@@ -1434,12 +1439,12 @@ OBOntologyModifier.prototype = {
 				dataAccess.OB_currentlyDisplayedTree, categoryTitle);
 		categoryNodeCached.each(function(node) {
 			node.removeAttribute("title");
-			node.setAttribute("title", newCategoryTitle.replace(/\s/, "_"));
+			node.setAttribute("title", newCategoryTitle.replace(/\s/g, "_"));
 
 		});
 		categoryNodeDisplayed.each(function(node) {
 			node.removeAttribute("title");
-			node.setAttribute("title", newCategoryTitle.replace(/\s/, "_"));
+			node.setAttribute("title", newCategoryTitle.replace(/\s/g, "_"));
 		});
 
 	},
@@ -2043,7 +2048,7 @@ OBCatgeorySubMenu.prototype = Object
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'categoryTreeMenu_input_ontologytools')
-									.strip().replace(/\s/, "_");
+									.strip().replace(/\s/g, "_");
 
 							// check if annotated categories are changed
 							var categoriesToUse = $F(
@@ -2070,7 +2075,7 @@ OBCatgeorySubMenu.prototype = Object
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING',name));
 								if (!confirmation) {
-									Form.Element.setValue('categoryTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									Form.Element.setValue('categoryTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
 								}
 							}
@@ -2425,7 +2430,7 @@ OBPropertySubMenu.prototype = Object
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'propertyTreeMenu_input_ontologytools')
-									.strip().replace(/\s/, "_");
+									.strip().replace(/\s/g, "_");
 
 							// check if annotated categories are changed
 							var propertiesToUse = $F(
@@ -2452,7 +2457,7 @@ OBPropertySubMenu.prototype = Object
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING',name));
 								if (!confirmation) {
-									Form.Element.setValue('propertyTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									Form.Element.setValue('propertyTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
 								}
 							}
@@ -2741,10 +2746,10 @@ OBInstanceSubMenu.prototype = Object
 							// check if rename operation necessary
 							var doRename = this.selectedTitle != $F(
 									'instanceListMenu_input_ontologytools')
-									.strip().replace(/\s/, "_")
+									.strip().replace(/\s/g, "_")
 									&& ":" + this.selectedTitle != $F(
 											'instanceListMenu_input_ontologytools')
-											.strip().replace(/\s/, "_");
+											.strip().replace(/\s/g, "_");
 							;
 
 							// check if annotated categories are changed
@@ -2771,7 +2776,7 @@ OBInstanceSubMenu.prototype = Object
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING',name));
 								if (!confirmation) {
-									Form.Element.setValue('instanceListMenu_input_ontologytools', this.selectedTitle.replace(/_/, " "));
+									Form.Element.setValue('instanceListMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
 								}
 							}
@@ -3568,7 +3573,7 @@ OBEditPropertySubMenu.prototype = Object
 							var confirmation = confirm(gLanguage
 									.getMessage('OB_RENAME_WARNING',name));
 							if (!confirmation) {
-								Form.Element.setValue('schemaPropertiesMenu_propertytitle_ontologytools', this.propertyName.replace(/_/, " "));
+								Form.Element.setValue('schemaPropertiesMenu_propertytitle_ontologytools', this.propertyName.replace(/_/g, " "));
 								return;
 							}
 						}
@@ -3622,7 +3627,7 @@ OBEditPropertySubMenu.prototype = Object
 						} else {
 							propMandatory = 'checked="true"';
 						}
-						var propertyName = this.propertyName.replace(/_/, " ");
+						var propertyName = this.propertyName.replace(/_/g, " ");
 						var typebox = this.newTypeInputBox();
 						var rangebox = this.newRangeInputBox();
 

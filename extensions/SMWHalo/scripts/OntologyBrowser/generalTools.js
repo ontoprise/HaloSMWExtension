@@ -578,7 +578,7 @@ GeneralTools.matchArrayOfRegExp = function (term, regexArray) {
  * @return string
  */
 GeneralTools.makeWikiURL = function(prefixedTitle) {
-	return wgServer + wgArticlePath.replace(/\$1/, prefixedTitle);
+	return wgServer + wgArticlePath.replace(/\$1/, prefixedTitle.replace(/\s/,"_"));
 },
 
 /**
@@ -593,12 +593,13 @@ GeneralTools.makeTSCURI = function(prefixedTitle) {
 		return false;
 	}
 	var parts = prefixedTitle.split(":");
-	var title_esc = parts[0];
 	if (parts.length == 1) {
+		var title_esc = parts[0].replace(/\s/g,"_");
 		return smwghTripleStoreGraph+"/a/"+ title_esc;
 	} else {
-		var nsText = parts[1].toLowerCase();
-		return smwghTripleStoreGraph+"/"+nsText+"/"+ title_esc;
+		var nsText = parts[0].toLowerCase();
+		var title_esc = parts[1].substr(0,1).toUpperCase() + parts[1].substr(1);
+		return smwghTripleStoreGraph+"/"+nsText+"/"+ title_esc.replace(/\s/g,"_");
 		
 	}
 },
