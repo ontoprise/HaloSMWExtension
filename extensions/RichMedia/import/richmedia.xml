@@ -67,8 +67,8 @@
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks rmListInfoIcon&quot; title=&quot;View the file page.&quot;&gt;[[File:RM_info_icon_16x16.png|link={{fullurl:{{{1}}}}}]]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;Edit the file meta data via Semantic Forms&quot;&gt;[[File:RM_edit_with_forms_icon_16x16.gif|link={{fullurl:{{{1}}}|action=formedit}}]]&lt;/span&gt;
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;Delete this file.&quot;&gt;[[File:RM_delete_icon_16x16.png|link={{fullurl:{{{1}}}|action=delete}}]]&lt;/span&gt;
 &lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Category:Template]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -101,9 +101,9 @@
 | default RM_image_icon_16x16.png
 }}&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 [[Category:Template]]
 &lt;/noinclude&gt;</text>
@@ -174,8 +174,8 @@
 |}
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -257,8 +257,8 @@
 {{{end template}}} {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -344,8 +344,8 @@
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -436,8 +436,8 @@
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
 &lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -518,8 +518,8 @@
 
 {{{end template}}}
 &lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -599,8 +599,8 @@
 |}
 
 {{{end template}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -623,8 +623,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -647,8 +647,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -671,8 +671,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Has type::Date| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -695,8 +695,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     </revision>
@@ -720,8 +720,8 @@
 
 [[Category:Property]]
 
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Has type::Page| ]] [[has domain and range::Category:Media;Category:User| ]]</text>
     </revision>
@@ -744,8 +744,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Has type::Text| ]] [[Subproperty of::Property:Description| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -765,8 +765,8 @@
 == Information about this category ==
 [[Rationale::This category subsumes media content coming from media files (e.g. document, audio, image and video files).]]
 [[No automatic formedit::true]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Content|Content]]</text>
     </revision>
@@ -787,8 +787,8 @@
 [[Rationale::This category is used to identify all images]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM image icon 16x16.png]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|Image]]</text>
     </revision>
@@ -809,8 +809,8 @@
 [[Rationale::This category is used to identify all PDF documents.]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM pdf icon 16x16.png]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|Media]]</text>
     </revision>
@@ -831,8 +831,8 @@
 [[Rationale::This category is used to identify all documents.]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM document icon 16x16.png]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|Document]]</text>
     </revision>
@@ -853,8 +853,8 @@
 [[Rationale::This category is used to identify all audio documents.]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM music icon 16x16.png]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|Media]]</text>
     </revision>
@@ -875,8 +875,8 @@
 [[Rationale::This category is used to identify video files.]]
 [[No automatic formedit::true]]
 [[¢Category has icon::File:RM video icon 16x16.png]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|Video]]</text>
     </revision>
@@ -930,9 +930,9 @@
 {{!}} valign=&quot;top&quot; {{!}} {{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}|undefined}} }}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -956,8 +956,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Is inverse of::Property:Attachment| ]] [[Has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -1044,8 +1044,8 @@
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1079,9 +1079,9 @@
 
 [[Category:VCard]]&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1117,9 +1117,9 @@
 [[Category:ICalendar]]
 &lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1140,8 +1140,8 @@
 [[Rationale::This category is used to identify all calendars.]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM icalendar icon 16x16.gif]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|ICalendar]]</text>
     </revision>
@@ -1162,8 +1162,8 @@
 [[Rationale::This category is used to identify all VCards.]]
 [[No automatic formedit::true]]
 [[Category has icon::File:RM vcard icon 16x16.gif]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Category:Media|VCard]]</text>
     </revision>
@@ -1186,8 +1186,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -1210,8 +1210,8 @@
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Category:Property]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[has type::String| ]] [[has domain and range::Category:Media; | ]]</text>
     </revision>
@@ -1246,9 +1246,9 @@
 
 [[Category:Media]]&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1284,9 +1284,9 @@
 [[Category:Image]]
 &lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1321,9 +1321,9 @@
 
 [[Category:Pdf]]&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1358,9 +1358,9 @@
 [[Category:Document]]
 &lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1395,9 +1395,9 @@
 
 [[Category:Audio]]&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1432,9 +1432,9 @@
 
 [[Category:Video]]&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1457,9 +1457,9 @@
 {{#ifeq:{{{show|}}}|True|{{RMListOuterTable}}|}} 
 &lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1508,9 +1508,9 @@
 |}
 &lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 [[Category:Template]]
 &lt;/noinclude&gt;</text>
@@ -1598,8 +1598,8 @@
 {{{standard input|minor edit}}} {{{standard input|watch}}} 
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}} &lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1644,9 +1644,9 @@
 |-
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1696,9 +1696,9 @@
 
 {{#ifexist:{{#extractEmailID: {{{email}}} | Mbox }} | [[HasRelatedArticle::{{#extractEmailID: {{{email}}} | Mbox }}| ]] | [[HasRelatedArticle::{{{name|}}}| ]] }}&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1707,25 +1707,28 @@
     <title>Richmedia</title>
     <id>215</id>
     <revision>
-      <timestamp>2011-11-16T15:23:06Z</timestamp>
+      <timestamp>2011-11-16T22:19:39Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Content bundle}}
-[[Vendor::ontoprise GmbH| ]]
-[[Maintainer::ontoprise GmbH| ]]
-[[Ontology version::1.5.3| ]]
-[[Installation dir::extensions/RichMedia| ]] 
+      <text xml:space="preserve">__NORICHEDITOR__
+;Copyright
+:[[Vendor::ontoprise GmbH]]
+;Maintainer
+:[[Maintainer::ontoprise GmbH]]
+;Version
+:[[Ontology version::1.5.3]]
+;Installation directory
+:[[Installation dir::extensions/RichMedia]] 
+;Help URL
 [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension | ]]
-;dependencies
+;Dependencies
 :[[Dependency::semanticforms;2.2.1;]]
 :[[Dependency::Smwplus;1.6.0]]
 ;License
-:[[License::GPL v2| ]]
-[[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.| ]]
-;This content bundle features a set of basic elements that are necessary for the Rich Media extension.
-
+:[[License::GPL v2]]
+;[[Rationale::This content bundle features a set of basic elements that are necessary for the Rich Media extension.]]
 With the RichMedia Extension you can let the system generate a list of related media (images, documents, pdf, audio and video) to every article.
 
 ;How to use
@@ -1749,8 +1752,7 @@ More information about the RichMedia extension and how to use it can be found in
 }}
 
 [[Category:Content bundle|Content_bundle]]
-{{Content hash|value=}}
-{{Part of bundle|value=Richmedia}}</text>
+[[Part of bundle::Richmedia| ]]</text>
     </revision>
   </page>
   <page>
@@ -1768,9 +1770,9 @@ More information about the RichMedia extension and how to use it can be found in
 [[Category:Template]]
 &lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }}&lt;/includeonly&gt;&lt;noinclude&gt;
 
-{{Part of bundle|value=Richmedia}}
+[[Part of bundle::Richmedia]]
 
-{{Content hash|value=}}
+
 
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1794,8 +1796,8 @@ More information about the RichMedia extension and how to use it can be found in
 
 [[Category:Property]]
 
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 
 [[Is inverse of::Property:HasRelatedArticle| ]]
 [[has domain and range::; Category:Media| ]][[has type::Type:Page| ]]</text>
@@ -1805,31 +1807,24 @@ More information about the RichMedia extension and how to use it can be found in
     <title>Richmedia Sandbox</title>
     <id>284</id>
     <revision>
-      <timestamp>2011-04-01T11:38:38Z</timestamp>
+      <timestamp>2011-11-16T22:18:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">= Richmedia Sandbox =
-Just click on '''&quot;&gt;&gt;Attach file&quot;''' below to upload and attach new files to this sandbox article.
+      <text xml:space="preserve">__NORICHEDITOR__Just click on '''&quot;&gt;&gt;Attach file&quot;''' below to upload and attach new files to this sandbox article.
 
 More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_extension Rich Media extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
-
 [[Rationale::A small Sandbox of the Rich Media extension in this Wiki to give you a smooth start.| ]]
-
 {{RMList|show=True}}
-
-&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
-&lt;/noinclude&gt;</text>
+[[Part of bundle::Richmedia| ]]</text>
     </revision>
   </page>
   <page>
     <title>Document:Richmedia Sandbox.doc</title>
     <id>286</id>
     <revision>
-      <timestamp>2011-07-06T14:47:46Z</timestamp>
+      <timestamp>2011-11-16T22:20:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1847,8 +1842,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 }}
 &lt;noinclude&gt;
 [[Rationale::Example document for the Rich Media sandbox.]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia| ]]
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1856,7 +1850,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>Pdf:Richmedia Sandbox.pdf</title>
     <id>287</id>
     <revision>
-      <timestamp>2011-07-06T14:47:59Z</timestamp>
+      <timestamp>2011-11-16T22:22:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1874,8 +1868,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 }}
 &lt;noinclude&gt;
 [[Rationale::Example PDF for the Rich Media sandbox.]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia| ]]
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1883,11 +1876,11 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
     <title>File:Richmedia Sandbox.png</title>
     <id>288</id>
     <revision>
-      <timestamp>2011-10-13T16:18:18Z</timestamp>
+      <timestamp>2011-11-16T22:21:27Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>uploaded a new version of &amp;quot;[[File:Richmedia Sandbox.png]]&amp;quot;: auto-inserted image</comment>
       <text xml:space="preserve">{{RMImage
 |Filename=File:Richmedia Sandbox.png
 |CopyrightBy=Ontoprise GmbH
@@ -1901,8 +1894,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 }}
 &lt;noinclude&gt;
 [[Rationale::Example image for the Rich Media sandbox.]]
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia| ]]
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1925,7 +1917,7 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
 
 [[Category:Property]]
 {{Part of bundle|value=	Richmedia}}
-{{Content hash|value=}}
+
 
 [[Has type::Page| ]] [[Has domain and range::Category:Content| ]]
 [[Category:Transitive properties|Transitive_properties]]</text>
@@ -1943,8 +1935,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus document icon 16x16.png]] to [[File:RM document icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Document icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1961,8 +1953,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus edit with forms icon 16x16.gif]] to [[File:RM edit with forms icon 16x16.gif]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1977,8 +1969,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::ICalendar icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1995,8 +1987,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus image icon 16x16.png]] to [[File:RM image icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Image/File icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2013,8 +2005,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus info icon 16x16.png]] to [[File:RM info icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Info icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2031,8 +2023,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus music icon 16x16.png]] to [[File:RM music icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Audio icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2049,8 +2041,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus pdf icon 16x16.png]] to [[File:RM pdf icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2067,8 +2059,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus refresh icon 16x16.gif]] to [[File:RM refresh icon 16x16.gif]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Refresh icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2085,8 +2077,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus vcard icon 16x16.gif]] to [[File:RM vcard icon 16x16.gif]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::VCard icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2103,8 +2095,8 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
       <minor/>
       <comment>moved [[File:Smw plus delete icon 16x16.png]] to [[File:RM delete icon 16x16.png]]</comment>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Delete icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2119,36 +2111,10 @@ More information can be found also in the [http://smwforum.ontoprise.com/smwforu
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;
-{{Part of bundle|value=Richmedia}}
-{{Content hash|value=}}
+[[Part of bundle::Richmedia]]
+
 [[Rationale::Video icon of the Rich Media extension used in the Media list.| ]]
 &lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Content hash</title>
-    <id>248</id>
-    <revision>
-      <id>257</id>
-      <timestamp>2010-12-21T14:25:49Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Part of bundle</title>
-    <id>247</id>
-    <revision>
-      <id>256</id>
-      <timestamp>2010-12-21T14:25:58Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
     </revision>
   </page>
 </mediawiki>
