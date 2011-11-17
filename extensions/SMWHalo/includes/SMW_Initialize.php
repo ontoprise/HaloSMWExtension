@@ -801,11 +801,14 @@ function smwfHaloAddJSLanguageScripts() {
 	// content language file
 	$clngScript = '/scripts/Language/SMW_LanguageEn.js';
 	$lng = '/scripts/Language/SMW_Language';
-	if (isset($wgUser)) {
-		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+	if (isset($wgLanguageCode)) {
+		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($smwgHaloIP . $lng)) {
 			$clngScript = $lng;
 		}
+	} else {
+		$lng .= 'En.js';
+		$clngScript = $lng;
 	}
 
 	// user language file
@@ -816,7 +819,10 @@ function smwfHaloAddJSLanguageScripts() {
 		if (file_exists($smwgHaloIP . $lng)) {
 			$ulngScript = $lng;
 		}
-	}
+	} else {
+        $lng .= 'En.js';
+        $ulngScript = $lng;
+    }
 	$wgResourceModules['ext.smwhalo.Language'] = array(
 	// JavaScript and CSS styles. To combine multiple file, just list them as an array.
 		'scripts' => array(

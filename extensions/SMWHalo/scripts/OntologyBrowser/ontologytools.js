@@ -590,12 +590,12 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 
-		var superCategoryContent = "[[" + gLanguage.getMessage('CATEGORY_NS')
+		var superCategoryContent = "[[" + gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ superCategoryTitle[0] + "]]";
 		if (superCategoryTitle.length > 1) {
 			for ( var i = 1, n = superCategoryTitle.length; i < n; i++) {
 				superCategoryContent = superCategoryContent + "[["
-						+ gLanguage.getMessage('CATEGORY_NS')
+						+ gLanguage.getMessage('CATEGORY_NS', 'cont')
 						+ superCategoryTitle[i] + "]]";
 			}
 		}
@@ -609,7 +609,7 @@ OBOntologyModifier.prototype = {
 					+ selectedBundle + "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ subCategoryTitle, superCategoryContent, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
 				$(superCategoryID));
@@ -651,7 +651,7 @@ OBOntologyModifier.prototype = {
 				.getAttribute('title');
 		}
 		var content = superCategoryTitle != null ? "[["
-				+ gLanguage.getMessage('CATEGORY_NS') + superCategoryTitle
+				+ gLanguage.getMessage('CATEGORY_NS', 'cont') + superCategoryTitle
 				+ "]]" : "";
 
 		var selectedBundle = $F("bundleSelector");
@@ -663,7 +663,7 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS')
+		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ newCategoryTitle, content, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
 				sibligCategoryID != null ? $(sibligCategoryID) : $('categoryTree'));
@@ -692,8 +692,8 @@ OBOntologyModifier.prototype = {
 					newCategoryTitle, SMW_CATEGORY_NS, $(categoryID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY_NS')
-				+ categoryTitle, gLanguage.getMessage('CATEGORY_NS')
+		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
+				+ categoryTitle, gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
 
@@ -789,7 +789,7 @@ OBOntologyModifier.prototype = {
 			finished();
 		}
 		articleCreator.moveInstanceToCategories(gLanguage
-				.getMessage('CATEGORY_NS')
+				.getMessage('CATEGORY_NS', 'cont')
 				+ draggedCategory, targetCategories, "", callback.bind(this),
 				$('categoryTree'));
 	},
@@ -886,7 +886,7 @@ OBOntologyModifier.prototype = {
 			finished();
 		}
 		articleCreator.movePropertyToProperty(gLanguage
-				.getMessage('PROPERTY_NS')
+				.getMessage('PROPERTY_NS', 'cont')
 				+ draggedProperty, targetProperties, "", callback.bind(this),
 				$('propertyTree'));
 	},
@@ -918,7 +918,7 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 
-		var content = "\n[[_SUBP::" + gLanguage.getMessage('PROPERTY_NS')
+		var content = "\n[[_SUBP::" + gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]";
 		var selectedBundle = $F("bundleSelector");
 		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
@@ -929,7 +929,7 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ subPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
 				$(superPropertyID));
@@ -972,7 +972,7 @@ OBOntologyModifier.prototype = {
 				.getAttribute('title');
 		}
 		var content = superPropertyTitle != null ? "\n[[_SUBP::"
-				+ gLanguage.getMessage('PROPERTY_NS') + superPropertyTitle
+				+ gLanguage.getMessage('PROPERTY_NS', 'cont') + superPropertyTitle
 				+ "]]" : "";
 		var selectedBundle = $F("bundleSelector");
 		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
@@ -983,7 +983,7 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
 				sibligPropertyID != null ? $(sibligPropertyID) : $('propertyTree'));
@@ -1012,8 +1012,8 @@ OBOntologyModifier.prototype = {
 					newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS')
-				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
 	/**
@@ -1031,8 +1031,8 @@ OBOntologyModifier.prototype = {
 	renamePropertyWithCallback : function(newPropertyTitle, oldPropertyTitle,
 			propertyID, callback) {
 
-		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS')
-				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
 
@@ -1055,7 +1055,7 @@ OBOntologyModifier.prototype = {
 	editProperties : function(title, type, mandatory, newRange, oldRange,
 			domainCategory, callback) {
 
-		articleCreator.editPropertyArticle(gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.editPropertyArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ title, type, mandatory, newRange, oldRange, domainCategory,
 				"OB", callback);
 	},
@@ -1110,11 +1110,11 @@ OBOntologyModifier.prototype = {
 
 		if (range != '') {
 			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-					+ gLanguage.getMessage('CATEGORY_NS') + domainCategoryTitle
+					+ gLanguage.getMessage('CATEGORY_NS', 'cont') + domainCategoryTitle
 					+ "; " + gLanguage.getMessage('CATEGORY_NS') + range + "]]"
 		} else {
 			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-					+ gLanguage.getMessage('CATEGORY_NS') + domainCategoryTitle
+					+ gLanguage.getMessage('CATEGORY_NS', 'cont') + domainCategoryTitle
 					+ "]]";
 		}
 
@@ -1127,7 +1127,7 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS')
+		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ propertyTitle, '', content, gLanguage
 				.getMessage('CREATE_PROPERTY'), callback.bind(this),
 				$(domainCategoryID));
@@ -1217,7 +1217,7 @@ OBOntologyModifier.prototype = {
 		}
 		var categoryAnnotation = "";
 		categoryTitles.each(function(title) {
-			categoryAnnotation += "\n[[" + gLanguage.getMessage('CATEGORY_NS')
+			categoryAnnotation += "\n[[" + gLanguage.getMessage('CATEGORY_NS', 'cont')
 					+ title.strip() + "]]";
 		});
 		articleCreator.createArticle(instanceTitle, categoryAnnotation + "\n"
@@ -1235,7 +1235,7 @@ OBOntologyModifier.prototype = {
 		this.count++;
 		var categoryTitle_esc = encodeURIComponent(subCategoryTitle);
 		categoryTitle_esc = categoryTitle_esc.replace(/%2F/g, "/");
-		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('CATEGORY_NS')+subCategoryTitle);
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('CATEGORY_NS', 'cont')+subCategoryTitle);
 		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
 		return '<conceptTreeElement '+uri_att+' title_url="' + categoryTitle_esc
 				+ '" title="' + subCategoryTitle + '" id="ID_'
@@ -1275,7 +1275,7 @@ OBOntologyModifier.prototype = {
 		var propertyTitle_esc = encodeURIComponent(subPropertyTitle);
 		propertyTitle_esc = propertyTitle_esc.replace(/%2F/g, "/");
 
-		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('PROPERTY_NS')+subPropertyTitle);
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('PROPERTY_NS', 'cont')+subPropertyTitle);
 		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
 		return '<propertyTreeElement '+uri_att+' title_url="' + propertyTitle_esc
 				+ '" title="' + subPropertyTitle + '" id="ID_'
@@ -2073,7 +2073,7 @@ OBCatgeorySubMenu.prototype = Object
 							
 							if (doRename && smwghTripleStoreGraph) {
 								var confirmation = confirm(gLanguage
-										.getMessage('OB_RENAME_WARNING',name));
+										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
 									Form.Element.setValue('categoryTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
@@ -2194,12 +2194,12 @@ OBCatgeorySubMenu.prototype = Object
 					setValidators : function() {
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_input_ontologytools', gLanguage
-										.getMessage('CATEGORY_NS_WOC'), false,
+										.getMessage('CATEGORY_NS_WOC', 'cont'), false,
 								this);
 
 						this.subInputValidator = new OBObjectListValidator(this.id
 								+ '2_input_ontologytools', gLanguage
-								.getMessage('CATEGORY_NS_WOC'), true, this);
+								.getMessage('CATEGORY_NS_WOC', 'cont'), true, this);
 					},
 
 					setFocus : function() {
@@ -2455,7 +2455,7 @@ OBPropertySubMenu.prototype = Object
 							
 							if (doRename && smwghTripleStoreGraph) {
 								var confirmation = confirm(gLanguage
-										.getMessage('OB_RENAME_WARNING',name));
+										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
 									Form.Element.setValue('propertyTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
@@ -2574,11 +2574,11 @@ OBPropertySubMenu.prototype = Object
 					setValidators : function() {
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_input_ontologytools', gLanguage
-										.getMessage('PROPERTY_NS_WOC'), false,
+										.getMessage('PROPERTY_NS_WOC', 'cont'), false,
 								this);
 						this.subInputValidator = new OBObjectListValidator(this.id
 								+ '2_input_ontologytools', gLanguage
-								.getMessage('PROPERTY_NS_WOC'), true, this);
+								.getMessage('PROPERTY_NS_WOC', 'cont'), true, this);
 
 					},
 
@@ -2774,7 +2774,7 @@ OBInstanceSubMenu.prototype = Object
 							
 							if (doRename && smwghTripleStoreGraph) {
 								var confirmation = confirm(gLanguage
-										.getMessage('OB_RENAME_WARNING',name));
+										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
 									Form.Element.setValue('instanceListMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
 									return;
@@ -2946,7 +2946,7 @@ OBInstanceSubMenu.prototype = Object
 
 						this.categoriesInputValidator = new OBObjectListValidator(this.id
 								+ '2_input_ontologytools', gLanguage
-								.getMessage('CATEGORY_NS_WOC'), true, this);
+								.getMessage('CATEGORY_NS_WOC', 'cont'), true, this);
 
 					},
 
@@ -3198,7 +3198,7 @@ OBSchemaPropertySubMenu.prototype = Object
 						var c = this.count + 1;
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
-								gLanguage.getMessage('PROPERTY_NS_WOC'), false,
+								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'), false,
 								this);
 					},
 
@@ -3331,7 +3331,7 @@ OBSchemaPropertySubMenu.prototype = Object
 					onchangeTypeSelector : function(event) {
 						var value = $F(event.currentTarget);
 						if (value.toLowerCase() == gLanguage
-								.getMessage('PAGE_TYPE')) {
+								.getMessage('PAGE_TYPE'), 'cont') {
 							$('typeRange2_ontologytools').enable();
 							$('typeRange2_ontologytools').setStyle( {
 								backgroundColor : '#fff'
@@ -3426,7 +3426,7 @@ OBSchemaPropertySubMenu.prototype = Object
 						var toReplace = $(addTo.appendChild(document
 								.createElement("tr")));
 						toReplace.replace('<tr><td width="60px;">'
-								+ gLanguage.getMessage('CATEGORY_NS_WOC')
+								+ gLanguage.getMessage('CATEGORY_NS_WOC', 'cont')
 								+ ' </td><td>' + this.newRangeInputBox()
 								+ '</td></tr>');
 						autoCompleter.registerAllInputs();
@@ -3571,7 +3571,7 @@ OBEditPropertySubMenu.prototype = Object
 						
 						if (propertyTitleChanged && smwghTripleStoreGraph) {
 							var confirmation = confirm(gLanguage
-									.getMessage('OB_RENAME_WARNING',name));
+									.getMessage('OB_RENAME_WARNING'));
 							if (!confirmation) {
 								Form.Element.setValue('schemaPropertiesMenu_propertytitle_ontologytools', this.propertyName.replace(/_/g, " "));
 								return;
@@ -3592,7 +3592,7 @@ OBEditPropertySubMenu.prototype = Object
 							}
 
 							var newRange = type == gLanguage
-									.getMessage('TYPE_PAGE_WONS') ? range : "";
+									.getMessage('TYPE_PAGE_WONS', 'cont') ? range : "";
 							ontologyTools.editProperties(name, type, mandatory,
 									newRange, this.propertyRangeCategory,
 									domainCategory, finishedEditing.bind(this));
@@ -3683,11 +3683,11 @@ OBEditPropertySubMenu.prototype = Object
 					setValidators : function() {
 						this.changedtitleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
-								gLanguage.getMessage('PROPERTY_NS_WOC'), false,
+								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'), false,
 								this);
 						this.rangeInputValidator = new OBInputTitleValidator(
 								'typeRange2_ontologytools', gLanguage
-										.getMessage('CATEGORY_NS_WOC'), true,
+										.getMessage('CATEGORY_NS_WOC', 'cont'), true,
 								this);
 						var callbackEnableCommand = function() {
 							if (this.allIsValid()) {
@@ -3704,7 +3704,7 @@ OBEditPropertySubMenu.prototype = Object
 
 						var enableRangeInput = function() {
 							if ($F('typeRange1_ontologytools') == gLanguage
-									.getMessage('TYPE_PAGE_WONS')) {
+									.getMessage('TYPE_PAGE_WONS', 'cont')) {
 								$('typeRange2_ontologytools').enable();
 							} else {
 								$('typeRange2_ontologytools').disable();
@@ -3850,7 +3850,7 @@ OBEditPropertySubMenu.prototype = Object
 							}
 						}
 						if (c == 0) {
-							type = gLanguage.getMessage('TYPE_PAGE_WONS');
+							type = gLanguage.getMessage('TYPE_PAGE_WONS', 'cont');
 						} else {
 							type = this.builtinTypes[c];
 						}
