@@ -537,6 +537,12 @@ CKEDITOR.customprocessor.prototype =
 
     toHtml : function( data, fixForBody )
     {
+      //set global mode variable
+        if (window.parent.wgCKeditorCurrentMode)
+            window.parent.wgCKeditorCurrentMode = 'wysiwyg';
+        else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
+            window.parent.popup.parent.wgCKeditorCurrentMode = 'wysiwyg';
+          
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         // transform only if
@@ -560,7 +566,11 @@ CKEDITOR.customprocessor.prototype =
         data = writer.getHtml( true );
        
         return data;
-     }, 
+     },
+
+     getInterwikiLink: function(){
+       return 'TODO';
+     },
 
      getInterwikiLink: function(htmlNode){
 		var title = htmlNode.getAttribute('title');
