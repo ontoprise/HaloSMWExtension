@@ -750,7 +750,7 @@ QIHelper.prototype = {
       case "timeline":
       case "eventline":
         this.parseWikilinks2Html();
-        smw_timeline_init();
+//        smw_timeline_init();
 
         break;
       case "exhibit":
@@ -3082,6 +3082,19 @@ QIHelper.prototype = {
     this.parseQueryString();
   },
 
+  trimArray: function(array){
+    if(!array){
+      return array;
+    }
+    for(var i = 0; i < array.length; i++){
+      if(array[i] === ''){
+        array.splice(i, 1);
+        i--;
+      }
+    }
+    return array;
+  },
+
   parseQueryString : function() {
     var sub = this.queryPartsFromInitByAsk;
 
@@ -3097,7 +3110,8 @@ QIHelper.prototype = {
 
       // merge something like this [[Category:X]] | [[PropX::+]]
       // but also escape double || like in [[Category:X||Y]]
-      var tmp = sub[f].replace(/\|\|/g, '%%!!%%').split('|'),
+      var tmp = sub[f].replace(/\|\|/g, '%%!!%%').split('|');
+      tmp = this.trimArray(tmp);
       tmp2 = [ '' ];
 
       for (var t = 0; t < tmp.length; t++) {
@@ -3110,12 +3124,13 @@ QIHelper.prototype = {
       sub[f] = tmp2.join('|').replace(/%%!!%%/g, '||');
 
       // extact the arguments, i.e. all between [[...]]
-      var args = sub[f].split(/\]\]\s*\[\[/);
-      // remove the ]] from the last element
-      args[args.length - 1] = args[args.length - 1].substring(0,
-        args[args.length - 1].indexOf(']]'));
-      // and [[ from the first element
-      args[0] = args[0].replace(/^\s*\[\[/, '');
+      var args = [];
+      var regexPattern = new RegExp('\\[\\[([^\\]]+)\\]\\]', 'gm');
+      var match;
+      while(match = regexPattern.exec(sub[f])){
+        args.push(match[1]);
+      }
+
       this.handleQueryString(args, f, pMustShow);
     }
     this.setActiveQuery(0); // set main query to active
