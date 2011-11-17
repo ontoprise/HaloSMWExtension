@@ -227,7 +227,7 @@ ContextMenuFramework.prototype = {
     $('contextmenu').show();
 	var inp = $('contextmenu').select('input');
 	if (inp.length > 0) {
-	    inp[0].focus();
+		setTimeout(function () {inp[0].focus();}, 500);
 	}
 	
     var numberOfSubContainers = $('contextmenuContent').immediateDescendants().length;
