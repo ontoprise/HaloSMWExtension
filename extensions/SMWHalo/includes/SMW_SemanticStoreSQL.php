@@ -359,7 +359,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
 		$bundleSql = empty($bundleID) ? '' : ' AND cl_to IN (SELECT pc.page_title FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID.')';
 
-		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_id = cl_from '.$bundleSql.' '.
+		$sql = 'p1.page_title=' . $db->addQuotes($instanceTitle->getDBkey()) . ' AND p1.page_namespace = '.$instanceTitle->getNamespace().' AND p1.page_id = cl_from '.$bundleSql.' '.
 		DBHelper::getSQLConditions($requestoptions,'cl_to','cl_to');
 
 		$res = $db->select( array($page.' p1', $categorylinks),
