@@ -536,7 +536,7 @@ CKEDITOR.customprocessor.prototype =
   
 
     toHtml : function( data, fixForBody )
-    {
+    {         
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         // transform only if
