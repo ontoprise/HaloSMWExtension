@@ -549,7 +549,7 @@ CKEDITOR.customprocessor.prototype =
         // 1. there are no html attributes in data string starting with "_fck" or "_cke"
         // 2. the data string doesn't start with "<p>"
         // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
-        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife|tt|dl)[^>]*\s*\/?>/ig, '');
+        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife|tt|dl|math)[^>]*\s*\/?>/ig, '');
         var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
         if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:fck|cke)/) && dataWithoutTags.length === dataWithTags.length) {
             data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
@@ -566,11 +566,7 @@ CKEDITOR.customprocessor.prototype =
         data = writer.getHtml( true );
        
         return data;
-     },
-
-     getInterwikiLink: function(){
-       return 'TODO';
-     },
+     }, 
 
      getInterwikiLink: function(htmlNode){
 		var title = htmlNode.getAttribute('title');
@@ -1096,6 +1092,9 @@ CKEDITOR.customprocessor.prototype =
                             case 'img' :
 
                                 var formula = htmlNode.getAttribute( '_cke_mw_math' );
+								if (!formula) {
+									formula = htmlNode.getAttribute( '_fck_mw_math' );
+								}
 
                                 if ( formula && formula.length > 0 ){
                                     stringBuilder.push( '<math>' );

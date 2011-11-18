@@ -496,8 +496,8 @@ class CKeditor_MediaWiki {
 		// End of CSS trick
 
 		$script = <<<HEREDOC
-<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>
-<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>-->
+<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>-->
+<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
 </script>
