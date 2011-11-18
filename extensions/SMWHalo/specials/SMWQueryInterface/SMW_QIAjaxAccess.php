@@ -686,7 +686,7 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
   //get protocol string
   preg_match('/^(\w+):\/\//', $server, $match);
   $proto = $match[1];
-  
+
   $c = curl_init();
   curl_setopt($c, CURLOPT_URL, $server . $file);
   curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
@@ -873,7 +873,7 @@ function qiGetPropertyInformation($relationName) {
   }
   //output type value
   $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">' .
-          '<param name="' . $paramName . '" type="' . $type . '"' . $range . '>' .
+          '<param name="' . $paramName . '" type="' . $type . '" ' . $range . '>' .
           $units .
           '</param>' .
           '</relationSchema>';
@@ -894,13 +894,22 @@ function qiGetPropertyRangeInformation($relationName) {
   $title = Title::newFromText($relationName, SMW_NS_PROPERTY);
   $sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
   $prop = SMWDIProperty::newFromUserLabel($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-  $smwValues = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($title), $prop);
-  if (count($smwValues) > 0) {
-    $domainAndRange = $smwValues[0]->getDVs();
-    if (count($domainAndRange) > 1) {
-      $range = ' range="' . $domainAndRange[1]->getPrefixedText() . '"';
+  $rangeCategories = smwfGetSemanticStore()->getRangeCategories($title);
+  $range = '';
+
+  $numOfRangeCategories = count($rangeCategories);
+  if ($numOfRangeCategories > 0) {
+    $range = 'range="';
+
+    for ($i = 0; $i < $numOfRangeCategories; $i++) {
+      $range .= $rangeCategories[$i]->getFullText();
+      if ($i < $numOfRangeCategories - 1) {
+        $range .= ';';
+      }
     }
+    $range .= '"';
   }
+
   return $range;
 }
 

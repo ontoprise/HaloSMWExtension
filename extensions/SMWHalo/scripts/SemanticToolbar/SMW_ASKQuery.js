@@ -59,7 +59,7 @@ ASKQuery.prototype = {
     && typeof stb_control != 'undefined'
     && stb_control.isToolbarAvailable()
       && //inline query section should not be visible in wysiwyg mode
-      !(CKEDITOR && CKEDITOR.instances.wpTextbox1 && (showFCKEditor & RTE_VISIBLE)))
+      !(typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.wpTextbox1 && (showFCKEditor & RTE_VISIBLE)))
       {
       this.askQueryContainer = stb_control.createDivContainer(ASKQUERYCONTAINER,0);
       this.showToolbar();
