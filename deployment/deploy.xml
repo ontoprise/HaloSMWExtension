@@ -20,7 +20,7 @@
 		</helpurl>
 		<license>GPL-v2</license>
 		<dependencies>
-			<dependency from="1.16.0" to="1.17.9">mw</dependency>
+			<dependency from="1.17.0" to="1.17.9">mw</dependency>
 		</dependencies>
 	</global>
 
