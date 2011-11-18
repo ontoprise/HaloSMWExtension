@@ -341,7 +341,7 @@ window.wgUserLanguageStrings = {
     'QI_GT'                   : 'gr&ouml;&szlig;er',
     'QI_NOT'                  : 'nicht',
     'QI_LIKE'                 : '&auml;hnlich',
-    'QI BUTTON_ADD'           : 'Hinzuf&uuml;gen',
+    'QI_BUTTON_ADD'           : 'Hinzuf&uuml;gen',
     'QI_BUTTON_UPDATE'        : 'Aktualisieren',
     'QI_ALL_VALUES'           : 'alle Werte',
     'QI_SUBQUERY_TEXT'        : 'Ein neuer Query wird erstellt wenn Sie die Schaltfl&auml;che "Hinzuf&uuml;gen" oder "Aktualisieren" bet&auml;tigen, in welcher Sie Einschr&auml;nkungen vornehmen k&ouml;nnen.',

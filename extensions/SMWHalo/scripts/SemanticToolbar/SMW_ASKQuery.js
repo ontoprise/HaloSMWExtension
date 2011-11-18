@@ -160,7 +160,6 @@ ASKQuery.prototype = {
   },
 
   openQueryInterfaceDialog: function(href, onCleanup){
-    var thisObj = this;
     jQuery.fancybox({
       'href' : href,
       'width' : 977,

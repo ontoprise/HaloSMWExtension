@@ -50,7 +50,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     foreach ($types as $v) {
       $id = SMWDataValueFactory::findTypeID($v);
       $numericTypes = array('_num', '_boo', '_dat', '_tem', '_qty');
-      if(in_array($id, $numericTypes) || SMWDataValueFactory::newTypeIDValue($id, $v)->isNumeric())
+      if (in_array($id, $numericTypes) || SMWDataValueFactory::newTypeIDValue($id, $v)->isNumeric())
         array_push($numtypes, strtolower($v));
     }
     return implode(",", $numtypes);
@@ -199,10 +199,10 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     wfLoadExtensionMessages('SemanticMediaWiki');
 
     $format = $p_array[0];
-    
+
     //bugfix #15766: use the Validator extension to get available result printer parameters
-    $printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::SPECIAL_PAGE );
-		$params = method_exists( $printer, 'getValidatorParameters' ) ? $printer->getValidatorParameters() : array();
+    $printer = SMWQueryProcessor::getResultPrinter($format, SMWQueryProcessor::SPECIAL_PAGE);
+    $params = method_exists($printer, 'getValidatorParameters') ? $printer->getValidatorParameters() : array();
 
     // fix for missing parameter order
     $order_missing = true;
@@ -211,7 +211,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
     $intro_missing = true;
     $outro_missing = true;
 
-     for ($i =0; $i < count($params); $i++) {
+    for ($i = 0; $i < count($params); $i++) {
       switch ($params[$i]->getName()) {
         case "order" :
           $order_missing = false;
@@ -379,12 +379,12 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
  */
 function toJsonCompatibleArray($params) {
   $result = array();
-  
+
   foreach ($params as $name => $paramObject) {
     $values = null;
     if (is_object($paramObject) && get_class($paramObject) == 'Parameter') {
-      foreach ($paramObject->getCriteria() as $key => $value){
-        if(gettype($value) == 'object' && get_class($value) == 'CriterionInArray' && is_array($value->getAllowedValues())){
+      foreach ($paramObject->getCriteria() as $key => $value) {
+        if (gettype($value) == 'object' && get_class($value) == 'CriterionInArray' && is_array($value->getAllowedValues())) {
           $values = $value->getAllowedValues();
         }
       }
@@ -392,15 +392,14 @@ function toJsonCompatibleArray($params) {
       $paramArray['name'] = $paramObject->getName();
       $paramArray['type'] = $paramObject->getType();
 
-      if(isset($values))
+      if (isset($values))
         $paramArray['values'] = $values;
-      if(!is_null($paramObject->getDefault()))
+      if (!is_null($paramObject->getDefault()))
         $paramArray['defaultValue'] = $paramObject->getDefault();
-      if($paramObject->getDescription() && is_string($paramObject->getDescription()))
+      if ($paramObject->getDescription() && is_string($paramObject->getDescription()))
         $paramArray['description'] = $paramObject->getDescription();
-      
+
       $result[] = $paramArray;
-      
     }
   }
   return $result;
@@ -430,8 +429,8 @@ function parseWikiText($text, $page = '___Dummy_Page___') {
 
   //add script section for resource module loading in QI result preview
   $result .= '<script type="text/javascript">';
-  foreach(array_unique($parser->getOutput()->getModules()) as $module){
-    $result .= 'mw.loader.load( "'.$module.'");';
+  foreach (array_unique($parser->getOutput()->getModules()) as $module) {
+    $result .= 'mw.loader.load( "' . $module . '");';
   }
   $result .= '</script>';
 
@@ -476,8 +475,8 @@ function parseQuery($query, $page) {
  * @return string $html
  */
 function smwf_qi_getPage($args= "") {
-  global $wgServer, $wgScript, $wgLang, $smwgHaloQueryInterfaceHost4Wysiwyg;
-  $qiScript = $wgScript . '/' . $wgLang->getNsText(NS_SPECIAL) . ':QueryInterface';
+  global $wgServer, $wgScript, $wgContLang, $smwgHaloQueryInterfaceHost4Wysiwyg;
+  $qiScript = $wgScript . '/' . $wgContLang->getNsText(NS_SPECIAL) . ':QueryInterface';
 
   // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
   // save the source code of the above URL in $page
@@ -503,15 +502,11 @@ function smwf_qi_getPage($args= "") {
 //	mvDataFromPage($page, $newPage, "<!-- end content -->");
 //  mvDataFromPage($page, $newPage, "<script>", false);
 //  mvDataFromPage($page, $newPage, "<!-- Served in");
-
 //  $newPage.="</div></div></body></html>";
-
   // remove the Switch to Semantic Notification button, incase it's there
 //  $newPage = preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
-
   // remove smwCSH.js include because we do not want a help link in the query interface popup to appear
 //  $newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
-
   // have a string where to store JS command for onload event
   $onloadArgs = '';
 
@@ -546,7 +541,6 @@ function smwf_qi_getPage($args= "") {
   // for the CKEditor we set a smaller font size
 //  if (isset($params['CKE']))
 //    $page = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $page);
-
   // remove unnecessary scripts
 //    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
 //  $newPage .= '<script type="text/javascript">
@@ -557,7 +551,6 @@ function smwf_qi_getPage($args= "") {
 //      }
 //    });
 //    </script>';
-
 //	return $newPage;
   return $page;
 }
@@ -577,7 +570,7 @@ function smwf_qi_getAskPage($args= "") {
   $html = str_replace('</body>', '<input id="stb-qi-save-button" type="button" value="OK" name="ok" onclick="window.parent.smwhgASKQuery.saveQuery();" /></body>', $html);
   $html = str_replace('</body>', '<input id="stb-qi-cancel-button" type="button" value="Cancel" name="cancel" onclick="window.parent.smwhgASKQuery.cancelQuery();" /></body>', $html);
   $html = str_replace('</body>', '</div></div></div></body>', $html);
- 
+
   return $html;
 }
 
@@ -690,9 +683,17 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
     $port = $match[1];
     $server = substr($server, 0, 0 - strlen($port) - 1);
   }
+  //get protocol string
+  preg_match('/^(\w+):\/\//', $server, $match);
+  $proto = $match[1];
+  
   $c = curl_init();
   curl_setopt($c, CURLOPT_URL, $server . $file);
   curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+  if ($proto == "https") {
+    curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0); // don't verify ssl
+    curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+  }
   if (isset($port))
     curl_setopt($c, CURLOPT_PORT, $port);
   // needs authentication?
@@ -846,39 +847,38 @@ function qiGetPropertyInformation($relationName) {
   $relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
   $hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
   $types = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
-  
+
   //procede if types is set
-  if(isset($types)){
+  if (isset($types)) {
     //if types is longer than 1
     //  don't handle at this point
-    if(count($types) > 1){
+    if (count($types) > 1) {
       //@TODO add support for type record
     }
     //if type =_wpg
     //  output type =_wpg
     //  look up range and add it to output
-    if(count($types) == 1){
+    if (count($types) == 1) {
       $type = $types[0]->getFragment();
       $paramName = SMWHaloUtil::typeToReadableString($type);
       //if wiki page type then get range info
-      if($type == '_wpg'){
+      if ($type == '_wpg') {
         $range = qiGetPropertyRangeInformation($relationName);
       }
       //if quantity type then get units info
-      if($type == '_qty'){
+      if ($type == '_qty') {
         $units = qiGetPropertyCustomTypeInformation($relationName);
       }
     }
   }
   //output type value
   $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">' .
-              '<param name="' . $paramName . '" type="' . $type .'"' . $range . '>' .
-              $units .
-              '</param>' .
-              '</relationSchema>';
+          '<param name="' . $paramName . '" type="' . $type . '"' . $range . '>' .
+          $units .
+          '</param>' .
+          '</relationSchema>';
 
   return $relSchema;
-
 }
 
 /**
@@ -926,7 +926,7 @@ function qiGetPropertyCustomTypeInformation($typeName) {
   $prop = SMWDIProperty::newFromUserLabel($sspa['_CONV']);
   $smwValues = smwfGetStore()->getPropertyValues($title, $prop);
 
-  foreach ($smwValues as $quantityUnit){
+  foreach ($smwValues as $quantityUnit) {
     if (preg_match('/([\d\.]+)(.*)/', $quantityUnit->getString(), $matches)) {
       $ulist = explode(',', $matches[2]);
       $conv[$matches[1]] = trim($ulist[0]);
