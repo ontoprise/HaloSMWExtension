@@ -814,8 +814,9 @@ pre {
 /* TOC */
 
 #toc {
-        background-color: #F0F0F0;
-        border: 1px solid #4B595C;
+        background-color: #fff;
+		color: #000;
+        border: 1px solid #aaaaaa;
 }
 
 #mw-data-after-content {
