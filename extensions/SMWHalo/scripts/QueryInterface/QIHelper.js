@@ -936,6 +936,8 @@ QIHelper.prototype = {
     var args = [];
     if ( $$('#askQI #usetriplestore')[0] != null && $$('#askQI #usetriplestore')[0].checked )
       args.push('source=tsc');
+    else
+      args.push('source=wiki');
     var selectedDataSources = [];
     var selectorDsTpee = ($$('#askQI #qioptioncontent')[0]) ? $$('#askQI #qioptioncontent')[0].getElementsBySelector('[name="qiDsTpeeSelector"]') : [];
     var dataSources = $$('#askQI #qidatasourceselector')[0];
@@ -3018,7 +3020,9 @@ QIHelper.prototype = {
         return;
       }
       var triplestoreSwitch = $$('#askQI #usetriplestore')[0];
-      if (triplestoreSwitch) triplestoreSwitch.checked = true;
+      if (triplestoreSwitch && ask.match(/source\s*=\s*tsc/im)){
+        triplestoreSwitch.checked = true;
+      }
     }
 
     // split of query parts to handle subqueries seperately
