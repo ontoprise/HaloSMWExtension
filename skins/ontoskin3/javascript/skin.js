@@ -282,13 +282,10 @@ function Smwh_Skin() {
 		if ( $jq.inArray( mw.config.get('editsection-inline'), [ 'no', false ]) !== -1 ) {
 			return;
 		}
-		var img = '<img src="' + mw.config.get('stylepath') + '/' + mw.config.get('skin') +
-			'/img/button_edit.gif" class="editsection-icon" />';
 		mw.util.$content.find( '.editsection' ).each( function() {
 			var	editsec = $jq( this ),
 				$what = editsec.parent().children();
 			$what.first().before( $what.last() );
-			editsec.children().html(img + editsec.children().html());
 			editsec.html(editsec.children());
 		});
 

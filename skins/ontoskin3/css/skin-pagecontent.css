@@ -852,7 +852,9 @@ h3 .editsection { font-size: 76%; }
 h4 .editsection { font-size: 86%; }
 h6 .editsection { font-size: 125%; }
 
-.editsection-icon {
-	vertical-align: middle;
-	margin-right: 3px;
+h1 .editsection a, h2 .editsection a,
+h3 .editsection a, h4 .editsection a,
+h5 .editsection a, h6 .editsection a {
+	background: url(../img/button_edit.gif) no-repeat scroll left transparent;
+	padding: 2px 0px 2px 18px;
 }
