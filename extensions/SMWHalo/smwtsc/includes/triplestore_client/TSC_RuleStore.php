@@ -33,6 +33,16 @@ class SMWRuleStore {
 		$results = array(); //dummy impl
 		return $results;
 	}
+	
+	/**
+	 * Returns all rules 
+	 * 
+	 * @return int[] $pageID
+	 */
+	public function getAllRulePages() {
+		$results = array(); //dummy impl
+        return $results;
+	}
 
 	/**
 	 * Adds new rules to the local rule store.

@@ -35,6 +35,22 @@ class SRRuleStore extends SMWRuleStore {
 		return $results;
 	}
 	
+	public function getAllRulePages() {
+		$db =& wfGetDB( DB_SLAVE );
+
+        $ruleTableName = $db->tableName('smw_rules');
+        $res = $db->select($ruleTableName, array('subject_id'), array());
+        $results = array();
+
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $results[] = $row->subject_id;
+            }
+        }
+        $db->freeResult($res);
+        return $results;
+	}
+	
      /**
      * Returns true if the rule already exists, false otherwise.
      * Returns also date of last change.
