@@ -253,7 +253,22 @@ CKEDITOR.plugins.add( 'mediawiki',
                             break;
                     }
                     return result;
+                },
+				img : function (element) {
+                    var width = element.attributes['_fck_mw_width'] || '';
+                    var height = element.attributes['_fck_mw_height'] || '';
+					if (width) {
+						width = 'width:' + width + 'px;';
                 }
+					if (height) {
+						height = 'height:' + height + 'px;';
+            }
+					
+					if (width || height) {
+						element.attributes['style'] = width + height;
+					}
+					
+				}
             }
         };
 
@@ -536,7 +551,7 @@ CKEDITOR.customprocessor.prototype =
   
 
     toHtml : function( data, fixForBody )
-    {         
+    {
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         // transform only if
@@ -560,7 +575,7 @@ CKEDITOR.customprocessor.prototype =
         data = writer.getHtml( true );
        
         return data;
-     },
+     }, 
 
      getInterwikiLink: function(htmlNode){
 		var title = htmlNode.getAttribute('title');
@@ -884,7 +899,7 @@ CKEDITOR.customprocessor.prototype =
                             var href = htmlNode.getAttribute( '_cke_saved_href' );
                             var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || '';
                             var testInner = this._GetNodeText(htmlNode) || '';
-                            
+
                             // this is still the old style, thats used in the parser (should be fixed soon)
                             if (!href) {
                                 href = htmlNode.getAttribute( '_fcksavedurl' );
@@ -906,45 +921,45 @@ CKEDITOR.customprocessor.prototype =
 							
                             var isWikiUrl = true;
 
-                            if (hrefType != "" &&
-								hrefType != "http" &&
-								hrefType != "https" &&
-								hrefType != "mailto" &&
+                            if ( hrefType != "" && 
+                                hrefType != "http" &&
+                                hrefType != "https" &&
+                                hrefType != "mailto" &&
 								!href.StartsWith(hrefType.FirstToUpper() + ':')) {
-								stringBuilder.push('[[' + hrefType.FirstToUpper() + ':');
+                                stringBuilder.push( '[[' + hrefType.FirstToUpper() + ':' );
 							} else if (htmlNode.getAttribute('class') == "extiw") {
 								//convert url back to interwiki link
 								stringBuilder.push(this.getInterwikiLink(htmlNode));
-							} else {
-								isWikiUrl = !(href.StartsWith('mailto:') || (/^\w+:\/\//.test(href)) || (/\{\{[^\}]*\}\}/.test(href)));
-								stringBuilder.push(isWikiUrl ? '[[' : '[');
-								// #2223
-								if (htmlNode.getAttribute('_fcknotitle') && htmlNode.getAttribute('_fcknotitle') == "true") {
-									var testHref = decodeURIComponent(htmlNode.getAttribute('href'));
+                            } else {
+                                isWikiUrl = !( href.StartsWith( 'mailto:' ) || (/^\w+:\/\//.test( href )) || (/\{\{[^\}]*\}\}/.test( href )) );
+                                    stringBuilder.push( isWikiUrl ? '[[' : '[' );
+                                // #2223
+                                if( htmlNode.getAttribute( '_fcknotitle' ) && htmlNode.getAttribute( '_fcknotitle' ) == "true" ){
+                                    var testHref = decodeURIComponent(htmlNode.getAttribute('href'));
 									testInner = this._GetNodeText(htmlNode) || '';
-									if (href.toLowerCase().StartsWith('category:')) 
-										testInner = 'Category:' + testInner;
-									if (testHref.toLowerCase().StartsWith('rtecolon')) 
-										testHref = testHref.replace(/rtecolon/, ":");
-									testInner = testInner.replace(/&amp;/, "&");
-									if (testInner == testHref) 
-										pipeline = false;
-								}
-								if (href.toLowerCase().StartsWith('rtecolon')) { // change 'rtecolon=' => ':' in links
-									stringBuilder.push(':');
-									href = href.substring(8);
-								}
+                                    if ( href.toLowerCase().StartsWith( 'category:' ) )
+                                        testInner = 'Category:' + testInner;
+                                    if ( testHref.toLowerCase().StartsWith( 'rtecolon' ) )
+                                        testHref = testHref.replace( /rtecolon/, ":" );
+                                    testInner = testInner.replace( /&amp;/, "&" );
+                                    if ( testInner == testHref )
+                                        pipeline = false;
+                                }
+                                if( href.toLowerCase().StartsWith( 'rtecolon' ) ){ // change 'rtecolon=' => ':' in links
+                                    stringBuilder.push(':');
+                                    href = href.substring(8);
+                                }
 								if (isWikiUrl) 
 									href = decodeURIComponent(href);
-								stringBuilder.push(href);
-								var innerHTML = this._GetNodeText(htmlNode);
-								if (pipeline && innerHTML != '[n]' && (!isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith("category:"))) {
-									stringBuilder.push(isWikiUrl ? '|' : ' ');
-									this._AppendChildNodes(htmlNode, stringBuilder, prefix);
-								}
-								stringBuilder.push(isWikiUrl ? ']]' : ']');
+                                stringBuilder.push( href );
+                                var innerHTML = this._GetNodeText(htmlNode);
+                                if ( pipeline && innerHTML != '[n]' && ( !isWikiUrl || href != innerHTML || !href.toLowerCase().StartsWith( "category:" ) ) ){
+                                    stringBuilder.push( isWikiUrl? '|' : ' ' );
+                                    this._AppendChildNodes( htmlNode, stringBuilder, prefix );
+                                }
+                                stringBuilder.push( isWikiUrl ? ']]' : ']' );
 							}
-                            break;
+                                break;
 
                             case 'dl' :
 

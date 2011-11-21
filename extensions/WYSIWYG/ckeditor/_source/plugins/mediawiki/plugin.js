@@ -253,7 +253,22 @@ CKEDITOR.plugins.add( 'mediawiki',
                             break;
                     }
                     return result;
-                }
+                },
+				img : function (element) {
+                    var width = element.attributes['_fck_mw_width'] || '';
+                    var height = element.attributes['_fck_mw_height'] || '';
+					if (width) {
+						width = 'width:' + width + 'px;';
+					}
+					if (height) {
+						height = 'height:' + height + 'px;';
+					}
+					
+					if (width || height) {
+						element.attributes['style'] = width + height;
+					}
+					
+				}
             }
         };
 
@@ -536,7 +551,7 @@ CKEDITOR.customprocessor.prototype =
   
 
     toHtml : function( data, fixForBody )
-    {         
+    {
         // prevent double transformation because of some weird runtime issues
         // with the event dataReady in the smwtoolbar plugin
         // transform only if
