@@ -433,6 +433,20 @@ function smwgHaloSetupExtension() {
 
 		$wgHooks['ResourceLoaderRegisterModules'][]='smwhfRegisterResourceLoaderModules';
 
+		// ajax queries
+		require_once($smwgHaloIP . '/includes/ajaxquery/SMW_AQAjaxAccess.php');
+		$wgAutoloadClasses['SMWAQParserFunctions'] = $smwgHaloIP . '/includes/ajaxquery/SMW_AQParserFunctions.php';
+		// register hooks
+		if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
+			$wgHooks['ParserFirstCallInit'][] = 'SMWAQParserFunctions::registerFunctions';
+		} else {
+			if ( class_exists( 'StubObject' ) && !StubObject::isRealObject( $wgParser ) ) {
+				$wgParser->_unstub();
+			}
+			SMWAQParserFunctions::registerFunctions( $wgParser );
+		}
+		SMWAQParserFunctions::registerResourceModules();
+
 		// initialize static members of SMWHaloPredefinedPages
 		new SMWHaloPredefinedPages();
 
@@ -1190,6 +1204,9 @@ function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	$magicWords['annotateList'] = array( 0, 'annotateList' );
 	$magicWords['sparql']  = array( 0, 'sparql' );
 	$magicWords['ilink']  = array( 0, 'ilink' );
+	$magicWords['ajaxask']	= array ( 0, 'ajaxask' );
+	$magicWords['ajaxsparql']  = array ( 0, 'ajaxsparql' );
+	
 	return true;
 }
 
