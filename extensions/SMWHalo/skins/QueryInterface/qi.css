@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 #qicontent{
   cursor: default;
   font-family: sans-serif;
@@ -675,4 +677,9 @@ button.btnhov{
 
 #layout_sort{
   width: 235px;
+}
+
+/* reduce the font size of qtips */
+.ui-tooltip-qiQtip{
+  font-size: 11px !important;
 }
