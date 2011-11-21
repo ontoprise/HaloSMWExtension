@@ -255,8 +255,8 @@ class SMWQueryInterface extends SpecialPage {
             '<div id="qitextview">Query as text</div>
                  <div id="qisource"><textarea id="fullAskText" onchange="qihelper.sourceChanged=1"></textarea>' .
             '<div id="qisourceButtons">' .
-            '<button onclick="qihelper.loadFromSource(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>' .
-            '&nbsp;<span class="qibutton" onclick="qihelper.discardChangesOfSource();">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
+            '<button id="qiLoadFromSourceButton" onclick="qihelper.loadFromSource(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>' .
+            '&nbsp;<span class="qibutton" id="qiDiscardChangesButton" onclick="qihelper.discardChangesOfSource();">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
             '</div>' .
             '</div>' .
             '</div></div>
@@ -313,7 +313,7 @@ class SMWQueryInterface extends SpecialPage {
             '<div id="qistatus"></div>' .
             '<div id="boxcontent"><table><tbody id="dialoguecontent"></tbody></table></div>' .
             '<div id="dialoguebuttons" style="display:none; width: 100%">' .
-            '<button onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</button>&nbsp;' .
+            '<button id="qiDialogButtonAdd" onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</button>&nbsp;' .
             '<span style="text-align:right">' .
             '<span class="qibutton" onclick="qihelper.emptyDialogue(); qihelper.updateTree();">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;' .
             '<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
@@ -343,13 +343,13 @@ class SMWQueryInterface extends SpecialPage {
   private function addValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $columnLabelId, $drawTopLine = false) {
     return '<table ' . ($drawTopLine ? 'style="border-top: 1px solid gray;"' : '') . ($tableId ? "id=\"$tableId\"" : "") . '><tr>' .
             '<td>' . $nameInputLabel . '</td>' .
-            '<td><input ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . ' class="wickEnabled" type="text" autocomplete="OFF" constraints=""></td>' .
-            '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox" checked="checked">' .
+            '<td><input ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . ' class="wickEnabled" type="text" autocomplete="OFF" constraints=""/></td>' .
+            '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox" checked="checked"/>' .
             '<label ' . ($showInResultsChkBoxId ? "for=\"$showInResultsChkBoxId\"" : "") . '>' . wfMsg('smw_qi_show_in_results') . '</label></td></tr>' .
             '<tr><td></td><td ' . ($typeLabelId ? "id=\"$typeLabelId\"" : "") . ' class="typeLabelTd"></td><td></td></tr>' .
             '<tr><td>' . wfMsg('smw_qi_column_label') . '</td>' .
-            '<td><input ' . ($columnLabelId ? "id=\"$columnLabelId\"" : "") . ' type="text"></td>' .
-            '<td></td></tr><table>';
+            '<td><input ' . ($columnLabelId ? "id=\"$columnLabelId\"" : "") . ' type="text"/></td>' .
+            '<td></td></tr></table>';
   }
 
   private function addFiltersDialog($tableId) {
@@ -361,7 +361,7 @@ class SMWQueryInterface extends SpecialPage {
   private function addCategoryDialog() {
     return '<table id="qiCategoryDialogTable"><tr>' .
             '<td>' . wfMsg('smw_qi_category_name') . '</td>' .
-            '<td><input id="qiCategoryNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 14"></td>' .
+            '<td><input id="qiCategoryNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 14"/></td>' .
             '<td></td></tr>' .
             '<tr><td></td><td id="qiCategoryTypeLabel" class="typeLabelTd"></td><td></td></tr>' .
             '<tr><td></td>' .
@@ -377,8 +377,8 @@ class SMWQueryInterface extends SpecialPage {
   private function addPropertyDialog() {
     return '<table id="qiPropertyDialogTable"><tr>' .
             '<td>' . wfMsg('smw_qi_property_name') . '</td>' .
-            '<td><input id="qiPropertyNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 102"></td>' .
-            '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox" checked="checked">' .
+            '<td><input id="qiPropertyNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 102"/></td>' .
+            '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox" checked="checked"/>' .
             '<label for="qiPropertyValueMustBeSetChkBox">' . wfMsg('smw_qi_value_must_be_set') . '</label></td>' .
             '</tr><tr>' .
             '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd"></td><td></td>' .
@@ -446,7 +446,7 @@ class SMWQueryInterface extends SpecialPage {
       $fullPreviewLink = '&nbsp;|&nbsp; <a href="javascript:void(0);" onclick="qihelper.previewQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_fullpreview') . '\')">' . wfMsg('smw_qi_fullpreview') . '</a>';
     return '<div id="querylayout">
 					<div id="layouttitle">
-                        <span onclick="qihelper.switchlayout()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</span>
+                        <span onclick="qihelper.switchlayout()" title="' . wfMsg('smw_qi_tt_qlm') . '"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</span>
                         ' . $fullPreviewLink . '
 					</div>
 					<div id="layoutcontent" style="display:none">
@@ -546,7 +546,7 @@ class SMWQueryInterface extends SpecialPage {
     return '<div id="qimenubar">' .
             (($isIE) ? '<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>' : '') .
             $buttons .
-            '<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>' .
+            '<span><button id="qiResetQueryButton" onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>' .
             '</div>' .
 //            '<div id="fullpreview" style="display:none">' .
 //            '<table id="fullpreviewboxTable">' .

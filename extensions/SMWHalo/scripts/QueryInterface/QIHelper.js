@@ -70,6 +70,37 @@ QIHelper.prototype = {
       Event.observe(useTripleStore,'click', this.resetTscOptions.bind(this));
     if (! this.queryList)
       this.queryList = new QIList();
+    
+    this.enableResetQueryButton();
+    jQuery('#qiDialogButtonAdd').click(function(){
+      qihelper.enableResetQueryButton();
+    });
+    jQuery('#qidelete').click(function(){
+      qihelper.enableResetQueryButton();
+    });
+    jQuery('#qiLoadFromSourceButton').click(function(){
+      qihelper.enableResetQueryButton();
+    });
+    jQuery('#qiDiscardChangesButton').click(function(){
+      qihelper.enableResetQueryButton();
+    });
+
+
+  },
+
+  enableResetQueryButton: function(forceDisable){
+    if(forceDisable){
+      jQuery('#askQI #qiResetQueryButton').attr('disabled', 'disabled');
+    }
+    else{
+      //if query source or query tree is not empty enable "reset query" button
+      if(jQuery('#fullAskText').val().length || jQuery('#treeanchor').children().length){
+        jQuery('#askQI #qiResetQueryButton').removeAttr('disabled');
+      }
+      else{
+        jQuery('#askQI #qiResetQueryButton').attr('disabled', 'disabled');
+      }
+    }
   },
 
   /**
@@ -269,7 +300,7 @@ QIHelper.prototype = {
     
   /**
 	 * Called whenever preview result printer needs to be updated.
-     * This is only done, if the results are visible.
+   * This is only done, if the results are visible.
 	 */
   updatePreview : function() {
     // update result preview
@@ -490,6 +521,9 @@ QIHelper.prototype = {
     $$('#askQI #shade')[0].style.display = "none";
     $$('#askQI #resetdialogue')[0].style.display = "none";
     this.updatePreview();
+
+    jQuery('#askQI #fullAskText').val('');
+    this.enableResetQueryButton(true);
   },
 
   updateTree : function() {
@@ -512,17 +546,17 @@ QIHelper.prototype = {
   },
 
   getPreviewDialog: function(){
-    //locate priview dialog
+  //locate priview dialog
 
-    //if not found then create a new div at #askQI
+  //if not found then create a new div at #askQI
   },
 
   getFullPreviewElement: function(){
-//    var element = jQuery('#askQI #fullpreview');
-//    if(!jQuery(element).length){
-      jQuery('#askQI').append('<div id="fullpreview"/>');
-      element = jQuery('#askQI').children('#fullpreview');
-//    }
+    //    var element = jQuery('#askQI #fullpreview');
+    //    if(!jQuery(element).length){
+    jQuery('#askQI').append('<div id="fullpreview"/>');
+    element = jQuery('#askQI').children('#fullpreview');
+    //    }
 
     return element;
   },
@@ -750,7 +784,7 @@ QIHelper.prototype = {
       case "timeline":
       case "eventline":
         this.parseWikilinks2Html();
-//        smw_timeline_init();
+        //        smw_timeline_init();
 
         break;
       case "exhibit":
@@ -761,7 +795,9 @@ QIHelper.prototype = {
       case 'ofc-bar_3d':
       case 'ofc-line':
       case 'ofc-scatterline':
-        ofc_data_objs = { data:[] };
+        ofc_data_objs = {
+          data:[]
+        };
         if (resultCode != null) eval(resultCode);
         document.ofc.js.resetOfc();
         break;
@@ -894,8 +930,8 @@ QIHelper.prototype = {
     }
     fullQuery += ' | format=' + $$('#askQI #layout_format')[0].value;
     fullQuery += $$('#askQI #layout_sort')[0].value == gLanguage.getMessage('QI_ARTICLE_TITLE')
-      ? ""
-      : (' | sort=' + $$('#askQI #layout_sort')[0].value);
+    ? ""
+    : (' | sort=' + $$('#askQI #layout_sort')[0].value);
     var qParams = this.serializeSpecialQPParameters("|");
     if (qParams.length > 0) {
       if (! qParams.match(/^\s*\|/))
@@ -1154,16 +1190,18 @@ QIHelper.prototype = {
     }
   },
         
-//  getPropertyDialogInputs: function(){
-//    var inputs = this.getInputs();
-//    if($$('#askQI #dialoguecontent_pvalues')[0].visible()){
-//      inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));
-//    }
-//    return inputs;
-//  },
+  //  getPropertyDialogInputs: function(){
+  //    var inputs = this.getInputs();
+  //    if($$('#askQI #dialoguecontent_pvalues')[0].visible()){
+  //      inputs = inputs.concat($$('#dialoguecontent_pvalues input[type="text"]'));
+  //    }
+  //    return inputs;
+  //  },
         
   getInputs: function(){
-    var visibleTables = $$('#boxcontent table').findAll(function(element) {return element.visible();});
+    var visibleTables = $$('#boxcontent table').findAll(function(element) {
+      return element.visible();
+    });
     var inputs = [];
     visibleTables.each(function(element){
       inputs = inputs.concat(element.select('input[type="text"]'));
@@ -1620,7 +1658,7 @@ QIHelper.prototype = {
 	 * 
 	 * @param el
 	 *           DOMnode of the image element, which is in a table row
-     *           that will be deleted
+   *           that will be deleted
 	 */
   removeInput : function(el) {
     var tr = el.parentNode.parentNode;
@@ -1630,12 +1668,12 @@ QIHelper.prototype = {
   },
 
   /**
-     * When the inputfield with the property name is changed, then clear the
-     * property type so that it is retrieved again. This must be done so that the
-     * user cannot just hit "update" still with the old property information
-     * @param idx
-     *            Integer with the field number that has been changed
-     */
+   * When the inputfield with the property name is changed, then clear the
+   * property type so that it is retrieved again. This must be done so that the
+   * user cannot just hit "update" still with the old property information
+   * @param idx
+   *            Integer with the field number that has been changed
+   */
   clearPropertyType : function( idx ){
     $$('#askQI #dialoguecontent')[0].rows[idx * 2 +1].cells[1].innerHTML=
     gLanguage.getMessage('QI_PROPERTY_TYPE') + ':';
@@ -1668,7 +1706,7 @@ QIHelper.prototype = {
             var cell = row.insertCell(-1);
             this.pendingElement = new OBPendingIndicator(cell);
             this.pendingElement.show();
-            */
+       */
       if(window.timeoutId){
         window.clearTimeout(timeoutId);
       }
@@ -1897,12 +1935,12 @@ QIHelper.prototype = {
   },
 
   /**
-     * After the property name has been entered into the input field, the
-     * type is retrieved and the property dialogue is extended with selector
-     * for restrition values and printout options.
-     * Without automatic AC the dialogue must be completed before the property
-     * name has been entered.
-     */
+   * After the property name has been entered into the input field, the
+   * type is retrieved and the property dialogue is extended with selector
+   * for restrition values and printout options.
+   * Without automatic AC the dialogue must be completed before the property
+   * name has been entered.
+   */
   completePropertyDialogue: function() {
     // check if the dialogue is already complete
     if (this.activeDialogue == "property" && $$('#askQI #input_c1')[0]) return;
@@ -1979,20 +2017,20 @@ QIHelper.prototype = {
   },
 
   /**
-     * depending on the property type, another property can be added to a chain and
-     * a subquery can be used for that property. This is only possible if the
-     * current property is of the type page. Hence we must toggle:
-     * - the link to add another property to a chain
-     * - select the option subquery in the radio button
-     */
+   * depending on the property type, another property can be added to a chain and
+   * a subquery can be used for that property. This is only possible if the
+   * current property is of the type page. Hence we must toggle:
+   * - the link to add another property to a chain
+   * - select the option subquery in the radio button
+   */
   toggleSubqueryAddchain : function(op) {
     this.toggleSubquery(op);
     this.toggleAddchain(op);
   },
 
   /**
-     * toggles the subquery radio button
-     */
+   * toggles the subquery radio button
+   */
   toggleSubquery : function (op) {
     if (op) {
       try {
@@ -2010,8 +2048,8 @@ QIHelper.prototype = {
   },
 
   /**
-     * toggles the add chain link
-     */
+   * toggles the add chain link
+   */
   toggleAddchain : function(op) {
     if (!$$('#askQI #addchain')[0]) return;
     if (op) {
@@ -2050,8 +2088,8 @@ QIHelper.prototype = {
 	 * 
 	 * @param id
 	 *            id of the category group (saved with the query tree)
-     * @param focus
-     *            number of input field to set the focus
+   * @param focus
+   *            number of input field to set the focus
 	 */
   loadCategoryDialogue : function(id, focus) {
     this.newCategoryDialogue(false);
@@ -2073,8 +2111,8 @@ QIHelper.prototype = {
 	 * 
 	 * @param id
 	 *            id of the instace group (saved with the query tree)
-     * @param focus
-     *            number of input field to set the focus
+   * @param focus
+   *            number of input field to set the focus
 	 */
   loadInstanceDialogue : function(id, focus) {
     this.newInstanceDialogue(false);
@@ -2406,7 +2444,7 @@ QIHelper.prototype = {
         }
       }
       // now mark the clicked cell as selected
-//      el.parentNode.style.backgroundColor='#1122FF';
+      //      el.parentNode.style.backgroundColor='#1122FF';
       el.parentNode.style.backgroundColor='#53bff5';
       for (i = 0; i < el.parentNode.childNodes.length; i++) {
         if (el.parentNode.childNodes[i].style){
@@ -2431,9 +2469,9 @@ QIHelper.prototype = {
 	 * @param disabled
 	 *            enabled only for numeric datatypes
 	 * @param type
-     *            0 = other
-     *            1 = numeric
-     *            2 = string
+   *            0 = other
+   *            1 = numeric
+   *            2 = string
 	 */
   createRestrictionSelector : function(option, disabled, type) {
     var html = disabled ? '<select disabled="disabled">' : '<select>';
@@ -2474,10 +2512,10 @@ QIHelper.prototype = {
   },
 
   /**
-     * get the value of the selector whether to define a property value
-     * or add a subquery to the property. If the subproperty option
-     * was disabled but checked, then return -1 (no restriction set)
-     */
+   * get the value of the selector whether to define a property value
+   * or add a subquery to the property. If the subproperty option
+   * was disabled but checked, then return -1 (no restriction set)
+   */
   getPropertyValueSelector : function() {
     var radio = document.getElementsByName('input_r0');
     var val;
@@ -2509,7 +2547,7 @@ QIHelper.prototype = {
 
   /**
 	 * Reads the input fields of a category or instance dialogue and adds them
-     * to the query.
+   * to the query.
 	 */
   addCatInstGroup : function() {
     var tmp = Array();
@@ -2708,6 +2746,8 @@ QIHelper.prototype = {
         }
       }
     }
+
+    this.enableResetQueryButton();
   },
 
   switchMainTab : function(noreset) {
@@ -2993,8 +3033,8 @@ QIHelper.prototype = {
   },
     
   /**
-     * called when the Query Tree tab is clicked and the Query source tab is still active
-     */
+   * called when the Query Tree tab is clicked and the Query source tab is still active
+   */
   loadFromSource : function(noTabSwitch) {
     this.noTabSwitch = noTabSwitch;
     if ($$('#askQI #qiDefTab3')[0].className.indexOf('qiDefTabActive') > -1 &&
@@ -3007,7 +3047,7 @@ QIHelper.prototype = {
 
   initFromQueryString : function(ask) {
     this.doReset();
-   
+    jQuery('#askQI #fullAskText').val(ask);
     // does ask contain any data?
     if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
       return;
@@ -3468,10 +3508,10 @@ QIHelper.prototype = {
   },
 
   /**
- * Check the main query and all options for properties that must be shown in
- * the result. The returned array contains triples of properties with
- * array(propname, unit, column text)
- */
+   * Check the main query and all options for properties that must be shown in
+   * the result. The returned array contains triples of properties with
+   * array(propname, unit, column text)
+   */
   applyOptionParams : function(query) {
     var options = query.split('|');
     // parameters to show

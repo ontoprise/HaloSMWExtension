@@ -76,7 +76,7 @@ function initToolTips(){
         toolTip = toolTip[toolTip.length - 1];
       }
       else{
-        toolTip = toolTip[1];
+        toolTip = toolTip[1] ? toolTip[1] : toolTip[2];
       }
     }
     element.attr('title', toolTip);

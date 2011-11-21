@@ -121,7 +121,7 @@ div.qiaddbuttons span img{
 
 #boxcontent {
   width:100%;
-  height: 230px;
+  height: auto;
   float:left;
   overflow:auto;
 }
