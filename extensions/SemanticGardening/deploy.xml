@@ -4,6 +4,7 @@
 		<id>semanticgardening</id>
 		<title>Semantic Gardening extension</title>
 		<version>1.3.6</version>
+        <patchlevel>1</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticGardening</instdir>
@@ -12,7 +13,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Gardening_Extension</helpurl>
 		<dependencies>
-			<dependency from="1.6.0">smwhalo</dependency>
+			<dependency from="1.6.0" to="1.6.0">smwhalo</dependency>
 		</dependencies>
 		<license>GPL v2</license>
 	</global>

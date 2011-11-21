@@ -4,6 +4,7 @@
         <id>semanticformsinputs</id>
         <title>Semantic Forms Inputs</title>
         <version>0.4.1</version>
+        <patchlevel>1</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>Stephan Gambke</maintainer>
         <license>GPL-v2</license>
@@ -13,7 +14,7 @@
         </description>
         <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Inputs_extension</helpurl>
         <dependencies>
-            <dependency from="2.0.8">semanticforms</dependency>
+            <dependency from="2.2.1" to="2.2.1">semanticforms</dependency>
         </dependencies>
     </global>
     
