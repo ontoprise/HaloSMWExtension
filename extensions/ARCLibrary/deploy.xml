@@ -4,7 +4,7 @@
 		<id>arclibrary</id>
 		<title>ARC2 library</title>
 		<version>1.6.0</version>
-		<patchlevel>0</patchlevel>
+		<patchlevel>1</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/ARCLibrary</instdir>
@@ -13,7 +13,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
-			<dependency from="1.16.0">mw</dependency>
+			<dependency from="1.17.0" to="1.17.9"">mw</dependency>
 		</dependencies>
 		<license>GPL v2</license>
 	</global>
