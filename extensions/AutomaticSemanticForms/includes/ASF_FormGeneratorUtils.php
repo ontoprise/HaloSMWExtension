@@ -413,8 +413,6 @@ class ASFFormGeneratorUtils {
 		$displayTemplate = 
 			self::getInheritedPropertyValue($semanticData, ASF_PROP_USE_DISPLAY_TEMPLATE);
 		
-		echo('<pre>'.print_r($displayTemplate, ture).'</pte>');	
-			
 		return $displayTemplate;
 	}
 	

@@ -50,7 +50,6 @@ class ASFFormGenerator {
 		list($categories, $categoriesWithNoProperties, $categoriesWithNoFormEdit)
 			= $this->initializeCategoryFormData($categories);
 
-		//echo('<pre>'.print_r($categoriesWithNoProperties, true).'</pre>');
 		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0){
 			return false;
 		} else {
@@ -73,7 +72,8 @@ class ASFFormGenerator {
 
 		$categories = array();
 		foreach($categorySections as $categoryName => $categorySection){
-			$categoryTitle = Category::newFromName($categoryName)->getTitle();
+			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);
+			//$categoryTitle = Category::newFromName($categoryName)->getTitle();
 
 			$categoryFormDataObject =
 				new ASFCategoryFormData($categoryTitle, $categorySection);

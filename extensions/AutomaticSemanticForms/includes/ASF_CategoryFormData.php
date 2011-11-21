@@ -303,8 +303,10 @@ class ASFCategoryFormData {
 		$isEmpty = true;
 		
 		foreach($this->propertiesFormData as $prop){
-			if(!$prop->isHiddenProperty()) $isEmpty = false;
-			break;
+			if(!$prop->isHiddenProperty()){
+				$isEmpty = false;
+				break;
+			}
 		}
 		
 		return $isEmpty;
