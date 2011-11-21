@@ -63,8 +63,7 @@ var SMW_CAT_ALL_VALID_ANNOTATED =
  		': (hide:cat-confirm, hide:cat-addandcreate, call:catToolBar.finalCategoryCheck)"';
 
 var SMW_CAT_HINT_CATEGORY =
-	'constraints = "namespace:' + SMW_CATEGORY_NS + '"' +
-	( ( wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined' ) ? '" position="fixed"' : '');
+	'constraints = "namespace:' + SMW_CATEGORY_NS + '" position="fixed"';
 
 var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +

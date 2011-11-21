@@ -63,7 +63,8 @@ var SMW_PRP_VALID_FIELD_PROPERTY_NAME =
 		'? (hideMessage, call:propToolBar.recordFieldChanged) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
-var positionFixed = (typeof FCKeditor != 'undefined' || typeof CKEDITOR !=  'undefined') ? 'position="fixed"' : ''
+//var positionFixed = (typeof FCKeditor != 'undefined' || typeof CKEDITOR !=  'undefined') ? 'position="fixed"' : ''
+var positionFixed = ' position="fixed"';
 var SMW_PRP_HINT_CATEGORY =
 	'constraints = "namespace:' + SMW_CATEGORY_NS + '" ' + positionFixed;
 

@@ -97,7 +97,8 @@ var SMW_REL_SUB_SUPER_ALL_VALID =
  		'? (call:relToolBar.createSubSuperLinks) ' +
  		': (call:relToolBar.createSubSuperLinks)"';
  		
-var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined') ? '" position="fixed"' : ''
+//var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined' || typeof CKEDITOR != 'undefined') ? '" position="fixed"' : ''
+var positionFixed = '" position="fixed"';
 
 var SMW_REL_HINT_CATEGORY =
 	'constraints = "namespace:' + SMW_CATEGORY_NS + '"' + positionFixed;
