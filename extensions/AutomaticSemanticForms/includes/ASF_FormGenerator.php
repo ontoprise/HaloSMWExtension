@@ -1,50 +1,5 @@
 <?php
 
-//define form metadata properties for properties
-define('ASF_PROP_HAS_TYPE', '_TYPE');
-define('ASF_PROP_HAS_DOMAIN_AND_RANGE', 'Has_domain_and_range');
-define('ASF_PROP_HAS_RANGE', 'Has_range');
-define('ASF_PROP_HAS_MIN_CARDINALITY', 'Has_min_cardinality');
-define('ASF_PROP_HAS_MAX_CARDINALITY', 'Has_max_cardinality');
-define('ASF_PROP_ALLOWS_VALUES', '_PVAL');
-define('ASF_PROP_FORM_INPUT_LABEL', 'Form_input_label');
-define('ASF_PROP_USE_INPUT_TYPE', 'Use_input_type');
-define('ASF_PROP_IS_UPLOADABLE', 'Is_uploadable');
-define('ASF_PROP_FORM_INPUT_HELP', 'Form_input_help');
-define('ASF_PROP_VALIDATOR', 'Validator');
-define('ASF_PROP_USE_CLASS', 'Use_class');
-define('ASF_PROP_DELIMITER', 'Delimiter');
-define('ASF_PROP_FIELD_SEQUENCE_NUMBER', 'Field_sequence_number');
-define('ASF_PROP_DEFAULT_VALUE', 'Default_value');
-
-//define form metadata properties for categories
-define('ASF_PROP_NO_AUTOMATIC_FORMEDIT', 'No_automatic_formedit');
-define('ASF_PROP_USE_DISPLAY_TEMPLATE', 'Use_display_template');
-//define('ASF_PROP_USE_CLASS', 'Use_class');
-define('ASF_PROP_NOT_DISJOINT_WITH', 'Not_disjoint_with');
-define('ASF_PROP_PRELOAD', 'Use_preload_article');
-define('ASF_PROP_PAGE_NAME_TEMPLATE', 'Use_page_name_template');
-define('ASF_PROP_HIDE_FREE_TEXT', 'Hide_free_text');
-define('ASF_PROP_AUTOCOMPLETE_ON', 'Autocomplete_on');
-define('ASF_PROP_USE_STANDARD_INPUT', 'Use_standard_input');
-define('ASF_PROP_USE_AUTOGROW', 'Use_autogrow');
-
-
-//define dtata type form input type relations
-define('TEXTDATATYPES', '-page- ');
-define('LONGTEXTDATATYPES', '-url- -email- -annotation uri- -telephone number- -string-');
-define('SHORTTEXTDATATYPES', '-number- -temperature-');
-define('TEXTAREADATATYPES', '-text- -ccode-');
-define('DATETIMEDATATYPES', '-date-');
-define('CHECKBOXDATATYPES', '-boolean-');
-
-//define sizes of form input fields
-define('ASF_LONG_TEXT_SIZE', '110');
-define('ASF_SHORT_TEXT_SIZE', '30');
-define('ASF_TEXTAREA_ROWS', '5');
-define('ASF_TEXTAREA_COLS', '78');
-
-
 /*
  * Automatically generates Semantic Forms based on the current ontology
  */

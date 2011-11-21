@@ -135,6 +135,8 @@ function asfSetupExtension(){
 	global $sfgFormPrinter;
 	$sfgFormPrinter = new ASFFormPrinter();
 	
+	ASFFormGeneratorUtils::setupSchemaPropertyConstants();
+	
 	return true;
 }
 
