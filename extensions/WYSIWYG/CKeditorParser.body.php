@@ -735,17 +735,20 @@ class CKeditorParser extends CKeditorParserWrapper {
     $categories = $parserOutput->getCategories();
     if ($categories) {
       $appendString = '';
+      $linebreak = '';
       foreach ($categories as $cat => $val) {
         $args = '';
         if ($val == 'RTENOTITLE') {
           $args .= '_fcknotitle="true" ';
           $val = $cat;
         }
+        $appendString .= $linebreak;
         if ($val != $title->mTextform) {
-          $appendString .= '<br/><span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span>';
+          $appendString .= '<span ' . $args . 'class="fck_mw_category" sort="' . $val . '">' . str_replace('_', ' ', $cat) . '</span>';
         } else {
-          $appendString .= '<br/><span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span>';
+          $appendString .= '<span ' . $args . 'class="fck_mw_category">' . str_replace('_', ' ', $cat) . '</span>';
         }
+      	$linebreak = "<br />";
       }
       $oldText = $parserOutput->getText();
 
