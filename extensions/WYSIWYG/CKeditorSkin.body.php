@@ -262,7 +262,7 @@ class CKeditorSkin {
 		}
 
 		$u = $nt->getFullText();
-		$u = urlencode($u);  // Fix for links containing "
+		$u = rawurlencode($u);  // Fix for links containing "
 		//#Updating links tables -> #Updating_links_tables
 		$u = str_replace( "#" . $nt->getFragment(), $nt->getFragmentForURL(), $u );
 
@@ -295,7 +295,7 @@ class CKeditorSkin {
 		$u = preg_replace( "/^RTECOLON/", ":", $u ); // change 'RTECOLON' => ':'
 		if( substr( $text, 0, 10 ) == 'RTENOTITLE' ){ // starts with RTENOTITLE
 			$args .= '_fcknotitle="true" ';
-			$title = urldecode($u);
+			$title = rawurldecode($u);
 			$trail = substr( $text, 10 ) . $trail;
 		}
 
@@ -315,7 +315,7 @@ class CKeditorSkin {
 		wfProfileIn( __METHOD__ );
 
 		$u = $nt->getFullText();
-		$u = urlencode($u);  // Fix for links containing "
+		$u = rawurlencode($u);  // Fix for links containing "
 		
 		//#Updating links tables -> #Updating_links_tables
 		$u = str_replace( "#" . $nt->getFragment(), $nt->getFragmentForURL(), $u );
@@ -333,7 +333,7 @@ class CKeditorSkin {
 		$u = preg_replace( "/^RTECOLON/", ":", $u ); // change 'RTECOLON' => ':'
 		if( substr( $text, 0, 10 ) == 'RTENOTITLE' ){	// starts with RTENOTITLE
 			$args .= '_fcknotitle="true" ';
-			$title = urldecode($u);
+			$title = rawurldecode($u);
 			$trail = substr( $text, 10 ) . $trail;
 		}
 		$s = "<a {$args}href=\"{$u}\">{$title}</a>{$trail}";

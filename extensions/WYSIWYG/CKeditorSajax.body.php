@@ -124,6 +124,11 @@ function wfSajaxSearchArticleCKeditor( $term ) {
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
     $prefix = "";
     
+    // Check if title is valid
+    if (preg_match(Title::getTitleInvalidRegex(), $term) === 1) {
+    	return "***Title has an invalid format***";
+    }
+    
     if ( ( strlen( str_replace( '_', '', $term ) ) < 1 ) && ( count($ns) > 1 ) ) {
 		return '';
     }

@@ -27,18 +27,33 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
 
             ClearSearch() ;
 
+			var invalidTitle = false;
             if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
-                SetSearchMessage( editor.lang.mwplugin.noPageFound ) ;
+                SetSearchMessage( editor.lang.mwplugin.noPagesFound ) ;
             }
             else {
-                if ( results.length == 1 )
+                if (results.length == 1) {
+					if (results[0] === '***Title has an invalid format***') {
+						SetSearchMessage(editor.lang.mwplugin.invalidTitleFormat);
+						// hide the OK button
+						dialog.getButton('ok').getElement().hide();
+						invalidTitle = true;
+					} else {
                     SetSearchMessage( editor.lang.mwplugin.onePageFound ) ;
-                else
-                    SetSearchMessage( results.length + editor.lang.mwplugin.manyPageFound ) ;
-
-                for ( var i = 0 ; i < results.length ; i++ )
+					}
+				} else {
+					SetSearchMessage(results.length + editor.lang.mwplugin.manyPagesFound);
+				}
+				if (!invalidTitle) {
+					for (var i = 0; i < results.length; i++) {
                     select.add ( results[i].replace(/_/g, ' '), results[i] );
             }
+        }
+            }
+			if (!invalidTitle) {
+				// show the OK button
+				dialog.getButton('ok').getElement().show();
+			}			
         }
 
         var ClearSearch = function() {
@@ -231,10 +246,15 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
 
                 var href = ( element  && ( element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' ) || element.getAttribute('link') ) ) || '';
                 if (href) {
+					// The link is URL encoded
+					href = decodeURIComponent(href);
+					href = href.replace(/_/g, ' ');
                     var e = this.getContentElement( 'mwLinkTab1', 'linkTarget');
                     e.setValue(href);
                 }
                 this._.selectedElement = element;
+				
+				this.getButton('ok').getElement().show();
         	}
 
         }
