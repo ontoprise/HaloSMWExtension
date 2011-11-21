@@ -422,7 +422,7 @@ class SRFExhibit extends SMWResultPrinter {
 							$textstack[] = $object->getWikiValue();
 							break;
 						default:
-							$textstack[] = $object->getLongHTMLText( $outputmode, $this->getLinker( 0 ) );
+							$textstack[] = $object->getLongHTMLText( $this->getLinker( 0 ) ); // fixed by the HALO team
 					}
 				}
 

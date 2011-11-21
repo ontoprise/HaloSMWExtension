@@ -40,6 +40,7 @@ $messages['en'] = array(
 	'srf_outline_novalue' => 'No value',
 	'srf_printername_outline' => 'Outline',
 	'srf_paramdesc_outlineproperties' => 'The list of properties to be displayed as outline headers, separated by commas',
+	
 	// format "math"
 	'srf_printername_sum' => 'Sum of numbers',
 	'srf_printername_average' => 'Average of numbers',
@@ -47,6 +48,8 @@ $messages['en'] = array(
 	'srf_printername_min' => 'Minimum number',
 	'srf_paramdesc_limit' => 'The maximum number of pages to query',
 	'srf_printername_product' => 'Product of numbers',
+	'srf_printername_median' => 'Median of numbers',
+	
 	// formats "timeline" and "eventline"
 	'srf_printername_timeline' => 'Timeline',
 	'srf_printername_eventline' => 'Eventline',
@@ -136,6 +139,7 @@ $messages['qqq'] = array(
 There is an [http://discoursedb.org/wiki/Outline_example Outline example] ([http://semantic-mediawiki.org/wiki/Help:Outline_format more information]).',
 	'srf_paramdesc_outlineproperties' => '"Outline" means the outline of text or document here.',
 	'srf_paramdesc_timelinebands' => 'Available bands are DECADE, YEAR, MONTH, WEEK, and DAY. For details see http://semantic-mediawiki.org/wiki/Help:Timeline_format',
+	'srf_printername_gallery' => '{{Identical|Gallery}}',
 	'srf_paramdesc_graphname' => '{{Identical|Title}}',
 );
 
@@ -253,6 +257,14 @@ $messages['arz'] = array(
 	'srf_paramdesc_chartwidth' => 'عرض الرسم بالبكسل',
 );
 
+/** Azerbaijani (Azərbaycanca)
+ * @author Cekli829
+ */
+$messages['az'] = array(
+	'srfc_today' => 'Bu gün',
+	'srf_printername_gallery' => 'Qalereya',
+);
+
 /** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
  * @author EugeneZelenko
  * @author Jim-by
@@ -279,6 +291,7 @@ $messages['be-tarask'] = array(
 	'srf_printername_max' => 'Максымальны лік',
 	'srf_printername_min' => 'Мінімальны лік',
 	'srf_paramdesc_limit' => 'Максымальная колькасьць старонак для запыту',
+	'srf_printername_product' => 'Вынік лічбаў',
 	'srf_printername_timeline' => 'Храналёгія',
 	'srf_printername_eventline' => 'Храналёгія падзеяў',
 	'srf_paramdesc_timelinebands' => 'Вызначае, якія дыяпазоны будуць паказаныя ў выніку.',
@@ -286,6 +299,8 @@ $messages['be-tarask'] = array(
 	'srf_paramdesc_timelinestart' => 'Назва ўласьцівасьці, якая выкарыстоўваецца як першы пункт часу',
 	'srf_paramdesc_timelineend' => 'Назва ўласьцівасьці, якая выкарыстоўваецца для вызначэньня другога пункту часу',
 	'srf_paramdesc_timelinesize' => 'Вышыня шкалы часу (па змоўчваньні 300пкс)',
+	'srf-timeline-allresults' => 'Дадатковыя вынікі па гэтым запыце.',
+	'srf-timeline-nojs' => 'Вам неабходна дазволіць JavaScript, каб праглядаць інтэрактыўную лінію часу.',
 	'srf_paramdesc_views' => 'Прагляды для паказу',
 	'srf_paramdesc_facets' => 'Набор ўласьцівасьцяў для паказу на кожнай старонцы',
 	'srf_paramdesc_lens' => 'Назва шаблёну для паказу ўласьцівасьцяў старонкі',
@@ -304,6 +319,7 @@ $messages['be-tarask'] = array(
 	'srf_paramdesc_widths' => 'Шырыня выяваў',
 	'srf_paramdesc_heights' => 'Вышыня выяваў',
 	'srf_paramdesc_autocaptions' => 'Выкарыстоўваць назву файла ў якасьці загалоўку, калі ён не пададзены',
+	'srf_paramdesc_fileextensions' => 'Падчас выкарыстаньня назвы файла ў якасьці загалоўку, таксама паказваць пашырэньне файла',
 	'srf_printername_tagcloud' => 'Воблака тэгаў',
 	'srf_paramdesc_increase' => 'Як павялічыць памер тэгаў',
 	'srf_paramdesc_tagorder' => 'Парадак тэгаў',
@@ -464,8 +480,10 @@ $messages['ca'] = array(
 	'srf_printername_calendar' => 'Calendari mensual',
 	'srf_paramdesc_calendarlang' => 'El codi de la llengua en què es mostrarà el calendari',
 	'srf_printername_vcard' => 'Exportació vCard',
+	'srf_printername_icalendar' => 'Exportació iCalendar',
 	'srf_paramdesc_icalendartitle' => 'El títol del fitxer del calendari',
 	'srf_paramdesc_icalendardescription' => 'La descripció del fitxer del calendari',
+	'srf_printername_bibtex' => 'Exportació BibTeX',
 	'srf_outline_novalue' => 'Sense valor',
 	'srf_printername_sum' => 'Suma dels nombres',
 	'srf_printername_average' => 'Mitjana dels nombres',
@@ -473,11 +491,28 @@ $messages['ca'] = array(
 	'srf_printername_min' => 'Nombre mínim',
 	'srf_paramdesc_limit' => 'El nombre màxim de pàgines per consultar',
 	'srf_printername_product' => 'Producte de nombres',
+	'srf_printername_timeline' => 'Línia temporal',
+	'srf_printername_eventline' => "Línia d'esdeveniments",
+	'srf_paramdesc_timelinebands' => 'Defineix quines bandes es mostren en el resultat.',
 	'srf_paramdesc_timelinesize' => 'La llargada de la línia de temps (per defecte són 300px)',
+	'srf-timeline-allresults' => "Més resultats d'aquesta consulta.",
+	'srf_paramdesc_lens' => "El nom d'una plantilla amb què mostrar les propietats de la pàgina",
+	'srf_paramdesc_barnumbersaxislabel' => "L'etiqueta de l'eix de nombres",
 	'srf_printername_gallery' => 'Galeria',
+	'srf_paramdesc_perrow' => "El nombre d'imatges per fila",
+	'srf_paramdesc_widths' => "L'amplada de les imatges",
+	'srf_paramdesc_heights' => "L'alçada de les imatges",
+	'srf_paramdesc_autocaptions' => "Utilitza el nom de fitxer com a llegenda quan no se'n proporcioni cap",
 	'srf_printername_tagcloud' => "Núvol d'etiquetes",
+	'srf_paramdesc_increase' => 'Com augmentar la mida de les etiquetes',
+	'srf_paramdesc_tagorder' => "L'ordre de les etiquetes",
+	'srf_paramdesc_maxtags' => "El nombre màxim d'etiquetes en el núvol",
+	'srf_paramdesc_propsep' => 'Separador entre les propietats sol·licitades',
+	'srf_paramdesc_manysep' => 'Separador entre moltes propietats amb valor',
+	'srf_paramdesc_recordsep' => 'Separador entre els valors de les propietats de registre',
 	'srf_paramdesc_graphname' => 'Títol',
 	'srf_paramdesc_graphlabel' => 'Etiqueta del gràfic',
+	'srf_paramdesc_rankdir' => 'Direcció de la fletxa',
 );
 
 /** German (Deutsch)
@@ -490,13 +525,13 @@ $messages['ca'] = array(
  * @author Umherirrender
  */
 $messages['de'] = array(
-	'srf-desc' => 'Stellt zusätzliche Ausgabeformate für eingebettete Abfragen zur Verfügung',
+	'srf-desc' => 'Ermöglicht zusätzliche Ausgabeformate für eingebettete Abfragen',
 	'srf-name' => 'Semantische Ergebnisformate',
 	'srfc_previousmonth' => 'Voriger Monat',
 	'srfc_nextmonth' => 'Nächster Monat',
 	'srfc_today' => 'Heute',
 	'srfc_gotomonth' => 'Gehe zu Monat',
-	'srf_printername_calendar' => 'Monatlicher Kalender',
+	'srf_printername_calendar' => 'Kalender',
 	'srf_paramdesc_calendarlang' => 'Der Sprachcode der Sprache, in der der Kalender angezeigt werden soll',
 	'srf_printername_vcard' => 'vCard-Export',
 	'srf_printername_icalendar' => 'iCalendar-Export',
@@ -512,6 +547,7 @@ $messages['de'] = array(
 	'srf_printername_min' => 'Niedrigste Zahl',
 	'srf_paramdesc_limit' => 'Die maximale Anzahl der abfragbaren Seiten',
 	'srf_printername_product' => 'Produkt der Zahlen',
+	'srf_printername_median' => 'Median der Zahlen',
 	'srf_printername_timeline' => 'Zeitlinie',
 	'srf_printername_eventline' => 'Ereignislinie',
 	'srf_paramdesc_timelinebands' => 'Legt fest, welche Bereiche im Ergebnis angezeigt werden.',
@@ -782,6 +818,7 @@ $messages['fi'] = array(
 
 /** French (Français)
  * @author Crochet.david
+ * @author Gomoko
  * @author Grondin
  * @author Hashar
  * @author IAlex
@@ -814,6 +851,7 @@ $messages['fr'] = array(
 	'srf_printername_max' => 'Nombre maximal',
 	'srf_printername_min' => 'Nombre minimal',
 	'srf_paramdesc_limit' => 'Le nombre maximum de pages à rechercher',
+	'srf_printername_product' => 'Produit de nombres',
 	'srf_printername_timeline' => 'Chronologie',
 	'srf_printername_eventline' => 'Chronologie des événements',
 	'srf_paramdesc_timelinebands' => 'Définit quels groupes sont affichées dans les résultats.',
@@ -821,6 +859,8 @@ $messages['fr'] = array(
 	'srf_paramdesc_timelinestart' => 'Un nom de propriété utilisé pour définir un point de démarrage',
 	'srf_paramdesc_timelineend' => 'Un nom de propriété utilisé pour définir un point de seconde date',
 	'srf_paramdesc_timelinesize' => 'La hauteur de la frise (300px par défaut)',
+	'srf-timeline-allresults' => 'Autres résultats pour cette requête.',
+	'srf-timeline-nojs' => 'JavaScript doit être activé pour voir la chronologie interactive.',
 	'srf_paramdesc_views' => 'Les vues à afficher',
 	'srf_paramdesc_facets' => 'L’ensemble des propriétés à afficher pour chaque page',
 	'srf_paramdesc_lens' => 'Le nom du modèle utilisé pour afficher les propriétés de la page',
@@ -839,6 +879,9 @@ $messages['fr'] = array(
 	'srf_paramdesc_widths' => 'La largeur des images',
 	'srf_paramdesc_heights' => 'La hauteur des images',
 	'srf_paramdesc_autocaptions' => "Utiliser le nom de fichier comme légende lorsqu'aucune n'est fournie",
+	'srf_paramdesc_fileextensions' => "Quand le nom de fichier est utilisé comme titre, afficher aussi l'extension du fichier",
+	'srf_paramdesc_captionproperty' => 'Le nom de la propriété sémantique présent sur les pages demandées doit être utilisé comme titre',
+	'srf_paramdesc_imageproperty' => 'Le nom de la propriété sémantique sur les pages demandées qui pointent vers des images à utiliser. Quand il est positionné, les pages demandées elles-mêmes ne seront aps affichées comme des images',
 	'srf_printername_tagcloud' => 'Nuage de tags',
 	'srf_paramdesc_includesubject' => 'Si les noms des sujets eux-mêmes devraient être inclus',
 	'srf_paramdesc_increase' => 'Comment augmenter la taille des tags',
@@ -889,6 +932,9 @@ $messages['frp'] = array(
 	'srf_printername_outline' => 'Començon',
 	'srf_printername_sum' => 'Soma de nombros',
 	'srf_printername_average' => 'Moyena des nombros',
+	'srf_printername_max' => 'Nombro lo ples grant',
+	'srf_printername_min' => 'Nombro lo ples petiôt',
+	'srf_printername_product' => 'Fruit de nombros',
 	'srf_printername_timeline' => 'Diagramo cronologico',
 	'srf_printername_eventline' => 'Diagramo cronologico des èvènements',
 	'srf_printername_googlebar' => 'Diagramo en bârres de Google',
@@ -948,6 +994,7 @@ $messages['gl'] = array(
 	'srf_printername_max' => 'Número máximo',
 	'srf_printername_min' => 'Número mínimo',
 	'srf_paramdesc_limit' => 'O número máximo de páxinas a pescudar',
+	'srf_printername_product' => 'Produto dos números',
 	'srf_printername_timeline' => 'Liña do tempo',
 	'srf_printername_eventline' => 'Liña do evento',
 	'srf_paramdesc_timelinebands' => 'Define as bandas que se mostrarán no resultado.',
@@ -955,6 +1002,8 @@ $messages['gl'] = array(
 	'srf_paramdesc_timelinestart' => 'Un nome de propiedade usado para definir un primeiro punto de tempo',
 	'srf_paramdesc_timelineend' => 'Un nome de propiedade usado para definir un segundo punto de tempo',
 	'srf_paramdesc_timelinesize' => 'A altura da liña do tempo (por defecto, 300px)',
+	'srf-timeline-allresults' => 'Máis resultados para esta pescuda.',
+	'srf-timeline-nojs' => 'Debe ter o JavaScript activado para ollar a liña do tempo interactiva.',
 	'srf_paramdesc_views' => 'As vistas a mostrar',
 	'srf_paramdesc_facets' => 'O conxunto de propiedades a mostrar en cada páxina',
 	'srf_paramdesc_lens' => 'O nome dun modelo co que mostrar as propiedades da páxina',
@@ -973,6 +1022,9 @@ $messages['gl'] = array(
 	'srf_paramdesc_widths' => 'O largo das imaxes',
 	'srf_paramdesc_heights' => 'A altura das imaxes',
 	'srf_paramdesc_autocaptions' => 'Usar o nome do ficheiro como pé de imaxe cando non se indica ningún',
+	'srf_paramdesc_fileextensions' => 'Ao usar o nome do ficheiro como pé de imaxe, mostrar tamén a extensión do ficheiro',
+	'srf_paramdesc_captionproperty' => 'O nome dunha propiedade semántica presente nas páxinas consultadas a usar como pé de imaxe',
+	'srf_paramdesc_imageproperty' => 'Nome dunha propiedade semántica nas páxinas consultadas que apunta cara a imaxes a usar. Cando estea definido, as páxinas consultadas en si non se mostrarán como imaxes',
 	'srf_printername_tagcloud' => 'Nube de etiquetas',
 	'srf_paramdesc_includesubject' => 'Se os nomes dos temas deben incluírse',
 	'srf_paramdesc_increase' => 'Como aumentar o tamaño das etiquetas',
@@ -1311,6 +1363,7 @@ $messages['ia'] = array(
 	'srf_printername_min' => 'Numeros minime',
 	'srf_paramdesc_limit' => 'Le numero maxime de paginas a consultar',
 	'srf_printername_product' => 'Producto de numeros',
+	'srf_printername_median' => 'Mediana de numeros',
 	'srf_printername_timeline' => 'Chronologia',
 	'srf_printername_eventline' => 'Chronologia de eventos',
 	'srf_paramdesc_timelinebands' => 'Defini qual bandas es monstrate in le resultato.',
@@ -1517,6 +1570,7 @@ $messages['it'] = array(
  * @author Hosiryuhosi
  * @author JtFuruhata
  * @author Naohiro19
+ * @author Schu
  * @author Whym
  * @author 青子守歌
  */
@@ -1549,6 +1603,7 @@ $messages['ja'] = array(
 	'srf_paramdesc_timelinestart' => '最初の時点を定義するプロパティーの名前',
 	'srf_paramdesc_timelineend' => '2番目の時点を定義するプロパティーの名前',
 	'srf_paramdesc_timelinesize' => 'タイムラインの縦幅 (既定では300ピクセル)',
+	'srf-timeline-nojs' => 'インタラクティブなタイムラインを表示するために JavaScript を有効にする必要があります。',
 	'srf_paramdesc_views' => '表示されるビュー',
 	'srf_paramdesc_facets' => '各ページで表示するプロパティーの集合',
 	'srf_paramdesc_lens' => 'ページのプロパティーとともに表示するテンプレートの名前',
@@ -1563,7 +1618,11 @@ $messages['ja'] = array(
 	'srf_paramdesc_bardirection' => '棒グラフの方向',
 	'srf_paramdesc_barnumbersaxislabel' => '数値軸のラベル',
 	'srf_printername_gallery' => 'ギャラリー',
+	'srf_paramdesc_perrow' => '行あたりの画像の量',
+	'srf_paramdesc_widths' => '画像の幅',
+	'srf_paramdesc_heights' => '画像の高さ',
 	'srf_printername_tagcloud' => 'タグクラウド',
+	'srf-printername-graph' => 'グラフ',
 );
 
 /** Javanese (Basa Jawa)
@@ -1733,6 +1792,7 @@ $messages['mk'] = array(
 	'srf_printername_min' => 'Минимален број',
 	'srf_paramdesc_limit' => 'Максимален број на страници кои можат да се пребараат',
 	'srf_printername_product' => 'Производ на броеви',
+	'srf_printername_median' => 'Средна бројна вредност',
 	'srf_printername_timeline' => 'Хронологија',
 	'srf_printername_eventline' => 'Преглед на настани',
 	'srf_paramdesc_timelinebands' => 'Определува кои ленти ќе се прикажуваат во резултатот.',
@@ -1983,6 +2043,7 @@ $messages['no'] = array(
 	'srf_printername_max' => 'Største tall',
 	'srf_printername_min' => 'Minste tall',
 	'srf_paramdesc_limit' => 'Maks antall sider å etterspørre',
+	'srf_printername_product' => 'Produktet av tallene',
 	'srf_printername_timeline' => 'Tidslinje',
 	'srf_printername_eventline' => 'Hendelseslinje',
 	'srf_paramdesc_timelinebands' => 'Definerer hvilke bånd som vises i resultatet.',
@@ -1990,6 +2051,8 @@ $messages['no'] = array(
 	'srf_paramdesc_timelinestart' => 'Et egenskapsnavn brukt for å definere et første tidspunkt',
 	'srf_paramdesc_timelineend' => 'Et egenskapsnavn brukt for å definere et andre tidspunkt',
 	'srf_paramdesc_timelinesize' => 'Høyden på tidslinjen (standard er 300px)',
+	'srf-timeline-allresults' => 'Flere resultater for denne spørringen',
+	'srf-timeline-nojs' => 'Du må tillate JavaScript for å kunne se den interaktive tidslinjen.',
 	'srf_paramdesc_views' => 'Visninger som skal fremvises',
 	'srf_paramdesc_facets' => 'Egenskapssettet som skal vises for hver side',
 	'srf_paramdesc_lens' => 'Navnet på malen som skal vise frem sideegenskapene',
@@ -2008,6 +2071,9 @@ $messages['no'] = array(
 	'srf_paramdesc_widths' => 'Bredde på bildene',
 	'srf_paramdesc_heights' => 'Høyde på bildene',
 	'srf_paramdesc_autocaptions' => 'Bruk filnavn som bildetekst når denne mangler',
+	'srf_paramdesc_fileextensions' => 'Hvis filnavn brukes som figurtekst, vis også filtypen',
+	'srf_paramdesc_captionproperty' => 'Som figurtekst brukes navnet på den semantiske egenskapen tilgjengelig på sidene med spørringer',
+	'srf_paramdesc_imageproperty' => 'Navnet på en semantisk egenskap for sidene med spørringer som peker to bilder som skal brukes. Hvis satt, blir sidene med spørringer ikke selv vist frem som bilder.',
 	'srf_printername_tagcloud' => 'Tagg-sky',
 	'srf_paramdesc_includesubject' => 'Hvis emnetekstene selv bør være med',
 	'srf_paramdesc_increase' => 'Hvordan du øker størrelsen på taggene',
@@ -2174,36 +2240,36 @@ $messages['pms'] = array(
 	'srf_paramdesc_perrow' => 'Ël total ëd figure për riga',
 	'srf_paramdesc_widths' => 'La larghëssa dla figure',
 	'srf_paramdesc_heights' => "L'autëssa dle figure",
-	'srf_paramdesc_autocaptions' => "Dòvra nòm d'archivi com tìtol quand gnente a l'é dàit",
+	'srf_paramdesc_autocaptions' => "Dovré ël nòm d'archivi com descrission quand che gnun-a a l'é dàita",
 	'srf_printername_tagcloud' => 'Ansema ëd tichëtte',
 	'srf_paramdesc_includesubject' => 'Se ij nòm dël soget midem a dovrìo esse ancludù',
 	'srf_paramdesc_increase' => 'Com aumenté la dimension dle tichëtte',
 	'srf_paramdesc_tagorder' => "L'órdin dle tichëtte",
-	'srf_paramdesc_mincount' => 'Ël total mìnim ëd vire che un valor a deuv capité për esse listà',
-	'srf_paramdesc_minsize' => 'La dimension dle tichëtte pi cite an persentual (default: 77)',
-	'srf_paramdesc_maxsize' => 'La dimension dle tichëtte pi gròsse an persentual (default: 77)',
-	'srf_paramdesc_maxtags' => "Ël total màssim ëd tichëtte ant l'ansema",
-	'srf_printername_array' => 'Array',
-	'srf_paramdesc_pagetitle' => "Se mosté ij tìtoj ëd pagina com vos d'arzultà o stërmeje",
-	'srf_paramdesc_hidegaps' => 'Se mosté na propietà veuida e arcordé valor separà da separador o stërmeje',
-	'srf_paramdesc_arrayname' => "Se dàit e ArrayEstension a l'é disponìbil sòn-sì a creerà n'array con ij nòm specìfich",
-	'srf_paramdesc_propsep' => 'Separador tra le proprietà ciamà',
-	'srf_paramdesc_manysep' => 'Separador tra tante propietà valorisà',
-	'srf_paramdesc_recordsep' => 'Separador tra tante propietà valorisà',
-	'srf_printername_hash' => 'Hash',
-	'srf_paramdesc_hashname' => "Se dàit e l'estension HashTables a l'é disponibla sòn-sì a crerà n'hash con ël nòm specìfich",
+	'srf_paramdesc_mincount' => 'Ël nùmer mìnim ëd vire che un valor a dev ancapité për esse listà',
+	'srf_paramdesc_minsize' => 'La dimension dle tichëtte pi cite an persentual (stàndard: 77)',
+	'srf_paramdesc_maxsize' => 'La dimension dle tichëtte pi gròsse an përsentual (stàndard: 77)',
+	'srf_paramdesc_maxtags' => "La quantità màssima ëd tichëtte ant l'ansema",
+	'srf_printername_array' => 'Tàula',
+	'srf_paramdesc_pagetitle' => "S'a venta smon-e ij tìtoj ëd pàgina com vos ëd l'arzultà o stërmeje",
+	'srf_paramdesc_hidegaps' => "S'a venta smon-e na propietà veuida e argistré ij valor separà da 'd separator o stërmeje",
+	'srf_paramdesc_arrayname' => "Se dàit e si ArrayEstension a l'é disponìbil sòn a creerà na tàula con ij nòm ëspessìfich",
+	'srf_paramdesc_propsep' => 'Separator tra le proprietà ciamà',
+	'srf_paramdesc_manysep' => 'Separator tra tante propietà con valor',
+	'srf_paramdesc_recordsep' => "Separator tra ij valor ëd le propietà d'argistrassion",
+	'srf_printername_hash' => 'Taj',
+	'srf_paramdesc_hashname' => "Se dàit e l'estension HashTables a l'é disponìbil sòn a creerà un taj con ël nòm ëspessìfich",
 	'srf-printername-graph' => 'Gràfich',
-	'srf-paramdesc-graph-relation' => 'Ij soget o le propietà ëd nòm a son pare o fieuj?',
-	'srf-paramdesc-graph-nameprop' => "A përmëtt d'amposté na propietà che a sarà dovrà com soget nopà dël soget atual",
-	'srf-paramdesc-graph-nodeshape' => 'La forma ëd minca grop ant ël gràfich',
+	'srf-paramdesc-graph-relation' => 'Ij soget o le propietà ëd nòm son-ne dij pare o dij fieuj?',
+	'srf-paramdesc-graph-nameprop' => "A përmët d'amposté na propietà che a sarà dovrà com soget al pòst dël soget atual",
+	'srf-paramdesc-graph-nodeshape' => 'La forma ëd minca vértes ant ël gràf',
 	'srf_paramdesc_graphname' => 'Tìtol',
-	'srf_paramdesc_graphsize' => 'Dimension dël gràfich (an px)',
-	'srf_paramdesc_graphlegend' => 'Mosta legenda dël gràfich o nò',
+	'srf_paramdesc_graphsize' => 'Dimension dël graf (an pontin)',
+	'srf_paramdesc_graphlegend' => 'Mostré la legenda dël graf o nò',
 	'srf_paramdesc_graphlabel' => 'Tichëtta dël gràfich',
-	'srf_paramdesc_rankdir' => 'Diression dla frecia',
-	'srf_paramdesc_graphlink' => 'Colegament dël gràfich',
+	'srf_paramdesc_rankdir' => 'Diression dla flecia',
+	'srf_paramdesc_graphlink' => 'Liura al graf',
 	'srf_paramdesc_graphcolor' => 'Color dël gràfich',
-	'srf-paramdesc-graph-wwl' => 'Lìmit dël wrap dla paròla (an # ëd caràter)',
+	'srf-paramdesc-graph-wwl' => "Lìmit dl'a cap automàtich dla paròla (an nùmer ëd caràter)",
 );
 
 /** Pashto (پښتو)

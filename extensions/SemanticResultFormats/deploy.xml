@@ -3,16 +3,16 @@
     <global>
         <id>semanticresultformats</id>
         <title>Semantic Result Formats</title>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH</vendor>
-        <maintainer>ontoprise GmbH</maintainer>
+        <maintainer>Jeroen de Dauw et al.</maintainer>
         <instdir>extensions/SemanticResultFormats</instdir>
         <description>
-            Semantic Result Formats is an extension to MediaWiki and bundles a number of result formats for inline queries. The individual formats such as  timelines can be added to the installation independently.
+            Semantic Result Formats is an extension to MediaWiki and bundles a number of result formats for inline queries. The individual formats such as timelines can be added to the installation independently.
         </description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Result_Formats</helpurl>
+		<helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats</helpurl>
         <dependencies>
             <dependency from="1.6.0">smw</dependency>
         </dependencies>
@@ -32,12 +32,6 @@
     
     <configs>
         <successor ext="smw" />
-        <patch file="patch.txt" />
-        <new>
-            <patch file="patch.txt" />
-            <require name="srf"
-                file="extensions/SemanticResultFormats/SemanticResultFormats.php" />
-        </new>
         <uninstall>
     		<!-- empty -->
 		</uninstall>

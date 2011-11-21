@@ -2,6 +2,15 @@ For a documentation of all features, see
 http://semantic-mediawiki.org/wiki/Semantic_Result_Formats
 
 
+== SRF 1.6.2 ==
+
+Released on September 18, 2011.
+
+* Fixed error in math printer when there are no numerical results. 
+* Fixed vCard compatibility with SMW 1.6 and later.
+* Fixed array compatibility with SMW 1.6 and later.
+* Added median and product formats to the list of default enabled formats.
+
 == SRF 1.6.1 ==
 
 Released on August 20, 2011.
