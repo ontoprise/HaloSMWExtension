@@ -11,13 +11,13 @@ class TSCMappingStore {
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_urimapping = $db->tableName('smw_urimapping');
 		$tscURI = $db->selectRow($smw_urimapping, array('smw_uri'), array('page_id'=>$title->getArticleID()));
-		if ($tscURI !== false) return $tscURI->smw_uri;
+		if ($tscURI !== false) return str_replace(" ","_",$tscURI->smw_uri);
 
-		$parts = explode("/", $title->getText());
+		$parts = explode("/", $title->getDBkey());
 		$prefix = $parts[0];
 		$ns_uri = self::getNamespaceMapping($prefix);
 		if (is_null($ns_uri)) return NULL;
-		return $ns_uri.substr($title->getText(), strlen($prefix)+1);
+		return $ns_uri.substr($title->getDBkey(), strlen($prefix)+1);
 	}
 
 	public static function getNamespaceMapping($prefix) {

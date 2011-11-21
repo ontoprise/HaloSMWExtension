@@ -120,6 +120,8 @@ $messages['en'] = array(
 	
     //--- Non-existing pages ---
     'lod_nep_link'          => 'Create the article <b>$1</b> with the content displayed below.',
+
+    'smw_gard_exportobl_bundlename' => 'Bundle (blank for whole wiki)'
     													
 );
 
@@ -210,7 +212,8 @@ $messages['de'] = array(
     
     //--- Non-existing pages ---
     'lod_nep_link'          => 'Den Artikel <b>$1</b> mit dem unten dargestellten Inhalt erzeugen.',
-    
+
+    'smw_gard_exportobl_bundlename' => 'Bundle (leer lassen für ganzes Wiki)'
 );
 
 /** 

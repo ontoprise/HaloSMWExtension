@@ -431,6 +431,12 @@ class ExportObjectLogicBot extends GardeningBot {
 	}
 }
 
+/**
+ * Selects wiki pages of a bundle or in the whole wiki.
+ *  
+ * @author kuehn
+ *
+ */
 class OEBPageSource {
 	public static function getPages($namespace, $bundleID = NULL) {
 		global $dfgLang;
@@ -446,6 +452,7 @@ class OEBPageSource {
 					$titles[] = $title;
 				}
 			}
+			return $titles;
 		}
 	}
 
