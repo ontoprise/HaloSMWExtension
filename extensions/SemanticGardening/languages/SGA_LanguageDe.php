@@ -12,7 +12,7 @@ class SGA_LanguageDe {
     public $contentMessages = array();
     
     public $userMessages = array (
-/* Messages for Gardening */
+	/* Messages for Gardening */
     'gardening' => 'Gardening', // name of special page 'Gardening'
     'gardeninglog' => 'GardeningLog', // name of special page 'GardeningLog'
     'smw_gard_param_replaceredirects' => 'Ersetze Redirects',
@@ -153,8 +153,8 @@ class SGA_LanguageDe {
     'smw_gard_import_docu' => 'Importiert eine OWL-Datei.',
     'smw_gard_import_uselabels' => 'Benutze Labels',
     'smw_gard_ontology_id' => 'Ontology ID',
-    'smw_df_missing' => 'Um die Gardening Bots nutzen zu können müssen Sie das Deployment Framework installieren! <br/> Folgen Sie dem Link für weitere Informationen: ',
-    'smw_TSC_missing' => 'Um die Gardening Bots nutzen zu können müssen Sie das Triplestore Connector installieren! <br/> Folgen Sie dem Link für weitere Informationen:',
+    'smw_df_missing' => 'Um die Gardening Bots nutzen zu kï¿½nnen mï¿½ssen Sie das Deployment Framework installieren! <br/> Folgen Sie dem Link fï¿½r weitere Informationen: ',
+    'smw_TSC_missing' => 'Um die Gardening Bots nutzen zu kï¿½nnen mï¿½ssen Sie das Triplestore Connector installieren! <br/> Folgen Sie dem Link fï¿½r weitere Informationen:',
     
     
     /*Message for ExportOntologyBot*/
