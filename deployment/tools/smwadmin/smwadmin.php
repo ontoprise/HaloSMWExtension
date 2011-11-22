@@ -826,16 +826,17 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 				$dfgOut->outputln("\nThe following extensions would get updated:\n");
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
-					$dfgOut->outputln( "\t*$id-".$min->toVersionString()."_".$desc->getPatchlevel());
+					$id = $desc->getID();
+                    $dfgOut->outputln("\t*$id-".$min->toVersionString());
 				}
-
 
 			}
 			if (count($contradictions) > 0) {
 				$dfgOut->outputln("\nThe following extensions can not be installed/updated due to conflicts:");
 				foreach($contradictions as $etu) {
 					list($dd, $min, $max) = $etu;
-					$dfgOut->outputln("* ".$dd->getID());
+					$id = $dd->getID();
+                    $dfgOut->outputln("\t*$id-".$min->toVersionString());
 				}
 			}
 			$dfgOut->outputln("\n");

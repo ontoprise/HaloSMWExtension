@@ -596,7 +596,7 @@ class Installer {
 			}
 
 
-			list($url,$repo_url) = PackageRepository::getVersion($id, $desc->getVersion());
+			list($url,$repo_url) = PackageRepository::getVersion($id, $min);
 			$credentials = PackageRepository::getCredentials($repo_url);
 
 			$this->logger->info("Download $id-".$desc->getVersion()->toVersionString().".zip");
@@ -1062,6 +1062,7 @@ class Installer {
 			if (!$this->checkIfAlreadyContained($packagesToUpdate, $desc_min)) {
 				$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
 				$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages, $globalUpdate);
+				$this->collectSuperExtensions($desc_min, $packagesToUpdate, $localPackages);
 			}
 		}
 
@@ -1107,7 +1108,7 @@ class Installer {
 					$depToUpdate = $ptoUpdate->getDependency($dd->getID());
 					if ($depToUpdate->getMinVersion()->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($depToUpdate->getMaxVersion())) {
 
-						$packagesToUpdate[] = array($p, $depToUpdate->getMinVersion(), $depToUpdate->getMaxVersion());
+						$packagesToUpdate[] = array($p, $v, $v);
 						$updateFound = true;
 						break;
 					}
@@ -1115,6 +1116,7 @@ class Installer {
 				if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
 
 				$this->collectSuperExtensions($ptoUpdate, $packagesToUpdate, $localPackages);
+				$this->collectDependingExtensions($ptoUpdate, $updatesNeeded, $localPackages);
 			}
 		}
 
