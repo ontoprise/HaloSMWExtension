@@ -13,7 +13,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
-			<dependency from="1.17.0" to="1.17.9"">mw</dependency>
+			<dependency from="1.17.0" to="1.17.9">mw</dependency>
 		</dependencies>
 		<license>GPL v2</license>
 	</global>
