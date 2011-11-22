@@ -137,7 +137,8 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		var fsi = FacetedSearch.singleton.FacetedSearchInstance;
 		// Initialize the AjaxSolrManager for getting properties of the articles
 		this.mASMforProperties = new AjaxSolr.FSManager({
-			solrUrl : wgFSSolrURL
+			solrUrl : wgFSSolrURL,
+			servlet: wgFSSolrServlet
 		});
 		this.mASMforProperties.init();
 		this.mArticlePropertiesWidget = new FacetedSearch.classes.ArticlePropertiesWidget({
@@ -148,7 +149,8 @@ FacetedSearch.classes.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		// Initialize the AjaxSolrManager for checking if the search term is an
 		// existing article
 		this.mASMforTitleCheck = new AjaxSolr.FSManager({
-			solrUrl : wgFSSolrURL
+			solrUrl : wgFSSolrURL,
+			servlet: wgFSSolrServlet
 		});
 		this.mASMforTitleCheck.init();
 		this.mCreateArticleWidget = new FacetedSearch.classes.CreateArticleWidget({

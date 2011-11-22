@@ -45,17 +45,20 @@ $fsgIP = $IP.'/extensions/EnhancedRetrieval';
 # indexer: Type of the indexer. Currently only 'SOLR' is supported.
 # source:  The source for indexing semantic data. Currently only the database
 #          of SMW is supported: 'SMWDB'
-# host:    Name or IP address of the indexer server e.g. 'localhost'
+# host:    Protocol and name or IP address of the indexer server e.g. 
+#          'http://localhost' or $wgServer
 # port:    The port number of the indexer server e.g. 8983
-#
+# servlet: If the solrproxy is used it should be
+#          "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php"
+#          If SOLR is addressed directly it should be
+#          '/solr/select'
 ##
 $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
     'source'  => 'SMWDB',
-    'host'    => '127.0.0.1',
-    'port'    => 8983
+    'host'    => $wgServer,
+	'servlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php"
 );
-
 ###
 # If this variable is <true>, a search in the MediaWiki search field is redirected
 # to the faceted search special page. 

@@ -186,7 +186,8 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 */
 	function construct() {
 		mAjaxSolrManager = new AjaxSolr.FSManager({
-			solrUrl: wgFSSolrURL
+			solrUrl: wgFSSolrURL,
+			servlet: wgFSSolrServlet
 			});
 		
 		mAjaxSolrManager.addWidget(new FacetedSearch.classes.LinkCurrentSearchWidget({
@@ -422,6 +423,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 		var solrPresent = false;
 		var sm = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL,
+			servlet : wgFSSolrServlet,
 			handleResponse : function (data) {
 				solrPresent = true;
 			}
@@ -445,6 +447,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 	function initNamespaces() {
 		var sm = new AjaxSolr.FSManager({
 			solrUrl : wgFSSolrURL,
+			servlet: wgFSSolrServlet,
 			handleResponse : function (data) {
 				var namespaces = data.facet_counts.facet_fields[NAMESPACE_FIELD];
 				var ns = [];

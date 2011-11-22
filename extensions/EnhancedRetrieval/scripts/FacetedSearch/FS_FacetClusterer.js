@@ -74,7 +74,8 @@ FacetedSearch.classes.FacetClusterer = function (facetName, plainName) {
 	 */
 	function construct(facetName, plainName) {
 		mAjaxSolrManager = new AjaxSolr.FSManager({
-			solrUrl : wgFSSolrURL
+			solrUrl : wgFSSolrURL,
+			servlet: wgFSSolrServlet
 		});
 		mAjaxSolrManager.init();
 		fsm = FacetedSearch.singleton.FacetedSearchInstance.getAjaxSolrManager();
