@@ -60,6 +60,7 @@
     <delete dir="SemanticMaps" />
     <delete dir="SemanticNotifications/" />
     <delete dir="SemanticResultFormats" />
+  	<delete dir="SRFPlus" />
     <delete dir="SemanticRules" />
     <delete dir="SemanticWikiTag" />
     <delete dir="SMWUserManual" />
