@@ -368,8 +368,8 @@ if ($dfgInstallPackages) {
 } else {
 	// check for non-initialized extensions
 	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
-	if (count($localPackages) > 0) {
-		dffExitOnFatalError("\nThere are non-initialized extensions. Run: smwadmin --finalize\n");
+	if (count($localPackages) > 0 && !$dfgForce) {
+		dffExitOnFatalError("\nThere are non-initialized extensions. Run: 'smwadmin --finalize' or use -f to skip.\n");
 	}
 }
 
