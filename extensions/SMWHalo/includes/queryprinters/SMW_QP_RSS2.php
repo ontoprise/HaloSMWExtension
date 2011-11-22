@@ -310,7 +310,7 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 class SMWRSS2Item {
 
 	private $title;
-	private $fieldValues;
+	private $fieldValues = array();
 	
 	public function __construct($queryResultFields, $descriptionTemplate) {
 		
