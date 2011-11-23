@@ -1,38 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="treeview" name="SemanticTreeview">
-	<target name="treeview" depends="versionhint">
-		<delete dir="bin/zip" />
-		<delete>
-			<fileset dir="bin" includes="smwhalo-treeview*.zip" />
-		</delete>
-		<mkdir dir="bin/zip" />
+  <target name="treeview" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="smwhalo-treeview*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-		<copy todir="bin/zip/extensions/Treeview/img">
-			<fileset dir="../img/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip/extensions/Treeview/">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
+    <copy todir="bin/zip/extensions/Treeview/img">
+      <fileset dir="../img/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
+    <copy todir="bin/zip/extensions/Treeview/">
+      <fileset file="../*">
+        <exclude name="**/.svn, **/CVS" />
 
-			</fileset>
-		</copy>
-		<zip destfile="bin/treeview.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
-		<exec executable="php">
-			<arg value="../../../buildtools/renameDeployable.php" />
-			<arg value="../deploy.xml" />
-			<arg value="bin/treeview.zip" />
-		</exec>
-	</target>
-	<target name="versionhint">
-        <property environment="env" />
-		<exec executable="php">
-			<arg value="../../../buildtools/replaceVersionHint.php" />
-			<arg value="../deploy.xml" />
-			<arg value="../Treeview.php" />
-            <arg value="${env.BUILD_NUMBER}" />
-		</exec>
-	</target>
+      </fileset>
+    </copy>
+    <zip destfile="bin/treeview.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/treeview.zip" />
+    </exec>
+  </target>
+  <target name="versionhint">
+    <property environment="env" />
+    <exec executable="php">
+      <arg value="../../../buildtools/replaceVersionHint.php" />
+      <arg value="../deploy.xml" />
+      <arg value="../Treeview.php" />
+      <arg value="${env.BUILD_NUMBER}" />
+    </exec>
+  </target>
 </project>

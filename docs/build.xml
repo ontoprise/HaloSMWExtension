@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="documentation" name="SMWHalo Documentation"
-	xmlns:doxygen="antlib:org.doxygen.tools">
+<project basedir="." default="documentation" name="SMWHalo Documentation" xmlns:doxygen="antlib:org.doxygen.tools">
 
-	<target name="documentation" >
+  <target name="documentation">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
     <echo>Create documentation with doxygen</echo>
-		<doxygen:doxygen configFilename="d:\documentation\smwhalo.doxygen" doxygenPath="C:\Programme\doxygen\bin\doxygen"/>
-	</target>
+    <doxygen:doxygen configFilename="d:\documentation\smwhalo.doxygen" doxygenPath="C:\Programme\doxygen\bin\doxygen" />
+  </target>
 </project>

@@ -2,7 +2,9 @@
   <!-- =====================================================================
        APPLY_ALL
        ===================================================================== -->
-  <target name="apply_all" depends="apply_patches,apply_deployscripts" />
+  <target name="apply_all" depends="apply_patches,apply_deployscripts">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+  </target>
 
   <!-- =====================================================================
        APPLY_PATCHES
@@ -60,7 +62,7 @@
     <delete dir="SemanticMaps" />
     <delete dir="SemanticNotifications/" />
     <delete dir="SemanticResultFormats" />
-  	<delete dir="SRFPlus" />
+    <delete dir="SRFPlus" />
     <delete dir="SemanticRules" />
     <delete dir="SemanticWikiTag" />
     <delete dir="SMWUserManual" />

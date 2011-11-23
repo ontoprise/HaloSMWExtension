@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="im_build" name="ImageMap">
-	<target name="im_build" depends="versionhint">
-		<delete dir="bin/zip" />
-		<delete failonerror="false">
-			<fileset dir="bin" includes="smwhalo-imagemap*.zip" />
-		</delete>
-		<mkdir dir="bin/zip" />
+  <target name="im_build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete failonerror="false">
+      <fileset dir="bin" includes="smwhalo-imagemap*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-		<copy todir="bin/zip/extensions/ImageMap">
-			<fileset dir="../">
-				<include name="ImageMap.php" />
-				<include name="ImageMap_body.php" />
-				<include name="ImageMap.i18n.php" />
-				<include name="deploy.xml" />
-				<include name="desc-20.png" />
-				<include name="desc.svg" />
-			</fileset>
-		</copy>
-		<zip destfile="bin/imagemap.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
-		<exec executable="php">
-			<arg value="../../../buildtools/renameDeployable.php" />
-			<arg value="../deploy.xml" />
-			<arg value="bin/imagemap.zip" />
-		</exec>
-	</target>
+    <copy todir="bin/zip/extensions/ImageMap">
+      <fileset dir="../">
+        <include name="ImageMap.php" />
+        <include name="ImageMap_body.php" />
+        <include name="ImageMap.i18n.php" />
+        <include name="deploy.xml" />
+        <include name="desc-20.png" />
+        <include name="desc.svg" />
+      </fileset>
+    </copy>
+    <zip destfile="bin/imagemap.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/imagemap.zip" />
+    </exec>
+  </target>
 
-	<target name="versionhint">
-		<property environment="env" />
-		<exec executable="php">
-			<arg value="../../../buildtools/replaceVersionHint.php" />
-			<arg value="../deploy.xml" />
-			<arg value="../ImageMap.php" />
-			<arg value="${env.BUILD_NUMBER}" />
-		</exec>
-	</target>
-
+  <target name="versionhint">
+    <property environment="env" />
+    <exec executable="php">
+      <arg value="../../../buildtools/replaceVersionHint.php" />
+      <arg value="../deploy.xml" />
+      <arg value="../ImageMap.php" />
+      <arg value="${env.BUILD_NUMBER}" />
+    </exec>
+  </target>
 </project>

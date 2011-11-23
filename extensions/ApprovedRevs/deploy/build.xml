@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="ApprovedRevs">
-	<target name="build" depends="versionhint">
-		<delete dir="bin/zip" />
-		<delete>
-			<fileset dir="bin" includes="approvedrevs*.zip" />
-		</delete>
-		<mkdir dir="bin/zip" />
+  <target name="build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="approvedrevs*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-        <copy todir="bin/zip/extensions/ApprovedRevs/">
-            <fileset file="../**">
-                <exclude name="**/.svn, **/CVS" />
-                <exclude name="**/deploy/**" />
-                <exclude name="**/tests/**" />
-            </fileset>
-        </copy>
+    <copy todir="bin/zip/extensions/ApprovedRevs/">
+      <fileset file="../**">
+        <exclude name="**/.svn, **/CVS" />
+        <exclude name="**/deploy/**" />
+        <exclude name="**/tests/**" />
+      </fileset>
+    </copy>
 
-		<zip destfile="bin/approvedrevs.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
-		<exec executable="php">
-			<arg value="../../../buildtools/renameDeployable.php" />
-			<arg value="../deploy.xml" />
-			<arg value="bin/approvedrevs.zip" />
-		</exec>
-	</target>
-	<target name="versionhint">
-<!--
+    <zip destfile="bin/approvedrevs.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/approvedrevs.zip" />
+    </exec>
+  </target>
+  <target name="versionhint">
+    <!--
 		<property environment="env" />
 		<exec executable="php">
 			<arg value="../../../buildtools/replaceVersionHint.php" />
@@ -33,5 +34,5 @@
             <arg value="${env.BUILD_NUMBER}" />
 		</exec>
 -->
-	</target>
+  </target>
 </project>

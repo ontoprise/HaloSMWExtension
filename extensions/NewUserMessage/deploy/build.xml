@@ -1,41 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="NewUserMessage">
-    <target name="build" depends="versionhint">
-        <delete dir="bin/zip" />
-        <delete>
-            <fileset dir="bin" includes="newusermessage*.zip" />
-        </delete>
-        <mkdir dir="bin/zip" />
-        
-      
-        <copy todir="bin/zip/extensions/NewUserMessage/">
-            <fileset dir="../">
-                <include name="NewUserMessage*" />
-                <include name="README" />
-                <include name="deploy.xml" />
-            </fileset>
-        </copy>
+  <target name="build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="newusermessage*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-        <zip destfile="bin/newusermessage.zip" basedir="bin/zip" />
+    <copy todir="bin/zip/extensions/NewUserMessage/">
+      <fileset dir="../">
+        <include name="NewUserMessage*" />
+        <include name="README" />
+        <include name="deploy.xml" />
+      </fileset>
+    </copy>
 
-        <exec executable="php">
-            <arg value="../../../buildtools/renameDeployable.php" />
-            <arg value="../deploy.xml" />
-            <arg value="bin/newusermessage.zip" />
-        </exec>
+    <zip destfile="bin/newusermessage.zip" basedir="bin/zip" />
 
-    </target>
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/newusermessage.zip" />
+    </exec>
+  </target>
 
-   
-    <target name="versionhint">
-        <property environment="env" />
-        <exec executable="php">
-            <arg value="../../../buildtools/replaceVersionHint.php" />
-            <arg value="../deploy.xml" />
-            <arg value="../NewUserMessage.php" />
-            <arg value="${env.BUILD_NUMBER}" />
-        </exec>
-    </target>
-   
-    
+  <target name="versionhint">
+    <property environment="env" />
+    <exec executable="php">
+      <arg value="../../../buildtools/replaceVersionHint.php" />
+      <arg value="../deploy.xml" />
+      <arg value="../NewUserMessage.php" />
+      <arg value="${env.BUILD_NUMBER}" />
+    </exec>
+  </target>
 </project>

@@ -5,6 +5,7 @@
        BUILD
        ===================================================================== -->
   <target name="build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
     <delete dir="bin/zip" />
     <delete>
       <fileset dir="bin" includes="wysiwyg*.zip" />

@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="SMWUserManual">
-	<target name="build" depends="versionhint">
-		<delete dir="bin/zip" />
-		<delete>
-			<fileset dir="bin" includes="smwhalo-usermanual*.zip" />
-		</delete>
-		<mkdir dir="bin/zip" />
+  <target name="build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="smwhalo-usermanual*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-		<copy todir="bin/zip/extensions/SMWUserManual">
-			<fileset file="../*">
-				<include name="**/*" />
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/deploy/" />
-				<exclude name="**/comment.php" />
-				<exclude name="**/commentdata/" />
-			</fileset>
-		</copy>
+    <copy todir="bin/zip/extensions/SMWUserManual">
+      <fileset file="../*">
+        <include name="**/*" />
+        <exclude name="**/.svn, **/CVS" />
+        <exclude name="**/deploy/" />
+        <exclude name="**/comment.php" />
+        <exclude name="**/commentdata/" />
+      </fileset>
+    </copy>
 
-		<get src="http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/maintenance/cshPages.xml" dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml" ignoreerrors="true" />
+    <get src="http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/maintenance/cshPages.xml"
+         dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml"
+         ignoreerrors="true" />
 
-		<zip destfile="bin/smwusermanual.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
-		<exec executable="php">
-			<arg value="../../../buildtools/renameDeployable.php" />
-			<arg value="../deploy.xml" />
-			<arg value="bin/smwusermanual.zip" />
-		</exec>
-	</target>
+    <zip destfile="bin/smwusermanual.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/smwusermanual.zip" />
+    </exec>
+  </target>
 
-	<target name="versionhint">
-        <property environment="env" />
-		<exec executable="php">
-			<arg value="../../../buildtools/replaceVersionHint.php" />
-			<arg value="../deploy.xml" />
-			<arg value="../includes/SMW_UserManual.php" />
-            <arg value="${env.BUILD_NUMBER}" />
-		</exec>
-	</target>
+  <target name="versionhint">
+    <property environment="env" />
+    <exec executable="php">
+      <arg value="../../../buildtools/replaceVersionHint.php" />
+      <arg value="../deploy.xml" />
+      <arg value="../includes/SMW_UserManual.php" />
+      <arg value="${env.BUILD_NUMBER}" />
+    </exec>
+  </target>
 </project>
 

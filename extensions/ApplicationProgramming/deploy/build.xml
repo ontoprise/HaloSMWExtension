@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="applicationprogramming">
-	<target name="build">
-		<delete dir="bin/zip" />
-		<delete>
-			<fileset dir="bin" includes="smwhalo-application-programming*.zip" />
-		</delete>
-		<mkdir dir="bin/zip" />
+  <target name="build">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="smwhalo-application-programming*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-		<copy todir="bin/zip/extensions/ApplicationProgramming">
-			<fileset file="../deploy.xml" />
-		</copy>
-		
-		<copy todir="bin/zip/extensions/ApplicationProgramming/ParserFunctions">
-			<fileset dir="../ParserFunctions">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-			
-		<copy todir="bin/zip/extensions/ApplicationProgramming/Variables">
-			<fileset dir="../Variables">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		
-		<copy todir="bin/zip/extensions/ApplicationProgramming/URLArguments">
-			<fileset dir="../URLArguments">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		
-		<copy todir="bin/zip/extensions/ApplicationProgramming/PreloadText">
-			<fileset dir="../PreloadText">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+    <copy todir="bin/zip/extensions/ApplicationProgramming">
+      <fileset file="../deploy.xml" />
+    </copy>
 
-		<zip destfile="bin/applicationprogramming.zip" basedir="bin/zip" />
-		
-		<delete dir="bin/zip" />
-		
-		<exec executable="php">
-			<arg value="../../../buildtools/renameDeployable.php" />
-			<arg value="../deploy.xml" />
-			<arg value="bin/applicationprogramming.zip" />
-		</exec>
-	</target>
+    <copy todir="bin/zip/extensions/ApplicationProgramming/ParserFunctions">
+      <fileset dir="../ParserFunctions">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
 
+    <copy todir="bin/zip/extensions/ApplicationProgramming/Variables">
+      <fileset dir="../Variables">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
+
+    <copy todir="bin/zip/extensions/ApplicationProgramming/URLArguments">
+      <fileset dir="../URLArguments">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
+
+    <copy todir="bin/zip/extensions/ApplicationProgramming/PreloadText">
+      <fileset dir="../PreloadText">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
+
+    <zip destfile="bin/applicationprogramming.zip" basedir="bin/zip" />
+
+    <delete dir="bin/zip" />
+
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/applicationprogramming.zip" />
+    </exec>
+  </target>
 </project>
