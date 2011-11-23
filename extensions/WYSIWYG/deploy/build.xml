@@ -1,77 +1,88 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="wysiwyg">
-    <target name="build" depends="versionhint">
-        <delete dir="bin/zip" />
-        <delete>
-            <fileset dir="bin" includes="wysiwyg*.zip" />
-        </delete>
-        <mkdir dir="bin/zip" />
 
-        <copy todir="bin/zip/extensions/WYSIWYG/">
-            <fileset file="../**">
-                <exclude name="**/.svn, **/CVS" />
-                <exclude name="**/deploy/**" />
-                <exclude name="**/tests/**" />
-            </fileset>
-			<fileset dir="../../../patches/">
-				<include name="patch.php" />
-			</fileset>
-			<fileset dir="../../../deployment/tools">
-				<include name="patch.exe" />
-                <include name="patch.exe.manifest" />
-			</fileset>
-        </copy>
+  <!-- =====================================================================
+       BUILD
+       ===================================================================== -->
+  <target name="build" depends="versionhint">
+    <delete dir="bin/zip" />
+    <delete>
+      <fileset dir="bin" includes="wysiwyg*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
 
-        <zip destfile="bin/wysiwyg.zip" basedir="bin/zip" />
-        <delete dir="bin/zip" />
-        <exec executable="php">
-            <arg value="../../../buildtools/renameDeployable.php" />
-            <arg value="../deploy.xml" />
-            <arg value="bin/wysiwyg.zip" />
-        </exec>
-    </target>
+    <copy todir="bin/zip/extensions/WYSIWYG/">
+      <fileset file="../**">
+        <exclude name="**/.svn, **/CVS" />
+        <exclude name="**/deploy/**" />
+        <exclude name="**/tests/**" />
+      </fileset>
+      <fileset dir="../../../patches/">
+        <include name="patch.php" />
+      </fileset>
+      <fileset dir="../../../deployment/tools">
+        <include name="patch.exe" />
+        <include name="patch.exe.manifest" />
+      </fileset>
+    </copy>
 
-    <target name="versionhint">
-        <property environment="env" />
-        <exec executable="php">
-            <arg value="../../../buildtools/replaceVersionHint.php" />
-            <arg value="../deploy.xml" />
-            <arg value="../WYSIWYG.php" />
-            <arg value="${env.BUILD_NUMBER}" />
-        </exec>
-    </target>
+    <zip destfile="bin/wysiwyg.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/wysiwyg.zip" />
+    </exec>
+  </target>
 
-	<target name="patches" depends="checkos">
-		<echo message="########### ${patchtool}" />
-		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
-			<arg value="-d" />
-			<arg value="${basedir}/../../../" />
-			<arg value="-p" />
-			<arg value="../patch_for_MW_1.16.x.txt" />
-			<arg value="--patchtool" />
-			<arg value="${patchtool}" />
-		</exec>
+  <!-- =====================================================================
+       VERSIONHINT
+       ===================================================================== -->
+  <target name="versionhint">
+    <property environment="env" />
+    <exec executable="php">
+      <arg value="../../../buildtools/replaceVersionHint.php" />
+      <arg value="../deploy.xml" />
+      <arg value="../WYSIWYG.php" />
+      <arg value="${env.BUILD_NUMBER}" />
+    </exec>
+  </target>
 
-		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
-			<arg value="-d" />
-			<arg value="${basedir}/../../../" />
-			<arg value="-p" />
-			<arg value="../patch_for_SF_2.2.1.txt" />
-                        <arg value="--patchtool" />
-			<arg value="${patchtool}" />
-		</exec>
+  <!-- =====================================================================
+       PATCHES
+       ===================================================================== -->
+  <target name="patches" depends="checkos">
+    <echo message="########### ${patchtool}" />
+    <exec executable="php">
+      <arg value="../../../patches/patch.php" />
+      <arg value="-d" />
+      <arg value="${basedir}/../../../" />
+      <arg value="-p" />
+      <arg value="../patch_for_MW_1.16.x.txt" />
+      <arg value="--patchtool" />
+      <arg value="${patchtool}" />
+    </exec>
 
-	</target>
+    <exec executable="php">
+      <arg value="../../../patches/patch.php" />
+      <arg value="-d" />
+      <arg value="${basedir}/../../../" />
+      <arg value="-p" />
+      <arg value="../patch_for_SF_2.2.1.txt" />
+      <arg value="--patchtool" />
+      <arg value="${patchtool}" />
+    </exec>
+  </target>
 
-	<target name="checkos">
-		<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
-			<os family="windows" />
-		</condition>
-		<condition property="patchtool" value="patch">
-			<os family="unix" />
-		</condition>
-	</target>
-
+  <!-- =====================================================================
+       CHECKOS
+       ===================================================================== -->
+  <target name="checkos">
+    <condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+      <os family="windows" />
+    </condition>
+    <condition property="patchtool" value="patch">
+      <os family="unix" />
+    </condition>
+  </target>
 </project>
