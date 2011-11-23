@@ -11,6 +11,14 @@
     </delete>
     <mkdir dir="bin/zip" />
 
+    <!-- Issue 16142 - Make sure the Wysiwyg code is packed by the nightly builds -->
+    <property name="ckeditor.dir" location="../ckeditor" />
+    <echo>Pack Wysiwyg in: ${ckeditor.dir}</echo>
+    <java jar="${ckeditor.dir}/ckpackager.jar" fork="true" failonerror="true" dir="${ckeditor.dir}">
+      <arg value="ckeditor.pack" />
+      <arg value="-v" />
+    </java>
+
     <copy todir="bin/zip/extensions/WYSIWYG/">
       <fileset file="../**">
         <exclude name="**/.svn, **/CVS" />
