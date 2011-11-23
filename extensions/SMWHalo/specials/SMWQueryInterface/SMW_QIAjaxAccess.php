@@ -131,9 +131,9 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
       }
       // answer query using the SMW classes or TSC classes
       if ($useTsc)
-        $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_WIKI);
+        $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
       else
-        $result = SMWQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_WIKI);
+        $result = SMWQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
 
       // check for empty result
       if (is_array($result) && trim($result[0]) == '' || trim($result == '')) {
@@ -147,7 +147,6 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
         case 'timeline':
         case 'exhibit':
         case 'eventline':
-          return $result;
           break;
         case 'gallery':
         case 'googlepie':
@@ -162,17 +161,20 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
         case 'jqplotpie':
         case 'tabularform':
         case 'tagcloud':
-          return (is_array($result)) ? $result[0] : $result;
+        case 'live':
+          $result = is_array($result) ? $result[0] : $result;
           break;
         case 'map':
         case 'googlemaps2':
         case 'openlayers':
         case 'yahoomaps':
-          return wfMsg('smw_qi_printout_notavailable');
+          return wfMsg('smw_qi_printout_notavailable');        
+          
         default:
       }
-
+     
       $result = parseWikiText($result);
+
       // add target="_new" for all links
       $pattern = "|<a|i";
       $result = preg_replace($pattern, '<a target="_new"', $result);
@@ -415,24 +417,38 @@ function toJsonCompatibleArray($params) {
  * @return string html
  */
 function parseWikiText($text, $page = '___Dummy_Page___') {
-  global $wgParser;
+  global $wgOut, $wgParser, $wgAllowImageTag, $wgAllowExternalImages;
 
-  $parser = new Parser();
+//  $oldAllowImageTag = $wgAllowImageTag;
+//  $oldAllowExternalImages = $wgAllowExternalImages;
+//
+//  $wgAllowImageTag = true;
+//  $wgAllowExternalImages = true;
+
+//  $parser = new Parser();
   $title = Title::newFromText($page);
 
   $popt = new ParserOptions();
   $popt->setEditSection(false);
-  $pout = $parser->parse($text . '__NOTOC__', $title, $popt);
+//  $pout = $parser->parse($text . '__NOTOC__', $title, $popt);
+  $pout = $wgParser->parse($text . '__NOTOC__', $title, $popt);
   /// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
   SMWOutputs::requireFromParserOutput($pout);
-  $result = $pout->getText();
+//  $result = $pout->getText();
+  $result = $text;
+
+  $modules = array_merge(array_unique($wgOut->getModules()), array_unique($pout->getModules()));
 
   //add script section for resource module loading in QI result preview
   $result .= '<script type="text/javascript">';
-  foreach (array_unique($parser->getOutput()->getModules()) as $module) {
-    $result .= 'mw.loader.load( "' . $module . '");';
-  }
+  $result .= 'mw.loader.using(["';
+  $result .= implode('","', $modules);
+  $result .= '"], qihelper.executeInitMethods);';
   $result .= '</script>';
+  $result .= $wgOut->getScript();
+  
+//  $wgAllowImageTag = $oldAllowImageTag;
+//  $wgAllowExternalImages = $oldAllowExternalImages;
 
   return $result;
 }

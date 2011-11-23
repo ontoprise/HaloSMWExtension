@@ -1,8 +1,5 @@
 var isInit = false;
 
-//document ready somehow is not fired in Special:QueryInterface
-isInit || init();
-
 jQuery(document).ready(function(){
   //initialize QI script objects and vars
   isInit || init();
@@ -31,6 +28,9 @@ jQuery(document).ready(function(){
     window.parent.qihelper = qihelper;
   }
 });
+
+//document ready somehow is not fired in Special:QueryInterface
+isInit || init();
 
 //get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
 function initToolTips(){
@@ -93,6 +93,7 @@ function initToolTips(){
 function init(){
   isInit = true;  
   initialize_qi();
+  qihelper.initResultFormatLoading();
   initToolTips();
 }
   

@@ -1642,18 +1642,17 @@ function smwhfRegisterResourceLoaderModules() {
 			);
 
 			// Module for the Query Interface
-			// The QI depends on all SemanticResultFormats
 			$dependencies = array(
       'ext.smwhalo.Language',
-      'ext.smw.tooltips',
-      'ext.smw.style',
+//      'ext.smw.tooltips',
+//      'ext.smw.style',
       'ext.jquery.query',
       'ext.ScriptManager.prototype',
       'ext.jquery.qtip',
       'ext.jquery.tree',
       'ext.smwhalo.json2',
-      'jquery.ui.dialog',
-      'ext.tabularforms.main'
+      'jquery.ui.dialog'
+//      'ext.tabularforms.main'
       
      );
 			// Add all modules ext.srf.*
