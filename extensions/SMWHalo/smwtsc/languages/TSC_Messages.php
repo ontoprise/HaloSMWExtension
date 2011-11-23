@@ -97,13 +97,18 @@ $messages['en'] = array(
     'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgHaloEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
-    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
-    'asktsc' => 'Ask triplestore',
-    'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
     'smw_tsa_loadgraphs'=> 'Loaded graphs',
     'smw_tsa_autoloadfolder'=> 'Auto-load folder',
     'smw_tsa_tscparameters'=> 'TSC parameters',
     'smw_tsa_synccommands'=> 'Synchronization commands',
+
+    // ---- Ask triplestore ----
+    'asktsc' => 'Ask triplestore',
+
+    // ---- Query messages ----
+    'smw_ts_notconnected' => 'TSC not accessible. Check server: $1',
+    'smw_tsc_query_not_allowed' => 'Empty query not allowed when querying TSC.',
+    'smw_tsc_not_utf8' => 'Result in not encoded as UTF-8',
 
     // --- Derived facts---
     'tsc_derivedfacts_request_failed' => 'Request for derived facts failed.',
@@ -184,19 +189,24 @@ $messages['de'] = array(
     'smw_tsa_addtoconfig2' => 'Stellen Sie sicher, dass der Aufruf von enableSMWHalo keine Parameter mehr enthält. ',
     'smw_tsa_addtoconfig3' => 'Stellen Sie ebenso sicher, dass die Graph-URL ($smwgHaloTripleStoreGraph) valide ist. Sie darf keinen Hash (#) enthalten aber sonst frei gewählt werden.',
     'smw_tsa_addtoconfig4' => 'Falls das nicht funktioniert, schauen Sie hier: $1.',
-
     'smw_tsa_driverinfo' => 'Treiberinformation',
     'smw_tsa_status' => 'Status',
     'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgHaloEnableObjectLogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
     'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgHaloEnableObjectLogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
-
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
-
     'smw_tsa_loadgraphs'=> 'Geladene Graphen',
     'smw_tsa_autoloadfolder'=> 'Automatisch geladenes Verzeichnis',
     'smw_tsa_tscparameters'=> 'TSC-Parameter',
     'smw_tsa_synccommands'=> 'Synchronisationskommandos',
+
+    // ---- Ask triplestore ----
+    'asktsc' => 'Anfrage an Triplestore',
+    
+    // ---- Query messages ----
+    'smw_ts_notconnected' => 'TSC nicht erreichbar. Überprüfe den Server: $1',
+    'smw_tsc_query_not_allowed' => 'Leere Anfragen sind nicht erlaubt.',
+    'smw_tsc_not_utf8' => 'Ergebnis ist nicht als UTF-8 kodiert.',
     
     // --- Derived facts---
     'tsc_derivedfacts_request_failed' => 'Anfrage fehlgeschlagen',

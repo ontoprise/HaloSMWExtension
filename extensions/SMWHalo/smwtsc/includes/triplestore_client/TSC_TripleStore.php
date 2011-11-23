@@ -539,7 +539,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 		if ( defined( 'DO_MAINTENANCE' )  && !defined('SMWH_FORCE_TS_UPDATE') ) {
 			return $this->smwstore->getQueryResult($query);
 		}
-		 
+			
 		$toTSC = false; // redirects a normal ASK query to the TSC
 		if (!($query instanceof SMWSPARQLQuery)) {
 			// normal query from #ask
@@ -560,7 +560,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 			$query->params['metadata'] = "SWP2_AUTHORITY_ID";
 		}
 
-		 
+			
 		if ($query instanceof SMWSPARQLQuery || $toTSC) {
 			// handle only SPARQL queries and delegate all others
 			//          wfRunHooks('RewriteSparqlQuery', array(&$query) );
@@ -584,6 +584,13 @@ class SMWTripleStore extends SMWStoreAdapter {
 				// another charset.
 				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
+				}
+                   
+				// check for valid UTF8
+				if (!$this->isUTF8($response)) {
+					$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
+					$sqr->addErrors(array(wfMsg('smw_tsc_not_utf8')));
+					return $sqr;
 				}
 
 				// Allow extensions to transform the query result before it is
@@ -682,10 +689,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
-
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$dom->registerXPathNamespace("sparqlxml", "http://www.w3.org/2005/sparql-results#");
-		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
+		if($dom === FALSE) {
+			return new SMWHaloQueryResult(array(), $query, array(), $this);
+		}
 
 		$qResultSet = array();
 		$sources = $dom->xpath('//sparqlxml:source');
@@ -839,12 +847,12 @@ class SMWTripleStore extends SMWStoreAdapter {
 				} else {
 					$data = SMWPropertyValue::makeUserProperty($sel_var);
 				}
-                $propertyExists = Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists();
-                if ($propertyExists) {
+				$propertyExists = Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists();
+				if ($propertyExists) {
 					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
-                } else {
-                	$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var));
-                }
+				} else {
+					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var));
+				}
 
 				if (array_key_exists($var_name, $mapPRTOColumns)) {
 					$mapPRTOColumns[$var_name][] = $index;
@@ -988,13 +996,13 @@ class SMWTripleStore extends SMWStoreAdapter {
 			}
 
 			$rewritten_prs = new SMWChainPrintRequest(
-									$titleText,
-									$newtitle->exists() 
-										? SMWPrintRequest::PRINT_PROP 
-										: SMWPrintRequest::PRINT_THIS, 
-									$newlabel, 
-									$newData, 
-									$pr->getOutputFormat());
+			$titleText,
+			$newtitle->exists()
+			? SMWPrintRequest::PRINT_PROP
+			: SMWPrintRequest::PRINT_THIS,
+			$newlabel,
+			$newData,
+			$pr->getOutputFormat());
 			$rewritten_prs->getHash();
 
 		}
@@ -1098,52 +1106,52 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 * @param $literalType
 	 * @param $metadata
 	 */
-    protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
-         if (trim($literalValue) !== '') {
+	protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
+		if (trim($literalValue) !== '') {
 
-            // create SMWDataValue either by property or if that is not possible by the given XSD type
-            if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem())) {
-                $value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
-            } else {
-                $value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType), $literalValue);
-            }
+			// create SMWDataValue either by property or if that is not possible by the given XSD type
+			if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem())) {
+				$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
+			} else {
+				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType), $literalValue);
+			}
 
-            // set actual value
-            if ($value->getTypeID() == '_dat') {
-                // special handling for _dat
-                // normalize dateTime
-                if ($literalValue != '') {
-                     
-                    $literalValue = self::fixDateTime($literalValue);
+			// set actual value
+			if ($value->getTypeID() == '_dat') {
+				// special handling for _dat
+				// normalize dateTime
+				if ($literalValue != '') {
 
-                    // hack: can not use setUserValue for SMW_DV_Time for some reason.
-                    if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem()) ) {
-                        $valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
-                    } else {
-                        $valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
-                    }
-                    $value->setDataItem($valueTemp->getDataItem());
-                }
-            } else {
-                // all others, set as user type
-                $value->setUserValue($literalValue);
-            }
-        } else {
+					$literalValue = self::fixDateTime($literalValue);
 
-            // literal value is empty
-            if ($property instanceof SMWPropertyValue ) {
-                $value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem());
-            } else {
-                $value = SMWDataValueFactory::newTypeIDValue(is_null($property) ? '_str' :  '_wpg');
+					// hack: can not use setUserValue for SMW_DV_Time for some reason.
+					if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem()) ) {
+						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
+					} else {
+						$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
+					}
+					$value->setDataItem($valueTemp->getDataItem());
+				}
+			} else {
+				// all others, set as user type
+				$value->setUserValue($literalValue);
+			}
+		} else {
 
-            }
+			// literal value is empty
+			if ($property instanceof SMWPropertyValue ) {
+				$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem());
+			} else {
+				$value = SMWDataValueFactory::newTypeIDValue(is_null($property) ? '_str' :  '_wpg');
 
-        }
-        // set metadata
-        $di = $value->getDataItem();
-        TSHelper::setMetadata($di, $metadata);
-        return $di;
-    }
+			}
+
+		}
+		// set metadata
+		$di = $value->getDataItem();
+		TSHelper::setMetadata($di, $metadata);
+		return $di;
+	}
 
 	/**
 	 * Creates SMWDIWikiPage object.
@@ -1181,7 +1189,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 		global $wgServer, $wgArticlePath;
 		$value = $wgServer.$wgArticlePath;
 		$dbkey = urldecode($articleDBkey);
-		 
+			
 		$value = str_replace('$1', ucfirst($dbkey), $value);
 		$value .= '?action=edit&uri='.urlencode($uri).'&redlink=1';
 		$value = SMWDataValueFactory::newTypeIDValue('_ili', $value, str_replace("_", " ",$dbkey));
@@ -1334,6 +1342,22 @@ class SMWTripleStore extends SMWStoreAdapter {
 			$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
 		}
 		return $literalValue;
+	}
+
+	private function isUTF8($str) {
+		$strlen = strlen($str);
+		for($i=0; $i<$strlen; $i++){
+			$ord = ord($str[$i]);
+			if($ord < 0x80) continue; // 0bbbbbbb
+			elseif(($ord&0xE0)===0xC0 && $ord>0xC1) $n = 1; // 110bbbbb (exkl C0-C1)
+			elseif(($ord&0xF0)===0xE0) $n = 2; // 1110bbbb
+			elseif(($ord&0xF8)===0xF0 && $ord<0xF5) $n = 3; // 11110bbb (exkl F5-FF)
+			else return false; // invalid UTF-8 char
+			for($c=0; $c<$n; $c++) // $n following bytes? // 10bbbbbb
+			if(++$i===$strlen || (ord($str[$i])&0xC0)!==0x80)
+			return false; // invalid UTF-8 char
+		}
+		return true; // no invalid UTF-8 char found
 	}
 
 }
