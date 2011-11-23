@@ -52,23 +52,23 @@ class DFVersion {
 	public function getSubMinor() {
 		return $this->subminor;
 	}
-    
+
 	/**
 	 * Parses a version string.
-	 * 
+	 *
 	 * Format: major.minor.subminor
-	 * 
-	 * Examples: 
+	 *
+	 * Examples:
 	 *     * 1.40
 	 *     * 1.10.4
 	 *     * 4.3.10
 	 *     * 1.4  -> is extended to 1.4.0
-	 * 
+	 *
 	 * Note: Backwards compatible to old version number format with 3 or 4 digits:
-	 * 
+	 *
 	 *  130 -> 1.3.0
 	 *  1164 -> 1.16.4
-	 *  
+	 *
 	 * @param string $version_string
 	 * @throws Exception
 	 */
@@ -82,12 +82,12 @@ class DFVersion {
 				$this->subminor = intval($version_string[2]);
 				return;
 			} else if (strlen($version_string) == 4 && is_numeric($version_string)) {
-                // interprete it as old version number (before DF 1.6, for downwards compatibility)
-                $this->major = intval($version_string[0]);
-                $this->minor = intval($version_string[1].$version_string[2]);
-                $this->subminor = intval($version_string[3]);
-                return;
-            } else {
+				// interprete it as old version number (before DF 1.6, for downwards compatibility)
+				$this->major = intval($version_string[0]);
+				$this->minor = intval($version_string[1].$version_string[2]);
+				$this->subminor = intval($version_string[3]);
+				return;
+			} else {
 				// invalid format
 				throw new Exception("Invalid DF version format: $version_string");
 			}
@@ -95,7 +95,7 @@ class DFVersion {
 		$major = reset($parts);
 		$minor = next($parts);
 		$subminor = next($parts);
-        
+
 		if ($subminor === false) $subminor = 0;
 
 		$this->major = intval($major);
@@ -133,7 +133,7 @@ class DFVersion {
 	public function isHigher(DFVersion $v) {
 		return !$this->isEqual($v) && !$this->isLower($v);
 	}
-	
+
 	/**
 	 * Sorts and compacts versions. That means it filters out all doubles.
 	 *
@@ -186,18 +186,18 @@ class DFVersion {
 		foreach($versions as $v) {
 			if (!is_null($v)) $vresult[] = $v;
 		}
-		
+
 		// set result array
 		$versions = array();
 		foreach($vresult as $v) $versions[] = $v;
-		
+
 	}
-	
+
 	/**
-	 * Returns the maximum version. 
+	 * Returns the maximum version.
 	 *
 	 * @param array of tuples(DFVersion, patchlevel, ...) $versions
-	 * 
+	 *
 	 * @return tuples(DFVersion, patchlevel, ...)
 	 */
 	public static function getMaxVersion(& $versions) {
@@ -217,5 +217,10 @@ class DFVersion {
 			}
 		}
 		return $maxTuple;
+	}
+
+	public static function removePatchlevel($versionString) {
+		if (strpos($versionString, "_") === false) return $versionString;
+		return substr($versionString, 0, strpos($versionString, "_"));
 	}
 }

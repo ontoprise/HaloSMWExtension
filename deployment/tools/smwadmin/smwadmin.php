@@ -29,7 +29,9 @@
  *
  *
  */
-define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}} [B${env.BUILD_NUMBER}]');
+define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}}');
+define('DEPLOY_FRAMEWORK_VERSION_AND_BUILD', '{{$VERSION}} [B${env.BUILD_NUMBER}]');
+define('DF_REPOSITORY_LIST_LINK', 'http://dailywikibuilds.ontoprise.com/info/repository_list.html');
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);
@@ -323,6 +325,15 @@ try {
 	$rollback = Rollback::getInstance($mwrootDir);
 } catch(DF_SettingError $e) {
 	dffExitOnFatalError($e);
+}
+
+// check for new release
+$latestVersion = PackageRepository::getLatestRelease();
+if ($latestVersion !== false) {
+    $currentVersion = new DFVersion(DFVersion::removePatchlevel(DEPLOY_FRAMEWORK_VERSION));
+    if ($currentVersion->isLower($latestVersion)) {
+        $dfgOut->outputln("\n\n  !!!!!!!!!! NEW release available !!!!!!!!!! Check: ".DF_REPOSITORY_LIST_LINK."\n\n");
+    }
 }
 
 if ($dfgCreateProperties) {
@@ -763,7 +774,7 @@ if (count($installer->getErrors()) === 0) {
 
 function dffShowHelp() {
 	global $dfgOut;
-	$dfgOut->outputln( "Wiki administration tool utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009-2011");
+	$dfgOut->outputln( "Wiki administration tool utility v".DEPLOY_FRAMEWORK_VERSION_AND_BUILD.", Ontoprise 2009-2011");
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]");

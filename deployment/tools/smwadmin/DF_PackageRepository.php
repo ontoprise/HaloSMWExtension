@@ -202,6 +202,22 @@ class PackageRepository {
 	}
 
 	/**
+	 * Returns the number of the latest release the repository contains.
+	 *
+	 * @return int
+	 */
+	public static function getLatestRelease() {
+		$latestreleases = array();
+		foreach(self::getPackageRepository() as $url => $repo) {
+			$node = $repo->xpath("/root[@latestrelease]");
+			if (is_null($node) || $node == false || count($node) == 0) continue;
+			$latestreleases[] = new DFVersion((string) $node[0]->attributes()->latestrelease);
+		}
+		DFVersion::sortVersions($latestreleases);
+		return reset($latestreleases);
+	}
+
+	/**
 	 * Returns deploy descriptor of package $ext_id in the latest version.
 	 *
 	 * @param string $ext_id
@@ -378,7 +394,7 @@ class PackageRepository {
 			$packages = $repo->xpath("/root/extensions/extension");
 			foreach($packages as $p) {
 				$id = (string) $p->attributes()->id;
-                $title = (string) $p->attributes()->title;
+				$title = (string) $p->attributes()->title;
 				$versions = $p->xpath("version");
 				foreach($versions as $v) {
 					$description = (string) $v->attributes()->description;

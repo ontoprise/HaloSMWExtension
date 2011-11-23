@@ -5,7 +5,7 @@
  *
  * Creates a DF repository from the SVN version. Must be done once a new release available
  *
- * Usage:   php createRepsoitory.php -o <repository path>  -r release-num 
+ * Usage:   php createRepsoitory.php -o <repository path>  -r release-num
  *          php createRepsoitory.php -o <repository path>  --head [ --empty ]
  *
  * @author: Kai Kühn / ontoprise / 2009
@@ -23,6 +23,7 @@ require_once($rootDir."/tools/smwadmin/DF_Tools.php");
 
 $latest = false;
 $emptyRepo = false;
+$latestReleaseAttribute="";
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-o => output
@@ -45,21 +46,27 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$head = true;
 		continue;
 	}
-    
-    if ($arg == '--latest') {
-        $latest = true;
-        continue;
-    }
-    
-    if ($arg == '--empty') {
-        $emptyRepo = true;
-        continue;
-    }
-    
-    if ($arg == '--fixedpatchlevel') {
-        $fixedpatchlevel = next($argv);
-        continue;
-    }
+
+	if ($arg == '--latest') {
+		$latest = true;
+		continue;
+	}
+	
+	if ($arg == '--latestrelease') {
+		$releasenum = next($argv);
+		$latestReleaseAttribute = "latestrelease=\"$releasenum\"";
+		continue;
+	}
+
+	if ($arg == '--empty') {
+		$emptyRepo = true;
+		continue;
+	}
+
+	if ($arg == '--fixedpatchlevel') {
+		$fixedpatchlevel = next($argv);
+		continue;
+	}
 }
 
 if (!isset($outputDir)) {
@@ -87,14 +94,14 @@ $localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepo
 echo "\nCreate new repository ".$outputDir."repository.xml";
 
 
-$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root version=\"".DEPLOY_FRAMEWORK_REPOSITORY_VERSION."\">\n<extensions>\n";
+$new_ser = '<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="repository.xsl"?>'."<root version=\"".DEPLOY_FRAMEWORK_REPOSITORY_VERSION."\" $latestReleaseAttribute>\n<extensions>\n";
 foreach($localPackages as $lp) {
-	
+
 	$oldPatchlevel = $lp->getPatchlevel();
-    // set fixed patchlevel if necessary 
-    if (isset($fixedpatchlevel)) {
-        $lp = Tools::changeGlobalSection($lp, "patchlevel", $fixedpatchlevel);
-    } 
+	// set fixed patchlevel if necessary
+	if (isset($fixedpatchlevel)) {
+		$lp = Tools::changeGlobalSection($lp, "patchlevel", $fixedpatchlevel);
+	}
 	$id = $lp->getID();
 	if ($id == 'mw') continue; // special handling for mw
 	$title = Tools::escapeForXMLAttribute($lp->getTitle());
@@ -108,8 +115,8 @@ foreach($localPackages as $lp) {
 	$maintainer = Tools::escapeForXMLAttribute($lp->getMaintainer());
 	$helpurl = Tools::escapeForXMLAttribute($lp->getHelpURL());
 	$description = Tools::escapeForXMLAttribute($lp->getDescription());
-	
-    $verWithoutDots = str_replace(".","",$ver); // for compatibility to old version numbers
+
+	$verWithoutDots = str_replace(".","",$ver); // for compatibility to old version numbers
 	$new_ser .= "<version ver=\"$verWithoutDots\" version=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\" maintainer=\"$maintainer\" description=\"$description\" helpurl=\"$helpurl\"/>";
 
 	$new_ser .= "</extension>\n";
@@ -126,11 +133,11 @@ echo "\nWriting deploy descriptors...";
 // create symlinks for Linux and Windows 7
 $createSymlinks=true;
 if (Tools::isWindows($os) && $latest) {
-	
-    $createSymlinks = ($os == 'Windows 7');
-    if (!$createSymlinks) {
-        echo "Be careful: Cannot create symbolic links on Windows <= 7!";
-    }
+
+	$createSymlinks = ($os == 'Windows 7');
+	if (!$createSymlinks) {
+		echo "Be careful: Cannot create symbolic links on Windows <= 7!";
+	}
 }
 
 $outputDir = str_replace("\\", "/", $outputDir);
@@ -144,9 +151,9 @@ if (substr($rootDir, -1) != "/") $rootDir .= "/";
 // create substructure with deploy descriptors
 $localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepository::getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
-    if (isset($fixedpatchlevel)) {
-        $dd = Tools::changeGlobalSection($dd, "patchlevel", $fixedpatchlevel);
-    }
+	if (isset($fixedpatchlevel)) {
+		$dd = Tools::changeGlobalSection($dd, "patchlevel", $fixedpatchlevel);
+	}
 	$id = $dd->getID();
 	if ($id == 'mw') continue;
 	$instdir = $dd->getInstallationDirectory();
@@ -168,36 +175,36 @@ function createEntry($dd, $dd_file, $outputDir, $latest, $createSymlinks) {
 	$version = $dd->getVersion()->toVersionString();
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
 	Tools::mkpath($outputDir.$dd->getID());
-	
+
 	$xml = $dd->getXML();
 	$handle = fopen($outputDir.$dd->getID()."/deploy-".$version.".xml", "w");
-    fwrite($handle, $xml);
-    fclose($handle);
-    $handle = fopen($outputDir.$dd->getID()."/deploy-".str_replace(".","",$version).".xml", "w");
-    fwrite($handle, $xml);
-    fclose($handle);
-    	
+	fwrite($handle, $xml);
+	fclose($handle);
+	$handle = fopen($outputDir.$dd->getID()."/deploy-".str_replace(".","",$version).".xml", "w");
+	fwrite($handle, $xml);
+	fclose($handle);
+	 
 	print "\nCreated: $outputDir$targetFile";
-    
-    // creates links
-    $id = $dd->getID();
-    $version = $dd->getVersion()->toVersionString();
-    if ($createSymlinks && $latest) {
-        // remove symbolic link if existing
-        if (file_exists($outputDir."/$id/deploy.xml")) {
-            unlink($outputDir."/$id/deploy.xml");
-        }
-        // create symbolic link
-        if (Tools::isWindows()) {
-            $target = str_replace("/", "\\", "$outputDir/$id/deploy-$version.xml");
-            $link = str_replace("/", "\\", "$outputDir/$id/deploy.xml");
-            exec("mklink \"$link\" \"$target\"", $out, $res);
-        } else{
-            exec("ln -s $outputDir/$id/deploy-$version.xml $outputDir/$id/deploy.xml", $out, $res);
-        }
-        if ($res == 0) print "\nCreated link: $outputDir/".$id.'/deploy.xml';
-    }
-	
+
+	// creates links
+	$id = $dd->getID();
+	$version = $dd->getVersion()->toVersionString();
+	if ($createSymlinks && $latest) {
+		// remove symbolic link if existing
+		if (file_exists($outputDir."/$id/deploy.xml")) {
+			unlink($outputDir."/$id/deploy.xml");
+		}
+		// create symbolic link
+		if (Tools::isWindows()) {
+			$target = str_replace("/", "\\", "$outputDir/$id/deploy-$version.xml");
+			$link = str_replace("/", "\\", "$outputDir/$id/deploy.xml");
+			exec("mklink \"$link\" \"$target\"", $out, $res);
+		} else{
+			exec("ln -s $outputDir/$id/deploy-$version.xml $outputDir/$id/deploy.xml", $out, $res);
+		}
+		if ($res == 0) print "\nCreated link: $outputDir/".$id.'/deploy.xml';
+	}
+
 }
 
 
