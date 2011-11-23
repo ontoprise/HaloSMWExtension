@@ -51,8 +51,9 @@ function smwf_ga_readBotLog($taskid) {
  * @return $taskid ID of task.
  */
 function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
-	global $sgagDedicatedGardeningMachine;
-
+	global $sgagDedicatedGardeningMachine, $sgagIP;
+	// import bots
+	sgagImportBots("$sgagIP/includes/bots");
 	if (!isset($sgagDedicatedGardeningMachine) || $sgagDedicatedGardeningMachine == 'localhost' || $sgagDedicatedGardeningMachine == '127.0.0.1') {
 		global $wgUser;
 		$user = NULL;
