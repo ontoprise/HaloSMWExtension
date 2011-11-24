@@ -57,6 +57,7 @@ QIHelper.prototype = {
     this.TPEE_SELECTED = 1;
     this.propertyAddClicked = false;
     this.colNameEntered = false;
+    this.srfInitMethods = null;
 
     var qiStatus = $$('#askQI #qistatus')[0];
     if(qiStatus)
@@ -85,6 +86,8 @@ QIHelper.prototype = {
       qihelper.enableResetQueryButton();
     });
 
+    this.executeInitMethods();
+
   },
 
   isFunctionInArray: function(someFunction, arrayOfFunctions){
@@ -102,7 +105,7 @@ QIHelper.prototype = {
 
   //execute init methods of result format modules registered via overriden $(document).ready methosd
   executeInitMethods: function(){
-    var initMethods = qihelper.srfInitMethods || [];
+    var initMethods = this.srfInitMethods || [];
     
     for(var i = 0; i < initMethods.length; i++){
       try{
@@ -120,8 +123,8 @@ QIHelper.prototype = {
       catch(x){
         //exceptions are expected so just remove the faulty method and continue
         mw.log('EXCEPTION: ' + x);
-        qihelper.srfInitMethods.splice(i, 1);
-        initMethods = qihelper.srfInitMethods || [];
+        this.srfInitMethods.splice(i, 1);
+        initMethods = this.srfInitMethods || [];
         i--;
       }
     }
