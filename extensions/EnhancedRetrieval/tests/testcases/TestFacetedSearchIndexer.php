@@ -51,11 +51,13 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	private static $mSolrConfig = array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	);
+	    'indexer' => 'SOLR',
+	    'source'  => 'SMWDB',
+	    'proxyHost'    => 'http://localhost',
+		'proxyServlet' => "/mediawiki/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+		'indexerHost' => 'localhost',
+		'indexerPort' => 8983
+   	);
 	
 	
 	public static function setUpBeforeClass() {
@@ -78,65 +80,99 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	return array(
     		array(
     			array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	), 'FSSolrSMWDB', null
+				    'indexer' => 'SOLR',
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+   		    	), 'FSSolrSMWDB', null
     		),
     		array(
     			array(
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	), '', ERFSException::INCOMPLETE_CONFIG
-		    ),
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
     		array(
     			array(
-		    		'indexer' => 'SOLR',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	), '', ERFSException::INCOMPLETE_CONFIG
-		   	),
-			array(
+				    'indexer' => 'SOLR',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
+    		array(
     			array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'port'    => 8983
-		    	), '', ERFSException::INCOMPLETE_CONFIG
-		   	),
-			array(
+				    'indexer' => 'SOLR',
+				    'source'  => 'SMWDB',
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
+    		array(
     			array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost'
-		    	), '', ERFSException::INCOMPLETE_CONFIG
-		    ),
-			array(
+				    'indexer' => 'SOLR',
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
+    		array(
+    			array(
+				    'indexer' => 'SOLR',
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerPort' => 8983
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
+    		array(
+    			array(
+				    'indexer' => 'SOLR',
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost'
+   		    	), '', ERFSException::INCOMPLETE_CONFIG
+    		),
+    		array(
     			array(), '', ERFSException::INCOMPLETE_CONFIG
 		    ),
     		array(
     			array(
-		    		'indexer' => 'Lucene',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
+				    'indexer' => 'Lucene',
+				    'source'  => 'SMWDB',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
+    			), '', ERFSException::UNSUPPORTED_VALUE
+    		),
+    		array(
+    			array(
+				    'indexer' => 'SOLR',
+				    'source'  => 'whatever',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
 		    	), '', ERFSException::UNSUPPORTED_VALUE
     		),
     		array(
     			array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'whatever',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	), '', ERFSException::UNSUPPORTED_VALUE
-    		),
-    		array(
-    			array(
-		    		'indexer' => 'Lucene',
-		    		'source'  => 'whatever',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
+				    'indexer' => 'Lucene',
+				    'source'  => 'whatever',
+				    'proxyHost'    => $wgServer,
+					'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+					'indexerHost' => 'localhost',
+					'indexerPort' => 8983
 		    	), '', ERFSException::UNSUPPORTED_VALUE
     		),
 		    
@@ -237,11 +273,13 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	private static $mSolrConfig = array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	);
+	    'indexer' => 'SOLR',
+	    'source'  => 'SMWDB',
+	    'proxyHost'    => 'http://localhost',
+		'proxyServlet' => "/mediawiki/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+		'indexerHost' => 'localhost',
+		'indexerPort' => 8983
+	);
 	
 
 	/**
@@ -406,12 +444,37 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     }
     
     /**
-     * Tests the content of the index by asking several queries
+     * Tests the content of the index by asking several queries with direct 
+     * access to the indexer
      * @dataProvider providerForIndexContent
      */
     public function testIndexContent($query, $expResults) {
     	$indexer = FSIndexerFactory::create(self::$mSolrConfig);
     	$qr = $indexer->sendRawQuery($query);
+    	foreach ($expResults as $er) {
+    		$this->assertContains($er, $qr, "Could not find expected string <$er> in result:\n$qr");
+    	}
+    }
+    
+    /**
+     * Tests the content of the index by asking several queries via the solr 
+     * proxy.
+     * @dataProvider providerForIndexContent
+     */
+    public function testIndexProxy($query, $expResults) {
+    	$host = self::$mSolrConfig['proxyHost'];
+    	$servlet = self::$mSolrConfig['proxyServlet'];
+		$url = $host.$servlet.'?'.$query;
+		$fetch = curl_init( $url );
+		ob_start();
+		$ok = curl_exec( $fetch );
+		$qr = ob_get_contents();
+		ob_end_clean();
+		 
+		$info = curl_getinfo( $fetch );
+		curl_close( $fetch );
+		
+		$resultCode = $info['http_code']; # ????
     	foreach ($expResults as $er) {
     		$this->assertContains($er, $qr, "Could not find expected string <$er> in result:\n$qr");
     	}
@@ -435,11 +498,13 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	private static $mSolrConfig = array(
-		    		'indexer' => 'SOLR',
-		    		'source'  => 'SMWDB',
-		    		'host'    => 'localhost',
-		    		'port'    => 8983
-		    	);
+	    'indexer' => 'SOLR',
+	    'source'  => 'SMWDB',
+	    'proxyHost'    => 'http://localhost',
+		'proxyServlet' => "/mediawiki/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+		'indexerHost' => 'localhost',
+		'indexerPort' => 8983
+  	);
 		    	
 	private static $mArticleManager;
 	

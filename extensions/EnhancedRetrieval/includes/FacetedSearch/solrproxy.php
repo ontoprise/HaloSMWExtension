@@ -40,7 +40,7 @@ $SOLRport = 8983;
 
 
 // Include the Apache Solr Client library
-require_once('/SolrPhpClient/Apache/Solr/Service.php');
+require_once('SolrPhpClient/Apache/Solr/Service.php');
 
 /**
  * This is a sub class of the Apache_Solr_Service. It adds an additional method

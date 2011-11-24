@@ -45,8 +45,10 @@ class FSIndexerFactory  {
 	 * 	This array has the following key value pairs:
 	 *    'indexer' => 'SOLR'
      *    'source'  => 'SMWDB'
-	 *    'host'    => hostname
-     *    'port'    => portnumber
+	 *    'proxyHost' => hostname of the proxy
+     *    'proxyServlet' => the part of the URL after the port
+     *    'indexerHost'  => hostname of the indexer as seen from the wiki server
+     *    'indexerPort'  => port number of the indexer as seen from the wiki server
      *  If <null> (default), the global configuration which is stored in the 
      *  variable $fsgFacetedSearchConfig is used.
      *    
@@ -62,7 +64,9 @@ class FSIndexerFactory  {
 			$indexerConfig = $fsgFacetedSearchConfig;
 		}
 		// Check if the configuration is complete
-		$expKeys = array('indexer' => 0, 'source' => 0, 'host' => 0, 'port' => 0);
+		$expKeys = array('indexer' => 0, 'source' => 0, 'proxyHost' => 0, 
+		                 'proxyServlet' => 0, 'indexerHost' => 0, 
+		                 'indexerPort' => 0);
 		$missingKeys = array_diff_key($expKeys, $indexerConfig);
 		if (count($missingKeys) > 0) {
 			$missingKeys = "The following keys are missing: ".implode(', ', array_keys($missingKeys));
@@ -87,7 +91,7 @@ class FSIndexerFactory  {
 			// Indexer is Apache SOLR
 			if ($indexerConfig['source'] == 'SMWDB') {
 				// The SMW database is indexed
-				return new FSSolrSMWDB($indexerConfig['host'], $indexerConfig['port']);
+				return new FSSolrSMWDB($indexerConfig['indexerHost'], $indexerConfig['indexerPort']);
 			}
 		}
 		return null;

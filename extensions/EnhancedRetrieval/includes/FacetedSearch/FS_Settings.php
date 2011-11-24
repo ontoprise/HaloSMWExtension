@@ -45,20 +45,31 @@ $fsgIP = $IP.'/extensions/EnhancedRetrieval';
 # indexer: Type of the indexer. Currently only 'SOLR' is supported.
 # source:  The source for indexing semantic data. Currently only the database
 #          of SMW is supported: 'SMWDB'
-# host:    Protocol and name or IP address of the indexer server e.g. 
-#          'http://localhost' or $wgServer
-# port:    The port number of the indexer server e.g. 8983
-# servlet: If the solrproxy is used it should be
+# proxyHost: Protocol and name or IP address of the proxy to the indexer server 
+#          as seen from the client e.g. 'http://www.mywiki.com' or $wgServer
+# proxyServlet: Servlet of the indexer proxy as seen from the client. If the 
+#          solrproxy is used it should be
 #          "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php"
-#          If SOLR is addressed directly it should be
-#          '/solr/select'
+#          If the indexer is addressed directly it should be '/solr/select' (for SOLR)
+# indexerHost: Name or IP address of the indexer server as seen from the wiki server
+#          e.g. 'localhost'
+#          If the solrproxy is used and the indexer host (SOLR) is different from 
+#          'localhost', i.e. SOLR is running on another machine than the wiki server, 
+#          the variable $SOLRhost must be set in solrproxy.php.
+# indexerPort: The port number of the indexer server e.g. 8983 as seen from the 
+#          wiki server.
+#          If the solrproxy is used and the port of the indexer host (SOLR) is 
+#          different from 8983, the variable $SOLRport must be set in solrproxy.php.
 ##
 $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
     'source'  => 'SMWDB',
-    'host'    => $wgServer,
-	'servlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php"
+    'proxyHost'    => $wgServer,
+	'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
+	'indexerHost' => 'localhost',
+	'indexerPort' => 8983
 );
+
 ###
 # If this variable is <true>, a search in the MediaWiki search field is redirected
 # to the faceted search special page. 
