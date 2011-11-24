@@ -86,56 +86,46 @@ class CEComment {
 					self::COMMENT_ALREADY_EXISTS, $pageName
 				);
 			}
-			if( !$title->userCan( 'edit' ) ) {
+			// Insert current Date
+			$date = new DateTime();
+			$dateString = $date->format( 'c' );
+			if ( $editMode ) {
+				// use the original DATE!!!
+				$comNS = MWNamespace::getCanonicalName( CE_COMMENT_NS );
+				SMWQueryProcessor::processFunctionParams(
+						array($comNS . ":" . $pageName, "?Has comment date"), $querystring, $params, $printouts, true
+				);
+				$queryResult = explode( "|", SMWQueryProcessor::getResultFromQueryString(
+								$querystring, $params, $printouts, SMW_OUTPUT_WIKI
+						)
+				);
+				//just get the first property value and use this
+				if ( isset( $queryResult[0] ) ) {
+					// see '/extensions/SemanticMediaWiki/includes/SMW_DV_Time.php'
+					// [...] For export, times are given without timezone information. [...]
+					$date = new Datetime( $queryResult[0], new DateTimeZone( 'UTC' ) );
+					$dateString = $date->format( 'c' );
+				}
+				$responseText = wfMsg( 'ce_com_edited' );
+				$summary = wfMsg( 'ce_com_edit_sum' );
+			} else {
+				$responseText = wfMsg( 'ce_com_created' );
+				$summary = wfMsg( 'ce_com_create_sum' );
+			}
+			$pageContent = str_replace( '##DATE##', $dateString, $pageContent );
+			$article->doEdit( $pageContent, $summary );
+
+			if ( $article->exists() ) {
+				self::updateRelatedArticle( $pageContent );
 				wfProfileOut( __METHOD__ . ' [Collaboration]' );
 				return CECommentUtils::createXMLResponse(
-					wfMsg( 'ce_cf_you_not_allowed' ),
-					self::PERMISSION_ERROR, $pageName);
+								$responseText, self::SUCCESS, $pageName
+				);
 			} else {
-				// Insert current Date
-				$date = new DateTime();
-				$dateString = $date->format( 'c' );
-				if( $editMode ) {
-					// use the original DATE!!!
-					$comNS = MWNamespace::getCanonicalName( CE_COMMENT_NS );
-					SMWQueryProcessor::processFunctionParams(
-						array( $comNS . ":" . $pageName, "?Has comment date" ),
-						$querystring, $params, $printouts, true
-					);
-					$queryResult = explode( "|",
-						SMWQueryProcessor::getResultFromQueryString( 
-							$querystring, $params, $printouts, SMW_OUTPUT_WIKI
-						)
-					);
-					//just get the first property value and use this
-					if( isset( $queryResult[0] ) ) {
-						// see '/extensions/SemanticMediaWiki/includes/SMW_DV_Time.php'
-						// [...] For export, times are given without timezone information. [...]
-						$date = new Datetime( $queryResult[0], new DateTimeZone( 'UTC' ) );
-						$dateString = $date->format( 'c' );
-					}
-					$responseText = wfMsg( 'ce_com_edited' );
-					$summary = wfMsg( 'ce_com_edit_sum' ); 
-				} else {
-					$responseText = wfMsg( 'ce_com_created' );
-					$summary = wfMsg( 'ce_com_create_sum' );
-				}
-				$pageContent = str_replace( '##DATE##', $dateString, $pageContent );
-				$article->doEdit( $pageContent, $summary );
-
-				if( $article->exists() ) {
-					self::updateRelatedArticle( $pageContent );
-					wfProfileOut( __METHOD__ . ' [Collaboration]' );
-					return CECommentUtils::createXMLResponse(
-						$responseText, self::SUCCESS, $pageName
-					);
-				} else {
-					wfProfileOut( __METHOD__ . ' [Collaboration]' );
-					return CECommentUtils::createXMLResponse(
-						wfMsg( 'ce_com_edit_not_exists' ),
-						self::PERMISSION_ERROR, $pageName
-					);
-				}
+				wfProfileOut( __METHOD__ . ' [Collaboration]' );
+				return CECommentUtils::createXMLResponse(
+								wfMsg( 'ce_com_edit_not_exists' ), self::PERMISSION_ERROR, $pageName
+				);
 			}
 		}
 	}

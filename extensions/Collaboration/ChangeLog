@@ -11,6 +11,7 @@ VERSION 1.5.0
     Issue 15551 - Average article quality text out of alignment
     Issue 16144 – add attachement to a comment don't work properly
     Issue 16000 - $cegEnableCommentFor=CE_COMMENT_AUTH_ONLY; disables comments for ALL users
+    Issue 16001 - $cegEnableCommentFor=CE_COMMENT_ALL; doesnt allow anonymous users to leave comments
 
 
 VERSION 1.4.0

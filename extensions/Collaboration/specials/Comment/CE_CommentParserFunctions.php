@@ -281,7 +281,7 @@ class CECommentParserFunctions {
 		}
 		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
 			XML::openElement( 'form', array( 'id' => 'collabComForm',
-			'style' => 'display:none',		
+			'style' => 'display:none',
 			'onSubmit' => 'return ceCommentForm.processForm()' ) ) .
 			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .
 				XML::Element( 'img', array( 'id' => 'collabComFormUserImg',
@@ -324,13 +324,6 @@ class CECommentParserFunctions {
 			XML::closeElement('div') .
 			XML::closeElement('div');
 
-			$testTitle = Title::newFromText( 'Comment' . time(), CE_COMMENT_NS );
-			if( !$testTitle->userCan( 'edit' ) ) {
-				$script = '<script type="'.$wgJsMimeType.'">/*<![CDATA[*/'.
-					'var wgCEUserCanEdit = false;' .
-					'/*]]>*/</script>';
-				SMWOutputs::requireHeadItem('CEJS_Variables4', $script); 
-			}
 		self::$mInstance->mCommentFormDisplayed = true;
 
 		wfProfileOut( __METHOD__ . ' [Collaboration]' );
