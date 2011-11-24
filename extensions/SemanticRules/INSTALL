@@ -19,7 +19,7 @@ Requirements:
 	MediaWiki 1.17.x 
 	Semantic MediaWiki 1.6.1 (Please make reference to the installation instructions)
 	Halo Extension 1.6.0 (with Triplestore configured)
-	Basic/Prof. Triple Store 
+	Basic/Prof. Triple Store Connector 1.6.0
 
 
 Installation:
