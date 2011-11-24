@@ -620,8 +620,8 @@ CKEDITOR.customprocessor.prototype =
         data = data.replace(/<(hr|br)>/gi, '<$1/>' );
         // and the same with attributes
         data = data.replace(/<(hr|br)([^>]*)([^\/])>/gi, '<$1$2$3/>' );
-        // remove some unncessary br tags that are followed by a </p> or </li>
-        data = data.replace(/<br\/>(\s*<\/(p|li)>)/gi, '$1');
+        // remove some unncessary br tags that are followed by a </p> or </li> or </h...>
+        data = data.replace(/<br\/>(\s*<\/(p|li|h\d)>)/gi, '$1');
         // also remove <br/> before nested lists
         data = data.replace(/<br\/>(\s*<(ol|ul)>)/gi, '$1');
         // in IE the values of the class and alt attribute are not quoted
