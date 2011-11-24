@@ -104,7 +104,7 @@ class ExportOntologyBot extends GardeningBot {
 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
 			
 		// get bot parameters
-		$this->namespace = urldecode($paramArray['GARD_EO_NAMESPACE']);
+		$this->namespace = urldecode(trim($paramArray['GARD_EO_NAMESPACE']));
 		$exportOnlySchema = array_key_exists('GARD_EO_ONLYSCHEMA', $paramArray);
 		$this->rdfsSemantics = array_key_exists('GARD_EO_RDFSSEMANTICS', $paramArray);
 			
@@ -128,7 +128,8 @@ class ExportOntologyBot extends GardeningBot {
 		
 		// escape user defined namespace
 		$this->namespace = ExportOntologyBot::makeXMLAttributeContent($this->namespace);
-			
+		$this->namespace = trim($this->namespace);
+		
 		// open temporary file for export and write headers
 		$handle = fopen($wikiexportDir."/latestExport.temp","wb");
 		$this->writeHeader($handle);
