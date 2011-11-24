@@ -522,8 +522,8 @@ Section "Solr" solr
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop Solr.lnk" "$INSTDIR\solr\wiki\stopSolr.bat"
     ${EndIf}
 
-    DetailPrint "set solr_ip to $IP"
-    ${WriteToFile} "<?php$\r$\n$$solrIP='$IP';" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
+    ;DetailPrint "set solr_ip to $IP"
+    ;${WriteToFile} "<?php$\r$\n$$solrIP='$IP';" "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php"
     ;${ConfigWrite} "$MEDIAWIKIDIR\extensions\EnhancedRetrieval\SOLR\solr_ip.php" "<?php$\n\$$solrIP=" '"$IP";' $R0
     
     nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=startSolr.bat out=startSolr.bat noslash=true php-exe="$PHP" install-dir="$INSTDIR\solr\wiki" drive=true'
