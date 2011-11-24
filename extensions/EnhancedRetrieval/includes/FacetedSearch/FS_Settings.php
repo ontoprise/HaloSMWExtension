@@ -47,6 +47,9 @@ $fsgIP = $IP.'/extensions/EnhancedRetrieval';
 #          of SMW is supported: 'SMWDB'
 # proxyHost: Protocol and name or IP address of the proxy to the indexer server 
 #          as seen from the client e.g. 'http://www.mywiki.com' or $wgServer
+# proxyPort: The port number of the indexer server e.g. 8983 as seen from the 
+#          client server. 
+#          If the solrproxy is used this can be omitted.
 # proxyServlet: Servlet of the indexer proxy as seen from the client. If the 
 #          solrproxy is used it should be
 #          "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php"
@@ -65,6 +68,7 @@ $fsgFacetedSearchConfig = array(
     'indexer' => 'SOLR',
     'source'  => 'SMWDB',
     'proxyHost'    => $wgServer,
+//	'proxyPort'    => 8983,		
 	'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
 	'indexerHost' => 'localhost', // must be equal to $SOLRhost in solrproxy.php
 	'indexerPort' => 8983         // must be equal to $SOLRport in solrproxy.php

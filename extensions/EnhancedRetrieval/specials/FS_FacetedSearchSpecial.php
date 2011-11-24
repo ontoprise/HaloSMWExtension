@@ -168,16 +168,16 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	 */
 	public static function addJavaScriptVariables(&$vars) {
 		global $fsgFacetedSearchConfig, $fsgCreateNewPageLink;
-		$servlet = array_key_exists('servlet', $fsgFacetedSearchConfig)
-					? $fsgFacetedSearchConfig['servlet']
+		$servlet = array_key_exists('proxyServlet', $fsgFacetedSearchConfig)
+					? $fsgFacetedSearchConfig['proxyServlet']
 					: '/solr/select';
-		$port = array_key_exists('port', $fsgFacetedSearchConfig)
-					? $fsgFacetedSearchConfig['port']
+		$port = array_key_exists('proxyPort', $fsgFacetedSearchConfig)
+					? $fsgFacetedSearchConfig['proxyPort']
 					: false;
 					
-		$solrURL = $fsgFacetedSearchConfig['host'];
+		$solrURL = $fsgFacetedSearchConfig['proxyHost'];
 		if ($port) {
-			$solrURL .= ':' . $fsgFacetedSearchConfig['port'];
+			$solrURL .= ':' . $port;
 		}
 		
 		$vars['wgFSSolrURL'] = $solrURL;
