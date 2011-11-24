@@ -31,7 +31,7 @@
  */
 define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}}');
 define('DEPLOY_FRAMEWORK_VERSION_AND_BUILD', '{{$VERSION}} [B${env.BUILD_NUMBER}]');
-define('DF_REPOSITORY_LIST_LINK', 'http://dailywikibuilds.ontoprise.com/info/repository_list.html');
+
 
 // termination constants
 define('DF_TERMINATION_WITH_FINALIZE', 0);

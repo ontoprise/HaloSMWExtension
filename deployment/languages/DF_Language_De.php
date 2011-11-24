@@ -124,6 +124,9 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_server_start' => 'start',
     'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'Aktualisieren',
-	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen'
+	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen',
+	
+	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
+    'df_webadmin_repository_link' => 'Repository-Liste'
 	);
 }

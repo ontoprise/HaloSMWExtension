@@ -52,7 +52,8 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}} [B${env.BUILD_NUMBER}]');
+define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}}');
+define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '{{$VERSION}} [B${env.BUILD_NUMBER}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -225,7 +226,7 @@ if (isset($_GET['tab'])) {
 	$selectedTab = 0;
 }
 
-$dfVersion = DF_WEBADMIN_TOOL_VERSION;
+$dfVersion = DF_WEBADMIN_TOOL_VERSION_AND_BUILD;
 
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

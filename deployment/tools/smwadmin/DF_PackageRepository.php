@@ -30,6 +30,7 @@ require_once $rootDir.'/descriptor/DF_DeployDescriptor.php';
 // default repository
 // this URL is supposed to be fix forever
 define("SMWPLUS_REPOSITORY", "http://dailywikibuilds.ontoprise.com/repository/");
+define('DF_REPOSITORY_LIST_LINK', 'http://dailywikibuilds.ontoprise.com/info/repository_list.html');
 
 
 /**

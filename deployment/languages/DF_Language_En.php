@@ -127,7 +127,11 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'refresh',
 	
-	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)'
+	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
+	
+	'df_webadmin_newreleaseavailable' => 'New release available! Check the $1',
+    'df_webadmin_repository_link' => 'repository list'
+	
 	);
 
 }
