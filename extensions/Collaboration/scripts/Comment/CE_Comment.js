@@ -1106,17 +1106,14 @@ function CECommentForm() {
 			'id' : 'collabComFileToggle',
 			'text' : ' | ' + ceLanguage.getMessage( 'ce_com_file_toggle' ) + ': '
 		})
-		var checked = null;
-		if ( $( '.collabComResFileAttach:first' ).filter( ':visible' ) ) {
-			checked = ['checked', 'checked'];
-		}
 		var tmp = document.createElement( 'input' );
 		tmp.setAttribute( 'type', 'checkbox' );
-		$( tmp ).attr( 'ckecked', checked )
-			.change( function() {
-				ceCommentForm.toggleFileAttachment();
-			})
-			.appendTo( $( fileSpan ) );
+		$( tmp ).change( function() {
+			ceCommentForm.toggleFileAttachment();
+		}).appendTo( $( fileSpan ) );
+		if ( $( '.collabComResFileAttach:first' ).filter( ':visible' ) ) {
+			$( tmp ).attr( 'checked', 'checked' );
+		}
 		$( '.collabComInternHeader' ).append( $( fileSpan ) );
 		return true;
 	};
