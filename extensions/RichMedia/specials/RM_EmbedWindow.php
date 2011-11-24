@@ -171,7 +171,7 @@ END;
 	var screenHeight = top.screen.availHeight, screenWidth = top.screen.availWidth,
 		paddingTotal = 20, extraHeight = 60; // some extra space to avoid Scrollbars
 	extraWidth = 20, outer = top.jQuery('#fancybox-wrap'), 
-	inner = top.jQuery('#fancybox-inner');
+	inner = top.jQuery('#fancybox-content');
 
 	if ({$scroll} !== 1 && ( {$newWidth} > screenWidth || {$newHeight} > screenHeight) ) {
 		outer.css({ 
@@ -195,7 +195,7 @@ END;
 				width: {$newWidth} + extraWidth 
 			});
 	}
-	top.jQuery.fancybox.center(); 
+	top.jQuery.fancybox.center(true); 
 </script>
 HTML;
 			}
