@@ -397,7 +397,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		document.editform.submit();
 +
 +		//load the upload success message
-+		parent.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
++		parent.jQuery('#fancybox-content').load('{$uploadWindowUrlSuccess}');
  	</script>
  
  END;
@@ -1150,7 +1150,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow2.php
 -		parent.jQuery.fancybox.close();
 +		top.saveRichMediaData('{$target}', '{$imageURL}', '{$this->mInputID}');
 +		//load the upload success message
-+		top.jQuery('#fancybox-inner').load('{$uploadWindowUrlSuccess}');
++		top.jQuery('#fancybox-content').load('{$uploadWindowUrlSuccess}');
  	</script>
 +END;
 +		print $wgOut->getHTML();
