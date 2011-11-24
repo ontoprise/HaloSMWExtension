@@ -70,7 +70,7 @@ class CEComment {
 		# check authorization #
 		if ( !isset( $cegEnableCommentFor )
 			|| ( $cegEnableCommentFor == CE_COMMENT_NOBODY )
-			|| ( ( $cegEnableCommentFor == CE_COMMENT_AUTH_ONLY ) && !$wgUser->isAnon() ) )
+			|| ( ( $cegEnableCommentFor == CE_COMMENT_AUTH_ONLY ) && $wgUser->isAnon() ) )
 		{
 			wfProfileOut( __METHOD__ . ' [Collaboration]' );
 			return CECommentUtils::createXMLResponse(

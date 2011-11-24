@@ -9,6 +9,8 @@ VERSION 1.5.0
     Migrated to MediaWiki 1.17 and take use of the Resource Loader
   BUGFIXES:
     Issue 15551 - Average article quality text out of alignment
+    Issue 16144 – add attachement to a comment don't work properly
+    Issue 16000 - $cegEnableCommentFor=CE_COMMENT_AUTH_ONLY; disables comments for ALL users
 
 
 VERSION 1.4.0
