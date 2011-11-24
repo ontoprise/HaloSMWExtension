@@ -315,7 +315,7 @@ window.wgUserLanguageStrings = {
 	'QI_SAVE_ERROR'		  	  : "An unknown error occured. Your query could not be saved.",
 	'QI_EMPTY_TEMPLATE'		  : "In order to use the format 'template', you have to enter a template name.",
 	'QI_SPECIAL_QP_PARAMS'    : 'Options for',
-    'QI_START_CREATING_QUERY' : 'Click on<ul><li>Add Category</li><li>Add Property</li><li>Add Instance</li></ul>to create a new query.',
+    'QI_START_CREATING_QUERY' : 'Click on<ul><li>Add Category</li><li>Add Property</li><li>Add Instance</li></ul>to start creating your query.',
     'QI_BC_ADD_CATEGORY'      : 'Add category',
     'QI_BC_ADD_PROPERTY'      : 'Add property',
     'QI_BC_ADD_INSTANCE'      : 'Add instance',

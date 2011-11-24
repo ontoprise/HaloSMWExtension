@@ -32,14 +32,11 @@ jQuery(document).ready(function(){
 //document ready somehow is not fired in Special:QueryInterface
 isInit || init();
 
-//get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
+
 function initToolTips(){
   var qtipConfig = {
     content: {text: ''},
-    //    overwrite: false,
-    prerender: true,
     show: {
-      //      ready: true,
       solo: true,
       when: {
         event: 'mouseover'
@@ -67,6 +64,7 @@ function initToolTips(){
     }
   };
 
+//get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
   jQuery('[onmouseover^="Tip("]').not('#qiLoadConditionTerm').each(function(){
     var element = jQuery(this);
     var toolTip = element.attr('onmouseover').toString();

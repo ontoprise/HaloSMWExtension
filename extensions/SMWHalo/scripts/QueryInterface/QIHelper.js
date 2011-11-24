@@ -108,7 +108,10 @@ QIHelper.prototype = {
       try{
         //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
         var method = initMethods[i];
-        if(method.name == 'smw_sortables_init' && jQuery('.sortheader').length > 0){
+        mw.log('\ninitMethods[' + i + ']:' + method.name + '\n' + method.toString());
+        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
+          && jQuery('.sortheader').length > 0)
+        {
           continue;
         }        
         method();
@@ -797,7 +800,7 @@ openResultPreview : function(request) {
 },
 
 getInlineScripts: function(text){
-  var scriptRegexp = new RegExp(/\<script[^\>]*\>[^]*?\<\/script\>/gmi);
+  var scriptRegexp = new RegExp(/\<script[^\>]*\>[\s\S]*?\<\/script\>/gmi);
   var result = [];
   var noscript = text;
   var match;
@@ -955,7 +958,7 @@ updateBreadcrumbs : function(id, action) {
     html += this.queries[nav[i]].getName() + '</span>';
   }
   if (action) html += ': <b>' + action + '</b>';
-  var breadcrumpDIV = $$('#askQI #treeviewbreadcrumbs')[0];
+  var breadcrumpDIV = $$('#askQI #treeviewbreadcrumbs #breadcrumbsDiv')[0];
   if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
 },
 

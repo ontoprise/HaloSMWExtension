@@ -71,11 +71,11 @@
   vertical-align: baseline;
   white-space: nowrap;
   width: auto;
+  float: right;
 }
 
-div.qiaddbuttons{
-  padding-top: 10px;
-  float: left;
+.qiaddbuttons button{
+  margin-right: 3px;
 }
 
 div.qiaddbuttons span img{
@@ -106,7 +106,7 @@ div.qiaddbuttons span img{
   float:left;
   width:59%;
   height: 300px;
-  border: 1px solid #AAAAAA;
+  border: 1px solid #717171;
   float:left;
 }
 
@@ -263,7 +263,7 @@ hr {
 }
 
 #layoutcontent select{
-  /*width:95%;*/
+  width: 270px;
 }
 
 #previewlayout{
@@ -293,14 +293,6 @@ hr {
   float:left;
   margin-left: 2%;
   margin-bottom: 10px;
-}
-
-#qioptioncontent{
-  border:1px solid #AAAAAA;
-  background: #FFFFFF;
-  overflow: auto;
-  padding-left: 5px;
-  padding-right: 5px;
 }
 
 #qioptioncontent td {
@@ -339,23 +331,23 @@ hr {
 }
 
 a.minusplus{
-  background-image:url(images/down.png);
+  background-image:url(images/IconCollapse.jpg);
   float:left;
-  height:16px;
+  height:13px;
   margin-right:4px;
   margin-top:1px;
   overflow:hidden;
-  width:16px;
+  width:13px;
 }
 
 a.plusminus{
-  background-image:url(images/right.png);
+  background-image:url(images/IconExpand.jpg);
   float:left;
-  height:16px;
+  height:13px;
   margin-right:4px;
   margin-top:1px;
   overflow:hidden;
-  width:16px;
+  width:13px;
 }
 
 .subquerycell{
@@ -547,6 +539,7 @@ button.btnhov{
 }
 #qistatus {
   padding-left: 5px;
+  color: #7f7f7f;
 }
 #qitextview , #qisource {
   display: none;
@@ -682,4 +675,12 @@ button.btnhov{
 /* reduce the font size of qtips */
 .ui-tooltip-qiQtip{
   font-size: 11px !important;
+}
+
+#breadcrumbsDiv{
+  float: left;
+}
+
+#breadcrumbsDiv .qibuttonEmp:first-child{
+  font-weight: bold;
 }
