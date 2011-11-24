@@ -244,15 +244,7 @@ $smwgNamespacesWithSemanticLinks[NS_MEDIAWIKI] = true;
 
 
 /*start-enhancedretrieval*/
-if (file_exists($IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php'))
-    require_once $IP.'/extensions/EnhancedRetrieval/SOLR/solr_ip.php';
 require_once($IP.'/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
-$fsgFacetedSearchConfig = array(
-    'indexer' => 'SOLR',
-    'source'  => 'SMWDB',
-    'host'    => $solrIP,
-    'port'    => 8983
-);
 $fsgEnableIncrementalIndexer=false;
 /*end-enhancedretrieval*/
 
