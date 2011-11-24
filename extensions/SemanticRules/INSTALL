@@ -1,4 +1,4 @@
-Installation instructions for Semantic Rules extension v1.01
+Installation instructions for Semantic Rules extension v1.6.0
 ---------------------------------------------------------------
 
 Install instructions for the latest version of the Semantic Rules Extension are also online:
@@ -7,19 +7,19 @@ Install instructions for the latest version of the Semantic Rules Extension are 
  
 For the full manual of the Semantic Rules Extension have a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension_1.1.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension_1.6.0
  
 Install instructions for the latest version of SMWHalo are online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.6.0
 
 Requirements: 
 =============
 
 	MediaWiki 1.17.x 
-	Semantic MediaWiki 1.6 (Please make reference to the installation instructions)
-	Halo Extension 1.6
-	Basic Triple Store 
+	Semantic MediaWiki 1.6.1 (Please make reference to the installation instructions)
+	Halo Extension 1.6.0 (with Triplestore configured)
+	Basic/Prof. Triple Store 
 
 
 Installation:

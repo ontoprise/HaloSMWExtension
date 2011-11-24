@@ -1,18 +1,19 @@
 Semantic Rules extension ChangeLog
 ==================================
 
-
-VERSION XXXX
-
+VERSION 
+    1.60
 
   FEATURES:
-
+    - No new feature 
+    - Compatibility to MW 1.17 and SMWHalo 1.60
 
 
   CHANGES:
-
-
+    - No pre-configured Triplestore. Extension simply stops if triplestore 
+      is not configured.  
 
   BUGFIXES:
+    - No fixes
 
 
