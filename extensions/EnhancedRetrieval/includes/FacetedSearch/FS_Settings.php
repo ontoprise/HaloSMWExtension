@@ -48,7 +48,7 @@ $fsgIP = $IP.'/extensions/EnhancedRetrieval';
 # proxyHost: Protocol and name or IP address of the proxy to the indexer server 
 #          as seen from the client e.g. 'http://www.mywiki.com' or $wgServer
 # proxyPort: The port number of the indexer server e.g. 8983 as seen from the 
-#          client server. 
+#          client. 
 #          If the solrproxy is used this can be omitted.
 # proxyServlet: Servlet of the indexer proxy as seen from the client. If the 
 #          solrproxy is used it should be
