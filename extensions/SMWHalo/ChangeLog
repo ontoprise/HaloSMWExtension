@@ -4,7 +4,10 @@ VERSION 1.6.0
 	FEATURES:
 		15442 - Allow to specify a property that is displayed as label for the main result column	
 		15333 - Add stylesheet support to inline queries
-		
+		15575 - Implement improved category Microform  
+        15585 - Implement Edit instance microform  
+        15594   Implement improved category/instances/property selection
+ 
 	Bugfixes:
 		15726 - Catchable fatal error: Hook mismatch in LOD part on sfFormEdit	
 		14108 - Auto-completion not as expected

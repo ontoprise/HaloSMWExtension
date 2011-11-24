@@ -114,11 +114,12 @@ SMW+, also read the remarks in the section "Notes on Upgrading" below.
 
 (11) Open a command-line interface to install the patches.
      The files patch*.txt are Eclipse patch files which can be installed using the
-     tool patch.php (in the root folder of the extension) which itself uses GNU patch. The
-     The patch files are located in the directory 'extensions\SMWHalo'.
+     tool patch.php (located in deployment/tools) 
+     which itself uses GNU patch. The patch files are located in the 
+     directory 'extensions\SMWHalo'.
      They are named with respect to the extension that is patched and
-     the version of that extension. For instance, patch_for_MW_1.16.1.txt patches
-     version 1.16.1 of MediaWiki. Please choose the correct version when applying
+     the version of that extension. For instance, patch_for_MW_1.17.0.txt patches
+     version 1.17.0 of MediaWiki. Please choose the correct version when applying
      the patches in the following steps.
 
 (12) Patch MediaWiki:
@@ -191,24 +192,17 @@ the FAQ section, then contact the user support list (see the Contact section).
 3.  $smwgHaloPropertyPageFromTSC: Reads annotations on property pages from the TSC,
     not from the MySQL store.
     
-4.  Enable the Query Results Cache. Please note that the full feature richness
-    of the Query Results Cache is only available, if the Query Updator, which is
-    deployed together with the Triple Store Connector is installed. The behaviour
-    of the Query Results Cache can be configured
-    in ./includes/QueryResultsCache/QRC_Settings.php
- 	enableQueryResultsCache();
-
-5.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
+4.  One may use the OntologyBrowser to modify the ontology. Specify the appropriate 
 	rights (in this example for the WikiSysop) for modifying the ontology, otherwise 
 	you can only browse through.
 
-	$wgGroupPermissions['sysop']['ontologyediting'] = true;
+	   $wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 6.  If you protect your wiki with a htaccess file and use the Auth Digest method
     then you need to set the http password in the variable $smwgHaloHttpAuthPassword.
     The username will be taken from the http request, and is not set here.
 
-    $smwgHaloHttpAuthPassword='your password';
+        $smwgHaloHttpAuthPassword='your password';
 
 7.  $smwgHaloRedLinkWithCreateNewPage: Boolean, can be set to true, default is false.
     You can allow the wiki to modify the red links so that the user is sent to a
@@ -262,9 +256,9 @@ can set respective parameters somewhere below the line
 in your LocalSetting.php. For example, one can write
 
  include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
- $smwgHaloAllowNewHelpQuestions = true;
+ $smwgHaloPropertyPageFromTSC = true;
 
-to allow users to add new help questions to the system. There are various settings
+to have the content of property pages read from the TSC. There are several settings
 which are documented here:
 
 http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
