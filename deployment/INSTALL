@@ -10,8 +10,8 @@ Important!
 ---------------------------------------
 The new template of settings.php file is delivered in the config folder. If you install 
 the wiki admin tool for the first time, you have to copy settings.php in the root folder
-(deployment/settings.php). If you update, take a look in it and check if you need to set 
-additional parameters.
+(deployment/settings.php). If something is wrong the tool will tell you when you first access
+it. If you update, take a look in it and check if you need to set additional parameters.
 
 Third party tools
 ==================
@@ -46,23 +46,33 @@ Table of contents
  
         require_once('deployment/Deployment.php');
         
-    This was optional before DF 1.56!
+    This was optional before DF 1.56! (see also step 7)
     
 (1) Unzip deployment-x.x.x.zip in the MediaWiki root folder.
-(2) Replace in AdminSettings.php the example values given for  $wgDBadminuser (e.g. 'wikiadmin') and 
-      $wgDBadminpassword (e.g 'adminpass') with the name and passwort of the 
-      administrator user in your MYSQL installation. If you are using SMW+
-      then your default name and passwort is: 'root', 'm8nix'.
+(2) Set in LocalSettings.php the values for
+ 
+            $wgDBadminuser and 
+            $wgDBadminpassword
+             
+      with the name and passwort of the administrator user in
+      your MYSQL installation. If you are using SMW+ then your 
+      default name and passwort is: 'root' and 'm8nix'.
+     
+     Important: Use string constants and *not* other variables to define these variables.
+      
 (3) On Linux: make smwadmin.sh executable 
+
       Open the installation directory of the Wiki Administration Tool in the 
       commandline interface: "<mediawiki-install-dir>/deployment/tools/"
       and call: "chmod +x smwadmin.sh"
+      
 (4) Include the path to the php binary to PATH variable (either Windows or Linux) 
 (5) Include the path to mysql.exe to the PATH variable (either Windows or Linux)
 (6) Test your installation
+
   Open the installation directory of the Wiki Administration Tool in the 
   commandline interface in <mediawiki-install-dir>/deployment/tools/
-  and call: smwadmin.bat/sh. You should see the help screen.
+  and call: smwadmin.bat (windows) or ./smwadmin.sh (linux). You should see the help screen.
   
 (7) add the following include statement in your LocalSettings.php 
     
@@ -116,11 +126,12 @@ semantic extensions containing SMW + SF among others.
 # 3. HowTo use the Wiki Administration Tool
 # ======================================
 
-smwhalo admin utility v1.5.6_0 [B525], Ontoprise 2009-2011
+Wiki administration tool utility v1.6.0_0 [B???], Ontoprise 2009-2011
+
 Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]
        smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]
        smwadmin -r [ <restore point name> ]
-       smwadmin -l [--desc ]
+       smwadmin [--desc ] -l [ fragment ]
        smwadmin --rcreate [ <restore point name> ]
        smwadmin --rlist
        smwadmin --finalize
@@ -129,30 +140,41 @@ Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]
         -d <bundle> ]: De-Install
         -u <bundle>: Update
         -l [ pattern ] : List installed bundles.
-        -l --desc: Shows additional description about the bundles.
+        --desc -l : Shows additional description about the bundles.
+        -l smw : Lists only bundles containing 'smw' in the ID.
         -r [ name ]: Restore from a wiki-restore-point.
         --rcreate [ name ]: Explicitly creates a wiki-restore-point.
         --rlist : Shows all existing wiki-restore-points
         --finalize: Finalizes installation
+        
         Additional options (can only be used with the optional above):
+        
         --dep : Check only dependencies but do not install.
         -f: Force operation (ignore any problems if possible)
-        --nocheck: Skips the environment checks
+        --nocheck: Skips checks for appropriate rights.
         --noask: Skips all questions (assuming mostly 'yes' except for optional bundles
         --removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d
                 --removeTemplates: Removes all templates referenced used by a bundle. Used with -d
                 --removeInstances: Removes all instances referenced used by a bundle. Used with -d
                 --removeImages: Removes all images referenced used by a bundle. Used with -d
         --removestillused: Removes also pages which are used by other bundles. Used with -d --removereferenced
+        --applypatches <bundle-ID>: Applies all patches of the given bundle again.
 
-
-Examples:       smwadmin -i smwhalo Installs the given bundles
-                smwadmin -u: Updates complete installation
-                smwadmin -u --dep: Shows what would be updated.
-                smwadmin -d smw: Removes the bundle smw.
-                smwadmin -r [name] : Restores old installation from a restore point. User is prompted for which.
-                smwadmin -i smwhalo -f: Installs smwhalo ignoring any problems
-                smwadmin -u --noask: Updates the complete installation with no check for environment.
+Examples:
+        smwadmin -i smwhalo 
+            Installs the given bundle 'smwhalo'
+        smwadmin -u: 
+            Updates complete installation.
+        smwadmin -u --dep 
+            Shows what would be updated.
+        smwadmin -d smw 
+            Removes the bundle 'smw'.
+        smwadmin -r myrestorepoint
+            Restores old installation from the restore point 'myrestorepoint'. 
+        smwadmin -i smwhalo -f
+            Installs smwhalo ignoring any problems.
+        smwadmin -u --noask 
+            Updates the complete installation with no prompting.
 
 #
 # 4. Restore wiki from restore point
@@ -199,7 +221,7 @@ Open <mediawiki-install-dir>/deployment/settings.php and set the proxy server ad
 
 #
 # 7. Wiki Administration Tool log
-# ============================
+# ================================
 The DF writes a log about the operations. It is stored in $HOME/$wikiname/df_log
 Both $HOME and $wikiname can be configured in <mediawiki-install-dir>/deployment/settings.php
     
@@ -228,5 +250,6 @@ tsc=d:\tsc
 
 The file makes sure that the Wiki Administration Tool finds the applications. It is able 
 to find existing installations by itself but this works only for Windows if it is properly 
-registered in the Windows registry. Linux users should configure their applications if they
-were not installed via the Wiki Administration Tool in the first place.
+registered in the Windows registry (which is the case when installed via Windows Installer). 
+Linux users should configure their applications if they were not installed via the Wiki 
+Administration Tool in the first place.
