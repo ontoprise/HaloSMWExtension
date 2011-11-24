@@ -66,8 +66,8 @@ $fsgFacetedSearchConfig = array(
     'source'  => 'SMWDB',
     'proxyHost'    => $wgServer,
 	'proxyServlet' => "$wgScriptPath/extensions/EnhancedRetrieval/includes/FacetedSearch/solrproxy.php",
-	'indexerHost' => 'localhost',
-	'indexerPort' => 8983
+	'indexerHost' => 'localhost', // must be equal to $SOLRhost in solrproxy.php
+	'indexerPort' => 8983         // must be equal to $SOLRport in solrproxy.php
 );
 
 ###
