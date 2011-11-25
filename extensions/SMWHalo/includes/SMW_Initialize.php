@@ -1644,29 +1644,20 @@ function smwhfRegisterResourceLoaderModules() {
 			// Module for the Query Interface
 			$dependencies = array(
       'ext.smwhalo.Language',
-//      'ext.smw.tooltips',
-//      'ext.smw.style',
       'ext.jquery.query',
       'ext.ScriptManager.prototype',
       'ext.jquery.qtip',
       'ext.jquery.tree',
       'ext.smwhalo.json2',
-      'jquery.ui.dialog'
-//      'ext.tabularforms.main'
+      'jquery.ui.dialog',
+      'ext.smwhalo.general'
       
      );
-			// Add all modules ext.srf.*
-//			foreach ($wgResourceModules as $rid => $mod) {
-//				if (strpos($rid, 'ext.srf.') === 0) {
-//					$dependencies[] = $rid;
-//				}
-//			}
 
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
 		'scripts' => array(
 			'scripts/initPrototype.js',
 			'scripts/Logger/smw_logger.js',
-			'scripts/OntologyBrowser/generalTools.js',
 			'scripts/QueryInterface/Query.js',
 			'scripts/QueryInterface/QueryList.js',
 			'scripts/QueryInterface/QIHelper.js',

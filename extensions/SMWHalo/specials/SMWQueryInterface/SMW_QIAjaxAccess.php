@@ -416,7 +416,7 @@ function toJsonCompatibleArray($params) {
  * @param string  wikitext
  * @return string html
  */
-function parseWikiText($text, $page = '___Dummy_Page___') {
+function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = true) {
   global $wgOut, $wgParser, $wgAllowImageTag, $wgAllowExternalImages;
 
 //  $oldAllowImageTag = $wgAllowImageTag;
@@ -438,14 +438,17 @@ function parseWikiText($text, $page = '___Dummy_Page___') {
   $result = $text;
 
   $modules = array_merge(array_unique($wgOut->getModules()), array_unique($pout->getModules()));
-
-  //add script section for resource module loading in QI result preview
-  $result .= '<script type="text/javascript">';
-  $result .= 'mw.loader.using(["';
-  $result .= implode('","', $modules);
-  $result .= '"], qihelper.executeInitMethods);';
-  $result .= '</script>';
-  $result .= $wgOut->getScript();
+  //add script block which loads the necessary modules
+  //also add to the result all the <script> blocks the page contains
+  if($addInlineScripts){
+    //add script section for resource module loading in QI result preview
+    $result .= '<script type="text/javascript">';
+    $result .= 'mw.loader.using(["';
+    $result .= implode('","', $modules);
+    $result .= '"], qihelper.executeInitMethods);';
+    $result .= '</script>';
+    $result .= $wgOut->getScript();
+  }
   
 //  $wgAllowImageTag = $oldAllowImageTag;
 //  $wgAllowExternalImages = $oldAllowExternalImages;
@@ -467,7 +470,7 @@ function parseQuery($query, $page) {
   $query = str_replace('|', '%%%Pipe%%%', $query);
 
   // do not use the global parser that screws up things
-  $query = parseWikiText($query, $page);
+  $query = parseWikiText($query, $page, false);
 
   $query = str_replace('%%%BrOpen%%%', '[', $query);
   $query = str_replace('%%%BrClose%%%', ']', $query);

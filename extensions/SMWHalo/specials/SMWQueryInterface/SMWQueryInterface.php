@@ -155,7 +155,7 @@ class SMWQueryInterface extends SpecialPage {
     }
     // check if triple store is availabe, and offer option do deselect
     if (isset($smwgHaloWebserviceEndpoint)) {
-      $useTS = '<input type="checkbox" id="usetriplestore" checked="checked">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+      $useTS = '<input type="checkbox" id="usetriplestore" checked="checked"><label for="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</label></input>';
     }
     // check if there are any options that will be displayed, If this is not the case
     // then ommit this section

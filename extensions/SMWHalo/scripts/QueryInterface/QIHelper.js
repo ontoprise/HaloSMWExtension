@@ -57,7 +57,7 @@ QIHelper.prototype = {
     this.TPEE_SELECTED = 1;
     this.propertyAddClicked = false;
     this.colNameEntered = false;
-    this.srfInitMethods = null;
+    this.srfInitMethods = [];
 
     var qiStatus = $$('#askQI #qistatus')[0];
     if(qiStatus)
@@ -111,7 +111,7 @@ QIHelper.prototype = {
       try{
         //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
         var method = initMethods[i];
-        mw.log('\ninitMethods[' + i + ']:' + method.name + '\n' + method.toString());
+//        mw.log('\ninitMethods[' + i + ']:' + method.name + '\n' + method.toString());
         if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
           && jQuery('.sortheader').length > 0)
         {
@@ -132,9 +132,8 @@ QIHelper.prototype = {
 
   //override $initResultFormatLoading(document).ready and addOnloadHook methods to save the functions passed to them as arguments
   initResultFormatLoading: function(){
-    jQuery.fn.ready = qihelper.documentReady;
-    addOnloadHook = qihelper.documentReady;
-    qihelper.srfInitMethods = [];
+    jQuery.fn.ready = this.documentReady;
+    addOnloadHook = this.documentReady;
   },
 
   documentReady: function(someFunction){
@@ -852,14 +851,14 @@ pastePreview: function(request, preview) {
     if(qiPreviewDialog && qiPreviewDialog.dialog('isOpen')){
       $$('#askQI #previewcontent')[0].innerHTML = '';
       qiPreviewDialog.html(resultHTML);
-      this.appendScripts(qiPreviewDialog, qihelper.inlineScripts);
-      qihelper.executeInitMethods();
+      this.appendScripts(qiPreviewDialog, this.inlineScripts);
+      this.executeInitMethods();
     }
   }
   else{
     preview.innerHTML = resultHTML;
-    this.appendScripts(preview, qihelper.inlineScripts);
-    qihelper.executeInitMethodsTimeout = window.setTimeout(function(){
+    this.appendScripts(preview, this.inlineScripts);
+    this.executeInitMethodsTimeout = window.setTimeout(function(){
         window.clearTimeout(qihelper.executeInitMethodsTimeout);
         qihelper.executeInitMethods();
       }, 500);
@@ -889,7 +888,6 @@ pastePreview: function(request, preview) {
       document.ofc.js.resetOfc();
       break;
     case 'tabularform':
-//      window.tf.loadForms();
       break;
   }
 
