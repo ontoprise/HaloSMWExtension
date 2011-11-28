@@ -92,7 +92,7 @@ function smwf_na_getPropertyValue($titleName, $propertyName){
 	$prop = SMWDIProperty::newFromUserLabel($propertyName);
 	$propValues = smwfGetStore()->getPropertyValues($title, $prop);
 	if($propValues && count($propValues) > 0){
-		$propertyValue = $propValues[0]->getWikiValue();
+		$propertyValue = $propValues[0]->getString();
 	}
 	return $propertyValue . '}' . $titleName;
 }

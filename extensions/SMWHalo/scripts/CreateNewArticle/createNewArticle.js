@@ -343,6 +343,7 @@
           }
         },
         'onComplete'  : function(){
+          $('#fancybox-close').show();
 
           var articleTitleTextBox = $('#newArticleName');
           //build list of forms and categories
@@ -431,8 +432,6 @@
     if($.query.get('todo').toLowerCase() === 'createnewarticle'){
       CREATENEWARTICLE.openFancybox();
     }
-
-
 
     $(CREATENEWARTICLE.BIND_CONTROL_ID).click(function(event) {
       CREATENEWARTICLE.openFancybox();
