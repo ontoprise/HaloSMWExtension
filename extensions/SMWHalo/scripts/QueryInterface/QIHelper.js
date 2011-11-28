@@ -25,7 +25,7 @@ QIHelper.prototype = {
 	 * Initialize the QIHelper object and all variables
 	 */
   initialize : function() {
-    this.imgpath = wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/';
+    this.imgpath = mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/images/';
     this.divQiDefTabHeight = 300;
     this.divPreviewcontentHeight = 160;
     if (! this.numTypes ) { // get them only once.
@@ -85,9 +85,6 @@ QIHelper.prototype = {
     jQuery('#qiDiscardChangesButton').click(function(){
       qihelper.enableResetQueryButton();
     });
-
-    this.executeInitMethods();
-
   },
 
   isFunctionInArray: function(someFunction, arrayOfFunctions){
@@ -139,6 +136,12 @@ QIHelper.prototype = {
   documentReady: function(someFunction){
     if(typeof someFunction === 'function' && !qihelper.isFunctionInArray(someFunction, qihelper.srfInitMethods)){
       qihelper.srfInitMethods.push(someFunction);
+    }
+    try{ //those functions have to be executed in the first time when document is ready
+      someFunction();
+    }
+    catch(x){
+      mw.log('EXCEPTION: ' + x);
     }
   },
 
