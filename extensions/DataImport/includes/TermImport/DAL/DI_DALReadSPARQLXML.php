@@ -1,9 +1,6 @@
 <?php
 
 
-global $smwgDIIP;
-require_once($smwgDIIP . '/specials/TermImport/SMW_IDAL.php');
-
 define('DAL_SXML_RET_ERR_START',
 			'<?xml version="1.0"?>'."\n".
 			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".

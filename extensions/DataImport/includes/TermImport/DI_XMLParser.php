@@ -29,7 +29,7 @@
  * @author Thomas Schweitzer
  */
 
-class XMLParser {
+class DIXMLParser {
 	//--- Fields ---
 	
 	// String representation of the XML structure
@@ -193,8 +193,9 @@ class XMLParser {
 			return $values;
 		}
 		
-		$indices = $this->xmlIndex[strtoupper($elementPath[$pi])];
-		if (!$indices) {
+		if(array_key_exists(strtoupper($elementPath[$pi]), $this->xmlIndex)){
+			$indices = $this->xmlIndex[strtoupper($elementPath[$pi])];
+		} else {
 			return $result;
 		}
 		

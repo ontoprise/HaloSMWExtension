@@ -16,111 +16,20 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+var $ = $P;
+
 var TermImportPage = Class.create();
 
 TermImportPage.prototype = {
 	initialize: function() {
-		this.currentSelectedTLM = null;
 		this.currentSelectedDAM = null;
 		/*if (wgCanonicalSpecialPageName != 'Gardening') return;*/
 	},
 	
 	/**
-	 * Formats the selected TLM entry correctly when mouseout
-	 */
-	showRightTLM: function(e, node, tlID){
-		if (this.currentSelectedTLM!=node) {
-			Element.removeClassName(node,'entry-over');
-			Element.addClassName(node,'entry');
-		}else{
-			Element.removeClassName(node,'entry-over');
-			Element.addClassName(node,'entry-active');
-		}
-	},
-	
-	/**
-	 * Request the chosen TL module and paste TL description and DAL IDs
-	 * in the tl-desc respectively dal-id
-	 */
-	connectTL: function(e, node, tlID) {
-		if (this.currentSelectedTLM) {
-			Element.removeClassName(this.currentSelectedTLM,'entry-active');
-			Element.addClassName(this.currentSelectedTLM,'entry');
-		}
-		Element.removeClassName(node, 'entry');
-		Element.addClassName(node, 'entry-active');
-		this.currentSelectedTLM = node;		
-		if (this.pendingIndicatorTL == null && this.pendingIndicatorDAL == null) {
-			this.pendingIndicatorTL = new OBPendingIndicator($('tldesc'));
-			this.pendingIndicatorDAL = new OBPendingIndicator($('dalid'));
-		}
-		this.pendingIndicatorTL.show();
-		this.pendingIndicatorDAL.show();
-		sajax_do_call('smwf_ti_connectTL', [tlID, '', '', '', '', '', '', 0], this.connectTLCallback.bind(this, tlID));
-	},
-	
-	/*
-	 * Callback function for connectTL
-	 */
-	connectTLCallback: function(tlID, request) {
-		this.pendingIndicatorTL.hide();
-		this.pendingIndicatorDAL.hide();
-		
-		//DOM object and XML parsing...
-		var result = request.responseText;
-		var list = GeneralXMLTools.createDocumentFromString(request.responseText);
-		
-		//get all TLModules from the list
-		var tlmodules = list.getElementsByTagName("TLModules")[0].childNodes;
-		var response = '';
-		for (var i = 0, n = tlmodules.length; i < n; i++) {
-			//get on of the tlmodules
-			var tlmodule = tlmodules[i]; 
-			if(tlmodule.nodeType == 1) {
-				//find the id of the tlmodule
-				var found_tl_id = tlmodule.getElementsByTagName('id');
-				//var tl_class = tlmodule.getElementsByTagName('class');
-				//var tl_file = tlmodule.getElementsByTagName('file');
-				//find the desc
-				var tl_desc = tlmodule.getElementsByTagName('desc');
-				//check if found ID matches the given one
-				if (found_tl_id && found_tl_id[0].firstChild.nodeValue == tlID){
-					// yes, add the description to the response var.
-					response += "<b>Info: </b>"+tl_desc[0].firstChild.nodeValue;
-				}	
-			}	
-		}
-		if ( response ) {
-			$('tldesc').innerHTML = response;
-		}
-		
-     	// get all DALModules from the list 
-		var dalmodules = list.getElementsByTagName("DALModules")[0].childNodes;
-		// reset response var.
-		response = '';
-		
-		for (var i = 0, n = dalmodules.length; i < n; i++) {
-			//get one of the dalmodules
-			var dalmodule = dalmodules[i];
-			if(dalmodule.nodeType == 1) {
-				var dalid_obj = dalmodule.getElementsByTagName("id");
-				if (dalid_obj) {
-					//get the nodeValue
-					var dalid = dalid_obj[0].firstChild.nodeValue;
-					response += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" +
-		 				 "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" onClick=\"termImportPage.getDAL(event, this, '" + dalid + "', '" + tlID + "')\"><a>" + dalid + "</a></div>";
-				}	
-			}	
-		}
-		if ( response ) {
-			$('dalid').innerHTML = response;			
-		}
-	},
-	
-	/**
 	 * Formats the selected DAM entry correctly when mouseout
 	 */
-	showRightDAM: function(e, node, tlID){
+	showRightDAM: function(e, node){
 		if (this.currentSelectedDAM!=node) {
 			Element.removeClassName(node,'entry-over');
 			Element.addClassName(node,'entry');
@@ -133,7 +42,7 @@ TermImportPage.prototype = {
 	/*
 	 * function for getting all DAMs for the chosen TLM
 	 */
-	getDAL: function(e, node, dalID, tlID) {
+	getDAL: function(e, node, dalID) {
 		if (this.currentSelectedDAM) {
 			Element.removeClassName(this.currentSelectedDAM,'entry-active');
 			Element.addClassName(this.currentSelectedDAM,'entry');
@@ -141,19 +50,21 @@ TermImportPage.prototype = {
 		Element.removeClassName(node,'entry');
 		Element.addClassName(node, 'entry-active');
 		this.currentSelectedDAM = node;
+		this.currentSelectedDAM.dalID = dalID;
+		
 		if (this.pendingIndicatorDALDesc == null && this.pendingIndicatorSourceSpec == null) {
 			this.pendingIndicatorDALDesc = new OBPendingIndicator($('daldesc'));
 			this.pendingIndicatorSourceSpec = new OBPendingIndicator($('source-spec'));
 		}
 		this.pendingIndicatorDALDesc.show();
 		this.pendingIndicatorSourceSpec.show();
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , '', '', '', '', '', 0], this.getDALCallback.bind(this, tlID, dalID));
+		sajax_do_call('smwf_ti_connectDAM', [dalID , '', '', '', '', '', 0], this.getDALCallback.bind(this, dalID));
 	},
 	
 	/*
 	 *  Callback function for getting all DAMs for the chosen TLM
 	 */
-	getDALCallback: function(tlID, dalID, request){
+	getDALCallback: function(dalID, request){
 		this.pendingIndicatorDALDesc.hide();
 		this.pendingIndicatorSourceSpec.hide();
 		
@@ -162,39 +73,18 @@ TermImportPage.prototype = {
 		var list = GeneralXMLTools.createDocumentFromString(result);
 		
 		//get all DALModules from the list
-		var dalmodules = list.getElementsByTagName("DALModules")[0].childNodes;
-		var response = '';
-		//get id and desc of every dalmodule and compare to the given one
-		for (var i = 0, n = dalmodules.length; i < n; i++) {
-			// get one of the dalmodules (shortcut)
-			var dalmodule = dalmodules[i]; 
-			if(dalmodule.nodeType == 1) {
-				//find the id Obj of the dalmodule
-				var dalid_obj = dalmodule.getElementsByTagName('id');
-				//var dal_class = tlmodule.getElementsByTagName('class');
-				//var dal_file = tlmodule.getElementsByTagName('file');
-				//find the desc
-				var dal_desc = dalmodule.getElementsByTagName('desc');
-				//check if found ID matches the given one
-				if ( dalid_obj && dalid_obj[0].firstChild.nodeValue == dalID){
-					// yes, add the description to the response var.
-					response += "<b>Info: </b>" + dal_desc[0].firstChild.nodeValue;
-				}	
-			}		
-		}
-		if ( response ) {
-			$('daldesc').innerHTML = response;
-		}
-		
+		var damDesc = list.getElementsByTagName("damdescription")[0].firstChild.nodeValue;
+		$('daldesc').innerHTML = damDesc;
+
 		//create the right input-div
 		this.createDataSourceWidget (
-				list.getElementsByTagName("DataSource")[0].childNodes, tlID, dalID);
+				list.getElementsByTagName("DataSource")[0].childNodes, dalID);
 	},
 	
-	createDataSourceWidget : function(datasources, tlID, dalID) {
-		response = diLanguage.getMessage('smw_ti_sourceinfo')
+	createDataSourceWidget : function(datasources, dalID) {
+		response = this.getMessage('smw_ti_sourceinfo')
 				+ "<br><br><Table>";
-				//+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
+				//+ this.getMessage('smw_ti_source') + "&nbsp;";
 
 		var fieldnumber = 0;
 		for ( var i = 0, n = datasources.length; i < n; i++) {
@@ -274,17 +164,14 @@ TermImportPage.prototype = {
 		}
 		
 		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" " +
-				"onclick=\"termImportPage.getSource(event, this,'"
-				+ tlID + "','" + dalID + "')\">Next step</button>";
+				"onclick=\"termImportPage.getSource(event, this,"
+				+ "'" + dalID + "')\">Next step</button>";
 		// fade in the source specification
 		$('source-spec').innerHTML = response;
 	},
 	
-	getSource: function(e, node, tlID, dalID) {
-		tlID = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
-		dalID = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
-		
-		this.tlId = tlID;
+	getSource: function(e, node, dalID) {
+		dalID = this.currentSelectedDAM.dalID;
 		this.dalId = dalID;
 		
 		if (this.pendingIndicatorImportset == null) {
@@ -297,7 +184,7 @@ TermImportPage.prototype = {
 			var tag_array = new Array();
 			//XML structure for the DataSource
 			var dataSource = '';
-			var topcontainer = "<table id=\"sumtable\"><tr><td class=\"abstand\">TLM: <b>" + tlID + "</b></td><td class=\"abstand\">DAM: <b>" + dalID + "</b></td><td><ul>";
+			var topcontainer = "<table id=\"sumtable\"><tr><td class=\"abstand\">DAM: <b>" + dalID + "</b></td><td><ul>";
 			
 			for (var i = 0, n = source.length; i < n; i++) {
 				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
@@ -338,14 +225,14 @@ TermImportPage.prototype = {
 				}
 			}
 			topcontainer += "</ul></td><td class=\"abstand\"><a style=\"cursor: pointer;\"" +
-					" onClick=\"termImportPage.getTopContainer(event, this)\">" + diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+					" onClick=\"termImportPage.getTopContainer(event, this)\">" + this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 		//}
 		//catch(e) {
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -373,150 +260,83 @@ TermImportPage.prototype = {
 		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" 
 			+ dataSource + "</DataSource>";
 		$("loading-container").style.display ="inline";
-		
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
+
+		sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, dalID));
 	},
 	
 	/*
 	 * Callback function for the source specification
 	 */
-	getSourceCallback: function(tlID, dalID, request) {
+	getSourceCallback: function(dalID, request) {
 		$("loading-container").style.display ="none";
 		if(this.pendingIndicator != null){
 			this.pendingIndicatorImportset.hide();
 		}
 		
 		var result = request.responseText;
-		var list = GeneralXMLTools.createDocumentFromString(result);
+		result = result.substr(result.indexOf('--##starttf##--') + 15, result.indexOf('--##endtf##--') - result.indexOf('--##starttf##--') - 15); 
+		result = jQuery.parseJSON(result);
 		
-		try {
-			//why is ImportSet in Uppercases???
-			var importsets = list.getElementsByTagName("IMPORTSETS")[0].childNodes;
-			var import_response="<option value='ALL' selected>ALL</option>";
-			for (var i = 0, n = importsets.length; i < n; i++) {
-				// get one of the importsets
-				var importset = importsets[i]; 
-				if(importset.nodeType == 1) {
-					//find the name Obj of the 
-					var import_name_obj = importset.getElementsByTagName('NAME');
-					if ( import_name_obj ){
-						var import_name= import_name_obj[0].firstChild.nodeValue;
-						// add importset item to the list
-						import_response += "<option value='" + import_name + "'>" + import_name + "</option>";
-					}	
-				}	
-			}
-			//show properties on the right side
-			var properties = list.getElementsByTagName("Properties")[0].childNodes;
-			//var property_response = diLanguage.getMessage('smw_ti_attributes-heading');
-			
-			var property_response = '<div class=\"scrolling\"><table id=\"attrib_table\" class=\'mytable\'>';
-			
-			for (var i = 0, n = properties.length; i < n; i++) {
-				// get one of the importsets
-				var property = properties[i]; 
-				if(property.nodeType == 1) {
-					//find the name Obj of the 
-					var property_name_obj = property.getElementsByTagName('name');
-					if ( property_name_obj[0].firstChild ){
-						if( property_name_obj[0].firstChild.nodeValue != '') {
-							var property_name = property_name_obj[0].firstChild.nodeValue;
-							// add importset item to the list
-							if (property_name == diLanguage.getMessage('smw_ti_noa')){
-								property_response += "<tr><td class=\"mytd\" style=\"width:10px\"><input type=\"checkbox\" name=\"checked_properties\" value=\""+
-									property_name + "\" disabled checked></td><td class=\"mytd\">"+ property_name + "</td></tr>";
-							}
-							else {
-								property_response += "<tr><td class=\"mytd\" style=\"width:10px\"><input type=\"checkbox\" name=\"checked_properties\" value=\""+
-									property_name + "\" checked=\"true\"/></td><td class=\"mytd\">" + property_name + "</td></tr>";
-							}
-						}
-					}	
-				}	
-			}
-			property_response += "</table></div>";
-		
-			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<table class=\'mytable\'>';
-			var article_count = 0;
-			for (var i = 0, n = terms.length; i < n; i++) {
-			// get one of the importsets
-				var term = terms[i]; 
-				if(term.nodeType == 1) {
-					//find the name Obj of the 
-					if ( term.firstChild ){
-						var article_name = term.firstChild.nodeValue;
-						// add article name to the table
-						article_response += "<tr><td class=\"mytd\">" + article_name + "</td></tr>";
-						article_count++;
-					}
-				}
-			} 
-			article_response += "</table>";
-		}
-		catch(e){
-			//doesn't work in IE,so put it in a try-block
-			try {
-				var test = list.getElementsByTagName("message");
-				var error_message = "<br/><br/><span id=\"sumtable\">" + 
-					list.getElementsByTagName("message")[0].firstChild.nodeValue + "</span><br/><br/>"; 
-				error_message += "<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
-					+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>";
-				$('summary').style.display = "block";
-				$('summary').innerHTML = error_message;
-			
-				$('top-container').style.display = "none";
-				$('extras').style.display = "none";
-			} catch (e) {
-				// TODO: handle exception
-			}
-			return;
-		}
-		if (import_response) {
+		if(result['success']) {
 			$('extras').style.display = "inline";
-			if (Prototype.Browser.IE) {
-				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
-				$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\">" + 
-					import_response + "</select>";
+			if(result['importSets'].length > 0){
+				$('importset').style.display = "";
+				if (Prototype.Browser.IE) {
+					//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+					$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\">" + 
+						result['importSets'] + "</select>";
+				} else {
+					$('importset-input-field').innerHTML = result['importSets'];
+				}
+			} else {
+				$('importset').style.display = "none";
 			}
-			else {
-				$('importset-input-field').innerHTML = import_response;
-			}
-		}		
-		if (property_response) {
+		
 			$('extras-right').style.display = "inline";
-			$('attrib').innerHTML = property_response;
-			$('article_table').innerHTML = article_response;
-			$('article-count').innerHTML = article_count;
+			$('attrib').innerHTML = result['properties'];
+			$('article_table').innerHTML = result['terms'];
+			$('article-count').innerHTML = result['termsCount'];
 			$('extras-bottom').style.display = "inline";
 			
 			$('extras-bottom').innerHTML = 
 				"<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
-				+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>&nbsp;&nbsp;";
+				+ " value=\""+this.getMessage('smw_ti_prev-step')+"\"/>&nbsp;&nbsp;";
 			
 			$('extras-bottom').innerHTML += 
-				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"', true)\""
-				+ " value=\""+diLanguage.getMessage('smw_ti_save')+"\"/>&nbsp;&nbsp;";
+				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" + dalID +"', true)\""
+				+ " value=\""+this.getMessage('smw_ti_save')+"\"/>&nbsp;&nbsp;";
 			
 			$('extras-bottom').innerHTML += 
-				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"', false)\""
-				+ " value=\"" +diLanguage.getMessage('smw_ti_execute') + "\"/><br/><br/>";
-			
-			
-		}
-		if (Prototype.Browser.IE) {
-			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
-			$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple></select>";
-		}
-		else {
-			$('policy-textarea').innerHTML = '';
-		}
-		$('policy-input-field').value = '';
-		$('mapping-input-field').value = '';
+				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" + dalID +"', false)\""
+				+ " value=\"" +this.getMessage('smw_ti_execute') + "\"/><br/><br/>";
 		
-		if(this.tlId != null){
-			this.fillTermImportPage();
+			if (Prototype.Browser.IE) {
+				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+				$('policy-textarea').outerHTML = "<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple></select>";
+			} else {
+				$('policy-textarea').innerHTML = '';
+			}
+			$('policy-input-field').value = '';
+			$('mapping-input-field').value = '';
+		
+			if(this.dalId != null){
+				this.fillTermImportPage();
+			}
+		} else {
+			//todo: getting terms was not a success
+			
+			var test = list.getElementsByTagName("message");
+			var error_message = "<br/><br/><span id=\"sumtable\">" + 
+				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</span><br/><br/>"; 
+			error_message += "<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
+				+ " value=\""+this.getMessage('smw_ti_prev-step')+"\"/>";
+			$('summary').style.display = "block";
+			$('summary').innerHTML = error_message;
+		
+			$('top-container').style.display = "none";
+			$('extras').style.display = "none";
 		}
+		
 	},
 	
 	/*
@@ -534,19 +354,17 @@ TermImportPage.prototype = {
 		$('extras').style.display = "none";
 		$('extras-bottom').style.display = "none";
 		
-		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
-		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		var dalId = dalID = this.currentSelectedDAM.dalID;
 		
 		$("menue-step2").setAttribute("class", "TodoMenueStep");
 		$("menue-step2").style.cursor = "pointer";
 		$("menue-step2").setAttribute("onclick", 
-					"termImportPage.getSource(event, this,\"" + tlId + "\", \"" + dalId + "\")");
+					"termImportPage.getSource(event, this,\"" + dalId + "\")");
 		$("menue-step1").setAttribute("class", "ActualMenueStep");
 		
-		this.tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
-		this.dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		this.dalId = dalId;
 		
-		var result = this.getImportCredentials(e, node, this.tlId, this.dalId, false);
+		var result = this.getImportCredentials(e, node, this.dalId, false);
 
 		this.dataSource = escape(result[0]);
 		this.importSet = result[1];
@@ -578,19 +396,10 @@ TermImportPage.prototype = {
 	},
 	
 	importSetChanged: function(e, node) {
-		var hasInnerText =
-		(this.currentSelectedTLM.innerText != undefined) ? true : false;
-			var elem = this.currentSelectedTLM;
-			var elem2 = this.currentSelectedDAM;
+		var hasIn
+		var dalid = this.currentSelectedDAM.dalID;
 
-		if(!hasInnerText){
-    		var tlid = elem.textContent;
-    		var dalid = elem2.textContent;
-		} else{
-    		var tlid = elem.innerText;
-    		var dalid = elem2.innerText;
-		}
-		this.refreshPreview(e, node, tlid, dalid);
+		this.refreshPreview(e, node, dalid);
 	},
 	
 	/*
@@ -630,7 +439,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -660,19 +469,9 @@ TermImportPage.prototype = {
 		$('hidden_pol_type').innerHTML = hidden_response;
 		$('policy-input-field').value = "";
 		
-		var hasInnerText =
-		(this.currentSelectedTLM.innerText != undefined) ? true : false;
-			var elem = this.currentSelectedTLM;
-			var elem2 = this.currentSelectedDAM;
-
-		if(!hasInnerText){
-    		var tlid = elem.textContent;
-    		var dalid = elem2.textContent;
-		} else{
-    		var tlid = elem.innerText;
-    		var dalid = elem2.innerText;
-		}
-		this.refreshPreview(e, node,tlid,dalid);
+		var dalid = this.currentSelectedDAM.dalID;
+		
+		this.refreshPreview(e, node,dalid);
 	},
 	
 	/*
@@ -706,7 +505,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -728,19 +527,10 @@ TermImportPage.prototype = {
 		}
 		$('hidden_pol_type').innerHTML = hidden_response;
 		$('policy-input-field').value = "";
-		var hasInnerText =
-		(this.currentSelectedTLM.innerText != undefined) ? true : false;
-			var elem = this.currentSelectedTLM;
-			var elem2 = this.currentSelectedDAM;
 
-		if(!hasInnerText){
-    		var tlid = elem.textContent;
-    		var dalid = elem2.textContent;
-		} else{
-    		var tlid = elem.innerText;
-    		var dalid = elem2.innerText;
-		}
-		this.refreshPreview(e, node, tlid, dalid);
+		var dalid = this.currentSelectedDAM.dalID;
+		
+		this.refreshPreview(e, node, dalid);
 	},
 	
 	/*
@@ -765,7 +555,7 @@ TermImportPage.prototype = {
 	/*
 	 * Refresh Button of properties table or article preview is clicked so, refresh them...
 	 */
-	refreshPreview: function(e, node, tlID, dalID) {
+	refreshPreview: function(e, node, dalID) {
 		if (this.pendingIndicatorArticles == null) {
 			this.pendingIndicatorArticles = new OBPendingIndicator($('article_table'));
 		}
@@ -871,7 +661,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -882,10 +672,10 @@ TermImportPage.prototype = {
 			}
 			return;
 		}
-			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 0], this.refreshPreviewCallback.bind(this, tlID, dalID));
+			sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 0], this.refreshPreviewCallback.bind(this, dalID));
 	},
 	
-	refreshPreviewCallback: function(tlID, dalID, request){
+	refreshPreviewCallback: function(dalID, request){
 		//refresh the article preview!!!
 		this.pendingIndicatorArticles.hide();
 		
@@ -919,7 +709,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -937,8 +727,8 @@ TermImportPage.prototype = {
 	/*
 	 * Do the import!
 	 */
-	importItNow: function(e, node, tlID, dalID, createOnly){
-		var result = termImportPage.getImportCredentials(e, node, tlID, dalID, true);
+	importItNow: function(e, node, dalID, createOnly){
+		var result = termImportPage.getImportCredentials(e, node, dalID, true);
 		if(result == null){
 			return;
 		} else {
@@ -953,13 +743,13 @@ TermImportPage.prototype = {
 			
 			$("extras-bottom").style.display = "none";
 			$("loading-bottom-container").style.display = "inline";
-			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
+			sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, importSetName, 
 			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit, createOnly]
-			                                    , this.importItNowCallback.bind(this, tlID, dalID, createOnly));
+			                                    , this.importItNowCallback.bind(this, dalID, createOnly));
 		}
 	},
 	
-	getImportCredentials: function(e, node, tlID, dalID, commit){
+	getImportCredentials: function(e, node, dalID, commit){
 		//DataSource
 		try {
 			var source = document.getElementsByName("source");
@@ -1048,23 +838,9 @@ TermImportPage.prototype = {
 			}
    	 		inputPolicy += '</properties>'+"\n"+
 				'</InputPolicy>'+"\n";
-			//mapping policy
-			var mappingPage = document.getElementById('mapping-input-field').value;
-			if(mappingPage == '' && commit){
-				//do not import without a mapping page!
-				$('mapping-input-field').style.backgroundColor = "red";
-				return;
-			}
 			
-			//this code does only work once
-			// var re = /\w+/g;
-			// if(mappingPage.length > 0){
-   			//	// min. one other char than a whitespace
-   			//	if(re.test(mappingPage) != true && commit) {
-   			//		$('mapping-input-field').style.backgroundColor = "red";
-   			//		return ;	
-   			//	}
-			// } 
+   	 		//mapping policy
+			var mappingPage = document.getElementById('mapping-input-field').value;
 			
 			//conflict policy
 			//var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
@@ -1113,7 +889,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -1136,7 +912,7 @@ TermImportPage.prototype = {
 		return result;
 	},
 	
-	importItNowCallback: function(tlID, dalID, createOnly, request){
+	importItNowCallback: function(dalID, createOnly, request){
 		$("extras-bottom").style.display = "inline";
 		$("loading-bottom-container").style.display = "none";
 		var message= '';
@@ -1193,7 +969,6 @@ TermImportPage.prototype = {
 		}
 		this.editTermImport = true;
 		
-		this.tlId = $('tlId-ed').firstChild.nodeValue;
 		this.dalId = $('dalId-ed').firstChild.nodeValue;
 		this.dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
 		if($('importSet-ed').firstChild != null){
@@ -1215,22 +990,6 @@ TermImportPage.prototype = {
 		this.termImportName = $('termImportName-ed').firstChild.nodeValue;
 		this.updatePolicy = $('updatePolicy-ed').firstChild.nodeValue;
 		
-		//transport layer	
-		var found = false;
-		for (var i=0; i < $('tlid').childNodes.length; i++){
-			if($('tlid').childNodes[i].firstChild.firstChild.nodeValue == this.tlId){
-				this.currentSelectedTLM = $('tlid').childNodes[i];
-				Element.addClassName(this.currentSelectedTLM,'entry-active');
-				$('tldesc').innerHTML = "<b>Info: </b>"+$('tl-desc').firstChild.nodeValue;
-				found = true;
-			}
-		}
-		
-		if(!found){
-			alert("The Transport Layer Module " + this.tlId + " is not available.");
-			return;
-		}
-		
 		//data import layer
 		var dals = $('dalIds').firstChild.nodeValue.split(',');
 		$('dalid').innerHTML = "";
@@ -1238,9 +997,9 @@ TermImportPage.prototype = {
 		for(var i=0; i < dals.length; i++){		
 			if(dals[i] != ""){
 				$('dalid').innerHTML += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
-					+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
+					+ "onMouseOut=\"termImportPage.showRightDAM(event, this)\" "
 					+ "onClick=\"termImportPage.getDAL(event, this, '" 
-					+ dals[i] + "', '" + this.tlId + "')\"><a>" + dals[i] + "</a></div>";
+					+ dals[i] + "')\"><a>" + dals[i] + "</a></div>";
 				if(dals[i] == this.dalId){
 					this.currentSelectedDAM = $('dalid').childNodes[i].cloneNode(true);
 					found = true;
@@ -1259,9 +1018,9 @@ TermImportPage.prototype = {
 		//data source
 		dataSource = GeneralXMLTools.createDocumentFromString(this.dataSource);
 		dataSource = dataSource.getElementsByTagName("DataSource")[0].childNodes;
-		this.createDataSourceWidget(dataSource, this.tlId, this.dalId);
+		this.createDataSourceWidget(dataSource, this.dalId);
 		
-		this.getSource(null, null, this.tlId, this.dalId);
+		this.getSource(null, null, this.dalId);
 	},
 	
 	fillTermImportPage : function(){
@@ -1357,9 +1116,8 @@ TermImportPage.prototype = {
 			}
 		}
 		
-		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
-		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
-		this.refreshPreview(null, null, this.tlId, this.dalId);
+		var dalId = this.currentSelectedDAM.dalID;
+		this.refreshPreview(null, null, this.dalId);
 	},
 	
 	displayHelp : function(id) {
@@ -1372,11 +1130,22 @@ TermImportPage.prototype = {
 		$("help" + id).style.display = "none";
 		$("help-img" + id).getAttributeNode("onclick").nodeValue = "termImportPage.displayHelp("
 				+ id + ")";
+	},
+	
+	getMessage : function(sth){
+		return sth
 	}
 }
  // ----- Classes -----------
 
 var termImportPage = new TermImportPage();
+window.termImportPage = termImportPage;
+
+var diLanguage = function(){
+	var getMessage = function(sth){
+		return sth;
+	}
+};
 
 Event.observe(window, 'load', termImportPage.editTermImportDefinition
 	.bindAsEventListener(termImportPage));

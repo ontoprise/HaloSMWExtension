@@ -88,7 +88,6 @@ public function getImageDirectory() {
 	 * definitions of all Term Imports that need to be updated
 	 */
 	private function getNecessaryTermImports(){
-		require_once("SMW_TermImportDefinitionValidator.php");
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		SMWQueryProcessor::processFunctionParams(array("[[TermImport:+]] [[Category:TermImport]]")
 			,$querystring,$params,$printouts);
@@ -126,7 +125,7 @@ public function getImageDirectory() {
 			$timestamp = strtotime($queryResult);
 			
 
-			$tiDV = new SMWTermImportDefinitionValidator($xmlString);
+			$tiDV = new DITermImportDefinitionValidator($xmlString);
 			if(!$tiDV->validate()){
 				echo("\nThe Term Import definition of ".$tiArticleName." is invalid.\n");
 				$title = Title::newFromText("TermImport:".$tiArticleName);
@@ -159,9 +158,7 @@ public function getImageDirectory() {
 	 */
 	private function updateTermImports(){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		global $smwgDIIP;
-		require_once($smwgDIIP."/specials/TermImport/SMW_WIL.php");
-
+		
 		$necessaryTermImports = $this->getNecessaryTermImports();
 		
 		$this->setNumberOfTasks(1);
@@ -190,9 +187,7 @@ public function getImageDirectory() {
 			$importSets = $simpleXMLElement->xpath("//ImportSets");
 			$importSets = trim($importSets[0]->asXML());
 
-			$wil = new WIL();
-			$terms = $wil->importTerms($moduleConfig, $dataSource, $importSets, $inputPolicy,
-				$mappingPolicy, $conflictPolicy, $termImportName, false);
+			$terms = CL::importTerms($termImportName, false);
 
 			$title = Title::newFromText("TermImport:".$termImportName);	
 			if($terms != wfMsg('smw_ti_import_successful')){
@@ -214,9 +209,6 @@ public function getImageDirectory() {
 		SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
 	}
 }
-
-// Create one instance to register the bot.
-new TermImportUpdateBot();
 
 define('SMW_TERMIMPORTUPDATE_BOT_BASE', 22000);
 define('SMW_GARDISSUE_UPDATE_NOT_NECESSARY', SMW_TERMIMPORTUPDATE_BOT_BASE * 100 +1);

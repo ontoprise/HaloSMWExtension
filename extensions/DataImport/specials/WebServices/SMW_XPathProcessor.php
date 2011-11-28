@@ -45,16 +45,15 @@ class XPathProcessor {
 	function __construct($xmlString = ""){
 		
 		$domDocument = new DOMDocument();
-		@ $domDocument->loadXML($xmlString);
+		$domDocument->loadXML($xmlString);
 
 		$this->domXPath = new DOMXPath($domDocument);
 		
 		$nodes = $this->domXPath->query('//namespace::*');
-		
+
 		foreach ($nodes AS $node) {
 			$this->domXPath->registerNamespace($node->localName, $node->nodeValue);
 		}
-		
 	}
 
 	/*

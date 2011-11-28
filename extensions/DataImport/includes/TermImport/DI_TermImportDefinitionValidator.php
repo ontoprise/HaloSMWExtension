@@ -29,7 +29,7 @@
 /*
  * This class is responsible for validating Term Import definitions
  */
-class SMWTermImportDefinitionValidator {
+class DITermImportDefinitionValidator {
 	private $tiDefinition = null;
 	
 	public function __construct($tiDefinition){

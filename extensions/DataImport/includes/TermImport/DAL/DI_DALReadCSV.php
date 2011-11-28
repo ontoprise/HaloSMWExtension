@@ -20,48 +20,16 @@
  * @file
  * @ingroup DITIDataAccessLayer
  * Implementation of the Data Access Layer (DAL) that is part of the term import feature.
- * The DAL access a data source and creates terms in an XML format. These are 
- * returned to a module of the Transport layer.
- * This implementation reads a CSV file an returns its content in a form 
- * appropriate for the creation of articles.
  * 
- * @author Thomas Schweitzer
+ * @author Thomas Schweitzer 
+ * @author Ingo Steinbauer
  */
-
-global $smwgDIIP;
-require_once($smwgDIIP . '/specials/TermImport/SMW_IDAL.php');
-
-define('DAL_CVS_RET_ERR_START',
-			'<?xml version="1.0"?>'."\n".
-			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    		'<value>false</value>'."\n".
-    		'<message>');
-
-define('DAL_CVS_RET_ERR_END',
-			'</message>'."\n".
-    		'</ReturnValue>'."\n");
-
 
 class DALReadCSV implements IDAL {
 	
-//--- Fields ---
-
-	// Name of the current CSV file
 	private $filename;
-	
-	// The content of the current CSV file
 	private $csvContent;
 
-	
-//--- Public methods ---
-
-	/**
-	 * Constructor of class DALReadCSV.
-	 *
-	 */
-	function __construct() {
-		$this->csvContent = array();
-	}
 	
 	/**
 	 * Returns a specification of the data source.
@@ -111,45 +79,26 @@ class DALReadCSV implements IDAL {
 	 *		</ImportSets>
 	 * 
 	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 *		</ReturnValue>
-	 * 
 	 */
 	public function getImportSets($dataSourceSpec) {
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
-		$importSets = '';
+		$importSets = array();
 		
 		if (!$this->readContent($filename) 
 		    || count($this->csvContent) == 0) {
-		    return DAL_CVS_RET_ERR_START.
-		           wfMsg('smw_ti_fileerror', $filename).
-		           DAL_CVS_RET_ERR_END;
+		    return wfMsg('smw_ti_fileerror', $filename);
 		}
+		
 		$firstLine = &$this->csvContent[0];
 		$impSet = array();
 		if (strtolower($firstLine[0]) == 'importset') {
 			$len = count($this->csvContent);
 			for ($i = 1; $i < $len; ++$i) {
-				$impSet[$this->csvContent[$i][0]] = true;
-			}
-			foreach ($impSet as $is => $val) {
-				$importSets .=
-					'<importSet>'."\n".
-					'	<name>'.$is.'</name>'."\n".
-					'</importSet>'."\n";
+				$importSets[$this->csvContent[$i][0]] = true;
 			}
 		}
 		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$importSets.
-			'</ImportSets>'."\n";
-		
+		return array_keys($importSets);
 	}
      
 	/**
@@ -184,40 +133,25 @@ class DALReadCSV implements IDAL {
      *		</Properties>
 	 * 
 	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The property 'articleName' is not defined in file "..."</message>
-	 *		</ReturnValue>
 	 * 
 	 */
 	public function getProperties($dataSourceSpec, $importSet) {
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
-		$properties = '';
+		$properties = array();
 		
 		if (!$this->readContent($filename) 
-		    || count($this->csvContent) == 0) {
-		    return DAL_CVS_RET_ERR_START.
-		           wfMsg('smw_ti_fileerror', $filename).
-		           DAL_CVS_RET_ERR_END;
+		    	|| count($this->csvContent) == 0) {
+		    return wfMsg('smw_ti_fileerror', $filename);
 		}
-    	$firstLine = &$this->csvContent[0];
+    	
+		$firstLine = &$this->csvContent[0];
 		foreach ($firstLine as $prop) {
 			if (strtolower($prop) != 'importset') {
-				$properties .=
-					'<property>'."\n".
-					'	<name>'.trim($prop).'</name>'."\n".
-					'</property>'."\n";
+				$properties[trim($prop)] = true;
 			}
-		
 		}
 		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<Properties xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$properties.
-			'</Properties>'."\n";
+		return $properties;
 	}
 	
 	/**
@@ -232,23 +166,9 @@ class DALReadCSV implements IDAL {
 	 * @param string $inputPolicy
 	 * 		The XML structure of the input policy as defined in importTerms().
 	 * 
-	 * @return string
-	 * 		An XML structure that contains the names of all terms that match the
-	 * 		input policy.
-	 * 		Example:
-	 *		<?xml version="1.0"?>
-	 *		<terms xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <articleName>Hydrogen</articleName>
-	 *		    <articleName>Helium</articleName>
-	 *		</terms>
+	 * @return DITermCollection
 	 * 
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 * 		</ReturnValue>
+	  * 		If the operation fails, an error message is returned. 
 	 * 
 	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
@@ -271,32 +191,15 @@ class DALReadCSV implements IDAL {
      * 		The XML structure of the conflict policy. It defines if existing articles
      * 		are overwritten or not.
      *      * 
-     * @return string
-	 *		An XML structure that contains all requested terms together with 
-	 * 		their properties. The XML of requested terms that could not be 
-	 * 		retrieved contains an error message.
-	 * 		Example: 
-	 *		<?xml version="1.0"?>
-	 *		<terms xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <term>
-	 *		        <articleName>Helium</articleName>
-	 *		        <content>Helium is a gas under normal conditions.</content>
-	 *		        <!--
-	 *		        Additional properties with type "string" may be specified.
-	 *		        -->
-	 *		    </term>
-	 *		    <term error="The term 'Hydrogen' could not be found.">
-	 *		        <articleName>Hydrogen</articleName>
-	 *		    </term>
-	 *		</terms>
+     * @return DITermCollection
+     * 
+      * If the operation fails, an error message is returned.
 	 *
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, false);
 		
 	}
-	
-	//--- Private methods ---
 	
 	/**
 	 * Extracts the filename from the data source specification.
@@ -329,6 +232,10 @@ class DALReadCSV implements IDAL {
 	 * 		<false>, otherwise
 	 */
 	private function readContent($filename) {
+		if(!is_null($this->csvContent)){
+			return $this->csvContent;
+		}
+		
 		if ($this->filename == $filename) {
 			return true;
 		}
@@ -347,7 +254,7 @@ class DALReadCSV implements IDAL {
 			$line = fgets($file);
 			if ($line) {
 				//escape special characters in an XML document:
-				$line = htmlspecialchars($line);
+				//$line = htmlspecialchars($line);
 				@ $vals = &explode("\t", $line);
 				$this->csvContent[] = $vals;
 			}
@@ -357,108 +264,6 @@ class DALReadCSV implements IDAL {
 		$this->filename = $filename;
 		
 		return true;
-		
-	}
-	
-	/**
-	 * Extracts the names of the import sets from the XML string <$importSets>.
-	 *
-	 * @param string $importSets 
-	 * 		An XML string that contains tags with the name "importSet". 
-	 * @return array<string>
-	 * 		The names of all import sets in <$importSets> or an error message
-	 * 		if the XML is not valid.
-	 */
-	private function parseImportSets(&$importSets) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($importSets);
-		$result = $parser->parse();
-    	
-		if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	return $parser->getValuesOfElement(array('importSet','name'));
-	}
-	
-	/**
-	 * Parses the input policy in the XML string <$inputPolicy>. The policy 
-	 * specifies concrete terms, regular expression for terms to import and
-	 * the properties of the terms to import.
-	 *
-	 * @param string $inputPolicy 
-	 * 		An XML string that contains the input policy.  
-	 * @return array(array<string>)
-	 * 		An array with three arrays (keys: "terms", "regex", "properties") 
-	 * 		that contain the values from the XML string or an error message
-	 * 		if the XML is not valid. 
-	 */
-	private function parseInputPolicy(&$inputPolicy) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($inputPolicy);
-		$result = $parser->parse();
-    	if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	$policy = array();
-    	$policy['terms'] = $parser->getValuesOfElement(array('terms', 'term'));
-    	$policy['regex'] = $parser->getValuesOfElement(array('terms', 'regex'));
-    	$policy['properties'] = $parser->getValuesOfElement(array('properties', 'property'));
-    	return $policy;
-		
-	}
-	
-	/**
-	 * Checks if a term (that may belong to an import set) matches the restriction
-	 * of import sets and the input policy.
-	 *
-	 * @param string $impSet
-	 * 		The name of the import that the term belongs to. Can be <null>.
-	 * @param string $term
-	 * 		The name of the term.
-	 * @param array<string> $importSets
-	 * 		An array of allowed import sets.
-	 * @param array(array<string>) $policy
-	 * 		An array with the keys 'terms', 'regex' and 'properties'. The value for 
-	 * 		each key is an array of strings with terms, regular expressions and 
-	 * 		properties, respectively.
-	 * @return boolean
-	 * 		<true>, if the term matches the rules and should be imported
-	 * 		<false> otherwise
-	 */
-	private function termMatchesRules($impSet, $term, 
-			                          &$importSets, &$policy) {
-		
-		// Check import set
-		if ($impSet != null && count($importSets) > 0) {
-			if (!in_array($impSet, $importSets)) {
-				// Term belongs to the wrong import set.
-				return false;	                          	
-			}
-		}
-
-		// Check term policy
-		$terms = &$policy['terms'];
-		if (in_array($term, $terms)) {
-			return true;
-		}
-		
-		// Check regex policy
-		$regex = &$policy['regex'];
-		foreach ($regex as $re) {
-			$re = trim($re);
-			if (preg_match('/'.$re.'/', $term)) {
-				return true;
-			}
-		}
-		
-		return false;          	
-			                          	
 	}
 	
 	/**
@@ -477,30 +282,21 @@ class DALReadCSV implements IDAL {
      * 		If <true>, the XML structure for <getTermList> is created otherwise
      * 		the one for <getTerms>
      * 
-     * @return string
-	 *		An XML structure that contains all requested terms.
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 * 		</ReturnValue>
+     * @return DITermCollection
 	 *  
+ 	* If the operation fails, an error message is returned.
 	 */
 	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, 
 	                             $createTermList) {
 	                            	
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
-		$importSets = $this->parseImportSets($importSet);
-		$policy = $this->parseInputPolicy($inputPolicy);
-		$terms = '';
+		$policy = DIDALHelper::parseInputPolicy($inputPolicy);
+		
+		$terms = new DITermCollection();
 		
 		if (!$this->readContent($filename) 
-		    || ($len = count($this->csvContent)) == 0) {
-		    return DAL_CVS_RET_ERR_START.
-		           wfMsg('smw_ti_fileerror', $filename).
-		           DAL_CVS_RET_ERR_END;
+		    	|| ($len = count($this->csvContent)) == 0) {
+		    return wfMsg('smw_ti_fileerror', $filename);
 		}
 
 		$indexMap = array();
@@ -514,11 +310,10 @@ class DALReadCSV implements IDAL {
 			}
 			$indexMap[$p] = $idx;
 		}
+		
 		$articleIdx = $indexMap['articleName'];
 		if ($articleIdx === null) {
-		    return DAL_CVS_RET_ERR_START.
-		           wfMsg('smw_ti_no_article_names', $filename).
-		           DAL_CVS_RET_ERR_END;
+		    return wfMsg('smw_ti_no_article_names', $filename);
 		}
 		
 		$impSetIdx = array_key_exists('ImportSet', $indexMap)
@@ -528,50 +323,37 @@ class DALReadCSV implements IDAL {
 		for ($i = 1; $i < $len; ++$i) {
 			$impSet = ($impSetIdx === null) ? null
 			                                : $this->csvContent[$i][$impSetIdx];
-			if (!array_key_exists($i, $this->csvContent) || !array_key_exists($articleIdx, $this->csvContent[$i])) {                                
+			if (!array_key_exists($i, $this->csvContent) 
+					|| !array_key_exists($articleIdx, $this->csvContent[$i])) {                                
 				continue;
 			}
-			$term = $this->csvContent[$i][$articleIdx];
-			if ($this->termMatchesRules($impSet, $term, 
-			                            $importSets, $policy)) {
-			    // The term matches the policies.
-				// => add the term to the result
-				if ($createTermList) {
-					$terms .= "<articleName>".trim($term)."</articleName>\n";                          	
-				} else {
-					$terms .= "<term>\n";
+			
+			$articleName = $this->csvContent[$i][$articleIdx];
+			if (DIDALHelper::termMatchesRules($impSet, $articleName, $importSet, $policy)) {
+			    
+				$term = new DITerm();
+				$term->setArticleName($articleName);
+				
+				if (!$createTermList) {
+					
 					// add all requested properties
 					$props = &$policy['properties'];
 					foreach ($props as $prop) {
 						$prop = "".preg_replace("/ +/", "__SPACE__", $prop);
 						$idx = $indexMap[$prop];
 						if ($idx !== null) {
-							$value = htmlspecialchars(trim($this->csvContent[$i][$idx]));
-							if (strlen($value) > 0) {
-								// The property is only written, if it exists.
-								$terms .= "<".$prop.">";
-								$terms .= $value;
-								$terms .= "</".$prop.">\n";
-							}
+							$term->addProperty($prop, $this->csvContent[$i][$idx]);
 						}
 					}
-					$terms .= "</term>\n";
 				}
+				$terms->addTerm($term);
 			}
 		}
 		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$terms.
-			'</terms>'."\n";
-		
-	                            	
-		
+		return $terms;
 	}
 	
 	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
 		return true;
 	}
-	
 }

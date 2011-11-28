@@ -40,7 +40,7 @@ END:VCARD';
  * property names to one or more property values associated with that name.
  * A name is the unique property identifier such as N, ADR, and TEL.
  */
-class VCardForPOP3
+class DIVCardForPOP3
 {
     /**
      * An associative array where each key is the property name and each value

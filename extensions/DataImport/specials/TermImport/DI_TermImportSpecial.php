@@ -27,16 +27,13 @@
 
  if (!defined('MEDIAWIKI')) die();
 
-
-
 global $IP, $smwgDIIP;
 require_once( $IP . "/includes/SpecialPage.php" );
-require_once( $smwgDIIP . "/specials/TermImport/SMW_CL.php" );
 
 /*
  * Standard class that is resopnsible for the creation of the Special Page
  */
-class SMWTermImportSpecial extends SpecialPage {
+class DITermImportSpecial extends SpecialPage {
 	public function __construct() {
 		parent::__construct('TermImport', 'delete');
 	}
@@ -54,8 +51,10 @@ class SMWTermImportSpecial extends SpecialPage {
 		
 		$wgOut->setPageTitle(wfMsg('smw_ti_termimport'));
 
-		$cl = new CL();
+		$cl = new DICL();
 		$cl->execute();
+		
+		$wgOut->addModules( 'ext.dataimport.ti' );
 	}
 
 }

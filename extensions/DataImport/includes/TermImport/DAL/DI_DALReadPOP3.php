@@ -27,24 +27,9 @@
  * @author Ingo Steinbauer
  */
 
-global $smwgDIIP;
-require_once($smwgDIIP . '/specials/TermImport/SMW_IDAL.php');
-
-define('DAL_POP3_RET_ERR_START',
-			'<?xml version="1.0"?>'."\n".
-			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    		'<value>false</value>'."\n".
-    		'<message>');
-
-define('DAL_POP3_RET_ERR_END',
-			'</message>'."\n".
-    		'</ReturnValue>'."\n");
-
-
 class DALReadPOP3 implements IDAL {
 
 	private $connection = false;
-	private $attachmentMP = "";
 	private $mailFrom = "";
 	private $mailDate = "";
 	private $mailId = "";
@@ -54,10 +39,7 @@ class DALReadPOP3 implements IDAL {
 	private $embeddedMails;
 	private $embeddedMailIds;
 	
-	private $requiredProperties;
-	private $requiredTerms;
-	private $regularExpressions;
-	private $importSets;
+	private $requestedProperties;
 	
 	private $messagesToDelete;
 	private $errorMessages = array();
@@ -66,6 +48,9 @@ class DALReadPOP3 implements IDAL {
 	private $noCallPartNr = false; //this flag is used to determine when to skip multipart/related
 	
 	private $processedICalUIDs;
+	
+	private $terms;
+	private $term;
 
 	function __construct() {
 		global $wgNamespaceAliases;
@@ -80,22 +65,18 @@ class DALReadPOP3 implements IDAL {
 			' 	<UserName display="'."User:".'" type="text"></UserName>'."\n".
 			' 	<Password display="'."Password:".'" type="text"></Password>'."\n".
 			'	<SSL display="'."Use SSL:".'" type="checkbox"></SSL>'."\n".
-			//'	<AttachmentMP autocomplete="true" display="'."Extra Mapping Policy:".'" type="text"></AttachmentMP>'."\n".
 			'</DataSource>'."\n";
 	}
 
 	public function getImportSets($dataSourceSpec) {
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
-			return DAL_POP3_RET_ERR_START.
-			wfMsg('smw_ti_pop3error').
-			DAL_POP3_RET_ERR_END;
+			return wfMsg('smw_ti_pop3error');
 		}
 
 		$check = imap_check($connection);
 
 		$messages = imap_fetch_overview($connection,"1:{$check->Nmsgs}",0);
-		$result = "";
 		$names = array();
 		foreach($messages as $msg){
 			if(key_exists("from", $msg)){
@@ -105,136 +86,94 @@ class DALReadPOP3 implements IDAL {
 				$names[substr($name, $startPos, $endPos)] = true;
 			}
 		}
-		foreach($names as $name => $dontCare){
-			$result .= '<importSet>'."\n".
-				'	<name>'.$name.'</name>'."\n".
-				'</importSet>'."\n";
-		}
 		
 		imap_close($connection);
 		$this->connection = false;
 		
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n"
-			.$result.
-			'</ImportSets>'."\n";
+		return array_keys($names);
 	}
 
 	public function getProperties($dataSourceSpec, $importSet) {
-		$result = "";
-
-		//removed: bc, reply_to, sender, return_path
+			//removed: bc, reply_to, sender, return_path
 		$properties = array('articleName', 'from', 'to', 'cc', 'date', 'subject',
 			'in_reply_to','followup_to', 'references', 'message_id', 'body', 'attachments');
-		foreach ($properties as $prop) {
-			$properties .=
-				'<property>'."\n".
-				'	<name>'.$prop.'</name>'."\n".
-				'</property>'."\n";
-		}
-
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<Properties xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		$properties.
-			'</Properties>'."\n";
+		
+		return array_flip($properties);
 	}
 
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
-			return DAL_POP3_RET_ERR_START.
-			wfMsg('smw_ti_pop3error').
-			DAL_POP3_RET_ERR_END;
+			return wfMsg('smw_ti_pop3error');
 		}
 
 		$check = imap_check($connection);
 
-		$inputPolicy = $this->parseInputPolicy($inputPolicy);
-		$this->requiredProperties = array_flip($inputPolicy["properties"]);
-		$this->requiredTerms = array_flip($inputPolicy["terms"]);
-		$this->regularExpressions = $inputPolicy["regex"];
-		$this->importSets = $this->parseImportSets($importSet);
+		$inputPolicy = DIDALHelper::parseInputPolicy($inputPolicy);
+		$this->requestedProperties = array_flip($inputPolicy["properties"]);
 		
 		//$messages = imap_fetch_overview($connection,"1:{$check->Nmsgs}",0);
 		$messages = imap_search($connection, 'ALL');
 		
-		$result = "";
+		$terms = new DITermCollection();
 		if($messages){
 			$msgNumber = 1;
 			foreach($messages as $msg){
 				$header = imap_header($connection, $msgNumber);
 				$msgNumber += 1;
 				if(key_exists("message_id", $header)){
-					$importSet = $header->fromaddress;
-					$startPos = strpos($importSet, "<") + 1;
-					$endPos = strpos($importSet, ">") - $startPos;
-					$importSet = substr($importSet, $startPos, $endPos);
+					$impSet = $header->fromaddress;
+					$startPos = strpos($impSet, "<") + 1;
+					$endPos = strpos($impSet, ">") - $startPos;
+					$impSet = substr($impSet, $startPos, $endPos);
 				
-					if(!$this->termMatchesRules(
-							$importSet, $this->replaceAngledBrackets($header->message_id))){
+					if(!DIDALHelper::termMatchesRules(
+							$impSet, $this->replaceAngledBrackets($header->message_id), $importSet, $inputPolicy)){
 						continue;
 					}
 				} else {
 					continue;
 				}
 			
-			$result .= "<articleName>".$this->replaceAngledBrackets($header->message_id)."</articleName>\n";
-		}
+				$term = new DITerm();
+				$term->setArticleName(
+					$this->replaceAngledBrackets($header->message_id));
+				$terms->addTerm($term);
+			}
 		}
 		imap_close($connection);
 
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		$result.
-			'</terms>'."\n";
+		return $terms;
 	}
 
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
-		$inputPolicy = $this->parseInputPolicy($inputPolicy);
-		$this->requiredProperties = array_flip($inputPolicy["properties"]);
-		$this->requiredTerms = array_flip($inputPolicy["terms"]);
-		$this->regularExpressions = $inputPolicy["regex"];
-		$this->importSets = $this->parseImportSets($importSet);
+		
+		$inputPolicy = DIDALHelper::parseInputPolicy($inputPolicy);
+		$this->requestedProperties = array_flip($inputPolicy["properties"]);
 		$this->messagesToDelete = array();
 		
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
-			return DAL_POP3_RET_ERR_START.
-			wfMsg('smw_ti_pop3error').
-			DAL_POP3_RET_ERR_END;
+			return wfMsg('smw_ti_pop3error');
 		}
-		$messages = imap_search($connection, 'ALL');
 		
-		//$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
-
-		$result = "";
+		$messages = imap_search($connection, 'ALL');
 		if(is_array($messages)){
+			
+			$this->terms = new DITermCollection();
 			foreach($messages as $msg){
 				$this->messageContainsErrors = false;
-				$headerData = $this->getHeaderData($connection, $msg);
-				if($headerData == null){
+				$this->term = new DITerm();
+				
+				if(!$this->processHeaderData($connection, $msg)){
 					continue;
 				}
-				$tempResult = $this->getBody($connection, $msg);
-				$tempResult .= "\n".$headerData;
-				$tempResult .= "</term>";
+				
+				$this->processBody($connection, $msg);
 				
 				if($this->messageContainsErrors != true){
-					try {
-						// check if valid xml was created. Add the messageid and its related xml
-						// to the list of messages that will be imported. This will allow to remove
-						// that xml from the overall result again, if an error in an embedded 
-						// message occurs.
-						$tempXML = @ new SimpleXMLElement("<dummy>".$tempResult."</dummy>");
-						$this->messagesToDelete[$this->getMessageId($connection, $msg)][] = $tempResult;
-						$result .= $tempResult;
-					} catch (Exception $e) {
-						$this->createErrorMessage($connection, $msg, 
-							"an embedded E-mail produced an XML exception.");
-					}
+					$this->messagesToDelete[$this->getMessageId($connection, $msg)][] = true;
+					$this->terms->addTerm($this->term);
 				} 
 			} 
 		}
@@ -246,60 +185,44 @@ class DALReadPOP3 implements IDAL {
 				echo("\next embedded message");
 				$this->messageContainsErrors = false;
 				$this->noCallPartNr = true;
-				$header = $this->serializeHeaderData($mail["header"]);
-				$tempResult = $this->handleBodyParts($connection, $mail["message"], 
-					$mail["structure"], $mail["partNr"])
-					.$header."</term>";
+				$this->term = new DITerm();
+				
+				$this->doProcessHeaderData($mail["header"]);
+				
+				$this->handleBodyParts($connection, $mail["message"], 
+					$mail["structure"], $mail["partNr"]);
+					
 				if($this->messageContainsErrors != true){
-					try {
-						$tempXML = @ new SimpleXMLElement("<dummy>".$tempResult."</dummy>");
-						$result .= $tempResult;
-						$this->messagesToDelete
-							[$this->getMessageId($connection, $mail["message"])][] = $tempResult;
-					} catch (Exception $e){
-						foreach($this->messagesToDelete
-								[$this->getMessageId($connection, $mail["message"])] as $value){
-							$result = str_replace($value, "", $result);	
-						}
-						unset($this->messagesToDelete
-							[$this->getMessageId($connection, $mail["message"])]);
-						$this->createErrorMessage($connection, $mail["message"], 
-							"an embedded E-mail produced an XML exception.");
-					}
+					$this->messagesToDelete
+						[$this->getMessageId($connection, $mail["message"])][] = true;
+					$this->terms->addTerm($this->term);
 				} else {
-					foreach($this->messagesToDelete
-							[$this->getMessageId($connection, $mail["message"])] as $value){
-						$result = str_replace($value, "", $result);	
-					}
 					unset($this->messagesToDelete
 						[$this->getMessageId($connection, $mail["message"])]);
 				}
-				
 			}
 		}
 		
 		imap_close($connection);
 		
-		$deleteCallback = $this->createDeleteCallback($dataSourceSpec);
+		$this->createDeleteCallback($dataSourceSpec);
+		
+		//todo:deal with this
 		$errorMessages = "";
 		if(count($this->errorMessages) > 0){
 			$errorMessages = "<errors>".implode("", $this->errorMessages)."</errors>";
 		}
 		
-		print_r($result.$deleteCallback.$errorMessages);
+		echo("\r\nCollected terms:".print_r($this->terms, true));
 		
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$result.$deleteCallback.$errorMessages
-			.'</terms>'."\n";
+		return $this->terms; 
 	}
 
-	private function getBody($connection, $msg){
+	private function processBody($connection, $msg){
 		$this->processedICalUIDs = array();
 		$this->noCallPartNr = false;
 		$structure = imap_fetchstructure($connection, $msg);
-		return $this->handleBodyParts($connection, $msg, $structure, "");
+		$this->handleBodyParts($connection, $msg, $structure, "");
 	}
 	
 	private function handleBodyParts($connection, $msg, $structure, $basePartNr){
@@ -322,7 +245,7 @@ class DALReadPOP3 implements IDAL {
 			$this->handleBodyMultiPart($connection, $msg, $structure, $basePartNr);
 		}
 
-		return $this->serializeBodyXML();
+		$this->finalizeBodyProcessing();
 	}
 	
 	private function handleBodyMultiPart($connection, $msg, $structure, $basePartNr){
@@ -351,7 +274,7 @@ class DALReadPOP3 implements IDAL {
 				}
 				$this->handleBodyMultiPart($connection, $msg, $part, 
 					$basePartNr.$callPartNr);
-			} else if ($part->type == 2 && array_key_exists("attachments", $this->requiredProperties)){ // an attached email message
+			} else if ($part->type == 2 && array_key_exists("attachments", $this->requestedProperties)){ // an attached email message
 				$header = imap_rfc822_parse_headers($this->decodeBodyPart(
 						imap_fetchbody($connection, $msg, $basePartNr.$partNr.".0"), 
 						$encoding));
@@ -370,7 +293,7 @@ class DALReadPOP3 implements IDAL {
 				$this->embeddedMails[] = array("header" => $header, "structure" => $part,
 					"message" => $msg, "message_id" => $this->mailId, 
 					"partNr" => $basePartNr.$partNr.".");
-			} else if(array_key_exists("attachments", $this->requiredProperties)){ //an attachment
+			} else if(array_key_exists("attachments", $this->requestedProperties)){ //an attachment
 				$bodyStruct = imap_bodystruct($connection, $msg, $basePartNr.$partNr);
 				$result = $this->handleAttachments($bodyStruct, $connection, $msg, 
 					$basePartNr.$partNr, $encoding);
@@ -399,7 +322,7 @@ class DALReadPOP3 implements IDAL {
 		}
 
 		if(array_key_exists("filename", $params) && 
-				array_key_exists("attachments", $this->requiredProperties)){
+				array_key_exists("attachments", $this->requestedProperties)){
 			$fileName = $params['filename'];
 			if(!mb_check_encoding($fileName, "UTF-8")){
 				$fileName = utf8_encode($fileName);
@@ -413,7 +336,7 @@ class DALReadPOP3 implements IDAL {
 			}
 		} else if ($part->ifsubtype){
 			if(strtoupper($part->subtype) == "X-VCARD"){
-				if(!array_key_exists("attachments", $this->requiredProperties)){
+				if(!array_key_exists("attachments", $this->requestedProperties)){
 					return;
 				}
 				$result = $this->serialiseVCard($this->decodeBodyPart(
@@ -424,7 +347,7 @@ class DALReadPOP3 implements IDAL {
 					$this->messageContainsErrors = true;
 				}
 			} else if(strtoupper($part->subtype) == "CALENDAR"){
-				if(!array_key_exists("attachments", $this->requiredProperties)){
+				if(!array_key_exists("attachments", $this->requestedProperties)){
 					return;
 				}
 				$content = $this->decodeBodyPart(
@@ -434,8 +357,9 @@ class DALReadPOP3 implements IDAL {
 					$this->createErrorMessage($connection, $msg, $result);
 					$this->messageContainsErrors = true;
 				}
-			} else if(array_key_exists("body", $this->requiredProperties)
+			} else if(array_key_exists("body", $this->requestedProperties)
 					&& strtoupper($part->subtype) != "HTML"){
+				
 				$body = htmlspecialchars($this->decodeBodyPart(
 					imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
 					$encoding));
@@ -446,7 +370,7 @@ class DALReadPOP3 implements IDAL {
 				$body = $this->replaceSpecialWikiCharacters($body);
 				$this->body .= $body; 
 			}
-		} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
+		} else if(array_key_exists("body", $this->requestedProperties)){ //text message without subtype
 			$body = "<pre>".htmlspecialchars($this->decodeBodyPart(
 				imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
 				$encoding))."</pre>";
@@ -473,23 +397,6 @@ class DALReadPOP3 implements IDAL {
 			$bodyPart = base64_decode($bodyPart);
 		}
 		return $bodyPart;
-	}
-
-	private function getMPFromDataSource($dataSourceSpec, $mpName){
-		if(strpos($dataSourceSpec, "DATASOURCE") > 0){
-			$dataSourceSpec = str_replace('XMLNS="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
-			$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
-			$mp = $dataSourceSpec->xpath("//".strtoupper($mpName)."/text()");
-		} else {
-			$dataSourceSpec = str_replace('xmlns="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
-			$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
-			$mp = $dataSourceSpec->xpath("//".$mpName."/text()");
-		}
-		if($mp){
-			return $mp[0];
-		} else {
-			return "";
-		}
 	}
 
 	private function getConnection($dataSourceSpec){
@@ -546,12 +453,12 @@ class DALReadPOP3 implements IDAL {
 		return $this->connection;
 	}
 
-	private function getHeaderData($mbox, $msgNumber){
+	private function processHeaderData($mbox, $msgNumber){
 		$header = imap_header($mbox, $msgNumber);
-		return $this->serializeHeaderData($header, true);
+		return $this->doProcessHeaderData($header, true);
 	}
 	
-	private function serializeHeaderData($header, $matchRules=false){
+	private function doProcessHeaderData($header, $matchRules=false){
 		global $wgExtraNamespaces;
 		$ns="";
 		if(array_key_exists(NS_TI_EMAIL, $wgExtraNamespaces)){
@@ -560,49 +467,49 @@ class DALReadPOP3 implements IDAL {
 		
 		if($matchRules){
 			if(key_exists("message_id", $header)){
-				$importSet = $header->fromaddress;
-				$startPos = strpos($importSet, "<") + 1;
-				$endPos = strpos($importSet, ">") - $startPos;
-				$importSet = substr($importSet, $startPos, $endPos);
-				if(!$this->termMatchesRules($importSet, $this->replaceAngledBrackets($header->message_id))){
-					return null;
+				$impSet = $header->fromaddress;
+				$startPos = strpos($impSet, "<") + 1;
+				$endPos = strpos($impSet, ">") - $startPos;
+				$impSet = substr($impSet, $startPos, $endPos);
+				
+				if(!DIDALHelper::termMatchesRules(
+						$impSet, $this->replaceAngledBrackets($header->message_id), $importSet, $inputPolicy)){
+					return false;
 				}
 			} else {
-				return null;
+				return false;
 			}
 		}
 		
-		$result = "";
-		$result .= "<articleName>".$ns.
-			$this->replaceAngledBrackets($header->message_id)."</articleName>\n";
+		$this->term->setArticleName(
+			$ns.$this->replaceAngledBrackets($header->message_id));
 
 		//removed: bc, sender, return_path, reply_to
 		$addressTypes = array('from', 'to', 'cc');
 		
 		foreach($addressTypes as $type){
-			if(!array_key_exists($type, $this->requiredProperties)){
+			if(!array_key_exists($type, $this->requestedProperties)){
 				continue;
 			}
 			
 			if(key_exists($type, $header)){
-				$result .= "\n<".$type.">";
 				$first = true;
+				$from = '';
 				foreach($header->$type as $obj){
 					if(!$first){
-						$result.= ";";
+						$from.= ";";
 					}
 					$first = false;
 					if(key_exists('personal', $obj)){
-						$result .= htmlspecialchars(mb_decode_mimeheader($obj->personal));
+						$from .= htmlspecialchars(mb_decode_mimeheader($obj->personal));
 						
 						//this is necessary for being able to later pass
 						// the from attribute to the createAttachments callback
-						//todo: find better solution
 						if($type == "from"){
 							$this->mailFrom = htmlspecialchars(mb_decode_mimeheader($obj->personal));
 						}
 					}
-					$result.= ",";
+					$from.= ",";
 					
 					if($type == "from"){
 						$this->mailFrom .= ",";
@@ -611,39 +518,38 @@ class DALReadPOP3 implements IDAL {
 					if(key_exists('mailbox', $obj)){
 						//this is necessary for being able to later pass
 						// the from attribute to the createAttachments callback
-						//todo: find better solution
 						if($type == "from"){
 							$this->mailFrom .= htmlspecialchars($obj->mailbox);
 						}
-						$result .= htmlspecialchars($obj->mailbox);
+						$from .= htmlspecialchars($obj->mailbox);
 					}
 					if(key_exists('host', $obj)){
 						if($type == "from"){
 							$this->mailFrom .= "@".htmlspecialchars($obj->host);
 						}
-						$result .= "@".htmlspecialchars($obj->host);
+						$from .= "@".htmlspecialchars($obj->host);
 					}
 				}
-				$result .= "\n</".$type.">";
+				$this->term->addProperty($type, $from);
 			}
 		}
 
-		if(array_key_exists("date", $this->requiredProperties)){
+		if(array_key_exists("date", $this->requestedProperties)){
 			if(key_exists('date', $header)){
 				$this->mailDate = htmlspecialchars($this->formatDate($header->date));
-				$result .= "\n<date>".htmlspecialchars($this->formatDate($header->date))."</date>";
+				$this->term->addProperty('date', htmlspecialchars($this->formatDate($header->date)));	
 			} else if(key_exists('Date', $header)){
-				$result .= "\n<date>".htmlspecialchars($this->formatDate($header->Date))."</date>";
+				$this->term->addProperty('date', htmlspecialchars($this->formatDate($header->Date)));
 			} else if(key_exists('MailDate', $header)){
-				$result .= "\n<date>".htmlspecialchars($this->formatDate($header->MailDate))."</date>";
+				$this->term->addProperty('date', htmlspecialchars($this->formatDate($header->MailDate)));
 			}
 		}
 
-		if(array_key_exists("subject", $this->requiredProperties)){
+		if(array_key_exists("subject", $this->requestedProperties)){
 			if(key_exists('subject', $header)){
-				$result .= "\n<subject>".htmlspecialchars(mb_decode_mimeheader($header->subject))."</subject>";
+				$this->term->addProperty('subject', htmlspecialchars(mb_decode_mimeheader($header->subject)));
 			} else if(key_exists('Subject', $header)){
-				$result .= "\n<subject>".htmlspecialchars(mb_decode_mimeheader($header->Subject))."</subject>";
+				$this->term->addProperty('subject', htmlspecialchars(mb_decode_mimeheader($header->Subject)));
 			}
 		}
 		
@@ -653,31 +559,32 @@ class DALReadPOP3 implements IDAL {
 			$ns = $wgExtraNamespaces[NS_TI_EMAIL].":";
 		}
 
-		if(array_key_exists("in_reply_to", $this->requiredProperties)){
+		if(array_key_exists("in_reply_to", $this->requestedProperties)){
 			if(key_exists('in_reply_to', $header)){
-				$result .= "\n<in_reply_to>".$ns.htmlspecialchars($this->replaceAngledBrackets($header->in_reply_to))."</in_reply_to>";
+				$this->term->addProperty('in_reply_to', $ns.htmlspecialchars($this->replaceAngledBrackets($header->in_reply_to)));
 			}
 		}
 
-		if(array_key_exists("followup_to", $this->requiredProperties)){
+		if(array_key_exists("followup_to", $this->requestedProperties)){
 			if(key_exists('followup_to', $header)){
-				$result .= "\n<followup_to>".htmlspecialchars($header->followup_to)."</followup_to>";
+				$this->term->addProperty('followup_to', htmlspecialchars($this->replaceAngledBrackets($header->followup_to)));
 			}
 		}
 		
-		if(array_key_exists("references", $this->requiredProperties)){
+		if(array_key_exists("references", $this->requestedProperties)){
 			if(key_exists('references', $header)){
-				$result .= "\n<references>".$ns.htmlspecialchars($this->replaceAngledBrackets($header->references))."</references>";
+				$this->term->addProperty('references', $ns.htmlspecialchars($this->replaceAngledBrackets($header->references)));
 			}
 		}
 		
-		if(array_key_exists("message_id", $this->requiredProperties)){
+		if(array_key_exists("message_id", $this->requestedProperties)){
 			if(key_exists('message_id', $header)){
 				$this->mailId = $ns.htmlspecialchars($this->replaceAngledBrackets($header->message_id));
-				$result .= "\n<message_id>".htmlspecialchars($this->replaceAngledBrackets($header->message_id))."</message_id>";
+				$this->term->addProperty('message_id', $ns.htmlspecialchars($this->replaceAngledBrackets($header->message_id)));
 			}
 		}
-		return $result;
+		
+		return true;
 	}
 
 	private function replaceAngledBrackets($inputString){
@@ -700,8 +607,7 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	private function serialiseVCard($vCardString){
-		require_once('SMW_VCardParser.php');
-		$vCardParser = new VCardForPOP3();
+		$vCardParser = new DIVCardForPOP3();
 		$vCardParser->parse(explode("\n", $vCardString));
 
 		$values = $vCardParser->getProperties("N");
@@ -712,8 +618,7 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	private function serializeICal($iCalString){
-		require_once('SMW_ICalParser.php');
-		$iCalParser = new ICalParserForPOP3();
+		$iCalParser = new DIICalParserForPOP3();
 		$uid = $iCalParser->getUID($iCalString);
 		$this->processedICalUIDs[$uid] = true;
 		if(!is_null($uid)){
@@ -722,13 +627,19 @@ class DALReadPOP3 implements IDAL {
 		return false;
 	}
 
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return eval("return \$this->".$signature.",\$conflictPolicy, \$termImportName);");
+	public function executeCallBack($callback, $mappingPolicy, $conflictPolicy, $termImportName){
+		$method = $callback->getMethodName();
+		$params = $callback->getParams();
+		return $this->$method($params, $conflictPolicy, $termImportName);
 	}
 
-	private function handleDeleteCallBack($deletes, $dataSourceSpec, $conflictPolicy, $termImportName){
+	private function handleDeleteCallBack($params, $conflictPolicy, $termImportName){
+		$deletes = $params['deletes'];
+		$dataSourceSpec = $params['dataSourceSpec'];
+		
 		$this->connection = null;
 		$connection = $this->getConnection($dataSourceSpec);
+		
 		$messages = imap_search($connection, 'ALL');
 		if(is_array($messages)){
 			foreach($messages as $msg){
@@ -738,9 +649,11 @@ class DALReadPOP3 implements IDAL {
 				}
 			}
 		}
+		
 		imap_expunge($connection);
 		imap_close($connection);
-		return true;
+		
+		return array(true, array());
 	}
 	
 	private function getMessageId($mbox, $msgNumber){
@@ -763,16 +676,19 @@ class DALReadPOP3 implements IDAL {
 		}
 	}
 
-	private function handleAttachmentCallBack($fileName, $attachmentMP,
-			$mailFrom, $mailId, $mailDate, $extraContent, $conflictPolicy, $termImportName){
-				
+	private function handleAttachmentCallBack($params, $conflictPolicy, $termImportName){
+		$fileName = $params['fileName'];
+		$mailFrom = $params['mailFrom'];
+		$mailId = $params['mailId'];
+		$mailDate = $params['mailDate'];
+		$extraContent = $params['extraContent'];
+		
 		global $smwgDIIP;
 		$success = true;
 		$logMsgs = array();
 		$tiBot = new TermImportBot();
 
 		global $smwgEnableRichMedia; 
-		
 		if($smwgEnableRichMedia){
 			global $wgNamespaceByExtension;
 			$fileNameArray = explode(".", $fileName);
@@ -787,10 +703,9 @@ class DALReadPOP3 implements IDAL {
 		}
 		
 		$fileArticleTitle = Title::makeTitleSafe($ns, $fileName );
-
 		if($fileArticleTitle == null){
 			return $this->createCallBackResult(false,
-			array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
+				array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
 				'title' => wfMsg('smw_ti_import_error'))));
 		}
 
@@ -803,7 +718,7 @@ class DALReadPOP3 implements IDAL {
 				."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]",
 				wfMsg('smw_ti_creationComment'));
 			return $this->createCallBackResult(true,
-			array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
+				array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
 				'title' => $fileArticleTitle->getFullText())));
 		} else if($fileArticleTitle->exists()) {
 			$termAnnotations['updated'][] = $termImportName;
@@ -813,18 +728,10 @@ class DALReadPOP3 implements IDAL {
 			$updated = false;
 		}
 
-		// outcommented because the extra attachments mapping policy does not exist anymore
-		// $mappingPolicy = Title::newFromText($attachmentMP);
-		// if(!$mappingPolicy->exists()){
-		// 	throw new Exception("The attachment mapping policy \"".$attachmentMP."\" does not exist.");
-		// 	
-		// 	return $this->createCallBackResult(false,
-		// 	array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
-		// 		'title' => $attachmentMP)));
-		// }
-		
 		$fileNameArray = explode(".", $fileName);
 		$ext = $fileNameArray[count($fileNameArray)-1];
+		
+		//todo:change this
 		$fileFullPath =
 			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
 			$mFileProps = File::getPropsFromPath($fileFullPath, $ext );
@@ -849,33 +756,6 @@ class DALReadPOP3 implements IDAL {
 				'title' => $fileArticleTitle->getFullText())));
 		}
 		
-		// outcommented because the extra attachments mapping policy does not exist anymore
-		// $mappingPolicy = new Article($mappingPolicy);
-		// $mappingPolicy = $mappingPolicy->getContent();
-		// 
-		// $term = array();
-		// if(trim($mailFrom != "")){
-		// 	$term["FROM"] = array();
-		// 	$term["FROM"][] = array("value" => $mailFrom);
-		// }
-		// if(trim($mailId != "")){
-		// 	$term["MESSAGE_ID"] = array();
-		// 	$term["MESSAGE_ID"][] = array("value" => $mailId);
-		// }
-		// if(trim($mailDate != "")){
-		// 	$term["DATE"] = array();
-		// 	$term["DATE"][] = array("value" => $mailDate);
-		// }
-		// 
-		// if($extraContent != ""){
-		// 	$sxe = new SimpleXMLElement("<vc>".
-		// 		htmlspecialchars_decode($extraContent)."</vc>", LIBXML_NOCDATA);
-		// 	foreach($sxe->children() as $property => $value){
-		// 		$term[strtoupper($property)] = array();
-		// 		$term[strtoupper($property)][] = array("value" => $value);
-		// 	} 
-		// }
-		
 		$content = "";
 		$local->load();
 		global $smwgEnableUploadConverter;
@@ -883,15 +763,8 @@ class DALReadPOP3 implements IDAL {
 		if($smwgEnableUploadConverter){
 			$fileContent = UploadConverter::getFileContent($local);
 			$content = $fileContent;
-			//echo("\n\n####\n".substr($fileContent,0,200));
-			if(strlen($fileContent) > 0){
-			// 	$term["CONTENT"] = array();
-			// 	$term["CONTENT"][] = array("value" => $fileContent);
-			}
 		}
 
-		// $content = $tiBot->createContent($term, $mappingPolicy);
-		
 		echo("\n\n###title\n".$fileArticleTitle->getFullText());
 		echo("\n\n###content\n".substr($fileContent,0,300));
 		
@@ -915,17 +788,8 @@ class DALReadPOP3 implements IDAL {
 		}
 	}
 
-
 	private function createCallBackResult($success, $logMsgs){
-		$result = '<CallBackResult xmlns="http://www.ontoprise.de/smwplus#"><success>';
-		$result .= $success ? 'true' : 'false';
-		$result .= '</success>';
-		foreach($logMsgs as $logMsg){
-			$result .= '<logMessage><id>'.$logMsg['id']."</id>";
-			$result .= '<title>'.$logMsg['title']."</title></logMessage>";
-		}
-		$result .= '</CallBackResult>';
-		return $result;
+		return array($succes, $logMsgs);
 	}
 	
 	private function createAttachmentTerm($fileContent, $fileName, $extraContent=""){
@@ -934,14 +798,14 @@ class DALReadPOP3 implements IDAL {
 		//special handling for thunderbird invite.ics
 		//since thunderbird sents invitation twice
 		if(strtolower($fileName == 'invite.ics')){
-			require_once('SMW_ICalParser.php');
-			$iCalParser = new ICalParserForPOP3();
+			$iCalParser = new DIICalParserForPOP3();
 			$uid = $iCalParser->getUID($fileContent);
 			if(array_key_exists($uid, $this->processedICalUIDs)){
 				return 'true';
 			}
 		}
 		
+		//todo:change this
 		$fileFullPath =
 			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
 		try {
@@ -983,88 +847,23 @@ class DALReadPOP3 implements IDAL {
 		return $this->createAttachmentTerm($fileContent, $fileName);
 	}
 	
-	private function parseInputPolicy($inputPolicy) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($inputPolicy);
-		
-		$result = $parser->parse();
-		
-		if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	$policy = array();
-    	$policy['terms'] = $parser->getValuesOfElement(array('terms', 'term'));
-    	$policy['regex'] = $parser->getValuesOfElement(array('terms', 'regex'));
-    	$policy['properties'] = $parser->getValuesOfElement(array('properties', 'property'));
-    	return $policy;
-		
-	}
-	
-	private function termMatchesRules($importSet, $term) { 
-		// Check import set
-		if ($importSet != null && count($this->importSets) > 0) {
-			if (@!in_array($importSet, $this->importSets)) {
-		//		// Term belongs to the wrong import set.
-				return false;	                          	
-			}
-		}
-
-		// Check term policy
-		if (array_key_exists($term, $this->requiredTerms)) {
-			return true;
-		}
-		
-		// Check regex policy
-		foreach ($this->regularExpressions as $regEx) {
-			$regEx = trim($regEx);
-			if (preg_match('/'.$regEx.'/', $term)) {
-				return true;
-			}
-		}
-		return false;          	
-			                          	
-	}
-	
-	private function parseImportSets(&$importSets) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($importSets);
-		$result = $parser->parse();
-    	
-		if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	return $parser->getValuesOfElement(array('importSet','name'));
-	}
-	
-	
 	private function createDeleteCallback($dataSourceSpec){
 		if(count($this->messagesToDelete) == 0){
 			return;
 		}
 		
-		$delete = "";
-		$first = true;
-		foreach($this->messagesToDelete as $key => $dontcare){
-			if(!$first){
-				$delete .= ",";
-			}
-			$first = false;
-			$delete .= "'".$this->replaceAngledBrackets($key)."' => true";
-		}
-		$result = "\n\n<term callback='true'>".
-			"handleDeleteCallBack(".
-				"array(".$delete."), <![CDATA['".$dataSourceSpec."']]>"
-				."</term>";
-		return $result;
+		$deletes = array_keys($this->messagesToDelete);
+		
+		$term = new DITerm();
+		$term->addCallback( new DITermImportCallback(
+			"handleDeleteCallBack",
+			array('deletes' => $deletes, 'dataSourceSpec' => $dataSourceSpec)));
+		$term->setAnnonymousCallbackTerm(true);
+		
+		$this->terms->addTerm($term);
 	}
 	
-	private function serializeBodyXML(){
+	private function finalizeBodyProcessing(){
 		global $smwgEnableRichMedia, $wgExtraNamespaces, $wgNamespaceByExtension, $wgCanonicalNamespaceNames;
 		$attachmentTerms = "";
 		$firstOne = true;
@@ -1083,41 +882,37 @@ class DALReadPOP3 implements IDAL {
 			} else {
 				$ns = $wgCanonicalNamespaceNames[NS_IMAGE].":";
 			}
-			if($firstOne){
-				$attachmentFNs = "\n<attachments>".$ns.$fn;
-				$firstOne = false;
-			} else {
-				$attachmentFNs .= ",".$ns.$fn;
-			}
-			$attachmentTerms .= "\n\n<term callback='true'>".
-			"handleAttachmentCallBack(\"".
-				htmlspecialchars($fn)."\",\"".$this->attachmentMP."\",\""
-				.$this->mailFrom."\",\"".
-				$this->mailId."\",\"".$this->mailDate."\",\"".
-				htmlspecialchars($extraContent)."\""
-				."</term>";
+			
+			if(!$firstOne) $attachmentFNs .= ',';
+			$attachmentFNs = $ns.$fn;
+			$firstOne = false;
+			
+			$this->term->addCallback(new DITermImportCallback(
+				'handleAttachmentCallBack'.
+				array(
+				'fileName' => htmlspecialchars($fn), 
+				'mailFrom' => $this->mailFrom, 
+				'mailId' => $this->mailId,
+				'mailDate' => $this->mailDate, 
+				'extraContent' => htmlspecialchars($extraContent))));
 		}
 		
-		if($attachmentFNs == "" && $this->embeddedMailIds != ""){
-			$attachmentFNs = "<attachments>".$this->embeddedMailIds."</attachments>\n";	
-		} else if($attachmentFNs != ""){
-			if($this->embeddedMailIds != ""){
-				$attachmentFNs .= ",".$this->embeddedMailIds;
-			}
-			$attachmentFNs .= "</attachments>\n";
+		if($attachmentFNs != "" &&$this->embeddedMailIds != ""){
+			$attachmentFNs .= ",";
+		}
+		$attachmentFNs .= $this->embeddedMailIds;
+		
+		if(trim($attachmentFNs) != ""){
+			$this->term->addProperty('attachments', $attachmentFNs);
 		}
 		
-		if(trim($this->body) == ""){
-			$body = "";
-		} else {
-			$body = "<body><![CDATA[".$this->body."]]></body>";
+		if(trim($this->body) != ""){
+			$this->term->addProperty('body', $this->body);
 		}
-		
-		return $attachmentTerms."<term>"
-			.$attachmentFNs.$body;
 	}
 	
 	private function createErrorMessage($connection, $msgNr, $message = ""){
+		//todo:change this
 		$startOfMessage = "<error>The E-mail with the id ";
 		if(strlen($message) > 0){
 			$endOfMessage = " could not be imported because <![CDATA[".$message

@@ -27,12 +27,9 @@ if ($help) {
 }
 
 require_once ($smwgDIIP."/specials/WebServices/SMW_WSStorage.php");
-require_once ($smwgDIIP."/specials/Materialization/SMW_MaterializationStorageAccess.php");
 
 if ($delete) {
 	WSStorage::getDatabase()->deleteDatabaseTables();
-	SMWMaterializationStorageAccess::getDatabase()->deleteDatabaseTables();	
 } else {
 	WSStorage::getDatabase()->initDatabaseTables();
-	SMWMaterializationStorageAccess::getDatabase()->setup(true);
 }

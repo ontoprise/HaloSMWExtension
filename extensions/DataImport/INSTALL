@@ -102,12 +102,5 @@ Requirements:
 	include_once('extensions/DataImport/IAI/includes/IAI_Initialize.php');
 	enableIAI();
 
-(2) Go to extensions/DataImport/specials/TermImport/TL/ConnectLocal.cfg and add the following:
-	<Module>
-	    <id>Interwiki Article Import</id>
-	    <class>DALInterwikiArticleImport</class>
-	    <file>DAL/SMW_DALInterwikiArticleImport</file>
-	    <desc>Imports articles from an external Mediawiki.</desc>
-	</Module>
 
 

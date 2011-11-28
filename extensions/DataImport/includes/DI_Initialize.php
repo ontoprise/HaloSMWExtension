@@ -23,7 +23,6 @@ $smwgDIIP = $IP . '/extensions/DataImport';
 $smwgDIScriptPath = $wgScriptPath . '/extensions/DataImport';
 $wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
 
-
 global $smwgDIStyleVersion;
 $smwgDIStyleVersion = preg_replace('/[^\d]/', '', '{{$BUILDNUMBER}}' );
 if (strlen($smwgDIStyleVersion) > 0)
@@ -35,40 +34,22 @@ if (strlen($smwgDIStyleVersion) > 0)
  * Must be called *AFTER* SMWHalo is intialized.
  */
 function enableDataImportExtension() {
-	//tell SMW to call this function during initialization
 	global $wgExtensionFunctions, $smwgDIIP;
 	
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 	
-	global $smgJSLibs; 
-	$smgJSLibs[] = 'prototype';
-	
-	// Register additional namespaces
-	global $smwgWWSNamespaceIndex;
-	if (!isset($smwgWWSNamespaceIndex)) {
-		difInitWWSNamespaces(200);
-	} else {
-		difInitWWSNamespaces();
-	}
-	
-	// Register additional namespaces
-	if (!isset($smwgTINamespaceIndex)) {
-		difInitTINamespaces(202);
-	} else {
-		difInitTINamespaces();
-	}
-	
-	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
+	// define NS constants
+	difInitWWSNamespaces();
+	difInitTINamespaces();
 	
 	global $smwgNamespacesWithSemanticLinks;
 	$smwgNamespacesWithSemanticLinks[SMW_NS_TERM_IMPORT] = true;
+	$smwgNamespacesWithSemanticLinks[NS_TI_EMAIL] = true;
 	
 	//register namespaces
 	global $wgLanguageCode;
 	smwfDIInitContentLanguage($wgLanguageCode);
-	//WebServiceManager::registerWWSNamespaces();
-	difRegisterWWSNamespaces();	
-	diRegisterTermImportNamespaces();
+	difRegisterNamespaces();	
 	
 	global $wgHooks;
 	$wgHooks['LanguageGetMagic'][] = 'difSetupMagic';
@@ -76,7 +57,8 @@ function enableDataImportExtension() {
 	global $wgAutoloadClasses;
 	$wgAutoloadClasses['SMWWSSMWAskPage']  = 
 		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWAskPage.php';
-
+	
+	//WS result printers	
 	$wgAutoloadClasses['SMWQPWSSimpleTable'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSSimpleTable.php';
 	$wgAutoloadClasses['SMWQPWSTransposed'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTransposed.php';
 	$wgAutoloadClasses['SMWQPWSTIXML'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTIXML.php';
@@ -87,22 +69,16 @@ function enableDataImportExtension() {
 	$smwgResultFormats['tixml'] = 'SMWQPWSTIXML';
 }
 
-function enableMaterializationFeature(){
-	global $enableMaterialization, $smwgDIIP;;
-	$enableMaterialization = true;
-	
-	//require the materialize parser function
-	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
-}
-
 /**
  * Intializes Data Import Extension.
  * Called from SMW during initialization.
  */
 function smwfDISetupExtension() {
-	global $wgHooks, $wgExtensionCredits, $wgAutoloadClasses, $wgSpecialPages; 
-	global $smwgDIIP, $wgSpecialPageGroups, $wgRequest, $smwgEnableDataImportExtension, $wgContLang;
+	global $wgAutoloadClasses, $smwgDIIP, $smwgDIScriptPath; 
 
+	smwfDIInitMessages();
+	
+	//solves issue with maintenance mode and not yet initialized Di database tables
 	if(defined( 'DO_MAINTENANCE' )){
 		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 		if(!WSStorage::getDatabase()->isInitialized()){
@@ -110,63 +86,106 @@ function smwfDISetupExtension() {
 		}
 	}
 	
+	//enable webservice als src in ask queries
 	global $smwgQuerySources;
 	$smwgQuerySources['webservice'] = 'SMWWSSMWStore';
 	require_once($smwgDIIP. '/specials/WebServices/smwstoragelayer/SMW_WSSMWStore.php');
 	
-	//so that other extensions like the gardening framework know about
-	//the Data Import Extension
-	$smwgEnableDataImportExtension = true;
+	//autoload classes
+	//Term IMport Framework	
+	$wgAutoloadClasses['DICL']  = 
+		$smwgDIIP.'/includes/TermImport/DI_CL.php';
+	$wgAutoloadClasses['DITermCollection']  = 
+		$smwgDIIP.'/includes/TermImport/DI_Termcollection.php';
+	$wgAutoloadClasses['DITerm']  = 
+		$smwgDIIP.'/includes/TermImport/DI_Termcollection.php';
+	$wgAutoloadClasses['DIDAMRegistry']  = 
+		$smwgDIIP.'/includes/TermImport/DI_DAMRegistry.php';
+	$wgAutoloadClasses['DIDAMConfiguration']  = 
+		$smwgDIIP.'/includes/TermImport/DI_DAMRegistry.php';
+	$wgAutoloadClasses['DIDALHelper']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALHelper.php';
+	$wgAutoloadClasses['IDAL']  = 
+		$smwgDIIP.'/includes/TermImport/DI_IDAL.php';
+	$wgAutoloadClasses['DITermImportDefinitionValidator']  = 
+		$smwgDIIP.'/includes/TermImport/DI_TermImportDefinitionValidator.php';
+	$wgAutoloadClasses['DITermImportPage']  = 
+		$smwgDIIP.'/specials/TermImport/DI_TermImportPage.php';
+	$wgAutoloadClasses['DIXMLParser']  = 
+		$smwgDIIP.'/includes/TermImport/DI_XMLParser.php';
+		
+		
+	//DAMs
+	$wgAutoloadClasses['DALReadCSV']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALReadCSV.php';
+	$wgAutoloadClasses['DALReadFeed']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALReadFeed.php';
+	$wgAutoloadClasses['DALReadPOP3']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALReadPOP3.php';
+	$wgAutoloadClasses['DALReadTIXML']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALReadTIXML.php';
+	$wgAutoloadClasses['DALReadSPARQLXML']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/DI_DALReadSPARQLXML.php';
 	
+	//Mail attachment parsers
+	$wgAutoloadClasses['DIVCardForPOP3']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/MailAttachmentParsers/DI_VCardParser.php';
+	$wgAutoloadClasses['DIICalParserForPOP3']  = 
+		$smwgDIIP.'/includes/TermImport/DAL/MailAttachmentParsers/DI_ICalParser.php';
+		
+		
+	//bots
+	$wgAutoloadClasses['TermImportBot'] = 
+		$smwgDIIP.'/includes/TermImport/Bots/DI_TermImportBot.php';
+	$wgAutoloadClasses['TermImportUpdateBot'] = 
+		$smwgDIIP.'/includes/TermImport/Bots/DI_TermImportUpdateBot.php';
+	
+	//todo:remove this
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
-	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
+	WebServiceManager::initWikiWebServiceExtension();
 	
 	global $wgParser;
 	$wgParser->setFunctionHook( 'webServiceUsage', 'wsuf_Render' );
+	$wgParser->setHook('ImportSettings', 'DITermImportPage::renderTermImportDefinition');
 	
-	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
-
-	// register AddHTMLHeader functions for special pages
-	// to include javascript and css files (only on special page requests).
-	if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false
-			|| stripos($wgRequest->getRequestURL(), $spns_text."%3A") !== false) {
-		$wgHooks['BeforePageDisplay'][]='smwDITIAddHTMLHeader';
-		$wgHooks['BeforePageDisplay'][]='smwDIWSAddHTMLHeader';
-	}
+	//introduce resource modules
+	global $wgResourceModules;
+	$commonProperties = array(
+		'localBasePath' => $smwgDIIP,
+		'remoteExtPath' => 'DataImport'
+	);
 	
-	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
-	
-	global $enableMaterialization;
-	if(isset($enableMaterialization) && $enableMaterialization){ 
-		$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
-	}
-	
-	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
-	
-	smwfDIInitMessages();
-	
-	WebServiceManager::initWikiWebServiceExtension();
-	TermImportManager::initTermImportFramework();
+	$wgResourceModules['ext.dataimport.ti'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('scripts/TermImport/termimport.js'),
+			'styles' => array('skins/TermImport/termimport.css'),
+			'dependencies' => array('ext.ScriptManager.prototype'),
+		);
 	
 	// add some AJAX calls
+	global $wgRequest, $wgContLang;
+	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
 	$action = $wgRequest->getVal('action');
 	if ($action == 'ajax') {
 		$method_prefix = smwfDIGetAjaxMethodPrefix();
-
-		// decide according to ajax method prefix which script(s) to import
+		//include appropriate access point
 		switch($method_prefix) {
-			case '_ti_' : require_once($smwgDIIP . '/specials/TermImport/SMW_CL.php');
-			break;
-			case '_wsu_' : require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
-			break;
+			case '_ti_' : 
+				require_once($smwgDIIP . '/includes/TermImport/DI_CL.php');
+				break;
+			case '_wsu_' : 
+				require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
+				break;
 			case '_ws_' :  require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositoryAjaxAccess.php');
 				require_once($smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceAjaxAccess.php');
 				break;
 		} 
-				
 	} else { // otherwise register special pages
-		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgDIIP . '/specials/TermImport/SMW_TermImportSpecial.php';
-		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
+		global $wgSpecialPages, $wgSpecialPageGroups;
+		$wgAutoloadClasses['DITermImportSpecial'] = 
+			$smwgDIIP . '/specials/TermImport/DI_TermImportSpecial.php';
+		$wgSpecialPages['TermImport'] = array('DITermImportSpecial');
 		$wgSpecialPageGroups['TermImport'] = 'di_group';
 		
 		$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositorySpecial.php';
@@ -180,22 +199,43 @@ function smwfDISetupExtension() {
 		$wgAutoloadClasses['SMWUseWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_UseWebServiceSpecial.php';
 		$wgSpecialPages['UseWebService'] = array('SMWUseWebServiceSpecial');
 		$wgSpecialPageGroups['UseWebService'] = 'di_group';
-
-		// Register Credits
-		$wgExtensionCredits['parserhook'][]=array('name'=>'Data&nbsp;Import&nbsp;Extension', 'version'=>SMW_DI_VERSION,
-			'author'=>"Thomas&nbsp;Schweitzer, Ingo&nbsp;Steinbauer, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
-			'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension', 
-			'description' => 'Allows to import data from a lot of different sources.');
+		
+		//overwrite Special:Ask (needed for ask queries with source web service)
+		$wgSpecialPages['Ask'] = array('SMWWSSMWAskPage' );
 	}
+	
+	// Register Credits
+	global $wgExtensionCredits;
+	$wgExtensionCredits['parserhook'][]=array('name'=>'Data&nbsp;Import&nbsp;Extension', 'version'=>SMW_DI_VERSION,
+		'author'=>"Thomas&nbsp;Schweitzer, Ingo&nbsp;Steinbauer, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
+		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension', 
+		'description' => 'Allows to import data from a lot of different sources.');
 
 	//load the Gardening Bots
-	
-	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
-	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportUpdateBot.php");
+	//todo. change SGA so that bots can be registered without initializing them
+	$bot = new TermImportBot();
+	$bot = new TermImportUpdateBot();
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 	
-	$wgSpecialPages['Ask'] = array('SMWWSSMWAskPage' );
+	
+	
+	//register DAMs
+	//todo: use language files
+	DIDAMRegistry::registerDAM('DALReadCSV', 'CSV file', 
+		'Imports articles from a CSV file. You either have to pass the path to a file which is located on the server or a valid URL.');
+	//todo: add description
+	DIDAMRegistry::registerDAM('DALReadFeed', 'RSS feed', 
+		'Imports articles from feeds in the RSS or Atom format.');
+	DIDAMRegistry::registerDAM('DALReadPOP3', 'POP3 server', 
+		'Imports mails from a POP3 server.');
+	DIDAMRegistry::registerDAM('DALReadTIXML', 'Web Service result', 
+		'Imports the results of a web service call in the TIXML result format. You have to enter the name of the article, that contains the web service result in the TIXML format.');
+	DIDAMRegistry::registerDAM('DALReadSPARQLXML', 'SPARQL endpoint', 
+		'Imports results of a SELECT query to a SPARQL endpoint.');
+	
+	global $wgHooks;
+	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
 	
 	return true;
 }
@@ -208,11 +248,6 @@ function smwfDIInitializeTables() {
 	global $smwgDIIP;
 	require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceManager.php');
 	WebServiceManager::initDatabaseTables();
-	
-	require_once($smwgDIIP . '/specials/Materialization/SMW_MaterializationStorageAccess.php');
-	$dbAccess = SMWMaterializationStorageAccess::getInstance();
-	$db = $dbAccess->getDatabase();
-	$db->setup(true);
 	
 	return true;
 }
@@ -273,153 +308,6 @@ function smwfDIInitUserMessages() {
 	$wgMessageCache->addMessages($smwgDILang->getUserMsgArray(), $wgLang->getCode());
 }
 
-/**
- * Add appropriate JS language script
- */
-//function smwfDIAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-function smwfDIAddJSLanguageScripts(&$out, $mode = "all", $namespace = -1, $pages = array()) {
-	global $wgLanguageCode, $smwgDIScriptPath, $wgUser, $smwgDIIP;
-	global $smwgDIStyleVersion;
-	
-	// content language file
-	$lng = '/scripts/Language/SMWDI_Language';
-	
-	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng.".js".$smwgDIStyleVersion."\"></script>");
-	
-	if (!empty($wgLanguageCode)) {
-		$lng .= ucfirst($wgLanguageCode).'.js'.$smwgDIStyleVersion;
-		if (file_exists($smwgDIIP . $lng)) {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
-		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js".$smwgDIStyleVersion."\"></script>");
-		}
-	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageEn.js".$smwgDIStyleVersion."\"></script>");
-	}
-
-	// user language file
-	$lng = '/scripts/Language/SMWDI_Language';
-	if (isset($wgUser)) {
-		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js'.$smwgDIStyleVersion;
-		//$temp = $smwgDIScriptPath . $lng;
-		if (file_exists($smwgDIIP . $lng)) {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath.$lng."\"></script>");
-		} else {
-			$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js".$smwgDIStyleVersion."\"></script>");
-		}
-	} else {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/Language/SMWDI_LanguageUserEn.js".$smwgDIStyleVersion."\"></script>");
-	}
-}
-
-function smwDIWSAddHTMLHeader(&$out) {
-	global $wgTitle;
-	global $smwgDIStyleVersion;
-	
-	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
-	
-	global $smwgDIScriptPath;
-	$includeCSS = false;
-	if($wgTitle->getText() == "DefineWebService"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/def-webservices.js".$smwgDIStyleVersion."\"></script>");	
-		$includeCSS = true;
-	}
-	
-	if($wgTitle->getText() == "DataImportRepository"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/webservices-rep.js".$smwgDIStyleVersion."\"></script>");
-		$includeCSS = true;
-	}
-	
-	if($wgTitle->getText() == "UseWebService"){
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js".$smwgDIStyleVersion."\"></script>");
-		$includeCSS = true;
-	}
-	
-	if($includeCSS){
-		//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
-		smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
-	
-		//$jsm->addCSSIf($smwgDIScriptPath . '/skins/webservices/webservices.css', "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":UseWebService"));
-
-		$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $smwgDIScriptPath . '/skins/webservices/webservices.css'.$smwgDIStyleVersion
-                    ));
-	
-		//$jsm->serializeScripts($out);
-		//$jsm->serializeCSS($out);
-	}
-	
-	return true;
-}
-
-// TermImport scripts callback
-// includes necessary css files.
-function smwDITIAddHTMLHeader(&$out){
-	global $wgTitle;
-	global $smwgDIStyleVersion;
-	if ($wgTitle->getNamespace() != NS_SPECIAL || $wgTitle->getText() != "TermImport") return true;
-
-	global $smwgDIScriptPath;
-
-	//$jsm = SMWResourceManager::SINGLETON();
-	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/TermImport/termImport.js', "all", -1, array(NS_SPECIAL.":TermImport"));
-	
-	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/TermImport/termImport.js".$smwgDIStyleVersion."\"></script>");
-	
-	//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":TermImport"));
-	smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":TermImport"));
-	
-	//$jsm->addCSSIf($smwgDIScriptPath . '/skins/TermImport/termimport.css', "all", -1, NS_SPECIAL.":TermImport");
-	
-	$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $smwgDIScriptPath . '/skins/TermImport/termimport.css'.$smwgDIStyleVersion
-                    ));
-	
-	//$jsm->serializeScripts($out);
-	//$jsm->serializeCSS($out);
-
-	return true;
-}
-
-
-function smwDITBAddHTMLHeader(&$out){
-	global $smwgDIScriptPath, $wgRequest, $wgTitle;
-	global $smwgDIStyleVersion;;
-	
-	$ns = "";
-	$text = "";
-	if($wgTitle != null){
-		$ns = $wgTitle->getNamespace();
-		$text = $wgTitle->getText();
-	}
-	
-// Bugfix 15862 - Remove the webservice section in STB	
-//	$action = $wgRequest->getVal('action');
-//	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
-	if ($ns == NS_SPECIAL && $text == "FormEdit") {
-//		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js".$smwgDIStyleVersion."\"></script>");
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js".$smwgDIStyleVersion."\"></script>");
-	}
-	
-	return true;
-}
-
-function smwDIMAAddHTMLHeader(&$out){
-	global $smwgDIScriptPath, $wgRequest;
-	
-	$action = $wgRequest->getVal('action');
-	if ($action == 'edit') {
-		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/Materialization/materialize.js\"></script>");
-	}
-	
-	return true;
-}
 
 function smwfDIGetAjaxMethodPrefix() {
 	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
@@ -435,7 +323,7 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 	return true;
 }
 
-/**
+	/**
 	 * Initializes the namespaces that are used by the Wiki Web Service extension.
 	 * Normally the base index starts at 200. It must be an even number greater than
 	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
@@ -449,7 +337,7 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 		if (!isset($smwgWWSNamespaceIndex)) {
 			$smwgWWSNamespaceIndex = $baseIndex;
 		}
-
+		
 		if (!defined('SMW_NS_WEB_SERVICE')) {
 			define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
 			define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
@@ -461,8 +349,7 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 	 * messages have been installed.
 	 *
 	 */
-	function difRegisterWWSNamespaces() {
-		//also registers TermImport namespace
+	function difRegisterNamespaces() {
 		global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
 
 		// Register namespace identifiers
@@ -482,7 +369,7 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 	 * @param int $baseIndex
 	 * 		Optional base index for all Term Import namespaces. The default is 202.
 	 */
-	function difInitTINamespaces($baseIndex = 200) {
+	function difInitTINamespaces($baseIndex = 202) {
 		global $smwgTINamespaceIndex;
 		if (!isset($smwgTINamespaceIndex)) {
 			$smwgTINamespaceIndex = $baseIndex;
@@ -492,6 +379,11 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 			define('SMW_NS_TERM_IMPORT',       $smwgTINamespaceIndex);
 			define('SMW_NS_TERM_IMPORT_TALK',  $smwgTINamespaceIndex+1);
 		}
+		
+		//this is not nice, but I cannot change it, since older versions then will not work anymore
+		global $smwgWWSNamespaceIndex;
+		if (!defined('NS_TI_EMAIL')) define('NS_TI_EMAIL', $smwgWWSNamespaceIndex+20);
+		if (!defined('NS_TI_EMAIL_TALK')) define('NS_TI_EMAIL_TALK', $smwgWWSNamespaceIndex+21);
 	}
 	
 /*
