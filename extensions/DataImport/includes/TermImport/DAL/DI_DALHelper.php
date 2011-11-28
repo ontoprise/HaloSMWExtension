@@ -49,37 +49,37 @@ class DIDALHelper {
 	 * 		<true>, if the term matches the rules and should be imported
 	 * 		<false> otherwise
 	 */
-	public static function termMatchesRules($impSet, $term,
-			&$importSets, &$policy) {
+	public static function termMatchesRules($importSet, $term,
+			$givenImportSet, $policy) {
 
-		//deal with this one
-		return true;
+		//echo('<pre>'.print_r($policy, true).'</pre>');
 				
 		// Check import set
-		if ($impSet != null && strlen(trim($importSets)) > 0) {
+		if ($importSet != null && strlen(trim($givenImportSet)) > 0) {
 			
-			if (trim($impSet) == trim($importSets)) {
+			if (trim($importSet) == trim($givenImportSet)) {
 				// Term belongs to the wrong import set.
 				return false;
 			}
 		}
 
 		// Check term policy
-		$terms = &$policy['terms'];
-		if (in_array($term, $terms)) {
+		$terms = $policy['terms'];
+		if (is_array($terms) && in_array($term, $terms)) {
 			return true;
 		}
 
 		// Check regex policy
-		$regex = &$policy['regex'];
-		foreach ($regex as $re) {
-			$re = trim($re);
-			if (preg_match('/'.$re.'/', $term)) {
-				return true;
+		$regex = $policy['regex'];
+		if(is_array($regex)){
+			foreach ($regex as $re) {
+				$re = trim($re);
+				if (preg_match('/'.$re.'/', $term)) {
+					return true;
+				}
 			}
 		}
-
+		
 		return false;
 	}
-	
 }
