@@ -316,10 +316,6 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
 
-
-		$nary_pos = $matchDomainOrRange ? '"_1"' : '"_2"';
-
-
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -335,9 +331,16 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
+		
+	   $domain = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN->getDBkey()) );
+        if ($domain == NULL) {
+            $domainID = -1; // does never exist
+        } else {
+            $domainID = $domain->smw_id;
+        }
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_id = '.$domainID.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 
 		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');
@@ -352,7 +355,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 			// insert direct properties of current supercategory level
 			$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_id = '.$domainID.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			// copy supercatgegories to subcategories of next iteration
 			$db->query('DELETE FROM smw_ob_properties_sub');
@@ -394,10 +397,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_ids = $db->tableName('smw_ids');
-
-
-		$nary_pos = '"_1"';
-
+		
 
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
@@ -414,9 +414,18 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
+		
+	    $domain = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => SMWHaloPredefinedPages::$HAS_DOMAIN->getDBkey()) );
+        if ($domain == NULL) {
+            $domainID = -1; // does never exist
+        } else {
+            $domainID = $domain->smw_id;
+        }
+		
+		
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_id = '.$domainID.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
@@ -431,7 +440,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 			// insert direct properties of current supercategory level
 			$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_id = '.$domainID.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			// copy supercatgegories to subcategories of next iteration
 			$db->query('DELETE FROM smw_ob_properties_sub');
@@ -476,9 +485,6 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_ids = $db->tableName('smw_ids');
 
 
-		$nary_pos = 0;
-
-
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARBINARY(255), inferred ENUM(\'true\',\'false\'))
                     ENGINE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
@@ -494,6 +500,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		} else {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
+	    
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
                      ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');

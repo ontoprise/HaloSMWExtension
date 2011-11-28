@@ -91,10 +91,10 @@ class SMWPredefinitions {
 class SMWHaloPredefinedPages {
 
 	/**
-	 * Domain hint property.
+	 * Domain and range property.
 	 * Determines the domain and range of a property.
 	 *
-	 * It is a n-ary properties with take the domain as first parameter
+	 * It is a record property with take the domain as first parameter
 	 * and the range as second. The range is optional.
 	 *
 	 * It is defined as:
@@ -104,6 +104,20 @@ class SMWHaloPredefinedPages {
 	 * @var Title
 	 */
 	public static $HAS_DOMAIN_AND_RANGE;
+	
+	/**
+	 * Domain property of $HAS_DOMAIN_AND_RANGE
+	 * 
+	 * @var Title
+	 */
+	public static $HAS_DOMAIN;
+	
+	/**
+     * Range property of $HAS_DOMAIN_AND_RANGE
+     * 
+     * @var Title
+     */
+	public static $HAS_RANGE;
 
 	/**
 	 * Minimum cardinality.
@@ -163,6 +177,8 @@ class SMWHaloPredefinedPages {
 		$smwSpecialCategories = $smwgHaloContLang->getSpecialCategoryArray();
 
 		self::$HAS_DOMAIN_AND_RANGE = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT], SMW_NS_PROPERTY);
+		self::$HAS_DOMAIN = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_DOMAIN], SMW_NS_PROPERTY);
+		self::$HAS_RANGE = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_RANGE], SMW_NS_PROPERTY);
 		self::$HAS_MIN_CARDINALITY = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MIN_CARD], SMW_NS_PROPERTY);
 		self::$HAS_MAX_CARDINALITY = Title::newFromText($smwSpecialSchemaProperties[SMW_SSP_HAS_MAX_CARD], SMW_NS_PROPERTY);
 		self::$TRANSITIVE_PROPERTY = Title::newFromText($smwSpecialCategories[SMW_SC_TRANSITIVE_RELATIONS], NS_CATEGORY);
