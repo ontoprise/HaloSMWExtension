@@ -724,7 +724,10 @@ class Installer {
 		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-
+			if (!file_exists($installDirectory."/init$.ext")) {
+				// already initialized
+				continue;
+			}
 			$ont_installer->installOntologies($desc);
 			$res_installer->installOrUpdateResources($desc);
 			$res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
@@ -736,10 +739,12 @@ class Installer {
 			if ($desc->isNonPublic()) {
 				$installDirectory = $this->getNonPublicDirectory($desc);
 			}
+				
 			$this->logger->info("Mark extension as initialized: ".$desc->getID());
 			$dfgOut->outputln("[Clean up...");
 			unlink($installDirectory."/init$.ext");
 			$dfgOut->output("done.]\n\n");
+				
 		}
 
 		// print (optional) notices

@@ -675,11 +675,11 @@ foreach($packageToUpdate as $toUpdate) {
 	$toUpdate = str_replace(".", "", $toUpdate);
 	$parts = explode("-", $toUpdate);
 	$packageID = $parts[0];
-	$version = count($parts) > 1 ? $parts[1] : NULL;
+	$version = count($parts) > 1 ? new DFVersion($parts[1]) : NULL;
 	try {
-		$logger->info("Start update package '$packageID'".(is_null($version) ? "" : "-$version"));
+		$logger->info("Start update package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
 		dffHandleInstallOrUpdate($packageID, $version);
-		$logger->info("End update package '$packageID'".(is_null($version) ? "" : "-$version"));
+		$logger->info("End update package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
 		dffExitOnFatalError($e);
