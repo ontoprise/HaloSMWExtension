@@ -838,6 +838,7 @@ pastePreview: function(request, preview) {
     case 'ofc-bar_3d':
     case 'ofc-line':
     case 'ofc-scatterline':
+    	window.ofc_data_objs = {data:[],tabs:[],showhide:[]};
 //      var tuple =  request.responseText.split("|||");
 //      resultHTML = tuple[0];
 //      resultCode = tuple[1];
