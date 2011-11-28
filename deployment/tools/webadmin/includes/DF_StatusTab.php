@@ -54,7 +54,7 @@ class DFStatusTab {
 		$html = $dfgLang->getLanguageString('df_webadmin_status_text');
 		$html .= " <input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refresh_status\"></input>";
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-		
+
 		// check for updates
 		$dfgOut->setVerbose(false);
 		$updates = $cc->checksForUpdates();
@@ -64,15 +64,19 @@ class DFStatusTab {
 			$html .= "<img id=\"df_gu_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 			$html .= "</div>";
 		}
-		
+
 		// check for new release
 		$latestVersion = PackageRepository::getLatestRelease();
 		if ($latestVersion !== false) {
-			$currentVersion = new DFVersion(DFVersion::removePatchlevel(DF_WEBADMIN_TOOL_VERSION));
-			if ($currentVersion->isLower($latestVersion)) {
-				$repositorylistlink = $dfgLang->getLanguageString('df_webadmin_repository_link');
-				$html .= "<div id=\"df_updateavailable\">".$dfgLang->getLanguageString('df_webadmin_newreleaseavailable', 
-				            array("<a target=\"_blank\" href=\"".DF_REPOSITORY_LIST_LINK."\">$repositorylistlink</a></div>"));
+			try {
+				$currentVersion = new DFVersion(DFVersion::removePatchlevel(DF_WEBADMIN_TOOL_VERSION));
+				if ($currentVersion->isLower($latestVersion)) {
+					$repositorylistlink = $dfgLang->getLanguageString('df_webadmin_repository_link');
+					$html .= "<div id=\"df_updateavailable\">".$dfgLang->getLanguageString('df_webadmin_newreleaseavailable',
+					array("<a target=\"_blank\" href=\"".DF_REPOSITORY_LIST_LINK."\">$repositorylistlink</a></div>"));
+				}
+			} catch(Exception $e) {
+				// ignore, just skip check for new release
 			}
 		}
 
