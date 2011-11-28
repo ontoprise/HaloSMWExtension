@@ -859,7 +859,7 @@ function smwf_om_userCan($titleName, $action, $namespaceID = 0) {
 	}
 	global $wgUser;
 	$result = true;
-	wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
+	wfRunHooks('userCan', array(&$title, &$wgUser, $action, &$result));
 	if (isset($result) && $result == false) {
 		return "false";
 	} else {
