@@ -60,12 +60,6 @@ class SRFOFC extends SMWResultPrinter {
     	if(self::$JSIncluded) return;
     	
     	SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
-    	if($this->m_isAjax) {
-    		global $wgOut;
-//    		$wgOut->addScript('<script type="text/javascript">if(typeof(window.ofc_data_objs)=="undefined") window.ofc_data_objs = {data:[],tabs:[],showhide:[]};</script>');
-			// FIXME: Halo QueryInterface will not load resource twice, have to remove data
-    		$wgOut->addScript('<script type="text/javascript">if(typeof(window.inlinequery)=="undefined") window.ofc_data_objs = {data:[],tabs:[],showhide:[]};</script>');
-    	}
     	
 		// MediaWiki 1.17 introduces the Resource Loader.
 		$realFunction = array( 'SMWOutputs', 'requireResource' );
