@@ -29,8 +29,15 @@
         	  
         		prop = 'smwh_'+prop+'_t';
         		var val = row.get('obj');
+        		var namespace = row.get('namespace');
+        		if (namespace.length() > 0) {
+        		  // Make first letter uppercase
+        		  namespace = namespace.substr(0,1).toUpperCase() + namespace.substr(1);
+        		  val = namespace + ':' + val;
+        		}
         		row.remove('prop');
         		row.remove('obj');
+        		row.remove('namespace');
         		// Add the property and its value
         		row.put(prop, val);
         		// Store the names of all properties in the article
@@ -173,10 +180,12 @@
   				name="rels" 
   				transformer="script:Relations"
   				query="SELECT CONVERT(pids.smw_title USING utf8) as prop, 
-  				              CONVERT(oids.smw_title USING utf8) as obj
+  				              CONVERT(oids.smw_title USING utf8) as obj,
+  				              CONVERT(nsmap.name USING utf8) as namespace
   				       FROM &DBPREFIX;smw_rels2 AS r
   				       LEFT JOIN (&DBPREFIX;smw_ids as pids) ON (pids.smw_id = r.p_id)
   				       LEFT JOIN (&DBPREFIX;smw_ids as oids) ON (oids.smw_id = r.o_id)
+  				       LEFT JOIN (&DBPREFIX;fs_namespace as nsmap) ON (nsmap.namespace_id = oids.smw_namespace)
   				       WHERE r.s_id='${smwids.smwID}'">
   			</entity>
   			

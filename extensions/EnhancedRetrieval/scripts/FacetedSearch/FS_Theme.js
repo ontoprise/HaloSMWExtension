@@ -361,8 +361,7 @@
 				// Relation values are rendered as link
 				var vals = [];
 				$.each(doc[property], function() {
-					// TODO check link namespace, has to be extracetd from value, e.g. Namespace:Page_Title
-					vals.push('<a href="' + this + '">' + noUnderscore(this) + '</a>');
+					vals.push('<a href="' + getLink(0, this) + '">' + noUnderscore(this) + '</a>');
 				});
 				output += '<td>' + vals.join(', ') + '</td>';
 			} else {

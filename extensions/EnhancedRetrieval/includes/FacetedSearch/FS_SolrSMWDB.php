@@ -208,13 +208,15 @@ SQL;
 
 		$sql = <<<SQL
 			SELECT CAST(pids.smw_title AS CHAR) as prop, 
-                   CAST(oids.smw_title AS CHAR) as obj
+                   CAST(oids.smw_title AS CHAR) as obj,
+                   oids.smw_namespace as namespace
 	        FROM $smw_rels2 AS r
 	        LEFT JOIN ($smw_ids as pids) ON (pids.smw_id = r.p_id)
 	        LEFT JOIN ($smw_ids as oids) ON (oids.smw_id = r.o_id)
 	        WHERE r.s_id=$smwID
 SQL;
 		$res = $db->query($sql);
+		global $wgContLang;
 		if ($db->numRows($res) > 0) {
 			$properties = array();
 			while ($row = $db->fetchObject($res)) {
@@ -225,7 +227,10 @@ SQL;
 					$p = SMWDIProperty::newFromUserLabel($prop);
 					$prop = str_replace(' ', '_', $p->getLabel());
 				}
-				$obj  = $row->obj;
+				$ns   = $row->namespace;
+    			$nsText = ($ns !== '0') ? $wgContLang->getNsText($ns).':'
+    			                      : '';
+				$obj = $nsText.$row->obj;
 				
 				// The values of all properties are stored as string.
         		$prop = "smwh_{$prop}_t";

@@ -5,7 +5,7 @@
  * 
  * Setup database for Enhanced retrieval extension.
  * 
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 27.01.2009
  */
@@ -16,7 +16,8 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-require_once "$mediaWikiLocation/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php";
+//require_once "$mediaWikiLocation/extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php";
+require_once "$mediaWikiLocation/extensions/EnhancedRetrieval/includes/FacetedSearch/storage/FS_StorageSQL.php";
 
 $delete = array_key_exists('delete', $options);
 $help = array_key_exists('h', $options);
@@ -25,13 +26,17 @@ if ($help) {
     die();
 }
 if ($delete) {
-	wfUSDeInitializeTables();
-	smwfSynsetsDeInitializeTables();
+//	wfUSDeInitializeTables();
+//	smwfSynsetsDeInitializeTables();
+	
+	$fsdb = new FSStorageSQL();
+	$fsdb->dropDatabaseTables();
+	
 	print ("\nAll data removed successfully.\n");
 	die();
 }
 
-
+/*
 // no param - initialize 
 $onlyTables = array_key_exists('t', $options);
 
@@ -41,6 +46,12 @@ wfUSInitialize($onlyTables);
 //create synset tables
 print "\nSetup database for query expansion based on synsets.";
 smwfSynsetsInitializeTables();
+print "\n..done";
+*/
+print "\nInitializing table with namespace names for Faceted Search.";
+$fsdb = new FSStorageSQL();
+$fsdb->initDatabaseTables();
+$fsdb->updateNamespaceTable();
 print "\n..done";
 
 
