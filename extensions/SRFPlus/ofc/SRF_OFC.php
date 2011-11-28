@@ -55,9 +55,18 @@ class SRFOFC extends SMWResultPrinter {
 		);
 	}
     
+	static $JSIncluded = false;
     protected function includeJS() {
-		SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
-
+    	if(self::$JSIncluded) return;
+    	
+    	SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
+    	if($this->m_isAjax) {
+    		global $wgOut;
+//    		$wgOut->addScript('<script type="text/javascript">if(typeof(window.ofc_data_objs)=="undefined") window.ofc_data_objs = {data:[],tabs:[],showhide:[]};</script>');
+			// FIXME: Halo QueryInterface will not load resource twice, have to remove data
+    		$wgOut->addScript('<script type="text/javascript">if(typeof(window.inlinequery)=="undefined") window.ofc_data_objs = {data:[],tabs:[],showhide:[]};</script>');
+    	}
+    	
 		// MediaWiki 1.17 introduces the Resource Loader.
 		$realFunction = array( 'SMWOutputs', 'requireResource' );
 		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
@@ -65,7 +74,9 @@ class SRFOFC extends SMWResultPrinter {
 		}
 		else {
 			$this->setupOFCHeader();
-		}		
+		}
+
+		self::$JSIncluded = true;
 	}
     
 	function getScripts() {
@@ -229,9 +240,7 @@ class SRFOFC extends SMWResultPrinter {
         // if there is only one column in the results then stop right away
         if ($res->getColumnCount() == 1) return "";
 
-		if (!$this->m_isAjax) {
-			$this->includeJS();
-		}
+		$this->includeJS();
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
 		// print header
@@ -291,11 +300,13 @@ class SRFOFC extends SMWResultPrinter {
 				$table .= "\t\t<td>";
 				$first = true;
 				$data = '';
-
+				$isNum = false;
+				
+				$text = $ofc_text = '';
 				while ( ($object = $field->getNextObject()) !== false ) {
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
 						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
-						$ofc_text = $object->getLongText($outputmode,$this->getLinker($firstcol));
+						$ofc_text = $object->getTitle()->getPrefixedText();
 						$provURL = Title::newFromText($object->getShortText(SMW_OUTPUT_WIKI))->getFullURL();
 					} else {
 						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
@@ -305,6 +316,7 @@ class SRFOFC extends SMWResultPrinter {
 					if ($first) {
 						if ($object->isNumeric()) { // use numeric sortkey
 							$table .= '<span class="smwsortkey">' . $object->getWikiValue() . '</span>';
+							$isNum = true;
 						}
 						// get first data only
 						$data .= $object->getShortText(SMW_OUTPUT_WIKI);
@@ -512,11 +524,11 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			}
 		}
-		if (!$this->m_isAjax) {
-			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", '<script type="text/javascript">if(typeof(ofc_data_objs)=="undefined") ofc_data_objs = {data:[],tabs:[],showhide:[]};' . $js . '</script>' . "\n");
-		}
-		return !$this->m_isAjax ? $html : $html . '|||' . $js;
-
+		
+		global $wgOut;
+		$wgOut->addScript('<script type="text/javascript">' . $js . '</script>' . "\n");
+		
+		return $html;
 	}
 	private function getLabelText($chart) {
 		$first = true;
