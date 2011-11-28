@@ -838,11 +838,11 @@ pastePreview: function(request, preview) {
     case 'ofc-bar_3d':
     case 'ofc-line':
     case 'ofc-scatterline':
-      var tuple =  request.responseText.split("|||");
-      resultHTML = tuple[0];
-      resultCode = tuple[1];
-            
-      break;
+//      var tuple =  request.responseText.split("|||");
+//      resultHTML = tuple[0];
+//      resultCode = tuple[1];
+//            
+//      break;
     default:
       resultHTML = plainHtml;
       resultCode = null;
@@ -881,11 +881,11 @@ pastePreview: function(request, preview) {
     case 'ofc-bar_3d':
     case 'ofc-line':
     case 'ofc-scatterline':
-      ofc_data_objs = {
-        data:[]
-      };
-      if (resultCode != null) eval(resultCode);
-      document.ofc.js.resetOfc();
+//      ofc_data_objs = {
+//        data:[]
+//      };
+//      if (resultCode != null) eval(resultCode);
+//      ofc.js.resetOfc();
       break;
     case 'tabularform':
       break;
