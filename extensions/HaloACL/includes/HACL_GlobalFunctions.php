@@ -1,27 +1,26 @@
 <?php
+/*
+ * Copyright (C) Vulcan Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /**
  * @file
  * @ingroup HaloACL
- */
-
-/*  Copyright 2009, ontoprise GmbH
- *  This file is part of the HaloACL-Extension.
  *
- *   The HaloACL-Extension is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   The HaloACL-Extension is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/**
  * This file contains global functions that are called from the Halo-Access-Control-List
  * extension.
  *
@@ -209,7 +208,7 @@ function haclfSetupExtension() {
 	$wgExtensionCredits['other'][]= array(
         'name'=>'HaloACL',
         'version'=>HACL_HALOACL_VERSION,
-        'author'=>"Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].",
+        'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
         'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension',
         'description' => 'Protect the content of your wiki.');
 

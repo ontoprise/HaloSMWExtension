@@ -1,5 +1,23 @@
 <?php
 /*
+ * Copyright (C) ontoprise GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
  PreloadText.php
  Fills the edit box of a new article with a text that is given in the URL parameter
  preloadtext as in ?title=Article&preloadtext=This+is+the+initial+content
@@ -16,7 +34,7 @@ $wgExtensionCredits['other'][] = array(
 	'name' => 'Preload text',
 	'version' => '1.0',
 	'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Preload_text',
-	'author' => 'Thomas Schweitzer. Owned by [http://www.ontoprise.de ontoprise GmbH].',   
+	'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
 	'description' => 'Fills the edit box of a new article with a text that is given in the URL parameter "preloadtext"'
 );
  

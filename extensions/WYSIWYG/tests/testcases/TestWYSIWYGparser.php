@@ -1,4 +1,26 @@
 <?php
+/*
+ * Copyright (C) ontoprise GmbH
+ *
+ * Vulcan Inc. (Seattle, WA) and ontoprise GmbH (Karlsruhe, Germany)
+ * expressly waive any right to enforce any Intellectual Property
+ * Rights in or to any enhancements made to this program.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 
 /**
  *
@@ -6,7 +28,7 @@
  * @ingroup WYSIWYGTests
  *
  * description...
- * @author OP
+
  */
 class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
 
@@ -61,8 +83,8 @@ class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
 
     /* because of the not installed RichMedia extension this test doen't make sense
     function testPage3() {
-        $text = 'This link [[Document:Richmedia.doc|Richmedia.doc]] is created when you upload an document with the [http://smwformum.ontoprise.com Richmedia extension].';
-        $expected = '<p>This link <a title="Richmedia.doc" _fck_mw_type="Document" _fck_mw_filename="Richmedia.doc" _fcksavedurl="Document:Richmedia.doc" href="Richmedia.doc">Richmedia.doc</a> is created when you upload an document with the <a href="http://smwformum.ontoprise.com">Richmedia extension</a>.
+        $text = 'This link [[Document:Richmedia.doc|Richmedia.doc]] is created when you upload an document with the [http://smwforum.ontoprise.com Richmedia extension].';
+        $expected = '<p>This link <a title="Richmedia.doc" _fck_mw_type="Document" _fck_mw_filename="Richmedia.doc" _fcksavedurl="Document:Richmedia.doc" href="Richmedia.doc">Richmedia.doc</a> is created when you upload an document with the <a href="http://smwforum.ontoprise.com">Richmedia extension</a>.
 </p>';
         $res = $this->parsePage($text);
         $this->assertEquals($expected, $res);

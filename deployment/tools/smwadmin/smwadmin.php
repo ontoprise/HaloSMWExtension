@@ -1,19 +1,20 @@
 <?php
-
-/*  Copyright 2009, ontoprise GmbH
+/*
+ * Copyright (C) Vulcan Inc.
  *
- *   The deployment tool is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   The deployment tool is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 /**
@@ -25,8 +26,7 @@
  *
  * Installation tool.
  *
- * @author: Kai K�hn / ontoprise / 2009
- *
+ * @author: Kai K�hn
  *
  */
 define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}}');
@@ -774,7 +774,7 @@ if (count($installer->getErrors()) === 0) {
 
 function dffShowHelp() {
 	global $dfgOut;
-	$dfgOut->outputln( "Wiki administration tool utility v".DEPLOY_FRAMEWORK_VERSION_AND_BUILD.", Ontoprise 2009-2011");
+	$dfgOut->outputln( "Wiki administration tool utility v".DEPLOY_FRAMEWORK_VERSION_AND_BUILD);
 	$dfgOut->outputln();
 	$dfgOut->outputln( "Usage: smwadmin [ -i | -d ] <bundle>[-<version>] [ additional-options ]");
 	$dfgOut->outputln( "       smwadmin -u [ <bundle>[-<version>] ] [ additional-options ]");

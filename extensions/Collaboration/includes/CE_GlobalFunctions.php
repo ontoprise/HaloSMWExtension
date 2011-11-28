@@ -1,19 +1,20 @@
 <?php
-/*  Copyright 2009, ontoprise GmbH
- *  This file is part of the Collaboration-Extension.
+/*
+ * Copyright (C) Vulcan Inc.
  *
- *   The Collaboration-Extension is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   The Collaboration-Extension is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 /**
@@ -103,7 +104,7 @@ function cefSetupExtension() {
 	$wgExtensionCredits['other'][]= array(
 		'name' => 'Collaboration',
 		'version' => CE_VERSION,
-		'author' => "Benjamin Langguth and others. Owned by [http://www.ontoprise.de ontoprise GmbH].",
+		'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
 		'url' => 'http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension',
 		'description' => 'Some fancy collaboration tools.'
 		);

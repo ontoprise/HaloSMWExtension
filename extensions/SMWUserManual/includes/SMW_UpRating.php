@@ -1,10 +1,28 @@
 <?php
+/*
+ * Copyright (C) Vulcan Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /**
  * Ultrapedia provenance rating
  *
  * @file
  * @ingroup Ultrapedia
- * @author: Stephan Robotta / ontoprise / 2009
+ * @author: Stephan Robotta
  */
 
 // no valid entry point for the extension
@@ -16,8 +34,8 @@ define('SMW_UP_RATING_VERSION', '1.1');
 $wgExtensionCredits['other'][] = array(
     'name' => 'SMW Ultrapedia Rating',
 	'version'=>SMW_UP_RATING_VERSION,
-    'author' => 'Owned by [http://www.ontoprise.de ontoprise GmbH].',
-    'url' => 'http://sourceforge.net/projects/halo-extension/',
+	'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
+	'url' => 'http://sourceforge.net/projects/halo-extension/',
     'description' => 'Rate data and send feedback to UP'.
         'and Wikipedia for improvements'
 );

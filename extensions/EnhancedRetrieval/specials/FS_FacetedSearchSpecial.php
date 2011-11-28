@@ -1,30 +1,27 @@
 <?php
+/*
+ * Copyright (C) Vulcan Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /**
  * @file
  * @ingroup FS_Special
- */
-
-/*  Copyright 2011, ontoprise GmbH
-* 
-*   This file is part of the EnhancedRetrieval-Extension.
-*
-*   The EnhancedRetrieval-Extension is free software; you can redistribute 
-*   it and/or modify it under the terms of the GNU General Public License as 
-*   published by the Free Software Foundation; either version 3 of the License, 
-*   or (at your option) any later version.
-*
-*   The EnhancedRetrieval-Extension is distributed in the hope that it will 
-*   be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- * A special page for doing a faceted search on the semantic data in the wiki.
  *
+ * A special page for doing a faceted search on the semantic data in the wiki.
  *
  * @author Thomas Schweitzer
  */

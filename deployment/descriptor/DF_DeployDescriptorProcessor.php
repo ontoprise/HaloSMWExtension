@@ -1,18 +1,20 @@
 <?php
-/*  Copyright 2009, ontoprise GmbH
+/*
+ * Copyright (C) Vulcan Inc.
  *
- *   The deployment tool is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   The deployment tool is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 /**
@@ -22,7 +24,7 @@
  * Applies changes to the the LocalSettings.php.
  * Modifications are specified in the deploy descriptor.
  *
- *  @author: Kai K�hn / Ontoprise / 2009
+ *  @author: Kai K�hn
  *
  */
 
@@ -493,7 +495,7 @@ class DeployDescriptionProcessor {
 /**
  * Represents a configuration change in the localsettings file.
  *
- * @author: Kai K�hn / Ontoprise / 2009
+ * @author: Kai K�hn
  *
  */
 abstract class ConfigElement {
@@ -725,7 +727,7 @@ class VariableConfigElement extends ConfigElement {
 /**
  * Represents a require/include statement in the settings.
  *
- * @author: Kai K�hn / Ontoprise / 2009
+ * @author: Kai K�hn
  *
  */
 class RequireConfigElement extends ConfigElement {
@@ -759,7 +761,7 @@ class RequireConfigElement extends ConfigElement {
 /**
  * A generic replacement command. Useful to remove bugs.
  *
- * @author: Kai Kuehn / Ontoprise / 2010
+ * @author: Kai Kuehn
  *
  */
 class ReplaceConfigElement extends ConfigElement {
@@ -782,7 +784,7 @@ class ReplaceConfigElement extends ConfigElement {
 /**
  * Represents a arbitrary PHP statement in the settings.
  *
- * @author: Kai K�hn / Ontoprise / 2009
+ * @author: Kai K�hn
  *
  */
 class PHPConfigElement extends ConfigElement {
@@ -817,7 +819,7 @@ class PHPConfigElement extends ConfigElement {
  *
  * e.g. enableSemantics('http://localhost:8080', true);
  *
- * @author: Kai K�hn / Ontoprise / 2009
+ * @author: Kai K�hn
  *
  */
 class FunctionCallConfigElement extends ConfigElement {

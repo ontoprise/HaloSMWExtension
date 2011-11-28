@@ -1,4 +1,22 @@
 <?php
+/*
+ * Copyright (C) Vulcan Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 /**
  *
  * Created on 13.09.2007
@@ -336,7 +354,7 @@ function smwgHaloSetupExtension() {
 	$wgExtensionCredits['semantic'][] = array(
 		'name'=>'SMWHalo&nbsp;Extension', 
 		'version'=>SMW_HALO_VERSION,
-		'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn, Markus&nbsp;Nitsche, J&ouml;rg Heizmann, Frederik&nbsp;Pfisterer, Robert Ulrich, Daniel Hansch, Moritz Weiten and Michael Erdmann. Owned by [http://www.ontoprise.de ontoprise GmbH].", 
+		'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
 		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual',
 		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
 		);
