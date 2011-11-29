@@ -30,7 +30,7 @@
  *
  */
 define('DEPLOY_FRAMEWORK_VERSION', '{{$VERSION}}');
-define('DEPLOY_FRAMEWORK_VERSION_AND_BUILD', '{{$VERSION}} [B${env.BUILD_NUMBER}]');
+define('DEPLOY_FRAMEWORK_VERSION_AND_BUILD', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 
 // termination constants

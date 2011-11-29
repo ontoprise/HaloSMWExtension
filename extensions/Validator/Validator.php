@@ -24,8 +24,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
-
-define( 'Validator_VERSION', '0.4.10 [B${env.BUILD_NUMBER}]' );
+define( 'Validator_VERSION', '0.4.10 [B{{$BUILDNUMBER}}]' );
 
 // Register the internationalization file.
 $wgExtensionMessagesFiles['Validator'] = dirname( __FILE__ ) . '/Validator.i18n.php';

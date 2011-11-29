@@ -17,7 +17,7 @@
  *
  */
 
-define( 'DF_VERSION', '{{$VERSION}} [B${env.BUILD_NUMBER}]' );
+define( 'DF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
 define ('DF_WIKICONTEXT', 1);
 
 $wgExtensionFunctions[] = 'dfgSetupExtension';
