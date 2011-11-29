@@ -109,7 +109,6 @@ function initToolTips(){
 function init(){
   isInit = true;  
   initialize_qi();
-  qihelper.initResultFormatLoading();
   initToolTips();
 }
   
