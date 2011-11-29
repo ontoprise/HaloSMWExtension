@@ -14,7 +14,7 @@
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Enhanced_Retrieval_Extension
 		</helpurl>
 		<dependencies>
-            <depencency from="1.6.0" to="1.6.0">smwhalo</depencency>
+            <dependency from="1.6.0" to="1.6.0">smwhalo</dependency>
 		</dependencies>
 		<notice>
 			Please copy the files in /EnhancedRetrieval/SOLR/ 
