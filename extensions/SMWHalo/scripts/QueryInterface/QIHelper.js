@@ -76,6 +76,7 @@ QIHelper.prototype = {
     this.propertyAddClicked = false;
     this.colNameEntered = false;
     this.srfInitMethods = [];
+    this.originalDocumentReady = null;
 
     var qiStatus = $$('#askQI #qistatus')[0];
     if(qiStatus)
@@ -147,6 +148,7 @@ QIHelper.prototype = {
 
   //override $initResultFormatLoading(document).ready and addOnloadHook methods to save the functions passed to them as arguments
   initResultFormatLoading: function(){
+    this.originalDocumentReady = jQuery.fn.ready;
     jQuery.fn.ready = this.documentReady;
     addOnloadHook = this.documentReady;
   },
@@ -155,11 +157,9 @@ QIHelper.prototype = {
     if(typeof someFunction === 'function' && !qihelper.isFunctionInArray(someFunction, qihelper.srfInitMethods)){
       qihelper.srfInitMethods.push(someFunction);
     }
-    try{ //those functions have to be executed in the first time when document is ready
-      someFunction();
-    }
-    catch(x){
-      mw.log('EXCEPTION: ' + x);
+    //if this is skin initialization then invoke the original method (init menus, images etc when page loads)
+    if(someFunction.toString().indexOf('smwh_Skin = new Smwh_Skin') > -1){
+      qihelper.originalDocumentReady.apply(document, arguments);
     }
   },
 

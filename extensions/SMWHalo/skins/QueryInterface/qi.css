@@ -682,3 +682,7 @@ button.btnhov{
 #breadcrumbsDiv .qibuttonEmp:first-child{
   font-weight: bold;
 }
+
+#bodyContent{
+  overflow: hidden;
+}

@@ -437,12 +437,6 @@ function toJsonCompatibleArray($params) {
 function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = true) {
   global $wgOut, $wgParser, $wgAllowImageTag, $wgAllowExternalImages;
 
-//  $oldAllowImageTag = $wgAllowImageTag;
-//  $oldAllowExternalImages = $wgAllowExternalImages;
-//
-//  $wgAllowImageTag = true;
-//  $wgAllowExternalImages = true;
-
 //  $parser = new Parser();
   $title = Title::newFromText($page);
 
@@ -467,9 +461,6 @@ function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = tr
     $result .= '</script>';
     $result .= $wgOut->getScript();
   }
-  
-//  $wgAllowImageTag = $oldAllowImageTag;
-//  $wgAllowExternalImages = $oldAllowExternalImages;
 
   return $result;
 }
