@@ -40,35 +40,35 @@ class SCStorage {
 		}
 	}
 
-}
 
-//--- Public methods ---
 
-/**
- * Returns the single instance of this class.
- *
- * @return WSStorage
- * 		The single instance of this class.
- */
-public static function getInstance() {
-	if (!isset(self::$mInstance)) {
-		$c = __CLASS__;
-		self::$mInstance = new $c;
+	//--- Public methods ---
+
+	/**
+	 * Returns the single instance of this class.
+	 *
+	 * @return WSStorage
+	 * 		The single instance of this class.
+	 */
+	public static function getInstance() {
+		if (!isset(self::$mInstance)) {
+			$c = __CLASS__;
+			self::$mInstance = new $c;
+		}
+
+		return self::$mInstance;
 	}
 
-	return self::$mInstance;
-}
-
-/**
- * Returns the actual database.
- *
- * @return object
- * 		The object to access the database.
- */
-public static function getDatabase() {
-	self::getInstance(); // Make sure, singleton is initialized
-	return self::$mDatabase;
-}
+	/**
+	 * Returns the actual database.
+	 *
+	 * @return object
+	 * 		The object to access the database.
+	 */
+	public static function getDatabase() {
+		self::getInstance(); // Make sure, singleton is initialized
+		return self::$mDatabase;
+	}
 
 }
 
