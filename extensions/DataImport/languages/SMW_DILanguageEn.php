@@ -347,7 +347,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 		SMW_NS_WEB_SERVICE       => 'WebService',
 		SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk',
 		SMW_NS_TERM_IMPORT => 'TermImport',
-		SMW_NS_TERM_IMPORT_TALK => 'TermImport_talk'
+		SMW_NS_TERM_IMPORT_TALK => 'TermImport_talk',
 		NS_TI_EMAIL => 'E-mail',
 	    NS_TI_EMAIL_TALK => 'E-mail_talk'
 	);
