@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  * Copyright (C) Vulcan Inc.
  *
@@ -25,7 +25,7 @@
  */
 
 require_once 'CommonClasses.php';
-require_once 'TestArticles.php';
+//require_once 'TestArticles.php';
 
 class TestFacetedSearchIndexerSuite extends PHPUnit_Framework_TestSuite
 {
@@ -51,7 +51,7 @@ class TestFacetedSearchIndexerSuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
 		// Temporarily disabled for speeding up tests
-//        $this->mArticleManager->deleteArticles("U1");
+        $this->mArticleManager->deleteArticles("U1");
         
 	}
 	
@@ -257,7 +257,7 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	
     	// Send a query for all documents and asserts that all articles were added.
     	$qr = $indexer->sendRawQuery("q=*:*");
-    	$expResult = 'numFound="165"';
+    	$expResult = 'numFound="168"';
     	$this->assertContains($expResult, $qr, "The index does not contain the expected number of documents.");
     }
 
@@ -323,7 +323,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     public function providerForIndexContent() {
     	return array(
     		#0
-    		array("q=*:*", array('numFound="165"')),
+    		array("q=*:*", array('numFound="168"')),
     		#1
     		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0&sort=smwh_title_s%20asc",
     		      array(
@@ -366,8 +366,8 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      array(
     		      	'"smwh_Located_in_t",34',
     		      	'"smwh_Located_in_state_t",22',
-    		        '"numFound":165',
-    		      	'"smwh_Modification_date_xsdvalue_dt",165',
+    		        '"numFound":168',
+    		      	'"smwh_Modification_date_xsdvalue_dt",168',
     		      	'"smwh_Building_name_xsdvalue_t",34',
     		      	'"smwh_Image_xsdvalue_t",34',
     		      	'"smwh_Height_stories_xsdvalue_d",34',
@@ -455,6 +455,13 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
 					'"smwh_full_text":"Dies ist die Kategorie Übung."',
 					'"smwh_full_text":"Dieses Property verweist auf die nächste Übung.\n\n[[has type::Page]]"',
 					'"numFound":4'
+    		      )
+    		),
+    		#11 - Search for a property that links to a page in the user namespace
+    		array("q=smwh_title_s:ThomasPage&json.nl=map&fl=smwh_Created_By_t%2Csmwh_Modification_date_xsdvalue_dt&wt=json",
+    		      array(
+					'"smwh_Created_By_t":["User:Thomas","User_talk:Thomas","Thomas"]',
+					'"numFound":1'
     		      )
     		),
     		
@@ -719,6 +726,17 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
     		      	'"numFound":3'
        		    )
     		),
+    		#10 - Search for a property that links to a page in the user namespace
+    		array(
+    			  array("edit" =>
+    				  array("MichaelsPage" => "[[Created By::User:Michael]][[Created By::User talk:Michael]][[Created By::Michael]]")),
+    			  "q=smwh_title_s:MichaelsPage&json.nl=map&fl=smwh_Created_By_t%2Csmwh_Modification_date_xsdvalue_dt&wt=json",
+    		      array(
+					'"smwh_Created_By_t":["User:Michael","User_talk:Michael","Michael"]',
+					'"numFound":1'
+    		      )
+    		),
+    		
     	);
     }
     

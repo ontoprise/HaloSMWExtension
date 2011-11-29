@@ -3596,4 +3596,46 @@
 [[Category:Übung]]</text>
     </revision>
   </page>
+  <page>
+    <title>User:Thomas</title>
+    <id>226</id>
+    <revision>
+      <id>241</id>
+      <timestamp>2011-11-28T16:44:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;This is the page of user Thomas.&quot;</comment>
+      <text xml:space="preserve" bytes="32">This is the page of user Thomas.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Created By</title>
+    <id>227</id>
+    <revision>
+      <id>242</id>
+      <timestamp>2011-11-28T16:47:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[has type::Page]]&quot;</comment>
+      <text xml:space="preserve" bytes="18">[[has type::Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ThomasPage</title>
+    <id>228</id>
+    <revision>
+      <id>243</id>
+      <timestamp>2011-11-28T16:48:58Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;[[Created By::User:Thomas]]&quot;</comment>
+      <text xml:space="preserve" bytes="27">[[Created By::User:Thomas]] [[Created By::User talk:Thomas]] [[Created By::Thomas]]</text>
+    </revision>
+  </page>
 </mediawiki>
