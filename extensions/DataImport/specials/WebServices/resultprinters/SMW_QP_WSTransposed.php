@@ -36,7 +36,7 @@ class SMWQPWSTransposed extends SMWResultPrinter {
 
 	}
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText(SMWQueryResult $res, $outputmode ) {
 
 		//transpose result
 		$results = array();

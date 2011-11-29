@@ -23,7 +23,7 @@ class SMWQPWSTIXML extends SMWResultPrinter {
 	protected $mSep = ',';
 	protected $mTemplate = false;
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText(SMWQueryResult $res, $outputmode ) {
 
 		$result = "<?xml version='1.0'?>";
 		$result .= "<tixml xmlns='http://www.ontoprise.de/smwplus#'>";

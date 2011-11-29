@@ -20,7 +20,7 @@
 
 class SMWQPWSSimpleTable extends SMWResultPrinter {
 
-	protected function getResultText( $res, $outputmode ) {
+	protected function getResultText(SMWQueryResult $res, $outputmode ) {
 		// print header
 		$result = '<table class="smwtable" width="100%">'."\n";
 			  
