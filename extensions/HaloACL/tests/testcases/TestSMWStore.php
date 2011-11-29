@@ -125,7 +125,7 @@ This property is not accessible by RestrictedUser.
 
 [[has domain and range::; | ]]
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -135,7 +135,7 @@ There are no access restrictions for this property.
 
 [[has domain and range::; | ]]
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -658,13 +658,14 @@ class TestSMWStore extends PHPUnit_Framework_TestCase {
 	 * processor.
 	 */
 	function testSPARQLGetQueryResults() {
+		define('SMWH_FORCE_TS_UPDATE', 1);
 		global $smwgHaloTripleStoreGraph;
 		
 		$query = <<<QUERY
 SELECT ?s ?o
   WHERE {
     GRAPH <$smwgHaloTripleStoreGraph> {
-      ?s prop:NormalProperty ?o .
+      ?s property:NormalProperty ?o .
     }
   }
 QUERY;
@@ -739,7 +740,7 @@ QUERY;
 SELECT ?s ?o
   WHERE {
     GRAPH <$smwgHaloTripleStoreGraph> {
-      ?s prop:ProtectedProperty ?o .
+      ?s property:ProtectedProperty ?o .
     }
   }
 QUERY;
@@ -826,9 +827,9 @@ QUERY;
 SELECT ?s ?o
   WHERE {
     GRAPH <$smwgHaloTripleStoreGraph> {
-      { ?s prop:NormalProperty ?o . }
+      { ?s property:NormalProperty ?o . }
       UNION
-      { ?s prop:ProtectedProperty ?o . }
+      { ?s property:ProtectedProperty ?o . }
 	}
   }
 QUERY;
@@ -950,8 +951,8 @@ QUERY;
     function providerForGetRecordValues() {
     	return array(
     		// Article name, property, index of property value, expected
-    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", 0, "Category:Person"),
-    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", 1, "Category:Dog"),
+    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", "Has_domain", "Category:Person"),
+    		array("Property:PropWithDomainAndRange", "Has_domain_and_range", "Has_range", "Category:Dog"),
     	);
     }
 	
@@ -961,25 +962,24 @@ QUERY;
 	 */
 	public function testGetRecordValues($name, $property, $index, $expected) {
 		$store = smwfGetStore();
-		$subject = Title::newFromText($name);
+		$subject = SMWDIWikiPage::newFromTitle(Title::newFromText($name));
 		$semanticData = $store->getSemanticData($subject);
 		$properties = $semanticData->getProperties();
 		
-		if(array_key_exists($property, $properties)) {
+		if (array_key_exists($property, $properties)) {
 			$values = $semanticData->getPropertyValues($properties[$property]);
 											
 			if (is_array($values)) {
 				$idx = array_keys($values);
 				$idx = $idx[0];
-				if($values[$idx] instanceof SMWRecordValue){
-					$dVs = $values[$idx]->getDVs();
-					if(count($dVs) >= $index+1){
-						$idx = array_keys($dVs);
-						$idx = $idx[$index];
-						$result = $dVs[$idx]->getShortWikiText();
-						$this->assertEquals($expected, $result);
-					}
-				}
+				$this->assertInstanceOf("SMWDIContainer", $values[$idx]);
+				$dVs = $values[$idx]->getSemanticData();
+				$prop = SMWDIProperty::newFromUserLabel($index);
+				$propVals = $dVs->getPropertyValues($prop);
+				$this->assertEquals(1, count($propVals), "Expected exactly one value for property $index.");
+				$val = array_shift($propVals);
+				$result = $val->getTitle()->getFullText();
+				$this->assertEquals($expected, $result);
 			}
 		}
 	}
@@ -996,7 +996,7 @@ QUERY;
 		
 		// All properties in the page "ProtectedPage" are not accessible
 		$title = Title::newFromText("ProtectedPage");
-		$props = $store->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
+		$props = $store->getSemanticData(SMWDIWikiPage::newFromTitle($title));
 		
 		if ($normalUser) {
 			$this->checkPropertiesAndValues($props, array(
@@ -1010,7 +1010,7 @@ QUERY;
 		
 		// Some properties in "PageWithProtectedProperties" are protected
 		$title = Title::newFromText("PageWithProtectedProperties");
-		$props = $store->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
+		$props = $store->getSemanticData(SMWDIWikiPage::newFromTitle($title));
 
 		if ($normalUser) {
 			$this->checkPropertiesAndValues($props, array(
@@ -1025,7 +1025,7 @@ QUERY;
 		
 		// There are no properties in "NormalPage"
 		$title = Title::newFromText("NormalPage");
-		$props = $store->getSemanticData(SMWWikiPageValue::makePageFromTitle($title));
+		$props = $store->getSemanticData(SMWDIWikiPage::newFromTitle($title));
 
 		$this->checkPropertiesAndValues($props, array(), "doTestGetSemanticData-3, any user");
 		
@@ -1043,9 +1043,11 @@ QUERY;
     	$wgUser = User::newFromId(User::idFromName($testConfig['user']));
 		
 		$store = smwfGetStore();
-		$subject = Title::newFromText($testConfig['page']);
+		$t = Title::newFromText($testConfig['page']);
+		$subject = $t == null ? null : SMWDIWikiPage::newFromTitle($t);
+		
 		$props = $store->getPropertyValues($subject, 
-		                                   SMWPropertyValue::makeUserProperty($testConfig['property']));
+		                                   SMWDIProperty::newFromUserLabel($testConfig['property']));
 		$this->checkPropertyValues($props, $testConfig['values'], 
 								   "doTestGetPropertyValues:\n".
 								   "\tUser: {$testConfig['user']}\n".
@@ -1064,7 +1066,7 @@ QUERY;
     	$wgUser = User::newFromId(User::idFromName($testConfig['user']));
 		
 		$store = smwfGetStore();
-		$subjects = $store->getPropertySubjects(SMWPropertyValue::makeProperty($testConfig['property']), null);
+		$subjects = $store->getPropertySubjects(SMWDIProperty::newFromUserLabel($testConfig['property']), null);
 		
 		$subjectNames = array();
 		foreach ($subjects as $s) {
@@ -1094,12 +1096,12 @@ QUERY;
     	$wgUser = User::newFromId(User::idFromName($testConfig['user']));
 		
 		$store = smwfGetStore();
-		$props = $store->getProperties(Title::newFromText($testConfig['page']), null);
+		$props = $store->getProperties(SMWDIWikiPage::newFromTitle(Title::newFromText($testConfig['page'])), null);
 		
 		$propNames = array();
 		foreach ($props as $p) {
-			if ($p->isShown()) {
-				$propNames[] = $p->getWikiPageValue()->getTitle()->getText();
+			if ($p->isShown() && $p->isUserDefined()) {
+				$propNames[] = $p->getDiWikiPage()->getTitle()->getText();
 			}
 		}
 		$expectedProps = $testConfig['values'];
@@ -1128,14 +1130,14 @@ QUERY;
 		$store = smwfGetStore();
 		
 		$t = Title::newFromText($testConfig['object']);
-		$obj = SMWWikiPageValue::makePageFromTitle($t);
+		$obj = SMWDiWikiPage::newFromTitle($t);
 		
 		$props = $store->getInProperties($obj);
 		
 		$propNames = array();
 		foreach ($props as $p) {
 			if ($p->isShown()) {
-				$propNames[] = $p->getWikiPageValue()->getTitle()->getText();
+				$propNames[] = $p->getDiWikiPage()->getTitle()->getText();
 			}
 		}
 		$expectedProps = $testConfig['values'];
@@ -1170,8 +1172,8 @@ QUERY;
     	$propNames = array();
     	foreach ($propUsage as $propAndCount) {
     		$prop = $propAndCount[0];
-    		if ($prop->isVisible()) {
-    			$propNames[] = $prop->getText();
+    		if ($prop->isShown()) {
+    			$propNames[] = $prop->getKey();
     		}
     	}
     	
@@ -1311,7 +1313,7 @@ QUERY;
 		$result = array();
 		while ( $row = $res->getNext() ) {
 			foreach ($row as $cell) {
-				$subject = $cell->getResultSubject()->getText();
+				$subject = $cell->getResultSubject()->getTitle()->getText();
 				if (!array_key_exists($subject, $result)) {
 					$result[$subject] = array();
 				}
@@ -1403,8 +1405,8 @@ QUERY;
 	private function getPropertyNames($semData) {
 		$propNames = array();
 		foreach($semData->getProperties() as $p) {
-			if ($p->isShown()) {
-				$wpv = $p->getWikiPageValue();
+			if ($p->isShown() && $p->isUserDefined()) {
+				$wpv = $p->getDiWikiPage();
 				$propNames[] = $wpv->getTitle()->getText();
 			}
 		}
@@ -1430,13 +1432,13 @@ QUERY;
 		foreach ($expected as $expProp => $expValues) {
 			$this->assertContains($expProp, $propNames, "*** Assertion failed for $testDescr ***");
 			
-			$vals = $semData->getPropertyValues(SMWPropertyValue::makeUserProperty($expProp));
+			$vals = $semData->getPropertyValues(SMWDIProperty::newFromUserLabel($expProp));
 			$this->assertEquals(count($vals), count($expValues), "*** Assertion failed for $testDescr ***");
 			
-			// The values are of type SMWWikiPageValue => get their names
+			// The values are of type SMWDIWikiPage => get their names
 			$stringVals = array();
 			foreach ($vals as $value) {
-				$stringVals[] = $value->getText();
+				$stringVals[] = $value->getTitle()->getText();
 			}
 			foreach ($expValues as $expVal) {
 				$this->assertContains($expVal, $stringVals, "*** Assertion failed for $testDescr ***");
@@ -1462,7 +1464,7 @@ QUERY;
 		
 		$strValues = array();
 		foreach ($values as $v) {
-			$strValues[] = $v->getWikiValue();
+			$strValues[] = $v->getDBkey();
 		}
 		foreach ($expectedValues as $v) {
 			$this->assertContains($v, $strValues, "*** Expected value missing in $testDescr ***");

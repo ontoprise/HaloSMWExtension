@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*
  * Copyright (C) Vulcan Inc.
  *
@@ -199,8 +199,8 @@ ACL
 
     private function createArticles() {
         $this->mArticleManager = new ArticleManager();
-        $this->mArticleManager->createArticles($this->mArticles, "U1");
         $this->mArticleManager->createACLBaseArticles("U1");
+        $this->mArticleManager->createArticles($this->mArticles, "U1");
     }
  	
 }
@@ -1075,7 +1075,7 @@ class TestDynamicAssignees extends PHPUnit_Framework_TestCase {
 <<<ACL
 This is the property for team members.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Team; Category:User| ]]
 [[has domain and range::Category:Team; Category:ACL/Group| ]]
 
@@ -1086,7 +1086,7 @@ ACL
 <<<ACL
 This is the property for project members.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Team; Category:User| ]]
 [[has domain and range::Category:Team; Category:ACL/Group| ]]
 
@@ -1554,7 +1554,7 @@ class TestDynamicMembers extends PHPUnit_Framework_TestCase {
 <<<ACL
 This is the property for team members.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Team; Category:User| ]]
 [[has domain and range::Category:Team; Category:ACL/Group| ]]
 
@@ -1565,7 +1565,7 @@ ACL
 <<<ACL
 This is the property for project members.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Team; Category:User| ]]
 [[has domain and range::Category:Team; Category:ACL/Group| ]]
 
@@ -2005,7 +2005,7 @@ class TestDynamicMembersHierarchy extends PHPUnit_Framework_TestCase {
 <<<ACL
 This is the property for members.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::; Category:User| ]]
 [[has domain and range::; Category:ACL/Group| ]]
 
@@ -2336,7 +2336,7 @@ class TestMembersAssigneesExample extends PHPUnit_Framework_TestCase {
 <<<ACL
 This is the property for managers of a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Project; Category:Person| ]]
 
 ACL
@@ -2346,7 +2346,7 @@ ACL
 <<<ACL
 This is the property for members of a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Project; Category:Person| ]]
 [[has domain and range::Category:Project; Category:Group| ]]
 
@@ -2357,7 +2357,7 @@ ACL
 <<<ACL
 This is the property for persons who work for something e.g. a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Person; | ]]
 [[has domain and range::Category:Person; | ]]
 
@@ -2546,7 +2546,7 @@ class TestShowDynamicMembers extends PHPUnit_Framework_TestCase {
 <<<ACL
 This is the property for managers of a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Project; Category:Person| ]]
 
 ACL
@@ -2556,7 +2556,7 @@ ACL
 <<<ACL
 This is the property for members of a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Project; Category:Person| ]]
 [[has domain and range::Category:Project; Category:Group| ]]
 
@@ -2567,7 +2567,7 @@ ACL
 <<<ACL
 This is the property for persons who work for something e.g. a project.
 
-[[has type::Type:Page| ]]
+[[has type::Page| ]]
 [[has domain and range::Category:Person; | ]]
 [[has domain and range::Category:Person; | ]]
 

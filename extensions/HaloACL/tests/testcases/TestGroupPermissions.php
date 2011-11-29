@@ -562,26 +562,26 @@ class TestMWGroupPermissionsUI extends PHPUnit_Framework_TestCase {
 		$expected = <<<JSON
 [			
 	{
-		attributes: {
-			id:"haclgt--1"
+		"attributes": {
+			"id":"haclgt--1"
 		},
-		data: "*Allusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
+		"data": "*Allusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
 	},
 	{
-		attributes: {
-			id: "haclgt--2"
+		"attributes": {
+			"id": "haclgt--2"
 		},
-		data: "*Registeredusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
+		"data": "*Registeredusers*<spanclass=\"tree-haloacl-checknormal\"></span>"
 	},
 	{
-		attributes: { 
-			id : "haclgt-$gid" 
+		"attributes": { 
+			"id" : "haclgt-$gid" 
 		}, 
-		data: "Company <span class=\"tree-haloacl-permitted-features\"title=\"Thisgrouphasthefollowingpermission(s):Edit,Read,Upload\">
+		"data": "Company <span class=\"tree-haloacl-permitted-features\"title=\"Thisgrouphasthefollowingpermission(s):Edit,Read,Upload\">
 		               </span>
 		               <span class=\"tree-haloacl-checkchecked\">
 		               </span>", 
-		state: "closed"
+		"state": "closed"
 	}
 ]
 JSON;
@@ -595,33 +595,33 @@ JSON;
 		$expected = <<<JSON
 [			
 	{
-		attributes: { 
-			id : "haclgt-43" 
+		"attributes": { 
+			"id" : "haclgt-43" 
 		}, 
-		data: "Marketing <span class=\"tree-haloacl-permitted-features\" 
+		"data": "Marketing <span class=\"tree-haloacl-permitted-features\" 
 		                      title=\"This group has the following permission(s): Upload\">
 		                 </span>
 				<span class=\"tree-haloacl-check checked\"></span>"
 	},			
 	{
-		attributes: { 
-			id : "haclgt-44" 
+		"attributes": { 
+			"id" : "haclgt-44" 
 		}, 
-		data: "Development <span class=\"tree-haloacl-permitted-features\" 
+		"data": "Development <span class=\"tree-haloacl-permitted-features\" 
 		                         title=\"This group has the following permission(s): Read\">
 		                   </span>
 				<span class=\"tree-haloacl-check normal\"></span>"
-		,state: "closed"
+		,"state": "closed"
 	},
 	{
-		attributes: { 
-			id : "haclgt-47" 
+		"attributes": { 
+			"id" : "haclgt-47" 
 		}, 
-		data: "Services <span class=\"tree-haloacl-permitted-features\" 
+		"data": "Services <span class=\"tree-haloacl-permitted-features\" 
 		                      title=\"This group has the following permission(s): Edit\">
 		                </span>
 				<span class=\"tree-haloacl-check crossed\"></span>"
-		,state: "closed"
+		,"state": "closed"
 	}
 ]
 JSON;

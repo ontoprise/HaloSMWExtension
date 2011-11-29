@@ -1,21 +1,21 @@
 <?php
 /*
  * Copyright (C) Vulcan Inc.
- *
+*
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+*   it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
+*   (at your option) any later version.
+*
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
  * You should have received a copy of the GNU General Public License along
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
- */
+*/
 
 /**
  * @file
@@ -518,7 +518,7 @@ class HACLEvaluator {
 		$protectionActive = NULL;
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				$wpv = $prop->getWikiPageValue();
+				$wpv = $prop->getDiWikiPage();
 				if (!$wpv) {
 					// There's no page for the property
 					continue;
@@ -607,7 +607,7 @@ class HACLEvaluator {
 	
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				$prop = $prop->getWikiPageValue();
+				$prop = $prop->getDiWikiPage();
 				if ($prop) {
 					$prop = $prop->getTitle();
 					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
@@ -623,7 +623,7 @@ class HACLEvaluator {
 	
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				$prop = $prop->getWikiPageValue();
+				$prop = $prop->getDiWikiPage();
 				if ($prop) {
 					$prop = $prop->getTitle();
 					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
@@ -657,7 +657,14 @@ class HACLEvaluator {
 		
 		$protected = false;
 		$pt = $propertyValue->getProperty();
-		$pt = $pt->getWikiPageValue()->getTitle();
+		if (!is_null($pt)) {
+			$pt = $pt->getDiWikiPage();
+		}
+		if (is_null($pt)) {
+			// This is a builtin property which can not be protected.
+			return true;
+		}
+		$pt = $pt->getTitle();
 		if (!self::hasPropertyRight($pt, $wgUser, HACLRight::READ)) {
 			// The property is protected
 			$protected = true;
@@ -1221,7 +1228,7 @@ class HACLEvaluator {
 		
 		// We need ALL properties of the title
 		$pa = $store->setProtectionActive(false);
-		$semdata = smwfGetStore()->getSemanticData($t);
+		$semdata = smwfGetStore()->getSemanticData(SMWDIWikiPage::newFromTitle($t));
 		$store->setProtectionActive($pa);
 		$props = $semdata->getProperties();
 
@@ -1231,7 +1238,7 @@ class HACLEvaluator {
 //				continue;
 //			}
 			// Check if a property is protected
-			$wpv = $p->getWikiPageValue();
+			$wpv = $p->getDiWikiPage();
 			if (!$wpv) {
 				// no page for property
 				continue;

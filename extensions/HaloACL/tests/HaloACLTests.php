@@ -37,16 +37,17 @@ class HaloACLTests
     public static function suite()
     {
 		define('UNIT_TEST_RUNNING', true);
+		define('SMWH_FORCE_TS_UPDATE', true);
     	$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
-    	$suite->addTestSuite("TestDatabaseSuite");
-    	$suite->addTestSuite("TestParserFunctionsSuite");
-    	$suite->addTestSuite("TestUserCanHookSuite");
-    	$suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
-////    	$suite->addTestSuite("TestLDAPStorageSuite");
+//    	$suite->addTestSuite("TestDatabaseSuite");
+//    	$suite->addTestSuite("TestParserFunctionsSuite");
+//	   	$suite->addTestSuite("TestUserCanHookSuite");
+//    	$suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
+//    	$suite->addTestSuite("TestLDAPStorageSuite");
 //    	$suite->addTestSuite("TestSMWStoreSuite");
 //    	$suite->addTestSuite("TestGroupPermissionsSuite");
-//    	$suite->addTestSuite("TestDynamicHaloACLSuite");
+    	$suite->addTestSuite("TestDynamicHaloACLSuite");
 //    	$suite->addTestSuite("TestRenderArticlesSuite");
         
         return $suite;
