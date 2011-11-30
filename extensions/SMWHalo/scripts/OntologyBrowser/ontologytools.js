@@ -2071,7 +2071,7 @@ OBCatgeorySubMenu.prototype = Object
 								}
 							}
 							
-							if (doRename && smwghTripleStoreGraph) {
+							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
@@ -2453,7 +2453,7 @@ OBPropertySubMenu.prototype = Object
 								}
 							}
 							
-							if (doRename && smwghTripleStoreGraph) {
+							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
@@ -2772,7 +2772,7 @@ OBInstanceSubMenu.prototype = Object
 								}
 							}
 							
-							if (doRename && smwghTripleStoreGraph) {
+							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
@@ -3544,7 +3544,7 @@ OBEditPropertySubMenu.prototype = Object
 
 					hasPropertyTitleChanged : function() {
 						var name = $F('schemaPropertiesMenu_propertytitle_ontologytools');
-						var nameEdited = name != this.propertyName;
+						var nameEdited = name.replace(/\s/g,"_") != this.propertyName;
 						return nameEdited;
 					},
 
@@ -3569,7 +3569,7 @@ OBEditPropertySubMenu.prototype = Object
 						var propertyTitleChanged = this
 								.hasPropertyTitleChanged();
 						
-						if (propertyTitleChanged && smwghTripleStoreGraph) {
+						if (propertyTitleChanged && typeof(smwghTripleStoreGraph) != undefined) {
 							var confirmation = confirm(gLanguage
 									.getMessage('OB_RENAME_WARNING'));
 							if (!confirmation) {
