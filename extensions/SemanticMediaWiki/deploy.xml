@@ -12,7 +12,7 @@
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
             <dependency from="1.15.4" to="1.17.9">MW</dependency>
-            <dependency from="0.4.0" >validator</dependency>
+            <dependency from="0.4.10" to="0.4.10" >validator</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
