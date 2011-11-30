@@ -29,18 +29,6 @@
       <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
-      <namespace key="120" case="first-letter">Document</namespace>
-      <namespace key="121" case="first-letter">Document talk</namespace>
-      <namespace key="122" case="first-letter">Audio</namespace>
-      <namespace key="123" case="first-letter">Audio talk</namespace>
-      <namespace key="124" case="first-letter">Video</namespace>
-      <namespace key="125" case="first-letter">Video talk</namespace>
-      <namespace key="126" case="first-letter">Pdf</namespace>
-      <namespace key="127" case="first-letter">Pdf talk</namespace>
-      <namespace key="128" case="first-letter">ICalendar</namespace>
-      <namespace key="129" case="first-letter">ICalendar talk</namespace>
-      <namespace key="130" case="first-letter">VCard</namespace>
-      <namespace key="131" case="first-letter">VCard talk</namespace>
       <namespace key="274" case="first-letter">Widget</namespace>
       <namespace key="275" case="first-letter">Widget talk</namespace>
       <namespace key="700" case="first-letter">Comment</namespace>
@@ -51,62 +39,77 @@
     <title>ASF sandbox</title>
     <id>317</id>
     <revision>
-      <id>6591</id>
-      <timestamp>2011-10-28T09:33:56Z</timestamp>
+      <id>7899</id>
+      <timestamp>2011-11-29T18:24:24Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>Ontoprise</username>
+        <id>12</id>
       </contributor>
-      <text xml:space="preserve" bytes="1083">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Automatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
+      <text xml:space="preserve" bytes="836">&lt;div style=&quot;font-size: 20pt;  line-height: 30px&quot;&gt;Welcome to the&lt;br/&gt;Automatic Semantic Forms &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;sandbox&lt;/span&gt;!&lt;br/&gt;&lt;/div&gt;
 &lt;span style=&quot;font-size: 20pt;  font-weight: bold&quot;&gt;B&lt;/span&gt;elow you can play around with the Automatic Semantic Forms extension. This is easy and works like follows:
 
 #Enter an article name in the input field. Use the name of an article that does not yet exist.
 #Choose one of the categories in the dropdown box.
 #Hit the 'Try out' button.
 
-&lt;br/&gt;&lt;br/&gt;|{{#ifeq:{{#isExtensionInstalled:automaticsemanticforms}} |true |Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}|'''First, you have to install the Automatic Semantic Forms extension.'''}}{{#ifeq:{{#ask:[[:Category:Task in sandbox]]|link=none|source=wiki}}|Category:Task in sandbox|&lt;br/&gt;&lt;small&gt;&lt;i&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;/i&gt;&lt;/small&gt;|}}
+&lt;br/&gt;&lt;br/&gt;Article name: {{#asfforminput:both|40|20|ASF Example||all|&amp;nbsp;&amp;nbsp;Category:|Try&amp;nbsp;out!|true}}
+
+&lt;small&gt;&lt;b&gt;Hint:&lt;/b&gt; Choose the category 'Phone call' as a first example!&lt;/small&gt;
 
 [[Rationale::This is the sandbox article for the Automatic Semantic Forms extension.| ]][[Part of bundle::Automaticsemanticforms| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Autocomplete on</title>
+    <id>2495</id>
+    <revision>
+      <id>6813</id>
+      <timestamp>2011-11-11T13:47:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="726">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a property article if you want to overwrite the default autocompletion constraints that are used for this property in Automatic Semantic Forms. You can use the same constraints, that are also allowed for the constraints parameter for form input fields. This only works if Halo Autocompletion is used.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Part of bundle::Automaticsemanticforms| ]]
+
+[[Has type::String| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
+
+[[Category:Property]]</text>
     </revision>
   </page>
   <page>
     <title>Automaticsemanticforms</title>
     <id>221</id>
     <revision>
-      <id>6546</id>
-      <timestamp>2011-10-24T15:31:55Z</timestamp>
+      <id>7897</id>
+      <timestamp>2011-11-29T17:12:00Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>Ontoprise</username>
+        <id>12</id>
       </contributor>
-      <text xml:space="preserve" bytes="1606">{{Content bundle}}
+      <text xml:space="preserve" bytes="1581">[[Rationale::This content bundle contains Property articles, which are used by the Automatic Semantic Forms extension. This content bundle is optional. The Automatic Semantic Forms extension also works without it]]
 
-== Information about this bundle ==
-
-[[Rationale::This content bundle contains Property articles, which are used by the Automatic Semantic Forms extension. This content bundle is optional. The Automatic Semantic Forms extension also works without it]]
-
-[[Part of bundle::Automaticsemanticforms| ]] [[Installation dir::extensions/AutomaticSemanticForms| ]][[Dependency::smwhalo;1.6.0| ]] [[Dependency::semanticforms;2.1.2| ]] [[Dependency::Smwplus; 1.6.0| ]] [[Dependency::Smwplussandbox; 1.1.0| ]] [[Vendor::Ontoprise GmbH| ]]
-
-;Copyright
-:[[Vendor::ontoprise GmbH]]
-
-;Maintainer
-:[[Maintainer::ontoprise GmbH]]
-
-;License
-:[[License::GPL v2]]
-
-;Version
-:[[Ontology version::1.2.0]]
-
-;How to use
-:The Properties, which are included in this content bundle can be used to annotate Properties and Categories in order to control automatic Semantic Forms creation.
-
-;Sandbox
-:We:have created the [[ASF sandbox|sandbox article]] in this Wiki, which demonstartes some Features of the Automatic Semantic Forms extension.
+{|  style= cellspacing=&quot;2&quot; border-color=&quot;#ffffff&quot; width=&quot;90%&quot; align=&quot;center&quot;
+!width=&quot;50%&quot;|
+!width=&quot;10%&quot;|
+!width=&quot;40%&quot;|
+|-
+| The Properties, which are included in this content bundle can be used to annotate Properties and Categories in order to control automatic Semantic Forms creation. 
+Open the example article to learn how to use Automatic Semantic Forms:
+|
+|[[File:Button Start.png|left|link=ASF sandbox]]
+|-
+|}
 
 ;User manual
 :More information about the Automatic Semantic Forms extension and how to use it can be found in our [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_extension%7CSMWForum%7CSMWForum| ]][http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_extension%7CSMWForum%7CSMWForum%7C smwforum].
+
+[[Part of bundle::Automaticsemanticforms| ]] [[Installation dir::extensions/AutomaticSemanticForms| ]][[Dependency::smwhalo;1.6.0| ]] [[Dependency::semanticforms;2.1.2| ]] [[Dependency::Smwplus; 1.6.0| ]] [[Dependency::Smwplussandbox; 1.1.0| ]][[Vendor::ontoprise GmbH| ]][[Maintainer::ontoprise GmbH| ]][[License::GPL v2| ]][[Ontology version::1.2.0| ]][[Patchlevel::1| ]]
 
 ;This bundle contains these articles
 
@@ -126,41 +129,19 @@
     <title>Property:Call</title>
     <id>319</id>
     <revision>
-      <id>6541</id>
-      <timestamp>2011-10-24T15:16:31Z</timestamp>
+      <id>7842</id>
+      <timestamp>2011-11-25T13:59:26Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>Ontoprise</username>
+        <id>12</id>
       </contributor>
-      <text xml:space="preserve" bytes="526">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
-== Information about this property ==
+      <text xml:space="preserve" bytes="488">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
 [[Rationale::Which number should be called in a phone call. (This property is used by the Automatic Semantic Forms sandbox.)]]
 
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Has type::String| ]] [[Has domain and range::Category:Phone call; | ]] [[Form input help::Enter the &lt;b&gt;phone number&lt;/b&gt;&lt;br/&gt;you have to call.| ]] [[Part of bundle::Automaticsemanticforms| ]]
 
-[[Category:Property]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Default value</title>
-    <id>196</id>
-    <revision>
-      <id>6542</id>
-      <timestamp>2011-10-24T15:18:25Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve" bytes="545">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
-== Information about this property ==
-[[Rationale::You can use this property to annotate a property article, if you want that the form input field for that property contains a default value in an automatically created Semantic Form.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Has type::Text| ]] [[Has max cardinality::1| ]] [[Has domain and range::Category:Property; | ]]
-[[Part of bundle::automaticsemanticforms| ]]
 [[Category:Property]]</text>
     </revision>
   </page>
@@ -316,26 +297,79 @@ Please note, that this annotation is not inherited to subcategories. You can als
     </revision>
   </page>
   <page>
-    <title>Category:Phone call</title>
-    <id>318</id>
+    <title>Template:Phone call</title>
+    <id>2460</id>
     <revision>
-      <id>6584</id>
-      <timestamp>2011-10-28T07:47:24Z</timestamp>
+      <id>6589</id>
+      <timestamp>2011-10-28T09:19:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve" bytes="359">{{Category}} __NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__
-== Information about this category ==
-[[Rationale::Use this category for phone calls which you have to do. (This category is used by the Automatic Semantic Forms sandbox.]] [[Use display template::Phone call|:Phone call]]
+      <text xml:space="preserve" bytes="1419">&lt;noinclude&gt;{{Template}}
+[[Rationale::This template is used for formating phone call tasks]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! colspan=&quot;2&quot; style=&quot;background: rgb(240, 55, 55) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: white;&quot; | {{FULLPAGENAME}}
+|-
+{{Tablerow|Label=Description:|Value=Call the following telephone number.}}
+|-
+{{Tablesection|Label=Details|Color=#ffb0a6}}
+|-
+{{Tablerow|Label=Responsible person:|Value={{#show:{{FULLPAGENAME}}|?Assigned to=|source=wiki}} }}
+|-
+{{Tablerow|Label=Call:|Value={{#show:{{FULLPAGENAME}}|?Call=|source=wiki}} }}
+|-
+{{Tablerow|Label=Start time:|Value={{#show:{{FULLPAGENAME}}|?Start time=|source=wiki}} }}
+|-
+{{Tablerow|Label=End time:|Value={{#show:{{FULLPAGENAME}}|?End time=|source=wiki}} }}
+|-
+{{Tablerow|Label=Related sandbox project:|Value={{#show:{{FULLPAGENAME}}|?Related to project in sandbox=|source=wiki}} }}
+|-
+|}&lt;/includeonly&gt;&lt;noinclude&gt;[[Part of bundle::Automaticsemanticforms| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Phone call</title>
+    <id>318</id>
+    <revision>
+      <id>7840</id>
+      <timestamp>2011-11-25T13:57:15Z</timestamp>
+      <contributor>
+        <username>Ontoprise</username>
+        <id>12</id>
+      </contributor>
+      <text xml:space="preserve" bytes="309">{{Category}} __NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__
+[[Rationale::Use this category for phone calls which you have to do. (This category is used by the Automatic Semantic Forms sandbox.]]
+[[Use display template::Phone call| ]]
+[[Part of bundle::Automaticsemanticforms| ]]
+[[Category:Smwplussandbox/Task]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use autogrow</title>
+    <id>2494</id>
+    <revision>
+      <id>6804</id>
+      <timestamp>2011-11-11T13:04:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a property article if the property is o...&quot;</comment>
+      <text xml:space="preserve" bytes="602">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a property article if the property is of type text and if you want that the textarea for this property in Automatic Semantic Forms autogrows instead of displaying a scrollbar.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
 [[Part of bundle::Automaticsemanticforms| ]]
 
+[[Has type::Boolean| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
 
-
-
-
-[[Category:Task in sandbox]]</text>
+[[Category:Property]]</text>
     </revision>
   </page>
   <page>
@@ -355,6 +389,38 @@ Please note, that this annotation is not inherited to subcategories. You can als
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 
  [[Has type::Text| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]] [[Part of bundle::automaticsemanticforms| ]]
+
+[[Category:Property]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Use default input</title>
+    <id>2498</id>
+    <revision>
+      <id>6815</id>
+      <timestamp>2011-11-11T13:58:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a category article if you want to custo...&quot;</comment>
+      <text xml:space="preserve" bytes="909">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
+== Information about this property ==
+[[Rationale::Use this property to annotate a category article if you want to customize which standard input fields should be shown in the form footer. If one of the categories of an instance has such an annotation, thae only the chosen default input fields are shown. Otherwise all are shown.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Part of bundle::Automaticsemanticforms| ]]
+
+[[Has type::String| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Category; | ]] [[Allows value::asf message| ]]
+[[Allows value::summary| ]]
+[[Allows value::minor edit| ]]
+[[Allows value::watch| ]]
+[[Allows value::save| ]]
+[[Allows value::preview| ]]
+[[Allows value::changes| ]]
+[[Allows value::cancel| ]]
+[[Allows value::save and continue| ]]
 
 [[Category:Property]]</text>
     </revision>
@@ -467,120 +533,6 @@ Please note, that this annotation is not inherited to subcategories. You can als
 [[Has type::Text| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
 
 [[Part of bundle::automaticsemanticforms| ]]
-
-[[Category:Property]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Phone call</title>
-    <id>2460</id>
-    <revision>
-      <id>6589</id>
-      <timestamp>2011-10-28T09:19:24Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve" bytes="1419">&lt;noinclude&gt;{{Template}}
-[[Rationale::This template is used for formating phone call tasks]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
-|-
-! colspan=&quot;2&quot; style=&quot;background: rgb(240, 55, 55) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: white;&quot; | {{FULLPAGENAME}}
-|-
-{{Tablerow|Label=Description:|Value=Call the following telephone number.}}
-|-
-{{Tablesection|Label=Details|Color=#ffb0a6}}
-|-
-{{Tablerow|Label=Responsible person:|Value={{#show:{{FULLPAGENAME}}|?Assigned to=|source=wiki}} }}
-|-
-{{Tablerow|Label=Call:|Value={{#show:{{FULLPAGENAME}}|?Call=|source=wiki}} }}
-|-
-{{Tablerow|Label=Start time:|Value={{#show:{{FULLPAGENAME}}|?Start time=|source=wiki}} }}
-|-
-{{Tablerow|Label=End time:|Value={{#show:{{FULLPAGENAME}}|?End time=|source=wiki}} }}
-|-
-{{Tablerow|Label=Related sandbox project:|Value={{#show:{{FULLPAGENAME}}|?Related to project in sandbox=|source=wiki}} }}
-|-
-|}&lt;/includeonly&gt;&lt;noinclude&gt;[[Part of bundle::Automaticsemanticforms| ]]
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Use default input</title>
-    <id>2498</id>
-    <revision>
-      <id>6815</id>
-      <timestamp>2011-11-11T13:58:23Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a category article if you want to custo...&quot;</comment>
-      <text xml:space="preserve" bytes="909">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
-== Information about this property ==
-[[Rationale::Use this property to annotate a category article if you want to customize which standard input fields should be shown in the form footer. If one of the categories of an instance has such an annotation, thae only the chosen default input fields are shown. Otherwise all are shown.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Part of bundle::Automaticsemanticforms| ]]
-
-[[Has type::String| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Category; | ]] [[Allows value::asf message| ]]
-[[Allows value::summary| ]]
-[[Allows value::minor edit| ]]
-[[Allows value::watch| ]]
-[[Allows value::save| ]]
-[[Allows value::preview| ]]
-[[Allows value::changes| ]]
-[[Allows value::cancel| ]]
-[[Allows value::save and continue| ]]
-
-[[Category:Property]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Autocomplete on</title>
-    <id>2495</id>
-    <revision>
-      <id>6813</id>
-      <timestamp>2011-11-11T13:47:20Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve" bytes="726">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
-== Information about this property ==
-[[Rationale::Use this property to annotate a property article if you want to overwrite the default autocompletion constraints that are used for this property in Automatic Semantic Forms. You can use the same constraints, that are also allowed for the constraints parameter for form input fields. This only works if Halo Autocompletion is used.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Part of bundle::Automaticsemanticforms| ]]
-
-[[Has type::String| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
-
-[[Category:Property]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Use autogrow</title>
-    <id>2494</id>
-    <revision>
-      <id>6804</id>
-      <timestamp>2011-11-11T13:04:42Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__  == Information about this property == [[Rationale::Use this property to annotate a property article if the property is o...&quot;</comment>
-      <text xml:space="preserve" bytes="602">{{Property}}__NOTOC__ __NORICHEDITOR__ __NOEDITSECTION__ 
-== Information about this property ==
-[[Rationale::Use this property to annotate a property article if the property is of type text and if you want that the textarea for this property in Automatic Semantic Forms autogrows instead of displaying a scrollbar.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Part of bundle::Automaticsemanticforms| ]]
-
-[[Has type::Boolean| ]] [[Has max cardinality::1| ]] [[Has min cardinality::0| ]][[has domain and range::Category:Property; | ]]
 
 [[Category:Property]]</text>
     </revision>
