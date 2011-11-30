@@ -1,6 +1,9 @@
 WYSIWYG extension ChangeLog
 ===========================
+Version 1.6.1
 
+  Bugfixes>
+	14486 - WYSIWYG doesn't show up in form
 
 VERSION 1.4.1
 
