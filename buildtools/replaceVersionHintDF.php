@@ -25,7 +25,7 @@ $patchlevel = $dd->getPatchlevel();
 
 $content = file_get_contents($file_to_replaceHints);
 $content = str_replace('{{$VERSION}}', $version."_".$patchlevel, $content);
-$content = str_replace('{{$BUILD_NUMBER}}', $buildnumber, $content);
+$content = str_replace('{{$BUILDNUMBER}}', $buildnumber, $content);
 $handle = fopen($file_to_replaceHints, "w");
 fwrite($handle, $content);
 fclose($handle);
