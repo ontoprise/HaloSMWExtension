@@ -582,6 +582,22 @@ $this->ckeditorHeadScript = $script;
           $this->ckeditorHeadScript = '';
           return true;
     }
+    
+    /**
+     * Add javascript files for the CKEditor to Semantic Forms
+     * @param $scripts
+     */
+    public function onSfAddJavascriptFiles($scripts) {
+		// The FCKeditor extension has no defined ResourceLoader
+		// modules yet, so we have to call the scripts directly.
+		global $wgFCKEditorDir, $wgScriptPath;
+		if ( $wgFCKEditorDir && (class_exists( 'FCKEditor' ) || class_exists( 'CKEditor' )) ) {
+            $scripts[] = class_exists('CKEditor')
+                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
+                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
+		}
+    	return true;
+    }
      
 
     private static function GetQILoadUrl() {

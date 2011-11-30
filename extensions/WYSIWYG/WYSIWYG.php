@@ -120,6 +120,8 @@ $wgHooks['EditPage::showEditForm:fields'][]		= array( $oCKeditorExtension, 'onEd
 $wgHooks['EditPageBeforePreviewText'][]         = array( $oCKeditorExtension, 'onEditPageBeforePreviewText' );
 $wgHooks['EditPagePreviewTextEnd'][]            = array( $oCKeditorExtension, 'onEditPagePreviewTextEnd' );
 $wgHooks['CustomEditor'][]                      = array( $oCKeditorExtension, 'onCustomEditor' );
+// Add javascript files for semantic forms
+$wgHooks['sfAddJavascriptFiles'][]              = array( $oCKeditorExtension, 'onSfAddJavascriptFiles' );
 $wgHooks['LanguageGetMagic'][]					= 'CKeditor_MediaWiki::onLanguageGetMagic';
 $wgHooks['ParserBeforeStrip'][]					= 'CKeditor_MediaWiki::onParserBeforeStrip';
 $wgHooks['ParserBeforeInternalParse'][]			= 'CKeditor_MediaWiki::onParserBeforeInternalParse';

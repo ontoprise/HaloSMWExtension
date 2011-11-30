@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12352)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12016)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
 @@ -265,6 +265,10 @@
  		wfProfileIn( __METHOD__ );
@@ -34,28 +34,28 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  							$sfgTabIndex++;
  							$sfgFieldNum++;
  							if ( $cur_value == '' ) {
-Index: extensions/SemanticForms/includes/SF_Utils.php
-===================================================================
---- extensions/SemanticForms/includes/SF_Utils.php	(revision 12352)
-+++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
-@@ -438,7 +438,11 @@
- 		// modules yet, so we have to call the scripts directly.
- 		// @TODO Move this code into the FCKeditor extension.
- 		if ( $wgFCKEditorDir && class_exists( 'FCKEditor' ) ) {
--			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
-+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+            $scripts[] = class_exists('CKEditor')
-+                ? "$wgScriptPath/$wgFCKEditorDir/ckeditor.js"
-+                : "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
-+            /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
- 		}
- 
- 		foreach ( $scripts as $js ) {
 Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12352)
+--- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12016)
 +++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
-@@ -409,10 +409,19 @@
+@@ -382,9 +382,16 @@
+ 
+ 		// Differentiate between FCKeditor and the newer CKeditor,
+ 		// which isn't handled here
++/*op-patch|TS|2011-11-30|CKeditor|Use CKEditor in semantic forms|start|doc|http://http://dmwiki.ontoprise.com/index.php/articlename*/
++		if ( !class_exists( 'FCKeditor' ) && !class_exists( 'CKeditor' ) ) {
++			return false;
++		}
++/* Original code		
+ 		if ( !class_exists( 'FCKeditor' ) ) {
+ 			return false;
+ 		}
++*/		
++/*op-patch|TS|2011-11-30|end*/
+ 
+ 		$showFCKEditor = 0;
+ 		if ( !$wgUser->getOption( 'riched_start_disabled' ) ) {
+@@ -409,10 +416,19 @@
  
  	static function prepareTextForFCK( $text ) {
  		global $wgTitle;
@@ -78,7 +78,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		$parser->setOutputType( OT_HTML );
  		$text = $parser->parse( $text, $wgTitle, $options )->getText();
  		return $text;
-@@ -456,7 +465,10 @@
+@@ -456,7 +472,10 @@
  		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
  			$wgFCKEditorDir .= '/';
  		}
@@ -90,7 +90,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		$javascript_text .= <<<END
  var oFCKeditor = new FCKeditor( "free_text" );
  
-@@ -469,6 +481,17 @@
+@@ -469,6 +488,17 @@
  oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet";
  oFCKeditor.ready = true;
  
@@ -108,7 +108,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  //IE hack to call func from popup
  function FCK_sajax(func_name, args, target) {
  	sajax_request_type = 'POST' ;
-@@ -514,14 +537,15 @@
+@@ -514,14 +544,15 @@
  	if ( realTextarea )
  	{
  		// Create the editor instance and replace the textarea.
@@ -131,7 +131,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		oFCKeditor.ReplaceTextarea() ;
  
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -702,6 +726,8 @@
+@@ -702,6 +733,8 @@
  addOnloadHook( initEditor );
  
  END;
@@ -140,3 +140,21 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		return $javascript_text;
  	}
  
+Index: extensions/SemanticForms/includes/SF_Utils.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_Utils.php	(revision 12016)
++++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
+@@ -434,13 +434,6 @@
+ 
+ 		wfRunHooks( 'sfAddJavascriptFiles', array( &$scripts ) );
+ 
+-		// The FCKeditor extension has no defined ResourceLoader
+-		// modules yet, so we have to call the scripts directly.
+-		// @TODO Move this code into the FCKeditor extension.
+-		if ( $wgFCKEditorDir && class_exists( 'FCKEditor' ) ) {
+-			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
+-		}
+-
+ 		foreach ( $scripts as $js ) {
+ 			if ( $parser ) {
+ 				$script = "<script type=\"$wgJsMimeType\" src=\"$js\"></script>\n";
