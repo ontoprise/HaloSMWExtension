@@ -1,0 +1,17 @@
+== Usage ==
+?* Based on SIMILE widgets (http://simile-widgets.org/).
+?* Shows SMW query result in timplot (http://simile-widgets.org/timeplot/) and runway (http://simile-widgets.org/runway/).
+?* According to technical problem, runway and timeplot CANNOT be viewed in same page.
+?* Supports Query aggregation, defined in simile query format
+** SIMILE runway view
+	| image=, image to show, internal image only
+	| subtitle=, optional, subtitle to show
+	| format=runway, show in runway format
+** SIMILE timeplot view
+	| time=, time plot, date type
+	| end=, end time plot, date type
+	| value=, multiple, values to show, number type
+	| format=timeplot, show in timplot format
+
+== SIMILE Runway ==
+If SIMILE runway does not show images properly, please check crossdomain.xml. http://code.google.com/p/simile-widgets/wiki/Runway

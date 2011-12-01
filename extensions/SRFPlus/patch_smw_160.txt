@@ -1,0 +1,92 @@
+Index: extensions/SRFPlus/Exhibit/SRF_Exhibit.php
+===================================================================
+--- extensions/SRFPlus/Exhibit/SRF_Exhibit.php	(revision 0)
++++ extensions/SRFPlus/Exhibit/SRF_Exhibit.php	(revision 0)
+@@ -105,7 +105,7 @@
+ 		}
+ 	}
+ 
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		$this->includeJS();
+ 
+ 		global $smwgIQRunningNumber, $wgScriptPath, $wgGoogleMapsKey, $smwgScriptPath, $srfpgIP, $srfpgScriptPath;
+
+Index: extensions/SRFPlus/Group/SRF_GroupList.php
+===================================================================
+--- extensions/SRFPlus/Group/SRF_GroupList.php	(revision 0)
++++ extensions/SRFPlus/Group/SRF_GroupList.php	(revision 0)
+@@ -47,7 +47,7 @@
+ 		return wfMsg('smw_printername_' . $this->mFormat);
+ 	}
+ 
+-	protected function getResultText($res,$outputmode) {
++	protected function getResultText(SMWQueryResult $res,$outputmode) {
+ 		$result_rows = $this->getGroupResult($res, $outputmode, $headers);
+ 
+ 		if($result_rows === NULL) {
+
+Index: extensions/SRFPlus/Group/SRF_GroupOFC.php
+===================================================================
+--- extensions/SRFPlus/Group/SRF_GroupOFC.php	(revision 0)
++++ extensions/SRFPlus/Group/SRF_GroupOFC.php	(revision 0)
+@@ -192,7 +192,7 @@
+ 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
+ 
+ 
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		global $smwgIQRunningNumber;
+ 		$outputmode = SMW_OUTPUT_HTML;
+ 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
+
+Index: extensions/SRFPlus/Group/SRF_GroupTable.php
+===================================================================
+--- extensions/SRFPlus/Group/SRF_GroupTable.php	(revision 0)
++++ extensions/SRFPlus/Group/SRF_GroupTable.php	(revision 0)
+@@ -25,7 +25,7 @@
+ 		SRFGroupResultPrinter::readParameters($params,$outputmode);
+ 	}
+ 	
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		global $smwgIQRunningNumber;
+ 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+ 		
+
+Index: extensions/SRFPlus/ofc/SRF_OFC.php
+===================================================================
+--- extensions/SRFPlus/ofc/SRF_OFC.php	(revision 0)
++++ extensions/SRFPlus/ofc/SRF_OFC.php	(revision 0)
+@@ -220,7 +220,7 @@
+ 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
+ 
+ 
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 
+ 		global $smwgIQRunningNumber;
+ 		$outputmode = SMW_OUTPUT_HTML;
+
+Index: extensions/SRFPlus/Simile/SMW_QP_Simile.php
+===================================================================
+--- extensions/SRFPlus/Simile/SMW_QP_Simile.php	(revision 0)
++++ extensions/SRFPlus/Simile/SMW_QP_Simile.php	(revision 0)
+@@ -77,7 +77,7 @@
+ 		}
+ 		return $time;
+ 	}
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		$this->includeJS();
+ 		
+ 		$header_items = array();
+@@ -230,7 +230,7 @@
+ 		}
+ 	}
+ 
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		$this->includeJS();
+ 
+ 		$header_items = array();

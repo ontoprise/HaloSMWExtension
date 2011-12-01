@@ -15,7 +15,13 @@
 		<helpurl></helpurl>
         <dependencies>
             <dependency from="1.5.0">smw</dependency>
+            <dependency from="1.0.0" optional="true">semanticaggregation</dependency>
         </dependencies>
+		<notice>If SIMILE runway does not show images properly, please check crossdomain.xml. http://code.google.com/p/simile-widgets/wiki/Runway .
+			
+			Signup google map key to enable Exhibit map. http://code.google.com/apis/maps/signup.html .
+			Add to LocalSettings, "$wgGoogleMapsKey='gmapkey';".
+        </notice>
     </global>
     
     <codefiles>
@@ -31,12 +37,14 @@
     </resources>
     
     <configs>
+			<patch file="patch_smw_160.txt" ext="smw" from="160"/>
         <new>
             <require name="srfplus"
                 file="extensions/SRFPlus/SRFPlus.php" />
+			<script file="../SemanticMediaWiki/maintenance/SMW_setup.php" />
+			<patch file="patch_smw_160.txt" ext="smw" from="160"/>
         </new>
         <uninstall>
-    		<!-- empty -->
 		</uninstall>
     </configs>
 </deploydescriptor>

@@ -28,6 +28,11 @@ $srfpgIP = dirname( __FILE__ );
 
 // Require the settings file.
 require $srfpgIP . '/ofc/SRF_OFC_Init.php';
+require $srfpgIP . '/Simile/SRF_Simile_Init.php';
+require $srfpgIP . '/Exhibit/SRF_Exhibit_Init.php';
+if( defined( 'SMW_AGGREGATION_VERSION' ) ) {
+	require $srfpgIP . '/Group/SRF_Group_Init.php';
+}
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other'][] = array(
 	'path' => __FILE__,
@@ -41,3 +46,28 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other']
 	'url' => '',
 	'description' => 'Semantic Result Formats Plus'
 );
+
+global $wgExtensionFunctions;
+$wgExtensionFunctions[] = 'SRFPlusSetupExtension';
+function SRFPlusSetupExtension() {
+	global $wgHooks, $wgRequest, $srfpgIP;
+	$wgHooks['smwInitializeTables'][] = 'srfpGMapInitializeTables';
+
+	$action = $wgRequest->getVal('action');
+	// add some AJAX calls
+	if ($action == 'ajax') {
+		$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
+		if ($func_name == NULL) return NULL;
+		if (substr( $func_name, 0, strlen( 'srf_' ) ) === 'srf_' ) {
+			require_once($srfpgIP . '/includes/SRF_AjaxAccess.php');
+		}
+	}
+	return true;
+}
+function srfpGMapInitializeTables() {
+	global $srfpgIP;
+	require_once( $srfpgIP . '/includes/SRF_Storage.php' );
+	SRFStorage::getDatabase()->setup(true);
+	
+	return true;
+}
