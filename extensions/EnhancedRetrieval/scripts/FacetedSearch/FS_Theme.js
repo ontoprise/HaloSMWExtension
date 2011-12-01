@@ -44,6 +44,12 @@
 		10 : ['Template', wgScriptPath + IMAGE_PATH + 'smw_plus_template_icon_16x16.png'],
 		14: ['Category', wgScriptPath + IMAGE_PATH + 'smw_plus_category_icon_16x16.png'],
 		102 : ['Property', wgScriptPath + IMAGE_PATH + 'smw_plus_property_icon_16x16.png'],
+		120 : ['Document', wgScriptPath + IMAGE_PATH + 'smw_plus_document_icon_16x16.png'],
+		122 : ['Audio', wgScriptPath + IMAGE_PATH + 'smw_plus_music_icon_16x16.png'],
+		124 : ['Video', wgScriptPath + IMAGE_PATH + 'smw_plus_video_icon_16x16.png'],
+		126 : ['Pdf', wgScriptPath + IMAGE_PATH + 'smw_plus_pdf_icon_16x16.png'],
+		128 : ['ICalendar', wgScriptPath + IMAGE_PATH + 'smw_plus_ical_icon_16x16.gif'],
+		130 : ['VCard', wgScriptPath + IMAGE_PATH + 'smw_plus_vcard_icon_16x16.gif'],
 		700 : ['Comment', wgScriptPath + IMAGE_PATH + 'smw_plus_comment_icon_16x16.png']
 	};
 	
