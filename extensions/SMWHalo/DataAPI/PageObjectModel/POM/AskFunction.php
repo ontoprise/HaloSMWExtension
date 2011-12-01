@@ -43,7 +43,10 @@ class POMAskFunction extends POMExtensionParserFunction
 		$this->nodeText = $text;
 	}
 
-
+    public function setNodeText($nodeText) {
+    	$this->nodeText = $nodeText;
+    }
+    
 	/**
 	 * Convert the object to a string.
 	 *

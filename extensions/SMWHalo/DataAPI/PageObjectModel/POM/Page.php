@@ -20,9 +20,9 @@
 
 /**
  * @file
-  * @ingroup DAPOM
-  * 
-  * @author Dian
+ * @ingroup DAPOM
+ *
+ * @author Dian
  */
 
 /**
@@ -131,6 +131,7 @@ class POMPage extends PCPPage
 			'POMExtensionParserFunction',
 			'POMCategory', 
 			'POMProperty', 
+		    'POMLink', 
 			'POMSimpleText'));
 
 		foreach ($parsers as $parser)
@@ -159,8 +160,8 @@ class POMPage extends PCPPage
 		$__pomPage->basetimestamp = $pcpPageObj->basetimestamp;
 		$__pomPage->lastrevid = $pcpPageObj->lastrevid;
 		$__pomPage->usedrevid = $pcpPageObj->usedrevid;
-		
-		
+
+
 		$__pomPage->children =  new DLList();
 		$__pomPage->children->setShortcutTypes(array(
 			'POMTemplate',
@@ -169,6 +170,7 @@ class POMPage extends PCPPage
 			'POMExtensionParserFunction',
 			'POMCategory', 
 			'POMProperty', 
+		    'POMLink', 
 			'POMSimpleText'));
 
 		foreach ($parsers as $parser)
@@ -248,6 +250,14 @@ class POMPage extends PCPPage
 					break;
 				case 'POMProperty' :
 					if ( strcmp('POMProperty', get_class($element)) === 0){ // types match
+						$__oldNode->element = &$element;
+						return false;
+					}else{ // types mismatch
+						return false;
+					}
+					break;
+				case 'POMLink' :
+					if ( strcmp('POMLink', get_class($element)) === 0){ // types match
 						$__oldNode->element = &$element;
 						return false;
 					}else{ // types mismatch
@@ -619,7 +629,7 @@ class POMPage extends PCPPage
 			while($__iterator->hasNext()){
 				$__element = &$__iterator->getNextNodeValueByReference();
 				if( strcmp($__element->id, $element->id) === 0){
-					$result = $this->children->remove($__element); 
+					$result = $this->children->remove($__element);
 					return $result ;
 				}
 			}

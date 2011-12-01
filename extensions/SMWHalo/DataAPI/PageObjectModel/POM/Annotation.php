@@ -20,9 +20,9 @@
 
 /**
  * @file
-  * @ingroup DAPOM
-  * 
-  * @author Dian
+ * @ingroup DAPOM
+ *
+ * @author Dian
  */
 
 /**
@@ -54,6 +54,71 @@ abstract class POMAnnotation extends POMElement {
 
 }
 
+class POMLink extends POMAnnotation {
+	public function POMLink($text) {
+		$this->value = $this->parseValue($text);
+		$this->representation = '';
+
+		$this->children = null; // forcefully ignore children
+		$this->id = "link".POMElement::$elementCounter;
+		POMElement::$elementCounter++;
+	}
+
+	/**
+	 * Copies the current attribute values into a string representing a category annotation.
+	 *
+	 * @return string The markup for the category.
+	 */
+	public function toString(){
+		$__stringValue = '';
+		$__stringValue = '[['.$this->value.']]';
+
+		return $__stringValue;
+	}
+
+	/**
+	 * Get the value of the category.
+	 *
+	 * @return string The value of the category.
+	 */
+	public function getValue(){
+		return $this->value;
+	}
+
+	/**
+	 * Set the value of the category.
+	 *
+	 * @param string $value The value.
+	 */
+	public function setValue($value){
+		$this->value = $value;
+	}
+
+	/**
+	 * Class constructor. Creates the annotation based on the given parameters.
+	 *
+	 * @param string $value The name of the category.
+	 * @return POMLink
+	 */
+	public static function createLink($value)
+	{
+		$__nodeText = '[['.$value.']]';
+		return new POMLink($__nodeText);
+	}
+
+	private function parseValue ($text){
+		if(strpos($text, '|')){
+			$__start = 2;
+			$__end = strpos($text, '|');
+			return trim(substr($text, $__start , $__end - $__start));
+		}else{
+			$__start = 2;
+			$__end = strpos($text, ']]');
+			return trim(substr($text, $__start , $__end - $__start));
+		}
+	}
+}
+
 /**
  * The category class used.
  *
@@ -67,7 +132,7 @@ class POMCategory extends POMAnnotation {
 	 */
 	public function POMCategory($text)
 	{
-//		$this->nodeText = $text;
+		//		$this->nodeText = $text;
 		global $wgLang;
 		$this->name = $wgLang->getNSText(NS_CATEGORY);
 		$this->value = $this->parseValue($text);
@@ -150,7 +215,7 @@ class POMProperty extends POMAnnotation {
 	 */
 	public function POMProperty($text)
 	{
-//		$this->nodeText = $text;
+		//		$this->nodeText = $text;
 		$this->name = $this->parseName($text);
 		$this->value = $this->parseValue($text);
 		$this->representation = $this->parseRepresentation($text);
@@ -186,7 +251,7 @@ class POMProperty extends POMAnnotation {
 	 * @return string The markup for the property.
 	 */
 	public function toString()
-	{	
+	{
 		$__stringValue = '';
 		if ( strcmp($this->representation, '') === 0){
 			$__stringValue = '[['.$this->name.'::'.$this->value.']]';
@@ -196,10 +261,10 @@ class POMProperty extends POMAnnotation {
 		return $__stringValue;
 	}
 
-	private function parseName ($text){		
+	private function parseName ($text){
 		while(preg_match('/^\[\[/',$text) !== 0){
 			$__start = strpos($text, '[[')+2;
-			$text = substr($text, $__start);			
+			$text = substr($text, $__start);
 		}
 		return substr($text, 0, strpos($text, '::'));
 	}

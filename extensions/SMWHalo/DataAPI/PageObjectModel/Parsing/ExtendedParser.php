@@ -348,11 +348,11 @@ class POMExtendedParser extends POMParser{
 					if (strpos($aText, '::')){
 						$page->addElement(new POMProperty($aText));
 						$aText = '';
-					}else if (strpos($aText, $wgLang->getNSText(NS_CATEGORY).':') === 0){
+					}else if (strpos($aText, "[[".$wgLang->getNSText(NS_CATEGORY).':') === 0){
 						$page->addElement(new POMCategory($aText));
 						$aText = '';
 					}else{
-						$page->addElement(new POMSimpleText($aText));
+						$page->addElement(new POMLink($aText));
 						$aText = '';
 					}
 				
