@@ -1,0 +1,16 @@
+To apply aggregations to SMW Ask query printouts.
+* |? printout>aggregation flag=printout label
+
+Aggregation flag set, case insensitive
+* SUM
+* AVERAGE
+* MAX
+* MIN
+* COUNT
+
+Able to create new aggregations upon SA
+* create class which extends SMWQueryAggregate (get to code for detail)
+* register class in $smwgQueryAggregateIDs
+
+Create SMW resultprinter, use SA
+* create class which extends SMWAggregateResultPrinter

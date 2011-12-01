@@ -1,0 +1,49 @@
+Index: extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(revision 0000)
++++ extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(working copy)
+@@ -173,6 +173,9 @@
+ 			} elseif ( $param { 0 } == '?' ) { // print statement
+ 				$param = substr( $param, 1 );
+ 				$parts = explode( '=', $param, 2 );
++				$tmps = explode( '>', $parts[0], 2 );
++				$parts[0] = $tmps[0];
++				$aggregation = trim($tmps[1]);
+ 				$propparts = explode( '#', $parts[0], 2 );
+ 
+ 				$data = null;
+@@ -213,7 +216,7 @@
+ 					$label = trim( $parts[1] );
+ 				}
+ 
+-				$lastprintout = new SMWPrintRequest( $printmode, $label, $data, trim( $propparts[1] ) );
++				$lastprintout = new SMWAggregatePrintRequest( $printmode, $label, $data, trim( $propparts[1] ), $aggregation );
+ 				$printouts[] = $lastprintout;
+ 			} elseif ( $param[0] == '+' ) { // print request parameter
+ 				if ( $lastprintout !== null ) {
+
+Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
+===================================================================
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 0000)
++++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
+@@ -141,6 +141,7 @@
+ 	SORT_COLUMN_INDEX = column;
+ 	var firstRow = new Array();
+ 	var newRows = new Array();
++	var headers = new Array();
+ 	var footers = new Array();
+ 	for ( i = 0; i < table.rows[0].length; i++ ) {
+ 		firstRow[i] = table.rows[0][i];
+@@ -148,8 +149,10 @@
+ 	// class "sortbottom" makes rows sort below all others, but they are still sorted
+ 	// class "smwfooter" excludes rows from sorting and appends them below in unchanged order
+ 	for ( j = 1; j < table.rows.length; j++ ) {
+-		if ( ( !table.rows[j].className || table.rows[j].className.indexOf( 'smwfooter' ) == -1 ) ) {
+-			newRows.push( table.rows[j] );
++		if ( !table.rows[j].className || ( table.rows[j].className.indexOf('smwfooter') == -1 && table.rows[j].className.indexOf('smwheader') == -1 ) ) {
++			newRows.push(table.rows[j]); 
++		} else if( table.rows[j].className.indexOf('smwfooter') == -1 ) {
++			headers.push( table.rows[j] ); 
+ 		} else {
+ 			footers.push( table.rows[j] );
+ 		}

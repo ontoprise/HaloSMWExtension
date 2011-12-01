@@ -1,0 +1,23 @@
+Index: extensions/SMWHalo/smwtsc/includes/query_processor/SMW_QueryProcessor.php
+===================================================================
+--- extensions/SMWHalo/smwtsc/includes/query_processor/SMW_QueryProcessor.php	(revision 0000)
++++ extensions/SMWHalo/smwtsc/includes/query_processor/SMW_QueryProcessor.php	(working copy)
+@@ -183,6 +183,9 @@
+ 			} elseif ( $param { 0 } == '?' ) { // print statement
+ 				$param = substr( $param, 1 );
+ 				$parts = explode( '=', $param, 2 );
++				$tmps = explode( '>', $parts[0], 2 );
++				$parts[0] = $tmps[0];
++				$aggregation = trim($tmps[1]);
+ 				$propparts = explode( '#', $parts[0], 2 );
+ 
+ 				$data = null;
+@@ -223,7 +226,7 @@
+ 					$label = trim( $parts[1] );
+ 				}
+ 
+-				$lastprintout = new SMWPrintRequest( $printmode, $label, $data, trim( $propparts[1] ) );
++				$lastprintout = new SMWAggregatePrintRequest( $printmode, $label, $data, trim( $propparts[1] ), $aggregation );
+ 				$printouts[] = $lastprintout;
+ 			} elseif ( $param[0] == '+' ) { // print request parameter
+ 				if ( $lastprintout !== null ) {
