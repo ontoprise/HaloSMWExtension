@@ -1496,8 +1496,9 @@ QIHelper.prototype = {
     var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
     + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
     + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
-    + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
-    + 'onblur="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
+    + 'onkeyup="qihelper.handleKeyUpEvent(' + idx + ')" '
+//    + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
+//    + 'onblur="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
     + ((propName) ? 'value="'+propName+'" ' : '')
     + 'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"'
     + '/>';
@@ -1541,6 +1542,23 @@ QIHelper.prototype = {
     this.enableButton(this.getInputs());
     this.setListeners(this.getInputs());
   },
+
+  handleKeyUpEvent: function(idx){
+    var theFunction = function(){
+      qihelper.clearPropertyTypeAndGetInfo(idx);
+    };
+    qihelper.clearPropertyTypeAndGetInfo(idx);
+    jQuery('#input_p'+ idx).blur(theFunction);
+    jQuery('#input_p'+ idx).click(function(event){
+      jQuery(event.target).unbind('blur', theFunction);
+      jQuery(event.target).unbind('click');
+    });
+  },
+
+  clearPropertyTypeAndGetInfo: function(idx){
+      qihelper.clearPropertyType(idx);
+      qihelper.getPropertyInformation();
+   },
 
   setPropertyRestriction : function () {
     if (this.oldPropertyRestriction == null) this.oldPropertyRestriction = -1;
@@ -1792,7 +1810,8 @@ QIHelper.prototype = {
   getPropertyInformation : function() {
     var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 - 1;
     var propname = $('input_p'+idx).value;
-    if (propname != "" && propname != this.propname) { // only if not empty
+//    if (propname != "" && propname != this.propname) { // only if not empty
+    if (propname != "") { // only if not empty
       // and name changed
       this.propname = propname;
       if (this.pendingElement) {
