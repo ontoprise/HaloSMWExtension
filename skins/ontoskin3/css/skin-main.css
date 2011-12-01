@@ -298,10 +298,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	cursor: pointer;
 }
 
-#tabsleft #ca-talk:hover:after {
-    border-color: #A9C5D9 transparent;
-}
-
 #tabsleft .tab {
     float: left;
 }
@@ -319,7 +315,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 	margin: 3px 15px 0 15px;
 }
 
-#tabsleft #ca-talk:before {
+#tabsleft > a > #ca-talk:before {
     content: "";
     position: absolute;
     bottom: -8px;
@@ -329,7 +325,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-color: #228C9E transparent;
 }
 
-#tabsleft #ca-talk:after {
+#tabsleft > a > #ca-talk:after {
     content: "";
     position: absolute;
     bottom: -7px;
@@ -337,6 +333,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-width: 7px 7px 0;
     border-style: solid;
     border-color: #fff transparent;
+}
+
+#tabsleft > a > #ca-talk:hover:after {
+    border-color: #AAD1DE transparent;
 }
 
 #cat_icons {
