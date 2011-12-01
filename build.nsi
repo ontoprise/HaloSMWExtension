@@ -821,21 +821,13 @@ Function configCustomizationsForNew
         StrCpy $WIKINAME "MyWiki"
     ${EndIf}
     ${Switch} $WIKISKIN
-        ${Case} 'ontoskin (grayish, based on monobook)'
-            StrCpy $WIKISKIN "ontoskin"
-            StrCpy $DEFAULTLOGO "skins/ontoskin/images/wiki.jpg"
-            ${Break}
-        ${Case} 'ontoskin2 (blue)'
-            StrCpy $WIKISKIN "ontoskin2"
-            StrCpy $DEFAULTLOGO "skins/ontoskin2/images/wiki.jpg"
-            ${Break}
         ${Case} 'ontoskin3'
             StrCpy $WIKISKIN "ontoskin3"
-            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.jpg"
+            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.png"
             ${Break}   
         ${Default}
             StrCpy $WIKISKIN "ontoskin3"
-            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.jpg"
+            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.png"
         ${Break}
     ${EndSwitch}
     ${Switch} $WIKILANG
