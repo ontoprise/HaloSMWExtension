@@ -1497,6 +1497,7 @@ QIHelper.prototype = {
     + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
     + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
     + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
+    + 'onblur="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
     + ((propName) ? 'value="'+propName+'" ' : '')
     + 'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"'
     + '/>';
