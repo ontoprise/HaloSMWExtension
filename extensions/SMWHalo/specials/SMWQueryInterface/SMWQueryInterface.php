@@ -241,10 +241,7 @@ class SMWQueryInterface extends SpecialPage {
   }
 
   private function addQueryDefinitionSparql() {
-    $html = $this->addDefinitionTitleSparql() .
-            '<tr><td id="qiaddbuttons" class="qiaddbuttons">' .
-            '<button id="qiAddSubjectBtn" title="' . wfMsg('smw_qi_tt_addSubject') . '">' . wfMsg('smw_qi_add_subject') . '</button>' .
-            '</td></tr><tr><td>' .
+    $html = '<table id="qiquerydefinition"><tr><td>' .
             $this->addDragboxSparql() .
             $this->addTabHeaderForQIDefinitionSparql() .
             '</td></tr>' .
@@ -283,25 +280,48 @@ class SMWQueryInterface extends SpecialPage {
   }
 
   private function addTabHeaderForQIDefinitionSparql() {
-    $html = '<div id="qiDefTab"><table>
-                 <tr>
-                 <td id="qiDefTab1" class="qiDefTabActive" title="' . wfMsg('smw_qi_tt_treeview') . '">' . wfMsg('smw_qi_queryastree') . '</td>
-                 <td class="qiDefTabSpacer"> </td>' .
-            '<td id="qiDefTab3" class="qiDefTabInactive" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</td>
-                 <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
-                 </tr>
-                 </table>
-                 <div class="qiDefTabContent">' .
-            $this->addTreeViewSparql() .
-            '<div id="qitextview">Query as text</div>
-                 <div id="qisource"><textarea id="sparqlQueryText"></textarea>' .
-            '<div id="qisourceButtons">' .
-            '<button id="qiUpdateSourceBtn" title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
-            '&nbsp;<span class="qibutton" id="discardChangesLink">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
-            '</div>' .
-            '</div>' .
-            '</div></div>
-        ';
+    $html = '<div id="qiDefTab">
+                <ul>
+                  <li><a href="#tabs-1" title="' . wfMsg('smw_qi_tt_treeview') . '">' . wfMsg('smw_qi_queryastree') . '</a></li>
+                  <li><a href="#tabs-2" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</a></li>
+                  <li><a href="#tabs-3" title="' . wfMsg('smw_qi_tt_parserFunc') . '">' . wfMsg('smw_qi_parserFunc') . '</a></li>
+                </ul>
+                <div id="tabs-1">' . $this->addTreeViewSparql() . '</div>
+                <div id="tabs-2">
+                 <div id="qisparqlQueryTextDiv"><textarea id="sparqlQueryText"></textarea>' .
+                  '<div id="qisourceButtons">' .
+                  '<button id="qiUpdateSourceBtn" title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
+                  '&nbsp;<a href="#" class="qibutton" id="discardChangesLink">' . wfMsg('smw_qi_discard_changes') . '</a>&nbsp;' .
+                  '</div>
+                  </div>
+                </div>
+                <div id="tabs-3">
+                  <textarea id="qiSparqlParserFunction" readonly="true"></textarea>
+                </div>
+             </div>';
+
+    
+
+
+//    $html = '<div id="qiDefTab"><table>
+//                 <tr>
+//                 <td id="qiDefTab1" class="qiDefTabActive" title="' . wfMsg('smw_qi_tt_treeview') . '">' . wfMsg('smw_qi_queryastree') . '</td>
+//                 <td class="qiDefTabSpacer"> </td>' .
+//            '<td id="qiDefTab3" class="qiDefTabInactive" title="' . wfMsg('smw_qi_tt_showAsk') . '">' . wfMsg('smw_qi_querysource') . '</td>
+//                 <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
+//                 </tr>
+//                 </table>
+//                 <div class="qiDefTabContent">' .
+//            $this->addTreeViewSparql() .
+//            '<div id="qitextview">Query as text</div>
+//                 <div id="qisource"><textarea id="sparqlQueryText"></textarea>' .
+//            '<div id="qisourceButtons">' .
+//            '<button id="qiUpdateSourceBtn" title="' . wfMsg('smw_qi_tt_update') . '">' . wfMsg('smw_qi_update') . '</button>' .
+//            '&nbsp;<span class="qibutton" id="discardChangesLink">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
+//            '</div>' .
+//            '</div>' .
+//            '</div></div>
+//        ';
     return $html;
   }
 
@@ -349,6 +369,7 @@ class SMWQueryInterface extends SpecialPage {
 
   private function addDragboxSparql() {
     return '<table id="qiDetailsTable"><tr><td id="qiTopToolbar">' .
+            '<button id="qiAddSubjectBtn" title="' . wfMsg('smw_qi_tt_addSubject') . '">' . wfMsg('smw_qi_add_subject') . '</button>' .
             '<button id="qiAddCategoryBtn" title="' . wfMsg('smw_qi_tt_addCategory') . '">' . wfMsg('smw_qi_add_category') . '</button>' .
             '<button id="qiAddPropertyBtn" title="' . wfMsg('smw_qi_tt_addProperty') . '">' . wfMsg('smw_qi_add_property') . '</button>' .
             '</td></tr>' .
@@ -369,7 +390,7 @@ class SMWQueryInterface extends SpecialPage {
     return '<table ' . ($drawTopLine ? 'style="border-top: 1px solid gray;"' : '') . ($tableId ? "id=\"$tableId\"" : "") . '><tr>' .
             '<td>' . $nameInputLabel . '</td>' .
             '<td><input ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . ' class="wickEnabled" type="text" autocomplete="OFF" constraints=""/></td>' .
-            '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox" checked="checked"/>' .
+            '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox"/>' .
             '<label ' . ($showInResultsChkBoxId ? "for=\"$showInResultsChkBoxId\"" : "") . '>' . wfMsg('smw_qi_show_in_results') . '</label></td></tr>' .
             '<tr><td></td><td ' . ($typeLabelId ? "id=\"$typeLabelId\"" : "") . ' class="typeLabelTd"></td><td></td></tr>' .
             '<tr><td>' . wfMsg('smw_qi_column_label') . '</td>' .
@@ -403,7 +424,7 @@ class SMWQueryInterface extends SpecialPage {
     return '<table id="qiPropertyDialogTable"><tr>' .
             '<td>' . wfMsg('smw_qi_property_name') . '</td>' .
             '<td><input id="qiPropertyNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 102"/></td>' .
-            '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox" checked="checked"/>' .
+            '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox"/>' .
             '<label for="qiPropertyValueMustBeSetChkBox">' . wfMsg('smw_qi_value_must_be_set') . '</label></td>' .
             '</tr><tr>' .
             '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd"></td><td></td>' .
@@ -413,12 +434,7 @@ class SMWQueryInterface extends SpecialPage {
   }
 
   private function addResultPartSparql() {
-    $html = '<div id="qiresulttitle"><span onclick="qihelper.switchResult()" onmouseover="Tip(\''
-            . wfMsg('smw_qi_tt_previewres')
-            . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>'
-            . wfMsg('smw_qi_section_result')
-            . '</span><button id="switchToSparqlBtn">' . wfMsg('smw_qi_switch_to_sparql') . '</button></div>' .
-            '<div id="qiresultcontent">' .
+    $html = '<div id="qiresultcontent">' .
             $this->addQueryLayoutSparql() .
             $this->addPreviewResults() .
             '</div>';
@@ -426,13 +442,6 @@ class SMWQueryInterface extends SpecialPage {
   }
 
   private function addResultPart() {
-//    $html = '<div id="qiresulttitle">' .
-//      <span onclick="qihelper.switchResult()" onmouseover="Tip(\''
-//            . wfMsg('smw_qi_tt_previewres')
-//            . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>'
-//            . wfMsg('smw_qi_section_result')
-//            . '</span><button id="switchToSparqlBtn" style="display:none">' . wfMsg('smw_qi_switch_to_sparql') . '</button>
-//            '</div>' .
    $html = '<div id="qiresultcontent">' .
             $this->addQueryLayout() .
             $this->addPreviewResults() .
@@ -574,16 +583,11 @@ class SMWQueryInterface extends SpecialPage {
             stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false)
             );
     return '<div id="qimenubar">' .
-            (($isIE) ? '<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>' : '') .
+            (($isIE) ? '<button onclick="qihelper.copyToClipboard()" title="' . wfMsg('smw_qi_tt_clipboard') . '">' . wfMsg('smw_qi_clipboard') . '</button>' : '') .
             $buttons .
-            '<span><button id="qiResetQueryButton" onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>' .
+            '<button id="switchToSparqlBtn">' . wfMsg('smw_qi_switch_to_sparql') . '</button>'.
+            '<button id="qiResetQueryButton" onclick="qihelper.resetQuery()" title="' . wfMsg('smw_qi_tt_reset') . '">' . wfMsg('smw_qi_reset') . '</button>' .
             '</div>' .
-//            '<div id="fullpreview" style="display:none">' .
-//            '<table id="fullpreviewboxTable">' .
-//            '<tr><td><div id="fullpreview"/></td></tr>' .
-//            '<tr><td class="qibutton" onclick="$$(\'#askQI #fullpreviewbox\')[0].toggle(); $$(\'#askQI #shade\')[0].toggle(); qihelper.reloadOfcPreview()"><img src="' . $imagepath . 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</td></tr>' .
-//            '</table>' .
-//            '</div>' .
             '</div>' .
             '<div id="resetdialogue" class="topDialogue" style="display:none">' .
             'Do you really want to reset your query?<br/>' .

@@ -1668,8 +1668,8 @@ function smwhfRegisterResourceLoaderModules() {
       'ext.jquery.tree',
       'ext.smwhalo.json2',
       'jquery.ui.dialog',
+      'jquery.ui.tabs',
       'ext.smwhalo.general'
-      
      );
 
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(

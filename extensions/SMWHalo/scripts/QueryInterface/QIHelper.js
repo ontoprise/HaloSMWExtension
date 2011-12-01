@@ -1029,26 +1029,28 @@ QIHelper.prototype = {
   getFullParserAsk : function() {
     var asktext = this.recurseQuery(0, "parser");
     var displays = this.queries[0].getDisplayStatements();
-    var fullQuery = "{{#ask: " + asktext;
-    for ( var i = 0; i < displays.length; i++) {
-      fullQuery += "| ?" + displays[i];
+    var fullQuery = '';
+    if(asktext && asktext.length > 1){
+      fullQuery += "{{#ask: " + asktext;
+      for ( var i = 0; i < displays.length; i++) {
+        fullQuery += "| ?" + displays[i];
+      }
+      fullQuery += ' | format=' + $$('#askQI #layout_format')[0].value;
+      fullQuery += $$('#askQI #layout_sort')[0].value == gLanguage.getMessage('QI_ARTICLE_TITLE')
+      ? ""
+      : (' | sort=' + $$('#askQI #layout_sort')[0].value);
+      var qParams = this.serializeSpecialQPParameters("|");
+      if (qParams.length > 0) {
+        if (! qParams.match(/^\s*\|/))
+          fullQuery += '| ';
+        fullQuery += qParams;
+      }
+      qParams = this.getReasonerAndParams();
+      if (qParams.length > 0) fullQuery += "| "+ qParams;
+      if ($$('#askQI #qiQueryName')[0].value)
+        fullQuery += '| queryname=' + $$('#askQI #qiQueryName')[0].value;
+      fullQuery += "| merge=false|}}";
     }
-    fullQuery += ' | format=' + $$('#askQI #layout_format')[0].value;
-    fullQuery += $$('#askQI #layout_sort')[0].value == gLanguage.getMessage('QI_ARTICLE_TITLE')
-    ? ""
-    : (' | sort=' + $$('#askQI #layout_sort')[0].value);
-    var qParams = this.serializeSpecialQPParameters("|");
-    if (qParams.length > 0) {
-      if (! qParams.match(/^\s*\|/))
-        fullQuery += '| ';
-      fullQuery += qParams;
-    }
-    qParams = this.getReasonerAndParams();
-    if (qParams.length > 0) fullQuery += "| "+ qParams;
-    if ($$('#askQI #qiQueryName')[0].value)
-      fullQuery += '| queryname=' + $$('#askQI #qiQueryName')[0].value;
-    fullQuery += "| merge=false|}}";
-
     return fullQuery;
   },
 

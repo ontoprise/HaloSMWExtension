@@ -26,17 +26,19 @@
 }
 
 #qimenubar{
-  border: 1px solid #C0C0C0;
+  /*  border: 1px solid #C0C0C0;*/
   background: #DDDDDD;
   width:100%;
   float:left;
   margin-top:10px;
-  position:relative;
 }
 
-#qimenubar > span {
-  position:absolute;
-  right:13px;
+#qimenubar > button {
+  margin: 2px;
+}
+
+#qiResetQueryButton{
+  float: right;
 }
 
 .qibutton{
@@ -436,6 +438,7 @@ button.btnhov{
 #qiDefTab {
   float:right;
   width: 40%;
+  height: 298px;
 }
 
 #qiDefTabInLoad {
@@ -564,20 +567,20 @@ button.btnhov{
 
 
 #stb-qi-footer-spacer {
-/*  height:60px;*/
+  /*  height:60px;*/
 }
 #stb-qi-footer-wrap {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-/*  font-size: 70%;*/
+  /*  font-size: 70%;*/
 }
 
 #stb-qi-footer-container {
   background: white;
-/*  height: 30px;*/
-/*  font-size: 70%;*/
+  /*  height: 30px;*/
+  /*  font-size: 70%;*/
 }
 
 #stb-qi-footer {
@@ -586,7 +589,7 @@ button.btnhov{
   position: relative;
   text-align: center;
   vertical-align: bottom;
-/*  font-size: 70%;*/
+  /*  font-size: 70%;*/
 }
 #stb-qi-footer input {
   margin: 5px;
@@ -601,10 +604,6 @@ button.btnhov{
   line-height: normal;
 }
 
-#switchToSparqlBtn{
-  float:right;
-}
-
 #qiTopToolbar, #qiBottomToolbar{
   height: 30px;
   background-color: #DDDDDD;
@@ -615,16 +614,19 @@ button.btnhov{
 
 #qiTopToolbar button{
   float: right;
-  margin-right: 10px;
+  margin-right: 2px;
   margin-bottom: 3px;
   margin-top: 3px;
 }
 
 #qiBottomToolbar button, #qiBottomToolbar a{
-  float: none;
-  margin-left: 10px;
+  margin-left: 2px;
   margin-bottom: 3px;
   margin-top: 3px;
+}
+
+#qiBottomToolbar a{
+  margin-left: 10px;
 }
 
 #qiBoxcontent { 
@@ -686,3 +688,37 @@ button.btnhov{
 #bodyContent{
   overflow: hidden;
 }
+
+/* jquery tabs css start */
+.ui-tabs .ui-tabs-nav {
+  padding: 0;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+  font-weight: bold;
+}
+
+.ui-tabs {
+  padding: 0
+}
+
+.ui-tabs .ui-tabs-panel {
+  height: auto;
+  padding: 4px 10px 4px 4px;
+}
+/* jquery tabs css end */
+
+#qisparqlQueryTextDiv{
+  width: 100%;
+  height: 100%;
+}
+
+#qisparqlQueryTextDiv textarea, #qiSparqlParserFunction{
+  width: 100%;
+  height: 225px;
+  resize: none;
+  font-family: monospace;
+  font-size: 11px;
+}
+
+

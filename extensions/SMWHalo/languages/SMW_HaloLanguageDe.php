@@ -336,6 +336,7 @@ protected $smwUserMessages = array(
       'smw_qi_property_name' => 'Property name',
       'smw_qi_value_must_be_set' => 'Value must be set',
       'smw_qi_value_name' => 'Value name',
+    'smw_qi_parserFunc' => 'Parser Function',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
@@ -371,6 +372,7 @@ protected $smwUserMessages = array(
     'smw_qi_tt_addSubject' => 'Add Subject',
       'smw_qi_tt_delete' => 'Delete selected tree node',
       'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
+    'smw_qi_tt_parserFunc' => 'View mediawiki parser function for current query',
 
 	/* Annotation */
  	'smw_annotation_tab' => 'Seite annotieren',
