@@ -520,6 +520,7 @@ Section "Solr" solr
         CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Start Solr.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
         CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Stop Solr.lnk" "$INSTDIR\solr\wiki\stopSolr.bat"
+        ShellLink::SetRunAsAdministrator "$SMPROGRAMS\$STARTMENU_FOLDER\Stop Solr.lnk"
     ${EndIf}
 
     ;DetailPrint "set solr_ip to $IP"
