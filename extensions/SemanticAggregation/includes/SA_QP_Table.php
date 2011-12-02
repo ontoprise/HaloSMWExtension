@@ -13,7 +13,7 @@
  */
 class SMWAggregateTableResultPrinter extends SMWAggregateResultPrinter {
 
-	protected function getResultText(SMWQueryResult $res, $outputmode) {
+	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 

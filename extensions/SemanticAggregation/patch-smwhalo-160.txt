@@ -21,3 +21,18 @@ Index: extensions/SMWHalo/smwtsc/includes/query_processor/SMW_QueryProcessor.php
  				$printouts[] = $lastprintout;
  			} elseif ( $param[0] == '+' ) { // print request parameter
  				if ( $lastprintout !== null ) {
+
+
+Index: extensions/SemanticAggregation/includes/SA_QP_Table.php
+===================================================================
+--- extensions/SemanticAggregation/includes/SA_QP_Table.php	(revision 0000)
++++ extensions/SemanticAggregation/includes/SA_QP_Table.php	(working copy)
+@@ -13,7 +13,7 @@
+  */
+ class SMWAggregateTableResultPrinter extends SMWAggregateResultPrinter {
+ 
+-	protected function getResultText($res, $outputmode) {
++	protected function getResultText(SMWQueryResult $res, $outputmode) {
+ 		global $smwgIQRunningNumber;
+ 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+ 
