@@ -1,5 +1,9 @@
 SMWHalo extension ChangeLog
 ===========================
+VERSION 1.6.1
+	FEATURES:
+	16229 - Support the Distribution parameter in the Fancy Table Query Printer
+	
 VERSION 1.6.0
 	FEATURES:
 		15442 - Allow to specify a property that is displayed as label for the main result column	

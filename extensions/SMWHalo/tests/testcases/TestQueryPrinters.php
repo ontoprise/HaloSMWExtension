@@ -32,10 +32,12 @@ class TestQueryPrintersSuite extends PHPUnit_Framework_TestSuite
 		$suite = new TestQueryPrintersSuite();
 		$suite->addTestSuite('TestQueryPrinters');
 		$suite->addTestSuite('TestFancyTableQuery');
+		$suite->addTestSuite('TestFancyTableDistributionQuery');
 		return $suite;
 	}
 	
 	protected function setUp() {
+        Skin::getSkinNames();
 	}
 	
 	protected function tearDown() {
@@ -693,6 +695,447 @@ TABLE
 	function testFancyTablePrinterResult($query, $expResult) {
 		
 		$actualResult = SMWQueryProcessor::getResultFromFunctionParams( $query, SMW_OUTPUT_WIKI );
+		// Remove whitespaces for comparison
+		$actualResult = preg_replace("/\s*/", "", $actualResult);
+		$expResult = preg_replace("/\s*/", "", $expResult);
+		
+		$this->assertEquals($expResult, $actualResult);
+		
+	}
+}
+
+/**
+ * This class tests the distribution feature of the FancyTableResultPrinter.
+ * 
+ * @author thsc
+ *
+ */
+class TestFancyTableDistributionQuery extends PHPUnit_Framework_TestCase {
+
+	private static $mArticleManager;
+	
+	public static function setUpBeforeClass() {
+		SMWHaloCommon::createUsers(array("U1"));
+    	
+        self::$mArticleManager = new ArticleManager();
+        self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
+        // Existing articles are not overwritten => do the import twice
+        self::$mArticleManager->deleteArticles("U1");
+        self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
+	}
+	
+	public static function tearDownAfterClass() {
+		// Temporarily disabled for speeding up tests
+        self::$mArticleManager->deleteArticles("U1");
+	}
+	
+	protected function setUp() {
+   	}
+	
+	protected function tearDown() {
+        
+	}
+	
+    /**
+     * Data provider for testFancyTablePrinterResult
+     */
+    function providerForFancyTableDistribution() {
+
+    	return array(
+#0 --- A normal query without distribution ---
+	    	array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+					'format=fancytable'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th></th>
+		<th>[[:Property:Located In|Located In]]</th>
+	</tr>
+	<tr>
+		<td>[[:Baltimore|Baltimore]]</td>
+		<td>[[:USA|USA]]</td>
+	</tr>
+	<tr>
+		<td>[[:Berlin|Berlin]]</td>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Bern|Bern]]</td>
+		<td>[[:Switzerland|Switzerland]]</td>
+	</tr>
+	<tr>
+		<td>[[:Boston|Boston]]</td>
+		<td>[[:USA|USA]]</td>
+	</tr>
+	<tr>
+		<td>[[:Bremen|Bremen]]</td>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Graz|Graz]]</td>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+	<tr>
+		<td>[[:Hamburg|Hamburg]]</td>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Linz|Linz]]</td>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+	<tr>
+		<td>[[:Stuttgart|Stuttgart]]</td>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Vienna|Vienna]]</td>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+</table>
+
+TABLE
+    			  ),
+#1 --- A normal query without the subject column ---     			  
+	    	array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+					'mainlabel=-',
+					'format=fancytable'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#2 --- A distribution query without the subject column ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>4</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+		<td>3</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#3 --- A distribution query without the subject column, with title for the distribution column ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>4</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+		<td>3</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#4 --- A distribution query without the subject column, with title for the 
+#      distribution column, with two columns ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+    			    '?NorthOf50DegreesN',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>[[:Property:NorthOf50DegreesN|NorthOf50DegreesN]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>[[:False|False]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:True|True]]</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+		<td>[[:False|False]]</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#5 --- A distribution query without the subject column, with title for the 
+#      distribution column, with two columns, order ascending ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+    			    '?NorthOf50DegreesN',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+					'distributionsort=asc',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>[[:Property:NorthOf50DegreesN|NorthOf50DegreesN]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>[[:False|False]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:True|True]]</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+		<td>[[:False|False]]</td>
+		<td>3</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#6 --- A distribution query without the subject column, with title for the 
+#      distribution column, with two columns, order descending ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+    			    '?NorthOf50DegreesN',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+					'distributionsort=desc',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>[[:Property:NorthOf50DegreesN|NorthOf50DegreesN]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:Austria|Austria]]</td>
+		<td>[[:False|False]]</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:True|True]]</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>[[:False|False]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#7 --- A distribution query without the subject column, with title for the 
+#      distribution column, with two columns, limit = 2 ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+    			    '?NorthOf50DegreesN',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+					'distributionlimit=2',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>[[:Property:NorthOf50DegreesN|NorthOf50DegreesN]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:USA|USA]]</td>
+		<td>[[:False|False]]</td>
+		<td>2</td>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:True|True]]</td>
+		<td>3</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+#8 --- A distribution query without the subject column, with title for the 
+#      distribution column, with two columns, order ascending, limit=2 ---     			  
+    			  array(array(
+					'[[Category:City]]',
+					'[[Located In::+]]',
+					'?Located In',
+    			    '?NorthOf50DegreesN',
+					'mainlabel=-',
+					'format=fancytable',
+					'distribution=on',
+					'distributionlimit=2',
+    			    'distributionsort=asc',
+    			  	'distributiontitle=Occurrences'
+    			  ), 
+<<<TABLE
+<table class="smwtable" id="querytable0">
+	<tr>
+		<th>[[:Property:Located In|Located In]]</th>
+		<th>[[:Property:NorthOf50DegreesN|NorthOf50DegreesN]]</th>
+		<th>Occurrences</th>
+	</tr>
+	<tr>
+		<td>[[:Germany|Germany]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+	<tr>
+		<td>[[:Switzerland|Switzerland]]</td>
+		<td>[[:False|False]]</td>
+		<td>1</td>
+	</tr>
+</table>
+TABLE
+    			  ),
+		);
+    }
+	
+	/**
+	 * Tests the correct output of the fancy table printer.
+	 * 
+     * @dataProvider providerForFancyTableDistribution
+	 *
+	 */
+	function testFancyTableDistribution($query, $expResult) {
+		$actualResult = SMWQueryProcessor::getResultFromFunctionParams( $query, SMW_OUTPUT_WIKI );
+//echo $actualResult;
 		// Remove whitespaces for comparison
 		$actualResult = preg_replace("/\s*/", "", $actualResult);
 		$expResult = preg_replace("/\s*/", "", $expResult);

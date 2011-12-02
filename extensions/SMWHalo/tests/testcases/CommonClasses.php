@@ -97,19 +97,53 @@ class ArticleManager {
     }
     
     /**
-     * Delete all articles that were created during a test.
+	 * Moves articles as a given user. The names of all moved articles are 
+	 * stored so that they can be deleted later.
+	 * 
+	 * @param array(string => string) $articles
+	 * 		A map from article names from source to target name.
      */
-    function deleteArticles($user) {
+	public function moveArticles($articles) {
+		$linkCache = LinkCache::singleton();
+    	foreach ($articles as $source => $target) {
+	    	// Clear the link cache as it returns wrong title IDs otherwise.
+	    	$linkCache->clear();
+	    	
+	    	// We must use newFromURL as newFromText uses an internal cache
+	    	// that contains old IDs
+    		$st = Title::newFromURL($source);
+    		$st->moveNoAuth(Title::newFromURL($target));
+    		$this->mAddedArticles[] = $target;
+    	}
+    }
+    
+    
+    /**
+     * Deletes the articles given in $articles as user $user. If $articles is null,
+     * all articles that were created during a test are deleted.
+     * 
+     * @param string $user
+     * 		User who deletes the articles
+     * @param array(string) $articles
+     * 		Names of the articles that will be deleted.
+     */
+    function deleteArticles($user, $articles = null) {
    		global $wgUser, $wgOut;
     	$wgUser = User::newFromName($user);
     	
-		foreach ($this->mAddedArticles as $a) {
+    	if (is_null($articles)) {
+    		$articles = $this->mAddedArticles;
+    	}
+		foreach ($articles as $a) {
 		    $t = Title::newFromText($a);
 		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
 	    	$article = new Article($t);
 			$article->doDelete("Testing");
+			$key = array_search($a, $this->mAddedArticles);
+			if ($key !== false) {
+				unset($this->mAddedArticles[$key]);
+			}
 		}
-		$this->mAddedArticles = array();
     }
 	
 	/**
@@ -124,6 +158,33 @@ class ArticleManager {
 	public static function articleExists($title) {
 		$title = Title::newFromText($title);
 		return $title->exists();
+	}
+    
+	/**
+	 * Imports the articles that are stored in the wiki dump with the given
+	 * $filename.
+	 * @param string $filename
+	 * 		Name of the file that contains the wiki dump.
+	 */
+	public function importArticles($filename) {
+		$source = ImportStreamSource::newFromFile($filename);
+		if ($source->isOK()) {
+			$source = $source->value;
+		}
+		$importer = new WikiImporter($source);
+		$result = $importer->doImport();
+
+		if ($result) {
+			// Import was successful
+			// => get the names of imported articles
+			$doc = new DOMDocument();
+			$doc->load($filename);
+			$entries = $doc->getElementsByTagName('title');
+			foreach ($entries as $entry) {
+				$article = $entry->nodeValue;
+				$this->mAddedArticles[] = $article;
+			}
+		}
 	}
     
 

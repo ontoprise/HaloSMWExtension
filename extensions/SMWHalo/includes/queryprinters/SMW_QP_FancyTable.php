@@ -64,10 +64,14 @@
  */
 class SMWFancyTableResultPrinter extends SMWResultPrinter {
 
+	//--- Constants ---
+	const DISTRIBUTION_COUNTER = "\t\t<td distribution_counter=\"true\"></td>\n";
+
 	//--- Fields ---
 	// An array of strings, containing warnings if some replacement statements
 	// are invalid.
 	private $mReplaceWarnings = array();
+	private $mCalculateDistribution = false;
 
 	/**
 	 * List of printrequests for which numeric sort keys are used.
@@ -88,6 +92,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		SMWOutputs::requireHeadItem( SMW_HEADER_SORTTABLE );
 
+		$this->checkDistribution();
 		$replacements = $this->getReplacements();
 		
 		// Create an array with all print requests. The key is the hash code of
@@ -139,6 +144,20 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 		return "<table class=\"$style\"" .
 			  ( $this->mFormat == 'broadtable' ? ' width="100%"' : '' ) .
 				  " id=\"querytable$smwgIQRunningNumber\">\n";
+		
+	}
+	
+	/**
+	 * Checks if the calculation of the distribution is requested.
+	 */
+	private function checkDistribution() {
+		if (array_key_exists('distribution', $this->m_params)) {
+			$this->mCalculateDistribution = 
+				$this->m_params['distribution'] === 'on' || 
+				$this->m_params['distribution'] === 'true';
+		} else {
+			$this->mCalculateDistribution = false;
+		}
 		
 	}
 	
@@ -312,7 +331,13 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 					);
 				}
 			}
-			
+			// If a distribution is requested and additional column is added
+			if ($this->mCalculateDistribution) {
+				$t = array_key_exists('distributiontitle', $this->m_params) 
+						? $this->m_params['distributiontitle']
+						: '';
+				$result .= "\t\t<th>$t</th>\n";
+			}
 			$result .= "\t</tr>\n";
 		}
 				
@@ -334,8 +359,19 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	private function createTableBody(SMWQueryResult $res, $outputmode, array $prReplacements) {
 		$result = '';
 		// print all result rows
-		while ( $row = $res->getNext() ) {
-			$result .= $this->createTableRow($row, $outputmode, $prReplacements);
+		if ($this->mCalculateDistribution) {
+			// We have to calculate the distribution of tables entries before 
+			// we add the rows to the body.
+			$rowsHTML = array();
+			while ( $row = $res->getNext() ) {
+				$rowsHTML[] = $this->createTableRow($row, $outputmode, $prReplacements);
+			}
+			$result = $this->createHTMLForDistribution($rowsHTML);
+		} else {
+			// just concatenate the HTML for all rows
+			while ( $row = $res->getNext() ) {
+				$result .= $this->createTableRow($row, $outputmode, $prReplacements);
+			}
 		}
 		return $result;
 	}
@@ -383,6 +419,83 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	}
 	
 	/**
+	 * The HTML for all rows of the table may contain duplicate lines. These 
+	 * duplicates are removed and the number of occurrences is added as the 
+	 * last column in each remaing row.
+	 * The order of rows is preserved if not sorting option is specified.
+	 *  
+	 * @param {array<string>} $rowsHTML
+	 *   An array of HTML strings.
+	 * @return {String}
+	 * 	An HTML string based on the elements of $rowsHTML but without duplicate
+	 *  lines and number of occurrences appended.
+	 */
+	private function createHTMLForDistribution(array $rowsHTML) {
+		$hashes = array();
+		$resultRows = array();
+		$hashedResultRows = array();
+		$sort = array_key_exists('distributionsort', $this->m_params)
+				? $this->m_params['distributionsort']
+				: false;
+		
+		// Calculate the number of occurrences of each row
+		foreach ($rowsHTML as $row) {
+			$hash = hash('md5', $row);
+			if (!array_key_exists($hash, $hashes)) {
+				$hashes[$hash] = 1;
+				$resultRows[] = $row;
+				if ($sort !== false) {
+					$hashedResultRows[$hash] = $row;
+				}
+			} else {
+				$hashes[$hash] = $hashes[$hash] + 1;
+			}
+		}
+
+		$limit = array_key_exists('distributionlimit', $this->m_params)
+				? $this->m_params['distributionlimit'] * 1
+				: false;
+		
+		$result = "";
+		if ($sort !== false) {
+			// Sorting requested
+			if ($sort === 'desc') {
+				arsort($hashes, SORT_NUMERIC);
+			} else {
+				asort($hashes, SORT_NUMERIC);
+			}
+			// Insert the number into the HTML of the row and generate the complete HTML
+			foreach ($hashes as $hash => $count) {
+				if ($limit !== false) {
+					if ($limit === 0) {
+						break;
+					}
+					--$limit;
+				}
+				$row = $hashedResultRows[$hash];
+				$dc = "\t\t<td>$count</td>\n";
+				$row = str_replace(self::DISTRIBUTION_COUNTER, $dc, $row);
+				$result .= $row;
+			}
+		} else {
+			// Insert the number into the HTML of the row and generate the complete HTML
+			foreach ($resultRows as $row) {
+				if ($limit !== false) {
+					if ($limit === 0) {
+						break;
+					}
+					--$limit;
+				}
+				$count = $hashes[hash('md5', $row)];
+				$dc = "\t\t<td>$count</td>\n";
+				$row = str_replace(self::DISTRIBUTION_COUNTER, $dc, $row);
+				$result .= $row;
+			}
+		}
+		return $result;
+	}
+	
+	/**
 	 * Creates the HTML for a row of the result
 	 * @param $row
 	 * 		The result row.
@@ -410,6 +523,11 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 			}
 			
 			$result .= $this->createTableField($field, $rowArray, $outputmode, $prReplacements);
+		}
+		// If the distribution of values is requested a placeholder for the number
+		// of occurrences is added
+		if ($this->mCalculateDistribution) {
+			$result .= self::DISTRIBUTION_COUNTER;
 		}
 		$result .= "\t</tr>\n";
 		return $result;

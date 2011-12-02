@@ -1,0 +1,252 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.4/ http://www.mediawiki.org/xml/export-0.4.xsd" version="0.4" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/halorel156/index.php/Main_Page</base>
+    <generator>MediaWiki 1.16.4</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="104" case="first-letter">Type</namespace>
+      <namespace key="105" case="first-letter">Type talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Baltimore</title>
+    <id>56</id>
+    <revision>
+      <id>67</id>
+      <timestamp>2009-07-24T12:31:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Baltimore.  [[Category:City]] [[Located In::USA]] [[Population::640000]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Baltimore.
+
+[[Category:City]]
+[[Located In::USA]]
+[[Population::640000]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Berlin</title>
+    <id>57</id>
+    <revision>
+      <id>68</id>
+      <timestamp>2009-07-24T12:33:09Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Berlin.  [[Category:City]] [[Located In::Germany]] [[Population::3450000]][[NorthOf50DegreesN::true]]</comment>
+      <text xml:space="preserve">This is the city of Berlin.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::3450000]]
+[[NorthOf50DegreesN::true]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bern</title>
+    <id>58</id>
+    <revision>
+      <id>69</id>
+      <timestamp>2009-07-24T12:33:58Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Bern.  [[Category:City]] [[Located In::Switzerland]] [[Population::122600]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Bern.
+
+[[Category:City]]
+[[Located In::Switzerland]]
+[[Population::122600]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Boston</title>
+    <id>59</id>
+    <revision>
+      <id>70</id>
+      <timestamp>2009-07-24T12:34:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Boston.  [[Category:City]] [[Located In::USA]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Boston.
+
+[[Category:City]]
+[[Located In::USA]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bremen</title>
+    <id>60</id>
+    <revision>
+      <id>71</id>
+      <timestamp>2009-07-24T12:35:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Bremen.  [[Category:City]] [[Located In::Germany]] [[Population::548000]][[NorthOf50DegreesN::true]]</comment>
+      <text xml:space="preserve">This is the city of Bremen.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::548000]]
+[[NorthOf50DegreesN::true]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Graz</title>
+    <id>61</id>
+    <revision>
+      <id>72</id>
+      <timestamp>2009-07-24T12:36:24Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Graz.  [[Category:City]] [[Located In::Austria]] [[Population::253000]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Graz.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::253000]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Hamburg</title>
+    <id>62</id>
+    <revision>
+      <id>73</id>
+      <timestamp>2009-07-24T12:37:22Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Hamburg.  [[Category:City]] [[Located In::Germany]] [[Population::1773000]][[NorthOf50DegreesN::true]]</comment>
+      <text xml:space="preserve">This is the city of Hamburg.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::1773000]]
+[[NorthOf50DegreesN::true]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Linz</title>
+    <id>63</id>
+    <revision>
+      <id>74</id>
+      <timestamp>2009-07-24T12:38:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Linz.  [[Category:City]] [[Located In::Austria]] [[Population::189500]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Linz.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::189500]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Stuttgart</title>
+    <id>64</id>
+    <revision>
+      <id>75</id>
+      <timestamp>2009-07-24T12:38:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Stuttgart.  [[Category:City]] [[Located In::Germany]] [[Population::597000]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Stuttgart.
+
+[[Category:City]]
+[[Located In::Germany]]
+[[Population::597000]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Vienna</title>
+    <id>65</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-07-24T12:39:44Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the city of Vienna.  [[Category:City]] [[Located In::Austria]] [[Population::1691000]][[NorthOf50DegreesN::false]]
+</comment>
+      <text xml:space="preserve">This is the city of Vienna.
+
+[[Category:City]]
+[[Located In::Austria]]
+[[Population::1691000]]
+[[NorthOf50DegreesN::false]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>America</title>
+    <id>72</id>
+    <revision>
+      <id>83</id>
+      <timestamp>2009-07-24T12:45:17Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is America.  [[Category:Continent]]</comment>
+      <text xml:space="preserve">This is America.
+
+[[Category:Continent]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Europe</title>
+    <id>67</id>
+    <revision>
+      <id>78</id>
+      <timestamp>2009-07-24T12:41:09Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is Europe.  [[Category:Continent]]</comment>
+      <text xml:space="preserve">This is Europe.
+
+[[Category:Continent]]</text>
+    </revision>
+  </page>
+</mediawiki>
