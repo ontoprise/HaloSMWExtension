@@ -357,6 +357,9 @@ window.wgUserLanguageStrings = {
     'QI_NOT_SPECIFIED'        : 'Nicht definiert',
     'QI_NO_QUERIES_FOUND'     : 'Die Suche hat keine Queries im Wiki gefunden',
     'QI_SPARQL_NOT_SUPPORTED' : 'SPARQL queries k&ouml;nen nicht im Query Interface bearbeitet werden.',
+
+    //SPARQL query interface
+    'QI_SWITCH_TO_SPARQL'     : 'Switch to SPARQL',
     
 	
 	// Wiki text parser

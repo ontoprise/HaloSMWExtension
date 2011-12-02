@@ -108,59 +108,58 @@ QIHelper.prototype = {
     });
   },
 
-  isFunctionInArray: function(someFunction, arrayOfFunctions){
-    var result = false;
-    if(typeof someFunction === 'function' && arrayOfFunctions && arrayOfFunctions.length){
-      jQuery.each(arrayOfFunctions, function(key, value){
-        if(value.toString() == someFunction.toString()){
-          result = true;
-          return false; //break the loop
-        }
-      });
-    }
-    return result;
-  },
+//  isFunctionInArray: function(someFunction, arrayOfFunctions){
+//    var result = false;
+//    if(typeof someFunction === 'function' && arrayOfFunctions && arrayOfFunctions.length){
+//      jQuery.each(arrayOfFunctions, function(key, value){
+//        if(value.toString() == someFunction.toString()){
+//          result = true;
+//          return false; //break the loop
+//        }
+//      });
+//    }
+//    return result;
+//  },
+//
+//  //add function to array only if it's not there yet
+//  addInitMethod: function(func, resultFormatName){
+//    if(resultFormatName && !qihelper.isFunctionInArray(func, qihelper.srfInitMethods)){
+//      qihelper.srfInitMethods.push(func);
+//    }
+//  },
 
-  //add function to array only if it's not there yet
-  addInitMethod: function(func, resultFormatName){
-    if(resultFormatName && !qihelper.isFunctionInArray(func, qihelper.srfInitMethods)){
-      qihelper.srfInitMethods.push(func);
-    }
-  },
+//  //execute init methods of result format modules registered via overriden $(document).ready methosd
+//  executeInitMethods: function(){
+//    var initMethods = qihelper.srfInitMethods || [];
+//
+//    for(var i = 0; i < initMethods.length; i++){
+//      try{
+//        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
+//        var method = initMethods[i];
+//        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
+//          && jQuery('.sortheader').length > 0)
+//          {
+//          continue;
+//        }
+//        method();
+//
+//      }
+//      catch(x){
+//        //exceptions are expected so just continue
+//        mw.log('EXCEPTION: ' + x);
+//      }
+//    }
+//  },
 
-  //execute init methods of result format modules registered via overriden $(document).ready methosd
-  executeInitMethods: function(){
-    var initMethods = qihelper.srfInitMethods || [];
-    
-    for(var i = 0; i < initMethods.length; i++){
-      try{
-        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
-        var method = initMethods[i];
-        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
-          && jQuery('.sortheader').length > 0)
-          {
-          continue;
-        }        
-        method();
-
-      }
-      catch(x){
-        //exceptions are expected so just continue
-        mw.log('EXCEPTION: ' + x);
-      }
-    }
-  },
-
-  //override $initResultFormatLoading(document).ready and addOnloadHook methods to save the functions passed to them as arguments
-  initResultFormatLoading: function(){
-    jQuery.fn.ready = qihelper.documentReady;
-    addOnloadHook = qihelper.documentReady;
-  },
-
-  documentReady: function(someFunction){
-    //each result format will have it's array of functions
-    qihelper.addInitMethod(someFunction, qihelper.selectedResultFormat);
-  },
+//  //override jquery.ready and addOnloadHook methods to save the functions passed to them as arguments
+//  initResultFormatLoading: function(){
+//    jQuery.fn.ready = qihelper.documentReady;
+//    addOnloadHook = qihelper.documentReady;
+//  },
+//
+//  documentReady: function(someFunction){
+//    qihelper.addInitMethod(someFunction, qihelper.selectedResultFormat);
+//  },
 
   enableResetQueryButton: function(forceDisable){
     if(forceDisable){
@@ -846,9 +845,9 @@ QIHelper.prototype = {
     if(this.pendingElement)
       this.pendingElement.hide();
 
-    qihelper.inlineScripts = this.getInlineScripts(request.responseText);
-    var plainHtml = qihelper.inlineScripts.pop();
-    this.initResultFormatLoading();
+    SPARQL.srfInitScripts = SPARQL.getInitScripts(request.responseText);
+    var plainHtml = SPARQL.srfInitScripts.pop();
+    SPARQL.initResultFormatLoading();
         
     // pre-processing
     var resultHTML;
@@ -873,18 +872,14 @@ QIHelper.prototype = {
       if(qiPreviewDialog && qiPreviewDialog.dialog('isOpen')){
         $$('#askQI #previewcontent')[0].innerHTML = '';
         qiPreviewDialog.html(resultHTML);
-        this.appendScripts(qiPreviewDialog, this.inlineScripts);
-        this.executeInitMethods();
+        SPARQL.appendScripts(qiPreviewDialog, SPARQL.srfInitScripts);
+        SPARQL.executeInitMethods();
       }
     }
     else{
       preview.innerHTML = resultHTML;
-      this.appendScripts(preview, this.inlineScripts);
-      this.executeInitMethods();
-    //    this.executeInitMethodsTimeout = window.setTimeout(function(){
-    //        window.clearTimeout(qihelper.executeInitMethodsTimeout);
-    //        qihelper.executeInitMethods();
-    //      }, 500);
+      SPARQL.appendScripts(preview, SPARQL.srfInitScripts);
+      SPARQL.executeInitMethods();
     }
 
       
@@ -2963,7 +2958,7 @@ QIHelper.prototype = {
   },
 
   discardChangesOfSource : function() {
-    $$('#askQI #fullAskText')[0].value =   $$('#askQI #query4DiscardChanges')[0].innerHTML.unescapeHTML();
+    $$('#askQI #fullAskText')[0].value = $$('#askQI #query4DiscardChanges')[0].innerHTML.unescapeHTML();
     this.sourceChanged=1;
     this.loadFromSource(true);
   },

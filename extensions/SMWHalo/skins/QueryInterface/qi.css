@@ -653,7 +653,6 @@ button.btnhov{
   vertical-align: top;
   overflow:auto;
   padding: 5px;
-  height: 223px;
 }
 
 #qiBoxcontent img{
@@ -721,4 +720,7 @@ button.btnhov{
   font-size: 11px;
 }
 
+/*#switchToSparqlBtn{
+  display: none;
+}*/
 

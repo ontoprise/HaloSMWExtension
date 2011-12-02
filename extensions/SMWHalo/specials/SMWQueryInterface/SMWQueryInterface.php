@@ -585,7 +585,6 @@ class SMWQueryInterface extends SpecialPage {
     return '<div id="qimenubar">' .
             (($isIE) ? '<button onclick="qihelper.copyToClipboard()" title="' . wfMsg('smw_qi_tt_clipboard') . '">' . wfMsg('smw_qi_clipboard') . '</button>' : '') .
             $buttons .
-            '<button id="switchToSparqlBtn">' . wfMsg('smw_qi_switch_to_sparql') . '</button>'.
             '<button id="qiResetQueryButton" onclick="qihelper.resetQuery()" title="' . wfMsg('smw_qi_tt_reset') . '">' . wfMsg('smw_qi_reset') . '</button>' .
             '</div>' .
             '</div>' .

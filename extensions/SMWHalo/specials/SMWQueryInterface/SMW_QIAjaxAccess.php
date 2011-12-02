@@ -457,7 +457,7 @@ function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = tr
     $result .= '<script type="text/javascript">';
     $result .= 'mw.loader.using(["';
     $result .= implode('","', $modules);
-    $result .= '"], qihelper.executeInitMethods);';
+    $result .= '"], window.parent.SPARQL.executeInitMethods);';
     $result .= '</script>';
     $result .= $wgOut->getScript();
   }
