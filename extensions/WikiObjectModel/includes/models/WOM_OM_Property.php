@@ -10,6 +10,9 @@
 
 class WOMPropertyModel extends WikiObjectModel {
 	protected $m_property; // name
+	protected $m_value;
+	protected $m_caption;
+	protected $m_user_property; // name
 	protected $m_smwdatavalue; // value, caption, type
 	protected $m_visible;
 
@@ -21,20 +24,40 @@ class WOMPropertyModel extends WikiObjectModel {
 			throw new MWException( __METHOD__ . ": Property model is invalid. Please install 'SemanticMediaWiki extension' first." );
 		}
 
-		$property = SMWPropertyValue::makeUserProperty( $property );
-		$smwdatavalue = SMWDataValueFactory::newPropertyObjectValue( $property, $value, $caption );
+		$user_property = SMWPropertyValue::makeUserProperty( $property );
+		if ( count ( $user_property->getErrors() ) > 0 ) {
+			$user_property = SMWPropertyValue::makeUserProperty( '///NA///' );
+		} else {
+			$property = '';
+		}
+		$smwdatavalue = null;
+		// FIXME: property should be collection object according to templates
+		// if template/field used
+		if ( preg_match( '/\{\{.+\}\}/s', $value . $caption ) ) {
+			$value = $value . ( $caption == '' ? '' : "|{$caption}" );
+			$caption = '';
+		} else {
+			if ( version_compare ( SMW_VERSION, '1.6', '>=' ) ) {
+				$smwdatavalue = SMWDataValueFactory::newPropertyObjectValue( $user_property->getDataItem(), $value, $caption );
+			} else {
+				$smwdatavalue = SMWDataValueFactory::newPropertyObjectValue( $user_property, $value, $caption );
+			}
+		}
 
-		$this->m_property = $property;
+		$this->m_user_property = $user_property;
 		$this->m_smwdatavalue = $smwdatavalue;
-		$this->m_visible = !preg_match( '/\s+/', $caption );
+		$this->m_property = $property;
+		$this->m_value = $value;
+		$this->m_caption = $caption;
+		$this->m_visible = !preg_match( '/^\s+$/', $caption );
 	}
 
 	public function getProperty() {
-		return $this->m_property;
+		return $this->m_user_property;
 	}
 
 	public function setProperty( $property ) {
-		$this->m_property = $property;
+		$this->m_user_property = $property;
 	}
 
 	public function getSMWDataValue() {
@@ -50,7 +73,7 @@ class WOMPropertyModel extends WikiObjectModel {
 		if ( $this->getPropertyValue() != $this->getCaption()
 			&& $this->getCaption() != '' ) {
 				$res .= "|{$this->getCaption()}";
-		} else if ( !$this->m_visible ) {
+		} elseif ( !$this->m_visible ) {
 			$res .= "| ";
 		}
 		$res .= "]]";
@@ -59,15 +82,15 @@ class WOMPropertyModel extends WikiObjectModel {
 	}
 
 	public function getPropertyName() {
-		return $this->m_property->getWikiValue();
+		return ( $this->m_property ) ? $this->m_property : $this->m_user_property->getWikiValue();
 	}
 
 	public function getPropertyValue() {
-		return $this->m_smwdatavalue->getWikiValue();
+		return $this->m_smwdatavalue == null ? $this->m_value : $this->m_smwdatavalue->getWikiValue();
 	}
 
 	public function getCaption() {
-		$caption = $this->m_smwdatavalue->getShortWikiText();
+		$caption = $this->m_smwdatavalue == null ? $this->m_caption : $this->m_smwdatavalue->getShortWikiText();
 		return ( $caption == $this->getPropertyValue() ) ? '' : $caption;
 	}
 
@@ -81,12 +104,12 @@ class WOMPropertyModel extends WikiObjectModel {
 		}
 	}
 	protected function getXMLAttributes() {
-		return "name=\"{$this->getPropertyName()}\"";
+		return 'name="' . self::xml_entities( $this->getPropertyName() ) . '"';
 	}
 	protected function getXMLContent() {
 		return "
-<value>{$this->getPropertyValue()}</value>
-<caption>{$this->getCaption()}</caption>
+<value><![CDATA[{$this->getPropertyValue()}]]></value>
+<caption><![CDATA[{$this->getCaption()}]]></caption>
 ";
 	}
 }
