@@ -55,28 +55,18 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 	}
 	
 	private function getTime($object) {
-		$time = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue();
 		if($object instanceof SMWTimeValue) {
 			if(version_compare(SMW_VERSION, '1.6', '>=')) {
 				$time = $object->getISO8601Date();
 			} else {
-				$t = explode('T', $time);
-				$d = explode('/', $t[0]);
-				$time = $d[0].'-';
-				if(strlen($d[1])==1) $time .= '0';
-				$time .= $d[1].'-';
-				if(strlen($d[2])==1) $time .= '0';
-				$time .= $d[2];
-				$time .= 'T';
-				if($t[1]=='') {
-					$time .= '00:00:00';
-				} else {
-					$time .= $t[1];
-				}
+				$time = $object->getYear()."-".str_pad($object->getMonth(),2,'0',STR_PAD_LEFT)."-".str_pad($object->getDay(),2,'0',STR_PAD_LEFT)." ".$object->getTimeString();
 			}
+		} else {
+			$time = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue();
 		}
 		return $time;
 	}
+	
 	protected function getResultText($res, $outputmode) {
 		$this->includeJS();
 		
@@ -150,15 +140,22 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 			$data .= ",values:[".substr($values, 1)."],description:\"$html\"}";
 		}
 		
-		global $wgOut;
-		$wgOut->addScript('
+		$js = '
 <script type="text/javascript">
 	simileTimeplotRecords.push( {
 		div: "' . $div . '",
 		count: ' . count($cols) . ',
 		data: [' . $data . ']
 	} );
-</script>');
+</script>';
+		// MediaWiki 1.17 introduces the Resource Loader.
+		$realFunction = array( 'SMWOutputs', 'requireResource' );
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
+			global $wgOut;
+			$wgOut->addScript( $js );
+		} else {
+			SMWOutputs::requireHeadItem("simile$smwgIQRunningNumber", $js);
+		}
 		
 		// Make label for finding further results
 		if ( $this->linkFurtherResults($res) && ( ('ol' != $this->mFormat) || ($this->getSearchLabel(SMW_OUTPUT_WIKI)) ) ) {
@@ -302,8 +299,7 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 			$data .= ", html:\"$html\"}";
 		}
 		
-		global $wgOut;
-		$wgOut->addScript('
+		$js = '
 <script type="text/javascript">
 	simileRunwayRecords[' . $smwgIQRunningNumber . '] = {
 		div: "' . $div . '",
@@ -313,7 +309,15 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 		items: ' . $items . ',
 		data: [' . $data . ']
 	};
-</script>');
+</script>';
+		// MediaWiki 1.17 introduces the Resource Loader.
+		$realFunction = array( 'SMWOutputs', 'requireResource' );
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
+			global $wgOut;
+			$wgOut->addScript( $js );
+		} else {
+			SMWOutputs::requireHeadItem("simile$smwgIQRunningNumber", $js);
+		}
 		
 		// Make label for finding further results
 		if ( $this->linkFurtherResults($res) && ( ('ol' != $this->mFormat) || ($this->getSearchLabel(SMW_OUTPUT_WIKI)) ) ) {

@@ -104,7 +104,19 @@ class SRFExhibit extends SMWResultPrinter {
 			return "";
 		}
 	}
-
+	private function getTime($object) {
+		if($object instanceof SMWTimeValue) {
+			if(version_compare(SMW_VERSION, '1.6', '>=')) {
+				$time = $object->getISO8601Date();
+			} else {
+				$time = $object->getYear()."-".str_pad($object->getMonth(),2,'0',STR_PAD_LEFT)."-".str_pad($object->getDay(),2,'0',STR_PAD_LEFT)." ".$object->getTimeString();
+			}
+		} else {
+			$time = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue();
+		}
+		return $time;
+	}
+	
 	protected function getResultText($res, $outputmode) {
 		$this->includeJS();
 
@@ -366,7 +378,7 @@ class SRFExhibit extends SMWResultPrinter {
 							$tmp = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getNumericValue($outputmode,$this->getLinker(0));
 							break;
 						case '_dat':
-							$tmp = $object->getYear()."-".str_pad($object->getMonth(),2,'0',STR_PAD_LEFT)."-".str_pad($object->getDay(),2,'0',STR_PAD_LEFT)." ".$object->getTimeString();
+							$tmp = $this->getTime($object);
 							break;
 						case '_uri':
 							$tmp = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue($outputmode,$this->getLinker(0));
@@ -408,15 +420,22 @@ class SRFExhibit extends SMWResultPrinter {
 			}
 		}
 		
-		global $wgOut;
-		$wgOut->addScript('
+		$js = '
 <script type="text/javascript">
 ' . implode("\n", $gmaps) . '
 ' . implode("\n", $locationstr) . '
 ' . $properties . '
 smwExhibitJSON.lens.push({id:"' . $collection . '_lens", content: "' . str_replace( "\n", '\n', str_replace( '"', '\"', $lenssrc) ) . '"});
 ' . $items .'
-</script>');
+</script>';
+		// MediaWiki 1.17 introduces the Resource Loader.
+		$realFunction = array( 'SMWOutputs', 'requireResource' );
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
+			global $wgOut;
+			$wgOut->addScript( $js );
+		} else {
+			SMWOutputs::requireHeadItem('ExhibitData' . SRFExhibit::$exhibitRunningNumber, $js);
+		}
 
 		$result = '<div ex:role="collection" ex:itemTypes="' . $itemTypes . '" id="' . $collection . '"></div>
 		<div class="top-facets"></div>

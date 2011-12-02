@@ -530,8 +530,16 @@ class SRFGroupOFC extends SRFGroupResultPrinter {
 			}
 		}
 
-		global $wgOut;
-		$wgOut->addScript('<script type="text/javascript">' . $js . '</script>' . "\n");
+
+		$js = '<script type="text/javascript">' . $js . '</script>' . "\n";
+		// MediaWiki 1.17 introduces the Resource Loader.
+		$realFunction = array( 'SMWOutputs', 'requireResource' );
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
+			global $wgOut;
+			$wgOut->addScript( $js );
+		} else {
+			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", $js);
+		}
 		
 		return $html;
 	}

@@ -3,7 +3,7 @@ window.ofc_render = { js:{} };
 (function($) {
  //$.noConflict(); EVIL!!!
 
-	var flash_chart_path = (mw?mw.config.get( 'wgScriptPath' ) : wgScriptPath) + "/extensions/SRFPlus/ofc/open-flash-chart.swf";
+	var flash_chart_path = wgScriptPath + "/extensions/SRFPlus/ofc/open-flash-chart.swf";
 
 	//default setup
 	var ofc_h='100%';
@@ -120,7 +120,9 @@ window.ofc_render = { js:{} };
 			  	event.preventDefault();
 			    var the_id=$(this).attr("id").substr(16);
 			    var html_table=$('#'+the_id);
-			    if (html_table.is(":hidden")) {
+				// Other extensions may write to document, and causes document.ready be called more than once
+				// if (html_table.is(":hidden")) {
+			    if ($(this).text() == "Show table") {
 			    	html_table.show();
 			    	$(this).text("Hide table");
 			    }else{
