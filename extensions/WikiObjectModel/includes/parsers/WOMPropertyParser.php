@@ -24,7 +24,9 @@ class WOMPropertyParser extends WOMLinkParser {
 		// copied from SemanticMediaWiki, includes/SMW_ParserExtensions.php
 		// not deal with <nowiki>, could be bug here. SMW has the same bug
 		// E.g., [[text::this <nowiki> is ]] </nowiki> not good]]
-					$semanticLinkPattern = '/^\[\[                 # Beginning of the link
+//		global $smwgLinksInValues;
+//		if ( $smwgLinksInValues ) { // More complex regexp -- lib PCRE may cause segfaults if text is long :-(
+			$semanticLinkPattern = '/^\[\[                 # Beginning of the link
 			                        (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
 			                        (                     # After that:
 			                          (?:[^|\[\]]         #   either normal text (without |, [ or ])
@@ -34,7 +36,13 @@ class WOMPropertyParser extends WOMLinkParser {
 			                        (?:\|([^]]*))?        # Display text (like "text" in [[link|text]]), optional
 			                        \]\]                  # End of link
 			                        /xu';
-
+//		} else { // Simpler regexps -- no segfaults found for those, but no links in values.
+//			$semanticLinkPattern = '/\[\[                 # Beginning of the link
+//			                        (?:([^:][^]]*):[=:])+ # Property name (or a list of those)
+//			                        ([^\[\]]*)            # content: anything but [, |, ]
+//			                        \]\]                  # End of link
+//			                        /xu';
+//		}
 		$r = preg_match( $semanticLinkPattern, $text, $m );
 		if ( $r ) {
 			return array( 'len' => strlen( $m[0] ), 'obj' => new WOMPropertyModel( $m[1], $m[2], isset( $m[3] ) ? $m[3] : '' ) );

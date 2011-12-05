@@ -26,7 +26,8 @@ class WOMTableModel extends WikiObjectModelCollection {
 	}
 
 	public function getWikiText() {
-		return "{| {$this->m_style}" . parent::getWikiText() . "\n|}";
+		return ( $this->isLastLF() ? '' : "\n" ) .
+			"{| {$this->m_style}" . parent::getWikiText() . "\n|}";
 	}
 
 	public function setXMLAttribute( $key, $value ) {
@@ -38,7 +39,6 @@ class WOMTableModel extends WikiObjectModelCollection {
 	}
 
 	protected function getXMLAttributes() {
-		$style = str_replace( '"', "'", $this->m_style );
-		return "style=\"{$style}\"";
+		return 'style="' . self::xml_entities( str_replace( '"', "'", $this->m_style ) ) . '"';
 	}
 }

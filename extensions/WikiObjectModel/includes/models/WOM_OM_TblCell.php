@@ -33,7 +33,7 @@ class WOMTableCellModel extends WikiObjectModelCollection {
 	public function setXMLAttribute( $key, $value ) {
 		if ( $value == '' ) throw new MWException( __METHOD__ . ": value cannot be empty" );
 
-		$value = str_replace( '\n', "\n", $value );
+//		$value = str_replace( '\n', "\n", $value );
 		if ( $key == 'prefix' ) {
 			$this->m_prefix = $value;
 			return;
@@ -42,8 +42,8 @@ class WOMTableCellModel extends WikiObjectModelCollection {
 	}
 
 	protected function getXMLAttributes() {
-		$prefix = str_replace( "\n", '\n', $this->m_prefix );
+//		$prefix = str_replace( "\n", '\n', $this->m_prefix );
 		$prefix = str_replace( '"', "'", $prefix );
-		return "prefix=\"{$prefix}\"";
+		return 'prefix="' . self::xml_entities( $prefix ) . '"';
 	}
 }

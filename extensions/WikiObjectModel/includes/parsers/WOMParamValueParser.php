@@ -14,7 +14,8 @@ class WOMParamValueParser extends WikiObjectModelParser {
 	}
 
 	public function parseNext( $text, WikiObjectModelCollection $parentObj, $offset = 0 ) {
-		if ( !( $parentObj instanceof WOMParameterModel ) )
+		if ( !( ( $parentObj instanceof WOMParameterModel )
+			|| ( $parentObj instanceof WOMTemplateFieldHolderModel ) ) )
 			return null;
 
 		return array( 'len' => 0, 'obj' => new WOMParamValueModel() );

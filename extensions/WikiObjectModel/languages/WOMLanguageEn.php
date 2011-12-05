@@ -11,16 +11,6 @@ include_once( $wgOMIP . '/languages/WOMLanguage.php' );
 
 class WOMLanguageEn extends WOMLanguage {
 
-	protected $wContentMessages = array(
-
-	);
-
-	protected $wUserMessages = array(
-	/*Messages for Object Model*/
-		'objecteditor' => 'Object Editor',
-		'wom_editor' => 'Object Model',
-	);
-
 	protected $wWOMTypeLabels = array(
 		'_cat'  => 'Category', // Category
 		'_wpg'  => 'Page', // Page

@@ -36,6 +36,6 @@ class WOMParserFunctionModel extends WikiObjectModelCollection {
 	}
 
 	protected function getXMLAttributes() {
-		return "key=\"{$this->m_function_key}\"";
+		return 'key="' . self::xml_entities( $this->m_function_key ) . '"';
 	}
 }

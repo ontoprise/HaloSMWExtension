@@ -57,6 +57,6 @@ class WOMTemplateModel extends WikiObjectModelCollection {
 		}
 	}
 	protected function getXMLAttributes() {
-		return "name=\"{$this->m_name}\"";
+		return 'name="' . self::xml_entities( $this->m_name ) . '"';
 	}
 }

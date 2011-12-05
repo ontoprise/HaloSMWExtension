@@ -22,7 +22,8 @@ class WOMListItemModel extends WikiObjectModelCollection {
 	}
 
 	public function getWikiText() {
-		return $this->m_header . parent::getWikiText();
+		return ( $this->isLastLF() ? '' : "\n" ) .
+			$this->m_header . parent::getWikiText();
 	}
 
 	public function setXMLAttribute( $key, $value ) {

@@ -16,36 +16,36 @@ class WOMProcessor {
 	private static $base_parser;
 
 	private static function setupParsers() {
-		if ( WOMProcessor::$isParsersRegistered ) return;
+		if ( self::$isParsersRegistered ) return;
 
 		global $wgOMParsers;
 		foreach ( $wgOMParsers as $p ) {
 			$parser = new $p();
-			WOMProcessor::$parsers[$parser->getParserID()] = $parser;
+			self::$parsers[$parser->getParserID()] = $parser;
 		}
-		WOMProcessor::$base_parser = WOMProcessor::$parsers[WOM_PARSER_ID_TEXT];
+		self::$base_parser = self::$parsers[WOM_PARSER_ID_TEXT];
 
-		WOMProcessor::$isParsersRegistered = true;
+		self::$isParsersRegistered = true;
 	}
 
 	public static function getObjectParser( WikiObjectModel $obj ) {
 		$fname = 'WikiObjectModel::getObjectParser (WOM)';
 		wfProfileIn( $fname );
 
-		if ( !WOMProcessor::$isParsersRegistered ) {
-			WOMProcessor::setupParsers();
+		if ( !self::$isParsersRegistered ) {
+			self::setupParsers();
 		}
 		global $wgOMModelParserMapping;
 		if ( isset( $wgOMModelParserMapping[$obj->getTypeID()] ) ) {
 			$id = $wgOMModelParserMapping[$obj->getTypeID()];
-			if ( isset( WOMProcessor::$parsers[$id] ) ) {
+			if ( isset( self::$parsers[$id] ) ) {
 				wfProfileOut( $fname );
-				return WOMProcessor::$parsers[$id];
+				return self::$parsers[$id];
 			}
 		}
 		wfProfileOut( $fname );
 
-		return WOMProcessor::$base_parser;
+		return self::$base_parser;
 	}
 
 	private static function applyObjID( WikiObjectModel $wom, WOMPageModel $root ) {
@@ -53,7 +53,7 @@ class WOMProcessor {
 		$root->addToPageObjectSet( $wom );
 		if ( $wom instanceof WikiObjectModelCollection ) {
 			foreach ( $wom->getObjects() as $obj ) {
-				WOMProcessor::applyObjID( $obj, $root );
+				self::applyObjID( $obj, $root );
 			}
 		}
 	}
@@ -62,23 +62,76 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::parseToWOM (WOM)';
 		wfProfileIn( $fname );
 
-		if ( !WOMProcessor::$isParsersRegistered ) {
-			WOMProcessor::setupParsers();
+		if ( !self::$isParsersRegistered ) {
+			self::setupParsers();
 		}
 
 		$root = new WOMPageModel();
-		WOMProcessor::parseNext( $text, $root, $root );
-		WOMProcessor::parseSentences( $root );
-		WOMProcessor::applyObjID( $root, $root );
+		self::parseNext( $text, $root, $root );
+		self::parseParagraphs( $root );
+		self::parseSentences( $root );
+		self::applyObjID( $root, $root );
 		wfProfileOut( $fname );
 		return $root;
 	}
 
 	/**
-	 * Special case, sentence is not standard wiki object
+	 * Special case, paragraphs and sentences are not standard wiki object
 	 *
 	 * @param WOMPageModel $rootObj
 	 */
+	private static function parseParagraphs( WikiObjectModelCollection $wom ) {
+		global $wgOMParagraphObjectTypes;
+		$in_paragraph = false;
+		$new_objs = array();
+		$paragraphObj = null;
+		foreach ( $wom->getObjects() as $id => $obj ) {
+			if ( in_array( $obj->getTypeID(), $wgOMParagraphObjectTypes ) ) {
+				if ( !$in_paragraph ) {
+					$paragraphObj = new WOMParagraphModel();
+					$new_objs[] = $paragraphObj;
+					$in_paragraph = true;
+				}
+				$paragraphObj->insertObject( $obj );
+				// parse paragraph break
+				if ( $obj->getTypeID() == WOM_TYPE_TEXT ) {
+					$text = $obj->getWikiText();
+					$offset = 0;
+					$len = strlen( $text );
+					// HTML tag <p> is not valid 'paragraph' syntax in WOM
+					$r = preg_match_all( '/\n[ \t]*\n/', $text, $ms, PREG_SET_ORDER | PREG_OFFSET_CAPTURE );
+					if ( $r ) {
+						foreach ( $ms as $m ) {
+							$end = $m[0][1] + strlen( $m[0][0] );
+							$obj->setText( substr( $text, $offset, $m[0][1] - $offset ) );
+							$offset = $end;
+							$paragraphObj = new WOMParagraphModel();
+							$new_objs[] = $paragraphObj;
+							$obj = new WOMTextModel( substr( $text, $end ) );
+							$paragraphObj->insertObject( $obj );
+						}
+					}
+				}
+			} else {
+				$in_paragraph = false;
+				$paragraphObj = null;
+
+				if ( $obj->getTypeID() == WOM_TYPE_HTMLTAG ) {
+					// special case, html tag
+				} else if ( $obj instanceof WikiObjectModelCollection ) {
+					self::parseParagraphs( $obj );
+				}
+				$new_objs[] = $obj;
+			}
+		}
+
+		$wom->reset();
+
+		foreach ( $new_objs as $obj ) {
+			$wom->insertObject( $obj );
+		}
+	}
+
 	private static function parseSentences( WikiObjectModelCollection $wom ) {
 		global $wgOMSentenceObjectTypes;
 		$in_sentence = false;
@@ -126,8 +179,8 @@ class WOMProcessor {
 
 				if ( $obj->getTypeID() == WOM_TYPE_HTMLTAG ) {
 					// special case, html tag
-				} else if ( $obj instanceof WikiObjectModelCollection ) {
-					WOMProcessor::parseSentences( $obj );
+				} elseif ( $obj instanceof WikiObjectModelCollection ) {
+					self::parseSentences( $obj );
 				}
 				$new_objs[] = $obj;
 			}
@@ -160,8 +213,8 @@ class WOMProcessor {
 		$len = strlen( $text );
 
 		while ( $offset < $len ) {
-			if ( WOMProcessor::getObjectParser( $parentObj ) != null ) {
-				$objectClosed = WOMProcessor::getObjectParser( $parentObj )
+			if ( self::getObjectParser( $parentObj ) != null ) {
+				$objectClosed = self::getObjectParser( $parentObj )
 					->isObjectClosed( $parentObj, $text, $offset );
 				if ( $objectClosed !== false ) {
 					$offset += $objectClosed;
@@ -173,7 +226,7 @@ class WOMProcessor {
 			$result = null;
 			if ( $parserInstance == null ) {
 				$parserInstance2 = null;
-				foreach ( WOMProcessor::$parsers as $parser ) {
+				foreach ( self::$parsers as $parser ) {
 					$parser_res = $parser->parseNext( $text, $parentObj, $offset );
 					if ( $parser_res == null ) continue;
 					if ( $parserInstance2 == null || $parser->subclassOf( $parserInstance2 ) ) {
@@ -182,7 +235,7 @@ class WOMProcessor {
 					}
 				}
 				if ( $parserInstance2 == null ) {
-					$parserInstance2 = WOMProcessor::$base_parser;
+					$parserInstance2 = self::$base_parser;
 					$result = $parserInstance2->parseNext( $text, $parentObj, $offset );
 				}
 			} else {
@@ -208,27 +261,27 @@ class WOMProcessor {
 				$next_obj->setParent( $parentObj );
 			}
 
-			WOMProcessor::assemble( $next_obj );
+			self::assemble( $next_obj );
 
 			if ( $next_obj->isCollection() && !( isset( $result['closed'] ) && $result['closed'] ) ) {
 				$collection_start = $offset;
-				$d = WOMProcessor::parseNext( $text, $next_obj, $rootObj, $offset,
-					( ( $parserInstance2 != null && isset( WOMProcessor::$parsers[$parserInstance2->getSubParserID()] ) ) ?
-					WOMProcessor::$parsers[$parserInstance2->getSubParserID()] :
+				$d = self::parseNext( $text, $next_obj, $rootObj, $offset,
+					( ( $parserInstance2 != null && isset( self::$parsers[$parserInstance2->getSubParserID()] ) ) ?
+					self::$parsers[$parserInstance2->getSubParserID()] :
 					null ) );
 				if ( $d == 100 && $parserInstance2->isObjectClosed( $next_obj, $text, $offset ) === false ) {
 					// rollback
-					$p = WOMProcessor::getObjectParser( $parentObj );
+					$p = self::getObjectParser( $parentObj );
 					if ( $p != null && $p->isObjectClosed( $parentObj, $text, $offset ) === false ) {
 						return $d;
 					}
 					$parentObj->rollback();
 					$offset = $collection_start - $result['len'];
-					$result = WOMProcessor::$base_parser->parseNext( $text, $parentObj, $offset );
+					$result = self::$base_parser->parseNext( $text, $parentObj, $offset );
 					$offset += $result['len'];
 					$next_obj = $result['obj'];
 					$next_obj->setParent( $parentObj );
-					WOMProcessor::assemble( $next_obj );
+					self::assemble( $next_obj );
 				} else {
 					$next_obj->updateOnNodeClosed();
 				}
@@ -240,6 +293,7 @@ class WOMProcessor {
 //		wfProfileOut( $fname );
 	}
 
+/*
 	public static function getTemplateEditor( $template_name, $form_name = null ) {
 		$fname = 'WikiObjectModel::getTemplateEditor (WOM)';
 		wfProfileIn( $fname );
@@ -281,9 +335,9 @@ class WOMProcessor {
 			$possible_values[] = html_entity_decode( $value->getWikiValue() );
 		}
 		if ( count( $possible_values ) > 0 ) {
-			$result = WOMProcessor::getSemanticEditor( 'enumeration' );
+			$result = self::getSemanticEditor( 'enumeration' );
 		} else {
-			$result = WOMProcessor::getSemanticEditor( $property->getPropertyTypeID() );
+			$result = self::getSemanticEditor( $property->getPropertyTypeID() );
 		}
 
 		wfProfileOut( $fname );
@@ -321,6 +375,7 @@ class WOMProcessor {
 			return array( 'textarea', 'text' );
 		}
 	}
+*/
 
 	public static function getPageObject( $title, $rid = 0 ) {
 		$fname = 'WikiObjectModel::getPageObject (WOM)';
@@ -332,7 +387,7 @@ class WOMProcessor {
 		}
 		$content = $revision->getText();
 
-		$wom = WOMProcessor::parseToWOM( $content );
+		$wom = self::parseToWOM( $content );
 		$wom->setTitle( $title );
 		$wom->setRevisionID( $revision->getId() );
 
@@ -341,11 +396,21 @@ class WOMProcessor {
 		return $wom;
 	}
 
-	public static function getObjIdByXPath( $title, $xpath, $rid = 0 ) {
+	public static function getPageDom( $title, $rid = 0 ) {
 		$fname = 'WikiObjectModel::getObjIdByXPath (WOM)';
 		wfProfileIn( $fname );
 
-		$xml = WOMProcessor::getPageObject( $title, $rid )->toXML();
+		$xml = self::getPageObject( $title, $rid )->toXML();
+		$xObj = simplexml_load_string( $xml );
+
+		wfProfileOut( $fname );
+		return $xObj;
+	}
+	public static function getObjIdByXPath2( WOMPageModel $wom_obj, $xpath, $extra_msg = '' ) {
+		$fname = 'WikiObjectModel::getObjIdByXPath2 (WOM)';
+		wfProfileIn( $fname );
+
+		$xml = $wom_obj->toXML();
 		$xObj = simplexml_load_string( $xml );
 		try {
 			$objs = $xObj->xpath( $xpath );
@@ -359,8 +424,17 @@ class WOMProcessor {
 				$ret[] = strval( $o['id'] );
 			}
 		} else {
-			throw new MWException( __METHOD__ . ": XML element not found in {$title} ({$rid}), xpath: {$xpath}" );
+			throw new MWException( __METHOD__ . ": XML element not found{$extra_msg}, xpath: {$xpath}" );
 		}
+		wfProfileOut( $fname );
+		return $ret;
+	}
+	public static function getObjIdByXPath( $title, $xpath, $rid = 0 ) {
+		$fname = 'WikiObjectModel::getObjIdByXPath (WOM)';
+		wfProfileIn( $fname );
+
+		$ret = self::getObjIdByXPath2( self::getPageObject( $title, $rid ), $xpath, " in {$title} ({$rid})" );
+
 		wfProfileOut( $fname );
 		return $ret;
 	}
@@ -369,7 +443,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getSubPageObjectsByParentId (WOM)';
 		wfProfileIn( $fname );
 
-		$wom = WOMProcessor::getPageObject( $title, $rid );
+		$wom = self::getPageObject( $title, $rid );
 
 		$obj = $wom->getObject( $obj_id );
 
@@ -384,7 +458,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getPageObjectsByTypeID (WOM)';
 		wfProfileIn( $fname );
 
-		$wom = WOMProcessor::getPageObject( $title, $rid );
+		$wom = self::getPageObject( $title, $rid );
 
 		$result = $wom->getObjectsByTypeID( $type_id );
 
@@ -397,7 +471,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getPageTemplates (WOM)';
 		wfProfileIn( $fname );
 
-		$result = WOMProcessor::getPageObjectsByTypeID(
+		$result = self::getPageObjectsByTypeID(
 			WOM_TYPE_TEMPLATE, $title, $rid );
 
 		if ( $name == '' ) {
@@ -420,7 +494,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getPageCategories (WOM)';
 		wfProfileIn( $fname );
 
-		$result = WOMProcessor::getPageObjectsByTypeID(
+		$result = self::getPageObjectsByTypeID(
 			WOM_TYPE_CATEGORY, $title, $rid );
 
 		wfProfileOut( $fname );
@@ -432,7 +506,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getPageLinks (WOM)';
 		wfProfileIn( $fname );
 
-		$result = WOMProcessor::getPageObjectsByTypeID(
+		$result = self::getPageObjectsByTypeID(
 			WOM_TYPE_LINK, $title, $rid );
 
 		wfProfileOut( $fname );
@@ -445,7 +519,7 @@ class WOMProcessor {
 		wfProfileIn( $fname );
 
 		// do not return properties which are binding template fields, in current version
-		$result = WOMProcessor::getPageObjectsByTypeID(
+		$result = self::getPageObjectsByTypeID(
 			WOM_TYPE_PROPERTY, $title, $rid );
 
 		wfProfileOut( $fname );
@@ -457,7 +531,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getParserFunctions (WOM)';
 		wfProfileIn( $fname );
 
-		$result = WOMProcessor::getPageObjectsByTypeID(
+		$result = self::getPageObjectsByTypeID(
 			WOM_TYPE_PARSERFUNCTION, $title, $rid );
 
 		if ( $function_key == '' ) {
@@ -489,7 +563,7 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 		$wom->insertPageObject( $object, $obj_id );
 
 		// save to wiki
@@ -513,7 +587,7 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 		$parent = $wom->getObject( $obj_id );
 		if ( !( $parent instanceof WikiObjectModelCollection ) ) {
 			throw new MWException( __METHOD__ . ": Object is not a collection object '{$title} ({$revision_id}) - {$obj_id}'" );
@@ -543,7 +617,7 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 		$wom->updatePageObject( $object, $obj_id );
 
 		// save to wiki
@@ -567,7 +641,7 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 		$wom->removePageObject( $obj_id );
 
 		// save to wiki
@@ -591,8 +665,8 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
-		$text = WOMProcessor::getValidText( $text, $wom->getObject( $obj_id )->getParent(), $wom );
+		$wom = self::getPageObject( $title, $revision_id );
+		$text = self::getValidText( $text, $wom->getObject( $obj_id )->getParent(), $wom );
 		// no need to parse or merge object model but use text
 		$wom->insertPageObject( new WOMTextModel( $text ), $obj_id );
 
@@ -617,14 +691,14 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 		$parent = $wom->getObject( $obj_id );
 		if ( !( $parent instanceof WikiObjectModelCollection ) ) {
 			throw new MWException( __METHOD__ . ": Object is not a collection object '{$title} ({$revision_id}) - {$obj_id}'" );
 			wfProfileOut( $fname );
 			return;
 		}
-		$text = WOMProcessor::getValidText( $text, $parent, $wom );
+		$text = self::getValidText( $text, $parent, $wom );
 		// no need to parse or merge object model but use text
 		$wom->appendChildObject( new WOMTextModel( $text ), $obj_id );
 
@@ -649,8 +723,8 @@ class WOMProcessor {
 				return;
 			}
 		}
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
-		$text = WOMProcessor::getValidText( $text, $wom->getObject( $obj_id )->getParent(), $wom );
+		$wom = self::getPageObject( $title, $revision_id );
+		$text = self::getValidText( $text, $wom->getObject( $obj_id )->getParent(), $wom );
 		// no need to parse or merge object model but use text
 		$wom->updatePageObject( new WOMTextModel( $text ), $obj_id );
 
@@ -662,15 +736,15 @@ class WOMProcessor {
 		wfProfileOut( $fname );
 	}
 
-	private static function getValidText( $text, $parent, $wom ) {
+	public static function getValidText( $text, $parent, $wom ) {
 		if ( $parent != null ) {
-			$parserId = WOMProcessor::getObjectParser( $parent )->getSubParserID();
+			$parserId = self::getObjectParser( $parent )->getSubParserID();
 			if ( $parserId != '' ) {
-				$parser = WOMProcessor::$parsers[$parserId];
+				$parser = self::$parsers[$parserId];
 				$offset = 0;
 				$p2 = clone ( $parent );
 				$p2->reset();
-				WOMProcessor::parseNext( $text, $p2, $wom, $offset, $parser );
+				self::parseNext( $text, $p2, $wom, $offset, $parser );
 				$text = '';
 				foreach ( $p2->getObjects() as $obj ) {
 					$text .= $obj->getWikiText();
@@ -684,10 +758,10 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::getToc (WOM)';
 		wfProfileIn( $fname );
 
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 
 		$arr = array();
-		WOMProcessor::saveToToc( $wom, $arr );
+		self::saveToToc( $wom, $arr );
 
 		wfProfileOut( $fname );
 
@@ -698,7 +772,7 @@ class WOMProcessor {
 		foreach ( $wom->getObjects() as $obj ) {
 			if ( $obj->getTypeID() == WOM_TYPE_SECTION ) {
 				$sec = array( 'section' => $obj->getName(), 'sub' => array() );
-				WOMProcessor::saveToToc( $obj, $sec['sub'] );
+				self::saveToToc( $obj, $sec['sub'] );
 				$arr[] = $sec;
 			}
 		}
@@ -726,7 +800,7 @@ class WOMProcessor {
 		$fname = 'WikiObjectModel::objectToWikiText (WOM)';
 		wfProfileIn( $fname );
 
-		$wom = WOMProcessor::getPageObject( $title, $revision_id );
+		$wom = self::getPageObject( $title, $revision_id );
 
 		$obj = $wom->getObject( $obj_id );
 

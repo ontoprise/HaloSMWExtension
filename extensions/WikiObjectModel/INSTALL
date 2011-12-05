@@ -1,7 +1,7 @@
 == Requirements ==
 
 * MediaWiki 1.13.5
-* Semantic MediaWiki 1.4.3 (optional)
+* Semantic MediaWiki >1.4.3 and < 1.6 (optional)
 * PHP 5.x or greater installed and working
 * MySQL >= 4.0.14 (version required by MediaWiki)
 
@@ -9,4 +9,4 @@
 
 Edit $IP/LocalSettings.php and add:
 
-    include_once('extensions/WikiObjectModel/includes/WOM_Initialize.php');
+    include_once('extensions/WikiObjectModel/WikiObjectModel.php');

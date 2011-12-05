@@ -1,6 +1,6 @@
 <?php
 /**
- * This model implements key value models.
+ * This model implements Template Field Holder models.
  *
  * @author Ning
  * @file
@@ -8,11 +8,11 @@
  *
  */
 
-class WOMParameterModel extends WikiObjectModelCollection {
+class WOMTemplateFieldHolderModel extends WikiObjectModelCollection {
 	protected $m_key;
 
-	public function __construct( $key = '' ) {
-		parent::__construct( WOM_TYPE_PARAMETER );
+	public function __construct( $key ) {
+		parent::__construct( WOM_TYPE_TMPL_FIELD_HOLDER );
 		$this->m_key = $key;
 	}
 
@@ -21,9 +21,7 @@ class WOMParameterModel extends WikiObjectModelCollection {
 	}
 
 	public function getWikiText() {
-		return ( $this->m_key == '' ? "" : ( $this->m_key . '=' ) ) .
-			$this->getValueText() .
-			'|';
+		return "{{{{$this->m_key}|{$this->getValueText()}}}}";
 	}
 
 	public function getValueText() {
@@ -33,14 +31,14 @@ class WOMParameterModel extends WikiObjectModelCollection {
 	public function setXMLAttribute( $key, $value ) {
 		if ( $value == '' ) throw new MWException( __METHOD__ . ": value cannot be empty" );
 
-		if ( $key == 'key' ) {
+		if ( $key == 'name' ) {
 			$this->m_key = $value;
 		} else {
-			throw new MWException( __METHOD__ . ": invalid key/value pair: key=key_string" );
+			throw new MWException( __METHOD__ . ": invalid key/value pair: name|value_if_blank" );
 		}
 	}
 
 	protected function getXMLAttributes() {
-		return 'key="' . self::xml_entities( $this->m_key ) . '"';
+		return 'name="' . self::xml_entities( $this->m_key ) . '"';
 	}
 }

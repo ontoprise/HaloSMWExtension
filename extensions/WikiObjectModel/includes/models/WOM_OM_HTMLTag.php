@@ -27,15 +27,32 @@ class WOMHTMLTagModel extends WikiObjectModelCollection {
 	}
 
 	public function getAttributes() {
-		return $this->m_attributes;
+		return $this->m_attrs;
+	}
+
+	public function getAttribute( $attr ) {
+		$attr = strtolower( $attr );
+		foreach ( $this->m_attrs as $a => $v ) {
+			$a = strtolower( $a );
+			$v = preg_replace( '/^[\'"](.*)[\'"]$/', '$1', $v );
+			if ( $attr == $a ) return $v;
+		}
 	}
 
 	public function setAttributes( $attrs ) {
-		$this->m_attributes = $attrs;
+		$this->m_attrs = $attrs;
 	}
 
 	public function getWikiText() {
-		return "<{$this->m_name}>" . parent::getWikiText() . "</{$this->m_name}>";
+		$attr = '';
+		foreach ( $this->m_attrs as $a => $v ) {
+			$attr .= " {$a}={$v}";
+		}
+		return "<{$this->m_name}{$attr}>" . parent::getWikiText() . "</{$this->m_name}>";
+	}
+
+	public function getInnerWikiText() {
+		return parent::getWikiText();
 	}
 
 	public function updateOnNodeClosed() {
@@ -52,6 +69,13 @@ class WOMHTMLTagModel extends WikiObjectModelCollection {
 		}
 	}
 	protected function getXMLAttributes() {
-		return "name=\"{$this->m_name}\"";
+		$ret = 'name="' . self::xml_entities( $this->m_name ) . '"';
+		foreach ( $this->m_attrs as $a => $v ) {
+			$v = preg_replace( '/^"(.*)"$/', '$1', $v );
+			if ( $a == 'id' ) $a = 'tag_id';
+			$v = self::xml_entities( $v );
+			$ret .= " {$a}=\"{$v}\"";
+		}
+		return $ret;
 	}
 }

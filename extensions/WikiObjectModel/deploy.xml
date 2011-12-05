@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>101</version>
+        <patchlevel>0</patchlevel>
+        <id>wom</id>
+        <vendor>Vulcan</vendor>
+        <maintainer>Vulcan</maintainer>
+        <instdir>extensions/WikiObjectModel</instdir>
+        <description>Wiki object model.</description>
+        <helpurl>http://www.mediawiki.org/wiki/Extension:Wiki_Object_Model</helpurl>
+		<dependencies>
+            <dependency from="1120" to="1170">MW</dependency>
+						<dependency from="156" to="161">smw</dependency>
+        </dependencies>
+        <license>GPL-v2</license>
+    </global>
+    <codefiles>
+    
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+        <new>
+            <require name="wom"
+                file="extensions/WikiObjectModel/WikiObjectModel.php" />
+        </new>
+    </configs>
+</deploydescriptor>

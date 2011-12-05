@@ -3,11 +3,26 @@
 /**
  * @addtogroup API
  */
-class ApiWOMGetObjectModel extends ApiBase {
+class ApiWOMQuery extends ApiBase {
 
 	public function __construct( $main, $action ) {
 		parent :: __construct( $main, $action );
 	}
+
+	// given the 'key', return the result set of 'xpath' or wiki object id set
+	// e.g., key=hello, world&action=womquery,
+	// returns <match><id>1</id><type>text</type><start>20</start><end>30</end></match>
+	// in wiki object id="1", the text part of WOM node, char index start at 20 and end at 30
+	// for the paragraph instance, it will return id1, id2, id 3
+	// given the 'key', specify the returning object type, same result set to the previous api
+	// e.g., key=hello, world&action=womquery&return=sentence/paragraph/property value/template value/section...
+	// for the paragraph instance,
+	// return=sentence, it will return id3
+	// return=paragraph, it will return id1, id2
+	// given the 'key' and returning type, specify the context of required object, same return
+	// e.g., key=hello, world&action=womquery&return=sentence&xpath=/page/section[3]
+	// for the paragraph instance,
+	// return=paragraph, xpath=sentence/.., it will return id2
 
 	public function execute() {
 		global $wgUser;
@@ -15,14 +30,14 @@ class ApiWOMGetObjectModel extends ApiBase {
 		$params = $this->extractRequestParams();
 		if ( is_null( $params['title'] ) )
 			$this->dieUsage( 'Must specify page title', 0 );
-		if ( is_null( $params['xpath'] ) )
-			$this->dieUsage( 'Must specify xpath', 1 );
+		if ( is_null( $params['key'] ) )
+			$this->dieUsage( 'Must specify key', 1 );
 
 		$page_name = $params['title'];
-		$xpath = $params['xpath'];
-		$type = $params['type'];
+		$key = $params['key'];
 		$rid = $params['rid'];
-
+		$type = $params['type'];
+		$xpath = $params['xpath'];
 
 		$articleTitle = Title::newFromText( $page_name );
 		if ( !$articleTitle )
@@ -32,6 +47,9 @@ class ApiWOMGetObjectModel extends ApiBase {
 		if ( !$article->exists() )
 			$this->dieUsage( "Article doesn't exist ($page_name)", 3 );
 
+		if ( !$xpath ) {
+			$xpath = '/';
+		}
 		try {
 			$objs = WOMProcessor::getObjIdByXPath( $articleTitle, $xpath, $rid );
 		} catch ( Exception $e ) {
@@ -76,9 +94,9 @@ class ApiWOMGetObjectModel extends ApiBase {
 					header ( "Content-Type: application/rdf+xml" );
 					echo <<<OUTPUT
 <?xml version="1.0" encoding="UTF-8" ?>
-<api><womget result="Success"><return>
+<api><womquery result="Success"><return>
 {$xml}
-</return></womget></api>
+</return></womquery></api>
 OUTPUT;
 					exit( 1 );
 				}
@@ -90,13 +108,14 @@ OUTPUT;
 	protected function getAllowedParams() {
 		return array (
 			'title' => null,
+			'key' => null,
 			'xpath' => null,
 			'type' => array(
-				ApiBase :: PARAM_DFLT => 'wiki',
+				ApiBase :: PARAM_DFLT => WOM_TYPE_SENTENCE,
 				ApiBase :: PARAM_TYPE => array(
-					'wiki',
-					'count',
-					'xml',
+					WOM_TYPE_SECTION,
+					WOM_TYPE_PARAGRAPH,
+					WOM_TYPE_SENTENCE,
 				),
 			),
 			'rid' => array (
@@ -110,24 +129,22 @@ OUTPUT;
 	protected function getParamDescription() {
 		return array (
 			'title' => 'Title of the page to modify',
+			'key' => 'query key',
 			'xpath' => 'DOM-like xpath to locate WOM object instances (http://www.w3schools.com/xpath/xpath_syntax.asp)',
 			'type' => array (
-				'Type to fetch useful wiki object data',
-				'type = wiki, get wiki text of specified object',
-				'type = count, get objects count with specified xpath',
-				'type = xml, view "encoded objects\' xml" with specified xpath, usually use with format=xml',
+				'Object type to fetch useful wiki object data',
 			),
 			'rid' => 'Revision id of specified page - by dafault latest updated revision (0) is used',
 		);
 	}
 
 	protected function getDescription() {
-		return 'Call to get object values to Wiki Object Model';
+		return 'Call to get objects to Wiki Object Model';
 	}
 
 	protected function getExamples() {
 		return array (
-			'api.php?action=womget&title=Somepage&xpath=//template[@name=SomeTempate]/template_field[@key=templateparam]'
+			'api.php?action=womquery&title=Somepage&key=hello,world'
 		);
 	}
 

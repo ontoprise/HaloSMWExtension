@@ -37,8 +37,8 @@ class WOMSectionModel extends WikiObjectModelCollection {
 	}
 
 	public function getHeaderText() {
-//		return "\n" .
-		return substr( WOMSectionModel::$heading, 0, $this->m_level ) .
+		return ( $this->isLastLF() ? '' : "\n" ) .
+			substr( WOMSectionModel::$heading, 0, $this->m_level ) .
 			$this->m_name .
 			substr( WOMSectionModel::$heading, 0, $this->m_level ) .
 			"\n";
@@ -58,7 +58,7 @@ class WOMSectionModel extends WikiObjectModelCollection {
 		if ( $key == 'name' ) {
 			$this->m_name = $value;
 			return;
-		} else if ( $key == 'level' ) {
+		} elseif ( $key == 'level' ) {
 			$i = intval( $value );
 			if ( $i > 0 && $i <= strlen( WOMSectionModel::$heading ) ) {
 				$this->m_level = $i;
@@ -69,6 +69,6 @@ class WOMSectionModel extends WikiObjectModelCollection {
 	}
 
 	protected function getXMLAttributes() {
-		return "name=\"{$this->m_name}\" level=\"{$this->m_level}\"";
+		return 'name="' . self::xml_entities( $this->m_name ) . '" level="' . $this->m_level . '"';
 	}
 }

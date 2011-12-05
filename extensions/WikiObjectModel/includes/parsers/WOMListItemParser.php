@@ -33,7 +33,8 @@ class WOMListItemParser extends WikiObjectModelParser {
 		if ( !$obj instanceof WOMListItemModel )
 			return false;
 
-		if ( ( strlen( $text ) >= $offset + 1 ) && $text { $offset } == "\n" ) {
+		$len = strlen( $text );
+		if ( ( $offset >= $len ) || ( ( $len >= $offset + 1 ) && $text { $offset } == "\n" ) ) {
 			return 0;
 		}
 

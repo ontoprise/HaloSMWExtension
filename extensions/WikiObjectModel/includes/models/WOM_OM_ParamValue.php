@@ -17,8 +17,4 @@ class WOMParamValueModel extends WikiObjectModelCollection {
 	public function setXMLAttribute( $key, $value ) {
 		throw new MWException( __METHOD__ . ": no key/value pair required" );
 	}
-
-	protected function getXMLAttributes() {
-		return '';
-	}
 }

@@ -1,9 +1,12 @@
 <?php
 
+global $wgOMIP;
+require_once( $wgOMIP . '/includes/apis/WOM_OutputProcessor.php' );
+
 /**
  * @addtogroup API
  */
-class ApiWOMGetObjectModel extends ApiBase {
+class ApiWOMOutputObjectModel extends ApiBase {
 
 	public function __construct( $main, $action ) {
 		parent :: __construct( $main, $action );
@@ -32,8 +35,9 @@ class ApiWOMGetObjectModel extends ApiBase {
 		if ( !$article->exists() )
 			$this->dieUsage( "Article doesn't exist ($page_name)", 3 );
 
+		$page_obj = WOMOutputProcessor::getOutputData( $articleTitle, $rid );
 		try {
-			$objs = WOMProcessor::getObjIdByXPath( $articleTitle, $xpath, $rid );
+			$objs = WOMProcessor::getObjIdByXPath2( $page_obj, $xpath );
 		} catch ( Exception $e ) {
 			$err = $e->getMessage();
 		}
@@ -60,14 +64,12 @@ class ApiWOMGetObjectModel extends ApiBase {
 				$this->getResult()->setContent( $result['return'], $count );
 			} else {
 				$xml = '';
-				$page_obj = WOMProcessor::getPageObject( $articleTitle, $rid );
 				foreach ( $objs as $id ) {
 					if ( $id == '' ) continue;
 					$wobj = $page_obj->getObject( $id );
 					$result['return'][$id] = array();
 					if ( $type == 'xml' ) {
 						$xml .= "<{$id} xml:space=\"preserve\">{$wobj->toXML()}</{$id}>";
-//						$this->getResult()->setContent( $result['return'][$id], $wobj->toXML() );
 					} else {
 						$this->getResult()->setContent( $result['return'][$id], $wobj->getWikiText() );
 					}
@@ -76,9 +78,9 @@ class ApiWOMGetObjectModel extends ApiBase {
 					header ( "Content-Type: application/rdf+xml" );
 					echo <<<OUTPUT
 <?xml version="1.0" encoding="UTF-8" ?>
-<api><womget result="Success"><return>
+<api><womoutput result="Success"><return>
 {$xml}
-</return></womget></api>
+</return></womoutput></api>
 OUTPUT;
 					exit( 1 );
 				}
@@ -127,7 +129,7 @@ OUTPUT;
 
 	protected function getExamples() {
 		return array (
-			'api.php?action=womget&title=Somepage&xpath=//template[@name=SomeTempate]/template_field[@key=templateparam]'
+			'api.php?action=womoutput&title=Somepage&xpath=//template[@name=SomeTempate]/template_field[@key=templateparam]'
 		);
 	}
 

@@ -66,6 +66,30 @@ abstract class WikiObjectModel {
 		return $this->m_typeid;
 	}
 
+	public function getPreviousObject() {
+		$p = $this->getParent();
+		if ( $p == null ) return $p;
+
+		$previous = null;
+		foreach ( $p->getObjects() as $v ) {
+			if ( $this->getObjectID() == $v->getObjectID() ) {
+				return $previous;
+			}
+			$previous = $v;
+		}
+		return null;
+	}
+
+	protected function isLastLF() {
+		$pre = $this->getPreviousObject();
+		if ( $pre != null ) {
+			$wiki = $pre->getWikiText();
+			$len = strlen( $wiki );
+			return ( $len == 0 || $wiki { $len - 1 } == "\n" );
+		}
+		return true;
+	}
+
 	/**
 	 * Return TRUE if a value was defined and understood by the given type,
 	 * and false if parsing errors occured or no value was given.
@@ -107,4 +131,39 @@ abstract class WikiObjectModel {
 	}
 
 	public function objectUpdate( WikiObjectModel $obj ) { }
+
+	static function xml_entity_decode( $text, $charset = 'Windows-1252' ) {
+		// Double decode, so if the value was &amp;trade; it will become Trademark
+		$text = html_entity_decode( $text, ENT_COMPAT, $charset );
+		$text = html_entity_decode( $text, ENT_COMPAT, $charset );
+
+		return $text;
+	}
+
+	static function xml_entities( $text, $charset = 'Windows-1252' ) {
+		// First we encode html characters that are also invalid in xml
+		$text = htmlentities( $text, ENT_COMPAT, $charset, false );
+		// XML character entity array from Wiki
+		// Note: &apos; is useless in UTF-8 or in UTF-16
+		$arr_xml_special_char = array( "&quot;", "&amp;", "&apos;", "&lt;", "&gt;" );
+		// Building the regex string to exclude all strings with xml special char
+		$arr_xml_special_char_regex = "(?";
+
+		foreach ( $arr_xml_special_char as $key => $value ) {
+			$arr_xml_special_char_regex .= "(?!$value)";
+		}
+		$arr_xml_special_char_regex .= ")";
+
+		// Scan the array for &something_not_xml; syntax
+		$pattern = "/$arr_xml_special_char_regex&([a-zA-Z0-9]+;)/";
+
+		// Replace the &something_not_xml; with &amp;something_not_xml;
+		$replacement = '&amp;${1}';
+
+		return preg_replace( $pattern, $replacement, $text );
+	}
+	static function xml_attribute_entities( $text, $charset = 'Windows-1252' ) {
+		$ret = self::xml_entities( $text, $charset );
+		return str_replace( "\n", '&#10;', $ret );
+	}
 }

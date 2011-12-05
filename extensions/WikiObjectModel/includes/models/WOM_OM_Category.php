@@ -38,6 +38,6 @@ class WOMCategoryModel extends WikiObjectModel {
 	}
 
 	protected function getXMLContent() {
-		return $this->m_name;
+		return self::xml_entities( $this->m_name );
 	}
 }
