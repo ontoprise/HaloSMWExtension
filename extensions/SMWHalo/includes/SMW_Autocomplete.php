@@ -670,7 +670,7 @@ class AutoCompletionRequester {
 			// set content (ie. the content to display)
 			if (is_string($title)) {
 				$typeAtt =  "type=\"-1\""; // no namespace, just a value
-				$content = $title;
+				$content = htmlspecialchars($title);
 			} else {
 				// $title is actual Title obejct
 				if (array_key_exists('schemaData', $matches[$i]) && $title->getNamespace() == SMW_NS_PROPERTY) {
@@ -693,7 +693,6 @@ class AutoCompletionRequester {
 			}
 
 			// set all other
-			$content = htmlspecialchars($content);
 			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
 			$pasteContent = htmlspecialchars($pasteContent);
 			$extraData = htmlspecialchars($extraData);
