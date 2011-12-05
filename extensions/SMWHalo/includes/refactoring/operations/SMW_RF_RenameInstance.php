@@ -33,7 +33,7 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 	public function getAffectedPages() {
 		if (!$this->adaptAnnotations) return 0;
 
-		// get all pages using $this->oldInstance
+		// get all pages using $this->oldInstance in an annotation
 		$instanceDi = SMWDIWikiPage::newFromTitle($this->oldInstance);
 		$properties = smwfGetStore()->getInProperties($instanceDi);
 		foreach($properties as $p) {
@@ -41,6 +41,12 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			foreach($subjects as $s) {
 				$subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
 			}
+		}
+
+		// get all pages which uses links with that instance
+		$subjects = $this->oldInstance->getLinksTo();
+		foreach($subjects as $s) {
+			$subjectDBKeys[] = $s->getPrefixedDBkey();
 		}
 
 		// get all queries using $this->oldInstance
@@ -78,6 +84,20 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			$this->oldInstance->moveTo($this->newInstance);
 		}
 	}
+	
+	/**
+	 * Replaces old title with new.
+	 * Callback method for array_walk
+	 *
+	 * @param string $title Prefixed title
+	 * @param int $index
+	 */
+	protected function replaceTitle(& $title, $index) {
+		if ($title == $this->oldInstance->getPrefixedText()) {
+			$changed = true;
+			$title = $this->newInstance->getPrefixedText();
+		}
+	}
 
 	public function changeContent($titleName, $wikitext) {
 		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
@@ -93,9 +113,10 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			}
 
 			$value = $pomProperty->getValue();
-			if ($value == $this->oldInstance->getPrefixedText()) {
-				$pomProperty->setValue($this->newInstance->getPrefixedText());
-			}
+			$values = $this->splitRecordValues($value);
+			array_walk($values, array($this, 'replaceTitle'));
+
+			$pomProperty->setValue(implode("; ",$values));
 		}
 
 		# iterate trough the links
@@ -104,7 +125,7 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
 
 			$value = $pomProperty->getValue();
-			 
+
 			if ($value == $this->oldInstance->getPrefixedText()) {
 				$pomProperty->setValue(":".$this->newInstance->getPrefixedText());
 			}

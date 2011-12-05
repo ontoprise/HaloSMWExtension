@@ -30,6 +30,7 @@ require_once($smwgHaloIP.'/includes/refactoring/SMW_RF_RefactoringOperation.php'
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameProperty.php');
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameCategory.php');
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameInstance.php');
+require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_ChangeValue.php');
 require_once($smwgHaloIP.'/DataAPI/PageCRUD_Plus/PCP.php');
 require_once($smwgHaloIP.'/DataAPI/PageObjectModel/POM.php');
 
@@ -71,7 +72,7 @@ This is a test [[Property:Testproperty]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
 		$this->assertContains('Newtestproperty', $wikitext);
-		
+
 	}
 
 	function testRenamePropertyInQuery() {
@@ -92,7 +93,7 @@ ENDS;
 This is a test [[Category:Testcategory]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
-		
+
 		$this->assertContains('Newtestcategory', $wikitext);
 	}
 
@@ -102,7 +103,17 @@ ENDS;
 This is a test [[ABC::Category:Testcategory]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
-		
+
+		$this->assertContains('Newtestcategory', $wikitext);
+	}
+
+	function testRenameCategoryAsRecordValue() {
+		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
+		$wikitext = <<<ENDS
+This is a test [[Has domain and range::Category:Testcategory; Category:TestRange]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
 		$this->assertContains('Newtestcategory', $wikitext);
 	}
 
@@ -112,56 +123,145 @@ ENDS;
 This is a test [[:Category:Testcategory]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
-		
+
 		$this->assertContains('Newtestcategory', $wikitext);
 	}
-	
-function testRenameCategoryInQuery() {
-        $r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-        $wikitext = <<<ENDS
+
+	function testRenameCategoryInQuery() {
+		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Category:Testcategory]][[Testproperty::+]] }}
 Test text
 ENDS;
-        $wikitext = $r->changeContent('Test', $wikitext);
-        
-        $this->assertContains('NewTestcategory', $wikitext);
+		$wikitext = $r->changeContent('Test', $wikitext);
 
-    }
-    
-function testRenameCategoryInQuery2() {
-        $r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-        $wikitext = <<<ENDS
+		$this->assertContains('NewTestcategory', $wikitext);
+
+	}
+
+	function testRenameCategoryInQuery2() {
+		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Testproperty::Category:Testcategory]] }}
 Test text
 ENDS;
-        $wikitext = $r->changeContent('Test', $wikitext);
-        
-        $this->assertContains('NewTestcategory', $wikitext);
+		$wikitext = $r->changeContent('Test', $wikitext);
 
-    }
-    
-function testRenameCategoryInQuery3() {
-        $r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-        $wikitext = <<<ENDS
+		$this->assertContains('NewTestcategory', $wikitext);
+
+	}
+
+	function testRenameCategoryInQuery3() {
+		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[:Category:Testcategory]] }}
 Test text
 ENDS;
-        $wikitext = $r->changeContent('Test', $wikitext);
-        
-        $this->assertContains('NewTestcategory', $wikitext);
+		$wikitext = $r->changeContent('Test', $wikitext);
 
-    }
-	
-function testInstanceAsLink() {
-        $r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-        $wikitext = <<<ENDS
+		$this->assertContains('NewTestcategory', $wikitext);
+
+	}
+
+	function testInstanceAsLink() {
+		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$wikitext = <<<ENDS
 This is a test [[Testinstance]]. No text.
 ENDS;
-        $wikitext = $r->changeContent('Test', $wikitext);
-        
-        $this->assertContains('NewTestinstance', $wikitext);
-    }
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTestinstance', $wikitext);
+	}
+
+	function testInstanceOtherNamespaceAsLink() {
+		$r = new SMWRFRenameInstanceOperation("Help:Testinstance", "Help:NewTestinstance", true);
+		$wikitext = <<<ENDS
+This is a test [[Help:Testinstance]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('Help:NewTestinstance', $wikitext);
+	}
+
+	function testInstanceWithWhitespaceAsLink() {
+		$r = new SMWRFRenameInstanceOperation("Test instance", "NewTest instance", true);
+		$wikitext = <<<ENDS
+This is a test [[Test instance]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTest instance', $wikitext);
+	}
+
+	function testInstanceInAnnotation() {
+		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$wikitext = <<<ENDS
+This is a test [[ABC::Testinstance]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTestinstance', $wikitext);
+	}
+
+	function testInstanceInRecordAnnotation() {
+		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$wikitext = <<<ENDS
+This is a test [[ABC::Testinstance; CDE; FGH]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTestinstance', $wikitext);
+	}
+
+	function testInstanceInQuery() {
+		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$wikitext = <<<ENDS
+This is a test {{#ask: [[Testinstance]][[Testproperty::+]] }}. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTestinstance', $wikitext);
+	}
+
+	function testInstanceInQuery2() {
+		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$wikitext = <<<ENDS
+This is a test {{#ask: [[Category:Testcategory]][[ABC::Testinstance]] }}. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('NewTestinstance', $wikitext);
+	}
+
+	function testChangeValue() {
+		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", "new");
+		$wikitext = <<<ENDS
+This is a test [[Testproperty::old]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('Testproperty::new', $wikitext);
+	}
+
+	function testValueRemove() {
+		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", NULL);
+		$wikitext = <<<ENDS
+This is a test [[Testproperty::old]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertNotContains('Testproperty::', $wikitext);
+	}
+	function testValueAdd() {
+		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "new");
+		$wikitext = <<<ENDS
+This is a test [[Testproperty::old]]. No text.
+ENDS;
+		$wikitext = $r->changeContent('Test', $wikitext);
+
+		$this->assertContains('Testproperty::new', $wikitext);
+	}
 }

@@ -50,6 +50,12 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 			}
 		}
 
+	    // get all pages which uses links to $this->oldCategory
+		$subjects = $this->oldCategory->getLinksTo();
+		foreach($subjects as $s) {
+			$subjectDBKeys[] = $s->getPrefixedDBkey();
+		}
+
 		// get all queries using $this->oldCategory
 		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
 		$propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
@@ -85,6 +91,20 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 		}
 	}
 
+	/**
+	 * Replaces old category with new.
+	 * Callback method for array_walk
+	 *
+	 * @param string $title Prefixed title
+	 * @param int $index
+	 */
+	protected function replaceTitle(& $title, $index) {
+		if ($title == $this->oldCategory->getPrefixedText()) {
+			$changed = true;
+			$title = $this->newCategory->getPrefixedText();
+		}
+	}
+
 	public function changeContent($titleName, $wikitext) {
 		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
 
@@ -101,26 +121,27 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 		# iterate through property values
 		$iterator = $pom->getProperties()->listIterator();
 		while($iterator->hasNext()){
+			$pomCategory = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+
+			$value = $pomCategory->getValue();
+			$values = $this->splitRecordValues($value);
+			array_walk($values, array($this, 'replaceTitle'));
+
+			$pomCategory->setValue(implode("; ",$values));
+		}
+
+		# iterate trough the links
+		$iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
+		while($iterator->hasNext()){
 			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-		
+
 			$value = $pomProperty->getValue();
-			if ($value == $this->oldCategory->getPrefixedText()) {
-				$pomProperty->setValue($this->newCategory->getPrefixedText());
+
+			if ($value == ":".$this->oldCategory->getPrefixedText()) {
+				$pomProperty->setValue(":".$this->newCategory->getPrefixedText());
 			}
 		}
-		
-		# iterate trough the links
-        $iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
-        while($iterator->hasNext()){
-            $pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
 
-            $value = $pomProperty->getValue();
-           
-            if ($value == ":".$this->oldCategory->getPrefixedText()) {
-                $pomProperty->setValue(":".$this->newCategory->getPrefixedText());
-            }
-        }
-		
 
 		#iterate trough queries
 		$iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();

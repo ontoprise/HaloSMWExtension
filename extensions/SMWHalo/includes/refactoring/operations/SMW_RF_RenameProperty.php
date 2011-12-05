@@ -24,121 +24,143 @@
  */
 class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 
-    private $oldProperty;
-    private $newProperty;
-    private $adaptAnnotations;
+	private $oldProperty;
+	private $newProperty;
+	private $adaptAnnotations;
 
-    private $subjectDBKeys;
+	private $subjectDBKeys;
 
-    public function __construct($oldProperty, $newProperty, $adaptAnnotations) {
-        $this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
-        $this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
-        $this->adaptAnnotations = $adaptAnnotations;
+	public function __construct($oldProperty, $newProperty, $adaptAnnotations) {
+		$this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
+		$this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
+		$this->adaptAnnotations = $adaptAnnotations;
 
-    }
+	}
 
-    public function getAffectedPages() {
-        if (!$this->adaptAnnotations) return 0;
+	public function getAffectedPages() {
+		if (!$this->adaptAnnotations) return 0;
 
-        // get all pages using $this->property
-        $propertyDi = SMWDIProperty::newFromUserLabel($this->oldProperty->getText());
-        $subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
+		// get all pages using $this->property
+		$propertyDi = SMWDIProperty::newFromUserLabel($this->oldProperty->getText());
+		$subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
+		foreach($subjects as $s) {
+			$subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
+		}
+		
+	    // get all pages which uses links to $this->property
+        $subjects = $this->oldProperty->getLinksTo();
         foreach($subjects as $s) {
-            $subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
+            $subjectDBKeys[] = $s->getPrefixedDBkey();
         }
 
-        // get all queries using $this->property
-        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-        $propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldProperty);
-        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
-        foreach($subjects as $s) {
-            $subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
-        }
+		// get all queries using $this->property
+		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
+		$propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldProperty);
+		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
+		foreach($subjects as $s) {
+			$subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
+		}
 
-        $subjectDBKeys = array_unique($subjectDBKeys);
-        return $subjectDBKeys;
-    }
+		$subjectDBKeys = array_unique($subjectDBKeys);
+		return $subjectDBKeys;
+	}
 
-    public function refactor($save = true) {
+	public function refactor($save = true) {
 
-        $subjectDBkeys = $this->getAffectedPages();
+		$subjectDBkeys = $this->getAffectedPages();
 
-        foreach($subjectDBkeys as $dbkey) {
-            $title = Title::newFromDBkey($dbkey);
-            $rev = Revision::newFromTitle($title);
+		foreach($subjectDBkeys as $dbkey) {
+			$title = Title::newFromDBkey($dbkey);
+			$rev = Revision::newFromTitle($title);
 
-            $wikitext = $this->changeContent($title->getText(), $rev->getRawText());
+			$wikitext = $this->changeContent($title->getText(), $rev->getRawText());
 
-            // stores article
-            if ($save) {
-                $a = new Article($title);
-                $a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-            }
-        }
+			// stores article
+			if ($save) {
+				$a = new Article($title);
+				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+			}
+		}
 
-        // move article
-        if ($save) {
-            $this->oldProperty->moveTo($this->newProperty);
-        }
-    }
+		// move article
+		if ($save) {
+			$this->oldProperty->moveTo($this->newProperty);
+		}
+	}
 
-    public function changeContent($titleName, $wikitext) {
-        $pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
+	
+	/**
+	 * Replaces old property with new.
+	 * Callback method for array_walk
+	 *
+	 * @param string $title Prefixed title
+	 * @param int $index
+	 */
+	protected function replaceTitle(& $title, $index) {
+		if ($title == $this->oldProperty->getPrefixedText()) {
+			
+			$title = $this->newProperty->getPrefixedText();
+		}
+	}
+	public function changeContent($titleName, $wikitext) {
+		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
 
-        # iterate trough the annotations
-        $iterator = $pom->getProperties()->listIterator();
-        while($iterator->hasNext()){
-            $pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+		# iterate trough the annotations
+		$iterator = $pom->getProperties()->listIterator();
+		while($iterator->hasNext()){
+			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
 
-            $name = $pomProperty->getName();
-            if ($name == $this->oldProperty->getText()) {
-                $pomProperty->setName($this->newProperty->getText());
-            }
+			$name = $pomProperty->getName();
+			if ($name == $this->oldProperty->getText()) {
+				$pomProperty->setName($this->newProperty->getText());
+			}
 
-            $value = $pomProperty->getValue();
-            if ($value == $this->oldProperty->getPrefixedText()) {
-                $pomProperty->setValue($this->newProperty->getPrefixedText());
-            }
-        }
-        
-        # iterate trough the links
-        $iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
-        while($iterator->hasNext()){
-            $pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+			$value = $pomProperty->getValue();
+			$values = $this->splitRecordValues($value);
+			array_walk($values, array($this, 'replaceTitle'));
 
-            $value = $pomProperty->getValue();
-          
-            if ($value == $this->oldProperty->getPrefixedText()) {
-                $pomProperty->setValue($this->newProperty->getPrefixedText());
-            }
-        }
+			$pomProperty->setValue(implode("; ",$values));
+			 
+		}
 
-        #iterate trough queries
-        $iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();
-        $quotedCategoryName = preg_quote($this->oldProperty->getText());
-        $quotedCategoryPrefixedName = preg_quote($this->oldProperty->getPrefixedText());
-        while($iterator->hasNext()){
+		# iterate trough the links
+		$iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
+		while($iterator->hasNext()){
+			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
 
-            $pomQuery = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-            $queryText = $pomQuery->toString();
+			$value = $pomProperty->getValue();
 
-            // replace property as property
-            $queryText = preg_replace('/\[\[\s*'.$quotedCategoryName.'\s*::([^]])\]\]/i', "[[".$this->newProperty->getText()."::$1]]", $queryText);
+			if ($value == $this->oldProperty->getPrefixedText()) {
+				$pomProperty->setValue($this->newProperty->getPrefixedText());
+			}
+		}
 
-            // replace property as value
-            $queryText = preg_replace('/\[\[([^:]|:[^:])+::\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[$1::".$this->newProperty->getPrefixedText()."]]", $queryText);
+		#iterate trough queries
+		$iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();
+		$quotedCategoryName = preg_quote($this->oldProperty->getText());
+		$quotedCategoryPrefixedName = preg_quote($this->oldProperty->getPrefixedText());
+		while($iterator->hasNext()){
 
-            // replace property as instance
-            $queryText = preg_replace('/\[\[\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[".$this->newProperty->getPrefixedText()."]]", $queryText);
+			$pomQuery = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+			$queryText = $pomQuery->toString();
 
-            $pomQuery->setNodeText($queryText);
-        }
+			// replace property as property
+			$queryText = preg_replace('/\[\[\s*'.$quotedCategoryName.'\s*::([^]])\]\]/i', "[[".$this->newProperty->getText()."::$1]]", $queryText);
 
-        # TODO: iterate through rules
-        # not yet implemented in Data-API
+			// replace property as value
+			$queryText = preg_replace('/\[\[([^:]|:[^:])+::\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[$1::".$this->newProperty->getPrefixedText()."]]", $queryText);
 
-        // calls sync() internally
-        $wikitext = $pom->toString();
-        return $wikitext;
-    }
+			// replace property as instance
+			$queryText = preg_replace('/\[\[\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[".$this->newProperty->getPrefixedText()."]]", $queryText);
+
+			$pomQuery->setNodeText($queryText);
+		}
+
+		# TODO: iterate through rules
+		# not yet implemented in Data-API
+
+		// calls sync() internally
+		$wikitext = $pom->toString();
+		return $wikitext;
+	}
 }

@@ -40,6 +40,23 @@ abstract class SMWRFRefactoringOperation {
 	 */
 	public abstract function refactor($save = true);
 
+	protected function splitRecordValues($value) {
+		$valueArray = explode(";", $value);
+		array_walk($valueArray, array($this, 'trim'));
+		return $valueArray;
+	}
+    
+	/**
+	 * Returns trimmed string
+     * Callback method for array_walk
+     * 
+     * @param string $s
+     * @param int $index
+     */
+	private function trim(& $s, $i) {
+		$s = trim($s);
+	}
+
 }
 
 
