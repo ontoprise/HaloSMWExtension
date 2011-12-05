@@ -108,58 +108,58 @@ QIHelper.prototype = {
     });
   },
 
-//  isFunctionInArray: function(someFunction, arrayOfFunctions){
-//    var result = false;
-//    if(typeof someFunction === 'function' && arrayOfFunctions && arrayOfFunctions.length){
-//      jQuery.each(arrayOfFunctions, function(key, value){
-//        if(value.toString() == someFunction.toString()){
-//          result = true;
-//          return false; //break the loop
-//        }
-//      });
-//    }
-//    return result;
-//  },
-//
-//  //add function to array only if it's not there yet
-//  addInitMethod: function(func, resultFormatName){
-//    if(resultFormatName && !qihelper.isFunctionInArray(func, qihelper.srfInitMethods)){
-//      qihelper.srfInitMethods.push(func);
-//    }
-//  },
+  //  isFunctionInArray: function(someFunction, arrayOfFunctions){
+  //    var result = false;
+  //    if(typeof someFunction === 'function' && arrayOfFunctions && arrayOfFunctions.length){
+  //      jQuery.each(arrayOfFunctions, function(key, value){
+  //        if(value.toString() == someFunction.toString()){
+  //          result = true;
+  //          return false; //break the loop
+  //        }
+  //      });
+  //    }
+  //    return result;
+  //  },
+  //
+  //  //add function to array only if it's not there yet
+  //  addInitMethod: function(func, resultFormatName){
+  //    if(resultFormatName && !qihelper.isFunctionInArray(func, qihelper.srfInitMethods)){
+  //      qihelper.srfInitMethods.push(func);
+  //    }
+  //  },
 
-//  //execute init methods of result format modules registered via overriden $(document).ready methosd
-//  executeInitMethods: function(){
-//    var initMethods = qihelper.srfInitMethods || [];
-//
-//    for(var i = 0; i < initMethods.length; i++){
-//      try{
-//        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
-//        var method = initMethods[i];
-//        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
-//          && jQuery('.sortheader').length > 0)
-//          {
-//          continue;
-//        }
-//        method();
-//
-//      }
-//      catch(x){
-//        //exceptions are expected so just continue
-//        mw.log('EXCEPTION: ' + x);
-//      }
-//    }
-//  },
+  //  //execute init methods of result format modules registered via overriden $(document).ready methosd
+  //  executeInitMethods: function(){
+  //    var initMethods = qihelper.srfInitMethods || [];
+  //
+  //    for(var i = 0; i < initMethods.length; i++){
+  //      try{
+  //        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
+  //        var method = initMethods[i];
+  //        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
+  //          && jQuery('.sortheader').length > 0)
+  //          {
+  //          continue;
+  //        }
+  //        method();
+  //
+  //      }
+  //      catch(x){
+  //        //exceptions are expected so just continue
+  //        mw.log('EXCEPTION: ' + x);
+  //      }
+  //    }
+  //  },
 
-//  //override jquery.ready and addOnloadHook methods to save the functions passed to them as arguments
-//  initResultFormatLoading: function(){
-//    jQuery.fn.ready = qihelper.documentReady;
-//    addOnloadHook = qihelper.documentReady;
-//  },
-//
-//  documentReady: function(someFunction){
-//    qihelper.addInitMethod(someFunction, qihelper.selectedResultFormat);
-//  },
+  //  //override jquery.ready and addOnloadHook methods to save the functions passed to them as arguments
+  //  initResultFormatLoading: function(){
+  //    jQuery.fn.ready = qihelper.documentReady;
+  //    addOnloadHook = qihelper.documentReady;
+  //  },
+  //
+  //  documentReady: function(someFunction){
+  //    qihelper.addInitMethod(someFunction, qihelper.selectedResultFormat);
+  //  },
 
   enableResetQueryButton: function(forceDisable){
     if(forceDisable){
@@ -680,20 +680,21 @@ QIHelper.prototype = {
   },
 
   getDialogConfig: function(){
+    var closeMsg = gLanguage.getMessage('QI_CLOSE');
+    var buttons = {};
+    buttons[closeMsg] = function() {
+      jQuery('#fullpreview').dialog('close');
+    };
     var config = {
-      title: 'Query result',
+      title: gLanguage.getMessage('QI_QUERY_RESULT'),
       height: 300,
       width: 500,
       closeOnEscape: true,
       modal: true,
-      buttons: {
-        'Close': function() {
-          jQuery(this).dialog('close');
-        }
-      },
+      buttons: buttons,
       close: function(event, ui) {
         jQuery('#askQI #previewcontent').html(jQuery(this).html());
-        qihelper.appendScripts(jQuery('#askQI #previewcontent'), qihelper.inlineScripts);
+        SPARQL.appendScripts(jQuery('#askQI #previewcontent'), SPARQL.srfInitScripts);
         jQuery(this).remove();
       }
     };
@@ -819,26 +820,6 @@ QIHelper.prototype = {
 	 */
   openResultPreview : function(request) {
     this.pastePreview(request, $$('#askQI #previewcontent')[0]);
-  },
-
-  getInlineScripts: function(text){
-    var scriptRegexp = new RegExp(/\<script[^\>]*\>[\s\S]*?\<\/script\>/gmi);
-    var result = [];
-    var noscript = text;
-    var match;
-    while(match = scriptRegexp.exec(text)){
-      result.push(match[0]);
-      noscript = noscript.replace(match[0], '');
-    }
-
-    result.push(noscript);
-    return result;
-  },
-	
-  appendScripts: function(domElement, scriptArray){
-    for(var i = 0; i < scriptArray.length; i++){
-      jQuery(domElement).append(scriptArray[i]);
-    }
   },
 
   pastePreview: function(request, preview) {
@@ -1494,8 +1475,8 @@ QIHelper.prototype = {
     + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
     + ((idx > 0) ? 'style="font-weight:bold;" ' : '')
     + 'onkeyup="qihelper.handleKeyUpEvent(' + idx + ')" '
-//    + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
-//    + 'onblur="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
+    //    + 'onkeyup="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
+    //    + 'onblur="qihelper.clearPropertyType('+idx+'), qihelper.getPropertyInformation()" '
     + ((propName) ? 'value="'+propName+'" ' : '')
     + 'title="' +  gLanguage.getMessage('AUTOCOMPLETION_HINT') + '"'
     + '/>';
@@ -1553,9 +1534,9 @@ QIHelper.prototype = {
   },
 
   clearPropertyTypeAndGetInfo: function(idx){
-      qihelper.clearPropertyType(idx);
-      qihelper.getPropertyInformation();
-   },
+    qihelper.clearPropertyType(idx);
+    qihelper.getPropertyInformation();
+  },
 
   setPropertyRestriction : function () {
     if (this.oldPropertyRestriction == null) this.oldPropertyRestriction = -1;
@@ -1807,7 +1788,7 @@ QIHelper.prototype = {
   getPropertyInformation : function() {
     var idx = ($$('#askQI #dialoguecontent')[0].rows.length -1) / 2 - 1;
     var propname = $('input_p'+idx).value;
-//    if (propname != "" && propname != this.propname) { // only if not empty
+    //    if (propname != "" && propname != this.propname) { // only if not empty
     if (propname != "") { // only if not empty
       // and name changed
       this.propname = propname;

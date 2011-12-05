@@ -30,7 +30,8 @@
   background: #DDDDDD;
   width:100%;
   float:left;
-  margin-top:10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 #qimenubar > button {
@@ -695,6 +696,7 @@ button.btnhov{
 
 .ui-tabs .ui-tabs-nav li a {
   font-weight: bold;
+  padding: 0.5em;
 }
 
 .ui-tabs {
@@ -720,7 +722,16 @@ button.btnhov{
   font-size: 11px;
 }
 
-/*#switchToSparqlBtn{
-  display: none;
-}*/
+#qiCategoryDialog{
+  height: 220px;
+  overflow: auto;
+}
 
+.selectedInputBox{
+  border: 1px solid #FF9900;
+}
+
+#sparqlQI{
+  float: left;
+  width: 99%;
+}

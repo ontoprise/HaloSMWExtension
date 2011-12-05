@@ -361,6 +361,10 @@ window.wgUserLanguageStrings = {
     
     //SPARQL query interface
     'QI_SWITCH_TO_SPARQL'     : 'Switch to SPARQL',
+    'QI_SHOW_IN_RESULTS_MUST_BE_SET': 'At least one variable must have a "Show in results" option selected',
+    'QI_INVALID_QUERY' : 'The query is invalid',
+    'QI_CLOSE'  :  'Close',
+    'QI_QUERY_RESULT' : 'Query result',
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Thank you for evaluating annotations, ',
