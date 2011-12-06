@@ -58,7 +58,9 @@ class SMWQueryInterface extends SpecialPage {
 
   public function execute($par) {
 
-    global $wgRequest, $wgOut, $smwgHaloScriptPath, $smwgDeployVersion;
+    global $wgRequest, $wgOut, $smwgHaloScriptPath, $smwgDeployVersion, $wgHooks;
+
+    $wgHooks['MakeGlobalVariablesScript'][] = 'SMWQueryInterface::onMakeGlobalVariablesScript';
 
     $this->imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 
@@ -87,6 +89,14 @@ class SMWQueryInterface extends SpecialPage {
 
     $html .= '</div></div></div>';
     $wgOut->addHTML($html);
+  }
+
+  public static function onMakeGlobalVariablesScript(&$vars){
+    global $smwgHaloWebserviceEndpoint;
+    if(isset($smwgHaloWebserviceEndpoint)){
+      $vars['smwgHaloWebserviceEndpoint'] = $smwgHaloWebserviceEndpoint;
+    }
+    return true;
   }
 
   private function createSparqlQI() {

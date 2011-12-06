@@ -632,6 +632,7 @@ button.btnhov{
 
 #qiBoxcontent { 
   vertical-align: top;
+  height: 220px;
 }
 
 #qiDetailsTable{
@@ -652,8 +653,9 @@ button.btnhov{
 
 #qiBoxcontent div{
   vertical-align: top;
-  overflow:auto;
+  overflow: auto;
   padding: 5px;
+  height: inherit;
 }
 
 #qiBoxcontent img{
@@ -722,11 +724,6 @@ button.btnhov{
   font-size: 11px;
 }
 
-#qiCategoryDialog{
-  height: 220px;
-  overflow: auto;
-}
-
 .selectedInputBox{
   border: 1px solid #FF9900;
 }
@@ -734,4 +731,11 @@ button.btnhov{
 #sparqlQI{
   float: left;
   width: 99%;
+}
+
+li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="category"] > ins{
+  background-image: url("images/or.png");
+  background-position: 0;
+  background-repeat: no-repeat;
+  background: url("images/or.png") no-repeat scroll 0 0 transparent;
 }
