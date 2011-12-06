@@ -87,9 +87,12 @@ class SMWRuleStore {
      * @param int $new_article_id
      * @param int $old_article_id
      * @param Title $newTitle
+     * 
+     * @return tuple(old rule URI, new rule URI)
      */
     public function updateRules($new_article_id, $old_article_id, $newTitle) {
         // no impl
+        return array();
     }
 
 	/**
