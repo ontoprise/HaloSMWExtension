@@ -121,6 +121,7 @@ class Rollback {
 			// possible since MW 1.16
 			$wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
+			$wgDBserver = $this->getVariableValue("LocalSettings.php", "wgDBserver");
 				
 			if (empty($wgDBadminuser) || empty($wgDBadminpassword)) {
 				$dfgOut->outputln('$wgDBadminuser and $wgDBadminpassword is empty! Please set.', DF_PRINTSTREAM_TYPE_WARN);
@@ -145,8 +146,8 @@ class Rollback {
 			$mysqlDump = DF_Config::$settings['df_mysql_dir']."/bin/mysqldump";
 		}
 
-		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->restoreDir."/$name/dump.sql");
-		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
+		$logger->info("\n\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword --host=$wgDBserver $wgDBname > ".$this->restoreDir."/$name/dump.sql");
+		exec("\"$mysqlDump\" -u $wgDBadminuser --password=$wgDBadminpassword --host=$wgDBserver $wgDBname > \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		$dfgOut->output("done.]");
 		$savedDataBase = true;
 
@@ -326,6 +327,7 @@ class Rollback {
 			// possible since MW 1.16
 			$wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
+			$wgDBserver = $this->getVariableValue("LocalSettings.php", "wgDBserver");
 		}
 		$wgDBname = $this->getVariableValue("LocalSettings.php", "wgDBname");
 		if (!file_exists($this->restoreDir."/$name/dump.sql")) return false; // nothing to restore
@@ -343,8 +345,8 @@ class Rollback {
 		if (array_key_exists('df_mysql_dir', DF_Config::$settings) && !empty(DF_Config::$settings['df_mysql_dir'])) {
 			$mysqlExec = DF_Config::$settings['df_mysql_dir']."/bin/mysql";
 		}
-		$logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"");
-		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
+		$logger->info("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --host=$wgDBserver --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"");
+		exec("\"$mysqlExec\" -u $wgDBadminuser --password=$wgDBadminpassword --host=$wgDBserver --database=$wgDBname < \"".$this->restoreDir."/$name/dump.sql\"", $out, $ret);
 		if ($ret != 0){
 			$logger->error("Could not restore database.");
 			$dfgOut->outputln("Could not restore database. See log for details.", DF_PRINTSTREAM_TYPE_ERROR);
