@@ -32,6 +32,10 @@
     
     <configs>
         <successor ext="smw" />
+        <new>
+            <require name="srf"
+                file="extensions/SemanticResultFormats/SemanticResultFormats.php" />
+        </new>
         <uninstall>
     		<!-- empty -->
 		</uninstall>
