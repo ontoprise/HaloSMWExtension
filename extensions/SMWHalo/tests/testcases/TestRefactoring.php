@@ -31,8 +31,7 @@ require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameProperty
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameCategory.php');
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_RenameInstance.php');
 require_once($smwgHaloIP.'/includes/refactoring/operations/SMW_RF_ChangeValue.php');
-require_once($smwgHaloIP.'/DataAPI/PageCRUD_Plus/PCP.php');
-require_once($smwgHaloIP.'/DataAPI/PageObjectModel/POM.php');
+
 
 class TestRefactoring extends PHPUnit_Framework_TestCase {
 
@@ -44,6 +43,8 @@ class TestRefactoring extends PHPUnit_Framework_TestCase {
 	function tearDown() {
 
 	}
+	
+	
 
 	function testRenameProperty() {
 		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
@@ -79,13 +80,37 @@ ENDS;
 		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test
-{{#ask: [[Category:Testcategory]][[Testproperty::+]] }}
+{{#ask: [[Category:Testcategory]][[Testproperty::+]]|?Testproperty }}
 Test text
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
 		$this->assertContains('Newtestproperty', $wikitext);
 
 	}
+	
+function testRenamePropertyInQuery2() {
+        $r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+        $wikitext = <<<ENDS
+This is a test
+{{#ask: [[Property:Testproperty]]|?Testproperty }}
+Test text
+ENDS;
+        $wikitext = $r->changeContent('Test', $wikitext);
+        $this->assertContains('Newtestproperty', $wikitext);
+
+    }
+    
+function testRenamePropertyInQuery3() {
+        $r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+        $wikitext = <<<ENDS
+This is a test
+{{#ask: [[Category:Testcategory]]|?Testproperty }}
+Test text
+ENDS;
+        $wikitext = $r->changeContent('Test', $wikitext);
+        $this->assertContains('Newtestproperty', $wikitext);
+
+    }
 
 	function testRenameCategory() {
 		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
@@ -237,13 +262,13 @@ ENDS;
 	}
 
 	function testChangeValue() {
-		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", "new");
+		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "Old", "New");
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::old]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
 
-		$this->assertContains('Testproperty::new', $wikitext);
+		$this->assertContains('Testproperty::New', $wikitext);
 	}
 
 	function testValueRemove() {
@@ -256,12 +281,12 @@ ENDS;
 		$this->assertNotContains('Testproperty::', $wikitext);
 	}
 	function testValueAdd() {
-		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "new");
+		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "New");
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::old]]. No text.
 ENDS;
 		$wikitext = $r->changeContent('Test', $wikitext);
 
-		$this->assertContains('Testproperty::new', $wikitext);
+		$this->assertContains('Testproperty::New', $wikitext);
 	}
 }
