@@ -84,7 +84,7 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			$this->oldInstance->moveTo($this->newInstance);
 		}
 	}
-	
+
 	/**
 	 * Replaces old title with new.
 	 * Callback method for array_walk
@@ -99,61 +99,47 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 		}
 	}
 
-	public function changeContent($titleName, $wikitext) {
-		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
-
-		# iterate trough the annotations
-		$iterator = $pom->getProperties()->listIterator();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-
-			$name = $pomProperty->getName();
-			if ($name == $this->oldInstance->getText()) {
-				$pomProperty->setName($this->newInstance->getText());
-			}
-
-			$value = $pomProperty->getValue();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-
-			$pomProperty->setValue(implode("; ",$values));
-		}
-
-		# iterate trough the links
-		$iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-
-			$value = $pomProperty->getValue();
+	private function replaceInstanceInLink($objects) {
+		foreach($objects as $o){
+			$value = $o->getLink();
 
 			if ($value == $this->oldInstance->getPrefixedText()) {
-				$pomProperty->setValue(":".$this->newInstance->getPrefixedText());
+				$o->setLink($this->newInstance->getPrefixedText());
 			}
 		}
+	}
 
-		#iterate trough queries
-		$iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();
-		$quotedInstanceName = preg_quote($this->oldInstance->getText());
-		$quotedInstancePrefixedName = preg_quote($this->oldInstance->getPrefixedText());
-		while($iterator->hasNext()){
+	public function changeContent($titleName, $wikitext) {
+		$pom = WOMProcessor::parseToWOM($wikitext);
 
-			$pomQuery = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-			$queryText = $pomQuery->toString();
+		# iterate through the annotation values
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		$this->replaceValueInAnnotation($objects);
 
-			// replace instance as instance
-			$queryText = preg_replace('/\[\[\s*'.$quotedInstancePrefixedName.'\s*\]\]/i', "[[".$this->newInstance->getPrefixedText()."]]", $queryText);
+		# iterate trough the links
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
+		$this->replaceInstanceInLink($objects);
 
-			// replace instance as value
-			$queryText = preg_replace('/\[\[([^:]|:[^:])+::\s*'.$quotedInstancePrefixedName.'\s*\]\]/i', "[[$1::".$this->newInstance->getPrefixedText()."]]", $queryText);
+		# iterate trough queries
+		# better support for ASK would be nice
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+		foreach($objects as $o){
+			if ($o->getFunctionKey() == 'ask') {
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
+				$this->replaceValueInAnnotation($results);
 
-			$pomQuery->setNodeText($queryText);
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
+				$this->replaceInstanceInLink($results);
+
+			}
 		}
 
 		# TODO: iterate through rules
-		# not yet implemented in Data-API
+		# not yet implemented in WOM*/
 
-		// calls sync() internally
-		$wikitext = $pom->toString();
+		$wikitext = $pom->getWikiText();
 		return $wikitext;
 	}
 }

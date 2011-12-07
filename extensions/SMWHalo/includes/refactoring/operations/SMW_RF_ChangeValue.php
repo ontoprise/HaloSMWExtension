@@ -39,49 +39,92 @@ class SMWRFChangeValueOperation extends SMWRFRefactoringOperation {
 
 	}
 
+	protected function replaceValueInAnnotation($objects) {
+		foreach($objects as $o){
+
+			$name = $o->getProperty()->getDataItem()->getLabel();
+			if ($name == $this->oldProperty->getText()) {
+				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
+			}
+
+			$value = $o->getPropertyValue();
+			$values = $this->splitRecordValues($value);
+			array_walk($values, array($this, 'replaceTitle'));
+
+
+			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
+			$o->setSMWDataValue($newValue);
+
+		}
+	}
+
+	/**
+	 * Replaces old value with new.
+	 * Callback method for array_walk
+	 *
+	 * @param string $title Prefixed title
+	 * @param int $index
+	 */
+	protected function replaceValue(& $value, $index) {
+		if (ucfirst($value) == ucfirst($this->oldValue)) {
+			$value = $this->newValue;
+		}
+	}
+
 	public function changeContent($titleName, $wikitext) {
-		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
+		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
-		$iterator = $pom->getProperties()->listIterator();
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+
 		$toDelete = array();
 		$toAdd = array();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
 
+		foreach($objects as $o){
+
+			$name = $o->getProperty()->getDataItem()->getLabel();
 			if (is_null($this->newValue)) {
 				// remove annotation
-				if ($pomProperty->getName() == $this->property->getText()) {
-					$value = $pomProperty->getValue();
-					if (is_null($this->oldValue) || $value == $this->oldValue) {
-						$toDelete[] = $pomProperty;
+				if ($name == $this->property->getText()) {
+					$value = $o->getPropertyValue();
+					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
+						$toDelete[] = $o;
 					}
 				}
-			} if (is_null($this->oldValue)) {
-				 // add new annotation
-				 $toAdd[] = new POMProperty("[[".$this->property->getText()."::".$this->newValue."]]");
+			} else if (is_null($this->oldValue)) {
+				// add new annotation
+				$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
+
+			} else {
+				$value = $o->getPropertyValue();
 				
-			}else {
-				$value = $pomProperty->getValue();
-				if ($pomProperty->getName() == $this->property->getText()) {
-					   $value = $pomProperty->getValue();
-					if (is_null($this->oldValue) || $value == $this->oldValue) {
-						$pomProperty->setValue($this->newValue);
+				if ($name == $this->property->getText()) {
+					
+					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
+					
+						$values = $this->splitRecordValues($value);
+							
+						array_walk($values, array($this, 'replaceValue'));
+						
+						$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
+						$o->setSMWDataValue($newValue);
 					}
 				}
 			}
 		}
 
 		foreach($toDelete as $d) {
-			$pom->delete($d);
-		}
-		
-		foreach($toAdd as $a) {
-			$pom->addElement($a);
+			$pom->removePageObject($d->getObjectID());
 		}
 
+		foreach($toAdd as $a) {
+			$a->setObjectID(uniqid());
+			$pom->appendChildObject($a);
+		}
+
+
 		// calls sync() internally
-		$wikitext = $pom->toString();
+		$wikitext = $pom->getWikiText();
 		return $wikitext;
 	}
 }

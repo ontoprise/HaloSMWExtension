@@ -46,12 +46,12 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 		foreach($subjects as $s) {
 			$subjectDBKeys[] = $s->getTitle()->getPrefixedDBkey();
 		}
-		
-	    // get all pages which uses links to $this->property
-        $subjects = $this->oldProperty->getLinksTo();
-        foreach($subjects as $s) {
-            $subjectDBKeys[] = $s->getPrefixedDBkey();
-        }
+
+		// get all pages which uses links to $this->property
+		$subjects = $this->oldProperty->getLinksTo();
+		foreach($subjects as $s) {
+			$subjectDBKeys[] = $s->getPrefixedDBkey();
+		}
 
 		// get all queries using $this->property
 		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
@@ -88,7 +88,7 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 		}
 	}
 
-	
+
 	/**
 	 * Replaces old property with new.
 	 * Callback method for array_walk
@@ -98,69 +98,91 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 	 */
 	protected function replaceTitle(& $title, $index) {
 		if ($title == $this->oldProperty->getPrefixedText()) {
-			
+
 			$title = $this->newProperty->getPrefixedText();
 		}
 	}
-	public function changeContent($titleName, $wikitext) {
-		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
 
-		# iterate trough the annotations
-		$iterator = $pom->getProperties()->listIterator();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+	private function replacePropertyInAnnotation($objects) {
+		foreach($objects as $o){
 
-			$name = $pomProperty->getName();
+			$name = $o->getProperty()->getDataItem()->getLabel();
 			if ($name == $this->oldProperty->getText()) {
-				$pomProperty->setName($this->newProperty->getText());
+				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
 			}
 
-			$value = $pomProperty->getValue();
+			$value = $o->getPropertyValue();
 			$values = $this->splitRecordValues($value);
 			array_walk($values, array($this, 'replaceTitle'));
 
-			$pomProperty->setValue(implode("; ",$values));
 			 
+			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
+			$o->setSMWDataValue($newValue);
+
 		}
+	}
+	
+	private function replacePropertyInLink($objects) {
+	foreach($objects as $o){
+
+
+            $value = $o->getLink();
+
+            if ($value == $this->oldProperty->getPrefixedText()) {
+                $o->setLink($this->newProperty->getPrefixedText());
+            }
+        }
+	}
+	
+	private function replacePrintout($objects) {
+		foreach($objects as $o){
+			$value = $o->getWikiText();
+			$value = trim($value);
+			if ($value == '?'.$this->oldProperty->getText()) {
+				$o->setText('?'.$this->newProperty->getText());
+			}
+			
+		}
+	}
+	public function changeContent($titleName, $wikitext) {
+		$pom = WOMProcessor::parseToWOM($wikitext);
+
+		# iterate trough the annotations
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+        $this->replacePropertyInAnnotation($objects);
 
 		# iterate trough the links
-		$iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
+		$this->replacePropertyInLink($objects);
 
-			$value = $pomProperty->getValue();
-
-			if ($value == $this->oldProperty->getPrefixedText()) {
-				$pomProperty->setValue($this->newProperty->getPrefixedText());
+		# iterate trough queries
+		# better support for ASK would be nice
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+		foreach($objects as $o){
+			if ($o->getFunctionKey() == 'ask') {
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
+				$this->replacePropertyInAnnotation($results);
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
+				$this->replacePropertyInLink($results);
+				
+				$results = array();
+                $this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
+				foreach($results as $o) {
+					$paramTexts = array();
+					$this->findObjectByID($o, WOM_TYPE_TEXT, $paramTexts);
+					$this->replacePrintout($paramTexts);
+				}
 			}
 		}
-
-		#iterate trough queries
-		$iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();
-		$quotedCategoryName = preg_quote($this->oldProperty->getText());
-		$quotedCategoryPrefixedName = preg_quote($this->oldProperty->getPrefixedText());
-		while($iterator->hasNext()){
-
-			$pomQuery = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-			$queryText = $pomQuery->toString();
-
-			// replace property as property
-			$queryText = preg_replace('/\[\[\s*'.$quotedCategoryName.'\s*::([^]])\]\]/i', "[[".$this->newProperty->getText()."::$1]]", $queryText);
-
-			// replace property as value
-			$queryText = preg_replace('/\[\[([^:]|:[^:])+::\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[$1::".$this->newProperty->getPrefixedText()."]]", $queryText);
-
-			// replace property as instance
-			$queryText = preg_replace('/\[\[\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[".$this->newProperty->getPrefixedText()."]]", $queryText);
-
-			$pomQuery->setNodeText($queryText);
-		}
-
+		
 		# TODO: iterate through rules
-		# not yet implemented in Data-API
-
-		// calls sync() internally
-		$wikitext = $pom->toString();
+		# not yet implemented in WOM*/
+	
+		$wikitext = $pom->getWikiText();
 		return $wikitext;
 	}
+
+
 }

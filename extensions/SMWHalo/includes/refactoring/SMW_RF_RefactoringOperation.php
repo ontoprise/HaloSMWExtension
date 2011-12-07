@@ -45,17 +45,52 @@ abstract class SMWRFRefactoringOperation {
 		array_walk($valueArray, array($this, 'trim'));
 		return $valueArray;
 	}
-    
+
 	/**
 	 * Returns trimmed string
-     * Callback method for array_walk
-     * 
-     * @param string $s
-     * @param int $index
-     */
+	 * Callback method for array_walk
+	 *
+	 * @param string $s
+	 * @param int $index
+	 */
 	private function trim(& $s, $i) {
 		$s = trim($s);
 	}
+
+	protected function findObjectByID($node, $id, & $results) {
+		
+		if ($node->isCollection()) {
+			$objects = $node->getObjects();
+			foreach($objects as $o) {
+				if ($o->getTypeID() == $id) {
+					
+					$results[] = $o;
+				
+				}
+				$this->findObjectByID($o, $id, $results);
+			}
+		} else {
+			if ($node->getTypeID() == $id) {
+			
+				$results[] = $node;
+				
+			}
+		}
+	}
+	
+protected function replaceValueInAnnotation($objects) {
+        foreach($objects as $o){
+          
+            $value = $o->getPropertyValue();
+            $values = $this->splitRecordValues($value);
+         
+            array_walk($values, array($this, 'replaceTitle'));
+           
+            $newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
+            $o->setSMWDataValue($newValue);
+
+        }
+    }
 
 }
 

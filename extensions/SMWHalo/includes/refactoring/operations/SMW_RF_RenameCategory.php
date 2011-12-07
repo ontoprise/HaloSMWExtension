@@ -50,7 +50,7 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 			}
 		}
 
-	    // get all pages which uses links to $this->oldCategory
+		// get all pages which uses links to $this->oldCategory
 		$subjects = $this->oldCategory->getLinksTo();
 		foreach($subjects as $s) {
 			$subjectDBKeys[] = $s->getPrefixedDBkey();
@@ -98,77 +98,72 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 	 * @param string $title Prefixed title
 	 * @param int $index
 	 */
-	protected function replaceTitle(& $title, $index) {
-		if ($title == $this->oldCategory->getPrefixedText()) {
+	public function replaceTitle(& $title, $index) {
+		
+		if ($title == ":".$this->oldCategory->getPrefixedText()) {
 			$changed = true;
 			$title = $this->newCategory->getPrefixedText();
 		}
 	}
 
-	public function changeContent($titleName, $wikitext) {
-		$pom = new POMPage($titleName, $wikitext, array('POMExtendedParser'));
+	private function replaceCategoryInAnnotation($objects) {
+		foreach($objects as $o){
 
-		# iterate trough the category annotations
-		$iterator = $pom->getCategories()->listIterator();
-		while($iterator->hasNext()){
-			$pomCategory = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-			$value = $pomCategory->getValue();
-			if ($value == $this->oldCategory->getText()) {
-				$pomCategory->setValue($this->newCategory->getText());
+			$name = $o->getName();
+			if ($name == $this->oldCategory->getText()) {
+				$o->setName($this->newCategory->getText());
 			}
+
 		}
+	}
 
-		# iterate through property values
-		$iterator = $pom->getProperties()->listIterator();
-		while($iterator->hasNext()){
-			$pomCategory = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-
-			$value = $pomCategory->getValue();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-
-			$pomCategory->setValue(implode("; ",$values));
-		}
-
-		# iterate trough the links
-		$iterator = $pom->getElements()->getShortcuts('POMLink')->listIterator();
-		while($iterator->hasNext()){
-			$pomProperty = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-
-			$value = $pomProperty->getValue();
+	private function replaceCategoryInLink($objects) {
+		foreach($objects as $o){
+			$value = $o->getLink();
 
 			if ($value == ":".$this->oldCategory->getPrefixedText()) {
-				$pomProperty->setValue(":".$this->newCategory->getPrefixedText());
+				$o->setLink(":".$this->newCategory->getPrefixedText());
 			}
 		}
+	}
+
+	 
+	public function changeContent($titleName, $wikitext) {
+		$pom = WOMProcessor::parseToWOM($wikitext);
+
+		# iterate trough the annotations
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
+		$this->replaceCategoryInAnnotation($objects);
+
+		# iterate through the annotation values
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		$this->replaceValueInAnnotation($objects);
 
 
-		#iterate trough queries
-		$iterator = $pom->getElements()->getShortcuts('POMAskFunction')->listIterator();
-		$quotedCategoryName = preg_quote($this->oldCategory->getText());
-		$quotedCategoryPrefixedName = preg_quote($this->oldCategory->getPrefixedText());
-		while($iterator->hasNext()){
+		# iterate trough the links
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
+		$this->replaceCategoryInLink($objects);
 
-			$pomQuery = &$iterator->getNextNodeValueByReference(); # get reference for direct changes
-			$queryText = $pomQuery->toString();
+		# iterate trough queries
+		# better support for ASK would be nice
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+		foreach($objects as $o){
+			if ($o->getFunctionKey() == 'ask') {
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
+				$this->replaceCategoryInAnnotation($results);
+				
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
+				$this->replaceCategoryInLink($results);
 
-			// replace category as category
-			$queryText = preg_replace('/\[\[\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[".$this->newCategory->getPrefixedText()."]]", $queryText);
-
-			// replace category as value
-			$queryText = preg_replace('/\[\[([^:]|:[^:])+::\s*'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[$1::".$this->newCategory->getPrefixedText()."]]", $queryText);
-
-			// replace category as category-link
-			$queryText = preg_replace('/\[\[\s*:'.$quotedCategoryPrefixedName.'\s*\]\]/i', "[[:".$this->newCategory->getPrefixedText()."]]", $queryText);
-
-			$pomQuery->setNodeText($queryText);
+			}
 		}
 
 		# TODO: iterate through rules
-		# not yet implemented in Data-API
+		# not yet implemented in WOM*/
 
-		// calls sync() internally
-		$wikitext = $pom->toString();
+		$wikitext = $pom->getWikiText();
 		return $wikitext;
 	}
 }
