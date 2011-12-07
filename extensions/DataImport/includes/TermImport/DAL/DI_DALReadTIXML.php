@@ -20,50 +20,22 @@
 /**
  * @file
  * @ingroup DITIDataAccessLayer
- * Implementation of the Data Access Layer (DAL) that is part of the term import feature.
- * The DAL accesses a data source and creates terms in an XML format. These are
- * returned to a module of the Transport layer.
- * This implementation reads the TIXML format ann returns its content in a form
- * appropriate for the creation of articles.
+ * 
+ * This DAM reads web service results in the TIXML format
  *
  * @author Ingo Steinbauer
  */
-
-define('DAL_TIXML_RET_ERR_START',
-			'<?xml version="1.0"?>'."\n".
-			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    		'<value>false</value>'."\n".
-    		'<message>');
-
-define('DAL_TIXML_RET_ERR_END',
-			'</message>'."\n".
-    		'</ReturnValue>'."\n");
-
-
 class DALReadTIXML implements IDAL {
 
-	// Name of the current TIXML article
 	private $articleName;
-
-	// The content of the current TIXML article
 	private $tixmlContent;
 
-	/**
-	 * Constructor of class DALReadTIXML.
-	 *
-	 */
 	function __construct() {
 		$this->tixmlContent = array();
 	}
 
-	/**
-	 * Returns a specification of the data source.
-	 * See further details in SMW_IDAL.php
-	 *
-	 * @return string:
-	 * 		The returned XML structure specifies the data source
-	 */
 	public function getSourceSpecification() {
+		//todo: language
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -71,152 +43,55 @@ class DALReadTIXML implements IDAL {
 			'</DataSource>'."\n";
 	}
 	 
-	/**
-	 * Returns a list of import sets and their description.
-	 *
-	 * @param string $dataSourceSpec:
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered.
-	 * @return string:
-	 * 		Returns a list of import sets and their description (for the user)
-	 * 		that the module can extract from the data source. An import set is
-	 * 		just a name for a set of terms that module can extract e.g. different
-	 * 		domains of knowledge like Biological terms, Chemical terms etc.
-	 * 		Each XML element <importSet> has the mandatory elements <name> and
-	 * 		<desc>. Arbitrary, module dependent elements can be added.
-	 * 		If the operation fails, an error message is returned.
-	 */
 	public function getImportSets($dataSourceSpec) {
 		$articleName = $this->getArticleNameFromSpec($dataSourceSpec);
-		$importSets = '';
-
+		$importSets = array();
+		
 		if (!$this->readContent($articleName)
 				|| count($this->tixmlContent) == 0) {
-			return DAL_TIXML_RET_ERR_START.
-			wfMsg('smw_ti_articleerror', $articleName).
-			DAL_TIXML_RET_ERR_END;
+			return wfMsg('smw_ti_articleerror', $articleName);
 		}
 
 		$firstLine = &$this->tixmlContent[0];
-		$impSet = array();
 		if (strtolower($firstLine[0]) == 'importset') {
 			$len = count($this->tixmlContent);
 			for ($i = 1; $i < $len; ++$i) {
-				$impSet[$this->tixmlContent[$i][0]] = true;
-			}
-			foreach ($impSet as $is => $val) {
-				$importSets .=
-					'<importSet>'."\n".
-					'	<name>'.$is.'</name>'."\n".
-					'</importSet>'."\n";
+				$importSets[$this->tixmlContent[$i][0]] = true;
 			}
 		}
 
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		$importSets.
-			'</ImportSets>'."\n";
-
+		return array_keys($importSets);
 	}
 	 
-	/**
-	 * Returns a list of properties and their description.
-	 *
-	 * @param string $dataSourceSpec:
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered.
-	 * @param string $importSet:
-	 * 		One of the import sets that can be retrieved with getImportSet() or
-	 * 		empty. The complete XML element <importSet> as specified above is
-	 * 		passed as it may contain values besides <name> and <desc>.
-	 * @return string:
-	 * 		Returns a list of properties and their description (for the user)
-	 * 		that the module can extract from the data source for each term in the
-	 * 		specified import set.
-	*/
 	public function getProperties($dataSourceSpec, $importSet) {
 		$articleName = $this->getArticleNameFromSpec($dataSourceSpec);
-		$properties = '';
+		$properties = array();
 
 		if (!$this->readContent($articleName)
-		|| count($this->tixmlContent) == 0) {
-			return DAL_TIXML_RET_ERR_START.
-			wfMsg('smw_ti_articleerror', $articleName).
-			DAL_TIXML_RET_ERR_END;
+				|| count($this->tixmlContent) == 0) {
+			return wfMsg('smw_ti_articleerror', $articleName);
 		}
+		
 		$firstLine = &$this->tixmlContent[0];
 		foreach ($firstLine as $prop) {
 			if (strtolower($prop) != 'importset') {
-				$properties .=
-					'<property>'."\n".
-					'	<name>'.trim($prop).'</name>'."\n".
-					'</property>'."\n";
+				$properties[] = trim($prop);
 			}
 		}
 
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<Properties xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		$properties.
-			'</Properties>'."\n";
+		return $properties;
 	}
 
-	/**
-	 * Returns a list of the names of all terms that match the input policy.
-	 *
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered.
-	 * @param string $importSet
-	 * 		One of the <importSet>-elements from the XML structure from
-	 * 		getImportSets() or empty.
-	 * @param string $inputPolicy
-	 * 		The XML structure of the input policy as defined in importTerms().
-	 *
-	 * @return string
-	 * 		An XML structure that contains the names of all terms that match the
-	 * 		input policy.
-	 * 		Example:
-	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, true);
 	}
 
-	/**
-	 * Generates the XML description of all terms in the data source that match
-	 * the input policy.
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification, filled with the data
-	 * 		the user entered.
-	 * @param string $importSet
-	 * 		One of the <importSet>-elements from the XML structure from
-	 * 		getImportSets() or empty.
-	 * @param string $inputPolicy
-	 * 		The XML structure of the input policy. It contains the specification
-	 * 		of the terms to import and their properties.
-     * @param string $conflictPolicy
-     * 		The XML structure of the conflict policy. It defines if existing articles
-     * 		are overwritten or not.
-	 * 
-	 * @return string
-	 *		An XML structure that contains all requested terms together with
-	 * 		their properties. The XML of requested terms that could not be
-	 * 		retrieved contains an error message.
-	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, false);
 	}
 
 	/**
 	 * Extracts the articleName from the data source specification.
-	 *
-	 * @param string $dataSourceSpec
-	 * 		The XML structure that specifies the data source must contain the
-	 * 		<articleName> element with the name of an article in the wiki.
-	 *
-	 * @return string
-	 * 		Name of the article or <null> if the value in not present.
 	 */
 	private function getArticleNameFromSpec($dataSourceSpec) {
 		preg_match('/<articleName.*?>(.*?)<\/articleName>/i', $dataSourceSpec, $articleName);
@@ -292,151 +167,40 @@ class DALReadTIXML implements IDAL {
 	}
 
 	/**
-	 * Extracts the names of the import sets from the XML string <$importSets>.
-	 *
-	 * @param string $importSets
-	 * 		An XML string that contains tags with the name "importSet".
-	 * @return array<string>
-	 * 		The names of all import sets in <$importSets> or an error message
-	 * 		if the XML is not valid.
-	 */
-	private function parseImportSets(&$importSets) {
-		global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($importSets);
-		$result = $parser->parse();
-		if ($result !== TRUE) {
-			return $result;
-		}
-		 
-		return $parser->getValuesOfElement(array('importSet','name'));
-	}
-
-	/**
-	 * Parses the input policy in the XML string <$inputPolicy>. The policy
-	 * specifies concrete terms, regular expression for terms to import and
-	 * the properties of the terms to import.
-	 *
-	 * @param string $inputPolicy
-	 * 		An XML string that contains the input policy.
-	 * @return array(array<string>)
-	 * 		An array with three arrays (keys: "terms", "regex", "properties")
-	 * 		that contain the values from the XML string or an error message
-	 * 		if the XML is not valid.
-	 */
-	private function parseInputPolicy(&$inputPolicy) {
-		global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($inputPolicy);
-		$result = $parser->parse();
-		if ($result !== TRUE) {
-			return $result;
-		}
-		 
-		$policy = array();
-		$policy['terms'] = $parser->getValuesOfElement(array('terms', 'term'));
-		$policy['regex'] = $parser->getValuesOfElement(array('terms', 'regex'));
-		$policy['properties'] = $parser->getValuesOfElement(array('properties', 'property'));
-		return $policy;
-
-	}
-
-	/**
-	 * Checks if a term (that may belong to an import set) matches the restriction
-	 * of import sets and the input policy.
-	 *
-	 * @param string $impSet
-	 * 		The name of the import that the term belongs to. Can be <null>.
-	 * @param string $term
-	 * 		The name of the term.
-	 * @param array<string> $importSets
-	 * 		An array of allowed import sets.
-	 * @param array(array<string>) $policy
-	 * 		An array with the keys 'terms', 'regex' and 'properties'. The value for
-	 * 		each key is an array of strings with terms, regular expressions and
-	 * 		properties, respectively.
-	 * @return boolean
-	 * 		<true>, if the term matches the rules and should be imported
-	 * 		<false> otherwise
-	 */
-	private function termMatchesRules($impSet, $term,
-	&$importSets, &$policy) {
-
-		// Check import set
-		if ($impSet != null && count($importSets) > 0) {
-			if (!in_array($impSet, $importSets)) {
-				// Term belongs to the wrong import set.
-				return false;
-			}
-		}
-
-		// Check term policy
-		$terms = &$policy['terms'];
-		if (in_array($term, $terms)) {
-			return true;
-		}
-
-		// Check regex policy
-		$regex = &$policy['regex'];
-		foreach ($regex as $re) {
-			if (preg_match('/'.$re.'/', $term)) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-	/**
-	 * Generates the XML description of all terms in the data source that match
-	 * the input policy.
+	 * Generates the Term Collection which will be imported
+	
 	 * @param string $dataSourceSpec
 	 * 		The XML structure from getSourceSpecification, filled with the data
 	 * 		the user entered.
 	 * @param string $importSet
-	 * 		One of the <importSet>-elements from the XML structure from
+	 * 		One of the <importSet>-elements from 
 	 * 		getImportSets() or empty.
 	 * @param string $inputPolicy
 	 * 		The XML structure of the input policy. It contains the specification
 	 * 		of the terms to import and their properties.
 	 * @param boolean $createTermList
-	 * 		If <true>, the XML structure for <getTermList> is created otherwise
-	 * 		the one for <getTerms>
+	 * 		only term titles must be extracted if the term list should be created
 	 *
-	 * @return string
-	 *		An XML structure that contains all requested terms.
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 * 		</ReturnValue>
+	 * @return DITermCollection
 	 *
 	 */
-	private function createTerms($dataSourceSpec, $importSet, $inputPolicy,
-	$createTermList) {
+	private function createTerms($dataSourceSpec, $givenImportSet, $inputPolicy,
+			$createTermList) {
 
 		$articleName = $this->getArticleNameFromSpec($dataSourceSpec);
-		$importSets = $this->parseImportSets($importSet);
-		$policy = $this->parseInputPolicy($inputPolicy);
-		$terms = '';
+		$inputPolicy = DIDALHelper::parseInputPolicy($inputPolicy);
+		
+		$terms = new DITermCollection();
 
 		if (!$this->readContent($articleName)
-			|| ($len = count($this->tixmlContent)) == 0) {
-			return DAL_TIXML_RET_ERR_START.
-			wfMsg('smw_ti_articleerror', $articleName).
-			DAL_TIXML_RET_ERR_END;
+				|| ($len = count($this->tixmlContent)) == 0) {
+			return wfMsg('smw_ti_articleerror', $articleName);
 		}
 
 		$indexMap = array();
 		foreach ($this->tixmlContent[0] as $idx => $prop) {
 			$p = trim($prop);
-			$p = preg_replace("/ +/", "__SPACE__", $p);
-			if (strtolower($p) == 'Articlename') {
+			if (strtolower($p) == 'articlename') {
 				$p = 'articleName';
 			} else if (strtolower($p) == 'importset') {
 				$p = 'ImportSet';
@@ -445,9 +209,7 @@ class DALReadTIXML implements IDAL {
 		}
 		$articleIdx = $indexMap['articleName'];
 		if ($articleIdx === null) {
-			return DAL_TIXML_RET_ERR_START.
-			wfMsg('smw_ti_no_article_names', $articleName).
-			DAL_TIXML_RET_ERR_END;
+			return wfMsg('smw_ti_no_article_names', $articleName);
 		}
 
 		$impSetIdx = array_key_exists('ImportSet', $indexMap)
@@ -460,49 +222,39 @@ class DALReadTIXML implements IDAL {
 			if (!array_key_exists($i, $this->tixmlContent) || !array_key_exists($articleIdx, $this->tixmlContent[$i])) {
 				continue;
 			}
-			$term = $this->tixmlContent[$i][$articleIdx];
-			if ($this->termMatchesRules($impSet, $term,
-				$importSets, $policy)) {
-				// The term matches the policies.
-				// => add the term to the result
-				if ($createTermList) {
-					$terms .= "<articleName>".trim($term)."</articleName>\n";
-				} else {
-					$terms .= "<term>\n";
+			$articleName = $this->tixmlContent[$i][$articleIdx];
+			if (DIDALHelper::termMatchesRules($impSet, $articleName,
+					$givenImportSet, $inputPolicy)) {
+				
+				$term = new DITerm();
+				$term->setArticleName($articleName);
+				
+				if (!$createTermList) {
 					// add all requested properties
-					$props = &$policy['properties'];
+					$props = $inputPolicy['properties'];
 					
 					foreach ($props as $prop) {
-						$prop = "".trim(preg_replace("/ +/", "__SPACE__", $prop));
-						
+						$prop = "".trim($prop);
 						$idx = $indexMap[$prop];
 						
 						if ($idx !== null) {
-							$value = htmlspecialchars(trim($this->tixmlContent[$i][$idx]));
+							$value = trim($this->tixmlContent[$i][$idx]);
 							if (strlen($value) > 0) {
-								// The property is only written, if it exists.
-								$terms .= "<".$prop.">";
-								$terms .= $value;
-								$terms .= "</".$prop.">\n";
+								$term->addProperty($prop, $value);
 							}
 						}
 					}
-					$terms .= "</term>\n";
 				}
+				$terms->addTerm($term);
 			} 
 		}
 		
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-		$terms.
-			'</terms>'."\n";
-
-
+		//echo(print_r($terms, true));
+		
+		return $terms;
 	}
 	
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return true;
+	public function executeCallBack($callback, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+		return array(true, array());
 	}
-
 }

@@ -164,7 +164,7 @@ interface IDAL {
 	 * @return string
 	 *
 	 */
-	public function executeCallBack($callback, $mappingPolicy, $conflictPolicy, $termImportName);
+	public function executeCallBack($callback, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName);
 	
 	/**
 	 * Returns a list of the names of all terms that match the input policy. 

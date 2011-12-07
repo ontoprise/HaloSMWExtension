@@ -89,5 +89,4 @@ DILanguage.prototype = {
 }
 
 // Singleton of this class
-
-var diLanguage = new DILanguage();
+window.diLanguage = new DILanguage();

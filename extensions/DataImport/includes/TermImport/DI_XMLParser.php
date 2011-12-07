@@ -158,7 +158,7 @@ class DIXMLParser {
 							$xml .= ' ' . $key . '="'.$val.'"' ;
 						}
 					}
-					$xml .= '>'. $elem['value'] . '</'.$elem['tag'].'>';
+					@$xml .= '>'. $elem['value'] . '</'.$elem['tag'].'>';
 					break;
 				case 'close':
 					$xml .= '</'.$elem['tag'].'>';

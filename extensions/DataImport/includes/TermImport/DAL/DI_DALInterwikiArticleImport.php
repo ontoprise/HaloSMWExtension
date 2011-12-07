@@ -27,17 +27,6 @@
  * @author Thomas Schweitzer
  */
 
-define('DAL_IAI_RET_ERR_START',
-			'<?xml version="1.0"?>'."\n".
-			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    		'<value>false</value>'."\n".
-    		'<message>');
-
-define('DAL_IAI_RET_ERR_END',
-			'</message>'."\n".
-    		'</ReturnValue>'."\n");
-
-
 class DALInterwikiArticleImport implements IDAL {
 	
 //--- Fields ---
@@ -83,186 +72,27 @@ class DALInterwikiArticleImport implements IDAL {
      
 	/**
 	 * Returns a list of import sets and their description.
-	 * 
-	 * @param string $dataSourceSpec: 
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered. 
-	 * @return string:
-     * 		Returns a list of import sets and their description (for the user) 
-     * 		that the module can extract from the data source. An import set is 
-     * 		just a name for a set of terms that module can extract e.g. different
-     * 		domains of knowledge like Biological terms, Chemical terms etc. 
-     * 		Each XML element <importSet> has the mandatory elements <name> and 
-     * 		<desc>. Arbitrary, module dependent elements can be added. 
-     * 		Example:
-     * 		<?xml version="1.0"?>
-	 *		<ImportSets xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <importSet>
-	 *		        <name>Biological terms</name>
-	 *     			 <desc>Import all terms from the biology domain.</desc>
-	 * 			</importSet>
-	 *		    <importSet>
-	 *		        <name>Biological terms</name>
-	 *		        <desc>mport all terms from the chemistry domain.</desc>
-	 *		    </importSet>
-	 *		</ImportSets>
-	 * 
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 *		</ReturnValue>
-	 * 
-	 */
-	public function getImportSets($dataSourceSpec) {
-		$importSets = 
-			'<importSet>'."\n".
-			'	<name>Articles</name>'."\n".
-			'	<desc>Import the specified articles.</desc>'."\n".
-			'</importSet>'."\n".
-			'<importSet>'."\n".
-			'	<name>Templates</name>'."\n".
-			'	<desc>Import the templates needed by the specified articles.</desc>'."\n".
-			'</importSet>'."\n".
-				'<importSet>'."\n".
-			'	<name>Images</name>'."\n".
-			'	<desc>Import the images needed by the specified articles.</desc>'."\n".
-			'</importSet>'."\n";
-		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$importSets.
-			'</ImportSets>'."\n";
-		
+	 */ 
+	 public function getImportSets($dataSourceSpec) {
+	 	return array('Articles', 'Template', 'Images');
 	}
      
 	/**
 	 * Returns a list of properties and their description.
-	 *          
-	 * @param string $dataSourceSpec: 
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered.
-     * @param string $importSet: 
-     * 		One of the import sets that can be retrieved with getImportSet() or 
-     * 		empty. The complete XML element <importSet> as specified above is 
-     * 		passed as it may contain values besides <name> and <desc>.
-     * @return string: 
-     * 		Returns a list of properties and their description (for the user) 
-     * 		that the module can extract from the data source for each term in the
-     * 		specified import set.
-     * 		Example:
-     * 		<?xml version="1.0"?>
-     *		<Properties xmlns="http://www.ontoprise.de/smwplus#">
-     *		    <property>
-     *		        <name>articleName</name>
-     *		        <desc>An article with this name will be created for the term of the vocabulary.</desc>
-     *		    </property>
-     *		    <property>
-     *		        <name>content</name>
-     *		        <desc>The description of the term.</desc>
-     *		    </property>
-     *		    <property>
-     *		        <name>author</name>
-     *		        <desc>Name of the person who describe the term.</desc>
-     *		    </property>
-     *		</Properties>
-	 * 
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The property 'articleName' is not defined in file "..."</message>
-	 *		</ReturnValue>
-	 * 
-	 */
+	*/          
 	public function getProperties($dataSourceSpec, $importSet) {
-		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<Properties xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-				'<property>'."\n".
-				'	<name>articleName</name>'."\n".
-				'</property>'."\n".
-				'<property>'."\n".
-				'	<name>linkToReport</name>'."\n".
-				'</property>'."\n".
-			'</Properties>'."\n";
+		return array('articleName', 'linkToReport');
 	}
 	
 	/**
 	 * Returns a list of the names of all terms that match the input policy. 
-	 *
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification(), filled with the data 
-	 * 		the user entered.
-	 * @param string $importSet
-	 * 		One of the <importSet>-elements from the XML structure from 
-	 * 		getImportSets() or empty.
-	 * @param string $inputPolicy
-	 * 		The XML structure of the input policy as defined in importTerms().
-	 * 
-	 * @return string
-	 * 		An XML structure that contains the names of all terms that match the
-	 * 		input policy.
-	 * 		Example:
-	 *		<?xml version="1.0"?>
-	 *		<terms xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <articleName>Hydrogen</articleName>
-	 *		    <articleName>Helium</articleName>
-	 *		</terms>
-	 * 
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 * 		</ReturnValue>
-	 * 
-	 */
+	*/
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, null, true);
 	}
 	
 	/**
 	 * Generates the XML description of all terms in the data source that match 
-	 * the input policy.
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification, filled with the data 
-	 * 		the user entered.
-     * @param string $importSet
-     * 		One of the <importSet>-elements from the XML structure from 
-     * 		getImportSets() or empty.
-     * @param string $inputPolicy
-     * 		The XML structure of the input policy. It contains the specification
-     * 		of the terms to import and their properties.
-     * @param string $conflictPolicy
-     * 		The XML structure of the conflict policy. It defines if existing articles
-     * 		are overwritten or not.
-     *  
-     * @return string
-	 *		An XML structure that contains all requested terms together with 
-	 * 		their properties. The XML of requested terms that could not be 
-	 * 		retrieved contains an error message.
-	 * 		Example: 
-	 *		<?xml version="1.0"?>
-	 *		<terms xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <term>
-	 *		        <articleName>Helium</articleName>
-	 *		        <content>Helium is a gas under normal conditions.</content>
-	 *		        <!--
-	 *		        Additional properties with type "string" may be specified.
-	 *		        -->
-	 *		    </term>
-	 *		    <term error="The term 'Hydrogen' could not be found.">
-	 *		        <articleName>Hydrogen</articleName>
-	 *		    </term>
-	 *		</terms>
-	 *
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy, false);
@@ -287,118 +117,14 @@ class DALInterwikiArticleImport implements IDAL {
 		return (count($wiki) == 2) ? $wiki[1] : null;
 	}
 		
-	
 	/**
-	 * Extracts the names of the import sets from the XML string <$importSets>.
+	 * Generates the Term Collection.
 	 *
-	 * @param string $importSets 
-	 * 		An XML string that contains tags with the name "importSet". 
-	 * @return array<string>
-	 * 		The names of all import sets in <$importSets> or an error message
-	 * 		if the XML is not valid.
-	 */
-	private function parseImportSets(&$importSets) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($importSets);
-		$result = $parser->parse();
-    	
-		if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	return $parser->getValuesOfElement(array('importSet','name'));
-	}
-	
-	/**
-	 * Parses the input policy in the XML string <$inputPolicy>. The policy 
-	 * specifies concrete terms, regular expression for terms to import and
-	 * the properties of the terms to import.
-	 *
-	 * @param string $inputPolicy 
-	 * 		An XML string that contains the input policy.  
-	 * @return array(array<string>)
-	 * 		An array with three arrays (keys: "terms", "regex", "properties") 
-	 * 		that contain the values from the XML string or an error message
-	 * 		if the XML is not valid. 
-	 */
-	private function parseInputPolicy(&$inputPolicy) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($inputPolicy);
-		$result = $parser->parse();
-    	if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	$policy = array();
-    	$policy['terms'] = $parser->getValuesOfElement(array('terms', 'term'));
-    	$policy['regex'] = $parser->getValuesOfElement(array('terms', 'regex'));
-    	$policy['properties'] = $parser->getValuesOfElement(array('properties', 'property'));
-    	return $policy;
-		
-	}
-	
-	
-	
-	/**
-	 * Checks if a term (that may belong to an import set) matches the restriction
-	 * of import sets and the input policy.
-	 *
-	 * @param string $impSet
-	 * 		The name of the import that the term belongs to. Can be <null>.
-	 * @param string $term
-	 * 		The name of the term.
-	 * @param array<string> $importSets
-	 * 		An array of allowed import sets.
-	 * @param array(array<string>) $policy
-	 * 		An array with the keys 'terms', 'regex' and 'properties'. The value for 
-	 * 		each key is an array of strings with terms, regular expressions and 
-	 * 		properties, respectively.
-	 * @return boolean
-	 * 		<true>, if the term matches the rules and should be imported
-	 * 		<false> otherwise
-	 */
-	private function termMatchesRules($impSet, $term, 
-			                          &$importSets, &$policy) {
-		
-		// Check import set
-		if ($impSet != null && count($importSets) > 0) {
-			if (!in_array($impSet, $importSets)) {
-				// Term belongs to the wrong import set.
-				return false;	                          	
-			}
-		}
-
-		// Check term policy
-		$terms = &$policy['terms'];
-		if (in_array($term, $terms)) {
-			return true;
-		}
-		
-		// Check regex policy
-		$regex = &$policy['regex'];
-		foreach ($regex as $re) {
-			$re = trim($re);
-			if (preg_match('/'.$re.'/', $term)) {
-				return true;
-			}
-		}
-		
-		return false;          	
-			                          	
-	}
-	
-	/**
-	 * Generates the XML description of all terms in the data source that match 
-	 * the input policy.
 	 * @param string $dataSourceSpec
 	 * 		The XML structure from getSourceSpecification, filled with the data 
 	 * 		the user entered.
      * @param string $importSet
-     * 		One of the <importSet>-elements from the XML structure from 
+     * 		One of the <importSet>-elements from  
      * 		getImportSets() or empty.
      * @param string $inputPolicy
      * 		The XML structure of the input policy. It contains the specification
@@ -411,36 +137,22 @@ class DALInterwikiArticleImport implements IDAL {
      * 		If <true>, the XML structure for <getTermList> is created otherwise
      * 		the one for <getTerms>
      * 
-     * @return string
-	 *		An XML structure that contains all requested terms.
-	 * 		If the operation fails, an error message is returned.
-	 * 		Example:
-	 * 		<?xml version="1.0"?>
-	 *		<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <value>false</value>
-	 *		    <message>The specified data source does not exist.</message>
-	 * 		</ReturnValue>
-	 *  
+     * @return Term Collection
 	 */
 	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, 
-	                             $conflictPolicy, $createTermList) {
+			$conflictPolicy, $createTermList) {
 	                            	
 		$wiki = $this->getSourceWikiFromSpec($dataSourceSpec);
 		if (!array_key_exists($wiki, $this->mWikiAPIs)) {
 			echo "Unknown wiki: $wiki\n";
-			return '<?xml version="1.0"?>
-					<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-						<value>false</value>
-						<message>The specified data source "'.$wiki.'" does not exist.</message>
-					</ReturnValue>';
+			return 'The specified data source "'.$wiki.'" does not exist.';
 		}
 		
 		$iai = new IAIArticleImporter($this->mWikiAPIs[$wiki]);
 
-		$importSets = $this->parseImportSets($importSet);
-		$policy = $this->parseInputPolicy($inputPolicy);
+		$policy = DIDALHelper::parseInputPolicy($inputPolicy);
 		
-		$terms = '';
+		$terms = new DITermCollection();
 		
 		// Find the terms in the source wiki closest to the requested terms
 		$ipTerms = $policy['terms'];
@@ -459,12 +171,17 @@ class DALInterwikiArticleImport implements IDAL {
 			$matches = $iai->getArticles($term, $ns, 1);
 			$ipTerms[$k] = $matches[0];
 		}
-		if ($createTermList) {
+		
+		$diTerm = new DITerm();
+		$diTerm->setArticleName($t);
+		
+		if (!$createTermList) {
 			foreach ($ipTerms as $t) {
-				$terms .= "<articleName>".$t."</articleName>\n";
+				$diTerm = new DITerm();
+				$diTerm->setArticleName($t);
+				$terms->addTerm($diTerm);
 			}
 		} else {
-			
 			// Conflict policy
 			$overwrite = true;
 			preg_match('/<overwriteExistingTerms.*?>(.*?)<\/overwriteExistingTerms>/i', 
@@ -479,7 +196,6 @@ class DALInterwikiArticleImport implements IDAL {
 			foreach ($ipTerms as $t) {
 				echo "$t\n";
 			}
-			
 			echo "\n";
 			
 			$importArticles = true;
@@ -522,32 +238,22 @@ class DALInterwikiArticleImport implements IDAL {
 				}
 			} catch (Exception $e) {
 				echo "Caught an exception: \n".$e->getMessage();
-				return '<?xml version="1.0"?>
-						<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-							<value>false</value>
-							<message>Caught an exception: '.$e->getMessage().'</message>
-						</ReturnValue>';
+				return 'Caught an exception: '.$e->getMessage();
 			}
 			$report = $iai->createReport(true);
 			echo "Saved report for articles in: $report\n";
 							
-			$terms .= "<term>\n";
-			$terms .= "<articleName>{$report}_TIF</articleName>\n";
-			$terms .= "<linkToReport>{$report}</linkToReport>\n";
-			$terms .= "</term>\n";
+			$diTerm = new DITerm();
+			$diTerm->setArticleName($report.'_TIF');
+			$diTerm->addProperty('linkToReport', $report)
+			$terms->addTerm($diTerm);
 		}
 		
-		return 
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$terms.
-			'</terms>'."\n";
-	                            	
-		
+		return $terms;
 	}
 	
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return true;
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+		return array(true, array());
 	}
 	
 }

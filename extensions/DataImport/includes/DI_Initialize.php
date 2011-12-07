@@ -53,6 +53,8 @@ if (strlen($smwgDIStyleVersion) > 0)
  */
 function enableDataImportExtension() {
 	global $wgExtensionFunctions, $smwgDIIP;
+
+	require_once($smwgDIIP.'/includes/DI_Settings.php');
 	
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 	
@@ -178,7 +180,24 @@ function smwfDISetupExtension() {
 		array(
 			'scripts' => array('scripts/TermImport/termimport.js'),
 			'styles' => array('skins/TermImport/termimport.css'),
-			'dependencies' => array('ext.ScriptManager.prototype'),
+			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
+		);
+
+	$langMSGScriptIntro = 'scripts/Language/DI_LanguageUser';
+	$langMSGScript = $langMSGScriptIntro.'En.js';
+	if (isset($wgUser)) {
+		$lng .= $langMSGScriptIntro.ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($smwgDIIP.'/'.$lng)) {
+			$langMSGScript = $lng;
+		}
+	}
+	
+	$wgResourceModules['ext.dataimport.lang'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array(
+				$langMSGScript,
+				'scripts/Language/DI_Language.js')	
 		);
 	
 	// add some AJAX calls
@@ -330,7 +349,11 @@ function smwfDIInitUserMessages() {
 function smwfDIGetAjaxMethodPrefix() {
 	$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
 	if ($func_name == NULL) return NULL;
-	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
+	if(substr($func_name,0, 3) == 'dif'){
+		return substr($func_name, 3, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
+	} else {
+		return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
+	}
 }
 
 function difRegisterAutocompletionIcons(& $namespaceMappings) { 

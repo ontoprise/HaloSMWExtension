@@ -17,43 +17,27 @@
  *
  */
 
-//$feed = new SimplePie('http://smwforum.ontoprise.com/smwbugs/buglist.cgi?bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&cf_issuetype=Bug&email1=steinbauer&emailassigned_to1=1&emailtype1=substring&query_format=advanced&title=Issue%20List&ctype=atom');
-//$feed = new SimplePie('http://hsozkult.geschichte.hu-berlin.de/rss.xml');
-//$feed = new SimplePie('http://anderstornkvist.se/atomfeed.php');
-//$feed = new SimplePie('http://www.w3.org/QA/atom.xml');
-
 class DALReadFeed implements IDAL {
 
 	private $feedDefinitions;
 	private $dataSourceSpec;
 	
-	/**
-	 * Returns a specification of the data source.
-	 * See further details in SMW_IDAL.php
-	 */
+	
 	public function getSourceSpecification() {
-		//todo: what other data source spec features do we have? autocompletion?
-		
-		//todo:add labels
+		//todo:language
 		
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			' 	<supercategory display="1" type="text"></supercategory>'."\n".
-			'	<urlproperty display="2" type="text"></urlproperty>'."\n".
-			'	<prefixproperty display="3" type="text"></prefixproperty>'."\n".
-			'	<delimiter display="4" type="text"></delimiter>'."\n".
+			' 	<supercategory display="Feed definition category:" type="text" autocomplete="namespace: '.NS_CATEGORY.'" ></supercategory>'."\n".
+			'	<urlproperty display="Name of URL property" type="text" autocomplete="namespace: '.SMW_NS_PROPERTY.'"></urlproperty>'."\n".
+			'	<prefixproperty display="Name of prefix property:" type="text" autocomplete="namespace: '.SMW_NS_PROPERTY.'"></prefixproperty>'."\n".
 			'</DataSource>'."\n";
 	}
 	
 	
-	/**
-	 * Returns a list of import sets and their description.
-	 */
 	public function getImportSets($dataSourceSpec) {
 		$importSets = array();
-		
-		//todo: is it still possible to import all feeds
 		
 		$this->initDataSourceSpecValues($dataSourceSpec);
 		if(is_null($this->dataSourceSpec['supercat']) || is_null($this->dataSourceSpec['urlprop'])){
@@ -70,45 +54,37 @@ class DALReadFeed implements IDAL {
 		return array_keys($importSets);
 	}
 
-	/**
-	 * Returns a list of properties and their description.
-	 */
+	
 	public function getProperties($dataSourceSpec, $importSet) {
 		$properties = array();
 		
-		//todo: deal with properties
 		$properties['articleName'] = true;
-		$properties['Has title'] = true;
-		$properties['Stems from feed'] = true;
-		$properties['Has content'] = true;
-		$properties['Has tag'] = true;
-		$properties['Has author'] = true;
-		$properties['Has contributor'] = true;
-		$properties['Has copyright'] = true;
-		$properties['Has publication date'] = true;
-		$properties['Has local publication date'] = true;
-		$properties['Has permalink'] = true;
-		$properties['Has URL'] = true;
-		$properties['Enclosures'] = true;
-		$properties['Has latitude'] = true;
-		$properties['Has longiitude'] = true;
-		$properties['Has sourc'] = true;
+		$properties[DI_TI_DAM_FEED_SUBJECT] = true;
+		$properties[DI_TI_DAM_FEED_STEMS_FROM] = true;
+		$properties[DI_TI_DAM_FEED_CONTENT] = true;
+		$properties[DI_TI_DAM_FEED_TAG] = true;
+		$properties[DI_TI_DAM_FEED_AUTHOR] = true;
+		$properties[DI_TI_DAM_FEED_CONTRIBUTOR] = true;
+		$properties[DI_TI_DAM_FEED_COPYRIGHT] = true;
+		$properties[DI_TI_DAM_FEED_DATE] = true;
+		$properties[DI_TI_DAM_FEED_LOCAL_DATE] = true;
+		$properties[DI_TI_DAM_FEED_PERMA_LINK] = true;
+		$properties[DI_TI_DAM_FEED_URL] = true;
+		$properties[DI_TI_DAM_FEED_ENCLOSURES] = true;
+		$properties[DI_TI_DAM_FEED_LATITUDE] = true;
+		$properties[DI_TI_DAM_FEED_LONGITUDE] = true;
+		$properties[DI_TI_DAM_FEED_SOURCE] = true;
+		$properties[DI_TI_DAM_FEED_ID] = true;
 		
-		return $properties;
+		return array_keys($properties);
 	}
 	
 	
-	/**
-	 * Returns a list of the names of all terms that match the input policy. 
-	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, true);
 	}
 	
 	
-	/**
-	 * Creates the term collection for the term import 
-	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, false);
 	}
@@ -120,10 +96,14 @@ class DALReadFeed implements IDAL {
 			return $this->dataSourceSpec;
 		}
 		
-		//todo: move this to the DIDALHelper
-		
 		$this->dataSourceSpec = array(
 			'supercat' => null, 'urlprop' => null, 'prefixprop' => null, 'delimiter' => ',');
+		
+		$dataSourceSpec = str_replace(
+			array('SUPERCATEGORY', 'URLPROPERTY', 'PREFIXPROPERTY', ),
+			array('supercategory', 'urlproperty', 'prefixproperty'),
+			$dataSourceSpec);
+			
 		
 		if(preg_match('/<supercategory.*?>(.*?)<\/supercategory>/i', $dataSourceSpec, $hit)){
 			$this->dataSourceSpec['supercat'] = $hit[1];
@@ -134,17 +114,13 @@ class DALReadFeed implements IDAL {
 		if(preg_match('/<prefixproperty.*?>(.*?)<\/prefixproperty>/i', $dataSourceSpec, $hit)){
 			$this->dataSourceSpec['prefixprop'] = $hit[1];
 		}
-		if(preg_match('/<delimiter.*?>(.*?)<\/delimiter>/i', $dataSourceSpec, $hit)){
-			$this->dataSourceSpec['delimiter'] = $hit[1];
-		}
 		
 		return $this->dataSourceSpec;
 	}
 	
-	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, 
+	private function createTerms($dataSourceSpec, $givenImportSet, $inputPolicy, 
 			$createTermList) {
 
-		
 		$this->initDataSourceSpecValues($dataSourceSpec);
 		if(is_null($this->dataSourceSpec['supercat']) || is_null($this->dataSourceSpec['urlprop'])){
 			return 'todo: error message';
@@ -152,92 +128,88 @@ class DALReadFeed implements IDAL {
 
 		$this->initFeedDefinitions(
 			$this->dataSourceSpec['supercat'], $this->dataSourceSpec['urlprop'], $this->dataSourceSpec['prefixprop']);
-				
+
+		$inputPolicy = DIDALHelper::parseInputPolicy($inputPolicy);	
+			
 		global $smwgDIIP;
-		require_once($smwgDIIP.'/libs/simplepie/simplepie.inc');
-		
+		@ require_once($smwgDIIP.'/libs/simplepie/simplepie.inc');
 		
 		$terms = new DITermCollection();
-		error_reporting(E_ALL);
+		error_reporting(E_ALL); //necessary since simplepie produces som strict warnings
 		foreach($this->feedDefinitions as $feedDefinition){
-			//todo: suppress warnings for unavailable feeds
-			
 			//todo: deal with feed item limits, i.e. importing the same 100 feed items
 			//every ten minutes is not a good idea
 			
-			$feed = new SimplePie($feedDefinition['url']);
-
-			foreach($feed->get_items() as $item){
+			//only read feed if no other import set was chosen
+			if(strlen(trim(''.$givenImportSet)) > 0){
+				if(trim($givenImportSet) != trim($feedDefinition['title'])){
+					continue;
+				}
+			}
+			
+			@$feed = new SimplePie($feedDefinition['url']);
+			
+			$error = $feed->error();
+			
+			@$items = $feed->get_items();
+			if(count($items) == 0 && !is_null($error)&& strlen($error) > 0){
+				echo('It was not possible to connect to '.$feedDefinition['title'].': '.$error);
+				$terms->addErrorMsg('It was not possible to connect to '.$feedDefinition['title'].': '.$error);
+				continue;
+			} 
+			
+			foreach($items as $item){
 				$term = new DITerm();
 					
-				if(!is_null($title = @$item->get_title())){
-					$term->setArticleName($title);
+				if(!is_null($title = $item->get_title())){
+					$term->setArticleName($feedDefinition['prefix'].$title);
 				} else {
-					//an imported term needs an article name
 					continue;
 				}
 				
-				//todo:check input policy and import set
+				if(!DIDALHelper::termMatchesRules($feedDefinition['title'], $term->getArticleName(), $givenImportSet, $inputPolicy)){
+					continue;
+				}
 				
 				if(!$createTermList){
 				
-					$term->addProperty('Has title', $title);
+					$term->addProperty('Has subject', $title);
 					
 					$term->addProperty('Stems from feed', $feedDefinition['title']);
 					
 					if(!is_null($content = $item->get_content())){
-						//todo: description or content?
-						//todo: deal with special characters
-						//todo: deal with HTML
 						$term->addProperty('Has content', $content);
 					} 
 	
 					if(!is_null($categories = $item->get_categories())){
-						$temp = array();
 						foreach($categories as $category){
-							$temp[] = $category->get_term();
+							$term->addProperty('Has tag', $category->get_term()); 
 						}
-	
-						//todo:enable several values also if no template is used 
-						$term->addProperty('Has tag', 
-							implode($this->dataSourceSpec['delimiter'], $temp));
 					}
 	
 					if(!is_null($authors = @$item->get_authors())){
 						//todo: describe the behaviour below
-						$temp = array();
 						foreach($authors as $author){
 							if(!is_null($t = @$author->get_name())){
-								$temp[] = $t;
+								$term->addProperty('Has author', $t);
 							} else if (!is_null($t = @$author->get_email())){
-								$temp[] = $t;
+								$term->addProperty('Has author', $t);
 							} else if (!is_null($t = @$author->get_link())){
-								$temp[] = $t;
+								$term->addProperty('Has author', $t);
 							}
-						}
-	
-						if(count($temp) > 0){
-							$term->addProperty('Has author', 
-								implode($this->dataSourceSpec['delimiter'], $temp));
 						}
 					}
 	
 					if(!is_null($contributors = @$item->get_contributors())){
 						//todo: describe the behaviour below
-						$temp = array();
 						foreach($contributors as $contributor){
 							if(!is_null($t = $contributor->get_name())){
-								$temp[] = $t;
+								$term->addProperty('Has contributor', $t);
 							} else if (!is_null($t = @$contributor->get_email())){
-								$temp[] = $t;
+								$term->addProperty('Has contributor', $t);
 							} else if (!is_null($t = @$contributor->get_link())){
-								$temp[] = $t;
+								$term->addProperty('Has contributor', $t);
 							}
-						}
-	
-						if(count($temp) > 0){
-							$term->addProperty('Has contributor', 
-								implode($this->dataSourceSpec['delimiter'], $temp));
 						}
 					}
 	
@@ -245,8 +217,6 @@ class DALReadFeed implements IDAL {
 						$term->addProperty('Has copyright', $copyright);
 					}
 	
-					//todo: use language file for property names
-					
 					//todo: date encoding
 					if(!is_null($date = $item->get_date())){
 						$term->addProperty('Has publication date', $date);
@@ -271,17 +241,10 @@ class DALReadFeed implements IDAL {
 						//all other enclosures attributes are ignored
 						//in the future, we could add the enclosures as their own terms
 						//like we handle attachmets for e-mails
-						$temp = array();
 						foreach($enclosures as $enclosure){
 							if(!is_null($t = $enclosure->get_link())){
-								$temp[] = $t;
+								$term->addProperty('Enclosures file', $t);
 							}
-						}
-							
-						if(count($temp) > 0){
-							//todo: find better property name
-							$term->addProperty('Enclosures', 
-								implode($this->dataSourceSpec['delimiter'], $temp));
 						}
 					}
 	
@@ -301,20 +264,22 @@ class DALReadFeed implements IDAL {
 							$term->addProperty('Has source', $sourcelink);
 						}
 					}
+					
+					if(!is_null($id = $item->get_id())){
+						$term->addProperty('Has id', $id);
+					}
 				}
 				
 				$terms->addTerm($term);
 			}
 		}
 		
-		//file_put_contents('d://feedterms.rtf', print_r($terms, true));
-		
 		return $terms;
 	}
 
 			
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return true;
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+		return array(true, array());
 	}
 	
 	private function initFeedDefinitions($superCategory, $urlPropertyName, $prefixPropertyName){
@@ -326,15 +291,24 @@ class DALReadFeed implements IDAL {
 		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
 
-		//todo. deal with namespaces in category and property names and son on
+		global $wgLang;
+		if(strpos($superCategory, $wgLang->getNSText(NS_CATEGORY).':') === false){
+			$superCategory = $wgLang->getNSText(NS_CATEGORY).':'.$superCategory;
+		}
+		if(strpos($urlPropertyName, $wgLang->getNSText(SMW_NS_PROPERTY).':') === 0){
+			$urlPropertyName = substr($urlPropertyName, strpos($urlPropertyName, ":") +1);
+		}
+		if(strpos($prefixPropertyName, $wgLang->getNSText(SMW_NS_PROPERTY).':') === 0){
+			$prefixPropertyName = substr($prefixPropertyName, strpos($prefixPropertyName, ":") +1);
+		}
+		
 		$rawParams[] = '[['.$superCategory.']] [['.$urlPropertyName.'::+]]';
 		$rawParams[] = '?'.$urlPropertyName;
-		if(!is_null($prefixPropertyName))
+		if(!is_null($prefixPropertyName) && strlen($prefixPropertyName) > 0)
 			$rawParams[] = "?".$prefixPropertyName;
 
 		SMWQueryProcessor::processFunctionParams($rawParams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-		//todo: deal with limit
 		$params['limit'] = 500;
 		
 		$xmlResult = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
@@ -345,22 +319,31 @@ class DALReadFeed implements IDAL {
 		$this->feedDefinitions = array();
 		global $smwgHaloTripleStoreGraph;
 		foreach($dom->xpath('//sparqlxml:result') as $result){
-			//todo: deal with case where url and prefix property have several values
-			
-			//todo: deal with case where url and prefix property are of type page
 			
 			$title = "".$result->binding[0]->uri;
 			$title = substr($title, strlen($smwgHaloTripleStoreGraph.'/a/'));
 			$title = str_replace('_', ' ', $title);
+			
+			@$url = "".$result->binding[1]->literal;
+			if(strlen($url) == 0){
+				$url = "".$result->binding[1]->uri;
+				$url = substr($url, strlen($smwgHaloTripleStoreGraph.'/a/'));
+			}
+			if(strlen($url) == 0){
+				//a url is necessary, but this should not happen since having an URL is a query condition
+				continue;
+			}
+			
 			$prefix = '';
 			if(count($result->binding) > 2){
-				$prefix = "".$result->binding[2]->literal;
+				@$prefix = "".$result->binding[2]->literal;
+				if(strlen($prefix) == 0){
+					$prefix = "".$result->binding[2]->uri;
+					$prefix = substr($prefix, strlen($smwgHaloTripleStoreGraph.'/a/'));
+				}
 			}
-			$title = $prefix.$title;
 			
-			$url = "".$result->binding[1]->literal;
-			
-			$this->feedDefinitions[] = array('title' => $title, 'url' => $url);
+			$this->feedDefinitions[] = array('title' => $title, 'url' => $url, 'prefix' => $prefix);
 		}
 		
 		return $this->feedDefinitions;

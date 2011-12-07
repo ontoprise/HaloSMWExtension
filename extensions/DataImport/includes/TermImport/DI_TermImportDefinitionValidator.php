@@ -48,7 +48,7 @@ class DITermImportDefinitionValidator {
 		$valid &= $this->isValidDataSource();
 		$valid &= $this->isValidImportSet();
 		$valid &= $this->isValidInputPolicy();
-		$valid &= $this->isValidMappingPolicy();
+		$valid &= $this->isValidCreationPattern();
 		$valid &= $this->isValidModuleConfiguration();
 		$valid &= $this->isValidUpdatePolicy();
 		
@@ -61,10 +61,7 @@ class DITermImportDefinitionValidator {
 	
 	public function isValidModuleConfiguration(){
 		$node = $this->tiDefinition->xpath("
-			/ImportSettings/ModuleConfiguration/TLModules/Module/id");
-		if(count($node) != 1) return false;
-		$node = $this->tiDefinition->xpath("
-			/ImportSettings/ModuleConfiguration/DALModules/Module/id");
+			/ImportSettings/ModuleConfiguration/DALModule/id");
 		if(count($node) != 1) return false;
 		return true;
 	}
@@ -75,15 +72,15 @@ class DITermImportDefinitionValidator {
 		return true;
 	}
 	
-	public function isValidMappingPolicy(){
-		$node = $this->tiDefinition->xpath("/ImportSettings/MappingPolicy/page");
+	public function isValidCreationPattern(){
+		$node = $this->tiDefinition->xpath("/ImportSettings/CreationPattern");
 		if(count($node) != 1) return false;
 		return true;
 	}
 	
 	public function isValidConflictPolicy(){
 		$node = $this->tiDefinition->xpath("
-			/ImportSettings/ConflictPolicy/overwriteExistingTerms[./text() = 'true' or ./text() = 'false']");
+			/ImportSettings/ConflictPolicy/OverwriteExistingTerms[./text() = 'true' or ./text() = 'false']");
 		if(count($node) != 1) return false;
 		return true;
 	}

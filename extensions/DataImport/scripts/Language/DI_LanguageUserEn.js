@@ -16,14 +16,14 @@
  *
  */
 
-var wgDIUserLanguageStrings = {
-		'smw_ti_sourceinfo'			: 	'<b>Enter<br/> module specific data:</b>',
+window.wgDIUserLanguageStrings = {
+		'smw_ti_sourceinfo'			: 	'<b>Configure data source:</b>',
 		'smw_ti_source'				: 	'Source',
 		'smw_ti_edit'				: 	'edit',
 		'smw_ti_noa'				: 	'articleName',
-		'smw_ti_save'				:	'Save Term Import',
-		'smw_ti_execute'			:	'Save and execute Term Import',
-		'smw_ti_prev-step'			:	'Back to previous step',
+		'smw_ti_save'				:	'Save',
+		'smw_ti_execute'			:	'Save and execute',
+		'smw_ti_prev-step'			:	'Back',
 		
 		'smw_wws_add_parameter'		:	'Add parameter',
 		'smw_wws_add_parameters'	:	'Add parameters',

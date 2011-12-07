@@ -69,23 +69,20 @@ class DIDALHelper {
 	public static function termMatchesRules($importSet, $term,
 			$givenImportSet, $policy) {
 
-		//echo('<pre>'.print_r($policy, true).'</pre>');
-				
 		// Check import set
 		if ($importSet != null && strlen(trim($givenImportSet)) > 0) {
-			
-			if (trim($importSet) == trim($givenImportSet)) {
+			if (trim($importSet) != trim($givenImportSet)) {
 				// Term belongs to the wrong import set.
 				return false;
 			}
 		}
-
+		
 		// Check term policy
 		$terms = $policy['terms'];
 		if (is_array($terms) && in_array($term, $terms)) {
 			return true;
 		}
-
+		
 		// Check regex policy
 		$regex = $policy['regex'];
 		if(is_array($regex)){

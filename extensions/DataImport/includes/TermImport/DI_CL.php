@@ -25,7 +25,7 @@
 
 // register ajax calls
 global $wgAjaxExportList;
-$wgAjaxExportList[] = 'smwf_ti_connectDAM';
+$wgAjaxExportList[] = 'dif_ti_connectDAM';
 
 class DICL {
 
@@ -91,23 +91,54 @@ class DICL {
 										"<img onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Delete-silk.png\" /></div>".
 									"</div>" .	
 									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"3\" multiple>" .  
-									"</select><div id=\"hidden_pol_type\"></div>" .
-								"</div>" . //policy
-								"<div id=\"mapping\">" .
+									"</select><br><br>".
+									"<div id=\"hidden_pol_type\"></div>" .
+								"<br><br></div>" . //policy
+								
+								//todo: language
+								"<div id=\"creation-pattern\">" .
 									"<br/><br/><div class=\"input-field-heading\">".
-									wfMsg('smw_ti_mappingPage-heading').
+									wfMsg('smw_ti_creation-pattern-heading').
 									"<img id=\"help-img3\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
 									"<div id=\"help3\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span >".wfMsg('smw_ti_help')."</span> ".
-									wfMsg('smw_ti_mappingPage-help')."</div>".
-									wfMsg('smw_ti_mappingPage-label').
-									"<input name=\"mapping\" id=\"mapping-input-field\" type=\"text\"
-									class=\"wickEnabled\" typeHint=\"0\" 
-									size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>&nbsp&nbsp
-										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">" . wfMsg('smw_ti_viewMappingPage') . "</a>&nbsp&nbsp
-										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') ."</a>".
-								"</div>" . //mapping
+									wfMsg('smw_ti_creation-pattern-help')."</div>".
+									"<input type=\"radio\" name=\"creation-pattern\" 
+										value=\"annotations\" checked onchange=\"termImportPage.showOrHideDelimiterInput(event)\"><span>".
+										wfMsg('smw_ti_creation-pattern-label-1')."</span>".
+									"<input id=\"creationpattern-checkbox\" type=\"radio\" name=\"creation-pattern\" value=\"template\" onchange=\"termImportPage.showOrHideDelimiterInput(event)\">".
+										wfMsg('smw_ti_creation-pattern-label-1')."Template:</span>".
+									"&nbsp;&nbsp;".
+									"<input name=\"template\" id=\"template-input-field\" type=\"text\"
+										class=\"wickEnabled\" constraints=\"namespace: ".NS_CATEGORY."\" 
+										size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>".
+								"</div>" . //template
+								"<div id=\"delimiter\" style=\"display: none\">" .
+									"<br/><br/><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_delimiter-heading').
+									"<img id=\"help-img-10\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('10')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help10\" class=\"TIHelpMessage\" style=\"display: none\">".
+									"<span >".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_delimiter-help')."</div>".
+									wfMsg('smw_ti_delimitery-label').
+									"<input name=\"delimiter\" id=\"delimiter-input-field\" type=\"text\"
+										size=\"5\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>".
+								"</div>" . //delimiter
+								"<div id=\"categories\">" .
+									"<br/><br/><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_category-heading').
+									"<img id=\"help-img-9\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('9')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help9\" class=\"TIHelpMessage\" style=\"display: none\">".
+									"<span >".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_category-help')."</div>".
+									wfMsg('smw_ti_category-label').
+									"<input name=\"category\" id=\"categories-input-field\" type=\"text\"
+										class=\"wickEnabled\" constraints=\"namespace: ".NS_CATEGORY."\" 
+										size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>".
+								"</div>" . //category	
 								"<div id=\"conflict\">" .
 									"<br/><br/><div class=\"input-field-heading\">".
 									wfMsg('smw_ti_conflictpolicy-heading').
@@ -144,7 +175,7 @@ class DICL {
 									wfMsg('smw_ti_ti_name-help')."</div>".
 									wfMsg('smw_ti_ti_name-label').
 									"<input id=\"ti-name-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>" .
-								"</div>" . //ti name
+								"<br/><br/></div>" . //ti name
 							"</div>" . //extras-left
 							"<div id=\"extras-right\">" .
 								"<div class=\"input-field-heading\">".
@@ -193,7 +224,7 @@ class DICL {
 	 * creates the embedded html spans for the edit term import gui
 	 */
 	private function embedEditTermImportData($termImportName){
-		//todo: deal with this
+		//todo: deal with edit functionality
 		$html = '<span id="editDataSpan" style="display: none">';
 		
 		$xmlString = smwf_om_GetWikiText('TermImport:'.$termImportName);
@@ -268,24 +299,16 @@ class DICL {
 	 *
 	 */
 	public static function importTerms($termImportName, $async = true) {
-		$result = "true";
-		$msg = "";
-
 		if($async){
+			//Called by Term Import Special Page
 		  	$param = "termImportName=".$termImportName;
 			$taskID = GardeningBot::runBot('smw_termimportbot', $param);
-			if (is_int($taskID)) {
-				$msg = wfMsg('smw_ti_botstarted');
-			} else {
+			if(!is_int($taskID)) {
 				$msg = wfMsg('smw_ti_botnotstarted');
-				$result = false;
+				return $msg;
+			} else {
+				return true;
 			}
-			
-			return '<?xml version="1.0"?>'."\n".
-	 			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-	 			"	<value>$result</value>\n".
-	 			"	<message>$msg</message>\n".
-	 			'</ReturnValue>';
 		} else {
 			$param = array("termImportName" => $termImportName);
 			global $registeredBots;
@@ -296,64 +319,103 @@ class DICL {
 			$log = $log[0];
 			SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished(
 				$taskID, $log, $logPageTitle);
-			
 			return $log;
 		}
 	}
 	
-	public static function createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $conflictConfig,
-			$inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
+	public static function createTIArticle($damID, $sourceConfig, $conflictPolicy, $inputConfig, $importSetName, 
+			$updatePolicy, $templateName, $extraCategories, $delimiter, $termImportName, $edit) {
 	
-		$title = Title::newFromText("TermImport:".$termImportName);
+		$title = Title::newFromText(''.$termImportName, SMW_NS_TERM_IMPORT);
 		if($title->exists() && $edit == "false") {
-			return '<?xml version="1.0"?>
-		 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-		 		    <value>falseTIN</value>
-		 		    <message>' . wfMsg('smw_ti_def_allready_exists') . '</message>
-		 			</ReturnValue >';
+			return wfMsg('smw_ti_def_allready_exists');
 		}
 		
-		$moduleConfig = str_replace('<?xml version="1.0"?>',"",$moduleConfig);
-		$moduleConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$moduleConfig);
-		$moduleConfig = trim($moduleConfig);
-	
+		$moduleConfig =
+			'<ModuleConfiguration>'."\n".
+			'<DALModule>'."\n".
+			'<id>' . $damID .'</id>'."\n".
+			'</DALModule >'."\n".
+			'</ModuleConfiguration>';
+		
 		$sourceConfig = str_replace('<?xml version="1.0"?>',"",$sourceConfig);
 		$sourceConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$sourceConfig);
 		$sourceConfig = trim($sourceConfig);
-	
-		$mappingConfig = str_replace('<?xml version="1.0"?>',"",$mappingConfig);
-		$mappingConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$mappingConfig);
-		$mappingConfig = trim($mappingConfig);
-	
-		$conflictConfig = str_replace('<?xml version="1.0"?>',"",$conflictConfig);
-		$conflictConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$conflictConfig);
-		$conflictConfig = trim($conflictConfig);
-	
+		
+		$conflictPolicy =
+			'<ConflictPolicy>'."\n".
+    		'	<OverwriteExistingTerms>' . $conflictPolicy . '</OverwriteExistingTerms>'."\n".
+			'</ConflictPolicy >';
+		
 		$inputConfig = str_replace('<?xml version="1.0"?>',"",$inputConfig);
 		$inputConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$inputConfig);
 		$inputConfig = trim($inputConfig);
-	
-		$updatePolicy = str_replace('<?xml version="1.0"?>',"",$updatePolicy);
-		$updatePolicy = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$updatePolicy);
-		$updatePolicy = trim($updatePolicy);
-	
-		echo('<pre>'.print_r($importSetConfig,true).'</pre>');
 		
-		$importSetConfig = str_replace('<?xml version="1.0"?>',"",$importSetConfig);
-		$importSetConfig = str_replace(' XMLNS="http://www.ontoprise.de/smwplus#"',"",$importSetConfig);
-		$importSetConfig = str_replace('IMPORTSETS>',"ImportSets>",$importSetConfig);
-		$importSetConfig = str_replace('IMPORTSET>',"ImportSet>",$importSetConfig);
-		$importSetConfig = str_replace('NAME>',"Name>",$importSetConfig);
-		$importSetConfig = trim($importSetConfig);
-	
-		$tiConfig = "<ImportSettings>".$moduleConfig.$sourceConfig.
-		$mappingConfig.$conflictConfig.$inputConfig.$importSetConfig.$updatePolicy
-		."</ImportSettings>";
+		$importSetConfig =
+			'<ImportSets>'."\n".
+   	 		'	<ImportSet>'."\n".
+			'		<Name>'.$importSetName.'</Name>'."\n".
+			'	</ImportSet>'."\n".
+			'</ImportSets>';
+			
+		if($updatePolicy == 0 || $updatePolicy == ""){
+			$updatePolicy = "<once/>";
+		} else {
+			$updatePolicy = "<maxAge value=\"".$updatePolicy."\"/>";
+		}
+		$updatePolicy = 
+			'<UpdatePolicy>'."\n".
+			$updatePolicy
+			.'</UpdatePolicy>';
+
+		$innerCreationPatternText = '';
+		if(strlen(trim($templateName)) > 0){
+			$innerCreationPatternText = 
+				'<UseTemplate>'.
+				'true'.
+				'</UseTemplate>'."\n";
+			
+			$innerCreationPatternText .= 
+				'<TemplateName>'.
+				$templateName.
+				'</TemplateName>'."\n";
+			
+			$innerCreationPatternText .=
+				'<Delimiter>'.
+				$delimiter.
+				'</Delimiter>'."\n";
+		} else {
+			$innerCreationPatternText = 
+				'<UseTemplate>'.
+				'false'.
+				'</UseTemplate>'."\n";
+		}
+		
+		if(strlen(trim($extraCategories)) > 0){
+			$extraCategories = 
+				'<ExtraCategories>'.
+				$extraCategories.
+				'</ExtraCategories>'."\n";	
+		} 
+		
+		$creationPattern =
+			'<CreationPattern>'."\n".
+			$innerCreationPatternText.
+			$extraCategories.
+			'</CreationPattern>'."\n";
+			
+		$tiConfig =" <ImportSettings>". 
+			$moduleConfig.$sourceConfig.
+			$conflictPolicy.$inputConfig.$importSetConfig.$updatePolicy.
+			$creationPattern.
+			"</ImportSettings>";
 	
 		//pretty print
+		$tiConfig = str_replace('></', '>#escth#</', $tiConfig);
 		$xml = explode("\n", preg_replace('/>\s*</', ">\n<", $tiConfig));
 		$tiConfig = implode("\n", $xml);
-	
+		$tiConfig = str_replace('>#escth#</', '></', $tiConfig);
+		
 		$articleContent = $tiConfig;
 	
 		$articleContent .= "\n==== Last runs of this Term Import ====\n";
@@ -365,16 +427,12 @@ class DICL {
 		$temp = $result;
 		$result = explode(",", $result);
 		$result = trim($result[0]);
+		
 		if($result !== "true"){
-			return '<?xml version="1.0"?>
-		 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-		 		    <value>falseTIN</value>
-		 		    <message>' . wfMsg('smw_ti_def_not_creatable') . '</message>
-		 			</ReturnValue >';
+			return wfMsg('smw_ti_def_not_creatable');
 		}
 		
 		smwf_om_TouchArticle("TermImport:".$termImportName);
-	
 		return true;
 	}
 }
@@ -391,8 +449,8 @@ class DICL {
  *
  * @return $result an XML structure
  */
-function smwf_ti_connectDAM($damID , $source_input, $givenImportSetName,
-		$givenInputPol, $mappingPage, $givenConflictPol = true,
+function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
+		$givenInputPol, $templateName, $extraCategories, $delimiter, $givenConflictPol = true,
 		$runBot, $termImportName = null, $updatePolicy = "", $edit = false,
 		$createOnly = false) {
 
@@ -412,27 +470,32 @@ function smwf_ti_connectDAM($damID , $source_input, $givenImportSetName,
 
 	if(isset($source_input)){
 		$source_xml = new SimpleXMLElement($source_input);
-		$source_xml_alt = new SimpleXMLElement($source);
-			
-		foreach ($source_xml->children() as $second_gen) {
-			$tag = $second_gen->getName();
-			$value = (string) $second_gen;
-			$result = $source_xml_alt->xpath($tag);
+		$source_xml_original = new SimpleXMLElement($source);
 
-			//Change the old tag
-			$source_xml_alt->$tag = $value;
+		$source_result = '<DataSource>'."\n";
+		foreach ($source_xml_original->children() as $second_gen) {
+			$tag = $second_gen->getName();
+			$source_result .= '<'.$tag.'>';
+			if(!is_null($source_xml->$tag) && strlen(trim($source_xml->$tag)) > 0 ){
+				$source_result .= trim($source_xml->$tag);
+			}
+			$source_result .= '</'.$tag.'>'."\n";
 		}
-		//get the xml-string
-		$source_result = $source_xml_alt->asXML();
+		$source_result .= '</DataSource>'."\n";
+		
+		echo($source_result);
 	}
 
 	$importSets = $dam->getImportSets($source_result);
 	if(!is_array($importSets)){
-		//todo: error occured
-		error();
+		$result = array('success' => false, 
+			'msg' => $importSets);
+		$result = json_encode($result);
+		return '--##starttf##--' . $result . '--##endtf##--';
 	} else {
 		$importSetsHTML= "";
 		if(count($importSets) > 0){
+			$importSetsHTML .= "<option value=''></option>";
 			foreach($importSets as $iS){
 				$importSetsHTML .=
 					"<option value='".$iS."'>".$iS."</option>"; 
@@ -442,10 +505,13 @@ function smwf_ti_connectDAM($damID , $source_input, $givenImportSetName,
 	
 	$properties = $dam->getProperties($source_result, $givenImportSetName);
 	if(!is_array($properties)){
-		//todo: error occured
+		$result = array('success' => false, 
+			'msg' => $properties);
+		$result = json_encode($result);
+		return '--##starttf##--' . $result . '--##endtf##--';
 	} else {
 		$propertiesHTML = "<div class='scrolling'><table id='attrib_table' class='mytable'>";
-		foreach($properties as $pN => $dC){
+		foreach($properties as $pN){
 			$disabled = '';
 			if(strtolower($pN) == 'articlename'){
 				$disabled = 'disabled';
@@ -478,7 +544,10 @@ function smwf_ti_connectDAM($damID , $source_input, $givenImportSetName,
 		
 		$terms = $dam->getTermList($source_result, $givenImportSetName, $givenInputPol);
 		if(!($terms instanceof DITermCollection)){
-			//todo: error occured
+			$result = array('success' => false, 
+				'msg' => $terms);
+			$result = json_encode($result);
+			return '--##starttf##--' . $result . '--##endtf##--';
 		} else {
 			$terms = $terms->getTerms();
 			$termsCount = count($terms);
@@ -487,85 +556,58 @@ function smwf_ti_connectDAM($damID , $source_input, $givenImportSetName,
 			foreach($terms as $term){
 				$termsHTML .= "<tr><td class=\"mytd\">".$term->getArticleName()."</td></tr>";
 			}
+			
 			$termsHTML .= '</table>';
-		}
-		
-		$result = array('success' => true, 'importSets' => $importSetsHTML,
-			'properties' => $propertiesHTML, 'terms' => $termsHTML, 'termsCount' => $termsCount);
-		$result = json_encode($result);
+			$result = array('success' => true, 'importSets' => $importSetsHTML,
+				'properties' => $propertiesHTML, 'terms' => $termsHTML, 'termsCount' => $termsCount);
+			$result = json_encode($result);
 
-		return '--##starttf##--' . $result . '--##endtf##--';
+			return '--##starttf##--' . $result . '--##endtf##--';
+		}
 	} elseif ( $runBot == 1 ){
 		//do the Import!
-		
-		$moduleConfig =
-			'<?xml version="1.0"?>'."\n".
-			'<ModuleConfiguration xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			'  <DALModules>'."\n".
-			'    <Module>'."\n".
-			'        <id>' . $damID .'</id>'."\n".
-			'    </Module>'."\n".
-			'  </DALModules >'."\n".
-			'</ModuleConfiguration>';
-		
-		//todo: only if there is a given import set name in place
-		$importSetConf =
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-   	 		'	<ImportSet>'."\n".
-			'		<Name>'.$givenImportSetName.'</Name>'."\n".
-			'	</ImportSet>'."\n".
-			'</ImportSets>';
-			
-		
-		//todo: only add if there is a mapping policy in place
-		$mappingPolicy =
-			'<?xml version="1.0"?>'."\n".
-			'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-   	 		'	<page>' . $mappingPage . '</page>'."\n".
-			'</MappingPolicy >';
 
-		if($givenConflictPol && $givenConflictPol != '') {
-			$conflictPolicy =
-				'<?xml version="1.0"?>'."\n".
-				'<ConflictPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    			'	<overwriteExistingTerms>' . $givenConflictPol . '</overwriteExistingTerms>'."\n".
-				'</ConflictPolicy >';
-		}
-		
-		if($updatePolicy == 0 || $updatePolicy == ""){
-			$updatePolicy = "<once/>";
-		} else {
-			$updatePolicy = "<maxAge value=\"".$updatePolicy."\"/>";
-		}
-		$updatePolicy = '<?xml version="1.0"?>'."\n".
-			'<UpdatePolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".$updatePolicy
-		.'</UpdatePolicy>';
-
-		$articleCreated = DICL::createTIArticle($moduleConfig, $source_result, $mappingPolicy, $conflictPolicy,
-			$givenInputPol, $importSetConf, $termImportName, $updatePolicy, $edit);
+		$articleCreated = DICL::createTIArticle($damID, $source_result, $givenConflictPol, $givenInputPol, $givenImportSetName, 
+			$updatePolicy, $templateName, $extraCategories, $delimiter, $termImportName, $edit);
 
 		if($articleCreated !== true){
-			//todo: return json
-			return $articleCreated;
+			$result = array('success' => false, 
+				'msg' => $articleCreated);
+			$result = json_encode($result);
+			return '--##starttf##--' . $result . '--##endtf##--';
 		} else if ($createOnly != "false"){
-			//todo: return json
-			return '<?xml version="1.0"?>
-	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
-	 		    <value>articleCreated</value>
-	 		    <message>' . $termImportName . '</message>
-	 			</ReturnValue >';
+			//todo:language
+			$linker = new Linker();
+			$link = $linker->makeLink(
+				Title::newFromText(''.$termImportName, SMW_NS_TERM_IMPORT)->getFullText(), ''.$termImportName);
+			$result = array('success' => true, 
+				'msg' => '<br><b>The Term Import Definition '.$link.' was saved successfully.<br/></b><br/>');
+			$result = json_encode($result);
+			return '--##starttf##--' . $result . '--##endtf##--';
 		}
 
 		$result = DICL::importTerms($termImportName);
-		if ( $result == false) {
-			//error while running bot
+		if (is_string($result)) {
+			$result = array('success' => false, 
+				'msg' => $result);
+			$result = json_encode($result);
+			return '--##starttf##--' . $result . '--##endtf##--';
 		} else {
-			//todo: return JSON
-			return $result;
+			//todo:language
+			$linker = new Linker();
+			$link = $linker->makeLink(
+				Title::newFromText(''.$termImportName, SMW_NS_TERM_IMPORT)->getFullText(), ''.$termImportName);
+			$msg = '<br><b>The Term Import Definition '.$link.' was saved successfully.</b><br/><br/>';
+			
+			$link = $linker->makeLink(
+				Title::newFromText('Gardening', NS_SPECIAL)->getFullText());
+			$msg .= '<b>The Term Import Bot has been started successfully. See '.$link.' for details.</b><br/><br/>';
+			
+			$result = array('success' => true, 
+				'msg' => $msg);
+			$result = json_encode($result);
+			return '--##starttf##--' . $result . '--##endtf##--';
 		}
 	}
-	
-	return null;
 }
 

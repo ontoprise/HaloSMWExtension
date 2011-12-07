@@ -63,7 +63,7 @@ TermImportPage.prototype = {
 		}
 		this.pendingIndicatorDALDesc.show();
 		this.pendingIndicatorSourceSpec.show();
-		sajax_do_call('smwf_ti_connectDAM', [dalID , '', '', '', '', '', 0], this.getDALCallback.bind(this, dalID));
+		sajax_do_call('dif_ti_connectDAM', [dalID , '', '', '', '', '','', '', 0], this.getDALCallback.bind(this, dalID));
 	},
 	
 	/*
@@ -87,9 +87,9 @@ TermImportPage.prototype = {
 	},
 	
 	createDataSourceWidget : function(datasources, dalID) {
-		response = this.getMessage('smw_ti_sourceinfo')
+		response = diLanguage.getMessage('smw_ti_sourceinfo')
 				+ "<br><br><Table>";
-				//+ this.getMessage('smw_ti_source') + "&nbsp;";
+				//+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
 
 		var fieldnumber = 0;
 		for ( var i = 0, n = datasources.length; i < n; i++) {
@@ -97,7 +97,6 @@ TermImportPage.prototype = {
 			var datasource = datasources[i];
 			
 			if (datasource.nodeType == 1) {
-				// TagName bekommen
 				var tag = datasource.tagName;
 				
 				if (datasource.getAttribute('display')) {
@@ -118,36 +117,35 @@ TermImportPage.prototype = {
 						rows = datasource.getAttribute('rows');
 					}
 					
+					response += "<tr><td style=\"vertical-align:top\">"
+						+ attrib_display
+						+ "</td><td style=\"vertical-align:top\">";
+					
 					if (attrib_type == "file") {
-						response += "<tr><td>"
-								+ attrib_display
-								+ "</td><td><input name=\"source\" id=\""
+						response += "<input name=\"source\" id=\""
 								+ attrib_display
 								+ "\" class=\"inputfield " + attrib_class + "\" type=\"file\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\"/>" + "</td></tr>";
 					} else if(attrib_type == "checkbox"){
-						response += "<tr><td>"
-							+ attrib_display
-							+ "</td><td><input name=\"source\" id=\""
+						response += "<input name=\"source\" id=\""
 							+ attrib_display
 							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" style=\"width:auto;margin:0;\" checked=\""
 							+ datasource.textContent + "\"/></td></tr>";
 					} else if (attrib_type == "textarea") {
-						response += "<tr><td style=\"vertical-align:top\">"
-							+ attrib_display
-							+ "</td><td><textarea name=\"source\" type=\"text\" id=\""
+						response += "<textarea name=\"source\" type=\"text\" id=\""
 							+ attrib_display
 							+ "\" class=\"inputfield " + attrib_class + "\" rows=\"" + rows + "\" value=\""
 							+ datasource.textContent + "\">" + datasource.textContent + "</textarea>" + "</td></tr>";
-					} else {
-						//original class was inputfield
-						response += "<tr><td >"
-								+ attrib_display
-								+ "</td><td><input name=\"source\" id=\""
-								+ attrib_display+ "\" class=\"" + attrib_class + "\"";
+					} else { //type is text
+						response += "<input name=\"source\" id=\""
+								+ attrib_display+ "\" class=\"" + attrib_class + " ";
 						if(datasource.getAttribute('autocomplete')){
-							response += " class=\"wickEnabled\" typeHint=\"0\" ";
+							var constraint = datasource.getAttribute('autocomplete');
+							response += " wickEnabled\" constraints=\"" + constraint + "\" ";
+						} else {
+							response += "\" ";
 						}
+					
 						if(datasource.firstChild){
 							if(datasource.firstChild.nodeValue){
 								response += " type=\"" + attrib_type + "\" size=\"" + size + "\" maxlength=\"100\" value=\""
@@ -164,13 +162,13 @@ TermImportPage.prototype = {
 					response += "<input type=\"hidden\" id=\"tag_"
 							+ attrib_display + "\" value=\"" + tag + "\"/>";
 				}
-				// }
 			}
 		}
 		
 		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" " +
 				"onclick=\"termImportPage.getSource(event, this,"
 				+ "'" + dalID + "')\">Next step</button>";
+		
 		// fade in the source specification
 		$('source-spec').innerHTML = response;
 	},
@@ -230,14 +228,14 @@ TermImportPage.prototype = {
 				}
 			}
 			topcontainer += "</ul></td><td class=\"abstand\"><a style=\"cursor: pointer;\"" +
-					" onClick=\"termImportPage.getTopContainer(event, this)\">" + this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+					" onClick=\"termImportPage.getTopContainer(event, this)\">" + diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 		//}
 		//catch(e) {
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -266,7 +264,7 @@ TermImportPage.prototype = {
 			+ dataSource + "</DataSource>";
 		$("loading-container").style.display ="inline";
 
-		sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, dalID));
+		sajax_do_call('dif_ti_connectDAM', [dalID , dataSource, '', '', '','', '', '', 0], this.getSourceCallback.bind(this, dalID));
 	},
 	
 	/*
@@ -286,17 +284,17 @@ TermImportPage.prototype = {
 			$('extras').style.display = "inline";
 			if(result['importSets'].length > 0){
 				$('importset').style.display = "";
-				if (Prototype.Browser.IE) {
-					//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
-					$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\">" + 
-						result['importSets'] + "</select>";
-				} else {
-					$('importset-input-field').innerHTML = result['importSets'];
-				}
 			} else {
 				$('importset').style.display = "none";
 			}
-		
+			if (Prototype.Browser.IE) {
+				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+				$('importset-input-field').outerHTML = "<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\">" + 
+					result['importSets'] + "</select>";
+			} else {
+				$('importset-input-field').innerHTML = result['importSets'];
+			}
+			
 			$('extras-right').style.display = "inline";
 			$('attrib').innerHTML = result['properties'];
 			$('article_table').innerHTML = result['terms'];
@@ -305,15 +303,15 @@ TermImportPage.prototype = {
 			
 			$('extras-bottom').innerHTML = 
 				"<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
-				+ " value=\""+this.getMessage('smw_ti_prev-step')+"\"/>&nbsp;&nbsp;";
+				+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>&nbsp;&nbsp;";
 			
 			$('extras-bottom').innerHTML += 
 				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" + dalID +"', true)\""
-				+ " value=\""+this.getMessage('smw_ti_save')+"\"/>&nbsp;&nbsp;";
+				+ " value=\""+diLanguage.getMessage('smw_ti_save')+"\"/>&nbsp;&nbsp;";
 			
 			$('extras-bottom').innerHTML += 
 				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" + dalID +"', false)\""
-				+ " value=\"" +this.getMessage('smw_ti_execute') + "\"/><br/><br/>";
+				+ " value=\"" +diLanguage.getMessage('smw_ti_execute') + "\"/><br/><br/>";
 		
 			if (Prototype.Browser.IE) {
 				//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -322,7 +320,9 @@ TermImportPage.prototype = {
 				$('policy-textarea').innerHTML = '';
 			}
 			$('policy-input-field').value = '';
-			$('mapping-input-field').value = '';
+			$('template-input-field').value = '';
+			$('categories-input-field').value = '';
+			$('delimiter-input-field').value = ',';
 		
 			if(this.dalId != null){
 				this.fillTermImportPage();
@@ -330,11 +330,10 @@ TermImportPage.prototype = {
 		} else {
 			//todo: getting terms was not a success
 			
-			var test = list.getElementsByTagName("message");
 			var error_message = "<br/><br/><span id=\"sumtable\">" + 
-				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</span><br/><br/>"; 
+				result['msg'] + "</span><br/><br/>"; 
 			error_message += "<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
-				+ " value=\""+this.getMessage('smw_ti_prev-step')+"\"/>";
+				+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>";
 			$('summary').style.display = "block";
 			$('summary').innerHTML = error_message;
 		
@@ -371,8 +370,10 @@ TermImportPage.prototype = {
 		
 		var result = this.getImportCredentials(e, node, this.dalId, false);
 
-		this.dataSource = escape(result[0]);
-		this.importSet = result[1];
+		//todo: adjust to change getimportcrediantials function
+		
+		this.dataSource = escape(result.dataSource);
+		this.importSet = result.importSetName;
 
 		var inputPolicy = GeneralXMLTools.createDocumentFromString(result[2]);
 		this.regex = this.implodeElements(inputPolicy.getElementsByTagName("regex"));
@@ -444,7 +445,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -510,7 +511,7 @@ TermImportPage.prototype = {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
 				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
+				diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
 			$('summary').style.display = "inline";
 			$('summary').innerHTML = error_message;
 		
@@ -539,25 +540,6 @@ TermImportPage.prototype = {
 	},
 	
 	/*
-	 * redirects to the entered mapping article
-	 */
-	viewMappingArticle: function(e, node) {
-		var mappingPage = document.getElementById('mapping-input-field').value;
-		var path = wgArticlePath.replace(/\$1/, mappingPage);
-		window.open(wgServer + path, "");
-	},
-	
-	/*
-	 * redirects to the edit page of the entered article
-	 */
-	editMappingArticle: function(e,node) {
-		var mappingPage = document.getElementById('mapping-input-field').value;
-		queryStr = "?action=edit";
-		var path = wgArticlePath.replace(/\$1/, mappingPage);
-		window.open(wgServer + path + queryStr, "");
-	},
-
-	/*
 	 * Refresh Button of properties table or article preview is clicked so, refresh them...
 	 */
 	refreshPreview: function(e, node, dalID) {
@@ -566,70 +548,123 @@ TermImportPage.prototype = {
 		}
 		this.pendingIndicatorArticles.show();
 		
+		var result = this.getImportCredentials(e, node, dalID, false);
+		
+		sajax_do_call('dif_ti_connectDAM', [dalID , result.dataSource, result.importSetName, 
+			result.inputPolicy, result.template, result.extraCategories, result.delimiter, result.conflictPol, 0], 
+		    this.refreshPreviewCallback.bind(this, dalID));
+	},
+	
+	refreshPreviewCallback: function(dalID, request){
+		//refresh the article preview!!!
+		this.pendingIndicatorArticles.hide();
+	
+		var result = request.responseText;
+		result = result.substr(result.indexOf('--##starttf##--') + 15, result.indexOf('--##endtf##--') - result.indexOf('--##starttf##--') - 15); 
+		result = jQuery.parseJSON(result);
+		
+		if(result['success']) {
+			$('article_table').innerHTML = result['terms'];
+			$('article-count').innerHTML = result['termsCount'];
+		} else {
+			//updating preview failed somehow
+			
+			var error_message = "<br/><br/><span id=\"sumtable\">" + 
+				result['msg'] + "</span><br/><br/>"; 
+			error_message += "<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
+				+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>";
+			$('summary').style.display = "block";
+			$('summary').innerHTML = error_message;
+		
+			$('top-container').style.display = "none";
+			$('extras').style.display = "none";
+		}
+		
+		
+	},
+	
+	/*
+	 * Do the import!
+	 */
+	importItNow: function(e, node, dalID, createOnly){
+		var result = termImportPage.getImportCredentials(e, node, dalID, true);
+		
+		if(result == null){
+			return;
+		} else {
+			$("extras-bottom").style.display = "none";
+			$("loading-bottom-container").style.display = "inline";
+			
+			sajax_do_call('dif_ti_connectDAM', [dalID , result.dataSource, result.importSetName, 
+			                                    result.inputPolicy, result.template, result.extraCategories, result.delimiter, result.conflictPol, 1, result.termImportName, result.updatePolicy, this.editTermImport, createOnly]
+			                                    , this.importItNowCallback.bind(this, dalID, createOnly));
+		}
+	},
+	
+	getImportCredentials: function(e, node, dalID, commit){
+		var result = new Object();
+		
 		//DataSource
-		try {
-			var source = document.getElementsByName("source");
-			var sourcearray = new Array();
-			var tag_array = new Array();
-			//XML structure for the DataSource
-			var dataSource = '';
-			for (var i = 0, n = source.length; i < n; i++) {
-				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
-				if (document.getElementById(source[i].id).files) {
-					//ffx3 - try to have access to full path
-					try {
-						netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
-					}
-					catch (e){
-						alert('Unable to access local files due to browser security settings. ' +
-								'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
-								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
-								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
-	    				return;
-						
-					}
+		var source = document.getElementsByName("source");
+		var sourcearray = new Array();
+		var tag_array = new Array();
+		var dataSource = '';
+		for (var i = 0, n = source.length; i < n; i++) {
+			//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
+			if (document.getElementById(source[i].id).files) {
+				//ffx3 - try to have access to full path
+				try {
+					netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
 				}
-				sourcearray[i] = document.getElementById(source[i].id).value;
-				if (sourcearray[i] && sourcearray[i] != '') {
-					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
-					
-					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
+				catch (e){
+					alert('Unable to access local files due to browser security settings. ' +
+							'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
+							'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
+							'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
+	    			return;
 				}
 			}
-		
-			dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
-		
-			//gets the selected import set 
-			var importSetName = document.getElementById('importset-input-field').value;
-		
-			//input policy
-			//this doesn't work in IE...
-			//var policy_selects = document.getElementsByName('policy-select');
-			//this works:	
-			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');
-			if (policy_selects.length > 0) {
-				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-   		 			'<terms>'+"\n";
-   		 		//get the terms...
-				for(var i = 0, n = policy_selects.length; i < n; i++) {
-   		 			var policy_type = document.getElementById("pol-type_" + policy_selects[i].firstChild.nodeValue);
-    				inputPolicy += '<' + policy_type.value + '>' + 
-    								policy_selects[i].firstChild.nodeValue + 
-    								'</' + policy_type.value + '>'+"\n";
-    			}
-    			inputPolicy +='</terms>'+"\n"+
-   	 				'<properties>'+"\n";
-			}else{
-				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-   		 			'<terms>'+"\n"+
-   		 			 '	<regex></regex>'+"\n"+
-   		 			'	<term></term>'+"\n"+
-   		 			'</terms>'+"\n"+
-   	 				'<properties>'+"\n";
+			sourcearray[i] = document.getElementById(source[i].id).value;
+			if (sourcearray[i] && sourcearray[i] != '') {
+				tag_array[i] = document.getElementById("tag_" + source[i].id).value;
+				if(typeof(sourcearray[i]) == 'string'){
+					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
+					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
+				}
+				dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
 			}
-			//and now the properties...
+		}
+		result.dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
+			
+		//gets the selected import set 
+		result.importSetName = document.getElementById('importset-input-field').value;
+			
+		//input policy
+		var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');	
+		if (policy_selects.length > 0) {
+			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
+				'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
+   					'<terms>'+"\n";
+   			//get the terms...
+			for(var i = 0, n = policy_selects.length; i < n; i++) {
+   					var policy_type = document.getElementById("pol-type_" + policy_selects[i].firstChild.nodeValue);
+   					inputPolicy += '<' + policy_type.value + '>' + 
+    							policy_selects[i].firstChild.nodeValue + 
+    							'</' + policy_type.value + '>'+"\n";
+    		}
+    		inputPolicy +='</terms>'+"\n"+
+   	 			'<properties>'+"\n";
+		}else{
+			var inputPolicy = '<?xml version="1.0"?>'+"\n"+
+				'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
+   		 		'<terms>'+"\n"+
+   		 		 '	<regex></regex>'+"\n"+
+   		 		'	<term></term>'+"\n"+
+   		 		'</terms>'+"\n"+
+   	 			'<properties>'+"\n";
+		}
+		//and now the properties...
+		if(document.getElementById('attrib_table')){
 			var properties = document.getElementById('attrib_table').getElementsByTagName('td');
 			for (var i = 0, n = properties.length; i < n; i++) {
 				// get one of the importsets
@@ -643,325 +678,83 @@ TermImportPage.prototype = {
 									inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
 									break;
 								}
-							}
-						}	
-					}	
-				}	
-			}   	 				
-   	 		inputPolicy += '</properties>'+"\n"+
-				'</InputPolicy>'+"\n";
-			//mapping policy
-			var mappingPage = document.getElementById('mapping-input-field').value;
-		
-			//conflict policy
-			if(document.getElementById('conflict-input-field').value == 'overwrite') {
-				var conflictPol = true;
-			}
-			else {
-				var conflictPol = false;
-			}
-		}
-		catch(e) {
-			try {
-			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
-				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
-				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
-			$('summary').style.display = "inline";
-			$('summary').innerHTML = error_message;
-		
-			$('top-container').style.display = "none";
-			$('bottom-container').style.display = "none";				
-			} catch (e) {
-				// TODO: handle exception
-			}
-			return;
-		}
-			sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 0], this.refreshPreviewCallback.bind(this, dalID));
-	},
-	
-	refreshPreviewCallback: function(dalID, request){
-		//refresh the article preview!!!
-		this.pendingIndicatorArticles.hide();
-		
-		var result = request.responseText;
-		var list = GeneralXMLTools.createDocumentFromString(result);
-		
-				
-		try {
-			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<table class=\"mytable\">';
-			var article_count = 0;
-			for (var i = 0, n = terms.length; i < n; i++) {
-			// get one of the importsets
-				var term = terms[i]; 
-				if(term.nodeType == 1) {
-					//find the name Obj of the 
-					if ( term.firstChild ){
-						var article_name = term.firstChild.nodeValue;
-						if ( article_name ){
-							// add article name to the table
-							article_response += "<tr><td class=\"mytd\">" + article_name + "</td></tr>";
-							article_count++;
-						}
+							}	
+						}						
 					}	
 				}	
 			}
-			article_response += '</table>';
 		}
-		catch(e){
-			try {
-			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
-				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
-				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
-			$('summary').style.display = "inline";
-			$('summary').innerHTML = error_message;
+   	 	inputPolicy += '</properties>'+"\n"+
+			'</InputPolicy>'+"\n";
+		result.inputPolicy = inputPolicy;
+   	 	
+		//template name
+		result.template = document.getElementById('template-input-field').value;
 		
-			$('top-container').style.display = "none";
-			$('bottom-container').style.display = "none";				
-			} catch (e) {
-				// TODO: handle exception
-			}
-			return;
-		}		
-		$('article_table').innerHTML = article_response;
-		$('article-count').innerHTML = article_count;
-	},
-	
-	/*
-	 * Do the import!
-	 */
-	importItNow: function(e, node, dalID, createOnly){
-		var result = termImportPage.getImportCredentials(e, node, dalID, true);
-		if(result == null){
-			return;
+		//extra category annotations
+		result.extraCategories = document.getElementById('categories-input-field').value;
+			
+		//delimiter
+		result.delimiter = document.getElementById('delimiter-input-field').value;
+			
+		//conflict policy
+		//var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
+		var optionIndex = document.getElementById('conflict-input-field').selectedIndex; 
+		if(optionIndex == -1){
+			optionIndex = 0;
+		}
+		var conflict = document.getElementById('conflict-input-field').childNodes[optionIndex].firstChild.nodeValue;
+		if( conflict == 'overwrite') {
+			var conflictPol = true;
 		} else {
-			var dataSource = result[0];  
-			var importSetName= result[1];
-			var inputPolicy = result[2]; 
-			var mappingPage = result[3]; 
-			var conflictPol = result[4];
-			var termImportName = result[5];
-			var updatePolicy = result[6];
-			var edit = this.editTermImport;
-			
-			$("extras-bottom").style.display = "none";
-			$("loading-bottom-container").style.display = "inline";
-			sajax_do_call('smwf_ti_connectDAM', [dalID , dataSource, importSetName, 
-			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit, createOnly]
-			                                    , this.importItNowCallback.bind(this, dalID, createOnly));
+			var conflictPol = false;
 		}
-	},
-	
-	getImportCredentials: function(e, node, dalID, commit){
-		//DataSource
-		try {
-			var source = document.getElementsByName("source");
-			var sourcearray = new Array();
-			var tag_array = new Array();
-			//XML structure for the DataSource
-			var dataSource = '';
-			for (var i = 0, n = source.length; i < n; i++) {
-				//new workaround... https://bugzilla.mozilla.org/show_bug.cgi?id=143220#c41
-				if (document.getElementById(source[i].id).files) {
-					//ffx3 - try to have access to full path
-					try {
-						netscape.security.PrivilegeManager.enablePrivilege( 'UniversalFileRead' );
-					}
-					catch (e){
-						alert('Unable to access local files due to browser security settings. ' +
-								'To overcome this, follow these steps: (1) Enter "about:config" in the URL field; ' +
-								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
-								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
-	    				return;
-					}
-				}
-				sourcearray[i] = document.getElementById(source[i].id).value;
-				if (sourcearray[i] && sourcearray[i] != '') {
-					tag_array[i] = document.getElementById("tag_" + source[i].id).value;
-					if(typeof(sourcearray[i]) == 'string'){
-						sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
-						sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
-					}
-					dataSource += "<" + tag_array[i] + ">" + sourcearray[i] + "</" + tag_array[i] + ">";
-				}
-			}
-			dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
-			
-			//gets the selected import set 
-			var importSetName = document.getElementById('importset-input-field').value;
-			
-			//input policy
-			//this doesn't work in IE...
-			//var policy_selects = document.getElementsByName('policy-select');
-			//this works:
-			var policy_selects = document.getElementById('policy-textarea').getElementsByTagName('option');	
+		result.conflictPol = conflictPol;
 		
-			if (policy_selects.length > 0) {
-				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-   		 			'<terms>'+"\n";
-   		 		//get the terms...
-				for(var i = 0, n = policy_selects.length; i < n; i++) {
-   		 			var policy_type = document.getElementById("pol-type_" + policy_selects[i].firstChild.nodeValue);
-    				inputPolicy += '<' + policy_type.value + '>' + 
-    								policy_selects[i].firstChild.nodeValue + 
-    								'</' + policy_type.value + '>'+"\n";
-    			}
-    			inputPolicy +='</terms>'+"\n"+
-   	 				'<properties>'+"\n";
-			}else{
-				var inputPolicy = '<?xml version="1.0"?>'+"\n"+
-					'<InputPolicy xmlns="http://www.ontoprise.de/smwplus#">'+"\n"+
-   		 			'<terms>'+"\n"+
-   		 			 '	<regex></regex>'+"\n"+
-   		 			'	<term></term>'+"\n"+
-   		 			'</terms>'+"\n"+
-   	 				'<properties>'+"\n";
-			}
-			//and now the properties...
-			if(document.getElementById('attrib_table')){
-				var properties = document.getElementById('attrib_table').getElementsByTagName('td');
-				for (var i = 0, n = properties.length; i < n; i++) {
-					// get one of the importsets
-					var property = properties[i]; 
-					if(property.nodeType == 1) {
-						if ( property.firstChild.nodeValue ){
-							var checkboxes = document.getElementsByName('checked_properties');
-							for (var j = 0, m = checkboxes.length; j < m; j++) {
-								if(property.firstChild.nodeValue == checkboxes[j].value){
-									if(checkboxes[j].checked){
-										inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
-										break;
-									}
-								}	
-							}						
-						}	
-					}	
-				}
-			}
-   	 		inputPolicy += '</properties>'+"\n"+
-				'</InputPolicy>'+"\n";
-			
-   	 		//mapping policy
-			var mappingPage = document.getElementById('mapping-input-field').value;
-			
-			//conflict policy
-			//var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
-			var optionIndex = document.getElementById('conflict-input-field').selectedIndex; 
-			if(optionIndex == -1){
-				optionIndex = 0;
-			}
-			var conflict = document.getElementById('conflict-input-field').childNodes[optionIndex].firstChild.nodeValue;
-			if( conflict == 'overwrite') {
-				var conflictPol = true;
-			}
-			else {
-				var conflictPol = false;
-			}
-			//term import name
-			var termImportName = document.getElementById('ti-name-input-field').value;
-			if(termImportName == '' && commit){
-				//do not import without a term import name!
-				$('ti-name-input-field').style.backgroundColor = "red";
-				return ;
-			}
-			
-			//this code does only work once
-			// if(termImportName.length > 0){
-			// // min. one other char than a whitespace
-			// if(re.test(termImportName) != true && commit) {
-			// $('ti-name-input-field').style.backgroundColor = "red";
-			// return ;
-			//   				}
-			//			}
-			
-			//update policy todo:make integer check
-			var updatePolicy = 0;
-			if($('update-policy-checkbox').checked){
-				if($("ti-update-policy-input-field").value != ""){
-					if(parseInt($("ti-update-policy-input-field").value)
-							!= $("ti-update-policy-input-field").value-0 && commit){
-						$("ti-update-policy-input-field").style.backgroundColor = "red";
-						return;
-					}
-				}
-				updatePolicy = $("ti-update-policy-input-field").value;
-			}
-		} catch(e) {
-			try {
-			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
-				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
-				"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-				this.getMessage('smw_ti_edit') + "</a></td></tr></table>";
-			$('summary').style.display = "inline";
-			$('summary').innerHTML = error_message;
-		
-			$('top-container').style.display = "none";
-			$('bottom-container').style.display = "none";				
-			} catch (e) {
-				// TODO: handle exception
-			}
-			return;
+		//term import name
+		result.termImportName = document.getElementById('ti-name-input-field').value;
+
+		if(result.termImportName == '' && commit){
+			//do not import without a term import name!
+			$('ti-name-input-field').style.backgroundColor = "red";
+			return ;
 		}
+			
+		//update policy todo:make integer check
+		var updatePolicy = 0;
+		if($('update-policy-checkbox').checked){
+			if($("ti-update-policy-input-field").value != ""){
+				if(parseInt($("ti-update-policy-input-field").value)
+						!= $("ti-update-policy-input-field").value-0 && commit){
+					$("ti-update-policy-input-field").style.backgroundColor = "red";
+					return;
+				}
+			}
+			updatePolicy = $("ti-update-policy-input-field").value;
+		}
+		result.updatePolicy = updatePolicy;
 		
-		var result = new Array();
-		result[0] = dataSource;  
-		result[1] = importSetName; 
-		result[2] = inputPolicy; 
-		result[3] = mappingPage; 
-		result[4] = conflictPol;
-		result[5] = termImportName;
-		result[6] = updatePolicy;
 		return result;
 	},
 	
 	importItNowCallback: function(dalID, createOnly, request){
 		$("extras-bottom").style.display = "inline";
 		$("loading-bottom-container").style.display = "none";
-		var message= '';
-		try {
-			var result = request.responseText;
-			
-			var list = GeneralXMLTools.createDocumentFromString(result);
 		
-			message = list.getElementsByTagName("message")[0].firstChild.nodeValue;
-		}
-		catch(e){
-		}
-		try {
-			var result = request.responseText;
-			var list = GeneralXMLTools.createDocumentFromString(result);
-			
-			var value = list.getElementsByTagName("value")[0].firstChild.nodeValue;
-			message = list.getElementsByTagName("message")[0].firstChild.nodeValue;
-			if(value == "falseMap") {
-				$('mapping-input-field').style.backgroundColor = "red";
-				alert(message);
-				return;
-			} else if(value == "falseTIN") {
-				$('ti-name-input-field').style.backgroundColor = "red";
-				alert(message);
-				return;
-			} else if(value == "articleCreated") {
-				var path = wgArticlePath.replace(/\$1/, "TermImport:" + message);
-				message = '<br><b>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/></b><br/>';
-				
-				$('extras-bottom').innerHTML = message;
-				return;
-			}
-			
-		} catch (e) {
-			// TODO: handle exception
-		}
-		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
-		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details<br/><br/>';
+		var result = request.responseText;
+		result = result.substr(result.indexOf('--##starttf##--') + 15, result.indexOf('--##endtf##--') - result.indexOf('--##starttf##--') - 15); 
+		result = jQuery.parseJSON(result);
 		
-		$('extras-bottom').innerHTML = "<b>"+message+"</b>";
+		if(result['success']) {
+			var message = '<br><b>' + result['msg'] + '</b><br/>';
+			$('extras-bottom').innerHTML = message;
+		} else {
+			$('ti-name-input-field').style.backgroundColor = "red";
+			alert(result['msg']);
+		}
 	},
+	
 	changeBackground: function(e, node) {
-		// $('mapping-input-field').style.backgroundColor = "white";
 		node.style.backgroundColor = "white";
 	},
 	
@@ -1137,20 +930,18 @@ TermImportPage.prototype = {
 				+ id + ")";
 	},
 	
-	getMessage : function(sth){
-		return sth
+	showOrHideDelimiterInput : function(event){
+		if(Event.element(event).value == "template"){
+			$('delimiter').style.display = "";
+		} else {
+			$('delimiter').style.display = "none";
+		}
 	}
 }
- // ----- Classes -----------
+
 
 var termImportPage = new TermImportPage();
 window.termImportPage = termImportPage;
-
-var diLanguage = function(){
-	var getMessage = function(sth){
-		return sth;
-	}
-};
 
 Event.observe(window, 'load', termImportPage.editTermImportDefinition
 	.bindAsEventListener(termImportPage));

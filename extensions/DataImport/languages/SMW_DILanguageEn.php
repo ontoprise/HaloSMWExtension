@@ -30,8 +30,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'specialpages-group-di_group' => 'Data Import',
 	
 	/* Messages of the Thesaurus Import */
-	'smw_ti_selectDAM' => 'First select a Data Access Module.',
-	'smw_ti_firstselectTLM' => 'First select a Transport Layer Module.',
+	'smw_ti_selectDAM' => 'Choose data source.',
 	'smw_ti_selectImport-heading' => 'Import sets',
 	'smw_ti_selectImport-label' => 'Choose:&nbsp&nbsp',
 	'smw_ti_selectImport-help' => 'If you like to only import terms that belong to a certain import set, then please choose it here.',
@@ -280,11 +279,19 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_gardissue_ti_class_success' => 'Updated Term Imports',
 	'smw_gardissue_ti_class_failure' => 'Term Imports with failures',
 	
-	'smw_ti_menuestep1' => '1. Define module specific data',
+	'smw_ti_menuestep1' => '1. Choose and configure data source ',
 	'smw_ti_menuestep2' => '2. Configure and execute Term Import',
 	'smw_ti_tl-heading' => 'Choose Transport Layer Module:',
-	'smw_ti_dam-heading' => 'Choose Data Acccess Module:',
-	'smw_ti_module-data-heading' => 'Enter module specific data:',
+	'smw_ti_dam-heading' => 'Choose data source:',
+	'smw_ti_module-data-heading' => 'Configure data source:',
+	
+	'smw_ti_creation-pattern-heading' => 'Creation Pattern:',
+	'smw_ti_creation-pattern-label-1' => 'Annotations',
+	'smw_ti_creation-pattern-label-2' => 'Template',
+	'smw_ti_delimiter-heading' => 'Delimiter',
+	'smw_ti_delimitery-label' => 'Choose: ', 
+	'smw_ti_category-heading' => 'Additional Category Annotations',
+	'smw_ti_category-label' => 'Names:',
 	
 	'smw_wwsr_update_tooltip' => 'Start the update bot for this WWSD.',
 	'smw_wwsr_rep_edit_tooltip' => 'Edit this WWSD in the graphical user interface.',

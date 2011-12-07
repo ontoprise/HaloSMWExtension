@@ -279,11 +279,18 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_gardissue_ti_class_success' => 'Aktualisierte Term Imports',
 	'smw_gardissue_ti_class_failure' => 'Fehlerhafte Term Imports',
 	
-	'smw_ti_menuestep1' => '1. Modulspezifische Daten angeben',
+	'smw_ti_menuestep1' => '1. Datenquelle w&auml;hlen und konfigurieren',
 	'smw_ti_menuestep2' => '2. Term Import konfigurieren und ausführen',
-	'smw_ti_tl-heading' => 'Transport Layer Modul wählen:',
-	'smw_ti_dam-heading' => 'Data Acccess Modul wählen:',
-	'smw_ti_module-data-heading' => 'Modulspezifische Daten angeben:',
+	'smw_ti_dam-heading' => 'Datenquelle wählen:',
+	'smw_ti_module-data-heading' => 'Konfiguration der Datenquelle:',
+	
+	'smw_ti_creation-pattern-heading' => 'Erzeugungsmuster:',
+	'smw_ti_creation-pattern-label-1' => 'Annotationen',
+	'smw_ti_creation-pattern-label-2' => 'Template',
+	'smw_ti_delimiter-heading' => 'Trennzeichen',
+	'smw_ti_delimitery-label' => 'Zeichenkette: ', 
+	'smw_ti_category-heading' => 'Zus&auml;tzliche Kategorie Annotationen',
+	'smw_ti_category-label' => 'Namen:',
 	
 	'smw_wwsr_update_tooltip' => 'Update Bot für diese WWSD starten.',
 	'smw_wwsr_rep_edit_tooltip' => 'Diese WWSD in der GUI editieren.',

@@ -17,17 +17,9 @@
  *
  */
 
-
-define('DAL_SXML_RET_ERR_START',
-			'<?xml version="1.0"?>'."\n".
-			'<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-    		'<value>false</value>'."\n".
-    		'<message>');
-
-define('DAL_SXML_RET_ERR_END',
-			'</message>'."\n".
-    		'</ReturnValue>'."\n");
-
+/*
+ * @author Ingo Steinbauer
+ */
 
 class DALReadSPARQLXML implements IDAL {  
 	
@@ -37,7 +29,6 @@ class DALReadSPARQLXML implements IDAL {
 
 	
 	public function getSourceSpecification() {
-		
 		return 
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -50,8 +41,8 @@ class DALReadSPARQLXML implements IDAL {
 	public function getImportSets($dataSourceSpec) {
 		$endPointName = $this->getEndpointURIFromSourceSpec($dataSourceSpec);
 		$query = $this->getQueryFromSourceSpec($dataSourceSpec);
+		$importSets = array();
 		
-		$importSets = '';
 		if (!$this->readContent($endPointName, $query)
 				|| count($this->queryResultColumns) == 0) {
 			return $this->errorMSG;;
@@ -64,25 +55,17 @@ class DALReadSPARQLXML implements IDAL {
 			}
 		}
 
-		$result = '';
 		if(strlen($importSetLabel) > 0){
-			$impSets = array();
 			foreach($this->queryResult as $row){
 				$iS = $row[$importSetLabel];
 				if(array_key_exists($iS, $impSets)){
 					continue;
 				}
-				$impSets[$iS] = true;
-				
-				$result .= '<importSet>'."\n".'	<name>'.$iS.'</name>'."\n".'</importSet>'."\n";
+				$importSets[$iS] = true;
 			}
 		}
 		
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<ImportSets xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$result.
-			'</ImportSets>'."\n";
+		return array_flip($importSets);
 	}
 	 
 	
@@ -90,42 +73,33 @@ class DALReadSPARQLXML implements IDAL {
 		$endPointName = $this->getEndpointURIFromSourceSpec($dataSourceSpec);
 		$query = $this->getQueryFromSourceSpec($dataSourceSpec);
 		
-		$importSets = '';
 		if (!$this->readContent($endPointName, $query)
 				|| count($this->queryResultColumns) == 0) {
 			return $this->errorMSG;
 		}
 		
-		$properties = '';
+		$properties = array();
 		foreach ($this->queryResultColumns as $column => $dontCare) {
 			$column = (strtolower($column) == 'articlename') ? 'articleName' : $column;
 			$column = (strtolower($column) == 'importset') ? 'importSet' : $column;
-			$properties .=
-				'<property>'."\n".
-				'	<name>'.trim($column).'</name>'."\n".
-				'</property>'."\n";
+			
+			$properties[trim($column)] = true;
 		}
 
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<Properties xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$properties.
-			'</Properties>'."\n";
+		return array_keys($properties);
 	}
 	
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		$result = $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, true);
-		//file_put_contents("d://terms-list.rtf", print_r($result, true));
 		return $result;
 	}
 	
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		$result = $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, false);
-		//file_put_contents("d://terms-list.rtf", print_r($result, true));
 		return $result;
 	}
 	
-	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, $createTermList) {
+	private function createTerms($dataSourceSpec, $givenImportSet, $inputPolicy, $createTermList) {
 		$endPointURI = $this->getEndpointURIFromSourceSpec($dataSourceSpec);
 		$query = $this->getQueryFromSourceSpec($dataSourceSpec);
 		
@@ -133,8 +107,7 @@ class DALReadSPARQLXML implements IDAL {
 			return $this->errorMSG;
 		}
 		
-		$importSets = $this->parseImportSets($importSet);
-		$inputPolicy = $this->parseInputPolicy($inputPolicy);
+		$inputPolicy = DIDALHelper::parseInputPolicy($inputPolicy);
 		
 		//Get articleName and importSet
 		$articleNameLabel = false;
@@ -150,10 +123,11 @@ class DALReadSPARQLXML implements IDAL {
 		}
 		
 		if(!$articleNameLabel){
-			return DAL_SXML_RET_ERR_START.'One of the variables in the query must be called "articlename".'.DAL_SXML_RET_ERR_END;
+			//todo: use language file
+			return 'One of the variables in the query must be called "articlename';
 		}
 		
-		$terms = '';
+		$terms = new DITermCollection();
 		$processedArticleNames = array();
 		foreach($this->queryResult as $row){
 			
@@ -163,36 +137,28 @@ class DALReadSPARQLXML implements IDAL {
 			}
 			$processedArticleNames[$row[$articleNameLabel]] = true;
 			$importSet = (!$importSetLabel) ? null : $row[$importSetLabel]; 
-			if (!$this->termMatchesRules($importSet, $row[$articleNameLabel], 
-			                            $importSets, $inputPolicy)) {
+			if (!DIDALHelper::termMatchesRules($importSet, $row[$articleNameLabel], 
+					$givenImportSet, $inputPolicy)) {
 				continue;                            	
 			}
 			
-			$articleNameXML = "<articleName>".$row[$articleNameLabel]."</articleName>\n"; 
-			if($createTermList){
-				$terms .= $articleNameXML;
-			} else {
-				$terms .= "<term>\n";
-				$terms .= $articleNameXML; 
+			$term = new DITerm();
+			$term->setArticleName($row[$articleNameLabel]); 
+			if(!$createTermList){
+				
 				foreach($this->queryResultColumns as $columnName => $dontCare){
-					$terms .= '<'.$columnName.'>';
-					@ $terms .= $row[$columnName];
-					$terms .= '</'.$columnName.'>';					
+					if(array_key_exists($columnName, $row)){
+						$term->addProperty($columnName, $row[$columnName]);			
+					}
 				}
-				$terms .= "</term>\n";
 			}
+			$terms->addTerm($term);
 		}
 		
-		return
-			'<?xml version="1.0"?>'."\n".
-			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$terms.
-			'</terms>'."\n";
-		
+		return $terms;
 	}
 	
 	private function readContent($endPointURI, $query){
-		
 		if(!is_null($this->errorMSG)){
 			//query already processed
 			return false;
@@ -209,19 +175,19 @@ class DALReadSPARQLXML implements IDAL {
 		$result = $store->query($query);
 		
 		if(!is_array($result['result'])){
-			$this->errorMSG = DAL_SXML_RET_ERR_START.'No results could be retrieved from the SPARQL endpoint.'.DAL_SXML_RET_ERR_END;
+			$this->errorMSG = 'No results could be retrieved from the SPARQL endpoint.';
 			return false;
 		}
 		
 		$this->queryResultColumns = array();
 		foreach($result['result']['variables'] as $column){
-			$this->queryResultColumns[htmlspecialchars(trim($column))] = $column; 
+			$this->queryResultColumns[trim($column)] = $column; 
 		}
 		
 		$this->queryResult = array();
 		foreach($result['result']['rows'] as $key => $row){
 			foreach($this->queryResultColumns as $column => $oColumn){
-				@ $this->queryResult[$key][$column] = htmlspecialchars(trim($row[$oColumn]));
+				@ $this->queryResult[$key][$column] = trim($row[$oColumn]);
 			}
 		}
 		
@@ -237,7 +203,6 @@ class DALReadSPARQLXML implements IDAL {
 	}
 	
 	private function getQueryFromSourceSpec($dataSourceSpec){
-		
 		if(strpos($dataSourceSpec, '<query')){
 			$start = strpos($dataSourceSpec, '<query');
 			$start = strpos($dataSourceSpec, '>', $start) + 1;
@@ -254,72 +219,8 @@ class DALReadSPARQLXML implements IDAL {
 		return $query;
 	}
 	
-	
-	private function parseImportSets(&$importSets) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($importSets);
-		$result = $parser->parse();
-    	
-		if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	return $parser->getValuesOfElement(array('importSet','name'));
-	}
-	
-	
-private function parseInputPolicy(&$inputPolicy) {
-    	global $smwgDIIP;
-		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
-		$parser = new XMLParser($inputPolicy);
-		$result = $parser->parse();
-    	if ($result !== TRUE) {
-			return $result;
-    	}
-    	
-    	$policy = array();
-    	$policy['terms'] = $parser->getValuesOfElement(array('terms', 'term'));
-    	$policy['regex'] = $parser->getValuesOfElement(array('terms', 'regex'));
-    	$policy['properties'] = $parser->getValuesOfElement(array('properties', 'property'));
-    	return $policy;
-		
-	}
-	
-	private function termMatchesRules($impSet, $term, 
-			                          &$importSets, &$policy) {
-		
-		// Check import set
-		if ($impSet != null && count($importSets) > 0) {
-			if (!in_array($impSet, $importSets)) {
-				// Term belongs to the wrong import set.
-				return false;	                          	
-			}
-		}
-
-		// Check term policy
-		$terms = &$policy['terms'];
-		if (in_array($term, $terms)) {
-			return true;
-		}
-		
-		// Check regex policy
-		$regex = &$policy['regex'];
-		foreach ($regex as $re) {
-			$re = trim($re);
-			if (preg_match('/'.$re.'/', $term)) {
-				return true;
-			}
-		}
-		
-		return false;          	
-			                          	
-	}
-	
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return true;
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+		return array(true, array());
 	}
 	
 }

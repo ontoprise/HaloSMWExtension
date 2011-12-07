@@ -9,42 +9,16 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 #top-container{
 	margin-top: 30px;
 	width: 100%;
-	height: 260px;
+	height: 370px;
 	padding-bottom: 10px;
 }
-#top-container #tl-content{
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	/*border: 1px solid #AAAAAA;*/
-	float: left;
-	/*overflow: hidden;*/
-	width: 150px;
-	height: 360px;	
-}
-#top-container #tl-content #tlid{
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	float: left;
-	width: 150px;
-	height: 140px;
-	border: 1px solid #AAAAAA;
-	border-bottom: none;
-}
-#top-container #tl-content #tldesc{
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	float: left;
-	width: 140px;
-	height: 180px;
-	border: 1px solid #AAAAAA;
-	padding: 3px 5px 3px 5px;
-}
+
 #top-container #dal-content{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	/*border: 1px solid #AAAAAA;*/
 	float: left;
-	width: 150px;
+	width: 200px;
 	height: 360px;
 	/*margin-left: 50px;*/
 }
@@ -54,7 +28,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 	border-bottom: none;
 	float: left;
-	width: 150px;
+	width: 200px;
 	height: 140px;	
 }
 #top-container #dal-content #daldesc{
@@ -62,41 +36,49 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-size: 12px;
 	border: 1px solid #AAAAAA;
 	float: left;
-	width: 140px;
+	width: 190px;
 	height: 180px;
 	padding: 3px 5px 3px 5px;
 }
+
 #summary{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 13px;
-	border-bottom: 1px solid #AAAAAA;
+	/*border-bottom: 1px solid #AAAAAA;*/
 	float: left;
-	width: 140%;
+	/*width: 140%;*/
 	display: none;
 	padding-bottom: 10px;	
 }
+
 #summary #sumtable{
 	background-color: #F1F7AE;
 	padding: 3px 20px 3px 20px;
 }
+
 #top-container #source-spec{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	width: 390px;	
+	width: 600px;	
 	float: left;
 	height: 360px;
 	border: 1;
+	margin-left:20px;
 }
+
 #top-container #source-spec input, #top-container #source-spec textarea {
 	border: 1px solid #AAAAAA;
 	width: 250px;
 }
+
 #top-container #source-spec .short{
 	width: 150px;
 }
+
 #top-container #source-spec .middle{
 	width: 250px;
 }
+
 #top-container #source-spec .long{
 	width: 350px;
 }
@@ -217,11 +199,25 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 }
 
-#bottom-container #extras #extras-left #mapping{
+#bottom-container #extras #extras-left #creation-pattern{
 	width: 100%;
 	float: left;
 }
-#bottom-container #extras #extras-left #mapping #mapping-input-field{
+#bottom-container #extras #extras-left #creation-pattern #template-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #categories{
+	width: 100%;
+	float: left;
+}
+#bottom-container #extras #extras-left #categories #categories-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #delimiter{
+	width: 100%;
+	float: left;
+}
+#bottom-container #extras #extras-left #delimiter #delimiter-input-field{
 	border: 1px solid #AAAAAA;
 }
 #bottom-container #extras #extras-left #conflict{
@@ -294,7 +290,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 }
 .scrolling{
 	padding: 3px 5px 3px 5px;
-	max-height: 200px;
+	max-height: 275px;
 	overflow: auto;
 }
 

@@ -16,14 +16,14 @@
  *
  */
 
-var wgDIUserLanguageStrings = {
-		'smw_ti_sourceinfo'			: 	'Die folgenden Informationen werden benötigt, damit der Import gestartet werden kann',
+window.wgDIUserLanguageStrings = {
+		'smw_ti_sourceinfo'			: 	'<b>Konfiguration der Datenquelle:</b>',
 		'smw_ti_source'				: 	'Quelle',
 		'smw_ti_edit'				: 	'editiere',
 		'smw_ti_noa'				: 	'articleName',
-		'smw_ti_save'				:	'Term Import speichern',
-		'smw_ti_execute'			:	'Term Import speichern und ausf&uuml;hren',
-		'smw_ti_prev-step'			:	'Zur&uuml;ck zum vorherigen Schritt',
+		'smw_ti_save'				:	'Speichern',
+		'smw_ti_execute'			:	'Speichern und starten',
+		'smw_ti_prev-step'			:	'Zur&uuml;ck',
 		
 		
 		'smw_wws_add_parameter'		:	'Parameter hinzuf&uuml;gen',

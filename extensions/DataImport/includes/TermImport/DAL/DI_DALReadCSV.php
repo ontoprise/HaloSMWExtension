@@ -20,7 +20,7 @@
 /**
  * @file
  * @ingroup DITIDataAccessLayer
- * Implementation of the Data Access Layer (DAL) that is part of the term import feature.
+ * Implementation of the Data Access Layer (DAL) that is part of the term import feature. Imports terms from a CSV file.
  * 
  * @author Thomas Schweitzer 
  * @author Ingo Steinbauer
@@ -32,19 +32,6 @@ class DALReadCSV implements IDAL {
 	private $csvContent;
 
 	
-	/**
-	 * Returns a specification of the data source.
-	 * See further details in SMW_IDAL.php
-	 * 
-	 * @return string:
-	 * 		The returned XML structure specifies the data source i.e. a file. 
-	 * 		The name of the file has to be specified by the user.
-	 *		<?xml version="1.0"?>
-	 *		<DataSource xmlns=http://www.ontoprise.de/smwplus#">
-	 *	    	<filename display="Filename:" type="t"></filename>
-	 *		</DataSource>
-	 * 
-	 */
 	public function getSourceSpecification() {
 		return 
 			'<?xml version="1.0"?>'."\n".
@@ -53,34 +40,6 @@ class DALReadCSV implements IDAL {
 			'</DataSource>'."\n";
 	}
      
-	/**
-	 * Returns a list of import sets and their description.
-	 * 
-	 * @param string $dataSourceSpec: 
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered. 
-	 * @return string:
-     * 		Returns a list of import sets and their description (for the user) 
-     * 		that the module can extract from the data source. An import set is 
-     * 		just a name for a set of terms that module can extract e.g. different
-     * 		domains of knowledge like Biological terms, Chemical terms etc. 
-     * 		Each XML element <importSet> has the mandatory elements <name> and 
-     * 		<desc>. Arbitrary, module dependent elements can be added. 
-     * 		Example:
-     * 		<?xml version="1.0"?>
-	 *		<ImportSets xmlns="http://www.ontoprise.de/smwplus#">
-	 *		    <importSet>
-	 *		        <name>Biological terms</name>
-	 *     			 <desc>Import all terms from the biology domain.</desc>
-	 * 			</importSet>
-	 *		    <importSet>
-	 *		        <name>Biological terms</name>
-	 *		        <desc>mport all terms from the chemistry domain.</desc>
-	 *		    </importSet>
-	 *		</ImportSets>
-	 * 
-	 * 		If the operation fails, an error message is returned.
-	 */
 	public function getImportSets($dataSourceSpec) {
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
 		$importSets = array();
@@ -102,40 +61,6 @@ class DALReadCSV implements IDAL {
 		return array_keys($importSets);
 	}
      
-	/**
-	 * Returns a list of properties and their description.
-	 *          
-	 * @param string $dataSourceSpec: 
-	 * 		The XML structure from getSourceSpecification(), filled with the data
-	 * 		the user entered.
-     * @param string $importSet: 
-     * 		One of the import sets that can be retrieved with getImportSet() or 
-     * 		empty. The complete XML element <importSet> as specified above is 
-     * 		passed as it may contain values besides <name> and <desc>.
-     * @return string: 
-     * 		Returns a list of properties and their description (for the user) 
-     * 		that the module can extract from the data source for each term in the
-     * 		specified import set.
-     * 		Example:
-     * 		<?xml version="1.0"?>
-     *		<Properties xmlns="http://www.ontoprise.de/smwplus#">
-     *		    <property>
-     *		        <name>articleName</name>
-     *		        <desc>An article with this name will be created for the term of the vocabulary.</desc>
-     *		    </property>
-     *		    <property>
-     *		        <name>content</name>
-     *		        <desc>The description of the term.</desc>
-     *		    </property>
-     *		    <property>
-     *		        <name>author</name>
-     *		        <desc>Name of the person who describe the term.</desc>
-     *		    </property>
-     *		</Properties>
-	 * 
-	 * 		If the operation fails, an error message is returned.
-	 * 
-	 */
 	public function getProperties($dataSourceSpec, $importSet) {
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
 		$properties = array();
@@ -152,54 +77,15 @@ class DALReadCSV implements IDAL {
 			}
 		}
 		
-		return $properties;
+		return array_keys($properties);
 	}
 	
-	/**
-	 * Returns a list of the names of all terms that match the input policy. 
-	 *
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification(), filled with the data 
-	 * 		the user entered.
-	 * @param string $importSet
-	 * 		One of the <importSet>-elements from the XML structure from 
-	 * 		getImportSets() or empty.
-	 * @param string $inputPolicy
-	 * 		The XML structure of the input policy as defined in importTerms().
-	 * 
-	 * @return DITermCollection
-	 * 
-	  * 		If the operation fails, an error message is returned. 
-	 * 
-	 */
 	public function getTermList($dataSourceSpec, $importSet, $inputPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, true);
 	}
 	
-	/**
-	 * Generates the XML description of all terms in the data source that match 
-	 * the input policy.
-	 * @param string $dataSourceSpec
-	 * 		The XML structure from getSourceSpecification, filled with the data 
-	 * 		the user entered.
-     * @param string $importSet
-     * 		One of the <importSet>-elements from the XML structure from 
-     * 		getImportSets() or empty.
-     * @param string $inputPolicy
-     * 		The XML structure of the input policy. It contains the specification
-     * 		of the terms to import and their properties.
-     * @param string $conflictPolicy
-     * 		The XML structure of the conflict policy. It defines if existing articles
-     * 		are overwritten or not.
-     *      * 
-     * @return DITermCollection
-     * 
-      * If the operation fails, an error message is returned.
-	 *
-	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, false);
-		
 	}
 	
 	/**
@@ -254,8 +140,6 @@ class DALReadCSV implements IDAL {
 		while (!feof($file)) {
 			$line = fgets($file);
 			if ($line) {
-				//escape special characters in an XML document:
-				//$line = htmlspecialchars($line);
 				@ $vals = &explode("\t", $line);
 				$this->csvContent[] = $vals;
 			}
@@ -268,27 +152,24 @@ class DALReadCSV implements IDAL {
 	}
 	
 	/**
-	 * Generates the XML description of all terms in the data source that match 
-	 * the input policy.
+	 * Generates the Term Collection which will be imported.
+	 * 
 	 * @param string $dataSourceSpec
 	 * 		The XML structure from getSourceSpecification, filled with the data 
 	 * 		the user entered.
      * @param string $importSet
-     * 		One of the <importSet>-elements from the XML structure from 
+     * 		One of the <importSet>-elements from 
      * 		getImportSets() or empty.
      * @param string $inputPolicy
      * 		The XML structure of the input policy. It contains the specification
      * 		of the terms to import and their properties.
-     * @param boolean $createTermList
-     * 		If <true>, the XML structure for <getTermList> is created otherwise
-     * 		the one for <getTerms>
+     * @param boolean 
+     * 		Only aarticle names must be extracted if the term list is needed
      * 
      * @return DITermCollection
-	 *  
- 	* If the operation fails, an error message is returned.
 	 */
 	private function createTerms($dataSourceSpec, $importSet, $inputPolicy, 
-	                             $createTermList) {
+			$createTermList) {
 	                            	
 		$filename = $this->getFilenameFromSpec($dataSourceSpec);
 		$policy = DIDALHelper::parseInputPolicy($inputPolicy);
@@ -303,7 +184,6 @@ class DALReadCSV implements IDAL {
 		$indexMap = array();
 		foreach ($this->csvContent[0] as $idx => $prop) {
 			$p = trim($prop);
-			$p = preg_replace("/ +/", "__SPACE__", $p);
 			if (strtolower($p) == 'articlename') {
 				$p = 'articleName';
 			} else if (strtolower($p) == 'importset') {
@@ -340,7 +220,7 @@ class DALReadCSV implements IDAL {
 					// add all requested properties
 					$props = &$policy['properties'];
 					foreach ($props as $prop) {
-						$prop = "".preg_replace("/ +/", "__SPACE__", $prop);
+						$prop = "".$prop;
 						$idx = $indexMap[$prop];
 						if ($idx !== null) {
 							$term->addProperty($prop, $this->csvContent[$i][$idx]);
@@ -354,7 +234,7 @@ class DALReadCSV implements IDAL {
 		return $terms;
 	}
 	
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		return true;
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+		return array(true, array());
 	}
 }

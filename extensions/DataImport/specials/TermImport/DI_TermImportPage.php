@@ -42,6 +42,8 @@ class DITermImportPage {
 	 */
 	public static function renderTermImportDefinition($input, $args, $parser) {
 		
+		//todo: language
+		
 		$attr = "";
 		foreach ($args as $k => $v) {
 			$attr .= " ". $k . '="' . $v . '"';
@@ -59,8 +61,8 @@ class DITermImportPage {
 			$messages .= "\n* Invalid data source definition.";
 			if(!$tiDV->isValidConflictPolicy())
 			$messages .= "\n* Invalid conflict policy.";
-			if(!$tiDV->isValidMappingPolicy())
-			$messages .= "\n* Invalid mapping policy.";
+			if(!$tiDV->isValidCreationPattern())
+			$messages .= "\n* Invalid creation pattern.";
 			if(!$tiDV->isValidImportSet())
 			$messages .= "\n* Invalid import set.";
 			if(!$tiDV->isValidInputPolicy())
