@@ -501,7 +501,7 @@ begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileA
 
 [[Rationale::Shows all comments incl. a form entry field for the given article.]]
 [[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{lc:{{{show|}}}}}|true|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
 
 {{Part of bundle|value=Collaboration}}
 
