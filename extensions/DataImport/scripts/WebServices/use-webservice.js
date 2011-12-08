@@ -24,6 +24,8 @@
  * 
  */
 
+var $ = $P;
+
 var UseWebService = Class.create();
 
 UseWebService.prototype = {
@@ -52,7 +54,7 @@ UseWebService.prototype = {
 		
 		$("step1-go-img").style.display = "none";
 		$("step2-go-img").style.display = "";
-
+		
 		$("step2").style.display = "";
 		$("step3").style.display = "none";
 		$("step4").style.display = "none";
@@ -614,5 +616,5 @@ UseWebService.prototype = {
 	}
 };
 
-var useWSSpecial = new UseWebService();
+window.useWSSpecial = new UseWebService();
 
