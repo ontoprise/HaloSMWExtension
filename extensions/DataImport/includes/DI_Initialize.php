@@ -116,7 +116,7 @@ function smwfDISetupExtension() {
 	$wgAutoloadClasses['DICL']  = 
 		$smwgDIIP.'/includes/TermImport/DI_CL.php';
 	$wgAutoloadClasses['DITermCollection']  = 
-		$smwgDIIP.'/includes/TermImport/DI_Termcollection.php';
+		$smwgDIIP.'/includes/TermImport/DI_TermCollection.php';
 	$wgAutoloadClasses['DITerm']  = 
 		$smwgDIIP.'/includes/TermImport/DI_Termcollection.php';
 	$wgAutoloadClasses['DIDAMRegistry']  = 
@@ -178,10 +178,20 @@ function smwfDISetupExtension() {
 	$wgResourceModules['ext.dataimport.ti'] = 
 		$commonProperties + 
 		array(
-			'scripts' => array('scripts/TermImport/termimport.js'),
+			'scripts' => array('scripts/TermImport/termImport.js'),
 			'styles' => array('skins/TermImport/termimport.css'),
 			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
 		);
+		
+		
+	$wgResourceModules['ext.dataimport.usews'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('scripts/WebServices/use-webservice.js'),
+			'styles' => array('skins/webservices/webservices.css'),
+			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
+		);
+		
 
 	$langMSGScriptIntro = 'scripts/Language/DI_LanguageUser';
 	$langMSGScript = $langMSGScriptIntro.'En.js';

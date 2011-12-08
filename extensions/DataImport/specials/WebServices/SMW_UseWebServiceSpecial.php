@@ -117,10 +117,8 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<span id=\"step1-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"useWSSpecial.processStep1()\">";
 		$html .= "</span>";
-
-		$html .= "</div>";
-
-
+		
+				$html .= "</div>";
 
 		//2. Define parameters
 		$html .= "<div id=\"step2\" class=\"StepDiv\" style=\"display: none\">";
@@ -130,9 +128,10 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 
 		$html .= "<table id=\"step2-parameters\"><tr><th>".wfMsg('smw_wwsu_alias')."</th><th id=\"step2-use-label\" style=\"visibility: hidden\">".wfMsg('smw_wwsu_use')."<span onclick=\"useWSSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step2-use\"/></span></th><th>".wfMsg('smw_wwsu_value')."</th><th>".wfMsg('smw_wwsu_defaultvalue')."</th></tr></table>";
-		$html .= "<div id=\"step2-noparameters\">".wfMsg("smw_wwsu_noparameters")."</div>";
+		//$html .= "<div id=\"step2-noparameters\">".wfMsg("smw_wwsu_noparameters")."</div>";
 		
-		$html .= "<div id=\"step2-help\" class=\"WSHLPMSG\" style=\"display:none\">".wfMsg("smw_wsuse_s2-help")."</div>";
+		$html .= "<div id=\"step2-help\" class=\"WSHLPMSG\" style=\"display:none\">"
+			.wfMsg("smw_wsuse_s2-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step2-go\" class=\"OKButton\">";
@@ -199,6 +198,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= '<p>'.wfMsg('smw_wwsu_sort');
 		$html .= '<input id="step4-sort-checkbox" type="checkbox" onchange="useWSSpecial.displaySortDetails()"/>';
 		$html .= '<span id="step4-sort-details" style="display: none">';
+		
 		$html .= '<span class="step4-format-labels">'.wfMsg('smw_wwsu_sort_by').'</span>';
 		$html .= '<select id="step4-sort-column"></select>';
 		$html .= '<span class="step4-format-labels">'.wfMsg('smw_wwsu_sort_order').'</span>';
@@ -206,7 +206,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<option value=\"".wfMsg('smw_wwsu_sort_order_asc')."\">".wfMsg('smw_wwsu_sort_order_asc')."</option>";
 		$html .= "<option value=\"".wfMsg('smw_wwsu_sort_order_desc')."\">".wfMsg('smw_wwsu_sort_order_desc')."</option>";
 		$html .= '</select>';
-		$html .= "</sption>";
+		$html .= "</span>";
 		$html .= '</p>';
 		
 		//template
@@ -295,5 +295,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "</div>";
 
 		$wgOut->addHTML($html);
+		
+		$wgOut->addModules( 'ext.dataimport.usews' );
 	}
 }
