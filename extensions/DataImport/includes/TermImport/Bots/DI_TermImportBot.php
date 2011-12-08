@@ -74,13 +74,6 @@ class TermImportBot extends GardeningBot {
 	public function run($paramArray, $isAsync, $delay) {
 		echo "\r\nBot executed!\n";
 		
-		//todo: is this still valid?
-		global $smwgDefaultStore;
-		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
-			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
-			smwfGetStore()->initialize(true);
-		}
-		
 		$result = "";
 		
 		$termImportName = $paramArray["termImportName"];
@@ -96,6 +89,14 @@ class TermImportBot extends GardeningBot {
 		}
 		
 		$this->createTermImportResultContent($termImportName);
+		
+		//bot is executed in maintenaince mode in which no semantic data is stored to tsc
+		//therefore refresh tsc after bot is done
+		global $smwgDefaultStore;
+		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
+			smwfGetStore()->initialize(true);
+		}
 		
 		return array($result, "TermImport:".$termImportName."/".$timeInTitle);
 	}
@@ -221,7 +222,6 @@ class TermImportBot extends GardeningBot {
 			
 			//deal with callbacks
 			foreach($term->getCallbacks() as $callback){
-				//todo: deal also here with mapping policy
 				list($callBackSucces, $logMsgs) = $dam->executeCallback(
 					$callback, $templateName, $extraCategories, $delimiter, $cp, $termImportName);
 				

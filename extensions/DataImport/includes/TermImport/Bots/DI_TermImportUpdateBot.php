@@ -44,7 +44,6 @@ class TermImportUpdateBot extends GardeningBot {
 	}
 
 	public function getHelpText() {
-		//todo: provide help message
 		return wfMsg('smw_gard_termimportupdatebothelp');
 	}
 
@@ -52,7 +51,7 @@ class TermImportUpdateBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 	
-public function getImageDirectory() {
+	public function getImageDirectory() {
 		return 'extensions/DataImport/skins/TermImport/images';
 	}
 
@@ -73,6 +72,8 @@ public function getImageDirectory() {
 		
 		$this->updateTermImports();
 		
+		//bot is executed in maintenaince mode in which no semantic data is stored to tsc
+		//therefore refresh tsc after bot is done
 		global $smwgDefaultStore;
 		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
 			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
@@ -88,42 +89,29 @@ public function getImageDirectory() {
 	 */
 	private function getNecessaryTermImports(){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-		SMWQueryProcessor::processFunctionParams(array("[[TermImport:+]] [[Category:TermImport]]")
-			,$querystring,$params,$printouts);
-		$queryResult = explode("|",
-		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-			$printouts, SMW_OUTPUT_WIKI));
-
 		
+		global $wgLang;
+		$queryString = '[['.$wgLang->getNSText(NS_CATEGORY).':TermImport]] '.
+			'[['.$wgLang->getNSText(SMW_NS_TERM_IMPORT).':+]]';
+		
+		SMWQueryProcessor::processFunctionParams(array($queryString)
+			,$queryString, $params,$printouts);
+		$queryResult = explode("|",
+			SMWQueryProcessor::getResultFromQueryString($queryString,$params,
+				$printouts, SMW_OUTPUT_WIKI));
+
 		unset($queryResult[0]);
 
 		$necessaryTermImports = array();
 		foreach($queryResult as $tiArticleName){
+			echo("\n");
 			$tiArticleName = substr($tiArticleName, 0, strpos($tiArticleName, "]]"));
+			
 			$xmlString = smwf_om_GetWikiText('TermImport:'.$tiArticleName);
 			$start = strpos($xmlString, "<ImportSettings>");
 			$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
 			$xmlString = substr($xmlString, $start, $end);
-				
-			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
-				,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
-				"format=list", "mainlabel=-", "searchlabel=") 
-				,$querystring,$params,$printouts);
-			$queryResult =
-				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-				$printouts, SMW_OUTPUT_WIKI);
-
-			// timestamp creation depends on property type (page or date)
-			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));
-			if(strpos($queryResult, "[[:") === 0){ //type page
-				$queryResult = trim(substr($queryResult, strpos($queryResult, "|")+1));
-				$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "]")));
-			} else { //type date
-				$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "[")));
-			}
-			$timestamp = strtotime($queryResult);
 			
-
 			$tiDV = new DITermImportDefinitionValidator($xmlString);
 			if(!$tiDV->validate()){
 				echo("\nThe Term Import definition of ".$tiArticleName." is invalid.\n");
@@ -133,20 +121,52 @@ public function getImageDirectory() {
 				continue;	
 			}
 			
+			$queryString = '[[BelongsToTermImport::'.$wgLang->getNSText(SMW_NS_TERM_IMPORT).':'.$tiArticleName."]]";
+			
+			SMWQueryProcessor::processFunctionParams(array($queryString
+				,"?HasImportDate", "limit=1", "sort=HasImportDate", "order=descending",
+				"format=list", "mainlabel=-", "searchlabel=") 
+				,$queryString,$params,$printouts);
+			
+			$queryResult =
+				SMWQueryProcessor::getResultFromQueryString($queryString,$params,
+				$printouts, SMW_OUTPUT_WIKI);
+
+			// timestamp creation depends on property type (page or date)
+			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));
+			
+			if(strlen(trim($queryResult)) == 0){
+				echo("\n".$tiArticleName." has not yet been executed.");
+				$necessaryTermImports[$tiArticleName] = $xmlString;
+				continue;
+			} else {
+				if(strpos($queryResult, "[[:") === 0){ //type page
+					$queryResult = trim(substr($queryResult, strpos($queryResult, "|")+1));
+					$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "]")));
+				} else { //type date
+					$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "[")));
+				}
+				echo("\n".$tiArticleName." was last executed on: ".$queryResult);
+				
+				$timestamp = strtotime($queryResult);
+			}
+			
 			$simpleXMLElement = new SimpleXMLElement($xmlString);
 			$maxAge = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
-
-			//echo("\ntimestamp: ".$imestamp);
 			
-			if($maxAge != ""){
-				if($timestamp == 0 || (wfTime() - $timestamp - $maxAge[0]->value*60) > 0){
-					echo("\nRun this term import: ".$tiArticleName);
-					$necessaryTermImports[$tiArticleName] = $xmlString;
-				}
-			} else {
+			if(!is_array($maxAge) || !array_key_exists(0, $maxAge)){
+				echo("\n".$tiArticleName." is not executed periodically.");
 				$title = Title::newFromText("TermImport:".$tiArticleName);
 				$log->addGardeningIssueAboutArticle
 					($this->id, SMW_GARDISSUE_UPDATE_NOT_NECESSARY, $title);
+				continue;
+			}
+			
+			if((wfTime() - $timestamp - $maxAge[0]->value*60) > 0){
+				echo("\n".$tiArticleName. " needs an update");
+				$necessaryTermImports[$tiArticleName] = $xmlString;
+			} else {
+				echo("\n".$tiArticleName. " is up to date");
 			}
 		}
 		return $necessaryTermImports;
@@ -163,30 +183,11 @@ public function getImageDirectory() {
 		$this->setNumberOfTasks(1);
 		$this->addSubTask(count($necessaryTermImports));
 		
+		echo("\n\nStart processing term imports...");
 		foreach($necessaryTermImports as $termImportName => $xmlString){
 			echo("\nProcessing term import: " .$termImportName. "\n");
 			
-			$simpleXMLElement = new SimpleXMLElement($xmlString);
-
-			$moduleConfig = $simpleXMLElement->xpath("//ModuleConfiguration");
-			$moduleConfig = trim($moduleConfig[0]->asXML());
-
-			$dataSource = $simpleXMLElement->xpath("//DataSource");
-			$dataSource = trim($dataSource[0]->asXML());
-
-			$mappingPolicy = $simpleXMLElement->xpath("//MappingPolicy");
-			$mappingPolicy = trim($mappingPolicy[0]->asXML());
-
-			$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy");
-			$conflictPolicy = trim($conflictPolicy[0]->asXML());
-
-			$inputPolicy = $simpleXMLElement->xpath("//InputPolicy");
-			$inputPolicy = trim($inputPolicy[0]->asXML());
-
-			$importSets = $simpleXMLElement->xpath("//ImportSets");
-			$importSets = trim($importSets[0]->asXML());
-
-			$terms = CL::importTerms($termImportName, false);
+			$terms = DICL::importTerms($termImportName, false);
 
 			$title = Title::newFromText("TermImport:".$termImportName);	
 			if($terms != wfMsg('smw_ti_import_successful')){

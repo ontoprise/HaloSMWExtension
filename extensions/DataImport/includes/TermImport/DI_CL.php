@@ -94,8 +94,6 @@ class DICL {
 									"</select><br><br>".
 									"<div id=\"hidden_pol_type\"></div>" .
 								"<br><br></div>" . //policy
-								
-								//todo: language
 								"<div id=\"creation-pattern\">" .
 									"<br/><br/><div class=\"input-field-heading\">".
 									wfMsg('smw_ti_creation-pattern-heading').
@@ -108,7 +106,7 @@ class DICL {
 										value=\"annotations\" checked onchange=\"termImportPage.showOrHideDelimiterInput(event)\"><span>".
 										wfMsg('smw_ti_creation-pattern-label-1')."</span>".
 									"<input id=\"creationpattern-checkbox\" type=\"radio\" name=\"creation-pattern\" value=\"template\" onchange=\"termImportPage.showOrHideDelimiterInput(event)\">".
-										wfMsg('smw_ti_creation-pattern-label-1')."Template:</span>".
+										wfMsg('smw_ti_creation-pattern-label-2').":</span>".
 									"&nbsp;&nbsp;".
 									"<input name=\"template\" id=\"template-input-field\" type=\"text\"
 										class=\"wickEnabled\" constraints=\"namespace: ".NS_CATEGORY."\" 
@@ -224,7 +222,6 @@ class DICL {
 	 * creates the embedded html spans for the edit term import gui
 	 */
 	private function embedEditTermImportData($termImportName){
-		//todo: deal with edit functionality
 		$html = '<span id="editDataSpan" style="display: none">';
 		
 		$xmlString = smwf_om_GetWikiText('TermImport:'.$termImportName);
@@ -232,16 +229,30 @@ class DICL {
 		$start = strpos($xmlString, "<ImportSettings>");
 		$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
 		$xmlString = substr($xmlString, $start, $end);
+		
 		$simpleXMLElement = new SimpleXMLElement($xmlString);
 		
-		$tlId = $simpleXMLElement->xpath("//TLModules/Module/id/text()");
-		$html .= '<span id="tlId-ed">'.$tlId[0].'</span>';
-		
-		$dalId = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
-		$html .= '<span id="dalId-ed">'.$dalId[0].'</span>';
+		$damId = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
+		if(@strlen(trim(''.$damId[0])) == 0){
+			$damId = $simpleXMLElement->xpath("//DALModule/id/text()");
+		}
+		$damId = ''.$damId[0]; 
+		$html .= '<span id="dalId-ed">'.$damId.'</span>';
 		
 		$dataSource = $simpleXMLElement->xpath("//DataSource");
-		$html .= '<span id="dataSource-ed">'.rawurlencode($dataSource[0]->asXML()).'</span>';
+		
+		
+		//compute complete data source
+		$dataSourceDef = DIDAMRegistry::getDAM($damId)->getSourceSpecification();
+		$dataSourceDef = new SimpleXMLElement($dataSourceDef);
+		foreach ($dataSource[0]->children() as $child) {
+			$tag = $child->getName();
+			$value = (string)$child;
+			$dataSourceDef->$tag = $value;
+		}
+		$dataSource = $dataSourceDef->asXML();
+		
+		$html .= '<span id="dataSource-ed">'.rawurlencode($dataSource).'</span>';
 		
 		$importSet = $simpleXMLElement->xpath("//ImportSets/ImportSet/Name/text()");
 		@ $html .= '<span id="importSet-ed">'.$importSet[0].'</span>';
@@ -258,36 +269,31 @@ class DICL {
 		$properties = implode(",", $properties);
 		$html .= '<span id="properties-ed">'.$properties.'</span>';
 		
-		$mappingPolicy = $simpleXMLElement->xpath("//MappingPolicy/page/text()");
-		$html .= '<span id="mappingPolicy-ed">'.$mappingPolicy[0].'</span>';
+		$template = $simpleXMLElement->xpath("//CreationPattern/TemplateName/text()");
+		@$template = ''.$template[0];
+		$html .= '<span id="templateName-ed">'.$template.'</span>';
 		
-		$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy/overwriteExistingTerms/text()");
+		$delimiter = $simpleXMLElement->xpath("//CreationPattern/Delimiter/text()");
+		@$delimiter = ''.$delimiter[0];
+		if($delimiter == '') $delimiter = ',';
+		$html .= '<span id="delimiter-ed">'.$delimiter.'</span>';
+		
+		$extraCategories = $simpleXMLElement->xpath("//CreationPattern/ExtraCategories/text()");
+		@$extraCategories = ''.$extraCategories[0];
+		$html .= '<span id="extraCategories-ed">'.$extraCategories.'</span>';
+		
+		$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy/OverwriteExistingTerms/text()");
 		$conflictPolicy = $conflictPolicy[0] == "true" ? "overwrite" : "preserve current versions"; 
 		$html .= '<span id="conflictPolicy-ed">'.$conflictPolicy.'</span>';
 
-				$html .= '<span id="termImportName-ed">'.$termImportName.'</span>';
+		$html .= '<span id="termImportName-ed">'.$termImportName.'</span>';
 		
 		$updatePolicy = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
 		$updatePolicy = $updatePolicy ? $updatePolicy[0] : "0"; 
 		$html .= '<span id="updatePolicy-ed">'.$updatePolicy.'</span>';
 		
-		$xmlString = @ smwf_ti_connectTL($tlId[0]);
-		$xmlString = str_replace('xmlns="http://www.ontoprise.de/smwplus#"'
-				, "", $xmlString);
-		$simpleXMLElement = new SimpleXMLElement($xmlString);
-		$tlDesc = $simpleXMLElement->xpath("//TLModules/Module/desc/text()");
-		$html .= '<span id="tl-desc">'.$tlDesc[0].'</span>';
-		
-		$dalDesc = $simpleXMLElement->xpath("//Module[./id/text() = '".$dalId[0]."']/desc/text()");
-		$html .= '<span id="dal-desc">'.$dalDesc[0].'</span>';
-		
-		$dals = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
-		if($dals != null){
-			$dals = implode(",", $dals);
-			$html .= '<span id="dalIds">'.$dals.'</span>';
-		} 
-		
-		$html .= "</span>";
+		$damDescription = DIDAMRegistry::getDAMDesc($damId);
+		$html .= '<span id="dal-desc">'.$damDescription.'</span>';
 		
 		return $html;	
 	}
@@ -457,7 +463,6 @@ function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
 	global $wgOut;	
 	
 	$dam = DIDAMRegistry::getDAM($damID);
-	//todo: add error handling if dam does not exist
 	
 	$damDescription = DIDAMRegistry::getDAMDesc($damID);
 	$source = $dam->getSourceSpecification();

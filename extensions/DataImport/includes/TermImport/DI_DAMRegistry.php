@@ -66,7 +66,7 @@ class DIDAMConfiguration {
 	public function getHTML(){
 		return "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"".
 			" onMouseOut=\"termImportPage.showRightDAM(event, this)\"".
-			" onClick=\"termImportPage.getDAL(event, this, '$this->className')\">".
+			" onClick=\"termImportPage.getDAL(event, this, '$this->className')\" id=\"$this->className\">".
 			" <a>$this->label</a></div>";
 	}
 	
