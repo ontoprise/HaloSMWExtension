@@ -52,17 +52,17 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 		// get all queries using $this->oldInstance
 		// TODO: QRC_DOI_LABEL is missing
 		/*$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOI_LABEL);
-		 $propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldInstance);
-		 $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
+		 $instanceStringDi = new SMWDIString($this->$this->oldInstance->getPrefixedText());
+		 $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $instanceStringDi);
 		 foreach($subjects as $s) {
 			$subjects[] = $s->getTitle();
 			}*/
 
-		$this->makeTitleListUnique($subjects);
+		$subjects = $this->makeTitleListUnique($subjects);
 		return $subjects;
 	}
 
-	public function refactor($save = true) {
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
 		$subjectDBkeys = $this->getAffectedPages();
 
@@ -77,12 +77,14 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
 		// move article
 		if ($save) {
 			$this->oldInstance->moveTo($this->newInstance);
 		}
+		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
 
 	/**

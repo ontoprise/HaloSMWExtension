@@ -16,6 +16,11 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/**
+ * 
+ * @author Kai Kuehn
+ *
+ */
 class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 
 	var $category;
@@ -31,29 +36,36 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 		$store = smwfGetSemanticStore();
 		$instances = $store->getDirectInstances($this->category);
 		$directSubcategories = $store->getDirectSubCategories($this->category);
-		$allSubCategories = $store->getSubCategories($this->category);
 
 		// get all queries $this->category is used in
-		$queries = array();
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-		$propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
-		foreach($subjects as $s) {
-			$queries[] = $s->getTitle();
-		}
+        $queries = array();
+        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
+        $categoryStringDi = new SMWDIString($this->category->getText());
+        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
+        foreach($subjects as $s) {
+            $queries[] = $s->getTitle();
+        }
 		$results = array();
 		$results['instances'] = $instances;
 		$results['queries'] = $queries;
 		$results['directSubcategories'] = $directSubcategories;
-		$results['allSubCategories'] = $allSubCategories;
 
 		return $results;
 	}
 
-	public function refactor($save = true) {
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 		if (array_key_exists('onlyCategory', $this->options) && $this->options['onlyCategory'] == true) {
 			$a = new Article($this->category);
-			$this->deleteArticle($a);
+			if ($save) {
+				if (!SRFTools::deleteArticle($a)) {
+					$logMessages[] = 'Deletion failed: '.$this->category->getPrefixedText();
+				}
+			}
+			$logMessages[] = 'Article deleted: '.$this->category->getPrefixedText();
+			if (!is_null($testData)) {
+				$testData[$this->category->getPrefixedText()] = 'deleted';
+			}
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
 			return;
 		}
 
@@ -63,44 +75,115 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 			// if instances are completely removed, there is no need to remove annotations before
 			foreach($results['instances'] as $i) {
 				$a = new Article($i);
-				$this->deleteArticle($a);
+				if ($save) {
+					if (!SRFTools::deleteArticle($a)) {
+						$logMessages[] = 'Deletion failed: '.$i->getPrefixedText();
+					}
+				}
+				$logMessages[] = 'Article deleted: '.$i->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$i->getPrefixedText()] = 'deleted';
+				}
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 		} else if (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true) {
-			$pom = WOMProcessor::parseToWOM($wikitext);
-
-			# iterate trough the annotations
-			$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
-			foreach($objects as $o){
-
-				$name = $o->getName();
-				if ($name == $this->category->getText()) {
-					$toDelete[] = $o;
+			foreach($results['instances'] as $i) {
+				$rev = Revision::newFromTitle($i);
+				if (is_null($rev)) continue;
+				$wikitext = $this->removeCategoryAnnotation($rev->getRawText());
+				if ($save) {
+					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 				}
-
+				$logMessages[] = 'Removed category annotation from: '.$i->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$i->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
+				}
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 		}
 
 		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true) {
-
+			foreach($results['queries'] as $q) {
+				$rev = Revision::newFromTitle($q);
+				if (is_null($rev)) continue;
+				$wikitext = $this->removeQuery($rev->getRawText());
+				if ($save) {
+					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				}
+				$logMessages[] = 'Removed query from: '.$i->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$i->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
+				}
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
+			}
 		}
 
 		if (array_key_exists('deleteSubcategories', $this->options) && $this->options['deleteSubcategories'] == true) {
-
+			foreach($results['directSubcategories'] as $c) {
+				$op = new SMWRFDeleteCategoryOperation($c, array('deleteSubcategories'=>true, 'onlyCategory' => true));
+				$op->refactor($save, $logMessages, $testData);
+			}
 		}
 
 		if (array_key_exists('deleteAllInstancesOfSubcategories', $this->options) && $this->options['deleteAllInstancesOfSubcategories'] == true) {
-
-		}
-	}
-
-	protected function deleteArticle($a) {
-		global $wgUser;
-		$reason = "Removed by Semantic Refactoring extension";
-		if ( wfRunHooks( 'ArticleDelete', array( &$a, &$wgUser, &$reason, &$error ) ) ) {
-			if ( $this->doDeleteArticle( $reason ) ) {
-				$deleted = $this->mTitle->getPrefixedText();
-				wfRunHooks( 'ArticleDeleteComplete', array( &$this, &$wgUser, $reason, $id ) );
+			foreach($results['directSubcategories'] as $c) {
+				$op = new SMWRFDeleteCategoryOperation($c, array('deleteAllInstancesOfSubcategories'=>true, 'removeInstances' => true));
+				$op->refactor($save, $logMessages, $testData);
 			}
 		}
 	}
+
+	private function removeQuery($wikitext) {
+
+		$wom = WOMProcessor::parseToWOM($wikitext);
+		$toDelete = array();
+
+		# iterate trough the annotations
+		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+
+		foreach($objects as $o){
+			$results = array();
+			$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
+			foreach($results as $c){
+				$name = $c->getName();
+				if ($name == $this->category->getText()) {
+					$toDelete[] = $o;
+				}
+			}
+
+		}
+
+		foreach($toDelete as $d) {
+			$wom->removePageObject($d->getObjectID());
+		}
+
+		$wikitext = $wom->getWikiText();
+		return $wikitext;
+	}
+
+	private function removeCategoryAnnotation($wikitext) {
+
+		$wom = WOMProcessor::parseToWOM($wikitext);
+		$toDelete = array();
+
+		# iterate trough the annotations
+		$objects = $wom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
+		foreach($objects as $o){
+
+			$name = $o->getName();
+			if ($name == $this->category->getText()) {
+				$toDelete[] = $o;
+			}
+
+		}
+
+		foreach($toDelete as $d) {
+			$wom->removePageObject($d->getObjectID());
+		}
+
+		$wikitext = $wom->getWikiText();
+		return $wikitext;
+	}
+
+	
 }

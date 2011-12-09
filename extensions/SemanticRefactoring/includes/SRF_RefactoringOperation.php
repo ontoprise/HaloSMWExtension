@@ -25,14 +25,20 @@
  */
 abstract class SMWRFRefactoringOperation {
 
-	var $mAffectedPages = NULL;
-
+	protected $mAffectedPages = NULL;
+    protected $mBot;
+    
 	public function getAffectedPages() {
 		if (is_null($this->mAffectedPages)) {
 			$this->mAffectedPages = $this->queryAffectedPages();
 		}
 		return $this->mAffectedPages;
 	}
+	
+	public function setBot(GardeningBot $bot) {
+		$this->mBot = $bot;
+	}
+	
 	/**
 	 * Returns all pages which must be changed for a refactoring.
 	 *
@@ -44,9 +50,10 @@ abstract class SMWRFRefactoringOperation {
 	 * Performs the actual refactoring
 	 *
 	 * @param boolean $save
-
+	 * @param string [] & $logMessages
+	 * @param array & $testData
 	 */
-	public abstract function refactor($save = true);
+	public abstract function refactor($save = true, & $logMessages, & $testData = NULL);
 
 	protected function splitRecordValues($value) {
 		$valueArray = explode(";", $value);
@@ -86,6 +93,8 @@ abstract class SMWRFRefactoringOperation {
 		}
 	}
 
+	
+
 	protected function replaceValueInAnnotation($objects) {
 		foreach($objects as $o){
 
@@ -102,7 +111,7 @@ abstract class SMWRFRefactoringOperation {
 
 	public static function makeTitleListUnique($titles) {
 		usort($titles, array("SMWRFRefactoringOperation", "compareTitles"));
-		
+
 		$result = array();
 		$last = reset($titles);
 		if ($last !== false) $result[] = $last;
@@ -114,10 +123,10 @@ abstract class SMWRFRefactoringOperation {
 			$last = $titles[$i];
 			$result[] = $titles[$i];
 		}
-		
+
 		return $result;
 	}
-    
+
 	/* callback methods */
 	private static function compareTitles($a, $b) {
 		return strcmp($a->getPrefixedText(), $b->getPrefixedText());

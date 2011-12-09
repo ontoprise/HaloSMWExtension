@@ -54,18 +54,19 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 		}
 
 		// get all queries using $this->property
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-		$propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldProperty);
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
-		foreach($subjects as $s) {
-			$subjects[] = $s->getTitle();
-		}
+        $queries = array();
+        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
+        $propertyStringDi = new SMWDIString($this->property->getText());
+        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
+        foreach($subjects as $s) {
+            $queries[] = $s->getTitle();
+        }
 
-		$this->makeTitleListUnique($subjects);
+		$subjects = $this->makeTitleListUnique($subjects);
 		return $subjects;
 	}
 
-	public function refactor($save = true) {
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
 		$subjectDBkeys = $this->getAffectedPages();
 
@@ -80,12 +81,14 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
 		// move article
 		if ($save) {
 			$this->oldProperty->moveTo($this->newProperty);
 		}
+		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
 
 

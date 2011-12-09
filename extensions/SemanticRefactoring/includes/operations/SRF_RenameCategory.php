@@ -57,18 +57,19 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 		}
 
 		// get all queries using $this->oldCategory
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-		$propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
-		foreach($subjects as $s) {
-			$subjects[] = $s->getTitle();
-		}
+	    $queries = array();
+        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
+        $categoryStringDi = new SMWDIString($this->$this->oldCategory->getText());
+        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
+        foreach($subjects as $s) {
+            $queries[] = $s->getTitle();
+        }
 
-		$this->makeTitleListUnique($subjects);
+		$subjects = $this->makeTitleListUnique($subjects);
 		return $subjects;
 	}
 
-	public function refactor($save = true) {
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
 		$subjectDBkeys = $this->getAffectedPages();
 
@@ -83,12 +84,14 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
 		// move article
 		if ($save) {
 			$this->oldCategory->moveTo($this->newCategory);
 		}
+		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
 
 	/**

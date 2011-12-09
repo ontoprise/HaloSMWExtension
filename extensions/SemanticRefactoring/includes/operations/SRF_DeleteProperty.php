@@ -16,66 +16,204 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/**
+ * 
+ * @author Kai Kuehn
+ *
+ */
 class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 
-    var $property;
-    var $options;
+	var $property;
+	var $options;
 
-    public function __construct($category, $options) {
-        $this->property = Title::newFromText($category, NS_CATEGORY);
-        $this->options = $options;
-    }
+	public function __construct($category, $options) {
+		$this->property = Title::newFromText($category, SMW_NS_PROPERTY);
+		$this->options = $options;
+	}
 
-    public function queryAffectedPages() {
+	public function queryAffectedPages() {
 
-        $store = smwfGetSemanticStore();
-        $smwstore = smwfGetStore();
-        $propertyDi = SMWDIProperty::newFromUserLabel($this->property);
-        $instances = $smwstore->getAllPropertySubjects($propertyDi);
-        
-        $directSubProperties = $store->getDirectSubProperties($this->property);
-        $allSubProperties = $store->getSubProperties($this->property);
+		$store = smwfGetSemanticStore();
+		$smwstore = smwfGetStore();
 
-        // get all queries $this->property is used in
-        $queries = array();
-        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-        $propertyWPDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
-        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyWPDi);
-        foreach($subjects as $s) {
-            $queries[] = $s->getTitle()->getPrefixedDBkey();
-        }
-        $results = array();
-        $results['instances'] = $instances;
-        $results['queries'] = $queries;
-        $results['directSubProperties'] = $directSubcategories;
-        $results['allSubProperties'] = $allSubCategories;
+		// get all instances using $this->property as annotation
+		$propertyDi = SMWDIProperty::newFromUserLabel($this->property->getText());
+		$pageDIs = $smwstore->getAllPropertySubjects($propertyDi);
+		$instances = array();
+		foreach($pageDIs as $di) {
+			$instances[] = $di->getTitle();
+		}
 
-        return $results;
-    }
+		// get all direct subproperties of $this->property
+		$directSubProperties = array();
+		$dsp = $store->getDirectSubProperties($this->property);
+		foreach($dsp as $tuple) {
+			list($property, $hasChildren) = $tuple;
+			$directSubProperties[] = $property;
+		}
 
-    public function refactor($save = true) {
-        if (array_key_exists('onlyCategory', $this->options) && $this->options['onlyCategory'] == true) {
-            $a = new Article($this->property);
-            $a->doDelete();
-            return;
-        }
+		// get all queries $this->property is used in
+		$queries = array();
+		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
+		$propertyStringDi = new SMWDIString($this->property->getText());
+		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
+		foreach($subjects as $s) {
+			$queries[] = $s->getTitle();
+		}
+		$results = array();
+		$results['instances'] = $instances;
+		$results['queries'] = $queries;
+		$results['directSubProperties'] = $directSubProperties;
 
-        if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
-            // if instances are completely removed, there is no need to remove annotations before
-        } else if (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true) {
+		return $results;
+	}
 
-        }
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+		if (array_key_exists('onlyProperty', $this->options) && $this->options['onlyProperty'] == true) {
+			$a = new Article($this->property);
+			if ($save) {
+				if (!SRFTools::deleteArticle($a)) {
+					$logMessages[] = 'Deletion failed: '.$this->property->getPrefixedText();
+				}
+			}
+			$logMessages[] = 'Article deleted: '.$this->property->getPrefixedText();
+			if (!is_null($testData)) {
+				$testData[$this->property->getPrefixedText()] = 'deleted';
+			}
+			return;
+		}
 
-        if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true) {
+		$results = $this->getAffectedPages();
 
-        }
+		if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
+			// if instances are completely removed, there is no need to remove annotations before
+			foreach($results['instances'] as $i) {
+				$a = new Article($i);
+				if ($save) {
+					if (!SRFTools::deleteArticle($a)) {
+						$logMessages[] = 'Deletion failed: '.$i->getPrefixedText();
+					}
+				}
+				$logMessages[] = 'Article deleted: '.$i->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$i->getPrefixedText()] = 'deleted';
+				}
+			}
+		} else if (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true) {
+			foreach($results['instances'] as $i) {
+				$rev = Revision::newFromTitle($i);
+				if (is_null($rev)) continue;
+				$wikitext = $this->removePropertyAnnotation($rev->getRawText());
+				if ($save) {
+					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				}
+				$logMessages[] = 'Removed property annotation from: '.$i->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$i->getPrefixedText()] = array('removePropertyAnnotations', $wikitext);
+				}
+			}
+		}
 
-        if (array_key_exists('deleteSubcategories', $this->options) && $this->options['deleteSubcategories'] == true) {
-                
-        }
+		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true) {
+			foreach($results['queries'] as $q) {
+				$rev = Revision::newFromTitle($q);
+				if (is_null($rev)) continue;
+				$wikitext = $this->removeQuery($rev->getRawText());
+				if ($save) {
+					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				}
+				$logMessages[] = 'Removed query from: '.$q->getPrefixedText();
+				if (!is_null($testData)) {
+					$testData[$q->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
+				}
+			}
+		}
 
-        if (array_key_exists('deleteAllInstancesOfSubcategories', $this->options) && $this->options['deleteAllInstancesOfSubcategories'] == true) {
+		if (array_key_exists('deleteSubproperties', $this->options) && $this->options['deleteSubproperties'] == true) {
+			foreach($results['directSubcategories'] as $c) {
+				$op = new SMWRFDeleteCategoryOperation($c, array('deleteSubproperties'=>true, 'onlyProperty' => true));
+				$op->refactor($save, $logMessages, $testData);
+			}
+		}
 
-        }
-    }
+		if (array_key_exists('deleteAllInstancesUsingSubproperties', $this->options) && $this->options['deleteAllInstancesUsingSubproperties'] == true) {
+			foreach($results['directSubcategories'] as $c) {
+				$op = new SMWRFDeleteCategoryOperation($c, array('deleteAllInstancesUsingSubproperties'=>true, 'removeInstancesUsingProperty' => true));
+				$op->refactor($save, $logMessages, $testData);
+			}
+		}
+	}
+
+	private function removeQuery($wikitext) {
+
+		$wom = WOMProcessor::parseToWOM($wikitext);
+		$toDelete = array();
+
+		# iterate trough the annotations
+		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+
+		foreach($objects as $o){
+			$deleted = false;
+			$results = array();
+			$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
+			foreach($results as $c){
+				$name = $c->getPropertyName();
+				if ($name == $this->property->getText()) {
+					$toDelete[] = $o->getObjectID();
+					$deleted = true;
+				}
+			}
+				
+			if ($deleted) continue;
+
+			// find printout
+			$results = array();
+			$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
+			foreach($results as $paramValue) {
+				$paramTexts = array();
+				$this->findObjectByID($paramValue, WOM_TYPE_TEXT, $printouts);
+				foreach($printouts as $po){
+					$value = $po->getWikiText();
+					$value = trim($value);
+					if ($value == '?'.$this->oldProperty->getText()) {
+						$toDelete[] = $o->getObjectID();
+					}
+
+				}
+			}
+		}
+		
+        $toDelete = array_unique($toDelete);
+		foreach($toDelete as $id) {
+    		$wom->removePageObject($id);
+		}
+
+		$wikitext = $wom->getWikiText();
+		return $wikitext;
+	}
+
+	private function removePropertyAnnotation($wikitext) {
+
+		$wom = WOMProcessor::parseToWOM($wikitext);
+		$toDelete = array();
+
+		# iterate trough the annotations
+		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		foreach($objects as $o){
+
+			$name = $o->getPropertyName();
+			if ($name == $this->property->getText()) {
+				$toDelete[] = $o;
+			}
+
+		}
+
+		foreach($toDelete as $d) {
+			$wom->removePageObject($d->getObjectID());
+		}
+
+		$wikitext = $wom->getWikiText();
+		return $wikitext;
+	}
+
 }

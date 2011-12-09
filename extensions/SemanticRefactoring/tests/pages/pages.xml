@@ -1,0 +1,61 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd"
+	version="0.3" xml:lang="en">
+	<siteinfo>
+		<sitename>Halo3wiki</sitename>
+		<base>http://localhost/mediawiki/index.php/Main_Page</base>
+		<generator>MediaWiki 1.15.3</generator>
+		<case>first-letter</case>
+		<namespaces>
+			<namespace key="-2">Media</namespace>
+			<namespace key="-1">Special</namespace>
+			<namespace key="0" />
+			<namespace key="1">Talk</namespace>
+			<namespace key="2">User</namespace>
+			<namespace key="3">User talk</namespace>
+			<namespace key="4">Halo3wiki</namespace>
+			<namespace key="5">Halo3wiki talk</namespace>
+			<namespace key="6">File</namespace>
+			<namespace key="7">File talk</namespace>
+			<namespace key="8">MediaWiki</namespace>
+			<namespace key="9">MediaWiki talk</namespace>
+			<namespace key="10">Template</namespace>
+			<namespace key="11">Template talk</namespace>
+			<namespace key="12">Help</namespace>
+			<namespace key="13">Help talk</namespace>
+			<namespace key="14">Category</namespace>
+			<namespace key="15">Category talk</namespace>
+			<namespace key="102">Property</namespace>
+			<namespace key="103">Property talk</namespace>
+			<namespace key="104">Type</namespace>
+			<namespace key="105">Type talk</namespace>
+			<namespace key="106">Form</namespace>
+			<namespace key="107">Form talk</namespace>
+			<namespace key="108">Concept</namespace>
+			<namespace key="109">Concept talk</namespace>
+		</namespaces>
+	</siteinfo>
+	<page>
+		<title>Category:Person</title>
+		<id>1</id>
+		<revision>
+			<id>1</id>
+			<timestamp>2009-10-16T10:39:23Z</timestamp>
+			<contributor>
+				<ip>MediaWiki default</ip>
+			</contributor>
+			<text xml:space="preserve"></text>
+		</revision>
+		<title>Kai</title>
+        <id>2</id>
+        <revision>
+            <id>1</id>
+            <timestamp>2009-10-16T10:39:23Z</timestamp>
+            <contributor>
+                <ip>MediaWiki default</ip>
+            </contributor>
+            <text xml:space="preserve">[[Category:Person]]</text>
+        </revision>
+	</page>
+</mediawiki>

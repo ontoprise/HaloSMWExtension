@@ -35,8 +35,12 @@ class SMWRFChangeValueOperation extends SMWRFRefactoringOperation {
 		return $this->instanceSet;
 	}
 
-	public function refactor($save = true) {
-
+	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+		foreach($this->instanceSet as $o) {
+			$rev = Revision::newFromTitle($o);
+			$this->changeContent($rev->getRawText());
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
+		}
 	}
 
 	protected function replaceValueInAnnotation($objects) {

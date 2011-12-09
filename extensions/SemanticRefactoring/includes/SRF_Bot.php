@@ -73,5 +73,34 @@ class SMWRFRefactoringBot extends GardeningBot {
 			return "RefactoringBot should not be executed synchronously!";
 		}
 		
+		if (!array_key_exists('operation', $paramArray)) {
+			return "Refactoring operation not specified.";
+		}
+		
+		$operation = $paramArray['operation'];
+		
+		$parameters = array();
+	    if (!array_key_exists('parameters', $paramArray)) {
+            $parameters = new stdClass();
+        } else {
+        	$parameters = json_decode($paramArray['parameters']);
+        }
+        
+        switch($operation) {
+        	case 'renameProperty': 
+        		$oldProperty = $parameters->oldProperty;
+        		$newProperty = $parameters->newProperty;
+        		$adaptAnnotations = $parameters->adaptAnnotations;
+        		$op = new SMWRFRenamePropertyOperation($oldProperty, $newProperty, $adaptAnnotations);
+        		$num = count($op->getAffectedPages());
+        		
+        }
+        $op->setBot($this);
+        $this->totalWork($num);
+        
+        $logMessages=array();
+        $op->refactor(true, $logMessages);
+        
+        return implode("\n*", $logMessages);
 	}
 }
