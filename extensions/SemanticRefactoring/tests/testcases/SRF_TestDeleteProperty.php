@@ -28,49 +28,61 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteProperty.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
-    protected $backupGlobals = FALSE;
 
-    function setUp() {
+	protected $backupGlobals = FALSE;
 
-    }
+	static function setUpBeforeClass() {
+		global $srfDeletePropertyArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfDeletePropertyArticles);
+	}
 
-    function tearDown() {
+	function tearDown() {
 
-    }
+	}
 
-    function testRemoveProperty() {
-        $r = new SMWRFDeletePropertyOperation('HasName', array('onlyProperty'=>true));
-        $logMessages = array();
-        $testData = array();
-        $r->refactor(false, $logMessages, $testData);
-        print_r($testData);
-    }
+	function testRemoveProperty() {
+		$r = new SMWRFDeletePropertyOperation('Has child', array('onlyProperty'=>true));
+		$logMessages = array();
+		$testData = array();
+		$r->refactor(false, $logMessages, $testData);
+		$this->assertEquals('deleted', $testData['Property:Has child']);
+		//print_r($testData);
+	}
 
-    function testRemovePropertyWithInstances() {
-        $r = new SMWRFDeletePropertyOperation('HasName', array('removeInstancesUsingProperty'=>true));
-        $logMessages = array();
-        $testData = array();
-        $r->refactor(false, $logMessages, $testData);
-        print_r($testData);
-    }
+	function testRemovePropertyWithInstances() {
+		$r = new SMWRFDeletePropertyOperation('Has son', array('removeInstancesUsingProperty'=>true));
+		$logMessages = array();
+		$testData = array();
+		$r->refactor(false, $logMessages, $testData);
+		$this->assertEquals('deleted', $testData['Bernd']);
+		//print_r($testData);
+	}
 
 
 
-    function testRemoveQueries() {
-        $r = new SMWRFDeletePropertyOperation('HasName', array('removeQueries'=>true));
-        $logMessages = array();
-        $testData = array();
-        $r->refactor(false, $logMessages, $testData);
-        print_r($testData);
-    }
+	function testRemoveQueries() {
+		$r = new SMWRFDeletePropertyOperation('Has son', array('removeQueries'=>true));
+		$logMessages = array();
+		$testData = array();
+		$r->refactor(false, $logMessages, $testData);
+		list($op, $wikitext) = $testData['All sons'];
+        $this->assertEquals('removePropertyAnnotations', $op);
+        $this->assertNotContains('#ask', $wikitext);
+		//print_r($testData);
+	}
 
-    function testRemovePropertyAnnotations() {
-        $r = new SMWRFDeletePropertyOperation('HasName', array('removePropertyAnnotations'=>true));
-        $logMessages = array();
-        $testData = array();
-        $r->refactor(false, $logMessages, $testData);
-        print_r($testData);
-    }
+	function testRemovePropertyAnnotations() {
+		$r = new SMWRFDeletePropertyOperation('Has son', array('removePropertyAnnotations'=>true));
+		$logMessages = array();
+		$testData = array();
+		$r->refactor(false, $logMessages, $testData);
+		list($op, $wikitext) = $testData['Bernd'];
+        $this->assertEquals('removePropertyAnnotations', $op);
+        $this->assertNotContains('[[Has son::Kai]]', $wikitext);
+		//print_r($testData);
+	}
 }

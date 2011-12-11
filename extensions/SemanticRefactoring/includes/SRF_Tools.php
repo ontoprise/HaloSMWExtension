@@ -17,7 +17,7 @@
  *
  */
 /**
- * 
+ *
  * @author Kai Kuehn
  *
  */
@@ -34,4 +34,28 @@ class SRFTools {
 		}
 		return false;
 	}
+
+	public static function makeTitleListUnique($titles) {
+		usort($titles, array("SRFTools", "compareTitles"));
+
+		$result = array();
+		$last = reset($titles);
+		if ($last !== false) $result[] = $last;
+		for($i = 1, $n = count($titles); $i < $n; $i++ ) {
+			if ($titles[$i]->getPrefixedText() == $last->getPrefixedText()) {
+				$titles[$i] = NULL;
+				continue;
+			}
+			$last = $titles[$i];
+			$result[] = $titles[$i];
+		}
+
+		return $result;
+	}
+
+	/* callback methods */
+	private static function compareTitles($a, $b) {
+		return strcmp($a->getPrefixedText(), $b->getPrefixedText());
+	}
+	
 }

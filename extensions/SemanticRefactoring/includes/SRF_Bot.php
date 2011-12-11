@@ -90,10 +90,13 @@ class SMWRFRefactoringBot extends GardeningBot {
         	case 'renameProperty': 
         		$oldProperty = $parameters->oldProperty;
         		$newProperty = $parameters->newProperty;
-        		$adaptAnnotations = $parameters->adaptAnnotations;
-        		$op = new SMWRFRenamePropertyOperation($oldProperty, $newProperty, $adaptAnnotations);
-        		$num = count($op->getAffectedPages());
         		
+        		$op = new SMWRFRenamePropertyOperation($oldProperty, $newProperty);
+        		$num = $op->getNumberOfAffectedPages();
+        		break;
+        	case 'renameCategory' :
+        		//TODO: add others
+        		break;	
         }
         $op->setBot($this);
         $this->totalWork($num);

@@ -17,7 +17,7 @@
  *
  */
 /**
- * 
+ *
  * @author Kai Kuehn
  *
  */
@@ -25,14 +25,38 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 
 	var $property;
 	var $options;
+	var $affectedPages;
 
 	public function __construct($category, $options) {
 		$this->property = Title::newFromText($category, SMW_NS_PROPERTY);
 		$this->options = $options;
 	}
 
-	public function queryAffectedPages() {
+	public function getNumberOfAffectedPages() {
 
+		$this->affectedPages = $this->queryAffectedPages();
+		$num += (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true)
+		|| (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true) ? count($affectedPages['instances']) : 0;
+
+		$num += array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true ? count($affectedPages['queries']) : 0;
+
+		if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
+
+			if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
+				$num += $smwfGetSemanticStore()->getNumberOfUsage($this->property);
+			} else {
+				$subproperties = $store->getSubProperties($this->property);
+				$num += count($subproperties);
+			}
+		}
+
+		return $num;
+	}
+
+
+	public function queryAffectedPages() {
+		// calculate only once
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
 		$store = smwfGetSemanticStore();
 		$smwstore = smwfGetStore();
 
@@ -60,15 +84,17 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 		foreach($subjects as $s) {
 			$queries[] = $s->getTitle();
 		}
-		$results = array();
-		$results['instances'] = $instances;
-		$results['queries'] = $queries;
-		$results['directSubProperties'] = $directSubProperties;
+		$this->affectedPages = array();
+		$this->affectedPages['instances'] = $instances;
+		$this->affectedPages['queries'] = $queries;
+		$this->affectedPages['directSubProperties'] = $directSubProperties;
 
-		return $results;
+		return $this->affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+		$results = $this->queryAffectedPages();
+		
 		if (array_key_exists('onlyProperty', $this->options) && $this->options['onlyProperty'] == true) {
 			$a = new Article($this->property);
 			if ($save) {
@@ -83,7 +109,6 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 			return;
 		}
 
-		$results = $this->getAffectedPages();
 
 		if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
 			// if instances are completely removed, there is no need to remove annotations before
@@ -124,24 +149,19 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 				}
 				$logMessages[] = 'Removed query from: '.$q->getPrefixedText();
 				if (!is_null($testData)) {
-					$testData[$q->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
+					$testData[$q->getPrefixedText()] = array('removePropertyAnnotations', $wikitext);
 				}
 			}
 		}
 
-		if (array_key_exists('deleteSubproperties', $this->options) && $this->options['deleteSubproperties'] == true) {
-			foreach($results['directSubcategories'] as $c) {
-				$op = new SMWRFDeleteCategoryOperation($c, array('deleteSubproperties'=>true, 'onlyProperty' => true));
+		if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
+			foreach($results['directSubcategories'] as $p) {
+				$op = new SMWRFDeletePropertyOperation($p, $this->options);
 				$op->refactor($save, $logMessages, $testData);
 			}
 		}
 
-		if (array_key_exists('deleteAllInstancesUsingSubproperties', $this->options) && $this->options['deleteAllInstancesUsingSubproperties'] == true) {
-			foreach($results['directSubcategories'] as $c) {
-				$op = new SMWRFDeleteCategoryOperation($c, array('deleteAllInstancesUsingSubproperties'=>true, 'removeInstancesUsingProperty' => true));
-				$op->refactor($save, $logMessages, $testData);
-			}
-		}
+
 	}
 
 	private function removeQuery($wikitext) {
@@ -163,7 +183,7 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 					$deleted = true;
 				}
 			}
-				
+
 			if ($deleted) continue;
 
 			// find printout
@@ -182,10 +202,10 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 				}
 			}
 		}
-		
-        $toDelete = array_unique($toDelete);
+
+		$toDelete = array_unique($toDelete);
 		foreach($toDelete as $id) {
-    		$wom->removePageObject($id);
+			$wom->removePageObject($id);
 		}
 
 		$wikitext = $wom->getWikiText();

@@ -19,19 +19,23 @@
 class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 	private $oldInstance;
 	private $newInstance;
-	private $adaptAnnotations;
 
-	private $subjectDBKeys;
+	private $affectedPages;
 
 	public function __construct($oldInstance, $newInstance, $adaptAnnotations) {
 		$this->oldInstance = Title::newFromText($oldInstance);
 		$this->newInstance = Title::newFromText($newInstance);
-		$this->adaptAnnotations = $adaptAnnotations;
+
 
 	}
 
+	public function getNumberOfAffectedPages() {
+		$this->affectedPages = $this->queryAffectedPages();
+		return count($this->affectedPages);
+	}
+
 	public function queryAffectedPages() {
-		if (!$this->adaptAnnotations) return 0;
+		$this->queryAffectedPages();
 
 		// get all pages using $this->oldInstance in an annotation
 		$instanceDi = SMWDIWikiPage::newFromTitle($this->oldInstance);
@@ -58,16 +62,16 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 			$subjects[] = $s->getTitle();
 			}*/
 
-		$subjects = $this->makeTitleListUnique($subjects);
-		return $subjects;
+		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+		return $this->affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
-		$subjectDBkeys = $this->getAffectedPages();
+		$this->queryAffectedPages();
 
-		foreach($subjectDBkeys as $dbkey) {
-			$title = Title::newFromDBkey($dbkey);
+		foreach($this->affectedPages as $title) {
+				
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $this->changeContent($rev->getRawText());

@@ -28,12 +28,15 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteCategory.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = FALSE;
 
-	function setUp() {
-
+	static function setUpBeforeClass() {
+		global $srfDeleteCategoryArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfDeleteCategoryArticles);
 	}
 
 	function tearDown() {
@@ -45,32 +48,41 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		print_r($testData);
+		$this->assertEquals('deleted', $testData['Category:Person']);
+		//print_r($testData);
 	}
 
 	function testRemoveCategoryWithInstances() {
-		$r = new SMWRFDeleteCategoryOperation('Person', array('removeInstances'=>true));
+		$r = new SMWRFDeleteCategoryOperation('Man', array('removeInstances'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		print_r($testData);
+		$this->assertEquals('deleted', $testData['Kai']);
+		//print_r($testData);
 	}
 
 
 
 	function testRemoveQueries() {
-		$r = new SMWRFDeleteCategoryOperation('Person', array('removeQueries'=>true));
+		$r = new SMWRFDeleteCategoryOperation('Man', array('removeQueries'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		print_r($testData);
+		list($op, $wikitext) = $testData['All men'];
+		$this->assertEquals('removeCategoryAnnotations', $op);
+		$this->assertNotContains('#ask', $wikitext);
+		
+		//print_r($testData);
 	}
 
 	function testRemoveCategoryAnnotations() {
-		$r = new SMWRFDeleteCategoryOperation('Person', array('removeCategoryAnnotations'=>true));
+		$r = new SMWRFDeleteCategoryOperation('Man', array('removeCategoryAnnotations'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		print_r($testData);
+		list($op, $wikitext) = $testData['Kai'];
+		$this->assertEquals('removeCategoryAnnotations', $op);
+        $this->assertNotContains('[[Category:Man]]', $wikitext);
+		//print_r($testData);
 	}
 }

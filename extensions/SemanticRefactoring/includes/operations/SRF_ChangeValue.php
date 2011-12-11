@@ -34,6 +34,10 @@ class SMWRFChangeValueOperation extends SMWRFRefactoringOperation {
 	public function queryAffectedPages() {
 		return $this->instanceSet;
 	}
+	
+	public function getNumberOfAffectedPages() {
+		return count($this->instanceSet);
+	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 		foreach($this->instanceSet as $o) {

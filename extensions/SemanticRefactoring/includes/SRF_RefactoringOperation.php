@@ -25,27 +25,15 @@
  */
 abstract class SMWRFRefactoringOperation {
 
-	protected $mAffectedPages = NULL;
-    protected $mBot;
+	protected $mBot;
     
-	public function getAffectedPages() {
-		if (is_null($this->mAffectedPages)) {
-			$this->mAffectedPages = $this->queryAffectedPages();
-		}
-		return $this->mAffectedPages;
-	}
+    /**
+     * Returns the number of pages which get processed in some way.
+     * 
+     * @return int
+     */
+	public abstract function getNumberOfAffectedPages();
 	
-	public function setBot(GardeningBot $bot) {
-		$this->mBot = $bot;
-	}
-	
-	/**
-	 * Returns all pages which must be changed for a refactoring.
-	 *
-	 * @return string[] prefixed DBkeys
-	 */
-	public abstract function queryAffectedPages();
-
 	/**
 	 * Performs the actual refactoring
 	 *
@@ -54,6 +42,15 @@ abstract class SMWRFRefactoringOperation {
 	 * @param array & $testData
 	 */
 	public abstract function refactor($save = true, & $logMessages, & $testData = NULL);
+	
+	/**
+	 * Set a GardeningBot to report progress
+	 * 
+	 * @param GardeningBot $bot
+	 */
+	public function setBot(GardeningBot $bot) {
+		$this->mBot = $bot;
+	}
 
 	protected function splitRecordValues($value) {
 		$valueArray = explode(";", $value);
@@ -109,31 +106,7 @@ abstract class SMWRFRefactoringOperation {
 		}
 	}
 
-	public static function makeTitleListUnique($titles) {
-		usort($titles, array("SMWRFRefactoringOperation", "compareTitles"));
-
-		$result = array();
-		$last = reset($titles);
-		if ($last !== false) $result[] = $last;
-		for($i = 1, $n = count($titles); $i < $n; $i++ ) {
-			if ($titles[$i]->getPrefixedText() == $last->getPrefixedText()) {
-				$titles[$i] = NULL;
-				continue;
-			}
-			$last = $titles[$i];
-			$result[] = $titles[$i];
-		}
-
-		return $result;
-	}
-
-	/* callback methods */
-	private static function compareTitles($a, $b) {
-		return strcmp($a->getPrefixedText(), $b->getPrefixedText());
-	}
-	private static function isnull($a) {
-		return is_null($a);
-	}
+	
 }
 
 

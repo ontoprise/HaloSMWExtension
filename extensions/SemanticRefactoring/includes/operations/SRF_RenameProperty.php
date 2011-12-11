@@ -26,19 +26,21 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 
 	private $oldProperty;
 	private $newProperty;
-	private $adaptAnnotations;
-
-	private $subjectDBKeys;
+	private $affectedPages;
 
 	public function __construct($oldProperty, $newProperty, $adaptAnnotations) {
 		$this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
 		$this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
-		$this->adaptAnnotations = $adaptAnnotations;
 
 	}
 
+	public function getNumberOfAffectedPages() {
+		$this->affectedPages = $this->queryAffectedPages();
+		return count($this->affectedPages);
+	}
+
 	public function queryAffectedPages() {
-		if (!$this->adaptAnnotations) return 0;
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		// get all pages using $this->property
 		$propertyDi = SMWDIProperty::newFromUserLabel($this->oldProperty->getText());
@@ -54,24 +56,24 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 		}
 
 		// get all queries using $this->property
-        $queries = array();
-        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-        $propertyStringDi = new SMWDIString($this->property->getText());
-        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
-        foreach($subjects as $s) {
-            $queries[] = $s->getTitle();
-        }
+		$queries = array();
+		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
+		$propertyStringDi = new SMWDIString($this->property->getText());
+		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
+		foreach($subjects as $s) {
+			$queries[] = $s->getTitle();
+		}
 
-		$subjects = $this->makeTitleListUnique($subjects);
-		return $subjects;
+		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+		return $this->affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
-		$subjectDBkeys = $this->getAffectedPages();
+		$this->queryAffectedPages();
 
-		foreach($subjectDBkeys as $dbkey) {
-			$title = Title::newFromDBkey($dbkey);
+		foreach($this->affectedPages as $title) {
+
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $this->changeContent($rev->getRawText());
@@ -118,25 +120,25 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 			$values = $this->splitRecordValues($value);
 			array_walk($values, array($this, 'replaceTitle'));
 
-			 
+
 			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
 			$o->setSMWDataValue($newValue);
 
 		}
 	}
-	
+
 	private function replacePropertyInLink($objects) {
-	foreach($objects as $o){
+		foreach($objects as $o){
 
 
-            $value = $o->getLink();
+			$value = $o->getLink();
 
-            if ($value == $this->oldProperty->getPrefixedText()) {
-                $o->setLink($this->newProperty->getPrefixedText());
-            }
-        }
+			if ($value == $this->oldProperty->getPrefixedText()) {
+				$o->setLink($this->newProperty->getPrefixedText());
+			}
+		}
 	}
-	
+
 	private function replacePrintout($objects) {
 		foreach($objects as $o){
 			$value = $o->getWikiText();
@@ -144,7 +146,7 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 			if ($value == '?'.$this->oldProperty->getText()) {
 				$o->setText('?'.$this->newProperty->getText());
 			}
-			
+
 		}
 	}
 	public function changeContent($wikitext) {
@@ -152,7 +154,7 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-        $this->replacePropertyInAnnotation($objects);
+		$this->replacePropertyInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
@@ -169,9 +171,9 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
 				$this->replacePropertyInLink($results);
-				
+
 				$results = array();
-                $this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
+				$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
 				foreach($results as $o) {
 					$paramTexts = array();
 					$this->findObjectByID($o, WOM_TYPE_TEXT, $paramTexts);
@@ -179,10 +181,10 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 				}
 			}
 		}
-		
+
 		# TODO: iterate through rules
 		# not yet implemented in WOM*/
-	
+
 		$wikitext = $pom->getWikiText();
 		return $wikitext;
 	}

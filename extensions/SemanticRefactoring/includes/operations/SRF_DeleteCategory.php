@@ -17,7 +17,7 @@
  *
  */
 /**
- * 
+ *
  * @author Kai Kuehn
  *
  */
@@ -25,35 +25,64 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 
 	var $category;
 	var $options;
+	var $affectedPages;
 
 	public function __construct($category, $options) {
+
 		$this->category = Title::newFromText($category, NS_CATEGORY);
 		$this->options = $options;
+		$this->affectedPages = NULL;
+	}
+
+	public function getNumberOfAffectedPages() {
+
+		$this->affectedPages = $this->queryAffectedPages();
+		$num += (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true)
+		|| (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true) ? count($affectedPages['instances']) : 0;
+
+		$num += array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true ? count($affectedPages['queries']) : 0;
+
+		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
+				
+			if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
+				$num += $smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories();
+			} else {
+				$subcategories = $store->getSubCategories($this->category);
+				$num += count($subcategories);
+			}
+		}
+
+		return $num;
 	}
 
 	public function queryAffectedPages() {
+
+		// calculate only once
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		$store = smwfGetSemanticStore();
 		$instances = $store->getDirectInstances($this->category);
 		$directSubcategories = $store->getDirectSubCategories($this->category);
 
 		// get all queries $this->category is used in
-        $queries = array();
-        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-        $categoryStringDi = new SMWDIString($this->category->getText());
-        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
-        foreach($subjects as $s) {
-            $queries[] = $s->getTitle();
-        }
-		$results = array();
-		$results['instances'] = $instances;
-		$results['queries'] = $queries;
-		$results['directSubcategories'] = $directSubcategories;
+		$queries = array();
+		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
+		$categoryStringDi = new SMWDIString($this->category->getText());
+		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
+		foreach($subjects as $s) {
+			$queries[] = $s->getTitle();
+		}
+		$this->affectedPages = array();
+		$this->affectedPages['instances'] = $instances;
+		$this->affectedPages['queries'] = $queries;
+		$this->affectedPages['directSubcategories'] = $directSubcategories;
 
-		return $results;
+		return $this->affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+		$results = $this->queryAffectedPages();
+		
 		if (array_key_exists('onlyCategory', $this->options) && $this->options['onlyCategory'] == true) {
 			$a = new Article($this->category);
 			if ($save) {
@@ -69,7 +98,6 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 			return;
 		}
 
-		$results = $this->getAffectedPages();
 
 		if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
 			// if instances are completely removed, there is no need to remove annotations before
@@ -110,27 +138,23 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 				if ($save) {
 					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 				}
-				$logMessages[] = 'Removed query from: '.$i->getPrefixedText();
+				$logMessages[] = 'Removed query from: '.$q->getPrefixedText();
 				if (!is_null($testData)) {
-					$testData[$i->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
+					$testData[$q->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
 				}
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 		}
 
-		if (array_key_exists('deleteSubcategories', $this->options) && $this->options['deleteSubcategories'] == true) {
+		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
 			foreach($results['directSubcategories'] as $c) {
-				$op = new SMWRFDeleteCategoryOperation($c, array('deleteSubcategories'=>true, 'onlyCategory' => true));
+				$op = new SMWRFDeleteCategoryOperation($c, $this->options);
+				$op->setBot($mBot);
 				$op->refactor($save, $logMessages, $testData);
 			}
 		}
 
-		if (array_key_exists('deleteAllInstancesOfSubcategories', $this->options) && $this->options['deleteAllInstancesOfSubcategories'] == true) {
-			foreach($results['directSubcategories'] as $c) {
-				$op = new SMWRFDeleteCategoryOperation($c, array('deleteAllInstancesOfSubcategories'=>true, 'removeInstances' => true));
-				$op->refactor($save, $logMessages, $testData);
-			}
-		}
+
 	}
 
 	private function removeQuery($wikitext) {
@@ -147,14 +171,16 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 			foreach($results as $c){
 				$name = $c->getName();
 				if ($name == $this->category->getText()) {
-					$toDelete[] = $o;
+					$toDelete[] = $o->getObjectID();
 				}
 			}
 
 		}
+		
+		$toDelete = array_unique($toDelete);
 
-		foreach($toDelete as $d) {
-			$wom->removePageObject($d->getObjectID());
+		foreach($toDelete as $id) {
+			$wom->removePageObject($id);
 		}
 
 		$wikitext = $wom->getWikiText();
@@ -185,5 +211,5 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 		return $wikitext;
 	}
 
-	
+
 }

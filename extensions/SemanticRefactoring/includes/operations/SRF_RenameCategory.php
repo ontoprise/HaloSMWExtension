@@ -19,19 +19,25 @@
 class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 	private $oldCategory;
 	private $newCategory;
-	private $adaptAnnotations;
+	
+	private $affectedPages;
 
-	private $subjectDBKeys;
+	
 
-	public function __construct($oldCategory, $newCategory, $adaptAnnotations) {
+	public function __construct($oldCategory, $newCategory) {
 		$this->oldCategory = Title::newFromText($oldCategory, NS_CATEGORY);
 		$this->newCategory = Title::newFromText($newCategory, NS_CATEGORY);
-		$this->adaptAnnotations = $adaptAnnotations;
+		
 
 	}
 
+	public function getNumberOfAffectedPages() {
+		$this->affectedPages = $this->queryAffectedPages();
+		return count($this->affectedPages);
+	}
+
 	public function queryAffectedPages() {
-		if (!$this->adaptAnnotations) return 0;
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		// get all pages using $this->oldCategory as category annotation
 		$propertyDi = SMWDIProperty::newFromUserLabel('_TYPE');
@@ -57,23 +63,23 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 		}
 
 		// get all queries using $this->oldCategory
-	    $queries = array();
-        $qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-        $categoryStringDi = new SMWDIString($this->$this->oldCategory->getText());
-        $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
-        foreach($subjects as $s) {
-            $queries[] = $s->getTitle();
-        }
+		$queries = array();
+		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
+		$categoryStringDi = new SMWDIString($this->$this->oldCategory->getText());
+		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
+		foreach($subjects as $s) {
+			$queries[] = $s->getTitle();
+		}
 
-		$subjects = $this->makeTitleListUnique($subjects);
-		return $subjects;
+		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+		return $this->affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages, & $testData = NULL) {
 
-		$subjectDBkeys = $this->getAffectedPages();
+		$this->queryAffectedPages();
 
-		foreach($subjectDBkeys as $dbkey) {
+		foreach($this->affectedPages as $dbkey) {
 			$title = Title::newFromDBkey($dbkey);
 			$rev = Revision::newFromTitle($title);
 
@@ -102,7 +108,7 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 	 * @param int $index
 	 */
 	public function replaceTitle(& $title, $index) {
-		
+
 		if ($title == ":".$this->oldCategory->getPrefixedText()) {
 			$changed = true;
 			$title = $this->newCategory->getPrefixedText();
@@ -130,7 +136,7 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 		}
 	}
 
-	 
+
 	public function changeContent($wikitext) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
@@ -155,7 +161,7 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
 				$this->replaceCategoryInAnnotation($results);
-				
+
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
 				$this->replaceCategoryInLink($results);
