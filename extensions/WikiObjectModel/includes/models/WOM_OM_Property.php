@@ -33,7 +33,7 @@ class WOMPropertyModel extends WikiObjectModel {
 		$smwdatavalue = null;
 		// FIXME: property should be collection object according to templates
 		// if template/field used
-		if ( preg_match( '/\{\{.+\}\}/s', $value . $caption ) ) {
+		if ( preg_match ( '/\{\{.+\}\}/s', $value . $caption ) ) {
 			$value = $value . ( $caption == '' ? '' : "|{$caption}" );
 			$caption = '';
 		} else {
@@ -41,6 +41,9 @@ class WOMPropertyModel extends WikiObjectModel {
 				$smwdatavalue = SMWDataValueFactory::newPropertyObjectValue( $user_property->getDataItem(), $value, $caption );
 			} else {
 				$smwdatavalue = SMWDataValueFactory::newPropertyObjectValue( $user_property, $value, $caption );
+			}
+			if ( count ( $smwdatavalue->getErrors() ) > 0 ) {
+				$smwdatavalue = null;
 			}
 		}
 
