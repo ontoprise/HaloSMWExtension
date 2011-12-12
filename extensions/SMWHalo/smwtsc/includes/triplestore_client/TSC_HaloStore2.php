@@ -73,7 +73,7 @@ class SMWHaloStore2 extends SMWStoreAdapter {
 			$id = $db->selectRow($smw_ids, array('smw_id'), array('smw_title'=>$subjectTitle->getDBkey(), 'smw_namespace'=>$subjectTitle->getNamespace()));
 		}
 
-		if (is_null($id)) return; // something is wrong. stop here
+		if (is_null($id) || $id === false) return; // something is wrong. stop here
 
 		// delete old mappings
 		$db->delete($smw_urimapping, array('smw_id' => $id->smw_id));
