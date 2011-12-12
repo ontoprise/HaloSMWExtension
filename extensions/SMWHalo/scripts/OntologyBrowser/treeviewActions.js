@@ -592,6 +592,10 @@ OBCategoryTreeActionListener.prototype = Object
 						
                                            					    
                    	},
+                   	
+                   	executeCommand : function(commandID) {
+                   		obCategoryMenuProvider.doCommand(commandID);
+                   	},
 
 					// ---- Selection methods. Called when the entity is
 					// selected ---------------------

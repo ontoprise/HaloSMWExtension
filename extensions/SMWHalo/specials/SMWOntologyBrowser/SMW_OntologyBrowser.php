@@ -49,6 +49,9 @@ define('SMW_OB_COMMAND_INSTANCE_RENAME', 8);
 define('SMW_OB_COMMAND_ADD_SCHEMAPROPERTY', 9);
 define('SMW_OB_COMMAND_EDITPROPERTY', 10);
 
+define('SMW_OB_COMMAND_CATEGORY_DELETE', 11);
+define('SMW_OB_COMMAND_PROPERTY_DELETE', 12);
+
 // standard functions for creating a new special
 //function doSMW_OntologyBrowser() {
 //		SMW_OntologyBrowser::execute();
@@ -177,9 +180,9 @@ if(!smwfIsTripleStoreConfigured()) {
 			$html .= "</span>";
 			if ($showMenuBar)
 			{
-				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_editcategory')."</a><div id=\"categoryTreeMenu\"></div></span>
+				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_editcategory')."</a> | <a onclick=\"categoryActionListener.executeCommand(".SMW_OB_COMMAND_CATEGORY_DELETE.")\">".wfMsg('smw_ob_cmd_deletecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
 			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> 
-                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_editproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
+                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_editproperty')."</a>| <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_DELETE.")\">".wfMsg('smw_ob_cmd_deleteproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
 				$html .= $menu;
 			}
 

@@ -37,6 +37,9 @@ var SMW_OB_COMMAND_INSTANCE_EDIT = 8;
 
 var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
+var SMW_OB_COMMAND_CATEGORY_DELETE = 11;
+var SMW_OB_COMMAND_PROPERTY_DELETE = 12;
+
 // Event types
 window.OB_SELECTIONLISTENER = 'selectionChanged';
 window.OB_SELECTEDTRIPLELISTENER = 'selectedTripleChanged';
@@ -1938,8 +1941,8 @@ OBOntologySubMenu.prototype = {
 	 * 
 	 * Executes a command
 	 */
-	doCommand : function() {
-
+	doCommand : function(commandID) {
+		
 	},
 	/**
 	 * @abstract
@@ -2043,8 +2046,11 @@ OBCatgeorySubMenu.prototype = Object
 								callback.bind(this));
 					},
 
-					doCommand : function() {
-
+					doCommand : function(commandID) {
+						if (commandID) {
+							this.commandID = commandID;
+						}
+						
 						switch (this.commandID) {
 
 						case SMW_OB_COMMAND_ADDSUBCATEGORY: {
@@ -2149,7 +2155,11 @@ OBCatgeorySubMenu.prototype = Object
 							this.cancel();
 							break;
 						}
-
+						
+						case SMW_OB_COMMAND_CATEGORY_DELETE: {
+							alert('Delete command');
+							break;
+						}
 						default:
 							alert('Unknown command!');
 						}
