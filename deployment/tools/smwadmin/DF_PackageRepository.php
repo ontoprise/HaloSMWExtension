@@ -427,30 +427,7 @@ class PackageRepository {
 		ksort($results);
 		return $results;
 	}
-	/**
-	 * Returns latest available version of a package
-	 *
-	 * @param string $packageID The package ID
-	 * @return array (string download URL, DFVersion, string repo URL)
-	 */
-	public static function getLatestVersion($packageID) {
-		$results = array();
-		foreach(self::getPackageRepository() as $url => $repo) {
-
-			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version");
-			if (count($package) == 0) continue;
-			$download_url = trim((string) $package[0]->attributes()->url);
-			$version = new DFVersion((string) $package[0]->attributes()->version);
-			$patchlevel = (string) $package[0]->attributes()->patchlevel;
-			$results[] = array($version, $patchlevel, $download_url, $url);
-
-		}
-		if (count($results) == 0) return NULL;
-		$max = DFVersion::getMaxVersion($results);
-
-		list($maxVersion, $maxPatchlevel, $download_url, $repo_url) = $max;
-		return array($download_url, $maxVersion, $repo_url);
-	}
+	
 
 	/**
 	 * Returns the URL of the requested version of the package if available or NULL if not.
@@ -459,7 +436,7 @@ class PackageRepository {
 	 * @param DFVersion $version
 	 * @return array (url, repo_url)
 	 */
-	public static function getVersion($packageID, $version) {
+	public static function getDownloadURL($packageID, $version) {
 		$results = array();
 		foreach(self::getPackageRepository() as $url => $repo) {
 			$versionStr = $version->toVersionString();

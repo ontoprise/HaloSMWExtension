@@ -597,7 +597,7 @@ class Installer {
 			}
 
             $dd_fromrange = PackageRepository::getDeployDescriptorFromRange($id, $min, $max );
-			list($url,$repo_url) = PackageRepository::getVersion($id, $dd_fromrange->getVersion() );
+			list($url,$repo_url) = PackageRepository::getDownloadURL($id, $dd_fromrange->getVersion() );
 			$credentials = PackageRepository::getCredentials($repo_url);
 
 			$this->logger->info("Download $id-".$desc->getVersion()->toVersionString().".zip");
@@ -1113,6 +1113,8 @@ class Installer {
 				foreach($versions as $v) {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					$depToUpdate = $ptoUpdate->getDependency($dd->getID());
+					if (is_null($depToUpdate)) continue; // dependency may be removed in the meantime.
+					
 					if ($depToUpdate->getMinVersion()->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($depToUpdate->getMaxVersion())) {
 
 						$packagesToUpdate[] = array($p, $v, $v);
