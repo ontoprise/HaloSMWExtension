@@ -20,11 +20,22 @@ class WOMParserFunctionParser extends WOMTemplateParser {
 		if ( $r ) {
 			$len = strlen( $m[0] );
 			$func_key = trim( $m[1] );
+
 			return array( 'len' => $len, 'obj' => new WOMParserFunctionModel( $func_key ) );
 		}
 		return null;
 	}
 
+	public function getSubParserID( $obj ) {
+		if ( ( $obj instanceof WOMParserFunctionModel ) 
+			&& ( strtolower( $obj->getFunctionKey() ) == 'ask' ) 
+			&& ( count ( $obj->getObjects() ) == 0 ) ) {
+			
+			return WOM_PARSER_ID_QUERYSTRING;
+		}
+		return WOM_PARSER_ID_PARAMETER;
+	}
+	
 	public function isObjectClosed( $obj, $text, $offset ) {
 		if ( !$obj instanceof WOMParserFunctionModel ) return false;
 

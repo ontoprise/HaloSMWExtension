@@ -38,7 +38,7 @@ class WOMParameterParser extends WikiObjectModelParser {
 		}
 	}
 
-	public function getSubParserID() {
+	public function getSubParserID( $obj ) {
 		return WOM_PARSER_ID_PARAM_VALUE;
 	}
 

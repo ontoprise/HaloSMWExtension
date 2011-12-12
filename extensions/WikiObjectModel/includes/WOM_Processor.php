@@ -118,7 +118,7 @@ class WOMProcessor {
 
 				if ( $obj->getTypeID() == WOM_TYPE_HTMLTAG ) {
 					// special case, html tag
-				} else if ( $obj instanceof WikiObjectModelCollection ) {
+				} elseif ( $obj instanceof WikiObjectModelCollection ) {
 					self::parseParagraphs( $obj );
 				}
 				$new_objs[] = $obj;
@@ -206,7 +206,7 @@ class WOMProcessor {
 		}
 	}
 
-	private static function parseNext( $text, WikiObjectModelCollection $parentObj, WOMPageModel $rootObj, &$offset = 0, $parserInstance = null ) {
+	private static function parseNext( $text, WikiObjectModelCollection $parentObj, WOMPageModel $rootObj, &$offset = 0 ) {
 //		$fname = 'WikiObjectModel::parseNext (WOM)';
 //		wfProfileIn( $fname );
 
@@ -224,22 +224,23 @@ class WOMProcessor {
 			}
 
 			$result = null;
-			if ( $parserInstance == null ) {
-				$parserInstance2 = null;
+			$parserId = self::getObjectParser( $parentObj )->getSubParserID( $parentObj );
+			if ( $parserId == '' ) {
+				$parserInstance = null;
 				foreach ( self::$parsers as $parser ) {
 					$parser_res = $parser->parseNext( $text, $parentObj, $offset );
 					if ( $parser_res == null ) continue;
-					if ( $parserInstance2 == null || $parser->subclassOf( $parserInstance2 ) ) {
-						$parserInstance2 = $parser;
+					if ( $parserInstance == null || $parser->subclassOf( $parserInstance ) ) {
+						$parserInstance = $parser;
 						$result = $parser_res;
 					}
 				}
-				if ( $parserInstance2 == null ) {
-					$parserInstance2 = self::$base_parser;
-					$result = $parserInstance2->parseNext( $text, $parentObj, $offset );
+				if ( $parserInstance == null ) {
+					$parserInstance = self::$base_parser;
+					$result = $parserInstance->parseNext( $text, $parentObj, $offset );
 				}
 			} else {
-				$parserInstance2 = $parserInstance;
+				$parserInstance = self::$parsers[$parserId];
 				$result = $parserInstance->parseNext( $text, $parentObj, $offset );
 				if ( $result == null ) {
 					// FIXME: just omit current char, this will not fit for Wiki parser
@@ -265,11 +266,8 @@ class WOMProcessor {
 
 			if ( $next_obj->isCollection() && !( isset( $result['closed'] ) && $result['closed'] ) ) {
 				$collection_start = $offset;
-				$d = self::parseNext( $text, $next_obj, $rootObj, $offset,
-					( ( $parserInstance2 != null && isset( self::$parsers[$parserInstance2->getSubParserID()] ) ) ?
-					self::$parsers[$parserInstance2->getSubParserID()] :
-					null ) );
-				if ( $d == 100 && $parserInstance2->isObjectClosed( $next_obj, $text, $offset ) === false ) {
+				$d = self::parseNext( $text, $next_obj, $rootObj, $offset );
+				if ( $d == 100 && $parserInstance->isObjectClosed( $next_obj, $text, $offset ) === false ) {
 					// rollback
 					$p = self::getObjectParser( $parentObj );
 					if ( $p != null && $p->isObjectClosed( $parentObj, $text, $offset ) === false ) {
@@ -738,13 +736,12 @@ class WOMProcessor {
 
 	public static function getValidText( $text, $parent, $wom ) {
 		if ( $parent != null ) {
-			$parserId = self::getObjectParser( $parent )->getSubParserID();
+			$parserId = self::getObjectParser( $parent )->getSubParserID( $parent );
 			if ( $parserId != '' ) {
-				$parser = self::$parsers[$parserId];
 				$offset = 0;
 				$p2 = clone ( $parent );
 				$p2->reset();
-				self::parseNext( $text, $p2, $wom, $offset, $parser );
+				self::parseNext( $text, $p2, $wom, $offset );
 				$text = '';
 				foreach ( $p2->getObjects() as $obj ) {
 					$text .= $obj->getWikiText();

@@ -70,7 +70,7 @@ class WikiObjectModelParser {
 	}
 
 	// specified next parser. e.g., template parser -> parameter parser
-	public function getSubParserID() { return ''; }
+	public function getSubParserID( $obj ) { return ''; }
 
 	/**
 	 * Return a string that displays all error messages as a tooltip, or

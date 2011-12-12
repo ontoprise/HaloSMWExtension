@@ -45,8 +45,42 @@ class WOMPropertyParser extends WOMLinkParser {
 //		}
 		$r = preg_match( $semanticLinkPattern, $text, $m );
 		if ( $r ) {
+			$inQuerystring = false;
+			$o = $parentObj;
+			do{
+				if ( $o instanceof WOMQuerystringModel ) {
+					$inQuerystring = true;
+					break;
+				}
+				$o = $o->getParent();
+			} while($o != null);
+			
+			if($inQuerystring) {
+				$semanticPropPattern = '/\[\[                 # Beginning of the link
+				                        (?:([^:][^][]*):[=:])+ # Property name (or a list of those)
+				                        /xu';
+				preg_match( $semanticPropPattern, $text, $m );
+				return array( 'len' => strlen( $m[0] ), 'obj' => new WOMNestPropertyModel( $m[1] ) );
+			}
+
 			return array( 'len' => strlen( $m[0] ), 'obj' => new WOMPropertyModel( $m[1], $m[2], isset( $m[3] ) ? $m[3] : '' ) );
 		}
 		return null;
+	}
+
+	public function getSubParserID( $obj ) {
+		return WOM_PARSER_ID_PROPERTY_VALUE;
+	}
+
+	public function isObjectClosed( $obj, $text, $offset ) {
+		if ( !$obj instanceof WOMNestPropertyModel ) return false;
+
+		if ( ( strlen( $text ) >= $offset + 2 )
+			&& $text { $offset } == ']'
+			&& $text { $offset + 1 } == ']' ) {
+				return 2;
+		}
+
+		return false;
 	}
 }

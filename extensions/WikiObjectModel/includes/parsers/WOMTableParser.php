@@ -26,7 +26,7 @@ class WOMTableParser extends WikiObjectModelParser {
 		return array( 'len' => strlen( $m[1] ), 'obj' => new WOMTableModel( trim( $m[2] ) ) );
 	}
 
-	public function getSubParserID() {
+	public function getSubParserID( $obj ) {
 		return WOM_PARSER_ID_TABLECELL;
 	}
 

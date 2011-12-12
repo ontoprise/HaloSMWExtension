@@ -25,7 +25,7 @@ class WOMTemplateFieldHolderParser extends WikiObjectModelParser {
 		return null;
 	}
 
-	public function getSubParserID() {
+	public function getSubParserID( $obj ) {
 		return WOM_PARSER_ID_PARAM_VALUE;
 	}
 
