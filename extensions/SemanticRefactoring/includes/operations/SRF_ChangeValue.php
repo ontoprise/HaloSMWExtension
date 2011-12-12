@@ -16,7 +16,7 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SMWRFChangeValueOperation extends SMWRFRefactoringOperation {
+class SRFChangeValueOperation extends SRFRefactoringOperation {
 	private $instanceSet;
 	private $property;
 	private $oldValue;

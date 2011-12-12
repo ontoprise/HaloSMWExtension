@@ -22,7 +22,7 @@
  * Created on 08.12.2011
  *
  * @defgroup SemanticRefactoring Semantic Refactoring extension
- * 
+ *
  * @author Kai
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -30,3 +30,61 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SEMANTIC_REFACTORING_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 $srefgIP = $IP . '/extensions/SemanticRefactoring';
+$wgExtensionMessagesFiles['SemanticRefactoring'] = $srefgIP . '/languages/SRF_Messages.php';
+$smgJSLibs[] = 'fancybox';
+
+$wgExtensionFunctions[] = 'sreffSetupExtension';
+function sreffSetupExtension() {
+	global $srefgIP; $wgAutoloadClasses;
+
+	// autoload classes
+	$wgAutoloadClasses['SRFRefactoringBot'] = $srefgIP . '/includes/SRF_Bot.php';
+	$wgAutoloadClasses['SRFRefactoringOperation'] = $srefgIP . '/includes/SRF_RefactoringOperation.php';
+	$wgAutoloadClasses['SRFTools'] = $srefgIP . '/includes/SRF_Tools.php';
+	$wgAutoloadClasses['SRFChangeValueOperation'] = $srefgIP . '/includes/operations/SRF_ChangeValue.php';
+	$wgAutoloadClasses['SRFDeleteCategoryOperation'] = $srefgIP . '/includes/operations/SRF_DeleteCategory.php';
+	$wgAutoloadClasses['SRFDeletePropertyOperation'] = $srefgIP . '/includes/operations/SRF_DeleteProperty.php';
+	$wgAutoloadClasses['SRFRenameCategoryOperation'] = $srefgIP . '/includes/operations/SRF_RenameCategory.php';
+	$wgAutoloadClasses['SRFRenameInstanceOperation'] = $srefgIP . '/includes/operations/SRF_RenameInstance.php';
+	$wgAutoloadClasses['SRFRenamePropertyOperation'] = $srefgIP . '/includes/operations/SRF_RenameProperty.php';
+
+	global $wgOut;
+	sreffRegisterJSModules($wgOut);
+	
+	require_once($srefgIP . '/includes/SRF_Bot.php');
+	new SRFRefactoringBot();
+}
+
+/**
+ * Register JS modules
+ *
+ * @param $out
+ */
+function sreffRegisterJSModules(& $out) {
+	global $wgResourceModules, $moduleTemplate, $wgScriptPath, $srefgIP;
+	$moduleTemplate = array(
+        'localBasePath' => $srefgIP,
+        'remoteBasePath' => $wgScriptPath . '/extensions/SemanticRefactoring',
+        'group' => 'ext.semanticrefactoring'
+        );
+
+       
+        $wgResourceModules['ext.semanticrefactoring.dialogs'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/SRF_dialogs.js'
+            ),
+        'styles' => array(
+
+            ),
+        'dependencies' => array(
+            ),
+         'messages' => array("rename", "rename_category", "rename_property", "rename_annotations"),
+            );
+
+            //  sreffRegisterJSLanguageModules($out);
+            // add modules
+            $out->addModules(array('ext.semanticrefactoring.dialogs'));
+}
+
+
+

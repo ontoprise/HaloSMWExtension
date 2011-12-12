@@ -21,7 +21,7 @@
  * @author Kai Kuehn
  *
  */
-class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
+class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 
 	var $property;
 	var $options;
@@ -156,7 +156,7 @@ class SMWRFDeletePropertyOperation extends SMWRFRefactoringOperation {
 
 		if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
 			foreach($results['directSubcategories'] as $p) {
-				$op = new SMWRFDeletePropertyOperation($p, $this->options);
+				$op = new SRFDeletePropertyOperation($p, $this->options);
 				$op->refactor($save, $logMessages, $testData);
 			}
 		}

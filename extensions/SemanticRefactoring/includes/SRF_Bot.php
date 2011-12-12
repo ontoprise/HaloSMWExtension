@@ -41,7 +41,7 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
  * @author kuehn
  *
  */
-class SMWRFRefactoringBot extends GardeningBot {
+class SRFRefactoringBot extends GardeningBot {
 
 	function __construct() {
 		parent::GardeningBot("smw_refactoringbot");
@@ -67,43 +67,55 @@ class SMWRFRefactoringBot extends GardeningBot {
 	}
 
 	public function run($paramArray, $isAsync, $delay) {
-
+   
 		// do not allow to start synchronously.
 		if (!$isAsync) {
 			return "RefactoringBot should not be executed synchronously!";
 		}
-		
-		if (!array_key_exists('operation', $paramArray)) {
+
+		if (!array_key_exists('SRF_OPERATION', $paramArray)) {
 			return "Refactoring operation not specified.";
 		}
-		
-		$operation = $paramArray['operation'];
-		
-		$parameters = array();
-	    if (!array_key_exists('parameters', $paramArray)) {
-            $parameters = new stdClass();
-        } else {
-        	$parameters = json_decode($paramArray['parameters']);
-        }
-        
-        switch($operation) {
-        	case 'renameProperty': 
-        		$oldProperty = $parameters->oldProperty;
-        		$newProperty = $parameters->newProperty;
-        		
-        		$op = new SMWRFRenamePropertyOperation($oldProperty, $newProperty);
-        		$num = $op->getNumberOfAffectedPages();
-        		break;
-        	case 'renameCategory' :
-        		//TODO: add others
-        		break;	
-        }
-        $op->setBot($this);
-        $this->totalWork($num);
-        
-        $logMessages=array();
-        $op->refactor(true, $logMessages);
-        
-        return implode("\n*", $logMessages);
+
+		$operation = $paramArray['SRF_OPERATION'];
+
+		switch($operation) {
+			case 'renameProperty':
+				if (!array_key_exists('oldProperty', $paramArray)) {
+					return "Old property missing";
+				}
+				$oldProperty = $paramArray['oldProperty'];
+
+				if (!array_key_exists('newProperty', $paramArray)) {
+					return "New property missing";
+				}
+				$newProperty = $paramArray['newProperty'];
+
+				$op = new SRFRenamePropertyOperation($oldProperty, $newProperty);
+				$num = $op->getNumberOfAffectedPages();
+				break;
+			case 'renameCategory' :
+				if (!array_key_exists('oldCategory', $paramArray)) {
+                    return "Old category missing";
+                }
+                $oldCategory = $paramArray['oldCategory'];
+
+                if (!array_key_exists('newCategory', $paramArray)) {
+                    return "New property missing";
+                }
+                $newCategory = $paramArray['newCategory'];
+
+				$op = new SRFRenameCategoryOperation($oldCategory, $newCategory);
+				$num = $op->getNumberOfAffectedPages();
+				break;
+		}
+		$op->setBot($this);
+		$this->totalWork($num);
+
+		$logMessages=array();
+		$op->refactor(false, $logMessages);
+
+		return implode("\n*", $logMessages);
 	}
 }
+

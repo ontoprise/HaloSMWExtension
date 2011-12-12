@@ -288,8 +288,8 @@ OBArticleCreator.prototype = {
 		}
 		this.pendingIndicator.show(node);
 		sajax_do_call('smwf_om_CreateArticle', [ title, wgUserName, content,
-				optionalText, creationComment, "true" ], ajaxResponseCreateArticle
-				.bind(this));
+				optionalText, creationComment, "true" ],
+				ajaxResponseCreateArticle.bind(this));
 
 	},
 
@@ -590,7 +590,8 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 
-		var superCategoryContent = "[[" + gLanguage.getMessage('CATEGORY_NS', 'cont')
+		var superCategoryContent = "[["
+				+ gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ superCategoryTitle[0] + "]]";
 		if (superCategoryTitle.length > 1) {
 			for ( var i = 1, n = superCategoryTitle.length; i < n; i++) {
@@ -609,7 +610,8 @@ OBOntologyModifier.prototype = {
 					+ selectedBundle + "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
+		articleCreator.createArticle(gLanguage
+				.getMessage('CATEGORY_NS', 'cont')
 				+ subCategoryTitle, superCategoryContent, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
 				$(superCategoryID));
@@ -632,9 +634,10 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var newCategoryXML = GeneralXMLTools.createDocumentFromString(this
 					.createCategoryNode(newCategoryTitle));
-			var superCategoryID = sibligCategoryID != null ? GeneralXMLTools.getNodeById(
-					dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode
-					.getAttribute('id') : null;
+			var superCategoryID = sibligCategoryID != null ? GeneralXMLTools
+					.getNodeById(dataAccess.OB_cachedCategoryTree,
+							sibligCategoryID).parentNode.getAttribute('id')
+					: null;
 			this.insertCategoryNode(superCategoryID, newCategoryXML);
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree,
@@ -646,13 +649,13 @@ OBOntologyModifier.prototype = {
 		}
 		var superCategoryTitle = null;
 		if (sibligCategoryID != null) {
-		 superCategoryTitle = GeneralXMLTools.getNodeById(
-				dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode
-				.getAttribute('title');
+			superCategoryTitle = GeneralXMLTools.getNodeById(
+					dataAccess.OB_cachedCategoryTree, sibligCategoryID).parentNode
+					.getAttribute('title');
 		}
 		var content = superCategoryTitle != null ? "[["
-				+ gLanguage.getMessage('CATEGORY_NS', 'cont') + superCategoryTitle
-				+ "]]" : "";
+				+ gLanguage.getMessage('CATEGORY_NS', 'cont')
+				+ superCategoryTitle + "]]" : "";
 
 		var selectedBundle = $F("bundleSelector");
 		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
@@ -663,10 +666,12 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
+		articleCreator.createArticle(gLanguage
+				.getMessage('CATEGORY_NS', 'cont')
 				+ newCategoryTitle, content, '', gLanguage
 				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
-				sibligCategoryID != null ? $(sibligCategoryID) : $('categoryTree'));
+				sibligCategoryID != null ? $(sibligCategoryID)
+						: $('categoryTree'));
 	},
 
 	/**
@@ -692,7 +697,8 @@ OBOntologyModifier.prototype = {
 					newCategoryTitle, SMW_CATEGORY_NS, $(categoryID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('CATEGORY_NS', 'cont')
+		articleCreator.renameArticle(gLanguage
+				.getMessage('CATEGORY_NS', 'cont')
 				+ categoryTitle, gLanguage.getMessage('CATEGORY_NS', 'cont')
 				+ newCategoryTitle, "OB", callback.bind(this), $(categoryID));
 	},
@@ -788,8 +794,8 @@ OBOntologyModifier.prototype = {
 
 			finished();
 		}
-		articleCreator.moveInstanceToCategories(gLanguage
-				.getMessage('CATEGORY_NS', 'cont')
+		articleCreator.moveInstanceToCategories(gLanguage.getMessage(
+				'CATEGORY_NS', 'cont')
 				+ draggedCategory, targetCategories, "", callback.bind(this),
 				$('categoryTree'));
 	},
@@ -885,8 +891,8 @@ OBOntologyModifier.prototype = {
 
 			finished();
 		}
-		articleCreator.movePropertyToProperty(gLanguage
-				.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.movePropertyToProperty(gLanguage.getMessage(
+				'PROPERTY_NS', 'cont')
 				+ draggedProperty, targetProperties, "", callback.bind(this),
 				$('propertyTree'));
 	},
@@ -918,7 +924,8 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 
-		var content = "\n[[_SUBP::" + gLanguage.getMessage('PROPERTY_NS', 'cont')
+		var content = "\n[[_SUBP::"
+				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]";
 		var selectedBundle = $F("bundleSelector");
 		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
@@ -929,7 +936,8 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.createArticle(gLanguage
+				.getMessage('PROPERTY_NS', 'cont')
 				+ subPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
 				$(superPropertyID));
@@ -952,9 +960,10 @@ OBOntologyModifier.prototype = {
 		function callback() {
 			var subPropertyXML = GeneralXMLTools.createDocumentFromString(this
 					.createPropertyNode(newPropertyTitle));
-			var superPropertyID = sibligPropertyID != null ? GeneralXMLTools.getNodeById(
-					dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode
-					.getAttribute('id') : null;
+			var superPropertyID = sibligPropertyID != null ? GeneralXMLTools
+					.getNodeById(dataAccess.OB_cachedPropertyTree,
+							sibligPropertyID).parentNode.getAttribute('id')
+					: null;
 			this.insertPropertyNode(superPropertyID, subPropertyXML);
 			selectionProvider.fireBeforeRefresh();
 			transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree,
@@ -965,15 +974,15 @@ OBOntologyModifier.prototype = {
 			selectionProvider.fireRefresh();
 		}
 		var superPropertyTitle = null;
-		
+
 		if (sibligPropertyID != null) {
-		var superPropertyTitle = GeneralXMLTools.getNodeById(
-				dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode
-				.getAttribute('title');
+			var superPropertyTitle = GeneralXMLTools.getNodeById(
+					dataAccess.OB_cachedPropertyTree, sibligPropertyID).parentNode
+					.getAttribute('title');
 		}
 		var content = superPropertyTitle != null ? "\n[[_SUBP::"
-				+ gLanguage.getMessage('PROPERTY_NS', 'cont') + superPropertyTitle
-				+ "]]" : "";
+				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
+				+ superPropertyTitle + "]]" : "";
 		var selectedBundle = $F("bundleSelector");
 		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
 				: "";
@@ -983,10 +992,12 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.createArticle(gLanguage
+				.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, '', content, gLanguage
 				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
-				sibligPropertyID != null ? $(sibligPropertyID) : $('propertyTree'));
+				sibligPropertyID != null ? $(sibligPropertyID)
+						: $('propertyTree'));
 	},
 
 	/**
@@ -1012,7 +1023,8 @@ OBOntologyModifier.prototype = {
 					newPropertyTitle, SMW_PROPERTY_NS, $(propertyID))
 			selectionProvider.fireRefresh();
 		}
-		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.renameArticle(gLanguage
+				.getMessage('PROPERTY_NS', 'cont')
 				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
@@ -1031,7 +1043,8 @@ OBOntologyModifier.prototype = {
 	renamePropertyWithCallback : function(newPropertyTitle, oldPropertyTitle,
 			propertyID, callback) {
 
-		articleCreator.renameArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.renameArticle(gLanguage
+				.getMessage('PROPERTY_NS', 'cont')
 				+ oldPropertyTitle, gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ newPropertyTitle, "OB", callback.bind(this), $(propertyID));
 	},
@@ -1055,7 +1068,8 @@ OBOntologyModifier.prototype = {
 	editProperties : function(title, type, mandatory, newRange, oldRange,
 			domainCategory, callback) {
 
-		articleCreator.editPropertyArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.editPropertyArticle(gLanguage.getMessage('PROPERTY_NS',
+				'cont')
 				+ title, type, mandatory, newRange, oldRange, domainCategory,
 				"OB", callback);
 	},
@@ -1110,12 +1124,13 @@ OBOntologyModifier.prototype = {
 
 		if (range != '') {
 			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-					+ gLanguage.getMessage('CATEGORY_NS', 'cont') + domainCategoryTitle
-					+ "; " + gLanguage.getMessage('CATEGORY_NS') + range + "]]"
+					+ gLanguage.getMessage('CATEGORY_NS', 'cont')
+					+ domainCategoryTitle + "; "
+					+ gLanguage.getMessage('CATEGORY_NS') + range + "]]"
 		} else {
 			content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"
-					+ gLanguage.getMessage('CATEGORY_NS', 'cont') + domainCategoryTitle
-					+ "]]";
+					+ gLanguage.getMessage('CATEGORY_NS', 'cont')
+					+ domainCategoryTitle + "]]";
 		}
 
 		var selectedBundle = $F("bundleSelector");
@@ -1127,7 +1142,8 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
-		articleCreator.createArticle(gLanguage.getMessage('PROPERTY_NS', 'cont')
+		articleCreator.createArticle(gLanguage
+				.getMessage('PROPERTY_NS', 'cont')
 				+ propertyTitle, '', content, gLanguage
 				.getMessage('CREATE_PROPERTY'), callback.bind(this),
 				$(domainCategoryID));
@@ -1217,7 +1233,8 @@ OBOntologyModifier.prototype = {
 		}
 		var categoryAnnotation = "";
 		categoryTitles.each(function(title) {
-			categoryAnnotation += "\n[[" + gLanguage.getMessage('CATEGORY_NS', 'cont')
+			categoryAnnotation += "\n[["
+					+ gLanguage.getMessage('CATEGORY_NS', 'cont')
 					+ title.strip() + "]]";
 		});
 		articleCreator.createArticle(instanceTitle, categoryAnnotation + "\n"
@@ -1235,11 +1252,13 @@ OBOntologyModifier.prototype = {
 		this.count++;
 		var categoryTitle_esc = encodeURIComponent(subCategoryTitle);
 		categoryTitle_esc = categoryTitle_esc.replace(/%2F/g, "/");
-		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('CATEGORY_NS', 'cont')+subCategoryTitle);
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('CATEGORY_NS',
+				'cont')
+				+ subCategoryTitle);
 		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
-		return '<conceptTreeElement '+uri_att+' title_url="' + categoryTitle_esc
-				+ '" title="' + subCategoryTitle + '" id="ID_'
-				+ (this.date.getTime() + this.count)
+		return '<conceptTreeElement ' + uri_att + ' title_url="'
+				+ categoryTitle_esc + '" title="' + subCategoryTitle
+				+ '" id="ID_' + (this.date.getTime() + this.count)
 				+ '" isLeaf="true" expanded="true"/>';
 	},
 
@@ -1275,11 +1294,13 @@ OBOntologyModifier.prototype = {
 		var propertyTitle_esc = encodeURIComponent(subPropertyTitle);
 		propertyTitle_esc = propertyTitle_esc.replace(/%2F/g, "/");
 
-		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('PROPERTY_NS', 'cont')+subPropertyTitle);
+		var uri = GeneralTools.makeTSCURI(gLanguage.getMessage('PROPERTY_NS',
+				'cont')
+				+ subPropertyTitle);
 		var uri_att = uri != false ? 'uri="' + uri + '"' : '';
-		return '<propertyTreeElement '+uri_att+' title_url="' + propertyTitle_esc
-				+ '" title="' + subPropertyTitle + '" id="ID_'
-				+ (this.date.getTime() + this.count)
+		return '<propertyTreeElement ' + uri_att + ' title_url="'
+				+ propertyTitle_esc + '" title="' + subPropertyTitle
+				+ '" id="ID_' + (this.date.getTime() + this.count)
 				+ '" isLeaf="true" expanded="true"/>';
 	},
 
@@ -1723,8 +1744,7 @@ OBInputTitleValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 		;
 
 		var pageName = $F(this.id);
-		
-		
+
 		if (pageName == '') {
 			this.control.enable(false, this.id);
 			return;
@@ -1777,20 +1797,21 @@ OBObjectListValidator.prototype = Object.extend(new OBInputFieldValidator(), {
 	 */
 	_checkIfValidCategory : function(id) {
 		var objects = $F(this.id).split(",");
-		
+
 		objects.sort(function(a, b) {
 			return a.strip() < b.strip() ? -1 : 1
 		});
-		if (objects.length != this.objects.length) return true;
+		if (objects.length != this.objects.length)
+			return true;
 		for ( var i = 0; i < objects.length; i++) {
-			objects[i] = objects[i]
-					.strip();
-			if (objects[i] != this.objects[i]) return true;
+			objects[i] = objects[i].strip();
+			if (objects[i] != this.objects[i])
+				return true;
 		}
 		return false;
 	},
-	
-	setObjects: function(objects) {
+
+	setObjects : function(objects) {
 		this.objects = objects;
 		this.objects.sort(function(a, b) {
 			return a.strip() < b.strip() ? -1 : 1
@@ -1980,11 +2001,11 @@ OBCatgeorySubMenu.prototype = Object
 													$('categoryTreeMenu2_input_ontologytools'),
 													this.selectedTitle.replace(
 															/_/, " "));
-									this.subInputValidator.setObjects([ this.selectedTitle ]);
+									this.subInputValidator
+											.setObjects( [ this.selectedTitle ]);
 								}
 							}
-							
-							
+
 						}
 					},
 
@@ -1994,9 +2015,10 @@ OBCatgeorySubMenu.prototype = Object
 							this.updateSuperCategories(this.selectedTitle,
 									commandID);
 						} else if (this.commandID == SMW_OB_COMMAND_ADDSUBCATEGORY) {
-							this.subInputValidator.setObjects([ this.selectedTitle ]);
+							this.subInputValidator
+									.setObjects( [ this.selectedTitle ]);
 						}
-						
+
 					},
 
 					updateSuperCategories : function(title, commandID) {
@@ -2011,7 +2033,8 @@ OBCatgeorySubMenu.prototype = Object
 								this.annotatedSuperCategories[i] = this.annotatedSuperCategories[i]
 										.strip();
 							}
-							this.subInputValidator.setObjects(this.annotatedSuperCategories);
+							this.subInputValidator
+									.setObjects(this.annotatedSuperCategories);
 							Form.Element.setValue(
 									$('categoryTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2070,12 +2093,24 @@ OBCatgeorySubMenu.prototype = Object
 									}
 								}
 							}
-							
-							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
+
+							var srefVersion = mw.loader
+									.version('ext.semanticrefactoring.dialogs');
+
+							if (srefVersion != null) {
+								srefgDialog.openDialog('renameCategoryContent', { oldCategory: this.selectedTitle, newCategory : $F(this.id
+										+ '_input_ontologytools') });
+								return;
+							} else if (doRename
+									&& typeof (smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
-									Form.Element.setValue('categoryTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
+									Form.Element
+											.setValue(
+													'categoryTreeMenu_input_ontologytools',
+													this.selectedTitle.replace(
+															/_/g, " "));
 									return;
 								}
 							}
@@ -2085,7 +2120,7 @@ OBCatgeorySubMenu.prototype = Object
 								var selectedTitle = this.selectedTitle;
 								var selectedID = this.selectedID;
 								var newCategoryTitle = $F(this.id
-										+ '_input_ontologytools')
+										+ '_input_ontologytools');
 								ontologyTools.moveCategory(selectedID,
 										categoriesToUse,
 
@@ -2127,7 +2162,7 @@ OBCatgeorySubMenu.prototype = Object
 								: '';
 						this.categoryTitle = titlevalue;
 						categoryTitle = titlevalue;
-						
+
 						var superCategoryContent = "";
 						for ( var i = 0; i < this.annotatedSuperCategories.length; i++) {
 							superCategoryContent = ","
@@ -2138,8 +2173,9 @@ OBCatgeorySubMenu.prototype = Object
 						var categoryContent = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? superCategoryContent
 								.replace(/_/g, " ")
 								: this.selectedTitle;
-						if (categoryContent == null) categoryContent = "";
-								
+						if (categoryContent == null)
+							categoryContent = "";
+
 						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
 								: gLanguage.getMessage('AddCategory');
@@ -2194,12 +2230,13 @@ OBCatgeorySubMenu.prototype = Object
 					setValidators : function() {
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_input_ontologytools', gLanguage
-										.getMessage('CATEGORY_NS_WOC', 'cont'), false,
-								this);
+										.getMessage('CATEGORY_NS_WOC', 'cont'),
+								false, this);
 
-						this.subInputValidator = new OBObjectListValidator(this.id
-								+ '2_input_ontologytools', gLanguage
-								.getMessage('CATEGORY_NS_WOC', 'cont'), true, this);
+						this.subInputValidator = new OBObjectListValidator(
+								this.id + '2_input_ontologytools', gLanguage
+										.getMessage('CATEGORY_NS_WOC', 'cont'),
+								true, this);
 					},
 
 					setFocus : function() {
@@ -2291,7 +2328,7 @@ OBCatgeorySubMenu.prototype = Object
 					 *            ID of input field
 					 */
 					enable : function(b, id) {
-						
+
 						if (id == 'categoryTreeMenu2_input_ontologytools') {
 							this.categoriesOK = b;
 							this.titleOK = this.titleInputValidator.isValid;
@@ -2302,16 +2339,16 @@ OBCatgeorySubMenu.prototype = Object
 							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
 									: '#F00';
 
-							
 							$(id).setStyle( {
 								backgroundColor : bg_color
 							});
 						}
-						
+
 						var titleUnchanged = this.titleInputValidator.initialValue == $F('categoryTreeMenu_input_ontologytools');
-						
-						this.enableCommand(this.titleOK || ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
-					
+
+						this
+								.enableCommand(this.titleOK
+										|| ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
 
 					},
 
@@ -2325,7 +2362,7 @@ OBCatgeorySubMenu.prototype = Object
 						this.categoriesOK = false;
 						this.titleOK = false;
 						this.enableCommand(false);
-						
+
 					}
 				});
 
@@ -2365,7 +2402,8 @@ OBPropertySubMenu.prototype = Object
 													$('propertyTreeMenu2_input_ontologytools'),
 													this.selectedTitle.replace(
 															/_/, " "));
-									this.subInputValidator.setObjects([ this.selectedTitle ]);
+									this.subInputValidator
+											.setObjects( [ this.selectedTitle ]);
 								}
 							}
 						}
@@ -2377,7 +2415,8 @@ OBPropertySubMenu.prototype = Object
 							this.updateEditProperties(this.selectedTitle,
 									commandID);
 						} else if (this.commandID == SMW_OB_COMMAND_ADDSUBPROPERTY) {
-							this.subInputValidator.setObjects([ this.selectedTitle ]);
+							this.subInputValidator
+									.setObjects( [ this.selectedTitle ]);
 						}
 					},
 
@@ -2393,7 +2432,8 @@ OBPropertySubMenu.prototype = Object
 								this.annotatedSuperProperties[i] = this.annotatedSuperProperties[i]
 										.strip();
 							}
-							this.subInputValidator.setObjects(this.annotatedSuperProperties);
+							this.subInputValidator
+									.setObjects(this.annotatedSuperProperties);
 							Form.Element.setValue(
 									$('propertyTreeMenu2_input_ontologytools'),
 									request.responseText);
@@ -2452,12 +2492,25 @@ OBPropertySubMenu.prototype = Object
 									}
 								}
 							}
-							
-							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
+
+							var srefVersion = mw.loader
+									.version('ext.semanticrefactoring.dialogs');
+
+							if (srefVersion != null) {
+								srefgDialog.openDialog('renamePropertyContent');
+								return;
+							}
+							else if(doRename
+									&& typeof (smwghTripleStoreGraph) != undefined)
+							{
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
-									Form.Element.setValue('propertyTreeMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
+									Form.Element
+											.setValue(
+													'propertyTreeMenu_input_ontologytools',
+													this.selectedTitle.replace(
+															/_/g, " "));
 									return;
 								}
 							}
@@ -2512,13 +2565,15 @@ OBPropertySubMenu.prototype = Object
 						var superpropertyContent = "";
 						for ( var i = 0; i < this.annotatedSuperProperties.length; i++) {
 							superpropertyContent = ","
-									+ this.annotatedSuperProperties[i].replace(/_/g, " ");
+									+ this.annotatedSuperProperties[i].replace(
+											/_/g, " ");
 						}
 						superpropertyContent = superpropertyContent.substr(1);
 
 						var propertyContent = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? superpropertyContent
 								: this.selectedTitle;
-						if (propertyContent == null) propertyContent = "";
+						if (propertyContent == null)
+							propertyContent = "";
 
 						var applyButtonLabel = this.commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ? gLanguage
 								.getMessage('SAVE_CHANGES').replace(/_/g, " ")
@@ -2574,11 +2629,12 @@ OBPropertySubMenu.prototype = Object
 					setValidators : function() {
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_input_ontologytools', gLanguage
-										.getMessage('PROPERTY_NS_WOC', 'cont'), false,
-								this);
-						this.subInputValidator = new OBObjectListValidator(this.id
-								+ '2_input_ontologytools', gLanguage
-								.getMessage('PROPERTY_NS_WOC', 'cont'), true, this);
+										.getMessage('PROPERTY_NS_WOC', 'cont'),
+								false, this);
+						this.subInputValidator = new OBObjectListValidator(
+								this.id + '2_input_ontologytools', gLanguage
+										.getMessage('PROPERTY_NS_WOC', 'cont'),
+								true, this);
 
 					},
 
@@ -2667,15 +2723,16 @@ OBPropertySubMenu.prototype = Object
 							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
 									: '#F00';
 
-							
 							$(id).setStyle( {
 								backgroundColor : bg_color
 							});
 						}
-						
+
 						var titleUnchanged = this.titleInputValidator.initialValue == $F('propertyTreeMenu_input_ontologytools');
-						
-						this.enableCommand(this.titleOK || ((this.titleOK && this.propertiesOK) || (titleUnchanged && this.propertiesOK)));
+
+						this
+								.enableCommand(this.titleOK
+										|| ((this.titleOK && this.propertiesOK) || (titleUnchanged && this.propertiesOK)));
 
 					},
 
@@ -2732,7 +2789,8 @@ OBInstanceSubMenu.prototype = Object
 							this.annotatedCategories(this.selectedInstance,
 									commandID);
 						} else if (commandID == SMW_OB_COMMAND_INSTANCE_CREATE) {
-							this.categoriesInputValidator.setObjects([ this.selectedCategoryTitle ]);
+							this.categoriesInputValidator
+									.setObjects( [ this.selectedCategoryTitle ]);
 						}
 					},
 
@@ -2771,12 +2829,17 @@ OBInstanceSubMenu.prototype = Object
 									}
 								}
 							}
-							
-							if (doRename && typeof(smwghTripleStoreGraph) != undefined) {
+
+							if (doRename
+									&& typeof (smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
-									Form.Element.setValue('instanceListMenu_input_ontologytools', this.selectedTitle.replace(/_/g, " "));
+									Form.Element
+											.setValue(
+													'instanceListMenu_input_ontologytools',
+													this.selectedTitle.replace(
+															/_/g, " "));
 									return;
 								}
 							}
@@ -2858,7 +2921,8 @@ OBInstanceSubMenu.prototype = Object
 								this.categoriesOfInstance[i] = this.categoriesOfInstance[i]
 										.strip();
 							}
-							this.categoriesInputValidator.setObjects(this.categoriesOfInstance);
+							this.categoriesInputValidator
+									.setObjects(this.categoriesOfInstance);
 							Form.Element.setValue(
 									$('instanceListMenu2_input_ontologytools'),
 									request.responseText);
@@ -2944,9 +3008,10 @@ OBInstanceSubMenu.prototype = Object
 								this.id + '_input_ontologytools', '', false,
 								this);
 
-						this.categoriesInputValidator = new OBObjectListValidator(this.id
-								+ '2_input_ontologytools', gLanguage
-								.getMessage('CATEGORY_NS_WOC', 'cont'), true, this);
+						this.categoriesInputValidator = new OBObjectListValidator(
+								this.id + '2_input_ontologytools', gLanguage
+										.getMessage('CATEGORY_NS_WOC', 'cont'),
+								true, this);
 
 					},
 
@@ -3007,8 +3072,7 @@ OBInstanceSubMenu.prototype = Object
 											+ '.doCommand()">'
 											+ applyButtonLabel + '</button>');
 						}
-						
-						
+
 					},
 
 					/**
@@ -3032,15 +3096,16 @@ OBInstanceSubMenu.prototype = Object
 							var bg_color = b ? '#0F0' : $F(id) == '' ? '#FFF'
 									: '#F00';
 
-							
 							$(id).setStyle( {
 								backgroundColor : bg_color
 							});
 						}
-						
+
 						var titleUnchanged = this.titleInputValidator.initialValue == $F('instanceListMenu_input_ontologytools');
-						
-						this.enableCommand(this.titleOK || ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
+
+						this
+								.enableCommand(this.titleOK
+										|| ((this.titleOK && this.categoriesOK) || (titleUnchanged && this.categoriesOK)));
 					},
 
 					/**
@@ -3198,8 +3263,8 @@ OBSchemaPropertySubMenu.prototype = Object
 						var c = this.count + 1;
 						this.titleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
-								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'), false,
-								this);
+								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'),
+								false, this);
 					},
 
 					/**
@@ -3426,9 +3491,9 @@ OBSchemaPropertySubMenu.prototype = Object
 						var toReplace = $(addTo.appendChild(document
 								.createElement("tr")));
 						toReplace.replace('<tr><td width="60px;">'
-								+ gLanguage.getMessage('CATEGORY_NS_WOC', 'cont')
-								+ ' </td><td>' + this.newRangeInputBox()
-								+ '</td></tr>');
+								+ gLanguage.getMessage('CATEGORY_NS_WOC',
+										'cont') + ' </td><td>'
+								+ this.newRangeInputBox() + '</td></tr>');
 						autoCompleter.registerAllInputs();
 
 						this.enable(true, 'typeRange' + this.count
@@ -3544,7 +3609,7 @@ OBEditPropertySubMenu.prototype = Object
 
 					hasPropertyTitleChanged : function() {
 						var name = $F('schemaPropertiesMenu_propertytitle_ontologytools');
-						var nameEdited = name.replace(/\s/g,"_") != this.propertyName;
+						var nameEdited = name.replace(/\s/g, "_") != this.propertyName;
 						return nameEdited;
 					},
 
@@ -3568,12 +3633,17 @@ OBEditPropertySubMenu.prototype = Object
 
 						var propertyTitleChanged = this
 								.hasPropertyTitleChanged();
-						
-						if (propertyTitleChanged && typeof(smwghTripleStoreGraph) != undefined) {
+
+						if (propertyTitleChanged
+								&& typeof (smwghTripleStoreGraph) != undefined) {
 							var confirmation = confirm(gLanguage
 									.getMessage('OB_RENAME_WARNING'));
 							if (!confirmation) {
-								Form.Element.setValue('schemaPropertiesMenu_propertytitle_ontologytools', this.propertyName.replace(/_/g, " "));
+								Form.Element
+										.setValue(
+												'schemaPropertiesMenu_propertytitle_ontologytools',
+												this.propertyName.replace(/_/g,
+														" "));
 								return;
 							}
 						}
@@ -3591,8 +3661,8 @@ OBEditPropertySubMenu.prototype = Object
 								}
 							}
 
-							var newRange = type == gLanguage
-									.getMessage('TYPE_PAGE_WONS', 'cont') ? range : "";
+							var newRange = type == gLanguage.getMessage(
+									'TYPE_PAGE_WONS', 'cont') ? range : "";
 							ontologyTools.editProperties(name, type, mandatory,
 									newRange, this.propertyRangeCategory,
 									domainCategory, finishedEditing.bind(this));
@@ -3683,12 +3753,12 @@ OBEditPropertySubMenu.prototype = Object
 					setValidators : function() {
 						this.changedtitleInputValidator = new OBInputTitleValidator(
 								this.id + '_propertytitle_ontologytools',
-								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'), false,
-								this);
+								gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'),
+								false, this);
 						this.rangeInputValidator = new OBInputTitleValidator(
 								'typeRange2_ontologytools', gLanguage
-										.getMessage('CATEGORY_NS_WOC', 'cont'), true,
-								this);
+										.getMessage('CATEGORY_NS_WOC', 'cont'),
+								true, this);
 						var callbackEnableCommand = function() {
 							if (this.allIsValid()) {
 								this.enableCommand(true, 'OB_SAVE_CHANGES');
@@ -3850,7 +3920,8 @@ OBEditPropertySubMenu.prototype = Object
 							}
 						}
 						if (c == 0) {
-							type = gLanguage.getMessage('TYPE_PAGE_WONS', 'cont');
+							type = gLanguage.getMessage('TYPE_PAGE_WONS',
+									'cont');
 						} else {
 							type = this.builtinTypes[c];
 						}
@@ -3881,7 +3952,8 @@ OBEditPropertySubMenu.prototype = Object
 
 					newRangeInputBox : function() {
 						var enabled = this.propertyType == gLanguage
-								.getMessage('TYPE_PAGE_WONS') || this.propertyType == '';
+								.getMessage('TYPE_PAGE_WONS')
+								|| this.propertyType == '';
 						var enabledStr = enabled ? '' : 'disabled="true"';
 
 						var toReplace = '<input class="wickEnabled" constraints="namespace: Category" '

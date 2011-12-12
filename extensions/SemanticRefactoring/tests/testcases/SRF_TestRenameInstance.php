@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameInstance.php');
 
 class SRFTestRenameInstance extends PHPUnit_Framework_TestCase {
@@ -41,7 +41,7 @@ class SRFTestRenameInstance extends PHPUnit_Framework_TestCase {
 	}
 
 	function testInstanceAsLink() {
-		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test [[Testinstance]]. No text.
 ENDS;
@@ -51,7 +51,7 @@ ENDS;
 	}
 
 	function testInstanceOtherNamespaceAsLink() {
-		$r = new SMWRFRenameInstanceOperation("Help:Testinstance", "Help:NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Help:Testinstance", "Help:NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test [[Help:Testinstance]]. No text.
 ENDS;
@@ -61,7 +61,7 @@ ENDS;
 	}
 
 	function testInstanceWithWhitespaceAsLink() {
-		$r = new SMWRFRenameInstanceOperation("Test instance", "NewTest instance", true);
+		$r = new SRFRenameInstanceOperation("Test instance", "NewTest instance", true);
 		$wikitext = <<<ENDS
 This is a test [[Test instance]]. No text.
 ENDS;
@@ -71,7 +71,7 @@ ENDS;
 	}
 
 	function testInstanceInAnnotation() {
-		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test [[ABC::Testinstance]]. No text.
 ENDS;
@@ -81,7 +81,7 @@ ENDS;
 	}
 
 	function testInstanceInRecordAnnotation() {
-		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test [[ABC::Testinstance; CDE; FGH]]. No text.
 ENDS;
@@ -91,7 +91,7 @@ ENDS;
 	}
 
 	function testInstanceInQuery() {
-		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test {{#ask: [[Testinstance]][[Testproperty::+]] }}. No text.
 ENDS;
@@ -101,7 +101,7 @@ ENDS;
 	}
 
 	function testInstanceInQuery2() {
-		$r = new SMWRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
+		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
 		$wikitext = <<<ENDS
 This is a test {{#ask: [[Category:Testcategory]][[ABC::Testinstance]] }}. No text.
 ENDS;

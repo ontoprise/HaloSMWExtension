@@ -22,7 +22,7 @@
  * @author Kai Kuehn
  *
  */
-class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
+class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 	private $oldProperty;
 	private $newProperty;
@@ -83,14 +83,10 @@ class SMWRFRenamePropertyOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			$logMessages[] = 'Content of "'.$i->getPrefixedText().'" changed.';
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
-
-		// move article
-		if ($save) {
-			$this->oldProperty->moveTo($this->newProperty);
-		}
-		if (!is_null($this->mBot)) $this->mBot->worked(1);
+	
 	}
 
 

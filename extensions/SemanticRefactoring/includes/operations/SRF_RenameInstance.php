@@ -16,7 +16,7 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
+class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 	private $oldInstance;
 	private $newInstance;
 
@@ -81,14 +81,11 @@ class SMWRFRenameInstanceOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			$logMessages[] = 'Content of "'.$i->getPrefixedText().'" changed.';
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
-		// move article
-		if ($save) {
-			$this->oldInstance->moveTo($this->newInstance);
-		}
-		if (!is_null($this->mBot)) $this->mBot->worked(1);
+		
 	}
 
 	/**

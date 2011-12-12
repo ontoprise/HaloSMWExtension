@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteCategory.php');
 require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
@@ -44,7 +44,7 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategory() {
-		$r = new SMWRFDeleteCategoryOperation('Person', array('onlyCategory'=>true));
+		$r = new SRFDeleteCategoryOperation('Person', array('onlyCategory'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -53,7 +53,7 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategoryWithInstances() {
-		$r = new SMWRFDeleteCategoryOperation('Man', array('removeInstances'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('removeInstances'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -64,7 +64,7 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 
 
 	function testRemoveQueries() {
-		$r = new SMWRFDeleteCategoryOperation('Man', array('removeQueries'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('removeQueries'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -76,7 +76,7 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategoryAnnotations() {
-		$r = new SMWRFDeleteCategoryOperation('Man', array('removeCategoryAnnotations'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('removeCategoryAnnotations'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);

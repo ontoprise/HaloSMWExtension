@@ -21,7 +21,7 @@
  * @author Kai Kuehn
  *
  */
-class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
+class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 	var $category;
 	var $options;
@@ -148,7 +148,7 @@ class SMWRFDeleteCategoryOperation extends SMWRFRefactoringOperation {
 
 		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
 			foreach($results['directSubcategories'] as $c) {
-				$op = new SMWRFDeleteCategoryOperation($c, $this->options);
+				$op = new SRFDeleteCategoryOperation($c, $this->options);
 				$op->setBot($mBot);
 				$op->refactor($save, $logMessages, $testData);
 			}

@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_ChangeValue.php');
 
 class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
@@ -42,7 +42,7 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 
 
 	function testChangeValue() {
-		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "Old", "New");
+		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", "Old", "New");
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::old]]. No text.
 ENDS;
@@ -52,7 +52,7 @@ ENDS;
 	}
 
 	function testValueRemove() {
-		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", NULL);
+		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", NULL);
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::old]]. No text.
 ENDS;
@@ -61,7 +61,7 @@ ENDS;
 		$this->assertNotContains('Testproperty::', $wikitext);
 	}
 	function testValueAdd() {
-		$r = new SMWRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "New");
+		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "New");
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::old]]. No text.
 ENDS;

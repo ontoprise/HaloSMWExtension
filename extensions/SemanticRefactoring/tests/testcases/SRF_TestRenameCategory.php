@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameCategory.php');
 
 class SRFTestRenameCategory extends PHPUnit_Framework_TestCase {
@@ -41,7 +41,7 @@ class SRFTestRenameCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRenameCategory() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
 		$wikitext = <<<ENDS
 This is a test [[Category:Testcategory]]. No text.
 ENDS;
@@ -51,7 +51,7 @@ ENDS;
 	}
 
 	function testRenameCategoryAsValue() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
 		$wikitext = <<<ENDS
 This is a test [[ABC::Category:Testcategory]]. No text.
 ENDS;
@@ -61,7 +61,7 @@ ENDS;
 	}
 
 	function testRenameCategoryAsRecordValue() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
 		$wikitext = <<<ENDS
 This is a test [[Has domain and range::Category:Testcategory; Category:TestRange]]. No text.
 ENDS;
@@ -71,7 +71,7 @@ ENDS;
 	}
 
 	function testRenameCategoryAsLink() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
 		$wikitext = <<<ENDS
 This is a test [[:Category:Testcategory]]. No text.
 ENDS;
@@ -81,7 +81,7 @@ ENDS;
 	}
 
 	function testRenameCategoryInQuery() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Category:Testcategory]][[Testproperty::+]] }}
@@ -94,7 +94,7 @@ ENDS;
 	}
 
 	function testRenameCategoryInQuery2() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Testproperty::Category:Testcategory]] }}
@@ -107,7 +107,7 @@ ENDS;
 	}
 
 	function testRenameCategoryInQuery3() {
-		$r = new SMWRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
+		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[:Category:Testcategory]] }}

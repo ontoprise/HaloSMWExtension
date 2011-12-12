@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameProperty.php');
 
 class SRFTestRenameProperty extends PHPUnit_Framework_TestCase {
@@ -43,7 +43,7 @@ class SRFTestRenameProperty extends PHPUnit_Framework_TestCase {
 
 
 	function testRenameProperty() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test [[Testproperty::value1]]. No text.
 ENDS;
@@ -53,7 +53,7 @@ ENDS;
 	}
 
 	function testRenamePropertyAsValue() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test [[ABC::Property:Testproperty]]. No text.
 ENDS;
@@ -63,7 +63,7 @@ ENDS;
 	}
 
 	function testRenamePropertyAsLink() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test [[Property:Testproperty]]. No text.
 ENDS;
@@ -73,7 +73,7 @@ ENDS;
 	}
 
 	function testRenamePropertyInQuery() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Category:Testcategory]][[Testproperty::+]]|?Testproperty }}
@@ -85,7 +85,7 @@ ENDS;
 	}
 
 	function testRenamePropertyInQuery2() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Property:Testproperty]]|?Testproperty }}
@@ -97,7 +97,7 @@ ENDS;
 	}
 
 	function testRenamePropertyInQuery3() {
-		$r = new SMWRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
+		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
 		$wikitext = <<<ENDS
 This is a test
 {{#ask: [[Category:Testcategory]]|?Testproperty }}

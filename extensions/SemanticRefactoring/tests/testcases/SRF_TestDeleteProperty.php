@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteProperty.php');
 require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
@@ -45,7 +45,7 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveProperty() {
-		$r = new SMWRFDeletePropertyOperation('Has child', array('onlyProperty'=>true));
+		$r = new SRFDeletePropertyOperation('Has child', array('onlyProperty'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -54,7 +54,7 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemovePropertyWithInstances() {
-		$r = new SMWRFDeletePropertyOperation('Has son', array('removeInstancesUsingProperty'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('removeInstancesUsingProperty'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -65,7 +65,7 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 
 
 	function testRemoveQueries() {
-		$r = new SMWRFDeletePropertyOperation('Has son', array('removeQueries'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('removeQueries'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
@@ -76,7 +76,7 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemovePropertyAnnotations() {
-		$r = new SMWRFDeletePropertyOperation('Has son', array('removePropertyAnnotations'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('removePropertyAnnotations'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);

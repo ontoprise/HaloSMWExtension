@@ -23,7 +23,7 @@
  * @author Kai Kuehn
  *
  */
-abstract class SMWRFRefactoringOperation {
+abstract class SRFRefactoringOperation {
 
 	protected $mBot;
     

@@ -16,7 +16,7 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
+class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 	private $oldCategory;
 	private $newCategory;
 	
@@ -90,14 +90,11 @@ class SMWRFRenameCategoryOperation extends SMWRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
+			$logMessages[] = 'Content of "'.$i->getPrefixedText().'" changed.';
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
-		// move article
-		if ($save) {
-			$this->oldCategory->moveTo($this->newCategory);
-		}
-		if (!is_null($this->mBot)) $this->mBot->worked(1);
+		
 	}
 
 	/**
