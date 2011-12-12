@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
+require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameCategory.php');
 
 class SRFTestRenameCategory extends PHPUnit_Framework_TestCase {

@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
+require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_ChangeValue.php');
 
 class SRFTestChangeValue extends PHPUnit_Framework_TestCase {

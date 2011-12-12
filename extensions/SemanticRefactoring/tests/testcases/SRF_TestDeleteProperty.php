@@ -26,7 +26,7 @@
  *
  */
 global $srefgIP;
-require_once($srefgIP.'/includes/SRFRefactoringOperation.php');
+require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteProperty.php');
 require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
