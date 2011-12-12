@@ -43,6 +43,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	//--- Constants ---
 	
 	const SPECIAL_PAGE_HTML = '
+{{fs_ext_Top}}
 <div id="wrapper"> 
 	<div class="facets">
 		<div>
@@ -95,8 +96,10 @@ class FSFacetedSearchSpecial extends SpecialPage {
 </div>
 <div class="xfsCurrentSearchLink">
 	<hr class="xfsSeparatorLine">
-	<div id="current_search_link"></div>
+	<span id="current_search_link"></span>
+	{{fs_ext_BottomMenu}}
 </div>
+{{fs_ext_Bottom}}
 ';
 
     public function __construct() {
@@ -153,8 +156,58 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		$html = self::SPECIAL_PAGE_HTML;
 		$html = str_replace('{{searchTerm}}', htmlspecialchars($search), $html);
 		
+		$html = $this->addExtensions($html);
+		
 		$wgOut->addHTML($this->replaceLanguageStrings($html));
 		$wgOut->addModules('ext.facetedSearch.special');
+    }
+    
+    /**
+     * The HTML structure of Faceted Search offers sections for other extensions
+     * that can inject their HTML. 
+     * These sections are named {{fs_ext_X}} where X is variable e.g. {{fs_ext_Top}}.
+     * For each such section a hook with the name FacetedSearchExtensionX is called
+     * e.g. FacetedSearchExtensionTop.
+     * Functions that are registered for this hook must have the following
+     * signature
+     * 
+     * function fn(&$html)
+     * 
+     * The parameter $html contains the HTML that was assembled so far and the
+     * function can augment it.
+     * 
+     * Finally the {{fs_ext_X}} section is replaced by the HTML.
+     * 
+     * After the HTML was collected, the hook FacetedSearchExtensionAddResources
+     * is called where extensions should add their resources like scripts and 
+     * styles. This function has no parameters i.e.
+     * 
+     * function fn()
+     * 
+     * @param {String} $pageHTML
+     * 		The HTML of the whole page where the extensions are injected.
+     * 
+     * @return {String}
+     * 		The modified HTML
+     */
+    public function addExtensions($pageHTML) {
+    	if (preg_match_all("/{{fs_ext_(.*)}}/", $pageHTML, $matches, PREG_SET_ORDER)) {
+    		// Collect the html from all extensions
+    		foreach ($matches as $extensionPoint) {
+    			$extp = $extensionPoint[0];
+    			$hook = 'FacetedSearchExtension'.$extensionPoint[1];
+    			$html = '';
+    			wfRunHooks($hook, array(&$html));
+    			
+    			// Do the replacement in the HTML structure
+    			$pageHTML = str_replace($extp, $html, $pageHTML);
+    		}
+    		
+    		// Let the extensions add their resources
+    		wfRunHooks('FacetedSearchExtensionAddResources', array());
+    		
+    	}
+    	return $pageHTML;
     }
 
 	/**

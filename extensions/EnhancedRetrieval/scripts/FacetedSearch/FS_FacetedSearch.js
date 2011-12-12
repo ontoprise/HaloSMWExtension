@@ -185,77 +185,24 @@ FacetedSearch.classes.FacetedSearch = function () {
 	/**
 	 * Constructor for the FacetedSearch class.
 	 */
-	function construct() {
-		mAjaxSolrManager = new AjaxSolr.FSManager({
-			solrUrl: wgFSSolrURL,
-			servlet: wgFSSolrServlet
-			});
-		
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.LinkCurrentSearchWidget({
-			id: 'currentSearchLink',
-			target: '#current_search_link'
-		}));
-		
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ResultWidget({
-		  id: 'article',
-		  target: '#docs'
-		}));
-		
-		// Add the widgets for the standard facets
-		var categoryFacet = FACET_FIELDS[0];
-		var relationFacet = FACET_FIELDS[1];
-		var attributeFacet = FACET_FIELDS[2];
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
-			id : 'fsf' + categoryFacet,
-			target : '#field_categories',
-			field : categoryFacet
-		}));
-		mRelationWidget = new FacetedSearch.classes.FacetWidget({
-			id : 'fsf' + relationFacet,
-			target : '#field_dummy',
-			field : relationFacet,
-			noRender : true
-		});
-		mAjaxSolrManager.addWidget(mRelationWidget);
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
-			id : 'fsf' + attributeFacet,
-			target : '#field_properties',
-			field : attributeFacet,
-			fields : [ relationFacet, attributeFacet ]
-		}));
-
-		// paging
-		var lang = FacetedSearch.singleton.Language;
-
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.PagerWidget({
-			id : 'pager',
-			target : '#pager',
-			prevLabel : lang.getMessage('pagerPrevious'),
-			nextLabel : lang.getMessage('pagerNext'),
-			renderHeader : function(perPage, offset, total) {
-				$('#pager-header').html(
-						$('<span/>').text(
-								lang.getMessage('results') + ' ' 
-								+ Math.min(total, offset + 1)
-								+ ' ' + lang.getMessage('to') + ' '
-								+ Math.min(total, offset + perPage)
-								+ ' '+ lang.getMessage('of') + ' ' + total));
-			}
-		}));
-		
-		// current search filters
-		mAjaxSolrManager.addWidget(new FacetedSearch.classes.CurrentSearchWidget({
-			id: 'currentsearch',
-		  	target: '#selection'
-		}));
-
-		// init
-		mAjaxSolrManager.init();
-		initParameterStore();
-		checkSolrPresent();	
-		
-	};
+	function construct(){
+	}
 	that.construct = construct;
+		
+	/**
+	 * Constructor for the FacetedSearch class.
+	 */
+	function createUserInterface() {
+		createSolrManager();
+		createWidgets();
+		addEventHandlers();
+		
+		initNamespaces();
+		
+		// Show all results at start up
+		updateSearchResults();
+	};
+	that.createUserInterface = createUserInterface;
 	
 	/**
 	 * Keyup event handler for the search input field.
@@ -305,6 +252,15 @@ FacetedSearch.classes.FacetedSearch = function () {
 	}
 	
 	/**
+	 * Adds the given widget to the SOLR manager.
+	 * 
+	 * @param {AbstractWidget} widget
+	 */
+	that.addWidget = function (widget) {
+		mAjaxSolrManager.addWidget(widget);
+	}
+	
+	/**
 	 * Gets the search term from the input field and triggers a new SOLR request.
 	 * All widgets will be updated.
 	 */
@@ -331,6 +287,7 @@ FacetedSearch.classes.FacetedSearch = function () {
 		mAjaxSolrManager.doRequest(0);
 		
 	}
+	that.updateSearchResults = updateSearchResults;
 	
 	/**
 	 * Translates a query string that is not an expert query (i.e. not enclosed in
@@ -555,13 +512,91 @@ FacetedSearch.classes.FacetedSearch = function () {
 		}
 	}
 	
+	/**
+	 * @private
+	 * Creates the SOLR manager
+	 */
+	function createSolrManager(){
+		mAjaxSolrManager = new AjaxSolr.FSManager({
+			solrUrl: wgFSSolrURL,
+			servlet: wgFSSolrServlet
+			});
+	}
+	
+	/**
+	 * @private
+	 * Creates and attaches all widgets to the SOLR manager
+	 */
+	function createWidgets() {
+		
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.LinkCurrentSearchWidget({
+			id: 'currentSearchLink',
+			target: '#current_search_link'
+		}));
+
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.ResultWidget({
+		  id: 'article',
+		  target: '#docs'
+		}));
+		
+		// Add the widgets for the standard facets
+		var categoryFacet = FACET_FIELDS[0];
+		var relationFacet = FACET_FIELDS[1];
+		var attributeFacet = FACET_FIELDS[2];
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
+			id : 'fsf' + categoryFacet,
+			target : '#field_categories',
+			field : categoryFacet
+		}));
+		mRelationWidget = new FacetedSearch.classes.FacetWidget({
+			id : 'fsf' + relationFacet,
+			target : '#field_dummy',
+			field : relationFacet,
+			noRender : true
+		});
+		mAjaxSolrManager.addWidget(mRelationWidget);
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.FacetWidget({
+			id : 'fsf' + attributeFacet,
+			target : '#field_properties',
+			field : attributeFacet,
+			fields : [ relationFacet, attributeFacet ]
+		}));
+
+		// paging
+		var lang = FacetedSearch.singleton.Language;
+
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.PagerWidget({
+			id : 'pager',
+			target : '#pager',
+			prevLabel : lang.getMessage('pagerPrevious'),
+			nextLabel : lang.getMessage('pagerNext'),
+			renderHeader : function(perPage, offset, total) {
+				$('#pager-header').html(
+						$('<span/>').text(
+								lang.getMessage('results') + ' ' 
+								+ Math.min(total, offset + 1)
+								+ ' ' + lang.getMessage('to') + ' '
+								+ Math.min(total, offset + perPage)
+								+ ' '+ lang.getMessage('of') + ' ' + total));
+			}
+		}));
+		
+		// current search filters
+		mAjaxSolrManager.addWidget(new FacetedSearch.classes.CurrentSearchWidget({
+			id: 'currentsearch',
+		  	target: '#selection'
+		}));
+		
+		// Inform all extensions that widgets can be added now
+		$(that).trigger('FSAddWidgets');
+
+		// init
+		mAjaxSolrManager.init();
+		initParameterStore();
+		checkSolrPresent();	
+	}
+	
 	construct();
-	addEventHandlers();
-	
-	initNamespaces();
-	
-	// Show all results at start up
-	updateSearchResults();
 	
 	// Public constants
 	that.FACET_FIELDS		= FACET_FIELDS;
@@ -576,9 +611,12 @@ FacetedSearch.classes.FacetedSearch = function () {
 	
 }
 
+// Create the singleton instance of Faceted Search
+if (!FacetedSearch.singleton) {
+	FacetedSearch.singleton = {};
+}
+FacetedSearch.singleton.FacetedSearchInstance = FacetedSearch.classes.FacetedSearch();
+
 jQuery(document).ready(function() {
-	if (!FacetedSearch.singleton) {
-		FacetedSearch.singleton = {};
-	}
-	FacetedSearch.singleton.FacetedSearchInstance = FacetedSearch.classes.FacetedSearch();
+	FacetedSearch.singleton.FacetedSearchInstance.createUserInterface();
 });

@@ -87,7 +87,7 @@ function fsfInitResourceLoaderModules() {
 	);
 
 	// Scripts and styles for all actions
-	$wgResourceModules['ext.facetedSearch.special'] = $moduleTemplate + array(
+	$wgResourceModules['ext.facetedSearch.ajaxSolr'] = $moduleTemplate + array(
 		'scripts' => array(
 			"scripts/ajax-solr/lib/core/Core.js",      
 			"scripts/ajax-solr/lib/core/AbstractManager.js",      
@@ -99,9 +99,13 @@ function fsfInitResourceLoaderModules() {
 			"scripts/ajax-solr/lib/core/ParameterStore.js",      
 			"scripts/ajax-solr/lib/helpers/jquery/ajaxsolr.theme.js",      
 			"scripts/ajax-solr/lib/widgets/jquery/PagerWidget.js",      
-			
 			"scripts/FacetedSearch/jquery.jsonp-2.1.4.js",
 			"scripts/FacetedSearch/FS_Manager.jquery.js",
+			)
+	);
+	// Scripts and styles for all actions
+	$wgResourceModules['ext.facetedSearch.special'] = $moduleTemplate + array(
+		'scripts' => array(
 			"scripts/FacetedSearch/FS_Theme.js",      
 			"scripts/FacetedSearch/FS_ResultWidget.js",      
 			"scripts/FacetedSearch/FS_PagerWidget.js",      
@@ -118,14 +122,14 @@ function fsfInitResourceLoaderModules() {
 			"scripts/FacetedSearch/FS_StringFacetClusterer.js",
 			"scripts/FacetedSearch/FS_DateFacetClusterer.js",
 			"scripts/FacetedSearch/FS_ClusterWidget.js",
-			"scripts/FacetedSearch/FS_FacetClustererFactory.js"
-		
+			"scripts/FacetedSearch/FS_FacetClustererFactory.js",
 			),
 		'styles' => array(
 				'/skin/faceted_search.css',
 				),
 		'dependencies' => array(
-				'ext.facetedSearch.Language'
+				'ext.facetedSearch.Language',
+				'ext.facetedSearch.ajaxSolr',
 				)
 				
 	);
