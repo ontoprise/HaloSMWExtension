@@ -80,6 +80,7 @@ class WikiTypeToXSD {
 			case '_anu' : return 'xsd:anyURI';
 
 			// single unit type in SMW
+			case '_qty' :
 			case '_tem' : return 'tsctype:unit';
 
 			//only relevant for schema import
