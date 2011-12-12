@@ -18,9 +18,8 @@
  */
 
 
-require_once 'testcases/TestGenerateTree.php';
-require_once 'testcases/TestGenerateTreeDynamic.php';
-require_once 'testcases/TestGenerateTreeAjaxCalls.php'; 
+require_once 'testcases/TestTreeviewExtensionBasics.php';
+require_once 'testcases/TestTreeviewParserFunctions.php';
 
 class TreeviewTests
 {
@@ -28,9 +27,8 @@ class TreeviewTests
     {
         $suite = new PHPUnit_Framework_TestSuite('PHPUnit');
  
-        $suite->addTestSuite("TestGenerateTree");
-        $suite->addTestSuite("TestGenerateTreeDynamic");
- 		$suite->addTestSuite("TestGenerateTreeAjaxCalls");
+        $suite->addTestSuite("TestTreeviewExtensionBasicsSuite");
+        $suite->addTestSuite("TestTreeviewParserFunctionsSuite");
  		
         return $suite;
     }

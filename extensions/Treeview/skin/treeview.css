@@ -1,4 +1,3 @@
-<?php
 /*
  * Copyright (C) Vulcan Inc.
  *
@@ -17,19 +16,35 @@
  *
  */
 
-#Import SMW, SMWHalo
-include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
-enableSemantics('http://wiki', true);
- 
-include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-enableSMWHalo();
+/**
+ * @file
+ * @ingroup TreeViewStyles
+ * @author: Thomas Schweitzer
+ */
 
-#Semantic Treeview 
-require_once('extensions/Treeview/includes/TV_Initialize.php');
-enableTreeView();
+.tvDefineTreeView {
+	margin: 10px;	
+}
 
-###Each extension wich depends on SMWHalo depends also on arclibrary####
-include_once('extensions/ARCLibrary/ARCLibrary.php');
+.tvDefineTreeViewInner {
+	border-color: #AAAAAA;
+	border-style: solid;
+	border-width: 1px;
+	height: 200px;
+	margin: 10px;
+	overflow-x: hidden;
+}
 
-################################################################################################################
+.tvToggleSectionButton {
+	cursor: pointer;
+}
+
+.tvParserFunctionBox {
+	background-color: #EEEEFF;
+	border-color: #AAAAAA;
+	border-style: solid;
+	border-width: 1px;
+	font-family: Courier;
+	margin: 10px;	
+}
 
