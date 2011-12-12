@@ -339,7 +339,7 @@ class DFBundleTools {
 				$a = new Article($title);
 				$id = $title->getArticleID( GAID_FOR_UPDATE );
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-					if( true/*$a->doDeleteArticle( "ontology removed: ".$ext_id )*/ ) {
+					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
 						$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
 						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "ontology removed: ".$ext_id, $id));
@@ -368,7 +368,7 @@ class DFBundleTools {
 				$a = new Article($title);
 				$id = $row->id;
 				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-					if( true/*$a->doDeleteArticle( "ontology removed: ".$ext_id )*/ ) {
+					if( $a->doDeleteArticle( "ontology removed: ".$ext_id ) ) {
 						if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
 						$dfgOut->outputln("\t[Removing page]: ".$title->getPrefixedText()."...");
 
