@@ -102,10 +102,10 @@ class DFCommandInterface {
 
 	public function saveLocalSettingFragment($extid, $fragment) {
 		global $mwrootDir;
-		
+
 		//FIXME: this is necessary for Linux because it escapes quotes in $fragment. why?
 		if (!Tools::isWindows()) {
-		  $fragment = str_replace(array('\"', "\\'"), array('"', "'"), $fragment);
+			$fragment = str_replace(array('\"', "\\'"), array('"', "'"), $fragment);
 		}
 		if ($extid != 'all') {
 			$localPackages = PackageRepository::getLocalPackages($mwrootDir);
@@ -559,6 +559,10 @@ class DFCommandInterface {
 
 	public function storeServerSettings($jsondata) {
 		global $mwrootDir;
+		//FIXME: this is necessary for Linux because it escapes quotes in $fragment. why?
+		if (!Tools::isWindows()) {
+			$jsondata = str_replace(array('\"', "\\'"), array('"', "'"), $jsondata);
+		}
 		$server_settings = fopen($mwrootDir."/deployment/config/serversettings","w");
 		if ($server_settings === false) return "false";
 		fwrite($server_settings, $jsondata);
