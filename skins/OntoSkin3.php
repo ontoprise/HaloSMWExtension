@@ -23,6 +23,7 @@
 if( !defined( 'MEDIAWIKI' ) )
     die( -1 );
 
+    
 /**
  * Inherit main code from SkinTemplate, set the CSS and template filter.
  * @todo document
@@ -42,7 +43,7 @@ class SkinOntoSkin3 extends SkinTemplate {
             $this->skinname  = 'ontoskin3';
             $this->stylename = 'ontoskin3';
             $this->template  = 'OntoSkin3Template';
-
+            $this->addResourceModules($out);
     }
     
     function getSkinName() {
@@ -80,6 +81,12 @@ class SkinOntoSkin3 extends SkinTemplate {
         
 	        
     }
+    
+    function addResourceModules($out) {
+		// Add the module for the tree view
+		$out->addModules('ext.TreeView.tree');
+	}
+    	
 }
 
 /**
@@ -251,16 +258,7 @@ class OntoSkin3Template extends QuickTemplate {
             <div class="visualClear"></div>
             <div id="smwh_pstats"> <?php echo $this->smwh_Skin->showPageStats(); ?> </div>
             <?php endif; // page != 'plain' ?>
-            
                 
-                <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
-                <?php $this->html('reporttime') ?>
-                <?php if ( $this->data['debug'] ): ?>
-        <!-- Debug output:
-                    <?php $this->text( 'debug' ); ?>
-
-        -->
-                <?php endif; ?>
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
             <td rowspan="2" id="shadow_right" width="7">
@@ -280,6 +278,14 @@ class OntoSkin3Template extends QuickTemplate {
             <?php endif; // page != 'plain' ?>
         <div id="ontomenuanchor"></div>
 
+		<?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
+		<?php $this->html('reporttime') ?>
+		<?php if ( $this->data['debug'] ): ?>
+	        <!-- Debug output:
+	        <?php $this->text( 'debug' ); ?>
+	        -->
+		<?php endif; ?>
+                
 		<!-- Javascript for Ontoskin3 -->
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"></script>
         
