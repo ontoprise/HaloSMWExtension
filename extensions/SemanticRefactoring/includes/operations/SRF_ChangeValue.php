@@ -39,7 +39,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		return count($this->instanceSet);
 	}
 
-	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+	public function refactor($save = true, & $logMessages) {
 		foreach($this->instanceSet as $o) {
 			$rev = Revision::newFromTitle($o);
 			$this->changeContent($rev->getRawText());

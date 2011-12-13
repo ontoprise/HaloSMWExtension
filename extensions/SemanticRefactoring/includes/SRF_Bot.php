@@ -35,6 +35,17 @@ global $sgagIP;
 require_once("$sgagIP/includes/SGA_GardeningBot.php");
 require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
+require_once( $srefgIP . '/includes/SRF_Bot.php');
+require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP . '/includes/SRF_Tools.php');
+require_once($srefgIP . '/includes/operations/SRF_ChangeValue.php');
+require_once($srefgIP . '/includes/operations/SRF_DeleteCategory.php');
+require_once($srefgIP . '/includes/operations/SRF_DeleteProperty.php');
+require_once($srefgIP . '/includes/operations/SRF_RenameCategory.php');
+require_once($srefgIP . '/includes/operations/SRF_RenameInstance.php');
+require_once($srefgIP . '/includes/operations/SRF_RenameProperty.php');
+
+
 /**
  * Exports object logic from TSC.
  *
@@ -67,7 +78,7 @@ class SRFRefactoringBot extends GardeningBot {
 	}
 
 	public function run($paramArray, $isAsync, $delay) {
-   
+			
 		// do not allow to start synchronously.
 		if (!$isAsync) {
 			return "RefactoringBot should not be executed synchronously!";
@@ -91,26 +102,35 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$newProperty = $paramArray['newProperty'];
 
+				if (!array_key_exists('rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+					return "Nothing done.";
+				}
+
 				$op = new SRFRenamePropertyOperation($oldProperty, $newProperty);
 				$num = $op->getNumberOfAffectedPages();
 				break;
 			case 'renameCategory' :
 				if (!array_key_exists('oldCategory', $paramArray)) {
-                    return "Old category missing";
-                }
-                $oldCategory = $paramArray['oldCategory'];
+					return "Old category missing";
+				}
+				$oldCategory = $paramArray['oldCategory'];
 
-                if (!array_key_exists('newCategory', $paramArray)) {
-                    return "New property missing";
-                }
-                $newCategory = $paramArray['newCategory'];
-
+				if (!array_key_exists('newCategory', $paramArray)) {
+					return "New property missing";
+				}
+				$newCategory = $paramArray['newCategory'];
+				
+				if (!array_key_exists('rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+					return "Nothing done.";
+				}
+				
 				$op = new SRFRenameCategoryOperation($oldCategory, $newCategory);
 				$num = $op->getNumberOfAffectedPages();
 				break;
 		}
 		$op->setBot($this);
-		$this->totalWork($num);
+		$this->setNumberOfTasks(1);
+		$this->addSubTask($num);
 
 		$logMessages=array();
 		$op->refactor(false, $logMessages);

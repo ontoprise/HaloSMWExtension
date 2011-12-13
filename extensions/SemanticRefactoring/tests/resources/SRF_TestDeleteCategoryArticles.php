@@ -37,4 +37,16 @@ TEXT
 [[Employee of::Ontoprise]]
 [[Category:Employee]]
 TEXT
+,
+//------------------------------------------------------------------------------        
+            'Property:Has name' =>
+<<<TEXT
+[[Has domain and range::Category:Person]]
+TEXT
+,
+//------------------------------------------------------------------------------        
+            'Property:Has employee' =>
+<<<TEXT
+[[Has domain and range::Category:Company; Category:Person]]
+TEXT
 );

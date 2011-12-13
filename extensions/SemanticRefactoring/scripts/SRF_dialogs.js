@@ -25,11 +25,11 @@
 	var content = {
 		renamePropertyContent : '<form action="" method="get" id="sref_option_form" operation="renameProperty">'
 				+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
-				+ '<tr><td colspan="2"><span>Choose the operation details:</span></td></tr>'
-				+ '<tr><td colspan="2"><input type="checkbox" id="rename_property">'
+				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
+				+ '<tr><td colspan="2"><input type="checkbox" id="rename_property" checked="true" requiresBot="false">'
 				+ mw.msg('rename_property')
 				+ '</input></td></tr>'
-				+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations">'
+				+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations" checked="true" requiresBot="true">'
 				+ mw.msg('rename_annotations')
 				+ '</input></td></tr>'
 				+ '<tr><td colspan="2"><input type="button" id="rename" value="'
@@ -37,11 +37,11 @@
 
 		renameCategoryContent : '<form action="" method="get" id="sref_option_form" operation="renameCategory">'
 			+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
-			+ '<tr><td colspan="2"><span>Choose the operation details:</span></td></tr>'
-			+ '<tr><td colspan="2"><input type="checkbox" id="rename_property">'
+			+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
+			+ '<tr><td colspan="2"><input type="checkbox" id="rename_property" checked="true" requiresBot="false">'
 			+ mw.msg('rename_category')
 			+ '</input></td></tr>'
-			+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations">'
+			+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations" checked="true" requiresBot="true">'
 			+ mw.msg('rename_annotations')
 			+ '</input></td></tr>'
 			+ '<tr><td colspan="2"><input type="button" id="rename" value="'
@@ -50,7 +50,7 @@
 
 	var dialog = {
 
-		openDialog : function(type, parameters) {
+		openDialog : function(type, parameters, callback) {
 			$.fancybox( {
 				'content' : content[type],
 				'modal' : true,
@@ -75,13 +75,17 @@
 						for(p in parameters) {
 							ajaxParams[p] = parameters[p];
 						}
+						var requiresBot = false;
 						$('input', $('#sref_option_form')).each(function(i, e) {
 							var p = $(e).attr("id");
-							ajaxParams[p] = true;
+							var value = $(e).attr('checked');
+							ajaxParams[p] = value;
+							if (value) requiresBot = requiresBot || $(e).attr('requiresBot') == 'true'; 
 						});
 						var operation = $('#sref_option_form').attr('operation'); 
 						
-						dialog.launchBot(operation, ajaxParams);
+						if (requiresBot) dialog.launchBot(operation, ajaxParams);
+						callback(ajaxParams);
 					});
 
 					// articleTitleTextBox.focus();

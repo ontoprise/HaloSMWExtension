@@ -48,8 +48,8 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('deleted', $testData['Category:Person']);
-		//print_r($testData);
+		$this->assertEquals('Article deleted', $logMessages['Category:Person']->getOperation());
+
 	}
 
 	function testRemoveCategoryWithInstances() {
@@ -57,22 +57,20 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('deleted', $testData['Kai']);
-		//print_r($testData);
+		$this->assertEquals('Article deleted', $logMessages['Kai']->getOperation());
+
 	}
-
-
 
 	function testRemoveQueries() {
 		$r = new SRFDeleteCategoryOperation('Man', array('removeQueries'=>true));
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		list($op, $wikitext) = $testData['All men'];
-		$this->assertEquals('removeCategoryAnnotations', $op);
-		$this->assertNotContains('#ask', $wikitext);
-		
-		//print_r($testData);
+		$log = $logMessages['All men'];
+		$this->assertEquals('Removed query', $log->getOperation());
+		$this->assertNotContains('#ask', $log->getWikiText());
+
+
 	}
 
 	function testRemoveCategoryAnnotations() {
@@ -80,9 +78,23 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		list($op, $wikitext) = $testData['Kai'];
-		$this->assertEquals('removeCategoryAnnotations', $op);
-        $this->assertNotContains('[[Category:Man]]', $wikitext);
-		//print_r($testData);
+		$log =  $logMessages['Kai'];
+		$this->assertEquals('Removed category annotation', $log->getOperation());
+		$this->assertNotContains('[[Category:Man]]', $log->getWikiText());
+
+	}
+
+	function testRemoveCategoryFromDomainAndRange() {
+		$r = new SRFDeleteCategoryOperation('Person', array('removeFromDomainOrRange'=>true));
+		$logMessages = array();
+		$testData = array();
+		$r->refactor(false, $logMessages, $testData);
+
+		$log =  $logMessages['Property:Has name'];
+		$this->assertEquals('Removed from domain and/or range',  $log->getOperation());
+		$this->assertNotContains('[[Category:Person]]', $log->getWikiText());
+		$log =  $logMessages['Property:Has employee'];
+		$this->assertEquals('Removed from domain and/or range',  $log->getOperation());
+		$this->assertNotContains('[[Category:Person]]', $log->getWikiText());
 	}
 }

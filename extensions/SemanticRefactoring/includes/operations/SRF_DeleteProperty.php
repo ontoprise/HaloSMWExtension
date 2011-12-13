@@ -92,148 +92,155 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		return $this->affectedPages;
 	}
 
-	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
-		
+
 		if (array_key_exists('onlyProperty', $this->options) && $this->options['onlyProperty'] == true) {
 			$a = new Article($this->property);
+			$deleted = true;
 			if ($save) {
-				if (!SRFTools::deleteArticle($a)) {
-					$logMessages[] = 'Deletion failed: '.$this->property->getPrefixedText();
-				}
+				$deleted = SRFTools::deleteArticle($a);
 			}
-			$logMessages[] = 'Article deleted: '.$this->property->getPrefixedText();
-			if (!is_null($testData)) {
-				$testData[$this->property->getPrefixedText()] = 'deleted';
+			if ($deleted) {
+				$logMessages[$this->property->getPrefixedText()] = new SRFLog('Article deleted',$this->property);
+			} else {
+				$logMessages[$this->property->getPrefixedText()] = new SRFLog('Deletion failed',$this->property);
 			}
 			return;
 		}
 
 
+	
+
+	$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries']);
+	$set = SRFTools::makeTitleListUnique($set);
+	foreach($set as $i) {
 		if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
 			// if instances are completely removed, there is no need to remove annotations before
-			foreach($results['instances'] as $i) {
-				$a = new Article($i);
-				if ($save) {
-					if (!SRFTools::deleteArticle($a)) {
-						$logMessages[] = 'Deletion failed: '.$i->getPrefixedText();
-					}
-				}
-				$logMessages[] = 'Article deleted: '.$i->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$i->getPrefixedText()] = 'deleted';
-				}
-			}
-		} else if (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true) {
-			foreach($results['instances'] as $i) {
-				$rev = Revision::newFromTitle($i);
-				if (is_null($rev)) continue;
-				$wikitext = $this->removePropertyAnnotation($rev->getRawText());
-				if ($save) {
-					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-				}
-				$logMessages[] = 'Removed property annotation from: '.$i->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$i->getPrefixedText()] = array('removePropertyAnnotations', $wikitext);
-				}
-			}
-		}
 
-		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true) {
-			foreach($results['queries'] as $q) {
-				$rev = Revision::newFromTitle($q);
-				if (is_null($rev)) continue;
-				$wikitext = $this->removeQuery($rev->getRawText());
-				if ($save) {
-					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-				}
-				$logMessages[] = 'Removed query from: '.$q->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$q->getPrefixedText()] = array('removePropertyAnnotations', $wikitext);
-				}
+			$a = new Article($i);
+			$deleted = true;
+			if ($save) {
+				$deleted = SRFTools::deleteArticle($a);
 			}
-		}
+			if ($deleted) {
+				$logMessages[$i->getPrefixedText()] = new SRFLog('Article deleted',$i);
+			} else {
+				$logMessages[$i->getPrefixedText()] = new SRFLog('Deletion failed',$i);
+			}
 
-		if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
-			foreach($results['directSubcategories'] as $p) {
-				$op = new SRFDeletePropertyOperation($p, $this->options);
-				$op->refactor($save, $logMessages, $testData);
-			}
+			continue; // if article is removed, then continue;
+		}
+		$rev = Revision::newFromTitle($i);
+		if (is_null($rev)) continue;
+		$wikitext = $rev->getRawText();
+
+		if (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true
+		&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
+			$wikitext = $this->removePropertyAnnotation($wikitext);
+
+			$logMessages[$i->getPrefixedText()] = new SRFLog('Removed property annotation',$i);
+				
 		}
 
 
+		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true
+		&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
+			$wikitext = $this->removeQuery($wikitext);
+			if ($save) {
+				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+			}
+
+			$logMessages[$i->getPrefixedText()] = new SRFLog('Removed query',$i);
+				
+		}
 	}
 
-	private function removeQuery($wikitext) {
-
-		$wom = WOMProcessor::parseToWOM($wikitext);
-		$toDelete = array();
-
-		# iterate trough the annotations
-		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
-
-		foreach($objects as $o){
-			$deleted = false;
-			$results = array();
-			$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
-			foreach($results as $c){
-				$name = $c->getPropertyName();
-				if ($name == $this->property->getText()) {
-					$toDelete[] = $o->getObjectID();
-					$deleted = true;
-				}
-			}
-
-			if ($deleted) continue;
-
-			// find printout
-			$results = array();
-			$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
-			foreach($results as $paramValue) {
-				$paramTexts = array();
-				$this->findObjectByID($paramValue, WOM_TYPE_TEXT, $printouts);
-				foreach($printouts as $po){
-					$value = $po->getWikiText();
-					$value = trim($value);
-					if ($value == '?'.$this->oldProperty->getText()) {
-						$toDelete[] = $o->getObjectID();
-					}
-
-				}
-			}
-		}
-
-		$toDelete = array_unique($toDelete);
-		foreach($toDelete as $id) {
-			$wom->removePageObject($id);
-		}
-
-		$wikitext = $wom->getWikiText();
-		return $wikitext;
+	if ($save) {
+		$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 	}
 
-	private function removePropertyAnnotation($wikitext) {
 
-		$wom = WOMProcessor::parseToWOM($wikitext);
-		$toDelete = array();
+	if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
+		foreach($results['directSubcategories'] as $p) {
+			$op = new SRFDeletePropertyOperation($p, $this->options);
+			$op->refactor($save, $logMessages, $testData);
+		}
+	}
+}
 
-		# iterate trough the annotations
-		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		foreach($objects as $o){
 
-			$name = $o->getPropertyName();
+
+private function removeQuery($wikitext) {
+
+	$wom = WOMProcessor::parseToWOM($wikitext);
+	$toDelete = array();
+
+	# iterate trough the annotations
+	$objects = $wom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+
+	foreach($objects as $o){
+		$deleted = false;
+		$results = array();
+		$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
+		foreach($results as $c){
+			$name = $c->getPropertyName();
 			if ($name == $this->property->getText()) {
-				$toDelete[] = $o;
+				$toDelete[] = $o->getObjectID();
+				$deleted = true;
 			}
-
 		}
 
-		foreach($toDelete as $d) {
-			$wom->removePageObject($d->getObjectID());
-		}
+		if ($deleted) continue;
 
-		$wikitext = $wom->getWikiText();
-		return $wikitext;
+		// find printout
+		$results = array();
+		$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
+		foreach($results as $paramValue) {
+			$paramTexts = array();
+			$this->findObjectByID($paramValue, WOM_TYPE_TEXT, $printouts);
+			foreach($printouts as $po){
+				$value = $po->getWikiText();
+				$value = trim($value);
+				if ($value == '?'.$this->oldProperty->getText()) {
+					$toDelete[] = $o->getObjectID();
+				}
+
+			}
+		}
 	}
+
+	$toDelete = array_unique($toDelete);
+	foreach($toDelete as $id) {
+		$wom->removePageObject($id);
+	}
+
+	$wikitext = $wom->getWikiText();
+	return $wikitext;
+}
+
+private function removePropertyAnnotation($wikitext) {
+
+	$wom = WOMProcessor::parseToWOM($wikitext);
+	$toDelete = array();
+
+	# iterate trough the annotations
+	$objects = $wom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+	foreach($objects as $o){
+
+		$name = $o->getPropertyName();
+		if ($name == $this->property->getText()) {
+			$toDelete[] = $o;
+		}
+
+	}
+
+	foreach($toDelete as $d) {
+		$wom->removePageObject($d->getObjectID());
+	}
+
+	$wikitext = $wom->getWikiText();
+	return $wikitext;
+}
 
 }

@@ -1337,6 +1337,10 @@ OBPropertyTreeActionListener.prototype = Object
 						obPropertyMenuProvider.showContent(commandID,'propertyTree');
 					},
 					
+					executeCommand : function(commandID) {
+						obPropertyMenuProvider.doCommand(commandID);
+                   	},
+					
 					
 					select : function(event, node, propertyID, propertyName) {
 

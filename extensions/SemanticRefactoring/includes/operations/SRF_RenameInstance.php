@@ -66,7 +66,7 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		return $this->affectedPages;
 	}
 
-	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+	public function refactor($save = true, & $logMessages) {
 
 		$this->queryAffectedPages();
 
@@ -81,7 +81,7 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
-			$logMessages[] = 'Content of "'.$i->getPrefixedText().'" changed.';
+			$logMessages[] = 'Content of "'.$title->getPrefixedText().'" changed.';
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 

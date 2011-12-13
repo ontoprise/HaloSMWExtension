@@ -49,7 +49,8 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('deleted', $testData['Property:Has child']);
+		$this->assertEquals('Article deleted', $logMessages['Property:Has child']->getOperation());
+		
 		//print_r($testData);
 	}
 
@@ -58,7 +59,8 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('deleted', $testData['Bernd']);
+		
+		$this->assertEquals('Article deleted', $logMessages['Bernd']->getOperation());
 		//print_r($testData);
 	}
 
@@ -69,9 +71,9 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		list($op, $wikitext) = $testData['All sons'];
-        $this->assertEquals('removePropertyAnnotations', $op);
-        $this->assertNotContains('#ask', $wikitext);
+		$log = $logMessages['All sons'];
+        $this->assertEquals('Removed query', $log->getOperation());
+        $this->assertNotContains('#ask', $log->getWikiText());
 		//print_r($testData);
 	}
 
@@ -80,9 +82,9 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 		$logMessages = array();
 		$testData = array();
 		$r->refactor(false, $logMessages, $testData);
-		list($op, $wikitext) = $testData['Bernd'];
-        $this->assertEquals('removePropertyAnnotations', $op);
-        $this->assertNotContains('[[Has son::Kai]]', $wikitext);
+		$log = $logMessages['Bernd'];
+        $this->assertEquals('Removed property annotation', $log->getOperation());
+        $this->assertNotContains('[[Has son::Kai]]', $log->getWikiText());
 		//print_r($testData);
 	}
 }

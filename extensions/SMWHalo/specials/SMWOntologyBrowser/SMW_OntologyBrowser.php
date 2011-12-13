@@ -182,7 +182,7 @@ if(!smwfIsTripleStoreConfigured()) {
 			{
 				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_editcategory')."</a> | <a onclick=\"categoryActionListener.executeCommand(".SMW_OB_COMMAND_CATEGORY_DELETE.")\">".wfMsg('smw_ob_cmd_deletecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
 			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> 
-                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_editproperty')."</a>| <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_DELETE.")\">".wfMsg('smw_ob_cmd_deleteproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
+                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_editproperty')."</a>| <a onclick=\"propertyActionListener.executeCommand(".SMW_OB_COMMAND_PROPERTY_DELETE.")\">".wfMsg('smw_ob_cmd_deleteproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
 				$html .= $menu;
 			}
 

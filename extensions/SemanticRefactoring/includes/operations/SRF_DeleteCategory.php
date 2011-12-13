@@ -43,7 +43,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		$num += array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true ? count($affectedPages['queries']) : 0;
 
 		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
-				
+
 			if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
 				$num += $smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories();
 			} else {
@@ -72,79 +72,122 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		foreach($subjects as $s) {
 			$queries[] = $s->getTitle();
 		}
+
+		// get properties with domain and/or ranges
+		$domainProperties = $store->getPropertiesWithDomain($this->category);
+		$rangeProperties = $store->getPropertiesWithRange($this->category);
+		$domainsOrRanges = array_merge($domainProperties, $rangeProperties);
+		$domainsOrRanges = SRFTools::makeTitleListUnique($domainsOrRanges);
+
 		$this->affectedPages = array();
 		$this->affectedPages['instances'] = $instances;
 		$this->affectedPages['queries'] = $queries;
+		$this->affectedPages['domainsOrRanges'] = $domainsOrRanges;
 		$this->affectedPages['directSubcategories'] = $directSubcategories;
 
 		return $this->affectedPages;
 	}
 
-	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
-		
+
 		if (array_key_exists('onlyCategory', $this->options) && $this->options['onlyCategory'] == true) {
 			$a = new Article($this->category);
+			$deleted = true;
 			if ($save) {
-				if (!SRFTools::deleteArticle($a)) {
-					$logMessages[] = 'Deletion failed: '.$this->category->getPrefixedText();
-				}
+				$deleted = SRFTools::deleteArticle($a);
 			}
-			$logMessages[] = 'Article deleted: '.$this->category->getPrefixedText();
-			if (!is_null($testData)) {
-				$testData[$this->category->getPrefixedText()] = 'deleted';
+			if ($deleted) {
+				$logMessages[$this->category->getPrefixedText()] = new SRFLog('Article deleted',$this->category);
+			} else {
+				$logMessages[$this->category->getPrefixedText()] = new SRFLog('Deletion failed',$this->category);
 			}
+
+
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 			return;
 		}
 
+		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries'],$this->affectedPages['domainsOrRanges']);
+		$set = SRFTools::makeTitleListUnique($set);
 
-		if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
-			// if instances are completely removed, there is no need to remove annotations before
-			foreach($results['instances'] as $i) {
-				$a = new Article($i);
+
+		// if instances are completely removed, there is no need to remove annotations before
+		foreach($set as $i) {
+			$a = new Article($i);
+
+			if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
+				$deleted = true;
 				if ($save) {
-					if (!SRFTools::deleteArticle($a)) {
-						$logMessages[] = 'Deletion failed: '.$i->getPrefixedText();
+					$deleted = SRFTools::deleteArticle($a);
+				}
+				if ($deleted) {
+					$logMessages[$i->getPrefixedText()] = new SRFLog('Article deleted',$i);
+				} else {
+					$logMessages[$i->getPrefixedText()] = new SRFLog('Deletion failed',$i);
+
+				}
+
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
+
+				continue; // continue if article is completely removed.
+			}
+
+			$rev = Revision::newFromTitle($i);
+			if (is_null($rev)) continue;
+			$wikitext = $rev->getRawText();
+
+			if (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true
+			&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
+				$wikitext = $this->removeCategoryAnnotation($wikitext);
+
+				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed category annotation',$i);
+
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
+			}
+
+			if (array_key_exists('removeFromDomainOrRange', $this->options) && $this->options['removeFromDomainOrRange'] == true
+			&& SRFTools::containsTitle($i, $this->affectedPages['domainsOrRanges'])) {
+
+				// if the property should be completly removed
+				if (array_key_exists('removeDomainOrRangeProperty', $this->options) && $this->options['removeDomainOrRangeProperty'] == true) {
+					$deleted = true;
+					if ($save) {
+						$deleted = SRFTools::deleteArticle($i);
 					}
+					if ($deleted) {
+						$logMessages[] = new SRFLog('Article deleted',$i);
+					} else {
+						$logMessages[] = new SRFLog('Deletion failed',$i);
+					}
+
+					continue;
 				}
-				$logMessages[] = 'Article deleted: '.$i->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$i->getPrefixedText()] = 'deleted';
-				}
+
+				$wikitext = $this->removePropertyAnnotation(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText(), $wikitext);
+
+				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed from domain and/or range',$i);
+
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
-		} else if (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true) {
-			foreach($results['instances'] as $i) {
-				$rev = Revision::newFromTitle($i);
-				if (is_null($rev)) continue;
-				$wikitext = $this->removeCategoryAnnotation($rev->getRawText());
-				if ($save) {
-					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-				}
-				$logMessages[] = 'Removed category annotation from: '.$i->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$i->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
-				}
+
+			if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true
+			&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
+
+				$wikitext = $this->removeQuery($wikitext);
+
+				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed query',$i);
+
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
+			}
+
+			if ($save) {
+				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
 		}
 
-		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true) {
-			foreach($results['queries'] as $q) {
-				$rev = Revision::newFromTitle($q);
-				if (is_null($rev)) continue;
-				$wikitext = $this->removeQuery($rev->getRawText());
-				if ($save) {
-					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-				}
-				$logMessages[] = 'Removed query from: '.$q->getPrefixedText();
-				if (!is_null($testData)) {
-					$testData[$q->getPrefixedText()] = array('removeCategoryAnnotations', $wikitext);
-				}
-				if (!is_null($this->mBot)) $this->mBot->worked(1);
-			}
-		}
+
+
 
 		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
 			foreach($results['directSubcategories'] as $c) {
@@ -176,11 +219,35 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			}
 
 		}
-		
+
 		$toDelete = array_unique($toDelete);
 
 		foreach($toDelete as $id) {
 			$wom->removePageObject($id);
+		}
+
+		$wikitext = $wom->getWikiText();
+		return $wikitext;
+	}
+
+	private function removePropertyAnnotation($property, $wikitext) {
+
+		$wom = WOMProcessor::parseToWOM($wikitext);
+		$toDelete = array();
+
+		# iterate trough the annotations
+		$objects = $wom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		foreach($objects as $o){
+
+			$name = $o->getPropertyName();
+			if ($name == $property) {
+				$toDelete[] = $o->getObjectID();
+			}
+
+		}
+		$toDelete = array_unique($toDelete);
+		foreach($toDelete as $d) {
+			$wom->removePageObject($d);
 		}
 
 		$wikitext = $wom->getWikiText();

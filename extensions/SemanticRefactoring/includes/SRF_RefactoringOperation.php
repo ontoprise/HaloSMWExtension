@@ -23,6 +23,8 @@
  * @author Kai Kuehn
  *
  */
+require_once($srefgIP.'/includes/SRF_Log.php');
+
 abstract class SRFRefactoringOperation {
 
 	protected $mBot;
@@ -41,7 +43,7 @@ abstract class SRFRefactoringOperation {
 	 * @param string [] & $logMessages
 	 * @param array & $testData
 	 */
-	public abstract function refactor($save = true, & $logMessages, & $testData = NULL);
+	public abstract function refactor($save = true, & $logMessages);
 	
 	/**
 	 * Set a GardeningBot to report progress

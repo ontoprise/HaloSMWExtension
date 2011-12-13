@@ -2074,38 +2074,18 @@ OBCatgeorySubMenu.prototype = Object
 							break;
 						}
 						case SMW_OB_COMMAND_SUBCATEGORY_EDIT: {
-							// check if rename operation necessary
+							
 							var doRename = this.selectedTitle != $F(
-									'categoryTreeMenu_input_ontologytools')
-									.strip().replace(/\s/g, "_");
-
-							// check if annotated categories are changed
-							var categoriesToUse = $F(
-									'categoryTreeMenu2_input_ontologytools')
-									.split(",");
-
-							categoriesToUse.sort(function(a, b) {
-								return a.strip() < b.strip() ? -1 : 1
-							});
-							for ( var i = 0; i < categoriesToUse.length; i++) {
-								categoriesToUse[i] = categoriesToUse[i].strip();
-							}
-							var doChangeOfCategories = categoriesToUse.length != this.annotatedSuperCategories.length;
-							if (categoriesToUse.length == this.annotatedSuperCategories.length) {
-								for ( var i = 0; i < categoriesToUse.length; i++) {
-									if (categoriesToUse[i] != this.annotatedSuperCategories[i]) {
-										doChangeOfCategories = true;
-										break;
-									}
-								}
-							}
-
+							'categoryTreeMenu_input_ontologytools')
+							.strip().replace(/\s/g, "_");
+							
 							var srefVersion = mw.loader
 									.version('ext.semanticrefactoring.dialogs');
 
 							if (srefVersion != null) {
 								srefgDialog.openDialog('renameCategoryContent', { oldCategory: this.selectedTitle, newCategory : $F(this.id
-										+ '_input_ontologytools') });
+										+ '_input_ontologytools') }, this.renameAndMove.bind(this));
+								
 								return;
 							} else if (doRename
 									&& typeof (smwghTripleStoreGraph) != undefined) {
@@ -2122,35 +2102,7 @@ OBCatgeorySubMenu.prototype = Object
 							}
 
 							// do actual wiki operations
-							if (doChangeOfCategories) {
-								var selectedTitle = this.selectedTitle;
-								var selectedID = this.selectedID;
-								var newCategoryTitle = $F(this.id
-										+ '_input_ontologytools');
-								ontologyTools.moveCategory(selectedID,
-										categoriesToUse,
-
-										function() {
-
-											// called if
-											// "moveInstanceToCategories"
-											// was successful,
-											// then rename
-											if (doRename) {
-												// only change of
-												// categories
-												ontologyTools.renameCategory(
-														newCategoryTitle,
-														selectedTitle,
-														selectedID);
-											}
-										});
-							} else if (doRename) {
-								// only rename
-								ontologyTools.renameCategory($F(this.id
-										+ '_input_ontologytools'),
-										this.selectedTitle, this.selectedID);
-							}
+							this.renameAndMove({rename_property: doRename });
 
 							this.cancel();
 							break;
@@ -2162,6 +2114,61 @@ OBCatgeorySubMenu.prototype = Object
 						}
 						default:
 							alert('Unknown command!');
+						}
+					},
+					
+					renameAndMove: function(options) {
+						// check if rename operation necessary
+						var doRename = options.rename_property;
+
+						// check if annotated categories are changed
+						var categoriesToUse = $F(
+								'categoryTreeMenu2_input_ontologytools')
+								.split(",");
+
+						categoriesToUse.sort(function(a, b) {
+							return a.strip() < b.strip() ? -1 : 1
+						});
+						for ( var i = 0; i < categoriesToUse.length; i++) {
+							categoriesToUse[i] = categoriesToUse[i].strip();
+						}
+						var doChangeOfCategories = categoriesToUse.length != this.annotatedSuperCategories.length;
+						if (categoriesToUse.length == this.annotatedSuperCategories.length) {
+							for ( var i = 0; i < categoriesToUse.length; i++) {
+								if (categoriesToUse[i] != this.annotatedSuperCategories[i]) {
+									doChangeOfCategories = true;
+									break;
+								}
+							}
+						}
+						if (doChangeOfCategories) {
+							var selectedTitle = this.selectedTitle;
+							var selectedID = this.selectedID;
+							var newCategoryTitle = $F(this.id
+									+ '_input_ontologytools');
+							ontologyTools.moveCategory(selectedID,
+									categoriesToUse,
+
+									function() {
+
+										// called if
+										// "moveInstanceToCategories"
+										// was successful,
+										// then rename
+										if (doRename) {
+											// only change of
+											// categories
+											ontologyTools.renameCategory(
+													newCategoryTitle,
+													selectedTitle,
+													selectedID);
+										}
+									});
+						} else if (doRename) {
+							// only rename
+							ontologyTools.renameCategory($F(this.id
+									+ '_input_ontologytools'),
+									this.selectedTitle, this.selectedID);
 						}
 					},
 
@@ -2452,7 +2459,11 @@ OBPropertySubMenu.prototype = Object
 								callback.bind(this));
 					},
 
-					doCommand : function() {
+					doCommand : function(commandID) {
+						if (commandID) {
+							this.commandID = commandID;
+						}
+						
 						switch (this.commandID) {
 
 						case SMW_OB_COMMAND_ADDSUBPROPERTY: {
@@ -2508,6 +2519,7 @@ OBPropertySubMenu.prototype = Object
 
 							if (srefVersion != null) {
 								srefgDialog.openDialog('renamePropertyContent');
+								
 								return;
 							}
 							else if(doRename
@@ -2559,6 +2571,11 @@ OBPropertySubMenu.prototype = Object
 							this.cancel();
 							break;
 						}
+						case SMW_OB_COMMAND_PROPERTY_DELETE: {
+							alert('Delete command');
+							break;
+						}
+						
 						default:
 							alert('Unknown command!');
 						}

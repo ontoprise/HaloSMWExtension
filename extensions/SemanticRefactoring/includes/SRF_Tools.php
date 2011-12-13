@@ -57,5 +57,14 @@ class SRFTools {
 	private static function compareTitles($a, $b) {
 		return strcmp($a->getPrefixedText(), $b->getPrefixedText());
 	}
-	
+
+
+	public static function containsTitle($title, $set) {
+		for($i = 0, $n = count($set); $i < $n; $i++ ) {
+			if ($set[$i]->getPrefixedText() == $title->getPrefixedText()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

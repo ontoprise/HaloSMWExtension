@@ -40,11 +40,12 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		// get all pages using $this->oldCategory as category annotation
-		$propertyDi = SMWDIProperty::newFromUserLabel('_TYPE');
-		$subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
-		foreach($subjects as $s) {
-			$subjects[] = $s->getTitle();
+		$titles = array();
+		$subjects = smwfGetSemanticStore()->getDirectInstances($this->oldCategory);
+	    foreach($subjects as $s) {
+			$titles[] = $s;
 		}
+		
 
 		// get all pages using $this->oldCategory as property value
 		$categoryDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
@@ -52,35 +53,37 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $categoryDi);
 			foreach($subjects as $s) {
-				$subjects[] = $s->getTitle();
+				$titles[] = $s->getTitle();
 			}
 		}
+		
 
 		// get all pages which uses links to $this->oldCategory
 		$subjects = $this->oldCategory->getLinksTo();
 		foreach($subjects as $s) {
-			$subjects[] = $s;
+			$titles[] = $s;
 		}
+
 
 		// get all queries using $this->oldCategory
 		$queries = array();
 		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-		$categoryStringDi = new SMWDIString($this->$this->oldCategory->getText());
+		$categoryStringDi = new SMWDIString($this->oldCategory->getText());
 		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
 		foreach($subjects as $s) {
-			$queries[] = $s->getTitle();
+			$titles[] = $s->getTitle();
 		}
 
-		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
 
-	public function refactor($save = true, & $logMessages, & $testData = NULL) {
+	public function refactor($save = true, & $logMessages) {
 
 		$this->queryAffectedPages();
-
-		foreach($this->affectedPages as $dbkey) {
-			$title = Title::newFromDBkey($dbkey);
+        
+		foreach($this->affectedPages as $title) {
+			
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $this->changeContent($rev->getRawText());
@@ -90,7 +93,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
-			$logMessages[] = 'Content of "'.$i->getPrefixedText().'" changed.';
+			$logMessages[] = 'Content of "'.$title->getPrefixedText().'" changed.';
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
