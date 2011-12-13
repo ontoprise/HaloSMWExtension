@@ -22,19 +22,19 @@
  * @author: Thomas Schweitzer
  */
 
-if (typeof window.TreeView == "undefined") {
+if (typeof TreeView == "undefined") {
 // Define the TreeView module	
-	window.TreeView = { 
+	TreeView = { 
 		classes : {},
 		singleton: {}
 	};
 }
-if (typeof window.TreeView.classes == "undefined") {
-	window.TreeView.classes = {};
+if (typeof TreeView.classes == "undefined") {
+	TreeView.classes = {};
 }
 
-if (typeof window.TreeView.singleton == "undefined") {
-	window.TreeView.singleton = {};
+if (typeof TreeView.singleton == "undefined") {
+	TreeView.singleton = {};
 }
 
 /**

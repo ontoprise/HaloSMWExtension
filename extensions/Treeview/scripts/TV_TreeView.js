@@ -22,15 +22,20 @@
  * @author: Thomas Schweitzer
  */
 
-if (typeof window.TreeView == "undefined") {
+if (typeof TreeView == "undefined") {
 // Define the TreeView module	
-	window.TreeView = { 
+	TreeView = { 
 		classes : {}
 	};
 }
-if (typeof window.TreeView.classes == "undefined") {
-	window.TreeView.classes = {};
+if (typeof TreeView.classes == "undefined") {
+	TreeView.classes = {};
 }
+
+if (typeof TreeView.singleton == "undefined") {
+	TreeView.singleton = {};
+}
+
 
 /**
  * @class TreeViewLoader
@@ -57,17 +62,7 @@ TreeView.classes.TreeViewLoader = function() {
 		}
 	    $.jstree._themes = mw.config.get('tvgTreeThemes');
 
-		for (var i = 0; i < TreeView.trees.length; ++i) {
-			var tree = TreeView.trees[i];
-			var elem = $('#'+tree.id);
-			var jsTreeConfig = {
-					"json_data" : tree.json,
-					"plugins" : [ "themes", "json_data"],
-					 "themes" : { "theme" : tree.theme },
-				};
-			elem.jstree(jsTreeConfig)
-				.bind("loaded.jstree", onLoadJSTree);
-		}
+		initializeTrees();
 		
 	};
 	
@@ -95,7 +90,35 @@ TreeView.classes.TreeViewLoader = function() {
 		});
 	}
 	
-	construct();	
+	/**
+	 * Iterates over all tree objects and instantiates those trees which are not
+	 * instantiated yet.
+	 */
+	function initializeTrees() {
+		for (var i = 0; i < TreeView.trees.length; ++i) {
+			var tree = TreeView.trees[i];
+			if (!tree.initialized) {
+				var elem = $('#' + tree.id);
+				var jsTreeConfig = {
+					"json_data": tree.json,
+					"plugins": ["themes", "json_data"],
+					"themes": {
+						"theme": tree.theme
+					},
+				};
+				elem.jstree(jsTreeConfig)
+				    .bind("loaded.jstree", onLoadJSTree);
+				tree.initialized = true;
+			}
+		}
+	}
+	that.initializeTrees = initializeTrees;
+	
+	construct();
+	
+	return that;
 
 }
-TreeView.classes.TreeViewLoader();
+
+
+TreeView.singleton.TreeViewLoader = TreeView.classes.TreeViewLoader();

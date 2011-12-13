@@ -22,14 +22,14 @@
  * @author: Thomas Schweitzer
  */
 
-if (typeof window.TreeView == "undefined") {
+if (typeof TreeView == "undefined") {
 // Define the TreeView module	
-	window.TreeView = { 
+	TreeView = { 
 		classes : {}
 	};
 }
-if (typeof window.TreeView.classes == "undefined") {
-	window.TreeView.classes = {};
+if (typeof TreeView.classes == "undefined") {
+	TreeView.classes = {};
 }
 
 /**

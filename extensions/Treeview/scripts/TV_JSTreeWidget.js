@@ -15,21 +15,21 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+ 
 /**
  * @file
  * @ingroup TreeViewScripts
  * @author: Thomas Schweitzer
  */
 
-if (typeof window.TreeView == "undefined") {
+if (typeof TreeView == "undefined") {
 // Define the TreeView module	
-	window.TreeView = { 
+	TreeView = { 
 		classes : {}
 	};
 }
-if (typeof window.TreeView.classes == "undefined") {
-	window.TreeView.classes = {};
+if (typeof TreeView.classes == "undefined") {
+	TreeView.classes = {};
 }
 
 /**
@@ -61,8 +61,10 @@ TreeView.classes.JSTreeWidget = AjaxSolr.AbstractWidget.extend({
 	 */
 	afterRequest: function(json) {
 		if (typeof this.treeDomID === 'string') {
+			jQuery.jstree._themes = mw.config.get('tvgTreeThemes');
 			jQuery(this.treeDomID).jstree({
 				'json_data': json,
+				'themes' : { "theme" : 'default' },
 				'plugins': ['themes', 'json_data']
 			});
 		} else if (this.tree && this.parentNode){
