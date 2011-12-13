@@ -55,6 +55,7 @@ function enableTreeView() {
 	$wgAutoloadClasses['TVLanguageDe'] = $tvgIP . '/languages/TV_LanguageDe.php';
 	$wgAutoloadClasses['TVParserFunctions'] = $tvgIP . '/includes/TV_ParserFunctions.php';
 	$wgAutoloadClasses['TVFacetedSearchExtension'] = $tvgIP . '/includes/TV_FacetedSearchExtension.php';
+	$wgAutoloadClasses['TVNavigationTree'] = $tvgIP . '/includes/TV_NavigationTree.php';
 	
 	global $wgHooks;
 	$wgHooks['ParserFirstCallInit'][] = 'TVParserFunctions::initParserFunctions';
@@ -65,6 +66,8 @@ function enableTreeView() {
 	$wgHooks['FacetedSearchExtensionTop'][] = 'TVFacetedSearchExtension::injectTreeViewDefinition';
 	$wgHooks['FacetedSearchExtensionBottomMenu'][] = 'TVFacetedSearchExtension::injectBottomMenu';
 	$wgHooks['FacetedSearchExtensionAddResources'][] = 'TVFacetedSearchExtension::addResources';
+	
+	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'TVNavigationTree::showNavigationTree';
 	
 	tvfInitContentLanguage($wgLanguageCode);
 

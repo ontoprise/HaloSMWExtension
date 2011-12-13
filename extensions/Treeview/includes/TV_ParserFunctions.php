@@ -57,6 +57,8 @@ HTML
 <script type="wgJsMimeType">
 	if (typeof(TreeView) === 'undefined') {
 		TreeView = {};
+	}
+	if (typeof(TreeView.trees) === 'undefined') {
 		TreeView.trees = [];
 	}
 	var treeObj = {
@@ -65,6 +67,11 @@ HTML
 		theme: 'defaultTheme'
 	};
 	TreeView.trees.push(treeObj);
+	if (TreeView.singleton) {
+		if (TreeView.singleton.TreeViewLoader) {
+			TreeView.singleton.TreeViewLoader.initializeTrees();
+		}
+	}
 </script>
 SCRIPT
 ;
@@ -91,6 +98,7 @@ SCRIPT
 	public static function initParserFunctions(&$parser) {
 		$parser->setFunctionHook('tvtree', array('TVParserFunctions', 'tree'));
 		$parser->setFunctionHook('tvgeneratetree', array('TVParserFunctions', 'generateTree'));
+		
 		return true;
 	}
 	
