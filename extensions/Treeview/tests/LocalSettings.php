@@ -24,6 +24,8 @@ enableSemantics('http://wiki', true);
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo();
 
+require_once('extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php');
+
 #Semantic Treeview 
 require_once('extensions/Treeview/includes/TV_Initialize.php');
 enableTreeView();
