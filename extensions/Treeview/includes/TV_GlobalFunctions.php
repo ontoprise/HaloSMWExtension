@@ -148,7 +148,7 @@ function tvfSetupScriptAndStyleModule() {
 //            '/some.css',
             ),
             
-		'messages' => array('tv_cl_solr_pfp'),
+		'messages' => array('tv_treepf_template'),
 
 		'dependencies' => array(
             'ext.facetedSearch.special',

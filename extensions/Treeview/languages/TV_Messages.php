@@ -53,7 +53,16 @@ $messages['en'] = array(
 	'tv_copy_parser_function'	=> "You can copy this wikitext into an article to generate the same tree.",
 	
 	// Client side language strings
-	'tv_cl_solr_pfp'	=> 'solrquery'  // must be the same as TVLanguage::PFP_SOLR_QUERY
+	'tv_treepf_template' => <<<TEMPLATE
+{{#tree:
+*{{#generateTree:
+property=$1
+|rootlabel=Enter name of root node here
+|solrquery=$2 
+}}
+}}
+TEMPLATE
+
 );
 
 /** 
@@ -76,7 +85,15 @@ $messages['de'] = array(
 	'tv_copy_parser_function'	=> "Sie können diesen Wikitext in einen Artikel kopieren um dort den gleichen Baum zu erzeugen.",
 
 	// Client side language strings
-	'tv_cl_solr_pfp'	=> 'solrquery'  // must be the same as TVLanguage::PFP_SOLR_QUERY
+	'tv_treepf_template' => <<<TEMPLATE
+{{#baum:
+*{{#erzeugeBaum:
+attribut=$1
+|wurzelname=Wurzelname hier eingeben
+|solrquery=$2 
+}}
+}}
+TEMPLATE
 );
 
 
