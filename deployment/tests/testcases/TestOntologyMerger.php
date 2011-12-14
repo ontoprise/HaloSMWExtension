@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 require_once ('deployment/io/import/DF_OntologyMerger.php');
 require_once ('deployment/languages//DF_Language.php');
@@ -92,14 +94,14 @@ ENDS
 ENDS
 		;
 		$actual = $om->getSemanticData($bundleID, $wikiText);
-	
+
 		$this->assertArrayHasKey(0, $actual);
 		$this->assertArrayHasKey(1, $actual);
 		list($properties, $categories) = $actual;
 		$this->assertEquals($properties[0][0], "Has domain and range");
 		$this->assertEquals($properties[0][1], "Category:Person");
 		$this->assertEquals($categories[0], "Transitive property");
-		
+
 	}
 
 }

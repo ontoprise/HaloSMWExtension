@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 // activate for debugging
 //define('DEBUG_MODE', true);
 
@@ -40,27 +42,27 @@ class TestInstaller extends PHPUnit_Framework_TestCase {
 	// temporary directory used for installation
 	var $instPath;
 	// temporary directory used for downloads
-    var $tmpPath;
+	var $tmpPath;
 	// mediawiki root (simulates an existing installation)
 	var $local_path;
 
 	function setUp() {
-		
-        global $dfgNoAsk;
-        $dfgNoAsk = true;
+
+		global $dfgNoAsk;
+		$dfgNoAsk = true;
 		// repo path points to a directory containing a test repository
 		$repo_path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository/repository.xml" : "testcases/resources/repository/repository.xml";
 		// local path points to a directory containing a simulated local installation.
 		$this->local_path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer" : "testcases/resources/installer";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($repo_path));
 		$this->installer = Installer::getInstance($this->local_path, true);
-		
+
 		// create temporary directory for downloads and installation
 		$this->instPath = Tools::isWindows() ? 'c:\temp\install_test' : '/tmp/install_test';
-        $this->tmpPath = Tools::isWindows() ? 'c:/temp/mw_deploy_tool' : '/tmp/mw_deploy_tool';
-        if (!file_exists($this->instPath)) Tools::mkpath($this->instPath);
+		$this->tmpPath = Tools::isWindows() ? 'c:/temp/mw_deploy_tool' : '/tmp/mw_deploy_tool';
+		if (!file_exists($this->instPath)) Tools::mkpath($this->instPath);
 		if (!file_exists($this->tmpPath)) Tools::mkpath($this->tmpPath);
-        
+
 		// set installation dir and copy a dummy LocalSettings.php in it.
 		$this->installer->setInstDir($this->instPath);
 		copy($this->local_path."/LocalSettings.php", $this->instPath."/LocalSettings.php");

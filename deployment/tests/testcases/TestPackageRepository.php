@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 define("DEPLOY_FRAMEWORK_INTERNAL_REPO", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
 define("DEPLOY_FRAMEWORK_INTERNAL_REPO2", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository2/");
@@ -40,7 +42,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
 		global $dfgOut;
-        $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+		$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository/repository.xml" : "testcases/resources/repository/repository.xml";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO);
 		self::$rootDir = realpath(dirname($path));
@@ -180,9 +182,9 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'mw');
 
 		$packages = PackageRepository::getLocalPackages(self::$instDir);
-	
+
 		$this->assertTrue(count($packages) >= 4);
-		
+
 			
 	}
 

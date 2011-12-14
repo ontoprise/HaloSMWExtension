@@ -16,6 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 require_once ('deployment/io/DF_BundleTools.php');
 /**
@@ -24,18 +27,18 @@ require_once ('deployment/io/DF_BundleTools.php');
  */
 class TestNamespaceMappings extends PHPUnit_Framework_TestCase {
 
-   
+	 
 
-    function setUp() {
-        
-    }
+	function setUp() {
 
-    function tearDown() {
+	}
 
-    }
+	function tearDown() {
 
-    function testParseNamespaceMappings() {
-    	$text = <<<ENDS
+	}
+
+	function testParseNamespaceMappings() {
+		$text = <<<ENDS
     	
 *foaf: http://foaf.namespace
 mywiki: http://mywiki
@@ -43,16 +46,16 @@ mywiki: http://mywiki
 *category: http://category:wiki/test
 
 ENDS
-;
-               
-    	$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
-    	$this->assertEquals($namespaceMappings['foaf'], 'http://foaf.namespace');
-    	$this->assertEquals($namespaceMappings['mywiki'], 'http://mywiki');
-    	$this->assertEquals($namespaceMappings['category'], 'http://category:wiki/test');
-    }
-    
-  function testLoadAndStoreNamespaceMappings() {
-        $text = <<<ENDS
+		;
+		 
+		$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
+		$this->assertEquals($namespaceMappings['foaf'], 'http://foaf.namespace');
+		$this->assertEquals($namespaceMappings['mywiki'], 'http://mywiki');
+		$this->assertEquals($namespaceMappings['category'], 'http://category:wiki/test');
+	}
+
+	function testLoadAndStoreNamespaceMappings() {
+		$text = <<<ENDS
         
 *foaf: http://foaf.namespace
 mywiki: http://mywiki
@@ -60,14 +63,14 @@ mywiki: http://mywiki
 *category: http://category:wiki/test
 
 ENDS
-;
-               
-        $namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
-        DFBundleTools::storeRegisteredPrefixes($namespaceMappings);
-        $namespaceMappings = DFBundleTools::getRegisteredPrefixes();
-        
-        $this->assertEquals($namespaceMappings['foaf'], 'http://foaf.namespace');
-        $this->assertEquals($namespaceMappings['mywiki'], 'http://mywiki');
-        $this->assertEquals($namespaceMappings['category'], 'http://category:wiki/test');
-    }
+		;
+		 
+		$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
+		DFBundleTools::storeRegisteredPrefixes($namespaceMappings);
+		$namespaceMappings = DFBundleTools::getRegisteredPrefixes();
+
+		$this->assertEquals($namespaceMappings['foaf'], 'http://foaf.namespace');
+		$this->assertEquals($namespaceMappings['mywiki'], 'http://mywiki');
+		$this->assertEquals($namespaceMappings['category'], 'http://category:wiki/test');
+	}
 }

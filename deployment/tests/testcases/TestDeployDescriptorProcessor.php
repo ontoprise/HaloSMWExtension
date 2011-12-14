@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 require_once ('deployment/settings.php');
 require_once ('deployment/io/DF_Log.php');
@@ -30,13 +32,13 @@ require_once ('deployment/descriptor/DF_DeployDescriptor.php');
  */
 class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 
-    var $xml_variables;
-    var $xml_function;
-    var $xml_function2;
-    var $xml_require;
-    var $xml_php;
-    var $xml_replace;
-    
+	var $xml_variables;
+	var $xml_function;
+	var $xml_function2;
+	var $xml_require;
+	var $xml_php;
+	var $xml_replace;
+
 
 	function setUp() {
 		global $dfgOut;
@@ -58,7 +60,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$exp_precedings = array("SemanticMediawiki", "SemanticGardening");
 		$ddp = new DeployDescriptor($this->xml_variables);
 		$successors = $ddp->getSuccessors();
-		
+
 		foreach($successors as $succ) {
 			$this->assertContains($succ, $exp_precedings);
 		}
@@ -69,7 +71,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 		global $testvar;
-		
+
 		eval($res);
 		$this->assertTrue(isset($testvar));
 	}
@@ -159,8 +161,8 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		global $server;
 		global $port;
 		global $protocol;
-		
-		
+
+
 		eval($res);
 
 		$this->assertTrue(isset($server) && isset($port) && isset($protocol));
@@ -237,18 +239,18 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(!isset($testphp2));
 
 	}
-	
-    function testReplacement() {
-        $ddp2 = new DeployDescriptor($this->xml_replace);
-        $res = $ddp2->applyConfigurations("testcases/resources", true);
-            
-        global $testvar2;
-        eval($res);
 
-        $this->assertTrue(isset($testvar2));
-        $this->assertEquals("Halo rockt echt", $testvar2);
+	function testReplacement() {
+		$ddp2 = new DeployDescriptor($this->xml_replace);
+		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
-    }
+		global $testvar2;
+		eval($res);
+
+		$this->assertTrue(isset($testvar2));
+		$this->assertEquals("Halo rockt echt", $testvar2);
+
+	}
 }
 
 // testfunctions needed

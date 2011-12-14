@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 
 require_once ('deployment/descriptor/DF_DeployDescriptor.php');
@@ -105,7 +107,7 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 	function testPatches() {
 		$patches = $this->ddp->getPatches(array('smwhalo' => $this->ddp));
-		 
+			
 		$path = $patches[0]->getPatchfile();
 		$mayFail = $patches[0]->mayFail();
 		$this->assertEquals("patch.txt", $path);

@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 
 require_once 'testcases/TestDeployDescriptor.php';
@@ -30,18 +32,18 @@ require_once 'testcases/TestTools.php';
 
 class DeployTests
 {
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('DeployFramework');
+	public static function suite()
+	{
+		$suite = new PHPUnit_Framework_TestSuite('DeployFramework');
 
-        $suite->addTestSuite("TestDeployDescriptor");
-        $suite->addTestSuite("TestDeployDescriptorProcessor");
-        $suite->addTestSuite("TestPackageRepository");
-        $suite->addTestSuite("TestResourceInstaller");
-        $suite->addTestSuite("TestOntologyMerger");
-        $suite->addTestSuite("TestNamespaceMappings");
-        $suite->addTestSuite("TestVersions");
-        //$suite->addTestSuite("TestTools");
-        return $suite;
-    }
+		$suite->addTestSuite("TestDeployDescriptor");
+		$suite->addTestSuite("TestDeployDescriptorProcessor");
+		$suite->addTestSuite("TestPackageRepository");
+		$suite->addTestSuite("TestResourceInstaller");
+		$suite->addTestSuite("TestOntologyMerger");
+		$suite->addTestSuite("TestNamespaceMappings");
+		$suite->addTestSuite("TestVersions");
+		//$suite->addTestSuite("TestTools");
+		return $suite;
+	}
 }

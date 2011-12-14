@@ -16,6 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 require_once ('deployment/tools/smwadmin/DF_Tools.php');
 
@@ -31,7 +34,7 @@ class TestVersions extends PHPUnit_Framework_TestCase {
 
 	}
 
-	
-	
+
+
 	//TODO: add lots of tests here...
 }

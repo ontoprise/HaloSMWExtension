@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 define('LOD_NS_MAPPING', 250);
 
@@ -36,25 +38,25 @@ require_once ($rootDir.'/io/DF_PrintoutStream.php');
 class TestResourceInstaller extends PHPUnit_Framework_TestCase {
 	var $ddp;
 	var $ri;
-	
-	
-    function setUp() {
-    	   global $dfgOut;
-        $dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
-        $xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
-        $this->ddp = new DeployDescriptor($xml);
-        $path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/" : "testcases/resources/installer/";
-        $this->ri = ResourceInstaller::getInstance(realpath($path));
-    }
-    
-    public function testInstallMappings() {
-    	$importedMappings = $this->ri->installOrUpdateMappings($this->ddp, true);
-    
-    	list($source, $target, $content) = $importedMappings[0];
-    	$this->assertEquals("dbpedia", $source);
-    	list($source, $target, $content) = $importedMappings[1];
-        $this->assertEquals("freebase", $source);
-    }
-    
-    //TODO: add tests for other functionality
+
+
+	function setUp() {
+		global $dfgOut;
+		$dfgOut = DFPrintoutStream::getInstance(DF_OUTPUT_FORMAT_TEXT);
+		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
+		$this->ddp = new DeployDescriptor($xml);
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/" : "testcases/resources/installer/";
+		$this->ri = ResourceInstaller::getInstance(realpath($path));
+	}
+
+	public function testInstallMappings() {
+		$importedMappings = $this->ri->installOrUpdateMappings($this->ddp, true);
+
+		list($source, $target, $content) = $importedMappings[0];
+		$this->assertEquals("dbpedia", $source);
+		list($source, $target, $content) = $importedMappings[1];
+		$this->assertEquals("freebase", $source);
+	}
+
+	//TODO: add tests for other functionality
 }
