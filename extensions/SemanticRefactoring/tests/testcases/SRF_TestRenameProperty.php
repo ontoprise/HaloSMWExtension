@@ -28,83 +28,74 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameProperty.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestRenameProperty extends PHPUnit_Framework_TestCase {
 
 
-	function setUp() {
+	protected $backupGlobals = FALSE;
 
+	static function setUpBeforeClass() {
+		global $srfRenamePropertyArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfRenamePropertyArticles);
 	}
 
 	function tearDown() {
 
 	}
 
-
-
 	function testRenameProperty() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test [[Testproperty::value1]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
+		$r = new SRFRenamePropertyOperation("Has son", "HasSon");
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Bernd']);
+		$this->assertContains('HasSon', $log->getWikiText());
 
 	}
 
 	function testRenamePropertyAsValue() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test [[ABC::Property:Testproperty]]. No text.
-ENDS;
-		$wikitext = $r->changeContent( $wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
+		$r = new SRFRenamePropertyOperation("Has child", "HasChild");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		
+        $log = reset($logMessages['Property:Has kid']);
+		$this->assertContains('Property:HasChild', $log->getWikiText());
 
 	}
+	
+    function testRenamePropertyAsSubpropertyValue() {
+        $r = new SRFRenamePropertyOperation("Has child", "HasChild");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        
+        $log = reset($logMessages['Property:Has son']);
+        $this->assertContains('Property:HasChild', $log->getWikiText());
+
+    }
 
 	function testRenamePropertyAsLink() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test [[Property:Testproperty]]. No text.
-ENDS;
-		$wikitext = $r->changeContent( $wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
+		$r = new SRFRenamePropertyOperation("Has son", "HasSon");
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Pages']);
+        $this->assertContains('Property:HasSon', $log->getWikiText());
 
 	}
 
 	function testRenamePropertyInQuery() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[Category:Testcategory]][[Testproperty::+]]|?Testproperty }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent( $wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
+		$r = new SRFRenamePropertyOperation("Has son", "HasSon");
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['All sons']);
+        $this->assertContains('HasSon::', $log->getWikiText());
 
 	}
 
 	function testRenamePropertyInQuery2() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[Property:Testproperty]]|?Testproperty }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent( $wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
+		$r = new SRFRenamePropertyOperation("Has son", "HasSon");
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['All sons']);
+        $this->assertContains('?HasSon', $log->getWikiText());
 
 	}
 
-	function testRenamePropertyInQuery3() {
-		$r = new SRFRenamePropertyOperation("Testproperty", "Newtestproperty", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[Category:Testcategory]]|?Testproperty }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent( $wikitext);
-		$this->assertContains('Newtestproperty', $wikitext);
-
-	}
+	
 }

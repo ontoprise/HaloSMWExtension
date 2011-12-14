@@ -74,15 +74,12 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		}
 
 		// get properties with domain and/or ranges
-		$domainProperties = $store->getPropertiesWithDomain($this->category);
-		$rangeProperties = $store->getPropertiesWithRange($this->category);
-		$domainsOrRanges = array_merge($domainProperties, $rangeProperties);
-		$domainsOrRanges = SRFTools::makeTitleListUnique($domainsOrRanges);
+		$propertiesWithDomain = $store->getPropertiesWithDomain($this->category);
 
 		$this->affectedPages = array();
 		$this->affectedPages['instances'] = $instances;
 		$this->affectedPages['queries'] = $queries;
-		$this->affectedPages['domainsOrRanges'] = $domainsOrRanges;
+		$this->affectedPages['propertiesWithDomain'] = $propertiesWithDomain;
 		$this->affectedPages['directSubcategories'] = $directSubcategories;
 
 		return $this->affectedPages;
@@ -91,16 +88,16 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
 
-		if (array_key_exists('onlyCategory', $this->options) && $this->options['onlyCategory'] == true) {
+		if (array_key_exists('sref_onlyCategory', $this->options) && $this->options['sref_onlyCategory'] == true) {
 			$a = new Article($this->category);
 			$deleted = true;
 			if ($save) {
 				$deleted = SRFTools::deleteArticle($a);
 			}
 			if ($deleted) {
-				$logMessages[$this->category->getPrefixedText()] = new SRFLog('Article deleted',$this->category);
+				$logMessages[$this->category->getPrefixedText()][] = new SRFLog('Article deleted',$this->category);
 			} else {
-				$logMessages[$this->category->getPrefixedText()] = new SRFLog('Deletion failed',$this->category);
+				$logMessages[$this->category->getPrefixedText()][] = new SRFLog('Deletion failed',$this->category);
 			}
 
 
@@ -108,7 +105,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			return;
 		}
 
-		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries'],$this->affectedPages['domainsOrRanges']);
+		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries'],$this->affectedPages['propertiesWithDomain']);
 		$set = SRFTools::makeTitleListUnique($set);
 
 
@@ -116,15 +113,15 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		foreach($set as $i) {
 			$a = new Article($i);
 
-			if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
+			if (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == true) {
 				$deleted = true;
 				if ($save) {
 					$deleted = SRFTools::deleteArticle($a);
 				}
 				if ($deleted) {
-					$logMessages[$i->getPrefixedText()] = new SRFLog('Article deleted',$i);
+					$logMessages[$i->getPrefixedText()][] = new SRFLog('Article deleted',$i);
 				} else {
-					$logMessages[$i->getPrefixedText()] = new SRFLog('Deletion failed',$i);
+					$logMessages[$i->getPrefixedText()][] = new SRFLog('Deletion failed',$i);
 
 				}
 
@@ -137,28 +134,28 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			if (is_null($rev)) continue;
 			$wikitext = $rev->getRawText();
 
-			if (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true
+			if (array_key_exists('sref_removeCategoryAnnotations', $this->options) && $this->options['sref_removeCategoryAnnotations'] == true
 			&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
 				$wikitext = $this->removeCategoryAnnotation($wikitext);
 
-				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed category annotation',$i);
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed category annotation',$i);
 
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 
-			if (array_key_exists('removeFromDomainOrRange', $this->options) && $this->options['removeFromDomainOrRange'] == true
-			&& SRFTools::containsTitle($i, $this->affectedPages['domainsOrRanges'])) {
+			if (array_key_exists('sref_removeFromDomain', $this->options) && $this->options['sref_removeFromDomain'] == true
+			&& SRFTools::containsTitle($i, $this->affectedPages['propertiesWithDomain'])) {
 
 				// if the property should be completly removed
-				if (array_key_exists('removeDomainOrRangeProperty', $this->options) && $this->options['removeDomainOrRangeProperty'] == true) {
+				if (array_key_exists('sref_removePropertyWithDomain', $this->options) && $this->options['sref_removePropertyWithDomain'] == true) {
 					$deleted = true;
 					if ($save) {
 						$deleted = SRFTools::deleteArticle($i);
 					}
 					if ($deleted) {
-						$logMessages[] = new SRFLog('Article deleted',$i);
+						$logMessages[][] = new SRFLog('Article deleted',$i);
 					} else {
-						$logMessages[] = new SRFLog('Deletion failed',$i);
+						$logMessages[][] = new SRFLog('Deletion failed',$i);
 					}
 
 					continue;
@@ -166,17 +163,17 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 				$wikitext = $this->removePropertyAnnotation(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText(), $wikitext);
 
-				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed from domain and/or range',$i);
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed from domain and/or range',$i);
 
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 
-			if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true
+			if (array_key_exists('sref_removeQueriesWithCategories', $this->options) && $this->options['sref_removeQueriesWithCategories'] == true
 			&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
 
 				$wikitext = $this->removeQuery($wikitext);
 
-				$logMessages[$i->getPrefixedText()] = new SRFLog('Removed query',$i);
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed query',$i);
 
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
@@ -189,7 +186,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 
 
-		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
+		if (array_key_exists('sref_includeSubcategories', $this->options) && $this->options['sref_includeSubcategories'] == true) {
 			foreach($results['directSubcategories'] as $c) {
 				$op = new SRFDeleteCategoryOperation($c, $this->options);
 				$op->setBot($mBot);

@@ -28,12 +28,16 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_ChangeValue.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 
+	protected $backupGlobals = FALSE;
 
-	function setUp() {
-
+	static function setUpBeforeClass() {
+		global $srfChangeValueArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfChangeValueArticles);
 	}
 
 	function tearDown() {
@@ -42,32 +46,30 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 
 
 	function testChangeValue() {
-		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", "Old", "New");
-		$wikitext = <<<ENDS
-This is a test [[Testproperty::old]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Testproperty::New', $wikitext);
+		$r = new SRFChangeValueOperation(array("Michael"), "Employee of", "Ontoprise", "Ontoprise GmbH");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Michael']);
+        print "\n".$log->asWikiText();
+        $this->assertContains('[[Employee of::Ontoprise GmbH]]', $log->getWikiText());
 	}
 
 	function testValueRemove() {
-		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", "old", NULL);
-		$wikitext = <<<ENDS
-This is a test [[Testproperty::old]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertNotContains('Testproperty::', $wikitext);
+		$r = new SRFChangeValueOperation(array("Daniel"), "Has income", "60000", NULL);
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Daniel']);
+        print "\n".$log->asWikiText();
+        $this->assertNotContains('60000', $log->getWikiText());
 	}
+	
 	function testValueAdd() {
-		$r = new SRFChangeValueOperation(array("Testinstance"), "Testproperty", NULL, "New");
-		$wikitext = <<<ENDS
-This is a test [[Testproperty::old]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Testproperty::New', $wikitext);
+		$r = new SRFChangeValueOperation(array("Dmitry"), "Occupation", NULL, "Software engineer");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Dmitry']);
+        print "\n".$log->asWikiText();
+        $this->assertContains('[[Occupation::Software engineer]]', $log->getWikiText());
 	}
 
 }

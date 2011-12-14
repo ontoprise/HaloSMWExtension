@@ -42,29 +42,42 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	public function queryAffectedPages() {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
+		$titles=array();
 		// get all pages using $this->property
 		$propertyDi = SMWDIProperty::newFromUserLabel($this->oldProperty->getText());
 		$subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
 		foreach($subjects as $s) {
-			$subjects[] = $s->getTitle();
+			$titles[] = $s->getTitle();
 		}
+
+		// get all pages using $this->property
+		$objectDi = SMWDIWikiPage::newFromTitle($this->oldProperty);
+		$properties = smwfGetStore()->getInProperties($objectDi);
+		foreach($properties as $p) {
+			$subjects = smwfGetStore()->getPropertySubjects($p, $objectDi);
+			foreach($subjects as $s) {
+				$titles[] = $s->getTitle();
+			}
+		}
+		
+		//TODO: Subproperty of this not handled
 
 		// get all pages which uses links to $this->property
 		$subjects = $this->oldProperty->getLinksTo();
 		foreach($subjects as $s) {
-			$subjects[] = $s;
+			$titles[] = $s;
 		}
 
 		// get all queries using $this->property
 		$queries = array();
 		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-		$propertyStringDi = new SMWDIString($this->property->getText());
+		$propertyStringDi = new SMWDIString($this->oldProperty->getText());
 		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
 		foreach($subjects as $s) {
-			$queries[] = $s->getTitle();
+			$titles[] = $s->getTitle();
 		}
 
-		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
 
@@ -76,17 +89,17 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 			$rev = Revision::newFromTitle($title);
 
-			$wikitext = $this->changeContent($rev->getRawText());
+			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			// stores article
 			if ($save) {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
-			$logMessages[] = 'Content of "'.$title->getPrefixedText().'" changed.';
+
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
-	
+
 	}
 
 
@@ -105,25 +118,33 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	}
 
 	private function replacePropertyInAnnotation($objects) {
+		$changed = false;
 		foreach($objects as $o){
 
 			$name = $o->getProperty()->getDataItem()->getLabel();
 			if ($name == $this->oldProperty->getText()) {
 				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
+				$changed = true;
 			}
 
 			$value = $o->getPropertyValue();
 			$values = $this->splitRecordValues($value);
 			array_walk($values, array($this, 'replaceTitle'));
+			$newValue = implode("; ", $values);
 
+			if ($value != $newValue) {
+				$changed = true; //FIXME: may be untrue because of whitespaces
+			}
 
-			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
-			$o->setSMWDataValue($newValue);
+			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), $newValue);
+			$o->setSMWDataValue($newDataValue);
 
 		}
+		return $changed;
 	}
 
 	private function replacePropertyInLink($objects) {
+		$changed = false;
 		foreach($objects as $o){
 
 
@@ -131,49 +152,55 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 			if ($value == $this->oldProperty->getPrefixedText()) {
 				$o->setLink($this->newProperty->getPrefixedText());
+				$changed = true;
 			}
 		}
+		return $changed;
 	}
 
 	private function replacePrintout($objects) {
+		$changed = false;
 		foreach($objects as $o){
 			$value = $o->getWikiText();
 			$value = trim($value);
 			if ($value == '?'.$this->oldProperty->getText()) {
 				$o->setText('?'.$this->newProperty->getText());
+				$changed=true;
 			}
 
 		}
+		return $changed;
 	}
-	public function changeContent($wikitext) {
+	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		$this->replacePropertyInAnnotation($objects);
+		$changedAnnotation = $this->replacePropertyInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$this->replacePropertyInLink($objects);
+		$changedLink = $this->replacePropertyInLink($objects);
 
 		# iterate trough queries
 		# better support for ASK would be nice
+		$changedQuery=false;
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
-				$this->replacePropertyInAnnotation($results);
+				$changedQuery = $changedQuery || $this->replacePropertyInAnnotation($results);
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$this->replacePropertyInLink($results);
+				$changedQuery = $changedQuery || $this->replacePropertyInLink($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
 				foreach($results as $o) {
 					$paramTexts = array();
 					$this->findObjectByID($o, WOM_TYPE_TEXT, $paramTexts);
-					$this->replacePrintout($paramTexts);
+					$changedQuery = $changedQuery || $this->replacePrintout($paramTexts);
 				}
 			}
 		}
@@ -182,6 +209,17 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 		# not yet implemented in WOM*/
 
 		$wikitext = $pom->getWikiText();
+
+		if ($changedAnnotation) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed property or value", $title, $wikitext);
+		}
+		if ($changedLink) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
+		}
+		if ($changedQuery) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
+		}
+		
 		return $wikitext;
 	}
 

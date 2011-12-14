@@ -95,16 +95,16 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
 
-		if (array_key_exists('onlyProperty', $this->options) && $this->options['onlyProperty'] == true) {
+		if (array_key_exists('sref_onlyProperty', $this->options) && $this->options['sref_onlyProperty'] == true) {
 			$a = new Article($this->property);
 			$deleted = true;
 			if ($save) {
 				$deleted = SRFTools::deleteArticle($a);
 			}
 			if ($deleted) {
-				$logMessages[$this->property->getPrefixedText()] = new SRFLog('Article deleted',$this->property);
+				$logMessages[$this->property->getPrefixedText()][] = new SRFLog('Article deleted',$this->property);
 			} else {
-				$logMessages[$this->property->getPrefixedText()] = new SRFLog('Deletion failed',$this->property);
+				$logMessages[$this->property->getPrefixedText()][] = new SRFLog('Deletion failed',$this->property);
 			}
 			return;
 		}
@@ -115,7 +115,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries']);
 	$set = SRFTools::makeTitleListUnique($set);
 	foreach($set as $i) {
-		if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
+		if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == true) {
 			// if instances are completely removed, there is no need to remove annotations before
 
 			$a = new Article($i);
@@ -124,9 +124,9 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 				$deleted = SRFTools::deleteArticle($a);
 			}
 			if ($deleted) {
-				$logMessages[$i->getPrefixedText()] = new SRFLog('Article deleted',$i);
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Article deleted',$i);
 			} else {
-				$logMessages[$i->getPrefixedText()] = new SRFLog('Deletion failed',$i);
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Deletion failed',$i);
 			}
 
 			continue; // if article is removed, then continue;
@@ -135,23 +135,23 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		if (is_null($rev)) continue;
 		$wikitext = $rev->getRawText();
 
-		if (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true
+		if (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == true
 		&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
 			$wikitext = $this->removePropertyAnnotation($wikitext);
 
-			$logMessages[$i->getPrefixedText()] = new SRFLog('Removed property annotation',$i);
+			$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed property annotation',$i);
 				
 		}
 
 
-		if (array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true
+		if (array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == true
 		&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
 			$wikitext = $this->removeQuery($wikitext);
 			if ($save) {
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
 
-			$logMessages[$i->getPrefixedText()] = new SRFLog('Removed query',$i);
+			$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed query',$i);
 				
 		}
 	}
@@ -161,7 +161,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	}
 
 
-	if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
+	if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == true) {
 		foreach($results['directSubcategories'] as $p) {
 			$op = new SRFDeletePropertyOperation($p, $this->options);
 			$op->refactor($save, $logMessages, $testData);

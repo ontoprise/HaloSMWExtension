@@ -25,7 +25,9 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 	private $subjectDBKeys;
 
 	public function __construct($instanceSet, $property, $oldValue, $newValue) {
-		$this->instanceSet = $instanceSet;
+		foreach($instanceSet as $i) {
+		  $this->instanceSet[] = Title::newFromText($i);
+		}
 		$this->property = Title::newFromText($property, SMW_NS_PROPERTY);
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
@@ -34,37 +36,21 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 	public function queryAffectedPages() {
 		return $this->instanceSet;
 	}
-	
+
 	public function getNumberOfAffectedPages() {
 		return count($this->instanceSet);
 	}
 
 	public function refactor($save = true, & $logMessages) {
-		foreach($this->instanceSet as $o) {
-			$rev = Revision::newFromTitle($o);
-			$this->changeContent($rev->getRawText());
+		foreach($this->instanceSet as $title) {
+			
+			$rev = Revision::newFromTitle($title);
+			$this->changeContent($title, $rev->getRawText(), $logMessages);
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 	}
 
-	protected function replaceValueInAnnotation($objects) {
-		foreach($objects as $o){
-
-			$name = $o->getProperty()->getDataItem()->getLabel();
-			if ($name == $this->oldProperty->getText()) {
-				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
-			}
-
-			$value = $o->getPropertyValue();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-
-
-			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
-			$o->setSMWDataValue($newValue);
-
-		}
-	}
+	
 
 	/**
 	 * Replaces old value with new.
@@ -79,7 +65,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		}
 	}
 
-	public function changeContent($wikitext) {
+	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
@@ -96,33 +82,38 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 				if ($name == $this->property->getText()) {
 					$value = $o->getPropertyValue();
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
-						$toDelete[] = $o;
+						$toDelete[] = $o->getObjectID();
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '$2' for $1 at \$title", $title, "", array($this->property, $this->oldValue));
 					}
 				}
 			} else if (is_null($this->oldValue)) {
 				// add new annotation
 				$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
-
+                $logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 at \$title", $title, "", array($this->property, $this->newValue));
 			} else {
-				$value = $o->getPropertyValue();
 				
-				if ($name == $this->property->getText()) {
-					
-					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
-					
-						$values = $this->splitRecordValues($value);
-							
-						array_walk($values, array($this, 'replaceValue'));
+				// change values
+				$value = $o->getPropertyValue();
+    			if ($name == $this->property->getText()) {
 						
-						$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
-						$o->setSMWDataValue($newValue);
+					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
+							
+						$values = $this->splitRecordValues($value);
+						array_walk($values, array($this, 'replaceValue'));
+						$newValue = implode("; ", $values);
+						if ($value != $newValue) {
+							$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value '$2' into '$3' for $1 at \$title", $title, "", array($this->property, $this->oldValue, $this->newValue));
+						}
+
+						$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), $newValue);
+						$o->setSMWDataValue($newDataValue);
 					}
 				}
 			}
 		}
-
+		$toDelete = array_unique($toDelete);
 		foreach($toDelete as $d) {
-			$pom->removePageObject($d->getObjectID());
+			$pom->removePageObject($d);
 		}
 
 		foreach($toAdd as $a) {
@@ -131,8 +122,15 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		}
 
 
-		// calls sync() internally
 		$wikitext = $pom->getWikiText();
+		
+		// set final wiki text
+		foreach($logMessages as $title => $set) {
+			foreach($set as $lm) {
+				$lm->setWikiText($wikitext);
+			}
+		}
+		
 		return $wikitext;
 	}
 }

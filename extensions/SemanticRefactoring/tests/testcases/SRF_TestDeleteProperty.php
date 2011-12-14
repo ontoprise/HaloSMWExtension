@@ -45,44 +45,46 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveProperty() {
-		$r = new SRFDeletePropertyOperation('Has child', array('onlyProperty'=>true));
+		$r = new SRFDeletePropertyOperation('Has child', array('sref_onlyProperty'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('Article deleted', $logMessages['Property:Has child']->getOperation());
+		
+		$r->refactor(false, $logMessages);
+		
+		$log = reset($logMessages['Property:Has child']);
+		$this->assertEquals('Article deleted', $log->asWikiText());
 		
 		//print_r($testData);
 	}
 
 	function testRemovePropertyWithInstances() {
-		$r = new SRFDeletePropertyOperation('Has son', array('removeInstancesUsingProperty'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('sref_removeInstancesUsingProperty'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
 		
-		$this->assertEquals('Article deleted', $logMessages['Bernd']->getOperation());
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Bernd']);
+		$this->assertEquals('Article deleted', $log->getOperation());
 		//print_r($testData);
 	}
 
 
 
 	function testRemoveQueries() {
-		$r = new SRFDeletePropertyOperation('Has son', array('removeQueries'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('sref_removeQueriesWithProperties'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$log = $logMessages['All sons'];
+	
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['All sons']);
         $this->assertEquals('Removed query', $log->getOperation());
         $this->assertNotContains('#ask', $log->getWikiText());
 		//print_r($testData);
 	}
 
 	function testRemovePropertyAnnotations() {
-		$r = new SRFDeletePropertyOperation('Has son', array('removePropertyAnnotations'=>true));
+		$r = new SRFDeletePropertyOperation('Has son', array('sref_removePropertyAnnotations'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$log = $logMessages['Bernd'];
+		
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Bernd']);
         $this->assertEquals('Removed property annotation', $log->getOperation());
         $this->assertNotContains('[[Has son::Kai]]', $log->getWikiText());
 		//print_r($testData);

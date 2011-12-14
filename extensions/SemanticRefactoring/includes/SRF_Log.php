@@ -21,11 +21,13 @@ class SRFLog {
 	private $mOperation;
 	private $mAffectedTitle;
 	private $mWikitext;
+	private $mArgs;
 
-	public function __construct($operation, $affectedTitle, $wikitext = "") {
+	public function __construct($operation, $affectedTitle, $wikitext = "", $args = array()) {
 		$this->mOperation = $operation;
 		$this->mAffectedTitle = $affectedTitle;
 		$this->mWikitext = $wikitext;
+		$this->mArgs = $args;
 	}
 
 	public function getOperation() {
@@ -40,15 +42,31 @@ class SRFLog {
 		return $this->mWikitext;
 	}
 
-	public function asWikiText() {
-		return $this->mOperation . " " . self::titleAsWikiText($this->mAffectedTitle);
+	public function setWikiText($wikitext) {
+		$this->mWikitext = $wikitext;
 	}
 
-	public static function setAsWikitext(array $logs) {
-		$wikitext = "";
-		foreach($logs as $l) {
-			$wikitext .= "\n*".$l->asWikiText();
+	public function asWikiText() {
+		$text = $this->mOperation;
+		for($i = 0, $n=count($this->mArgs); $i < $n; $i++) {
+			$arg = $this->mArgs[$i];
+			if ($arg instanceof Title) $repl = self::titleAsWikiText($arg); else $repl = $arg;
+			$text = str_replace('$'.($i+1),$repl, $text);
 		}
+		$text = str_replace('$title', self::titleAsWikiText($this->mAffectedTitle), $text);
+		return $text;
+	}
+
+	public static function asWikiTextFromLogMessages(array $logMessages) {
+		$wikitext = "";
+		foreach($logMessages as $prefixedText => $set) {
+			$title = Title::newFromText($prefixedText);
+			$wikitext .= "\n*".self::titleAsWikiText($title);
+			foreach($set as $l) {
+				$wikitext .= "\n**".$l->asWikiText();
+			}
+		}
+		return $wikitext;
 	}
 
 	private static function titleAsWikiText($title) {

@@ -19,6 +19,10 @@
 
 require_once('SRF_TestDeleteCategoryArticles.php');
 require_once('SRF_TestDeletePropertyArticles.php');
+require_once('SRF_TestRenamePropertyArticles.php');
+require_once('SRF_TestRenameCategoryArticles.php');
+require_once('SRF_TestRenameInstanceArticles.php');
+require_once('SRF_TestChangeValueArticles.php');
 
 /**
  * This file contains common classes for all test cases.

@@ -50,7 +50,7 @@ function sreffSetupExtension() {
 
 	global $wgOut;
 	sreffRegisterJSModules($wgOut);
-	
+
 	require_once($srefgIP . '/includes/SRF_Bot.php');
 	new SRFRefactoringBot();
 }
@@ -68,7 +68,7 @@ function sreffRegisterJSModules(& $out) {
         'group' => 'ext.semanticrefactoring'
         );
 
-       
+         
         $wgResourceModules['ext.semanticrefactoring.dialogs'] = $moduleTemplate + array(
         'scripts' => array(
             'scripts/SRF_dialogs.js'
@@ -78,12 +78,44 @@ function sreffRegisterJSModules(& $out) {
             ),
         'dependencies' => array(
             ),
-         'messages' => array("rename", "rename_category", "rename_property", "rename_annotations"),
-            );
+         'messages' => array('sref_start_operation',
+                            'sref_rename_property',
+                             'sref_rename_property',
+						    'sref_rename_property_help',
+						    'sref_rename_category',
+						    'sref_rename_category_help',
+						    'sref_rename_annotations',
+						    'sref_rename_annotations_help',
+						
+						    'sref_onlyCategory',
+						    'sref_onlyCategory_help',
+						    'sref_removeInstances' ,
+						    'sref_removeInstances_help',
+						    'sref_removeCategoryAnnotations',
+						    'sref_removeCategoryAnnotations_help',
+						    'sref_removePropertyWithDomain',
+						    'sref_removePropertyWithDomain_help',
+						    'sref_removeQueriesWithCategories',
+						    'sref_removeQueries_help',
+						    'sref_includeSubcategories',
+						    'sref_includeSubcategories_help',
+						
+						    'sref_onlyProperty' ,
+						    'sref_onlyProperty_help',
+						    'sref_removeInstancesUsingProperty',
+						    'sref_removeInstancesUsingProperty_help',
+						    'sref_removePropertyAnnotations',
+						    'sref_removePropertyAnnotations_help',
+						    'sref_removeQueriesWithProperties',
+						    'sref_removeQueriesWithProperties_help',
+						    'sref_includeSubproperties',
+						    'sref_includeSubproperties_help'
+    ),
+    );
 
-            //  sreffRegisterJSLanguageModules($out);
-            // add modules
-            $out->addModules(array('ext.semanticrefactoring.dialogs'));
+    //  sreffRegisterJSLanguageModules($out);
+    // add modules
+    $out->addModules(array('ext.semanticrefactoring.dialogs'));
 }
 
 

@@ -102,7 +102,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$newProperty = $paramArray['newProperty'];
 
-				if (!array_key_exists('rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
 					return "Nothing done.";
 				}
 
@@ -120,7 +120,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$newCategory = $paramArray['newCategory'];
 				
-				if (!array_key_exists('rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
 					return "Nothing done.";
 				}
 				

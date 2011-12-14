@@ -28,87 +28,74 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameInstance.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestRenameInstance extends PHPUnit_Framework_TestCase {
 
 
-	function setUp() {
+	protected $backupGlobals = FALSE;
 
+	static function setUpBeforeClass() {
+		global $srfRenameInstanceArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfRenameInstanceArticles);
 	}
+
 
 	function tearDown() {
 
 	}
 
-	function testInstanceAsLink() {
-		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test [[Testinstance]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
+	function testInstanceInAnnotation() {
+		$r = new SRFRenameInstanceOperation("Kai", "Kai Kuehn");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Thomas']);
+		$this->assertContains('[[Has colleague::Kai Kuehn]]', $log->getWikiText());
+	}
 
-		$this->assertContains('NewTestinstance', $wikitext);
+	function testInstanceAsLink() {
+		$r = new SRFRenameInstanceOperation("Kai", "Kai Kuehn");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['People']);
+		$this->assertContains('[[Kai Kuehn]]', $log->getWikiText());
 	}
 
 	function testInstanceOtherNamespaceAsLink() {
-		$r = new SRFRenameInstanceOperation("Help:Testinstance", "Help:NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test [[Help:Testinstance]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Help:NewTestinstance', $wikitext);
+		$r = new SRFRenameInstanceOperation("Help:OntologyBrowser", "Help:DataExplorer");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Help pages']);
+		$this->assertContains('[[Help:DataExplorer]]', $log->getWikiText());
 	}
 
 	function testInstanceWithWhitespaceAsLink() {
-		$r = new SRFRenameInstanceOperation("Test instance", "NewTest instance", true);
-		$wikitext = <<<ENDS
-This is a test [[Test instance]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTest instance', $wikitext);
+		$r = new SRFRenameInstanceOperation("Help:Query Interface", "Help:QI");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Help pages']);
+		$this->assertContains('[[Help:QI]]', $log->getWikiText());
 	}
 
-	function testInstanceInAnnotation() {
-		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test [[ABC::Testinstance]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
 
-		$this->assertContains('NewTestinstance', $wikitext);
-	}
-
-	function testInstanceInRecordAnnotation() {
-		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test [[ABC::Testinstance; CDE; FGH]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestinstance', $wikitext);
-	}
-
-	function testInstanceInQuery() {
-		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test {{#ask: [[Testinstance]][[Testproperty::+]] }}. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestinstance', $wikitext);
+	function testInstanceInQuery1() {
+		$r = new SRFRenameInstanceOperation("Kai", "Kai Kuehn");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['All colleagues of Kai']);
+		$this->assertContains('[[Has colleague::Kai Kuehn]]', $log->getWikiText());
 	}
 
 	function testInstanceInQuery2() {
-		$r = new SRFRenameInstanceOperation("Testinstance", "NewTestinstance", true);
-		$wikitext = <<<ENDS
-This is a test {{#ask: [[Category:Testcategory]][[ABC::Testinstance]] }}. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestinstance', $wikitext);
+		$r = new SRFRenameInstanceOperation("Kai", "Kai Kuehn");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['All colleagues']);
+		$this->assertContains('[[Kai Kuehn]]', $log->getWikiText());
 	}
+
+
 
 
 }

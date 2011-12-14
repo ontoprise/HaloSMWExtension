@@ -19,15 +19,15 @@
 class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 	private $oldCategory;
 	private $newCategory;
-	
+
 	private $affectedPages;
 
-	
+
 
 	public function __construct($oldCategory, $newCategory) {
 		$this->oldCategory = Title::newFromText($oldCategory, NS_CATEGORY);
 		$this->newCategory = Title::newFromText($newCategory, NS_CATEGORY);
-		
+
 
 	}
 
@@ -42,10 +42,16 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		// get all pages using $this->oldCategory as category annotation
 		$titles = array();
 		$subjects = smwfGetSemanticStore()->getDirectInstances($this->oldCategory);
-	    foreach($subjects as $s) {
+		foreach($subjects as $s) {
 			$titles[] = $s;
 		}
-		
+
+		$subjects = smwfGetSemanticStore()->getDirectSubCategories($this->oldCategory);
+		foreach($subjects as $tuple) {
+			list($s, $hasSubcategories) = $tuple;
+			$titles[] = $s;
+		}
+
 
 		// get all pages using $this->oldCategory as property value
 		$categoryDi = SMWDIWikiPage::newFromTitle($this->oldCategory);
@@ -56,7 +62,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 				$titles[] = $s->getTitle();
 			}
 		}
-		
+
 
 		// get all pages which uses links to $this->oldCategory
 		$subjects = $this->oldCategory->getLinksTo();
@@ -74,6 +80,8 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 			$titles[] = $s->getTitle();
 		}
 
+		
+
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
@@ -81,12 +89,12 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 	public function refactor($save = true, & $logMessages) {
 
 		$this->queryAffectedPages();
-        
+
 		foreach($this->affectedPages as $title) {
-			
+
 			$rev = Revision::newFromTitle($title);
 
-			$wikitext = $this->changeContent($rev->getRawText());
+			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			// stores article
 			if ($save) {
@@ -97,7 +105,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
-		
+
 	}
 
 	/**
@@ -116,55 +124,62 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 	}
 
 	private function replaceCategoryInAnnotation($objects) {
+		$changed = false;
 		foreach($objects as $o){
 
 			$name = $o->getName();
 			if ($name == $this->oldCategory->getText()) {
 				$o->setName($this->newCategory->getText());
+				$changed = true;
 			}
 
 		}
+		return true;
 	}
 
 	private function replaceCategoryInLink($objects) {
+		$changed = false;
 		foreach($objects as $o){
 			$value = $o->getLink();
 
 			if ($value == ":".$this->oldCategory->getPrefixedText()) {
 				$o->setLink(":".$this->newCategory->getPrefixedText());
+				$changed = true;
 			}
 		}
+		return true;
 	}
 
 
-	public function changeContent($wikitext) {
+	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
-		$this->replaceCategoryInAnnotation($objects);
+		$changedCategoryAnnotation = $this->replaceCategoryInAnnotation($objects);
 
 		# iterate through the annotation values
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		$this->replaceValueInAnnotation($objects);
+		$changedCategoryValue = $this->replaceValueInAnnotation($objects);
 
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$this->replaceCategoryInLink($objects);
+		$changedCategoryLink = $this->replaceCategoryInLink($objects);
 
 		# iterate trough queries
 		# better support for ASK would be nice
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
+		$changedQuery =true;
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
-				$this->replaceCategoryInAnnotation($results);
+				$changedQuery = $changedQuery || $this->replaceCategoryInAnnotation($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$this->replaceCategoryInLink($results);
+				$changedQuery = $changedQuery || $this->replaceCategoryInLink($results);
 
 			}
 		}
@@ -173,6 +188,19 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		# not yet implemented in WOM*/
 
 		$wikitext = $pom->getWikiText();
+
+		if ($changedCategoryAnnotation) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category annotation at \$title", $title, $wikitext);
+		}
+		if ($changedCategoryValue) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category as annotation value at \$title", $title, $wikitext);
+		}
+		if ($changedCategoryLink) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link at \$title", $title, $wikitext);
+		}
+		if ($changedQuery) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query at \$title", $title, $wikitext);
+		}
 		return $wikitext;
 	}
 }

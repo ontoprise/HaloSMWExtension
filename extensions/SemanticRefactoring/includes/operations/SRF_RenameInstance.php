@@ -35,22 +35,23 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 	}
 
 	public function queryAffectedPages() {
-		$this->queryAffectedPages();
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		// get all pages using $this->oldInstance in an annotation
+		$titles = array();
 		$instanceDi = SMWDIWikiPage::newFromTitle($this->oldInstance);
 		$properties = smwfGetStore()->getInProperties($instanceDi);
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $instanceDi);
 			foreach($subjects as $s) {
-				$subjects[] = $s->getTitle();
+				$titles[] = $s->getTitle();
 			}
 		}
 
 		// get all pages which uses links with that instance
 		$subjects = $this->oldInstance->getLinksTo();
 		foreach($subjects as $s) {
-			$subjects[] = $s;
+			$titles[] = $s;
 		}
 
 		// get all queries using $this->oldInstance
@@ -59,10 +60,11 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		 $instanceStringDi = new SMWDIString($this->$this->oldInstance->getPrefixedText());
 		 $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $instanceStringDi);
 		 foreach($subjects as $s) {
-			$subjects[] = $s->getTitle();
+			$titles[] = $s->getTitle();
 			}*/
-
-		$this->affectedPages = SRFTools::makeTitleListUnique($subjects);
+        
+		
+		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
 
@@ -71,21 +73,21 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		$this->queryAffectedPages();
 
 		foreach($this->affectedPages as $title) {
-				
+
 			$rev = Revision::newFromTitle($title);
 
-			$wikitext = $this->changeContent($rev->getRawText());
+			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			// stores article
 			if ($save) {
 				$a = new Article($title);
 				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
 			}
-			$logMessages[] = 'Content of "'.$title->getPrefixedText().'" changed.';
+			
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
-		
+
 	}
 
 	/**
@@ -103,38 +105,42 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 	}
 
 	private function replaceInstanceInLink($objects) {
+		$changed = false;
 		foreach($objects as $o){
 			$value = $o->getLink();
 
 			if ($value == $this->oldInstance->getPrefixedText()) {
 				$o->setLink($this->newInstance->getPrefixedText());
+				$changed = true;
 			}
 		}
+		return $changed;
 	}
 
-	public function changeContent($wikitext) {
+	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate through the annotation values
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		$this->replaceValueInAnnotation($objects);
+		$changedValueinAnnotation = $this->replaceValueInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$this->replaceInstanceInLink($objects);
+		$changedLink = $this->replaceInstanceInLink($objects);
 
 		# iterate trough queries
 		# better support for ASK would be nice
+		$changedQuery=false;
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
-				$this->replaceValueInAnnotation($results);
+				$changedQuery = $changedQuery || $this->replaceValueInAnnotation($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$this->replaceInstanceInLink($results);
+				$changedQuery = $changedQuery || $this->replaceInstanceInLink($results);
 
 			}
 		}
@@ -143,6 +149,16 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		# not yet implemented in WOM*/
 
 		$wikitext = $pom->getWikiText();
+
+		if ($changedValueinAnnotation) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed instance as value", $title, $wikitext);
+		}
+		if ($changedLink) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
+		}
+		if ($changedQuery) {
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
+		}
 		return $wikitext;
 	}
 }

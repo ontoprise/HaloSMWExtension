@@ -95,17 +95,22 @@ abstract class SRFRefactoringOperation {
 	
 
 	protected function replaceValueInAnnotation($objects) {
+		$changed = false;
 		foreach($objects as $o){
 
 			$value = $o->getPropertyValue();
 			$values = $this->splitRecordValues($value);
-
 			array_walk($values, array($this, 'replaceTitle'));
+			$newValue = implode("; ", $values);
+			if ($value != $newValue) {
+				$changed = true;
+			}
 
-			$newValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), implode("; ", $values));
-			$o->setSMWDataValue($newValue);
+			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(),$newValue );
+			$o->setSMWDataValue($newDataValue);
 
 		}
+		return $changed;
 	}
 
 	

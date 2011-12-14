@@ -28,94 +28,78 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameCategory.php');
+require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestRenameCategory extends PHPUnit_Framework_TestCase {
 
 
-	function setUp() {
+	protected $backupGlobals = FALSE;
 
-	}
+    static function setUpBeforeClass() {
+        global $srfRenameCategoryArticles;
+        $articleManager = new ArticleManager();
+        $articleManager->createArticles($srfRenameCategoryArticles);
+    }
+	
 
 	function tearDown() {
 
 	}
 
 	function testRenameCategory() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
-		$wikitext = <<<ENDS
-This is a test [[Category:Testcategory]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Newtestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Person", "Citizen");
+		$logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Category:Man']);
+        $this->assertContains('[[Category:Citizen]]', $log->getWikiText());
 	}
 
 	function testRenameCategoryAsValue() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
-		$wikitext = <<<ENDS
-This is a test [[ABC::Category:Testcategory]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Newtestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Person", "Citizen");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Property:Has employee']);
+        $this->assertContains('Category:Citizen', $log->getWikiText());
 	}
 
-	function testRenameCategoryAsRecordValue() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
-		$wikitext = <<<ENDS
-This is a test [[Has domain and range::Category:Testcategory; Category:TestRange]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Newtestcategory', $wikitext);
-	}
+	
 
 	function testRenameCategoryAsLink() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "Newtestcategory", true);
-		$wikitext = <<<ENDS
-This is a test [[:Category:Testcategory]]. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('Newtestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Man", "Citizen");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+      
+        $log = reset($logMessages['Testlink']);
+        $this->assertContains('[[:Category:Citizen]]', $log->getWikiText());
 	}
 
 	function testRenameCategoryInQuery() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[Category:Testcategory]][[Testproperty::+]] }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Man", "Citizen");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+    
+        $log = reset($logMessages['All men']);
+        $this->assertContains('[[Category:Citizen]]', $log->getWikiText());
 
 	}
 
 	function testRenameCategoryInQuery2() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[Testproperty::Category:Testcategory]] }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Man", "Citizen");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+      
+        $log = reset($logMessages['Property:Is human']);
+        $this->assertContains('::Category:Citizen', $log->getWikiText());
 
 	}
 
 	function testRenameCategoryInQuery3() {
-		$r = new SRFRenameCategoryOperation("Testcategory", "NewTestcategory", true);
-		$wikitext = <<<ENDS
-This is a test
-{{#ask: [[:Category:Testcategory]] }}
-Test text
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		$this->assertContains('NewTestcategory', $wikitext);
+		$r = new SRFRenameCategoryOperation("Man", "Citizen");
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+      
+        $log = reset($logMessages['Category info']);
+        $this->assertContains(':Category:Citizen', $log->getWikiText());
 
 	}
 

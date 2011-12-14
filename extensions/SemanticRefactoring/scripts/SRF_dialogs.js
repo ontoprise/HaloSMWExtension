@@ -23,76 +23,129 @@
 (function($) {
 
 	var content = {
-		renamePropertyContent : '<form action="" method="get" id="sref_option_form" operation="renameProperty">'
+
+		htmlTemplate : '<form action="" method="get" id="sref_option_form" operation="renameProperty">'
 				+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
 				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
-				+ '<tr><td colspan="2"><input type="checkbox" id="rename_property" checked="true" requiresBot="false">'
-				+ mw.msg('rename_property')
-				+ '</input></td></tr>'
-				+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations" checked="true" requiresBot="true">'
-				+ mw.msg('rename_annotations')
-				+ '</input></td></tr>'
-				+ '<tr><td colspan="2"><input type="button" id="rename" value="'
-				+ mw.msg('rename') + '"></input></td></tr>' + '</table></form>',
+				+ '<tr><td colspan="2">'
+				+ '%%OPTIONS%%'
+				+ '<tr><td colspan="2"><input type="button" id="sref_start_operation" value="'
+				+ mw.msg('sref_start_operation') + '"></input></td></tr>' + '</table></form>',
 
-		renameCategoryContent : '<form action="" method="get" id="sref_option_form" operation="renameCategory">'
-			+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
-			+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
-			+ '<tr><td colspan="2"><input type="checkbox" id="rename_property" checked="true" requiresBot="false">'
-			+ mw.msg('rename_category')
-			+ '</input></td></tr>'
-			+ '<tr><td colspan="2"><input type="checkbox" id="rename_annotations" checked="true" requiresBot="true">'
-			+ mw.msg('rename_annotations')
-			+ '</input></td></tr>'
-			+ '<tr><td colspan="2"><input type="button" id="rename" value="'
-			+ mw.msg('rename') + '"></input></td></tr>' + '</table></form>'
+		newCheckbox : function(id, checked, requiresBot) {
+			var checkedAttribute = checked ? 'checked="true"' : '';
+			var html = '<tr><td colspan="2"><input type="checkbox" id="' + id
+					+ '" ' + checkedAttribute + ' requiresBot="'
+					+ (requiresBot ? "true" : "false") + '">' + mw.msg(id)
+					+ '</input></td><td>'+mw.msg(id+"_help")+'</td></tr>';
+			return html;
+		},
+
+		createHtml : function(type) {
+			var dialogMode = content[type];
+			var checkBoxRows = "";
+			for (checkBox in dialogMode) {
+				checkBoxRows += content.newCheckbox(checkBox,
+						dialogMode[checkBox][0], dialogMode[checkBox][1])
+			}
+			return content.htmlTemplate.replace(/%%OPTIONS%%/, checkBoxRows);
+		},
+
+		renamePropertyContent : {
+			'sref_rename_property' : [ true, false ],
+			'sref_rename_annotations' : [ true, true ]
+		},
+
+		renameCategoryContent : {
+			'sref_rename_category' : [ true, false ],
+			'sref_rename_annotations' : [ true, true ]
+		},
+
+		deleteCategoryContent : {
+			'sref_onlyCategory' : [ true, false ],
+			'sref_removeInstances' : [ true, true ],
+			'sref_removeCategoryAnnotations': [ true, true ] ,
+			/*'removeFromDomain' : [ false, true ],*/
+			'sref_removePropertyWithDomain' : [ false, true ],
+			'sref_removeQueriesWithCategories' : [ true, true ],
+			'sref_includeSubcategories' : [ false, true ],
+		},
+		
+		deletePropertyContent : {
+			'sref_onlyProperty' : [ true, false ],
+			'sref_removeInstancesUsingProperty' : [ true, true ],
+			'sref_removePropertyAnnotations': [ true, true ] ,
+			'sref_removeQueriesWithProperties' : [ false, true ],
+			'sref_includeSubproperties' : [ false, true ]
+			
+		}
 	}
 
 	var dialog = {
 
 		openDialog : function(type, parameters, callback) {
-			$.fancybox( {
-				'content' : content[type],
-				'modal' : true,
-				'width' : '75%',
-				'height' : '75%',
-				'autoScale' : false,
-				'overlayColor' : '#222',
-				'overlayOpacity' : '0.8',
-				'scrolling' : 'no',
-				'titleShow' : false,
-				'onCleanup' : function() {
+			$
+					.fancybox( {
+						'content' : content.createHtml(type),
+						'modal' : true,
+						'width' : '75%',
+						'height' : '75%',
+						'autoScale' : false,
+						'overlayColor' : '#222',
+						'overlayOpacity' : '0.8',
+						'scrolling' : 'no',
+						'titleShow' : false,
+						'onCleanup' : function() {
 
-				},
-				'onComplete' : function() {
-					$('#fancybox-close').show();
+						},
+						'onComplete' : function() {
+							$('#fancybox-close').show();
 
-					$.fancybox.resize();
-					$.fancybox.center();
+							$.fancybox.resize();
+							$.fancybox.center();
 
-					$('#rename').click(function() {
-						var ajaxParams = { };
-						for(p in parameters) {
-							ajaxParams[p] = parameters[p];
+							$('#sref_start_operation')
+									.click(
+											function() {
+												var ajaxParams = {};
+												for (p in parameters) {
+													ajaxParams[p] = parameters[p];
+												}
+												var requiresBot = false;
+												$('input',
+														$('#sref_option_form'))
+														.each(
+																function(i, e) {
+																	var p = $(e)
+																			.attr(
+																					"id");
+																	var value = $(
+																			e)
+																			.attr(
+																					'checked');
+																	ajaxParams[p] = value;
+																	if (value)
+																		requiresBot = requiresBot
+																				|| $(
+																						e)
+																						.attr(
+																								'requiresBot') == 'true';
+																});
+												var operation = $(
+														'#sref_option_form')
+														.attr('operation');
+
+												if (requiresBot)
+													dialog.launchBot(operation,
+															ajaxParams);
+												if (callback) callback(ajaxParams);
+											});
+
+							// articleTitleTextBox.focus();
 						}
-						var requiresBot = false;
-						$('input', $('#sref_option_form')).each(function(i, e) {
-							var p = $(e).attr("id");
-							var value = $(e).attr('checked');
-							ajaxParams[p] = value;
-							if (value) requiresBot = requiresBot || $(e).attr('requiresBot') == 'true'; 
-						});
-						var operation = $('#sref_option_form').attr('operation'); 
-						
-						if (requiresBot) dialog.launchBot(operation, ajaxParams);
-						callback(ajaxParams);
 					});
-
-					// articleTitleTextBox.focus();
-				}
-			});
 		},
-		
+
 		launchBot : function(operation, params) {
 
 			var callBackOnRunBot = function() {
@@ -102,16 +155,16 @@
 			var callBackOnError = function() {
 				alert("Error");
 			}
-			
-			var paramString = "SRF_OPERATION="+operation;
-			for(p in params) {
-				paramString += ","+p+"="+params[p];
+
+			var paramString = "SRF_OPERATION=" + operation;
+			for (p in params) {
+				paramString += "," + p + "=" + params[p];
 			}
-			
-			$.get(mw.config.get( 'wgScript' ), {
+
+			$.get(mw.config.get('wgScript'), {
 				action : 'ajax',
 				rs : 'smwf_ga_LaunchGardeningBot',
-				rsargs : [ 'smw_refactoringbot', paramString , null, null ]
+				rsargs : [ 'smw_refactoringbot', paramString, null, null ]
 			});
 
 		}

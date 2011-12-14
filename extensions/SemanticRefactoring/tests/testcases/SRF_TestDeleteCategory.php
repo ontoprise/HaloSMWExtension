@@ -44,29 +44,30 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategory() {
-		$r = new SRFDeleteCategoryOperation('Person', array('onlyCategory'=>true));
+		$r = new SRFDeleteCategoryOperation('Person', array('sref_onlyCategory'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('Article deleted', $logMessages['Category:Person']->getOperation());
+		
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Category:Person']);
+		$this->assertEquals('Article deleted', $log->getOperation());
 
 	}
 
 	function testRemoveCategoryWithInstances() {
-		$r = new SRFDeleteCategoryOperation('Man', array('removeInstances'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('sref_removeInstances'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$this->assertEquals('Article deleted', $logMessages['Kai']->getOperation());
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Kai']);
+		$this->assertEquals('Article deleted', $log->getOperation());
 
 	}
 
 	function testRemoveQueries() {
-		$r = new SRFDeleteCategoryOperation('Man', array('removeQueries'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('sref_removeQueriesWithCategories'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$log = $logMessages['All men'];
+		
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['All men']);
 		$this->assertEquals('Removed query', $log->getOperation());
 		$this->assertNotContains('#ask', $log->getWikiText());
 
@@ -74,27 +75,25 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategoryAnnotations() {
-		$r = new SRFDeleteCategoryOperation('Man', array('removeCategoryAnnotations'=>true));
+		$r = new SRFDeleteCategoryOperation('Man', array('sref_removeCategoryAnnotations'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
-		$log =  $logMessages['Kai'];
+		
+		$r->refactor(false, $logMessages);
+		$log =  reset($logMessages['Kai']);
 		$this->assertEquals('Removed category annotation', $log->getOperation());
 		$this->assertNotContains('[[Category:Man]]', $log->getWikiText());
 
 	}
 
 	function testRemoveCategoryFromDomainAndRange() {
-		$r = new SRFDeleteCategoryOperation('Person', array('removeFromDomainOrRange'=>true));
+		$r = new SRFDeleteCategoryOperation('Person', array('sref_removeFromDomain'=>true));
 		$logMessages = array();
-		$testData = array();
-		$r->refactor(false, $logMessages, $testData);
+		
+		$r->refactor(false, $logMessages);
 
-		$log =  $logMessages['Property:Has name'];
+		$log =  reset($logMessages['Property:Has name']);
 		$this->assertEquals('Removed from domain and/or range',  $log->getOperation());
 		$this->assertNotContains('[[Category:Person]]', $log->getWikiText());
-		$log =  $logMessages['Property:Has employee'];
-		$this->assertEquals('Removed from domain and/or range',  $log->getOperation());
-		$this->assertNotContains('[[Category:Person]]', $log->getWikiText());
+		
 	}
 }
