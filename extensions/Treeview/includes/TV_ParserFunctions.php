@@ -157,8 +157,8 @@ SCRIPT
 		self::storeParameters($params, 'generateTree');
 		
 		$generateTreeJSON = self::GENERATE_TREE_JSON;
-		$root = array_key_exists(TVLanguage::PFP_ROOT, self::$mParameters)
-					? self::$mParameters[TVLanguage::PFP_ROOT]
+		$root = array_key_exists(TVLanguage::PFP_ROOT_LABEL, self::$mParameters)
+					? self::$mParameters[TVLanguage::PFP_ROOT_LABEL]
 					: wfMsg('tv_default_root_name');
 		$root = json_encode($root);
 		
@@ -230,11 +230,7 @@ TEXT
 		$numMatches = preg_match_all("/(?:^|\n)(\*+)(.*)/", $wikiText, $matches);
 		if ($numMatches > 0) {
 			$tree = self::buildTreeStructure($matches[1], $matches[2]);
-			
-			$tree['label'] = array_key_exists(TVLanguage::PFP_ROOT, self::$mParameters)
-								? self::$mParameters[TVLanguage::PFP_ROOT]
-								: wfMsg('tv_default_root_name');
-			$json = self::serializeTreeAsJson($tree);
+			$json = self::serializeTreeAsJson($tree, true);
 			$json = self::wrapJsonTree($json);
 		} else {
 			// There is no tree structure given
@@ -324,16 +320,19 @@ TEXT
 	}
 	
 	/**
-	 * Serializes the tree structure given in $tree as JSON for display in
+	 * Serializes the tree structure given in $tree as JSON for display in jstree
 	 * 
 	 * @param {array} $tree
 	 * 		The tree as an array structure with the keys "label", "link", "json"
 	 *      and "children".
+	 * @param {boolean} $isTopLevel
+	 * 		true, if this recursion step creates the top level of the tree  
+	 * 		false otherwise
 	 * 
 	 * @return {String}
 	 * 		JSON serialization of the tree.
 	 */
-	private static function serializeTreeAsJson($tree) {
+	private static function serializeTreeAsJson($tree, $isTopLevel = false) {
 		// If the node already contains JSON, just return it as it is.
 		if (array_key_exists('json', $tree) && $tree['json']) {
 			return $tree['json'];
@@ -348,7 +347,9 @@ TEXT
 		// Add all children
 		$children = "";
 		if (array_key_exists('children', $tree)) {
-			$children = ",\n" . '"children":[' . "\n";
+			$children = ($isTopLevel) 
+							? '"data":[' . "\n"
+							: ",\n" . '"children":[' . "\n";
 			
 			$numChildren = count($tree['children']);
 			$i = 0;
@@ -366,7 +367,10 @@ TEXT
 					? '"href":'.json_encode($tree['link'])
 					: ''; 
 		// Create the JSON representation
-		$json = <<<JSON
+		if ($isTopLevel) {
+			$json = $children;
+		} else {
+			$json = <<<JSON
 {
 	"data": {
 		"title": $label,
@@ -374,9 +378,8 @@ TEXT
 	}
 	$children
 }
-JSON
-;
-		
+JSON;
+		}	
 		return $json;
 	}
 	
@@ -390,12 +393,9 @@ JSON
 	private static function wrapJsonTree($json) {
 		$json = <<<JSON
 {
-	"data": [
-		$json
-		]
+	$json
 }		
-JSON
-;
+JSON;
 		return $json;		
 	}
 	
@@ -413,9 +413,9 @@ JSON
 		self::$mParameters = array();
 		$validParams = array();
 		if ($parserFunction === 'tree') {
-			$validParams = array(TVLanguage::PFP_THEME, TVLanguage::PFP_ROOT);
+			$validParams = array(TVLanguage::PFP_THEME);
 		} else if ($parserFunction === 'generateTree') {
-			$validParams = array(TVLanguage::PFP_PROPERTY, TVLanguage::PFP_ROOT,
+			$validParams = array(TVLanguage::PFP_PROPERTY, TVLanguage::PFP_ROOT_LABEL,
 			                     TVLanguage::PFP_SOLR_QUERY);
 		}
 		for ($i = 1; $i < count($params); ++$i) {

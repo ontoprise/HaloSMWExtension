@@ -39,8 +39,9 @@ class TVLanguageEn extends TVLanguage {
 	);
 	
 	protected $mParserFunctionsParameters = array(
-		TVLanguage::PFP_ROOT	=> 'root', 
-		TVLanguage::PFP_THEME	=> 'theme',
+		TVLanguage::PFP_ROOT		=> 'root', 
+		TVLanguage::PFP_ROOT_LABEL	=> 'rootlabel', 
+		TVLanguage::PFP_THEME		=> 'theme',
 		TVLanguage::PFP_PROPERTY	=> 'property',
 		TVLanguage::PFP_SOLR_QUERY	=> 'solrquery' // see also 'tv_cl_solr_pfp' in TV_Messages.php
 	);

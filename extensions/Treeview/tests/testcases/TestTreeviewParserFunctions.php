@@ -77,12 +77,12 @@ class TestTreeviewParserFunctionsBasics extends PHPUnit_Framework_TestCase {
     function providerForTreeParserFunction() {
     	return array(
     		// wikitext, expected html
-#0 - Test a simple tree with no root node label    	
+#0 - Test a simple, flat tree	
     		array(
 <<<TEXT
 {{#tree:
 *a
-**b
+*b
 }}
 TEXT
 , 
@@ -91,25 +91,47 @@ TEXT
 {
 	"data" : [
 		{
-			"data": {
-				"title": "Root",
+			"data" : {
+				"title": "a",
+				"attr": {}
+			}
+		},
+		{ 
+			"data" : {
+				"title": "b",
+				"attr": {}
+			} 
+		}
+	]
+}
+JSON
+			),
+    	),
+#1 - Test a simple, hierarchical tree with    	
+    		array(
+<<<TEXT
+{{#tree:
+*a
+**b
+}}
+TEXT
+, 
+			array('TreeView_ID_1',
+<<<JSON
+{
+	"data" : [
+		{
+			"data" : {
+				"title": "a",
 				"attr": {}
 			},
 			"children" : [
-				{
+				{ 
 					"data" : {
-						"title": "a",
+						"title": "b",
 						"attr": {}
-					},
-					"children" : [
-						{ 
-							"data" : {
-								"title": "b",
-								"attr": {}
-							} 
-   						}
-					]
-				}
+					} 
+   				}
 			]
 		}
 	]
@@ -117,7 +139,7 @@ TEXT
 JSON
 			),
     	),
-# 1 - Test a more complex tree structure
+# 2 - Test a more complex tree structure
     	array(
 <<<TEXT
 {{#tree:
@@ -132,78 +154,70 @@ JSON
 }}
 TEXT
 , 
-			array('TreeView_ID_1',
+			array('TreeView_ID_2',
 <<<JSON
 {
-	"data": [
+	"data" : [
 		{
 			"data" : {
-				"title": "Root",
+				"title": "1-a",
 				"attr": {}
 			},
 			"children" : [
 				{
 					"data" : {
-						"title": "1-a",
+						"title": "2-a",
+						"attr": {}
+					}
+    			},
+				{ 
+					"data" : {
+						"title": "2-b",
 						"attr": {}
 					},
 					"children" : [
 						{
 							"data" : {
-								"title": "2-a",
-								"attr": {}
-							}
-    					},
-						{ 
-							"data" : {
-								"title": "2-b",
+								"title": "3-a",
 								"attr": {}
 							},
 							"children" : [
 								{
 									"data" : {
-										"title": "3-a",
-										"attr": {}
-									},
-									"children" : [
-										{
-											"data" : {
-												"title": "4-a",
-												"attr": {}
-											}
-    									}
-									]
-								},
-								{
-									"data" : {
-										"title": "3-b",
+										"title": "4-a",
 										"attr": {}
 									}
-								}
-							] 
-    					},
-						{ 
+    							}
+							]
+						},
+						{
 							"data" : {
-								"title": "2-c",
+								"title": "3-b",
 								"attr": {}
 							}
-    					}
-					]
-				},
+						}
+					] 
+    			},
 				{ 
 					"data" : {
-						"title": "1-b",
+						"title": "2-c",
 						"attr": {}
 					}
     			}
 			]
-		}
+		},
+		{ 
+			"data" : {
+				"title": "1-b",
+				"attr": {}
+			}
+    	}
 	]
 }
 JSON
 				),
 			),
-#2 - Error message for missing label on level 3
+#3 - Error message for missing label on level 3
 			array(
 <<<TEXT
 {{#tree:
@@ -213,46 +227,38 @@ JSON
 }}
 TEXT
 , 
-			array('TreeView_ID_2',
+			array('TreeView_ID_3',
 <<<JSON
 {
-	"data": [
+	"data" : [
 		{
 			"data" : {
-				"title": "Root",
+				"title": "1-a",
 				"attr": {}
 			},
 			"children" : [
 				{
 					"data" : {
-						"title": "1-a",
+						"title": "2-a",
 						"attr": {}
 					},
 					"children" : [
 						{
 							"data" : {
-								"title": "2-a",
+								"title": "***Warning: Missing label for this tree level***",
 								"attr": {}
 							},
 							"children" : [
-								{
+								{ 
 									"data" : {
-										"title": "***Warning: Missing label for this tree level***",
+										"title": "4-a",
 										"attr": {}
-									},
-									"children" : [
-										{ 
-											"data" : {
-												"title": "4-a",
-												"attr": {}
-											}
-    									}
-									]
-								}
+									}
+    							}
 							]
-    					}
+						}
 					]
-				}
+    			}
 			]
 		}
 	]
@@ -260,9 +266,9 @@ TEXT
 JSON
 				),
 			),
-#3 - Test tree structure for the error that no tree was provided.			
+#4 - Test tree structure for the error that no tree was provided.			
     		array('{{#tree: no tree here}}',
-    			array('TreeView_ID_3',
+    			array('TreeView_ID_4',
 <<<JSON
 {
 	"data" : "*** Warning: No tree structure found! ***"
@@ -270,7 +276,7 @@ JSON
 JSON
     			) 
     		),
-#4 - Test tree nodes with characters used in JSON    
+#5 - Test tree nodes with characters used in JSON    
     		array(
 <<<TEXT
 {{#tree:
@@ -279,62 +285,22 @@ JSON
 }}
 TEXT
 , 
-			array('TreeView_ID_4',
-<<<JSON
-{
-	"data" : [
-		{
-			"data": {
-				"title": "Root",
-				"attr": {}
-			},
-			"children" : [
-				{
-					"data" : {
-						"title": "a\"b",
-						"attr": {}
-					},
-					"children" : [
-						{ 
-							"data" : {
-								"title":"b[]c",
-								"attr": {}
-							} 
-    					}
-					]
-				}
-			]
-		}
-	]
-}
-JSON
-			),
-    	),
-#5 - Test tree nodes with characters used in JSON    
-    		array(
-<<<TEXT
-{{#tree:
-root=My root node
-|*a
-}}
-TEXT
-, 
 			array('TreeView_ID_5',
 <<<JSON
 {
 	"data" : [
 		{
-			"data": {
-				"title": "My root node",
+			"data" : {
+				"title": "a\"b",
 				"attr": {}
 			},
 			"children" : [
-				{
+				{ 
 					"data" : {
-						"title": "a",
+						"title":"b[]c",
 						"attr": {}
-					}
-				}
+					} 
+    			}
 			]
 		}
 	]
@@ -346,7 +312,6 @@ JSON
     		array(
 <<<TEXT
 {{#tree:
-root=My root node
 |theme=classic
 |*a
 }}
@@ -362,6 +327,7 @@ HTML
     		array(
 <<<TEXT
 {{#tree:
+rootlabel=Root|
 *[[Main Page]]
 *[[Main Page|Main]]
 * [[Main Page]]
@@ -380,72 +346,64 @@ TEXT
 {
 	"data" : [
 		{
-			"data": {
-				"title": "Root",
-				"attr": {}
-			},
-			"children" : [
-				{
-					"data" : {
-						"title": "Main Page",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Main",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Main Page",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Main",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "http:\/\/localhost\/mediawiki\/index.php\/Main_Page",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "https:\/\/localhost\/mediawiki\/index.php\/Main_Page",
-						"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "http:\/\/localhost\/mediawiki\/index.php\/Main_Page",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "https:\/\/localhost\/mediawiki\/index.php\/Main_Page",
-						"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Main Page",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Main Page",
-						"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
-					}
-				}
-			]
+			"data" : {
+				"title": "Main Page",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Main",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Main Page",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Main",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "http:\/\/localhost\/mediawiki\/index.php\/Main_Page",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "https:\/\/localhost\/mediawiki\/index.php\/Main_Page",
+				"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "http:\/\/localhost\/mediawiki\/index.php\/Main_Page",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "https:\/\/localhost\/mediawiki\/index.php\/Main_Page",
+				"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Main Page",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Main Page",
+				"attr": {"href":"https:\/\/localhost\/mediawiki\/index.php\/Main_Page"}
+			}
 		}
 	]
 }
@@ -468,36 +426,28 @@ TEXT
 {
 	"data" : [
 		{
-			"data": {
-				"title": "Root",
-				"attr": {}
-			},
-			"children" : [
-				{
-					"data" : {
-						"title": "Category:Foo",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Category:Foo"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Foo",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Category:Foo"}
-					}
-				},
-				{
-					"data" : {
-						"title": "User:Bar",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/User:Bar"}
-					}
-				},
-				{
-					"data" : {
-						"title": "Bar",
-						"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/User:Bar"}
-					}
-				}
-			]
+			"data" : {
+				"title": "Category:Foo",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Category:Foo"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Foo",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/Category:Foo"}
+			}
+		},
+		{
+			"data" : {
+				"title": "User:Bar",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/User:Bar"}
+			}
+		},
+		{
+			"data" : {
+				"title": "Bar",
+				"attr": {"href":"http:\/\/localhost\/mediawiki\/index.php\/User:Bar"}
+			}
 		}
 	]
 }
@@ -518,18 +468,10 @@ TEXT
 {
 	"data" : [
 		{
-			"data": {
-				"title": "Root",
+			"data" : {
+				"title": "GenerateTree",
 				"attr": {}
-			},
-			"children" : [
-				{
-					"data" : {
-						"title": "GenerateTree",
-						"attr": {}
-					}
-				}
-			]
+			}
 		}
 	]
 }
@@ -574,7 +516,7 @@ JSON
 <<<TEXT
 {{#generateTree:
 property=someProperty
-|root=Root Node
+|rootlabel=Root Node
 }}
 TEXT
 , 
@@ -621,7 +563,7 @@ JSON
 {{#tree:
 *{{#generateTree:
 property=someProperty
-|root=Root Node
+|rootlabel=Root Node
 }}
 }}
 TEXT
@@ -631,17 +573,9 @@ TEXT
 	"data" : [
 		{
 			"data": {
-				"title": "Root",
-				"attr": {}
-			},
-			"children" : [
-				{
-					"data": {
-						"title": "Root Node",
-						"attr": { "generateTree": true, "property": "someProperty" }
-					}
-				}
-			]
+				"title": "Root Node",
+				"attr": { "generateTree": true, "property": "someProperty" }
+			}
 		}
 	]
 }
@@ -654,7 +588,7 @@ JSON
 *{{#generateTree:
 property=someProperty
 |solrquery=q=smwh_search_field%3A(%2Bfoo*%20)
-|root=Root Node
+|rootlabel=Root Node
 }}
 }}
 TEXT
@@ -664,19 +598,11 @@ TEXT
 	"data" : [
 		{
 			"data": {
-				"title": "Root",
-				"attr": {}
-			},
-			"children" : [
-				{
-					"data": {
-						"title": "Root Node",
-						"attr": { "generateTree": true,
-								  "solrQuery": "q=smwh_search_field%3A(%2Bfoo*%20)", 
-								  "property": "someProperty" }
-					}
-				}
-			]
+				"title": "Root Node",
+				"attr": { "generateTree": true,
+						  "solrQuery": "q=smwh_search_field%3A(%2Bfoo*%20)", 
+						  "property": "someProperty" }
+			}
 		}
 	]
 }
