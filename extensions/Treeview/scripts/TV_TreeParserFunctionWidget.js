@@ -75,14 +75,7 @@ TreeView.classes.TreeParserFunctionWidget = AjaxSolr.AbstractWidget.extend({
 		store.removeByValue('fq', 'smwh_properties:smwh_Subsection_of_t');
 		
 		var query = this.mStore.string();
-		var tree = 
-		"{{#tree:" +
-		"\n*{{#generateTree:" + 
-		"\nproperty=" + tp +
-		"\n|root=Name of root node" +
-		"\n|" + mw.msg('tv_cl_solr_pfp')  + "="+query + 
-		"\n}}\n" +
-		"}}";
+		var tree = mw.msg('tv_treepf_template', tp, query);
 		
 		$(this.target).empty();
 		$(this.target).append(AjaxSolr.theme('treeParserFunction', tree));
