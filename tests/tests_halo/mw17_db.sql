@@ -679,7 +679,7 @@ CREATE TABLE `objectcache` (
 
 LOCK TABLES `objectcache` WRITE;
 /*!40000 ALTER TABLE `objectcache` DISABLE KEYS */;
-INSERT INTO `objectcache` VALUES ('empty_mw117:pcache:idhash:1-0!*!0!!en!*','¥VmoâF¾ÏüŠÅZé$°MH¸,ÆÕ)J“H!¡:ÚûPUh±Xe½¶¼ë.ºÿÞ™Åp†¤U›D(–ggžyv^}ÏÃ÷&¢4PÞW¶¨¬Ç{þlø)÷²)<YohPçôŒ{QGóx©_åƒd+aØ@3S%	³¨”Ú0©JAÚüyÜŠ|´*â‹\\›JYfWÀ\"ÁV%,FÞÊÚ‚û~Vt×ˆ˜t7/—>½ù× \nŽ†´5K”0fä!%(µPÌ9V‚\Zy:_äJåkYQ.ÁŽ¼Ù\\	ýàÅ¿ã½~6ìª’)D¾ˆÙ\"/‘\"þÏ„•¹fø«ŒÔKÇŒÜ2“/ìZ”ÐuÜ[ÑªG¦zO •Ö@BÖ^üçþ2[ÎR§ðÔ-VÅ/VZ£±z6KøIdÅP8«!¸÷\Zf\"q§î]â«Åœ]µÄ\r#ZZH½˜,é\ZE>QŠÙ³lÝYH•Ôà1™Ž¼Ú~¶·?Fd5Näã-[Q¥âHÉøE†Öëu×%‡îø#Ac¡+¡(E¹¬JÐ™ÙzxkÂÀØŒ)iÜÅ1\'Hð\r$ýüÛý(xÄø7IOsTÌ™*ÚQéù{–¡u^éÞM\rA`ä‹ò{/3ÛjEíN‡µî`=™ B†•VB‘—¶5Ág™Scwè<– -ËÙ‰î¯5ÉíÀKŠý“¨\n•Œüœ~/8„§=6ßX0­)d…’­2ìÝÐ»|*@ù¬pã‡-0.ëµó€œ·:ó/âÈùN?‰ëY»b°aèÖnfÙ:¼pg\\¦8£V<ìíí ÝÝþÈèÓƒ-¬„að)Â“þà$däÍM¼>Ž¿[¡—öî­ÔÆ\nðçïxâÙÞp™—šÍLjäÝà<çM\0F€ÞÏõÍÕ1kÊ{\rùMÚ8àÁM†ˆMmâ{YÏÞCŸyþ×¤J\"×Ósþ®þ¯aúÁ„¡­mÎNø»;ÊAQdh‘ÝàÕJ:-•Ø_êy>œó`XÛ\\ãÊxåˆÒu—_ÑŠ+7Òkœ½7²þ\'ó´R/2»]¶×yÞ¤ƒÏ¾ŠRoã×”Ö,œ4äÏ½\nDv.lž(xµÏ÷êwtÆ½=±Ü^¨ow¼Y¶µ©«lemz[(·Òš2ä³(óÌm¬F‘ÏvENÁ Ï,Gêl°u t²ÊË#ûõ4ü¾KÉ¤Ì(íAwQ,§÷×Óñ- zôõCóûå&	Or%“MCñ$x¡øÙ}¶@z_ìc{B!¥fÚ†‚Öé6sY\"×Üÿµ©Uˆ‹Cy¹Õtÿ€Ò85È°{Öíï„\'Ô‹z7n\'Ñö³k§‡³RRµÝ‘”úŸšcnîU:K™ât7Ý^…0Î','2011-08-11 13:47:31'),('empty_mw117:pcache:idoptions:1','EÁ‚@Dÿ¥`¶°vÆ£á¢ÞWh°‰,†®‰†ðï²ã­™7íLkÚì}sã“ô´¥I©\"è/<ªœ.\Zà¦ØØ4£YØßŸKDS¡ÁÜ–9®jöó^ßà„ªÂ\Z“X™Ø¢— õ½=úN\ZpW2¿Å³r[?â’¯à<å4É.YáÙ_y¼±o%tšîb\"HÀ­Då&®µ…2·~òTï>tàæù','2011-08-11 13:47:31');
+INSERT INTO `objectcache` VALUES ('empty_mw117:pcache:idhash:1-0!*!0!!en!*','ï¿½Vmoï¿½Fï¿½ï¿½ï¿½ï¿½Zï¿½$ï¿½MHï¿½,ï¿½ï¿½)Jï¿½H!ï¿½:ï¿½ï¿½PUhï¿½Xeï¿½ï¿½ï¿½ï¿½.ï¿½ï¿½Þ™ï¿½pï¿½ï¿½Uï¿½D(ï¿½ggï¿½yv^}ï¿½ï¿½ï¿½&ï¿½4Pï¿½Wï¿½ï¿½ï¿½ï¿½{ï¿½lï¿½)ï¿½ï¿½)<YohPï¿½ï¿½{QGï¿½xï¿½_ï¿½d+aï¿½@3S%	ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½JAÚï¿½yÜŠ|ï¿½*ï¿½\\ï¿½JYfWï¿½\"ï¿½V%,Fï¿½ï¿½Ú‚ï¿½~Vt×ˆï¿½t7/ï¿½>ï¿½ï¿½× \nï¿½ï¿½ï¿½5Kï¿½0fï¿½!%(ï¿½Pï¿½9Vï¿½\Zy:_ï¿½Jï¿½kï¿½YQ.ï¿½ï¿½ï¿½ï¿½\\	ï¿½ï¿½Å¿ï¿½~6ìª’)Dï¿½ï¿½ï¿½\"/ï¿½\"ï¿½Ï„ï¿½ï¿½fï¿½ï¿½KÇŒï¿½2ï¿½/ï¿½Zï¿½ï¿½uï¿½[ÑªGï¿½zO ï¿½ï¿½@Bï¿½^ï¿½ï¿½ï¿½2[ï¿½Rï¿½ï¿½ï¿½-Vï¿½/VZï¿½ï¿½ï¿½z6Kï¿½Idï¿½P8ï¿½!ï¿½ï¿½\Zf\"qï¿½ï¿½]ï¿½ï¿½Åœ]ï¿½ï¿½ï¿½\r#ZZHï¿½ï¿½,ï¿½\ZE>Qï¿½ï¿½ï¿½lï¿½Yï¿½Hï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½~ï¿½ï¿½?Fd5Nï¿½ï¿½-[Qï¿½ï¿½Hï¿½ï¿½Eï¿½ï¿½ï¿½uï¿½%ï¿½ï¿½ï¿½#Acï¿½+ï¿½(Eï¿½ï¿½JÐ™ï¿½zxkï¿½ï¿½ï¿½ï¿½)iï¿½ï¿½1\'Hï¿½\r$ï¿½ï¿½ï¿½ï¿½(xï¿½ï¿½7IOsTÌ™ï¿½*ÚQï¿½ï¿½{ï¿½ï¿½u^ï¿½ï¿½M\rA`ï¿½ï¿½{/3ï¿½jEï¿½Nï¿½ï¿½ï¿½`=ï¿½ï¿½Bï¿½ï¿½VBï¿½ï¿½ï¿½5ï¿½gï¿½Scwï¿½<ï¿½ -ï¿½Ù‰ï¿½5Éï¿½ï¿½Kï¿½ï¿½\nï¿½ï¿½ï¿½ï¿½~/8ï¿½ï¿½=6ï¿½X0ï¿½)dï¿½ï¿½ï¿½2ï¿½ï¿½Ð»|*@ï¿½ï¿½pï¿½-0.ï¿½ó€œ·:ï¿½ï¿½/ï¿½ï¿½ï¿½N?ï¿½ï¿½Yï¿½bï¿½aï¿½ï¿½nfï¿½:ï¿½pg\\ï¿½8ï¿½V<ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óƒ-ï¿½ï¿½ï¿½aï¿½)Â“ï¿½ï¿½$dï¿½ï¿½Mï¿½>ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\nï¿½ï¿½ï¿½xï¿½ï¿½ï¿½pï¿½ï¿½ï¿½ï¿½Ljï¿½ï¿½ï¿½<ï¿½M\0Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1kï¿½{\rï¿½Mï¿½8ï¿½ï¿½Mï¿½ï¿½Mmï¿½{Yï¿½ï¿½Cï¿½yï¿½ï¿½×¤J\"ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½aï¿½ï¿½ï¿½ï¿½ï¿½mï¿½Nï¿½;ï¿½AQdhï¿½ï¿½ï¿½ï¿½J:-ï¿½ï¿½_ï¿½y>ï¿½ï¿½`Xï¿½\\ï¿½ï¿½xï¿½ï¿½uï¿½_ÑŠ+7ï¿½kï¿½ï¿½7ï¿½ï¿½\'ï¿½ï¿½R/2ï¿½]ï¿½ï¿½yÞ¤ï¿½Ï¾ï¿½Roï¿½×”ï¿½,ï¿½4ï¿½ï¿½ï¿½\nDv.lï¿½(xï¿½ï¿½ï¿½ï¿½wtÆ½=ï¿½ï¿½^ï¿½owï¿½Yï¿½ï¿½ï¿½ï¿½lemz[(ï¿½Òš2ï¿½(ï¿½ï¿½mï¿½Fï¿½ï¿½vENï¿½ï¿½ï¿½,Gï¿½lï¿½u tï¿½ï¿½ï¿½#ï¿½ï¿½4ï¿½KÉ¤ï¿½(ï¿½AwQ,ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½zï¿½ï¿½Cï¿½ï¿½ï¿½&	Or%ï¿½MCï¿½$xï¿½ï¿½ï¿½}ï¿½@z_ï¿½c{B!ï¿½fÚ†ï¿½ï¿½ï¿½6sY\"ï¿½ï¿½ï¿½ï¿½ï¿½Uï¿½ï¿½Cyï¿½ï¿½tï¿½ï¿½ï¿½85È°{ï¿½ï¿½ï¿½ï¿½\'ï¿½ï¿½z7n\'ï¿½ï¿½ï¿½kï¿½ï¿½ï¿½RRï¿½Ý‘ï¿½ï¿½cnï¿½U:Kï¿½ï¿½t7ï¿½^ï¿½0ï¿½','2011-08-11 13:47:31'),('empty_mw117:pcache:idoptions:1','Eï¿½ï¿½ï¿½@Dï¿½ï¿½`ï¿½ï¿½vï¿½Æ£ï¿½ï¿½Whï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã­™7ï¿½Lkï¿½ï¿½}sï¿½ï¿½ï¿½ï¿½Iï¿½\"ï¿½/<ï¿½ï¿½.\Zï¿½ï¿½ï¿½4ï¿½Yï¿½ßŸKï¿½DSï¿½ï¿½Ü–9ï¿½jï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½\Zï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=ï¿½N\ZpW2ï¿½Å³r[?â’¯ï¿½<ï¿½4ï¿½.Yï¿½ï¿½_yï¿½ï¿½o%tï¿½ï¿½b\"Hï¿½ï¿½Dï¿½&ï¿½ï¿½ï¿½2ï¿½~ï¿½Tï¿½>tï¿½ï¿½ï¿½','2011-08-11 13:47:31');
 /*!40000 ALTER TABLE `objectcache` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1311,7 +1311,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'WikiSysop','',':B:03285a0a:d431706dedfd5f16415d2978dcd80da3','',NULL,'kai.kuehn@web.de','','20110810134735','c8a3450aa0783324b06bcd73bda53751',NULL,'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',NULL,'20110810134730',0);
+INSERT INTO `user` VALUES (1,'WikiSysop','',':B:03285a0a:d431706dedfd5f16415d2978dcd80da3','',NULL,'user@example.com','','20110810134735','c8a3450aa0783324b06bcd73bda53751',NULL,'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',NULL,'20110810134730',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
