@@ -327,7 +327,6 @@ HTML
     		array(
 <<<TEXT
 {{#tree:
-rootlabel=Root|
 *[[Main Page]]
 *[[Main Page|Main]]
 * [[Main Page]]
