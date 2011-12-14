@@ -414,7 +414,7 @@ class ConsistencyChecker {
 
 		// check if semantic rule extension AND triplestore is installed.
 		if (in_array("extensions/SemanticRules/includes/SR_Initialize.php", $matches[3])) {
-			if (strpos($ls, "SMWTripleStore") === false) {
+			if (strpos($ls, "smwgHaloWebserviceEndpoint") === false) {
 				$errorFound=true;
 				$this->statusLog[] = $dfgOut->getln(array("\n","\t","[FAILED]","Rule extension installed but no triplestore is active."));
 
