@@ -17,13 +17,17 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
  * @ingroup SMWHaloTests
- * 
+ *
  * @defgroup SMWHaloTests SMWHalo unit tests
  * @ingroup SMWHalo
- * 
+ *
  * @author Kai K�hn
  */
 
@@ -44,15 +48,15 @@ class HaloTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('SMWHalo');
 
-//		$suite->addTestSuite("TestSemanticStore");
-//		$suite->addTestSuite("TestWikiEQI");
-//		$suite->addTestSuite("TestAutocompletionStore");
+		//		$suite->addTestSuite("TestSemanticStore");
+		//		$suite->addTestSuite("TestWikiEQI");
+		//		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestQueryPrintersSuite");
-//		$suite->addTestSuite("TestWikiJobs");
-//		$suite->addTestSuite("TestDataAPI");
-//		$suite->addTestSuite("TestQIAjaxAccess");
-//		$suite->addTestSuite("TestBuiltinPropertiesSuite");
-//		$suite->addTestSuite("TestOntologyManipulatorSuite");
+		//		$suite->addTestSuite("TestWikiJobs");
+		//		$suite->addTestSuite("TestDataAPI");
+		//		$suite->addTestSuite("TestQIAjaxAccess");
+		//		$suite->addTestSuite("TestBuiltinPropertiesSuite");
+		//		$suite->addTestSuite("TestOntologyManipulatorSuite");
 		return $suite;
 	}
 }

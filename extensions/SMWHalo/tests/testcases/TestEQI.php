@@ -16,7 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 /**
  * @file
  * @ingroup SMWHaloTests
@@ -80,7 +82,7 @@ abstract class TestEQI extends PHPUnit_Framework_TestCase {
 	function testASKPropertyContraint2() {
 		$res = $this->makeCall("[[Category:Sports car]][[Has Engine::<q>[[Has torsional moment::+]]</q>]]", $this->params);
 		$this->assertContains('<uri>http://publicbuild/ob/a/Audi_TT</uri>', $res);
-		 
+			
 	}
 
 	function testASKPropertyContraint3() {
@@ -95,6 +97,6 @@ abstract class TestEQI extends PHPUnit_Framework_TestCase {
 		$this->assertContains('175', $res);
 	}
 
-	
+
 
 }

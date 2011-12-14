@@ -17,17 +17,21 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
- * @ingroup SMWHaloTests 
- * 
+ * @ingroup SMWHaloTests
+ *
  * @author Kai K�hn
  *
  */
 
 class TestQueryPrintersSuite extends PHPUnit_Framework_TestSuite
 {
-	
+
 	public static function suite() {
 		$suite = new TestQueryPrintersSuite();
 		$suite->addTestSuite('TestQueryPrinters');
@@ -35,11 +39,11 @@ class TestQueryPrintersSuite extends PHPUnit_Framework_TestSuite
 		$suite->addTestSuite('TestFancyTableDistributionQuery');
 		return $suite;
 	}
-	
+
 	protected function setUp() {
-        Skin::getSkinNames();
+		Skin::getSkinNames();
 	}
-	
+
 	protected function tearDown() {
 	}
 
@@ -69,7 +73,7 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 		$res = smwfGetStore()->getQueryResult($query);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, SMW_OUTPUT_FILE, $context, $format);
 		$this->assertFileContentsIgnoringWhitespaces("$smwgHaloIP/tests/testcases/resources/xml_qp_result.dat", $result);
-		
+
 	}
 
 	function testExcelQueryPrinter() {
@@ -82,11 +86,11 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 		$query  = SMWQueryProcessor::createQuery($querystring, $params, $context, $format, $extraprintouts);
 		$res = smwfGetStore()->getQueryResult($query);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, SMW_OUTPUT_FILE, $context, $format);
-		
+
 		$this->assertFileContentsIgnoringWhitespaces("$smwgHaloIP/tests/testcases/resources/excel_qp_result.dat", $result);
-		
+
 	}
-	
+
 	function assertFileContentsIgnoringWhitespaces($file, $act_result) {
 		$contents = file_get_contents($file);
 		$contents = preg_replace("/\\s+|\\n+|\\r+/", "", $contents);
@@ -100,63 +104,63 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
  * It needs the pages: LTRPPage1, LTRPPage2, LTRPPage3, LTRPQuery, LTRPNumber
  * LTRPPage and LTRPString
  * The TSC must be running.
- * 
+ *
  * @author thsc
  *
  */
 class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 
-	
+
 	function setUp() {
 		define('SMWH_FORCE_TS_UPDATE', 1); // We are running in maintenance mode
-										   // which normally disables the TripleStore
-		
+		// which normally disables the TripleStore
+
 		global $smwgHaloTripleStoreGraph, $IP, $smwgHaloIP,$smwgHaloNEPEnabled;
-		
+
 		$smwgHaloNEPEnabled=true;
-		
+
 		include_once "$IP/extensions/LinkedData/storage/TripleStore/LOD_TripleStoreAccess.php";
 		include_once "$IP/extensions/LinkedData/storage/TripleStore/LOD_Triple.php";
 		include_once "$IP/extensions/LinkedData/storage/TripleStore/LOD_SparqlQueryResult.php";
-		
+
 		$hitchhiker = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(HitchhikersGuide)";
 		$lord = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(LordOfTheRings)";
 		$adams = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(Douglas%20Adams)";
 		$tolkien = "obl:term#%3Chttp://www.NewOnto1.org/dbOntology%23c%3E(J.R.R%20Tolkien)";
-		
-		$mTriples = array(
-			array($hitchhiker, "prop:Title", "The Hitchhiker's Guide to the Galaxy", "xsd:string"),
-			array($hitchhiker, "prop:Price", "10.20", "xsd:double"),
-			array($hitchhiker, "prop:Pages", "224", "xsd:int"),
-			array($hitchhiker, "prop:ReallyCool", "true", "xsd:boolean"),
-			array($hitchhiker, "prop:Published", "1979-04-02T13:41:09+01:00", "xsd:dateTime"),
-			array($hitchhiker, "prop:Amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI"),
-			array($hitchhiker, "prop:Author", $adams, "__objectURI"),
-			array($hitchhiker, "prop:AuthorName", "Douglas Adams", "xsd:string"),
 
-			array($lord, "prop:Title", "The Lord of the Rings", "xsd:string"),
-			array($lord, "prop:Price", "12.19", "xsd:double"),
-			array($lord, "prop:Pages", "1178", "xsd:int"),
-			array($lord, "prop:ReallyCool", "true", "xsd:boolean"),
-			array($lord, "prop:Published", "2005-10-12T14:54:09+01:00", "xsd:dateTime"),
-			array($lord, "prop:Amazon", "http://www.amazon.com/Lord-Rings-50th-Anniversary-Vol/dp/0618640150/", "xsd:anyURI"),
-			array($lord, "prop:Author", $tolkien, "__objectURI"),
-			array($lord, "prop:AuthorName", "J.R.R. Tolkien", "xsd:string"),
+		$mTriples = array(
+		array($hitchhiker, "prop:Title", "The Hitchhiker's Guide to the Galaxy", "xsd:string"),
+		array($hitchhiker, "prop:Price", "10.20", "xsd:double"),
+		array($hitchhiker, "prop:Pages", "224", "xsd:int"),
+		array($hitchhiker, "prop:ReallyCool", "true", "xsd:boolean"),
+		array($hitchhiker, "prop:Published", "1979-04-02T13:41:09+01:00", "xsd:dateTime"),
+		array($hitchhiker, "prop:Amazon", "http://www.amazon.com/Hitchhikers-Guide-Galaxy-25th-Anniversary/dp/1400052920/ref=sr_1_1?ie=UTF8&s=books&qid=1272987287&sr=1-1", "xsd:anyURI"),
+		array($hitchhiker, "prop:Author", $adams, "__objectURI"),
+		array($hitchhiker, "prop:AuthorName", "Douglas Adams", "xsd:string"),
+
+		array($lord, "prop:Title", "The Lord of the Rings", "xsd:string"),
+		array($lord, "prop:Price", "12.19", "xsd:double"),
+		array($lord, "prop:Pages", "1178", "xsd:int"),
+		array($lord, "prop:ReallyCool", "true", "xsd:boolean"),
+		array($lord, "prop:Published", "2005-10-12T14:54:09+01:00", "xsd:dateTime"),
+		array($lord, "prop:Amazon", "http://www.amazon.com/Lord-Rings-50th-Anniversary-Vol/dp/0618640150/", "xsd:anyURI"),
+		array($lord, "prop:Author", $tolkien, "__objectURI"),
+		array($lord, "prop:AuthorName", "J.R.R. Tolkien", "xsd:string"),
 			
-			array($adams, "prop:FirstName", "Douglas", "xsd:string"),
-			array($adams, "prop:LastName", "Adams", "xsd:string"),
+		array($adams, "prop:FirstName", "Douglas", "xsd:string"),
+		array($adams, "prop:LastName", "Adams", "xsd:string"),
 			
-			array($tolkien, "prop:FirstName", "John", "xsd:string"),
-			array($tolkien, "prop:LastName", "Tolkien", "xsd:string"),
+		array($tolkien, "prop:FirstName", "John", "xsd:string"),
+		array($tolkien, "prop:LastName", "Tolkien", "xsd:string"),
 			
 		);
-    	$prefixes = TSNamespaces::getW3CPrefixes()
-    				.TSNamespaces::getAllPrefixes();
-    	$triples = array();
-		foreach ($mTriples as $t) {		
+		$prefixes = TSNamespaces::getW3CPrefixes()
+		.TSNamespaces::getAllPrefixes();
+		$triples = array();
+		foreach ($mTriples as $t) {
 			$triples[] = new LODTriple($t[0], $t[1], $t[2], $t[3]);
 		}
-		
+
 		// Inserts triples into the triple store
 		$tsa = new LODTripleStoreAccess();
 		$tsa->addPrefixes($prefixes);
@@ -167,7 +171,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 
 	function tearDown() {
 	}
-	
+
 
 	/**
 	 * Tests if the printer is registered
@@ -177,7 +181,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 		$this->assertArrayHasKey('fancytable', $smwgResultFormats);
 		$this->assertEquals('SMWFancyTableResultPrinter', $smwgResultFormats['fancytable']);
 	}
-	
+
 	/**
 	 * Tests if the class for the label table printer can be instantiated.
 	 */
@@ -189,17 +193,17 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 		}
 		$this->assertTrue(true);
 	}
-	
-	
-    /**
-     * Data provider for testFancyTablePrinterResult
-     */
-    function providerForFancyTablePrinterResult() {
+
+
+	/**
+	 * Data provider for testFancyTablePrinterResult
+	 */
+	function providerForFancyTablePrinterResult() {
 		global $wgScriptPath;
-    	return array(
-#0    	
-//--- A normal query ---
-	    	array(array(
+		return array(
+		#0
+		//--- A normal query ---
+		array(array(
 					'[[author::+]]',
 					'?title',
 					'?price',
@@ -209,7 +213,7 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
     				'?amazon',
 					'?author',	
 					'format=fancytable'
-    			  ), 
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -244,10 +248,10 @@ class TestFancyTableQuery extends PHPUnit_Framework_TestCase {
 	</tr>
 </table>
 TABLE
-    			  ),
-#1    	
-//--- Assigning a new label for the subject column ---
-			array(array(
+					),
+					#1
+					//--- Assigning a new label for the subject column ---
+					array(array(
 					'[[author::+]]',
 					'mainlabel=Book',
 					'?title',
@@ -258,7 +262,7 @@ TABLE
     				'?amazon',
 					'?author',	
 					'format=fancytable'
-    			  ), 
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -293,10 +297,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),   
-#2
-//--- Assigning a new label for the subject column and replace the subject values and author values ---
-			array(array(
+					),
+					#2
+					//--- Assigning a new label for the subject column and replace the subject values and author values ---
+					array(array(
 					'[[author::+]]',
 					'mainlabel=Book',
 					'?title',
@@ -310,7 +314,7 @@ TABLE
 					'format=fancytable',
     			    'replace(?)=?title',
     			    'replace(?author)=?AuthorName'
-    			  ), 
+    			    ),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -342,11 +346,11 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),  	
-#3
-//--- Assigning a new label for the subject column do some invalid replacements.
-//--- This leads to a warning at the end of the table.
-			array(array(
+    			    ),
+    			    #3
+    			    //--- Assigning a new label for the subject column do some invalid replacements.
+    			    //--- This leads to a warning at the end of the table.
+    			    array(array(
 					'[[author::+]]',
 					'mainlabel=Book',
 					'?title',
@@ -362,7 +366,7 @@ TABLE
     			    'replace(?xtitle)=?title',
     			    'replace(?author)=?xAuthorName',
 				    'replace(?price)=?pages'
-					), 
+				    ),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -403,11 +407,11 @@ Found invalid replace statements with unknown properties:
 </ul>
 </div>
 TABLE
-			),    			  
-				  
-#4
-//--- Replace the price by pages ---
-			array(array(
+				    ),
+
+				    #4
+				    //--- Replace the price by pages ---
+				    array(array(
 					'[[author::+]]',
 					'mainlabel=Book',
 					'?title',
@@ -419,7 +423,7 @@ TABLE
 					'?author',	
 					'format=fancytable',
     			    'replace(?price)=?pages'
-    			  ), 
+    			    ),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -451,16 +455,16 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#5
-//--- A query for wiki pages. ---
-			array(array(
+    			    ),
+    			    #5
+    			    //--- A query for wiki pages. ---
+    			    array(array(
 					'[[LTRPString::+]]',
 					'?LTRPString',
 					'?LTRPNumber',
 					'?LTRPPage',
 					'format=fancytable'
-    			  ),
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -489,17 +493,17 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),    
-#6			  
-//--- A query for wiki pages with replacement of the subject by a string ---
-			array(array(
+					),
+					#6
+					//--- A query for wiki pages with replacement of the subject by a string ---
+					array(array(
 					'[[LTRPString::+]]',
 					'?LTRPString',
 					'?LTRPNumber',
 					'?LTRPPage',
 					'format=fancytable',
 					'replace(?)=?LTRPString'
-    			  ),
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -524,17 +528,17 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#7  			  
-//--- A query for wiki pages with replacement of the subject by a Number ---
-			array(array(
+					),
+					#7
+					//--- A query for wiki pages with replacement of the subject by a Number ---
+					array(array(
 					'[[LTRPString::+]]',
 					'?LTRPString',
 					'?LTRPNumber',
 					'?LTRPPage',
 					'format=fancytable',
 					'replace(?)=?LTRPNumber'
-    			  ),
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -559,17 +563,17 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#8	  
-//--- A query for wiki pages with replacement of the subject by a Page ---
-			array(array(
+					),
+					#8
+					//--- A query for wiki pages with replacement of the subject by a Page ---
+					array(array(
 					'[[LTRPString::+]]',
 					'?LTRPString',
 					'?LTRPNumber',
 					'?LTRPPage',
 					'format=fancytable',
 					'replace(?)=?LTRPPage'
-    			  ),
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -594,10 +598,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#9
-//--- A query for wiki pages. Replace the subject by a number and a string by a page---
-			array(array(
+					),
+					#9
+					//--- A query for wiki pages. Replace the subject by a number and a string by a page---
+					array(array(
 					'[[LTRPString::+]]',
 					'?LTRPString',
 					'?LTRPNumber',
@@ -605,7 +609,7 @@ TABLE
 					'replace(?)=?LTRPNumber',
 					'replace(?LTRPString)=?LTRPPage',
 					'format=fancytable'
-    			  ),
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -626,15 +630,15 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#10
-//--- A normal query with 'style' parameter ---
-	    	array(array(
+					),
+					#10
+					//--- A normal query with 'style' parameter ---
+					array(array(
 					'[[author::+]]',
 					'?title',
 					'format=fancytable',
 	    			'style=fancystyle'
-    			  ), 
+	    			),
 <<<TABLE
 <table class="fancystyle" id="querytable0">
 	<tr>
@@ -651,10 +655,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-			),
-#11
-//--- A query with a property path i.e. author.FirstName as replacement			
-	    	array(array(
+	    			),
+	    			#11
+	    			//--- A query with a property path i.e. author.FirstName as replacement
+	    			array(array(
 				'[[author::+]]',
 				'mainlabel=Author',
 				'?author.FirstName',
@@ -662,7 +666,7 @@ TABLE
 				'?AuthorName',
 				'replace(?)=?author.FirstName',
 				'format=fancytable'
-    			  ), 
+				),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -682,73 +686,73 @@ TABLE
 	</tr>
 </table>			
 TABLE
-			)
-    	);
-    }
-	
+				)
+				);
+	}
+
 	/**
 	 * Tests the correct output of the label table printer.
-	 * 
-     * @dataProvider providerForFancyTablePrinterResult
+	 *
+	 * @dataProvider providerForFancyTablePrinterResult
 	 *
 	 */
 	function testFancyTablePrinterResult($query, $expResult) {
-		
+
 		$actualResult = SMWQueryProcessor::getResultFromFunctionParams( $query, SMW_OUTPUT_WIKI );
 		// Remove whitespaces for comparison
 		$actualResult = preg_replace("/\s*/", "", $actualResult);
 		$expResult = preg_replace("/\s*/", "", $expResult);
-		
+
 		$this->assertEquals($expResult, $actualResult);
-		
+
 	}
 }
 
 /**
  * This class tests the distribution feature of the FancyTableResultPrinter.
- * 
+ *
  * @author thsc
  *
  */
 class TestFancyTableDistributionQuery extends PHPUnit_Framework_TestCase {
 
 	private static $mArticleManager;
-	
+
 	public static function setUpBeforeClass() {
 		SMWHaloCommon::createUsers(array("U1"));
-    	
-        self::$mArticleManager = new ArticleManager();
-        self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
-        // Existing articles are not overwritten => do the import twice
-        self::$mArticleManager->deleteArticles("U1");
-        self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
+		 
+		self::$mArticleManager = new ArticleManager();
+		self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
+		// Existing articles are not overwritten => do the import twice
+		self::$mArticleManager->deleteArticles("U1");
+		self::$mArticleManager->importArticles(__DIR__."/resources/FancyTableDistributionTestArticlesDump.xml");
 	}
-	
+
 	public static function tearDownAfterClass() {
 		// Temporarily disabled for speeding up tests
-        self::$mArticleManager->deleteArticles("U1");
+		self::$mArticleManager->deleteArticles("U1");
 	}
-	
-	protected function setUp() {
-   	}
-	
-	protected function tearDown() {
-        
-	}
-	
-    /**
-     * Data provider for testFancyTablePrinterResult
-     */
-    function providerForFancyTableDistribution() {
 
-    	return array(
-#0 --- A normal query without distribution ---
-	    	array(array(
+	protected function setUp() {
+	}
+
+	protected function tearDown() {
+
+	}
+
+	/**
+	 * Data provider for testFancyTablePrinterResult
+	 */
+	function providerForFancyTableDistribution() {
+
+		return array(
+		#0 --- A normal query without distribution ---
+		array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
 					'format=fancytable'
-    			  ), 
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -798,15 +802,15 @@ class TestFancyTableDistributionQuery extends PHPUnit_Framework_TestCase {
 </table>
 
 TABLE
-    			  ),
-#1 --- A normal query without the subject column ---     			  
-	    	array(array(
+					),
+					#1 --- A normal query without the subject column ---
+					array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
 					'mainlabel=-',
 					'format=fancytable'
-    			  ), 
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -844,16 +848,16 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#2 --- A distribution query without the subject column ---     			  
-    			  array(array(
+					),
+					#2 --- A distribution query without the subject column ---
+					array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
 					'mainlabel=-',
 					'format=fancytable',
 					'distribution=on'
-    			  ), 
+					),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -878,9 +882,9 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#3 --- A distribution query without the subject column, with title for the distribution column ---     			  
-    			  array(array(
+					),
+					#3 --- A distribution query without the subject column, with title for the distribution column ---
+					array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -888,7 +892,7 @@ TABLE
 					'format=fancytable',
 					'distribution=on',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -913,10 +917,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#4 --- A distribution query without the subject column, with title for the 
-#      distribution column, with two columns ---     			  
-    			  array(array(
+    			  	),
+    			  	#4 --- A distribution query without the subject column, with title for the
+    			  	#      distribution column, with two columns ---
+    			  	array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -925,7 +929,7 @@ TABLE
 					'format=fancytable',
 					'distribution=on',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -960,10 +964,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#5 --- A distribution query without the subject column, with title for the 
-#      distribution column, with two columns, order ascending ---     			  
-    			  array(array(
+    			  	),
+    			  	#5 --- A distribution query without the subject column, with title for the
+    			  	#      distribution column, with two columns, order ascending ---
+    			  	array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -973,7 +977,7 @@ TABLE
 					'distribution=on',
 					'distributionsort=asc',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -1008,10 +1012,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#6 --- A distribution query without the subject column, with title for the 
-#      distribution column, with two columns, order descending ---     			  
-    			  array(array(
+    			  	),
+    			  	#6 --- A distribution query without the subject column, with title for the
+    			  	#      distribution column, with two columns, order descending ---
+    			  	array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -1021,7 +1025,7 @@ TABLE
 					'distribution=on',
 					'distributionsort=desc',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -1056,10 +1060,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#7 --- A distribution query without the subject column, with title for the 
-#      distribution column, with two columns, limit = 2 ---     			  
-    			  array(array(
+    			  	),
+    			  	#7 --- A distribution query without the subject column, with title for the
+    			  	#      distribution column, with two columns, limit = 2 ---
+    			  	array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -1069,7 +1073,7 @@ TABLE
 					'distribution=on',
 					'distributionlimit=2',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -1089,10 +1093,10 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-#8 --- A distribution query without the subject column, with title for the 
-#      distribution column, with two columns, order ascending, limit=2 ---     			  
-    			  array(array(
+    			  	),
+    			  	#8 --- A distribution query without the subject column, with title for the
+    			  	#      distribution column, with two columns, order ascending, limit=2 ---
+    			  	array(array(
 					'[[Category:City]]',
 					'[[Located In::+]]',
 					'?Located In',
@@ -1103,7 +1107,7 @@ TABLE
 					'distributionlimit=2',
     			    'distributionsort=asc',
     			  	'distributiontitle=Occurrences'
-    			  ), 
+    			  	),
 <<<TABLE
 <table class="smwtable" id="querytable0">
 	<tr>
@@ -1123,24 +1127,24 @@ TABLE
 	</tr>
 </table>
 TABLE
-    			  ),
-		);
-    }
-	
+    			  	),
+    			  	);
+	}
+
 	/**
 	 * Tests the correct output of the fancy table printer.
-	 * 
-     * @dataProvider providerForFancyTableDistribution
+	 *
+	 * @dataProvider providerForFancyTableDistribution
 	 *
 	 */
 	function testFancyTableDistribution($query, $expResult) {
 		$actualResult = SMWQueryProcessor::getResultFromFunctionParams( $query, SMW_OUTPUT_WIKI );
-//echo $actualResult;
+		//echo $actualResult;
 		// Remove whitespaces for comparison
 		$actualResult = preg_replace("/\s*/", "", $actualResult);
 		$expResult = preg_replace("/\s*/", "", $expResult);
-		
+
 		$this->assertEquals($expResult, $actualResult);
-		
+
 	}
 }

@@ -17,6 +17,10 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
  * @ingroup SMWHaloTests
@@ -41,8 +45,8 @@ class HaloTests
 		$suite->addTestSuite("TestTSCEQI");
 		$suite->addTestSuite("TestAutocompletionTSCStore");
 		$suite->addTestSuite("TestLODSourceDefinitionSuite");
-	    $suite->addTestSuite("TestSparqlParserSuite");
-	    $suite->addTestSuite("TestTripleStoreAccessSuite");
+		$suite->addTestSuite("TestSparqlParserSuite");
+		$suite->addTestSuite("TestTripleStoreAccessSuite");
 		return $suite;
 	}
 }

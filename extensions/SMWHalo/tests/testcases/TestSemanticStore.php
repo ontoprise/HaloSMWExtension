@@ -17,14 +17,17 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 /**
  * @file
- * @ingroup SMWHaloTests 
- * 
+ * @ingroup SMWHaloTests
+ *
  * Tests the semantic storage layer of HALO.
  * @author Kai K�hn
- * 
+ *
  */
 class TestSemanticStore extends PHPUnit_Framework_TestCase {
 
@@ -74,9 +77,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 		$rootProperties = smwfGetSemanticStore()->getRootProperties();
 
 		foreach ($rootProperties as $tuple) {
-			  list($p,$isLeaf) = $tuple;
-			
-		      $this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
+			list($p,$isLeaf) = $tuple;
+				
+			$this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
 		}
 			
 	}
@@ -274,7 +277,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	public function testNumberOfPropertiesForTarget() {
 		$exp_usage = 3;
 		$usage = smwfGetSemanticStore()->getNumberOfPropertiesForTarget(Title::newFromText("Kai", NS_MAIN));
-		
+
 		$this->assertEquals($exp_usage, $usage);
 			
 	}

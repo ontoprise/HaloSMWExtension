@@ -17,6 +17,10 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 global $smwgHaloIP;
 require_once($smwgHaloIP.'/includes/SMW_Autocomplete.php');
 require_once($smwgHaloIP.'/tests/testcases/TestAutocompletionStore.php');

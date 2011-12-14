@@ -16,6 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 global $smwgHaloIP;
 require_once($smwgHaloIP.'/includes/SMW_Autocomplete.php');
@@ -44,7 +47,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$exp_units = array("N", "Newton");
 		$p = Title::newFromText("Has_torsional_moment", SMW_NS_PROPERTY);
 		$units = smwfGetAutoCompletionStore()->getUnits($p, "N");
-   
+		 
 		foreach ($units as $u) {
 			$this->assertContains($u, $exp_units, $u." missing");
 		}
@@ -97,12 +100,12 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	function testGetInstanceAsTarget() {
 			
 		$exp_values = array("Kai");
-        $propertyDi = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+		$propertyDi = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
 		$domainRangeAnnotations = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText("Has Child", SMW_NS_PROPERTY)), $propertyDi);
 		$values = smwfGetAutoCompletionStore()->getInstanceAsTarget("K", $domainRangeAnnotations);
 
 		foreach ($values as $v) {
-				$title = $this->getTitle($v);
+			$title = $this->getTitle($v);
 			$this->assertContains($title->getText(), $exp_values, $title->getText()." missing");
 		}
 	}
@@ -150,7 +153,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$exp_values = array("Has Engine", "Has Voltage");
 		$exp_values2 = array("Has Engine" => false, "Has Voltage" => false);
 		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Electric car", NS_CATEGORY));
-		 
+			
 		foreach ($values as $v) {
 			$t = $v['title'];
 			$inferred = $v['inferred'];
@@ -164,10 +167,10 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$exp_values = array("Has Engine", "Has Voltage");
 		$exp_values2 = array("Has Engine" => true, "Has Voltage" => true);
 		$values = smwfGetAutoCompletionStore()->getPropertyForAnnotation("Has", Title::newFromText("Hybrid car", NS_CATEGORY));
-		 
+			
 		foreach ($values as $v) {
 			$t = $v['title'];
-            $inferred = $v['inferred'];
+			$inferred = $v['inferred'];
 			$this->assertContains($t->getText(), $exp_values, $t->getText()." missing");
 			$this->assertEquals($exp_values2[$t->getText()], $inferred);
 		}
@@ -179,7 +182,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("cyl", Title::newFromText("Has Engine", SMW_NS_PROPERTY));
 		foreach ($values as $v) {
 			$t = $v['title'];
-            $inferred = $v['inferred'];
+			$inferred = $v['inferred'];
 			$text = is_string($v) ? $v : $t->getText();
 			$this->assertContains($text, $exp_values, $text." missing");
 		}
@@ -191,7 +194,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 		$values = smwfGetAutoCompletionStore()->getValueForAnnotation("jack", Title::newFromText("Has Child", SMW_NS_PROPERTY));
 		foreach ($values as $v) {
 			$t = $v['title'];
-            $inferred = $v['inferred'];
+			$inferred = $v['inferred'];
 			$text = is_string($v) ? $v : $t->getText();
 			$this->assertContains($text, $exp_values, $text." missing");
 		}

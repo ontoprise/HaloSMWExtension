@@ -17,6 +17,10 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
  * @ingroup SMWHaloTests
@@ -60,14 +64,14 @@ ENDS;
 		$job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Karlsruhe", "Adelsheim"));
 		$newtext = $job->modifyPageContent($text);
 		$this->assertTrue(strpos($newtext, "[[Lives in ::Adelsheim]]") !== false);
-		
+
 		$job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Musterstrasse", "Neue Musterstrasse"));
-        $newtext = $job->modifyPageContent($text);
-        $this->assertTrue(strpos($newtext, "[[ has adress::Neue Musterstrasse;  34;  0721 / 43743437463;  76131]]") !== false);
-        
-        $job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Category:Test1", "Category:NewTest1"));
-        $newtext = $job->modifyPageContent($text);
-        $this->assertTrue(strpos($newtext, "[[ has domain and range::Category:NewTest1;  Category:Test2]]") !== false);
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[ has adress::Neue Musterstrasse;  34;  0721 / 43743437463;  76131]]") !== false);
+
+		$job = new SMW_UpdateLinksAfterMoveJob($dummyTitle, array("Category:Test1", "Category:NewTest1"));
+		$newtext = $job->modifyPageContent($text);
+		$this->assertTrue(strpos($newtext, "[[ has domain and range::Category:NewTest1;  Category:Test2]]") !== false);
 	}
 
 

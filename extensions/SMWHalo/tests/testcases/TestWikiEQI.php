@@ -17,12 +17,16 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
  * @ingroup SMWHaloTests
  *
  * Tests the external query interface provided by the Wiki itself.
- * 
+ *
  * @author Kai Kühn
  *
  */
@@ -30,12 +34,12 @@ require_once('TestEQI.php');
 class TestWikiEQI extends TestEQI {
 
 
-    function setUp() {
-        $this->params = array();
-    }
+	function setUp() {
+		$this->params = array();
+	}
 
-    function tearDown() {
+	function tearDown() {
 
-    }
-   
+	}
+	 
 }

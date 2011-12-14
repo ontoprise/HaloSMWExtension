@@ -17,6 +17,10 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 /**
  * @file
  * @ingroup LinkedData_Tests
@@ -85,7 +89,7 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 		$commands[] = $this->createGraph($this->mPersonGraph);
 		$commands[] = $this->loadFileIntoGraph("{$this->mFilePath}PersonGraph.n3", $smwgHaloTripleStoreGraph, "n3");
 		$success = $this->flushCommands($commands);
-		 
+			
 	}
 
 	private function createGraph($uri) {
@@ -123,7 +127,7 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 	private function createArticles() {
 		global $wgUser;
 		$wgUser = User::newFromName("WikiSysop");
-		 
+			
 		$file = __FILE__;
 		try {
 			foreach (self::$mOrderOfArticleCreation as $title) {
@@ -132,7 +136,7 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 		} catch (Exception $e) {
 			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
 		}
-		 
+			
 	}
 
 	private function createArticle($title, $content) {
@@ -146,7 +150,7 @@ class TestNonExistinPageSuite extends PHPUnit_Framework_TestSuite
 			echo "Creating article ".$title->getFullText()." failed\n";
 		}
 	}
-	 
+
 	private function removeArticles() {
 
 		foreach (self::$mOrderOfArticleCreation as $a) {
@@ -397,9 +401,9 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 	 */
 	function testCheckEditFormPreloadTextHook() {
 		global $wgHooks;
-		 
+			
 		$this->assertArrayHasKey('EditFormPreloadText', $wgHooks);
-		 
+			
 		$this->assertContains('TSCNonExistingPageHandler::onEditFormPreloadText',
 		$wgHooks['EditFormPreloadText']);
 	}
@@ -450,10 +454,10 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 	 */
 	private function checkNonExistingArticles($articleName, array $expectedContent) {
 		global $wgRequest;
-		 
+			
 		global $mediaWiki;
 		$mediaWiki = new MediaWiki();
-		 
+			
 		// Check article in view mode
 		$wgRequest->setVal('action', 'view');
 		$wgRequest->setVal('title', $articleName);
@@ -477,10 +481,10 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 	}
 
 	private function verifyContent($articleName, $mode, array $expectedContent) {
-		 
+			
 		$uri = TSHelper::getUriFromTitle(Title::newFromText($articleName));
 		$t = Title::newFromText($articleName);
-		 
+			
 		// generate the text for the non-existing page
 		$text = "Foo";
 		switch ($mode) {
@@ -498,7 +502,7 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 		}
 		// remove whitespaces for comparison
 		$text = trim(preg_replace("/\s+/", " ", $text));
-		 
+			
 		// verify that the text contains the expected content
 		$articles = TestNonExistinPageSuite::$mArticles;
 		foreach ($expectedContent as $ep) {
@@ -508,7 +512,7 @@ class TestNonExistingPageHandler extends PHPUnit_Framework_TestCase {
 			$ac = trim(str_replace('$name$', $t->getText(), str_replace('$uri$', $uri, $ac)));
 			$this->assertTrue(strpos($text, $ac) !== false, "Text for template <$ep> not found in article $articleName. Mode = $mode" );
 		}
-		 
+			
 		if ($mode == "view") {
 			$link = trim(wfMsg('lod_nep_link', $articleName));
 			$this->assertTrue(strpos($text, $link) !== false, "Link not found" );
