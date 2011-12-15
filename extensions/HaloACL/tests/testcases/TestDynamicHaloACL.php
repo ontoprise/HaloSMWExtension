@@ -1144,22 +1144,22 @@ ACL
 <<<ACL
 This is the security descriptor for page TeamB.
 {{#access:
-| assigned to =User:U5, {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+| assigned to =User:U5, {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}
 |actions=wysiwyg
 |description=Allows wysiwyg
 }}
 
 {{#access:
 | assigned to =User:U5, 
-    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} |?m # =}}
+    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} }}
 |actions=formedit
 |description=Allows formedit
 }}
 
 {{#access:
 | assigned to =User:U5, 
-    {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}},
-    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} |?m # =}}
+    {{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}},
+    {{#sparql: SELECT ?m WHERE { a:TeamA property:ProjectMembers ?m .} }}
 |actions=read
 |description=Allows read
 }}
@@ -1282,28 +1282,28 @@ ACL
     	return array(
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}",
 		    	), 
 		    	array("users"  => array("U1"), 
 		    	      "groups" => array("Group/A"))
 		   ),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} }}"
 		    	), 
 		    	array("users"  => array("U1"), 
 		    	      "groups" => array("Group/A"))
 		   ),
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers}}",
 		    	), 
 		    	array("users"  => array("U1", "U2", "U3"), 
 		    	      "groups" => array("Group/A", "Group/B"))
 		   ),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} }}"
 		    	), 
 		    	array("users"  => array("U1", "U2", "U3"), 
 		    	      "groups" => array("Group/A", "Group/B"))
@@ -1399,28 +1399,28 @@ ACL
     	return array(
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}",
 		    	), 
 		    	array("U1", "U2", "U3"),
 		    	array("U4", "U5"),
 			),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} }}"
 		    	), 
 		    	array("U1", "U2", "U3"),
 		    	array("U4", "U5"),
 		    ),
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers}}",
 		    	), 
 		    	array("U1", "U2", "U3", "U4", "U5"),
 		    	array()
 		   ),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} }}"
 		    	), 
 		    	array("U1", "U2", "U3", "U4", "U5"),
 		    	array()
@@ -1652,10 +1652,10 @@ ACL
 		$wgTitle = Title::newFromText("Some Page");
     	
 		$teamQuery = <<<ASK
-{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}
 ASK;
 		$projectQuery = <<<ASK
-{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}
+{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} }}
 ASK;
 		
 		$wikiText = <<<ACL
@@ -1746,28 +1746,28 @@ ACL
     	return array(
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}",
+		    		"{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}",
 		    	), 
 		    	array("users"  => array("U1"), 
 		    	      "groups" => array("Group/A"))
 		   ),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:TeamMembers ?tm .} }}"
 		    	), 
 		    	array("users"  => array("U1"), 
 		    	      "groups" => array("Group/A"))
 		   ),
     		array(
     			array(
-		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers # =}}",
+		    		"{{#ask: [[TeamA]][[ProjectMembers::+]]|?ProjectMembers}}",
 		    	), 
 		    	array("users"  => array("U1", "U2", "U3"), 
 		    	      "groups" => array("Group/A", "Group/B"))
 		   ),
     		array(
     			array(
-		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}"
+		    		"{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} }}"
 		    	), 
 		    	array("users"  => array("U1", "U2", "U3"), 
 		    	      "groups" => array("Group/A", "Group/B"))
@@ -1864,10 +1864,10 @@ ACL
      */
     public function testGroupArticleLifeCycle() {
 		$teamQuery = <<<ASK
-{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers # =}}
+{{#ask: [[TeamA]][[TeamMembers::+]]|?TeamMembers}}
 ASK;
 		$projectQuery = <<<ASK
-{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} |?tm # =}}
+{{#sparql: SELECT ?tm WHERE { a:TeamA property:ProjectMembers ?tm .} }}
 ASK;
 		$groupSkeleton = <<<TEXT
 {{#manage group: assigned to=User:U1}}
@@ -2014,7 +2014,7 @@ ACL
 //------------------------------------------------------------------------------		
 			'ACL:Group/A' =>
 <<<ACL
-{{#member: |members={{#ask: [[A]][[Members::+]]|?Members # =}} }}
+{{#member: |members={{#ask: [[A]][[Members::+]]|?Members}} }}
 
 {{#manage group: assigned to=User:U1}}
 [[Category:ACL/Group]]
@@ -2025,7 +2025,7 @@ ACL
 			'ACL:Group/B' =>
 <<<ACL
 {{#manage group: assigned to=User:U1}}
-{{#member: |members={{#sparql: SELECT ?m WHERE { a:B property:Members ?m .} |?m # =}} }}
+{{#member: |members={{#sparql: SELECT ?m WHERE { a:B property:Members ?m .} }} }}
 
 [[Category:ACL/Group]]
 
@@ -2034,7 +2034,7 @@ ACL
 //------------------------------------------------------------------------------		
 			'ACL:Group/C' =>
 <<<ACL
-{{#member: |members={{#ask: [[C]][[Members::+]]|?Members # =}} }}
+{{#member: |members={{#ask: [[C]][[Members::+]]|?Members}} }}
 
 {{#manage group: assigned to=User:U1}}
 [[Category:ACL/Group]]
@@ -2045,7 +2045,7 @@ ACL
 			'ACL:Group/D' =>
 <<<ACL
 {{#manage group: assigned to=User:U1}}
-{{#member: |members={{#sparql: SELECT ?m WHERE { a:D property:Members ?m .} |?m # =}} }}
+{{#member: |members={{#sparql: SELECT ?m WHERE { a:D property:Members ?m .} }} }}
 
 [[Category:ACL/Group]]
 
@@ -2054,7 +2054,7 @@ ACL
 //------------------------------------------------------------------------------		
 			'ACL:Group/E' =>
 <<<ACL
-{{#member: |members={{#ask: [[E]][[Members::+]]|?Members # =}} }}
+{{#member: |members={{#ask: [[E]][[Members::+]]|?Members}} }}
 
 {{#manage group: assigned to=User:U1}}
 [[Category:ACL/Group]]
@@ -2416,7 +2416,7 @@ ACL
 			'ACL:Group/MembersOfProjectA' =>
 <<<ACL
 {{#member: 
-| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}}
+| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} }}
 }}
 
 {{#manage group: assigned to=User:Jane}}
@@ -2428,14 +2428,14 @@ ACL
 			'ACL:Page/ProjectA' =>
 <<<ACL
 {{#access: 
- |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}
+ |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}}
  |actions=read,edit,formedit,wysiwyg,create,move,delete,annotate
  |description=Full access for project manager
  |name=FA
 }}
 
 {{#access: 
- |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}}
+ |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} }}
  |actions=edit
  |description=Edit right for project members
  |name=Edit
@@ -2626,16 +2626,16 @@ ACL
 			'ACL:Group/MembersOfProjectA' =>
 <<<ACL
 {{#member: 
-| members={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}},
+| members={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}},
 User:John
 }}
 
 {{#member: 
-| members={{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} |?pm # =}}
+| members={{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} }}
 }}
 
 {{#member: 
-| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}}
+| members={{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} }}
 }}
 
 {{#manage group: assigned to=User:Jane}}
@@ -2647,8 +2647,8 @@ ACL
 			'ACL:Page/ProjectA' =>
 <<<ACL
 {{#access: 
- |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}},
-  {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}},
+ |assigned to={{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}},
+  {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} }},
   User:John
  |actions=read,edit,formedit,wysiwyg,create,move,delete,annotate
  |description=Full access for project manager
@@ -2656,8 +2656,8 @@ ACL
 }}
 
 {{#access: 
- |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}},
- {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}, Group/MembersOfProjectA
+ |assigned to={{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} }},
+ {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}}, Group/MembersOfProjectA
  |actions=edit
  |description=Edit right for project members
  |name=Edit
@@ -2708,7 +2708,7 @@ Group members
         John 
     Dynamic members
         Queries for dynamic members
-            {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}} 
+            {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}} 
         Dynamic user members
             Jane 
 EXP
@@ -2717,7 +2717,7 @@ EXP
 Group members
     Dynamic members
         Queries for dynamic members
-            {{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} |?pm # =}} 
+            {{#sparql: SELECT ?pm WHERE { a:ProjectA property:HasProjectMember ?pm .} }} 
         Dynamic group members
             Group/MembersOfProjectA 
 EXP
@@ -2726,7 +2726,7 @@ EXP
 Group members
     Dynamic members
         Queries for dynamic members
-            {{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} |?p # =}} 
+            {{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} }} 
         Dynamic user members
             John
             Peter
@@ -2743,8 +2743,8 @@ FA
         John 
     Dynamic assignees
         Queries for dynamic assignees
-             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}}
-             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}} 
+             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}}
+             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} }} 
         Dynamically assigned users
              Jane 
         Dynamically assigned groups
@@ -2761,8 +2761,8 @@ Edit
         Group/MembersOfProjectA 
     Dynamic assignees
         Queries for dynamic assignees
-             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} |?m # =}}
-             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager # =}} 
+             {{#sparql: SELECT ?m WHERE { a:ProjectA property:HasProjectMember ?m .} }}
+             {{#ask: [[ProjectA]][[ProjectManager::+]]|?projectManager}} 
         Dynamically assigned users
              Jane 
         Dynamically assigned groups
@@ -2796,7 +2796,7 @@ EXP
     	$html = $wgOut->getHTML();
     	
     	// remove all HTML tags, whitespaces and &nbsp; from generated HTML
-    	$html  = preg_replace("/<\/*.*?>|\s*|&nbsp;/", "", $html);
+    	$html  = preg_replace("/<\/*.*?>|\s*|&nbsp;|&#160;/", "", $html);
     	
     	foreach ($expected as $exp) {
     		$exp = preg_replace("/\s*/", "", $exp);
