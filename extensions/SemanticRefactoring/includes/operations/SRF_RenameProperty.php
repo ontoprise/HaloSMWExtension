@@ -28,7 +28,7 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	private $newProperty;
 	private $affectedPages;
 
-	public function __construct($oldProperty, $newProperty, $adaptAnnotations) {
+	public function __construct($oldProperty, $newProperty) {
 		$this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
 		$this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
 
@@ -59,8 +59,15 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 				$titles[] = $s->getTitle();
 			}
 		}
-		
-		//TODO: Subproperty of this not handled
+
+		// subproperties
+		$subPropertyDi = SMWDIProperty::newFromUserLabel('_SUBP');
+		$subjects = smwfGetStore()->getPropertySubjects($subPropertyDi, $objectDi);
+
+		foreach($subjects as $s) {
+			$titles[] = $s->getTitle();
+		}
+
 
 		// get all pages which uses links to $this->property
 		$subjects = $this->oldProperty->getLinksTo();
@@ -69,12 +76,14 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 		}
 
 		// get all queries using $this->property
-		$queries = array();
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOP_LABEL);
-		$propertyStringDi = new SMWDIString($this->oldProperty->getText());
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $propertyStringDi);
-		foreach($subjects as $s) {
-			$titles[] = $s->getTitle();
+		$queryMetadataPattern = new SMWQMQueryMetadata(true);
+		$queryMetadataPattern->instanceOccurences = array($this->oldProperty->getPrefixedText() => true);
+		$queryMetadataPattern->propertyConditions = array($this->oldProperty->getText() => true);
+		$queryMetadataPattern->propertyPrintRequests = array($this->oldProperty->getText() => true);
+		
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		foreach($qmr as $s) {
+			$titles[] = Title::newFromText($s->usedInArticle);
 		}
 
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
@@ -87,14 +96,17 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 		foreach($this->affectedPages as $title) {
 
+
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			// stores article
 			if ($save) {
-				$a = new Article($title);
-				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+				}
 			}
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
@@ -111,7 +123,11 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	 * @param int $index
 	 */
 	protected function replaceTitle(& $title, $index) {
-		if ($title == $this->oldProperty->getPrefixedText()) {
+
+		// some properties appear only with their local
+		// name in annotations (e.g. Subproperty of)
+		if ($title == $this->oldProperty->getPrefixedText()
+		|| $title == $this->oldProperty->getText()) {
 
 			$title = $this->newProperty->getPrefixedText();
 		}
@@ -219,7 +235,7 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 		if ($changedQuery) {
 			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
 		}
-		
+
 		return $wikitext;
 	}
 

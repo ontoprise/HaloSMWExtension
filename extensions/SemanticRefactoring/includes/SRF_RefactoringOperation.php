@@ -70,6 +70,23 @@ abstract class SRFRefactoringOperation {
 	private function trim(& $s, $i) {
 		$s = trim($s);
 	}
+	
+	/**
+	 * Stores the $wikitext in the article $title.
+	 * 
+	 * @param Title $title
+	 * @param string wikitext
+	 * @param string comment
+	 * 
+	 * @return Status
+	 */
+	protected function storeArticle($title, $wikitext, $comment) {
+		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
+		if ($userCan == "false") return Status::newFatal("no sufficient rights");
+		$a = new Article($title);
+        $status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
+        return $status;
+	}
 
 	protected function findObjectByID($node, $id, & $results) {
 

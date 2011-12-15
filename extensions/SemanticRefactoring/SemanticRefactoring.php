@@ -79,6 +79,8 @@ function sreffRegisterJSModules(& $out) {
         'dependencies' => array(
             ),
          'messages' => array('sref_start_operation',
+                            'sref_rename_instance',
+                            'sref_rename_instance_help',
                             'sref_rename_property',
                              'sref_rename_property',
 						    'sref_rename_property_help',
@@ -87,8 +89,8 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_rename_annotations',
 						    'sref_rename_annotations_help',
 						
-						    'sref_onlyCategory',
-						    'sref_onlyCategory_help',
+						    'sref_deleteCategory',
+						    'sref_deleteCategory_help',
 						    'sref_removeInstances' ,
 						    'sref_removeInstances_help',
 						    'sref_removeCategoryAnnotations',
@@ -100,8 +102,8 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_includeSubcategories',
 						    'sref_includeSubcategories_help',
 						
-						    'sref_onlyProperty' ,
-						    'sref_onlyProperty_help',
+						    'sref_deleteProperty' ,
+						    'sref_deleteProperty_help',
 						    'sref_removeInstancesUsingProperty',
 						    'sref_removeInstancesUsingProperty_help',
 						    'sref_removePropertyAnnotations',

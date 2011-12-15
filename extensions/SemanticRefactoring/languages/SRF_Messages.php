@@ -5,6 +5,8 @@ $messages['en'] = array(
     'sref_start_operation' => 'Start refactoring',
 
     /*rename*/
+    'sref_rename_instance' => 'Rename instance',
+    'sref_rename_instance_help' => 'Renames the instance page itself.',
     'sref_rename_property' => 'Rename property',
     'sref_rename_property_help' => 'Renames the property page itself.',
     'sref_rename_category' => 'Rename category',
@@ -13,8 +15,8 @@ $messages['en'] = array(
     'sref_rename_annotations_help' => 'Rename all occurences in annotations and queries.',
 
     /*delete*/
-    'sref_onlyCategory' => 'Delete only category',
-    'sref_onlyCategory_help' => '!!TODO: HELP TEXT!!',
+    'sref_deleteCategory' => 'Delete category',
+    'sref_deleteCategory_help' => '!!TODO: HELP TEXT!!',
     'sref_removeInstances' => 'Delete all instances',
     'sref_removeInstances_help' => '!!TODO: HELP TEXT!!',
     'sref_removeCategoryAnnotations' => 'Remove all occurences of this category',
@@ -26,8 +28,8 @@ $messages['en'] = array(
     'sref_includeSubcategories' => 'Include sub-categories',
     'sref_includeSubcategories_help' => '!!TODO: HELP TEXT!!',
     
-    'sref_onlyProperty' => 'Delete only property',
-    'sref_onlyProperty_help' =>  '!!TODO: HELP TEXT!!',
+    'sref_deleteProperty' => 'Delete property',
+    'sref_deleteProperty_help' =>  '!!TODO: HELP TEXT!!',
 	'sref_removeInstancesUsingProperty' => 'Delete all instances using this property.',
     'sref_removeInstancesUsingProperty_help' =>  '!!TODO: HELP TEXT!!',
 	'sref_removePropertyAnnotations' => 'Remove all occurences of this property',
@@ -47,6 +49,8 @@ $messages['de'] = array(
     'sref_start_operation' => 'Starte Refactoring',
     
     /*rename*/
+    'sref_rename_instance' => 'Rename instance',
+    'sref_rename_instance_help' => 'Renames the instance page itself.',
     'rename_property' => 'Rename property',
     'rename_property_help' => 'Renames the property page itself.',
     'rename_category' => 'Rename category',

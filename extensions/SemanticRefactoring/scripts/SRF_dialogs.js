@@ -24,13 +24,18 @@
 
 	var content = {
 
-		htmlTemplate : '<form action="" method="get" id="sref_option_form" operation="renameProperty">'
+		htmlTemplate : function(operation) {  
+		
+			var template = '<form action="" method="get" id="sref_option_form" operation="'+operation+'">'
 				+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
 				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
 				+ '<tr><td colspan="2">'
 				+ '%%OPTIONS%%'
 				+ '<tr><td colspan="2"><input type="button" id="sref_start_operation" value="'
-				+ mw.msg('sref_start_operation') + '"></input></td></tr>' + '</table></form>',
+				+ mw.msg('sref_start_operation') + '"></input></td></tr>' + '</table></form>';
+			
+			return template;
+		},
 
 		newCheckbox : function(id, checked, requiresBot) {
 			var checkedAttribute = checked ? 'checked="true"' : '';
@@ -48,21 +53,26 @@
 				checkBoxRows += content.newCheckbox(checkBox,
 						dialogMode[checkBox][0], dialogMode[checkBox][1])
 			}
-			return content.htmlTemplate.replace(/%%OPTIONS%%/, checkBoxRows);
+			return content.htmlTemplate(type).replace(/%%OPTIONS%%/, checkBoxRows);
 		},
 
-		renamePropertyContent : {
+		renameInstance : {
+			'sref_rename_instance' : [ true, false ],
+			'sref_rename_annotations' : [ true, true ]
+		},
+		
+		renameProperty : {
 			'sref_rename_property' : [ true, false ],
 			'sref_rename_annotations' : [ true, true ]
 		},
 
-		renameCategoryContent : {
+		renameCategory : {
 			'sref_rename_category' : [ true, false ],
 			'sref_rename_annotations' : [ true, true ]
 		},
 
-		deleteCategoryContent : {
-			'sref_onlyCategory' : [ true, false ],
+		deleteCategory : {
+			'sref_deleteCategory' : [ true, false ],
 			'sref_removeInstances' : [ true, true ],
 			'sref_removeCategoryAnnotations': [ true, true ] ,
 			/*'removeFromDomain' : [ false, true ],*/
@@ -71,8 +81,8 @@
 			'sref_includeSubcategories' : [ false, true ],
 		},
 		
-		deletePropertyContent : {
-			'sref_onlyProperty' : [ true, false ],
+		deleteProperty : {
+			'sref_deleteProperty' : [ true, false ],
 			'sref_removeInstancesUsingProperty' : [ true, true ],
 			'sref_removePropertyAnnotations': [ true, true ] ,
 			'sref_removeQueriesWithProperties' : [ false, true ],
@@ -139,6 +149,7 @@
 													dialog.launchBot(operation,
 															ajaxParams);
 												if (callback) callback(ajaxParams);
+												$.fancybox.close();
 											});
 
 							// articleTitleTextBox.focus();

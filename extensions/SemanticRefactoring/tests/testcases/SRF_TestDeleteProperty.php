@@ -25,6 +25,11 @@
  * @author Kai Kühn
  *
  */
+
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+    die( "This script must be run from the command line\n" );
+}
+
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteProperty.php');
@@ -45,7 +50,7 @@ class SRFTestDeleteProperty extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveProperty() {
-		$r = new SRFDeletePropertyOperation('Has child', array('sref_onlyProperty'=>true));
+		$r = new SRFDeletePropertyOperation('Has child', array('sref_deleteProperty'=>true));
 		$logMessages = array();
 		
 		$r->refactor(false, $logMessages);

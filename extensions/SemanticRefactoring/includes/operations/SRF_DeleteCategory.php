@@ -65,12 +65,13 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		$directSubcategories = $store->getDirectSubCategories($this->category);
 
 		// get all queries $this->category is used in
-		$queries = array();
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-		$categoryStringDi = new SMWDIString($this->category->getText());
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
-		foreach($subjects as $s) {
-			$queries[] = $s->getTitle();
+		$queries=array();
+		$queryMetadataPattern = new SMWQMQueryMetadata(true);
+		$queryMetadataPattern->instanceOccurences = array($this->category->getPrefixedText() => true);
+		$queryMetadataPattern->categoryConditions = array($this->category->getText() => true);
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		foreach($qmr as $s) {
+			$queries[] = Title::newFromText($s->usedInArticle);
 		}
 
 		// get properties with domain and/or ranges
@@ -88,7 +89,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
 
-		if (array_key_exists('sref_onlyCategory', $this->options) && $this->options['sref_onlyCategory'] == true) {
+		if (array_key_exists('sref_deleteCategory', $this->options) && $this->options['sref_deleteCategory'] == true) {
 			$a = new Article($this->category);
 			$deleted = true;
 			if ($save) {
@@ -102,7 +103,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
-			return;
+			
 		}
 
 		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries'],$this->affectedPages['propertiesWithDomain']);
@@ -179,7 +180,10 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			}
 
 			if ($save) {
-				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+				}
 			}
 		}
 

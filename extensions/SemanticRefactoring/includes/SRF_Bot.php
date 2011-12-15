@@ -91,6 +91,24 @@ class SRFRefactoringBot extends GardeningBot {
 		$operation = $paramArray['SRF_OPERATION'];
 
 		switch($operation) {
+			case 'renameInstance':
+                if (!array_key_exists('oldInstance', $paramArray)) {
+                    return "Old instance missing";
+                }
+                $oldInstance = $paramArray['oldInstance'];
+
+                if (!array_key_exists('newInstance', $paramArray)) {
+                    return "New instance missing";
+                }
+                $newInstance = $paramArray['newInstance'];
+
+                if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['sref_rename_annotations'] == false) {
+                    return "Nothing done.";
+                }
+
+                $op = new SRFRenameInstanceOperation($oldInstance, $newInstance);
+              
+                break;
 			case 'renameProperty':
 				if (!array_key_exists('oldProperty', $paramArray)) {
 					return "Old property missing";
@@ -102,12 +120,12 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$newProperty = $paramArray['newProperty'];
 
-				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['sref_rename_annotations'] == false) {
 					return "Nothing done.";
 				}
 
 				$op = new SRFRenamePropertyOperation($oldProperty, $newProperty);
-				$num = $op->getNumberOfAffectedPages();
+			
 				break;
 			case 'renameCategory' :
 				if (!array_key_exists('oldCategory', $paramArray)) {
@@ -119,15 +137,33 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New property missing";
 				}
 				$newCategory = $paramArray['newCategory'];
-				
-				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['rename_annotations'] == false) {
+
+				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['sref_rename_annotations'] == false) {
 					return "Nothing done.";
 				}
-				
+
 				$op = new SRFRenameCategoryOperation($oldCategory, $newCategory);
-				$num = $op->getNumberOfAffectedPages();
+				
+				break;
+			case 'deleteCategory' :
+				if (!array_key_exists('category', $paramArray)) {
+					return "Category missing";
+				}
+				$category = $paramArray['category'];
+				$op = new SRFDeleteCategoryOperation($category, $paramArray);
+				
+				break;
+			case 'deleteProperty' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				$op = new SRFDeletePropertyOperation($property, $paramArray);
+				
 				break;
 		}
+		
+		$num = $op->getNumberOfAffectedPages();
 		$op->setBot($this);
 		$this->setNumberOfTasks(1);
 		$this->addSubTask($num);
@@ -135,7 +171,16 @@ class SRFRefactoringBot extends GardeningBot {
 		$logMessages=array();
 		$op->refactor(false, $logMessages);
 
-		return implode("\n*", $logMessages);
+		ksort($logMessages);
+		$log = "";
+		foreach($logMessages as $prefixedTitle => $lm_array) {
+			$log .= "\n*".SRFLog::titleAsWikiText(Title::newFromText($prefixedTitle));
+			foreach($lm_array as $lm) {
+				$log .= "\n**".$lm->asWikiText();
+			}
+		}
+
+		return $log;
 	}
 }
 

@@ -22,7 +22,7 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 
 	private $affectedPages;
 
-	public function __construct($oldInstance, $newInstance, $adaptAnnotations) {
+	public function __construct($oldInstance, $newInstance) {
 		$this->oldInstance = Title::newFromText($oldInstance);
 		$this->newInstance = Title::newFromText($newInstance);
 
@@ -55,15 +55,15 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		}
 
 		// get all queries using $this->oldInstance
-		// TODO: QRC_DOI_LABEL is missing
-		/*$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOI_LABEL);
-		 $instanceStringDi = new SMWDIString($this->$this->oldInstance->getPrefixedText());
-		 $subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $instanceStringDi);
-		 foreach($subjects as $s) {
-			$titles[] = $s->getTitle();
-			}*/
-        
-		
+		$queryMetadataPattern = new SMWQMQueryMetadata(true);
+		$queryMetadataPattern->instanceOccurences = array($this->oldInstance->getPrefixedText() => true);
+		 
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		foreach($qmr as $s) {
+			$titles[] = Title::newFromText($s->usedInArticle);
+		}
+
+
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
@@ -80,10 +80,12 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 
 			// stores article
 			if ($save) {
-				$a = new Article($title);
-				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+				}
 			}
-			
+
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 

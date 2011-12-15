@@ -25,6 +25,11 @@
  * @author Kai Kühn
  *
  */
+
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+    die( "This script must be run from the command line\n" );
+}
+
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_DeleteCategory.php');
@@ -44,7 +49,7 @@ class SRFTestDeleteCategory extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRemoveCategory() {
-		$r = new SRFDeleteCategoryOperation('Person', array('sref_onlyCategory'=>true));
+		$r = new SRFDeleteCategoryOperation('Person', array('sref_deleteCategory'=>true));
 		$logMessages = array();
 		
 		$r->refactor(false, $logMessages);

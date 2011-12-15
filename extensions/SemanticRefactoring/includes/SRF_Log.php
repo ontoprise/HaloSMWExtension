@@ -69,7 +69,7 @@ class SRFLog {
 		return $wikitext;
 	}
 
-	private static function titleAsWikiText($title) {
+	public static function titleAsWikiText($title) {
 		if ($title->getNamespace() == NS_CATEGORY) {
 			return "[[:".$title->getPrefixedText()."]]";
 		}

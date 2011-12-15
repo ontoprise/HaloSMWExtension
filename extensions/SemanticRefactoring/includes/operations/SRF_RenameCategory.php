@@ -72,15 +72,13 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 
 
 		// get all queries using $this->oldCategory
-		$queries = array();
-		$qrc_dopDi = SMWDIProperty::newFromUserLabel(QRC_DOC_LABEL);
-		$categoryStringDi = new SMWDIString($this->oldCategory->getText());
-		$subjects = smwfGetStore()->getPropertySubjects($qrc_dopDi, $categoryStringDi);
-		foreach($subjects as $s) {
-			$titles[] = $s->getTitle();
+		$queryMetadataPattern = new SMWQMQueryMetadata(true);
+		$queryMetadataPattern->instanceOccurences = array($this->oldCategory->getPrefixedText() => true);
+		$queryMetadataPattern->categoryConditions = array($this->oldCategory->getText() => true);
+		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
+		foreach($qmr as $s) {
+			$titles[] = Title::newFromText($s->usedInArticle);
 		}
-
-		
 
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
@@ -98,10 +96,12 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 
 			// stores article
 			if ($save) {
-				$a = new Article($title);
-				$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+				}
 			}
-			$logMessages[] = 'Content of "'.$title->getPrefixedText().'" changed.';
+			
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
@@ -134,7 +134,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 			}
 
 		}
-		return true;
+		return $changed;
 	}
 
 	private function replaceCategoryInLink($objects) {
@@ -147,7 +147,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 				$changed = true;
 			}
 		}
-		return true;
+		return $changed;
 	}
 
 
@@ -170,7 +170,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		# iterate trough queries
 		# better support for ASK would be nice
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
-		$changedQuery =true;
+		$changedQuery =false;
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
@@ -190,16 +190,16 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		$wikitext = $pom->getWikiText();
 
 		if ($changedCategoryAnnotation) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category annotation at \$title", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category annotation", $title, $wikitext);
 		}
 		if ($changedCategoryValue) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category as annotation value at \$title", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category as annotation value", $title, $wikitext);
 		}
 		if ($changedCategoryLink) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link at \$title", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
 		}
 		if ($changedQuery) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query at \$title", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
 		}
 		return $wikitext;
 	}

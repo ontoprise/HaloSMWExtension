@@ -1,4 +1,9 @@
 <?php
+
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+    die( "This script must be run from the command line\n" );
+}
+
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/SRF_Tools.php');

@@ -26,6 +26,9 @@
  * 
  * @author Kai
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+    die( "This script must be run from the command line\n" );
+}
 
 require_once 'testcases/SRF_TestRenameProperty.php';
 require_once 'testcases/SRF_TestRenameCategory.php';
