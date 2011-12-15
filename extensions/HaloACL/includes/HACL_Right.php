@@ -690,18 +690,23 @@ class  HACLRight  {
 		// Disable the result filter for the same reason
 		$rfd = HACLResultFilter::setDisabled(true);
 
+		$queryFormat = false;
 		if (preg_match('/{{#ask:\s*(.*?)\s*}}/', $query, $matches) == 1) {
 			// Query is in ask format
-			$query = $matches[1];
-			$params = explode('|', $query);
-			$params[] = "format=list";
-			$res = SMWQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_WIKI);
+			$queryFormat = 'ask';
 		} else if (preg_match('/{{#sparql:\s*(.*?)\s*}}/', $query, $matches) == 1) {
 			// Query is in sparql format
+			$queryFormat = 'sparql';
+		}
+		if ($queryFormat) {
 			$query = $matches[1];
 			$params = explode('|', $query);
 			$params[] = "format=list";
-			$res = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
+			$params[] = "headers=hide";
+			$params[] = "link=none";
+			$res = $queryFormat === 'ask'
+					? SMWQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_WIKI)
+					: SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
 		}
 		
 		if (!is_null($smwStore)) {
