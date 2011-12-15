@@ -75,7 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			echo "Authentication by Wiki sysop-users requires Wiki Administration Tool to be included in LocalSettings.php";
 			echo "<br>please add: <pre>require_once('deployment/Deployment.php');</pre>";
 			exit;
-		}
+		} else if ($isAuthorized === 404) {
+			$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
+			$hostname = $_SERVER['HTTP_HOST'];
+            echo '<b>$scriptPath</b> is probably not correctly configured. Please check deployment/settings.php. <br>The current wiki URL is: <b>'.$proto."://".$hostname.$wgScriptPath."</b>";
+            exit;
+        }
 	} else{
 		$isAuthorized = $username == DF_Config::$df_webadmin_user
 		&& $passwort == DF_Config::$df_webadmin_pass;
