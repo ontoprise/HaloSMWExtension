@@ -224,7 +224,7 @@ class SMWQMQueryMetadata {
 			$property = SMWDIProperty::newFromUserLabel($propLabel);
 			$vals = $container->getSemanticData()->getPropertyValues($property);
 			if(count($vals) > 0){
-				$this->$attr = $vals[0]->getSortKey();
+				$this->$attr = reset($vals)->getSortKey();
 			}
 		}
 		
