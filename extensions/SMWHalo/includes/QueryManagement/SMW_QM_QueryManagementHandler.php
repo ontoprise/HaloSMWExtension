@@ -72,11 +72,12 @@ class SMWQMQueryManagementHandler {
 	 */
 	public static function initProperties(){
 		global $wgTitle, $wgLang;
+		
 		if($wgTitle instanceof Title
 				&& $wgTitle->getText() == 'Browse' && $wgTitle->getNamespace() == NS_SPECIAL){
 			SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', false, false);
 		} else {
-			SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);	
+			SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
 		}
 		SMWPropertyValue::registerProperty('___QRC_HQID', '_str', QRC_HQID_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
@@ -115,8 +116,6 @@ class SMWQMQueryManagementHandler {
 	 * It appends query related metadata to the article which contains the query.
 	 */
 	public function storeQueryMetadata($query){
-		
-		SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
 		
 		if (!isset($query->params) || !is_array($query->params)) {
 			// No parameters set 
@@ -470,8 +469,7 @@ class SMWQMQueryManagementHandler {
 	}
 	
 	
-	public function searchQueries($queryMetadata){
-		//SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
+	public function searchQueries($queryMetadata, $returnInstances = false){
 		
 		$queryString = $queryMetadata->getMetadaSearchQueryString();
 		
@@ -505,6 +503,10 @@ class SMWQMQueryManagementHandler {
 			}
 		}
 		
+		if($returnInstances){
+			return $queryResults; 
+		}
+		
 		$queryMetadataResults = array();
 		
 		SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);
@@ -534,6 +536,9 @@ class SMWQMQueryManagementHandler {
 		}
 		
 		//echo('<pre>'.print_r($queryMetadataResults, true).'</pre>');
+		
+		//set back so that another search will also work
+		SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
 		
 		return $queryMetadataResults;
 	}
