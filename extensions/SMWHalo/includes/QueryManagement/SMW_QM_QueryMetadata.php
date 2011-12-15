@@ -32,6 +32,7 @@ class SMWQMQueryMetadata {
 
 	public $categoryConditions;
 	public $propertyConditions;
+	public $instanceOccurences;
 
 	public $usedInArticle;
 	
@@ -44,7 +45,7 @@ class SMWQMQueryMetadata {
 	public $usesASKSyntax;
 	
 	public function __construct($isDisjunctive = false, $propertyPrintRequests = null, $isSparqlQuery = null, $categoryConditions = null, 
-			$propertyConditions = null, $usedInArticle = null, $queryPrinter = null, $queryName = null, $usesASKSyntax = null){
+			$propertyConditions = null, $usedInArticle = null, $queryPrinter = null, $queryName = null, $usesASKSyntax = null, $instanceOccurences = null){
 		
 		$this->isDisjunctive = $isDisjunctive;
 		$this->propertyPrintRequests = $propertyPrintRequests;
@@ -55,6 +56,7 @@ class SMWQMQueryMetadata {
 		$this->queryPrinter = $queryPrinter;
 		$this->queryName = $queryName;
 		$this->usesASKSyntax = $usesASKSyntax;
+		$this->instanceOccurences = $instanceOccurences;;
 	}
 	
 	public function getMetadaSearchQueryString(){
@@ -69,6 +71,12 @@ class SMWQMQueryMetadata {
 		if(!is_null($this->categoryConditions)){
 			foreach($this->categoryConditions as $cc => $dontCare){
 				$queryString[] = ' [['.QRC_UQC_LABEL.'.'.QRC_DOC_LABEL.'::'.$cc.']]';
+			}
+		}
+		
+		if(!is_null($this->instanceOccurences)){
+			foreach($this->instanceOccurences as $io => $dontCare){
+				$queryString[] = ' [['.QRC_UQC_LABEL.'.'.QRC_DOI_LABEL.'::'.$io.']]';
 			}
 		}
 		
@@ -147,6 +155,16 @@ class SMWQMQueryMetadata {
 			}
 		}
 		
+		if(!is_null($this->instanceOccurences) && !is_null($queryMetadataPattern->instanceOccurences)){
+			foreach($queryMetadataPattern->instanceOccurences as $io => $dontCare){
+				if(!array_key_exists($io, $this->instanceOccurences) && !$this->isDisjunctive){
+					return false;
+				} else if(array_key_exists($io, $this->instanceOccurences) && $this->isDisjunctive){
+					return true;
+				}
+			}
+		}
+		
 		if(!is_null($this->propertyConditions) && !is_null($queryMetadataPattern->propertyConditions)){
 			foreach($queryMetadataPattern->propertyConditions as $pc => $dontCare){
 				if(!array_key_exists($pc, $this->propertyConditions)  && !$this->isDisjunctive){
@@ -213,7 +231,8 @@ class SMWQMQueryMetadata {
 		$properties = array(
 			'propertyPrintRequests' => QRC_HEPP_LABEL,
 			'propertyConditions' => QRC_DOP_LABEL,
-			'categoryConditions' => QRC_DOC_LABEL
+			'categoryConditions' => QRC_DOC_LABEL,
+			'instanceOccurences' =>QRC_DOI_LABEL 
 		);
 		
 		foreach($properties as $attr => $propLabel){
@@ -227,7 +246,5 @@ class SMWQMQueryMetadata {
 				$this->$attr = array_flip($this->$attr);
 			}
 		}
-	
 	}
-	
 }

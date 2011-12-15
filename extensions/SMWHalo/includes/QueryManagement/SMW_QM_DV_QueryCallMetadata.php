@@ -92,6 +92,15 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
+	/*
+	 * Add dependency to an instance, which is used by the query
+	 */
+	public function addInstanceDependency($instanceName){
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_DOI_LABEL);
+		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $instanceName);
+		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
+	}
+	
 	public function addExtraPropertyPrintouts($epp){
 		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HEPP_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue->getDataItem(), $epp);

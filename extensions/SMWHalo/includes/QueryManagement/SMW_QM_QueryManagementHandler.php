@@ -39,6 +39,7 @@ define('QRC_UAS_LABEL','QRCUsesASKSyntax');
 
 define('QRC_DOP_LABEL','QRCDependsOnProperty');
 define('QRC_DOC_LABEL','QRCDependsOnCategory');
+define('QRC_DOI_LABEL','QRCDependsOnInstance');
 
 define('QM_UIA_LABEL','QMUsedInArticle');
 define('QM_UQP_LABEL','QMUsedQueryPrinter');
@@ -75,7 +76,7 @@ class SMWQMQueryManagementHandler {
 				&& $wgTitle->getText() == 'Browse' && $wgTitle->getNamespace() == NS_SPECIAL){
 			SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', false, false);
 		} else {
-			SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);	
+			SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);	
 		}
 		SMWPropertyValue::registerProperty('___QRC_HQID', '_str', QRC_HQID_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
@@ -84,6 +85,7 @@ class SMWQMQueryManagementHandler {
 		
 		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOI_LABEL , false);
 		
 		SMWPropertyValue::registerProperty('___QRC_HEPP', '_str', QRC_HEPP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
@@ -113,6 +115,8 @@ class SMWQMQueryManagementHandler {
 	 * It appends query related metadata to the article which contains the query.
 	 */
 	public function storeQueryMetadata($query){
+		
+		SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
 		
 		if (!isset($query->params) || !is_array($query->params)) {
 			// No parameters set 
@@ -173,11 +177,14 @@ class SMWQMQueryManagementHandler {
 			
 		$properties = array();
 		$categories = array();
+		$instances = array();
 		
 		if ($query instanceof SMWSPARQLQuery){
+			//todo:deal with instances
 			list($properties, $categories) = $this->getSPARQLQueryParts($query);
+			$instances = array();
 		} else  if($query instanceof SMWQuery){
-			list($properties, $categories) = $this->getQueryParts($query->getDescription());
+			list($properties, $categories, $instances) = $this->getQueryParts($query->getDescription());
 		}
 		
 		foreach($properties as $p => $dontCare){
@@ -186,6 +193,10 @@ class SMWQMQueryManagementHandler {
 		
 		foreach($categories as $c => $dontCare){
 			$dataValue->addCategoryDependency($c);
+		}
+		
+		foreach($instances as $i => $dontCare){
+			$dataValue->addInstanceDependency($i);
 		}
 		
 		$dataValue->setUsedInArticle($title->getFullText());
@@ -258,28 +269,46 @@ class SMWQMQueryManagementHandler {
 	}
 	
 	/*
-	 * Returns all properties and categories, which are used in a query
+	 * Returns all properties, categories and instances, which are used in a query
 	 */
-	private function getQueryParts($description, $properties = array(), $categories = array()){
+	private function getQueryParts($description, $properties = array(), $categories = array(), $instances = array()){
 		if($this->hasSubdescription($description)){
 			foreach($description->getDescriptions() as $subDescription){
-				list($properties, $categories) = $this->getQueryParts($subDescription, $properties, $categories);
+				list($properties, $categories, $instances) = $this->getQueryParts($subDescription, $properties, $categories, $instances);
 			}
 		}
 		
 		//for properties with subqueries and query chains
 		if($description instanceof SMWSomeProperty && $description->getDepth() > 1){
-			list($properties, $categories) = $this->getQueryParts($description->getDescription(), $properties, $categories);
+			list($properties, $categories, $instances) = $this->getQueryParts($description->getDescription(), $properties, $categories, $instances);
 		}
 		
 		if($description instanceof SMWSomeProperty){
 			$properties[$description->getProperty()->getLabel()] = null;
+			if($description->getDescription() instanceof SMWValueDescription){
+				$dataItem = $description->getDescription()->getDataItem();
+				if($dataItem instanceof SMWDIWikiPage){
+					$title = $dataItem->getTitle();
+					if(!is_null($title)){
+						$instances[$title->getFullText()] = null;
+					}
+				}
+			}
+			
 		} else if ($description instanceof SMWClassDescription){
 			foreach($description->getCategories() as $title)
 				$categories[$title->getTitle()->getText()] = null;
+		} else if($description instanceof SMWValueDescription){
+			$dataItem = $description->getDataItem();
+			if($dataItem instanceof SMWDIWikiPage){
+				$title = $dataItem->getTitle();
+				if(!is_null($title)){
+					$instances[$title->getFullText()] = null;
+				}
+			}
 		}
 		
-		return array($properties, $categories);
+		return array($properties, $categories, $instances);
 	}
 	
 	/*
@@ -442,9 +471,11 @@ class SMWQMQueryManagementHandler {
 	
 	
 	public function searchQueries($queryMetadata){
+		//SMWDIProperty::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
+		
 		$queryString = $queryMetadata->getMetadaSearchQueryString();
 		
-		 SMWQueryProcessor::processFunctionParams(array($queryString) 
+		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
 		
 		$store = smwfGetStore(); 
@@ -462,7 +493,6 @@ class SMWQMQueryManagementHandler {
 				SMWQueryProcessor::createQuery($queryString,$params);
 				
 			$query->params['noquerymanagement'] = 'true';
-			$query->params['nocaching'] = 'true';
 			
 			$qrT = $store->getQueryResult($query)->getResults();
 			
@@ -476,10 +506,14 @@ class SMWQMQueryManagementHandler {
 		}
 		
 		$queryMetadataResults = array();
+		
+		SMWDIProperty::registerProperty('___QRC_UQC', '_qcm', QRC_UQC_LABEL , false);
+		
 		foreach($queryResults as $queryResult){
 			$semanticData = $store->getSemanticData($queryResult);
 			
 			$property = SMWPropertyValue::makeProperty('___QRC_UQC');
+			
 			$propVals = $semanticData->getPropertyValues($property->getDataItem());
 			
 			//echo('<pre>'.print_r($propVals, true).'</pre>');
@@ -490,6 +524,8 @@ class SMWQMQueryManagementHandler {
 				
 				$queryMetadataResult = new SMWQMQueryMetadata();
 				$queryMetadataResult->fillFromPropertyValues($pVs);
+				
+				//echo('<pre>'.print_r($queryMetadataResult, true).'</pre>');
 				
 				if($queryMetadataResult->matchesQueryMetadataPattern($queryMetadata)){
 					$queryMetadataResults[] = $queryMetadataResult; 					
