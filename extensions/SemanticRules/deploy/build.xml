@@ -34,6 +34,11 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
+  	<copy todir="bin/zip/extensions/SemanticRules/tests">
+  	      <fileset dir="../tests/">
+  	        <exclude name="**/.svn, **/CVS" />
+  	      </fileset>
+  	</copy>
     <copy todir="bin/zip/extensions/SemanticRules/specials">
       <fileset dir="../specials/">
         <exclude name="**/.svn, **/CVS" />

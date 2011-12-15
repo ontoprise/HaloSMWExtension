@@ -54,6 +54,11 @@
         <include name="patch.php" />
       </fileset>
     </copy>
+  	 <copy todir="bin/zip/deployment/tests">
+  	      <fileset dir="../tests/">
+  	        <exclude name="**/.svn, **/CVS" />
+  	      </fileset>
+  	 </copy>
     <copy file="../tools/smwadmin/smwadmin.php"
           tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
           overwrite="true"

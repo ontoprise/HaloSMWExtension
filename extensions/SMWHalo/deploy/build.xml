@@ -2,323 +2,309 @@
 <project basedir="." default="smwhalo_build" name="SMWHalo">
 
 
-  <target name="smwhalo_build" depends="versionhint">
-    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
-      <fileset dir="bin" includes="smwhalo-*.zip" />
-    </delete>
+	<target name="smwhalo_build" depends="versionhint">
+		<echo>Start building ${ant.project.name}: ${ant.file}</echo>
+		<delete dir="bin/zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-*.zip" />
+		</delete>
 
 
-    <mkdir dir="bin/zip" />
+		<mkdir dir="bin/zip" />
 
-    <copy todir="bin/zip/extensions/SMWHalo/DataAPI">
-      <fileset dir="../DataAPI/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/includes">
-      <fileset dir="../includes/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/languages">
-      <fileset dir="../languages/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/libs">
-      <fileset dir="../libs/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/maintenance">
-      <fileset dir="../maintenance/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/scripts">
-      <fileset dir="../scripts/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/skins">
-      <fileset dir="../skins/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/specials">
-      <fileset dir="../specials/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/resources">
-      <fileset dir="../resources/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/smwtsc">
-      <fileset dir="../smwtsc/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/SMWHalo/tests">
-      <fileset dir="../tests/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/skins">
-      <fileset file="../../../skins/OntoSkin*" />
-    </copy>
-    <copy todir="bin/zip/skins/ontoskin3">
-      <fileset dir="../../../skins/ontoskin3">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/skins/monobook" file="../../../skins/ontoskin3/lightbulb.css" />
+		<copy todir="bin/zip/extensions/SMWHalo/DataAPI">
+			<fileset dir="../DataAPI/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/includes">
+			<fileset dir="../includes/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/languages">
+			<fileset dir="../languages/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/libs">
+			<fileset dir="../libs/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/maintenance">
+			<fileset dir="../maintenance/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/scripts">
+			<fileset dir="../scripts/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/skins">
+			<fileset dir="../skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/specials">
+			<fileset dir="../specials/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/resources">
+			<fileset dir="../resources/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/smwtsc">
+			<fileset dir="../smwtsc/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/tests">
+			<fileset dir="../tests/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SMWHalo/tests_selenium">
+			<fileset dir="../tests_selenium/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/skins">
+			<fileset file="../../../skins/OntoSkin*" />
+		</copy>
+		<copy todir="bin/zip/skins/ontoskin3">
+			<fileset dir="../../../skins/ontoskin3">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/skins/monobook" file="../../../skins/ontoskin3/lightbulb.css" />
 
-    <copy todir="bin/zip/extensions/SMWHalo">
-      <fileset dir="../">
-        <include name="COPYING" />
-        <include name="INSTALL" />
-        <include name="patch.txt" />
-        <include name="patch_for*.txt" />
-        <include name="deploy.xml" />
+		<copy todir="bin/zip/extensions/SMWHalo">
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="patch.txt" />
+				<include name="patch_for*.txt" />
+				<include name="deploy.xml" />
 
-      </fileset>
-      <fileset dir="../../../patches/">
-        <include name="patch.php" />
-      </fileset>
-      <fileset dir="../../../deployment/tools">
-        <include name="patch.exe" />
-        <include name="patch.exe.manifest" />
-      </fileset>
-    </copy>
-
-
-
-    <zip destfile="bin/smwhalo.zip" basedir="bin/zip" />
-
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwhalo.zip" />
-    </exec>
-
-  </target>
-
-  <target name="smwhalo_bundled_build" depends="smwhalo_build">
-    <ant antfile="../../ApplicationProgramming/deploy/build.xml"
-         inheritall="true"
-         dir="../../ApplicationProgramming/deploy"
-         target="build">
-    </ant>
-    <ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
-    </ant>
-    <ant antfile="../../ScriptManager/deploy/build.xml"
-         inheritall="true"
-         dir="../../ScriptManager/deploy"
-         target="scriptmanager_build">
-    </ant>
-    <ant antfile="../../deployment/deploy/build.xml"
-         inheritall="true"
-         dir="../../../deployment/deploy"
-         target="wikiadmintool">
-    </ant>
-    <delete>
-      <fileset dir="bin" includes="smwhalo-bundled*.zip" />
-    </delete>
-    <copy todir="bin/zip/deployment">
-      <fileset dir="../../../deployment/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-      </fileset>
-    </copy>
-    <copy file="../../../patches/patch.php"
-          tofile="bin/zip/deployment/tools/patch.php"
-          overwrite="true"
-          verbose="true"
-          failonerror="true" />
-
-    <copy todir="bin/zip/extensions/ApplicationProgramming">
-      <fileset dir="../../ApplicationProgramming/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/ARCLibrary">
-      <fileset dir="../../ARCLibrary/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-      </fileset>
-    </copy>
-    <copy todir="bin/zip/extensions/ScriptManager">
-      <fileset dir="../../ScriptManager/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-      </fileset>
-    </copy>
-    <zip destfile="bin/smwhalo-bundled.zip" basedir="bin/zip" />
-
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwhalo-bundled.zip" />
-      <arg value="bin/smwhalo-%s_including_dependencies.zip" />
-    </exec>
-
-  </target>
-
-  <target name="smwhalo_convenience_build">
-    <delete dir="bin/zip_convenience" />
-    <delete>
-      <fileset dir="bin" includes="smwhalo-convenience*.zip" />
-    </delete>
-    <mkdir dir="bin/zip_convenience" />
-
-    <copy todir="bin/zip_convenience/extensions/DynamicPageList">
-      <fileset dir="../../DynamicPageList/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-
-    <copy todir="bin/zip_convenience/extensions/DebugTemplate">
-      <fileset dir="../../DebugTemplate/">
-        <exclude name="**/.svn, **/CVS" />
-      </fileset>
-    </copy>
-
-
-    <copy todir="bin/zip_convenience/extensions">
-      <fileset file="../../LdapAuthentication.php/" />
-      <fileset file="../../Cite.php/" />
-      <fileset file="../../Cite.i18n.php/" />
-      <fileset file="../../Quicktime.php/" />
-    </copy>
+			</fileset>
+			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
+			<fileset dir="../../../deployment/tools">
+				<include name="patch.exe" />
+				<include name="patch.exe.manifest" />
+			</fileset>
+		</copy>
 
 
 
-    <zip destfile="bin/smwhalo-convenience.zip" basedir="bin/zip_convenience" />
-    <delete dir="bin/zip_convenience" />
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwhalo-convenience.zip" />
-    </exec>
-  </target>
+		<zip destfile="bin/smwhalo.zip" basedir="bin/zip" />
 
-  <target name="smwplus_source_build" depends="smwhalo_bundled_build">
-    <delete>
-      <fileset dir="bin" includes="smwplus-source*.zip" />
-    </delete>
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo.zip" />
+		</exec>
 
-    <ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
-    </ant>
-    <ant antfile="../../EnhancedRetrieval/deploy/build.xml"
-         inheritall="true"
-         dir="../../EnhancedRetrieval/deploy"
-         target="enhancedretrieval">
-    </ant>
-    <ant antfile="../../SemanticMediaWiki/deploy/build.xml"
-         inheritall="true"
-         dir="../../SemanticMediaWiki/deploy"
-         target="smw_build">
-    </ant>
+	</target>
 
-    <copy todir="bin/zip/extensions/WYSIWYG">
-      <fileset dir="../../WYSIWYG/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-        <exclude name="**/tests/**" />
-      </fileset>
-    </copy>
+	<target name="smwhalo_bundled_build" depends="smwhalo_build">
+		<ant antfile="../../ApplicationProgramming/deploy/build.xml" inheritall="true" dir="../../ApplicationProgramming/deploy" target="build">
+		</ant>
+		<ant antfile="../../ARCLibrary/deploy/build.xml" inheritall="true" dir="../../ARCLibrary/deploy" target="build">
+		</ant>
+		<ant antfile="../../ScriptManager/deploy/build.xml" inheritall="true" dir="../../ScriptManager/deploy" target="scriptmanager_build">
+		</ant>
+		<ant antfile="../../deployment/deploy/build.xml" inheritall="true" dir="../../../deployment/deploy" target="wikiadmintool">
+		</ant>
+		<delete>
+			<fileset dir="bin" includes="smwhalo-bundled*.zip" />
+		</delete>
+		<copy todir="bin/zip/deployment">
+			<fileset dir="../../../deployment/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true" />
 
-    <copy todir="bin/zip/extensions/EnhancedRetrieval">
-      <fileset dir="../../EnhancedRetrieval/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-        <exclude name="**/tests/**" />
-      </fileset>
-    </copy>
+		<copy todir="bin/zip/extensions/ApplicationProgramming">
+			<fileset dir="../../ApplicationProgramming/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/ARCLibrary">
+			<fileset dir="../../ARCLibrary/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/ScriptManager">
+			<fileset dir="../../ScriptManager/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/smwhalo-bundled.zip" basedir="bin/zip" />
 
-    <copy todir="bin/zip/extensions/SemanticMediaWiki">
-      <fileset dir="../../SemanticMediaWiki/">
-        <exclude name="**/.svn, **/CVS" />
-        <exclude name="**/deploy/**" />
-        <exclude name="**/tests/**" />
-      </fileset>
-    </copy>
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-bundled.zip" />
+			<arg value="bin/smwhalo-%s_including_dependencies.zip" />
+		</exec>
 
-    <zip destfile="bin/smwplus-source.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
-    <exec executable="php">
-      <arg value="../../../buildtools/renameDeployable.php" />
-      <arg value="../deploy.xml" />
-      <arg value="bin/smwplus-source.zip" />
-    </exec>
-  </target>
+	</target>
 
+	<target name="smwhalo_convenience_build">
+		<delete dir="bin/zip_convenience" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-convenience*.zip" />
+		</delete>
+		<mkdir dir="bin/zip_convenience" />
 
-  <target name="versionhint">
-    <property environment="env" />
-    <exec executable="php">
-      <arg value="../../../buildtools/replaceVersionHint.php" />
-      <arg value="../deploy.xml" />
-      <arg value="../includes/SMW_Initialize.php" />
-      <arg value="${env.BUILD_NUMBER}" />
-    </exec>
-  </target>
+		<copy todir="bin/zip_convenience/extensions/DynamicPageList">
+			<fileset dir="../../DynamicPageList/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
-  <target name="cleanzip">
-    <echo>Clean up old zip archives...</echo>
-    <delete>
-      <fileset dir="../../" includes="**/deploy/bin/*.zip" />
-    </delete>
-  </target>
-
-  <target name="patches" depends="checkos">
-    <echo message="${patchtool}" />
-
-    <exec executable="php">
-      <arg value="../../../patches/patch.php" />
-      <arg value="-d" />
-      <arg value="${basedir}/../../../" />
-      <arg value="-p" />
-      <arg value="../patch_for_MW1.17.0.txt" />
-      <arg value="--patchtool" />
-      <arg value="${patchtool}" />
-    </exec>
-
-    <exec executable="php">
-      <arg value="../../../patches/patch.php" />
-      <arg value="-d" />
-      <arg value="${basedir}/../../../" />
-      <arg value="-p" />
-      <arg value="../patch_for_SF2.2.1.txt" />
-      <arg value="--patchtool" />
-      <arg value="${patchtool}" />
-    </exec>
-
-    <exec executable="php">
-      <arg value="../../../patches/patch.php" />
-      <arg value="-d" />
-      <arg value="${basedir}/../../../" />
-      <arg value="-p" />
-      <arg value="../patch_for_SMW1.6.1.txt" />
-      <arg value="--patchtool" />
-      <arg value="${patchtool}" />
-    </exec>
-
-  </target>
+		<copy todir="bin/zip_convenience/extensions/DebugTemplate">
+			<fileset dir="../../DebugTemplate/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
 
-  <target name="checkos">
-    <condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
-      <os family="windows" />
-    </condition>
-    <condition property="patchtool" value="patch">
-      <os family="unix" />
-    </condition>
-  </target>
+		<copy todir="bin/zip_convenience/extensions">
+			<fileset file="../../LdapAuthentication.php/" />
+			<fileset file="../../Cite.php/" />
+			<fileset file="../../Cite.i18n.php/" />
+			<fileset file="../../Quicktime.php/" />
+		</copy>
+
+
+
+		<zip destfile="bin/smwhalo-convenience.zip" basedir="bin/zip_convenience" />
+		<delete dir="bin/zip_convenience" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-convenience.zip" />
+		</exec>
+	</target>
+
+	<target name="smwplus_source_build" depends="smwhalo_bundled_build">
+		<delete>
+			<fileset dir="bin" includes="smwplus-source*.zip" />
+		</delete>
+
+		<ant antfile="../../WYSIWYG/deploy/build.xml" inheritall="true" dir="../../WYSIWYG/deploy" target="build">
+		</ant>
+		<ant antfile="../../EnhancedRetrieval/deploy/build.xml" inheritall="true" dir="../../EnhancedRetrieval/deploy" target="enhancedretrieval">
+		</ant>
+		<ant antfile="../../SemanticMediaWiki/deploy/build.xml" inheritall="true" dir="../../SemanticMediaWiki/deploy" target="smw_build">
+		</ant>
+
+		<copy todir="bin/zip/extensions/WYSIWYG">
+			<fileset dir="../../WYSIWYG/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+		<copy todir="bin/zip/extensions/EnhancedRetrieval">
+			<fileset dir="../../EnhancedRetrieval/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+		<copy todir="bin/zip/extensions/SemanticMediaWiki">
+			<fileset dir="../../SemanticMediaWiki/">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/deploy/**" />
+				<exclude name="**/tests/**" />
+			</fileset>
+		</copy>
+
+		<zip destfile="bin/smwplus-source.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwplus-source.zip" />
+		</exec>
+	</target>
+
+
+	<target name="versionhint">
+		<property environment="env" />
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/SMW_Initialize.php" />
+			<arg value="${env.BUILD_NUMBER}" />
+		</exec>
+	</target>
+
+	<target name="cleanzip">
+		<echo>Clean up old zip archives...</echo>
+		<delete>
+			<fileset dir="../../" includes="**/deploy/bin/*.zip" />
+		</delete>
+	</target>
+
+	<target name="patches" depends="checkos">
+		<echo message="${patchtool}" />
+
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch_for_MW1.17.0.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch_for_SF2.2.1.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+
+		<exec executable="php">
+			<arg value="../../../patches/patch.php" />
+			<arg value="-d" />
+			<arg value="${basedir}/../../../" />
+			<arg value="-p" />
+			<arg value="../patch_for_SMW1.6.1.txt" />
+			<arg value="--patchtool" />
+			<arg value="${patchtool}" />
+		</exec>
+
+	</target>
+
+
+	<target name="checkos">
+		<condition property="patchtool" value="${basedir}/../../../deployment/tools/patch.exe">
+			<os family="windows" />
+		</condition>
+		<condition property="patchtool" value="patch">
+			<os family="unix" />
+		</condition>
+	</target>
 
 </project>
