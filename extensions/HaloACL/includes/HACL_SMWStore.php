@@ -497,7 +497,7 @@ class HACLSMWStore extends SMWStore {
 	 * is is called as public method from other classes. This should be fixed 
 	 * where only this interface is expected.
 	 */
-	public function getSMWPropertyID( SMWPropertyValue $property ) {
+	public function getSMWPropertyID( SMWDIProperty $property ) {
 		return $this->mWrappedStore->getSMWPropertyID($property);
 	}
 	
