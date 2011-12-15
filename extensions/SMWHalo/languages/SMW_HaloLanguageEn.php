@@ -200,6 +200,8 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
 	'smw_ob_cmd_createinstance' => 'Create instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
+	'smw_ob_cmd_deletecategory' => 'Delete category',
+	'smw_ob_cmd_deleteproperty' => 'Delete property',
 	
 	/* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (all bundles)" ,

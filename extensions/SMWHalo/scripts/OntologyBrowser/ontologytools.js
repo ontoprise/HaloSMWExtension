@@ -1942,7 +1942,7 @@ OBOntologySubMenu.prototype = {
 	 * Executes a command
 	 */
 	doCommand : function(commandID) {
-		
+
 	},
 	/**
 	 * @abstract
@@ -2050,7 +2050,7 @@ OBCatgeorySubMenu.prototype = Object
 						if (commandID) {
 							this.commandID = commandID;
 						}
-						
+
 						switch (this.commandID) {
 
 						case SMW_OB_COMMAND_ADDSUBCATEGORY: {
@@ -2074,18 +2074,22 @@ OBCatgeorySubMenu.prototype = Object
 							break;
 						}
 						case SMW_OB_COMMAND_SUBCATEGORY_EDIT: {
-							
+
 							var doRename = this.selectedTitle != $F(
-							'categoryTreeMenu_input_ontologytools')
-							.strip().replace(/\s/g, "_");
-							
+									'categoryTreeMenu_input_ontologytools')
+									.strip().replace(/\s/g, "_");
+
 							var srefVersion = mw.loader
 									.version('ext.semanticrefactoring.dialogs');
 
 							if (srefVersion != null) {
-								srefgDialog.openDialog('renameCategoryContent', { oldCategory: this.selectedTitle, newCategory : $F(this.id
-										+ '_input_ontologytools') }, this.renameAndMove.bind(this));
-								
+								srefgDialog.openDialog('renameCategory',
+										{
+											oldCategory : this.selectedTitle,
+											newCategory : $F(this.id
+													+ '_input_ontologytools')
+										}, this.renameAndMove.bind(this));
+
 								return;
 							} else if (doRename
 									&& typeof (smwghTripleStoreGraph) != undefined) {
@@ -2102,29 +2106,45 @@ OBCatgeorySubMenu.prototype = Object
 							}
 
 							// do actual wiki operations
-							this.renameAndMove({rename_property: doRename });
+							this.renameAndMove( {
+								srf_rename_category : doRename
+							});
 
 							this.cancel();
 							break;
 						}
-						
+
 						case SMW_OB_COMMAND_CATEGORY_DELETE: {
-							alert('Delete command');
+							var srefVersion = mw.loader
+									.version('ext.semanticrefactoring.dialogs');
+
+							if (srefVersion != null) {
+								srefgDialog.openDialog('deleteCategory',
+										{
+											category : this.selectedTitle,
+											
+										});
+
+								return;
+							}
 							break;
 						}
 						default:
 							alert('Unknown command!');
 						}
 					},
-					
-					renameAndMove: function(options) {
+
+					renameAndMove : function(options) {
+						// FIXME: REMOVE THIS
+						return;
+						
 						// check if rename operation necessary
-						var doRename = options.rename_property;
+						var doRename = options.srf_rename_category;
 
 						// check if annotated categories are changed
 						var categoriesToUse = $F(
-								'categoryTreeMenu2_input_ontologytools')
-								.split(",");
+								'categoryTreeMenu2_input_ontologytools').split(
+								",");
 
 						categoriesToUse.sort(function(a, b) {
 							return a.strip() < b.strip() ? -1 : 1
@@ -2160,8 +2180,7 @@ OBCatgeorySubMenu.prototype = Object
 											// categories
 											ontologyTools.renameCategory(
 													newCategoryTitle,
-													selectedTitle,
-													selectedID);
+													selectedTitle, selectedID);
 										}
 									});
 						} else if (doRename) {
@@ -2463,7 +2482,7 @@ OBPropertySubMenu.prototype = Object
 						if (commandID) {
 							this.commandID = commandID;
 						}
-						
+
 						switch (this.commandID) {
 
 						case SMW_OB_COMMAND_ADDSUBPROPERTY: {
@@ -2493,38 +2512,20 @@ OBPropertySubMenu.prototype = Object
 									'propertyTreeMenu_input_ontologytools')
 									.strip().replace(/\s/g, "_");
 
-							// check if annotated categories are changed
-							var propertiesToUse = $F(
-									'propertyTreeMenu2_input_ontologytools')
-									.split(",");
-
-							propertiesToUse.sort(function(a, b) {
-								return a.strip() < b.strip() ? -1 : 1
-							});
-							for ( var i = 0; i < propertiesToUse.length; i++) {
-								propertiesToUse[i] = propertiesToUse[i].strip();
-							}
-							var doChangeOfProperties = propertiesToUse.length != this.annotatedSuperProperties.length;
-							if (propertiesToUse.length == this.annotatedSuperProperties.length) {
-								for ( var i = 0; i < propertiesToUse.length; i++) {
-									if (propertiesToUse[i] != this.annotatedSuperProperties[i]) {
-										doChangeOfProperties = true;
-										break;
-									}
-								}
-							}
-
 							var srefVersion = mw.loader
 									.version('ext.semanticrefactoring.dialogs');
 
 							if (srefVersion != null) {
-								srefgDialog.openDialog('renamePropertyContent');
-								
+									srefgDialog.openDialog('renameProperty',
+											{
+												oldProperty : this.selectedTitle,
+												newProperty : $F(this.id
+														+ '_input_ontologytools')
+											}, this.renameAndMove.bind(this));
+
 								return;
-							}
-							else if(doRename
-									&& typeof (smwghTripleStoreGraph) != undefined)
-							{
+							} else if (doRename
+									&& typeof (smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
 								if (!confirmation) {
@@ -2537,47 +2538,91 @@ OBPropertySubMenu.prototype = Object
 								}
 							}
 
-							// do actual wiki operations
-							if (doChangeOfProperties) {
-								var selectedTitle = this.selectedTitle;
-								var selectedID = this.selectedID;
-								var newPropertyTitle = $F(this.id
-										+ '_input_ontologytools')
-								ontologyTools.moveProperty(selectedID,
-										propertiesToUse,
-
-										function() {
-
-											// called if
-											// "moveInstanceToCategories"
-											// was successful,
-											// then rename
-											if (doRename) {
-												// only change of
-												// categories
-												ontologyTools.renameProperty(
-														newPropertyTitle,
-														selectedTitle,
-														selectedID);
-											}
-										});
-							} else if (doRename) {
-								// only rename
-								ontologyTools.renameProperty($F(this.id
-										+ '_input_ontologytools'),
-										this.selectedTitle, this.selectedID);
-							}
+								// do actual wiki operations
+								this.renameAndMove( {
+									srf_rename_property : doRename
+								});
 
 							this.cancel();
 							break;
 						}
 						case SMW_OB_COMMAND_PROPERTY_DELETE: {
-							alert('Delete command');
+							var srefVersion = mw.loader
+							.version('ext.semanticrefactoring.dialogs');
+
+							if (srefVersion != null) {
+								srefgDialog.openDialog('deleteProperty',
+										{
+											property : this.selectedTitle,
+										});
+		
+								return;
+							}
 							break;
+							
 						}
-						
+
 						default:
 							alert('Unknown command!');
+						}
+					},
+					
+					renameAndMove : function(options) {
+						// FIXME: REMOVE THIS
+						return;
+						
+						var doRename = options.srf_rename_property;
+						
+						// check if annotated categories are changed
+						var propertiesToUse = $F(
+								'propertyTreeMenu2_input_ontologytools')
+								.split(",");
+
+						propertiesToUse.sort(function(a, b) {
+							return a.strip() < b.strip() ? -1 : 1
+						});
+						for ( var i = 0; i < propertiesToUse.length; i++) {
+							propertiesToUse[i] = propertiesToUse[i].strip();
+						}
+						var doChangeOfProperties = propertiesToUse.length != this.annotatedSuperProperties.length;
+						if (propertiesToUse.length == this.annotatedSuperProperties.length) {
+							for ( var i = 0; i < propertiesToUse.length; i++) {
+								if (propertiesToUse[i] != this.annotatedSuperProperties[i]) {
+									doChangeOfProperties = true;
+									break;
+								}
+							}
+						}
+						
+						// do actual wiki operations
+						if (doChangeOfProperties) {
+							var selectedTitle = this.selectedTitle;
+							var selectedID = this.selectedID;
+							var newPropertyTitle = $F(this.id
+									+ '_input_ontologytools')
+							ontologyTools.moveProperty(selectedID,
+									propertiesToUse,
+
+									function() {
+
+										// called if
+										// "moveInstanceToCategories"
+										// was successful,
+										// then rename
+										if (doRename) {
+											// only change of
+											// categories
+											ontologyTools.renameProperty(
+													newPropertyTitle,
+													selectedTitle,
+													selectedID);
+										}
+									});
+						} else if (doRename) {
+							// only rename
+							ontologyTools.renameProperty($F(this.id
+									+ '_input_ontologytools'),
+									this.selectedTitle, this.selectedID);
 						}
 					},
 
@@ -2835,29 +2880,23 @@ OBInstanceSubMenu.prototype = Object
 									&& ":" + this.selectedTitle != $F(
 											'instanceListMenu_input_ontologytools')
 											.strip().replace(/\s/g, "_");
-							;
+							
 
-							// check if annotated categories are changed
-							var categoriesToUse = $F(
-									'instanceListMenu2_input_ontologytools')
-									.split(",");
-							categoriesToUse.sort(function(a, b) {
-								return a.strip() < b.strip() ? -1 : 1
-							});
-							for ( var i = 0; i < categoriesToUse.length; i++) {
-								categoriesToUse[i] = categoriesToUse[i].strip();
-							}
-							var doChangeOfCategories = categoriesToUse.length != this.categoriesOfInstance.length;
-							if (categoriesToUse.length == this.categoriesOfInstance.length) {
-								for ( var i = 0; i < categoriesToUse.length; i++) {
-									if (categoriesToUse[i] != this.categoriesOfInstance[i]) {
-										doChangeOfCategories = true;
-										break;
-									}
-								}
-							}
+							
 
-							if (doRename
+							var srefVersion = mw.loader
+							.version('ext.semanticrefactoring.dialogs');
+
+							if (srefVersion != null) {
+									srefgDialog.openDialog('renameInstance',
+											{
+												oldInstance : this.selectedTitle,
+												newInstance : $F(this.id
+														+ '_input_ontologytools')
+											}, this.renameAndMove.bind(this));
+		
+								return;
+							} else if (doRename
 									&& typeof (smwghTripleStoreGraph) != undefined) {
 								var confirmation = confirm(gLanguage
 										.getMessage('OB_RENAME_WARNING'));
@@ -2870,35 +2909,11 @@ OBInstanceSubMenu.prototype = Object
 									return;
 								}
 							}
-
 							// do actual wiki operations
-							if (doChangeOfCategories) {
-								var newInstanceTitle = $F(this.id
-										+ '_input_ontologytools');
-								var selectedTitle = this.selectedTitle;
-								var selectedID = this.selectedID;
-								articleCreator.moveInstanceToCategories(
-										this.selectedTitle, categoriesToUse,
-										"", function() {
-											// called if
-											// "moveInstanceToCategories"
-											// was successful,
-											// then rename
-											if (doRename) {
-												// only change of
-												// categories
-												ontologyTools.renameInstance(
-														newInstanceTitle,
-														selectedTitle,
-														selectedID);
-											}
-										}, this.selectedID);
-							} else if (doRename) {
-								// only rename
-								ontologyTools.renameInstance($F(this.id
-										+ '_input_ontologytools'),
-										this.selectedTitle, this.selectedID);
-							}
+							this.renameAndMove( {
+								srf_rename_instance : doRename
+							});
+							
 							this.cancel();
 							break;
 						}
@@ -2932,6 +2947,62 @@ OBInstanceSubMenu.prototype = Object
 						}
 						default:
 							alert('Unknown command!');
+						}
+					},
+					
+					renameAndMove : function(options) {
+						// FIXME: REMOVE THIS
+						return;
+						
+						var doRename = options.srf_rename_instance;
+						
+						// check if annotated categories are changed
+						var categoriesToUse = $F(
+								'instanceListMenu2_input_ontologytools')
+								.split(",");
+						categoriesToUse.sort(function(a, b) {
+							return a.strip() < b.strip() ? -1 : 1
+						});
+						for ( var i = 0; i < categoriesToUse.length; i++) {
+							categoriesToUse[i] = categoriesToUse[i].strip();
+						}
+						var doChangeOfCategories = categoriesToUse.length != this.categoriesOfInstance.length;
+						if (categoriesToUse.length == this.categoriesOfInstance.length) {
+							for ( var i = 0; i < categoriesToUse.length; i++) {
+								if (categoriesToUse[i] != this.categoriesOfInstance[i]) {
+									doChangeOfCategories = true;
+									break;
+								}
+							}
+						}
+						
+						// do actual wiki operations
+						if (doChangeOfCategories) {
+							var newInstanceTitle = $F(this.id
+									+ '_input_ontologytools');
+							var selectedTitle = this.selectedTitle;
+							var selectedID = this.selectedID;
+							articleCreator.moveInstanceToCategories(
+									this.selectedTitle, categoriesToUse,
+									"", function() {
+										// called if
+										// "moveInstanceToCategories"
+										// was successful,
+										// then rename
+										if (doRename) {
+											// only change of
+											// categories
+											ontologyTools.renameInstance(
+													newInstanceTitle,
+													selectedTitle,
+													selectedID);
+										}
+									}, this.selectedID);
+						} else if (doRename) {
+							// only rename
+							ontologyTools.renameInstance($F(this.id
+									+ '_input_ontologytools'),
+									this.selectedTitle, this.selectedID);
 						}
 					},
 

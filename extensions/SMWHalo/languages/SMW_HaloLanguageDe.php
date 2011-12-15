@@ -199,6 +199,8 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
     'smw_ob_cmd_createinstance' => 'Instanz erzeugen',
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
+    'smw_ob_cmd_deletecategory' => 'Lösche Kategorie',
+    'smw_ob_cmd_deleteproperty' => 'Lösche Property',
 	
 	/* Advanced options in the Data Explorer */
 	'smw_ob_source_wiki' => "-Wiki- (alle Bundles)" ,
