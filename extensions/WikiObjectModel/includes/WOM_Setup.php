@@ -15,6 +15,7 @@ $wgAutoloadClasses['WOMTemplateModel']         =  $wgOMIP . '/includes/models/WO
 $wgAutoloadClasses['WOMParserFunctionModel']   =  $wgOMIP . '/includes/models/WOM_OM_ParserFunction.php';
 $wgAutoloadClasses['WOMParameterModel']        =  $wgOMIP . '/includes/models/WOM_OM_Parameter.php';
 $wgAutoloadClasses['WOMQuerystringModel']      =  $wgOMIP . '/includes/models/WOM_OM_Querystring.php';
+$wgAutoloadClasses['WOMQueryPrintoutModel']    =  $wgOMIP . '/includes/models/WOM_OM_QueryPrintout.php';
 $wgAutoloadClasses['WOMParamValueModel']       =  $wgOMIP . '/includes/models/WOM_OM_ParamValue.php';
 $wgAutoloadClasses['WOMTemplateFieldModel']    =  $wgOMIP . '/includes/models/WOM_OM_TmplField.php';
 $wgAutoloadClasses['WOMPropertyModel']         =  $wgOMIP . '/includes/models/WOM_OM_Property.php';
@@ -45,6 +46,7 @@ define( 'WOM_TYPE_TEMPLATE'       , 'template' );
 define( 'WOM_TYPE_PARSERFUNCTION' , 'parser_function' );
 define( 'WOM_TYPE_PARAMETER'      , 'parameter' );
 define( 'WOM_TYPE_QUERYSTRING'    , 'querystring' );
+define( 'WOM_TYPE_QUERYPRINTOUT'  , 'printout' );
 define( 'WOM_TYPE_PARAM_VALUE'    , 'value' );
 define( 'WOM_TYPE_TMPL_FIELD'     , 'template_field' );
 define( 'WOM_TYPE_SENTENCE'       , 'sentence' );
@@ -67,7 +69,6 @@ $wgAutoloadClasses['WOMSectionParser']         =  $wgOMIP . '/includes/parsers/W
 $wgAutoloadClasses['WOMTemplateParser']        =  $wgOMIP . '/includes/parsers/WOMTemplateParser.php';
 $wgAutoloadClasses['WOMParserFunctionParser']  =  $wgOMIP . '/includes/parsers/WOMParserFunctionParser.php';
 $wgAutoloadClasses['WOMParameterParser']       =  $wgOMIP . '/includes/parsers/WOMParameterParser.php';
-$wgAutoloadClasses['WOMQuerystringParser']     =  $wgOMIP . '/includes/parsers/WOMQuerystringParser.php';
 $wgAutoloadClasses['WOMParamValueParser']      =  $wgOMIP . '/includes/parsers/WOMParamValueParser.php';
 $wgAutoloadClasses['WOMListItemParser']        =  $wgOMIP . '/includes/parsers/WOMListItemParser.php';
 $wgAutoloadClasses['WOMTableParser']           =  $wgOMIP . '/includes/parsers/WOMTableParser.php';
@@ -86,7 +87,6 @@ define( 'WOM_PARSER_ID_TEXT'           , 'text' );
 define( 'WOM_PARSER_ID_TEMPLATE'       , 'template' );
 define( 'WOM_PARSER_ID_PARSERFUNCTION' , 'parser_function' );
 define( 'WOM_PARSER_ID_PARAMETER'      , 'parameter' );
-define( 'WOM_PARSER_ID_QUERYSTRING'    , 'querystring' );
 define( 'WOM_PARSER_ID_PARAM_VALUE'    , 'value' );
 define( 'WOM_PARSER_ID_LISTITEM'       , 'list_item' );
 define( 'WOM_PARSER_ID_TABLE'          , 'table' );
@@ -106,7 +106,6 @@ $wgOMParsers = array(
 		'WOMTemplateParser',
 		'WOMParserFunctionParser',
 		'WOMParameterParser',
-		'WOMQuerystringParser',
 		'WOMParamValueParser',
 		'WOMListItemParser',
 		'WOMTableParser',
@@ -128,7 +127,8 @@ $wgOMModelParserMapping = array(
 	WOM_TYPE_PARSERFUNCTION => WOM_PARSER_ID_PARSERFUNCTION,
 	WOM_TYPE_PARAMETER      => WOM_PARSER_ID_PARAMETER,
 	WOM_TYPE_TMPL_FIELD     => WOM_PARSER_ID_PARAMETER,
-	WOM_TYPE_QUERYSTRING    => WOM_PARSER_ID_QUERYSTRING,
+	WOM_TYPE_QUERYSTRING    => WOM_PARSER_ID_PARAMETER,
+	WOM_TYPE_QUERYPRINTOUT  => WOM_PARSER_ID_PARAMETER,
 	WOM_TYPE_PARAM_VALUE    => WOM_PARSER_ID_PARAM_VALUE,
 	WOM_TYPE_LISTITEM       => WOM_PARSER_ID_LISTITEM,
 	WOM_TYPE_TABLE          => WOM_PARSER_ID_TABLE,

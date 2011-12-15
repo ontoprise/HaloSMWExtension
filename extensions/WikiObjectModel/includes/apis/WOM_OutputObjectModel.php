@@ -1,4 +1,7 @@
 <?php
+if ( !defined( 'MEDIAWIKI' ) ) {
+	exit( 1 );
+}
 
 global $wgOMIP;
 require_once( $wgOMIP . '/includes/apis/WOM_OutputProcessor.php' );

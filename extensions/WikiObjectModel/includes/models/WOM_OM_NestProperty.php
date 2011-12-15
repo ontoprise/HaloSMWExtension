@@ -46,7 +46,7 @@ class WOMNestPropertyModel extends WikiObjectModelCollection {
 	public function getWikiText() {
 		return "[[{$this->getPropertyName()}::{$this->getValueText()}]]";
 	}
-	
+
 	public function getValueText() {
 		return parent::getWikiText();
 	}

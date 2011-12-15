@@ -269,9 +269,11 @@ class WOMProcessor {
 				$d = self::parseNext( $text, $next_obj, $rootObj, $offset );
 				if ( $d == 100 && $parserInstance->isObjectClosed( $next_obj, $text, $offset ) === false ) {
 					// rollback
-					$p = self::getObjectParser( $parentObj );
-					if ( $p != null && $p->isObjectClosed( $parentObj, $text, $offset ) === false ) {
-						return $d;
+					if ( ! ( $parentObj instanceof WOMPageModel ) ) {
+						$p = self::getObjectParser( $parentObj );
+						if ( $p != null && $p->isObjectClosed( $parentObj, $text, $offset ) === false ) {
+							return $d;
+						}
 					}
 					$parentObj->rollback();
 					$offset = $collection_start - $result['len'];

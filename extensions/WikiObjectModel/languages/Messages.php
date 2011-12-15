@@ -17,6 +17,15 @@ $messages['af'] = array(
 	'wom-desc' => 'Maklike bladsyobjek-model',
 );
 
+/** Belarusian (Taraškievica orthography) (‪Беларуская (тарашкевіца)‬)
+ * @author Renessaince
+ */
+$messages['be-tarask'] = array(
+	'objecteditor' => 'Рэдактар аб’ектаў',
+	'wom_editor' => 'Мадэль аб’ектаў',
+	'wom-desc' => 'Мадэль аб’ектаў Easy Page для вікі-ўдзельніка',
+);
+
 /** German (Deutsch)
  * @author Kghbln
  */
@@ -52,6 +61,15 @@ $messages['gl'] = array(
 	'wom-desc' => 'Modelo de obxectos de páxina sinxelo para os usuarios do wiki',
 );
 
+/** Upper Sorbian (Hornjoserbsce)
+ * @author Michawiki
+ */
+$messages['hsb'] = array(
+	'objecteditor' => 'Objektowy editor',
+	'wom_editor' => 'Objektowy model',
+	'wom-desc' => 'Lochki objektowy model strony za wikiwužiwarja',
+);
+
 /** Interlingua (Interlingua)
  * @author McDutchie
  */
@@ -68,6 +86,15 @@ $messages['ja'] = array(
 	'objecteditor' => 'オブジェクトエディタ',
 	'wom_editor' => 'オブジェクトモデル',
 	'wom-desc' => 'ウィキ利用者のための簡単​​なページオブジェクトモデル',
+);
+
+/** Luxembourgish (Lëtzebuergesch)
+ * @author Robby
+ */
+$messages['lb'] = array(
+	'objecteditor' => 'Object Editeur',
+	'wom_editor' => 'Object-Schabloun',
+	'wom-desc' => 'Einfach Object-Schabloun vu Säite fir Wiki-Benotzer',
 );
 
 /** Macedonian (Македонски)
@@ -104,6 +131,15 @@ $messages['pt'] = array(
 	'objecteditor' => 'Editor de Objectos',
 	'wom_editor' => 'Modelo de Objectos',
 	'wom-desc' => 'Modelo de Objectos "Easy Page" para os utilizadores da wiki',
+);
+
+/** Swedish (Svenska)
+ * @author Warrakkk
+ */
+$messages['sv'] = array(
+	'objecteditor' => 'Objektredigerare',
+	'wom_editor' => 'Objektmodell',
+	'wom-desc' => 'Enkel sidoobjektmodell för wikianvändare',
 );
 
 /** Turkish (Türkçe)

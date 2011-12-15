@@ -21,7 +21,7 @@ class WOMParserFunctionModel extends WikiObjectModelCollection {
 
 	public function getWikiText() {
 		return "{{#{$this->m_function_key}:" .
-		parent::getWikiText() .
+			parent::getWikiText() .
 			'}}';
 	}
 

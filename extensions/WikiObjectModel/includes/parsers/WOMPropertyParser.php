@@ -47,15 +47,15 @@ class WOMPropertyParser extends WOMLinkParser {
 		if ( $r ) {
 			$inQuerystring = false;
 			$o = $parentObj;
-			do{
+			do {
 				if ( $o instanceof WOMQuerystringModel ) {
 					$inQuerystring = true;
 					break;
 				}
 				$o = $o->getParent();
-			} while($o != null);
-			
-			if($inQuerystring) {
+			} while ( $o != null );
+
+			if ( $inQuerystring ) {
 				$semanticPropPattern = '/\[\[                 # Beginning of the link
 				                        (?:([^:][^][]*):[=:])+ # Property name (or a list of those)
 				                        /xu';
