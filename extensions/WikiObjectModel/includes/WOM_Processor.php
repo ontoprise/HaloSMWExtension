@@ -119,7 +119,10 @@ class WOMProcessor {
 				if ( $obj->getTypeID() == WOM_TYPE_HTMLTAG ) {
 					// special case, html tag
 				} elseif ( $obj instanceof WikiObjectModelCollection ) {
-					self::parseParagraphs( $obj );
+					// FIXME: hardcode, for querystring object
+					if ( $obj->getTypeID() != WOM_TYPE_QUERYSTRING ) {
+						self::parseParagraphs( $obj );
+					}
 				}
 				$new_objs[] = $obj;
 			}
@@ -180,7 +183,10 @@ class WOMProcessor {
 				if ( $obj->getTypeID() == WOM_TYPE_HTMLTAG ) {
 					// special case, html tag
 				} elseif ( $obj instanceof WikiObjectModelCollection ) {
-					self::parseSentences( $obj );
+					// FIXME: hardcode, for querystring object
+					if ( $obj->getTypeID() != WOM_TYPE_QUERYSTRING ) {
+						self::parseSentences( $obj );
+					}
 				}
 				$new_objs[] = $obj;
 			}
