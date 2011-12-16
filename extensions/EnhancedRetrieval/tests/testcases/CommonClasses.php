@@ -17,6 +17,11 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
+
 /**
  * This file contains common classes for all test cases.
  * 
