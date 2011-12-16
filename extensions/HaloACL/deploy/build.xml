@@ -53,6 +53,11 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
+    <copy todir="bin/zip/extensions/HaloACL/tests">
+      <fileset dir="../tests/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
     <copy todir="bin/zip/extensions/HaloACL/yui">
       <fileset dir="../yui/">
         <exclude name="**/.svn, **/CVS" />

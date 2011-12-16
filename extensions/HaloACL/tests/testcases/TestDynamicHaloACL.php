@@ -16,6 +16,9 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 /**
  * This suite tests the features of "Dynamic HaloACL". The protection of HaloACL
