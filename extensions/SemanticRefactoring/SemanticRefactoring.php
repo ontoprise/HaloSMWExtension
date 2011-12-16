@@ -111,7 +111,9 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_removeQueriesWithProperties',
 						    'sref_removeQueriesWithProperties_help',
 						    'sref_includeSubproperties',
-						    'sref_includeSubproperties_help'
+						    'sref_includeSubproperties_help',
+                        
+                            'sref_not_allowed_botstart'
     ),
     );
 

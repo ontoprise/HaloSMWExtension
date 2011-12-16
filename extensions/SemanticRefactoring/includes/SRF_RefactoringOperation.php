@@ -28,7 +28,11 @@ require_once($srefgIP.'/includes/SRF_Log.php');
 abstract class SRFRefactoringOperation {
 
 	protected $mBot;
-    
+    protected $mRefOpTimeStamp;
+	
+	protected function __construct() {
+		$this->mRefOpTimeStamp = wfTimestampNow();
+	}
     /**
      * Returns the number of pages which get processed in some way.
      * 
@@ -84,6 +88,9 @@ abstract class SRFRefactoringOperation {
 		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
 		if ($userCan == "false") return Status::newFatal("no sufficient rights");
 		$a = new Article($title);
+		if ($this->mRefOpTimeStamp < $a->getTimestamp()) {
+			return Status::newFatal("nothing done. article was changed in the meantime.");
+		}
         $status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
         return $status;
 	}

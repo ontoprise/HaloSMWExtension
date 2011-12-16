@@ -152,30 +152,40 @@
 												$.fancybox.close();
 											});
 
-							// articleTitleTextBox.focus();
+							
 						}
 					});
 		},
 
 		launchBot : function(operation, params) {
 
-			var callBackOnRunBot = function() {
-				alert("Bot started");
+			var onSuccess = function(xhr) {
+				// silently ignore
 			}
 
-			var callBackOnError = function() {
-				alert("Error");
+			var onError = function(xhr) {
+				if (xhr.status == 403) {
+					alert(mw.msg('sref_not_allowed_botstart'));
+				} else {
+					alert(xhr.responseText);
+				}
 			}
-
+			
+			// set bot parameters
 			var paramString = "SRF_OPERATION=" + operation;
 			for (p in params) {
 				paramString += "," + p + "=" + params[p];
 			}
 
-			$.get(mw.config.get('wgScript'), {
-				action : 'ajax',
-				rs : 'smwf_ga_LaunchGardeningBot',
-				rsargs : [ 'smw_refactoringbot', paramString, null, null ]
+			// launch Bot
+			$.ajax({
+				url: mw.config.get('wgScript'),
+				data: {	action : 'ajax',
+						rs : 'smwf_ga_LaunchGardeningBot',
+						rsargs : [ 'smw_refactoringbot', paramString, null, null ] 
+					},
+				success: onSuccess,
+				error: onError
 			});
 
 		}

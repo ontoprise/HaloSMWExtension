@@ -2107,7 +2107,7 @@ OBCatgeorySubMenu.prototype = Object
 
 							// do actual wiki operations
 							this.renameAndMove( {
-								srf_rename_category : doRename
+								sref_rename_category : doRename
 							});
 
 							this.cancel();
@@ -2135,11 +2135,10 @@ OBCatgeorySubMenu.prototype = Object
 					},
 
 					renameAndMove : function(options) {
-						// FIXME: REMOVE THIS
-						return;
+						
 						
 						// check if rename operation necessary
-						var doRename = options.srf_rename_category;
+						var doRename = options.sref_rename_category;
 
 						// check if annotated categories are changed
 						var categoriesToUse = $F(
@@ -2540,7 +2539,7 @@ OBPropertySubMenu.prototype = Object
 
 								// do actual wiki operations
 								this.renameAndMove( {
-									srf_rename_property : doRename
+									sref_rename_property : doRename
 								});
 
 							this.cancel();
@@ -2568,10 +2567,9 @@ OBPropertySubMenu.prototype = Object
 					},
 					
 					renameAndMove : function(options) {
-						// FIXME: REMOVE THIS
-						return;
 						
-						var doRename = options.srf_rename_property;
+						
+						var doRename = options.sref_rename_property;
 						
 						// check if annotated categories are changed
 						var propertiesToUse = $F(
@@ -2911,7 +2909,7 @@ OBInstanceSubMenu.prototype = Object
 							}
 							// do actual wiki operations
 							this.renameAndMove( {
-								srf_rename_instance : doRename
+								sref_rename_instance : doRename
 							});
 							
 							this.cancel();
@@ -2951,10 +2949,9 @@ OBInstanceSubMenu.prototype = Object
 					},
 					
 					renameAndMove : function(options) {
-						// FIXME: REMOVE THIS
-						return;
 						
-						var doRename = options.srf_rename_instance;
+						
+						var doRename = options.sref_rename_instance;
 						
 						// check if annotated categories are changed
 						var categoriesToUse = $F(
@@ -3718,21 +3715,23 @@ OBEditPropertySubMenu.prototype = Object
 					},
 
 					doCommand : function() {
-						var domainCategory = this.selectedTitle;
-
-						var mandatory = $('schemaPropertiesMenu_minCard_ontologytools').checked;
-						var type = $F('typeRange1_ontologytools');
-						var range = $F('typeRange2_ontologytools');
+					
 						var name = $F('schemaPropertiesMenu_propertytitle_ontologytools');
 
-						var reloadProperties = function() {
-							schemaEditPropertyListener.reloadProperties();
-						}
-
 						var propertyTitleChanged = this
-								.hasPropertyTitleChanged();
-
-						if (propertyTitleChanged
+						.hasPropertyTitleChanged();
+						
+						var srefVersion = mw.loader
+						.version('ext.semanticrefactoring.dialogs');
+						if (srefVersion != null) {
+								srefgDialog.openDialog('renameProperty',
+										{
+											oldProperty : this.propertyName,
+											newProperty : name
+										}, this.renameAndChange.bind(this));
+	
+							return;
+						} else if (propertyTitleChanged
 								&& typeof (smwghTripleStoreGraph) != undefined) {
 							var confirmation = confirm(gLanguage
 									.getMessage('OB_RENAME_WARNING'));
@@ -3745,6 +3744,30 @@ OBEditPropertySubMenu.prototype = Object
 								return;
 							}
 						}
+						
+						// do actual wiki operations
+						this.renameAndChange( {
+							sref_rename_property : propertyTitleChanged
+						});
+						
+						this.cancel();
+					},
+					
+					renameAndChange: function(options) {
+												
+						var propertyTitleChanged = options.sref_rename_property;
+						
+						var domainCategory = this.selectedTitle;
+
+						var mandatory = $('schemaPropertiesMenu_minCard_ontologytools').checked;
+						var type = $F('typeRange1_ontologytools');
+						var range = $F('typeRange2_ontologytools');
+						var name = $F('schemaPropertiesMenu_propertytitle_ontologytools');
+
+						var reloadProperties = function() {
+							schemaEditPropertyListener.reloadProperties();
+						}
+						
 						// saves changes
 						if (this.havePropertyCharacteristicsChanged()) {
 
@@ -3774,7 +3797,6 @@ OBEditPropertySubMenu.prototype = Object
 									reloadProperties);
 							this.propertyName = name;
 						}
-						this.cancel();
 					},
 
 					getCommandText : function() {

@@ -25,6 +25,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 	private $subjectDBKeys;
 
 	public function __construct($instanceSet, $property, $oldValue, $newValue) {
+		parent::__construct();
 		foreach($instanceSet as $i) {
 		  $this->instanceSet[] = Title::newFromText($i);
 		}

@@ -29,6 +29,7 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	private $affectedPages;
 
 	public function __construct($oldProperty, $newProperty) {
+		parent::__construct();
 		$this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
 		$this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
 
@@ -190,14 +191,6 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
-		# iterate trough the annotations
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		$changedAnnotation = $this->replacePropertyInAnnotation($objects);
-
-		# iterate trough the links
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$changedLink = $this->replacePropertyInLink($objects);
-
 		# iterate trough queries
 		# better support for ASK would be nice
 		$changedQuery=false;
@@ -220,6 +213,15 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 				}
 			}
 		}
+		
+		# iterate trough the annotations
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		$changedAnnotation = $this->replacePropertyInAnnotation($objects);
+
+		# iterate trough the links
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
+		$changedLink = $this->replacePropertyInLink($objects);
+
 
 		# TODO: iterate through rules
 		# not yet implemented in WOM*/

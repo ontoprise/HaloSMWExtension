@@ -28,6 +28,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	var $affectedPages;
 
 	public function __construct($category, $options) {
+		parent::__construct();
 		$this->property = Title::newFromText($category, SMW_NS_PROPERTY);
 		$this->options = $options;
 	}
@@ -99,7 +100,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	public function refactor($save = true, & $logMessages) {
 		$results = $this->queryAffectedPages();
 
-		if (array_key_exists('sref_deleteProperty', $this->options) && $this->options['sref_deleteProperty'] == true) {
+		if (array_key_exists('sref_deleteProperty', $this->options) && $this->options['sref_deleteProperty'] == "true") {
 			$a = new Article($this->property);
 			$deleted = true;
 			if ($save) {
@@ -117,7 +118,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries']);
 		$set = SRFTools::makeTitleListUnique($set);
 		foreach($set as $i) {
-			if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == true) {
+			if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true") {
 				// if instances are completely removed, there is no need to remove annotations before
 
 				$a = new Article($i);
@@ -137,7 +138,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 			if (is_null($rev)) continue;
 			$wikitext = $rev->getRawText();
 
-			if (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == true
+			if (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == "true"
 			&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
 				$wikitext = $this->removePropertyAnnotation($wikitext);
 
@@ -146,7 +147,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 			}
 
 
-			if (array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == true
+			if (array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == "true"
 			&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
 				$wikitext = $this->removeQuery($wikitext);
 				if ($save) {
@@ -166,7 +167,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		}
 
 
-		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == true) {
+		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == "true") {
 			foreach($results['directSubcategories'] as $p) {
 				$op = new SRFDeletePropertyOperation($p, $this->options);
 				$op->refactor($save, $logMessages, $testData);

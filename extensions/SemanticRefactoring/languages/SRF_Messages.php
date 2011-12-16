@@ -2,6 +2,7 @@
 $messages = array();
 
 $messages['en'] = array(
+    'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Start refactoring',
 
     /*rename*/
@@ -37,15 +38,17 @@ $messages['en'] = array(
 	'sref_removeQueriesWithProperties' => 'Remove all queries containing this category',
     'sref_removeQueriesWithProperties_help' =>  '!!TODO: HELP TEXT!!',
     'sref_includeSubproperties' => 'Include sub-properties',
-    'sref_includeSubproperties_help' =>  '!!TODO: HELP TEXT!!'
+    'sref_includeSubproperties_help' =>  '!!TODO: HELP TEXT!!',
 
-
+    /* errors */
+    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.'
 );
 
 /**
  * German (Deutsch)
  */
 $messages['de'] = array(
+    'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Starte Refactoring',
     
     /*rename*/
@@ -81,7 +84,10 @@ $messages['de'] = array(
     'removeQueriesWithProperties' => 'Remove all queries containing this category',
     'removeQueriesWithProperties_help' =>  '!!TODO: HELP TEXT!!',
     'includeSubproperties' => 'Include sub-properties',
-    'includeSubproperties_help' =>  '!!TODO: HELP TEXT!!'
+    'includeSubproperties_help' =>  '!!TODO: HELP TEXT!!',
+
+    /* errors */
+    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.'
 );
 
 /**

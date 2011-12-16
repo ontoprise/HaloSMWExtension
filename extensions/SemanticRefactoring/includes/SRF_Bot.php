@@ -150,6 +150,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Category missing";
 				}
 				$category = $paramArray['category'];
+				
 				$op = new SRFDeleteCategoryOperation($category, $paramArray);
 				
 				break;
@@ -169,7 +170,7 @@ class SRFRefactoringBot extends GardeningBot {
 		$this->addSubTask($num);
 
 		$logMessages=array();
-		$op->refactor(false, $logMessages);
+		$op->refactor(true, $logMessages);
 
 		ksort($logMessages);
 		$log = "";

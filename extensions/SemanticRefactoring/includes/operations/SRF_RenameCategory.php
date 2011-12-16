@@ -25,6 +25,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 
 
 	public function __construct($oldCategory, $newCategory) {
+		parent::__construct();
 		$this->oldCategory = Title::newFromText($oldCategory, NS_CATEGORY);
 		$this->newCategory = Title::newFromText($newCategory, NS_CATEGORY);
 
@@ -153,20 +154,6 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
-
-		# iterate trough the annotations
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
-		$changedCategoryAnnotation = $this->replaceCategoryInAnnotation($objects);
-
-		# iterate through the annotation values
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
-		$changedCategoryValue = $this->replaceValueInAnnotation($objects);
-
-
-		# iterate trough the links
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$changedCategoryLink = $this->replaceCategoryInLink($objects);
-
 		# iterate trough queries
 		# better support for ASK would be nice
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
@@ -183,6 +170,20 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 
 			}
 		}
+
+		# iterate trough the annotations
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
+		$changedCategoryAnnotation = $this->replaceCategoryInAnnotation($objects);
+
+		# iterate through the annotation values
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		$changedCategoryValue = $this->replaceValueInAnnotation($objects);
+
+
+		# iterate trough the links
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
+		$changedCategoryLink = $this->replaceCategoryInLink($objects);
+
 
 		# TODO: iterate through rules
 		# not yet implemented in WOM*/
