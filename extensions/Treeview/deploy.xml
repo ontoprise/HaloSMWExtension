@@ -3,7 +3,7 @@
 	<global>
 		<id>treeview</id>
 		<title>Semantic Treeview extension</title>
-		<version>1.4.5</version>
+		<version>2.0.0</version>
         <license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
