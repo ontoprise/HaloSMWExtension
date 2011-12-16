@@ -201,14 +201,15 @@ hr {
   border-bottom: 1px solid #AAAAAA;
 }
 
-.qiboxcontent{
+.qiBoxcontent{
   padding-left: 10px;
   padding-top: 5px;
   padding-right: 10px;
   padding-bottom: 5px;
+  font-size: 10px;
 }
 
-.qiboxcontent img{
+.qiBoxcontent img{
   border:1px solid #999999;
   cursor:pointer;
 }
@@ -644,7 +645,8 @@ button.btnhov{
   border-collapse: collapse;
 }
 
-#qiBoxcontent table{
+#qiBoxcontent select{
+  width: 155px;
 }
 
 #qiBoxcontent table td{
@@ -724,8 +726,8 @@ button.btnhov{
   font-size: 11px;
 }
 
-.selectedInputBox{
-  border: 1px solid #FF9900;
+#qiCategoryDialogTable input[type=text]:focus{
+  border: 2px inset gray;
 }
 
 #sparqlQI{
@@ -739,3 +741,21 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
   background-repeat: no-repeat;
   background: url("images/or.png") no-repeat scroll 0 0 transparent;
 }
+
+.tableSectionTitle{
+  font-weight: bold;
+  color: gray;
+  padding-bottom: 4px;
+  padding-right: 4px;
+}
+
+#qiQueryParameterTable{
+  border-top: 1px solid silver;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qiQueryParameterTable input[type=text], #qiQueryParameterTable select{
+  width: 130px;
+}
+

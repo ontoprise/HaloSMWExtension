@@ -863,6 +863,10 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 
 
 function qiGetPropertyInformation($relationName) {
+  if(!isset($relationName) || is_null($relationName)){
+    return null;
+  }
+  
   global $smwgContLang, $smwgHaloContLang;
   $relationName = htmlspecialchars_decode($relationName);
   $range = '';
@@ -898,10 +902,13 @@ function qiGetPropertyInformation($relationName) {
         $units = qiGetPropertyCustomTypeInformation($relationName);
       }
     }
+
+    //get xsd type
+    $xsdType = ' xsdType="' . WikiTypeToXSD::getXSDType($type) . '" ';
   }
   //output type value
   $relSchema = '<relationSchema name="' . $relationName . '" arity="' . $arity . '">' .
-          '<param name="' . $paramName . '" type="' . $type . '" ' . $range . '>' .
+          '<param name="' . $paramName . '" type="' . $type . '" ' . $range . $xsdType .'>' .
           $units .
           '</param>' .
           '</relationSchema>';
@@ -1055,3 +1062,15 @@ function qiCheckHash($token, $hash) {
   list($new_token, $new_hash) = qiCreateHash($token);
   return ($hash == $new_hash);
 }
+
+function smwf_qi_translateASK($askQuery) {
+  //call SMWSPARQLQueryProcessor::translateASK
+
+  //which will create a tsc connection object: TSConnection::getConnector()
+
+  //then call connector->translateASK()
+
+  
+}
+
+

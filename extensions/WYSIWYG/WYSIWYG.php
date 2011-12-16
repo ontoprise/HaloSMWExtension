@@ -136,7 +136,7 @@ $wgHooks['BeforePageDisplay'][]                 = 'CKeditor_MediaWiki::onBeforeP
 
 // Defaults for new preferences options
 $wgDefaultUserOptions['riched_use_toggle'] = 1;
-$wgDefaultUserOptions['riched_start_disabled'] = 1;
+$wgDefaultUserOptions['riched_start_disabled'] = 0;
 $wgDefaultUserOptions['riched_use_popup'] = 1;
 $wgDefaultUserOptions['riched_toggle_remember_state'] = 1;
 

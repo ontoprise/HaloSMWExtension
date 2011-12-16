@@ -430,7 +430,7 @@ class CKeditor_MediaWiki {
 				$this->showFCKEditor += RTE_TOGGLE_LINK;
 			}
 		}
-        if (!isset( $this->loadSTBonStartup ) ) {
+        if (defined('SMW_HALO_VERSION') && !isset( $this->loadSTBonStartup ) ) {
             $this->loadSTBonStartup = 0;
             if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
 				$this->loadSTBonStartup = 1;

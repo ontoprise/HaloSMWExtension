@@ -341,6 +341,8 @@ clicking the big arrows between the columns.',
       'smw_qi_value_must_be_set' => 'Value must be set',
       'smw_qi_value_name' => 'Value name',
       'smw_qi_parserFunc' => 'Parser Function',
+      'smw_qi_property' => 'Property',
+      'smw_qi_value' => 'Value',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',
