@@ -139,14 +139,17 @@ function smwf_ts_getWikiNamespaces() {
 function smwf_ts_getWikiSpecialProperties() {
 
     global $wgContLang, $smwgHaloContLang, $smwgContLang;
-    $specialProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+    $specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
     $specialCategories = $smwgHaloContLang->getSpecialCategoryArray();
+    $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
     $specialPropertiesSMW = $smwgContLang->getPropertyLabels();
+    
+    
 
-    $result = "HAS_DOMAIN_AND_RANGE=".$specialProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].",".
-                "HAS_MIN_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MIN_CARD].",".
-                "HAS_MAX_CARDINALITY=".$specialProperties[SMW_SSP_HAS_MAX_CARD].",".
-                "IS_INVERSE_OF=".$specialProperties[SMW_SSP_IS_INVERSE_OF].",".
+    $result = "HAS_DOMAIN_AND_RANGE=".$specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].",".
+                "HAS_MIN_CARDINALITY=".$specialSchemaProperties[SMW_SSP_HAS_MIN_CARD].",".
+                "HAS_MAX_CARDINALITY=".$specialSchemaProperties[SMW_SSP_HAS_MAX_CARD].",".
+                "IS_INVERSE_OF=".$specialSchemaProperties[SMW_SSP_IS_INVERSE_OF].",".
                 "TRANSITIVE_PROPERTIES=".$specialCategories[SMW_SC_TRANSITIVE_RELATIONS].",".
                 "SYMETRICAL_PROPERTIES=".$specialCategories[SMW_SC_SYMMETRICAL_RELATIONS].",".
                 "CORRESPONDS_TO=".$specialPropertiesSMW['_CONV'].",".
@@ -158,7 +161,11 @@ function smwf_ts_getWikiSpecialProperties() {
                 "IMPORTED_FROM=".$specialPropertiesSMW['_IMPO'].",".
                 "PROVIDES_SERVICE=".$specialPropertiesSMW['_SERV'].",".
                 "ALLOWS_VALUE=".$specialPropertiesSMW['_PVAL'].",".
-                "HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'].",";
+                "SUBPROPERTY_OF=".$specialPropertiesSMW['_SUBP'].",".
+                "HAS_IMPROPER_VALUE_FOR=".$specialPropertiesSMW['_ERRP'].",".
+			    "CREATOR=".$specialProperties['___CREA'][1].",".
+			    "CREATION_DATE=".$specialProperties['___CREADT'][1].",".
+			    "MODIFIER=".$specialProperties['___MOD'][1].",";
 
     // these two namespaces are required for ASK queries
     $result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";

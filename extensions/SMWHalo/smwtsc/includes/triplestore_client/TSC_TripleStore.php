@@ -369,6 +369,36 @@ class SMWTripleStore extends SMWStoreAdapter {
                     $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
                 }
                 continue;
+            } elseif ($property->getKey() == "___CREA") {
+            	global $smwgHaloContLang;
+            	$specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+                $propertyLabel = str_replace(" ","_",$specialProperties['___CREA'][1]);
+                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+                foreach($propertyValueArray as $value) {
+                    $object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
+                    $triples[] = array($subject_iri, $property_iri, $object_iri);
+                }
+                continue;
+            } elseif ($property->getKey() == "___CREADT") {
+                global $smwgHaloContLang;
+                $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+                $propertyLabel = str_replace(" ","_",$specialProperties['___CREADT'][1]);
+                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+                foreach($propertyValueArray as $value) {
+                    $string = TSHelper::serializeDataItem($value);
+                    $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
+                }
+                continue;
+            } elseif ($property->getKey() == "___MOD") {
+                global $smwgHaloContLang;
+                $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+                $propertyLabel = str_replace(" ","_",$specialProperties['___MOD'][1]);
+                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+                foreach($propertyValueArray as $value) {
+                    $object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
+                    $triples[] = array($subject_iri, $property_iri, $object_iri);
+                }
+                continue;
             }
 
 
