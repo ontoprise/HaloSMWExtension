@@ -29,9 +29,12 @@ abstract class SRFRefactoringOperation {
 
 	protected $mBot;
     protected $mRefOpTimeStamp;
+    
+    private $mGardeningLogCategory;
 	
 	protected function __construct() {
 		$this->mRefOpTimeStamp = wfTimestampNow();
+		$this->mGardeningLogCategory = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
 	}
     /**
      * Returns the number of pages which get processed in some way.
@@ -86,10 +89,13 @@ abstract class SRFRefactoringOperation {
 	 */
 	protected function storeArticle($title, $wikitext, $comment) {
 		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
-		if ($userCan == "false") return Status::newFatal("no sufficient rights");
+		if ($userCan == "false") return Status::newFatal(wfMsg('sref_no_sufficient_rights'));
 		$a = new Article($title);
 		if ($this->mRefOpTimeStamp < $a->getTimestamp()) {
-			return Status::newFatal("nothing done. article was changed in the meantime.");
+			return Status::newFatal(wfMsg('sref_article_changed'));
+		}
+		if (smwfGetSemanticStore()->isInCategory($title, $this->mGardeningLogCategory)) {
+			return Status::newFatal(wfMsg('sref_do_not_change_gardeninglog'));
 		}
         $status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
         return $status;

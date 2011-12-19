@@ -36,14 +36,14 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 	public function getNumberOfAffectedPages() {
 
 		$this->affectedPages = $this->queryAffectedPages();
-		$num += (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true)
-		|| (array_key_exists('removePropertyAnnotations', $this->options) && $this->options['removePropertyAnnotations'] == true) ? count($affectedPages['instances']) : 0;
+		$num = (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true")
+		|| (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == "true") ? count($this->affectedPages['instances']) : 0;
 
-		$num += array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true ? count($affectedPages['queries']) : 0;
+		$num += array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == "true" ? count($this->affectedPages['queries']) : 0;
 
-		if (array_key_exists('includeSubproperties', $this->options) && $this->options['includeSubproperties'] == true) {
+		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == "true") {
 
-			if (array_key_exists('removeInstancesUsingProperty', $this->options) && $this->options['removeInstancesUsingProperty'] == true) {
+			if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true") {
 				$num += $smwfGetSemanticStore()->getNumberOfUsage($this->property);
 			} else {
 				$subproperties = $store->getSubProperties($this->property);

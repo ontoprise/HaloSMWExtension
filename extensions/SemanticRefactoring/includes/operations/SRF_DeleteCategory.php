@@ -37,14 +37,14 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 	public function getNumberOfAffectedPages() {
 
 		$this->affectedPages = $this->queryAffectedPages();
-		$num += (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true)
-		|| (array_key_exists('removeCategoryAnnotations', $this->options) && $this->options['removeCategoryAnnotations'] == true) ? count($affectedPages['instances']) : 0;
+		$num = (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true")
+		|| (array_key_exists('sref_removeCategoryAnnotations', $this->options) && $this->options['sref_removeCategoryAnnotations'] == "true") ? count($this->affectedPages['instances']) : 0;
 
-		$num += array_key_exists('removeQueries', $this->options) && $this->options['removeQueries'] == true ? count($affectedPages['queries']) : 0;
+		$num += array_key_exists('sref_removeQueriesWithCategories', $this->options) && $this->options['sref_removeQueriesWithCategories'] == "true" ? count($this->affectedPages['queries']) : 0;
 
-		if (array_key_exists('includeSubcategories', $this->options) && $this->options['includeSubcategories'] == true) {
+		if (array_key_exists('sref_includeSubcategories', $this->options) && $this->options['sref_includeSubcategories'] == "true") {
 
-			if (array_key_exists('removeInstances', $this->options) && $this->options['removeInstances'] == true) {
+			if (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true") {
 				$num += $smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories();
 			} else {
 				$subcategories = $store->getSubCategories($this->category);

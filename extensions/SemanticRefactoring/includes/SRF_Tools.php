@@ -26,9 +26,8 @@ class SRFTools {
 		global $wgUser;
 		$reason = "Removed by Semantic Refactoring extension";
 		if ( wfRunHooks( 'ArticleDelete', array( &$a, &$wgUser, &$reason, &$error ) ) ) {
-			if ( $this->doDeleteArticle( $reason ) ) {
-				$deleted = $this->mTitle->getPrefixedText();
-				wfRunHooks( 'ArticleDeleteComplete', array( &$this, &$wgUser, $reason, $id ) );
+			if ( $a->doDeleteArticle( $reason ) ) {
+				wfRunHooks( 'ArticleDeleteComplete', array( &$a, &$wgUser, $reason, $id ) );
 				return true;
 			}
 		}

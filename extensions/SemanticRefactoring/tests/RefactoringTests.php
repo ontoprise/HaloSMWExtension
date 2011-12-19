@@ -20,20 +20,21 @@
 /**
  * @file
  * @ingroup RefactoringTests
- * 
+ *
  * @defgroup RefactoringTests Semantic Refactoring unit tests
  * @ingroup SemanticRefactoring
- * 
+ *
  * @author Kai
  */
 if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-    die( "This script must be run from the command line\n" );
+	die( "This script must be run from the command line\n" );
 }
 
 require_once 'testcases/SRF_TestRenameProperty.php';
 require_once 'testcases/SRF_TestRenameCategory.php';
 require_once 'testcases/SRF_TestRenameInstance.php';
 require_once 'testcases/SRF_TestChangeValue.php';
+require_once 'testcases/SRF_TestChangeTemplateParameter.php';
 require_once 'testcases/SRF_TestDeleteCategory.php';
 require_once 'testcases/SRF_TestDeleteProperty.php';
 require_once 'testcases/SRF_TestUtil.php';
@@ -41,18 +42,24 @@ require_once 'testcases/SRF_TestUtil.php';
 class SemanticRefactoringTests
 {
 	protected $backupGlobals = FALSE;
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('SemanticRefactoring');
-        $suite->addTestSuite("SRFTestDeleteProperty");
-        $suite->addTestSuite("SRFTestDeleteCategory");
-        
-        $suite->addTestSuite("SRFTestRenameCategory");
-        $suite->addTestSuite("SRFTestRenameProperty");
-        $suite->addTestSuite("SRFTestRenameInstance");
-        $suite->addTestSuite("SRFTestChangeValue");
-        
-        $suite->addTestSuite("SRFTestUtil");
-        return $suite;
-    }
+	public static function suite()
+	{
+		$suite = new PHPUnit_Framework_TestSuite('SemanticRefactoring');
+		
+		/*delete*/
+		$suite->addTestSuite("SRFTestDeleteProperty");
+		$suite->addTestSuite("SRFTestDeleteCategory");
+
+		/*rename*/
+		$suite->addTestSuite("SRFTestRenameCategory");
+		$suite->addTestSuite("SRFTestRenameProperty");
+		$suite->addTestSuite("SRFTestRenameInstance");
+		
+		/*change*/
+		$suite->addTestSuite("SRFTestChangeValue");
+		$suite->addTestSuite("SRFTestChangeTemplateParameter");
+
+		$suite->addTestSuite("SRFTestUtil");
+		return $suite;
+	}
 }

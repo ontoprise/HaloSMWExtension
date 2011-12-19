@@ -41,7 +41,12 @@ $messages['en'] = array(
     'sref_includeSubproperties_help' =>  '!!TODO: HELP TEXT!!',
 
     /* errors */
-    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.'
+    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.',
+    'sref_no_sufficient_rights' => 'no sufficient rights',
+	'sref_article_changed' => 'nothing done. article was changed in the meantime.',
+	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page'
+	
+	/* special pages */
 );
 
 /**
@@ -87,7 +92,12 @@ $messages['de'] = array(
     'includeSubproperties_help' =>  '!!TODO: HELP TEXT!!',
 
     /* errors */
-    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.'
+    'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.',
+    'sref_no_sufficient_rights' => 'no sufficient rights',
+    'sref_article_changed' => 'nothing done. article was changed in the meantime.',
+    'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page'
+    
+    /* special pages */
 );
 
 /**
