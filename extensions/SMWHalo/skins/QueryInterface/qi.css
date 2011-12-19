@@ -727,7 +727,7 @@ button.btnhov{
 }
 
 #qiCategoryDialogTable input[type=text]:focus{
-  border: 2px inset gray;
+/*  border: 2px inset gray;*/
 }
 
 #sparqlQI{
@@ -757,5 +757,9 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
 
 #qiQueryParameterTable input[type=text], #qiQueryParameterTable select{
   width: 130px;
+}
+
+#qiSubjectDialog #qiAddAndFilterLink{
+  display: none;
 }
 

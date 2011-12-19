@@ -107,6 +107,12 @@ function smgSetupExtension() {
         'dependencies' => 'jquery.cookie'
 	);
 
+     $wgResourceModules['ext.jquery.jec'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/jec/jquery.jec-1.3.3.js'
+        )
+	);
+
 
 
     
