@@ -27,9 +27,6 @@ $wgHooks['LanguageGetMagic'][] = 'ASFDataPickerParserFunction::languageGetMagic'
 
 function dapi_refreshData($wsParam, $dapiId, $selectedIds, $containerId){
 	
-	global $smwgDIIP;
-	require_once($smwgDIIP.'/specials/WebServices/SMW_WebServiceUsage.php');
-	
 	global $dapi_instantiations;
 	
 	$wsCallParameters = array();
@@ -40,7 +37,7 @@ function dapi_refreshData($wsParam, $dapiId, $selectedIds, $containerId){
 	$wsCallParameters[] = "?result.".$dapi_instantiations[$dapiId]['label'];
 	
 	$parser = null;
-	$wsresult = SMWWebServiceUsage::processCall($parser, $wsCallParameters, true, false, true);
+	$wsresult = DIWebServiceUsage::processCall($parser, $wsCallParameters, true, false, true);
 	
 	$resultItems = array();
 	if(is_array($wsresult)){
