@@ -79,6 +79,7 @@ TreeView.classes.TreeViewLoader = function() {
 			var node = tree._get_node(elem);
 			var property = $(elem).attr('property');
 			var solrQuery = $(elem).attr('solrQuery');
+			solrQuery = solrQuery.replace(/&amp;/g, '&');
 			var solrMgr = TreeView.classes.SolrTreeViewManager();
 			solrMgr.setTreeProperty(property);
 			if (solrQuery) {
