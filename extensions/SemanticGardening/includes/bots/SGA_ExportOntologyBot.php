@@ -881,5 +881,6 @@ class ExportOntologyBotFilter extends GardeningIssueFilter {
 	}
 }
 // create one instance for registration at Gardening Framework
-new ExportOntologyBot();
+// bot is disabled. it will be replaced soon
+//new ExportOntologyBot();
 
