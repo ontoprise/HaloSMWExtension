@@ -14,7 +14,9 @@ class WOMParameterParser extends WikiObjectModelParser {
 	}
 
 	private function parseAsk ( $text, WikiObjectModelCollection $parentObj ) {
-		if ( !defined( 'SMW_VERSION' ) ) return null;
+		if ( !defined( 'SMW_VERSION' ) 
+			|| !( $parentObj instanceof WOMParserFunctionModel ) )
+				return null;
 
 		if ( trim( strtolower( $parentObj->getFunctionKey() ) ) != 'ask' ) return null;
 
