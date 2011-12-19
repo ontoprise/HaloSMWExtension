@@ -76,7 +76,7 @@ class ApiWOMGetObjectModel extends ApiBase {
 					header ( "Content-Type: application/rdf+xml" );
 					echo <<<OUTPUT
 <?xml version="1.0" encoding="UTF-8" ?>
-<api><womget result="Success"><return>
+<api><womget result="Success" revisionID="{$page_obj->getRevisionID()}"><return>
 {$xml}
 </return></womget></api>
 OUTPUT;
