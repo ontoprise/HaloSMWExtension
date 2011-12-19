@@ -44,9 +44,11 @@ $messages['en'] = array(
     'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.',
     'sref_no_sufficient_rights' => 'no sufficient rights',
 	'sref_article_changed' => 'nothing done. article was changed in the meantime.',
-	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page'
+	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
 	
 	/* special pages */
+    'sref_specialrefactor' => 'Semantic Refactoring',
+    'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
 );
 
 /**
@@ -95,9 +97,11 @@ $messages['de'] = array(
     'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.',
     'sref_no_sufficient_rights' => 'no sufficient rights',
     'sref_article_changed' => 'nothing done. article was changed in the meantime.',
-    'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page'
+    'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
     
     /* special pages */
+    'sref_specialrefactor' => 'Semantic Refactoring',
+    'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
 );
 
 /**

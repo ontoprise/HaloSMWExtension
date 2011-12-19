@@ -35,7 +35,11 @@ $smgJSLibs[] = 'fancybox';
 
 $wgExtensionFunctions[] = 'sreffSetupExtension';
 function sreffSetupExtension() {
-	global $srefgIP; $wgAutoloadClasses;
+	global $srefgIP, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
+	
+	$wgAutoloadClasses['SREFRefactor'] = $srefgIP . '/specials/refactor/SRF_SpecialRefactor.php';
+    $wgSpecialPages['SREFRefactor'] = array('SREFRefactor');
+    $wgSpecialPageGroups['SREFRefactor'] = 'smwplus_group';
 
 	// autoload classes
 	$wgAutoloadClasses['SRFRefactoringBot'] = $srefgIP . '/includes/SRF_Bot.php';
@@ -117,9 +121,11 @@ function sreffRegisterJSModules(& $out) {
     ),
     );
 
-    //  sreffRegisterJSLanguageModules($out);
+    
     // add modules
     $out->addModules(array('ext.semanticrefactoring.dialogs'));
+    
+   
 }
 
 
