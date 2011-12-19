@@ -264,14 +264,16 @@ class SMWTripleStore extends SMWStoreAdapter {
 				continue; // do not process normal triple generation, if hook provides triples.
 			}
 
+			global $smwgContLang;
+			$specialProperties = $smwgContLang->getPropertyLabels();
+
 			// handle properties with special semantics
 			if ($property->getKey() == "_TYPE") {
 				// ingore. handeled by SMW_TS_SchemaContributor or SMW_TS_SimpleContributor
 				continue;
 			} elseif ($property->getKey() == "_CONV") {
 
-				global $smwgContLang;
-				$specialProperties = $smwgContLang->getPropertyLabels();
+
 				$conversionPropertyLabel = str_replace(" ","_",$specialProperties['_CONV']);
 				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $conversionPropertyLabel);
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
@@ -305,30 +307,43 @@ class SMWTripleStore extends SMWStoreAdapter {
 				}
 				continue;
 			} elseif ($property->getKey() == "_UNIT") {
+
+				$propertyLabel = str_replace(" ","_",$specialProperties['_UNIT']);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
 				foreach($propertyValueArray as $value) {
 					$string = $value->getString();
 					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
 				}
 				continue;
 			} elseif ($property->getKey() == "_IMPO") {
+
+				$propertyLabel = str_replace(" ","_",$specialProperties['_IMPO']);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
 				foreach($propertyValueArray as $value) {
+					if (!($value instanceof SMWDIString)) continue;
 					$string = $value->getString();
 					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
 				}
 				continue;
 			} elseif ($property->getKey() == "_URI") {
+				$propertyLabel = str_replace(" ","_",$specialProperties['_URI']);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
 				foreach($propertyValueArray as $value) {
 					$uri = $value->getURI();
 					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($uri)."\"^^xsd:anyURI");
 				}
 				continue;
 			} elseif ($property->getKey() == "_SERV") {
+				$propertyLabel = str_replace(" ","_",$specialProperties['_SERV']);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
 				foreach($propertyValueArray as $value) {
 					$string = $value->getString();
 					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
 				}
 				continue;
 			} elseif ($property->getKey() == "_PVAL") {
+				$propertyLabel = str_replace(" ","_",$specialProperties['_PVAL']);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
 				foreach($propertyValueArray as $value) {
 					$string = $value->getString();
 					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
@@ -346,7 +361,15 @@ class SMWTripleStore extends SMWStoreAdapter {
 					$triples[] = array($subject_iri, "tsctype:concept", "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:string");
 				}
 				continue;
-			}
+			} elseif ($property->getKey() == "_MDAT") {
+				$propertyLabel = str_replace(" ","_",$specialProperties['_MDAT']);
+                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+                foreach($propertyValueArray as $value) {
+                    $string = TSHelper::serializeDataItem($value);
+                    $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
+                }
+                continue;
+            }
 
 
 			// there are other special properties which need not to be handled special
@@ -603,7 +626,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
 				}
-				 
+					
 				// check for valid UTF8
 				if (!$this->isUTF8($response)) {
 					$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
@@ -821,7 +844,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 				// native SPARQL query, no main variable
 				// however, it may contain _X_ if a query from translateASK webservice is used.
-				
+
 				if (count($variableSet) > 0 && "_X_" == $variableSet[0]) {
 					// SPARQL query contains ?_X_, interprete it as main column
 					$hasMainColumn = true;
