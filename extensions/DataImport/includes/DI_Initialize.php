@@ -73,20 +73,6 @@ function enableDataImportExtension() {
 	
 	global $wgHooks;
 	$wgHooks['LanguageGetMagic'][] = 'difSetupMagic';
-	
-	global $wgAutoloadClasses;
-	$wgAutoloadClasses['SMWWSSMWAskPage']  = 
-		$smwgDIIP.'/specials/WebServices/smwstoragelayer/SMW_WSSMWAskPage.php';
-	
-	//WS result printers	
-	$wgAutoloadClasses['SMWQPWSSimpleTable'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSSimpleTable.php';
-	$wgAutoloadClasses['SMWQPWSTransposed'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTransposed.php';
-	$wgAutoloadClasses['SMWQPWSTIXML'] = $smwgDIIP . '/specials/WebServices/resultprinters/SMW_QP_WSTIXML.php';
-
-	global $smwgResultFormats;
-	$smwgResultFormats['simpletable'] = 'SMWQPWSSimpleTable'; 
-	$smwgResultFormats['transposed'] = 'SMWQPWSTransposed';
-	$smwgResultFormats['tixml'] = 'SMWQPWSTIXML';
 }
 
 /**
@@ -100,16 +86,10 @@ function smwfDISetupExtension() {
 	
 	//solves issue with maintenance mode and not yet initialized Di database tables
 	if(defined( 'DO_MAINTENANCE' )){
-		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-		if(!WSStorage::getDatabase()->isInitialized()){
+		if(!difGetWSStore()->isInitialized()){
 			return true;
 		}
 	}
-	
-	//enable webservice als src in ask queries
-	global $smwgQuerySources;
-	$smwgQuerySources['webservice'] = 'SMWWSSMWStore';
-	require_once($smwgDIIP. '/specials/WebServices/smwstoragelayer/SMW_WSSMWStore.php');
 	
 	//autoload classes
 	//Term IMport Framework	
@@ -159,14 +139,86 @@ function smwfDISetupExtension() {
 		$smwgDIIP.'/includes/TermImport/Bots/DI_TermImportBot.php';
 	$wgAutoloadClasses['TermImportUpdateBot'] = 
 		$smwgDIIP.'/includes/TermImport/Bots/DI_TermImportUpdateBot.php';
+
+	//conflict policies and helpers
+	$wgAutoloadClasses['DIConflictPolicy'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_ConflictPolicy.php';
+	$wgAutoloadClasses['DICPOverwrite'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_CP_Overwrite.php';
+	$wgAutoloadClasses['DICPIgnore'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_CP_Ignore.php';
+	$wgAutoloadClasses['DICPAppendSome'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_CP_AppendSome.php';	
+	$wgAutoloadClasses['DICPHArticleAccess'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_CPH_ArticleAccess.php';
+	$wgAutoloadClasses['DICPHIdentityChecker'] =
+		$smwgDIIP.'/includes/TermImport/ConflictPolicies/DI_CPH_IdentityChecker.php';
+		
+	//Web Services
+	$wgAutoloadClasses['DIWebService'] =
+		$smwgDIIP.'/includes/WebServices/DI_WebService.php';
+	$wgAutoloadClasses['DIWebServiceUsage'] =
+		$smwgDIIP.'/includes/WebServices/DI_WebServiceUsage.php';
+	$wgAutoloadClasses['DIWebServiceCache'] =
+		$smwgDIIP.'/includes/WebServices/DI_WebServiceCache.php';
+	$wgAutoloadClasses['IDIWebServiceClient'] =
+		$smwgDIIP.'/includes/WebServices/DI_IWebServiceClient.php';
+	$wgAutoloadClasses['DISubParameterProcessor'] =
+		$smwgDIIP.'/includes/WebServices/DI_SubParameterProcessor.php';
+	$wgAutoloadClasses['DIXPathProcessor'] =
+		$smwgDIIP.'/includes/WebServices/DI_XPathProcessor.php';
+		
+	//clients	
+		
+	//smwstorage layer	
+	$wgAutoloadClasses['DIWSQueryResult'] =
+		$smwgDIIP.'/includes/WebServices/smwstoragelayer/DI_WSQueryResult.php';
+	$wgAutoloadClasses['DIWSResultArray'] =
+		$smwgDIIP.'/includes/WebServices/smwstoragelayer/DI_WSQueryResult.php';
+	$wgAutoloadClasses['DIWSSMWStore'] =
+		$smwgDIIP.'/includes/WebServices/smwstoragelayer/DI_WSSMWStore.php';
+			
+	//Specials
+	$wgAutoloadClasses['DIWebServicePage'] =
+		$smwgDIIP.'/specials/WebServices/DI_WebServicePage.php';
+	$wgAutoloadClasses['DISMWAskPageReplacement']  = 
+		$smwgDIIP.'/specials/WebServices/AskSpecial/DI_SMWAskPageReplacement.php';
+
+	//WS result printers	
+	$wgAutoloadClasses['DIQPWSSimpleTable'] = 
+		$smwgDIIP . '/includes/WebServices/resultprinters/DI_QP_WSSimpleTable.php';
+	$wgAutoloadClasses['DIQPWSTransposed'] = 
+		$smwgDIIP . '/includes/WebServices/resultprinters/DI_QP_WSTransposed.php';
+	$wgAutoloadClasses['DIQPWSTIXML'] = 
+		$smwgDIIP . '/includes/WebServices/resultprinters/DI_QP_WSTIXML.php';
+
 	
+	//register query printers
+	global $smwgResultFormats;
+	$smwgResultFormats['simpletable'] = 'DIQPWSSimpleTable'; 
+	$smwgResultFormats['transposed'] = 'DIQPWSTransposed';
+	$smwgResultFormats['tixml'] = 'DIQPWSTIXML';
+		
+	//register conflict policies
+	global $ditigConflictPolicies;
+	$ditigConflictPolicies['ignore'] = 'DICPIgnore';
+	$ditigConflictPolicies['overwrite'] = 'DICPOverwrite';	
+	$ditigConflictPolicies['append some'] = 'DICPAppendSome';
+	
+	//enable webservice als src in ask queries
+	global $smwgQuerySources;
+	$smwgQuerySources['webservice'] = 'DIWSSMWStore';
+		
 	//todo:remove this
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
 	WebServiceManager::initWikiWebServiceExtension();
 	
+	//set all parser hooks
 	global $wgParser;
-	$wgParser->setFunctionHook( 'webServiceUsage', 'wsuf_Render' );
+	$wgParser->setFunctionHook( 'webServiceUsage', 'DIWebServiceUsage::renderWSParserFunction' );
 	$wgParser->setHook('ImportSettings', 'DITermImportPage::renderTermImportDefinition');
+	$wgHooks['ArticleSaveComplete'][] = 'DIWebServiceUsage::detectEditedWSUsages';
+	$wgHooks['ArticleDelete'][] = 'DIWebServiceUsagedetectDeletedWSUsages';
 	
 	//introduce resource modules
 	global $wgResourceModules;
@@ -183,11 +235,27 @@ function smwfDISetupExtension() {
 			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
 		);
 		
+	$wgResourceModules['ext.dataimport.defws'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('scripts/WebServices/def-webservices.js'),
+			'styles' => array('skins/webservices/webservices.css'),
+			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
+		);
 		
 	$wgResourceModules['ext.dataimport.usews'] = 
 		$commonProperties + 
 		array(
 			'scripts' => array('scripts/WebServices/use-webservice.js'),
+			'styles' => array('skins/webservices/webservices.css'),
+			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
+		);
+		
+		
+	$wgResourceModules['ext.dataimport.rep'] = 
+		$commonProperties + 
+		array(
+			'scripts' => array('scripts/WebServices/webservices-rep.js'),
 			'styles' => array('skins/webservices/webservices.css'),
 			'dependencies' => array('ext.dataimport.lang', 'ext.ScriptManager.prototype'),
 		);
@@ -222,10 +290,11 @@ function smwfDISetupExtension() {
 				require_once($smwgDIIP . '/includes/TermImport/DI_CL.php');
 				break;
 			case '_wsu_' : 
-				require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
+				require_once($smwgDIIP . '/specials/WebServices/DI_UseWebServiceAjaxAccess.php');
 				break;
-			case '_ws_' :  require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositoryAjaxAccess.php');
-				require_once($smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceAjaxAccess.php');
+			case '_ws_' :  
+				require_once($smwgDIIP . '/specials/WebServices/DI_WebServiceRepositoryAjaxAccess.php');
+				require_once($smwgDIIP . '/specials/WebServices/DI_DefineWebServiceAjaxAccess.php');
 				break;
 		} 
 	} else { // otherwise register special pages
@@ -235,20 +304,21 @@ function smwfDISetupExtension() {
 		$wgSpecialPages['TermImport'] = array('DITermImportSpecial');
 		$wgSpecialPageGroups['TermImport'] = 'di_group';
 		
-		$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositorySpecial.php';
-		$wgSpecialPages['DataImportRepository'] = array('SMWWebServiceRepositorySpecial');
+		$wgAutoloadClasses['DIWebServiceRepositorySpecial'] = $smwgDIIP . '/specials/WebServices/DI_WebServiceRepositorySpecial.php';
+		$wgSpecialPages['DataImportRepository'] = array('DIWebServiceRepositorySpecial');
 		$wgSpecialPageGroups['DataImportRepository'] = 'di_group';
 
-		$wgAutoloadClasses['SMWDefineWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceSpecial.php';
-		$wgSpecialPages['DefineWebService'] = array('SMWDefineWebServiceSpecial');
+		$wgAutoloadClasses['DIDefineWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/DI_DefineWebServiceSpecial.php';
+		$wgAutoloadClasses['DIDefineWebServiceSpecialAjaxAccess'] = $smwgDIIP . '/specials/WebServices/DI_DefineWebServiceAjaxAccess.php';
+		$wgSpecialPages['DefineWebService'] = array('DIDefineWebServiceSpecial');
 		$wgSpecialPageGroups['DefineWebService'] = 'di_group';
 		
-		$wgAutoloadClasses['SMWUseWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_UseWebServiceSpecial.php';
-		$wgSpecialPages['UseWebService'] = array('SMWUseWebServiceSpecial');
+		$wgAutoloadClasses['DIUseWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/DI_UseWebServiceSpecial.php';
+		$wgSpecialPages['UseWebService'] = array('DIUseWebServiceSpecial');
 		$wgSpecialPageGroups['UseWebService'] = 'di_group';
 		
 		//overwrite Special:Ask (needed for ask queries with source web service)
-		$wgSpecialPages['Ask'] = array('SMWWSSMWAskPage' );
+		$wgSpecialPages['Ask'] = array('DISMWAskPageReplacement' );
 	}
 	
 	// Register Credits
@@ -374,73 +444,90 @@ function difRegisterAutocompletionIcons(& $namespaceMappings) {
 	return true;
 }
 
-	/**
-	 * Initializes the namespaces that are used by the Wiki Web Service extension.
-	 * Normally the base index starts at 200. It must be an even number greater than
-	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
-	 * from 100 upwards.
-	 *
-	 * @param int $baseIndex
-	 * 		Optional base index for all Wiki Web Service namespaces. The default is 200.
-	 */
-	function difInitWWSNamespaces($baseIndex = 200) {
-		global $smwgWWSNamespaceIndex;
-		if (!isset($smwgWWSNamespaceIndex)) {
-			$smwgWWSNamespaceIndex = $baseIndex;
-		}
-		
-		if (!defined('SMW_NS_WEB_SERVICE')) {
-			define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
-			define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
-		}
+/**
+ * Initializes the namespaces that are used by the Wiki Web Service extension.
+ * Normally the base index starts at 200. It must be an even number greater than
+ * than 100. However, by default Semantic MediaWiki uses the namespace indexes
+ * from 100 upwards.
+ *
+ * @param int $baseIndex
+ * 		Optional base index for all Wiki Web Service namespaces. The default is 200.
+ */
+function difInitWWSNamespaces($baseIndex = 200) {
+	global $smwgWWSNamespaceIndex;
+	if (!isset($smwgWWSNamespaceIndex)) {
+		$smwgWWSNamespaceIndex = $baseIndex;
 	}
 	
-	/**
-	 * Registers the new namespaces. Must be called after the language dependent
-	 * messages have been installed.
-	 *
-	 */
-	function difRegisterNamespaces() {
-		global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
+	if (!defined('SMW_NS_WEB_SERVICE')) {
+		define('SMW_NS_WEB_SERVICE',       $smwgWWSNamespaceIndex);
+		define('SMW_NS_WEB_SERVICE_TALK',  $smwgWWSNamespaceIndex+1);
+	}
+}
 
-		// Register namespace identifiers
-		if (!is_array($wgExtraNamespaces)) {
-			$wgExtraNamespaces = array();
-		}
-		$wgExtraNamespaces = $wgExtraNamespaces + $smwgDIContLang->getNamespaces();
-		$wgNamespaceAliases = $wgNamespaceAliases + $smwgDIContLang->getNamespaceAliases();
+/**
+ * Registers the new namespaces. Must be called after the language dependent
+ * messages have been installed.
+ *
+ */
+function difRegisterNamespaces() {
+	global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
+
+	// Register namespace identifiers
+	if (!is_array($wgExtraNamespaces)) {
+		$wgExtraNamespaces = array();
+	}
+	$wgExtraNamespaces = $wgExtraNamespaces + $smwgDIContLang->getNamespaces();
+	$wgNamespaceAliases = $wgNamespaceAliases + $smwgDIContLang->getNamespaceAliases();
+}
+
+/**
+ * Initializes the namespaces that are used by the Term Import framework
+ * Normally the base index starts at 202. It must be an even number greater than
+ * than 100. However, by default Semantic MediaWiki uses the namespace indexes
+ * from 100 upwards.
+ *
+ * @param int $baseIndex
+ * 		Optional base index for all Term Import namespaces. The default is 202.
+ */
+function difInitTINamespaces($baseIndex = 202) {
+	global $smwgTINamespaceIndex;
+	if (!isset($smwgTINamespaceIndex)) {
+		$smwgTINamespaceIndex = $baseIndex;
+	}
+
+	if (!defined('SMW_NS_TERM_IMPORT')) {
+		define('SMW_NS_TERM_IMPORT',       $smwgTINamespaceIndex);
+		define('SMW_NS_TERM_IMPORT_TALK',  $smwgTINamespaceIndex+1);
 	}
 	
-	/**
-	 * Initializes the namespaces that are used by the Term Import framework
-	 * Normally the base index starts at 202. It must be an even number greater than
-	 * than 100. However, by default Semantic MediaWiki uses the namespace indexes
-	 * from 100 upwards.
-	 *
-	 * @param int $baseIndex
-	 * 		Optional base index for all Term Import namespaces. The default is 202.
-	 */
-	function difInitTINamespaces($baseIndex = 202) {
-		global $smwgTINamespaceIndex;
-		if (!isset($smwgTINamespaceIndex)) {
-			$smwgTINamespaceIndex = $baseIndex;
-		}
-
-		if (!defined('SMW_NS_TERM_IMPORT')) {
-			define('SMW_NS_TERM_IMPORT',       $smwgTINamespaceIndex);
-			define('SMW_NS_TERM_IMPORT_TALK',  $smwgTINamespaceIndex+1);
-		}
-		
-		//this is not nice, but I cannot change it, since older versions then will not work anymore
-		global $smwgWWSNamespaceIndex;
-		if (!defined('NS_TI_EMAIL')) define('NS_TI_EMAIL', $smwgWWSNamespaceIndex+20);
-		if (!defined('NS_TI_EMAIL_TALK')) define('NS_TI_EMAIL_TALK', $smwgWWSNamespaceIndex+21);
-	}
+	//this is not nice, but I cannot change it, since older versions then will not work anymore
+	global $smwgWWSNamespaceIndex;
+	if (!defined('NS_TI_EMAIL')) define('NS_TI_EMAIL', $smwgWWSNamespaceIndex+20);
+	if (!defined('NS_TI_EMAIL_TALK')) define('NS_TI_EMAIL_TALK', $smwgWWSNamespaceIndex+21);
+}
 	
 /*
  * Initialize magic words
  */
-	function difSetupMagic( &$magicWords, $langCode ) {
+function difSetupMagic( &$magicWords, $langCode ) {
 	$magicWords['webServiceUsage'] = array( 0, 'ws' );
 	return true;
+}
+
+/*
+ * Get the WS store
+ */
+function difGetWSStore(){
+	global $diwsgStore;
+	
+	if(is_null($diwsgStore)){
+		//autoloading has to be done because of maintenaince mode
+		global $wgAutoloadClasses, $smwgDIIP;
+		$wgAutoloadClasses['DIWSStorageSQL'] =
+			$smwgDIIP.'/includes/WebServices/storage/DI_WSStorageSQL.php';
+		$diwsgStore = new DIWSStorageSQL();	
+	}
+	
+	return $diwsgStore;
 }

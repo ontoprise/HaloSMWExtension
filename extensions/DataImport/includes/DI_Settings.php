@@ -47,5 +47,50 @@ define('DI_TI_DAM_FEED_LONGITUDE', 'Has longiitude');
 define('DI_TI_DAM_FEED_SOURCE', 'Has sourc');
 define('DI_TI_DAM_FEED_ID', 'Has id');
 
+/*
+ * Identity checks by the 'Append Some' conflict strategy
+ * will be done based on the following term attributes 
+ */
+global $ditigAttributesForIdentityCheck;
+$ditigAttributesForIdentityCheck[] = array();
+$ditigAttributesForIdentityCheck['DALReadFeed'] = array(
+	DI_TI_DAM_FEED_ID);
 
+	
+/*
+ * Values of the following term attributes will be appended
+ * by the 'Append Some' conflict strategy if existing instances
+ * are updated 
+ */	
+global $ditigAttributesForAppending;
+$ditigAttributesForAppending[] = array();
+$ditigAttributesForAppending['DALReadFeed'] = array(
+	DI_TI_DAM_FEED_STEMS_FROM);
+	
+/*
+ * if the 'Append Some' Conflict Policy detects that an article with the 
+ * samw title but which is not identical already exists, then it adds a 
+ * suffix to the article name and tries to create this one. This is repeated
+ * until an already existing article which is identical or an article name which
+ * does not yet exist is found.
+ * 
+ * Normally a counter is used as suffix, e.g. 'articlename - 1'. This is bad if
+ * one of your feeds always uses the same subject for all feed items. In this
+ * case a huge number of articles has to be checked before the CP finds an
+ * article name that does not yet exist because the CP always starts with the
+ * suffix 1. In this case set the variable to true. Then the current date is used as
+ * suffix.
+ * 
+ *  If you do not have such a feed, then setting this variable to true is not
+ *  a good idea, since after the first article name check the CP will never have
+ *  another hit and the CP may miss that some articles are identical.  
+ */
+global $ditigUseDateAsSuffixOnConflicts;
+$ditigUseDateAsSuffixOnConflicts = false;
 
+/*
+* Pages in the namespace WebService list the articles that use a the web service.
+* This value limits the number of displayed articles.
+*/
+global $diwsgArticleLimit;
+$diwsgArticleLimit = 25;
