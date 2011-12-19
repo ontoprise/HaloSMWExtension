@@ -52,10 +52,7 @@ global $wsClient;
 function smwf_wsu_processStep1($name){
 	global $smwgDIIP;
 
-	require_once($smwgDIIP.'/specials/WebServices/SMW_WebService.php');
-	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-
-	$webService = WebService::newFromName($name);
+	$webService = DIWebService::newFromName($name);
 	$parameters = new SimpleXMLElement("<p>".$webService->getParameters()."</p>");
 
 	$response = "";
@@ -71,7 +68,7 @@ function smwf_wsu_processStep1($name){
 			$response .= $param->attributes()->defaultValue;
 			$response .= ";";
 
-			$subParameterProcessor = new SMWSubParameterProcessor(
+			$subParameterProcessor = new DISubParameterProcessor(
 			$param->asXML(), array());
 
 			$nonOptionalSubParameters = $subParameterProcessor->getMissingSubParameters();
@@ -110,10 +107,7 @@ function smwf_wsu_processStep1($name){
 function smwf_wsu_processStep2($name){
 	global $smwgDIIP;
 
-	require_once($smwgDIIP.'/specials/WebServices/SMW_WebService.php');
-	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-
-	$webService = WebService::newFromName($name);
+	$webService = DIWebService::newFromName($name);
 	$results = new SimpleXMLElement("<p>".$webService->getResult()."</p>");
 
 	$response = "";
@@ -136,8 +130,7 @@ function smwf_wsu_processStep2($name){
 
 function smwf_wsu_getPreview($articleName, $wsSyn){
 	global $smwgDIIP;
-	require_once($smwgDIIP.'/specials/WebServices/SMW_WebServiceUsage.php');
-
+	
 	$wsSyn = str_replace("\n", "", $wsSyn);
 	$wsSyn = substr($wsSyn, 0, strlen($wsSyn)-2);
 
@@ -149,7 +142,7 @@ function smwf_wsu_getPreview($articleName, $wsSyn){
 	for($i=1; $i < count($wsSyn); $i++){
 		$parameters[] = $wsSyn[$i];
 	}
-	return SMWWebServiceUsage::getPreview($articleName, $parameters);
+	return DIWebServiceUsage::getPreview($articleName, $parameters);
 }
 
 function smwf_uws_getPage($args= "") {

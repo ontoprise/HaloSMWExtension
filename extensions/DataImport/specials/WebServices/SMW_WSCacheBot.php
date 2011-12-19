@@ -83,7 +83,7 @@ class WSCacheBot extends GardeningBot {
 	 *
 	 */
 	private function cleanCompleteCache(){
-		$webServices = WSStorage::getDatabase()->getWebServices();
+		$webServices = difGetWSStore()->getWebServices();
 		$this->setNumberOfTasks(sizeof($webServices));
 		foreach($webServices as $ws){
 			$this->cleanWSCacheEntries($ws);
@@ -100,7 +100,7 @@ class WSCacheBot extends GardeningBot {
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		if($ws->getSpanOfLife() != "0"){
-			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
+			$cacheResults = difGetWSStore()->getResultsFromCache($ws->getArticleID());
 			$this->addSubTask(sizeof($cacheResults)+1);
 			//echo($ws->getArticleID());
 			$deletedCacheEntries = 0;
@@ -123,7 +123,7 @@ class WSCacheBot extends GardeningBot {
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
 				> $ws->getSpanOfLife() *24*60*60){
-					WSStorage::getDatabase()->removeWSEntryFromCache(
+					difGetWSStore()->removeWSEntryFromCache(
 					$ws->getArticleID(), $cacheResult["paramSetId"]);
 					$deletedCacheEntries += 1;
 				}

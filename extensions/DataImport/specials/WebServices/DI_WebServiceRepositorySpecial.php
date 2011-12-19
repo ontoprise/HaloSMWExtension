@@ -27,19 +27,13 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_WS_SYSOP' , 'sysop');
 
-global $IP;
-require_once( $IP . "/includes/SpecialPage.php" );
-
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
-
 /**
  * This class represents the special page webservice repository
  *
  * @author Ingo Steinbauer
  *
  */
-class SMWWebServiceRepositorySpecial extends SpecialPage {
+class DIWebServiceRepositorySpecial extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('DataImportRepository');
@@ -87,9 +81,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		global $smwgDIIP;
 		
 		// handle web service repository
-		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-		
-		$webServices = WSStorage::getDatabase()->getWebServices();
+		$webServices = difGetWSStore()->getWebServices();
 		ksort($webServices);
 
 		$html .= "<span id=\"web-service-tab-content\">";
@@ -111,7 +103,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 				$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
 				$html .= "<tr id=\"ws-row-".$ws->getArticleID()."\"><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
 
-				$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
+				$cacheResults = difGetWSStore()->getResultsFromCache($ws->getArticleID());
 				$oldestUpdate = "";
 				if(count($cacheResults) >0){
 					$oldestUpdate = $cacheResults[0]["lastUpdate"];
@@ -242,5 +234,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$html .= "</span>";
 		
 		$wgOut->addHTML($html);
+		
+		$wgOut->addModules( 'ext.dataimport.rep');
 	}
 }

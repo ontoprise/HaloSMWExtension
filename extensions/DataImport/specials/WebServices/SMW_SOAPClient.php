@@ -25,8 +25,6 @@
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 
 define('WWS_WSDL_NS', 'http://schemas.xmlsoap.org/wsdl/');
 define('WWS_SOAP_NS', 'http://schemas.xmlsoap.org/wsdl/soap/');
@@ -40,7 +38,7 @@ define('WWS_SOAPENC_NS', 'http://schemas.xmlsoap.org/soap/encoding/');
  * @author Thomas Schweitzer
  *
  */
-class SMWSoapClient implements IWebServiceClient {
+class SMWSoapClient implements IDIWebServiceClient {
 
 
 	//--- Private fields ---

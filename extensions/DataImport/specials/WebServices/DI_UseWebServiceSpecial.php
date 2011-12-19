@@ -31,13 +31,8 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $IP;
-require_once( $IP . "/includes/SpecialPage.php" );
 
-global $smwgDIIP, $smwgDIScriptPath;
-include_once($smwgDIIP . '/languages/SMW_DILanguage.php');
-
-class SMWUseWebServiceSpecial extends SpecialPage {
+class DIUseWebServiceSpecial extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('UseWebService');

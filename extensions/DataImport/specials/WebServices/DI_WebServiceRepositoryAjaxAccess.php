@@ -43,7 +43,6 @@ $wgAjaxExportList[] = 'smwf_ti_deleteTermImport';
 	 */
 function smwf_ws_confirmWWSD($wsId){
 	global $smwgDIIP;
-	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 	
 	global $wgUser;
 	$allowed = false;
@@ -58,7 +57,7 @@ function smwf_ws_confirmWWSD($wsId){
 	}
 	
 	if($allowed){
-		WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "true");
+		difGetWSStore()->setWWSDConfirmationStatus($wsId, "true");
 		return $wsId;
 	}
 	return 0;
@@ -66,7 +65,6 @@ function smwf_ws_confirmWWSD($wsId){
 
 function smwf_ws_deleteWWSD($wsId){
 	global $smwgDIIP, $wgUser;
-	require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
 	
 	$pageName = Title::newFromID($wsId)->getFullText();
 	
@@ -77,36 +75,12 @@ function smwf_ws_deleteWWSD($wsId){
 
 
 function smwf_ti_update($tiArticleName){
-	global $smwgDIIP;
-	require_once($smwgDIIP."/specials/TermImport/SMW_WIL.php");
-	
-	$xmlString = smwf_om_GetWikiText('TermImport:'.$tiArticleName);
-	$start = strpos($xmlString, "<ImportSettings>");
-	$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
-	$xmlString = substr($xmlString, $start, $end);
-	$simpleXMLElement = new SimpleXMLElement($xmlString);
-
-	$moduleConfig = $simpleXMLElement->xpath("//ModuleConfiguration");
-	$moduleConfig = trim($moduleConfig[0]->asXML());
-	$dataSource = $simpleXMLElement->xpath("//DataSource");
-	$dataSource = trim($dataSource[0]->asXML());
-	$mappingPolicy = $simpleXMLElement->xpath("//MappingPolicy");
-	$mappingPolicy = trim($mappingPolicy[0]->asXML());
-	$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy");
-	$conflictPolicy = trim($conflictPolicy[0]->asXML());
-	$inputPolicy = $simpleXMLElement->xpath("//InputPolicy");
-	$inputPolicy = trim($inputPolicy[0]->asXML());
-	$importSets = $simpleXMLElement->xpath("//ImportSets");
-	$importSets = trim($importSets[0]->asXML());
-	$wil = new WIL();
-		
-	$terms = $wil->importTerms($moduleConfig, $dataSource, $importSets, $inputPolicy,
-		$mappingPolicy, $conflictPolicy, $tiArticleName, true);
+	$res = DICL::importTerms($tiArticleName, true);
 			
-	if($terms != wfMsg('smw_ti_import_successful')){
-		return $terms;
-	} else {			
+	if($res === true){
 		return "success";
+	} else {			
+		return $res;
 	}
 }
 

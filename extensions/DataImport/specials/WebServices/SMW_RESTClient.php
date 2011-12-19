@@ -24,9 +24,6 @@
  * @author Ingo Steinbauer
  */
 
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
-
 /**
  * Class for the access of RESTful web services. It implements the interface
  * <IWebServiceClient>.
@@ -34,7 +31,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
  * @author Ingo Steinbauer
  *
  */
-class SMWRestClient implements IWebServiceClient {
+class SMWRestClient implements IDIWebServiceClient {
 
 	private $mURI;		  // string: the URI of the web service
 
@@ -171,7 +168,7 @@ class SMWRestClient implements IWebServiceClient {
 		
 		$ctx = stream_context_create($params);
 
-		$fp = fopen($uri, 'rb', true, $ctx);
+		@ $fp = fopen($uri, 'rb', true, $ctx);
 		
 		if (!$fp) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;

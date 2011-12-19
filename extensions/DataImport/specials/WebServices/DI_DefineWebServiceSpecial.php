@@ -26,14 +26,9 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-global $IP;
-require_once( $IP . "/includes/SpecialPage.php" );
 
-global $smwgDIIP, $smwgDIScriptPath;
-include_once($smwgDIIP . '/languages/SMW_DILanguage.php');
 
-class SMWDefineWebServiceSpecial extends SpecialPage {
-
+class DIDefineWebServiceSpecial extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('DefineWebService');
@@ -54,7 +49,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$editwwsd = false;
 		if ( !is_null( $wwsdId ) ) {
 			$editwwsd = true;
-			$wwsd = WebService::newFromID($wwsdId);
+			$wwsd = DIWebService::newFromID($wwsdId);
 		}
 
 		$html = "";
@@ -440,10 +435,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		}
 
 		$wgOut->addHTML($html);
+		
+		$wgOut->addModules( 'ext.dataimport.defws' );
 	}
 
 	private function getMergedParameters($wwsd, $result){
-		$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($wwsd->getURI());
+		$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($wwsd->getURI());
 
 		if($result){
 			$wwsdParameters = new SimpleXMLElement($wwsd->getResult());
@@ -457,14 +454,14 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$wsdlParameters = array();
 		if($result){
-			$wsdlParameters = WebService::flattenParam("", $rawParameters[0], $wsClient);
+			$wsdlParameters = DIWebService::flattenParam("", $rawParameters[0], $wsClient);
 		} else {
 			//todo: handle no params
 			$numParam = count($rawParameters);
 			for ($i = 1; $i < $numParam; $i++) {
 				$pName = $rawParameters[$i][0];
 				$pType = $rawParameters[$i][1];
-				$tempFlat = WebService::flattenParam($pName, $pType, $wsClient);
+				$tempFlat = DIWebService::flattenParam($pName, $pType, $wsClient);
 				$wsdlParameters = array_merge($wsdlParameters , $tempFlat);
 			}
 		}

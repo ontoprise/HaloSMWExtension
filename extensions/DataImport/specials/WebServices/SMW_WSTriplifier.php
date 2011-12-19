@@ -186,7 +186,7 @@ class WSTriplifier {
 		}
 		
 		$triples = array();
-		$allAliases = WebService::newFromId($wsId)->getAllResultPartAliases();
+		$allAliases = DIWebService::newFromId($wsId)->getAllResultPartAliases();
 		$subjectCreationPatternParts = array();
 		foreach($allAliases as $alias => $dc){
 			if(strpos($subjectCreationPattern, "?".$alias."?") !== false){

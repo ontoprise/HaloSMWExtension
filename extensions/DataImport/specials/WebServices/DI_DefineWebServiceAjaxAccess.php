@@ -36,8 +36,6 @@ $wgAjaxExportList[] = 'smwf_ws_processStep6';
 
 
 global $smwgDIIP, $smwgHaloIP;
-require_once($smwgDIIP.'/specials/WebServices/SMW_WebService.php');
-require_once($smwgDIIP.'/specials/WebServices/SMW_WSDLArrayDetector.php');
 require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
 
 /**
@@ -51,7 +49,7 @@ global $wsClient;
 function smwf_ws_processStep1($uri, $authenticationType, $user, $pw){
 	global $wsClient;
 	
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
+	$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
 	if(is_array($wsClient)){
 		return "false";
 	} else {
@@ -70,7 +68,7 @@ function smwf_ws_processStep1($uri, $authenticationType, $user, $pw){
  */
 function smwf_ws_processStep2($uri, $authenticationType, $user, $pw, $methodName){
 	global $wsClient;
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
+	$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
 	
 	$rawParameters = $wsClient->getOperation($methodName);
 	
@@ -86,7 +84,7 @@ function smwf_ws_processStep2($uri, $authenticationType, $user, $pw, $methodName
 	for ($i = 1; $i < $numParam; ++$i) {
 		$pName = $rawParameters[$i][0];
 		$pType = $rawParameters[$i][1];
-		$tempFlat = WebService::flattenParam($pName, $pType, $wsClient, $typePath);
+		$tempFlat = DIWebService::flattenParam($pName, $pType, $wsClient, $typePath);
 		
 		//this is necessary because the gui expects
 		//that parameter paths start with a single "/"
@@ -109,11 +107,11 @@ function smwf_ws_processStep2($uri, $authenticationType, $user, $pw, $methodName
  */
 function smwf_ws_processStep3($uri, $authenticationType, $user, $pw, $methodName){
 	
-	$wsClient = DefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
+	$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($uri, $authenticationType, $user, $pw);
 	
 	$rawResult = $wsClient->getOperation($methodName);
 	
-	$flatResult = WebService::flattenParam("", $rawResult[0], $wsClient, $typePath);
+	$flatResult = DIWebService::flattenParam("", $rawResult[0], $wsClient, $typePath);
 	
 	return "todo:handle exceptions;".implode(";", $flatResult);
 }
@@ -133,7 +131,7 @@ function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd, ""));
 	
 	if($editResult[0]){
-		$ws = WebService::newFromWWSD($name, $wwsd);
+		$ws = DIWebService::newFromWWSD($name, $wwsd);
 		if(is_array($ws)){
 			return "isa ".implode(";", $ws);
 		} else {
@@ -147,7 +145,7 @@ function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 	} else return "false done";
 }
 
-class DefineWebServiceSpecialAjaxAccess{
+class DIDefineWebServiceSpecialAjaxAccess{
 	/**
 	 * creates a webservice-client for the given uri
 	 *
@@ -172,49 +170,5 @@ class DefineWebServiceSpecialAjaxAccess{
 		}
 		return $wsClient;
 	}
-
-	/**
-	 *
-	 *
-	 * @param string $uri
-	 * @param SoapClient $wsClient
-	 * @param string $name
-	 * @param string $type
-	 * @param boolean $result
-	 * @param  $typePath
-	 * @return unknown
-	 */
-
-	/**
-	 *
-	 * @param string $uri
-	 * 		the uri of the wsdl
-	 * @param SMWSoapClient $wsClient
-	 * 		a properly initialized soapclient for accessing the wsdl
-	 * @param string $name
-	 * 		The fields of the type are added to this name, separated by a dot.
-	 * @param string $type
-	 * 		The name of an XSD base type or a type defined in the WSDL.
-	 * @param array<string> $typePath
-	 * 		This array contains all types that were encountered in the recursion.
-	 * 		To avoid an inifinite loop, the recursion stops if $type is already
-	 * 		in the $typePath. This parameter is omitted in the top level call.
-	 * @return array<string>
-	 * 		All resulting paths. If a path causes an endless recursion, the
-	 * 		keyword ##overflow## is appended to the path.
-	 */
-	//public static function getFlatParameters($uri, $wsClient, $name, $type, &$typePath=null){
-	//	$flatParams = WebService::flattenParam($name, $type, $wsClient, $typePath);
-
-		//$arrayDetector = new WSDLArrayDetector($uri);
-
-		//$adParameters = $arrayDetector->getArrayPaths($type, $name);
-
-		//if($result){
-		//	$adParameters = $arrayDetector->cleanResultParts($adParameters);
-		//}
-
-	//	return $flatParams;
-		//return $arrayDetector->mergePaths($flatParams, $adParameters);
-	//}
+	
 }

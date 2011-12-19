@@ -48,6 +48,11 @@ class DITermImportPage {
 		foreach ($args as $k => $v) {
 			$attr .= " ". $k . '="' . $v . '"';
 		}
+		
+		//this is necessary, since someone (I really do not who)
+		//replaces ]]> with ] which is really strange
+		$input = str_replace('] ] >', ']]>', $input);
+		
 		$completeImportSettings = "<ImportSettings$attr>".$input."</ImportSettings>\n";
 	
 		$messages = "";

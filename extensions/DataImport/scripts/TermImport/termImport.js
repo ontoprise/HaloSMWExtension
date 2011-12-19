@@ -205,7 +205,7 @@ TermImportPage.prototype = {
 				}
 			}
 			if($(source[i].id).type == "text" || $(source[i].id).type == "undefined" || $(source[i].id).type == "textarea"){
-				dataSource += source[i].id;
+				//dataSource += source[i].id;
 				sourcearray[i] = document.getElementById(source[i].id).value;
 			} else if(document.getElementById(source[i].id).type == "checkbox"){
 				sourcearray[i] = document.getElementById(source[i].id).checked;
@@ -214,11 +214,7 @@ TermImportPage.prototype = {
 			if (sourcearray[i] && sourcearray[i] != '') {					
 				//create XML doc
 				tag_array[i] = document.getElementById("tag_" + source[i].id);
-				if(typeof(sourcearray[i]) == 'string'){
-					sourcearray[i] = sourcearray[i].replace(/>/g, "&gt;");
-					sourcearray[i] = sourcearray[i].replace(/</g, "&lt;");
-				}
-				dataSource += "<" + tag_array[i].value + ">" + sourcearray[i] + "</" + tag_array[i].value + ">";
+				dataSource += "<" + tag_array[i].value + "><![CDATA[" + sourcearray[i] + "]]></" + tag_array[i].value + ">";
 			
 				//change the top-container
 				var display = source[i].id;
@@ -255,7 +251,7 @@ TermImportPage.prototype = {
 		
 		$('top-container').style.display = "none";
 		
-		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" 
+		dataSource = "<DataSource bla=\"http://www.ontoprise.de/smwplus#\">" 
 			+ dataSource + "</DataSource>";
 		$("loading-container").style.display ="inline";
 
@@ -276,6 +272,16 @@ TermImportPage.prototype = {
 		result = jQuery.parseJSON(result);
 		
 		if(result['success']) {
+			
+			//todo: make this unnecessary
+			if(this.currentSelectedDAM.dalID == 'DALReadFeed'){
+				document.getElementById('conflict-input-field').
+					childNodes[2].style.display="";
+			} else {
+				document.getElementById('conflict-input-field').
+				childNodes[2].style.display="none";
+			}
+						
 			$('extras').style.display = "inline";
 			if(result['importSets'].length > 0){
 				$('importset').style.display = "";
@@ -690,18 +696,11 @@ TermImportPage.prototype = {
 		result.delimiter = document.getElementById('delimiter-input-field').value;
 			
 		//conflict policy
-		//var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
 		var optionIndex = document.getElementById('conflict-input-field').selectedIndex; 
 		if(optionIndex == -1){
 			optionIndex = 0;
 		}
-		var conflict = document.getElementById('conflict-input-field').childNodes[optionIndex].firstChild.nodeValue;
-		if( conflict == 'overwrite') {
-			var conflictPol = true;
-		} else {
-			var conflictPol = false;
-		}
-		result.conflictPol = conflictPol;
+		result.conflictPol = document.getElementById('conflict-input-field').childNodes[optionIndex].getAttribute('value');
 		
 		//term import name
 		result.termImportName = document.getElementById('ti-name-input-field').value;

@@ -24,37 +24,30 @@
  * the special page Special:ASK
  * 
  * Two things are modified:
- * - Source parameter is evaluated and the SMWWSSMWStore is used if necessary
+ * - Source parameter is evaluated and the DIWSSMWStore is used if necessary
  * - links for editing the query are removed from the HTML output.
  */
-class SMWWSSMWAskPage extends SMWAskPage {
+class DISMWAskPageReplacement extends SMWAskPage {
 
 	private $m_isWSCall = false;
-	
-	/*
-	 * @overrides
-	 * 
+
+	/**
+	 * TODO: document
 	 */
 	protected function makeHTMLResult() {
+		global $wgOut, $smwgAutocompleteInSpecialAsk;
 		
 		$this->checkIfThisIsAWSCALL();
-		
-		global $wgOut, $smwgAutocompleteInSpecialAsk;
 
 		$delete_msg = wfMsg( 'delete' );
 
 		// Javascript code for the dynamic parts of the page
 		$javascript_text = <<<END
-<script type="text/javascript">       
-jQuery.noConflict();
-function xmlhttpPost(strURL) {
-	jQuery.ajax({ url: strURL, data: getquerystring(), context: document.body, success: function(data){
-		document.getElementById("other_options").innerHTML = data;
-	}});   
-}
-function getquerystring() {
-	var format_selector = document.getElementById('formatSelector');
-	return format_selector.value;
+<script type="text/javascript">
+function updateOtherOptions(strURL) {
+	jQuery.ajax({ url: strURL, context: document.body, success: function(data){
+		jQuery("#other_options").html(data);
+	}});
 }
 
 // code for handling adding and removing the "sort" inputs
@@ -107,7 +100,7 @@ END;
 		$result_mime = false; // output in MW Special page as usual
 
 		// build parameter strings for URLs, based on current settings
-		$urltail = '&q=' . urlencode( $this->m_querystring );
+		$urlArgs['q'] = $this->m_querystring;
 
 		$tmp_parray = array();
 		foreach ( $this->m_params as $key => $value ) {
@@ -115,14 +108,17 @@ END;
 				$tmp_parray[$key] = $value;
 			}
 		}
-		$urltail .= '&p=' . urlencode( SMWInfolink::encodeParameters( $tmp_parray ) );
+
+		$urlArgs['p'] = SMWInfolink::encodeParameters( $tmp_parray );
 		$printoutstring = '';
+
 		foreach ( $this->m_printouts as $printout ) {
 			$printoutstring .= $printout->getSerialisation() . "\n";
 		}
-		if ( $printoutstring != '' ) $urltail .= '&po=' . urlencode( $printoutstring );
-		if ( array_key_exists( 'sort', $this->m_params ) )  $urltail .= '&sort=' . $this->m_params['sort'];
-		if ( array_key_exists( 'order', $this->m_params ) ) $urltail .= '&order=' . $this->m_params['order'];
+
+		if ( $printoutstring != '' ) $urlArgs['po'] = $printoutstring;
+		if ( array_key_exists( 'sort', $this->m_params ) )  $urlArgs['sort'] = $this->m_params['sort'];
+		if ( array_key_exists( 'order', $this->m_params ) ) $urlArgs['order'] = $this->m_params['order'];
 
 		if ( $this->m_querystring != '' ) {
 			$queryobj = SMWQueryProcessor::createQuery( $this->m_querystring, $this->m_params, SMWQueryProcessor::SPECIAL_PAGE , $this->m_params['format'], $this->m_printouts );
@@ -130,7 +126,7 @@ END;
 			$store = $this->getStore();
 			$res = $store->getQueryResult( $queryobj );
 			
-			// try to be smart for rss/ical if no description/title is given and we have a concept query:
+			// Try to be smart for rss/ical if no description/title is given and we have a concept query:
 			if ( $this->m_params['format'] == 'rss' ) {
 				$desckey = 'rssdescription';
 				$titlekey = 'rsstitle';
@@ -138,74 +134,96 @@ END;
 				$desckey = 'icalendardescription';
 				$titlekey = 'icalendartitle';
 			} else { $desckey = false; }
+
 			if ( ( $desckey ) && ( $queryobj->getDescription() instanceof SMWConceptDescription ) &&
 			     ( !isset( $this->m_params[$desckey] ) || !isset( $this->m_params[$titlekey] ) ) ) {
 				$concept = $queryobj->getDescription()->getConcept();
+
 				if ( !isset( $this->m_params[$titlekey] ) ) {
 					$this->m_params[$titlekey] = $concept->getText();
 				}
+
 				if ( !isset( $this->m_params[$desckey] ) ) {
-					$dv = end( smwfGetStore()->getPropertyValues( SMWWikiPageValue::makePageFromTitle( $concept ), SMWPropertyValue::makeProperty( '_CONC' ) ) );
+					// / @bug The current SMWStore will never return SMWConceptValue (an SMWDataValue) here; it might return SMWDIConcept (an SMWDataItem)
+					$dv = end( smwfGetStore()->getPropertyValues( SMWWikiPageValue::makePageFromTitle( $concept ), new SMWDIProperty( '_CONC' ) ) );
 					if ( $dv instanceof SMWConceptValue ) {
 						$this->m_params[$desckey] = $dv->getDocu();
 					}
 				}
 			}
+
 			$printer = SMWQueryProcessor::getResultPrinter( $this->m_params['format'], SMWQueryProcessor::SPECIAL_PAGE );
 			$result_mime = $printer->getMimeType( $res );
+
 			global $wgRequest;
+
 			$hidequery = $wgRequest->getVal( 'eq' ) == 'no';
+
 			// if it's an export format (like CSV, JSON, etc.),
 			// don't actually export the data if 'eq' is set to
 			// either 'yes' or 'no' in the query string - just
 			// show the link instead
-			if ( $this->m_editquery || $hidequery )
-				$result_mime = false;
+			if ( $this->m_editquery || $hidequery ) $result_mime = false;
+
 			if ( $result_mime == false ) {
 				if ( $res->getCount() > 0 ) {
-					if ( $this->m_editquery )
-						$urltail .= '&eq=yes';
-					if ( $hidequery )
-						$urltail .= '&eq=no';
-					$navigation = $this->getNavigationBar( $res, $urltail );
+					if ( $this->m_editquery ) {
+						$urlArgs['eq'] = 'yes';
+					}
+					else if ( $hidequery ) {
+						$urlArgs['eq'] = 'no';
+					}
+
+					$navigation = $this->getNavigationBar( $res, $urlArgs );
 					$result .= '<div style="text-align: center;">' . "\n" . $navigation . "\n</div>\n";
 					$query_result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_HTML );
+
 					if ( is_array( $query_result ) ) {
 						$result .= $query_result[0];
 					} else {
 						$result .= $query_result;
 					}
+
 					$result .= '<div style="text-align: center;">' . "\n" . $navigation . "\n</div>\n";
 				} else {
-					$result = '<div style="text-align: center;">' . wfMsg( 'smw_result_noresults' ) . '</div>';
+					$result = '<div style="text-align: center;">' . wfMsgHtml( 'smw_result_noresults' ) . '</div>';
 				}
 			} else { // make a stand-alone file
 				$result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_FILE );
 				$result_name = $printer->getFileName( $res ); // only fetch that after initialising the parameters
 			}
 		}
-		
+
 		if ( $result_mime == false ) {
 			if ( $this->m_querystring ) {
 				$wgOut->setHTMLtitle( $this->m_querystring );
 			} else {
 				$wgOut->setHTMLtitle( wfMsg( 'ask' ) );
 			}
-			$result = $this->getInputForm( $printoutstring, 'offset=' . $this->m_params['offset'] . '&limit=' . $this->m_params['limit'] . $urltail ) . $result;
+
+			$result = $this->getInputForm(
+				$printoutstring,
+				'offset=' . $this->m_params['offset']
+					. '&limit=' . $this->m_params['limit']
+					. wfArrayToCGI( $urlArgs )
+			) . $result;
 			
 			$result = $this->postProcessHTML($result);
 			
 			$wgOut->addHTML( $result );
 		} else {
 			$wgOut->disable();
+
 			header( "Content-type: $result_mime; charset=UTF-8" );
+
 			if ( $result_name !== false ) {
 				header( "content-disposition: attachment; filename=$result_name" );
 			}
-			print $result;
+
+			echo $result;
 		}
 	}
-	
+
 	/*
 	 * Checks if source=webservice
 	 */
@@ -214,18 +232,19 @@ END;
 			$this->m_isWSCall = true;	
 		}
 	}
-
+	
 	/*
-	 * uses SMWWSSMWStore if source = webservice
-	 */
+	 * uses DIWSSMWStore if source = webservice
+	*/
 	private function getStore(){
 		if($this->m_isWSCall){
-			$store = new SMWWSSMWStore();	
+			$store = new DIWSSMWStore();	
 		} else {
 			$store = smwfGetStore();
 		}
 		return $store;
 	}
+	
 	
 	/*
 	 * Replaces links for editing the query if source=webservice
@@ -241,4 +260,6 @@ END;
 		return $result;
 	}
 	
+
 }
+	

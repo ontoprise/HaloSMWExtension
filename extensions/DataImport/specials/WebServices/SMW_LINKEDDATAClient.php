@@ -18,7 +18,6 @@
  */
 
 global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_RESTClient.php");
 
 /**
@@ -35,7 +34,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_RESTClient.php");
  * @author Ingo Steinbauer
  *
  */
-class SMWLinkeddataClient implements IWebServiceClient {
+class SMWLinkeddataClient implements IDIWebServiceClient {
 
 	private $mRESTClient;
 

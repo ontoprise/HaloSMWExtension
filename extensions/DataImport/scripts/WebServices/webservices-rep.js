@@ -22,6 +22,9 @@
  * @author Ingo Steinbauer
  *
  */
+
+var $ = $P;
+
 var WebServiceRepositorySpecial = Class.create();
 
 WebServiceRepositorySpecial.prototype = {
@@ -164,4 +167,4 @@ WebServiceRepositorySpecial.prototype = {
 	}
 }	
 
-webServiceRepSpecial = new WebServiceRepositorySpecial();
+window.webServiceRepSpecial = new WebServiceRepositorySpecial();

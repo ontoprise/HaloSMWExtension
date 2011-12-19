@@ -32,11 +32,6 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
 
 
-// needed for db access
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
-require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceUsage.php");
-
 /**
  * This bot updates outdated ws-cache-entries that are used in semantic
  * properties
@@ -77,7 +72,7 @@ class WSUpdateBot extends GardeningBot {
 		echo("bot started\n");
 		if(array_key_exists("WS_WSID", $paramArray) && $paramArray["WS_WSID"] != null){
 			$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-			$ws = WebService::newFromID($paramArray["WS_WSID"]);
+			$ws = DIWebService::newFromID($paramArray["WS_WSID"]);
 			$affectedArticles = $this->updateWSResults($ws);
 			$this->setNumberOfTasks(2);
 		} else {
@@ -116,7 +111,7 @@ class WSUpdateBot extends GardeningBot {
 	private function updateAllWSResults(){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		$affectedArticles = array();
-		$webServices = WSStorage::getDatabase()->getWebservices();
+		$webServices = difGetWSStore()->getWebservices();
 		$this->setNumberOfTasks(count($webServices) + 1);
 		foreach($webServices as $ws){
 			echo("\n\n".$ws->getName()."\n");
@@ -141,14 +136,14 @@ class WSUpdateBot extends GardeningBot {
 	private function updateWSResults($ws){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		echo("updating " .$ws->getName() ."\n");
-		$parameterSets = WSStorage::getDatabase()->getWSUsages($ws->getArticleID());
+		$parameterSets = difGetWSStore()->getWSUsages($ws->getArticleID());
 
 		$updatedEntries = 0;
 		$affectedArticles = array();
 		foreach($parameterSets as $parameterSet){
 			echo("\t updating paramater set " .$parameterSet["paramSetId"] . "\n");
 
-			$cacheResult = WSStorage::getDatabase()->getResultFromCache(
+			$cacheResult = difGetWSStore()->getResultFromCache(
 			$ws->getArticleID(), $parameterSet["paramSetId"]);
 
 			$refresh = false;
@@ -170,7 +165,7 @@ class WSUpdateBot extends GardeningBot {
 					sleep($ws->getUpdateDelay());
 					echo ("\t\t sleeping " .$ws->getUpdateDelay()."\n");
 				}
-				$parameters = WSStorage::getDatabase()->getParameters($parameterSet["paramSetId"]);
+				$parameters = difGetWSStore()->getParameters($parameterSet["paramSetId"]);
 				$parameters = $ws->initializeCallParameters($parameters);
 
 				$response = $ws->getWSClient()->call($ws->getMethod(), $parameters);
@@ -185,7 +180,7 @@ class WSUpdateBot extends GardeningBot {
 				}
 					
 				if($goon) {
-					WSStorage::getDatabase()->storeCacheEntry(
+					difGetWSStore()->storeCacheEntry(
 					$ws->getArticleID(),
 					$parameterSet["paramSetId"],
 					serialize($response),
@@ -197,7 +192,7 @@ class WSUpdateBot extends GardeningBot {
 				}
 			}
 
-			$tempAffectedArticles = WSStorage::getDatabase()
+			$tempAffectedArticles = difGetWSStore()
 			->getUsedWSParameterSetPairs($ws->getArticleID(), $parameterSet["paramSetId"]);
 				
 			if($ws->getQueryPolicy() > 0){

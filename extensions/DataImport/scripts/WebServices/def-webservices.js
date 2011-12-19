@@ -24,6 +24,8 @@
  * 
  */
 
+var $ = $P;
+
 var DefineWebServiceSpecial = Class.create();
 
 DefineWebServiceSpecial.prototype = {
@@ -4833,13 +4835,7 @@ DefineWebServiceSpecial.prototype = {
 	}
 }
 
-
-
-
-var webServiceSpecial;
-if (webServiceSpecial == undefined) {
-	webServiceSpecial = new DefineWebServiceSpecial();
-}
+window.webServiceSpecial = new DefineWebServiceSpecial();
 
 Event.observe(window, 'load', webServiceSpecial.editWWSD
 		.bindAsEventListener(webServiceSpecial));

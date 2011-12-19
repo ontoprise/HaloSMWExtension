@@ -29,7 +29,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	protected $smwUserMessages = array(
     'specialpages-group-di_group' => 'Data Import',
 
-	/* Messages of the Thesaurus Import */
+	/* Messages of the Term Import */
 	'smw_ti_selectDAM' => 'Bitte w&auml;hle ein DAM aus.',
 	'smw_ti_firstselectTLM' => 'W&auml;hle zuerst das TLM aus.',
 	'smw_ti_selectImport-heading' => 'Import Sets',
@@ -40,11 +40,6 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_inputpolicy-help' => 'Mit der Input Policy kann definiert werden, welche Informationen importiert werden sollen. Dabei k&ouml;nnen (<a href="http://www.opengroup.org/onlinepubs/007908799/xbd/re.html" target="_blank">regul&auml;re Ausdr&uuml;cke</a>) verwendet werden.<br/>Beispiel: Benutze "^Em.*" um nur Terme zu importieren, die mit "Em" beginnen.<br/>Alle daten werden importiert, wenn keine Import Policy angegeben wird.',
 	'smw_ti_inputpolicy-label' => 'Filter hinzufügen:',
 		'smw_ti_inputpolicy-defined' => 'Definierte Filter:&nbsp;&nbsp;',
-	'smw_ti_mappingPage-heading' => 'Mapping Policy',
-	'smw_ti_mappingPage-label' => 'Artikelnamen angeben:',
-	'smw_ti_mappingPage-help' => 'Bitte geben Sie den Namen des Artikels an, der die Mapping Policy enth&auml;lt. Dieser Artikel stellt eine Art Template für die neu zu erzeugenden Artikel dar.',
-	'smw_ti_viewMappingPage' => 'Anzeigen',
-	'smw_ti_editMappingPage' => 'Editieren',
 	'smw_ti_conflictpolicy-heading' => 'Conflict Policy',
 	'smw_ti_conflictpolicy-label' => 'Auswählen:&nbsp;&nbsp;',
 	'smw_ti_conflictpolicy-help' => 'Bitte definiere eine Conflict Policy. Diese definiert, was passiert wenn ein Artikel importiert werden soll, der bereits existiert:',
@@ -61,10 +56,17 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_articles-label1' => 'Die folgenden ',
 	'smw_ti_articles-label2' =>  ' Artikel werden importiert:',
 	'smw_ti_articles-help' =>  'Die Tabelle unten zeigt, welche Artikel bei diesem Term Import importiert werden.',
+	
+	'smw_ti_creation-pattern-heading' => 'Erzeugungsmuster:',
+	'smw_ti_creation-pattern-label-1' => 'Annotationen',
+	'smw_ti_creation-pattern-label-2' => 'Template',
+	'smw_ti_delimiter-heading' => 'Trennzeichen',
+	'smw_ti_delimitery-label' => 'Zeichenkette: ', 
+	'smw_ti_category-heading' => 'Zus&auml;tzliche Kategorie Annotationen',
+	'smw_ti_category-label' => 'Namen:',
 
 	'smw_ti_succ_connected' => 'Erfolgreich mit "$1" verbunden.',
 	'smw_ti_class_not_found' => 'Klasse "$1" nicht gefunden.',
-	'smw_ti_no_tl_module_spec' => 'Die Spezifikation des TL-Moduls mit der ID "$1" konnte nicht gefunden werden.',
 	'smw_ti_xml_error' => 'XML Fehler: $1 in Zeile $2',
 	'smw_ti_filename'  => 'Dateiname:',
 	'smw_ti_articlename'  => 'Artikel Name:',
@@ -74,16 +76,23 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_no_article_names' => 'In der angegebenen Datenquelle gibt es keine Artikelnamen.',
 	'smw_ti_termimport' => 'Vokabular importieren',
 	'termimport' => 'Vokabular importieren',
-	'smw_ti_botstarted' => 'Der Bot zum Importieren eines Vokabulars wurde erfolgreich gestartet.',
-	'smw_ti_botnotstarted' => 'Der Bot zum Importieren eines Vokabulars konnte nicht gestartet werden.',
-	'smw_ti_couldnotwritesettings' => 'Die Einstellungen f&uuml;r den Vokabelimportbot konnten nicht gespeichert werden.',
+	
+	'smw_ti_definition_saved_successfully' => 'Die Term Import Definition $1 wurde erfolgreich gespeichert.',
+	'smw_ti_started_successfully' => 'Der Term Import Bot wurde erfolgreich gestartet. Den Verlauf k&ouml;nnen Sie hier verfolgen: $1',
+	
+	'smw_ti_feed_category' => 'Kategorie der Feedd Definitionen:',
+	'smw_ti_feed_urlprop' => 'URL Property:',
+	'smw_ti_feed_prefixprop' => 'Pr&auml;fix Property:',
+	'smw_ti_feed_wrong_datasource' => 'Sowohl der Name der Kategorie, die die Feed Definitionen enth&auml;lt als auch der Name des URL Properties m&uuml;ssen angegeben werden. ',.
+
+	'smw_ti_sparql_wrong_variable_name' => 'Eine der Variablen in der Anfrage muss "articlename" heissen.',	
+		
 	'smw_ti_missing_articlename' => 'Ein Artikel konnte nicht erzeugt werden, da der "articleName" in der Beschreibung des Begriffs fehlt.',
 	'smw_ti_invalid_articlename' => 'Der Artikelname "$1" ist ung&uuml;ltig.',
 	'smw_ti_articleNotUpdated' => 'Der existierende Artikel "$1" wurde nicht durch eine neue Version ersetzt.',
 	'smw_ti_mappingpolicy_missing' => 'Die Mapping Policy "$1" existiert nicht.',
 	'smw_ti_creationComment' => 'Dieser Artikel wurde vom Vokalbelimport-Framework erzeugt bzw. aktualisiert.',
 	'smw_ti_creationFailed'  => 'Der Artikel "$1" konnte nicht erzeugt bzw. aktualisiert werden.',
-	'smw_ti_missing_mp' => 'Die Mapping Policy fehlt.',
 	'smw_ti_import_error' => 'Importfehler',
 	'smw_ti_added_article' => '$1 wurde zum Wiki hinzugef&uuml;gt.',
 	'smw_ti_updated_article' => '$1 wurde aktualisiert.',
@@ -94,7 +103,25 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_gardissue_ti_class_updated_article' => 'Aktualisierte Artikel',
 	'smw_gardissue_ti_class_system_error' => 'Importsystemfehler',
 	'smw_gardissue_ti_class_update_skipped' => '&Uuml;bersprungene Aktualisierungen',
-
+	
+	'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
+	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren der Begriffe eines Vokabulars.',
+	'smw_termimportupdatebot' => 'Update Definierte Term Imports aktualisieren.',
+	'smw_gard_termimportupdatebothelp' => 'Startet den Bot zum aktualisieren von definierten Term Imports',
+	'smw_ti_def_allready_exists' => 'Eine Term Import Definition mit diesem Namen existiert bereits.',
+	'smw_ti_def_not_creatable' => 'Es war nicht möglich eine Term Import Definition mit diesem Namen zu erstellen.',
+	'smw_ti_update_not_necessary' => 'Eine Aktualisierung dieses Term Imports war nicht nötig.',
+	'smw_ti_updated_successfully' => 'Dieser Term Import wurde erfolgreich aktualisiert.',
+	'smw_ti_update_failure' => 'Beim Aktualisieren dieses Term Imports ist ein Fehler aufgetreten.',
+	'smw_gardissue_ti_class_ignored' => 'Ignorierte Term Imports',
+	'smw_gardissue_ti_class_success' => 'Aktualisierte Term Imports',
+	'smw_gardissue_ti_class_failure' => 'Fehlerhafte Term Imports',
+	
+	'smw_ti_menuestep1' => '1. Datenquelle w&auml;hlen und konfigurieren',
+	'smw_ti_menuestep2' => '2. Term Import konfigurieren und ausführen',
+	'smw_ti_dam-heading' => 'Datenquelle wählen:',
+	'smw_ti_module-data-heading' => 'Konfiguration der Datenquelle:',
+	
 	/* Messages for the wiki web services */
 	'smw_wws_articles_header' => 'Seiten, die den Web-Service "$1" benutzen',
 	'smw_wws_properties_header' => 'Eigenschaften, die von "$1" gesetzt werden',
@@ -263,34 +290,6 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_addcall' => 'F&uuml;ge Aufruf zu <articlename> hinzu',
 	'smw_wwsu_noresults' => 'Dieser Web Service stellt keine Result Parts zur Verf&uuml;gung',
 	'smw_wwsu_copytoclipboard' => 'In Zwischenablage kopieren',
-	
-	'smw_wwsm_update_msg' => 'Die Quelle der letzten Materialisierung wurde geändert.',
-	
-	'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
-	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren der Begriffe eines Vokabulars.',
-	'smw_termimportupdatebot' => 'Update Definierte Term Imports aktualisieren.',
-	'smw_gard_termimportupdatebothelp' => 'Startet den Bot zum aktualisieren von definierten Term Imports',
-	'smw_ti_def_allready_exists' => 'Eine Term Import Definition mit diesem Namen existiert bereits.',
-	'smw_ti_def_not_creatable' => 'Es war nicht möglich eine Term Import Definition mit diesem Namen zu erstellen.',
-	'smw_ti_update_not_necessary' => 'Eine Aktualisierung dieses Term Imports war nicht nötig.',
-	'smw_ti_updated_successfully' => 'Dieser Term Import wurde erfolgreich aktualisiert.',
-	'smw_ti_update_failure' => 'Beim Aktualisieren dieses Term Imports ist ein Fehler aufgetreten.',
-	'smw_gardissue_ti_class_ignored' => 'Ignorierte Term Imports',
-	'smw_gardissue_ti_class_success' => 'Aktualisierte Term Imports',
-	'smw_gardissue_ti_class_failure' => 'Fehlerhafte Term Imports',
-	
-	'smw_ti_menuestep1' => '1. Datenquelle w&auml;hlen und konfigurieren',
-	'smw_ti_menuestep2' => '2. Term Import konfigurieren und ausführen',
-	'smw_ti_dam-heading' => 'Datenquelle wählen:',
-	'smw_ti_module-data-heading' => 'Konfiguration der Datenquelle:',
-	
-	'smw_ti_creation-pattern-heading' => 'Erzeugungsmuster:',
-	'smw_ti_creation-pattern-label-1' => 'Annotationen',
-	'smw_ti_creation-pattern-label-2' => 'Template',
-	'smw_ti_delimiter-heading' => 'Trennzeichen',
-	'smw_ti_delimitery-label' => 'Zeichenkette: ', 
-	'smw_ti_category-heading' => 'Zus&auml;tzliche Kategorie Annotationen',
-	'smw_ti_category-label' => 'Namen:',
 	
 	'smw_wwsr_update_tooltip' => 'Update Bot für diese WWSD starten.',
 	'smw_wwsr_rep_edit_tooltip' => 'Diese WWSD in der GUI editieren.',

@@ -44,10 +44,8 @@ if ($help) {
 	die();
 }
 
-require_once ($smwgDIIP."/specials/WebServices/SMW_WSStorage.php");
-
 if ($delete) {
-	WSStorage::getDatabase()->deleteDatabaseTables();
+	difGetWSStore()->deleteDatabaseTables();
 } else {
-	WSStorage::getDatabase()->initDatabaseTables();
+	difGetWSStore()->initDatabaseTables();
 }

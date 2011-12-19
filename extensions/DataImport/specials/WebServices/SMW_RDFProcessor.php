@@ -33,7 +33,7 @@
 
 /**
  * This class provides a wrapper for the ARC2 library
- * which is used by SMWWebService to extract result parts
+ * which is used by WebService to extract result parts
  * from serialized RDF
  *
  * @author Ingo Steinbauer
@@ -122,7 +122,7 @@ class SMWRDFProcessor {
 	}
 
 	/**
-	 * This method is called by SMWWebService
+	 * This method is called by WebService
 	 * when processing result parts. It updates the internal
 	 * processed index, which can be accessed by
 	 * SMWWebService after all propertys have

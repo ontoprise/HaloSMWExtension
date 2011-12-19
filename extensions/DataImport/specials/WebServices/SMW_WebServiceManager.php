@@ -27,28 +27,6 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
-// Include the settings file for the configuration of the Web Service extension.
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceSettings.php");
-
-// include the web service syntax parser
-require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceUsage.php");
-
-require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceRepositoryAjaxAccess.php");
-
-require_once("$smwgDIIP/specials/WebServices/SMW_DefineWebServiceAjaxAccess.php");
-
-require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php');
-
-
-###
-# If you already have custom namespaces on your site, insert
-# $smwgWWSNamespaceIndex = ???;
-# into your LocalSettings.php *before* including this file.
-# The number ??? must be the smallest even namespace number
-# that is not in use yet. However, it must not be smaller
-# than 100. Semantic MediaWiki normally uses namespace numbers from 100 upwards.
-##
 
 /**
  * This class contains the top level functionality of the Wiki Web Service
@@ -71,10 +49,8 @@ class WebServiceManager {
 	 * 		Returns always <true>.
 	 */
 	static function showWebServicePage(&$title, &$article) {
-		global $smwgDIIP, $wgNamespaceAliases;
 		if ($title->getNamespace() == SMW_NS_WEB_SERVICE) {
-			require_once("$smwgDIIP/specials/WebServices/SMW_WebServicePage.php");
-			$article = new SMWWebServicePage($title);
+			$article = new DIWebServicePage($title);
 		}
 		return true;
 	}
@@ -116,7 +92,7 @@ class WebServiceManager {
 		
 		//deal with case where user replaces a WWSD with a completely empty article
 		if(!self::$mOldWebserviceRemembered){
-			$wwsd = WebService::newFromID($article->getID());;
+			$wwsd = DIWebService::newFromID($article->getID());;
 			self::rememberWWSD($wwsd);
 		}
 
@@ -131,7 +107,7 @@ class WebServiceManager {
 				
 			//deal with triplification
 			if(self::$mOldWebservice){
-				$articles = WSStorage::getDatabase()->getWSArticles(self::$mOldWebservice->getArticleID(), new SMWRequestOptions());
+				$articles = difGetWSStore()->getWSArticles(self::$mOldWebservice->getArticleID(), new SMWRequestOptions());
 				WSTriplifier::getInstance()->removeWS(self::$mOldWebservice->getArticleID(), $articles);
 			}
 		}
@@ -158,28 +134,28 @@ class WebServiceManager {
 		if ($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
-		$ws = WebService::newFromID($article->getID());
+		$ws = DIWebService::newFromID($article->getID());
 		if ($ws) {
 			//triplification processing
 			global $smwgDIIP;
 			require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
 			//deal with triplification
-			$articles = WSStorage::getDatabase()->getWSArticles($article->getID(), new SMWRequestOptions());
+			$articles = difGetWSStore()->getWSArticles($article->getID(), new SMWRequestOptions());
 			WSTriplifier::getInstance()->removeWS($article->getID(), $articles);
 				
 			WebServiceCache::removeWS($ws->getArticleID());
 				
 			$options = new SMWRequestOptions();
-			$pageIds = WSStorage::getDatabase()->getWSArticles($ws->getArticleID(), $options);
+			$pageIds = difGetWSStore()->getWSArticles($ws->getArticleID(), $options);
 			foreach($pageIds as $articleId){
-				$usedWSs = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
+				$usedWSs = difGetWSStore()->getWSsUsedInArticle($articleId);
 				foreach($usedWSs as $usedWS){
 					if($usedWS[0] == $ws->getArticleID()){
-						WSStorage::getDatabase()->removeWSArticle(
+						difGetWSStore()->removeWSArticle(
 						$ws->getArticleID(), $usedWS[1], $articleId);
-						$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($usedWS[1]);
+						$parameterSetIds = difGetWSStore()->getUsedParameterSetIds($usedWS[1]);
 						if(sizeof($parameterSetIds) == 0){
-							WSStorage::getDatabase()->removeParameterSet($usedWS[1]);
+							difGetWSStore()->removeParameterSet($usedWS[1]);
 						}
 					}
 				}
@@ -198,8 +174,7 @@ class WebServiceManager {
 	 */
 	public static function initDatabaseTables() {
 		global $smwgDIIP;
-		require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
-		WSStorage::getDatabase()->initDatabaseTables();
+		difGetWSStore()->initDatabaseTables();
 	}
 
 	/**
@@ -260,9 +235,8 @@ class WebServiceManager {
  */
 function wwsdParserHook($input, $args, $parser) {
 	global $smwgDIIP;
-	require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
-
-	$wwsd = WebService::newFromID($parser->getTitle()->getArticleID());
+	
+	$wwsd = DIWebService::newFromID($parser->getTitle()->getArticleID());
 	WebServiceManager::rememberWWSD($wwsd);
 
 	$attr = "";
@@ -275,7 +249,7 @@ function wwsdParserHook($input, $args, $parser) {
 	$name = $parser->mTitle->getText();
 	$id = $parser->mTitle->getArticleID();
 	
-	$ws = WebService::newFromWWSD($name, $completeWWSD);
+	$ws = DIWebService::newFromWWSD($name, $completeWWSD);
 	
 	$errors = null;
 	$warnings = null;
