@@ -44,7 +44,7 @@ class DataImportTests
 		//$suite->addTestSuite("TestWSUsage");
 		//$suite->addTestSuite("TestJSONProcessor");
 		//$suite->addTestSuite("TestTIReadPOP3");
-//		$suite->addTestSuite("TestWikipediaUltrapediaMerger");
+		//$suite->addTestSuite("TestWikipediaUltrapediaMerger");
 		//$suite->addTestSuite("TestLDConnector");
 		//$suite->addTestSuite("TestWSTriplifier");
 
