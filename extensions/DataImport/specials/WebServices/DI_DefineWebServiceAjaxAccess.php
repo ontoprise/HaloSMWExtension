@@ -125,7 +125,7 @@ function smwf_ws_processStep3($uri, $authenticationType, $user, $pw, $methodName
  */
 function smwf_ws_processStep6($name, $wwsd, $user, $wsSyntax){
 	global $wgHooks;
-	$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
+	$wgHooks['ArticleSaveComplete'][] = 'DIWebServicePageHooks::articleSavedHook';
 	
 	//$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd.$wsSyntax, ""));
 	$editResult = explode(",", smwf_om_EditArticle("webservice:".$name, $user, $wwsd, ""));
@@ -152,22 +152,14 @@ class DIDefineWebServiceSpecialAjaxAccess{
 	 * @param string $uri uri of the wsdl
 	 * @return ws-client
 	 */
-	
 	public static function createWSClient($uri, $authenticationType, $user, $pw) {
-		global $smwgDIIP;
-
-		try {
-			$mProtocol = "SOAP";
-			include_once($smwgDIIP . "/specials/WebServices/SMW_".
-			$mProtocol."Client.php");
-			$classname = "SMW".ucfirst(strtolower($mProtocol))."Client";
-			if (!class_exists($classname)) {
-				return array(wfMsg("smw_wws_invalid_protocol"));
-			}
-			$wsClient = new $classname($uri, $authenticationType, $user, $pw);
-		} catch (Exception $e) {
-			return array(wfMsg("smw_wws_invalid_wwsd"));
+		
+		$classname = "DISoapClient";
+		if (!class_exists($classname)) {
+			return array(wfMsg("smw_wws_invalid_protocol"));
 		}
+		$wsClient = new $classname($uri, $authenticationType, $user, $pw);
+		
 		return $wsClient;
 	}
 	

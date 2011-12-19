@@ -17,9 +17,6 @@
  *
  */
 
-global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_RESTClient.php");
-
 /**
  * @file
  * @ingroup DIWebServices
@@ -34,7 +31,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_RESTClient.php");
  * @author Ingo Steinbauer
  *
  */
-class SMWLinkeddataClient implements IDIWebServiceClient {
+class DILinkeddataClient implements IDIWebServiceClient {
 
 	private $mRESTClient;
 
@@ -51,7 +48,7 @@ class SMWLinkeddataClient implements IDIWebServiceClient {
 	 */
 	public function __construct($uri, $authenticationType = "",
 			$authenticationLogin = "", $authenticationPassword = "") {
-		$this->mRESTClient = new SMWRestClient($uri, $authenticationType, $authenticationLogin, $authenticationPassword); 
+		$this->mRESTClient = new DIRestClient($uri, $authenticationType, $authenticationLogin, $authenticationPassword); 
 	}
 
 	/**
@@ -64,7 +61,8 @@ class SMWLinkeddataClient implements IDIWebServiceClient {
 		if(!array_key_exists(DI_ACCEPT, $parameters)){
 			$parameters[DI_ACCEPT][0] = "*/*, application/rdf+xml";
 		}
-		$response = $this->mRESTClient->call($operationName, $parameters); 
+		$response = $this->mRESTClient->call($operationName, $parameters);
+
 		return  $response;
 	}
 	

@@ -440,7 +440,9 @@ class DIDefineWebServiceSpecial extends SpecialPage {
 	}
 
 	private function getMergedParameters($wwsd, $result){
-		$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($wwsd->getURI());
+		
+		$wsClient = DIDefineWebServiceSpecialAjaxAccess::createWSClient($wwsd->getURI(), 
+			$wwsd->getAuthenticationType(), $wwsd->getAuthenticationLogin(), $wwsd->getAuthenticationPassword());
 
 		if($result){
 			$wwsdParameters = new SimpleXMLElement($wwsd->getResult());

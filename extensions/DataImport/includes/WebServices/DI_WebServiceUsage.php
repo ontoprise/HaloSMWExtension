@@ -28,10 +28,6 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-global $smwgDIIP;
-// needed for db access
-require_once("$smwgDIIP/specials/WebServices/SMW_WSTriplifier.php");
-
 class DIWebServiceUsage {
 
 	/**
@@ -227,7 +223,7 @@ class DIWebServiceUsage {
 					}
 					
 					$subjects[$displayTripleSubjects] = 
-						WSTriplifier::getInstance()
+						DIWSTriplifier::getInstance()
 							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify && !$preview && !$smwQueryMode, $articleId, $dropGraph, $subjectCreationPatternParts, $parser);
 				}
 			}
@@ -355,7 +351,7 @@ class DIWebServiceUsage {
 		$format = 'table';
 		
 		$query = 	SMWQueryProcessor::createQuery( 
-			'WS Query', array(), SMWQueryProcessor::INLINE_QUERY, $format, array());
+			'[[WS query]]', array(), SMWQueryProcessor::INLINE_QUERY, $format, array());
 		
 		$queryResult = 
 			new DIWSQueryResult(array(), $query, array(), new DIWSSMWStore(), false);
@@ -530,7 +526,7 @@ class DIWebServiceUsage {
 		
 		//create query object
 		$query = 	SMWQueryProcessor::createQuery( 
-			'WS Query', 
+			'[[WS Query]]', 
 			$queryParams, 
 			SMWQueryProcessor::INLINE_QUERY, 
 			$format, 
@@ -656,8 +652,8 @@ class DIWebServiceUsage {
 		foreach($oldWSUsages as $oldWSUsage){
 			$remove = true;
 			foreach($wgsmwRememberedWSUsages as $rememberedWSUsage){
-				if(($wgsmwRememberedWSUsages[0] == $oldWSUsage[0])
-						&& ($wgsmwRememberedWSUsages[1] == $oldWSUsage[1])){
+				if(($rememberedWSUsage[0] == $oldWSUsage[0])
+						&& ($rememberedWSUsage[1] == $oldWSUsage[1])){
 					$remove = false;
 				}
 			}
@@ -681,7 +677,7 @@ class DIWebServiceUsage {
 		
 		foreach($oldWSUsages as $oldWSUsage){
 			if(!array_key_exists($oldWSUsage[0], $wgsmwRememberedWSTriplifications)){
-				WSTriplifier::getInstance()->removeWSUsage($oldWSUsage[0], $articleId);
+				DIWSTriplifier::getInstance()->removeWSUsage($oldWSUsage[0], $articleId);
 			}
 		}
 		$wgsmwRememberedWSTriplifications = array();

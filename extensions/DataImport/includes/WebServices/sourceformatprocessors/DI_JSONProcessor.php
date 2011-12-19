@@ -31,7 +31,7 @@
  * @author Ingo Steinbauer
  *
  */
-class JSONProcessor {
+class DIJSONProcessor {
 	
 	/*
 	 * Converts json to xml so that it can be evaluated via xpath

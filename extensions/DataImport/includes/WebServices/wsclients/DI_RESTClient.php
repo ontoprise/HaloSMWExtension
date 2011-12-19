@@ -31,7 +31,7 @@
  * @author Ingo Steinbauer
  *
  */
-class SMWRestClient implements IDIWebServiceClient {
+class DIRestClient implements IDIWebServiceClient {
 
 	private $mURI;		  // string: the URI of the web service
 

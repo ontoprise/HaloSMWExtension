@@ -199,7 +199,7 @@ class DIWSStorageSQL {
 	 *    <false>, otherwise
 	 *
 	 */
-	public function storeWS(WebService &$webService) {
+	public function storeWS(DIWebService &$webService) {
 		$db =& wfGetDB( DB_MASTER );
 		try {
 			$db->replace($db->tableName('smw_ws_wwsd'), null, array(

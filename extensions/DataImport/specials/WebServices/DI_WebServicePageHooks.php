@@ -29,14 +29,10 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 /**
- * This class contains the top level functionality of the Wiki Web Service
- * extensions. It
- * - provides access to the database
- * - creates instances of class WebService
- * - registers namespaces
- *
+ * This class implements some parser hooks for
+ * the special web service article page.
  */
-class WebServiceManager {
+class DIWebServicePageHooks {
 
 	public static $mNewWebService = null;
 	public static $mOldWebservice = null; // the webserve in its state before the wwsd is changed
@@ -53,24 +49,6 @@ class WebServiceManager {
 			$article = new DIWebServicePage($title);
 		}
 		return true;
-	}
-
-	/**
-	 * Initialized the wiki web service extension:
-	 * - installs the extended representation of articles in the namespace
-	 *   'WebService'.
-	 *
-	 */
-	static function initWikiWebServiceExtension() {
-		global $wgRequest, $wgHooks, $wgParser;
-		$action = $wgRequest->getVal('action');
-
-		// Install the extended representation of articles in the namespace 'WebService'.
-		$wgHooks['ArticleFromTitle'][] = 'WebServiceManager::showWebServicePage';
-
-		$wgParser->setHook('WebService', 'wwsdParserHook');
-		$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
-		$wgHooks['ArticleDelete'][] = 'WebServiceManager::articleDeleteHook';
 	}
 
 	/**
@@ -97,25 +75,27 @@ class WebServiceManager {
 		}
 
 		global $smwgDIIP;
-		require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
-
+		
 		// check if an wwsd was change and delete the old wwsd and the
 		// related cache entries from the db
-		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
-			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
+		if(self::detectModifiedWWSD(self::$mNewWebService)){
+			DIWebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
 			self::$mOldWebservice->removeFromDB();
 				
 			//deal with triplification
 			if(self::$mOldWebservice){
 				$articles = difGetWSStore()->getWSArticles(self::$mOldWebservice->getArticleID(), new SMWRequestOptions());
-				WSTriplifier::getInstance()->removeWS(self::$mOldWebservice->getArticleID(), $articles);
+				DIWSTriplifier::getInstance()->removeWS(self::$mOldWebservice->getArticleID(), $articles);
 			}
 		}
 
 		//handle triplification processing
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
-			WSTriplifier::getInstance()->addWSAsDataSource($article->getID());
+			DIWSTriplifier::getInstance()->addWSAsDataSource($article->getID());
+			
+			global $smwgDIIP;
+			require_once($smwgDIIP . '/specials/WebServices/DI_WebServiceRepositoryAjaxAccess.php');
 			smwf_ws_confirmWWSD(self::$mNewWebService->getArticleID());
 		}
 		
@@ -138,12 +118,11 @@ class WebServiceManager {
 		if ($ws) {
 			//triplification processing
 			global $smwgDIIP;
-			require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
 			//deal with triplification
 			$articles = difGetWSStore()->getWSArticles($article->getID(), new SMWRequestOptions());
-			WSTriplifier::getInstance()->removeWS($article->getID(), $articles);
+			DIWSTriplifier::getInstance()->removeWS($article->getID(), $articles);
 				
-			WebServiceCache::removeWS($ws->getArticleID());
+			DIWebServiceCache::removeWS($ws->getArticleID());
 				
 			$options = new SMWRequestOptions();
 			$pageIds = difGetWSStore()->getWSArticles($ws->getArticleID(), $options);
@@ -166,15 +145,6 @@ class WebServiceManager {
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;
 		return true;
-	}
-
-	/**
-	 * Creates the database tables that are used by the web service extension.
-	 *
-	 */
-	public static function initDatabaseTables() {
-		global $smwgDIIP;
-		difGetWSStore()->initDatabaseTables();
 	}
 
 	/**
@@ -216,88 +186,81 @@ class WebServiceManager {
 		self::$mOldWebservice = $ws;
 		self::$mOldWebserviceRemembered = true;
 	}
-}
 
-/**
- * This function is called, when a <WebService>-tag for a WWSD has been
- * found in an article. If the content of the definition is correct, and
- * if the namespace of the article is the WebService namespace, the WWSD
- * will be stored in the database.
- *
- * @param string $input
- * 		The content of the tag
- * @param array $args
- * 		Array of attributes in the tag
- * @param Parser $parser
- * 		The wiki text parser
- * @return string
- * 		The text to be rendered
- */
-function wwsdParserHook($input, $args, $parser) {
-	global $smwgDIIP;
-	
-	$wwsd = DIWebService::newFromID($parser->getTitle()->getArticleID());
-	WebServiceManager::rememberWWSD($wwsd);
-
-	$attr = "";
-	foreach ($args as $k => $v) {
-		$attr .= " ". $k . '="' . $v . '"';
-	}
-	$completeWWSD = "<WebService$attr>".$input."</WebService>\n";
-
-	$notice = '';
-	$name = $parser->mTitle->getText();
-	$id = $parser->mTitle->getArticleID();
-	
-	$ws = DIWebService::newFromWWSD($name, $completeWWSD);
-	
-	$errors = null;
-	$warnings = null;
-	if (is_array($ws)) {
-		$errors = $ws;
-	} else {
-		// A web service object was returned. Validate the definition
-		// with respect to the WSDL.
+	/**
+	 * This function is called, when a <WebService>-tag for a WWSD has been
+	 * found in an article. If the content of the definition is correct, and
+	 * if the namespace of the article is the WebService namespace, the WWSD
+	 * will be stored in the database.
+	 *
+	 * @param string $input
+	 * 		The content of the tag
+	 * @param array $args
+	 * 		Array of attributes in the tag
+	 * @param Parser $parser
+	 * 		The wiki text parser
+	 * @return string
+	 * 		The text to be rendered
+	 */
+	public static function wwsdParserHook($input, $args, $parser) {
+		global $smwgDIIP;
 		
-		$res = $ws->validateWWSD();
+		$wwsd = DIWebService::newFromID($parser->getTitle()->getArticleID());
+		self::rememberWWSD($wwsd);
+	
+		$attr = "";
+		foreach ($args as $k => $v) {
+			$attr .= " ". $k . '="' . $v . '"';
+		}
+		$completeWWSD = "<WebService$attr>".$input."</WebService>\n";
+	
+		$notice = '';
+		$name = $parser->mTitle->getText();
+		$id = $parser->mTitle->getArticleID();
 		
-		if (is_array($res)) {
-			// Warnings were returned
-			$warnings = $res;
-		} else if (is_string($res)){
-			$errors = array($res);
+		$ws = DIWebService::newFromWWSD($name, $completeWWSD);
+		
+		$errors = null;
+		$warnings = null;
+		if (is_array($ws)) {
+			$errors = $ws;
+		} else {
+			// A web service object was returned. Validate the definition
+			// with respect to the WSDL.
+			
+			$res = $ws->validateWWSD();
+			
+			if (is_array($res)) {
+				// Warnings were returned
+				$warnings = $res;
+			} else if (is_string($res)){
+				$errors = array($res);
+			}
 		}
-	}
-	$msg = "";
-	if ($errors != null || $warnings != null) {
-		// Errors within the WWSD => show them as a bullet list
-		$ew = $errors ? $errors : $warnings;
-		$msg = '<h4><span class="mw-headline">'.wfMsg('smw_wws_wwsd_errors').'</h4><ul>';
-		foreach ($ew as $err) {
-			$msg .= '<li>'.$err.'</li>';
+		$msg = "";
+		if ($errors != null || $warnings != null) {
+			// Errors within the WWSD => show them as a bullet list
+			$ew = $errors ? $errors : $warnings;
+			$msg = '<h4><span class="mw-headline">'.wfMsg('smw_wws_wwsd_errors').'</h4><ul>';
+			foreach ($ew as $err) {
+				$msg .= '<li>'.$err.'</li>';
+			}
+			$msg .= '</ul>';
+			if ($errors) {
+				return '<h4><span class="mw-headline">Web Service Definition</span></h4>'.
+						"<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
+			}
 		}
-		$msg .= '</ul>';
-		if ($errors) {
-			return '<h4><span class="mw-headline">Web Service Definition</span></h4>'.
-					"<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
+		if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
+			// store the WWSD in the database in the hook function <articleSavedHook>.
+			self::$mNewWebService = $ws;
+		} else {
+			// add message: namespace webService needed.
+			$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
 		}
+	
+		return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
+			."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg; 
 	}
-	if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
-		// store the WWSD in the database in the hook function <articleSavedHook>.
-		WebServiceManager::$mNewWebService = $ws;
-	} else {
-		// add message: namespace webService needed.
-		$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
-	}
-
-	//	global $wgArticlePath;
-	//	if(strpos($wgArticlePath, "?") > 0){
-	//		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
-	//	} else {
-	//		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
-	//	}
-	//	$linkToDefGui = '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
-
-	return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
-	."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg; //.$linkToDefGui;
+	
 }

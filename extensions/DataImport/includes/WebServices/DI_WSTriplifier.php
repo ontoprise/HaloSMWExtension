@@ -35,7 +35,7 @@ if(defined( 'LOD_LINKEDDATA_VERSION')){
  * of the Data Import Extension and the Triple Store, respectively the Linked
  * Data Extension
  */
-class WSTriplifier {
+class DIWSTriplifier {
 	
 	static private $instance;
 	
@@ -360,7 +360,7 @@ class WSTriplifier {
 	 * This method is called if one edits or deletes a WWSD.
 	 * All graphs, provenance data and data in the 
 	 * DataSourceInformation graph is removed. This methhod is 
-	 * called by the WebServiceManager.
+	 * called by the WebServicePageHooks
 	 */
 	public function removeWS($wsId, $articleIds){
 		foreach($articleIds as $articleId){
@@ -373,7 +373,7 @@ class WSTriplifier {
 	/*
 	 * This method is called if one edits or creates a new WWSD.
 	 * The WS is added to the DataSourceInformationGraph. This methhod is 
-	 * called by the WebServiceManager.
+	 * called by the WebServicePageHooks.
 	 */
 	public function addWSAsDataSource($wsId){
 		if(defined( 'LOD_LINKEDDATA_VERSION')){

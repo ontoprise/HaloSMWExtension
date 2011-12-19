@@ -34,9 +34,6 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgDIIP;
-require_once("$smwgDIIP/specials/WebServices/SMW_JSONProcessor.php");
-require_once("$smwgDIIP/specials/WebServices/SMW_RDFProcessor.php");
-
 
 //some special parameters and result parts
 define('DI_URL_SUFFIX', '__url__suffix');
@@ -630,14 +627,14 @@ class DIWebService {
 				$p = explode("=", $p, 2);
 				$alias = $p[0];
 				$property = $p[1];
-				SMWRDFProcessor::getInstance()->preprocessProperty($property);
+				DIRDFProcessor::getInstance()->preprocessProperty($property);
 				$postProcess[$alias] = $property;
 			}
 		}
 
 		if(count($postProcess) > 0){
 			foreach ($postProcess as $alias => $property){
-				$results[$alias] = SMWRDFProcessor::getInstance()->getFinalResult($property);
+				$results[$alias] = DIRDFProcessor::getInstance()->getFinalResult($property);
 			}
 		}
 
@@ -666,11 +663,11 @@ class DIWebService {
 				$language = $this->mCallParameters[DI_LANGUAGE][0];
 			}
 
-			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse,
+			DIRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse,
 				$this->responseContentType, $language);
 
 			//setup namespace prefixes
-			SMWRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);
+			DIRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);
 
 
 		}
@@ -711,14 +708,14 @@ class DIWebService {
 		} else if ($json != null){
 			$newValue = array();
 			foreach($value as $v){
-				$jsonProcessor = new JSONProcessor();
+				$jsonProcessor = new DIJSONProcessor();
 				$xmlString = $jsonProcessor->convertJSON2XML($v);
 				$xpathProcessor = new DIXPathProcessor($xmlString);
 				$newValue = array_merge($newValue, $xpathProcessor->evaluateQuery($json));
 			}
 			$value = $newValue;
 		} else if ($property != null){
-			$value = SMWRDFProcessor::getInstance()->preprocessProperty($property);
+			$value = DIRDFProcessor::getInstance()->preprocessProperty($property);
 		}
 		return $value;
 	}
@@ -927,28 +924,17 @@ class DIWebService {
 	 *
 	 */
 	private function createWSClient() {
-		// include the correct client
-		global $smwgDIIP;
-
-		$protocol = strtoupper($this->mProtocol);
 		if(!$this->mWSClient){
-			try {
-				include_once($smwgDIIP . "/specials/WebServices/SMW_".
-					$protocol."Client.php");
-				
-				$classname = "SMW".ucfirst(strtolower($protocol))."Client";
-				
-				if (!class_exists($classname)) {
-					return array(wfMsg("smw_wws_invalid_protocol"));
-				}
-				
-				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType,
-					$this->mAuthenticationLogin, $this->mAuthenticationPassword);
-			} catch (Exception $e) {
-				// The wwsd is erroneous
-				$this->mWSClient = null;
-				return array(wfMsg("smw_wws_invalid_wwsd"));
+			$protocol = strtoupper($this->mProtocol);
+			
+			$classname = "DI".ucfirst(strtolower($protocol))."Client";
+			
+			if(!class_exists($classname)) {
+				return array(wfMsg("smw_wws_invalid_protocol"));
 			}
+				
+			$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType,
+				$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 		}
 		return true;
 	}

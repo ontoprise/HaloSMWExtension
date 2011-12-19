@@ -37,7 +37,7 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
  * properties
  *
  */
-class WSUpdateBot extends GardeningBot {
+class DIWSUpdateBot extends GardeningBot {
 
 	/**
 	 * Constructor
@@ -208,14 +208,13 @@ class WSUpdateBot extends GardeningBot {
 	}
 }
 
-$ws = new WSUpdateBot();
 define('SMW_WSUPDATE_BOT_BASE', 2600);
 define('SMW_GARDISSUE_UPDATED_WSCACHE_ENTRIES', SMW_WSUPDATE_BOT_BASE * 100 + 1);
 define('SMW_GARDISSUE_ERROR_WSCACHE_ENTRIES', SMW_WSUPDATE_BOT_BASE * 100 + 2);
 define('SMW_GARDISSUE_MISSCONFIRM_WSCACHE_ENTRIES', SMW_WSUPDATE_BOT_BASE * 100 + 3);
 
 
-class WSUpdateBotIssue extends GardeningIssue {
+class DIWSUpdateBotIssue extends GardeningIssue {
 
 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
@@ -234,7 +233,7 @@ class WSUpdateBotIssue extends GardeningIssue {
 	}
 }
 
-class WSUpdateBotFilter extends GardeningIssueFilter {
+class DIWSUpdateBotFilter extends GardeningIssueFilter {
 
 	public function __construct() {
 		parent::__construct(SMW_WSCACHE_BOT_BASE);

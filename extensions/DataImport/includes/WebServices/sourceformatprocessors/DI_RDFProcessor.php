@@ -39,7 +39,7 @@
  * @author Ingo Steinbauer
  *
  */
-class SMWRDFProcessor {
+class DIRDFProcessor {
 
 	private static $instance;
 

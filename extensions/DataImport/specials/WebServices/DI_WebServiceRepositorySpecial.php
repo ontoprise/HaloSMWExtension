@@ -127,7 +127,7 @@ class DIWebServiceRepositorySpecial extends SpecialPage {
 				$html .= "<td>".$oldestUpdate.$latestUpdate."</td>";
 	
 				if($allowed){
-					$wsUpdateBot = new WSUpdateBot();
+					$wsUpdateBot = new DIWSUpdateBot();
 					$html .= "<td style=\"text-align: center\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\" alt=\"".wfMsg('smw_wwsr_update')."\" title=\"".wfMsg('smw_wwsr_update_tooltip')."\">".wfMsg('smw_wwsr_update')."</button>";
 					$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\"><a href=\"".$gardeningURL."\">".wfMsg('smw_wwsr_updating')."</a></div></td>";
 				}

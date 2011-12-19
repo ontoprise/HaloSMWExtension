@@ -33,7 +33,7 @@ require_once("$sgagIP/includes/SGA_GardeningBot.php");
  * them from the database
  *
  */
-class WSCacheBot extends GardeningBot {
+class DIWSCacheBot extends GardeningBot {
 
 	/**
 	 * Constructor
@@ -98,8 +98,10 @@ class WSCacheBot extends GardeningBot {
 	 */
 	private function cleanWSCacheEntries($ws){
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		
+		echo("\n\nProcessing WS: ".$ws->getName());
 
-		if($ws->getSpanOfLife() != "0"){
+		if( $ws->getSpanOfLife() != "0"){
 			$cacheResults = difGetWSStore()->getResultsFromCache($ws->getArticleID());
 			$this->addSubTask(sizeof($cacheResults)+1);
 			//echo($ws->getArticleID());
@@ -122,7 +124,7 @@ class WSCacheBot extends GardeningBot {
 
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
-				> $ws->getSpanOfLife() *24*60*60){
+						> $ws->getSpanOfLife() *24*60*60){
 					difGetWSStore()->removeWSEntryFromCache(
 					$ws->getArticleID(), $cacheResult["paramSetId"]);
 					$deletedCacheEntries += 1;
@@ -142,13 +144,11 @@ class WSCacheBot extends GardeningBot {
 	}
 }
 
-new WSCacheBot();
-
 define('SMW_WSCACHE_BOT_BASE', 2500);
 define('SMW_GARDISSUE__REMOVED_WSCACHE_ENTRIES', SMW_WSCACHE_BOT_BASE * 100 + 1);
 
 
-class WSCacheBotIssue extends GardeningIssue {
+class DIWSCacheBotIssue extends GardeningIssue {
 
 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
@@ -165,7 +165,7 @@ class WSCacheBotIssue extends GardeningIssue {
 	}
 }
 
-class WSCacheBotFilter extends GardeningIssueFilter {
+class DIWSCacheBotFilter extends GardeningIssueFilter {
 
 	public function __construct() {
 		parent::__construct(SMW_WSCACHE_BOT_BASE);

@@ -38,7 +38,7 @@ define('WWS_SOAPENC_NS', 'http://schemas.xmlsoap.org/soap/encoding/');
  * @author Thomas Schweitzer
  *
  */
-class SMWSoapClient implements IDIWebServiceClient {
+class DISoapClient implements IDIWebServiceClient {
 
 
 	//--- Private fields ---

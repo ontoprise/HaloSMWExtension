@@ -45,8 +45,7 @@ class DIUseWebServiceSpecial extends SpecialPage {
 	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgDIIP;
 
-		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-		$webServices = WSStorage::getDatabase()->getWebServices();
+		$webServices = difGetWSStore()->getWebServices();
 		ksort($webServices);
 		$ws = "";
 		

@@ -165,11 +165,26 @@ function smwfDISetupExtension() {
 		$smwgDIIP.'/includes/WebServices/DI_IWebServiceClient.php';
 	$wgAutoloadClasses['DISubParameterProcessor'] =
 		$smwgDIIP.'/includes/WebServices/DI_SubParameterProcessor.php';
+	$wgAutoloadClasses['DIWSTriplifier'] =
+		$smwgDIIP.'/includes/WebServices/DI_WSTriplifier.php';	
+		
+	
+	//sourceformatprocessors
 	$wgAutoloadClasses['DIXPathProcessor'] =
-		$smwgDIIP.'/includes/WebServices/DI_XPathProcessor.php';
+		$smwgDIIP.'/includes/WebServices/sourceformatprocessors/DI_XPathProcessor.php';
+	$wgAutoloadClasses['DIJSONProcessor'] =
+		$smwgDIIP.'/includes/WebServices/sourceformatprocessors/DI_JSONProcessor.php';
+	$wgAutoloadClasses['DIRDFProcessor'] =
+		$smwgDIIP.'/includes/WebServices/sourceformatprocessors/DI_RDFProcessor.php';
 		
-	//clients	
-		
+	//clients
+	$wgAutoloadClasses['DIRestClient'] =
+		$smwgDIIP.'/includes/WebServices/wsclients/DI_RESTClient.php';	
+	$wgAutoloadClasses['DILinkeddataClient'] =
+		$smwgDIIP.'/includes/WebServices/wsclients/DI_LinkedDataClient.php';
+	$wgAutoloadClasses['DISoapClient'] =
+		$smwgDIIP.'/includes/WebServices/wsclients/DI_SOAPClient.php';
+			
 	//smwstorage layer	
 	$wgAutoloadClasses['DIWSQueryResult'] =
 		$smwgDIIP.'/includes/WebServices/smwstoragelayer/DI_WSQueryResult.php';
@@ -181,6 +196,8 @@ function smwfDISetupExtension() {
 	//Specials
 	$wgAutoloadClasses['DIWebServicePage'] =
 		$smwgDIIP.'/specials/WebServices/DI_WebServicePage.php';
+	$wgAutoloadClasses['DIWebServicePageHooks'] =
+		$smwgDIIP.'/specials/WebServices/DI_WebServicePageHooks.php';	
 	$wgAutoloadClasses['DISMWAskPageReplacement']  = 
 		$smwgDIIP.'/specials/WebServices/AskSpecial/DI_SMWAskPageReplacement.php';
 
@@ -192,6 +209,11 @@ function smwfDISetupExtension() {
 	$wgAutoloadClasses['DIQPWSTIXML'] = 
 		$smwgDIIP . '/includes/WebServices/resultprinters/DI_QP_WSTIXML.php';
 
+	//bots
+	$wgAutoloadClasses['DIWSUpdateBot'] = 
+		$smwgDIIP . '/includes/WebServices/bots/DI_WSUpdateBot.php';
+	$wgAutoloadClasses['DIWSCacheBot'] = 
+		$smwgDIIP . '/includes/WebServices/bots/DI_WSCacheBot.php';
 	
 	//register query printers
 	global $smwgResultFormats;
@@ -209,16 +231,23 @@ function smwfDISetupExtension() {
 	global $smwgQuerySources;
 	$smwgQuerySources['webservice'] = 'DIWSSMWStore';
 		
-	//todo:remove this
-	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
-	WebServiceManager::initWikiWebServiceExtension();
-	
 	//set all parser hooks
-	global $wgParser;
-	$wgParser->setFunctionHook( 'webServiceUsage', 'DIWebServiceUsage::renderWSParserFunction' );
+	global $wgParser, $wgHooks;
+	//term import
 	$wgParser->setHook('ImportSettings', 'DITermImportPage::renderTermImportDefinition');
+	
+	//ws usage
+	$wgParser->setFunctionHook( 'webServiceUsage', 'DIWebServiceUsage::renderWSParserFunction' );
 	$wgHooks['ArticleSaveComplete'][] = 'DIWebServiceUsage::detectEditedWSUsages';
-	$wgHooks['ArticleDelete'][] = 'DIWebServiceUsagedetectDeletedWSUsages';
+	$wgHooks['ArticleDelete'][] = 'DIWebServiceUsage::detectDeletedWSUsages';
+	
+	//web service page
+	$wgHooks['ArticleFromTitle'][] = 'DIWebServicePageHooks::showWebServicePage';
+	$wgHooks['ArticleSaveComplete'][] = 'DIWebServicePageHooks::articleSavedHook';
+	$wgHooks['ArticleDelete'][] = 'DIWebServicePageHooks::articleDeleteHook';
+	$wgParser->setHook('WebService', 'DIWebServicePageHooks::wwsdParserHook');
+		
+	
 	
 	//introduce resource modules
 	global $wgResourceModules;
@@ -289,7 +318,7 @@ function smwfDISetupExtension() {
 			case '_ti_' : 
 				require_once($smwgDIIP . '/includes/TermImport/DI_CL.php');
 				break;
-			case '_wsu_' : 
+			case '_wsu' :
 				require_once($smwgDIIP . '/specials/WebServices/DI_UseWebServiceAjaxAccess.php');
 				break;
 			case '_ws_' :  
@@ -332,10 +361,8 @@ function smwfDISetupExtension() {
 	//todo. change SGA so that bots can be registered without initializing them
 	$bot = new TermImportBot();
 	$bot = new TermImportUpdateBot();
-	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
-	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
-	
-	
+	$bot = new DIWSUpdateBot();
+	$bot = new DIWSCacheBot();
 	
 	//register DAMs
 	//todo: use language files
@@ -362,10 +389,7 @@ function smwfDISetupExtension() {
  * Called from SMW when admin re-initializes tables
  */
 function smwfDIInitializeTables() {
-	global $smwgDIIP;
-	require_once($smwgDIIP . '/specials/WebServices/SMW_WebServiceManager.php');
-	WebServiceManager::initDatabaseTables();
-	
+	difGetWSStore()->initDatabaseTables();
 	return true;
 }
 

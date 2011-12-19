@@ -59,6 +59,7 @@ class DIWebServicePage extends SMWOrderedListPage {
 	 * article that indicates further results).
 	 */
 	protected function getHTML() {
+		
 		global $wgContLang;
 
 		// ask for the list of articles that use the web service
@@ -79,7 +80,7 @@ class DIWebServicePage extends SMWOrderedListPage {
 		}
 		$articleIDs = difGetWSStore()
 			->getWSArticles($this->getTitle()->getArticleID(), $options);
-
+			
 		foreach($articleIDs as $articleId){
 			$this->mArticles[] = SMWDIWikiPage::newFromTitle(Title::newFromID($articleId));
 		}
