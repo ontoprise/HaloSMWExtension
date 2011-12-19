@@ -35,7 +35,6 @@ class DALReadTIXML implements IDAL {
 	}
 
 	public function getSourceSpecification() {
-		//todo: language
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -94,9 +93,13 @@ class DALReadTIXML implements IDAL {
 	 * Extracts the articleName from the data source specification.
 	 */
 	private function getArticleNameFromSpec($dataSourceSpec) {
-		preg_match('/<articleName.*?>(.*?)<\/articleName>/i', $dataSourceSpec, $articleName);
-
-		return (count($articleName) == 2) ? $articleName[1] : null;
+	$dataSourceSpec = new SimpleXMLElement($dataSourceSpec);
+		$res = $dataSourceSpec->xpath('//articleName');
+		if(count($res) > 0){
+			return ''.trim($res[0]);
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -240,7 +243,7 @@ class DALReadTIXML implements IDAL {
 						if ($idx !== null) {
 							$value = trim($this->tixmlContent[$i][$idx]);
 							if (strlen($value) > 0) {
-								$term->addProperty($prop, $value);
+								$term->addAttribute($prop, $value);
 							}
 						}
 					}
@@ -254,7 +257,7 @@ class DALReadTIXML implements IDAL {
 		return $terms;
 	}
 	
-	public function executeCallBack($callback, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+	public function executeCallBack($callback, $templateName, $extraCategories, $delimiter, $overwriteExistingArticles, $termImportName){
 		return array(true, array());
 	}
 }

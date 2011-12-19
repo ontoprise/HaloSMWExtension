@@ -96,7 +96,6 @@ class DALInterwikiArticleImport implements IDAL {
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		return $this->createTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy, false);
-		
 	}
 	
 	//--- Private methods ---
@@ -184,10 +183,10 @@ class DALInterwikiArticleImport implements IDAL {
 		} else {
 			// Conflict policy
 			$overwrite = true;
-			preg_match('/<overwriteExistingTerms.*?>(.*?)<\/overwriteExistingTerms>/i', 
+			preg_match('/<Name.*?>(.*?)<\/Name>/i', 
 						$conflictPolicy, $overwriteMatch);
 			if (count($overwriteMatch) == 2) {
-				$overwrite = $overwriteMatch[1] == 'true';
+				$overwrite = $overwriteMatch[1] != 'ignore';
 				echo "\nSkip existing articles: ". ($overwrite ? "false\n" : "true\n");
 			}
 			echo "Importing from wiki: $wiki\n";
@@ -245,14 +244,14 @@ class DALInterwikiArticleImport implements IDAL {
 							
 			$diTerm = new DITerm();
 			$diTerm->setArticleName($report.'_TIF');
-			$diTerm->addProperty('linkToReport', $report)
+			$diTerm->addAttribute('linkToReport', $report);
 			$terms->addTerm($diTerm);
 		}
 		
 		return $terms;
 	}
 	
-	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $overwriteExistingArticles, $termImportName){
 		return array(true, array());
 	}
 	

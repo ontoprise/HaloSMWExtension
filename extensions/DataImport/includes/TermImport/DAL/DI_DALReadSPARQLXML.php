@@ -123,8 +123,7 @@ class DALReadSPARQLXML implements IDAL {
 		}
 		
 		if(!$articleNameLabel){
-			//todo: use language file
-			return 'One of the variables in the query must be called "articlename';
+			return wfMsg('smw_ti_sparql_wrong_variable_name');;
 		}
 		
 		$terms = new DITermCollection();
@@ -148,7 +147,7 @@ class DALReadSPARQLXML implements IDAL {
 				
 				foreach($this->queryResultColumns as $columnName => $dontCare){
 					if(array_key_exists($columnName, $row)){
-						$term->addProperty($columnName, $row[$columnName]);			
+						$term->addAttribute($columnName, $row[$columnName]);			
 					}
 				}
 			}
@@ -197,29 +196,26 @@ class DALReadSPARQLXML implements IDAL {
 	}
 	
 	private function getEndpointURIFromSourceSpec($dataSourceSpec){
-		preg_match('/<endpoint.*?>(.*?)<\/endpoint>/i', $dataSourceSpec, $endpoint);
-		
-		return (count($endpoint) == 2) ? $endpoint[1] : null;
+		$dataSourceSpec = new SimpleXMLElement($dataSourceSpec);
+		$res = $dataSourceSpec->xpath('//endpoint');
+		if(count($res) > 0){
+			return ''.trim($res[0]);
+		} else {
+			return null;
+		}
 	}
 	
 	private function getQueryFromSourceSpec($dataSourceSpec){
-		if(strpos($dataSourceSpec, '<query')){
-			$start = strpos($dataSourceSpec, '<query');
-			$start = strpos($dataSourceSpec, '>', $start) + 1;
-			$end = strpos($dataSourceSpec, '</query>');
+		$dataSourceSpec = new SimpleXMLElement($dataSourceSpec);
+		$res = $dataSourceSpec->xpath('//query');
+		if(count($res) > 0){
+			return ''.trim($res[0]);
 		} else {
-			$start = strpos($dataSourceSpec, '<QUERY');
-			$start = strpos($dataSourceSpec, '>', $start) + 1;
-			$end = strpos($dataSourceSpec, '</QUERY>');
+			return null;
 		}
-		$query = substr($dataSourceSpec, $start, $end-$start);
-		$query = str_replace('&gt;', '>', $query);
-		$query = str_replace('&lt;', '<', $query);
-		
-		return $query;
 	}
 	
-	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $overwriteExistingArticles, $termImportName){
 		return array(true, array());
 	}
 	

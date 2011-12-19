@@ -99,9 +99,13 @@ class DALReadCSV implements IDAL {
 	 * 		Name of a file or <null> if the value in not present. 
 	 */
 	private function getFilenameFromSpec($dataSourceSpec) {
-		preg_match('/<filename.*?>(.*?)<\/filename>/i', $dataSourceSpec, $filename);
-		
-		return (count($filename) == 2) ? $filename[1] : null;
+		$dataSourceSpec = new SimpleXMLElement($dataSourceSpec);
+		$res = $dataSourceSpec->xpath('//filename');
+		if(count($res) > 0){
+			return ''.trim($res[0]);
+		} else {
+			return null;
+		}
 	}
 	
 	/**
@@ -223,7 +227,7 @@ class DALReadCSV implements IDAL {
 						$prop = "".$prop;
 						$idx = $indexMap[$prop];
 						if ($idx !== null) {
-							$term->addProperty($prop, $this->csvContent[$i][$idx]);
+							$term->addAttribute($prop, $this->csvContent[$i][$idx]);
 						}
 					}
 				}
@@ -234,7 +238,7 @@ class DALReadCSV implements IDAL {
 		return $terms;
 	}
 	
-	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName){
+	public function executeCallBack($signature, $templateName, $extraCategories, $delimiter, $overwriteExistingArticles, $termImportName){
 		return array(true, array());
 	}
 }
