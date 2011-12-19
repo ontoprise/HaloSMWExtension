@@ -80,7 +80,7 @@ class DITermImportDefinitionValidator {
 	
 	public function isValidConflictPolicy(){
 		$node = $this->tiDefinition->xpath("
-			/ImportSettings/ConflictPolicy/OverwriteExistingTerms[./text() = 'true' or ./text() = 'false']");
+			/ImportSettings/ConflictPolicy/Name");
 		if(count($node) != 1) return false;
 		return true;
 	}

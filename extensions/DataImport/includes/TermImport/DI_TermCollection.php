@@ -17,75 +17,114 @@
  *
  */
 
-//todo:document this
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Ingo Steinbauer
+ */
 
+/*
+ * A collection of terms that have been
+ * provided by a DAM and that will be imported
+ * by the Term Import Framework
+ */
 class DITermCollection {
 	
 	private $terms = array();
 	private $errorMsgs = array();
 	
+	/*
+	 * Add a new term
+	 */
 	public function addTerm($term){
 		$this->terms[] = $term;
 	}
 	
+	/*
+	 * Get all terms in this collection
+	 */
 	public function getTerms(){
 		return $this->terms;
 	}
 	
+	/*
+	 * Enables a DAM to add errors to the collection.
+	 * The errors later will be added to the import log by
+	 * the Term Import Bot.
+	 */
 	public function addErrorMsg($msg){
 		$this->errorMsgs[] = $msg;
 	}
 	
+	/*
+	 * Get all errors
+	 */
 	public function getErrorMsgs(){
 		return $this->errorMsgs;
 	}
 	
 }
 
-
+/*
+ * This class reprents a term that was provided
+ * by a DAM and that will be imported by the TIF
+ */
 class DITerm {
 
 	private $articleName = '';
-	private $props = array();
+	private $attributes = array();
 	
 	private $callbacks = array();
 	private $isAnnonymousCallbackTerm = false;
 	
-	private $propsForAnnotations;
-	private $propsForTemplates;
+	private $attributesForAnnotations;
+	private $attributesForTemplates;
 	
 	public static $tagWhitelist;
 
+	/*
+	 * Set the article name for this term
+	 */
 	public function setArticleName($articleName){
 		$articleName = strip_tags($articleName);
 		$this->articleName = $articleName; 
 	}
 	
+	/*
+	 * Get the desired article name for this term
+	 */
 	public function getArticleName(){
 		return $this->articleName; 
 	}
 	
-	public function addProperty($prop, $value){
+	/*
+	 * add a new attribute name / value pair to this term
+	 */
+	public function addAttribute($attribute, $value){
 		if(is_array($value)){
 			
 			foreach($value as $val){
-				$this->addProperty($prop, $val);
+				$this->addAttribute($attribute, $val);
 			}
 				
 		} else {
-		
 			$value = trim($value);
 			
 			if (strlen($value) > 0) {
-				if(!array_key_exists($prop, $this->props)){
-					$this->props[$prop] = array();
+				if(!array_key_exists($attribute, $this->attributes)){
+					$this->attributes[$attribute] = array();
 				}
-				$this->props[$prop][] = $value;
+				$this->attributes[$attribute][] = $value;
 			}
 		}
 	}
 	
-	public function getProperties($sAnnotations=true){
+	/*
+	 * Get all attributes of this term. The attributes will differ depending on
+	 * ehether they will be used as annotation or template parameter values.
+	 */
+	public function getAttributes($sAnnotations=true){
 		return $this->initializeReturnValues($sAnnotations);
 	}
 	
@@ -95,63 +134,83 @@ class DITerm {
 		$tagWhitelist = self::getTagWhitelist();
 		
 		if($sAnnotations){
-			if(is_null($this->propsForAnnotations)){
-				$this->propsForAnnotations = array();
-				foreach($this->props as $prop => $values){
+			if(is_null($this->attributesForAnnotations)){
+				$this->attributesForAnnotations = array();
+				foreach($this->attributes as $attribute => $values){
 					foreach($values as $value){
 						$value = str_replace(
 							array('[', ']', '{', '}', '|'),
 							array('&#91;', '&#93;', '&#123;', '&#125;', '&#124;'),
 							$value);
 						
-						$this->propsForAnnotations[$prop][] = 
+						$this->attributesForAnnotations[$attribute][] = 
 							strip_tags($value, $tagWhitelist);	
 					}
 				}
 			}	
-			return $this->propsForAnnotations; 
+			return $this->attributesForAnnotations; 
 		} else {
-			if(is_null($this->propsForTemplates)){
-				$this->propsForTemplates = array();
-				foreach($this->props as $prop => $value){
+			if(is_null($this->attributesForTemplates)){
+				$this->attributesForTemplates = array();
+				foreach($this->attributes as $attribute => $values){
 					foreach($values as $value){
-						$this->propsForTemplates[$prop][] = 
-							$completeValue .= strip_tags($value, $tagWhitelist.'<pre>');;	
+						$this->attributesForTemplates[$attribute][] = 
+							strip_tags($value, $tagWhitelist.'<pre>');;	
 					}
 				}
 			}	
-			return $this->propsForTemplates;
+			return $this->attributesForTemplates;
 		}
 	}
 	
-	public function getPropertyValue($propertyName, $asAnnotations=true){
+	/*
+	 * Returns the values of a certain attribute. Value may differ on whether it
+	 * will be used as an annotation or template parameter value
+	 */
+	public function getAttributeValue($attributeName, $asAnnotations=true){
+		$attributes = $this->initializeReturnValues($asAnnotations);
 		
-		$props = $this->initializeReturnValues($asAnnotations);
-		
-		if(array_key_exists($propertyName, $props)){
-			return $props[$propertyName];
+		if(array_key_exists($attributeName, $attributes)){
+			return $attributes[$attributeName];
 		}
 		
 		return false;
 	}
 	
+	/*
+	 * Get all callbacks that have been associated with
+	 * this term by a DAM
+	 */
 	public function getCallbacks(){
 		return $this->callbacks;
 	}
 	
+	/*
+	 * Enables a DAM to tell the Term Import Bot to call a callback method
+	 * of the DAM, when the Term Import Bot reaches this term in his queue.
+	 */
 	public function addCallback(DITermImportCallback $callback){
 		$this->callbacks[] = $callback;
 	}
 	
+	/*
+	 * Does this term also contain content for new articles or
+	 * is it only used to tell the Term Import Bot to call some 
+	 * callback methods of the DAm, when he reaches this term.
+	 */
 	public function isAnnonymousCallbackTerm(){
 		return $this->isAnnonymousCallbackTerm;
 	}
 	
+	/*
+	 * Enables a DAM to make this an annonymous callback term, that does not
+	 * provide content for a new article.
+	 */
 	public function setAnnonymousCallbackTerm($anonymousCallbackTerm){
 		$this->isAnnonymousCallbackTerm = $anonymousCallbackTerm;
 	}
 	
-	public static function getTagWhitelist(){
+	private static function getTagWhitelist(){
 		if(is_null(self::$tagWhitelist)){
 			//copied from Sanitizer (MW 1.17)
 			//removed 'pre' since pre seems to be not allowed in annotation values
@@ -192,6 +251,11 @@ class DITerm {
 		return self::$tagWhitelist;
 	}
 	
+	/*
+	 * Enables the Term Import Bot to create a term with a
+	 * safer article name, when creating an article with the
+	 * original article name failed.
+	 */
 	public function getSaferArticleName(){
 		//based on Title.php (MW 1.17)
 		$articleName = $this->articleName;

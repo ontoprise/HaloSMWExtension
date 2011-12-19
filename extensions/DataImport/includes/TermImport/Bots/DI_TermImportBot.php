@@ -40,9 +40,6 @@ class TermImportBot extends GardeningBot {
 	private $dateString = null;
 	private $importErrors = array();
 	
-	private $computedDisplayTemplates = array();
-	private $computedDelimiters = array();
-
 	function __construct() {
 		parent::GardeningBot("smw_termimportbot");
 	}
@@ -134,8 +131,11 @@ class TermImportBot extends GardeningBot {
 			//todo: language
 			return "Connecting the data access layer module $dalModule[0] failed."; 
 		}
+		$damId = $dalModule[0];
 
-		$source = $parser->serializeElement(array('DataSource'));
+		$settingsXML = new SimpleXMLElement($settings);
+		$source = $settingsXML->xpath('//DataSource');
+		$source = $source[0]->asXML();
 		
 		$importSets = $parser->getValuesOfElement(array('ImportSets', 'ImportSet', 'Name'));
 		if(count($importSets) > 0){
@@ -153,7 +153,7 @@ class TermImportBot extends GardeningBot {
 		echo("\r\nTerms in place");
 		
 		try {
-			$result = $this->createArticles($terms, $creationPattern, $conflictPolicy, $dam,$termImportName);
+			$result = $this->createArticles($terms, $creationPattern, $conflictPolicy, $dam,$termImportName, $damId);
 			
 			echo "\r\nBot finished!\n";
 			if ($result === true) {
@@ -168,7 +168,7 @@ class TermImportBot extends GardeningBot {
 	/**
 	 * Creates articles for the terms according to the creation pattern and conflict policy.
 	 */
-	private function createArticles($termsCollection, $creationPattern, $conflictPolicy, $dam, $termImportName) {
+	private function createArticles($termsCollection, $creationPattern, $conflictPolicy, $dam, $termImportName, $damId) {
 		
 		echo("\r\nStart to create articles");
 
@@ -202,11 +202,19 @@ class TermImportBot extends GardeningBot {
 		}
 		
 		$parser = new DIXMLParser($conflictPolicy);
-		$cp = false;
+		$cp = 'overwrite';
 		if ($parser->parse() === TRUE) {
-			$cp = $parser->getValuesOfElement(array('ConflictPolicy','OverwriteExistingTerms'));
+			$cp = $parser->getValuesOfElement(array('ConflictPolicy','Name'));
 			$cp = $cp[0];
-			$cp = strtolower($cp) == 'true' ? true : false;
+		}
+		
+		global $ditigConflictPolicies;
+		$cp = $ditigConflictPolicies[$cp];
+		$cp = new $cp();
+		
+		$overwriteExistingArticles = false;
+		if($cp == 'ignore'){
+			$overwriteExistingArticles = false;
 		}
 		
 		$terms = $termsCollection->getTerms();
@@ -223,7 +231,7 @@ class TermImportBot extends GardeningBot {
 			//deal with callbacks
 			foreach($term->getCallbacks() as $callback){
 				list($callBackSucces, $logMsgs) = $dam->executeCallback(
-					$callback, $templateName, $extraCategories, $delimiter, $cp, $termImportName);
+					$callback, $templateName, $extraCategories, $delimiter, $overwriteExistingArticles, $termImportName);
 				
 				foreach($logMsgs as $logMsg){
 					$log->addGardeningIssueAboutArticle(
@@ -238,7 +246,8 @@ class TermImportBot extends GardeningBot {
 			
 			//import new term if this is not an anonymous callback term
 			if(!$term->isAnnonymousCallbackTerm()){
-				$caResult = $this->createArticle($term, $templateName, $extraCategories, $delimiter, $cp, $termImportName);
+				
+				$caResult = $this->createArticle($term, $templateName, $extraCategories, $delimiter, $cp, $termImportName, $damId);
 				$this->worked(1);
 	
 				if ($caResult !== true) {
@@ -265,7 +274,7 @@ class TermImportBot extends GardeningBot {
 	 * Creates an article for the given term according to the creation pattern and
 	 * conflict policy
 	 */
-	private function createArticle(&$term, $templateName, $extraCategories, $delimiter, $overwriteExistingArticle, $termImportName) {
+	private function createArticle($term, $templateName, $extraCategories, $delimiter, $conflictPolicy, $termImportName, $damId) {
 		
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
@@ -302,138 +311,11 @@ class TermImportBot extends GardeningBot {
 			}
 		}
 		
-		$article = new Article($title);
-
-		$updated = false;
-		$termAnnotations = $this->getExistingTermAnnotations($title);
-		
-		if ($article->exists()) {
-			
-			if (!$overwriteExistingArticle) {
-				echo wfMsg("\r\n".'smw_ti_articleNotUpdated', $title)."\n";
-				$log->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_UPDATE_SKIPPED, $title);
-				
-				$termAnnotations['ignored'][] = $termImportName;
-				$termAnnotations = "\n\n\n"
-					.$this->createTermAnnotations($termAnnotations);
-				$article->doEdit(
-					$article->getContent().$termAnnotations, wfMsg('smw_ti_creationComment'));
-				
-				return true;
-			}
-			$updated = true;
-		}
-		
-		if($updated){
-			$termAnnotations['updated'][] = $termImportName;  
-		} else {
-			$termAnnotations['added'][] = $termImportName;
-		}
-		$termAnnotations = "\n".$this->createTermAnnotations($termAnnotations);
-
-		// Create the content of the article based on the creation pattern
-		$content = $this->createContent($term, $templateName, $extraCategories, $delimiter);
-
-		// Create/update the article
-		$success = $article->doEdit($content.$termAnnotations, wfMsg('smw_ti_creationComment'));
-		if (!$success) {
-			$log->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_CREATION_FAILED, $title);
-			return wfMsg('smw_ti_creationFailed', $title);
-		}
-
-		echo "\r\nArticle ".$title->getFullText();
-		echo $updated==true ? " updated\n" : " created.\n";
-		$log->addGardeningIssueAboutArticle(
-			$this->id,
-			$updated == true ? SMW_GARDISSUE_UPDATED_ARTICLE
-			: SMW_GARDISSUE_ADDED_ARTICLE,
-		$title);
-
-		return true;
-	}
-
-	/**
-	 * Creates the content of an article based on the description of the term and
-	 * the creation pattern
-	*/
-	private function createContent($term, $template, $extraCategories, $delimiter){
-		$result = '';
-		
-		$addedCategories = array();
-		
-		global $wgLang;
-		if(trim($template) == ''){
-			foreach($term->getProperties(true) as $property => $values){
-				
-				$delimiter = $this->getDelimiter($property);
-				
-				foreach($values as $vs){
-					
-					//necessary for example if csv column contains several values
-					//todo: document this 
-					if($delimiter === false){
-						$vs = array($vs);
-					} else {
-						$vs = explode($delimiter, $vs);
-					}
-					
-					foreach($vs as $value){
-						$value = trim($value);
-						
-						//todo: document this
-						if(ucfirst(trim($property)) == $wgLang->getNSText(NS_CATEGORY)){
-							if(strpos($value, $wgLang->getNSText(NS_CATEGORY).':') !== 0 ){
-								$addedCategories[$value] = true;
-								$value = $wgLang->getNSText(NS_CATEGORY).':'.$value;
-							} else {
-								$addedCategories[$value] = true;
-							}
-							$result .= '[['.$value."]]";
-						} else {	
-							$result .= '[['.$property.'::'.$value."| ]]";
-						}
-					}
-				}
-			}
-		} else {
-			$result = '{{'.$template;
-			foreach($term->getProperties() as $property => $values){
-				$result .= "\n".'|'.$property.' = '. implode($delimiter, $values);
-			}
-			$result .= "\n"."}}";
-		}
-		
-		if(strlen($extraCategories) > 0){
-			global $wgLang;
-			
-			$extraCategories = explode(',', $extraCategories);
-			foreach($extraCategories as $eC){
-				$eC = trim($eC);
-				if(strpos($eC, $wgLang->getNSText(NS_CATEGORY).':') !== 0 ){
-					$addedCategories[$eC] = true;
-					$eC = $wgLang->getNSText(NS_CATEGORY).':'.$eC;
-				} else {
-					$addedCategories[$eC] = true;
-				}
-				
-				$result .= '[['.$eC.']]';
-			}
-		}
-		
-		$addedDisplayTemplates = array();
-		foreach(array_keys($addedCategories) as$aC){
-			$displayTemplate = $this->getDisplayTemplateForCategory($aC);
-			if(strlen($displayTemplate) > 0){
-				if(!array_key_exists($displayTemplate, $addedDisplayTemplates)){
-					$addedDisplayTemplates[$displayTemplate] = true;
-					$result .= '{{'.$displayTemplate.'}}';
-				}
-			}
-		}
-		
+		$result = $conflictPolicy->createArticle(
+			$term, $templateName, $extraCategories, $delimiter, $title, $termImportName, $log, $this->id, $damId);
 		return $result;
 	}
-	
+
 	private function createTermImportResultContent($termImportName){
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
@@ -520,194 +402,6 @@ class TermImportBot extends GardeningBot {
 		}
 		return $this->dateString;
 	}
-	
-	/**
-	 * returns an array that contains already existing term import annotations
-	 * 
-	 * @param $title
-	 * @return array
-	 */
-	public function getExistingTermAnnotations($title){
-		$existingAnnotations = array();
-		$existingAnnotations['added'] = array();
-		$existingAnnotations['updated'] = array();
-		$existingAnnotations['ignored'] = array();
-
-		if($title == null){
-			return $existingAnnotations;
-		}
-		
-		if($title->exists()){
-			$semdata = smwfGetStore()->
-				getSemanticData(SMWDIWikiPage::newFromTitle($title));
-
-			$property = SMWDIProperty::newFromUserLabel('WasAddedDuringTermImport');
-			$values = $semdata->getPropertyValues($property);
-			foreach($values as $value){
-				$existingAnnotations['updated'][] = 
-					SMWDataValueFactory::newDataItemValue($value, null)->getShortWikiText();
-			}
-			
-			$property = SMWDIProperty::newFromUserLabel('WasIgnoredDuringTermImport');
-			$values = $semdata->getPropertyValues($property);
-			foreach($values as $value){
-				$existingAnnotations['ignored'][] = 
-					SMWDataValueFactory::newDataItemValue($value, null)->getShortWikiText();
-			}
-		}
-		
-		return $existingAnnotations;
-	}
-	
-	/**
-	 * Returns the annotations which can be added to a term
-	 * 
-	 * @param $annotations
-	 * @return string
-	 */
-	public function createTermAnnotations($annotations){
-		$result = "";
-		foreach($annotations['added'] as $annotation){
-			$result .= "[[wasAddedDuringTermImport::".$annotation."| ]] ";
-		}
-		
-		foreach($annotations['updated'] as $annotation){
-			$result .= "[[wasUpdatedDuringTermImport::".$annotation."| ]] ";
-		}
-		
-		foreach($annotations['ignored'] as $annotation){
-			$result .= "[[wasIgnoredDuringTermImport::".$annotation."| ]] ";
-		}
-		return trim($result);
-	}
-	
-	private function getDisplayTemplateForCategory($category){
-		global $wgLang;
-		if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
-			$category = substr($category, strpos($category, ":") +1);
-		}
-		
-		if(!array_key_exists($category, $this->computedDisplayTemplates)){
-			$title = Title::newFromText($category, NS_CATEGORY);
-			$store = smwfGetStore();
-			$semanticData = $store->getSemanticData(
-				SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
-				
-			$displayTemplate = 
-				$this->getInheritedPropertyValue($semanticData, 'Use_display_template');
-			
-			if(count($displayTemplate) > 0){
-				$displayTemplate = $displayTemplate[0];
-			} else {
-				$displayTemplate = '';
-			}
-			$this->computedDisplayTemplates[$category] = $displayTemplate; 
-		}
-		
-		return $this->computedDisplayTemplates[$category];
-	}
-	
-	
-	private function getInheritedPropertyValue($semanticData, $propertyName, $getAll = false, $values = array(), $processedCategories = array()){
-		//todo: this has been copied from ASF, consolidate this
-		
-		$properties = $semanticData->getProperties();
-		
-		if(array_key_exists($propertyName, $properties)){
-			$vals = $semanticData->getPropertyValues($properties[$propertyName]);
-			if(!$getAll){
-				$idx = array_keys($vals);
-				$idx = $idx[0];
-				$values[] = SMWDataValueFactory::newDataItemValue($vals[$idx], null)
-					->getShortWikiText();
-			} else {
-				foreach($vals as $v){
-					$values[] = SMWDataValueFactory::newDataItemValue($v, null)
-						->getShortWikiText();
-				}
-			}
-		} else {
-			$title = $semanticData->getSubject()->getTitle();
-			
-			if(array_key_exists($title->getText(), $processedCategories)){
-				//deal with cyrcles
-				return $values;
-			} else {
-				$processedCategories[$title->getText()] = true;
-			}
-			
-			$superCategories = $title->getParentCategories();
-			if(array_key_exists($title->getFullText(), $superCategories)){
-				unset($superCategories[$title->getFullText()]);
-			}
-			
-			$store = smwfGetStore();
-			foreach($superCategories as $c => $dc){
-				$semanticData = $store->getSemanticData(
-					SMWDIWikiPage::newFromTitle(Title::newFromText($c, NS_CATEGORY)));
-				$values = $this->getInheritedPropertyValue($semanticData, $propertyName, $getAll, $values, $processedCategories);
-			}
-		}
-		
-		return $values;
-	}
-	
-	private function getDelimiter($property){
-		
-		$property = trim($property);
-		
-		if(!array_key_exists($property, $this->computedDelimiters)){
-			global $wgLang;
-			if(ucfirst($property) == $wgLang->getNSText(NS_CATEGORY)){
-				$delimiter = ',';
-			} else {
-				$title = Title::newFromText($property, SMW_NS_PROPERTY);
-				$store = smwfGetStore();
-				$semanticData = $store->getSemanticData(
-					SMWWikiPageValue::makePageFromTitle($title)->getDataItem());
-				
-				$delimiter = $this->getPropertyValue($semanticData, 'Delimiter');
-			
-				if(!$delimiter){
-					global $smwgHaloContLang;
-					$specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-					
-					$maxCardinality = $this->getPropertyValue($semanticData, 
-						$specialSchemaProperties[SMW_SSP_HAS_MAX_CARD]);
-					
-					if($maxCardinality !== '1'){
-						$delimiter = ',';
-					} 
-				}
-			}
-			
-			$this->computedDelimiters[$property] = $delimiter;
-		}
-		
-		return $this->computedDelimiters[$property]; 
-	}
-	
-	private function getPropertyValue($semanticData, $propertyName, $defaultValue = false){
-		
-		$propertyName = str_replace(' ', '_', $propertyName);
-		
-		$result = $defaultValue;
-		
-		$properties = $semanticData->getProperties();
-		
-		if(array_key_exists($propertyName, $properties)){
-			$values = $semanticData->getPropertyValues($properties[$propertyName]);
-			$idx = array_keys($values);
-			$idx = $idx[0];
-			if(!is_null($values[$idx])){						
-				$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
-					->getShortWikiText();
-			}
-		}
-		
-		return $result;
-	}
-		
 }
 
 define('SMW_TERMIMPORT_BOT_BASE', 2200);

@@ -146,9 +146,12 @@ class DICL {
 									"<span>".wfMsg('smw_ti_help')."</span> ".
 									wfMsg('smw_ti_conflictpolicy-help')."</div>".
 									wfMsg('smw_ti_conflictpolicy-label').
+									//todo: language
 									"<select name=\"conflict\" id=\"conflict-input-field\">" .
-										"<option>overwrite</option>" .
-										"<option>preserve current versions</option>" .
+										//todo: compute this dynamically according to the available cps 
+										"<option value=\"overwrite\">overwrite</option>" .
+										"<option value=\"ignore\">preserve current versions</option>" .
+										"<option value=\"append some\" style=\"display:none\">append selected values</option>" .
 									"</select>" .
 								"</div>" . //conflict
 								"<div id=\"ti-update-policy\">" .
@@ -282,8 +285,7 @@ class DICL {
 		@$extraCategories = ''.$extraCategories[0];
 		$html .= '<span id="extraCategories-ed">'.$extraCategories.'</span>';
 		
-		$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy/OverwriteExistingTerms/text()");
-		$conflictPolicy = $conflictPolicy[0] == "true" ? "overwrite" : "preserve current versions"; 
+		$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy/Name/text()");
 		$html .= '<span id="conflictPolicy-ed">'.$conflictPolicy.'</span>';
 
 		$html .= '<span id="termImportName-ed">'.$termImportName.'</span>';
@@ -350,7 +352,7 @@ class DICL {
 		
 		$conflictPolicy =
 			'<ConflictPolicy>'."\n".
-    		'	<OverwriteExistingTerms>' . $conflictPolicy . '</OverwriteExistingTerms>'."\n".
+    		'	<Name>' . $conflictPolicy . '</Name>'."\n".
 			'</ConflictPolicy >';
 		
 		$inputConfig = str_replace('<?xml version="1.0"?>',"",$inputConfig);
@@ -449,14 +451,19 @@ class DICL {
  * @param $source_input an XML structure of the given source inputs
  * @param $givenImportSetName the given import set name (String)
  * @param $givenInputPol an XML structure with the given input policy
- * @param $mappingPage The name of the mapping article
+ * @param $templateName (string) the name of the template if a template should be used as creation pattern
+ * @param $extraCategoriees (string) coma separated list of extra category annotations
+ * @param $delimiter (string) delimiter that will be used to separate multiple values 
  * @param $givenConflictPol Boolean: overwrite=true, preserve=false
  * @param $runBot run the bot???
+ * @param $temImportName (string) name of the term import article
+ * @param $updatePolicy (string) how often in minutes should this term import be updated
+ * @param $edit : is this a new term import or is an existing one edited
  *
  * @return $result an XML structure
  */
 function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
-		$givenInputPol, $templateName, $extraCategories, $delimiter, $givenConflictPol = true,
+		$givenInputPol, $templateName, $extraCategories, $delimiter, $givenConflictPol = overwrite,
 		$runBot, $termImportName = null, $updatePolicy = "", $edit = false,
 		$createOnly = false) {
 
@@ -480,11 +487,11 @@ function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
 		$source_result = '<DataSource>'."\n";
 		foreach ($source_xml_original->children() as $second_gen) {
 			$tag = $second_gen->getName();
-			$source_result .= '<'.$tag.'>';
+			$source_result .= '<'.$tag.'><![CDATA[';
 			if(!is_null($source_xml->$tag) && strlen(trim($source_xml->$tag)) > 0 ){
 				$source_result .= trim($source_xml->$tag);
 			}
-			$source_result .= '</'.$tag.'>'."\n";
+			$source_result .= ']]></'.$tag.'>'."\n";
 		}
 		$source_result .= '</DataSource>'."\n";
 		
@@ -581,12 +588,11 @@ function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
 			$result = json_encode($result);
 			return '--##starttf##--' . $result . '--##endtf##--';
 		} else if ($createOnly != "false"){
-			//todo:language
 			$linker = new Linker();
 			$link = $linker->makeLink(
 				Title::newFromText(''.$termImportName, SMW_NS_TERM_IMPORT)->getFullText(), ''.$termImportName);
 			$result = array('success' => true, 
-				'msg' => '<br><b>The Term Import Definition '.$link.' was saved successfully.<br/></b><br/>');
+				'msg' => '<br><b>'.wfMsg('smw_ti_definition_saved_successfully', $link).'<br/></b><br/>');
 			$result = json_encode($result);
 			return '--##starttf##--' . $result . '--##endtf##--';
 		}
@@ -598,15 +604,14 @@ function dif_ti_connectDAM($damID , $source_input, $givenImportSetName,
 			$result = json_encode($result);
 			return '--##starttf##--' . $result . '--##endtf##--';
 		} else {
-			//todo:language
 			$linker = new Linker();
 			$link = $linker->makeLink(
 				Title::newFromText(''.$termImportName, SMW_NS_TERM_IMPORT)->getFullText(), ''.$termImportName);
-			$msg = '<br><b>The Term Import Definition '.$link.' was saved successfully.</b><br/><br/>';
+			$msg = '<br><b>'.wfMsg('smw_ti_definition_saved_successfully', $link).'<br/></b><br/>';
 			
 			$link = $linker->makeLink(
 				Title::newFromText('Gardening', NS_SPECIAL)->getFullText());
-			$msg .= '<b>The Term Import Bot has been started successfully. See '.$link.' for details.</b><br/><br/>';
+			$msg .= '<b>'.wfMsg('smw_ti_started_successfully', $link).'</b><br/><br/>';
 			
 			$result = array('success' => true, 
 				'msg' => $msg);

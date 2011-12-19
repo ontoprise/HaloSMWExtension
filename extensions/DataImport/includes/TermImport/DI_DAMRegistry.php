@@ -17,15 +17,33 @@
  *
  */
 
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/*
+ * A registry of all Data Access Modules
+ * that are available in the Wiki
+ */
 class DIDAMRegistry {
 	
 	private static $registeredDAMs = array();
 	
+	/*
+	 * Register a DAM with the given DAMConfiguration
+	 */
 	public static function registerDAM($className, $label, $description){
 		self::$registeredDAMs[$className] = 
 			new DIDAMConfiguration($className, $label, $description);  
 	}
 	
+	/*
+	 * Returns the HTML snippet, which is shown in Special:TermImport
+	 * for this DAM in the list of available DAMs
+	 */
 	public static function getDAMsHTML(){
 		$html = "";
 		foreach(self::$registeredDAMs as $dam){
@@ -34,6 +52,10 @@ class DIDAMRegistry {
 		return $html;
 	}
 	
+	/*
+	 * Returns an instance of a DAM or false if an
+	 * unknown DAM id was given.
+	 */
 	public static function getDAM($className){
 		if(class_exists($className)){
 			return new $className();
@@ -42,6 +64,10 @@ class DIDAMRegistry {
 		}
 	}
 	
+	/*
+	 * Returns the description of a DAM which is shown in
+	 * Special:TermImport
+	 */
 	public static function getDAMDesc($className){
 		if(array_key_exists($className, self::$registeredDAMs)){
 			return self::$registeredDAMs[$className]->getDescription();
@@ -51,6 +77,10 @@ class DIDAMRegistry {
 	}
 }
 
+/*
+ * Represents a DAM configuration which
+ * was registered in the DAM registry
+ */
 class DIDAMConfiguration {
 	
 	private $className;
@@ -63,6 +93,10 @@ class DIDAMConfiguration {
 		$this->description = $description;
 	}
 	
+	/*
+	 * Returns the HTML snippet, which is shown in Special:TermImport
+	 * for this DAM in the list of available DAMs
+	 */
 	public function getHTML(){
 		return "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"".
 			" onMouseOut=\"termImportPage.showRightDAM(event, this)\"".
@@ -70,6 +104,10 @@ class DIDAMConfiguration {
 			" <a>$this->label</a></div>";
 	}
 	
+	/*
+	 * Returns the description of this DAM. This is shown in
+	 * Special:TermImport
+	 */
 	public function getDescription(){
 		return $this->description;
 	}

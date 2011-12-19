@@ -38,8 +38,6 @@ class TermImportUpdateBot extends GardeningBot {
 
 
 	function __construct() {
-		//todo:register termimportupdatebot
-		//define('SMWH_FORCE_TS_UPDATE', true);
 		parent::GardeningBot("smw_termimportupdatebot");
 	}
 
