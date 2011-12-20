@@ -15,8 +15,7 @@
 			for structured data that has semantic markup. Easy creation of forms
 			can be achieved by using the Automatic Semantic Forms extension.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension
-		</helpurl>
+               <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Extension</helpurl>
 		<dependencies>
 			<dependency from="1.14.0" to="1.17.9">mw</dependency>
 			<dependency from="1.4.2" to="1.6.9">smw</dependency>
