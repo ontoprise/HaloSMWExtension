@@ -685,13 +685,13 @@ class SMWTripleStore extends SMWStoreAdapter {
 						if ($e->getCode() == 0) {
 							// happens most likely when TSC is not running
 							global $smwgHaloWebserviceEndpoint;
-							header("Cache-Control: no-cache");
-							header('Pragma: no-cache');
+							@header("Cache-Control: no-cache");
+							@header('Pragma: no-cache');
 							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgHaloWebserviceEndpoint)));
 
 						} else {
-							header("Cache-Control: no-cache");
-							header('Pragma: no-cache');
+							@header("Cache-Control: no-cache");
+							@header('Pragma: no-cache');
 							$sqr->addErrors(array($e->getMessage()));
 						}
 						// in case of an error
