@@ -18,7 +18,6 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
-
     <copy todir="bin/zip/extensions/SemanticGardening/maintenance">
       <fileset dir="../maintenance/">
         <exclude name="**/.svn, **/CVS" />
@@ -34,13 +33,17 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
-
     <copy todir="bin/zip/extensions/SemanticGardening/tests">
       <fileset dir="../tests/">
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
     <copy todir="bin/zip/extensions/SemanticGardening/specials">
+      <fileset dir="../specials/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
+    <copy todir="bin/zip/extensions/SemanticGardening/tests">
       <fileset dir="../specials/">
         <exclude name="**/.svn, **/CVS" />
       </fileset>

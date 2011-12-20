@@ -17,6 +17,10 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 global $sgagIP;
 require_once $sgagIP . '/includes/bots/consistency_bot/SGA_ConsistencyBot.php';
 require_once 'Util.php';

@@ -17,12 +17,15 @@
  *
  */
 
- 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+} 
+
 require_once 'testcases/TestConsistencyBot.php';
 require_once 'testcases/TestAnomaliesBot.php';
 require_once 'testcases/TestMissingAnnotationsBot.php';
 require_once 'testcases/TestUndefinedEntitiesBot.php';
-require_once 'testcases/TestImportOntologyBot.php';
+//require_once 'testcases/TestImportOntologyBot.php';
  
 class GardeningTests
 {
@@ -34,7 +37,7 @@ class GardeningTests
         $suite->addTestSuite("TestAnomaliesBot");
         $suite->addTestSuite("TestMissingAnnotationsBot");
         $suite->addTestSuite("TestUndefinedEntitiesBot");
-        $suite->addTestSuite("TestImportOntologyBot");
+        //$suite->addTestSuite("TestImportOntologyBot");
  
         return $suite;
     }
