@@ -587,13 +587,21 @@ OBCategoryTreeActionListener.prototype = Object
 
 										
 					showSubMenu : function(commandID) {
-						
+						if (this.selectedCategory == null && commandID == SMW_OB_COMMAND_SUBCATEGORY_EDIT ) {
+							alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+							return;
+						}
 						 obCategoryMenuProvider.showContent(commandID,'categoryTree');
 						
                                            					    
                    	},
                    	
                    	executeCommand : function(commandID) {
+                   		if (this.selectedCategory == null && commandID == SMW_OB_COMMAND_CATEGORY_DELETE ) {
+							alert(gLanguage.getMessage('OB_SELECT_CATEGORY'));
+							return;
+						}
+                   		
                    		obCategoryMenuProvider.doCommand(commandID);
                    	},
 
@@ -1332,12 +1340,19 @@ OBPropertyTreeActionListener.prototype = Object
 					
 
 					showSubMenu : function(commandID) {
-						
+						if (this.selectedCategory == null && commandID == SMW_OB_COMMAND_SUBPROPERTY_EDIT ) {
+							alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
+							return;
+						}
 						
 						obPropertyMenuProvider.showContent(commandID,'propertyTree');
 					},
 					
 					executeCommand : function(commandID) {
+						if (this.selectedCategory == null && commandID == SMW_OB_COMMAND_PROPERTY_DELETE ) {
+							alert(gLanguage.getMessage('OB_SELECT_PROPERTY'));
+							return;
+						}
 						obPropertyMenuProvider.doCommand(commandID);
                    	},
 					

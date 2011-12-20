@@ -1507,6 +1507,50 @@ OBOntologyModifier.prototype = {
 		propertyNodeCached.setAttribute("type", newPropertyType); // TODO:
 		// escape
 		propertyNodeDisplayed.setAttribute("type", newPropertyType);
+	},
+	
+	deleteCategoryNode: function(categoryID) {
+		var categoryNodeCached = GeneralXMLTools.getNodeById(
+				dataAccess.OB_cachedCategoryTree, categoryID);
+		var categoryNodeDisplayed = GeneralXMLTools.getNodeById(
+				dataAccess.OB_currentlyDisplayedTree, categoryID);
+		categoryNodeCached.parentNode.removeChild(categoryNodeCached);
+		categoryNodeDisplayed.parentNode.removeChild(categoryNodeDisplayed);
+		
+		
+		
+	},
+	
+	deletePropertyNode: function(propertyID) {
+		var propertyNodeCached = GeneralXMLTools.getNodeById(
+				dataAccess.OB_cachedPropertyTree, propertyID);
+		var propertyNodeDisplayed = GeneralXMLTools.getNodeById(
+				dataAccess.OB_currentlyDisplayedTree, propertyID);
+		propertyNodeCached.parentNode.removeChild(propertyNodeCached);
+		propertyNodeDisplayed.parentNode.removeChild(propertyNodeDisplayed);
+		
+		
+		
+	},
+	
+	refreshCategoryTree: function() {
+		selectionProvider.fireBeforeRefresh();
+		transformer.transformXMLToHTML(dataAccess.OB_cachedCategoryTree,
+				$('categoryTree'), true);
+
+		selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS,
+				null)
+		selectionProvider.fireRefresh();
+	},
+	
+	refreshPropertyTree: function() {
+		selectionProvider.fireBeforeRefresh();
+		transformer.transformXMLToHTML(dataAccess.OB_cachedPropertyTree,
+				$('propertyTree'), true);
+
+		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS,
+				null)
+		selectionProvider.fireRefresh();
 	}
 
 }
@@ -2123,7 +2167,7 @@ OBCatgeorySubMenu.prototype = Object
 										{
 											category : this.selectedTitle,
 											
-										});
+										}, this.deleteCategory.bind(this));
 
 								return;
 							}
@@ -2132,6 +2176,11 @@ OBCatgeorySubMenu.prototype = Object
 						default:
 							alert('Unknown command!');
 						}
+					},
+					
+					deleteCategory: function() {
+						ontologyTools.deleteCategoryNode(this.selectedID);
+						ontologyTools.refreshCategoryTree();
 					},
 
 					renameAndMove : function(options) {
@@ -2553,7 +2602,7 @@ OBPropertySubMenu.prototype = Object
 								srefgDialog.openDialog('deleteProperty',
 										{
 											property : this.selectedTitle,
-										});
+										}, this.deleteProperty.bind(this));
 		
 								return;
 							}
@@ -2564,6 +2613,11 @@ OBPropertySubMenu.prototype = Object
 						default:
 							alert('Unknown command!');
 						}
+					},
+					
+					deleteProperty: function() {
+						ontologyTools.deletePropertyNode(this.selectedID);
+						ontologyTools.refreshPropertyTree();
 					},
 					
 					renameAndMove : function(options) {
