@@ -17,6 +17,9 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 function di_utils_getParamSetId($wsId, $pId){
 	$db =& wfGetDB( DB_SLAVE );

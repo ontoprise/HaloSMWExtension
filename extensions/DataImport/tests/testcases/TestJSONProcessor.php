@@ -17,6 +17,9 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_JSONProcessor.php");

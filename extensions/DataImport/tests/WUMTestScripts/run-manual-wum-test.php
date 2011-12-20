@@ -17,6 +17,9 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 $url = 'http://10.0.0.211/DemoWiki/';
 $user = 'WikiSysop';

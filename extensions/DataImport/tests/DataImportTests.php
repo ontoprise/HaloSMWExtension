@@ -17,13 +17,15 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 require_once 'testcases/TestWSUpdateBot.php';
 require_once 'testcases/TestWSCacheBot.php';
 require_once 'testcases/TestWSManagement.php';
 require_once 'testcases/TestWSUsage.php';
-require_once 'testcase
-s/TestJSONProcessor.php';
+require_once 'testcases/TestJSONProcessor.php';
 require_once 'testcases/TestTIReadPOP3.php';
 require_once 'testcases/TestWikipediaUltrapediaMerger.php';
 require_once 'testcases/TestLDConnector.php';

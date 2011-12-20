@@ -17,6 +17,9 @@
  *
  */
 
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
 
 class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 
