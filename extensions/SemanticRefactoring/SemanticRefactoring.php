@@ -40,8 +40,13 @@ function sreffSetupExtension() {
 	$wgAutoloadClasses['SREFRefactor'] = $srefgIP . '/specials/refactor/SRF_SpecialRefactor.php';
     $wgSpecialPages['SREFRefactor'] = array('SREFRefactor');
     $wgSpecialPageGroups['SREFRefactor'] = 'smwplus_group';
+    
+    global $smwgResultFormats;
+    $smwgResultFormats['_srftable'] = 'SRFTableSelectorResultPrinter';
 
 	// autoload classes
+	$wgAutoloadClasses['SRFTableSelectorResultPrinter'] = $srefgIP . '/specials/refactor/SRF_TableSelectorResultPrinter.php';
+	
 	$wgAutoloadClasses['SRFRefactoringBot'] = $srefgIP . '/includes/SRF_Bot.php';
 	$wgAutoloadClasses['SRFRefactoringOperation'] = $srefgIP . '/includes/SRF_RefactoringOperation.php';
 	$wgAutoloadClasses['SRFTools'] = $srefgIP . '/includes/SRF_Tools.php';
@@ -75,10 +80,11 @@ function sreffRegisterJSModules(& $out) {
          
         $wgResourceModules['ext.semanticrefactoring.dialogs'] = $moduleTemplate + array(
         'scripts' => array(
-            'scripts/SRF_dialogs.js'
+            'scripts/SRF_dialogs.js',
+            'scripts/SRF_SpecialRefactor.js'
             ),
         'styles' => array(
-
+            'skins/SRF_SpecialRefactor.css'
             ),
         'dependencies' => array(
             ),

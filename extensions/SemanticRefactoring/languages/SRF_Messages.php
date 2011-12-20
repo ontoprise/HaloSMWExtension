@@ -47,7 +47,7 @@ $messages['en'] = array(
 	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
 	
 	/* special pages */
-    'sref_specialrefactor' => 'Semantic Refactoring',
+    'srefrefactor' => 'Semantic Refactoring',
     'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
 );
 
@@ -100,7 +100,7 @@ $messages['de'] = array(
     'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
     
     /* special pages */
-    'sref_specialrefactor' => 'Semantic Refactoring',
+    'srefrefactor' => 'Semantic Refactoring',
     'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
 );
 
