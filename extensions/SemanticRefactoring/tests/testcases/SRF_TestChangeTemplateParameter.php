@@ -52,39 +52,23 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 		print "\n".$log->asWikiText();
 		$this->assertContains('Newvalue1', $log->getWikiText());
 	}
-	
-	/*function testChangeValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testinstance"), "Testtemplate", "param1", "value1", "Newvalue1");
-		$wikitext = <<<ENDS
-This is a test {{Testtemplate|param1=value1|param2=value2}}. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		//print $wikitext;
-		$this->assertContains('param1=Newvalue1', $wikitext);
-	}
 
 	function testAddValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testinstance"), "Testtemplate", "param3", NULL, "value3");
-		$wikitext = <<<ENDS
-This is a test {{Testtemplate|param1=value1|param2=value2}}. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-		//print $wikitext;
-		$this->assertContains('param3=value3', $wikitext);
+		$r = new SRFChangeTemplateParameterOperation(array("Testarticle2"), "Testtemplate", "param3", NULL, "value3");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Testarticle2']);
+		print "\n".$log->asWikiText();
+		$this->assertContains('param3=value3', $log->getWikiText());
 	}
 
 	function testDeleteValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testinstance"), "Testtemplate", "param1", "value1", NULL);
-		$wikitext = <<<ENDS
-This is a test {{Testtemplate|param1=value1|param2=value2}}. No text.
-ENDS;
-		$wikitext = $r->changeContent($wikitext);
-
-
-		$this->assertNotContains('value1', $wikitext);
-	}*/
-
+		$r = new SRFChangeTemplateParameterOperation(array("Testarticle3"), "Testtemplate", "param1", "value1", NULL);
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Testarticle3']);
+		print "\n".$log->asWikiText();
+		$this->assertNotContains('value1', $log->getWikiText());
+	}
 
 }
