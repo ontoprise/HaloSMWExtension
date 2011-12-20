@@ -232,6 +232,8 @@ public function createMergeResultArticle(){
 		
 		$result .= "\n\n[[Category:WUMergeReport]]";
 
+		global $smwgHaloIP; 
+		require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");		
 		smwf_om_EditArticle($title, 'WUM', $result, '');
 	}
 	

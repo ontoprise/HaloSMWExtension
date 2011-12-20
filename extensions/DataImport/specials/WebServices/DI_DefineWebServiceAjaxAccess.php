@@ -34,7 +34,6 @@ $wgAjaxExportList[] = 'smwf_ws_processStep2';
 $wgAjaxExportList[] = 'smwf_ws_processStep3';
 $wgAjaxExportList[] = 'smwf_ws_processStep6';
 
-
 global $smwgDIIP, $smwgHaloIP;
 require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
 

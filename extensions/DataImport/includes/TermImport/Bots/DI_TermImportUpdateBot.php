@@ -30,6 +30,9 @@ require_once("$sgagIP/includes/SGA_GardeningBot.php");
 require_once("$sgagIP/includes/SGA_GardeningIssues.php");
 require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 
+global $smwgHaloIP; 
+require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
+
 /**
  * This bot checks if Term Imports need updates and triggers them.
  *

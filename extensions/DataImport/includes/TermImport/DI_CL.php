@@ -227,6 +227,8 @@ class DICL {
 	private function embedEditTermImportData($termImportName){
 		$html = '<span id="editDataSpan" style="display: none">';
 		
+		global $smwgHaloIP; 
+		require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
 		$xmlString = smwf_om_GetWikiText('TermImport:'.$termImportName);
 		
 		$start = strpos($xmlString, "<ImportSettings>");
@@ -430,6 +432,9 @@ class DICL {
 		$articleContent .= "{{#ask: [[belongsToTermImportWithLabel::".$termImportName."]]"
 			."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
 		$articleContent .= "\n[[Category:TermImport]]";
+		
+		global $smwgHaloIP; 
+		require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
 		
 		$result = smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');
 		$temp = $result;

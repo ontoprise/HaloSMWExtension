@@ -24,6 +24,8 @@ $wgAjaxExportList[] = 'smwf_ws_deleteWWSD';
 $wgAjaxExportList[] = 'smwf_ti_update';
 $wgAjaxExportList[] = 'smwf_ti_deleteTermImport'; 
 
+global $smwgHaloIP; 
+require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
 
 /**
  * @file
