@@ -43,16 +43,34 @@ class DIXPathProcessor {
 	 *  	will be created
 	 */
 	function __construct($xmlString = ""){
-		
+		$this->doConstruct($xmlString);	
+	}
+	
+	private function doConstruct($xmlString){
 		$domDocument = new DOMDocument();
 		$domDocument->loadXML($xmlString);
-
+		
 		$this->domXPath = new DOMXPath($domDocument);
 		
 		$nodes = $this->domXPath->query('//namespace::*');
-
+		$xmlns = false;
+		$replacedXMLNSs = array();
 		foreach ($nodes AS $node) {
+			if($node->localName == 'xmlns'){
+				if($xmlns){
+					if(!in_array($node->nodeValue, $replacedXMLNSs) && $node->nodeValue != $xmlns){
+						$replacedXMLNSs[] = $node->nodeValue;
+						$xmlString = str_replace('xmlns="'.$node->nodeValue.'"', '', $xmlString);
+					}
+					continue;
+				}
+				$xmlns = $node->nodeValue;
+			}	
 			$this->domXPath->registerNamespace($node->localName, $node->nodeValue);
+		}
+		
+		if(count($replacedXMLNSs) > 0){
+			$this->doConstruct($xmlString);
 		}
 	}
 
