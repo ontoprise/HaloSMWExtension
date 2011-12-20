@@ -33,7 +33,7 @@
 	<configs>
 		<new>
 			<require name="stv"
-				file="extensions/Treeview/Treeview.php" />
+				file="extensions/Treeview/includes/TV_Initialize.php" />
 			<function name="enableTreeView"></function>
 		</new>
 	</configs>
