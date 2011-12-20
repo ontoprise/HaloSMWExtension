@@ -118,6 +118,16 @@ abstract class SMWSemanticStore {
 	public abstract function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL, $bundleID = '');
 
 	/**
+	 * Checks if $article is an article which is of category $category
+	 * 
+	 * @param Title $article
+	 * @param Title $category
+	 * 
+	 * @return boolean
+	 */
+	public abstract function isInCategory(Title $article, Title $category);
+	
+	/**
 	 * Returns all articles of $categoryTitle lying in NS_MAIN including articles of all subcategories of $categoryTitle.
 	 *
 	 * In the case of a cycle in the category inheritance graph, this method has a treshhold

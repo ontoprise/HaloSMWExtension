@@ -399,6 +399,26 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		return $result;
 	}
+	
+	function isInCategory(Title $article, Title $category) {
+	
+           
+        $dbr = wfGetDB( DB_SLAVE );
+        $categorylinks = $dbr->tableName( 'categorylinks' );
+
+        # NEW SQL
+        $sql = "SELECT * FROM $categorylinks"
+             . " WHERE cl_from=".$article->getArticleID()
+             . " AND cl_to = ".$dbr->addQuotes($category->getDBkey());
+
+        $res = $dbr->query( $sql );
+       
+        $contains = $dbr->numRows( $res ) > 0;
+        $dbr->freeResult($res);    
+        
+        return $contains;
+   
+	}
 
 	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
 		return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, true);
