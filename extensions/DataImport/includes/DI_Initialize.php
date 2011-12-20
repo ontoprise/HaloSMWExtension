@@ -365,18 +365,16 @@ function smwfDISetupExtension() {
 	$bot = new DIWSCacheBot();
 	
 	//register DAMs
-	//todo: use language files
 	DIDAMRegistry::registerDAM('DALReadCSV', 'CSV file', 
-		'Imports articles from a CSV file. You either have to pass the path to a file which is located on the server or a valid URL.');
-	//todo: add description
+		wfMsg('smw_ti_damdesc_csv'));
 	DIDAMRegistry::registerDAM('DALReadFeed', 'RSS feed', 
-		'Imports articles from feeds in the RSS or Atom format.');
+		wfMsg('smw_ti_damdesc_feed'));
 	DIDAMRegistry::registerDAM('DALReadPOP3', 'POP3 server', 
-		'Imports mails from a POP3 server.');
+		wfMsg('smw_ti_damdesc_pop3'));
 	DIDAMRegistry::registerDAM('DALReadTIXML', 'Web Service result', 
-		'Imports the results of a web service call in the TIXML result format. You have to enter the name of the article, that contains the web service result in the TIXML format.');
+		wfMsg('smw_ti_damdesc_tixml'));
 	DIDAMRegistry::registerDAM('DALReadSPARQLXML', 'SPARQL endpoint', 
-		'Imports results of a SELECT query to a SPARQL endpoint.');
+		wfMsg('smw_ti_damdesc_sparql'));
 	
 	global $wgHooks;
 	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';

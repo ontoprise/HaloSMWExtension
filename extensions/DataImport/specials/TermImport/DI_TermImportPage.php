@@ -42,8 +42,6 @@ class DITermImportPage {
 	 */
 	public static function renderTermImportDefinition($input, $args, $parser) {
 		
-		//todo: language
-		
 		$attr = "";
 		foreach ($args as $k => $v) {
 			$attr .= " ". $k . '="' . $v . '"';
@@ -85,9 +83,9 @@ class DITermImportPage {
 			} else {
 				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$parser->getTitle()->getText();
 			}
-			$messages = '<h4><a href="'.$url.'">Click here to edit the Term Import definition in the GUI</a></h4>';
+			$messages = '<h4><a href="'.$url.'">'.wfMsg('smw_ti_page_editlink').'</a></h4>';
 		}
-		$completeImportSettings = '<h4><span class="mw-headline">Term Import definition</span></h4>'
+		$completeImportSettings = '<h4><span class="mw-headline">Term Import Definition</span></h4>'
 		.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
 		return  $completeImportSettings.$messages;
 	}

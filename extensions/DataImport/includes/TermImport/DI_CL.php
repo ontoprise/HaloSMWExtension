@@ -43,11 +43,14 @@ class DICL {
 		$html .= "<div id=\"top-container\">";
 		
 		$damsHTML = DIDAMRegistry::getDAMsHTML();
-		$html .= "<div><div id=\"dal-content\"><b>".wfMsg('smw_ti_dam-heading')."</b>" .
-				 	"<div id=\"dalid\">" . $damsHTML."</div>" .
-				 	"<div id=\"daldesc\">" . "</div></div>" .
-					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.png\"/></div>".
-				 "</div>";
+		$html .= "<div>";
+		$html .= "<div id=\"dal-content\">".
+						"<b>".wfMsg('smw_ti_dam-heading')."</b>" .
+				 		"<div id=\"dalid\">" . $damsHTML."</div>" .
+				 		"<div id=\"daldesc\"></div>".
+					"</div>";
+		$html .= "<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.png\"/></div>";
+		$html .= "</div>";
 
 		$html .= "<div id=\"source-spec\"><b>".wfMsg('smw_ti_module-data-heading')."</b>" .
 				"<table height=\"200px\"><tr><td valign=\"top\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
@@ -115,7 +118,7 @@ class DICL {
 								"<div id=\"delimiter\" style=\"display: none\">" .
 									"<br/><br/><div class=\"input-field-heading\">".
 									wfMsg('smw_ti_delimiter-heading').
-									"<img id=\"help-img-10\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('10')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"<img id=\"help-img10\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('10')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
 									"<div id=\"help10\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span >".wfMsg('smw_ti_help')."</span> ".
@@ -127,7 +130,7 @@ class DICL {
 								"<div id=\"categories\">" .
 									"<br/><br/><div class=\"input-field-heading\">".
 									wfMsg('smw_ti_category-heading').
-									"<img id=\"help-img-9\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('9')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"<img id=\"help-img9\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp('9')\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
 									"<div id=\"help9\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span >".wfMsg('smw_ti_help')."</span> ".
@@ -148,7 +151,6 @@ class DICL {
 									wfMsg('smw_ti_conflictpolicy-label').
 									//todo: language
 									"<select name=\"conflict\" id=\"conflict-input-field\">" .
-										//todo: compute this dynamically according to the available cps 
 										"<option value=\"overwrite\">overwrite</option>" .
 										"<option value=\"ignore\">preserve current versions</option>" .
 										"<option value=\"append some\" style=\"display:none\">append selected values</option>" .

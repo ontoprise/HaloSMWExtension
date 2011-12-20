@@ -60,10 +60,13 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_creation-pattern-heading' => 'Erzeugungsmuster:',
 	'smw_ti_creation-pattern-label-1' => 'Annotationen',
 	'smw_ti_creation-pattern-label-2' => 'Template',
+	'smw_ti_creation-pattern-help' => 'Sie k&ouml;nnen sich entweder dazu entscheiden neue Artikel einfach mit versteckten Annotationen oder mit Templates zu erstellen. Wenn Sie sich f&uuml;r Annotationen entscheiden, dann wird der Wikitext jedes neu erstellten Artikels nur eine Reihe versteckter Annotationen enthalten. Die namen der Termattribute werden als Propertynamen verwendet.<br>Entscheiden Sie sich dazu Templates zu verwenden, dann wird jedem neue erstellten Artikel ein Template-Aufruf hinzugefügt. Die Termattribute werden als Templateparameter verwendet.<br>Entscheiden Sie sich für Templates, dann sollten Sie zus&auml;tzlich ein Trennzeichen angeben, dass dann dazu verwendet wird die einzelnen Templateparameter-Werte zu separieren, falls ein Termattribut mehrere Werte besitzt. Entscheiden Sie sich für Annotationen, dann wird das Trennzeichen automatisch auf Basis der Wikiontologie, bzw. dem Min und Max cardinality und dem Delimiter Property berechnet.',
 	'smw_ti_delimiter-heading' => 'Trennzeichen',
-	'smw_ti_delimitery-label' => 'Zeichenkette: ', 
+	'smw_ti_delimitery-label' => 'Zeichenkette: ',
+	'smw_ti_delimiter-help' => 'Das angegebene Trennzeichen wird dazu verwendet, um mehrere Templateparameterwerte zu separieren, falls ein Termattribut mehrere werte besitzt.', 
 	'smw_ti_category-heading' => 'Zus&auml;tzliche Kategorie Annotationen',
 	'smw_ti_category-label' => 'Namen:',
+	'smw_ti_category-help' => 'Hier k&ouml;nnen Sie eine Kommaseparierte Liste mit Kategorieannotationen angeben. Diese werden dann den neuen Artikeln hinzugefügt. Eventuell f&uuml;r diese Kategorien vorhandene Display Templates werden auch angewendet.',
 
 	'smw_ti_succ_connected' => 'Erfolgreich mit "$1" verbunden.',
 	'smw_ti_class_not_found' => 'Klasse "$1" nicht gefunden.',
@@ -121,6 +124,14 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_menuestep2' => '2. Term Import konfigurieren und ausführen',
 	'smw_ti_dam-heading' => 'Datenquelle wählen:',
 	'smw_ti_module-data-heading' => 'Konfiguration der Datenquelle:',
+	
+	'smw_ti_damdesc_csv' => 'Importiert Terme aus einer CSV-Datei. Sie m&uuml;ssen entweder den Pfad zu einer CSV-Datei auf dem Server oder eine valide URL zu einer solchen Datei angeben. Eine der Spalten in der CSV-Datei muss \'articleName\' heissen.',
+	'smw_ti_damdesc_feed' => 'Importiert Terme aus RSS- oder Atom-Feeds. Sie m&uuml;ssen den namen einer Kategorie angeben, in der das Data Access Modul die Feed Definitions Artikel finden kann. Zudem m&uuml;ssen Sie den Namen des Properties angeben, dass zum Speichern der Feed URLs verwendet wird. Das Data Access Modul wird dann nach allen Artikeln in der angebenen Kategorie suchen und die Feeds mit der in jedem Artikel jeweils angegebenen URL in das Wiki importieren. Optional kann ein Property zur Angabe von Artikelnamen-Pr&auml;fixen angegeben werden. Das Data Access Modul wird die in jeder Feed-Definition angegebenen Pr&auml;fixe dann bei der Erstellung neuer Artikel ber&uuml;cksichtigen.',
+	'smw_ti_damdesc_pop3' => 'Importiert E.mails von einem POP3-Server. Besitzen Sie zum Beispiel einen Account bei Google Mail, dann m&uuml;ssen Sie pop.googlemail.com als Servername und Ihre E-mail Adresse als Benutzername angeben. Zudem m&uuml;ssen Sie die SSL Checkbox aktivieren. (Zuvor m&uuml;ssen Sie allerdings auf der Google Mail Webseite die Verwendung eines POP3-Servers aktivieren.)',
+	'smw_ti_damdesc_tixml' => 'Importiert die Ergebnisse einer Web Service Anfrage im TIXML format. Sie m&uuml;ssen den Namen eines Artikels im Wiki angeben. Der Artikel muss dann das Web Service Ergebnis im TIDXML Format mithilfe der #ws Parser Function enthalten.',
+	'smw_ti_damdesc_sparql' => 'Importiert die Ergebnisse einer SPARQL-Select Anfrage. Sie m&uuml;ssen die URL des SPARQL-Endpoints und die Anfrage angeben. Eine der Ergebnisvariablen in der Anfrage muss \'articleName\' heissen.',
+	
+	'smw_ti_page_editlink' => 'Klicken Sie bitte hier um die Term Import Definition in der GUI zu editierenn',
 	
 	/* Messages for the wiki web services */
 	'smw_wws_articles_header' => 'Seiten, die den Web-Service "$1" benutzen',

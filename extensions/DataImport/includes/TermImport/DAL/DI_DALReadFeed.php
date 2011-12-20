@@ -113,7 +113,7 @@ class DALReadFeed implements IDAL {
 		if(count($res) > 0){
 			$this->dataSourceSpec['prefixprop'] =  ''.trim($res[0]);
 		}
-		 
+		
 		return $this->dataSourceSpec;
 	}
 	
@@ -214,14 +214,12 @@ class DALReadFeed implements IDAL {
 						$term->addAttribute('Has copyright', $copyright);
 					}
 	
-					//todo: date encoding
 					if(!is_null($date = $item->get_date())){
-						$term->addAttribute('Has publication date', $date);
+						$term->addAttribute('Has publication date', date( "c", strtotime($date)));
 					}
 	
-					//todo: date encoding
 					if(!is_null($localdate = $item->get_local_date())){
-						$term->addAttribute('Has local publication date', $localdate);
+						$term->addAttribute('Has local publication date', date( "c", strtotime($localdate)));
 					}
 	
 					if(!is_null($permalink = $item->get_permalink())){

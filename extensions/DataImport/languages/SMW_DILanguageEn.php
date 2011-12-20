@@ -59,10 +59,13 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_creation-pattern-heading' => 'Creation Pattern:',
 	'smw_ti_creation-pattern-label-1' => 'Annotations',
 	'smw_ti_creation-pattern-label-2' => 'Template',
+	'smw_ti_creation-pattern-help' => 'You can either decide to simply create articles with silent annotations or you can decide to use a template to create the new articles. If you decide to create only annotations, then the Wiki text of the new articles will only consist of a number of hidden annotations. For each attribute of the imported term, an annotation will be created. The attribute name will be used as Property name.<br/> If you choose to use a template, then a template call will be added to each new article. The attributes of the imported terms will be used as template parameters.<br/>If you choose to use templates, then you also will be able to enter a delimiter that will be used to separate template parameter values if the corresponding attribute of the term has several values. If you choose to create annotations, then the delimiter will be computed based on the Wiki ontology, respectively on the values of the corresponding Min and Max cardinality and the Delimiter annotations.',
 	'smw_ti_delimiter-heading' => 'Delimiter',
-	'smw_ti_delimitery-label' => 'Choose: ', 
+	'smw_ti_delimitery-label' => 'Choose: ',
+	'smw_ti_delimiter-help' => 'The given delimiter will be used to separate several template parameter values if a term attribute has more than one value.', 
 	'smw_ti_category-heading' => 'Additional Category Annotations',
 	'smw_ti_category-label' => 'Names:',
+	'smw_ti_category-help' => 'Here you can enter a comaseparated list of category names. Those categories then will be added as category annotations to each new article. Display Templates that have been defined for those categories will also be applied.',
 
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
 	'smw_ti_class_not_found' => 'Class "$1" not found.',
@@ -121,6 +124,14 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_menuestep2' => '2. Configure and execute Term Import',
 	'smw_ti_dam-heading' => 'Choose data source:',
 	'smw_ti_module-data-heading' => 'Configure data source:',
+	
+	'smw_ti_damdesc_csv' => 'Imports articles from a CSV file. You either have to pass the path to a file which is located on the server or a valid URL. One of the colums in the source must be named \'articleName\'',
+	'smw_ti_damdesc_feed' => 'Imports articles from feeds in the RSS or Atom format.You have to enter the name of a category in which the Data Access Module can find Feed Definition articles. You also have to enter the name of the property which is used to store the Feed URLs. The Data Access Module then will search for all instances in that category and their URL property value and then will import the Feeds with those URLs. Optionally, you can enter the name of a property that stores prefixes for feeds. The Data Access Module will then use those prefixes for the names of the created articles.',
+	'smw_ti_damdesc_pop3' => 'Imports mails from a POP3 server. For example if you have a mail account at Google Mail, then the server name is pop.googlemail.com, the username is your email adress and you have to select the SSL checkbox. Please note, that you first have to enable POP3 access on the Google Mail website.',
+	'smw_ti_damdesc_tixml' => 'Imports the results of a web service call in the TIXML result format. You have to enter the name of the article, that contains the web service result in the TIXML format. You can add such a web service result to an article by using the #ws parser function and the format \'tixml\'. One of the result parts in the web service result must be named \'articleName\'.',
+	'smw_ti_damdesc_sparql' => 'Imports results of a SELECT query to a SPARQL endpoint. You have to enter the URL of a SPARQL endpoint and a select query in the SPARQL syntax. One of the result variables must be named \'articleName\'.',
+	
+	'smw_ti_page_editlink' => 'Click here to edit the Term Import definition in the GUI',
 	
 	/* Messages for the wiki web services */
 	'smw_wws_articles_header' => 'Pages using the web service "$1"',

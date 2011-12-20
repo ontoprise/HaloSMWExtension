@@ -30,6 +30,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	float: left;
 	width: 200px;
 	height: 140px;	
+	overflow: auto;
 }
 #top-container #dal-content #daldesc{
 	font-family: Arial, Helvetica, sans-serif;
@@ -39,6 +40,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	width: 190px;
 	height: 180px;
 	padding: 3px 5px 3px 5px;
+	overflow: auto;
 }
 
 #summary{
@@ -261,7 +263,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 .arrow{
 	height: 214px;
 	float: left;
-	padding: 40px 5px 0px 5px;
+	padding: 20px 5px 0px 5px;
 }
 .inputfield{
 	border: 1px solid #AAAAAA;
