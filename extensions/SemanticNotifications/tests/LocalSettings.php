@@ -1,12 +1,14 @@
-
-#Import SMW, SMWHalo
-include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
+# SMW
+include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
 enableSemantics('http://wiki', true);
- 
+
+# SMWHalo
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://publicbuild/ob');
-$smwgHaloWebserviceEndpoint="localhost:8090";
-$smwgHaloAutoCompletionTSC=true;
+enableSMWHalo('SMWHaloStore2', "SMWTripleStore");
+
+$smwgHaloWebserviceEndpoint='localhost:8090';
+$smwgHaloEnableObjectLogicRules=true;
+$smwgWebserviceProtocol="rest";
 
 #SemanticGardening
 $phpInterpreter="c:\Programme\xampp\php";
