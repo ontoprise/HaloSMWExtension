@@ -384,14 +384,20 @@ class SRFExhibit extends SMWResultPrinter {
 							$tmp = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue($outputmode,$this->getLinker(0));
 							break;
 						case '__sin':
-							$tmp = $object->getShortText($outputmode,null);
+							if(version_compare(SMW_VERSION, '1.5', '>='))
+								$tmp = $object->getShortText($this->getLinker($outputmode));
+							else
+								$tmp = $object->getShortText($outputmode,null);
 							if(strpos($tmp,":")){
 								$tmp = explode(":",$tmp,2);
 								$tmp = $tmp[1];
 							}
 							break;
 						default:
-							$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
+							if(version_compare(SMW_VERSION, '1.5', '>='))
+								$tmp = $object->getLongHTMLText($this->getLinker($outputmode));
+							else
+								$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
 					}
 					if($object->getTypeID() == '_num') {
 						$textstack[] = '"' . $colstack[$col] . '": ' . str_replace('"', '\"', $tmp);
