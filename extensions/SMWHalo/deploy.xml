@@ -10,8 +10,7 @@
 		<description>
 			The Halo extension provides a core set of functions and user interfaces to MediaWiki or Semantic MediaWiki to improve its usability, data consistency and retrieval-, security- and data processing-capabilities.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual
-		</helpurl>
+               <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual</helpurl>
 		<license>GPL v2</license>
 		<dependencies>
 			<dependency from="1.17.0" to="1.17.9">mw</dependency>

@@ -5,11 +5,11 @@
         <title>Maps</title>
         <version>1.0.3</version>
         <vendor>ontoprise GmbH</vendor>
-        <maintainer>jeroendedauw@gmail.com</maintainer>
+        <maintainer>Jeroen De Dauw</maintainer>
         <license>GPL-v2</license>
         <instdir>extensions/Maps</instdir>
         <description>Displays Google maps in the wiki</description>
-        <helpurl></helpurl>
+        <helpurl>http://www.mediawiki.org/wiki/Extension:Maps</helpurl>
         <dependencies>
             <dependency from="1.15.0">mw</dependency>
         </dependencies>
