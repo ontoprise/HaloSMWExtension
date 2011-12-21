@@ -1,0 +1,358 @@
+<mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.17.0</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2" case="first-letter">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="first-letter">Halo3wiki</namespace>
+      <namespace key="5" case="first-letter">Halo3wiki talk</namespace>
+      <namespace key="6" case="first-letter">File</namespace>
+      <namespace key="7" case="first-letter">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="first-letter">Template</namespace>
+      <namespace key="11" case="first-letter">Template talk</namespace>
+      <namespace key="12" case="first-letter">Help</namespace>
+      <namespace key="13" case="first-letter">Help talk</namespace>
+      <namespace key="14" case="first-letter">Category</namespace>
+      <namespace key="15" case="first-letter">Category talk</namespace>
+      <namespace key="102" case="first-letter">Property</namespace>
+      <namespace key="103" case="first-letter">Property talk</namespace>
+      <namespace key="106" case="first-letter">Form</namespace>
+      <namespace key="107" case="first-letter">Form talk</namespace>
+      <namespace key="108" case="first-letter">Concept</namespace>
+      <namespace key="109" case="first-letter">Concept talk</namespace>
+      <namespace key="120" case="first-letter">Document</namespace>
+      <namespace key="121" case="first-letter">Document talk</namespace>
+      <namespace key="122" case="first-letter">Audio</namespace>
+      <namespace key="123" case="first-letter">Audio talk</namespace>
+      <namespace key="124" case="first-letter">Video</namespace>
+      <namespace key="125" case="first-letter">Video talk</namespace>
+      <namespace key="126" case="first-letter">Pdf</namespace>
+      <namespace key="127" case="first-letter">Pdf talk</namespace>
+      <namespace key="128" case="first-letter">ICalendar</namespace>
+      <namespace key="129" case="first-letter">ICalendar talk</namespace>
+      <namespace key="130" case="first-letter">VCard</namespace>
+      <namespace key="131" case="first-letter">VCard talk</namespace>
+      <namespace key="200" case="first-letter">WebService</namespace>
+      <namespace key="201" case="first-letter">WebService talk</namespace>
+      <namespace key="202" case="first-letter">TermImport</namespace>
+      <namespace key="203" case="first-letter">TermImport talk</namespace>
+      <namespace key="220" case="first-letter">E-mail</namespace>
+      <namespace key="221" case="first-letter">E-mail talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Property:Has subject</title>
+    <id>5334</id>
+    <revision>
+      <timestamp>2011-12-21T14:50:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the subject value of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::String| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has tag</title>
+    <id>5335</id>
+    <revision>
+      <timestamp>2011-12-21T14:52:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the values of the category annotations of an imported feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Page| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Stems from feed</title>
+    <id>5336</id>
+    <revision>
+      <timestamp>2011-12-21T15:17:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores from which feed definition in the Wiki this feed stems.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Page| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has copyright</title>
+    <id>5338</id>
+    <revision>
+      <timestamp>2011-12-21T14:11:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the copyright information for this feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has permalink</title>
+    <id>5339</id>
+    <revision>
+      <timestamp>2011-12-21T14:17:53Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the permalink of this feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::URL| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has publication date</title>
+    <id>5340</id>
+    <revision>
+      <timestamp>2011-12-21T14:19:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the publication date of this feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+
+[[Has type::Date| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has contributor</title>
+    <id>5341</id>
+    <revision>
+      <timestamp>2011-12-21T14:10:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores who the contributor of a feed item was.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Page| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has content</title>
+    <id>5342</id>
+    <revision>
+      <timestamp>2011-12-21T14:06:53Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the content of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+
+
+[[Has type::Text| ]][[Part of bundle::dataimport| ]]
+[[Has max cardinality::1|1]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has local publication date</title>
+    <id>5343</id>
+    <revision>
+      <timestamp>2011-12-21T14:15:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the local publication date of this feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Date| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has id</title>
+    <id>5344</id>
+    <revision>
+      <timestamp>2011-12-21T14:12:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the unique id of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Text| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has longitude</title>
+    <id>5345</id>
+    <revision>
+      <timestamp>2011-12-21T14:16:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the value of the longitude annotation of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::String| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has latitude</title>
+    <id>5346</id>
+    <revision>
+      <timestamp>2011-12-21T14:13:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the value of the latitude annotation of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Steing| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Enclosures</title>
+    <id>5347</id>
+    <revision>
+      <timestamp>2011-12-21T13:58:31Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::Links to files that were embedded in an imported Feed Item. ]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::URL| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has author</title>
+    <id>5348</id>
+    <revision>
+      <timestamp>2011-12-21T14:04:54Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property links to the author of a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+
+
+[[Has type::Page| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has source</title>
+    <id>5350</id>
+    <revision>
+      <timestamp>2011-12-21T14:21:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the original source of a feed item if it was republiched.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::Page| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has URL</title>
+    <id>5351</id>
+    <revision>
+      <timestamp>2011-12-21T14:03:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__
+[[Rationale::This property stores the URL of a feed or a feed item.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+[[Category:Property]]
+[[Has type::URL| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]][[Has domain and range::Category:Feed;| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:FeedItem</title>
+    <id>5810</id>
+    <revision>
+      <timestamp>2011-12-21T15:33:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__ __NOEDITSECTION__
+[[Rationale::Instances in this category represent feed items that have been imported by the Feed Import Data Access Module. ]]
+[[Part of bundle::dataimport| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Feed</title>
+    <id>5811</id>
+    <revision>
+      <timestamp>2011-12-21T15:31:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">__NOTOC__ __NOEDITSECTION__
+[[Rationale::Instances in this category describe feeds. The Feed Import Data Access Module will import all feeds, that are described by instances in thiss category.]]
+[[Part of bundle::dataimport| ]]</text>
+    </revision>
+  </page>
+</mediawiki>

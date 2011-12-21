@@ -54,6 +54,11 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
+    <copy todir="bin/zip/extensions/DataImport/import">
+      <fileset dir="../import/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
     <copy todir="bin/zip/extensions/DataImport/">
       <fileset dir="../">
         <include name="COPYING" />

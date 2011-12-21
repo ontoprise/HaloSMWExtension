@@ -25,7 +25,7 @@
 	</codefiles>
 
 	<wikidumps>
-		<!-- empty -->
+		<file loc="import/dump.xml"/>
 	</wikidumps>
 
 	<resources>
