@@ -246,6 +246,27 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 		$db->freeResult($res);
 		return NULL; // minimum
 	}
+	
+	/**
+	 * Checks if a Gardening bot of the given type is running
+	 *
+	 * @param $botID Bot-ID
+	 * 
+	 * @return boolean
+	 */
+	public function isGardeningBotRunning($botID = NULL) {
+
+		$fname = 'SGA::isGardeningBotRunning';
+		$db =& wfGetDB( DB_SLAVE );
+
+		$res = $db->select( $db->tableName('smw_gardening'),
+		array('*'),
+		array('gardeningbot='.$db->addQuotes($botID), 'timestamp_end = NULL'),
+		$fname,array());
+		$result = $db->numRows( $res ) > 0;
+		$db->freeResult($res);
+		return $result; 
+	}
 
 	/**
 	 * Initializes Gardening table.

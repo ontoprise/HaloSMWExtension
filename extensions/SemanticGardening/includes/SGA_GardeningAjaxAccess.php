@@ -313,6 +313,14 @@ function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor
 
 }
 
+function smwf_ga_isBotRunning($botID) {
+	$isRunning = SGAGardeningLog::getGardeningLogAccess()->isGardeningBotRunning($botID);
+	$response = new AjaxResponse($isRunning ? "true" : "false");
+	$response->setContentType( "application/text" );
+	$response->setResponseCode(200);
+	return $response;
+}
+
 /**
  * Returns (MD5-hashed) passwort.
  *

@@ -78,7 +78,16 @@ abstract class SGAGardeningLog {
 	 * @param botID type of Gardening task
 	 */
 	public abstract function getLastFinishedGardeningTask($botID = NULL);
-
+	
+	/**
+	 * Checks if a Gardening bot of the given type is running
+	 *
+	 * @param $botID Bot-ID
+	 * 
+	 * @return boolean
+	 */
+	public abstract function isGardeningBotRunning($botID = NULL);
+	
 	/**
 	 * Cleanup Gardening log.
 	 */
