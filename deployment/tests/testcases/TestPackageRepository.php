@@ -56,12 +56,12 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 
 	function testGetVersion() {
-		$this->assertNotNull(PackageRepository::getVersion("smwhalo",143));
+		$this->assertNotNull(PackageRepository::getDownloadURL("smwhalo",143));
 	}
 
 	function testGetVersion2() {
 		try {
-			PackageRepository::getVersion("smwhalo",170);
+			PackageRepository::getDownloadURL("smwhalo",170);
 			$this->assertTrue(false);
 		} catch(RepositoryError $e) {
 			$this->assertTrue(true);
@@ -89,9 +89,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(143, $versions[2]);
 	}
 
-	function testLatestVersion() {
-		$this->assertNotNull(PackageRepository::getLatestVersion("smwhalo"));
-	}
+	
 
 	function testExistsVersion() {
 		$this->assertTrue(PackageRepository::existsPackage("smwhalo"));
