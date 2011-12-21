@@ -133,8 +133,15 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	
 	'df_webadmin_newreleaseavailable' => 'New release available! Check the $1',
-    'df_webadmin_repository_link' => 'repository list'
+    'df_webadmin_repository_link' => 'repository list',
 	
+     /*Message for ImportOntologyBot*/
+    'smw_gard_import_docu' => 'Imports an ontology file.',
+    'smw_gard_import_uselabels' => 'Use labels',
+    'smw_gard_ontology_id' => 'Ontology ID',
+    'smw_df_missing' => 'To use the import bot you have to install the Wiki admin tool'
+    
+    
 	);
 
 }

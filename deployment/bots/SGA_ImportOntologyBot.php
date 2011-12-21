@@ -20,10 +20,10 @@
 /**
  * @file
  * @ingroup ImportOntologyBot
- * 
+ *
  * @defgroup ImportOntologyBot
  * @ingroup SemanticGardeningBots
- * 
+ *
  * @author Kai K�hn
  * Created on 03.07.2007
  *
@@ -39,103 +39,59 @@ require_once("$sgagIP/includes/SGA_GardeningIssues.php");
 define('XML_SCHEMA_NS', 'http://www.w3.org/2001/XMLSchema#');
 
 class ImportOntologyBot extends GardeningBot {
-
-	private static $OWL_VALUES_FROM;
-
-	// global log which contains wiki-markup
-	private $globalLog;
-
-	// use labels or localnames
-	private $useLabels = true;
-
-	// use ontology ID as a marker for the imported ontology
-	private $ontologyID;
-
+	
 	function ImportOntologyBot() {
 		parent::GardeningBot("smw_importontologybot");
-		$this->globalLog = "== The following wiki pages were created during import: ==\n\n";
-			
-			
 	}
 
 	public function getHelpText() {
-		return wfMsg('smw_gard_import_docu');
+		if ($this->canBeRun()) {
+			return wfMsg('smw_gard_import_docu');
+		} else {
+			return "<div>".wfMsg('smw_df_missing')."<a title=\"Deployment Framework\"".
+                    "href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework\"".
+                    ">Deployment Framework</a></div>";
+
+		}
 	}
 
 	public function getLabel() {
 		return wfMsg($this->id);
 	}
 
-
-
-	/**
-	 * Returns an array mapping parameter IDs to parameter objects
-	 */
 	public function createParameters() {
-
-		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, 'owl');
-		$param2= new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, 'obl');
-		return array($param1,$param2);
-	
+		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, array('owl','obl'));
+		return array($param1);
 	}
 
-	/**
-	 * Import ontology
-	 * Do not use echo when it is not running asynchronously.
-	 */
 	public function run($paramArray, $isAsync, $delay) {
-                $this->globalLog = "";
+		
 		// do not allow to start synchronously.
+        if (!$isAsync) {
+        	return "Can not start asynchronously.";
+        }
 		
 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
-		$this->useLabels = false; //array_key_exists('GARD_IO_USE_LABELS', $paramArray);
-		$this->ontologyID = urldecode($paramArray['GARD_IO_ONTOLOGY_ID']);
 
 		$fileTitle = Title::newFromText($fileName);
 		$fileLocation = wfFindFile($fileTitle)->getPath();
 
 		global $IP;
-	       chdir($IP.'/deployment/tools');
-		   
-		   print "\nImport file: $fileLocation";
-	       exec($IP.'/deployment/tools/smwadmin -i "'.$fileLocation.'"', $out, $ret);
-		   if ($ret != 0) {
-				$errorText = implode("Error !\n", $out); 
-				return $errorText;
-		   }
-	       return "done";
-	}
-	
-	public function canBeRun() {
-	    $req = true;
-	    $filename = '././././deployment';
-		$filename1 = '././././deployment/tools/onto2mwxml/tsc';
-		if (!file_exists($filename)) {
-            $req = false;
-    		}
-		if(!file_exists($filename1)){
-			$req = false;
-			}	    	
-		return $req;
-	}
-	
-	public function importOntology_TSC() {
-	    $tsc = true;
-		$filename1 = '././././deployment/tools/onto2mwxml/tsc';
-		if (!file_exists($filename1)) {
-			$tsc = $tsc;
-    		}
-		return $tsc;
+		chdir($IP.'/deployment/tools');
+			
+		print "\nImport file: $fileLocation";
+		exec($IP.'/deployment/tools/smwadmin -i "'.$fileLocation.'"', $out, $ret);
+		$statusText = implode("\n", $out);
+		return $statusText;
 	}
 
-    public function importOntology_df() {
-	    $df = true;
-	    $filename = '././././deployment';
-		if(!file_exists($filename)){
-			$df = false;
-			}	
-		return $df;
+	public function canBeRun() {
+		global $IP;
+		$filename = "$IP/deployment/tools/onto2mwxml";
+		return (file_exists($filename) && is_dir($filename));
+
 	}
+
 }
 /*
  * Note: This bot filter has no real functionality. It is just a dummy to
@@ -172,4 +128,4 @@ class ImportOntologyBotFilter extends GardeningIssueFilter {
 
 // For importing an ontology please do not use the ImportBot any longer.
 // Instead use the deployment framework: smwadmin -i <ontology-file>
-// This will read the ontology and create appropriate wiki pages.  
+// This will read the ontology and create appropriate wiki pages.

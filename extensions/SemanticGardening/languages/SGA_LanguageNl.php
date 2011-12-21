@@ -172,11 +172,7 @@ class SGA_LanguageNl {
     
     'smw_gardissue_class_category_leaves' => 'Categoriebladen',
     'smw_gardissue_class_number_anomalies' => 'Subcategorie anomalie',
-    
-    /*Message for ImportOntologyBot*/
-    'smw_gard_import_docu' => 'Importeer een OWL bestand.',
-    'smw_gard_import_uselabels' => 'Use labels',
-    'smw_gard_ontology_id' => 'Ontology ID',
+   
     
     /*Message for ExportOntologyBot*/
     'smw_exportontologybot' => 'Ontology exporteren',   

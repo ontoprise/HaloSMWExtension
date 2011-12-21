@@ -20,15 +20,15 @@
 /**
  * @file
  * @ingroup SemanticGardeningSpecials
- * 
+ *
  * Created on 12.03.2007
  *
  * @author Kai K�hn
  */
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
 if (function_exists("sgafGardeningInitMessages"))
-  sgafGardeningInitMessages();
+sgafGardeningInitMessages();
 
 
 
@@ -50,12 +50,12 @@ sgagImportBots("$sgagIP/includes/bots");
  */
 
 class SGAGardening extends SpecialPage {
-	
-	
+
+
 	public function __construct() {
 		parent::__construct('Gardening');
 	}
-	
+
 	public function execute($par) {
 		global $wgRequest, $wgOut, $wgUser;
 		$wgOut->setPageTitle(wfMsg('gardening'));
@@ -72,7 +72,7 @@ class SGAGardening extends SpecialPage {
 				 </div>";
 		$wgOut->addHTML($html);
 	}
-	
+
 	static function getGardeningLogTable() {
 		global $wgServer,$wgScript, $wgArticlePath;
 		$html = "<table width=\"100%\" class=\"smwtable\"><tr><th>User</th><th>Action</th><th>Start-Time</th><th>End-Time</th><th>Log</th><th>Progress</th><th>State</th></tr>";
@@ -84,25 +84,25 @@ class SGAGardening extends SpecialPage {
 		foreach ($gardeningLog as $row) {
 			$html .= "<tr>";
 			for ($i=0; $i < count($row)-1;$i++) {
-				
+
 					
 				if ($i == 4 && $row[3] != null) {
 					// check if it points to log page or GardeningLog
 					// FIXME: clean up: GardeningLog links should be simply empty
 					$parts = explode("?bot=", $row[$i]);
-					if (count($parts) == 2) { // GardeningLog 
+					if (count($parts) == 2) { // GardeningLog
 						$botID = $parts[1];
 						$html .= "<td><a href=\"".$glp->getFullURL("bot=$botID")."\">Log</a></td>";
 					} else { // log page
 						$logPage = Title::newFromText($parts[0]);
 						$html .= "<td><a href=\"".$logPage->getFullURL()."\">Log</a></td>";
 					}
-					
+						
 				} else if ($i == 1) {
 					$html .= "<td>".wfMsg($row[$i])."</td>";
-				 } else if ($i == 5) {
-				 	$html .= "<td>".(number_format(($row[$i]+0)*100))."%</td>";
-				 } else { 
+				} else if ($i == 5) {
+					$html .= "<td>".(number_format(($row[$i]+0)*100))."%</td>";
+				} else {
 					$html .= "<td>".$row[$i]."</td>";
 				}
 			}
@@ -116,25 +116,25 @@ class SGAGardening extends SpecialPage {
 		$html .= "</table>";
 		return $html;
 	}
-	
+
 	static function getRegisteredBots() {
 		global $registeredBots, $wgUser, $wgServer, $wgScriptPath;
-		 $htmlResult = "";
-		 $first = true;
-		 foreach($registeredBots as $botID => $bot) {
-		 	if (is_null($wgUser) || !$wgUser->isAllowed('gardening')) {
-		 		continue; // do not add this bot, because the user must not access it.
-		 	}
-		 	
-		 	if (!$bot->isVisible()) {
-		 		continue;
-		 	}
-		 	
-		 	$imageDirectory = $bot->getImageDirectory();
+		$htmlResult = "";
+		$first = true;
+		foreach($registeredBots as $botID => $bot) {
+			if (is_null($wgUser) || !$wgUser->isAllowed('gardening')) {
+				continue; // do not add this bot, because the user must not access it.
+			}
 
-		 	// if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
+			if (!$bot->isVisible()) {
+				continue;
+			}
+
+			$imageDirectory = $bot->getImageDirectory();
+
+			// if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
 			$imageDirectory = $imageDirectory == NULL ? 'extensions/SemanticGardening/skins' : $imageDirectory;
-			
+				
 			$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 							" onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
 							"<table width=\"100%\"><tr>" .
@@ -142,53 +142,39 @@ class SGAGardening extends SpecialPage {
 							"<td><a>" . $bot->getLabel() . "</a></td>" .
 							"</tr></table>" .
 							"</div>";
-		 }
-		 if ($htmlResult == '') {
-		 	$htmlResult .= wfMsg('smw_gard_notools');
-		 }
-		 return $htmlResult;
+		}
+		if ($htmlResult == '') {
+			$htmlResult .= wfMsg('smw_gard_notools');
+		}
+		return $htmlResult;
 	}
 
-	
-static function getParameterFormularForBot($botID) {
+
+	static function getParameterFormularForBot($botID) {
 		global $registeredBots;
- 		$bot = $registeredBots[$botID];
- 		if ($bot == null) {
- 			return "unknown bot"; //TODO: externalize by wfMsg(...)
- 		}
-	
- 		$htmlResult = "<div>".$bot->getHelpText()."</div>";
- 		
+		$bot = $registeredBots[$botID];
+		if ($bot == null) {
+			return "unknown bot"; //TODO: externalize by wfMsg(...)
+		}
+
+		$htmlResult = "<div>".$bot->getHelpText()."</div>";
+			
 		if ($bot->canBeRun()) {
-		$htmlResult .= "<form id=\"gardeningParamForm\"";
- 		$parameters = $bot->getParameters();
- 		foreach($parameters as $param) {
- 			$htmlResult .= $param->serializeAsHTML()."<br>";
- 		}
- 		$htmlResult .= "</form><br>";
- 		$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run 
+			$htmlResult .= "<form id=\"gardeningParamForm\"";
+			$parameters = $bot->getParameters();
+			foreach($parameters as $param) {
+				$htmlResult .= $param->serializeAsHTML()."<br>";
+			}
+			$htmlResult .= "</form><br>";
+			$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run
 
 Bot</button>";
-		}
+		} 
 		
-		if(!$bot->importOntology_df()){
-		$htmlResult .= "<div>".wfMsg('smw_df_missing')."<a title=\"Deployment Framework\" 
+		return $htmlResult;
 
-href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework\">Deployment Framework</a></div>";
-		$htmlResult .= "<br>";
-		}
-		if(!$bot->importOntology_TSC()){
-		$htmlResult .= "<div>".wfMsg('smw_TSC_missing')."<a title=\"Triplestore Connector\" 
-
-href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_TripleStoreConnector_Basic_1.5.3_manually\">Triplesto
-
-re Connector</a></div>";
-			
-		}
- 		return $htmlResult;
-		
 	}
-	
-	
+
+
 }
 

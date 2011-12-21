@@ -183,9 +183,7 @@ of the tools click on this link: $1.',
     'smw_gardissue_class_category_leaves' => 'Category leaves',
     'smw_gardissue_class_number_anomalies' => 'Subcategory anomaly',
     
-    /*Message for ImportOntologyBot*/
-    'smw_gard_import_docu' => 'Imports an OWL file.',
-    'smw_gard_import_uselabels' => 'Use labels',
+   
 
     /*Message for ExportOntologyBot*/
     'smw_exportontologybot' => 'Export ontology',   

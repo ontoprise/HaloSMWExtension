@@ -463,16 +463,18 @@ abstract class GardeningBot {
 		return $botLogFile;
 	}
 	
+	/**
+	 * Indicates if a bot can be started.
+	 * If not, the help text is shown. GardeningBot::getHelpText()
+	 * can show a different text depending of the result of this
+	 * method.
+	 * 
+	 * @return boolean
+	 */
     public function canBeRun() {
 		return true;
 	}
-      public function importOntology_TSC() {
-		return true;
-	}
-
-      public function importOntology_df() {
-		return true;
-	}
+    
 
 	/**
 	 * Returns a writeable dir (assuming $sgaTempDir is configured accrodingly).

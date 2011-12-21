@@ -94,7 +94,9 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 			}
 
 		} else {
-			return $taskid;
+			 $response = new AjaxResponse($taskid);
+	         $response->setResponseCode(403);
+			 return $response;
 		}
 	} else {
 		// redirect call to dedicated gardening server
@@ -115,7 +117,9 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 				return substr($result, stripos($result, "<table"));
 			}
 		}
-		return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission');
+		$response = new AjaxResponse("ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'));
+        $response->setResponseCode(403);
+        return $response;
 	}
 }
 

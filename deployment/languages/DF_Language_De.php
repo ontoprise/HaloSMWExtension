@@ -130,6 +130,13 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen',
 	
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
-    'df_webadmin_repository_link' => 'Repository-Liste'
+    'df_webadmin_repository_link' => 'Repository-Liste',
+	
+	/*Message for ImportOntologyBot*/
+    'smw_gard_import_docu' => 'Importiert eine Ontologie-Datei.',
+    'smw_gard_import_uselabels' => 'Benutze Labels',
+    'smw_gard_ontology_id' => 'Ontology ID',
+    'smw_df_missing' => 'Um die Gardening Bots nutzen zu können müssen Sie das Wiki admin tool installieren! <br/> Folgen Sie dem Link für weitere Informationen: '
+	
 	);
 }

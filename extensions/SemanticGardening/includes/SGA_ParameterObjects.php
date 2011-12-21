@@ -248,8 +248,12 @@
  		$htmlResult = "";
  		$db =& wfGetDB( DB_SLAVE );
 		$fname = 'getUploadedFilesAsHTML';
+		$ext_cond = array();
+		foreach($this->fileExtension as $ext) {
+			$ext_cond[] = '(LOWER(img_name) LIKE LOWER('. $db->addQuotes('%.'.$ext).'))'; 
+		}
 		$res = $db->select( $db->tableName('image'),
-		             array('img_name'), array('LOWER(img_name) LIKE LOWER('. $db->addQuotes('%.'.$this->fileExtension).')' ),
+		             array('img_name'), array(implode(" OR ",$ext_cond)),
 		             $fname, null );
 		$result = array();
 		if($db->numRows( $res ) > 0)
@@ -266,9 +270,9 @@
 		$specialPageAliases = $wgLang->getSpecialPageAliases();
 		$uploadLink = $skin->makeKnownLinkObj(Title::newFromText($specialPageAliases['Upload'][0], NS_SPECIAL), $specialPageAliases['Upload'][0]);
 		if (count($result) == 0) {
-			$htmlResult .= '- '.wfMsg('smw_gard_import_nofiles', strtoupper($this->fileExtension)).' - <br>'.wfMsg('smw_gard_import_addfiles', $uploadLink, strtoupper($this->fileExtension));
+			$htmlResult .= '- '.wfMsg('smw_gard_import_nofiles', strtoupper(implode(",",$this->fileExtension))).' - <br>'.wfMsg('smw_gard_import_addfiles', $uploadLink, strtoupper(implode(",",$this->fileExtension)));
 		} else {
-			$htmlResult .= wfMsg('smw_gard_import_choosefile', strtoupper($this->fileExtension))." ".wfMsg('smw_gard_import_addfiles', $uploadLink, strtoupper($this->fileExtension)).
+			$htmlResult .= wfMsg('smw_gard_import_choosefile', strtoupper(implode(",",$this->fileExtension)))." ".wfMsg('smw_gard_import_addfiles', $uploadLink, strtoupper(implode(",",$this->fileExtension))).
 							'<div id="gardening-import"><table border="0" cellspacing="0" cellpadding="0">';
 			for($i = 0, $n = count($result); $i < $n; $i++) {
 				$htmlResult .= '<tr><td width="100px"><input type="radio" name="'.$this->ID.'" value="'.$result[$i].'" '.($this->selection == $i ? "checked=\"checked\"" : "").'/></td>';
