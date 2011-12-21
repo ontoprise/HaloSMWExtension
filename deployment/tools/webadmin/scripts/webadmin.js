@@ -47,12 +47,16 @@ $(function() {
 		
 		var oldLength = 0;
 		var processCounter = 0;
+		var readLogCallPending = false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending=false;
 				var resultLog = xhr3.responseText;
 				var length = resultLog.length;
 				resultLog = resultLog.substr(oldLength);
@@ -87,20 +91,22 @@ $(function() {
 				$('.ui-dialog-titlebar-close').show();
 			} });
 			
-			// this call checks periodically if there is at least on PHP process running
-			var isProcessRunningUrl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=isProcessRunning&rsargs[]=php";
-			$.ajax( { url : isProcessRunningUrl, dataType:"json", complete : function(xhr3, status3) {
-				if (xhr3.responseText == "false") {
-					processCounter++;
-					if (processCounter > 5) {
-						processCounter=0;
-						$('.ui-dialog-titlebar-close').show();
-						var dialog = $('#df_install_dialog');
-						dialog[0].innerHTML += "<br/>Seems that operation is not running anymore... You might close the window.";
-						dialog[0].scrollTop = dialog[0].scrollHeight;
+			if (dfgOS != 'Windows XP') {
+				// this call checks periodically if there is at least on PHP process running
+				var isProcessRunningUrl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=isProcessRunning&rsargs[]=php";
+				$.ajax( { url : isProcessRunningUrl, dataType:"json", complete : function(xhr3, status3) {
+					if (xhr3.responseText == "false") {
+						processCounter++;
+						if (processCounter > 5) {
+							processCounter=0;
+							$('.ui-dialog-titlebar-close').show();
+							var dialog = $('#df_install_dialog');
+							dialog[0].innerHTML += "<br/>Seems that operation is not running anymore... You might close the window.";
+							dialog[0].scrollTop = dialog[0].scrollHeight;
+						}
 					}
-				}
-			} });
+				} });
+			}
 			
 		};
 		setTimeout( periodicLogLoad, 3000);
@@ -121,12 +127,16 @@ $(function() {
 		
 		// poll log until finished
 		var timer;
+		var readLogCallPending=false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending=false;
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') {
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
@@ -177,12 +187,16 @@ $(function() {
 		
 		// poll log until finished
 		var timer;
+		var readLogCallPending = false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
@@ -230,12 +244,16 @@ $(function() {
 		
 		// poll log until finished
 		var timer;
+		var readLogCallPending = false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
@@ -282,12 +300,16 @@ $(function() {
 		
 		// poll log until finished
 		var timer;
+		var readLogCallPending = false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
@@ -1035,39 +1057,41 @@ $(function() {
 		});
 		
 		// register process polling
-		var timer;
-		var periodicProcessPoll = function() {
-			if (timer) clearTimeout(timer);
-			timer = setTimeout( periodicProcessPoll, 20000);
-			
-			var servers = ["apache","mysql","solr","tsc","memcached"];
-			var commands = [];
-			$(servers).each(function() {
-				 commands.push($('#df_servers_'+this+'_command').val());
-			});
-			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=areServicesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
-			var updateProcessDisplay = function(xhr, status) {
+		if (dfgOS != 'Windows XP') {
+			var timer;
+			var periodicProcessPoll = function() {
+				if (timer) clearTimeout(timer);
+				timer = setTimeout( periodicProcessPoll, 20000);
 				
-				var result = xhr.responseText.split(",");
-				var i = 0;
-				$(result).each(function(index, s) {
-					var flag = $('#df_run_flag_'+servers[i]);
-					if (s == "1") {
-						flag.text("running");  
-						flag.addClass('df_running_process');
-						flag.removeClass('df_not_running_process');
-					} else {
-						flag.text("not running")
-						flag.addClass('df_not_running_process');
-						flag.removeClass('df_running_process');
-					}
-					i++;
+				var servers = ["apache","mysql","solr","tsc","memcached"];
+				var commands = [];
+				$(servers).each(function() {
+					 commands.push($('#df_servers_'+this+'_command').val());
 				});
-				
-			};
-			$.ajax( { url : url, dataType:"json", complete : updateProcessDisplay, timeout: 10000  });
+				var url = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=areServicesRunning&rsargs[]="+servers.join(",")+"&rsargs[]="+encodeURIComponent(commands.join(","));
+				var updateProcessDisplay = function(xhr, status) {
+					
+					var result = xhr.responseText.split(",");
+					var i = 0;
+					$(result).each(function(index, s) {
+						var flag = $('#df_run_flag_'+servers[i]);
+						if (s == "1") {
+							flag.text("running");  
+							flag.addClass('df_running_process');
+							flag.removeClass('df_not_running_process');
+						} else {
+							flag.text("not running")
+							flag.addClass('df_not_running_process');
+							flag.removeClass('df_running_process');
+						}
+						i++;
+					});
+					
+				};
+				$.ajax( { url : url, dataType:"json", complete : updateProcessDisplay, timeout: 10000  });
+			}
+			setTimeout( periodicProcessPoll, 20000);
 		}
-		setTimeout( periodicProcessPoll, 20000);
 		
 		// server command change listener
 		$('.df_servers_command').change(function(e) {
@@ -1171,12 +1195,16 @@ $(function() {
 		
 		// poll log until finished
 		var timer;
+		var readLogCallPending = false;
 		var periodicLogLoad = function(xhr2, status2) {
 			if (timer) clearTimeout(timer);
 			timer = setTimeout( periodicLogLoad, 5000);
 			
+			if (readLogCallPending) return;
+			readLogCallPending = true;
 			var readLogurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="+encodeURIComponent(logfile);
-			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) { 
+			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
+				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';

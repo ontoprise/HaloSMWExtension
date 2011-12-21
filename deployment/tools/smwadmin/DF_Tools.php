@@ -66,7 +66,10 @@ class Tools {
 		if ($thisBoxRunsWindows && (strpos($os[0], "6.1") !== false)) {
 			$version = "Windows 7";
 			$os = $version;
-		}
+		} else if ($thisBoxRunsWindows) {
+            $version = "Windows XP";
+            $os = $version;
+        }
 
 		return $thisBoxRunsWindows;
 	}

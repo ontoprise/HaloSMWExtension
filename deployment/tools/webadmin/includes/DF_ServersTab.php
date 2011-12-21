@@ -49,7 +49,12 @@ class DFServersTab {
 
 	public function getHTML() {
 		global $dfgLang;
-				
+
+		Tools::isWindows($os);
+		if ($os == "Windows XP") {
+			return "This feature is not available on Windows XP";
+		}
+
 		$executeText = $dfgLang->getLanguageString('df_webadmin_server_execute');
 		$startActionText = $dfgLang->getLanguageString('df_webadmin_server_start');
 		$endActionText = $dfgLang->getLanguageString('df_webadmin_server_end');
@@ -58,11 +63,11 @@ class DFServersTab {
 
 		$html .= "<br/><br/>";
 		$html .= "<table id=\"df_server_state_table\">";
-        $html .= "<th>Service</th>";
-        $html .= "<th>Status</th>";
-        $html .= "<th>Operation</th>";
-        $html .= "<th>Command</th>";
-    	$html .= "<tr>";
+		$html .= "<th>Service</th>";
+		$html .= "<th>Status</th>";
+		$html .= "<th>Operation</th>";
+		$html .= "<th>Command</th>";
+		$html .= "<tr>";
 		$apacheStart = self::guessPaths("apache", "start");
 		$apacheEnd = self::guessPaths("apache", "end");
 		$html .= "<td>Apache</td>";
