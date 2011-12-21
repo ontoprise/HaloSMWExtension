@@ -78,10 +78,6 @@ class SMWH_Skin {
 			$menu.= "</li>";
 			$index++;
 		}
-
-
-		$menu.= "</ul>";
-		$menu.= "<ul id=\"menuright\" class=\"smwh_menulist\">";
 		$menu.= $this->buildMenuMediaWiki();
 		$menu.= $this->buildTools();
 		$menu.= "</ul>";
@@ -553,8 +549,19 @@ class SMWH_Skin {
 	 * @return string
 	 */
 	public function buildQuickLinks() {
+		global $wgStylePath;
+
 		$quicklinks = "<!-- HaloQuickLinks -->";
-		$quicklinks .= "<div id=\"smwh_quicklinks\">";
+		$quicklinks .= "<div id='smwh_quicklinks'>";
+		$quicklinks .= "<div class='smwh_quicklinks_static'>";
+		$quicklinks .= "<img src='" . $wgStylePath . $this->imagepath . "/logo_smw+_small_trans.png' title='Powered by SMW+' alt='Powered by SMW+'/>";
+		$quicklinks .= $this->parseWikiText( "[[Imprint|Imprint]]" );
+		$quicklinks .= "<a href='http://smwforum.ontoprise.com/smwforum/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a>";
+		$quicklinks .= $this->parseWikiText( "[[Contact|Contact]]" );
+		$quicklinks .= $this->parseWikiText( "[[Privacy policy|Privacy policy]]" );
+		$quicklinks .= $this->parseWikiText( "[[Terms and conditions|Terms & Conditions]]" );
+		$quicklinks .= "<a href='http://smwforum.ontoprise.com/smwforum/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a>";
+		$quicklinks .= "</div>";
 
 		//Get the content for the page options from MediaWiki:halopageoptions
 		$content = wfMsgForContent( 'haloquicklinks' );
@@ -570,6 +577,21 @@ class SMWH_Skin {
 		$quicklinks .="</div>";
 		//return the html snippet
 		return $quicklinks;
+	}
+
+	/**
+	 * Build the personal quick links
+	 * 
+	 * @return string
+	 */
+	public function buildPersonalQuickLinks() {
+		// @todo: put in Mediawiki:PersonalQuickLinks
+		$html = $this->parseWikiText( '<div id="quicklinks">[[Special:SpecialPages|Special pages]]' .
+			'| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]' .
+			'| [[Special:Preferences|Preferences]]</div>'
+		);
+
+		return '' . $html . '';
 	}
 
 	/**

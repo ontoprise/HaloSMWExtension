@@ -103,20 +103,44 @@
 }
 
 #createNewArticleCtrl{
+  background: #ffffff; /* Old browsers */
+  background: -moz-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(35%,#f1f8f9), color-stop(100%,#e9f3f6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* IE10+ */
+  background: linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e9f3f6',GradientType=0 ); /* IE6-9 */
+  color: #219EB5;
   float: left;
-  padding-right: 10px;
-  padding-bottom: 3px;
-  margin-top: 5px;
-  margin-right: 30px;
+  padding: 3px 5px;
+  margin-right: 10px;
   font-size: smaller;
   cursor: pointer;
-  border: 0px solid black;
+  border: 1px solid #116988;
   vertical-align: middle;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 
+#createNewArticleCtrl:hover{
+  background: linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* W3C */
+  background: -moz-linear-gradient(top, #ffffff 0%, #f1f8f9 45%, #AAD1DE 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(45%,#f1f8f9), color-stop(100%,#AAD1DE)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#AAD1DE',GradientType=0 ); /* IE6-9 */
+}
 
-#createNewArticleCtrl a{
-  margin-bottom: 10px;
+#createNewArticleCtrl:active{
+  box-shadow: inset 2px 2px 3px #116988, inset -1px -1px 2px #116988;
+}
+
+#createNewArticleCtrl img {
+  vertical-align: bottom;
+  margin-right: 2px;
 }
 
 #listOfTemplatesAndCategories option {
