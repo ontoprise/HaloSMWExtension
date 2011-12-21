@@ -1098,7 +1098,9 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 				if ($sv == TSNamespaces::$RDF_NS."type") {
 					$allValues[] = SMWDIProperty::newFromUserLabel('_INST');
-				} else {
+				} else if ($sv == TSNamespaces::$RDFS_NS."label") {
+                    $allValues[] = SMWDIProperty::newFromUserLabel('Label');
+                } else {
 					$internalPropertyID = TSHelper::isInternalProperty($sv);
 					if ($internalPropertyID !== false) {
 						$allValues[] = SMWDIProperty::newFromUserLabel($internalPropertyID);
