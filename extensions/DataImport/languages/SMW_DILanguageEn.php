@@ -30,7 +30,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'specialpages-group-di_group' => 'Data Import',
 	
 	/* Messages of the Term Import */
-	'smw_ti_selectDAM' => 'Choose data source.',
+	'smw_ti_selectDAM' => 'Choose a data source.',
 	'smw_ti_selectImport-heading' => 'Import sets',
 	'smw_ti_selectImport-label' => 'Choose:&nbsp&nbsp',
 	'smw_ti_selectImport-help' => 'If you like to only import terms that belong to a certain import set, then please choose it here.',

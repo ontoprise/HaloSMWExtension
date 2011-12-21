@@ -30,7 +30,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
     'specialpages-group-di_group' => 'Data Import',
 
 	/* Messages of the Term Import */
-	'smw_ti_selectDAM' => 'Bitte w&auml;hle ein DAM aus.',
+	'smw_ti_selectDAM' => 'Bitte w&auml;hlen Sie eine Datenquelle aus.',
 	'smw_ti_firstselectTLM' => 'W&auml;hle zuerst das TLM aus.',
 	'smw_ti_selectImport-heading' => 'Import Sets',
 	'smw_ti_selectImport-label' => 'Auswählen:&nbsp&nbsp',
@@ -85,8 +85,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	
 	'smw_ti_feed_category' => 'Kategorie der Feedd Definitionen:',
 	'smw_ti_feed_urlprop' => 'URL Property:',
-	'smw_ti_feed_prefixprop' => 'Pr&auml;fix Property:',
-	'smw_ti_feed_wrong_datasource' => 'Sowohl der Name der Kategorie, die die Feed Definitionen enth&auml;lt als auch der Name des URL Properties m&uuml;ssen angegeben werden. ',.
+	'smw_ti_feed_prefixprop' => 'Präfix Property:',
+	'smw_ti_feed_wrong_datasource' => 'Sowohl der Name der Kategorie, die die Feed Definitionen enth&auml;lt als auch der Name des URL Properties m&uuml;ssen angegeben werden.',
 
 	'smw_ti_sparql_wrong_variable_name' => 'Eine der Variablen in der Anfrage muss "articlename" heissen.',	
 		
@@ -125,11 +125,11 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_dam-heading' => 'Datenquelle wählen:',
 	'smw_ti_module-data-heading' => 'Konfiguration der Datenquelle:',
 	
-	'smw_ti_damdesc_csv' => 'Importiert Terme aus einer CSV-Datei. Sie m&uuml;ssen entweder den Pfad zu einer CSV-Datei auf dem Server oder eine valide URL zu einer solchen Datei angeben. Eine der Spalten in der CSV-Datei muss \'articleName\' heissen.',
-	'smw_ti_damdesc_feed' => 'Importiert Terme aus RSS- oder Atom-Feeds. Sie m&uuml;ssen den namen einer Kategorie angeben, in der das Data Access Modul die Feed Definitions Artikel finden kann. Zudem m&uuml;ssen Sie den Namen des Properties angeben, dass zum Speichern der Feed URLs verwendet wird. Das Data Access Modul wird dann nach allen Artikeln in der angebenen Kategorie suchen und die Feeds mit der in jedem Artikel jeweils angegebenen URL in das Wiki importieren. Optional kann ein Property zur Angabe von Artikelnamen-Pr&auml;fixen angegeben werden. Das Data Access Modul wird die in jeder Feed-Definition angegebenen Pr&auml;fixe dann bei der Erstellung neuer Artikel ber&uuml;cksichtigen.',
-	'smw_ti_damdesc_pop3' => 'Importiert E.mails von einem POP3-Server. Besitzen Sie zum Beispiel einen Account bei Google Mail, dann m&uuml;ssen Sie pop.googlemail.com als Servername und Ihre E-mail Adresse als Benutzername angeben. Zudem m&uuml;ssen Sie die SSL Checkbox aktivieren. (Zuvor m&uuml;ssen Sie allerdings auf der Google Mail Webseite die Verwendung eines POP3-Servers aktivieren.)',
-	'smw_ti_damdesc_tixml' => 'Importiert die Ergebnisse einer Web Service Anfrage im TIXML format. Sie m&uuml;ssen den Namen eines Artikels im Wiki angeben. Der Artikel muss dann das Web Service Ergebnis im TIDXML Format mithilfe der #ws Parser Function enthalten.',
-	'smw_ti_damdesc_sparql' => 'Importiert die Ergebnisse einer SPARQL-Select Anfrage. Sie m&uuml;ssen die URL des SPARQL-Endpoints und die Anfrage angeben. Eine der Ergebnisvariablen in der Anfrage muss \'articleName\' heissen.',
+	'smw_ti_damdesc_csv' => 'Importiert Terme aus einer CSV-Datei. Sie müssen entweder den Pfad zu einer CSV-Datei auf dem Server oder eine valide URL zu einer solchen Datei angeben. Eine der Spalten in der CSV-Datei muss \'articleName\' heissen.',
+	'smw_ti_damdesc_feed' => 'Importiert Terme aus RSS- oder Atom-Feeds. Sie müssen den Namen einer Kategorie angeben, in der das Data Access Modul die Feed Definitions Artikel finden kann. Zudem müssen Sie den Namen des Properties angeben, dass zum Speichern der Feed URLs verwendet wird. Das Data Access Modul wird dann nach allen Artikeln in der angebenen Kategorie suchen und die Feeds mit der in jedem Artikel jeweils angegebenen URL in das Wiki importieren. Optional kann ein Property zur Angabe von Artikelnamen-Präfixen angegeben werden. Das Data Access Modul wird die in jeder Feed-Definition angegebenen Präfixe dann bei der Erstellung neuer Artikel berücksichtigen.',
+	'smw_ti_damdesc_pop3' => 'Importiert E.mails von einem POP3-Server. Besitzen Sie zum Beispiel einen Account bei Google Mail, dann müssen Sie pop.googlemail.com als Servername und Ihre E-mail Adresse als Benutzername angeben. Zudem müssen Sie die SSL Checkbox aktivieren. (Zuvor müssen Sie allerdings auf der Google Mail Webseite die Verwendung eines POP3-Servers aktivieren.)',
+	'smw_ti_damdesc_tixml' => 'Importiert die Ergebnisse einer Web Service Anfrage im TIXML format. Sie müssen den Namen eines Artikels im Wiki angeben. Der Artikel muss dann das Web Service Ergebnis im TIDXML Format mithilfe der #ws Parser Function enthalten.',
+	'smw_ti_damdesc_sparql' => 'Importiert die Ergebnisse einer SPARQL-Select Anfrage. Sie müssen die URL des SPARQL-Endpoints und die Anfrage angeben. Eine der Ergebnisvariablen in der Anfrage muss \'articleName\' heissen.',
 	
 	'smw_ti_page_editlink' => 'Klicken Sie bitte hier um die Term Import Definition in der GUI zu editierenn',
 	
