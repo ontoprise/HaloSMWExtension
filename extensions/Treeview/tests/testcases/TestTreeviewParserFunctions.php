@@ -481,12 +481,94 @@ JSON
 			),
     	),
     	
+#10 - Test the parameter filter - Expect the filter field in JSON to be true
+    		array(
+<<<TEXT
+{{#tree:
+filter=true
+}}
+TEXT
+, 
+			array('TreeView_ID_10',
+<<<JSON
+filter:true
+JSON
+			),
+    	),
+    	
+#11 - Test the parameter 'filter' - Expect the filter field in JSON to be false
+    		array(
+<<<TEXT
+{{#tree:
+filter=false
+}}
+TEXT
+, 
+			array('TreeView_ID_11',
+<<<JSON
+filter:false
+JSON
+			),
+    	),
+    	
+#12 - Test the parameter 'width' - Expect the width to be set in a css style
+    		array(
+<<<TEXT
+{{#tree:
+width=123
+}}
+TEXT
+, 
+			array('TreeView_ID_12',
+<<<JSON
+style="width:123px"
+JSON
+			),
+    	),
+    	
+#13 - Test the parameter 'height' - Expect the height to be set in a css style
+    		array(
+<<<TEXT
+{{#tree:
+height=456
+}}
+TEXT
+, 
+			array('TreeView_ID_13',
+<<<JSON
+style="height:456px"
+JSON
+			),
+    	),
+    	
+#14 - Test the parameters 'width' and 'height' - Expect width and height to be set in a css style
+    		array(
+<<<TEXT
+{{#tree:
+width=123|
+height=456
+}}
+TEXT
+, 
+			array('TreeView_ID_14',
+<<<JSON
+style="width:123px;height:456px"
+JSON
+			),
+    	),
+    	
     	
     	);
     }
     
     /**
      * Tests the parser function {{#tree: }}
+     * 
+     * @param {String} $wikiText
+     * 		The wikitext that will be parsed
+     * @param {array(String)} $expected
+     * 		[0] => an ID that must appear in the generated HTML
+     * 		[1] => JSON or HTML code the must appear
      * 
      * @dataProvider providerForTreeParserFunction
      */

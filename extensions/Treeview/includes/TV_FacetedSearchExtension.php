@@ -139,7 +139,7 @@ HTML;
 		global $tvgScriptPath;
 		$html = str_replace("{tvgScriptPath}", $tvgScriptPath, $html);
 		// Replace the language strings
-		$html = self::replaceLanguageStrings($html);
+		$html = TreeViewExtension::replaceLanguageStrings($html);
 
 		return true;
 	}	
@@ -157,7 +157,7 @@ HTML;
 		global $tvgScriptPath;
 		$html = str_replace("{tvgScriptPath}", $tvgScriptPath, $html);
 		// Replace the language strings
-		$html = self::replaceLanguageStrings($html);
+		$html = TreeViewExtension::replaceLanguageStrings($html);
 			
 		return true;
 	}	
@@ -175,32 +175,5 @@ HTML;
 	}
 
 	//--- Private methods ---
-	/**
-	 * Language dependent identifiers in $text that have the format {{identifier}}
-	 * are replaced by the string that corresponds to the identifier.
-	 * 
-	 * @param string $text
-	 * 		Text with language identifiers
-	 * @return string
-	 * 		Text with replaced language identifiers.
-	 */
-	private static function replaceLanguageStrings($text) {
-		// Find all identifiers
-		$numMatches = preg_match_all("/(\{\{(.*?)\}\})/", $text, $identifiers);
-		if ($numMatches === 0) {
-			return $text;
-		}
-
-		// Get all language strings
-		$langStrings = array();
-		foreach ($identifiers[2] as $id) {
-			$langStrings[] = wfMsg($id);
-		}
-		
-		// Replace all language identifiers
-		$text = str_replace($identifiers[1], $langStrings, $text);
-		return $text;
-	}
-    
 	
 }

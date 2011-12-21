@@ -48,3 +48,16 @@
 	margin: 10px;	
 }
 
+.tvTreeWrapper {
+	width: 400px;
+	overflow:auto;
+}
+
+.tvFilterInput {
+	margin: 0px;
+}
+
+.tvTreeFilterWrapper {
+	margin: 0px;
+}
+

@@ -51,6 +51,9 @@ $messages['en'] = array(
 	'tv_hide_parser_function' => "Hide the parser function",
 	'tv_parser_function' 		=> "Parser function for this search",
 	'tv_copy_parser_function'	=> "You can copy this wikitext into an article to generate the same tree.",
+	'tv_filter'				=> "Filter:",
+	'tv_filter_help'		=> "Search in the content of the tree's articles.",
+	'tv_filter_apply'		=> "Search",
 	
 	// Client side language strings
 	'tv_treepf_template' => <<<TEMPLATE
@@ -83,6 +86,10 @@ $messages['de'] = array(
 	'tv_hide_parser_function' => "Parserfunktion ausblenden",
 	'tv_parser_function' 	=> "Parserfunktion für diese Suche",
 	'tv_copy_parser_function'	=> "Sie können diesen Wikitext in einen Artikel kopieren um dort den gleichen Baum zu erzeugen.",
+
+	'tv_filter'				=> "Filter:",
+	'tv_filter_help'		=> "Suche im Inhalt der Artikel des Baumes.",
+	'tv_filter_apply'		=> "Suchen",
 
 	// Client side language strings
 	'tv_treepf_template' => <<<TEMPLATE

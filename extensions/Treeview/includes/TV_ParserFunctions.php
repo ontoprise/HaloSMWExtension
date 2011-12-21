@@ -49,12 +49,27 @@ class TVParserFunctions  {
 	const GENERATE_TREE_JSON = 'generateTreeJSON:';
 	
 	const HTML_FOR_TREE = <<<HTML
-<span id="treeID" />
-HTML
-;
+<div id="wrapper_for_{treeID}" class="tvTreeWrapper" {dimensions}>
+	<!-- This span contains the input field for the filter and the apply button. -->
+	<div id="{treeID}_filter_wrapper" class="tvTreeFilterWrapper" style="display:none">
+		<table style="width:100%">
+			<tr>
+				<td>{{tv_filter}}</td>
+				<!-- Do not insert linebreaks. Otherwise MW will insert <p> tags -->
+				<td style="width:100%">	<input id="{treeID}_filter_input" class="tvFilterInput" style="width:95%" type="text" title="{{tv_filter_help}}" /> </td>
+				<td> <button id="{treeID}_filter_apply" type="button">{{tv_filter_apply}} </button> </td>
+			</tr>
+		</table>	
+		<hr />
+	</div>
+	<!-- The tree is inserted here -->
+	<span id="{treeID}" />
+</div>
+
+HTML;
 
 	const SCRIPT_FOR_TREE = <<<SCRIPT
-<script type="wgJsMimeType">
+<script type="{wgJsMimeType}">
 	if (typeof(TreeView) === 'undefined') {
 		TreeView = {};
 	}
@@ -62,9 +77,10 @@ HTML
 		TreeView.trees = [];
 	}
 	var treeObj = {
-		id: 'treeID',
-		json: jsonTree,
-		theme: 'defaultTheme'
+		id: '{treeID}',
+		json: {jsonTree},
+		theme: '{defaultTheme}',
+		filter: {filterSwitch},
 	};
 	TreeView.trees.push(treeObj);
 	if (TreeView.singleton) {
@@ -129,7 +145,20 @@ SCRIPT
 		$theme = array_key_exists(TVLanguage::PFP_THEME, self::$mParameters)
 					? self::$mParameters[TVLanguage::PFP_THEME]
 					: self::DEFAULT_THEME;
-		$text = self::createHTML($id).self::createScript($id, $json, $theme);
+					
+		$filter = array_key_exists(TVLanguage::PFP_FILTER, self::$mParameters)
+					? (self::$mParameters[TVLanguage::PFP_FILTER] === 'true')
+					: false;
+		
+		$width = array_key_exists(TVLanguage::PFP_WIDTH, self::$mParameters)
+					? self::$mParameters[TVLanguage::PFP_WIDTH]
+					: false;
+		$height = array_key_exists(TVLanguage::PFP_HEIGHT, self::$mParameters)
+					? self::$mParameters[TVLanguage::PFP_HEIGHT]
+					: false;
+		
+		$text = self::createHTML($id, $width, $height)
+		        .self::createScript($id, $json, $theme, $filter);
 		
 		global $wgOut;
 		$wgOut->addModules('ext.TreeView.tree');
@@ -292,16 +321,19 @@ TEXT
 	 * 		JSON representation of the tree.
 	 * @param {String} $theme
 	 * 		The name of the tree's theme (skin). 
+	 * @param {bool} $filter
+	 * 		true, if the full-text filter should be enabled. 
 	 * 
 	 * @return {String}
 	 * 		A piece of JavaScript
 	 */
-	private static function createScript($id, $jsonTree, $theme) {
+	private static function createScript($id, $jsonTree, $theme, $filter = false) {
 		global $wgJsMimeType;
-		$script = str_replace('wgJsMimeType', $wgJsMimeType, self::SCRIPT_FOR_TREE);
-		$script = str_replace('jsonTree', $jsonTree, $script);
-		$script = str_replace('treeID', $id, $script);
-		$script = str_replace('defaultTheme', $theme, $script);
+		$script = str_replace('{wgJsMimeType}', $wgJsMimeType, self::SCRIPT_FOR_TREE);
+		$script = str_replace('{jsonTree}', $jsonTree, $script);
+		$script = str_replace('{treeID}', $id, $script);
+		$script = str_replace('{defaultTheme}', $theme, $script);
+		$script = str_replace('{filterSwitch}', $filter ? 'true' : 'false', $script);
 		
 		return $script;
 	}
@@ -310,12 +342,29 @@ TEXT
 	 * Creates a piece of HTML that displays the tree in the page
 	 * @param {String} $id
 	 * 		ID of the element that will be the anchor for the tree
+	 * @param {bool/int} $width
+	 * 		If not false, this is the width of the tree area in pixels
+	 * @param {bool/int} $height
+	 * 		If not false, this is the height of the tree area in pixels
 	 * 
 	 * @return {String}
 	 * 		A piece of HTML
 	 */
-	private static function createHTML($id) {
-		$html = str_replace('treeID', $id, self::HTML_FOR_TREE);
+	private static function createHTML($id, $width, $height) {
+		$html = str_replace('{treeID}', $id, self::HTML_FOR_TREE);
+		
+		// Set width and height of the div containing tree
+		$dimensions = '';
+		if ($width !== false && $height !== false) {
+			$dimensions = "style=\"width:{$width}px;height:{$height}px\"";
+		} else if ($width !== false) {
+			$dimensions = "style=\"width:{$width}px\"";
+		} else if ($height !== false) {
+			$dimensions = "style=\"height:{$height}px\"";
+		}
+		$html = str_replace('{dimensions}', $dimensions, $html);
+		
+		$html = TreeViewExtension::replaceLanguageStrings($html);
 		return $html;
 	}
 	
@@ -413,7 +462,8 @@ JSON;
 		self::$mParameters = array();
 		$validParams = array();
 		if ($parserFunction === 'tree') {
-			$validParams = array(TVLanguage::PFP_THEME);
+			$validParams = array(TVLanguage::PFP_THEME, TVLanguage::PFP_FILTER,
+								 TVLanguage::PFP_WIDTH, TVLanguage::PFP_HEIGHT);
 		} else if ($parserFunction === 'generateTree') {
 			$validParams = array(TVLanguage::PFP_PROPERTY, TVLanguage::PFP_ROOT_LABEL,
 			                     TVLanguage::PFP_SOLR_QUERY);

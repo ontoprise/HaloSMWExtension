@@ -43,7 +43,10 @@ class TVLanguageEn extends TVLanguage {
 		TVLanguage::PFP_ROOT_LABEL	=> 'rootlabel', 
 		TVLanguage::PFP_THEME		=> 'theme',
 		TVLanguage::PFP_PROPERTY	=> 'property',
-		TVLanguage::PFP_SOLR_QUERY	=> 'solrquery'
+		TVLanguage::PFP_SOLR_QUERY	=> 'solrquery',
+		TVLanguage::PFP_FILTER		=> 'filter',
+		TVLanguage::PFP_WIDTH		=> 'width',
+		TVLanguage::PFP_HEIGHT		=> 'height'
 	);
 	
 }

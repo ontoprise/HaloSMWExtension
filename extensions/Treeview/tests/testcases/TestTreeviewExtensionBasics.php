@@ -88,7 +88,11 @@ class TestTreeviewExtensionBasics extends PHPUnit_Framework_TestCase {
     	                  "The class 'TVLanguageEn' is not defined.");
     	$this->assertTrue(class_exists(('TVLanguageDe')), 
     	                  "The class 'TVLanguageDe' is not defined.");
-		
+    	
+    	// Check if the main class exists
+    	$this->assertTrue(class_exists(('TreeViewExtension')), 
+    	                  "The class 'TreeViewExtension' is not defined.");
+    	
     	
     }
     

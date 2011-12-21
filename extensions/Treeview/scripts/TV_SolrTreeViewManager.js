@@ -68,6 +68,11 @@ TreeView.classes.SolrTreeViewManager = function(){
 	// that is applied on the elements of the tree.
 	var mFilterStore;
 	
+	// {String}
+	// This string contains search terms that the user entered. The terms are
+	// separated by spaced. They are added to the query for filtered results. 
+	var mUserQuery = "";
+	
 	// {Object}
 	// This object maps for all pages to their parent node in the tree 
 	var mParentMap;
@@ -147,6 +152,22 @@ TreeView.classes.SolrTreeViewManager = function(){
 	that.updateTree = updateTree;
 	
 	
+	/**
+	 * @public
+	 * 
+	 * The given value is a list of search terms (separated by space) that must
+	 * occur in the articles that belong to the tree. They are added as additional
+	 * full-text filters.
+	 * The tree is updated for these new search terms.
+	 * 
+	 * @param {String} value
+	 */
+	function updateFilter(value) {
+		mUserQuery = value;
+		updateTree();
+	}
+	that.updateFilter = updateFilter;
+	
 	//--- Private Methods ---
 	
 	
@@ -199,9 +220,25 @@ TreeView.classes.SolrTreeViewManager = function(){
 		
 		// Copy the constraints from the external filterStore
 		if (mFilterStore) {
-			jQuery.each(mFilterStore.values('q'), function(index, value){
-				mSolrManagerForFilter.store.addByValue('q', value);
-			});
+			// Add the query, augmented with user input
+			var query = mFilterStore.values('q')[0];
+			if (mUserQuery.length > 1) {
+				var terms = mUserQuery.split(' ');
+				var userTerms = '';
+				for (var i = 0; i < terms.length; ++i) {
+					if (terms[i].length > 0) {
+						userTerms += '+' + terms[i] + ' ';
+					}
+				}
+				// Split the SOLR query into its parts:
+				// 1. The field that is queried
+				// 2. The search terms that are enclosed in a brace
+				var queryParts = query.match(/^\s*(.*?):\(\s*(.*?)\s*\)\s*$/);
+				var field = queryParts[1];
+				query = field + ':(' + userTerms + queryParts[2] + ')';
+			}
+			mSolrManagerForFilter.store.addByValue('q', query);
+			
 			jQuery.each(mFilterStore.values('fq'), function(index, value){
 				mSolrManagerForFilter.store.addByValue('fq', value);
 			});

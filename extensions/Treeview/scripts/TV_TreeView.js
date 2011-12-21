@@ -75,6 +75,25 @@ TreeView.classes.TreeViewLoader = function() {
 	 */
 	function onLoadJSTree(event, data) {
 		var tree = data.inst;
+		
+		// Get the tree specification for 'this' tree
+		var id = $(this).attr('id');
+		for (var i = 0; i < TreeView.trees.length; ++i) {
+			var t = TreeView.trees[i];
+			if (t.id === id) {
+				var treeSpec = t;
+			}
+		}
+		
+		
+		// Show the input field of the filter if switched on
+		var filterInput = null;
+		if (treeSpec.filter) {
+			filterInput = $('#'+id+'_filter_input');
+			$('#'+id+'_filter_wrapper').show();
+		}
+		
+		// Connect the SOLR managers to dynamic branches
 		$(this).find('a[generateTree="true"]').each(function (idx, elem) {
 			var node = tree._get_node(elem);
 			var property = $(elem).attr('property');
@@ -88,7 +107,22 @@ TreeView.classes.TreeViewLoader = function() {
 			solrMgr.addWidget(
 				new TreeView.classes.JSTreeWidget({tree: tree, parentNode: node}));
 			solrMgr.updateTree();
+			
+			// Handle changes of the filter input field of the tree, if it exists
+			if (filterInput) {
+				var updateFilter = function (event) {
+					var mgr = event.data.solrMgr;
+					var value = event.data.input.val();
+					mgr.updateFilter(value);
+				};
+				
+				// Wire the change event for the input field
+				filterInput.bind('change', {solrMgr: solrMgr, input: filterInput}, updateFilter);
+				// Wire the apply button for the input field
+				$('#'+id+'_filter_apply').bind('click', {solrMgr: solrMgr, input: filterInput}, updateFilter);
+			}
 		});
+		
 	}
 	
 	/**

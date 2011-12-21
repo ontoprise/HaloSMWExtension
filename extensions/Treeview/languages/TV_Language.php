@@ -38,6 +38,9 @@ abstract class TVLanguage {
 	const PFP_PROPERTY = 102;
 	const PFP_SOLR_QUERY = 103;
 	const PFP_ROOT_LABEL = 104;
+	const PFP_FILTER     = 105;
+	const PFP_WIDTH      = 106;
+	const PFP_HEIGHT     = 107;
 	
 	
 	// the special message arrays ...

@@ -68,7 +68,11 @@ TreeView.classes.JSTreeWidget = AjaxSolr.AbstractWidget.extend({
 				'plugins': ['themes', 'json_data']
 			});
 		} else if (this.tree && this.parentNode){
+			// first delete all children of the parent
+			this.deleteChildrenNodes(this.tree, this.parentNode);
+			// then add the new nodes
 			this.addChildNode(this.tree, this.parentNode, json.data);
+			this.tree.open_node(this.parentNode, false, true);
 		}
 		
 	},
@@ -87,6 +91,21 @@ TreeView.classes.JSTreeWidget = AjaxSolr.AbstractWidget.extend({
 		var obj = tree._parse_json(json);
 		parentNode.append(obj);
 		tree.clean_node(parentNode);
+	},
+	
+	/**
+	 * Deletes the children of the parentNode
+	 * 
+	 * @param {object} tree 
+	 * 		A jsTree object, e.g. treeObj =	$.jstree._reference("demo");
+	 * @param {object} parentNode 
+	 * 		The DOM parent node whose children will be deleted
+	 **/
+	deleteChildrenNodes: function (tree, parentNode){
+		tree._get_children(parentNode)
+		    .each(function(idx, child) {
+				tree.delete_node(child);
+			});
 	}
 	
 });
