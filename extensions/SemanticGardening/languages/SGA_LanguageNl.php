@@ -59,14 +59,10 @@ class SGA_LanguageNl {
     'smw_missingannotationsbot' => 'Pagina´s zonder aantekeningen zoeken',
     'smw_anomaliesbot' => 'Anomalieën zoeken',
     'smw_renamingbot' => 'Pagina hernoemen',
-    'smw_importontologybot' => 'Een ontologie importeren',
+    
     'smw_gardissue_class_all' => 'Alle',
     
-    /* Messages for Gardening Bot: ImportOntology Bot*/
-    'smw_gard_import_choosefile' => 'De volgende $1 bestanden zijn beschikbaar.',
-    'smw_gard_import_addfiles' => '$2 bestaan toevoegen door $1 te gebruiken.',
-    'smw_gard_import_nofiles' => 'Er zijn geen bestanden van het type $1 beschikbaar',
-    
+     
     /* Messages for Gardening Bot: ConsistencyBot */
     'smw_gard_consistency_docu'  => 'De consistentiebot houdt toezicht op loops in de taxonomie en eigenschappen zonder domein of waardenbereik. Het controleert ook op het correct gebruik van eigenschappen overeenstemmend met domein en waardenbereik, alsook foutieve kardinaliteiten.',
     'smw_gard_no_errors' => 'Proficiat! De wiki is consistent.',

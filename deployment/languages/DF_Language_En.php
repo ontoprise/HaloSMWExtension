@@ -137,9 +137,11 @@ class DF_Language_En extends DF_Language {
 	
      /*Message for ImportOntologyBot*/
     'smw_gard_import_docu' => 'Imports an ontology file.',
-    'smw_gard_import_uselabels' => 'Use labels',
-    'smw_gard_ontology_id' => 'Ontology ID',
-    'smw_df_missing' => 'To use the import bot you have to install the Wiki admin tool'
+    'smw_gard_import_choosefile' => 'The following $1 files are available.',
+    'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
+    'smw_gard_import_nofiles' => 'No files of type $1 are available',
+    'smw_df_missing' => 'To use the import bot you have to install the Wiki admin tool',
+    'smw_importontologybot' => 'Import an ontology'
     
     
 	);

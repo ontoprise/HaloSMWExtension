@@ -58,7 +58,7 @@ class SGA_LanguageDe {
     'smw_missingannotationsbot' => 'Finde Seiten ohne Annotationen',
     'smw_anomaliesbot' => 'Finde Anomalien',
     'smw_renamingbot' => 'Benenne Seiten um',
-    'smw_importontologybot' => 'Importiere eine Ontologie',
+   
     'smw_gardissue_class_all' => 'Alle',
     
     'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf�gbar.',
