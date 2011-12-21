@@ -34,13 +34,13 @@ class ASFFormGeneratorUtils {
 		//define form metadata properties for properties
 		define('ASF_PROP_HAS_TYPE', '_TYPE');
 		define('ASF_PROP_HAS_DOMAIN_AND_RANGE', 
-			$specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
+			str_replace(' ', '_', $specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]));
 		define('ASF_PROP_HAS_RANGE', 
-			$specialSchemaProperties[SMW_SSP_HAS_RANGE]);
+			str_replace(' ', '_', $specialSchemaProperties[SMW_SSP_HAS_RANGE]));
 		define('ASF_PROP_HAS_MIN_CARDINALITY', 
-			$specialSchemaProperties[SMW_SSP_HAS_MIN_CARD]);
+			str_replace(' ', '_', $specialSchemaProperties[SMW_SSP_HAS_MIN_CARD]));
 		define('ASF_PROP_HAS_MAX_CARDINALITY', 
-			$specialSchemaProperties[SMW_SSP_HAS_MAX_CARD]);
+			str_replace(' ', '_', $specialSchemaProperties[SMW_SSP_HAS_MAX_CARD]));
 		define('ASF_PROP_ALLOWS_VALUES', '_PVAL');
 		
 		define('ASF_PROP_FORM_INPUT_LABEL', 'Form_input_label');
