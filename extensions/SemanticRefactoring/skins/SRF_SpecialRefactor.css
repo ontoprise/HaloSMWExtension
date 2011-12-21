@@ -20,24 +20,29 @@
  */
  
 #sref_querybox {
-	
+	 height: 120px;
+    width: 30%;
+    height: 250px;
+    float: left;
 }
 
 #sref_querybox_textarea {
     resize: none;
-    height: 120px;
+   height: 250px;
+    
 }
 
 #sref_resultbox {
-    width: 92%;
-   
+    width: 50%;
     margin-top: 10px;
 }
 
+
 #sref_commandboxes {
+	float: left;
 	width: 92%;
-	height: 200px;
-    margin-top: 10px;
+	height: 100px;
+    margin-top: 40px;
 }
 
 .sref_operation_selector {

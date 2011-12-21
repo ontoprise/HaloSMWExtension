@@ -27,7 +27,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SEMANTIC_REFACTORING_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]');
+define('SEMANTIC_REFACTORING_VERSION', '1.0.0_0 [B${env.BUILD_NUMBER}]');
 
 $srefgIP = $IP . '/extensions/SemanticRefactoring';
 $wgExtensionMessagesFiles['SemanticRefactoring'] = $srefgIP . '/languages/SRF_Messages.php';

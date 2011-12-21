@@ -102,4 +102,14 @@
 	$('#sref_commandboxes').html(commandBox.createHTML());
 	commandBox.addListeners();
 	
+	$('#sref_start_operation').click(function(e) { 
+		var results = $('input[checked="true"]', '#sref_resultbox');
+		prefixedTitles = [];
+		results.each(function(i,e) { 
+			var prefixedTitle = $(e).attr("prefixedTitle");
+			prefixedTitles.push(prefixedTitle);
+		});
+		alert(prefixedTitles.join(","));
+	});
+	
 })(jQuery);	

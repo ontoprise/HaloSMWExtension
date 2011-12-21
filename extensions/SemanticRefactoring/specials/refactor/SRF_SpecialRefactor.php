@@ -53,16 +53,19 @@ class SREFRefactor extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('srefrefactor'));
 		$adminPage = Title::newFromText(wfMsg('srefrefactor'), NS_SPECIAL);
 
-		$html = wfMsg('sref_specialrefactor_description');
-
+		$html = "<div>".wfMsg('sref_specialrefactor_description')."</div>";
+        $query_val = $wgRequest->getVal( 'q' );
+        
 		$spectitle = $this->getTitleFor( 'SREFRefactor' );
-		$html .= '<form method="post" action="' . $spectitle->escapeLocalURL() . '" name="refactor">';
+		
+		$html .= '<div>';
 		$html .= '<div id="sref_querybox">';
-		$html .= '<textarea id="sref_querybox_textarea" name="q"></textarea>';
-		$html .= '</div>';
-
+		$html .= '<form method="post" action="' . $spectitle->escapeLocalURL() . '" name="refactor">';
+		$html .= '<textarea id="sref_querybox_textarea" name="q">'.$query_val.'</textarea>';
 		$html .= '<input type="submit" id="sref_run_query" value="Run"></input>';
 		$html .= '</form>';
+		$html .= '</div>';
+
 
 		$html .= '<div id="sref_resultbox">';
 		if ( $wgRequest->getCheck( 'q' ) ) {
@@ -79,11 +82,20 @@ class SREFRefactor extends SpecialPage {
 			}
 			$html .= $result;
 
+			if($res->hasFurtherResults()) {
+				$html .= '<input type="checkbox" id="sref_allresults">'.wfMsg('sref_allresults').'</input>';
+			}
 		}
 		$html .= '</div>';
+        $html .= '</div>';
+        
+   
+		$html .= '<div id="sref_commandboxes">';
 
-		$html .= '<div id="sref_commandboxes"></div>';
-
+         $html .= '</div>';
+         $html .= '<div style="float:left">';
+        $html .= '<input type="button" id="sref_start_operation" value="'.wfMsg('sref_start_operation').'"></input>';
+        $html .= '</div>';
 		$wgOut->addHTML($html);
 	}
 
@@ -126,12 +138,15 @@ class SREFRefactor extends SpecialPage {
 
 		// Check for q= query string, used whenever this special page calls itself (via submit or plain link):
 		$this->m_querystring = $wgRequest->getText( 'q' );
+		list($queryText, $printouts) = self::splitASKQuery($this->m_querystring);
+		$this->m_querystring = $queryText;
+		$paramstring = $printouts;
+		
 		if ( $this->m_querystring != '' ) {
 			$rawparams[] = $this->m_querystring;
 		}
 
 		// Check for param strings in po (printouts), appears in some links and in submits:
-		$paramstring = $wgRequest->getText( 'po' );
 
 		if ( $paramstring != '' ) { // parameters from HTML input fields
 			$ps = explode( "\n", $paramstring ); // params separated by newlines here (compatible with text-input for printouts)
@@ -208,6 +223,32 @@ class SREFRefactor extends SpecialPage {
 		} else {
 			throw new MWException( "Invalid special page name \"$name\"" );
 		}
+	}
+
+	private static function splitASKQuery($query) {
+		$result = array();
+		$result[0] = trim($query);
+		$result[1] = "";
+		$i = 0;
+		$index = -1;
+		do {
+			$index = strpos($query, "|");
+			if ($index > -1 && strlen($query) > ($index + 1)) {
+				if ($query[$index + 1] != '|') {
+					$result[0] = trim(substr($query, 0, $index));
+					$result[1] = trim(substr($query, $index + 1));
+					break;
+				} else {
+					$i = $index + 2;
+					continue;
+				}
+			}
+			$i = $index + 1;
+		} while ($index > -1);
+		if (strlen($result[0])-1 >= 0 && $result[0][strlen($result[0])-1] == "|") {
+			$result[0] = substr($result[0], 0, strlen($result[0]) - 1);
+		}
+		return $result;
 	}
 }
 
