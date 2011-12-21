@@ -53,9 +53,6 @@
 			<require name="smwhalo"
 				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
 			<function name="enableSMWHalo">
-				<string name="sql_storage">SMWHaloStore2</string>
-				<string name="ts_storage" null="true" />
-				<string name="ts-url" null="true" />
 			</function>
 			<variable name="wgUseAjax">
 				<boolean name="wgUseAjax" description="enables ajax calls">true</boolean>
@@ -63,8 +60,8 @@
 			<variable name="wgDefaultSkin">
 				<string name="wgDefaultSkin" description="Default skin used">ontoskin3</string>
 			</variable>
-			<variable name="smwgShowDerivedFacts">
-				<boolean name="smwgShowDerivedFacts"
+			<variable name="smwgHaloShowDerivedFacts">
+				<boolean name="smwgHaloShowDerivedFacts"
 					description="Shows derived factbox as new tab besides the normal factbox.">true</boolean>
 			</variable>
 			<script file="maintenance/SMW_setup.php" />
