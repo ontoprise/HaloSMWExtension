@@ -294,7 +294,9 @@ class ExportObjectLogicBot extends GardeningBot {
 		}
 
 		$serializer = new OEBOBLSerializer();
-
+		//require_once('SGA_OEBRDFXMLSerializer.php');
+        //$serializer = new OEBRDFXMLSerializer();
+        
 		global $wgLanguageCode, $smwgHaloTripleStoreGraph;
 
 		if (!defined('DF_VERSION')) {
@@ -320,15 +322,15 @@ class ExportObjectLogicBot extends GardeningBot {
 
 		echo "\nCreate OBL export from bundle $bundleName...";
 		$export = "";
-		$export .= "\n\n// schema categories";
+		
 		$export .= $this->exportCategories($bundleName, $serializer);
 		$this->worked(1);
 
-		$export .= "\n\n// schema properties";
+		
 		$export .= $this->exportProperties($bundleName, $serializer);
 		$this->worked(1);
 
-		$export .= "\n\n// instances";
+		
 		$export .= $this->exportInstances($bundleName, $serializer);
 		$this->worked(1);
 
@@ -451,7 +453,7 @@ class ExportObjectLogicBot extends GardeningBot {
 
 /**
  * Selects wiki pages of a bundle or in the whole wiki.
- *  
+ *
  * @author kuehn
  *
  */
@@ -691,7 +693,7 @@ class OEBOBLSerializer extends OEBOntologySerializer {
 	}
 
 	public function serializeCategory($title, $superCategories) {
-		$obl = "";
+		$obl = "\n\n// schema categories";
 		if (count($superCategories) == 0) {
 			// root concept
 			$iri = $this->getTSCIRI($title);
@@ -710,7 +712,7 @@ class OEBOBLSerializer extends OEBOntologySerializer {
 	}
 
 	public function serializeProperty($title, $domains, $range, $type, $minCardValue, $maxCardValue, $transitive, $symetrical, $inverseOfProperty, $subProperties) {
-		$obl = "";
+		$obl = "\n\n// schema properties";
 		$modifiers = '{'.$minCardValue.':'.$maxCardValue;
 		if ($transitive) {
 			$modifiers .= ",transitive";
@@ -909,48 +911,7 @@ ENDS;
 	}
 }
 
-/**
- * Serializer for RDF/XML.
- * 
- * @author ??
- *
- */
-class OEBRDFXMLSerializer extends OEBOntologySerializer {
-    
-	//TODO: implement methods (merge from OntologyExportBot)
-	
-	public  function serializeHeader($uri, $bundleName) {
-		return '';
-	}
 
-	public  function serializeFooter($uri, $bundleName){
-		return '';
-	}
-
-	public  function serializeCategory($category, $superCategories){
-		return '';
-	}
-
-	public  function serializeProperty($property, $domainCategories, $rangeCategory, $xsdType, $minCardValue, $maxCardValue, $transitive, $symetrical, $inverseOfProperty, $subProperties){
-		return '';
-	}
-
-	public  function serializeInstance($instance, $category){
-		return '';
-	}
-	public  function serializeInstanceValues($instance, $property, $values){
-		return '';
-	}
-
-	public  function serializeRule($title, $name, $rule_uri, $ruletext){
-		return '';
-	}
-
-	public  function serializeExternalArtifacts($bundleName){
-		return '';
-	}
-
-}
 
 /*
  * Note: This bot filter has no real functionality. It is just a dummy to
