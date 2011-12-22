@@ -20,29 +20,56 @@
  */
  
 #sref_querybox {
-	 height: 120px;
-    width: 30%;
+	 
     height: 250px;
-    float: left;
-}
-
-#sref_querybox_textarea {
-    resize: none;
-   height: 250px;
     
 }
 
+#sref_query_container {
+    float:left;
+  
+   height: 250px;
+    width: 40%;
+}
+
+#sref_result_container {
+   float: left;
+    margin-left: 10px;
+    margin-top: 1px;
+    
+    width: 58%;
+   
+}
+
+#sref_querybox_textarea {
+	height: 220px;
+    resize: none;
+  
+}
+
 #sref_resultbox {
-    width: 50%;
-    margin-top: 10px;
+    border: 1px solid #CCCCCC;
+    height: 220px;
 }
 
 
 #sref_commandboxes {
 	float: left;
 	width: 92%;
-	height: 100px;
+	height: 160px;
+    margin-left: 10px;
     margin-top: 40px;
+}
+
+#sref_resultoptions {
+	float: left;
+    width: 92%;
+    margin-left: 10px;
+    margin-top: 40px;
+}
+
+.sref_instance_selector {
+	margin-right: 10px;
 }
 
 .sref_operation_selector {

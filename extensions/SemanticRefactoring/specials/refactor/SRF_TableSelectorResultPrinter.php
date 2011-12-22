@@ -33,19 +33,19 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
         
         while ( ( $dv = $resultArray->getNextDataValue() ) !== false ) {
             $sortKey = '';
+            $isSubject = $resultArray->getPrintRequest()->getMode() == SMWPrintRequest::PRINT_THIS;
             
             if ( $isFirst ) {
                 $isFirst = false;
                 $sortkey = $dv->getDataItem()->getSortKey();
-                $enc_sortkey = Sanitizer::encodeAttribute($dv->getDataItem()->getTitle()->getPrefixedDBkey());
-                $checkbox = '<input type="checkbox" checked="true" prefixedTitle="'.$enc_sortkey.'"></input>';
+                $enc_sortkey = $isSubject ? Sanitizer::encodeAttribute($dv->getDataItem()->getTitle()->getPrefixedDBkey()) : "";
+                $checkbox = '<input class="sref_instance_selector" type="checkbox" checked="true" prefixedTitle="'.$enc_sortkey.'"></input>';
                 if ( is_numeric( $sortkey ) ) { // additional hidden sortkey for numeric entries
                     $this->columnsWithSortKey[$resultArray->getPrintRequest()->getHash()] = true;
                     $sortKey .= '<span class="smwsortkey">' . $sortkey . '</span>';
                 }
             }
             
-            $isSubject = $resultArray->getPrintRequest()->getMode() == SMWPrintRequest::PRINT_THIS;
             $value = ( ( $dv->getTypeID() == '_wpg' ) || ( $dv->getTypeID() == '__sin' ) ) ?
                    $dv->getLongText( $outputmode, $this->getLinker( $isSubject ) ) :
                    $dv->getShortText( $outputmode, $this->getLinker( $isSubject ) );

@@ -45,6 +45,7 @@ function sreffSetupExtension() {
     $smwgResultFormats['_srftable'] = 'SRFTableSelectorResultPrinter';
 
 	// autoload classes
+	$wgAutoloadClasses['SRFQuerySelector'] = $srefgIP . '/specials/refactor/SRF_QuerySelector.php';
 	$wgAutoloadClasses['SRFTableSelectorResultPrinter'] = $srefgIP . '/specials/refactor/SRF_TableSelectorResultPrinter.php';
 	
 	$wgAutoloadClasses['SRFRefactoringBot'] = $srefgIP . '/includes/SRF_Bot.php';
@@ -86,7 +87,7 @@ function sreffRegisterJSModules(& $out) {
         'styles' => array(
             'skins/SRF_SpecialRefactor.css'
             ),
-        'dependencies' => array(
+        'dependencies' => array('ext.smw.style', 'ext.smw.tooltips', 'ext.smw.sorttable'
             ),
          'messages' => array('sref_start_operation',
                             'sref_rename_instance',
@@ -132,6 +133,17 @@ function sreffRegisterJSModules(& $out) {
     $out->addModules(array('ext.semanticrefactoring.dialogs'));
     
    
+}
+
+global $wgAjaxExportList;
+$wgAjaxExportList[] = 'sreff_query';
+
+function sreff_query($query) {
+    $qs = new SRFQuerySelector();
+    $qresult = $qs->getQueryResult();
+    $response = new AjaxResponse($qresult['html']);
+    $response->setResponseCode(200);
+    return $response;
 }
 
 

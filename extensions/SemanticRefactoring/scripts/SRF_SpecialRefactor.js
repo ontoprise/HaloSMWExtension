@@ -50,16 +50,19 @@
 		current_operation : -1, 
 		
 		createHTML : function() {
-			var html = '<select id="sref_operation_type" class="sref_operation_selector" size="5">';
+			var html = '<h1>Choose commands</h1>';
+			html += '<div style="float:left"><select id="sref_operation_type" class="sref_operation_selector" size="5">';
 			$(content.level1).each(function(i, e) { 
 				html += '<option value="'+e+'">'+e+'</option>';
 			});
-			html += '</select>';
+			html += '</select></div>';
 			
-			html += '<select id="sref_operation" class="sref_operation_selector" size="5">';
-			html += '</select>';
+			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>';
+			html += '<div style="float:left"><select id="sref_operation" class="sref_operation_selector" size="5">';
+			html += '</select></div>';
 			
-			html += '<div id="sref_parameters" class="sref_operation_selector">';
+			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>'
+			html += '<div style="float:left" id="sref_parameters" class="sref_operation_selector">';
 			html += '</div>';
 			
 			return html;
@@ -78,11 +81,14 @@
 			
 			$('#sref_operation').change(function(e) { 
 				var i = e.currentTarget.selectedIndex;
-				var html = "";
+				var html = "<table>";
 				i = ""+commandBox.current_operation+i;
-				$(content.parameters[i]).each(function(i, e) { 
+				$(content.parameters[i]).each(function(i, e) {
+					html += "<tr>";
 					html += commandBox.createInputField(e);
+					html += "</tr>";
 				});
+				html += "</table>";
 				$('#sref_parameters').html(html);
 			});
 		},
@@ -94,7 +100,7 @@
 				acAttr='class="wickEnabled"';
 				acAttr+=' constraints="'+e.ac+'"';
 			}
-			var html = e.title+': <input id="'+e.id+'" type="text" value="" '+acAttr+'></input>';
+			var html = "<td>"+e.title+"</td>"+'<td><input id="'+e.id+'" type="text" value="" '+acAttr+'></input></td>';
 			return html;
 		}
 	};
