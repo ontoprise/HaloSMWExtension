@@ -400,10 +400,11 @@ class DALReadPOP3 implements IDAL {
 	private function getConnection($dataSourceSpec){
 		if($this->connection == false){
 			$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
-			$serverAddress = $dataSourceSpec->xpath("//SERVERADDRESS/text()");
-			$userName = $dataSourceSpec->xpath("//USERNAME/text()");
-			$password = $dataSourceSpec->xpath("//PASSWORD/text()");
-			$ssl = $dataSourceSpec->xpath("//SSL/text()");
+			$serverAddress = $dataSourceSpec->xpath("//ServerAddress");
+			$userName = $dataSourceSpec->xpath("//UserName");
+			$password = $dataSourceSpec->xpath("//Password");
+			$ssl = $dataSourceSpec->xpath("//SSL");
+			$ssl = ''.trim($ssl[0]);
 			
 			if($serverAddress){
 				$serverAddress = $serverAddress[0];
@@ -412,7 +413,7 @@ class DALReadPOP3 implements IDAL {
 			}
 
 			if($ssl){
-				if($ssl[0] == "true" || $ssl[0] == "on"){
+				if($ssl == "true" || $ssl == "on"){
 					$serverAddress .= ":995/pop3/ssl}INBOX";
 				} else {
 					$serverAddress .= ":110/pop3}INBOX";
@@ -421,12 +422,12 @@ class DALReadPOP3 implements IDAL {
 				$serverAddress .= ":110/pop3}INBOX";
 			}
 			if($userName){
-				$userName = $userName[0];
+				$userName = trim($userName[0]);
 			} else {
 				$userName = "";
 			}
 			if($password){
-				$password = $password[0];
+				$password = trim($password[0]);
 			} else {
 				$password = "";
 			}
