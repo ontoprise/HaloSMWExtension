@@ -39,7 +39,7 @@ require_once("$sgagIP/includes/SGA_GardeningIssues.php");
 define('XML_SCHEMA_NS', 'http://www.w3.org/2001/XMLSchema#');
 
 class ImportOntologyBot extends GardeningBot {
-	
+
 	function ImportOntologyBot() {
 		parent::GardeningBot("smw_importontologybot");
 	}
@@ -65,12 +65,12 @@ class ImportOntologyBot extends GardeningBot {
 	}
 
 	public function run($paramArray, $isAsync, $delay) {
-		
+
 		// do not allow to start synchronously.
-        if (!$isAsync) {
-        	return "Can not start asynchronously.";
-        }
-		
+		if (!$isAsync) {
+			return "Can not start asynchronously.";
+		}
+
 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
 		$fileTitle = Title::newFromText($fileName, NS_FILE);
 		$fileLocation = wfFindFile($fileTitle)->getPath();
@@ -78,8 +78,13 @@ class ImportOntologyBot extends GardeningBot {
 		global $IP;
 		chdir($IP.'/deployment/tools');
 			
+		if (isset(DF_Config::$settings['df_php_executable']) && DF_Config::$settings['df_php_executable'] != '') {
+			$phpExe = '"'.DF_Config::$settings['df_php_executable'].'"';
+		} else {
+			$phpExe = "php";
+		}
 		print "\nImport file: $fileLocation";
-		exec($IP.'/deployment/tools/smwadmin -i "'.$fileLocation.'" --nocheck', $out, $ret);
+		exec($phpExe.' '.$IP.'/deployment/tools/smwadmin/smwadmin.php -i "'.$fileLocation.'" --nocheck', $out, $ret);
 		$statusText = implode("\n", $out);
 		return $statusText;
 	}

@@ -211,7 +211,7 @@ class OntologyInstaller {
 
 					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
 						if( $a->doDeleteArticle( "article is empty" ) ) {
-							if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+							//if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
 							$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
 							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "article is empty", $bundleID));
 							$dfgOut->output("done.]");

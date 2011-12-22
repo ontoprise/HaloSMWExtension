@@ -77,13 +77,14 @@ class OntologyMerger {
 
 	public function containsBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
-
+        $bundleID = str_replace("/","\\/", $bundleID);
 		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
 		return preg_match($pattern, $wikiText, $matches) > 0;
 	}
 
 	public function removeBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
+		$bundleID = str_replace("/","\\/", $bundleID);
 		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
 		return preg_replace($pattern, "", $wikiText);
 	}
@@ -99,6 +100,8 @@ class OntologyMerger {
 		if (!$this->containsBundle($bundleID, $wikiText)) {
 			return NULL;
 		}
+		$bundleID = preg_quote($bundleID);
+        $bundleID = str_replace("/","\\/", $bundleID);
 		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
 		preg_match_all($pattern, $wikiText, $matches);
 
