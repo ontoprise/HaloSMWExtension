@@ -105,8 +105,8 @@ HTML;
 	const FS_BOTTOM_MENU_HTML = <<<HTML
 <span>
 	&nbsp;|&nbsp;
-	<a id="tv_define_tree_link">{{tv_define_tree}}</a>
-	<a id="tv_hide_treeview_toolbox_link" style="display:none">{{tv_hide_treeview_toolbox}}</a>
+	<a id="tv_define_tree_link" style="cursor: pointer">{{tv_define_tree}}</a>
+	<a id="tv_hide_treeview_toolbox_link" style="display:none; cursor: pointer">{{tv_hide_treeview_toolbox}}</a>
 </span>
 HTML;
 		
