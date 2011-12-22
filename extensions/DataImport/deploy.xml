@@ -37,7 +37,6 @@
 			<require name="di_init"
 				file="extensions/DataImport/includes/DI_Initialize.php" />
 			<function name="enableDataImportExtension" />
-			<function name="enableIAI" />
 			<script file="maintenance/DI_setup.php" params="" />
 		</new>
 		<uninstall>
