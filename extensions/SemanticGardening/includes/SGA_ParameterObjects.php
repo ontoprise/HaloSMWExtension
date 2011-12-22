@@ -228,7 +228,7 @@
  		// new MW 1.12 code
  		if ($value == NULL || $value == '') return wfMsg('smw_gard_missing_selection');
  		
- 		$fileTitle = Title::newFromText($value);
+ 		$fileTitle = Title::newFromText($value, NS_FILE);
  		$file = wfFindFile($fileTitle)->getPath();
  	 		
  		$valid = file_exists($file) || ($this->options & SMW_GARD_PARAM_REQUIRED) == 0;

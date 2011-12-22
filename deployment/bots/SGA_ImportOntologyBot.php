@@ -72,15 +72,14 @@ class ImportOntologyBot extends GardeningBot {
         }
 		
 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
-
-		$fileTitle = Title::newFromText($fileName);
+		$fileTitle = Title::newFromText($fileName, NS_FILE);
 		$fileLocation = wfFindFile($fileTitle)->getPath();
 
 		global $IP;
 		chdir($IP.'/deployment/tools');
 			
 		print "\nImport file: $fileLocation";
-		exec($IP.'/deployment/tools/smwadmin -i "'.$fileLocation.'"', $out, $ret);
+		exec($IP.'/deployment/tools/smwadmin -i "'.$fileLocation.'" --nocheck', $out, $ret);
 		$statusText = implode("\n", $out);
 		return $statusText;
 	}
