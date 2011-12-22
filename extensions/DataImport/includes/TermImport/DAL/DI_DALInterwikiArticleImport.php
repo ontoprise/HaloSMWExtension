@@ -111,9 +111,14 @@ class DALInterwikiArticleImport implements IDAL {
 	 * 		Name of a wiki or <null> if the value in not present. 
 	 */
 	private function getSourceWikiFromSpec($dataSourceSpec) {
-		preg_match('/<wiki.*?>(.*?)<\/wiki>/i', $dataSourceSpec, $wiki);
 		
-		return (count($wiki) == 2) ? $wiki[1] : null;
+		$dataSourceSpec = new SimpleXMLElement($dataSourceSpec);
+		$res = $dataSourceSpec->xpath('//wiki');
+		if(count($res) > 0){
+			return ''.trim($res[0]);
+		} else {
+			return null;
+		}
 	}
 		
 	/**
@@ -171,10 +176,9 @@ class DALInterwikiArticleImport implements IDAL {
 			$ipTerms[$k] = $matches[0];
 		}
 		
-		$diTerm = new DITerm();
-		$diTerm->setArticleName($t);
+		echo('<pre>'.print_r($ipTerms, true).'</pre>');
 		
-		if (!$createTermList) {
+		if ($createTermList) {
 			foreach ($ipTerms as $t) {
 				$diTerm = new DITerm();
 				$diTerm->setArticleName($t);

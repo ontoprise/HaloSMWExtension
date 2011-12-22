@@ -379,6 +379,16 @@ function smwfDISetupExtension() {
 	global $wgHooks;
 	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
 	
+	//add IAI DAM if IAI is enabled
+	global $iagEnabled;
+	if($iagEnabled){
+		$wgAutoloadClasses['DALInterwikiArticleImport']  = 
+			$smwgDIIP.'/includes/TermImport/DAL/DI_DALInterwikiArticleImport.php';
+		//todo:use language file
+		DIDAMRegistry::registerDAM('DALInterwikiArticleImport', 'Other Wiki', 
+			'Imports articles from an external Mediawiki installation.');
+	}
+	
 	return true;
 }
 

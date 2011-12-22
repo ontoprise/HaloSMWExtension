@@ -64,8 +64,11 @@ iaifStartLog("enableIAI");
     $wgAutoloadClasses['IAIArticleImporter'] = $iaigIP . '/includes/IAI_ArticleImporter.php';
 
     //--- Autoloading for exception classes ---
-    $wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
-
+	$wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
+	
+	global $iagEnabled;
+	$iagEnabled = true;
+	
 iaifEndLog("enableIAI");
     return true;
 }
@@ -108,15 +111,7 @@ iaifStartLog("enableIAI");
         'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension',
         'description' => 'Import articles from other Mediawikis.');
     
-    //Initialize the IAI Data Access Module for the Term Import Framework
-    global $smwgDIIP;
-    $wgAutoloadClasses['DALInterwikiArticleImport']  = 
-		$smwgDIIP.'/includes/TermImport/DAL/DI_DALInterwikiArticleImport.php';
-	//todo:use language file
-	DIDAMRegistry::registerDAM('DALInterwikiArticleImport', 'Other Wiki', 
-		'Imports articles from an external Mediawiki installation.');
-
-    wfProfileOut('iaifSetupExtension');
+        wfProfileOut('iaifSetupExtension');
 iaifEndLog("enableIAI");
     return true;
     
