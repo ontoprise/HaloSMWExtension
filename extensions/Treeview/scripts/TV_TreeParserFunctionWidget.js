@@ -72,7 +72,8 @@ TreeView.classes.TreeParserFunctionWidget = AjaxSolr.AbstractWidget.extend({
 		});
 		
 		// Remove the query for the property
-		store.removeByValue('fq', 'smwh_properties:smwh_Subsection_of_t');
+		var pwu = tp.replace(/ /g, '_');
+		store.removeByValue('fq', 'smwh_properties:smwh_'+pwu+'_t');
 		
 		var query = this.mStore.string();
 		var tree = mw.msg('tv_treepf_template', tp, query);
