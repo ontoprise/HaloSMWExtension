@@ -20,6 +20,7 @@
 
 require_once 'testcases/TestTreeviewExtensionBasics.php';
 require_once 'testcases/TestTreeviewParserFunctions.php';
+require_once 'testcases/TestTreeviewSelenium.php';
 
 class TreeviewTests
 {
@@ -29,6 +30,7 @@ class TreeviewTests
  
         $suite->addTestSuite("TestTreeviewExtensionBasicsSuite");
         $suite->addTestSuite("TestTreeviewParserFunctionsSuite");
+        $suite->addTestSuite("TestTreeviewSeleniumSuite");
  		
         return $suite;
     }
