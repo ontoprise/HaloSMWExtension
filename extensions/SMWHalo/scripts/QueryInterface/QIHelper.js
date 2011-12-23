@@ -39,8 +39,6 @@ var qiPreviewDialog;
 var QIHelper = Class.create();
 QIHelper.prototype = {
 
-  srfInitMethods : [],
-  originalDocumentReady : jQuery.fn.ready,
   selectedResultFormat : null,
   /**
 	 * Initialize the QIHelper object and all variables

@@ -1681,6 +1681,7 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/QueryInterface/QueryList.js',
 			'scripts/QueryInterface/QIHelper.js',
       'scripts/QueryInterface/sparqlQI.js',
+      'scripts/QueryInterface/sparqlModel.js',
       'scripts/QueryInterface/init.js',
       'scripts/QueryInterface/window.binding.js'
 			),
