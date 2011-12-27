@@ -84,6 +84,32 @@
 
     //call init in the construstor
     this.init(value, type, datatype_iri, language);
+
+    /**
+   * Get short representation of the iri.
+   * Search for a matching namespace iri in the table, if found remove it from the given name.
+   * If not found then return the string after last delimiter (/ : #)
+   */
+    this.getShortName = function(){
+      if(this.type === TYPE.VAR){
+        return this.value;
+      }
+      var result = null;
+      var that = this;
+      $.each(SPARQL.Model.data.namespace, function(index, namespace){
+        if(that.value.substr(0, namespace.namespace_iri.length) === namespace.namespace_iri){
+          result = that.value.replace(namespace.namespace_iri, '');
+          return false;
+        }
+      });
+
+      if(!result){
+        result = this.value.split(/[\/:#]/);
+        result = result[result.length - 1];
+      }
+
+      return result;
+    };
   };
 
 
@@ -95,26 +121,51 @@
   };
 
 
+  SPARQL.Model.PredicateTerm = function(value, type, datatype_iri, language){
+    this.fixIRI = function(value){
+      return SPARQL.Model.assureFullyQualifiedIRI(value, 'property');
+    };
+    SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
+  };
+
+  SPARQL.Model.ObjectTerm = function(value, type, datatype_iri, language){
+    this.fixIRI = function(value){
+      return SPARQL.Model.assureFullyQualifiedIRI(value, 'instance');
+    };
+    SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
+  };
+
+
   /**
    * SPARQL.Model.Triple constructor. Creates new Triple obejct.
    * @param subject Term representing subject of the triple
    * @param object Term representing object of the triple
    * @param predicate Term representing predicate of the triple
-   * @param isOptional boolean indicating if this triple is optional
+   * @param optional boolean indicating if this triple is optional
    * @exception when this method is called without 'new' keyword
    */
-  SPARQL.Model.Triple = function(subject, predicate, object, isOptional){
+  SPARQL.Model.Triple = function(subject, predicate, object, optional){
     if(!this instanceof SPARQL.Model.Triple){
       throw new Error("SPARQL.Model.Triple constructor called as a function");
     }
-    this.subject = subject;
-    this.predicate = predicate;
-    this.object = object;
-    this.optional = isOptional;
-  };
+    if(typeof predicate === 'string'){
+      //init from node label
+      var params = predicate.split(' ');
+      this.subject = subject;
+      this.predicate = new SPARQL.Model.PredicateTerm(params[0]);
+      this.object = new SPARQL.Model.ObjectTerm(params[1]);
+      this.optional = optional || false;
+    }
+    else{
+      this.subject = subject;
+      this.predicate = predicate;
+      this.object = object;
+      this.optional = optional;
+    }
 
-  SPARQL.Model.Triple.isEqual = function(anotherTriple){
-    return SPARQL.objectsEqual(this, anotherTriple);
+    this.isEqual = function(anotherTriple){
+      return SPARQL.objectsEqual(this, anotherTriple);
+    };
   };
 
   /**
@@ -217,6 +268,44 @@
       return this.category_iri.length === 0;
     };
   };
+
+
+  SPARQL.Model.FilterExpression = function(operator, argument1, argument2){
+    if(!this instanceof SPARQL.Model.FilterExpression){
+      throw new Error("SPARQL.Model.FilterExpression constructor called as a function");
+    }
+
+    this.operator = operator;
+    this.argument = [argument1, argument2];
+
+    /**
+     * Check if given argument is a part of this filter expression
+     * @param term Term
+     * @return true if this filter expression contains such an argument, false otherwise
+     */
+    this.hasTerm = function(term){
+      var result = false;
+      var that = this;
+      $.each(that.argument, function(index, argument){
+        if(argument.isEqual(term)){
+          result = true;
+          return false;
+        }
+      });
+
+      return result;
+    };
+
+    /**
+     * Compare this expression to the given one
+     * @param anotherExpression FilterExprerssion
+     * @return true if these filter expressions are equal, false otherwise
+     */
+    this.isEqual = function(anotherExpression){
+      return SPARQL.objectsEqual(this, anotherExpression);
+    };
+  };
+  
   /**
    * Get namespace iri matching the given prefix
    * @param prefix string prefix
@@ -277,18 +366,18 @@
 
   /*
    *  Create new subject
-   *  @param subjectName
-   *  @param type
+   *  @param subjectName string
+   *  @param type string
    */
   SPARQL.Model.createSubject = function(subjectName, type){
     var subject = new SPARQL.Model.SubjectTerm(subjectName, type);
     
     if(subject.type === TYPE.VAR 
-      && subjectName
-      && subjectName.length
-      && $.inArray(subjectName, SPARQL.Model.data.projection_var) === -1)
+      && subject.value
+      && subject.value.length
+      && $.inArray(subject.value, SPARQL.Model.data.projection_var) === -1)
       {
-      SPARQL.Model.data.projection_var.push(subjectName); 
+      SPARQL.Model.data.projection_var.push(subject.value);
     }
 
     SPARQL.toTree();
@@ -377,7 +466,7 @@
       }
     }
     
-    SPARQL.toTree();
+    SPARQL.toTree(SPARQL.View.getSelectedNodeAttr('id'));
   };
 
   /**
@@ -427,31 +516,36 @@
       }
     }
 
-    SPARQL.toTree();
+    SPARQL.toTree(SPARQL.View.getSelectedNodeAttr('id'));
   };
 
   /**
    *  Delete category from the specified subject.
    *  If category name is given then search in subject categories is performed (used for removing categories in OR relation).
    *  Otherwise the whole category_restriction object is removed (this is used when no OR relations defined)
-   *  @param subject Term representing subject
-   *  @param oldCategories array of categories
-   *  @param categoryToDelete string category name
+   *  @param categoryRestriction CategoryRestriction object
+   *  @param categoryToDelete string name of category to delete
    */
-  SPARQL.Model.deleteCategory = function(subject, oldCategories, categoryToDelete){
-    var categoryRestriction = new SPARQL.Model.CategoryRestriction(subject, oldCategories);
+  SPARQL.Model.deleteCategory = function(categoryRestriction, categoryToDelete){
     var category_restrictions = SPARQL.Model.data.category_restriction;
     for(var i = 0; i < category_restrictions.length; i++){
       if(categoryRestriction.isEqual(category_restrictions[i])){
-        categoryRestriction.deleteCategory(categoryToDelete);
-        if(categoryRestriction.isEmpty()){
-          category_restrictions.splice(i, 1);
+        if(categoryToDelete){
+          categoryRestriction.deleteCategory(categoryToDelete);
+          if(categoryRestriction.isEmpty()){
+            category_restrictions.splice(i, 1);
+          }
+          else{
+            category_restrictions[i] = categoryRestriction;
+          }
         }
         else{
-          category_restrictions[i] = categoryRestriction;
-        }
+          category_restrictions.splice(i, 1);
+        }       
+
+        break;
       }
-      break;
+      
     }
     SPARQL.toTree();
   };
@@ -465,28 +559,24 @@
   SPARQL.Model.updateFilters = function(varTerm, newFilters){
     //iterate over filters
     var filters = SPARQL.Model.data.filter;
-    for(i = 0; i < filters.length; i++){
+    for(var i = 0; i < filters.length; i++){
       for(var j = 0; j < filters[i].expression.length; j++){
-        for(var k = 0; k < filters[i].expression[j].argument.length; k++){
-          if(SPARQL.objectsEqual(filters[i].expression[j].argument[k], varTerm)){
-            filters.splice(i, 1);
-            i--;
-          }
+        if(filters[i].expression[j].hasTerm(varTerm)){
+          filters.splice(i, 1);
+          i--;
+          break;
         }
       }
     }
     if(newFilters && newFilters.length){
-      filters.concat(newFilters);
+      SPARQL.Model.data.filter = filters.concat(newFilters);
     }
-    
-    SPARQL.View.updateFilters(varTerm);
-  //    SPARQL.updateAllFromTree();
   };
 
 
-  SPARQL.Model.addFilterAND = function(){
-    SPARQL.View.addFilterAND('');
-  };
+  //  SPARQL.Model.addFilterAND = function(){
+  //    SPARQL.View.addFilterAND('');
+  //  };
 
 
   /**
@@ -512,53 +602,42 @@
    *  @param showInResults boolean is this var shown in results
    */
   SPARQL.Model.createProperty = function(subject, propertyName, valueName, optional, showInResults){
-    if(!subject){
-      subject = SPARQL.Model.createSubject('newsubject', 'VAR');
-    }
-    var propertyType = ($.trim(propertyName).indexOf('?') === 0 ? 'VAR' : 'IRI');
-    var propertyValue = (propertyType === 'VAR' ? $.trim(propertyName).replace(/^\?/, '') : SPARQL.property_iri + SPARQL.iri_delim + propertyName);
-    var valueType = ($.trim(valueName).indexOf('?') === 0 ? 'VAR' : 'IRI');
-    var valueValue = (valueType === 'VAR' ? $.trim(valueName).replace(/^\?/, '') : SPARQL.instance_iri + SPARQL.iri_delim + valueName);
+    subject = subject || SPARQL.Model.createSubject('?newsubject-' + SPARQL.getNextUid());
+    propertyName = propertyName || 'property-' + SPARQL.getNextUid();
+    valueName = valueName || '?value-' + SPARQL.getNextUid();
+    optional = optional || false;
+    showInResults = showInResults || true;
 
-    var triple  = {
-      subject: subject,
-      predicate: new SPARQL.Model.Term(propertyValue, propertyType),
-      object: new SPARQL.Model.Term(valueValue, valueType),
-      optional: optional
-    };
-    //@TODO check if this triple is already in the array
-    //implement inArray method for objects
-    SPARQL.Model.data.triple.push(triple);
+    var predicate = new SPARQL.Model.PredicateTerm(propertyName);
+    var object = new SPARQL.Model.ObjectTerm(valueName);
 
-    var index = $.inArray(triple.object.value, SPARQL.Model.data.projection_var);
-    if(showInResults){
-      if(triple.object.type === TYPE.VAR && index === -1){
-        SPARQL.Model.data.projection_var.push(triple.object.value);
+    //create new Triple object
+    var newTriple = new SPARQL.Model.Triple(subject, predicate, object, optional);
+
+    //if it's not already in SPARQL.Model.data.triple then add it
+    if(!SPARQL.isObjectInArray(newTriple, SPARQL.Model.data.triple)){
+      SPARQL.Model.data.triple.push(newTriple);
+      if(showInResults && newTriple.object.type === TYPE.VAR && $.inArray(newTriple.object.value, SPARQL.Model.data.projection_var) === -1){
+        SPARQL.Model.data.projection_var.push(newTriple.object.value);
       }
+      SPARQL.toTree();
     }
-    else{
-      if(index > -1){
-        SPARQL.Model.data.projection_var.splice(index, 1);
-      }
-    }
-
-    SPARQL.View.createProperty(triple);
   };
 
   /**
    *  Remove triple replresenting given property
    *  and remove the object var from projection vars, filters, order if it's not part of any other triple or category restriction
-   *  @param dataEntity
+   *  @param triple Triple replresenting given property
    */
-  SPARQL.Model.deleteProperty = function(dataEntity){
+  SPARQL.Model.deleteProperty = function(triple){
     //remove this property from triple
     var triples = SPARQL.Model.data.triple;
     var objectVarInUse = false;
     for(var i = 0; i < triples.length; i++){
-      if(SPARQL.objectsEqual(dataEntity.value, triples[i])){
+      if(triple.isEqual(triples[i])){
         triples.splice(i, 1);
       }
-      else if(dataEntity.value.object.type === TYPE.VAR && SPARQL.objectsEqual(dataEntity.value.object, triples[i])){
+      else if(triple.object.type === TYPE.VAR && triple.object.isEqual(triples[i].object)){
         objectVarInUse = true;
       }
     }
@@ -566,20 +645,25 @@
     if(!objectVarInUse){
       var category_restriction = SPARQL.Model.data.category_restriction;
       for(i = 0; i < category_restriction.length; i++){
-        if(category_restriction[i].subject.isEqual(dataEntity.value.object)){
+        if(category_restriction[i].subject.isEqual(triple.object)){
           objectVarInUse = true;
           break;
         }
       }
     }
 
-    //if this var not in use then delete it from filters and order
+    //if this var not in use then delete it from projection_var, filters and order
     if(!objectVarInUse){
+      var index = $.inArray(triple.object.value, SPARQL.Model.data.projection_var);
+      if(index > -1){
+        SPARQL.Model.data.projection_var.splice(index, 1);
+      }
+      
       var filters = SPARQL.Model.data.filter;
       for(i = 0; i < filters.length; i++){
         for(var j = 0; j < filters[i].expression.length; j++){
           for(var k = 0; k < filters[i].expression[j].argument.length; k++){
-            if(filters[i].expression[j].argument.isEqual(dataEntity.value.object)){
+            if(filters[i].expression[j].argument.isEqual(triple.object)){
               filters.splice(i, 1);
               break;
             }
@@ -589,15 +673,14 @@
 
       var order = SPARQL.Model.data.order;
       for(i = 0; i < order.length; i++){
-        if(order[i].by_var === dataEntity.value.object.value){
+        if(order[i].by_var === triple.object.value){
           order.splice(i, 1);
           break;
         }
       }
     }
+    SPARQL.toTree();
 
-    SPARQL.View.deleteProperty(dataEntity);
-  //    SPARQL.updateAllFromTree();
   };
 
   /**
@@ -733,16 +816,16 @@
    *
    */
   SPARQL.Model.updateProperty = function(oldTriple, newTriple, valueInResults){
-    //varExists indicates whether an object var of the old triple exists somewhere elso fo we have to update it also
+    //varExists indicates whether an object var of the old triple exists somewhere in the model so we have to update it also
     var varExists = false;
-    if(SPARQL.objectsEqual(oldTriple, newTriple)){
+    if(oldTriple.isEqual(newTriple)){
       varExists = true;
     }
     else{
       //find old triple
       var triples = SPARQL.Model.data.triple;
       for(var i = 0; i < triples.length; i++){
-        if(SPARQL.objectsEqual(oldTriple, triples[i])){
+        if(oldTriple.isEqual(triples[i])){
           //replace with the new triple
           triples[i] = newTriple;
         }
@@ -793,21 +876,22 @@
           }
         });
       }
-      if(valueInResults && $.inArray(newTriple.object.value, projection_var) === -1){
-        projection_var.push(newTriple.object.value);
-      }
-      if(!valueInResults && $.inArray(newTriple.object.value, projection_var) > -1){
-        for(i = 0; i < projection_var.length; i++){
-          if(projection_var[i] === newTriple.object.value){
-            projection_var.splice(i, 1);
-            break;
+      if(newTriple.object.type === TYPE.VAR){
+        if(valueInResults && $.inArray(newTriple.object.value, projection_var) === -1){
+          projection_var.push(newTriple.object.value);
+        }
+        if(!valueInResults && $.inArray(newTriple.object.value, projection_var) > -1){
+          for(i = 0; i < projection_var.length; i++){
+            if(projection_var[i] === newTriple.object.value){
+              projection_var.splice(i, 1);
+              break;
+            }
           }
         }
       }
     }
 
-    SPARQL.View.updateProperty(oldTriple, newTriple);
-  //    SPARQL.updateAllFromTree();
+    SPARQL.toTree();
   };
 
 
