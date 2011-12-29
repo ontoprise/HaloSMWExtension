@@ -763,3 +763,6 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
   display: none;
 }
 
+.jstree-hovered{
+  text-decoration: none !important;
+}

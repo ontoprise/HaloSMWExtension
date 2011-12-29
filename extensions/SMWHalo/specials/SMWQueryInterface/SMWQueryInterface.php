@@ -365,8 +365,8 @@ class SMWQueryInterface extends SpecialPage {
             '</td></tr>' .
             '<tr><td id="qiBottomToolbar">' .
             '<button id="qiUpdateButton">' . wfMsg('smw_qi_update') . '</button>&nbsp;' .
-            '<a id="qiDeleteLink" href="#" title="' . wfMsg('smw_qi_tt_delete') . '">' . wfMsg('smw_qi_delete') . '</a>' .
-            '<a id="qiCancelLink" href="#" title="' . wfMsg('smw_qi_tt_cancel') . '">' . wfMsg('smw_qi_cancel') . '</a>' .
+            '<a id="qiDeleteLink" href="javascript: void(0)" title="' . wfMsg('smw_qi_tt_delete') . '">' . wfMsg('smw_qi_delete') . '</a>' .
+            '<a id="qiCancelLink" href="javascript: void(0)" title="' . wfMsg('smw_qi_tt_cancel') . '">' . wfMsg('smw_qi_cancel') . '</a>' .
             '</td></tr>' .
             '</table>';
   }

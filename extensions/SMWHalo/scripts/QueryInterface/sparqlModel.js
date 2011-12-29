@@ -38,6 +38,78 @@
   };
 
   /**
+   * Populate model from the sparql query json structure
+   * @param data json object representing the sparql query
+   */
+  SPARQL.Model.init = function(data){
+    //reset the model to initial values
+    SPARQL.Model.data.category_restriction = [];
+    SPARQL.Model.data.triple = [];
+    SPARQL.Model.data.filter = [];
+    SPARQL.Model.data.projection_var = [];
+    SPARQL.Model.data.order = [];
+
+    //init static data
+    SPARQL.Model.data.projection_var = data.projection_var;
+    SPARQL.Model.data.order = data.order;
+    $.merge(SPARQL.Model.data.namespace, data.namespace);
+
+    //init category_restriction
+    data.category_restriction = data.category_restriction || [];
+    $.each(data.category_restriction, function(index, category){
+      var subject = new SPARQL.Model.SubjectTerm(category.subject.value, category.subject.type);
+      SPARQL.Model.data.category_restriction.push(new SPARQL.Model.CategoryRestriction(subject, category.category_iri));
+    });
+    //init triple
+    data.triple = data.triple || [];
+    $.each(data.triple, function(index, triple){
+      var subject = new SPARQL.Model.SubjectTerm(triple.subject.value, triple.subject.type);
+      var predicate = new SPARQL.Model.PredicateTerm(triple.predicate.value, triple.predicate.type);
+      var object = new SPARQL.Model.ObjectTerm(triple.object.value, triple.object.type);
+      SPARQL.Model.data.triple.push(new SPARQL.Model.Triple(subject, predicate, object, triple.optional, triple.optional));
+    });
+    //init filter
+    data.filter = data.filter || [];
+    $.each(data.filter, function(i, filter){
+      var expressions = {
+        expression: []
+      };
+      $.each(filter.expression, function(j, expression){
+        var argument1 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[0].type, expression.argument[0].datatype_iri);
+        var argument2 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[1].type, expression.argument[0].datatype_iri);
+        expressions.expression.push(new SPARQL.Model.FilterExpression(expression.operator, argument1, argument2));
+      });
+      SPARQL.Model.data.filter.push(expressions);
+    });
+  };
+
+  /**
+   * Check if given variable is already a part of a model
+   * @term Term representing a variable
+   * @return true is given variable is a part of triples or categories, false otherwise
+   */
+  SPARQL.Model.isVarInModel = function(term){
+    var result = false;
+    $.each(SPARQL.Model.data.triple, function(index, triple){
+      if(triple.subject.isEqual(term) || triple.predicate.isEqual(term) || triple.object.isEqual(term)){
+        result = true;
+        return false;
+      }
+    });
+
+    if(!result){
+      $.each(SPARQL.Model.data.category_restriction, function(index, category_restriction){
+        if(category_restriction.subject.isEqual(term)){
+          result = true;
+          return false;
+        }
+      });
+    }
+
+    return result;
+  };
+
+  /**
    * SPARQL.Model.Term constructor. Creates new Term obejct.
    * @param type
    * @param value
@@ -55,9 +127,9 @@
       }
 
       this.type = $.trim(type);
-      this.value = $.trim(value) || '';
+      this.value = ($.trim(value) || '').replace(/\s+/g, '_');
       this.datatype_iri = $.trim(datatype_iri);
-      this.language = $.trim(language);
+      this.language = $.trim(language);      
 
       //if ty is not defined then figure it out from the value
       if(!this.type){
@@ -66,7 +138,7 @@
 
       //replace spaces by underscores in iri
       if(this.type === TYPE.IRI && this.fixIRI){
-        this.value = this.fixIRI(value);
+        this.value = this.fixIRI(this.value);
       }
       //remove ? from the beginning of a name
       else if(this.type === TYPE.VAR){
@@ -74,10 +146,14 @@
       }
     };
 
+    this.getId = function(){
+      return this.value.replace(/[:\?\/]/g, '-');
+    };
+
     /**
-   * Compare this Term object to another
-   * @param term
-   */
+     * Compare this Term object to another
+     * @param term
+     */
     this.isEqual = function(term){
       return SPARQL.objectsEqual(this, term);
     };
@@ -86,10 +162,10 @@
     this.init(value, type, datatype_iri, language);
 
     /**
-   * Get short representation of the iri.
-   * Search for a matching namespace iri in the table, if found remove it from the given name.
-   * If not found then return the string after last delimiter (/ : #)
-   */
+     * Get short representation of the iri.
+     * Search for a matching namespace iri in the table, if found remove it from the given name.
+     * If not found then return the string after last delimiter (/ : #)
+     */
     this.getShortName = function(){
       if(this.type === TYPE.VAR){
         return this.value;
@@ -154,19 +230,39 @@
       this.subject = subject;
       this.predicate = new SPARQL.Model.PredicateTerm(params[0]);
       this.object = new SPARQL.Model.ObjectTerm(params[1]);
-      this.optional = optional || false;
+      this.optional = SPARQL.Model.isOptional(this);
     }
     else{
       this.subject = subject;
       this.predicate = predicate;
       this.object = object;
-      this.optional = optional;
+      this.optional = optional || false;
     }
+
+    this.getId = function(){
+      var id = this.subject.value + '-' + this.predicate.value + '-' + this.object.value;
+      return id.replace(/[:\?\/]/g, '-');
+    };
 
     this.isEqual = function(anotherTriple){
       return SPARQL.objectsEqual(this, anotherTriple);
     };
   };
+
+  SPARQL.Model.isOptional = function(triple){
+    var result = false;
+    $.each(SPARQL.Model.data.triple, function(index, value){
+      if(value.subject.isEqual(triple.subject)
+        && value.predicate.isEqual(triple.predicate)
+        && value.object.isEqual(triple.object))
+      {
+        result = value.optional;
+        return false;
+      }
+    });
+
+    return result;
+  }
 
   /**
    * SPARQL.Model.CategoryRestriction constructor. Creates new CategoryRestriction object.
@@ -191,21 +287,26 @@
       this.category_iri[i] = SPARQL.Model.assureFullyQualifiedIRI(this.category_iri[i], 'category');
     }
 
+    this.getId = function(){
+      var id = this.subject.value + '-' + this.category_iri.join('-');
+      return id.replace(/[:\?\/]/g, '-');
+    };
+
 
     /**
-   * Compare this CategoryRestriction object to another.
-   * @param anotherCategoryRestriction CategoryRestriction object to compare this one to
-   * @return true if the objects are equal, false otherwise
-   */
+     * Compare this CategoryRestriction object to another.
+     * @param anotherCategoryRestriction CategoryRestriction object to compare this one to
+     * @return true if the objects are equal, false otherwise
+     */
     this.isEqual = function(anotherCategoryRestriction){
       return SPARQL.objectsEqual(this, anotherCategoryRestriction);
     };
 
     /**
-   * Get short representation of the iri.
-   * Search for a matching namespace iri in the table, if found remove it from the given name.
-   * If not found then return the string after last delimiter (/ : #)
-   */
+     * Get short representation of the iri.
+     * Search for a matching namespace iri in the table, if found remove it from the given name.
+     * If not found then return the string after last delimiter (/ : #)
+     */
     this.getShortName = function(iri){
       var result = null;
       $.each(SPARQL.Model.data.namespace, function(index, namespace){
@@ -238,7 +339,7 @@
       var that = this;
       $.each(this.category_iri, function(index, value){
         result += that.getShortName(value);
-        if(index < that.category_iri - 1){
+        if(index < that.category_iri.length - 1){
           result += ' or ';
         }
       });
@@ -248,9 +349,9 @@
     };
 
     /**
-   * Delete category from categiry_iri array
-   * @param categoryName string category name. If it's not a fully qualified iri then an attempt is made to transform it to one.
-   */
+     * Delete category from categiry_iri array
+     * @param categoryName string category name. If it's not a fully qualified iri then an attempt is made to transform it to one.
+     */
     this.deleteCategory = function(categoryName){
       categoryName = SPARQL.Model.assureFullyQualifiedIRI(categoryName, 'category');
       for(var i = 0; i < this.category_iri.length; i++){
@@ -261,9 +362,9 @@
     };
 
     /**
-   * Checks if the category_iri array is empty
-   * @return true if categry_iri is empty, false otherwise
-   */
+     * Checks if the category_iri array is empty
+     * @return true if categry_iri is empty, false otherwise
+     */
     this.isEmpty = function(){
       return this.category_iri.length === 0;
     };
@@ -294,6 +395,11 @@
       });
 
       return result;
+    };
+
+    this.getId = function(){
+      var id = this.operator + '-' + this.argument[0].value + '-' + this.argument[1].value;
+      return id.replace(/[:\?\/]/g, '-');
     };
 
     /**
@@ -331,12 +437,12 @@
   SPARQL.Model.assureFullyQualifiedIRI = function(value, prefix){
     if(value){
       value = $.trim(value);
-      var fullyQualifiedIRIPattern = /^http:\/\/:\w+[\.\/#]?\w+$/;
+      var fullyQualifiedIRIPattern = /^http:\/\/\w+(?:[\.\/#]?\w+)*$/;
       var shortIRIPattern = /^(\w+):\w+$/;
       var match;
 
       //replace spaces by underscores
-      value = value.replace(/\s+/, '_');
+      value = value.replace(/\s+/g, '_');
 
       //if value is of form 'http://xxx.yyy/zzzz' then do nothing, just return value
       if(fullyQualifiedIRIPattern.test(value)){
@@ -370,6 +476,9 @@
    *  @param type string
    */
   SPARQL.Model.createSubject = function(subjectName, type){
+    if(!subjectName){
+      subjectName = '?subject' + SPARQL.getNextUid();
+    }
     var subject = new SPARQL.Model.SubjectTerm(subjectName, type);
     
     if(subject.type === TYPE.VAR 
@@ -380,7 +489,7 @@
       SPARQL.Model.data.projection_var.push(subject.value);
     }
 
-    SPARQL.toTree();
+    SPARQL.toTree(subject.getId());
 
     return subject;
   };
@@ -466,7 +575,7 @@
       }
     }
     
-    SPARQL.toTree(SPARQL.View.getSelectedNodeAttr('id'));
+    SPARQL.toTree(subjectNew.getId());
   };
 
   /**
@@ -475,9 +584,8 @@
    * @param categoryArray array of categories
    */
   SPARQL.Model.createCategory = function(subject, categoryArray){
-    if(!subject){
-      subject = SPARQL.Model.createSubject('newsubject');
-    }
+    subject = subject || SPARQL.Model.createSubject();
+    categoryArray = categoryArray || 'category' + SPARQL.getNextUid();
 
     if(typeof categoryArray === 'string'){
       categoryArray = [categoryArray];
@@ -495,7 +603,7 @@
     });
     if(!alreadyExists){
       SPARQL.Model.data.category_restriction.push(newCategoryRestriction);
-      SPARQL.toTree();
+      SPARQL.toTree(newCategoryRestriction.getId());
     }
   };
 
@@ -507,16 +615,17 @@
    */
   SPARQL.Model.updateCategory = function(oldCategoryRestriction, newCategories){
     var category_restrictions = SPARQL.Model.data.category_restriction;
-  
+    var newCategory;
     for(var i = 0; i < category_restrictions.length; i++){
       if(oldCategoryRestriction.isEqual(category_restrictions[i])){
         //create category_iri from newCategories and replace old category with new one
-        category_restrictions[i] = new SPARQL.Model.CategoryRestriction(oldCategoryRestriction.subject, newCategories);
+        newCategory = new SPARQL.Model.CategoryRestriction(oldCategoryRestriction.subject, newCategories);
+        category_restrictions[i] = newCategory;
         break;
       }
     }
 
-    SPARQL.toTree(SPARQL.View.getSelectedNodeAttr('id'));
+    SPARQL.toTree(newCategory ? newCategory.getId() : null);
   };
 
   /**
@@ -602,9 +711,9 @@
    *  @param showInResults boolean is this var shown in results
    */
   SPARQL.Model.createProperty = function(subject, propertyName, valueName, optional, showInResults){
-    subject = subject || SPARQL.Model.createSubject('?newsubject-' + SPARQL.getNextUid());
-    propertyName = propertyName || 'property-' + SPARQL.getNextUid();
-    valueName = valueName || '?value-' + SPARQL.getNextUid();
+    subject = subject || SPARQL.Model.createSubject();
+    propertyName = propertyName || 'property' + SPARQL.getNextUid();
+    valueName = valueName || '?value' + SPARQL.getNextUid();
     optional = optional || false;
     showInResults = showInResults || true;
 
@@ -620,7 +729,7 @@
       if(showInResults && newTriple.object.type === TYPE.VAR && $.inArray(newTriple.object.value, SPARQL.Model.data.projection_var) === -1){
         SPARQL.Model.data.projection_var.push(newTriple.object.value);
       }
-      SPARQL.toTree();
+      SPARQL.toTree(newTriple.getId());
     }
   };
 
@@ -661,12 +770,10 @@
       
       var filters = SPARQL.Model.data.filter;
       for(i = 0; i < filters.length; i++){
-        for(var j = 0; j < filters[i].expression.length; j++){
-          for(var k = 0; k < filters[i].expression[j].argument.length; k++){
-            if(filters[i].expression[j].argument.isEqual(triple.object)){
-              filters.splice(i, 1);
-              break;
-            }
+        for(var j = 0; j < filters[i].expression.length; j++){          
+          if(filters[i].expression[j].hasTerm(triple.object)){
+            filters.splice(i, 1);
+            break;
           }
         }
       }
@@ -823,7 +930,7 @@
     }
     else{
       //find old triple
-      var triples = SPARQL.Model.data.triple;
+      var triples = SPARQL.Model.data.triple || [];
       for(var i = 0; i < triples.length; i++){
         if(oldTriple.isEqual(triples[i])){
           //replace with the new triple
@@ -837,7 +944,7 @@
     }
 
     if(!varExists){
-      var category_restrictions = SPARQL.Model.data.category_restriction;
+      var category_restrictions = SPARQL.Model.data.category_restriction || [];
       $.each(category_restrictions, function(index, category_restriction){
         if(category_restriction.subject.isEqual(oldTriple.object)){
           varExists = true;
@@ -846,7 +953,7 @@
       });
     }
 
-    var filters = SPARQL.Model.data.filter;
+    var filters = SPARQL.Model.data.filter || [];
     if(newTriple.object.type === TYPE.VAR){
       $.each(filters, function(i, filter){
         $.each(filter.expression, function(j, expression){
@@ -858,7 +965,7 @@
         });
       });
 
-      var order = SPARQL.Model.data.order;
+      var order = SPARQL.Model.data.order || [];
       $.each(order, function(index, value){
         if(value.by_var === oldTriple.object.value){
           value.by_var = newTriple.object.value;
@@ -867,7 +974,7 @@
     }
 
     if(typeof valueInResults !== 'undefined'){
-      var projection_var = SPARQL.Model.data.projection_var;
+      var projection_var = SPARQL.Model.data.projection_var || [];
       if(!varExists){
         $.each(projection_var, function(index, variable){
           if(variable === oldTriple.object.value){
@@ -891,7 +998,7 @@
       }
     }
 
-    SPARQL.toTree();
+    SPARQL.toTree(newTriple.getId());
   };
 
 
