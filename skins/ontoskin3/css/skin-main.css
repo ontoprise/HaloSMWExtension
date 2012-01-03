@@ -518,6 +518,10 @@ textarea {
 	font-size:x-large;
 	position: relative;
 	margin-right: 30px;
+	text-overflow: ellipsis; /* [...] at the end */
+	max-width: 650px;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 #ca-edit {
