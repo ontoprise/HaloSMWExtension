@@ -251,7 +251,7 @@ function Smwh_Skin() {
 		}
 
 		//register Eventhandler for the menubar itself
-		$jq( "#smwh_menu * .smwh_menulistitem" ).hover( this.showMenu, this.hideMenu );
+		$jq( "#smwh_menu" ).find( ".smwh_menulistitem" ).hover( this.showMenu, this.hideMenu );
 		//register Eventhandler for the more tab
 		$jq( "#more" ).hover( this.showMenu, this.hideMenu );
 		//register Eventhandler for the tree view icons
@@ -287,7 +287,7 @@ function Smwh_Skin() {
 	 */
 	this.setCookieObj = function( key, val ) {
 		if( GeneralBrowserTools !== undefined 
-			&& key && val )
+			&& key !== undefined && val !== undefined )
 		{
 			GeneralBrowserTools.setCookieObject( key, val );
 		}
