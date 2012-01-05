@@ -75,9 +75,9 @@
         expression: []
       };
       $.each(filter.expression, function(j, expression){
-        var argument1 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[0].type, expression.argument[0].datatype_iri);
-        var argument2 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[1].type, expression.argument[0].datatype_iri);
-        expressions.expression.push(new SPARQL.Model.FilterExpression(expression.operator, argument1, argument2));
+        var argument0 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[0].type, expression.argument[0].datatype_iri);
+        var argument1 = new SPARQL.Model.Term(expression.argument[1].value, expression.argument[1].type, expression.argument[1].datatype_iri);
+        expressions.expression.push(new SPARQL.Model.FilterExpression(expression.operator, argument0, argument1));
       });
       SPARQL.Model.data.filter.push(expressions);
     });
@@ -211,15 +211,34 @@
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
   };
 
+  SPARQL.Model.FilterArgumentTerm = function(value, type, datatype_iri, language){
+//    this.fixValue = function(value, datatype_iri){
+//      switch(datatype_iri){
+//        case 'xsd:dateTime':
+//          var datePattern = /^\\-?\\d{4}\\-\\d{2}\\-\\d{2}$/;
+//          if(datePattern.test(value)){
+//            value = value + 'T00:00:00';
+//          }
+//          break;
+//
+//        default:
+//          break;
+//      }
+//
+//      return value;
+//    };
+    
+    SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
+  };
 
   /**
-   * SPARQL.Model.Triple constructor. Creates new Triple obejct.
-   * @param subject Term representing subject of the triple
-   * @param object Term representing object of the triple
-   * @param predicate Term representing predicate of the triple
-   * @param optional boolean indicating if this triple is optional
-   * @exception when this method is called without 'new' keyword
-   */
+     * SPARQL.Model.Triple constructor. Creates new Triple obejct.
+     * @param subject Term representing subject of the triple
+     * @param object Term representing object of the triple
+     * @param predicate Term representing predicate of the triple
+     * @param optional boolean indicating if this triple is optional
+     * @exception when this method is called without 'new' keyword
+     */
   SPARQL.Model.Triple = function(subject, predicate, object, optional){
     if(!this instanceof SPARQL.Model.Triple){
       throw new Error("SPARQL.Model.Triple constructor called as a function");
@@ -255,7 +274,7 @@
       if(value.subject.isEqual(triple.subject)
         && value.predicate.isEqual(triple.predicate)
         && value.object.isEqual(triple.object))
-      {
+        {
         result = value.optional;
         return false;
       }
@@ -265,18 +284,18 @@
   }
 
   /**
-   * SPARQL.Model.CategoryRestriction constructor. Creates new CategoryRestriction object.
-   * @param subject Term representing the subject
-   * @param categoryArray array of categories in fully qualified, short form or even plain names.
-   * The method tries to fix the names to make them fully qualified iri
-   */
+     * SPARQL.Model.CategoryRestriction constructor. Creates new CategoryRestriction object.
+     * @param subject Term representing the subject
+     * @param categoryArray array of categories in fully qualified, short form or even plain names.
+     * The method tries to fix the names to make them fully qualified iri
+     */
   SPARQL.Model.CategoryRestriction = function(subject, categoryArray){
     if(!this instanceof SPARQL.Model.CategoryRestriction){
       throw new Error("SPARQL.Model.CategoryRestriction constructor called as a function");
     }
     this.subject = subject;
     //init from tree node text (category names separated by ' or ')
-    if(typeof categoryArray === 'string'){      
+    if(typeof categoryArray === 'string'){
       this.category_iri = categoryArray.split(' or ');
     }
     else{
@@ -294,19 +313,19 @@
 
 
     /**
-     * Compare this CategoryRestriction object to another.
-     * @param anotherCategoryRestriction CategoryRestriction object to compare this one to
-     * @return true if the objects are equal, false otherwise
-     */
+       * Compare this CategoryRestriction object to another.
+       * @param anotherCategoryRestriction CategoryRestriction object to compare this one to
+       * @return true if the objects are equal, false otherwise
+       */
     this.isEqual = function(anotherCategoryRestriction){
       return SPARQL.objectsEqual(this, anotherCategoryRestriction);
     };
 
     /**
-     * Get short representation of the iri.
-     * Search for a matching namespace iri in the table, if found remove it from the given name.
-     * If not found then return the string after last delimiter (/ : #)
-     */
+       * Get short representation of the iri.
+       * Search for a matching namespace iri in the table, if found remove it from the given name.
+       * If not found then return the string after last delimiter (/ : #)
+       */
     this.getShortName = function(iri){
       var result = null;
       $.each(SPARQL.Model.data.namespace, function(index, namespace){
@@ -349,9 +368,9 @@
     };
 
     /**
-     * Delete category from categiry_iri array
-     * @param categoryName string category name. If it's not a fully qualified iri then an attempt is made to transform it to one.
-     */
+       * Delete category from categiry_iri array
+       * @param categoryName string category name. If it's not a fully qualified iri then an attempt is made to transform it to one.
+       */
     this.deleteCategory = function(categoryName){
       categoryName = SPARQL.Model.assureFullyQualifiedIRI(categoryName, 'category');
       for(var i = 0; i < this.category_iri.length; i++){
@@ -362,9 +381,9 @@
     };
 
     /**
-     * Checks if the category_iri array is empty
-     * @return true if categry_iri is empty, false otherwise
-     */
+       * Checks if the category_iri array is empty
+       * @return true if categry_iri is empty, false otherwise
+       */
     this.isEmpty = function(){
       return this.category_iri.length === 0;
     };
@@ -380,10 +399,10 @@
     this.argument = [argument1, argument2];
 
     /**
-     * Check if given argument is a part of this filter expression
-     * @param term Term
-     * @return true if this filter expression contains such an argument, false otherwise
-     */
+       * Check if given argument is a part of this filter expression
+       * @param term Term
+       * @return true if this filter expression contains such an argument, false otherwise
+       */
     this.hasTerm = function(term){
       var result = false;
       var that = this;
@@ -403,20 +422,20 @@
     };
 
     /**
-     * Compare this expression to the given one
-     * @param anotherExpression FilterExprerssion
-     * @return true if these filter expressions are equal, false otherwise
-     */
+       * Compare this expression to the given one
+       * @param anotherExpression FilterExprerssion
+       * @return true if these filter expressions are equal, false otherwise
+       */
     this.isEqual = function(anotherExpression){
       return SPARQL.objectsEqual(this, anotherExpression);
     };
   };
   
   /**
-   * Get namespace iri matching the given prefix
-   * @param prefix string prefix
-   * @return string matching namespace or empty string in case of failure
-   */
+     * Get namespace iri matching the given prefix
+     * @param prefix string prefix
+     * @return string matching namespace or empty string in case of failure
+     */
   SPARQL.Model.getNamespace = function(prefix){
     var result = null;
     $.each(SPARQL.Model.data.namespace, function(index, namespace){
@@ -430,10 +449,10 @@
   };
 
   /**
-   * Make sure the given value is a fully qualified iri
-   * @param value the iri string
-   * @param prefix optional
-   */
+     * Make sure the given value is a fully qualified iri
+     * @param value the iri string
+     * @param prefix optional
+     */
   SPARQL.Model.assureFullyQualifiedIRI = function(value, prefix){
     if(value){
       value = $.trim(value);
@@ -471,17 +490,17 @@
   
 
   /*
-   *  Create new subject
-   *  @param subjectName string
-   *  @param type string
-   */
+     *  Create new subject
+     *  @param subjectName string
+     *  @param type string
+     */
   SPARQL.Model.createSubject = function(subjectName, type){
     if(!subjectName){
       subjectName = '?subject' + SPARQL.getNextUid();
     }
     var subject = new SPARQL.Model.SubjectTerm(subjectName, type);
     
-    if(subject.type === TYPE.VAR 
+    if(subject.type === TYPE.VAR
       && subject.value
       && subject.value.length
       && $.inArray(subject.value, SPARQL.Model.data.projection_var) === -1)
@@ -495,15 +514,15 @@
   };
   
   /**
-   * Update subject. Replace all occurences of the subject in the datamodel
-   * @param subjectOld Term
-   * @param subjectNew Term
-   * @param inResults boolean
-   */
-  SPARQL.Model.updateSubject = function(subjectOld, subjectNew, inResults){    
+     * Update subject. Replace all occurences of the subject in the datamodel
+     * @param subjectOld Term
+     * @param subjectNew Term
+     * @param inResults boolean
+     */
+  SPARQL.Model.updateSubject = function(subjectOld, subjectNew, inResults){
     //do this only if inResults is defined
     if(typeof inResults !== 'undefined'){
-      var projection_vars = SPARQL.Model.data.projection_var;
+      var projection_vars = SPARQL.Model.data.projection_var || [];
       var varInArray = $.inArray(subjectOld.value, projection_vars);
       //if new value should be in results
       if(inResults){
@@ -521,7 +540,7 @@
       //if new value should NOT be in results
       else{
         if(varInArray > -1){
-          //remove from array          
+          //remove from array
           projection_vars.splice(varInArray, 1);
         }
       }
@@ -530,7 +549,7 @@
       return;
     }
     //go over triples, find this subject and change it
-    var triples = SPARQL.Model.data.triple;
+    var triples = SPARQL.Model.data.triple || [];
     for(var i = 0; i < triples.length; i++){
       var triple = triples[i];
       if(subjectOld.isEqual(triple.subject)){
@@ -540,7 +559,7 @@
         triple.object = subjectNew;
       }
     }
-    var category_restriction = SPARQL.Model.data.category_restriction;
+    var category_restriction = SPARQL.Model.data.category_restriction  || [];
     //iterate over categories and change
     for(i = 0; i < category_restriction.length; i++){
       if(subjectOld.isEqual(category_restriction[i].subject)){
@@ -548,7 +567,7 @@
       }
     }
     //iterate over filters
-    var filters = SPARQL.Model.data.filter;
+    var filters = SPARQL.Model.data.filter || [];
     for(i = 0; i < filters.length; i++){
       for(var j = 0; j < filters[i].expression.length; j++){
         for(var k = 0; k < filters[i].expression[j].argument.length; k++){
@@ -560,7 +579,7 @@
     }
     
     if(subjectOld.type === TYPE.VAR){
-      var order = SPARQL.Model.data.order;
+      var order = SPARQL.Model.data.order || [];
       for(i = 0; i < order.length; i++){
         if(subjectOld.value === order[i].by_var){
           if(subjectNew.type === TYPE.VAR){
@@ -579,10 +598,10 @@
   };
 
   /**
-   * Create new category
-   * @param subject Term
-   * @param categoryArray array of categories
-   */
+     * Create new category
+     * @param subject Term
+     * @param categoryArray array of categories
+     */
   SPARQL.Model.createCategory = function(subject, categoryArray){
     subject = subject || SPARQL.Model.createSubject();
     categoryArray = categoryArray || 'category' + SPARQL.getNextUid();
@@ -609,10 +628,10 @@
 
 
   /**
-   * Update category
-   * @param oldCategoryRestriction CategoryRestriction old category
-   * @param newCategories array of new category iri
-   */
+     * Update category
+     * @param oldCategoryRestriction CategoryRestriction old category
+     * @param newCategories array of new category iri
+     */
   SPARQL.Model.updateCategory = function(oldCategoryRestriction, newCategories){
     var category_restrictions = SPARQL.Model.data.category_restriction;
     var newCategory;
@@ -629,12 +648,12 @@
   };
 
   /**
-   *  Delete category from the specified subject.
-   *  If category name is given then search in subject categories is performed (used for removing categories in OR relation).
-   *  Otherwise the whole category_restriction object is removed (this is used when no OR relations defined)
-   *  @param categoryRestriction CategoryRestriction object
-   *  @param categoryToDelete string name of category to delete
-   */
+     *  Delete category from the specified subject.
+     *  If category name is given then search in subject categories is performed (used for removing categories in OR relation).
+     *  Otherwise the whole category_restriction object is removed (this is used when no OR relations defined)
+     *  @param categoryRestriction CategoryRestriction object
+     *  @param categoryToDelete string name of category to delete
+     */
   SPARQL.Model.deleteCategory = function(categoryRestriction, categoryToDelete){
     var category_restrictions = SPARQL.Model.data.category_restriction;
     for(var i = 0; i < category_restrictions.length; i++){
@@ -650,7 +669,7 @@
         }
         else{
           category_restrictions.splice(i, 1);
-        }       
+        }
 
         break;
       }
@@ -660,11 +679,11 @@
   };
 
   /**
-   *  Update filters belonging to the given variable.
-   *  Removes filters having the given var as argument then adds a new filters to array
-   *  @param varTerm Term representing variable
-   *  @param newFilters array of filters
-   */
+     *  Update filters belonging to the given variable.
+     *  Removes filters having the given var as argument then adds a new filters to array
+     *  @param varTerm Term representing variable
+     *  @param newFilters array of filters
+     */
   SPARQL.Model.updateFilters = function(varTerm, newFilters){
     //iterate over filters
     var filters = SPARQL.Model.data.filter;
@@ -689,9 +708,9 @@
 
 
   /**
-   *  Check if given variable is in projection vars
-   *  @param subject Term representing a variable
-   */
+     *  Check if given variable is in projection vars
+     *  @param subject Term representing a variable
+     */
   SPARQL.Model.isVarInResults = function(subject){
     var result = true;
     var projection_var = SPARQL.Model.data.projection_var;
@@ -703,13 +722,13 @@
   };
 
   /**
-   *  Create new property.
-   *  @param subject Term representing a subject
-   *  @param propertyName string property name
-   *  @param valueName string property value name
-   *  @param optional boolean is this triple optional
-   *  @param showInResults boolean is this var shown in results
-   */
+     *  Create new property.
+     *  @param subject Term representing a subject
+     *  @param propertyName string property name
+     *  @param valueName string property value name
+     *  @param optional boolean is this triple optional
+     *  @param showInResults boolean is this var shown in results
+     */
   SPARQL.Model.createProperty = function(subject, propertyName, valueName, optional, showInResults){
     subject = subject || SPARQL.Model.createSubject();
     propertyName = propertyName || 'property' + SPARQL.getNextUid();
@@ -734,10 +753,10 @@
   };
 
   /**
-   *  Remove triple replresenting given property
-   *  and remove the object var from projection vars, filters, order if it's not part of any other triple or category restriction
-   *  @param triple Triple replresenting given property
-   */
+     *  Remove triple replresenting given property
+     *  and remove the object var from projection vars, filters, order if it's not part of any other triple or category restriction
+     *  @param triple Triple replresenting given property
+     */
   SPARQL.Model.deleteProperty = function(triple){
     //remove this property from triple
     var triples = SPARQL.Model.data.triple;
@@ -770,7 +789,7 @@
       
       var filters = SPARQL.Model.data.filter;
       for(i = 0; i < filters.length; i++){
-        for(var j = 0; j < filters[i].expression.length; j++){          
+        for(var j = 0; j < filters[i].expression.length; j++){
           if(filters[i].expression[j].hasTerm(triple.object)){
             filters.splice(i, 1);
             break;
@@ -791,14 +810,14 @@
   };
 
   /**
-   * Delete subject. Delete all the triples having this argument as subject
-   * and delete all categories having this argument as subject
-   * and delete all filters if this argument does not appear as object in any triple
-   * and delete it from projection vars
-   * and delete it from order
-   * @param subject Term
-   */
-  SPARQL.Model.deleteSubject = function(subject){    
+     * Delete subject. Delete all the triples having this argument as subject
+     * and delete all categories having this argument as subject
+     * and delete all filters if this argument does not appear as object in any triple
+     * and delete it from projection vars
+     * and delete it from order
+     * @param subject Term
+     */
+  SPARQL.Model.deleteSubject = function(subject){
     var category_restriction = SPARQL.Model.data.category_restriction;
     //remove from categories
     for(var i = 0; i < category_restriction.length; i++){
@@ -862,8 +881,8 @@
   };
 
   /**
-   * Reset the model to initial state: empty data, set default namespaces and query parameters
-   */
+     * Reset the model to initial state: empty data, set default namespaces and query parameters
+     */
   SPARQL.Model.reset = function(){
     SPARQL.tripleStoreGraph = window.parent.smwghTripleStoreGraph + SPARQL.iri_delim;
     SPARQL.category_iri = SPARQL.tripleStoreGraph + 'category';
@@ -915,13 +934,13 @@
   };
 
   /**
-   * Change the triple representing this property in the model.
-   * Change also the object var if it's not part of any other triple
-   * @param oldTriple old triple object
-   * @param newTriple new triple object
-   * @param valueInResults boolean indicating whether the object value should be shown in results or not
-   *
-   */
+     * Change the triple representing this property in the model.
+     * Change also the object var if it's not part of any other triple
+     * @param oldTriple old triple object
+     * @param newTriple new triple object
+     * @param valueInResults boolean indicating whether the object value should be shown in results or not
+     *
+     */
   SPARQL.Model.updateProperty = function(oldTriple, newTriple, valueInResults){
     //varExists indicates whether an object var of the old triple exists somewhere in the model so we have to update it also
     var varExists = false;

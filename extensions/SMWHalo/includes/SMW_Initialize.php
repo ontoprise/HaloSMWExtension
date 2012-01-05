@@ -1679,9 +1679,10 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/Logger/smw_logger.js',
 			'scripts/QueryInterface/Query.js',
 			'scripts/QueryInterface/QueryList.js',
-			'scripts/QueryInterface/QIHelper.js',
+			'scripts/QueryInterface/QIHelper.js',      
       'scripts/QueryInterface/sparqlQI.js',
       'scripts/QueryInterface/sparqlModel.js',
+      'scripts/QueryInterface/sparqlValidator.js',
       'scripts/QueryInterface/init.js',
       'scripts/QueryInterface/window.binding.js'
 			),

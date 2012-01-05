@@ -617,8 +617,6 @@ button.btnhov{
 #qiTopToolbar button{
   float: right;
   margin-right: 2px;
-  margin-bottom: 3px;
-  margin-top: 3px;
 }
 
 #qiBottomToolbar button, #qiBottomToolbar a{
@@ -765,4 +763,26 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
 
 .jstree-hovered{
   text-decoration: none !important;
+}
+
+#qiDetailsTable table{
+  width: 100%;
+}
+
+#qiDetailsTable table td{
+  padding: 0;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+#entityDetailsTd *{
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+}
+
+.failedValidation{
+  border: 1px inset red;
 }

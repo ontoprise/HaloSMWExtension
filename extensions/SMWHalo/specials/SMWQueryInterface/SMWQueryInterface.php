@@ -354,10 +354,11 @@ class SMWQueryInterface extends SpecialPage {
 
   private function addDragboxSparql() {
     return '<table id="qiDetailsTable"><tr><td id="qiTopToolbar">' .
+            '<table><tr><td id="entityDetailsTd"></td><td>' .
             '<button id="qiAddSubjectBtn" title="' . wfMsg('smw_qi_tt_addSubject') . '">' . wfMsg('smw_qi_add_subject') . '</button>' .
             '<button id="qiAddCategoryBtn" title="' . wfMsg('smw_qi_tt_addCategory') . '">' . wfMsg('smw_qi_add_category') . '</button>' .
             '<button id="qiAddPropertyBtn" title="' . wfMsg('smw_qi_tt_addProperty') . '">' . wfMsg('smw_qi_add_property') . '</button>' .
-            '</td></tr>' .
+            '</td></tr></table></td></tr>' .
             '<tr><td id="qiBoxcontent">' .
             '<div id="qiSubjectDialog" style="display:none">' . $this->addSubjectDialog() . '</div>' .
             '<div id="qiCategoryDialog" style="display:none"/>' . $this->addCategoryDialog() . '</div>' .
