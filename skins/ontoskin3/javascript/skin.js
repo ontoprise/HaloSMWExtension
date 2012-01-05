@@ -54,7 +54,7 @@ function Smwh_Skin() {
 	this.resizePage = function () {
 		if( this.expanded === false ) {
 			//show layout, which uses full browser window size
-			$jq( ".shadows" ).removeClass( "smwh_center" );
+			$jq( ".shadows, #smwh_menu > div:first-child" ).removeClass( "smwh_center" );
 			$jq( "#personal_expand" )
 				.removeClass( "limited" )
 				.addClass( "expanded" );
@@ -66,7 +66,7 @@ function Smwh_Skin() {
 			this.hideTree();
 		} else {
 			//show layout, which is optimized for 1024x768
-			$jq( ".shadows" ).addClass( "smwh_center" );
+			$jq( ".shadows, #smwh_menu > div:first-child" ).addClass( "smwh_center" );
 			$jq( "#personal_expand" )
 				.removeClass( "expanded" )
 				.addClass( "limited" );
