@@ -278,6 +278,10 @@ function Smwh_Skin() {
 			$what.first().before( $what.last() );
 			editsec.html( editsec.children() );
 		});
+		
+		if ( !( 'placeholder' in document.createElement( 'input' ) ) ) {
+			$jq('#searchInput').placeholder();
+		}
 	},
 
 	/**

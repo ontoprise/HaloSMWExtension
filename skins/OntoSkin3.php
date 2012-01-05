@@ -43,7 +43,8 @@ class SkinOntoSkin3 extends SkinTemplate {
 				'ontoskin3/javascript/skin.js'
 			),
 			'remoteBasePath' => $wgStylePath,
-			'localBasePath' => $wgStyleDirectory
+			'localBasePath' => $wgStyleDirectory,
+			'dependencies' => 'jquery.placeholder'
 		);
 	}
 
@@ -109,11 +110,8 @@ class OntoSkin3Template extends QuickTemplate {
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
 		?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="<?php $this->text( 'xhtmldefaultnamespace' ) ?>"
-<?php foreach ( $this->data['xhtmlnamespaces'] as $tag => $ns ) {
-		?>xmlns:<?php echo "{$tag}=\"{$ns}\" ";
-} ?>xml:lang="<?php $this->text( 'lang' ) ?>" lang="<?php $this->text( 'lang' ) ?>" dir="<?php $this->text( 'dir' ) ?>">
+<!DOCTYPE html>
+<html lang="<?php $this->text( 'lang' ) ?>" dir="<?php $this->text( 'dir' ) ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="<?php $this->text( 'mimetype' ) ?>; charset=<?php $this->text( 'charset' ) ?>" />
 		<?php $this->html( 'headlinks' ) ?>
@@ -124,7 +122,7 @@ class OntoSkin3Template extends QuickTemplate {
 			src="<?php $this->text( 'stylepath' ) ?>/common/IEFixes.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>
 		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 
-			<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
+		<?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
 		<!-- <script type="<?php $this->text( 'jsmimetype' ) ?>" src="<?php $this->text( 'stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"></script>  -->
 
@@ -289,7 +287,6 @@ class OntoSkin3Template extends QuickTemplate {
 	function searchBox() {
 		global $wgUseTwoButtonsSearchForm, $wgScriptPath;
 		?>
-
 		<!-- searchBox -->
 		<div id="smwh_search" class="portlet">
 			<div id="searchBody" class="pBody" >
@@ -299,10 +296,12 @@ class OntoSkin3Template extends QuickTemplate {
 						<img src="<?php echo $wgScriptPath . '/extensions/SMWHalo/skins/CreateNewArticle/Addcontent.png' ?>"></img>New page
 					</div>
 					<input id="searchInput" pasteNS="true" class="wickEnabled" 
-						name="search" constraints="all" onfocus="this.value='';" 
-						type="text"<?php echo $this->skin->tooltipAndAccesskey( 'search' ); ?>
-						value="<?php $this->msg( 'smw_search_this_wiki' ); ?>" />
-					<input type='submit' src='<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/button_go.png' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg( 'searcharticle' ) ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
+						name="search" constraints="all" 
+						type="text" <?php echo $this->skin->tooltipAndAccesskey( 'search' ); ?>
+						placeholder="<?php $this->msg( 'smw_search_this_wiki' ); ?>" />
+					<input type='submit' src='<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/button_go.png'
+						name="go" class="searchButton" id="searchGoButton" 
+						value="<?php $this->msg( 'searcharticle' ) ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
 					<!-- @todo: looking glass
 						<input type='submit' src='<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/button_search.png' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg( 'searchbutton' ) ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
 					-->
