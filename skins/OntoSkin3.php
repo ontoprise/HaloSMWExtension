@@ -151,8 +151,7 @@ class OntoSkin3Template extends QuickTemplate {
 	<?php if ( $this->data['body_onload'] ) { ?>
 		onload="<?php $this->text( 'body_onload' ) ?>"
 	<?php } ?>
-		class="mediawiki <?php $this->text( 'dir' ) ?>
-		<?php $this->text( 'pageclass' ) ?> <?php $this->text( 'skinnameclass' ) ?>">
+		class="mediawiki <?php $this->text( 'dir' ) ?> <?php $this->text( 'pageclass' ) ?> <?php $this->text( 'skinnameclass' ) ?>">
 		<!-- globalWrapper -->
 		<div id="globalWrapper">
 			<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
@@ -206,7 +205,7 @@ class OntoSkin3Template extends QuickTemplate {
 			</div>
 			<!-- /menu -->
 			<!-- content -->
-			<div class="shadows smwh_center">
+			<div id="main" class="shadows smwh_center">
 				<div id="smwh_breadcrumbs">
 					<div id="smwh_last_visited">
 						<?php $this->msg( 'smw_last_visited' ); ?>

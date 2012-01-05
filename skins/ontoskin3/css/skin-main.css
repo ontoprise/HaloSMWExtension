@@ -13,10 +13,18 @@
 /* ---------->>> GLOBAL <<<-----------*/
 /* -----------------------------------*/
 
-body {
+html, body, #globalWrapper {
 	background-color: #aad1de;
+	height: 100%;
 	margin: 0;
+	overflow: auto;
 }
+
+body > #globalWrapper {
+	height: auto;
+	min-height: 100%;
+}
+
 .mediawiki {
 	font-family: Helvetica,Arial,Helvetica,sans-serif;
 }
@@ -49,7 +57,6 @@ textarea {
 .shadows {
 	background-color: #FFF;
 	box-shadow: 2px 2px 8px #269FB2, -2px 2px 8px #269FB2;
-	margin-top:-2px;
 }
 
 /* overwrites useragent css to prevent scrolling triggered by padding */
@@ -661,6 +668,12 @@ textarea {
 /* ----------------------------------------*/
 /* ---------->>> CONTENT <<<-----------*/
 /* ----------------------------------------*/
+#main {
+	overflow: auto;
+	margin-bottom: 240px;
+	height: 100%;
+}
+
 #mainpage {
 	background-color: #FFFFFF;
 	clear: both;
@@ -692,10 +705,12 @@ textarea {
 /* ---------->>> FOOTER <<<-----------*/
 /* -----------------------------------*/
 #footer {
+	position: relative;
+	margin-top: -230px;
+	height: 230px;
+	clear: both;
 	background-color: #e8edff;
 	box-shadow: inset 0 4px 16px #FFF;
-	margin-top: 10px;
-	min-height: 230px;
 }
 
 #smwh_quicklinks, #smwh_quicklinks a{
