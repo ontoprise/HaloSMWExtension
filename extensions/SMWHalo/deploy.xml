@@ -66,7 +66,11 @@
 			</variable>
 			<script file="maintenance/SMW_setup.php" />
 		</new>
-		<update from="1.5.6">
+		<update from="156">
+		    <replace>
+              <search>smwgWebserviceEndpoint</search>
+              <replacement>smwgHaloWebserviceEndpoint</replacement>
+            </replace>
 			<patch file="patch_for_SMW1.6.1.txt" ext="smw" from="1.6.0" to="1.6.1" />
 			<patch file="patch_for_MW1.17.0.txt" ext="mw" from="1.17.0" to="1.17.0" />
 			<patch file="patch_for_SF2.1.2.txt" ext="semanticforms" from="2.1.2" to="2.1.2" />
