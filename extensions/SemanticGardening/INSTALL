@@ -58,6 +58,11 @@ Installation:
 (4) To specify the gardening privilege for sysops, add:
 
 	$wgGroupPermissions['sysop']['gardening'] = true;
+
+Update:
+=======
+(1) Run:
+        php {wiki-path}/extensions/SemanticGardening/maintenance/SGA_setup.php --update
 	
 Options:
 ========
