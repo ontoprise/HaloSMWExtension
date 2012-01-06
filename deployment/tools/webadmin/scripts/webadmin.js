@@ -61,10 +61,13 @@ $(function() {
 				var length = resultLog.length;
 				resultLog = resultLog.substr(oldLength);
 				oldLength = length;
+				resultLog += '<br><a id="df_finalization_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_finalization_console_log')+'</a>';
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
 					$('#df_progress_indicator').remove();
+					$('#df_finalization_console_log_link').remove();
 					dialog[0].innerHTML += resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
@@ -138,6 +141,8 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
 				readLogCallPending=false;
 				var resultLog = xhr3.responseText;
+				resultLog += '<br><a id="df_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_console_log')+'</a>';
 				if (resultLog != '') {
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
@@ -198,6 +203,8 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
 				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
+				resultLog += '<br><a id="df_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_console_log')+'</a>';
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
@@ -255,6 +262,8 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
 				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
+				resultLog += '<br><a id="df_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_console_log')+'</a>';
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
@@ -311,6 +320,8 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
 				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
+				resultLog += '<br><a id="df_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_console_log')+'</a>';
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
@@ -1206,6 +1217,8 @@ $(function() {
 			$.ajax( { url : readLogurl, dataType:"json", complete : function(xhr3, status3) {
 				readLogCallPending = false;
 				var resultLog = xhr3.responseText;
+				resultLog += '<br><a id="df_console_log_link" target="_blank" href="'+wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=readLog&rsargs[]="
+				+encodeURIComponent(logfile+".console_out")+'">'+dfgWebAdminLanguage.getMessage('df_webadmin_console_log')+'</a>';
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');

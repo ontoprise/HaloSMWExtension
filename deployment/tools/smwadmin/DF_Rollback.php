@@ -96,7 +96,8 @@ class Rollback {
 		$logger->info("Save installation to ".$this->restoreDir."/$name");
 		$dfgOut->outputln("[Save installation...");
 		$success = Tools::mkpath($this->restoreDir."/$name");
-		$success = $success && Tools::copy_dir($this->rootDir, $this->restoreDir."/$name", array($this->rootDir."/deployment"));
+		//$success = $success && Tools::copy_dir($this->rootDir, $this->restoreDir."/$name", array($this->rootDir."/deployment"));
+		$success = $success && Tools::makeZip($this->rootDir."/*", $this->restoreDir."/$name/software.zip", $this->rootDir);
 		$dfgOut->output("done.]");
 		$savedInstallation = true;
 		if (!$success) {
@@ -301,12 +302,14 @@ class Rollback {
 
 		$logger->info("Remove current installation");
 		$dfgOut->outputln("[Remove current installation...");
-		Tools::remove_dir($this->rootDir, array(Tools::normalizePath($this->rootDir."/deployment")));
+		
+		Tools::remove_dir($this->rootDir, "unzip.exe");
 		$dfgOut->output("done.]");
 
 		$logger->info("Restore old installation");
 		$dfgOut->outputln("[Restore old installation...");
-		$success = Tools::copy_dir($this->restoreDir."/$name", $this->rootDir);
+		
+		$success = Tools::unpackZip($this->restoreDir."/$name/software.zip", $this->rootDir, $this->rootDir);
 		if (!$success) {
 			$logger->error("Restore old installation faild. Could not copy from ".$this->restoreDir."/$name");
 		}

@@ -64,7 +64,10 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_select_extension' : 'Wähle Extension',
 	'df_webadmin_fragment_not_found' : 'Fragment nicht gefunden',
 	'df_webadmin_save_ok' : 'LocalSettings erfolgreich gespeichert.',
-	'df_webadmin_save_failed' : 'Fehler beim Speichern von LocalSettings.php.'
+	'df_webadmin_save_failed' : 'Fehler beim Speichern von LocalSettings.php.',
+	
+	'df_webadmin_console_log' : 'Klicken Sie hier für das Konsolen-Log.',
+    'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.'
 	
 };
 

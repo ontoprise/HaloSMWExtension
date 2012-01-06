@@ -89,7 +89,13 @@ class DFVersion {
 				$this->minor = intval($version_string[1].$version_string[2]);
 				$this->subminor = intval($version_string[3]);
 				return;
-			} else {
+			} else if (strlen($version_string) == 2 && is_numeric($version_string)) {
+                // e.g. 16 -> 1.6.0
+                $this->major = intval($version_string[0]);
+                $this->minor = intval($version_string[1]);
+                $this->subminor = 0;
+                return;
+            }  else {
 				// invalid format
 				throw new Exception("Invalid DF version format: $version_string");
 			}

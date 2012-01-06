@@ -133,3 +133,11 @@
 #df_server_state_table td {
     height: 40px;
 }
+
+#df_console_log_link {
+    color: grey; 
+}
+
+#df_finalization_console_log_link {
+    color: grey; 
+}

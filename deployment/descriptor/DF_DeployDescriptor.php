@@ -178,20 +178,19 @@ class DeployDescriptor {
 			$path = "/deploydescriptor/configs/new";
 		} else {
 			$fromString = $from->toVersionString();
-			if ($fromPatchlevel == NULL || $fromPatchlevel == 0) {
-			 $path = "//update[@from='$fromString']";
-			} else {
-				$path = "//update[@from='$fromString' and @patchlevel='$fromPatchlevel']";
+			if (is_null($fromPatchlevel)) {
+				$fromPatchlevel = 0;
+			}
+			$path = "//update[@from='$fromString' and @patchlevel='$fromPatchlevel']";
+			$update = $this->dom->xpath($path);
+			if (count($update) === 0) {
+				// if not appropriate patchlevel update exists, try without patchlevel constraint
+				$path = "//update[@from='$fromString']";
 				$update = $this->dom->xpath($path);
-				if (count($update) === 0) {
-					// if not appropriate patchlevel update exists, try without patchlevel constraint
-					$path = "//update[@from='$fromString']";
-					$update = $this->dom->xpath($path);
-					if (count($update) === 0 && $from->isEqual($this->getVersion())) {
-						// if no explicit update section exists, check if updating the
-						// currently installed version only to another patchlevel
-						$path = "//update[@from='patchlevel']";
-					}
+				if (count($update) === 0 && $from->isEqual($this->getVersion())) {
+					// if no explicit update section exists, check if updating the
+					// currently installed version only to another patchlevel
+					$path = "//update[@from='patchlevel']";
 				}
 			}
 

@@ -212,6 +212,8 @@ File for repository links:
 
 You may add new repositories here, the Ontoprise repo is already configured.
 
+Note: The former location of this file was in deployment/tools
+
 #
 # 6. Using Wiki Administration Tool with a Proxy
 # ===========================================

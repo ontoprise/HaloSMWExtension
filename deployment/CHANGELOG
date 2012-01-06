@@ -8,6 +8,8 @@ New:
 
   - Compatible with MW 1.17 (but not with < 1.17)
   
+  - repositories file location has changed. It is now located at config/repositories
+  
   - settings.php is now shipped in the config/ directory. It must be configured and then 
     copied to the root directory of the wiki admin tool (the former location).
   

@@ -67,9 +67,9 @@ class Tools {
 			$version = "Windows 7";
 			$os = $version;
 		} else if ($thisBoxRunsWindows) {
-            $version = "Windows XP";
-            $os = $version;
-        }
+			$version = "Windows XP";
+			$os = $version;
+		}
 
 		return $thisBoxRunsWindows;
 	}
@@ -93,16 +93,19 @@ class Tools {
 	 * @param string $current_dir
 	 * @param array directories to exclude
 	 */
-	public static function remove_dir($current_dir, $exclude_dirs = array()) {
+	public static function remove_dir($current_dir, $excluded = "") {
 		if (substr(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
 		if($dir = @opendir($current_dir)) {
 			while (($f = readdir($dir)) !== false) {
 				if ($f == "." || $f == "..") continue;
-				if (in_array(Tools::normalizePath($current_dir.$f), $exclude_dirs)) continue;
+				if (strpos(Tools::normalizePath($current_dir.$f), $excluded) !== false) {
+					print "\nSkip this: ".Tools::normalizePath($current_dir.$f);
+					continue;
+				}
 				if(filetype($current_dir.$f) == "file") {
 					unlink($current_dir.$f);
 				} elseif(filetype($current_dir.$f) == "dir") {
-					self::remove_dir($current_dir.$f);
+					self::remove_dir($current_dir.$f, $excluded);
 				}
 			}
 			closedir($dir);
@@ -153,6 +156,7 @@ class Tools {
 		}
 		return $dirs;
 	}
+
 
 	/**
 	 * Copy file or folder from source to destination, it can do
@@ -549,11 +553,56 @@ class Tools {
 		return $res == 0;
 	}
 
+	/**
+	 * Creates an archive of a given directory or file (recursively in case of dir)
+	 *
+	 * @param $source given directory or file (full path)
+	 * @param $archiveFile archive file (full path)
+	 * @param $mwrootPath
+	 *
+	 * @return boolean
+	 */
+	public function makeZip($source, $archiveFile, $mwrootPath = "") {
+		$zipExe = empty($mwrootPath) ? 'zip' : self::getZipPath($mwrootPath);
+		if (self::isWindows()) {
+			// we have to make a distinction here because on Windows 7z is used to create archives.
+			$command = "$zipExe a -tzip -r -x!unzip.exe \"$archiveFile\" \"$source\"";
+		} else {
+			// TODO: linux command
+		}
+		exec($command, $out, $ret);
+		return $ret == 0;
+	}
+
+	/**
+	 * Unzips a zip archive into destination
+	 * @param $zipFile
+	 * @param $destination
+	 * 
+	 * @return boolean
+	 */
+	public function unpackZip($zipFile, $destination, $mwrootPath = "") {
+		$zipFile = Tools::makeUnixPath($zipFile);
+		if (!file_exists($zipFile)) return NULL;
+		$unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
+		exec($unzipExe.' -o "'.$zipFile.'" -d "'.$destination.'"', $output, $res);
+		return $ret == 0;
+	}
+
+
 	private static function getUnzipPath($mwrootPath) {
 		if (self::isWindows()) {
-			return '"'.$mwrootPath.'/deployment/tools/unzip"';
+			return '"'.$mwrootPath.'/deployment/tools/unzip.exe"';
 		} else {
 			return 'unzip'; // assume it is in path on Linux
+		}
+	}
+
+	private static function getZipPath($mwrootPath) {
+		if (self::isWindows()) {
+			return '"'.$mwrootPath.'/deployment/tools/maintenance/export/7za.exe"';
+		} else {
+			return 'zip'; // assume it is in path on Linux
 		}
 	}
 
@@ -955,14 +1004,14 @@ class Tools {
 		fclose($handle);
 		return true;
 	}
-    
+
 	/**
 	 * Changes a node in the global section of the deploy descriptor.
-	 * 
+	 *
 	 * @param DeployDescriptor $dd
 	 * @param string $tag
 	 * @param string $newValue
-	 * 
+	 *
 	 * @return DeployDescriptor
 	 */
 	public static function changeGlobalSection($dd, $tag, $newValue) {
