@@ -27,8 +27,7 @@
 
 #sref_query_container {
     float:left;
-  
-   height: 250px;
+    height: 250px;
     width: 40%;
 }
 
@@ -36,7 +35,6 @@
    float: left;
     margin-left: 10px;
     margin-top: 1px;
-    
     width: 58%;
    
 }
@@ -56,9 +54,18 @@
 #sref_commandboxes {
 	float: left;
 	width: 92%;
-	height: 160px;
-    margin-left: 10px;
-    margin-top: 40px;
+}
+
+#sref_command_parameters {
+	width: 100%
+}
+
+.sref_param_label {
+	width: 50%
+}
+
+.sref_param_input {
+    width: 50%
 }
 
 #sref_resultoptions {
@@ -66,6 +73,12 @@
     width: 92%;
     margin-left: 10px;
     margin-top: 40px;
+}
+
+#sref_operations {
+	border: 1px solid #CCCCCC;
+    height: 120px;
+    width: 100%;
 }
 
 .sref_instance_selector {

@@ -22,25 +22,62 @@
  */
 (function($) {
 	
-	//TODO: replace with language constants
 	var content = { 
-		level1 : [	
-			'Category',
-			'Annotation/property',
-			'Template' ]
+		level1 : {	
+			0 : mw.msg('sref_category'),
+			1 : mw.msg('sref_annotationproperty'),
+			2 : mw.msg('sref_template') }
 		,
 		
 		level2 : {
-			0 : ['add', 'remove', 'replace'],
-			1 : ['add', 'remove', 'replace', 'set value'],
-			2 : ['set', 'rename', 'replace']
+			0 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace')],
+			1 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace'), mw.msg('sref_setvalue')],
+			2 : [mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace')]
 		},
 		
+		operationnames: {
+			'00' : 'addCategory',
+			'01' : 'removeCategory',
+			'02' : 'replaceCategory',
+			
+			'10' : 'addAnnotation',
+			'11' : 'removeAnnotation',
+			'12' : 'replaceAnnotation',
+			'13' : 'setValueOfAnnotation',
+			
+			'20' : 'setValueOfTemplate',
+			'21' : 'renameTemplateParameter',
+			'22' : 'replaceTemplateValue',
+		},
+		
+		
 		parameters : { 
-			'00' : [ { id : 'category', ac : 'namespace: Category', title : 'Category name' } ],
-			'01' : [ { id : 'category', ac : 'namespace: Category', title : 'Category name' } ],
-			'02' : [ { id : 'old_category', ac : 'namespace: Category', title : 'Old category name' },
-			         { id : 'new_category', ac : 'namespace: Category', title : 'New category name' } ]
+			'00' : [ { id : 'category', ac : 'namespace: Category', title : mw.msg('sref_category'), optional : false } ],
+			'01' : [ { id : 'category', ac : 'namespace: Category', title : mw.msg('sref_category'), optional : false } ],
+			'02' : [ { id : 'old_category', ac : 'namespace: Category', title : mw.msg('sref_old_category'), optional : false },
+			         { id : 'new_category', ac : 'namespace: Category', title : mw.msg('sref_new_category'), optional : false } ],
+			'10' : [ { id : 'property', ac : 'namespace: Property', title : mw.msg('sref_property'), optional : false },
+			         { id : 'value', title : mw.msg('sref_value'), optional : false } ],
+			'11' : [ { id : 'property', ac : 'namespace: Property', title : mw.msg('sref_property') },
+			         { id : 'value', title : mw.msg('sref_value'), optional : true } ],
+			'12' : [ { id : 'property', ac : 'namespace: Property', title : mw.msg('sref_property'), optional : false },
+			         { id : 'old_value', title : mw.msg('sref_old_value'), optional : false } ,
+			         { id : 'new_value', title : mw.msg('sref_new_value'), optional : false } ],
+			'13' : [ { id : 'property', ac : 'namespace: Property', title : mw.msg('sref_property'), optional : false },
+					 { id : 'value', title : mw.msg('sref_value'), optional : false } ],
+			'20' : [ { id : 'template', ac : 'namespace: Template', title :  mw.msg('sref_template'), optional : false },
+					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
+					 { id : 'value', title : mw.msg('sref_value'), optional : false } ],
+			'21' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
+					 { id : 'old_parameter', title : mw.msg('sref_old_parameter'), optional : false },
+					 { id : 'new_parameter', title : mw.msg('sref_new_parameter'), optional : false }],
+								 
+			'22' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
+					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
+					 { id : 'old_value', title :  mw.msg('sref_old_value'), optional : false },
+					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false }]
+		
+		
 		}
 	
 	};
@@ -50,11 +87,11 @@
 		current_operation : -1, 
 		
 		createHTML : function() {
-			var html = '<h1>Choose commands</h1>';
+			var html = '';
 			html += '<div style="float:left"><select id="sref_operation_type" class="sref_operation_selector" size="5">';
-			$(content.level1).each(function(i, e) { 
-				html += '<option value="'+e+'">'+e+'</option>';
-			});
+			for (e in content.level1) { 
+				html += '<option value="'+content.level1[e]+'">'+content.level1[e]+'</option>';
+			}
 			html += '</select></div>';
 			
 			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>';
@@ -62,7 +99,7 @@
 			html += '</select></div>';
 			
 			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>'
-			html += '<div style="float:left" id="sref_parameters" class="sref_operation_selector">';
+			html += '<div style="float:left" id="sref_parameters">';
 			html += '</div>';
 			
 			return html;
@@ -81,7 +118,7 @@
 			
 			$('#sref_operation').change(function(e) { 
 				var i = e.currentTarget.selectedIndex;
-				var html = "<table>";
+				var html = '<table class="sref_command_parameters">';
 				i = ""+commandBox.current_operation+i;
 				$(content.parameters[i]).each(function(i, e) {
 					html += "<tr>";
@@ -90,6 +127,22 @@
 				});
 				html += "</table>";
 				$('#sref_parameters').html(html);
+			});
+			
+			$('#sref_clear_query').click(function(e) { 
+				$('#sref_querybox_textarea').val("");
+			});
+			
+			$('#sref_open_qi').click(function(e) { 
+				alert('not implemented yet'); //TODO: implement
+			});
+			
+			$('#sref_run_query').click(function(e) { 
+				if ($.trim($('#sref_querybox_textarea').val()) == '') {
+					alert("Enter a query"); //TODO: localize
+					return;
+				}
+				$('#refactor_form').submit();
 			});
 		},
 		
@@ -100,7 +153,11 @@
 				acAttr='class="wickEnabled"';
 				acAttr+=' constraints="'+e.ac+'"';
 			}
-			var html = "<td>"+e.title+"</td>"+'<td><input id="'+e.id+'" type="text" value="" '+acAttr+'></input></td>';
+			var optionalAttr = "";
+			if (typeof(e.optional) != 'undefined') {
+				optionalAttr = e.optional == true ? 'optional="true"' : 'optional="false"';
+			}
+			var html = '<td class="sref_param_label">'+e.title+"</td>"+'<td class="sref_param_input"><input id="'+e.id+'" '+optionalAttr+' type="text" size="30" value="" '+acAttr+'></input></td>';
 			return html;
 		}
 	};
@@ -115,6 +172,57 @@
 			var prefixedTitle = $(e).attr("prefixedTitle");
 			prefixedTitles.push(prefixedTitle);
 		});
+		
+		var selectedOperationType = $('#sref_operation_type option:selected');
+		var selectedOperation =  $('#sref_operation option:selected');
+		if (selectedOperationType.length == 0 || selectedOperation.length == 0) {
+			alert("Select operation"); // TODO: localize
+			return;
+		}
+		var operationTypeIndex = selectedOperationType[0].index;
+		var operationIndex = selectedOperation[0].index;
+		
+		var operationKey = ""+operationTypeIndex+operationIndex;
+		var operation = content.operationnames[operationKey];
+		
+		if (operation == null) {
+			alert("Internal error"); // TODO: localize
+			return;
+		}
+		
+		// read parameters from DOM
+		var message = "";
+		var params = {};
+		$('#sref_parameters input').each(function(i, e) {
+			var jqe = $(e);
+			if ($.trim(jqe.val()) == '' && jqe.attr('optional') == "false") {
+				message += "\n"+'Parameter ' +jqe.attr('id')+ " is mandatory."; // TODO:
+			}
+			params[jqe.attr('id')] = jqe.val();
+		});
+		if (message != '') {
+			alert(message);
+			return;
+		}
+		
+		// set bot parameters
+		var paramString = "SRF_OPERATION=" + operation;
+		for (p in params) {
+			paramString += "," + p + "=" + params[p];
+		}
+		
+		
+		// launch Bot
+		$.ajax({
+			url: mw.config.get('wgScript'),
+			data: {	action : 'ajax',
+					rs : 'smwf_ga_LaunchGardeningBotXML',
+					rsargs : [ 'smw_refactoringbot', paramString, null, null ] 
+				},
+			success: onSuccess,
+			error: onError
+		});
+		
 		alert(prefixedTitles.join(","));
 	});
 	

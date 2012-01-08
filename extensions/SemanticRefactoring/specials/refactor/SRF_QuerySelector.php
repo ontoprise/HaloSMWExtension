@@ -29,7 +29,7 @@
 define('SREF_QUERY_PAGE_LIMIT', 2);
 
 class SRFQuerySelector {
-	
+
 	protected $m_querystring = '';
 	protected $m_params = array();
 	protected $m_printouts = array();
@@ -38,10 +38,10 @@ class SRFQuerySelector {
 
 	public function __construct($query) {
 		$this->m_querystring = $query;
-		
+
 	}
 	public function getQueryResult() {
-				        
+
 		$this->extractQueryParameters();
 		$queryobj = SMWQueryProcessor::createQuery( $this->m_querystring, $this->m_params, SMWQueryProcessor::SPECIAL_PAGE , '_srftable', $this->m_printouts );
 		$res = smwfGetStore()->getQueryResult( $queryobj );
@@ -54,8 +54,8 @@ class SRFQuerySelector {
 			$result = $query_result;
 		}
 		$html = $result;
-		
-        return array('html' => $html, 'result'=>$res);
+
+		return array('html' => $html, 'result'=>$res);
 	}
 	/**
 	 * This code rather hacky since there are many ways to call that special page, the most involved of
@@ -66,13 +66,13 @@ class SRFQuerySelector {
 	 */
 	protected function extractQueryParameters(  ) {
 		global $wgRequest, $smwgQMaxInlineLimit;
-        
+
 		// Check for q= query string, used whenever this special page calls itself (via submit or plain link):
 		list($queryText, $printouts) = self::splitASKQuery($this->m_querystring);
 		$this->m_querystring = $queryText;
 		$paramstring = $printouts;
 
-
+		$rawparams=array();
 		if ( $this->m_querystring != '' ) {
 			$rawparams[] = $this->m_querystring;
 		}

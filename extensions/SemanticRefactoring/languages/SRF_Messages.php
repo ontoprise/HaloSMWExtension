@@ -48,7 +48,36 @@ $messages['en'] = array(
 	
 	/* special pages */
     'srefrefactor' => 'Semantic Refactoring',
-    'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
+    'sref_specialrefactor_description' => 'Semantic Refactoring allows the user to manipulate large amounts of wiki annotations with one command. 
+                                            This is, for example, necessary if you want to replace a property by another in all annotations where it appears. Another 
+                                            example would be to remove all uses of a particular category from all pages. For a detailed overview of the possibilities, please
+                                            take a look at $1.',
+    'sref_enter_query' => 'Enter a query to select an instance set',
+    'sref_run_query' => 'Run query',
+    'sref_open_qi' => 'Open query interface',
+    'sref_clear_query' => 'Clear',
+    'sref_select_instanceset'=> 'Select instance set',
+    'sref_choose_commands' => 'Choose commands',
+    'sref_running_operations' => 'Running operations',
+
+    'sref_add' => 'add',
+    'sref_remove' => 'remove',
+    'sref_replace' => 'replace',
+    'sref_setvalue' => 'set value',
+    'sref_rename' => 'rename',
+
+    'sref_category' => 'Category',
+    'sref_old_category' => 'Old category', 
+    'sref_new_category' => 'New category',
+    'sref_annotationproperty' => 'Annotation/Property',
+    'sref_property' => 'Property',
+    'sref_template' => 'Template',
+    'sref_parameter' => 'Parameter',
+    'sref_old_parameter' => 'Old parameter',
+    'sref_new_parameter' => 'New parameter',
+    'sref_value' => 'Value',
+    'sref_old_value' => 'Old value',
+    'sref_new_value' => 'New value'
 );
 
 /**
@@ -102,7 +131,36 @@ $messages['de'] = array(
     
     /* special pages */
     'srefrefactor' => 'Semantic Refactoring',
-    'sref_specialrefactor_description' => 'Semantic Refactoring means ...'
+   'sref_specialrefactor_description' => 'Semantic Refactoring erlaubt es viele Annotationen gleichzeitig im Wiki mit einem einzelnen Kommando zu manipulieren. 
+                                            Das ist beispielsweise dann sinvoll, wenn man ein Property durch ein anderes Property ersetzen will. Es wird
+                                            dann an allen Stellen in einem Schritt geändert, wofür man normalerweise alle Seiten manuell ändern und 
+                                            neu speichern müsste. Für einen detailierten Überblick über das SemanticRefactoring, schauen Sie bitte im $1.',
+    'sref_enter_query' => 'Enter a query to select an instance set',
+    'sref_run_query' => 'Run query',
+    'sref_clear_query' => 'Clear',
+    'sref_open_qi' => 'Open query interface',
+    'sref_select_instanceset'=> 'Select instance set',
+    'sref_choose_commands' => 'Choose commands',
+    'sref_running_operations' => 'Running operations',
+
+    'sref_add' => 'add',
+    'sref_remove' => 'remove',
+    'sref_replace' => 'replace',
+    'sref_setvalue' => 'set value',
+    'sref_rename' => 'rename',
+
+    'sref_category' => 'Category',
+    'sref_old_category' => 'Old category',
+    'sref_new_category' => 'New category',
+    'sref_annotationproperty' => 'Annotation/Property',
+    'sref_property' => 'Property',
+    'sref_template' => 'Template',
+    'sref_parameter' => 'Parameter',
+    'sref_old_parameter' => 'Old parameter',
+    'sref_new_parameter' => 'New parameter',
+    'sref_value' => 'Value',
+    'sref_old_value' => 'Old value',
+    'sref_new_value' => 'New value'
 );
 
 /**

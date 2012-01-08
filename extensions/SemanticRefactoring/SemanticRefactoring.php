@@ -124,8 +124,26 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_includeSubproperties',
 						    'sref_includeSubproperties_help',
                         
-                            'sref_not_allowed_botstart'
-    ),
+                            'sref_not_allowed_botstart',
+            
+				             'sref_add',
+				            'sref_remove',
+				            'sref_replace' ,
+				            'sref_setvalue',
+				            'sref_rename',
+				            'sref_category',
+                            'sref_old_category',
+                            'sref_new_category',
+				            'sref_annotationproperty',
+				            'sref_template',
+                            'sref_property',
+				            'sref_parameter',
+						    'sref_old_parameter',
+						    'sref_new_parameter',
+						    'sref_value',
+						    'sref_old_value',
+						    'sref_new_value'
+    )
     );
 
     

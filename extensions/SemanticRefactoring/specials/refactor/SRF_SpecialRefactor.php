@@ -28,6 +28,8 @@
  */
 if (!defined('MEDIAWIKI')) die();
 
+define("SRFF_HELP_URL", "http://smwforum.ontoprise.com");
+
 global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
 
@@ -49,18 +51,23 @@ class SREFRefactor extends SpecialPage {
 		$adminPage = Title::newFromText(wfMsg('srefrefactor'), NS_SPECIAL);
 
 		// description text
-		$html = "<div>".wfMsg('sref_specialrefactor_description')."</div>";
+		$helpLink = '<a target="_blank" href="'.SRFF_HELP_URL.'">SMW-Forum</a>';
+		$html = "<div>".wfMsg('sref_specialrefactor_description', $helpLink)."</div>";
 
 		// query box
 		$spectitle = $this->getTitleFor( 'SREFRefactor' );
 		$query_val = $wgRequest->getVal( 'q' );
-		$html .= '<h1>Select instance set</h1>';
+		$html .= '<h1>'.wfMsg('sref_select_instanceset').'</h1>';
 		$html .= '<div>';
-		
-		$html .= '<form method="post" action="' . $spectitle->escapeLocalURL() . '" name="refactor">';
+		$html .= wfMsg('sref_enter_query');
+		$html .= '<form id="refactor_form" method="post" action="' . $spectitle->escapeLocalURL() . '" name="refactor">';
 		$html .= '<div id="sref_query_container">';
 		$html .= '<textarea id="sref_querybox_textarea" name="q">'.$query_val.'</textarea>';
-		$html .= '<input type="submit" id="sref_run_query" value="Run"></input></div>';
+		$html .= '<input type="button" id="sref_run_query" value="'.wfMsg('sref_run_query').'"></input>';
+		$html .= '<input type="button" id="sref_clear_query" value="'.wfMsg('sref_clear_query').'"></input>';
+		$html .= '<input type="button" id="sref_open_qi" value="'.wfMsg('sref_open_qi').'"></input>';
+		$html .= '</div>';
+		
 		// result box
 		$html .= '<div id="sref_result_container"><div id="sref_resultbox">';
 		if ( $wgRequest->getCheck( 'q' ) ) {
@@ -69,9 +76,8 @@ class SREFRefactor extends SpecialPage {
 			$html .= $qresult['html'];
 		}
 		$html .= '</div>';
-		$html .= '<input type="submit" id="sref_run_query" value="Run"></input></div>';
+		$html .= 'TODO: browse large query results via pages';
 		$html .= '</div>';
-		
 		$html .= '</form>';
 		
 
@@ -87,12 +93,23 @@ class SREFRefactor extends SpecialPage {
 		
 
 		// command box
+		$html .= '<div style="float:left;width:99%" >';
+		$html .= '<h1>'.wfMsg('sref_choose_commands').'</h1>';
 		$html .= '<div id="sref_commandboxes">';
 		$html .= '</div>';
 		$html .= '<div style="float:left">';
 		$html .= '<input type="button" id="sref_start_operation" value="'.wfMsg('sref_start_operation').'"></input>';
 		$html .= '</div>';
-
+        $html .= '</div>';
+        
+        // running operations
+        $html .= '<div style="float:left;width:99%">';
+        $html .= '<h1>'.wfMsg('sref_running_operations').'</h1>';
+        $html .= '<div id="sref_operations">';
+        $html .= '</div>';
+      
+        $html .= '</div>';
+        
 		// add to page
 		$wgOut->addHTML($html);
 	}
