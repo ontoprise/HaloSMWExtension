@@ -555,6 +555,8 @@ class Tools {
 
 	/**
 	 * Creates an archive of a given directory or file (recursively in case of dir)
+	 * 
+	 * Note: Does not include file named unzip.exe.
 	 *
 	 * @param $source given directory or file (full path)
 	 * @param $archiveFile archive file (full path)
@@ -568,7 +570,7 @@ class Tools {
 			// we have to make a distinction here because on Windows 7z is used to create archives.
 			$command = "$zipExe a -tzip -r -x!unzip.exe \"$archiveFile\" \"$source\"";
 		} else {
-			// TODO: linux command
+			$command = "$zipExe -r \"$archiveFile\" \"$source\" -x \\*unzip.exe";
 		}
 		exec($command, $out, $ret);
 		return $ret == 0;
