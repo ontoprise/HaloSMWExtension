@@ -31,8 +31,8 @@
 //      'xsd:anyURI': '',
 //      'tsctype:record': '',
       'tsctype:page' : '^[%!"$&\\()*,\\-.\\/0-9:;=?@A-Z\\^_`a-z~\\x80-\\xFF+]+$',
-      'iri' : '^(?:' + protocol + '|' + prefix + ')*\\w+$',
-      'variable' : '^\\?\\w+$'
+      'iri' : '^(?:' + protocol + '|' + prefix + ')*[\\w\\s]+$',
+      'variable' : '^\\?[\\w\\s]+$'
     },
     get: function(key){
       return SPARQL.Validator.map[key];

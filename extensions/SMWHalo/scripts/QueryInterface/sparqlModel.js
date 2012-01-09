@@ -508,7 +508,7 @@
       SPARQL.Model.data.projection_var.push(subject.value);
     }
 
-    SPARQL.toTree(subject.getId());
+    SPARQL.toTree(null, subject.getId(), true);
 
     return subject;
   };
@@ -594,7 +594,7 @@
       }
     }
     
-    SPARQL.toTree(subjectNew.getId());
+    SPARQL.toTree(null, subjectNew.getId());
   };
 
   /**
@@ -622,7 +622,7 @@
     });
     if(!alreadyExists){
       SPARQL.Model.data.category_restriction.push(newCategoryRestriction);
-      SPARQL.toTree(newCategoryRestriction.getId());
+      SPARQL.toTree(null, newCategoryRestriction.getId());
     }
   };
 
@@ -644,7 +644,7 @@
       }
     }
 
-    SPARQL.toTree(newCategory ? newCategory.getId() : null);
+    SPARQL.toTree(null, newCategory ? newCategory.getId() : null);
   };
 
   /**
@@ -672,9 +672,9 @@
         }
 
         break;
-      }
-      
+      }      
     }
+
     SPARQL.toTree();
   };
 
@@ -748,7 +748,7 @@
       if(showInResults && newTriple.object.type === TYPE.VAR && $.inArray(newTriple.object.value, SPARQL.Model.data.projection_var) === -1){
         SPARQL.Model.data.projection_var.push(newTriple.object.value);
       }
-      SPARQL.toTree(newTriple.getId());
+      SPARQL.toTree(null, newTriple.getId());
     }
   };
 
@@ -759,7 +759,7 @@
      */
   SPARQL.Model.deleteProperty = function(triple){
     //remove this property from triple
-    var triples = SPARQL.Model.data.triple;
+    var triples = SPARQL.Model.data.triple || [];
     var objectVarInUse = false;
     for(var i = 0; i < triples.length; i++){
       if(triple.isEqual(triples[i])){
@@ -771,7 +771,7 @@
     }
     //check if this var is in categories
     if(!objectVarInUse){
-      var category_restriction = SPARQL.Model.data.category_restriction;
+      var category_restriction = SPARQL.Model.data.category_restriction || [];
       for(i = 0; i < category_restriction.length; i++){
         if(category_restriction[i].subject.isEqual(triple.object)){
           objectVarInUse = true;
@@ -787,7 +787,7 @@
         SPARQL.Model.data.projection_var.splice(index, 1);
       }
       
-      var filters = SPARQL.Model.data.filter;
+      var filters = SPARQL.Model.data.filter || [];
       for(i = 0; i < filters.length; i++){
         for(var j = 0; j < filters[i].expression.length; j++){
           if(filters[i].expression[j].hasTerm(triple.object)){
@@ -797,7 +797,7 @@
         }
       }
 
-      var order = SPARQL.Model.data.order;
+      var order = SPARQL.Model.data.order || [];
       for(i = 0; i < order.length; i++){
         if(order[i].by_var === triple.object.value){
           order.splice(i, 1);
@@ -810,6 +810,20 @@
   };
 
   /**
+   * Delete variables that appear only in projection_var in the model
+   * 
+   */
+  SPARQL.Model.cleanup = function(){
+    var projection_var = SPARQL.Model.data.projection_var;
+    for(var i = 0; i < projection_var.length; i++){
+      if(!SPARQL.Model.isVarInModel(new SPARQL.Model.SubjectTerm(projection_var[i], TYPE.VAR))){
+        projection_var.splice(i, 1);
+        i--;
+      }
+    }
+  };
+
+  /**
      * Delete subject. Delete all the triples having this argument as subject
      * and delete all categories having this argument as subject
      * and delete all filters if this argument does not appear as object in any triple
@@ -818,7 +832,7 @@
      * @param subject Term
      */
   SPARQL.Model.deleteSubject = function(subject){
-    var category_restriction = SPARQL.Model.data.category_restriction;
+    var category_restriction = SPARQL.Model.data.category_restriction || [];
     //remove from categories
     for(var i = 0; i < category_restriction.length; i++){
       if(subject.isEqual(category_restriction[i].subject)){
@@ -828,7 +842,7 @@
     }
 
     //remove from triple
-    var triples = SPARQL.Model.data.triple;
+    var triples = SPARQL.Model.data.triple || [];
     var occursAsObject = false;
     for(i = 0; i < triples.length; i++){
       if(subject.isEqual(triples[i].subject)){
@@ -843,7 +857,7 @@
 
     //if this is var remove it from order
     if(!occursAsObject && subject.type === 'VAR'){
-      var filters = SPARQL.Model.data.filter;
+      var filters = SPARQL.Model.data.filter || [];
       for(i = 0; i < filters.length; i++){
         for(var j = 0; j < filters[i].expression.length; j++){
           for(var k = 0; k < filters[i].expression[j].argument.length; k++){
@@ -859,7 +873,7 @@
         }
       }
 
-      var order = SPARQL.Model.data.order;
+      var order = SPARQL.Model.data.order || [];
       for(i = 0; i < order.length; i++){
         if(subject.value === order[i].by_var){
           order.splice(i, 1);
@@ -868,7 +882,7 @@
       }
 
       //remove it from projection_var
-      var projection_var = SPARQL.Model.data.projection_var;
+      var projection_var = SPARQL.Model.data.projection_var || [];
       for(i = 0; i < projection_var.length; i++){
         if(subject.value === projection_var[i]){
           projection_var.splice(i, 1);
@@ -877,6 +891,7 @@
       }
     }
 
+    SPARQL.Model.cleanup();
     SPARQL.toTree();
   };
 
@@ -1017,7 +1032,7 @@
       }
     }
 
-    SPARQL.toTree(newTriple.getId());
+    SPARQL.toTree(null, newTriple.getId());
   };
 
 
