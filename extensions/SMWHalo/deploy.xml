@@ -3,7 +3,7 @@
 	<global>
 		<id>smwhalo</id>
 		<title>Halo extension</title>
-		<version>1.6.0</version>
+		<version>1.7.0</version>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SMWHalo</instdir>
