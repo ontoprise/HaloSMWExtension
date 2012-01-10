@@ -16,23 +16,22 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
+class SRFChangeTemplateOperation extends SRFRefactoringOperation {
 
 	private $instanceSet;
 	private $template;
-	private $parameter;
-	private $oldValue; // empty means: add value
-	private $newValue; // empty means: remove value
+	private $old_parameter;
+	private $new_parameter;
+	 
 
-	public function __construct($instanceSet, $template, $parameter, $oldValue, $newValue) {
+	public function __construct($instanceSet, $template, $old_parameter, $new_parameter) {
 		parent::__construct();
 		foreach($instanceSet as $i) {
 			$this->instanceSet[] = Title::newFromText($i);
 		}
 		$this->template = Title::newFromText($template, NS_TEMPLATE);
-		$this->parameter = $parameter;
-		$this->oldValue = $oldValue;
-		$this->newValue = $newValue;
+		$this->old_parameter = $old_parameter;
+		$this->new_parameter = $new_parameter;
 	}
 
 	public function queryAffectedPages() {
@@ -49,7 +48,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
-				
+
 			// stores article
 			if ($save) {
 				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
@@ -64,62 +63,33 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
-		if (is_null($this->oldValue) && is_null($this->newValue)) {
+		if (is_null($this->old_parameter) || is_null($this->new_parameter)) {
 			return $pom->getWikiText();
 		}
-		//print_r($pom);
+		
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_TEMPLATE);
-
-		$toDelete = array();
-		$toAdd = array();
 
 		foreach($objects as $o){
 
 			$name = $o->getName();
-			if (is_null($this->newValue)) {
-				// remove annotation
-				if ($name == $this->template->getText()) {
-					$results = array();
-					$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
-					foreach($parameters as $p) {
-						if (is_null($this->oldValue) || $p->getWikiText() == $this->oldValue) {
-							$toDelete[] = $p->getObjectID();
-							$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '".$this->oldValue."' of '".$this->parameter."'", $title);
-						}
+			 
+            $parameters=array();
+			if ($name == $this->template->getText()) {
+				$results = array();
+
+				$this->findObjectByID($o, WOM_TYPE_TMPL_FIELD, $parameters);
+				foreach($parameters as $p) {
+
+					if ($p->getKey() == $this->old_parameter) {
+						$p->setXMLAttribute('key', $this->new_parameter );
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed parameter '".$this->old_parameter."' to '".$this->new_parameter."'", $title);
 					}
 				}
-			} else if (is_null($this->oldValue)) {
-				// add new template parameter
-				$paramValue = new WOMParamValueModel();
-				$templateField = new WOMTemplateFieldModel($this->parameter);
-				$templateField->insertObject(new WOMTextModel($this->newValue));
-				$paramValue->insertObject($templateField);
-				$o->insertObject($paramValue);
-				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '".$this->parameter."=".$this->newValue."'", $title);
-			} else {
 
-				if ($name == $this->template->getText()) {
-					$results = array();
-					$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
-					foreach($parameters as $p) {
-							
-						if ($p->getWikiText() == $this->oldValue) {
-							$id = $p->getObjectID();
-							$p->getParent()->updateObject(new WOMTextModel($this->newValue), $id);
-							$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value of '".$this->parameter."' from '".$this->oldValue."' to '".$this->newValue."'", $title);
-						}
-					}
-
-				}
 			}
-		}
 
-		$toDelete = array_unique($toDelete);
-		foreach($toDelete as $d) {
-			$pom->removePageObject($d);
 		}
-
 
 		// calls sync() internally
 		$wikitext = $pom->getWikiText();

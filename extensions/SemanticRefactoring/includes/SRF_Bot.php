@@ -38,6 +38,9 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 require_once( $srefgIP . '/includes/SRF_Bot.php');
 require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP . '/includes/SRF_Tools.php');
+require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
+require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
+require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateParameter.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeValue.php');
 require_once($srefgIP . '/includes/operations/SRF_DeleteCategory.php');
 require_once($srefgIP . '/includes/operations/SRF_DeleteProperty.php');
@@ -77,6 +80,43 @@ class SRFRefactoringBot extends GardeningBot {
 		return array();
 	}
 
+	/**
+	 * Creates a comment depending on the given parameters
+	 *
+	 * @param string parameters (comma-separated)
+	 * @return string
+	 */
+	public function getComment($params) {
+		$paramArray = GardeningBot::convertParamStringToArray($params);
+		$operation = $paramArray['SRF_OPERATION'];
+
+		switch($operation) {
+			case 'addCategory':
+				if (!array_key_exists('category', $paramArray)) {
+					return '';
+				}
+				$category = $paramArray['category'];
+				return wfMsg('sref_comment_addcategory', $category);
+			case 'removeCategory':
+				if (!array_key_exists('category', $paramArray)) {
+					return '';
+				}
+				$category = $paramArray['category'];
+				return wfMsg('sref_comment_removecategory', $category);
+			case 'replaceCategory':
+				if (!array_key_exists('old_category', $paramArray)) {
+					return '';
+				}
+				$old_category = $paramArray['old_category'];
+				if (!array_key_exists('new_category', $paramArray)) {
+                    return '';
+                }
+                $new_category = $paramArray['new_category'];
+				return wfMsg('sref_comment_replacecategory', $old_category, $new_category);
+		}
+		return '- unknown parameters -';
+	}
+
 	public function run($paramArray, $isAsync, $delay) {
 			
 		// do not allow to start synchronously.
@@ -92,23 +132,23 @@ class SRFRefactoringBot extends GardeningBot {
 
 		switch($operation) {
 			case 'renameInstance':
-                if (!array_key_exists('oldInstance', $paramArray)) {
-                    return "Old instance missing";
-                }
-                $oldInstance = $paramArray['oldInstance'];
+				if (!array_key_exists('oldInstance', $paramArray)) {
+					return "Old instance missing";
+				}
+				$oldInstance = $paramArray['oldInstance'];
 
-                if (!array_key_exists('newInstance', $paramArray)) {
-                    return "New instance missing";
-                }
-                $newInstance = $paramArray['newInstance'];
+				if (!array_key_exists('newInstance', $paramArray)) {
+					return "New instance missing";
+				}
+				$newInstance = $paramArray['newInstance'];
 
-                if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['sref_rename_annotations'] == false) {
-                    return "Nothing done.";
-                }
+				if (!array_key_exists('sref_rename_annotations', $paramArray) || $paramArray['sref_rename_annotations'] == false) {
+					return "Nothing done.";
+				}
 
-                $op = new SRFRenameInstanceOperation($oldInstance, $newInstance);
-              
-                break;
+				$op = new SRFRenameInstanceOperation($oldInstance, $newInstance);
+
+				break;
 			case 'renameProperty':
 				if (!array_key_exists('oldProperty', $paramArray)) {
 					return "Old property missing";
@@ -125,7 +165,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 
 				$op = new SRFRenamePropertyOperation($oldProperty, $newProperty);
-			
+					
 				break;
 			case 'renameCategory' :
 				if (!array_key_exists('oldCategory', $paramArray)) {
@@ -143,16 +183,16 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 
 				$op = new SRFRenameCategoryOperation($oldCategory, $newCategory);
-				
+
 				break;
 			case 'deleteCategory' :
 				if (!array_key_exists('category', $paramArray)) {
 					return "Category missing";
 				}
 				$category = $paramArray['category'];
-				
+
 				$op = new SRFDeleteCategoryOperation($category, $paramArray);
-				
+
 				break;
 			case 'deleteProperty' :
 				if (!array_key_exists('property', $paramArray)) {
@@ -160,10 +200,46 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$property = $paramArray['property'];
 				$op = new SRFDeletePropertyOperation($property, $paramArray);
-				
+
+				break;
+
+			case 'addCategory' :
+				if (!array_key_exists('category', $paramArray)) {
+					return "Category missing";
+				}
+				$category = $paramArray['category'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeCategoryValueOperation($titles, NULL, $category);
+
+				break;
+
+			case 'removeCategory' :
+				if (!array_key_exists('category', $paramArray)) {
+					return "Category missing";
+				}
+				$category = $paramArray['category'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeCategoryValueOperation($titles, $category, NULL);
+
+				break;
+			case 'replaceCategory' :
+				if (!array_key_exists('old_category', $paramArray)) {
+					return "old_category missing";
+				}
+				$old_category = $paramArray['new_category'];
+				if (!array_key_exists('new_category', $paramArray)) {
+					return "new_category missing";
+				}
+				$new_category = $paramArray['new_category'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeCategoryValueOperation($titles, $old_category, new_category);
+
 				break;
 		}
-		
+
 		$num = $op->getNumberOfAffectedPages();
 		$op->setBot($this);
 		$this->setNumberOfTasks(1);

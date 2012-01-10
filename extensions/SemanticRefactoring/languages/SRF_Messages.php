@@ -57,7 +57,7 @@ $messages['en'] = array(
     'sref_open_qi' => 'Open query interface',
     'sref_clear_query' => 'Clear',
     'sref_select_instanceset'=> 'Select instance set',
-    'sref_choose_commands' => 'Choose commands',
+    'sref_choose_commands' => 'Choose command',
     'sref_running_operations' => 'Running operations',
 
     'sref_add' => 'add',
@@ -77,7 +77,19 @@ $messages['en'] = array(
     'sref_new_parameter' => 'New parameter',
     'sref_value' => 'Value',
     'sref_old_value' => 'Old value',
-    'sref_new_value' => 'New value'
+    'sref_new_value' => 'New value',
+
+    'sref_comment' => 'Comment',
+	'sref_starttime' => 'Start-time',
+	'sref_endtime' => 'End-time',
+	'sref_progress' => 'Progress',
+	'sref_status' => 'Status',
+    'sref_finished' => 'finished',
+    'sref_running' => 'running',
+
+    'sref_comment_addcategory' => 'Add category $1',
+    'sref_comment_removecategory' => 'Remove category $1',
+    'sref_comment_replacecategory' => 'Replace category $1 by $2'
 );
 
 /**
@@ -140,7 +152,7 @@ $messages['de'] = array(
     'sref_clear_query' => 'Clear',
     'sref_open_qi' => 'Open query interface',
     'sref_select_instanceset'=> 'Select instance set',
-    'sref_choose_commands' => 'Choose commands',
+    'sref_choose_commands' => 'Choose command',
     'sref_running_operations' => 'Running operations',
 
     'sref_add' => 'add',
@@ -160,7 +172,19 @@ $messages['de'] = array(
     'sref_new_parameter' => 'New parameter',
     'sref_value' => 'Value',
     'sref_old_value' => 'Old value',
-    'sref_new_value' => 'New value'
+    'sref_new_value' => 'New value',
+
+    'sref_comment' => 'Comment',
+    'sref_starttime' => 'Start-time',
+    'sref_endtime' => 'End-time',
+    'sref_progress' => 'Progress',
+    'sref_status' => 'Status',
+    'sref_finished' => 'finished',
+    'sref_running' => 'running',
+
+    'sref_comment_addcategory' => 'Add category $1',
+    'sref_comment_removecategory' => 'Remove category $1',
+    'sref_comment_replacecategory' => 'Replace category $1 by $2'
 );
 
 /**

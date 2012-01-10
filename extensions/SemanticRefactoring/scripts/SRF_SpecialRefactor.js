@@ -131,18 +131,24 @@
 			
 			$('#sref_clear_query').click(function(e) { 
 				$('#sref_querybox_textarea').val("");
+				$('#sref_run_query').attr('disabled', true);
 			});
 			
 			$('#sref_open_qi').click(function(e) { 
 				alert('not implemented yet'); //TODO: implement
 			});
 			
-			$('#sref_run_query').click(function(e) { 
-				if ($.trim($('#sref_querybox_textarea').val()) == '') {
-					alert("Enter a query"); //TODO: localize
-					return;
-				}
-				$('#refactor_form').submit();
+			// disable query textbox if it contains nothing
+			var disabled = ($.trim($('#sref_querybox_textarea').val()) == '');
+			$('#sref_run_query').attr('disabled', disabled);
+			$('#sref_querybox_textarea').keyup(function(e) { 
+				var disabled = ($.trim($('#sref_querybox_textarea').val()) == '');
+				$('#sref_run_query').attr('disabled', disabled);
+			});
+			
+			// initial request of running ops
+			$(document).ready(function(e) {
+				runningOperations.requestTable();
 			});
 		},
 		
@@ -160,6 +166,59 @@
 			var html = '<td class="sref_param_label">'+e.title+"</td>"+'<td class="sref_param_input"><input id="'+e.id+'" '+optionalAttr+' type="text" size="30" value="" '+acAttr+'></input></td>';
 			return html;
 		}
+	};
+	
+	var runningOperations = {
+		showTable : function(response) {
+			var table = $.parseJSON(response);
+			var html = "<table width=\"100%\" class=\"smwtable\"><tr><th>"+mw.msg('sref_comment')+"</th><th>"+mw.msg('sref_starttime')+"</th><th>"
+						+mw.msg('sref_endtime')+"</th><th>"+mw.msg('sref_progress')+"</th><th>"+mw.msg('sref_status')+"</th></tr>";
+			$(table).each(function(i, e) { 
+				html += "<tr>";
+				html += "<td>";
+				html += e.comment;
+				html += "</td>";
+				html += "<td>";
+				html += e.starttime;
+				html += "</td>";
+				html += "<td>";
+				html += e.endtime;
+				html += "</td>";
+				html += "<td>";
+				html += (e.progress * 100) + "%";
+				html += "</td>";
+				html += "<td>";
+				html += (e.progress == 1 ? '<span style="color:green; font-weight:bold">'+mw.msg('sref_finished')+'</span>' 
+											: '<span style="color:blue; font-weight:bold">'+mw.msg('sref_running')+'</span>');
+				html += "</td>";
+				
+			});
+			html += "</table>";
+			$('#sref_operations').html(html);
+		},
+		
+		onError : function(xhr) {
+			if (xhr.status == 403) {
+				alert(mw.msg('sref_not_allowed_botstart'));
+			} else {
+				alert(xhr.responseText);
+			}
+		},
+		
+		requestTable : function(response) {
+			$.ajax({
+				url: mw.config.get('wgScript'),
+				data: {	action : 'ajax',
+						rs : 'smwf_ga_GetGardeningLogAsJSON',
+						rsargs : [ 'smw_refactoringbot' ] 
+					},
+				success: runningOperations.showTable,
+				error: runningOperations.onError
+			});
+			
+		}
+	
+	
 	};
 			
 	$('#sref_commandboxes').html(commandBox.createHTML());
@@ -211,19 +270,31 @@
 			paramString += "," + p + "=" + params[p];
 		}
 		
+		paramString += ",titles="+prefixedTitles.join("%%");
+		
 		
 		// launch Bot
+		
+		var onError = function(xhr) {
+			if (xhr.status == 403) {
+				alert(mw.msg('sref_not_allowed_botstart'));
+			} else {
+				alert(xhr.responseText);
+			}
+		}
+		
 		$.ajax({
 			url: mw.config.get('wgScript'),
 			data: {	action : 'ajax',
-					rs : 'smwf_ga_LaunchGardeningBotXML',
+					rs : 'smwf_ga_LaunchGardeningBot',
 					rsargs : [ 'smw_refactoringbot', paramString, null, null ] 
 				},
-			success: onSuccess,
+			success: runningOperations.requestTable,
 			error: onError
 		});
 		
-		alert(prefixedTitles.join(","));
+		
+		
 	});
 	
 })(jQuery);	

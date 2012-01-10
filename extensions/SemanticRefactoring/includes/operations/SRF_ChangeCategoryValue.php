@@ -16,24 +16,22 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeValueOperation extends SRFRefactoringOperation {
+class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 	private $instanceSet;
-	private $property;
-	private $oldValue; // empty means: add or set annotation
+
+	private $oldValue;
 	private $newValue; // empty means: remove annotation
-	private $set; // true means: annotation is set not added (default is false)
 
 	private $subjectDBKeys;
 
-	public function __construct($instanceSet, $property, $oldValue, $newValue, $set = false) {
+	public function __construct($instanceSet, $oldValue, $newValue) {
 		parent::__construct();
 		foreach($instanceSet as $i) {
 			$this->instanceSet[] = Title::newFromText($i);
 		}
-		$this->property = Title::newFromText($property, SMW_NS_PROPERTY);
+
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
-		$this->set = $set;
 	}
 
 	public function queryAffectedPages() {
@@ -50,7 +48,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 			$rev = Revision::newFromTitle($title);
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
-
+				
 			// stores article
 			if ($save) {
 				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
@@ -71,7 +69,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 	 * @param int $index
 	 */
 	protected function replaceValue(& $value, $index) {
-		if ($this->set || ucfirst($value) == ucfirst($this->oldValue)) {
+		if (ucfirst($value) == ucfirst($this->oldValue)) {
 			$value = $this->newValue;
 		}
 	}
@@ -80,52 +78,39 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
-		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
+		$objects = $pom->getObjectsByTypeID(WOM_TYPE_CATEGORY);
 
 		$toDelete = array();
 		$toAdd = array();
 
-		if (is_null($this->oldValue) && !$this->set) {
+		if (is_null($this->oldValue)) {
 			// add new annotation
-			$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 at \$title", $title, "", array($this->property, $this->newValue));
-		}
+			$toAdd[] = new WOMCategoryModel($this->newValue);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added category $1 at \$title", $title, "", array($this->newValue));
+		} else {
+			foreach($objects as $o){
 
-		foreach($objects as $o){
 
-			$name = $o->getProperty()->getDataItem()->getLabel();
-			if (is_null($this->newValue)) {
-				// remove annotation
-				if ($name == $this->property->getText()) {
-					$value = $o->getPropertyValue();
+				if (is_null($this->newValue)) {
+					// remove annotation
+
+					$value = $o->getName();
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 						$toDelete[] = $o->getObjectID();
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '$2' for $1 at \$title", $title, "", array($this->property, $this->oldValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted category $1 at \$title", $title, "", array($this->oldValue));
 					}
-				}
-			} else  {
 
-				// change values
-				$value = $o->getPropertyValue();
-				if ($name == $this->property->getText()) {
+				} else {
 
-					if ($this->set || ucfirst($value) == ucfirst($this->oldValue)) {
-							
-						$values = $this->splitRecordValues($value);
-						array_walk($values, array($this, 'replaceValue'));
-						$newValue = implode("; ", $values);
-						if ($value != $newValue) {
-							if ($this->set) {
-								$logMessages[$title->getPrefixedText()][] = new SRFLog("Set value '$2' for $1 at \$title", $title, "", array($this->property, $this->newValue));
-							} else {
-								$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value '$2' into '$3' for $1 at \$title", $title, "", array($this->property, $this->oldValue, $this->newValue));
+					// change values
+					$value = $o->getName();
 
-							}
-						}
+					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 
-						$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), $newValue);
-						$o->setSMWDataValue($newDataValue);
+						$o->setName($this->newValue);
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category '$1' into '$2' at \$title", $title, "", array($this->oldValue, $this->newValue));
 					}
+
 				}
 			}
 		}

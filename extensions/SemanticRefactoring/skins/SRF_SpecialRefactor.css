@@ -25,6 +25,14 @@
     
 }
 
+#sref_clear_query {
+	margin-left: 5px;
+}
+
+#sref_open_qi {
+    margin-left: 5px;
+}
+
 #sref_query_container {
     float:left;
     height: 250px;
@@ -79,6 +87,7 @@
 	border: 1px solid #CCCCCC;
     height: 120px;
     width: 100%;
+    overflow: auto;
 }
 
 .sref_instance_selector {

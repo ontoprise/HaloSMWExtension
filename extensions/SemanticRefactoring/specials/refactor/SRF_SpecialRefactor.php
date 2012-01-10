@@ -63,7 +63,7 @@ class SREFRefactor extends SpecialPage {
 		$html .= '<form id="refactor_form" method="post" action="' . $spectitle->escapeLocalURL() . '" name="refactor">';
 		$html .= '<div id="sref_query_container">';
 		$html .= '<textarea id="sref_querybox_textarea" name="q">'.$query_val.'</textarea>';
-		$html .= '<input type="button" id="sref_run_query" value="'.wfMsg('sref_run_query').'"></input>';
+		$html .= '<input type="submit" id="sref_run_query" value="'.wfMsg('sref_run_query').'"></input>';
 		$html .= '<input type="button" id="sref_clear_query" value="'.wfMsg('sref_clear_query').'"></input>';
 		$html .= '<input type="button" id="sref_open_qi" value="'.wfMsg('sref_open_qi').'"></input>';
 		$html .= '</div>';

@@ -76,5 +76,16 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 		print "\n".$log->asWikiText();
 		$this->assertContains('[[Occupation::Software engineer]]', $log->getWikiText());
 	}
+	
+function testValueSet() {
+        $r = new SRFChangeValueOperation(array("Thomas"), "Employee of", NULL, "Ontoprise GmbH", true);
+        $logMessages=array();
+        $r->refactor(false, $logMessages);
+        $log = reset($logMessages['Thomas']);
+        print "\n".$log->asWikiText();
+        $this->assertNotContains('[[Employee of::Ontoprise]]', $log->getWikiText());
+        $this->assertNotContains('[[Employee of::FZI]]', $log->getWikiText());
+        $this->assertContains('[[Employee of::Ontoprise GmbH]]', $log->getWikiText());
+    }
 
 }

@@ -142,7 +142,15 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_new_parameter',
 						    'sref_value',
 						    'sref_old_value',
-						    'sref_new_value'
+						    'sref_new_value',
+            
+				            'sref_comment',
+						    'sref_starttime',
+						    'sref_endtime',
+						    'sref_progress',
+						    'sref_status',
+                            'sref_finished',
+                            'sref_running'
     )
     );
 

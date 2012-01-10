@@ -17,5 +17,11 @@ TEXT
 <<<TEXT
 [[Employee of::Ontoprise]]
 TEXT
-
+,
+//------------------------------------------------------------------------------        
+            'Thomas' =>
+<<<TEXT
+[[Employee of::FZI]]
+[[Employee of::Ontoprise]]
+TEXT
 );

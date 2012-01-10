@@ -23,7 +23,9 @@
  * @author Kai Kuehn
  *
  */
+global $smwgHaloIP;
 require_once($srefgIP.'/includes/SRF_Log.php');
+require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
 
 abstract class SRFRefactoringOperation {
 
