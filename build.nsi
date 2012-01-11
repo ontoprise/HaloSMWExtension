@@ -27,7 +27,7 @@
 ; --- The following definitions are meant to be changed ---
 
 !define PRODUCTPATH "SMWPLUS"
-!define PRODUCT_YEAR "2011"
+!define PRODUCT_YEAR "2012"
 #!define VERSION "1.4.3" set by hudson
 #!define BUILD_ID "431" set by hudson
 !define REQUIRED_JAVA_VERSION 16
