@@ -113,6 +113,19 @@ function smgSetupExtension() {
         )
 	);
 
+     $wgResourceModules['jquery.ui.combobox'] = $moduleTemplate + array(
+        'scripts' => array(
+            'scripts/jquery.ui.combobox/jquery.ui.combobox.js'
+        ),
+         'styles' => array(
+          'scripts/jquery.ui.combobox/jquery.ui.combobox.css'
+				),
+         'dependencies' => array(
+             'jquery.ui.autocomplete',
+             'jquery.ui.button'
+        )
+	);
+
 
 
     

@@ -341,6 +341,8 @@ protected $smwUserMessages = array(
     'smw_qi_parserFunc' => 'Parser Function',
     'smw_qi_property' => 'Property',
       'smw_qi_value' => 'Value',
+    'smw_qi_source' => 'Source',
+      'smw_qi_graph' => 'Graph',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',

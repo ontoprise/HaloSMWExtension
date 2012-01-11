@@ -824,8 +824,7 @@ QIHelper.prototype = {
     if(this.pendingElement)
       this.pendingElement.hide();
 
-    SPARQL.srfInitScripts = SPARQL.getInitScripts(request.responseText);
-    var plainHtml = SPARQL.srfInitScripts.pop();
+    var plainHtml = SPARQL.getInitScripts(request.responseText);
     SPARQL.initResultFormatLoading();
         
     // pre-processing

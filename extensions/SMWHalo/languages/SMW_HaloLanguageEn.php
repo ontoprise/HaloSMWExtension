@@ -343,6 +343,8 @@ clicking the big arrows between the columns.',
       'smw_qi_parserFunc' => 'Parser Function',
       'smw_qi_property' => 'Property',
       'smw_qi_value' => 'Value',
+      'smw_qi_source' => 'Source',
+      'smw_qi_graph' => 'Graph',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'By adding a category, only articles of this category are included',

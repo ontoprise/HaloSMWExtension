@@ -83,12 +83,30 @@
     });
   };
 
+  SPARQL.Model.moveOptionalTriplesToEnd = function(){
+    if(!(SPARQL.Model.data.category_restriction && SPARQL.Model.data.category_restriction.length)
+      && SPARQL.Model.data.triple && SPARQL.Model.data.triple.length && SPARQL.Model.data.triple[0].optional){
+      var optionalLast = [];
+      for(var i = 0; i < SPARQL.Model.data.triple.length; i++){
+        if(SPARQL.Model.data.triple[i].optional){
+          optionalLast.push(SPARQL.Model.data.triple.splice(i, 1)[0]);
+          i--;
+        }
+      }
+      if(optionalLast.length){
+        SPARQL.Model.data.triple = $.merge(SPARQL.Model.data.triple, optionalLast);
+      }
+    }
+  };
+
+  
+
   /**
    * Check if given variable is already a part of a model
    * @term Term representing a variable
    * @return true is given variable is a part of triples or categories, false otherwise
    */
-  SPARQL.Model.isVarInModel = function(term){
+  SPARQL.Model.isTermInModel = function(term){
     var result = false;
     $.each(SPARQL.Model.data.triple, function(index, triple){
       if(triple.subject.isEqual(term) || triple.predicate.isEqual(term) || triple.object.isEqual(term)){
@@ -163,25 +181,32 @@
 
     /**
      * Get short representation of the iri.
-     * Search for a matching namespace iri in the table, if found remove it from the given name.
-     * If not found then return the string after last delimiter (/ : #)
+     * Search for a matching namespace iri in the table, if found and the namespace prefix is equal to the given one,
+     * then remove the namespace iri from the name, else if the prefixes are not equal, then replace the namespace iri
+     * with the namespace prefix.
+     * If not found then return the string after last delimiter (/,#)
      */
-    this.getShortName = function(){
+    this.getShortName = function(prefix){
       if(this.type === TYPE.VAR){
         return this.value;
       }
       var result = null;
       var that = this;
+
       $.each(SPARQL.Model.data.namespace, function(index, namespace){
         if(that.value.substr(0, namespace.namespace_iri.length) === namespace.namespace_iri){
-          result = that.value.replace(namespace.namespace_iri, '');
+          if(prefix === namespace.prefix){
+            result = that.value.replace(namespace.namespace_iri, '');
+          }
+          else{
+            result = that.value.replace(namespace.namespace_iri, namespace.prefix + ':');
+          }
           return false;
         }
       });
 
       if(!result){
-        result = this.value.split(/[\/:#]/);
-        result = result[result.length - 1];
+        result = this.value;
       }
 
       return result;
@@ -212,21 +237,21 @@
   };
 
   SPARQL.Model.FilterArgumentTerm = function(value, type, datatype_iri, language){
-//    this.fixValue = function(value, datatype_iri){
-//      switch(datatype_iri){
-//        case 'xsd:dateTime':
-//          var datePattern = /^\\-?\\d{4}\\-\\d{2}\\-\\d{2}$/;
-//          if(datePattern.test(value)){
-//            value = value + 'T00:00:00';
-//          }
-//          break;
-//
-//        default:
-//          break;
-//      }
-//
-//      return value;
-//    };
+    //    this.fixValue = function(value, datatype_iri){
+    //      switch(datatype_iri){
+    //        case 'xsd:dateTime':
+    //          var datePattern = /^\\-?\\d{4}\\-\\d{2}\\-\\d{2}$/;
+    //          if(datePattern.test(value)){
+    //            value = value + 'T00:00:00';
+    //          }
+    //          break;
+    //
+    //        default:
+    //          break;
+    //      }
+    //
+    //      return value;
+    //    };
     
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
   };
@@ -322,32 +347,41 @@
     };
 
     /**
-       * Get short representation of the iri.
-       * Search for a matching namespace iri in the table, if found remove it from the given name.
-       * If not found then return the string after last delimiter (/ : #)
-       */
-    this.getShortName = function(iri){
+     * Get short representation of the iri.
+     * Search for a matching namespace iri in the table, if found and the namespace prefix is equal to the given one,
+     * then remove the namespace iri from the name, else if the prefixes are not equal, then replace the namespace iri
+     * with the namespace prefix.
+     * If not found then return the string after last delimiter (/,#)
+     */
+    this.getShortName = function(iri, prefix){
+      if(this.type === TYPE.VAR){
+        return this.value;
+      }
       var result = null;
       $.each(SPARQL.Model.data.namespace, function(index, namespace){
         if(iri.substr(0, namespace.namespace_iri.length) === namespace.namespace_iri){
-          result = iri.replace(namespace.namespace_iri, '');
+          if(prefix === namespace.prefix){
+            result = iri.replace(namespace.namespace_iri, '');
+          }
+          else{
+            result = iri.replace(namespace.namespace_iri, namespace.prefix + ':');
+          }
           return false;
         }
       });
 
       if(!result){
-        iri = iri.split(/[\/:#]/);
-        result = iri[iri.length - 1];
+        result = iri;
       }
 
       return result;
-    };
+    };    
 
     this.getShortNameArray = function(){
       var result = [];
       var that = this;
       $.each(this.category_iri, function(index, value){
-        result.push(that.getShortName(value));
+        result.push(that.getShortName(value, 'category'));
       });
 
       return result;
@@ -357,7 +391,7 @@
       var result = '';
       var that = this;
       $.each(this.category_iri, function(index, value){
-        result += that.getShortName(value);
+        result += that.getShortName(value, 'category');
         if(index < that.category_iri.length - 1){
           result += ' or ';
         }
@@ -456,7 +490,7 @@
   SPARQL.Model.assureFullyQualifiedIRI = function(value, prefix){
     if(value){
       value = $.trim(value);
-      var fullyQualifiedIRIPattern = /^http:\/\/\w+(?:[\.\/#]?\w+)*$/;
+      var fullyQualifiedIRIPattern = /^http:\/\/\w+(?:[\.\:_\/#]?\w+)*$/;
       var shortIRIPattern = /^(\w+):\w+$/;
       var match;
 
@@ -814,10 +848,46 @@
    * 
    */
   SPARQL.Model.cleanup = function(){
-    var projection_var = SPARQL.Model.data.projection_var;
+    SPARQL.Model.removeOrphanVars();
+    SPARQL.Model.removeOrphanFilters();
+    SPARQL.Model.removeOrphanOrders();    
+  };
+  
+
+  SPARQL.Model.removeOrphanVars = function(){
+    var projection_var = SPARQL.Model.data.projection_var || [];
     for(var i = 0; i < projection_var.length; i++){
-      if(!SPARQL.Model.isVarInModel(new SPARQL.Model.SubjectTerm(projection_var[i], TYPE.VAR))){
+      if(!SPARQL.Model.isTermInModel(new SPARQL.Model.Term(projection_var[i], TYPE.VAR))){
         projection_var.splice(i, 1);
+        i--;
+      }
+    }
+  };
+
+  
+  SPARQL.Model.removeOrphanFilters = function(){
+    var filter = SPARQL.Model.data.filter || [];
+    for(var i = 0; i < filter.length; i++){
+      for(var j = 0; j < filter[i].expression.length; j++){
+        var argument0 = filter[i].expression[j].argument[0]; 
+        var argument1 = filter[i].expression[j].argument[1];
+
+        if(argument0.type === TYPE.VAR && !SPARQL.Model.isTermInModel(argument0)
+          || argument1.type === TYPE.VAR && !SPARQL.Model.isTermInModel(argument1))
+        {
+          filter[i].expression.splice(i, 1);
+          i--;
+        }
+      }
+    }
+  };
+
+
+  SPARQL.Model.removeOrphanOrders = function(){
+    var order = SPARQL.Model.data.order || [];
+    for(var i = 0; i < order.length; i++){
+      if(!SPARQL.Model.isTermInModel(new SPARQL.Model.Term(order[i], TYPE.VAR))){
+        order.splice(i, 1);
         i--;
       }
     }
@@ -849,51 +919,13 @@
         triples.splice(i, 1);
         i--;
       }
-      else if(subject.isEqual(triples[i].object)){
-        occursAsObject = true;
-      }
-    }
-
-
-    //if this is var remove it from order
-    if(!occursAsObject && subject.type === 'VAR'){
-      var filters = SPARQL.Model.data.filter || [];
-      for(i = 0; i < filters.length; i++){
-        for(var j = 0; j < filters[i].expression.length; j++){
-          for(var k = 0; k < filters[i].expression[j].argument.length; k++){
-            if(subject.isEqual(filters[i].expression[j].argument[k])){
-              filters[i].expression[j].splice(j, 1);
-              j--;
-            }
-          }
-        }
-        if(filters[i].expression.length === 0){
-          filters.splice(i, 1);
-          i--;
-        }
-      }
-
-      var order = SPARQL.Model.data.order || [];
-      for(i = 0; i < order.length; i++){
-        if(subject.value === order[i].by_var){
-          order.splice(i, 1);
-          break;
-        }
-      }
-
-      //remove it from projection_var
-      var projection_var = SPARQL.Model.data.projection_var || [];
-      for(i = 0; i < projection_var.length; i++){
-        if(subject.value === projection_var[i]){
-          projection_var.splice(i, 1);
-          break;
-        }
-      }
-    }
-
+    }    
+  
     SPARQL.Model.cleanup();
     SPARQL.toTree();
   };
+
+
 
   /**
      * Reset the model to initial state: empty data, set default namespaces and query parameters

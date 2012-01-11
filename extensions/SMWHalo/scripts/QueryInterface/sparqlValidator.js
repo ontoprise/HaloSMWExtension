@@ -17,8 +17,8 @@
  */
 
 (function($){
-  var protocol = 'http:\\/\\/\\w+\\/';
-  var prefix = '\\w:';
+  var protocol = 'http:\\/\\/(\\w+\\.*\\w+\\/)+';
+  var prefix = '[a-zA-Z_]+:';
 
   SPARQL.Validator = {    
     map: {

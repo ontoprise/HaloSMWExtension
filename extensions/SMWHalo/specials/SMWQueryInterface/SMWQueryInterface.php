@@ -385,6 +385,19 @@ class SMWQueryInterface extends SpecialPage {
             '<td></td></tr></table>';
   }
 
+   private function addPropertyValueDialog($nameInputLabel, $tableId, $nameInputId, $showInResultsChkBoxId, $typeLabelId, $columnLabelId, $drawTopLine = false, $title = false) {
+    return '<table ' . ($drawTopLine ? 'style="border-top: 1px solid silver;"' : '') . ($tableId ? "id=\"$tableId\"" : "") . '>' .
+            ($title ? '<tr><td colspan="3" class="tableSectionTitle">' . $title .'</td></tr>' : '') .
+            '<tr><td>' . $nameInputLabel . '</td>' .
+            '<td><select ' . ($nameInputId ? "id=\"$nameInputId\"" : "") . '/></td>' .
+            '<td><input ' . ($showInResultsChkBoxId ? "id=\"$showInResultsChkBoxId\"" : "") . ' type="checkbox"/>' .
+            '<label ' . ($showInResultsChkBoxId ? "for=\"$showInResultsChkBoxId\"" : "") . '>' . wfMsg('smw_qi_show_in_results') . '</label></td></tr>' .
+            '<tr><td></td><td ' . ($typeLabelId ? "id=\"$typeLabelId\"" : "") . ' class="typeLabelTd"></td><td></td></tr>' .
+            '<tr><td>' . wfMsg('smw_qi_column_label') . '</td>' .
+            '<td><input ' . ($columnLabelId ? "id=\"$columnLabelId\"" : "") . ' type="text"/></td>' .
+            '<td></td></tr></table>';
+  }
+
   private function addFiltersDialog($tableId) {
     return '<table ' . ($tableId ? "id=\"$tableId\"" : "") . '><tr><td class="tableSectionTitle">' . wfMsg('smw_qi_filters') . '</td></tr>' .
             '<tr><td><a href="" id="qiAddAndFilterLink">' . wfMsg('smw_qi_add_and_filter') . ' (AND)</a></td></tr>' .
@@ -417,7 +430,7 @@ class SMWQueryInterface extends SpecialPage {
             '</tr><tr>' .
             '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd">&nbsp;</td><td></td>' .
             '</tr></table>' .
-            $this->addValueDialog(wfMsg('smw_qi_value_name'), 'qiPropertyValueTable', 'qiPropertyValueNameInput', 'qiPropertyValueShowInResultsChkBox', 'qiPropertyValueTypeLabel', 'qiPropertyColumnLabelInput', true, wfMsg('smw_qi_value')) .
+            $this->addPropertyValueDialog(wfMsg('smw_qi_value_name'), 'qiPropertyValueTable', 'qiPropertyValueNameInput', 'qiPropertyValueShowInResultsChkBox', 'qiPropertyValueTypeLabel', 'qiPropertyColumnLabelInput', true, wfMsg('smw_qi_value')) .
             $this->addFiltersDialog('qiPropertyFiltersTable');
   }
 
@@ -532,22 +545,26 @@ class SMWQueryInterface extends SpecialPage {
                         ' . $fullPreviewLink . '
 					</div>
 					<div id="qiQueryFormatContent" style="display:none" class="layoutcontent">
-                        <table summary="Layout Manager for query">
-                            <tr>
-        						<td width="50%" title="' . wfMsg('smw_qi_tt_format') . '">
-                					Format: <select id="layout_format">
-                                    ' . $resultoptionshtml . '
-                                    </select>
-                                </td>
-                                <td title="' . wfMsg('smw_qi_tt_sort') . '">
-                                    Sort by: <select id="layout_sort">
-                                    </select>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div id="queryprinteroptions" style="display:none"></div>
-                </div>';
+            <table id="qiQueryOptionTable" summary="Layout Manager for query">
+            <tr>
+                <td>' . wfMsg('smw_qi_source') . '</td>' .
+                '<td><select id="qiSourceSelect"/></td>
+                 <td>' . wfMsg('smw_qi_graph') . '</td>
+                 <td><select id="qiGraphSelect"/></td>
+           </tr>
+            <tr>
+                <td title="' . wfMsg('smw_qi_tt_format') . '">Format</td>
+                <td><select id="layout_format">
+                    ' . $resultoptionshtml . '
+                     </select>
+                </td>
+                <td title="' . wfMsg('smw_qi_tt_sort') . '">Sort by</td>
+                <td><select id="layout_sort"></select>
+                </td>
+            </tr>
+        </table>
+        </div>
+    </div>';
   }
 
   private function addPreviewResults() {

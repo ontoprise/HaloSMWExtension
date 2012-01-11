@@ -1670,7 +1670,7 @@ function smwhfRegisterResourceLoaderModules() {
       'jquery.ui.dialog',
       'jquery.ui.tabs',
       'ext.smwhalo.general',
-      'ext.jquery.jec'
+      'jquery.ui.combobox'
      );
 
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
