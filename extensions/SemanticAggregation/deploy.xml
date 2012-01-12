@@ -1,51 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-    <global>
-        <version>100</version>
-        <id>semanticaggregation</id>
-        <vendor>Vulcan</vendor>
-        <maintainer>Vulcan</maintainer>
-        <instdir>extensions/SemanticAggregation</instdir>
-        <description>
-        </description>
-		<helpurl></helpurl>
-        <dependencies>
-            <dependency from="1120">mw</dependency>
-            <dependency from="156">smw</dependency>
-            <dependency from="156" optional="true">smwhalo</dependency>
-        </dependencies>
-        <license>GPL-v2</license>
-    </global>
-    <codefiles>
-    
-    </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
-    <configs>
-            <patch file="patch-smw-156.txt" ext="smw" from="1.5.6" />
-            <patch file="patch-smwhalo-156.txt" ext="smwhalo" from="1.5.6" to="1.5.6" />
-            <patch file="patch-smwhalo-160.txt" ext="smwhalo" from="1.6.0" />
-        <new>
-        
-            <require name="semanticaggregation"
-                file="extensions/SemanticAggregation/includes/SA_Initialize.php" />
-            <patch file="patch-smw-156.txt" ext="smw" from="156" />
-            <patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
-            <patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
-        </new>
-			<update>
-            <patch file="patch-smw-156.txt" ext="smw" from="156" />
-            <patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
-            <patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
-			</update>
-			<uninstall>
-            <patch file="patch-smw-156.txt" ext="smw" from="156" />
-            <patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
-            <patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
-			</uninstall>
-    </configs>
+	<global>
+		<version>100</version>
+		<id>semanticaggregation</id>
+		<vendor>Vulcan</vendor>
+		<maintainer>Vulcan</maintainer>
+		<description>Enable aggregation on specified fields in inline queries.</description>
+		<helpurl>http://wiking.vulcan.com/dev/index.php/Semantic_aggregation_extension</helpurl>
+		<instdir>extensions/SemanticAggregation</instdir>
+		<dependencies>
+			<dependency from="1.12.0" to="1.17.9">mw</dependency>
+			<dependency from="1.5.6" to="1.6.1">smw</dependency>
+			<dependency from="1.5.6" to="1.7.0" optional="true">smwhalo</dependency>
+		</dependencies>
+		<license>GPL-v2</license>
+	</global>
+	<codefiles>
+
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<patch file="patch-smw-156.txt" ext="smw" from="1.5.6" />
+		<patch file="patch-smwhalo-156.txt" ext="smwhalo" from="1.5.6" to="1.5.6" />
+		<patch file="patch-smwhalo-160.txt" ext="smwhalo" from="1.6.0" />
+		<new>
+
+			<require name="semanticaggregation"
+				file="extensions/SemanticAggregation/includes/SA_Initialize.php" />
+			<patch file="patch-smw-156.txt" ext="smw" from="156" />
+			<patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
+			<patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
+		</new>
+		<update>
+			<patch file="patch-smw-156.txt" ext="smw" from="156" />
+			<patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
+			<patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
+		</update>
+		<uninstall>
+			<patch file="patch-smw-156.txt" ext="smw" from="156" />
+			<patch file="patch-smwhalo-156.txt" ext="smwhalo" from="156" to="156" />
+			<patch file="patch-smwhalo-160.txt" ext="smwhalo" from="160" />
+		</uninstall>
+	</configs>
 </deploydescriptor>
