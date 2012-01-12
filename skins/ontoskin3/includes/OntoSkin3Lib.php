@@ -79,7 +79,7 @@ class SMWH_Skin {
 			$index++;
 		}
 		$menu.= $this->buildMenuMediaWiki();
-		$menu.= $this->buildTools();
+//		$menu.= $this->buildTools();
 		$menu.= "</ul>";
 
 		return $menu;
@@ -585,11 +585,18 @@ class SMWH_Skin {
 	 * @return string
 	 */
 	public function buildPersonalQuickLinks() {
-		// @todo: put in Mediawiki:PersonalQuickLinks
-		$html = $this->parseWikiText( '<div id="quicklinks">[[Special:SpecialPages|Special pages]]' .
-			'| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]' .
-			'| [[Special:Preferences|Preferences]]</div>'
-		);
+		global $wgUser;
+
+		$wikiText = '<div id="quicklinks">[[Special:SpecialPages|Special pages]]' .
+			'| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]';
+		if( $wgUser->isLoggedIn() ) {
+			$wikiText .= '| [[Special:Preferences|Preferences]]';
+			$groups = $wgUser->getEffectiveGroups();
+			if ( in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1 ) {
+				$wikiText .= '| [[Mediawiki:Haloadministration|Administration]]';
+			}
+		}
+		$html = $this->parseWikiText( $wikiText . '</div>' );
 
 		return '' . $html . '';
 	}
