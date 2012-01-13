@@ -294,12 +294,14 @@ class OntoSkin3Template extends QuickTemplate {
 					<div id="createNewArticleCtrl">
 						<img src="<?php echo $wgScriptPath . '/extensions/SMWHalo/skins/CreateNewArticle/Addcontent.png' ?>"></img>New page
 					</div>
-					<input id="searchInput" pasteNS="true" class="wickEnabled" 
-						name="search" constraints="all" 
-						type="text" <?php echo $this->skin->tooltipAndAccesskey( 'search' ); ?>
-						placeholder="<?php $this->msg( 'smw_search_this_wiki' ); ?>" />
-					<button id="searchButton" type='submit' name='button'
-						<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?>></button>
+					<div style="float:left">
+						<input id="searchInput" pasteNS="true" class="wickEnabled" 
+							name="search" constraints="all" 
+							type="text" <?php echo $this->skin->tooltipAndAccesskey( 'search' ); ?>
+							placeholder="<?php $this->msg( 'smw_search_this_wiki' ); ?>" />
+						<button id="searchButton" type='submit' name='button'
+							<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?>></button>
+					</div>
 				</form>
 			</div>
 		</div>
