@@ -298,12 +298,8 @@ class OntoSkin3Template extends QuickTemplate {
 						name="search" constraints="all" 
 						type="text" <?php echo $this->skin->tooltipAndAccesskey( 'search' ); ?>
 						placeholder="<?php $this->msg( 'smw_search_this_wiki' ); ?>" />
-					<input type='submit' src='<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/button_go.png'
-						name="go" class="searchButton" id="searchGoButton" 
-						value="<?php $this->msg( 'searcharticle' ) ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
-					<!-- @todo: looking glass
-						<input type='submit' src='<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/button_search.png' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg( 'searchbutton' ) ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
-					-->
+					<button id="searchButton" type='submit' name='button'
+						<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?>></button>
 				</form>
 			</div>
 		</div>

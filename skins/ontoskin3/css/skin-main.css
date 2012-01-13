@@ -56,7 +56,7 @@ textarea {
 
 .shadows {
 	background-color: #FFF;
-	box-shadow: 2px 2px 8px #269FB2, -2px 2px 8px #269FB2;
+	box-shadow: 2px 2px 8px #9BBFCB, -2px 2px 8px #9BBFCB;
 }
 
 /* overwrites useragent css to prevent scrolling triggered by padding */
@@ -376,6 +376,10 @@ textarea {
 	float: right;
 }
 
+#simpleSearch {
+	float:left;
+}
+
 #searchInput {
 	background-color: #AAD1DE;
 	border: 1px solid #116988;
@@ -384,10 +388,10 @@ textarea {
 	color: #000000;
 	display: block;
 	float: left;
-	font-size: 90%;
-	height: 20px;
+	font-size: 75%;
+	height: 18px;
 	margin-top: -2px;
-	padding: 5px;
+	padding: 5px 30px 5px 5px;
 	width: 250px;
 }
 
@@ -396,47 +400,17 @@ textarea {
 	box-shadow: inset 2px 2px 4px #AAD1DE, inset -2px -2px 4px #AAD1DE;
 }
 
-#searchGoButton, #mw-searchButton {
-	background: #ffffff; /* Old browsers */
-	background: -moz-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(35%,#f1f8f9), color-stop(100%,#e9f3f6)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* IE10+ */
-	background: linear-gradient(top, #ffffff 0%, #f1f8f9 35%, #e9f3f6 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e9f3f6',GradientType=0 ); /* IE6-9 */
-	border: 1px solid #116988;
-	border-radius: 3px;
-	-webkit-border-radius: 3px;
-	box-shadow: 0 1px 3px #999;
-	color: #219EB5;
+#searchButton {
+	background-color: transparent;
+	background-image: url(../img/search.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	border: none;
 	cursor: pointer;
-	display: inline-block;
-	font-weight: bold;
-	font-size: 10pt;
-	float: right;
-	height: 30px;
-	line-height: 1;
-/*	margin-left: -40px;*/
-	padding: 5px 10px 6px;
-	position: relative;
-	text-decoration: none;
-	text-shadow: 0 -1px 1px rgba(0, 2, 34, 0.25);
-	width: 40px;
-}
-
-#searchGoButton:hover, #mw-searchButton:hover {
-	background: linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* W3C */
-	background: -moz-linear-gradient(top, #ffffff 0%, #f1f8f9 45%, #AAD1DE 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(45%,#f1f8f9), color-stop(100%,#AAD1DE)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #ffffff 0%,#f1f8f9 45%,#AAD1DE 100%); /* IE10+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#AAD1DE',GradientType=0 ); /* IE6-9 */
-}
-
-#searchGoButton:active, #mw-searchButton:active {
-  box-shadow: inset 2px 2px 3px #116988, inset -1px -1px 2px #116988;
+	height: 24px;
+	margin-left: -28px;
+	padding: 0;
+	width: 24px;
 }
 
 /* ----------------------------------------*/
