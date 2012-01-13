@@ -50,10 +50,10 @@ class SMWH_Skin {
 	 *
 	 */
 	public function buildMenuHtml() {
-		$rawmenu = $this->getMenuItems();
+			$rawmenu = $this->getMenuItems();
 
 		if ( count( $rawmenu ) <= 0 ) {
-			return "<p style=\"margin-left: 30px;\">no menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
+			return "<div style=\"margin-left: 30px; float:left;color: white\">no menu defined, see <a href=\"http://smwplus.com/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwplus.com</a> for details</div>";
 		}
 
 		$index = 0;
@@ -115,6 +115,7 @@ class SMWH_Skin {
 		$heading = '';
 		foreach ( $lines as $line ) {
 
+			$line = str_replace( array( '[[SMW::on]]', '[[SMW::off]]' ), '', $line ); //for queries in menu
 			//Lines starting with * but not **
 			if ( strpos( $line, '*' ) === 0 && strpos( $line, '**' ) === false ) {
 				$heading = trim( $line, '*' );
