@@ -97,7 +97,7 @@ class SGAGardening extends SpecialPage {
 						$logPage = Title::newFromText($parts[0]);
 						$html .= "<td><a href=\"".$logPage->getFullURL()."\">Log</a></td>";
 					}
-						
+
 				} else if ($i == 1) {
 					$html .= "<td>".wfMsg($row[$i])."</td>";
 				} else if ($i == 5) {
@@ -117,6 +117,33 @@ class SGAGardening extends SpecialPage {
 		return $html;
 	}
 
+	static function getGardeningLogAsJSON() {
+		global $wgServer,$wgScript, $wgArticlePath;
+
+		$gLog = array();
+		$gardeningLog = SGAGardeningLog::getGardeningLogAccess()->getGardeningLogAsTable();
+		if ($gardeningLog == null || !is_array($gardeningLog)) {
+			return json_encode($gLog);
+		}
+
+		foreach ($gardeningLog as $row) {
+				
+			$o = new stdClass();
+			list($user,$gardeningbot,$starttime,$endtime,$log, $progress, $id, $comment) = $row;
+			$o->user = $user;
+			$o->gardeningbot = $gardeningbot;
+			$o->starttime = $starttime;
+			$o->endtime = $endtime;
+			$o->log = $log;
+			$o->progress = $progress;
+			$o->id = $id;
+			$o->comment = $comment;
+			$gLog[] = $o;
+		}
+
+		return json_encode($gLog);
+	}
+
 	static function getRegisteredBots() {
 		global $registeredBots, $wgUser, $wgServer, $wgScriptPath;
 		$htmlResult = "";
@@ -134,7 +161,7 @@ class SGAGardening extends SpecialPage {
 
 			// if $imageDirectory is NULL, try to find icons in the SemanticGardening skin folder
 			$imageDirectory = $imageDirectory == NULL ? 'extensions/SemanticGardening/skins' : $imageDirectory;
-				
+
 			$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .
 							" onMouseOut=\"gardeningPage.showRightClass(event, this, '$botID')\" onClick=\"gardeningPage.showParams(event, this, '$botID')\" id=\"$botID\">" .
 							"<table width=\"100%\"><tr>" .
@@ -169,8 +196,8 @@ class SGAGardening extends SpecialPage {
 			$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run
 
 Bot</button>";
-		} 
-		
+		}
+
 		return $htmlResult;
 
 	}

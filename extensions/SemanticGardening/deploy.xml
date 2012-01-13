@@ -52,6 +52,9 @@
 			</variable>
 			<script file="maintenance/SGA_setup.php" params="" />
 		</new>
+		<update from="1.3.6">
+          <script file="maintenance/SGA_setup.php" params="" />
+        </update>
 		<uninstall>
 			<script file="maintenance/SGA_setup.php" params="--delete" />
     	</uninstall>

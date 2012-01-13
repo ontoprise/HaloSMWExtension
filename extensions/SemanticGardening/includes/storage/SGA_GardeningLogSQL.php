@@ -64,6 +64,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 				  'timestamp_end' 	=>	'VARCHAR(14) '.$collation.'',
 				  'useremail'   	=>  'VARCHAR(255) '.$collation.'',
 				  'log'				=>	'VARCHAR(255) '.$collation.'',
+		          'comment'         =>  'VARCHAR(255) '.$collation.'',
 				  'progress'		=>	'DOUBLE'), $db, $verbose);
 
 
@@ -116,7 +117,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 		$db =& wfGetDB( DB_SLAVE );
 
 		$res = $db->select( $db->tableName('smw_gardening'),
-		array('user','gardeningbot', 'starttime','endtime','log', 'progress', 'id'), array(),
+		array('user','gardeningbot', 'starttime','endtime','log', 'progress', 'id', 'comment'), array(),
 		$fname, array('ORDER BY' => 'id DESC') );
 
 		$result = array();
@@ -125,7 +126,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 			$row = $db->fetchObject($res);
 			while($row)
 			{
-				$result[]=array($row->user,$row->gardeningbot,$row->starttime,$row->endtime,$row->log, $row->progress, $row->id);
+				$result[]=array($row->user,$row->gardeningbot,$row->starttime,$row->endtime,$row->log, $row->progress, $row->id, $row->comment);
 				$row = $db->fetchObject($res);
 			}
 		}
@@ -137,7 +138,8 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 	 * Adds a gardening task. One must specify the $botID.
 	 * Returns a task id which identifies the task.
 	 *
-	 * @param $botID botID
+	 * @param string $botID botID
+
 	 * @return taskID
 	 */
 	public function addGardeningTask($botID) {
@@ -156,9 +158,20 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 		                   'timestamp_end' => null,
 		                   'log' => null,
 		                   'progress' => 0,
+		                 
 		                   'useremail' => $wgUser->getEmail()), 
 		$fname );
 		return $db->insertId();
+	}
+	
+	public function updateComment($taskID, $comment) {
+		
+        $db =& wfGetDB( DB_MASTER );
+            
+        $db->update( $db->tableName('smw_gardening'),
+        array('comment' => $comment),
+        array( 'id' => $taskID) );
+        
 	}
 
 	/**

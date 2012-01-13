@@ -37,6 +37,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ga_LaunchGardeningBot';
 $wgAjaxExportList[] = 'smwf_ga_CancelGardeningBot';
 $wgAjaxExportList[] = 'smwf_ga_GetGardeningLog';
+$wgAjaxExportList[] = 'smwf_ga_GetGardeningLogAsJSON';
 $wgAjaxExportList[] = 'smwf_ga_GetBotParameters';
 $wgAjaxExportList[] = 'smwf_ga_GetRegisteredBots';
 $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
@@ -181,6 +182,14 @@ function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 function smwf_ga_GetGardeningLog() {
 
 	return SGAGardening::getGardeningLogTable();
+}
+
+/**
+ * Returns gardening log as HTML
+ */
+function smwf_ga_GetGardeningLogAsJSON($id = '') {
+
+    return SGAGardening::getGardeningLogAsJSON();
 }
 
 /**

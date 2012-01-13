@@ -44,6 +44,7 @@ abstract class SGAGardeningLog {
 	 * Returns a task id which identifies the task.
 	 *
 	 * @param $botID botID
+	
 	 * @return taskID
 	 */
 	public abstract function addGardeningTask($botID);

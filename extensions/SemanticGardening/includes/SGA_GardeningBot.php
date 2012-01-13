@@ -133,6 +133,19 @@ abstract class GardeningBot {
 	 * Returns the bot name for a user
 	 */
 	public abstract function getLabel();
+	
+	/**
+     * Creates a human-readible comment depending on the given parameters.
+     * (same as for run-method)
+     *
+     * @param string parameters (comma-separated key-value pairs)
+     *  e.g. param1=value1,param2=value2, ...
+     *  
+     * @return string
+     */
+	public function getComment($params) {
+		return '';
+	}
 
 	/**
 	 * Returns directory for bot icon. NULL means the icon
@@ -442,6 +455,7 @@ abstract class GardeningBot {
 				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
 			}
 		}
+		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($params));
 		return $taskid;
 	}
 
