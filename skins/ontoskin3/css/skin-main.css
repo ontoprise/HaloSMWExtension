@@ -407,6 +407,7 @@ textarea {
 	background-repeat: no-repeat;
 	border: none;
 	cursor: pointer;
+	float: left;
 	height: 24px;
 	margin-left: -28px;
 	padding: 0;
