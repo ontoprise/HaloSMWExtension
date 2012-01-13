@@ -58,6 +58,10 @@
               <replacement>extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php</replacement>
             </replace>
 		</update>
+		<update from="patchlevel" removeAll="true">
+            <require name="us_init"
+                file="extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php" />
+        </update>
 		<update from="156" removeAll="true">
 			<require name="us_init"
 				file="extensions/EnhancedRetrieval/includes/EnhancedRetrieval.php" />
