@@ -53,6 +53,15 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 		$this->assertContains('Newvalue1', $log->getWikiText());
 	}
 
+	function testSetValue() {
+		$r = new SRFChangeTemplateParameterOperation(array("Testarticle1"), "Testtemplate", "param1", NULL, "Newvalue1", true);
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Testarticle1']);
+		print "\n".$log->asWikiText();
+		$this->assertContains('Newvalue1', $log->getWikiText());
+	}
+
 	function testAddValue() {
 		$r = new SRFChangeTemplateParameterOperation(array("Testarticle2"), "Testtemplate", "param3", NULL, "value3");
 		$logMessages=array();

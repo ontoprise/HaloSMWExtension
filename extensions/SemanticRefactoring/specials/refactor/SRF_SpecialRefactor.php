@@ -28,7 +28,7 @@
  */
 if (!defined('MEDIAWIKI')) die();
 
-define("SRFF_HELP_URL", "http://smwforum.ontoprise.com");
+define("SRFF_HELP_URL", "http://www.smwplus.com");
 
 global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
@@ -76,6 +76,8 @@ class SREFRefactor extends SpecialPage {
 			$html .= $qresult['html'];
 		}
 		$html .= '</div>';
+		$html .= '<input type="button" id="sref_selectall" value="'.wfMsg('sref_selectall').'"></input>';
+		$html .= '<input type="button" id="sref_deselectall" value="'.wfMsg('sref_deselectall').'"></input>';
 		$html .= 'TODO: browse large query results via pages';
 		$html .= '</div>';
 		$html .= '</form>';

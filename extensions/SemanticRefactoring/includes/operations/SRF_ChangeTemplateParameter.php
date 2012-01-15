@@ -23,8 +23,9 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 	private $parameter;
 	private $oldValue; // empty means: add value
 	private $newValue; // empty means: remove value
+	private $set;
 
-	public function __construct($instanceSet, $template, $parameter, $oldValue, $newValue) {
+	public function __construct($instanceSet, $template, $parameter, $oldValue, $newValue, $set = false) {
 		parent::__construct();
 		foreach($instanceSet as $i) {
 			$this->instanceSet[] = Title::newFromText($i);
@@ -33,6 +34,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 		$this->parameter = $parameter;
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
+		$this->set = $set;
 	}
 
 	public function queryAffectedPages() {
@@ -49,7 +51,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
-				
+
 			// stores article
 			if ($save) {
 				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
@@ -74,6 +76,8 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 		$toDelete = array();
 		$toAdd = array();
 
+
+
 		foreach($objects as $o){
 
 			$name = $o->getName();
@@ -89,7 +93,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 						}
 					}
 				}
-			} else if (is_null($this->oldValue)) {
+			} else if (is_null($this->oldValue) && !$this->set) {
 				// add new template parameter
 				$paramValue = new WOMParamValueModel();
 				$templateField = new WOMTemplateFieldModel($this->parameter);
@@ -97,14 +101,14 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 				$paramValue->insertObject($templateField);
 				$o->insertObject($paramValue);
 				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '".$this->parameter."=".$this->newValue."'", $title);
-			} else {
+			} else  {
 
 				if ($name == $this->template->getText()) {
 					$results = array();
 					$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
 					foreach($parameters as $p) {
 							
-						if ($p->getWikiText() == $this->oldValue) {
+						if ($this->set || $p->getWikiText() == $this->oldValue) {
 							$id = $p->getObjectID();
 							$p->getParent()->updateObject(new WOMTextModel($this->newValue), $id);
 							$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value of '".$this->parameter."' from '".$this->oldValue."' to '".$this->newValue."'", $title);

@@ -146,9 +146,24 @@
 				$('#sref_run_query').attr('disabled', disabled);
 			});
 			
-			// initial request of running ops
+			// request of running ops
 			$(document).ready(function(e) {
 				runningOperations.requestTable();
+				setInterval(runningOperations.requestTable, 20000);
+			});
+			
+			// (de-)select all
+			$('#sref_selectall').click(function(e) { 
+				var results = $('input', '#sref_resultbox');
+				results.each(function(i, e) { 
+					$(e).attr("checked", true);
+				});
+			});
+			$('#sref_deselectall').click(function(e) { 
+				var results = $('input', '#sref_resultbox');
+				results.each(function(i, e) { 
+					$(e).attr("checked", false);
+				});
 			});
 		},
 		

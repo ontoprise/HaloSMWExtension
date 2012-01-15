@@ -33,6 +33,15 @@
     margin-left: 5px;
 }
 
+#sref_selectall {
+	margin-top: 2px;
+}
+
+#sref_deselectall {
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
 #sref_query_container {
     float:left;
     height: 250px;

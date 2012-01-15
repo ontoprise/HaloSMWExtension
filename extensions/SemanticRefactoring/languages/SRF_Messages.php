@@ -56,6 +56,8 @@ $messages['en'] = array(
     'sref_run_query' => 'Run query',
     'sref_open_qi' => 'Open query interface',
     'sref_clear_query' => 'Clear',
+    'sref_selectall' => 'Select all',
+    'sref_deselectall' => 'Deselect all',
     'sref_select_instanceset'=> 'Select instance set',
     'sref_choose_commands' => 'Choose command',
     'sref_running_operations' => 'Running operations',
@@ -89,7 +91,14 @@ $messages['en'] = array(
 
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
-    'sref_comment_replacecategory' => 'Replace category $1 by $2'
+    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    'sref_comment_addAnnotation' => 'Add annotation $1::$2',
+	'sref_comment_removeAnnotation' => 'Remove annotation $1::$2',
+	'sref_comment_replaceAnnotation' => 'Replace annotation $1::$2 by $1::$3',
+	'sref_comment_setValueOfAnnotation' => 'Set value of $1::$2',
+	'sref_comment_setValueOfTemplate' => 'Set value of $1: $2=$3',
+	'sref_comment_replaceTemplateValue' => 'Replace template value $1: $2=$3 by $2=$4',
+	'sref_comment_renameTemplateParameter' => 'Replace template parameter $1: $2 by $3'
 );
 
 /**
@@ -150,6 +159,8 @@ $messages['de'] = array(
     'sref_enter_query' => 'Enter a query to select an instance set',
     'sref_run_query' => 'Run query',
     'sref_clear_query' => 'Clear',
+    'sref_selectall' => 'Select all',
+    'sref_deselectall' => 'Deselect all',
     'sref_open_qi' => 'Open query interface',
     'sref_select_instanceset'=> 'Select instance set',
     'sref_choose_commands' => 'Choose command',
@@ -184,7 +195,17 @@ $messages['de'] = array(
 
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
-    'sref_comment_replacecategory' => 'Replace category $1 by $2'
+    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    'sref_comment_addcategory' => 'Add category $1',
+    'sref_comment_removecategory' => 'Remove category $1',
+    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    'sref_comment_addAnnotation' => 'Add annotation $1::$2',
+    'sref_comment_removeAnnotation' => 'Remove annotation $1::$2',
+    'sref_comment_replaceAnnotation' => 'Replace annotation $1::$2 by $1::$3',
+    'sref_comment_setValueOfAnnotation' => 'Set value of $1::$2',
+    'sref_comment_setValueOfTemplate' => 'Set value of $1: $2=$3',
+    'sref_comment_replaceTemplateValue' => 'Replace template value $1: $2=$3 by $2=$4',
+    'sref_comment_renameTemplateParameter' => 'Replace template parameter $1: $2 by $3'
 );
 
 /**

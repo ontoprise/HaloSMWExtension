@@ -90,29 +90,140 @@ class SRFRefactoringBot extends GardeningBot {
 		$paramArray = GardeningBot::convertParamStringToArray($params);
 		$operation = $paramArray['SRF_OPERATION'];
 
+		$msg = 'sref_comment_'.strtolower($operation);
 		switch($operation) {
 			case 'addCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';
 				}
 				$category = $paramArray['category'];
-				return wfMsg('sref_comment_addcategory', $category);
+				return wfMsg($msg, $category);
 			case 'removeCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';
 				}
 				$category = $paramArray['category'];
-				return wfMsg('sref_comment_removecategory', $category);
+				return wfMsg($msg, $category);
 			case 'replaceCategory':
 				if (!array_key_exists('old_category', $paramArray)) {
 					return '';
 				}
 				$old_category = $paramArray['old_category'];
 				if (!array_key_exists('new_category', $paramArray)) {
-                    return '';
-                }
-                $new_category = $paramArray['new_category'];
-				return wfMsg('sref_comment_replacecategory', $old_category, $new_category);
+					return '';
+				}
+				$new_category = $paramArray['new_category'];
+				return wfMsg($msg, $old_category, $new_category);
+			case 'addAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				return wfMsg($msg, $property, $value);
+
+				break;
+
+			case 'removeAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				return wfMsg($msg, $property, $value);
+
+				break;
+
+			case 'replaceAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				return wfMsg($msg, $property, $old_value, $new_value);
+
+				break;
+
+			case 'setValueOfAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				return wfMsg($msg, $property, $value);
+
+				break;
+
+			case 'setValueOfTemplate' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				return wfMsg($msg, $template, $parameter, $value);
+
+				break;
+
+			case 'replaceTemplateValue' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				return wfMsg($msg, $template, $parameter, $old_value, $new_value);
+
+				break;
+
+			case 'renameTemplateParameter' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+
+				if (!array_key_exists('old_parameter', $paramArray)) {
+					return "old_parameter missing";
+				}
+				$old_parameter = $paramArray['old_parameter'];
+				if (!array_key_exists('new_parameter', $paramArray)) {
+					return "new_parameter missing";
+				}
+				$new_parameter = $paramArray['new_parameter'];
+				return wfMsg($msg, $template, $old_parameter, $new_parameter);
+				break;
 		}
 		return '- unknown parameters -';
 	}
@@ -236,6 +347,132 @@ class SRFRefactoringBot extends GardeningBot {
 				$titles = explode("%%", $paramArray['titles']);
 
 				$op = new SRFChangeCategoryValueOperation($titles, $old_category, new_category);
+
+				break;
+
+			case 'addAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeValueOperation($titles, $property, NULL, $value);
+
+				break;
+
+			case 'removeAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeValueOperation($titles, $property, $value, NULL);
+
+				break;
+
+			case 'replaceAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeValueOperation($titles, $property, $old_value, $new_value);
+
+				break;
+
+			case 'setValueOfAnnotation' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeValueOperation($titles, $property, NULL, $value, true);
+
+				break;
+
+			case 'setValueOfTemplate' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, NULL, $value, true);
+
+				break;
+
+			case 'replaceTemplateValue' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, $old_value, $new_value);
+
+				break;
+
+			case 'renameTemplateParameter' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+
+				if (!array_key_exists('old_parameter', $paramArray)) {
+					return "old_parameter missing";
+				}
+				$old_parameter = $paramArray['old_parameter'];
+				if (!array_key_exists('new_parameter', $paramArray)) {
+					return "new_parameter missing";
+				}
+				$new_parameter = $paramArray['new_parameter'];
+				$titles = explode("%%", $paramArray['titles']);
+
+				$op = new SRFChangeTemplateOperation($titles, $template, $old_parameter, $new_parameter);
 
 				break;
 		}
