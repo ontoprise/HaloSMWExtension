@@ -90,7 +90,7 @@ class DFMaintenanceTab {
 			$html .= "</td>";
 			$html .= "<td>";
 			$lastMod = filemtime($rp);
-			$html .= date ("m/d/Y", $lastMod);
+			$html .= date ("Y-m-d", $lastMod);
 			$html .= "</td>";
 			$html .= "<td>";
 			$html .= "<input type=\"button\" class=\"df_restore_button\" value=\"$restoreButtonText\" id=\"df_restore__$name\"></input>";
