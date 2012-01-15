@@ -296,12 +296,12 @@ class DFBundleTools {
 		$categorylinks = $db->tableName('categorylinks');
 		$templatelinks = $db->tableName('templatelinks');
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_bundle (id INT(8) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForPagesOfBundle' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForPagesOfBundle' );
 
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_templates_used (title  VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_templates_must_persist (title  VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
@@ -448,12 +448,12 @@ class DFBundleTools {
 		$categorylinks = $db->tableName('categorylinks');
 		$imagelinks = $db->tableName('imagelinks');
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_bundle (id INT(8) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForPagesOfBundle' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForPagesOfBundle' );
 
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_images_used (title  VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 		$db->query( 'CREATE TEMPORARY TABLE df_page_of_images_must_persist (title  VARCHAR(255) NOT NULL)
-                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+                    ENGINE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
