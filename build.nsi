@@ -675,7 +675,8 @@ Function showWikiCustomize
 FunctionEnd
 
 Function checkWikiCustomize
-  CALL checkForSkype
+  CALL checkOS
+  CALL checkPorts
 FunctionEnd
 
 ; Issue 15644: still needed!
@@ -1073,11 +1074,8 @@ Function installAsWindowsService
             
            # Apache (remove others before)
            nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
-           nsExec::ExecToLog 'schtasks /delete /tn "stop_apache" /F'
-           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt" {{command}} "\"net start apache\""'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt" {{command}} "\"$INSTDIR\restartapacheservice.bat\""'
            nsExec::ExecToLog 'schtasks /create /tn "start_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_start_apacheservice.txt"'
-           nsExec::ExecToLog '"$FART" -- "$INSTDIR\scheduled_tasks\runas_template_stop_apacheservice.txt" {{command}} "\"net stop apache\""'
-           nsExec::ExecToLog 'schtasks /create /tn "stop_apache" /XML "$INSTDIR\scheduled_tasks\runas_template_stop_apacheservice.txt"'
            # We do not need a stop command for apache
             
            # Mysql (remove others before)
@@ -1677,4 +1675,55 @@ Function WriteToFile
 
  Pop $1
  Pop $0
+FunctionEnd
+
+
+Function checkOS
+    ${GetWindowsVersion} $R0
+    ${If} $R0 == "7"
+    ${OrIf} $R0 == "2008"
+        Goto os_ok
+    ${EndIf}
+     MessageBox MB_OK|MB_ICONEXCLAMATION  "Non-supported OS detected! Please use Windows 7 or Windows Server 2008 (R2)." 
+     Abort
+os_ok:
+FunctionEnd
+;
+; Checks if TCP ports 80 (HTTP) and 3306 (MySQL) are available.
+; Aborts installtion with an according message, if not.
+;
+Function checkPorts
+  TCP::CheckPort 80
+  Pop $0
+  StrCmp $0 "free" http_port_ok
+  StrCmp $0 "socket_error" http_socket_error
+  StrCmp $0 "inuse" http_socket_inuse
+  Goto http_port_ok
+http_socket_inuse:
+    FindProcDLL::FindProc "Skype.exe"
+    ${If} $R0 == 1
+        MessageBox MB_OK|MB_ICONEXCLAMATION   "Seems that Skype is blocking TCP port 80. Please close it or change its config."  
+        Abort
+    ${EndIf}
+      MessageBox MB_OK|MB_ICONEXCLAMATION "HTTP Port 80 is in use by another application."
+      Abort
+        
+http_socket_error:
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Invalid TCP Port number. It should be an integer between 1 and 65535."
+  Abort
+http_port_ok:
+
+  TCP::CheckPort 3306
+  Pop $0
+  StrCmp $0 "free" mysql_port_ok
+  StrCmp $0 "socket_error" mysql_socket_error
+  StrCmp $0 "inuse" mysql_socket_inuse
+  Goto mysql_port_ok
+mysql_socket_inuse:
+  MessageBox MB_OK|MB_ICONEXCLAMATION "MySQL port 3306 is in use by another application."
+  Abort
+mysql_socket_error:
+  MessageBox MB_OK|MB_ICONEXCLAMATION "Invalid TCP Port number. It should be an integer between 1 and 65535."
+  Abort
+mysql_port_ok:
 FunctionEnd
