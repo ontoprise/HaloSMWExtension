@@ -759,7 +759,7 @@ serializeRule: function() {
 			var inputId = r.id.replace(/-radio-/, '-input-');
 			var value = $(inputId).value;
 			if (r.id.indexOf('-radio-prop-') > 0) {
-				xml += '<property>' + value.replace(" ","_") + '</property>';
+				xml += '<property>' + value.replace(/ /g,"_") + '</property>';
 				this.variableSpec += 'prop#' + value + ';';
 			} else {
 				xml += '<constant>' + value + '</constant>';
