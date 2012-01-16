@@ -86,7 +86,7 @@ function dffInitializeLanguage() {
 	}
 	require_once("$smwgDFIP/languages/$langClass.php");
 	$dfgLang = new $langClass();
-	$wgMessageCache->addMessages($dfgLang->getLanguageArray(), $wgLang->getCode());
+	
 }
 
 function dfgCheckUpdate(&$wgUser, &$injected_html) {
