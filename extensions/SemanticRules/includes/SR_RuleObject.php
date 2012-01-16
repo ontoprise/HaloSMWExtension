@@ -108,7 +108,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 		// add result
 
-		$resultMapping = " AND $resultvar = $ser_formula";
+		$resultMapping = trim($variableassignments) == '' ? " $resultvar = $ser_formula" : " AND $resultvar = $ser_formula";
 			
 
 		// fetch rule head
