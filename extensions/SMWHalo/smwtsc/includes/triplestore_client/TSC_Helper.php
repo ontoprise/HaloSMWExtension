@@ -674,7 +674,7 @@ class TSNamespaces {
 	public function getFullIRIByName($namespace, $localname) {
 		global $smwgHaloTripleStoreGraph;
 		$localname = str_replace(" ", "_", $localname);
-		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($namespace)."/$localname>";
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($namespace)."/". self::encodeSpecials($localname).">";
 	}
 
 	/**
@@ -684,7 +684,7 @@ class TSNamespaces {
 	 */
 	public function getFullIRI(Title $t) {
 		global $smwgHaloTripleStoreGraph;
-		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey().">";
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".self::encodeSpecials($t->getDBkey()).">";
 	}
 
 	/**
@@ -694,7 +694,7 @@ class TSNamespaces {
 	 */
 	public function getFullURI(Title $t) {
 		global $smwgHaloTripleStoreGraph;
-		return $smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".$t->getDBkey();
+		return $smwgHaloTripleStoreGraph."/".$this->getNSPrefix($t->getNamespace())."/".self::encodeSpecials($t->getDBkey());
 	}
 
 	/**
@@ -704,7 +704,7 @@ class TSNamespaces {
 	 */
 	public function getFullIRIFromProperty(SMWPropertyValue $p) {
 		global $smwgHaloTripleStoreGraph;
-		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getDBkey().">";
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".self::encodeSpecials($p->getDBkey()).">";
 	}
 
 	/**
@@ -714,7 +714,17 @@ class TSNamespaces {
 	 */
 	public function getFullIRIFromDIProperty(SMWDIProperty $p) {
 		global $smwgHaloTripleStoreGraph;
-		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".$p->getKey().">";
+		return "<".$smwgHaloTripleStoreGraph."/".$this->getNSPrefix(SMW_NS_PROPERTY)."/".self::encodeSpecials($p->getKey()).">";
+	}
+	
+	/**
+     * Replaces % by the correct %-escape sequence.
+     * 
+     * @param $uri
+     * @return
+     */
+	public static function encodeSpecials($localname) {
+		return preg_replace('/%$|%.$|%([^2][^5])/', '%25$1', $localname);
 	}
 
 
