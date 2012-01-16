@@ -1,21 +1,3 @@
-== Requirements ==
-
-* SemanticResultFormats
-
-== Installation ==
-
-	require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php");
-
-Or
-	add 'ofc' support to '$IP/extensions/SemanticResultFormats/SRF_Settings.php'
-<pre><nowiki>
-	$srfgFormats = array('icalendar', 'vcard', 'calendar', 'eventline', 'timeline', 'sum', 'average', 'min', 'max', 'ofc');
-
-		case 'ofc':
-			$class = 'SRFOFC';
-			$file = $srfgIP . '/ofc/SRF_OFC.php';
-		break;
-</nowiki></pre>
 
 == Usage ==
 In ask query parameter syntax.
