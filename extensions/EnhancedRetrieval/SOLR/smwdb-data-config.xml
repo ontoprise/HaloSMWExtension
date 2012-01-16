@@ -1,6 +1,7 @@
 <!DOCTYPE dataConfig [
     <!ENTITY DBPREFIX ""> <!-- You can specify a MediaWiki database prefix here. -->
 ]>
+<!-- 1.7.0 -->
 <dataConfig>
 	<dataSource 
 		type="JdbcDataSource" 
