@@ -45,7 +45,7 @@ class DF_Language_De extends DF_Language {
 	'df_minversion' => 'Minversion',
     'df_maxversion' => 'Maxversion',
 
-	'checkinstallation' => 'Prüfe Installation',
+	
 	'category' => 'Kategorie',
 	'is_inverse_of' => 'Ist invers zu',
     'has_domain_and_range' => 'Hat Domain und Range',
