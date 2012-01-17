@@ -83,34 +83,34 @@ class SGAGardening extends SpecialPage {
 		$glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 		foreach ($gardeningLog as $row) {
 			$html .= "<tr>";
-			for ($i=0; $i < count($row)-1;$i++) {
-
-					
-				if ($i == 4 && $row[3] != null) {
-					// check if it points to log page or GardeningLog
-					// FIXME: clean up: GardeningLog links should be simply empty
-					$parts = explode("?bot=", $row[$i]);
-					if (count($parts) == 2) { // GardeningLog
-						$botID = $parts[1];
-						$html .= "<td><a href=\"".$glp->getFullURL("bot=$botID")."\">Log</a></td>";
-					} else { // log page
-						$logPage = Title::newFromText($parts[0]);
-						$html .= "<td><a href=\"".$logPage->getFullURL()."\">Log</a></td>";
-					}
-
-				} else if ($i == 1) {
-					$html .= "<td>".wfMsg($row[$i])."</td>";
-				} else if ($i == 5) {
-					$html .= "<td>".(number_format(($row[$i]+0)*100))."%</td>";
-				} else {
-					$html .= "<td>".$row[$i]."</td>";
+			list($user,$gardeningbot,$starttime,$endtime,$log, $progress, $id, $comment) = $row;
+				
+			$html .= "<td>".$user."</td>";
+			$html .= "<td>".wfMsg($gardeningbot)."</td>";
+			$html .= "<td>".$starttime."</td>";
+			$html .= "<td>".$endtime."</td>";
+		
+			if ($endtime != null) {
+				// check if it points to log page or GardeningLog
+				// FIXME: clean up: GardeningLog links should be simply empty
+				$parts = explode("?bot=", $log);
+				if (count($parts) == 2) { // GardeningLog
+					$botID = $parts[1];
+					$html .= "<td><a href=\"".$glp->getFullURL("bot=$botID")."\">Log</a></td>";
+				} else { // log page
+					$logPage = Title::newFromText($parts[0]);
+					$html .= "<td><a href=\"".$logPage->getFullURL()."\">Log</a></td>";
 				}
+
 			}
-			$runningBot = $row[3] == null;
+			
+            $html .= "<td>".(number_format(($progress+0)*100))."%</td>";
+				
+			$runningBot = $endtime == null;
 			$html .= ($runningBot ? "<td class=\"runningBots\">running</td>" : "<td class=\"finishedBots\">finished</td>");
-			$html .= "<td><button type=\"button\" name=\"abort\" ".($runningBot ? "" : "disabled")." onclick=\"gardeningPage.cancel(event, ".$row[6].")\">".wfMsg('smw_gard_abortbot')."</button></td>";
+			$html .= "<td><button type=\"button\" name=\"abort\" ".($runningBot ? "" : "disabled")." onclick=\"gardeningPage.cancel(event, ".$id.")\">".wfMsg('smw_gard_abortbot')."</button></td>";
 			global $sgaTempDir;
-			$html .= "<td><a href=\"$wgServer$wgScript?action=ajax&rs=smwf_ga_readBotLog&rsargs[]=".$row[$i]."\">".wfMsg('smw_gard_consolelog')."</a></td>";
+			$html .= "<td><a href=\"$wgServer$wgScript?action=ajax&rs=smwf_ga_readBotLog&rsargs[]=".$id."\">".wfMsg('smw_gard_consolelog')."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";
@@ -127,7 +127,7 @@ class SGAGardening extends SpecialPage {
 		}
 
 		foreach ($gardeningLog as $row) {
-				
+
 			$o = new stdClass();
 			list($user,$gardeningbot,$starttime,$endtime,$log, $progress, $id, $comment) = $row;
 			$o->user = $user;

@@ -121,7 +121,12 @@ if ($bot != null) {
 		// 	2. Replace {{percantage}} by %
 		// 	3. decode URL
 		//  4. convert string of the form (key=value,)* to a hash array
-		$log = $bot->run(GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,"")))), true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
+		$paramArray = GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,""))));
+		if (array_key_exists('__PARAM_FILE', $paramArray)) {
+			$params = file_get_contents($paramArray['__PARAM_FILE']);
+			$paramArray = GardeningBot::convertParamStringToArray($params);
+		}
+		$log = $bot->run($paramArray, true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
 	
 		global $smwgAbortBotPortRange;
         if (isset($smwgAbortBotPortRange)) @socket_close($bot->getTermSignalSocket());

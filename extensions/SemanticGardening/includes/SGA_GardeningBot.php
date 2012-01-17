@@ -381,6 +381,16 @@ abstract class GardeningBot {
 		if (gettype($isValid) == 'string') {
 			return "ERROR:$isValid";
 		}
+		
+		// do not ship parameters via commandline if length > 100
+		$oldparams = $params;
+		if (strlen($params) > 100) {
+			$paramfilename = uniqid().".param";
+			$handle = fopen(self::getWriteableDir()."/$paramfilename", "w");
+			fwrite($handle, $params);
+			fclose($handle);
+			$params = "__PARAM_FILE=".self::getWriteableDir()."/$paramfilename";
+		}
 
 		// ok everything is fine, so add a gardening task
 		$taskid = SGAGardeningLog::getGardeningLogAccess()->addGardeningTask($botID);
@@ -455,7 +465,7 @@ abstract class GardeningBot {
 				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
 			}
 		}
-		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($params));
+		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($oldparams));
 		return $taskid;
 	}
 
