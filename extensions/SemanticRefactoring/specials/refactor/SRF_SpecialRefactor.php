@@ -29,6 +29,7 @@
 if (!defined('MEDIAWIKI')) die();
 
 define("SRFF_HELP_URL", "http://www.smwplus.com");
+define('SREF_QUERY_PAGE_LIMIT', 100);
 
 global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
@@ -67,32 +68,40 @@ class SREFRefactor extends SpecialPage {
 		$html .= '<input type="button" id="sref_clear_query" value="'.wfMsg('sref_clear_query').'"></input>';
 		$html .= '<input type="button" id="sref_open_qi" value="'.wfMsg('sref_open_qi').'"></input>';
 		$html .= '</div>';
-		
+
 		// result box
 		$html .= '<div id="sref_result_container"><div id="sref_resultbox">';
+		$offset = $wgRequest->getVal( 'offset' );
 		if ( $wgRequest->getCheck( 'q' ) ) {
-			$qs = new SRFQuerySelector( $wgRequest->getText( 'q' ));
+			
+			$qs = new SRFQuerySelector($wgRequest->getText( 'q' ));
 			$qresult = $qs->getQueryResult();
 			$html .= $qresult['html'];
 		}
 		$html .= '</div>';
 		$html .= '<input type="button" id="sref_selectall" value="'.wfMsg('sref_selectall').'"></input>';
 		$html .= '<input type="button" id="sref_deselectall" value="'.wfMsg('sref_deselectall').'"></input>';
-		$html .= 'TODO: browse large query results via pages';
-		$html .= '</div>';
-		$html .= '</form>';
+
+		if (isset($qresult) && $qresult['result']->hasFurtherResults()) {
+			$html .= '<span id="sref_further_results">'.wfMsg('sref_more_results').'</span>';
+		}
+
+		// arrows
+		$tableRowsCount = isset($qresult) ? $qresult['result']->getCount() : 0;
+		$pageNum = $tableRowsCount / SREF_QUERY_PAGE_LIMIT;
+        $pageNum += $tableRowsCount % SREF_QUERY_PAGE_LIMIT === 0 ? 0 : 1;
+		$html .= '<span id="sref_page_counter">'.wfMsg('sref_page').' 1 - '.$pageNum.'</span>';
+		$html .= '<a id="sref_prev_page" class="sref_prev_page_element sref_pointer">('.wfMsg('sref_prev_page').' '.SREF_QUERY_PAGE_LIMIT.')</a><span class="sref_prev_page_element" id="sref_prev_page_disabled" style="display: none;">('.wfMsg('sref_prev_page').')</span>';
+		$html .= '<a id="sref_next_page" class="sref_next_page_element sref_pointer">('.wfMsg('sref_next_page').' '.SREF_QUERY_PAGE_LIMIT.')</a><span class="sref_next_page_element" id="sref_next_page_disabled" style="display: none;">('.wfMsg('sref_next_page').')</span>';
 		
 
-	 /*  if ($qresult['result']->hasFurtherResults()) {
-            $html .= '<span id="sref_further_results">halo</span>';
-        }
-		$html .= '<div id="sref_resultoptions">';
-		if($qresult['result']->hasFurtherResults()) {
-			$html .= '<input type="checkbox" id="sref_allresults">'.wfMsg('sref_allresults').'</input>';
-		}
-		$html .= '</div>';*/
+
 		$html .= '</div>';
-		
+		$html .= '</form>';
+
+
+		$html .= '</div>';
+
 
 		// command box
 		$html .= '<div style="float:left;width:99%" >';
@@ -102,16 +111,16 @@ class SREFRefactor extends SpecialPage {
 		$html .= '<div style="float:left">';
 		$html .= '<input type="button" id="sref_start_operation" value="'.wfMsg('sref_start_operation').'"></input>';
 		$html .= '</div>';
-        $html .= '</div>';
-        
-        // running operations
-        $html .= '<div style="float:left;width:99%">';
-        $html .= '<h1>'.wfMsg('sref_running_operations').'</h1>';
-        $html .= '<div id="sref_operations">';
-        $html .= '</div>';
-      
-        $html .= '</div>';
-        
+		$html .= '</div>';
+
+		// running operations
+		$html .= '<div style="float:left;width:99%">';
+		$html .= '<h1>'.wfMsg('sref_running_operations').'</h1>';
+		$html .= '<div id="sref_operations">';
+		$html .= '</div>';
+
+		$html .= '</div>';
+
 		// add to page
 		$wgOut->addHTML($html);
 	}

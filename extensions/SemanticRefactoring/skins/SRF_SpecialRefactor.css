@@ -42,6 +42,38 @@
     margin-left: 5px;
 }
 
+#sref_further_results {
+	margin-top: 2px;
+	margin-left: 5px;
+}
+
+#sref_next_page {
+	margin-top: 2px;
+    margin-left: 5px;
+}
+
+.sref_next_page_element {
+	margin-top: 2px;
+    margin-left: 5px;
+   
+}
+
+.sref_prev_page_element {
+    margin-top: 2px;
+    margin-left: 5px;
+    
+}
+
+.sref_pointer {
+	cursor: pointer;
+}
+
+#sref_page_counter {
+	margin-top: 2px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 #sref_query_container {
     float:left;
     height: 250px;

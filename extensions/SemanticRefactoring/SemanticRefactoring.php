@@ -150,7 +150,8 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_progress',
 						    'sref_status',
                             'sref_finished',
-                            'sref_running'
+                            'sref_running',
+                            'sref_page'
     )
     );
 

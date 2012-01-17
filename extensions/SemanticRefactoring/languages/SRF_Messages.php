@@ -61,6 +61,10 @@ $messages['en'] = array(
     'sref_select_instanceset'=> 'Select instance set',
     'sref_choose_commands' => 'Choose command',
     'sref_running_operations' => 'Running operations',
+    'sref_more_results' => 'More results available',
+    'sref_next_page' => 'next',
+    'sref_prev_page' => 'prev',
+    'sref_page' => 'Page',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',
@@ -92,13 +96,16 @@ $messages['en'] = array(
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
     'sref_comment_replacecategory' => 'Replace category $1 by $2',
-    'sref_comment_addAnnotation' => 'Add annotation $1::$2',
-	'sref_comment_removeAnnotation' => 'Remove annotation $1::$2',
-	'sref_comment_replaceAnnotation' => 'Replace annotation $1::$2 by $1::$3',
-	'sref_comment_setValueOfAnnotation' => 'Set value of $1::$2',
-	'sref_comment_setValueOfTemplate' => 'Set value of $1: $2=$3',
-	'sref_comment_replaceTemplateValue' => 'Replace template value $1: $2=$3 by $2=$4',
-	'sref_comment_renameTemplateParameter' => 'Replace template parameter $1: $2 by $3'
+    'sref_comment_addcategory' => 'Add category $1',
+    'sref_comment_removecategory' => 'Remove category $1',
+    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    'sref_comment_addannotation' => 'Add annotation $1::$2',
+    'sref_comment_removeannotation' => 'Remove annotation $1::$2',
+    'sref_comment_replaceannotation' => 'Replace annotation $1::$2 by $1::$3',
+    'sref_comment_setvalueofannotation' => 'Set value of $1::$2',
+    'sref_comment_setvalueoftemplate' => 'Set value of $1: $2=$3',
+    'sref_comment_replacettemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
+    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3'
 );
 
 /**
@@ -165,6 +172,10 @@ $messages['de'] = array(
     'sref_select_instanceset'=> 'Select instance set',
     'sref_choose_commands' => 'Choose command',
     'sref_running_operations' => 'Running operations',
+    'sref_more_results' => 'More results available',
+    'sref_next_page' => 'next',
+    'sref_prev_page' => 'prev',
+     'sref_page' => 'Page',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',
@@ -199,13 +210,13 @@ $messages['de'] = array(
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
     'sref_comment_replacecategory' => 'Replace category $1 by $2',
-    'sref_comment_addAnnotation' => 'Add annotation $1::$2',
-    'sref_comment_removeAnnotation' => 'Remove annotation $1::$2',
-    'sref_comment_replaceAnnotation' => 'Replace annotation $1::$2 by $1::$3',
-    'sref_comment_setValueOfAnnotation' => 'Set value of $1::$2',
-    'sref_comment_setValueOfTemplate' => 'Set value of $1: $2=$3',
-    'sref_comment_replaceTemplateValue' => 'Replace template value $1: $2=$3 by $2=$4',
-    'sref_comment_renameTemplateParameter' => 'Replace template parameter $1: $2 by $3'
+    'sref_comment_addannotation' => 'Add annotation $1::$2',
+    'sref_comment_removeannotation' => 'Remove annotation $1::$2',
+    'sref_comment_replaceannotation' => 'Replace annotation $1::$2 by $1::$3',
+    'sref_comment_setvalueofannotation' => 'Set value of $1::$2',
+    'sref_comment_setvalueoftemplate' => 'Set value of $1: $2=$3',
+    'sref_comment_replacettemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
+    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3'
 );
 
 /**

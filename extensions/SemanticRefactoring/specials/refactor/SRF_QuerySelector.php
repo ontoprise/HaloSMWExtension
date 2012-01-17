@@ -26,7 +26,7 @@
  *
  * @author Kai Kühn
  */
-define('SREF_QUERY_PAGE_LIMIT', 2);
+
 
 class SRFQuerySelector {
 
@@ -66,7 +66,8 @@ class SRFQuerySelector {
 	 */
 	protected function extractQueryParameters(  ) {
 		global $wgRequest, $smwgQMaxInlineLimit;
-
+        $oldQMaxLimit = $smwgQMaxInlineLimit;
+        $smwgQMaxInlineLimit = 500;
 		// Check for q= query string, used whenever this special page calls itself (via submit or plain link):
 		list($queryText, $printouts) = self::splitASKQuery($this->m_querystring);
 		$this->m_querystring = $queryText;
@@ -124,17 +125,19 @@ class SRFQuerySelector {
 			if ( $this->m_params['offset'] == '' )  $this->m_params['offset'] = 0;
 		}
 
-		if ( !array_key_exists( 'limit', $this->m_params ) ) {
+		/*if ( !array_key_exists( 'limit', $this->m_params ) ) {
 			$this->m_params['limit'] = $wgRequest->getVal( 'limit' );
 
 			if ( $this->m_params['limit'] == '' ) {
 				$this->m_params['limit'] = ( $this->m_params['format'] == 'rss' ) ? 10 : 20; // Standard limit for RSS.
 			}
-		}
+		}*/
 
-		$this->m_params['limit'] = min( $this->m_params['limit'], SREF_QUERY_PAGE_LIMIT );
+		$this->m_params['limit'] = 500; //min( array($this->m_params['limit'], SREF_QUERY_PAGE_LIMIT) );
 
 		$this->m_editquery = ( $wgRequest->getVal( 'eq' ) == 'yes' ) || ( $this->m_querystring == '' );
+		
+		$smwgQMaxInlineLimit = $oldQMaxLimit;
 	}
 
 	/**

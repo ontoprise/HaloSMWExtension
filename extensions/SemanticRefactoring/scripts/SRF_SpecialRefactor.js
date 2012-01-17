@@ -81,6 +81,8 @@
 		}
 	
 	};
+	
+	var visibleSlice = 0;
 
 	var commandBox = {
 			
@@ -103,6 +105,27 @@
 			html += '</div>';
 			
 			return html;
+		},
+		
+		updateNextPrev: function() {
+			var pageNum = $('#sref_slice0').attr('pageNum');
+			if (pageNum == undefined) pageNum = 1;
+			if (visibleSlice == 0) {
+				$('#sref_prev_page_disabled').show();
+				$('#sref_prev_page').hide();
+				
+			} else {
+				$('#sref_prev_page_disabled').hide();
+				$('#sref_prev_page').show();
+			}
+			if (visibleSlice == pageNum - 1) {
+				$('#sref_next_page_disabled').show();
+				$('#sref_next_page').hide();
+			} else {
+				$('#sref_next_page_disabled').hide();
+				$('#sref_next_page').show();
+			}
+			$('#sref_page_counter').html(mw.msg('sref_page')+' '+(visibleSlice+1)+" - "+pageNum);
 		},
 	
 		addListeners: function() {
@@ -135,7 +158,8 @@
 			});
 			
 			$('#sref_open_qi').click(function(e) { 
-				alert('not implemented yet'); //TODO: implement
+				//alert('not implemented yet'); //TODO: implement
+				queryInterface.showQI();
 			});
 			
 			// disable query textbox if it contains nothing
@@ -165,6 +189,23 @@
 					$(e).attr("checked", false);
 				});
 			});
+			
+			// next - prev arrows
+			$('#sref_prev_page').click(function(i, e) {
+				$('#sref_slice'+visibleSlice).hide();
+				visibleSlice -= 1;
+				$('#sref_slice'+visibleSlice).show();
+				commandBox.updateNextPrev();
+				
+			});
+			$('#sref_next_page').click(function(i, e) {
+				$('#sref_slice'+visibleSlice).hide();
+				visibleSlice += 1;
+				$('#sref_slice'+visibleSlice).show();
+				commandBox.updateNextPrev();
+			});
+			commandBox.updateNextPrev();
+			
 		},
 		
 		createInputField : function(e) {
@@ -181,6 +222,67 @@
 			var html = '<td class="sref_param_label">'+e.title+"</td>"+'<td class="sref_param_input"><input id="'+e.id+'" '+optionalAttr+' type="text" size="30" value="" '+acAttr+'></input></td>';
 			return html;
 		}
+	};
+	
+	var queryInterface = { 
+			showQI : function() {
+				queryInterface.openQueryInterfaceDialog(mw.config.get('wgScript') 
+							+ '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE',
+							queryInterface.setNewAskQuery);
+			},
+			
+			openQueryInterfaceDialog: function(href, onCleanup){
+			    jQuery.fancybox({
+			      'href' : href,
+			      'width' : 977,
+			      'height' : 600,
+			      'padding': 10,
+			      'margin' : 0,
+			      'autoScale' : false,
+			      'transitionIn' : 'none',
+			      'transitionOut' : 'none',
+			      'type' : 'iframe',
+			      'overlayColor' : '#222',
+			      'overlayOpacity' : '0.8',
+			      'hideOnContentClick' : false,
+			      'scrolling' : 'auto',
+			      'onCleanup' : onCleanup      
+			    });
+			  },
+			  
+			  /**
+			   * set new query annotations
+			   */
+			    setNewAskQuery:function() {
+			      var qiHelperObj = queryInterface.getQIHelper();
+			      
+			      var newQuery = qiHelperObj.getAskQueryFromGui();
+			      if( typeof( qiHelperObj.querySaved) == 'undefined' ||
+			        qiHelperObj.querySaved !== true ) {
+			        return;
+			      }
+			      newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
+			      newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
+			      newQuery = newQuery.replace(/\]\]</g, "]]\n<");
+			      newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+			  	
+			      $('#sref_querybox_textarea').val(newQuery);
+			      delete qiHelperObj;
+			    },
+			    
+			    getQIHelper: function(){
+			        // some extensions use the YUI lib that adds an additional iframe
+			        if(!queryInterface.qihelper){
+			          for (i=0; i<window.top.frames.length; i++) {
+			            if (window.top.frames[i].qihelper) {
+			            	queryInterface.qihelper = window.top.frames[i].qihelper;
+			              break;
+			            }
+			          }
+			        }
+
+			        return queryInterface.qihelper;
+			      }
 	};
 	
 	var runningOperations = {
@@ -286,8 +388,7 @@
 		}
 		
 		paramString += ",titles="+prefixedTitles.join("%%");
-		
-		
+				
 		// launch Bot
 		
 		var onError = function(xhr) {
@@ -299,6 +400,7 @@
 		}
 		
 		$.ajax({
+			type: "POST",
 			url: mw.config.get('wgScript'),
 			data: {	action : 'ajax',
 					rs : 'smwf_ga_LaunchGardeningBot',

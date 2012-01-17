@@ -339,14 +339,14 @@ class SRFRefactoringBot extends GardeningBot {
 				if (!array_key_exists('old_category', $paramArray)) {
 					return "old_category missing";
 				}
-				$old_category = $paramArray['new_category'];
+				$old_category = $paramArray['old_category'];
 				if (!array_key_exists('new_category', $paramArray)) {
 					return "new_category missing";
 				}
 				$new_category = $paramArray['new_category'];
 				$titles = explode("%%", $paramArray['titles']);
 
-				$op = new SRFChangeCategoryValueOperation($titles, $old_category, new_category);
+				$op = new SRFChangeCategoryValueOperation($titles, $old_category, $new_category);
 
 				break;
 
