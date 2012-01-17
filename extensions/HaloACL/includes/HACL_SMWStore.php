@@ -139,14 +139,14 @@ class HACLSMWStore extends SMWStore {
 	 */
 	public function getPropertyValues( $subject, SMWDIProperty $property, $requestoptions = null ) {
 		if (!$this->mProtectionActive) {
-			return $this->mWrappedStore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+			return $this->mWrappedStore->getPropertyValues($subject, $property, $requestoptions);
 		}
 		
 		if (!$this->isSubjectAccessible($subject) || !$this->isPropertyAccessible($property)) {
 			return array();
 		}
 		
-		$values = $this->mWrappedStore->getPropertyValues($subject, $property, $requestoptions, $outputformat);
+		$values = $this->mWrappedStore->getPropertyValues($subject, $property, $requestoptions);
 		foreach ($values as $k => $v) {
 			if ($v instanceof SMWDIWikiPage) {
 				$allowed = $this->userCanAccessTitle($v->getTitle(), 'read');
