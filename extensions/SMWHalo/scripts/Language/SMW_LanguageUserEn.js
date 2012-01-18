@@ -326,6 +326,7 @@ window.wgUserLanguageStrings = {
     'QI_BC_ADD_OTHER_CATEGORY': 'Add another category (OR)',
     'QI_BC_ADD_OTHER_INSTANCE': 'Add another instance (OR)',
     'QI_DC_ADD_OTHER_RESTRICT': 'Add another restriction (OR)',
+    'QI_DC_ADD_NEW_FILTER'    : 'Add new filter (AND)',
     'QI_CAT_ADDED_SUCCESSFUL' : 'Category successfully added to the query',
     'QI_PROP_ADDED_SUCCESSFUL': 'Property successfully added to the query',
     'QI_INST_ADDED_SUCCESSFUL': 'Instance successfully added to the query',

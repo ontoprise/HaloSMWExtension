@@ -54,6 +54,7 @@ isInit || init();
 function initToolTips(){
   var qtipConfig = {
     content: {text: ''},
+    overwrite: false,
     show: {
       solo: true,
       when: {
@@ -101,7 +102,9 @@ function initToolTips(){
 
   jQuery('#qicontent [title]').each(function(){
     qtipConfig.content.text = jQuery(this).attr('title');
-    jQuery(this).qtip(qtipConfig);
+    jQuery(this).qtip(qtipConfig).mouseover(function(e){
+      e.stopPropagation();
+    });
   });
 }
 

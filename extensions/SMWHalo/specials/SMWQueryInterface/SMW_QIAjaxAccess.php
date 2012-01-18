@@ -36,6 +36,7 @@ global $wgAjaxExportList, $wgHooks;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 $wgAjaxExportList[] = 'smwf_qi_getPage';
 $wgAjaxExportList[] = 'smwf_qi_getAskPage';
+$wgAjaxExportList[] = 'smwf_qi_getSparqlQueryResult';
 
 $wgHooks['ajaxMIMEtype'][] = 'smwf_qi_getPageMimeType';
 
@@ -45,6 +46,46 @@ function smwf_qi_getPageMimeType($func, & $mimeType) {
 	if ($func == 'smwf_qi_getAskPage')
 	$mimeType = 'text/html; charset=utf-8';
 	return true;
+}
+
+/**
+ * Get result of a SPARQL query
+ * @param string $querystring SPARQL query
+ * @param string $paramstring parser function parameters e.g. |format=table|source=tsc
+ * @return string query result html or error message in case of a falure
+ */
+function smwf_qi_getSparqlQueryResult($querystring, $paramstring){
+    $params = array($querystring);
+    if($paramstring){
+      $explodedParams = explode("|", $paramstring);
+      foreach ($explodedParams as $param) {
+        if(trim($param)){
+          list($key, $value) = explode("=", $param);
+          $key = trim($key);
+          if($key){
+            $params[$key] = trim($value);
+          }
+        }
+      }
+    }
+
+    // set some default values, if params are not set
+    if (!in_array('format', array_keys($params)))
+      $params['format'] = 'table';
+
+    SMWSPARQLQueryProcessor::processFunctionParams($params, $querystring, $resutlParams, $resultPrintouts);
+
+    $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $resultPrintouts, SMW_OUTPUT_HTML);
+    if (is_array($result) && trim($result[0]) == '' || trim($result == '')) {
+       return wfMsg('smw_qi_printout_err4');
+    }
+
+    $result = parseWikiText($result);
+
+    // add target="_new" for all links
+    $pattern = "|<a|i";
+    $result = preg_replace($pattern, '<a target="_new"', $result);
+    return $result;
 }
 
 function smwf_qi_QIAccess($method, $params, $currentPage= null) {
@@ -121,22 +162,24 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 				$rawparams[] = trim($p_array[0]);
 			}
 
-			$rawparams = array_merge($rawparams, $fixparams);
-			// set some default values, if params are not set
-			$useTsc = (in_array('source', array_keys($fixparams)) && strtolower($fixparams['source']) == 'tsc');
-			if (!in_array('format', array_keys($fixparams)))
-			$fixparams['format'] = 'table';
+      $rawparams = array_merge($rawparams, $fixparams);
+      // set some default values, if params are not set      
+      if (!in_array('format', array_keys($fixparams)))
+        $fixparams['format'] = 'table';
+      if (!in_array('source', array_keys($fixparams)))
+        $fixparams['source'] = 'wiki';
 
-			// use SMW classes or TSC classes and parse params and answer query
-			if ($useTsc)
-			SMWSPARQLQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
-			else
-			SMWQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
-			// check if there is any result and if it corresponds to the selected format
-			$mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
-			$invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
-			if ($invalidRes != 0)
-			return wfMsg('smw_qi_printout_err' . $invalidRes);
+      $useTsc = (strtolower($fixparams['source']) != 'wiki');
+      // use SMW classes or TSC classes and parse params and answer query
+      if ($useTsc)
+        SMWSPARQLQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
+      else
+        SMWQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
+      // check if there is any result and if it corresponds to the selected format
+      $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
+      $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
+      if ($invalidRes != 0)
+        return wfMsg('smw_qi_printout_err' . $invalidRes);
 
 			// quickfix: unset conflicting params for maps
 			if (in_array($fixparams['format'], array("map", "googlemaps2", "openlayers", "yahoomaps"))) {
@@ -520,23 +563,7 @@ function smwf_qi_getPage($args= "") {
 	if ($page === false || $httpErr != 200)
 	return "Error: SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.<br/>HTTP Error code " . $httpErr;
 
-	// create the new source code, by removing the wiki stuff,
-	// keep the header (because of all css and javascripts) and the main content part only
-	//  $newPage = "";
-	//	mvDataFromPage($page, $newPage, '<body');
-	//  $newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
-	//  $newPage.= '<div id="globalWrapper" style="background-image:none; background-color: #ffffff;"><div id="content">';
-	//	mvDataFromPage($page, $newPage, "<!-- start content -->");
-	//	mvDataFromPage($page, $newPage, "<!-- end content -->");
-	//  mvDataFromPage($page, $newPage, "<script>", false);
-	//  mvDataFromPage($page, $newPage, "<!-- Served in");
-	//  $newPage.="</div></div></body></html>";
-	// remove the Switch to Semantic Notification button, incase it's there
-	//  $newPage = preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
-	// remove smwCSH.js include because we do not want a help link in the query interface popup to appear
-	//  $newPage = preg_replace('/<script.*?\/smwCSH.js.*?<\/script>/', "", $newPage);
-	// have a string where to store JS command for onload event
-	$onloadArgs = '';
+  $onloadArgs = '';
 
 	// parse submited params
 	$params = array();
@@ -554,33 +581,20 @@ function smwf_qi_getPage($args= "") {
 	else
 	$excelBridge = '';
 
-	// check params and change HTML of the Query Interface
-	if (isset($params['noPreview']))
-	$page = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $page);
-	if (isset($params['noLayout']))
-	$page = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $page);
-	if (isset($params['query'])) {
-		$queryString = str_replace('"', '&quot;', $params['query']);
-		$queryString = str_replace("'", "\'", $queryString);
-		$onloadArgs .= 'qihelper.initFromQueryString(\'' . $queryString . '\');';
-	}
-	if (strlen($onloadArgs) > 0)
-	$page = str_replace('<body', '<body onload="' . $onloadArgs . '"', $page);
-	// for the CKEditor we set a smaller font size
-	//  if (isset($params['CKE']))
-	//    $page = preg_replace('/(<body.*?)(style=")([^"]*")/i', '$1$2font-size: 70%; $3', $page);
-	// remove unnecessary scripts
-	//    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
-	//  $newPage .= '<script type="text/javascript">
-	//    jQuery(document).ready(function(){
-	//      if ( window.mediaWiki ) {
-	//        window.mediaWiki.loader.load("ext.smwhalo.queryInterface");
-	//        window.mediaWiki.loader.go();
-	//      }
-	//    });
-	//    </script>';
-	//	return $newPage;
-	return $page;
+  // check params and change HTML of the Query Interface
+  if (isset($params['noPreview']))
+    $page = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $page);
+  if (isset($params['noLayout']))
+    $page = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $page);
+  if (isset($params['query'])) {
+    $queryString = str_replace('"', '&quot;', $params['query']);
+    $queryString = str_replace("'", "\'", $queryString);
+    $onloadArgs .= 'qihelper.initFromQueryString(\'' . $queryString . '\');';
+  }
+  if (strlen($onloadArgs) > 0)
+    $page = str_replace('<body', '<body onload="' . $onloadArgs . '"', $page);
+ 
+  return $page;
 }
 
 /**

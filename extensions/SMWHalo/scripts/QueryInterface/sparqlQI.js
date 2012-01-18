@@ -29,7 +29,7 @@
     },
     srfInitMethods: [],
     srfInitScripts: [],
-    sources: ['tsc', 'http://dbpedia.org'],
+    sources: ['tsc', 'http://dbpedia.org/sparql'],
     graphs: ['default', 'none', 'null', 'any'],
     variables: [],
 
@@ -59,19 +59,6 @@
       return;
     }
     SPARQL.View.map.treeToData[nodeId] = nodeData;
-  };
-
-  SPARQL.View.getNodeId = function(nodeData){
-    var treeToDataArray = SPARQL.View.map.treeToData;
-    var result;
-    for(var nodeId in treeToDataArray){
-      if(nodeId && SPARQL.objectsEqual(treeToDataArray[nodeId], nodeData)){
-        result = nodeId;
-        break;
-      }
-    }
-
-    return result; 
   };
 
   SPARQL.View.getTree = function(){
@@ -160,33 +147,6 @@
   };
   
 
-  
-  //  SPARQL.View.updateSubject = function(subjectOld, subjectNew){
-  //    var jstree = $.jstree._reference('qiTreeDiv');
-  //    var selectedNode = jstree.get_selected();
-  //    var subjectOldObj = {
-  //      type: 'subject',
-  //      value: subjectOld
-  //    };
-  //    var nodeId = SPARQL.View.getNodeId(subjectOldObj);
-  //    if(nodeId === selectedNode.attr('id')){
-  //      var subjectType = subjectNew.type;
-  //      if(subjectType === 'VAR'){
-  //        jstree.set_text(selectedNode, '?' + subjectNew.value);
-  //        jstree.set_type('variable', selectedNode);
-  //      }
-  //      else{
-  //        jstree.set_text(selectedNode, subjectNew.value.replace(SPARQL.instance_iri, '').replace(SPARQL.iri_delim, ''));
-  //        jstree.set_type('instance', selectedNode);
-  //      }
-  //
-  //      SPARQL.View.map.put(nodeId, {
-  //        type: 'subject',
-  //        value: subjectNew
-  //      });
-  //    }
-  //  };
-
 
   /**
    *  Compare two objects by comparing only their fields (not methods)
@@ -242,17 +202,6 @@
     return false;
   };
 
-  //  SPARQL.View.updateCategory = function(nodeData, newCategories){
-  //
-  //    var nodeId = SPARQL.View.getNodeId(nodeData);
-  //    nodeData.category_iri = SPARQL.View.buildCategoryIRIArray(newCategories);
-  //    SPARQL.View.map.put(nodeId, nodeData);
-  //
-  //    //set text for this node
-  //    var tree = $.jstree._reference('qiTreeDiv');
-  //    var categoryNode = tree._get_node('#' + nodeId);
-  //    tree.set_text(categoryNode, SPARQL.View.buildCategoryNodeLabel(newCategories));
-  //  };
 
   SPARQL.View.buildCategoryNodeLabel = function(categoryArray){
     var result = '';
@@ -277,20 +226,20 @@
     return result;
   };
   
-  SPARQL.View.deleteCategory = function(categoryObj){
-    //get node id
-    var nodeId = SPARQL.View.getNodeId(categoryObj);
+//  SPARQL.View.deleteCategory = function(categoryObj){
+//    //get node id
+//    var nodeId = SPARQL.View.getNodeId(categoryObj);
+//
+//    //remove tree node
+//    $.jstree._focused().delete_node('#' + nodeId);
+//
+//    //remove the nodeid from the map
+//    SPARQL.View.map.remove(nodeId);
+//  };
 
-    //remove tree node
-    $.jstree._focused().delete_node('#' + nodeId);
-
-    //remove the nodeid from the map
-    SPARQL.View.map.remove(nodeId);
-  };
-
-  SPARQL.View.map.remove = function(nodeId){
-    delete SPARQL.View.map.treeToData[nodeId];
-  };
+//  SPARQL.View.map.remove = function(nodeId){
+//    delete SPARQL.View.map.treeToData[nodeId];
+//  };
 
   
   SPARQL.arraysEqual = function(arr1, arr2){
@@ -301,123 +250,6 @@
     return SPARQL.uid++;
   };
 
-  //  SPARQL.getFullName = function(name, type){
-  //    var fullName = null;
-  //    switch(type){
-  //      case 'category':
-  //        fullName = SPARQL.category_iri + SPARQL.iri_delim + name;
-  //        break;
-  //
-  //      case 'property':
-  //        fullName = SPARQL.property_iri + SPARQL.iri_delim + name;
-  //        break;
-  //
-  //      case 'instance':
-  //        fullName = SPARQL.instance_iri + SPARQL.iri_delim + name;
-  //        break;
-  //
-  //      default:
-  //        fullName = name;
-  //        break;
-  //    }
-  //
-  //    return fullName;
-  //  };
-
-  //  SPARQL.getShortName = function(iri){
-  //    var iriTokens = String.split(iri, SPARQL.iri_delim);
-  //    if(iriTokens && iriTokens.length){
-  //      return iriTokens[iriTokens.length - 1];
-  //    }
-  //
-  //    return iri;
-  //  };
-
-  //  SPARQL.getIRI = function(string){
-  //    var shortName = SPARQL.getShortName(string);
-  //    if(shortName !== string)
-  //      return string.substring(0, string.indexOf(SPARQL.iri_delim + shortName));
-  //    return null;
-  //  };
-
-  //  SPARQL.jstreeToQueryTree = function(treeJsonObject){
-  //    treeJsonObject = treeJsonObject || SPARQL.json.treeJsonObject;
-  //    var queryJsonObject = {};
-  //    var projection_var = [];
-  //    var category_restriction = [];
-  //    var triple = [];
-  //    //for each subject
-  //    //    var data = treeJsonObject.json_data.data;
-  //    for(var i = 0; i < treeJsonObject.length; i++){
-  //
-  //      //if this is variable and showInResults then add it to projection_var
-  //      var subject = treeJsonObject[i];
-  //      if(subject.attr.type === 'VAR' && subject.attr.showinresults === 'true'){
-  //        projection_var.push(SPARQL.fixName(subject.attr.name));
-  //      }
-  //
-  //      //for each child
-  //      if(subject.children){
-  //        for(var j = 0; j < subject.children.length; j++){
-  //          //if this is category then add a category_restriction
-  //          var child = subject.children[j];
-  //          if(child.attr.gui === 'category'){
-  //            var thisCategoryRestriction = {
-  //              subject: {
-  //                value: SPARQL.fixName(subject.attr.name),
-  //                type: subject.attr.type
-  //              },
-  //              category_iri:[child.attr.iri + SPARQL.iri_delim + SPARQL.fixName(child.attr.name)]
-  //            }
-  //            //for each category child (OR relation)
-  //            var categoryChildren = child.children;
-  //            if(categoryChildren){
-  //              for(var catIndex = 0; catIndex < categoryChildren.length; catIndex++){
-  //                //add it to category_iri array
-  //                var categoryChild = categoryChildren[catIndex];
-  //                thisCategoryRestriction.category_iri.push(categoryChild.attr.iri + SPARQL.iri_delim + SPARQL.fixName(categoryChild.attr.name));
-  //              }
-  //            }
-  //
-  //
-  //            category_restriction.push(thisCategoryRestriction);
-  //          }
-  //
-  //          //if this is property then add a triple
-  //          if(child.attr.gui === 'property'){
-  //            var thisTriple = {
-  //              subject: {
-  //                value: subject.attr.type === 'IRI' ? SPARQL.getFullName(SPARQL.fixName(subject.attr.name), 'instance') : SPARQL.fixName(subject.attr.name),
-  //                type: subject.attr.type
-  //              },
-  //              predicate:{},
-  //              object:{}
-  //            }
-  //
-  //            thisTriple.predicate.value = child.attr.iri + SPARQL.iri_delim + SPARQL.fixName(child.attr.name);
-  //            thisTriple.predicate.type = child.attr.type;
-  //            thisTriple.object.value = SPARQL.fixName(child.attr.valuename);
-  //            thisTriple.object.type = child.attr.valuetype;
-  //            thisTriple.optional = !child.attr.valuemustbeset;
-  //            if(child.attr.showinresults){
-  //              projection_var.push(SPARQL.fixName(child.attr.valuename));
-  //            }
-  //            triple.push(thisTriple);
-  //
-  //          }
-  //        }
-  //      }
-  //    }
-  //    queryJsonObject.projection_var = projection_var;
-  //    queryJsonObject.category_restriction = category_restriction;
-  //    queryJsonObject.triple = triple;
-  //
-  //    //add order and format settings to query
-  //
-  //    SPARQL.Model.data = queryJsonObject;
-  //    SPARQL.json.treeJsonObject = treeJsonObject;
-  //
-  //  };
 
   SPARQL.activateUpdateSourceBtn = function(){
     $('#qiUpdateSourceBtn').live('click', function(){
@@ -426,26 +258,6 @@
     });
   };
 
-
-
-  //  SPARQL.parseParserFuncString = function(parserFuncString){
-  //    var regex = /\{\{#sparql:\s*(([\s\S]+)\s*\|(\w+)\s*=\s*(\w+))\s*\}\}/;
-  //    var result = regex.exec(parserFuncString);
-  //    if(result){
-  //      for(var i = 0; i < result.length; i++){
-  //        if(i === 1){
-  //          SPARQL.queryWithParamsString = result[i];
-  //        }
-  //        if(i === 2){
-  //          SPARQL.queryString = result[i];
-  //        }
-  //        if(i > 2){
-  //          break;
-  //        //@TODO implement query parameters initialization
-  //        }
-  //      }
-  //    }
-  //  };
 
   SPARQL.activateDiscardChangesLink = function(){
     $('#discardChangesLink').live('click', function(event){
@@ -460,7 +272,7 @@
 
   SPARQL.sparqlToTree = function(sparqlQuery){
     sparqlQuery = sparqlQuery || SPARQL.queryString;
-    if(!(sparqlQuery && sparqlQuery.length))
+    if(!(sparqlQuery && sparqlQuery.length) || sparqlQuery.match(/SELECT\s*\*\s*WHERE\s*{[\s\r\n]*}\s*/gi))
       return;
 
     mw.log('sparql query send:\n' + sparqlQuery);
@@ -471,6 +283,10 @@
       data: {
         sparql: sparqlQuery
       },
+      beforeSend: function(jqXHR, settings){
+        mw.log('data: ' + $(this).data.sparql);
+        mw.log('jqXHR.responseText: ' + jqXHR.responseText);
+      },
       success: function(data, textStatus, jqXHR) {
         mw.log('textStatus: ' + textStatus);
         mw.log('jqXHR.responseText: ' + jqXHR.responseText);
@@ -480,9 +296,9 @@
           SPARQL.Model.init(data);
           SPARQL.updateSortOptions();
           SPARQL.toTree();
-          if(SPARQL.validateQueryTree(SPARQL.Model.data)){
-            SPARQL.getQueryResult(SPARQL.queryString);
-          }
+//          if(SPARQL.validateQueryTree(SPARQL.Model.data)){
+//            SPARQL.getQueryResult(SPARQL.queryString);
+//          }
         }
         else{
           //tsc is not reachable
@@ -518,6 +334,8 @@
         modal: true,
         width: 'auto',
         height: 'auto',
+        maxHeight: $(window).height(),
+        maxWidth: $(window).width(),
         resizable: true,
         title: title || '',
         buttons: buttons,
@@ -557,54 +375,46 @@
 
 
   SPARQL.treeToSparql = function(treeJsonConfig){
-    //if tree is empty then clear the sparql view
-    if(SPARQL.View.isTreeEmpty()){
-      $('#sparqlQueryText').val('');
-      $('#qiSparqlParserFunction').val('');
-      SPARQL.queryString = null;
-      SPARQL.parserFuncString = null;
-    }
-    else{
-      //else proceed with the translation
-      treeJsonConfig = treeJsonConfig || SPARQL.Model.data;
-      if(SPARQL.validateQueryTree(treeJsonConfig)){
-        var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
-        mw.log('tree json:\n' + jsonString);
-        //send ajax post request to localhost:8080/sparql/treeToSPARQL
-        $.ajax({
-          type: 'POST',
-          url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/treeToSPARQL',
-          data: {
-            tree: jsonString
-          },
-          success: function(data, textStatus, jqXHR) {
-            mw.log('data: ' + data);
-            mw.log('textStatus: ' + textStatus);
-            mw.log('jqXHR.responseText: ' + jqXHR.responseText);
-            if(data && data.query){
-              SPARQL.queryString = data.query;
-              var parserFuncString = SPARQL.buildParserFuncString(data.query);
-              $('#sparqlQueryText').val(SPARQL.queryString);
-              $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
-              $('#qiSparqlParserFunction').val(parserFuncString);
-              SPARQL.getQueryResult(SPARQL.queryString);
-            }
-            else{
-              //tsc is not reachable
-              SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server');
-            }
-          },
-          error: function(xhr, textStatus, errorThrown) {
-            mw.log(textStatus);
-            mw.log('response: ' + xhr.responseText)
-            mw.log('errorThrown: ' + errorThrown);
-            var errorJson = $.parseJSON(xhr.responseText);
-            SPARQL.showMessageDialog(errorJson.error, 'SPARQL tree to string convertion error');
-          }
-
-        });
+    //else proceed with the translation
+    treeJsonConfig = treeJsonConfig || SPARQL.Model.data;
+      
+    var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
+    mw.log('tree json:\n' + jsonString);
+    //send ajax post request to localhost:8080/sparql/treeToSPARQL
+    $.ajax({
+      type: 'POST',
+      url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/treeToSPARQL',
+      data: {
+        tree: jsonString
+      },
+      success: function(data, textStatus, jqXHR) {
+        mw.log('data: ' + data);
+        mw.log('textStatus: ' + textStatus);
+        mw.log('jqXHR.responseText: ' + jqXHR.responseText);
+        if(data && data.query){
+          SPARQL.queryString = data.query;
+          var parserFuncString = SPARQL.buildParserFuncString(data.query);
+          $('#sparqlQueryText').val(SPARQL.queryString);
+          $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
+          $('#qiSparqlParserFunction').val(parserFuncString);
+//          if(SPARQL.validateQueryTree(treeJsonConfig)){
+//            SPARQL.getQueryResult(SPARQL.queryString);
+//          }
+        }
+        else{
+          //tsc is not reachable
+          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server');
+        }
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        mw.log(textStatus);
+        mw.log('response: ' + xhr.responseText)
+        mw.log('errorThrown: ' + errorThrown);
+        var errorJson = $.parseJSON(xhr.responseText);
+        SPARQL.showMessageDialog(errorJson.error, 'SPARQL tree to string convertion error');
       }
-    }
+
+    });
   };
 
   SPARQL.stringifyJSON = function(jsonObject){
@@ -678,14 +488,15 @@
   SPARQL.View.activateAddCategoryBtn = function(){
     $('#qiAddCategoryBtn').live('click', function(){
       //get selected node
-      var selectedSubjectNodeText = SPARQL.View.getNodeText(SPARQL.View.getSelectedSubjectNode());
+      var selectedSubjectNodeText = SPARQL.View.getNodeText(SPARQL.View.getSelectedSubjectNode());      
       if(selectedSubjectNodeText){
         var subject = new SPARQL.Model.SubjectTerm(selectedSubjectNodeText);
         SPARQL.Model.createCategory(subject);
       }
       else{
         SPARQL.Model.createCategory();
-      }      
+      }
+
     });
   };
 
@@ -698,7 +509,7 @@
     $('#qiPropertyDialog').hide();
 
     //populate the dilaog
-    var category_iri = categoryRestriction.getShortNameArray();
+    var category_iri = categoryRestriction ? categoryRestriction.getShortNameArray() : [];
 
     //remove all previously added input rows
     $('#qiCategoryDialogTable tr').not('#categoryInputRow').not('#categoryTypeRow').not('#categoryOrLinkRow').remove();
@@ -706,7 +517,7 @@
     $('#qiCategoryDialogTable').find('input').first().focus();
     
     for(var i = 0; i < category_iri.length; i++){
-      var categoryName = category_iri[i];
+      var categoryName = category_iri[i].replace(/_/g, ' ');
       if(i == 0){
         $('#qiCategoryDialogTable input').val(categoryName);
       }
@@ -720,23 +531,9 @@
       $(this).attr('validator', 'iri');
     });
 
-    $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.categoryIcon + '"><span>' + SPARQL.shortString(categoryRestriction.getString()) + '</span>');
-
-    
-
-    //    //bind keyup event to every category name inputbox
-    //    $('#qiCategoryDialog input[type=text]').live('keyup', function(event){
-    //      //bind focusout event for use with autocompletion
-    //      $(this).live('focusout', function(event){
-    //        $(this).unbind('focusout');
-    //        SPARQL.View.openCategoryDialog.changeName($(this));
-    //      });
-    //
-    //      SPARQL.View.openCategoryDialog.changeName($(this));
-    //    });
-    //    $('#qiCategoryDialog input[type=text]').live('focusout', function(event){
-    //      SPARQL.View.openCategoryDialog.changeName($(this));
-    //    });
+   if(categoryRestriction){
+      $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.categoryIcon + '"><span>' + SPARQL.shortString(categoryRestriction.getString().replace(/_/g, ' ')) + '</span>');
+   }
 
     $('#qiCategoryDialog input[type=text]').live('focus', function(event){
       $(this).attr('oldvalue', $(this).val());
@@ -744,12 +541,12 @@
   };
 
   SPARQL.shortString = function(string){
-    var limit = 20;
+    var limit = 30;
     if(string && string.length > limit){
       string = string.substr(0, limit - 3) + '...';
     }
 
-    return string;
+    return SPARQL.escapeHtmlEntities(string);
   };
 
   SPARQL.View.openCategoryDialog.changeName = function(categoryArray){
@@ -770,66 +567,14 @@
   };
 
   
-
-  //  SPARQL.createSubjectNode = function(tree, nodeName, nodeTitle, nodeType){
-  //    //create new subject node and select it
-  //    var subjectNodeData = {
-  //      data:{
-  //        title: '',
-  //        icon : SPARQL.json.variableIcon
-  //      },
-  //      attr: {
-  //        id: 'subject-' + SPARQL.getNextUid(),
-  //        name: nodeName,
-  //        gui: 'subject',
-  //        temporary: true,
-  //        type: nodeType,
-  //        showinresults: true
-  //      },
-  //      children: []
-  //    };
-  //
-  //    var isVar = (nodeType === 'VAR');
-  //    if(isVar){
-  //      if(nodeTitle){
-  //        subjectNodeData.data.title = '?' + nodeTitle;
-  //      }
-  //    }
-  //    else{
-  //      subjectNodeData.data.icon = SPARQL.json.instanceIcon;
-  //      subjectNodeData.data.iri = SPARQL.instance_iri;
-  //    }
-  //
-  //    tree.deselect_all();
-  //    tree.create ( null , 'first' , subjectNodeData, function(){}, true );
-  //    tree.select_node('#' + subjectNodeData.attr.id);
-  //    var selectedNode = tree.get_selected();
-  //    return selectedNode;
-  //  };
-  
   SPARQL.View.activateAddSubjectBtn = function(){
     $('#qiAddSubjectBtn').live('click', function(){
-      SPARQL.Model.createSubject();
+      SPARQL.View.openSubjectDialog();
+//      SPARQL.Model.createSubject();
     });
   };
 
   
-
-  //  SPARQL.View.getTripleNodeData = function(nodeData){
-  //    var result;
-  //    $.each(SPARQL.View.map.treeToData, function(key, value){
-  //      if(value.type === 'property'
-  //        && value.value.object.value === nodeData.value.value
-  //        && value.value.object.type === nodeData.value.type)
-  //        {
-  //        result = value;
-  //        return false;
-  //      }
-  //    });
-  //
-  //    return result ? result.value : result;
-  //
-  //  };
   SPARQL.View.activateCategoryUpdateBtn = function(){
     $('#qiUpdateButton').unbind();
     $('#qiUpdateButton').click(function(){
@@ -899,24 +644,35 @@
   SPARQL.View.openSubjectDialog = function(subject){    
     SPARQL.View.activateSubjectUpdateBtn();
     SPARQL.View.activateSubjectDeleteLink();
-    
-    var subjectName = subject.getShortName('instance');
-    var isVar = (subject.type === TYPE.VAR);
-    var showInResults = !subjectName.length || (isVar && SPARQL.Model.isVarInResults(subject));
-    
-    if(isVar){
-      $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.variableIcon + '"><span>' + SPARQL.shortString(subjectName) + '</span>');
-      subjectName = '?' + subjectName;      
+
+    if(subject){
+      var subjectName = subject.getShortName('instance');
+      var isVar = (subject.type === TYPE.VAR);
+      var showInResults = !subjectName.length || (isVar && SPARQL.Model.isVarInResults(subject));
+
+      if(isVar){
+        $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.variableIcon + '"><span>' + SPARQL.shortString(subjectName) + '</span>');
+        subjectName = '?' + subjectName;
+      }
+      else{
+        $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.instanceIcon + '"><span>' + SPARQL.shortString(subjectName).replace(/_/g, ' ') + '</span>');
+      }
     }
     else{
-      $('#entityDetailsTd').empty().append('<img src="' + SPARQL.json.instanceIcon + '"><span>' + SPARQL.shortString(subjectName) + '</span>');
-    }
+      subjectName = '';
+      isVar = true;
+      showInResults = true;
+
+      $('#entityDetailsTd').empty();
+    }  
+    
     
     $('#qiCategoryDialog').hide();
     $('#qiSubjectDialog').show();
     $('#qiPropertyDialog').hide();
 
-    SPARQL.View.showFilters(subject, $('#qiSubjectDialog'), true);
+    SPARQL.View.deleteAllFilters($('#qiSubjectFiltersTable'));
+    SPARQL.View.showFilters(subject, $('#qiSubjectFiltersTable'), true);
     
     if(showInResults){
       $('#qiSubjectShowInResultsChkBox').attr('checked', 'checked');
@@ -932,13 +688,15 @@
     //set 1st time the oldValue mannualy cause we have to set the value after the focus
     $('#qiSubjectNameInput').attr('oldValue', subjectName);
 
-    if(isVar){
-      $('#qiSubjectNameInput').attr('validator', 'variable');
-    }
-    else{
-      $('#qiSubjectNameInput').attr('validator', 'iri');
-    }
 
+    $('#qiSubjectNameInput').keyup(function(){
+      if($.trim($(this).val()).indexOf('?') === 0){
+        $('#qiSubjectNameInput').attr('validator', 'variable');
+      }
+      else{
+        $('#qiSubjectNameInput').attr('validator', 'iri');
+      }
+    });
   }
 
   SPARQL.View.openSubjectDialog.changeName = function(input, checkBox){
@@ -963,13 +721,7 @@
     SPARQL.Model.updateSubject(new SPARQL.Model.SubjectTerm(subjectOldName), new SPARQL.Model.SubjectTerm(subjectNewName), inResults);
   };
 
-  //  SPARQL.fixName = function(string){
-  //    if(string){
-  //      string = string.replace(/\?/, '');
-  //      string = string.replace(/\s/, '_');
-  //    }
-  //    return string;
-  //  };
+
 
   SPARQL.initVariableArray = function(){
     SPARQL.variables = [];
@@ -1007,11 +759,11 @@
   SPARQL.View.openPropertyDialog = function(triple){
     SPARQL.View.activatePropertyUpdateBtn();
     SPARQL.View.activatePropertyDeleteLink();
-    var propertyName = triple.predicate.getShortName('property');
+    var propertyName = triple.predicate.getShortName('property').replace(/_/g, ' ');
     var propertyType = triple.predicate.type;
     var valueName = triple.object.getShortName('instance');
     var valueType = triple.object.type;
-    //    var columnLabel = selectedNode.attr('columnlabel');
+
     var showInResults = SPARQL.Model.isVarInResults(triple.object);
     var valueMustBeSet = !triple.optional;
 
@@ -1033,8 +785,6 @@
     else{
       $('#qiPropertyNameInput').attr('validator', 'iri');
     }
-    
-    SPARQL.View.showFilters(triple.object, $('#qiPropertyDialog'));
 
     $('#qiCategoryDialog').hide();
     $('#qiSubjectDialog').hide();
@@ -1044,9 +794,7 @@
     
     $('#qiPropertyDialog #qiPropertyNameInput').val(propertyName);
     
-    SPARQL.getPropertyInfo($('#qiPropertyDialog #qiPropertyNameInput').val());
-    
-    //    $('#qiPropertyDialog #qiSubjectColumnLabel').val(columnLabel || '');
+    SPARQL.getPropertyInfo($('#qiPropertyDialog #qiPropertyNameInput').val());    
 
     if(valueMustBeSet){
       $('#qiPropertyDialog #qiPropertyValueMustBeSetChkBox').attr('checked', 'checked');
@@ -1071,40 +819,46 @@
     $('#qiPropertyDialog #qiPropertyNameInput').keyup(function(){
       SPARQL.getPropertyInfo($(this).val());
       SPARQL.View.setValidator($(this));
+
+      $('#qiPropertyDialog #qiPropertyNameInput').focusout(function(){
+        SPARQL.getPropertyInfo($(this).val());
+        SPARQL.View.setValidator($(this));
+      });
     });
-    $('#qiPropertyDialog #qiPropertyNameInput').focusout(function(){
-      SPARQL.getPropertyInfo($(this).val());
-      SPARQL.View.setValidator($(this));
-    });
-    $('#qiPropertyDialog #qiPropertyValueNameInput').keyup(function(){
-      SPARQL.View.setValidator($(this));
-    });
-    $('#qiPropertyDialog #qiPropertyValueNameInput').focusout(function(){
-      SPARQL.View.setValidator($(this));
-    });
+    
   };
 
   SPARQL.View.initPropertyValueCombobox = function(defaultValue){
     $('#qiPropertyValueNameInput').empty();
-    var selected;
+    var selected = '';
     var valueExists;
     $.each(SPARQL.variables, function(index, value){
       value = '?' + value;
       if(value === defaultValue){
         valueExists = true;
-        selected = 'selected="selected"';
+//        selected = 'selected="selected"';
       }
-      else{
-        selected = '';
-      }
+//      else{
+//        selected = '';
+//      }
       $('#qiPropertyValueNameInput').append('<option value="' + value + '"' + selected + '>' + value + '</option>');
     });
 
     if(!valueExists){
+//      $('#qiPropertyValueNameInput').prepend('<option value="' + defaultValue + '" selected="selected">' + defaultValue + '</option>');
       $('#qiPropertyValueNameInput').prepend('<option value="' + defaultValue + '" selected="selected">' + defaultValue + '</option>');
+      
     }
 
-    $('#qiPropertyValueNameInput').combobox('destroy').combobox();
+    $('#qiPropertyValueNameInput').val(defaultValue);
+    
+    $('#qiPropertyValueNameInput').combobox('destroy').combobox({
+      selected: function(event, ui){
+        var selectedValue = ui.item ? ui.item.value : ui.value;
+        SPARQL.View.deleteAllFilters($('#qiPropertyFiltersTable'));
+        SPARQL.View.showFilters(new SPARQL.Model.Term(selectedValue), $('#qiPropertyFiltersTable'));
+      }
+    });    
   };
 
   SPARQL.View.setValidator = function(element){
@@ -1116,9 +870,33 @@
     }
   };
 
-  SPARQL.View.deleteAllFilters = function(dialog){
-    $(dialog).find('#qiAddAndFilterLink').closest('tr').siblings().remove();
+  SPARQL.View.deleteAllFilters = function(filterTable){
+    filterTable.find('tr').not(':first').remove();
   };
+
+  SPARQL.getShortName = function(iri, defaultPrefix){
+    if(!iri){
+      return null;
+    }
+    var result;
+      $.each(SPARQL.Model.data.namespace, function(index, namespace){
+        if(iri.substr(0, namespace.namespace_iri.length) === namespace.namespace_iri){
+          if(defaultPrefix === namespace.prefix){
+            result = iri.replace(namespace.namespace_iri, '');
+          }
+          else{
+            result = iri.replace(namespace.namespace_iri, namespace.prefix + ':');
+          }
+          return false;
+        }
+      });
+
+      if(!result){
+        result = iri;
+      }
+
+      return result;
+    };
 
   /**
    * Show filter inputs in the dialog.
@@ -1126,39 +904,36 @@
    * @param dialog dom element of the dialog
    * @param readOnly boolean indicating whether the inputs should be read only or not
    */
-  SPARQL.View.showFilters = function(term, dialog, readOnly){
-    SPARQL.View.deleteAllFilters(dialog);
-    if(!term || !dialog){
+  SPARQL.View.showFilters = function(term, dialog, readOnly){    
+    $(dialog).append(SPARQL.createAddAndFilterLink());
+    
+    if(!dialog){
       return;
     }
-    
-    var filters = SPARQL.Model.data.filter;
-    for(var i = 0; filters && i < filters.length; i++){
-      for(var j = 0; j < filters[i].expression.length; j++){
-        if(filters[i].expression[j].argument[0].isEqual(term)){
-          var operator = filters[i].expression[j].operator;
-          var value = filters[i].expression[j].argument[1].value;
-          if(j == 0){
-            //add AND filter panel
-            $(dialog).find('#qiAddAndFilterLink').closest('tr').before('<tr><td>' + SPARQL.createFilterTable(operator, value) + '</td></tr>');
-          }
-          else{
-            $(dialog).find('#qiAddOrFilterLink').last().closest('tr').before(SPARQL.createFilterPanel(operator, value));
-          }
-        }
-        else if(filters[i].expression[j].argument[1].isEqual(term)){
-          operator = filters[i].expression[j].operator;
-          value = filters[i].expression[j].argument[0].value;
-          if(j == 0){
-            //add AND filter panel
-            $(dialog).find('#qiAddAndFilterLink').closest('tr').before('<tr><td>' + SPARQL.createFilterTable(operator, value) + '</td></tr>');
-          }
-          else{
-            $(dialog).find('#qiAddOrFilterLink').last().closest('tr').before(SPARQL.createFilterPanel(operator, value));
+
+    if(term){
+      var filters = SPARQL.Model.data.filter;
+      for(var i = 0; filters && i < filters.length; i++){
+        for(var j = 0; j < filters[i].expression.length; j++){
+          for(var k = 0; k < filters[i].expression[j].argument.length; k++){
+            if(filters[i].expression[j].argument[k].isEqual(term)){
+              var operator = filters[i].expression[j].operator;
+              var value = filters[i].expression[j].argument[k^1].value;
+              var type = filters[i].expression[j].argument[k^1].datatype_iri;
+              if(j == 0){
+                //add AND filter panel
+                var filterTable = $('<tr/>').append($('<td/>').append(SPARQL.createFilterTable(operator, value, SPARQL.getShortName(type))));
+                $(dialog).find('#qiAddAndFilterLink').closest('tr').before(filterTable);
+              }
+              else{
+                $(dialog).find('#qiAddOrFilterLink').last().closest('tr').before(SPARQL.createFilterPanel(operator, value, SPARQL.getShortName(type)));
+              }
+            }
           }
         }
       }
     }
+    
     if(readOnly){
       //Hide 'add' and 'delete' links and disabled inputs
       if($(dialog).find('.filterOR').length){
@@ -1169,14 +944,19 @@
       else{
         $(dialog).find('#qiAddOrFilterLink').hide();
       }
+      if(!(filters && filters.length)){
+        $(dialog).find('.tableSectionTitle').hide();
+      }
       $(dialog).find('#qiAddAndFilterLink').hide();
       $(dialog).find('#qiDeleteFilterImg').hide();
-      $(dialog).find('.filterAND select').attr('disabled', 'disabled');
+      $(dialog).find('.filterAND select').filter(':visible').attr('disabled', 'disabled');
       $(dialog).find('.filterAND input').attr('disabled', 'disabled');
     }
+
   };
 
-  SPARQL.View.openPropertyDialog.changeName = function(){
+  SPARQL.View.openPropertyDialog.changeName = function(){  
+    
     var propertyNodeText = SPARQL.View.getSelectedNodeText();
     var subjectNodeText = SPARQL.View.getNodeText(SPARQL.View.getSelectedSubjectNode());
     var subject = new SPARQL.Model.SubjectTerm(subjectNodeText);
@@ -1194,30 +974,6 @@
     //change property in the model
     SPARQL.Model.updateProperty(oldTriple, newTriple, newShowInResults);
   };
-
-  
-  //  SPARQL.View.updateProperty = function(oldTriple, newTriple){
-  //    var oldTripleObj = {
-  //      type: 'property',
-  //      value: oldTriple
-  //    };
-  //    var nodeId = SPARQL.View.getNodeId(oldTripleObj);
-  //    SPARQL.View.map.remove(nodeId);
-  //    SPARQL.View.map.put(nodeId, {
-  //      type: 'property',
-  //      value: newTriple
-  //    });
-  //
-  //    var jstree = $.jstree._reference('qiTreeDiv');
-  //    var propValue = newTriple.object.value.replace(SPARQL.instance_iri, '').replace(SPARQL.iri_delim, '');
-  //    if(newTriple.object.type === 'VAR'){
-  //      if(newTriple.object.value && newTriple.object.value.length){
-  //        propValue = '?' + newTriple.object.value;
-  //      }
-  //    }
-  //    var nodeText = newTriple.predicate.value.replace(SPARQL.property_iri, '').replace(SPARQL.iri_delim, '') + ' ' + propValue;
-  //    jstree.set_text(SPARQL.View.getParentNode(jstree.get_selected(), 'property'), nodeText);
-  //  };
 
   
   SPARQL.View.createProperty = function(triple){
@@ -1252,19 +1008,6 @@
     SPARQL.View.getTree().create(SPARQL.View.getNodeById(triple.subject.getId()), 'first' , propertyNodeData, function(){}, true);
   };
 
-  //  SPARQL.View.getSubjectNode = function(subject){
-  //    //get node id by data entity
-  //    var nodeId = SPARQL.View.getNodeId({
-  //      type: 'subject',
-  //      value: subject
-  //    });
-  //    //get tree node by id
-  //    return $.jstree._reference('qiTreeDiv')._get_node('#' + nodeId);
-  //  };
-
-  //  SPARQL.View.getParentSubjectNode = function(thisNode){
-  //    return SPARQL.View.getParentNode(thisNode, ['variable', 'instance']);
-  //  };
 
   SPARQL.View.activateAddPropertyBtn = function(){
     $('#qiAddPropertyBtn').live('click', function(){
@@ -1282,15 +1025,14 @@
   SPARQL.activateAddAndFilterLink = function(){
     $('#qiAddAndFilterLink').live('click', function(event){
       //display filter gui
-      $(this).closest('tr').before('<tr><td>' + SPARQL.createFilterTable() + '</td></tr>');   
+      var filterTable = $('<tr/>').append($('<td/>').append(SPARQL.createFilterTable()));
+      $(this).closest('tr').before(filterTable);
       event.preventDefault();
-      //init operator select
-      SPARQL.initOperatorSelectBox($('#qiPropertyTypeLabel').next().html(), $('#qiPropertyFiltersTable select'));
     });
   };
   
 
-  SPARQL.View.addFilterAND =  function(label){
+  SPARQL.View.createFilter =  function(label){
     //get parent property node of the selected node
     var parentPropertyNode = SPARQL.View.getParentNode(SPARQL.View.getSelectedNode(), ['variable', 'property']);
 
@@ -1300,12 +1042,14 @@
         title: label
       },
       attr: {
-        rel: 'filter'
+        rel: 'filter',
+        id: parentPropertyNode.attr('id') + '-' + label.replace(/[\s\/:<>!=]/g, '-'),
+        title: label
       }
     };
 
     //append it to property node as child
-    SPARQL.View.getTree().create (parentPropertyNode, 'first' , filterNode, function(){}, true );
+    SPARQL.View.getTree().create (parentPropertyNode, 'last' , filterNode, function(){}, true );
   };
 
   SPARQL.View.translateOperator = function(sparqlOperator){
@@ -1338,62 +1082,11 @@
   };
 
 
-  //  SPARQL.Model.addFilterOR = function(operator, operandType1, operandValue1, operandType2, operandValue2, dataTypeIRI){
-  //    //build expression object using the arguments
-  //    var expression = [{
-  //      operator: operator,
-  //      argument: [{
-  //        type: operandType1,
-  //        value: operandValue1
-  //      },
-  //      {
-  //        type: operandType2,
-  //        value: operandValue2,
-  //        datatype_iri: dataTypeIRI
-  //      }]
-  //    }];
-  //
-  //    var newFilter = {
-  //      expression: []
-  //    };
-  //
-  //    //find a filter for operandValue1
-  //    var filters = SPARQL.Model.data.filter;
-  //
-  //    var found = false;
-  //    for(var i = 0; !found && i < filters.length; i++){
-  //      var arguments = filters[i].expression[0].argument;
-  //      for(var j = 0; j < arguments.length; j++){
-  //        if(arguments[j].value === operandValue1 && arguments[j].type === operandType1){
-  //          newFilter = filters[i];
-  //          found = true;
-  //          break;
-  //        }
-  //      }
-  //    }
-  //
-  //    //add this expression object to the filter
-  //    newFilter.expression.push(expression);
-  //
-  //    if(!found){
-  //      filters.push(newFilter);
-  //    }
-  //
-  //    SPARQL.View.updateFilters(operandType1, operandValue1);
-  //  };
-
-  //  SPARQL.View.addFilterOR = function(operator, operandType1, operandValue1, operandType2, operandValue2, dataTypeIRI){
-  //  //get AND filter node
-  //
-  //  //add filter description to the node label
-  //  };
-
   SPARQL.activateAddOrFilterLink = function(){
     $('#qiAddOrFilterLink').live('click', function(event){
       $(this).closest('tr').before(SPARQL.createFilterPanel());
       event.preventDefault();
-      //init operator select
-      SPARQL.initOperatorSelectBox($('#qiPropertyTypeLabel').next().html(), $('#qiPropertyFiltersTable select'));
+      
     });
   };
 
@@ -1408,22 +1101,10 @@
     });
   };
   
-  //  SPARQL.getNumber = function(value){
-  //    var result = value;
-  //    try{
-  //      result = parseInt(value);
-  //    }
-  //    catch(x){
-  //      return value;
-  //    }
-  //
-  //    result = (result === NaN ? value : result);
-  //    return result;
-  //  };
   
   SPARQL.getDataTypeIRI = function(type){
     var result;
-    var prefix = /^(\w+):(\w+)/.exec(type);
+    var prefix = /^(\w+):(\w+)$/.exec(type);
     if(prefix && prefix.length){
       var iri;
       var namespace = SPARQL.Model.data.namespace;
@@ -1455,10 +1136,14 @@
       //iterate over OR filters
       $(this).find('.filterOR').each(function(){
         //create new expression object
-        var operator = $(this).find('select').val();
-        var value = $.trim($(this).find('input').val());
+        var operator = $(this).find('select.filterOperator').val();
+        var value = $.trim($(this).find('input.filterValue').val());
+        var type = $(this).find('select.filterType').val();
+        var dataType = SPARQL.getDataTypeIRI($('#qiPropertyDialog').find('.typeLabelTd').next().text());
+        dataType = (operator === 'regex') ? SPARQL.getDataTypeIRI('xsd:string') : dataType;
+        dataType = dataType || SPARQL.getDataTypeIRI(type);
         if(value.length){
-          var argument2 = new SPARQL.Model.FilterArgumentTerm(value, TYPE.LITERAL, SPARQL.getDataTypeIRI($('#qiPropertyDialog').find('.typeLabelTd').next().text()));
+          var argument2 = new SPARQL.Model.FilterArgumentTerm(value, TYPE.LITERAL, dataType);
           var expression = new SPARQL.Model.FilterExpression(operator, term, argument2);
 
           //add expression object to the array
@@ -1472,52 +1157,6 @@
     return filters;
   }
 
-  //  SPARQL.Model.deleteFilter = function(operator, operandType1, operandValue1, operandType2, operandValue2){
-  //    var filters = SPARQL.Model.data.filter;
-  //    for(var i = 0; i < filters.length; i++){
-  //      for(var j = 0; j < filters[i].expression.length; j++){
-  //        var expression = filters[i].expression[j];
-  //        if((expression.argument[0].value === operandValue1
-  //          && expression.argument[0].type === operandType1
-  //          && expression.argument[1].value === operandValue2
-  //          && expression.argument[1].type === operandType2)
-  //        || (expression.argument[0].value === operandValue2
-  //          && expression.argument[0].type === operandType2
-  //          && expression.argument[1].value === operandValue1
-  //          && expression.argument[1].type === operandType1))
-  //          {
-  //          if(filters[i].expression.length > 1){
-  //            filters[i].expression.splice(j, 1);
-  //          }
-  //          else{
-  //            filters.splice(i, 1);
-  //            break;
-  //          }
-  //        }
-  //      }
-  //    }
-  //    SPARQL.View.deleteFilter(operator, operandType1, operandValue1, operandType2, operandValue2);
-  //  };
-
-  //  SPARQL.View.deleteFilter = function(operator, operandType1, operandValue1, operandType2, operandValue2){
-  //    SPARQL.View.updateFilters(operandType1, operandValue1);
-  //
-  //  };
-
-  //  SPARQL.View.getPropertyNode = function(value, type){
-  //    //get all triples having object with such value and type
-  //    var dataEntities = SPARQL.View.map.treeToData;
-  //    var result = [];
-  //    for(var nodeId in dataEntities){
-  //      var dataEntity = dataEntities[nodeId];
-  //      if(dataEntity.type === 'property' && dataEntity.value.object.value === value && dataEntity.value.object.type === type){
-  //        result.push($.jstree._reference('qiTreeDiv')._get_node('#' + nodeId));
-  //      }
-  //    }
-  //
-  //    return $(result);
-  //  };
-
   SPARQL.View.updateFilters = function(operandTerm){  
     //iterate over filters array
     var filters = SPARQL.Model.data.filter || [];
@@ -1525,59 +1164,129 @@
       var filterLabel = '';
       for(var j = 0; j < filters[i].expression.length; j++){
         var expression = filters[i].expression[j];
-        //add filter node for each filter whose expression argument type and value equal to the arguments
-        if(expression.argument[0].isEqual(operandTerm)){
-          filterLabel += SPARQL.View.translateOperator(expression.operator) + ' ' + expression.argument[1].value;
+        for(var k = 0; k < expression.argument.length; k++){
+          //add filter node for each filter whose expression argument type and value equal to the arguments
+          if(expression.argument[k].isEqual(operandTerm)){
+            filterLabel += SPARQL.View.translateOperator(expression.operator) + ' ' + expression.argument[k^1].value;
+          } 
         }
-        else if(expression.argument[1].isEqual(operandTerm)){
-          filterLabel += SPARQL.View.translateOperator(expression.operator) + ' ' + expression.argument[0].value;
-        }
-        else{//this is filter for different variable
-          break;
-        }
-
         if(j < filters[i].expression.length - 1){
           filterLabel += ' or ';
-        }
+        }        
       }
       //create filter node
       if(filterLabel.length){
-        SPARQL.View.addFilterAND(filterLabel);
+        SPARQL.View.createFilter(filterLabel);
       }
     }
   };
+
+  SPARQL.getOperatorValues = function(type, values){
+    var operators = $.extend({}, values);
+    
+    switch(type){
+      case 'tsctype:page':
+      case 'xsd:anyURI':
+      case 'tsctype:record':
+        delete operators.LT;
+        delete operators.LE;
+        delete operators.GT;
+        delete operators.GE;
+        break;
+
+      case 'xsd:boolean':
+        delete operators.LT;
+        delete operators.LE;
+        delete operators.GT;
+        delete operators.GE;
+        delete operators.regex;
+        break;
+
+      case 'xsd:dateTime':
+      case 'xsd:date':
+        delete operators.regex;
+        break;
+
+      default:
+        break;
+    }    
+
+    return operators
+  }
   
 
-  SPARQL.createFilterPanel = function(operator, value){
-    value = value || '';
-    var validatorType = $('#qiPropertyTypeLabel').filter(':visible').next().html();
-    return '<tr class="filterOR"><td></td>'
-    + '<td><select>'
-    + '<option value="LT"' + SPARQL.createFilterPanel.selected(operator, 'LT') + '>' + gLanguage.getMessage('QI_LT') + ' (<)</option>'
-    + '<option value="LE"' + SPARQL.createFilterPanel.selected(operator, 'LE') + '>' + gLanguage.getMessage('QI_LT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (<=)</option>'
-    + '<option value="GT"' + SPARQL.createFilterPanel.selected(operator, 'GT') + '>' + gLanguage.getMessage('QI_GT') + ' (>)</option>'
-    + '<option value="GE"' + SPARQL.createFilterPanel.selected(operator, 'GE') + '>' + gLanguage.getMessage('QI_GT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (>=)</option>'
-    + '<option value="EQ"' + SPARQL.createFilterPanel.selected(operator, 'EQ') + '>' + gLanguage.getMessage('QI_EQUAL') + ' (=)</option>'
-    + '<option value="NE"' + SPARQL.createFilterPanel.selected(operator, 'NE') + '>' + gLanguage.getMessage('QI_NOT') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (!=)</option>'
-    + '<option value="regex"' + SPARQL.createFilterPanel.selected(operator, 'regex') + '>' + gLanguage.getMessage('QI_LIKE') + ' (regexp)</option>'
-    + '</select>'
-    + '</td><td>'
-    + '<input type="text" value="' + value + '" validator="' + validatorType + '">'
-    + '</td><td>'
-    + '<img id="qiDeleteFilterImg" title="Delete filter" src="' + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/images/delete_icon.png"/>'
-    + '</td></tr>';
-  };
+  SPARQL.createFilterPanel = function(operator, value, type){
+    var validatorType = $('#qiPropertyTypeLabel').next().html() || type;
 
-  SPARQL.createFilterPanel.selected = function(operator, value){
-    return operator === value ? 'selected="selected"' : '';
-  };
+    var operatorValues = {
+      LT: gLanguage.getMessage('QI_LT') + ' (<)',
+      LE: gLanguage.getMessage('QI_LT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (<=)',
+      GT: gLanguage.getMessage('QI_GT') + ' (>)',
+      GE: gLanguage.getMessage('QI_GT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (>=)',
+      EQ: gLanguage.getMessage('QI_EQUAL') + ' (=)',
+      NE: gLanguage.getMessage('QI_NOT') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (!=)',
+      regex: gLanguage.getMessage('QI_LIKE') + ' (regexp)'
+    };
 
-  SPARQL.createFilterTable = function(operator, value){
-    return '<table class="filterAND">' + SPARQL.createFilterPanel(operator, value) + SPARQL.createAddOrFilterLink() + '</table>';
+    var typeValues = ['xsd:string', 'xsd:number', 'xsd:date'];
+
+//     var typeValues = {
+//      'http://www.w3.org/2001/XMLSchema#string': 'xsd:string',
+//      'http://www.w3.org/2001/XMLSchema#number': 'xsd:number',
+//      'http://www.w3.org/2001/XMLSchema#date': 'xsd:date'
+//    };
+    var operatorSelect = SPARQL.createSelectBox(SPARQL.getOperatorValues(validatorType, operatorValues), {'class': 'filterOperator'}, operator);
+    var tr = $('<tr/>')
+              .attr('class', 'filterOR')
+                .append('<td/>')
+                  .append($('<td/>').append(operatorSelect));
+
+    var input = $('<input type="text"/>').attr('class', 'filterValue');
+    var typeSelect = SPARQL.createSelectBox(typeValues, {'class': 'filterType'}, type, function(event){
+      $(this)
+        .closest('tr')
+          .find('select.filterOperator')
+            .replaceWith(SPARQL.createSelectBox(SPARQL.getOperatorValues($(this).val(), operatorValues), {'class': 'filterOperator'}, operator));
+    });
+    var deleteImg = $('<img/>')
+                      .attr('id', 'qiDeleteFilterImg')
+                        .attr('title', 'Delete filter')
+                          .attr('src', mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/images/delete_icon.png');
+                          
+    var filterPanel = tr
+            .append($('<td/>').append(input))
+              .append($('<td/>').append(typeSelect))
+                .append($('<td/>').append(deleteImg));
+
+    if(value && value.length){
+      input.attr('value', value);
+    }
+    if(!$('#qiPropertyTypeLabel').next().html().length){
+      typeSelect.closest('td').show();
+      input.attr('validator', typeSelect.val());
+    }
+    else{
+      typeSelect.closest('td').hide();
+      input.attr('validator', validatorType);
+    }
+
+    return filterPanel;
+  };
+ 
+
+  SPARQL.createFilterTable = function(operator, value, type){
+    return $('<table/>')
+      .attr('class', 'filterAND')
+        .append(SPARQL.createFilterPanel(operator, value, type))
+          .append(SPARQL.createAddOrFilterLink());
   };
 
   SPARQL.createAddOrFilterLink = function(){
     return '<tr><td colspan="4" style="text-align:center;"><a href="" id="qiAddOrFilterLink">' + gLanguage.getMessage('QI_DC_ADD_OTHER_RESTRICT') + '</a></td><tr>';
+  };
+
+  SPARQL.createAddAndFilterLink = function(){
+    return '<tr><td><a href="" id="qiAddAndFilterLink">' + gLanguage.getMessage('QI_DC_ADD_NEW_FILTER') + '</a></td></tr>';
   };
 
   SPARQL.createAdditionalCategoryPanel = function(categoryName){
@@ -1591,55 +1300,6 @@
     + '/extensions/SMWHalo/skins/QueryInterface/images/delete_icon.png"/></td></tr>'
     + '<tr><td></td><td id="qiSubjectTypeLabel"></td><td></td></tr>';
   };
-
-  //  SPARQL.Model.addCategoryOR = function(categoryName, subjectName, subjectType){
-  //    var category_restrictions = SPARQL.Model.data.category_restriction;
-  //    for(var i = 0; i < category_restrictions.length; i++){
-  //      var category_restriction = category_restrictions[i];
-  //      if(category_restriction.subject.type === subjectType
-  //        && category_restriction.subject.value.replace(SPARQL.instance_iri, '').replace(SPARQL.iri_delim, '') === subjectName){
-  //        category_restriction.category_iri.push(SPARQL.category_iri + SPARQL.iri_delim + categoryName);
-  //        break;
-  //      }
-  //    }
-  //
-  //    SPARQL.View.addCategoryOR(categoryName, subjectName, subjectType);
-  //    SPARQL.updateAllFromTree();
-  //  };
-
-  //  SPARQL.View.addCategoryOR = function(categoryName, subjectName, subjectType){
-  //    //display additional category input
-  //    $('#qiAddOrCategoryLink').closest('tr').before(SPARQL.createAdditionalCategoryPanel(''));
-  //    //get category node
-  //    subjectName = (subjectType === 'VAR' ? subjectName : SPARQL.instance_iri + SPARQL.iri_delim + subjectName);
-  //    var nodeId = SPARQL.View.getNodeId({
-  //      type: 'subject',
-  //      value: {
-  //        type: subjectType,
-  //        value: subjectName
-  //      }
-  //    });
-  //    var jstree = $.jstree._reference('qiTreeDiv');
-  //    var subjectNode = jstree._get_node('#' + nodeId);
-  //    var categoryNode = null;
-  //    jstree._get_children(subjectNode).each(function(){
-  //      if($(this).attr('rel') === 'category'){
-  //        categoryNode = $(this);
-  //        return false; //break the loop
-  //      }
-  //    });
-  //    var nodeData = SPARQL.View.getDataEntity(categoryNode.attr('id'));
-  //    nodeData.category_iri.push(SPARQL.category_iri + SPARQL.iri_delim + categoryName);
-  //    SPARQL.View.map.put(categoryNode.attr('id'), nodeData);
-  //
-  //    if(categoryName && categoryName.length){
-  //      //change it's label to contain additional category name
-  //      jstree.set_text(categoryNode, jstree.get_text(categoryNode) + ' or ' + categoryName);
-  //    }
-  //
-  //    $('#qiCategoryDialogTable').find('input').last().focus();
-  //
-  //  };
 
   SPARQL.activateAddOrCategoryLink = function(){
     $('#qiAddOrCategoryLink').live('click', function(event){
@@ -1660,32 +1320,6 @@
       $('#qiAddOrCategoryLink').closest('tr').find('input').focus();
     });
   };
-
-  //  SPARQL.activateUpdateBtn = function(){
-  //    $('#qiUpdateButton').bind('click', function(event){
-  //      switch(event.data.dialogType){
-  //        case 'subject':
-  //          SPARQL.View.openSubjectDialog.changeName($('#qiSubjectNameInput'), $('#qiSubjectShowInResultsChkBox'));
-  //          break;
-  //
-  //        case 'category':
-  //          SPARQL.View.openCategoryDialog.changeName($('#qiCategoryNameInput'));
-  //          break;
-  //
-  //        case 'property':
-  //          SPARQL.View.updateProperty($('#qiPropertyNameInput'), $('#qiPropertyValueMustBeSetChkBox'), $('#qiPropertyValueNameInput'), $('#qiPropertyValueShowInResultsChkBox'));
-  //          break;
-  //
-  //        default:
-  //          break;
-  //      }
-  //
-  //      SPARQL.toTree();
-  //      SPARQL.updateAllFromTree();
-  //    });
-  //
-  //  };
-
 
   SPARQL.escapeCssSelector = function(selector){
     return selector ? selector.replace(/([\_\:\/])/g, '\\$1') : selector;
@@ -1754,7 +1388,7 @@
       function(NODE, REF_NODE){
         //        var newId = SPARQL.View.getDomPath(REF_NODE.rslt.obj);
         //        $(REF_NODE.rslt.obj).attr('id', newId);
-        REF_NODE.inst.select_node(REF_NODE.rslt.obj, true);
+        REF_NODE.inst.select_node(REF_NODE.rslt.obj, true, false);
       });
     tree.bind('delete_node.jstree',
       function(NODE, REF_NODE){
@@ -1763,13 +1397,16 @@
           var nodeId = prevNode.attr('id');
           REF_NODE.inst.select_node('#' + nodeId, true);
         }
-        if(SPARQL.View.isTreeEmpty()){
-          SPARQL.View.reset();
-        }
+      //        if(SPARQL.View.isTreeEmpty()){
+      //          SPARQL.View.reset();
+      //        }
       });
 
     tree.bind("select_node.jstree",
       function(NODE, REF_NODE) {
+        if(REF_NODE.args[2] === false){
+          return;
+        }
         //get node data
         var theNode = SPARQL.View.getParentNode($(REF_NODE.rslt.obj), ['variable', 'instance', 'category', 'property']);
         var nodeText = SPARQL.View.getNodeText(theNode);
@@ -1811,16 +1448,11 @@
   };
 
   SPARQL.updateAllFromTree = function(){
-    //if tree structure is empty then reset the model and return
-    if(!SPARQL.Model.data.triple.length && !SPARQL.Model.data.category_restriction.length){
-      return;
-    }
-    window.clearTimeout(window.updateTimeoutId);
-    window.updateTimeoutId = window.setTimeout(function(){
+    if(SPARQL.validateQueryTree()){
       SPARQL.treeToSparql();
       SPARQL.updateSortOptions();
-    }, 500)
-    
+      SPARQL.getQueryResult();
+    }
   };
 
   //delete selected tree node
@@ -1926,6 +1558,7 @@
 
   SPARQL.View.cancel = function(){
     $('#entityDetailsTd').empty();
+    $('#previewcontent').empty();
     SPARQL.toTree(null, -1);
     
   //    SPARQL.View.getTree().deselect_all();
@@ -1981,7 +1614,14 @@
   
 
   SPARQL.validateQueryTree = function(queryTree){
-    //if none of the vars has 'show in results' set display a message
+    queryTree = queryTree || SPARQL.Model.data;
+    //if tree is empty fail silently
+    if(!(queryTree.triple && queryTree.triple.length)
+      && !(queryTree.category_restriction && queryTree.category_restriction.length))
+      {
+      return false;
+    }
+    //if tree is not empty but none of the vars has 'show in results' set display a message
     if(queryTree.projection_var.length == 0){
       SPARQL.showMessageDialog(gLanguage.getMessage('QI_SHOW_IN_RESULTS_MUST_BE_SET'), gLanguage.getMessage('QI_INVALID_QUERY'));
       return false;
@@ -2007,19 +1647,13 @@
     }
     
     $('#previewcontent').empty().append('<img src="' + mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/ajax-loader.gif"/>');
-  
-    var currentPage = null;
-    if (window.parent.wgPageName) {
-      currentPage = window.parent.wgPageName.wgCanonicalNamespace || '';
-      currentPage += ':' + window.parent.wgPageName;
-    }
 
     $.ajax({
       type: 'POST',
       url: mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?action=ajax',
       data: {
-        rs: 'smwf_qi_QIAccess',
-        rsargs: [ 'getQueryResult', queryString + ',' + SPARQL.getParameterString(), currentPage]
+        rs: 'smwf_qi_getSparqlQueryResult',
+        rsargs: [ queryString, SPARQL.getParameterString()]
       },
       success: function(data, textStatus, jqXHR) {
         mw.log('data: ' + data);
@@ -2470,6 +2104,13 @@
   SPARQL.getPropertyInfo = function(propertyName){    
     window.clearTimeout(window.getPropertyTypeTimeout);
     window.getPropertyTypeTimeout = window.setTimeout(function(){
+      if($('#qiQuerySourceSelect').val() !== 'tsc'){
+        $('#qiPropertyTypeLabel').html('Type: unknown');
+        $('#qiPropertyTypeLabel').next().html('');
+        SPARQL.View.deleteAllFilters($('#qiPropertyFiltersTable'));
+        SPARQL.View.showFilters(new SPARQL.Model.Term($('#qiPropertyValueNameInput').val()), $('#qiPropertyFiltersTable'));
+        return;
+      }
       if(!(propertyName && propertyName.length)){
         return;
       }
@@ -2480,11 +2121,14 @@
           rs: 'smwf_qi_QIAccess',
           rsargs: [ 'getPropertyInformation', propertyName ]
         },
+        beforeSend: function(jqXHR, settings){
+          SPARQL.View.deleteAllFilters($('#qiPropertyFiltersTable'));
+        },
         success: function(data, textStatus, jqXHR) {
           mw.log('data: ' + data);
           mw.log('textStatus: ' + textStatus);
           mw.log('jqXHR.responseText: ' + jqXHR.responseText);
-          SPARQL.processPropertyInfo(data);
+          SPARQL.processPropertyInfo(data);          
         },
         error: function(xhr, textStatus, errorThrown) {
           mw.log(textStatus);
@@ -2677,24 +2321,10 @@
     $('#qiPropertyTypeLabel').html('Type: ' + type);
     $('#qiPropertyTypeLabel').next().html(xsdType).hide();
 
-    //init operator select
-    SPARQL.initOperatorSelectBox(xsdType, $('#qiPropertyFiltersTable select'));
-
-    //register validator for the inputs
-    $('.filterAND input').filter(':visible').each(function(){
-      $(this).attr('validator', xsdType);
-    });
+    SPARQL.View.showFilters(new SPARQL.Model.Term($('#qiPropertyValueNameInput').val()), $('#qiPropertyFiltersTable'));
   };
 
   SPARQL.initOperatorSelectBox = function(xsdType, selectElement){
-    //    var lt = '<option value="LT">' + gLanguage.getMessage('QI_LT') + ' (<)</option>';
-    //    var le = '<option value="LE">' + gLanguage.getMessage('QI_LT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (<=)</option>';
-    //    var gt = '<option value="GT">' + gLanguage.getMessage('QI_GT') + ' (>)</option>';
-    //    var ge = '<option value="GE">' + gLanguage.getMessage('QI_GT') + ' ' + gLanguage.getMessage('QI_OR') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (>=</option>';
-    //    var eq = '<option value="EQ">' + gLanguage.getMessage('QI_EQUAL') + ' (=)</option>';
-    //    var ne = '<option value="NE">' + gLanguage.getMessage('QI_NOT') + ' ' + gLanguage.getMessage('QI_EQUAL') + ' (!=)</option>';
-    //    var regex = '<option value="regex">' + gLanguage.getMessage('QI_LIKE') + ' (regex)</option>';
-
     switch(xsdType){
       case 'xsd:string':
       case 'tsctype:page':
@@ -2724,49 +2354,138 @@
     }
   };
 
-  SPARQL.createSelectBox = function(name, values, defaultValue, changeHandler){
+  SPARQL.createSelectBox = function(values, attributes, defaultValue, changeHandler){
     var select = $('<select/>');
     var selected = null;
-    for(var i = 0; i < values.length; i++){
-      var value = values[i];
-      if(value === defaultValue){
+    
+    if(attributes && typeof attributes === 'object'){
+      $.each(attributes, function(key, value){
+        select.attr(key, value);
+      });
+    }
+
+    $.each(values, function(key, value){
+      var selectValue = key;
+      if($.isArray(values)){
+        selectValue = value;
+      }
+      if(selectValue === defaultValue){
         selected = ' selected="selected"';
       }
       else{
         selected = '';
       }
-     
-      select.append('<option value="' + value + '"' + selected + '>' + value + '</option>');
+
+      select.append('<option value="' + selectValue + '"' + selected + '>' + value + '</option>');
+    });
+
+    if(changeHandler){
+      select.bind('change', {defaultValue: defaultValue}, changeHandler);
     }
-
-    changeHandler = changeHandler || function(){
-      var selectedVal = $(this).children(':selected').val();
-      if(selectedVal !== defaultValue){
-        SPARQL.queryParameters[name] = selectedVal;
-      }
-      else{
-        delete SPARQL.queryParameters[name];
-      }
-      SPARQL.treeToSparql();
-    };
-
-    select.change(changeHandler);
 
     return select;
   };
 
+
+//  SPARQL.createSelectBox_ = function(name, values, defaultValue, changeHandler, id){
+//    var select = $('<select/>');
+//    if(id){
+//      select.attr('id', id);
+//    }
+//    var selected = null;
+//    for(var i = 0; i < values.length; i++){
+//      var value = values[i];
+//      if(value === defaultValue){
+//        selected = ' selected="selected"';
+//      }
+//      else{
+//        selected = '';
+//      }
+//
+//      select.append('<option value="' + value + '"' + selected + '>' + value + '</option>');
+//    }
+//
+//    select.change(changeHandler);
+//
+//    return select;
+//  };
+
+  SPARQL.setQueryParameter = function(paramName, value, defaultValue){
+      if(value !== defaultValue){
+        SPARQL.queryParameters[paramName] = value;
+      }
+      else{
+        delete SPARQL.queryParameters[paramName];
+      }
+      SPARQL.treeToSparql();
+  };
+
   SPARQL.initSourceSelectBox = function(){
-    $('#qiSourceSelect').replaceWith(SPARQL.createSelectBox('source', SPARQL.sources, 'tsc'));
+    $('#qiSourceSelect').replaceWith(SPARQL.createSelectBox(SPARQL.sources, {id: 'qiQuerySourceSelect'}, 'tsc', function(event){
+      SPARQL.setQueryParameter('source', $(this).val(), event.data.defaultValue);
+      SPARQL.getPropertyInfo($('#qiPropertyNameInput').val());
+    }));
   };
 
   SPARQL.initGraphSelectBox = function(){
-    $('#qiGraphSelect').replaceWith(SPARQL.createSelectBox('graph', SPARQL.graphs, 'default'));
+    $('#qiGraphSelect').replaceWith(SPARQL.createSelectBox(SPARQL.graphs, null, 'default', function(event){
+      SPARQL.setQueryParameter('graph', event.data.value, event.data.defaultValue);
+    }));
+  };
+
+  SPARQL.getWikiPrefixes = function(){
+    $.ajax({
+      type: 'POST',
+      url: mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?action=ajax',
+      data: {
+        rs: 'smwf_ts_getWikiPrefixes'
+      },
+      success: function(data, textStatus, jqXHR) {
+        mw.log('WikiNamespaces......textStatus: ' + textStatus);
+        mw.log('WikiNamespaces......jqXHR.responseText: ' + jqXHR.responseText);
+        //init namespaces array
+        SPARQL.initNamespace(data);
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        mw.log(textStatus);
+        mw.log('response: ' + xhr.responseText)
+        mw.log('errorThrown: ' + errorThrown);
+        SPARQL.showMessageDialog(xhr.responseText || errorThrown, 'Failed to get wiki namespace prefixes');
+      }
+    });
+  };
+
+  SPARQL.initNamespace = function(namespaceString){
+    var splitByPrefix = namespaceString.split(/[\r\n]/);
+    var namespace = [];
+    var pattern = /PREFIX\s+([^:]+):<([^\>]+)>/;
+    var match = null;
+    $.each(splitByPrefix, function(index, value){
+      if(match = pattern.exec(value)){
+        var prefix = $.trim(match[1]);
+        var namespace_iri = $.trim(match[2]);
+        if(prefix !== 'cat' && prefix !== 'prop'){//remove old version duplicates of 'category' and 'property'
+          namespace.push({prefix: prefix, namespace_iri: namespace_iri});
+        }
+      }
+    });
+
+    if(namespace.length){
+      SPARQL.Model.data.namespace = namespace;
+    }
+  };
+
+  SPARQL.escapeHtmlEntities = function(string){
+    return string.replace('&', '&amp')
+                  .replace('<', '&lt')
+                  .replace('>', '&gt');
   };
 
 
   $(document).ready(function(){
     SPARQL.smwgHaloWebserviceEndpoint = mw.config.get('smwgHaloWebserviceEndpoint');
     if(SPARQL.smwgHaloWebserviceEndpoint){
+      SPARQL.getWikiPrefixes();
       SPARQL.smwgHaloWebserviceEndpoint = 'http://' + SPARQL.smwgHaloWebserviceEndpoint;
       SPARQL.Model.reset();
       SPARQL.activateSwitchToSparqBtn();

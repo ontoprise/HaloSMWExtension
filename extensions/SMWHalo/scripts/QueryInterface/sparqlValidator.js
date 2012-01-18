@@ -17,21 +17,22 @@
  */
 
 (function($){
-  var protocol = 'http:\\/\\/(\\w+\\.*\\w+\\/)+';
-  var prefix = '[a-zA-Z_]+:';
+  var iri = '^[^<>:]+:[^<>:]+$';
 
   SPARQL.Validator = {    
     map: {
       'xsd:integer' : '^\\-?\\d+$',
       'xsd:string': '^[\\s\\S]*$',
       'xsd:double': '^\\-?\\d+(?:\\.?\\d+)?(?:e\\d+)?$',
+      'xsd:number': '^\\-?\\d+(?:\\.?\\d+)?(?:e\\d+)?$',
       'xsd:boolean': '^(?:true|false)$',
       'xsd:dateTime': '^\\-?\\d{4}\\-\\d{2}\\-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?$',
       'xsd:date': '^\\-?\\d{4}\\-\\d{2}\\-\\d{2}$',
 //      'xsd:anyURI': '',
 //      'tsctype:record': '',
       'tsctype:page' : '^[%!"$&\\()*,\\-.\\/0-9:;=?@A-Z\\^_`a-z~\\x80-\\xFF+]+$',
-      'iri' : '^(?:' + protocol + '|' + prefix + ')*[\\w\\s]+$',
+      'iri' : iri + '|' + '^<?' + iri + '>?$',
+
       'variable' : '^\\?[\\w\\s]+$'
     },
     get: function(key){
@@ -43,7 +44,10 @@
       if(pattern){
         pattern = new RegExp(pattern);
         if(!pattern.test(value)){
-          SPARQL.showMessageDialog('Invalid value for ' + datatype + ': "' + value + '"', 'Validation failed');
+          if(datatype === 'iri' && pattern.test('prefix:' + value)){
+            return true;
+          }
+          SPARQL.showMessageDialog('Invalid value for ' + datatype + ': "' + SPARQL.escapeHtmlEntities(value) + '"', 'Validation failed');
           result = false;
         }
       }
@@ -57,7 +61,7 @@
 
     validateAll: function(){
       var result = true;
-      $('input[validator]').filter(':visible').each(function(index, value){
+      $('[validator]').each(function(index, value){
         if(!SPARQL.Validator.validate($(this).val(), $(this).attr('validator'))){
           $(this).addClass('failedValidation');
           result = false;
@@ -69,6 +73,15 @@
       });
 
       return result;
+    },
+
+    isIRI: function(string){
+        var pattern = new RegExp(SPARQL.Validator.get('iri'));
+        return pattern.test(string);
+    },
+
+    hasPointyBrackets: function(string){
+      return (string.indexOf('<') === 0 && string.indexOf('>') === string.length - 1);
     }
   };
 

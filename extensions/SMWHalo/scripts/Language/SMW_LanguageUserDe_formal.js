@@ -325,6 +325,7 @@ window.wgUserLanguageStrings = {
     'QI_BC_ADD_OTHER_CATEGORY': 'weitere Kategorie hinzuf&uuml;gen (ODER)',
     'QI_BC_ADD_OTHER_INSTANCE': 'weitere Instanz hinzuf&uuml;gen (ODER)',
     'QI_DC_ADD_OTHER_RESTRICT': 'weitere Werteinschr&auml;nkung hinzuf&uuml;gen (ODER)',
+    'QI_DC_ADD_NEW_FILTER'    : 'Add new filter (AND)',
     'QI_CAT_ADDED_SUCCESSFUL' : 'Kategorie erfolgreich zum Query hinzugef&uuml;gt',
     'QI_PROP_ADDED_SUCCESSFUL': 'Attribut erfolgreich zum Query hinzugef&uuml;gt',
     'QI_INST_ADDED_SUCCESSFUL': 'Instanz erfolgreich zum Query hinzugef&uuml;gt',

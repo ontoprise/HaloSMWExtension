@@ -46,13 +46,11 @@
     SPARQL.Model.data.category_restriction = [];
     SPARQL.Model.data.triple = [];
     SPARQL.Model.data.filter = [];
-    SPARQL.Model.data.projection_var = [];
-    SPARQL.Model.data.order = [];
 
     //init static data
-    SPARQL.Model.data.projection_var = data.projection_var;
-    SPARQL.Model.data.order = data.order;
-    $.merge(SPARQL.Model.data.namespace, data.namespace);
+    SPARQL.Model.data.projection_var = data.projection_var || [];
+    SPARQL.Model.data.order = data.order || [];
+    $.merge(SPARQL.Model.data.namespace, (data.namespace || []));
 
     //init category_restriction
     data.category_restriction = data.category_restriction || [];
@@ -75,8 +73,8 @@
         expression: []
       };
       $.each(filter.expression, function(j, expression){
-        var argument0 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[0].type, expression.argument[0].datatype_iri);
-        var argument1 = new SPARQL.Model.Term(expression.argument[1].value, expression.argument[1].type, expression.argument[1].datatype_iri);
+        var argument0 = new SPARQL.Model.Term(expression.argument[0].value, expression.argument[0].type, expression.argument[0].datatype_iri, expression.argument[0].language);
+        var argument1 = new SPARQL.Model.Term(expression.argument[1].value, expression.argument[1].type, expression.argument[1].datatype_iri, expression.argument[1].language);
         expressions.expression.push(new SPARQL.Model.FilterExpression(expression.operator, argument0, argument1));
       });
       SPARQL.Model.data.filter.push(expressions);
@@ -146,8 +144,8 @@
 
       this.type = $.trim(type);
       this.value = ($.trim(value) || '').replace(/\s+/g, '_');
-      this.datatype_iri = $.trim(datatype_iri);
-      this.language = $.trim(language);      
+      this.datatype_iri = datatype_iri;
+      this.language = language;      
 
       //if ty is not defined then figure it out from the value
       if(!this.type){
@@ -206,7 +204,7 @@
       });
 
       if(!result){
-        result = this.value;
+        result = '<' + this.value + '>';
       }
 
       return result;
@@ -237,22 +235,6 @@
   };
 
   SPARQL.Model.FilterArgumentTerm = function(value, type, datatype_iri, language){
-    //    this.fixValue = function(value, datatype_iri){
-    //      switch(datatype_iri){
-    //        case 'xsd:dateTime':
-    //          var datePattern = /^\\-?\\d{4}\\-\\d{2}\\-\\d{2}$/;
-    //          if(datePattern.test(value)){
-    //            value = value + 'T00:00:00';
-    //          }
-    //          break;
-    //
-    //        default:
-    //          break;
-    //      }
-    //
-    //      return value;
-    //    };
-    
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
   };
 
@@ -371,7 +353,7 @@
       });
 
       if(!result){
-        result = iri;
+        result = '<' + iri + '>';
       }
 
       return result;
@@ -490,27 +472,26 @@
   SPARQL.Model.assureFullyQualifiedIRI = function(value, prefix){
     if(value){
       value = $.trim(value);
-      var fullyQualifiedIRIPattern = /^http:\/\/\w+(?:[\.\:_\/#]?\w+)*$/;
-      var shortIRIPattern = /^(\w+):\w+$/;
-      var match;
 
       //replace spaces by underscores
       value = value.replace(/\s+/g, '_');
 
-      //if value is of form 'http://xxx.yyy/zzzz' then do nothing, just return value
-      if(fullyQualifiedIRIPattern.test(value)){
-        return value;
+      //if value is in pointy brackets then do nothing, just return it
+      if(SPARQL.Validator.hasPointyBrackets(value)){
+        return value.replace(/^</, '').replace(/>$/, '');
       }
-      //else if value is of form 'xxxx:yyyy' then replace the xxxx:' with a namespace
-      else if((match = shortIRIPattern.exec(value))){
-        var prfx = match[1];
+      //else if iri contains colon then try to replace the prefix with
+      //a matching namespace
+      var colonIndex = value.indexOf(':');
+      if(colonIndex > -1){
+        var prfx = value.substring(0, colonIndex);
         var namespace = SPARQL.Model.getNamespace(prfx);
         if(namespace){
-          value = value.replace(prefix + ':', namespace);
+          value = value.replace(prfx + ':', namespace);
           return value;
         }
       }
-      //else get the namespace by given prefix and append it to value
+      //else default prefix is specified then get namespace for this prefix and append it to value
       else if(prefix){
         namespace = SPARQL.Model.getNamespace(prefix);
         if(namespace){
@@ -735,12 +716,6 @@
     }
   };
 
-
-  //  SPARQL.Model.addFilterAND = function(){
-  //    SPARQL.View.addFilterAND('');
-  //  };
-
-
   /**
      *  Check if given variable is in projection vars
      *  @param subject Term representing a variable
@@ -963,6 +938,10 @@
     {
       prefix: "rdf",
       namespace_iri: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    },
+    {
+      prefix: "rdfs",
+      namespace_iri: 'http://www.w3.org/2000/01/rdf-schema#'
     },
     {
       prefix: "category",

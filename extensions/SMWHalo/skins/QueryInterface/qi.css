@@ -644,9 +644,6 @@ button.btnhov{
   border-collapse: collapse;
 }
 
-#qiBoxcontent select{
-  width: 155px;
-}
 
 #qiPropertyValueNameInput{
   width: 135px;
@@ -766,7 +763,7 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
   display: none;
 }
 
-.jstree-hovered{
+.jstree a:hover, a.jstree-hovered{
   text-decoration: none !important;
 }
 
@@ -790,4 +787,17 @@ li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="
 
 .failedValidation{
   border: 1px inset red;
+}
+
+.filterAND select{
+  width: 100px;
+}
+
+.filterAND td{
+  text-align: center;
+}
+
+#qiSubjectFiltersTable, #qiPropertyFiltersTable{
+  border-top: 1px solid silver;
+  margin-top: 10px;
 }

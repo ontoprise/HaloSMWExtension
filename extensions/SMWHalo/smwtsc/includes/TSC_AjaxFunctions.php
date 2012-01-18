@@ -25,6 +25,7 @@ $wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
 $wgAjaxExportList[] = 'smwf_ts_getWikiSpecialProperties';
 $wgAjaxExportList[] = 'smwf_ts_triggerAsynchronousLoading';
 $wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
+$wgAjaxExportList[] = 'smwf_ts_getWikiPrefixes';
     
 /**
  * Returns the datasource table as HTML
@@ -89,6 +90,10 @@ function smwf_ts_getSyncCommands() {
     }
 
     return implode("\n", $sparulCommands);
+}
+
+function smwf_ts_getWikiPrefixes() {
+  return TSNamespaces::getAllPrefixes();
 }
 
 
