@@ -99,7 +99,7 @@ abstract class GardeningBot {
 
 	protected function GardeningBot($id) {
 		$this->id = $id;
-		
+
 		// registering bot
 		global $registeredBots;
 		$registeredBots[$id] = $this;
@@ -133,16 +133,16 @@ abstract class GardeningBot {
 	 * Returns the bot name for a user
 	 */
 	public abstract function getLabel();
-	
+
 	/**
-     * Creates a human-readible comment depending on the given parameters.
-     * (same as for run-method)
-     *
-     * @param string parameters (comma-separated key-value pairs)
-     *  e.g. param1=value1,param2=value2, ...
-     *  
-     * @return string
-     */
+	 * Creates a human-readible comment depending on the given parameters.
+	 * (same as for run-method)
+	 *
+	 * @param string parameters (comma-separated key-value pairs)
+	 *  e.g. param1=value1,param2=value2, ...
+	 *
+	 * @return string
+	 */
 	public function getComment($params) {
 		return '';
 	}
@@ -177,6 +177,7 @@ abstract class GardeningBot {
 	 * Should return a log as wiki markup.
 	 *
 	 * @param $paramArray hash array containing the given value for each parameter ID as key.
+	 *             or a stdClass object if bot parameter was a JSON string. (Must be preceded by #json:)
 	 * @param $isAsync indicates if the bots runs asynchronously.
 	 * @param $delay indicates if the gardening process should take a periodic delay. (may be ignored, but should not)
 	 */
@@ -186,7 +187,7 @@ abstract class GardeningBot {
 	 * Total work (= total number of subtasks)
 	 */
 	public function setNumberOfTasks($totalwork) {
-		$this->totalWork = $totalwork;
+		$this->totalWork = $totalwork; 
 	}
 
 	/**
@@ -232,9 +233,9 @@ abstract class GardeningBot {
 
 			socket_getpeername($accept_sock, $name);
 			if ($name == '127.0.0.1') { //TODO: save? spoofing?
-			socket_close($accept_sock);
-			$this->isAborted = true;
-			return true;
+				socket_close($accept_sock);
+				$this->isAborted = true;
+				return true;
 			}
 		}
 		return false;
@@ -283,11 +284,11 @@ abstract class GardeningBot {
 		if($this->totalWork > 0){
 			$res = $res = ($this->currentTask-1)/$this->totalWork;
 		}
-		
+
 		if($this->subtaskWork > 0 && $this->totalWork > 0){
 			$res += $this->currentWork / $this->subtaskWork / $this->totalWork;
 		}
-		return  $res;   
+		return  $res;
 	}
 
 
@@ -377,19 +378,24 @@ abstract class GardeningBot {
 			
 			
 		// validate parameters
-		$isValid = GardeningBot::checkParameters($botID, GardeningBot::convertParamStringToArray($params));
-		if (gettype($isValid) == 'string') {
-			return "ERROR:$isValid";
+		if (strpos($params, '#json:') === false) {
+			$paramObject = GardeningBot::convertParamStringToArray($params);
+			$isValid = GardeningBot::checkParameters($botID, $paramObject);
+			if (gettype($isValid) == 'string') {
+				return "ERROR:$isValid";
+			}
 		}
-		
-		// do not ship parameters via commandline if length > 100
-		$oldparams = $params;
-		if (strlen($params) > 100) {
+
+		// do not ship parameters via commandline if #json: is used.
+	
+		if (strpos($params, '#json:') === 0) {
+			$paramObject = json_decode(substr($params,6));
 			$paramfilename = uniqid().".param";
 			$handle = fopen(self::getWriteableDir()."/$paramfilename", "w");
 			fwrite($handle, $params);
 			fclose($handle);
 			$params = "__PARAM_FILE=".self::getWriteableDir()."/$paramfilename";
+			
 		}
 
 		// ok everything is fine, so add a gardening task
@@ -465,7 +471,7 @@ abstract class GardeningBot {
 				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
 			}
 		}
-		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($oldparams));
+		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($paramObject));
 		return $taskid;
 	}
 
@@ -473,32 +479,32 @@ abstract class GardeningBot {
 	 * Returns log direction (shell command output redirection)
 	 *
 	 * @param int $taskid ID of gardening run
-	 * 
+	 *
 	 */
 	private static function getLogRedirection($taskid) {
-        global $sgaTempDir;
-        // $sgaTempDir is set but empty to disable logging
-    
+		global $sgaTempDir;
+		// $sgaTempDir is set but empty to disable logging
+
 		$useTmpDir = self::getWriteableDir();
-      
+
 		self::mkpath($useTmpDir);
 		$botLogFile =  "> $useTmpDir"."log_$taskid";
-		
+
 		return $botLogFile;
 	}
-	
+
 	/**
 	 * Indicates if a bot can be started.
 	 * If not, the help text is shown. GardeningBot::getHelpText()
 	 * can show a different text depending of the result of this
 	 * method.
-	 * 
+	 *
 	 * @return boolean
 	 */
-    public function canBeRun() {
+	public function canBeRun() {
 		return true;
 	}
-    
+
 
 	/**
 	 * Returns a writeable dir (assuming $sgaTempDir is configured accrodingly).
@@ -656,7 +662,7 @@ abstract class GardeningBot {
 		}
 		print $pro_str."%";
 	}
-	
+
 	public static function getXSDValue($dataItem) {
 		return $dataItem->getSortKey();
 	}

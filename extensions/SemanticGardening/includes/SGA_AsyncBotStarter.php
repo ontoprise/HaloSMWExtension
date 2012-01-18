@@ -124,7 +124,11 @@ if ($bot != null) {
 		$paramArray = GardeningBot::convertParamStringToArray(urldecode(str_replace("{{percentage}}", "%", implode($params,""))));
 		if (array_key_exists('__PARAM_FILE', $paramArray)) {
 			$params = file_get_contents($paramArray['__PARAM_FILE']);
-			$paramArray = GardeningBot::convertParamStringToArray($params);
+			if (strpos($params, '#json:') === 0) {
+				 $paramArray = json_decode(substr($params, 6));
+			} else {
+			     $paramArray = GardeningBot::convertParamStringToArray($params);
+			}
 		}
 		$log = $bot->run($paramArray, true, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
 	
