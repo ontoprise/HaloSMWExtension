@@ -65,6 +65,8 @@ $messages['en'] = array(
     'sref_next_page' => 'next',
     'sref_prev_page' => 'prev',
     'sref_page' => 'Page',
+    'sref_add_command' => 'add command',
+    'sref_remove_command' => 'remove command',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',
@@ -175,7 +177,9 @@ $messages['de'] = array(
     'sref_more_results' => 'More results available',
     'sref_next_page' => 'next',
     'sref_prev_page' => 'prev',
-     'sref_page' => 'Page',
+    'sref_page' => 'Page',
+    'sref_add_command' => 'add command',
+    'sref_remove_command' => 'remove command',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',

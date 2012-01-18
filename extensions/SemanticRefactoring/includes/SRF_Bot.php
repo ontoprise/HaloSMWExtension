@@ -81,29 +81,57 @@ class SRFRefactoringBot extends GardeningBot {
 	}
 
 	/**
-	 * Creates a comment depending on the given parameters
+	 * Creates a comment depending on the given parameters.
 	 *
-	 * @param string parameters (comma-separated)
+	 * @param mixed $parameters
 	 * @return string
 	 */
-	public function getComment($params) {
-		$paramArray = GardeningBot::convertParamStringToArray($params);
-		$operation = $paramArray['SRF_OPERATION'];
+	public function getComment($parameters) {
+        
+		$operation = array();
+		if (is_array($parameters)) {
 
-		$msg = 'sref_comment_'.strtolower($operation);
-		switch($operation) {
+			// normal bot call
+			return $this->getMessageText($parameters);
+
+		} else {
+            $result = "";
+			// user defined paramArray
+			$commands = $parameters->commands;
+			foreach($commands as $c) {
+				$paramArray = GardeningBot::convertParamStringToArray($c);
+				$result .= "\n".$this->getMessageText($paramArray);
+			}
+		}
+
+		return trim($result);
+	}
+	
+   /**
+    * Returns a human-readible message for an operation
+    * description as key-value pairs.
+    * 
+    * @param array $paramArray
+    * @return string|Ambigous <String:, string, mixed>
+    */
+    private function getMessageText($paramArray) {
+		$op = $paramArray['SRF_OPERATION'];
+		$msg = 'sref_comment_'.strtolower($op);
+		switch($op) {
 			case 'addCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';
 				}
 				$category = $paramArray['category'];
 				return wfMsg($msg, $category);
+				break;
 			case 'removeCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';
 				}
 				$category = $paramArray['category'];
 				return wfMsg($msg, $category);
+				break;
 			case 'replaceCategory':
 				if (!array_key_exists('old_category', $paramArray)) {
 					return '';
@@ -114,6 +142,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$new_category = $paramArray['new_category'];
 				return wfMsg($msg, $old_category, $new_category);
+				break;
 			case 'addAnnotation' :
 				if (!array_key_exists('property', $paramArray)) {
 					return "Property missing";
@@ -225,22 +254,9 @@ class SRFRefactoringBot extends GardeningBot {
 				return wfMsg($msg, $template, $old_parameter, $new_parameter);
 				break;
 		}
-		return '- unknown parameters -';
 	}
 
-	public function run($paramArray, $isAsync, $delay) {
-			
-		// do not allow to start synchronously.
-		if (!$isAsync) {
-			return "RefactoringBot should not be executed synchronously!";
-		}
-
-		if (!array_key_exists('SRF_OPERATION', $paramArray)) {
-			return "Refactoring operation not specified.";
-		}
-
-		$operation = $paramArray['SRF_OPERATION'];
-
+	private function getOperation($operation, $titles, $paramArray) {
 		switch($operation) {
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
@@ -276,7 +292,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 
 				$op = new SRFRenamePropertyOperation($oldProperty, $newProperty);
-					
+
 				break;
 			case 'renameCategory' :
 				if (!array_key_exists('oldCategory', $paramArray)) {
@@ -319,7 +335,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Category missing";
 				}
 				$category = $paramArray['category'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeCategoryValueOperation($titles, NULL, $category);
 
@@ -330,7 +346,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Category missing";
 				}
 				$category = $paramArray['category'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeCategoryValueOperation($titles, $category, NULL);
 
@@ -344,7 +360,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "new_category missing";
 				}
 				$new_category = $paramArray['new_category'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeCategoryValueOperation($titles, $old_category, $new_category);
 
@@ -359,7 +375,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeValueOperation($titles, $property, NULL, $value);
 
@@ -374,7 +390,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeValueOperation($titles, $property, $value, NULL);
 
@@ -393,7 +409,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-				$titles = explode("%%", $paramArray['titles']);
+					
 
 				$op = new SRFChangeValueOperation($titles, $property, $old_value, $new_value);
 
@@ -408,7 +424,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				$titles = explode("%%", $paramArray['titles']);
+
 
 				$op = new SRFChangeValueOperation($titles, $property, NULL, $value, true);
 
@@ -427,7 +443,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				$titles = explode("%%", $paramArray['titles']);
+
 
 				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, NULL, $value, true);
 
@@ -450,7 +466,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-				$titles = explode("%%", $paramArray['titles']);
+
 
 				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, $old_value, $new_value);
 
@@ -470,21 +486,63 @@ class SRFRefactoringBot extends GardeningBot {
 					return "new_parameter missing";
 				}
 				$new_parameter = $paramArray['new_parameter'];
-				$titles = explode("%%", $paramArray['titles']);
+
 
 				$op = new SRFChangeTemplateOperation($titles, $template, $old_parameter, $new_parameter);
 
 				break;
 		}
+		return $op;
+	}
 
-		$num = $op->getNumberOfAffectedPages();
-		$op->setBot($this);
-		$this->setNumberOfTasks(1);
-		$this->addSubTask($num);
+	public function run($paramArray, $isAsync, $delay) {
+			
+		// do not allow to start synchronously.
+		if (!$isAsync) {
+			return "RefactoringBot should not be executed synchronously!";
+		}
 
-		$logMessages=array();
-		$op->refactor(true, $logMessages);
+		$ops = array();
+		if (is_array($paramArray)) {
 
+			// normal bot call
+			$operation = $paramArray['SRF_OPERATION'];
+			$op = $this->getOperation($operation, $titles, $paramArray);
+			$num = $op->getNumberOfAffectedPages();
+			$op->setBot($this);
+			$this->setNumberOfTasks(1);
+			$this->addSubTask($num);
+
+			$logMessages=array();
+			$op->refactor(true, $logMessages);
+
+		} else {
+
+			// user defined paramArray
+			$commands = $paramArray->commands;
+			$titles = $paramArray->titles;
+			foreach($commands as $c) {
+				$paramArray = GardeningBot::convertParamStringToArray($c);
+				$operation = $paramArray['SRF_OPERATION'];
+				$ops[] = $this->getOperation($operation, $titles, $paramArray);
+			}
+
+			if (count($ops) == 0) {
+				return "No operations specified.";
+			}
+
+			// use first operation to indicate bot progress
+			$op = $ops[0];
+			$num = $op->getNumberOfAffectedPages();
+			$op->setBot($this);
+			$this->setNumberOfTasks(1);
+			$this->addSubTask($num);
+
+			$logMessages=array();
+			SRFRefactoringOperation::applyOperations(true, $titles, $ops, $logMessages);
+		}
+
+		// print messages
 		ksort($logMessages);
 		$log = "";
 		foreach($logMessages as $prefixedTitle => $lm_array) {

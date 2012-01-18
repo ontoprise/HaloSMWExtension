@@ -89,7 +89,7 @@ abstract class SRFRefactoringOperation {
 	 * 
 	 * @return Status
 	 */
-	protected function storeArticle($title, $wikitext, $comment) {
+	public function storeArticle($title, $wikitext, $comment) {
 		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
 		if ($userCan == "false") return Status::newFatal(wfMsg('sref_no_sufficient_rights'));
 		$a = new Article($title);
@@ -101,6 +101,48 @@ abstract class SRFRefactoringOperation {
 		}
         $status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
         return $status;
+	}
+	
+	public function botWorked($worked) {
+		 if (!is_null($this->mBot)) $this->mBot->worked(1);
+	}
+	
+	
+	/**
+	 * Applies the given operations on the set of titles.
+	 * 
+	 * NOTE:
+	 * Any titles to work on which are specified in the operation itself
+	 * are ignored!
+	 * 
+	 * @param boolean $save
+	 * @param string[] $titles Full qualified titles
+	 * @param SRFRefactoringOperation[] $operations
+	 * @param array $logMessages
+	 */
+	public static function applyOperations($save = true, $titles, $operations, & $logMessages) {
+	
+        foreach($titles as $title_str) {
+            $title = Title::newFromText($title_str);
+            $rev = Revision::newFromTitle($title);
+            
+            $wikitext = $rev->getRawText();
+            foreach($operations as $op) {
+                $wikitext = $op->changeContent($title, $wikitext, $logMessages);
+                $op->botWorked(1);
+            }
+                
+            // stores article
+            if ($save) {
+                $status = $op->storeArticle($title, $wikitext, $rev->getRawComment());
+                if (!$status->isGood()) {
+                	$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+                    $l->setLogType(SREF_LOG_STATUS_WARN);
+                    $logMessages[$title->getPrefixedText()][] = $l;
+                }
+            }
+        }
+    
 	}
 
 	protected function findObjectByID($node, $id, & $results) {

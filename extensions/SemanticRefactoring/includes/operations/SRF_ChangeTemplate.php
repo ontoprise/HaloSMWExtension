@@ -83,7 +83,7 @@ class SRFChangeTemplateOperation extends SRFRefactoringOperation {
 
 					if ($p->getKey() == $this->old_parameter) {
 						$p->setXMLAttribute('key', $this->new_parameter );
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed parameter '".$this->old_parameter."' to '".$this->new_parameter."'", $title);
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed parameter '$1' to '$2'", $title, "", array($this->old_parameter, $this->new_parameter));
 					}
 				}
 

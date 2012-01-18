@@ -85,72 +85,81 @@
 	var visibleSlice = 0;
 
 	var commandBox = {
-			
-		current_operation : -1, 
 		
-		createHTML : function() {
-			var html = '';
-			html += '<div style="float:left"><select id="sref_operation_type" class="sref_operation_selector" size="5">';
-			for (e in content.level1) { 
-				html += '<option value="'+content.level1[e]+'">'+content.level1[e]+'</option>';
+		command : function(id) {
+			this.id = id;
+			this.current_operation = -1;
+			this.createHTML = function(showRemoveIcon) {
+				var html = '';
+				html += '<div style="width:90%;float:left" class="sref_commandbox"><div style="float:left"><select id="sref_operation_type'+this.id+'" class="sref_operation_type_selector" size="5">';
+				for (e in content.level1) { 
+					html += '<option value="'+content.level1[e]+'">'+content.level1[e]+'</option>';
+				}
+				html += '</select></div>';
+				
+				html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>';
+				html += '<div style="float:left"><select id="sref_operation'+this.id+'" class="sref_operation_selector" size="5">';
+				html += '</select></div>';
+				
+				html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>'
+				html += '<div style="float:left" id="sref_parameters'+this.id+'" class="sref_parameters">';
+				html += '</div>';
+				if (showRemoveIcon) html += '<img title="'+mw.msg('sref_remove_command')+'" class="sref_pointer" id="sref_remove_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/delete_icon.png"/>';
+				html += '</div>';
+				return html;
 			}
-			html += '</select></div>';
-			
-			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>';
-			html += '<div style="float:left"><select id="sref_operation" class="sref_operation_selector" size="5">';
-			html += '</select></div>';
-			
-			html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>'
-			html += '<div style="float:left" id="sref_parameters">';
-			html += '</div>';
-			
-			return html;
-		},
 		
-		
-	
-		addListeners: function() {
-			$('#sref_operation_type').change(function(e) { 
-				var i = e.currentTarget.selectedIndex;
-				commandBox.current_operation = i;
-				var html = "";
-				$(content.level2[i]).each(function(i, e) { 
-					html += '<option value="'+e+'">'+e+'</option>';
+			this.addListeners = function() {
+				var o = this;
+				
+				$('#sref_operation_type'+o.id).change(function(e) { 
+					var i = e.currentTarget.selectedIndex;
+					o.current_operation = i;
+					var html = "";
+					$(content.level2[i]).each(function(i, e) { 
+						html += '<option value="'+e+'">'+e+'</option>';
+					});
+					$('#sref_operation'+o.id).html(html);
 				});
-				$('#sref_operation').html(html);
-			});
-			
-			$('#sref_operation').change(function(e) { 
-				var i = e.currentTarget.selectedIndex;
-				var html = '<table class="sref_command_parameters">';
-				i = ""+commandBox.current_operation+i;
-				$(content.parameters[i]).each(function(i, e) {
-					html += "<tr>";
-					html += commandBox.createInputField(e);
-					html += "</tr>";
+				
+				$('#sref_operation'+o.id).change(function(e) { 
+					var i = e.currentTarget.selectedIndex;
+					var html = '<table class="sref_command_parameters">';
+					i = ""+o.current_operation+i;
+					$(content.parameters[i]).each(function(i, e) {
+						html += "<tr>";
+						html += o.createInputField(e);
+						html += "</tr>";
+					});
+					html += "</table>";
+					$('#sref_parameters'+o.id).html(html);
 				});
-				html += "</table>";
-				$('#sref_parameters').html(html);
-			});
+				
+				$('#sref_remove_operation'+o.id).click(function(e) {
+					var commandBox = $(this.parentNode);
+					commandBox.remove();
+				});
+				
+			}
 			
-			
-			
-		},
+			this.createInputField = function(e) {
 		
-		createInputField : function(e) {
-	
-			var acAttr = "";
-			if (e.ac && e.ac != null) {
-				acAttr='class="wickEnabled"';
-				acAttr+=' constraints="'+e.ac+'"';
+				var acAttr = "";
+				if (e.ac && e.ac != null) {
+					acAttr='class="wickEnabled"';
+					acAttr+=' constraints="'+e.ac+'"';
+				}
+				var optionalAttr = "";
+				if (typeof(e.optional) != 'undefined') {
+					optionalAttr = e.optional == true ? 'optional="true"' : 'optional="false"';
+				}
+				var html = '<td class="sref_param_label">'+e.title+"</td>"+'<td class="sref_param_input">'
+							+'<input id="'+this.id+"__"+e.id+'" '+optionalAttr+' type="text" size="30" value="" '+acAttr+'></input></td>';
+				return html;
 			}
-			var optionalAttr = "";
-			if (typeof(e.optional) != 'undefined') {
-				optionalAttr = e.optional == true ? 'optional="true"' : 'optional="false"';
-			}
-			var html = '<td class="sref_param_label">'+e.title+"</td>"+'<td class="sref_param_input"><input id="'+e.id+'" '+optionalAttr+' type="text" size="30" value="" '+acAttr+'></input></td>';
-			return html;
+			
 		}
+		
 	};
 	
 	var resultBox = {
@@ -276,7 +285,9 @@
 			      newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
 			      newQuery = newQuery.replace(/\]\]</g, "]]\n<");
 			      newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
-			  	
+			      newQuery = newQuery.replace(/\{\{#ask:/, "");
+			      newQuery = newQuery.replace(/\}\}/, "");
+			      
 			      $('#sref_querybox_textarea').val(newQuery);
 			      delete qiHelperObj;
 			    },
@@ -371,12 +382,75 @@
 	
 	};
 			
-	$('#sref_commandboxes').html(commandBox.createHTML());
-	commandBox.addListeners();
+	//commandBox.addListeners();
+	var numOfCommands = 1;
+	var command1 = new commandBox.command('0');
+	$('#sref_commandboxes').html(command1.createHTML(false));
+	command1.addListeners();
+	
 	resultBox.addListeners();
 	$('#sref_add_command').click(function() { 
-		alert("Command");
+		numOfCommands++;
+		var c = new commandBox.command(''+numOfCommands);
+		$('#sref_commandboxes').append(c.createHTML(true));
+		c.addListeners();
 	});
+	
+	var assembleParameters = { 
+			getCommandParameters : function() {
+				var paramArray = { commands : [] };
+				var message = "";
+				var commandBoxes = $('.sref_commandbox');
+				commandBoxes.each(function(i, cBox) { 
+					
+					var selectedOperationType = $('.sref_operation_type_selector option:selected', cBox);
+					var selectedOperation =  $('.sref_operation_selector option:selected', cBox);
+					if (selectedOperationType.length == 0 || selectedOperation.length == 0) {
+						alert("Select operation"); // TODO: localize
+						return;
+					}
+					var operationTypeIndex = selectedOperationType[0].index;
+					var operationIndex = selectedOperation[0].index;
+					
+					var operationKey = ""+operationTypeIndex+operationIndex;
+					var operation = content.operationnames[operationKey];
+					
+					if (operation == null) {
+						alert("Internal error"); // TODO: localize
+						return;
+					}
+					
+					// read parameters from DOM
+					
+					var params = {};
+					$('.sref_parameters input', cBox).each(function(i, e) {
+						var jqe = $(e);
+						var parts = jqe.attr('id').split(/__/);
+						var id = parts[1];
+						if ($.trim(jqe.val()) == '' && jqe.attr('optional') == "false") {
+							message += "\n"+'Parameter ' +id+ " is mandatory."; // TODO:
+						}
+						params[id] = jqe.val();
+					});
+					
+					
+					// set bot parameters
+					var paramString = "SRF_OPERATION=" + operation;
+					for (p in params) {
+						paramString += "," + p + "=" + params[p];
+					}
+					paramArray.commands.push(paramString);
+					
+				});
+				
+				if (message != '') {
+					alert(message);
+					return null;
+				}
+				
+				return paramArray;
+			}
+	};
 	
 	$('#sref_start_operation').click(function(e) { 
 		var results = $('input[checked="true"]', '#sref_resultbox');
@@ -386,46 +460,16 @@
 			prefixedTitles.push(prefixedTitle);
 		});
 		
-		var selectedOperationType = $('#sref_operation_type option:selected');
-		var selectedOperation =  $('#sref_operation option:selected');
-		if (selectedOperationType.length == 0 || selectedOperation.length == 0) {
-			alert("Select operation"); // TODO: localize
+		var paramArray = assembleParameters.getCommandParameters();
+		if (paramArray == null) {
 			return;
 		}
-		var operationTypeIndex = selectedOperationType[0].index;
-		var operationIndex = selectedOperation[0].index;
+		paramArray.titles = prefixedTitles;
 		
-		var operationKey = ""+operationTypeIndex+operationIndex;
-		var operation = content.operationnames[operationKey];
+		var paramString = "#json:";
+		var jsonData = Object.toJSON(paramArray);
+		paramString += jsonData;
 		
-		if (operation == null) {
-			alert("Internal error"); // TODO: localize
-			return;
-		}
-		
-		// read parameters from DOM
-		var message = "";
-		var params = {};
-		$('#sref_parameters input').each(function(i, e) {
-			var jqe = $(e);
-			if ($.trim(jqe.val()) == '' && jqe.attr('optional') == "false") {
-				message += "\n"+'Parameter ' +jqe.attr('id')+ " is mandatory."; // TODO:
-			}
-			params[jqe.attr('id')] = jqe.val();
-		});
-		if (message != '') {
-			alert(message);
-			return;
-		}
-		
-		// set bot parameters
-		var paramString = "SRF_OPERATION=" + operation;
-		for (p in params) {
-			paramString += "," + p + "=" + params[p];
-		}
-		
-		paramString += ",titles="+prefixedTitles.join("%%");
-				
 		// launch Bot
 		
 		var onError = function(xhr) {

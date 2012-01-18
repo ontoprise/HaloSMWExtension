@@ -55,7 +55,9 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 			if ($save) {
 				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
 				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+					$l->setLogType(SREF_LOG_STATUS_WARN);
+					$logMessages[$title->getPrefixedText()][] = $l;
 				}
 			}
 		}
@@ -88,7 +90,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		if (is_null($this->oldValue) && !$this->set) {
 			// add new annotation
 			$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 at \$title", $title, "", array($this->property, $this->newValue));
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 ", $title, "", array($this->property, $this->newValue));
 		}
 
 		foreach($objects as $o){
@@ -100,7 +102,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 					$value = $o->getPropertyValue();
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 						$toDelete[] = $o->getObjectID();
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '$2' for $1 at \$title", $title, "", array($this->property, $this->oldValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '$2' for $1 ", $title, "", array($this->property, $this->oldValue));
 					}
 				}
 			} else  {
@@ -116,9 +118,9 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 						$newValue = implode("; ", $values);
 						if ($value != $newValue) {
 							if ($this->set) {
-								$logMessages[$title->getPrefixedText()][] = new SRFLog("Set value '$2' for $1 at \$title", $title, "", array($this->property, $this->newValue));
+								$logMessages[$title->getPrefixedText()][] = new SRFLog("Set value '$2' for $1 ", $title, "", array($this->property, $this->newValue));
 							} else {
-								$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value '$2' into '$3' for $1 at \$title", $title, "", array($this->property, $this->oldValue, $this->newValue));
+								$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value '$2' into '$3' for $1 ", $title, "", array($this->property, $this->oldValue, $this->newValue));
 
 							}
 						}

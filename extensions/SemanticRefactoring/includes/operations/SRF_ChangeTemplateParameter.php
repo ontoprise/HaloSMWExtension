@@ -89,7 +89,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 					foreach($parameters as $p) {
 						if (is_null($this->oldValue) || $p->getWikiText() == $this->oldValue) {
 							$toDelete[] = $p->getObjectID();
-							$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '".$this->oldValue."' of '".$this->parameter."'", $title);
+							$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted value '$2' of '$1'", $title, "", array($this->parameter, $this->oldValue));
 						}
 					}
 				}
@@ -100,7 +100,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 				$templateField->insertObject(new WOMTextModel($this->newValue));
 				$paramValue->insertObject($templateField);
 				$o->insertObject($paramValue);
-				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '".$this->parameter."=".$this->newValue."'", $title);
+				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '$2' of '$1'", $title, "", array($this->parameter, $this->newValue));
 			} else  {
 
 				if ($name == $this->template->getText()) {
@@ -111,7 +111,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 						if ($this->set || $p->getWikiText() == $this->oldValue) {
 							$id = $p->getObjectID();
 							$p->getParent()->updateObject(new WOMTextModel($this->newValue), $id);
-							$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value of '".$this->parameter."' from '".$this->oldValue."' to '".$this->newValue."'", $title);
+							$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed value of '$1' from '$2' to '$3'", $title, "", array($this->parameter, $this->oldValue, $this->newValue));
 						}
 					}
 

@@ -16,18 +16,28 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+define ('SREF_LOG_STATUS_INFO', 0);
+define ('SREF_LOG_STATUS_WARN', 1);
+
 class SRFLog {
 
 	private $mOperation;
 	private $mAffectedTitle;
 	private $mWikitext;
 	private $mArgs;
+	private $mType;
 
 	public function __construct($operation, $affectedTitle, $wikitext = "", $args = array()) {
 		$this->mOperation = $operation;
 		$this->mAffectedTitle = $affectedTitle;
 		$this->mWikitext = $wikitext;
 		$this->mArgs = $args;
+		$this->mType = SREF_LOG_STATUS_INFO;
+	}
+	
+	public function setLogType($type) {
+		$this->mType = $type;
 	}
 
 	public function getOperation() {
@@ -54,6 +64,9 @@ class SRFLog {
 			$text = str_replace('$'.($i+1),$repl, $text);
 		}
 		$text = str_replace('$title', self::titleAsWikiText($this->mAffectedTitle), $text);
+		if ($this->mType == SREF_LOG_STATUS_WARN) {
+			return '<span style="color:#ff0000">'.$text.'</span>';
+		}
 		return $text;
 	}
 

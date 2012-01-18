@@ -109,7 +109,10 @@ class SREFRefactor extends SpecialPage {
 		$html .= '<div id="sref_commandboxes">';
 		$html .= '</div>';
 		$html .= '<div style="float:left">';
-		$html .= '<input type="button" id="sref_start_operation" value="'.wfMsg('sref_start_operation').'"></input>';
+		
+		global $wgScriptPath;
+		$html .= '<img title="'.wfMsg('sref_add_command').'" class="sref_pointer" id="sref_add_command" src="'.$wgScriptPath.'/extensions/SemanticRefactoring/skins/images/plus-act.gif"/>';
+		$html .= '<br><input type="button" id="sref_start_operation" value="'.wfMsg('sref_start_operation').'"></input>';
 		$html .= '</div>';
 		$html .= '</div>';
 

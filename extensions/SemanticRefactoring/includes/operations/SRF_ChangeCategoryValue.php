@@ -86,7 +86,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 		if (is_null($this->oldValue)) {
 			// add new annotation
 			$toAdd[] = new WOMCategoryModel($this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added category $1 at \$title", $title, "", array($this->newValue));
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added category $1 ", $title, "", array($this->newValue));
 		} else {
 			foreach($objects as $o){
 
@@ -97,7 +97,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 					$value = $o->getName();
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 						$toDelete[] = $o->getObjectID();
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted category $1 at \$title", $title, "", array($this->oldValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted category $1 ", $title, "", array($this->oldValue));
 					}
 
 				} else {
@@ -108,7 +108,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 
 						$o->setName($this->newValue);
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category '$1' into '$2' at \$title", $title, "", array($this->oldValue, $this->newValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category '$1' into '$2' ", $title, "", array($this->oldValue, $this->newValue));
 					}
 
 				}
