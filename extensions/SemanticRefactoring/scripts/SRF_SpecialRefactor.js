@@ -101,10 +101,12 @@
 				html += '<div style="float:left"><select id="sref_operation'+this.id+'" class="sref_operation_selector" size="5">';
 				html += '</select></div>';
 				
-				html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/></div>'
+				html += '<div style="float:left"><img src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/arrow.png"/>';
+				html += '</div>';
 				html += '<div style="float:left" id="sref_parameters'+this.id+'" class="sref_parameters">';
 				html += '</div>';
-				if (showRemoveIcon) html += '<img title="'+mw.msg('sref_remove_command')+'" class="sref_pointer" id="sref_remove_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/delete_icon.png"/>';
+				if (showRemoveIcon) html += '<img style="float:right"title="'+mw.msg('sref_remove_command')+'" class="sref_pointer" id="sref_remove_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/delete_icon.png"/>';
+				//html += '<img style="float:right" title="'+mw.msg('sref_help_command')+'" class="sref_pointer" id="sref_help_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/help.gif"/>';
 				html += '</div>';
 				return html;
 			}
@@ -117,9 +119,32 @@
 					o.current_operation = i;
 					var html = "";
 					$(content.level2[i]).each(function(i, e) { 
-						html += '<option value="'+e+'">'+e+'</option>';
+						html += '<option id="sref_command_'+i+'_'+o.id+'" value="'+e+'">'+e+'</option>';
 					});
 					$('#sref_operation'+o.id).html(html);
+					
+					$(content.level2[i]).each(function(i, e) { 
+						var op = ""+o.current_operation+i;
+						var msg_id = content.operationnames[op].toLowerCase();
+						$('#sref_command_'+i+'_'+o.id).qtip( {
+							content : mw.msg("sref_help_"+msg_id),
+							show : {													
+								when : { event : 'mouseover' }
+							},
+							hide : {
+								when : { event : 'mouseout' },
+								fixed : true
+							},
+							position: {
+		                      my: 'bottom left',
+		                      at: 'top left',
+		                      target: 'mouse'
+		                    },
+							style : {
+		                        classes: 'ui-tooltip-blue ui-tooltip-shadow'
+		                    }
+						});
+					});
 				});
 				
 				$('#sref_operation'+o.id).change(function(e) { 
@@ -140,6 +165,8 @@
 					commandBox.remove();
 				});
 				
+				
+				
 			}
 			
 			this.createInputField = function(e) {
@@ -148,6 +175,7 @@
 				if (e.ac && e.ac != null) {
 					acAttr='class="wickEnabled"';
 					acAttr+=' constraints="'+e.ac+'"';
+					
 				}
 				var optionalAttr = "";
 				if (typeof(e.optional) != 'undefined') {
@@ -332,12 +360,15 @@
 	var runningOperations = {
 		showTable : function(response) {
 			var table = $.parseJSON(response);
-			var html = "<table width=\"100%\" class=\"smwtable\"><tr><th>"+mw.msg('sref_comment')+"</th><th>"+mw.msg('sref_starttime')+"</th><th>"
+			var html = "<table width=\"100%\" class=\"smwtable\"><tr><th>"+mw.msg('sref_comment')+"</th><th>"+mw.msg('sref_log')+"</th><th>"+mw.msg('sref_starttime')+"</th><th>"
 						+mw.msg('sref_endtime')+"</th><th>"+mw.msg('sref_progress')+"</th><th>"+mw.msg('sref_status')+"</th></tr>";
 			$(table).each(function(i, e) { 
 				html += "<tr>";
 				html += "<td>";
 				html += e.comment;
+				html += "</td>";
+				html += "<td>";
+				html += '<a href="'+mw.config.get('wgServer')+mw.config.get('wgArticlePath').replace(/\$1/, e.log)+'">'+mw.msg('sref_log')+'</a>';
 				html += "</td>";
 				html += "<td>";
 				html += e.starttime;

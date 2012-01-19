@@ -87,7 +87,7 @@ class SRFRefactoringBot extends GardeningBot {
 	 * @return string
 	 */
 	public function getComment($parameters) {
-        
+
 		$operation = array();
 		if (is_array($parameters)) {
 
@@ -95,7 +95,7 @@ class SRFRefactoringBot extends GardeningBot {
 			return $this->getMessageText($parameters);
 
 		} else {
-            $result = "";
+			$result = "";
 			// user defined paramArray
 			$commands = $parameters->commands;
 			foreach($commands as $c) {
@@ -106,18 +106,76 @@ class SRFRefactoringBot extends GardeningBot {
 
 		return trim($result);
 	}
-	
-   /**
-    * Returns a human-readible message for an operation
-    * description as key-value pairs.
-    * 
-    * @param array $paramArray
-    * @return string|Ambigous <String:, string, mixed>
-    */
-    private function getMessageText($paramArray) {
+
+	/**
+	 * Returns a human-readible message for an operation
+	 * description as key-value pairs.
+	 *
+	 * @param array $paramArray
+	 * @return string|Ambigous <String:, string, mixed>
+	 */
+	private function getMessageText($paramArray) {
 		$op = $paramArray['SRF_OPERATION'];
 		$msg = 'sref_comment_'.strtolower($op);
 		switch($op) {
+			case 'renameInstance':
+				if (!array_key_exists('oldInstance', $paramArray)) {
+					return "Old instance missing";
+				}
+				$oldInstance = $paramArray['oldInstance'];
+
+				if (!array_key_exists('newInstance', $paramArray)) {
+					return "New instance missing";
+				}
+				$newInstance = $paramArray['newInstance'];
+				return wfMsg($msg, $oldInstance, $newInstance);
+				break;
+			case 'renameProperty':
+				if (!array_key_exists('oldProperty', $paramArray)) {
+					return "Old property missing";
+				}
+				$oldProperty = $paramArray['oldProperty'];
+
+				if (!array_key_exists('newProperty', $paramArray)) {
+					return "New property missing";
+				}
+				$newProperty = $paramArray['newProperty'];
+				return wfMsg($msg, $oldProperty, $newProperty);
+				 
+
+				break;
+			case 'renameCategory' :
+				if (!array_key_exists('oldCategory', $paramArray)) {
+					return "Old category missing";
+				}
+				$oldCategory = $paramArray['oldCategory'];
+
+				if (!array_key_exists('newCategory', $paramArray)) {
+					return "New property missing";
+				}
+				$newCategory = $paramArray['newCategory'];
+				return wfMsg($msg, $oldCategory, $newCategory);
+
+
+				break;
+			case 'deleteCategory' :
+				if (!array_key_exists('category', $paramArray)) {
+					return "Category missing";
+				}
+				$category = $paramArray['category'];
+
+				return wfMsg($msg, $category);
+
+				break;
+			case 'deleteProperty' :
+				if (!array_key_exists('property', $paramArray)) {
+					return "Property missing";
+				}
+				$property = $paramArray['property'];
+				 
+				return wfMsg($msg, $property);
+				break;
+
 			case 'addCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';

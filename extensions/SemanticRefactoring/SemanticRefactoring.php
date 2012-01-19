@@ -146,6 +146,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_new_value',
             
 				            'sref_comment',
+                            'sref_log',
 						    'sref_starttime',
 						    'sref_endtime',
 						    'sref_progress',
@@ -154,7 +155,21 @@ function sreffRegisterJSModules(& $out) {
                             'sref_running',
                             'sref_page',
 				            'sref_add_command',
-				            'sref_remove_command'
+				            'sref_remove_command',
+            
+				            'sref_help_addcategory',
+						    'sref_help_removecategory' ,
+						    'sref_help_replacecategory' ,
+						    'sref_help_addcategory',
+						    'sref_help_removecategory',
+						    'sref_help_replacecategory',
+						    'sref_help_addannotation',
+						    'sref_help_removeannotation',
+						    'sref_help_replaceannotation',
+						    'sref_help_setvalueofannotation',
+						    'sref_help_setvalueoftemplate',
+						    'sref_help_replacetemplatevalue',
+						    'sref_help_renametemplateparameter'
     )
     );
 

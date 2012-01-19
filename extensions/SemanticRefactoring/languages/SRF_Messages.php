@@ -88,16 +88,19 @@ $messages['en'] = array(
     'sref_new_value' => 'New value',
 
     'sref_comment' => 'Comment',
+    'sref_log' => 'Log',
 	'sref_starttime' => 'Start-time',
 	'sref_endtime' => 'End-time',
 	'sref_progress' => 'Progress',
 	'sref_status' => 'Status',
     'sref_finished' => 'finished',
     'sref_running' => 'running',
-
-    'sref_comment_addcategory' => 'Add category $1',
-    'sref_comment_removecategory' => 'Remove category $1',
-    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    
+    'sref_comment_renameinstance' => 'Rename instance $1 to $2',
+    'sref_comment_renameproperty' => 'Rename property $1 to $2',
+    'sref_comment_renamecategory' => 'Rename category $1 to $2',
+    'sref_comment_deleteproperty' => 'Delete property $1',
+    'sref_comment_deletecategory' => 'Delete category $1',
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
     'sref_comment_replacecategory' => 'Replace category $1 by $2',
@@ -106,8 +109,20 @@ $messages['en'] = array(
     'sref_comment_replaceannotation' => 'Replace annotation $1::$2 by $1::$3',
     'sref_comment_setvalueofannotation' => 'Set value of $1::$2',
     'sref_comment_setvalueoftemplate' => 'Set value of $1: $2=$3',
-    'sref_comment_replacettemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
-    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3'
+    'sref_comment_replacetemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
+    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3',
+
+   
+    'sref_help_addcategory' => 'Add category as new annotation',
+    'sref_help_removecategory' => 'Remove an existing category annotation',
+    'sref_help_replacecategory' => 'Replace an category annotation by another',
+    'sref_help_addannotation' => 'Add new annotation',
+    'sref_help_removeannotation' => 'Remove existing annotation',
+    'sref_help_replaceannotation' => 'Replace annotation by another',
+    'sref_help_setvalueofannotation' => 'Set new value for an existing annotation.',
+    'sref_help_setvalueoftemplate' => 'Set new value of a template parameter',
+    'sref_help_replacetemplatevalue' => 'Replace a value of a template parameter by another',
+    'sref_help_renametemplateparameter' => 'Rename a template parameter'
 );
 
 /**
@@ -201,16 +216,19 @@ $messages['de'] = array(
     'sref_new_value' => 'New value',
 
     'sref_comment' => 'Comment',
+    'sref_log' => 'Log',
     'sref_starttime' => 'Start-time',
     'sref_endtime' => 'End-time',
     'sref_progress' => 'Progress',
     'sref_status' => 'Status',
     'sref_finished' => 'finished',
     'sref_running' => 'running',
-
-    'sref_comment_addcategory' => 'Add category $1',
-    'sref_comment_removecategory' => 'Remove category $1',
-    'sref_comment_replacecategory' => 'Replace category $1 by $2',
+    
+    'sref_comment_renameinstance' => 'Rename instance $1 to $2',
+	'sref_comment_renameproperty' => 'Rename property $1 to $2',
+	'sref_comment_renamecategory' => 'Rename category $1 to $2',
+	'sref_comment_deleteproperty' => 'Delete property $1',
+	'sref_comment_deletecategory' => 'Delete category $1',
     'sref_comment_addcategory' => 'Add category $1',
     'sref_comment_removecategory' => 'Remove category $1',
     'sref_comment_replacecategory' => 'Replace category $1 by $2',
@@ -219,8 +237,19 @@ $messages['de'] = array(
     'sref_comment_replaceannotation' => 'Replace annotation $1::$2 by $1::$3',
     'sref_comment_setvalueofannotation' => 'Set value of $1::$2',
     'sref_comment_setvalueoftemplate' => 'Set value of $1: $2=$3',
-    'sref_comment_replacettemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
-    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3'
+    'sref_comment_replacetemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
+    'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3',
+
+    'sref_help_addcategory' => 'Add category as new annotation',
+    'sref_help_removecategory' => 'Remove an existing category annotation',
+    'sref_help_replacecategory' => 'Replace an category annotation by another',
+    'sref_help_addannotation' => 'Add new annotation',
+    'sref_help_removeannotation' => 'Remove existing annotation',
+    'sref_help_replaceannotation' => 'Replace annotation by another',
+    'sref_help_setvalueofannotation' => 'Set new value for an existing annotation.',
+    'sref_help_setvalueoftemplate' => 'Set new value of a template parameter',
+    'sref_help_replacetemplatevalue' => 'Replace a value of a template parameter by another',
+    'sref_help_renametemplateparameter' => 'Rename a template parameter'
 );
 
 /**
