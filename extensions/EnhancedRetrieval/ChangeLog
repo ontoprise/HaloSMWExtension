@@ -1,6 +1,10 @@
 Enhanced Retrieval extension ChangeLog
 ======================================
 
+VERSION 1.7
+  BUGFIXES:
+	16483 - English is not the fallback language in the UI
+	
 VERSION 1.6
   FEATURES:
     14756 - A configurable faceted search
