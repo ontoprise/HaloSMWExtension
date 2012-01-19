@@ -76,6 +76,11 @@ class ResourceInstaller {
 				// remove old pages
 				$this->logger->info("\n[Removing unused pages from ".$dd->getID());
 				$dfgOut->outputln("[Removing unused pages from ".$dd->getID());
+			    if (!file_exists($dumpPath)) {
+                    $this->logger->warn("\nIgnoring missing file: ".$dumpPath);
+                    $dfgOut->outputln("\nIgnoring missing file: ".$dumpPath);
+                    continue;
+                }
 				$verificationLog = $this->getPagesFromImport($dumpPath, $dd->getID());
 				$this->removeOldPages($dd->getID(), $verificationLog);
 				$dfgOut->outputln( "done.]");
