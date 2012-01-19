@@ -17,13 +17,36 @@ html, body, #globalWrapper {
 	background-color: #aad1de;
 	height: 100%;
 	margin: 0;
-	overflow: auto;
 }
 
 body > #globalWrapper {
 	height: auto;
 	min-height: 100%;
 }
+
+#wrapper {
+	padding-bottom: 240px;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.clearfix {
+	display: inline-block;
+}
+/* Hides from IE-mac \*/
+* html .clearfix {
+	height: 1%;
+}
+.clearfix {
+	display: block;
+}
+/* End hide from IE-mac */
 
 .mediawiki {
 	font-family: Helvetica,Arial,Helvetica,sans-serif;
@@ -645,8 +668,6 @@ textarea {
 /* ----------------------------------------*/
 #main {
 	overflow: auto;
-	margin-bottom: 240px;
-	height: 100%;
 }
 
 #mainpage {

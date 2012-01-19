@@ -154,108 +154,112 @@ class OntoSkin3Template extends QuickTemplate {
 		class="mediawiki <?php $this->text( 'dir' ) ?> <?php $this->text( 'pageclass' ) ?> <?php $this->text( 'skinnameclass' ) ?>">
 		<!-- globalWrapper -->
 		<div id="globalWrapper">
-			<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
-			<!-- header -->
-			<div id="smwh_head">
-				<div class="smwh_center">
-					<!-- logo -->
-					<div id="smwh_logo">
-						<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"
-							<?php echo $skin->tooltipAndAccesskey( 'p-logo' ) ?>>
-							<img src="<?php $this->text( 'logopath' ) ?>"/>
-						</a>
-					</div>
-					<!-- /logo -->
-					<!-- personalbar -->
-					<div id="smwh_personal">
-						<a id="personal_expand" class="limited" href="javascript:smwh_Skin.resizePage()">Change view</a>
-						<?php
-							foreach ( $this->data['personal_urls'] as $key => $item ) {
-								//echo $key;
-								if ( !($key == "login" || $key == "anonlogin" || $key == "logout" || $key == "userpage") ) {
-									continue;
-								} ?>
-								<a id="personal_<?php echo $key ?>"
-									href="<?php echo htmlspecialchars( $item['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'pt-' . $key ) ?>
-									class="<?php if ( $item['active'] ) { ?>active<?php }
-									if ( !empty( $item['class'] ) ) {
-										echo htmlspecialchars( $item['class'] );
-									} ?>">
-									<?php echo htmlspecialchars( $item['text'] ) ?>
-								</a>
-						<?php } ?>
-					</div>
-					<!-- /personalbar -->
-					<?php echo $this->smwh_Skin->buildPersonalQuickLinks(); ?>
-				</div>
-			</div>
-			<!-- /header -->
-			<!-- menu -->
-			<div id="smwh_menu">
-				<div class="smwh_center">
-					<div id="home">
-						<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'p-logo' ); ?>>
-							<img src="<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/menue_mainpageicon_white.gif" alt="mainpage"/>
-						</a>
-					</div>
-					<?php echo $this->smwh_Skin->buildMenuHtml(); ?>
-					<!-- Search -->
-					<?php $this->searchBox(); ?>
-				</div>
-			</div>
-			<!-- /menu -->
-			<!-- content -->
-			<div id="main" class="shadows smwh_center">
-				<div id="smwh_breadcrumbs">
-					<div id="smwh_last_visited">
-						<?php $this->msg( 'smw_last_visited' ); ?>
-					</div>
-					<div id="breadcrumb"></div>
-				</div>
-				<div id="mainpage">
-					<div id="smwh_tabs">
-						<?php echo $this->smwh_Skin->buildTabs(); ?>
-					</div>
-					<?php echo $this->smwh_Skin->buildCreatedBy(); ?>
-					<?php endif; // action != 'plainpage'  ?>
-					<div id="column-content">
-						<div id="content">
-							<!-- div from mw 1.13 removed 1.15 -->
-							<div id="bodyContent">
-								<h3 id="siteSub"><?php $this->msg( 'tagline' ) ?></h3>
-								<div id="contentSub"><?php $this->html( 'subtitle' ) ?></div>
-									<?php if ( $this->data['undelete'] ) { ?>
-										<div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
-									<?php } ?>
-									<?php if ( $this->data['newtalk'] ) { ?>
-										<div class="usermessage"><?php $this->html( 'newtalk' ) ?></div>
-									<?php } ?>
-									<?php if ( $this->data['showjumplinks'] ) { ?>
-										<div id="jump-to-nav"><?php $this->msg( 'jumpto' ) ?>
-											<a href="#column-one"><?php $this->msg( 'jumptonavigation' ) ?></a>, <a href="#searchInput"><?php $this->msg( 'jumptosearch' ) ?></a>
-										</div>
-									<?php } ?>
-									<?php $this->html( 'bodytext' ) ?>
-										<div class="visualClear"></div>
-									<?php if ( $this->data['catlinks'] ) { ?>
-										<div id="catlinks"><?php $this->html( 'catlinks' ) ?></div>
-									<?php } ?>
-									<?php if ( $this->data['dataAfterContent'] ) {
-										$this->html( 'dataAfterContent' );
+			<!-- wrapper -->
+			<div id="wrapper" class="clearfix">
+				<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
+				<!-- header -->
+				<div id="smwh_head">
+					<div class="smwh_center">
+						<!-- logo -->
+						<div id="smwh_logo">
+							<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"
+								<?php echo $skin->tooltipAndAccesskey( 'p-logo' ) ?>>
+								<img src="<?php $this->text( 'logopath' ) ?>"/>
+							</a>
+						</div>
+						<!-- /logo -->
+						<!-- personalbar -->
+						<div id="smwh_personal">
+							<a id="personal_expand" class="limited" href="javascript:smwh_Skin.resizePage()">Change view</a>
+							<?php
+								foreach ( $this->data['personal_urls'] as $key => $item ) {
+									//echo $key;
+									if ( !($key == "login" || $key == "anonlogin" || $key == "logout" || $key == "userpage") ) {
+										continue;
 									} ?>
-								<div class="visualClear"></div>
+									<a id="personal_<?php echo $key ?>"
+										href="<?php echo htmlspecialchars( $item['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'pt-' . $key ) ?>
+										class="<?php if ( $item['active'] ) { ?>active<?php }
+										if ( !empty( $item['class'] ) ) {
+											echo htmlspecialchars( $item['class'] );
+										} ?>">
+										<?php echo htmlspecialchars( $item['text'] ) ?>
+									</a>
+							<?php } ?>
+						</div>
+						<!-- /personalbar -->
+						<?php echo $this->smwh_Skin->buildPersonalQuickLinks(); ?>
+					</div>
+				</div>
+				<!-- /header -->
+				<!-- menu -->
+				<div id="smwh_menu">
+					<div class="smwh_center">
+						<div id="home">
+							<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'p-logo' ); ?>>
+								<img src="<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/menue_mainpageicon_white.gif" alt="mainpage"/>
+							</a>
+						</div>
+						<?php echo $this->smwh_Skin->buildMenuHtml(); ?>
+						<!-- Search -->
+						<?php $this->searchBox(); ?>
+					</div>
+				</div>
+				<!-- /menu -->
+				<!-- content -->
+				<div id="main" class="shadows smwh_center">
+					<div id="smwh_breadcrumbs">
+						<div id="smwh_last_visited">
+							<?php $this->msg( 'smw_last_visited' ); ?>
+						</div>
+						<div id="breadcrumb"></div>
+					</div>
+					<div id="mainpage">
+						<div id="smwh_tabs">
+							<?php echo $this->smwh_Skin->buildTabs(); ?>
+						</div>
+						<?php echo $this->smwh_Skin->buildCreatedBy(); ?>
+						<?php endif; // action != 'plainpage'  ?>
+						<div id="column-content">
+							<div id="content">
+								<!-- div from mw 1.13 removed 1.15 -->
+								<div id="bodyContent">
+									<h3 id="siteSub"><?php $this->msg( 'tagline' ) ?></h3>
+									<div id="contentSub"><?php $this->html( 'subtitle' ) ?></div>
+										<?php if ( $this->data['undelete'] ) { ?>
+											<div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
+										<?php } ?>
+										<?php if ( $this->data['newtalk'] ) { ?>
+											<div class="usermessage"><?php $this->html( 'newtalk' ) ?></div>
+										<?php } ?>
+										<?php if ( $this->data['showjumplinks'] ) { ?>
+											<div id="jump-to-nav"><?php $this->msg( 'jumpto' ) ?>
+												<a href="#column-one"><?php $this->msg( 'jumptonavigation' ) ?></a>, <a href="#searchInput"><?php $this->msg( 'jumptosearch' ) ?></a>
+											</div>
+										<?php } ?>
+										<?php $this->html( 'bodytext' ) ?>
+											<div class="visualClear"></div>
+										<?php if ( $this->data['catlinks'] ) { ?>
+											<div id="catlinks"><?php $this->html( 'catlinks' ) ?></div>
+										<?php } ?>
+										<?php if ( $this->data['dataAfterContent'] ) {
+											$this->html( 'dataAfterContent' );
+										} ?>
+									<div class="visualClear"></div>
+								</div>
 							</div>
 						</div>
+							<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
 					</div>
-						<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
+					<div class="visualClear"></div>
+					<div id="smwh_pstats"> <?php echo $this->smwh_Skin->showPageStats(); ?> </div>
+					<?php endif; // page != 'plain'  ?>
+					<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
+						<?php echo $this->smwh_Skin->treeview(); ?>
 				</div>
-				<div class="visualClear"></div>
-				<div id="smwh_pstats"> <?php echo $this->smwh_Skin->showPageStats(); ?> </div>
-				<?php endif; // page != 'plain'  ?>
-				<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
-					<?php echo $this->smwh_Skin->treeview(); ?>
+				<!-- /content -->
 			</div>
-			<!-- /content -->
+			<!-- /wrapper -->
 		</div>
 		<!-- /globalWrapper -->
 		<!-- footer -->
