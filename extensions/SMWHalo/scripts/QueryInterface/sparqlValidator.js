@@ -17,7 +17,7 @@
  */
 
 (function($){
-  var iri = '^[^<>:]+:[^<>:]+$';
+  var iri = '[^<>:]+:[^<>:]+';
 
   SPARQL.Validator = {    
     map: {
@@ -31,7 +31,7 @@
 //      'xsd:anyURI': '',
 //      'tsctype:record': '',
       'tsctype:page' : '^[%!"$&\\()*,\\-.\\/0-9:;=?@A-Z\\^_`a-z~\\x80-\\xFF+]+$',
-      'iri' : iri + '|' + '^<?' + iri + '>?$',
+      'iri' : '^' + iri + '$|' + '^<{1}' + iri + '>{1}$',
 
       'variable' : '^\\?[\\w\\s]+$'
     },
@@ -61,7 +61,7 @@
 
     validateAll: function(){
       var result = true;
-      $('[validator]').each(function(index, value){
+      $('[validator]').filter(':visible').add('#qiPropertyValueNameInput').each(function(index, value){
         if(!SPARQL.Validator.validate($(this).val(), $(this).attr('validator'))){
           $(this).addClass('failedValidation');
           result = false;

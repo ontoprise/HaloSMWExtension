@@ -204,7 +204,8 @@
       });
 
       if(!result){
-        result = '<' + this.value + '>';
+        var value = this.value.length ? '<' + this.value + '>' : this.value;
+        result = value;
       }
 
       return result;
@@ -214,7 +215,7 @@
 
   SPARQL.Model.SubjectTerm = function(value, type, datatype_iri, language){
     this.fixIRI = function(value){
-      return SPARQL.Model.assureFullyQualifiedIRI(value, 'instance');
+      return SPARQL.Model.assureFullyQualifiedIRI(value, 'a');
     };
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);    
   };
@@ -229,7 +230,7 @@
 
   SPARQL.Model.ObjectTerm = function(value, type, datatype_iri, language){
     this.fixIRI = function(value){
-      return SPARQL.Model.assureFullyQualifiedIRI(value, 'instance');
+      return SPARQL.Model.assureFullyQualifiedIRI(value, 'a');
     };
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
   };
@@ -353,7 +354,8 @@
       });
 
       if(!result){
-        result = '<' + iri + '>';
+        var value = iri.length ? '<' + iri + '>' : iri;
+        result = value;
       }
 
       return result;
@@ -511,7 +513,7 @@
      */
   SPARQL.Model.createSubject = function(subjectName, type){
     if(!subjectName){
-      subjectName = '?subject' + SPARQL.getNextUid();
+      subjectName = '?v' + SPARQL.getNextUid();
     }
     var subject = new SPARQL.Model.SubjectTerm(subjectName, type);
     
@@ -561,6 +563,9 @@
       }
     }
     if(subjectOld.isEqual(subjectNew)){
+      if(SPARQL.validateQueryTree()){
+        SPARQL.toTree(null, subjectNew.getId());
+      }
       return;
     }
     //go over triples, find this subject and change it
@@ -619,7 +624,8 @@
      */
   SPARQL.Model.createCategory = function(subject, categoryArray){
     subject = subject || SPARQL.Model.createSubject();
-    categoryArray = categoryArray || 'category' + SPARQL.getNextUid();
+//    categoryArray = categoryArray || 'category' + SPARQL.getNextUid();
+    categoryArray = categoryArray || '';
 
     if(typeof categoryArray === 'string'){
       categoryArray = [categoryArray];
@@ -740,8 +746,10 @@
      */
   SPARQL.Model.createProperty = function(subject, propertyName, valueName, optional, showInResults){
     subject = subject || SPARQL.Model.createSubject();
-    propertyName = propertyName || 'property' + SPARQL.getNextUid();
-    valueName = valueName || '?value' + SPARQL.getNextUid();
+//    propertyName = propertyName || 'property' + SPARQL.getNextUid();
+    propertyName = propertyName || '';
+//    valueName = valueName || '?value' + SPARQL.getNextUid();
+    valueName = valueName || '?v' + SPARQL.getNextUid();
     optional = optional || false;
     showInResults = showInResults || true;
 
@@ -905,11 +913,7 @@
   /**
      * Reset the model to initial state: empty data, set default namespaces and query parameters
      */
-  SPARQL.Model.reset = function(){
-    SPARQL.tripleStoreGraph = window.parent.smwghTripleStoreGraph + SPARQL.iri_delim;
-    SPARQL.category_iri = SPARQL.tripleStoreGraph + 'category';
-    SPARQL.property_iri = SPARQL.tripleStoreGraph + 'property';
-    SPARQL.instance_iri = SPARQL.tripleStoreGraph + 'instance';
+  SPARQL.Model.reset = function(){  
 
     SPARQL.Model.data = {
       category_restriction: [],
@@ -925,36 +929,6 @@
       source: 'tsc',
       format: 'table'
     },
-
-    SPARQL.Model.data.namespace = [
-    {
-      prefix: "tsctype",
-      namespace_iri: "http://www.ontoprise.de/smwplus/tsc/unittype#"
-    },
-    {
-      prefix: "xsd",
-      namespace_iri: "http://www.w3.org/2001/XMLSchema#"
-    },
-    {
-      prefix: "rdf",
-      namespace_iri: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    },
-    {
-      prefix: "rdfs",
-      namespace_iri: 'http://www.w3.org/2000/01/rdf-schema#'
-    },
-    {
-      prefix: "category",
-      namespace_iri: SPARQL.category_iri + SPARQL.iri_delim
-    },
-    {
-      prefix: "property",
-      namespace_iri: SPARQL.property_iri + SPARQL.iri_delim
-    },
-    {
-      prefix: "instance",
-      namespace_iri: SPARQL.instance_iri + SPARQL.iri_delim
-    }];
 
     SPARQL.View.reset();
   };
