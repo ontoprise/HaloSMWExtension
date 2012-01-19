@@ -179,7 +179,7 @@ $messages['de'] = array(
 	/* for scripts */
 	'ce_com_default_header'          => 'Erstellen',
 	'ce_com_ext_header'              => 'Kommentare',
-	'ce_invalid'                     =>'Sie haben keinen gültigen Kommentar eingegeben.',
+	'ce_invalid'                     => 'Sie haben keinen gültigen Kommentar eingegeben.',
 	'ce_reload'                      => ' Seite wird neu geladen ...',
 	'ce_deleting'                    => 'Lösche Kommentar ...',
 	'ce_full_deleting'               => 'Lösche Kommentare vollständig ...',
@@ -210,4 +210,95 @@ $messages['de'] = array(
 	'ce_form_toggle_no_edit_tooltip' => 'Sie dürfen leider keine neuen Kommentare erstellen.',
 	'ce_edit_intro'                  => 'Dieser Kommentare wurde zuletzt bearbeitet von',
 	'ce_edit_date_intro'             => 'am'
+);
+
+/** 
+ * French
+ */
+$messages['fr'] = array(
+	/* general/maintenance messages */
+	'collaboration'      => 'Collaboration',
+	'collaboration_desc' => 'Collaboration',
+	'ce_sp_intro'        => 'Cette page spéciale vous donner un rapide aperçu des derniers commentaires publiés.',
+	'ce_allowed'         => 'Félicitation ! L\'extension Collaboration fonctionne correctement !',
+	'ce_warning'         => 'Avertissement de l\'extension Collaboration',
+	'ce_var_undef'       => 'La variable suivante n\'a pas été correctement initialisée: "$1". <br/> Veuillez vérifier vos paramètres.',
+
+	/* comment form */
+	/* warnings */
+	'ce_cf_disabled'        => 'Les commentaires sont actuellement désactivés.',
+	'ce_cf_already_shown'   => 'Le formulaire de commentaires est déjà affiché dans cette page.',
+	'ce_cf_all_not_allowed' => 'Personne n\'est actuellement autorisé à publier des commentaires.',
+	'ce_cf_you_not_allowed' => 'Vous n\'êtes pas actuellement autorisé à publier des commentaires. Veuillez d\'abord vous connecter.',
+
+	/* author */
+	'ce_cf_author' => 'Auteur:',
+	/* rating */
+	'ce_cf_article_rating'  => 'Evaluez la qualité de cet article',
+	'ce_cf_article_rating2' => '(optionnel)',
+	'ce_ce_rating_0'        => 'bon',
+	'ce_ce_rating_1'        => 'neutre',
+	'ce_ce_rating_2'        => 'mauvais',
+	'ce_cf_rating_title_b'  => 'Vous pouvez ajouter une mauvaise évaluation de cet article à votre commentaire en cliquant sur cette icone.',
+	'ce_cf_rating_title_n'  => 'Vous pouvez ajouter une évaluation neutre de cet article à votre commentaire en cliquant sur cette icone.',
+	'ce_cf_rating_title_g'  => 'Vous pouvez ajouter une bonne évaluation de cet article à votre commentaire en cliquant sur cette icone.',
+
+	/*comments*/
+	'ce_cf_comment'            => 'Commentaire',
+	'ce_cf_predef'             => 'Entrez votre commentaire ici...',
+	'ce_cf_submit_button_name' => 'Ajouter un commentaire',
+	'ce_cf_reset_button_name'  => 'Annuler',
+	'ce_cf_file_attach'        => 'Pièces jointes article(s):',
+	'ce_cf_file_upload_text'   => 'Importer un fichier',
+	'ce_cf_file_upload_link'   => 'Importer un fichier',
+
+	/* comment processing */
+	'ce_com_cannot_create'               => 'Impossible de créer un commentaire.',
+	'ce_com_create_sum'                  => 'Commentaire créé par l\'extension Collaboration.',
+	'ce_com_edit_sum'                    => 'Commentaire modifié par l\'extension Collaboration.',
+	'ce_comment_exists'                  => 'Le commentaire "$ 1" existe déjà.',
+	'ce_com_created'                     => 'Commentaire créé avec succès.',
+	'ce_com_edited'                      => 'Commentaire modifié avec succès.',
+	'ce_com_edit_not_exists'             => 'Vous avez essayé de modifier un commentaire inexistant. Veuillez ressayer à nouveau.',
+	'ce_nothing_deleted'                 => 'Aucun commentaire supprimé.',
+	'ce_comment_delete_reason'           => 'Commentaire supprimé via l\'interface graphique de l\'extension Collaboration.',
+	'ce_comment_deletion_successful'     => 'Commentaire supprimé avec succès.',
+	'ce_comment_massdeletion_successful' => 'Commentaires supprimés avec succès.',
+	'ce_comment_deletion_error'          => 'Ce commentaire n\'a pas pu être supprimé.',
+	'ce_comment_has_deleted'             => 'supprimer ce commentaire sur',
+
+	/* for scripts */
+	'ce_com_default_header'          => 'Ajouter un commentaire',
+	'ce_com_ext_header'              => 'Commentaires',
+	'ce_invalid'                     => 'Vous n\'avez pas entré un commentaire valide.',
+	'ce_reload'                      => ' Rechargement de la page en cours ...',
+	'ce_deleting'                    => 'Supression du commentaire en cours ...',
+	'ce_full_deleting'               => 'Suppression complète des commentaires en cours ...',
+	'ce_delete'                      => 'Voulez-vous vraiment supprimer ce commentaire ?',
+	'ce_delete_button'               => 'Supprimer ce commentaire',
+	'ce_cancel_button'               => 'Annuler',
+	'ce_full_delete'                 => 'Supprimer complètement ce commentaire et toutes les réponses suivantes de ce commentaire.',
+	'ce_close_button'                => 'Fermer la fenêtre et rafraîchir la page',
+	'ce_delete_title'                => 'Cliquez ici pour supprimer ce commentaire',
+	'ce_edit_title'                  => 'Cliquez ici pour modifier ce commentaire',
+	'ce_edit_cancel_title'           => 'Cliquez ici pour quitter le mode modification.',
+	'ce_reply_title'                 => 'Cliquez ici pour répondre à ce commentaire',
+	'ce_com_reply'                   => 'Répondre',
+	'ce_edit_rating_text'            => 'Evaluez la qualité de cet article ',
+	'ce_edit_rating_text2'           => '(optionel)',
+	'ce_edit_button'                 => 'Modifier ce commentaire',
+	'ce_com_show'                    => 'Afficher les commentaires',
+	'ce_com_hide'                    => 'Masquer les commentaires',
+	'ce_com_view'                    => 'Voir',
+	'ce_com_view_flat'               => 'Plat',
+	'ce_com_view_threaded'           => 'Fil',
+	'ce_com_file_toggle'             => 'Voir les pièces jointes',
+	'ce_com_rating_text_short'       => 'Qualité Moy. de l\'article',
+	'ce_com_rating_text'             => 'Moyenne de la qualité de l\'article basée sur',
+	'ce_com_rating_text2'            => 'Evaluation(s).',
+	'ce_com_toggle_tooltip'          => 'Cliquez pour afficher/masquer tous les commentaires',
+	'ce_form_toggle_tooltip'         => 'Cliquez pour afficher/masquer le formulaire de commentaires.',
+	'ce_form_toggle_no_edit_tooltip' => 'Vous n\'êtes pas autorisé à ajouter de nouveaux commentaires',
+	'ce_edit_intro'                  => 'Ce commentaire a été modifié en dernier par',
+	'ce_edit_date_intro'             => 'le'
 );
