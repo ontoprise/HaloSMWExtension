@@ -506,7 +506,7 @@ AutoCompleter.prototype = {
                 if (posStyle == null || posStyle == 'absolute') {
                     Element.setStyle(this.siw.floater, { position: 'absolute'});
                     x = x - Position.page(document.body)[0] - Position.realOffset(document.body)[0];
-                    y = y;
+                    y = y - document.body.scrollTop;
                 } else if (posStyle == 'fixed') {
                     Element.setStyle(this.siw.floater, { position: 'fixed'});
                                         
