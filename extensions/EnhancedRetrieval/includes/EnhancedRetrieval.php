@@ -169,11 +169,11 @@ function wfUSInitUserMessages() {
 	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
 	if (file_exists($IP.'/extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php')) {
-		include_once('extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php' );
+		include_once($IP.'/extensions/EnhancedRetrieval/languages/'. $usLangClass . '.php' );
 	}
 	// fallback if language not supported
 	if ( !class_exists($usLangClass)) {
-		include_once('extensions/EnhancedRetrieval/languages/US_LanguageEn.php' );
+		include_once($IP.'/extensions/EnhancedRetrieval/languages/US_LanguageEn.php' );
 		$aclgHaloLang = new US_LanguageEn();
 	} else {
 		$aclgHaloLang = new $usLangClass();
