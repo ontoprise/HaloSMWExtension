@@ -37,6 +37,9 @@
 	<configs>
 		<successor ext="smwhalo" />
 		<patch file="patch.txt" />
+		<!-- <patch file="patches/HaloACL/patch_for_SF_2.1.2.txt" /> -->
+		<patch file="patches/SMWHalo/patch_for_SF2.2.1.txt" />
+		<patch file="patches/WYSIWYG/patch_for_SF_2.2.1.txt" />
 		<new>
 			<require name="sf_init" file="extensions/SemanticForms/SemanticForms.php" />
 		</new>
