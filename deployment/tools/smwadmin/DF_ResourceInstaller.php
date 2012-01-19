@@ -71,16 +71,18 @@ class ResourceInstaller {
 
 		foreach($wikidumps as $file) {
 			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
+			
+			if (!file_exists($dumpPath)) {
+				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
+				$dfgOut->outputln("\tdump file '".$dumpPath."' does not exist. Ignore it.", DF_PRINTSTREAM_TYPE_WARN);
+				continue;
+			}
 			// remove old pages
 			if (!is_null($fromVersion) && $fromVersion != '') {
 				// remove old pages
 				$this->logger->info("\n[Removing unused pages from ".$dd->getID());
 				$dfgOut->outputln("[Removing unused pages from ".$dd->getID());
-			    if (!file_exists($dumpPath)) {
-                    $this->logger->warn("\nIgnoring missing file: ".$dumpPath);
-                    $dfgOut->outputln("\nIgnoring missing file: ".$dumpPath);
-                    continue;
-                }
+			   
 				$verificationLog = $this->getPagesFromImport($dumpPath, $dd->getID());
 				$this->removeOldPages($dd->getID(), $verificationLog);
 				$dfgOut->outputln( "done.]");
@@ -88,11 +90,7 @@ class ResourceInstaller {
 
 			$this->logger->info("Import ontology: $file");
 			$dfgOut->outputln("[Import ontology: $file");
-			if (!file_exists($dumpPath)) {
-				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
-				$dfgOut->outputln("\tdump file '".$dumpPath."' does not exist.", DF_PRINTSTREAM_TYPE_WARN);
-				continue;
-			}
+			
 			$result = $reader->importFromFile($dumpPath );
 			$dfgOut->outputln("done.]");
 				
