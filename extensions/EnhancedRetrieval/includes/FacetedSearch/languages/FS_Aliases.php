@@ -31,3 +31,11 @@ $aliases = array();
 $aliases['en'] = array(
 );
 
+/** Deutsch */
+$aliases['de'] = array(
+);
+
+/** French */
+$aliases['fr'] = array(
+);
+

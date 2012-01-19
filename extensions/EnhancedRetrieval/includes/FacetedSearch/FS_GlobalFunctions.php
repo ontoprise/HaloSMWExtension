@@ -144,11 +144,14 @@ function fsfAddJSLanguageScripts() {
 	global $fsgIP, $wgUser, $wgResourceModules;
 	// user language file
     $ulngScript = '/scripts/FacetedSearch/Language/FS_Language.js';
-	$lng = '/scripts/FacetedSearch/Language/FS_Language';
+	$lngBase = '/scripts/FacetedSearch/Language/FS_Language';
 	if (isset($wgUser)) {
-		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+		$lng = $lngBase . ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($fsgIP. $lng)) {
 			$ulngScript = $lng;
+		} else {
+			// No language file => Fall back to english
+			$ulngScript =  $lngBase . 'En.js';
 		}
 	}
 	$wgResourceModules['ext.facetedSearch.Language'] = array(

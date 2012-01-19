@@ -78,3 +78,30 @@ $messages['de'] = array(
 	'fs_title_descending' => 'Artikelname absteigend',
 	'fs_sort_by'		  => 'Sortierung:'
 );
+
+/** 
+ * French
+ */
+$messages['fr'] = array(
+	/* general/maintenance messages */
+    'facetedsearch'		=> 'FacetedSearch',
+    'fs_special_page' => 'Recherche à facettes',  // Name of the special page for Faceted Search
+    'specialpages-group-facetedsearch_group'	=> 'Recherche à facettes',
+
+	//--- Messages for the special page ---
+	'fs_title'	          => "Recherche à facettes",
+	'fs_search'           => "Trouver",
+	'fs_categories'       => "Catégories",
+	'fs_properties'       => "Attributs",
+	'fs_namespaces'       => "Espaces de noms",
+	'fs_search_results'   => "Résultats de la recherche",
+	'fs_selected'         => "Facettes sélectionnées",
+	'fs_available_facets' => "Facettes disponibles",
+	'fs_relevance'		  => 'Pertinence',
+	'fs_newest_date_first'=> 'Articles récents en premier',
+	'fs_oldest_date_first'=> 'Articles anciens en premier',
+	'fs_title_ascending'  => 'Titre ascendant',
+	'fs_title_descending' => 'Titre descendant',
+	'fs_sort_by'		  => 'Trier par'
+);
+
