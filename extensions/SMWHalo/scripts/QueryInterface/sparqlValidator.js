@@ -61,7 +61,11 @@
 
     validateAll: function(){
       var result = true;
-      $('[validator]').filter(':visible').add('#qiPropertyValueNameInput').each(function(index, value){
+      var validatedElements = $('[validator]').filter(':visible');
+      if($('#qiPropertyDialog').is(':visible')){
+        validatedElements.add('#qiPropertyValueNameInput');
+      }
+      validatedElements.each(function(index, value){
         if(!SPARQL.Validator.validate($(this).val(), $(this).attr('validator'))){
           $(this).addClass('failedValidation');
           result = false;

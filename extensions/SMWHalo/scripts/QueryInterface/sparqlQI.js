@@ -335,8 +335,6 @@
         modal: (modal !== false),
         width: 'auto',
         height: 'auto',
-        maxHeight: $(window).height(),
-        maxWidth: $(window).width(),
         resizable: true,
         title: title || '',
         buttons: buttons,
@@ -349,6 +347,9 @@
       });
       dialogDiv.html(message);
       dialogDiv.dialog('open');
+//      if(dialogDiv.height() > 600){
+//        dialogDiv.option('height', 600);
+//      }
     }
     return dialogDiv;
   };
@@ -590,6 +591,7 @@
   SPARQL.View.activatePropertyUpdateBtn = function(){
     $('#qiUpdateButton').unbind();
     $('#qiUpdateButton').click(function(){
+      $('#qiPropertyValueNameInput').siblings('input').eq(0).change();
       if(SPARQL.Validator.validateAll()){
         SPARQL.View.openPropertyDialog.changeName();
       }
@@ -2028,11 +2030,14 @@
     for(var i = 0; i < initMethods.length; i++){
       try{
         //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
+        //so if there are visible sort headers already then remove them
         var method = initMethods[i];
         if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
-          && $('.sortheader').length > 0)
-          {
-          continue;
+          && $('.sortheader').filter(':visible').length > 0)
+        {
+          $('th a.sortheader').each(function(){
+            $(this).parent().html($(this).siblings('span').eq(0).text());
+          });
         }
         method();
 
@@ -2454,6 +2459,7 @@
         //init namespaces array
         SPARQL.namespaceString = data;
         SPARQL.initNamespace(data);
+        SPARQL.initNamespaceInfoImg();
       },
       error: function(xhr, textStatus, errorThrown) {
         mw.log(textStatus);
@@ -2473,9 +2479,7 @@
       if(match = pattern.exec(value)){
         var prefix = $.trim(match[1]);
         var namespace_iri = $.trim(match[2]);
-        if(prefix !== 'cat' && prefix !== 'prop'){//remove old version duplicates of 'category' and 'property'
           namespace.push({prefix: prefix, namespace_iri: namespace_iri});
-        }
       }
     });
 
@@ -2484,6 +2488,8 @@
     }
   };
 
+
+
   SPARQL.escapeHtmlEntities = function(string){
     return string.replace(/&/g, '&amp')
                   .replace(/</g, '&lt')
@@ -2491,19 +2497,36 @@
                   .replace(/\r*\n/g, '<br/>');
   };
 
-  SPARQL.initNamespaceInfoImg = function(){
-    var src = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/images/info.png';
-    var img = $('<img/>').attr('src', src);
-    img.click(function(){
-      var dialog = SPARQL.showMessageDialog(SPARQL.escapeHtmlEntities(SPARQL.namespaceString), 'Namespaces', null, null, false);
-      dialog.css({
-        'font-family': 'courier new',
-        'font-size': '11px',
-        'width': '600px;'
-      })
-    });
-    $('#qiDefTab').children('ul').append($('<li/>').append(img));
+  SPARQL.buildNamespaceHtmlTable = function(){
+    var namespaces = SPARQL.Model.data.namespace;
+    var html = '<table class="smwtable" id="namespaceTable"><tr><th>Prefix</th><th>Namespace</th></tr>';
 
+    $.each(namespaces, function(index, namespace){
+      html += '<tr><td>' + namespace.prefix + '</td><td>' + namespace.namespace_iri + '</td></tr>\n';
+    });
+
+    html += '</table>';
+  
+    return html;
+  };
+
+  SPARQL.initNamespaceInfoImg = function(){
+    SPARQL.initResultFormatLoading();
+    mw.loader.using('ext.smw.sorttable', function(){
+      var src = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/extensions/SMWHalo/skins/QueryInterface/images/info.png';
+      var img = $('<img/>').attr('src', src);
+      img.click(function(){
+        if($('#dialogDiv').length && $('#dialogDiv').dialog('isOpen')){
+          $('#dialogDiv').dialog('close');
+        }
+        else{
+          SPARQL.showMessageDialog(SPARQL.buildNamespaceHtmlTable(), 'Namespaces', null, null, false);
+          SPARQL.executeInitMethods();
+        }
+      });
+
+      $('#qiDefTab').children('ul').append($('<li/>').append(img));
+    })
   };
 
 
@@ -2531,7 +2554,6 @@
       SPARQL.activateFullPreviewLink();
       SPARQL.initSourceSelectBox();
       SPARQL.initGraphSelectBox();
-      SPARQL.initNamespaceInfoImg();
     }
   });
 

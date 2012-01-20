@@ -93,7 +93,11 @@ function smwf_ts_getSyncCommands() {
 }
 
 function smwf_ts_getWikiPrefixes() {
-  return TSNamespaces::getAllPrefixes();
+  $prefixes = TSNamespaces::getAllPrefixes();
+  //remove cat: and prop: prefixes
+  $pattern = '/PREFIX\s+(?:cat|prop):<[^>]+>\r*\s+/i';
+  $replacement = '';
+  return preg_replace($pattern, $replacement, $prefixes);
 }
 
 
