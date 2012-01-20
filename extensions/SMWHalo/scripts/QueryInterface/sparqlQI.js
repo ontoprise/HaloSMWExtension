@@ -303,7 +303,7 @@
         }
         else{
           //tsc is not reachable
-          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server');
+          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'sparqlToTreeMsgDialog');
         }
       },
       error: function(xhr, textStatus, errorThrown) {
@@ -311,49 +311,57 @@
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
         var errorJson = $.parseJSON(xhr.responseText);
-        SPARQL.showMessageDialog(errorJson.error, gLanguage.getMessage('QI_INVALID_QUERY'));
+        SPARQL.showMessageDialog(errorJson.error, gLanguage.getMessage('QI_INVALID_QUERY'), 'sparqlToTreeMsgDialog');
       }
     });
   };
 
-  SPARQL.showMessageDialog = function(message, title, anchorElement, callback, modal){
-    if(!(anchorElement && anchorElement.length)){
-      anchorElement = $('#sparqlQI');
-    }
-    if($('#dialogDiv').length === 0){
-      var dialogDiv = $('<div id="dialogDiv"/>');
-      anchorElement.append(dialogDiv);
+  SPARQL.showMessageDialog = function(message, title, id, onCloseCallback, modal, toggle){
+    
+    //if id is not specified then generate one
+    id = id || 'dialog-' + SPARQL.getNextUid();
 
-      var buttons = {};
-      var closeMsg = gLanguage.getMessage('QI_CLOSE');
-      buttons[closeMsg] = function() {
-        dialogDiv.dialog("close");
-      };
-     
-      dialogDiv.dialog({
-        autoOpen: false,
-        modal: (modal !== false),
-        width: 'auto',
-        height: 'auto',
-        resizable: true,
-        title: title || '',
-        buttons: buttons,
-        close: function(){
-          if(callback && typeof callback === 'function'){
-            callback();
-          }
-          dialogDiv.remove();
-        }
-      });
-      dialogDiv.html(message);
-      dialogDiv.dialog('open');
-      if(dialogDiv.height() > 600){
-        dialogDiv.dialog('option', 'height', 600);
-      }
-      if(dialogDiv.width() > 1000){
-        dialogDiv.dialog('option', 'height', 1000);
+    //if this dialog is already open then close it first
+    if($('#' + id).length && $('#' + id).dialog('isOpen')){
+      $('#' + id).dialog('close');
+      if(toggle){
+        return null;
       }
     }
+
+    var dialogDiv = $('<div/>').attr('id', id);
+    $('body').append(dialogDiv);      
+
+    var buttons = {};
+    var closeMsg = gLanguage.getMessage('QI_CLOSE');
+    buttons[closeMsg] = function() {
+      dialogDiv.dialog("close");
+    };
+
+    dialogDiv.dialog({
+      autoOpen: false,
+      modal: (modal !== false),
+      width: 'auto',
+      height: 'auto',
+      resizable: true,
+      title: title || '',
+      buttons: buttons,
+      close: function(){
+        if(onCloseCallback && typeof onCloseCallback === 'function'){
+          onCloseCallback();
+        }
+        dialogDiv.remove();
+      }
+    });
+    dialogDiv.html(message);
+    dialogDiv.dialog('open');
+    if(dialogDiv.height() > 600){
+      dialogDiv.dialog('option', 'height', 600);
+    }
+    if(dialogDiv.width() > 1000){
+      dialogDiv.dialog('option', 'height', 1000);
+    }
+
     return dialogDiv;
   };
 
@@ -410,7 +418,7 @@
         }
         else{
           //tsc is not reachable
-          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server');
+          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'treeToSparqlMsgDialog');
         }
       },
       error: function(xhr, textStatus, errorThrown) {
@@ -418,7 +426,7 @@
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
         var errorJson = $.parseJSON(xhr.responseText);
-        SPARQL.showMessageDialog(errorJson.error, 'SPARQL tree to string convertion error');
+        SPARQL.showMessageDialog(errorJson.error, 'SPARQL tree to string convertion error', 'treeToSparqlMsgDialog');
       }
 
     });
@@ -487,7 +495,7 @@
         mw.log(textStatus);
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
-        SPARQL.showMessageDialog(errorThrown || xhr.responseText, 'ASK to SPARQL translation error');
+        SPARQL.showMessageDialog(errorThrown || xhr.responseText, 'ASK to SPARQL translation error', 'askToSparqlMsgDialog');
       }
     });
   };
@@ -1622,7 +1630,7 @@
     }
     //if tree is not empty but none of the vars has 'show in results' set display a message
     if(queryTree.projection_var.length == 0){
-      SPARQL.showMessageDialog(gLanguage.getMessage('QI_SHOW_IN_RESULTS_MUST_BE_SET'), gLanguage.getMessage('QI_INVALID_QUERY'));
+      SPARQL.showMessageDialog(gLanguage.getMessage('QI_SHOW_IN_RESULTS_MUST_BE_SET'), gLanguage.getMessage('QI_INVALID_QUERY'), 'validateQueryTreeMsgDialog');
       return false;
     }
     return true;
@@ -1667,7 +1675,7 @@
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
         $('#sparqlQI #previewcontent').empty();
-        SPARQL.showMessageDialog(errorThrown || xhr.responseText);
+        SPARQL.showMessageDialog(errorThrown || xhr.responseText, null, 'getQueryResultMsgDialog');
 
       }
     });
@@ -2097,7 +2105,7 @@
     $('#sparqlQI #qiFullPreviewLink').live('click', function(event){
       var html = $('#sparqlQI #previewcontent').html() || gLanguage.getMessage('QI_EMPTY_QUERY');
       $('#sparqlQI #previewcontent').html('');
-      SPARQL.processResultHtml(html, SPARQL.showMessageDialog(html, gLanguage.getMessage('QI_QUERY_RESULT'), null, function(){
+      SPARQL.processResultHtml(html, SPARQL.showMessageDialog(html, gLanguage.getMessage('QI_QUERY_RESULT'), 'fullPreviewDialog', function(){
         SPARQL.processResultHtml(html, $('#sparqlQI #previewcontent'));
       }));
       event.preventDefault();
@@ -2151,7 +2159,7 @@
           mw.log('response: ' + xhr.responseText)
           mw.log('errorThrown: ' + errorThrown);
           $('#sparqlQI #previewcontent').empty();
-          SPARQL.showMessageDialog(errorThrown || xhr.responseText);
+          SPARQL.showMessageDialog(errorThrown || xhr.responseText, null, 'getPropertyInfoMsgDialog');
         }
       });
     }, 500);
@@ -2180,7 +2188,7 @@
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
         $('#sparqlQI #previewcontent').empty();
-        SPARQL.showMessageDialog(errorThrown || xhr.responseText);
+        SPARQL.showMessageDialog(errorThrown || xhr.responseText, null, 'getQueryParametersMsgDialog');
 
       }
     });
@@ -2468,7 +2476,7 @@
         mw.log(textStatus);
         mw.log('response: ' + xhr.responseText)
         mw.log('errorThrown: ' + errorThrown);
-        SPARQL.showMessageDialog(xhr.responseText || errorThrown, 'Failed to get wiki namespace prefixes');
+        SPARQL.showMessageDialog(xhr.responseText || errorThrown, 'Failed to get wiki namespace prefixes', 'getWikiPrefixesMsgDialog');
       }
     });
   };
@@ -2523,7 +2531,7 @@
           $('#dialogDiv').dialog('close');
         }
         else{
-          SPARQL.showMessageDialog(SPARQL.buildNamespaceHtmlTable(), 'Namespaces', null, null, false);
+          SPARQL.showMessageDialog(SPARQL.buildNamespaceHtmlTable(), 'Namespaces', 'namespaceDialog', null, false, true);
           SPARQL.executeInitMethods();
         }
       });
