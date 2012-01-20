@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 11973)
+--- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 13326)
 +++ extensions/SemanticForms/includes/SF_FormEditTab.php	(working copy)
 @@ -145,8 +145,19 @@
  		}
@@ -26,9 +26,9 @@ Index: extensions/SemanticForms/includes/SF_FormEditTab.php
  
 Index: extensions/SemanticForms/includes/SF_FormLinker.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 11973)
+--- extensions/SemanticForms/includes/SF_FormLinker.php	(revision 13326)
 +++ extensions/SemanticForms/includes/SF_FormLinker.php	(working copy)
-@@ -292,7 +292,10 @@
+@@ -305,7 +305,9 @@
  		// If this is not a category page, look for a default form
  		// for its parent category or categories.
  		$namespace = $title->getNamespace();
@@ -36,11 +36,10 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
 +		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
 +		//if (NS_CATEGORY !== $namespace) {
 +		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/
-+		
  			$default_forms = array();
  			$categories = SFUtils::getCategoriesForPage( $title );
  			foreach ( $categories as $category ) {
-@@ -301,7 +304,10 @@
+@@ -324,7 +326,9 @@
  			if ( count( $default_forms ) > 0 ) {
  				return $default_forms;
  			}
@@ -48,33 +47,33 @@ Index: extensions/SemanticForms/includes/SF_FormLinker.php
 +		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
 +		//}
 +		/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/
-+			
- 		// If we're still here, just return the default form for the
- 		// namespace, which may well be null.
- 		if ( NS_MAIN === $namespace ) {
+ 
+ 		// All that's left is checking for the namespace. If this is
+ 		// a subpage, exit out - default forms for namespaces don't
 Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 12233)
+--- extensions/SemanticForms/includes/SF_FormPrinter.php	(revision 13326)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.php	(working copy)
-@@ -279,7 +279,17 @@
+@@ -337,7 +337,17 @@
  		$new_text = "";
  		// flag for placing "<onlyinclude>" tags in form output
  		$onlyinclude_free_text = false;
+-		
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +		$includeonly_free_text = false;
 +		/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
- 		
++ 		
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
 +		global $wgContLang;
 +		$namespace_labels = $wgContLang->getNamespaces();
 +		$user_namespace = $namespace_labels[NS_USER];
 +		/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
-+		
++
  		// If we have existing content and we're not in an active replacement
  		// situation, preserve the original content. We do this because we want
  		// to pass the original content on IF this is a partial form.
-@@ -422,6 +432,10 @@
+@@ -471,6 +481,10 @@
  		for ( $section_num = 0; $section_num < count( $form_def_sections ); $section_num++ ) {
  			$start_position = 0;
  			$template_text = "";
@@ -85,16 +84,19 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  			// the append is there to ensure that the original
  			// array doesn't get modified; is it necessary?
  			$section = " " . $form_def_sections[$section_num];
-@@ -443,11 +457,21 @@
+@@ -494,7 +508,10 @@
+ 					$add_button_text = wfMsg( 'sf_formedit_addanother' );
  					// Also replace periods with underlines, since that's what
  					// POST does to strings anyway.
- 					$query_template_name = str_replace( '.', '_', $query_template_name );
+-					$query_template_name = str_replace( '.', '_', $query_template_name );
 +					/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
 +					/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +					$force_open = false;
 +					/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
+ 					// ...and escape apostrophes.
+ 					$query_template_name = str_replace( "'", "\'", $query_template_name );
  					// Cycle through the other components.
- 					for ( $i = 2; $i < count( $tag_components ); $i++ ) {
+@@ -502,6 +519,12 @@
  						$component = $tag_components[$i];
  						if ( $component == 'multiple' ) $allow_multiple = true;
  						if ( $component == 'strict' ) $strict_parsing = true;
@@ -107,9 +109,9 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  						$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
  						if ( count( $sub_components ) == 2 ) {
  							if ( $sub_components[0] == 'label' ) {
-@@ -455,6 +479,14 @@
- 							} elseif ( $sub_components[0] == 'add button text' ) {
- 								$add_button_text = $sub_components[1];
+@@ -517,6 +540,14 @@
+ 								$curPlaceholder = ( count( $matches ) > 2 ) ? self::placeholderFormat( $matches[1], $matches[2] ) : null;
+ 								unset ($matches);
  							}
 +							/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
 +							/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
@@ -121,17 +123,16 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +							/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  						}
  					}
- 					// If this is the first instance, add the label into the form, if
-@@ -463,7 +495,44 @@
+ 					// If this is the first instance, add
+@@ -527,7 +558,42 @@
  					if ( $old_template_name != $template_name ) {
  						if ( isset( $template_label ) ) {
- 							$form_text .= "<fieldset>\n";
--							$form_text .= "<legend>$template_label</legend>\n";
-+							/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
+ 							$multipleTemplateString .= "<fieldset>\n";
+-							$multipleTemplateString .= "<legend>$template_label</legend>\n";
 +							/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +							// Add Javascript, curser style and sfgTabIndex for each legend
 +							// content was:
-+							// $form_text .= "<legend>$template_label</legend>\n";
++							// $multipleTemplateString .= "<legend>$template_label</legend>\n";
 +							// }
 +							global $smwgRMActFormName, $sfgScriptPath;
 +							//only if collapsible
@@ -148,43 +149,37 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +								if ( $force_open || $cookie_open ) {
 +									$section_visibility ='';
 +									$img = 'minus';
-+								}
-+								else {
++								} else  {
 +									$section_visibility = 'none';
 +									$img = 'plus';
 +								}
-+								$form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"" .
++								$multipleTemplateString .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"" .
 +									"onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\"" .
 +									"onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">" .
 +									"<img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"" .
 +									"onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
 +								$sfgTabIndex++;
 +								#This DIV provides the functionality for collapsing forms
-+								$form_text .= "<div id=\"{$smwgRMActFormName}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
++								$multipleTemplateString .= "<div id=\"{$smwgRMActFormName}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
 +							} else {
-+								$form_text .= "<legend>$template_label</legend>\n";
++								$multipleTemplateString .= "<legend>$template_label</legend>\n";
 +							}
 +							/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
  						}
- 						if ($allow_multiple) {
- 							$form_text .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
-@@ -1089,10 +1158,13 @@
- 								// if the date is hidden, cur_value will already be set
- 								// to the default value
- 								( $cur_value == '' || $cur_value == 'current user' ) ) {
--							if ( $input_type == 'text' || $input_type == '' ) {
--								$cur_value_in_template = $wgUser->getName();
-+							/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
-+							if ($input_type == 'text' || $input_type == '' ||
-+							$input_type == 'haloACtext' || $input_type == 'haloACtextarea') {
-+								$cur_value_in_template = $user_namespace.":".$wgUser->getName();
- 								$cur_value = $cur_value_in_template;
- 							}
-+							/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
- 						}
- 						$new_text = $this->formFieldHTML( $form_field, $cur_value );
+ 						// If $curPlaceholder is set, it means we want to insert a
+ 						// multiple template form's HTML into the main form's HTML.
+@@ -1184,7 +1250,9 @@
+ 							// to the default value
+ 							( $cur_value === '' || $cur_value == 'current user' ) ) {
  
-@@ -1215,9 +1287,16 @@
+-							$cur_value_in_template = $wgUser->getName();
++							/*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
++							$cur_value_in_template = $user_namespace.":".$wgUser->getName();
++							/*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
+ 							$cur_value = $cur_value_in_template;
+ 						}
+ 
+@@ -1324,8 +1392,14 @@
  							$form_is_partial = true;
  							// replacement pages may have minimal matches...
  							$source_page_matches_this_form = true;
@@ -194,29 +189,38 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
 +						/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Patch_free_text_in_includeonly_tags*/
 +						elseif($tag == 'includeonly free text') {
 +							$includeonly_free_text = true;
-+						}
-+						elseif($tag == 'onlyinclude free text') {
++						} elseif($tag == 'onlyinclude free text') {
  							$onlyinclude_free_text = true;
- 						}
-+						/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
- 					}
- 					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
- 				// =====================================================
-@@ -1310,7 +1389,12 @@
- 			} else {
++ 						/*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
+ 						} elseif ( $tag == 'query form at top' ) {
+ 							// TODO - this should be made a field of
+ 							// some non-static class that actually
+@@ -1428,6 +1502,15 @@
  				$form_text .= $section;
  			}
--
+ 			$curPlaceholder = null;
++			
 +			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
 +			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
 +			if( $collapsible ) {
 +				$form_text .= "</div>"; //closing div for collapsing
 +			}
 +			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
++
++			
  		} // end for
  
+ 		// Cleanup - everything has been browsed.
+@@ -1441,6 +1524,8 @@
+ 			$form_text = preg_replace( '/' . self::makePlaceholderInFormHTML( $stringToReplace ) . '/', '', $form_text );	
+ 		}
+ 		
++		
++		
  		// if it wasn't included in the form definition, add the
-@@ -1351,6 +1435,17 @@
+ 		// 'free text' input as a hidden field at the bottom
+ 		if ( ! $free_text_was_included ) {
+@@ -1479,6 +1564,17 @@
  		} else {
  			$free_text = null;
  		}
@@ -236,9 +240,9 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.php
  			$free_text = str_replace( "<onlyinclude>", '', $free_text );
 Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php
 ===================================================================
---- extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php	(revision 11974)
+--- extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php	(revision 13326)
 +++ extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php	(working copy)
-@@ -87,6 +87,16 @@
+@@ -127,6 +127,16 @@
  		if ( is_null( $cur_value ) ) {
  			$cur_value = '';
  		}
@@ -257,9 +261,9 @@ Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaInput.php
  		if ( $is_mandatory ) {
 Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php
 ===================================================================
---- extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php	(revision 11974)
+--- extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php	(revision 13326)
 +++ extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteInput.php	(working copy)
-@@ -99,6 +99,16 @@
+@@ -142,6 +142,16 @@
  		if ( is_null( $cur_value ) ) {
  			$cur_value = '';
  		}
@@ -278,11 +282,11 @@ Index: extensions/SemanticForms/includes/forminputs/SF_TextAreaWithAutocompleteI
  
 Index: extensions/SemanticForms/includes/forminputs/SF_TextInput.php
 ===================================================================
---- extensions/SemanticForms/includes/forminputs/SF_TextInput.php	(revision 11974)
+--- extensions/SemanticForms/includes/forminputs/SF_TextInput.php	(revision 13326)
 +++ extensions/SemanticForms/includes/forminputs/SF_TextInput.php	(working copy)
-@@ -126,6 +126,16 @@
- 		if ( array_key_exists( 'maxlength', $other_args ) ) {
- 			$inputAttrs['maxlength'] = $other_args['maxlength'];
+@@ -164,6 +164,16 @@
+ 		if ( array_key_exists( 'placeholder', $other_args ) ) {
+ 			$inputAttrs['placeholder'] = $other_args['placeholder'];
  		}
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
@@ -296,14 +300,14 @@ Index: extensions/SemanticForms/includes/forminputs/SF_TextInput.php
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
  		$text = Xml::element( 'input', $inputAttrs );
  
- 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+ 		if ( array_key_exists( 'uploadable', $other_args ) && $other_args['uploadable'] == true ) {
 Index: extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php
 ===================================================================
---- extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php	(revision 11974)
+--- extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php	(revision 13326)
 +++ extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput.php	(working copy)
-@@ -177,6 +177,16 @@
- 		if ( array_key_exists( 'maxlength', $other_args ) ) {
- 			$inputAttrs['maxlength'] = $other_args['maxlength'];
+@@ -176,6 +176,17 @@
+ 		if ( array_key_exists( 'placeholder', $other_args ) ) {
+ 			$inputAttrs['placeholder'] = $other_args['placeholder'];
  		}
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|start*/
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|doc|http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Fix_other_args_bug*/
@@ -315,55 +319,30 @@ Index: extensions/SemanticForms/includes/forminputs/SF_TextWithAutocompleteInput
 +			$inputAttrs[$key] = $other_args[$key];
 +		}
 +		/*op-patch|SR|2011-03-31|SF|Fix other_args bug|end*/
++		
  		$text = "\n\t" . Xml::element( 'input', $inputAttrs ) . "\n";
  
- 		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+ 		if ( array_key_exists( 'uploadable', $other_args ) && $other_args['uploadable'] == true ) {
 Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
---- extensions/SemanticForms/languages/SF_Messages.php	(revision 11973)
+--- extensions/SemanticForms/languages/SF_Messages.php	(revision 13326)
 +++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
 @@ -17,6 +17,10 @@
   */
  $messages['en'] = array(
  	// user messages
-+       /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
-+       'sf_several_forms_notice'             => 'There is more than one form defined for this page. You can select another form to edit the page.',
-+       'sf_several_forms_label'              => 'Select form: ',
-+       /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
++	/*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++	'sf_several_forms_notice'             => 'There is more than one form defined for this page. You can select another form to edit the page.',
++	'sf_several_forms_label'              => 'Select form: ',
++	/*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
-Index: extensions/SemanticForms/specials/SF_FormEdit.php
-===================================================================
---- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 12233)
-+++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
-@@ -149,7 +149,12 @@
- 		} elseif ( $target_name == '' && $page_name_formula == '' ) {
- 			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
- 		} else {
--
-+			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
-+			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
-+			global $smwgRMActFormName;
-+			$smwgRMActFormName = $form_name;
-+			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
-+			
- 			$save_page = $wgRequest->getCheck( 'wpSave' );
- 			$preview_page = $wgRequest->getCheck( 'wpPreview' );
- 			$diff_page = $wgRequest->getCheck( 'wpDiff' );
-@@ -355,7 +360,6 @@
- 				$text .= $form_text;
- 			}
- 		}
--
- 		SFUtils::addJavascriptAndCSS();
- 		if ( ! empty( $javascript_text ) ) {
- 			$wgOut->addScript( '		<script type="text/javascript">' . "\n$javascript_text\n" . '</script>' . "\n" );
 Index: extensions/SemanticForms/libs/SemanticForms.js
 ===================================================================
---- extensions/SemanticForms/libs/SemanticForms.js	(revision 12233)
+--- extensions/SemanticForms/libs/SemanticForms.js	(revision 13326)
 +++ extensions/SemanticForms/libs/SemanticForms.js	(working copy)
-@@ -900,3 +900,89 @@
+@@ -950,3 +950,89 @@
  	});
  
  })(jQuery);
@@ -453,4 +432,20 @@ Index: extensions/SemanticForms/libs/SemanticForms.js
 +	}
 +);
 +/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
-\ No newline at end of file
+Index: extensions/SemanticForms/specials/SF_FormEdit.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_FormEdit.php	(revision 13326)
++++ extensions/SemanticForms/specials/SF_FormEdit.php	(working copy)
+@@ -154,6 +154,12 @@
+ 			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
+ 		} else {
+ 
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|start*/
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|doc|http://dmwiki.ontoprise.com/dmwiki/index.php/CollapsingForms*/
++			global $smwgRMActFormName;
++			$smwgRMActFormName = $form_name;
++			/*op-patch|BL|2009-10-09|SF|CollapsingForms|end*/
++			
+ 			$save_page = $wgRequest->getCheck( 'wpSave' );
+ 			$preview_page = $wgRequest->getCheck( 'wpPreview' );
+ 			$diff_page = $wgRequest->getCheck( 'wpDiff' );
