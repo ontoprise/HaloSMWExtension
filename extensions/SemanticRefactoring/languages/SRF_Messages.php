@@ -47,7 +47,7 @@ $messages['en'] = array(
 	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
 	
 	/* special pages */
-    'srefrefactor' => 'Semantic Refactoring',
+    'semanticrefactoring' => 'Semantic Refactoring',
     'sref_specialrefactor_description' => 'Semantic Refactoring allows the user to manipulate large amounts of wiki annotations with one command. 
                                             This is, for example, necessary if you want to replace a property by another in all annotations where it appears. Another 
                                             example would be to remove all uses of a particular category from all pages. For a detailed overview of the possibilities, please
@@ -176,7 +176,7 @@ $messages['de'] = array(
     'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
     
     /* special pages */
-    'srefrefactor' => 'Semantic Refactoring',
+    'semanticrefactoring' => 'Semantic Refactoring',
    'sref_specialrefactor_description' => 'Semantic Refactoring erlaubt es viele Annotationen gleichzeitig im Wiki mit einem einzelnen Kommando zu manipulieren. 
                                             Das ist beispielsweise dann sinvoll, wenn man ein Property durch ein anderes Property ersetzen will. Es wird
                                             dann an allen Stellen in einem Schritt geändert, wofür man normalerweise alle Seiten manuell ändern und 

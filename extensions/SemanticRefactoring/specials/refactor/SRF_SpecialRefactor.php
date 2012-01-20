@@ -40,23 +40,23 @@ require_once( "$IP/includes/SpecialPage.php" );
  * @author Kai Kühn
  *
  */
-class SREFRefactor extends SpecialPage {
+class SemanticRefactoring extends SpecialPage {
 
 	public function __construct() {
-		parent::__construct('SREFRefactor', 'delete');
+		parent::__construct('SemanticRefactoring', 'delete');
 	}
 
 	public function execute($p) {
 		global $wgOut, $wgRequest;
-		$wgOut->setPageTitle(wfMsg('srefrefactor'));
-		$adminPage = Title::newFromText(wfMsg('srefrefactor'), NS_SPECIAL);
+		$wgOut->setPageTitle(wfMsg('semanticrefactoring'));
+		$adminPage = Title::newFromText(wfMsg('semanticrefactoring'), NS_SPECIAL);
 
 		// description text
 		$helpLink = '<a target="_blank" href="'.SRFF_HELP_URL.'">SMW-Forum</a>';
 		$html = "<div>".wfMsg('sref_specialrefactor_description', $helpLink)."</div>";
 
 		// query box
-		$spectitle = $this->getTitleFor( 'SREFRefactor' );
+		$spectitle = $this->getTitleFor( 'SemanticRefactoring' );
 		$query_val = $wgRequest->getVal( 'q' );
 		$html .= '<h1>'.wfMsg('sref_select_instanceset').'</h1>';
 		$html .= '<div>';

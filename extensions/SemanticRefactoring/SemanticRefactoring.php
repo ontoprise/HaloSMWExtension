@@ -37,9 +37,9 @@ $wgExtensionFunctions[] = 'sreffSetupExtension';
 function sreffSetupExtension() {
 	global $srefgIP, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
 	
-	$wgAutoloadClasses['SREFRefactor'] = $srefgIP . '/specials/refactor/SRF_SpecialRefactor.php';
-    $wgSpecialPages['SREFRefactor'] = array('SREFRefactor');
-    $wgSpecialPageGroups['SREFRefactor'] = 'smwplus_group';
+	$wgAutoloadClasses['SemanticRefactoring'] = $srefgIP . '/specials/refactor/SRF_SpecialRefactor.php';
+    $wgSpecialPages['SemanticRefactoring'] = array('SemanticRefactoring');
+    $wgSpecialPageGroups['SemanticRefactoring'] = 'smwplus_group';
     
     global $smwgResultFormats;
     $smwgResultFormats['_srftable'] = 'SRFTableSelectorResultPrinter';
