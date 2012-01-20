@@ -112,8 +112,9 @@ class  HACLQueryRewriter  {
 			$queryString = str_replace('&lt;','<',$queryString);
 			$queryString = str_replace('&gt;','>',$queryString);
 			$query->setQueryString($queryString);
-			$ep = $query->getExtraPrintouts();
-			$query->setExtraPrintouts($qr->prunePrintRequests($ep));
+			$ep = $qr->prunePrintRequests($query->getExtraPrintouts());
+			$ep = $qr->removeDuplicatePrintouts($ep, $descr ? $descr : $query->getDescription());
+			$query->setExtraPrintouts($ep);
 			
 			if ($descr) {
 				$query->setDescription($descr);
@@ -237,6 +238,36 @@ class  HACLQueryRewriter  {
 			}
 		}
 		return $printRequests;
+	}
+	
+	/**
+	 * When the extra printouts for a query are set with setExtraPrintouts(),
+	 * these printouts are all added to the query description, no matter if they
+	 * are already contained. This must not happen as otherwise result columns will
+	 * be duplicated.
+	 * This method removes all print requests from $extraPrintouts that are 
+	 * already contained in $queryDescr.
+	 * 
+	 * @param array<SMWPrintRequest> $extraPrintouts
+	 * @param {SMWDescription} $queryDescr
+	 * 
+	 * @return array<SMWPrintRequest>
+	 * 		Extra printouts without duplicates.
+	 */
+	private function removeDuplicatePrintouts($extraPrintouts, $queryDescr) {
+		$qdpr = $queryDescr->getPrintRequests();
+		$qpr = array();
+		foreach ($qdpr as $printRequest) {
+			$qpr[] = $printRequest->getHash();
+		}
+		
+		foreach ($extraPrintouts as $epKey => $printRequest) {
+			if (in_array($printRequest->getHash(), $qpr)) {
+				unset($extraPrintouts[$epKey]);
+			}
+		}
+		
+		return array_values($extraPrintouts);
 	}
 
 	/**
