@@ -10,7 +10,8 @@
  * 'forminput' is called as:
  *
  * {{#forminput:form=|size=|default value=|button text=|query string=
- * |autocomplete on category=|autocomplete on namespace=}}
+ * |autocomplete on category=|autocomplete on namespace=
+ * |remote autocompletion}}
  *
  * This function returns HTML representing a form to let the user enter the
  * name of a page to be added or edited using a Semantic Forms form. All
@@ -26,6 +27,10 @@
  * (you can only use one). To autcomplete on all pages in the main (blank)
  * namespace, specify "autocomplete on namespace=main".
  *
+ * If the "remote autocompletion" parameter is added, autocompletion
+ * is done via an external URL, which can allow autocompletion on a much
+ * larger set of values.
+ *
  * Example: to create an input to add or edit a page with a form called
  * 'User' within a namespace also called 'User', and to have the form
  * preload with the page called 'UserStub', you could call the following:
@@ -36,21 +41,25 @@
  *
  * 'formlink' is called as:
  *
- * {{#formlink:form=|link text=|link type=|query string=}}
+ * {{#formlink:form=|link text=|link type=|tooltip=|query string=|target=
+ * |popup}}
  *
  * This function returns HTML representing a link to a form; given that
  * no page name is entered by the the user, the form must be one that
  * creates an automatic page name, or else it will display an error
  * message when the user clicks on the link.
  *
- * The first two arguments are mandatory: 'form' is the name of the SF
- * form, and 'link text' is the text of the link. 'link type' is the type of
- * the link: if set to 'button', the link will be a button; if set to
- * 'post button', the link will be a button that uses the 'POST' method to
- * send other values to the form; if set to anything else or not called, it
- * will be a standard hyperlink. 'query string' is the text to be added to
- * the generated URL's query string (or, in the case of 'post button' to
- * be sent as hidden inputs).
+ * The first two arguments are mandatory:
+ * 'form' is the name of the SF form, and 'link text' is the text of the link.
+ * 'link type' is the type of the link: if set to 'button', the link will be
+ * a button; if set to 'post button', the link will be a button that uses the
+ * 'POST' method to send other values to the form; if set to anything else or
+ * not called, it will be a standard hyperlink.
+ * 'tooltip' sets a hovering tooltip text, if it's an actual link.
+ * 'query string' is the text to be added to the generated URL's query string
+ * (or, in the case of 'post button', to be sent as hidden inputs).
+ * 'target' is an optional value, setting the name of the page to be
+ * edited by the form.
  *
  * Example: to create a link to add data with a form called
  * 'User' within a namespace also called 'User', and to have the form
@@ -150,19 +159,34 @@ class SFParserFunctions {
 		global $wgVersion;
 
 		$params = func_get_args();
-		array_shift( $params ); // don't need the parser
-		// set defaults
-		$inFormName = $inLinkStr = $inLinkType = $inQueryStr = $inTargetName = '';
+		array_shift( $params ); // We don't need the parser.
+		// Set defaults.
+		$inFormName = $inLinkStr = $inLinkType = $inTooltip =
+			$inQueryStr = $inTargetName = '';
 		$classStr = "";
-		// assign params - support unlabelled params, for backwards compatibility
+		// assign params
+		// - support unlabelled params, for backwards compatibility
+		// - parse and sanitize all parameter values
 		foreach ( $params as $i => $param ) {
+			
 			$elements = explode( '=', $param, 2 );
-			$param_name = null;
-			$value = trim( $param );
+
+			// set param_name and value
 			if ( count( $elements ) > 1 ) {
+				
 				$param_name = trim( $elements[0] );
+				
+				// parse (and sanitize) parameter values
 				$value = trim( $parser->recursiveTagParse( $elements[1] ) );
+				
+			} else {
+				
+				$param_name = null;
+
+				// parse (and sanitize) parameter values
+				$value = trim( $parser->recursiveTagParse( $param ) );
 			}
+
 			if ( $param_name == 'form' ) {
 				$inFormName = $value;
 			} elseif ( $param_name == 'link text' ) {
@@ -171,6 +195,8 @@ class SFParserFunctions {
 				$inLinkType = $value;
 			} elseif ( $param_name == 'query string' ) {
 				$inQueryStr = $value;
+			} elseif ( $param_name == 'tooltip' ) {
+				$inTooltip = Sanitizer::decodeCharReferences( $value );
 			} elseif ( $param_name == 'target' ) {
 				$inTargetName = $value;
 			} elseif ( $param_name == null && $value == 'popup'
@@ -179,13 +205,13 @@ class SFParserFunctions {
 				$classStr = 'popupformlink';
 			}
 			elseif ( $i == 0 ) {
-				$inFormName = $param;
+				$inFormName = $value;
 			} elseif ( $i == 1 ) {
-				$inLinkStr = $param;
+				$inLinkStr = $value;
 			} elseif ( $i == 2 ) {
-				$inLinkType = $param;
+				$inLinkType = $value;
 			} elseif ( $i == 3 ) {
-				$inQueryStr = $param;
+				$inQueryStr = $value;
 			}
 		}
 
@@ -197,9 +223,9 @@ class SFParserFunctions {
 		$link_url = str_replace( ' ', '_', $link_url );
 		$hidden_inputs = "";
 		if ( $inQueryStr != '' ) {
-			// special handling for 'post button' - query string
-			// has to be turned into hidden inputs
-			if ( $inLinkType == 'post button' ) {
+			// Special handling for the buttons - query string
+			// has to be turned into hidden inputs.
+			if ( $inLinkType == 'button' || $inLinkType == 'post button' ) {
 				// Change HTML-encoded ampersands to
 				// URL-encoded ampersands, so that the string
 				// doesn't get split up on the '&'.
@@ -214,28 +240,27 @@ class SFParserFunctions {
 				}
 			} else {
 				$link_url .= ( strstr( $link_url, '?' ) ) ? '&' : '?';
-				// URL-encode any spaces, plus-signs or
-				// ampersands in the query string
-				// (should this just be a general urlencode?)
-				$inQueryStr = str_replace( array( ' ', '+', '&amp;' ),
-					array( '%20', '%2B', '%26' ),
+				// URL-encode the spaces, newlines, ampersands etc.
+				// in the query string.
+				// (Should this just be a general urlencode?)
+				$inQueryStr = str_replace( array( ' ', '+', '&amp;', "\n", '#' ),
+					array( '%20', '%2B', '%26', '%0A', '%23' ),
 					$inQueryStr );
 				$link_url .= $inQueryStr;
 			}
 		}
 		if ( $inLinkType == 'button' ) {
-			$link_url = html_entity_decode( $link_url, ENT_QUOTES );
-			$link_url = str_replace( "'", "\'", $link_url );
-			$str = "<form class=\"$classStr\">";
-			$str .= Xml::element( 'input', array(
-				'type' => 'button',
-				'value' => $inLinkStr,
-				'onclick' => "window.location.href='$link_url'",
-			) ) . "</form>";
+			$str =
+				Xml::tags( 'form', array('action' => $link_url, 'method' => 'get', 'class' => $classStr),
+					Xml::tags( 'button', array('type' => 'submit', 'value' => $inLinkStr), $inLinkStr ) .
+					$hidden_inputs
+				);
 		} elseif ( $inLinkType == 'post button' ) {
-			$str = "<form action=\"$link_url\" method=\"post\" class=\"$classStr\">";
-			$str .= Xml::element( 'input', array( 'type' => 'submit', 'value' => $inLinkStr ) );
-			$str .= "$hidden_inputs</form>";
+			$str =
+				Xml::tags( 'form', array('action' => $link_url, 'method' => 'post', 'class' => $classStr),
+					Xml::tags( 'button', array('type' => 'submit', 'value' => $inLinkStr), $inLinkStr ) .
+					$hidden_inputs
+				);
 		} else {
 			// If a target page has been specified but it doesn't
 			// exist, make it a red link.
@@ -245,7 +270,7 @@ class SFParserFunctions {
 					$classStr .= " new";
 				}
 			}
-			$str = "<a href=\"$link_url\" class=\"$classStr\">$inLinkStr</a>";
+			$str = Xml::tags( 'a', array( 'href' => $link_url, 'class' => $classStr, 'title' => $inTooltip ), $inLinkStr );
 		}
 		// hack to remove newline from beginning of output, thanks to
 		// http://jimbojw.com/wiki/index.php?title=Raw_HTML_Output_from_a_MediaWiki_Parser_Function
@@ -260,6 +285,7 @@ class SFParserFunctions {
 		// set defaults
 		$inFormName = $inValue = $inButtonStr = $inQueryStr = '';
 		$inAutocompletionSource = '';
+		$inRemoteAutocompletion = false;
 		$inSize = 25;
 		$classStr = "";
 		// assign params - support unlabelled params, for backwards compatibility
@@ -287,6 +313,8 @@ class SFParserFunctions {
 			} elseif ( $param_name == 'autocomplete on namespace' ) {
 				$inAutocompletionSource = $value;
 				$autocompletion_type = 'namespace';
+			} elseif ( $param_name == 'remote autocompletion' ) {
+				$inRemoteAutocompletion = true;
 			} elseif ( $param_name == null && $value == 'popup'
 				&& version_compare( $wgVersion, '1.16', '>=' )) {
 				self::loadScriptsForPopupForm( $parser );
@@ -304,8 +332,27 @@ class SFParserFunctions {
 				$inQueryStr = $param;
 		}
 
+		$fs = SpecialPage::getPage( 'FormStart' );
+		$fs_url = $fs->getTitle()->getLocalURL();
+		$str = <<<END
+			<form name="createbox" action="$fs_url" method="get" class="$classStr">
+			<p>
+
+END;
+		$formInputAttrs = array(
+			'type' => 'text',
+			'name' => 'page_name',
+			'size' => $inSize,
+			'value' => $inValue,
+		);
+
+		// Now apply the necessary settings and Javascript, depending
+		// on whether or not there's autocompletion (and whether the
+		// autocompletion is local or remote).
 		$input_num = 1;
-		if ( ! empty( $inAutocompletionSource ) ) {
+		if ( empty( $inAutocompletionSource ) ) {
+			$formInputAttrs['class'] = 'formInput';
+		} else {
 			self::$num_autocompletion_inputs++;
 			$input_num = self::$num_autocompletion_inputs;
 			// place the necessary Javascript on the page, and
@@ -316,37 +363,23 @@ class SFParserFunctions {
 				$parser->disableCache();
 				SFUtils::addJavascriptAndCSS();
 			}
-			$autocompletion_values = SFUtils::getAutocompleteValues( $inAutocompletionSource, $autocompletion_type );
-			global $sfgAutocompleteValues;
-			$sfgAutocompleteValues["input_$input_num"] = $autocompletion_values;
+
+			$inputID = 'input_' . $input_num;
+			$formInputAttrs['id'] = $inputID;
+			$formInputAttrs['class'] = 'autocompleteInput createboxInput formInput';
+			if ( $inRemoteAutocompletion ) {
+				$formInputAttrs['autocompletesettings'] = $inAutocompletionSource;
+				$formInputAttrs['autocompletedatatype'] = $autocompletion_type;
+			} else {
+				$autocompletion_values = SFUtils::getAutocompleteValues( $inAutocompletionSource, $autocompletion_type );
+				global $sfgAutocompleteValues;
+				$sfgAutocompleteValues[$inputID] = $autocompletion_values;
+				$formInputAttrs['autocompletesettings'] = $inputID;
+			}
 		}
 
-		$fs = SpecialPage::getPage( 'FormStart' );
-		$fs_url = $fs->getTitle()->getLocalURL();
-		if ( empty( $inAutocompletionSource ) ) {
-			$str = <<<END
-			<form action="$fs_url" method="get" class="$classStr">
-			<p>
+		$str .= "\t" . Xml::element( 'input', $formInputAttrs ) . "\n";
 
-END;
-			$str .= Xml::element( 'input',
-				array( 'type' => 'text', 'name' => 'page_name', 'size' => $inSize, 'value' => $inValue, 'class' => 'formInput' ) );
-		} else {
-			$str = <<<END
-			<form name="createbox" action="$fs_url" method="get" class="$classStr">
-			<p>
-
-END;
-			$str .= Xml::element( 'input', array(
-				'type' => 'text',
-				'name' => 'page_name',
-				'id' => 'input_' . $input_num,
-				'size' => $inSize,
-				'value' => $inValue,
-				'class' => 'autocompleteInput createboxInput formInput',
-				'autocompletesettings' => 'input_' . $input_num
-			) );
-		}
 		// if the form start URL looks like "index.php?title=Special:FormStart"
 		// (i.e., it's in the default URL style), add in the title as a
 		// hidden value
@@ -545,12 +578,15 @@ END;
 
 
 	static function renderAutoEdit ( &$parser ) {
+		
+		global $wgTitle;
 
 		// set defaults
 		$formcontent = '';
 
 		$linkString = null;
 		$linkType = 'span';
+		$summary = null;
 
 		$classString = 'autoedit-trigger';
 
@@ -575,13 +611,20 @@ END;
 				case 'reload':
 					$classString .= ' reload';
 					break;
+				case 'summary':
+					$summary = $parser->recursiveTagParse( $value );
+					break;
 				default :
+					// The decode-encode sequence allows users to pass wikitext
+					// to the target form without having it parsed right away.
+					// To do that they need to use htmlentities instead of
+					// braces and brackets
 					$formcontent .=
-						Xml::input( $key, false, urldecode( $value ) , array( 'type' => 'hidden') );
+						Xml::input( $key, false, Sanitizer::decodeCharReferences( $value ) , array( 'type' => 'hidden' ) );
 			}
 		}
 
-		if ( !$linkString ) return null;
+		if ( $linkString == null ) return null;
 
 		if ( $linkType == 'button' ) {
 			$linkElement = Xml::tags( "button", array( 'class' => $classString ), $linkString );
@@ -590,6 +633,13 @@ END;
 		} else {
 			$linkElement = Xml::tags( "span", array( 'class' => $classString ), $linkString );
 		}
+
+		if ( $summary == null ) {
+			$summary = wfMsg('sf_autoedit_summary', "[[$wgTitle]]" );
+		}
+		
+		$formcontent .=
+			Xml::input( 'wpSummary', false, $summary, array('type' => 'hidden') );
 
 		$form = Xml::tags( 'form', array( 'class' => 'autoedit-data' ), $formcontent );
 

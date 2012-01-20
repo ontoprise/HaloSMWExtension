@@ -3,8 +3,8 @@
 	<global>
 		<id>semanticforms</id>
 		<title>Semantic Forms</title>
-		<version>2.2.1</version>
-		<patchlevel>1</patchlevel>
+		<version>2.3.2</version>
+		<patchlevel>0</patchlevel>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH / Yaron Koren</vendor>
 		<maintainer>ontoprise GmbH</maintainer>

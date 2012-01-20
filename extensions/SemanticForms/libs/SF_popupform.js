@@ -16,25 +16,7 @@ jQuery(function(){
 	});
 
 	// register formlink with button
-	jQuery( 'form.popupformlink[method!="post"] input' ).each(function() {
-		
-		var input = jQuery(this);
-
-		// Yay, IE 4 lines, FF 0 lines
-		var target = String (this.getAttribute("onclick"));
-		var start = target.indexOf("window.location.href='") + 22;
-		var stop = target.indexOf("'", start);
-		target = target.substring( start, stop );
-
-		input.data( "target", target ) // extract link target from event handler
-		.attr( "onclick", null ) // and remove event handler
-		.click( function( evt ){
-			return ext.popupform.handlePopupFormLink( jQuery( this ).data( "target" ), this);
-		});
-	})
-
-	// register formlink with post button
-	jQuery( 'form.popupformlink[method="post"]' ).submit(function(evt){
+	jQuery( 'form.popupformlink' ).submit(function(evt){
 		return ext.popupform.handlePopupFormLink( this.getAttribute( 'action' ), this );
 	});
 
@@ -202,22 +184,25 @@ window.ext.popupform = new function() {
 		var iframe = jQuery( event.target );
 		var iframecontents = iframe.contents();
 		
-		if ( brokenChrome ) container[0].style.visibility = "hidden";
+		if ( brokenBrowser ) container[0].style.visibility = "hidden";
 		else container[0].style.opacity = 0;
 
 		container.show();
 
 		// GuMaxDD has #content but keeps headlines in #gumax-content-body
 		content = iframecontents.find("#gumax-content-body");
-
+		
 		// normal skins use #content (e.g. Vector, Monobook)
 		if ( content.length == 0 ) content = iframecontents.find("#content");
 
 		// some skins use #mw_content (e.g. Modern)
 		if ( content.length == 0 ) content = iframecontents.find("#mw_content");
 
+		var iframebody = content.closest("body");
+		var iframedoc = iframebody.parent();
+
 		// this is not a normal MW page (or it uses an unknown skin)
-		if ( content.length == 0 ) content = iframecontents.find("body");
+		if ( content.length == 0 ) content = iframebody;
 
 		// the huge left margin looks ugly in Vector, reduce it
 		// (How does this look for other skins?)
@@ -229,23 +214,30 @@ window.ext.popupform = new function() {
 			height: "auto",
 			minWidth: "0px",
 			minHeight:"0px",
-			overflow: "visible",
-			position: "absolute",
-			top: "0",
-			left: "0",
+//			overflow: "visible",
+//			position: "relative",
+//			top: "0",
+//			left: "0",
 			border: "none"
 		} )
-		.parents().css( {
+		.parentsUntil('html')
+		.css( {
 			margin: 0,
 			padding: 0,
 			width: "auto",
 			height: "auto",
 			minWidth: "0px",
-			minHeight:"0px",
-			overflow: "visible",
+			minHeight: "0px",
+			"float": "none",  // Cavendish skin uses floating -> unfloat content
+//			position: "relative",
+//			top: "0",
+//			left: "0",
 			background: "transparent"
 		})
 		.andSelf().siblings();
+
+		iframedoc.height('100%').width('100%');
+		iframebody.height('100%').width('100%');
 
 		if ( jQuery.browser.msie && jQuery.browser.version < "8" ) {
 			siblings.hide();
@@ -387,6 +379,7 @@ window.ext.popupform = new function() {
 		.not('a[href*="javascript:"]') // scripted links
 		.not('a[target]')              // targeted links
 		.not('a[href^="#"]')           // local links
+		.not('a.sfFancyBox')           // link to file upload
 		.click(function(event){
 			if ( event.result != false ) {  // if not already caught by somebody else
 				closeFrameAndFollowLink( event.target.getAttribute('href') )
@@ -449,7 +442,7 @@ window.ext.popupform = new function() {
 			// Send the form data off, we do not care for the returned data
 			var innerformdata = innerform.serialize();
 			jQuery.post( innerform.attr("action"), innerformdata );
-
+				
 			// build new url for outer page (we have to ask for a purge)
 
 			var url = location.href;
@@ -503,18 +496,20 @@ window.ext.popupform = new function() {
 
 		// find the dimensions of the document
 
-		var html = content.closest('html');
+		var body = content.closest('body');
+		var html = body.parent();
 
 		var scrollTgt = html;
 			
 		if ( jQuery.browser.webkit || jQuery.browser.safari ) {
-			scrollTgt = content.closest('body');
+			scrollTgt = body;
 		}
 
 		var scrollTop = scrollTgt.scrollTop()
 		var scrollLeft = scrollTgt.scrollLeft();
 
 		content
+		.css('position', 'absolute')
 		.width( 'auto' )
 		.height( 'auto' );
 
@@ -533,6 +528,7 @@ window.ext.popupform = new function() {
 		.height( '100%' );
 
 		content
+		.css('position', 'relative')
 		.width( oldContW )
 		.height( oldContH );
 
@@ -695,8 +691,14 @@ window.ext.popupform = new function() {
 		}
 
 		scrollTgt
+		.css('overflow', 'auto')
 		.scrollTop(Math.min(scrollTop, docpH - frameH))
 		.scrollLeft(scrollLeft);
+
+		if ( jQuery.browser.mozilla ) {
+			body
+			.css('overflow', 'auto')
+		}
 
 		return true;
 	}

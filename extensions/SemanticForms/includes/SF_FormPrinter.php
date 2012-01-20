@@ -8,6 +8,7 @@
  * @author Harold Solbrig
  * @author Daniel Hansch
  * @author Stephan Gambke
+ * @author LY Meng
  * @file
  * @ingroup SF
  */
@@ -218,6 +219,18 @@ class SFFormPrinter {
 		}
 	}
 
+	static function placeholderFormat( $templateName, $fieldName ) {
+		return $templateName . '___' . $fieldName;
+	}
+
+	static function makePlaceholderInWikiText( $str ) {
+		return '@replace_' . $str . '@';
+	}
+
+	static function makePlaceholderInFormHTML( $str ) {
+		return '@insertHTML_' . $str . '@';
+	}
+
 	/**
 	 * Creates the HTML for the inner table for every instance of a
 	 * multiple-instance template in the form.
@@ -248,6 +261,51 @@ END;
 	}
 
 	/**
+	 * Creates the HTML for a single instance of a multiple-instance template;
+	 * plus the end tags for the full multiple-instance HTML.
+	 */
+	function multipleTemplateInstanceHTML( $all_instances_printed, &$section, $instance_num, $add_button_text ) {
+		global $sfgTabIndex;
+
+		if ( ! $all_instances_printed ) {
+			// Add the character "a" onto the instance number of this input
+			// in the form, to differentiate the inputs the form starts out
+			// with from any inputs added by the Javascript.
+			$section = str_replace( '[num]', "[{$instance_num}a]", $section );
+
+			$text = "\t\t" . Xml::tags( 'div',
+				array(
+					// The "multipleTemplate" class is there for
+					// backwards-compatibility with any custom CSS on people's
+					// wikis before SF 2.0.9.
+					'class' => "multipleTemplateInstance multipleTemplate"
+				),
+				$this->multipleTemplateInstanceTableHTML( $section )
+			) . "\n";
+
+		} else { //if ( $all_instances_printed ) {
+			// This is the last instance of this
+			// template - print all the sections
+			// necessary for adding additional
+			// instances.
+			$text = "\t\t" . Xml::tags( 'div',
+				array(
+					'class' => "multipleTemplateStarter",
+					'style' => "display: none",
+				),
+				$this->multipleTemplateInstanceTableHTML( $section )
+			) . "\n";
+			$text .= <<<END
+	</div><!-- multipleTemplateList -->
+		<p style="margin-left:10px;" />
+		<p><input type="button" value="$add_button_text" tabindex="$sfgTabIndex" class="multipleTemplateAdder" /></p>
+	</div><!-- multipleTemplateWrapper -->
+END;
+		}
+		return $text;
+	}
+
+	/**
 	 * This function is the real heart of the entire Semantic Forms
 	 * extension. It handles two main actions: (1) displaying a form on the
 	 * screen, given a form definition and possibly page contents (if an
@@ -257,13 +315,13 @@ END;
 	 * It also does some related tasks, like figuring out the page name (if
 	 * only a page formula exists).
 	 */
-	function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $embedded = false ) {
+	function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $is_embedded = false ) {
 		global $wgRequest, $wgUser, $wgOut, $wgParser;
 		global $sfgTabIndex; // used to represent the current tab index in the form
 		global $sfgFieldNum; // used for setting various HTML IDs
 
 		wfProfileIn( __METHOD__ );
-
+		
 		// initialize some variables
 		$sfgTabIndex = 1;
 		$sfgFieldNum = 1;
@@ -292,10 +350,10 @@ END;
 			$original_page_content = $existing_page_content;
 		} else {
 			$original_page_content = null;
-			 if ( $wgRequest->getCheck( 'free_text' ) ) {
-					$existing_page_content = $wgRequest->getVal( 'free_text' );
-					$form_is_partial = true;
-			 }
+			if ( $wgRequest->getCheck( 'free_text' ) ) {
+				$existing_page_content = $wgRequest->getVal( 'free_text' );
+				$form_is_partial = true;
+			}
 		}
 
 		// Disable all form elements if user doesn't have edit
@@ -303,12 +361,14 @@ END;
 		// editing permissions can be set in different ways.
 		// HACK - sometimes we don't know the page name in advance, but
 		// we still need to set a title here for testing permissions.
-		if ( $embedded ) {
+		if ( $is_embedded ) {
 			// If this is an embedded form (probably a 'RunQuery'),
 			// just use the name of the actual page we're on.
 			global $wgTitle;
 			$this->mPageTitle = $wgTitle;
-		} elseif ( $page_name == '' ) {
+		} elseif ( $is_query ) {
+			$this->mPageTitle = Title::newFromText( 'RunQuery dummy title' );
+		} elseif ( $page_name === '' ) {
 			$this->mPageTitle = Title::newFromText(
 				$wgRequest->getVal( 'namespace' ) . ":Semantic Forms permissions test" );
 		} else {
@@ -317,7 +377,7 @@ END;
 
 		global $wgOut;
 		// show previous set of deletions for this page, if it's been deleted before
-		if ( ! $form_submitted && ! $this->mPageTitle->exists() ) {
+		if ( ! $form_submitted && ( $this->mPageTitle && !$this->mPageTitle->exists() ) ) {
 			$this->showDeletionLog( $wgOut );
 		}
 		// Unfortunately, we can't just call userCan() here because, as of MW 1.16,
@@ -325,12 +385,14 @@ END;
 		// "$wgEmailConfirmToEdit = true;". Instead, we'll just get the
 		// permission errors from the start, and use those to determine whether
 		// the page is editable.
-		//$userCanEditPage = ( $wgUser->isAllowed( 'edit' ) && $this->mPageTitle->userCan( 'edit' ) );
-		$permissionErrors = $this->mPageTitle->getUserPermissionsErrors( 'edit', $wgUser );
-		$userCanEditPage = count( $permissionErrors ) == 0;
-		wfRunHooks( 'sfUserCanEditPage', array( $this->mPageTitle, &$userCanEditPage ) );
+		if ( !$is_query ) {
+			//$userCanEditPage = ( $wgUser->isAllowed( 'edit' ) && $this->mPageTitle->userCan( 'edit' ) );
+			$permissionErrors = $this->mPageTitle->getUserPermissionsErrors( 'edit', $wgUser );
+			$userCanEditPage = count( $permissionErrors ) == 0;
+			wfRunHooks( 'sfUserCanEditPage', array( $this->mPageTitle, &$userCanEditPage ) );
+		}
 		$form_text = "";
-		if ( $userCanEditPage || $is_query ) {
+		if ( $is_query || $userCanEditPage ) {
 			$form_is_disabled = false;
 			// Show "Your IP address will be recorded" warning if
 			// user is anonymous, and it's not a query -
@@ -341,41 +403,20 @@ END;
 			}
 		} else {
 			$form_is_disabled = true;
-			$wgOut->readOnlyPage( null, false, $permissionErrors, 'edit' );
+			$wgOut->setPageTitle( wfMsg( 'badaccess' ) );
+			$wgOut->addWikiText( $wgOut->formatPermissionsErrorMessage( $permissionErrors, 'edit' ) );
 			$wgOut->addHTML( "\n<hr />\n" );
 		}
-
-		// Remove <noinclude> sections and <includeonly> tags from form definition.
-		$form_def = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $form_def );
-		$form_def = strtr( $form_def, array( '<includeonly>' => '', '</includeonly>' => '' ) );
-
-		// Parse wiki-text.
-		// Add '<nowiki>' tags around every triple-bracketed form definition
-		// element, so that the wiki parser won't touch it - the parser will
-		// remove the '<nowiki>' tags, leaving us with what we need.
-		$form_def = "__NOEDITSECTION__" . strtr( $form_def, array( '{{{' => '<nowiki>{{{', '}}}' => '}}}</nowiki>' ) );
 
 		$oldParser = $wgParser;
 
 		$wgParser = unserialize( serialize( $oldParser ) ); // deep clone of parser
+		$wgParser->Options( ParserOptions::newFromUser( $wgUser ) );
+		$wgParser->Title( $this->mPageTitle );
+		$wgParser->clearState();
 		
-		// Get the form definition from the cache, if we're using caching and it's
-		// there.
-//		$got_form_def_from_cache = false;
-//		global $sfgCacheFormDefinitions;
-//		if ( $sfgCacheFormDefinitions && ! is_null( $form_id ) ) {
-//			$db = wfGetDB( DB_MASTER );
-//			$res = $db->select( 'page_props', 'pp_value', "pp_propname = 'formdefinition' AND pp_page = '$form_id'" );
-//			if ( $res->numRows() >	0 ) {
-//				$form_def = $res->fetchObject()->pp_value;
-//				$got_form_def_from_cache = true;
-//			}
-//		}
-		// Otherwise, parse it.
-//		if ( ! $got_form_def_from_cache ) {
-		$form_def = $wgParser->parse($form_def, $this->mPageTitle, ParserOptions::newFromUser($wgUser))->getText();
-//		}
-
+		$form_def = SFFormUtils::getFormDefinition( $wgParser, $form_def, $form_id );
+		
 		// Turn form definition file into an array of sections, one for each
 		// template definition (plus the first section)
 		$form_def_sections = array();
@@ -419,6 +460,14 @@ END;
 		$instance_num = 0;
 		$all_instances_printed = false;
 		$strict_parsing = false;
+		
+		// Placeholder name in the form
+		$curPlaceholder = null;
+		// Used to store the HTML code of the multiple template, to reinsert it into the right spot	
+		$multipleTemplateString = "";	
+		// This array will keep track of all the replaced @<name>@ strings
+		$placeholderFields = array();	
+		
 		for ( $section_num = 0; $section_num < count( $form_def_sections ); $section_num++ ) {
 			$start_position = 0;
 			$template_text = "";
@@ -426,6 +475,9 @@ END;
 			// array doesn't get modified; is it necessary?
 			$section = " " . $form_def_sections[$section_num];
 
+			
+			$multipleTemplateString="";
+			
 			while ( $brackets_loc = strpos( $section, '{{{', $start_position ) ) {
 				$brackets_end_loc = strpos( $section, "}}}", $brackets_loc );
 				$bracketed_string = substr( $section, $brackets_loc + 3, $brackets_end_loc - ( $brackets_loc + 3 ) );
@@ -443,6 +495,8 @@ END;
 					// Also replace periods with underlines, since that's what
 					// POST does to strings anyway.
 					$query_template_name = str_replace( '.', '_', $query_template_name );
+					// ...and escape apostrophes.
+					$query_template_name = str_replace( "'", "\'", $query_template_name );
 					// Cycle through the other components.
 					for ( $i = 2; $i < count( $tag_components ); $i++ ) {
 						$component = $tag_components[$i];
@@ -454,29 +508,47 @@ END;
 								$template_label = $sub_components[1];
 							} elseif ( $sub_components[0] == 'add button text' ) {
 								$add_button_text = $sub_components[1];
+							} elseif ($sub_components[0] == 'embed in field') {
+								// Placeholder on form template level. Assume that the template form def
+								// will have a multiple+placeholder parameters, and get the placeholder value.
+								// We expect something like TemplateName[fieldName], and convert it to the
+								// TemplateName___fieldName form used internally.
+								preg_match( '/\s*(.*)\[(.*)\]\s*/', $sub_components[1], $matches );
+								$curPlaceholder = ( count( $matches ) > 2 ) ? self::placeholderFormat( $matches[1], $matches[2] ) : null;
+								unset ($matches);
 							}
 						}
 					}
-					// If this is the first instance, add the label into the form, if
-					// there is one, and add the appropriate wrapper div, if this is
-					// a multiple-instance template.
+					// If this is the first instance, add
+					// the label into the form, if there is
+					// one, and add the appropriate wrapper
+					// div, if this is a multiple-instance
+					// template.
 					if ( $old_template_name != $template_name ) {
 						if ( isset( $template_label ) ) {
-							$form_text .= "<fieldset>\n";
-							$form_text .= "<legend>$template_label</legend>\n";
+							$multipleTemplateString .= "<fieldset>\n";
+							$multipleTemplateString .= "<legend>$template_label</legend>\n";
 						}
-						if ($allow_multiple) {
-							$form_text .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
-							$form_text .= "\t" . '<div class="multipleTemplateList">' . "\n";
-						}
+						// If $curPlaceholder is set, it means we want to insert a
+						// multiple template form's HTML into the main form's HTML.
+ 						// So, the HTML will be stored in $multipleTemplateString.
+ 						if ($allow_multiple) {						
+ 							$multipleTemplateString .= "\t" . '<div class="multipleTemplateWrapper">' . "\n";
+ 							$multipleTemplateString .= "\t" . '<div class="multipleTemplateList">' . "\n";
+ 						}
+					}
+					if ( $curPlaceholder == null ) {
+						$form_text .= $multipleTemplateString;						
 					}
 					$template_text .= "{{" . $template_name;
 					$all_fields = $tif->getAllFields();
 					// remove template tag
 					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
 					$template_instance_query_values = $wgRequest->getArray( $query_template_name );
-					// If we are editing a page, and this template can be found more than
-					// once in that page, and multiple values are allowed, repeat this
+					// If we are editing a page, and this
+					// template can be found more than
+					// once in that page, and multiple
+					// values are allowed, repeat this
 					// section.
 					$existing_template_text = null;
 					if ( $source_is_page || $form_is_partial ) {
@@ -562,6 +634,14 @@ END;
 										$field .= $c;
 									}
 								}
+								// If there are uncompleted opening brackets, the whole form will get messed up -
+								// display a warning.
+								// (If there are too many *closing* brackets, some template stuff will end up in
+								// the "free text" field - which is bad, but it's harder for the code to detect
+								// the problem - though hopefully, easier for users.)
+								if ( $uncompleted_curly_brackets > 0 || $uncompleted_square_brackets > 0 ) {
+									$form_text .= "\t" . '<div class="warningbox">' . wfMsg( 'sf_formedit_mismatchedbrackets', $this->mPageTitle->getFullURL( array( 'action' => 'edit' ) ) ) . "</div>\n<br clear=\"both\" />\n";
+								}
 								$existing_template_text = substr( $existing_page_content, $start_char, $i - $start_char );
 								// now remove this template from the text being edited
 								// if this is a partial form, establish a new insertion point
@@ -630,7 +710,7 @@ END;
 					// Remove this tag, reset some variables, and close off form HTML tag.
 					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
 					$template_name = null;
-					if ( isset( $template_label ) ) {
+					if ( isset( $template_label ) && $curPlaceholder == null ) {
 						$form_text .= "</fieldset>\n";
 						unset ( $template_label );
 					}
@@ -639,7 +719,7 @@ END;
 					$instance_num = 0;
 				// =====================================================
 				// field processing
-				// =====================================================	
+				// =====================================================
 				} elseif ( $tag_title == 'field' ) {
 					$field_name = trim( $tag_components[1] );
 					// cycle through the other components
@@ -656,121 +736,122 @@ END;
 					$possible_values = null;
 					$semantic_property = null;
 					$preload_page = null;
+					$holds_template = false;
+					
 					for ( $i = 2; $i < count( $tag_components ); $i++ ) {
+						
 						$component = trim( $tag_components[$i] );
+						
 						if ( $component == 'mandatory' ) {
 							$is_mandatory = true;
 						} elseif ( $component == 'hidden' ) {
 							$is_hidden = true;
 						} elseif ( $component == 'restricted' ) {
 							$is_restricted = ( ! $wgUser || ! $wgUser->isAllowed( 'editrestrictedfields' ) );
-						} elseif ( $component == 'uploadable' ) {
-							$field_args['is_uploadable'] = true;
 						} elseif ( $component == 'list' ) {
 							$is_list = true;
-						} elseif ( $component == 'autocomplete' ) {
-							$field_args['autocomplete'] = true;
-						} elseif ( $component == 'no autocomplete' ) {
-							$field_args['no autocomplete'] = true;
-						} elseif ( $component == 'remote autocompletion' ) {
-							$field_args['remote autocompletion'] = true;
 						} elseif ( $component == 'edittools' ) { // free text only
 							$free_text_components[] = 'edittools';
-						} else {
-							$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
-							if ( count( $sub_components ) == 1 ) {
-								// add handling for single-value params, for custom input types
-								$field_args[$sub_components[0]] = null;
-							} elseif ( count( $sub_components ) == 2 ) {
-								// First, set each value as its own entry in $field_args.
-								$field_args[$sub_components[0]] = $sub_components[1];
+						} 
+						
+						$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
+						
+						if ( count( $sub_components ) == 1 ) {
+							// add handling for single-value params, for custom input types
+							$field_args[$sub_components[0]] = true;
 
-								// Then, do all special handling.
-								if ( $sub_components[0] == 'input type' ) {
-									$input_type = $sub_components[1];
-								} elseif ( $sub_components[0] == 'default' ) {
-									$default_value = $wgParser->recursiveTagParse( $sub_components[1] );
-								} elseif ( $sub_components[0] == 'preload' ) {
-									// free text field has special handling
-									if ( $field_name == 'free text' || $field_name == '<freetext>' ) {
-										$free_text_preload_page = $sub_components[1];
-									} else {
-										$preload_page = $sub_components[1];
-									}
-								} elseif ( $sub_components[0] == 'show on select' ) {
-									// html_entity_decode() is needed to turn '&gt;' to '>'
-									$vals = explode( ';', html_entity_decode( $sub_components[1] ) );
-									foreach ( $vals as $val ) {
-										$val = trim( $val );
-										if ( empty( $val ) ) continue;
-										$option_div_pair = explode( '=>', $val, 2 );
-										if ( count( $option_div_pair ) > 1 ) {
-											$option = $option_div_pair[0];
-											$div_id = $option_div_pair[1];
-											if ( array_key_exists( $div_id, $show_on_select ) )
-												$show_on_select[$div_id][] = $option;
-											else
-												$show_on_select[$div_id] = array( $option );
-										} else {
-											$show_on_select[$val] = array();
-										}
-									}
-								} elseif ( $sub_components[0] == 'autocomplete on property' ) {
-									$property_name = $sub_components[1];
-									$propValue = SMWPropertyValue::makeUserProperty( $property_name );
-									if ( $propValue->getPropertyTypeID() == '_wpg' ) {
-										$field_args['autocomplete field type'] = 'relation';
-									} else {
-										$field_args['autocomplete field type'] = 'attribute';
-									}
-									$field_args['autocompletion source'] = $sub_components[1];
-								} elseif ( $sub_components[0] == 'autocomplete on category' ) {
-									$field_args['autocomplete field type'] = 'category';
-									$field_args['autocompletion source'] = $sub_components[1];
-								} elseif ( $sub_components[0] == 'autocomplete on concept' ) {
-									$field_args['autocomplete field type'] = 'concept';
-									$field_args['autocompletion source'] = $sub_components[1];
-								} elseif ( $sub_components[0] == 'autocomplete on namespace' ) {
-									$field_args['autocomplete field type'] = 'namespace';
-									$autocompletion_source = $sub_components[1];
-									// special handling for "main" (blank) namespace
-									if ( $autocompletion_source == "" )
-										$autocompletion_source = "main";
-									$field_args['autocompletion source'] = $autocompletion_source;
-								} elseif ( $sub_components[0] == 'autocomplete from url' ) {
-									$field_args['autocomplete field type'] = 'external_url';
-									$field_args['autocompletion source'] = $sub_components[1];
-									// 'external' autocompletion is always done remotely, i.e. via API
-									$field_args['remote autocompletion'] = true;
-								} elseif ( $sub_components[0] == 'values' ) {
-									// Handle this one only after 'delimiter' has
-									// also been set.
-									$values = $sub_components[1];
-								} elseif ( $sub_components[0] == 'values from property' ) {
-									$propertyName = $sub_components[1];
-									$propValue = SMWPropertyValue::makeUserProperty( $propertyName );
-									$isRelation = $propValue->getPropertyTypeID() == '_wpg';
-									$possible_values = SFAutocompleteAPI::getAllValuesForProperty( $isRelation, $propertyName );
-								} elseif ( $sub_components[0] == 'values from category' ) {
-									$category_name = ucfirst( $sub_components[1] );
-									$possible_values = SFUtils::getAllPagesForCategory( $category_name, 10 );
-								} elseif ( $sub_components[0] == 'values from concept' ) {
-									$possible_values = SFUtils::getAllPagesForConcept( $sub_components[1] );
-								} elseif ( $sub_components[0] == 'values from namespace' ) {
-									$possible_values = SFUtils::getAllPagesForNamespace( $sub_components[1] );
-								} elseif ( $sub_components[0] == 'property' ) {
-									$semantic_property = $sub_components[1];
-								} elseif ( $sub_components[0] == 'default filename' ) {
-									$default_filename = str_replace( '&lt;page name&gt;', $page_name, $sub_components[1] );
-									// Parse value, so default filename can include parser functions.
-									$default_filename = $wgParser->recursiveTagParse( $default_filename );
-									$field_args['default filename'] = $default_filename;
-								} elseif ( $sub_components[0] == 'restricted' ) {
-									$is_restricted = !array_intersect(
-											$wgUser->getEffectiveGroups(),
-											array_map( 'trim', explode( ',', $sub_components[1] ) )
-									);
+							if ( $component == 'holds template' ) {
+								$is_hidden = true;
+								$holds_template = true;
+								$placeholderFields[] = self::placeholderFormat( $template_name, $field_name );
+							}
+						} elseif ( count( $sub_components ) == 2 ) {
+							// First, set each value as its own entry in $field_args.
+							$field_args[$sub_components[0]] = $sub_components[1];
+
+							// Then, do all special handling.
+							if ( $sub_components[0] == 'input type' ) {
+								$input_type = $sub_components[1];
+							} elseif ( $sub_components[0] == 'default' ) {
+								$default_value = $wgParser->recursiveTagParse( $sub_components[1] );
+							} elseif ( $sub_components[0] == 'preload' ) {
+								// free text field has special handling
+								if ( $field_name == 'free text' || $field_name == '<freetext>' ) {
+									$free_text_preload_page = $sub_components[1];
+								} else {
+									$preload_page = $sub_components[1];
 								}
+							} elseif ( $sub_components[0] == 'show on select' ) {
+								// html_entity_decode() is needed to turn '&gt;' to '>'
+								$vals = explode( ';', html_entity_decode( $sub_components[1] ) );
+								foreach ( $vals as $val ) {
+									$val = trim( $val );
+									if ( empty( $val ) )
+										continue;
+									$option_div_pair = explode( '=>', $val, 2 );
+									if ( count( $option_div_pair ) > 1 ) {
+										$option = $option_div_pair[0];
+										$div_id = $option_div_pair[1];
+										if ( array_key_exists( $div_id, $show_on_select ) )
+											$show_on_select[$div_id][] = $option;
+										else
+											$show_on_select[$div_id] = array($option);
+									} else {
+										$show_on_select[$val] = array();
+									}
+								}
+							} elseif ( $sub_components[0] == 'autocomplete on property' ) {
+								$property_name = $sub_components[1];
+								$propValue = SMWPropertyValue::makeUserProperty( $property_name );
+								if ( $propValue->getPropertyTypeID() == '_wpg' ) {
+									$field_args['autocomplete field type'] = 'relation';
+								} else {
+									$field_args['autocomplete field type'] = 'attribute';
+								}
+								$field_args['autocompletion source'] = $sub_components[1];
+							} elseif ( $sub_components[0] == 'autocomplete on category' ) {
+								$field_args['autocomplete field type'] = 'category';
+								$field_args['autocompletion source'] = $sub_components[1];
+							} elseif ( $sub_components[0] == 'autocomplete on concept' ) {
+								$field_args['autocomplete field type'] = 'concept';
+								$field_args['autocompletion source'] = $sub_components[1];
+							} elseif ( $sub_components[0] == 'autocomplete on namespace' ) {
+								$field_args['autocomplete field type'] = 'namespace';
+								$autocompletion_source = $sub_components[1];
+								// special handling for "main" (blank) namespace
+								if ( $autocompletion_source == "" )
+									$autocompletion_source = "main";
+								$field_args['autocompletion source'] = $autocompletion_source;
+							} elseif ( $sub_components[0] == 'autocomplete from url' ) {
+								$field_args['autocomplete field type'] = 'external_url';
+								$field_args['autocompletion source'] = $sub_components[1];
+								// 'external' autocompletion is always done remotely, i.e. via API
+								$field_args['remote autocompletion'] = true;
+							} elseif ( $sub_components[0] == 'values' ) {
+								// Handle this one only after 'delimiter' has
+								// also been set.
+								$values = $sub_components[1];
+							} elseif ( $sub_components[0] == 'values from property' ) {
+								$propertyName = $sub_components[1];
+								$possible_values = SFUtils::getAllValuesForProperty( $propertyName );
+							} elseif ( $sub_components[0] == 'values from category' ) {
+								$category_name = ucfirst( $sub_components[1] );
+								$possible_values = SFUtils::getAllPagesForCategory( $category_name, 10 );
+							} elseif ( $sub_components[0] == 'values from concept' ) {
+								$possible_values = SFUtils::getAllPagesForConcept( $sub_components[1] );
+							} elseif ( $sub_components[0] == 'values from namespace' ) {
+								$possible_values = SFUtils::getAllPagesForNamespace( $sub_components[1] );
+							} elseif ( $sub_components[0] == 'property' ) {
+								$semantic_property = $sub_components[1];
+							} elseif ( $sub_components[0] == 'default filename' ) {
+								$default_filename = str_replace( '&lt;page name&gt;', $page_name, $sub_components[1] );
+								// Parse value, so default filename can include parser functions.
+								$default_filename = $wgParser->recursiveTagParse( $default_filename );
+								$field_args['default filename'] = $default_filename;
+							} elseif ( $sub_components[0] == 'restricted' ) {
+								$is_restricted = !array_intersect(
+										$wgUser->getEffectiveGroups(), array_map( 'trim', explode( ',', $sub_components[1] ) )
+								);
 							}
 						}
 					} // end for
@@ -824,15 +905,28 @@ END;
 						}
 					}
 
-					// if the user is editing a page, and that page contains a call to
+					// If the user is editing a page, and that page contains a call to
 					// the template being processed, get the current field's value
 					// from the template call
 					if ( $source_is_page && ( ! empty( $existing_template_text ) ) ) {
 						if ( isset( $template_contents[$field_name] ) ) {
 							$cur_value = $template_contents[$field_name];
-							// now remove this value from $template_contents, so that
-							// at the end we can have a list of all the fields that
-							// weren't handled by the form
+
+							// If the field is a placeholder, the contents of this template
+							// parameter should be treated as elements parsed by an another
+							// multiple template form.
+							// By putting that at the very end of the parsed string, we'll
+							// have it processed as a regular multiple template form.
+							if ( $holds_template ) {
+								$existing_page_content = $existing_page_content . $cur_value;
+							}
+
+							// Now remove this value
+							// from $template_contents,
+							// so that at the end we
+							// can have a list of all
+							// the fields that weren't
+							// handled by the form.
 							unset( $template_contents[$field_name] );
 						} else {
 							$cur_value = '';
@@ -849,7 +943,7 @@ END;
 						} else {
 							$sfgTabIndex++;
 							$sfgFieldNum++;
-							if ( $cur_value == '' ) {
+							if ( $cur_value === '' || is_null( $cur_value )  ) {
 								$default_value = '!free_text!';
 							} else {
 								$default_value = $cur_value;
@@ -883,7 +977,7 @@ END;
 						$data_text .= "!free_text!\n";
 					}
 
-					if ( $template_name == '' || $field_name == '<freetext>' ) {
+					if ( $template_name === '' || $field_name == '<freetext>' ) {
 						$section = substr_replace( $section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
 					} else {
 						if ( is_array( $cur_value ) ) {
@@ -918,7 +1012,7 @@ END;
 								} elseif ( count( $cur_value ) >= 3 ) {
 									$month = $cur_value['month'];
 									$day = $cur_value['day'];
-									if ( $day != '' ) {
+									if ( $day !== '' ) {
 										global $wgAmericanDates;
 										if ( $wgAmericanDates == false ) {
 											// pad out day to always be two digits
@@ -932,7 +1026,7 @@ END;
 									if ( isset( $cur_value['second'] ) ) $second = $cur_value['second'];
 									if ( isset( $cur_value['ampm24h'] ) ) $ampm24h = $cur_value['ampm24h'];
 									if ( isset( $cur_value['timezone'] ) ) $timezone = $cur_value['timezone'];
-									if ( $month != '' && $day != '' && $year != '' ) {
+									if ( $month !== '' && $day !== '' && $year !== '' ) {
 										// special handling for American dates - otherwise, just
 										// the standard year/month/day (where month is a number)
 										global $wgAmericanDates;
@@ -958,7 +1052,7 @@ END;
 						} else { // value is not an array
 							$cur_value_in_template = $cur_value;
 						}
-						if ( $template_name == null || $template_name == '' ) {
+						if ( $template_name == null || $template_name === '' ) {
 							$input_name = $field_name;
 						} elseif ( $allow_multiple ) {
 							// 'num' will get replaced by an actual index, either in PHP
@@ -985,7 +1079,7 @@ END;
 						// if we're creating the page name from a formula based on
 						// form values, see if the current input is part of that formula,
 						// and if so, substitute in the actual value
-						if ( $form_submitted && $generated_page_name != '' ) {
+						if ( $form_submitted && $generated_page_name !== '' ) {
 							// this line appears to be unnecessary
 							// $generated_page_name = str_replace('.', '_', $generated_page_name);
 							$generated_page_name = str_replace( ' ', '_', $generated_page_name );
@@ -1030,16 +1124,16 @@ END;
 						}
 						// increment the global field number regardless
 						$sfgFieldNum++;
-						// if the field is a date field, and its default value was set
+						// If the field is a date field, and its default value was set
 						// to 'now', and it has no current value, set $cur_value to be
-						// the current date
+						// the current date.
 						if ( $default_value == 'now' &&
 								// if the date is hidden, cur_value will already be set
 								// to the default value
-								( $cur_value == '' || $cur_value == 'now' ) ) {
+								( $cur_value === '' || $cur_value == 'now' ) ) {
 							if ( $input_type == 'date' || $input_type == 'datetime' ||
 									$input_type == 'year' ||
-									( $input_type == '' && $form_field->getTemplateField()->getPropertyType() == '_dat' ) ) {
+									( $input_type === '' && $form_field->getTemplateField()->getPropertyType() == '_dat' ) ) {
 								// Get current time, for the time zone specified in the wiki.
 								global $wgLocaltimezone;
 								if ( isset( $wgLocaltimezone ) ) {
@@ -1082,23 +1176,37 @@ END;
 								}
 							}
 						}
-						// if the field is a text field, and its default value was set
+						// If the field is a text field, and its default value was set
 						// to 'current user', and it has no current value, set $cur_value
-						// to be the current user
+						// to be the current user.
 						if ( $default_value == 'current user' &&
-								// if the date is hidden, cur_value will already be set
-								// to the default value
-								( $cur_value == '' || $cur_value == 'current user' ) ) {
-							if ( $input_type == 'text' || $input_type == '' ) {
-								$cur_value_in_template = $wgUser->getName();
-								$cur_value = $cur_value_in_template;
-							}
+							// if the date is hidden, cur_value will already be set
+							// to the default value
+							( $cur_value === '' || $cur_value == 'current user' ) ) {
+
+							$cur_value_in_template = $wgUser->getName();
+							$cur_value = $cur_value_in_template;
 						}
+
+						// Generate a hidden field with a placeholder value that will be replaced
+						// by the multiple-instances template output at form submission.
+						////<input type="hidden" value="@replace_Town___mayors@" name="Town[town_mayors]" />
+						if ( $holds_template ) {
+							$cur_value = self::makePlaceholderInWikiText( self::placeholderFormat($template_name,$field_name) );
+						}
+			
 						$new_text = $this->formFieldHTML( $form_field, $cur_value );
 
-						// if this field is disabled, add a hidden field holding
+						// Add a field just after the hidden field, within the HTML, to locate 
+						// where the multiple-templates HTML, stored in $multipleTemplateString,
+						// should be inserted.
+						if ( $holds_template ) {
+							$new_text .= self::makePlaceholderInFormHTML( self::placeholderFormat( $template_name, $field_name ) );
+						}
+						
+						// If this field is disabled, add a hidden field holding
 						// the value of this field, because disabled inputs for some
-						// reason don't submit their value
+						// reason don't submit their value.
 						if ( $form_field->isDisabled() ) {
 							if ( $field_name == 'free text' || $field_name == '<freetext>' ) {
 								$new_text .= SFFormUtils::hiddenFieldHTML( 'free_text', '!free_text!' );
@@ -1113,7 +1221,7 @@ END;
 								$template_text .= "|$cur_value_in_template";
 							} else {
 								// If the value is null, don't include it at all.
-								if ( $cur_value_in_template != '' ) {
+								if ( $cur_value_in_template !== '' ) {
 									$template_text .= "\n|$field_name=$cur_value_in_template";
 								}
 							}
@@ -1192,7 +1300,8 @@ END;
 					// TODO: Generate an error message if this is included more than once
 					foreach ( array_slice( $tag_components, 1 ) as $component ) {
 						$sub_components = array_map( 'trim', explode( '=', $component, 2 ) );
-						$tag = $sub_components[0];
+						// Tag names are case-insensitive
+						$tag = strtolower( $sub_components[0] );
 						if ( $tag == 'create title' || $tag == 'add title' ) {
 							// Handle this only if
 							// we're adding a page.
@@ -1217,6 +1326,13 @@ END;
 							$source_page_matches_this_form = true;
 						} elseif ( $tag == 'includeonly free text' || $tag == 'onlyinclude free text' ) {
 							$onlyinclude_free_text = true;
+						} elseif ( $tag == 'query form at top' ) {
+							// TODO - this should be made a field of
+							// some non-static class that actually
+							// prints the form, instead of requiring
+							// a global variable.
+							global $sfgRunQueryFormAtTop;
+							$sfgRunQueryFormAtTop = true;
 						}
 					}
 					$section = substr_replace( $section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc );
@@ -1230,7 +1346,7 @@ END;
 			} // end while
 
 			if ( ! $all_instances_printed ) {
-				if ( $template_text != '' ) {
+				if ( $template_text !== '' ) {
 					// For mostly aesthetic purposes, if the template call ends with
 					// a bunch of pipes (i.e., it's an indexed template with unused
 					// parameters at the end), remove the pipes.
@@ -1246,8 +1362,24 @@ END;
 						$template_text .= SFFormUtils::addUnhandledFields( $template_name );
 					}
 					$template_text .= "}}";
-					$data_text .= $template_text . "\n";
-					// If there is a placeholder in the text, we know that we are
+
+					// The base $template_text will contain strings like "@replace_xxx@"
+					// in the hidden fields when the form is submitted.
+					// On the following loops, the text for the multiple-instance templates
+					// is progressively reinserted in the main data, always keeping a
+					// trailing @replace_xxx@ for a given field
+					// The trailing @replace_xxx@ is then deleted at the end.
+					// Note: this cleanup step could also be done with a regexp, instead of
+					// keeping a track array (e.g., /@replace_(.*)@/)
+					$reptmp = self::makePlaceholderInWikiText( $curPlaceholder );
+					if ( $curPlaceholder != null && $data_text && strpos( $data_text, $reptmp, 0 ) !== false) {
+						$data_text = preg_replace( '/' . $reptmp . '/', $template_text . $reptmp, $data_text );
+					} else {
+						$data_text .= $template_text . "\n";
+					}
+
+					// If there is a placeholder in the
+					// text, we know that we are
 					// doing a replace.
 					if ( $existing_page_content && strpos( $existing_page_content, '{{{insertionpoint}}}', 0 ) !== false ) {
 						$existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}(\r?\n?)/',
@@ -1266,53 +1398,49 @@ END;
 			}
 
 			if ( $allow_multiple ) {
+				if ( $curPlaceholder == null ) {
+					// The normal process.
+					$form_text .= $this->multipleTemplateInstanceHTML( $all_instances_printed, $section, $instance_num, $add_button_text );
+				} else { // if ( $curPlaceholder != null ){
+					// The template text won't be appended at the end of the template like for usual multiple template forms.
+					// The HTML text will then be stored in the $multipleTemplateString variable,
+					// and then added in the right @insertHTML_".$placeHolderField."@"; position
+					// Optimization: actually, instead of separating the processes, the usual multiple
+					// template forms could also be handled this way if a fitting placeholder tag was added.
+					$multipleTemplateString .= $this->multipleTemplateInstanceHTML( $all_instances_printed, $section, $instance_num, $add_button_text );
+					// We replace the $multipleTemplateString HTML into the
+					// current placeholder tag, but also add another
+					// placeholder tag, to keep track of it.
+					$multipleTemplateString .= self::makePlaceholderInFormHTML( $curPlaceholder );
+					if ( isset( $template_label ) ) {
+						$multipleTemplateString .= "</fieldset>\n";
+						unset ( $template_label );
+					}
+					$form_text = preg_replace( '/' . self::makePlaceholderInFormHTML( $curPlaceholder ) . '/',
+						$multipleTemplateString, $form_text );
+				}
 				if ( ! $all_instances_printed ) {
-					// Add the character "a" onto the instance number of this input
-					// in the form, to differentiate the inputs the form starts out
-					// with from any inputs added by the Javascript.
-					$section = str_replace( '[num]', "[{$instance_num}a]", $section );
-					// @TODO - this replacement should be
-					// case- and spacing-insensitive
-					$section = str_replace( ' id=', ' origID=', $section );
-					$form_text .= "\t\t" . Xml::tags( 'div',
-						array(
-							// The "multipleTemplate" class is there for
-							// backwards-compatibility with any custom CSS on people's
-							// wikis before SF 2.0.9.
-							'class' => "multipleTemplateInstance multipleTemplate"
-						),
-						$this->multipleTemplateInstanceTableHTML( $section )
-					) . "\n";
-
 					// This will cause the section to be
 					// re-parsed on the next go.
 					$section_num--;
-				} else {
-					// This is the last instance of this
-					// template - print all the sections
-					// necessary for adding additional
-					// instances.
-					$form_text .= "\t\t" . Xml::tags( 'div',
-						array(
-							'class' => "multipleTemplateStarter",
-							'style' => "display: none",
-						),
-						$this->multipleTemplateInstanceTableHTML( $section )
-					) . "\n";
-					$form_text .= <<<END
-	</div><!-- multipleTemplateList -->
-		<p style="margin-left:10px;" />
-		<p><input type="button" value="$add_button_text" tabindex="$sfgTabIndex" class="multipleTemplateAdder" /></p>
-	</div><!-- multipleTemplateWrapper -->
-
-END;
 				}
-			} else {
+			} else { //if ( $allow_multiple ) {
 				$form_text .= $section;
 			}
-
+			$curPlaceholder = null;
 		} // end for
 
+		// Cleanup - everything has been browsed.
+		// Remove all the remaining placeholder
+		// tags in the HTML and wiki-text.
+		foreach ( $placeholderFields as $stringToReplace ) {
+			//remove the @<replacename>@ tags from the data that is submitted
+			$data_text = preg_replace('/'.self::makePlaceholderInWikiText( $stringToReplace ).'/', '',$data_text);	
+			
+			//remove the @<insertHTML>@ tags from the generated HTML form
+			$form_text = preg_replace( '/' . self::makePlaceholderInFormHTML( $stringToReplace ) . '/', '', $form_text );	
+		}
+		
 		// if it wasn't included in the form definition, add the
 		// 'free text' input as a hidden field at the bottom
 		if ( ! $free_text_was_included ) {
@@ -1325,16 +1453,16 @@ END;
 		// (a) we're processing a replacement (param 'partial' == 1)
 		// (b) we're sending out something to be replaced (param 'partial' is missing)
 		if ( $form_is_partial ) {
-			 if ( !$wgRequest->getCheck( 'partial' ) ) {
-				 $free_text = $original_page_content;
-				 $form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
-			 } else {
-				 $free_text = null;
-				 $existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
-					 array( '{{','}}' ),
-					 $existing_page_content );
-				 $existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
-			 }
+			if ( !$wgRequest->getCheck( 'partial' ) ) {
+				$free_text = $original_page_content;
+				$form_text .= SFFormUtils::hiddenFieldHTML( 'partial', 1 );
+			} else {
+				$free_text = null;
+				$existing_page_content = preg_replace( array( '/�\{/m','/\}�/m' ),
+					array( '{{','}}' ),
+					$existing_page_content );
+				$existing_page_content = preg_replace( '/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content );
+			}
 		} elseif ( $source_is_page ) {
 			// if the page is the source, free_text will just be whatever in the
 			// page hasn't already been inserted into the form
@@ -1377,8 +1505,8 @@ END;
 
 		// Add a warning in, if we're editing an existing page and that
 		// page appears to not have been created with this form.
-		if ( $this->mPageTitle->exists() && ( $existing_page_content != '' ) && ! $source_page_matches_this_form ) {
-			$form_text = "\t" . '<div class="warningMessage">' . wfMsg( 'sf_formedit_formwarning', $this->mPageTitle->getFullURL() ) . "</div>\n" . $form_text;
+		if ( $this->mPageTitle->exists() && ( $existing_page_content !== '' ) && ! $source_page_matches_this_form ) {
+			$form_text = "\t" . '<div class="warningbox">' . wfMsg( 'sf_formedit_formwarning', $this->mPageTitle->getFullURL() ) . "</div>\n<br clear=\"both\" />\n" . $form_text;
 		}
 
 		// add form bottom, if no custom "standard inputs" have been defined
@@ -1389,7 +1517,7 @@ END;
 				$form_text .= SFFormUtils::formBottom( $form_is_disabled );
 		}
 		$starttime = wfTimestampNow();
-		$page_article = new Article( $this->mPageTitle );
+		$page_article = new Article( $this->mPageTitle, 0 );
 		$edittime = $page_article->getTimestamp();
 		if ( !$is_query ) {
 			$form_text .= SFFormUtils::hiddenFieldHTML( 'wpStarttime', wfTimestampNow() );
@@ -1419,7 +1547,7 @@ END;
 		if ( $wgRequest->getCheck( 'partial' ) )
 			$data_text = $existing_page_content;
 
-		if ( !$embedded ) {
+		if ( !$is_embedded ) {
 			$form_page_title = $wgParser->recursiveTagParse( str_replace( "{{!}}", "|", $form_page_title ) );
 		} else {
 			$form_page_title = null;
@@ -1452,7 +1580,7 @@ END;
 
 		if ( $form_field->isHidden() ) {
 			$text = SFFormUtils::hiddenFieldHTML( $form_field->getInputName(), $cur_value );
-		} elseif ( $form_field->getInputType() != '' &&
+		} elseif ( $form_field->getInputType() !== '' &&
 							array_key_exists( $form_field->getInputType(), $this->mInputTypeHooks ) &&
 							$this->mInputTypeHooks[$form_field->getInputType()] != null ) {
 			$funcArgs = array();
@@ -1470,7 +1598,7 @@ END;
 		} else { // input type not defined in form
 			$property_type = $template_field->getPropertyType();
 			$is_list = ( $form_field->isList() || $template_field->isList() );
-			if ( $property_type != '' &&
+			if ( $property_type !== '' &&
 				array_key_exists( $property_type, $this->mSemanticTypeHooks ) &&
 				isset( $this->mSemanticTypeHooks[$property_type][$is_list] ) ) {
 				$funcArgs = array();

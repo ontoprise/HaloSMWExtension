@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFDateTimeInput class.
  *
@@ -145,7 +141,7 @@ class SFDateTimeInput extends SFDateInput {
 			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

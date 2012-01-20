@@ -28,10 +28,6 @@ class SFFormLinker {
 	 * in the wiki.
 	 */
 	static function getIncomingProperties( $title ) {
-		// produce a useful error message if SMW isn't installed
-		if ( ! function_exists( 'smwfGetStore' ) ) {
-			die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
-		}
 		$store = smwfGetStore();
 		// SMW 1.6+
 		if ( class_exists( 'SMWDataItem' ) ) {
@@ -64,13 +60,24 @@ class SFFormLinker {
 			return;
 		}
 		$store = smwfGetStore();
-		$data = $store->getSemanticData( $title );
+		if ( class_exists( 'SMWDataItem' ) ) {
+			$value = SMWDIWikiPage::newFromTitle( $title );
+		} else {
+			$value = $title;
+		}
+		$data = $store->getSemanticData( $value );
 		foreach ( $data->getProperties() as $property ) {
 			$propertyValues = $data->getPropertyValues( $property );
 			foreach ( $propertyValues as $propertyValue ) {
-				if ( $propertyValue instanceof SMWWikiPageValue ) {
+				$linkedPageName = null;
+				if ( $propertyValue instanceof SMWDIWikiPage ) {
+					$propertyName = $property->getKey();
+					$linkedPageName = $propertyValue->getDBkey();
+				} elseif ( $propertyValue instanceof SMWWikiPageValue ) {
 					$propertyName = $property->getWikiValue();
 					$linkedPageName = $propertyValue->getWikiValue();
+				}
+				if ( !is_null( $linkedPageName ) ) {
 					if ( array_key_exists( $linkedPageName, self::$mLinkedPages ) ) {
 						self::$mLinkedPages[$linkedPageName][] = $propertyName;
 					} else {
@@ -127,11 +134,6 @@ class SFFormLinker {
 
 		global $sfgContLang;
 		
-		// Produce a useful error message if SMW isn't installed.
-		if ( ! function_exists( 'smwfGetStore' ) ) {
-			die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
-		}
-			
 		$store = smwfGetStore();
 		$subject = Title::makeTitleSafe( $page_namespace, $page_name );
 		$form_names = SFUtils::getSMWPropertyValues( $store, $subject, $prop_smw_id );
@@ -253,24 +255,35 @@ class SFFormLinker {
 	 * AKA red-linked) page
 	 */
 	static function setBrokenLink( $linker, $target, $options, $text, &$attribs, &$ret ) {
-		if ( in_array( 'broken', $options ) ) {
-			global $sfgRedLinksCheckOnlyLocalProps;
-			if ( $sfgRedLinksCheckOnlyLocalProps ) {
-				self::getPagePropertiesOfPage( $linker->getTitle() );
+		// If it's not a broken (red) link, exit.
+		if ( !in_array( 'broken', $options ) ) {
+			return true;
+		}
+		// If the link is to a special page, exit.
+		if ( $target->getNamespace() == NS_SPECIAL ) {
+			return true;
+		}
+
+		global $sfgRedLinksCheckOnlyLocalProps;
+		if ( $sfgRedLinksCheckOnlyLocalProps ) {
+			$incoming_properties = array();
+			global $wgTitle;
+			// If this is called from the command line, $wgTitle
+			// might not have been set.
+			if ( !is_null( $wgTitle ) ) {
+				self::getPagePropertiesOfPage( $wgTitle );
 				$targetName = $target->getText();
 				if ( array_key_exists( $targetName, self::$mLinkedPages ) ) {
 					$incoming_properties = self::$mLinkedPages[$targetName];
-				} else {
-					$incoming_properties = array();
 				}
-			} else {
-				$incoming_properties = self::getIncomingProperties( $target );
 			}
-			self::createLinkedPage( $target, $incoming_properties );
-			$link = self::formEditLink( $target, $incoming_properties );
-			if ( $link != '' ) {
-				$attribs['href'] = $link;
-			}
+		} else {
+			$incoming_properties = self::getIncomingProperties( $target );
+		}
+		self::createLinkedPage( $target, $incoming_properties );
+		$link = self::formEditLink( $target, $incoming_properties );
+		if ( !is_null( $link ) ) {
+			$attribs['href'] = $link;
 		}
 		return true;
 	}
@@ -296,12 +309,30 @@ class SFFormLinker {
 			$default_forms = array();
 			$categories = SFUtils::getCategoriesForPage( $title );
 			foreach ( $categories as $category ) {
+				if ( class_exists( 'PSSchema' ) ) {
+					// Check the Page Schema, if one exists.
+					$psSchema = new PSSchema( $category );
+					if ( $psSchema->isPSDefined() ) {
+						$formName = SFPageSchemas::getFormName( $psSchema );
+						if ( !is_null( $formName ) ) {
+							$default_forms[] = $formName;
+						}
+					}
+				}
 				$default_forms = array_merge( $default_forms, self::getFormsThatPagePointsTo( $category, NS_CATEGORY, self::DEFAULT_FORM ) );
 			}
 			if ( count( $default_forms ) > 0 ) {
 				return $default_forms;
 			}
 		}
+
+		// All that's left is checking for the namespace. If this is
+		// a subpage, exit out - default forms for namespaces don't
+		// apply to subpages.
+		if ( $title->isSubpage() ) {
+			return array();
+		}
+		
 		// If we're still here, just return the default form for the
 		// namespace, which may well be null.
 		if ( NS_MAIN === $namespace ) {

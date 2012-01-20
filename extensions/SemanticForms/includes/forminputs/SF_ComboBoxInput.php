@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFComboBoxInput class.
  *
@@ -62,10 +58,9 @@ class SFComboBoxInput extends SFFormInput {
 		count( $other_args['possible_values'] ) > 0 ) {
 			$values = $other_args['possible_values'];
 		} elseif ( $autocompleteFieldType == 'values' ) {
-			$autocompleteValues = explode( ',', $other_args['values'] );
+			$values = explode( ',', $other_args['values'] );
 		} else {
 			$values = SFUtils::getAutocompleteValues( $autocompletionSource, $autocompleteFieldType );
-			$autocompleteValues = SFUtils::getAutocompleteValues( $autocompletionSource, $autocompleteFieldType );
 		}
 		$autocompletionSource = str_replace( "'", "\'", $autocompletionSource );
 
@@ -120,7 +115,7 @@ class SFComboBoxInput extends SFFormInput {
 			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

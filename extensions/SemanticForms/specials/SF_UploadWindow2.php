@@ -383,11 +383,18 @@ class SFUploadWindow2Proto extends UnlistedSpecialPage {
 		}
 
 		$basename = str_replace( '_', ' ', $basename );
-		$output = '     <script type="text/javascript">' . "\n";
+		// UTF8-decoding is needed for IE
+		$basename = utf8_decode( $basename );
+		
+		$output .= <<<END
+		<script type="text/javascript">
+		var input = parent.window.jQuery( parent.document.getElementById("{$this->mInputID}") );
+END;
+		
 		if ( $this->mDelimiter == null ) {
 			$output .= <<<END
-		parent.document.getElementById("{$this->mInputID}").value = '$basename';
-
+		input.val( '$basename' );
+		input.change();
 END;
 		} else {
 			$output .= <<<END
@@ -397,14 +404,18 @@ END;
 		// both a delimiter and a file name; and add on a delimiter
 		// at the end in any case
 		var cur_value = parent.document.getElementById("{$this->mInputID}").value;
-		if (cur_value == '') {
-			parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
+		
+		if (cur_value === '') {
+			input.val( '$basename' + '{$this->mDelimiter} ' );
+			input.change();
 		} else {
 			var last_char = cur_value.charAt(cur_value.length - 1);
 			if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
 				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
+				input.change();
 			} else {
 				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
+				input.change();
 			}
 		}
 
@@ -429,7 +440,7 @@ END;
 		global $wgUseCopyrightUpload;
 		if ( $wgUseCopyrightUpload ) {
 			$licensetxt = '';
-			if ( $license != '' ) {
+			if ( $license !== '' ) {
 				$licensetxt = '== ' . wfMsgForContent( 'license-header' ) . " ==\n" . '{{' . $license . '}}' . "\n";
 			}
 			$pageText = '== ' . wfMsgForContent ( 'filedesc' ) . " ==\n" . $comment . "\n" .
@@ -437,8 +448,8 @@ END;
 			  "$licensetxt" .
 			  '== ' . wfMsgForContent ( 'filesource' ) . " ==\n" . $source ;
 		} else {
-			if ( $license != '' ) {
-				$filedesc = $comment == '' ? '' : '== ' . wfMsgForContent ( 'filedesc' ) . " ==\n" . $comment . "\n";
+			if ( $license !== '' ) {
+				$filedesc = $comment === '' ? '' : '== ' . wfMsgForContent ( 'filedesc' ) . " ==\n" . $comment . "\n";
 				 $pageText = $filedesc .
 					 '== ' . wfMsgForContent ( 'license-header' ) . " ==\n" . '{{' . $license . '}}' . "\n";
 			} else {
@@ -926,7 +937,7 @@ class SFUploadForm extends HTMLForm {
 				'section' => 'options',
 			);
 		}
-		$descriptor['wpDestFileWarningAck'] = array(
+		$descriptor['DestFileWarningAck'] = array(
 			'type' => 'hidden',
 			'id' => 'wpDestFileWarningAck',
 			'default' => $this->mDestWarningAck ? '1' : '',
@@ -955,9 +966,15 @@ class SFUploadForm extends HTMLForm {
 		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
 
 		if ( method_exists( $wgOut, 'addModules' ) ) {
-			$head_scripts = '';
 			$wgOut->addModules( array( 'mediawiki.action.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
-			$body_scripts = $wgOut->getHeadScripts( $sk );
+			// Method was added in MW 1.18
+			if ( method_exists( $wgOut, 'getBottomScripts' ) ) {
+				$head_scripts = $wgOut->getHeadScripts( $sk );
+				$body_scripts = $wgOut->getBottomScripts( $sk );
+			} else {
+				$head_scripts = '';
+				$body_scripts = $wgOut->getHeadScripts( $sk );
+			}
 		} else {
 			global $wgJsMimeType, $wgStylePath, $wgStyleVersion;
 			$vars_js = Skin::makeGlobalVariablesScript( array( 'skinname' => $sk->getSkinName() ) );
@@ -1008,13 +1025,12 @@ END;
 	protected function addUploadJS( $autofill = true ) {
 		global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
 		global $wgStrictFileExtensions;
-		global $wgEnableFirefogg, $wgEnableJS2system;
+		global $wgEnableJS2system;
 		global $wgOut;
 
 		$scriptVars = array(
 			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
 			'wgAjaxLicensePreview' => $wgUseAjax && $wgAjaxLicensePreview,
-			'wgEnableFirefogg' => (bool)$wgEnableFirefogg,
 			'wgUploadAutoFill' => (bool)$autofill &&
 				// If we received mDestFile from the request, don't autofill
 				// the wpDestFile textbox

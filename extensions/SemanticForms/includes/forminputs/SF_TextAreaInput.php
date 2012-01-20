@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File holding the SFTextAreaInput class
  *
@@ -6,41 +7,66 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFTextAreaInput class.
  *
  * @ingroup SFFormInput
  */
 class SFTextAreaInput extends SFFormInput {
+
 	public static function getName() {
 		return 'textarea';
 	}
 
 	public static function getDefaultPropTypes() {
-		return array( '_txt' => array(), '_cod' => array() );
+		return array('_txt' => array(), '_cod' => array());
 	}
 
 	public static function getOtherPropTypesHandled() {
-		return array( '_wpg', '_str' );
+		return array('_wpg', '_str');
 	}
 
 	public static function getOtherPropTypeListsHandled() {
-		return array( '_wpg', '_str' );
+		return array('_wpg', '_str');
 	}
 
 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
+
+		global $wgOut;
 		global $sfgTabIndex, $sfgFieldNum;
 
-		$className = ( $is_mandatory ) ? 'mandatoryField' : 'createboxInput';
+		// Use a special ID for the free text field, for FCK's needs.
+		$input_id = $input_name == 'free_text' ? 'free_text' : "input_$sfgFieldNum";
+
+		if ( array_key_exists( 'editor', $other_args ) &&
+			$other_args['editor'] == 'wikieditor' &&
+			
+			method_exists( $wgOut, 'getResourceLoader' ) &&
+			in_array( 'jquery.wikiEditor', $wgOut->getResourceLoader()->getModuleNames() ) &&
+				
+			class_exists( 'WikiEditorHooks' ) ) {
+
+			// load modules for all enabled features
+			WikiEditorHooks::editPageShowEditFormInitial( $this );
+
+			$wgOut->addModules( 'ext.semanticforms.wikieditor' );
+
+			$jstext = <<<JAVASCRIPT
+			jQuery( jQuery('#$input_id').SemanticForms_registerInputInit( ext.wikieditor.init, null ) );
+JAVASCRIPT;
+
+			// write JS code directly to the page's code
+			$wgOut->addScript( Html::inlineScript( $jstext ) );
+
+			$className = "wikieditor ";
+		} else {
+			$className = "";
+		}
+
+		$className .= ( $is_mandatory ) ? 'mandatoryField' : 'createboxInput';
 		if ( array_key_exists( 'class', $other_args ) ) {
 			$className .= " " . $other_args['class'];
 		}
-		// Use a special ID for the free text field, for FCK's needs.
-		$input_id = $input_name == 'free_text' ? 'free_text' : "input_$sfgFieldNum";
 
 		if ( array_key_exists( 'rows', $other_args ) ) {
 			$rows = $other_args['rows'];
@@ -62,6 +88,16 @@ class SFTextAreaInput extends SFFormInput {
 
 		if ( array_key_exists( 'cols', $other_args ) ) {
 			$textarea_attrs['cols'] = $other_args['cols'];
+			// Needed to prevent CSS from overriding the manually-
+			// set width.
+			$textarea_attrs['style'] = 'width: auto';
+		} elseif ( array_key_exists( 'autogrow', $other_args ) ) {
+			// If 'autogrow' has been set, automatically set
+			// the number of columns - otherwise, the Javascript
+			// won't be able to know how many characters there
+			// are per line, and thus won't work.
+			$textarea_attrs['cols'] = 90;
+			$textarea_attrs['style'] = 'width: auto';
 		} else {
 			$textarea_attrs['style'] = 'width: 100%';
 		}
@@ -82,6 +118,10 @@ class SFTextAreaInput extends SFFormInput {
 			$textarea_attrs['onKeyDown'] = $maxLengthJSCheck;
 			$textarea_attrs['onKeyUp'] = $maxLengthJSCheck;
 		}
+		if ( array_key_exists( 'placeholder', $other_args ) ) {
+			$textarea_attrs['placeholder'] = $other_args['placeholder'];
+		}
+
 		// Bug in Xml::element()? It doesn't close the textarea tag
 		// properly if the text inside is null - set it to '' instead.
 		if ( is_null( $cur_value ) ) {
@@ -92,7 +132,8 @@ class SFTextAreaInput extends SFFormInput {
 		if ( $is_mandatory ) {
 			$spanClass .= ' mandatoryFieldSpan';
 		}
-		$text = Xml::tags( 'span', array( 'class' => $spanClass ), $text );
+		$text = Xml::tags( 'span', array('class' => $spanClass), $text );
+
 		return $text;
 	}
 
@@ -119,6 +160,11 @@ class SFTextAreaInput extends SFFormInput {
 			'description' => wfMsg( 'sf_forminputs_maxlength' )
 		);
 		$params[] = array(
+			'name' => 'placeholder',
+			'type' => 'string',
+			'description' => wfMsg( 'sf_forminputs_placeholder' )
+		);
+		$params[] = array(
 			'name' => 'autogrow',
 			'type' => 'boolean',
 			'description' => wfMsg( 'sf_forminputs_autogrow' )
@@ -130,12 +176,10 @@ class SFTextAreaInput extends SFFormInput {
 	 * Returns the HTML code to be included in the output page for this input.
 	 */
 	public function getHtmlText() {
+
 		return self::getHTML(
-			$this->mCurrentValue,
-			$this->mInputName,
-			$this->mIsMandatory,
-			$this->mIsDisabled,
-			$mOtherArgs
+				$this->mCurrentValue, $this->mInputName, $this->mIsMandatory, $this->mIsDisabled, $this->mOtherArgs
 		);
 	}
+
 }

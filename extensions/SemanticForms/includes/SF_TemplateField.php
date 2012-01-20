@@ -18,15 +18,17 @@ class SFTemplateField {
 	private $mPossibleValues;
 	private $mIsList;
 	private $mDelimiter;
+	private $mDisplay;
 	private $mInputType;
 
-	static function create( $name, $label, $semanticProperty = null, $isList = null, $delimiter = null ) {
+	static function create( $name, $label, $semanticProperty = null, $isList = null, $delimiter = null, $display = null ) {
 		$f = new SFTemplateField();
 		$f->mFieldName = trim( str_replace( '\\', '', $name ) );
 		$f->mLabel = trim( str_replace( '\\', '', $label ) );
 		$f->setSemanticProperty( $semanticProperty );
 		$f->mIsList = $isList;
 		$f->mDelimiter = $delimiter;
+		$f->mDisplay = $display;
 		// Delimiter should default to ','.
 		if ( !empty( $isList ) && empty( $delimiter ) ) {
 			$f->mDelimiter = ',';
@@ -154,8 +156,9 @@ class SFTemplateField {
 	}
 
 	/**
-	 * Creates the text of a template, when called from either
-	 * Special:CreateTemplate or Special:CreateClass.
+	 * Creates the text of a template, when called from
+	 * Special:CreateTemplate, Special:CreateClass or the Page Schemas
+	 * extension.
 	 *
 	 * @TODO: There's really no good reason why this method is contained
 	 * within this class.
@@ -179,15 +182,15 @@ END;
 </pre>
 $template_footer
 </noinclude><includeonly>
-
 END;
 		// Only add a call to #set_internal if the Semantic Internal
 		// Objects extension is also installed.
-		if ( !empty( $internal_obj_property) && class_exists( 'SIOInternalObject' ) ) {
+		if ( !empty( $internal_obj_property ) && class_exists( 'SIOInternalObject' ) ) {
 			$setInternalText = '{{#set_internal:' . $internal_obj_property;
 		} else {
 			$setInternalText = null;
 		}
+		$setText = '';
 
  		// Topmost part of table depends on format.
 		if ( $template_format == 'infobox' ) {
@@ -205,25 +208,44 @@ END;
 		}
 
 		foreach ( $template_fields as $i => $field ) {
-			if ( $i > 0 ) {
-				$tableText .= "|-\n";
-			}
-			$tableText .= "! " . $field->mLabel . "\n";
+			// Header/field label column
+			if ( is_null( $field->mDisplay ) ) {
+				if ( $i > 0 ) {
+					$tableText .= "|-\n";
+				}
+				$tableText .= '! ' . $field->mLabel . "\n";
+			} elseif ( $field->mDisplay == 'nonempty' ) {
+				$tableText .= '{{#if:{{{' . $field->mFieldName . '|}}}|';
+				if ( $i > 0 ) {
+					$tableText .= "{{!}}-\n";
+				}
+				$tableText .= '! ' . $field->mLabel . "\n";
+			} // If it's 'hidden', do nothing
+			// Value column
 			if ( empty( $field->mSemanticProperty ) ) {
 				$tableText .= "| {{{" . $field->mFieldName . "|}}}\n";
-				// if this field is meant to contain a list,
-				// add on an 'arraymap' function, that will
-				// call this semantic markup tag on every
-				// element in the list
 			} elseif ( !is_null( $setInternalText ) ) {
+				$tableText .= "| {{{" . $field->mFieldName . "|}}}\n";
 				if ( $field->mIsList ) {
 					$setInternalText .= '|' . $field->mSemanticProperty . '#list={{{' . $field->mFieldName . '|}}}';
 				} else {
 					$setInternalText .= '|' . $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}';
 				}
+			} elseif ( $field->mDisplay == 'hidden' ) {
+				if ( $field->mIsList ) {
+					$setText .= $field->mSemanticProperty . '#list={{{' . $field->mFieldName . '|}}}|';
+				} else {
+					$setText .= $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}|';
+				}
+			} elseif ( $field->mDisplay == 'nonempty' ) {
+				$tableText .= '{{!}} [[' . $field->mSemanticProperty . '::{{{' . $field->mFieldName . "|}}}]]}}\n";
 			} elseif ( $field->mIsList ) {
-				// find a string that's not in the semantic
-				// field call, to be used as the variable
+				// If this field is meant to contain a list,
+				// add on an 'arraymap' function, that will
+				// call this semantic markup tag on every
+				// element in the list.
+				// Find a string that's not in the semantic
+				// field call, to be used as the variable.
 				$var = "x"; // default - use this if all the attempts fail
 				if ( strstr( $field->mSemanticProperty, $var ) ) {
 					$var_options = array( 'y', 'z', 'xx', 'yy', 'zz', 'aa', 'bb', 'cc' );
@@ -242,7 +264,7 @@ END;
 
 		// Add a row with an inline query to this table, for
 		// aggregation, if a property was specified.
-		if ( $aggregating_property != '' ) {
+		if ( !is_null( $aggregating_property ) && $aggregating_property !== '' ) {
 			if ( count( $template_fields ) > 0 ) {
 				$tableText .= "|-\n";
 			}
@@ -252,14 +274,25 @@ END;
 
 END;
 		}
-		$tableText .= "|}\n";
-		if ( !is_null( $setInternalText ) ) {
-			$setInternalText .= "}}\n";
+		$tableText .= "|}";
+		// Leave out newlines if there's an internal property
+		// set here (which would mean that there are meant to be
+		// multiple instances of this template.)
+		if ( is_null( $setInternalText ) ) {
+			$tableText .= "\n";
+		} else {
+			$setInternalText .= "}}";
 			$text .= $setInternalText;
 		}
 
+		// Add a call to #set, if necessary
+		if ( $setText !== '' ) {
+			$setText = '{{#set:' . $setText . "}}\n";
+			$text .= $setText;
+		}
+
 		$text .= $tableText;
-		if ( $category != '' ) {
+		if ( $category !== '' ) {
 			global $wgContLang;
 			$namespace_labels = $wgContLang->getNamespaces();
 			$category_namespace = $namespace_labels[NS_CATEGORY];

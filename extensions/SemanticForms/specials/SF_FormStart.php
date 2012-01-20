@@ -64,14 +64,14 @@ class SFFormStart extends SpecialPage {
 			$page_name = $wgRequest->getVal( 'page_name' );
 			// This form can be used to create a sub-page for an
 			// existing page
-			if ( $super_page != '' )
-			{
+			if ( !is_null( $super_page ) && $super_page !== '' ) {
 				$page_name = "$super_page/$page_name";
 			}
-			if ( $page_name != '' ) {
+			
+			if ( $page_name !== '' ) {
 				// Append the namespace prefix to the page name,
 				// if this namespace was not already entered.
-				if ( strpos( $page_name, $target_namespace . ':' ) === false && $target_namespace != '' )
+				if ( strpos( $page_name, $target_namespace . ':' ) === false && !is_null( $target_namespace ) )
 					$page_name = $target_namespace . ':' . $page_name;
 				// If there was no page title, it's probably an
 				// invalid page name, containing forbidden
@@ -88,10 +88,10 @@ class SFFormStart extends SpecialPage {
 			}
 		}
 
-		if ( ( ! $form_title || ! $form_title->exists() ) && ( $form_name != '' ) ) {
+		if ( ( !$form_title || !$form_title->exists() ) && ( $form_name !== '' ) ) {
 			$text = Xml::element( 'p', null, wfMsg( 'sf_formstart_badform', SFUtils::linkText( SF_NS_FORM, $form_name ) ) ) . "\n";
 		} else {
-			if ( $form_name == '' ) {
+			if ( $form_name === '' ) {
 				$description = htmlspecialchars( wfMsg( 'sf_formstart_noform_docu', $form_name ) );
 			}
 			else {
@@ -106,7 +106,7 @@ class SFFormStart extends SpecialPage {
 END;
 			// If no form was specified, display a dropdown letting
 			// the user choose the form.
-			if ( $form_name == '' )
+			if ( $form_name === '' )
 				$text .= SFUtils::formDropdownHTML();
 
 			$text .= "\t</p>\n";
@@ -119,6 +119,18 @@ END;
 		$wgOut->addHTML( $text );
 	}
 
+	/**
+	 * Helper function - returns a URL that includes Special:FormEdit.
+	 */
+	static function getFormEditURL( $formName, $targetName) {
+		$fe = SpecialPage::getPage( 'FormEdit' );
+		// Special handling for forms whose name contains a slash.
+		if ( strpos( $formName, '/' ) !== false ) {
+			return $fe->getTitle()->getLocalURL( array( 'form' => $formName, 'target' => $targetName ) );
+		}
+		return $fe->getTitle( "$formName/$targetName" )->getLocalURL();
+	}
+
 	function doRedirect( $form_name, $page_name, $params ) {
 		global $wgOut;
 
@@ -126,15 +138,16 @@ END;
 		if ( $page_title->exists() ) {
 			// It exists - see if page is a redirect; if
 			// it is, edit the target page instead.
-			$article = new Article( $page_title );
+			$article = new Article( $page_title, 0 );
 			$article->loadContent();
 			$redirect_title = Title::newFromRedirect( $article->fetchContent() );
 			if ( $redirect_title != null ) {
 				$page_title = $redirect_title;
+				$page_name = SFUtils::titleURLString( $redirect_title );
 			}
 			// HACK - if this is the default form for
 			// this page, send to the regular 'formedit'
-			// tab page; otherwise, send to the 'Special:EditData'
+			// tab page; otherwise, send to the 'Special:FormEdit'
 			// page, with the form name hardcoded.
 			// Is this logic necessary? Or should we just
 			// out-guess the user and always send to the
@@ -147,12 +160,10 @@ END;
 			if ( $form_name == $default_form_name ) {
 				$redirect_url = $page_title->getLocalURL( 'action=formedit' );
 			} else {
-				$fe = SpecialPage::getPage( 'FormEdit' );
-				$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFUtils::titleURLString( $page_title );
+				$redirect_url = self::getFormEditURL( $form_name, $page_name );
 			}
 		} else {
-			$fe = SpecialPage::getPage( 'FormEdit' );
-			$redirect_url = $fe->getTitle()->getFullURL() . "/" . $form_name . "/" . SFUtils::titleURLString( $page_title );
+			$redirect_url = self::getFormEditURL( $form_name, $page_name );
 			// Of all the request values, send on to 'FormEdit'
 			// only 'preload' and specific form fields - we can
 			// identify the latter because they show up as arrays.
@@ -162,18 +173,18 @@ END;
 					foreach ( $val as $field_name => $value ) {
 						$field_name = urlencode( $field_name );
 						$value = urlencode( $value );
-						$redirect_url .= ( strpos( $redirect_url, "?" ) > - 1 ) ? '&' : '?';
+						$redirect_url .= ( strpos( $redirect_url, '?' ) > - 1 ) ? '&' : '?';
 						$redirect_url .= $template_name . '[' . $field_name . ']=' . $value;
 					}
 				} elseif ( $key == 'preload' ) {
-					$redirect_url .= ( strpos( $redirect_url, "?" ) > - 1 ) ? '&' : '?';
+					$redirect_url .= ( strpos( $redirect_url, '?' ) > - 1 ) ? '&' : '?';
 					$redirect_url .= "$key=$val";
 				}
 			}
 		}
 
-		if ( $params != '' ) {
-			$redirect_url .= ( strpos( $redirect_url, "?" ) > - 1 ) ? '&' : '?';
+		if ( !is_null( $params ) && $params !== '' ) {
+			$redirect_url .= ( strpos( $redirect_url, '?' ) > - 1 ) ? '&' : '?';
 			$redirect_url .= $params;
 		}
 

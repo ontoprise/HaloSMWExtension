@@ -97,7 +97,7 @@ class TemplatesPage extends QueryPage {
 	function getCategoryDefinedByTemplate( $templateTitle ) {
 		global $wgContLang;
 
-		$templateArticle = new Article( $templateTitle );
+		$templateArticle = new Article( $templateTitle, 0 );
 		$templateText = $templateArticle->getContent();
 		$cat_ns_name = $wgContLang->getNsText( NS_TEMPLATE );
 		if ( preg_match_all( "/\[\[(Category|$cat_ns_name):([^\]]*)\]\]/", $templateText, $matches ) ) {
@@ -114,7 +114,7 @@ class TemplatesPage extends QueryPage {
 		$title = Title::makeTitle( NS_TEMPLATE, $result->value );
 		$text = $skin->makeLinkObj( $title, htmlspecialchars( $title->getText() ) );
 		$category = $this->getCategoryDefinedByTemplate( $title );
-		if ( $category != '' ) {
+		if ( $category !== '' ) {
 			SFUtils::loadMessages();
 			$text .= ' ' . wfMsg( 'sf_templates_definescat' ) . ' ' . SFUtils::linkText( NS_CATEGORY, $category );
 		}

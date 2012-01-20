@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFDropdownInput class.
  *
@@ -33,6 +29,9 @@ class SFDropdownInput extends SFEnumInput {
 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
 		global $sfgTabIndex, $sfgFieldNum, $sfgShowOnSelect;
 
+		// Standardize $cur_value
+		if ( is_null( $cur_value ) ) { $cur_value = ''; }
+
 		$className = ( $is_mandatory ) ? 'mandatoryField' : 'createboxInput';
 		if ( array_key_exists( 'class', $other_args ) ) {
 			$className .= ' ' . $other_args['class'];
@@ -53,7 +52,7 @@ class SFDropdownInput extends SFEnumInput {
 		// mandatory field and there's a current value in place
 		// (either through a default value or because we're editing
 		// an existing page).
-		if ( !$is_mandatory || $cur_value == '' ) {
+		if ( !$is_mandatory || $cur_value === '' ) {
 			$innerDropdown .= "	<option value=\"\"></option>\n";
 		}
 		if ( ( $possible_values = $other_args['possible_values'] ) == null ) {
@@ -112,7 +111,7 @@ class SFDropdownInput extends SFEnumInput {
 			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

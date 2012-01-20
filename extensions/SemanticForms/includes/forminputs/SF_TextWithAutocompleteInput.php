@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFTextWithAutocompleteInput class.
  *
@@ -116,7 +112,7 @@ class SFTextWithAutocompleteInput extends SFTextInput {
 		if ( array_key_exists( 'remote autocompletion', $field_args ) &&
 				$field_args['remote autocompletion'] == true ) {
 			$remoteDataType = $autocompleteFieldType;
-		} elseif ( $autocompletionSource != '' ) {
+		} elseif ( $autocompletionSource !== '' ) {
 			// @TODO - that count() check shouldn't be necessary
 			if ( array_key_exists( 'possible_values', $field_args ) &&
 			count( $field_args['possible_values'] ) > 0 ) {
@@ -177,15 +173,18 @@ class SFTextWithAutocompleteInput extends SFTextInput {
 		if ( array_key_exists( 'maxlength', $other_args ) ) {
 			$inputAttrs['maxlength'] = $other_args['maxlength'];
 		}
+		if ( array_key_exists( 'placeholder', $other_args ) ) {
+			$inputAttrs['placeholder'] = $other_args['placeholder'];
+		}
 		$text = "\n\t" . Xml::element( 'input', $inputAttrs ) . "\n";
 
-		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+		if ( array_key_exists( 'uploadable', $other_args ) && $other_args['uploadable'] == true ) {
 			if ( array_key_exists( 'default filename', $other_args ) ) {
 				$default_filename = $other_args['default filename'];
 			} else {
 				$default_filename = '';
 			}
-			$text .= self::uploadLinkHTML( $input_id, $delimiter, $default_filename );
+			$text .= self::uploadableHTML( $input_id, $delimiter, $default_filename, $cur_value, $other_args );
 		}
 
 		$spanClass = 'inputSpan';
@@ -234,10 +233,10 @@ class SFTextWithAutocompleteInput extends SFTextInput {
 	public function getHtmlText() {
 		return self::getHTML(
 			$this->mCurrentValue,
-			$this->mInputName, 
+			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

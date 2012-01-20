@@ -31,7 +31,6 @@ class SFUtils {
 			global $wgCapitalLinks;
 			return $wgCapitalLinks;
 		}
-
 	}
 
 	/**
@@ -41,7 +40,7 @@ class SFUtils {
 	 */
 	public static function titleURLString( $title ) {
 		$namespace = wfUrlencode( $title->getNsText() );
-		if ( $namespace != '' ) {
+		if ( $namespace !== '' ) {
 			$namespace .= ':';
 		}
 		if ( self::isCapitalized( $title ) ) {
@@ -58,7 +57,7 @@ class SFUtils {
 	 */
 	public static function titleString( $title ) {
 		$namespace = $title->getNsText();
-		if ( $namespace != '' ) {
+		if ( $namespace !== '' ) {
 			$namespace .= ':';
 		}
 		if ( self::isCapitalized( $title ) ) {
@@ -86,7 +85,7 @@ class SFUtils {
 			$values = array();
 			foreach ( $res as $value ) {
 				if ( $value instanceof SMWDIUri ) {
-					$values[] = $value->getFragment();
+					$values[] = $value->getURI();
 				} else {
 					// getSortKey() seems to return the
 					// correct value for all the other
@@ -112,7 +111,6 @@ class SFUtils {
 			return array_unique( $values );
 		}
 	}
-
 	/**
 	 * Helper function - gets names of categories for a page;
 	 * based on Title::getParentCategories(), but simpler
@@ -153,136 +151,7 @@ class SFUtils {
 			SMWPropertyValue::registerProperty( $id, $typeid, $label, true );
 		}
 	}
-    /**
-	* Function to return the Property based on the xml passed from the PageSchema extension 
-	*/
-	public static function createPageSchemasObject( $objectName, $xmlForField, &$object ) {
-		$sfarray = array();
-		if ( $objectName == "FormInput" ) {
-			foreach ( $xmlForField->children() as $tag => $child ) {
-				if ( $tag == $objectName ) {
-					foreach ( $child->children() as $prop ) {
-						if($prop->getName() ==  'InputType'){
-							$sfarray[$prop->getName()] = (string)$prop;
-						}else{
-						//Remember these values  can be null also. While polulating in the page text, take care of that.
-							$sfarray[(string)$prop->attributes()->name] = (string)$prop;
-						}
-					}			
-				}
-			}
-			//Setting value specific to SF in 'sf' index. 
-			$object['sf'] = $sfarray;
-		}
-		return true;
-	}
-	public static function getHtmlTextForPS( &$js_extensions ,&$text_extensions ) {	
-		$html_text = "";
-		$html_text .= '<p><legend>semanticForms:FormInput</legend> </p>
-		<p> Input-Type: <input size="15" name="sf_input_type_starter"></p>
-		<p>Parameter name and its value as a key=value pair,seperated by comma (if a value contains a comma, replace it with "\,"): For eg. Size=20,mandatory=true</p>
-		<p><input value="" name="sf_key_values_starter" size="80"></p>';
-		
-		$text_extensions['sf'] = $html_text;
-		return true;
-	}
-	/**
-	*/
-	public static function getPageList( $psSchemaObj, &$genPageList ) {
-		global $wgOut, $wgUser;
-		$template_all = $psSchemaObj->getTemplates();		
-		foreach ( $template_all as $template ) {
-			$title =  Title::makeTitleSafe( NS_TEMPLATE, $template->getName() );
-			$genPageList[] = $title;
-		}
-		$form_name = $psSchemaObj->getFormName();
-		if( $form_name == null ){
-			return true;
-		}
-		//$form = SFForm::create( $form_name, $form_templates );
-		$title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
-		$genPageList[] = $title;
-		return true;
-	}
-	/**
-	*/
-	public static function generatePages( $psSchemaObj, $toGenPageList ) {
-		global $wgOut, $wgUser;
-		$template_all = $psSchemaObj->getTemplates();		
-		$form_templates = array();
-		$jobs = array();
-		foreach ( $template_all as $template ) {
-			$template_array = array();			
-			$template_array['name'] = $template->getName();
-			$template_array['category_name'] = $psSchemaObj->categoryName;
-			$field_all = $template->getFields();			
-			$field_count = 0; //counts the number of fields
-			$template_fields = array();	
-			foreach( $field_all as $fieldObj ) { //for each Field, retrieve smw properties and fill $prop_name , $prop_type 
-				$field_count++;																
-				$sf_array = $fieldObj->getObject('FormInput');//this returns an array with property values filled
-				$form_input_array = $sf_array['sf'];
-				$smw_array = $fieldObj->getObject('Property');   //this returns an array with property values filled			
-				$prop_array = $smw_array['smw'];
-				$field_t = SFTemplateField::create( $fieldObj->getName(), $fieldObj->getLabel(), $prop_array['name'], $fieldObj->isList() ,$fieldObj->getDelimiter());
-				$template_fields[] = $field_t;
-			}
-			$template_text = SFTemplateField::createTemplateText( $template->getName(), $template_fields, null, $psSchemaObj->categoryName, null, 	null, null );
-			$title =  Title::makeTitleSafe( NS_TEMPLATE, $template->getName() );
-			$key_title = PageSchemas::titleString( $title );
-			if( in_array($key_title, $toGenPageList )){
-				$params = array();
-				$params['user_id'] = $wgUser->getId();
-				$params['page_text'] = $template_text;		
-				$jobs[] = new PSCreatePageJob( $title, $params );
-				Job::batchInsert( $jobs );
-			}
-			//Creating Form Templates at this time
-			$form_template = SFTemplateInForm::create( $template->getName(), $template->getLabel(), $template->isMultiple() );
-			$form_templates[] = $form_template;
-		}		
-		$form_name = $psSchemaObj->getFormName();
-		$form_array = $psSchemaObj->getFormArray();		
-		if( $form_name == null ){
-			return true;
-		}
-		$form = SFForm::create( $form_name, $form_templates );
-		$form->setPageNameFormula( $form_array['PageNameFormula'] );
-		$form->setCreateTitle( $form_array['CreateTite'] );
-		$form->setEditTitle( $form_array['EditTitle'] );
-		$title = Title::makeTitleSafe( SF_NS_FORM, $form->getFormName() );
-		$key_title = PageSchemas::titleString( $title );
-		if( in_array($key_title, $toGenPageList )){
-		$full_text = $form->createMarkup();				
-			$params = array();
-			$params['user_id'] = $wgUser->getId();
-			$params['page_text'] = $full_text;		
-			$jobs[] = new PSCreatePageJob( $title, $params );
-			Job::batchInsert( $jobs );		
-		}
-		return true;
-	}
-	/**
-	*Thi Function parses the Field elements in the xml of the pages. Hooks for PageSchemas extension
-	*/
-	public static function parseFieldElements( $field_xml, &$text_object ) {
-		foreach ( $field_xml->children() as $tag => $child ) {
-				if ( $tag == "FormInput" ) {
-					$text = "";
-					$text = PageSchemas::tableMessageRowHTML( "paramAttr", "SemanticForms", (string)$tag );										
-					foreach ( $child->children() as $prop ) {
-						if( $prop->getName() == 'InputType' ){
-							$text .= PageSchemas::tableMessageRowHTML("paramAttrMsg", $prop->getName(), $prop );
-						}else {
-							$prop_name = (string)$prop->attributes()->name;
-							$text .= PageSchemas::tableMessageRowHTML("paramAttrMsg", $prop_name, (string)$prop );
-						}
-					}
-					$text_object['sf']=$text;
-				}
-			}
-			return true;
-	}
+
 	public static function initProperties() {
 		global $sfgContLang;
 
@@ -351,14 +220,12 @@ class SFUtils {
 	 */
 	public static function printRedirectForm( $title, $page_contents, $edit_summary, $is_save, $is_preview, $is_diff, $is_minor_edit, $watch_this, $start_time, $edit_time ) {
 		global $wgUser, $sfgScriptPath;
-		
+
 		if ( $is_save ) {
 			$action = "wpSave";
-		}
-		elseif ( $is_preview ) {
+		} elseif ( $is_preview ) {
 			$action = "wpPreview";
-		}
-		else { // $is_diff
+		} else { // $is_diff
 			$action = "wpDiff";
 		}
 
@@ -417,6 +284,7 @@ END;
 		}
 		$output->addModules( 'ext.semanticforms.main' );
 		$output->addModules( 'ext.semanticforms.fancybox' );
+		$output->addModules( 'ext.semanticforms.imagepreview' );
 		$output->addModules( 'ext.semanticforms.autogrow' );
 		$output->addModules( 'ext.semanticforms.submit' );
 		$output->addModules( 'ext.smw.tooltips' );
@@ -454,7 +322,7 @@ END;
 	/**
 	 * Includes the necessary Javascript and CSS files for the form
 	 * to display and work correctly.
-	 * 
+	 *
 	 * Accepts an optional Parser instance, or uses $wgOut if omitted.
 	 */
 	public static function addJavascriptAndCSS( $parser = null ) {
@@ -499,7 +367,7 @@ END;
 				$wgOut->addLink( $link );
 			}
 		}
-		
+
 		$scripts = array();
 		if ( !$sfgUseFormEditPage )
 			$scripts[] = "$sfgScriptPath/libs/SF_ajax_form_preview.js";
@@ -528,6 +396,7 @@ END;
 		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.mouse.min.js";
 		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.sortable.min.js";
 		$scripts[] = "$sfgScriptPath/libs/jquery.fancybox.js";
+		$scripts[] = "$sfgScriptPath/libs/SF_imagePreview.js";
 		$scripts[] = "$sfgScriptPath/libs/SF_autogrow.js";
 		$scripts[] = "$sfgScriptPath/libs/SF_submit.js";
 		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
@@ -544,8 +413,8 @@ END;
 	}
 
 	/**
-	 * Return an array of all form names on this wiki
- 	*/
+	 * Returns an array of all form names on this wiki.
+	*/
 	public static function getAllForms() {
 		$dbr = wfGetDB( DB_SLAVE );
 		$res = $dbr->select( 'page',
@@ -575,7 +444,7 @@ END;
 		return "\t$form_label:" . Xml::tags( 'select', array( 'name' => 'form' ), $select_body ) . "\n";
 	}
 
-	/*
+	/**
 	 * This function, unlike the others, doesn't take in a substring
 	 * because it uses the SMW data store, which can't perform
 	 * case-insensitive queries; for queries with a substring, the
@@ -592,7 +461,7 @@ END;
 		return $values;
 	}
 
-	/*
+	/**
 	 * Get all the pages that belong to a category and all its
 	 * subcategories, down a certain number of levels - heavily based on
 	 * SMW's SMWInlineQuery::includeSubcategories()
@@ -715,32 +584,59 @@ END;
 	}
 
 	public static function getAllPagesForNamespace( $namespace_name, $substring = null ) {
-		// cycle through all the namespace names for this language, and
-		// if one matches the namespace specified in the form, add the
-		// names of all the pages in that namespace to $names_array
-		global $wgContLang;
+		global $wgContLang, $wgLanguageCode;
+
+		// Cycle through all the namespace names for this language, and
+		// if one matches the namespace specified in the form, get the
+		// names of all the pages in that namespace.
+
+		// Switch to blank for the string 'Main'.
+		if ( $namespace_name == 'Main' || $namespace_name == 'main' ) {
+			$namespace_name = '';
+		}
+		$matchingNamespaceCode = null;
 		$namespaces = $wgContLang->getNamespaces();
-		$db = wfGetDB( DB_SLAVE );
-		$pages = array();
-		foreach ( $namespaces as $ns_code => $ns_name ) {
-			if ( $ns_name == $namespace_name ) {
-				$conditions = "page_namespace = $ns_code";
-				if ( $substring != null ) {
-					$substring = str_replace( ' ', '_', strtolower( $substring ) );
-					$substring = str_replace( '_', '\_', $substring );
-					$substring = str_replace( "'", "\'", $substring );
-					$conditions .= " AND (LOWER(CONVERT(`page_title` USING utf8)) LIKE '$substring%' OR LOWER(CONVERT(`page_title` USING utf8)) LIKE '%\_$substring%')";
-				}
-				$res = $db->select( 'page',
-					'page_title',
-					$conditions, __METHOD__,
-					array( 'ORDER BY' => 'page_title' ) );
-				while ( $row = $db->fetchRow( $res ) ) {
-					$pages[] = str_replace( '_', ' ', $row[0] );
-				}
-				$db->freeResult( $res );
+		foreach ( $namespaces as $curNSCode => $curNSName ) {
+			if ( $curNSName == $namespace_name ) {
+				$matchingNamespaceCode = $curNSCode;
 			}
 		}
+
+		// If that didn't find anything, and we're in a language
+		// other than English, check English as well.
+		if ( is_null( $matchingNamespaceCode ) && $wgLanguageCode != 'en' ) {
+			$englishLang = Language::factory( 'en' );
+			$namespaces = $englishLang->getNamespaces();
+			foreach ( $namespaces as $curNSCode => $curNSName ) {
+				if ( $curNSName == $namespace_name ) {
+					$matchingNamespaceCode = $curNSCode;
+				}
+			}
+		}
+
+		if ( is_null( $matchingNamespaceCode ) ) {
+			return array();
+		}
+
+		$db = wfGetDB( DB_SLAVE );
+		$conditions = "page_namespace = $matchingNamespaceCode";
+		if ( $substring != null ) {
+			$substring = str_replace( ' ', '_', strtolower( $substring ) );
+			$substring = str_replace( '_', '\_', $substring );
+			$substring = str_replace( "'", "\'", $substring );
+			$conditions .= " AND (LOWER(CONVERT(`page_title` USING utf8)) LIKE '$substring%' OR LOWER(CONVERT(`page_title` USING utf8)) LIKE '%\_$substring%')";
+		}
+		$res = $db->select( 'page',
+			'page_title',
+			$conditions, __METHOD__,
+			array( 'ORDER BY' => 'page_title' ) );
+
+		$pages = array();
+		while ( $row = $db->fetchRow( $res ) ) {
+			$pages[] = str_replace( '_', ' ', $row[0] );
+		}
+		$db->freeResult( $res );
+
 		return $pages;
 	}
 
@@ -749,6 +645,11 @@ END;
 	 * type, for use by both Javascript autocompletion and comboboxes.
 	 */
 	public static function getAutocompleteValues( $source_name, $source_type ) {
+		
+		if ( $source_name == null ) {
+			return null;
+		}
+		
 		$names_array = array();
 		// The query depends on whether this is a property, category,
 		// concept or namespace.
@@ -759,9 +660,6 @@ END;
 		} elseif ( $source_type == 'concept' ) {
 			$names_array = self::getAllPagesForConcept( $source_name );
 		} else { // i.e., $source_type == 'namespace'
-			// switch back to blank for main namespace
-			if ( $source_name == "Main" )
-				$source_name = "";
 			$names_array = self::getAllPagesForNamespace( $source_name );
 		}
 		return $names_array;
@@ -822,35 +720,6 @@ END;
 	}
 
 	/**
-	 * Parse the form definition and store the resulting HTML in the
-	 * page_props table, if caching has been specified in LocalSettings.php
-	 */
-	public static function cacheFormDefinition( $parser, $text ) {
-		global $sfgCacheFormDefinitions;
-		if ( ! $sfgCacheFormDefinitions )
-			return true;
-
-		$title = $parser->getTitle();
-		if ( empty( $title ) ) return true;
-		if ( $title->getNamespace() != SF_NS_FORM ) return true;
-		// Remove <noinclude> sections and <includeonly> tags from form definition
-		$form_def = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $text );
-		$form_def = strtr( $form_def, array( '<includeonly>' => '', '</includeonly>' => '' ) );
-
-		// parse wiki-text
-		// add '<nowiki>' tags around every triple-bracketed form
-		// definition element, so that the wiki parser won't touch
-		// it - the parser will remove the '<nowiki>' tags, leaving
-		// us with what we need
-		$form_def = "__NOEDITSECTION__" . strtr( $form_def, array( '{{{' => '<nowiki>{{{', '}}}' => '}}}</nowiki>' ) );
-		$dummy_title = Title::newFromText( 'Form definition title for caching purposes' );
-		$form_def = $parser->parse( $form_def, $dummy_title, $parser->mOptions )->getText();
-
-		$parser->mOutput->setProperty( 'formdefinition', $form_def );
-		return true;
-	}
-
-	/*
 	 * Loads messages only for MediaWiki versions that need it (< 1.16)
 	 */
 	public static function loadMessages() {

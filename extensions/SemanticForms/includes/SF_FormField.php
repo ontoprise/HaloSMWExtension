@@ -6,8 +6,8 @@
  */
 
 /**
- * This class is distinct from SFTemplateField in that it represents a
- * template field defined in a form - it contains a SFTemplateField object
+ * This class is distinct from SFTemplateField in that it represents a template
+ * field defined in a form definition - it contains a SFTemplateField object
  * within it (the $template_field variable), along with the other properties
  * for that field that are set within the form
  * @ingroup SF
@@ -37,7 +37,7 @@ class SFFormField {
 		$f = new SFFormField();
 		$f->mNum = $num;
 		$f->template_field = $template_field;
-		$f->mInputType = "";
+		$f->mInputType = null;
 		$f->mIsMandatory = false;
 		$f->mIsHidden = false;
 		$f->mIsRestricted = false;
@@ -118,8 +118,20 @@ class SFFormField {
 		$this->template_field = $templateField;
 	}
 
+	public function setInputType( $inputType ) {
+		$this->mInputType = $inputType;
+	}
+
+	public function setIsMandatory( $isMandatory ) {
+		$this->mIsMandatory = $isMandatory;
+	}
+
 	public function setIsHidden( $isHidden ) {
 		$this->mIsHidden = $isHidden;
+	}
+
+	public function setIsRestricted( $isRestricted ) {
+		$this->mIsRestricted = $isRestricted;
 	}
 
 	public function setFieldArg( $key, $value ) {
@@ -213,9 +225,9 @@ END;
 		}
 		$text .= $this->inputTypeDropdownHTML( $field_form_text, $default_input_type, $possible_input_types, $template_field->getInputType() );
 
-		if (! is_null( $template_field->getInputType() ) ) {
+		if ( !is_null( $template_field->getInputType() ) ) {
 			$cur_input_type = $template_field->getInputType();
-		} elseif (! is_null( $default_input_type ) ) {
+		} elseif ( !is_null( $default_input_type ) ) {
 			$cur_input_type = $default_input_type;
 		} else {
 			$cur_input_type = $possible_input_types[0];
@@ -251,7 +263,7 @@ END;
 	// such templates in form definitions gets more sophisticated
 	function createMarkup( $part_of_multiple, $is_last_field_in_template ) {
 		$text = "";
-		if ( $this->template_field->getLabel() != '' ) {
+		if ( $this->template_field->getLabel() !== '' ) {
 			if ( $part_of_multiple ) {
 				$text .= "'''" . $this->template_field->getLabel() . ":''' ";
 			} else {
@@ -260,8 +272,13 @@ END;
 		}
 		if ( ! $part_of_multiple ) { $text .= "| "; }
 		$text .= "{{{field|" . $this->template_field->getFieldName();
+		// TODO - why is there an input type field in both the form
+		// field and the template field? One of them should probably
+		// be removed.
 		if ( $this->mIsHidden ) {
 			$text .= "|hidden";
+		} elseif ( !is_null( $this->getInputType() ) ) {
+			$text .= "|input type=" . $this->getInputType();
 		} elseif ( $this->template_field->getInputType() != '' ) {
 			$text .= "|input type=" . $this->template_field->getInputType();
 		}
@@ -286,7 +303,7 @@ END;
 		return $text;
 	}
 
-	/*
+	/**
 	 * Since Semantic Forms uses a hook system for the functions that
 	 * create HTML inputs, most arguments are contained in the "$other_args"
 	 * array - create this array, using the attributes of this form
@@ -304,7 +321,7 @@ END;
 			$other_args['value_labels'] = $this->template_field->getValueLabels();
 		}
 		$other_args['is_list'] = ( $this->mIsList || $this->template_field->isList() );
-		if ( $this->template_field->getSemanticProperty() != '' &&
+		if ( $this->template_field->getSemanticProperty() !== '' &&
 			! array_key_exists( 'semantic_property', $other_args ) ) {
 			$other_args['semantic_property'] = $this->template_field->getSemanticProperty();
 			$other_args['property_type'] = $this->template_field->getPropertyType();

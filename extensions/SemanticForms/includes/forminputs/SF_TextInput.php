@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFTextInput class.
  *
@@ -46,7 +42,7 @@ class SFTextInput extends SFFormInput {
 		return array( '_wpg' );
 	}
 
-	public static function uploadLinkHTML( $input_id, $delimiter = null, $default_filename = null ) {
+	public static function uploadableHTML( $input_id, $delimiter = null, $default_filename = null, $cur_value = '', $other_args = array() ) {
 		$upload_window_page = SpecialPage::getPage( 'UploadWindow' );
 		$query_string = "sfInputID=$input_id";
 		if ( $delimiter != null ) {
@@ -64,13 +60,48 @@ class SFTextInput extends SFFormInput {
 			$style = '';
 		}
 
+		$cssClasses = array( 'sfFancyBox', 'sfUploadable' );
+		
+		$showPreview = array_key_exists( 'image preview', $other_args );
+		
+		if ( $showPreview ) {
+			$cssClasses[] = 'sfImagePreview';
+		}
+		
 		$linkAttrs = array(
 			'href' => $upload_window_url,
-			'class' => 'sfFancyBox',
+			'class' => implode( ' ', $cssClasses ),
 			'title' => $upload_label,
-			'rev' => $style
+			'rev' => $style,
+			'data-input-id' => $input_id
 		);
+		
 		$text = "\t" . Xml::element( 'a', $linkAttrs, $upload_label ) . "\n";
+		
+		if ( $showPreview ) {
+			$previewImage = null;
+			
+			if ( $cur_value !== '' ) {
+				$imageTitle = Title::newFromText( $cur_value, NS_FILE );
+
+				if ( !is_null( $imageTitle ) && $imageTitle->getNamespace() == NS_FILE && $imageTitle->exists() ) {
+					$imagePage = new ImagePage( $imageTitle );
+					$url = $imagePage->getDisplayedFile()->transform( array( 'width' => 200 ) )->getURL();
+					
+					$previewImage =  Html::element(
+						'img',
+						array( 'src' => $url )
+					);
+				}
+			}
+			
+			$text .= Html::rawElement(
+				'div',
+				array( 'id' => $input_id . '_imagepreview', 'class' => 'sfImagePreviewWrapper' ),
+				$previewImage
+			);
+		}
+		
 		return $text;
 	}
 
@@ -93,9 +124,13 @@ class SFTextInput extends SFFormInput {
 		$input_id = "input_$sfgFieldNum";
 		// Set size based on pre-set size, or field type - if field
 		// type is set, possibly add validation too.
+		// (This special handling should only be done if the field
+		// holds a single value, not a list of values.)
 		$size = 35;
 		$inputType = '';
-		if ( array_key_exists( 'field_type', $other_args ) ) {
+		if ( array_key_exists( 'field_type', $other_args )  &&
+			( !array_key_exists( 'is_list', $other_args ) ||
+	       		!$other_args['is_list']	) ) {
 			if ( $other_args['field_type'] == 'number' ) {
 				$size = 10;
 				$inputType = 'number';
@@ -126,9 +161,12 @@ class SFTextInput extends SFFormInput {
 		if ( array_key_exists( 'maxlength', $other_args ) ) {
 			$inputAttrs['maxlength'] = $other_args['maxlength'];
 		}
+		if ( array_key_exists( 'placeholder', $other_args ) ) {
+			$inputAttrs['placeholder'] = $other_args['placeholder'];
+		}
 		$text = Xml::element( 'input', $inputAttrs );
 
-		if ( array_key_exists( 'is_uploadable', $other_args ) && $other_args['is_uploadable'] == true ) {
+		if ( array_key_exists( 'uploadable', $other_args ) && $other_args['uploadable'] == true ) {
 			if ( array_key_exists( 'is_list', $other_args ) && $other_args['is_list'] == true ) {
 				if ( array_key_exists( 'delimiter', $other_args ) ) {
 					$delimiter = $other_args['delimiter'];
@@ -143,10 +181,11 @@ class SFTextInput extends SFFormInput {
 			} else {
 				$default_filename = '';
 			}
-			$text .= self::uploadLinkHTML( $input_id, $delimiter, $default_filename );
+			
+			$text .= self::uploadableHTML( $input_id, $delimiter, $default_filename, $cur_value, $other_args );
 		}
 		$spanClass = 'inputSpan';
-		if ( $inputType != '' ) {
+		if ( $inputType !== '' ) {
 			$spanClass .= " {$inputType}Input";
 		}
 		if ( $is_mandatory ) {
@@ -167,6 +206,11 @@ class SFTextInput extends SFFormInput {
 			'name' => 'maxlength',
 			'type' => 'int',
 			'description' => wfMsg( 'sf_forminputs_maxlength' )
+		);
+		$params[] = array(
+			'name' => 'placeholder',
+			'type' => 'string',
+			'description' => wfMsg( 'sf_forminputs_placeholder' )
 		);
 		$params[] = array(
 			'name' => 'uploadable',
@@ -190,7 +234,7 @@ class SFTextInput extends SFFormInput {
 			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

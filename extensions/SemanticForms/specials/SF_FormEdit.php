@@ -93,7 +93,7 @@ class SFFormEdit extends SpecialPage {
 		SFUtils::loadMessages();
 
 		// If we have no form name we might as well stop right away
-		if ( $form_name == '' ) {
+		if ( $form_name === '' ) {
 			return 'sf_formedit_badurl';
 		}
 
@@ -103,11 +103,15 @@ class SFFormEdit extends SpecialPage {
 
 		$form_title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
 
-		$form_article = new Article( $form_title );
+		$form_article = new Article( $form_title, 0 );
 		$form_definition = $form_article->getContent();
 		$form_definition = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $form_definition );
 
-		if ( $target_name == '' ) {
+		if ( is_null( $target_name ) ) {
+			$target_name = '';
+		}
+
+		if ( $target_name === '' ) {
 
 			// parse the form to see if it has a 'page name' value set
 			$matches;
@@ -120,12 +124,12 @@ class SFFormEdit extends SpecialPage {
 		} else {
 			$target_title = Title::newFromText( $target_name );
 
-			if ( $target_title->exists() ) {
+			if ( $target_title && $target_title->exists() ) {
 				if ( $wgRequest->getVal( 'query' ) == 'true' ) {
 					$page_contents = null;
 					//$page_is_source = false;
 				} else {
-					$target_article = new Article( $target_title );
+					$target_article = new Article( $target_title, 0 );
 					$page_contents = $target_article->getContent();
 					//$page_is_source = true;
 				}
@@ -146,7 +150,7 @@ class SFFormEdit extends SpecialPage {
 			} else {
 				$text = Xml::tags( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formstart_badform', SFUtils::linkText( SF_NS_FORM, $form_name ) ) ) . "\n";
 			}
-		} elseif ( $target_name == '' && $page_name_formula == '' ) {
+		} elseif ( $target_name === '' && $page_name_formula === '' ) {
 			$text = Xml::element( 'p', array( 'class' => 'error' ), wfMsg( 'sf_formedit_badurl' ) ) . "\n";
 		} else {
 
@@ -188,7 +192,7 @@ class SFFormEdit extends SpecialPage {
 			$wgOut->setPageTitle( $s );
 
 			if ( $form_submitted ) {
-				if ( $page_name_formula != '' ) {
+				if ( !is_null( $page_name_formula ) && $page_name_formula !== '' ) {
 					$target_name = $generated_page_name;
 					// prepend a super-page, if one was specified
 					if ( $wgRequest->getCheck( 'super_page' ) ) {
@@ -213,12 +217,12 @@ class SFFormEdit extends SpecialPage {
 					// underlines - hopefully this won't
 					// cause problems of its own
 					$target_name = str_replace( ' ', '_', $target_name );
-					$target_name = $wgParser->transformMsg( $target_name, ParserOptions::newFromUser( null ) );
+					$target_name = $wgParser->preprocess( $target_name, $wgOut->getTitle(), ParserOptions::newFromUser( null ) );
 
 					$title_number = "";
 					$isRandom = false;
 
-					if ( strpos( $target_name, '{num' ) ) {
+					if ( strpos( $target_name, '{num' ) !== false ) {
 
 						// random number
 						if ( preg_match( '/{num;random}/', $target_name, $matches ) ) {
@@ -271,12 +275,21 @@ class SFFormEdit extends SpecialPage {
 				}
 
 				if ( is_null( $target_title ) ) {
-					if ( $target_name )	return array ( 'sf_formstart_badtitle' , array( $target_name ) );
-					else return 'sf_formedit_emptytitle';
+					if ( $target_name )	{
+						return array ( 'sf_formstart_badtitle' , array( $target_name ) );
+					}
+					else {
+						return 'sf_formedit_emptytitle';
+					}
 				}
 
 				if ( $save_page ) {
 
+					$permErrors = $target_title->getUserPermissionsErrors( 'edit', $wgUser );
+					if ( $permErrors ) {
+						// just return the first error and let them fix it one by one
+						return array_shift( $permErrors );
+					}
 					// Set up all the variables for the
 					// page save.
 					$data = array(
@@ -300,21 +313,28 @@ class SFFormEdit extends SpecialPage {
 
 					// Find existing article if it exists,
 					// or create a new one.
-					$article = new Article( $target_title );
+					$article = new Article( $target_title, 0 );
 
 					$editor = new EditPage( $article );
 					$editor->importFormData( $request );
 
 					// Try to save the page!
 					$resultDetails = array();
-					$saveResultCode = $editor->internalAttemptSave( $resultDetails );
+					$saveResult = $editor->internalAttemptSave( $resultDetails );
+					// Return value was made an object in MW 1.19
+					if ( is_object( $saveResult ) ) {
+						$saveResultCode = $saveResult->value;
+					} else {
+						$saveResultCode = $saveResult;
+					}
 
 					if ( ( $saveResultCode == EditPage::AS_HOOK_ERROR || $saveResultCode == EditPage::AS_HOOK_ERROR_EXPECTED ) && $redirectOnError ) {
 
 						$wgOut->clearHTML();
 						$wgOut->setArticleBodyOnly(true);
+						// Lets other code process additional form-definition syntax
+						wfRunHooks( 'sfWritePageData', array( $form_name, $target_title, &$data_text ) );
 						$text = SFUtils::printRedirectForm( $target_title, $data_text, $wgRequest->getVal( 'wpSummary' ), $save_page, $preview_page, $diff_page, $wgRequest->getCheck( 'wpMinoredit' ), $wgRequest->getCheck( 'wpWatchthis' ), $wgRequest->getVal( 'wpStarttime' ), $wgRequest->getVal( 'wpEdittime' ) );
-
 					} else {
 
 						if ( $saveResultCode == EditPage::AS_SUCCESS_UPDATE || $saveResultCode == EditPage::AS_SUCCESS_NEW_ARTICLE ) {
@@ -325,6 +345,8 @@ class SFFormEdit extends SpecialPage {
 					}
 					
 				} else {
+					// Lets other code process additional form-definition syntax
+					wfRunHooks( 'sfWritePageData', array( $form_name, $target_title, &$data_text ) );
 					$text = SFUtils::printRedirectForm( $target_title, $data_text, $wgRequest->getVal( 'wpSummary' ), $save_page, $preview_page, $diff_page, $wgRequest->getCheck( 'wpMinoredit' ), $wgRequest->getCheck( 'wpWatchthis' ), $wgRequest->getVal( 'wpStarttime' ), $wgRequest->getVal( 'wpEdittime' ) );  // extract its data
 				}
 
@@ -333,7 +355,7 @@ class SFFormEdit extends SpecialPage {
 				// override the default title for this page if
 				// a title was specified in the form
 				if ( $form_page_title != null ) {
-					if ( $target_name == '' ) {
+					if ( $target_name === '' ) {
 						$wgOut->setPageTitle( $form_page_title );
 					} else {
 						$wgOut->setPageTitle( "$form_page_title: {$target_title->getPrefixedText()}" );

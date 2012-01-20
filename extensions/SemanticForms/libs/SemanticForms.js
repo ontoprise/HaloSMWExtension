@@ -13,6 +13,29 @@
 
 // Activate autocomplete functionality for the specified field
 (function(jQuery) {
+
+	/* extending jQuery functions for custom highlighting */
+	jQuery.ui.autocomplete.prototype._renderItem = function( ul, item) {
+
+		var delim  = this.element.context.delimiter;
+		if ( delim == null ) {
+			term = this.term;
+		} else {
+			term = this.term.split( delim ).pop();
+		}
+		var re = new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + term.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1") + ")(?![^<>]*>)(?![^&;]+;)", "gi");
+		var loc = item.label.search(re);
+		if (loc >= 0) {
+			var t = item.label.substr(0, loc) + '<strong>' + item.label.substr(loc, term.length) + '</strong>' + item.label.substr(loc + term.length);
+		} else {
+			var t = item.label;
+		}
+		return jQuery( "<li></li>" )
+			.data( "item.autocomplete", item )
+			.append( " <a>" + t + "</a>" )
+			.appendTo( ul );
+	};
+
   jQuery.fn.attachAutocomplete = function() {
     return this.each(function() {
 	// Get all the necessary values from the input's "autocompletesettings"
@@ -29,22 +52,6 @@
 		}
 	}
 
-    /* extending jQuery functions for custom highlighting */
-    jQuery.ui.autocomplete.prototype._renderItem = function( ul, item) {
-
-	var re = new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + this.term.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1") + ")(?![^<>]*>)(?![^&;]+;)", "gi");
-	var loc = item.label.search(re);
-	if (loc >= 0) {
-		var t = item.label.substr(0, loc) + '<strong>' + item.label.substr(loc, this.term.length) + '</strong>' + item.label.substr(loc + this.term.length);
-	} else {
-		var t = item.label;
-	}
-	return jQuery( "<li></li>" )
-		.data( "item.autocomplete", item )
-		.append( " <a>" + t + "</a>" )
-		.appendTo( ul );
-	};
-
 	// Modify the delimiter. If it's "\n", change it to an actual
 	// newline - otherwise, add a space to the end.
 	// This doesn't cover the case of a delimiter that's a newline
@@ -57,6 +64,9 @@
 			delimiter += " ";
 		}
 	}
+	// Store this value within the object, so that it can be used
+	// during highlighting of the search term as well.
+	this.delimiter = delimiter;
 
 	/* extending jquery functions */
 	jQuery.extend( jQuery.ui.autocomplete, {	
@@ -308,19 +318,24 @@ jQuery.fn.SemanticForms_unregisterInputInit = function() {
  */
 
 // Display a div that would otherwise be hidden by "show on select".
-function showDiv(div_id, instanceWrapperDiv) {
-	if (instanceWrapperDiv != null) {
-		instanceWrapperDiv.find('[origID=' + div_id + ']').find(".hiddenBySF").removeClass('hiddenBySF');
-		instanceWrapperDiv.find('[origID=' + div_id + ']').show();
-	} else {
-		jQuery('#' + div_id).find(".hiddenBySF").removeClass('hiddenBySF');
-		jQuery('#' + div_id).show();
-	}
+function showDiv(div_id, instanceWrapperDiv, speed) {
+	var elem = jQuery('[id="' + div_id + '"]', instanceWrapperDiv);
+	elem.find(".hiddenBySF").removeClass('hiddenBySF');
+
+	elem.each( function() {
+		if ( jQuery(this).css('display') == 'none' ) {
+			
+			jQuery(this).slideDown(speed, function() {
+				jQuery(this).fadeTo(speed,1);
+			});
+
+		}
+	});
 }
 
 // Hide a div due to "show on select". The CSS class is there so that SF can
 // ignore the div's contents when the form is submitted.
-function hideDiv(div_id, instanceWrapperDiv) {
+function hideDiv(div_id, instanceWrapperDiv, speed) {
 	// IDs can't contain spaces, and jQuery won't work with such IDs - if
 	// this one has a space, display an alert.
 	if ( div_id.indexOf( ' ' ) > -1 ) {
@@ -328,94 +343,115 @@ function hideDiv(div_id, instanceWrapperDiv) {
 		// hardcoded in English.
 		alert( "Warning: this form has \"show on select\" pointing to an invalid element ID (\"" + div_id + "\") - IDs in HTML cannot contain spaces." );
 	}
-	if (instanceWrapperDiv != null) {
-		instanceWrapperDiv.find('[origID=' + div_id + ']').find("span, div").addClass('hiddenBySF');
-		instanceWrapperDiv.find('[origID=' + div_id + ']').hide();
-	} else {
-		jQuery('#' + div_id).find("span, div").addClass('hiddenBySF');
-		jQuery('#' + div_id).hide();
-	}
+	
+	var elem = jQuery('[id="' + div_id + '"]', instanceWrapperDiv);
+	elem.find("span, div").addClass('hiddenBySF');
+	
+	elem.each( function() {
+		if ( jQuery(this).css('display') != 'none' ) {
+		
+			// if 'display' is not 'hidden', but the element is hidden otherwise
+			// (e.g. by having height = 0), just hide it, else animate the hiding
+			if ( jQuery(this).is(':hidden') ) {
+				jQuery(this).hide();
+			} else {
+			jQuery(this).fadeTo(speed, 0, function() {
+				jQuery(this).slideUp(speed);
+			});
+			}
+		}
+	});
 }
 
 // Show this div if the current value is any of the relevant options -
 // otherwise, hide it.
-function showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv) {
+function showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv, initPage) {
 	for ( var i = 0; i < options.length; i++ ) {
 		// If it's a listbox and the user has selected more than one
 		// value, it'll be an array - handle either case.
 		if ((jQuery.isArray(inputVal) && jQuery.inArray(options[i], inputVal) >= 0) ||
 		    (!jQuery.isArray(inputVal) && (inputVal == options[i]))) {
-			showDiv(div_id, instanceWrapperDiv);
+			showDiv( div_id, instanceWrapperDiv, initPage ? 0 : 'fast' );
 			return;
 		}
 	}
-	hideDiv(div_id, instanceWrapperDiv);
+	hideDiv(div_id, instanceWrapperDiv, initPage ? 0 : 'fast' );
 }
 
 // Used for handling 'show on select' for the 'dropdown' and 'listbox' inputs.
-jQuery.fn.showIfSelected = function(partOfMultiple) {
+jQuery.fn.showIfSelected = function(initPage) {
 	var inputVal = this.val();
-	if (partOfMultiple) {
-		var showOnSelectVals = sfgShowOnSelect[this.attr("origID")];
-		var instanceWrapperDiv = this.closest(".multipleTemplateInstance");
-	} else {
-		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
-		var instanceWrapperDiv = null;
+	var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
+
+	var instanceWrapperDiv = this.closest('.multipleTemplateInstance');
+	if ( instanceWrapperDiv.length == 0 ) {
+		instanceWrapperDiv = null;
 	}
+	
 	if ( showOnSelectVals !== undefined ) {
 		for ( var i = 0; i < showOnSelectVals.length; i++ ) {
 			var options = showOnSelectVals[i][0];
 			var div_id = showOnSelectVals[i][1];
-			showDivIfSelected(options, div_id, inputVal, instanceWrapperDiv);
+			showDivIfSelected( options, div_id, inputVal, instanceWrapperDiv, initPage );
 		}
 	}
+	
+	return this;
 }
 
 // Show this div if any of the relevant selections are checked -
 // otherwise, hide it.
-jQuery.fn.showDivIfChecked = function(options, div_id, instanceWrapperDiv) {
+jQuery.fn.showDivIfChecked = function(options, div_id, instanceWrapperDiv, initPage ) {
 	for ( var i = 0; i < options.length; i++ ) {
 		if (jQuery(this).find('[value="' + options[i] + '"]').is(":checked")) {
-			showDiv(div_id, instanceWrapperDiv);
-			return;
+			showDiv(div_id, instanceWrapperDiv, initPage ? 0 : 'fast' );
+			return this;
 		}
 	}
 	hideDiv(div_id, instanceWrapperDiv);
+	
+	return this;
 }
 
 // Used for handling 'show on select' for the 'checkboxes' and 'radiobutton'
 // inputs.
-jQuery.fn.showIfChecked = function(partOfMultiple) {
-	if (partOfMultiple) {
-		var showOnSelectVals = sfgShowOnSelect[this.attr("origID")];
-		var instanceWrapperDiv = this.closest(".multipleTemplateInstance");
-	} else {
-		var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
-		var instanceWrapperDiv = null;
+jQuery.fn.showIfChecked = function(initPage) {
+
+	var showOnSelectVals = sfgShowOnSelect[this.attr("id")];
+
+	var instanceWrapperDiv = this.closest('.multipleTemplateInstance');
+	if ( instanceWrapperDiv.length == 0 ) {
+		instanceWrapperDiv = null;
 	}
+	
 	if ( showOnSelectVals !== undefined ) {
 		for ( var i = 0; i < showOnSelectVals.length; i++ ) {
 			var options = showOnSelectVals[i][0];
 			var div_id = showOnSelectVals[i][1];
-			this.showDivIfChecked(options, div_id, instanceWrapperDiv);
+			this.showDivIfChecked(options, div_id, instanceWrapperDiv, initPage );
 		}
 	}
+	
+	return this;
 }
 
 // Used for handling 'show on select' for the 'checkbox' input.
-jQuery.fn.showIfCheckedCheckbox = function(partOfMultiple) {
-	if (partOfMultiple) {
-		var div_id = sfgShowOnSelect[this.attr("origID")];
-		var instanceWrapperDiv = this.closest(".multipleTemplateInstance");
-	} else {
-		var div_id = sfgShowOnSelect[this.attr("id")];
-		var instanceWrapperDiv = null;
+jQuery.fn.showIfCheckedCheckbox = function(initPage) {
+
+	var div_id = sfgShowOnSelect[this.attr("id")];
+
+	var instanceWrapperDiv = this.closest('.multipleTemplateInstance');
+	if ( instanceWrapperDiv.length == 0 ) {
+		instanceWrapperDiv = null;
 	}
+	
 	if (jQuery(this).is(":checked")) {
-		showDiv(div_id, instanceWrapperDiv);
+		showDiv(div_id, instanceWrapperDiv, initPage ? 0 : 'fast' );
 	} else {
-		hideDiv(div_id, instanceWrapperDiv);
+		hideDiv(div_id, instanceWrapperDiv, initPage ? 0 : 'fast' );
 	}
+		
+	return this;
 }
 
 /*
@@ -605,7 +641,7 @@ window.validateAll = function () {
 	if (num_errors > 0) {
 		// add error header, if it's not there already
 		if (jQuery("#form_error_header").size() == 0) {
-			jQuery("#contentSub").append('<div id="form_error_header" class="warningMessage" style="font-size: medium">' + sfgFormErrorsHeader + '</div>');
+			jQuery("#contentSub").append('<div id="form_error_header" class="errorbox" style="font-size: medium"><img src="' + sfgScriptPath + '/skins/MW-Icon-AlertMark.png" />&nbsp;' + sfgFormErrorsHeader + '</div><br clear="both" />');
 		}
 		scroll(0, 0);
 	} else {
@@ -634,16 +670,11 @@ jQuery.fn.addInstance = function() {
 		.addClass('multipleTemplateInstance')
 		.addClass('multipleTemplate') // backwards compatibility
 		.removeAttr("id")
-		.css("display", "block");
+		.fadeTo(0,0)
+		.slideDown('fast', function() {
+			jQuery(this).fadeTo('fast', 1);
+		});
 
-	// Add on a new attribute, "origID", representing the ID of all
-	// HTML elements that had an ID; and delete the actual ID attribute
-	// of any divs and spans (presumably, these exist only for the
-	// sake of "show on select"). We do the deletions because no two
-	// elements on the page are allowed to have the same ID.
-	new_div.find('[id!=""]').attr('origID', function() { return this.id; });
-	new_div.find('div[id!=""], span[id!=""]').removeAttr('id');
-	
 	// Make internal ID unique for the relevant form elements, and replace
 	// the [num] index in the element names with an actual unique index
 	new_div.find("input, select, textarea").each(
@@ -658,6 +689,12 @@ jQuery.fn.addInstance = function() {
 				var old_id = this.id;
 
 				this.id = this.id.replace(/input_/g, 'input_' + num_elements + '_');
+
+				// TODO: Data in sfgShowOnSelect should probably be stored in
+				//  jQuery("#sfForm").data('SemanticForms')
+				if ( sfgShowOnSelect[ old_id ] ) {
+					sfgShowOnSelect[ this.id ] = sfgShowOnSelect[ old_id ];
+				}
 
 				// register initialization and validation methods for new inputs
 
@@ -722,9 +759,6 @@ jQuery.fn.addInstance = function() {
 			}
 		);
 
-		// Remove the encompassing div for this instance.
-		jQuery(this).closest(".multipleTemplateInstance")
-			.fadeOut('fast', function() { jQuery(this).remove(); });
 	});
 
 	// Somewhat of a hack - remove the divs that the combobox() call
@@ -733,7 +767,7 @@ jQuery.fn.addInstance = function() {
 	// that doesn't involve removing and then recreating divs.
 	new_div.find('.sfComboBoxActual').remove();
 
-	new_div.initializeJSElements(true);
+	new_div.initializeJSElements();
 
 	// Initialize new inputs
 	new_div.find("input, select, textarea").each(
@@ -763,33 +797,41 @@ jQuery.fn.addInstance = function() {
  * called for either the entire HTML body, or for a div representing an
  * instance of a multiple-instance template.
  */
-jQuery.fn.initializeJSElements = function(partOfMultiple) {
+jQuery.fn.initializeJSElements = function() {
 	this.find(".sfShowIfSelected").each( function() {
-		jQuery(this).showIfSelected(partOfMultiple);
-		jQuery(this).change( function() {
-			jQuery(this).showIfSelected(partOfMultiple);
+		jQuery(this)
+		.showIfSelected(true)
+		.change( function() {
+			jQuery(this).showIfSelected(false);
 		});
 	});
 	
 	this.find(".sfShowIfChecked").each( function() {
-		jQuery(this).showIfChecked(partOfMultiple);
-		jQuery(this).click( function() {
-			jQuery(this).showIfChecked(partOfMultiple);
+		jQuery(this)
+		.showIfChecked(true)
+		.click( function() {
+			jQuery(this).showIfChecked(false);
 		});
 	});
 	
 	this.find(".sfShowIfCheckedCheckbox").each( function() {
-		jQuery(this).showIfCheckedCheckbox(partOfMultiple);
-		jQuery(this).click( function() {
-			jQuery(this).showIfCheckedCheckbox(partOfMultiple);
+		jQuery(this)
+		.showIfCheckedCheckbox(true)
+		.click( function() {
+			jQuery(this).showIfCheckedCheckbox(false);
 		});
 	});
 
 	this.find(".remover").click( function() {
 		// Remove the encompassing div for this instance.
 		jQuery(this).closest(".multipleTemplateInstance")
-			.fadeOut('fast', function() { jQuery(this).remove(); });
+		.fadeTo('fast', 0, function() {
+			jQuery(this).slideUp('fast', function() {
+				jQuery(this).remove(); 
+			});
+		});
 	});
+	
 	this.find('.autocompleteInput').attachAutocomplete();
 	this.find('.sfComboBox').combobox();
 	this.find('.autoGrow').autoGrow();
@@ -809,10 +851,10 @@ var num_elements = 0;
 
 // Once the document has finished loading, set up everything!
 jQuery(document).ready(function() {
-	jQuery('body').initializeJSElements(false);
+	jQuery('body').initializeJSElements();
 
 	jQuery('.multipleTemplateInstance').initializeJSElements(true);
-	jQuery('.multipleTemplateAdder').click( function() { jQuery(this).addInstance(); } );
+	jQuery('.multipleTemplateAdder').click( function() {jQuery(this).addInstance();} );
 	jQuery('.multipleTemplateList').sortable({
 		axis: 'y',
 		handle: '.rearrangerImage'
@@ -820,7 +862,7 @@ jQuery(document).ready(function() {
 
 
 	// If the form is submitted, validate everything!
-	jQuery('#sfForm').submit( function() { return validateAll(); } );
+	jQuery('#sfForm').submit( function() {return validateAll();} );
 });
 
 /* extending jquery functions */
@@ -851,7 +893,7 @@ jQuery(document).ready(function() {
 							if (this.value && (!request.term || matcher.test(text))) {
 								return {
 									id: this.value,
-									label: text.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + jQuery.ui.autocomplete.escapeRegex(request.term) + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>"),
+									label: text,
 									value: text
 								};
 							}
@@ -886,6 +928,14 @@ jQuery(document).ready(function() {
 				text: false
 			}).removeClass("ui-corner-all")
 			.addClass("ui-corner-right ui-button-icon sfComboBoxActual")
+			// Add some inline CSS, to override CSS set by the
+			// jquery.ui.tabs module - this is necessary if form is
+			// used in conjunction with the Header Tabs extension.
+			// 'cssText' attribute is needed because the normal
+			// .css() calls don't allow for setting "!important",
+			// which is needed to counteract "!important" coming
+			// from the jquery.ui.tabs CSS.
+			.css('cssText', 'padding: 0 !important; margin: 0 !important; -moz-border-radius: 0; -webkit-border-radius: 0; width: 1.7em;')
 			.click(function() {
 				// close if already visible
 				if (input.autocomplete("widget").is(":visible")) {

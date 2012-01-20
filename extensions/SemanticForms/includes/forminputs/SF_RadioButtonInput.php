@@ -6,10 +6,6 @@
  * @ingroup SF
  */
 
-if ( !defined( 'SF_VERSION' ) ) {
-	die( 'This file is part of the SemanticForms extension, it is not a valid entry point.' );
-}
-
 /**
  * The SFRadioButtonInput class.
  *
@@ -23,10 +19,14 @@ class SFRadioButtonInput extends SFEnumInput {
 	public static function getHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
 		global $sfgTabIndex, $sfgFieldNum, $sfgShowOnSelect;
 
+		// Standardize $cur_value
+		if ( is_null( $cur_value ) ) { $cur_value = ''; }
+
 		if ( ( $possible_values = $other_args['possible_values'] ) == null ) {
 			// If it's a Boolean property, display 'Yes' and 'No'
 			// as the values.
-			if ( $other_args['property_type'] == '_boo' ) {
+			if ( array_key_exists( 'property_type', $other_args ) &&
+				$other_args['property_type'] == '_boo' ) {
 				$possible_values = array(
 					SFUtils::getWordForYesOrNo( true ),
 					SFUtils::getWordForYesOrNo( false ),
@@ -40,7 +40,7 @@ class SFRadioButtonInput extends SFEnumInput {
 		// mandatory field and there's a current value in place (either
 		// through a default value or because we're editing an existing
 		// page).
-		if ( !$is_mandatory || $cur_value == '' ) {
+		if ( !$is_mandatory || $cur_value === '' ) {
 			array_unshift( $possible_values, '' );
 		}
 
@@ -49,6 +49,8 @@ class SFRadioButtonInput extends SFEnumInput {
 		// the radiobuttons be checked at the beginning.
 		if ( !in_array( $cur_value, $possible_values ) ) {
 			if ( in_array( '', $possible_values ) ) {
+				$cur_value = '';
+			} elseif ( count( $possible_values ) == 0 ) {
 				$cur_value = '';
 			} else {
 				$cur_value = $possible_values[0];
@@ -80,7 +82,7 @@ class SFRadioButtonInput extends SFEnumInput {
 			if ( $is_disabled ) {
 				$radiobutton_attrs['disabled'] = 'disabled';
 			}
-			if ( $possible_value == '' ) { // blank/"None" value
+			if ( $possible_value === '' ) { // blank/"None" value
 				$label = wfMsg( 'sf_formedit_none' );
 			} elseif (
 				array_key_exists( 'value_labels', $other_args ) &&
@@ -137,7 +139,7 @@ class SFRadioButtonInput extends SFEnumInput {
 			$this->mInputName,
 			$this->mIsMandatory,
 			$this->mIsDisabled,
-			$mOtherArgs
+			$this->mOtherArgs
 		);
 	}
 }

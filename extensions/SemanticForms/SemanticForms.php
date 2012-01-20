@@ -36,7 +36,11 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define( 'SF_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+if ( !defined( 'SMW_VERSION' ) ) {
+	die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
+}
+
+define( 'SF_VERSION', '2.3.2' );
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'specialpage'][] = array(
 	'path' => __FILE__,
@@ -83,17 +87,11 @@ $wgHooks['SkinTemplateTabs'][] = 'SFFormEditTab::displayTab';
 $wgHooks['SkinTemplateNavigation'][] = 'SFFormEditTab::displayTab2';
 $wgHooks['smwInitProperties'][] = 'SFUtils::initProperties';
 $wgHooks['AdminLinks'][] = 'SFUtils::addToAdminLinks';
-$wgHooks['ParserBeforeStrip'][] = 'SFUtils::cacheFormDefinition';
+$wgHooks['ArticlePurge'][] = 'SFFormUtils::purgeCache';
+$wgHooks['ArticleSave'][] = 'SFFormUtils::purgeCache';
 $wgHooks['ParserFirstCallInit'][] = 'SFParserFunctions::registerFunctions';
 $wgHooks['MakeGlobalVariablesScript'][] = 'SFFormUtils::setGlobalJSVariables';
-
-//PSSchema Hooks
-$wgHooks['PageSchemasGetObject'][] = 'SFUtils::createPageSchemasObject' ; //Hook for  returning PageSchema(extension)  object from a given xml 
-$wgHooks['PageSchemasGeneratePages'][] = 'SFUtils::generatePages' ; //Hook for  creating Pages
-$wgHooks['PSParseFieldElements'][] = 'SFUtils::parseFieldElements' ; //Hook for  creating Pages
-$wgHooks['PageSchemasGetPageList'][] = 'SFUtils::getPageList' ; //Hook for  creating Pages
-$wgHooks['getHtmlTextForFieldInputs'][] = 'SFUtils::getHtmlTextForPS' ; //Hook for  retuning html text to PS schema
-
+$wgHooks['PageSchemasRegisterHandlers'][] = 'SFPageSchemas::registerClass';
 
 $wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
 $wgAPIModules['sfautoedit'] = 'SFAutoeditAPI';
@@ -138,8 +136,8 @@ if ( class_exists( 'HTMLTextField' ) ) { // added in MW 1.16
 	$wgAutoloadClasses['SFUploadWindow'] = $sfgIP . '/specials/SF_UploadWindow.php';
 }
 $wgAutoloadClasses['SFTemplateField'] = $sfgIP . '/includes/SF_TemplateField.php';
-$wgAutoloadClasses['SFForm'] = $sfgIP . '/includes/SF_FormClasses.php';
-$wgAutoloadClasses['SFTemplateInForm'] = $sfgIP . '/includes/SF_FormClasses.php';
+$wgAutoloadClasses['SFForm'] = $sfgIP . '/includes/SF_Form.php';
+$wgAutoloadClasses['SFTemplateInForm'] = $sfgIP . '/includes/SF_TemplateInForm.php';
 $wgAutoloadClasses['SFFormField'] = $sfgIP . '/includes/SF_FormField.php';
 $wgAutoloadClasses['SFFormPrinter'] = $sfgIP . '/includes/SF_FormPrinter.php';
 $wgAutoloadClasses['SFFormUtils'] = $sfgIP . '/includes/SF_FormUtils.php';
@@ -147,6 +145,7 @@ $wgAutoloadClasses['SFFormEditTab'] = $sfgIP . '/includes/SF_FormEditTab.php';
 $wgAutoloadClasses['SFFormEditPage'] = $sfgIP . '/includes/SF_FormEditPage.php';
 $wgAutoloadClasses['SFUtils'] = $sfgIP . '/includes/SF_Utils.php';
 $wgAutoloadClasses['SFFormLinker'] = $sfgIP . '/includes/SF_FormLinker.php';
+$wgAutoloadClasses['SFPageSchemas'] = $sfgIP . '/includes/SF_PageSchemas.php';
 $wgAutoloadClasses['SFParserFunctions'] = $sfgIP . '/includes/SF_ParserFunctions.php';
 $wgAutoloadClasses['SFAutocompleteAPI'] = $sfgIP . '/includes/SF_AutocompleteAPI.php';
 $wgAutoloadClasses['SFAutoeditAPI'] = $sfgIP . '/includes/SF_AutoeditAPI.php';
@@ -199,9 +198,11 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 				'skins/SF_jquery_ui_overrides.css',
 			),
 			'dependencies' => array(
+				'jquery.ui.core',
 				'jquery.ui.autocomplete',
 				'jquery.ui.button',
 				'jquery.ui.sortable',
+				'jquery.ui.widget',
 			),
 		),
 		'ext.semanticforms.fancybox' => $sfgResourceTemplate + array(
@@ -230,6 +231,13 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 			'scripts' => 'libs/SF_collapsible.js',
 			'styles' => 'skins/SF_collapsible.css',
 			'dependencies' => array( 'jquery' ),
+		),
+		'ext.semanticforms.wikieditor' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_wikieditor.js',
+			'styles' => 'skins/SF_wikieditor.css',
+		),
+		'ext.semanticforms.imagepreview' => $sfgResourceTemplate + array(
+			'scripts' => 'libs/SF_imagePreview.js',
 		),
 	);
 }
@@ -293,7 +301,7 @@ $sfgListSeparator = ",";
 # ##
 # Extend the edit form from the internal EditPage class rather than using a
 # special page and hacking things up.
-# 
+#
 # @note This is experimental and requires updates to EditPage which I have only
 #       added into MediaWiki 1.14a
 # ##
@@ -310,6 +318,18 @@ $sfg24HourTime = false;
 # ##
 $sfgCacheFormDefinitions = false;
 
+/**
+ * The cache type for storing form definitions. This cache is similar in
+ * function to the parser cache. Is is used to store form data which is
+ * expensive to regenerate, and benefits from having plenty of storage space.
+ *
+ * If this setting remains at null the setting for the $wgParserCacheType will
+ * be used.
+ * 
+ * For available types see $wgMainCacheType.
+ */
+$sfgFormCacheType = null;
+
 # ##
 # When modifying red links to potentially point to a form to edit that page,
 # check only the properties pointing to that missing page from the page the
@@ -318,10 +338,17 @@ $sfgCacheFormDefinitions = false;
 $sfgRedLinksCheckOnlyLocalProps = false;
 
 # ##
+# Displays the form above, instead of below, the results, in the
+# Special:RunQuery page.
+# (This is actually an undocumented variable, used by the code.)
+# ##
+$sfgRunQueryFormAtTop = false;
+
+# ##
 # Page properties, used for the API
 # ##
 $wgPageProps['formdefinition'] = 'Definition of the semantic form used on the page';
- 
+
 # ##
 # Global variables for Javascript
 # ##

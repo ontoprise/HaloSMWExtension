@@ -13,11 +13,13 @@
 class SFFormUtils {
 	static function setGlobalJSVariables( &$vars ) {
 		global $sfgAutocompleteValues, $sfgAutocompleteOnAllChars;
+		global $sfgScriptPath;
 //		global $sfgInitJSFunctions, $sfgValidationJSFunctions;
 		global $sfgShowOnSelect;
 
 		$vars['sfgRemoveText'] = wfMsg( 'sf_formedit_remove' );
 		$vars['sfgAutocompleteOnAllChars'] = $sfgAutocompleteOnAllChars;
+		$vars['sfgScriptPath'] = $sfgScriptPath;
 		// variables that are associative arrays need to be cast as
 		// objects, to work with MW 1.15 and earlier
 		$vars['sfgAutocompleteValues'] = (object)$sfgAutocompleteValues;
@@ -34,6 +36,7 @@ class SFFormUtils {
 		//$vars['sfgBadIntegerErrorStr'] = wfMsg( 'sf_bad_integer_error' );
 		$vars['sfgBadDateErrorStr'] = wfMsg( 'sf_bad_date_error' );
 		$vars['sfgAnonEditWarning'] = wfMsg( 'sf_autoedit_anoneditwarning' );
+		$vars['sfgSaveAndContinueSummary'] = wfMsg( 'sf_formedit_saveandcontinue_summary', wfMsg( 'sf_formedit_saveandcontinueediting' ) );
 
 		return true;
 	}
@@ -830,4 +833,157 @@ function FCKeditor_OpenPopup(jsID, textareaID)
 END;
 		return $javascript_text;
 	}
+
+
+	/**
+	 * Parse the form definition and store the resulting HTML in the
+	 * main cache, if caching has been specified in LocalSettings.php
+	 */
+	public static function getFormDefinition( $parser, $form_def = null, $form_id = null ) {
+
+		global $sfgCacheFormDefinitions, $wgRequest;
+
+		$cachekey = null;
+
+		// use cache if allowed
+		if ( $sfgCacheFormDefinitions && $form_id !== null ) {
+
+			// create a cache key consisting of owner name, article id and user options
+			$cachekey = self::getCacheKey( $form_id, $parser );
+
+			$cached_def =  self::getFormCache()->get( $cachekey );
+
+			// Cache hit?
+			if ( $cached_def !== false && $cached_def !== null ) {
+
+				wfDebug( "Cache hit: Got form definition $cachekey from cache\n" );
+				return $cached_def;
+			} else {
+				wfDebug( "Cache miss: Form definition $cachekey not found in cache\n" );
+			}
+
+		}
+
+		if ( $form_id !== null ) {
+
+			$form_article = Article::newFromID( $form_id );
+			$form_def = $form_article->getContent();
+
+		} elseif ( $form_def == null ) {
+
+			// No id, no text -> nothing to do
+			return '';
+
+		}
+
+		// Remove <noinclude> sections and <includeonly> tags from form definition
+		$form_def = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $form_def );
+		$form_def = strtr( $form_def, array( '<includeonly>' => '', '</includeonly>' => '' ) );
+
+		// add '<nowiki>' tags around every triple-bracketed form
+		// definition element, so that the wiki parser won't touch
+		// it - the parser will remove the '<nowiki>' tags, leaving
+		// us with what we need
+		$form_def = "__NOEDITSECTION__" . strtr( $form_def, array( '{{{' => '<nowiki>{{{', '}}}' => '}}}</nowiki>' ) );
+
+		$title = new Title();
+		$tmpParser = unserialize( serialize( $parser ) ); // deep clone of parser
+
+		// parse wiki-text
+		$output = $tmpParser->parse( $form_def, $title, $tmpParser->getOptions() );
+		$form_def = $output->getText();
+
+		// store in  cache if allowed
+		if ( $sfgCacheFormDefinitions && $form_id !== null ) {
+
+			if ( $output->getCacheTime() == -1 ) {
+				self::purgeCache( $form_article );
+				wfDebug( "Caching disabled for form definition $cachekey\n" );
+			} else {
+
+				if ( method_exists( $output, 'getCacheExpiry' ) ) { // MW 1.17+
+					self::getFormCache()->set( $cachekey, $form_def, $output->getCacheExpiry() );
+				} else { // MW 1.16
+					self::getFormCache()->set( $cachekey, $form_def );
+				}
+
+				wfDebug( "Cached form definition $cachekey\n" );
+			}
+
+		}
+
+		return $form_def;
+	}
+
+	/**
+	 * Deletes the form definition associated with the given wiki page
+	 * from the main cache.
+	 *
+	 * @param Page $wikipage
+	 * @return Bool
+	 */
+	public static function purgeCache ( &$wikipage = null ) {
+
+		if ( is_null( $wikipage ) || ( $wikipage->getTitle()->getNamespace() == SF_NS_FORM ) ) {
+
+			$keyToPurge = self::getCacheKey( ( is_null( $wikipage ) ) ? null : $wikipage->getId()  );
+
+			$len = strlen( $keyToPurge );
+
+			$cache = self::getFormCache();
+			$keysInCache = $cache->keys();
+
+			foreach ( $keysInCache as $curKey ) {
+
+				if ( strncmp( $curKey, $keyToPurge, $len ) === 0 ) {
+
+					if ( self::getFormCache()->delete( $curKey ) ) {
+						wfDebug( "Deleted cached form definition $curKey.\n" );
+					}
+
+				}
+
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 *  Get the cache object used by the form cache
+	 */
+	public static function getFormCache() {
+		global $sfgFormCacheType, $wgParserCacheType;
+		$ret = & wfGetCache( ( $sfgFormCacheType !== null ) ? $sfgFormCacheType : $wgParserCacheType  );
+		return $ret;
+	}
+
+
+	/**
+	 * Get a cache key.
+	 *
+	 * @param $formId or null
+	 * @param Parser $parser or null
+	 * @return String
+	 */
+	public static function getCacheKey( $formId = null, &$parser = null ) {
+
+		if ( is_null( $formId ) ) {
+			return wfMemcKey( 'ext.SemanticForms.formdefinition' );
+		} elseif ( is_null( $parser ) ) {
+			return wfMemcKey( 'ext.SemanticForms.formdefinition', $formId );
+		} else {
+
+			if ( method_exists( 'ParserOptions', 'optionsHash' ) ) { // MW 1.17+
+				$optionsHash = $parser->getOptions()->optionsHash( ParserOptions::legacyOptions() );
+			} else { // MW 1.16
+				$optionsHash = $parser->getOptions()->mUser->getPageRenderingHash();
+			}
+
+			return wfMemcKey(
+					'ext.SemanticForms.formdefinition', $formId, $optionsHash
+			);
+		}
+	}
+
 }

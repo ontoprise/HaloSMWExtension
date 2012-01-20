@@ -95,9 +95,9 @@ jQuery(document).ready(function() {
 			'page',
 			'page_title',
 			array( 'page_namespace' => NS_TEMPLATE, 'page_is_redirect' => 0 ),
-			array( 'ORDER BY' => 'page_title' ) 
+			array( 'ORDER BY' => 'page_title' )
 		);
-	
+
 		if ( $db->numRows( $res ) > 0 ) {
 			while ( $row = $db->fetchRow( $res ) ) {
 				$template_name = str_replace( '_', ' ', $row[0] );
@@ -305,12 +305,17 @@ END;
 				'type' => 'text',
 				'name' => $paramName . '_' . $fieldFormText,
 				'value' => $cur_value,
-				'size' => 32 
-			) ); 
+				'size' => 32
+			) );
+		} elseif ( $type == 'text' ) {
+			return Xml::element( 'textarea', array(
+				'name' => $paramName . '_' . $fieldFormText,
+				'rows' => 4
+			), $cur_value );
 		} elseif ( $type == 'enumeration' ) {
 			$text = '<select name="p[' . htmlspecialchars( $paramName ) . ']">';
 			$text .= "\n	<option value=''></option>\n";
-				
+
 			$parts = array();
 			foreach ( $param['values'] as $value ) {
 				$parts[] = '<option value="' . htmlspecialchars( $value ) . '"' .
@@ -349,6 +354,7 @@ END;
 	 */
 	public static function showInputTypeOptions( $inputType, $fieldFormText, $paramValues ) {
 		global $sfgFormPrinter;
+		global $wgParser;
 
 		$text = '';
 
@@ -365,9 +371,15 @@ END;
 		foreach ( $params as $i => $param ) {
 			$paramName = $param['name'];
 			$type = $param['type'];
-			$desc = $param['description'];
+			$desc = $wgParser->parse( $param['description'], new Title(), new ParserOptions() )->getText();
 
-			$cur_value = ( array_key_exists( $paramName, $paramValues ) ) ? $paramValues[$paramName] : '';
+			if ( array_key_exists( $paramName, $paramValues ) ) {
+				$cur_value = $paramValues[$paramName];
+			} elseif ( array_key_exists( 'default', $param ) ) {
+				$cur_value = $param['default'];
+			} else {
+				$cur_value = '';
+			}
 
 			// 3 values per row, with alternating colors for rows
 			if ( $i % 3 == 0 ) {
@@ -378,7 +390,7 @@ END;
 			$text .= "<div style=\"width: 30%; padding: 5px; float: left;\">$paramName:\n";
 
 			$text .= self::inputTypeParamInput( $type, $paramName, $cur_value, $param, array(), $fieldFormText );
-			$text .= "\n<br />" . Xml::element( 'em', null, $desc ) . "\n</div>\n";
+			$text .= "\n<br />" . Xml::tags( 'em', null, $desc ) . "\n</div>\n";
 
 			if ( $i % 3 == 2 || $i == count( $params ) - 1 ) {
 				$text .= "<div style=\"clear: both\";></div></div>\n";
