@@ -163,6 +163,9 @@ class Installer {
 		if (is_null($dd)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_UNCOMPRESS_ERROR, "Uncompressing $filePath failed.");
 		}
+		if (Tools::checkBundleIntegrity($filePath, $dd, $this->rootDir) === false) {
+			$dfgOut->outputln("WARN: The bundle's folder structure is invalid! Check it. It usually starts with extensions/...", DF_PRINTSTREAM_TYPE_WARN);
+		}
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 
 		// check dependencies

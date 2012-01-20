@@ -527,6 +527,35 @@ class Tools {
 	}
 
 	/**
+	 * Checks the integrity of a bundle.
+	 * 
+	 *  (1) is the path structure correct? ie. is the install dir one of the root folders
+	 *      of the bundle?
+	 *  
+	 * @param string $filePath bundle as zip file (absolute or relative)
+	 * @param DeployDescriptor $dd
+	 * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
+	 */
+	public static function checkBundleIntegrity($filePath, $dd, $mwrootPath = "") {
+		global $dfgOut;
+		$filePath = Tools::makeUnixPath($filePath);
+		if (!file_exists($filePath)) return NULL;
+		$unzipExe = empty($mwrootPath) ? 'unzip' : self::getUnzipPath($mwrootPath);
+		exec($unzipExe.' -l "'.$filePath.'"', $output, $res);
+		$instDir = $dd->getInstallationDirectory();
+		$isValid = true;
+		foreach($output as $o) {
+			if (strpos($o, "$instDir") !== false) {
+				if (strpos($o, " $instDir") === false) {
+					$isValid = false;
+					break;
+				}
+			}
+		}
+		return $isValid;
+	}
+
+	/**
 	 * Unzips a file from a zip archive.
 	 *
 	 * @param $zipFile Full path to zip file
@@ -555,7 +584,7 @@ class Tools {
 
 	/**
 	 * Creates an archive of a given directory or file (recursively in case of dir)
-	 * 
+	 *
 	 * Note: Does not include file named unzip.exe.
 	 *
 	 * @param $source given directory or file (full path)
@@ -580,7 +609,7 @@ class Tools {
 	 * Unzips a zip archive into destination
 	 * @param $zipFile
 	 * @param $destination
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function unpackZip($zipFile, $destination, $mwrootPath = "") {
