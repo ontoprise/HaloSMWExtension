@@ -365,7 +365,7 @@
 			$(table).each(function(i, e) { 
 				html += "<tr>";
 				html += "<td>";
-				html += e.comment;
+				html += runningOperations.formatComment(e.comment);
 				html += "</td>";
 				html += "<td>";
 				html += '<a href="'+mw.config.get('wgServer')+mw.config.get('wgArticlePath').replace(/\$1/, e.log)+'">'+mw.msg('sref_log')+'</a>';
@@ -374,7 +374,7 @@
 				html += e.starttime;
 				html += "</td>";
 				html += "<td>";
-				html += e.endtime;
+				html += e.endtime == null ? "-" : e.endtime;
 				html += "</td>";
 				html += "<td>";
 				html += (e.progress * 100) + "%";
@@ -387,6 +387,17 @@
 			});
 			html += "</table>";
 			$('#sref_operations').html(html);
+		},
+		
+		formatComment: function(comment) {
+			var comments = comment.split(/\n/);
+			if (comments.length == 1) return comment;
+			var html = "<ul>";
+			$(comments).each(function (i, e) { 
+				html += "<li>"+e+"</li>"
+			});
+			html += "</ul>";
+			return html;
 		},
 		
 		onError : function(xhr) {
@@ -437,7 +448,7 @@
 					var selectedOperationType = $('.sref_operation_type_selector option:selected', cBox);
 					var selectedOperation =  $('.sref_operation_selector option:selected', cBox);
 					if (selectedOperationType.length == 0 || selectedOperation.length == 0) {
-						alert("Select operation"); // TODO: localize
+						message = "Select operation"; // TODO: localize
 						return;
 					}
 					var operationTypeIndex = selectedOperationType[0].index;
@@ -447,7 +458,7 @@
 					var operation = content.operationnames[operationKey];
 					
 					if (operation == null) {
-						alert("Internal error"); // TODO: localize
+						message = "Internal error"; // TODO: localize
 						return;
 					}
 					
