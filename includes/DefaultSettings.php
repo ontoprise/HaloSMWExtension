@@ -1139,7 +1139,7 @@ $wgUsersNotifiedOnAllChanges = array();
 /** Database host name or IP address */
 $wgDBserver         = 'localhost';
 /** Database port number (for PostgreSQL) */
-$wgDBport           = 5432;
+$wgDBport           = 3306;
 /** Name of the database */
 $wgDBname           = 'my_wiki';
 /** Database username */
