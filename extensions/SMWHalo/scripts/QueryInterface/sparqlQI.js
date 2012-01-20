@@ -347,9 +347,12 @@
       });
       dialogDiv.html(message);
       dialogDiv.dialog('open');
-//      if(dialogDiv.height() > 600){
-//        dialogDiv.option('height', 600);
-//      }
+      if(dialogDiv.height() > 600){
+        dialogDiv.dialog('option', 'height', 600);
+      }
+      if(dialogDiv.width() > 1000){
+        dialogDiv.dialog('option', 'height', 1000);
+      }
     }
     return dialogDiv;
   };
