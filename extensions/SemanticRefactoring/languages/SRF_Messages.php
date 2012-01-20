@@ -67,6 +67,7 @@ $messages['en'] = array(
     'sref_page' => 'Page',
     'sref_add_command' => 'add command',
     'sref_remove_command' => 'remove command',
+    'sref_no_instances_selected' => 'No instances selected',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',
@@ -195,6 +196,7 @@ $messages['de'] = array(
     'sref_page' => 'Page',
     'sref_add_command' => 'add command',
     'sref_remove_command' => 'remove command',
+    'sref_no_instances_selected' => 'No instances selected',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',

@@ -126,6 +126,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_includeSubproperties_help',
                         
                             'sref_not_allowed_botstart',
+                            'sref_no_instances_selected',
             
 				             'sref_add',
 				            'sref_remove',

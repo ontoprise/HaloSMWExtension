@@ -19,6 +19,8 @@
 /**
  * @author Kai Kuehn
  * 
+ * For use at Special:Semantic refactoring
+ * 
  */
 (function($) {
 	
@@ -86,7 +88,11 @@
 
 	var commandBox = {
 		
-		command : function(id) {
+		/**
+		 * Class for commands. An object of this class
+		 * creates HTML for a command box set. 
+		 */
+		Command : function(id) {
 			this.id = id;
 			this.current_operation = -1;
 			this.createHTML = function(showRemoveIcon) {
@@ -106,7 +112,6 @@
 				html += '<div style="float:left" id="sref_parameters'+this.id+'" class="sref_parameters">';
 				html += '</div>';
 				if (showRemoveIcon) html += '<img style="float:right"title="'+mw.msg('sref_remove_command')+'" class="sref_pointer" id="sref_remove_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/delete_icon.png"/>';
-				//html += '<img style="float:right" title="'+mw.msg('sref_help_command')+'" class="sref_pointer" id="sref_help_operation'+this.id+'" src="'+wgScriptPath+'/extensions/SemanticRefactoring/skins/images/help.gif"/>';
 				html += '</div>';
 				return html;
 			}
@@ -145,6 +150,9 @@
 		                    }
 						});
 					});
+					
+					assembleParameters.updateStartButtonStatus();
+					
 				});
 				
 				$('#sref_operation'+o.id).change(function(e) { 
@@ -158,11 +166,18 @@
 					});
 					html += "</table>";
 					$('#sref_parameters'+o.id).html(html);
+					
+					$('#sref_parameters'+o.id+' input').keyup(function() { 
+						assembleParameters.updateStartButtonStatus();
+					});
+					
+					assembleParameters.updateStartButtonStatus();
 				});
 				
 				$('#sref_remove_operation'+o.id).click(function(e) {
 					var commandBox = $(this.parentNode);
 					commandBox.remove();
+					assembleParameters.updateStartButtonStatus();
 				});
 				
 				
@@ -238,13 +253,14 @@
 					setInterval(runningOperations.requestTable, 20000);
 				});
 				
-				// (de-)select all
+				// "select all" button
 				$('#sref_selectall').click(function(e) { 
 					var results = $('input', '#sref_resultbox');
 					results.each(function(i, e) { 
 						$(e).attr("checked", true);
 					});
 				});
+				// "de-select all" button
 				$('#sref_deselectall').click(function(e) { 
 					var results = $('input', '#sref_resultbox');
 					results.each(function(i, e) { 
@@ -270,7 +286,9 @@
 			}
 	};
 	
+	// the QI interface is called via the following code
 	var queryInterface = { 
+			
 			showQI : function() {
 				queryInterface.openQueryInterfaceDialog(mw.config.get('wgScript') 
 							+ '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE%26returnObject=srfgASKListener',
@@ -298,8 +316,8 @@
 			  },
 			 
 			  
-			  /**
-				 * set new query annotations
+			  	/**
+				 * Sets the returned query text
 				 */
 			    setNewAskQuery:function() {
 			      var qiHelperObj = queryInterface.getQIHelper();
@@ -318,6 +336,9 @@
 			      
 			      $('#sref_querybox_textarea').val(newQuery);
 			      delete qiHelperObj;
+			      
+			      var disabled = ($.trim($('#sref_querybox_textarea').val()) == '');
+				  $('#sref_run_query').attr('disabled', disabled);
 			    },
 			    
 			    getQIHelper: function(){
@@ -333,21 +354,21 @@
 			        }
 
 			        return queryInterface.qihelper;
-			      },
-			      saveQuery: function(){
-			    	   var qiHelperObj = queryInterface.getQIHelper();
-			    	   qiHelperObj.querySaved = true;
-			    	    jQuery.fancybox.close();
-			    	    delete qiHelperObj;
+			    },
+				saveQuery: function(){
+				    var qiHelperObj = queryInterface.getQIHelper();
+				    qiHelperObj.querySaved = true;
+				    jQuery.fancybox.close();
+				    delete qiHelperObj;
+	
+				},
 
-			    	  },
-
-			    	  cancelQuery: function(){
-			    		  var qiHelperObj = queryInterface.getQIHelper();
-			    		  qiHelperObj.querySaved = false;
-			    	    jQuery.fancybox.close();
-			    	    delete qiHelperObj;
-			    	  }
+			    cancelQuery: function(){
+			    	var qiHelperObj = queryInterface.getQIHelper();
+			    	qiHelperObj.querySaved = false;
+			    	jQuery.fancybox.close();
+			    	delete qiHelperObj;
+			    }
 			      
 			     
 	};
@@ -357,6 +378,7 @@
 	window.srfgASKListener.saveQuery = queryInterface.saveQuery;
 	window.srfgASKListener.cancelQuery = queryInterface.cancelQuery;
 	
+	// table 'running operations'
 	var runningOperations = {
 		showTable : function(response) {
 			var table = $.parseJSON(response);
@@ -368,7 +390,9 @@
 				html += runningOperations.formatComment(e.comment);
 				html += "</td>";
 				html += "<td>";
-				html += '<a href="'+mw.config.get('wgServer')+mw.config.get('wgArticlePath').replace(/\$1/, e.log)+'">'+mw.msg('sref_log')+'</a>';
+				if (e.endtime != null) {
+					html += '<a href="'+mw.config.get('wgServer')+mw.config.get('wgArticlePath').replace(/\$1/, e.log)+'">'+mw.msg('sref_log')+'</a>';
+				}
 				html += "</td>";
 				html += "<td>";
 				html += e.starttime;
@@ -409,6 +433,7 @@
 		},
 		
 		requestTable : function(response) {
+			$('#sref_start_operation').attr("disabled", false);
 			$.ajax({
 				url: mw.config.get('wgScript'),
 				data: {	action : 'ajax',
@@ -424,20 +449,25 @@
 	
 	};
 			
-	//commandBox.addListeners();
+	// initialize first command
 	var numOfCommands = 1;
-	var command1 = new commandBox.command('0');
+	var command1 = new commandBox.Command('0');
 	$('#sref_commandboxes').html(command1.createHTML(false));
 	command1.addListeners();
 	
+	// register listeners for the result box
 	resultBox.addListeners();
+	
+	// add additional commands
 	$('#sref_add_command').click(function() { 
 		numOfCommands++;
-		var c = new commandBox.command(''+numOfCommands);
+		var c = new commandBox.Command(''+numOfCommands);
 		$('#sref_commandboxes').append(c.createHTML(true));
 		c.addListeners();
+		$('#sref_start_operation').attr("disabled", true);
 	});
 	
+	// acquires the refactoring bot parametrization
 	var assembleParameters = { 
 			getCommandParameters : function() {
 				var paramArray = { commands : [] };
@@ -445,10 +475,11 @@
 				var commandBoxes = $('.sref_commandbox');
 				commandBoxes.each(function(i, cBox) { 
 					
+					// read operation from DOM
 					var selectedOperationType = $('.sref_operation_type_selector option:selected', cBox);
 					var selectedOperation =  $('.sref_operation_selector option:selected', cBox);
 					if (selectedOperationType.length == 0 || selectedOperation.length == 0) {
-						message = "Select operation"; // TODO: localize
+						message = "Select operation"; 
 						return;
 					}
 					var operationTypeIndex = selectedOperationType[0].index;
@@ -458,12 +489,11 @@
 					var operation = content.operationnames[operationKey];
 					
 					if (operation == null) {
-						message = "Internal error"; // TODO: localize
+						message = "Internal error"; 
 						return;
 					}
 					
 					// read parameters from DOM
-					
 					var params = {};
 					$('.sref_parameters input', cBox).each(function(i, e) {
 						var jqe = $(e);
@@ -486,22 +516,38 @@
 				});
 				
 				if (message != '') {
-					alert(message);
 					return null;
 				}
 				
 				return paramArray;
+			},
+			
+			updateStartButtonStatus: function() {
+				var status = assembleParameters.getCommandParameters();
+				if (status == null) { 
+					$('#sref_start_operation').attr("disabled", true);
+				} else {
+					$('#sref_start_operation').attr("disabled", false);
+				}
 			}
 	};
 	
+	// run refactoring
 	$('#sref_start_operation').click(function(e) { 
+		
+		// get (selected) titles to work on
 		var results = $('input[checked="true"]', '#sref_resultbox');
 		prefixedTitles = [];
 		results.each(function(i,e) { 
 			var prefixedTitle = $(e).attr("prefixedTitle");
 			prefixedTitles.push(prefixedTitle);
 		});
+		if (results.length == 0) {
+			alert(mw.msg('sref_no_instances_selected'));
+			return;
+		}
 		
+		// get bot parametrization and save as JSON
 		var paramArray = assembleParameters.getCommandParameters();
 		if (paramArray == null) {
 			return;
@@ -512,7 +558,6 @@
 		var jsonData = Object.toJSON(paramArray);
 		paramString += jsonData;
 		
-		// launch Bot
 		
 		var onError = function(xhr) {
 			if (xhr.status == 403) {
@@ -522,6 +567,7 @@
 			}
 		}
 		
+		// launch Bot
 		$.ajax({
 			type: "POST",
 			url: mw.config.get('wgScript'),
@@ -532,6 +578,7 @@
 			success: runningOperations.requestTable,
 			error: onError
 		});
+		$('#sref_start_operation').attr("disabled", true);
 		
 		
 		
