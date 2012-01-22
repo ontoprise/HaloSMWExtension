@@ -95,6 +95,11 @@ class DF_Config  {
 // upload directory for DF-GUI, if not set home directory or temp is used.
 //'df_uploaddir' => '',
 
+// uncomment one of the following lines to use a particular HTTP impl.
+// per default a suitable impl. is selected automatically
+//'df_http_impl' => 'HttpDownloadCurlImpl',
+//'df_http_impl' => 'HttpDownloadSocketImpl',
+
 // set PHP executable (only if it is not in PATH or it has the wrong version)
 // PHP 5 is required at least
 'df_php_executable' => 'php',
