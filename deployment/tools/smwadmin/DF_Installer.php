@@ -544,7 +544,7 @@ class Installer {
 	 * @param int fromVersion Update from this version
 	 */
 	private function installOrUpdatePackages($extensions_to_update) {
-		$d = new HttpDownload();
+		$d = HttpDownload::getInstance();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		$num = 0;
 

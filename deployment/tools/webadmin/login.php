@@ -78,9 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		} else if ($isAuthorized === 404) {
 			$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
 			$hostname = $_SERVER['HTTP_HOST'];
-            echo '<b>$scriptPath</b> is probably not correctly configured. Please check deployment/settings.php. <br>The current wiki URL is: <b>'.$proto."://".$hostname.$wgScriptPath."</b>";
-            exit;
-        }
+			echo '<b>$scriptPath</b> is probably not correctly configured. Please check deployment/settings.php. <br>The current wiki URL is: <b>'.$proto."://".$hostname.$wgScriptPath."</b>";
+			exit;
+		}
 	} else{
 		$isAuthorized = $username == DF_Config::$df_webadmin_user
 		&& $passwort == DF_Config::$df_webadmin_pass;
@@ -259,14 +259,13 @@ function dffCheckEnvironment() {
 		}
 	}
 
-	// check socket_create (some webhosters provide crappy PHP installations which lacks socket functions)
-	if (function_exists("socket_create")) {
-		@$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		if ($socket === false) {
-			$result .= "<li>Could not create a socket. Are you sure you run a standard PHP installation?</li>";
+	// check HTTP download methods (some webhosters provide crappy PHP installations which lacks socket functions)
+	// if sockets are not available, at least curl must be there. Otherwise it won't work.
+
+	if (!array_key_exists('df_http_impl', DF_Config::$settings)) {
+		if (!function_exists("socket_create") && !extension_loaded('curl')) {
+			$result .= "<li>Could neither find socket functions nor 'php_curl' module. At least one is required to run this tool.</li>";
 		}
-	} else {
-		$result .= "<li>Could not find 'socket_create' PHP-function. Are you sure you run a standard PHP installation?</li>";
 	}
 
 	return empty($result) ? true : "<ul>$result</ul>";

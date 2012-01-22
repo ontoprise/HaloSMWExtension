@@ -20,22 +20,44 @@
 define('PROGRESS_BAR_LENGTH', 40);
 
 /**
- * @file
- * @ingroup DFIO
  *
- * HTTP Downloader implementation.
+ * HttpDownload contains methods for accessing resources via HTTP.
  *
- * @author Kai K�hn
+ * @author Kai Kuehn
  *
  */
-class HttpDownload {
-	private $header;
+abstract class HttpDownload {
 
-	private $proxy_addr="";
-	private $proxy_port="8080"; //use Port 8080 as default for proxy servers
+	protected $proxy_addr="";
+	protected $proxy_port="8080"; //use Port 8080 as default for proxy servers
 
 	public function __construct() {
 		$this->setProxy();
+	}
+
+	/**
+	 *
+	 */
+	protected function setProxy(){
+
+		if (!class_exists("DF_Config")) return;
+		//Read settings for the proxy
+		$proxy_url = DF_Config::getValue('df_proxy');
+		//don't change anything if no proxy is set in the config
+		if($proxy_url=="" || $proxy_url ==null) return;
+
+		//get proxy port and host
+		$partsOfURL = parse_url($proxy_url);
+		//get proxy ip to connect to
+		$proxy_server = gethostbyname($partsOfURL['host']);
+		//get port from settings
+		$proxy_port = $partsOfURL['port'];
+		//set port to default 8080 if not specified
+		if( $proxy_port == "" || $proxy_port == null ) $proxy_port = "8080";
+
+		//Set the proxy address and the port for Download
+		$this->proxy_addr = $proxy_server;
+		$this->proxy_port = $proxy_port;
 	}
 
 	/**
@@ -68,6 +90,61 @@ class HttpDownload {
 	 *                     downloadFinished($filename)
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 */
+	public abstract function downloadAsFile($path, $port, $host, $filename, $credentials = "", $callback = NULL);
+
+	/**
+	 * Downloads a resource via HTTP protocol returns the content as string.
+	 *
+	 * @param string $path
+	 * @param int $port
+	 * @param string $host
+	 * @param object $callback: An object with 2 methods:
+	 *                     downloadProgres($percentage).
+	 *                     downloadFinished($filename)
+	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
+	 * @return string
+	 */
+	public abstract function downloadAsString($path, $port, $host, $credentials = "", $callback = NULL);
+
+	private static $INSTANCE = NULL;
+
+	public static function getInstance() {
+		if (is_null(self::$INSTANCE)) {
+			if (array_key_exists('df_http_impl', DF_Config::$settings)) {
+				$clazz = DF_Config::$settings['df_http_impl'];
+                self::$INSTANCE = new $clazz();
+			} else {
+				if (function_exists('socket_create')) {
+					self::$INSTANCE = new HttpDownloadSocketImpl();
+				} else if (extension_loaded('curl')) {
+					self::$INSTANCE = new HttpDownloadCurlImpl();
+				} else {
+					dffExitOnFatalError("No HTTP impl. available on this system. see INSTALL file.");
+				}
+			}
+		}
+		return self::$INSTANCE;
+	}
+}
+/**
+ * @file
+ * @ingroup DFIO
+ *
+ * HTTP Downloader implementation.
+ *
+ * @author Kai K�hn
+ *
+ */
+class HttpDownloadSocketImpl extends HttpDownload {
+	private $header;
+
+
+
+	public function __construct() {
+		parent::__construct();
+	}
+
+
 	public function downloadAsFile($path, $port, $host, $filename, $credentials = "", $callback = NULL) {
 
 		$credentials = trim($credentials);
@@ -124,18 +201,7 @@ class HttpDownload {
 		socket_close($socket);
 	}
 
-	/**
-	 * Downloads a resource via HTTP protocol returns the content as string.
-	 *
-	 * @param string $path
-	 * @param int $port
-	 * @param string $host
-	 * @param object $callback: An object with 2 methods:
-	 *                     downloadProgres($percentage).
-	 *                     downloadFinished($filename)
-	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
-	 * @return string
-	 */
+
 	public function downloadAsString($path, $port, $host, $credentials = "", $callback = NULL) {
 
 		$credentials = trim($credentials);
@@ -236,30 +302,6 @@ class HttpDownload {
 		}
 	}
 
-	/**
-	 *
-	 */
-	private function setProxy(){
-		
-		if (!class_exists("DF_Config")) return;
-		//Read settings for the proxy
-		$proxy_url = DF_Config::getValue('df_proxy');
-		//don't change anything if no proxy is set in the config
-		if($proxy_url=="" || $proxy_url ==null) return;
-
-		//get proxy port and host
-		$partsOfURL = parse_url($proxy_url);
-		//get proxy ip to connect to
-		$proxy_server = gethostbyname($partsOfURL['host']);
-		//get port from settings
-		$proxy_port = $partsOfURL['port'];
-		//set port to default 8080 if not specified
-		if( $proxy_port == "" || $proxy_port == null ) $proxy_port = "8080";
-
-		//Set the proxy address and the port for Download
-		$this->proxy_addr = $proxy_server;
-		$this->proxy_port = $proxy_port;
-	}
 
 	/**
 	 * Parser content length from HTTP header
@@ -280,10 +322,10 @@ class HttpDownload {
 	 * @param float $per
 	 */
 	public function downloadProgress($length, $contentLength = 0) {
-		
+
 		global $dfgOut;
 		if ($dfgOut->getMode() != DF_OUTPUT_FORMAT_TEXT) return;
-		
+
 		static $first = true;
 		static $lastLength = 0;
 		if (!$first) for($i = 0; $i < $lastLength; $i++) echo chr(8);
@@ -309,15 +351,84 @@ class HttpDownload {
 
 	public function downloadStart($filename) {
 		global $dfgOut;
-        if ($dfgOut->getMode() != DF_OUTPUT_FORMAT_TEXT) return;
+		if ($dfgOut->getMode() != DF_OUTPUT_FORMAT_TEXT) return;
 		if (!is_null($filename)) echo "\nDownloading $filename...\n";
 	}
 
 	public function downloadFinished($filename) {
 		global $dfgOut;
-        if ($dfgOut->getMode() != DF_OUTPUT_FORMAT_TEXT) return;
-		
+		if ($dfgOut->getMode() != DF_OUTPUT_FORMAT_TEXT) return;
+
 	}
+}
+
+/**
+ * HTTP Download impl. via CURL
+ *
+ * @author Kai Kuehn
+ *
+ */
+class HttpDownloadCurlImpl extends HttpDownload {
+
+	public function __construct() {
+		parent::__construct();
+	}
+
+	public function downloadAsFile($path, $port, $host, $filename, $credentials = "", $callback = NULL) {
+
+		$ch = curl_init("http://".$host.":".$port."/".$path);
+		$fp = fopen($filename, "w");
+
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+		if ($this->credentials != '') {
+			curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
+		}
+		if($this->proxy_addr != "" && $this->proxy_port != ""){
+			curl_setopt($ch, CURLOPT_PROXY, $this->proxy_addr);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_port);
+			if ($this->credentials != '') {
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD,trim($this->credentials));
+			}
+		}
+
+		curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+
+
+	}
+
+
+	public function downloadAsString($path, $port, $host, $credentials = "", $callback = NULL) {
+
+		// Create a curl handle
+		$ch = curl_init("http://".$host.":".$port."/".$path);
+
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+		if ($this->credentials != '') {
+			curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
+		}
+		if($this->proxy_addr != "" && $this->proxy_port != ""){
+			curl_setopt($ch, CURLOPT_PROXY, $this->proxy_addr);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy_port);
+			if ($this->credentials != '') {
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD,trim($this->credentials));
+			}
+		}
+
+		// Execute
+		$res = curl_exec($ch);
+
+		$status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		return $res;
+	}
+
 }
 
 class HttpError extends Exception {

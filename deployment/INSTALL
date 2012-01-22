@@ -255,3 +255,13 @@ to find existing installations by itself but this works only for Windows if it i
 registered in the Windows registry (which is the case when installed via Windows Installer). 
 Linux users should configure their applications if they were not installed via the Wiki 
 Administration Tool in the first place.
+
+#
+# Troubleshooting
+#
+
+Q: What means: "No HTTP impl. available on this system" ? 
+A: WAT needs the socket function of PHP or the 'curl' module loaded to access files via HTTP.
+   The socket functions are part of the standard PHP release but some webhosters deactivate them.
+   If they are missing, WAT can use 'curl' instead. If this is also missing, WAT won't work. Sorry.
+   

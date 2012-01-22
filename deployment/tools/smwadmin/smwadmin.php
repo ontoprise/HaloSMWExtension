@@ -330,8 +330,12 @@ try {
 // check for new release
 $latestVersion = PackageRepository::getLatestRelease();
 if ($latestVersion !== false) {
-    $currentVersion = new DFVersion(DFVersion::removePatchlevel(DEPLOY_FRAMEWORK_VERSION));
-    if ($currentVersion->isLower($latestVersion)) {
+	try {
+        $currentVersion = new DFVersion(DFVersion::removePatchlevel(DEPLOY_FRAMEWORK_VERSION));
+	} catch(Exception $e) {
+		$currentVersion = NULL; // THIS happens only in SVN version
+	}
+    if (!is_null($currentVersion) && $currentVersion->isLower($latestVersion)) {
         $dfgOut->outputln("\n\n  !!!!!!!!!! NEW release available !!!!!!!!!! Check: ".DF_REPOSITORY_LIST_LINK."\n\n");
     }
 }
@@ -380,7 +384,8 @@ if ($dfgInstallPackages) {
 	// check for non-initialized extensions
 	$localPackages = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
 	if (count($localPackages) > 0 && !$dfgForce) {
-		dffExitOnFatalError("\nThere are non-initialized extensions. Run: 'smwadmin --finalize' or use -f to skip.\n");
+		//dffExitOnFatalError("\nThere are non-initialized extensions. Run: 'smwadmin --finalize' or use -f to skip.\n");
+		$dfgOut->outputln("\nThere are non-initialized extensions. Run: 'smwadmin --finalize'\n", DF_PRINTSTREAM_TYPE_WARN);
 	}
 }
 

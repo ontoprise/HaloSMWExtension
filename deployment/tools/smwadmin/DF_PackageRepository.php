@@ -132,7 +132,7 @@ class PackageRepository {
 			self::$repo_credentials[SMWPLUS_REPOSITORY] = "" ; // default repo
 			$repo_urls[] = SMWPLUS_REPOSITORY;
 		}
-		$d = new HttpDownload();
+		$d = HttpDownload::getInstance();
 		foreach($repo_urls as $url) {
 			$url = trim($url);
 			if (substr($url, -1) != '/') $url .= '/';
@@ -248,7 +248,7 @@ class PackageRepository {
 
 
 		// download descriptor
-		$d = new HttpDownload();
+		$d = HttpDownload::getInstance();
 		$credentials = array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "";
 		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy.xml");
 
@@ -307,7 +307,7 @@ class PackageRepository {
 		if (!isset($repourl)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $ext_id-$version");
 
 		// download descriptor
-		$d = new HttpDownload();
+		$d = HttpDownload::getInstance();
 		$credentials = array_key_exists($repourl, self::$repo_credentials) ? self::$repo_credentials[$repourl] : '';
 		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy-$version.xml");
 
