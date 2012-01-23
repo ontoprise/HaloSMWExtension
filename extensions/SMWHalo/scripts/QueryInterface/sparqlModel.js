@@ -50,7 +50,6 @@
     //init static data
     SPARQL.Model.data.projection_var = data.projection_var || [];
     SPARQL.Model.data.order = data.order || [];
-    $.merge(SPARQL.Model.data.namespace, (data.namespace || []));
 
     //init category_restriction
     data.category_restriction = data.category_restriction || [];
@@ -185,7 +184,7 @@
      * If not found then return the string after last delimiter (/,#)
      */
     this.getShortName = function(prefix){
-      if(this.type === TYPE.VAR){
+      if(this.type !== TYPE.IRI){
         return this.value;
       }
       var result = null;
@@ -236,6 +235,9 @@
   };
 
   SPARQL.Model.FilterArgumentTerm = function(value, type, datatype_iri, language){
+    this.fixIRI = function(value){
+      return SPARQL.Model.assureFullyQualifiedIRI(value, 'a');
+    };
     SPARQL.Model.Term.call(this, value, type, datatype_iri, language);
   };
 
@@ -771,7 +773,7 @@
 
   /**
      *  Remove triple replresenting given property
-     *  and remove the object var from projection vars, filters, order if it's not part of any other triple or category restriction
+     *  also remove the object var from projection vars, filters, order if it's not part of any other triple or category restriction
      *  @param triple Triple replresenting given property
      */
   SPARQL.Model.deleteProperty = function(triple){
@@ -781,6 +783,7 @@
     for(var i = 0; i < triples.length; i++){
       if(triple.isEqual(triples[i])){
         triples.splice(i, 1);
+        break;
       }
       else if(triple.object.type === TYPE.VAR && triple.object.isEqual(triples[i].object)){
         objectVarInUse = true;

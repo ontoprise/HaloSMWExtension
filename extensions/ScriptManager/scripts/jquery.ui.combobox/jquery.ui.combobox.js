@@ -30,10 +30,11 @@
           }) );
         },
         select: function( event, ui ) {
-          ui.item.option.selected = true;
+          ui.item.option.selected = true;          
           self._trigger( "selected", event, {
             item: ui.item.option
           });
+          select.val(ui.item.option.value);
         },
         change: function( event, ui ) {
           if ( !ui.item ) {
@@ -46,20 +47,20 @@
               }
             });
             if ( !valid ) {
-              // remove invalid value, as it didn't match anything
-              //              $( this ).val( "" );
-              //              select.append( "" );
-              self.addItem($( this ).val());
-              self._trigger( "selected", event, {
-                item: $( this ).val()
-              });
-              input.data( "autocomplete" ).term = "";
+              var value = $( this ).val();
+              if(value.length){
+                select.prepend($('<option/>').attr('value', value).text(value));
+                select.val(value);  
+                self._trigger( 'selected', event, {
+                  item: ui.item != null ? ui.item.option : null,
+                  value: value
+                });
+                              
+              }
+              if(input.data( "autocomplete" )){
+                input.data( "autocomplete" ).term = "";
+              }
             }
-          }
-        },
-        mouseout: function(event, ui){
-          if(ui.item && ui.item.option && ui.item.option.length){
-            this.change(event, ui);
           }
         }
       })
@@ -105,21 +106,6 @@
       this.button.remove();
       this.element.show();
       $.Widget.prototype.destroy.call( this );
-    },
-
-    addItem: function(value){
-      var itemExists = false;
-      var options = this.element.children();
-      for(var i = 0; i < options.length; i++){
-        if(options[i].text === value){
-          itemExists = true;
-          break;
-        }
-      }
-      if(!itemExists){
-        this.element.prepend($('<option/>').attr('value', value).attr('selected', 'selected').html(value));
-      }
-      this.input.val(value);
     }
   });
 })( jQuery );
