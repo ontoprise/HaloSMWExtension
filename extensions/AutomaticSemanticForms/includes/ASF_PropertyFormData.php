@@ -169,7 +169,13 @@ class ASFPropertyFormData {
 		
 		//overwrite computed AC with user constraint
 		if($asfUseHaloAutocompletion && $this->userAutocompletionConstraint){
-			$autocompletion = ' |constraints='.lcfirst($this->userAutocompletionConstraint);
+			$this->userAutocompletionConstraint = strtolower(substr($this->userAutocompletionConstraint, 0, 1)).
+				substr($this->userAutocompletionConstraint, 1);
+			$this->userAutocompletionConstraint = str_replace(
+				array('((((', '))))'),
+				array('[[', ']]'),
+				$this->userAutocompletionConstraint);
+			$autocompletion = ' |constraints='.$this->userAutocompletionConstraint;
 		}
 		
 		//deal with validator

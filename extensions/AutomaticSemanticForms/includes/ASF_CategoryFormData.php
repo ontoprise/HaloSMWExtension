@@ -115,7 +115,8 @@ class ASFCategoryFormData {
 			$standardInputs = 
 				ASFFormGeneratorUtils::getInheritedPropertyValue($this->semanticData, ASF_PROP_USE_STANDARD_INPUT, true);
 			foreach($standardInputs as $sI){
-				$this->standardInputs[lcfirst($sI)] = true;
+				$sI = strtolower(substr($sI, 0,1)). substr($sI, 1);
+				$this->standardInputs[$sI] = true;
 			}
 				
 		} else {
