@@ -72,7 +72,7 @@ class WOMPropertyModel extends WikiObjectModel {
 	}
 
 	public function getWikiText() {
-		$res = "[[{$this->getPropertyName()}::{$this->getPropertyValue()}";
+		$res = "[[{$this->getPropertyName()}:: {$this->getPropertyValue()}";
 		if ( $this->getPropertyValue() != $this->getCaption()
 			&& $this->getCaption() != '' ) {
 				$res .= "|{$this->getCaption()}";
