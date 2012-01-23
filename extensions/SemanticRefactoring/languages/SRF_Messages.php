@@ -25,7 +25,7 @@ $messages['en'] = array(
     'sref_removePropertyWithDomain' => 'Delete all properties with this domain',
     'sref_removePropertyWithDomain_help' => 'Deletes all property articles which use the selected category as domain.',
     'sref_removeQueriesWithCategories' => 'Remove all queries containing this category',
-    'sref_removeQueries_help' => 'Removes all queries which contain the selected category. Does not delete the article which contains the query.',
+    'sref_removeQueriesWithCategories_help' => 'Removes all queries which contain the selected category. Does not delete the article which contains the query.',
     'sref_includeSubcategories' => 'Include sub-categories',
     'sref_includeSubcategories_help' => 'Applies the selected operations to all sub-categories of the selected category. This happens recursively, ie. it includes the non-direct sub-categories',
     
@@ -153,7 +153,7 @@ $messages['de'] = array(
     'sref_removePropertyWithDomain' => 'Delete all properties with this domain',
     'sref_removePropertyWithDomain_help' => 'Deletes all property articles which use the selected category as domain.',
     'sref_removeQueriesWithCategories' => 'Remove all queries containing this category',
-    'sref_removeQueries_help' => 'Removes all queries which contain the selected category. Does not delete the article which contains the query.',
+    'sref_removeQueriesWithCategories_help' => 'Removes all queries which contain the selected category. Does not delete the article which contains the query.',
     'sref_includeSubcategories' => 'Include sub-categories',
     'sref_includeSubcategories_help' => 'Applies the selected operations to all sub-categories of the selected category. This happens recursively, ie. it includes the non-direct sub-categories',
     

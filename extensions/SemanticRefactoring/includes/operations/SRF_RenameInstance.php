@@ -119,6 +119,26 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		}
 		return $changed;
 	}
+	
+    private function replaceInstanceInQuery($objects) {
+        $changed = false;
+        foreach($objects as $o){
+        	
+            $value = $o->getValueText();
+            $values = $this->splitRecordValues($value);
+            array_walk($values, array($this, 'replaceTitle'));
+            $newValue = implode("; ", $values);
+
+            if ($value != $newValue) {
+                $changed = true; //FIXME: may be untrue because of whitespaces
+                $new = new WOMNestPropertyValueModel();
+                $new->insertObject(new WOMTextModel($newValue));
+               $o->updateObject($new, $o->getLastObject()->getObjectID());
+            }
+
+        }
+        return $changed;
+    }
 
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
@@ -129,13 +149,13 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
-				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
-				$changedQuery = $changedQuery || $this->replaceValueInAnnotation($results);
+			$results = array();
+                $this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+                $changedQuery |= $this->replaceInstanceInQuery($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$changedQuery = $changedQuery || $this->replaceInstanceInLink($results);
+				$changedQuery |= $this->replaceInstanceInLink($results);
 
 			}
 		}

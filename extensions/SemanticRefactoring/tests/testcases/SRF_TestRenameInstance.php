@@ -56,7 +56,7 @@ class SRFTestRenameInstance extends PHPUnit_Framework_TestCase {
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Thomas']);
-		$this->assertContains('[[Has colleague::Kai Kuehn]]', $log->getWikiText());
+		$this->assertContains('[[Has colleague:: Kai Kuehn]]', $log->getWikiText());
 	}
 
 	function testInstanceAsLink() {

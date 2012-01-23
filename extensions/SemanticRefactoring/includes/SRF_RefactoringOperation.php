@@ -30,21 +30,21 @@ require_once($smwgHaloIP.'/includes/SMW_OntologyManipulator.php');
 abstract class SRFRefactoringOperation {
 
 	protected $mBot;
-    protected $mRefOpTimeStamp;
-    
-    private $mGardeningLogCategory;
-	
+	protected $mRefOpTimeStamp;
+
+	private $mGardeningLogCategory;
+
 	protected function __construct() {
 		$this->mRefOpTimeStamp = wfTimestampNow();
 		$this->mGardeningLogCategory = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
 	}
-    /**
-     * Returns the number of pages which get processed in some way.
-     * 
-     * @return int
-     */
+	/**
+	 * Returns the number of pages which get processed in some way.
+	 *
+	 * @return int
+	 */
 	public abstract function getNumberOfAffectedPages();
-	
+
 	/**
 	 * Performs the actual refactoring
 	 *
@@ -53,10 +53,10 @@ abstract class SRFRefactoringOperation {
 	 * @param array & $testData
 	 */
 	public abstract function refactor($save = true, & $logMessages);
-	
+
 	/**
 	 * Set a GardeningBot to report progress
-	 * 
+	 *
 	 * @param GardeningBot $bot
 	 */
 	public function setBot(GardeningBot $bot) {
@@ -79,14 +79,14 @@ abstract class SRFRefactoringOperation {
 	private function trim(& $s, $i) {
 		$s = trim($s);
 	}
-	
+
 	/**
 	 * Stores the $wikitext in the article $title.
-	 * 
+	 *
 	 * @param Title $title
 	 * @param string wikitext
 	 * @param string comment
-	 * 
+	 *
 	 * @return Status
 	 */
 	public function storeArticle($title, $wikitext, $comment) {
@@ -99,50 +99,50 @@ abstract class SRFRefactoringOperation {
 		if (smwfGetSemanticStore()->isInCategory($title, $this->mGardeningLogCategory)) {
 			return Status::newFatal(wfMsg('sref_do_not_change_gardeninglog'));
 		}
-        $status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
-        return $status;
+		$status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
+		return $status;
 	}
-	
+
 	public function botWorked($worked) {
-		 if (!is_null($this->mBot)) $this->mBot->worked(1);
+		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
-	
-	
+
+
 	/**
 	 * Applies the given operations on the set of titles.
-	 * 
+	 *
 	 * NOTE:
 	 * Any titles to work on which are specified in the operation itself
 	 * are ignored!
-	 * 
+	 *
 	 * @param boolean $save
 	 * @param string[] $titles Full qualified titles
 	 * @param SRFRefactoringOperation[] $operations
 	 * @param array $logMessages
 	 */
 	public static function applyOperations($save = true, $titles, $operations, & $logMessages) {
-	
-        foreach($titles as $title_str) {
-            $title = Title::newFromText($title_str);
-            $rev = Revision::newFromTitle($title);
-            
-            $wikitext = $rev->getRawText();
-            foreach($operations as $op) {
-                $wikitext = $op->changeContent($title, $wikitext, $logMessages);
-                $op->botWorked(1);
-            }
-                
-            // stores article
-            if ($save) {
-                $status = $op->storeArticle($title, $wikitext, $rev->getRawComment());
-                if (!$status->isGood()) {
-                	$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-                    $l->setLogType(SREF_LOG_STATUS_WARN);
-                    $logMessages[$title->getPrefixedText()][] = $l;
-                }
-            }
-        }
-    
+
+		foreach($titles as $title_str) {
+			$title = Title::newFromText($title_str);
+			$rev = Revision::newFromTitle($title);
+
+			$wikitext = $rev->getRawText();
+			foreach($operations as $op) {
+				$wikitext = $op->changeContent($title, $wikitext, $logMessages);
+				$op->botWorked(1);
+			}
+
+			// stores article
+			if ($save) {
+				$status = $op->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+					$l->setLogType(SREF_LOG_STATUS_WARN);
+					$logMessages[$title->getPrefixedText()][] = $l;
+				}
+			}
+		}
+
 	}
 
 	protected function findObjectByID($node, $id, & $results) {
@@ -166,28 +166,46 @@ abstract class SRFRefactoringOperation {
 		}
 	}
 
-	
+
 
 	protected function replaceValueInAnnotation($objects) {
 		$changed = false;
 		foreach($objects as $o){
 
-			$value = $o->getPropertyValue();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-			$newValue = implode("; ", $values);
-			if ($value != $newValue) {
+			$value = $o->getSMWDataValue();
+			$newvalues = array();
+			$oldvalues = array();
+			if ($value instanceof SMWRecordValue) {
+				$dis = $value->getDataItems();
+				foreach($dis as $di) {
+					if ($di->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {
+						$title = $di->getTitle()->getPrefixedText();
+						$oldvalues[] = $title;
+						$this->replaceTitle($title, 0);
+						$newvalues[] = $title;
+					}
+				}
+			} else if ($value instanceof SMWWikiPageValue) {
+				$title = $value->getDataItem()->getTitle()->getPrefixedText();
+				$oldvalues[] = $title;
+				$this->replaceTitle($title, 0);
+				$newvalues[] = $title;
+			}
+			$oldValue = implode("; ", $oldvalues);
+			$newValue = implode("; ", $newvalues);
+			if ($oldValue != $newValue) {
 				$changed = true;
 			}
-
+            
 			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(),$newValue );
+			
 			$o->setSMWDataValue($newDataValue);
 
 		}
 		return $changed;
 	}
 
-	
+
 }
 
 

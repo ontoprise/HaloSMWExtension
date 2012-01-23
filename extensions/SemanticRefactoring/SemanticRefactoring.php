@@ -110,7 +110,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_removePropertyWithDomain',
 						    'sref_removePropertyWithDomain_help',
 						    'sref_removeQueriesWithCategories',
-						    'sref_removeQueries_help',
+						    'sref_removeQueriesWithCategories_help',
 						    'sref_includeSubcategories',
 						    'sref_includeSubcategories_help',
 						

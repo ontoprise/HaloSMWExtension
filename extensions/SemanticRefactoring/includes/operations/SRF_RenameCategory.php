@@ -102,7 +102,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
 				}
 			}
-			
+				
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
 		}
 
@@ -118,7 +118,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 	 */
 	public function replaceTitle(& $title, $index) {
 
-		if ($title == ":".$this->oldCategory->getPrefixedText()) {
+		if ($title == $this->oldCategory->getPrefixedText()) {
 			$changed = true;
 			$title = $this->newCategory->getPrefixedText();
 		}
@@ -151,6 +151,27 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		return $changed;
 	}
 
+	private function replaceCategoryInNestedProperty($objects) {
+		$changed = false;
+		foreach($objects as $o){
+           
+			$value = $o->getValueText();
+			$values = $this->splitRecordValues($value);
+			array_walk($values, array($this, 'replaceTitle'));
+			$newValue = implode("; ", $values);
+
+			if ($value != $newValue) {
+				$changed = true; //FIXME: may be untrue because of whitespaces
+				$new = new WOMNestPropertyValueModel();
+				$new->insertObject(new WOMTextModel($newValue));
+				$o->updateObject($new, $o->getLastObject()->getObjectID());
+			  
+			}
+
+		}
+		return $changed;
+	}
+
 
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
@@ -162,11 +183,14 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
-				$changedQuery = $changedQuery || $this->replaceCategoryInAnnotation($results);
+				$changedQuery |= $this->replaceCategoryInAnnotation($results);
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+				$changedQuery |= $this->replaceCategoryInNestedProperty($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$changedQuery = $changedQuery || $this->replaceCategoryInLink($results);
+				$changedQuery |=  $this->replaceCategoryInLink($results);
 
 			}
 		}
@@ -202,6 +226,7 @@ class SRFRenameCategoryOperation extends SRFRefactoringOperation {
 		if ($changedQuery) {
 			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
 		}
+		
 		return $wikitext;
 	}
 }
