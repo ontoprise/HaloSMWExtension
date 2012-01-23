@@ -179,7 +179,7 @@ class TSHelper {
 	public static function serializeDataItem(SMWDataItem $di) {
 		switch($di->getDIType()) {
 			case SMWDataItem::TYPE_GEO:
-				$text = implode(",",$object->getCoordinateSet());
+				$text = implode(",",$di->getCoordinateSet());
 				break;
 			case SMWDataItem::TYPE_NUMBER:
 				$text = $di->getNumber();
