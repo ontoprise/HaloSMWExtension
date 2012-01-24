@@ -61,6 +61,8 @@
 			from="2.1.2" to="2.1.2" />
 		<patch file="RichMediaPatchForSF2_2_1.txt" ext="semanticforms"
 			from="2.2.1" to="2.2.1" />
+		<patch file="RichMediaPatchForSF2_3_2.txt" ext="semanticforms"
+			from="2.3.2" to="2.3.2" />
 		<patch file="RichMediaPatchForMW1_15_3.txt" ext="mw" from="1.15.3"
 			to="1.15.3" />
 		<patch file="RichMediaPatchForMW1_16_0.txt" ext="mw" from="1.16.0"
