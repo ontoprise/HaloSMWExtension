@@ -32,6 +32,7 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
+require_once($srefgIP . '/includes/operations/SRF_RenameOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_RenameProperty.php');
 require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
