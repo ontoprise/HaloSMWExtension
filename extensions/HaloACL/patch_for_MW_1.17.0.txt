@@ -259,13 +259,18 @@ Index: includes/QueryPage.php
 ===================================================================
 --- includes/QueryPage.php	(revision 11800)
 +++ includes/QueryPage.php	(working copy)
-@@ -405,6 +405,14 @@
+@@ -405,6 +405,19 @@
  			# $res might contain the whole 1,000 rows, so we read up to
  			# $num [should update this to use a Pager]
  			for( $i = 0; $i < $num && $row = $dbr->fetchObject( $res ); $i++ ) {
 +/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
-+// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
-+				$title = Title::makeTitleSafe( $row->namespace, $row->title );
++// See http://dmwiki.ontoprise.com/dmwiki/index.php/SafeTitle
++				$title = null;
++				if (isset($row->namespace) && isset($row->title)) {
++					$title = Title::makeTitleSafe( $row->namespace, $row->title );
++				} else if (isset($row->id)) {
++					$title = Title::newFromID($row->id);
++				}
 +				if (!$title->userCanReadEx()) {
 +					continue;
 +				}
