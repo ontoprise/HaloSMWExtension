@@ -37,6 +37,7 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 				
 		$suite = new TestRenderArticlesSuite();
 		$suite->addTestSuite('TestTransclusion');
+		$suite->addTestSuite('TestMWSpecialPages');
 		return $suite;
 	}
 	
@@ -45,10 +46,7 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		
-		User::createNew("U1");
-    	User::createNew("U2");
-        User::idFromName("U1");  
-        User::idFromName("U2");  
+		HaloACLCommon::createUsers(array("U1", "U2"));
         
    		global $wgUser;
     	$wgUser = User::newFromName("U1");
@@ -133,6 +131,11 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 			'Category:ACL/Group',
 			'Category:ACL/Right',
 			'Category:ACL/ACL',
+			'Category:Super',
+			'Category:Sub',
+			'Category:AnotherSub',
+			'ArticleInSub',
+			'ACL:Category/Super',
 			'IncludedPage',
 			'IncludingPage',
 			'ACL:Page/IncludedPage'
@@ -155,6 +158,47 @@ ACL
 			'Category:ACL/ACL' =>
 <<<ACL
 This is the category for security descriptors.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:Super' =>
+<<<ACL
+This is a super category.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:Sub' =>
+<<<ACL
+This is a sub category.
+[[Category:Super]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:AnotherSub' =>
+<<<ACL
+This is a another sub category.
+[[Category:Super]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ArticleInSub' =>
+<<<ACL
+This is an article in sub category.
+[[Category:Sub]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ACL:Category/Super' =>
+<<<ACL
+{{#access: assigned to=User:U1
+ |actions=read,edit,formedit,wysiwyg,create,move,delete,annotate
+ |description=fullaccess for U:U1
+ |name=Right}}
+
+{{#manage rights: assigned to=User:U1}}
+
+[[Category:ACL/ACL]]
+
 ACL
 ,
 //------------------------------------------------------------------------------		
@@ -287,5 +331,84 @@ class TestTransclusion extends PHPUnit_Framework_TestCase {
     	$pos = strpos($html, $expectedMsg);
     	$this->assertTrue($pos !== false, "Protection for transclusion failed.");
     }
+    
+}
+
+/**
+ * This class tests if Mediawiki's special pages for listing articles hide 
+ * protected articles. Tests are applied to:
+ * - Special:UnusedCategories
+ * - Special:Categories
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php
+ * 
+ * @author thsc
+ *
+ */
+class TestMWSpecialPages extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+	// List of articles that were added during a test.
+	private $mAddedArticles = array();
+	
+    function setUp() {
+    }
+
+    /**
+     * Delete all articles that were created during a test.
+     */
+    function tearDown() {
+   		global $wgUser, $wgOut;
+    	$wgUser = User::newFromName("U1");
+    	
+		foreach ($this->mAddedArticles as $a) {
+		    $t = Title::newFromText($a);
+		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
+	    	$article = new Article($t);
+			$article->doDelete("Testing");
+		}
+    }
+
+    /**
+     * Data provider for testSpecialPages
+     */
+    function providerSpecialPages() {
+    	return array(
+	    	// $user, $specialPage, $content, $expectedContentPresent
+    		array('U1', 'Special:Categories', 'title="Category:Sub"', true),
+    		array('U2', 'Special:Categories', 'title="Category:Sub"', false),
+    		array('U1', 'Special:UnusedCategories', 'title="Category:AnotherSub"', true),
+    		array('U2', 'Special:UnusedCategories', 'title="Category:AnotherSub"', false),
+    	);
+    }
+
+    /**
+     * Checks if a protected article appears on a special page
+     * 
+     * @dataProvider providerSpecialPages
+     */
+    function testSpecialPages($user, $specialPage, $content, $expectedContentPresent) {
+
+    	global $wgUser;
+    	
+    	$wgUser = User::newFromName($user);
+    	
+    	global $wgOut;
+    	$wgOut = new OutputPage();
+    	$t = Title::newFromText($specialPage);
+    	SpecialPage::executePath($t);
+    	$html = $wgOut->getHTML();
+    	
+    	$pos = strpos($html, $content);
+    	if ($expectedContentPresent) {
+    		// We expect the $content to be present
+    		$this->assertTrue($pos !== false, "The expected content was not found.");
+    	} else {
+    		// We expect the $content to be absent
+    		$this->assertTrue($pos === false, "The content was found but supposed to be missing.");
+    	}
+    }
+    
     
 }
