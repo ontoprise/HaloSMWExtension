@@ -643,7 +643,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 			}
 			try {
 				global $smwgHaloTripleStoreGraph;
-				$con = TSConnection::getConnector();
+        $con = TSConnection::getConnector();
 				$con->connect();
 
 				// if graph parameter is set but empty or set and null, no wikigraph is given

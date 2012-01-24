@@ -897,10 +897,28 @@ function qiGetPropertyInformation($relationName) {
 	$arity = 2;
 	$units = '';
 
-	//get types
-	$relationTitle = SMWDIWikiPage::newFromTitle(Title::newFromText($relationName, SMW_NS_PROPERTY));
+	//search for iri in wiki namespaces and create title from only local part
+  $title = TSHelper::getTitleFromURI($relationName, false);
+
+  //if not found then search for this iri in other namespaces
+  if(!($title instanceof Title)){
+    $mappings = TSCMappingStore::getAllNamespaceMappings();
+    foreach($mappings as $prefix => $iri) {
+      //if found then create title from local part with first capital letter prefix appended
+      if(strpos($relationName, $iri) === 0){
+        $title = Title::newFromText(str_replace($iri, ucfirst($prefix) . '/', $relationName) , SMW_NS_PROPERTY);
+        break;
+      }
+    }
+  }
+
+  if(!($title instanceof Title)){
+    $title = Title::newFromText($relationName, SMW_NS_PROPERTY);
+  }
+  
+  $relationWikiPage = SMWDIWikiPage::newFromTitle($title);
 	$hasTypeDI = SMWDIProperty::newFromUserLabel("_TYPE");
-	$types = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDI);
+	$types = smwfGetStore()->getPropertyValues($relationWikiPage, $hasTypeDI);
 
 	//procede if types is set
 	if (isset($types)) {

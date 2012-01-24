@@ -92,10 +92,15 @@ function smwf_ts_getSyncCommands() {
     return implode("\n", $sparulCommands);
 }
 
+/**
+ * Get all wiki prefixes as string excluding:
+ *  cat, prop, *_talk
+ * @return string prefixes
+ */
 function smwf_ts_getWikiPrefixes() {
   $prefixes = TSNamespaces::getAllPrefixes();
   //remove cat: and prop: prefixes
-  $pattern = '/PREFIX\s+(?:cat|prop):<[^>]+>\r*\s+/i';
+  $pattern = '/PREFIX\s+(?:cat|prop|[^:]+_talk):<[^>]+>\r*\s+/i';
   $replacement = '';
   return preg_replace($pattern, $replacement, $prefixes);
 }
