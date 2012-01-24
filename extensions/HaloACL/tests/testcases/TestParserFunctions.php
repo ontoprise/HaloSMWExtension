@@ -53,12 +53,8 @@ class TestParserFunctionsSuite extends PHPUnit_Framework_TestSuite
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		
-		User::createNew("U1");
-    	User::createNew("U2");
-        User::idFromName("U1");  
-        User::idFromName("U2");  
-        Skin::getSkinNames();
-        
+		HaloACLCommon::createUsers(array("U1", "U2"));
+		        
         $this->mArticleManager = new ArticleManager();
     	$this->mArticleManager->createACLBaseArticles("U1");
 	}

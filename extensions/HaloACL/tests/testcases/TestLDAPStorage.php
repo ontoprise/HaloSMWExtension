@@ -37,11 +37,8 @@ class TestLDAPStorageSuite extends PHPUnit_Framework_TestSuite
 	}
 	
 	protected function setUp() {
-    	User::createNew("U1");
-    	User::createNew("U2");
-    	User::idFromName("U1");  
-    	User::idFromName("U2");  
-    	Skin::getSkinNames();
+		HaloACLCommon::createUsers(array("U1", "U2"));
+		Skin::getSkinNames();
 
 		$_SESSION['wsDomain'] = "TestLDAP";
 		

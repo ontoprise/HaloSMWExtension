@@ -54,10 +54,7 @@ class TestGroupPermissionsSuite extends PHPUnit_Framework_TestSuite
 		global $wgGroupPermissions;
 		self::$mGroupPermissions = $wgGroupPermissions;
 		
-    	User::createNew("U1");
-    	User::createNew("U2");
-    	User::idFromName("U1");  
-    	User::idFromName("U2");  
+		HaloACLCommon::createUsers(array("U1", "U2"));
     	Skin::getSkinNames();
     	
     	HACLStorage::reset(HACL_STORE_SQL);

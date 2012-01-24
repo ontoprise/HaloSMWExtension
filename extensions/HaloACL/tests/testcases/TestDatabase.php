@@ -43,13 +43,8 @@ class TestDatabaseSuite extends PHPUnit_Framework_TestSuite
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		
-    	User::createNew("U1");
-    	User::createNew("U2");
-        User::createNew("U3");
-        User::createNew("U4");
-        User::createNew("U5");
-        User::createNew("U6");
-        
+		HaloACLCommon::createUsers(array("U1", "U2", "U3", "U4", "U5", "U6"));
+		
         $this->initArticleContent();
         $this->createArticles();
 		

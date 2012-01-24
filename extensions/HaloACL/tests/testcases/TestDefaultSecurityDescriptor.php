@@ -38,11 +38,8 @@ class TestDefaultSecurityDescriptorSuite extends PHPUnit_Framework_TestSuite
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);
 		
-		User::createNew("U1");
-    	User::createNew("U2");
-        User::idFromName("U1");  
-        User::idFromName("U2");  
-        
+		HaloACLCommon::createUsers(array("U1", "U2"));
+		        
    		global $wgUser;
     	$wgUser = User::newFromName("U1");
     	
