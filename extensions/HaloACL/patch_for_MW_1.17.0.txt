@@ -15,6 +15,24 @@ Index: includes/specials/SpecialAllpages.php
  					if( $t ) {
  						$link = ( $s->page_is_redirect ? '<div class="allpagesredirect">' : '' ) .
  							$sk->linkKnown( $t, htmlspecialchars( $t->getText() ) ) .
+Index: includes/specials/SpecialCategories.php
+===================================================================
+--- includes/specials/SpecialCategories.php	(revision 11800)
++++ includes/specials/SpecialCategories.php	(working copy)
+@@ -116,6 +116,13 @@
+ 	function formatRow($result) {
+ 		global $wgLang;
+ 		$title = Title::makeTitle( NS_CATEGORY, $result->cat_title );
++		/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++		// See http://dmwiki.ontoprise.com:8888/dmwiki/index.php/SafeTitle
++		if (!$title->userCanReadEx()) {
++			return "";
++		}
++		/*op-patch|TS|2009-06-19|end*/
++		
+ 		$titleText = $this->getSkin()->link( $title, htmlspecialchars( $title->getText() ) );
+ 		$count = wfMsgExt( 'nmembers', array( 'parsemag', 'escape' ),
+ 				$wgLang->formatNum( $result->cat_pages ) );
 Index: includes/specials/SpecialExport.php
 ===================================================================
 --- includes/specials/SpecialExport.php	(revision 11800)
