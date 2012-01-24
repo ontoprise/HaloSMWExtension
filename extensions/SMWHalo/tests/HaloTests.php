@@ -34,7 +34,6 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 require_once 'testcases/TestSemanticStore.php';
 require_once 'testcases/TestWikiEQI.php';
 require_once 'testcases/TestAutocompletionStore.php';
-require_once 'testcases/TestWikiJobs.php';
 require_once 'testcases/TestDataAPI.php';
 
 require_once 'testcases/TestQueryPrinters.php';
@@ -48,15 +47,15 @@ class HaloTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('SMWHalo');
 
-		//		$suite->addTestSuite("TestSemanticStore");
-		//		$suite->addTestSuite("TestWikiEQI");
-		//		$suite->addTestSuite("TestAutocompletionStore");
+		$suite->addTestSuite("TestSemanticStore");
+		$suite->addTestSuite("TestWikiEQI");
+		$suite->addTestSuite("TestAutocompletionStore");
 		$suite->addTestSuite("TestQueryPrintersSuite");
-		//		$suite->addTestSuite("TestWikiJobs");
-		//		$suite->addTestSuite("TestDataAPI");
-		//		$suite->addTestSuite("TestQIAjaxAccess");
-		//		$suite->addTestSuite("TestBuiltinPropertiesSuite");
-		//		$suite->addTestSuite("TestOntologyManipulatorSuite");
+
+		$suite->addTestSuite("TestDataAPI");
+		$suite->addTestSuite("TestQIAjaxAccess");
+		$suite->addTestSuite("TestBuiltinPropertiesSuite");
+		$suite->addTestSuite("TestOntologyManipulatorSuite");
 		return $suite;
 	}
 }

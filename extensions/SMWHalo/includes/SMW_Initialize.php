@@ -254,9 +254,9 @@ function smwgHaloSetupExtension() {
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 
-	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_UpdateLinksAfterMoveJob';
-	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_UpdateCategoriesAfterMoveJob';
-	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_UpdatePropertiesAfterMoveJob';
+	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_DummyJob';
+	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_DummyJob';
+	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_DummyJob';
 
 
 
@@ -333,10 +333,8 @@ function smwgHaloSetupExtension() {
 	}
 
 
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateLinksAfterMoveJob.php');
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdatePropertiesAfterMoveJob.php');
-	require_once($smwgHaloIP . '/includes/Jobs/SMW_UpdateCategoriesAfterMoveJob.php');
-
+	require_once($smwgHaloIP . '/includes/Jobs/SMW_DummyJob.php');
+	
 
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
