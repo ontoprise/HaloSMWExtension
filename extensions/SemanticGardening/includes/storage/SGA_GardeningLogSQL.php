@@ -329,11 +329,11 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 	private  function createGardeningLogFile($botID, $date, $logContent, $logPageTitle = null) {
 		if($logPageTitle == null){
 			$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
-			$title = Title::newFromText($botID."_at_".$timeInTitle);
+			$title = Title::newFromText($botID."_at_".$timeInTitle, SGA_NS_LOG);
 			$article = new Article($title);
 			$article->insertNewArticle($logContent, "Logging of $botID at ".$this->getDBDate($date), false, false);
 		} else {
-			$title = Title::newFromText($logPageTitle);
+			$title = Title::newFromText($logPageTitle, SGA_NS_LOG);
 		}
 
 		return $title;

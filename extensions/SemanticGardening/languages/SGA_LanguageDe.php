@@ -27,7 +27,7 @@
  */
 class SGA_LanguageDe {
     
-    public $contentMessages = array();
+    public $contentMessages = array('smw_gard_log_ns' => 'Log');
     
     public $userMessages = array (
 	/* Messages for Gardening */
