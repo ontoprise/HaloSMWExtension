@@ -105,8 +105,6 @@ class ASFFormPrinter extends SFFormPrinter {
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
 			parent::formHTML( $form_def, $form_submitted, $source_is_page, null, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 
-		file_put_contents('d://formdef-works.html', $form_text);	
-			
 		if($postProcess && $form_submitted){
 			$data_text = 
 				ASFWikiTextManipulator::getInstance()->getWikiTextForSaving($generated_page_name, $data_text,  $existingAnnotations);
