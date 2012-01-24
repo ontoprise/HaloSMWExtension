@@ -19,6 +19,12 @@
  * 
  */
  
+.sref_warning {
+    color: red;
+    font-size: medium; 
+    font-weight: bold;
+}
+ 
 #sref_querybox {
 	 
     height: 250px;
@@ -137,4 +143,11 @@
 
 .sref_operation_selector {
 	width: 150px;
+}
+
+/*
+* DataExplorer dialogs
+*/
+.sref_option_table {
+    border-top: 1px solid #000;
 }

@@ -414,6 +414,7 @@
 		},
 		
 		formatComment: function(comment) {
+			if (comment == null) return '';
 			var comments = comment.split(/\n/);
 			if (comments.length == 1) return comment;
 			var html = "<ul>";

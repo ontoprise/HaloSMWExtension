@@ -44,6 +44,7 @@ require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateParameter.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeValue.php');
 require_once($srefgIP . '/includes/operations/SRF_DeleteCategory.php');
 require_once($srefgIP . '/includes/operations/SRF_DeleteProperty.php');
+require_once($srefgIP . '/includes/operations/SRF_RenameOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_RenameCategory.php');
 require_once($srefgIP . '/includes/operations/SRF_RenameInstance.php');
 require_once($srefgIP . '/includes/operations/SRF_RenameProperty.php');
@@ -106,6 +107,12 @@ class SRFRefactoringBot extends GardeningBot {
 
 		return trim($result);
 	}
+	
+	private static function createLink($name, $ns = NS_MAIN) {
+		$title = Title::newFromText( $name, $ns );
+		$url = $title->getFullURL();
+		return '<a href="'.$url.'">'.$title->getPrefixedText().'</a>';
+	}
 
 	/**
 	 * Returns a human-readible message for an operation
@@ -128,7 +135,8 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New instance missing";
 				}
 				$newInstance = $paramArray['newInstance'];
-				return wfMsg($msg, $oldInstance, $newInstance);
+				
+				return wfMsg($msg, self::createLink($oldInstance), self::createLink($newInstance));
 				break;
 			case 'renameProperty':
 				if (!array_key_exists('oldProperty', $paramArray)) {
@@ -140,7 +148,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New property missing";
 				}
 				$newProperty = $paramArray['newProperty'];
-				return wfMsg($msg, $oldProperty, $newProperty);
+				return wfMsg($msg, self::createLink($oldProperty, SMW_NS_PROPERTY), self::createLink($newProperty, SMW_NS_PROPERTY));
 				 
 
 				break;
@@ -154,8 +162,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New property missing";
 				}
 				$newCategory = $paramArray['newCategory'];
-				return wfMsg($msg, $oldCategory, $newCategory);
-
+                return wfMsg($msg, self::createLink($oldCategory, NS_CATEGORY), self::createLink($newCategory, NS_CATEGORY));
 
 				break;
 			case 'deleteCategory' :
@@ -164,7 +171,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$category = $paramArray['category'];
 
-				return wfMsg($msg, $category);
+				return wfMsg($msg,  self::createLink($category, NS_CATEGORY));
 
 				break;
 			case 'deleteProperty' :
@@ -173,7 +180,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$property = $paramArray['property'];
 				 
-				return wfMsg($msg, $property);
+				return wfMsg($msg, self::createLink($property, SMW_NS_PROPERTY));
 				break;
 
 			case 'addCategory':
@@ -181,14 +188,14 @@ class SRFRefactoringBot extends GardeningBot {
 					return '';
 				}
 				$category = $paramArray['category'];
-				return wfMsg($msg, $category);
+				return wfMsg($msg,  self::createLink($category, NS_CATEGORY));
 				break;
 			case 'removeCategory':
 				if (!array_key_exists('category', $paramArray)) {
 					return '';
 				}
 				$category = $paramArray['category'];
-				return wfMsg($msg, $category);
+				return wfMsg($msg,  self::createLink($category, NS_CATEGORY));
 				break;
 			case 'replaceCategory':
 				if (!array_key_exists('old_category', $paramArray)) {
@@ -199,7 +206,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return '';
 				}
 				$new_category = $paramArray['new_category'];
-				return wfMsg($msg, $old_category, $new_category);
+				return wfMsg($msg,  self::createLink($old_category, NS_CATEGORY), self::createLink($new_category, NS_CATEGORY));
 				break;
 			case 'addAnnotation' :
 				if (!array_key_exists('property', $paramArray)) {
@@ -210,8 +217,8 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				return wfMsg($msg, $property, $value);
-
+				
+                return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
 				break;
 
 			case 'removeAnnotation' :
@@ -223,7 +230,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				return wfMsg($msg, $property, $value);
+				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
 
 				break;
 
@@ -240,7 +247,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-				return wfMsg($msg, $property, $old_value, $new_value);
+			    return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $old_value, $new_value);
 
 				break;
 
@@ -253,7 +260,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				return wfMsg($msg, $property, $value);
+				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
 
 				break;
 
@@ -270,7 +277,8 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				return wfMsg($msg, $template, $parameter, $value);
+				
+				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $value);
 
 				break;
 
@@ -291,8 +299,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-				return wfMsg($msg, $template, $parameter, $old_value, $new_value);
-
+                return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $old_value, $new_value);
 				break;
 
 			case 'renameTemplateParameter' :
@@ -309,7 +316,8 @@ class SRFRefactoringBot extends GardeningBot {
 					return "new_parameter missing";
 				}
 				$new_parameter = $paramArray['new_parameter'];
-				return wfMsg($msg, $template, $old_parameter, $new_parameter);
+				
+				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $old_parameter, $new_parameter);
 				break;
 		}
 	}
@@ -565,7 +573,7 @@ class SRFRefactoringBot extends GardeningBot {
 
 			// normal bot call
 			$operation = $paramArray['SRF_OPERATION'];
-			$op = $this->getOperation($operation, $titles, $paramArray);
+			$op = $this->getOperation($operation, NULL, $paramArray);
 			$num = $op->getNumberOfAffectedPages();
 			$op->setBot($this);
 			$this->setNumberOfTasks(1);
@@ -609,7 +617,10 @@ class SRFRefactoringBot extends GardeningBot {
 				$log .= "\n**".$lm->asWikiText();
 			}
 		}
-
+        
+		if (trim($log) == '') {
+			$log = "Nothing done.";
+		}
 		return $log;
 	}
 }

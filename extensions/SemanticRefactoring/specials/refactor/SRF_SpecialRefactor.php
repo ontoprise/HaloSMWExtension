@@ -50,11 +50,20 @@ class SemanticRefactoring extends SpecialPage {
 		global $wgOut, $wgRequest;
 		$wgOut->setPageTitle(wfMsg('semanticrefactoring'));
 		$adminPage = Title::newFromText(wfMsg('semanticrefactoring'), NS_SPECIAL);
-
+        $html = "";
+        
+        // check gardening right and print warning
+		global $wgUser;
+        if (is_null($wgUser) || !$wgUser->isAllowed('gardening')) {
+        	$warning = '<span class="sref_warning">'.wfMsg('sref_warning_no_gardening')."</span>";
+			$html = $warning;
+        }
+        
 		// description text
 		$helpLink = '<a target="_blank" href="'.SRFF_HELP_URL.'">SMW-Forum</a>';
-		$html = "<div>".wfMsg('sref_specialrefactor_description', $helpLink)."</div>";
-
+		$html .= "<div>".wfMsg('sref_specialrefactor_description', $helpLink)."</div>";
+        
+		// check if gardening right and print a warning if not
 		// query box
 		$spectitle = $this->getTitleFor( 'SemanticRefactoring' );
 		$query_val = $wgRequest->getVal( 'q' );

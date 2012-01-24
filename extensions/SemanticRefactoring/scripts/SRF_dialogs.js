@@ -27,66 +27,84 @@
 		htmlTemplate : function(operation) {  
 		
 			var template = '<form action="" method="get" id="sref_option_form" operation="'+operation+'">'
-				+ '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
+				+ '<table cellspacing="0" id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
 				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
 				+ '<tr><td colspan="2">'
 				+ '%%OPTIONS%%'
-				+ '<tr><td colspan="2"><input type="button" id="sref_start_operation" value="'
+				+ '<tr><td colspan="2">%%WARNING%%<input type="button" id="sref_start_operation" value="'
 				+ mw.msg('sref_start_operation') + '"></input></td></tr>' + '</table></form>';
 			
 			return template;
 		},
 
-		newCheckbox : function(id, checked, requiresBot) {
-			var checkedAttribute = checked ? 'checked="true"' : '';
-			var html = '<tr><td colspan="2"><input type="checkbox" id="' + id
+		newCheckbox : function(id, checked, requiresBot, granted) {
+			
+			var disabled = granted ? "" : 'disabled="true"'; 
+			var checkedAttribute = checked && granted ? 'checked="true"' : '';
+			var html = '<tr><td class="sref_option_table" colspan="2"><input type="checkbox" id="' + id
 					+ '" ' + checkedAttribute + ' requiresBot="'
-					+ (requiresBot ? "true" : "false") + '">' + mw.msg(id)
-					+ '</input></td><td>'+mw.msg(id+"_help")+'</td></tr>';
+					+ (requiresBot ? "true" : "false") + '" '+disabled+'>' + mw.msg(id)
+					+ '</input></td><td class="sref_option_table">'+mw.msg(id+"_help")+'</td></tr>';
 			return html;
 		},
 
 		createHtml : function(type) {
 			var dialogMode = content[type];
 			var checkBoxRows = "";
+			var granted = false;
+			var validGroups = mw.config.get('srefValidGroups').groups;						
+			$(mw.config.get('wgUserGroups')).each(function(i, e) {
+				var j;
+				for( j = 0; j < validGroups.length; j++) {
+					if (validGroups[j] == e) { 
+						granted = true;
+					}
+				}
+			});
 			for (checkBox in dialogMode) {
 				checkBoxRows += content.newCheckbox(checkBox,
-						dialogMode[checkBox][0], dialogMode[checkBox][1])
+						dialogMode[checkBox][0], dialogMode[checkBox][1], dialogMode[checkBox][2] | granted)
 			}
-			return content.htmlTemplate(type).replace(/%%OPTIONS%%/, checkBoxRows);
+			var html = content.htmlTemplate(type).replace(/%%OPTIONS%%/, checkBoxRows);
+			if (!granted) {
+				html = html.replace(/%%WARNING%%/, '<span class="sref_warning">'+mw.msg("sref_warning_no_gardening")+'</span>');
+			} else {
+				html = html.replace(/%%WARNING%%/, "");
+			}
+			return html;
 		},
 
 		renameInstance : {
-			'sref_rename_instance' : [ true, false ],
-			'sref_rename_annotations' : [ true, true ]
+			'sref_rename_instance' : [ true, false, true ],
+			'sref_rename_annotations' : [ true, true, false ]
 		},
 		
 		renameProperty : {
-			'sref_rename_property' : [ true, false ],
-			'sref_rename_annotations' : [ true, true ]
+			'sref_rename_property' : [ true, false , true],
+			'sref_rename_annotations' : [ true, true, false ]
 		},
 
 		renameCategory : {
-			'sref_rename_category' : [ true, false ],
-			'sref_rename_annotations' : [ true, true ]
+			'sref_rename_category' : [ true, false, true ],
+			'sref_rename_annotations' : [ true, true, false ]
 		},
 
 		deleteCategory : {
-			'sref_deleteCategory' : [ true, false ],
-			'sref_removeInstances' : [ true, true ],
-			'sref_removeCategoryAnnotations': [ true, true ] ,
+			'sref_deleteCategory' : [ true, false, true ],
+			'sref_removeInstances' : [ true, true, false ],
+			'sref_removeCategoryAnnotations': [ true, true, false ] ,
 			/*'removeFromDomain' : [ false, true ],*/
-			'sref_removePropertyWithDomain' : [ false, true ],
-			'sref_removeQueriesWithCategories' : [ true, true ],
-			'sref_includeSubcategories' : [ false, true ],
+			'sref_removePropertyWithDomain' : [ false, true, false ],
+			'sref_removeQueriesWithCategories' : [ true, true, false ],
+			'sref_includeSubcategories' : [ false, true, false ],
 		},
 		
 		deleteProperty : {
-			'sref_deleteProperty' : [ true, false ],
-			'sref_removeInstancesUsingProperty' : [ true, true ],
-			'sref_removePropertyAnnotations': [ true, true ] ,
-			'sref_removeQueriesWithProperties' : [ false, true ],
-			'sref_includeSubproperties' : [ false, true ]
+			'sref_deleteProperty' : [ true, false, '*' ],
+			'sref_removeInstancesUsingProperty' : [ true, true, 'gardening' ],
+			'sref_removePropertyAnnotations': [ true, true, 'gardening' ] ,
+			'sref_removeQueriesWithProperties' : [ false, true , 'gardening'],
+			'sref_includeSubproperties' : [ false, true, 'gardening' ]
 			
 		}
 	}

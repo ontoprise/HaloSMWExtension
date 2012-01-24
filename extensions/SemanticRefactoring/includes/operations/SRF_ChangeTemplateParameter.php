@@ -47,6 +47,7 @@ class SRFChangeTemplateParameterOperation extends SRFRefactoringOperation {
 
 	public function refactor($save = true, & $logMessages) {
 		foreach($this->instanceSet as $title) {
+			if ($title->getNamespace() == SGA_NS_LOG) continue;
 			$rev = Revision::newFromTitle($title);
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
 

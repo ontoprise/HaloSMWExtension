@@ -4,6 +4,7 @@ $messages = array();
 $messages['en'] = array(
     'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Start refactoring',
+    'sref_warning_no_gardening' => 'You can not run gardening bots due to missing rights! You need the "gardening" right.',
 
     /*rename*/
     'sref_rename_instance' => 'Rename instance',
@@ -132,6 +133,7 @@ $messages['en'] = array(
 $messages['de'] = array(
     'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Starte Refactoring',
+    'sref_warning_no_gardening' => 'You can not run gardening bots due to missing rights! You need the "gardening" right.',
     
     /*rename*/
     'sref_rename_instance' => 'Rename instance',

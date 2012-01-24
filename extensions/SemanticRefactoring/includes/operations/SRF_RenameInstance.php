@@ -16,31 +16,25 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFRenameInstanceOperation extends SRFRefactoringOperation {
-	private $oldInstance;
-	private $newInstance;
+class SRFRenameInstanceOperation extends SRFRenameOperation {
 
-	private $affectedPages;
 
-	public function __construct($oldInstance, $newInstance) {
+	public function __construct($old, $new) {
 		parent::__construct();
-		$this->oldInstance = Title::newFromText($oldInstance);
-		$this->newInstance = Title::newFromText($newInstance);
+		$this->old = Title::newFromText($old);
+		$this->new = Title::newFromText($new);
 
 
 	}
 
-	public function getNumberOfAffectedPages() {
-		$this->affectedPages = $this->queryAffectedPages();
-		return count($this->affectedPages);
-	}
+   
 
 	public function queryAffectedPages() {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
-		// get all pages using $this->oldInstance in an annotation
+		// get all pages using $this->old in an annotation
 		$titles = array();
-		$instanceDi = SMWDIWikiPage::newFromTitle($this->oldInstance);
+		$instanceDi = SMWDIWikiPage::newFromTitle($this->old);
 		$properties = smwfGetStore()->getInProperties($instanceDi);
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $instanceDi);
@@ -48,21 +42,26 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 				$titles[] = $s->getTitle();
 			}
 		}
+		print_r($titles);
+		
 
 		// get all pages which uses links with that instance
-		$subjects = $this->oldInstance->getLinksTo();
+		$subjects = $this->old->getLinksTo();
 		foreach($subjects as $s) {
+			if ($s->isRedirect()) continue;
 			$titles[] = $s;
 		}
+		print_r($titles);
 
-		// get all queries using $this->oldInstance
+		// get all queries using $this->old
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
-		$queryMetadataPattern->instanceOccurences = array($this->oldInstance->getPrefixedText() => true);
-		 
+		$queryMetadataPattern->instanceOccurences = array($this->old->getPrefixedText() => true);
+			
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$titles[] = Title::newFromText($s->usedInArticle);
 		}
+		print_r($titles);
 
 
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
@@ -74,7 +73,7 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		$this->queryAffectedPages();
 
 		foreach($this->affectedPages as $title) {
-
+            if ($title->getNamespace() == SGA_NS_LOG) continue;
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
@@ -93,53 +92,7 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 
 	}
 
-	/**
-	 * Replaces old title with new.
-	 * Callback method for array_walk
-	 *
-	 * @param string $title Prefixed title
-	 * @param int $index
-	 */
-	protected function replaceTitle(& $title, $index) {
-		if ($title == $this->oldInstance->getPrefixedText()) {
-			$changed = true;
-			$title = $this->newInstance->getPrefixedText();
-		}
-	}
-
-	private function replaceInstanceInLink($objects) {
-		$changed = false;
-		foreach($objects as $o){
-			$value = $o->getLink();
-
-			if ($value == $this->oldInstance->getPrefixedText()) {
-				$o->setLink($this->newInstance->getPrefixedText());
-				$changed = true;
-			}
-		}
-		return $changed;
-	}
 	
-    private function replaceInstanceInQuery($objects) {
-        $changed = false;
-        foreach($objects as $o){
-        	
-            $value = $o->getValueText();
-            $values = $this->splitRecordValues($value);
-            array_walk($values, array($this, 'replaceTitle'));
-            $newValue = implode("; ", $values);
-
-            if ($value != $newValue) {
-                $changed = true; //FIXME: may be untrue because of whitespaces
-                $new = new WOMNestPropertyValueModel();
-                $new->insertObject(new WOMTextModel($newValue));
-               $o->updateObject($new, $o->getLastObject()->getObjectID());
-            }
-
-        }
-        return $changed;
-    }
-
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
@@ -149,24 +102,24 @@ class SRFRenameInstanceOperation extends SRFRefactoringOperation {
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PARSERFUNCTION);
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
-			$results = array();
-                $this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
-                $changedQuery |= $this->replaceInstanceInQuery($results);
+				$results = array();
+				$this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+				$changedQuery |= $this->replaceValueInNestedProperty($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$changedQuery |= $this->replaceInstanceInLink($results);
+				$changedQuery |= $this->replaceLink($results);
 
 			}
 		}
-		
+
 		# iterate through the annotation values
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
 		$changedValueinAnnotation = $this->replaceValueInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$changedLink = $this->replaceInstanceInLink($objects);
+		$changedLink = $this->replaceLink($objects);
 
 
 		# TODO: iterate through rules

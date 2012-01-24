@@ -22,37 +22,32 @@
  * @author Kai Kuehn
  *
  */
-class SRFRenamePropertyOperation extends SRFRefactoringOperation {
+class SRFRenamePropertyOperation extends SRFRenameOperation {
 
-	private $oldProperty;
-	private $newProperty;
-	private $affectedPages;
+	
 
-	public function __construct($oldProperty, $newProperty) {
+	public function __construct($old, $new) {
 		parent::__construct();
-		$this->oldProperty = Title::newFromText($oldProperty, SMW_NS_PROPERTY);
-		$this->newProperty = Title::newFromText($newProperty, SMW_NS_PROPERTY);;
+		$this->old = Title::newFromText($old, SMW_NS_PROPERTY);
+		$this->new = Title::newFromText($new, SMW_NS_PROPERTY);;
 
 	}
 
-	public function getNumberOfAffectedPages() {
-		$this->affectedPages = $this->queryAffectedPages();
-		return count($this->affectedPages);
-	}
+	
 
 	public function queryAffectedPages() {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		$titles=array();
 		// get all pages using $this->property
-		$propertyDi = SMWDIProperty::newFromUserLabel($this->oldProperty->getText());
+		$propertyDi = SMWDIProperty::newFromUserLabel($this->old->getText());
 		$subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
 		foreach($subjects as $s) {
 			$titles[] = $s->getTitle();
 		}
 
 		// get all pages using $this->property
-		$objectDi = SMWDIWikiPage::newFromTitle($this->oldProperty);
+		$objectDi = SMWDIWikiPage::newFromTitle($this->old);
 		$properties = smwfGetStore()->getInProperties($objectDi);
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $objectDi);
@@ -71,16 +66,16 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 
 		// get all pages which uses links to $this->property
-		$subjects = $this->oldProperty->getLinksTo();
+		$subjects = $this->old->getLinksTo();
 		foreach($subjects as $s) {
 			$titles[] = $s;
 		}
 
 		// get all queries using $this->property
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
-		$queryMetadataPattern->instanceOccurences = array($this->oldProperty->getPrefixedText() => true);
-		$queryMetadataPattern->propertyConditions = array($this->oldProperty->getText() => true);
-		$queryMetadataPattern->propertyPrintRequests = array($this->oldProperty->getText() => true);
+		$queryMetadataPattern->instanceOccurences = array($this->old->getPrefixedText() => true);
+		$queryMetadataPattern->propertyConditions = array($this->old->getText() => true);
+		$queryMetadataPattern->propertyPrintRequests = array($this->old->getText() => true);
 
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
@@ -96,7 +91,7 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 		$this->queryAffectedPages();
 
 		foreach($this->affectedPages as $title) {
-
+            if ($title->getNamespace() == SGA_NS_LOG) continue;
 
 			$rev = Revision::newFromTitle($title);
 
@@ -115,106 +110,23 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 
 	}
 
-
-	/**
-     * Replaces old property with new.
-     * Callback method for array_walk
-     *
-     * @param string $title Prefixed title
-     * @param int $index
-     */
-    protected function replaceTitle(& $title, $index) {
-
-        // some properties appear only with their local
-        // name in annotations (e.g. Subproperty of)
-        if ($title == $this->oldProperty->getPrefixedText()
-        || $title == $this->oldProperty->getText()) {
-
-            $title = $this->newProperty->getPrefixedText();
-        }
-    }
 	
-	private function replacePropertyInAnnotation($objects) {
-		$changed = false;
-		foreach($objects as $o){
-
-			$name = $o->getProperty()->getDataItem()->getLabel();
-			if ($name == $this->oldProperty->getText()) {
-				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
-				$changed = true;
-			}
-
-			$value = $o->getPropertyValue();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-			$newValue = implode("; ", $values);
-
-			if ($value != $newValue) {
-				$changed = true; //FIXME: may be untrue because of whitespaces
-			}
-
-			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(), $newValue);
-			$o->setSMWDataValue($newDataValue);
-
-		}
-		return $changed;
-	}
-
-	private function replacePropertyInQuery($objects) {
-		$changed = false;
-		foreach($objects as $o){
-
-			$name = $o->getProperty()->getDataItem()->getLabel();
-			if ($name == $this->oldProperty->getText()) {
-				$o->setProperty(SMWPropertyValue::makeUserProperty($this->newProperty->getText()));
-				$changed = true;
-			}
-
-			$value = $o->getValueText();
-			$values = $this->splitRecordValues($value);
-			array_walk($values, array($this, 'replaceTitle'));
-			$newValue = implode("; ", $values);
-
-			if ($value != $newValue) {
-				$changed = true; //FIXME: may be untrue because of whitespaces
-				$new = new WOMNestPropertyValueModel();
-				$new->insertObject(new WOMTextModel($newValue));
-				$o->updateObject($new, $o->getLastObject()->getObjectID());
-			}
-
-		}
-		return $changed;
-	}
-
-	private function replacePropertyInLink($objects) {
-		$changed = false;
-		foreach($objects as $o){
-
-
-			$value = $o->getLink();
-
-			if ($value == $this->oldProperty->getPrefixedText()) {
-				$o->setLink($this->newProperty->getPrefixedText());
-				$changed = true;
-			}
-		}
-		return $changed;
-	}
-
-	private function replacePrintout($o) {
+	protected function replacePrintout($o) {
 		$changed = false;
 
 		$value = $o->getProperty();
 		$value = trim($value);
 
-		if ($value == $this->oldProperty->getText()) {
-			$o->setXMLAttribute('property', $this->newProperty->getText());
+		if ($this->equalsOld($value)) {
+			$o->setXMLAttribute('property', $this->getNew()->getText());
 			$changed=true;
 		}
 
 
 		return $changed;
 	}
+
+
 	public function changeContent($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
@@ -226,15 +138,20 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
-				$changedQuery |= $this->replacePropertyInQuery($results);
+				$changedQuery |= $this->replaceValueInNestedProperty($results);
+				
+				$results = array();
+                $this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+                $changedQuery |= $this->replacePropertyInNestedProperty($results);
+				
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
-				$changedQuery |= $this->replacePropertyInLink($results);
+				$changedQuery |= $this->replaceLink($results);
 
 				$results = array();
 				$this->findObjectByID($o, WOM_TYPE_QUERYPRINTOUT, $results);
 				foreach($results as $o) {
-						
+
 					$changedQuery |= $this->replacePrintout($o);
 				}
 			}
@@ -243,10 +160,11 @@ class SRFRenamePropertyOperation extends SRFRefactoringOperation {
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
 		$changedAnnotation = $this->replacePropertyInAnnotation($objects);
+		$changedAnnotation |= $this->replaceValueInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
-		$changedLink = $this->replacePropertyInLink($objects);
+		$changedLink = $this->replaceLink($objects);
 
 
 		# TODO: iterate through rules

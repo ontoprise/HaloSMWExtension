@@ -168,42 +168,7 @@ abstract class SRFRefactoringOperation {
 
 
 
-	protected function replaceValueInAnnotation($objects) {
-		$changed = false;
-		foreach($objects as $o){
-
-			$value = $o->getSMWDataValue();
-			$newvalues = array();
-			$oldvalues = array();
-			if ($value instanceof SMWRecordValue) {
-				$dis = $value->getDataItems();
-				foreach($dis as $di) {
-					if ($di->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {
-						$title = $di->getTitle()->getPrefixedText();
-						$oldvalues[] = $title;
-						$this->replaceTitle($title, 0);
-						$newvalues[] = $title;
-					}
-				}
-			} else if ($value instanceof SMWWikiPageValue) {
-				$title = $value->getDataItem()->getTitle()->getPrefixedText();
-				$oldvalues[] = $title;
-				$this->replaceTitle($title, 0);
-				$newvalues[] = $title;
-			}
-			$oldValue = implode("; ", $oldvalues);
-			$newValue = implode("; ", $newvalues);
-			if ($oldValue != $newValue) {
-				$changed = true;
-			}
-            
-			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(),$newValue );
-			
-			$o->setSMWDataValue($newDataValue);
-
-		}
-		return $changed;
-	}
+	
 
 
 }

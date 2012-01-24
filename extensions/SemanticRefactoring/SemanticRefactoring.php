@@ -57,12 +57,26 @@ function sreffSetupExtension() {
 	$wgAutoloadClasses['SRFRenameCategoryOperation'] = $srefgIP . '/includes/operations/SRF_RenameCategory.php';
 	$wgAutoloadClasses['SRFRenameInstanceOperation'] = $srefgIP . '/includes/operations/SRF_RenameInstance.php';
 	$wgAutoloadClasses['SRFRenamePropertyOperation'] = $srefgIP . '/includes/operations/SRF_RenameProperty.php';
-
+    
+	global $wgHooks;
+	$wgHooks['ResourceLoaderGetConfigVars'][] = 'srefSetResourceLoaderConfigVars';
+	
 	global $wgOut;
 	sreffRegisterJSModules($wgOut);
 
 	require_once($srefgIP . '/includes/SRF_Bot.php');
 	new SRFRefactoringBot();
+}
+
+function srefSetResourceLoaderConfigVars( &$vars ) {
+	 // add groups having the 'gardening' right
+    $groups = array();
+    global $wgGroupPermissions;
+    foreach($wgGroupPermissions as $group => $arr) {
+        if (array_key_exists('gardening', $arr)) $groups[] = $group;
+    }
+    $vars['srefValidGroups']['groups'] = $groups;
+    return true;
 }
 
 /**
@@ -91,6 +105,7 @@ function sreffRegisterJSModules(& $out) {
         'dependencies' => array('ext.smw.style', 'ext.smw.tooltips', 'ext.smw.sorttable'
             ),
          'messages' => array('sref_start_operation',
+                            'sref_warning_no_gardening',
                             'sref_rename_instance',
                             'sref_rename_instance_help',
                             'sref_rename_property',
@@ -174,7 +189,7 @@ function sreffRegisterJSModules(& $out) {
     )
     );
 
-    
+   
     // add modules
     $out->addModules(array('ext.semanticrefactoring.dialogs'));
     
