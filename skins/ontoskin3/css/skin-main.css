@@ -164,43 +164,44 @@ textarea {
 /* ---------------------------------*/
 /* ---------->>> MENU <<<-----------*/
 /* ---------------------------------*/
-#home {
-	float: left;
-}
-
-#home:hover {
-	background-color: #AAD1DE;
-}
-
-.smwh_menuhead {
-	margin: 0 3px;
-}
-
 #smwh_menu {
 	background: #269FB2 none;
 	border: 1px solid #269FB2;
 	box-shadow: inset 0 1px 2px #AAD1DE, inset 0 -1px 2px #AAD1DE;
 	clear: both;
-	height: 28px;
-	padding: 10px 0;
-}
-
-.smwh_menudropdown {
-	/*background: url(../img/menu_arrow.gif) right no-repeat;*/
+	height: 48px;
 }
 
 #smwh_menu .editsection {
 	display: none;
 }
 
+#home {
+	float: left;
+	height: 30px;
+	margin-top: -1px;
+	padding: 10px 0;
+}
+
+#home:hover {
+	background-color: #AAD1DE;
+}
+
+.smwh_menudropdown {
+	/*background: url(../img/menu_arrow.gif) right no-repeat;*/
+}
+
 #smwh_menu .smwh_menulist {
-	padding: 0;
+	float: left;
 	margin: 0;
+	padding: 0;
 }
 
 .smwh_menulist .smwh_menuhead {
 	display: inline-block;
-	padding: 0 10px;
+	height: 30px;
+	margin: -1px 3px 0;
+	padding: 10px;
 }
 
 .smwh_menulist .smwh_menuhead > p,
@@ -225,61 +226,74 @@ textarea {
 	z-index: 25;
 }
 
-/*
-* Show menus when mouse is over the proper item
-*/
 #smwh_menu .hovering .smwh_menuhead p {
 	color: #404040;
 }
 
-#smwh_menu .hovering .smwh_menuhead {
-	background: #AAD1DE;
-	border-radius: 3px 3px 0 0 ;
-	-webkit-border-radius: 3px 3px 0 0 ;
+#smwh_menu .hovering .smwh_menuhead,
+#smwh_menu .smwh_active .smwh_menuhead {
+	background: #AAD1DE;;
+/*	box-shadow: inset 0 1px 2px #269FB2, inset 0 -1px 2px #269FB2;*/
+	
+	background: linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* W3C */
+	background: -moz-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#269FB2), color-stop(30%,#AAD1DE)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* IE10+ */
+	
 	cursor: pointer;
-	margin: 0 3px;
 }
 
-#smwh_menu .hovering .smwh_menubody {
-	display: block;
-}
-
-/*
-* Show the more menu when mouse is over the more tab
-*/
-#more.hovering .smwh_menubody {
-	display: block !important;
-}
-
-.smwh_menulist .smwh_menubody {
+.smwh_menubody {
 	display: none;
 	position: absolute;
-	width: auto;
 	z-index: 20;
 }
 
-#smwh_menuhead_more  {
-	background: url(../img/more_menu_arrow.gif) right no-repeat;
+.smwh_menubody.open {
+	display: block;
 }
 
-.smwh_menulist .smwh_menubody td a {
+.autoW {
+	width: auto;
+}
+
+.smwh_megamenu {
+	position: inherit;
+	margin-bottom: 3px;
+}
+
+#smwh_menuhead_more {
+	background: url(../img/more_menu_arrow.gif) right no-repeat;
+	padding: 0 10px;
+	height: auto;
+}
+
+#smwh_menubody_more a {
+	font-size: 1em;
+	font-weight: normal;
+}
+
+.smwh_menubody td a {
 	padding: 3px 0 3px 3px;
 }
 
-.smwh_menulist .smwh_menubody td:hover,
-.smwh_menulist .smwh_menubody td:hover a {
+.smwh_menubody td:hover,
+.smwh_menubody td:hover a {
 	background-color: #d8e1e2;
 	text-decoration: none;
 }
 
-.smwh_menulist .smwh_menubody .hovering  {
+.smwh_menubody .hovering  {
 	background-image: none;
 	background-repeat: repeat;
 	background-attachment: scroll;
 	background-position: 0 0;
 }
 
-.smwh_menulist .smwh_menubody_visible {
+.smwh_menubody_visible {
+/*	replace with gradient*/
 	background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;
 	border: 2px solid #DFDFDC;
 	border-radius: 5px;
@@ -287,8 +301,8 @@ textarea {
 	padding: 5px;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible a,
-#smwh_menu .smwh_menulist .smwh_menubody_visible strong {
+.smwh_menubody_visible a,
+.smwh_menubody_visible strong {
 	color: #116988;
 	display:list-item;
 	font-size: 80%;
@@ -299,42 +313,42 @@ textarea {
 	vertical-align: middle;
 }
 
-.smwh_menulist .smwh_menubody_visible a:hover{
-   color: #FFF;
+.smwh_menubody_visible a:hover{
+/*	color: #FFF;*/
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .productsmenu a,
-#smwh_menu .smwh_menulist .smwh_menubody_visible .productsmenu strong {
+.smwh_menubody_visible .productsmenu a,
+.smwh_menubody_visible .productsmenu strong {
 	font-weight:bold;
 	padding-bottom: 0;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .table-wrapper {
+.smwh_menubody_visible .table-wrapper {
 	position:relative;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .table {
+.smwh_menubody_visible .table {
 	border-collapse:collapse;
 	border-spacing: 0;
 	display:table;
 	width:100%;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .table-row {
+.smwh_menubody_visible .table-row {
 	display:table-row
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .table-cell {
+.smwh_menubody_visible .table-cell {
 	display:table-cell;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .icon-double {
+.smwh_menubody_visible .icon-double {
 	bottom: 0;
 	position: absolute;
 	top: 0;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .about a {
+.smwh_menubody_visible .about a {
 	color: grey;
 	display: list-item;
 	font-size: 80%;
@@ -346,57 +360,54 @@ textarea {
 	vertical-align: middle;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .icon img {
+.smwh_menubody_visible .icon img {
 	vertical-align: middle;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .table-cell > img {
+.smwh_menubody_visible .table-cell > img {
 	padding: 3px 0 3px 3px;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .MenuThumbButton a {
+.smwh_menubody_visible .MenuThumbButton a {
 	height: 106px;
 	padding: 2px;
 	width: 145px;
 }
 
-#smwh_menu .smwh_menulist .smwh_menubody_visible .MenuThumbButton a:hover {
+.smwh_menubody_visible .MenuThumbButton a:hover {
 	background-color: #828282;
 }
 
 /* selects hover event of the last column of the "Semantic Enterprise Wiki" group in the Products mega menu  */
-.smwh_menulist .smwh_menubody .SemanticEnterpriseWikiGroup tr td:last-child:hover  {
+.smwh_menubody .SemanticEnterpriseWikiGroup tr td:last-child:hover  {
 	background-color:transparent;
 }
 
 /* selects hover event of the last row of the "Semantic Enterprise Wiki" group in the Products mega menu  */
-.smwh_menulist .smwh_menubody .SemanticEnterpriseWikiGroup tr:last-child td:hover a {
+.smwh_menubody .SemanticEnterpriseWikiGroup tr:last-child td:hover a {
 	background-color:transparent;
 }
 
-#menuleft {
-	float: left;
-}
-
-#menuleft .smwh_menubody {
+.smwh_menubody {
 	left: 0em;
-}
-
-#menuright {
-	float: right;
-}
-
-#menuright .smwh_menubody {
-	right: 0em;
 }
 
 #toolsimage {
 	margin-left: 5px;
 }
 
+/*
+* Show the more menu when mouse is over the more tab
+*/
+#more.open .smwh_menubody {
+	display: block !important;
+}
+
+
 /* search */
 #smwh_search {
 	float: right;
+	margin-top: 10px;
 }
 
 #simpleSearch {
@@ -634,7 +645,7 @@ textarea {
 	display: none;
 }
 
-#tabsleft .smwh_menulist .hovering .smwh_menubody {
+#tabsleft .smwh_menulist .open .smwh_menubody {
 	display: block;
 }
 
@@ -761,10 +772,10 @@ textarea {
 	border: 1px solid #CACAC4;
 	padding: 5px;
 }
-#smwh_treeview_close {
+
+.smwh_treeview_close {
 	position: absolute;
-	right: 5px;
-	top: 7px;
+	right: 10px;
 }
 
 #smwh_treeviewtoggleleft {

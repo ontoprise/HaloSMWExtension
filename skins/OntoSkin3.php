@@ -17,7 +17,9 @@
  *
  */
 
-/**    This skin is based on Monobook from Mediawiki 1.15
+/**    
+ * @todo: remove this? 
+ * This skin is based on Monobook from Mediawiki 1.15
  *     changes making this compatible to Mediawiki 1.13 have been marked
  */
 if ( !defined( 'MEDIAWIKI' ) )
@@ -31,8 +33,10 @@ if ( !defined( 'MEDIAWIKI' ) )
 class SkinOntoSkin3 extends SkinTemplate {
 
 	function __construct() {
-		global $wgResourceModules, $wgStylePath, $wgStyleDirectory;
+		global $wgResourceModules, $wgStylePath, $wgStyleDirectory, $wgHooks;
 
+		$wgHooks['ResourceLoaderGetConfigVars'][] = 'SkinOntoSkin3::setResourceLoaderConfigVars';
+		
 		$wgResourceModules['skins.ontoskin3'] = array(
 			'styles' => array(
 				'ontoskin3/css/skin-main.css' => array( 'media' => 'screen' ),
@@ -40,11 +44,12 @@ class SkinOntoSkin3 extends SkinTemplate {
 				'ontoskin3/css/skin-printable.css' => array( 'media' => 'print' ),
 			),
 			'scripts' => array(
-				'ontoskin3/javascript/skin.js'
+//				'ontoskin3/javascript/skin.js',
+				'ontoskin3/javascript/jquery.ontoskin.js'
 			),
 			'remoteBasePath' => $wgStylePath,
 			'localBasePath' => $wgStyleDirectory,
-			'dependencies' => 'jquery.placeholder'
+			'dependencies' => array( 'jquery.cookie', 'jquery.placeholder' )
 		);
 	}
 
@@ -54,12 +59,11 @@ class SkinOntoSkin3 extends SkinTemplate {
 	 *
 	 * */
 	function initPage( OutputPage $out ) {
-
 		parent::initPage( $out );
 		$this->skinname = 'ontoskin3';
 		$this->stylename = 'ontoskin3';
 		$this->template = 'OntoSkin3Template';
-		$this->addResourceModules($out);
+		$this->addResourceModules( $out );
 	}
 
 	function getSkinName() {
@@ -72,9 +76,20 @@ class SkinOntoSkin3 extends SkinTemplate {
 	}
 
 	function addResourceModules( OutputPage $out ) {
-		$out->addModuleScripts( 'skins.ontoskin3' );
+		$out->addModules( 'skins.ontoskin3' );
 		// Add the module for the tree view
-		$out->addModules('ext.TreeView.tree');
+		$out->addModules( 'ext.TreeView.tree' );
+	}
+
+	static function setResourceLoaderConfigVars( &$vars ) {
+		global $wgOntoSkinConfig;
+
+		foreach( $wgOntoSkinConfig as $key => $val ) {
+			$vars['wgOntoSkin'][$key] = $val;
+		}
+
+//		$vars['wgOntoSkin'] = 'test';
+		return true;
 	}
 }
 
@@ -170,7 +185,7 @@ class OntoSkin3Template extends QuickTemplate {
 						<!-- /logo -->
 						<!-- personalbar -->
 						<div id="smwh_personal">
-							<a id="personal_expand" class="limited" href="javascript:smwh_Skin.resizePage()">Change view</a>
+							<a id="personal_expand" class="limited" href="#">Change view</a>
 							<?php
 								foreach ( $this->data['personal_urls'] as $key => $item ) {
 									//echo $key;
@@ -193,7 +208,7 @@ class OntoSkin3Template extends QuickTemplate {
 				</div>
 				<!-- /header -->
 				<!-- menu -->
-				<div id="smwh_menu">
+				<div id="smwh_menu" class="clearfix">
 					<div class="smwh_center">
 						<div id="home">
 							<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'p-logo' ); ?>>
@@ -292,10 +307,10 @@ class OntoSkin3Template extends QuickTemplate {
 		?>
 		<!-- searchBox -->
 		<div id="smwh_search" class="portlet">
-			<div id="searchBody" class="pBody" >
+			<div id="searchBody" class="pBody">
 				<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform">
 					<input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
-					<div id="createNewArticleCtrl">
+					<div id="createNewArticleCtrl" style="float:left;">
 						<img src="<?php echo $wgScriptPath . '/extensions/SMWHalo/skins/CreateNewArticle/Addcontent.png' ?>"></img>New page
 					</div>
 					<div style="float:left">

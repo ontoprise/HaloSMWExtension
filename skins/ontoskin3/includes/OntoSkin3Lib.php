@@ -57,15 +57,15 @@ class SMWH_Skin {
 		}
 
 		$index = 0;
-		$menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
+		$menu = "<ul class=\"smwh_menulist\">";
 		foreach ( $rawmenu as $menuName => $menuItems ) {
 			$menu.= "<li class=\"smwh_menulistitem\">";
 
 			//Check if submenu exists
 			if ( count( $menuItems ) > 0 ) {
 				//If it's a dropdown menu with items in it, add specific css class for traingle as visualization
-				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead smwh_menudropdown\">" . $this->parseWikiText( $menuName ) . "</div>";
-				$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody\">";
+				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">" . $this->parseWikiText( $menuName ) . "</div>";
+				$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody autoW\">";
 				$menu.= "<div class=\"smwh_menubody_visible\">";
 				foreach ( $menuItems as $menuItem ) {
 					$menu.= "<div class=\"smwh_menuitem\">" . $this->buildMenuItemHtml( $menuItem ) . "</div>";
@@ -661,16 +661,16 @@ class SMWH_Skin {
 		if ( $tree != null && $tree != "" ) {
 
 			//Add the left treeview button
-			$treeview = '<div id="smwh_treeviewtoggleleft" title="' . wfMsg( 'smw_treeviewleft' ) . '">';
+			$treeview = '<div id="smwh_treeviewtoggleleft" style="display:none" title="' . wfMsg( 'smw_treeviewleft' ) . '">';
 			$treeview .= '</div>';
 
 			//Add the right treeview button
-			$treeview .= '<div id="smwh_treeviewtoggleright" title="' . wfMsg( 'smw_treeviewright' ) . '">';
+			$treeview .= '<div id="smwh_treeviewtoggleright" style="display:none" title="' . wfMsg( 'smw_treeviewright' ) . '">';
 			$treeview .= '</div>';
 
 			//Add the treeview itself
 			$treeview .= '<div id="smwh_treeview">';
-			$treeview .= '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
+			$treeview .= '<div id="smwh_treeview_head">SemanticTreeview <a class="smwh_treeview_close" href="#"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
 			$treeview .= '<div id="smwh_treeview_content">';
 			$treeview .= $tree;
 			$treeview .= "</div>";
