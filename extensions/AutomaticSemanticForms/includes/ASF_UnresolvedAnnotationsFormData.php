@@ -77,6 +77,7 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		
 		$this->propertiesFormData = array();
 		foreach($unresolvedAnnotations as $name => $dontCare){
+			$name = str_replace(array("\n", "\r", '\t'), array('', '', ''), $name); 
 			$this->propertiesFormData[$name] = 
 				new ASFPropertyFormData(Title::newFromText($name, SMW_NS_PROPERTY));
 		}

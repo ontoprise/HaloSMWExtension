@@ -61,10 +61,10 @@ class ASFFormPrinter extends SFFormPrinter {
 	 * parent method and then does some postprocessing.
 	 */
 	function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $embedded = false ) {
-
+		
 		$postProcess = false;
 		if($formDefinition = ASFFormGenerator::getInstance()->getFormDefinition()){
-
+			
 			if(is_null($existing_page_content)){
 				$existing_page_content = '';
 			}
@@ -95,16 +95,18 @@ class ASFFormPrinter extends SFFormPrinter {
 				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 			}
 
-			$form_def = $formDefinition->getFormDefinition(); 
-			
+			$form_def = $formDefinition->getFormDefinition();
+
 			$page_name_formula = $formDefinition->getPageNameTemplate();
 			
 			$postProcess = true;
 		}
 
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
-			parent::formHTML( $form_def, $form_submitted, $source_is_page, $form_id, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
+			parent::formHTML( $form_def, $form_submitted, $source_is_page, null, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 
+		file_put_contents('d://formdef-works.html', $form_text);	
+			
 		if($postProcess && $form_submitted){
 			$data_text = 
 				ASFWikiTextManipulator::getInstance()->getWikiTextForSaving($generated_page_name, $data_text,  $existingAnnotations);

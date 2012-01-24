@@ -32,13 +32,15 @@ class ASFFormEdit extends SFFormEdit {
 	 * It adds some ASF features and then calls its parent method
 	 */
 	function execute($query, $redirectOnError = true) {
-	
+		
 		if($this->doRedirect()){
 			return true;
 		}
 	
 		//get get parameters
 		global $wgRequest;
+		
+		echo('<pre>'.print_r($wgRequest, true).'</pre>');
 		
 		$categoryParam = $wgRequest->getVal('categories');
 		
@@ -98,7 +100,7 @@ class ASFFormEdit extends SFFormEdit {
 			//The given instance will be edited with forms for the given categories
 			
 			//first deal with preloading form input fields
-			if(is_array($wgRequest->getArray('Property', null))){
+			if(!$wgRequest->wasPosted() && is_array($wgRequest->getArray('Property', null))){
 				$wgRequest->setVal('CreateSilentAnnotations:', $wgRequest->getArray('Property', null));
 			}
 			

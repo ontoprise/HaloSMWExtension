@@ -45,6 +45,10 @@ class ASFParserFunctions {
 			array( 'ASFParserFunctions', 'renderQTip'));
 		$parser->setFunctionHook( 'qTipHelp', 
 			array( 'ASFParserFunctions', 'renderQTipHelp'));
+			
+		//overwrite original formlink parser function
+		$parser->setFunctionHook( 'formlink', 
+			array( 'ASFParserFunctions', 'renderFormLink' ) );
 
 			
 		return true;
@@ -583,8 +587,20 @@ class ASFParserFunctions {
 		
 		//end form tag
 		$str .= '</form><p>';
-			
+
 		return $parser->insertStripItem( $str, $parser->mStripState );
+	}
+	
+	public static function renderFormLink ( &$parser ) {
+
+		$params = func_get_args();
+		
+		//echo('<pre>'.print_r($params, true).'</pre>');
+		
+		$params[0] = &$parser;
+		$params[1] = '='.$params[1];
+		
+		return call_user_func_array('SFParserFunctions::renderFormLink', $params);
 	}
 }
 
