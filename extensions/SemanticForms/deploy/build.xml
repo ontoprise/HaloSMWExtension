@@ -37,7 +37,7 @@
 
     <copy todir="bin/zip/extensions/SemanticForms/patches/RichMedia">
       <fileset dir="../../RichMedia/">
-        <include name="RichMediaPatchForSF2_2_1.txt" />
+        <include name="RichMediaPatchForSF2_3_2.txt" />
       </fileset>
     </copy>
 
@@ -108,7 +108,7 @@
       <arg value="-d" />
       <arg value="${basedir}/../../../" />
       <arg value="-p" />
-      <arg value="../patches/SMWHalo/patch_for_SF2.1.2.txt" />
+      <arg value="../patches/SMWHalo/patch_for_SF2.3.2.txt" />
       <arg value="--patchtool" />
       <arg value="${patchtool}" />
     </exec>
@@ -118,7 +118,7 @@
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patches/WYSIWYG/patch_for_SF_2.1.2.txt" />
+			<arg value="../patches/WYSIWYG/patch_for_SF_2.3.2.txt" />
 __FIX_THIS_LINE_WHEN_COMMENT_REMOVED__			<arg value="        - -        patchtool" />
 			<arg value="${patchtool}" />
 		</exec>

@@ -148,7 +148,7 @@
       <arg value="-d" />
       <arg value="${basedir}/../../../" />
       <arg value="-p" />
-      <arg value="../RichMediaPatchForSF2_2_1.txt" />
+      <arg value="../RichMediaPatchForSF2_3_2.txt" />
       <arg value="--patchtool" />
       <arg value="${patchtool}" />
     </exec>
