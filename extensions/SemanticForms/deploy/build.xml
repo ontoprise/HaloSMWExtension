@@ -35,24 +35,6 @@
       </fileset>
     </copy>
 
-    <copy todir="bin/zip/extensions/SemanticForms/patches/RichMedia">
-      <fileset dir="../../RichMedia/">
-        <include name="RichMediaPatchForSF2_3_2.txt" />
-      </fileset>
-    </copy>
-
-    <copy todir="bin/zip/extensions/SemanticForms/patches/SMWHalo">
-      <fileset dir="../../SMWHalo/">
-        <include name="patch_for_SF2.3.2.txt" />
-      </fileset>
-    </copy>
-
-    <copy todir="bin/zip/extensions/SemanticForms/patches/WYSIWYG">
-      <fileset dir="../../WYSIWYG/">
-        <include name="patch_for_SF_2.3.2.txt" />
-      </fileset>
-    </copy>
-
     <copy todir="bin/zip/extensions/SemanticForms">
       <fileset dir="../">
         <include name="COPYING" />
@@ -100,29 +82,6 @@
       <arg value="--patchtool" />
       <arg value="${patchtool}" />
     </exec>
-  </target>
-  <target name="patches" depends="patch_sf_only">
-    <echo message="${patchtool}" />
-    <exec executable="php">
-      <arg value="../../../patches/patch.php" />
-      <arg value="-d" />
-      <arg value="${basedir}/../../../" />
-      <arg value="-p" />
-      <arg value="../patches/SMWHalo/patch_for_SF2.3.2.txt" />
-      <arg value="--patchtool" />
-      <arg value="${patchtool}" />
-    </exec>
-    <!--
-		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
-			<arg value="-d" />
-			<arg value="${basedir}/../../../" />
-			<arg value="-p" />
-			<arg value="../patches/WYSIWYG/patch_for_SF_2.3.2.txt" />
-__FIX_THIS_LINE_WHEN_COMMENT_REMOVED__			<arg value="        - -        patchtool" />
-			<arg value="${patchtool}" />
-		</exec>
--->
   </target>
 
   <target name="checkos">

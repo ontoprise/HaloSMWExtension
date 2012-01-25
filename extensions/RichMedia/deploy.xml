@@ -16,7 +16,7 @@
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
-			<dependency from="2.2.1" to="2.2.1">semanticforms</dependency>
+			<dependency from="2.3.2" to="2.3.2">semanticforms</dependency>
 			<dependency from="1.6.0" to="1.7.0">smwplus</dependency>
 		</dependencies>
 	</global>
