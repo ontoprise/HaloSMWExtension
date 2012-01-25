@@ -1,6 +1,11 @@
 Semantic Gardening extension ChangeLog
 ======================================
 
+VERSION 1.3.6
+
+	CHANGES
+	  The Export Ontology Bot has been disabled. In the next version it will be replaced by a new one, which will be part of the Deployment Framework. 
+
 VERSION 1.3.3
 
   FEATURES:
