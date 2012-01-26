@@ -119,6 +119,7 @@ var ASFAdmin = {
 		
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
+			type : 'POST',
 			data: {
 				'action' : 'ajax',
 				'rs' : 'asff_saveForm',
