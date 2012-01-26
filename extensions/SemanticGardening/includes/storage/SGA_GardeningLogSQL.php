@@ -64,7 +64,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 				  'timestamp_end' 	=>	'VARCHAR(14) '.$collation.'',
 				  'useremail'   	=>  'VARCHAR(255) '.$collation.'',
 				  'log'				=>	'VARCHAR(255) '.$collation.'',
-		          'comment'         =>  'VARCHAR(255) '.$collation.'',
+		          'comment'         =>  'MEDIUMBLOB',
 				  'progress'		=>	'DOUBLE'), $db, $verbose);
 
 
