@@ -539,9 +539,8 @@ class DFCommandInterface {
      * @param string $commandLineToStart Command to start (with parameters)
      */
     public function startProcess($commandLineToStart, $operation) {
-        $runAsUser = DF_Config::$df_runas_user;
-        $password = DF_Config::$df_runas_password;
-
+        $runAsUser = isset(DF_Config::$df_runas_user) ? DF_Config::$df_runas_user : NULL;
+        $password = isset(DF_Config::$df_runas_password) ? DF_Config::$df_runas_password : NULL;
 
         if (Tools::isWindows()) {
             if (!is_null($runAsUser)) {
