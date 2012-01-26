@@ -117,6 +117,7 @@ class SMWQueryProcessor {
 			foreach ( $orders as $key => $order ) { // normalise
 				$order = strtolower( trim( $order ) );
 				if ( ( $order == 'descending' ) || ( $order == 'reverse' ) || ( $order == 'desc' ) ) {
+				
 					$orders[$key] = 'DESC';
 				} elseif ( ( $order == 'random' ) || ( $order == 'rand' ) ) {
 					$orders[$key] = 'RANDOM';
@@ -134,25 +135,25 @@ class SMWQueryProcessor {
 			$query->sort = true;
 			$query->sortkeys = array();
 				
-			foreach ( explode( ',', trim( $params['sort'] ) ) as $sort ) {
-				$sort = smwfNormalTitleDBKey( trim( $sort ) ); // slight normalisation
-				$order = current( $orders );
-				if ( $order === false ) { // default
-					$order = 'ASC';
-				}
-
-				if ( array_key_exists( $sort, $query->sortkeys ) ) {
-					// maybe throw an error here?
-				} else {
-					$query->sortkeys[$sort] = $order;
-				}
-
-				next( $orders );
-			}
+		foreach ( explode( ',', $params['sort'] ) as $sort ) {
+                $propertyValue = SMWPropertyValue::makeUserProperty( trim( $sort ) );
+                if ( $propertyValue->isValid() ) {
+                    $sortkey = $propertyValue->getDataItem()->getKey();
+                    $order = current( $orders );
+                    if ( $order === false ) { // default
+                        $order = 'ASC';
+                    }
+                    $query->sortkeys[$sortkey] = $order; // should we check for duplicate sort keys?
+                    next( $orders );
+                } else {
+                    $query->addErrors( $propertyValue->getErrors() );
+                }
+            }
 				
 			if ( current( $orders ) !== false ) { // sort key remaining, apply to page name
 				$query->sortkeys[''] = current( $orders );
 			}
+			
 		} elseif ( $format == 'rss' ) { // unsorted RSS: use *descending* default order
 			///TODO: the default sort field should be "modification date" (now it is the title, but
 			///likely to be overwritten by printouts with label "date").
