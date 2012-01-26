@@ -38,7 +38,7 @@ class SRFChangeTemplateOperation extends SRFRefactoringOperation {
 		return $this->instanceSet;
 	}
 
-	public function getNumberOfAffectedPages() {
+	public function getWork() {
 		return count($this->instanceSet);
 	}
 

@@ -6,7 +6,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	protected $affectedPages;
 
 
-	public function getNumberOfAffectedPages() {
+	public function getWork() {
 		$this->affectedPages = $this->queryAffectedPages();
 		return count($this->affectedPages);
 	}

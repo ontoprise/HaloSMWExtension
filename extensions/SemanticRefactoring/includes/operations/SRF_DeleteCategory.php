@@ -28,27 +28,19 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 	var $affectedPages;
 
 	public function __construct($category, $options) {
-        parent::__construct();
+		parent::__construct();
 		$this->category = Title::newFromText($category, NS_CATEGORY);
 		$this->options = $options;
 		$this->affectedPages = NULL;
 	}
 
-	public function getNumberOfAffectedPages() {
+	public function getWork() {
 
-		$this->affectedPages = $this->queryAffectedPages();
-		$num = (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true")
-		|| (array_key_exists('sref_removeCategoryAnnotations', $this->options) && $this->options['sref_removeCategoryAnnotations'] == "true") ? count($this->affectedPages['instances']) : 0;
-
-		$num += array_key_exists('sref_removeQueriesWithCategories', $this->options) && $this->options['sref_removeQueriesWithCategories'] == "true" ? count($this->affectedPages['queries']) : 0;
-
-		if (array_key_exists('sref_includeSubcategories', $this->options) && $this->options['sref_includeSubcategories'] == "true") {
-
-			if (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true") {
-				$num += $smwfGetSemanticStore()->getNumberOfInstancesAndSubcategories();
-			} else {
-				$subcategories = $store->getSubCategories($this->category);
-				$num += count($subcategories);
+		$num = $this->getWorkForCategory($this->category);
+		if ($this->isOptionSet('sref_includeSubcategories', $this->options)) {
+			$subcategories = $store->getSubCategories($this->category);
+			foreach($subcategories as $s) {
+				$num += $this->getWorkForCategory($s);
 			}
 		}
 
@@ -56,26 +48,37 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 	}
 
 	public function queryAffectedPages() {
+		return $this->getAffectedPagesForCategory($this->category);
+	}
 
+	private function getWorkForCategory($category) {
+		$affectedPages = $this->getAffectedPagesForCategory($category);
+		$num = $this->isOptionSet('sref_removeInstances', $this->options) ? count($affectedPages['instances']) : 0;
+		$num += $this->isOptionSet('sref_removeFromDomain', $this->options) ? count($affectedPages['propertiesWithDomain']) : 0;
+		$num += count($affectedPages['queries']) + count($affectedPages['instances']);
+	}
+
+
+	private function getAffectedPagesForCategory($category) {
 		// calculate only once
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		$store = smwfGetSemanticStore();
-		$instances = $store->getDirectInstances($this->category);
-		$directSubcategories = $store->getDirectSubCategories($this->category);
+		$instances = $store->getDirectInstances($category);
+		$directSubcategories = $store->getDirectSubCategories($category);
 
 		// get all queries $this->category is used in
 		$queries=array();
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
-		$queryMetadataPattern->instanceOccurences = array($this->category->getPrefixedText() => true);
-		$queryMetadataPattern->categoryConditions = array($this->category->getText() => true);
+		$queryMetadataPattern->instanceOccurences = array($category->getPrefixedText() => true);
+		$queryMetadataPattern->categoryConditions = array($category->getText() => true);
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$queries[] = Title::newFromText($s->usedInArticle);
 		}
 
 		// get properties with domain and/or ranges
-		$propertiesWithDomain = $store->getPropertiesWithDomain($this->category);
+		$propertiesWithDomain = $store->getPropertiesWithDomain($category);
 
 		$this->affectedPages = array();
 		$this->affectedPages['instances'] = $instances;
@@ -103,18 +106,16 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);
-			
+
 		}
 
-		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries'],$this->affectedPages['propertiesWithDomain']);
-		$set = SRFTools::makeTitleListUnique($set);
 
 
 		// if instances are completely removed, there is no need to remove annotations before
-		foreach($set as $i) {
-			$a = new Article($i);
+		if (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true") {
+			foreach($this->affectedPages['instances'] as $i) {
+				$a = new Article($i);
 
-			if (array_key_exists('sref_removeInstances', $this->options) && $this->options['sref_removeInstances'] == "true") {
 				$deleted = true;
 				if ($save) {
 					$deleted = SRFTools::deleteArticle($a);
@@ -128,9 +129,44 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 
-				continue; // continue if article is completely removed.
-			}
 
+			}
+		}
+
+		if (array_key_exists('sref_removeFromDomain', $this->options) && $this->options['sref_removeFromDomain'] == "true"
+		&& SRFTools::containsTitle($i, $this->affectedPages['propertiesWithDomain'])) {
+			foreach($this->affectedPages['propertiesWithDomain'] as $i) {
+				// if the property should be completly removed
+				if (array_key_exists('sref_removePropertyWithDomain', $this->options) && $this->options['sref_removePropertyWithDomain'] == "true") {
+					$deleted = true;
+					if ($save) {
+						$deleted = SRFTools::deleteArticle($i);
+					}
+					if ($deleted) {
+						$logMessages[][] = new SRFLog('Article deleted',$i);
+					} else {
+						$logMessages[][] = new SRFLog('Deletion failed',$i);
+					}
+
+					continue; // continue if completely removed.
+				}
+
+				$rev = Revision::newFromTitle($i);
+				if (is_null($rev)) continue;
+				$wikitext = $rev->getRawText();
+
+				$wikitext = $this->removePropertyAnnotation(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText(), $wikitext);
+
+				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed from domain and/or range',$i);
+
+				if (!is_null($this->mBot)) $this->mBot->worked(1);
+			}
+		}
+
+		$set = array_merge($this->affectedPages['queries'],$this->affectedPages['instances']);
+		$set = SRFTools::makeTitleListUnique($set);
+
+		foreach($set as $i) {
 			$rev = Revision::newFromTitle($i);
 			if (is_null($rev)) continue;
 			$wikitext = $rev->getRawText();
@@ -144,30 +180,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 				if (!is_null($this->mBot)) $this->mBot->worked(1);
 			}
 
-			if (array_key_exists('sref_removeFromDomain', $this->options) && $this->options['sref_removeFromDomain'] == "true"
-			&& SRFTools::containsTitle($i, $this->affectedPages['propertiesWithDomain'])) {
 
-				// if the property should be completly removed
-				if (array_key_exists('sref_removePropertyWithDomain', $this->options) && $this->options['sref_removePropertyWithDomain'] == "true") {
-					$deleted = true;
-					if ($save) {
-						$deleted = SRFTools::deleteArticle($i);
-					}
-					if ($deleted) {
-						$logMessages[][] = new SRFLog('Article deleted',$i);
-					} else {
-						$logMessages[][] = new SRFLog('Deletion failed',$i);
-					}
-
-					continue;
-				}
-
-				$wikitext = $this->removePropertyAnnotation(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText(), $wikitext);
-
-				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed from domain and/or range',$i);
-
-				if (!is_null($this->mBot)) $this->mBot->worked(1);
-			}
 
 			if (array_key_exists('sref_removeQueriesWithCategories', $this->options) && $this->options['sref_removeQueriesWithCategories'] == "true"
 			&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
@@ -180,9 +193,9 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			}
 
 			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				$status = $this->storeArticle($i, $wikitext, $rev->getRawComment());
 				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+					$logMessages[$i->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $i, $wikitext, array($status->getWikiText()));
 				}
 			}
 		}

@@ -25,6 +25,7 @@ class SRFTools {
 	public static function deleteArticle($a) {
 		global $wgUser;
 		$reason = "Removed by Semantic Refactoring extension";
+		$id = $a->getTitle()->getArticleID();
 		if ( wfRunHooks( 'ArticleDelete', array( &$a, &$wgUser, &$reason, &$error ) ) ) {
 			if ( $a->doDeleteArticle( $reason ) ) {
 				wfRunHooks( 'ArticleDeleteComplete', array( &$a, &$wgUser, $reason, $id ) );

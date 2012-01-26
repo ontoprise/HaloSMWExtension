@@ -43,7 +43,7 @@ abstract class SRFRefactoringOperation {
 	 *
 	 * @return int
 	 */
-	public abstract function getNumberOfAffectedPages();
+	public abstract function getWork();
 
 	/**
 	 * Performs the actual refactoring
@@ -53,7 +53,11 @@ abstract class SRFRefactoringOperation {
 	 * @param array & $testData
 	 */
 	public abstract function refactor($save = true, & $logMessages);
-
+    
+	
+	public function isOptionSet($option, $options) {
+		return (array_key_exists($option, $options) && $options[$option] == "true");
+	}
 	/**
 	 * Set a GardeningBot to report progress
 	 *

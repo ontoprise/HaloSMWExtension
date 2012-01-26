@@ -33,29 +33,31 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		$this->options = $options;
 	}
 
-	public function getNumberOfAffectedPages() {
+	public function getWork() {
 
-		$this->affectedPages = $this->queryAffectedPages();
-		$num = (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true")
-		|| (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == "true") ? count($this->affectedPages['instances']) : 0;
+		$num = $this->getWorkForProperty($this->property);
 
-		$num += array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == "true" ? count($this->affectedPages['queries']) : 0;
-
-		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == "true") {
-
-			if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true") {
-				$num += $smwfGetSemanticStore()->getNumberOfUsage($this->property);
-			} else {
-				$subproperties = $store->getSubProperties($this->property);
-				$num += count($subproperties);
+		if ($this->isOptionSet('sref_includeSubproperties', $this->options)) {
+			$subproperties = $store->getSubProperties($this->property);
+			foreach($subproperties as $s) {
+				$num += $this->getWorkForProperty($s);
 			}
 		}
 
 		return $num;
 	}
 
-
 	public function queryAffectedPages() {
+		return $this->getAffectedPagesForProperty($this->property);
+	}
+
+	private function getWorkForProperty($property) {
+		$affectedPages = $this->getAffectedPagesForProperty($property);
+		$num = $this->isOptionSet('sref_removeInstancesUsingProperty', $this->options) ? count($affectedPages['instances']) : 0;
+		$num += count($affectedPages['queries']) + count($affectedPages['instances']);
+	}
+
+	private function getAffectedPagesForProperty() {
 		// calculate only once
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 		$store = smwfGetSemanticStore();
@@ -111,14 +113,12 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 			} else {
 				$logMessages[$this->property->getPrefixedText()][] = new SRFLog('Deletion failed',$this->property);
 			}
-			
+
 		}
 
 
-		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries']);
-		$set = SRFTools::makeTitleListUnique($set);
-		foreach($set as $i) {
-			if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true") {
+		if (array_key_exists('sref_removeInstancesUsingProperty', $this->options) && $this->options['sref_removeInstancesUsingProperty'] == "true") {
+			foreach($this->affectedPages['instances'] as $i) {
 				// if instances are completely removed, there is no need to remove annotations before
 
 				$a = new Article($i);
@@ -132,16 +132,20 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 					$logMessages[$i->getPrefixedText()][] = new SRFLog('Deletion failed',$i);
 				}
 
-				continue; // if article is removed, then continue;
+
 			}
+		}
+
+		$set = array_merge($this->affectedPages['instances'], $this->affectedPages['queries']);
+		$set = SRFTools::makeTitleListUnique($set);
+
+		foreach($set as $i) {
 			$rev = Revision::newFromTitle($i);
 			if (is_null($rev)) continue;
 			$wikitext = $rev->getRawText();
-
 			if (array_key_exists('sref_removePropertyAnnotations', $this->options) && $this->options['sref_removePropertyAnnotations'] == "true"
 			&& SRFTools::containsTitle($i, $this->affectedPages['instances'])) {
 				$wikitext = $this->removePropertyAnnotation($wikitext);
-
 				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed property annotation',$i);
 
 			}
@@ -150,22 +154,18 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 			if (array_key_exists('sref_removeQueriesWithProperties', $this->options) && $this->options['sref_removeQueriesWithProperties'] == "true"
 			&& SRFTools::containsTitle($i, $this->affectedPages['queries'])) {
 				$wikitext = $this->removeQuery($wikitext);
-				if ($save) {
-					$a->doEdit($wikitext, $rev->getRawComment(), EDIT_FORCE_BOT);
-				}
-
 				$logMessages[$i->getPrefixedText()][] = new SRFLog('Removed query',$i);
 
 			}
-		}
 
-		if ($save) {
-			$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-			if (!$status->isGood()) {
-				$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+			if ($save) {
+				$status = $this->storeArticle($i, $wikitext, $rev->getRawComment());
+
+				if (!$status->isGood()) {
+					$logMessages[$i->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $i, $wikitext, array($status->getWikiText()));
+				}
 			}
 		}
-
 
 		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == "true") {
 			foreach($results['directSubcategories'] as $p) {

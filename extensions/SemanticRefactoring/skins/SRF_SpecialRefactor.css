@@ -103,6 +103,7 @@
 #sref_resultbox {
     border: 1px solid #CCCCCC;
     height: 220px;
+    overflow: auto;
 }
 
 

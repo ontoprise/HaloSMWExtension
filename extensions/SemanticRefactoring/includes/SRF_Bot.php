@@ -108,10 +108,11 @@ class SRFRefactoringBot extends GardeningBot {
 		return trim($result);
 	}
 	
-	private static function createLink($name, $ns = NS_MAIN) {
+	private static function createLink($name, $ns = NS_MAIN, $showNamespace = true) {
 		$title = Title::newFromText( $name, $ns );
 		$url = $title->getFullURL();
-		return '<a href="'.$url.'">'.$title->getPrefixedText().'</a>';
+		$displayText = $showNamespace ? $title->getPrefixedText() : $title->getText();
+		return '<a href="'.$url.'">'.$displayText.'</a>';
 	}
 
 	/**
@@ -218,7 +219,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$value = $paramArray['value'];
 				
-                return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
+                return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
 				break;
 
 			case 'removeAnnotation' :
@@ -230,7 +231,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
+				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
 
 				break;
 
@@ -247,7 +248,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-			    return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $old_value, $new_value);
+			    return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $old_value, $new_value);
 
 				break;
 
@@ -260,7 +261,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY), $value);
+				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
 
 				break;
 
@@ -574,7 +575,7 @@ class SRFRefactoringBot extends GardeningBot {
 			// normal bot call
 			$operation = $paramArray['SRF_OPERATION'];
 			$op = $this->getOperation($operation, NULL, $paramArray);
-			$num = $op->getNumberOfAffectedPages();
+			$num = $op->getWork();
 			$op->setBot($this);
 			$this->setNumberOfTasks(1);
 			$this->addSubTask($num);
@@ -599,7 +600,7 @@ class SRFRefactoringBot extends GardeningBot {
 
 			// use first operation to indicate bot progress
 			$op = $ops[0];
-			$num = $op->getNumberOfAffectedPages();
+			$num = $op->getWork();
 			$op->setBot($this);
 			$this->setNumberOfTasks(1);
 			$this->addSubTask($num);
