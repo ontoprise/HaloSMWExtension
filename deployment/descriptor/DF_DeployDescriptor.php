@@ -552,8 +552,8 @@ class DeployDescriptor {
 
 				$ext_id = $patch->getID();
 				$pf = $patch->getPatchfile();
-				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
-					$patches[] = $pf;
+				if (empty($ext_id) && !DFPatch::containsPatchfile($patches, $patch)) {
+					$patches[] = $patch;
 					continue;
 				}
 				$fromVersion = $patch->getMinversion();
