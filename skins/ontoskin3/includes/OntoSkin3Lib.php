@@ -264,7 +264,7 @@ class SMWH_Skin {
 			//if the administration menu is not defined, return a link to the help section in smwforum describing how to configure it
 			$menu .= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
 			$menu .= "<div class=\"smwh_menubody_visible\">";
-			$menu .= "<p>no administration menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
+			$menu .= "<p>no administration menu defined, see <a href=\"http://smwplus.com/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
 			$menu .= "</div></div>";
 		}
 		$menu .= "</li>";
@@ -557,11 +557,11 @@ class SMWH_Skin {
 		$quicklinks .= "<div class='smwh_quicklinks_static'>";
 		$quicklinks .= "<img src='" . $wgStylePath . $this->imagepath . "/logo_smw+_small_trans.png' title='Powered by SMW+' alt='Powered by SMW+'/>";
 		$quicklinks .= $this->parseWikiText( "[[Imprint|Imprint]]" );
-		$quicklinks .= "<a href='http://smwforum.ontoprise.com/smwforum/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a>";
+		$quicklinks .= "<a href='http://smwplus.com/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a>";
 		$quicklinks .= $this->parseWikiText( "[[Contact|Contact]]" );
 		$quicklinks .= $this->parseWikiText( "[[Privacy policy|Privacy policy]]" );
 		$quicklinks .= $this->parseWikiText( "[[Terms and conditions|Terms & Conditions]]" );
-		$quicklinks .= "<a href='http://smwforum.ontoprise.com/smwforum/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a>";
+		$quicklinks .= "<a href='http://smwplus.com/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a>";
 		$quicklinks .= "</div>";
 
 		//Get the content for the page options from MediaWiki:halopageoptions
@@ -573,7 +573,7 @@ class SMWH_Skin {
 			$quicklinks .= $this->parseWikiText( $content );
 		} else {
 			//if the footer is not defined, return a link to the help section in smwforum describing how to configure it
-			$quicklinks.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
+			$quicklinks.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwplus.com/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
 		}
 		$quicklinks .="</div>";
 		//return the html snippet
