@@ -144,16 +144,16 @@ class SRFRenameCategoryOperation extends SRFRenameOperation {
 		$wikitext = $pom->getWikiText();
 
 		if ($changedCategoryAnnotation) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category annotation", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in a category annotation.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedCategoryValue) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category as annotation value", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in an annotation value.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedCategoryLink) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in link.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedQuery) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in a query.', $title, $wikitext, array($this->old, $this->new));
 		}
 //		print "\n-----------------";
 //		print "\n$wikitext";

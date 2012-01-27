@@ -160,7 +160,7 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
 		$changedAnnotation = $this->replacePropertyInAnnotation($objects);
-		$changedAnnotation |= $this->replaceValueInAnnotation($objects);
+		$changedValue = $this->replaceValueInAnnotation($objects);
 
 		# iterate trough the links
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_LINK);
@@ -173,13 +173,16 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 		$wikitext = $pom->getWikiText();
 
 		if ($changedAnnotation) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed property or value", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 as property of an annotation.', $title, $wikitext, array($this->old, $this->new));
 		}
+	    if ($changedValue) {
+            $logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 as value of an annotation.', $title, $wikitext, array($this->old, $this->new));
+        }
 		if ($changedLink) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed link from $1 to $2.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedQuery) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed $1 in query to $2.", $title, $wikitext, array($this->old, $this->new));
 		}
 
 		return $wikitext;

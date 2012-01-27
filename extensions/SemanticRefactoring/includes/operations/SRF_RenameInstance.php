@@ -128,13 +128,13 @@ class SRFRenameInstanceOperation extends SRFRenameOperation {
 		$wikitext = $pom->getWikiText();
 
 		if ($changedValueinAnnotation) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed instance as value", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 as value of an annotation.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedLink) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed link", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in a link.', $title, $wikitext, array($this->old, $this->new));
 		}
 		if ($changedQuery) {
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed query", $title, $wikitext);
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Changed $1 to $2 in a query.', $title, $wikitext, array($this->old, $this->new));
 		}
 		return $wikitext;
 	}
