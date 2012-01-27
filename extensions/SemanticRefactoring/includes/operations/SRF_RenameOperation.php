@@ -26,9 +26,13 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 
 	protected function replaceValueInAnnotation($objects) {
 		$changed = false;
+		
 		foreach($objects as $o){
 
 			$value = $o->getSMWDataValue();
+			
+			if (!$o->getProperty()->getDataItem()->isUserDefined()) continue;
+			
 			$newvalues = array();
 			$oldvalues = array();
 			if ($value instanceof SMWRecordValue) {
@@ -41,7 +45,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 					if ($di->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {
 						$title = $di->getTitle()->getPrefixedText();
 						$oldvalues[] = $title;
-						$this->replacePrefixedTitle($title, 0);
+						$this->replacePrefixedTitle($title, 0, $changed);
 						$newvalues[] = $title;
 					} else {
 						// all other types are simply copied
@@ -51,21 +55,22 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 			} else if ($value instanceof SMWWikiPageValue) {
 				$title = $value->getDataItem()->getTitle()->getPrefixedText();
 				$oldvalues[] = $title;
-				$this->replacePrefixedTitle($title, 0);
+				$this->replacePrefixedTitle($title, 0, $changed);
 				$newvalues[] = $title;
-			} else {
+			} else if (!is_null($value)) {
 				// all other types are simply copied
 				$newvalues[] = TSHelper::serializeDataItem($value->getDataItem());
+			} else {
+				$newvalues[] = trim($o->getPropertyValue());
 			}
-			$oldValue = implode("; ", $oldvalues);
+		
 			$newValue = implode("; ", $newvalues);
-			if ($oldValue != $newValue) {
-				$changed = true;
-			}
-
+		
 			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(),$newValue );
-
-			$o->setSMWDataValue($newDataValue);
+            
+			if ($newDataValue->isValid()) {
+	       		$o->setSMWDataValue($newDataValue);
+   			}
 
 		}
 		return $changed;
@@ -106,10 +111,11 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	 * @param string $title Prefixed title
 	 * @param int $index
 	 */
-	public function replacePrefixedTitle(& $title, $index) {
-
+	public function replacePrefixedTitle(& $title, $index, & $changed) {
+        $changed = false;
 		if ($this->equalsOldPrefixed($title)) {
 			$title = $this->getNew()->getPrefixedText();
+			$changed = true;
 		}
 	}
 
