@@ -233,7 +233,7 @@ class ASFPropertyFormData {
 		$syntax .= '}}}';
 		
 		if($this->isWriteProtected()){
-			$syntax .= '<span class="asf-write-protected">wpaaaaaaaaaaaaaaaaaaaaaa</span>';			
+			$syntax .= '<span class="asf-write-protected"></span>';			
 		}
 		
 		//deal with form input help
