@@ -28,13 +28,15 @@
 		level1 : {	
 			0 : mw.msg('sref_category'),
 			1 : mw.msg('sref_annotationproperty'),
-			2 : mw.msg('sref_template') }
+			2 : mw.msg('sref_template'),
+			3 : mw.msg('sref_touch')}
 		,
 		
 		level2 : {
 			0 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace')],
 			1 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace'), mw.msg('sref_setvalue')],
-			2 : [mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace')]
+			2 : [mw.msg('sref_add'), mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace')],
+			3 : [mw.msg('sref_touchall') ]
 		},
 		
 		operationnames: {
@@ -47,9 +49,12 @@
 			'12' : 'replaceAnnotation',
 			'13' : 'setValueOfAnnotation',
 			
-			'20' : 'setValueOfTemplate',
-			'21' : 'renameTemplateParameter',
-			'22' : 'replaceTemplateValue',
+			'20' : 'addValueOfTemplate',
+			'21' : 'setValueOfTemplate',
+			'22' : 'renameTemplateParameter',
+			'23' : 'replaceTemplateValue',
+			
+			'30' : 'touchPages'
 		},
 		
 		
@@ -69,15 +74,19 @@
 					 { id : 'value', title : mw.msg('sref_value'), optional : false } ],
 			'20' : [ { id : 'template', ac : 'namespace: Template', title :  mw.msg('sref_template'), optional : false },
 					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
+					 { id : 'value', title : mw.msg('sref_value'), optional : false } ],					 
+			'21' : [ { id : 'template', ac : 'namespace: Template', title :  mw.msg('sref_template'), optional : false },
+					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
 					 { id : 'value', title : mw.msg('sref_value'), optional : false } ],
-			'21' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
+			'22' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
 					 { id : 'old_parameter', title : mw.msg('sref_old_parameter'), optional : false },
 					 { id : 'new_parameter', title : mw.msg('sref_new_parameter'), optional : false }],
 								 
-			'22' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
+			'23' : [ { id : 'template', ac : 'namespace: Template', title : mw.msg('sref_template'), optional : false },
 					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
 					 { id : 'old_value', title :  mw.msg('sref_old_value'), optional : false },
-					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false }]
+					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false }],
+			'30' : [ ]
 		
 		
 		}

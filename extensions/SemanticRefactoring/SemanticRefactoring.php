@@ -160,6 +160,8 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_value',
 						    'sref_old_value',
 						    'sref_new_value',
+			                'sref_touch',
+			                'sref_touchall',
             
 				            'sref_comment',
                             'sref_log',
@@ -172,7 +174,8 @@ function sreffRegisterJSModules(& $out) {
                             'sref_page',
 				            'sref_add_command',
 				            'sref_remove_command',
-            
+                            
+                            'sref_help_touchpages',
 				            'sref_help_addcategory',
 						    'sref_help_removecategory' ,
 						    'sref_help_replacecategory' ,
@@ -183,6 +186,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_help_removeannotation',
 						    'sref_help_replaceannotation',
 						    'sref_help_setvalueofannotation',
+                            'sref_help_addvalueoftemplate',
 						    'sref_help_setvalueoftemplate',
 						    'sref_help_replacetemplatevalue',
 						    'sref_help_renametemplateparameter'

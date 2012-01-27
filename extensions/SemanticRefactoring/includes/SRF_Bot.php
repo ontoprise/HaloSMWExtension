@@ -38,6 +38,8 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 require_once( $srefgIP . '/includes/SRF_Bot.php');
 require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP . '/includes/SRF_Tools.php');
+
+require_once($srefgIP . '/includes/operations/SRF_TouchpageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateParameter.php');
@@ -107,7 +109,7 @@ class SRFRefactoringBot extends GardeningBot {
 
 		return trim($result);
 	}
-	
+
 	private static function createLink($name, $ns = NS_MAIN, $showNamespace = true) {
 		$title = Title::newFromText( $name, $ns );
 		$url = $title->getFullURL();
@@ -126,6 +128,9 @@ class SRFRefactoringBot extends GardeningBot {
 		$op = $paramArray['SRF_OPERATION'];
 		$msg = 'sref_comment_'.strtolower($op);
 		switch($op) {
+			case 'touchPages':
+				return wfMsg($msg);
+				break;
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
 					return "Old instance missing";
@@ -136,7 +141,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New instance missing";
 				}
 				$newInstance = $paramArray['newInstance'];
-				
+
 				return wfMsg($msg, self::createLink($oldInstance), self::createLink($newInstance));
 				break;
 			case 'renameProperty':
@@ -150,7 +155,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$newProperty = $paramArray['newProperty'];
 				return wfMsg($msg, self::createLink($oldProperty, SMW_NS_PROPERTY), self::createLink($newProperty, SMW_NS_PROPERTY));
-				 
+					
 
 				break;
 			case 'renameCategory' :
@@ -163,7 +168,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New property missing";
 				}
 				$newCategory = $paramArray['newCategory'];
-                return wfMsg($msg, self::createLink($oldCategory, NS_CATEGORY), self::createLink($newCategory, NS_CATEGORY));
+				return wfMsg($msg, self::createLink($oldCategory, NS_CATEGORY), self::createLink($newCategory, NS_CATEGORY));
 
 				break;
 			case 'deleteCategory' :
@@ -180,7 +185,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Property missing";
 				}
 				$property = $paramArray['property'];
-				 
+					
 				return wfMsg($msg, self::createLink($property, SMW_NS_PROPERTY));
 				break;
 
@@ -218,8 +223,8 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				
-                return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
+
+				return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
 				break;
 
 			case 'removeAnnotation' :
@@ -231,7 +236,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
+				return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
 
 				break;
 
@@ -248,7 +253,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-			    return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $old_value, $new_value);
+				return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $old_value, $new_value);
 
 				break;
 
@@ -261,7 +266,24 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				 return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
+				return wfMsg($msg,  self::createLink($property, SMW_NS_PROPERTY, false), $value);
+
+				break;
+			case 'addValueOfTemplate':
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+
+				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $value);
 
 				break;
 
@@ -278,7 +300,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "Value missing";
 				}
 				$value = $paramArray['value'];
-				
+
 				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $value);
 
 				break;
@@ -300,7 +322,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "New Value missing";
 				}
 				$new_value = $paramArray['new_value'];
-                return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $old_value, $new_value);
+				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $parameter, $old_value, $new_value);
 				break;
 
 			case 'renameTemplateParameter' :
@@ -317,7 +339,7 @@ class SRFRefactoringBot extends GardeningBot {
 					return "new_parameter missing";
 				}
 				$new_parameter = $paramArray['new_parameter'];
-				
+
 				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $old_parameter, $new_parameter);
 				break;
 		}
@@ -325,6 +347,11 @@ class SRFRefactoringBot extends GardeningBot {
 
 	private function getOperation($operation, $titles, $paramArray) {
 		switch($operation) {
+			case 'touchPages':
+               
+                $op = new SRFTouchpageOperation($titles);
+
+                break;
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
 					return "Old instance missing";
@@ -497,6 +524,25 @@ class SRFRefactoringBot extends GardeningBot {
 
 				break;
 
+			case 'addValueOfTemplate' :
+				if (!array_key_exists('template', $paramArray)) {
+					return "template missing";
+				}
+				$template = $paramArray['template'];
+				if (!array_key_exists('parameter', $paramArray)) {
+					return "parameter missing";
+				}
+				$parameter = $paramArray['parameter'];
+				if (!array_key_exists('value', $paramArray)) {
+					return "Value missing";
+				}
+				$value = $paramArray['value'];
+
+
+				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, NULL, $value, false);
+
+				break;
+
 			case 'setValueOfTemplate' :
 				if (!array_key_exists('template', $paramArray)) {
 					return "template missing";
@@ -618,7 +664,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$log .= "\n**".$lm->asWikiText();
 			}
 		}
-        
+
 		if (trim($log) == '') {
 			$log = "Nothing done.";
 		}
