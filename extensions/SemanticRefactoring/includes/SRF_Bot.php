@@ -39,6 +39,7 @@ require_once( $srefgIP . '/includes/SRF_Bot.php');
 require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP . '/includes/SRF_Tools.php');
 
+require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_TouchpageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
@@ -618,7 +619,7 @@ class SRFRefactoringBot extends GardeningBot {
 		$ops = array();
 		if (is_array($paramArray)) {
 
-			// normal bot call
+			// normal bot call, $paramArray is a hash array
 			$operation = $paramArray['SRF_OPERATION'];
 			$op = $this->getOperation($operation, NULL, $paramArray);
 			$num = $op->getWork();
@@ -631,9 +632,11 @@ class SRFRefactoringBot extends GardeningBot {
 
 		} else {
 
-			// user defined paramArray
+			// user defined, paramArray is an object 
 			$commands = $paramArray->commands;
 			$titles = $paramArray->titles;
+			
+			// assuming that operations are ALL instance level operations!
 			foreach($commands as $c) {
 				$paramArray = GardeningBot::convertParamStringToArray($c);
 				$operation = $paramArray['SRF_OPERATION'];

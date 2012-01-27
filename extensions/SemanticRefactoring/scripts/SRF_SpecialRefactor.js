@@ -410,7 +410,7 @@
 				html += e.endtime == null ? "-" : e.endtime;
 				html += "</td>";
 				html += "<td>";
-				html += (e.progress * 100) + "%";
+				html += Math.round(e.progress * 100) + "%";
 				html += "</td>";
 				html += "<td>";
 				html += (e.progress == 1 ? '<span style="color:green; font-weight:bold">'+mw.msg('sref_finished')+'</span>' 

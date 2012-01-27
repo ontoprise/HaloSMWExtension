@@ -132,7 +132,7 @@ abstract class SRFRefactoringOperation {
 
 			$wikitext = $rev->getRawText();
 			foreach($operations as $op) {
-				$wikitext = $op->changeContent($title, $wikitext, $logMessages);
+				$wikitext = $op->applyOperation($title, $wikitext, $logMessages);
 				$op->botWorked(1);
 			}
 

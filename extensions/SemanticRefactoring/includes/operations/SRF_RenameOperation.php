@@ -24,15 +24,39 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 		return $this->new;
 	}
 
+	public function refactor($save = true, & $logMessages) {
+
+		$this->queryAffectedPages();
+
+		foreach($this->affectedPages as $title) {
+			if ($title->getNamespace() == SGA_NS_LOG) continue;
+			$rev = Revision::newFromTitle($title);
+
+			$wikitext = $this->applyOperation($title, $rev->getRawText(), $logMessages);
+
+			// stores article
+			if ($save) {
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+				}
+			}
+
+			if (!is_null($this->mBot)) $this->mBot->worked(1);
+		}
+
+
+	}
+
 	protected function replaceValueInAnnotation($objects) {
 		$changed = false;
-		
+
 		foreach($objects as $o){
 
 			$value = $o->getSMWDataValue();
-			
+				
 			if (!$o->getProperty()->getDataItem()->isUserDefined()) continue;
-			
+				
 			$newvalues = array();
 			$oldvalues = array();
 			if ($value instanceof SMWRecordValue) {
@@ -63,14 +87,14 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 			} else {
 				$newvalues[] = trim($o->getPropertyValue());
 			}
-		
+
 			$newValue = implode("; ", $newvalues);
-		
+
 			$newDataValue = SMWDataValueFactory::newPropertyObjectValue($o->getProperty()->getDataItem(),$newValue );
-            
+
 			if ($newDataValue->isValid()) {
-	       		$o->setSMWDataValue($newDataValue);
-   			}
+				$o->setSMWDataValue($newDataValue);
+			}
 
 		}
 		return $changed;
@@ -112,7 +136,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	 * @param int $index
 	 */
 	public function replacePrefixedTitle(& $title, $index, & $changed) {
-        $changed = false;
+		$changed = false;
 		if ($this->equalsOldPrefixed($title)) {
 			$title = $this->getNew()->getPrefixedText();
 			$changed = true;
@@ -143,7 +167,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	protected function replaceLink($objects) {
 		$changed = false;
 		foreach($objects as $o){
-				
+
 			$title = $o->getLink();
 
 			if ($this->equalsOldPrefixed($title)) {

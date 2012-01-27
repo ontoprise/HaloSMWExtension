@@ -16,19 +16,16 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeTemplateOperation extends SRFRefactoringOperation {
+class SRFChangeTemplateOperation extends SRFInstanceLevelOperation {
 
-	private $instanceSet;
+	
 	private $template;
 	private $old_parameter;
 	private $new_parameter;
 	 
 
 	public function __construct($instanceSet, $template, $old_parameter, $new_parameter) {
-		parent::__construct();
-		foreach($instanceSet as $i) {
-			$this->instanceSet[] = Title::newFromText($i);
-		}
+		parent::__construct($instanceSet);
 		$this->template = Title::newFromText($template, NS_TEMPLATE);
 		$this->old_parameter = $old_parameter;
 		$this->new_parameter = $new_parameter;
@@ -42,26 +39,10 @@ class SRFChangeTemplateOperation extends SRFRefactoringOperation {
 		return count($this->instanceSet);
 	}
 
-	public function refactor($save = true, & $logMessages) {
-		foreach($this->instanceSet as $title) {
-			if ($title->getNamespace() == SGA_NS_LOG) continue;
-			$rev = Revision::newFromTitle($title);
-			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
-
-			if (!is_null($this->mBot)) $this->mBot->worked(1);
-
-			// stores article
-			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-				}
-			}
-		}
-	}
+	
 
 
-	public function changeContent($title, $wikitext, & $logMessages) {
+	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		if (is_null($this->old_parameter) || is_null($this->new_parameter)) {

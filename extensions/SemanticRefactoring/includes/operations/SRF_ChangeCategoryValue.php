@@ -16,8 +16,8 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
-	private $instanceSet;
+class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
+	
 
 	private $oldValue;
 	private $newValue; // empty means: remove annotation
@@ -25,10 +25,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 	private $subjectDBKeys;
 
 	public function __construct($instanceSet, $oldValue, $newValue) {
-		parent::__construct();
-		foreach($instanceSet as $i) {
-			$this->instanceSet[] = Title::newFromText($i);
-		}
+		parent::__construct($instanceSet);
 
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
@@ -42,24 +39,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 		return count($this->instanceSet);
 	}
 
-	public function refactor($save = true, & $logMessages) {
-		foreach($this->instanceSet as $title) {
-            if ($title->getNamespace() == SGA_NS_LOG) continue;
-			$rev = Revision::newFromTitle($title);
-			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
-			if (!is_null($this->mBot)) $this->mBot->worked(1);
-				
-			// stores article
-			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-				}
-			}
-		}
-	}
-
-
+	
 
 	/**
 	 * Replaces old value with new.
@@ -74,7 +54,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 		}
 	}
 
-	public function changeContent($title, $wikitext, & $logMessages) {
+	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
@@ -86,7 +66,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 		if (is_null($this->oldValue)) {
 			// add new annotation
 			$toAdd[] = new WOMCategoryModel($this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added category $1 ", $title, "", array($this->newValue));
+			$logMessages[$title->getPrefixedText()][] = new SRFLog('Added category $1 ', $title, "", array(Title::newFromText($this->newValue, NS_CATEGORY)));
 		} else {
 			foreach($objects as $o){
 
@@ -97,7 +77,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 					$value = $o->getName();
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 						$toDelete[] = $o->getObjectID();
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted category $1 ", $title, "", array($this->oldValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Deleted category $1 ", $title, "", array(Title::newFromText($this->oldValue, NS_CATEGORY)));
 					}
 
 				} else {
@@ -108,7 +88,7 @@ class SRFChangeCategoryValueOperation extends SRFRefactoringOperation {
 					if (is_null($this->oldValue) || ucfirst($value) == ucfirst($this->oldValue)) {
 
 						$o->setName($this->newValue);
-						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category '$1' into '$2' ", $title, "", array($this->oldValue, $this->newValue));
+						$logMessages[$title->getPrefixedText()][] = new SRFLog("Changed category '$1' into '$2' ", $title, "", array(Title::newFromText($this->oldValue, NS_CATEGORY), Title::newFromText($this->newValue, NS_CATEGORY)));
 					}
 
 				}

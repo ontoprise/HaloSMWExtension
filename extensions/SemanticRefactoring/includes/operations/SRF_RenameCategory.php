@@ -77,32 +77,10 @@ class SRFRenameCategoryOperation extends SRFRenameOperation {
 		return $this->affectedPages;
 	}
 
-	public function refactor($save = true, & $logMessages) {
-
-		$this->queryAffectedPages();
-
-		foreach($this->affectedPages as $title) {
-            if ($title->getNamespace() == SGA_NS_LOG) continue;
-			$rev = Revision::newFromTitle($title);
-
-			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
-
-			// stores article
-			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-				}
-			}
-				
-			if (!is_null($this->mBot)) $this->mBot->worked(1);
-		}
-
-
-	}
 	
 	
-	public function changeContent($title, $wikitext, & $logMessages) {
+	
+	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 		# iterate trough queries
 		# better support for ASK would be nice

@@ -16,8 +16,8 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeValueOperation extends SRFRefactoringOperation {
-	private $instanceSet;
+class SRFChangeValueOperation extends SRFInstanceLevelOperation {
+	
 	private $property;
 	private $oldValue; // empty means: add or set annotation
 	private $newValue; // empty means: remove annotation
@@ -26,10 +26,8 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 	private $subjectDBKeys;
 
 	public function __construct($instanceSet, $property, $oldValue, $newValue, $set = false) {
-		parent::__construct();
-		foreach($instanceSet as $i) {
-			$this->instanceSet[] = Title::newFromText($i);
-		}
+		parent::__construct($instanceSet);
+		
 		$this->property = Title::newFromText($property, SMW_NS_PROPERTY);
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
@@ -44,24 +42,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		return count($this->instanceSet);
 	}
 
-	public function refactor($save = true, & $logMessages) {
-		foreach($this->instanceSet as $title) {
-            if ($title->getNamespace() == SGA_NS_LOG) continue;
-			$rev = Revision::newFromTitle($title);
-			$wikitext = $this->changeContent($title, $rev->getRawText(), $logMessages);
-			if (!is_null($this->mBot)) $this->mBot->worked(1);
-
-			// stores article
-			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-					$l->setLogType(SREF_LOG_STATUS_WARN);
-					$logMessages[$title->getPrefixedText()][] = $l;
-				}
-			}
-		}
-	}
+	
 
 
 
@@ -78,7 +59,7 @@ class SRFChangeValueOperation extends SRFRefactoringOperation {
 		}
 	}
 
-	public function changeContent($title, $wikitext, & $logMessages) {
+	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
