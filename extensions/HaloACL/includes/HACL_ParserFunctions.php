@@ -1124,18 +1124,33 @@ class HACLParserFunctions {
 	 *
 	 */
 	private function checkConsistency() {
-		global $haclgContLang;
+		global $haclgContLang, $wgContLang;
 		$msg = array();
 
 		// Get the direct parent categories of the article
 		$cats = self::$mInstance->mTitle->getParentCategories();
+		
+		// Remove the category prefixes. This is needed for languages that are
+		// not supported by HaloACL.
+		$catName = $wgContLang->getNSText(NS_CATEGORY).':';
+		foreach ($cats as $cat => $page) {
+			unset($cats[$cat]);
+			if (preg_match("/^$catName(.*?)$/", $cat, $m)) {
+				$cat = $m[1];
+			}
+			$cats[$cat] = $page;
+		}
 
 		$gCat = $haclgContLang->getCategory(HACLLanguage::CAT_GROUP);
+		$gCatWoNs = substr($gCat, strpos($gCat, ':')+1);
 		$rCat = $haclgContLang->getCategory(HACLLanguage::CAT_RIGHT);
+		$rCatWoNs = substr($rCat, strpos($rCat, ':')+1);
 		$sdCat = $haclgContLang->getCategory(HACLLanguage::CAT_SECURITY_DESCRIPTOR);
-		$isGroup = array_key_exists($gCat, $cats);
-		$isRight = array_key_exists($rCat, $cats);
-		$isSD    = array_key_exists($sdCat, $cats);
+		$sdCatWoNs = substr($sdCat, strpos($sdCat, ':')+1);
+		
+		$isGroup = array_key_exists($gCatWoNs, $cats);
+		$isRight = array_key_exists($rCatWoNs, $cats);
+		$isSD    = array_key_exists($sdCatWoNs, $cats);
 		$isWhitelist = $this->mTitle->getFullText() == $haclgContLang->getWhitelist();
 
 		// Page must belong only to one category
