@@ -146,6 +146,16 @@ abstract class GardeningBot {
 	public function getComment($params) {
 		return '';
 	}
+	
+	/**
+	 * Returns true if this bot can run in multiple instances
+	 * at the same time.
+	 * 
+	 * @return boolean
+	 */
+	public function runParallel() {
+		return true;
+	}
 
 	/**
 	 * Returns directory for bot icon. NULL means the icon

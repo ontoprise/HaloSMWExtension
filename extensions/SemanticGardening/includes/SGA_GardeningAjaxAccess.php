@@ -49,9 +49,9 @@ $wgAjaxExportList[] = 'smwf_ga_readBotLog';
 
 
 function smwf_ga_readBotLog($taskid) {
-	
-    $botDir = GardeningBot::getWriteableDir();
-    $botLogFile =  "$botDir"."log_$taskid";
+
+	$botDir = GardeningBot::getWriteableDir();
+	$botLogFile =  "$botDir"."log_$taskid";
 	$botlog = file_get_contents($botLogFile);
 	$botlog = preg_replace("/\x08/","\n",$botlog); // replace backspace by linefeed.
 	$response = new AjaxResponse($botlog);
@@ -87,6 +87,18 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 
 			}
 		}
+
+		// check if bot can run wrt other running instances of this bot
+		global $registeredBots;
+		if (!$registeredBots[$botID]->runParallel()) {
+			$isRunning = SGAGardeningLog::getGardeningLogAccess()->isGardeningBotRunning($botID);
+			if ($isRunning) {
+				$response = new AjaxResponse("$botID already runs");
+				$response->setResponseCode(500);
+				return $response;
+			}
+		}
+
 		$taskid = GardeningBot::runBot($botID, $params, $user);
 		if (gettype($taskid) == 'integer') { // task id, no error code
 
@@ -95,9 +107,9 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 			}
 
 		} else {
-			 $response = new AjaxResponse($taskid);
-	         $response->setResponseCode(403);
-			 return $response;
+			$response = new AjaxResponse($taskid);
+			$response->setResponseCode(403);
+			return $response;
 		}
 	} else {
 		// redirect call to dedicated gardening server
@@ -119,8 +131,8 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 			}
 		}
 		$response = new AjaxResponse("ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'));
-        $response->setResponseCode(403);
-        return $response;
+		$response->setResponseCode(403);
+		return $response;
 	}
 }
 
@@ -189,7 +201,7 @@ function smwf_ga_GetGardeningLog() {
  */
 function smwf_ga_GetGardeningLogAsJSON($id = '') {
 
-    return SGAGardening::getGardeningLogAsJSON();
+	return SGAGardening::getGardeningLogAsJSON();
 }
 
 /**

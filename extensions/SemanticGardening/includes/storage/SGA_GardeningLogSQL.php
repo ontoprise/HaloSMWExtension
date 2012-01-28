@@ -274,7 +274,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 
 		$res = $db->select( $db->tableName('smw_gardening'),
 		array('*'),
-		array('gardeningbot='.$db->addQuotes($botID), 'timestamp_end = NULL'),
+		array('gardeningbot' => $botID, 'endtime' => NULL),
 		$fname,array());
 		$result = $db->numRows( $res ) > 0;
 		$db->freeResult($res);
