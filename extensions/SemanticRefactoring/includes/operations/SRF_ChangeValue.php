@@ -17,7 +17,7 @@
  *
  */
 class SRFChangeValueOperation extends SRFInstanceLevelOperation {
-	
+
 	private $property;
 	private $oldValue; // empty means: add or set annotation
 	private $newValue; // empty means: remove annotation
@@ -27,7 +27,7 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 
 	public function __construct($instanceSet, $property, $oldValue, $newValue, $set = false) {
 		parent::__construct($instanceSet);
-		
+
 		$this->property = Title::newFromText($property, SMW_NS_PROPERTY);
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
@@ -42,7 +42,7 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 		return count($this->instanceSet);
 	}
 
-	
+
 
 
 
@@ -59,6 +59,16 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 		}
 	}
 
+	private function containsAnnotation($objects, $property, $value) {
+		foreach($objects as $o) {
+			if ($o->getProperty()->getDataItem()->getLabel() == $property
+			&& $o->getPropertyValue() == $value) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
@@ -70,8 +80,10 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 
 		if (is_null($this->oldValue) && !$this->set) {
 			// add new annotation
-			$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 ", $title, "", array($this->property, $this->newValue));
+			if(!$this->containsAnnotation($objects, $this->property->getText(), $this->newValue)) {
+				$toAdd[] = new WOMPropertyModel($this->property->getText(), $this->newValue);
+				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added value '$2' for $1 ", $title, "", array($this->property, $this->newValue));
+			}
 		}
 
 		foreach($objects as $o){

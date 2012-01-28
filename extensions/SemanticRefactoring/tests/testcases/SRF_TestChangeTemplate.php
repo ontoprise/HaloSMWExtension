@@ -28,31 +28,41 @@
 global $srefgIP;
 require_once($srefgIP.'/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP.'/includes/operations/SRF_ChangeTemplate.php');
+require_once($srefgIP.'/includes/operations/SRF_ChangeTemplateName.php');
 require_once($srefgIP.'/tests/resources/SRF_ArticleManager.php');
 
 class SRFTestChangeTemplate extends PHPUnit_Framework_TestCase {
 
-    protected $backupGlobals = FALSE;
+	protected $backupGlobals = FALSE;
 
-    static function setUpBeforeClass() {
-        global $srfChangeTemplateArticles;
-        $articleManager = new ArticleManager();
-        $articleManager->createArticles($srfChangeTemplateArticles);
-    }
+	static function setUpBeforeClass() {
+		global $srfChangeTemplateArticles;
+		$articleManager = new ArticleManager();
+		$articleManager->createArticles($srfChangeTemplateArticles);
+	}
 
-    function tearDown() {
+	function tearDown() {
 
-    }
+	}
 
-    function testChangeParameter() {
-        $r = new SRFChangeTemplateOperation(array("Testarticle1"), "Testtemplate", "param1", "newparam1");
-        $logMessages=array();
-        $r->refactor(false, $logMessages);
-        $log = reset($logMessages['Testarticle1']);
-        print "\n".$log->asWikiText();
-        $this->assertContains('newparam1', $log->getWikiText());
-    }
+	function testChangeParameter() {
+		$r = new SRFChangeTemplateOperation(array("Testarticle1"), "Testtemplate", "param1", "newparam1");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Testarticle1']);
+		print "\n".$log->asWikiText();
+		$this->assertContains('newparam1', $log->getWikiText());
+	}
 
-    
+	function testChangeTemplateName() {
+		$r = new SRFChangeTemplateNameOperation(array("Testarticle1"), "Testtemplate", "NewTesttemplate");
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Testarticle1']);
+		print "\n".$log->asWikiText();
+		$this->assertContains('NewTesttemplate', $log->getWikiText());
+	}
+
+
 
 }

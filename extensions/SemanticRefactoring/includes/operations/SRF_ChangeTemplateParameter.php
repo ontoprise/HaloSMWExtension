@@ -18,7 +18,7 @@
  */
 class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
 
-	
+
 	private $template;
 	private $parameter;
 	private $oldValue; // empty means: add value
@@ -42,7 +42,14 @@ class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
 		return count($this->instanceSet);
 	}
 
-	
+	private function containsTemplateParameter($objects, $parameter) {
+		foreach($objects as $o) {
+			if ($o->getKey() == $parameter) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 
 	public function applyOperation($title, $wikitext, & $logMessages) {
@@ -78,11 +85,15 @@ class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
 			} else if (is_null($this->oldValue) && !$this->set) {
 				// add new template parameter
 				$paramValue = new WOMParamValueModel();
-				$templateField = new WOMTemplateFieldModel($this->parameter);
-				$templateField->insertObject(new WOMTextModel($this->newValue));
-				$paramValue->insertObject($templateField);
-				$o->insertObject($paramValue);
-				$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '$2' of '$1'", $title, "", array($this->parameter, $this->newValue));
+				$tmp_fields = array();
+				$this->findObjectByID($o, WOM_TYPE_TMPL_FIELD, $tmp_fields);
+				if(!$this->containsTemplateParameter($tmp_fields, $this->parameter)) {
+					$templateField = new WOMTemplateFieldModel($this->parameter);
+					$templateField->insertObject(new WOMTextModel($this->newValue));
+					$paramValue->insertObject($templateField);
+					$o->insertObject($paramValue);
+					$logMessages[$title->getPrefixedText()][] = new SRFLog("Added parameter '$2' of '$1'", $title, "", array($this->parameter, $this->newValue));
+				}
 			} else  {
 
 				if ($name == $this->template->getText()) {

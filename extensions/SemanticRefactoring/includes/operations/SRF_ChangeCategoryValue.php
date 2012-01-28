@@ -17,7 +17,7 @@
  *
  */
 class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
-	
+
 
 	private $oldValue;
 	private $newValue; // empty means: remove annotation
@@ -39,7 +39,7 @@ class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
 		return count($this->instanceSet);
 	}
 
-	
+
 
 	/**
 	 * Replaces old value with new.
@@ -54,6 +54,15 @@ class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
 		}
 	}
 
+	private function containsCategory($objects, $category) {
+		foreach($objects as $o) {
+			if ($o->getName() == $category) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
@@ -65,8 +74,10 @@ class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
 
 		if (is_null($this->oldValue)) {
 			// add new annotation
-			$toAdd[] = new WOMCategoryModel($this->newValue);
-			$logMessages[$title->getPrefixedText()][] = new SRFLog('Added category $1 ', $title, "", array(Title::newFromText($this->newValue, NS_CATEGORY)));
+			if(!$this->containsCategory($objects, $this->newValue)) {
+				$toAdd[] = new WOMCategoryModel($this->newValue);
+				$logMessages[$title->getPrefixedText()][] = new SRFLog('Added category $1 ', $title, "", array(Title::newFromText($this->newValue, NS_CATEGORY)));
+			}
 		} else {
 			foreach($objects as $o){
 

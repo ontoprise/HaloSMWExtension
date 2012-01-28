@@ -88,6 +88,7 @@ class SemanticRefactoring extends SpecialPage {
 			$html .= $qresult['html'];
 		}
 		$html .= '</div>';
+		$html .= '<div style="display: none" id="sref_titlesbox"><textarea id="sref_titlesbox_textarea"></textarea></div>';
 		$html .= '<input type="button" id="sref_selectall" value="'.wfMsg('sref_selectall').'"></input>';
 		$html .= '<input type="button" id="sref_deselectall" value="'.wfMsg('sref_deselectall').'"></input>';
 
@@ -102,7 +103,7 @@ class SemanticRefactoring extends SpecialPage {
 		$html .= '<span id="sref_page_counter">'.wfMsg('sref_page').' 1 - '.$pageNum.'</span>';
 		$html .= '<a id="sref_prev_page" class="sref_prev_page_element sref_pointer">('.wfMsg('sref_prev_page').' '.SREF_QUERY_PAGE_LIMIT.')</a><span class="sref_prev_page_element" id="sref_prev_page_disabled" style="display: none;">('.wfMsg('sref_prev_page').')</span>';
 		$html .= '<a id="sref_next_page" class="sref_next_page_element sref_pointer">('.wfMsg('sref_next_page').' '.SREF_QUERY_PAGE_LIMIT.')</a><span class="sref_next_page_element" id="sref_next_page_disabled" style="display: none;">('.wfMsg('sref_next_page').')</span>';
-		
+		$html .= '<a id="sref_toggle_resultbox" class="sref_pointer">'.wfMsg('sref_toggle_resultbox').'</a>';
 
 
 		$html .= '</div>';

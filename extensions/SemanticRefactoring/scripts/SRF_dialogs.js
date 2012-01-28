@@ -31,8 +31,9 @@
 				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
 				+ '<tr><td colspan="2">'
 				+ '%%OPTIONS%%'
-				+ '<tr><td colspan="2">%%WARNING%%<input type="button" id="sref_start_operation" value="'
-				+ mw.msg('sref_start_operation') + '"></input></td></tr>' + '</table></form>';
+				+ '</table><div style="margin-top: 20px">%%WARNING%%<input type="button" id="sref_start_operation" value="'
+				+ mw.msg('sref_start_operation') + '"></input><input style="margin-left:5px" type="button" id="sref_cancel_operation" value="'
+				+ mw.msg('sref_cancel_operation') + '"></input></div>' + '</form>';
 			
 			return template;
 		},
@@ -131,7 +132,10 @@
 
 							$.fancybox.resize();
 							$.fancybox.center();
-
+							
+							$('#sref_cancel_operation').click(function() { 
+								$.fancybox.close();
+							});
 							$('#sref_start_operation')
 									.click(
 											function() {

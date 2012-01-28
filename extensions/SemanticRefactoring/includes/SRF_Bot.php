@@ -43,6 +43,7 @@ require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_TouchpageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
+require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateName.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateParameter.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeValue.php');
 require_once($srefgIP . '/includes/operations/SRF_DeleteCategory.php');
@@ -66,7 +67,7 @@ class SRFRefactoringBot extends GardeningBot {
 	}
 
 	public function getHelpText() {
-		return wfMsg('smw_gard_exportobl_docu');
+		return ""; // does not appear on Special:Gardening so never mind.
 	}
 
 	public function getLabel() {
@@ -76,6 +77,10 @@ class SRFRefactoringBot extends GardeningBot {
 	public function isVisible() {
 		return false;
 	}
+	
+    public function runParallel() {
+        return false;
+    }
 
 	/**
 	 * Returns an array
@@ -343,16 +348,31 @@ class SRFRefactoringBot extends GardeningBot {
 
 				return wfMsg($msg,  self::createLink($template, NS_TEMPLATE), $old_parameter, $new_parameter);
 				break;
+
+			case 'renameTemplate' :
+				if (!array_key_exists('old_template', $paramArray)) {
+					return "old template missing";
+				}
+				$old_template = $paramArray['old_template'];
+
+				if (!array_key_exists('new_template', $paramArray)) {
+					return "new template missing";
+				}
+				$new_template = $paramArray['new_template'];
+
+				return wfMsg($msg,  self::createLink($old_template, NS_TEMPLATE), self::createLink($new_template, NS_TEMPLATE));
+
+				break;
 		}
 	}
 
 	private function getOperation($operation, $titles, $paramArray) {
 		switch($operation) {
 			case 'touchPages':
-               
-                $op = new SRFTouchpageOperation($titles);
+					
+				$op = new SRFTouchpageOperation($titles);
 
-                break;
+				break;
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
 					return "Old instance missing";
@@ -605,6 +625,21 @@ class SRFRefactoringBot extends GardeningBot {
 				$op = new SRFChangeTemplateOperation($titles, $template, $old_parameter, $new_parameter);
 
 				break;
+
+			case 'renameTemplate' :
+				if (!array_key_exists('old_template', $paramArray)) {
+					return "old template missing";
+				}
+				$old_template = $paramArray['old_template'];
+
+				if (!array_key_exists('new_template', $paramArray)) {
+					return "new template missing";
+				}
+				$new_template = $paramArray['new_template'];
+
+				$op = new SRFChangeTemplateNameOperation($titles, $old_template, $new_template);
+
+				break;
 		}
 		return $op;
 	}
@@ -632,10 +667,10 @@ class SRFRefactoringBot extends GardeningBot {
 
 		} else {
 
-			// user defined, paramArray is an object 
+			// user defined, paramArray is an object
 			$commands = $paramArray->commands;
 			$titles = $paramArray->titles;
-			
+
 			// assuming that operations are ALL instance level operations!
 			foreach($commands as $c) {
 				$paramArray = GardeningBot::convertParamStringToArray($c);

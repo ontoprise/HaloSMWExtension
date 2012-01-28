@@ -18,7 +18,8 @@
  * @author Kai Kuehn
  * 
  */
- 
+
+
 .sref_warning {
     color: red;
     font-size: medium; 
@@ -68,6 +69,15 @@
     margin-top: 2px;
     margin-left: 5px;
     
+}
+
+#sref_toggle_resultbox {
+	float: right;
+}
+
+#sref_titlesbox_textarea {
+	height: 220px;
+    resize: none;
 }
 
 .sref_pointer {

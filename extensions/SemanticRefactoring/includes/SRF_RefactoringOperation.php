@@ -120,14 +120,14 @@ abstract class SRFRefactoringOperation {
 	 * are ignored!
 	 *
 	 * @param boolean $save
-	 * @param string[] $titles Full qualified titles
+	 * @param string/Title[] $titles Titles or full qualified title strings
 	 * @param SRFRefactoringOperation[] $operations
 	 * @param array $logMessages
 	 */
 	public static function applyOperations($save = true, $titles, $operations, & $logMessages) {
 
-		foreach($titles as $title_str) {
-			$title = Title::newFromText($title_str);
+		foreach($titles as $t) {
+			$title = $t instanceof Title ? $t : Title::newFromText($t);
 			$rev = Revision::newFromTitle($title);
 
 			$wikitext = $rev->getRawText();

@@ -105,6 +105,7 @@ function sreffRegisterJSModules(& $out) {
         'dependencies' => array('ext.smw.style', 'ext.smw.tooltips', 'ext.smw.sorttable'
             ),
          'messages' => array('sref_start_operation',
+                            'sref_cancel_operation',
                             'sref_warning_no_gardening',
                             'sref_rename_instance',
                             'sref_rename_instance_help',
@@ -148,6 +149,8 @@ function sreffRegisterJSModules(& $out) {
 				            'sref_replace' ,
 				            'sref_setvalue',
 				            'sref_rename',
+                            'sref_rename_template',
+            
 				            'sref_category',
                             'sref_old_category',
                             'sref_new_category',
@@ -161,7 +164,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_old_value',
 						    'sref_new_value',
 			                'sref_touch',
-			                'sref_touchall',
+			                'sref_saveall',
             
 				            'sref_comment',
                             'sref_log',
@@ -189,7 +192,8 @@ function sreffRegisterJSModules(& $out) {
                             'sref_help_addvalueoftemplate',
 						    'sref_help_setvalueoftemplate',
 						    'sref_help_replacetemplatevalue',
-						    'sref_help_renametemplateparameter'
+						    'sref_help_renametemplateparameter',
+                            'sref_help_renametemplate'
     )
     );
 

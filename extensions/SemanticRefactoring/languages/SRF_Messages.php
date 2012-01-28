@@ -4,9 +4,10 @@ $messages = array();
 $messages['en'] = array(
     'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Start refactoring',
+    'sref_cancel_operation' => 'Cancel',
     'sref_warning_no_gardening' => 'You can not run gardening bots due to missing rights! You need the "gardening" right.',
 
-    /*rename*/
+/*rename*/
     'sref_rename_instance' => 'Rename instance',
     'sref_rename_instance_help' => 'Renames the instance page itself.',
     'sref_rename_property' => 'Rename property',
@@ -16,7 +17,7 @@ $messages['en'] = array(
     'sref_rename_annotations' => 'Rename all occurences',
     'sref_rename_annotations_help' => 'Rename all occurences in annotations and queries.',
 
-    /*delete*/
+/*delete*/
     'sref_deleteCategory' => 'Delete category',
     'sref_deleteCategory_help' => 'Deletes the selected category article.',
     'sref_removeInstances' => 'Delete all instances',
@@ -29,7 +30,7 @@ $messages['en'] = array(
     'sref_removeQueriesWithCategories_help' => 'Removes all queries which contain the selected category. Does not delete the article which contains the query.',
     'sref_includeSubcategories' => 'Include sub-categories',
     'sref_includeSubcategories_help' => 'Applies the selected operations to all sub-categories of the selected category. This happens recursively, ie. it includes the non-direct sub-categories',
-    
+
     'sref_deleteProperty' => 'Delete property',
     'sref_deleteProperty_help' =>  'Deletes the selected property article.',
 	'sref_removeInstancesUsingProperty' => 'Delete all instances using this property.',
@@ -41,13 +42,13 @@ $messages['en'] = array(
     'sref_includeSubproperties' => 'Include sub-properties',
     'sref_includeSubproperties_help' =>  'Applies the selected operations to all sub-properties of the selected property. This happens recursively, ie. it includes the non-direct sub-properties',
 
-    /* errors */
+/* errors */
     'sref_not_allowed_botstart' => 'You are not allowed to start the refactoring bot.',
     'sref_no_sufficient_rights' => 'no sufficient rights',
 	'sref_article_changed' => 'nothing done. article was changed in the meantime.',
 	'sref_do_not_change_gardeninglog' => 'do not change a GardeningLog page',
-	
-	/* special pages */
+
+/* special pages */
     'semanticrefactoring' => 'Semantic Refactoring',
     'sref_specialrefactor_description' => 'Semantic Refactoring allows the user to manipulate large amounts of wiki annotations with one command. 
                                             This is, for example, necessary if you want to replace a property by another in all annotations where it appears. Another 
@@ -69,12 +70,14 @@ $messages['en'] = array(
     'sref_add_command' => 'add command',
     'sref_remove_command' => 'remove command',
     'sref_no_instances_selected' => 'No instances selected',
+    'sref_toggle_resultbox' => 'Toggle query/title mode',
 
     'sref_add' => 'add',
     'sref_remove' => 'remove',
     'sref_replace' => 'replace',
     'sref_setvalue' => 'set value',
     'sref_rename' => 'rename',
+    'sref_rename_template' => 'rename template',
 
     'sref_category' => 'Category',
     'sref_old_category' => 'Old category', 
@@ -89,7 +92,7 @@ $messages['en'] = array(
     'sref_old_value' => 'Old value',
     'sref_new_value' => 'New value',
 	'sref_touch'=> 'Touch',
-	'sref_touchall'=> 'all',
+	'sref_saveall'=> 'save',
 
     'sref_comment' => 'Comment',
     'sref_log' => 'Log',
@@ -99,7 +102,7 @@ $messages['en'] = array(
 	'sref_status' => 'Status',
     'sref_finished' => 'finished',
     'sref_running' => 'running',
-    
+
     'sref_comment_touchpages' => 'Page was touch (ie. saved without changes)',
     'sref_comment_renameinstance' => 'Rename instance $1 to $2',
     'sref_comment_renameproperty' => 'Rename property $1 to $2',
@@ -113,10 +116,11 @@ $messages['en'] = array(
     'sref_comment_removeannotation' => 'Remove annotation $1::$2',
     'sref_comment_replaceannotation' => 'Replace annotation $1::$2 by $1::$3',
     'sref_comment_setvalueofannotation' => 'Set value of $1::$2',
-    'sref_comment_addvalueoftemplate' => 'Add value to $1: $2=3',
+    'sref_comment_addvalueoftemplate' => 'Add value to $1: $2=$3',
     'sref_comment_setvalueoftemplate' => 'Set value of $1: $2=$3',
     'sref_comment_replacetemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
     'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3',
+    'sref_comment_renametemplate' => 'Replace template $1 by $2',
 
     'sref_help_touchpages' => 'Touch pages (ie. save without changes)',
     'sref_help_addcategory' => 'Add category as new annotation',
@@ -129,7 +133,8 @@ $messages['en'] = array(
     'sref_help_addvalueoftemplate' => 'Add new value of a template parameter',
     'sref_help_setvalueoftemplate' => 'Set new value of a template parameter',
     'sref_help_replacetemplatevalue' => 'Replace a value of a template parameter by another',
-    'sref_help_renametemplateparameter' => 'Rename a template parameter'
+    'sref_help_renametemplateparameter' => 'Rename a template parameter',
+    'sref_help_renametemplate' => 'Rename a template'
 );
 
 /**
@@ -137,10 +142,11 @@ $messages['en'] = array(
  */
 $messages['de'] = array(
  'smw_refactoringbot' => 'Refactoring bot',
+    'sref_cancel_operation' => 'Abbrechen',
     'sref_start_operation' => 'Starte Refactoring',
     'sref_warning_no_gardening' => 'Sie können aufgrund fehlender Rechte keine Gardening bots ausführen! Sie benötigen das "gardening" Recht.',
-    
-    /*rename*/
+
+/*rename*/
     'sref_rename_instance' => 'Instanz umbenennen',
     'sref_rename_instance_help' => 'Benennt die Instanzseite selbst um.',
     'rename_property' => 'Property umbenennen',
@@ -150,7 +156,7 @@ $messages['de'] = array(
     'rename_annotations' => 'Alle Vorkommen umbenennen',
     'rename_annotations_help' => 'Benenne alle Vorkommen in Annotationen und Queries um.',
 
-    /*delete*/
+/*delete*/
     'sref_deleteCategory' => 'Lösche Kategorie',
     'sref_deleteCategory_help' => 'Lösche den ausgewählten Kategorie Artikel',
     'sref_removeInstances' => 'Lösche alle Instanzen',
@@ -163,7 +169,7 @@ $messages['de'] = array(
     'sref_removeQueriesWithCategories_help' => 'Entferne alle Queries die diese Kategorie enthalten. Löscht nicht den Artikel der die Query enthält.',
     'sref_includeSubcategories' => 'Schließe Unterkategorien mit ein',
     'sref_includeSubcategories_help' => 'Wendet die ausgewählte Operation auf alle Unterkategorien der ausgewählten Kategorie an. Dies findet rekursiv statt, das heißt es werden nicht-direkte Unterkategorien mit einbezogen',
-    
+
     'sref_deleteProperty' => 'Lösche Property',
     'sref_deleteProperty_help' =>  'Lösche den ausgewählten Property Artikel.',
     'sref_removeInstancesUsingProperty' => 'Lösche alle Instanzen die diese Property benutzen.',
@@ -176,13 +182,13 @@ $messages['de'] = array(
     'sref_includeSubproperties_help' =>  'Wendet die ausgewählten Operationen auf alle Unter-Properties des ausgewählten Properties an. Dies findet rekursiv statt, das heißt es werden nicht-direkte Unter-Properties mit einbezogen',
 
 
-    /* errors */
+/* errors */
     'sref_not_allowed_botstart' => 'Es ist ihnen nicht gestattet den Refactoring bot zu starten.',
     'sref_no_sufficient_rights' => 'unzureichende Rechte',
     'sref_article_changed' => 'nichts ausgeführt. Artikel wurde in der Zwischenzeit verändert.',
     'sref_do_not_change_gardeninglog' => 'Verändere keine GardeningLog Seite',
-    
-    /* special pages */
+
+/* special pages */
     'semanticrefactoring' => 'Semantic Refactoring',
    'sref_specialrefactor_description' => 'Semantic Refactoring erlaubt es viele Annotationen gleichzeitig im Wiki mit einem einzelnen Kommando zu manipulieren. 
                                             Das ist beispielsweise dann sinvoll, wenn man ein Property durch ein anderes Property ersetzen will. Es wird
@@ -204,12 +210,14 @@ $messages['de'] = array(
     'sref_add_command' => 'Kommando hinzufügen',
     'sref_remove_command' => 'Kommando entfernen',
     'sref_no_instances_selected' => 'Keine Instanz ausgewählt',
+    'sref_toggle_resultbox' => 'Wechsle zw. Query/Titel Modus',
 
     'sref_add' => 'füge hinzu',
     'sref_remove' => 'entferne',
     'sref_replace' => 'ersetze',
     'sref_setvalue' => 'setze Wert',
     'sref_rename' => 'benenne um',
+'sref_rename_template' => 'rename template',
 
     'sref_category' => 'Kategorie',
     'sref_old_category' => 'Alte Kategorie',
@@ -224,7 +232,7 @@ $messages['de'] = array(
     'sref_old_value' => 'Alter Wert',
     'sref_new_value' => 'Neuer Wert',
     'sref_touch'=> 'Anfassen',
-    'sref_touchall'=> 'alle',
+    'sref_saveall'=> 'speichern',
 
     'sref_comment' => 'Kommentar',
     'sref_log' => 'Log',
@@ -234,7 +242,7 @@ $messages['de'] = array(
     'sref_status' => 'Status',
     'sref_finished' => 'abgeschlossen',
     'sref_running' => 'running',
-    
+
     'sref_comment_touchpages' => 'Seite wurde angefasst, d.h. ohne Änderung neu gespeichert.',
     'sref_comment_renameinstance' => 'Benenne Instanz $1 in $2 um',
     'sref_comment_renameproperty' => 'Benenne Property $1 in $2 um',
@@ -252,7 +260,8 @@ $messages['de'] = array(
     'sref_comment_setvalueoftemplate' => 'Setze den Wert von $1: $2=$3',
     'sref_comment_replacetemplatevalue' => 'Ersetze Templatewerte $1: $2=$3 by $2=$4',
     'sref_comment_renametemplateparameter' => 'Ersetze Templateparameter $1: $2 by $3',
-    
+ 'sref_comment_renametemplate' => 'Replace template $1 by $2',
+
     'sref_help_touchpages' => 'Fasse Seite an, d.h. speichere ohne Änderung.',
     'sref_help_addcategory' => 'Fügt Kategorie-Annotation hinzu',
     'sref_help_removecategory' => 'Entfernt Kategorie-Annotation',
@@ -264,7 +273,8 @@ $messages['de'] = array(
     'sref_help_addvalueoftemplate' => 'Fügt neuen Wert für Templateparameter hinzu',
     'sref_help_setvalueoftemplate' => 'Setzt neue Wert für Templateparameter',
     'sref_help_replacetemplatevalue' => 'Ersetzt Wert für Templateparameter durch anderen',
-    'sref_help_renametemplateparameter' => 'Benennt einen Templateparameter um'
+    'sref_help_renametemplateparameter' => 'Benennt einen Templateparameter um',
+ 'sref_help_renametemplate' => 'Rename a template'
    
 );
 

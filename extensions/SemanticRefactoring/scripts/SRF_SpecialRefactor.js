@@ -35,8 +35,8 @@
 		level2 : {
 			0 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace')],
 			1 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace'), mw.msg('sref_setvalue')],
-			2 : [mw.msg('sref_add'), mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace')],
-			3 : [mw.msg('sref_touchall') ]
+			2 : [mw.msg('sref_add'), mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace'), mw.msg('sref_rename_template')],
+			3 : [mw.msg('sref_saveall') ]
 		},
 		
 		operationnames: {
@@ -53,6 +53,7 @@
 			'21' : 'setValueOfTemplate',
 			'22' : 'renameTemplateParameter',
 			'23' : 'replaceTemplateValue',
+			'24' : 'renameTemplate',
 			
 			'30' : 'touchPages'
 		},
@@ -86,6 +87,8 @@
 					 { id : 'parameter', title : mw.msg('sref_parameter'), optional : false },
 					 { id : 'old_value', title :  mw.msg('sref_old_value'), optional : false },
 					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false }],
+			'24' : [  { id : 'old_template', ac : 'namespace: Template' , title :  mw.msg('sref_old_value'), optional : false },
+					 { id : 'new_template', ac : 'namespace: Template', title :  mw.msg('sref_new_value'), optional : false }],
 			'30' : [ ]
 		
 		
@@ -216,6 +219,8 @@
 	
 	var resultBox = {
 			
+			queryMode : true,
+			
 			updateNextPrev: function() {
 				var pageNum = $('#sref_slice0').attr('pageNum');
 				if (pageNum == undefined) pageNum = 1;
@@ -292,6 +297,18 @@
 					resultBox.updateNextPrev();
 				});
 				resultBox.updateNextPrev();
+				
+				$('#sref_toggle_resultbox').click(function(i, e) {
+					$('#sref_resultbox').toggle();
+					$('#sref_titlesbox').toggle();
+					resultBox.queryMode = !resultBox.queryMode;
+					$('#sref_querybox_textarea').attr('disabled', !resultBox.queryMode);
+					$('#sref_run_query').attr('disabled', !resultBox.queryMode || ($.trim($('#sref_querybox_textarea').val()) == ''));
+					$('#sref_clear_query').attr('disabled', !resultBox.queryMode);
+					$('#sref_open_qi').attr('disabled', !resultBox.queryMode);
+					
+					
+				});
 			}
 	};
 	
@@ -545,16 +562,27 @@
 	// run refactoring
 	$('#sref_start_operation').click(function(e) { 
 		
+		var prefixedTitles = [];
+		
 		// get (selected) titles to work on
-		var results = $('input[checked="true"]', '#sref_resultbox');
-		prefixedTitles = [];
-		results.each(function(i,e) { 
-			var prefixedTitle = $(e).attr("prefixedTitle");
-			prefixedTitles.push(prefixedTitle);
-		});
-		if (results.length == 0) {
-			alert(mw.msg('sref_no_instances_selected'));
-			return;
+		if (resultBox.queryMode) {
+			// get selected items from query result
+			var results = $('input[checked="true"]', '#sref_resultbox');
+			results.each(function(i,e) { 
+				var prefixedTitle = $(e).attr("prefixedTitle");
+				prefixedTitles.push(prefixedTitle);
+			});
+			if (results.length == 0) {
+				alert(mw.msg('sref_no_instances_selected'));
+				return;
+			}
+		} else {
+			// get title list from textarea
+			var titlesText = $('#sref_titlesbox_textarea').val();
+			prefixedTitles = titlesText.split("\n");
+			prefixedTitles = $.map(prefixedTitles, function(e) {
+				return e == '' ? null : $.trim(e);
+			});
 		}
 		
 		// get bot parametrization and save as JSON
