@@ -295,7 +295,7 @@ function &smwfGetAutoCompletionStore() {
 	if ($smwhgAutoCompletionStore == NULL) {
 		global $smwgHaloWebserviceEndpoint;
 		if (isset($smwgHaloWebserviceEndpoint)) {
-				
+
 			global $smwgHaloAutoCompletionTSC;
 			if (isset($smwgHaloAutoCompletionTSC) && $smwgHaloAutoCompletionTSC === true) {
 				// activate TSC autocompletion only explicitly
@@ -306,7 +306,7 @@ function &smwfGetAutoCompletionStore() {
 		} else {
 
 			$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
-			
+				
 		}
 	}
 	return $smwhgAutoCompletionStore;
@@ -431,7 +431,7 @@ class AutoCompletionRequester {
 			$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText($propertyText, SMW_NS_PROPERTY)), SMWDIProperty::newFromUserLabel("_LIST"));
 			$stringDi = reset($values);
 			$proposal = $stringDi->getString();
-			
+				
 			smwfGetStore()->setLocalRequest(false);
 			return (array($proposal));
 		} else if ($typeID == '_ema') {
@@ -838,13 +838,15 @@ class AutoCompletionHandler {
 				// continue to fill in results if possible
 			} else if ($commandText == 'schema-property-domain') {
 				if (empty($params[0]) || is_null($params[0])) continue;
-				if (smwf_om_userCan($params[0], 'read') == 'true') {
-					$category = Title::newFromText($params[0]);
-					if (!is_null($category)) {
-						$pages = $acStore->getPropertyForCategory($userInput, $category);
-						$inf = self::setInferred($pages, !$first);
-						$result = self::mergeResults($result, $inf);
+				foreach($params as $p) {
+					if (smwf_om_userCan($p, 'read') == 'true') {
+						$category = Title::newFromText($p);
+						if (!is_null($category)) {
+							$pages = $acStore->getPropertyForCategory($userInput, $category);
+							$inf = self::setInferred($pages, !$first);
+							$result = self::mergeResults($result, $inf);
 
+						}
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -910,8 +912,8 @@ class AutoCompletionHandler {
 							$samples = AutoCompletionRequester::getSyntaxSamples($property->getText());
 							if (!is_null($samples)) return $samples;
 						}
-                        $domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
-                        $propertyDI = SMWDIWikiPage::newFromTitle($property);
+						$domainRangeProperty = SMWDIProperty::newFromUserLabel(SMWHaloPredefinedPages::$HAS_DOMAIN_AND_RANGE->getText());
+						$propertyDI = SMWDIWikiPage::newFromTitle($property);
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($propertyDI, $domainRangeProperty);
 						$pages = $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations);
 						$inf = self::setInferred($pages, !$first);
