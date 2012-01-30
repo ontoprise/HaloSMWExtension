@@ -2,10 +2,10 @@ Index: extensions/SRFPlus/Exhibit/SRF_Exhibit.php
 ===================================================================
 --- extensions/SRFPlus/Exhibit/SRF_Exhibit.php	(revision 0)
 +++ extensions/SRFPlus/Exhibit/SRF_Exhibit.php	(revision 0)
-@@ -105,7 +105,7 @@
- 		}
+@@ -117,7 +117,7 @@
+ 		return $time;
  	}
- 
+ 	
 -	protected function getResultText($res, $outputmode) {
 +	protected function getResultText(SMWQueryResult $res, $outputmode) {
  		$this->includeJS();
