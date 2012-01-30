@@ -91,8 +91,9 @@ $messages['en'] = array(
     'sref_value' => 'Value',
     'sref_old_value' => 'Old value',
     'sref_new_value' => 'New value',
-	'sref_touch'=> 'Touch',
-	'sref_saveall'=> 'save',
+	'sref_misc'=> 'Misc',
+	'sref_save'=> 'save',
+    'sref_purge'=> 'purge',
 
     'sref_comment' => 'Comment',
     'sref_log' => 'Log',
@@ -104,6 +105,7 @@ $messages['en'] = array(
     'sref_running' => 'running',
 
     'sref_comment_touchpages' => 'Page was touch (ie. saved without changes)',
+    'sref_comment_purgepages' => 'Page was purged (ie. invalidated)',
     'sref_comment_renameinstance' => 'Rename instance $1 to $2',
     'sref_comment_renameproperty' => 'Rename property $1 to $2',
     'sref_comment_renamecategory' => 'Rename category $1 to $2',
@@ -123,6 +125,7 @@ $messages['en'] = array(
     'sref_comment_renametemplate' => 'Replace template $1 by $2',
 
     'sref_help_touchpages' => 'Touch pages (ie. save without changes)',
+    'sref_help_purgepages' => 'Purge pages (ie. invalidates in cache)',
     'sref_help_addcategory' => 'Add category as new annotation',
     'sref_help_removecategory' => 'Remove an existing category annotation',
     'sref_help_replacecategory' => 'Replace an category annotation by another',
@@ -231,8 +234,9 @@ $messages['de'] = array(
     'sref_value' => 'Wert',
     'sref_old_value' => 'Alter Wert',
     'sref_new_value' => 'Neuer Wert',
-    'sref_touch'=> 'Anfassen',
-    'sref_saveall'=> 'speichern',
+    'sref_misc'=> 'Versch.',
+    'sref_save'=> 'speichern',
+    'sref_purge'=> 'invalidieren',
 
     'sref_comment' => 'Kommentar',
     'sref_log' => 'Log',
@@ -244,6 +248,7 @@ $messages['de'] = array(
     'sref_running' => 'running',
 
     'sref_comment_touchpages' => 'Seite wurde angefasst, d.h. ohne Änderung neu gespeichert.',
+    'sref_comment_purgepages' => 'Seite wurde invalidiert.',
     'sref_comment_renameinstance' => 'Benenne Instanz $1 in $2 um',
     'sref_comment_renameproperty' => 'Benenne Property $1 in $2 um',
     'sref_comment_renamecategory' => 'Benenne Kategorie $1 in $2 um',
@@ -263,6 +268,7 @@ $messages['de'] = array(
  'sref_comment_renametemplate' => 'Replace template $1 by $2',
 
     'sref_help_touchpages' => 'Fasse Seite an, d.h. speichere ohne Änderung.',
+    'sref_help_purgepages' => 'Invalidiere Seite im Cache.',
     'sref_help_addcategory' => 'Fügt Kategorie-Annotation hinzu',
     'sref_help_removecategory' => 'Entfernt Kategorie-Annotation',
     'sref_help_replacecategory' => 'Ersetzt Kategorie-Annotation durch eine andere',

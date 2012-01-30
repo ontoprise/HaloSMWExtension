@@ -41,6 +41,7 @@ require_once($srefgIP . '/includes/SRF_Tools.php');
 
 require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_TouchpageOperation.php');
+require_once($srefgIP . '/includes/operations/SRF_PurgepageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateName.php');
@@ -77,10 +78,10 @@ class SRFRefactoringBot extends GardeningBot {
 	public function isVisible() {
 		return false;
 	}
-	
-    public function runParallel() {
-        return false;
-    }
+
+	public function runParallel() {
+		return false;
+	}
 
 	/**
 	 * Returns an array
@@ -135,6 +136,9 @@ class SRFRefactoringBot extends GardeningBot {
 		$msg = 'sref_comment_'.strtolower($op);
 		switch($op) {
 			case 'touchPages':
+				return wfMsg($msg);
+				break;
+			case 'purgePages':
 				return wfMsg($msg);
 				break;
 			case 'renameInstance':
@@ -371,6 +375,11 @@ class SRFRefactoringBot extends GardeningBot {
 			case 'touchPages':
 					
 				$op = new SRFTouchpageOperation($titles);
+
+				break;
+			case 'purgePages':
+
+				$op = new SRFPurgepageOperation($titles);
 
 				break;
 			case 'renameInstance':

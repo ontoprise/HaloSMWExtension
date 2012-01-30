@@ -163,8 +163,9 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_value',
 						    'sref_old_value',
 						    'sref_new_value',
-			                'sref_touch',
-			                'sref_saveall',
+			                'sref_misc',
+			                'sref_save',
+                            'sref_purge',
             
 				            'sref_comment',
                             'sref_log',
@@ -179,6 +180,7 @@ function sreffRegisterJSModules(& $out) {
 				            'sref_remove_command',
                             
                             'sref_help_touchpages',
+                            'sref_help_purgepages',
 				            'sref_help_addcategory',
 						    'sref_help_removecategory' ,
 						    'sref_help_replacecategory' ,

@@ -29,14 +29,14 @@
 			0 : mw.msg('sref_category'),
 			1 : mw.msg('sref_annotationproperty'),
 			2 : mw.msg('sref_template'),
-			3 : mw.msg('sref_touch')}
+			3 : mw.msg('sref_misc')}
 		,
 		
 		level2 : {
 			0 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace')],
 			1 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace'), mw.msg('sref_setvalue')],
 			2 : [mw.msg('sref_add'), mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace'), mw.msg('sref_rename_template')],
-			3 : [mw.msg('sref_saveall') ]
+			3 : [mw.msg('sref_save'), mw.msg('sref_purge') ]
 		},
 		
 		operationnames: {
@@ -55,7 +55,8 @@
 			'23' : 'replaceTemplateValue',
 			'24' : 'renameTemplate',
 			
-			'30' : 'touchPages'
+			'30' : 'touchPages',
+			'31' : 'purgePages'
 		},
 		
 		
@@ -89,7 +90,8 @@
 					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false }],
 			'24' : [  { id : 'old_template', ac : 'namespace: Template' , title :  mw.msg('sref_old_value'), optional : false },
 					 { id : 'new_template', ac : 'namespace: Template', title :  mw.msg('sref_new_value'), optional : false }],
-			'30' : [ ]
+			'30' : [ ],
+			'31' : [ ]
 		
 		
 		}
