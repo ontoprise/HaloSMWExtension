@@ -37,6 +37,7 @@ $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 $wgAjaxExportList[] = 'smwf_qi_getPage';
 $wgAjaxExportList[] = 'smwf_qi_getAskPage';
 $wgAjaxExportList[] = 'smwf_qi_getSparqlQueryResult';
+$wgAjaxExportList[] = 'smwf_qi_parseSparqlQuery';
 
 $wgHooks['ajaxMIMEtype'][] = 'smwf_qi_getPageMimeType';
 

@@ -37,6 +37,24 @@
     }
   };
 
+  SPARQL.Model.removeNamespaceDuplicates = function(namespaceArray){
+    if(!(namespaceArray && namespaceArray.length)){
+      return [];
+    }
+
+    var result = $.map(namespaceArray, function(value, index){
+      for(var i = index + 1; i < namespaceArray.length; i++){
+        if(value.prefix === namespaceArray[i].prefix){
+          mw.log('remove ' + value.prefix + ' : ' + value.namespace_iri);
+          return null;
+        }
+      }      
+      return value;
+    });
+
+    return result;
+  };
+
   /**
    * Populate model from the sparql query json structure
    * @param data json object representing the sparql query
@@ -50,6 +68,7 @@
     //init static data
     SPARQL.Model.data.projection_var = data.projection_var || [];
     SPARQL.Model.data.order = data.order || [];
+    SPARQL.Model.data.namespace = SPARQL.Model.removeNamespaceDuplicates(data.namespace);
 
     //init category_restriction
     data.category_restriction = data.category_restriction || [];
@@ -515,7 +534,7 @@
      */
   SPARQL.Model.createSubject = function(subjectName, type){
     if(!subjectName){
-      subjectName = '?v' + SPARQL.getNextUid();
+      subjectName = '?variable_' + SPARQL.getNextUid();
     }
     var subject = new SPARQL.Model.SubjectTerm(subjectName, type);
     
@@ -751,7 +770,7 @@
 //    propertyName = propertyName || 'property' + SPARQL.getNextUid();
     propertyName = propertyName || '';
 //    valueName = valueName || '?value' + SPARQL.getNextUid();
-    valueName = valueName || '?v' + SPARQL.getNextUid();
+    valueName = valueName || '?variable_' + SPARQL.getNextUid();
     optional = optional || false;
     showInResults = showInResults || true;
 

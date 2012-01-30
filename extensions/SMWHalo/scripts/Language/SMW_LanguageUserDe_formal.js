@@ -366,6 +366,10 @@ window.wgUserLanguageStrings = {
     'QI_INVALID_QUERY' : 'The query is invalid',
     'QI_CLOSE'  :  'Close',
     'QI_QUERY_RESULT' : 'Query result',
+    'QI_OK'   : 'OK',
+    'QI_CANCEL'  : 'Cancel',
+    'QI_SWITCH_TO_SPARQL_WARNING' : 'Your ASK query is now going to be converted to SPARQL.<br/>This is not reversible because SPARQL is much more expressive than ASK.<br/>This also requires that TSC is up and running and synchronized with your wiki.<br/>Are you sure you want to proceed?',
+    'QI_CONFIRMATION' : 'Confirmation',
     
 	
 	// Wiki text parser

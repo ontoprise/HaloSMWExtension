@@ -360,6 +360,17 @@ window.wgUserLanguageStrings = {
     'QI_NOT_SPECIFIED'        : 'Non spécifié',
     'QI_NO_QUERIES_FOUND'     : 'Votre recherche ne correspond à aucune requêtes dans le wiki',
     'QI_SPARQL_NOT_SUPPORTED' : 'Les requêtes SPARQL ne peuvent pas être édité dans l\'interface de requêtes.',
+    
+    //SPARQL query interface
+    'QI_SWITCH_TO_SPARQL'     : 'Switch to SPARQL',
+    'QI_SHOW_IN_RESULTS_MUST_BE_SET': 'At least one variable must have a "Show in results" option selected',
+    'QI_INVALID_QUERY' : 'The query is invalid',
+    'QI_CLOSE'  :  'Close',
+    'QI_QUERY_RESULT' : 'Query result',
+    'QI_OK'   : 'OK',
+    'QI_CANCEL'  : 'Cancel',
+    'QI_SWITCH_TO_SPARQL_WARNING' : 'Your ASK query is now going to be converted to SPARQL.<br/>This is not reversible because SPARQL is much more expressive than ASK.<br/>This also requires that TSC is up and running and synchronized with your wiki.<br/>Are you sure you want to proceed?',
+    'QI_CONFIRMATION' : 'Confirmation',
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Merci d\'évaluer les annotations, ',
