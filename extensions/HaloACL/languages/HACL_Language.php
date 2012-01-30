@@ -145,10 +145,10 @@ abstract class HACLLanguage {
 	 * 		PF_PROPERTY_ACCESS, PF_WHITELIST, PF_MEMBER
 	 * 
 	 * @return string 
-	 * 		The language dependent name of the parser function.
+	 * 		The language dependent name of the parser function all in lower case.
 	 */
 	public function getParserFunctionParameter($parserFunctionParameterID) {
-		return $this->mParserFunctionsParameters[$parserFunctionParameterID];
+		return strtolower($this->mParserFunctionsParameters[$parserFunctionParameterID]);
 	}
 	
 	/**
