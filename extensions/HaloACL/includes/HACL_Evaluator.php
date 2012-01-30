@@ -610,7 +610,7 @@ class HACLEvaluator {
 				$prop = $prop->getDiWikiPage();
 				if ($prop) {
 					$prop = $prop->getTitle();
-					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
+					if ($prop && !self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
 						wfProfileOut('HACLEvaluator::onDiffViewHeader (HaloACL)');
 						return true;
@@ -626,7 +626,7 @@ class HACLEvaluator {
 				$prop = $prop->getDiWikiPage();
 				if ($prop) {
 					$prop = $prop->getTitle();
-					if (!self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
+					if ($prop && !self::checkPropertyAccess($prop, $wgUser, "propertyread")) {
 						HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
 						wfProfileOut('HACLEvaluator::onDiffViewHeader (HaloACL)');
 						return true;
