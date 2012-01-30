@@ -3,8 +3,8 @@
 	<global>
 		<id>arclibrary</id>
 		<title>ARC2 library</title>
-		<version>1.6.0</version>
-		<patchlevel>1</patchlevel>
+		<version>1.7.0</version>
+		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/ARCLibrary</instdir>
