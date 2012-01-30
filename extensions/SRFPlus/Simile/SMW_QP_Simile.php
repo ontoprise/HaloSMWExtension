@@ -8,7 +8,9 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 	protected $mEnd = '';
 	protected $mValue = '';
 	
-    public static function registerResourceModules() {
+	protected $m_isAjax = false;
+	
+	public static function registerResourceModules() {
 		global $wgResourceModules, $srfpgScriptPath;
 		
 		$moduleTemplate = array(
@@ -25,8 +27,9 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 	
     protected function includeJS() {
 		global $smwgSimileSite;
-		SMWOutputs::requireHeadItem("simile_timeplot", '<script src="' . $smwgSimileSite . '/timeplot/1.1/timeplot-api.js"></script>');
-    	
+		$header_js = '<script src="' . $smwgSimileSite . '/timeplot/1.1/timeplot-api.js"></script>';
+		SMWOutputs::requireHeadItem("simile_timeplot", $header_js);
+
 		// MediaWiki 1.17 introduces the Resource Loader.
 		$realFunction = array( 'SMWOutputs', 'requireResource' );
 		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) && is_callable( $realFunction ) ) {
@@ -39,7 +42,15 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 			SMWOutputs::requireHeadItem("simile_timeplotwiki", '<script src="'. $srfpgScriptPath . '/Simile/scripts/Simile_TimeplotWiki.js"></script>');
 		}
 	}
-
+	
+	function getParameters() {
+        return array(
+			array('name' => 'time', 'type' => 'string', 'description' => "field name of start time"),
+			array('name' => 'end', 'type' => 'string', 'description' => "field name of end time"),
+			array('name' => 'value', 'type' => 'string', 'description' => "field name of timeplot value"),
+		);
+    }
+	
 	protected function readParameters( $params, $outputmode ) {
 		parent::readParameters( $params, $outputmode );
 
@@ -51,6 +62,10 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 		}
 		if ( array_key_exists( 'value', $params ) ) {
 			$this->mValue = trim( $params['value'] );
+		}
+		global $wgRequest;
+		if ( $wgRequest->getVal( 'action' ) == 'ajax' ) {
+			$this->m_isAjax = true;
 		}
 	}
 	
@@ -142,7 +157,7 @@ class SMWSimileTimeplotResultPrinter extends SMWResultPrinter {
 		
 		$js = '
 <script type="text/javascript">
-	simileTimeplotRecords.push( {
+	simileTimeplot.records.push( {
 		div: "' . $div . '",
 		count: ' . count($cols) . ',
 		data: [' . $data . ']
@@ -184,6 +199,8 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 	protected $mImage = '';
 	protected $mSubtitle = '';
 	
+	protected $m_isAjax = false;
+	
 	public static function registerResourceModules() {
 		global $wgResourceModules, $srfpgScriptPath;
 		
@@ -201,7 +218,8 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 	
     protected function includeJS() {
 		global $smwgSimileSite;
-		SMWOutputs::requireHeadItem("simile_runway", '<script src="' . $smwgSimileSite . '/runway/1.0/runway-api.js"></script>');
+		$header_js = '<script src="' . $smwgSimileSite . '/runway/1.0/runway-api.js"></script>';
+		SMWOutputs::requireHeadItem("simile_runway", $header_js);
     	
 		// MediaWiki 1.17 introduces the Resource Loader.
 		$realFunction = array( 'SMWOutputs', 'requireResource' );
@@ -216,6 +234,13 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 		}
 	}
 	
+	function getParameters() {
+        return array(
+			array('name' => 'image', 'type' => 'string', 'description' => "field name of image(s)"),
+			array('name' => 'subtitle', 'type' => 'string', 'description' => "field name of subtitle(s)"),
+		);
+    }
+	
 	protected function readParameters( $params, $outputmode ) {
 		parent::readParameters( $params, $outputmode );
 
@@ -224,6 +249,10 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 		}
 		if ( array_key_exists( 'subtitle', $params ) ) {
 			$this->mSubtitle = trim( $params['subtitle'] );
+		}
+		global $wgRequest;
+		if ( $wgRequest->getVal( 'action' ) == 'ajax' ) {
+			$this->m_isAjax = true;
 		}
 	}
 
@@ -298,13 +327,13 @@ class SMWSimileRunwayResultPrinter extends SMWResultPrinter {
 			}
 			$data .= ", html:\"$html\"}";
 		}
-		
+
 		$js = '
 <script type="text/javascript">
-	simileRunwayRecords[' . $smwgIQRunningNumber . '] = {
+	simileRunway.records[' . $smwgIQRunningNumber . '] = {
 		div: "' . $div . '",
 		onSelect: function(index, id) {
-			document.getElementById("' . $slide . '").innerHTML = simileRunwayRecords[' . $smwgIQRunningNumber .'].data[index].html;
+			document.getElementById("' . $slide . '").innerHTML = simileRunway.records[' . $smwgIQRunningNumber .'].data[index].html;
 		},
 		items: ' . $items . ',
 		data: [' . $data . ']

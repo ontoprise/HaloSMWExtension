@@ -58,12 +58,12 @@ Index: extensions/SRFPlus/ofc/SRF_OFC.php
 ===================================================================
 --- extensions/SRFPlus/ofc/SRF_OFC.php	(revision 0)
 +++ extensions/SRFPlus/ofc/SRF_OFC.php	(revision 0)
-@@ -220,7 +220,7 @@
+@@ -225,7 +225,7 @@
  	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
  
  
--	protected function getResultText($res, $outputmode) {
-+	protected function getResultText(SMWQueryResult $res, $outputmode) {
+-	protected function getResultText( $res, $outputmode ) {
++	protected function getResultText( SMWQueryResult $res, $outputmode ) {
  
  		global $smwgIQRunningNumber;
  		$outputmode = SMW_OUTPUT_HTML;
@@ -72,16 +72,16 @@ Index: extensions/SRFPlus/Simile/SMW_QP_Simile.php
 ===================================================================
 --- extensions/SRFPlus/Simile/SMW_QP_Simile.php	(revision 0)
 +++ extensions/SRFPlus/Simile/SMW_QP_Simile.php	(revision 0)
-@@ -77,7 +77,7 @@
- 		}
+@@ -82,7 +82,7 @@
  		return $time;
  	}
+ 	
 -	protected function getResultText($res, $outputmode) {
 +	protected function getResultText(SMWQueryResult $res, $outputmode) {
  		$this->includeJS();
  		
  		$header_items = array();
-@@ -230,7 +230,7 @@
+@@ -256,7 +256,7 @@
  		}
  	}
  

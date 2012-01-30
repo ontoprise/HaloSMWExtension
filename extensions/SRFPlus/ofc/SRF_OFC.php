@@ -134,6 +134,11 @@ class SRFOFC extends SMWResultPrinter {
 		}
 		if (array_key_exists('ajaxcall', $this->m_params)) {
 			$this->m_isAjax = true;
+		} else {
+			global $wgRequest;
+			if ( $wgRequest->getVal( 'action' ) == 'ajax' ) {
+				$this->m_isAjax = true;
+			}
 		}
 
 		if(strpos(strtolower($this->mFormat), 'ofc-') === 0) {
@@ -220,7 +225,7 @@ class SRFOFC extends SMWResultPrinter {
 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
 
 
-	protected function getResultText($res, $outputmode) {
+	protected function getResultText( $res, $outputmode ) {
 
 		global $smwgIQRunningNumber;
 		$outputmode = SMW_OUTPUT_HTML;
@@ -501,7 +506,11 @@ class SRFOFC extends SMWResultPrinter {
 			$html .= '</div></div>';
 		}
 
-		$js = 'ofc_data_objs.data.push({' . implode(',', $ofc_data_objs) . '});';
+		if( $this->m_isAjax ) {
+			$js = 'if(typeof(ofc_data_objs)=="undefined") window.ofc_data_objs = {data:[],tabs:[],showhide:[]};' . 
+				'jQuery(document).ready(function(){if(typeof(ofc_render)!="undefined")ofc_render.js.renderOfc();});';
+		}
+		$js .= 'ofc_data_objs.data.push({' . implode(',', $ofc_data_objs) . '});';
 		if($this->m_singlechart === FALSE) {
 			if($this->m_tabview) {
 				foreach($this->m_charts as $chart) {
@@ -513,7 +522,7 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			}
 		}
-		
+
 		$js = '<script type="text/javascript">' . $js . '</script>' . "\n";
 		// MediaWiki 1.17 introduces the Resource Loader.
 		$realFunction = array( 'SMWOutputs', 'requireResource' );
