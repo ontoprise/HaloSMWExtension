@@ -9,6 +9,10 @@
  * include them in your LocalSettings.php.
  */
 
+if ( !defined( 'SFI_VERSION' ) ) {
+	die( 'This file is part of the SemanticFormsInputs extension, it is not a valid entry point.' );
+}
+
 ##
 # This is the path to your installation of Semantic Forms Inputs as
 # seen from the web. No final slash.
@@ -152,4 +156,10 @@ $sfigSettings->timePickerShowResetButton = false;
 # way to erase the input field if it is disabled for direct input.
 #
 $sfigSettings->datetimePickerShowResetButton = false;
+
+##
+# This determines if the input field shall be disabled. The user can
+# only set the value via the menu in this case.
+#
+$sfigSettings->menuSelectDisableInputField = false;
 

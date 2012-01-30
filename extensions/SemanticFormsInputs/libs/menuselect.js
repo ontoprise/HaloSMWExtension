@@ -12,93 +12,93 @@
  */
 function SFI_MS_init( inputID, params ) {
 
-	jQuery('#' + inputID + "_show").one('focus', function(){
+	var inputShow = jQuery('#' + inputID + "_show");
+
+	inputShow.one('focus', function(){
+
 		var treeid = "#" + inputID.replace(/input/,"span") + "_tree"
+		var tree = jQuery( treeid );
+		var treeRoot = tree.children( "ul" );
+		var treeAllLists = tree.find( "ul" );
 
-		jQuery(treeid).css("visibility","hidden");
+		// wrap content in table to separate content from sub-menus and to
+		// support animating the list item width later;
+		// ensure list items have constant width,
+		// TODO: prevent layout changes when list item width is changed
+		// set position static ( was set to fixed to calculate text width )
+		treeAllLists
+		.each( function() {
 
-		// wrap content in span to separate content from sub-menus,
-		// wrap content in div to support animating the list item width later
-		jQuery( treeid + " li" ).each(
-			function() {
+			var maxwidth = 0;
+			var listitems = jQuery(this).children("li");
 
-				jQuery( this ).contents().not( "ul" )
-				.wrapAll( '<span />' )
-				.wrapAll( '<div class="cont"/>' );
+			listitems
+			.each( function() {
 
-				jQuery( this ).contents().not( "ul" )
-				.find("div.cont")
-				.css({
-					position:'fixed',
-					top: '0px',
-					left: '0px'
-				});
+				var item = jQuery( this );
+				var contents = item.contents()//.not( "ul" );
+					.filter(function() {
+					  return ! jQuery( this ).is('ul');
+					});
+				
+				contents
+				.wrapAll( '<table><tbody><tr><td class="cont"/>' );
 
 				// insert the arrows indicating submenus
-				if ( jQuery( this ).children( "ul" ).length > 0 ) {
-					jQuery( this ).children( "span" ).children( "div" )
-					.before( '<div class="arrow" ><img src="' + sfigScriptPath + '/images/MenuSelectArrow.gif" /></div>' )
+				if ( item.children( "ul" ).length > 0 ) {
+					contents.parent()
+					.after( '<td class="arrow" ><img src="' + sfigScriptPath + '/images/MenuSelectArrow.gif" /></td>' )
 				}
 
-		} );
+				maxwidth = Math.max( item.outerWidth(false) + 10, maxwidth );
 
-		// ensure labels of list item have constant width regardless of width of list item
-		// prevents layout changes when list item width is changed
-		// set position static ( was set to fixed to calculate text width )
-		jQuery( treeid + " li>span>div.cont" ).each( function() {
-			jQuery( this ).width( jQuery( this ).outerWidth(true) +  jQuery( this ).siblings("div.arrow").outerWidth(true) + 5);
-			jQuery( this ).css( "position", "static" );
-		} );
+				item.css('position', 'static');
 
-		// add class for default state and fix dimensions
-		jQuery( treeid + " li" )
-		.addClass( "ui-state-default" )
-		.each(
-			function() {
-				jQuery(this).height(jQuery(this).height());
-				jQuery(this).width(jQuery(this).width());
+			} )
 
-				// to be used for restoring width after mouse leves this item
-				jQuery(this).data("width", jQuery(this).width());
-			}
-		);
+			if ( jQuery.browser.msie && document.documentMode <= "7" ) {
+				maxwidth = 100;
+				jQuery( this )
+				.width( window.screen.width )
+				.height( window.screen.height );
+			} else if ( jQuery.browser.webkit || jQuery.browser.safari ) {
+				maxwidth = 100;
+			};
 
-		// initially hide everything
-		jQuery( treeid + " ul" )
-		.css({"z-index":1})
-		.hide()
-		.fadeTo(0, 0 );
 
-		// some crap "browsers" need special treatment
-		if ( jQuery.browser.msie ) {
-			jQuery( treeid + " ul" ).css({ "position":"relative" });
-		}
+			listitems
+			.width( maxwidth )
+			.data( "width", maxwidth );
+		})
+		.fadeTo( 0, 0 );
+
 
 		// sanitize links
-		jQuery( treeid ).find( "a" )
+		tree.find( "a" )
 		.each(
 			function() {
 
+				var link = jQuery( this );
+
 				// find title of target page
-				if ( jQuery( this ).hasClass( 'new' ) ) { // for red links get it from the href
+				if ( link.hasClass( 'new' ) ) { // for red links get it from the href
 
 					regexp = /.*title=([^&]*).*/;
-					res = regexp.exec( jQuery( this ).attr( 'href' ) );
+					res = regexp.exec( link.attr( 'href' ) );
 
 					title = unescape( res[1] );
 
-					jQuery( this ).data( 'title', title ); // save title in data
+					link.data( 'title', title ); // save title in data
 
 				} else { // for normal links title is in the links title attribute
-					jQuery( this )
-					.data( 'title', jQuery( this ).attr( 'title' ) ); // save title in data
+					link.data( 'title', link.attr( 'title' ) ); // save title in data
 				}
 
-				jQuery( this )
+				link
 				.removeAttr( 'title' )  // remove title to prevent tooltips on links
 				.bind( "click", function( event ) {
 					event.preventDefault();
-				} ) // prevent following links
+				} ); // prevent following links
 
 			}
 		);
@@ -106,131 +106,127 @@ function SFI_MS_init( inputID, params ) {
 		// attach event handlers
 
 		// mouse entered list item
-		jQuery( treeid + " li" )
+		tree.find( "li" )
 		.mouseenter( function( evt ) {
 
+			var target = jQuery( evt.currentTarget );
+
 			// switch classes to change display style
-			jQuery( evt.currentTarget )
+			target
 			.removeClass( "ui-state-default" )
 			.addClass( "ui-state-hover" );
 
-			// if we reentered (i.e. moved mouse from item to sub-item)
-			if (jQuery( evt.currentTarget ).data( "timeout" ) != null) {
-
-				// clear any timeout that may still run on the list item
-				// (i.e. do not fade out submenu)
-				clearTimeout( jQuery( evt.currentTarget ).data( "timeout" ) );
-				jQuery( evt.currentTarget ).data( "timeout", null );
-
-				// abort further actions (just leave the submenu open)
-				return;
-			}
-
-
 			// if list item has sub-items...
-			if ( jQuery( evt.currentTarget ).children( "ul" ).length > 0 ) {
+			if ( target.children( "ul" ).length > 0 ) {
 
-				// set timeout to show sub-items
-				jQuery( evt.currentTarget )
-				.data( "timeout", setTimeout(
-					function() {
+				// if we reentered (i.e. moved mouse from item to sub-item)
+				if ( target.data( "timeout" ) != null) {
 
-						// clear timeout data
-						jQuery( evt.currentTarget ).data( "timeout", null );
+					// clear any timeout that may still run on the list item
+					// (i.e. do not fade out submenu)
+					clearTimeout( target.data( "timeout" ) );
+					target.data( "timeout", null );
 
-						// some crap "browsers" need special treatment
-						if ( jQuery.browser.msie ) {
-							jQuery( evt.currentTarget ).children( "ul" )
+				} else {
+
+					// set timeout to show sub-items
+					target
+					.data( "timeout", setTimeout(
+						function() {
+
+							var pos = target.position();
+
+							// clear timeout data
+							target
+							.data( "timeout", null )
+
+							// animate list item width
+							.animate( {"width": target.width() + 10}, 100, function(){
+
+							// fade in sub-menu
+							// can not use fadeIn, it sets display:block
+							target.children( "ul" )
 							.css( {
-								"top": -jQuery( evt.currentTarget ).outerHeight(),
-								"left": jQuery( evt.currentTarget ).outerWidth() + 10
+								"display":"inline",
+								"z-index":100,
+								"top" : pos.top,
+								"left" : pos.left + target.width()
+							} )
+							.fadeTo( 400, 100 );
 							} );
-						}
-
-						// fade in sub-menu
-						// can not use fadeIn, it sets display:block
-						jQuery( evt.currentTarget ).children( "ul" )
-						.css( {
-							"display":"inline",
-							"z-index":100
-						} )
-						.fadeTo( 400, 1 );
-
-						w = jQuery( evt.currentTarget ).width();
-
-						// animate list item width
-						jQuery( evt.currentTarget )
-						.animate( { "width": w + 10 }, 100 );
-
-					}, 400 )
-				);
+						}, 400 )
+					);
+				}
 			}
 
-		} );
+		} )
 
 		// mouse left list item
-		jQuery( treeid + " li" )
 		.mouseleave( function( evt ) {
 
+			var target = jQuery( evt.currentTarget );
+
 			// switch classes to change display style
-			jQuery( evt.currentTarget )
+			target
 			.removeClass( "ui-state-hover" )
 			.addClass( "ui-state-default" )
 
-			// if we just moved in and out of the item (without really hovering)
-			if (jQuery( evt.currentTarget ).data( "timeout" ) != null) {
-
-				// clear any timeout that may still run on the list item
-				// (i.e. do not fade in submenu)
-				clearTimeout( jQuery( evt.currentTarget ).data( "timeout" ) );
-				jQuery( evt.currentTarget ).data( "timeout", null );
-
-				// abort further actions (no need to close)
-				return;
-			}
-
 			// if list item has sub-items...
-			if ( jQuery( evt.currentTarget ).children( "ul" ).length > 0 ) {
+			if ( target.children( "ul" ).length > 0 ) {
 
-				// hide sub-items after a short pause
-				jQuery( evt.currentTarget ).data( "timeout", setTimeout(
-					function() {
+				// if we just moved in and out of the item (without really hovering)
+				if ( target.data( "timeout" ) != null ) {
 
-						// clear timeout data
-						jQuery( evt.currentTarget ).data( "timeout", null );
+					// clear any timeout that may still run on the list item
+					// (i.e. do not fade in submenu)
+					clearTimeout( target.data( "timeout" ) );
+					target.data( "timeout", null );
 
-						// fade out sub-menu
-						// when finished set display:none and put list item back in
-						// line ( i.e. animate to original width )
-						jQuery( evt.currentTarget ).children( "ul" )
-						.css( "z-index", 1 )
-						.fadeTo( 400, 0,
-							function() {
+				} else {
 
-								jQuery( this ).css( "display", "none" );
+					// hide sub-items after a short pause
+					target.data( "timeout", setTimeout(
+						function() {
 
-								// animate list item width
-								jQuery( this ).parent()
-								.animate( { "width": jQuery( this ).parent().data( "width" ) }, 100 );
-							}
-						);
+							// clear timeout data
+							target.data( "timeout", null )
 
-					}, 400 )
-				);
+							// fade out sub-menu
+							// when finished set display:none and put list item back in
+							// line ( i.e. animate to original width )
+							.children( "ul" )
+							.css( "z-index", 1 )
+							.fadeTo( 400, 0,
+								function() {
+
+									jQuery( this )
+									.css( "display", "none" )
+
+									// animate list item width
+									.parent()
+									.animate( {"width": jQuery( this ).parent().data( "width" )}, 100 );
+								}
+							);
+
+						}, 400 )
+					);
+				}
 			}
 
-		} );
+		} )
 
 		// clicked list item
-		jQuery( treeid + " li" )
 		.mousedown( function() {
 
+			var content = jQuery( this ).children( "table" ).find( ".cont" );
+
 			// set visible value and leave input
-			jQuery( "#" + inputID + "_show" ).attr( "value", jQuery( this )
-			.children( "span" ).find( "div.cont" ).text() ).blur();
+			inputShow
+			.attr( "value", content.text() )
+			.blur();
 
 			// set hidden value that gets sent back to the server
-			link = jQuery( this ).children( "span" ).find( "div.cont>a" );
+			var link = content.children( "a" );
 
 			// if content is link
 			if ( link.length == 1 ) {
@@ -241,7 +237,7 @@ function SFI_MS_init( inputID, params ) {
 			} else {
 
 				// just use text of list item
-				jQuery( "#" + inputID ).attr( "value", jQuery( this ).children( "span" ).find( "div.cont" ).text() );
+				jQuery( "#" + inputID ).attr( "value", content.text() );
 
 			}
 			return false;
@@ -249,23 +245,30 @@ function SFI_MS_init( inputID, params ) {
 		} );
 
 		// show top menu when input gets focus
-		jQuery( "#" + inputID + "_show" )
+		inputShow
 		.focus( function() {
-			jQuery( treeid + ">ul" ).css( "display", "inline" ).fadeTo( 400, 1 );
-		} );
+			treeRoot
+			.css( "display", "inline" )
+			.fadeTo( 400, 1 );
+		} )
 
 		// hide all menus when input loses focus
-		jQuery( "#" + inputID + "_show" )
 		.blur( function() {
 
-			jQuery( treeid + " ul" ).fadeTo( 400, 0,
+			treeAllLists
+			.fadeTo( 400, 0,
 				function() {
-					jQuery( this ).css( "display", "none" );
+					jQuery( this )
+					.css( "display", "none" );
 				} );
 		} );
 
-		jQuery( treeid ).css("visibility","visible");
-		jQuery( treeid + ">ul" ).css( "display", "inline" ).fadeTo( 400, 1 );
+		tree
+		.css("visibility","visible");
+
+		treeRoot
+		.css( "display", "inline" )
+		.fadeTo( 400, 1 );
 
 	});
 }

@@ -17,8 +17,8 @@ See the COPYING file for more information.
 == Installation ==
 
 Having at least MediaWiki 1.16, Semantic MediaWiki 1.5.4 and Semantic
-Forms 2.0.8 installed is a precondition for the Semantic Forms Inputs
-extension version 0.4 and above; the code will not work without it.
+Forms 2.3.1 installed is a precondition for the Semantic Forms Inputs
+extension version 0.5 and above; the code will not work without it.
 
 To install Semantic Forms Inputs, create a directory named
 SemanticFormsInputs in the extensions directory of your MediaWiki
@@ -26,27 +26,29 @@ installation and copy the extension's files into it. Then add the
 following line to your LocalSettings.php below the inclusion of the
 Semantic Forms extension:
 
-require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
+require_once( "$IP/extensions/SemanticFormsInputs/SemanticFormsInputs.php" );
 
 == Credits ==
 
-Semantic Forms Inputs was written by Stephan Gambke, Sanyam Goyal and
-Yaron Koren.
+Semantic Forms Inputs was written by Stephan Gambke with contributions
+from Yaron Koren, Jeroen de Dauw, Sanyam Goyal and others.
 
-The 'datepicker' input uses the jQuery and jQuery UI libraries.
+The extenion uses the jQuery and jQuery UI libraries.
 See http://jquery.org/ and http://jqueryui.com/ .
 
 Button icons are derived from the Mini Icons 2 icon set from
 brandspankingnew.net. See
 http://www.brandspankingnew.net/archive/2006/12/hohoho.html
 
+Finally, internationalization was achieved through the work of the
+translatewiki community. See http://translatewiki.net
 
 == Contact ==
 
 Bugs should preferably be reported on the Wikimedia bug tracker:
 http://bugzilla.wikimedia.org/
 
-Comments, questions and suggestions can be send or posted to:
+Comments, questions and suggestions can be sent or posted to:
 
 * the appropriate Semantic MediaWiki mailing list:
   http://lists.sourceforge.net/lists/listinfo/semediawiki-user

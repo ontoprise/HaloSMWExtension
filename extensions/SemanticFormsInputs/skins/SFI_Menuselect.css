@@ -18,20 +18,14 @@
 .SFI_menuselect ul { /* all lists */
 	margin: 0px;
 	padding: 0px;
-	/*margin: -20px;
-	padding: 20px;*/
-	list-style: none;
+	list-style: none none outside;
 	position: absolute;
 	display: inline;
 }
 
 .SFI_menuselect ul ul { /* sub-item lists only */
-	margin-left: 2px;
-	margin-right: 2px;
-	margin-top: -2px;
-	/*margin-left: -18px;
-	margin-right: -18px;
-	margin-top: -22px;*/
+	margin-left: 3px;
+	margin-right: 3px;
 }
 
 
@@ -39,21 +33,23 @@
 	margin: 1px 0px;
 	padding: 0px 0px;
 	text-align: left;
-	/*position: static;*/
-	/*display:inline;*/
-	/*min-width: 100px;*/
+	position: fixed;
+	list-style-image: none;
 }
 
-.SFI_menuselect li>span { /* all entries */
-	display:inline-block;
-	width:100%;
+.SFI_menuselect table {
+	background: transparent;
+	border-collapse: collapse;
+	display: inline;
 }
 
-.SFI_menuselect li>span>div.cont { 
+.SFI_menuselect .cont { 
 	padding:0px 2px;
+	width: 100%;
+	vertical-align: baseline;
 }
 
-.SFI_menuselect li>span>div.arrow {
-	float:right;
+.SFI_menuselect .arrow {
+	padding: 0px;
 }
 
