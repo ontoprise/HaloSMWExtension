@@ -259,7 +259,7 @@ Index: includes/QueryPage.php
 ===================================================================
 --- includes/QueryPage.php	(revision 11800)
 +++ includes/QueryPage.php	(working copy)
-@@ -405,6 +405,19 @@
+@@ -405,6 +405,22 @@
  			# $res might contain the whole 1,000 rows, so we read up to
  			# $num [should update this to use a Pager]
  			for( $i = 0; $i < $num && $row = $dbr->fetchObject( $res ); $i++ ) {
@@ -270,8 +270,11 @@ Index: includes/QueryPage.php
 +					$title = Title::makeTitleSafe( $row->namespace, $row->title );
 +				} else if (isset($row->id)) {
 +					$title = Title::newFromID($row->id);
++				} else if (isset($row->type) && $row->type === 'Templates' 
++							&& isset($row->title)) {
++					$title = Title::makeTitleSafe(NS_TEMPLATE, $row->title);
 +				}
-+				if (!$title->userCanReadEx()) {
++				if ($title && !$title->userCanReadEx()) {
 +					continue;
 +				}
 +/*op-patch|TS|2009-06-19|end*/  
