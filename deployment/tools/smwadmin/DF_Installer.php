@@ -1042,7 +1042,9 @@ class Installer {
 					if ($p->getVersion()->isHigher($dep->getMaxVersion())) {
 						global $dfgForce;
 						if (!$dfgForce) {
-							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Requires '".$p->getID()."' to be installed at most in version ".$dep->getMaxVersion()->toVersionString().". Downgrades are not supported.");
+							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "'".$p->getID()."' must be installed in version ".$dep->getMaxVersion()->toVersionString().
+							             ".\nIf a higher version is already installed please de-install the extension and install ".$dep->getMaxVersion()->toVersionString()." instead.");
+							
 						}
 					}
 				}
