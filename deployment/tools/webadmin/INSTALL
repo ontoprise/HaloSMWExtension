@@ -73,6 +73,19 @@ Windows 7 (should also work on XP):
         public static $df_runas_user = "wikiadmin";
         public static $df_runas_password = "geheim";
         
+    Note:
+    
+    There is a maintenace script which create stubs for these tasks: 
+        
+        deployment/maintenace/installServerTasks.php
+    
+    In non-SMW+ environments, you need to adjust the stubs 
+    afterwards because the run commands only contain:
+    
+        "add your script here"
+    
+    
+        
 Linux:
 
     (1) Change the user's sudo rights which runs the webserver. It must be able to 
