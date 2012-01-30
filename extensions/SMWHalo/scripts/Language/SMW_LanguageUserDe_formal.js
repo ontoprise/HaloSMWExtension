@@ -173,6 +173,7 @@ window.wgUserLanguageStrings = {
     'AC_ALL' : 'Auto-completion für alle Seiten',
 	'AC_QUERY' : 'ASK-Query',
 	'AC_SCHEMA_PROPERTY_DOMAIN' : 'Alle Attribute mit der Domäne: ',
+	'AC_SCHEMA_PROPERTY_WITHSAME_DOMAIN' : 'Alle Attribute mit der gleichen Domäne: ',
 	'AC_SCHEMA_PROPERTY_RANGE_INSTANCE' : 'Alle Attribute mit einem Wertebereich dieser Instanz: ',
 	'AC_DOMAINLESS_PROPERTY' : 'Alle Attribute ohne Domäne',
 	'AC_ANNOTATION_PROPERTY' : 'Alle Attribute, die auf Seiten dieser Kategorie verwendet werden: ',

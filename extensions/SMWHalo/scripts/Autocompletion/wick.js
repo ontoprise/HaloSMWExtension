@@ -1362,13 +1362,15 @@ AutoCompleter.prototype = {
 				command = jQuery.trim(c.substr(0, sepIndex));
 				parameter = jQuery.trim(c.substr(sepIndex+1));
 			}
-    			        		
+			   		
     		if (constraint == 'all') {
     			showText += gLanguage.getMessage('AC_ALL');
     		} else if (command == 'ask') {
     			showText += gLanguage.getMessage('AC_QUERY') + parameter;
     		} else if (command == 'schema-property-domain') {
     			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_DOMAIN') + parameter;
+    		} else if (command == 'schema-property-withsame-domain') {
+    			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_WITHSAME_DOMAIN') + parameter;
     		} else if (command == 'schema-property-range-instance') {
     			showText += gLanguage.getMessage('AC_SCHEMA_PROPERTY_RANGE_INSTANCE') + parameter;
     		} else if (command == 'domainless-property') {

@@ -153,7 +153,7 @@ window.wgUserLanguageStrings = {
 	'AH_SAVE_COMMENT'		  : 'Les annotations ont été ajoutées dans le mode d\'annotation avancé.',
 	'AAM_SAVE_ANNOTATIONS' 	  : 'Voulez-vous enregistrer les annotations de la session courante ?',
 	'CAN_NOT_ANNOTATE_SELECTION' : 'Il est impossible d\'annoter la sélection. Elle contient déjà des annotations ou des paragraphes ou finit par un lien.',
-	'AAM_DELETE_ANNOTATIONS'  : '�`tes-vous sûr de vouloir supprimer cette annotation ?',
+	'AAM_DELETE_ANNOTATIONS'  : '�`tes-vous sûr de vouloir supprimer cette annotation ?',
 	
 	// Save annotations
 	'SA_SAVE_ANNOTATION_HINTS': "N\'oubliez pas de sauvegarder votre travail !",
@@ -177,6 +177,7 @@ window.wgUserLanguageStrings = {
 	'AC_ALL' : 'Auto-complétion pour toutes les pages',
 	'AC_QUERY' : 'Requête-ASK',
 	'AC_SCHEMA_PROPERTY_DOMAIN' : 'Tous les attributs avec le domaine: ',
+	'AC_SCHEMA_PROPERTY_WITHSAME_DOMAIN' : 'Tous les attributs avec le même domaine: ',
 	'AC_SCHEMA_PROPERTY_RANGE_INSTANCE' : 'Tous les attributs qui ont un champ de valeurs d\'instance de: ',
 	'AC_DOMAINLESS_PROPERTY' : 'Tous les attributs sans domaine',
 	'AC_ANNOTATION_PROPERTY' : 'Les attributs qui sont utilisés sur les pages de catégorie: ',
@@ -226,7 +227,7 @@ window.wgUserLanguageStrings = {
 	'OB_SELECT_INSTANCE'	  : 'Sélectionner l\'instance en premier',
 	'OB_WRONG_MAXCARD'		  : 'Cardinalité maximum invalide',
 	'OB_WRONG_MINCARD'		  : 'Cardinalité minimum invalide',
-	'OB_CONFIRM_INSTANCE_DELETION' : '�`tes-vous sûr de vouloir supprimer cet article ?',
+	'OB_CONFIRM_INSTANCE_DELETION' : '�`tes-vous sûr de vouloir supprimer cet article ?',
 	'SMW_OB_OPEN' 			  : 'ouvrir',
 	'SMW_OB_EDIT' 			  : 'modifier',
 	'SMW_OB_DELETE'                   : 'supprimer',
@@ -246,7 +247,7 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_META_PROPERTY'	  : 'Meta-attribut',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Valeur',
 	'SMW_OB_META_COMMAND_SHOW'  : 'Afficher les les méta-données',
-	'SMW_OB_META_COMMAND_RATE'  : '�0valuer ce fait',
+	'SMW_OB_META_COMMAND_RATE'  : '�0valuer ce fait',
 	
 	// metaproperties
 	'SMW_OB_META_SWP2_AUTHORITY'   : 'Autorité',
@@ -264,7 +265,7 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_META_DATASOURCE_ID_FROM'   : 'ID',
 	'SMW_OB_META_DATASOURCE_CHANGEFREQ_FROM'   : 'Fréquence de rafraichissement',
 	'SMW_OB_META_DATASOURCE_DESCRIPTION_FROM'   : 'Description',
-	'SMW_OB_META_DATASOURCE_LABEL_FROM'   : '�0tiquette',
+	'SMW_OB_META_DATASOURCE_LABEL_FROM'   : '�0tiquette',
 	'SMW_OB_META_DATASOURCE_LASTMOD_FROM'   : 'Dernier changement',
 	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_FROM'   : 'Préfixe des données liées',
 	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_FROM'   : 'Schéma d\'URI',
@@ -277,7 +278,7 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_META_DATASOURCE_ID_TO'   : 'ID',
 	'SMW_OB_META_DATASOURCE_CHANGEFREQ_TO'   : 'Fréquence de rafraichissement',
 	'SMW_OB_META_DATASOURCE_DESCRIPTION_TO'   : 'Description',
-	'SMW_OB_META_DATASOURCE_LABEL_TO'   : '�0tiquette',
+	'SMW_OB_META_DATASOURCE_LABEL_TO'   : '�0tiquette',
 	'SMW_OB_META_DATASOURCE_LASTMOD_TO'   : 'Dernier changement',
 	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_TO'   : 'Préfixe des données liées',
 	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_TO'   : 'Schéma d\'URI',
@@ -286,9 +287,9 @@ window.wgUserLanguageStrings = {
 	'SMW_OB_META_IMPORT_GRAPH_REVISION_NO'   : 'Numéro de révision',
 	'SMW_OB_META_IMPORT_GRAPH_LAST_CHANGED_BY'   : 'Dernier changement',
 	'SMW_OB_META_RATING_VALUE'   : 'Valeur de l\'évaluation',
-	'SMW_OB_META_RATING_USER'   : '�0valué par l\'utilisateur',
+	'SMW_OB_META_RATING_USER'   : '�0valué par l\'utilisateur',
 	'SMW_OB_META_RATING_CREATED'   : 'L\'évaluation a été créé le',
-	'SMW_OB_META_RATING_ASSESSMENT'   : '�0valuation',
+	'SMW_OB_META_RATING_ASSESSMENT'   : '�0valuation',
 	
 
 	// Query Interface
@@ -337,7 +338,7 @@ window.wgUserLanguageStrings = {
     'QI_NONE'                 : 'Aucun',
     'QI_PROPERTY_TYPE'        : 'Type',
     'QI_PROPERTY_RANGE'       : 'Champ de valeurs',
-    'QI_COLUMN_LABEL'         : '�0tiquette de colonne',
+    'QI_COLUMN_LABEL'         : '�0tiquette de colonne',
     'QI_SHOWUNIT'             : 'Unité',
     'QI_EQUAL'                : 'égal',
     'QI_LT'                   : 'moins',

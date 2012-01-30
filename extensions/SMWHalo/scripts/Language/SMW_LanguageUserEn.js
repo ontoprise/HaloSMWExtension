@@ -176,6 +176,7 @@ window.wgUserLanguageStrings = {
 	'AC_ALL' : 'Auto-completion for all pages',
 	'AC_QUERY' : 'ASK-Query',
 	'AC_SCHEMA_PROPERTY_DOMAIN' : 'All properties with domain: ',
+	'AC_SCHEMA_PROPERTY_WITHSAME_DOMAIN' : 'All properties with same domain',
 	'AC_SCHEMA_PROPERTY_RANGE_INSTANCE' : 'All properties which have a range-instance of: ',
 	'AC_DOMAINLESS_PROPERTY' : 'All properties without domain',
 	'AC_ANNOTATION_PROPERTY' : 'Properties which are used on pages of category: ',

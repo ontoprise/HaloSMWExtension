@@ -306,7 +306,7 @@ function &smwfGetAutoCompletionStore() {
 		} else {
 
 			$smwhgAutoCompletionStore = new AutoCompletionStorageSQL2();
-				
+
 		}
 	}
 	return $smwhgAutoCompletionStore;
@@ -431,7 +431,7 @@ class AutoCompletionRequester {
 			$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText($propertyText, SMW_NS_PROPERTY)), SMWDIProperty::newFromUserLabel("_LIST"));
 			$stringDi = reset($values);
 			$proposal = $stringDi->getString();
-				
+
 			smwfGetStore()->setLocalRequest(false);
 			return (array($proposal));
 		} else if ($typeID == '_ema') {
@@ -850,6 +850,21 @@ class AutoCompletionHandler {
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+			} else if ($commandText == 'schema-property-withsame-domain') {
+				if (empty($params[0]) || is_null($params[0])) continue;
+				$pagesUnion = array();
+				foreach($params as $p) {
+					if (smwf_om_userCan($p, 'read') == 'true') {
+						$category = Title::newFromText($p);
+						if (!is_null($category)) {
+							$pages = $acStore->getPropertyForCategory($userInput, $category);
+							$inf = self::setInferred($pages, !$first);
+							$pagesUnion[] = $inf;
+						}
+					}
+				}
+				$result = self::intersectResults($pagesUnion);
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-range-instance') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
@@ -1052,6 +1067,35 @@ class AutoCompletionHandler {
 			}
 		}
 		return $arr1;
+	}
+
+	/**
+	 * Returns results which occur in all parts
+	 * 
+	 * @param Title[][] $arr1 
+	 */
+	public static function intersectResults(& $arr1) {
+		// intersect results
+		$results = array();
+		$first = reset($arr1[0]);
+		while ($first !== false) {
+			$containedInAll = true;
+
+			for($i = 1, $n = count($arr1); $i < $n; $i++) {
+				$contains = false;
+				for($j = 0, $m = count($arr1[$i]); $j < $m; $j++) {
+					$cmp = self::isEqualResults($first, $arr1[$i][$j]);
+					$contains = $contains | ($cmp == 0);
+				}
+					
+				$containedInAll = $containedInAll & $contains;
+			}
+			if ($containedInAll) {
+				$results[] = $first;
+			}
+			$first = next($arr1[0]);
+		}
+		return $results;
 	}
 
 	/**
