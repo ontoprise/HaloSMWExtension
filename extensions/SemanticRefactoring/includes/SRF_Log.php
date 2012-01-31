@@ -81,6 +81,10 @@ class SRFLog {
 		}
 		return $wikitext;
 	}
+	
+	private static function getHistoryLink($title) {
+		return "[".$title->getFullURL(array('action' => 'history'))." History]";
+	}
 
 	public static function titleAsWikiText($title) {
 		if ($title->getNamespace() == NS_CATEGORY) {

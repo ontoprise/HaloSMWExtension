@@ -40,7 +40,7 @@ require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP . '/includes/SRF_Tools.php');
 
 require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
-require_once($srefgIP . '/includes/operations/SRF_TouchpageOperation.php');
+require_once($srefgIP . '/includes/operations/SRF_SavepageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_PurgepageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
@@ -374,7 +374,7 @@ class SRFRefactoringBot extends GardeningBot {
 		switch($operation) {
 			case 'touchPages':
 					
-				$op = new SRFTouchpageOperation($titles);
+				$op = new SRFSavepageOperation($titles);
 
 				break;
 			case 'purgePages':
@@ -653,6 +653,12 @@ class SRFRefactoringBot extends GardeningBot {
 		return $op;
 	}
 
+	public function getPreview($operation, $paramArray) {
+		$op = $this->getOperation($operation, NULL, $paramArray);
+		$num = $op->getWork();
+		return $num;
+	}
+
 	public function run($paramArray, $isAsync, $delay) {
 			
 		// do not allow to start synchronously.
@@ -705,12 +711,7 @@ class SRFRefactoringBot extends GardeningBot {
 		// print messages
 		ksort($logMessages);
 		$log = "";
-		foreach($logMessages as $prefixedTitle => $lm_array) {
-			$log .= "\n*".SRFLog::titleAsWikiText(Title::newFromText($prefixedTitle));
-			foreach($lm_array as $lm) {
-				$log .= "\n**".$lm->asWikiText();
-			}
-		}
+		$log = SRFLog::asWikiTextFromLogMessages($logMessages);
 
 		if (trim($log) == '') {
 			$log = "Nothing done.";

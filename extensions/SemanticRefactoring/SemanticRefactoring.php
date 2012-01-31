@@ -106,6 +106,8 @@ function sreffRegisterJSModules(& $out) {
             ),
          'messages' => array('sref_start_operation',
                             'sref_cancel_operation',
+                            'sref_preview_operation',
+                            'sref_closepreview_operation',
                             'sref_warning_no_gardening',
                             'sref_rename_instance',
                             'sref_rename_instance_help',
@@ -208,11 +210,38 @@ function sreffRegisterJSModules(& $out) {
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'sreff_query';
+$wgAjaxExportList[] = 'sreff_requestPreview';
 
+/**
+ * Returns query result
+ * 
+ * @param $query
+ * 
+ * @return string HTML 
+ */
 function sreff_query($query) {
     $qs = new SRFQuerySelector();
     $qresult = $qs->getQueryResult();
     $response = new AjaxResponse($qresult['html']);
+    $response->setResponseCode(200);
+    return $response;
+}
+
+/**
+ * Returns a preview for an operation
+ * 
+ * @param $paramString
+ * 
+ * @return JSON string
+ */
+function sreff_requestPreview($paramString) {
+	global $srefgIP;
+	require_once($srefgIP . '/includes/SRF_Bot.php');
+    $bot = new SRFRefactoringBot();
+	$paramArray = GardeningBot::convertParamStringToArray($paramString);
+    $preview = $bot->getPreview($paramArray['SRF_OPERATION'], $paramArray);
+    
+	$response = new AjaxResponse($preview);
     $response->setResponseCode(200);
     return $response;
 }

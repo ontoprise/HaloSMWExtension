@@ -26,14 +26,19 @@
 
 		htmlTemplate : function(operation) {  
 		
-			var template = '<form action="" method="get" id="sref_option_form" operation="'+operation+'">'
+			var template = '<div id="sref_main"><form action="" method="get" id="sref_option_form" operation="'+operation+'">'
 				+ '<table cellspacing="0" id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Options</td></tr>'
 				+ '<tr><td colspan="2"><span>Refactoring features are available. Please choose the operation details:</span></td></tr>'
 				+ '<tr><td colspan="2">'
 				+ '%%OPTIONS%%'
 				+ '</table><div style="margin-top: 20px">%%WARNING%%<input type="button" id="sref_start_operation" value="'
 				+ mw.msg('sref_start_operation') + '"></input><input style="margin-left:5px" type="button" id="sref_cancel_operation" value="'
-				+ mw.msg('sref_cancel_operation') + '"></input></div>' + '</form>';
+				+ mw.msg('sref_cancel_operation') + '"></input><input style="margin-left:5px" type="button" id="sref_preview_operation" value="'
+				+ mw.msg('sref_preview_operation') + '"></input></div>' + '</form></div>';
+			
+			// preview button
+			template += '<div id="sref_preview" style="display: none;"><div id="sref_preview_content"></div><input style="margin-left:5px" type="button" id="sref_closepreview_operation" value="'
+				+ mw.msg('sref_closepreview_operation') + '"></input></div>';
 			
 			return template;
 		},
@@ -136,33 +141,29 @@
 							$('#sref_cancel_operation').click(function() { 
 								$.fancybox.close();
 							});
+							$('#sref_preview_operation').click(function() { 
+								$('#sref_main').toggle();
+								$('#sref_preview').toggle();
+								var onSuccess = function(responseText) {
+									// silently ignore
+									//TODO: show preview results
+									$('#sref_preview_content').html(responseText);
+								} 
+								var ajaxParams = dialog.getParameters(parameters);
+								var operation = $(
+										'#sref_option_form')
+										.attr('operation');
+								dialog.requestPreview(operation, ajaxParams, onSuccess);
+								
+							});
+							$('#sref_closepreview_operation').click(function() { 
+								$('#sref_main').toggle();
+								$('#sref_preview').toggle();
+							});
 							$('#sref_start_operation')
 									.click(
 											function() {
-												var ajaxParams = {};
-												for (p in parameters) {
-													ajaxParams[p] = parameters[p];
-												}
-												var requiresBot = false;
-												$('input',
-														$('#sref_option_form'))
-														.each(
-																function(i, e) {
-																	var p = $(e)
-																			.attr(
-																					"id");
-																	var value = $(
-																			e)
-																			.attr(
-																					'checked');
-																	ajaxParams[p] = value;
-																	if (value)
-																		requiresBot = requiresBot
-																				|| $(
-																						e)
-																						.attr(
-																								'requiresBot') == 'true';
-																});
+												var ajaxParams = dialog.getParameters(parameters);
 												var operation = $(
 														'#sref_option_form')
 														.attr('operation');
@@ -177,6 +178,34 @@
 							
 						}
 					});
+		},
+		
+		getParameters: function(parameters) {
+			var ajaxParams = {};
+			for (p in parameters) {
+				ajaxParams[p] = parameters[p];
+			}
+			var requiresBot = false;
+			$('input',
+					$('#sref_option_form'))
+					.each(
+							function(i, e) {
+								var p = $(e)
+										.attr(
+												"id");
+								var value = $(
+										e)
+										.attr(
+												'checked');
+								ajaxParams[p] = value;
+								if (value)
+									requiresBot = requiresBot
+											|| $(
+													e)
+													.attr(
+															'requiresBot') == 'true';
+							});
+			return ajaxParams;
 		},
 
 		launchBot : function(operation, params) {
@@ -210,6 +239,34 @@
 				error: onError
 			});
 
+		},
+		
+		requestPreview: function(operation, params, onSuccess) {
+			
+			var onError = function(xhr) {
+				if (xhr.status == 403) {
+					alert(mw.msg('sref_not_allowed_botstart'));
+				} else {
+					alert(xhr.responseText);
+				}
+			}
+			
+			// set bot parameters
+			var paramString = "SRF_OPERATION=" + operation;
+			for (p in params) {
+				paramString += "," + p + "=" + params[p];
+			}
+
+			// launch Bot
+			$.ajax({
+				url: mw.config.get('wgScript'),
+				data: {	action : 'ajax',
+						rs : 'sreff_requestPreview',
+						rsargs : [ paramString ] 
+					},
+				success: onSuccess,
+				error: onError
+			});
 		}
 	};
 

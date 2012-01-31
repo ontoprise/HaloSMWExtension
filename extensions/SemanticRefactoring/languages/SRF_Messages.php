@@ -5,6 +5,8 @@ $messages['en'] = array(
     'smw_refactoringbot' => 'Refactoring bot',
     'sref_start_operation' => 'Start refactoring',
     'sref_cancel_operation' => 'Cancel',
+    'sref_preview_operation' => 'Preview',
+    'sref_closepreview_operation' => 'Close preview',
     'sref_warning_no_gardening' => 'You can not run gardening bots due to missing rights! You need the "gardening" right.',
 
 /*rename*/
@@ -146,6 +148,8 @@ $messages['en'] = array(
 $messages['de'] = array(
  'smw_refactoringbot' => 'Refactoring bot',
     'sref_cancel_operation' => 'Abbrechen',
+    'sref_preview_operation' => 'Vorschau',
+    'sref_closepreview_operation' => 'Schließe Vorschau',
     'sref_start_operation' => 'Starte Refactoring',
     'sref_warning_no_gardening' => 'Sie können aufgrund fehlender Rechte keine Gardening bots ausführen! Sie benötigen das "gardening" Recht.',
 
