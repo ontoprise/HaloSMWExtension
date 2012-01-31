@@ -16,7 +16,7 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFTouchpageOperation extends SRFInstanceLevelOperation {
+class SRFSavepageOperation extends SRFInstanceLevelOperation {
 
 	
 	public function __construct($instanceSet) {
@@ -39,23 +39,11 @@ class SRFTouchpageOperation extends SRFInstanceLevelOperation {
 	
 
 	public function storeArticle($title, $wikitext, $comment) {
-		// do not store because nothing changed.
-	    // run only ArticleSave hook
-        global $wgUser;
-        $a = new Article($title);
-        $rev = Revision::newFromTitle($title);
-        $user = $wgUser;
-        $text = $wikitext;
-        $summary = $rev->getComment($audience);
-        $flags = 0;
-
-        $status = Status::newGood();
-        if ( !wfRunHooks( 'ArticleSave', array( &$a, &$user, &$text, &$summary,
-        $flags & EDIT_MINOR, null, null, &$flags, &$status ) ) ) {
-            if ( $status->isOK() ) {
-                $status->fatal( 'edit-hook-aborted' );
-            }
-        }
-		return $status;
+		
+		$article = new Article($title);
+		// will return warning that nothing changed, nevertheless
+		$status = $article->doEdit($wikitext, $article->getComment());
+            
+		return Status::newGood();
 	}
 }
