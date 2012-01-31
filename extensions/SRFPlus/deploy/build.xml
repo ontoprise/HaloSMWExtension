@@ -2,9 +2,9 @@
 <project basedir="." default="srfplus" name="SRF Plus">
   <target name="srfplus" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
 
-    <delete>
+    <delete quiet="true">
       <fileset dir="bin" includes="srfplus*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -23,7 +23,7 @@
     </copy>
 
     <zip destfile="bin/srfplus.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

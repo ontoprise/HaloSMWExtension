@@ -5,7 +5,7 @@
 		<property environment="env" />
 		<property name="base_dir" value="${env.WORKSPACE}/../.." />
 		<property name="xampp_dir" value="Internal__SMWPlusInstaller_and_XAMPP/workspace/XAMPP"/>
-		<delete dir="bin/solr_zip" />
+		<delete dir="bin/solr_zip" quiet="true" />
 		<mkdir dir="bin/solr_zip" />
 
 		<copy todir="bin/solr_zip/solr">
@@ -19,6 +19,6 @@
             </fileset>
         </copy>
 		<zip destfile="bin/solr-${VERSION}.zip" basedir="bin/solr_zip" />
-		<delete dir="bin/solr_zip" />
+		<delete dir="bin/solr_zip" quiet="true" />
 	</target>
 </project>

@@ -2,9 +2,9 @@
 <project basedir="." default="semanticresultformats" name="Semantic Result formats">
   <target name="semanticresultformats" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
 
-    <delete>
+    <delete quiet="true">
       <fileset dir="bin" includes="smwhalo-srf*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -23,7 +23,7 @@
     </copy>
 
     <zip destfile="bin/semanticresultformats.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

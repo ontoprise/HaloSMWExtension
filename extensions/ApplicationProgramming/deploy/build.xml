@@ -2,8 +2,8 @@
 <project basedir="." default="build" name="applicationprogramming">
   <target name="build">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="smwhalo-application-programming*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -38,7 +38,7 @@
 
     <zip destfile="bin/applicationprogramming.zip" basedir="bin/zip" />
 
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
 
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />

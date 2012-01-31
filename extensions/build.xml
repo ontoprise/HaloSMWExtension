@@ -40,34 +40,34 @@
        DEL_EXTENSION_SUITE
        ===================================================================== -->
   <target name="del_extension_suite">
-    <delete dir="AutomaticSemanticForms" />
-    <delete dir="ApprovedRevs" />
-    <delete dir="Baseontologybundle" />
-    <delete dir="Cite" />
-    <delete dir="Collaboration" />
-    <delete dir="DataImport" />
-    <delete dir="DebugTemplate" />
-    <delete dir="DynamicPageList" />
-    <delete dir="HaloACL" />
-    <delete dir="HashingFunctions" />
-    <delete dir="LdapAuthentication" />
-    <delete dir="LinkedData" />
-    <delete dir="ImageMap" />
-    <delete dir="Maps" />
-    <delete dir="RichMedia" />
-    <delete dir="SemanticConnector" />
-    <delete dir="SemanticForms" />
-    <delete dir="SemanticFormsInputs" />
-    <delete dir="SemanticGardening" />
-    <delete dir="SemanticMaps" />
-    <delete dir="SemanticNotifications/" />
-    <delete dir="SemanticResultFormats" />
-    <delete dir="SRFPlus" />
-    <delete dir="SemanticRules" />
-    <delete dir="SemanticWikiTag" />
-    <delete dir="SMWUserManual" />
-    <delete dir="Treeview" />
-    <delete dir="Ultrapedia" />
-    <delete dir="Widgets" />
+    <delete dir="AutomaticSemanticForms" quiet="true" />
+    <delete dir="ApprovedRevs" quiet="true" />
+    <delete dir="Baseontologybundle" quiet="true" />
+    <delete dir="Cite" quiet="true" />
+    <delete dir="Collaboration" quiet="true" />
+    <delete dir="DataImport" quiet="true" />
+    <delete dir="DebugTemplate" quiet="true" />
+    <delete dir="DynamicPageList" quiet="true" />
+    <delete dir="HaloACL" quiet="true" />
+    <delete dir="HashingFunctions" quiet="true" />
+    <delete dir="LdapAuthentication" quiet="true" />
+    <delete dir="LinkedData" quiet="true" />
+    <delete dir="ImageMap" quiet="true" />
+    <delete dir="Maps" quiet="true" />
+    <delete dir="RichMedia" quiet="true" />
+    <delete dir="SemanticConnector" quiet="true" />
+    <delete dir="SemanticForms" quiet="true" />
+    <delete dir="SemanticFormsInputs" quiet="true" />
+    <delete dir="SemanticGardening" quiet="true" />
+    <delete dir="SemanticMaps" quiet="true" />
+    <delete dir="SemanticNotifications/" quiet="true" />
+    <delete dir="SemanticResultFormats" quiet="true" />
+    <delete dir="SRFPlus" quiet="true" />
+    <delete dir="SemanticRules" quiet="true" />
+    <delete dir="SemanticWikiTag" quiet="true" />
+    <delete dir="SMWUserManual" quiet="true" />
+    <delete dir="Treeview" quiet="true" />
+    <delete dir="Ultrapedia" quiet="true" />
+    <delete dir="Widgets" quiet="true" />
   </target>
 </project>

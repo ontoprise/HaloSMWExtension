@@ -2,8 +2,8 @@
 <project basedir="." default="build" name="SMWHalo">
   <target name="build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="automaticsemanticforms*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -63,7 +63,7 @@
          dir="../../SemanticForms/deploy"
          target="sf_build">
     </ant>
-    <delete>
+    <delete quiet="true">
       <fileset dir="bin" includes="automaticsemanticforms_bundled*.zip" />
     </delete>
     <copy todir="bin/zip/extensions/SemanticForms">
@@ -73,7 +73,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/automaticsemanticforms_bundled.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

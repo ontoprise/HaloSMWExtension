@@ -3,8 +3,8 @@
 
 	<target name="semanticrefactoring" depends="versionhint">
 		<echo>Start building ${ant.project.name}: ${ant.file}</echo>
-		<delete dir="bin/zip" />
-		<delete>
+		<delete dir="bin/zip" quiet="true" />
+		<delete quiet="true">
 			<fileset dir="bin" includes="semanticrefactoring*.zip" />
 		</delete>
 		<mkdir dir="bin/zip" />
@@ -55,7 +55,7 @@
 
 		</copy>
 		<zip destfile="bin/semanticrefactoring.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+		<delete dir="bin/zip" quiet="true" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />

@@ -1,8 +1,8 @@
 <project basedir="." default="wom_build" name="WOM">
   <target name="wom_build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="wom*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -32,7 +32,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/wom.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

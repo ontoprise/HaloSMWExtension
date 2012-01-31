@@ -2,8 +2,8 @@
 <project basedir="." default="widgets" name="widgets">
   <target name="widgets" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="widgets*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -35,7 +35,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/widgets.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

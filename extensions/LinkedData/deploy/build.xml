@@ -2,8 +2,8 @@
 <project basedir="." default="LinkedData_build" name="LinkedData">
   <target name="LinkedData_build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete file="bin/linkeddata*.zip" />
+    <delete dir="bin/zip" quiet="true" />
+    <delete file="bin/linkeddata*.zip" quiet="true" />
     <mkdir dir="bin/zip" />
 
     <copy todir="bin/zip/extensions/LinkedData/exceptions">
@@ -66,7 +66,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/linkeddata.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />

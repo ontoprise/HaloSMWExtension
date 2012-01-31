@@ -2,8 +2,8 @@
 <project basedir="." default="build" name="NewUserMessage">
   <target name="build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="newusermessage*.zip" />
     </delete>
     <mkdir dir="bin/zip" />

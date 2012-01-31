@@ -3,7 +3,7 @@
   <target name="wikiadmintool" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
     <property environment="env" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
 
     <mkdir dir="bin/zip" />
     <copy todir="bin/zip/deployment/descriptor">
@@ -80,7 +80,7 @@
     </copy>
     <touch file="bin/zip/deployment/config/externalapps" />
     <zip destfile="bin/wikiadmintool.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../buildtools/renameDeployableDF.php" />
       <arg value="../deploy.xml" />

@@ -2,8 +2,8 @@
 <project basedir="." default="HaloACL_build" name="HaloACL">
   <target name="HaloACL_build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
-    <delete>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
       <fileset dir="bin" includes="smwhalo-HaloACL*.zip" />
     </delete>
     <mkdir dir="bin/zip" />
@@ -99,7 +99,7 @@
          dir="../../ScriptManager/deploy"
          target="scriptmanager_build">
     </ant>
-    <delete>
+    <delete quiet="true">
       <fileset dir="bin" includes="haloacl-bundled*.zip" />
     </delete>
     <copy todir="bin/zip/extensions/ARCLibrary">
@@ -115,7 +115,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/haloacl-bundled.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />
@@ -176,7 +176,7 @@
       <fileset dir="../../HaloACL/scripts/jsTree.v.0.9.9a" includes="jquery.tree.min.js" />
       <fileset dir="../../HaloACL/scripts" includes="specialhacl-packed_custom.js" />
     </concat>
-    <delete file="../../HaloACL/scripts/specialhacl-packed_custom.js" />
+    <delete file="../../HaloACL/scripts/specialhacl-packed_custom.js" quiet="true" />
 
     <echo>Pack javasacript for all other pages</echo>
     <java fork="true" jar="../../../buildtools/closure/compiler.jar" failonerror="true">
@@ -207,7 +207,7 @@
       <fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
       <fileset dir="../../HaloACL/scripts" includes="hacl-packed_custom.js" />
     </concat>
-    <delete file="../../HaloACL/scripts/hacl-packed_custom.js" />
+    <delete file="../../HaloACL/scripts/hacl-packed_custom.js" quiet="true" />
   </target>
   <target name="patches" depends="checkos">
     <echo message="${patchtool}" />

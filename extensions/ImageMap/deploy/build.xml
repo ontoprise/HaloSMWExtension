@@ -2,7 +2,7 @@
 <project basedir="." default="im_build" name="ImageMap">
   <target name="im_build" depends="versionhint">
     <echo>Start building ${ant.project.name}: ${ant.file}</echo>
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <delete failonerror="false">
       <fileset dir="bin" includes="smwhalo-imagemap*.zip" />
     </delete>
@@ -19,7 +19,7 @@
       </fileset>
     </copy>
     <zip destfile="bin/imagemap.zip" basedir="bin/zip" />
-    <delete dir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
     <exec executable="php">
       <arg value="../../../buildtools/renameDeployable.php" />
       <arg value="../deploy.xml" />
