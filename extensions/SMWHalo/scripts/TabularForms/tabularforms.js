@@ -71,7 +71,9 @@ var TF = Class.create({
 		
 		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'block');
 		
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(tf.initializeLoadedCell)
+		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(function(){
+			tf.initializeLoadedCell(this, data.tabularFormId);
+		});
 		
 		jQuery('#' + data.tabularFormId + ' tr td:nth-child(1)').each(tf.initializeDeleteButtons);
 		
@@ -142,20 +144,21 @@ var TF = Class.create({
 	 * It adds required event listeners to all input foelds for modifying 
 	 * instance data.
 	 */
-	initializeLoadedCell : function(){
-		jQuery(this).attr('originalValue', jQuery(this).attr('value'));
-		jQuery(this).attr('currentValue', jQuery(this).attr('value'));
+	initializeLoadedCell : function(element, tabularFormId){
+		jQuery(element).attr('originalValue', jQuery(element).attr('value'));
+		jQuery(element).attr('currentValue', jQuery(element).attr('value'));
 			
-		jQuery(this).change(tf.cellChangeHandler);
-		jQuery(this).keyup(tf.cellKeyUpHandler);
-		jQuery(this).keydown(tf.cellKeyDownHandler);
-		jQuery(this).focus(tf.setAsCurrentlySelectedCellValue);
-		jQuery(this).blur(tf.unSetAsCurrentlySelectedCellValue);
+		jQuery(element).change(tf.cellChangeHandler);
+		jQuery(element).keyup(function(event){
+			tf.cellKeyUpHandler(element, event, tabularFormId);
+		});
+		jQuery(element).keydown(tf.cellKeyDownHandler);
+		jQuery(element).focus(tf.setAsCurrentlySelectedCellValue);
+		jQuery(element).blur(tf.unSetAsCurrentlySelectedCellValue);
 		
-		if(jQuery(this).parent().parent().attr('isNew') == 'true'){
-			tf.checkAnnotationValue(this);
+		if(jQuery(element).parent().parent().attr('isNew') == 'true'){
+			tf.checkAnnotationValue(element, 'event', tabularFormId);
 		}
-				
 	},
 	
 	/*
@@ -184,23 +187,29 @@ var TF = Class.create({
 	 * - navigation
 	 * - article name changes (detecting valid article names)
 	 */
-	cellKeyUpHandler : function(event){
+	cellKeyUpHandler : function(element, event, tabularFormId){
 		
 		if(event.which == '16'){
 			tf.shiftKeyPressed = false;
 		}
 		
-		tf.navigateCells(this, event.which);
+		tf.navigateCells(element, event.which);
 		
-		tf.cellValueChangeHandler(this);
+		tf.cellValueChangeHandler(element);
 		
 		//do checks only if values really have changed
-		if(jQuery(this).attr('currentValue') != jQuery(this).attr('value')){
-			jQuery(this).attr('currentValue', jQuery(this).attr('value'));
+		if(jQuery(element).attr('currentValue') != jQuery(element).attr('value')){
+			jQuery(element).attr('currentValue', jQuery(element).attr('value'));
 			
-			tf.checkNewInstanceName(this, event.which);
-				
-			tf.checkAnnotationValue(this, event.which);
+			//only perform a check if the user has finished typing for more than 1200 msecs
+			var currentValue = jQuery(element).attr('value');
+			window.setTimeout(function() {
+				if(currentValue == jQuery(element).attr('value')){
+					tf.checkNewInstanceName(element, event.which, tabularFormId);
+					
+					tf.checkAnnotationValue(element, event.which, tabularFormId);
+				}
+			}, 1200);
 		}
 	},
 	
@@ -763,14 +772,17 @@ var TF = Class.create({
 		jQuery('td:last-child', newRow).removeClass('tabf_table_cell');
 		jQuery('td:last-child', newRow).addClass('tabf_status_cell');
 		
-		jQuery('td textarea', newRow).each(tf.initializeLoadedCell)
-		jQuery('td:nth-child(1)', newRow).each(tf.initializeDeleteButtons)
+		jQuery('td textarea', newRow).each(function(){
+			tf.initializeLoadedCell(this, tabfId);
+		});
+
+		jQuery('td:nth-child(1)', newRow).each(tf.initializeDeleteButtons);
 		
 		jQuery('td:nth-child(1) textarea', newRow).focus();
 		
 		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).attr('disabled', 'disabled');
 		
-		tf.checkNewInstanceName(jQuery('td:nth-child(1) textarea', newRow), 55);
+		tf.checkNewInstanceName(jQuery('td:nth-child(1) textarea', newRow), 55, tabfId);
 	},
 	
 	/*
@@ -778,19 +790,22 @@ var TF = Class.create({
 	 * 
 	 * checks if instance name is valid and new via an Ajax Call.
 	 */
-	checkNewInstanceName : function(element, keyCode){
+	checkNewInstanceName : function(element, keyCode, tabularFormId){
 		
-		//todo: alsi check that none of the other new instances has the same name
+		//todo: also check that none of the other new instances has the same name
 		
-		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') == -1 
+		if(jQuery(element).attr('isArticleName') == 'true'){
+			return true;
+		} else if (	jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') == -1 
 				&& jQuery(element).attr('class').indexOf('tabf_valid_instance_name') == -1){
+			jQuery(element).attr('isArticleName', 'true');
 			return;
 		}
 		
 		var articleName = jQuery(element).attr('value');
-		var tabularFormId = jQuery(element).parent().parent().parent().parent().parent().parent().attr('id');
-		var rowNr = tf.getChildNumber(jQuery(element).parent().parent(), 1) 
 		
+		var rowNr = tf.getChildNumber(jQuery(element).parent().parent(), 1) 
+
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
 			data: {
@@ -807,9 +822,10 @@ var TF = Class.create({
 	 * Callback function for new instance name check
 	 */
 	checkNewInstanceNameCallBack : function(data){
+
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = jQuery.parseJSON(data);
-		
+
 		var row =  jQuery('#' + data.tabularFormId + ' table tr:nth-child(' + data.rowNr + ')');
 		if(data.validTitle == true){
 			jQuery('td:nth-child(1) textarea', jQuery(row)).removeClass('tabf_erronious_instance_name');
@@ -1217,85 +1233,123 @@ var TF = Class.create({
 	 * - is valid according to property type
 	 * - matches the query conditions for htis property
 	 */
-	checkAnnotationValue : function(element){
+	checkAnnotationValue : function(element, which, tabularFormId){
 		
-		if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') != -1 
+		if(jQuery(element).attr('isArticleName') == 'false'){
+			return true;
+		} else if(jQuery(element).attr('class').indexOf('tabf_erronious_instance_name') != -1 
 				|| jQuery(element).attr('class').indexOf('tabf_valid_instance_name') != -1){
-			//seems to be textarea for instance name
+			//only do this clumbsy test once
+			jQuery(element).attr('isArticleName', 'false');
 			return;
 		}
 		
-		var tabularFormId = jQuery(element).parent().parent().parent().parent().parent().parent().attr('id');
 		var rowNr = tf.getChildNumber(jQuery(element).parent().parent(), 1)
 		var columnNr = tf.getChildNumber(jQuery(element).parent(), 1);
-		var fieldNr = tf.getChildNumber(jQuery(element), 1);
+		var headerElement = jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr+ ')');
 		
-		if( jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr 
-				+ ')').attr('is-template') != 'true'){
-		
-			var cssSelector = '#' + tabularFormId + ' table tr:nth-child(' + rowNr + ') td:nth-child(' + columnNr  + ')';
-			
-			var annotationName = jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr 
-					+ ')').attr('field-address');
-			var annotationLabel = '';
-			if(annotationName == '__Category__'){
-				annotationLabel = jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr 
-						+ ') span:nth-child(2)').html();
-			} else {
-				annotationLabel = jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr 
-						+ ') span:nth-child(2) a').html();
-			}
-			
-			var queryConditions = jQuery('#' + tabularFormId + ' table tr:nth-child(1) th:nth-child(' + columnNr 
-					+ ')' ).get();
-			if(queryConditions[0].childNodes.length == 4){
-				queryConditions = queryConditions[0].lastChild.innerHTML;
-			} else {
-				queryConditions = '';
-			}
-			
-			var annotationValue = jQuery(element).attr('value');
-			
-			var annotationValues = "";
-			jQuery('textarea', jQuery(element).parent()).each( function (){
-				annotationValues += ";" + jQuery(this).attr('value').replace(/;/g, "/;");
-			});
-			
-			//add read-only values
-			jQuery('div', jQuery(element).parent()).each( function (){
-				var title = '';
-				if(jQuery('a', this).html() != null){
-					title = jQuery('a',this).html();
-					if(jQuery('a',this).attr('title').indexOf(':' + title) > 1){
-						title = jQuery('a', this).attr('title').substr(0, title.length + 1 + jQuery('a', this).attr('title').indexOf(':' + title));
-					}
-				} else {
-					title = jQuery(this).html(); 
-				}
-				annotationValues += ";" + title.replace(/;/g, "/;");
-			});
-			
-			if(queryConditions == null){
-				queryConditions = false;
-			}
-			
-			var articleName = '';
-			if(jQuery('td:nth-child(1) ',jQuery(element).parent().parent()).attr('revision-id') == '-1'){
-				var articleName = jQuery('td:nth-child(1) textarea',jQuery(element).parent().parent()).attr('value');
-			} else {
-				var articleName = jQuery('td:nth-child(1) ',jQuery(element).parent().parent()).attr('article-name');
-			}
-			
-			var url = wgServer + wgScriptPath + "/index.php";
-			jQuery.ajax({ url:  url, 
-				data: {
-					'action' : 'ajax',
-					'rs' : 'tff_checkAnnotationValues',
-					'rsargs[]' : [annotationName, annotationLabel, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName]
-				},
-				success: tf.checkAnnotationValueCallBack				
-			});
+		if( jQuery(headerElement).attr('is-template') == 'true'){
+			//this is an input field for a template and no checks have to be performed
+			return true;
 		}
+		
+		var fieldNr = tf.getChildNumber(jQuery(element), 1);
+		var cell = jQuery(element).parent();
+		var row = jQuery(cell).parent();
+		
+		var annotationName = jQuery(headerElement).attr('field-address');
+		var annotationLabel = '';
+		if(annotationName == '__Category__'){
+			annotationLabel = jQuery('span:nth-child(2)', headerElement).html();
+		} else {
+			annotationLabel = jQuery('span:nth-child(2) a', headerElement).html();
+		}
+			
+		var queryConditions = jQuery(headerElement ).get();
+		if(queryConditions[0].childNodes.length == 4){
+			queryConditions = queryConditions[0].lastChild.innerHTML;
+		} else {
+			queryConditions = '';
+		}
+			
+		var annotationValue = jQuery(element).attr('value');
+			
+		var annotationValues = "";
+		jQuery('textarea', jQuery(cell)).each( function (){
+			annotationValues += ";" + jQuery(this).attr('value').replace(/;/g, "/;");
+		});
+		
+		var cssSelector = '#' + tabularFormId + ' table tr:nth-child(' + rowNr + ') td:nth-child(' + columnNr  + ')';
+			
+		//add read-only values
+		jQuery('div', jQuery(cell)).each( function (){
+			var title = '';
+			if(jQuery('a', this).html() != null){
+				title = jQuery('a',this).html();
+				if(jQuery('a',this).attr('title').indexOf(':' + title) > 1){
+					title = jQuery('a', this).attr('title').substr(0, title.length + 1 + jQuery('a', this).attr('title').indexOf(':' + title));
+				}
+			} else {
+				title = jQuery(this).html(); 
+			}
+			annotationValues += ";" + title.replace(/;/g, "/;");
+		});
+			
+		if(queryConditions == null){
+			queryConditions = false;
+		}
+			
+		var articleName = '';
+		if(jQuery('td:nth-child(1) ',jQuery(row)).attr('revision-id') == '-1'){
+			var articleName = jQuery('td:nth-child(1) textarea',jQuery(row)).attr('value');
+		} else {
+			var articleName = jQuery('td:nth-child(1) ',jQuery(row)).attr('article-name');
+		}
+			
+		var url = wgServer + wgScriptPath + "/index.php";
+		jQuery.ajax({ url:  url, 
+			data: {
+				'action' : 'ajax',
+				'rs' : 'tff_checkAnnotationValues',
+				'rsargs[]' : [annotationName, annotationLabel, annotationValue, annotationValues, queryConditions, cssSelector, fieldNr, articleName]
+			},
+			success: function(data){
+					
+				data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+				data = jQuery.parseJSON(data);
+					
+				container = jQuery(row).parent().parent();
+				if(data.isValid == false){
+					tf.addNotification(container, 'tabf_invalid_value_warning', data.cssSelector + '-' + data.fieldNr, rowNr, data.invalidValueMsg);
+					jQuery(element).addClass('tabf_invalid_input_filed_value');
+				} else {
+					tf.deleteNotification(container, 'tabf_invalid_value_warning', data.cssSelector  + '-' + data.fieldNr);
+					jQuery(element).removeClass('tabf_invalid_input_filed_value');
+				}
+				
+				//uppdate row state
+				if(jQuery('.tabf_invalid_input_filed_value', jQuery(row)).get().length > 0){
+					jQuery('.tabf_invalid_value_status', jQuery(row)).css('display', '');
+				} else {
+					jQuery('.tabf_invalid_value_status', jQuery(row)).css('display', 'none');
+				}
+				
+				if(data.lost == true){
+					tf.addNotification(container, 'tabf_probably_lost_instance', data.cssSelector, rowNr, data.looseWarnings);
+					jQuery(cell).addClass('tabf_probably_lost_cell');
+				} else {
+					tf.deleteNotification(container, 'tabf_probably_lost_instance', data.cssSelector);
+					jQuery(cell).removeClass('tabf_probably_lost_cell');
+				}
+				
+				//uppdate row state
+				if(jQuery('.tabf_probably_lost_cell', jQuery(row)).get().length > 0){
+					jQuery('.tabf_getslost_status', jQuery(row)).css('display', '');
+				} else {
+					jQuery('.tabf_getslost_status', jQuery(row)).css('display', 'none');
+				}
+			}				
+		});
 	},
 	
 	/*
@@ -1303,40 +1357,7 @@ var TF = Class.create({
 	 */
 	checkAnnotationValueCallBack : function(data){
 		
-		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-		data = jQuery.parseJSON(data);
 		
-		var container = jQuery(data.cssSelector).parent().parent().parent().parent();
-		var instanceId = tf.getChildNumber(jQuery(data.cssSelector).parent(), 1);
-		if(data.isValid == false){
-			tf.addNotification(container, 'tabf_invalid_value_warning', data.cssSelector + '-' + data.fieldNr, instanceId, data.invalidValueMsg);
-			jQuery(data.cssSelector + ' textarea:nth-child(' + data.fieldNr + ')').addClass('tabf_invalid_input_filed_value');
-		} else {
-			tf.deleteNotification(container, 'tabf_invalid_value_warning', data.cssSelector  + '-' + data.fieldNr);
-			jQuery(data.cssSelector + ' textarea:nth-child(' + data.fieldNr + ')').removeClass('tabf_invalid_input_filed_value');
-		}
-		
-		//uppdate row state
-		if(jQuery('.tabf_invalid_input_filed_value', jQuery(data.cssSelector).parent()).get().length > 0){
-			jQuery('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', '');
-		} else {
-			jQuery('.tabf_invalid_value_status', jQuery(data.cssSelector).parent()).css('display', 'none');
-		}
-		
-		if(data.lost == true){
-			tf.addNotification(container, 'tabf_probably_lost_instance', data.cssSelector, instanceId, data.looseWarnings);
-			jQuery(data.cssSelector).addClass('tabf_probably_lost_cell');
-		} else {
-			tf.deleteNotification(container, 'tabf_probably_lost_instance', data.cssSelector);
-			jQuery(data.cssSelector).removeClass('tabf_probably_lost_cell');
-		}
-		
-		//uppdate row state
-		if(jQuery('.tabf_probably_lost_cell', jQuery(data.cssSelector).parent()).get().length > 0){
-			jQuery('.tabf_getslost_status', jQuery(data.cssSelector).parent()).css('display', '');
-		} else {
-			jQuery('.tabf_getslost_status', jQuery(data.cssSelector).parent()).css('display', 'none');
-		}
 	},
 	
 	addNotification : function(container, notificationClass, id, instanceId, message){

@@ -147,6 +147,7 @@ function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $t
  * Called by UI in order to cecck if article name is new and valid
  */
 function tff_checkArticleName($articleName, $rowNr, $tabularFormId){
+	
 	$articleName = trim($articleName);
 	$articleName = explode(':', $articleName, 2);
 	foreach($articleName as $key => $value){
@@ -366,6 +367,8 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 					$cDV = SMWDataValueFactory::newTypeIdValue('_wpg', $compareValue);
 				}
 				
+				if(!$cDV->isValid()) continue;
+				
 				$cVal = $cDV->getDataItem()->getSortKey();
 				
 				if($cDV instanceof SMWWikiPageValue ){
@@ -402,6 +405,8 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 							$aDV = SMWDataValueFactory::newTypeIdValue('_wpg', $annotationValue);
 						}
 						$aVal = $aDV->getDataItem()->getSortKey();
+						
+						if(!$aDV->isValid()) continue;
 						
 						if($aDV instanceof SMWWikiPageValue){
 							if($annotationName != TF_CATEGORY_KEYWORD){
