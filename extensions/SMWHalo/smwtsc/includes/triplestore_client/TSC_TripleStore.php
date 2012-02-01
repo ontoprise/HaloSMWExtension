@@ -363,43 +363,43 @@ class SMWTripleStore extends SMWStoreAdapter {
 				continue;
 			} elseif ($property->getKey() == "_MDAT") {
 				$propertyLabel = str_replace(" ","_",$specialProperties['_MDAT']);
-                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
-                foreach($propertyValueArray as $value) {
-                    $string = TSHelper::serializeDataItem($value);
-                    $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
-                }
-                continue;
-            } elseif ($property->getKey() == "___CREA") {
-            	global $smwgHaloContLang;
-            	$specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
-                $propertyLabel = str_replace(" ","_",$specialProperties['___CREA'][1]);
-                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
-                foreach($propertyValueArray as $value) {
-                    $object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
-                    $triples[] = array($subject_iri, $property_iri, $object_iri);
-                }
-                continue;
-            } elseif ($property->getKey() == "___CREADT") {
-                global $smwgHaloContLang;
-                $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
-                $propertyLabel = str_replace(" ","_",$specialProperties['___CREADT'][1]);
-                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
-                foreach($propertyValueArray as $value) {
-                    $string = TSHelper::serializeDataItem($value);
-                    $triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
-                }
-                continue;
-            } elseif ($property->getKey() == "___MOD") {
-                global $smwgHaloContLang;
-                $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
-                $propertyLabel = str_replace(" ","_",$specialProperties['___MOD'][1]);
-                $property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
-                foreach($propertyValueArray as $value) {
-                    $object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
-                    $triples[] = array($subject_iri, $property_iri, $object_iri);
-                }
-                continue;
-            }
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+				foreach($propertyValueArray as $value) {
+					$string = TSHelper::serializeDataItem($value);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
+				}
+				continue;
+			} elseif ($property->getKey() == "___CREA") {
+				global $smwgHaloContLang;
+				$specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+				$propertyLabel = str_replace(" ","_",$specialProperties['___CREA'][1]);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+				foreach($propertyValueArray as $value) {
+					$object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
+					$triples[] = array($subject_iri, $property_iri, $object_iri);
+				}
+				continue;
+			} elseif ($property->getKey() == "___CREADT") {
+				global $smwgHaloContLang;
+				$specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+				$propertyLabel = str_replace(" ","_",$specialProperties['___CREADT'][1]);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+				foreach($propertyValueArray as $value) {
+					$string = TSHelper::serializeDataItem($value);
+					$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
+				}
+				continue;
+			} elseif ($property->getKey() == "___MOD") {
+				global $smwgHaloContLang;
+				$specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
+				$propertyLabel = str_replace(" ","_",$specialProperties['___MOD'][1]);
+				$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+				foreach($propertyValueArray as $value) {
+					$object_iri = $this->tsNamespace->getFullIRI($value->getTitle());
+					$triples[] = array($subject_iri, $property_iri, $object_iri);
+				}
+				continue;
+			}
 
 
 			// there are other special properties which need not to be handled special
@@ -643,7 +643,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 			}
 			try {
 				global $smwgHaloTripleStoreGraph;
-        $con = TSConnection::getConnector();
+				$con = TSConnection::getConnector();
 				$con->connect();
 
 				// if graph parameter is set but empty or set and null, no wikigraph is given
@@ -685,13 +685,17 @@ class SMWTripleStore extends SMWStoreAdapter {
 						if ($e->getCode() == 0) {
 							// happens most likely when TSC is not running
 							global $smwgHaloWebserviceEndpoint;
-							@header("Cache-Control: no-cache");
-							@header('Pragma: no-cache');
+							if (!headers_sent()) {
+								@header("Cache-Control: no-cache");
+								@header('Pragma: no-cache');
+							}
 							$sqr->addErrors(array(wfMsg('smw_ts_notconnected', $smwgHaloWebserviceEndpoint)));
 
 						} else {
-							@header("Cache-Control: no-cache");
-							@header('Pragma: no-cache');
+							if (!headers_sent()) {
+								@header("Cache-Control: no-cache");
+								@header('Pragma: no-cache');
+							}
 							$sqr->addErrors(array($e->getMessage()));
 						}
 						// in case of an error
@@ -1099,8 +1103,8 @@ class SMWTripleStore extends SMWStoreAdapter {
 				if ($sv == TSNamespaces::$RDF_NS."type") {
 					$allValues[] = SMWDIProperty::newFromUserLabel('_INST');
 				} else if ($sv == TSNamespaces::$RDFS_NS."label") {
-                    $allValues[] = SMWDIProperty::newFromUserLabel('Label');
-                } else {
+					$allValues[] = SMWDIProperty::newFromUserLabel('Label');
+				} else {
 					$internalPropertyID = TSHelper::isInternalProperty($sv);
 					if ($internalPropertyID !== false) {
 						$allValues[] = SMWDIProperty::newFromUserLabel($internalPropertyID);
