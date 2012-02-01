@@ -204,7 +204,7 @@ class NewUserMessage {
 
 		if ( $good ) {
 			// Set newtalk with the right user ID
-			$user->setNewtalk( true );
+			//$user->setNewtalk( true );
 			$dbw->commit();
 		} else {
 			// The article was concurrently created
