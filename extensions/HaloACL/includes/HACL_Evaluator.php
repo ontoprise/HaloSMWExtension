@@ -535,7 +535,8 @@ class HACLEvaluator {
 					// Access to property is restricted
 					if (!isset($oldPV)) {
 						// Get all old properties of the page from the semantic store
-						$oldPV = smwfGetStore()->getSemanticData($editor->mTitle);
+						$wp = SMWDIWikiPage::newFromTitle($editor->mTitle);
+						$oldPV = smwfGetStore()->getSemanticData($wp);
 					}
 				    if (self::propertyValuesChanged($prop, $oldPV, $output->mSMWData)) {
 						$protectedProperties .= "* $name\n";
@@ -1354,7 +1355,7 @@ class HACLEvaluator {
 	 * 		<true>, if values have been added, removed or changed,
 	 * 		<false>, if values are exactly the same.
 	 */
-	private static function propertyValuesChanged(SMWPropertyValue $property, 
+	private static function propertyValuesChanged(SMWDIProperty $property, 
 												  SMWSemanticData $oldValues, 
 												  SMWSemanticData $newValues) {
 												  	
@@ -1364,11 +1365,7 @@ class HACLEvaluator {
 		$oldValues = array();
 		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
 		foreach ($oldPV as $v) {
-//			$hash = implode("\t", $v->getDBkeys());
 			$hash = $v->getHash();
-			if ($v instanceof SMWNumberValue) {
-				$hash = strval(floatval($hash));
-			}
 			$oldValues[$hash] = false;
 		}
 		self::$mMode = HACLEvaluator::NORMAL;
@@ -1377,16 +1374,7 @@ class HACLEvaluator {
 		$newPV = $newValues->getPropertyValues($property);
 		foreach ($newPV as $v) {
 			self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
-			$wv = $v->getWikiValue();
-			if (empty($wv)) {
-				// A property has an empty value => can be ignored
-				continue;
-			}
-//			$nv = implode("\t", $v->getDBkeys());
 			$nv = $v->getHash();
-			if ($v instanceof SMWNumberValue) {
-				$nv = strval(floatval($nv));
-			}
 			self::$mMode = HACLEvaluator::NORMAL;
 			if (array_key_exists($nv, $oldValues)) {
 				// Old value was not changed
