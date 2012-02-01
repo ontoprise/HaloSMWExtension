@@ -719,8 +719,11 @@ textarea {
 	border-radius: 2px 2px 2px 2px;
 	box-shadow: 1px 1px 1px 1px #ccc;
 	padding-top:0.3em;
+	color: #116988;
+	background: #F5D0A9;
+	line-height:1.3em;
+    font-size: 0.9em;
 }
-
 
 
 #smw_browserCheckClose{
@@ -731,6 +734,13 @@ textarea {
 	box-shadow: 1px 1px 1px 1px #ccc;
 	padding-bottom:0.2em;
 	padding-left: 0.5em;
+	color: #116988;
+	background: #F5D0A9;
+	line-height:1.3em;
+    font-size: 0.9em;
+	line-height:2.2em;
+	font-size:0.8em;
+	background: #fff;
 }
 
 #smw_browserCheckClose span{
@@ -738,6 +748,10 @@ textarea {
     line-height: 1em;
 	position:absolute;
 	margin-top:0.4em;
+}
+
+#smw_browserCheck a:visited{
+    color: #116988;
 }
 
 #smw_browserCheckClose img{
