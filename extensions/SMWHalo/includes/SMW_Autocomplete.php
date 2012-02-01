@@ -939,14 +939,18 @@ class AutoCompletionHandler {
 			} else if ($commandText == 'namespace') {
 				$namespaceIndexes = array();
 				global $wgContLang;
-				foreach($params as $p) {
-					if (is_numeric($p)) {
-						$namespaceIndexes[] = $p;
-					} else if (strtolower($p) == "main") {
-						$namespaceIndexes[] = 0;
-					} else {
-						$ns = $wgContLang->getNsIndex( $p );
-						$namespaceIndexes[] = $ns;
+				if (count($params) == 1 && strtolower($params[0]) == 'all') {
+					$namespaceIndexes = NULL;
+				} else {
+					foreach($params as $p) {
+						if (is_numeric($p)) {
+							$namespaceIndexes[] = $p;
+						} else if (strtolower($p) == "main") {
+							$namespaceIndexes[] = 0;
+						} else {
+							$ns = $wgContLang->getNsIndex( $p );
+							$namespaceIndexes[] = $ns;
+						}
 					}
 				}
 				$pages = smwfGetAutoCompletionStore()->getPages($userInput, $namespaceIndexes);
@@ -1071,8 +1075,8 @@ class AutoCompletionHandler {
 
 	/**
 	 * Returns results which occur in all parts
-	 * 
-	 * @param Title[][] $arr1 
+	 *
+	 * @param Title[][] $arr1
 	 */
 	public static function intersectResults(& $arr1) {
 		// intersect results
