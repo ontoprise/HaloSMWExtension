@@ -31,5 +31,11 @@ Installation:
 (2) Add to your LocalSettings.php after you initialized SMWHalo: 
     require_once("extensions/SemanticRules/includes/SR_Initialize.php");
 
+(3) Set the right "ontologyediting". Otherwise you won't see the Rules tab in 
+    DataExplorer.
+    
+    Example:
+    
+        $wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 Now the Rules Extension is installed and ready to use.
