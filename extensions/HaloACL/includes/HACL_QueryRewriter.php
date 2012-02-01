@@ -105,22 +105,23 @@ class  HACLQueryRewriter  {
 		if (!($descr instanceof SMWSPARQLDescription)) {
 			// Remove protected properties from the query description with ask
 			// syntax
-			$descr = $qr->pruneProtectedPropertiesFromAsk($descr);
+			$ep = $query->getExtraPrintouts();
+			$query->setExtraPrintouts(array());
+			$descr = $qr->pruneProtectedPropertiesFromAsk($descr, $ep);
+			if ($descr) {
+				$query->setDescription($descr);
+			} else {
+				$queryEmpty = true;
+			}
 			
 			$queryString = $descr ? $descr->getQueryString()
 			                      : "";
 			$queryString = str_replace('&lt;','<',$queryString);
 			$queryString = str_replace('&gt;','>',$queryString);
 			$query->setQueryString($queryString);
-			$ep = $qr->prunePrintRequests($query->getExtraPrintouts());
-			$ep = $qr->removeDuplicatePrintouts($ep, $descr ? $descr : $query->getDescription());
+			$ep = $qr->prunePrintRequests($ep);
 			$query->setExtraPrintouts($ep);
 			
-			if ($descr) {
-				$query->setDescription($descr);
-			} else {
-				$queryEmpty = true;
-			}
 		} else {
 			// handle query with SPARQL-syntax
 			$qr->pruneSparqlQuery($query);
@@ -146,13 +147,19 @@ class  HACLQueryRewriter  {
 	 *
 	 * @param SMWDescription $descr
 	 * 		The description which is pruned.
+	 * @param array $extraPrintoutsToIgnore
+	 * 		An optional array of extra printouts that will not be added to the
+	 * 		print requests of the query.
 	 * @return SMWDescription
 	 * 		The pruned description
 	 */
-	private function pruneProtectedPropertiesFromAsk(SMWDescription $descr) {
+	private function pruneProtectedPropertiesFromAsk(SMWDescription $descr, $extraPrintoutsToIgnore = null) {
 		// Remove protected properties from the print requests 
 		$printRequests = $this->prunePrintRequests($descr->getPrintRequests());
-				
+		if ($extraPrintoutsToIgnore) {
+			$printRequests = $this->removeDuplicatePrintouts($printRequests, $extraPrintoutsToIgnore);
+		}
+		
 		if (!($descr instanceof SMWConjunction ||
 		      $descr instanceof SMWDisjunction ||
 		      $descr instanceof SMWSomeProperty)) {
@@ -245,29 +252,29 @@ class  HACLQueryRewriter  {
 	 * these printouts are all added to the query description, no matter if they
 	 * are already contained. This must not happen as otherwise result columns will
 	 * be duplicated.
-	 * This method removes all print requests from $extraPrintouts that are 
-	 * already contained in $queryDescr.
+	 * This method removes all print requests from $printRequests that are 
+	 * already contained in $extraPrintouts.
 	 * 
+	 * @param array<SMWPrintRequest> $printRequests
 	 * @param array<SMWPrintRequest> $extraPrintouts
-	 * @param {SMWDescription} $queryDescr
 	 * 
 	 * @return array<SMWPrintRequest>
 	 * 		Extra printouts without duplicates.
 	 */
-	private function removeDuplicatePrintouts($extraPrintouts, $queryDescr) {
-		$qdpr = $queryDescr->getPrintRequests();
+	private function removeDuplicatePrintouts($printRequests, $extraPrintouts) {
 		$qpr = array();
-		foreach ($qdpr as $printRequest) {
-			$qpr[] = $printRequest->getHash();
+		foreach ($printRequests as $key => $printRequest) {
+			$qpr[$printRequest->getHash()] = $key;
 		}
 		
 		foreach ($extraPrintouts as $epKey => $printRequest) {
-			if (in_array($printRequest->getHash(), $qpr)) {
-				unset($extraPrintouts[$epKey]);
+			$hash = $printRequest->getHash();
+			if (array_key_exists($hash, $qpr)) {
+				unset($printRequests[$qpr[$hash]]);
 			}
 		}
 		
-		return array_values($extraPrintouts);
+		return array_values($printRequests);
 	}
 
 	/**
