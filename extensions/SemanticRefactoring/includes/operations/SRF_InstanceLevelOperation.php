@@ -22,19 +22,17 @@
  *
  */
 abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
-
-	// set of instances this operation is about
-	protected $instanceSet;
-
+	
 	public function __construct($instanceSet) {
 		parent::__construct();
+		$this->affectedPages = array();
 		foreach($instanceSet as $i) {
-			$this->instanceSet[] = Title::newFromText($i);
+			$this->affectedPages[] = Title::newFromText($i);
 		}
 	}
 
 	public function queryAffectedPages() {
-        return $this->instanceSet;
+        return $this->affectedPages;
     }
     	
 	/**
@@ -45,12 +43,9 @@ abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 	 * @see extensions/SemanticRefactoring/includes/SRFRefactoringOperation::refactor()
 	 */
 	public function refactor($save = true, & $logMessages) {
-		SRFRefactoringOperation::applyOperations($save, $this->instanceSet, array($this), $logMessages);
+		SRFRefactoringOperation::applyOperations($save, $this->affectedPages, array($this), $logMessages);
 	}
 	
-	public function preview() {
-		return array('sref_changedpage' => $this->getWork());
-	}
 
 	/**
 	 * Applies the operation and returns the changed wikitext.

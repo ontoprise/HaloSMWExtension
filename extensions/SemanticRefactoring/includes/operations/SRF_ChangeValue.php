@@ -34,12 +34,6 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 		$this->set = $set;
 	}
 
-	
-
-
-
-
-
 	/**
 	 * Replaces old value with new.
 	 * Callback method for array_walk

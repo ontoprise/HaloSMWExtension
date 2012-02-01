@@ -31,10 +31,10 @@ abstract class SRFRefactoringOperation {
 
 	protected $mBot;
 	protected $mRefOpTimeStamp;
-
-	private $mGardeningLogCategory;
 	protected $affectedPages;
 	protected $previewData;
+	
+	private $mGardeningLogCategory;
 	
 
 	protected function __construct() {
@@ -46,8 +46,9 @@ abstract class SRFRefactoringOperation {
 	}
 
 	/**
-	 *
 	 * Returns page titles which get processed in some way.
+	 * 
+	 * @return Title[]
 	 */
 	public abstract function queryAffectedPages();
 
@@ -83,10 +84,17 @@ abstract class SRFRefactoringOperation {
 		$this->previewData['sref_changedpage'] = $this->getWork();
 		return $this->previewData;
 	}
-
+    
+	/**
+	 * True if $option is set.
+	 * 
+	 * @param string $option
+	 * @param array $options Hash array of options
+	 */
 	public function isOptionSet($option, $options) {
 		return (array_key_exists($option, $options) && $options[$option] == "true");
 	}
+	
 	/**
 	 * Set a GardeningBot to report progress
 	 *
@@ -96,6 +104,9 @@ abstract class SRFRefactoringOperation {
 		$this->mBot = $bot;
 	}
 
+	
+	// HELPER methods
+	
 	protected function splitRecordValues($value) {
 		$valueArray = explode(";", $value);
 		array_walk($valueArray, array($this, 'trim'));
@@ -178,6 +189,15 @@ abstract class SRFRefactoringOperation {
 
 	}
 
+	/**
+	 * Find nodes with the given type-ID below $node.
+	 * 
+	 * @param WikiObjectModel $node
+	 * @param string $id Type-ID
+	 * @param array (out) $results
+	 * 
+	 * @return
+	 */
 	protected function findObjectByID($node, $id, & $results) {
 
 		if ($node->isCollection()) {

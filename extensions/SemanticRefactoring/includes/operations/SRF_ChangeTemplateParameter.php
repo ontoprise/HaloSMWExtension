@@ -34,8 +34,6 @@ class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
 		$this->set = $set;
 	}
 
-	
-
 	private function containsTemplateParameter($objects, $parameter) {
 		foreach($objects as $o) {
 			if ($o->getKey() == $parameter) {

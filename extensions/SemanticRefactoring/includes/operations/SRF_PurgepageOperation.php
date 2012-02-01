@@ -20,19 +20,7 @@ class SRFPurgepageOperation extends SRFInstanceLevelOperation {
 
 
 	public function __construct($instanceSet) {
-		parent::__construct();
-	}
-
-	public function queryAffectedPages() {
-		return $this->instanceSet;
-	}
-
-	public function getWork() {
-		return count($this->instanceSet);
-	}
-
-	public function preview() {
-		return array('sref_changedpage' => $this->getWork());
+		parent::__construct($instanceSet);
 	}
 
 	public function applyOperation($title, $wikitext, & $logMessages) {
@@ -45,10 +33,9 @@ class SRFPurgepageOperation extends SRFInstanceLevelOperation {
 	public function storeArticle($title, $wikitext, $comment) {
 		// do not store because nothing changed.
 		// only purge
-		global $wgUser;
+		
 		$a = new Article($title);
 		$a->doPurge();
-
-		return Status::newGood();;
+    	return Status::newGood();
 	}
 }

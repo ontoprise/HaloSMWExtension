@@ -31,8 +31,6 @@ class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
 		$this->newValue = $newValue;
 	}
 
-	
-
 	/**
 	 * Replaces old value with new.
 	 * Callback method for array_walk

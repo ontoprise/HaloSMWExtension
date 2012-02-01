@@ -67,24 +67,41 @@ class SRFRefactoringBot extends GardeningBot {
 		parent::GardeningBot("smw_refactoringbot");
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::getHelpText()
+	 */
 	public function getHelpText() {
 		return ""; // does not appear on Special:Gardening so never mind.
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::getLabel()
+	 */
 	public function getLabel() {
 		return wfMsg($this->id);
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::isVisible()
+	 */
 	public function isVisible() {
 		return false;
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::runParallel()
+	 */
 	public function runParallel() {
 		return false;
 	}
 
 	/**
-	 * Returns an array
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::createParameters()
 	 */
 	public function createParameters() {
 		return array();
@@ -128,7 +145,7 @@ class SRFRefactoringBot extends GardeningBot {
 	 * Returns a human-readible message for an operation
 	 * description as key-value pairs.
 	 *
-	 * @param array $paramArray
+	 * @param array $paramArray Options for the operation
 	 * @return string|Ambigous <String:, string, mixed>
 	 */
 	private function getMessageText($paramArray) {
@@ -367,9 +384,21 @@ class SRFRefactoringBot extends GardeningBot {
 				return wfMsg($msg,  self::createLink($old_template, NS_TEMPLATE), self::createLink($new_template, NS_TEMPLATE));
 
 				break;
+			default:
+				return "-unknown operation-";
+				break;
 		}
 	}
-
+    
+	/**
+	 * Returns SRFRefactoringOperation object.
+	 * 
+	 * @param string $operation Operation-ID
+	 * @param string[] $titles Fully-qualified titles
+	 * @param array $paramArray Options for the operation
+	 * 
+	 * @return SRFRefactoringOperation
+	 */
 	private function getOperation($operation, $titles, $paramArray) {
 		switch($operation) {
 			case 'touchPages':
@@ -652,13 +681,25 @@ class SRFRefactoringBot extends GardeningBot {
 		}
 		return $op;
 	}
-
+    
+	/**
+	 * Returns preview as a hash array
+	 * 
+	 * @param string $operation operation-ID
+	 * @param array $paramArray
+	 * 
+	 * @return array (string => int) : Message => Number of pages processed
+	 */
 	public function getPreview($operation, $paramArray) {
 		$op = $this->getOperation($operation, NULL, $paramArray);
 		$res = $op->preview();
 		return $res;
 	}
-
+    
+	/**
+	 * (non-PHPdoc)
+	 * @see extensions/SemanticGardening/includes/GardeningBot::run()
+	 */
 	public function run($paramArray, $isAsync, $delay) {
 			
 		// do not allow to start synchronously.

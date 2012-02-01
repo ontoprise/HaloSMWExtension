@@ -28,8 +28,6 @@ class SRFChangeTemplateNameOperation extends SRFInstanceLevelOperation {
         $this->new_template = Title::newFromText($new_template, NS_TEMPLATE);
     }
 
-   
-
     public function applyOperation($title, $wikitext, & $logMessages) {
         $pom = WOMProcessor::parseToWOM($wikitext);
 

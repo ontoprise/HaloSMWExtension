@@ -31,10 +31,6 @@ class SRFChangeTemplateOperation extends SRFInstanceLevelOperation {
 		$this->new_parameter = $new_parameter;
 	}
 
-	
-	
-
-
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
