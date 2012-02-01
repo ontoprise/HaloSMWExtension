@@ -18,7 +18,8 @@ class NewUserMessage {
 	 * Add the template message if the users talk page does not already exist
 	 */
 	static function createNewUserMessage( $user ) {
-		$talk = $user->getTalkPage();
+		//op-patch:create user page instead of user-talk page
+		$talk = $user->getUserPage();
 
 		if ( !$talk->exists() ) {
 			global $wgUser, $wgLqtTalkPages;
@@ -204,7 +205,8 @@ class NewUserMessage {
 
 		if ( $good ) {
 			// Set newtalk with the right user ID
-			$user->setNewtalk( true );
+			//op-patch:create user page instead of user-talk page
+			//$user->setNewtalk( true );
 			$dbw->commit();
 		} else {
 			// The article was concurrently created
