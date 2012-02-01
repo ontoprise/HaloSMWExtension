@@ -18,30 +18,33 @@
  */
 class SRFRenameCategoryOperation extends SRFRenameOperation {
 	
+	
 
 	public function __construct($old, $new) {
 		parent::__construct();
 		$this->old = Title::newFromText($old, NS_CATEGORY);
 		$this->new = Title::newFromText($new, NS_CATEGORY);
-
-
 	}
 	
-
+    
 
 	public function queryAffectedPages() {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		// get all pages using $this->old as category annotation
 		$titles = array();
+		$this->previewData['sref_changedInstances'] = 0;
 		$subjects = smwfGetSemanticStore()->getDirectInstances($this->old);
 		foreach($subjects as $s) {
+			$this->previewData['sref_changedInstances'] += 1;
 			$titles[] = $s;
 		}
 
 		$subjects = smwfGetSemanticStore()->getDirectSubCategories($this->old);
+		$this->previewData['sref_changedSubcategories'] = 0;
 		foreach($subjects as $tuple) {
 			list($s, $hasSubcategories) = $tuple;
+			$this->previewData['sref_changedSubcategories'] += 1;
 			$titles[] = $s;
 		}
 
@@ -49,9 +52,11 @@ class SRFRenameCategoryOperation extends SRFRenameOperation {
 		// get all pages using $this->old as property value
 		$categoryDi = SMWDIWikiPage::newFromTitle($this->old);
 		$properties = smwfGetStore()->getInProperties($categoryDi);
+		$this->previewData['sref_changedPropertyvalues'] = 0;
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $categoryDi);
 			foreach($subjects as $s) {
+				$this->previewData['sref_changedPropertyvalues'] += 1;
 				$titles[] = $s->getTitle();
 			}
 		}
@@ -59,25 +64,29 @@ class SRFRenameCategoryOperation extends SRFRenameOperation {
 
 		// get all pages which uses links to $this->old
 		$subjects = $this->old->getLinksTo();
+		$this->previewData['sref_changedLinks'] = 0;
 		foreach($subjects as $s) {
 			$titles[] = $s;
+			$this->previewData['sref_changedLinks'] += 1;
 		}
 
 
 		// get all queries using $this->old
+		$this->previewData['sref_changedQueries'] = 0;
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
 		$queryMetadataPattern->instanceOccurences = array($this->old->getPrefixedText() => true);
 		$queryMetadataPattern->categoryConditions = array($this->old->getText() => true);
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$titles[] = Title::newFromText($s->usedInArticle);
+			$this->previewData['sref_changedQueries'] += 1;
 		}
 
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}
 
-	
+   
 	
 	
 	public function applyOperation($title, $wikitext, & $logMessages) {

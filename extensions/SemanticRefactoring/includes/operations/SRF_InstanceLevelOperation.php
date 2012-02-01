@@ -33,6 +33,10 @@ abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 		}
 	}
 
+	public function queryAffectedPages() {
+        return $this->instanceSet;
+    }
+    	
 	/**
 	 * Applies and stores the changes of this refactoring operation.
 	 * (not used if several operations are combined, see applyOperation)
@@ -42,6 +46,10 @@ abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 	 */
 	public function refactor($save = true, & $logMessages) {
 		SRFRefactoringOperation::applyOperations($save, $this->instanceSet, array($this), $logMessages);
+	}
+	
+	public function preview() {
+		return array('sref_changedpage' => $this->getWork());
 	}
 
 	/**

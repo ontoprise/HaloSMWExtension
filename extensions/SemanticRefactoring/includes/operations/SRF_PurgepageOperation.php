@@ -31,6 +31,10 @@ class SRFPurgepageOperation extends SRFInstanceLevelOperation {
 		return count($this->instanceSet);
 	}
 
+	public function preview() {
+		return array('sref_changedpage' => $this->getWork());
+	}
+
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$logMessages[$title->getPrefixedText()][] = new SRFLog("Purged '$1'", $title, "", array($title));
 		return $wikitext;

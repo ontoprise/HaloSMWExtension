@@ -25,13 +25,13 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	protected $old;
 	protected $new;
 
-	protected $affectedPages;
+	
 
-
-	public function getWork() {
-		$this->affectedPages = $this->queryAffectedPages();
-		return count($this->affectedPages);
+	public function __construct() {
+		parent::__construct();
+		
 	}
+	
 
 	public function equalsOldPrefixed($prefixedTitle) {
 		return $prefixedTitle == $this->old->getPrefixedText() || $prefixedTitle == ":".$this->old->getPrefixedText();
@@ -76,9 +76,9 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 		foreach($objects as $o){
 
 			$value = $o->getSMWDataValue();
-				
+
 			if (!$o->getProperty()->getDataItem()->isUserDefined()) continue;
-				
+
 			$newvalues = array();
 			$oldvalues = array();
 			if ($value instanceof SMWRecordValue) {

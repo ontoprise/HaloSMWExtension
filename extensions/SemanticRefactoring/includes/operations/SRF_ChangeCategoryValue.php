@@ -31,15 +31,7 @@ class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
 		$this->newValue = $newValue;
 	}
 
-	public function queryAffectedPages() {
-		return $this->instanceSet;
-	}
-
-	public function getWork() {
-		return count($this->instanceSet);
-	}
-
-
+	
 
 	/**
 	 * Replaces old value with new.

@@ -655,8 +655,8 @@ class SRFRefactoringBot extends GardeningBot {
 
 	public function getPreview($operation, $paramArray) {
 		$op = $this->getOperation($operation, NULL, $paramArray);
-		$num = $op->getWork();
-		return $num;
+		$res = $op->preview();
+		return $res;
 	}
 
 	public function run($paramArray, $isAsync, $delay) {

@@ -25,43 +25,73 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 	var $category;
 	var $options;
-	var $affectedPages;
+    var $totalWork;
 
 	public function __construct($category, $options) {
 		parent::__construct();
 		$this->category = Title::newFromText($category, NS_CATEGORY);
 		$this->options = $options;
-		$this->affectedPages = NULL;
+        $this->totalWork = -1;
 	}
 
 	public function getWork() {
+		if ($this->totalWork == -1) {
+			$this->queryAffectedPages();
+		}
+		return $this->totalWork;
+	}
 
-		$num = $this->getWorkForCategory($this->category);
-		if ($this->isOptionSet('sref_includeSubcategories', $this->options)) {
-			$subcategories = $store->getSubCategories($this->category);
-			foreach($subcategories as $s) {
-				$num += $this->getWorkForCategory($s);
+
+	private function collectWorkForCategory($category, & $num, & $previewData) {
+		$affectedPages = $this->getAffectedPagesForCategory($category);
+
+		
+		if ( $this->isOptionSet('sref_removeInstances', $this->options)) {
+			$num += count($affectedPages['instances']);
+			$previewData['sref_deletedInstances'] += count($affectedPages['instances']);
+		} else {
+			if ( $this->isOptionSet('sref_removeCategoryAnnotations', $this->options)) {
+				$num += count($affectedPages['instances']);
+				$previewData['sref_changedInstances'] += count($affectedPages['instances']);
 			}
 		}
+		if ( $this->isOptionSet('sref_removeQueriesWithCategories', $this->options)) {
+			$num += count($affectedPages['queries']);
+			$previewData['sref_changedQueries'] += count($affectedPages['queries']);
+		}
+		if ( $this->isOptionSet('sref_removePropertyWithDomain', $this->options)) {
+			$num += count($affectedPages['propertiesWithDomain']);
+			$previewData['sref_deletedPropertyWithDomain'] += count($affectedPages['propertiesWithDomain']);
+		} else if ( $this->isOptionSet('sref_removeFromDomain', $this->options)) {
+			$num += count($affectedPages['propertiesWithDomain']);
+			$previewData['sref_changedPropertyWithDomain'] += count($affectedPages['propertiesWithDomain']);
+		}
 
-		return $num;
+		
 	}
 
 	public function queryAffectedPages() {
-		return $this->getAffectedPagesForCategory($this->category);
-	}
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
+		$this->affectedPages = $this->getAffectedPagesForCategory($this->category);
+		$this->previewData['sref_changedQueries'] = 0;
+		$this->previewData['sref_changedInstances'] = 0;
+		$this->previewData['sref_deletedInstances'] = 0;
+		$this->previewData['sref_deletedPropertyWithDomain'] = 0;
 
-	private function getWorkForCategory($category) {
-		$affectedPages = $this->getAffectedPagesForCategory($category);
-		$num = $this->isOptionSet('sref_removeInstances', $this->options) ? count($affectedPages['instances']) : 0;
-		$num += $this->isOptionSet('sref_removeFromDomain', $this->options) ? count($affectedPages['propertiesWithDomain']) : 0;
-		$num += count($affectedPages['queries']) + count($affectedPages['instances']);
+		$this->totalWork = 0;
+		$this->collectWorkForCategory($this->category, $this->totalWork, $this->previewData);
+		if ($this->isOptionSet('sref_includeSubcategories', $this->options)) {
+			$subcategories = $store->getSubCategories($this->category);
+			foreach($subcategories as $s) {
+				$this->collectWorkForCategory($s, $this->totalWork, $this->previewData);
+			}
+		}
+		
+		return $this->affectedPages;
 	}
-
 
 	private function getAffectedPagesForCategory($category) {
 		// calculate only once
-		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		$store = smwfGetSemanticStore();
 		$instances = $store->getDirectInstances($category);
@@ -80,17 +110,17 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		// get properties with domain and/or ranges
 		$propertiesWithDomain = $store->getPropertiesWithDomain($category);
 
-		$this->affectedPages = array();
-		$this->affectedPages['instances'] = $instances;
-		$this->affectedPages['queries'] = $queries;
-		$this->affectedPages['propertiesWithDomain'] = $propertiesWithDomain;
-		$this->affectedPages['directSubcategories'] = $directSubcategories;
+		$affectedPages = array();
+		$affectedPages['instances'] = $instances;
+		$affectedPages['queries'] = $queries;
+		$affectedPages['propertiesWithDomain'] = $propertiesWithDomain;
+		$affectedPages['directSubcategories'] = $directSubcategories;
 
-		return $this->affectedPages;
+		return $affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages) {
-		$results = $this->queryAffectedPages();
+		$this->queryAffectedPages();
 
 		if (array_key_exists('sref_deleteCategory', $this->options) && $this->options['sref_deleteCategory'] == "true") {
 			$a = new Article($this->category);
@@ -204,10 +234,10 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 
 		if (array_key_exists('sref_includeSubcategories', $this->options) && $this->options['sref_includeSubcategories'] == "true") {
-			foreach($results['directSubcategories'] as $c) {
+			foreach($this->affectedPages['directSubcategories'] as $c) {
 				$op = new SRFDeleteCategoryOperation($c, $this->options);
 				$op->setBot($mBot);
-				$op->refactor($save, $logMessages, $testData);
+				$op->refactor($save, $logMessages);
 			}
 		}
 

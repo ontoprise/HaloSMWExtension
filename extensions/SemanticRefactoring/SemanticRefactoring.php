@@ -197,7 +197,19 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_help_setvalueoftemplate',
 						    'sref_help_replacetemplatevalue',
 						    'sref_help_renametemplateparameter',
-                            'sref_help_renametemplate'
+                            'sref_help_renametemplate',
+            
+                            'sref_changedpage',
+				            'sref_changedInstances' ,
+						    'sref_changedSubcategories',
+						    'sref_changedPropertyvalues',
+						    'sref_changedLinks',
+						    'sref_changedQueries',
+				            'sref_changedProperty',
+						    'sref_changedPropertyAsValue',
+						    'sref_changedSubproperties',
+                            'sref_deletedInstances',
+                            'sref_deletedPropertyWithDomain'
     )
     );
 
@@ -241,7 +253,7 @@ function sreff_requestPreview($paramString) {
 	$paramArray = GardeningBot::convertParamStringToArray($paramString);
     $preview = $bot->getPreview($paramArray['SRF_OPERATION'], $paramArray);
     
-	$response = new AjaxResponse($preview);
+	$response = new AjaxResponse(json_encode($preview));
     $response->setResponseCode(200);
     return $response;
 }

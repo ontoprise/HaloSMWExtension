@@ -34,13 +34,7 @@ class SRFChangeValueOperation extends SRFInstanceLevelOperation {
 		$this->set = $set;
 	}
 
-	public function queryAffectedPages() {
-		return $this->instanceSet;
-	}
-
-	public function getWork() {
-		return count($this->instanceSet);
-	}
+	
 
 
 

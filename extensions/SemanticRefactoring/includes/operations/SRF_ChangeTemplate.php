@@ -31,14 +31,7 @@ class SRFChangeTemplateOperation extends SRFInstanceLevelOperation {
 		$this->new_parameter = $new_parameter;
 	}
 
-	public function queryAffectedPages() {
-		return $this->instanceSet;
-	}
-
-	public function getWork() {
-		return count($this->instanceSet);
-	}
-
+	
 	
 
 

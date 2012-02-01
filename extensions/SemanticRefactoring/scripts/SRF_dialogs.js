@@ -141,15 +141,30 @@
 							$('#sref_cancel_operation').click(function() { 
 								$.fancybox.close();
 							});
+							
+							var previewRequested = false;
 							$('#sref_preview_operation').click(function() { 
 								$('#sref_main').toggle();
 								$('#sref_preview').toggle();
 								var onSuccess = function(responseText) {
-									// silently ignore
-									//TODO: show preview results
-									$('#sref_preview_content').html(responseText);
+									
+									// show preview results
+									var preview = $.parseJSON(responseText);
+									var p, html = "<table>";
+									for(p in preview) {
+										if (p == 'sref_changedpage') continue;
+										html += '<tr>';
+										html += '<td>'+mw.msg(p, preview[p])+'</td>';
+										html += '</tr>';
+									}
+									html += '<td class="sref_total_number_preview">'+mw.msg('sref_changedpage', "<b>"+preview['sref_changedpage']+"</b>")+'</td>';
+									html += '</table>';
+									$('#sref_preview_content').html(html);
 								} 
-								var ajaxParams = dialog.getParameters(parameters);
+								if (previewRequested) return;
+								previewRequested = true;
+								var res = dialog.getParameters(parameters);
+								var ajaxParams = res['ajaxParams'];
 								var operation = $(
 										'#sref_option_form')
 										.attr('operation');
@@ -163,7 +178,9 @@
 							$('#sref_start_operation')
 									.click(
 											function() {
-												var ajaxParams = dialog.getParameters(parameters);
+												var res = dialog.getParameters(parameters);
+												var ajaxParams = res['ajaxParams'];
+												var requiresBot = res['requiresBot'];
 												var operation = $(
 														'#sref_option_form')
 														.attr('operation');
@@ -205,7 +222,7 @@
 													.attr(
 															'requiresBot') == 'true';
 							});
-			return ajaxParams;
+			return { 'ajaxParams':  ajaxParams, 'requiresBot' : requiresBot };
 		},
 
 		launchBot : function(operation, params) {

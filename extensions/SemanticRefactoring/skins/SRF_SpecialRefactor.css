@@ -162,3 +162,11 @@
 .sref_option_table {
     border-top: 1px solid #000;
 }
+
+#sref_preview_content {
+	margin-bottom: 30px;
+}
+
+.sref_total_number_preview {
+	 font-size: large; 
+}

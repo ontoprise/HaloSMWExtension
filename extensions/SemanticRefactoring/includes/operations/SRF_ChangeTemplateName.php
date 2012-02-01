@@ -28,13 +28,7 @@ class SRFChangeTemplateNameOperation extends SRFInstanceLevelOperation {
         $this->new_template = Title::newFromText($new_template, NS_TEMPLATE);
     }
 
-    public function queryAffectedPages() {
-        return $this->instanceSet;
-    }
-
-    public function getWork() {
-        return count($this->instanceSet);
-    }
+   
 
     public function applyOperation($title, $wikitext, & $logMessages) {
         $pom = WOMProcessor::parseToWOM($wikitext);

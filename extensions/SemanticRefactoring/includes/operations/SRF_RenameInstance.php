@@ -23,8 +23,6 @@ class SRFRenameInstanceOperation extends SRFRenameOperation {
 		parent::__construct();
 		$this->old = Title::newFromText($old);
 		$this->new = Title::newFromText($new);
-
-
 	}
 
    
@@ -34,36 +32,37 @@ class SRFRenameInstanceOperation extends SRFRenameOperation {
 
 		// get all pages using $this->old in an annotation
 		$titles = array();
+		$this->previewData['sref_changedInstances'] = 0;
 		$instanceDi = SMWDIWikiPage::newFromTitle($this->old);
 		$properties = smwfGetStore()->getInProperties($instanceDi);
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $instanceDi);
 			foreach($subjects as $s) {
 				$titles[] = $s->getTitle();
+				$this->previewData['sref_changedInstances'] += 1;
 			}
 		}
-		print_r($titles);
 		
-
 		// get all pages which uses links with that instance
+		$this->previewData['sref_changedLinks'] = 0;
 		$subjects = $this->old->getLinksTo();
 		foreach($subjects as $s) {
 			if ($s->isRedirect()) continue;
 			$titles[] = $s;
+			$this->previewData['sref_changedLinks'] += 1;
 		}
-		print_r($titles);
-
+		
 		// get all queries using $this->old
+		$this->previewData['sref_changedQueries'] = 0;
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
 		$queryMetadataPattern->instanceOccurences = array($this->old->getPrefixedText() => true);
 			
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$titles[] = Title::newFromText($s->usedInArticle);
+			$this->previewData['sref_changedQueries'] += 1;
 		}
-		print_r($titles);
-
-
+	
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);
 		return $this->affectedPages;
 	}

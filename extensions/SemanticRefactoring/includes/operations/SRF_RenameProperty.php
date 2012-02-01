@@ -39,39 +39,48 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 		if (!is_null($this->affectedPages)) return $this->affectedPages;
 
 		$titles=array();
+		$this->previewData['sref_changedProperty'] = 0;
 		// get all pages using $this->property
 		$propertyDi = SMWDIProperty::newFromUserLabel($this->old->getText());
 		$subjects = smwfGetStore()->getAllPropertySubjects($propertyDi);
 		foreach($subjects as $s) {
 			$titles[] = $s->getTitle();
+			$this->previewData['sref_changedProperty'] += 1;
 		}
 
 		// get all pages using $this->property
+		$this->previewData['sref_changedPropertyAsValue'] = 0;
 		$objectDi = SMWDIWikiPage::newFromTitle($this->old);
 		$properties = smwfGetStore()->getInProperties($objectDi);
 		foreach($properties as $p) {
 			$subjects = smwfGetStore()->getPropertySubjects($p, $objectDi);
 			foreach($subjects as $s) {
 				$titles[] = $s->getTitle();
+				$this->previewData['sref_changedPropertyAsValue'] += 1;
 			}
 		}
 
 		// subproperties
+		$this->previewData['sref_changedSubproperties'] = 0;
 		$subPropertyDi = SMWDIProperty::newFromUserLabel('_SUBP');
 		$subjects = smwfGetStore()->getPropertySubjects($subPropertyDi, $objectDi);
 
 		foreach($subjects as $s) {
 			$titles[] = $s->getTitle();
+			$this->previewData['sref_changedSubproperties'] += 1;
 		}
 
 
 		// get all pages which uses links to $this->property
+		$this->previewData['sref_changedLinks'] = 0;
 		$subjects = $this->old->getLinksTo();
 		foreach($subjects as $s) {
 			$titles[] = $s;
+			$this->previewData['sref_changedLinks'] += 1;
 		}
 
 		// get all queries using $this->property
+		$this->previewData['sref_changedQueries'] = 0;
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
 		$queryMetadataPattern->instanceOccurences = array($this->old->getPrefixedText() => true);
 		$queryMetadataPattern->propertyConditions = array($this->old->getText() => true);
@@ -80,6 +89,7 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$titles[] = Title::newFromText($s->usedInArticle);
+			$this->previewData['sref_changedQueries']  += 1;
 		}
 
 		$this->affectedPages = SRFTools::makeTitleListUnique($titles);

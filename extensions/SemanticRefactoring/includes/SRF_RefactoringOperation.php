@@ -33,28 +33,57 @@ abstract class SRFRefactoringOperation {
 	protected $mRefOpTimeStamp;
 
 	private $mGardeningLogCategory;
+	protected $affectedPages;
+	protected $previewData;
+	
 
 	protected function __construct() {
 		$this->mRefOpTimeStamp = wfTimestampNow();
 		$this->mGardeningLogCategory = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
+		$this->affectedPages = NULL;
+		$this->previewData = array();
+		
 	}
+
 	/**
-	 * Returns the number of pages which get processed in some way.
 	 *
-	 * @return int
+	 * Returns page titles which get processed in some way.
 	 */
-	public abstract function getWork();
+	public abstract function queryAffectedPages();
 
 	/**
 	 * Performs the actual refactoring
 	 *
 	 * @param boolean $save
 	 * @param string [] & $logMessages
-	 * @param array & $testData
+	 *
 	 */
 	public abstract function refactor($save = true, & $logMessages);
-    
-	
+
+
+	/**
+	 * Returns the number of pages which get processed in some way.
+	 *
+	 * @return int
+	 */
+	public function getWork() {
+		$this->affectedPages = $this->queryAffectedPages();
+		return count($this->affectedPages);
+	}
+
+	/**
+	 * Returns a preview of the operation.
+	 *
+	 * A preview is a list of tuples (message-id, number of affected pages)
+	 *
+	 * @return array (message-id => number of affected pages)
+	 */
+	public function preview() {
+		$this->queryAffectedPages(); // make sure preview data is calculated.
+		$this->previewData['sref_changedpage'] = $this->getWork();
+		return $this->previewData;
+	}
+
 	public function isOptionSet($option, $options) {
 		return (array_key_exists($option, $options) && $options[$option] == "true");
 	}
@@ -172,7 +201,7 @@ abstract class SRFRefactoringOperation {
 
 
 
-	
+
 
 
 }

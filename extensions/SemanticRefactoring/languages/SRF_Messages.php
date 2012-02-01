@@ -139,7 +139,20 @@ $messages['en'] = array(
     'sref_help_setvalueoftemplate' => 'Set new value of a template parameter',
     'sref_help_replacetemplatevalue' => 'Replace a value of a template parameter by another',
     'sref_help_renametemplateparameter' => 'Rename a template parameter',
-    'sref_help_renametemplate' => 'Rename a template'
+    'sref_help_renametemplate' => 'Rename a template',
+
+    'sref_changedpage' => 'A total of $1 page(s) will be changed.',
+    'sref_changedInstances' => '$1 instance annotations will be changed.',
+	'sref_changedSubcategories' => '$1 sub-category annotations will be changed.',
+	'sref_changedPropertyvalues' => '$1 property values will be changed.',
+	'sref_changedLinks' => '$1 links will be changed.',
+	'sref_changedQueries' => '$1 queries will be changed.',
+    'sref_changedProperty' => '$1 properties in annotations will be changed',
+	'sref_changedPropertyAsValue' => '$1 properties as annotation values will be changed',
+	'sref_changedSubproperties' => '$1 sub-property annotations will be changed.',
+    'sref_deletedInstances' => '$1 instances are deleted',
+    'sref_deletedPropertyWithDomain' => '$1 properties are deleted'
+
 );
 
 /**
@@ -284,7 +297,19 @@ $messages['de'] = array(
     'sref_help_setvalueoftemplate' => 'Setzt neue Wert für Templateparameter',
     'sref_help_replacetemplatevalue' => 'Ersetzt Wert für Templateparameter durch anderen',
     'sref_help_renametemplateparameter' => 'Benennt einen Templateparameter um',
- 'sref_help_renametemplate' => 'Rename a template'
+    'sref_help_renametemplate' => 'Rename a template',
+
+    'sref_changedpage' => 'A total of $1 page(s) will be changed.',
+    'sref_changedInstances' => '$1 instance annotations will be changed.',
+    'sref_changedSubcategories' => '$1 sub-category annotations will be changed.',
+    'sref_changedPropertyvalues' => '$1 property values will be changed.',
+    'sref_changedLinks' => '$1 links will be changed.',
+    'sref_changedQueries' => '$1 queries will be changed.',
+    'sref_changedProperty' => '$1 properties in annotations will be changed',
+    'sref_changedPropertyAsValue' => '$1 properties as annotation values will be changed',
+    'sref_changedSubproperties' => '$1 sub-property annotations will be changed.',
+    'sref_deletedInstances' => '$1 instances are deleted',
+    'sref_deletedPropertyWithDomain' => '$1 properties are deleted'
    
 );
 

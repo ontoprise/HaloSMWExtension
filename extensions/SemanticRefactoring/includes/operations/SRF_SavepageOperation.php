@@ -18,7 +18,7 @@
  */
 class SRFSavepageOperation extends SRFInstanceLevelOperation {
 
-	
+
 	public function __construct($instanceSet) {
 		parent::__construct();
 	}
@@ -31,19 +31,23 @@ class SRFSavepageOperation extends SRFInstanceLevelOperation {
 		return count($this->instanceSet);
 	}
 
+	public function preview() {
+		return array('sref_changedpage' => $this->getWork());
+	}
+
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$logMessages[$title->getPrefixedText()][] = new SRFLog("Touched '$1'", $title, "", array($title));
 		return $wikitext;
 	}
 
-	
+
 
 	public function storeArticle($title, $wikitext, $comment) {
-		
+
 		$article = new Article($title);
 		// will return warning that nothing changed, nevertheless
 		$status = $article->doEdit($wikitext, $article->getComment());
-            
+
 		return Status::newGood();
 	}
 }

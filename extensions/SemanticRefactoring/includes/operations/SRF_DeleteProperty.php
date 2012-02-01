@@ -25,46 +25,73 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 
 	var $property;
 	var $options;
-	var $affectedPages;
+	var $totalWork;
 
 	public function __construct($category, $options) {
 		parent::__construct();
 		$this->property = Title::newFromText($category, SMW_NS_PROPERTY);
 		$this->options = $options;
+		$this->totalWork = -1;
 	}
 
 	public function getWork() {
+		if ($this->totalWork == -1) {
+			$this->queryAffectedPages();
+		}
+		return $this->totalWork;
+	}
 
-		$num = $this->getWorkForProperty($this->property);
+	public function queryAffectedPages() {
+		if (!is_null($this->affectedPages)) return $this->affectedPages;
+		$this->affectedPages = $this->getAffectedPagesForProperty($this->property);
+		$this->previewData['sref_changedQueries'] = 0;
+		$this->previewData['sref_changedInstances'] = 0;
+		$this->previewData['sref_deletedInstances'] = 0;
+
+		$this->totalWork = 0;
+		$this->collectWorkForProperty($this->property, $this->totalWork, $this->previewData);
 
 		if ($this->isOptionSet('sref_includeSubproperties', $this->options)) {
 			$subproperties = $store->getSubProperties($this->property);
 			foreach($subproperties as $s) {
-				$num += $this->getWorkForProperty($s);
+				$this->collectWorkForProperty($s, $this->totalWork, $this->previewData);
 			}
 		}
-
-		return $num;
+		return $this->affectedPages;
 	}
+	
+	private function collectWorkForProperty($property, & $num, & $previewData) {
 
-	public function queryAffectedPages() {
-		return $this->getAffectedPagesForProperty($this->property);
-	}
-
-	private function getWorkForProperty($property) {
+		
 		$affectedPages = $this->getAffectedPagesForProperty($property);
-		$num = $this->isOptionSet('sref_removeInstancesUsingProperty', $this->options) ? count($affectedPages['instances']) : 0;
-		$num += count($affectedPages['queries']) + count($affectedPages['instances']);
+
+		if ( $this->isOptionSet('sref_removeInstancesUsingProperty', $this->options)) {
+			$num += count($affectedPages['instances']);
+			$previewData['sref_deletedInstances'] += count($affectedPages['instances']);
+		} else {
+			if ( $this->isOptionSet('sref_removePropertyAnnotations', $this->options)) {
+				$num += count($affectedPages['instances']);
+				$previewData['sref_changedInstances'] += count($affectedPages['instances']);
+			}
+		}
+		if ( $this->isOptionSet('sref_removeQueriesWithProperties', $this->options)) {
+			$num += count($affectedPages['queries']);
+			$previewData['sref_changedQueries'] += count($affectedPages['queries']);
+		}
+			
+		
 	}
 
-	private function getAffectedPagesForProperty() {
+
+
+	private function getAffectedPagesForProperty($property) {
 		// calculate only once
-		if (!is_null($this->affectedPages)) return $this->affectedPages;
+
 		$store = smwfGetSemanticStore();
 		$smwstore = smwfGetStore();
 
 		// get all instances using $this->property as annotation
-		$propertyDi = SMWDIProperty::newFromUserLabel($this->property->getText());
+		$propertyDi = SMWDIProperty::newFromUserLabel($property->getText());
 		$pageDIs = $smwstore->getAllPropertySubjects($propertyDi);
 		$instances = array();
 		foreach($pageDIs as $di) {
@@ -73,7 +100,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 
 		// get all direct subproperties of $this->property
 		$directSubProperties = array();
-		$dsp = $store->getDirectSubProperties($this->property);
+		$dsp = $store->getDirectSubProperties($property);
 		foreach($dsp as $tuple) {
 			list($property, $hasChildren) = $tuple;
 			$directSubProperties[] = $property;
@@ -82,25 +109,25 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		// get all queries $this->property is used in
 		$queries = array();
 		$queryMetadataPattern = new SMWQMQueryMetadata(true);
-		$queryMetadataPattern->instanceOccurences = array($this->property->getPrefixedText() => true);
-		$queryMetadataPattern->propertyConditions = array($this->property->getText() => true);
-		$queryMetadataPattern->propertyPrintRequests = array($this->property->getText() => true);
+		$queryMetadataPattern->instanceOccurences = array($property->getPrefixedText() => true);
+		$queryMetadataPattern->propertyConditions = array($property->getText() => true);
+		$queryMetadataPattern->propertyPrintRequests = array($property->getText() => true);
 
 		$qmr = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadataPattern);
 		foreach($qmr as $s) {
 			$queries[] = Title::newFromText($s->usedInArticle);
 		}
 
-		$this->affectedPages = array();
-		$this->affectedPages['instances'] = $instances;
-		$this->affectedPages['queries'] = $queries;
-		$this->affectedPages['directSubProperties'] = $directSubProperties;
+		$affectedPages = array();
+		$affectedPages['instances'] = $instances;
+		$affectedPages['queries'] = $queries;
+		$affectedPages['directSubProperties'] = $directSubProperties;
 
-		return $this->affectedPages;
+		return $affectedPages;
 	}
 
 	public function refactor($save = true, & $logMessages) {
-		$results = $this->queryAffectedPages();
+		$this->queryAffectedPages();
 
 		if (array_key_exists('sref_deleteProperty', $this->options) && $this->options['sref_deleteProperty'] == "true") {
 			$a = new Article($this->property);
@@ -168,7 +195,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		}
 
 		if (array_key_exists('sref_includeSubproperties', $this->options) && $this->options['sref_includeSubproperties'] == "true") {
-			foreach($results['directSubcategories'] as $p) {
+			foreach($this->affectedPages['directSubcategories'] as $p) {
 				$op = new SRFDeletePropertyOperation($p, $this->options);
 				$op->refactor($save, $logMessages, $testData);
 			}
