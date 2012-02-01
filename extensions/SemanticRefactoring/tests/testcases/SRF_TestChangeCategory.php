@@ -51,7 +51,8 @@ class SRFTestChangeCategoryValue extends PHPUnit_Framework_TestCase {
 
 
     function testAddCategory() {
-        $r = new SRFChangeCategoryValueOperation(array("Kai"), NULL, "Person");
+    	$r = new SRFInstanceLevelOperation(array("Kai"));
+        $r->addOperation(new SRFChangeCategoryValueOperation(NULL, "Person"));
         $logMessages=array();
         $r->refactor(false, $logMessages);
         $log = reset($logMessages['Kai']);
@@ -60,7 +61,9 @@ class SRFTestChangeCategoryValue extends PHPUnit_Framework_TestCase {
     }
 
     function testRemoveCategory() {
-       $r = new SRFChangeCategoryValueOperation(array("Thomas"), "Person", NULL);
+    	$r = new SRFInstanceLevelOperation(array("Thomas"));
+        $r->addOperation(new SRFChangeCategoryValueOperation("Person", NULL));
+       
         $logMessages=array();
         $r->refactor(false, $logMessages);
         $log = reset($logMessages['Thomas']);
@@ -69,7 +72,9 @@ class SRFTestChangeCategoryValue extends PHPUnit_Framework_TestCase {
     }
 
     function testReplaceCategory() {
-        $r = new SRFChangeCategoryValueOperation(array("Michael"), "Human", "Person");
+    	$r = new SRFInstanceLevelOperation(array("Michael"));
+        $r->addOperation(new SRFChangeCategoryValueOperation("Human", "Person"));
+        
         $logMessages=array();
         $r->refactor(false, $logMessages);
         $log = reset($logMessages['Michael']);

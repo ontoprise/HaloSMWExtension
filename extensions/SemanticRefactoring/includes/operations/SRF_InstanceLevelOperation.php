@@ -21,20 +21,27 @@
  * @author Kai Kuehn
  *
  */
-abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
-	
+class SRFInstanceLevelOperation extends SRFRefactoringOperation {
+
+	protected $operations;
+
 	public function __construct($instanceSet) {
 		parent::__construct();
 		$this->affectedPages = array();
+		$this->operations = array();
 		foreach($instanceSet as $i) {
 			$this->affectedPages[] = Title::newFromText($i);
 		}
 	}
 
 	public function queryAffectedPages() {
-        return $this->affectedPages;
-    }
-    	
+		return $this->affectedPages;
+	}
+
+	public function addOperation($operation) {
+		$this->operations[] = $operation;
+	}
+	 
 	/**
 	 * Applies and stores the changes of this refactoring operation.
 	 * (not used if several operations are combined, see applyOperation)
@@ -43,18 +50,46 @@ abstract class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 	 * @see extensions/SemanticRefactoring/includes/SRFRefactoringOperation::refactor()
 	 */
 	public function refactor($save = true, & $logMessages) {
-		SRFRefactoringOperation::applyOperations($save, $this->affectedPages, array($this), $logMessages);
+		$this->applyOperations($save, $this->affectedPages, $this->operations, $logMessages);
 	}
-	
 
 	/**
-	 * Applies the operation and returns the changed wikitext.
+	 * Applies the given operations on the set of titles.
 	 *
-	 * @param Title $title
-	 * @param string $wikitext
+	 * NOTE:
+	 * Any titles to work on which are specified in the operation itself
+	 * are ignored!
+	 *
+	 * @param boolean $save
+	 * @param string/Title[] $titles Titles or full qualified title strings
+	 * @param SRFRefactoringOperation[] $operations
 	 * @param array $logMessages
-	 *
-	 * @return string
 	 */
-	public abstract function applyOperation($title, $wikitext, & $logMessages);
+	public function applyOperations($save = true, $titles, $operations, & $logMessages) {
+
+		foreach($titles as $t) {
+			$title = $t instanceof Title ? $t : Title::newFromText($t);
+			$rev = Revision::newFromTitle($title);
+
+			$wikitext = $rev->getRawText();
+			$requireSave = false;
+			foreach($operations as $op) {
+				$wikitext = $op->applyOperation($title, $wikitext, $logMessages);
+				$requireSave = $requireSave | $op->requireSave();
+			}
+			$this->botWorked(1);
+
+			// stores article
+			if ($save && $requireSave) {
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
+				if (!$status->isGood()) {
+					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+					$l->setLogType(SREF_LOG_STATUS_WARN);
+					$logMessages[$title->getPrefixedText()][] = $l;
+				}
+			}
+		}
+
+	}
+	
 }

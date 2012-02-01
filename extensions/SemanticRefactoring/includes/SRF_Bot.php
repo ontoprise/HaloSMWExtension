@@ -39,6 +39,7 @@ require_once( $srefgIP . '/includes/SRF_Bot.php');
 require_once($srefgIP . '/includes/SRF_RefactoringOperation.php');
 require_once($srefgIP . '/includes/SRF_Tools.php');
 
+require_once($srefgIP . '/includes/SRF_ApplyOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_SavepageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_PurgepageOperation.php');
@@ -403,12 +404,12 @@ class SRFRefactoringBot extends GardeningBot {
 		switch($operation) {
 			case 'touchPages':
 					
-				$op = new SRFSavepageOperation($titles);
+				$op = new SRFSavepageOperation();
 
 				break;
 			case 'purgePages':
 
-				$op = new SRFPurgepageOperation($titles);
+				$op = new SRFPurgepageOperation();
 
 				break;
 			case 'renameInstance':
@@ -490,7 +491,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$category = $paramArray['category'];
 					
 
-				$op = new SRFChangeCategoryValueOperation($titles, NULL, $category);
+				$op = new SRFChangeCategoryValueOperation(NULL, $category);
 
 				break;
 
@@ -501,7 +502,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$category = $paramArray['category'];
 					
 
-				$op = new SRFChangeCategoryValueOperation($titles, $category, NULL);
+				$op = new SRFChangeCategoryValueOperation($category, NULL);
 
 				break;
 			case 'replaceCategory' :
@@ -515,7 +516,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$new_category = $paramArray['new_category'];
 					
 
-				$op = new SRFChangeCategoryValueOperation($titles, $old_category, $new_category);
+				$op = new SRFChangeCategoryValueOperation($old_category, $new_category);
 
 				break;
 
@@ -530,7 +531,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$value = $paramArray['value'];
 					
 
-				$op = new SRFChangeValueOperation($titles, $property, NULL, $value);
+				$op = new SRFChangeValueOperation($property, NULL, $value);
 
 				break;
 
@@ -545,7 +546,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$value = $paramArray['value'];
 					
 
-				$op = new SRFChangeValueOperation($titles, $property, $value, NULL);
+				$op = new SRFChangeValueOperation($property, $value, NULL);
 
 				break;
 
@@ -564,7 +565,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$new_value = $paramArray['new_value'];
 					
 
-				$op = new SRFChangeValueOperation($titles, $property, $old_value, $new_value);
+				$op = new SRFChangeValueOperation($property, $old_value, $new_value);
 
 				break;
 
@@ -579,7 +580,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$value = $paramArray['value'];
 
 
-				$op = new SRFChangeValueOperation($titles, $property, NULL, $value, true);
+				$op = new SRFChangeValueOperation($property, NULL, $value, true);
 
 				break;
 
@@ -598,7 +599,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$value = $paramArray['value'];
 
 
-				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, NULL, $value, false);
+				$op = new SRFChangeTemplateParameterOperation($template, $parameter, NULL, $value, false);
 
 				break;
 
@@ -617,7 +618,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$value = $paramArray['value'];
 
 
-				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, NULL, $value, true);
+				$op = new SRFChangeTemplateParameterOperation($template, $parameter, NULL, $value, true);
 
 				break;
 
@@ -640,7 +641,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$new_value = $paramArray['new_value'];
 
 
-				$op = new SRFChangeTemplateParameterOperation($titles, $template, $parameter, $old_value, $new_value);
+				$op = new SRFChangeTemplateParameterOperation($template, $parameter, $old_value, $new_value);
 
 				break;
 
@@ -660,7 +661,7 @@ class SRFRefactoringBot extends GardeningBot {
 				$new_parameter = $paramArray['new_parameter'];
 
 
-				$op = new SRFChangeTemplateOperation($titles, $template, $old_parameter, $new_parameter);
+				$op = new SRFChangeTemplateOperation($template, $old_parameter, $new_parameter);
 
 				break;
 
@@ -675,7 +676,7 @@ class SRFRefactoringBot extends GardeningBot {
 				}
 				$new_template = $paramArray['new_template'];
 
-				$op = new SRFChangeTemplateNameOperation($titles, $old_template, $new_template);
+				$op = new SRFChangeTemplateNameOperation($old_template, $new_template);
 
 				break;
 		}
@@ -738,15 +739,18 @@ class SRFRefactoringBot extends GardeningBot {
 				return "No operations specified.";
 			}
 
-			// use first operation to indicate bot progress
-			$op = $ops[0];
+			// create InstanceLevelOperation
+			$op = new SRFInstanceLevelOperation($titles);
+			foreach($ops as $operation) {
+			     $op->addOperation($operation);
+			}
 			$num = $op->getWork();
 			$op->setBot($this);
 			$this->setNumberOfTasks(1);
 			$this->addSubTask($num);
 
 			$logMessages=array();
-			SRFRefactoringOperation::applyOperations(true, $titles, $ops, $logMessages);
+			$op->refactor(true, $logMessages);
 		}
 
 		// print messages

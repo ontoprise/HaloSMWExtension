@@ -37,6 +37,7 @@ require_once 'testcases/SRF_TestChangeValue.php';
 require_once 'testcases/SRF_TestChangeTemplate.php';
 require_once 'testcases/SRF_TestChangeCategory.php';
 require_once 'testcases/SRF_TestChangeTemplateParameter.php';
+require_once 'testcases/SRF_TestChangeTemplate.php';
 require_once 'testcases/SRF_TestDeleteCategory.php';
 require_once 'testcases/SRF_TestDeleteProperty.php';
 require_once 'testcases/SRF_TestUtil.php';
@@ -62,6 +63,7 @@ class SemanticRefactoringTests
 		$suite->addTestSuite("SRFTestChangeCategory");
 		$suite->addTestSuite("SRFTestChangeValue");
 		$suite->addTestSuite("SRFTestChangeTemplateParameter");
+		$suite->addTestSuite("SRFTestChangeTemplate");
 
 		$suite->addTestSuite("SRFTestUtil");
 		return $suite;

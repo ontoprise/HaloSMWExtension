@@ -16,14 +16,14 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeTemplateNameOperation extends SRFInstanceLevelOperation {
+class SRFChangeTemplateNameOperation extends SRFApplyOperation {
     
     private $old_template;
     private $new_template;
      
 
-    public function __construct($instanceSet, $old_template, $new_template) {
-        parent::__construct($instanceSet);
+    public function __construct($old_template, $new_template) {
+      
         $this->old_template = Title::newFromText($old_template, NS_TEMPLATE);
         $this->new_template = Title::newFromText($new_template, NS_TEMPLATE);
     }

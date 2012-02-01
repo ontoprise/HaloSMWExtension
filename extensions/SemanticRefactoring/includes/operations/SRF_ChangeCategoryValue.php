@@ -16,17 +16,14 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeCategoryValueOperation extends SRFInstanceLevelOperation {
+class SRFChangeCategoryValueOperation extends SRFApplyOperation {
 
 
 	private $oldValue;
 	private $newValue; // empty means: remove annotation
 
-	private $subjectDBKeys;
-
-	public function __construct($instanceSet, $oldValue, $newValue) {
-		parent::__construct($instanceSet);
-
+	public function __construct($oldValue, $newValue) {
+		
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;
 	}

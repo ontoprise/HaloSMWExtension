@@ -150,44 +150,7 @@ abstract class SRFRefactoringOperation {
 	public function botWorked($worked) {
 		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
-
-
-	/**
-	 * Applies the given operations on the set of titles.
-	 *
-	 * NOTE:
-	 * Any titles to work on which are specified in the operation itself
-	 * are ignored!
-	 *
-	 * @param boolean $save
-	 * @param string/Title[] $titles Titles or full qualified title strings
-	 * @param SRFRefactoringOperation[] $operations
-	 * @param array $logMessages
-	 */
-	public static function applyOperations($save = true, $titles, $operations, & $logMessages) {
-
-		foreach($titles as $t) {
-			$title = $t instanceof Title ? $t : Title::newFromText($t);
-			$rev = Revision::newFromTitle($title);
-
-			$wikitext = $rev->getRawText();
-			foreach($operations as $op) {
-				$wikitext = $op->applyOperation($title, $wikitext, $logMessages);
-				$op->botWorked(1);
-			}
-
-			// stores article
-			if ($save) {
-				$status = $op->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-					$l->setLogType(SREF_LOG_STATUS_WARN);
-					$logMessages[$title->getPrefixedText()][] = $l;
-				}
-			}
-		}
-
-	}
+	
 
 	/**
 	 * Find nodes with the given type-ID below $node.

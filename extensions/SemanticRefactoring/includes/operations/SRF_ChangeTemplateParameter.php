@@ -16,7 +16,7 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
+class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 
 
 	private $template;
@@ -25,8 +25,8 @@ class SRFChangeTemplateParameterOperation extends SRFInstanceLevelOperation {
 	private $newValue; // empty means: remove value
 	private $set;
 
-	public function __construct($instanceSet, $template, $parameter, $oldValue, $newValue, $set = false) {
-		parent::__construct($instanceSet);
+	public function __construct($template, $parameter, $oldValue, $newValue, $set = false) {
+	
 		$this->template = Title::newFromText($template, NS_TEMPLATE);
 		$this->parameter = $parameter;
 		$this->oldValue = $oldValue;

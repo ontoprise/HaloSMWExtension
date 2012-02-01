@@ -51,7 +51,9 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 
 
 	function testChangeValue() {
-		$r = new SRFChangeValueOperation(array("Michael"), "Employee of", "Ontoprise", "Ontoprise GmbH");
+		$r = new SRFInstanceLevelOperation(array("Michael"));
+		$r->addOperation(new SRFChangeValueOperation("Employee of", "Ontoprise", "Ontoprise GmbH"));
+
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Michael']);
@@ -60,7 +62,9 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 	}
 
 	function testValueRemove() {
-		$r = new SRFChangeValueOperation(array("Daniel"), "Has income", "60000", NULL);
+		$r = new SRFInstanceLevelOperation(array("Daniel"));
+		$r->addOperation(new SRFChangeValueOperation("Has income", "60000", NULL));
+
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Daniel']);
@@ -69,23 +73,27 @@ class SRFTestChangeValue extends PHPUnit_Framework_TestCase {
 	}
 
 	function testValueAdd() {
-		$r = new SRFChangeValueOperation(array("Dmitry"), "Occupation", NULL, "Software engineer");
+		$r = new SRFInstanceLevelOperation(array("Dmitry"));
+		$r->addOperation(new SRFChangeValueOperation("Occupation", NULL, "Software engineer"));
+
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Dmitry']);
 		print "\n".$log->asWikiText();
 		$this->assertContains('[[Occupation::Software engineer]]', $log->getWikiText());
 	}
-	
-function testValueSet() {
-        $r = new SRFChangeValueOperation(array("Thomas"), "Employee of", NULL, "Ontoprise GmbH", true);
-        $logMessages=array();
-        $r->refactor(false, $logMessages);
-        $log = reset($logMessages['Thomas']);
-        print "\n".$log->asWikiText();
-        $this->assertNotContains('[[Employee of::Ontoprise]]', $log->getWikiText());
-        $this->assertNotContains('[[Employee of::FZI]]', $log->getWikiText());
-        $this->assertContains('[[Employee of::Ontoprise GmbH]]', $log->getWikiText());
-    }
+
+	function testValueSet() {
+		$r = new SRFInstanceLevelOperation(array("Thomas"));
+		$r->addOperation(new SRFChangeValueOperation("Employee of", NULL, "Ontoprise GmbH", true));
+
+		$logMessages=array();
+		$r->refactor(false, $logMessages);
+		$log = reset($logMessages['Thomas']);
+		print "\n".$log->asWikiText();
+		$this->assertNotContains('[[Employee of::Ontoprise]]', $log->getWikiText());
+		$this->assertNotContains('[[Employee of::FZI]]', $log->getWikiText());
+		$this->assertContains('[[Employee of::Ontoprise GmbH]]', $log->getWikiText());
+	}
 
 }

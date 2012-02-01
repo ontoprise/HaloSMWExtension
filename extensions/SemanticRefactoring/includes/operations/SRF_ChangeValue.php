@@ -16,18 +16,15 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFChangeValueOperation extends SRFInstanceLevelOperation {
+class SRFChangeValueOperation extends SRFApplyOperation {
 
 	private $property;
 	private $oldValue; // empty means: add or set annotation
 	private $newValue; // empty means: remove annotation
 	private $set; // true means: annotation is set not added (default is false)
 
-	private $subjectDBKeys;
-
-	public function __construct($instanceSet, $property, $oldValue, $newValue, $set = false) {
-		parent::__construct($instanceSet);
-
+	public function __construct($property, $oldValue, $newValue, $set = false) {
+		
 		$this->property = Title::newFromText($property, SMW_NS_PROPERTY);
 		$this->oldValue = $oldValue;
 		$this->newValue = $newValue;

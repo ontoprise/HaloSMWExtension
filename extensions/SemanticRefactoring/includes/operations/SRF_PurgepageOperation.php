@@ -16,26 +16,20 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-class SRFPurgepageOperation extends SRFInstanceLevelOperation {
-
-
-	public function __construct($instanceSet) {
-		parent::__construct($instanceSet);
-	}
+class SRFPurgepageOperation extends SRFApplyOperation {
 
 	public function applyOperation($title, $wikitext, & $logMessages) {
-		$logMessages[$title->getPrefixedText()][] = new SRFLog("Purged '$1'", $title, "", array($title));
+		// do not store because nothing changed.
+		// only purge
+
+		$a = new Article($title);
+		$a->doPurge();
+
+		$logMessages[$title->getPrefixedText()][] = new SRFLog("Touched '$1'", $title, "", array($title));
 		return $wikitext;
 	}
 
-
-
-	public function storeArticle($title, $wikitext, $comment) {
-		// do not store because nothing changed.
-		// only purge
-		
-		$a = new Article($title);
-		$a->doPurge();
-    	return Status::newGood();
+	public function requireSave() {
+		return false;
 	}
 }

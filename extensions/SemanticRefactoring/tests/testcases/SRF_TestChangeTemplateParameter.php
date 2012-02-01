@@ -45,7 +45,9 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 	}
 
 	function testChangeValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testarticle1"), "Testtemplate", "param1", "value1", "Newvalue1");
+		$r = new SRFInstanceLevelOperation(array("Testarticle1"));
+        $r->addOperation(new SRFChangeTemplateParameterOperation("Testtemplate", "param1", "value1", "Newvalue1"));
+				
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle1']);
@@ -54,7 +56,9 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 	}
 
 	function testSetValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testarticle1"), "Testtemplate", "param1", NULL, "Newvalue1", true);
+		$r = new SRFInstanceLevelOperation(array("Testarticle1"));
+        $r->addOperation(new SRFChangeTemplateParameterOperation("Testtemplate", "param1", NULL, "Newvalue1", true));
+				
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle1']);
@@ -63,7 +67,9 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 	}
 
 	function testAddValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testarticle2"), "Testtemplate", "param3", NULL, "value3");
+		$r = new SRFInstanceLevelOperation(array("Testarticle2"));
+        $r->addOperation(new SRFChangeTemplateParameterOperation("Testtemplate", "param3", NULL, "value3"));
+			
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle2']);
@@ -72,7 +78,9 @@ class SRFTestChangeTemplateParameter extends PHPUnit_Framework_TestCase {
 	}
 
 	function testDeleteValue() {
-		$r = new SRFChangeTemplateParameterOperation(array("Testarticle3"), "Testtemplate", "param1", "value1", NULL);
+		$r = new SRFInstanceLevelOperation(array("Testarticle3"));
+        $r->addOperation(new SRFChangeTemplateParameterOperation("Testtemplate", "param1", "value1", NULL));
+			
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle3']);

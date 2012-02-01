@@ -46,7 +46,9 @@ class SRFTestChangeTemplate extends PHPUnit_Framework_TestCase {
 	}
 
 	function testChangeParameter() {
-		$r = new SRFChangeTemplateOperation(array("Testarticle1"), "Testtemplate", "param1", "newparam1");
+		$r = new SRFInstanceLevelOperation(array("Testarticle1"));
+        $r->addOperation(new SRFChangeTemplateOperation("Testtemplate", "param1", "newparam1"));
+		
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle1']);
@@ -55,7 +57,9 @@ class SRFTestChangeTemplate extends PHPUnit_Framework_TestCase {
 	}
 
 	function testChangeTemplateName() {
-		$r = new SRFChangeTemplateNameOperation(array("Testarticle1"), "Testtemplate", "NewTesttemplate");
+		$r = new SRFInstanceLevelOperation(array("Testarticle1"));
+        $r->addOperation(new SRFChangeTemplateNameOperation("Testtemplate", "NewTesttemplate"));
+		
 		$logMessages=array();
 		$r->refactor(false, $logMessages);
 		$log = reset($logMessages['Testarticle1']);
