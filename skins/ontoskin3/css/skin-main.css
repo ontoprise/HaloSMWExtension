@@ -708,6 +708,43 @@ textarea {
 	border-spacing: 0;
 }
 
+#smw_browserCheck{
+    height: 26px;
+	width:auto;
+    margin-top:2.8em;
+	margin-left: 1.5em;
+	margin-right:1.5em;
+	padding-left:0.5em;
+	padding-right:0.3em;
+	border-radius: 2px 2px 2px 2px;
+	box-shadow: 1px 1px 1px 1px #ccc;
+	padding-top:0.3em;
+}
+
+
+
+#smw_browserCheckClose{
+    height: 19px;
+	width:160px;
+	float:right;
+	border-radius: 2px 2px 2px 2px;
+	box-shadow: 1px 1px 1px 1px #ccc;
+	padding-bottom:0.2em;
+	padding-left: 0.5em;
+}
+
+#smw_browserCheckClose span{
+	padding-left: 0.1em;
+    line-height: 1em;
+	position:absolute;
+	margin-top:0.4em;
+}
+
+#smw_browserCheckClose img{
+    padding-top: 0.3em;
+	padding-left: 12em;
+}
+
 /* -----------------------------------*/
 /* ---------->>> FOOTER <<<-----------*/
 /* -----------------------------------*/
