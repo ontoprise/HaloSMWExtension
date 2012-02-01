@@ -1225,7 +1225,7 @@ QUERY;
 		
 		$res = smwfGetStore()->getQueryResult($queryobj);
 
-		$errMsg =	"doTestSPARQLGetPropertiesSpecial:\n".
+		$errMsg =	"doTestSPARQLGetQueryResult:\n".
 					"\tUser: {$testConfig['user']}\n".
 					"\tQuery: {$testConfig['query']}\n";
     	
