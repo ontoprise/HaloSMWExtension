@@ -1,8 +1,8 @@
 <?php
 /** Extension:NewUserMessage
  *
- * @package MediaWiki
- * @subpackage Extensions
+ * @file
+ * @ingroup Extensions
  *
  * @author [http://www.organicdesign.co.nz/nad User:Nad]
  * @license GNU General Public Licence 2.0 or later
@@ -12,7 +12,7 @@
 if ( !defined( 'MEDIAWIKI' ) )
 	die( 'Not an entry point.' );
 
-define( 'NEWUSERMESSAGE_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}]' );
+define( 'NEWUSERMESSAGE_VERSION', '3.1, 2010-05-10' );
 
 $wgNewUserSuppressRC = false;           // Specify whether or not the new user message creation should show up in recent changes
 $wgNewUserMinorEdit = true;             // Should the new user message creation be a minor edit?

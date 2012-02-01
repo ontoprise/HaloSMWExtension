@@ -2,7 +2,8 @@
 /**
  * Internationalisation file for extension NewUserMessage.
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 $messages = array();
@@ -14,7 +15,7 @@ $messages = array();
 $messages['en'] = array(
 	'newusermessage-desc' => "Adds a message to newly created user's talk pages",
 	'newuseredit-summary' => 'Adding [[{{int:newusermessage-template}}|welcome message]] to new user\'s talk page',
-	'newusermessage-template' => 'Template:Welcome', # The title of the message template
+	'newusermessage-template' => 'Template:Welcome', # The title of the message template 
 	'newusermessage-template-subject' => 'Template:Welcome-subject', # Always substituted. Used if LiquidThreads is enabled in the User_talk namespace. Do not translate or duplicate this message to other languages
 	'newusermessage-template-body' => 'Template:Welcome-body', # Used if LiquidThreads is enabled in the User_talk namespace. Do not translate or duplicate this message to other languages
 	'newusermessage-editor' => 'New user message', # The username used for the edit
@@ -24,14 +25,11 @@ $messages['en'] = array(
 /** Message documentation (Message documentation)
  * @author Purodha
  * @author Siebrand
+ * @author The Evil IP address
  */
 $messages['qqq'] = array(
-	'newusermessage-desc' => 'Short description of this extension, shown on [[Special:Version]]. Do not translate or change links.',
+	'newusermessage-desc' => '{{desc}}',
 	'newuseredit-summary' => 'The edit summary used when placing a new user message.',
-	'newusermessage-subject' => 'Used if LiquidThreads is enabled in the User_talk namespace. Do not translate or duplicate this message to other languages.',
-	'newusermessage-body' => 'Used if LiquidThreads is enabled in the User_talk namespace. Do not translate or duplicate this message to other languages.',
-	'newusermessage-editor' => 'The username used for the edit',
-	'newusermessage-substitute' => 'If this message is not empty, the new user message templates will be substituted. Do not translate or duplicate this message to other languages.',
 );
 
 /** Afrikaans (Afrikaans)
@@ -42,7 +40,7 @@ $messages['af'] = array(
 	'newuseredit-summary' => 'Plaas [[{{int:newusermessage-template}}|welkomboodskap]] op nuwe gebruiker se besprekingsblad',
 );
 
-/** Old English (Anglo-Saxon)
+/** Old English (Ænglisc)
  * @author Wōdenhelm
  */
 $messages['ang'] = array(
@@ -74,6 +72,14 @@ $messages['arz'] = array(
 $messages['ast'] = array(
 	'newusermessage-desc' => "Añade un mensaxe a les páxines d'alderique d'usuariu creaes recién",
 	'newuseredit-summary' => "Añadiendo [[{{int:newusermessage-template}}|mensaxe de bienvenida]] a la nueva páxina d'alderique d'usuariu",
+);
+
+/** Bashkir (Башҡорт)
+ * @author Assele
+ */
+$messages['ba'] = array(
+	'newusermessage-desc' => 'Яңы теркәлгән ҡатнашыусының фекер алышыу битенә хәбәр өҫтәй',
+	'newuseredit-summary' => 'Яңы теркәлгән ҡатнашыусының фекер алышыу битенә [[{{int:newusermessage-template}}|сәләмләү хәбәре]] өҫтәү',
 );
 
 /** Bavarian (Boarisch)
@@ -213,6 +219,7 @@ $messages['es'] = array(
  */
 $messages['et'] = array(
 	'newusermessage-desc' => 'Lisab vastloodud kasutaja aruteluleheküljele läkituse.',
+	'newuseredit-summary' => '[[{{int:newusermessage-template}}|Tervitusteate]] lisamine uue kasutaja aruteluleheküljele',
 );
 
 /** Basque (Euskara)
@@ -262,6 +269,7 @@ $messages['frp'] = array(
  */
 $messages['fur'] = array(
 	'newusermessage-desc' => 'Zonte un messaç inte pagjine di discussion di un utent apene regjistrât',
+	'newuseredit-summary' => 'O zonti [[{{int:newusermessage-template}}|un messaç di benvignût]] ae pagjine di discussion di un gnûf utent',
 );
 
 /** Galician (Galego)
@@ -370,6 +378,14 @@ $messages['jv'] = array(
 	'newuseredit-summary' => 'Nambahaké [[{{int:newusermessage-template}}|pesen sugeng rawuh]] ing kaca wicara panganggo anyar',
 );
 
+/** Georgian (ქართული)
+ * @author BRUTE
+ */
+$messages['ka'] = array(
+	'newusermessage-desc' => 'ამატებს შეტყობინებას ახალ-დარეგისტრირებული მომხმარებლის განხილვის გვერდზე',
+	'newuseredit-summary' => 'დაემატა [[{{int:newusermessage-template}}|მისალმების შეტყობინება]] ახალი მომხმარებლის განხილვის გვერდზე',
+);
+
 /** Khmer (ភាសាខ្មែរ)
  * @author Chhorran
  * @author Lovekhmer
@@ -388,7 +404,7 @@ $messages['ko'] = array(
 	'newuseredit-summary' => '새 사용자의 토론 문서에 [[{{int:newusermessage-template}}|환영 메시지]]를 추가',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -420,6 +436,14 @@ $messages['li'] = array(
 $messages['lt'] = array(
 	'newusermessage-desc' => 'Prideda pranešimą į naujai sukurtų naudotojų aptarimų puslapius.',
 	'newuseredit-summary' => 'Prideda [[{{int:newusermessage-template}}|pasveikinimo pranešimą]] į naujo naudotojo aptarimo puslapį',
+);
+
+/** Latvian (Latviešu)
+ * @author Xil
+ */
+$messages['lv'] = array(
+	'newusermessage-desc' => 'Pievieno sveicienu jauno lietotāju diskusijām',
+	'newuseredit-summary' => '[[{{int:newusermessage-template}}|Apsveic]] jaunu lietotāju',
 );
 
 /** Macedonian (Македонски)
@@ -546,8 +570,8 @@ $messages['pt-br'] = array(
  * @author Mihai
  */
 $messages['ro'] = array(
-	'newusermessage-desc' => 'Adaugă un mesaj în paginile de discuţie ale utilizatorilor nou înregistraţi',
-	'newuseredit-summary' => 'Adaugă [[{{int:newusermessage-template}}|un mesaj de bun venit]] în paginile de discuţie ale utilizatorilor noi',
+	'newusermessage-desc' => 'Adaugă un mesaj în paginile de discuție ale utilizatorilor nou înregistrați',
+	'newuseredit-summary' => 'Adaugă [[{{int:newusermessage-template}}|un mesaj de bun venit]] în paginile de discuție ale utilizatorilor noi',
 );
 
 /** Tarandíne (Tarandíne)
@@ -564,6 +588,14 @@ $messages['roa-tara'] = array(
 $messages['ru'] = array(
 	'newusermessage-desc' => 'Добавляет сообщение на страницу обсуждения недавно зарегистрированного участника',
 	'newuseredit-summary' => 'Добавление [[{{int:newusermessage-template}}|приветствия]] на страницу обсуждения нового участника',
+);
+
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'newusermessage-desc' => 'Додавать повідомлїня на діскузны сторінкы ново створеных хоснователїв',
+	'newuseredit-summary' => 'Приданя [[{{int:newusermessage-template}}|привітаня]] на діскузну сторінку нового хоснователя',
 );
 
 /** Yakut (Саха тыла)
@@ -689,7 +721,14 @@ $messages['vo'] = array(
 	'newuseredit-summary' => '[[{{int:newusermessage-template}}|Benokömanun]] paläükon lä bespikapad gebana nulik',
 );
 
-/** Yue (粵語)
+/** Yoruba (Yorùbá)
+ * @author Demmy
+ */
+$messages['yo'] = array(
+	'newusermessage-desc' => 'Àfikún ìránṣẹ́ kan kún àwọn ojúewé ọ̀rọ̀ oníṣe dídá tuntun',
+);
+
+/** Cantonese (粵語)
  * @author Shinjiman
  */
 $messages['yue'] = array(
@@ -699,9 +738,10 @@ $messages['yue'] = array(
 
 /** Simplified Chinese (‪中文(简体)‬)
  * @author Gaoxuewei
+ * @author Xiaomingyan
  */
 $messages['zh-hans'] = array(
-	'newusermessage-desc' => '在新用户的讨论页上添加一条信息',
+	'newusermessage-desc' => '在新用户的讨论页上添加信息',
 	'newuseredit-summary' => '在新用户的讨论页上添加[[{{int:newusermessage-template}}|欢迎信息]]',
 );
 

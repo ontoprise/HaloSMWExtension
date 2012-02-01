@@ -1,8 +1,8 @@
 <?php
 /** Extension:NewUserMessage
  *
- * @package MediaWiki
- * @subpackage Extensions
+ * @file
+ * @ingroup Extensions
  *
  * @author [http://www.organicdesign.co.nz/nad User:Nad]
  * @license GNU General Public Licence 2.0 or later
@@ -14,150 +14,166 @@ if ( !defined( 'MEDIAWIKI' ) )
 	die( 'Not an entry point.' );
 
 class NewUserMessage {
-	/*
-	 * Add the template message if the users talk page does not already exist
+
+	/**
+	 * Produce the editor for new user messages.
+	 * @returns User
 	 */
-	static function createNewUserMessage( $user ) {
-		$talk = $user->getUserPage();
-
-		if ( !$talk->exists() ) {
-			global $wgUser, $wgLqtTalkPages;
-
-			$name = $user->getName();
-			$realName = $user->getRealName();
-
-			wfLoadExtensionMessages( 'NewUserMessage' );
-
-			$article = new Article( $talk );
-			$editSummary = wfMsgForContent( 'newuseredit-summary' );
-
-			// Create a user object for the editing user and add it to the
-			// database if it is not there already
-			$editor = User::newFromName( wfMsgForContent( 'newusermessage-editor' ) );
-			if ( !$editor->isLoggedIn() ) {
-				$editor->addToDatabase();
-			}
-			
-			$signatures = wfMsgForContent( 'newusermessage-signatures' );
-			$signature = null;
-
-			if ( !wfEmptyMsg( 'newusermessage-signatures', $signatures ) ) {
-				$pattern = '/^\* ?(.*?)$/m';
-				preg_match_all( $pattern, $signatures, $signatureList, PREG_SET_ORDER );
-				if ( count( $signatureList ) > 0 ) {
-					$rand = rand( 0, count( $signatureList ) - 1 );
-					$signature = $signatureList[$rand][1];
-				}
-			}
-
-			// Add (any) content to [[MediaWiki:Newusermessage-substitute]] to substitute the welcome template.
-			$substitute = wfMsgForContent( 'newusermessage-substitute' );
-
-			if ( $wgLqtTalkPages && LqtDispatch::isLqtPage( $talk ) ) { // Create a thread on the talk page if LiquidThreads is installed
-				// Get subject text
-				$threadSubject = self::getTextForPageInKey( 'newusermessage-template-subject' );
-
-				// Do not continue if there is no valid subject title
-				if ( !$threadSubject ) {
-					wfDebug( __METHOD__ . ": no text found for the subject\n" );
-					return true;
-				}
-
-				/** Create the final subject text.
-				 * Always substituted and processed by parser to avoid awkward subjects
-				 * Use real name if new user provided it
-				 */
-				$parser = new Parser;
-				$parser->setOutputType( 'wiki' );
-				$parserOptions = new ParserOptions;
-
-				if ( $realName ) {
-					$threadSubject = $parser->preSaveTransform(
-						"{{subst:{$threadSubject}|$realName}}",
-						$talk /* as dummy */,
-						$editor, $parserOptions
-					);
-				} else {
-					$threadSubject = $parser->preSaveTransform(
-						"{{subst:{$threadSubject}|$name}}",
-						$talk /* as dummy */,
-						$editor,
-						$parserOptions
-					);
-				}
-
-				// Get the body text
-				$threadBody = self::getTextForPageInKey( 'newusermessage-template-body' );
-
-				// Do not continue if there is no body text
-				if ( !$threadBody ) {
-					wfDebug( __METHOD__ . ": no text found for the body\n" );
-					return true;
-				}
-
-				// Create the final body text after checking if the template is to be substituted.
-				if ( $substitute ) {
-					$threadBody = "{{subst:{$threadBody}|$name|$realName}}";
-				} else {
-					$threadBody = "{{{$threadBody}|$name|$realName}}";
-				}
-
-				$threadTitle = Threads::newThreadTitle( $threadSubject, $article );
-
-				if ( !$threadTitle ) {
-					wfDebug( __METHOD__ . ": invalid title $threadTitle\n" );
-					return true;
-				}
-
-				$threadArticle = new Article( $threadTitle );
-				self::writeWelcomeMessage( $user, $threadArticle,  $threadBody, $editSummary, $editor );
-
-				// Need to edit as another user. Lqt does not provide an interface to alternative users,
-				// so replacing $wgUser here.
-				$parkedUser = $wgUser;
-				$wgUser = $editor;
-				
-				LqtView::newPostMetadataUpdates(
-					array(
-						'talkpage' => $article,
-						'text' => $threadBody,
-						'summary' => $editSummary,
-						'root' => $threadArticle,
-						'subject' => $threadSubject,
-						'signature' => $signature,
-					)
-				);
-
-				// Set $wgUser back to the newly created user
-				$wgUser = $parkedUser;
-			} else { // Processing without LiquidThreads
-				$templateTitleText = wfMsg( 'newusermessage-template' );
-				$templateTitle = Title::newFromText( $templateTitleText );
-				if ( !$templateTitle ) {
-					wfDebug( __METHOD__ . ": invalid title in newusermessage-template\n" );
-					return true;
-				}
-
-				if ( $templateTitle->getNamespace() == NS_TEMPLATE ) {
-					$templateTitleText = $templateTitle->getText();
-				}
-
-				if ( $substitute ) {
-					$text = "{{subst:{$templateTitleText}|$name|$realName}}";
-				} else {
-					$text = "{{{$templateTitleText}|$name|$realName}}";
-				}
-				
-				if ( $signature ) {
-					$text .= "\n-- {$signature} ~~~~~";
-				}
-
-				self::writeWelcomeMessage( $user, $article,  $text, $editSummary, $editor );
-			}
+	static function fetchEditor() {
+		// Create a user object for the editing user and add it to the
+		// database if it is not there already
+		$editor = User::newFromName( wfMsgForContent( 'newusermessage-editor' ) );
+		if ( !$editor->isLoggedIn() ) {
+			$editor->addToDatabase();
 		}
-		return true;
+
+		return $editor;
 	}
 
+	/**
+	 * Produce a (possibly random) signature.
+	 * @returns String
+	 */
+	static function fetchSignature() {
+		$signatures = wfMsgForContent( 'newusermessage-signatures' );
+		$signature = '';
+
+		if ( !wfEmptyMsg( 'newusermessage-signatures', $signatures ) ) {
+			$pattern = '/^\* ?(.*?)$/m';
+			preg_match_all( $pattern, $signatures, $signatureList, PREG_SET_ORDER );
+			if ( count( $signatureList ) > 0 ) {
+				$rand = rand( 0, count( $signatureList ) - 1 );
+				$signature = $signatureList[$rand][1];
+			}
+		}
+
+		return $signature;
+	}
+
+	/**
+	 * Return the template name if it exists, or '' otherwise.
+	 * @returns string
+	 */
+	static function fetchTemplateIfExists( $template ) {
+		$text = Title::newFromText( $template );
+
+		if ( !$text ) {
+			wfDebug( __METHOD__ . ": '$template' is not a valid title.\n" );
+			return '';
+		} elseif ( $text->getNamespace() !== NS_TEMPLATE ) {
+			wfDebug( __METHOD__ . ": '$template' is not a valid Template.\n" );
+			return '';
+		} elseif ( !$text->exists() ) {
+			return '';
+		}
+
+		return $text->getText();
+	}
+
+	/**
+	 * Produce a subject for the message.
+	 * @returns String
+	 */
+	static function fetchSubject() {
+		return self::fetchTemplateIfExists( wfMsg( 'newusermessage-template-subject' ) );
+	}
+
+	/**
+	 * Produce the template that contains the text of the message.
+	 * @returns String
+	 */
+	static function fetchText() {
+		$template = wfMsg( 'newusermessage-template-body' );
+		
+		$title = Title::newFromText( $template );
+		if ( $title && $title->exists() && $title->getLength() ) {
+			return $template;
+		}
+		
+		// Fall back if necessary to the old template
+		return wfMsg( 'newusermessage-template' );
+	}
+
+	/**
+	 * Produce the flags to set on Article::doEdit
+	 * @returns Int
+	 */
+	static function fetchFlags() {
+		global $wgNewUserMinorEdit, $wgNewUserSuppressRC;
+
+		$flags = EDIT_NEW;
+		if ( $wgNewUserMinorEdit ) $flags = $flags | EDIT_MINOR;
+		if ( $wgNewUserSuppressRC ) $flags = $flags | EDIT_SUPPRESS_RC;
+
+		return $flags;
+	}
+
+	/**
+	 * Take care of substition on the string in a uniform manner
+	 * @param $str String
+	 * @param $user User
+	 * @param $editor User
+	 * @param $talk Article
+	 * @param $preparse if provided, then preparse the string using a Parser
+	 * @returns String
+	 */
+	static private function substString( $str, $user, $editor, $talk, $preparse = null ) {
+		$realName = $user->getRealName();
+		$name = $user->getName();
+
+		// Add (any) content to [[MediaWiki:Newusermessage-substitute]] to substitute the
+		// welcome template.
+		$substitute = wfMsgForContent( 'newusermessage-substitute' );
+
+		if ( $substitute ) {
+			$str = '{{subst:' . "$str|realName=$realName|name=$name}}";
+		} else {
+			$str = '{{' . "$str|realName=$realName|name=$name}}";
+		}
+
+		if ( $preparse ) {
+			global $wgParser;
+
+			$str = $wgParser->preSaveTransform($str, $talk, $editor, new ParserOptions );
+		}
+
+		return $str;
+	}
+
+	/**
+	 * Add the message if the users talk page does not already exist
+	 * @param $user User object
+	 */
+	static function createNewUserMessage( $user ) {
+		$talk = $user->getTalkPage();
+
+		if ( !$talk->exists() ) {
+			$subject = self::fetchSubject();
+			$text = self::fetchText();
+			$signature = self::fetchSignature();
+			$editSummary = wfMsgForContent( 'newuseredit-summary' );
+			$editor = self::fetchEditor();
+			$flags = self::fetchFlags();
+
+			if ( $subject ) {
+				$subject = self::substString( $subject, $user, $editor, $talk, "preparse" );
+			}
+			if ( $text ) {
+				$text = self::substString( $text, $user, $editor, $talk );
+			}
+
+			self::leaveUserMessage( $user, $article, $subject, $text, 
+				$signature, $editSummary, $editor, $flags );
+				
+			return true;
+		}
+	}
+
+	/**
+	 * Hook function to create a message on an auto-created user
+	 * @param $user User object of the user
+	 * @return bool
+	 */
 	static function createNewUserMessageAutoCreated( $user ) {
 		global $wgNewUserMessageOnAutoCreate;
 
@@ -168,73 +184,74 @@ class NewUserMessage {
 		return true;
 	}
 
+	/**
+	 * Hook function to provide a reserved name
+	 * @param $names Array
+	 */
 	static function onUserGetReservedNames( &$names ) {
-		wfLoadExtensionMessages( 'NewUserMessage' );
 		$names[] = 'msg:newusermessage-editor';
 		return true;
 	}
-
+	
 	/**
-	 * Create a page with text
-	 * @param $user User object: user that was just created
-	 * @param $article Article object: the article where $text is to be put
-	 * @param $text String: text to put in $article
-	 * @param $summary String: edit summary text
-	 * @param $editor User object: user that will make the edit
+	 * Leave a user a message
+	 * @param $subject String the subject of the message
+	 * @param $text String the message to leave
+	 * @param $signature String Text to leave in the signature
+	 * @param $summary String the summary for this change, defaults to
+	 *                        "Leave system message."
+	 * @param $editor User The user leaving the message, defaults to
+	 *                        "{{MediaWiki:usermessage-editor}}"
+	 * @param $flags Int default edit flags
+	 *
+	 * @return boolean true if it was successful
 	 */
-	private static function writeWelcomeMessage( $user, $article, $text, $summary, $editor ) {
-		global $wgNewUserMinorEdit, $wgNewUserSuppressRC;
+	public static function leaveUserMessage( $user, $article, $subject, $text, $signature,
+			$summary, $editor, $flags ) {
+		$text = self::formatUserMessage( $subject, $text, $signature );
+		$flags = $article->checkFlags( $flags );
 
-		wfLoadExtensionMessages( 'NewUserMessage' );
-
-		$flags = EDIT_NEW;
-		if ( $wgNewUserMinorEdit ) $flags = $flags | EDIT_MINOR;
-		if ( $wgNewUserSuppressRC ) $flags = $flags | EDIT_SUPPRESS_RC;
+		if ( $flags & EDIT_UPDATE ) {
+			$text = $article->getContent() . $text;
+		}
 
 		$dbw = wfGetDB( DB_MASTER );
 		$dbw->begin();
-		$good = true;
 
 		try {
-
-			$article->doEdit( $text, $summary, $flags, false, $editor );
+			$status = $article->doEdit( $text, $summary, $flags, false, $editor );
 		} catch ( DBQueryError $e ) {
-			$good = false;
-			}
+			$status = Status::newFatal( 'DB Error' );
+		}
 
-		if ( $good ) {
+		if ( $status->isGood() ) {
 			// Set newtalk with the right user ID
-			//$user->setNewtalk( true );
+			$user->setNewtalk( true );
 			$dbw->commit();
 		} else {
 			// The article was concurrently created
-			wfDebug( __METHOD__ . ": the article has already been created despite !\$talk->exists()\n" );
+			wfDebug( __METHOD__ . ": Error ".$status->getWikiText() );
 			$dbw->rollback();
 		}
+
+		return $status->isGood();
 	}
-
+	
 	/**
-	 * Returns the text contents of a template page set in given key contents
-	 * Returns empty string if no text could be retrieved.
-	 * @param $key String: message key that should contain a template page name
+	 * Format the user message using a hook, a template, or, failing these, a static format.
+	 * @param $subject   String the subject of the message
+	 * @param $text      String the content of the message
+	 * @param $signature String the signature, if provided.
 	 */
-	private static function getTextForPageInKey( $key ) {
-		$templateTitleText = wfMsgForContent( $key );
-		$templateTitle = Title::newFromText( $templateTitleText );
-
-		// Do not continue if there is no valid subject title
-		if ( !$templateTitle ) {
-			wfDebug( __METHOD__ . ": invalid title in " . $key . "\n" );
-			return '';
+	static protected function formatUserMessage( $subject, $text, $signature ) {
+		$contents = "\n";
+		$signature = empty( $signature ) ? "~~~~~" : "{$signature} ~~~~~";
+		
+		if ( $subject ) {
+			$contents .= "== $subject ==\n";
 		}
+		$contents .= "\n$text\n\n-- $signature\n";
 
-		// Get the subject text from the page
-		if ( $templateTitle->getNamespace() == NS_TEMPLATE ) {
-			return $templateTitle->getText();
-		} else {
-			// There is no subject text
-			wfDebug( __METHOD__ . ": " . $templateTitleText . " must be in NS_TEMPLATE\n" );
-			return '';
-		}
+		return $contents;
 	}
 }
