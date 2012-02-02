@@ -32,6 +32,7 @@
       <fileset dir="../">
         <include name="Widget*" />
         <include name="deploy.xml" />
+        <include name="widgets.xml" />
       </fileset>
     </copy>
     <zip destfile="bin/widgets.zip" basedir="bin/zip" />
