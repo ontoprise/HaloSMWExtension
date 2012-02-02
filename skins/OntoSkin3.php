@@ -38,18 +38,22 @@ class SkinOntoSkin3 extends SkinTemplate {
 		$wgHooks['ResourceLoaderGetConfigVars'][] = 'SkinOntoSkin3::setResourceLoaderConfigVars';
 		
 		$wgResourceModules['skins.ontoskin3'] = array(
-			'styles' => array(
-				'ontoskin3/css/skin-main.css' => array( 'media' => 'screen' ),
-				'ontoskin3/css/skin-pagecontent.css' => array( 'media' => 'screen' ),
-				'ontoskin3/css/skin-printable.css' => array( 'media' => 'print' ),
-			),
 			'scripts' => array(
-//				'ontoskin3/javascript/skin.js',
 				'ontoskin3/javascript/jquery.ontoskin.js'
 			),
 			'remoteBasePath' => $wgStylePath,
 			'localBasePath' => $wgStyleDirectory,
 			'dependencies' => array( 'jquery.cookie', 'jquery.placeholder' )
+		);
+
+		$wgResourceModules['skins.ontoskin3.styles'] = array(
+			'styles' => array(
+				'ontoskin3/css/skin-main.css' => array( 'media' => 'screen' ),
+				'ontoskin3/css/skin-pagecontent.css' => array( 'media' => 'screen' ),
+				'ontoskin3/css/skin-printable.css' => array( 'media' => 'print' ),
+			),
+			'remoteBasePath' => $wgStylePath,
+			'localBasePath' => $wgStyleDirectory,
 		);
 	}
 
@@ -72,7 +76,7 @@ class SkinOntoSkin3 extends SkinTemplate {
 
 	function setupSkinUserCss( OutputPage $out ) {
 		parent::setupSkinUserCss( $out );
-		$out->addModuleStyles( 'skins.ontoskin3' );
+		$out->addModuleStyles( 'skins.ontoskin3.styles' );
 	}
 
 	function addResourceModules( OutputPage $out ) {
@@ -120,7 +124,7 @@ class OntoSkin3Template extends QuickTemplate {
 		$this->smwh_Skin = new SMWH_Skin( $this, $action );
 
 		global $wgOut;
-		$wgOut->addModules( 'skins.ontoskin3' );
+		$wgOut->addModules( 'skins.ontoskin3.styles' );
 
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
