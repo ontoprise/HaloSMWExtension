@@ -49,7 +49,7 @@ class SRFChangeTemplateOperation extends SRFApplyOperation {
 			if ($name == $this->template->getText()) {
 				$results = array();
 
-				$this->findObjectByID($o, WOM_TYPE_TMPL_FIELD, $parameters);
+				SRFTools::findObjectByID($o, WOM_TYPE_TMPL_FIELD, $parameters);
 				foreach($parameters as $p) {
 
 					if ($p->getKey() == $this->old_parameter) {

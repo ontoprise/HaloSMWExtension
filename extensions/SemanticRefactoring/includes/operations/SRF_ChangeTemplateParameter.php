@@ -66,7 +66,7 @@ class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 				// remove annotation
 				if ($name == $this->template->getText()) {
 					$results = array();
-					$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
+					SRFTools::findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
 					foreach($parameters as $p) {
 						if (is_null($this->oldValue) || $p->getWikiText() == $this->oldValue) {
 							$toDelete[] = $p->getObjectID();
@@ -78,7 +78,7 @@ class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 				// add new template parameter
 				$paramValue = new WOMParamValueModel();
 				$tmp_fields = array();
-				$this->findObjectByID($o, WOM_TYPE_TMPL_FIELD, $tmp_fields);
+				SRFTools::findObjectByID($o, WOM_TYPE_TMPL_FIELD, $tmp_fields);
 				if(!$this->containsTemplateParameter($tmp_fields, $this->parameter)) {
 					$templateField = new WOMTemplateFieldModel($this->parameter);
 					$templateField->insertObject(new WOMTextModel($this->newValue));
@@ -90,7 +90,7 @@ class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 
 				if ($name == $this->template->getText()) {
 					$results = array();
-					$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
+					SRFTools::findObjectByID($o, WOM_TYPE_PARAM_VALUE, $parameters);
 					foreach($parameters as $p) {
 							
 						if ($this->set || $p->getWikiText() == $this->oldValue) {

@@ -33,21 +33,18 @@ abstract class SRFRefactoringOperation {
 	protected $mRefOpTimeStamp;
 	protected $affectedPages;
 	protected $previewData;
-	
-	private $mGardeningLogCategory;
-	
 
+	
 	protected function __construct() {
 		$this->mRefOpTimeStamp = wfTimestampNow();
-		$this->mGardeningLogCategory = Title::newFromText(wfMsg('smw_gardening_log_cat'), NS_CATEGORY);
 		$this->affectedPages = NULL;
 		$this->previewData = array();
-		
+
 	}
 
 	/**
 	 * Returns page titles which get processed in some way.
-	 * 
+	 *
 	 * @return Title[]
 	 */
 	public abstract function queryAffectedPages();
@@ -84,17 +81,7 @@ abstract class SRFRefactoringOperation {
 		$this->previewData['sref_changedpage'] = $this->getWork();
 		return $this->previewData;
 	}
-    
-	/**
-	 * True if $option is set.
-	 * 
-	 * @param string $option
-	 * @param array $options Hash array of options
-	 */
-	public function isOptionSet($option, $options) {
-		return (array_key_exists($option, $options) && $options[$option] == "true");
-	}
-	
+
 	/**
 	 * Set a GardeningBot to report progress
 	 *
@@ -104,24 +91,14 @@ abstract class SRFRefactoringOperation {
 		$this->mBot = $bot;
 	}
 
-	
-	// HELPER methods
-	
-	protected function splitRecordValues($value) {
-		$valueArray = explode(";", $value);
-		array_walk($valueArray, array($this, 'trim'));
-		return $valueArray;
-	}
-
 	/**
-	 * Returns trimmed string
-	 * Callback method for array_walk
+	 * True if $option is set.
 	 *
-	 * @param string $s
-	 * @param int $index
+	 * @param string $option
+	 * @param array $options Hash array of options
 	 */
-	private function trim(& $s, $i) {
-		$s = trim($s);
+	protected function isOptionSet($option, $options) {
+		return (array_key_exists($option, $options) && $options[$option] == "true");
 	}
 
 	/**
@@ -133,59 +110,21 @@ abstract class SRFRefactoringOperation {
 	 *
 	 * @return Status
 	 */
-	public function storeArticle($title, $wikitext, $comment) {
+	protected function storeArticle($title, $wikitext, $comment) {
 		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
 		if ($userCan == "false") return Status::newFatal(wfMsg('sref_no_sufficient_rights'));
 		$a = new Article($title);
 		if ($this->mRefOpTimeStamp < $a->getTimestamp()) {
 			return Status::newFatal(wfMsg('sref_article_changed'));
 		}
-		if (smwfGetSemanticStore()->isInCategory($title, $this->mGardeningLogCategory)) {
-			return Status::newFatal(wfMsg('sref_do_not_change_gardeninglog'));
-		}
+		
 		$status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
 		return $status;
 	}
 
-	public function botWorked($worked) {
+	protected function botWorked($worked) {
 		if (!is_null($this->mBot)) $this->mBot->worked(1);
 	}
-	
-
-	/**
-	 * Find nodes with the given type-ID below $node.
-	 * 
-	 * @param WikiObjectModel $node
-	 * @param string $id Type-ID
-	 * @param array (out) $results
-	 * 
-	 * @return
-	 */
-	protected function findObjectByID($node, $id, & $results) {
-
-		if ($node->isCollection()) {
-			$objects = $node->getObjects();
-			foreach($objects as $o) {
-				if ($o->getTypeID() == $id) {
-
-					$results[] = $o;
-
-				}
-				$this->findObjectByID($o, $id, $results);
-			}
-		} else {
-			if ($node->getTypeID() == $id) {
-					
-				$results[] = $node;
-
-			}
-		}
-	}
-
-
-
-
-
 
 }
 

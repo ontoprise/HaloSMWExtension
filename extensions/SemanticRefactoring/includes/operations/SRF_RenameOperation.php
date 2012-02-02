@@ -72,12 +72,12 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 
 	protected function replaceValueInAnnotation($objects) {
 		$changed = false;
-
+    
 		foreach($objects as $o){
 
 			$value = $o->getSMWDataValue();
 
-			if (!$o->getProperty()->getDataItem()->isUserDefined()) continue;
+			//if (!$o->getProperty()->getDataItem()->isUserDefined()) continue;
 
 			$newvalues = array();
 			$oldvalues = array();
@@ -157,7 +157,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 	 * @param string $title Prefixed title
 	 * @param int $index
 	 */
-	public function replacePrefixedTitle(& $title, $index, & $changed) {
+	public function replacePrefixedTitle(& $title, $index, & $changed = false) {
 		$changed = false;
 		if ($this->equalsOldPrefixed($title)) {
 			$title = $this->getNew()->getPrefixedText();
@@ -209,7 +209,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 		foreach($objects as $o){
 
 			$value = $o->getValueText();
-			$values = $this->splitRecordValues($value);
+			$values = SRFTools::splitRecordValues($value);
 			array_walk($values, array($this, 'replacePrefixedTitle'));
 			$newValue = implode("; ", $values);
 

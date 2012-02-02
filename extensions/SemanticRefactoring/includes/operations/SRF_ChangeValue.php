@@ -91,7 +91,7 @@ class SRFChangeValueOperation extends SRFApplyOperation {
 
 					if ($this->set || ucfirst($value) == ucfirst($this->oldValue)) {
 							
-						$values = $this->splitRecordValues($value);
+						$values = SRFTools::splitRecordValues($value);
 						array_walk($values, array($this, 'replaceValue'));
 						$newValue = implode("; ", $values);
 						if ($value != $newValue) {

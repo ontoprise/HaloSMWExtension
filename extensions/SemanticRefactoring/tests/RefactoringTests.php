@@ -60,7 +60,7 @@ class SemanticRefactoringTests
 		
 		/*change*/
 		$suite->addTestSuite("SRFTestChangeTemplate");
-		$suite->addTestSuite("SRFTestChangeCategory");
+		$suite->addTestSuite("SRFTestChangeCategoryValue");
 		$suite->addTestSuite("SRFTestChangeValue");
 		$suite->addTestSuite("SRFTestChangeTemplateParameter");
 		$suite->addTestSuite("SRFTestChangeTemplate");

@@ -77,6 +77,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 		$this->previewData['sref_changedInstances'] = 0;
 		$this->previewData['sref_deletedInstances'] = 0;
 		$this->previewData['sref_deletedPropertyWithDomain'] = 0;
+		$this->previewData['sref_changedPropertyWithDomain'] = 0;
 
 		$this->totalWork = 0;
 		$this->collectWorkForCategory($this->category, $this->totalWork, $this->previewData);
@@ -163,8 +164,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 			}
 		}
 
-		if (array_key_exists('sref_removeFromDomain', $this->options) && $this->options['sref_removeFromDomain'] == "true"
-		&& SRFTools::containsTitle($i, $this->affectedPages['propertiesWithDomain'])) {
+		if (array_key_exists('sref_removeFromDomain', $this->options) && $this->options['sref_removeFromDomain'] == "true") {
 			foreach($this->affectedPages['propertiesWithDomain'] as $i) {
 				// if the property should be completly removed
 				if (array_key_exists('sref_removePropertyWithDomain', $this->options) && $this->options['sref_removePropertyWithDomain'] == "true") {
@@ -254,7 +254,7 @@ class SRFDeleteCategoryOperation extends SRFRefactoringOperation {
 
 		foreach($objects as $o){
 			$results = array();
-			$this->findObjectByID($o, WOM_TYPE_CATEGORY, $results);
+			SRFTools::findObjectByID($o, WOM_TYPE_CATEGORY, $results);
 			foreach($results as $c){
 				$name = $c->getName();
 				if ($name == $this->category->getText()) {

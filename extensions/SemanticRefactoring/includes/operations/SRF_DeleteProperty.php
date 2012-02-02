@@ -215,7 +215,7 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 		foreach($objects as $o){
 			$deleted = false;
 			$results = array();
-			$this->findObjectByID($o, WOM_TYPE_PROPERTY, $results);
+			SRFTools::findObjectByID($o, WOM_TYPE_PROPERTY, $results);
 			foreach($results as $c){
 				$name = $c->getPropertyName();
 				if ($name == $this->property->getText()) {
@@ -228,10 +228,10 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 
 			// find printout
 			$results = array();
-			$this->findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
+			SRFTools::findObjectByID($o, WOM_TYPE_PARAM_VALUE, $results);
 			foreach($results as $paramValue) {
 				$paramTexts = array();
-				$this->findObjectByID($paramValue, WOM_TYPE_TEXT, $printouts);
+				SRFTools::findObjectByID($paramValue, WOM_TYPE_TEXT, $printouts);
 				foreach($printouts as $po){
 					$value = $po->getWikiText();
 					$value = trim($value);

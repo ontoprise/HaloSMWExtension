@@ -53,10 +53,7 @@ class SRFTools {
 		return $result;
 	}
 
-	/* callback methods */
-	private static function compareTitles($a, $b) {
-		return strcmp($a->getPrefixedText(), $b->getPrefixedText());
-	}
+
 
 
 	public static function containsTitle($title, $set) {
@@ -66,5 +63,50 @@ class SRFTools {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Find nodes with the given type-ID below $node.
+	 *
+	 * @param WikiObjectModel $node
+	 * @param string $id Type-ID
+	 * @param array (out) $results
+	 *
+	 * @return
+	 */
+	public static function findObjectByID($node, $id, & $results) {
+
+		if ($node->isCollection()) {
+			$objects = $node->getObjects();
+			foreach($objects as $o) {
+				if ($o->getTypeID() == $id) {
+
+					$results[] = $o;
+
+				}
+				self::findObjectByID($o, $id, $results);
+			}
+		} else {
+			if ($node->getTypeID() == $id) {
+
+				$results[] = $node;
+
+			}
+		}
+	}
+
+	public static function splitRecordValues($value) {
+		$valueArray = explode(";", $value);
+		array_walk($valueArray, array('SRFTools', 'trim'));
+		return $valueArray;
+	}
+
+	/* callback methods */
+	private static function compareTitles($a, $b) {
+		return strcmp($a->getPrefixedText(), $b->getPrefixedText());
+	}
+
+	private static function trim(& $s, $i) {
+		$s = trim($s);
 	}
 }

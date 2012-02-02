@@ -117,7 +117,7 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 
 	public function applyOperation($title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
-
+	
 		# iterate trough queries
 		# better support for ASK would be nice
 		$changedQuery=false;
@@ -125,26 +125,26 @@ class SRFRenamePropertyOperation extends SRFRenameOperation {
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+				SRFTools::findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
 				$changedQuery |= $this->replaceValueInNestedProperty($results);
 				
 				$results = array();
-                $this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+                SRFTools::findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
                 $changedQuery |= $this->replacePropertyInNestedProperty($results);
 				
 				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
+				SRFTools::findObjectByID($o, WOM_TYPE_LINK, $results);
 				$changedQuery |= $this->replaceLink($results);
 
 				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_QUERYPRINTOUT, $results);
+				SRFTools::findObjectByID($o, WOM_TYPE_QUERYPRINTOUT, $results);
 				foreach($results as $o) {
 
 					$changedQuery |= $this->replacePrintout($o);
 				}
 			}
 		}
-
+       
 		# iterate trough the annotations
 		$objects = $pom->getObjectsByTypeID(WOM_TYPE_PROPERTY);
 		$changedAnnotation = $this->replacePropertyInAnnotation($objects);

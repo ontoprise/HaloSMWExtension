@@ -80,11 +80,11 @@ class SRFRenameInstanceOperation extends SRFRenameOperation {
 		foreach($objects as $o){
 			if ($o->getFunctionKey() == 'ask') {
 				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
+				SRFTools::findObjectByID($o, WOM_TYPE_NESTPROPERTY, $results);
 				$changedQuery |= $this->replaceValueInNestedProperty($results);
 
 				$results = array();
-				$this->findObjectByID($o, WOM_TYPE_LINK, $results);
+				SRFTools::findObjectByID($o, WOM_TYPE_LINK, $results);
 				$changedQuery |= $this->replaceLink($results);
 
 			}
