@@ -89,9 +89,17 @@ class  HACLWhitelist  {
 		// Transform page-IDs to page names
 		$etc = haclfDisableTitlePatch();
 		foreach ($pageIDs as $pid) {
-			$t = Title::newFromID($pid);
-			if ($t) {
-				$pages[] = $t->getFullText();
+			if ($pid < 0) {
+				// Page is a special page
+				$name = HACLStorage::getDatabase()->specialForID($pid);
+				if ($name !== 0) {
+					$pages[] = $name;
+				}
+			} else {
+				$t = Title::newFromID($pid);
+				if ($t) {
+					$pages[] = $t->getFullText();
+				}
 			}
 		}
 		haclfRestoreTitlePatch($etc);
