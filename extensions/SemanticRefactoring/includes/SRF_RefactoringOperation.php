@@ -34,7 +34,7 @@ abstract class SRFRefactoringOperation {
 	protected $affectedPages;
 	protected $previewData;
 
-	
+
 	protected function __construct() {
 		$this->mRefOpTimeStamp = wfTimestampNow();
 		$this->affectedPages = NULL;
@@ -106,19 +106,32 @@ abstract class SRFRefactoringOperation {
 	 *
 	 * @param Title $title
 	 * @param string wikitext
+	 * @param string oldwikitext
 	 * @param string comment
-	 *
+	 * @param array $logMessages
+	 * 
 	 * @return Status
 	 */
-	protected function storeArticle($title, $wikitext, $comment) {
+	protected function storeArticle($title, $wikitext, $oldwikitext, $comment, & $logMessages) {
 		$userCan = smwf_om_userCan($title->getText(), "edit", $title->getNamespace());
 		if ($userCan == "false") return Status::newFatal(wfMsg('sref_no_sufficient_rights'));
 		$a = new Article($title);
 		if ($this->mRefOpTimeStamp < $a->getTimestamp()) {
 			return Status::newFatal(wfMsg('sref_article_changed'));
 		}
-		
+
 		$status = $a->doEdit($wikitext, $comment, EDIT_FORCE_BOT);
+		if (!$status->isGood()) {
+			$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
+			$l->setLogType(SREF_LOG_STATUS_WARN);
+			$logMessages[$title->getPrefixedText()][] = $l;
+		} else {
+			if (strncmp($oldwikitext, $wikitext) !== 0 && count($logMessages[$title->getPrefixedText()]) == 0) {
+				$l = new SRFLog('Article $title was normalized but not changed.', $title, $wikitext, array($status->getWikiText()));
+				$l->setLogType(SREF_LOG_STATUS_INFO);
+				$logMessages[$title->getPrefixedText()][] = $l;
+			}
+		}
 		return $status;
 	}
 

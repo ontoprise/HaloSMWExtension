@@ -58,10 +58,7 @@ abstract class SRFRenameOperation extends SRFRefactoringOperation {
 
 			// stores article
 			if ($save) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$logMessages[$title->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-				}
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawText(), $rev->getRawComment(), $logMessages);
 			}
 
 			if (!is_null($this->mBot)) $this->mBot->worked(1);

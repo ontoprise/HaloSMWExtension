@@ -81,13 +81,8 @@ class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 
 			// stores article
 			if ($save && $requireSave) {
-				$status = $this->storeArticle($title, $wikitext, $rev->getRawComment());
-				if (!$status->isGood()) {
-					$l = new SRFLog('Saving of $title failed due to: $1', $title, $wikitext, array($status->getWikiText()));
-					$l->setLogType(SREF_LOG_STATUS_WARN);
-					$logMessages[$title->getPrefixedText()][] = $l;
-				}
-			}
+				$status = $this->storeArticle($title, $wikitext, $rev->getRawText(), $rev->getRawComment(), $logMessages);
+			} 
 		}
 
 	}

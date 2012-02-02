@@ -186,11 +186,8 @@ class SRFDeletePropertyOperation extends SRFRefactoringOperation {
 			}
 
 			if ($save) {
-				$status = $this->storeArticle($i, $wikitext, $rev->getRawComment());
-
-				if (!$status->isGood()) {
-					$logMessages[$i->getPrefixedText()][] = new SRFLog('Saving of $title failed due to: $1', $i, $wikitext, array($status->getWikiText()));
-				}
+				$status = $this->storeArticle($i, $wikitext, $rev->getRawText(), $rev->getRawComment(), $logMessages);
+			
 			}
 		}
 
