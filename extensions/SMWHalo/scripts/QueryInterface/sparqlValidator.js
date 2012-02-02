@@ -17,6 +17,10 @@
  */
 
 (function($){
+  if(typeof SPARQL === 'undefined'){
+    return;
+  }
+  
   var iri = '[^<>:]+:[^<>:]+';
 
   SPARQL.Validator = {    

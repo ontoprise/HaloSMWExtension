@@ -110,7 +110,7 @@ function initToolTips(){
 
 
 function init(){
-  isInit = true;  
+  isInit = true; 
   initialize_qi();
   initToolTips();
 }

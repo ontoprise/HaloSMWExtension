@@ -1429,16 +1429,13 @@ QIHelper.prototype = {
   getCategoryConstraints : function() {
     // fetch category constraints:
     var cats = this.activeQuery.categories; // get the category group
-    var constraintsCategories = "";
-    for ( var i = 0, n = cats.length; i < n; i++) {
-      var catconstraint = cats[i].join(',');
-      if (i < n -1)
+    var catconstraint = '';
+    for ( var i = 0; i < cats.length; i++) {
+      catconstraint += cats[i].join(',');
+      if (i < cats.length - 1)
         catconstraint += ',';
     }
-    constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
-      'cont')
-    + catconstraint;
-    return constraintsCategories;
+    return gLanguage.getMessage('CATEGORY_NS', 'cont') + catconstraint;
   },
 
   addPropertyChainInput : function(propName) {
@@ -1624,6 +1621,7 @@ QIHelper.prototype = {
       oInput.className = "wickEnabled general-forms";
       oInput.setAttribute('autocomplete', 'OFF');
       oInput.setAttribute('constraints', ac_constraint);
+      oInput.setAttribute('pasteNS', 'true');
       cell.appendChild(oInput);
       try {
         var uIdx = (arity == 2) ? 0 : newRowIndex - 1;

@@ -418,7 +418,7 @@ class SMWQueryInterface extends SpecialPage {
     return '<table id="qiPropertyDialogTable"><tr>' .
             '<td colspan="3" class="tableSectionTitle">' . wfMsg('smw_qi_property') . '</td></tr><tr>' .
             '<td>' . wfMsg('smw_qi_property_name') . '</td>' .
-            '<td><input id="qiPropertyNameInput" class="wickEnabled" type="text" autocomplete="OFF" constraints="namespace: 102"/></td>' .
+            '<td><input id="qiPropertyNameInput" class="wickEnabled" type="text" autocomplete="OFF"/></td>' .
             '<td><input id="qiPropertyValueMustBeSetChkBox" type="checkbox"/>' .
             '<label for="qiPropertyValueMustBeSetChkBox">' . wfMsg('smw_qi_value_must_be_set') . '</label></td>' .
             '</tr><tr>' .
