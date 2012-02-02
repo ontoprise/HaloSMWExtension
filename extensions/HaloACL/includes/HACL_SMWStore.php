@@ -525,6 +525,8 @@ class HACLSMWStore extends SMWStore {
     public function getSMWPageIDandSort( $title, $namespace, $iw, &$sort, $canonical ) {
         return $this->mWrappedStore->getSMWPageIDandSort($title, $namespace, $iw, $sort, $canonical);
     }
+    
+    public function setLocalRequest($local) {}
 	
 	/**
 	 * Checks if a subject for properties is accessible.
