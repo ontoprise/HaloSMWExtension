@@ -40,8 +40,6 @@ class ASFFormEdit extends SFFormEdit {
 		//get get parameters
 		global $wgRequest;
 		
-		echo('<pre>'.print_r($wgRequest, true).'</pre>');
-		
 		$categoryParam = $wgRequest->getVal('categories');
 		
 		$targetName = $wgRequest->getVal('target');
