@@ -24,7 +24,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 #Requirements:
 #
 
-	Semantic Forms 2.2.1
+	Semantic Forms 2.3.2
 	Deployment Framework (optional)
 	SMW Plus ontology bundle 1.6.0
 
@@ -36,8 +36,8 @@ If you don't use the deployment framework, you can install it manually. See belo
 	1.1 The Rich Media extension comes with several patch files, where two must
 	be applied. One file patches Mediawiki and the other the Semantic Forms
 	extension. Depending on the version number choose the correct patch file.
-		* '/extensions/RichMedia/RichMediaPatchForSF2_2_1.txt': 
-			This file provides the necessary patches for Semantic Forms 2.2.1
+		* '/extensions/RichMedia/RichMediaPatchForSF2_3_2.txt': 
+			This file provides the necessary patches for Semantic Forms 2.3.2
 		* '/extensions/RichMedia/RichMediaPatchForMW1_17_0.txt': 
 			This is needed to patch MediaWiki in version 1.17.0
 		* '/extensions/RichMedia/RichMediaPatchForMW1_17_0_Namespace.txt': 
@@ -87,17 +87,17 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_exte
 6. Go to Special:Upload, select and upload the following files:
 	* '/extensions/RichMedia/skins/Calendar.gif'
 	* '/extensions/RichMedia/skins/vcard.gif'
-	* '/extensions/RichMedia/import/rm_delete_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_document_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_edit_with_forms_icon_16x16.gif'
-	* '/extensions/RichMedia/import/rm_icalendar_icon_16x16.gif'
-	* '/extensions/RichMedia/import/rm_image_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_info_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_music_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_pdf_icon_16x16.png'
-	* '/extensions/RichMedia/import/rm_refresh_icon_16x16.gif'
-	* '/extensions/RichMedia/import/rm_vcard_icon_16x16.gif'
-	* '/extensions/RichMedia/import/rm_video_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_delete_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_document_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_edit_with_forms_icon_16x16.gif'
+	* '/extensions/RichMedia/import/RM_icalendar_icon_16x16.gif'
+	* '/extensions/RichMedia/import/RM_image_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_info_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_music_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_pdf_icon_16x16.png'
+	* '/extensions/RichMedia/import/RM_refresh_icon_16x16.gif'
+	* '/extensions/RichMedia/import/RM_vcard_icon_16x16.gif'
+	* '/extensions/RichMedia/import/RM_video_icon_16x16.png'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files.

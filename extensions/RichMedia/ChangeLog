@@ -1,6 +1,11 @@
 Rich Media extension ChangeLog
 =============================
 
+VERSION 1.5.4
+
+	CHANGES:
+	 * Provided new patch to let Rich Media extension be compatible with and SF 2.3.2
+
 VERSION 1.5.3
 
   FEATURES:

@@ -3,7 +3,7 @@
 	<global>
 		<id>richmedia</id>
 		<title>Rich Media extension</title>
-		<version>1.5.3</version>
+		<version>1.5.4</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
