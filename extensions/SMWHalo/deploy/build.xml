@@ -130,7 +130,7 @@
 				<exclude name="**/deploy/**" />
 			</fileset>
 		</copy>
-		<copy file="../../../patches/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true" />
+		<copy file="../../../deployment/tools/patch.php" tofile="bin/zip/deployment/tools/patch.php" overwrite="true" verbose="true" failonerror="true" />
 
 		<copy todir="bin/zip/extensions/ApplicationProgramming">
 			<fileset dir="../../ApplicationProgramming/">
@@ -266,7 +266,7 @@
 		<echo message="${patchtool}" />
 
 		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
+			<arg value="../../../deployment/tools/patch.php" />
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
@@ -276,7 +276,7 @@
 		</exec>
 
 		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
+			<arg value="../../../deployment/tools/patch.php" />
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
@@ -286,7 +286,7 @@
 		</exec>
 
 		<exec executable="php">
-			<arg value="../../../patches/patch.php" />
+			<arg value="../../../deployment/tools/patch.php" />
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />

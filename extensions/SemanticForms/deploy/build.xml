@@ -74,7 +74,7 @@
   <target name="patch_sf_only" depends="checkos">
     <echo message="${patchtool}" />
     <exec executable="php">
-      <arg value="../../../patches/patch.php" />
+      <arg value="../../../deployment/tools/patch.php" />
       <arg value="-d" />
       <arg value="${basedir}/../../../" />
       <arg value="-p" />

@@ -212,7 +212,7 @@
   <target name="patches" depends="checkos">
     <echo message="${patchtool}" />
     <exec executable="php">
-      <arg value="../../../patches/patch.php" />
+      <arg value="../../../deployment/tools/patch.php" />
       <arg value="-d" />
       <arg value="${basedir}/../../../" />
       <arg value="-p" />
@@ -221,7 +221,7 @@
       <arg value="${patchtool}" />
     </exec>
     <exec executable="php">
-      <arg value="../../../patches/patch.php" />
+      <arg value="../../../deployment/tools/patch.php" />
       <arg value="-d" />
       <arg value="${basedir}/../../../" />
       <arg value="-p" />
