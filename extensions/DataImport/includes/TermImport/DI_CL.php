@@ -432,7 +432,7 @@ class DICL {
 	
 		$articleContent .= "\n==== Last runs of this Term Import ====\n";
 		$articleContent .= "{{#ask: [[belongsToTermImportWithLabel::".$termImportName."]]"
-			."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
+			."\n| format=ul | limit=10 | sort=hasImportDate | order=descending|source=wiki}}";
 		$articleContent .= "\n[[Category:TermImport]]";
 		
 		global $smwgHaloIP; 
