@@ -632,7 +632,6 @@ button.btnhov{
 
 #qiBoxcontent { 
   vertical-align: top;
-  height: 220px;
 }
 
 #qiDetailsTable{
@@ -656,7 +655,7 @@ button.btnhov{
 #qiBoxcontent div{
   vertical-align: top;
   overflow: auto;
-  padding: 5px;
+  margin: 5px;
   height: inherit;
 }
 

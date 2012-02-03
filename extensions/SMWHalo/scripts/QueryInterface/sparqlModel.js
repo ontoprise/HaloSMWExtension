@@ -562,6 +562,10 @@
      * @param inResults boolean
      */
   SPARQL.Model.updateSubject = function(subjectOld, subjectNew, inResults){
+    if(subjectNew.type === TYPE.IRI && SPARQL.Model.data.triple.length === 0){
+      SPARQL.showMessageDialog('Can\'t add new subject of type "IRI".\nUse variable instead.', 'Operation failed', 'modelUpdateSubjectMsg');
+      return;
+    }
     //do this only if inResults is defined
     if(typeof inResults !== 'undefined'){
       var projection_vars = SPARQL.Model.data.projection_var || [];
@@ -587,12 +591,12 @@
         }
       }
     }
-    if(subjectOld.isEqual(subjectNew)){
-      if(SPARQL.validateQueryTree()){
-        SPARQL.toTree(null, subjectNew.getId());
-      }
-      return;
-    }
+//    if(subjectOld.isEqual(subjectNew)){
+//      if(SPARQL.validateQueryTree()){
+//        SPARQL.toTree(null, subjectNew.getId());
+//      }
+//      return;
+//    }
     //go over triples, find this subject and change it
     var triples = SPARQL.Model.data.triple || [];
     for(var i = 0; i < triples.length; i++){
@@ -692,6 +696,14 @@
 
     SPARQL.toTree(null, newCategory ? newCategory.getId() : null);
   };
+
+
+  SPARQL.Model.addCategory = function(categoryRestriction){
+    SPARQL.Model.data.category_restriction.push(categoryRestriction);
+
+    SPARQL.toTree(null, categoryRestriction.getId());
+  };
+
 
   /**
      *  Delete category from the specified subject.

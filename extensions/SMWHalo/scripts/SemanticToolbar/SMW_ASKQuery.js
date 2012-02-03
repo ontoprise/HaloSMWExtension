@@ -147,16 +147,8 @@ ASKQuery.prototype = {
     smwhgLogger.log(selection,"STB-Queries","create_clicked");
     /*ENDLOG*/
 
-    //if wysiwyg is installed and in rich text mode
-    //then open wysiwyg QI dialog
-    //  if(CKEDITOR && CKEDITOR.instances.wpTextbox1 && document.getElementById('cke_wpTextbox1').style.display !== 'none' ){
-    //    CKEDITOR.instances.wpTextbox1.openDialog('SMWqi');
-    //  }
-    //  //else open QI fancybox
-    //  else{
     this.openQueryInterfaceDialog(mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE', smwhgASKQuery.setNewAskQuery);
-  //  }
-  //	alert(selection,"STB-Queries","create_clicked");
+
   },
 
   openQueryInterfaceDialog: function(href, onCleanup){
@@ -200,35 +192,9 @@ ASKQuery.prototype = {
 
   
     var query = queries[selindex].getQueryText().replace(/\n|\r/g, '');
-	
-    //  var editorInstance = CKEDITOR.instances.wpTextbox1;
-    //  if(CKEDITOR && editorInstance && document.getElementById('cke_wpTextbox1').style.display !== 'none' ){
-    //    //get all images in the editor
-    //    var queryImages = editorInstance.document.getElementsByTag('img');
-    //
-    //    //find the query we want to edit
-    //    for(var i = 0; i < queryImages.count(); i++){
-    //      var queryImg = queryImages.getItem(i);
-    //      if(queryImg.getAttribute('class') === 'FCK__SMWquery'){
-    //        var realElement = editorInstance.restoreRealElement(queryImg);
-    //        var realQuery = realElement.getChild(0).getText().replace(/fckLR/g, '').replace(/^{{#ask:\s*/, '').replace(/\s*}}$/, '');
-    //        if(realQuery === jQuery.trim(query)){
-    //          //workaround for null selection object in IE8 if editor is not focused
-    //          if(CKEDITOR.env.ie8){
-    //            editorInstance.focus();
-    //          }
-    //          editorInstance.getSelection().selectElement(queryImg);
-    //          break;
-    //        }
-    //      }
-    //    }
-    //    //then open the dialog
-    //    editorInstance.openDialog('SMWqi');
-    //  }
-    //  else{
+
     var uri = mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE' + encodeURIComponent('&query=' + query);
     this.openQueryInterfaceDialog(uri, smwhgASKQuery.setUpdatedAskQuery);
-  //  }
   },
 
   getQIHelper: function(){

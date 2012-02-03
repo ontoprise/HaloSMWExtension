@@ -106,58 +106,6 @@ QIHelper.prototype = {
     });
   },
 
-  //  isFunctionInArray: function(someFunction, arrayOfFunctions){
-  //    var result = false;
-  //    if(typeof someFunction === 'function' && arrayOfFunctions && arrayOfFunctions.length){
-  //      jQuery.each(arrayOfFunctions, function(key, value){
-  //        if(value.toString() == someFunction.toString()){
-  //          result = true;
-  //          return false; //break the loop
-  //        }
-  //      });
-  //    }
-  //    return result;
-  //  },
-  //
-  //  //add function to array only if it's not there yet
-  //  addInitMethod: function(func, resultFormatName){
-  //    if(resultFormatName && !qihelper.isFunctionInArray(func, qihelper.srfInitMethods)){
-  //      qihelper.srfInitMethods.push(func);
-  //    }
-  //  },
-
-  //  //execute init methods of result format modules registered via overriden $(document).ready methosd
-  //  executeInitMethods: function(){
-  //    var initMethods = qihelper.srfInitMethods || [];
-  //
-  //    for(var i = 0; i < initMethods.length; i++){
-  //      try{
-  //        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
-  //        var method = initMethods[i];
-  //        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
-  //          && jQuery('.sortheader').length > 0)
-  //          {
-  //          continue;
-  //        }
-  //        method();
-  //
-  //      }
-  //      catch(x){
-  //        //exceptions are expected so just continue
-  //        mw.log('EXCEPTION: ' + x);
-  //      }
-  //    }
-  //  },
-
-  //  //override jquery.ready and addOnloadHook methods to save the functions passed to them as arguments
-  //  initResultFormatLoading: function(){
-  //    jQuery.fn.ready = qihelper.documentReady;
-  //    addOnloadHook = qihelper.documentReady;
-  //  },
-  //
-  //  documentReady: function(someFunction){
-  //    qihelper.addInitMethod(someFunction, qihelper.selectedResultFormat);
-  //  },
 
   enableResetQueryButton: function(forceDisable){
     if(forceDisable){
@@ -618,11 +566,11 @@ QIHelper.prototype = {
 
  
   getFullPreviewElement: function(){
-    //    var element = jQuery('#askQI #fullpreview');
-    //    if(!jQuery(element).length){
-    jQuery('#askQI').append('<div id="fullpreview"/>');
-    element = jQuery('#askQI').children('#fullpreview');
-    //    }
+    var element = jQuery('#askQI #fullpreview');
+    if(element.length === 0){
+      element = jQuery('<div/>').attr('id', 'fullpreview');
+      jQuery('#askQI').append(element);
+    }
 
     return element;
   },
@@ -678,10 +626,11 @@ QIHelper.prototype = {
   },
 
   getDialogConfig: function(){
+    var dialogDiv = jQuery('#askQI #fullpreview');
     var closeMsg = gLanguage.getMessage('QI_CLOSE');
     var buttons = {};
     buttons[closeMsg] = function() {
-      jQuery('#fullpreview').dialog('close');
+      dialogDiv.dialog('close');
     };
     var config = {
       title: gLanguage.getMessage('QI_QUERY_RESULT'),
@@ -690,10 +639,14 @@ QIHelper.prototype = {
       closeOnEscape: true,
       modal: true,
       buttons: buttons,
+      zIndex: 998,
       close: function(event, ui) {
-        jQuery('#askQI #previewcontent').html(jQuery(this).html());
-        SPARQL.appendScripts(jQuery('#askQI #previewcontent'), SPARQL.srfInitScripts);
-        jQuery(this).remove();
+//        var previewElement = jQuery('#askQI #previewcontent');
+//        previewElement.html(dialogDiv.html());
+        dialogDiv.remove();
+//        SPARQL.appendScripts(previewElement, SPARQL.srfInitScripts);
+        window.qihelper.previewResultPrinter();
+        
       }
     };
 
@@ -707,7 +660,7 @@ QIHelper.prototype = {
     var isIE = browserVersionStr.match(msieRegex);
     var ieVersionNum = isIE ? parseInt(browserVersionStr.match(msieRegex)[1]) : 0;
 
-    if(jqueryVersionNum < 143 && isIE && ieVersionNum < 9){
+    if(jqueryVersionNum < 143 && isIE && ieVersionNum < 10){
       config.resizable = false;
       config.draggable = false;
       config.height = jQuery(window).height() - 50;
@@ -851,7 +804,7 @@ QIHelper.prototype = {
         $$('#askQI #previewcontent')[0].innerHTML = '';
         qiPreviewDialog.html(resultHTML);
         SPARQL.appendScripts(qiPreviewDialog, SPARQL.srfInitScripts);
-        SPARQL.executeInitMethods();
+//        SPARQL.executeInitMethods();
       }
     }
     else{
