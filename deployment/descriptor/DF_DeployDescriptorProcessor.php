@@ -240,7 +240,7 @@ class DeployDescriptionProcessor {
 	 * @param callback $userCallback Callback function for user confirmation. Returns 'y' or 'n'.
 	 */
 	function applyPatches($userCallback, $patchesToSkip = array()) {
-        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
 		foreach($this->dd_parser->getPatches($localPackages) as $patchObject) {
@@ -256,7 +256,7 @@ class DeployDescriptionProcessor {
 		$instDir = trim(self::makeUnixPath($this->dd_parser->getInstallationDirectory()));
 		if (substr($instDir, -1) != '/') $instDir .= "/";
 		$patch = $instDir.self::makeUnixPath($patch);
-		
+
 		if (in_array($patchObject->getPatchfile(), $patchesToSkip)) return;
 		$patchFailed = false;
 		if (!file_exists($rootDir."/".$patch)) {
@@ -272,8 +272,16 @@ class DeployDescriptionProcessor {
 		$dfgOut->output( "done.]");
 		$patchFailed = false;
 
-		$out = $this->eliminateWhichMayFail($out, $mayfail);
+		$filesOfNotFoundPatches = $this->checkPatchesByHeuristic($rootDir."/".$patch);
+		$filteredOut = array();
 		foreach($out as $line) {
+			if (!Tools::isContainedInText($filesOfNotFoundPatches, $line)) {
+				// if a FAILED patch is not found in $filesOfNotFoundPatches 
+				// it is assumed that is was correctly applied. Then there is 
+				// no need to show the error to the user.
+				continue;
+			}
+			$filteredOut[] = $line;
 			if (strpos($line, "FAILED") !== false) {
 				$patchFailed = true;
 			}
@@ -283,8 +291,8 @@ class DeployDescriptionProcessor {
 		$result = 'y';
 		if (!is_null($userCallback) && $patchFailed) {
 
-			if (count($out) > 0) {
-				foreach($out as $line) $dfgOut->outputln($line); // show failures
+			if (count($filteredOut) > 0) {
+				foreach($filteredOut as $line) $dfgOut->outputln($line); // show failures
 				$dfgOut->outputln();
 				$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
 			}
@@ -311,32 +319,42 @@ class DeployDescriptionProcessor {
 
 	}
 
+	
+
 	/**
-	 * Checks the output of GNU patch and eliminates those hunks which
-	 * may fail due to the patch spec in the deploy descriptor.
+	 * Checks the patches in the given patch file by a heuristic.
+	 * Halo patches have markers. If a marker is found in the patched
+	 * file, it is assumed that the patch was successfully applied.
+	 * 
+	 * If no marker is found, the patch is ignored.
 	 *
-	 * @param array of string $out Patch output in lines
-	 * @param string $mayfail Filenames of files to be patched but which may fail (comma separated).
-	 *
-	 * @return array of string Cleaned-up patch output.
+	 * @param string $patchFile Absolute path
+	 * @return string[] All files which are *not* patched but should according to $patchFile
 	 */
-	private function eliminateWhichMayFail($out, $mayfail) {
-		if (empty($mayfail)) return $out; // do nothing if no patches may fail.
-		$mayFailInFiles = explode(",", $mayfail);
-		$failedPatches = array();
-		foreach($out as $line) {
-			if (strpos($line, "FAILED") !== false) {
-				$failed = true;
-				foreach($mayFailInFiles as $file) {
-					if (strpos($line, $file.".rej") !== false) {
-						$failed = false;
-					}
-				}
-				if ($failed) $failedPatches[] = $line;
+	private function checkPatchesByHeuristic($patchFile) {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$patchFileContent = file_get_contents($patchFile);
+		$patches = preg_split('/Index:\s+(.+)[\n|\r\n]+=+[\n|\r\n]+/', $patchFileContent);
+		$allPatchesFound = true;
+		$filesOfNotFoundPatches = array();
+		foreach($patches as $p) {
+			if ($p == '') continue;
+			preg_match('/\+\+\+\s+([^\s]+)/', $p, $patchesFiles);
+			$relPath=$patchesFiles[1];
+			preg_match_all('/\/\*op-patch\|([^*]+)\*\//', $p, $patchHints);
+			$absPath = "$rootDir/$relPath";
+			$codeFileContent = file_get_contents($absPath);
+			foreach($patchHints[1] as $hint) {
+				$patchFound = (strpos($codeFileContent, $hint) !== false);
+				if (!$patchFound) $filesOfNotFoundPatches[] = basename($relPath);
+				$allPatchesFound = $allPatchesFound & $patchFound;
 			}
 		}
-		return $failedPatches;
+		return array_unique($filesOfNotFoundPatches);
 	}
+
+
+
 
 	/**
 	 * Removes patches
@@ -390,7 +408,7 @@ class DeployDescriptionProcessor {
 	 * @param (out) array & $alreadyApplied List of patch files (paths relative to MW folder).
 	 */
 	function checkIfPatchesAlreadyApplied(& $alreadyApplied) {
-        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		$localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
 		foreach($this->dd_parser->getPatches($localPackages) as $patchObject) {
@@ -423,7 +441,6 @@ class DeployDescriptionProcessor {
 		$dfgOut->output( "done.]");
 		$patchFailed = false;
 
-		$out = $this->eliminateWhichMayFail($out, $mayfail);
 		foreach($out as $line) {
 			if (strpos($line, "FAILED") !== false) {
 				$patchFailed = true;
@@ -468,7 +485,7 @@ class DeployDescriptionProcessor {
 	private function getInsertPosition($ext_id) {
 		$MAXINT = pow(2,32);
 		$maximumInsert = $MAXINT;
-			
+
 		$pos = strpos($this->localSettingsContent, "/*end-$ext_id*/");
 
 		if ($pos === false) {
