@@ -1205,12 +1205,12 @@ class Installer {
 		$result['extensions'] = array();
 		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
-			$result['extensions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+			$result['extensions'][] = array($desc->getID(), $desc->getVersion()->toVersionString(), $desc->getPatchlevel());;
 		}
 		$result['contradictions'] = array();
 		foreach($contradictions as $etu) {
 			list($desc, $min, $max) = $etu;
-			$result['contradictions'][] = array($desc->getID(), $desc->getVersion(), $desc->getPatchlevel());;
+			$result['contradictions'][] = array($desc->getID(), $desc->getVersion()->toVersionString(), $desc->getPatchlevel());;
 		}
 		return $result;
 	}
