@@ -50,6 +50,10 @@
 	border-bottom: 2px solid #116988;
 }
 
+.tabf_status_column_header{
+	border-bottom: 2px solid #116988;
+}
+
 .tabf_column_header a {
 	/* no possible red links? */
 	color: #116988 !important;
