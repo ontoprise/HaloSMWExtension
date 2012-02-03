@@ -1,6 +1,12 @@
 Automatic Semantic Forms extension ChangeLog
 ===============================
 
+VERSION 1.3 Patchlevel 6
+
+FEATURES
+* One can now enter more than one category as value for the 'category ac root' parameter of the asfforminput parser function.
+
+
 VERsION 1.3
 
 CHANGES
