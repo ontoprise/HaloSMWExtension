@@ -117,7 +117,7 @@
 }
 
 .tabf_in_edit_mode .tabf_table_cell textarea:hover {
-	background: url(edit.gif) no-repeat 95% 50%;
+/*	background: url(edit.gif) no-repeat 95% 50%; */
 }
 
 .tabf_in_edit_mode .tabf_table_cell textarea:focus {
