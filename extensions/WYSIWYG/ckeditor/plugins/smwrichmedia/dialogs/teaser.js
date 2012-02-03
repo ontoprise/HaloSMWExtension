@@ -66,8 +66,8 @@ CKEDITOR.dialog.add( 'SMWrichmedia', function( editor ) {
                                 '<p>' +
                                     'In order to use this feature you require the "Rich Media extension" which you<br/>'+
                                     'can download here for free: click here to download<br/>'+
-                                    '(<a href="http://smwforum.ontoprise.com/smwforum/index.php/Rich_Media_extension">'+
-                                    'http://smwforum.ontoprise.com/smwforum/index.php/Rich_Media_extension</a>)' +
+                                    '(<a href="http://www.smwplus.com/index.php/Extension:Rich_Media">'+
+                                    'http://www.smwplus.com/index.php/Extension:Rich_Media</a>)' +
                                 '</p>' +
                             '</div>'
 					}

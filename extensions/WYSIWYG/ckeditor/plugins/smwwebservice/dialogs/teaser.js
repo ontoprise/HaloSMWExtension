@@ -66,8 +66,8 @@ CKEDITOR.dialog.add( 'SMWwebservice', function( editor ) {
                                 '<p>' +
                                     'In order to use this feature you require the "Data Import extension" which you<br/>'+
                                     'can download here for free: click here to download<br/>'+
-                                    '(<a href="http://smwforum.ontoprise.com/smwforum/index.php/Data_Import_extension" target="new">'+
-                                    'http://smwforum.ontoprise.com/smwforum/index.php/Data_Import_extension</a>)' +
+                                    '(<a href="http://www.smwplus.com/index.php/Extension:Data_Import" target="new">'+
+                                    'http://www.smwplus.com/index.php/Extension:Data_Import</a>)' +
                                 '</p>' +
                             '</div>'
 					}
