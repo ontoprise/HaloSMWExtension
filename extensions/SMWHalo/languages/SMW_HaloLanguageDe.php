@@ -485,7 +485,8 @@ protected $smwUserMessages = array(
 	'tabf_parameter_write_protected_desc' => "Schreibgesch&uuml;tzte Annotationen",
 	'tabf_parameter_instance_preload_desc' => "Preload Wert f&uuml;r Instanznamen.",
 	
-	'tabf_ns_header' => "Systembenachrichtigungen",
+	'tabf_ns_header_show' => "Systembenachrichtigungen ausklappen",
+	'tabf_ns_header_hide' => "Systembenachrichtigungen einklappen",
 	'tabf_ns_warning_invalid_instance_name' => "&Auml;nderungen k&ouml;nnen gerade nicht gespeichert werden, da einige der neuen Instanznahmen fehlerhaft sind.",
 	'tabf_ns_warning_invalid_value' => "Die folgenden Annotations-Werte sind invalide.",
 	'tabf_ns_warning_lost_instance_otf' => "die folgenden Instanzen k&ouml;nnten nach dem Speichern nicht mehr Teil des Anfrageergebnisses sein.",

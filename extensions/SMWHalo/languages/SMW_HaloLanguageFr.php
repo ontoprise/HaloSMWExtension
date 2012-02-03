@@ -454,7 +454,7 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'smw_treeviewright' => 'Ouvrez l\'arborescence à droite',
 	
 	// Geo coord data type
-	'semanticmaps_lonely_unit'     => 'Pas de numéro trouvé avant le symbole "$1".', // $1 is something like �?°
+	'semanticmaps_lonely_unit'     => 'Pas de numéro trouvé avant le symbole "$1".', // $1 is something like �?°
 	'semanticmaps_bad_latlong'     => 'Latitude et longitude ne doivent être donnée qu\'une seule fois, et avec des coordonnées valides.',
 	'semanticmaps_abb_north'       => 'N',
 	'semanticmaps_abb_east'        => 'E',
@@ -519,7 +519,8 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'tabf_parameter_write_protected_desc' => "Annotations protégées en écriture",
 	'tabf_parameter_instance_preload_desc' => "Valeur de préchargement du nom de l'instance",
 	
-	'tabf_ns_header' => "Notifications système",
+	'tabf_ns_header_show' => "Notifications système",
+	'tabf_ns_header_hide' => "Notifications système",
 	'tabf_ns_warning_invalid_instance_name' => "Les changements ne peuvent pas être actuellement appliquée parce que certains nouveaux noms d'instance sont erronés:",
 	'tabf_ns_warning_invalid_value' => "Les valeurs d'annotation suivantes sont invalides:",
 	'tabf_ns_warning_lost_instance_otf' => "Les instances suivantes ne pourront plus être inclus dans le résultat de la requête après l'application des modifications:",

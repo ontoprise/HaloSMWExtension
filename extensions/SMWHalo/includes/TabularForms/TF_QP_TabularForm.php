@@ -365,9 +365,14 @@ class TFTabularFormData {
 		$numberOfWarnings = count($this->addInstanceBlockers) + count($this->queryResult->getErrors());
 
 		$html .= '<div class="tabf_notifications_heading">';
-		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/plus.gif" onclick="tf.expandNotificationSystem(event)" style="cursor: pointer"></img>';
-		$html .= '<img title="Hide" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/minus.gif" onclick="tf.collapseNotificationSystem(event)" style="cursor: pointer; display: none"></img>';
-		$html .= '<span>'.wfMsg('tabf_ns_header').'</span><span class="tabf-warnings-number">'.$numberOfWarnings.'</span>';
+		$html .= '<div onclick="tf.expandNotificationSystem(event)" style="cursor: pointer">';
+		$html .= '<img title="Expand" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/plus.gif"></img>';
+		$html .= '<span>&nbsp;'.wfMsg('tabf_ns_header_show').'</span><span class="tabf-warnings-number">'.$numberOfWarnings.'</span>';
+		$html .= '</div>';
+		$html .= '<div onclick="tf.collapseNotificationSystem(event)" style="cursor: pointer; display: none">';
+		$html .= '<img title="Hide" src="'.$smwgHaloScriptPath.'/skins/Annotation/images/minus.gif"></img>';
+		$html .= '<span>&nbsp;'.wfMsg('tabf_ns_header_hide').'</span><span class="tabf-warnings-number">'.$numberOfWarnings.'</span>';
+		$html .= '</div>';
 		$html .= '</div>';
 
 		$html .= '<div class="tabf_notifications" style="display: none">';

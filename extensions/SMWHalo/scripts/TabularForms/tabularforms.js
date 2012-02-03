@@ -1491,18 +1491,19 @@ var TF = Class.create({
 	},
 	
 	expandNotificationSystem : function(event){
-		var container = jQuery(Event.element(event)).parent();
-		jQuery('img:nth-child(1)', container).css('display', 'none');
-		jQuery('img:nth-child(2)', container).css('display', '');
+		var container = jQuery(Event.element(event)).parent().parent();
+		
+		jQuery('div:nth-child(1)', container).css('display', 'none');
+		jQuery('div:nth-child(2)', container).css('display', '');
 		
 		jQuery('.tabf_notifications', jQuery(container).parent()).css('display', '');
 		
 	},
 	
 	collapseNotificationSystem : function(event){
-		var container = jQuery(Event.element(event)).parent();
-		jQuery('img:nth-child(1)', container).css('display', '');
-		jQuery('img:nth-child(2)', container).css('display', 'none');
+		var container = jQuery(Event.element(event)).parent().parent();
+		jQuery('div:nth-child(1)', container).css('display', '');
+		jQuery('div:nth-child(2)', container).css('display', 'none');
 		
 		jQuery('.tabf_notifications', jQuery(container).parent()).css('display', 'none');
 	},
