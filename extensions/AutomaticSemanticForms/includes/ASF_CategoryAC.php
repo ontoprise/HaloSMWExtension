@@ -100,39 +100,45 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 	
 	
 	private static function getSubCategoryCandidates($category){
+
+		$categories = explode(';', $category);
 		
-		global $wgLang;
-		if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
+		$results = array();
+		foreach($categories as $category){
+			$category = trim($category);
+		
+			global $wgLang;
+			if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') === 0){
 				$category = substr($category, strpos($category, ":") +1);
-		}
-		$category = Title::newFromText($category, NS_CATEGORY);
+			}
+			$category = Title::newFromText($category, NS_CATEGORY);
 		
-		if(!($category instanceof Title)){
-			return array();
-		}
+			if(!($category instanceof Title)){
+				continue;
+			}
 		
-		//Get category candidates
-		$store = smwfGetSemanticStore();
-		$categoryCandidates = $store->getSubCategories($category);
-		$categoryCandidates[] = array($category);
+			//Get category candidates
+			$store = smwfGetSemanticStore();
+			$categoryCandidates = $store->getSubCategories($category);
+			$categoryCandidates[] = array($category);
 		
-		//filter categories
-		$store = smwfGetStore();
-		$categories = array();
-		foreach($categoryCandidates as $candidate){
-			$semanticData = ASFFormGeneratorUtils::getSemanticData($candidate[0]); 
+			//filter categories
+			$store = smwfGetStore();
+			foreach($categoryCandidates as $candidate){
+				$semanticData = ASFFormGeneratorUtils::getSemanticData($candidate[0]); 
 			
-			$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
-			$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');
+				$noASF = ASFFormGeneratorUtils::getPropertyValue($semanticData, ASF_PROP_NO_AUTOMATIC_FORMEDIT);
+				$hasDefaultForm = ASFFormGeneratorUtils::getPropertyValue($semanticData, 'Has_default_form');
 			
-			if(strtolower($noASF) != 'true' && strlen($hasDefaultForm) == 0){
-				$categories[$candidate[0]->getText()] = array($candidate[0]->getText()); 
+				if(strtolower($noASF) != 'true' && strlen($hasDefaultForm) == 0){
+					$results[$candidate[0]->getText()] = array($candidate[0]->getText()); 
+				}
 			}
 		}
 		
-		ksort($categories);
+		ksort($results);
 		
-		return $categories;
+		return $results;
 	}
 }
 
