@@ -22,9 +22,7 @@
  * @author Robert Ulrich and Benjamin Langguth
  * @since Version 1.6.1
  * 
- * @todo: create submodules for menu & tree?!?
- * @todo: #more handling is defect
- * @todo: effects (.animate() with deffereds)
+ * @todo: menu effects (.animate() with deffereds)
  * @todo: "v" in mega menu items
  */
 
@@ -32,7 +30,6 @@
 	$.Ontoskin = function( el ) {
 		var	base = this,
 			expanded = false,
-			treeViewHidden = true,
 			externalOptions,
 			supportedEvents = ['mouseenter', 'mouseleave', 'click'];
 
@@ -62,10 +59,10 @@
 			},
 			treeView : {
 				elems : {
-					left : '#smwh_treeviewtoggleleft',
-					center : '#smwh_treeviewtogglecenter',
-					right : '#smwh_treeviewtoggleright',
-					general : '#smwh_treeview'
+					toggle : '#smwh_treeviewtoggle',
+					general : '#smwh_treeview',
+					head : '#smwh_treeview_head',
+					content : '#smwh_treeview_content'
 				}
 			}
 		};
@@ -80,10 +77,9 @@
 		base.$menuItems = base.$el.find( '.smwh_menulistitem' );
 		base.$more = $( base.settings.elems.more );
 		base.$tv = $( base.settings.treeView.elems.general );
-		base.$tvtLeft = $( base.settings.treeView.elems.left );
-		base.$tvtRight = $( base.settings.treeView.elems.right );
-		base.$tvtCenter = $( base.settings.treeView.elems.center );
-		base.tvSize = base.$tv.outerWidth( true );
+		base.$tvHead = $( base.settings.treeView.elems.head );
+		base.$tvContent = $( base.settings.treeView.elems.content );
+		base.$tvt = $( base.settings.treeView.elems.toggle );
 
 		base.$pb = $( base.settings.elems.personalBar );
 
@@ -94,30 +90,23 @@
 		 */
 		base.init = function() {
 			var state = $.cookie( 'smwSkinExpanded' );
-			base.registerEventHandler();
+
+			base.modifyEditLinks();
 
 			if( state === true && expanded === false ) {
 				base.resizePage();
-			}
-
-			state = $.cookie( 'smwSkinTree' );
-			if( treeViewHidden === true ) {
-				if( state === 'left' ) {
-					base.showTree( 'left' );
-				} else if ( state === 'right' ) {
-					base.showTree( 'right' );
-				}
 			}
 
 			if( !( 'placeholder' in doc.createElement( 'input' ) ) ) {
 				$( '#searchInput' ).placeholder();
 			}
 
-			base.resizeControl();
-			base.modifyEditLinks();
 			if( base.settings.menu.useMega ) {
 				base.makeMegaMenu();
 			}
+
+			setTimeout( base.hideTree, 1500 );
+			base.registerEventHandler();
 		}
 
 		/**
@@ -147,17 +136,17 @@
 			base.$more.hover( base.showMenu, base.hideMenu );
 
 			// TreeView
-			base.$tv.find( '.smwh_treeview_close' ).click( function( ev ) {
+			base.$tvt.bind( 'click.treeview', base.showTree );
+			base.$tv.bind( 'mouseleave.treeview', base.hideTree );
+			base.$tvHead.find( '.smwh_treeview_close' ).click( function( ev ) {
 				ev.preventDefault();
 				base.hideTree();
 			});
-			base.$tvtLeft.click( base.showTree.bind( base, 'left' ) );
-			base.$tvtRight.click( base.showTree.bind( base, 'right' ) );
+
 			// register resize control, so everything gets update if
-			// size of the browser window changes e.g. the TreeView gots hidden
-			// if shown on the right and width to small after resize
-			$( win ).resize( base.resizeControl.bind( base ) );
-			// "Change view
+			// size of the browser window changes
+			$( win ).resize( base.resizePage.bind( base ) );
+			// "Change view"
 			base.$pb.click( base.resizePage );
 		}
 
@@ -276,9 +265,6 @@
 				$( base.settings.elems.personalBar )
 					.removeClass( 'limited' )
 					.addClass( 'expanded' );
-
-				//Hide TreeView (necessary if shown on the left side)
-				base.hideTree();
 				expanded = true;
 			} else {
 				//show layout, which is optimized for 1024x768
@@ -291,48 +277,20 @@
 			//store state in a cookie
 			$.cookie( 'smwSkinExpanded', expanded, {
 				path: '/'
-			} );
-
-			//Call resize control, so button for left TreeView is shown or hidden
-			base.resizeControl();
+			});
 		}
 
 		/**
 		 * @brief function showTree
-		 *		Displays the Tree at the page dependending on the position ('left' or 'right')
+		 *		Displays the Tree at the page
 		 */
-		base.showTree = function( position ) {
-			if( !treeViewHidden ) {
-				base.hideTree();
-			} else {
-				//Hide tree, this resets the tree styles and classes
-				base.hideTree();
-				if( position === 'left' ) {
-					base.$tv.addClass( 'smwh_treeviewleft' );
-					base.$tvtLeft.addClass( 'active' );
-					$.cookie( 'smwSkinTree', 'left', {
-						path: '/'
-					});
-				} else { //right side
-					//if page uses full screen width don't show tree on the right
-					if( expanded ) {
-						return;
-					}
-					//if the calculated width is too small don't show tree
-					if( base.getRightWidth() < base.tvSize ) {
-						return;
-					}
-					base.$tv.addClass( 'smwh_treeviewright' );
-					base.$tvtRight.addClass( 'active' );
-					$.cookie( 'smwSkinTree', 'right', {
-						path: '/'
-					} );
-				}
-
-				//calculate and set distance to the right
-				base.setRightDistance();
-				treeViewHidden = false;
-			}
+		base.showTree = function() {
+			base.$tv.show();
+			base.$tv.animate({
+				left: 0
+			},{
+				queue: false
+			}, 250 );
 		}
 
 		/**
@@ -340,68 +298,15 @@
 		 *		Hides the Tree
 		 */
 		base.hideTree = function() {
-			//remove classes with the style for TreeViews shown either right or left
-			//and remove styles like width and right set directly in the elements style
-			base.$tv.removeClass( 'smwh_treeviewright smwh_treeviewleft' ).removeAttr( 'style' );
-			//change state of the TreeView icons
-			base.$tvtLeft.removeClass( 'active' );
-			base.$tvtRight.removeClass( 'active' );
-			$.cookie( 'smwSkinTree', 'none', {
-				path: '/'
-			} );
-			treeViewHidden = true;
+			var tvW = base.$tv.outerWidth( true );
+
+			base.$tv.animate({
+				left: -tvW -2 //box-shadow
+			},{
+				queue: false
+			}, 250 );
 		}
 
-		/**
-		 * @brief function setRightDistance
-		 *		Calculate distance to the right browser border and apply
-		 *		to TreeView if shown on the leftside
-		 */
-		base.setRightDistance = function() {
-			//Get x-coordinates from the TreeView icons
-			var	toggleOffset = expanded ? 0 : $( '.shadows' ).offset().left,
-				toggleWidth = base.$tvtLeft.outerWidth();
-
-			base.$tvtLeft.css( 'right', toggleOffset - toggleWidth );
-			base.$tvtRight.css( 'right', toggleOffset - toggleWidth );
-			$( '.smwh_treeviewleft' ).css( 'right', toggleOffset + 'px' );
-		}
-
-		/**
-		 * @brief function getRightWidth
-		 *		Calculate gap between page and right browser border and apply 
-		 *		to TreeView if shown on the rightside
-		 */
-		base.getRightWidth = function() {
-			//Get left offset (same as right) and subtract the space needed for TreeView icons
-			return $( '.shadows' ).offset().left - 40;
-		}
-
-		/**
-		 * @brief function resizeControl
-		 *		Checks and set values if screen is resized and on startup
-		 */
-		base.resizeControl = function() {
-			var rightWidth = base.getRightWidth();
-
-			//Adjust css for left and right viewed TreeView
-			base.setRightDistance();
-			//hide tree if shown on the right side and not enough space is given.
-			if( rightWidth < base.tvSize
-				&& $( '.smwh_treeviewright' ).length > 0 )
-			{
-				base.hideTree();
-			}
-
-			base.$tvtLeft.css( 'display', 'block' )
-			//Check if there is enough space on the right side
-			//to show the TreeView otherwise remove button
-			if( expanded === true || rightWidth < base.tvSize ) {
-				base.$tvtRight.css( 'display', 'none' );
-			} else {
-				base.$tvtRight.css( 'display', 'block' );
-			}
-		}
 	};
 
 	$.fn.ontoskin = function( method ) {

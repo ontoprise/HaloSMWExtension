@@ -659,18 +659,17 @@ class SMWH_Skin {
 		//Generate the necessary surrounding html if the return of the treeview
 		//extension is not empty otherwise return an empty string
 		if ( $tree != null && $tree != "" ) {
-
 			//Add the left treeview button
-			$treeview = '<div id="smwh_treeviewtoggleleft" style="display:none" title="' . wfMsg( 'smw_treeviewleft' ) . '">';
+			$treeview = '<div id="smwh_treeviewtoggle" title="' . wfMsg( 'smw_treeviewright' ) . '">';
 			$treeview .= '</div>';
 
 			//Add the right treeview button
-			$treeview .= '<div id="smwh_treeviewtoggleright" style="display:none" title="' . wfMsg( 'smw_treeviewright' ) . '">';
-			$treeview .= '</div>';
+//			$treeview .= '<div id="smwh_treeviewtoggleright" style="display:none" title="' . wfMsg( 'smw_treeviewright' ) . '">';
+//			$treeview .= '</div>';
 
 			//Add the treeview itself
 			$treeview .= '<div id="smwh_treeview">';
-			$treeview .= '<div id="smwh_treeview_head">SemanticTreeview <a class="smwh_treeview_close" href="#"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
+			$treeview .= '<div id="smwh_treeview_head">Tree view <a class="smwh_treeview_close" href="#"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
 			$treeview .= '<div id="smwh_treeview_content">';
 			$treeview .= $tree;
 			$treeview .= "</div>";

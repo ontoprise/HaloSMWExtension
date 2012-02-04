@@ -795,22 +795,32 @@ textarea {
 /* -------------------------------------*/
 /* ---------->>> TREEVIEW <<<-----------*/
 /* -------------------------------------*/
-.treeviewtd{
-	padding: 0;
-}
 
 #smwh_treeview {
 	background-color: #FFF;
-	border: 1px solid #CACAC4;
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
+	border-top: 1px solid #CACAC4;
+	border-right: 1px solid #CACAC4;
+	border-bottom: 1px solid #CACAC4;
+	border-radius: 0 5px 5px 0;
+	-webkit-border-radius: 0 5px 5px 0;
 	box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
 	display: none;
-	height: 98%;
+	height: 90%;
 	padding: 5px;
 	position: fixed;
-	top: 1%;
+	top: 5%;
 	z-index: 100;
+}
+
+#smwh_treeview_head {
+	border-bottom: 1px solid #CACAC4;
+	padding: 5px;
+	text-align: center;
+}
+
+.smwh_treeview_close {
+	position: absolute;
+	right: 10px;
 }
 
 #smwh_treeview_content {
@@ -819,40 +829,17 @@ textarea {
 	overflow: auto;
 }
 
-#smwh_treeview_head {
-	border: 1px solid #CACAC4;
-	padding: 5px;
+#smwh_treeview_content .tvTreeWrapper {
+	padding-right:20px;
+	width: auto;
 }
 
-.smwh_treeview_close {
-	position: absolute;
-	right: 10px;
-}
-
-#smwh_treeviewtoggleleft {
-	background: url(../img/tree_left.png) repeat-x;
-	height: 33px;
-	position: fixed;
-	top: 50%;
-	width: 29px;
-	-moz-user-select: none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
-}
-
-#smwh_treeviewtoggleleft.active {
-	background: url(../img/tree_left_active.png) repeat-x;
-}
-
-#smwh_treeviewtoggleleft:hover {
-	background: url(../img/tree_left_hover.png) repeat-x;
-}
-
-#smwh_treeviewtoggleright {
+#smwh_treeviewtoggle {
 	background: url(../img/tree_right.png) repeat-x;
-	height: 33px;
+	cursor: pointer;
+	height: 32px;
+	margin-top: -16px;
 	position: fixed;
-	margin-top: 33px;
 	top: 50%;
 	width: 29px;
 	-moz-user-select: none;
@@ -860,28 +847,6 @@ textarea {
 	-webkit-user-select: none;
 }
 
-#smwh_treeviewtoggleright.active {
-	background: url(../img/tree_right_active.png) repeat-x !important;
-}
-
-#smwh_treeviewtoggleright:hover {
+#smwh_treeviewtoggle:hover {
 	background: url(../img/tree_right_hover.png) repeat-x;
-}
-
-.smwh_treeviewleft {
-	display: block !important;
-	width: 500px;
-}
-
-.smwh_treeviewright {
-	display: block !important;
-	right: 3px;
-}
-
-#smwh_treeviewtoggleleft.expanded, #smwh_treeviewtoggleright.expanded {
-	right: 0;
-}
-
-#smwh_treeview.expanded {
-	right: 20px;
 }

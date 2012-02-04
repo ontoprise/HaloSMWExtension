@@ -432,12 +432,13 @@ class OntoSkin3Template extends QuickTemplate {
 					<div id="smwh_pstats"> <?php echo $this->smwh_Skin->showPageStats(); ?> </div>
 					<?php endif; // page != 'plain'  ?>
 					<?php if ( $wgRequest->getText( 'page' ) != "plain" ) : ?>
-						<?php echo $this->smwh_Skin->treeview(); ?>
+						
 				</div>
 				<!-- /content -->
 			</div>
 			<!-- /wrapper -->
 		</div>
+		<?php echo $this->smwh_Skin->treeview(); ?>
 		<!-- /globalWrapper -->
 		<!-- footer -->
 		<div id="footer">
