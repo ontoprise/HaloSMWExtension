@@ -3,13 +3,14 @@
 	<global>
 		<id>collaboration</id>
 		<title>Collaboration extension</title>
-		<version>1.5.0</version>
+		<version>1.6.0</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/Collaboration</instdir>
 		<description>
-			The Collaboration extension allows to offer discussions in a fancy way. Users can add comments (also with file attachments) as well as ratings to articles. Moreover, comments can be tracked by querying e.g. for certain users or the 10 latest contributions.
+			The Collaboration extension allows to offer discussions in a fancy way. 
+			Users can add comments (also with file attachments) as well as ratings to articles. Moreover, comments can be tracked by querying e.g. for certain users or the 10 latest contributions.
 		</description>
 		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension</helpurl>
 		<dependencies>
