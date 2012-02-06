@@ -399,6 +399,20 @@ class SMWTripleStore extends SMWStoreAdapter {
 					$triples[] = array($subject_iri, $property_iri, $object_iri);
 				}
 				continue;
+			} else {
+				global $smwgContLang;
+				$datatypeLabels = $smwgContLang->getDatatypeLabels();
+				foreach($datatypeLabels as $key => $label) {
+					if ($property->getKey() == $key) {
+						$propertyLabel = str_replace(" ","_",$label);
+						$property_iri = $this->tsNamespace->getFullIRIByName(SMW_NS_PROPERTY, $propertyLabel);
+						foreach($propertyValueArray as $value) {
+							$string = TSHelper::serializeDataItem($value);
+							$triples[] = array($subject_iri, $property_iri, "\"".TSHelper::escapeForStringLiteral($string)."\"^^xsd:dateTime");
+						}
+						continue;
+					}
+				}
 			}
 
 
@@ -1131,7 +1145,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 						}
 
 
-						$allValues[] = $v;
+						if (!is_null($v)) $allValues[] = $v;
 
 					}
 				}
@@ -1157,7 +1171,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 					list($literalValue, $literalType, $metadata) = $literal;
 					$property = !is_null($pr) ? $pr->getData() : NULL;
 					$value = $this->createSMWDataItem($property, $literalValue, $literalType, $metadata);
-					$allValues[] = $value;
+					if (!is_null($value)) $allValues[] = $value;
 				}
 			}
 
@@ -1170,41 +1184,27 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 *
 	 * Creates primitive SMWDataItem object (ie. no SMWDIWikiPage).
 	 *
-	 * @param $property
-	 * @param $literalValue
-	 * @param $literalType
+	 * @param SMWPropertyValue $property
+	 * @param string $literalValue
+	 * @param string $literalType XSD-type
 	 * @param $metadata
 	 */
 	protected function createSMWDataItem($property, $literalValue, $literalType, $metadata) {
 		if (trim($literalValue) !== '') {
-
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
 			if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem())) {
+				$literalValue = self::fixValue($literalValue, $literalType);
 				$value = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $literalValue);
 			} else {
-				$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType), $literalValue);
+				$typeID = WikiTypeToXSD::getWikiType($literalType);
+				$literalValue = self::fixValue($literalValue, $literalType);
+				$value = SMWDataValueFactory::newTypeIDValue($typeID, $literalValue);
 			}
 
-			// set actual value
-			if ($value->getTypeID() == '_dat') {
-				// special handling for _dat
-				// normalize dateTime
-				if ($literalValue != '') {
-
-					$literalValue = self::fixDateTime($literalValue);
-
-					// hack: can not use setUserValue for SMW_DV_Time for some reason.
-					if ($property instanceof SMWPropertyValue && !is_null($property->getDataItem()) ) {
-						$valueTemp = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), str_replace("-","/",$literalValue));
-					} else {
-						$valueTemp = SMWDataValueFactory::newTypeIDValue('_dat', str_replace("-","/",$literalValue));
-					}
-					$value->setDataItem($valueTemp->getDataItem());
-				}
-			} else {
-				// all others, set as user type
-				$value->setUserValue($literalValue);
+			if (!$value->isValid()) {
+				return NULL;
 			}
+
 		} else {
 
 			// literal value is empty
@@ -1216,12 +1216,42 @@ class SMWTripleStore extends SMWStoreAdapter {
 			}
 
 		}
+
 		// set metadata
 		$di = $value->getDataItem();
 		TSHelper::setMetadata($di, $metadata);
 		return $di;
 	}
 
+	/**
+	 * Applies changes to certain types of values.
+	 *
+	 * @param string $literalValue
+	 * @param string $literalType XSD-type
+	 *
+	 * @return string
+	 */
+	private static function fixValue($literalValue, $literalType) {
+		$typeID = WikiTypeToXSD::getWikiType($literalType);
+
+		if ($typeID == '_dat') {
+			// remove time zone (if existing)
+			if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
+				$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
+			}
+
+			// remove miliseconds (if existing)
+			if (substr($literalValue, -4) == '.000') {
+				$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
+			}
+
+			// remove time (if it is 00:00:00, in this case only the date is usually significant)
+			if (substr($literalValue, -9) == 'T00:00:00') {
+				$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
+			}
+		}
+		return $literalValue;
+	}
 	/**
 	 * Creates SMWDIWikiPage object.
 	 *
@@ -1396,23 +1426,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 		return $contains;
 	}
 
-	private static function fixDateTime($literalValue) {
-		// remove time zone (if existing)
-		if (preg_match('/[+-]\d\d:\d\d/', $literalValue) > 0) {
-			$literalValue = substr($literalValue, 0, strlen($literalValue)-6);
-		}
 
-		// remove miliseconds (if existing)
-		if (substr($literalValue, -4) == '.000') {
-			$literalValue = substr($literalValue, 0, strlen($literalValue)-4);
-		}
-
-		// remove time (if it is 00:00:00, in this case only the date is usually significant)
-		if (substr($literalValue, -9) == 'T00:00:00') {
-			$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
-		}
-		return $literalValue;
-	}
 
 	private function isUTF8($str) {
 		$strlen = strlen($str);

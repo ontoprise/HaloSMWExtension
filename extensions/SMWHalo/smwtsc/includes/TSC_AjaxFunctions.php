@@ -157,7 +157,7 @@ function smwf_ts_getWikiSpecialProperties() {
     $specialCategories = $smwgHaloContLang->getSpecialCategoryArray();
     $specialProperties = $smwgHaloContLang->getSpecialPropertyLabels();
     $specialPropertiesSMW = $smwgContLang->getPropertyLabels();
-    
+    $datatypeLabels = $smwgContLang->getDatatypeLabels();
     
 
     $result = "HAS_DOMAIN_AND_RANGE=".$specialSchemaProperties[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT].",".
@@ -184,6 +184,11 @@ function smwf_ts_getWikiSpecialProperties() {
     // these two namespaces are required for ASK queries
     $result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";
     $result .= "CONCEPT=".$wgContLang->getNSText(SMW_NS_CONCEPT);
+    
+    /*foreach($datatypeLabels as $key => $label) {
+    	$keyCode = str_replace(" ","_",strtoupper($key));
+    	$result .= ",$keyCode=$label";
+    }*/
 
     return $result;
 }
