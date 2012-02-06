@@ -275,7 +275,7 @@ class DeployDescriptionProcessor {
 		$filesOfNotFoundPatches = $this->checkPatchesByHeuristic($rootDir."/".$patch);
 		$filteredOut = array();
 		foreach($out as $line) {
-			if (!Tools::isContainedInText($filesOfNotFoundPatches, $line)) {
+			if (!Tools::inStringArray($filesOfNotFoundPatches, $line)) {
 				// if a FAILED patch is not found in $filesOfNotFoundPatches 
 				// it is assumed that is was correctly applied. Then there is 
 				// no need to show the error to the user.
