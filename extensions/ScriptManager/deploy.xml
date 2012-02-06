@@ -3,7 +3,7 @@
     <global>
         <id>scriptmanager</id>
         <title>Script Manager extension</title>
-        <version>1.6.0</version>
+        <version>1.7.0</version>
         <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>
