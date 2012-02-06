@@ -33,27 +33,29 @@ final class SMGeoCoordsHooks {
 			// Only apply when there is more then one print request.
 			// This way requests comming from #show are ignored. 
 			if ( count( $printRequests ) > 1 ) {
-				$allCoords = true;
-				$first = true;
+				$allValid = true;
+				$hasCoords = false;
 				
 				// Loop through the print requests to determine their types.
-				foreach( $printRequests as $printRequest ) {
+				foreach( $printRequests as /* SMWPrintRequest */ $printRequest ) {
 					// Skip the first request, as it's the object.
-					if ( $first ) {
-						$first = false;
+					if ( $printRequest->getMode() == SMWPrintRequest::PRINT_THIS ) {
 						continue;
 					}
 					
 					$typeId = $printRequest->getTypeID();
-						
-					if ( $typeId != '_geo' ) {
-						$allCoords = false;
+					
+					if ( $typeId == '_geo' ) {
+						$hasCoords = true;
+					}
+					else {
+						$allValid = false;
 						break;
 					}
 				}
 	
 				// If they are all coordinates, set the result format to 'map'.
-				if ( $allCoords ) {
+				if ( $allValid && $hasCoords ) {
 					$format = 'map';
 				}				
 			}
@@ -73,7 +75,7 @@ final class SMGeoCoordsHooks {
 	 * @return true
 	 */
 	public static function initGeoCoordsType() {
-		SMWDataValueFactory::registerDatatype( '_geo', 'SMGeoCoordsValue', SMWDataItem::TYPE_GEO, 'Geographic coordinate' );
+		SMWDataValueFactory::registerDatatype( '_geo', 'SMGeoCoordsValue', SMWDataItem::TYPE_GEO );
 		return true;
 	}
 	

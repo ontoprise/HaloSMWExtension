@@ -16,7 +16,7 @@
 			marker = new OpenLayers.Marker( markerData.lonlat );
 		}
 
-		if ( markerData.text != '' ) {
+		if ( markerData.text !== '' ) {
 			// This is the handler for the mousedown event on the marker, and displays the popup.
 			marker.events.register('mousedown', marker,
 				function( evt ) { 
@@ -80,8 +80,9 @@
 				map.addControl(controls[i]); // If a control is provided, instead a string, just add it.
 				controls[i].activate(); // And activate it.
 			}
-			
-		}		
+		}
+		
+		map.addControl( new OpenLayers.Control.Attribution() ); 
 	}
 	
 	/**
@@ -137,7 +138,6 @@
 	
 	this.map = new OpenLayers.Map( mapElementId, mapOptions );
 	var map = this.map;
-	
 	this.addControls( map, options.controls, this.get( 0 ) );
 	
 	// Add the base layers.

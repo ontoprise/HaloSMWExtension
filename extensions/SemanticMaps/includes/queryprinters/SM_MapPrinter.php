@@ -27,13 +27,6 @@ class SMMapPrinter extends SMWResultPrinter {
 	protected $fatalErrorMsg = false;
 	
 	/**
-	 * @since 1.0
-	 * 
-	 * @var array
-	 */
-	protected $parameters;
-	
-	/**
 	 * Constructor.
 	 * 
 	 * @param $format String
@@ -47,30 +40,6 @@ class SMMapPrinter extends SMWResultPrinter {
 		$this->useValidator = true;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 * @see SMWResultPrinter::readParameters()
-	 */
-	protected function readParameters( /* array */ $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		$validator = new Validator( $this->getName(), false );
-		$validator->setParameters( $params, $this->getParameterInfo() );
-		$validator->validateParameters();
-		
-		$fatalError  = $validator->hasFatalError();
-		
-		if ( $fatalError === false ) {
-			$this->parameters = $validator->getParameterValues();
-		}
-		else {
-			$this->fatalErrorMsg =
-				'<span class="errorbox">' .
-				htmlspecialchars( wfMsgExt( 'validator-fatal-error', 'parsemag', $fatalError->getMessage() ) ) . 
-				'</span>';			
-		}	
-	}
-	
 	/**
 	 * Returns an array containing the parameter info.
 	 * 
@@ -174,7 +143,7 @@ class SMMapPrinter extends SMWResultPrinter {
 		if ( $this->fatalErrorMsg === false ) {
 			global $wgParser;
 			
-			$params = $this->parameters;
+			$params = $this->params;
 			
 			$queryHandler = new SMQueryHandler( $res, $outputmode );
 			$queryHandler->setShowSubject( $params['showtitle'] );
@@ -207,8 +176,10 @@ class SMMapPrinter extends SMWResultPrinter {
 					SMWOutputs::requireResource( $resourceModule );
 				}
 				
+				$result = $this->getMapHTML( $params, $wgParser, $mapName ) . $this->getJSON( $params, $wgParser, $mapName );
+				
 				return array(
-					$this->getMapHTML( $params, $wgParser, $mapName ) . $this->getJSON( $params, $wgParser, $mapName ),
+					$result,
 					'noparse' => true, 
 					'isHTML' => true
 				);				
@@ -306,7 +277,7 @@ class SMMapPrinter extends SMWResultPrinter {
 				$jsonObj['title'] = $parser->parse( $jsonObj['title'], $parser->getTitle(), new ParserOptions() )->getText();
 				$jsonObj['text'] = $parser->parse( $jsonObj['text'], $parser->getTitle(), new ParserOptions() )->getText();
 				
-				$hasTitleAndtext = $jsonObj['title'] != '' && $jsonObj['text'] != '';
+				$hasTitleAndtext = $jsonObj['title'] !== '' && $jsonObj['text'] !== '';
 				$jsonObj['text'] = ( $hasTitleAndtext ? '<b>' . $jsonObj['title'] . '</b><hr />' : $jsonObj['title'] ) . $jsonObj['text'];
 				$jsonObj['title'] = strip_tags( $jsonObj['title'] );
 				
@@ -337,9 +308,7 @@ class SMMapPrinter extends SMWResultPrinter {
 	 * @return array
 	 */
 	public final function getResult( SMWQueryResult $results, array $params, $outputmode ) {
-		// Skip checks, results with 0 entries are normal.
-		$this->readParameters( $params, $outputmode );
-		
+		$this->handleParameters( $params, $outputmode );
 		return $this->getResultText( $results, SMW_OUTPUT_HTML );
 	}
 
@@ -365,31 +334,7 @@ class SMMapPrinter extends SMWResultPrinter {
         // TODO: this can probably be done cleaner with some changes in Maps
         unset( $paramInfo['mappingservice'] );
         
-        if ( version_compare( SMW_VERSION, '1.6', '<' ) ) {
-			// Go through the descriptions, and convert them from Validator- to SMW-style.
-			// This if for b/c with SMW 1.5.x; SMW 1.6 directly accepts Parameter objects.
-			foreach ( $paramInfo as $paramDesc ) {
-				$param = array(
-					'name' => $paramDesc->getName(),
-					'type' => $this->getMappedParamType( $paramDesc->getType() ),
-					'description' => $paramDesc->getDescription() ? $paramDesc->getDescription() : '',
-					'default' => $paramDesc->isRequired() ? '' : $paramDesc->getDefault()
-				);
-				
-		        foreach ( $paramDesc->getCriteria() as $criterion ) {
-		    		if ( $criterion instanceof CriterionInArray ) {
-		    			$param['values'] = $criterion->getAllowedValues();
-		    			$param['type'] = $paramDesc->isList() ? 'enum-list' : 'enumeration';
-		    			break;
-		    		}
-		    	}
-	
-		    	$params[] = $param;
-			}
-        }
-        else {
-        	$params = array_merge( $params, $paramInfo );
-        }
+        $params = array_merge( $params, $paramInfo );
 
 		return $params;
     }

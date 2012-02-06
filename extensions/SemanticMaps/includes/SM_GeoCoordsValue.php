@@ -78,7 +78,7 @@ class SMGeoCoordsValue extends SMWDataValue {
 
 		$comparator = SMW_CMP_EQ;
 
-		if ( $value == '' ) {
+		if ( $value === '' ) {
 			$this->addError( wfMsg( 'smw_novalues' ) );
 		} else {
 			SMWDataValue::prepareValue( $value, $comparator );
@@ -102,7 +102,10 @@ class SMGeoCoordsValue extends SMWDataValue {
 				$this->m_dataitem = new SMWDIGeoCoord( $parsedCoords );
 			} else {
 				$this->addError( wfMsgExt( 'maps_unrecognized_coords', array( 'parsemag' ), $coordinates, 1 ) );
-				$this->m_dataitem = new SMWDIGeoCoord( array(0, 0) ); // make sure this is always set
+				
+				 // Make sure this is always set
+				 // TODO: Why is this needed?!
+				$this->m_dataitem = new SMWDIGeoCoord( array( 'lat' => 0, 'lon' => 0 ) );
 			}
 		}
 
@@ -164,10 +167,18 @@ class SMGeoCoordsValue extends SMWDataValue {
 			global $smgQPCoodFormat, $smgQPCoodDirectional;
 			$text = MapsCoordinateParser::formatCoordinates( $coordinateSet, $smgQPCoodFormat, $smgQPCoodDirectional );
 
-			return '<span class="smwttinline">' . htmlspecialchars( $text ) . '<span class="smwttcontent">' .
-		        htmlspecialchars ( wfMsgForContent( 'maps-latitude' ) . ' ' . $coordinateSet['lat'] ) . '<br />' .
-		        htmlspecialchars ( wfMsgForContent( 'maps-longitude' ) . ' ' . $coordinateSet['lon'] ) .
-		        '</span></span>';
+			$lines = array(
+				htmlspecialchars( wfMsgExt( 'semanticmaps-latitude', 'content', $coordinateSet['lat'] ) ),
+				htmlspecialchars( wfMsgExt( 'semanticmaps-longitude', 'content', $coordinateSet['lon'] ) ),
+			);
+			
+			if ( array_key_exists( 'alt', $coordinateSet ) ) {
+				$lines[] = htmlspecialchars ( wfMsgForContent( 'semanticmaps-altitude', 'content', $coordinateSet['alt'] ) );
+			}
+			
+			return 	'<span class="smwttinline">' . htmlspecialchars( $text ) . '<span class="smwttcontent">' .
+		        	 	implode( '<br />', $lines ) .
+		        	'</span></span>';
 		} else {
 			return $this->getErrorText();
 		}		
