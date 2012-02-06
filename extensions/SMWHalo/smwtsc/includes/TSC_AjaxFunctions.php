@@ -185,10 +185,10 @@ function smwf_ts_getWikiSpecialProperties() {
     $result .= "CATEGORY=".$wgContLang->getNSText(NS_CATEGORY).",";
     $result .= "CONCEPT=".$wgContLang->getNSText(SMW_NS_CONCEPT);
     
-    /*foreach($datatypeLabels as $key => $label) {
+    foreach($datatypeLabels as $key => $label) {
     	$keyCode = str_replace(" ","_",strtoupper($key));
     	$result .= ",$keyCode=$label";
-    }*/
+    }
 
     return $result;
 }
