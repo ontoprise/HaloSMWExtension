@@ -22,6 +22,10 @@ $messages['en'] = array(
 	'semanticmaps-kml' => 'KML',
 	'semanticmaps-default-kml-pagelink' => 'View page $1',
 
+	'semanticmaps-latitude' => 'Latitude: $1',
+	'semanticmaps-longitude' => 'Longitude: $1',
+	'semanticmaps-altitude' => 'Altitude: $1',
+
 	// Forms
 	'semanticmaps-loading-forminput'	=> 'Loading map form input...',
 	'semanticmaps_lookupcoordinates' 	=> 'Look up coordinates',
@@ -40,6 +44,11 @@ $messages['en'] = array(
 	'semanticmaps-par-template'		=> 'A template to use to format the info window contents.',
 	
 	'semanticmaps-par-geocodecontrol'		=> 'Show the geocoding control.',
+	
+	'semanticmaps-kml-text' => 'The text associates with each page. Overriden by the aditional queried properties if any.',
+	'semanticmaps-kml-title' => 'The default title for results',
+	'semanticmaps-kml-linkabsolute' => 'Should links be absolute or not (ie relative)',
+	'semanticmaps-kml-pagelinktext' => 'The text to use for the links to the page, in which $1 will be replaced by the page title',
 );
 
 /** Message documentation (Message documentation)
@@ -48,9 +57,11 @@ $messages['en'] = array(
  * @author Lloffiwr
  * @author Purodha
  * @author Raymond
+ * @author Umherirrender
  */
 $messages['qqq'] = array(
 	'semanticmaps-desc' => '{{desc}}',
+	'semanticmaps-kml' => '{{optional}}',
 	'semanticmaps-default-kml-pagelink' => '$1 is probably a page title.',
 	'semanticmaps-loading-forminput' => 'Message displayed during a computer action',
 	'semanticmaps_lookupcoordinates' => 'Submit button next to input box. The box contains the hint {{msg-mw|Semanticmaps_enteraddresshere}}',
@@ -93,6 +104,33 @@ $messages['arz'] = array(
 	'semanticmaps_enteraddresshere' => 'أدخل العنوان هنا',
 );
 
+/** Asturian (Asturianu)
+ * @author Xuacu
+ */
+$messages['ast'] = array(
+	'semanticmaps-desc' => 'Ufre la capacidá de ver y editar los datos de coordenaes guardaos cola estensión Semantic MediaWiki ([http://mapping.referata.com/wiki/Examples exemplos]).',
+	'semanticmaps-unrecognizeddistance' => 'El valor $1 nun ye una distancia válida.',
+	'semanticmaps-kml-link' => 'Ver el ficheru KML',
+	'semanticmaps-default-kml-pagelink' => 'Ver la páxina "$1"',
+	'semanticmaps-loading-forminput' => "Cargando'l formulariu d'entrada del mapa...",
+	'semanticmaps_lookupcoordinates' => 'Consultar les coordenaes',
+	'semanticmaps_enteraddresshere' => 'Escribi la direición equí',
+	'semanticmaps-updatemap' => 'Anovar el mapa',
+	'semanticmaps-forminput-remove' => 'Desaniciar',
+	'semanticmaps-forminput-add' => 'Amestar',
+	'semanticmaps-forminput-locations' => 'Llugares',
+	'semanticmaps-par-staticlocations' => 'Llista de llugares p\'amestar al mapa xunto colos datos consultaos. Como con display_points, pues amestar un títulu, una descripción y un iconu pa cada llugar usando\'l signu "~" como separador.',
+	'semanticmaps-par-forceshow' => "¿Ver el mapa tamién cuando nun hai llugares qu'amosar?",
+	'semanticmaps-par-showtitle' => "Amosar o non un títulu na ventana d'información del marcador. De vezu, desactivalo ye útil cuando s'utiliza una plantía pa dar formatu al conteníu de la ventana d'información.",
+	'semanticmaps-par-centre' => "El centru del mapa. Cuando nun se proporciona, el mapa escoyerá automáticamente'l meyor centru p'amosar tolos marcadores del mapa.",
+	'semanticmaps-par-template' => "Una plantía que s'utiliza pa dar formatu al conteníu de la ventana d'información.",
+	'semanticmaps-par-geocodecontrol' => 'Amosar el control de xeocodificación.',
+	'semanticmaps-kml-text' => 'El testu asociáu con cada páxina. Sustituyíu poles otres propiedaes consultaes, si esisten.',
+	'semanticmaps-kml-title' => 'El títulu predetermináu pa los resultaos',
+	'semanticmaps-kml-linkabsolute' => 'Si los títulos tienen de ser absolutos o non (esto ye, relativos)',
+	'semanticmaps-kml-pagelinktext' => 'El testu a usar pa los enllaces a la páxina, onde "$1" se sustituye pol títulu de la páxina',
+);
+
 /** Azerbaijani (Azərbaycanca)
  * @author Cekli829
  */
@@ -122,6 +160,7 @@ $messages['be-tarask'] = array(
 	'semanticmaps-par-showtitle' => 'Паказваць назву ў акне інфармацыі пра маркер ці не. Адключэньне гэтай функцыі часта карыснае падчас выкарыстаньня шаблёну для фарматаваньня зьместу акна інфармацыі.',
 	'semanticmaps-par-centre' => 'Цэнтар мапы. Калі ён не пададзены, мапа будзе аўтаматычна выбіраць аптымальны цэнтар для паказу ўсіх маркераў.',
 	'semanticmaps-par-template' => 'Шаблён для фарматаваньня зьместу акна інфармацыі.',
+	'semanticmaps-par-geocodecontrol' => 'Паказаць элемэнты кіраваньня геаграфічным кадаваньнем.',
 );
 
 /** Bulgarian (Български)
@@ -208,6 +247,7 @@ $messages['ca'] = array(
 	'semanticmaps-par-showtitle' => "Es mostra o no un títol en la finestra d'informació del marcador. Inhabilitar-ho sovint és útil quan s'utilitza una plantilla per donar format al contingut de la finestra d'informació.",
 	'semanticmaps-par-centre' => 'El centre del mapa. Quan no es proporciona, el map triarà automàticament el centre òptim per mostrar tots els marcadors al mapa.',
 	'semanticmaps-par-template' => "Una plantilla que s'utilitza per dona format al contingut de la finestra d'informació.",
+	'semanticmaps-par-geocodecontrol' => 'Mostra el control de geocodificació.',
 );
 
 /** Czech (Česky)
@@ -232,6 +272,7 @@ $messages['cy'] = array(
 	'semanticmaps-forminput-remove' => 'Tynner oddi ar y map',
 	'semanticmaps-forminput-add' => 'Ychwaneger',
 	'semanticmaps-forminput-locations' => 'Lleoliadau',
+	'semanticmaps-par-forceshow' => "Dangos y map, hyd yn oed pe nad oes mannau i'w dangos?",
 );
 
 /** German (Deutsch)
@@ -260,13 +301,17 @@ $messages['de'] = array(
 	'semanticmaps-par-centre' => 'Das Zentrum der Karte. Sofern nicht angegeben wird automatisch das optimale Zentrum zur Darstellung aller Kennzeichnungen auf der Karte gewählt.',
 	'semanticmaps-par-template' => 'Die zur Formatierung des Informationsfensterinhalts zu verwendende Vorlage.',
 	'semanticmaps-par-geocodecontrol' => 'Zeige die Steuerungsseite zum Geokodieren.',
+	'semanticmaps-kml-text' => 'Der Text, der zu jeder Seite angezeigt wird. Wird im Fall zusätzlich abgefragter Attribute ersetzt.',
+	'semanticmaps-kml-title' => 'Der Standardtitel für die Ergebnisse',
+	'semanticmaps-kml-linkabsolute' => 'Sollen die Links absolut sein oder nicht (nämlich relativ)',
+	'semanticmaps-kml-pagelinktext' => 'Der Text, der für die Links zur Seite genutzt werden soll. $1 wird dabei durch den Namen der Seite ersetzt.',
 );
 
 /** Lower Sorbian (Dolnoserbski)
  * @author Michawiki
  */
 $messages['dsb'] = array(
-	'semanticmaps-desc' => 'Bitujo zmóžnosć se koordinatowe daty pśez rozšyrjenje Semantic MediaWiki woglědaś a wobźěłaś ([http://mapping.referata.com/wiki/Examples demo]).',
+	'semanticmaps-desc' => 'Bitujo zmóžnosć se koordinatowe daty pśez rozšyrjenje Semantic MediaWiki woglědaś a wobźěłaś ([http://mapping.referata.com/wiki/Examples pśikłady]).',
 	'semanticmaps-unrecognizeddistance' => 'Gódnota $1 njejo płaśiwa distanca.',
 	'semanticmaps-kml-link' => 'KML-dataju se woglědaś',
 	'semanticmaps-default-kml-pagelink' => 'Bok $1 se woglědaś',
@@ -357,6 +402,10 @@ $messages['fr'] = array(
 	'semanticmaps-par-centre' => "Le centre de la carte. Lorsqu'il n'est pas fourni, la carte va choisir automatiquement le centre optimal pour afficher tous les marqueurs sur la carte.",
 	'semanticmaps-par-template' => "Un modèle à utiliser pour mettre en forme le contenu de la fenêtre d'informations.",
 	'semanticmaps-par-geocodecontrol' => 'Afficher le contrôle de géocodage.',
+	'semanticmaps-kml-text' => "Le texte associé avec chaque page. Remplacé par des propriétés récupérées supplémentaires s'il y en a.",
+	'semanticmaps-kml-title' => 'Le titre par défaut pour les résultats',
+	'semanticmaps-kml-linkabsolute' => 'Si les titres doivent être absolus ou non (c.à.d. relatifs)',
+	'semanticmaps-kml-pagelinktext' => 'Le texte à utiliser pour les liens vers la page, dans lesquels $1 sera remplacé par le titre de la page',
 );
 
 /** Franco-Provençal (Arpetan)
@@ -396,9 +445,14 @@ $messages['gl'] = array(
 	'semanticmaps-par-centre' => 'O centro do mapa. Cando non se proporciona, o mapa ha escoller automaticamente o mellor centro para mostrar todos os marcadores no mapa.',
 	'semanticmaps-par-template' => 'Un modelo a empregar para dar formato ao contido da ventá de información.',
 	'semanticmaps-par-geocodecontrol' => 'Mostrar o control de xeocodificación.',
+	'semanticmaps-kml-text' => 'O texto asociado a cada páxina. Substituído polas propiedades pescudadas adicionais, se existen.',
+	'semanticmaps-kml-title' => 'O título por defecto para os resultados',
+	'semanticmaps-kml-linkabsolute' => 'Se os títulos deberían ser absolutos ou non (por exemplo, relativos)',
+	'semanticmaps-kml-pagelinktext' => 'O texto a usar para as ligazóns cara á páxina, nas que "$1" será substituído polo título da páxina',
 );
 
 /** Swiss German (Alemannisch)
+ * @author Als-Chlämens
  * @author Als-Holder
  */
 $messages['gsw'] = array(
@@ -413,6 +467,12 @@ $messages['gsw'] = array(
 	'semanticmaps-forminput-remove' => 'Uuseneh',
 	'semanticmaps-forminput-add' => 'Zuefiege',
 	'semanticmaps-forminput-locations' => 'Standort',
+	'semanticmaps-par-staticlocations' => 'E Lischt vo Standört, wo zämme mit de Date, wo aabgfrogt werde, uff de Charte dezuegno werde sölle. Analog zue de Aazeigpünkt, chönne zue jedem Standort mit de Tilde „~“ als Trennzeiche, e Titel, Beschrybig un Symbol dezuegno werde.',
+	'semanticmaps-par-forceshow' => 'Die Charte au aazeige, wänn es kei Standört zum Aazeige git?',
+	'semanticmaps-par-showtitle' => 'E Titel im Informationsfenschter vo de Kennzeichnig aazeige oder nit. Des z deaktiviere isch vilmool nützlig, wänn e Vorlag zur Formatierig vum Inhalt vum Informationsfenschter bruucht wird.',
+	'semanticmaps-par-centre' => "S Zentrum vo de Chart. Wänn's nit andersch aagee isch, wird automatisch s optimali Zentrum zur Darstellig vo allene Kennzeichnige uff de Chart ussgwäält.",
+	'semanticmaps-par-template' => 'E Vorlag, wo zur Formatierig vum Inhalt vum Informationsfenschter bruucht wird.',
+	'semanticmaps-par-geocodecontrol' => 'D Stüürigssyte zum Geokodiere aazeige.',
 );
 
 /** Hebrew (עברית)
@@ -499,6 +559,10 @@ $messages['ia'] = array(
 	'semanticmaps-par-centre' => 'Le centro del carta. Si non specificate, le systema selige automaticamente le centro optimal pro monstrar tote le marcatores in le carta.',
 	'semanticmaps-par-template' => 'Un patrono a usar pro formatar le contento del fenestra de information.',
 	'semanticmaps-par-geocodecontrol' => 'Monstrar le controlo de geocodification.',
+	'semanticmaps-kml-text' => 'Le texto associate con cata pagina. Es supplantate per le additional proprietates consultate, si existe.',
+	'semanticmaps-kml-title' => 'Le titulo predefinite pro resultatos',
+	'semanticmaps-kml-linkabsolute' => 'Debe ligamines esser absolute o non (i.e. relative)',
+	'semanticmaps-kml-pagelinktext' => 'Le texto a usar pro le ligamines al pagina, in le quales $1 essera reimplaciate per le titulo de pagina',
 );
 
 /** Indonesian (Bahasa Indonesia)
@@ -598,6 +662,15 @@ för jeede Plaz aanjävve, med enem Schlängelsche (~) doh zwesche.',
 	'semanticmaps-par-showtitle' => 'Donn en Övverschreff en däm Finster met Infomazjuhne övver de Makeerong aanzeije udder nit. De Övverschreff afzeschallde es öff joot, wam_mer en Schabloon nemmp för dä Enhallt vum Finster zerääsch ze possumenteere.',
 	'semanticmaps-par-centre' => 'Der Meddelpunk vun dä Kaat. Wann keine aanjejovve_n_es jeiht dä automattesch op der optesche Meddelpunk vun all dä Makeerunge en dä Kaat.',
 	'semanticmaps-par-template' => 'En Schabloon för der Enhalt vum Finster met de Enfommazjuhne ze jeschtallte',
+	'semanticmaps-par-geocodecontrol' => "Donn dat Bedeenelemänt aanzeije för de Ko'odinaate op de Ääd ze beärbeide",
+);
+
+/** Kurdish (Latin script) (‪Kurdî (latînî)‬)
+ * @author Gomada
+ */
+$messages['ku-latn'] = array(
+	'semanticmaps-forminput-remove' => 'Jê bibe',
+	'semanticmaps-forminput-locations' => 'Cih',
 );
 
 /** Luxembourgish (Lëtzebuergesch)
@@ -624,7 +697,7 @@ $messages['mk'] = array(
 	'semanticmaps-kml-link' => 'Преглед на KML-податотеката',
 	'semanticmaps-default-kml-pagelink' => 'Преглед на статијата $1',
 	'semanticmaps-loading-forminput' => 'Вчитувам карти од внесеното...',
-	'semanticmaps_lookupcoordinates' => 'Побарај координати',
+	'semanticmaps_lookupcoordinates' => 'Дај координати',
 	'semanticmaps_enteraddresshere' => 'Внесете адреса',
 	'semanticmaps-updatemap' => 'Поднови карта',
 	'semanticmaps-forminput-remove' => 'Отстрани',
@@ -636,6 +709,10 @@ $messages['mk'] = array(
 	'semanticmaps-par-centre' => 'Средиштето на картата. Ако не е укажано, картата автоматски ќе го одбере средиштето кајшто оптимално ќе се прикажат сите одбележувачи на картата.',
 	'semanticmaps-par-template' => 'Шаблон за форматирање на содржината на инфопрозорецот.',
 	'semanticmaps-par-geocodecontrol' => 'Прикажи геокодни котроли.',
+	'semanticmaps-kml-text' => 'Текстот на секоја страница. Се презапишува ако има дополнителни барани својства.',
+	'semanticmaps-kml-title' => 'Стандарден наслов за резултатите',
+	'semanticmaps-kml-linkabsolute' => 'Дали врските да бидат апсолутни',
+	'semanticmaps-kml-pagelinktext' => 'Текстот на врските на страницата, каде $1 ќе се замени со насловот на страницата',
 );
 
 /** Malayalam (മലയാളം)
@@ -656,6 +733,7 @@ $messages['ms'] = array(
 
 /** Dutch (Nederlands)
  * @author Jeroen De Dauw
+ * @author SPQRobin
  * @author Siebrand
  */
 $messages['nl'] = array(
@@ -676,6 +754,10 @@ $messages['nl'] = array(
 	'semanticmaps-par-centre' => 'Het centrum van de kaart. Als deze waarde niet wordt opgegeven, wordt automatisch een keuze gemaakt voor een centrum op basis van alle markeringen op de kaart.',
 	'semanticmaps-par-template' => 'Een te gebruiken sjabloon om de inhoud van het gegevensvenster op te maken.',
 	'semanticmaps-par-geocodecontrol' => 'Besturingselement voor geocodering weergeven.',
+	'semanticmaps-kml-text' => 'De tekst die gekoppeld is aan iedere pagina. Als er extra opgevraagde eigenschappen zijn, wordt deze tekst daardoor overschreven.',
+	'semanticmaps-kml-title' => 'De standaard titel voor resultaten',
+	'semanticmaps-kml-linkabsolute' => 'Moeten verwijzingen absoluut zijn of niet (d.w.z. relatief)',
+	'semanticmaps-kml-pagelinktext' => 'De tekst om te gebruiken voor de verwijzingen naar de pagina, waarin $1 vervangen wordt door de paginatitel',
 );
 
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬)
@@ -708,6 +790,11 @@ $messages['no'] = array(
 	'semanticmaps-par-showtitle' => 'Vise tittel i markørinfovinduet eller ikke. Deaktivering er ofte nyttig når en bruker en mal for å formatere innholdet i infovinduet.',
 	'semanticmaps-par-centre' => 'Kartets sentrum. Hvis dette ikke er angitt, vil kartet automatisk velge det optimale senteret for å vise alle kartmarkørene.',
 	'semanticmaps-par-template' => 'Mal som brukes for å formatere innholdet i infovinduet.',
+	'semanticmaps-par-geocodecontrol' => 'Vis geokodingsstyringen',
+	'semanticmaps-kml-text' => 'Teksten knyttes til hver side. Overstyrt av spørringer på ekstra egenskaper, om noen.',
+	'semanticmaps-kml-title' => 'Standard resultatoverskrift',
+	'semanticmaps-kml-linkabsolute' => 'Skal lenker være absolutte eller ikke (dvs. relative)',
+	'semanticmaps-kml-pagelinktext' => 'Teksten som skal brukes for lenker til siden, der $1 erstattes av sidetittelen',
 );
 
 /** Occitan (Occitan)
@@ -870,17 +957,23 @@ $messages['sl'] = array(
 	'semanticmaps-par-centre' => 'Sredini zemljevida. Če ne podana, bo zemljevid samodejno izbral optimalno lokacijo za prikaz vseh oznak na zemljevidu.',
 	'semanticmaps-par-template' => 'Predloga za oblikovanje vsebine info okna.',
 	'semanticmaps-par-geocodecontrol' => 'Prikaži nadzor geokodiranja.',
+	'semanticmaps-kml-text' => 'Besedilo, povezano z vsako stranjo. Preglašeno z dodatnimi možnostmi poizvedbe, če obstajajo.',
+	'semanticmaps-kml-title' => 'Privzeti naslov za rezultate',
+	'semanticmaps-kml-linkabsolute' => 'Naj bodo povezave absolutne ali ne (tj. relativne)',
+	'semanticmaps-kml-pagelinktext' => 'Besedilo za povezave do strani, v katerih bo $1 zamenjan z naslovom strani',
 );
 
-/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
+/** Serbian (Cyrillic script) (‪Српски (ћирилица)‬)
+ * @author Rancher
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
 	'semanticmaps-unrecognizeddistance' => 'Вредност $1 није исправно растојање.',
+	'semanticmaps-kml' => 'KML',
 	'semanticmaps_enteraddresshere' => 'Унеси адресу овде',
 );
 
-/** Serbian Latin ekavian (‪Srpski (latinica)‬)
+/** Serbian (Latin script) (‪Srpski (latinica)‬)
  * @author Michaello
  */
 $messages['sr-el'] = array(

@@ -7,6 +7,18 @@ version of Maps. You can find the most up-do-date version at
 http://mapping.referata.com/wiki/Maps/Version_history#Maps_change_log
 
 
+=== Maps 1.0.5 ===
+(2011-11-30)
+
+* Fixed display of attribution control for OpenLayers.
+* Fixed to big precision of geographic coordinates in decimal minutes format (bug 32407).
+
+=== Maps 1.0.4 ===
+(2011-10-15)
+
+* Updated OpenLayers from 2.10 to 2.11.
+* Fixed bug in adding adittional markers for Google Maps v3 (mainly affecting the Semantic Maps form input).
+
 === Maps 1.0.3 ===
 (2011-09-14)
 

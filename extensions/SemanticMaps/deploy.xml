@@ -3,7 +3,7 @@
     <global>
         <id>semanticmaps</id>
         <title>Semantic Maps</title>
-        <version>1.0.3</version>
+        <version>1.0.5</version>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>jeroendedauw@gmail.com</maintainer>
         <license>GPL-v2</license>
@@ -12,9 +12,9 @@
         <helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Maps</helpurl>
         <dependencies>
             <dependency from="1.17.0">mw</dependency>
-            <dependency from="1.0.3" to="1.0.3">maps</dependency>
-            <dependency from="1.6.0">smw</dependency>
-            <dependency from="0.4.10">validator</dependency>
+            <dependency from="1.0.5" to="1.0.5">maps</dependency>
+            <dependency from="1.7.0">smw</dependency>
+            <dependency from="0.4.11">validator</dependency>
         </dependencies>
     </global>
     

@@ -24,6 +24,7 @@ $messages['en'] = array(
 	'maps-load-failed' => 'Could not load the map!',
 	'maps-markers' => 'Markers',
 	'maps-others' => 'others',
+	//TODO: move to namespaces i18n
 	'maps-ns-layer' => 'Layer',
 	'maps-ns-layer-talk' => 'Layer talk',
 	'maps-layer-property' => 'Property',
@@ -213,10 +214,12 @@ $1',
  * @author Kghbln
  * @author Purodha
  * @author Raymond
+ * @author Umherirrender
  * @author Тест
  */
 $messages['qqq'] = array(
 	'maps-desc' => '{{desc}}',
+	'right-geocode' => '{{doc-right|geocode}}',
 	'maps_map' => '{{Identical|Map}}',
 	'maps-others' => '{{Identical|Other}}',
 	'maps-layer-property' => '{{Identical|Property}}',
@@ -226,6 +229,11 @@ $messages['qqq'] = array(
 	'maps-longitude' => '{{Identical|Longitude}}',
 	'maps_geocoding_failed_for' => '* $1 is a list
 * $2 is the number of list items for PLURAL use.',
+	'maps_googlemaps2' => '{{optional}}',
+	'maps_googlemaps3' => '{{optional}}',
+	'maps_yahoomaps' => '{{optional}}',
+	'maps_openlayers' => '{{optional}}',
+	'maps_osm' => '{{optional}}',
 	'maps_centred_on' => '$1 and $2 are latitude and longitude.',
 );
 
@@ -350,6 +358,40 @@ $messages['arz'] = array(
 	'maps-longitude' => 'خطوط الطول:',
 	'maps_googlemaps2' => 'خرايط جوجل',
 	'maps_yahoomaps' => 'خرايط ياهو',
+);
+
+/** Asturian (Asturianu)
+ * @author Xuacu
+ */
+$messages['ast'] = array(
+	'maps-desc' => 'Activa inxertar mapes dinámicos nes páxines wiki, xeocodificación de direiciones y otres operaciones xeográfiques. ([http://mapping.referata.com/wiki/Examples Demos])',
+	'right-geocode' => 'Xeocódigu',
+	'maps_map' => 'Mapa',
+	'maps-loading-map' => "Cargando'l mapa...",
+	'maps-load-failed' => '¡Nun se pudo cargar el mapa!',
+	'maps-markers' => 'Marcadores',
+	'maps-others' => 'otros',
+	'maps-ns-layer' => 'Capa',
+	'maps-ns-layer-talk' => 'Alderique de capa',
+	'maps-layer-property' => 'Propiedá',
+	'maps-layer-value' => 'Valor',
+	'maps-layer-errors' => 'Errores',
+	'maps-error-invalid-layerdef' => 'Esta definición de capa nun ye válida.',
+	'maps-error-invalid-layertype' => 'Nun hai capes de tipu "$1". Sólo {{PLURAL:$3|tien sofitu esti tipu|tienen sofitu estos tipos}}: $2',
+	'maps-error-no-layertype' => "Tienes d'especificar la triba de capa. {{PLURAL:$2|Sólo tien sofitu esta triba|Tienen sofitu estes tribes}}: $1",
+	'validation-error-invalid-layer' => 'El parámetru $1 tien de ser una capa válida.',
+	'validation-error-invalid-layers' => 'El parámetru $1 tien de ser una o más capes válides.',
+	'maps-layer-of-type' => 'Capa de tipu $1',
+	'maps-abb-north' => 'N',
+	'maps-abb-east' => 'E',
+	'maps-abb-south' => 'S',
+	'maps-abb-west' => 'O',
+	'maps-latitude' => 'Llatitú:',
+	'maps-longitude' => 'Llonxitú:',
+	'maps_overlays' => 'Superposiciones',
+	'maps_photos' => 'Semeyes',
+	'maps_videos' => 'Videos',
+	'maps_wikipedia' => 'Uiquipedia',
 );
 
 /** Azerbaijani (Azərbaycanca)
@@ -538,7 +580,7 @@ $messages['bg'] = array(
 	'maps_webcams' => 'Уебкамери',
 );
 
-/** Bahasa Banjar (Bahasa Banjar)
+/** Banjar (Bahasa Banjar)
  * @author Ezagren
  */
 $messages['bjn'] = array(
@@ -587,6 +629,7 @@ $messages['bn'] = array(
  */
 $messages['br'] = array(
 	'maps-desc' => "Aotren a ra ensoc'hañ kartennoù dinamek er pajennoù wiki, geokodañ chomlec'hioù hag oberiadennoù douaroniel all. ([http://mapping.referata.com/wiki/Examples Diskouezadenn])",
+	'right-geocode' => 'Geokod',
 	'maps_map' => 'Kartenn',
 	'maps-loading-map' => 'O kargañ ar gartenn...',
 	'maps-load-failed' => "N'eus ket bet gallet kargañ ar gartenn !",
@@ -639,6 +682,7 @@ $1",
 $1",
 	'maps_map_cannot_be_displayed' => "N'hall ket ar gartenn bezañ diskwelet.",
 	'maps-geocoder-not-available' => "N'haller ket ober gant arc'hwel geokodañ ar c'hartennoù. N'haller ket geokodañ ho lec'hiadur.",
+	'maps_yahoomaps' => 'Yahoo! Kartennoù',
 	'maps_click_to_activate' => 'Klikañ evit gweredekaat  ar gartenn',
 	'maps_centred_on' => 'Kartenn kreizet war $1, $2.',
 	'maps-googlemaps2-incompatbrowser' => "N'eo ket kenglotus ho merdeer gant Google Maps v2.",
@@ -748,6 +792,7 @@ $messages['ce'] = array(
  * @author Mormegil
  */
 $messages['cs'] = array(
+	'right-geocode' => 'Geokódování',
 	'maps_map' => 'Mapa',
 	'maps-abb-north' => 'S',
 	'maps-abb-east' => 'V',
@@ -924,7 +969,7 @@ $1',
  * @author Michawiki
  */
 $messages['dsb'] = array(
-	'maps-desc' => 'Bitujo móžnosć koordinatowe daty w geografiskich kórtach zwobrazniś a adrese geokoděrowaś. ([http://mapping.referata.com/wiki/Maps_examples demo])',
+	'maps-desc' => 'Zmóžnijo zasajźowanje dynamiskich kórtow do wikibokow, geokoděrowanje adresow a druge geografiske akcije. ([http://mapping.referata.com/wiki/Examples pśikłady])',
 	'maps_map' => 'Karta',
 	'maps-loading-map' => 'Kórta se zacytujo...',
 	'maps-markers' => 'Marki',
@@ -1321,6 +1366,7 @@ $1",
  * @author ChrisPtDe
  */
 $messages['frp'] = array(
+	'right-geocode' => 'G·eocode',
 	'maps_map' => 'Mapa',
 	'maps-loading-map' => 'Chargement de la mapa...',
 	'maps-load-failed' => 'Empossiblo de chargiér la mapa !',
@@ -2242,9 +2288,11 @@ Servizi di cartografia disponibili: $1",
  * @author 青子守歌
  */
 $messages['ja'] = array(
-	'maps-desc' => '地図上に座標データを表示し、住所を座標データに変換する機能を提供する ([http://mapping.referata.com/wiki/Maps_examples 実演])。次の地図サービスに対応します: $1',
+	'maps-desc' => 'ウィキページへの動的な地図の組み込み、住所の座標データへの変換などの地図関連操作を可能にする。([http://mapping.referata.com/wiki/Examples 実演])',
+	'right-geocode' => 'ジオコーディング',
 	'maps_map' => '地図',
 	'maps-loading-map' => '地図を読み込み中…',
+	'maps-load-failed' => '地図を読み込めませんでした。',
 	'maps-markers' => 'マーカー',
 	'maps-others' => 'その他',
 	'maps-ns-layer' => 'レイヤー',
@@ -2254,15 +2302,15 @@ $messages['ja'] = array(
 	'maps-layer-errors' => 'エラー',
 	'maps-error-invalid-layerdef' => 'このレイヤー定義は不正です。',
 	'maps-error-invalid-layertype' => '種類「$1」のレイヤーが存在しません。{{PLURAL:$3|この|これら}}の種類のサポート：$2',
-	'maps-error-no-layertype' => 'レイヤーの種類を指定する必要があります。{{PLURAL:$2|この種類のみ|これらの種類}}のサポート：$1',
+	'maps-error-no-layertype' => 'レイヤーの種類を指定する必要があります。{{PLURAL:$2|この種類のみ|これらの種類}}に対応しています: $1',
 	'validation-error-invalid-layer' => '引数$1は有効なレイヤーでなければなりません。',
 	'validation-error-invalid-layers' => '引数$1は1つ以上の有効なレイヤーでなければなりません。',
 	'maps-layer-of-type' => '種類$1のレイヤー',
 	'maps-layer-type-supported-by' => 'このレイヤー種は、{{PLURAL:$2|$1地図サービスでのみ利用可能です|以下の地図サービスで利用可能です：$1}}。',
-	'validation-error-invalid-location' => 'パラメータ$1は有効な場所でなければなりません。',
+	'validation-error-invalid-location' => '引数$1は有効な場所でなければなりません。',
 	'validation-error-invalid-locations' => '引数$1は、1つそれ以上有効な場所でなければなりません。',
-	'validation-error-invalid-width' => 'パラメータ$1は有効な幅でなければなりません。',
-	'validation-error-invalid-height' => 'パラメータ$1は有効な高さでなければなりません。',
+	'validation-error-invalid-width' => '引数$1は有効な幅でなければなりません。',
+	'validation-error-invalid-height' => '引数$1は有効な高さでなければなりません。',
 	'validation-error-invalid-distance' => '引数$1は有効な距離でなければなりません。',
 	'validation-error-invalid-distances' => '引数$1は、1つ以上の有効な距離でなければなりません。',
 	'validation-error-invalid-image' => '引数$1は有効な画像でなければなりません。',
@@ -2286,6 +2334,7 @@ $1',
 	'maps-geocoder-not-available' => '地図のジオコーディング機能は利用できません。指定した位置をジオコーディングできません。',
 	'maps_click_to_activate' => 'クリックして地図をアクティブに',
 	'maps_centred_on' => '地図の中心は $1、$2。',
+	'maps-googlemaps2-incompatbrowser' => 'あなたのブラウザーは Google Maps v2 と互換性がありません。',
 	'maps_overlays' => 'オーバーレイ',
 	'maps_photos' => '写真',
 	'maps_videos' => '動画',
@@ -2451,6 +2500,7 @@ $1',
 	'maps-googlemaps3-par-kml' => "KML-Fichieren déi op d'Kaart musse geluede ginn.",
 	'maps-osm-par-thumbs' => 'Miniaturbiller weisen',
 	'maps-osm-par-photos' => 'Fotoe weisen',
+	'maps-yahoomaps-par-type' => 'Den Typ vu Kaart den am Ufank gewise gëtt.',
 );
 
 /** Lithuanian (Lietuvių)
@@ -2667,7 +2717,147 @@ $messages['mr'] = array(
  * @author Anakmalaysia
  */
 $messages['ms'] = array(
+	'maps-desc' => 'Membolehkan pembenaman petak dinamik pada laman wiki, pembuatan geokod alamat dan bermacam-macam lagi operasi geografi. ([http://mapping.referata.com/wiki/Examples tunjuk cara])',
+	'right-geocode' => 'Geokod',
+	'maps_map' => 'Peta',
+	'maps-loading-map' => 'Peta sedang dimuatkan...',
+	'maps-load-failed' => 'Peta tidak dapat dimuatkan!',
+	'maps-markers' => 'Penanda',
+	'maps-others' => 'lain-lain',
+	'maps-ns-layer' => 'Lapisan',
+	'maps-ns-layer-talk' => 'Perbincangan lapisan',
+	'maps-layer-property' => 'Sifat',
 	'maps-layer-value' => 'Nilai',
+	'maps-layer-errors' => 'Ralat',
+	'maps-error-invalid-layerdef' => 'Takrifan lapisan ini tidak sah.',
+	'maps-error-invalid-layertype' => 'Tiada lapisan jenis "$1". {{PLURAL:$3|Jenis|Jenis-jenis}} ini sahaja yang disokong: $2',
+	'maps-error-no-layertype' => 'Anda perlu menentukan jenis lapisan. {{PLURAL:$2|Jenis|Jenis-jenis}} ini sahaja yang disokong: $1',
+	'validation-error-invalid-layer' => 'Parameter $1 mestilah lapisan yang sah.',
+	'validation-error-invalid-layers' => 'Parameter $1 mestilah sekurang-kurangnya satu lapisan yang sah.',
+	'maps-layer-of-type' => 'Lapisan jenis $1',
+	'maps-layer-type-supported-by' => 'Jenis lapisan ini {{PLURAL:$2|hanya boleh digunakan dengan perkhidmatan pemetaan $1|boleh digunakan dengan perkhidmatan-perkhidmatan pemetaan yang berikut: $1}}.',
+	'maps-coordinates-description' => 'Cangkuk penghurai untuk memformatkan koordinat daripada/kepada sebarang format yang disokong.',
+	'maps-displaymap-description' => 'Memaparkan peta geografi tanpa sebarang penanda tentuan wiki padanya.',
+	'maps-displaypoint-description' => 'Memaparkan peta geografi dengan sekurang-kurangnya satu penanda tentuan wiki padanya.',
+	'maps-distance-description' => 'Menukar nilai jarak yang menggunakan unit disokong yang tertentu kepada setaraannya yang menggunakan unit yang lain.',
+	'maps-finddestination-description' => 'Mencari tujuan dari satu titik permulaan (yang boleh dinyatakan dalam sebarang format yang disokong), bearing permulaan dan jarak.',
+	'maps-geocode-description' => 'Membolehkan pembuatan geokod alamat, iaitu menukar lokasi yang boleh dibaca oleh manusia kepada peranggu koordinat. Wujudnya sokongan untuk beberapa perkhidmatan geokod yang tidak boleh disamakan dengan perkhidmatan pemetaan.',
+	'maps-geodistance-description' => 'Menghitung jarak geografi antara dua titik, daripada/kepada sebarang format yang disokong.',
+	'maps-mapsdoc-description' => 'Memaparkan jadual parameter untuk perkhidmatan pemetaan tertentu bersama nilai-nilai asali dan keterangannya.',
+	'maps-mapsdoc-par-service' => 'Perkhidmatan pemetaan untuk memaparkan dokumentasi parameter.',
+	'maps-mapsdoc-par-language' => 'Bahasa untuk memaparkan dokumentasi. Jika tiada terjemahannya, Bahasa Inggeris digunakan pula.',
+	'maps-coordinates-par-location' => 'Koordinat yang ingin diformatkan.',
+	'maps-coordinates-par-format' => 'Format sasaran untuk koordinat.',
+	'maps-coordinates-par-directional' => 'Menunjukkan sama ada koordinat wajar ditunjukkan berarah atau tidak.',
+	'maps-distance-par-distance' => 'Nilai jarak yang ingin ditukar kepada setaraannya dengan unit yang tertentu.',
+	'maps-distance-par-decimals' => 'Bilangan maksimum angka pecahan untuk digunakan dalam nilai hasil.',
+	'maps-distance-par-unit' => 'Unit paparan nilai jarak.',
+	'maps-finddestination-par-location' => 'Lokasi permulaan.',
+	'maps-finddestination-par-bearing' => 'Bearing permulaan.',
+	'maps-finddestination-par-distance' => 'Jarak perjalanan.',
+	'maps-finddestination-par-format' => 'Format untuk memaparkan destinasi.',
+	'maps-finddestination-par-directional' => 'Menunjukkan sama ada format destinasi wajar berarah atau tidak.',
+	'maps-finddestination-par-allowcoordinates' => 'Menunjukkan sama ada koordinat wajar dibenarkan. Jika ditetapkan tidak, hanya alamat yang diterima.',
+	'maps-finddestination-par-geoservice' => 'Perkhidmatan geokod yang digunakan untuk membuat geokod untuk nilai sekiranya berupa alamat.',
+	'maps-finddestination-par-mappingservice' => 'Parameter untuk menunjukkan perkhidmatan pemetaan untuk digunakan dengan fungsi ini.
+Ini akan membolehkan peta untuk mengatasi nilai asali parameter perkhidmatan dengan nilai yang paling sesuai untuk perkhidmatan pemetaan berkenaan.
+(Contoh: Untuk Google Maps, pembuat geokod Google akan digunakan.)',
+	'maps-geocode-par-location' => 'Alamat yang ingin dibuatkan geokod.',
+	'maps-geocode-par-mappingservice' => 'Perkhidmatan geokod yang ingin digunakan. Lihat semua perkhidmatan geokod yang sedia ada.',
+	'maps-geocode-par-geoservice' => 'Parameter ini membolehkan anda untuk menunjukkan bahawa anda sedang menggunakan permohonan geokod ini bersama perkhidmatan pemetaan yang tertentu.
+Setiap khidmat pemetaan boleh mengatasi nilai asali untuk perkhidmatan geokod.
+Ini adalah untuk pertimbangan legal, memandangkan anda tidak boleh menggunakan khidmat Google Geocoding melainkan bersama Google Maps.
+Penetapan parameter ini dan bukan parameter untuk perkhidmatan tersebut akan memastikan anda tidak menggunakan gabungan yang tidak sah.',
+	'maps-geocode-par-allowcoordinates' => 'Membolehkan pematian sokongan untuk koordinat dalam fungsi ini. Mesti memilih ya atau tidak.
+Jika tidak, semua nilai akan ditukar menjadi geokod, termasuk koordinat yang sah.',
+	'maps-geocode-par-format' => 'Format koordinat yang terhasil.',
+	'maps-geocode-par-directional' => 'Menunjukkan sama ada koordinat wajar ditunjukkan berarah atau tidak.',
+	'maps-geodistance-par-location1' => 'Titik pertama dalam peranggu untuk mengira jarak antara.',
+	'maps-geodistance-par-location2' => 'Titik kedua dalam peranggu untuk mengira jarak antara.',
+	'maps-geodistance-par-unit' => 'Unit paparan nilai jarak.',
+	'maps-geodistance-par-decimals' => 'Bilangan maksimum angka pecahan untuk digunakan dalam nilai hasil.',
+	'maps-geodistance-par-mappingservice' => 'Perkhidmatan geokod yang digunakan untuk membuat geokod alamat.',
+	'maps-geodistance-par-geoservice' => 'Perkhidmatan pemetaan yang digunakan bersama yang ini.
+Ini boleh mempengaruhi nilai asali perkhidmatan geokod.',
+	'maps-displaymap-par-mappingservice' => 'Membolehkan penetapan perkhidmatan pemetaan yang akan digunakan untuk menghasilkan peta.',
+	'maps-displaymap-par-coordinates' => 'Lokasi yang akan dijadikan pusat peta pada mulanya.',
+	'maps-displaypoints-par-zoom' => 'Membolehkan penetapan tahap zum peta.
+Apabila tidak diberikan sementara wujudnya berbilang penanda pada peta, zom yang paling muat akan diambil, bukan nilai asali yang terkonfigurasi.',
+	'maps-displaypoints-par-mappingservice' => 'Membolehkan penetapan perkhidmatan pemetaan yang akan digunakan untuk menghasilkan peta.',
+	'maps-displaypoints-par-coordinates' => 'Sekurang-kurangnya satu lokasi untuk dipaparkan pada peta. Ini akan ditunjukkan dengan penanda.',
+	'maps-displaypoints-par-centre' => 'Membolehkan penetapan koordinat pusat peta untuk display_point.
+Menerima alamat dan koordinat sekali.
+Apabila sifat ini tidak dinyatakan, peta akan menentukan pusatnya sendiri pada penanda yang diberikan, ataupun di antara penanda-penanda yang diberikan.',
+	'maps-displaypoints-par-title' => 'Membolehkan penetapan teks yang akan dipaparkan dalam tetimbul semua penanda yang tiada tajuk tertentu.
+Apabila digunakan bersama label, tajuknya akan berupa tebal dan bergaris bawah.',
+	'maps-displaypoints-par-label' => 'Membolehkan penetapan teks yang akan dipaparkan dalam tetimbul semua penanda yang tiada label tertentu.',
+	'maps-displaypoints-par-icon' => 'Membolehkan penetapan ikon yang digunakan untuk semua penanda.',
+	'validation-error-invalid-location' => 'Parameter $1 mestilah lokasi yang sah.',
+	'validation-error-invalid-locations' => 'Parameter $1 mestilah sekurang-kurangnya satu lokasi yang sah.',
+	'validation-error-invalid-width' => 'Parameter $1 mestilah lebar yang sah.',
+	'validation-error-invalid-height' => 'Parameter $1 mestilah tinggi yang sah.',
+	'validation-error-invalid-distance' => 'Parameter $1 mestilah jarak yang sah.',
+	'validation-error-invalid-distances' => 'Parameter $1 mestilah sekurang-kurangnya satu jarak yang sah.',
+	'validation-error-invalid-image' => 'Parameter $1 mestilah imej yang sah.',
+	'validation-error-invalid-images' => 'Parameter $1 mestilah sekurang-kurangnya satu imej yang sah.',
+	'validation-error-invalid-goverlay' => 'Parameter $1 mestilah tindanan yang sah.',
+	'validation-error-invalid-goverlays' => 'Parameter $1 mestilah sekurang-kurangnya satu tindanan yang sah.',
+	'maps-abb-north' => 'U',
+	'maps-abb-east' => 'T',
+	'maps-abb-south' => 'S',
+	'maps-abb-west' => 'B',
+	'maps-latitude' => 'Garis lintang:',
+	'maps-longitude' => 'Garis bujur:',
+	'maps-invalid-coordinates' => 'Nilai $1 tidak dikenali sebagai peranggu koordinat yang sah.',
+	'maps_coordinates_missing' => 'Tiada koordinat diberikan bagi peta.',
+	'maps_geocoding_failed' => '{{PLURAL:$2|Alamat|Alamat-alamat}} yang berikut tidak dapat dijadikan geokod: $1.',
+	'maps_geocoding_failed_for' => '{{PLURAL:$2|Alamat|Alamat-alamat}} yang berikut tidak dapat dijadikan geokod dan digugurkan dari peta:
+$1',
+	'maps_unrecognized_coords' => '{{PLURAL:$2|Koordinat|Koordinat-koordinat}} yang berikut tidak dikenali: $1.',
+	'maps_unrecognized_coords_for' => '{{PLURAL:$2|Koordinat|Koordinat-koordinat}} yang berikut tidak dikenali dan digugurkan dari peta:
+$1',
+	'maps_map_cannot_be_displayed' => 'Peta tidak dapat dipaparkan.',
+	'maps-geocoder-not-available' => 'Tiada ciri geokod Peta. Lokasi anda tidak boleh diberi geokod.',
+	'maps_click_to_activate' => 'Klik untuk mengaktifkan peta',
+	'maps_centred_on' => 'Peta berpusat di $1, $2.',
+	'maps-par-resizable' => 'Membolehkan pelarasan saiz peta dengan menyeret sudut kanan bawahnya.',
+	'maps-par-geoservice' => 'Perkhidmatan geokod yang digunakan untuk membuat terjemahan antara alamat dan koordinat.',
+	'maps-par-zoom' => 'Tahap zum peta. Untuk peta yang ada penanda, ini akan berpangkal kepada tahap paling kerap dizumkan yang masih memaparkan semua penanda.',
+	'maps-par-width' => 'Membolehkan penetapan lebar peta. Pada asali, piksel dianggap sebagai unit, tetapi anda boleh menetapkan mana-mana unit yang berikut: px, ex, em, %.',
+	'maps-par-height' => 'Membolehkan penetapan tinggi peta. Pada asali, piksel dianggap sebagai unit, tetapi anda boleh menetapkan mana-mana unit yang berikut: px, ex, em, %.',
+	'maps-googlemaps2-incompatbrowser' => 'Pelayar anda tidak serasi dengan Google Maps v2.',
+	'maps_overlays' => 'Tindanan',
+	'maps_photos' => 'Gambar',
+	'maps_videos' => 'Video',
+	'maps_wikipedia' => 'Wikipedia',
+	'maps_webcams' => 'Kamera web',
+	'maps-googlemaps2-par-type' => 'Jenis peta untuk dipaparkan pada mulanya.',
+	'maps-googlemaps2-par-types' => 'Jenis-jenis peta yang tersedia melalui kawalan jenis.',
+	'maps-googlemaps2-par-controls' => 'Alat kawalan untuk diletakkan pada peta.',
+	'maps-googlemaps2-par-autozoom' => 'Membolehkan penatalan dengan roda tetikus.',
+	'maps-googlemaps2-par-kml' => 'Fail-fail KML untuk dimuatkan kepada peta.',
+	'maps-googlemaps2-par-overlays' => 'Tindanan yang boleh dipasang oleh pengguna.',
+	'maps-googlemaps3-incompatbrowser' => 'Pelayar anda tidak serasi dengan Google Maps v3.',
+	'maps-googlemaps3-par-type' => 'Jenis peta untuk dipaparkan pada mulanya.',
+	'maps-googlemaps3-par-types' => 'Jenis-jenis peta yang tersedia melalui kawalan jenis.',
+	'maps-googlemaps3-par-layers' => 'Lapisan khas untuk dimuatkan kepada peta.',
+	'maps-googlemaps3-par-controls' => 'Alat kawalan untuk diletakkan pada peta.',
+	'maps-googlemaps3-par-zoomstyle' => 'Gaya kawalan zum.',
+	'maps-googlemaps3-par-typestyle' => 'Gaya kawalan jenis.',
+	'maps-googlemaps3-par-autoinfowindows' => 'Membuka semua tetingkap maklumat secara automatik selepas laman dimuatkan.',
+	'maps-googlemaps3-par-kml' => 'Fail-fail KML untuk dimuatkan kepada peta.',
+	'maps-googlemaps3-par-gkml' => 'Fail-fail KML yang dihoskan oleh Google untuk dimuatkan pada peta.',
+	'maps-googlemaps3-par-fusiontables' => 'ID Google Fusion Tables yang patut dimuatkan pada peta.',
+	'maps-googlemaps3-par-tilt' => 'Ciri menyendengkan Peta ketika menggunakan Google Maps.',
+	'maps-googlemaps3-par-kmlrezoom' => 'Zumkan semula peta selepas lapisan-lapisan KML dimuatkan.',
+	'maps-openlayers-par-controls' => 'Alat kawalan untuk diletakkan pada peta.',
+	'maps-openlayers-par-layers' => 'Lapisan-lapisan yang akan tersedia pada pemilih lapisan. Lapisan pertama akan dipaparkan apabila peta dimuatkan.',
+	'maps-osm-par-thumbs' => 'Tunjukkan gambar kenit (thumbnail)',
+	'maps-osm-par-photos' => 'Tunjukkan gambar',
+	'maps-yahoomaps-par-type' => 'Jenis peta untuk dipaparkan pada mulanya.',
+	'maps-yahoomaps-par-types' => 'Jenis-jenis peta yang tersedia melalui kawalan jenis.',
+	'maps-yahoomaps-par-controls' => 'Alat kawalan untuk diletakkan pada peta.',
+	'maps-yahoomaps-par-autozoom' => 'Membolehkan penatalan dengan roda tetikus.',
 );
 
 /** Erzya (Эрзянь) */
@@ -2807,7 +2997,7 @@ $1.',
 	'maps-par-height' => 'Maakt het mogelijk om de hoogte van de kaart in te stellen. Standaard worden pixels als eenheid gebruikt, maar u kunt expliciet een van deze eenheden aangeven: px, ex, em, %.',
 	'maps-googlemaps2-incompatbrowser' => 'Uw browser kan niet werken met Google Maps v2.',
 	'maps_overlays' => "Overlay's",
-	'maps_photos' => "Foto's",
+	'maps_photos' => 'Afbeeldingen',
 	'maps_videos' => "Video's",
 	'maps_wikipedia' => 'Wikipedia',
 	'maps_webcams' => 'Webcams',
@@ -2980,11 +3170,15 @@ $messages['or'] = array(
 	'maps-layer-value' => 'ମୂଲ୍ୟ',
 );
 
-/** Deitsch (Deitsch) */
+/** Deitsch (Deitsch)
+ * @author Xqt
+ */
 $messages['pdc'] = array(
 	'maps-abb-north' => 'N',
+	'maps-abb-east' => 'O',
 	'maps-abb-south' => 'S',
 	'maps-abb-west' => 'W',
+	'maps_wikipedia' => 'Wikipedia',
 );
 
 /** Polish (Polski)
@@ -3397,6 +3591,7 @@ $messages['roa-tara'] = array(
 );
 
 /** Russian (Русский)
+ * @author Adata80
  * @author Haffman
  * @author Lockal
  * @author MaxSem
@@ -3498,6 +3693,7 @@ $1',
 	'maps_videos' => 'Видео',
 	'maps_wikipedia' => 'Википедия',
 	'maps_webcams' => 'Веб-камеры',
+	'maps-googlemaps2-par-kml' => 'KML файлы для загрузки на карту.',
 	'maps-googlemaps3-incompatbrowser' => 'Ваш браузер несовместим с Google Maps v3.',
 );
 
@@ -3568,7 +3764,8 @@ $messages['sl'] = array(
 	'maps_webcams' => 'Spletne kamere',
 );
 
-/** Serbian Cyrillic ekavian (‪Српски (ћирилица)‬)
+/** Serbian (Cyrillic script) (‪Српски (ћирилица)‬)
+ * @author Rancher
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
@@ -3580,12 +3777,17 @@ $messages['sr-ec'] = array(
 	'maps-abb-west' => 'З',
 	'maps-latitude' => 'Географска ширина:',
 	'maps-longitude' => 'Географска дужина:',
+	'maps_googlemaps2' => 'Гугл мапе, друго издање',
+	'maps_googlemaps3' => 'Гугл мапе, треће издање',
+	'maps_yahoomaps' => 'Јаху мапе',
+	'maps_openlayers' => 'Опенлејерс',
+	'maps_osm' => 'Опенстритмап',
 	'maps_photos' => 'Фотографије',
 	'maps_videos' => 'Видео снимци',
 	'maps_webcams' => 'Веб-камере',
 );
 
-/** Serbian Latin ekavian (‪Srpski (latinica)‬) */
+/** Serbian (Latin script) (‪Srpski (latinica)‬) */
 $messages['sr-el'] = array(
 	'maps_map' => 'Mapa',
 	'maps-loading-map' => 'Učitavanje mape...',
@@ -3849,7 +4051,7 @@ $messages['tr'] = array(
 	'maps_webcams' => 'Web kameraları',
 );
 
-/** Tatar (Cyrillic) (Татарча/Tatarça (Cyrillic))
+/** Tatar (Cyrillic script) (Татарча)
  * @author Ильнар
  */
 $messages['tt-cyrl'] = array(

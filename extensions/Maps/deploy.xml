@@ -3,7 +3,7 @@
     <global>
         <id>maps</id>
         <title>Maps</title>
-        <version>1.0.3</version>
+        <version>1.0.5</version>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>Jeroen De Dauw</maintainer>
         <license>GPL-v2</license>
@@ -11,7 +11,7 @@
         <description>Displays Google maps in the wiki</description>
         <helpurl>http://www.mediawiki.org/wiki/Extension:Maps</helpurl>
         <dependencies>
-            <dependency from="1.15.0">mw</dependency>
+            <dependency from="1.17.0">mw</dependency>
         </dependencies>
     </global>
     
