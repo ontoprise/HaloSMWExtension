@@ -633,7 +633,7 @@ class Installer {
 		}
 
 		// (re-)apply patches
-		$this->logger->info("Apply patches for $id");
+		$this->logger->info("(Re-)apply patches");
 		$this->reapplyPatches($updatedExtensions);
 
 
