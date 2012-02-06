@@ -20,13 +20,13 @@
  * before being processed. All units, IDs or otherwise, should be suitable for
  * printout in wikitext, and main IDs should moreover be suitable for printout
  * in HTML.
- * 
+ *
  * Subclasses that support unit conversion may interpret the output format set
  * via setOutputFormat() to allow a unit to be selected for display. Note that
  * this setting does not affect the internal representation of the value
  * though. So chosing a specific output format will change the behavior of
  * output functions like getLongWikiText(), but not of functions that access
- * the value itself, such as getUnit() or getDBKeys(). 
+ * the value itself, such as getUnit() or getDBKeys().
  *
  * @author Markus Krötzsch
  * @ingroup SMWDataValues
@@ -66,7 +66,6 @@ class SMWNumberValue extends SMWDataValue {
 	 */
 	static protected function parseNumberValue( $value, &$number, &$unit ) {
 		// Parse to find $number and (possibly) $unit
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$decseparator = wfMsgForContent( 'smw_decseparator' );
 		$kiloseparator = wfMsgForContent( 'smw_kiloseparator' );
 
@@ -86,7 +85,7 @@ class SMWNumberValue extends SMWDataValue {
 			}
 		}
 
-		if ( ( count( $parts ) == 1 ) || ( $numstring == '' ) ) { // no number found
+		if ( ( count( $parts ) == 1 ) || ( $numstring === '' ) ) { // no number found
 			return 1;
 		} elseif ( is_infinite( $number ) ) { // number is too large for this platform
 			return 2;
@@ -143,7 +142,7 @@ class SMWNumberValue extends SMWDataValue {
 	}
 
 	public function getShortWikiText( $linked = null ) {
-		if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' )
+		if ( is_null( $linked ) || ( $linked === false ) || ( $this->m_outformat == '-' )
 			|| ( $this->m_outformat == '-u' ) || ( $this->m_outformat == '-n' ) || ( !$this->isValid() ) ) {
 			return $this->m_caption;
 		} else {
@@ -154,7 +153,7 @@ class SMWNumberValue extends SMWDataValue {
 			foreach ( $this->m_unitvalues as $unit => $value ) {
 				if ( $unit != $this->m_unitin ) {
 					$tooltip .= $sep . smwfNumberFormat( $value );
-					if ( $unit != '' ) {
+					if ( $unit !== '' ) {
 						$tooltip .= '&#160;' . $unit;
 					}
 					$sep = ' <br />';
@@ -164,8 +163,8 @@ class SMWNumberValue extends SMWDataValue {
 					}
 				}
 			}
-			if ( $tooltip != '' ) {
-				SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
+			if ( $tooltip !== '' ) {
+				SMWOutputs::requireResource( 'ext.smw.tooltips' );
 				return '<span class="smwttinline">' . $this->m_caption . '<span class="smwttcontent">' . $tooltip . '</span></span>';
 			} else {
 				return $this->m_caption;
@@ -191,7 +190,7 @@ class SMWNumberValue extends SMWDataValue {
 					$result .= ', ';
 				}
 				$result .= ( $this->m_outformat != '-' ? smwfNumberFormat( $value ) : $value );
-				if ( $unit != '' ) {
+				if ( $unit !== '' ) {
 					$result .= '&#160;' . $unit;
 				}
 				$i++;
@@ -217,7 +216,7 @@ class SMWNumberValue extends SMWDataValue {
 	public function getWikiValue() {
 		if ( $this->isValid() ) {
 			$unit = $this->getUnit();
-			return strval( $this->m_dataitem->getSerialization() ) . ( $unit != '' ? ' ' . $unit : '' );
+			return smwfNumberFormat( $this->m_dataitem->getSerialization() ) . ( $unit !== '' ? ' ' . $unit : '' );
 		} else {
 			return 'error';
 		}
@@ -277,7 +276,7 @@ class SMWNumberValue extends SMWDataValue {
 	protected function convertToMainUnit( $number, $unit ) {
 		$this->m_dataitem = new SMWDINumber( $number );
 		$this->m_unitin = '';
-		return ( $unit == '' );
+		return ( $unit === '' );
 	}
 
 	/**

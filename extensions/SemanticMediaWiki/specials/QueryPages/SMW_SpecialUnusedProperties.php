@@ -16,7 +16,6 @@ class SMWSpecialUnusedProperties extends SpecialPage {
 	
 	public function __construct() {
 		parent::__construct( 'UnusedProperties' );
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 	}
 
 	public function execute( $param ) {
@@ -67,7 +66,7 @@ class SMWUnusedPropertiesPage extends SMWQueryPage {
 	function formatResult( $skin, /* SMWDIProperty */ $result ) {
 		$linker = smwfGetLinker();
 		
-		$proplink = $linker->makeKnownLinkObj(
+		$proplink = $linker->link(
 			$result->getDiWikiPage()->getTitle(),
 			$result->getLabel()
 		);

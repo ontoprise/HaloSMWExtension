@@ -2,7 +2,7 @@
 
 /**
  * File holding the SMWRDFXMLSerializer class that provides basic functions for
- * serialising OWL data in RDF/XML syntax. 
+ * serialising OWL data in RDF/XML syntax.
  *
  * @file SMW_Serializer.php
  * @ingroup SMW
@@ -12,7 +12,7 @@
 
 /**
  * Class for serializing exported data (encoded as SMWExpData object) in
- * RDF/XML. 
+ * RDF/XML.
  *
  * @ingroup SMW
  */
@@ -20,7 +20,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	/**
 	 * True if the $pre_ns_buffer contains the beginning of a namespace
 	 * declaration block to which further declarations for the current
-	 * context can be appended. 
+	 * context can be appended.
 	 */
 	protected $namespace_block_started;
 	/**
@@ -70,7 +70,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 		$this->post_ns_buffer .= "\t<!-- Created by Semantic MediaWiki, http://semantic-mediawiki.org/ -->\n";
 		$this->post_ns_buffer .= '</rdf:RDF>';
 	}
-	
+
 	public function serializeDeclaration( $uri, $typename ) {
 		$this->post_ns_buffer .= "\t<$typename rdf:about=\"$uri\" />\n";
 	}
@@ -91,7 +91,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 		$this->namespace_block_started = false;
 		return $result;
 	}
-	
+
 	protected function serializeNamespace( $shortname, $uri ) {
 		if ( $this->namespaces_are_global ) {
 			$this->global_namespaces[$shortname] = true;
@@ -169,8 +169,9 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	}
 
 	/**
-	 * Add a serialization of the given SMWExpLiteral to the output,
-	 * assuming that an opening property tag is alerady there.
+	 * Add to the output a serialization of a property assignment where an
+	 * SMWExpLiteral is the object. It is assumed that a suitable subject
+	 * block has already been openend.
 	 *
 	 * @param $expResourceProperty SMWExpNsResource the property to use
 	 * @param $expLiteral SMWExpLiteral the data value to use
@@ -178,7 +179,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	 */
 	protected function serializeExpLiteral( SMWExpNsResource $expResourceProperty, SMWExpLiteral $expLiteral, $indent ) {
 		$this->post_ns_buffer .= $indent . '<' . $expResourceProperty->getQName();
-		if ( $expLiteral->getDatatype() != '' ) {
+		if ( $expLiteral->getDatatype() !== '' ) {
 			$this->post_ns_buffer .= ' rdf:datatype="' . $expLiteral->getDatatype() . '"';
 		}
 		$this->post_ns_buffer .= '>' . $this->makeAttributeValueString( $expLiteral->getLexicalForm() ) .
@@ -186,8 +187,9 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	}
 
 	/**
-	 * Add a serialization of the given SMWExpResource to the output,
-	 * assuming that an opening property tag is alerady there.
+	 * Add to the output a serialization of a property assignment where an
+	 * SMWExpResource is the object. It is assumed that a suitable subject
+	 * block has already been openend.
 	 *
 	 * @param $expResourceProperty SMWExpNsResource the property to use
 	 * @param $expResource SMWExpResource the data value to use
@@ -197,7 +199,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	protected function serializeExpResource( SMWExpNsResource $expResourceProperty, SMWExpResource $expResource, $indent, $isClassTypeProp ) {
 		$this->post_ns_buffer .= $indent . '<' . $expResourceProperty->getQName();
 		if ( !$expResource->isBlankNode() ) {
-			if ( ( $expResource instanceof SMWExpNsResource ) && ( $expResource->getNamespaceID() == 'wiki' ) ) { 
+			if ( ( $expResource instanceof SMWExpNsResource ) && ( $expResource->getNamespaceID() == 'wiki' ) ) {
 				// very common case, reduce bandwidth
 				$this->post_ns_buffer .= ' rdf:resource="&wiki;' . $expResource->getLocalName() . '"';
 			} else {
@@ -219,6 +221,9 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	 * @param $expResource array of (SMWExpResource or SMWExpData)
 	 * @param $indent string specifying a prefix for indentation (usually a sequence of tabs)
 	 * @param $isClassTypeProp boolean whether the resource must be declared as a class
+	 *
+	 * @bug The $isClassTypeProp parameter is not properly taken into account.
+	 * @bug Individual resources are not serialised properly.
 	 */
 	protected function serializeExpCollection( SMWExpNsResource $expResourceProperty, array $collection, $indent, $isClassTypeProp ) {
 		$this->post_ns_buffer .= $indent . '<' . $expResourceProperty->getQName() . " rdf:parseType=\"Collection\">\n";
@@ -226,17 +231,19 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 			if ( $expElement instanceof SMWExpData ) {
 				$this->serializeNestedExpData( $expElement, $indent );
 			} else {
-				$this->serializeExpResource( $expResourceProperty, $expElement, $indent );
+				// FIXME: the below is not the right thing to do here
+				//$this->serializeExpResource( $expResourceProperty, $expElement, $indent );
 			}
 			if ( $isClassTypeProp ) {
-				$this->requireDeclaration( $expResource, SMW_SERIALIZER_DECL_CLASS );
+				// FIXME: $expResource is undefined
+				//$this->requireDeclaration( $expResource, SMW_SERIALIZER_DECL_CLASS );
 			}
 		}
 		$this->post_ns_buffer .= "$indent</" . $expResourceProperty->getQName() . ">\n";
 	}
-	
+
 	/**
-	 * Escape a string in the special form that is required for values in 
+	 * Escape a string in the special form that is required for values in
 	 * DTD entity declarations in XML. Namely, this require the percent sign
 	 * to be replaced.
 	 *
@@ -250,7 +257,7 @@ class SMWRDFXMLSerializer extends SMWSerializer{
 	/**
 	 * Escape a string as required for using it in XML attribute values.
 	 *
-	 * @param $string string to be escaped 
+	 * @param $string string to be escaped
 	 * @return string
 	 */
 	protected function makeAttributeValueString( $string ) {

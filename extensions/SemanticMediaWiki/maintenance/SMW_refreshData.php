@@ -152,7 +152,7 @@ if (  array_key_exists( 'f', $options ) ) {
 	echo "\nAll storage structures have been deleted and recreated.\n\n";
 }
 
-$linkCache =& LinkCache::singleton();
+$linkCache = LinkCache::singleton();
 $num_files = 0;
 if ( $pages == false ) {
 	print "Refreshing all semantic data in the database!\n---\n" .
@@ -181,16 +181,21 @@ if ( $pages == false ) {
 	print "$num_files IDs refreshed.\n";
 } else {
 	print "Refreshing specified pages!\n\n";
+	
 	foreach ( $pages as $page ) {
 		if ( $verbose ) {
 			print "($num_files) Processing page " . $page . " ...\n";
 		}
+		
 		$title = Title::newFromText( $page );
-		if ( $title !== null ) {
+		
+		if ( !is_null( $title ) ) {
 			$updatejob = new SMWUpdateJob( $title );
 			$updatejob->run();
 		}
+		
 		$num_files++;
 	}
+	
 	print "$num_files pages refreshed.\n";
 }

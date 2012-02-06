@@ -53,7 +53,7 @@ abstract class SMWDataValue {
 	 * that represents the current data content. All other data stored here
 	 * is only about presentation and parsing, but is not relevant to the
 	 * actual data that is represented (and stored later on).
-	 * 
+	 *
 	 * This variable must always be set to some data item, even if there
 	 * have been errors in initialising the data.
 	 * @var SMWDataItem
@@ -61,10 +61,23 @@ abstract class SMWDataValue {
 	protected $m_dataitem;
 
 	/**
-	 * The text label of the respective property or false if none given.
+	 * The property for which this value is constructed or null if none
+	 * given. Property pages are used to make settings that affect parsing
+	 * and display, hence it is sometimes needed to know them.
+	 *
 	 * @var SMWDIProperty
 	 */
 	protected $m_property = null;
+
+	/**
+	 * Wiki page in the context of which the value is to be interpreted, or
+	 * null if not given (or not on a page). This information is used to
+	 * parse user values such as "#subsection" which only make sense when
+	 * used on a certain page.
+	 *
+	 * @var SMWDIWikiPage
+	 */
+	protected $m_contextPage = null;
 
 	/**
 	 * The text label to be used for output or false if none given.
@@ -151,11 +164,10 @@ abstract class SMWDataValue {
 		// e.g. math. In general, we are not prepared to handle such content properly, and we
 		// also have no means of obtaining the user input at this point. Hence the assignement
 		// just fails.
-		// Note: \x07 was used in MediaWiki 1.11.0, \x7f is used now
+		// Note: \x07 was used in MediaWiki 1.11.0, \x7f is used now (backwards compatiblity, b/c)
 		if ( ( strpos( $value, "\x7f" ) === false ) && ( strpos( $value, "\x07" ) === false ) ) {
 			$this->parseUserValue( $value ); // may set caption if not set yet, depending on datavalue
 		} else {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_parseerror' ) );
 			if ( $this->m_caption === false ) {
 				$this->m_caption = $value; // ensure that at least input can be shown
@@ -174,7 +186,7 @@ abstract class SMWDataValue {
 	 * true if this was successful (requiring the type of the dataitem
 	 * to match the data value). If false is returned, the data value is
 	 * left unchanged (the data item was rejected).
-	 * 
+	 *
 	 * @note Even if this function returns true, the data value object
 	 * might become invalid if the content of the data item caused errors
 	 * in spite of it being of the right basic type. False is only returned
@@ -191,13 +203,27 @@ abstract class SMWDataValue {
 	}
 
 	/**
-	 * Specify the property to which this value refers. Used to generate search links and
-	 * to find custom settings that relate to the property.
+	 * Specify the property to which this value refers. Property pages are
+	 * used to make settings that affect parsing and display, hence it is
+	 * sometimes needed to know them.
 	 *
 	 * @param SMWDIProperty $property
 	 */
 	public function setProperty( SMWDIProperty $property ) {
 		$this->m_property = $property;
+	}
+
+	/**
+	 * Specify the wiki page to which this value refers. This information is
+	 * used to parse user values such as "#subsection" which only make sense
+	 * when used on a certain page.
+	 *
+	 * @since 1.7
+	 *
+	 * @param SMWDIWikiPage $contextPage
+	 */
+	public function setContextPage( SMWDIWikiPage $contextPage ) {
+		$this->m_contextPage = $contextPage;
 	}
 
 	/**
@@ -220,21 +246,22 @@ abstract class SMWDataValue {
 	}
 
 	/**
-	 * Servicelinks are special kinds of infolinks that are created from current parameters
-	 * and in-wiki specification of URL templates. This method adds the current property's
-	 * servicelinks found in the messages. The number and content of the parameters is
-	 * depending on the datatype, and the service link message is usually crafted with a
+	 * Servicelinks are special kinds of infolinks that are created from
+	 * current parameters and in-wiki specification of URL templates. This
+	 * method adds the current property's servicelinks found in the
+	 * messages. The number and content of the parameters is depending on
+	 * the datatype, and the service link message is usually crafted with a
 	 * particular datatype in mind.
 	 */
 	public function addServiceLinks() {
 		if ( $this->mHasServiceLinks ) {
 			return;
 		}
-		if ( $this->m_property !== null ) {
+		if ( !is_null( $this->m_property ) ) {
 			$propertyDiWikiPage = $this->m_property->getDiWikiPage();
 		}
-		if ( ( $this->m_property === null ) || ( $propertyDiWikiPage === null ) ) {
-			return; // no property known
+		if ( is_null( $this->m_property ) || is_null( $propertyDiWikiPage ) ) {
+			return; // no property known, or not associated with a page
 		}
 
 		$args = $this->getServiceLinkParams();
@@ -248,7 +275,6 @@ abstract class SMWDataValue {
 
 		foreach ( $servicelinks as $dataItem ) {
 			if ( !( $dataItem instanceof SMWDIString ) ) continue;
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 
 			$args[0] = 'smw_service_' . str_replace( ' ', '_', $dataItem->getString() ); // messages distinguish ' ' from '_'
 			$text = call_user_func_array( 'wfMsgForContent', $args );
@@ -333,7 +359,7 @@ abstract class SMWDataValue {
 	 * true if this was successful (requiring the type of the dataitem
 	 * to match the data value). If false is returned, the data value is
 	 * left unchanged (the data item was rejected).
-	 * 
+	 *
 	 * @note Even if this function returns true, the data value object
 	 * might become invalid if the content of the data item caused errors
 	 * in spite of it being of the right basic type. False is only returned
@@ -342,7 +368,7 @@ abstract class SMWDataValue {
 	 * @since 1.6
 	 *
 	 * @param $dataitem SMWDataItem
-	 * 
+	 *
 	 * @return boolean
 	 */
 	abstract protected function loadDataItem( SMWDataItem $dataItem );
@@ -367,7 +393,7 @@ abstract class SMWDataValue {
 	 * value is not used elsewhere when calling this method. The function can
 	 * return SMWThingDescription to not impose any condition, e.g. if parsing
 	 * failed. Error messages of this SMWDataValue object are propagated.
-	 * 
+	 *
 	 * @note Descriptions of values need to know their property to be able to
 	 * create a parsable wikitext version of a query condition again. Thus it
 	 * might be necessary to call setProperty() before using this method.
@@ -397,7 +423,7 @@ abstract class SMWDataValue {
 	 * @param string $comparator
 	 */
 	static protected function prepareValue( &$value, &$comparator ) {
-		// Loop over the comparators to determine which one is used and what the actual value is. 
+		// Loop over the comparators to determine which one is used and what the actual value is.
 		foreach ( SMWQueryLanguage::getComparatorStrings() as $srting ) {
 			if ( strpos( $value, $srting ) === 0 ) {
 				$comparator = SMWQueryLanguage::getComparatorFromString( substr( $value, 0, strlen( $srting ) ) );
@@ -416,10 +442,10 @@ abstract class SMWDataValue {
 	 * even if errors occurred, to avoid additional checks for not
 	 * accessing null. Hence, one must not assume that a non-null return
 	 * value here implies that isValid() returns true.
-	 * 
+	 *
 	 * @since 1.6
-	 * 
-	 * @return SMWDataItem
+	 *
+	 * @return SMWDataItem|SMWDIError
 	 */
 	public function getDataItem() {
 		if ( $this->isValid() ) {
@@ -516,10 +542,10 @@ abstract class SMWDataValue {
 	/**
 	 * Return text serialisation of info links. Ensures more uniform layout
 	 * throughout wiki (Factbox, Property pages, ...).
-	 * 
+	 *
 	 * @param integer $outputformat Element of the SMW_OUTPUT_ enum
 	 * @param $linker
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getInfolinkText( $outputformat, $linker = null ) {
@@ -568,9 +594,10 @@ abstract class SMWDataValue {
 	abstract public function getWikiValue();
 
 	/**
-	 * Return a short string that unambiguously specify the type of this value.
-	 * This value will globally be used to identify the type of a value (in spite
-	 * of the class it actually belongs to, which can still implement various types).
+	 * Return a short string that unambiguously specify the type of this
+	 * value. This value will globally be used to identify the type of a
+	 * value (in spite of the class it actually belongs to, which can still
+	 * implement various types).
 	 */
 	public function getTypeID() {
 		return $this->m_typeid;
@@ -578,15 +605,16 @@ abstract class SMWDataValue {
 
 	/**
 	 * Return an array of SMWLink objects that provide additional resources
-	 * for the given value.
-	 * Captions can contain some HTML markup which is admissible for wiki
-	 * text, but no more. Result might have no entries but is always an array.
+	 * for the given value. Captions can contain some HTML markup which is
+	 * admissible for wiki text, but no more. Result might have no entries
+	 * but is always an array.
 	 */
 	public function getInfolinks() {
-		if ( $this->isValid() && ( $this->m_property !== null ) ) {
+		if ( $this->isValid() && !is_null( $this->m_property ) ) {
 			if ( !$this->mHasSearchLink ) { // add default search link
 				$this->mHasSearchLink = true;
-				$this->m_infolinks[] = SMWInfolink::newPropertySearchLink( '+', $this->m_property->getLabel(), $this->getWikiValue() );
+				$this->m_infolinks[] = SMWInfolink::newPropertySearchLink( '+',
+					$this->m_property->getLabel(), $this->getWikiValue() );
 			}
 
 			if ( !$this->mHasServiceLinks ) { // add further service links
@@ -609,8 +637,8 @@ abstract class SMWDataValue {
 	/**
 	 * Return a string that identifies the value of the object, and that can
 	 * be used to compare different value objects.
-	 * Possibly overwritten by subclasses (e.g. to ensure that returned value is
-	 * normalised first)
+	 * Possibly overwritten by subclasses (e.g. to ensure that returned
+	 * value is normalized first)
 	 *
 	 * @return string
 	 */
@@ -633,38 +661,19 @@ abstract class SMWDataValue {
 	}
 
 	/**
-	 * Convenience method that returns the DB key that holds the value that is
-	 * to be used for sorting data of this kind. If this datatype does not
-	 * support sorting, then null is returned here.
-	 * 
-	 * @deprecated since SMW 1.6, use getDataItem()->get...() instead. Will vanish before SMW 1.7.
-	 */
-	public function getValueKey() {
-		$dbkeys = $this->getDBkeys();
-		$validx = $this->getValueIndex();
-
-		if ( array_key_exists( $validx, $dbkeys ) ) {
-			return $dbkeys[$validx];
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Return TRUE if a value was defined and understood by the given type,
+	 * Return true if a value was defined and understood by the given type,
 	 * and false if parsing errors occured or no value was given.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isValid() {
-		$this->unstub();
 		return !$this->mHasErrors && isset( $this->m_dataitem );
 	}
 
 	/**
 	 * Return a string that displays all error messages as a tooltip, or
 	 * an empty string if no errors happened.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getErrorText() {
@@ -674,7 +683,7 @@ abstract class SMWDataValue {
 	/**
 	 * Return an array of error messages, or an empty array
 	 * if no errors occurred.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getErrors() {
@@ -686,11 +695,12 @@ abstract class SMWDataValue {
 	 * Creates an error if the value is illegal.
 	 */
 	protected function checkAllowedValues() {
-		if ( $this->m_property !== null ) {
+		if ( !is_null( $this->m_property ) ) {
 			$propertyDiWikiPage = $this->m_property->getDiWikiPage();
 		}
 
-		if ( ( $this->m_property === null ) || ( $propertyDiWikiPage === null ) || ( !isset( $this->m_dataitem ) ) ) {
+		if ( is_null( $this->m_property ) || is_null( $propertyDiWikiPage ) ||
+			!isset( $this->m_dataitem ) ) {
 			return; // no property known, or no data to check
 		}
 
@@ -715,7 +725,7 @@ abstract class SMWDataValue {
 					$accept = true;
 					break;
 				} else {
-					if ( $valuestring != '' ) {
+					if ( $valuestring !== '' ) {
 						$valuestring .= ', ';
 					}
 					$valuestring .= $di->getString();
@@ -724,42 +734,10 @@ abstract class SMWDataValue {
 		}
 
 		if ( !$accept ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError(
 				wfMsgForContent( 'smw_notinenum', $this->getWikiValue(), $valuestring )
 			);
 		}
 	}
-
-	/**
-	 * @deprecated Use SMWDataItem::setDataItem() and SMWCompatibilityHelpers::dataItemFromDBKeys(). Will vanish before SMW 1.7.
-	 */
-	private function setDBkeys( array $args ) {}
-	/**
-	 * @deprecated This function is no longer used and should not be implemented in subclasses.
-	 */
-	protected function parseDBkeys( $args ) {}
-	/**
-	 * @deprecated Use SMWCompatibilityHelpers::getDBkeysFromDataItem(). Will vanish before SMW 1.7.
-	 */
-	public function getDBkeys() {}
-	/**
-	 * @deprecated Use SMWCompatibilityHelpers::getSignatureFromDataItemId(). Will vanish before SMW 1.7.
-	 */
-	public function getSignature() {}
-	/**
-	 * @deprecated Use SMWCompatibilityHelpers::getIndexFromDataItemId(). Will vanish before SMW 1.7.
-	 */
-	public function getValueIndex() {}
-	/**
-	 * @deprecated Use SMWCompatibilityHelpers::getIndexFromDataItemId(). Will vanish before SMW 1.7.
-	 */
-	public function getLabelIndex() {}
-	/**
-	 * @deprecated There is no more unstubbing now. Data is kept in lean
-	 * data items. If any other fields need costy initialization,
-	 * subclasses can create their own mechanism.
-	 */
-	public function unstub() {}
 
 }

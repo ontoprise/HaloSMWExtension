@@ -32,7 +32,6 @@ class SMWImportValue extends SMWDataValue {
 		$msglines = preg_split( "([\n][\s]?)", wfMsgForContent( "smw_import_$onto_ns" ) ); // get the definition for "$namespace:$section"
 
 		if ( count( $msglines ) < 2 ) { // error: no elements for this namespace
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_unknown_importns', $onto_ns ) );
 			$this->m_dataitem = new SMWDIString( 'ERROR' );
 			return;
@@ -73,7 +72,7 @@ class SMWImportValue extends SMWDataValue {
 		}
 
 		// check whether element of correct type was found (extracts data from factbox)
-		///TODO: parser needed to do that
+		/// TODO: parser needed to do that
 // 		if(SMWParseData::getSMWData($parser) instanceof SMWSemanticData) {
 // 			$this_ns = SMWParseData::getSMWData($parser)->getSubject()->getNamespace();
 // 			$error = null;
@@ -101,7 +100,6 @@ class SMWImportValue extends SMWDataValue {
 		try {
 			$this->m_dataitem = new SMWDIString( $this->m_namespace . ' ' . $this->m_section . ' ' . $this->m_uri );
 		} catch ( SMWStringLengthException $e ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_maxstring', '"' . $this->m_namespace . ' ' . $this->m_section . ' ' . $this->m_uri . '"' ) );
 			$this->m_dataitem = new SMWDIString( 'ERROR' );
 		}
@@ -122,7 +120,6 @@ class SMWImportValue extends SMWDataValue {
 			$this->m_dataitem = $dataItem;
 			$parts = explode( ' ', $dataItem->getString(), 3 );
 			if ( count( $parts ) != 3 ) {
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$this->addError( wfMsgForContent( 'smw_parseerror' ) );
 			} else {
 				$this->m_namespace = $parts[0];

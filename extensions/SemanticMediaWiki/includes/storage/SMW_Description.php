@@ -442,7 +442,11 @@ class SMWValueDescription extends SMWDescription {
 		if ( $asvalue ) {
 			return $comparator . $dataValue->getWikiValue();
 		} else { // this only is possible for values of Type:Page
-			return '[[' . $comparator . $dataValue->getWikiValue() . ']]';
+			if ( $comparator === '' ) { // some extra care for Category: pages
+				return '[[:' . $dataValue->getWikiValue() . ']]';
+			} else {
+				return '[[' . $comparator . $dataValue->getWikiValue() . ']]';
+			}
 		}
 	}
 
@@ -508,7 +512,7 @@ class SMWConjunction extends SMWDescription {
 			$result .= ( $result ? ' ' : '' ) . $desc->getQueryString( false );
 		}
 		
-		if ( $result == '' ) {
+		if ( $result === '' ) {
 			return $asvalue ? '+' : '';
 		} else { // <q> not needed for stand-alone conjunctions (AND binds stronger than OR)
 			return $asvalue ? " &lt;q&gt;{$result}&lt;/q&gt; " : $result;
@@ -634,7 +638,7 @@ class SMWDisjunction extends SMWDescription {
 		
 		if ( !$this->m_true ) {
 			if ( $description instanceof SMWClassDescription ) { // combine class descriptions
-				if ( $this->m_classdesc === null ) { // first class description
+				if ( is_null( $this->m_classdesc ) ) { // first class description
 					$this->m_classdesc = $description;
 					$this->m_descriptions[] = $description;
 				} else {
@@ -803,9 +807,9 @@ class SMWSomeProperty extends SMWDescription {
 		$propertyChainString = $this->m_property->getLabel();
 		$propertyname = $propertyChainString;
 
-		while ( ( $propertyname != '' ) && ( $subdesc instanceof SMWSomeProperty ) ) { // try to use property chain syntax
+		while ( ( $propertyname !== '' ) && ( $subdesc instanceof SMWSomeProperty ) ) { // try to use property chain syntax
 			$propertyname = $subdesc->getProperty()->getLabel();
-			if ( $propertyname != '' ) {
+			if ( $propertyname !== '' ) {
 				$propertyChainString .= '.' . $propertyname;
 				$subdesc = $subdesc->getDescription();
 			}

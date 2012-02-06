@@ -11,34 +11,6 @@
  */
 
 /**
- * Small data object that specifies one wiki page to be serialised.
- * SMWSmallTitle objects are used to queue pages for serialisation, hence it
- * should be small to save memory.
- *
- * @ingroup SMW
- */
-class SMWSmallTitle {
-	/// DB key version of the title.
-	public $dbkey;
-	/// MediaWiki namespace constant.
-	public $namespace;
-	/**
-	 * Recursion depth for serialising this object. Depth of 1 or above means
-	 * the object is serialised with all property values, and referenced
-	 * objects are serialised with depth reduced by 1. Depth 0 means that only
-	 * minimal declarations are serialised, so no dependencies are added. A
-	 * depth of -1 encodes "infinite" depth, i.e. a complete recursive
-	 * serialisation without limit.
-	 * @var integer
-	 */
-	public $recdepth = 1;
-
-	public function getHash() {
-		return $this->dbkey . ' ' . $this->namespace;
-	}
-}
-
-/**
  * Class for controlling the export of SMW page data, supporting high-level
  * features such as recursive export and backlink inclusion. The class controls
  * export independent of the serialisation syntax that is used.
@@ -120,7 +92,7 @@ class SMWExportController {
 		$this->serializer->clear();
 		$this->element_queue = array();
 		$this->element_done = array();
-		if ( $outfilename != '' ) {
+		if ( $outfilename !== '' ) {
 			$this->outputfile = fopen( $outfilename, 'w' );
 			if ( !$this->outputfile ) { // TODO Rather throw an exception here.
 				print "\nCannot open \"$outfilename\" for writing.\n";
@@ -135,18 +107,20 @@ class SMWExportController {
 	 * level of pages, i.e. it serialises parts of SMW content and implements
 	 * features like recursive export or backlinks that are available for this
 	 * type of data.
+	 * 
+	 * The recursion depth means the following. Depth of 1 or above means
+	 * the object is serialised with all property values, and referenced
+	 * objects are serialised with depth reduced by 1. Depth 0 means that only
+	 * minimal declarations are serialised, so no dependencies are added. A
+	 * depth of -1 encodes "infinite" depth, i.e. a complete recursive
+	 * serialisation without limit.
 	 *
 	 * @param SMWDIWikiPage $diWikiPage specifying the page to be exported
-	 * @param integer $recursiondepth specifying the depth of recursion, see
-	 * SMWSmallTitle::$recdepth
+	 * @param integer $recursiondepth specifying the depth of recursion
 	 */
 	protected function serializePage( SMWDIWikiPage $diWikiPage, $recursiondepth = 1 ) {
-		$st = new SMWSmallTitle();
-		$st->dbkey = $diWikiPage->getDBKey();
-		$st->namespace = $diWikiPage->getNamespace();
-		$st->recdepth = $recursiondepth;
-		if ( $this->isDone( $st ) ) return; // do not export twice
-		$this->markAsDone( $st );
+		if ( $this->isPageDone( $diWikiPage, $recursiondepth ) ) return; // do not export twice
+		$this->markPageAsDone( $diWikiPage, $recursiondepth );
 		$data = SMWExporter::makeExportData( $this->getSemanticData( $diWikiPage, ( $recursiondepth == 0 ) ) );
 		$this->serializer->serializeExpData( $data, $recursiondepth );
 
@@ -188,18 +162,18 @@ class SMWExportController {
 			if ( $this->add_backlinks ) {
 				wfProfileIn( "RDF::PrintPages::GetBacklinks" );
 				$inprops = smwfGetStore()->getInProperties( $diWikiPage );
+				
 				foreach ( $inprops as $inprop ) {
 					$propWikiPage = $inprop->getDiWikiPage();
-					if ( $propWikiPage !== null ) {
+					
+					if ( !is_null( $propWikiPage ) ) {
 						$this->queuePage( $propWikiPage, 0 ); // no real recursion along properties
 					}
+					
 					$inSubs = smwfGetStore()->getPropertySubjects( $inprop, $diWikiPage );
+					
 					foreach ( $inSubs as $inSub ) {
-						$stb = new SMWSmallTitle();
-						$stb->dbkey = $inSub->getDBkey();
-						$stb->namespace = $inSub->getNamespace();
-						$stb->recdepth = $subrecdepth;
-						if ( !$this->isDone($stb) ) {
+						if ( !$this->isPageDone( $inSub, $subrecdepth ) ) {
 							$semdata = $this->getSemanticData( $inSub, true );
 							$semdata->addPropertyObjectValue( $inprop, $diWikiPage );
 							$data = SMWExporter::makeExportData( $semdata );
@@ -215,11 +189,7 @@ class SMWExportController {
 					$pinst = new SMWDIProperty( '_INST' );
 	
 					foreach ( $instances as $instance ) {
-						$stb = new SMWSmallTitle();
-						$stb->dbkey = $instance->getDBkey();
-						$stb->namespace = $instance->getNamespace();
-	
-						if ( !array_key_exists( $stb->getHash(), $this->element_done ) ) {
+						if ( !array_key_exists( $instance->getHash(), $this->element_done ) ) {
 							$semdata = $this->getSemanticData( $instance, true );
 							$semdata->addPropertyObjectValue( $pinst, $diWikiPage );
 							$data = SMWExporter::makeExportData( $semdata );
@@ -238,12 +208,8 @@ class SMWExportController {
 	
 					while ( $resarray !== false ) {
 						$instance = end( $resarray )->getNextDataValue();
-	
-						$stb = new SMWSmallTitle();
-						$stb->dbkey = $instance->getDBkey();
-						$stb->namespace = $instance->getNamespace();
-	
-						if ( !array_key_exists( $stb->getHash(), $this->element_done ) ) {
+
+						if ( !array_key_exists( $instance->getHash(), $this->element_done ) ) {
 							$semdata = $this->getSemanticData( $instance, true );
 							$semdata->addPropertyObjectValue( $pinst, $diWikiPage );
 							$data = SMWExporter::makeExportData( $semdata );
@@ -259,57 +225,57 @@ class SMWExportController {
 	}
 
 	/**
-	 * Serialize data associated to a specific page.
-	 *
-	 * @param SMWSmallTitle $st specifying the page to be exported
-	 */
-	protected function serializeSmallTitle( SMWSmallTitle $st ) {
-		if ( $this->isDone( $st ) ) return; // do not export twice
-		$diWikiPage = new SMWDIWikiPage( $st->dbkey, $st->namespace, '' );
-		$this->serializePage( $diWikiPage, $st->recdepth );
-	}
-
-	/**
 	 * Add a given SMWDIWikiPage to the export queue if needed.
 	 */
 	protected function queuePage( SMWDIWikiPage $diWikiPage, $recursiondepth ) {
-		$spt = new SMWSmallTitle();
-		$spt->dbkey = $diWikiPage->getDBkey();
-		$spt->namespace = $diWikiPage->getNamespace();
-		$spt->recdepth = $recursiondepth;
-		if ( !$this->isDone( $spt ) ) {
-			$this->element_queue[$spt->getHash()] = $spt;
+		if ( !$this->isPageDone( $diWikiPage, $recursiondepth ) ) {
+			$diWikiPage->recdepth = $recursiondepth; // add a field
+			$this->element_queue[$diWikiPage->getHash()] = $diWikiPage;
 		}
 	}
 
 	/**
 	 * Mark an article as done while making sure that the cache used for this
-	 * stays reasonably small. Input is given as an SMWSmallTitle object.
+	 * stays reasonably small. Input is given as an SMWDIWikiPage object.
 	 */
-	protected function markAsDone( $st ) {
+	protected function markPageAsDone( SMWDIWikiPage $di, $recdepth ) {
+		$this->markHashAsDone( $di->getHash(), $recdepth );
+	}
+
+	/**
+	 * Mark a task as done while making sure that the cache used for this
+	 * stays reasonably small.
+	 */
+	protected function markHashAsDone( $hash, $recdepth ) {
 		if ( count( $this->element_done ) >= self::MAX_CACHE_SIZE ) {
 			$this->element_done = array_slice( $this->element_done,
-										self::CACHE_BACKJUMP,
-										self::MAX_CACHE_SIZE - self::CACHE_BACKJUMP,
-										true );
+				self::CACHE_BACKJUMP,
+				self::MAX_CACHE_SIZE - self::CACHE_BACKJUMP,
+				true );
 		}
-		$hash = $st->getHash();
-		if ( !$this->isDone( $st ) ) {
-			$this->element_done[$hash] = $st->recdepth; // mark title as done, with given recursion
+		if ( !$this->isHashDone( $hash, $recdepth ) ) {
+			$this->element_done[$hash] = $recdepth; // mark title as done, with given recursion
 		}
 		unset( $this->element_queue[$hash] ); // make sure it is not in the queue
 	}
-	
+
 	/**
 	 * Check if the given object has already been serialised at sufficient
 	 * recursion depth.
-	 * @param SMWSmallTitle $st specifying the object to check
+	 * @param SMWDIWikiPage $st specifying the object to check
 	 */
-	protected function isDone( SMWSmallTitle $st ) {
-		$hash = $st->getHash();
+	protected function isPageDone( SMWDIWikiPage $di, $recdepth ) {
+		return $this->isHashDone( $di->getHash(), $recdepth );
+	}
+
+	/**
+	 * Check if the given task has already been completed at sufficient
+	 * recursion depth.
+	 */
+	protected function isHashDone( $hash, $recdepth ) {
 		return ( ( array_key_exists( $hash, $this->element_done ) ) &&
 		         ( ( $this->element_done[$hash] == -1 ) || 
-		           ( ( $st->recdepth != -1 ) && ( $this->element_done[$hash] >= $st->recdepth ) ) ) ); 
+		           ( ( $recdepth != -1 ) && ( $this->element_done[$hash] >= $recdepth ) ) ) );
 	}
 
 	/**
@@ -344,7 +310,7 @@ class SMWExportController {
 	protected function flush( $force = false ) {
 		if ( !$force && ( $this->delay_flush > 0 ) ) {
 			$this->delay_flush -= 1;
-		} elseif ( $this->outputfile !== null ) {
+		} elseif ( !is_null( $this->outputfile ) ) {
 			fwrite( $this->outputfile, $this->serializer->flushContent() );
 		} else {
 			print $this->serializer->flushContent();
@@ -374,7 +340,7 @@ class SMWExportController {
 	public function printPages( $pages, $recursion = 1, $revisiondate = false  ) {
 		wfProfileIn( "RDF::PrintPages" );
 
-		$linkCache =& LinkCache::singleton();
+		$linkCache = LinkCache::singleton();
 		$this->prepareSerialization();
 		$this->delay_flush = 10; // flush only after (fully) printing 11 objects
 
@@ -386,11 +352,9 @@ class SMWExportController {
 				$rev = Revision::getTimeStampFromID( $title, $title->getLatestRevID() );
 				if ( $rev < $revisiondate ) continue;
 			}
-			$st = new SMWSmallTitle();
-			$st->dbkey = $title->getDBkey();
-			$st->namespace = $title->getNamespace();
-			$st->recdepth = $recursion==1 ? -1 : 1;
-			$this->element_queue[$st->getHash()] = $st;
+
+			$diPage = SMWDIWikiPage::newFromTitle( $title );
+			$this->queuePage( $diPage, ( $recursion==1 ? -1 : 1 ) );
 		}
 
 		$this->serializer->startSerialization();
@@ -403,7 +367,8 @@ class SMWExportController {
 		$this->serializer->serializeExpData( SMWExporter::getOntologyExpData( $ontologyuri ) );
 
 		while ( count( $this->element_queue ) > 0 ) {
-			$this->serializeSmallTitle( reset( $this->element_queue ) );
+			$diPage = reset( $this->element_queue );
+			$this->serializePage( $diPage, $diPage->recdepth );
 			$this->flush();
 			$linkCache->clear(); // avoid potential memory leak
 		}
@@ -425,7 +390,7 @@ class SMWExportController {
 	 * @param integer $delayeach number of pages to process between two sleeps 
 	 */
 	public function printAll( $outfile, $ns_restriction = false, $delay, $delayeach ) {
-		$linkCache =& LinkCache::singleton();
+		$linkCache = LinkCache::singleton();
 		$db = wfGetDB( DB_SLAVE );
 
 		$this->delay_flush = 10;
@@ -440,22 +405,20 @@ class SMWExportController {
 
 		for ( $id = 1; $id <= $end; $id += 1 ) {
 			$title = Title::newFromID( $id );
-			if ( ( $title === null ) || !smwfIsSemanticsProcessed( $title->getNamespace() ) ) continue;
+			if ( is_null( $title ) || !smwfIsSemanticsProcessed( $title->getNamespace() ) ) continue;
 			if ( !SMWExportController::fitsNsRestriction( $ns_restriction, $title->getNamespace() ) ) continue;
 			$a_count += 1; // DEBUG
 
-			$st = new SMWSmallTitle();
-			$st->dbkey = $title->getDBkey();
-			$st->namespace = $title->getNamespace();
-			$st->recdepth = 1;
-			$this->element_queue[$st->getHash()] = $st;
+			$diPage = SMWDIWikiPage::newFromTitle( $title );
+			$this->queuePage( $diPage, 1 );
 
 			while ( count( $this->element_queue ) > 0 ) {
-				$this->serializeSmallTitle( reset( $this->element_queue ) );
+				$diPage = reset( $this->element_queue );
+				$this->serializePage( $diPage, $diPage->recdepth );
 				// resolve dependencies that will otherwise not be printed
-				foreach ( $this->element_queue as $key => $staux ) {
-					if ( !smwfIsSemanticsProcessed( $staux->namespace ) ||
-					     !SMWExportController::fitsNsRestriction( $ns_restriction, $staux->namespace ) ) {
+				foreach ( $this->element_queue as $key => $diaux ) {
+					if ( !smwfIsSemanticsProcessed( $diaux->getNamespace() ) ||
+					     !SMWExportController::fitsNsRestriction( $ns_restriction, $diaux->getNamespace() ) ) {
 						// Note: we do not need to check the cache to guess if an element was already
 						// printed. If so, it would not be included in the queue in the first place.
 						$d_count += 1; // DEBUG
@@ -501,7 +464,7 @@ class SMWExportController {
 		$query = '';
 		foreach ( $smwgNamespacesWithSemanticLinks as $ns => $enabled ) {
 			if ( $enabled ) {
-				if ( $query != '' ) $query .= ' OR ';
+				if ( $query !== '' ) $query .= ' OR ';
 				$query .= 'page_namespace = ' . $db->addQuotes( $ns );
 			}
 		}
@@ -512,14 +475,16 @@ class SMWExportController {
 
 		foreach ( $res as $row ) {
 			$foundpages = true;
-			$st = new SMWSmallTitle();
-			$st->dbkey = $row->page_title;
-			$st->namespace = $row->page_namespace;
-			$st->recdepth = 0;
-			$this->serializeSmallTitle( $st );
-			$this->flush();
-			$linkCache->clear();
+			try {
+				$diPage = new SMWDIWikiPage( $row->page_title, $row->page_namespace, '' );
+				$this->serializePage( $diPage, 0 );
+				$this->flush();
+				$linkCache->clear();
+			} catch ( SMWDataItemException $e ) {
+				// strange data, who knows, not our DB table, keep calm and carry on
+			}
 		}
+
 		if ( $foundpages ) { // add link to next result page
 			if ( strpos( SMWExporter::expandURI( '&wikiurl;' ), '?' ) === false ) { // check whether we have title as a first parameter or in URL
 				$nexturl = SMWExporter::expandURI( '&export;?offset=' ) . ( $offset + $limit );
@@ -550,11 +515,9 @@ class SMWExportController {
 
 		global $wgSitename, $wgLanguageCode;
 
-		$db = & wfGetDB( DB_SLAVE );
 		$this->prepareSerialization();
 		$this->delay_flush = 35; // don't do intermediate flushes with default parameters
-		$linkCache = LinkCache::singleton();
-		
+
 		// assemble export data: 
 		$data = new SMWExpData( new SMWExpResource( '&wiki;#wiki' ) );
 		$ed = new SMWExpData( SMWExporter::getSpecialNsResource( 'swivt', 'Wikisite' ) );
@@ -571,10 +534,12 @@ class SMWExportController {
 		$ed = new SMWExpData( new SMWExpLiteral( $wgLanguageCode, null, 'http://www.w3.org/2001/XMLSchema#string' ) );
 		$data->addPropertyObjectValue( SMWExporter::getSpecialNsResource( 'swivt', 'langCode' ), $ed );
 		$mainpage = Title::newMainPage();
-		if ( $mainpage !== null ) {
+		
+		if ( !is_null( $mainpage ) ) {
 			$ed = new SMWExpData( new SMWExpResource( $mainpage->getFullURL() ) );
 			$data->addPropertyObjectValue( SMWExporter::getSpecialNsResource( 'swivt', 'mainPage' ), $ed );
 		}
+		
 		// statistical information
 		$ed = new SMWExpData( new SMWExpLiteral( SiteStats::pages(), null, 'http://www.w3.org/2001/XMLSchema#int' ) );
 		$data->addPropertyObjectValue( SMWExporter::getSpecialNsResource( 'swivt', 'pageCount' ), $ed );

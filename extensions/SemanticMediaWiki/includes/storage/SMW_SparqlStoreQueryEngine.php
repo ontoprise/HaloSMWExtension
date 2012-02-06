@@ -75,7 +75,7 @@ abstract class SMWSparqlCondition {
 	abstract public function isSafe();
 
 	public function getWeakConditionString() {
-		return implode( $this->weakConditions );
+		return implode( '', $this->weakConditions );
 	}
 
 }
@@ -98,7 +98,7 @@ class SMWSparqlFalseCondition extends SMWSparqlCondition {
 }
 
 /**
- * Represents a condition that matches everything. Weak conditions (see 
+ * Represents a condition that matches everything. Weak conditions (see
  * SMWSparqlCondition::$weakConditions) might be still be included to
  * enable ordering (selecting sufficient data to order by).
  *
@@ -278,8 +278,7 @@ class SMWSparqlStoreQueryEngine {
 		$sparqlCondition = $this->getSparqlCondition( $query->getDescription() );
 
 		if ( $sparqlCondition instanceof SMWSparqlSingletonCondition ) {
-			$matchElement = $sparqlCondition->matchElement;
-			if ( $sparqlCondition->condition == '' ) { // all URIs exist, no querying
+			if ( $sparqlCondition->condition === '' ) { // all URIs exist, no querying
 				return 1;
 			} else {
 				$condition = $this->getSparqlConditionString( $sparqlCondition );
@@ -301,7 +300,6 @@ class SMWSparqlStoreQueryEngine {
 				return (int)$sparqlResultWrapper->getNumericValue();
 			} else {
 				///@todo Implement error reporting for counting queries.
-// 				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 // 				$result->addErrors( array( wfMsgForContent( 'smw_db_sparqlqueryproblem' ) ) );
 			}
 		}
@@ -320,7 +318,7 @@ class SMWSparqlStoreQueryEngine {
 
 		if ( $sparqlCondition instanceof SMWSparqlSingletonCondition ) {
 			$matchElement = $sparqlCondition->matchElement;
-			if ( $sparqlCondition->condition == '' ) { // all URIs exist, no querying
+			if ( $sparqlCondition->condition === '' ) { // all URIs exist, no querying
 				$results = array( array ( $matchElement ) );
 			} else {
 				$condition = $this->getSparqlConditionString( $sparqlCondition );
@@ -358,8 +356,7 @@ class SMWSparqlStoreQueryEngine {
 		$entries = array();
 
 		if ( $sparqlCondition instanceof SMWSparqlSingletonCondition ) {
-			$matchElement = $sparqlCondition->matchElement;
-			if ( $sparqlCondition->condition == '' ) { // all URIs exist, no querying
+			if ( $sparqlCondition->condition === '' ) { // all URIs exist, no querying
 				$sparql = 'None (no conditions).';
 			} else {
 				$condition = $this->getSparqlConditionString( $sparqlCondition );
@@ -393,7 +390,7 @@ class SMWSparqlStoreQueryEngine {
 	 */
 	protected function getSparqlConditionString( SMWSparqlCondition &$sparqlCondition ) {
 		$condition = $sparqlCondition->getWeakConditionString();
-		if ( ( $condition == '' ) && !$sparqlCondition->isSafe() ) {
+		if ( ( $condition === '' ) && !$sparqlCondition->isSafe() ) {
 			$swivtPageResource = SMWExporter::getSpecialNsResource( 'swivt', 'page' );
 			$condition = '?' . self::RESULT_VARIABLE . ' ' . $swivtPageResource->getQName() . " ?url .\n";
 		}
@@ -423,10 +420,12 @@ class SMWSparqlStoreQueryEngine {
 	 */
 	protected function getQueryResultFromSparqlResult( SMWSparqlResultWrapper $sparqlResultWrapper, SMWQuery $query ) {
 		$resultDataItems = array();
+		
 		foreach ( $sparqlResultWrapper as $resultRow ) {
 			if ( count( $resultRow ) > 0 ) {
 				$dataItem = SMWExporter::findDataItemForExpElement( $resultRow[0] );
-				if ( $dataItem !== null ) {
+				
+				if ( !is_null( $dataItem ) ) {
 					$resultDataItems[] = $dataItem;
 				}
 			}
@@ -444,11 +443,9 @@ class SMWSparqlStoreQueryEngine {
 		switch ( $sparqlResultWrapper->getErrorCode() ) {
 			case SMWSparqlResultWrapper::ERROR_NOERROR: break;
 			case SMWSparqlResultWrapper::ERROR_INCOMPLETE:
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$result->addErrors( array( wfMsgForContent( 'smw_db_sparqlqueryincomplete' ) ) );
 			break;
 			default:
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$result->addErrors( array( wfMsgForContent( 'smw_db_sparqlqueryproblem' ) ) );
 			break;
 		}
@@ -527,6 +524,7 @@ class SMWSparqlStoreQueryEngine {
 		$filter = '';
 		$namespaces = $weakConditions = $orderVariables = array();
 		$singletonMatchElement = null;
+		$singletonMatchElementName = '';
 		$hasSafeSubconditions = false;
 		foreach ( $subDescriptions as $subDescription ) {
 			$subCondition = $this->buildSparqlCondition( $subDescription, $joinVariable, null );
@@ -545,7 +543,7 @@ class SMWSparqlStoreQueryEngine {
 					$namespaces[$matchElement->getNamespaceId()] = $matchElement->getNamespace();
 				}
 
-				if ( ( $singletonMatchElement !== null ) && 
+				if ( ( !is_null( $singletonMatchElement ) ) &&
 				     ( $singletonMatchElementName !== $matchElementName ) ) {
 					return new SMWSparqlFalseCondition();
 				}
@@ -560,16 +558,16 @@ class SMWSparqlStoreQueryEngine {
 			$orderVariables = array_merge( $orderVariables, $subCondition->orderVariables );
 		}
 
-		if ( $singletonMatchElement !== null ) {
-			if ( $filter != '' ) {
+		if ( !is_null( $singletonMatchElement ) ) {
+			if ( $filter !== '' ) {
 				$condition .= "FILTER( $filter )";
 			}
 			$result = new SMWSparqlSingletonCondition( $singletonMatchElement, $condition,
 			                                           $hasSafeSubconditions, $namespaces );
-		} elseif ( $condition == '' ) {
+		} elseif ( $condition === '' ) {
 			$result = new SMWSparqlFilterCondition( $filter, $namespaces );
 		} else {
-			if ( $filter != '' ) {
+			if ( $filter !== '' ) {
 				$condition .= "FILTER( $filter )";
 			}
 			$result = new SMWSparqlWhereCondition( $condition, $hasSafeSubconditions, $namespaces );
@@ -622,7 +620,7 @@ class SMWSparqlStoreQueryEngine {
 				if ( $matchElement instanceof SMWExpNsResource ) {
 					$namespaces[$matchElement->getNamespaceId()] = $matchElement->getNamespace();
 				}
-				if ( $subCondition->condition == '' ) {
+				if ( $subCondition->condition === '' ) {
 					$filter .= ( $filter ? ' || ' : '' ) . "?$joinVariable = $matchElementName";
 				} else {
 					$unionCondition .= ( $unionCondition ? ' UNION ' : '' ) .
@@ -633,11 +631,11 @@ class SMWSparqlStoreQueryEngine {
 			$weakConditions = array_merge( $weakConditions, $subCondition->weakConditions );
 		}
 
-		if ( ( $unionCondition == '' ) && ( $filter == '' ) ) {
+		if ( ( $unionCondition === '' ) && ( $filter === '' ) ) {
 			return new SMWSparqlFalseCondition();
-		} elseif ( $unionCondition == '' ) {
+		} elseif ( $unionCondition === '' ) {
 			$result = new SMWSparqlFilterCondition( $filter, $namespaces );
-		} elseif ( $filter == '' ) {
+		} elseif ( $filter === '' ) {
 			$result = new SMWSparqlWhereCondition( $unionCondition, $hasSafeSubconditions, $namespaces );
 		} else {
 			$subJoinVariable = $this->getNextVariable();
@@ -669,7 +667,7 @@ class SMWSparqlStoreQueryEngine {
 		if ( array_key_exists( $diProperty->getKey(), $this->m_sortkeys ) ) {
 			$innerOrderByProperty = $diProperty;
 		} else {
-			$innerOrderByProperty = null; 
+			$innerOrderByProperty = null;
 		}
 
 		//*** Prepare inner condition ***//
@@ -711,14 +709,14 @@ class SMWSparqlStoreQueryEngine {
 		}
 		$condition = "$subjectName $propertyName $objectName .\n";
 		$innerConditionString = $innerCondition->getCondition() . $innerCondition->getWeakConditionString();
-		if ( $innerConditionString != '' ) {
+		if ( $innerConditionString !== '' ) {
 			$condition .= "{ $innerConditionString}\n" ;
 		}
 		$result = new SMWSparqlWhereCondition( $condition, true, $namespaces );
 
 		//*** Record inner ordering variable if found ***//
 		$result->orderVariables = $innerCondition->orderVariables;
-		if ( ( $innerOrderByProperty !== null ) && ( $innerCondition->orderByVariable != '' ) ) {
+		if ( !is_null( $innerOrderByProperty ) && ( $innerCondition->orderByVariable !== '' ) ) {
 			$result->orderVariables[$diProperty->getKey()] = $innerCondition->orderByVariable;
 		}
 
@@ -744,14 +742,14 @@ class SMWSparqlStoreQueryEngine {
 			$categoryName = SMWTurtleSerializer::getTurtleNameForExpElement( $categoryExpElement );
 			$namespaces[$categoryExpElement->getNamespaceId()] = $categoryExpElement->getNamespace();
 			$newcondition = "{ ?$joinVariable " . $instExpElement->getQName() . " $categoryName . }\n";
-			if ( $condition == '' ) {
+			if ( $condition === '' ) {
 				$condition = $newcondition;
 			} else {
 				$condition .= "UNION\n$newcondition";
 			}
 		}
 
-		if ( $condition == '' ) { // empty disjunction: always false, no results to order
+		if ( $condition === '' ) { // empty disjunction: always false, no results to order
 			return new SMWSparqlFalseCondition();
 		}
 
@@ -799,19 +797,19 @@ class SMWSparqlStoreQueryEngine {
 			case SMW_CMP_LESS: $comparator = '<'; break;
 			case SMW_CMP_GRTR: $comparator = '>'; break;
 			case SMW_CMP_LEQ:  $comparator = '<='; break;
-			case SMW_CMP_GEQ:  $comparator = '>='; break;							
+			case SMW_CMP_GEQ:  $comparator = '>='; break;
 			case SMW_CMP_NEQ:  $comparator = '!='; break;
 			case SMW_CMP_LIKE: $comparator = 'regex'; break;
 			case SMW_CMP_NLKE: $comparator = '!regex'; break;
 			default:           $comparator = ''; // unkown, unsupported
 		}
 
-		if ( $comparator == '' ) {
+		if ( $comparator === '' ) {
 			$result = $this->buildTrueCondition( $joinVariable, $orderByProperty );
 		} elseif ( $comparator == '=' ) {
 			$expElement = SMWExporter::getDataItemHelperExpElement( $dataItem );
-			if ( $expElement === null ) {
-				$expElement = SMWExporter::getDataItemExpElement( $dataItem, null );
+			if ( is_null( $expElement ) ) {
+				$expElement = SMWExporter::getDataItemExpElement( $dataItem );
 			}
 			$result = new SMWSparqlSingletonCondition( $expElement );
 			$this->addOrderByDataForProperty( $result, $joinVariable, $orderByProperty, $dataItem->getDIType() );
@@ -822,7 +820,7 @@ class SMWSparqlStoreQueryEngine {
 				                              $dataItem->getString() ) . '$';
 				$result = new SMWSparqlFilterCondition( "$comparator( ?$joinVariable, \"$pattern\", \"s\")", array() );
 				$this->addOrderByDataForProperty( $result, $joinVariable, $orderByProperty, $dataItem->getDIType() );
-			} else { 
+			} else {
 				$result = $this->buildTrueCondition( $joinVariable, $orderByProperty );
 			}
 		} else {
@@ -831,11 +829,11 @@ class SMWSparqlStoreQueryEngine {
 			$orderByVariable = $result->orderByVariable;
 
 			if ( $dataItem instanceof SMWDIWikiPage ) {
-				$expElement = SMWExporter::getDataItemExpElement( $dataItem->getSortKeyDataItem(), null );
+				$expElement = SMWExporter::getDataItemExpElement( $dataItem->getSortKeyDataItem() );
 			} else {
 				$expElement = SMWExporter::getDataItemHelperExpElement( $dataItem );
-				if ( $expElement === null ) {
-					$expElement = SMWExporter::getDataItemExpElement( $dataItem, null );
+				if ( is_null( $expElement ) ) {
+					$expElement = SMWExporter::getDataItemExpElement( $dataItem );
 				}
 			}
 
@@ -882,7 +880,7 @@ class SMWSparqlStoreQueryEngine {
 	 * @param integer $diType DataItem type id if known, or SMWDataItem::TYPE_NOTYPE to determine it from the property
 	 */
 	protected function addOrderByDataForProperty( SMWSparqlCondition &$sparqlCondition, $mainVariable, $orderByProperty, $diType = SMWDataItem::TYPE_NOTYPE ) {
-		if ( $orderByProperty === null ) {
+		if ( is_null( $orderByProperty ) ) {
 			return;
 		}
 
@@ -924,7 +922,7 @@ class SMWSparqlStoreQueryEngine {
 	protected function addMissingOrderByConditions( SMWSparqlCondition &$sparqlCondition ) {
 		foreach ( $this->m_sortkeys as $propkey => $order ) {
 			if ( !array_key_exists( $propkey, $sparqlCondition->orderVariables ) ) { // Find missing property to sort by.
-				if ( $propkey == '' ) { // order by result page sortkey
+				if ( $propkey === '' ) { // order by result page sortkey
 					$this->addOrderByData( $sparqlCondition, self::RESULT_VARIABLE, SMWDataItem::TYPE_WIKIPAGE );
 					$sparqlCondition->orderVariables[$propkey] = $sparqlCondition->orderByVariable;
 				} else { // extend query to order by other property values
@@ -961,7 +959,7 @@ class SMWSparqlStoreQueryEngine {
 					// not supported in SPARQL; might be possible via function calls in some stores
 				}
 			}
-			if ( $orderByString != '' ) {
+			if ( $orderByString !== '' ) {
 				$result['ORDER BY'] = $orderByString;
 			}
 		}

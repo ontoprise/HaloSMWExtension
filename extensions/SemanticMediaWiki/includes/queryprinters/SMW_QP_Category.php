@@ -3,8 +3,11 @@
  * Print query results in alphabetic groups displayed in columns, a la the
  * standard Category pages and the default view in Semantic Drilldown.
  * Based on SMW_QP_List by Markus Krötzsch.
+ * 
  * @author David Loomer
  * @author Yaron Koren
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
+ * 
  * @file
  * @ingroup SMWQuery
  */
@@ -16,30 +19,29 @@
  */
 class SMWCategoryResultPrinter extends SMWResultPrinter {
 
-	protected $mDelim = ',';
-	protected $mTemplate = '';
-	protected $mUserParam = '';
-	protected $mNumColumns = 3;
+	protected $mDelim;
+	protected $mTemplate;
+	protected $mUserParam;
+	protected $mNumColumns;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		if ( array_key_exists( 'delim', $params ) ) {
-			$this->mDelim = str_replace( '_', ' ', $params['delim'] );
-		}
-		if ( array_key_exists( 'template', $params ) ) {
-			$this->mTemplate = trim( $params['template'] );
-		}
-		if ( array_key_exists( 'userparam', $params ) ) {
-			$this->mUserParam = trim( $params['userparam'] );
-		}
-		if ( array_key_exists( 'columns', $params ) ) {
-			$this->mNumColumns = (int)$params['columns'];
-		}
-	}
-
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.6.2
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
+		
+		$this->mUserParam = trim( $params['userparam'] );
+		$this->mDelim = trim( $params['delim'] );
+		$this->mNumColumns = $params['columns'];
+		$this->mTemplate = $params['template'];
+	}	
+	
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_' . $this->mFormat );
 	}
 
@@ -65,8 +67,12 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 			$nextrow = $res->getNext(); // look ahead
 
 			$content = $row[0]->getContent();
-			$sortkey = $res->getStore()->getWikiPageSortKey( $content[0] );
-			$cur_first_char = $wgContLang->firstChar( $sortkey == '' ? $content[0]->getDBkey() : $sortkey );
+			
+			$cur_first_char = $wgContLang->firstChar(
+				$content[0]->getDIType() == SMWDataItem::TYPE_WIKIPAGE ?
+					$res->getStore()->getWikiPageSortKey( $content[0] )
+					: $content[0]->getSortKey()
+			);
 			
 			if ( $rowindex % $rows_per_column == 0 ) {
 				$result .= "\n			<div style=\"float: left; width: $column_width%;\">\n";
@@ -86,7 +92,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 			$result .= '<li>';
 			$first_col = true;
 			
-			if ( $this->mTemplate != '' ) { // build template code
+			if ( $this->mTemplate !== '' ) { // build template code
 				$this->hasTemplates = true;
 				$wikitext = ( $this->mUserParam ) ? "|userparam=$this->mUserParam":'';
 				$i = 1; // explicitly number parameters for more robust parsing (values may contain "=")
@@ -125,7 +131,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 						if ( $first_value ) { // first value in any column, print header
 							$first_value = false;
 							
-							if ( $this->mShowHeaders && ( $field->getPrintRequest()->getLabel() != '' ) ) {
+							if ( $this->mShowHeaders && ( $field->getPrintRequest()->getLabel() !== '' ) ) {
 								$result .= $field->getPrintRequest()->getText( SMW_OUTPUT_WIKI, $this->mLinker ) . ' ';
 							}
 						}
@@ -163,7 +169,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 			
 			if ( $this->mNumColumns != 3 ) $link->setParameter( $this->mNumColumns, 'columns' );
 			
-			if ( $this->mTemplate != '' ) {
+			if ( $this->mTemplate !== '' ) {
 				$link->setParameter( $this->mTemplate, 'template' );
 				
 				if ( array_key_exists( 'link', $this->m_params ) ) { // linking may interfere with templates
@@ -186,7 +192,19 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 		
 		$params['columns'] = new Parameter( 'columns', Parameter::TYPE_INTEGER );
 		$params['columns']->setDescription( wfMsg( 'smw_paramdesc_columns', 3 ) );
-		$params['columns']->setDefault( '', false );
+		$params['columns']->setDefault( 3, false );
+		
+		$params['delim'] = new Parameter( 'delim' );
+		$params['delim']->setDescription( wfMsg( 'smw-paramdesc-category-delim' ) );
+		$params['delim']->setDefault( ',' );
+		
+		$params['template'] = new Parameter( 'template' );
+		$params['template']->setDescription( wfMsg( 'smw-paramdesc-category-template' ) );
+		$params['template']->setDefault( '' );
+		
+		$params['userparam'] = new Parameter( 'userparam' );
+		$params['userparam']->setDescription( wfMsg( 'smw-paramdesc-category-userparam' ) );
+		$params['userparam']->setDefault( '' );
 		
 		return $params;
 	}

@@ -4,7 +4,7 @@
  * @ingroup SMWLanguage
  */
 
-/*
+/**
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
@@ -35,10 +35,11 @@ class SMWLanguageNo extends SMWLanguage {
 		'_ema' => 'E-post',  // name of the email type
 		'_uri' => 'URL',  // name of the URL type
 		'_anu' => 'URI-merknad', // name of the annotation URI type (OWL annotation property)
-		'_tel' => 'Telephone number',  // name of the telephone (URI) type //TODO: translate
-		'_rec' => 'Record', // name of record data type //TODO: translate
+		'_tel' => 'Telefonnummer',  // name of the telephone (URI) type
+		'_rec' => 'Record', // name of record data type
+		'_qty' => 'Mål', // name of the number type with units of measurement
 	);
-	
+
 	protected $m_DatatypeAliases = array(
 		'Streng'                => '_str',
 		'Linje'                 => '_str',
@@ -50,9 +51,10 @@ class SMWLanguageNo extends SMWLanguage {
 		'Koordinat'             => '_geo',
 		'Epost'                 => '_ema',
 		'URI'                   => '_uri',
-		'Nettadresse'           => '_uri'
+		'Nettadresse'           => '_uri',
+		'Størrelse'             => '_qty',
 	);
-	
+
 	protected $m_SpecialProperties = array(
 		// always start upper-case
 		'_TYPE' => 'Har type',
@@ -67,16 +69,17 @@ class SMWLanguageNo extends SMWLanguage {
 		'_MDAT' => 'Endringsdato',
 		'_ERRP' => 'Feilaktig verdi for',
 		'_LIST' => 'Has fields', // TODO: translate
+		'_SOBJ' => 'Has subobject', // TODO: translate
 	);
-	
+
 	protected $m_SpecialPropertyAliases = array(
 		'Type' => '_TYPE',
 		'Enhet' => '_UNIT',
-	    'Synonym URI' => '_URI',
-	    'Synonym adresse' => '_URI'
+		'Synonym URI' => '_URI',
+		'Synonym adresse' => '_URI'
 	);
-	
-	
+
+
 	protected $m_Namespaces = array(
 		SMW_NS_PROPERTY       => 'Egenskap',
 		SMW_NS_PROPERTY_TALK  => 'Egenskap-diskusjon',
@@ -85,11 +88,11 @@ class SMWLanguageNo extends SMWLanguage {
 		SMW_NS_CONCEPT        => 'Konsept',
 		SMW_NS_CONCEPT_TALK   => 'Konsept-diskusjon'
 	);
-	
+
 	protected $m_dateformats = array( array( SMW_Y ), array( SMW_MY, SMW_YM ), array( SMW_DMY, SMW_MDY, SMW_YMD, SMW_YDM ) );
-	
+
 	protected $m_months = array( "januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember" );
-	
+
 	protected $m_monthsshort = array( "jan.", "feb.", "mars", "april", "mai", "juni", "juli", "aug.", "sep.", "okt.", "nov.", "des." );
 
 }

@@ -1,19 +1,19 @@
 <?php
 /**
  * 4Store specific adjustments for SMWSparqlDatabase
- * 
+ *
  * @file
  * @ingroup SMWSparql
- * 
+ *
  * @author Markus Krötzsch
  */
 
 /**
  * Specific modifications of the SPARQL database implementation for 4Store.
- * 
+ *
  * @since 1.6
  * @ingroup SMWSparql
- * 
+ *
  * @author Markus Krötzsch
  */
 class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
@@ -37,9 +37,9 @@ class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
 		//$result = parent::doQuery( $sparql );
 		curl_setopt( $this->m_curlhandle, CURLOPT_URL, $this->m_queryEndpoint );
 		curl_setopt( $this->m_curlhandle, CURLOPT_POST, true );
-		$parameterString = "query=" . urlencode( $sparql ) . "&restricted=1";
+		$parameterString = "query=" . urlencode( $sparql ) . "&restricted=1" .
+			( ( $this->m_defaultGraph !== '' )? '&default-graph-uri=' . urlencode( $this->m_defaultGraph ) : '' );
 		curl_setopt( $this->m_curlhandle, CURLOPT_POSTFIELDS, $parameterString );
-
 		$xmlResult = curl_exec( $this->m_curlhandle );
 
 		if ( curl_errno( $this->m_curlhandle ) == 0 ) {
@@ -88,7 +88,7 @@ class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
 	 * SMWSparqlDatabase::throwSparqlErrors(). If errors occur and this
 	 * method does not throw anything, then an empty result with an error
 	 * code is returned.
-	 * 
+	 *
 	 * This method is specific to 4Store since it uses POST parameters that
 	 * are not given in the specification.
 	 *
@@ -96,12 +96,14 @@ class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
 	 * @return SMWSparqlResultWrapper
 	 */
 	public function doHttpPost( $payload ) {
-		if ( $this->m_dataEndpoint == '' ) {
-			throw new SMWSparqlDatabaseError( SMWSparqlDatabaseError::ERROR_NOSERVICE, "SPARQL POST with data: $payload", 'not specified', $error );
+		if ( $this->m_dataEndpoint === '' ) {
+			throw new SMWSparqlDatabaseError( SMWSparqlDatabaseError::ERROR_NOSERVICE, "SPARQL POST with data: $payload", 'not specified' );
 		}
 		curl_setopt( $this->m_curlhandle, CURLOPT_URL, $this->m_dataEndpoint );
 		curl_setopt( $this->m_curlhandle, CURLOPT_POST, true );
-		$parameterString = "data=" . urlencode( $payload ) . '&graph=default&mime-type=application/x-turtle';
+		$parameterString = "data=" . urlencode( $payload ) . '&graph=' .
+			( ( $this->m_defaultGraph !== '' )? urlencode( $this->m_defaultGraph ) : 'default' ) .
+			'&mime-type=application/x-turtle';
 		curl_setopt( $this->m_curlhandle, CURLOPT_POSTFIELDS, $parameterString );
 
 		curl_exec( $this->m_curlhandle );

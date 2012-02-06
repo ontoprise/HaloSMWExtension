@@ -7,7 +7,7 @@
  *
  * @file SMW_PropertyPage.php
  * @ingroup SMW
- * 
+ *
  * @author Markus Krötzsch
  */
 class SMWPropertyPage extends SMWOrderedListPage {
@@ -25,12 +25,11 @@ class SMWPropertyPage extends SMWOrderedListPage {
 
 	/**
 	 * Returns the HTML which is added to $wgOut after the article text.
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function getHtml() {
 		wfProfileIn( __METHOD__ . ' (SMW)' );
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 
 		$result = $this->getSubpropertyList() . $this->getPropertyValueList();
 
@@ -63,7 +62,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 			}
 
 			$result .= wfMsgExt( 'smw_subpropertyarticlecount', array( 'parsemag' ), $resultCount ) . "</p>\n";
-			
+
 			if ( $resultCount < 6 ) {
 				$result .= SMWPageLister::getShortList( 0, $resultCount, $subproperties, null );
 			} else {
@@ -131,7 +130,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 		$ac = count( $diWikiPages );
 
 		if ( $ac > $this->limit ) {
-			if ( $this->until != '' ) {
+			if ( $this->until !== '' ) {
 				$start = 1;
 			} else {
 				$start = 0;
@@ -158,15 +157,15 @@ class SMWPropertyPage extends SMWOrderedListPage {
 
 			// Property name
 			$searchlink = SMWInfolink::newBrowsingLink( '+', $dvWikiPage->getShortHTMLText() );
-			$r .= '<tr><td class="smwpropname">' . $dvWikiPage->getLongHTMLText( smwfGetLinker() ) .
+			$r .= '<tr><td class="smwpropname">' . $dvWikiPage->getShortHTMLText( smwfGetLinker() ) .
 			      '&#160;' . $searchlink->getHTML( smwfGetLinker() ) . '</td><td class="smwprops">';
-			
+
 			// Property values
 			$ropts = new SMWRequestOptions();
 			$ropts->limit = $smwgMaxPropertyValues + 1;
 			$values = $store->getPropertyValues( $diWikiPage, $this->mProperty, $ropts );
 			$i = 0;
-			
+
 			foreach ( $values as $di ) {
 				if ( $i != 0 ) {
 					$r .= ', ';
@@ -175,7 +174,7 @@ class SMWPropertyPage extends SMWOrderedListPage {
 
 				if ( $i < $smwgMaxPropertyValues + 1 ) {
 					$dv = SMWDataValueFactory::newDataItemValue( $di, $this->mProperty );
-					$r .= $dv->getLongHTMLText( smwfGetLinker() ) . $dv->getInfolinkText( SMW_OUTPUT_HTML, smwfGetLinker() );
+					$r .= $dv->getShortHTMLText( smwfGetLinker() ) . $dv->getInfolinkText( SMW_OUTPUT_HTML, smwfGetLinker() );
 				} else {
 					$searchlink = SMWInfolink::newInversePropertySearchLink( '…', $dvWikiPage->getWikiValue(), $this->mTitle->getText() );
 					$r .= $searchlink->getHTML( smwfGetLinker() );

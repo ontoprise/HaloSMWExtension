@@ -193,31 +193,51 @@ class SMWQueryResult {
 	 * can also be changed afterwards with SMWInfolink::setCaption()). If empty, the
 	 * message 'smw_iq_moreresults' is used as a caption.
 	 * 
-	 * @param mixed $caption A caption string or false
+	 * TODO: have this work for all params without manually overriding and adding everything
+	 * (this is possible since the param handling changes in 1.7) 
+	 * 
+	 * @param string|false $caption
 	 * 
 	 * @return SMWInfolink
 	 */
 	public function getQueryLink( $caption = false ) {
 		$params = array( trim( $this->mQuery->getQueryString() ) );
 		
-		foreach ( $this->mQuery->getExtraPrintouts() as $printout ) {
-			$params[] = $printout->getSerialisation();
+		foreach ( $this->mQuery->getExtraPrintouts() as /* SMWPrintRequest */ $printout ) {
+			$serialization = $printout->getSerialisation();
+			
+			// TODO: this is a hack to get rid of the mainlabel param in case it was automatically added
+			// by SMWQueryProcessor::addThisPrintout. Should be done nicer when this link creation gets redone.
+			if ( $serialization !== '?#' ) {
+				$params[] = $serialization;
+			}
 		}
 		
-		$params['mainlabel'] = $this->mQuery->getMainLabel();
+		if ( $this->mQuery->getMainLabel() !== false ) {
+			$params['mainlabel'] = $this->mQuery->getMainLabel();
+		}
+
+		$params['offset'] = $this->mQuery->getOffset() + count( $this->mResults );
 		
+		if ( $params['offset'] === 0 ) {
+			unset( $params['offset'] );
+		}
+		
+		if ( $this->mQuery->getLimit() > 0 ) {
+			$params['limit'] = $this->mQuery->getLimit();
+		}
+
 		if ( count( $this->mQuery->sortkeys ) > 0 ) {
 			$order = implode( ',', $this->mQuery->sortkeys );
 			$sort = implode( ',', array_keys( $this->mQuery->sortkeys ) );
 			
-			if ( $sort != '' || $order != 'ASC' ) {
+			if ( $sort !== '' || $order != 'ASC' ) {
 				$params['order'] = $order;
 				$params['sort'] = $sort;			
 			}
 		}
 		
 		if ( $caption == false ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$caption = ' ' . wfMsgForContent( 'smw_iq_moreresults' ); // The space is right here, not in the QPs!
 		}
 		
@@ -226,7 +246,16 @@ class SMWQueryResult {
 		
 		return $result;
 	}
-
+	
+	/**
+	 * @see SMWDISerializer::getSerializedQueryResult
+	 * @since 1.7
+	 * @return array
+	 */
+	public function serializeToArray() {
+		return SMWDISerializer::getSerializedQueryResult( $this );
+	}
+	
 }
 
 /**
@@ -368,20 +397,16 @@ class SMWResultArray {
 	 *
 	 * The parameter $linker controls linking of title values and should
 	 * be some Linker object (or NULL for no linking).
-	 * 
+	 *
 	 * @param integer $outputMode
 	 * @param mixed $linker
-	 * 
+	 *
 	 * @return string or false
 	 */
 	public function getNextText( $outputMode, $linker = null ) {
 		$dataValue = $this->getNextDataValue();
 		if ( $dataValue !== false ) { // Print data values.
-			if ( ( $dataValue->getTypeID() == '_wpg' ) || ( $dataValue->getTypeID() == '__sin' ) ) { // Prefer "long" text for page-values.
-				return $dataValue->getLongText( $outputMode, $linker );
-			} else {
-				return $dataValue->getShortText( $outputMode, $linker );
-			}
+			return $dataValue->getShortText( $outputMode, $linker );
 		} else {
 			return false;
 		}
@@ -428,10 +453,11 @@ class SMWResultArray {
 					$newcontent = array();
 
 					foreach ( $this->mContent as $diContainer ) {
-						$recordValue = SMWDataValueFactory::newDataItemValue( $diContainer, $propertyValue->getDataItem() );
+						/* SMWRecordValue */ $recordValue = SMWDataValueFactory::newDataItemValue( $diContainer, $propertyValue->getDataItem() );
 						$dataItems = $recordValue->getDataItems();
+						
 						if ( array_key_exists( $pos, $dataItems ) &&
-							( $dataItems[$pos] !== null ) ) {
+							( !is_null( $dataItems[$pos] ) ) ) {
 							$newcontent[] = $dataItems[$pos];
 						}
 					}
@@ -497,5 +523,5 @@ class SMWResultArray {
 		
 		return $options;
 	}
-
+	
 }

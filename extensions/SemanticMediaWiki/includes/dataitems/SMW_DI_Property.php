@@ -72,7 +72,7 @@ class SMWDIProperty extends SMWDataItem {
 	 * @param $inverse boolean states if the inverse of the property is constructed
 	 */
 	public function __construct( $key, $inverse = false ) {
-		if ( ( $key == '' ) || ( $key{0} == '-' ) ) {
+		if ( ( $key === '' ) || ( $key{0} == '-' ) ) {
 			throw new SMWDataItemException( "Illegal property key \"$key\"." );
 		}
 		if ( $key{0} == '_' ) {
@@ -330,11 +330,13 @@ class SMWDIProperty extends SMWDataItem {
 				'_SUBC'  =>  array( '__suc', !$smwgUseCategoryHierarchy ), // "subcategory of"
 				'_CONC'  =>  array( '__con', false ), // associated concept
 				'_MDAT'  =>  array( '_dat', false ), // "modification date"
+				'_CDAT'  =>  array( '_dat', false ), // "creation date"
 				'_ERRP'  =>  array( '_wpp', false ), // "has improper value for"
 				'_LIST'  =>  array( '__pls', true ), // "has fields"
 				'_SKEY'  =>  array( '__key', false ), // sort key of a page
 				'_SF_DF' => array( '__spf', true ), // Semantic Form's default form property
 				'_SF_AF' => array( '__spf', true ),  // Semantic Form's alternate form property
+				'_SOBJ'  =>  array( '_wpg', true ), // "has subobject"
 			);
 
 		foreach ( $datatypeLabels as $typeid => $label ) {

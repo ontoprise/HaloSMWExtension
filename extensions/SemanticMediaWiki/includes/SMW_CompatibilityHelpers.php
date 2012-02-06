@@ -48,14 +48,14 @@ class SMWCompatibilityHelpers {
 				if ( $typeid == '__typ' && $dbkeys[0]{0} == '_' ) { // b/c: old data stored as type ids
 					return SMWTypesValue::getTypeUriFromTypeId( $dbkeys[0] );
 				} else {
-					return SMWDIUri::doUnserialize( $dbkeys[0]);
+					return SMWDIUri::doUnserialize( $dbkeys[0] );
 				}
 			case SMWDataItem::TYPE_TIME:
 				$timedate = explode( 'T', $dbkeys[0], 2 );
 				if ( ( count( $dbkeys ) == 2 ) && ( count( $timedate ) == 2 ) ) {
 					$date = reset( $timedate );
 					$year = $month = $day = $hours = $minutes = $seconds = $timeoffset = false;
-					if ( ( end( $timedate ) == '' ) ||
+					if ( ( end( $timedate ) === '' ) ||
 					     ( SMWTimeValue::parseTimeString( end( $timedate ), $hours, $minutes, $seconds, $timeoffset ) == true ) ) {
 						$d = explode( '/', $date, 3 );
 						if ( count( $d ) == 3 ) {
@@ -65,8 +65,8 @@ class SMWCompatibilityHelpers {
 						} elseif ( count( $d ) == 1 ) {
 							list( $year ) = $d;
 						}
-						if ( $month == '' ) $month = false;
-						if ( $day == '' ) $day = false;
+						if ( $month === '' ) $month = false;
+						if ( $day === '' ) $day = false;
 						$calendarmodel = SMWDITime::CM_GREGORIAN;
 						return new SMWDITime( $calendarmodel, $year, $month, $day, $hours, $minutes, $seconds );
 					}
@@ -75,7 +75,10 @@ class SMWCompatibilityHelpers {
 			case SMWDataItem::TYPE_GEO:
 				return new SMWDIGeoCoord( array( 'lat' => (float)$dbkeys[0], 'lon' => (float)$dbkeys[1] ) );
 			case SMWDataItem::TYPE_CONTAINER:
-				$semanticData = new SMWContainerSemanticData();
+				// provided for backwards compatibility only;
+				// today containers are read from the store as substructures,
+				// not retrieved as single complex values
+				$semanticData = SMWContainerSemanticData::makeAnonymousContainer();
 				foreach ( reset( $dbkeys ) as $value ) {
 					if ( is_array( $value ) && ( count( $value ) == 2 ) ) {
 						$diP = new SMWDIProperty( reset( $value ), false );
@@ -96,7 +99,8 @@ class SMWCompatibilityHelpers {
 				break;
 			case SMWDataItem::TYPE_CONCEPT:
 				if ( count( $dbkeys ) >= 5 ) {
-					new SMWDIConcept( $dbkeys[0], smwfXMLContentEncode( $dbkeys[1] ), $dbkeys[2], $dbkeys[3], $dbkeys[4] );
+					return new SMWDIConcept( $dbkeys[0], smwfXMLContentEncode( $dbkeys[1] ),
+						$dbkeys[2], $dbkeys[3], $dbkeys[4] );
 				}
 				break;
 			case SMWDataItem::TYPE_PROPERTY:

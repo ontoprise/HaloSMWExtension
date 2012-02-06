@@ -33,7 +33,7 @@ class SMWDSVResultPrinter extends SMWResultPrinter {
 			$this->separator = trim( $params['separator'] );
 		}
 		
-		$this->fileName = str_replace( ' ', '_', $params['increase'] );
+		$this->fileName = str_replace( ' ', '_', $params['filename'] );
 	}	
 
 	public function getMimeType( $res ) {
@@ -49,7 +49,6 @@ class SMWDSVResultPrinter extends SMWResultPrinter {
 	}
 
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_dsv' );
 	}
 
@@ -156,13 +155,13 @@ class SMWDSVResultPrinter extends SMWResultPrinter {
 		if ( $this->getSearchLabel( $outputmode ) ) {
 			$label = $this->getSearchLabel( $outputmode );
 		} else {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$label = wfMsgForContent( 'smw_dsv_link' );
 		}
 
 		$link = $res->getQueryLink( $label );
 		$link->setParameter( 'dsv', 'format' );
-		$link->setParameter( $this->separator, 'sep' );
+		$link->setParameter( $this->separator, 'separator' );
+		$link->setParameter( $this->fileName, 'filename' );
 		
 		if ( array_key_exists( 'mainlabel', $this->m_params ) && $this->m_params['mainlabel'] !== false ) {
 			$link->setParameter( $this->m_params['mainlabel'], 'mainlabel' );

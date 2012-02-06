@@ -90,7 +90,7 @@ class SMWSqlStubSemanticData extends SMWSemanticData {
 				try {
 					if ( $propertyDiId == SMWDataItem::TYPE_CONTAINER ) {
 						$diSubWikiPage = SMWCompatibilityHelpers::dataItemFromDBKeys( '_wpg', $dbkeys );
-						$semanticData = new SMWContainerSemanticData();
+						$semanticData = new SMWContainerSemanticData( $diSubWikiPage );
 						$semanticData->copyDataFrom( smwfGetStore()->getSemanticData( $diSubWikiPage ) );
 
 						$di = new SMWDIContainer( $semanticData );
@@ -176,7 +176,7 @@ class SMWSqlStubSemanticData extends SMWSemanticData {
 	 */
 	protected function unstubProperty( $propertyKey, $diProperty = null ) {
 		if ( !array_key_exists( $propertyKey, $this->mProperties ) ) {
-			if ( $diProperty === null ) {
+			if ( is_null( $diProperty ) ) {
 				//$propertyDV = SMWPropertyValue::makeProperty( $propertyKey );
 				//$diProperty = $propertyDV->getDataItem();
 				$diProperty = new SMWDIProperty( $propertyKey, false );

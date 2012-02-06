@@ -25,7 +25,6 @@ class SMWBoolValue extends SMWDataValue {
 	protected $m_falsecaption;
 
 	protected function parseUserValue( $value ) {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$value = trim( $value );
 		if ( $this->m_caption === false ) {
 			$this->m_caption = $value;
@@ -66,7 +65,7 @@ class SMWBoolValue extends SMWDataValue {
 		if ( $formatstring == $this->m_outformat ) return;
 		unset( $this->m_truecaption );
 		unset( $this->m_falsecaption );
-		if ( $formatstring == '' ) { // no format
+		if ( $formatstring === '' ) { // no format
 			// (unsetting the captions is exactly the right thing here)
 		} elseif ( strtolower( $formatstring ) == '-' ) { // "plain" format
 			$this->m_truecaption = 'true';
@@ -120,7 +119,6 @@ class SMWBoolValue extends SMWDataValue {
 		if ( $useformat && ( isset( $this->m_truecaption ) ) ) {
 			return $this->m_dataitem->getBoolean() ? $this->m_truecaption : $this->m_falsecaption;
 		} else {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$vals = explode( ',', wfMsgForContent( $this->m_dataitem->getBoolean() ? 'smw_true_words' : 'smw_false_words' ) );
 			return reset( $vals );
 		}

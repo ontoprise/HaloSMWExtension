@@ -46,7 +46,7 @@ abstract class SMWQueryPage extends QueryPage {
 	 * @param $offset database query offset
 	 * @param $limit database query limit
 	 */
-	function doQuery( $offset = false, $limit = false, $shownavigation = true ) {
+	function doQuery( $offset = false, $limit = false ) {
 		global $wgOut, $wgContLang;
 
 		$options = new SMWRequestOptions();
@@ -63,7 +63,6 @@ abstract class SMWQueryPage extends QueryPage {
 
 		// if list is empty, show it
 		if ( $num == 0 ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$wgOut->addHTML( '<p>' . wfMsgHTML( 'specialpage-empty' ) . '</p>' );
 			return;
 		}

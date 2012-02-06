@@ -31,7 +31,7 @@ class SMWQuantityValue extends SMWNumberValue {
 			return true;
 		} else { // unsupported unit
 			return false;
-		} 
+		}
 	}
 
 	protected function makeConversionValues() {
@@ -41,7 +41,7 @@ class SMWQuantityValue extends SMWNumberValue {
 		$this->initDisplayData();
 		if ( count( $this->m_displayunits ) == 0 ) { // no display units, just show all
 			foreach ( $this->m_unitfactors as $unit => $factor ) {
-				if ( $unit != '' ) { // filter out the empty fallback unit that is always there
+				if ( $unit !== '' ) { // filter out the empty fallback unit that is always there
 					$this->m_unitvalues[$unit] = $this->m_dataitem->getNumber() * $factor;
 				}
 			}
@@ -60,7 +60,7 @@ class SMWQuantityValue extends SMWNumberValue {
 		$printunit = false; // the normalised string of a known unit to use for printouts
 		// Check if a known unit is given as outputformat:
 		if ( ( $this->m_outformat ) && ( $this->m_outformat != '-' ) &&
-		     ( $this->m_outformat != '-n' ) && ( $this->m_outformat != '-u' )) { // first try given output unit
+		     ( $this->m_outformat != '-n' ) && ( $this->m_outformat != '-u' ) ) { // first try given output unit
 			$wantedunit = SMWNumberValue::normalizeUnit( $this->m_outformat );
 			if ( array_key_exists( $wantedunit, $this->m_unitids ) ) {
 				$printunit = $wantedunit;
@@ -86,7 +86,7 @@ class SMWQuantityValue extends SMWNumberValue {
 		if ( $this->m_outformat != '-u' ) { // -u is the format for displaying the unit only
 			$this->m_caption .= ( ( $this->m_outformat != '-' ) && ( $this->m_outformat != '-n' ) ? smwfNumberFormat( $value ) : $value );
 		}
-		if ( ( $printunit != '' ) && ( $this->m_outformat != '-n' ) ) { // -n is the format for displaying the number only
+		if ( ( $printunit !== '' ) && ( $this->m_outformat != '-n' ) ) { // -n is the format for displaying the number only
 			if ( $this->m_outformat != '-u' ) {
 				$this->m_caption .=  ( $this->m_outformat != '-' ? '&#160;' : ' ' );
 			}
@@ -117,22 +117,21 @@ class SMWQuantityValue extends SMWNumberValue {
 		$this->m_unitfactors = array();
 		$this->m_mainunit = false;
 
-		if ( $this->m_property !== null ) {
+		if ( !is_null( $this->m_property ) ) {
 			$propertyDiWikiPage = $this->m_property->getDiWikiPage();
 		}
-		if ( ( $this->m_property === null ) || ( $propertyDiWikiPage === null ) ) {
+		if ( is_null( $this->m_property ) || is_null( $propertyDiWikiPage ) ) {
 			return; // we cannot find conversion factors without the property
 		}
 
 		$factors = smwfGetStore()->getPropertyValues( $propertyDiWikiPage, new SMWDIProperty( '_CONV' ) );
 		if ( count( $factors ) == 0 ) { // no custom type
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_nounitsdeclared' ) );
 			return;
 		}
 		$number = $unit = '';
 		foreach ( $factors as $di ) {
-			if ( ( $di->getDIType() !== SMWDataItem::TYPE_STRING ) || 
+			if ( ( $di->getDIType() !== SMWDataItem::TYPE_STRING ) ||
 			     ( SMWNumberValue::parseNumberValue( $di->getString(), $number, $unit ) != 0 ) ) {
 				continue; // ignore corrupted data and bogus inputs
 			}
@@ -171,7 +170,7 @@ class SMWQuantityValue extends SMWNumberValue {
 		if ( $this->m_displayunits !== false ) return; // do the below only once
 		$this->initConversionData(); // needed to normalise unit strings
 		$this->m_displayunits = array();
-		if ( ( $this->m_property === null ) || ( $this->m_property->getDIWikiPage() === null ) ) {
+		if ( is_null( $this->m_property ) || is_null( $this->m_property->getDIWikiPage() ) ) {
 			return;
 		}
 		$dataItems = smwfGetStore()->getPropertyValues( $this->m_property->getDIWikiPage(), new SMWDIProperty( '_UNIT' ) );

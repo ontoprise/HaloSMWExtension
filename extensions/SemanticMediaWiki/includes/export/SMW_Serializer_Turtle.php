@@ -2,7 +2,7 @@
 
 /**
  * File holding the SMWTurtleSerializer class that provides basic functions for
- * serialising OWL data in Turtle syntax. 
+ * serialising OWL data in Turtle syntax.
  *
  * @file SMW_Serializer.php
  * @ingroup SMW
@@ -12,7 +12,7 @@
 
 /**
  * Class for serializing exported data (encoded as SMWExpData object) in
- * Turtle syntax. 
+ * Turtle syntax.
  *
  * @ingroup SMW
  */
@@ -88,7 +88,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 			// In this case, one can always use wiki:... followed by "_" and possibly some namespace, since _ is legal as a first character.
 			"@prefix wiki: <" . SMWExporter::expandURI( '&wiki;' ) . "> .\n" .
 			"@prefix property: <" . SMWExporter::expandURI( '&property;' ) . "> .\n" .
-			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" . // note that this XSD URI is hardcoded below (its unlikely to change, of course) 
+			"@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n" . // note that this XSD URI is hardcoded below (its unlikely to change, of course)
 			"@prefix wikiurl: <" . SMWExporter::expandURI( '&wikiurl;' ) . "> .\n";
 		}
 		$this->global_namespaces = array( 'rdf' => true, 'rdfs' => true, 'owl' => true, 'swivt' => true, 'wiki' => true, 'property' => true );
@@ -100,7 +100,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 			$this->post_ns_buffer .= "\n# Created by Semantic MediaWiki, http://semantic-mediawiki.org/\n";
 		}
 	}
-	
+
 	public function serializeDeclaration( $uri, $typename ) {
 		$this->post_ns_buffer .= "<" . SMWExporter::expandURI( $uri ) . "> rdf:type $typename .\n";
 	}
@@ -112,7 +112,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 		}
 		$this->serializeNamespaces();
 	}
-	
+
 	protected function serializeNamespace( $shortname, $uri ) {
 		$this->global_namespaces[$shortname] = true;
 		if ( $this->sparqlmode ) {
@@ -141,8 +141,8 @@ class SMWTurtleSerializer extends SMWSerializer{
 			$bnode = true;
 			$this->post_ns_buffer .= "[";
 		}
-		
-		if ( ( $indent != '' ) && ( !$bnode ) ) { // called to generate a nested descripion; but Turtle cannot nest non-bnode descriptions, do this later
+
+		if ( ( $indent !== '' ) && ( !$bnode ) ) { // called to generate a nested descripion; but Turtle cannot nest non-bnode descriptions, do this later
 			$this->subexpdata[] = $data;
 			return;
 		} elseif ( !$bnode ) {
@@ -165,7 +165,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 				if ( $value instanceof SMWExpLiteral ) {
 					$prop_decl_type = SMW_SERIALIZER_DECL_APROP;
 					$this->serializeExpLiteral( $value );
-				} elseif ( $value instanceof SMWExpResource ) {	
+				} elseif ( $value instanceof SMWExpResource ) {
 					$prop_decl_type = SMW_SERIALIZER_DECL_OPROP;
 					$this->serializeExpResource( $value );
 				} elseif ( $value instanceof SMWExpData ) { // resource (maybe blank node), could have subdescriptions
@@ -182,7 +182,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 						$this->post_ns_buffer .= " )";
 					} else {
 						if ( $class_type_prop ) {
-							$this->requireDeclaration( $object, SMW_SERIALIZER_DECL_CLASS );
+							$this->requireDeclaration( $value->getSubject(), SMW_SERIALIZER_DECL_CLASS );
 						}
 						if ( count( $value->getProperties() ) > 0 ) { // resource with data: serialise
 							$this->post_ns_buffer .= "\n";
@@ -199,13 +199,13 @@ class SMWTurtleSerializer extends SMWSerializer{
 				}
 			}
 		}
-		$this->post_ns_buffer .= ( $bnode ? " ]" : " ." ) . ( $indent == '' ? "\n\n" : '' );
+		$this->post_ns_buffer .= ( $bnode ? " ]" : " ." ) . ( $indent === '' ? "\n\n" : '' );
 	}
-	
+
 	protected function serializeExpLiteral( SMWExpLiteral $element ) {
 		$this->post_ns_buffer .= self::getTurtleNameForExpElement( $element );
 	}
-	
+
 	protected function serializeExpResource( SMWExpResource $element ) {
 		if ( $element instanceof SMWExpNsResource ) {
 			$this->requireNamespace( $element->getNamespaceID(), $element->getNamespace() );
@@ -233,7 +233,7 @@ class SMWTurtleSerializer extends SMWSerializer{
 		} elseif ( $expElement instanceof SMWExpLiteral ) {
 			$lexicalForm = '"' . str_replace( array( '\\', "\n", '"' ), array( '\\\\', "\\n", '\"' ), $expElement->getLexicalForm() ) . '"';
 			$dt = $expElement->getDatatype();
-			if ( ( $dt != '' ) && ( $dt != 'http://www.w3.org/2001/XMLSchema#string' ) ) {
+			if ( ( $dt !== '' ) && ( $dt != 'http://www.w3.org/2001/XMLSchema#string' ) ) {
 				$count = 0;
 				$newdt = str_replace( 'http://www.w3.org/2001/XMLSchema#', 'xsd:',  $dt, $count );
 				return ( $count == 1 ) ? "$lexicalForm^^$newdt" : "$lexicalForm^^<$dt>";

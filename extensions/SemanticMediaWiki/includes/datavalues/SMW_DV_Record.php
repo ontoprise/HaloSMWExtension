@@ -24,10 +24,9 @@ class SMWRecordValue extends SMWDataValue {
 	}
 
 	protected function parseUserValueOrQuery( $value, $queryMode ) {
-		if ( $value == '' ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+		if ( $value === '' ) {
 			$this->addError( wfMsg( 'smw_novalues' ) );
-			
+
 			if ( $queryMode ) {
 				return new SMWThingDescription();
 			} else {
@@ -37,15 +36,21 @@ class SMWRecordValue extends SMWDataValue {
 
 		if ( $queryMode ) {
 			$subdescriptions = array();
+		} elseif ( is_null( $this->m_contextPage ) ) {
+			$semanticData = SMWContainerSemanticData::makeAnonymousContainer();
 		} else {
-			$semanticData = new SMWContainerSemanticData();
+			$subobjectName = '_' . hash( 'md4', $value, false ); // md4 is probably fastest of PHP's hashes
+			$subject = new SMWDIWikiPage( $this->m_contextPage->getDBkey(),
+				$this->m_contextPage->getNamespace(), $this->m_contextPage->getInterwiki(),
+				$subobjectName );
+			$semanticData = new SMWContainerSemanticData( $subject );
 		}
 
 		$values = preg_split( '/[\s]*;[\s]*/u', trim( $value ) );
 		$valueIndex = 0; // index in value array
 		$propertyIndex = 0; // index in property list
 		$empty = true;
-		
+
 		foreach ( $this->getPropertyDataItems() as $diProperty ) {
 			if ( !array_key_exists( $valueIndex, $values ) ) {
 				break; // stop if there are no values left
@@ -57,18 +62,18 @@ class SMWRecordValue extends SMWDataValue {
 			}
 
 			// generating the DVs:
-			if ( ( $values[$valueIndex] == '' ) || ( $values[$valueIndex] == '?' ) ) { // explicit omission
+			if ( ( $values[$valueIndex] === '' ) || ( $values[$valueIndex] == '?' ) ) { // explicit omission
 				$valueIndex++;
 			} else {
 				$dataValue = SMWDataValueFactory::newPropertyObjectValue( $diProperty, $values[$valueIndex] );
-				
+
 				if ( $dataValue->isValid() ) { // valid DV: keep
 					if ( $queryMode ) {
 						$subdescriptions[] = new SMWSomeProperty( $diProperty, new SMWValueDescription( $dataValue->getDataItem(), $comparator ) );
 					} else {
 						$semanticData->addPropertyObjectValue( $diProperty, $dataValue->getDataItem() );
 					}
-					
+
 					$valueIndex++;
 					$empty = false;
 				} elseif ( ( count( $values ) - $valueIndex ) == ( count( $this->m_diProperties ) - $propertyIndex ) ) {
@@ -76,16 +81,15 @@ class SMWRecordValue extends SMWDataValue {
 					if ( !$queryMode ) {
 						$semanticData->addPropertyObjectValue( $diProperty, $dataValue->getDataItem() );
 					}
-					
+
 					$this->addError( $dataValue->getErrors() );
-					$valueIndex++;
+					++$valueIndex;
 				}
 			}
 			++$propertyIndex;
 		}
 
 		if ( $empty ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsg( 'smw_novalues' ) );
 		}
 
@@ -96,7 +100,7 @@ class SMWRecordValue extends SMWDataValue {
 				default: return new SMWConjunction( $subdescriptions );
 			}
 		} else {
-			$this->m_dataitem = new SMWDIContainer( $semanticData, $this->m_typeid );
+			$this->m_dataitem = new SMWDIContainer( $semanticData );
 		}
 	}
 
@@ -165,13 +169,13 @@ class SMWRecordValue extends SMWDataValue {
 
 	/**
 	 * @deprecated as of 1.6, use getDataItems instead
-	 * 
+	 *
 	 * @return array of SMWDataItem
 	 */
 	public function getDVs() {
 		return $this->getDataItems();
 	}
-	
+
 	/**
 	 * Create a list (array with numeric keys) containing the datavalue
 	 * objects that this SMWRecordValue object holds. Values that are not
@@ -179,7 +183,7 @@ class SMWRecordValue extends SMWDataValue {
 	 * 0, not 1.
 	 *
 	 * @since 1.6
-	 * 
+	 *
 	 * @return array of SMWDataItem
 	 */
 	public function getDataItems() {
@@ -204,17 +208,18 @@ class SMWRecordValue extends SMWDataValue {
 	/**
 	 * Return the array (list) of properties that the individual entries of
 	 * this datatype consist of.
-	 * 
+	 *
 	 * @since 1.6
-	 * 
+	 *
 	 * @todo I18N for error message.
-	 * 
+	 *
 	 * @return array of SMWDIProperty
 	 */
 	public function getPropertyDataItems() {
-		if ( $this->m_diProperties === null ) {
+		if ( is_null( $this->m_diProperties ) ) {
 			$this->m_diProperties = self::findPropertyDataItems( $this->m_property );
-			if ( count( $this->m_diProperties ) == 0 ) { //TODO internalionalize
+
+			if ( count( $this->m_diProperties ) == 0 ) { // TODO internalionalize
 				$this->addError( 'The list of properties to be used for the data fields has not been specified properly.' );
 			}
 		}
@@ -229,7 +234,7 @@ class SMWRecordValue extends SMWDataValue {
 	 * @since 1.6
 	 *
 	 * @param $diProperty mixed null or SMWDIProperty object for which to retrieve the types
-	 * 
+	 *
 	 * @return array of SMWDIProperty
 	 */
 	public static function findPropertyDataItems( $diProperty ) {
@@ -242,7 +247,7 @@ class SMWRecordValue extends SMWDataValue {
 
 				if ( count( $dataItems ) == 1 ) {
 					$propertyListValue = new SMWPropertyListValue( '__pls' );
-					$propertyListValue->setDataItem( reset($dataItems) );
+					$propertyListValue->setDataItem( reset( $dataItems ) );
 
 					if ( $propertyListValue->isValid() ) {
 						return $propertyListValue->getPropertyDataItems();
@@ -270,7 +275,7 @@ class SMWRecordValue extends SMWDataValue {
 				$result .= ( $type == 4 ) ? '; ' : ', ';
 			}
 			++$i;
-			$propertyValues = $this->m_dataitem->getSemanticData()->getPropertyValues( $propertyDataItem ); // combining this with next line violates PHP strict standards 
+			$propertyValues = $this->m_dataitem->getSemanticData()->getPropertyValues( $propertyDataItem ); // combining this with next line violates PHP strict standards
 			$dataItem = reset( $propertyValues );
 			if ( $dataItem !== false ) {
 				$dataValue = SMWDataValueFactory::newDataItemValue( $dataItem, $propertyDataItem );

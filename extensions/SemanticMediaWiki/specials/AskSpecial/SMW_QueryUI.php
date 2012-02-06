@@ -25,13 +25,6 @@ abstract class SMWQueryUI extends SpecialPage {
 	 */
 	protected $uiCore;
 
-	/**
-	 * Is auto-complete enabled for these UI elements?
-	 *
-	 * @var mixed SMWQUeryUI::ENABLE_AUTO_SUGGEST | SMWQUeryUI::DISABLE_AUTO_SUGGEST
-	 */
-	private $autoCompleteEnabled = false;
-
 	const ENABLE_AUTO_SUGGEST = true;
 	const DISABLE_AUTO_SUGGEST = false;
 
@@ -55,53 +48,67 @@ abstract class SMWQueryUI extends SpecialPage {
 
 		if ( !$smwgQEnabled ) {
 			$wgOut->addHTML( '<br />' . wfMsg( 'smw_iq_disabled' ) );
-		} else {
-			$format_options_requested = $this->processFormatOptions( $wgRequest ); // handling ajax for format options
-			if ( !$format_options_requested ) {
-				// Checking if a query string has been sent by using the form
-				if ( !( $this->processQueryFormBox( $wgRequest ) === false ) ) {
-					$params = $this->processParams();
-					$this->uiCore =  SMWQueryUIHelper::makeForUI(
-							$this->processQueryFormBox( $wgRequest ),
-							$params,
-							array(),
-							false );
-					if ( $this->uiCore->getQueryString() != "" ) {
-						$this->uiCore->execute();
-					}
-				} else {
-				// the user has entered this page from a wiki-page using an infolink,
-				// or no query has been set
-					$this->uiCore =  SMWQueryUIHelper::makeForInfoLink( $p );
-				}
-				// adding rss feed of results to the page head
-				if ( ( $this->isSyndicated() )
-						&& ( $this->uiCore->getQueryString() !== '' )
-						&& ( method_exists( $wgOut, 'addFeedlink' ) ) // remove this line after MW 1.5 is no longer supported by SMW
-						&& ( array_key_exists( 'rss', $wgFeedClasses ) ) ) {
-					$res = $this->uiCore->getResultObject();
-					$link = $res->getQueryLink();
-					$link->setParameter( 'rss', 'format' );
-					$link->setParameter( $this->uiCore->getLimit(), 'limit' );
-					$wgOut->addFeedLink( 'rss', $link->getURl() );
-				}
-
-				$this->makePage( $p );
-			}
+			return;
 		}
 
-		SMWOutputs::commitToOutputPage( $wgOut ); // make sure locally collected output data is pushed to the output!
+		// Check if this request is actually an AJAX request, and handle it accodingly:
+		$ajaxMode = $this->processFormatOptions( $wgRequest );
+
+		// If not replying to AJAX, build the UI HTML as usual:
+		if ( !$ajaxMode ) {
+			// Checking if a query string has been sent by using the form:
+			if ( $this->processQueryFormBox( $wgRequest ) !== false ) {
+				$params = $this->processParams();
+				$this->uiCore =  SMWQueryUIHelper::makeForUI(
+					$this->processQueryFormBox( $wgRequest ),
+					$params, array(), false );
+				if ( $this->uiCore->getQueryString() !== '' ) {
+					$this->uiCore->execute();
+				}
+			} else { // Query not sent via form (though maybe from "further results" link:
+				$this->uiCore =  SMWQueryUIHelper::makeForInfoLink( $p );
+			}
+
+			// Add RSS feed of results to the page head:
+			if ( $this->isSyndicated() &&
+					$this->uiCore->getQueryString() !== '' &&
+					// Remove next line when MW 1.15 is no longer supported by SMW:
+					method_exists( $wgOut, 'addFeedlink' ) &&
+					array_key_exists( 'rss', $wgFeedClasses ) ) {
+				$res = $this->uiCore->getResultObject();
+				$link = $res->getQueryLink();
+				$link->setParameter( 'rss', 'format' );
+				$link->setParameter( $this->uiCore->getLimit(), 'limit' );
+				$wgOut->addFeedLink( 'rss', $link->getURl() );
+			}
+
+			$wgOut->addHTML( $this->makePage( $p ) );
+		}
+
+		// Make sure locally collected output data is pushed to the output:
+		SMWOutputs::commitToOutputPage( $wgOut );
 	}
 
 	/**
-	 * This method should call the various processXXXBox() methods for each
-	 * of the corresponding getXXXBox() methods which the UI uses. Merge the
-	 * results of these methods and return them.
+	 * This method should return an associative array of parameters
+	 * extracted from the current (global) web request.
 	 *
-	 * @global WebRequest $wgRequest
-	 * @return array
+	 * Implementations can call the various processXXXBox() methods for
+	 * reading parameters that belong to standard UI elements provided by
+	 * this base class (by according getXXXBox() methods).
+	 *
+	 * @return array of parameters
 	 */
 	protected abstract function processParams();
+
+	/**
+	 * Create an HTML form that is to be displayed on the page and return
+	 * the according HTML code.
+	 *
+	 * @param string $p the sub-page string
+	 * @return string HTML code for the page
+	 */
+	protected abstract function makePage( $p );
 
 	/**
 	 * To enable/disable syndicated feeds of results to appear in the UI
@@ -112,15 +119,6 @@ abstract class SMWQueryUI extends SpecialPage {
 	public function isSyndicated() {
 		return true;
 	}
-
-	/**
-	 * The main entry point for your UI. Call the various methods of
-	 * SMWQueryUI and SMWQueryUIHelper to build UI elements and to process
-	 * them.
-	 *
-	 * @param string $p the sub-page string
-	 */
-	protected abstract function makePage( $p );
 
 	/**
 	 * Builds a read-only #ask embed code of the given query. The code is
@@ -166,62 +164,12 @@ abstract class SMWQueryUI extends SpecialPage {
 	}
 
 	/**
-	 * Enable JQuery for the current output page $wgOut. Ensures that the
-	 * relevant Javascript is loaded.
-	 *
-	 * @global OutputPage $wgOut
-	 * @global boolean $smwgJQueryIncluded
-	 */
-	protected function enableJQuery() {
-		global $wgOut, $smwgJQueryIncluded, $smwgScriptPath;
-		if ( !$smwgJQueryIncluded ) {
-			$realFunction = array( $wgOut, 'includeJQuery' );
-			if ( is_callable( $realFunction ) ) {
-				$wgOut->includeJQuery();
-			} else {
-				$wgOut->addScriptFile( "$smwgScriptPath/libs/jquery-1.4.2.min.js" );
-			}
-			$smwgJQueryIncluded = true;
-		}
-	}
-
-	/**
-	 * Enable JQueryUI for the current output page $wgOut. Ensures that the
-	 * relevant Javascript is loaded.
-	 *
-	 * @global OutputPage $wgOut
-	 * @global string $smwgScriptPath
-	 * @global boolean $smwgJQueryUIIncluded
-	 */
-	protected function enableJQueryUI() {
-		global $wgOut, $smwgScriptPath, $smwgJQueryUIIncluded;
-
-		$wgOut->addExtensionStyle( "$smwgScriptPath/skins/jquery-ui/base/jquery.ui.all.css" );
-		$this->enableJQuery();
-
-		if ( !$smwgJQueryUIIncluded ) {
-			$scripts = array( "$smwgScriptPath/libs/jquery-ui/jquery.ui.core.min.js",
-				"$smwgScriptPath/libs/jquery-ui/jquery.ui.widget.min.js",
-				"$smwgScriptPath/libs/jquery-ui/jquery.ui.position.min.js",
-				"$smwgScriptPath/libs/jquery-ui/jquery.ui.autocomplete.min.js" );
-			foreach ( $scripts as $js ) {
-				$wgOut->addScriptFile( $js );
-			}
-			$smwgJQueryUIIncluded = true;
-		}
-	}
-
-	/**
-	 * Enable autom completion scripts and styles for the current output
-	 * page $wgOut.
-	 *
-	 * @global OutputPage $wgOut
+	 * Enable auto completion scripts and styles.
 	 */
 	protected function enableAutocompletion() {
-		global $wgOut;
-		if ( $this->autoCompleteEnabled == false ) {
-			$this->enableJQueryUI();
-			$javascriptAutocompleteText = <<<END
+		SMWOutputs::requireResource( 'jquery.ui.autocomplete' );
+
+		$javascriptAutocompleteText = <<<END
 <script type="text/javascript">
 	function smw_split( val ) {
 		return val.split( '\\n' );
@@ -267,9 +215,8 @@ abstract class SMWQueryUI extends SpecialPage {
 </script>
 END;
 
-			$wgOut->addScript( $javascriptAutocompleteText );
-			$this->autoCompleteEnabled = true;
-		}
+		SMWOutputs::requireScript( 'smwAutocompleteQueryUICore', $javascriptAutocompleteText );
+
 	}
 
 	/**
@@ -367,16 +314,14 @@ END;
 	 * complement processQueryFormBox() to decode data sent through these elements.
 	 * UI's may overload both to change form parameters.
 	 *
-	 * @global OutputPage $wgOut
 	 * @global string $smwgScriptPath
 	 * @return string
 	 */
 	protected function getQueryFormBox() {
-		global $wgOut, $smwgScriptPath;
 		$this->setUrlArgs( array( 'q' => $this->uiCore->getQueryString() ) );
 		$result = '<div>' .
 			Html::element( 'textarea',
-				array( 'name' => 'q', 'id' => 'querybox', 'rows'=>'6' ),
+				array( 'name' => 'q', 'id' => 'querybox', 'rows'=>'3' ),
 				$this->uiCore->getQueryString()
 			) .
 			'</div>';
@@ -434,7 +379,7 @@ END;
 		// processing params for main result column
 		if ( is_array( $mainColumnLabels ) ) {
 			foreach ( $mainColumnLabels as $key => $label ) {
-				if ( $label == '' ) {
+				if ( $label === '' ) {
 					$po[$key] = "?";
 				} else {
 					$po[$key] = "? = $label";
@@ -445,7 +390,7 @@ END;
 		$categoryNamespace = $wgContLang->getNsText( NS_CATEGORY );
 		if ( is_array( $categoryValues ) ) {
 			foreach ( $categoryValues as $key => $value ) {
-				if ( trim( $value ) == '' ) {
+				if ( trim( $value ) === '' ) {
 					$po[$key] = "?$categoryNamespace" ;
 				} else {
 					$po[$key] = "?$categoryNamespace:$value";
@@ -465,7 +410,7 @@ END;
 		}
 		if ( is_array( $categoryLabelValues ) ) {
 			foreach ( $categoryLabelValues as $key => $value ) {
-				if ( trim( $value ) != '' ) {
+				if ( trim( $value ) !== '' ) {
 				 $po[$key] .= ' = ' . $value;
 				}
 			}
@@ -476,7 +421,7 @@ END;
 			$params['order'] = '';
 			foreach ( $propertyValues as $key => $propertyValue ) {
 				$propertyValues[$key] = trim( $propertyValue );
-				if ( $propertyValues[$key] == '' ) {
+				if ( $propertyValues[$key] === '' ) {
 					unset( $propertyValues[$key] );
 				}
 				if ( $smwgQSortingSupport
@@ -484,14 +429,14 @@ END;
 					&& array_key_exists( $key, $orderValues )
 					&& $orderValues[$key] != 'NONE' )
 				{
-					$params['sort'] .= ( $params['sort'] != '' ? ',':'' ) . $propertyValues[$key];
-					$params['order'] .= ( $params['order'] != '' ? ',':'' ) . $orderValues[$key];
+					$params['sort'] .= ( $params['sort'] !== '' ? ',':'' ) . $propertyValues[$key];
+					$params['order'] .= ( $params['order'] !== '' ? ',':'' ) . $orderValues[$key];
 				}
 			}
-			if ( $params['sort'] == '' ) {
+			if ( $params['sort'] === '' ) {
 				unset ( $params['sort'] );
 			}
-			if ( $params['order'] == '' ) {
+			if ( $params['order'] === '' ) {
 				unset ( $params['order'] );
 			}
 			$displayValues = $wgRequest->getArray( 'display' );
@@ -501,19 +446,19 @@ END;
 						$propertyValues[$key] = '?' . trim( $propertyValues[$key] ); // adding leading '?'
 						if ( is_array( $propertyFormatValues ) // adding PO format
 							&& array_key_exists( $key, $propertyFormatValues )
-							&& $propertyFormatValues[$key] != '' )
+							&& $propertyFormatValues[$key] !== '' )
 						{
 							$propertyValues[$key] .= '#' . $propertyFormatValues[$key];
 						}
 						if ( is_array( $propertyLabelValues ) // adding label
 							&& array_key_exists( $key, $propertyLabelValues )
-							&& $propertyLabelValues[$key] != '' )
+							&& $propertyLabelValues[$key] !== '' )
 						{
 							$propertyValues[$key] .= ' = ' . $propertyLabelValues[$key];
 						}
 						if ( is_array( $propertyLimitValues ) // adding limit
 							&& array_key_exists( $key, $propertyLimitValues )
-							&& $propertyLimitValues[$key] != '' )
+							&& $propertyLimitValues[$key] !== '' )
 						{
 							// / @bug limit, when specified causes incorrect ordering of printouts
 							$po[] = $propertyValues[$key];
@@ -538,22 +483,22 @@ END;
 	 * sent by these elements.
 	 *
 	 * @global boolean $smwgQSortingSupport
+	 * @global boolean $smwgQRandSortingSupport
 	 * @global WebRequest $wgRequest
-	 * @global OutputPage $wgOut
 	 * @global string $smwgScriptPath
 	 * @global integer $smwgQPrintoutLimit
 	 * @param mixed $enableAutocomplete
 	 * @return string
 	 */
 	protected function getPoSortFormBox( $enableAutocomplete = SMWQueryUI::ENABLE_AUTO_SUGGEST ) {
-		global $smwgQSortingSupport, $wgRequest, $wgOut, $smwgScriptPath, $smwgQPrintoutLimit;
+		global $smwgQSortingSupport, $wgRequest, $smwgScriptPath;
+		global $smwgQRandSortingSupport, $smwgQPrintoutLimit;
 
-		$this->enableJQueryUI();
-		$wgOut->addScriptFile( "$smwgScriptPath/libs/jquery-ui/jquery-ui.dialog.min.js" );
-		$wgOut->addStyle( "$smwgScriptPath/skins/SMW_custom.css" );
+		SMWOutputs::requireResource( 'jquery.ui.autocomplete' );
+		SMWOutputs::requireResource( 'jquery.ui.dialog' );
+		SMWOutputs::requireResource( 'ext.smw.style' );
 
 		$result = '<span id="smwposortbox">';
-		$numSortValues = 0;
 		$params = $this->uiCore->getParameters();
 
 		// mainlabel
@@ -562,7 +507,7 @@ END;
 		} else {
 			$mainLabel = '';
 		}
-		if ( $mainLabel == '-' || $this->uiCore->getQueryString() == '' ) {
+		if ( $mainLabel == '-' ) {
 			$mainLabelText = '';
 			$formDisplay = 'none';
 		} else {
@@ -641,7 +586,7 @@ END;
 			}
 			$printOuts = ( $this->uiCore->getPrintOuts() );
 			$counter = 0;
-			foreach ( $printOuts as $poKey => $poValue ) {
+			foreach ( $printOuts as $poValue ) {
 				if ( $poValue->getMode() == SMWPrintRequest::PRINT_CATS ) {
 					$categoryValues[$counter] = ' ';
 					$categoryLabelValues[$counter] = $poValue->getLabel();
@@ -782,11 +727,16 @@ END;
 					$if3 = ( array_key_exists( $key, $orderValues ) && $orderValues[$key] == 'DESC' );
 					$result .= Xml::option( wfMsg( 'smw_qui_descorder' ), "DESC", $if3 );
 
+					if ( $smwgQRandSortingSupport ) {
+						$if4 = ( array_key_exists( $key, $orderValues ) && $orderValues[$key] == 'RANDOM' );
+						$result .= Xml::option( wfMsg( 'smw_qui_randorder' ), "RANDOM", $if4 );
+					}
+
 					$result .= Xml::closeElement( 'select' );
 
-					$if4 = ( array_key_exists( $key, $displayValues ) );
-					$result .= Xml::checkLabel( wfMsg( 'smw_qui_shownresults' ), "display[$i]", "display$i", $if4 );
-					if ( $if4 ) {
+					$if5 = ( array_key_exists( $key, $displayValues ) );
+					$result .= Xml::checkLabel( wfMsg( 'smw_qui_shownresults' ), "display[$i]", "display$i", $if5 );
+					if ( $if5 ) {
 						$urlArgs["display[$i]"] = '1';
 					}
 				}
@@ -889,7 +839,7 @@ END;
 					) .
 					Xml::closeElement( 'div' );
 				$urlArgs["category[$i]"] =
-					( $categoryValues[$key] == '' ) ? ' ':$categoryValues[$key];
+					( $categoryValues[$key] === '' ) ? ' ':$categoryValues[$key];
 
 				$urlArgs["cat_label[$i]"] = $categoryLabelValues[$key];
 				$urlArgs["cat_yes[$i]"] = $categoryYesValues[$key];
@@ -898,7 +848,7 @@ END;
 			}
 			if ( array_key_exists( $key, $mainColumnLabels ) ) {
 				/*
-				 * Make an element for main column
+				 * Make an element for main column aka query-matches
 				 */
 				$result .= Html::openElement( 'div',
 						array( 'id' => "sort_div_$i", 'class' => 'smwsort' )
@@ -920,7 +870,7 @@ END;
 					'<a class="smwq-more" href="javascript:smw_makeQueryMatchesDialog(\'' . $i . '\')">' . wfMsg( 'smw_qui_options' ) . '</a> ' .
 					'</div>';
 				$urlArgs["maincol_label[$i]"] =
-					( $mainColumnLabels[$key] == '' ) ? ' ':$mainColumnLabels[$key];
+					( $mainColumnLabels[$key] === '' ) ? ' ':$mainColumnLabels[$key];
 				$i++;
 			}
 		}
@@ -929,7 +879,7 @@ END;
 		// END: create form elements already submitted earlier via form
 
 		// create hidden form elements to be cloned later
-		//property
+		// property
 		$hiddenProperty = Html::openElement( 'div',
 				array( 'id' => 'property_starter',
 					'style' => 'display:none' )
@@ -947,8 +897,11 @@ END;
 			$hiddenProperty .= Html::openElement( 'select', array( 'name' => 'order_num' ) ) .
 					Xml::option( wfMsg( 'smw_qui_nosort' ), 'NONE' ) .
 					Xml::option( wfMsg( 'smw_qui_ascorder' ), 'ASC' ) .
-					Xml::option( wfMsg( 'smw_qui_descorder' ), 'DESC' ) .
-				Xml::closeElement( 'select' ) .
+					Xml::option( wfMsg( 'smw_qui_descorder' ), 'DESC' );
+			if ( $smwgQRandSortingSupport ) {
+				$hiddenProperty .= Xml::option( wfMsg( 'smw_qui_randorder' ), 'RANDOM' );
+			}
+			$hiddenProperty .= Xml::closeElement( 'select' ) .
 				Xml::checkLabel( wfMsg( 'smw_qui_shownresults' ), "display_num", '', true );
 		}
 		$hiddenProperty .= Html::hidden( 'prop_label_num', '' ) .
@@ -956,7 +909,7 @@ END;
 			Html::hidden( 'prop_limit_num', '' ) .
 			Xml::closeElement( 'div' );
 		$hiddenProperty = json_encode( $hiddenProperty );
-		//category
+		// category
 		$hiddenCategory = Html::openElement( 'div',
 			array( 'id' => 'category_starter',
 				'style' => 'display:none' )
@@ -990,7 +943,7 @@ END;
 			Xml::closeElement( 'div' );
 		$hiddenMainColumn = json_encode( $hiddenMainColumn );
 
-		//Create dialog-boxes
+		// Create dialog-boxes
 		// create dialogbox for Property options
 		$propertyHtml = Xml::inputLabelSep( wfMsg( 'smw_qui_prop' ),
 			'',
@@ -1438,7 +1391,7 @@ EOT;
 
 EOT;
 
-		$wgOut->addScript( $javascriptText );
+		SMWOutputs::requireScript( 'smwAutocompleteQueryUI', $javascriptText );
 		$result .= '</span>';
 		return $result;
 	}
@@ -1450,11 +1403,12 @@ EOT;
 	 *
 	 * @global boolean $smwgQSortingSupport
 	 * @global WebRequest $wgRequest
-	 * @global OutputPage $wgOut
 	 * @return string
+	 *
+	 * @todo This code is not used anywhere in SMW.
 	 */
 	protected function getSortingFormBox() {
-		global $smwgQSortingSupport, $wgRequest, $wgOut;
+		global $smwgQSortingSupport, $wgRequest;
 
 		if ( !$smwgQSortingSupport ) return '';
 		$params = $this->uiCore->getParameters();
@@ -1484,7 +1438,7 @@ EOT;
 			$this->setUrlArgs( $urlArgs );
 		}
 
-		$hidden .=  '<div id="sorting_starter" style="display: none">' . wfMsg( 'smw_ask_sortby' ) . ' <input type="text" size="25" />' . "\n";
+		$hidden =  '<div id="sorting_starter" style="display: none">' . wfMsg( 'smw_ask_sortby' ) . ' <input type="text" size="25" />' . "\n";
 		$hidden .= ' <select name="order_num">' . "\n";
 		$hidden .= '	<option value="ASC">' . wfMsg( 'smw_qui_ascorder' ) . "</option>\n";
 		$hidden .= '	<option value="DESC">' . wfMsg( 'smw_qui_descorder' ) . "</option>\n</select>\n";
@@ -1506,7 +1460,7 @@ EOT;
 		// Javascript code for handling adding and removing the "sort" inputs
 		$delete_msg = wfMsg( 'smw_qui_delete' );
 
-		$this->enableJQuery();
+		SMWOutputs::requireResource( 'jquery' );
 		$javascriptText = <<<EOT
 <script type="text/javascript">
 // code for handling adding and removing the "sort" inputs
@@ -1552,7 +1506,7 @@ function removeInstance(div_id) {
 
 EOT;
 
-		$wgOut->addScript( $javascriptText );
+		SMWOutputs::requireScript( 'smwPrintoutControlsQueryUI', $javascriptText );
 		return $result;
 	}
 
@@ -1575,10 +1529,10 @@ EOT;
 		if ( is_array( $orderValues ) ) {
 			$params['order'] = '';
 			foreach ( $orderValues as $order_value ) {
-				if ( $order_value == '' ) {
+				if ( $order_value === '' ) {
 					$order_value = 'ASC';
 				}
-				$params['order'] .= ( $params['order'] != '' ? ',' : '' ) . $order_value;
+				$params['order'] .= ( $params['order'] !== '' ? ',' : '' ) . $order_value;
 			}
 		}
 
@@ -1586,7 +1540,7 @@ EOT;
 		if ( is_array( $sort_values ) ) {
 			$params['sort'] = '';
 			foreach ( $sort_values as $sort_value ) {
-				$params['sort'] .= ( $params['sort'] != '' ? ',' : '' ) . $sort_value;
+				$params['sort'] .= ( $params['sort'] !== '' ? ',' : '' ) . $sort_value;
 			}
 		}
 		return $params;
@@ -1603,8 +1557,6 @@ EOT;
 	 * @return string The HTML code
 	 */
 	protected function getPOFormBox( $enableAutocomplete = SMWQueryUI::ENABLE_AUTO_SUGGEST ) {
-		global $wgOut;
-
 		if ( $enableAutocomplete ) {
 			$this->enableAutocompletion();
 			$javascriptAutocompleteText = <<<EOT
@@ -1642,7 +1594,7 @@ jQuery(document).ready(function(){
 </script>
 EOT;
 
-			$wgOut->addScript( $javascriptAutocompleteText );
+			SMWOutputs::requireScript( 'smwPrintoutAutocompleteQueryUI', $javascriptAutocompleteText );
 
 		}
 		$this->setUrlArgs( array( 'po' => $this->getPOStrings() ) );
@@ -1661,13 +1613,13 @@ EOT;
 		$postring = $wgRequest->getText( 'po' );
 		$poArray = array();
 
-		if ( $postring != '' ) { // parameters from HTML input fields
+		if ( $postring !== '' ) { // parameters from HTML input fields
 			$ps = explode( "\n", $postring ); // params separated by newlines here (compatible with text-input for printouts)
 
 			foreach ( $ps as $param ) { // add initial ? if omitted (all params considered as printouts)
 				$param = trim( $param );
 
-				if ( ( $param != '' ) && ( $param[0] != '?' ) ) {
+				if ( ( $param !== '' ) && ( $param[0] != '?' ) ) {
 					$param = '?' . $param;
 				}
 
@@ -1819,9 +1771,9 @@ EOT;
 	 * @return array The first element contains the format selector, while the second contains the Format options
 	 */
 	protected function getFormatSelectBoxSep( $defaultFormat = 'broadtable' ) {
-		global $smwgResultFormats, $wgOut;
+		global $smwgResultFormats;
 
-		$this->enableJQuery();
+		SMWOutputs::requireResource( 'jquery' );
 
 		// checking argument
 		$defFormat = 'broadtable';
@@ -1872,7 +1824,7 @@ function updateOtherOptions(strURL) {
 </script>
 END;
 
-		$wgOut->addScript( $javascript );
+		SMWOutputs::requireScript( 'smwUpdateOptionsQueryUI', $javascript );
 		// END: add javascript for updating formating options by ajax
 
 		return $result;
@@ -1910,8 +1862,8 @@ END;
 	/**
 	 * Generates form elements for a (web)requested format.
 	 *
-	 * Required by getFormatSelectBox() to recieve form elements from the Web.
-	 * UIs may need to overload processFormatOptions(),
+	 * Required by getFormatSelectBox() to recieve form elements from the
+	 * Web. UIs may need to overload processFormatOptions(),
 	 * processFormatSelectBox() and getFormatSelectBox() to change behavior.
 	 *
 	 * @param WebRequest $wgRequest

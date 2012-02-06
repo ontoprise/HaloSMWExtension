@@ -22,15 +22,22 @@ class SMWEmbeddedResultPrinter extends SMWResultPrinter {
 	protected $m_showhead;
 	protected $m_embedformat;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		$this->m_showhead = !array_key_exists( 'embedonly', $params );
-		$this->m_embedformat = array_key_exists( 'embedformat', $params ) ? trim( $params['embedformat'] ) : 'h1';
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.7
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
+		
+		$this->m_showhead = !$params['embedonly'];
+		$this->m_embedformat = $params['embedformat'];
 	}
 
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_embedded' );
 	}
 
@@ -46,21 +53,22 @@ class SMWEmbeddedResultPrinter extends SMWResultPrinter {
 
 		// print header
 		$result = '';
+		$footer = '';
+		$embstart = '';
+		$embend = '';
+		$headstart = '';
+		$headend = '';
 		$this->hasTemplates = true;
 
 		switch ( $this->m_embedformat ) {
 			case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6':
-				$footer = '';
-				$embstart = '';
 				$headstart = '<' . $this->m_embedformat . '>';
 				$headend = '</' . $this->m_embedformat . ">\n";
-				$embend = '';
 			break;
 			case 'ul': case 'ol':
 				$result .= '<' . $this->m_embedformat . '>';
 				$footer = '</' . $this->m_embedformat . '>';
 				$embstart = '<li>';
-				$headstart = '';
 				$headend = "<br />\n";
 				$embend = "</li>\n";
 			break;
@@ -101,7 +109,7 @@ class SMWEmbeddedResultPrinter extends SMWResultPrinter {
 			$format = ( $this->m_embedformat == 'ol' ) ? 'ul':$this->m_embedformat;
 			$link->setParameter( $format, 'embedformat' );
 			if ( !$this->m_showhead ) {
-				$link->setParameter( '1', 'embedonly' );
+				$link->setParameter( 'on', 'embedonly' );
 			}
 			$result .= $embstart . $link->getText( SMW_OUTPUT_WIKI, $this->mLinker ) . $embend;
 		}
@@ -115,11 +123,12 @@ class SMWEmbeddedResultPrinter extends SMWResultPrinter {
 
 		$params['embedformat'] = new Parameter( 'embedformat' );
 		$params['embedformat']->setMessage( 'smw_paramdesc_embedformat' );
-		$params['embedformat']->setDefault( '' );
+		$params['embedformat']->setDefault( 'h1' );
+		$params['embedformat']->addCriteria( new CriterionInArray( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ol', 'ul' ) );
 		
 		$params['embedonly'] = new Parameter( 'embedonly', Parameter::TYPE_BOOLEAN );
 		$params['embedonly']->setMessage( 'smw_paramdesc_embedonly' );
-		$params['embedonly']->setDefault( '' );	
+		$params['embedonly']->setDefault( false, false );	
 		
 		return $params;
 	}

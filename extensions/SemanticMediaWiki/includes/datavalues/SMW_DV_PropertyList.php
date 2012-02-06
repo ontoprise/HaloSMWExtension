@@ -34,7 +34,6 @@ class SMWPropertyListValue extends SMWDataValue {
 				$propertyName = $propertyNameParts[1];
 				$propertyNamespace = $wgContLang->getNsText( SMW_NS_PROPERTY );
 				if ( $namespace != $propertyNamespace ) {
-					smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 					$this->addError( wfMsgForContent( 'smw_wrong_namespace', $propertyNamespace ) );
 				}
 			}
@@ -45,7 +44,6 @@ class SMWPropertyListValue extends SMWDataValue {
 				$diProperty = SMWDIProperty::newFromUserLabel( $propertyName );
 			} catch ( SMWDataItemException $e ) {
 				$diProperty = new SMWDIProperty( 'Error' );
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$this->addError( wfMsgForContent( 'smw_noproperty', $propertyName ) );
 			}
 
@@ -57,16 +55,15 @@ class SMWPropertyListValue extends SMWDataValue {
 			$this->m_dataitem = new SMWDIString( $stringValue );
 		} catch ( SMWStringLengthException $e ) {
 			$this->m_dataitem = new SMWDIString( 'Error' );
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_maxstring', $stringValue ) );
 		}
 	}
 
 	/**
 	 * @see SMWDataValue::loadDataItem()
-	 * 
+	 *
 	 * @param $dataitem SMWDataItem
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function loadDataItem( SMWDataItem $dataItem ) {
@@ -79,7 +76,6 @@ class SMWPropertyListValue extends SMWDataValue {
 					$this->m_diProperties[] = new SMWDIProperty( $propertyKey );
 				} catch ( SMWDataItemException $e ) {
 					$this->m_diProperties[] = new SMWDIProperty( 'Error' );
-					smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 					$this->addError( wfMsgForContent( 'smw_parseerror' ) );
 				}
 			}
@@ -125,7 +121,7 @@ class SMWPropertyListValue extends SMWDataValue {
 		$result = '';
 		$sep = ( $type == 4 ) ? '; ' : ', ';
 		foreach ( $this->m_diProperties as $diProperty ) {
-			if ( $result != '' ) $result .= $sep;
+			if ( $result !== '' ) $result .= $sep;
 			$propertyValue = SMWDataValueFactory::newDataItemValue( $diProperty, null );
 			$result .= $this->makeValueOutputText( $type, $propertyValue, $linker );
 		}

@@ -26,12 +26,19 @@ define( 'SMW_HEADERS_HIDE', 0 ); // Used to be "false" hence use "0" to support 
 abstract class SMWResultPrinter {
 
 	/**
-	 * List of parameters, set by readParameters (which is deprecated)
-	 * and can be used to store parameters in readParameters.
+	 * @deprecated Use $params instead
+	 */
+	protected $m_params;
+	
+	/**
+	 * List of parameters, set by handleParameters.
+	 * param name (lower case, trimmed) => param value (mixed)
+	 * 
+	 * @since 1.7
 	 * 
 	 * @var array
 	 */
-	protected $m_params;
+	protected $params;
 
 	/**
 	 * Text to print *before* the output in case it is *not* empty; assumed to be wikitext.
@@ -96,8 +103,6 @@ abstract class SMWResultPrinter {
 	/// This can be set in LocalSettings.php, but only after enableSemantics().
 	public static $maxRecursionDepth = 2;
 
-	protected $useValidator;
-	
 	/**
 	 * Return serialised results in specified format.
 	 * Implemented by subclasses.
@@ -110,16 +115,16 @@ abstract class SMWResultPrinter {
 	 * 
 	 * @param string $format
 	 * @param $inline
-	 * @param boolean $useValidator Since 1.6
+	 * @param boolean $useValidator Deprecated since 1.6.2
 	 */
 	public function __construct( $format, $inline, $useValidator = false ) {
 		global $smwgQDefaultLinking;
+
 		$this->mFormat = $format;
 		$this->mInline = $inline;
 		$this->mLinkFirst = ( $smwgQDefaultLinking != 'none' );
 		$this->mLinkOthers = ( $smwgQDefaultLinking == 'all' );
 		$this->mLinker = class_exists( 'DummyLinker' ) ? new DummyLinker : new Linker; ///TODO: how can we get the default or user skin here (depending on context)?
-		$this->useValidator = $useValidator;
 	}
 
 	/**
@@ -157,20 +162,7 @@ abstract class SMWResultPrinter {
 		$this->isHTML = false;
 		$this->hasTemplates = false;
 		
-		if ( $this->useValidator ) {
-			$paramValidationResult = $this->handleRawParameters( $params );
-			
-			if ( is_array( $paramValidationResult ) ) {
-				$this->handleParameters( $paramValidationResult, $outputmode );
-			}
-			else {
-				$this->addError( $paramValidationResult );
-				return $this->getErrorString( $results );
-			}
-		}
-		else {
-			$this->readParameters( $params, $outputmode );
-		}
+		$this->handleParameters( $params, $outputmode );
 		
 		// Default output for normal printers:
 		if ( ( $outputmode != SMW_OUTPUT_FILE ) && // not in FILE context,
@@ -182,11 +174,10 @@ abstract class SMWResultPrinter {
 				$label = $this->mSearchlabel;
 
 				if ( $label === null ) { // apply defaults
-					smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 					$label = wfMsgForContent( 'smw_iq_moreresults' );
 				}
 
-				if ( $label != '' ) {
+				if ( $label !== '' ) {
 					$link = $results->getQueryLink( $this->escapeText( $label, $outputmode ) );
 					$result = $link->getText( $outputmode, $this->mLinker );
 				} else {
@@ -198,7 +189,7 @@ abstract class SMWResultPrinter {
 				return $result;
 			}
 		}
-
+		
 		// Get output from printer:
 		$result = $this->getResultText( $results, $outputmode );
 
@@ -291,31 +282,6 @@ abstract class SMWResultPrinter {
 
 		return $result;		
 	}
-
-	/**
-	 * Handles the user-provided parameters and returns the processes key-value pairs.
-	 * If there is a fatal error, a string with the error message will be returned intsead.
-	 * 
-	 * @since 1.6
-	 * 
-	 * @param array $keyValuePairs
-	 * 
-	 * @return array or string
-	 */
-	protected function handleRawParameters( array $keyValuePairs ) {
-		$validator = new Validator();
-		$validator->setParameters( $keyValuePairs, $this->getParameters() );
-		$validator->validateParameters();
-		$fatalError = $validator->hasFatalError();
-		
-		if ( $fatalError === false ) {
-			$this->mErrors = $validator->getErrorMessages();
-		    return $validator->getParameterValues();			
-		}
-		else {
-			return $fatalError->getMessage();
-		}
-	}
 	
 	/**
 	 * Read an array of parameter values given as key-value-pairs and
@@ -328,7 +294,8 @@ abstract class SMWResultPrinter {
 	 * @param $outputmode
 	 */
 	protected function handleParameters( array $params, $outputmode ) {
-		$this->m_params = $params;
+		$this->params = $params;
+		$this->m_params = $params; // Compat, change made in 1.6.3/1.7
 		
 		if ( array_key_exists( 'intro', $params ) ) { $this->mIntro = $params['intro']; }
 		if ( array_key_exists( 'outro', $params ) ) { $this->mOutro = $params['outro']; }
@@ -336,7 +303,7 @@ abstract class SMWResultPrinter {
 		if ( array_key_exists( 'searchlabel', $params ) ) {
 			$this->mSearchlabel = $params['searchlabel'] === false ? null : $params['searchlabel'];
 		}
-		
+
 		switch ( $params['link'] ) {
 			case 'head': case 'subject':
 				$this->mLinkFirst = true;
@@ -361,63 +328,6 @@ abstract class SMWResultPrinter {
 		} else {
 			$this->mShowHeaders = SMW_HEADERS_SHOW;
 		}		
-	}
-	
-	/**
-	 * Read an array of parameter values given as key-value-pairs and
-	 * initialise internal member fields accordingly. Possibly overwritten
-	 * (extended) by subclasses.
-	 *
-	 * @param array $params
-	 * @param $outputmode
-	 * 
-	 * @deprecated Use handleParameters instead
-	 */
-	protected function readParameters( $params, $outputmode ) {
-		$this->m_params = $params;
-
-		if ( array_key_exists( 'intro', $params ) ) {
-			$this->mIntro = $params['intro'];
-		}
-
-		if ( array_key_exists( 'outro', $params ) ) {
-			$this->mOutro = $params['outro'];
-		}
-
-		if ( array_key_exists( 'searchlabel', $params ) ) {
-			$this->mSearchlabel = $params['searchlabel'];
-		}
-
-		if ( array_key_exists( 'link', $params ) ) {
-			switch ( strtolower( trim( $params['link'] ) ) ) {
-			case 'head': case 'subject':
-				$this->mLinkFirst = true;
-				$this->mLinkOthers = false;
-				break;
-			case 'all':
-				$this->mLinkFirst = true;
-				$this->mLinkOthers = true;
-				break;
-			case 'none':
-				$this->mLinkFirst = false;
-				$this->mLinkOthers = false;
-				break;
-			}
-		}
-
-		if ( array_key_exists( 'default', $params ) ) {
-			$this->mDefault = str_replace( '_', ' ', $params['default'] );
-		}
-
-		if ( array_key_exists( 'headers', $params ) ) {
-			if ( strtolower( trim( $params['headers'] ) ) == 'hide' ) {
-				$this->mShowHeaders = SMW_HEADERS_HIDE;
-			} elseif ( strtolower( trim( $params['headers'] ) ) == 'plain' ) {
-				$this->mShowHeaders = SMW_HEADERS_PLAIN;
-			} else {
-				$this->mShowHeaders = SMW_HEADERS_SHOW;
-			}
-		}
 	}
 
 	/**
@@ -541,7 +451,7 @@ abstract class SMWResultPrinter {
 	 * @return boolean
 	 */
 	protected function linkFurtherResults( $results ) {
-		return ( $this->mInline && $results->hasFurtherResults() && ( $this->mSearchlabel !== '' ) );
+		return $this->mInline && $results->hasFurtherResults() && $this->mSearchlabel !== '';
 	}
 	
 	/**
@@ -613,47 +523,9 @@ abstract class SMWResultPrinter {
 		$params = array();
 		
 		foreach ( $this->getParameters() as $param ) {
-			$params[] = $this->toValidatorParam( $param );
+			$param = $this->toValidatorParam( $param );
+			$params[$param->getName()] = $param;
 		}
-		
-		return $params;
-	}
-	
-	/**
-	 * A function to describe the allowed parameters of a query using
-	 * any specific format - most query printers should override this
-	 * function
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array
-	 */
-	public function getParameters() {
-		$params = array();
-		
-		$params['format'] = new Parameter( 'format' );
-		
-		$params['limit'] = new Parameter( 'limit', Parameter::TYPE_INTEGER );
-		$params['limit']->setMessage( 'smw_paramdesc_limit' );
-		$params['limit']->setDefault( 20 );
-		
-		$params['offset'] = new Parameter( 'offset', Parameter::TYPE_INTEGER );
-		$params['offset']->setMessage( 'smw_paramdesc_offset' );
-		$params['offset']->setDefault( 0 );
-		
-		$params['headers'] = new Parameter( 'headers' );
-		$params['headers']->setMessage( 'smw_paramdesc_headers' );
-		$params['headers']->addCriteria( new CriterionInArray( 'show', 'hide', 'plain' ) );
-		$params['headers']->setDefault( 'show' );
-		
-		$params['mainlabel'] = new Parameter( 'mainlabel' );
-		$params['mainlabel']->setMessage( 'smw_paramdesc_mainlabel' );
-		$params['mainlabel']->setDefault( false, false );
-		
-		$params['link'] = new Parameter( 'link' );
-		$params['link']->setMessage( 'smw_paramdesc_link' );		
-		$params['link']->addCriteria( new CriterionInArray( 'all', 'subject', 'none' ) );
-		$params['link']->setDefault( 'all' );
 		
 		return $params;
 	}
@@ -696,6 +568,22 @@ abstract class SMWResultPrinter {
 		else {
 			return $param;
 		}
+	}
+	
+	/**
+	 * A function to describe the allowed parameters of a query using
+	 * any specific format - most query printers should override this
+	 * function.
+	 * 
+	 * TODO: refactor non-printer params up to the query processor
+	 * and do all param handling there. 
+	 *
+	 * @since 1.5
+	 *
+	 * @return array of Parameter
+	 */
+	public function getParameters() {
+		return array();
 	}
 
 }

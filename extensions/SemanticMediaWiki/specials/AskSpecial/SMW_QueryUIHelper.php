@@ -76,7 +76,7 @@ class SMWQueryUIHelper {
 	 */
 	private $queryResult = null;
 
-	/*
+	/**
 	 * Constants define whether the parameters was passed from the ui form (SPECIAL_PAGE)
 	 * or from the further results infolink (WIKI_LINK)
 	 */
@@ -208,7 +208,7 @@ class SMWQueryUIHelper {
 
 		$errors = array();
 		if ( $enableValidation ) {
-			if ( $queryString == '' ) {
+			if ( $queryString === '' ) {
 				$errors[] = wfMsg( 'smw_qui_noquery' );
 			} else {
 				$query = SMWQueryProcessor::createQuery( $queryString, array() );
@@ -320,8 +320,6 @@ class SMWQueryUIHelper {
 	 * Processes the QueryString, Params, and PrintOuts.
 	 *
 	 * @todo Combine this method with execute() or remove it altogether.
-	 * @todo for wikilink context, try to avoid computation if no query is set,
-	 * also check for pagination problems, if any.
 	 */
 	public function extractParameters( $p ) {
 		if ( $this->context == self::SPECIAL_PAGE ) {
@@ -349,9 +347,22 @@ class SMWQueryUIHelper {
 	 */
 	public function execute() {
 		$errors = array();
-		if ( $this->queryString != '' ) {
-			$query = SMWQueryProcessor::createQuery( $this->queryString, $this->parameters,
-				SMWQueryProcessor::SPECIAL_PAGE , $this->parameters['format'], $this->printOuts );
+
+		if ( $this->queryString !== '' ) {
+			// FIXME: this is a hack
+			SMWQueryProcessor::addThisPrintout( $this->printOuts, $this->parameters );
+			$params = SMWQueryProcessor::getProcessedParams( $this->parameters, $this->printOuts );
+			$this->parameters['format'] = $params['format'];
+			$this->params = $params;
+
+			$query = SMWQueryProcessor::createQuery(
+				$this->queryString,
+				$params,
+				SMWQueryProcessor::SPECIAL_PAGE,
+				$this->parameters['format'],
+				$this->printOuts
+			);
+
 			$res = smwfGetStore()->getQueryResult( $query );
 			$this->queryResult = $res;
 
@@ -428,10 +439,9 @@ class SMWQueryUIHelper {
 		$res = $this->queryResult;
 		$printer = SMWQueryProcessor::getResultPrinter( $this->parameters['format'],
 			SMWQueryProcessor::SPECIAL_PAGE );
-		$resultMime = $printer->getMimeType( $res );
 
 		if ( $res->getCount() > 0 ) {
-			$queryResult = $printer->getResult( $res, $this->parameters, SMW_OUTPUT_HTML );
+			$queryResult = $printer->getResult( $res, $this->params, SMW_OUTPUT_HTML );
 
 			if ( is_array( $queryResult ) ) {
 				$result .= $queryResult[0];
@@ -553,7 +563,6 @@ class SMWQueryUIHelper {
 		$result->setPrintOuts( $printouts, $enableValidation );
 		$result->setQueryString( $query, $enableValidation );
 		$result->extractParameters( '' );
-		// $result->execute();
 		return $result;
 	}
 

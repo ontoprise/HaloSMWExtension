@@ -28,8 +28,6 @@ class SMWConcept {
 	public static function render( Parser &$parser ) {
 		global $wgContLang, $wgTitle;
 
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
-
 		$title = $parser->getTitle();
 		$pconc = new SMWDIProperty( '_CONC' );
 
@@ -54,17 +52,22 @@ class SMWConcept {
 		$concept_docu = array_shift( $params );
 
 		// NOTE: the str_replace above is required in MediaWiki 1.11, but not in MediaWiki 1.14
-		$query = SMWQueryProcessor::createQuery( $concept_input, array( 'limit' => 20, 'format' => 'list' ), SMWQueryProcessor::CONCEPT_DESC );
+		$query = SMWQueryProcessor::createQuery(
+			$concept_input,
+			SMWQueryProcessor::getProcessedParams( array( 'limit' => 20, 'format' => 'list' ) ),
+			SMWQueryProcessor::CONCEPT_DESC
+		);
+		
 		$concept_text = $query->getDescription()->getQueryString();
 
-		if ( SMWParseData::getSMWData( $parser ) !== null ) {
+		if ( !is_null( SMWParseData::getSMWData( $parser ) ) ) {
 			$diConcept = new SMWDIConcept( $concept_text, $concept_docu, $query->getDescription()->getQueryFeatures(), $query->getDescription()->getSize(), $query->getDescription()->getDepth() );
 			SMWParseData::getSMWData( $parser )->addPropertyObjectValue( $pconc, $diConcept );
 		}
 
 		// display concept box:
 		$rdflink = SMWInfolink::newInternalLink( wfMsgForContent( 'smw_viewasrdf' ), $wgContLang->getNsText( NS_SPECIAL ) . ':ExportRDF/' . $title->getPrefixedText(), 'rdflink' );
-		SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
+		SMWOutputs::requireResource( 'ext.smw.style' );
 
 		// TODO: escape output, preferably via Html or Xml class.
 		$result = '<div class="smwfact"><span class="smwfactboxhead">' . wfMsgForContent( 'smw_concept_description', $title->getText() ) .
@@ -73,8 +76,7 @@ class SMWConcept {
 				( $concept_docu ? "<p>$concept_docu</p>" : '' ) .
 				'<pre>' . str_replace( '[', '&#x005B;', $concept_text ) . "</pre>\n</div>";
 
-		// Starting from MW 1.16, there is a more suited method available: Title::isSpecialPage
-		if ( !is_null( $wgTitle ) &&  $wgTitle->getNamespace() == NS_SPECIAL ) {
+		if ( !is_null( $wgTitle ) && $wgTitle->isSpecialPage() ) {
 			global $wgOut;
 			SMWOutputs::commitToOutputPage( $wgOut );
 		}

@@ -12,7 +12,7 @@
  * the Beginning of Time according to most of today's theories. The range of
  * supported future dates is limited more strictly, but it does also allow
  * year numbers in the order of 10^9.
- * 
+ *
  * The implementation notices and stores whether parts of a date/time have been
  * omitted (as in "2008" or "May 2007"). For all exporting and sorting
  * purposes, incomplete dates are completed with defaults (usually using the
@@ -21,14 +21,14 @@
  * behaviour e.g. for outputs (defaults are not printed when querying for a
  * value). This largely uses the precision handling of SMWDITime.
  *
- * 
+ *
  * Date formats
  *
  * Dates can be given in many formats, using numbers, month names, and
  * abbreviated month names. The preferred interpretation of ambiguous dates
  * ("1 2 2008" or even "1 2 3 BC") is controlled by the language file, as is
  * the local naming of months. English month names are always supported.
- * 
+ *
  * Dates can be given in Gregorian or Julian calendar, set by the token "Jl"
  * or "Gr" in the input. If neither is set, a default is chosen: inputs after
  * October 15, 1582 (the time when the Gregorian calendar was first inaugurated
@@ -38,12 +38,12 @@
  * 24), JD (direct numerical input in Julian Day notation), and MJD (direct
  * numerical input in Modified Julian Day notation as used in aviation and
  * space flight).
- * 
+ *
  * The class does not support the input of negative year numbers but uses the
  * markers "BC"/"BCE" and "AD"/"CE" instead. There is no year 0 in Gregorian or
  * Julian calendars, but the class graciously considers this input to mean year
  * 1 BC(E).
- * 
+ *
  * For prehisoric dates before 9999 BC(E) only year numbers are allowed
  * (nothing else makes much sense). At this time, the years of Julian and
  * Gregorian calendar still overlap significantly, so the transition to a
@@ -51,17 +51,17 @@
  * class will consider prehistoric dates as Gregorian but very ancient times
  * may be interpreted as desired (probably with reference to a physical notion
  * of time that is not dependent on revolutions of earth around the sun).
- * 
- * 
+ *
+ *
  * Time formats
  *
  * Times can be in formats like "23:12:45" and "12:30" possibly with additional
- * modifiers "am" or "pm". Timezones are supported: the class knows many 
+ * modifiers "am" or "pm". Timezones are supported: the class knows many
  * international timezone monikers (e.g. CET or GMT) and also allows time
  * offsets directly after a time (e.g. "10:30-3:30" or "14:45:23+2"). Such
  * offsets always refer to UTC. Timezones are only used on input and are not
  * stored as part of the value.
- * 
+ *
  * Time offsets take leap years into account, e.g. the date
  * "Feb 28 2004 23:00+2:00" is equivalent to "29 February 2004 01:00:00", while
  * "Feb 28 1900 23:00+2:00" is equivalent to "1 March 1900 01:00:00".
@@ -69,8 +69,8 @@
  * Military time format is supported. This consists of 4 or 6 numeric digits
  * followed by a one-letter timezone code (e.g. 1240Z is equivalent to 12:40
  * UTC).
- * 
- * 
+ *
+ *
  * I18N
  *
  * Currently, neither keywords like "BCE", "Jl", or "pm", nor timezone monikers
@@ -79,7 +79,7 @@
  * internationalized, but English names and abbreviations will also work in all
  * languages. The class also supports ordinal day-of-month annotations like
  * "st" and "rd", again only for English.
- * 
+ *
  * I18N includes the preferred order of dates, e.g. to interpret "5 6 2010".
  *
  * @todo Theparsing process can encounter many kinds of well-defined problems
@@ -145,11 +145,11 @@ class SMWTimeValue extends SMWDataValue {
 		/// TODO Direct JD input currently cannot cope with decimal numbers
 		$datecomponents = array();
 		$calendarmodel = $era = $hours = $minutes = $seconds = $timeoffset = false;
-		
+
 		// Check if it's parseable by wfTimestamp when it's not a year (which is wrongly interpreted).
 		if ( strlen( $value ) != 4 && wfTimestamp( TS_MW, $value ) !== false ) {
 			$timeStamp = wfTimestamp( TS_MW, $value );
-			
+
 			$this->m_dataitem = new SMWDITime(
 				SMWDITime::CM_GREGORIAN,
 				substr( $timeStamp, 0, 4 ),
@@ -160,11 +160,11 @@ class SMWTimeValue extends SMWDataValue {
 				substr( $timeStamp, 12, 2 )
 			);
 		}
-		else if ( $this->parseDateString( $value, $datecomponents, $calendarmodel, $era, $hours, $minutes, $seconds, $timeoffset ) ) {
+		elseif ( $this->parseDateString( $value, $datecomponents, $calendarmodel, $era, $hours, $minutes, $seconds, $timeoffset ) ) {
 			if ( ( $calendarmodel === false ) && ( $era === false ) && ( count( $datecomponents ) == 1 ) && ( intval( end( $datecomponents ) ) >= 100000 ) ) {
 				$calendarmodel = 'JD'; // default to JD input if a single number was given as the date
 			}
-			
+
 			if ( ( $calendarmodel == 'JD' ) || ( $calendarmodel == 'MJD' ) ) {
 				if ( ( $era === false ) && ( $hours === false ) && ( $timeoffset == 0 ) ) {
 					try {
@@ -172,19 +172,17 @@ class SMWTimeValue extends SMWDataValue {
 						if ( $calendarmodel == 'MJD' ) $jd += self::MJD_EPOCH;
 						$this->m_dataitem = SMWDITime::newFromJD( $jd, SMWDITime::CM_GREGORIAN, SMWDITime::PREC_YMDT, $this->m_typeid );
 					} catch ( SMWDataItemException $e ) {
-						smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 						$this->addError( wfMsgForContent( 'smw_nodatetime', $this->m_wikivalue ) );
 					}
 				} else {
-					smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 					$this->addError( wfMsgForContent( 'smw_nodatetime', $this->m_wikivalue ) );
 				}
 			} else {
 				$this->setDateFromParsedValues( $datecomponents, $calendarmodel, $era, $hours, $minutes, $seconds, $timeoffset );
 			}
 		}
-		
-		if ( $this->m_dataitem === null ) { // make sure that m_dataitem is set in any case
+
+		if ( is_null( $this->m_dataitem ) ) { // make sure that m_dataitem is set in any case
 			$this->m_dataitem = new SMWDITime( SMWDITime::CM_GREGORIAN, 32202 );
 		}
 	}
@@ -206,7 +204,6 @@ class SMWTimeValue extends SMWDataValue {
 	 * @todo This method in principle allows date parsing to be internationalized further. Should be done.
 	 */
 	protected function parseDateString( $string, &$datecomponents, &$calendarmodel, &$era, &$hours, &$minutes, &$seconds, &$timeoffset ) {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		// crude preprocessing for supporting different date separation characters;
 		// * this does not allow localized time notations such as "10.34 pm"
 		// * this creates problems with keywords that contain "." such as "p.m."
@@ -218,47 +215,49 @@ class SMWTimeValue extends SMWDataValue {
 		$calendarmodel = $timezoneoffset = $era = $ampm = false;
 		$hours = $minutes = $seconds = $timeoffset = false;
 		$unclearparts = array();
-		$prevmatchwasnumber = $matchisnumber = false; // used for looking back; numbers are days/months/years by default but may be re-interpreted if certain further symbols are found
-		$prevmatchwasdate = $matchisdate = false; // used for ensuring that date parts are in one block
+		$matchisnumber = false; // used for looking back; numbers are days/months/years by default but may be re-interpreted if certain further symbols are found
+		$matchisdate = false; // used for ensuring that date parts are in one block
+
 		foreach ( $matches as $match ) {
 			$prevmatchwasnumber = $matchisnumber;
 			$prevmatchwasdate   = $matchisdate;
 			$matchisnumber = $matchisdate = false;
+
 			if ( $match == ' ' ) {
 				$matchisdate = $prevmatchwasdate; // spaces in dates do not end the date
 			} elseif ( $match == '-' ) { // can only occur separately between date components
 				$datecomponents[] = $match; // we check later if this makes sense
 				$matchisdate = true;
 			} elseif ( is_numeric( $match ) &&
-			           ( $prevmatchwasdate || ( count( $datecomponents ) == 0 ) ) ) {
+			           ( $prevmatchwasdate || count( $datecomponents ) == 0 ) ) {
 				$datecomponents[] = $match;
 				$matchisnumber = true;
 				$matchisdate = true;
-			} elseif ( ( $era === false ) && ( in_array( $match, array( 'AD', 'CE' ) ) ) ) {
+			} elseif ( $era === false && in_array( $match, array( 'AD', 'CE' ) ) ) {
 				$era = '+';
-			} elseif ( ( $era === false ) && (  in_array( $match, array( 'BC', 'BCE' ) ) ) ) {
+			} elseif ( $era === false && in_array( $match, array( 'BC', 'BCE' ) ) ) {
 				$era = '-';
-			} elseif ( ( $calendarmodel === false ) && ( in_array( $match, array( 'Gr', 'He', 'Jl', 'MJD', 'JD', 'OS' ) ) ) ) {
+			} elseif ( $calendarmodel === false && in_array( $match, array( 'Gr', 'He', 'Jl', 'MJD', 'JD', 'OS' ) ) ) {
 				$calendarmodel = $match;
-			} elseif (  ( $ampm === false ) && ( ( strtolower( $match ) == 'am' ) || ( strtolower( $match ) == 'pm' ) ) ) {
+			} elseif ( $ampm === false && ( strtolower( $match ) === 'am' || strtolower( $match ) === 'pm' ) ) {
 				$ampm = strtolower( $match );
-			} elseif (  ( $hours === false ) && ( self::parseTimeString( $match, $hours, $minutes, $seconds, $timeoffset ) ) ) {
+			} elseif ( $hours === false && self::parseTimeString( $match, $hours, $minutes, $seconds, $timeoffset ) ) {
 				// nothing to do
-			} elseif ( ( $hours === true ) && ( $timezoneoffset === false ) &&
-			           ( array_key_exists( $match, self::$m_tz ) ) ) {
+			} elseif ( $hours !== false && $timezoneoffset === false &&
+			           array_key_exists( $match, self::$m_tz ) ) {
 				// only accept timezone if time has already been set
 				$timezoneoffset = self::$m_tz[ $match ];
-			} elseif ( ( $prevmatchwasnumber ) && ( $hours === false ) && ( $timezoneoffset === false ) &&
-			           ( array_key_exists( $match, self::$m_miltz ) ) &&
-				   ( self::parseMilTimeString( end( $datecomponents ), $hours, $minutes, $seconds ) ) ) {
+			} elseif ( $prevmatchwasnumber && $hours === false && $timezoneoffset === false &&
+			           array_key_exists( $match, self::$m_miltz ) &&
+				   self::parseMilTimeString( end( $datecomponents ), $hours, $minutes, $seconds ) ) {
 					// military timezone notation is found after a number -> re-interpret the number as military time
 					array_pop( $datecomponents );
 					$timezoneoffset = self::$m_miltz[ $match ];
-			} elseif ( ( $prevmatchwasdate || ( count( $datecomponents ) == 0 ) ) &&
+			} elseif ( ( $prevmatchwasdate || count( $datecomponents ) == 0 ) &&
 				   $this->parseMonthString( $match, $monthname ) ) {
 				$datecomponents[] = $monthname;
 				$matchisdate = true;
-			} elseif ( $prevmatchwasnumber && $prevmatchwasdate && ( in_array( $match, array( 'st', 'nd', 'rd', 'th' ) ) ) ) {
+			} elseif ( $prevmatchwasnumber && $prevmatchwasdate && in_array( $match, array( 'st', 'nd', 'rd', 'th' ) ) ) {
 				$datecomponents[] = 'd' . strval( array_pop( $datecomponents ) ); // must be a day; add standard marker
 				$matchisdate = true;
 			} else {
@@ -272,21 +271,24 @@ class SMWTimeValue extends SMWDataValue {
 		// 		debug_zval_dump( $unclearparts );
 
 		// Abort if we found unclear or over-specific information:
-		if ( ( count( $unclearparts ) != 0 ) ||
-		     ( ( $timezoneoffset !== false ) && ( $timeoffset !== false ) ) ) {
+		if ( count( $unclearparts ) != 0 ||
+		     ( $timezoneoffset !== false && $timeoffset !== false ) ) {
 			$this->addError( wfMsgForContent( 'smw_nodatetime', $this->m_wikivalue ) );
 			return false;
 		}
+
 		$timeoffset = $timeoffset + $timezoneoffset;
 		// Check if the a.m. and p.m. information is meaningful
-		if ( ( $ampm !== false ) && ( ( $hours > 12 ) || ( $hours == 0 ) ) ) { // Note: the == 0 check subsumes $hours===false
+
+		if ( $ampm !== false && ( $hours > 12 || $hours == 0 ) ) { // Note: the == 0 check subsumes $hours===false
 			$this->addError( wfMsgForContent( 'smw_nodatetime', $this->m_wikivalue ) );
 			return false;
-		} elseif ( ( $ampm == 'am' ) && ( $hours == 12 ) ) {
+		} elseif ( $ampm == 'am' && $hours == 12 ) {
 			$hours = 0;
-		} elseif ( ( $ampm == 'pm' ) && ( $hours < 12 ) ) {
+		} elseif ( $ampm == 'pm' && $hours < 12 ) {
 			$hours += 12;
 		}
+
 		return true;
 	}
 
@@ -310,7 +312,7 @@ class SMWTimeValue extends SMWDataValue {
 		} else {
 			$nhours = intval( $match[1] );
 			$nminutes = $match[2] ? intval( $match[2] ) : false;
-			if ( ( count( $match ) > 3 ) && ( $match[3] != '' ) ) {
+			if ( ( count( $match ) > 3 ) && ( $match[3] !== '' ) ) {
 				$nseconds = intval( substr( $match[3], 1 ) );
 			} else {
 				$nseconds = false;
@@ -319,7 +321,7 @@ class SMWTimeValue extends SMWDataValue {
 				$hours = $nhours;
 				$minutes = $nminutes;
 				$seconds = $nseconds;
-				if ( ( count( $match ) > 5 ) && ( $match[5] != '' ) ) {
+				if ( ( count( $match ) > 5 ) && ( $match[5] !== '' ) ) {
 					$timeoffset = intval( $match[5] );
 					if ( ( count( $match ) > 7 ) && ( $match[7] == '30' ) ) {
 						$timeoffset += 0.5;
@@ -500,7 +502,7 @@ class SMWTimeValue extends SMWDataValue {
 		// Having more than years or specifying a calendar model does
 		// not make sense for prehistoric dates, and our calendar
 		// conversion would not be reliable if JD numbers get too huge:
-		if ( ( $date['y'] <= self::PREHISTORY ) && 
+		if ( ( $date['y'] <= self::PREHISTORY ) &&
 		     ( ( $this->m_dataitem->getPrecision() > SMWDITime::PREC_Y ) || ( $calendarmodel !== false ) ) ) {
 			$this->addError( wfMsgForContent( 'smw_nodatetime', $this->m_wikivalue ) );
 			return false;
@@ -529,19 +531,19 @@ class SMWTimeValue extends SMWDataValue {
 	 * @return integer that encodes a three-digit bit vector
 	 */
 	protected static function checkDateComponent( $component, &$numvalue ) {
-		if ( $component == '' ) { // should not happen
+		if ( $component === '' ) { // should not happen
 			$numvalue = 0;
 			return 0;
 		} elseif ( is_numeric( $component ) ) {
 			$numvalue = intval( $component );
 			if ( ( $numvalue >= 1 ) && ( $numvalue <= 12 ) ) {
 				return SMW_DAY_MONTH_YEAR; // can be a month, day or year
-			} elseif ( ( $numvalue >= 1 ) && ( $numvalue <= 31 ) ) { 
+			} elseif ( ( $numvalue >= 1 ) && ( $numvalue <= 31 ) ) {
 				return SMW_DAY_YEAR; // can be day or year
 			} else { // number can just be a year
 				return SMW_YEAR;
 			}
-		} elseif ( $component{0} == 'd' ) { // already marked as day
+		} elseif ( $component { 0 } == 'd' ) { // already marked as day
 			if ( is_numeric( substr( $component, 1 ) ) ) {
 				$numvalue = intval( substr( $component, 1 ) );
 				return ( ( $numvalue >= 1 ) && ( $numvalue <= 31 ) ) ? SMW_DAY : 0;
@@ -641,7 +643,7 @@ class SMWTimeValue extends SMWDataValue {
 	 */
 	public function getYear( $calendarmodel = SMWDITime::CM_GREGORIAN ) {
 		$di = $this->getDataForCalendarModel( $calendarmodel );
-		if ( $di !== null ) {
+		if ( !is_null( $di ) ) {
 			return $di->getYear();
 		} else {
 			return false;
@@ -658,7 +660,7 @@ class SMWTimeValue extends SMWDataValue {
 	 */
 	public function getMonth( $calendarmodel = SMWDITime::CM_GREGORIAN, $default = 1 ) {
 		$di = $this->getDataForCalendarModel( $calendarmodel );
-		if ( $di !== null ) {
+		if ( !is_null( $di ) ) {
 			return ( $di->getPrecision() >= SMWDITime::PREC_YM ) ? $di->getMonth() : $default;
 		} else {
 			return false;
@@ -675,7 +677,7 @@ class SMWTimeValue extends SMWDataValue {
 	 */
 	public function getDay( $calendarmodel = SMWDITime::CM_GREGORIAN, $default = 1 ) {
 		$di = $this->getDataForCalendarModel( $calendarmodel );
-		if ( $di !== null ) {
+		if ( !is_null( $di ) ) {
 			return ( $di->getPrecision() >= SMWDITime::PREC_YMD ) ? $di->getDay() : $default;
 		} else {
 			return false;
@@ -695,7 +697,7 @@ class SMWTimeValue extends SMWDataValue {
 			return $default;
 		} else {
 			return sprintf( "%02d", $this->m_dataitem->getHour() ) . ':' .
-			       sprintf( "%02d", $this->m_dataitem->getMinute()) . ':' .
+			       sprintf( "%02d", $this->m_dataitem->getMinute() ) . ':' .
 			       sprintf( "%02d", $this->m_dataitem->getSecond() );
 		}
 	}
@@ -713,7 +715,7 @@ class SMWTimeValue extends SMWDataValue {
 	 * than 4 digits, which is not strictly conforming to the standard.
 	 * The date includes year, month, and day regardless of the input
 	 * precision, but will only include time when specified.
-	 * 
+	 *
 	 * Conforming to the 2000 version of ISO8601, year 1 BC(E) is
 	 * represented as "0000", year 2 BC(E) as "-0001" and so on.
 	 *
@@ -723,13 +725,12 @@ class SMWTimeValue extends SMWDataValue {
 	 * @return string
 	 */
 	public function getISO8601Date( $mindefault = true ) {
-		$yearnum = ( $this->getYear() > 0 ) ? $this->getYear() : 1 - $this->getYear();
 		$result = ( $this->getYear() > 0 ) ? '' : '-';
 		$monthnum = $this->getMonth( SMWDITime::CM_GREGORIAN, ( $mindefault ? 1 : 12 ) );
 		$result .= str_pad( $this->getYear(), 4, "0", STR_PAD_LEFT ) .
 			  '-' . str_pad( $monthnum, 2, "0", STR_PAD_LEFT );
 		if ( !$mindefault && ( $this->m_dataitem->getPrecision() < SMWDITime::PREC_YMD ) ) {
-			$maxday = self::getDayNumberForMonth( $monthnum, $this->getYear(), SMWDITime::CM_GREGORIAN );
+			$maxday = SMWDITime::getDayNumberForMonth( $monthnum, $this->getYear(), SMWDITime::CM_GREGORIAN );
 			$result .= '-' . str_pad( $this->getDay( SMWDITime::CM_GREGORIAN, $maxday ), 2, "0", STR_PAD_LEFT );
 		} else {
 			$result .= '-' . str_pad( $this->getDay(), 2, "0", STR_PAD_LEFT );
@@ -738,6 +739,37 @@ class SMWTimeValue extends SMWDataValue {
 			$result .= 'T' . $this->getTimeString( ( $mindefault ? '00:00:00' : '23:59:59' ) );
 		}
 		return $result;
+	}
+
+	/**
+	 * Use MediaWiki's date and time formatting. It can't handle all inputs
+	 * properly, but has superior i18n support.
+	 *
+	 * @return string
+	 */
+	public function getMediaWikiDate() {
+		global $wgContLang;
+
+		$dataitem = $this->m_dataitem;
+		$precision = $dataitem->getPrecision();
+
+		$year = $this->getYear();
+		if ( $year < 0 || $year > 9999 ) $year = '0000';
+		$year = str_pad( $year, 4, "0", STR_PAD_LEFT );
+
+		if ( $precision <= SMWDITime::PREC_Y ) {
+			return $wgContLang->formatNum( $year, true );
+		}
+
+		$month = str_pad( $this->getMonth( SMWDITime::CM_GREGORIAN ), 2, "0", STR_PAD_LEFT );
+		$day = str_pad( $this->getDay( SMWDITime::CM_GREGORIAN ), 2, "0", STR_PAD_LEFT );
+
+		if ( $precision <= SMWDITime::PREC_YMD ) {
+			return $wgContLang->date( "$year$month$day" . '000000', false, false );
+		}
+
+		$time = str_replace( ':', '', $this->getTimeString() );
+		return $wgContLang->timeAndDate( "$year$month$day$time", false, false );
 	}
 
 	/**
@@ -768,10 +800,15 @@ class SMWTimeValue extends SMWDataValue {
 	/**
 	 * Compute a suitable string to display the given date item.
 	 * @note MediaWiki's date functions are not applicable for the range of historic dates we support.
+	 *
+	 * @since 1.6
+	 *
+	 * @param SMWDITime $dataitem
+	 *
 	 * @return string
 	 * @todo Internationalize the CE and BCE strings.
 	 */
-	public function getCaptionFromDataitem( $dataitem ) {
+	public function getCaptionFromDataitem( SMWDITime $dataitem ) {
 		global $smwgContLang;
 		if ( $dataitem->getYear() > 0 ) {
 			$cestring = '';
@@ -781,10 +818,10 @@ class SMWTimeValue extends SMWDataValue {
 			$result = number_format( -( $dataitem->getYear() ), 0, '.', '' ) . ( $bcestring ? ( ' ' . $bcestring ) : '' );
 		}
 		if ( $dataitem->getPrecision() >= SMWDITime::PREC_YM ) {
-			$result =  $smwgContLang->getMonthLabel( $dataitem->getMonth() ) . " " . $result;
+			$result = $smwgContLang->getMonthLabel( $dataitem->getMonth() ) . " " . $result;
 		}
 		if ( $dataitem->getPrecision() >= SMWDITime::PREC_YMD ) {
-			$result =  $dataitem->getDay() . " " . $result;
+			$result = $dataitem->getDay() . " " . $result;
 		}
 		if ( $dataitem->getPrecision() >= SMWDITime::PREC_YMDT ) {
 			$result .= " " . $this->getTimeString();
@@ -799,10 +836,14 @@ class SMWTimeValue extends SMWDataValue {
 	 * @return string
 	 */
 	protected function getPreferredCaption() {
-		if ( ( strtoupper( $this->m_outformat ) == 'ISO' ) || ( $this->m_outformat == '-' ) ) {
+		$year = $this->m_dataitem->getYear();
+
+		if ( strtoupper( $this->m_outformat ) === 'ISO' || $this->m_outformat == '-' ) {
 			return $this->getISO8601Date();
+		} elseif ( strtoupper( $this->m_outformat ) === 'MEDIAWIKI' ) {
+			return $this->getMediaWikiDate();
 		} else {
-			if ( $this->m_dataitem->getYear() <= self::PREHISTORY ) {
+			if ( $year <= self::PREHISTORY ) {
 				return $this->getCaptionFromDataitem( $this->m_dataitem ); // should be Gregorian, but don't bother here
 			} elseif ( $this->m_dataitem->getJD() < self::J1582 ) {
 				return $this->getCaptionFromDataitem( $this->getDataForCalendarModel( SMWDITime::CM_JULIAN ) );

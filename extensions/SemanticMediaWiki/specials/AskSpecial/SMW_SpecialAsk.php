@@ -27,7 +27,6 @@ class SMWAskPage extends SpecialPage {
 	 */
 	public function __construct() {
 		parent::__construct( 'Ask' );
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 	}
 
 	/**
@@ -95,20 +94,20 @@ class SMWAskPage extends SpecialPage {
 
 		// Check for q= query string, used whenever this special page calls itself (via submit or plain link):
 		$this->m_querystring = $wgRequest->getText( 'q' );
-		if ( $this->m_querystring != '' ) {
+		if ( $this->m_querystring !== '' ) {
 			$rawparams[] = $this->m_querystring;
 		}
 
 		// Check for param strings in po (printouts), appears in some links and in submits:
 		$paramstring = $wgRequest->getText( 'po' );
 
-		if ( $paramstring != '' ) { // parameters from HTML input fields
+		if ( $paramstring !== '' ) { // parameters from HTML input fields
 			$ps = explode( "\n", $paramstring ); // params separated by newlines here (compatible with text-input for printouts)
 
 			foreach ( $ps as $param ) { // add initial ? if omitted (all params considered as printouts)
 				$param = trim( $param );
 
-				if ( ( $param != '' ) && ( $param { 0 } != '?' ) ) {
+				if ( ( $param !== '' ) && ( $param { 0 } != '?' ) ) {
 					$param = '?' . $param;
 				}
 
@@ -131,8 +130,8 @@ class SMWAskPage extends SpecialPage {
 				$this->m_params['order'] = '';
 
 				foreach ( $order_values as $order_value ) {
-					if ( $order_value == '' ) $order_value = 'ASC';
-					$this->m_params['order'] .= ( $this->m_params['order'] != '' ? ',' : '' ) . $order_value;
+					if ( $order_value === '' ) $order_value = 'ASC';
+					$this->m_params['order'] .= ( $this->m_params['order'] !== '' ? ',' : '' ) . $order_value;
 				}
 			}
 		}
@@ -149,20 +148,20 @@ class SMWAskPage extends SpecialPage {
 
 		if ( !array_key_exists( 'offset', $this->m_params ) ) {
 			$this->m_params['offset'] = $wgRequest->getVal( 'offset' );
-			if ( $this->m_params['offset'] == '' )  $this->m_params['offset'] = 0;
+			if ( $this->m_params['offset'] === '' )  $this->m_params['offset'] = 0;
 		}
 
 		if ( !array_key_exists( 'limit', $this->m_params ) ) {
 			$this->m_params['limit'] = $wgRequest->getVal( 'limit' );
 
-			if ( $this->m_params['limit'] == '' ) {
+			if ( $this->m_params['limit'] === '' ) {
 				 $this->m_params['limit'] = ( $this->m_params['format'] == 'rss' ) ? 10 : 20; // Standard limit for RSS.
 			}
 		}
 
 		$this->m_params['limit'] = min( $this->m_params['limit'], $smwgQMaxInlineLimit );
 
-		$this->m_editquery = ( $wgRequest->getVal( 'eq' ) == 'yes' ) || ( $this->m_querystring == '' );
+		$this->m_editquery = ( $wgRequest->getVal( 'eq' ) == 'yes' ) || ( $this->m_querystring === '' );
 	}
 
 	/**
@@ -201,7 +200,7 @@ class SMWAskPage extends SpecialPage {
 		foreach ( $scripts as $js ) {
 			$wgOut->addScriptFile( $js );
 		}
-		
+
 		$javascript_autocomplete_text = <<<END
 <script type="text/javascript">
 function split(val) {
@@ -218,7 +217,6 @@ function escapeQuestion(term){
 	}
 }
 
-jQuery.noConflict();
 /* extending jQuery functions for custom highligting */
 jQuery.ui.autocomplete.prototype._renderItem = function( ul, item) {
 	var term_without_q = escapeQuestion(extractLast(this.term));
@@ -254,7 +252,7 @@ jQuery(document).ready(function(){
 
 			jQuery.getJSON(url+request.term, function(data){
 				//remove the namespace prefix 'Property:' from returned data and add prefix '?'
-				for(i=0;i<data[1].length;i++) data[1][i]="?"+data[1][i].substr(data[1][i].indexOf(':')+1); 
+				for(i=0;i<data[1].length;i++) data[1][i]="?"+data[1][i].substr(data[1][i].indexOf(':')+1);
 				response(jQuery.ui.autocomplete.filter(data[1], escapeQuestion(extractLast(request.term))));
 			});
 		},
@@ -361,16 +359,28 @@ END;
 		$urlArgs['p'] = SMWInfolink::encodeParameters( $tmp_parray );
 		$printoutstring = '';
 
-		foreach ( $this->m_printouts as $printout ) {
+		foreach ( $this->m_printouts as /* SMWPrintRequest */ $printout ) {
 			$printoutstring .= $printout->getSerialisation() . "\n";
 		}
 
-		if ( $printoutstring != '' ) $urlArgs['po'] = $printoutstring;
+		if ( $printoutstring !== '' ) $urlArgs['po'] = $printoutstring;
 		if ( array_key_exists( 'sort', $this->m_params ) )  $urlArgs['sort'] = $this->m_params['sort'];
 		if ( array_key_exists( 'order', $this->m_params ) ) $urlArgs['order'] = $this->m_params['order'];
 
-		if ( $this->m_querystring != '' ) {
-			$queryobj = SMWQueryProcessor::createQuery( $this->m_querystring, $this->m_params, SMWQueryProcessor::SPECIAL_PAGE , $this->m_params['format'], $this->m_printouts );
+		if ( $this->m_querystring !== '' ) {
+			// FIXME: this is a hack
+			SMWQueryProcessor::addThisPrintout( $this->m_printouts, $this->m_params );
+			$params = SMWQueryProcessor::getProcessedParams( $this->m_params, $this->m_printouts );
+			$this->m_params['format'] = $params['format'];
+
+			$queryobj = SMWQueryProcessor::createQuery(
+				$this->m_querystring,
+				$params,
+				SMWQueryProcessor::SPECIAL_PAGE ,
+				$this->m_params['format'],
+				$this->m_printouts
+			);
+
 			$res = smwfGetStore()->getQueryResult( $queryobj );
 
 			// Try to be smart for rss/ical if no description/title is given and we have a concept query:
@@ -417,13 +427,13 @@ END;
 					if ( $this->m_editquery ) {
 						$urlArgs['eq'] = 'yes';
 					}
-					else if ( $hidequery ) {
+					elseif ( $hidequery ) {
 						$urlArgs['eq'] = 'no';
 					}
 
 					$navigation = $this->getNavigationBar( $res, $urlArgs );
 					$result .= '<div style="text-align: center;">' . "\n" . $navigation . "\n</div>\n";
-					$query_result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_HTML );
+					$query_result = $printer->getResult( $res, $params, SMW_OUTPUT_HTML );
 
 					if ( is_array( $query_result ) ) {
 						$result .= $query_result[0];
@@ -436,7 +446,7 @@ END;
 					$result = '<div style="text-align: center;">' . wfMsgHtml( 'smw_result_noresults' ) . '</div>';
 				}
 			} else { // make a stand-alone file
-				$result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_FILE );
+				$result = $printer->getResult( $res, $params, SMW_OUTPUT_FILE );
 				$result_name = $printer->getFileName( $res ); // only fetch that after initialising the parameters
 			}
 		}
@@ -448,13 +458,14 @@ END;
 				$wgOut->setHTMLtitle( wfMsg( 'ask' ) );
 			}
 
+			$urlArgs['offset'] = $this->m_params['offset'];
+			$urlArgs['limit'] = $this->m_params['limit'];
+
 			$result = $this->getInputForm(
 				$printoutstring,
-				'offset=' . $this->m_params['offset']
-					. '&limit=' . $this->m_params['limit']
-					. wfArrayToCGI( $urlArgs )
+				wfArrayToCGI( $urlArgs )
 			) . $result;
-			
+
 			$wgOut->addHTML( $result );
 		} else {
 			$wgOut->disable();
@@ -484,7 +495,7 @@ END;
 
 		if ( $this->m_editquery ) {
 			$spectitle = $this->getTitleFor( 'Ask' );
-			$result .= '<form name="ask" action="' . $spectitle->escapeLocalURL() . '" method="get">' . "\n" .
+			$result .= '<form name="ask" action="' . htmlspecialchars( $spectitle->getLocalURL() ) . '" method="get">' . "\n" .
 				'<input type="hidden" name="title" value="' . $spectitle->getPrefixedText() . '"/>';
 
 			// Table for main query and printouts.
@@ -644,7 +655,7 @@ END;
 				'a',
 				array(
 					'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( array(
-						'offset' => max( 0, $offset - $limit ), 
+						'offset' => max( 0, $offset - $limit ),
 						'limit' => $limit
 					) + $urlArgs ),
 					'rel' => 'nofollow'
@@ -668,8 +679,8 @@ END;
 				'a',
 				array(
 					'href' => SpecialPage::getSafeTitleFor( 'Ask' )->getLocalURL( array(
-						'offset' => ( $offset + $limit ), 
-						'limit' => $limit 
+						'offset' => ( $offset + $limit ),
+						'limit' => $limit
 					)  + $urlArgs ),
 					'rel' => 'nofollow'
 				),
@@ -725,7 +736,11 @@ END;
 	protected function showFormatOptions( $format, array $paramValues ) {
 		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::SPECIAL_PAGE );
 
-		$params = method_exists( $printer, 'getValidatorParameters' ) ? $printer->getValidatorParameters() : array();
+		$params = SMWQueryProcessor::getParameters();
+
+		if ( method_exists( $printer, 'getValidatorParameters' ) ) {
+			$params = array_merge( $params, $printer->getValidatorParameters() );
+		}
 
 		$optionsHtml = array();
 
@@ -734,7 +749,7 @@ END;
 			if ( $param->getName() == 'format' ) {
 				continue;
 			}
-			
+
 			$currentValue = array_key_exists( $param->getName(), $paramValues ) ? $paramValues[$param->getName()] : false;
 
 			$optionsHtml[] =
@@ -771,7 +786,7 @@ END;
 				),
 				$rowHtml
 			);
-			
+
 			$rowHtml = '';
 		}
 

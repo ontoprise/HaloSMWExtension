@@ -51,7 +51,6 @@ class SMWURIValue extends SMWDataValue {
 	}
 
 	protected function parseUserValue( $value ) {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$value = trim( $value );
 		$this->m_wikitext = $value;
 		if ( $this->m_caption === false ) {
@@ -59,7 +58,7 @@ class SMWURIValue extends SMWDataValue {
 		}
 
 		$scheme = $hierpart = $query = $fragment = '';
-		if ( $value == '' ) { // do not accept empty strings
+		if ( $value === '' ) { // do not accept empty strings
 			$this->addError( wfMsgForContent( 'smw_emptystring' ) );
 			$this->m_dataitem = new SMWDIUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
 			return;
@@ -119,7 +118,7 @@ class SMWURIValue extends SMWDataValue {
 				}
 				if ( ( strlen( preg_replace( '/[^0-9]/', '', $hierpart ) ) < 6 ) ||
 					( preg_match( '<[-+./][-./]>', $hierpart ) ) ||
-					( !SMWURIValue::isValidTelURI( 'tel:' . $hierpart ) ) ) { ///TODO: introduce error-message for "bad" phone number
+					( !SMWURIValue::isValidTelURI( 'tel:' . $hierpart ) ) ) { /// TODO: introduce error-message for "bad" phone number
 					$this->addError( wfMsgForContent( 'smw_baduri', $this->m_wikitext ) );
 				}
 				break;
@@ -129,10 +128,10 @@ class SMWURIValue extends SMWDataValue {
 					$value = substr( $value, 7 );
 					$this->m_wikitext = $value;
 				}
-				/// TODO The following is too strict, since emails may contain non-ASCII symbols (by RFC 2047 and RFC 3490)
-				$check = "#^([_a-zA-Z0-9-]+)((\.[_a-zA-Z0-9-]+)*)@([_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*)\.([a-zA-Z]{2,6})$#u";
-				if ( !preg_match( $check, $value ) ) {
-					///TODO: introduce error-message for "bad" email
+
+				$check = method_exists( 'Sanitizer', 'validateEmail' ) ? Sanitizer::validateEmail( $value ) : self::validateEmail( $value );
+				if ( !$check ) {
+					/// TODO: introduce error-message for "bad" email
 					$this->addError( wfMsgForContent( 'smw_baduri', $value ) );
 					break;
 				}
@@ -141,7 +140,7 @@ class SMWURIValue extends SMWDataValue {
 
 		// Now create the URI data item:
 		try {
-			$this->m_dataitem = new SMWDIUri( $scheme, $hierpart, $query, $fragment, $this->m_typeid);
+			$this->m_dataitem = new SMWDIUri( $scheme, $hierpart, $query, $fragment, $this->m_typeid );
 		} catch ( SMWDataItemException $e ) {
 			$this->addError( wfMsgForContent( 'smw_baduri', $this->m_wikitext ) );
 			$this->m_dataitem = new SMWDIUri( 'http', '//example.com', '', '', $this->m_typeid ); // define data item to have some value
@@ -182,7 +181,7 @@ class SMWURIValue extends SMWDataValue {
 
 	public function getShortWikiText( $linked = null ) {
 		$url = $this->getURL();
-		if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url == '' ) || ( $this->m_caption == '' ) ) {
+		if ( is_null( $linked ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url === '' ) || ( $this->m_caption === '' ) ) {
 			return $this->m_caption;
 		} else {
 			return '[' . $url . ' ' . $this->m_caption . ']';
@@ -191,7 +190,7 @@ class SMWURIValue extends SMWDataValue {
 
 	public function getShortHTMLText( $linker = null ) {
 		$url = $this->getURL();
-		if ( ( $linker === null ) || ( !$this->isValid() ) || ( $this->m_outformat == '-' ) || ( $url == '' ) || ( $this->m_caption == '' ) ) {
+		if ( is_null( $linker ) || ( !$this->isValid() ) || ( $this->m_outformat == '-' ) || ( $url === '' ) || ( $this->m_caption === '' ) ) {
 			return $this->m_caption;
 		} else {
 			return $linker->makeExternalLink( $url, $this->m_caption );
@@ -203,7 +202,8 @@ class SMWURIValue extends SMWDataValue {
 			return $this->getErrorText();
 		}
 		$url = $this->getURL();
-		if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url == '' ) ) {
+
+		if ( is_null( $linked ) || ( $linked === false ) || ( $this->m_outformat == '-' ) || ( $url === '' ) ) {
 			return $this->m_wikitext;
 		} else {
 			return '[' . $url . ' ' . $this->m_wikitext . ']';
@@ -214,8 +214,10 @@ class SMWURIValue extends SMWDataValue {
 		if ( !$this->isValid() ) {
 			return $this->getErrorText();
 		}
+
 		$url = $this->getURL();
-		if ( ( $linker === null ) || ( $this->m_outformat == '-' ) || ( $url == '' ) ) {
+
+		if ( is_null( $linker ) || ( $this->m_outformat == '-' ) || ( $url === '' ) ) {
 			return htmlspecialchars( $this->m_wikitext );
 		} else {
 			return $linker->makeExternalLink( $url, $this->m_wikitext );
@@ -244,12 +246,43 @@ class SMWURIValue extends SMWDataValue {
 	 */
 	public function getURL() {
 		global $wgUrlProtocols;
+
 		foreach ( $wgUrlProtocols as $prot ) {
 			if ( ( $prot == $this->m_dataitem->getScheme() . ':' ) || ( $prot == $this->m_dataitem->getScheme() . '://' ) ) {
 				return $this->m_dataitem->getURI();
 			}
 		}
+
 		return '';
+	}
+
+	/**
+	 * This is a copy of
+	 * @see Sanitizer::validateEmail
+	 * which was introduced in MW 1.18, and is thus used for compatibility with earlier versions.
+	 */
+	public static function validateEmail( $addr ) {
+		$result = null;
+		if ( !wfRunHooks( 'isValidEmailAddr', array( $addr, &$result ) ) ) {
+			return $result;
+		}
+
+		// Please note strings below are enclosed in brackets [], this make the
+		// hyphen "-" a range indicator. Hence it is double backslashed below.
+		// See bug 26948
+		$rfc5322_atext   = "a-z0-9!#$%&'*+\\-\/=?^_`{|}~" ;
+		$rfc1034_ldh_str = "a-z0-9\\-" ;
+
+		$HTML5_email_regexp = "/
+		^                      # start of string
+		[$rfc5322_atext\\.]+    # user part which is liberal :p
+		@                      # 'apostrophe'
+		[$rfc1034_ldh_str]+       # First domain part
+		(\\.[$rfc1034_ldh_str]+)*  # Following part prefixed with a dot
+		$                      # End of string
+		/ix" ; // case Insensitive, eXtended
+
+		return (bool) preg_match( $HTML5_email_regexp, $addr );
 	}
 
 }

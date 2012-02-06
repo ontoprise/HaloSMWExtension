@@ -48,6 +48,7 @@ class SMWDIWikiPage extends SMWDataItem {
 		if ( !is_numeric( $namespace ) ) {
 			throw new SMWDataItemException( "Given namespace '$namespace' is not an integer." );
 		}
+		
 		$this->m_dbkey = $dbkey;
 		$this->m_namespace = (int)$namespace; // really make this an integer
 		$this->m_interwiki = $interwiki;
@@ -94,9 +95,9 @@ class SMWDIWikiPage extends SMWDataItem {
 	 * @return mixed Title or null
 	 */
 	public function getTitle() {
-		if ( $this->m_interwiki == '' ) {
-			return Title::makeTitleSafe( $this->m_namespace, $this->m_dbkey, '' );
-		} else {
+		if ( $this->m_interwiki === '' ) {
+			return Title::makeTitleSafe( $this->m_namespace, $this->m_dbkey, $this->m_subobjectname );
+		} else { // TODO inefficient; incomplete for fragments (see above commment)
 			$datavalue = new SMWWikiPageValue( '_wpg' );
 			$datavalue->setDataItem( $this );
 			return Title::newFromText( $datavalue->getPrefixedText() );
@@ -104,7 +105,7 @@ class SMWDIWikiPage extends SMWDataItem {
 	}
 
 	public function getSerialization() {
-		if ( $this->m_subobjectname == '' ) {
+		if ( $this->m_subobjectname === '' ) {
 			return strval( $this->m_dbkey . '#' . strval( $this->m_namespace ) . '#' . $this->m_interwiki );
 		} else {
 			return strval( $this->m_dbkey . '#' . strval( $this->m_namespace ) . '#' . $this->m_interwiki . '#' . $this->m_subobjectname );
@@ -134,7 +135,8 @@ class SMWDIWikiPage extends SMWDataItem {
 	 * @return SMWDIWikiPage
 	 */
 	public static function newFromTitle( Title $title ) {
-		return new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), $title->getInterwiki() );
+		return new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(),
+			$title->getInterwiki(), str_replace( ' ', '_', $title->getFragment() ) );
 	}
 
 }

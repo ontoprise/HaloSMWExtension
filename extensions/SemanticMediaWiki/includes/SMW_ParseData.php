@@ -1,6 +1,7 @@
 <?php
 /**
- * The class in this file manages semantic data collected during parsing of an article.
+ * The class in this file manages semantic data collected during parsing of an
+ * article.
  *
  * @author Markus Krötzsch
  *
@@ -9,19 +10,15 @@
  */
 
 /**
- * Static class for managing semantic data collected during parsing, including some hooks
- * that can be used for updating and storing the data for some article. All methods
- * in this class are stateless: data is stored persistently only in a given parser
- * output. There is one exception: to provide a minimal compatibility with MediaWiki
- * up to version 1.13, the class keeps track of the latest ParserOutput that was
- * accessed. In this way, the ParserOutput can be reproduced when storing, since it
- * is not available as part of the storing LinkUpdate object in MediaWiki before 1.14.
+ * Static class for managing semantic data collected during parsing, including
+ * some hooks that can be used for updating and storing the data for some
+ * article. All methods in this class are stateless: data is stored persistently
+ * only in a given parser output.
+ *
  * @ingroup SMW
+ * @author Markus Krötzsch
  */
 class SMWParseData {
-
-	/// ParserOutput last used. See documentation to SMWParseData.
-	static public $mPrevOutput = null;
 
 	/**
 	 * Remove relevant SMW magic words from the given text and return
@@ -29,7 +26,7 @@ class SMWParseData {
 	 * store this array in the current parser output, using the variable
 	 * mSMWMagicWords.
 	 */
-	static public function stripMagicWords( &$text, $parser ) {
+	static public function stripMagicWords( &$text, Parser $parser ) {
 		$words = array();
 		$mw = MagicWord::get( 'SMW_NOFACTBOX' );
 
@@ -43,7 +40,7 @@ class SMWParseData {
 			$words[] = 'SMW_SHOWFACTBOX';
 		}
 
-		$output = SMWParseData::getOutput( $parser );
+		$output = $parser->getOutput();
 		$output->mSMWMagicWords = $words;
 
 		return $words;
@@ -56,7 +53,7 @@ class SMWParseData {
 	 * @return SMWSemanticData
 	 */
 	static public function getSMWdata( $parser ) {
-		$output = self::getOutput( $parser );
+		$output = $parser->getOutput();
 		$title = $parser->getTitle();
 
 		// No parsing, create error.
@@ -78,7 +75,7 @@ class SMWParseData {
 	 * @param Parser $parser
 	 */
 	static public function clearStorage( Parser $parser ) {
-		$output = self::getOutput( $parser );
+		$output = $parser->getOutput();
 		$title = $parser->getTitle();
 
 		if ( !isset( $output ) || !isset( $title ) ) {
@@ -107,17 +104,38 @@ class SMWParseData {
 
 		// See if this property is a special one, such as e.g. "has type".
 		$propertyDv = SMWPropertyValue::makeUserProperty( $propertyName );
+		
+		if ( !$propertyDv->isValid() ) {
+			return $propertyDv;
+		}
+		
 		$propertyDi = $propertyDv->getDataItem();
-		$result = SMWDataValueFactory::newPropertyObjectValue( $propertyDi, $value, $caption );
+		
+		// FIXME: this solves the issue of bug 29438, but is probably not what we want to do.
+		if ( $propertyDi instanceof SMWDIError ) {
+			return $propertyDv;
+		}
+		
+		$semandticData = self::getSMWData( $parser );
+
+		$result = SMWDataValueFactory::newPropertyObjectValue(
+			$propertyDi,
+			$value,
+			$caption,
+			$semandticData->getSubject()
+		);
 
 		if ( $propertyDi->isInverse() ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$result->addError( wfMsgForContent( 'smw_noinvannot' ) );
-		} elseif ( $storeAnnotation && ( self::getSMWData( $parser ) !== null ) ) {
-			self::getSMWData( $parser )->addPropertyObjectValue( $propertyDi, $result->getDataItem() );
+		} elseif ( $storeAnnotation && !is_null( self::getSMWData( $parser ) ) ) {
+			$semandticData->addPropertyObjectValue( $propertyDi, $result->getDataItem() );
+			
 			// Take note of the error for storage (do this here and not in storage, thus avoiding duplicates).
 			if ( !$result->isValid() ) {
-				self::getSMWData( $parser )->addPropertyObjectValue( new SMWDIProperty( '_ERRP' ), $propertyDi->getDiWikiPage() );
+				$semandticData->addPropertyObjectValue(
+					new SMWDIProperty( '_ERRP' ),
+					$propertyDi->getDiWikiPage()
+				);
 			}
 		}
 
@@ -147,7 +165,7 @@ class SMWParseData {
 	 * @todo FIXME: Some job generations here might create too many jobs at once on a large wiki. Use incremental jobs instead.
 	 */
 	static public function storeData( $parseroutput, Title $title, $makejobs = true ) {
-		global $smwgEnableUpdateJobs, $smwgDeclarationProperties;
+		global $smwgEnableUpdateJobs, $smwgDeclarationProperties, $smwgPageSpecialProperties;
 
 		$semdata = $parseroutput->mSMWData;
 		$namespace = $title->getNamespace();
@@ -158,15 +176,41 @@ class SMWParseData {
 		}
 
 		if ( $processSemantics ) {
-			$pmdat = new SMWDIProperty( '_MDAT' );
+			$props = array();
 
-			if ( count( $semdata->getPropertyValues( $pmdat ) ) == 0  ) { // no article data present yet, add it here
-				$timestamp =  Revision::getTimeStampFromID( $title, $title->getLatestRevID() );
-				$di = self::getDataItemFromMWTimestamp( $timestamp );
-				if ( $di !== null ) {
-					$semdata->addPropertyObjectValue( $pmdat, $di );
+			foreach ( $smwgPageSpecialProperties as $propId ) {
+				// Do not calculate the same property again.
+				if ( array_key_exists( $propId, $props ) ) {
+					continue;
 				}
-			}
+				
+				// Remember the property is processed.
+				$props[ $propId ] = true;              
+				$prop = new SMWDIProperty( $propId );
+				
+				if ( count( $semdata->getPropertyValues( $prop ) ) > 0  ) {
+					continue;
+				}
+				
+				// Calculate property value.
+				$datum = null;
+				
+				switch ( $propId ) {
+					case '_MDAT' :
+						$timestamp =  Revision::getTimeStampFromID( $title, $title->getLatestRevID() );
+						$datum = self::getDataItemFromMWTimestamp( $timestamp );
+						break;
+					case '_CDAT' :
+						$timestamp = $title->getFirstRevision()->getTimestamp();
+						$datum = self::getDataItemFromMWTimestamp( $timestamp );
+						break;
+				}
+				
+				if ( !is_null( $datum ) ) {
+					$semdata->addPropertyObjectValue( $prop, $datum );    
+				} // Issue error or warning?
+				
+			} // foreach
 		} else { // data found, but do all operations as if it was empty
 			$semdata = new SMWSemanticData( $semdata->getSubject() );
 		}
@@ -201,7 +245,7 @@ class SMWParseData {
 
 				foreach ( $subjects as $subject ) {
 					$subjectTitle = $subject->getTitle();
-					if ( $subjectTitle !== null ) {
+					if ( !is_null( $subjectTitle ) ) {
 						$jobs[] = new SMWUpdateJob( $subjectTitle );
 					}
 				}
@@ -211,7 +255,8 @@ class SMWParseData {
 
 				foreach ( $subjects as $subject ) {
 					$subjectTitle = $subject->getTitle();
-					if ( $subjectTitle !== null ) {
+					
+					if ( !is_null( $subjectTitle ) ) {
 						$jobs[] = new SMWUpdateJob( $subjectTitle );
 					}
 				}
@@ -234,15 +279,18 @@ class SMWParseData {
 
 				foreach ( $proppages as $proppage ) {
 					$propertyTitle = $proppage->getTitle();
-					if ( $propertyTitle !== null ) {
+					
+					if ( !is_null( $propertyTitle ) ) {
 						$jobs[] = new SMWUpdateJob( $propertyTitle );
 					}
+					
 					$prop = new SMWDIProperty( $proppage->getDBkey() );
 					$subjects = $store->getAllPropertySubjects( $prop );
 
 					foreach ( $subjects as $subject ) {
 						$subjectTitle = $subject->getTitle();
-						if ( $subjectTitle !== null ) {
+						
+						if ( !is_null( $subjectTitle ) ) {
 							$jobs[] = new SMWUpdateJob( $subjectTitle );
 						}
 					}
@@ -254,7 +302,8 @@ class SMWParseData {
 
 					foreach ( $subjects as $subject ) {
 						$subjectTitle = $subject->getTitle();
-						if ( $subjectTitle !== null ) {
+						
+						if ( !is_null( $subjectTitle ) ) {
 							$jobs[] = new SMWUpdateJob( $subject->getTitle() );
 						}
 					}
@@ -306,22 +355,6 @@ class SMWParseData {
 	}
 
 	/**
-	 * Get the parser output from a parser object. The result is also stored
-	 * in SMWParseData::$mPrevOutput for further reference.
-	 *
-	 * @param Parser $parser
-	 */
-	static protected function getOutput( Parser $parser ) {
-		if ( method_exists( $parser, 'getOutput' ) ) {
-			self::$mPrevOutput = $parser->getOutput();
-		} else {
-			self::$mPrevOutput = $parser->mOutput;
-		}
-
-		return self::$mPrevOutput;
-	}
-
-	/**
 	 * Hook function fetches category information and other final settings
 	 * from parser output, so that they are also replicated in SMW for more
 	 * efficient querying.
@@ -329,7 +362,7 @@ class SMWParseData {
 	static public function onParserAfterTidy( &$parser, &$text ) {
 		global $smwgUseCategoryHierarchy, $smwgCategoriesAsInstances;
 
-		if ( self::getSMWData( $parser ) === null ) {
+		if ( is_null( self::getSMWData( $parser ) ) ) {
 			return true;
 		}
 
@@ -348,7 +381,7 @@ class SMWParseData {
 			}
 		}
 
-		$sortkey = $parser->mDefaultSort ? $parser->mDefaultSort : 
+		$sortkey = $parser->mDefaultSort ? $parser->mDefaultSort :
 		            str_replace( '_', ' ', self::getSMWData( $parser )->getSubject()->getDBkey() );
 		$pskey = new SMWDIProperty( '_SKEY' );
 		try {
@@ -356,7 +389,7 @@ class SMWParseData {
 		} catch (SMWStringLengthException $e) { // cut it down to a reasonable length; no further bytes should be needed for sorting
 			$sortkey = substr( $sortkey, 0, $e->getMaxLength() );
 			$sortkeyDi = new SMWDIString( $sortkey );
-		} 
+		}
 		self::getSMWData( $parser )->addPropertyObjectValue( $pskey, $sortkeyDi );
 
 		return true;
@@ -374,6 +407,7 @@ class SMWParseData {
 	 * LinksUpdate.
 	 */
 	static public function onNewRevisionFromEditComplete( $article, $rev, $baseID ) {
+		global $smwgPageSpecialProperties;
 		if ( ( $article->mPreparedEdit ) && ( $article->mPreparedEdit->output instanceof ParserOutput ) ) {
 			$output = $article->mPreparedEdit->output;
 			$title = $article->getTitle();
@@ -390,37 +424,25 @@ class SMWParseData {
 			return true;
 		}
 
-		$pmdat = new SMWDIProperty( '_MDAT' );
-		$timestamp = $article->getTimestamp();
-		$di = self::getDataItemFromMWTimestamp( $timestamp );
-		if ( $di !== null ) {
-			$semdata->addPropertyObjectValue( $pmdat, $di );
+		if ( in_array( '_MDAT', $smwgPageSpecialProperties ) ) {
+			$pmdat = new SMWDIProperty( '_MDAT' );
+			$timestamp = $article->getTimestamp();
+			$di = self::getDataItemFromMWTimestamp( $timestamp );
+			
+			if ( !is_null( $di ) ) {
+				$semdata->addPropertyObjectValue( $pmdat, $di );
+			}
 		}
 
 		return true;
 	}
 
 	/**
-	 * Used to updates data after changes of templates, but also at each saving of an article.
+	 * Hook where the storage of data is triggered. This happens when
+	 * saving an article but possibly also when running update jobs.
 	 */
 	static public function onLinksUpdateConstructed( $links_update ) {
-		if ( isset( $links_update->mParserOutput ) ) {
-			$output = $links_update->mParserOutput;
-		} else { // MediaWiki <= 1.13 compatibility
-			$output = self::$mPrevOutput;
-
-			if ( !isset( $output ) ) {
-				smwfGetStore()->clearData( new SMWDIWikiPage(
-					$links_update->mTitle->getDbKey(),
-					$links_update->mTitle->getNamespace(),
-					$links_update->mTitle->getInterwiki()
-				) );
-				return true;
-			}
-		}
-
-		self::storeData( $output, $links_update->mTitle, true );
-
+		self::storeData( $links_update->mParserOutput, $links_update->mTitle, true );
 		return true;
 	}
 
@@ -461,7 +483,7 @@ class SMWParseData {
 		} catch ( SMWDataItemException $e ) {
 			// we rely on MW timestamp format above -- if it ever changes,
 			// exceptions might possibly occur but this should not prevent editing
-			trigger_error( $e.getMessage(), E_USER_NOTICE );
+			trigger_error( $e->getMessage(), E_USER_NOTICE );
 			return null;
 		}
 	}

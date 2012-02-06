@@ -15,11 +15,10 @@
 class SMWStringValue extends SMWDataValue {
 
 	protected function parseUserValue( $value ) {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		if ( $this->m_caption === false ) {
 			$this->m_caption = ( $this->m_typeid == '_cod' ) ? $this->getCodeDisplay( $value ) : $value;
 		}
-		if ( $value == '' ) {
+		if ( $value === '' ) {
 			$this->addError( wfMsgForContent( 'smw_emptystring' ) );
 		}
 
@@ -112,10 +111,10 @@ class SMWStringValue extends SMWDataValue {
 	protected function getAbbValue( $linked, $value ) {
 		$len = mb_strlen( $value );
 		if ( ( $len > 255 ) && ( $this->m_typeid != '_cod' ) ) {
-			if ( ( $linked === null ) || ( $linked === false ) ) {
+			if ( is_null( $linked ) || ( $linked === false ) ) {
 				return mb_substr( $value, 0, 42 ) . ' <span class="smwwarning">…</span> ' . mb_substr( $value, $len - 42 );
 			} else {
-				SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
+				SMWOutputs::requireResource( 'ext.smw.tooltips' );
 				return mb_substr( $value, 0, 42 ) . ' <span class="smwttpersist"> … <span class="smwttcontent">' . $value . '</span></span> ' . mb_substr( $value, $len - 42 );
 			}
 		} elseif ( $this->m_typeid == '_cod' ) {
@@ -129,7 +128,7 @@ class SMWStringValue extends SMWDataValue {
 	 * Special features for Type:Code formatting.
 	 */
 	protected function getCodeDisplay( $value, $scroll = false ) {
-		SMWOutputs::requireHeadItem( SMW_HEADER_STYLE );
+		SMWOutputs::requireResource( 'ext.smw.style' );
 		$result = str_replace( array( '<', '>', ' ', '=', "'", ':', "\n" ), array( '&lt;', '&gt;', '&#160;', '&#x003D;', '&#x0027;', '&#58;', "<br />" ), $value );
 		if ( $scroll ) {
 			$result = "<div style=\"height:5em; overflow:auto;\">$result</div>";

@@ -87,8 +87,8 @@ class SMWSemanticData {
 
 	/**
 	 * SMWDIWikiPage object that is the subject of this container.
-	 * Subjects that are null are used to represent "internal objects"
-	 * only.
+	 * Subjects can never be null (and this is ensured in all methods setting
+	 * them in this class).
 	 *
 	 * @var SMWDIWikiPage
 	 */
@@ -117,9 +117,6 @@ class SMWSemanticData {
 	 * output, then the Semdata container will at least look as if properly
 	 * initialised (though empty).
 	 *
-	 * @note It might be even better to have other members with stub object
-	 * data that is used for serializing, thus using much less data.
-	 *
 	 * @return array
 	 */
 	public function __sleep() {
@@ -127,7 +124,7 @@ class SMWSemanticData {
 	}
 
 	/**
-	 * Return subject to which the stored semantic annotation refer to.
+	 * Return subject to which the stored semantic annotations refer to.
 	 *
 	 * @return SMWDIWikiPage subject
 	 */
@@ -174,15 +171,14 @@ class SMWSemanticData {
 	public function getHash() {
 		$ctx = hash_init( 'md5' );
 
-		if ( $this->mSubject !== null ) { // here and below, use "_#_" to separate values; really not much care needed here
-			hash_update( $ctx, '_#_' . $this->mSubject->getSerialization() );
-		}
+		// here and below, use "_#_" to separate values; really not much care needed here
+		hash_update( $ctx, '_#_' . $this->mSubject->getSerialization() );
 
 		foreach ( $this->getProperties() as $property ) {
 			hash_update( $ctx, '_#_' . $property->getKey() . '##' );
 
-			foreach ( $this->getPropertyValues( $property ) as $dv ) {
-				hash_update( $ctx, '_#_' . $dv->getSerialization() );
+			foreach ( $this->getPropertyValues( $property ) as $di ) {
+				hash_update( $ctx, '_#_' . $di->getSerialization() );
 			}
 		}
 
@@ -266,7 +262,7 @@ class SMWSemanticData {
 		if ( array_key_exists( $propertyKey, $this->mProperties ) ) {
 			$property = $this->mProperties[$propertyKey];
 		} else {
-			if ( self::$mPropertyPrefix == '' ) {
+			if ( self::$mPropertyPrefix === '' ) {
 				global $wgContLang;
 				self::$mPropertyPrefix = $wgContLang->getNsText( SMW_NS_PROPERTY ) . ':';
 			} // explicitly use prefix to cope with things like [[Property:User:Stupid::somevalue]]
@@ -292,6 +288,34 @@ class SMWSemanticData {
 		$this->mHasVisibleProps = false;
 		$this->mHasVisibleSpecs = false;
 		$this->stubObject = false;
+	}
+
+	/**
+	 * Add all data from the given SMWSemanticData.
+	 *
+	 * @since 1.7
+	 *
+	 * @param $semanticData SMWSemanticData object to copy from
+	 */
+	public function importDataFrom( SMWSemanticData $semanticData ) {
+		// Shortcut when copying into empty objects that don't ask for more duplicate elimination:
+		if ( count( $this->mProperties ) == 0 &&
+		     ( $semanticData->mNoDuplicates >= $this->mNoDuplicates ) ) {
+			$this->mProperties = $semanticData->getProperties();
+			$this->mPropVals = array();
+			foreach ( $this->mProperties as $property ) {
+				$this->mPropVals[$property->getKey()] = $semanticData->getPropertyValues( $property );
+			}
+			$this->mHasVisibleProps = $semanticData->hasVisibleProperties();
+			$this->mHasVisibleSpecs = $semanticData->hasVisibleSpecialProperties();
+		} else {
+			foreach ( $semanticData->getProperties() as $property ) {
+				$values = $semanticData->getPropertyValues( $property );
+				foreach ( $values as $dataItem ) {
+					$this->addPropertyObjectValue( $property, $dataItem);
+				}
+			}
+		}
 	}
 
 }

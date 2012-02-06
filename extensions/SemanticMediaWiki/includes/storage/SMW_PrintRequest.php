@@ -44,7 +44,7 @@ class SMWPrintRequest {
 	 */
 	public function __construct( $mode, $label, $data = null, $outputformat = false, $params = null ) {
 		if ( ( ( $mode == self::PRINT_CATS || $mode == self::PRINT_THIS ) &&
-		         $data !== null ) ||
+		         !is_null( $data ) ) ||
 		     ( $mode == self::PRINT_PROP &&
 		         ( !( $data instanceof SMWPropertyValue ) || !$data->isValid() ) ) ||
 		     ( $mode == self::PRINT_CCAT &&
@@ -83,7 +83,7 @@ class SMWPrintRequest {
 	 * If it is NULL, no links will be created.
 	 */
 	public function getHTMLText( $linker = null ) {
-		if ( ( $linker === null ) || ( $this->m_label == '' ) ) {
+		if ( is_null( $linker ) || ( $this->m_label === '' ) ) {
 			return htmlspecialchars( $this->m_label );
 		}
 		
@@ -102,7 +102,7 @@ class SMWPrintRequest {
 	 * Obtain a Wiki-formatted representation of the label.
 	 */
 	public function getWikiText( $linked = false ) {
-		if ( ( $linked === null ) || ( $linked === false ) || ( $this->m_label == '' ) ) {
+		if ( is_null( $linked ) || ( $linked === false ) || ( $this->m_label === '' ) ) {
 			return $this->m_label;
 		} else {
 			switch ( $this->m_mode ) {
@@ -216,7 +216,7 @@ class SMWPrintRequest {
 					$printname = $this->m_data->getWikiValue();
 					$result = '?' . $printname;
 					
-					if ( $this->m_outputformat != '' ) {
+					if ( $this->m_outputformat !== '' ) {
 						$result .= '#' . $this->m_outputformat;
 					}
 				}
@@ -227,11 +227,11 @@ class SMWPrintRequest {
 			case self::PRINT_THIS:
 				$result = '?';
 				
-				if ( $this->m_label != '' ) {
+				if ( $this->m_label !== '' ) {
 					$result .= '=' . $this->m_label;
 				}
 				
-				if ( $this->m_outputformat != '' ) {
+				if ( $this->m_outputformat !== '' ) {
 					$result .= '#' . $this->m_outputformat;
 				}
 									

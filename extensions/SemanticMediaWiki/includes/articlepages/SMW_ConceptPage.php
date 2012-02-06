@@ -27,7 +27,7 @@ class SMWConceptPage extends SMWOrderedListPage {
 
 	/**
 	 * Returns the HTML which is added to $wgOut after the article text.
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function getHtml() {
@@ -40,7 +40,7 @@ class SMWConceptPage extends SMWOrderedListPage {
 			$queryResult = $store->getQueryResult( $query );
 
 			$diWikiPages = $queryResult->getResults();
-			if ($this->until != '' ) {
+			if ( $this->until !== '' ) {
 				$diWikiPages = array_reverse( $diWikiPages );
 			}
 
@@ -50,7 +50,6 @@ class SMWConceptPage extends SMWOrderedListPage {
 			$errors = array();
 		}
 
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		$pageLister = new SMWPageLister( $diWikiPages, null, $this->limit, $this->from, $this->until );
 		$this->mTitle->setFragment( '#SMWResults' ); // Make navigation point to the result list.
 		$navigation = $pageLister->getNavigationLinks( $this->mTitle );
@@ -67,36 +66,6 @@ class SMWConceptPage extends SMWOrderedListPage {
 		wfProfileOut( __METHOD__ . ' (SMW)' );
 		return $result;
 	}
-
-	/**
-	 * Format a list of wiki pages chunked by letter, either as a bullet
-	 * list or a columnar format, depending on the length.
-	 *
-	 * @param int $cutoff
-	 * @return string
-	 */
-// 	private function formatList( $cutoff = 6 ) {
-// 		$end = count( $this->diWikiPages );
-// 		
-// 		if ( $end > $this->limit ) {
-// 			if ( $this->until != '' ) {
-// 				$start = 1;
-// 			} else {
-// 				$start = 0;
-// 				$end --;
-// 			}
-// 		} else {
-// 			$start = 0;
-// 		}
-// 
-// 		if ( count ( $this->diWikiPages ) > $cutoff ) {
-// 			return $this->columnList( $start, $end, $this->diWikiPages );
-// 		} elseif ( count( $this->diWikiPages ) > 0 ) {
-// 			return $this->shortList( $start, $end, $this->diWikiPages );
-// 		} else {
-// 			return '';
-// 		}
-// 	}
 
 }
 

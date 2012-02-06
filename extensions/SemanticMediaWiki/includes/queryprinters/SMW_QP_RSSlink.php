@@ -10,38 +10,39 @@
  *
  * @author Denny Vrandecic
  * @author Markus Krötzsch
+ * 
  * @ingroup SMWQuery
  */
 class SMWRSSResultPrinter extends SMWResultPrinter {
+	
 	protected $m_title = '';
 	protected $m_description = '';
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-		if ( array_key_exists( 'title', $this->m_params ) ) {
-			$this->m_title = trim( $this->m_params['title'] );
-		// for backward compatibiliy
-		} elseif ( array_key_exists( 'rsstitle', $this->m_params ) ) {
-			$this->m_title = trim( $this->m_params['rsstitle'] );
-		}
-		if ( array_key_exists( 'description', $this->m_params ) ) {
-			$this->m_description = trim( $this->m_params['description'] );
-		// for backward compatibiliy
-		} elseif ( array_key_exists( 'rssdescription', $this->m_params ) ) {
-			$this->m_description = trim( $this->m_params['rssdescription'] );
-		}
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.7
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
+		
+		$this->m_title = trim( $params['title'] );
+		$this->m_description = trim( $params['description'] );
 	}
-
+	
 	public function getMimeType( $res ) {
-		return 'application/rss+xml'; // or is rdf+xml better? Might be confused in either case (with RSS2.0 or RDF)
+		// or is rdf+xml better? Might be confused in either case (with RSS2.0 or RDF)
+		return 'application/rss+xml';
 	}
 
 	public function getQueryMode( $context ) {
-		return ( $context == SMWQueryProcessor::SPECIAL_PAGE ) ? SMWQuery::MODE_INSTANCES:SMWQuery::MODE_NONE;
+		return $context == SMWQueryProcessor::SPECIAL_PAGE ? SMWQuery::MODE_INSTANCES : SMWQuery::MODE_NONE;
 	}
 
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_rss' );
 	}
 
@@ -50,11 +51,10 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 		$result = '';
 		if ( $outputmode == SMW_OUTPUT_FILE ) { // make RSS feed
 			if ( !$smwgRSSEnabled ) return '';
-			if ( $this->m_title == '' ) {
+			if ( $this->m_title === '' ) {
 				$this->m_title = $wgSitename;
 			}
-			if ( $this->m_description == '' ) {
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+			if ( $this->m_description === '' ) {
 				$this->m_description = wfMsg( 'smw_rss_description', $wgSitename );
 			}
 
@@ -71,11 +71,11 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 					// mechanism to add whatever you want :)
 					$req = $field->getPrintRequest();
 					if ( strtolower( $req->getLabel() ) == 'creator' ) {
-						foreach ( $field->getContent() as $entry ) {
+						while ( $entry = $field->getNextDataValue() ) {
 							$creators[] = $entry->getShortWikiText();
 						}
 					} elseif ( ( strtolower( $req->getLabel() ) == 'date' ) && ( $req->getTypeID() == '_dat' ) ) {
-						foreach ( $field->getContent() as $entry ) {
+						while ( $entry = $field->getNextDataValue() ) {
 							$dates[] = $entry->getXMLSchemaDate();
 						}
 					}
@@ -117,7 +117,6 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 			if ( $this->getSearchLabel( $outputmode ) ) {
 				$label = $this->getSearchLabel( $outputmode );
 			} else {
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$label = wfMsgForContent( 'smw_rss_link' );
 			}
 			$link = $res->getQueryLink( $label );
@@ -153,9 +152,11 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 		
 		$params['title'] = new Parameter( 'title' );
 		$params['title']->setMessage( 'smw_paramdesc_rsstitle' );
+		$params['title']->setDefault( '' );
 		
-		$params['description'] = new Parameter( 'title' );
+		$params['description'] = new Parameter( 'description' );
 		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['description']->setDefault( '' );
 		
 		return $params;
 	}
@@ -195,7 +196,7 @@ class SMWRSSItem {
 		}
 		$this->date = array();
 		if ( count( $d ) == 0 ) {
-			if ( $article === null ) {
+			if ( is_null( $article ) ) {
 				$article = new Article( $t );
 			}
 			$this->date[] = date( "c", strtotime( $article->getTimestamp() ) );

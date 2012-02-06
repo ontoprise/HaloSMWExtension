@@ -45,14 +45,11 @@ class SMWExporter {
 	 * Create exportable data from a given semantic data record.
 	 *
 	 * @param $semdata SMWSemanticData
-	 * @param $subject mixed SMWDIWikiPage to use as subject, or null to use the one from $semdata
 	 * @return SMWExpData
 	 */
-	static public function makeExportData( SMWSemanticData $semdata, $subject = null ) {
+	static public function makeExportData( SMWSemanticData $semdata ) {
 		self::initBaseURIs();
-		if ( is_null( $subject ) ) {
-			$subject = $semdata->getSubject();
-		}
+		$subject = $semdata->getSubject();
 		if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 			$types = $semdata->getPropertyValues( new SMWDIProperty( '_TYPE' ) );
 		} else {
@@ -81,13 +78,13 @@ class SMWExporter {
 	 */
 	static public function makeExportDataForSubject( SMWDIWikiPage $diWikiPage, $typesvalueforproperty = null, $addStubData = false ) {
 		global $wgContLang;
-		$wikiPageExpElement = self::getDataItemExpElement( $diWikiPage, $diWikiPage );
+		$wikiPageExpElement = self::getDataItemExpElement( $diWikiPage );
 		$result = new SMWExpData( $wikiPageExpElement );
 
-		if ( $diWikiPage->getSubobjectName() != '' ) {
+		if ( $diWikiPage->getSubobjectName() !== '' ) {
 			$result->addPropertyObjectValue( self::getSpecialNsResource( 'rdf', 'type' ), self::getSpecialNsResource( 'swivt', 'Subject' ) );
 			$masterPage = new SMWDIWikiPage( $diWikiPage->getDBkey(), $diWikiPage->getNamespace(), $diWikiPage->getInterwiki() );
-			$masterExpElement = self::getDataItemExpElement( $masterPage, $masterPage );
+			$masterExpElement = self::getDataItemExpElement( $masterPage );
 			$result->addPropertyObjectValue( self::getSpecialNsResource( 'swivt', 'masterPage' ), $masterExpElement );
 		} else {
 			$pageTitle = str_replace( '_', ' ', $diWikiPage->getDBkey() );
@@ -145,19 +142,22 @@ class SMWExporter {
 	 * @param $property SMWDIProperty
 	 * @param $dataItems array of SMWDataItem objects for the given property
 	 * @param $data SMWExpData to add the data to
-	 * @param $masterPage SMWDIWikiPage to which the data belongs; needed for internal object URIs
 	 */
-	static public function addPropertyValues( SMWDIProperty $property, array $dataItems, SMWExpData &$expData, SMWDIWikiPage $masterPage ) {
+	static public function addPropertyValues( SMWDIProperty $property, array $dataItems, SMWExpData &$expData ) {
 		if ( $property->isUserDefined() ) {
 			$pe = self::getResourceElementForProperty( $property );
 			$peHelper = self::getResourceElementForProperty( $property, true );
+			
 			foreach ( $dataItems as $dataItem ) {
-				$ed = self::getDataItemExpElement( $dataItem, $masterPage );
-				if ( $ed !== null ) {
+				$ed = self::getDataItemExpElement( $dataItem );
+				
+				if ( !is_null( $ed ) ) {
 					$expData->addPropertyObjectValue( $pe, $ed );
 				}
+				
 				$edHelper = self::getDataItemHelperExpElement( $dataItem );
-				if ( $edHelper !== null ) {
+				
+				if ( !is_null( $edHelper ) ) {
 					$expData->addPropertyObjectValue( $peHelper, $edHelper );
 				}
 			}
@@ -168,7 +168,7 @@ class SMWExporter {
 			}
 
 			$pe = self::getSpecialPropertyResource( $property->getKey(), $diSubject->getNamespace() );
-			if ( $pe === null ) return; // unknown special property, not exported 
+			if ( is_null( $pe ) ) return; // unknown special property, not exported 
 			if ( $property->getKey() == '_REDI' || $property->getKey() == '_URI' ) {
 				$filterNamespace = true;
 				if ( $property->getKey() == '_REDI' ) {
@@ -186,9 +186,11 @@ class SMWExporter {
 				        ( $dataItem->getNamespace() != $diSubject->getNamespace() ) ) ) {
 					continue;
 				}
-				$ed = self::getDataItemExpElement( $dataItem, $masterPage );
-				if ( $ed !== null ) {
-					if ( ( $property->getKey() == '_CONC' ) && ( $ed->getSubject()->getUri() == '' ) ) {
+				
+				$ed = self::getDataItemExpElement( $dataItem );
+				
+				if ( !is_null( $ed ) ) {
+					if ( ( $property->getKey() == '_CONC' ) && ( $ed->getSubject()->getUri() === '' ) ) {
 						// equivalent to anonymous class -> simplify description
 						foreach ( $ed->getProperties() as $subp ) {
 							if ( $subp->getUri() != self::getSpecialNsResource( 'rdf', 'type' )->getUri() ) {
@@ -223,7 +225,7 @@ class SMWExporter {
 	 */
 	static public function getResourceElementForProperty( SMWDIProperty $diProperty, $helperProperty = false ) {
 		$diWikiPage = $diProperty->getDiWikiPage();
-		if ( $diWikiPage === null ) {
+		if ( is_null( $diWikiPage ) ) {
 			throw new Exception( 'SMWExporter::getResourceElementForProperty() can only be used for user-defined properties.' );
 		} elseif ( $helperProperty ) {
 			return self::getResourceElementForWikiPage( $diWikiPage, 'aux' );
@@ -256,11 +258,11 @@ class SMWExporter {
 			} // else: Medialink to non-existing file :-/ fall through
 		}
 
-		if ( $diWikiPage->getSubobjectName() != '' ) {
+		if ( $diWikiPage->getSubobjectName() !== '' ) {
 			$modifier = $diWikiPage->getSubobjectName();
 		}
 
-		if ( $modifier == '' ) {
+		if ( $modifier === '' ) {
 			$importProperty = new SMWDIProperty( '_IMPO' );
 			$importDis = smwfGetStore()->getPropertyValues( $diWikiPage, $importProperty );
 			$importURI = ( count( $importDis ) > 0 );
@@ -273,9 +275,6 @@ class SMWExporter {
 			$namespace = $importValue->getNS();
 			$namespaceId = $importValue->getNSID();
 			$localName = $importValue->getLocalName();
-		} elseif ( self::isInternalObjectDiPage( $diWikiPage ) ) { // blank node
-			$localName = $namespace = $namespaceId = '';
-			$diWikiPage = null; // do not associate any wiki page with blank nodes
 		} else {
 			$localName = '';
 			if ( $diWikiPage->getNamespace() == SMW_NS_PROPERTY ) {
@@ -283,7 +282,7 @@ class SMWExporter {
 				$namespaceId = 'property';
 				$localName = self::encodeURI( rawurlencode( $diWikiPage->getDBkey() ) );
 			}
-			if ( ( $localName == '' ) ||
+			if ( ( $localName === '' ) ||
 			     ( in_array( $localName{0}, array( '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ) ) ) ) {
 				$namespace = self::getNamespaceUri( 'wiki' );
 				$namespaceId = 'wiki';
@@ -294,7 +293,7 @@ class SMWExporter {
 				}
 				$localName = self::encodeURI( wfUrlencode( $localName ) );
 			}
-			if ( $modifier != '' ) {
+			if ( $modifier !== '' ) {
 				$localName .=  '-23' . $modifier;
 			}
 		}
@@ -322,7 +321,6 @@ class SMWExporter {
 
 				$parts = explode( '-23', $dbKey, 2 );
 				if ( count( $parts ) == 2 ) {
-					$dbkey = $parts[0];
 					$subobjectname = $parts[1];
 				} else {
 					$subobjectname = '';
@@ -341,11 +339,13 @@ class SMWExporter {
 							break;
 						}
 					}
+					
 					if ( $namespaceId != -1 ) {
 						$dataItem = new SMWDIWikiPage( $parts[1], $namespaceId, '', $subobjectname );
 					} else {
 						$title = Title::newFromDBkey( $dbKey );
-						if ( $title !== null ) {
+						
+						if ( !is_null( $title ) ) {
 							$dataItem = new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), $title->getInterwiki(), $subobjectname );
 						}
 					}
@@ -436,7 +436,7 @@ class SMWExporter {
 	 */
 	static public function getSpecialNsResource( $namespaceId, $localName ) {
 		$namespace = self::getNamespaceUri( $namespaceId );
-		if ( $namespace != '' ) {
+		if ( $namespace !== '' ) {
 			return new SMWExpNsResource( $localName, $namespace, $namespaceId );
 		} else {
 			throw new InvalidArgumentException( "The vocabulary '$namespaceId' is not a known special vocabulary." );
@@ -537,10 +537,9 @@ class SMWExporter {
 	 * SMWExporter::getSpecialPropertyResource().
 	 * 
 	 * @param $dataItem SMWDataItem
-	 * @param $masterPage mixed SMWDIWikiPage to which the data belongs (needed for internal object URIs); or NULL if deemed irrelevant
 	 * @return SMWExpElement
 	 */
-	static public function getDataItemExpElement( SMWDataItem $dataItem, $masterPage ) {
+	static public function getDataItemExpElement( SMWDataItem $dataItem ) {
 		switch ( $dataItem->getDIType() ) {
 			case SMWDataItem::TYPE_NUMBER:
 				$lit = new SMWExpLiteral( $dataItem->getNumber(), 'http://www.w3.org/2001/XMLSchema#double', $dataItem );
@@ -585,7 +584,7 @@ class SMWExporter {
 				/// TODO
 				return null;
 			case SMWDataItem::TYPE_CONTAINER:
-				return self::makeExportData( $dataItem->getSemanticData(), $dataItem->getSubjectPage( $masterPage ) );
+				return self::makeExportData( $dataItem->getSemanticData() );
 			case SMWDataItem::TYPE_WIKIPAGE:
 				return self::getResourceElementForWikiPage( $dataItem );
 			case SMWDataItem::TYPE_CONCEPT:
@@ -641,37 +640,6 @@ class SMWExporter {
 	 */
 	static public function hasHelperExpElement( $dataItemType ) {
 		return ( $dataItemType == SMWDataItem::TYPE_TIME );
-	}
-
-	/**
-	 * Create a dataitem of a wikipage that is used to represent internal
-	 * objects. These objects are used as anonymous placeholders that are
-	 * only defined by their context. In particular, no two distinct
-	 * dataitems for this wiki page should be assumed to represent the same
-	 * object.
-	 *
-	 * @return SMWDIWikiPage
-	 */
-	static public function getInternalObjectDiPage() {
-		return new SMWDIWikiPage( 'SMWInternalObject', NS_SPECIAL, '' );
-	}
-
-	/**
-	 * Check if the given wiki page represents an internal object. See
-	 * SMWExporter::getInternalObjectDiPage() for details.
-	 *
-	 * @see SMWExporter::getInternalObjectDiPage()
-	 * @param $diWikiPage SMWDIWikiPage
-	 * @return boolean
-	 */
-	static public function isInternalObjectDiPage( SMWDIWikiPage $diWikiPage ) {
-		if ( $diWikiPage->getNamespace() == NS_SPECIAL &&
-		     $diWikiPage->getDBkey() == 'SMWInternalObject' &&
-		     $diWikiPage->getInterwiki() == '' ) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 }

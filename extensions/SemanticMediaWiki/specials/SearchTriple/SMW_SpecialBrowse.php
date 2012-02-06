@@ -37,7 +37,6 @@ class SMWSpecialBrowse extends SpecialPage {
 	public function __construct() {
 		global $smwgBrowseShowAll;
 		parent::__construct( 'Browse', '', true, false, 'default', true );
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		if ( $smwgBrowseShowAll ) {
 			SMWSpecialBrowse::$incomingvaluescount = 21;
 			SMWSpecialBrowse::$incomingpropertiescount = - 1;
@@ -55,22 +54,34 @@ class SMWSpecialBrowse extends SpecialPage {
 		// get the GET parameters
 		$this->articletext = $wgRequest->getVal( 'article' );
 		// no GET parameters? Then try the URL
-		if ( $this->articletext == '' ) {
+		if ( is_null( $this->articletext ) ) {
 			$params = SMWInfolink::decodeParameters( $query, false );
 			reset( $params );
 			$this->articletext = current( $params );
 		}
+		
 		$this->subject = SMWDataValueFactory::newTypeIDValue( '_wpg', $this->articletext );
 		$offsettext = $wgRequest->getVal( 'offset' );
-		$this->offset = ( $offsettext == '' ) ? 0:intval( $offsettext );
+		$this->offset = ( is_null( $offsettext ) ) ? 0 : intval( $offsettext );
+		
 		$dir = $wgRequest->getVal( 'dir' );
+		
 		if ( $smwgBrowseShowAll ) {
 			$this->showoutgoing = true;
 			$this->showincoming = true;
 		}
-		if ( ( $dir == 'both' ) || ( $dir == 'in' ) ) $this->showincoming = true;
-		if ( $dir == 'in' ) $this->showoutgoing = false;
-		if ( $dir == 'out' ) $this->showincoming = false;
+		
+		if ( $dir === 'both' || $dir === 'in' ) {
+			$this->showincoming = true;
+		}
+		
+		if ( $dir === 'in' ) {
+			$this->showoutgoing = false;
+		}
+		
+		if ( $dir === 'out' ) {
+			$this->showincoming = false;
+		}
 
 		$wgOut->addHTML( $this->displayBrowse() );
 		SMWOutputs::commitToOutputPage( $wgOut ); // make sure locally collected output data is pushed to the output!
@@ -86,15 +97,18 @@ class SMWSpecialBrowse extends SpecialPage {
 		global $wgContLang, $wgOut;
 		$html = "\n";
 		$leftside = !( $wgContLang->isRTL() ); // For right to left languages, all is mirrored
+		
 		if ( $this->subject->isValid() ) {
 			$wgOut->addStyle( '../extensions/SemanticMediaWiki/skins/SMW_custom.css' );
 
 			$html .= $this->displayHead();
+			
 			if ( $this->showoutgoing ) {
 				$data = smwfGetStore()->getSemanticData( $this->subject->getDataItem() );
 				$html .= $this->displayData( $data, $leftside );
 				$html .= $this->displayCenter();
 			}
+			
 			if ( $this->showincoming ) {
 				list( $indata, $more ) = $this->getInData();
 				global $smwgBrowseShowInverse;
@@ -104,10 +118,17 @@ class SMWSpecialBrowse extends SpecialPage {
 			}
 
 			$this->articletext = $this->subject->getWikiValue();
+			
 			// Add a bit space between the factbox and the query form
-			if ( !$this->including() ) $html .= "<p> &#160; </p>\n";
+			if ( !$this->including() ) {
+				$html .= "<p> &#160; </p>\n";
+			}
 		}
-		if ( !$this->including() ) $html .= $this->queryForm();
+		
+		if ( !$this->including() ) {
+			$html .= $this->queryForm();
+		}
+		
 		$wgOut->addHTML( $html );
 	}
 
@@ -117,7 +138,7 @@ class SMWSpecialBrowse extends SpecialPage {
 	 * @param[in] $data SMWSemanticData  The data to be displayed
 	 * @param[in] $left bool  Should properties be displayed on the left side?
 	 * @param[in] $incoming bool  Is this an incoming? Or an outgoing?
-	 * 
+	 *
 	 * @return A string containing the HTML with the factbox
 	 */
 	private function displayData( SMWSemanticData $data, $left = true, $incoming = false ) {
@@ -177,13 +198,13 @@ class SMWSpecialBrowse extends SpecialPage {
 					'a',
 					array(
 						'href' => SpecialPage::getSafeTitleFor( 'SearchByProperty' )->getLocalURL( array(
-							 'property' => $dvProperty->getWikiValue(), 
+							 'property' => $dvProperty->getWikiValue(),
 							 'value' => $this->subject->getWikiValue()
 						) )
 					),
 					wfMsg( "smw_browse_more" )
 				);
-				
+
 			}
 
 			$body .= "</td>\n";
@@ -208,14 +229,14 @@ class SMWSpecialBrowse extends SpecialPage {
 	 * @param[in] $property SMWPropertyValue  The property this value is linked to the subject with
 	 * @param[in] $value SMWDataValue  The actual value
 	 * @param[in] $incoming bool  If this is an incoming or outgoing link
-	 * 
+	 *
 	 * @return string  HTML with the link to the article, browse, and search pages
 	 */
 	private function displayValue( SMWPropertyValue $property, SMWDataValue $dataValue, $incoming ) {
 		$linker = smwfGetLinker();
-		
+
 		$html = $dataValue->getLongHTMLText( $linker );
-		
+
 		if ( $dataValue->getTypeID() == '_wpg' ) {
 			$html .= "&#160;" . SMWInfolink::newBrowsingLink( '+', $dataValue->getLongWikiText() )->getHTML( $linker );
 		} elseif ( $incoming && $property->isVisible() ) {
@@ -223,7 +244,7 @@ class SMWSpecialBrowse extends SpecialPage {
 		} else {
 			$html .= $dataValue->getInfolinkText( SMW_OUTPUT_HTML, $linker );
 		}
-		
+
 		return $html;
 	}
 
@@ -232,16 +253,15 @@ class SMWSpecialBrowse extends SpecialPage {
 	 *
 	 * @return A string containing the HTML with the subject line
 	 */
-	 private function displayHead() {
-	 	global $wgOut;
-	 	
+	private function displayHead() {
+		global $wgOut;
+
 		$wgOut->setHTMLTitle( $this->subject->getTitle() );
-		$html  = "<table class=\"smwb-factbox\" cellpadding=\"0\" cellspacing=\"0\">\n";
-		$html .= "<tr class=\"smwb-title\"><td colspan=\"2\">\n";
-		$html .= smwfGetLinker()->makeLinkObj( $this->subject->getTitle() ) . "\n"; // @todo Replace makeLinkObj with link as soon as we drop MW1.12 compatibility
-		$html .= "</td></tr>\n";
-		$html .= "</table>\n";
-		
+		$html = "<table class=\"smwb-factbox\" cellpadding=\"0\" cellspacing=\"0\">\n" .
+			"<tr class=\"smwb-title\"><td colspan=\"2\">\n" .
+			$this->subject->getLongHTMLText( smwfGetLinker() ) . "\n" .
+			"</td></tr>\n</table>\n";
+
 		return $html;
 	 }
 
@@ -292,20 +312,20 @@ class SMWSpecialBrowse extends SpecialPage {
 	 * @param[in] $out bool  Should the linked to page include outgoing properties?
 	 * @param[in] $in bool  Should the linked to page include incoming properties?
 	 * @param[in] $offset int  What is the offset for the incoming properties?
-	 * 
+	 *
 	 * @return string  HTML with the link to this page
 	 */
 	private function linkHere( $text, $out, $in, $offset ) {
-		$dir = $out ? ( $in ? 'both' : 'out' ) : 'in';
 		$frag = ( $text == wfMsg( 'smw_browse_show_incoming' ) ) ? '#smw_browse_incoming' : '';
-		
+
 		return Html::element(
 			'a',
 			array(
 				'href' => SpecialPage::getSafeTitleFor( 'Browse' )->getLocalURL( array(
-					'offset' => "{$offset}&dir={$dir}",
-					'article' => $this->subject->getLongWikiText() . $frag
-				) )
+					'offset' => $offset,
+					'dir' => $out ? ( $in ? 'both' : 'out' ) : 'in',
+					'article' => $this->subject->getLongWikiText()
+				) ) . $frag
 			),
 			$text
 		);
@@ -336,7 +356,7 @@ class SMWSpecialBrowse extends SpecialPage {
 		$valoptions = new SMWRequestOptions();
 		$valoptions->sort = true;
 		$valoptions->limit = SMWSpecialBrowse::$incomingvaluescount;
-		
+
 		foreach ( $inproperties as $property ) {
 			$values = smwfGetStore()->getPropertySubjects( $property, $this->subject->getDataItem(), $valoptions );
 			foreach ( $values as $value ) {
@@ -354,12 +374,12 @@ class SMWSpecialBrowse extends SpecialPage {
 	 *
 	 * @param[in] $property SMWPropertyValue  The property of interest
 	 * @param[in] $incoming bool  If it is an incoming property
-	 * 
+	 *
 	 * @return string  The label of the property
 	 */
 	private function getPropertyLabel( SMWPropertyValue $property, $incoming = false ) {
 		global $smwgBrowseShowInverse;
-		
+
 		if ( $incoming && $smwgBrowseShowInverse ) {
 			$oppositeprop = SMWPropertyValue::makeUserProperty( wfMsg( 'smw_inverse_label_property' ) );
 			$labelarray = &smwfGetStore()->getPropertyValues( $property->getDataItem()->getDiWikiPage(), $oppositeprop->getDataItem() );
@@ -368,7 +388,7 @@ class SMWSpecialBrowse extends SpecialPage {
 		} else {
 			$rv = $property->getWikiValue();
 		}
-		
+
 		return $this->unbreak( $rv );
 	}
 
@@ -380,7 +400,7 @@ class SMWSpecialBrowse extends SpecialPage {
 	private function queryForm() {
 		self::addAutoComplete();
 		$title = SpecialPage::getTitleFor( 'Browse' );
-		return '  <form name="smwbrowse" action="' . $title->escapeLocalURL() . '" method="get">' . "\n" .
+		return '  <form name="smwbrowse" action="' . htmlspecialchars( $title->getLocalURL() ) . '" method="get">' . "\n" .
 		       '    <input type="hidden" name="title" value="' . $title->getPrefixedText() . '"/>' .
 		       wfMsg( 'smw_browse_article' ) . "<br />\n" .
 		       '    <input type="text" name="article" id="page_input_box" value="' . htmlspecialchars( $this->articletext ) . '" />' . "\n" .
@@ -392,36 +412,8 @@ class SMWSpecialBrowse extends SpecialPage {
 	 * Creates the JS needed for adding auto-completion to queryForm(). Uses the
 	 * MW API to fetch suggestions.
 	 */
-	private static function addAutoComplete(){
-		global $wgOut, $smwgScriptPath, $smwgJQueryIncluded, $smwgJQueryUIIncluded;
-
-		// Add CSS and JavaScript for jQuery and jQuery UI.
-		$wgOut->addExtensionStyle( "$smwgScriptPath/skins/jquery-ui/base/jquery.ui.all.css" );
-
-		$scripts = array();
-
-		if ( !$smwgJQueryIncluded ) {
-			$realFunction = array( $wgOut, 'includeJQuery' );
-			if ( is_callable( $realFunction ) ) {
-				$wgOut->includeJQuery();
-			} else {
-				$scripts[] = "$smwgScriptPath/libs/jquery-1.4.2.min.js";
-			}
-
-			$smwgJQueryIncluded = true;
-		}
-
-		if ( !$smwgJQueryUIIncluded ) {
-			$scripts[] = "$smwgScriptPath/libs/jquery-ui/jquery.ui.core.min.js";
-			$scripts[] = "$smwgScriptPath/libs/jquery-ui/jquery.ui.widget.min.js";
-			$scripts[] = "$smwgScriptPath/libs/jquery-ui/jquery.ui.position.min.js";
-			$scripts[] = "$smwgScriptPath/libs/jquery-ui/jquery.ui.autocomplete.min.js";
-			$smwgJQueryUIIncluded = true;
-		}
-
-		foreach ( $scripts as $js ) {
-			$wgOut->addScriptFile( $js );
-		}
+	private static function addAutoComplete() {
+		SMWOutputs::requireResource( 'jquery.ui.autocomplete' );
 
 		$javascript_autocomplete_text = <<<END
 <script type="text/javascript">
@@ -439,7 +431,7 @@ jQuery(document).ready(function(){
 
 END;
 
-		$wgOut->addScript( $javascript_autocomplete_text );
+		SMWOutputs::requireScript( 'smwAutocompleteSpecialBrowse', $javascript_autocomplete_text );
 	}
 
 	/**
@@ -453,5 +445,5 @@ END;
  		$text = preg_replace( '/[\s]/u', $nonBreakingSpace, $text, - 1, $count );
  		return $count > 2 ? preg_replace( '/($nonBreakingSpace)/u', ' ', $text, max( 0, $count - 2 ) ):$text;
 	}
-	
+
 }

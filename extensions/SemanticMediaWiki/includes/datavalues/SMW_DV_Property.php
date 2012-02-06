@@ -1,9 +1,9 @@
 <?php
 /**
  * File holding class SMWPropertyValue.
- * 
+ *
  * @author Markus Krötzsch
- * 
+ *
  * @file
  * @ingroup SMWDataValues
  */
@@ -53,9 +53,9 @@ class SMWPropertyValue extends SMWDataValue {
 	 * @note The resulting property object might be invalid if
 	 * the provided name is not allowed. An object is returned
 	 * in any case.
-	 * 
+	 *
 	 * @param string $propertyName
-	 * 
+	 *
 	 * @return SMWPropertyValue
 	 */
 	static public function makeUserProperty( $propertyName ) {
@@ -106,7 +106,7 @@ class SMWPropertyValue extends SMWDataValue {
 		}
 		$propertyName = smwfNormalTitleText( ltrim( rtrim( $value, ' ]' ), ' [' ) ); // slightly normalise label
 		$inverse = false;
-		if ( ( $propertyName !== '' ) && ( $propertyName{ 0 } == '-' ) ) { // property refers to an inverse
+		if ( ( $propertyName !== '' ) && ( $propertyName { 0 } == '-' ) ) { // property refers to an inverse
 			$propertyName = (string)substr( $value, 1 );
 			/// NOTE The cast is necessary at least in PHP 5.3.3 to get string '' instead of boolean false.
 			$inverse = true;
@@ -115,7 +115,6 @@ class SMWPropertyValue extends SMWDataValue {
 		try {
 			$this->m_dataitem = SMWDIProperty::newFromUserLabel( $propertyName, $inverse, $this->m_typeid );
 		} catch ( SMWDataItemException $e ) { // happens, e.g., when trying to sort queries by property "-"
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$this->addError( wfMsgForContent( 'smw_noproperty', $value ) );
 			$this->m_dataitem = new SMWDIProperty( 'ERROR', false ); // just to have something
 		}
@@ -165,7 +164,7 @@ class SMWPropertyValue extends SMWDataValue {
 	public function getWikiPageValue() {
 		if ( !isset( $this->m_wikipage ) ) {
 			$diWikiPage = $this->m_dataitem->getDiWikiPage();
-			if ( $diWikiPage !== null ) {
+			if ( !is_null( $diWikiPage ) ) {
 				$this->m_wikipage = SMWDataValueFactory::newDataItemValue( $diWikiPage, null, $this->m_caption );
 				$this->m_wikipage->setOutputFormat( $this->m_outformat );
 				$this->addError( $this->m_wikipage->getErrors() );
@@ -182,7 +181,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 * @note Every user defined property is necessarily visible.
 	 */
 	public function isVisible() {
-		return ( $this->m_dataitem->isUserDefined() ) || ( $this->m_dataitem->getLabel() != '' );
+		return $this->isValid() && ( $this->m_dataitem->isUserDefined() || $this->m_dataitem->getLabel() !== '' );
 	}
 
 	public function getShortWikiText( $linked = null ) {
@@ -266,11 +265,10 @@ class SMWPropertyValue extends SMWDataValue {
 	 * Create special highlighting for hinting at special properties.
 	 */
 	protected function highlightText( $text ) {
-		if ( $this->isUserDefined() ) {
+		if ( $this->m_dataitem->isUserDefined() ) {
 			return $text;
 		} else {
-			SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+			SMWOutputs::requireResource( 'ext.smw.tooltips' );
 			return '<span class="smwttinline"><span class="smwbuiltin">' . $text .
 			'</span><span class="smwttcontent">' . wfMsgForContent( 'smw_isspecprop' ) . '</span></span>';
 		}
@@ -280,7 +278,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 * A function for registering/overwriting predefined properties for SMW. Should be called from
 	 * within the hook 'smwInitProperties'. Ids should start with three underscores "___" to avoid
 	 * current and future confusion with SMW built-ins.
-	 * 
+	 *
 	 * @deprecated Use SMWDIProperty::registerProperty(). Will vanish before SMW 1.7.
 	 */
 	static public function registerProperty( $id, $typeid, $label = false, $show = false ) {
@@ -291,7 +289,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 * Add a new alias label to an existing datatype id. Note that every ID should have a primary
 	 * label, either provided by SMW or registered with registerDatatype. This function should be
 	 * called from within the hook 'smwInitDatatypes'.
-	 * 
+	 *
 	 * @deprecated Use SMWDIProperty::registerPropertyAlias(). Will vanish before SMW 1.7.
 	 */
 	static public function registerPropertyAlias( $id, $label ) {
@@ -300,7 +298,7 @@ class SMWPropertyValue extends SMWDataValue {
 
 	/**
 	 * @see SMWDIProperty::isUserDefined()
-	 * 
+	 *
 	 * @deprecated since 1.6
 	 */
 	public function isUserDefined() {
@@ -309,7 +307,7 @@ class SMWPropertyValue extends SMWDataValue {
 
 	/**
 	 * @see SMWDIProperty::isShown()
-	 * 
+	 *
 	 * @deprecated since 1.6
 	 */
 	public function isShown() {
@@ -318,7 +316,7 @@ class SMWPropertyValue extends SMWDataValue {
 
 	/**
 	 * @see SMWDIProperty::isInverse()
-	 * 
+	 *
 	 * @deprecated since 1.6
 	 */
 	public function isInverse() {
@@ -330,7 +328,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 * for internal (invisible) properties, it is the property ID. The value agrees
 	 * with the first component of getDBkeys() and it can be used in its place.
 	 * @see SMWDIProperty::getKey()
-	 * 
+	 *
 	 * @deprecated since 1.6
 	 */
 	public function getDBkey() {
@@ -339,7 +337,7 @@ class SMWPropertyValue extends SMWDataValue {
 
 	/**
 	 * @see SMWDIProperty::getLabel()
-	 * 
+	 *
 	 * @deprecated since 1.6
 	 */
 	public function getText() {

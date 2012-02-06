@@ -35,8 +35,11 @@ define( 'CONCEPT_CACHE_HARD', 1 ); // show without cache if concept is not harde
 define( 'CONCEPT_CACHE_NONE', 0 ); // show all concepts even without any cache
 
 // Constants for identifying javascripts as used in SMWOutputs.
+/// @deprecated Use module 'ext.smw.tooltips', see SMW_Ouptuts.php. Vanishes in SMW 1.7 at the latest.
 define( 'SMW_HEADER_TOOLTIP', 2 );
+/// @deprecated Module removed. Vanishes in SMW 1.7 at the latest.
 define( 'SMW_HEADER_SORTTABLE', 3 );
+/// @deprecated Use module 'ext.smw.style', see SMW_Ouptuts.php. Vanishes in SMW 1.7 at the latest.
 define( 'SMW_HEADER_STYLE', 4 );
 
 // Constants for denoting output modes in many functions: HTML or Wiki?
@@ -153,7 +156,6 @@ function smwfHTMLtoUTF8( $text ) {
 function smwfNumberFormat( $value, $decplaces = 3 ) {
 	global $smwgMaxNonExpNumber;
 
-	smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 	$decseparator = wfMsgForContent( 'smw_decseparator' );
 
 	// If number is a trillion or more, then switch to scientific
@@ -230,12 +232,12 @@ function smwfNumberFormat( $value, $decplaces = 3 ) {
  */
 function smwfEncodeMessages( array $messages, $icon = 'warning', $seperator = ' <!--br-->', $escape = true ) {
 	if ( count( $messages ) > 0 ) {
-		SMWOutputs::requireHeadItem( SMW_HEADER_TOOLTIP );
-		
+		SMWOutputs::requireResource( 'ext.smw.tooltips' );
+
 		if ( $escape ) {
 			$messages = array_map( 'htmlspecialchars', $messages );
 		}
-		
+
 		if ( count( $messages ) == 1 )  {
 			$errorList = $messages[0];
 		}
@@ -246,33 +248,20 @@ function smwfEncodeMessages( array $messages, $icon = 'warning', $seperator = ' 
 			
 			$errorList = '<ul>' . implode( $seperator, $messages ) . '</ul>';
 		}
-		
+
 		return '<span class="smwttpersist">' .
-					'<span class="smwtticon">' . htmlspecialchars( $icon ) . '.png</span>' .
-					'<span class="smwttcontent">' . $errorList . '</span>' . 
-				'</span>';
+				'<span class="smwtticon">' . htmlspecialchars( $icon ) . '.png</span>' .
+				'<span class="smwttcontent">' . $errorList . '</span>' . 
+			'</span>';
 	} else {
 		return '';
 	}
 }
 
 /**
- * MediaWiki 1.16 introduces major changes in message handling, and the old
- * wfLoadExtensionMessages function will no longer be needed (or supported).
- * This function is used for maintaining compatibility with MediaWiki 1.15 or
- * below.
- *
- * @param string $extensionName The extension name for finding the the message
- * file; same as in wfLoadExtensionMessages()
- *
- * @since 1.5.1
+ * @deprecated since 1.7, will be removed in 1.9.
  */
-function smwfLoadExtensionMessages( $extensionName ) {
-	global $wgVersion;
-	if ( version_compare( $wgVersion, '1.16', '<' ) ) {
-		wfLoadExtensionMessages( $extensionName );
-	}
-}
+function smwfLoadExtensionMessages( $extensionName ) {}
 
 /**
  * Get a handle for the storage backend that is used to manage the data.
@@ -284,9 +273,9 @@ function smwfLoadExtensionMessages( $extensionName ) {
  * @return SMWStore
  */
 function &smwfGetStore() {
-	global $smwgMasterStore, $smwgDefaultStore, $smwgIP;
+	global $smwgMasterStore, $smwgDefaultStore;
 
-	if ( $smwgMasterStore === null ) {
+	if ( is_null( $smwgMasterStore ) ) {
 		$smwgMasterStore = new $smwgDefaultStore();
 	}
 
@@ -307,10 +296,11 @@ function &smwfGetStore() {
  * @return SMWSparqlDatabase or null
  */
 function &smwfGetSparqlDatabase() {
-	global $smwgSparqlDatabase, $smwgSparqlQueryEndpoint, $smwgSparqlUpdateEndpoint,
-	       $smwgSparqlDataEndpoint, $smwgSparqlDatabaseMaster;
+	global $smwgSparqlDatabase, $smwgSparqlDefaultGraph, $smwgSparqlQueryEndpoint,
+		$smwgSparqlUpdateEndpoint, $smwgSparqlDataEndpoint, $smwgSparqlDatabaseMaster;
 	if ( !isset( $smwgSparqlDatabaseMaster ) ) {
-		$smwgSparqlDatabaseMaster = new $smwgSparqlDatabase( $smwgSparqlQueryEndpoint, $smwgSparqlUpdateEndpoint, $smwgSparqlDataEndpoint );
+		$smwgSparqlDatabaseMaster = new $smwgSparqlDatabase( $smwgSparqlDefaultGraph,
+			$smwgSparqlQueryEndpoint, $smwgSparqlUpdateEndpoint, $smwgSparqlDataEndpoint );
 	}
 	return $smwgSparqlDatabaseMaster;
 }
@@ -321,17 +311,17 @@ function &smwfGetSparqlDatabase() {
  * where in MW 1.19 they are static, and a DummyLinker
  * class is introduced, which can be instantaited for
  * compat reasons. 
- * 
+ *
  * @since 1.6
- * 
+ *
  * @return Linker or DummyLinker
  */
 function smwfGetLinker() {
 	static $linker = false;
-	
+
 	if ( $linker === false ) {
 		$linker = class_exists( 'DummyLinker' ) ? new DummyLinker() : new Linker();
 	}
-	
+
 	return $linker;
 }

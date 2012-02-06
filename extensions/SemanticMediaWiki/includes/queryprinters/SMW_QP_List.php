@@ -18,52 +18,40 @@
  */
 class SMWListResultPrinter extends SMWResultPrinter {
 
-	protected $mSep = '';
-	protected $mTemplate = '';
-	protected $mUserParam = '';
-	protected $mColumns = 1;
-	protected $mIntroTemplate = '';
-	protected $mOutroTemplate = '';
-
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		if ( array_key_exists( 'sep', $params ) ) {
-			$this->mSep = str_replace( '_', ' ', $params['sep'] );
-		}
+	protected $mSep;
+	protected $mTemplate;
+	protected $mNamedArgs;
+	protected $mUserParam;
+	protected $mColumns;
+	protected $mIntroTemplate;
+	protected $mOutroTemplate;
+	
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.6
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
 		
-		if ( array_key_exists( 'template', $params ) ) {
-			$this->mTemplate = trim( $params['template'] );
-		}
-		
-		if ( array_key_exists( 'userparam', $params ) ) {
-			$this->mUserParam = trim( $params['userparam'] );
-		}
-		
-		if ( array_key_exists( 'columns', $params ) ) {
-			$columns = trim( $params['columns'] );
-			if ( $columns > 1 && $columns <= 10 ) { // allow a maximum of 10 columns
-				$this->mColumns = (int)$columns;
-			}
-		}
-		
-		if ( array_key_exists( 'introtemplate', $params ) ) {
-			$this->mIntroTemplate = $params['introtemplate'];
-		}
-		
-		if ( array_key_exists( 'outrotemplate', $params ) ) {
-			$this->mOutroTemplate = $params['outrotemplate'];
-		}
+		$this->mSep = $this->isPlainlist() ? $params['sep'] : '';
+		$this->mTemplate = trim( $params['template'] );
+		$this->mNamedArgs = $params['named args'];
+		$this->mUserParam = trim( $params['userparam'] );
+		$this->mColumns = !$this->isPlainlist() ? $params['columns'] : 1;
+		$this->mIntroTemplate = $params['introtemplate'];
+		$this->mOutroTemplate = $params['outrotemplate'];
 	}
 
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_' . $this->mFormat );
 	}
 
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		if ( ( $this->mFormat == 'template' ) && ( $this->mTemplate == false ) ) {
-			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 			$res->addErrors( array( wfMsgForContent( 'smw_notemplategiven' ) ) );
 			return '';
 		}
@@ -84,11 +72,10 @@ class SMWListResultPrinter extends SMWResultPrinter {
 			$rowend = '';
 			$plainlist = true;
 			
-			if ( $this->mSep != '' ) { // always respect custom separator
+			if ( $this->mSep !== '' ) { // always respect custom separator
 				$listsep = $this->mSep;
 				$finallistsep = $listsep;
 			} elseif ( $this->mFormat == 'list' )  {  // make default list ", , , and "
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$listsep = ', ';
 				$finallistsep = wfMsgForContent( 'smw_finallistconjunct' ) . ' ';
 			} else { // no default separators for format "template"
@@ -111,11 +98,11 @@ class SMWListResultPrinter extends SMWResultPrinter {
 			$rows_in_cur_column = 0;
 		}
 
-		if ( $header != '' ) {
+		if ( $header !== '' ) {
 			$result .= $header;
 		} 
 		
-		if ( $this->mIntroTemplate != '' ) {
+		if ( $this->mIntroTemplate !== '' ) {
 			$result .= "{{" . $this->mIntroTemplate . "}}";
 		}
 
@@ -128,7 +115,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 				$column_width, $res, $listsep, $finallistsep );
 		}
 		
-		if ( $this->mOutroTemplate != '' ) {
+		if ( $this->mOutroTemplate !== '' ) {
 			$result .= "{{" . $this->mOutroTemplate . "}}";
 		}
 		
@@ -138,7 +125,7 @@ class SMWListResultPrinter extends SMWResultPrinter {
 		}
 
 		// Print footer
-		if ( $footer != '' ) {
+		if ( $footer !== '' ) {
 			$result .= $footer;
 		}
 		
@@ -191,22 +178,18 @@ END;
 			$result .= $rowstart;
 		}
 
-		$first_col = true;
-		if ( $this->mTemplate != '' ) { // build template code
+		if ( $this->mTemplate !== '' ) { // build template code
 			$this->hasTemplates = true;
 			$wikitext = ( $this->mUserParam ) ? "|userparam=$this->mUserParam" : '';
-			$i = 1; // explicitly number parameters for more robust parsing (values may contain "=")
 			
-			foreach ( $row as $field ) {
-				$wikitext .= '|' . $i++ . '=';
+			foreach ( $row as $i => $field ) {
+				$wikitext .= '|' . ( $this->mNamedArgs ? '?' . $field->getPrintRequest()->getLabel() : $i + 1 ) . '=';
 				$first_value = true;
 				
-				while ( ( $text = $field->getNextText( SMW_OUTPUT_WIKI, $this->getLinker( $first_col ) ) ) !== false ) {
+				while ( ( $text = $field->getNextText( SMW_OUTPUT_WIKI, $this->getLinker( $i == 0 ) ) ) !== false ) {
 					if ( $first_value ) $first_value = false; else $wikitext .= ', ';
 					$wikitext .= $text;
 				}
-				
-				$first_col = false;
 			}
 			
 			$wikitext .= "|#=$rownum";
@@ -231,7 +214,7 @@ END;
 					if ( $first_value ) { // first value in any column, print header
 						$first_value = false;
 						
-						if ( ( $this->mShowHeaders != SMW_HEADERS_HIDE ) && ( $field->getPrintRequest()->getLabel() != '' ) ) {
+						if ( ( $this->mShowHeaders != SMW_HEADERS_HIDE ) && ( $field->getPrintRequest()->getLabel() !== '' ) ) {
 							$result .= $field->getPrintRequest()->getText( SMW_OUTPUT_WIKI, ( $this->mShowHeaders == SMW_HEADERS_PLAIN ? null:$this->mLinker ) ) . ' ';
 						}
 					}
@@ -255,52 +238,54 @@ END;
 			$link->setCaption( $this->getSearchLabel( SMW_OUTPUT_WIKI ) );
 		}
 		
-		if ( $this->mSep != '' ) {
+		if ( $this->mSep !== '' ) {
 			$link->setParameter( $this->mSep, 'sep' );
 		}
 		
 		$link->setParameter( $this->mFormat, 'format' );
 
-		if ( $this->mTemplate != '' ) {
+		if ( $this->mTemplate !== '' ) {
 			$link->setParameter( $this->mTemplate, 'template' );
-			if ( array_key_exists( 'link', $this->m_params ) ) { // linking may interfere with templates
-				$link->setParameter( $this->m_params['link'], 'link' );
+			if ( array_key_exists( 'link', $this->params ) ) { // linking may interfere with templates
+				$link->setParameter( $this->params['link'], 'link' );
 			}
 		}
 		
-		if ( $this->mUserParam != '' ) {
+		if ( $this->mUserParam !== '' ) {
 			$link->setParameter( $this->mUserParam, 'userparam' );
 		}
 		
-		if ( $this->mColumns != '' ) {
+		if ( $this->mColumns !== '' ) {
 			$link->setParameter( $this->mColumns, 'columns' );
 		}
 		
-		if ( $this->mIntro != '' ) {
+		if ( $this->mIntro !== '' ) {
 			$link->setParameter( $this->mIntro, 'intro' );
 		}
 		
-		if ( $this->mOutro != '' ) {
+		if ( $this->mOutro !== '' ) {
 			$link->setParameter( $this->mOutro, 'outro' );
 		}
 		
-		if ( $this->mIntroTemplate != '' ) {
+		if ( $this->mIntroTemplate !== '' ) {
 			$link->setParameter( $this->mIntroTemplate, 'introtemplate' );
 		}
 		
-		if ( $this->mOutroTemplate != '' ) {
+		if ( $this->mOutroTemplate !== '' ) {
 			$link->setParameter( $this->mOutroTemplate, 'outrotemplate' );
 		}
 		
 		$result .= $rowstart . ' '. $link->getText( SMW_OUTPUT_WIKI, $this->mLinker ) . $rowend;
 	}
 
+	protected function isPlainlist() {
+		return $this->mFormat != 'ul' && $this->mFormat != 'ol';
+	}
+	
 	public function getParameters() {
 		$params = array_merge( parent::getParameters(), parent::textDisplayParameters() );
 		
-		$plainlist = ( $this->mFormat != 'ul' && $this->mFormat != 'ol' );
-		
-		if ( $plainlist ) {
+		if ( $this->isPlainlist() ) {
 			$params['sep'] = new Parameter( 'sep' );
 			$params['sep']->setMessage( 'smw_paramdesc_sep' );
 			$params['sep']->setDefault( '' );
@@ -310,10 +295,14 @@ END;
 		$params['template']->setMessage( 'smw_paramdesc_template' );
 		$params['template']->setDefault( '' );	
 		
-		if ( !$plainlist ) {
+		$params['named args'] = new Parameter( 'named args', Parameter::TYPE_BOOLEAN, false );
+		$params['named args']->setMessage( 'smw_paramdesc_named_args' );
+		
+		if ( !$this->isPlainlist() ) {
 			$params['columns'] = new Parameter( 'columns', Parameter::TYPE_INTEGER );
 			$params['columns']->setMessage( 'smw_paramdesc_columns', 1 );
-			$params['columns']->setDefault( '', false );		
+			$params['columns']->setDefault( 1, false );
+			$params['columns']->addCriteria( new CriterionInRange( 1, 10 ) );	
 		}
 		
 		$params['userparam'] = new Parameter( 'userparam' );

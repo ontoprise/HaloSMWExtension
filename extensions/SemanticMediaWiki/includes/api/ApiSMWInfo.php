@@ -99,7 +99,7 @@ class ApiSMWInfo extends ApiBase {
 	}	
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiSMWInfo.php 88521 2011-05-21 16:15:12Z jeroendedauw $';
+		return __CLASS__ . ': $Id: ApiSMWInfo.php 95796 2011-08-30 17:46:47Z jeroendedauw $';
 	}		
 	
 }

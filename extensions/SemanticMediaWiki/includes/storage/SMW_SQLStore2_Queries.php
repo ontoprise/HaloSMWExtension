@@ -93,6 +93,8 @@ class SMWSQLStore2QueryEngine {
 	public function refreshConceptCache( Title $concept ) {
 		global $smwgQMaxLimit, $smwgQConceptFeatures, $wgDBtype;
 
+		$fname = 'SMW::refreshConceptCache';
+
 		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', '' );
 		$cid_c = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', '', false );
 
@@ -101,7 +103,7 @@ class SMWSQLStore2QueryEngine {
 			return $this->m_errors;
 		}
 
-		$values = $this->m_store->getPropertyValues( $concept, new SMWDIProperty( '_CONC' ) );// two lines due to "strict standards" warning
+		$values = $this->m_store->getPropertyValues( SMWDIWikiPage::newFromTitle( $concept ), new SMWDIProperty( '_CONC' ) );
 		$di = end( $values );
 		$desctxt = ( $di !== false ) ? $di->getConceptQuery() : false;
 		$this->m_errors = array();
@@ -127,27 +129,34 @@ class SMWSQLStore2QueryEngine {
 			}
 
 			// Update database:
-			$this->m_dbs->delete( 'smw_conccache', array( 'o_id' => $cid ), 'SMW::refreshConceptCache' );
+			$this->m_dbs->delete( 'smw_conccache', array( 'o_id' => $cid ), $fname );
+			$smw_conccache = $this->m_dbs->tablename( 'smw_conccache' );
 
 			if ( $wgDBtype == 'postgres' ) { // PostgresQL: no INSERT IGNORE, check for duplicates explicitly
-				$where = $qobj->where . ( $qobj->where ? ' AND ':'' ) .
-				         'NOT EXISTS (SELECT NULL FROM ' . $this->m_dbs->tableName( 'smw_conccache' ) .
-			             ' WHERE ' . $this->m_dbs->tablename( 'smw_conccache' ) . '.s_id = ' . $qobj->alias . '.s_id ' .
-			             ' AND   ' . $this->m_dbs->tablename( 'smw_conccache' ) . '.o_id = ' . $qobj->alias . '.o_id )';
+				$where = $qobj->where . ( $qobj->where ? ' AND ' : '' ) .
+					"NOT EXISTS (SELECT NULL FROM $smw_conccache" .
+					" WHERE {$smw_conccache}.s_id = {$qobj->alias}.s_id " .
+					" AND  {$smw_conccache}.o_id = {$qobj->alias}.o_id )";
 			} else { // MySQL just uses INSERT IGNORE, no extra conditions
 				$where = $qobj->where;
 			}
 
-			$this->m_dbs->query( "INSERT " . ( ( $wgDBtype == 'postgres' ) ? "":"IGNORE " ) . "INTO " . $this->m_dbs->tableName( 'smw_conccache' ) .
-			                    " SELECT DISTINCT $qobj->joinfield AS s_id, $cid AS o_id FROM " .
-			                    $this->m_dbs->tableName( $qobj->jointable ) . " AS $qobj->alias" . $qobj->from .
-			                    ( $where ? " WHERE ":'' ) . $where . " LIMIT $smwgQMaxLimit",
-			                    'SMW::refreshConceptCache' );
+			$this->m_dbs->query( "INSERT " . ( ( $wgDBtype == 'postgres' ) ? '' : 'IGNORE ' ) .
+				"INTO $smw_conccache" .
+				" SELECT DISTINCT {$qobj->joinfield} AS s_id, $cid AS o_id FROM " .
+				$this->m_dbs->tableName( $qobj->jointable ) . " AS {$qobj->alias}" .
+				$qobj->from .
+				( $where ? ' WHERE ' : '' ) . $where . " LIMIT $smwgQMaxLimit",
+				$fname );
 
-			$this->m_dbs->update( 'smw_conc2', array( 'cache_date' => strtotime( "now" ), 'cache_count' => $this->m_dbs->affectedRows() ), array( 's_id' => $cid ), 'SMW::refreshConceptCache' );
-		} else { // just delete old data if there is any
-			$this->m_dbs->delete( 'smw_conccache', array( 'o_id' => $cid ), 'SMW::refreshConceptCache' );
-			$this->m_dbs->update( 'smw_conc2', array( 'cache_date' => null, 'cache_count' => null ), array( 's_id' => $cid ), 'SMW::refreshConceptCache' );
+			$this->m_dbs->update( 'smw_conc2',
+				array( 'cache_date' => strtotime( "now" ), 'cache_count' => $this->m_dbs->affectedRows() ),
+				array( 's_id' => $cid ), $fname );
+		} else { // no concept found; just delete old data if there is any
+			$this->m_dbs->delete( 'smw_conccache', array( 'o_id' => $cid ), $fname );
+			$this->m_dbs->update( 'smw_conc2',
+				array( 'cache_date' => null, 'cache_count' => null ),
+				array( 's_id' => $cid ), $fname );
 			$this->m_errors[] = "No concept description found.";
 		}
 
@@ -295,7 +304,7 @@ class SMWSQLStore2QueryEngine {
 			$entries['SQL Query'] =
 			           "<tt>SELECT DISTINCT $qobj->alias.smw_title AS t,$qobj->alias.smw_namespace AS ns FROM " .
 			           $this->m_dbs->tableName( $qobj->jointable ) . " AS $qobj->alias" . $qobj->from .
-			           ( ( $qobj->where == '' ) ? '':' WHERE ' ) . $qobj->where . "$tailOpts LIMIT " .
+			           ( ( $qobj->where === '' ) ? '':' WHERE ' ) . $qobj->where . "$tailOpts LIMIT " .
 			           $sql_options['LIMIT'] . ' OFFSET ' . $sql_options['OFFSET'] . ';</tt>';
 		} else {
 			$entries['SQL Query'] = 'Empty result, no SQL query created.';
@@ -390,14 +399,16 @@ class SMWSQLStore2QueryEngine {
 			$qobj->where, 'SMW::getQueryResult', $sql_options );
 
 		$qr = array();
-		$count = 0;
+		$count = 0; // the number of fetched results ( != number of valid results in array $qr)
 		$prs = $query->getDescription()->getPrintrequests();
 
 		while ( ( $count < $query->getLimit() ) && ( $row = $this->m_dbs->fetchObject( $res ) ) ) {
 			$count++;
-			$v = new SMWDIWikiPage( $row->t, $row->ns, $row->iw, $row->so );
-			$qr[] = $v;
-			$this->m_store->cacheSMWPageID( $row->id, $row->t, $row->ns, $row->iw, $row->so );
+			if ( $row->iw === '' || $row->iw{0} != ':' )  {
+				$v = new SMWDIWikiPage( $row->t, $row->ns, $row->iw, $row->so );
+				$qr[] = $v;
+				$this->m_store->cacheSMWPageID( $row->id, $row->t, $row->ns, $row->iw, $row->so );
+			}
 		}
 
 		if ( $this->m_dbs->fetchObject( $res ) ) {
@@ -502,7 +513,7 @@ class SMWSQLStore2QueryEngine {
 			}
 		} elseif ( $description instanceof SMWConceptDescription ) { // fetch concept definition and insert it here
 			$cid = $this->m_store->getSMWPageID( $description->getConcept()->getDBkey(), SMW_NS_CONCEPT, '', '' );
-			// We bypass the storage interface here (which is legal as we controll it, and safe if we are careful with changes ...)
+			// We bypass the storage interface here (which is legal as we control it, and safe if we are careful with changes ...)
 			// This should be faster, but we must implement the unescaping that concepts do on getWikiValue()
 			$row = $this->m_dbs->selectRow(
 				'smw_conc2',
@@ -540,11 +551,9 @@ class SMWSQLStore2QueryEngine {
 						if ($qid != -1) {
 							$query = $this->m_queries[$qid];
 						} else { // somehow the concept query is no longer valid; maybe some syntax changed (upgrade) or global settings were modified since storing it
-							smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 							$this->m_errors[] = wfMsg( 'smw_emptysubquery' ); // not quite the right message, but this case is very rare; let us not make detailed messages for this
 						}
 					} else {
-						smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 						$this->m_errors[] = wfMsg( 'smw_concept_cache_miss', $description->getConcept()->getText() );
 					}
 				} // else: no cache, no description (this may happen); treat like empty concept
@@ -578,7 +587,7 @@ class SMWSQLStore2QueryEngine {
 		$tableid = SMWSQLStore2::findPropertyTableID( $property );
 		$typeid = $property->findPropertyTypeID();
 
-		if ( $tableid == '' ) { // Still no table to query? Give up.
+		if ( $tableid === '' ) { // Still no table to query? Give up.
 			$query->type = SMW_SQL2_NOQUERY;
 			return;
 		}
@@ -772,7 +781,7 @@ class SMWSQLStore2QueryEngine {
 				}
 			}
 
-			if ( $where == '' ) { // comparators did not apply; match all fields
+			if ( $where === '' ) { // comparators did not apply; match all fields
 				$i = 0;
 
 				foreach ( $proptable->objectfields as $fname => $ftype ) {
@@ -798,7 +807,7 @@ class SMWSQLStore2QueryEngine {
 			}
 		}
 
-		if ( $where != '' ) $query->where .= ( $query->where ? " $operator " : '' ) . "($where)";
+		if ( $where !== '' ) $query->where .= ( $query->where ? " $operator " : '' ) . "($where)";
 	}
 
 	/**
@@ -817,7 +826,7 @@ class SMWSQLStore2QueryEngine {
 					$subquery = $this->m_queries[$qid];
 					$this->executeQueries( $subquery );
 
-					if ( $subquery->jointable != '' ) { // Join with jointable.joinfield
+					if ( $subquery->jointable !== '' ) { // Join with jointable.joinfield
 						$query->from .= ' INNER JOIN ' . $this->m_dbs->tableName( $subquery->jointable ) . " AS $subquery->alias ON $joinfield=" . $subquery->joinfield;
 					} elseif ( $subquery->joinfield !== '' ) { // Require joinfield as "value" via WHERE.
 						$condition = '';
@@ -830,7 +839,7 @@ class SMWSQLStore2QueryEngine {
 							$condition = "($condition)";
 						}
 
-						$query->where .= ( ( $query->where == '' ) ? '':' AND ' ) . $condition;
+						$query->where .= ( ( $query->where === '' ) ? '':' AND ' ) . $condition;
 					} else { // interpret empty joinfields as impossible condition (empty result)
 						$query->joinfield = ''; // make whole query false
 						$query->jointable = '';
@@ -839,8 +848,8 @@ class SMWSQLStore2QueryEngine {
 						break;
 					}
 
-					if ( $subquery->where != '' ) {
-						$query->where .= ( ( $query->where == '' ) ? '':' AND ' ) . '(' . $subquery->where . ')';
+					if ( $subquery->where !== '' ) {
+						$query->where .= ( ( $query->where === '' ) ? '':' AND ' ) . '(' . $subquery->where . ')';
 					}
 
 					$query->from .= $subquery->from;
@@ -854,7 +863,7 @@ class SMWSQLStore2QueryEngine {
 				$key = false;
 
 				foreach ( $query->components as $qkey => $qid ) {
-					if ( $this->m_queries[$qkey]->jointable != '' ) {
+					if ( $this->m_queries[$qkey]->jointable !== '' ) {
 						$key = $qkey;
 						break;
 					}
@@ -900,7 +909,7 @@ class SMWSQLStore2QueryEngine {
 					$this->executeQueries( $subquery );
 					$sql = '';
 
-					if ( $subquery->jointable != '' ) {
+					if ( $subquery->jointable !== '' ) {
 						$sql = 'INSERT ' . ( ( $wgDBtype == 'postgres' ) ? '':'IGNORE ' ) . 'INTO ' .
 						       $this->m_dbs->tableName( $query->alias ) .
 							   " SELECT $subquery->joinfield FROM " . $this->m_dbs->tableName( $subquery->jointable ) .
@@ -1051,10 +1060,9 @@ class SMWSQLStore2QueryEngine {
 
 		foreach ( $this->m_sortkeys as $propkey => $order ) {
 			if ( !array_key_exists( $propkey, $qobj->sortfields ) ) { // Find missing property to sort by.
-				if ( $propkey == '' ) { // Sort by first result column (page titles).
+				if ( $propkey === '' ) { // Sort by first result column (page titles).
 					$qobj->sortfields[$propkey] = "$qobj->alias.smw_sortkey";
 				} else { // Try to extend query.
-					$extrawhere = '';
 					$sortprop = SMWPropertyValue::makeUserProperty( $propkey );
 
 					if ( $sortprop->isValid() ) {

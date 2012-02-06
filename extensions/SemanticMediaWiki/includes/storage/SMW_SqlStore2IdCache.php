@@ -12,7 +12,7 @@
 
 /**
  * An in-memory cache for managing object ids in SMWSQLStore2.
- * 
+ *
  * @since 1.6
  *
  * @ingroup SMWStore
@@ -48,7 +48,7 @@ class SMWSqlStore2IdCache {
 				$this->m_data[$hashKey] = $row->smw_id;
 				return $row->smw_id;
 			} else {
-				$index->data[$hashKey] = 0;
+				$this->m_data[$hashKey] = 0;
 				return 0;
 			}
 		}
@@ -70,7 +70,7 @@ class SMWSqlStore2IdCache {
 		if ( $interwiki == SMW_SQL2_SMWREDIIW ) {
 			$hashKey = self::getHashKey( $title, $namespace, '', $subobject );
 			$this->m_data[$hashKey] = 0;
-		} // could do this for $interwiki == '' too, but the SMW_SQL2_SMWREDIIW would be useless
+		} // could do this for $interwiki === '' too, but the SMW_SQL2_SMWREDIIW would be useless
 	}
 
 	public function deleteId( $title, $namespace, $interwiki, $subobject ) {

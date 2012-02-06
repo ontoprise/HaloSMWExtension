@@ -42,11 +42,11 @@ class SMWTemperatureValue extends SMWNumberValue {
 	protected function makeConversionValues() {
 		/// NOTE This class currently ignores display units.
 		if ( $this->m_unitvalues !== false ) return; // do this only once
-		if ( !$this->isValid() ) { 
+		if ( !$this->isValid() ) {
 			$this->m_unitvalues = array();
 		} else {
 			$this->m_unitvalues = array( 'K' => $this->m_dataitem->getNumber(),
-						'°C' => $this->m_dataitem->getNumber() - 273.15, 
+						'°C' => $this->m_dataitem->getNumber() - 273.15,
 						'°F' => ( $this->m_dataitem->getNumber() - 273.15 ) * 1.8 + 32,
 						'°R' => ( $this->m_dataitem->getNumber() ) * 1.8 );
 		}
@@ -55,7 +55,7 @@ class SMWTemperatureValue extends SMWNumberValue {
 	protected function makeUserValue() {
 		$value = false;
 		if ( ( $this->m_outformat ) && ( $this->m_outformat != '-' ) &&
-		     ( $this->m_outformat != '-n' ) && ( $this->m_outformat != '-u' )) { // first try given output unit
+		     ( $this->m_outformat != '-n' ) && ( $this->m_outformat != '-u' ) ) { // first try given output unit
 			$printunit = SMWNumberValue::normalizeUnit( $this->m_outformat );
 			$this->m_unitin = $this->getUnitID( $printunit );
 			switch ( $this->m_unitin ) {
@@ -84,7 +84,7 @@ class SMWTemperatureValue extends SMWNumberValue {
 		if ( $this->m_outformat != '-u' ) { // -u is the format for displaying the unit only
 			$this->m_caption .= ( ( $this->m_outformat != '-' ) && ( $this->m_outformat != '-n' ) ? smwfNumberFormat( $value ) : $value );
 		}
-		if ( ( $printunit != '' ) && ( $this->m_outformat != '-n' ) ) { // -n is the format for displaying the number only
+		if ( ( $printunit !== '' ) && ( $this->m_outformat != '-n' ) ) { // -n is the format for displaying the number only
 			if ( $this->m_outformat != '-u' ) {
 				$this->m_caption .=  ( $this->m_outformat != '-' ? '&#160;' : ' ' );
 			}

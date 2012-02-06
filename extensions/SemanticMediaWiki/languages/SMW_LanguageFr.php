@@ -4,7 +4,7 @@
  * @ingroup SMWLanguage
  */
 
-/*
+/**
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
@@ -37,15 +37,16 @@ class SMWLanguageFr extends SMWLanguage {
 		'_anu' => 'Annotation-URI',  // name of the annotation URI type (OWL annotation property)
 		'_tel' => 'Numéro de téléphone',  // name of the telephone (URI) type
 		'_rec' => 'Enregistrement', // name of record data type
+		'_qty' => 'Quantity', // name of the number type with units of measurement //TODO: translate
 	);
-	
+
 	protected $m_DatatypeAliases = array(
 		'URI'                   => '_uri',
 		'Nombre entier'         => '_num',
 		'Nombre décimal'        => '_num',
 		'Énumeration'           => '_str',
 	);
-	
+
 	protected $m_SpecialProperties = array(
 		// always start upper-case
 		'_TYPE' => 'A le type',
@@ -60,12 +61,13 @@ class SMWLanguageFr extends SMWLanguage {
 		'_MDAT' => 'Date de modification',
 		'_ERRP' => 'A une valeur incorrecte pour',
 		'_LIST' => 'A le champ',
+		'_SOBJ' => 'Has subobject', // TODO: translate
 	);
-	
+
 	protected $m_SpecialPropertyAliases = array(
 		'Unité de mesure'   => '_UNIT',
 	);
-	
+
 	protected $m_Namespaces = array(
 		SMW_NS_PROPERTY       => "Attribut",
 		SMW_NS_PROPERTY_TALK  => "Discussion_attribut",
@@ -74,11 +76,11 @@ class SMWLanguageFr extends SMWLanguage {
 		SMW_NS_CONCEPT        => 'Concept',
 		SMW_NS_CONCEPT_TALK   => 'Discussion_concept'
 	);
-	
+
 	protected $m_dateformats = array( array( SMW_Y ), array( SMW_MY, SMW_YM ), array( SMW_MDY, SMW_DMY, SMW_YMD, SMW_YDM ) );
-	
+
 	protected $m_months = array( "janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre" );
-	
+
 	protected $m_monthsshort = array( "jan", "fév", "mar", "avr", "mai", "jun", "jul", "aoû", "sep", "oct", "nov", "déc" );
 
 }

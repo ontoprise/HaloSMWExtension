@@ -7,20 +7,28 @@
 
 /**
  * Printer class for generating CSV output
+ * 
  * @author Nathan R. Yergler
  * @author Markus Krötzsch
+ * 
  * @ingroup SMWQuery
  */
 class SMWCsvResultPrinter extends SMWResultPrinter {
+	
 	protected $m_sep;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-		if ( array_key_exists( 'sep', $params ) ) {
-			$this->m_sep = str_replace( '_', ' ', $params['sep'] );
-		} else {
-			$this->m_sep = ',';
-		}
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.7
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
+		
+		$this->m_sep = str_replace( '_', ' ', $params['sep'] );
 	}
 
 	public function getMimeType( $res ) {
@@ -32,11 +40,10 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 	}
 
 	public function getQueryMode( $context ) {
-		return ( $context == SMWQueryProcessor::SPECIAL_PAGE ) ? SMWQuery::MODE_INSTANCES:SMWQuery::MODE_NONE;
+		return ( $context == SMWQueryProcessor::SPECIAL_PAGE ) ? SMWQuery::MODE_INSTANCES : SMWQuery::MODE_NONE;
 	}
 
 	public function getName() {
-		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 		return wfMsg( 'smw_printername_csv' );
 	}
 
@@ -78,7 +85,6 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 			if ( $this->getSearchLabel( $outputmode ) ) {
 				$label = $this->getSearchLabel( $outputmode );
 			} else {
-				smwfLoadExtensionMessages( 'SemanticMediaWiki' );
 				$label = wfMsgForContent( 'smw_csv_link' );
 			}
 
@@ -86,14 +92,14 @@ class SMWCsvResultPrinter extends SMWResultPrinter {
 			$link->setParameter( 'csv', 'format' );
 			$link->setParameter( $this->m_sep, 'sep' );
 			
-			if ( array_key_exists( 'mainlabel', $this->m_params ) && $this->m_params['mainlabel'] !== false ) {
-				$link->setParameter( $this->m_params['mainlabel'], 'mainlabel' );
+			if ( array_key_exists( 'mainlabel', $this->params ) && $this->params['mainlabel'] !== false ) {
+				$link->setParameter( $this->params['mainlabel'], 'mainlabel' );
 			}
 				
 			$link->setParameter( $this->mShowHeaders ? 'show' : 'hide', 'headers' );
 			
-			if ( array_key_exists( 'limit', $this->m_params ) ) {
-				$link->setParameter( $this->m_params['limit'], 'limit' );
+			if ( array_key_exists( 'limit', $this->params ) ) {
+				$link->setParameter( $this->params['limit'], 'limit' );
 			} else { // use a reasonable default limit
 				$link->setParameter( 100, 'limit' );
 			}

@@ -108,7 +108,7 @@ class SMWSQLStoreLight extends SMWStore {
 		} elseif ( $subject !== null ) { // subject given, use semantic data cache:
 			$sd = $this->getSemanticData( $subject, array( $property->getPropertyTypeID() ) );
 			$result = $this->applyRequestOptions( $sd->getPropertyValues( $property ), $requestoptions );
-			if ( $outputformat != '' ) { // reformat cached values
+			if ( $outputformat !== '' ) { // reformat cached values
 				$newres = array();
 				foreach ( $result as $dv ) {
 					$ndv = clone $dv;
@@ -125,7 +125,7 @@ class SMWSQLStoreLight extends SMWStore {
 			$result = array();
 			foreach ( $res as $row ) {
 				$dv = SMWDataValueFactory::newPropertyObjectValue( $property );
-				if ( $outputformat != '' ) $dv->setOutputFormat( $outputformat );
+				if ( $outputformat !== '' ) $dv->setOutputFormat( $outputformat );
 				$dv->setDBkeys( ( $tablename == 'smwsimple_special' ) ? array( $row->value ) : unserialize( $row->value ) );
 				$result[] = $dv;
 			}
@@ -272,7 +272,7 @@ class SMWSQLStoreLight extends SMWStore {
 		$updates = array(); // collect data for bulk updates; format: tableid => updatearray
 		foreach ( $data->getProperties() as $property ) {
 			$tablename = SMWSQLStoreLight::findPropertyTableName( $property );
-			if ( $tablename == '' ) continue;
+			if ( $tablename === '' ) continue;
 			foreach ( $data->getPropertyValues( $property ) as $dv ) {
 				if ( !$dv->isValid() ) continue;
 				if ( $dv instanceof SMWContainerValue ) {
@@ -481,7 +481,7 @@ class SMWSQLStoreLight extends SMWStore {
 			if ( $requestoptions->offset > 0 ) {
 				$sql_options['OFFSET'] = $requestoptions->offset;
 			}
-			if ( ( $valuecol != '' ) && ( $requestoptions->sort ) ) {
+			if ( ( $valuecol !== '' ) && ( $requestoptions->sort ) ) {
 				$sql_options['ORDER BY'] = $requestoptions->ascending ? $valuecol : $valuecol . ' DESC';
 			}
 		}
@@ -501,7 +501,7 @@ class SMWSQLStoreLight extends SMWStore {
 		$sql_conds = '';
 		if ( $requestoptions !== null ) {
 			$db = wfGetDB( DB_SLAVE ); /// TODO avoid doing this here again, all callers should have one
-			if ( ( $valuecol != '' ) && ( $requestoptions->boundary !== null ) ) { // apply value boundary
+			if ( ( $valuecol !== '' ) && ( $requestoptions->boundary !== null ) ) { // apply value boundary
 				if ( $requestoptions->ascending ) {
 					$op = $requestoptions->include_boundary ? ' >= ':' > ';
 				} else {
@@ -509,7 +509,7 @@ class SMWSQLStoreLight extends SMWStore {
 				}
 				$sql_conds .= ( $addand ? ' AND ':'' ) . $valuecol . $op . $db->addQuotes( $requestoptions->boundary );
 			}
-			if ( $labelcol != '' ) { // apply string conditions
+			if ( $labelcol !== '' ) { // apply string conditions
 				foreach ( $requestoptions->getStringConditions() as $strcond ) {
 					$string = str_replace( '_', '\_', $strcond->string );
 					switch ( $strcond->condition ) {
@@ -517,7 +517,7 @@ class SMWSQLStoreLight extends SMWStore {
 						case SMWStringCondition::STRCOND_POST: $string = '%' . $string; break;
 						case SMWStringCondition::STRCOND_MID:  $string = '%' . $string . '%'; break;
 					}
-					$sql_conds .= ( ( $addand || ( $sql_conds != '' ) ) ? ' AND ':'' ) . $labelcol . ' LIKE ' . $db->addQuotes( $string );
+					$sql_conds .= ( ( $addand || ( $sql_conds !== '' ) ) ? ' AND ':'' ) . $labelcol . ' LIKE ' . $db->addQuotes( $string );
 				}
 			}
 		}
