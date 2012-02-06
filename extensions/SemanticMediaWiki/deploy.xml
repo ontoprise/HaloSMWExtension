@@ -3,16 +3,16 @@
     <global>
         <id>smw</id>
         <title>Semantic MediaWiki</title>
-        <version>1.6.1</version>
-        <patchlevel>0</patchlevel>
+        <version>1.7.0</version>
+        <patchlevel>2</patchlevel>
         <vendor>ontoprise GmbH</vendor>
-        <maintainer>ontoprise GmbH</maintainer>
+        <maintainer>http://semantic-mediawiki.org/</maintainer>
         <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Enhances the wiki with semantic annotations.</description>
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
-            <dependency from="1.15.4" to="1.17.9">MW</dependency>
-            <dependency from="0.4.10" to="0.4.10" >validator</dependency>
+            <dependency from="1.16.0">MW</dependency>
+            <dependency from="0.4.13">validator</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>

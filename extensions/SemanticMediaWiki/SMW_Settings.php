@@ -23,7 +23,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 # web. Change it if required ($wgScriptPath is the path to the base directory
 # of your wiki). No final slash.
 ##
-$smwgScriptPath = ( 
+$smwgScriptPath = (
 	( version_compare( $wgVersion, '1.16', '>=' ) && isset( $wgExtensionAssetsPath ) && $wgExtensionAssetsPath )
 	? $wgExtensionAssetsPath : $wgScriptPath . '/extensions'
 	) . '/SemanticMediaWiki';
@@ -58,11 +58,19 @@ $smwgDefaultStore = "SMWSQLStore2";
 # This will lead to reduced functionality (e.g. the SMWSparqlStore will not
 # work if Update is not available). The data endpoint is always optional, but
 # in some SPARQL databases this method is more efficient than update.
+#
+# The default graph is similar to a database name in relational databases. It
+# can be set to any URI (e.g. the main page uri of your wiki with
+# "#graph" appended). Leaving the default graph URI empty only works if the
+# store is configure to use some default default graph or if it generally
+# supports this. Different wikis should normally use different default graphs
+# unless there is a good reason to share one graph.
 ##
 $smwgSparqlDatabase = 'SMWSparqlDatabase';
 $smwgSparqlQueryEndpoint = 'http://localhost:8080/sparql/';
 $smwgSparqlUpdateEndpoint = 'http://localhost:8080/update/';
 $smwgSparqlDataEndpoint = 'http://localhost:8080/data/';
+$smwgSparqlDefaultGraph = '';
 ##
 
 // load global constants and setup functions
@@ -95,9 +103,9 @@ smwfInitNamespaces();
 # __HIDEFACTBOX__ can be used to control Factbox display for individual pages.
 # Other options for this setting include:
 ##
- $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
+// $smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
 // $smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
-//$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
+$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
 // $smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
 ##
 
@@ -441,6 +449,19 @@ $smwgNamespacesWithSemanticLinks = array(
 	  SMW_NS_CONCEPT_TALK => false,
 );
 ##
+
+### List of enabled special page properties.
+# Modification date (_MDAT) is enabled by default for backward compatibility.
+# Extend array to enable other properties:
+#     $smwgPageSpecialProperties[] = '_CDAT';
+# Or:
+#     array_merge( $smwgPageSpecialProperties, array( '_CDAT' ) );
+# Or rewrite entire array:
+#     $smwgPageSpecialProperties = array( '_MDAT', '_CDAT' );
+# However, DO NOT use `+=' operator! This DOES NOT work:
+#     $smwgPageSpecialProperties += array( '_MDAT' );
+##
+$smwgPageSpecialProperties = array( '_MDAT' );
 
 ###
 # Properties (usually given as internal ids or DB key versions of property
