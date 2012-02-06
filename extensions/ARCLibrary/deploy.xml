@@ -35,9 +35,12 @@
 		<new>
 			<require name="arclib_init"
 				file="extensions/ARCLibrary/ARCLibrary.php" />
-			<function name="enableARCLibrary">
-			</function>
+			
 		</new>
+		<update from="156" removeAll="true">
+            <require name="arclib_init"
+                file="extensions/ARCLibrary/ARCLibrary.php" />
+        </update>
 		<uninstall>
 			<!-- empty -->
 		</uninstall>
