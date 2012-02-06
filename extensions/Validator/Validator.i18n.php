@@ -8,7 +8,7 @@
  *
  * @licence GNU GPL v3 or later
  * @author Jeroen De Dauw < jeroendedauw@gmail.com >
-*/
+ */
 
 $messages = array();
 
@@ -189,13 +189,29 @@ $messages['aln'] = array(
 
 /** Arabic (العربية)
  * @author Meno25
+ * @author روخو
  */
 $messages['ar'] = array(
 	'validator-desc' => 'المحقق يوفر طريقة سهلة للامتدادات الأخرى للتحقق من محددات دوال المحلل وامتدادات الوسوم، وضبط القيم الافتراضية وتوليد رسائل الخطأ',
+	'validator-warning' => 'تحذير: $1',
+	'validator-error' => 'خطأ: $1',
+	'validator-fatal-error' => 'خطأ قاتل: $1',
 	'validator_error_parameters' => '{{PLURAL:$1|الخطأ التالي|الاخطاء التالية}} تم كشفها في صياغتك:',
 	'validator_warning_parameters' => 'هناك {{PLURAL:$1|خطأ|أخطاء}} في صياغتك.',
 	'validator_error_unknown_argument' => '$1 ليس محددا صحيحا.',
 	'validator_error_required_missing' => 'المحدد المطلوب $1 ليس متوفرا.',
+	'validator-type-string' => 'نص',
+	'validator-type-float' => 'رقم',
+	'validator-type-boolean' => 'نعم/لا',
+	'validator-listerrors-errors' => 'أخطاء',
+	'validator-listerrors-minor' => 'ثانوي',
+	'validator-listerrors-low' => 'منخفض',
+	'validator-listerrors-normal' => 'طبيعي',
+	'validator-listerrors-fatal' => 'قاتل',
+	'validator-describe-descriptionmsg' => "'''وصف''': $1",
+	'validator-describe-empty' => 'فارغ',
+	'validator-describe-header-type' => 'نوع',
+	'validator-describe-syntax' => 'صياغة',
 	'validator_error_empty_argument' => 'المحدد $1 لا يمكن أن تكون قيمته فارغة.',
 	'validator_error_must_be_number' => 'المحدد $1 يمكن أن يكون فقط عددا.',
 	'validator_error_must_be_integer' => 'المحدد $1 يمكن أن يكون عددا صحيحا فقط.',
@@ -508,7 +524,7 @@ Zeigt sie lediglich bezüglich der Parserhooks an, die über dem Element „list
 	'validator-error-invalid-regex' => 'Parameter $1 muss diesem regulären Ausdruck entsprechen: $2.',
 	'validator-error-invalid-length' => 'Parameter $1 muss eine Länge von $2 haben.',
 	'validator-error-invalid-length-range' => 'Parameter $1 muss eine Länge zwischen $2 und $3 haben.',
-	'validator_error_invalid_argument' => 'Der Wert „$1“ ist nicht gültig für Parameter $2.',
+	'validator_error_invalid_argument' => 'Der Wert „$1“ ist nicht gültig für den Parameter $2.',
 	'validator_list_error_empty_argument' => 'Parameter $1 akzeptiert keine leeren Werte.',
 	'validator_list_error_must_be_number' => 'Parameter $1 kann nur Ziffern enthalten.',
 	'validator_list_error_must_be_integer' => 'Parameter $1 kann nur ganze Zahlen enthalten.',
@@ -520,10 +536,8 @@ Zeigt sie lediglich bezüglich der Parserhooks an, die über dem Element „list
 Nur {{PLURAL:$3|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $2.',
 	'validator-list-error-accepts-only-omitted' => 'Einer oder mehrere Werte für Parameter $1 sind ungültig.
 Nur {{PLURAL:$3|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $2 (sowie $4 ausgelassene {{PLURAL:$4|Wert|Werte}}).',
-	'validator_error_accepts_only' => 'Der Wert „$4“ ist nicht gültig für Parameter $1.
-Nur {{PLURAL:$3|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $2.',
-	'validator-error-accepts-only-omitted' => 'Der Wert „$2“ ist nicht gültig für Parameter $1.
-Nur {{PLURAL:$5|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $3 (sowie $4 ausgelassene {{PLURAL:$4|Wert|Werte}}).',
+	'validator_error_accepts_only' => 'Der Wert „$4“ ist nicht gültig für den Parameter $1. Nur {{PLURAL:$3|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $2.',
+	'validator-error-accepts-only-omitted' => 'Der Wert „$2“ ist nicht gültig für den Parameter $1. Nur {{PLURAL:$5|der folgende Wert wird|die folgenden Werte werden}} akzeptiert: $3 (sowie $4 nicht angezeigte {{PLURAL:$4|Wert|Werte}}).',
 	'validator_list_omitted' => '{{PLURAL:$2|Der Wert „$1“ wurde|Die Werte „$1“ wurden}} ausgelassen.',
 );
 
@@ -671,6 +685,7 @@ $messages['fi'] = array(
 /** French (Français)
  * @author Cedric31
  * @author Crochet.david
+ * @author Gomoko
  * @author IAlex
  * @author Jean-Frédéric
  * @author McDutchie
@@ -681,7 +696,7 @@ $messages['fi'] = array(
  * @author Verdy p
  */
 $messages['fr'] = array(
-	'validator-desc' => 'Le validateur fournit aux autres extensions un moyen simple de valider les paramètres des fonctions parseur et des extensions de balises, de définir des valeurs par défaut et de générer des messages d’erreur',
+	'validator-desc' => 'Le validateur fournit aux autres extensions un moyen simple de valider les paramètres des fonctions de l’analyseur syntaxique et des extensions de balises, de définir des valeurs par défaut et de générer des messages d’erreur',
 	'validator-warning' => 'Attention : $1',
 	'validator-error' => 'Erreur : $1',
 	'validator-fatal-error' => 'Erreur fatale : $1',
@@ -718,6 +733,7 @@ placer <code>listerrors</code> au plus bas de la page pour obtenir toutes les er
 	'validator-describe-bothhooks' => "Mis en oeuvre comme fonction de l'analyseur syntaxique et comme balise d'extension.",
 	'validator-describe-par-hooks' => "Les ''hooks'' de l'analyseur syntaxique dont il faut afficher la documentation.",
 	'validator-describe-par-pre' => "Permet d'obtenir le wikitexte de la documentation, sans qu'il soit rendu sur la page.",
+	'validator-describe-par-language' => 'La langue dans laquelle afficher les descriptions',
 	'validator-describe-listtype' => 'Liste de $1 éléments',
 	'validator-describe-empty' => 'vide',
 	'validator-describe-required' => 'requis',
@@ -855,6 +871,7 @@ coloque listerrors na parte inferior da páxina para obter todos os erros.',
 	'validator-describe-bothhooks' => 'Implementado como función analítica e como etiqueta de extensión.',
 	'validator-describe-par-hooks' => 'O analizador de asociadores para o que mostrar a documentación.',
 	'validator-describe-par-pre' => 'Permite obter o texto wiki para a documentación, sen que sexa renderizado na páxina.',
+	'validator-describe-par-language' => 'A lingua na que mostrar as descricións',
 	'validator-describe-listtype' => 'Lista de $1 elementos',
 	'validator-describe-empty' => 'baleiro',
 	'validator-describe-required' => 'obrigatorio',
@@ -899,6 +916,7 @@ Só acepta {{PLURAL:$5|este valor|estes valores}}: $3 (e $4 {{PLURAL:$4|valor om
 );
 
 /** Swiss German (Alemannisch)
+ * @author Als-Chlämens
  * @author Als-Holder
  */
 $messages['gsw'] = array(
@@ -939,6 +957,7 @@ Zeigt nume d Parserhook aa, wu iber em Elemänt „listerrors“ yygfiegt wore s
 	'validator-describe-bothhooks' => 'As Parserfunktion un au as Elementerwyterig implementiert.',
 	'validator-describe-par-hooks' => 'D Parserhook, wu d Dokumentation derfir soll aazeigt wäre.',
 	'validator-describe-par-pre' => 'Macht d Uusgab vu dr Dokumentation in Wikitext megli ohni ass dää bi dr Darstellig vu dr Syte gnutzt wird.',
+	'validator-describe-par-language' => 'D Sprooch, wo d Beschrybe drin aazeigt worde sölle',
 	'validator-describe-listtype' => 'Lischt vu $1 {{PLURAL:$1|Element|Element}}',
 	'validator-describe-empty' => 'läär',
 	'validator-describe-required' => 'erforderlig',
@@ -1107,6 +1126,7 @@ staj "listerrors" deleka na stronje abo blisko kónca strony, zo by wšě zmylki
 	'validator-describe-bothhooks' => 'Jako parserowa funkcija kaž tež jako elementowe rozšěrjenje implementowany.',
 	'validator-describe-par-hooks' => 'Parserowe hóčki, za kotrež ma so dokumentacija zwobraznić.',
 	'validator-describe-par-pre' => 'Zmóžnja woprawdźity wikitekst za dokumentaciju wobstarać, bjez toho zo so na stronje rysował.',
+	'validator-describe-par-language' => 'Rěč, w kotrejž wopisanje ma so zwobraznić',
 	'validator-describe-listtype' => 'Lisćina $1 {{PLURAL:$1|elementa|elementow|elementow|elementow}}',
 	'validator-describe-empty' => 'prózdny',
 	'validator-describe-required' => 'trěbny',
@@ -1502,7 +1522,7 @@ $messages['ksh'] = array(
 	'validator_list_omitted' => '{{PLURAL:$2|Dä Wäät|De Wääte|Keine Wäät}} $1 {{PLURAL:$2|es|sen|se}} fottjelohße woode.',
 );
 
-/** Kurdish (Latin) (Kurdî (Latin))
+/** Kurdish (Latin script) (‪Kurdî (latînî)‬)
  * @author George Animal
  */
 $messages['ku-latn'] = array(
@@ -1540,8 +1560,10 @@ $messages['lb'] = array(
 	'validator-listerrors-normal' => 'Normal',
 	'validator-listerrors-high' => 'Héich',
 	'validator-listerrors-fatal' => 'Fatal',
+	'validator-listerrors-par-minseverity' => 'Déi mannste Schwieregkeet vun engem Feeler fir datt en hei gewise gëtt.',
 	'validator-describe-descriptionmsg' => "'''Beschreiwung''': $1",
 	'validator-describe-aliases' => "'''{{PLURAL:$2|Alias|Aliasen}}:''' $1",
+	'validator-describe-par-language' => "D'Sprooch an där d'Beschreiwunge gewise solle ginn",
 	'validator-describe-listtype' => 'Lëscht mat {{PLURAL:$1|engem Element|$1 Elementer}}',
 	'validator-describe-empty' => 'eidel',
 	'validator-describe-required' => 'obligatoresch',
@@ -1679,7 +1701,7 @@ $messages['ms'] = array(
 	'validator-describe-descriptionmsg' => "'''Keterangan''': $1",
 	'validator-describe-empty' => 'kosong',
 	'validator-describe-required' => 'wajib',
-	'validator-describe-header-default' => 'Tersedia',
+	'validator-describe-header-default' => 'Asali',
 );
 
 /** Dutch (Nederlands)
@@ -1772,11 +1794,12 @@ Als ook $4 weggelaten {{PLURAL:$4|waarde|waarden}}.',
 );
 
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
+ * @author Event
  * @author Jon Harald Søby
  * @author Nghtwlkr
  */
 $messages['no'] = array(
-	'validator-desc' => 'Gir generisk støtte for parameterhåndtering for andre utvidelser',
+	'validator-desc' => 'Gir generisk støtte for parameterhåndtering fra andre utvidelser',
 	'validator-warning' => 'Advarsel: $1',
 	'validator-error' => 'Feil: $1',
 	'validator-fatal-error' => 'Kritisk feil: $1',
@@ -1784,38 +1807,75 @@ $messages['no'] = array(
 	'validator_warning_parameters' => 'Det er {{PLURAL:$1|én feil|flere feil}} i syntaksen din.',
 	'validator-warning-adittional-errors' => '... og {{PLURAL:$1|ett problem til|flere problem}}.',
 	'validator-error-omitted' => '{{PLURAL:$2|Verdien|Verdiene}} «$1» har blitt utelatt.',
-	'validator-error-problem' => 'Det var et problem med parameteren $1.',
+	'validator-error-problem' => 'Det var et problem med parameter $1.',
 	'validator_error_unknown_argument' => '$1 er ikke en gyldig parameter.',
 	'validator_error_required_missing' => 'Den nødvendige parameteren «$1» er ikke angitt.',
 	'validator-error-override-argument' => 'Prøvde å overkjøre parameter $1 (verdi: $2) med verdien «$3»',
+	'validator-type-string' => 'tekst',
+	'validator-type-number' => 'tall',
+	'validator-type-integer' => 'heltall',
+	'validator-type-float' => 'tall',
+	'validator-type-boolean' => 'ja/nei',
+	'validator-type-char' => 'tegn',
 	'validator-listerrors-errors' => 'Feil',
 	'validator-listerrors-minor' => 'Mindre',
 	'validator-listerrors-low' => 'Lav',
 	'validator-listerrors-normal' => 'Normal',
 	'validator-listerrors-high' => 'Høy',
 	'validator-listerrors-fatal' => 'Kritisk',
-	'validator_error_empty_argument' => 'Parameteren $1 kan ikke ha en tom verdi.',
-	'validator_error_must_be_number' => 'Parameteren $1 må være et tall.',
-	'validator_error_must_be_integer' => 'Parameteren $1 må være et heltall.',
+	'validator-listerrors-description' => 'Lister opp feil (og advarsler) som oppsto i "parser hooks" via Validator.
+Lister bare opp for "parser hooks" lagt til over der "listerrors" er satt inn;
+plasser "listerrors" på eller nær bunnen av siden for å få frem alle feilene.',
+	'validator-listerrors-par-minseverity' => 'Minimum alvorlighetsgrad for at en sak skal listes opp.',
+	'validator-describe-description' => 'Genererer dokumentasjon for en eller flere "parser hooks" definert via Validator.',
+	'validator-describe-notfound' => 'Det finnes ingen "parser hook" som håndterer "$1".',
+	'validator-describe-descriptionmsg' => "''Beskrivelse''': $1",
+	'validator-describe-aliases' => "'''{{PLURAL:$2|Alias|Aliaser}}''': $1",
+	'validator-describe-parserfunction' => 'Bare implementert som en parser-funksjon.',
+	'validator-describe-tagextension' => 'Bare implementert som en tag-utvidelse.',
+	'validator-describe-bothhooks' => 'Implementert både som en parser-funksjon og en tag-utvidelse.',
+	'validator-describe-par-hooks' => '"Parser hooks" som brukes for å angi dokumentasjon.',
+	'validator-describe-par-pre' => 'Tillater deg å få den faktiske wikiteksten for dokumentasjonen uten at den blir gjengitt på siden.',
+	'validator-describe-par-language' => 'Språket som brukes for beskrivelsene',
+	'validator-describe-listtype' => 'Liste av $1 elementer',
+	'validator-describe-empty' => 'tom',
+	'validator-describe-required' => 'påkrevet',
+	'validator-describe-header-parameter' => 'Parameter',
+	'validator-describe-header-aliases' => 'Aliaser',
+	'validator-describe-header-type' => 'Type',
+	'validator-describe-header-default' => 'Standard',
+	'validator-describe-header-description' => 'Beskrivelse',
+	'validator-describe-parameters' => 'Parametre',
+	'validator-describe-syntax' => 'Syntaks',
+	'validator-describe-tagmin' => 'Tag-utvidelse bare med de påkrevde parametrene.',
+	'validator-describe-tagmax' => 'Tag-utvidelse med alle parametrene.',
+	'validator-describe-tagdefault' => 'Tag-utvidelse med alle parametrene som bruker standard parameternotasjon.',
+	'validator-describe-pfmin' => 'Parser-funksjon bare med de påkrevde parametrene.',
+	'validator-describe-pfmax' => 'Parser-funksjon med alle parametrene.',
+	'validator-describe-pfdefault' => 'Parser-funksjon med alle parametrene som bruker standard parameternotasjon.',
+	'validator-describe-autogen' => 'Innholdet i dette avsnittet ble autogenerert av "describe parser hook" fra Validator-utvidelsen.',
+	'validator_error_empty_argument' => 'Parameter $1 kan ikke ha en tom verdi.',
+	'validator_error_must_be_number' => 'Parameter $1 må være et tall.',
+	'validator_error_must_be_integer' => 'Parameter $1 må være et heltall.',
 	'validator-error-must-be-float' => 'Parameter $1 må være et flyttall.',
 	'validator_error_invalid_range' => 'Parameter $1 må være mellom $2 og $3.',
-	'validator-error-invalid-regex' => 'Parameteren $1 må samsvare med dette regulære uttrykket: $2.',
+	'validator-error-invalid-regex' => 'Parameter $1 må samsvare med dette regulæruttrykket: $2.',
 	'validator-error-invalid-length' => 'Parameter $1 må ha en lengde på $2.',
 	'validator-error-invalid-length-range' => 'Parameter $1 må ha en lengde mellom $2 og $3.',
 	'validator_error_invalid_argument' => 'Verdien $1 er ikke gyldig for parameter $2.',
-	'validator_list_error_empty_argument' => 'Parameteren $1 godtar ikke tomme verdier.',
-	'validator_list_error_must_be_number' => 'Parameteren $1 kan bare inneholde tall.',
-	'validator_list_error_must_be_integer' => 'Parameteren $1 kan bare inneholde heltall.',
-	'validator-list-error-must-be-float' => 'Parameteren $1 kan bare innholde flyttall.',
-	'validator_list_error_invalid_range' => 'Alle verdier av parameteren $1 må være mellom $2 og $3.',
-	'validator-list-error-invalid-regex' => 'Alle verdier av parameteren $1 må samsvare med dette regulære uttrykket: $2.',
-	'validator_list_error_invalid_argument' => 'Parameteren $1 har en eller flere ugyldige verdier.',
-	'validator-list-error-accepts-only' => 'En eller flere verdier for parameteren $1 er ugyldige.
+	'validator_list_error_empty_argument' => 'Parameter $1 kan ikke ikke ha en tom verdi.',
+	'validator_list_error_must_be_number' => 'Parameter $1 kan bare inneholde tall.',
+	'validator_list_error_must_be_integer' => 'Parameter $1 kan bare inneholde heltall.',
+	'validator-list-error-must-be-float' => 'Parameter $1 kan bare innholde flyttall.',
+	'validator_list_error_invalid_range' => 'Alle verdier av parameter $1 må være mellom $2 og $3.',
+	'validator-list-error-invalid-regex' => 'Alle verdier av parameter $1 må samsvare med dette regulæruttrykket: $2.',
+	'validator_list_error_invalid_argument' => 'Parameter $1 har en eller flere ugyldige verdier.',
+	'validator-list-error-accepts-only' => 'En eller flere verdier for parameter $1 er ugyldige.
 Den godtar bare {{PLURAL:$3|denne verdien|disse verdiene}}: $2.',
-	'validator-list-error-accepts-only-omitted' => 'En eller flere verdier for parameteren $1 er ugyldige.
+	'validator-list-error-accepts-only-omitted' => 'En eller flere verdier for parameter $1 er ugyldige.
 Den godtar bare {{PLURAL:$3|denne verdien|disse verdiene}}: $2 (og $4 {{PLURAL:$4|utelatt verdi|utelatte verdier}}).',
-	'validator_error_accepts_only' => 'Verdien «$4» er ikke gyldig for parameteren $1. Den aksepterer kun {{PLURAL:$3|denne verdien|disse verdiene}}: $2.',
-	'validator-error-accepts-only-omitted' => 'Verdien «$2» er ikke gyldig for parameteren $1.
+	'validator_error_accepts_only' => 'Verdien «$4» er ikke gyldig for parameter $1. Den godtar kun {{PLURAL:$3|denne verdien|disse verdiene}}: $2.',
+	'validator-error-accepts-only-omitted' => 'Verdien «$2» er ikke gyldig for parameter $1.
 Den godtar bare {{PLURAL:$5|denne verdien|disse verdiene}}: $3 (og $4 {{PLURAL:$4|utelatt verdi|utelatte verdier}}).',
 	'validator_list_omitted' => '{{PLURAL:$2|Verdien|Verdiene}} $1 har blitt utelatt.',
 );
@@ -1835,6 +1895,13 @@ $messages['oc'] = array(
 	'validator_error_invalid_range' => 'Lo paramètre $1 deu èsser entre $2 e $3.',
 	'validator_error_invalid_argument' => '$1 es pas valedor pel paramètre $2.',
 	'validator_error_accepts_only' => 'Sonque {{PLURAL:$3|aquela valor es valedora|aquelas valors son valedoras}}pel paramètre $1 : $2.',
+);
+
+/** Ossetic (Ирон)
+ * @author Amikeco
+ */
+$messages['os'] = array(
+	'validator-describe-empty' => 'афтид',
 );
 
 /** Polish (Polski)
@@ -1922,9 +1989,9 @@ $messages['pms'] = array(
 	'validator-error-override-argument' => 'Provà a coaté ël paràmetr $1 (valor: $2) con ël valor "$3"',
 	'validator-type-string' => 'test',
 	'validator-type-number' => 'nùmer',
-	'validator-type-integer' => 'nùmer anter',
+	'validator-type-integer' => 'nùmer antregh',
 	'validator-type-float' => 'nùmer',
-	'validator-type-boolean' => 'é!/nò',
+	'validator-type-boolean' => 'bò/nò',
 	'validator-type-char' => 'caràter',
 	'validator-listerrors-errors' => 'Eror',
 	'validator-listerrors-minor' => 'Pi cit',
@@ -1932,19 +1999,20 @@ $messages['pms'] = array(
 	'validator-listerrors-normal' => 'Normal',
 	'validator-listerrors-high' => 'Àut',
 	'validator-listerrors-fatal' => 'Fatal',
-	'validator-listerrors-description' => "A lista eror (e avis) che a son capità ant ij gancio dël parser giontà via Validator.
-A lista mach ij gancio ëd parser giontà dzora andoa listerrors a l'é anserì;
-piassa listerrors dzora o davzin la sima dla pagina për pijé tùit j'eror.",
-	'validator-listerrors-par-minseverity' => "La minima severità d'un eror përchè a sia listà.",
-	'validator-describe-description' => 'A genera documentassion për un o pi gancio ëd parser definì via Validator.',
-	'validator-describe-notfound' => 'A-i é pa gnun gancio ëd parser ch\'a gestissa "$1".',
+	'validator-listerrors-description' => "A lista j'eror (e j'avis) che a son capità ant ij gancio ëd l'analisator sintàtich via Validator.
+Mach le liste dij gancio ëd l'analisator sintàtich giontà anté ch'a-i é listerrors a son anserìe;
+piassé listerrors dzora o davzin ël fond ëd la pàgina për ciapé tùit j'eror.",
+	'validator-listerrors-par-minseverity' => "La gravità mìnima ëd n'eror përchè a sia listà.",
+	'validator-describe-description' => "A genera la documentassion për un o pi gancio ëd l'analisator sintàtich definì via Validator.",
+	'validator-describe-notfound' => 'A-i é gnun gancio ëd l\'analisator sintàtich ch\'a gestissa "$1".',
 	'validator-describe-descriptionmsg' => "'''Descrission''': $1",
 	'validator-describe-aliases' => "'''{{PLURAL:$2|Alias|Alias}}''': $1",
-	'validator-describe-parserfunction' => 'Amplementà mach com funsion dël parser.',
-	'validator-describe-tagextension' => 'Amplementà mach com estension ëd tag.',
-	'validator-describe-bothhooks' => 'Amplementà sia com funsion dël parser che com estension ëd tag.',
-	'validator-describe-par-hooks' => 'Ël gancio dël parser për ël qual mosté la documentassion.',
-	'validator-describe-par-pre' => "At përmëtt ëd pijé ël wikitest atual për la documentassion, sensa ch'a sia presentà an sla pagina.",
+	'validator-describe-parserfunction' => "Realisà mach com funsion ëd l'analisator sintàtich.",
+	'validator-describe-tagextension' => 'Realisà mach com estension ëd tichëtta.',
+	'validator-describe-bothhooks' => "Realisà sia com funsion ëd l'analisator sintàtich che com estension ëd tichëtta.",
+	'validator-describe-par-hooks' => "Ij gancio ëd l'analisator sintàtich dont ësmon-e la documentassion.",
+	'validator-describe-par-pre' => "A-j përmët d'avèj ël wikitest atual për la documentassion, sensa ch'a sia smonù an sla pàgina.",
+	'validator-describe-par-language' => 'La lenga ant la qual smon-e le descrission',
 	'validator-describe-listtype' => 'Lista ëd $1 element',
 	'validator-describe-empty' => 'veuid',
 	'validator-describe-required' => 'ciamà',
@@ -1955,13 +2023,13 @@ piassa listerrors dzora o davzin la sima dla pagina për pijé tùit j'eror.",
 	'validator-describe-header-description' => 'Descrission',
 	'validator-describe-parameters' => 'Paràmetr',
 	'validator-describe-syntax' => 'Sintassi',
-	'validator-describe-tagmin' => 'Estension ëd tag con mach ij paràmetr ciamà.',
-	'validator-describe-tagmax' => 'Estension ëd tag con tùit ij paràmetr.',
-	'validator-describe-tagdefault' => 'Estension ëd tag con tùit ij paràmetr an dovrand la notassion ëd default dij paràmetr.',
-	'validator-describe-pfmin' => 'Funsion dël parser con mach ij paràmetr ciamà.',
-	'validator-describe-pfmax' => 'Funsion dël parser con tùit ij paràmetr.',
-	'validator-describe-pfdefault' => 'Funsion dël parser con tùit ij paràmetr an dovrand la notassion ëd default dij paràmetr.',
-	'validator-describe-autogen' => 'Ël contnù dë sta session a l\'era auto-generà dal gancio dël parser "descriv" ëd l\'estension ëd Validator.',
+	'validator-describe-tagmin' => 'Estension ëd tichëtta con mach ij paràmetr obligatòri.',
+	'validator-describe-tagmax' => 'Estension ëd tichëtta con tùit ij paràmetr.',
+	'validator-describe-tagdefault' => 'Estension ëd tichëtta con tùit ij paràmetr an dovrand la notassion dë stàndard dij paràmetr.',
+	'validator-describe-pfmin' => "Funsion ëd l'analisator sintàtich con mach ij paràmetr obligatòri.",
+	'validator-describe-pfmax' => "Funsion ëd l'analisator sintàtich con tùit ij paràmetr.",
+	'validator-describe-pfdefault' => "Funsion ëd l'analisator sintàtich con tùit ij paràmetr an dovrand la notassion dë stàndard dij paràmetr.",
+	'validator-describe-autogen' => "Ël contnù dë sta session a l'é stàit generà an automàtich dal gancio \"descrive\" ëd l'analisator sintàtich ëd l'estension ëd Validator.",
 	'validator_error_empty_argument' => 'Ël paràmetr $1 a peul pa avèj un valor veuid.',
 	'validator_error_must_be_number' => 'Ël paràmetr $1 a peul mach esse un nùmer.',
 	'validator_error_must_be_integer' => "Ël paràmetr $1 a peul mach esse n'antregh.",
@@ -2162,6 +2230,7 @@ $messages['ro'] = array(
  * @author Lockal
  * @author MaxSem
  * @author McDutchie
+ * @author Van de Bugger
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
@@ -2202,6 +2271,7 @@ $messages['ru'] = array(
 	'validator-describe-bothhooks' => 'Реализовано и функция парсера, и дополнительный тег.',
 	'validator-describe-par-hooks' => 'Обработчик парсера, для которого отображать документацию.',
 	'validator-describe-par-pre' => 'Позволяет получить фактический викитекст для документации, без показа на странице.',
+	'validator-describe-par-language' => 'Язык для отображения описания',
 	'validator-describe-listtype' => 'Перечень пунктов $1',
 	'validator-describe-empty' => 'пусто',
 	'validator-describe-required' => 'требуется',
@@ -2219,8 +2289,8 @@ $messages['ru'] = array(
 	'validator-describe-pfmax' => 'Парсерная функция со всеми параметрами.',
 	'validator-describe-pfdefault' => 'Парсерная функция со всеми параметрами, использованием параметров по умолчанию.',
 	'validator-describe-autogen' => 'Содержимое этого раздела было автоматически создано парсерным обработчиком «describe» расширения Validator.',
-	'validator_error_empty_argument' => 'Параметр $1 не может принимать пустое значение.',
-	'validator_error_must_be_number' => 'Значением параметра $1 могут быть только числа.',
+	'validator_error_empty_argument' => 'Параметр «$1» не может принимать пустое значение.',
+	'validator_error_must_be_number' => 'Значением параметра «$1» могут быть только числа.',
 	'validator_error_must_be_integer' => 'Параметр $1 может быть только целым числом.',
 	'validator-error-must-be-float' => 'Параметр $1 может быть числом с плавающей точкой.',
 	'validator_error_invalid_range' => 'Параметр $1 должен быть от $2 до $3.',
@@ -2258,6 +2328,13 @@ $messages['si'] = array(
 	'validator_error_invalid_range' => '$1 පරාමිතිය $2 හා $3 අතර විය යුතුය.',
 	'validator_error_invalid_argument' => '$2 පරාමිතිය සඳහා $1 අගය වලංගු නොවේ.',
 	'validator_error_accepts_only' => '$1 පරාමිතිය විසින් පිළිගනු ලබන්නේ {{PLURAL:$3|මෙම අගය|මෙම අගයන්}}: $2 පමණි.',
+);
+
+/** Serbian (Cyrillic script) (‪Српски (ћирилица)‬)
+ * @author Rancher
+ */
+$messages['sr-ec'] = array(
+	'validator-listerrors-severity-message' => '($1) $2',
 );
 
 /** Swedish (Svenska)
