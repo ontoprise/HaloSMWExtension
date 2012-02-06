@@ -5,18 +5,18 @@
  * @note AUTOLOADED
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 'Not an entry point.' );
-}
-
 class SRFGoogleBar extends SMWResultPrinter {
-	protected $m_width = '250';
+	
+	protected $m_width;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-		if ( array_key_exists( 'width', $this->m_params ) ) {
-			$this->m_width = $this->m_params['width'];
-		}
+	/**
+	 * (non-PHPdoc)
+	 * @see SMWResultPrinter::handleParameters()
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
+		
+		$this->m_width = $this->m_params['width'];
 	}
 
 	public function getName() {
@@ -38,18 +38,13 @@ class SRFGoogleBar extends SMWResultPrinter {
 		$max = 0; // the biggest value. needed for scaling
 		
 		while ( $row = $res->getNext() ) {
-			$name = efSRFGetNextDV( $row[0] )->getShortWikiText();
+			$name = $row[0]->getNextDataValue()->getShortWikiText();
 			foreach ( $row as $field ) {
-				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
+				while ( ( $object = $field->getNextDataValue() ) !== false ) {
 					
 					// use numeric sortkey
 					if ( $object->isNumeric() ) {
-						// getDataItem was introduced in SMW 1.6, getValueKey was deprecated in the same version.
-						if ( method_exists( $object, 'getDataItem' ) ) {
-							$nr = $object->getDataItem()->getSortKey();
-						} else {
-							$nr = $object->getValueKey();
-						}
+						$nr = $object->getDataItem()->getSortKey();
 
 						$count++;
 						$max = max( $max, $nr );
@@ -76,12 +71,15 @@ class SRFGoogleBar extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		return array(
-			array( 'name' => 'limit', 'type' => 'int', 'description' => wfMsg( 'smw_paramdesc_limit' ) ),
-			array( 'name' => 'height', 'type' => 'int', 'description' => wfMsg( 'srf_paramdesc_chartheight' ) ),
-			array( 'name' => 'width', 'type' => 'int', 'description' => wfMsg( 'srf_paramdesc_chartwidth' ) ),
-		);
+		$params = parent::getParameters();
+		
+//		$params['height'] = new Parameter( 'height', Parameter::TYPE_INTEGER, 250 );
+//		$params['height']->setMessage( 'srf_paramdesc_chartheight' );
+		
+		$params['width'] = new Parameter( 'width', Parameter::TYPE_INTEGER, 250 );
+		$params['width']->setMessage( 'srf_paramdesc_chartwidth' );		
+		
+		return $params;
 	}
 
 }
-

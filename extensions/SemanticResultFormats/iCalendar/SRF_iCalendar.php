@@ -15,25 +15,15 @@
  * @ingroup SemanticResultFormats
  */
 class SRFiCalendar extends SMWResultPrinter {
-	protected $m_title = '';
-	protected $m_description = '';
+	
+	protected $m_title;
+	protected $m_description;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
 		
-		if ( array_key_exists( 'title', $this->m_params ) ) {
-			$this->m_title = trim( $this->m_params['title'] );
-		// for backward compatibility
-		} elseif ( array_key_exists( 'icalendartitle', $this->m_params ) ) {
-			$this->m_title = trim( $this->m_params['icalendartitle'] );
-		}
-		
-		if ( array_key_exists( 'description', $this->m_params ) ) {
-			$this->m_description = trim( $this->m_params['description'] );
-		// for backward compatibility
-		} elseif ( array_key_exists( 'icalendardescription', $this->m_params ) ) {
-			$this->m_description = trim( $this->m_params['icalendardescription'] );
-		}
+		$this->m_title = trim( $params['title'] );
+		$this->m_description = trim( $params['description'] );
 	}
 
 	public function getMimeType( $res ) {
@@ -132,8 +122,8 @@ class SRFiCalendar extends SMWResultPrinter {
 			$link->setParameter( $this->m_description, 'description' );
 		}
 		
-		if ( array_key_exists( 'limit', $this->m_params ) ) {
-			$link->setParameter( $this->m_params['limit'], 'limit' );
+		if ( array_key_exists( 'limit', $this->params ) ) {
+			$link->setParameter( $this->params['limit'], 'limit' );
 		} else { // use a reasonable default limit
 			$link->setParameter( 20, 'limit' );
 		}
@@ -156,16 +146,14 @@ class SRFiCalendar extends SMWResultPrinter {
 		$result = '';
 		
 		$wikipage = $row[0]->getResultSubject(); // get the object
-		
-		// As of SMW 1.6, a SMWDiWikiPage object will be provided instead of a SMWWikiPageValue.
-		if ( class_exists( 'SMWDiWikiPage' ) && $wikipage instanceof SMWDiWikiPage ) {
-			$wikipage = SMWDataValueFactory::newDataItemValue( $wikipage, null );
-		}
+		$wikipage = SMWDataValueFactory::newDataItemValue( $wikipage, null );
 		
 		$startdate = false;
 		$enddate = false;
-		$location = '';
-		$description = '';
+		
+		$params = array(
+			'summary' => $wikipage->getShortWikiText()
+		);
 		
 		foreach ( $row as /* SMWResultArray */ $field ) {
 			// later we may add more things like a generic
@@ -174,23 +162,18 @@ class SRFiCalendar extends SMWResultPrinter {
 			$req = $field->getPrintRequest();
 			$label = strtolower( $req->getLabel() );
 			
-			if ( $label == 'start' && $req->getTypeID() == '_dat' ) {
-				$startdate = efSRFGetNextDV( $field ); // save only the first
-			}
-			else if ( $label == 'end' && $req->getTypeID() == '_dat' ) {
-				$enddate = efSRFGetNextDV( $field ); // save only the first
-			}
-			else if ( $label == 'location' ) {
-				$value = efSRFGetNextDV( $field ); // save only the first
-				if ( $value !== false ) {
-					$location = $value->getShortWikiText();
-				}
-			}
-			else if ( $label == 'description' ) {
-				$value = efSRFGetNextDV( $field ); // save only the first
-				if ( $value !== false ) {
-					$description = $value->getShortWikiText();
-				}
+			switch ( $label ) {
+				case 'start': case 'end':
+					if ( $req->getTypeID() == '_dat' ) {
+						$params[$label] = $field->getNextDataValue();
+					}
+					break;
+				case 'location': case 'description': case 'summary':
+					$value = $field->getNextDataValue();
+					if ( $value !== false ) {
+						$params[$label] = $value->getShortWikiText();
+					}
+					break;
 			}
 		}
 		
@@ -199,14 +182,14 @@ class SRFiCalendar extends SMWResultPrinter {
 		$url = $title->getFullURL();
 		
 		$result .= "BEGIN:VEVENT\r\n";
-		$result .= "SUMMARY:" . $wikipage->getShortWikiText() . "\r\n";
+		$result .= "SUMMARY:" . $params['summary'] . "\r\n";
 		$result .= "URL:$url\r\n";
 		$result .= "UID:$url\r\n";
 		
-		if ( $startdate != false ) $result .= "DTSTART:" . $this->parsedate( $startdate ) . "\r\n";
-		if ( $enddate != false )   $result .= "DTEND:" . $this->parsedate( $enddate, true ) . "\r\n";
-		if ( $location != "" )  $result .= "LOCATION:$location\r\n";
-		if ( $description != "" )  $result .= "DESCRIPTION:$description\r\n";
+		if ( array_key_exists( 'start', $params ) ) $result .= "DTSTART:" . $this->parsedate( $params['start'] ) . "\r\n";
+		if ( array_key_exists( 'end', $params ) )   $result .= "DTEND:" . $this->parsedate( $params['end'], true ) . "\r\n";
+		if ( array_key_exists( 'location', $params ) )  $result .= "LOCATION:" . $params['location'] . "\r\n";
+		if ( array_key_exists( 'description', $params ) )  $result .= "DESCRIPTION:" . $params['description'] . "\r\n";
 		
 		$t = strtotime( str_replace( 'T', ' ', $article->getTimestamp() ) );
 		$result .= "DTSTAMP:" . date( "Ymd", $t ) . "T" . date( "His", $t ) . "\r\n";
@@ -221,7 +204,7 @@ class SRFiCalendar extends SMWResultPrinter {
 	 */
 	static private function parsedate( SMWTimeValue $dv, $isend = false ) {
 		$year = $dv->getYear();
-		if ( ( $year > 9999 ) || ( $year < - 9998 ) ) return ''; // ISO range is limited to four digits
+		if ( ( $year > 9999 ) || ( $year < -9998 ) ) return ''; // ISO range is limited to four digits
 		
 		$year = number_format( $year, 0, '.', '' );
 		$time = str_replace( ':', '', $dv->getTimeString( false ) );
@@ -244,24 +227,15 @@ class SRFiCalendar extends SMWResultPrinter {
 	}
 
 	public function getParameters() {
-		if ( defined( 'SMW_SUPPORTS_VALIDATOR' ) ) {
-			$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
-			
-			$params['title'] = new Parameter( 'title' );
-			$params['title']->setDescription( wfMsg( 'srf_paramdesc_icalendartitle' ) );
-			$params['title']->setDefault( '' );
-			
-			$params['description'] = new Parameter( 'description' );
-			$params['description']->setDescription( wfMsg( 'srf_paramdesc_icalendardescription' ) );
-			$params['description']->setDefault( '' );
-		}
-		else {
-			// This if for b/c with SMW 1.5.x; SMW 1.6 directly accepts Parameter objects.
-			$params = parent::exportFormatParameters();
-			
-			$params[] = array( 'name' => 'title', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendartitle' ) );
-			$params[] = array( 'name' => 'description', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_icalendardescription' ) );				
-		}
+		$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
+		
+		$params['title'] = new Parameter( 'title' );
+		$params['title']->setMessage( 'srf_paramdesc_icalendartitle' );
+		$params['title']->setDefault( '' );
+		
+		$params['description'] = new Parameter( 'description' );
+		$params['description']->setMessage( 'srf_paramdesc_icalendardescription' );
+		$params['description']->setDefault( '' );
 		
 		return $params;
 	}

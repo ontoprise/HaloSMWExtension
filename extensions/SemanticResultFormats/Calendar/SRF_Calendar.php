@@ -12,22 +12,17 @@ $wgAutoloadClasses['SRFCHistoricalDate'] = dirname( __FILE__ ) . '/SRFC_Historic
  */
 class SRFCalendar extends SMWResultPrinter {
 
-	protected $mTemplate = '';
-	protected $mUserParam = '';
+	protected $mTemplate;
+	protected $mUserParam;
 	protected $mRealUserLang = null;
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
 
-		if ( array_key_exists( 'template', $params ) ) {
-			$this->mTemplate = trim( $params['template'] );
-		}
+		$this->mTemplate = trim( $params['template'] );
+		$this->mUserParam = trim( $params['userparam'] );
 		
-		if ( array_key_exists( 'userparam', $params ) ) {
-			$this->mUserParam = trim( $params['userparam'] );
-		}
-		
-		if ( array_key_exists( 'lang', $params ) ) {
+		if ( $params['lang'] !== false ) {
 			global $wgLang;
 			// store the actual user's language, so we can revert
 			// back to it after printing the calendar
@@ -45,7 +40,7 @@ class SRFCalendar extends SMWResultPrinter {
 		$this->hasTemplates = false;
 
 		// skip checks, results with 0 entries are normal
-		$this->readParameters( $params, $outputmode );
+		$this->handleParameters( $params, $outputmode );
 		return $this->getResultText( $results, SMW_OUTPUT_HTML );
 	}
 
@@ -56,10 +51,8 @@ class SRFCalendar extends SMWResultPrinter {
 	 * TODO: split up megamoth 
 	 */
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
-		global $wgUser;
-		$skin = $wgUser->getSkin();
-
 		$events = array();
+		
 		// print all result rows
 		while ( $row = $res->getNext() ) {
 			$dates = array();
@@ -76,7 +69,7 @@ class SRFCalendar extends SMWResultPrinter {
 					$pr = $field->getPrintRequest();
 					$text .= '|' . ( $i + 1 ) . '=';
 					
-					while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
+					while ( ( $object = $field->getNextDataValue() ) !== false ) {
 						if ( $object->getTypeID() == '_dat' ) {
 							$text .= $object->getLongWikiText();
 						} elseif ( $object->getTypeID() == '_wpg' ) { // use shorter "LongText" for wikipage
@@ -107,7 +100,7 @@ class SRFCalendar extends SMWResultPrinter {
 					// for this property
 					$textForProperty = '';
 					
-					while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) {
+					while ( ( $object = $field->getNextDataValue() ) !== false ) {
 						if ( $object->getTypeID() == '_dat' ) {
 							// don't add date values to the display
 						} elseif ( $object->getTypeID() == '_wpg' ) { // use shorter "LongText" for wikipage
@@ -118,7 +111,7 @@ class SRFCalendar extends SMWResultPrinter {
 								
 								// handling of "headers=" param
 								if ( $this->mShowHeaders == SMW_HEADERS_SHOW ) {
-									$textForProperty .= $pr->getHTMLText( $skin ) . ' ';
+									$textForProperty .= $pr->getHTMLText( smwfGetLinker() ) . ' ';
 								} elseif ( $this->mShowHeaders == SMW_HEADERS_PLAIN ) {
 									$textForProperty .= $pr->getLabel() . ' ';
 								}
@@ -126,14 +119,14 @@ class SRFCalendar extends SMWResultPrinter {
 								// if $this->mShowHeaders == SMW_HEADERS_HIDE, print nothing
 								// handling of "link=" param
 								if ( $this->mLinkOthers ) {
-									$textForProperty .= $object->getLongText( $outputmode, $skin );
+									$textForProperty .= $object->getLongText( $outputmode, smwfGetLinker() );
 								} else {
 									$textForProperty .= $object->getWikiValue();
 								}
 							}
 						} else {
 							$numNonDateProperties++;
-							$textForProperty .= $pr->getHTMLText( $skin ) . ' ' . $object->getShortText( $outputmode, $skin );
+							$textForProperty .= $pr->getHTMLText( smwfGetLinker() ) . ' ' . $object->getShortText( $outputmode, smwfGetLinker() );
 						}
 						if ( $pr->getMode() == SMWPrintRequest::PRINT_PROP && $pr->getTypeID() == '_dat' ) {
 							$dates[] = $this->formatDateStr( $object );
@@ -508,7 +501,17 @@ END;
 	 */
 	public function getParameters() {
 		$params = parent::getParameters();
-		$params[] = array( 'name' => 'lang', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_calendarlang' ) );
+		
+		$params['lang'] = new Parameter( 'lang' );
+		$params['lang']->setMessage( 'srf_paramdesc_calendarlang' );
+		$params['lang']->setDefault( false, false );
+		
+		$params['template'] = new Parameter( 'template' );
+		$params['template']->setDefault( '' );
+		
+		$params['userparam'] = new Parameter( 'userparam' );
+		$params['userparam']->setDefault( '' );
+		
 		return $params;
 	}
 

@@ -23,11 +23,6 @@ class SRFTagCloud extends SMWResultPrinter {
 	
 	protected $tagsHtml = array();
 	
-	public function __construct( $format, $inline, $useValidator = true ) {
-		parent::__construct( $format, $inline );
-		$this->useValidator = $useValidator;
-	}
-	
 	public function getName() {
 		return wfMsg( 'srf_printername_tagcloud' );
 	}
@@ -72,7 +67,7 @@ class SRFTagCloud extends SMWResultPrinter {
 		
 		while ( /* array of SMWResultArray */ $row = $results->getNext() ) { // Objects (pages)
 			for ( $i = 0, $n = count( $row ); $i < $n; $i++ ) { // SMWResultArray for a sinlge property 
-				while ( ( /* SMWDataValue */ $dataValue = efSRFGetNextDV( $row[$i] ) ) !== false ) { // Data values
+				while ( ( /* SMWDataValue */ $dataValue = $row[$i]->getNextDataValue() ) !== false ) { // Data values
 					
 					$isSubject = $row[$i]->getPrintRequest()->getMode() == SMWPrintRequest::PRINT_THIS;
 					

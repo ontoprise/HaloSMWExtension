@@ -52,58 +52,44 @@ class SRFGraph extends SMWResultPrinter {
 		'tripleoctagon',
 	);
 	
-	protected $m_graphName = 'QueryResult';
+	protected $m_graphName;
 	protected $m_graphLabel;
 	protected $m_graphColor;
 	protected $m_graphLegend;
 	protected $m_graphLink;
-	protected $m_rankdir = "LR";
-	protected $m_graphSize = "";
+	protected $m_rankdir;
+	protected $m_graphSize;
 	protected $m_labelArray = array();
 	protected $m_graphColors = array( 'black', 'red', 'green', 'blue', 'darkviolet', 'gold', 'deeppink', 'brown', 'bisque', 'darkgreen', 'yellow', 'darkblue', 'magenta', 'steelblue2' );
-	protected $m_nameProperty = false;
-	protected $m_nodeShape = false;
+	protected $m_nameProperty;
+	protected $m_nodeShape;
 	protected $m_parentRelation;
-	protected $m_wordWrapLimit = 25;
+	protected $m_wordWrapLimit;
 	
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		if ( array_key_exists( 'graphname', $params ) ) {
-			$this->m_graphName = trim( $params['graphname'] );
-		}
+	/**
+	 * (non-PHPdoc)
+	 * @see SMWResultPrinter::handleParameters()
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
 		
-		if ( array_key_exists( 'graphsize', $params ) ) {
-			$this->m_graphSize = trim( $params['graphsize'] );
-		}
+		$this->m_graphName = trim( $params['graphname'] );
+		$this->m_graphSize = trim( $params['graphsize'] );
 		
-		$this->m_graphLegend = array_key_exists( 'graphlegend', $params ) && strtolower( trim( $params['graphlegend'] ) ) == 'yes';
-		$this->m_graphLabel = array_key_exists( 'graphlabel', $params ) && strtolower( trim( $params['graphlabel'] ) ) == 'yes';
-
-		if ( array_key_exists( 'arrowdirection', $params ) ) {
-			$params['rankdir'] = $params['arrowdirection']; 
-		}
+		$this->m_graphLegend = $params['graphlegend'];
+		$this->m_graphLabel = $params['graphlabel'];
 		
-		if ( array_key_exists( 'rankdir', $params ) ) {
-			$this->m_rankdir = strtoupper( trim( $params['rankdir'] ) );
-		}
+		$this->m_rankdir = strtoupper( trim( $params['arrowdirection'] ) );
 		
-		$this->m_graphLink = array_key_exists( 'graphlink', $params ) && strtolower( trim( $params['graphlink'] ) ) == 'yes';
-		$this->m_graphColor = array_key_exists( 'graphcolor', $params ) && strtolower( trim( $params['graphcolor'] ) ) == 'yes';
+		$this->m_graphLink = $params['graphlink'];
+		$this->m_graphColor =$params['graphcolor'];
 		
-		if ( array_key_exists( 'nameproperty', $params ) ) {
-			$this->m_nameProperty = trim( $params['nameproperty'] );
-		}
+		$this->m_nameProperty = $params['nameproperty'] === false ? false : trim( $params['nameproperty'] );
 		
-		$this->m_parentRelation = array_key_exists( 'relation', $params ) && strtolower( trim( $params['relation'] ) ) == 'parent';
+		$this->m_parentRelation = strtolower( trim( $params['relation'] ) ) == 'parent';
 		
-		if ( array_key_exists( 'nodeshape', $params ) && in_array( trim( $params['nodeshape'] ), self::$NODE_SHAPES ) ) {
-			$this->m_nodeShape = trim( $params['nodeshape'] );
-		}
-		
-		if ( array_key_exists( 'wordwraplimit', $params ) && is_int( $params['wordwraplimit'] ) ) {
-			$this->m_wordWrapLimit = (int)$params['wordwraplimit'];
-		}
+		$this->m_nodeShape = $params['nodeshape'];
+		$this->m_wordWrapLimit = $params['wordwraplimit'];
 	}
 	
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
@@ -168,7 +154,7 @@ class SRFGraph extends SMWResultPrinter {
 		foreach ( $row as $i => $resultArray ) {
 
 			// Loop throught all the parts of the field value.
-			while ( ( $object = efSRFGetNextDV( $resultArray ) ) !== false ) {
+			while ( ( $object = $resultArray->getNextDataValue() ) !== false ) {
 				$propName = $resultArray->getPrintRequest()->getLabel();
 				$isName = $this->m_nameProperty ? ( $i != 0 && $this->m_nameProperty === $propName ) : $i == 0;
 				
@@ -290,19 +276,50 @@ class SRFGraph extends SMWResultPrinter {
 	}	
 	
 	public function getParameters() {
-		return array(
-			array( 'name' => 'graphname', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_graphname' ) ),
-			array( 'name' => 'graphsize', 'type' => 'int', 'description' => wfMsg( 'srf_paramdesc_graphsize' ) ),
-			array( 'name' => 'graphlegend', 'type' => 'enumeration', 'description' => wfMsg( 'srf_paramdesc_graphlegend' ), 'values'=> array( 'yes', 'no' ) ),
-			array( 'name' => 'graphlabel', 'type' => 'enumeration', 'description' => wfMsg( 'srf_paramdesc_graphlabel' ), 'values'=> array( 'yes', 'no' ) ),
-			array( 'name' => 'arrowdirection', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_rankdir' ) ),
-			array( 'name' => 'graphlink', 'type' => 'enumeration', 'description' => wfMsg( 'srf_paramdesc_graphlink' ), 'values'=> array( 'yes', 'no' ) ),
-			array( 'name' => 'graphcolor', 'type' => 'enumeration', 'description' => wfMsg( 'srf_paramdesc_graphcolor' ), 'values'=> array( 'yes', 'no' ) ),
-			array( 'name' => 'nodeshape', 'type' => 'enumeration', 'description' => wfMsg( 'srf-paramdesc-graph-nodeshape' ), 'values'=> self::$NODE_SHAPES ),
-			array( 'name' => 'nameproperty', 'type' => 'text', 'description' => wfMsg( 'srf-paramdesc-graph-nameprop' ) ),
-			array( 'name' => 'relation', 'type' => 'enumeration', 'description' => wfMsg( 'srf-paramdesc-graph-relation' ), 'values'=> array( 'parent', 'child' ) ),
-			array( 'name' => 'wordwraplimit', 'type' => 'int', 'description' => wfMsg( 'srf-paramdesc-graph-wwl' ) ),
-		);      
+		$params = parent::getParameters();
+		
+		$params['graphname'] = new Parameter( 'graphname', Parameter::TYPE_STRING, 'QueryResult' );
+		$params['graphname']->setMessage( 'srf_paramdesc_graphname' );
+		
+		$params['graphsize'] = new Parameter( 'graphsize', Parameter::TYPE_INTEGER );
+		$params['graphsize']->setMessage( 'srf_paramdesc_graphsize' );
+		$params['graphsize']->setDefault( '', false );
+		
+		$params['graphlegend'] = new Parameter( 'graphsize', Parameter::TYPE_BOOLEAN, false );
+		$params['graphlegend']->setMessage( 'srf_paramdesc_graphlegend' );
+		
+		$params['graphlabel'] = new Parameter( 'graphlabel', Parameter::TYPE_BOOLEAN, false );
+		$params['graphlabel']->setMessage( 'srf_paramdesc_graphlabel' );
+		
+		$params['graphlink'] = new Parameter( 'graphlink', Parameter::TYPE_BOOLEAN, false );
+		$params['graphlink']->setMessage( 'srf_paramdesc_graphlink' );
+		
+		$params['graphcolor'] = new Parameter( 'graphcolor', Parameter::TYPE_BOOLEAN, false );
+		$params['graphcolor']->setMessage( 'srf_paramdesc_graphcolor' );
+		
+		$params['arrowdirection'] = new Parameter( 'arrowdirection', Parameter::TYPE_STRING, 'LR', array( 'rankdir' ) );
+		$params['arrowdirection']->setMessage( 'srf_paramdesc_rankdir' );
+		$params['arrowdirection']->addCriteria( new CriterionInArray( 'LR', 'RL', 'TB', 'BT' ) );
+		
+		$params['nodeshape'] = new Parameter( 'nodeshape' );
+		$params['nodeshape']->setDefault( false, false );
+		$params['nodeshape']->setMessage( 'srf-paramdesc-graph-nodeshape' );
+		$params['nodeshape']->addCriteria( new CriterionInArray( self::$NODE_SHAPES ) );
+		
+		$params['relation'] = new Parameter( 'relation' );
+		$params['relation']->setDefault( 'child' );
+		$params['relation']->setMessage( 'srf-paramdesc-graph-relation' );
+		$params['relation']->addCriteria( new CriterionInArray( 'parent', 'child' ) );
+		
+		$params['nameproperty'] = new Parameter( 'nameproperty', Parameter::TYPE_STRING, '' );
+		$params['nameproperty']->setMessage( 'srf-paramdesc-graph-nameprop' );
+		$params['nameproperty']->setDefault( false, false );
+		
+		$params['wordwraplimit'] = new Parameter( 'wordwraplimit', Parameter::TYPE_INTEGER );
+		$params['wordwraplimit']->setMessage( 'srf-paramdesc-graph-wwl' );
+		$params['wordwraplimit']->setDefault( 25 );
+		
+		return $params;
 	}
 	
 }

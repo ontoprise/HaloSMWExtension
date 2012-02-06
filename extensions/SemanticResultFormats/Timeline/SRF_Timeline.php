@@ -22,38 +22,27 @@ class SRFTimeline extends SMWResultPrinter {
 	protected $m_tlbands = ''; // array of band IDs (MONTH, YEAR, ...)
 	protected $m_tlpos = ''; // position identifier (start, end, today, middle)
 
-	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
-
-		if ( array_key_exists( 'timelinestart', $params ) ) {
-			$this->m_tlstart = smwfNormalTitleDBKey( $params['timelinestart'] );
-		}
-		if ( array_key_exists( 'timelineend', $params ) ) {
-			$this->m_tlend = smwfNormalTitleDBKey( $params['timelineend'] );
-		}
+	/**
+	 * @see SMWResultPrinter::handleParameters
+	 * 
+	 * @since 1.6.3
+	 * 
+	 * @param array $params
+	 * @param $outputmode
+	 */
+	protected function handleParameters( array $params, $outputmode ) {
+		parent::handleParameters( $params, $outputmode );
 		
-		if ( array_key_exists( 'timelinesize', $params ) ) {
-			$this->m_tlsize = htmlspecialchars( str_replace( ';', ' ', strtolower( trim( $params['timelinesize'] ) ) ) );
+		$this->m_tlstart = smwfNormalTitleDBKey( $params['timelinestart'] );
+		$this->m_tlend = smwfNormalTitleDBKey( $params['timelineend'] );
+		$this->m_tlbands = $params['timelinebands'];
+		$this->m_tlpos = strtolower( trim( $params['timelineposition'] ) );
+		
 			// str_replace makes sure this is only one value, not mutliple CSS fields (prevent CSS attacks)
 			// / FIXME: this is either unsafe or redundant, since Timeline is Wiki-compatible. If the JavaScript makes user inputs to CSS then it is bad even if we block this injection path.
-		} else {
-			$this->m_tlsize = '300px';
-		}
-		
-		if ( array_key_exists( 'timelinebands', $params ) ) {
-		// check for band parameter, should look like "DAY,MONTH,YEAR"
-			$this->m_tlbands = preg_split( '/[,][\s]*/u', trim( $params['timelinebands'] ) );
-		} else {
-			$this->m_tlbands = array( 'MONTH', 'YEAR' ); // / TODO: check what default the JavaScript uses
-		}
-		
-		if ( array_key_exists( 'timelineposition', $params ) ) {
-			$this->m_tlpos = strtolower( trim( $params['timelineposition'] ) );
-		} else {
-			$this->m_tlpos = 'middle';
-		}
+		$this->m_tlsize = htmlspecialchars( str_replace( ';', ' ', strtolower( $params['timelinesize'] ) ) );
 	}
-
+	
 	public function getName() {
 		return wfMsg( 'srf_printername_' . $this->mFormat );
 	}
@@ -70,16 +59,7 @@ class SRFTimeline extends SMWResultPrinter {
 				if ( ( $pr->getMode() == SMWPrintRequest::PRINT_PROP ) && ( $pr->getTypeID() == '_dat' ) ) {
 					$dataValue = $pr->getData();
 					
-					// SMW >= 1.6
-					if ( method_exists ( $dataValue, 'getDataItem' ) ) {
-						$date_value = $dataValue->getDataItem()->getLabel();
-					} // SMW 1.5.x
-					elseif ( method_exists ( $dataValue, 'getValueKey' ) ) {
-						$date_value = $dataValue->getValueKey();
-					} // SMW < 1.5
-					else {
-						$date_value = $dataValue->getXSDValue();
-					}
+					$date_value = $dataValue->getDataItem()->getLabel();
 					
 					if ( ( $this->m_tlend == '' ) && ( $this->m_tlstart != '' ) &&
 					     ( $this->m_tlstart != $date_value ) ) {
@@ -182,18 +162,12 @@ class SRFTimeline extends SMWResultPrinter {
 				
 				if ( $dataValue == '' ) {
 					$date_value = null;
-				} // SMW >= 1.6
-				elseif ( method_exists ( $dataValue, 'getDataItem' ) ) {
-					$date_value = $dataValue->getDataItem()->getLabel();
-				} // SMW 1.5.x
-				elseif ( method_exists ( $dataValue, 'getValueKey' ) ) {
-					$date_value = $dataValue->getValueKey();
-				} // SMW < 1.5
+				}
 				else {
-					$date_value = $dataValue->getXSDValue();
+					$date_value = $dataValue->getDataItem()->getLabel();
 				}
 				
-				while ( ( $object = efSRFGetNextDV( $field ) ) !== false ) { // Loop over property values
+				while ( ( $object = $field->getNextDataValue() ) !== false ) { // Loop over property values
 					$event = $this->handlePropertyValue( 
 						$object, $outputmode, $pr, $first_col, $hastitle, $hastime,
 						$first_value, $isEventline, $curmeta, $curdata, $date_value, $output, $positions
@@ -364,21 +338,10 @@ class SRFTimeline extends SMWResultPrinter {
 		}
 		
 		if ( $isEventline && ( $pr->getMode() == SMWPrintRequest::PRINT_PROP ) && ( $pr->getTypeID() == '_dat' ) && ( '' != $pr->getLabel() ) && ( $date_value != $this->m_tlstart ) && ( $date_value != $this->m_tlend ) ) {
-			// SMW >= 1.6
-			if ( method_exists ( $object, 'getDataItem' ) ) {
-				$numericValue = $object->getDataItem()->getSortKey();
-			} // SMW 1.5.x
-			elseif ( method_exists ( $object, 'getValueKey' ) ) {
-				$numericValue = $object->getValueKey();
-			} // SMW < 1.5
-			else {
-				$numericValue = $object->getNumericValue();
-			}			
-			
 			$event = array(
 				$object->getXMLSchemaDate(),
 				$pr->getLabel(),
-				$numericValue,
+				$object->getDataItem()->getSortKey(),
 			);
 		}
 	
@@ -395,33 +358,29 @@ class SRFTimeline extends SMWResultPrinter {
 	public function getParameters() {
 		$params = parent::getParameters();
 		
-		$params[] = array( 'name' => 'timelinebands', 'type' => 'enum-list', 'description' => wfMsg( 'srf_paramdesc_timelinebands' ), 'values' => array( 'DECADE', 'YEAR', 'MONTH', 'WEEK', 'DAY', 'HOUR', 'MINUTE' ) );
-		$params[] = array( 'name' => 'timelineposition', 'type' => 'enumeration', 'description' => wfMsg( 'srf_paramdesc_timelineposition' ), 'values' => array( 'start', 'middle', 'end' ) );
-		$params[] = array( 'name' => 'timelinestart', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_timelinestart' ) );
-		$params[] = array( 'name' => 'timelineend', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_timelineend' ) );
-		$params[] = array( 'name' => 'timelinesize', 'type' => 'string', 'description' => wfMsg( 'srf_paramdesc_timelinesize' ) );
+		$params['timelinesize'] = new Parameter( 'timelinesize' );
+		$params['timelinesize']->setDefault( '300px' );
+		$params['timelinesize']->setMessage( 'srf_paramdesc_timelinesize' );
+
+		$params['timelineposition'] = new Parameter( 'timelineposition' );
+		$params['timelineposition']->setDefault( 'middle' );
+		$params['timelineposition']->setMessage( 'srf_paramdesc_timelineposition' );
+		$params['timelineposition']->addCriteria( new CriterionInArray( 'start', 'middle', 'end' ) );
+		
+		$params['timelinestart'] = new Parameter( 'timelinestart' );
+		$params['timelinestart']->setDefault( '' );
+		$params['timelinestart']->setMessage( 'srf_paramdesc_timelinestart' );
+		
+		$params['timelineend'] = new Parameter( 'timelineend' );
+		$params['timelineend']->setDefault( '' );
+		$params['timelineend']->setMessage( 'srf_paramdesc_timelineend' );
+		
+		$params['timelinebands'] = new ListParameter( 'timelinebands' );
+		$params['timelinebands']->setDefault( array( 'MONTH', 'YEAR' ) );
+		$params['timelinebands']->setMessage( 'srf_paramdesc_timelinebands' );
+		$params['timelinebands']->addCriteria( new CriterionInArray( 'DECADE', 'YEAR', 'MONTH', 'WEEK', 'DAY', 'HOUR', 'MINUTE' ) );
 		
 		 return $params;
-	}
-	
-	/**
-	 * Register the resource modules used by this result printer.
-	 * 
-	 * @since 1.5.2
-	 */
-	public static function registerResourceModules() {
-		global $wgResourceModules, $srfgScriptPath;
-		
-		$moduleTemplate = array(
-			'localBasePath' => dirname( __FILE__ ),
-			'remoteBasePath' => $srfgScriptPath . '/Timeline',
-			'group' => 'ext.srf'
-		);
-		
-		$wgResourceModules['ext.srf.timeline'] = $moduleTemplate + array(
-			'scripts' => array( 'SRF_timeline.js', 'SimileTimeline/timeline-api.js' ),
-			'dependencies' => array( 'mediawiki.legacy.wikibits' )
-		);
 	}
 	
 }
