@@ -28,10 +28,6 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
   var querySource, Tip;
   var height = window.outerHeight || window.screen.availHeight || 500;
   height = parseInt(height * 0.6);
-  var getQIHelper = function(){
-      return window.parent.qihelper;
-    };
-
   
     
   return {
@@ -65,7 +61,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
     ],
 
 		 
-    InsertDataInTextarea : function(ask) {
+    InsertDataInTextarea : function(query) {
       var myArea = window.parent.getElementById('wpTextbox1');
       if (!myArea) myArea = window.parent.getElementById('free_text');
 
@@ -86,10 +82,64 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
       if (myArea.selectionStart != undefined) {
         var before = myArea.value.substr(0, myArea.selectionStart);
         var after = myArea.value.substr(myArea.selectionStart);
-        myArea.value = before + ask + after;
+        myArea.value = before + query + after;
       }
-    },   
+    },
 
+    loadSPARQLQuery: function(querySource){
+        querySource = querySource.replace('{{#sparql:', '').replace(/(?:\|[^}]+)*}}/g, '')
+        window.loadSPARQLQueryCount = 0;
+        window.loadSPARQLQueryIntervalId = window.setInterval(function(){
+            window.loadSPARQLQueryCount++;
+            if(typeof SPARQL !== 'undefined' && SPARQL && SPARQL.smwgHaloWebserviceEndpoint){
+              window.clearInterval(window.loadSPARQLQueryIntervalId);
+              SPARQL.init();
+              SPARQL.sparqlToTree(querySource);
+              SPARQL.switchToSparqlView();              
+            }
+            else if(window.loadSPARQLQueryCount > 9){
+              window.clearInterval(window.loadSPARQLQueryIntervalId);
+            }
+
+          }, 1000)
+    },
+
+    loadASKQuery: function(querySource){
+      if(window.parent.qihelper && window.parent.qihelper.initFromQueryString){
+          window.parent.qihelper.initFromQueryString(querySource);
+        }
+        else{
+          window.initFromQueryStringIntervalId = window.setInterval(function(){
+            if(window.parent.qihelper && window.parent.qihelper.initFromQueryString){
+              window.clearInterval(window.initFromQueryStringIntervalId);
+              window.parent.qihelper.initFromQueryString(querySource);
+            }
+
+          }, 1000);
+        }
+    },
+
+    resetQIHelper: function(){
+      if(window.parent.qihelper && window.parent.qihelper.doReset){
+          window.parent.qihelper.doReset();
+        }
+        else{
+          window.resetIntervalId = window.setInterval(function(){
+            if(window.parent.qihelper && window.parent.qihelper.doReset){
+              window.clearInterval(window.resetIntervalId);
+              window.parent.qihelper.doReset();
+            }
+
+          }, 1000);
+        }
+    },
+
+    resetSPARQL: function(){
+      if(typeof SPARQL !== 'undefined' && SPARQL && SPARQL.smwgHaloWebserviceEndpoint){
+        SPARQL.Model.reset();
+        SPARQL.hide();
+      }
+    },
   
     onShow : function() {    
       var thisDialog = this;  
@@ -115,50 +165,45 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
         querySource = jQuery("<div/>").html(querySource).text();
         querySource = querySource.replace(/fckLR/g, '\r\n');
 
-        if(window.parent.qihelper && window.parent.qihelper.initFromQueryString)
-          window.parent.qihelper.initFromQueryString(querySource);
+        //if this is sparql then shitch to sparql view and load query
+        if(querySource.indexOf('{{#sparql:') === 0){
+          this.definition.loadSPARQLQuery(querySource);
+        }
         else{
-          var initFromQueryStringIntervalId = window.setInterval(function(){
-            if(window.parent.qihelper && window.parent.qihelper.initFromQueryString){
-              window.clearInterval(initFromQueryStringIntervalId);
-              window.parent.qihelper.initFromQueryString(querySource);
-            }
-              
-          }, 1000)
+          //else load ask
+          this.definition.resetSPARQL();
+          this.definition.loadASKQuery(querySource);
         }
       }
-      else {      
-        if(window.parent.qihelper && window.parent.qihelper.doReset)
-          window.parent.qihelper.doReset();
-        else
-          var resetIntervalId = window.setInterval(function(){
-            if(window.parent.qihelper && window.parent.qihelper.doReset){
-              window.clearInterval(resetIntervalId);
-              window.parent.qihelper.doReset();
-            }
-
-          }, 1000)
+      else {
+        this.definition.resetSPARQL();
+        this.definition.resetQIHelper();
       }
+        
     },
 
+
+
     onOk: function() {
-      //			var qiDocument = window.frames['CKeditorQueryInterface'];
-      var ask = window.parent.qihelper.getAskQueryFromGui();
-      ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
-      ask = ask.replace(/>\[\[/g, ">\n[[");
-      ask = ask.replace(/\]\]</g, "]]\n<");
-      ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+      var query = SPARQL.getQuery();
+      if(!query){
+        query = window.parent.qihelper.getAskQueryFromGui();
+        query = query.replace(/\]\]\[\[/g, "]]\n[[");
+        query = query.replace(/>\[\[/g, ">\n[[");
+        query = query.replace(/\]\]</g, "]]\n<");
+        query = query.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+      }
 
       if ( editor.mode == 'wysiwyg') {
-        ask = ask.replace(/\r?\n/g, 'fckLR');
-        ask = '<span class="fck_smw_query">' + ask + '</span>';
+        query = query.replace(/\r?\n/g, 'fckLR');
+        query = '<span class="fck_smw_query">' + CKEDITOR.tools.htmlEncode(query) + '</span>';
                 
         ////////hack for changing query object title in wysiwyg////////
         var fakeSpanDescription = editor.lang.fakeobjects['span'];
         editor.lang.fakeobjects['span'] = 'Edit Query (with Query Interface)';
         ///////////////////////////////////////////////////////////////
                 
-        var element = CKEDITOR.dom.element.createFromHtml(ask, editor.document),
+        var element = CKEDITOR.dom.element.createFromHtml(query, editor.document),
         newFakeObj = editor.createFakeElement( element, 'FCK__SMWquery', 'span', false);
                     
         //////////////////////////////////////////////////////////////
@@ -172,7 +217,7 @@ CKEDITOR.dialog.add( 'SMWqi', function( editor ) {
           editor.insertElement( newFakeObj );
       }
       else {
-        this.InsertDataInTextarea(ask);
+        this.InsertDataInTextarea(query);
       }
 
       window.refreshSTB.refreshToolBar();
