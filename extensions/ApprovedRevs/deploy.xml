@@ -3,7 +3,7 @@
 	<global>
 		<id>approvedrevs</id>
 		<title>Approved Revs</title>
-		<version>0.5.9</version>
+		<version>0.6</version>
 		<patchlevel>0</patchlevel>
         <vendor>Yaron Koren</vendor>
         <maintainer>Yaron Koren</maintainer>
@@ -14,7 +14,7 @@
 		</description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Approved_Revs</helpurl>
 		<dependencies>
-			<dependency from="1.14.0">mw</dependency>
+			<dependency from="1.16.0">mw</dependency>
 		</dependencies>
 		<license>GPL</license>
 	</global>

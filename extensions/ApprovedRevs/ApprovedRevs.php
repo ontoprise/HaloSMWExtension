@@ -9,7 +9,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
  * @author Yaron Koren
  */
 
-define( 'APPROVED_REVS_VERSION', '0.5.9' );
+define( 'APPROVED_REVS_VERSION', '0.6' );
 
 // credits
 $wgExtensionCredits['other'][] = array(
@@ -17,7 +17,7 @@ $wgExtensionCredits['other'][] = array(
 	'name'            => 'Approved Revs',
 	'version'         => APPROVED_REVS_VERSION,
 	'author'          => 'Yaron Koren',
-	'url'             => 'http://www.mediawiki.org/wiki/Extension:Approved_Revs',
+	'url'             => 'https://www.mediawiki.org/wiki/Extension:Approved_Revs',
 	'descriptionmsg'  => 'approvedrevs-desc'
 );
 
@@ -31,7 +31,7 @@ $egApprovedRevsShowApproveLatest = false;
 
 // internationalization
 $wgExtensionMessagesFiles['ApprovedRevs'] = $egApprovedRevsIP . 'ApprovedRevs.i18n.php';
-$wgExtensionAliasesFiles['ApprovedRevs'] = $egApprovedRevsIP . 'ApprovedRevs.alias.php';
+$wgExtensionMessagesFiles['ApprovedRevsAlias'] = $egApprovedRevsIP . 'ApprovedRevs.alias.php';
 
 // register all classes
 $wgAutoloadClasses['ApprovedRevs'] = $egApprovedRevsIP . 'ApprovedRevs_body.php';

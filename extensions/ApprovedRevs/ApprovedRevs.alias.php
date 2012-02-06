@@ -21,6 +21,16 @@ $specialPageAliases['eo'] = array(
 	'ApprovedRevs' => array( 'Aprobitaj_revizioj' ),
 );
 
+/** Persian (فارسی) */
+$specialPageAliases['fa'] = array(
+	'ApprovedRevs' => array( 'نسخه‌های_تثبیت‌شده' ),
+);
+
+/** Galician (Galego) */
+$specialPageAliases['gl'] = array(
+	'ApprovedRevs' => array( 'Aprobación_de_revisións' ),
+);
+
 /** 湘语 (湘语) */
 $specialPageAliases['hsn'] = array(
 	'ApprovedRevs' => array( '受认定版本', '受认定页面', '冇认定个页面' ),
@@ -29,6 +39,16 @@ $specialPageAliases['hsn'] = array(
 /** Haitian (Kreyòl ayisyen) */
 $specialPageAliases['ht'] = array(
 	'ApprovedRevs' => array( 'RevAprouve', 'PajAprouve', 'PajPaAprouve' ),
+);
+
+/** Interlingua (Interlingua) */
+$specialPageAliases['ia'] = array(
+	'ApprovedRevs' => array( 'Versiones_approbate' ),
+);
+
+/** Luxembourgish (Lëtzebuergesch) */
+$specialPageAliases['lb'] = array(
+	'ApprovedRevs' => array( 'Net_nogekuckte_Säiten' ),
 );
 
 /** Macedonian (Македонски) */
@@ -41,17 +61,22 @@ $specialPageAliases['ml'] = array(
 	'ApprovedRevs' => array( 'അംഗീകൃതതാളുകൾ', 'അംഗീകൃതമല്ലാത്തതാളുകൾ' ),
 );
 
+/** Norwegian Bokmål (‪Norsk (bokmål)‬) */
+$specialPageAliases['nb'] = array(
+	'ApprovedRevs' => array( 'Godkjente_revisjoner' ),
+);
+
+/** Nedersaksisch (Nedersaksisch) */
+$specialPageAliases['nds-nl'] = array(
+	'ApprovedRevs' => array( 'Goedekeurden_pagina\'s' ),
+);
+
 /** Dutch (Nederlands) */
 $specialPageAliases['nl'] = array(
 	'ApprovedRevs' => array( 'GoedgekeurdePaginas', 'GoedgekeurdePagina\'s' ),
 );
 
-/** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬) */
-$specialPageAliases['no'] = array(
-	'ApprovedRevs' => array( 'Godkjente_revisjoner' ),
-);
-
-/** Sanskrit (संस्कृत) */
+/** Sanskrit (संस्कृतम्) */
 $specialPageAliases['sa'] = array(
 	'ApprovedRevs' => array( 'अंगीकृत_पृष्टानि' ),
 );
@@ -61,7 +86,7 @@ $specialPageAliases['tr'] = array(
 	'ApprovedRevs' => array( 'OnaylanmışRevizyonlar', 'OnaylanmışSayfalar', 'OnaylanmamışSayfalar' ),
 );
 
-/**
- * For backwards compatibility with MediaWiki 1.15 and earlier.
- */
-$aliases =& $specialPageAliases;
+/** Traditional Chinese (‪中文(繁體)‬) */
+$specialPageAliases['zh-hant'] = array(
+	'ApprovedRevs' => array( '已通過的版本' ),
+);
