@@ -86,7 +86,7 @@ class SMWQMQueryManagementHandler {
 		
 		SMWPropertyValue::registerProperty('___QRC_DOP', '_str', QRC_DOP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOC_LABEL , false);
-		SMWPropertyValue::registerProperty('___QRC_DOC', '_str', QRC_DOI_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_DOI', '_str', QRC_DOI_LABEL , false);
 		
 		SMWPropertyValue::registerProperty('___QRC_HEPP', '_str', QRC_HEPP_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HECP', '_boo', QRC_HECP_LABEL , false);
