@@ -666,7 +666,7 @@ function onLoadCKeditor(){
 
 	}
     // enable semantic toolbar in the editor after 2s
-    if ( loadSTBonStartup ) {
+    if (false && loadSTBonStartup ) {
         setTimeout(function() {
             wgCKeditorInstance.execCommand('SMWtoolbar');
         }, 2000);
@@ -681,7 +681,13 @@ function checkSelected(){
 		tagClose += ' '
 	}
 }
+
 function initEditor(){
+	//overwrite the method, which is defined by sf
+	return true;
+}
+
+function initCKEditor(){
 	var toolbar = document.getElementById( 'toolbar' );
 	// show popup or toogle link
 	if( showFCKEditor & ( RTE_POPUP|RTE_TOGGLE_LINK ) ){
@@ -723,10 +729,12 @@ function initEditor(){
 	}
 	return true;
 }
-addOnloadHook( initEditor );
+addOnloadHook( initCKEditor );
 
 HEREDOC;
 
+		$script .= self::ToggleScript();
+		
         return $script;
     }
     public static function ToggleScript() {
@@ -824,7 +832,7 @@ function ToggleCKEditor( mode, objId ){
 		if( oPopupLink ) oPopupLink.style.display = 'none';
         if (typeof AdvancedAnnotation != 'undefined')
             AdvancedAnnotation.unload();
-        if ( loadSTBonStartup )
+        if (false && loadSTBonStartup )
             CKEDITOR.instances[objId].execCommand('SMWtoolbar');
 	}
 
