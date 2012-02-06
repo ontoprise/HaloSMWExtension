@@ -109,7 +109,7 @@ $mwRootDir = realpath($mwRootDir."/../../../");
 print($mwRootDir);
 if (substr($mwRootDir, -1) != "/") $mwRootDir .= "/";
 
-echo "\nRead local packages";
+echo "\nRead local bundles";
 $localPackages = isset($emptyRepo) && $emptyRepo == true ? array() : PackageRepository::getLocalPackages($mwRootDir);
 
 echo "\nCreate new repository ".$outputDir."repository.xml";

@@ -109,3 +109,4 @@ foreach($pageTitles as $tuple) {
 	$logger->info("($i) ". $t->getPrefixedText()." refreshed.");
 	print "\n\t[ ($i) ".$t->getPrefixedText()." refreshed]";
 }
+print "\ndone.]";

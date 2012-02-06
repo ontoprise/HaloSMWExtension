@@ -737,8 +737,8 @@ class DeployWikiRevision extends WikiRevision {
 			if ($this->mode == DEPLOYWIKIREVISION_INFO) {
 				return false;
 			} else {
-				$this->logger->info("Imported page: ".$this->title->getPrefixedText());
-				$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
+				$this->logger->info("[Imported page] ".$this->title->getPrefixedText());
+				$dfgOut->outputln("\t".$this->title->getPrefixedText());
 				$res = parent::importOldRevision();
 				// notify import operation
 				$user = User::newFromName( $this->getUser() );

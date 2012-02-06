@@ -153,6 +153,7 @@ $dfgBundleID = "";
 $dfgNoAsk=false;
 $dfgApplyPatchesFor=NULL;
 $dfgCreateProperties=false;
+$dfgShowOKHint = false;
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -310,7 +311,11 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// ignore
 		$dfgCreateProperties = true;
 		continue;
-	} else {
+	} else if ($arg == '--showOKHint') {
+        // ignore
+        $dfgShowOKHint = true;
+        continue;
+    } else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
@@ -375,10 +380,10 @@ if ($dfgInstallPackages) {
 	// finalize mode requires a wiki environment, so check and include a few things more
 	dffCheckWikiContext();
 
-	$logger->info("Start initializing packages");
+	$logger->info("Start initializing bundles");
 	$installer->initializePackages();
-	$logger->info("End initializing packages");
-	$dfgOut->outputln('__OK__');
+	$logger->info("End initializing bundles");
+	if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);  // 2 is normal termination but no further action
 } else {
 	// check for non-initialized extensions
@@ -424,7 +429,7 @@ if ($dfgRestore) {
 			$dfgOut->outputln("\nCould not restore '$dfgRestorePoint'. Does it exist?", DF_PRINTSTREAM_TYPE_ERROR);
 		}
 		$logger->info("End restore operation");
-		$dfgOut->outputln('__OK__');
+		if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 		die(DF_TERMINATION_WITH_FINALIZE);
 	} else {
 		die(DF_TERMINATION_WITHOUT_FINALIZE);
@@ -439,7 +444,7 @@ if ($dfgCreateRestorePoint) {
 	$rollback->saveInstallation($dfgRestorePoint);
 	$rollback->saveDatabase($dfgRestorePoint);
 	$logger->info("Restore point created");
-	$dfgOut->outputln('__OK__');
+	if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
 
@@ -450,7 +455,7 @@ if($dfgRemoveRestorePoint) {
 	try {
 		$success = $rollback->removeRestorePoint($dfgRestorePoint);
 		if ($success) {
-			$dfgOut->outputln('__OK__');
+			if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 			die(DF_TERMINATION_WITHOUT_FINALIZE);
 		} else {
 			dffExitOnFatalError("Removing of restore point '$dfgRestorePoint' failed.");
@@ -481,7 +486,7 @@ if ($dfgGlobalUpdate) {
 	$logger->info("Start global update");
 	dffHandleGlobalUpdate($dfgCheckDep);
 	$logger->info("End global update");
-	$dfgOut->outputln('__OK__');
+	if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 	die($dfgCheckDep === true  ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 }
 
@@ -766,7 +771,7 @@ if ($dfgListpages != "no") {
 }
 
 if (count($installer->getErrors()) === 0) {
-	$dfgOut->outputln( "\n__OK__\n");
+	if ($dfgShowOKHint) $dfgOut->outputln( "\n__OK__\n");
 	die($dfgCheckDep === true ? DF_TERMINATION_WITHOUT_FINALIZE : DF_TERMINATION_WITH_FINALIZE);
 } else {
 	$dfgOut->outputln("\nErrors occured:\n");

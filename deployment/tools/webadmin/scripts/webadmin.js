@@ -68,6 +68,7 @@ $(function() {
 					var dialog = $('#df_install_dialog');
 					$('#df_progress_indicator').remove();
 					$('#df_finalization_console_log_link').remove();
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML += resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
@@ -146,10 +147,11 @@ $(function() {
 				if (resultLog != '') {
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML = resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					// start finalize
@@ -157,7 +159,7 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
-				if (resultLog.indexOf("$$ERROR$$") != -1) {
+				if (xhr3.responseText.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
@@ -208,10 +210,11 @@ $(function() {
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML = resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					// start finalize
@@ -219,7 +222,7 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
-				if (resultLog.indexOf("$$ERROR$$") != -1) {
+				if (xhr3.responseText.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
@@ -267,10 +270,11 @@ $(function() {
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML = resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					// start finalize
@@ -278,7 +282,7 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
-				if (resultLog.indexOf("$$ERROR$$") != -1) {
+				if (xhr3.responseText.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
@@ -325,10 +329,11 @@ $(function() {
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML = resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					// start finalize
@@ -336,7 +341,7 @@ $(function() {
 					$.ajax( { url : finalizeurl, dataType:"json", complete : finalizeStarted });
 				}
 				
-				if (resultLog.indexOf("$$ERROR$$") != -1) {
+				if (xhr3.responseText.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					var $dialog = $('#df_install_dialog');
@@ -1222,10 +1227,11 @@ $(function() {
 				if (resultLog != '') { 
 					resultLog += '<img id="df_progress_indicator" src="skins/ajax-loader.gif"/>';
 					var dialog = $('#df_install_dialog');
+					resultLog = resultLog.replace(/__OK__/, "");
 					dialog[0].innerHTML = resultLog; 
 					dialog[0].scrollTop = dialog[0].scrollHeight;
 				}
-				if (resultLog.indexOf("__OK__") != -1 || resultLog.indexOf("$$NOTEXISTS$$") != -1 || resultLog.indexOf("$$ERROR$$") != -1) {
+				if (xhr3.responseText.indexOf("__OK__") != -1 || xhr3.responseText.indexOf("$$NOTEXISTS$$") != -1 || xhr3.responseText.indexOf("$$ERROR$$") != -1) {
 					clearTimeout(timer);
 					$('#df_progress_indicator').hide();
 					var dialog = $('#df_install_dialog');

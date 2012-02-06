@@ -116,10 +116,10 @@ class OntologyInstaller {
 
 		if ($conflict) {
 			// write prefix file
-			$dfgOut->outputln("[Conflict detected. Some pages are used by more than one bundle]");
+			$dfgOut->outputln("[Conflicts detected. At least two bundles share one or more pages.]");
 
 		} else {
-			$dfgOut->outputln("[No Conflict detected]");
+			$dfgOut->outputln("[No conflicts detected]");
 		}
 
 		// check if ontology is already installed
@@ -487,7 +487,7 @@ ENDS
 		foreach($verificationLog as $l) {
 			list($title, $msg) = $l;
 			if ($msg == 'conflict') {
-				$dfgOut->outputln("Conflict with: '$title'");
+				$dfgOut->outputln("Conflict! Title already exists: '$title'");
 				$conflict = true;
 			}
 		}

@@ -74,7 +74,18 @@ class Tools {
 		return $thisBoxRunsWindows;
 	}
 
-
+	/**
+	 * Checks if an array item in $arr is contained in $text
+	 *
+	 * @param string[] $arr
+	 * @param string $text
+	 */
+	public static function isContainedInText($arr, $text) {
+		foreach($arr as $a){
+			if (strpos($text, $a) !== false) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Creates the given directory.
@@ -238,6 +249,15 @@ class Tools {
 
 	public static function makeUnixPath($path) {
 		return str_replace("\\", "/", $path);
+	}
+
+	public static function unquotePath($path) {
+		$path = trim($path);
+		if ($path == '') return '';
+		if (substr($path,0, 1) == '"' && substr($path, -1) == '"') {
+			return substr($path, 1, strlen($path) - 2);
+		}
+		return $path;
 	}
 
 	public static function inStringArray($arr, $needle) {
@@ -528,10 +548,10 @@ class Tools {
 
 	/**
 	 * Checks the integrity of a bundle.
-	 * 
+	 *
 	 *  (1) is the path structure correct? ie. is the install dir one of the root folders
 	 *      of the bundle?
-	 *  
+	 *
 	 * @param string $filePath bundle as zip file (absolute or relative)
 	 * @param DeployDescriptor $dd
 	 * @param string $mwrootPath (if omitted unzip is supposed to be in current path)
@@ -1062,6 +1082,24 @@ class Tools {
 		}
 
 		return new DeployDescriptor($dom->saveXML());
+	}
+
+	/**
+	 * Opens a pipe to a process executed by forking the $command. 
+	 * 
+	 * @param string $command
+	 * @param PrintoutStream $out
+	 */
+	public static function outStream($command, & $out) {
+		if (!($p=popen("($command)2>&1","r"))) {
+			return 126;
+		}
+
+		while (!feof($p)) {
+			$line=fgets($p,1000);
+			$out->output($line);
+		}
+		pclose($p);
 	}
 }
 

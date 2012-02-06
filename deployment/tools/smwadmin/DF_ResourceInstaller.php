@@ -71,7 +71,7 @@ class ResourceInstaller {
 
 		foreach($wikidumps as $file) {
 			$dumpPath = $this->rootDir."/". $dd->getInstallationDirectory()."/".$file;
-			
+				
 			if (!file_exists($dumpPath)) {
 				$this->logger->warn("dump file '".$dumpPath."' does not exist.");
 				$dfgOut->outputln("\tdump file '".$dumpPath."' does not exist. Ignore it.", DF_PRINTSTREAM_TYPE_WARN);
@@ -82,28 +82,27 @@ class ResourceInstaller {
 				// remove old pages
 				$this->logger->info("\n[Removing unused pages from ".$dd->getID());
 				$dfgOut->outputln("[Removing unused pages from ".$dd->getID());
-			   
+
 				$verificationLog = $this->getPagesFromImport($dumpPath, $dd->getID());
 				$this->removeOldPages($dd->getID(), $verificationLog);
 				$dfgOut->outputln( "done.]");
 			}
 
-			$this->logger->info("Import ontology: $file");
-			$dfgOut->outputln("[Import ontology: $file");
-			
+			$this->logger->info("Importing dump: $file");
+			$dfgOut->outputln("[Importing dump: $file");
+				
 			$result = $reader->importFromFile($dumpPath );
 			$dfgOut->outputln("done.]");
-				
+
 			// refresh imported pages (started as a separate process)
 			global $rootDir;
-			$this->logger->info("Refreshing ontology: $file");
+			$this->logger->info("Refreshing dump: $file");
 			$id = $dd->getID();
 			$phpExe = 'php';
 			if (array_key_exists('df_php_executable', DF_Config::$settings)  && !empty(DF_Config::$settings['df_php_executable'])) {
 				$phpExe = DF_Config::$settings['df_php_executable'];
 			}
-			system("\"$phpExe\" \"$rootDir/tools/maintenance/refreshPages.php\" -d \"$dumpPath\" -b $id");
-			$dfgOut->outputln("done.]");
+			Tools::outStream("\"$phpExe\" \"$rootDir/tools/maintenance/refreshPages.php\" -d \"$dumpPath\" -b $id", $dfgOut);
 		}
 
 	}

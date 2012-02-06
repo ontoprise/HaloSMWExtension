@@ -804,7 +804,7 @@ class DeployDescriptor {
 		global $dfgOut;
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 
-		$dfgOut->outputln("[Configure LocalSettings.php...");
+		$dfgOut->outputln("[Configuring LocalSettings.php...");
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		$dfgOut->output("done.]");
 

@@ -64,7 +64,7 @@ $rootDir = realpath($rootDir."/../../../");
 print($rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
 
-echo "\nRead local packages";
+echo "\nRead local bundles";
 $localPackages = PackageRepository::getLocalPackages($rootDir, true);
 
 echo "\nRead existing repository from ".$outputDir."repository.xml";

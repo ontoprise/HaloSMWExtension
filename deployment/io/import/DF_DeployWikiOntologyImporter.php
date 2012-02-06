@@ -762,8 +762,8 @@ class DeployWikiOntologyRevision extends WikiRevision {
 
 
 			// log it
-			$this->logger->info("Imported page: ".$this->title->getPrefixedText());
-			$dfgOut->outputln("\t[Imported page] ".$this->title->getPrefixedText());
+			$this->logger->info("[Imported new page] ".$this->title->getPrefixedText());
+			$dfgOut->outputln("\t".$this->title->getPrefixedText());
 			return $res;
 		} else{
 
@@ -771,7 +771,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 
 			if( !is_null( $prior ) ) {
-				$dfgOut->outputln("\t[Merging page] ".$this->title->getPrefixedText());
+				$dfgOut->outputln("\t[Merging page/create new revision] ".$this->title->getPrefixedText());
 				$wikitext = $prior->getRawText();
 				$om = new OntologyMerger();
 				if (!$om->containsAnyBundle($wikitext)) {
@@ -905,7 +905,7 @@ class DeployWikiOntologyRevision extends WikiRevision {
 		}
 
     	$this->logger->info("Imported new revision of page: ".$this->title->getPrefixedText());
-		$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
+		//$dfgOut->outputln("\t[Imported new revision of page] ".$this->title->getPrefixedText());
 
 		return true;
 	}

@@ -129,7 +129,10 @@ class Installer {
 		if (count($extensions_to_update) == 0)
 		throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of bundles to install is empty.", $packageID);
 		// Install/update all dependant and super extensions
-		$dfgOut->outputln("The following packages need to be installed");
+		$dfgOut->outputln("The following bundles need to be installed");
+		if (count($extensions_to_update) == 0) {
+			$dfgOut->outputln(" - none. ");
+		}
 		foreach($extensions_to_update as $etu) {
 			list($dd, $min, $max) = $etu;
 			$dfgOut->outputln("- ".$dd->getID()."-".$dd->getVersion()->toVersionString());
@@ -170,18 +173,21 @@ class Installer {
 
 		// check dependencies
 		$updatesNeeded=array();
-		$dfgOut->outputln("[Check for necessary updates...");
+		$dfgOut->outputln("[Checking for necessary updates...");
 		$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages);
 		$this->collectSuperExtensions($dd, $updatesNeeded, $localPackages);
 		$dfgOut->output("done.]");
 
 		//  calculate version which matches all depdencies of an extension.
-		$dfgOut->outputln( "[Filter incompatible packages..." );
+		$dfgOut->outputln( "[Filtering incompatible bundles..." );
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
 		$dfgOut->output( "done.]");
 
 		// Install/update all dependant and super extensions
-		$dfgOut->outputln( "The following packages need to be installed");
+		$dfgOut->outputln( "The following bundles need to be installed");
+		if (count($extensions_to_update) == 0) {
+			$dfgOut->outputln(" - none. ");
+		}
 		$updatedExtensions = array();
 		foreach($extensions_to_update as $etu) {
 			list($deployd, $min, $max) = $etu;
@@ -260,7 +266,7 @@ class Installer {
 		$dfgOut->output( "done.]");
 
 		// check if there are depending extensions
-		$dfgOut->outputln( "[Checking for dependent packages of $packageID...");
+		$dfgOut->outputln( "[Checking for dependent bundles of $packageID...");
 		$existDependency = false;
 		$dependantPackages = array();
 		foreach($localPackages as $p) {
@@ -391,7 +397,7 @@ class Installer {
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
 		if (count($allPackages) == 0) {
-			$dfgOut->outputln( "\nNo packages found in repositories!\n");
+			$dfgOut->outputln( "\nNo bundles found in repositories!\n");
 
 		}
 		$dfgOut->outputln (" Bundle-ID (title)                                  | Installed | Av. versions  | Repository");
@@ -524,13 +530,13 @@ class Installer {
 		// 6. Check dependencies for install/update
 		// get package to install
 		$updatesNeeded = array(array($new_package, $new_package->getVersion(), $new_package->getVersion()));
-		$dfgOut->outputln( "[Check for necessary updates...");
+		$dfgOut->outputln( "[Checking for necessary updates...");
 		$this->collectDependingExtensions($new_package, $updatesNeeded, $localPackages);
 		$this->collectSuperExtensions($new_package, $updatesNeeded, $localPackages);
 		$dfgOut->output( "done.]");
 
 		// 7. calculate version which matches all depdencies of an extension.
-		$dfgOut->outputln("[Filter incompatible packages...");
+		$dfgOut->outputln("[Filtering incompatible bundles...");
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
 		$dfgOut->output("done.]");
 
@@ -599,7 +605,7 @@ class Installer {
 				}
 			}
 
-            $dd_fromrange = PackageRepository::getDeployDescriptorFromRange($id, $min, $max );
+			$dd_fromrange = PackageRepository::getDeployDescriptorFromRange($id, $min, $max );
 			list($url,$repo_url) = PackageRepository::getDownloadURL($id, $dd_fromrange->getVersion() );
 			$credentials = PackageRepository::getCredentials($repo_url);
 
@@ -718,7 +724,7 @@ class Installer {
 					$installDirectory = $this->getNonPublicDirectory($desc);
 				}
 				$this->logger->info("Mark extension as initialized: ".$desc->getID());
-				$dfgOut->outputln("[Clean up ".$desc->getID()."...");
+				$dfgOut->outputln("[Cleaning up ".$desc->getID()."...");
 				unlink($installDirectory."/init$.ext");
 				$dfgOut->output("done.]\n\n");
 			}
@@ -728,7 +734,7 @@ class Installer {
 		global $dfgForce;
 		foreach($localPackages as $tupl) {
 			list($desc, $fromVersion) = $tupl;
-				
+
 			// mark as initialized
 			$installDirectory = $this->rootDir."/".$desc->getInstallationDirectory();
 			if ($desc->isNonPublic()) {
@@ -746,7 +752,7 @@ class Installer {
 			$res_installer->installNamespaces($desc);
 
 			$this->logger->info("Mark extension as initialized: ".$desc->getID());
-			$dfgOut->outputln("[Clean up ".$desc->getID()."...");
+			$dfgOut->outputln("[Cleaning up ".$desc->getID()."...");
 			unlink($installDirectory."/init$.ext");
 			$dfgOut->output("done.]\n\n");
 
@@ -866,8 +872,8 @@ class Installer {
 			Tools::mkpath($unzipDirectory);
 		}
 		$versionStr = $version->toVersionString();
-		$dfgOut->outputln("unzip into $unzipDirectory");
-		$dfgOut->outputln("[unzip ".$id."-".$versionStr."zip...");
+		$dfgOut->outputln("Extracting into $unzipDirectory");
+		$dfgOut->outputln("[Extracting ".$id."-".$versionStr."zip...");
 		if (Tools::isWindows()) {
 			global $rootDir;
 			exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
@@ -1044,7 +1050,7 @@ class Installer {
 						if (!$dfgForce) {
 							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "'".$p->getID()."' must be installed in version ".$dep->getMaxVersion()->toVersionString().
 							             ".\nIf a higher version is already installed please de-install the extension and install ".$dep->getMaxVersion()->toVersionString()." instead.");
-							
+								
 						}
 					}
 				}
@@ -1119,7 +1125,7 @@ class Installer {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					$depToUpdate = $ptoUpdate->getDependency($dd->getID());
 					if (is_null($depToUpdate)) continue; // dependency may be removed in the meantime.
-					
+						
 					if ($depToUpdate->getMinVersion()->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($depToUpdate->getMaxVersion())) {
 
 						$packagesToUpdate[] = array($p, $v, $v);
