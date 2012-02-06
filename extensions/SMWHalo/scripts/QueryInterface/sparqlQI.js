@@ -666,8 +666,8 @@
     }
   };
 
-  SPARQL.View.openCategoryAddDialog = function(categoryRestriction){
-    SPARQL.View.openCategoryDialog(categoryRestriction);
+  SPARQL.View.openCategoryAddDialog = function(){
+    SPARQL.View.openCategoryDialog();
     SPARQL.View.activateCategoryAddBtn();
   };
 
@@ -689,7 +689,7 @@
     //remove all previously added input rows
     $('#qiCategoryDialogTable tr').not('#categoryInputRow').not('#categoryTypeRow').not('#categoryOrLinkRow').remove();
 
-    $('#qiCategoryDialogTable').find('input').first().focus();
+    $('#qiCategoryDialogTable input').val('').focus();
     
     for(var i = 0; i < category_iri.length; i++){
       var categoryName = category_iri[i].replace(/_/g, ' ');
@@ -724,7 +724,7 @@
     return SPARQL.escapeHtmlEntities(string);
   };
 
-  SPARQL.View.openCategoryDialog.changeName = function(categoryArray){
+  SPARQL.View.updateCategory = function(categoryArray){
     var categoryNodeText = SPARQL.View.getSelectedNodeText();
       var subjectNodeText = SPARQL.View.getNodeText(SPARQL.View.getSelectedSubjectNode());
       var subject = new SPARQL.Model.SubjectTerm(subjectNodeText);
@@ -744,8 +744,7 @@
   
   SPARQL.View.activateAddSubjectBtn = function(){
     $('#qiAddSubjectBtn').live('click', function(){
-      SPARQL.View.openSubjectDialog();
-//      SPARQL.Model.createSubject();
+      SPARQL.View.openSubjectAddDialog();
     });
   };
 
@@ -755,24 +754,26 @@
     $('#qiUpdateButton').text('Update');
     $('#qiUpdateButton').click(function(){
       if(SPARQL.Validator.validateAll()){
-        SPARQL.View.openCategoryDialog.changeName(SPARQL.View.getCategories());
+        SPARQL.View.updateCategory(SPARQL.View.getCategories());
       }
     });
   };
 
   SPARQL.View.activatePropertyUpdateBtn = function(){
     $('#qiUpdateButton').unbind();
+    $('#qiUpdateButton').text('Update');
     $('#qiUpdateButton').click(function(){
       //blur property value input to trigger change event
       $('#qiPropertyValueNameInput').siblings('input').eq(0).blur();
       if(SPARQL.Validator.validateAll()){
-        SPARQL.View.openPropertyDialog.changeName();
+        SPARQL.View.updateProperty();
       }
     });
   };
 
   SPARQL.View.activatePropertyAddBtn = function(){
     $('#qiUpdateButton').unbind();
+    $('#qiUpdateButton').text('Add');
     $('#qiUpdateButton').click(function(){
       //blur property value input to trigger change event
       $('#qiPropertyValueNameInput').siblings('input').eq(0).blur();
@@ -811,9 +812,26 @@
 
   SPARQL.View.activateSubjectUpdateBtn = function(){
     $('#qiUpdateButton').unbind();
+    $('#qiSubjectShowInResultsChkBox').removeAttr('disabled');
+    $('#qiUpdateButton').text('Update');
     $('#qiUpdateButton').click(function(){
       if(SPARQL.Validator.validateAll()){
-        SPARQL.View.openSubjectDialog.changeName($('#qiSubjectNameInput'), $('#qiSubjectShowInResultsChkBox'));
+        SPARQL.View.updateSubject($('#qiSubjectNameInput'), $('#qiSubjectShowInResultsChkBox'));
+      }
+    });
+  };
+
+  SPARQL.View.activateSubjectAddBtn = function(){
+    $('#qiSubjectShowInResultsChkBox').attr('checked', true);
+    $('#qiSubjectShowInResultsChkBox').attr('disabled', 'disabled');
+    $('#qiSubjectNameInput').unbind('keyup');
+    $('#qiSubjectNameInput').attr('validator', 'variable');
+
+    $('#qiUpdateButton').unbind();
+    $('#qiUpdateButton').text('Add');
+    $('#qiUpdateButton').click(function(){
+      if(SPARQL.Validator.validateAll()){
+        SPARQL.Model.createSubject($('#qiSubjectNameInput').val());
       }
     });
   };
@@ -830,8 +848,17 @@
     });
   };
 
-  SPARQL.View.openSubjectDialog = function(subject){    
+  SPARQL.View.openSubjectAddDialog = function(){
+    SPARQL.View.openSubjectDialog();
+    SPARQL.View.activateSubjectAddBtn();
+  };
+
+  SPARQL.View.openSubjectUpdateDialog = function(subject){
+    SPARQL.View.openSubjectDialog(subject);
     SPARQL.View.activateSubjectUpdateBtn();
+  };
+
+  SPARQL.View.openSubjectDialog = function(subject){    
     SPARQL.View.activateSubjectDeleteLink();
 
     if(subject){
@@ -887,7 +914,15 @@
     });
   }
 
-  SPARQL.View.openSubjectDialog.changeName = function(input, checkBox){
+  SPARQL.View.addSubject = function(input, checkBox){
+    //adding new subject which is not shown in reasults doesn't make any sence
+    checkBox.attr('checked', true);
+    checkBox.attr('disabled', 'disabled');
+
+    SPARQL.Model.createSubject(input.val());
+  };
+
+  SPARQL.View.updateSubject = function(input, checkBox){
     var subjectNewName = $.trim(input.val());
     var subjectOldName = $.trim(input.attr('oldValue') || '');
 
@@ -1089,13 +1124,27 @@
     }
 
     $('#qiPropertyValueNameInput').val(defaultValue);
-    
+
     $('#qiPropertyValueNameInput').combobox('destroy').combobox({
       selected: function(event, ui){
         var selectedValue = ui.item ? ui.item.value : ui.value;
         SPARQL.View.showFilters(new SPARQL.Model.Term(selectedValue), $('#qiPropertyFiltersTable'));
       }
-    });    
+    });
+
+//    var input = $('<input/>').attr('id', 'testinput');
+//    input.textext({
+//        plugins : 'tags prompt focus autocomplete ajax arrow',
+//        tagsItems : [ 'Basic', 'JavaScript', 'PHP', 'Scala' ],
+//        prompt : 'Add one...',
+//        ajax : {
+//            url : '/manual/examples/data.json',
+//            dataType : 'json',
+//            cacheResults : true
+//        }
+//    });
+
+//    $('#qiPropertyValueNameInput').add(input);
   };
 
   SPARQL.View.setValidator = function(element){
@@ -1215,7 +1264,7 @@
   };
 
 
-  SPARQL.View.openPropertyDialog.changeName = function(){  
+  SPARQL.View.updateProperty = function(){
     
     var propertyNodeText = SPARQL.View.getSelectedNodeText();
     var subjectNodeText = SPARQL.View.getNodeText(SPARQL.View.getSelectedSubjectNode());    
@@ -1712,7 +1761,7 @@
         switch(theNode.attr('rel')){
           case 'variable':
           case 'instance':
-            SPARQL.View.openSubjectDialog(new SPARQL.Model.SubjectTerm(SPARQL.View.getNodeText(theNode)));
+            SPARQL.View.openSubjectUpdateDialog(new SPARQL.Model.SubjectTerm(SPARQL.View.getNodeText(theNode)));
             break;
 
           case 'category':
@@ -1766,7 +1815,6 @@
   SPARQL.View.cancel = function(){
     $('#entityDetailsTd').empty();
     $('#previewcontent').empty();
-    $('#entityDetailsTd').empty();
     SPARQL.toTree(null, -1);
     
   //    SPARQL.View.getTree().deselect_all();
@@ -2026,6 +2074,7 @@
       $('#qiCategoryDialog').hide();
       $('#qiSubjectDialog').hide();
       $('#qiPropertyDialog').hide();
+      $('#entityDetailsTd').empty();
     }
     //otherwise select the nodes that were selected before rebuild
     else if(jstree._get_node('#' + selectedNodeId)){

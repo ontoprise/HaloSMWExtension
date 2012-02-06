@@ -674,6 +674,8 @@
       SPARQL.Model.data.category_restriction.push(newCategoryRestriction);
       SPARQL.toTree(null, newCategoryRestriction.getId());
     }
+
+    SPARQL.toTree(null, newCategoryRestriction.getId());
   };
 
 
@@ -698,11 +700,11 @@
   };
 
 
-  SPARQL.Model.addCategory = function(categoryRestriction){
-    SPARQL.Model.data.category_restriction.push(categoryRestriction);
-
-    SPARQL.toTree(null, categoryRestriction.getId());
-  };
+//  SPARQL.Model.addCategory = function(categoryRestriction){
+//    SPARQL.Model.data.category_restriction.push(categoryRestriction);
+//
+//    SPARQL.toTree(null, categoryRestriction.getId());
+//  };
 
 
   /**
