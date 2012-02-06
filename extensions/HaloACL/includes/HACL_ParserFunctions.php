@@ -1110,6 +1110,7 @@ class HACLParserFunctions {
 	 *	- must have managers (users or groups)
 	 *  - must have inline or predefined rights
 	 *  - a namespace can only be protected if it is not member of $haclgUnprotectableNamespaces
+	 *  - the protected element (article) must exist
 	 *
 	 * Whitelist:
 	 *  - must have a list of pages
@@ -1222,6 +1223,19 @@ class HACLParserFunctions {
 			if (count($this->mRightManagerGroups) == 0 &&
 				count($this->mRightManagerUsers) == 0) {
 				$msg[] = wfMsgForContent('hacl_right_must_have_managers');
+			}
+			
+			if ($isSD) {
+				// The element that should be protected by the SD must exist
+				$sdName = $this->mTitle->getPrefixedText();
+				if (!HACLSecurityDescriptor::existsPEforSDName($this->mTitle->getPrefixedText())) {
+					list($pe, $peType) = HACLSecurityDescriptor::nameOfPE($sdName);
+					$msg[] = wfMsgForContent('hacl_protected_element_missing', $pe);
+				}
+				if (!HACLSecurityDescriptor::checkCaseForSD($this->mTitle->getPrefixedText(), $proposal)) {
+					$msg[] = wfMsgForContent('hacl_incorrect_case_for_SD', $proposal);
+				}
+				
 			}
 		}
 

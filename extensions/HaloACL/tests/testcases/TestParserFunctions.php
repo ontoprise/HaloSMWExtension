@@ -1086,6 +1086,26 @@ class TestParserFunctionsOutput extends PHPUnit_Framework_TestCase {
     			  array('Special:UserLogin'),
     		      array('The whitelist in this article contains nonexistent articles.')
     		),
+    		array('U1', 'ACL:Page/MyPage', 
+    			  array(),
+    		      array('The definitions in this article will not be saved and they will not be taken to effect due to the following errors.')
+    		),
+    		array('U1', 'ACL:Page/myPage', 
+    			  array('This security descriptor has a wrong name. Try "ACL:Page/MyPage" instead.',
+    			  		'The definitions in this article will not be saved and they will not be taken to effect due to the following errors.'),
+    		      array('There is no element with the name')
+    		),
+    		array('U1', 'ACL:Page/mypage', 
+    			  array('This security descriptor has a wrong name. Try "ACL:Page/Mypage" instead.',
+    			  		'There is no element with the name "mypage" that can be protected.',
+    			  		'The definitions in this article will not be saved and they will not be taken to effect due to the following errors.'),
+    		      array()
+    		),
+    		array('U1', 'ACL:Page/MyOtherPage', 
+    		      array('There is no element with the name "MyOtherPage" that can be protected.',
+    			  		'The definitions in this article will not be saved and they will not be taken to effect due to the following errors.'),
+    			  array(),
+    		),
     	);
     }
 
@@ -1126,6 +1146,11 @@ class TestParserFunctionsOutput extends PHPUnit_Framework_TestCase {
 	private function initArticleContent() {
 		$this->mOrderOfArticleCreation = array(
 				'ACL:Whitelist',
+				'MyPage',
+				'ACL:Page/MyPage',
+				'ACL:Page/myPage',
+				'ACL:Page/mypage',
+				'ACL:Page/MyOtherPage',
 		);
 	
 		$this->mArticles = array(
@@ -1138,6 +1163,73 @@ This is the whitelist.
 
 ACL
 		,
+		//------------------------------------------------------------------------------
+				'MyPage' =>
+<<<ACL
+This is my page.
+ACL
+		,
+		//------------------------------------------------------------------------------
+				'ACL:Page/MyPage' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+
+{{#access:
+ assigned to=User:U1
+|actions=read
+|description= Allow read access U1
+}}
+
+[[Category:ACL/ACL]]
+		
+ACL
+		,
+		//------------------------------------------------------------------------------
+				'ACL:Page/myPage' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+
+{{#access:
+ assigned to=User:U1
+|actions=read
+|description= Allow read access U1
+}}
+
+[[Category:ACL/ACL]]
+		
+ACL
+		,
+		//------------------------------------------------------------------------------
+				'ACL:Page/mypage' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+
+{{#access:
+ assigned to=User:U1
+|actions=read
+|description= Allow read access U1
+}}
+
+[[Category:ACL/ACL]]
+		
+ACL
+		,
+		//------------------------------------------------------------------------------
+						'ACL:Page/MyOtherPage' =>
+		<<<ACL
+		{{#manage rights: assigned to=User:U1}}
+		
+		{{#access:
+		 assigned to=User:U1
+		|actions=read
+		|description= Allow read access U1
+		}}
+		
+		[[Category:ACL/ACL]]
+				
+ACL
+		,
+		
 		);
 	}
 	

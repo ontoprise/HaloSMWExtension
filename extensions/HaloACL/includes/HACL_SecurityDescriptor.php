@@ -282,6 +282,55 @@ class  HACLSecurityDescriptor  {
 	}
 	
 	/**
+	 * Checks if the element that should be protected by an SD with the name
+	 * $sdName exists.
+	 * 
+	 * @param string $sdName
+	 * 		Name of the Security Descriptor
+	 * 
+	 * @return boolean
+	 *    true, if the PE exists
+	 *    false otherwise
+	 */
+	public static function existsPEforSDName($sdName) {
+		list($pe, $peType) = self::nameOfPE($sdName);
+		if ($peType === self::PET_RIGHT) {
+			// Right templates do not need a concrete protected element
+			return true;
+		}
+		$peID = self::peIDforName($pe, $peType);
+		return $peID !== false;
+	}
+	
+	/**
+	 * Names for SDs may be ambiguous because of the case handling of MW. For MW
+	 * the titles "Foo" and "foo" are the same. But there must be only one SD for
+	 * protecting that page i.e. "ACL:Page/Foo". "ACL:Page/foo" would be a different
+	 * title for MW but the protected element would be the same. 
+	 * So per definition there must be upper case letters for SDs at certain 
+	 * positions (indicated with _X_):
+	 * - ACL:_P_age/_P_agename
+	 * - ACL:_C_ategory/_C_ategoryname
+	 * - ACL:_P_roperty/_P_ropertyname
+	 * - ACL:_N_amespace/_N_amespacename
+	 * 
+	 * @param String $sdName
+	 * 		Name of the Security Descriptor
+	 * @param String $propsal
+	 * 		Proposed name of the SD if the given $sdName is invalid
+	 * 
+	 * @return boolean
+	 * 		true, if the $sdName is correct
+	 * 		false otherwise
+	 * 
+	 */
+	public static function checkCaseForSD($sdName, &$proposal) {
+		list($pe, $peType) = self::nameOfPE($sdName);
+		$proposal = self::nameOfSD($pe, $peType);
+		return ($sdName == $proposal);
+	}
+	
+	/**
 	 * Tries to find the ID of the security descriptor for the protected element
 	 * with the ID $peID.
 	 *
@@ -442,9 +491,9 @@ class  HACLSecurityDescriptor  {
 	 *		- HACLSecurityDescriptor::PET_PAGE
 	 *		- HACLSecurityDescriptor::PET_PROPERTY
 	 * 
-	 * @return array(string, string)
-	 * 		Name of the protected element and its type (one of self::PET_CATEGORY
-	 *      etc). It the type is self::PET_RIGHT, the name is <null>.
+	 * @return String
+	 * 		Name of the security descriptor or <NULL> if the protected element is 
+	 *      invalid.
 	 */
 	public static function nameOfSD($nameOfPE, $peType) {
 
@@ -452,6 +501,23 @@ class  HACLSecurityDescriptor  {
 		$ns = $haclgContLang->getNamespaces();
 		$ns = $ns[HACL_NS_ACL].':';
 		$prefix = $haclgContLang->getPetPrefix($peType).'/';
+		
+		// get the canonical name for the passed protected element
+		$title = Title::newFromText($nameOfPE);
+		if (!$title) {
+			// Invalid title
+			return NULL;
+		}
+		switch ($peType) {
+			case self::PET_CATEGORY:
+			case self::PET_PROPERTY:
+				// for categories and properties the namespace of the protected
+				// element is removed.
+				$nameOfPE = $title->getText();
+				break;
+			default:
+				$nameOfPE = $title->getPrefixedText();
+		}
 		
 		$sdName = $ns.$prefix.$nameOfPE;
 		return $sdName;
