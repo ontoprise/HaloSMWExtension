@@ -67,7 +67,8 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_save_failed' : 'Fehler beim Speichern von LocalSettings.php.',
 	
 	'df_webadmin_console_log' : 'Klicken Sie hier für das Konsolen-Log.',
-    'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.'
+    'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.',
+    'df_webadmin_searching_in_repository' : 'Suche in Repository...'
 	
 };
 

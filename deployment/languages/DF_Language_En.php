@@ -89,14 +89,14 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_update' => 'Update',
 	'df_webadmin_checkdependency' => 'Check dependencies',
 	'df_webadmin_remove' => 'Remove file',
-	'df_webadmin_addrepository' => 'Add repository',
-	'df_webadmin_removerepository' => 'Remove repository',
+	'df_webadmin_addrepository' => 'Register a new repository',
+	'df_webadmin_removerepository' => 'Unregister selected repository',
 	
 	'df_webadmin_statustab' => 'Status',
 	'df_webadmin_searchtab' => 'Find extensions',
 	'df_webadmin_maintenacetab' => 'System Restore',
 	'df_webadmin_uploadtab' => 'Upload local bundles/ontologies',
-	'df_webadmin_settingstab' => 'Repositories',
+	'df_webadmin_settingstab' => 'Registered repositories',
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Servers',
 	
@@ -108,7 +108,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_removerestore' => 'Remove',
 	'df_webadmin_file' => 'File',
 	'df_webadmin_nothingfound' => 'No matching bundles for <b>"$1"</b> found!',
-	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repository click here: ',
+	'df_webadmin_searchinfoifnothingfound' => 'To browse the Ontoprise repositories click here: ',
 	'df_webadmin_norestorepoints' => 'No restore points found.',
 	'df_webadmin_nouploadedfiles' => 'No uploaded files found.',
 	
@@ -134,6 +134,7 @@ class DF_Language_En extends DF_Language {
 	
 	'df_webadmin_newreleaseavailable' => 'New release available! Check the $1',
     'df_webadmin_repository_link' => 'repository list',
+	
 	
      /*Message for ImportOntologyBot*/
     'smw_gard_import_docu' => 'Imports an ontology file.',

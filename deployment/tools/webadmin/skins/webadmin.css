@@ -18,6 +18,10 @@
 	margin-top: 20px;
 }
 
+#df_search_results_header {
+	margin-top: 10px;
+}
+
 #df_webadmin_aboutlink {
     cursor: pointer;	
 }

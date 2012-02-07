@@ -489,7 +489,18 @@ $(function() {
 	 * @param e event
 	 */
 	var searchHandler = function(e) {
-			
+		
+		// show repositories 
+		var html = dfgWebAdminLanguage.getMessage('df_webadmin_searching_in_repository');
+		$('#df_repository_list option').each(function(i, element) {
+			var url = $(element).val();
+			if ($.trim(url).substr(url.length-1) != "/") {
+				url += "/";
+			}
+			html += '<br><a target="_blank" href="'+url+'repository.xml">'+url+'</a>'; 
+		});
+		$('#df_search_results_header').html(html);
+		
 		var callbackHandler = function(html, status, xhr) {
 			
 			$('#df_search_progress_indicator').hide();

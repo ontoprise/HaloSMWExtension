@@ -427,7 +427,7 @@ class PackageRepository {
 		ksort($results);
 		return $results;
 	}
-	
+
 
 	/**
 	 * Returns the URL of the requested version of the package if available or NULL if not.

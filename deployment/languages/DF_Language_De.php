@@ -95,7 +95,7 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_searchtab' => 'Suche Extensions',
     'df_webadmin_maintenacetab' => 'Systemwiederherstellung',
 	'df_webadmin_uploadtab' => 'Hochladen von lokalen Bundles/Ontologien',
-	'df_webadmin_settingstab' => 'Paketquellen',
+	'df_webadmin_settingstab' => 'Registrierte Paketquellen',
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Server',
 
@@ -131,6 +131,7 @@ class DF_Language_De extends DF_Language {
 	
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
     'df_webadmin_repository_link' => 'Repository-Liste',
+	
 	
 	/*Message for ImportOntologyBot*/
     'smw_importontologybot' => 'Importiere eine Ontologie',

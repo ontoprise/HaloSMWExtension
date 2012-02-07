@@ -50,6 +50,7 @@ class DFSearchTab {
 		$findall = $dfgLang->getLanguageString('df_webadmin_findall');
 		$html = "<input type=\"text\" value=\"$findall\" onfocus=\"this.value='';\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
+		$html.= "<div id=\"df_search_results_header\"></div>";
 		$html.= "<div id=\"df_search_results\"></div>";
 		return $html;
 	}
@@ -60,7 +61,7 @@ class DFSearchTab {
 		if (count($results) == 0) {
 			$html = $dfgLang->getLanguageString('df_webadmin_nothingfound', array($searchValue));
 			$html .= "<br/><br/>".$dfgLang->getLanguageString('df_webadmin_searchinfoifnothingfound');
-			$html .= '<a href="http://dailywikibuilds.ontoprise.com/repository/repository.xml">Ontoprise repository</a>';
+			$html .= '<a target="_blank" href="http://www.smwplus.com/index.php/Repositories">Ontoprise repositories</a>';
 			return $html;
 		}
 		$html = "<table id=\"df_search_results_table\">";
