@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define( 'WOM_VERSION', '{{$VERSION}} alpha' );
+define( 'WOM_VERSION', '{{$VERSION}} [B{{$BUILDNUMBER}}] alpha' );
 
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
