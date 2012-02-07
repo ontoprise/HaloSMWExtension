@@ -742,7 +742,7 @@ class DeployWikiRevision extends WikiRevision {
 				$res = parent::importOldRevision();
 				// notify import operation
 				$user = User::newFromName( $this->getUser() );
-				RecentChange::notifyNew($this->timestamp, $this->title, $this->minor, $user, $this->getComment(), false);
+				RecentChange::notifyNew(wfTimestampNow(), $this->title, $this->minor, $user, $this->getComment(), false);
                 
 				// refresh semantic data if SMW is available
 				if (defined('SMW_VERSION')) {
