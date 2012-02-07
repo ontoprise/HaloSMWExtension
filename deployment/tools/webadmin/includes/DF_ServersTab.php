@@ -72,11 +72,9 @@ class DFServersTab {
 		$apacheEnd = self::guessPaths("apache", "end");
 		$html .= "<td>Apache</td>";
 
-		if (Tools::isServiceRunning("apache", self::guessPaths("apache"))) {
-			$html .= "<td id=\"df_run_flag_apache\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
-		} else {
-			$html .= "<td id=\"df_run_flag_apache\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
-		}
+
+		$html .= "<td id=\"df_run_flag_apache\" class=\"df_process_unknown\">".$dfgLang->getLanguageString('df_webadmin_process_unknown')."</td>";
+
 		$html .= "<td><select id=\"apache_selector\" class=\"df_action_selector\"><option value=\"$apacheStart\">restart</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_apache_command\" type=\"text\" size=\"80\" value=\"$apacheStart\"/>";
 		$html .= "<input id=\"df_servers_apache_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
@@ -87,11 +85,9 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>mySQL</td>";
 
-		if (Tools::isServiceRunning("mysqld", self::guessPaths("mysql"))) {
-			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
-		} else {
-			$html .= "<td id=\"df_run_flag_mysql\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
-		}
+
+		$html .= "<td id=\"df_run_flag_mysql\" class=\"df_process_unknown\">".$dfgLang->getLanguageString('df_webadmin_process_unknown')."</td>";
+
 		$html .= "<td><select id=\"mysql_selector\" class=\"df_action_selector\"><option value=\"$mysqlStart\">$startActionText</option><option value=\"$mysqlEnd\">$endActionText</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_mysql_command\" type=\"text\" size=\"80\" value=\"$mysqlStart\"/>";
 		$html .= "<input id=\"df_servers_mysql_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
@@ -102,11 +98,9 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>solr</td>";
 
-		if (Tools::isServiceRunning("solr", self::guessPaths("solr"))) {
-			$html .= "<td id=\"df_run_flag_solr\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
-		} else {
-			$html .= "<td id=\"df_run_flag_solr\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
-		}
+
+		$html .= "<td id=\"df_run_flag_solr\" class=\"df_process_unknown\">".$dfgLang->getLanguageString('df_webadmin_process_unknown')."</td>";
+
 		$html .= "<td><select id=\"solr_selector\" class=\"df_action_selector\"><option value=\"$solrStart\">$startActionText</option><option value=\"$solrEnd\">$endActionText</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_solr_command\" type=\"text\" size=\"80\" value=\"$solrStart\"/>";
 		$html .= "<input id=\"df_servers_solr_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
@@ -117,11 +111,9 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>tsc</td>";
 
-		if (Tools::isProcessRunning("tsc", self::guessPaths("tsc"))) {
-			$html .= "<td id=\"df_run_flag_tsc\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
-		} else {
-			$html .= "<td id=\"df_run_flag_tsc\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
-		}
+
+		$html .= "<td id=\"df_run_flag_tsc\" class=\"df_process_unknown\">".$dfgLang->getLanguageString('df_webadmin_process_unknown')."</td>";
+
 		$html .= "<td><select id=\"tsc_selector\" class=\"df_action_selector\"><option value=\"$tscStart\">$startActionText</option><option value=\"$tscEnd\">$endActionText</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_tsc_command\" type=\"text\" size=\"80\" value=\"$tscStart\"/>";
 		$html .= "<input id=\"df_servers_tsc_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";
@@ -132,11 +124,9 @@ class DFServersTab {
 		$html .= "<tr>";
 		$html .= "<td>memcached</td>";
 
-		if (Tools::isServiceRunning("memcached", self::guessPaths("memcached"))) {
-			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_runs')."</td>";
-		} else {
-			$html .= "<td id=\"df_run_flag_memcached\" class=\"df_not_running_process\">".$dfgLang->getLanguageString('df_webadmin_process_doesnot_run')."</td>";
-		}
+
+		$html .= "<td id=\"df_run_flag_memcached\" class=\"df_process_unknown\">".$dfgLang->getLanguageString('df_webadmin_process_unknown')."</td>";
+
 		$html .= "<td><select id=\"memcached_selector\" class=\"df_action_selector\"><option value=\"$memcachedStart\">$startActionText</option><option value=\"$memcachedEnd\">$endActionText</option></select></td>";
 		$html .= "<td><input class=\"df_servers_command\" id=\"df_servers_memcached_command\" type=\"text\" size=\"80\" value=\"$memcachedStart\"/>";
 		$html .= "<input id=\"df_servers_memcached_execute\" class=\"df_servers_execute\" type=\"button\" value=\"$executeText\"/>";

@@ -120,6 +120,13 @@
 	color: red;
 }
 
+.df_process_unknown {
+    background: grey;
+    color: white;
+    width: 150px;
+    text-align: center;
+}
+
 .df_running_process {
 	background: green;
     color: white;

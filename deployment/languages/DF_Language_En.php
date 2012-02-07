@@ -122,9 +122,10 @@ class DF_Language_En extends DF_Language {
 	'df_select_extension' => 'Select extension',
 	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes. If you edit LocalSettings.php manually, make sure that you <b>do not remove</b> the extension-tags in LocalSettings.php. Otherwise this view gets messed up.",
 	
-	'df_webadmin_configureservers' => 'Here you can start/stop the servers of your wiki installation',
+	'df_webadmin_configureservers' => 'Here you can start/stop the servers of your wiki installation. Please wait a few seconds until the state is refreshed.',
 	'df_webadmin_process_runs' => 'running',
 	'df_webadmin_process_doesnot_run' => 'not running',
+	'df_webadmin_process_unknown' => 'refreshing...',
 	'df_webadmin_server_execute' => 'Execute',
 	'df_webadmin_server_start' => 'start',
 	'df_webadmin_server_end' => 'stop',
