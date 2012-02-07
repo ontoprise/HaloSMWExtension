@@ -226,6 +226,13 @@ the FAQ section, then contact the user support list (see the Contact section).
     done without sending the authentication token, therefore the access must be
     checked by creating authentication tokens by a random string and this
     secret, so that the Query Interface cannot be accessed as an anonymous user.
+    
+10. $smwgHaloSPARQLPropertyPrintout = true/false
+    This option denotes if SPARQL variable names are interpreted as properties 
+    if they exist with the same name. If so, the values must match the type of 
+    this properties otherwise they are not shown in query results. If set to false
+    the types are ignored. Besides this global settings, the user can specify the option
+    'useproperty=true/false' as a query parameter. This overwrites the global setting.
 
 === Configuring a triplestore ===
 Add to LocalSettings.php:
