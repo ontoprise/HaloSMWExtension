@@ -250,6 +250,10 @@ function tscSetupExtension() {
 		$wgAutoloadClasses['ExportObjectLogicBot'] = $tscgIP . '/includes/bots/SGA_ExportObjectLogicBot.php';
 	    new ExportObjectLogicBot();
 	}
+	
+	// denotes if SPARQL variables should be interpreted as properties if possible
+	global $smwgHaloSPARQLPropertyPrintout;
+	if (!isset($smwgHaloSPARQLPropertyPrintout)) $smwgHaloSPARQLPropertyPrintout = true;
 }
 
 

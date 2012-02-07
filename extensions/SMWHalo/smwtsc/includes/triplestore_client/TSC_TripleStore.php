@@ -792,6 +792,13 @@ class SMWTripleStore extends SMWStoreAdapter {
 				$sourcesSet[] = (string) $s;
 			}
 		}
+		
+		// use property printouts
+		global $smwgHaloSPARQLPropertyPrintout;
+		$usePropertyPrintout = $smwgHaloSPARQLPropertyPrintout;
+		if (array_key_exists('useproperty', $query->params)) {
+			$usePropertyPrintout = $query->params['useproperty'] == 'true';
+		}
 
 		// result integration parameter
 		if (array_key_exists('resultintegration', $query->params) && $query->params['resultintegration'] == 'integrated') {
@@ -882,7 +889,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 							$mapPRTOColumns[$label] = array($index);
 						}
 
-						$rewritten_pr = $this->rewritePrintrequest($pr);
+						$rewritten_pr = $this->rewritePrintrequest($pr, $usePropertyPrintout);
 						$prs[] = $rewritten_pr;
 						$index++;
 					}
@@ -929,7 +936,8 @@ class SMWTripleStore extends SMWStoreAdapter {
 					$data = SMWPropertyValue::makeUserProperty($sel_var);
 				}
 				$propertyExists = !is_null($data) ? Title::newFromText($data->getDataItem()->getLabel(), SMW_NS_PROPERTY)->exists() : false;
-				if ($propertyExists) {
+				
+				if ($propertyExists && $usePropertyPrintout) {
 					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, str_replace("_"," ",$sel_var), $data);
 				} else {
 					$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var));
@@ -1056,7 +1064,8 @@ class SMWTripleStore extends SMWStoreAdapter {
 	 * @param SMWPrintRequest $pr
 	 * @return SMWPrintRequest
 	 */
-	private function rewritePrintrequest($pr) {
+	private function rewritePrintrequest($pr, $usePropertyPrintout) {
+		
 		$data = $pr->getData();
 		$rewritten_prs = $pr;
 		if ($data instanceof Title) { // property chain appear as Title
@@ -1078,7 +1087,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 			$rewritten_prs = new SMWChainPrintRequest(
 			$titleText,
-			$newtitle->exists()
+			$newtitle->exists() && $usePropertyPrintout
 			? SMWPrintRequest::PRINT_PROP
 			: SMWPrintRequest::PRINT_THIS,
 			$newlabel,
