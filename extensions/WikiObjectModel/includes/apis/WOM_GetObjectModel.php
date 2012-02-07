@@ -50,7 +50,7 @@ class ApiWOMGetObjectModel extends ApiBase {
 		} else {
 			$result['result'] = 'Success';
 			$result['revisionID'] = $page_obj->getRevisionID();
-			
+
 			// pay attention to special xml tag, e.g., <property><value>...</value></property>
 			$result['return'] = array();
 			if ( $type == 'count' ) {

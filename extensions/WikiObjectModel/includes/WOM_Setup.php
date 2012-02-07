@@ -32,6 +32,10 @@ $wgAutoloadClasses['WOMTableCellModel']        =  $wgOMIP . '/includes/models/WO
 $wgAutoloadClasses['WOMMagicWordModel']        =  $wgOMIP . '/includes/models/WOM_OM_MagicWord.php';
 $wgAutoloadClasses['WOMHTMLTagModel']          =  $wgOMIP . '/includes/models/WOM_OM_HTMLTag.php';
 $wgAutoloadClasses['WOMTemplateFieldHolderModel'] =  $wgOMIP . '/includes/models/WOM_OM_TmplFieldHolder.php';
+$wgAutoloadClasses['WOMSparqlModel']           =  $wgOMIP . '/includes/models/WOM_OM_Sparql.php';
+$wgAutoloadClasses['WOMRuleModel']             =  $wgOMIP . '/includes/models/WOM_OM_Rule.php';
+$wgAutoloadClasses['WOMRuleLogicModel']        =  $wgOMIP . '/includes/models/WOM_OM_RuleLogic.php';
+$wgAutoloadClasses['WOMRedirectModel']         =  $wgOMIP . '/includes/models/WOM_OM_Redirect.php';
 
 // Definitions
 define( 'WOM_TYPE_PAGE'           , 'page' );
@@ -57,6 +61,10 @@ define( 'WOM_TYPE_TBL_CELL'       , 'table_cell' );
 define( 'WOM_TYPE_MAGICWORD'      , 'magicword' );
 define( 'WOM_TYPE_HTMLTAG'        , 'html' );
 define( 'WOM_TYPE_TMPL_FIELD_HOLDER', 'template_field_holder' );
+define( 'WOM_TYPE_SPARQL'         , 'sparql' );
+define( 'WOM_TYPE_RULE'           , 'rule' );
+define( 'WOM_TYPE_RULELOGIC'      , 'rulelogic' );
+define( 'WOM_TYPE_REDIRECT'       , 'redirect' );
 
 // POM Parser
 $wgAutoloadClasses['WikiObjectModelParser']     =  $wgOMIP . '/includes/parsers/WikiObjectModelParser.php';
@@ -76,6 +84,8 @@ $wgAutoloadClasses['WOMTableCellParser']       =  $wgOMIP . '/includes/parsers/W
 $wgAutoloadClasses['WOMMagicWordParser']       =  $wgOMIP . '/includes/parsers/WOMMagicWordParser.php';
 $wgAutoloadClasses['WOMHTMLTagParser']         =  $wgOMIP . '/includes/parsers/WOMHTMLTagParser.php';
 $wgAutoloadClasses['WOMTemplateFieldHolderParser'] =  $wgOMIP . '/includes/parsers/WOMTemplateFieldHolderParser.php';
+$wgAutoloadClasses['WOMRuleParser']            =  $wgOMIP . '/includes/parsers/WOMRuleParser.php';
+$wgAutoloadClasses['WOMRedirectParser']        =  $wgOMIP . '/includes/parsers/WOMRedirectParser.php';
 
 // Definitions
 define( 'WOM_PARSER_ID_CATEGORY'       , 'category' );
@@ -94,6 +104,8 @@ define( 'WOM_PARSER_ID_TABLECELL'      , 'tbl_cell' );
 define( 'WOM_PARSER_ID_MAGICWORD'      , 'magicword' );
 define( 'WOM_PARSER_ID_HTMLTAG'        , 'html' );
 define( 'WOM_PARSER_ID_TEMPLATE_FIELD_HOLDER', 'template_field_holder' );
+define( 'WOM_PARSER_ID_RULE'           , 'rule' );
+define( 'WOM_PARSER_ID_REDIRECT'       , 'redirect' );
 
 global $wgOMParsers, $wgOMModelParserMapping;
 $wgOMParsers = array(
@@ -113,6 +125,8 @@ $wgOMParsers = array(
 		'WOMMagicWordParser',
 		'WOMHTMLTagParser',
 		'WOMTemplateFieldHolderParser',
+		'WOMRuleParser',
+		'WOMRedirectParser',
 );
 
 $wgOMModelParserMapping = array(
@@ -136,6 +150,8 @@ $wgOMModelParserMapping = array(
 	WOM_TYPE_MAGICWORD      => WOM_PARSER_ID_MAGICWORD,
 	WOM_TYPE_HTMLTAG        => WOM_PARSER_ID_HTMLTAG,
 	WOM_TYPE_TMPL_FIELD_HOLDER => WOM_PARSER_ID_TEMPLATE_FIELD_HOLDER,
+	WOM_TYPE_RULE           => WOM_PARSER_ID_RULE,
+	WOM_TYPE_REDIRECT       => WOM_PARSER_ID_REDIRECT,
 );
 
 global $wgOMSentenceObjectTypes;

@@ -73,8 +73,8 @@ class WOMPropertyModel extends WikiObjectModel {
 
 	public function getWikiText() {
 		$value = $this->getPropertyValue();
-		if (substr($value, 0, 1) == ':') {
-			$value = ' '.$value;
+		if ( substr( $value, 0, 1 ) == ':' ) {
+			$value = ' ' . $value;
 		}
 		$res = "[[{$this->getPropertyName()}::{$value}";
 		if ( $this->getPropertyValue() != $this->getCaption()
@@ -93,7 +93,7 @@ class WOMPropertyModel extends WikiObjectModel {
 	}
 
 	public function getPropertyValue() {
-		return trim($this->m_smwdatavalue == null ? $this->m_value : $this->m_smwdatavalue->getWikiValue());
+		return trim( $this->m_smwdatavalue == null ? $this->m_value : $this->m_smwdatavalue->getWikiValue() );
 	}
 
 	public function getCaption() {

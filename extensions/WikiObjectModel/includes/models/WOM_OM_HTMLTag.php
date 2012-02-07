@@ -37,6 +37,7 @@ class WOMHTMLTagModel extends WikiObjectModelCollection {
 			$v = preg_replace( '/^[\'"](.*)[\'"]$/', '$1', $v );
 			if ( $attr == $a ) return $v;
 		}
+		return null;
 	}
 
 	public function setAttributes( $attrs ) {
@@ -65,7 +66,7 @@ class WOMHTMLTagModel extends WikiObjectModelCollection {
 		if ( $key == 'name' ) {
 			$this->m_name = $value;
 		} else {
-			throw new MWException( __METHOD__ . ": invalid key/value pair: name=html_tag_name" );
+			$attrs[$key] = $value;
 		}
 	}
 	protected function getXMLAttributes() {
