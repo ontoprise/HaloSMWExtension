@@ -315,17 +315,17 @@
     <title>Property:Has latitude</title>
     <id>270</id>
     <revision>
-      <timestamp>2012-01-18T14:00:18Z</timestamp>
+      <timestamp>2012-02-07T14:00:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
-        <id>1</id>
+        <id>2</id>
       </contributor>
       <text xml:space="preserve">__NOTOC__
 [[Rationale::This property stores the value of the latitude annotation of a feed item.]]
 
 {{NoteInText|The characteristics of this property are visible in the factbox below.}}
 [[Category:Property]]
-[[Has type::Steing| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]] [[Has max cardinality::1| ]]</text>
+[[Has type::String| ]][[Part of bundle::dataimport| ]][[Has domain and range::Category:FeedItem;| ]] [[Has max cardinality::1| ]]</text>
     </revision>
   </page>
   <page>
