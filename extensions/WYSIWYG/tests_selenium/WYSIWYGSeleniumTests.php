@@ -24,10 +24,10 @@
 /**
  * @file
  * @ingroup WYSIWYGTests
- * 
+ *
  * @defgroup WYSIWYGTests WYSIWYG unit tests
  * @ingroup WYSIWYG
- * 
+ *
 
  */
 
@@ -44,6 +44,10 @@ require_once 'testcases/TestRule.php';
 require_once 'testcases/TestWebservice.php';
 require_once 'testcases/TestNoinclude.php';
 require_once 'testcases/TestQueries.php';
+require_once 'testcases/TestExternalImageLinks.php';
+require_once 'testcases/TestInternalFileLinks.php';
+require_once 'testcases/TestInternalMediaLinks.php';
+require_once 'testcases/TestInterwikiLinks.php';
 
 
 class WYSIWYGSeleniumTests
@@ -57,13 +61,18 @@ class WYSIWYGSeleniumTests
 		$suite->addTestSuite("TestTransformationOfSemanticData");
 		$suite->addTestSuite("TestAddingExternalImages");
 		$suite->addTestSuite("TestWikiMarkup");
-                $suite->addTestSuite("TestHtmlToWikitextConverion1");
-                $suite->addTestSuite("TestHtmlToWikitextConverion2");
-                $suite->addTestSuite("TestHtmlToWikitextConverion3");
-                $suite->addTestSuite("TestRule");
-                $suite->addTestSuite("TestWebservice");
-                $suite->addTestSuite("TestNoinclude");
-                $suite->addTestSuite("TestQueries");
+    $suite->addTestSuite("TestHtmlToWikitextConverion1");
+    $suite->addTestSuite("TestHtmlToWikitextConverion2");
+    $suite->addTestSuite("TestHtmlToWikitextConverion3");
+    $suite->addTestSuite("TestRule");
+    $suite->addTestSuite("TestWebservice");
+    $suite->addTestSuite("TestNoinclude");
+    $suite->addTestSuite("TestQueries");
+    $suite->addTestSuite("TestExternalImageLinks");
+    $suite->addTestSuite("TestInternalFileLinks");
+    $suite->addTestSuite("TestInternalMediaLinks");
+    $suite->addTestSuite("TestInterwikiLinks");
+
 		return $suite;
 	}
 }

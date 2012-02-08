@@ -71,8 +71,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             'img.fck_mw_border' +
             '{' +
                 'border: 1px solid #dddddd;' +
-            '}\n'
-            );
+            '}\n');
+			
         // Add the CSS styles for special wiki placeholders.
         editor.addCss(
             'img.FCK__MWRef' +
@@ -206,9 +206,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 'width: 66px !important;' +
                 'height: 15px !important;' +
                 'display: block' +
-            '}\n'
-                    
-            );
+            '}\n');
         var wikiFilterRules =
         {
             elements :
@@ -451,9 +449,10 @@ CKEDITOR.plugins.add( 'mediawiki',
 //                        'FCK__MWNoinclude',
 //                        'FCK__MWOnlyinclude'
                         ])
-                        ) return {
-                        MWSpecialTags: CKEDITOR.TRISTATE_ON
-                    };
+                        ) 
+				{
+						return { MWSpecialTags: CKEDITOR.TRISTATE_ON };
+				}
             });
         }
         
@@ -492,8 +491,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             {
                     evt.data.dialog = 'MWSpecialTags';	
                     
-            }
-                	   
+            }                	   
         });
         
         var createXMLHttpRequest = function()
@@ -716,7 +714,12 @@ CKEDITOR.customprocessor.prototype =
       // if there is no inner HTML in the Link, do not add it to the wikitext
       var label = this._GetNodeText(htmlNode).Trim();
       if (!label){
-        return '';
+        if(htmlNode.childNodes.length && htmlNode.childNodes[0].nodeName === 'img'){
+          label = htmlNode.childNodes[0].getAttribute('src');
+        }
+        if(!label){
+          return '';
+        }
       }
 
       //get link details
@@ -742,7 +745,7 @@ CKEDITOR.customprocessor.prototype =
         //handle external links
         title = title || label;
         title = (title === '[n]' ? '' : title);
-        var hrefTypeRegexp = new RegExp('^(' + mw.config.get('wgUrlProtocols') + ')[\\s\\S]+', i);
+        var hrefTypeRegexp = new RegExp('^(' + mw.config.get('wgUrlProtocols') + ')[\\s\\S]+', 'i');
         var matches = href.match(hrefTypeRegexp);
         if(matches && matches.length){
           title = (title ? ' ' + title : '');
@@ -819,7 +822,7 @@ CKEDITOR.customprocessor.prototype =
                 if ( sNodeName == "" || sNodeName.substring(0, 1) == '/' || sNodeName == "style")
                     return;
 
-                if ( sNodeName == 'br' && ( this._inPre || this._inLSpace ) ){
+                if ( sNodeName === 'br' && ( this._inPre || this._inLSpace ) ){
                     stringBuilder.push( "\n" );
                     if ( this._inLSpace )
                         stringBuilder.push( " " );
@@ -885,8 +888,8 @@ CKEDITOR.customprocessor.prototype =
                     if ( !basicElement[2] ){
                         this._AppendChildNodes( htmlNode, stringBuilder, prefix );
                         // only empty element inside, remove it to avoid quotes
-                        if ( ( stringBuilder.length == len || ( stringBuilder.length == len + 1 && !stringBuilder[len].length ) )
-                            && basicElement[0] && basicElement[0].charAt(0) == "'" ){
+                        if ( ( stringBuilder.length === len || ( stringBuilder.length == len + 1 && !stringBuilder[len].length ) )
+                            && basicElement[0] && basicElement[0].charAt(0) === "'" ){
                             stringBuilder.pop();
                             stringBuilder.pop();
                             return;
@@ -1083,7 +1086,7 @@ CKEDITOR.customprocessor.prototype =
                                         currentNode = currentNode.childNodes[0];
                                     } else {
                                         var nextNode = currentNode.nextSibling;
-                                        if (nextNode == null && level > 0) {
+                                        if (nextNode === null && level > 0) {
                                             while (level > 0) {
                                                 currentNode = currentNode.parentNode;
                                                 level--;
@@ -1449,6 +1452,9 @@ CKEDITOR.customprocessor.prototype =
 
                     stringBuilder.push( "-->" );
                     return;
+					
+				default:
+					return;
             }
         },
 
@@ -1582,6 +1588,9 @@ CKEDITOR.customprocessor.prototype =
                     }
                     if (emptyVal.exec(text)) return '';
                     return '[[' + labelCategory + ':' + text + ']]';
+				
+				default:
+					return '';
             }
         },
         // Get real element from a fake element.
