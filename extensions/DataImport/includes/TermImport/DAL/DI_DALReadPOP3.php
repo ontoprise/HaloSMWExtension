@@ -407,7 +407,7 @@ class DALReadPOP3 implements IDAL {
 			$ssl = ''.trim($ssl[0]);
 			
 			if($serverAddress){
-				$serverAddress = $serverAddress[0];
+				$serverAddress = ''.trim($serverAddress[0]);
 			} else {
 				$serverAddress = "";
 			}
@@ -422,18 +422,18 @@ class DALReadPOP3 implements IDAL {
 				$serverAddress .= ":110/pop3}INBOX";
 			}
 			if($userName){
-				$userName = trim($userName[0]);
+				$userName = ''.trim($userName[0]);
 			} else {
 				$userName = "";
 			}
 			if($password){
-				$password = trim($password[0]);
+				$password = ''.trim($password[0]);
 			} else {
 				$password = "";
 			}
 
-			$this->connection = @ imap_open ("{".$serverAddress,
-			$userName, $password);
+			$this->connection =  imap_open ("{".$serverAddress,
+				$userName, $password);
 
 			$check = @imap_check($this->connection);
 			if(!$check){
