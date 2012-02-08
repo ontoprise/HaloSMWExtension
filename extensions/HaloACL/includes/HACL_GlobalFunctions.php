@@ -886,7 +886,7 @@ function haclfDecrypt($string) {
 }
 
 function haclfHandleFormField($form_field, $cur_value, $form_submitted) {
-	$property_name = $form_field->template_field->semantic_property;
+	$property_name = $form_field->template_field->getSemanticProperty();
 	if (! empty($property_name)) {
 		$property_title = Title::makeTitleSafe(SMW_NS_PROPERTY, $property_name);
 		if (!isset($property_title)) {
