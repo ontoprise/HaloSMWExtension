@@ -102,7 +102,8 @@ $messages['en'] = array(
     'smw_tsa_autoloadfolder'=> 'Auto-load folder',
     'smw_tsa_tscparameters'=> 'TSC parameters',
     'smw_tsa_synccommands'=> 'Synchronization commands',
-
+	'smw_tsa_licenseinfo' => 'License',
+	'smw_tsa_license' => 'License state',
     // ---- Ask triplestore ----
     'asktsc' => 'Ask triplestore',
 
@@ -200,6 +201,8 @@ $messages['de'] = array(
     'smw_tsa_autoloadfolder'=> 'Automatisch geladenes Verzeichnis',
     'smw_tsa_tscparameters'=> 'TSC-Parameter',
     'smw_tsa_synccommands'=> 'Synchronisationskommandos',
+	'smw_tsa_licenseinfo' => 'Lizenz',
+	'smw_tsa_license' => 'Lizenz-Status',
 
     // ---- Ask triplestore ----
     'asktsc' => 'Anfrage an Triplestore',

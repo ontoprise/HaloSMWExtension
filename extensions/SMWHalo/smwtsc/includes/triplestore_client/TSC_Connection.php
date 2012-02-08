@@ -310,6 +310,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$xmlDoc = simplexml_load_string($result);
 		$resultMap = array();
 		$resultMap['tscversion'] = (string) $xmlDoc->tscversion;
+		$resultMap['licenseState'] = (string) $xmlDoc->licenseState;
 		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
 		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
 		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
