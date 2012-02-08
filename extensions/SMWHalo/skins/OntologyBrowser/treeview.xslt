@@ -255,7 +255,7 @@
 
 	<xsl:template match="instance">
 		<tr class="instanceListRow">
-			<td style="width: 15%"><!-- <img src="{$param-img-directory}instance.gif"/> -->
+			<td style="width: 45%"><!-- <img src="{$param-img-directory}instance.gif"/> -->
 				<a class="instance">
 					<xsl:choose>
 						<xsl:when test="gissues and @inherited">
@@ -308,8 +308,7 @@
 						<xsl:value-of select="'instance'" />
 					</xsl:with-param>
 				</xsl:call-template>
-			</td>
-			<td style="width: 170px">
+		
                 <span class="instanceTreeActions">
 				<a class="navigationLink" style="margin-left:5px;">
 					<xsl:choose>
