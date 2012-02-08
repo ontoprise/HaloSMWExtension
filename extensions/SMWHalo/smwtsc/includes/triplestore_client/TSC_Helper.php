@@ -240,9 +240,10 @@ class TSHelper {
 	public static function isSPARQL($parserFunctionParameters) {
 		if (is_array($parserFunctionParameters)) {
 			$isSparql = false;
-			foreach($parserFunctionParameters as $p) {
+			foreach($parserFunctionParameters as $key => $p) {
 				$p = trim($p);
 				$isSparql |= (stripos($p, "SELECT ") === 0 || stripos($p, "PREFIX ") === 0);
+				$isSparql |= (stripos($key, "SELECT ") === 0 || stripos($key, "PREFIX ") === 0);
 				if ($isSparql) break;
 			}
 			return $isSparql;
