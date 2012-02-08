@@ -312,7 +312,7 @@ class OB_StorageTS extends OB_Storage {
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 			$onlyDirect = $p_array[4] == "true";
 			global $smwgHaloTripleStoreGraph;
-			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$metadataRequest", $smwgHaloTripleStoreGraph);
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. } ORDER BY ASC(?p)",  "limit=$limit|offset=$offset$metadataRequest", $smwgHaloTripleStoreGraph);
 			$annotations = array();
 			$this->parseAnnotations($response, $instanceURI, $annotations, $onlyDirect);
 
@@ -742,7 +742,7 @@ class OB_StorageTSQuad extends OB_StorageTS {
 
 
 
-			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
+			$response = $client->query("SELECT ?p ?o WHERE { <$instanceURI> ?p ?o. } ORDER BY ASC(?p)",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 			$annotations = array();
 			$this->parseAnnotations($response, $instanceURI, $annotations);
 
