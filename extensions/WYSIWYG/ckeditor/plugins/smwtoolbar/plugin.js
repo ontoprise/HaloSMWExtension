@@ -897,7 +897,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu.showMenu();
     };
 
-    /**
+  /**
    * Create a new context menu for annotating a property.
    * Only the property container will be shown.
    * The selected text is the representation at least. If value and represenation
@@ -1088,53 +1088,6 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       return frame;
     };
 
-    /**
-   * fetches the current selected text from the gEditInterface (i.e. the FCK editor
-   * area) and creates a context menu for annotating the selected text or modifying
-   * the selected annotation.
-   *
-   * @param Event event
-   */
-    CheckSelectedAndCallPopup = function(event) {
-      if (!event) {
-        var frame = GetWindowOfEditor();
-        event = frame.event;
-      }
-	  if (!event) {
-	  	event = gElastMouseUpEvent;
-	  }
-	  gElastMouseUpEvent = event;
-      // handle here if the popup box for a selected annotation must be shown
-      var selection = gEditInterface.getSelectionAsArray();
-      var msg = gEditInterface.getErrMsgSelection();
-      if (!(selection && selection.length) && msg) {
-        var pos = CalculateClickPosition(event);        
-        msg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        window.parent.smwhgAnnotationHints.showMessageAndWikiText(
-          msg, '', pos[0], pos[1]);
-        return;
-      }
-      // something is selected, this will be a new annotation,
-      // offer both category and property toolbox
-      if (selection && selection.length === 1 && selection[0]) {
-        ShowNewToolbar(event, selection[0]);
-        return;
-      }
-      // an existing annotation will be edited
-      if (selection && selection.length > 1) {
-        if (selection[1] == 102) { // Property
-          var show = selection[0];
-          var val = show;
-          if (selection.length == 4)  // an explizit property value is set, then
-            val = selection[3];     // it's different from the selected (show)
-          ShowRelToolbar(event, selection[2], val, show);
-        }
-        else if (selection[1] == 14) { // Category
-          ShowCatToolbar(event, selection[0], true);
-        }
-      }
-    };
-	
 	/**
 	 * Invokes the tagging floatbox with the current selection for adding a 
 	 * property annotation.
@@ -1278,19 +1231,13 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             var iframe = frame;
             var iframeDocument = iframe.document || iframe.contentDocument;
             iframeDocument.onkeyup = this.EditorareaChanges.bind(this);
-            iframeDocument.onmouseup = CheckSelectedAndCallPopup;
-            iframeDocument.onmousedown = HideContextPopup;
           } else {
             window.parent.Event.observe(frame, 'keyup', this.EditorareaChanges.bind(this));
-            window.parent.Event.observe(frame, 'mouseup', CheckSelectedAndCallPopup);
-            window.parent.Event.observe(frame, 'mousedown', HideContextPopup);
           }
         //            window.parent.obContributor.activateTextArea(frame);
         } else {
           var Textarea = CKEditorTextArea(editor);
           window.parent.Event.observe(Textarea, 'keyup', this.EditorareaChanges.bind(this));
-          window.parent.Event.observe(Textarea, 'mouseup', CheckSelectedAndCallPopup);
-          window.parent.Event.observe(Textarea, 'mousedown', HideContextPopup);
           window.parent.obContributor.activateTextArea(Textarea);
         }
       },
@@ -1306,14 +1253,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             iframeDocument.onmousemove = null;
           } else {
             window.parent.Event.stopObserving(window.frames[0], 'keyup', this.EditorareaChanges);
-            window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-          //            window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
           }
         } else {
           var Textarea = CKEditorTextArea(editor);
           window.parent.Event.stopObserving(Textarea, 'keyup', this.EditorareaChanges);
-          window.parent.Event.stopObserving(Textarea, 'mouseup', CheckSelectedAndCallPopup);
-        //          window.parent.Event.stopObserving(Textarea, 'mousedown', HideContextPopup);
         }
       },
 	  RegisterMouseTracker: function (editor) {
