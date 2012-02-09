@@ -41,25 +41,7 @@ if( !defined( 'MEDIAWIKI' ) )
 
 global $IP, $wgHooks;
 require_once( "$IP/includes/CategoryPage.php");
-//$wgHooks['CategoryPageView'][] = 'smwfSemanticCategoryPage';
 
-/**
- * Hook for category page
- */
-//function smwfSemanticCategoryPage(& $categoryPage) {
-//	$newCategoryPage = new SMWCategoryPage($categoryPage->getTitle());
-//	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
-//			$newCategoryPage->openShowCategory();
-//	}
-//
-//	# If the article we've just shown is in the "Image" namespace,
-//	# follow it with the history list and link list for the image
-//	# it describes.
-//	if ( NS_CATEGORY == $newCategoryPage->mTitle->getNamespace() ) {
-//			$newCategoryPage->closeShowCategory();
-//	}
-//	return false;
-//}
 /**
  * Extends the original CategoryPage. 
  */
@@ -68,16 +50,18 @@ class SMWCategoryPage extends CategoryPage {
 	/**
 	 * Overwrites the original method and installs the extended SMWCategoryViewer.
 	 */
-	function closeShowCategory() {
-		global $wgOut, $wgRequest;
-		$from = $wgRequest->getVal( 'from' );
-		$until = $wgRequest->getVal( 'until' );
+    function closeShowCategory() {
+        global $wgOut, $wgRequest;
 
-		$viewer = new SMWCategoryViewer( $this->mTitle, $from, $until );
-		$wgOut->addHTML( $viewer->getHTML() );
-	
-		
-	}
+        $from = $until = array();
+        foreach ( array( 'page', 'subcat', 'file' ) as $type ) {
+            $from[$type] = $wgRequest->getVal( "{$type}from" );
+            $until[$type] = $wgRequest->getVal( "{$type}until" );
+        }
+
+        $viewer = new SMWCategoryViewer( $this->mTitle, $from, $until, $wgRequest->getValues() );
+        $wgOut->addHTML( $viewer->getHTML() );
+    }
 }
 
 /**
@@ -85,10 +69,10 @@ class SMWCategoryPage extends CategoryPage {
  */
 class SMWCategoryViewer extends CategoryViewer {
 
-	function __construct( $title, $from = '', $until = '' ) {
-		parent::__construct($title, $from, $until);
-		
-	}
+    function __construct( $title, $from = '', $until = '', $values ) {
+        parent::__construct($title, $from, $until, $values);
+        
+    }
 	
 	/**
 	 * Format the category data list.
