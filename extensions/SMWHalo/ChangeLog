@@ -1,5 +1,9 @@
 SMWHalo extension ChangeLog
 ===========================
+VERSION 1.7.0
+	Bugfixes:
+		16606 - Recommended properties don't show up on sub-categories
+
 VERSION 1.6.1
 	FEATURES:
 	16229 - Support the Distribution parameter in the Fancy Table Query Printer

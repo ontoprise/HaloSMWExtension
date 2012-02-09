@@ -1023,9 +1023,7 @@ function _smwfGetSuperCategories($categoryTitle, $asTree = false, $superCategory
 			$superCategoryTitles = _smwfGetSuperCategories($dSCT, $asTree, $superCategoryTitles);
 		}
 	}
-	$response = new AjaxResponse($superCategoryTitles);
-	$response->setResponseCode(200);
-	return $response;
+	return $superCategoryTitles;
 }
 
 /**
