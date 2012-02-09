@@ -30,8 +30,8 @@ class TestTransformationOfSemanticData extends SeleniumTestCase_Base
 
 	public function testMyTestCase()
 	{        
-            $this->login();
-            
+
+    $this->login();
 		$this->open("/mediawiki/index.php?title=Helium&action=edit&mode=wikitext");
 		$this->type("wpTextbox1", "Helium is the chemical element with atomic number 2, which is represented by the symbol He.It is a  [[has color::none|colorless]], [[smells like::odorless]], tasteless, non-toxic, inert monatomic gas that heads the noble gas group in the periodic table.");
 		$this->click("wpSave");

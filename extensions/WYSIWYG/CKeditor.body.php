@@ -99,10 +99,13 @@ class CKeditor_MediaWiki {
 		If FCKeditor extension is enabled, BUT it shouldn't appear (because it's disabled by user, we have incompatible browser etc.)
 		We must do this trick to show the original text as WikiText instead of HTML when conflict occurs
 		*/
-		if ( ( !$wgUser->getOption( 'showtoolbar' ) || $wgUser->getOption( 'riched_disable' ) || !$wgFCKEditorIsCompatible ) ||
-				in_array( $wgTitle->getNamespace(), $this->getExcludedNamespaces() ) || !( $this->showFCKEditor & RTE_VISIBLE ) ||
-				false !== strpos( $pageEditor->textbox1, '__NORICHEDITOR__' )
-			) {
+		if (( !$wgUser->getOption( 'showtoolbar' ) 
+            || $wgUser->getOption( 'riched_disable' )
+            || !$wgFCKEditorIsCompatible )
+            || in_array( $wgTitle->getNamespace(), $this->getExcludedNamespaces())
+            || !( $this->showFCKEditor & RTE_VISIBLE )
+            || false !== strpos( $pageEditor->textbox1, '__NORICHEDITOR__' ))
+    {
 			if( $pageEditor->isConflict ) {
 				$pageEditor->textbox1 = $pageEditor->getWikiContent();
 			}
@@ -168,13 +171,6 @@ class CKeditor_MediaWiki {
         return true;
     }
 
-    private static function addResourceModules(&$out){
-        if(defined('SMW_HALO_VERSION')){
-//            $out->addModules('ext.smwhalo.queryInterface');
-// Fix: This causes the STB to appear everywhere           $out->addModules('ext.smwhalo.allButAnnotate');
-        }
-    }
-
     // take content of css files and put this as inline text into the page, instead
     // of using the link elements to fetch css files separate from the server.
     // The latter causes IE to hang when more than 31 style sheets are processed this way.
@@ -185,14 +181,18 @@ class CKeditor_MediaWiki {
         
         //var_dump($out->styles);
         $action = $wgRequest->getText( 'action' );
-        if (! in_array($action, array('edit', 'submit'))) return $out;
+        if (! in_array($action, array('edit', 'submit'))){
+                return $out;
+        }
+        
         $inlineStyles = array();
         foreach ( $out->styles as $key => $val ) {
             if (count($out->styles[$key]) > 0) {
                 if (isset($out->styles[$key]['condition']) ||
                     isset($out->styles[$key]['dir']) ||
                     strpos($key, '?') !== false ||
-                    strpos($key, 'jquery.fancybox') !== false) continue;
+                    strpos($key, 'jquery.fancybox') !== false)
+                        continue;
                 $count = 1;
                 $cssFile = dirname(__FILE__) . '/../../' . str_replace($wgScriptPath, '', $key, $count);
                 $cssFile = str_replace('//', '/', $cssFile);
@@ -224,11 +224,17 @@ class CKeditor_MediaWiki {
 		$external = $wgRequest->getVal( 'externaledit' );
 		$section = $wgRequest->getVal( 'section' );
 		$oldid = $wgRequest->getVal( 'oldid' );
-		if( !$mediaWiki->getVal( 'UseExternalEditor' ) || $action == 'submit' || $internal ||
-		$section || $oldid || ( !$user->getOption( 'externaleditor' ) && !$external ) ) {
+		if( !$mediaWiki->getVal( 'UseExternalEditor' ) 
+            || $action == 'submit'
+            || $internal
+            || $section
+            || $oldid
+            || ( !$user->getOption( 'externaleditor' ) && !$external ) )
+    {
 			$editor = new CKeditorEditPage( $article );
 			$editor->submit();
-		} elseif( $mediaWiki->getVal( 'UseExternalEditor' ) && ( $external || $user->getOption( 'externaleditor' ) ) ) {
+		}
+    elseif( $mediaWiki->getVal( 'UseExternalEditor' ) && ( $external || $user->getOption( 'externaleditor' ) ) ) {
 			$mode = $wgRequest->getVal( 'mode' );
 			$extedit = new ExternalEdit( $article, $mode );
 			$extedit->edit();
@@ -471,14 +477,14 @@ class CKeditor_MediaWiki {
             $this->showFCKEditor |= RTE_VISIBLE;
         }
 
-		$wgFCKWikiTextBeforeParse = $form->textbox1;
-		if( $this->showFCKEditor & RTE_VISIBLE ){
-			$options = new CKeditorParserOptions();
-			$options->setTidy( true );
-			$parser = new CKeditorParser();
-			$parser->setOutputType( OT_HTML );
-			$form->textbox1 = str_replace( '<!-- Tidy found serious XHTML errors -->', '', $parser->parse( $form->textbox1, $wgTitle, $options )->getText() );
-		}
+//		$wgFCKWikiTextBeforeParse = $form->textbox1;
+//		if( $this->showFCKEditor & RTE_VISIBLE ){
+//			$options = new CKeditorParserOptions();
+//			$options->setTidy( true );
+//			$parser = new CKeditorParser();
+//			$parser->setOutputType( OT_HTML );
+//			$form->textbox1 = str_replace( '<!-- Tidy found serious XHTML errors -->', '', $parser->parse( $form->textbox1, $wgTitle, $options )->getText() );
+//		}
 
 		$printsheet = htmlspecialchars( "$wgStylePath/common/wikiprintable.css?$wgStyleVersion" );
 
@@ -496,8 +502,8 @@ class CKeditor_MediaWiki {
 		// End of CSS trick
 
 		$script = <<<HEREDOC
-<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>
-<!-- <script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script> -->
+<!-- <script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script> -->
+<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
 </script>

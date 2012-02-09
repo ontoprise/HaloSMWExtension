@@ -27,6 +27,7 @@ class TestHtmlToWikitextConverion2 extends SeleniumTestCase_Base
 {
   public function testHtmlToWikiConversion()
   {
+    $this->login();
     $this->open("/mediawiki/index.php?title=Testhtmltowiki&action=edit&mode=wysiwyg");
     $this->runScript("CKEDITOR.instances.wpTextbox1.setData('');");
     $this->setSpeed("2000");

@@ -20,15 +20,10 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
+require_once dirname(__FILE__) . '/../../../../tests/tests_halo/SeleniumTestCase_Base.php';
 
-class Example extends PHPUnit_Extensions_SeleniumTestCase
+class TestWikiMarkup1 extends SeleniumTestCase_Base
 {
-  protected function setUp()
-  {
-    $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://localhost/");
-  }
-
   public function testMyTestCase()
   {
     $this->open("/mediawiki/index.php?title=Mynewtestpagss&action=edit&mode=wysiwyg");

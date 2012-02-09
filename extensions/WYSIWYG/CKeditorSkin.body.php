@@ -134,8 +134,13 @@ class CKeditorSkin {
 				$srcPart = substr( $originalLink, strpos( $originalLink, "src=" ) + 5 );
 				$url = strtok( $srcPart, '"' );
 			}
-			$srcPart = substr( $originalLink, strpos( $originalLink, "src=" ) + 5 );
-			$url = strtok( $srcPart, '"' );
+      if(strpos( $originalLink, "src=" )){
+        $srcPart = substr( $originalLink, strpos( $originalLink, "src=" ) + 5 );
+        $url = strtok( $srcPart, '"' );
+      }
+      else{
+        $url = $found;
+      }
 		}
 
 		// Shortcuts

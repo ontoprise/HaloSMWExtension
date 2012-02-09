@@ -48,8 +48,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 	function doInsertHtml( data )
 	{
-		if ( this.dataProcessor )
-			data = this.dataProcessor.toHtml( data );
+//		if ( this.dataProcessor )
+//			data = this.dataProcessor.toHtml( data );
 
 		// HTML insertion only considers the first range.
 		var selection = this.getSelection(),

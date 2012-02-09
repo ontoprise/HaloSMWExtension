@@ -27,6 +27,7 @@ class TestHtmlToWikitextConverion1 extends SeleniumTestCase_Base
 {
   public function testHtmlToWikiConversion()
   {
+    $this->login();
     $this->open("/mediawiki/index.php?title=Testhtmltowiki&action=edit&mode=wysiwyg");
     $this->runScript("CKEDITOR.instances.wpTextbox1.setData('');");
     $this->setSpeed("2000");
@@ -39,6 +40,7 @@ class TestHtmlToWikitextConverion1 extends SeleniumTestCase_Base
     } catch (PHPUnit_Framework_AssertionFailedError $e) {
         array_push($this->verificationErrors, "Conversion error: the resulting wikitext is empty");
     }
+
   }
 }
 ?>

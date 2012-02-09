@@ -30,6 +30,7 @@ class TestPropertiesAndCategoriesChanges extends SeleniumTestCase_Base
 
 	public function testMyTestCase()
 	{
+    $this->login();
 		$this->open("/mediawiki/index.php?title=Mynewtestpage&action=edit&mode=wysiwyg");
 		$this->click("//a/img[@id='editimage']");
 		$this->waitForPageToLoad("30000");

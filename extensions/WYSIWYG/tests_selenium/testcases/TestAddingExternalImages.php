@@ -29,6 +29,7 @@ class TestAddingExternalImages extends SeleniumTestCase_Base
 
   public function testWithExternalImagesDisabled()
   {
+    $this->login();
     $this->open("/mediawiki/index.php?title=Mynewtestpage2&action=edit&mode=wysiwyg");
     $this->runScript("CKEDITOR.instances.wpTextbox1.setData(\"\")");
     for ($second = 0; ; $second++) {

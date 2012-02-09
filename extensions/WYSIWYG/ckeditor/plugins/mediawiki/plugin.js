@@ -575,17 +575,8 @@ CKEDITOR.customprocessor.prototype =
 
     toHtml : function( data, fixForBody )
     {
-        // prevent double transformation because of some weird runtime issues
-        // with the event dataReady in the smwtoolbar plugin
-        // transform only if
-        // 1. there are no html attributes in data string starting with "_fck" or "_cke"
-        // 2. the data string doesn't start with "<p>"
-        // 3. the data string doesn't contain html tags except for <span|div|br|p|sup|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery> (those are also used in wikitext-html) 
-        var dataWithTags = data.replace(/<\/?(?:span|div|br|p|sup|sub|ul|ol|li|u|big|nowiki|includeonly|noinclude|onlyinclude|galery|rule|webservice|uri|protocol|method|parameter|result|part|once|queryPolicy|delay|spanOfLife|tt|dl|math)[^>]*\s*\/?>/ig, '');
-        var dataWithoutTags = dataWithTags.replace(/<\/?\w+(?:(?:\s+[\w@\-]+(?:\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/ig, '');
-        if (data.indexOf('<p>') !== 0 && !data.match(/<.*?(?:fck|cke)/) && dataWithoutTags.length === dataWithTags.length) {
-            data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
-        }
+        data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
+
         //replace only "fcklr" which are not preceded by "<br "
         data = data.replace(/(\<br\s+)?fckLR/gi, function($0, $1){
           return $1 ? $0 : '<br fckLR="true">';
@@ -1039,12 +1030,12 @@ CKEDITOR.customprocessor.prototype =
                                             while ( cell ) {
                                                 attribs = this._GetAttributesStr( cell ) ;
 
-                                                if ( cell.tagName.toLowerCase() == "th" )
+                                                if (cell.tagName && cell.tagName.toLowerCase() == "th" )
                                                     stringBuilder.push( '!' ) ;
                                                 else
                                                     stringBuilder.push( '|' ) ;
 
-                                                if ( attribs.length > 0 )
+                                                if (attribs && attribs.length)
                                                     stringBuilder.push( attribs + ' |' ) ;
 
                                                 stringBuilder.push( ' ' ) ;
@@ -1487,57 +1478,59 @@ CKEDITOR.customprocessor.prototype =
             var attStr = '';
             var aAttributes = htmlNode.attributes;
 
-            for ( var n = 0; n < aAttributes.length; n++ ){
-                var oAttribute = aAttributes[n];
+            if(aAttributes){
+              for ( var n = 0; n < aAttributes.length; n++ ){
+                  var oAttribute = aAttributes[n];
 
-                if ( oAttribute.specified ){
-                    var sAttName = oAttribute.nodeName.toLowerCase();
-                    var sAttValue;
+                  if ( oAttribute.specified ){
+                      var sAttName = oAttribute.nodeName.toLowerCase();
+                      var sAttValue;
 
-                    // Ignore any attribute starting with "_fck" or "_cke".
-                    if ( sAttName.StartsWith( '_fck' ) || sAttName.StartsWith( '_cke' ) )
-                        continue;
-                    // There is a bug in Mozilla that returns '_moz_xxx' attributes as specified.
-                    else if ( sAttName.indexOf( '_moz' ) == 0 )
-                        continue;
-                    // For "class", nodeValue must be used.
-                    else if ( sAttName == 'class' ){
-                        // Get the class, removing any fckXXX and ckeXXX we can have there.
-                        sAttValue = oAttribute.nodeValue.replace( /(^|\s*)(fck|cke)\S+/, '' ).Trim();
+                      // Ignore any attribute starting with "_fck" or "_cke".
+                      if ( sAttName.StartsWith( '_fck' ) || sAttName.StartsWith( '_cke' ) )
+                          continue;
+                      // There is a bug in Mozilla that returns '_moz_xxx' attributes as specified.
+                      else if ( sAttName.indexOf( '_moz' ) == 0 )
+                          continue;
+                      // For "class", nodeValue must be used.
+                      else if ( sAttName == 'class' ){
+                          // Get the class, removing any fckXXX and ckeXXX we can have there.
+                          sAttValue = oAttribute.nodeValue.replace( /(^|\s*)(fck|cke)\S+/, '' ).Trim();
 
-                        if ( sAttValue.length == 0 )
-                            continue;
-                    //				} else if ( sAttName == 'style' && CKEDITOR.env.ie ) {
-                    } else if (CKEDITOR.env.ie ) {
-                        //					sAttValue = htmlNode.style.cssText.toLowerCase();
-                        sAttValue = oAttribute.nodeValue.toLowerCase();
-                    } else if ( sAttName == 'style' && CKEDITOR.env.gecko ) {
-                        // the Mozilla leave style attributes such as -moz in the text, remove them
-                        var styleVals = oAttribute.nodeValue.split(/;/),
-                        styleAtts = [];
-                        for (var i = 0; i < styleVals.length; i++) {
-                            var styleVal = styleVals[i].Trim();
-                            if ( ( !styleVal ) || (styleVal.indexOf('-moz') == 0) ) continue;
+                          if ( sAttValue.length == 0 )
+                              continue;
+                      //				} else if ( sAttName == 'style' && CKEDITOR.env.ie ) {
+                      } else if (CKEDITOR.env.ie ) {
+                          //					sAttValue = htmlNode.style.cssText.toLowerCase();
+                          sAttValue = oAttribute.nodeValue.toLowerCase();
+                      } else if ( sAttName == 'style' && CKEDITOR.env.gecko ) {
+                          // the Mozilla leave style attributes such as -moz in the text, remove them
+                          var styleVals = oAttribute.nodeValue.split(/;/),
+                          styleAtts = [];
+                          for (var i = 0; i < styleVals.length; i++) {
+                              var styleVal = styleVals[i].Trim();
+                              if ( ( !styleVal ) || (styleVal.indexOf('-moz') == 0) ) continue;
 
-                            styleAtts.push( styleVals[i] );
-                        }
-                        sAttValue = styleAtts.join('; ');
-                    }
-                    // XHTML doens't support attribute minimization like "CHECKED". It must be trasformed to cheched="checked".
-                    else if ( oAttribute.nodeValue === true )
-                        sAttValue = sAttName;
-                    else {
-                        //					sAttValue = htmlNode.getAttribute( sAttName, 2 );	// We must use getAttribute to get it exactly as it is defined.
-                        sAttValue = htmlNode.getAttribute( sAttName );	// We must use getAttribute to get it exactly as it is defined.
-                    }
+                              styleAtts.push( styleVals[i] );
+                          }
+                          sAttValue = styleAtts.join('; ');
+                      }
+                      // XHTML doens't support attribute minimization like "CHECKED". It must be trasformed to cheched="checked".
+                      else if ( oAttribute.nodeValue === true )
+                          sAttValue = sAttName;
+                      else {
+                          //					sAttValue = htmlNode.getAttribute( sAttName, 2 );	// We must use getAttribute to get it exactly as it is defined.
+                          sAttValue = htmlNode.getAttribute( sAttName );	// We must use getAttribute to get it exactly as it is defined.
+                      }
 
-                    // leave templates
-                    if ( sAttName.StartsWith( '{{' ) && sAttName.EndsWith( '}}' ) ) {
-                        attStr += ' ' + sAttName;
-                    } else {
-                        attStr += ' ' + sAttName + '="' + String(sAttValue).replace( '"', '&quot;' ) + '"';
-                    }
-                }
+                      // leave templates
+                      if ( sAttName.StartsWith( '{{' ) && sAttName.EndsWith( '}}' ) ) {
+                          attStr += ' ' + sAttName;
+                      } else {
+                          attStr += ' ' + sAttName + '="' + String(sAttValue).replace( '"', '&quot;' ) + '"';
+                      }
+                  }
+              }
             }
             return attStr;
         },

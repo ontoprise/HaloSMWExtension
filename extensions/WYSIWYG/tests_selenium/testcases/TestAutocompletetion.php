@@ -29,6 +29,7 @@ class TestAutocompletetion extends SeleniumTestCase_Base
 
   public function test_autocompletetion()
   {
+    $this->login();
     $this->open("/mediawiki/index.php?title=MyNewTestPage&action=edit");
     $this->type("wpTextbox1", "[[");
     $this->controlKeyDown();

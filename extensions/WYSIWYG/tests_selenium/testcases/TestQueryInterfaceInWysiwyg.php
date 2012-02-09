@@ -30,6 +30,7 @@ class TestQueryInterfaceInWysiwyg extends SeleniumTestCase_Base
 
   public function testMyTestCase()
   {
+    $this->login();
     $this->open("/mediawiki/index.php?title=France&action=edit");
     $this->type("wpTextbox1", "[[HasCitizen::33333333]]\n[[HasCapital::Paris]]\n[[Category:State]]");
     $this->click("wpSave");

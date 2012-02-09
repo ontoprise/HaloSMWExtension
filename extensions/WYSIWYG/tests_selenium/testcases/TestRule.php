@@ -29,6 +29,7 @@ class TestRule extends SeleniumTestCase_Base
     
   public function testRuleWikiToHtmlTransformation()
   {
+    $this->login();
     $this->open("/mw156/index.php?title=Testrule1&action=edit");
     $this->setSpeed("3000");
     if($this->isElementPresent("//a[@id='toggle_wpTextbox1'][text()='Show WikiTextEditor']")){
