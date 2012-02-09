@@ -46,10 +46,10 @@ class SMWQueryProcessor {
 		}
 
 		$paramDefinitions['format']->addManipulations( $formatManipulation );
-
 		$validator = new Validator( 'SMW query', $unknownInvalid );
 		$validator->setParameters( $params, $paramDefinitions, false );
 		$validator->validateParameters();
+
 
 		return $validator->getParameterValues();
 	}
@@ -363,7 +363,7 @@ class SMWQueryProcessor {
 			self::addThisPrintout( $printouts, $params, $showmode );
 		}
 
-		$params = self::getProcessedParams( $params, $printouts );
+        $params = self::getProcessedParams( $params, $printouts );
 
 		/*op-change|start|KK|make sure that the TSC is the default source if a triplestore is attached*/
 		if (!array_key_exists("source", $params) && smwfIsTripleStoreConfigured()) {
@@ -375,7 +375,7 @@ class SMWQueryProcessor {
 			}
 		}
 		/*op-change|end*/
-
+		
 		return self::getResultFromQueryString( $querystring, $params, $printouts, SMW_OUTPUT_WIKI, $context );
 	}
 
@@ -557,7 +557,12 @@ class SMWQueryProcessor {
 		}
 
 		$allowedFormats[] = 'auto';
-
+		
+		/*op-change|start|KK*/
+		$params['source'] = new Parameter( 'source' );
+        $params['source']->setDefault( smwfIsTripleStoreConfigured() ? 'tsc' : 'wiki' );
+        /*op-change|end|KK*/
+        
 		$params['format'] = new Parameter( 'format' );
 		$params['format']->setDefault( 'auto' );
 		//$params['format']->addCriteria( new CriterionInArray( $allowedFormats ) );

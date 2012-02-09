@@ -43,6 +43,9 @@ class SRFQuerySelector {
 	public function getQueryResult() {
 
 		$this->extractQueryParameters();
+		
+		SMWQueryProcessor::addThisPrintout(  $this->m_printouts, $this->m_params );
+		$this->m_params = SMWQueryProcessor::getProcessedParams($this->m_params, $this->m_printouts);
 		$queryobj = SMWQueryProcessor::createQuery( $this->m_querystring, $this->m_params, SMWQueryProcessor::SPECIAL_PAGE , '_srftable', $this->m_printouts );
 		$res = smwfGetStore()->getQueryResult( $queryobj );
 		$printer = SMWQueryProcessor::getResultPrinter('_srftable', SMWQueryProcessor::SPECIAL_PAGE );

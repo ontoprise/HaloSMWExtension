@@ -31,25 +31,30 @@
  * @ingroup SREFSpecials
  */
 class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
-
+	
+	protected function handleParameters( array $params, $outputmode ) {
+		SMWResultPrinter::handleParameters( $params, $outputmode );
+	}
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem( SMW_HEADER_SORTTABLE );
 
+
 		$tableRows = array();
 
+		$rowNum = 1;
 		while ( $subject = $res->getNext() ) {
-			$tableRows[] = $this->getRowForSubject( $subject, $outputmode );
+			$tableRows[] = $this->getRowForSubject( $subject, $outputmode, array(), $rowNum++ );
 		}
-        
+
 		$firstSlice = true;
 		$result = "";
-		
+
 		$pageNum = intval(count($tableRows) / SREF_QUERY_PAGE_LIMIT);
 		$pageNum += count($tableRows) % SREF_QUERY_PAGE_LIMIT === 0 ? 0 : 1;
-		
+
 		for($i = 0; $i < $pageNum; $i++) {
-		
+
 			// print header
 			$visible = $firstSlice ? 'style="display: block" pageNum="'.$pageNum.'"' : 'style="display: none"';
 			$firstSlice = false;
@@ -64,9 +69,9 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 				foreach ( $res->getPrintRequests() as $pr ) {
 					$attribs = array();
 
-					if ( array_key_exists( $pr->getHash(), $this->columnsWithSortKey ) ) {
-						$attribs['class'] = 'numericsort';
-					}
+					//					if ( array_key_exists( $pr->getHash(), $this->columnsWithSortKey ) ) {
+					//						$attribs['class'] = 'numericsort';
+					//					}
 
 					$headers[] = Html::rawElement(
                     'th',
@@ -74,9 +79,9 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 					$pr->getText( $outputmode, ( $this->mShowHeaders == SMW_HEADERS_PLAIN ? null:$this->mLinker ) )
 					);
 				}
-                if ($firstSlice) {
-				    array_unshift( $tableRows, '<tr>' . implode( "\n", $headers ) . '</tr>' );
-                }
+				if ($firstSlice) {
+					array_unshift( $tableRows, '<tr>' . implode( "\n", $headers ) . '</tr>' );
+				}
 			}
 
 			$result .= implode( "\n", array_slice($tableRows, $i*SREF_QUERY_PAGE_LIMIT, SREF_QUERY_PAGE_LIMIT) );
@@ -84,6 +89,7 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 			$result .= "</table>\n"; // print footer
 			$result .= "</div>\n";
 		}
+
 		$this->isHTML = ( $outputmode == SMW_OUTPUT_HTML ); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
 		return $result;
@@ -98,35 +104,24 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 	 *
 	 * @return string
 	 */
-	protected function getCellContent( SMWResultArray $resultArray, $outputmode ) {
+	protected function getCellContent( array /* of SMWDataValue */ $dataValues, $outputmode, $isSubject ) {
 		$values = array();
 		$isFirst = true;
-
-		while ( ( $dv = $resultArray->getNextDataValue() ) !== false ) {
-			$sortKey = '';
-			$isSubject = $resultArray->getPrintRequest()->getMode() == SMWPrintRequest::PRINT_THIS;
-
+		foreach ( $dataValues as $dv ) {
+			$checkbox = "";
 			if ( $isFirst ) {
 				$isFirst = false;
 				$sortkey = $dv->getDataItem()->getSortKey();
 				$enc_sortkey = $isSubject ? Sanitizer::encodeAttribute($dv->getDataItem()->getTitle()->getPrefixedDBkey()) : "";
 				$checkbox = '<input class="sref_instance_selector" type="checkbox" checked="true" prefixedTitle="'.$enc_sortkey.'"></input>';
-				if ( is_numeric( $sortkey ) ) { // additional hidden sortkey for numeric entries
-					$this->columnsWithSortKey[$resultArray->getPrintRequest()->getHash()] = true;
-					$sortKey .= '<span class="smwsortkey">' . $sortkey . '</span>';
-				}
+				
 			}
-
-			$value = ( ( $dv->getTypeID() == '_wpg' ) || ( $dv->getTypeID() == '__sin' ) ) ?
-			$dv->getLongText( $outputmode, $this->getLinker( $isSubject ) ) :
-			$dv->getShortText( $outputmode, $this->getLinker( $isSubject ) );
-
-			$values[] = $isSubject ? $checkbox . $sortKey . $value : $sortKey . $value ;
-
+			$value = $checkbox . $dv->getShortText( $outputmode, $this->getLinker( $isSubject ) );
+			$values[] = $value;
 		}
 
 		return implode( '<br />', $values );
 	}
 
-	 
+
 }

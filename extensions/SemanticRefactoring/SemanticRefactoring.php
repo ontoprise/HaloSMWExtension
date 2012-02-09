@@ -95,14 +95,13 @@ function sreffRegisterJSModules(& $out) {
          
         $wgResourceModules['ext.semanticrefactoring.dialogs'] = $moduleTemplate + array(
         'scripts' => array(
-           // 'scripts/jquery.json-2.3.js',
             'scripts/SRF_dialogs.js',
             'scripts/SRF_SpecialRefactor.js'
             ),
         'styles' => array(
             'skins/SRF_SpecialRefactor.css'
             ),
-        'dependencies' => array('ext.smw.style', 'ext.smw.tooltips', 'ext.smw.sorttable'
+        'dependencies' => array('ext.smw.style', 'ext.smw.tooltips'
             ),
          'messages' => array('sref_start_operation',
                             'sref_cancel_operation',
