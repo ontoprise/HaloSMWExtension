@@ -143,10 +143,12 @@ textarea {
 }
 
 #personal_expand.limited {
+	/*@embed*/
 	background: url(../img/expandview.png) right no-repeat;
 }
 
 #personal_expand.expanded {
+	/*@embed*/
 	background: url(../img/limitview.png) right no-repeat;
 }
 
@@ -188,6 +190,7 @@ textarea {
 }
 
 .smwh_menudropdown {
+	/*@embed*/
 	/*background: url(../img/menu_arrow.gif) right no-repeat;*/
 }
 
@@ -265,6 +268,7 @@ textarea {
 }
 
 #smwh_menuhead_more {
+	/*@embed*/
 	background: url(../img/more_menu_arrow.gif) right no-repeat;
 	padding: 0 10px;
 	height: auto;
@@ -294,6 +298,7 @@ textarea {
 
 .smwh_menubody_visible {
 /*	replace with gradient*/
+	/*@embed*/
 	background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;
 	border: 2px solid #DFDFDC;
 	border-radius: 5px;
@@ -436,6 +441,7 @@ textarea {
 
 #searchButton {
 	background-color: transparent;
+	/*@embed*/
 	background-image: url(../img/search.png);
 	background-position: center center;
 	background-repeat: no-repeat;
@@ -835,6 +841,7 @@ textarea {
 }
 
 #smwh_treeviewtoggle {
+	/* @embed */
 	background: url(../img/tree_right.png) repeat-x;
 	cursor: pointer;
 	height: 32px;
@@ -848,5 +855,6 @@ textarea {
 }
 
 #smwh_treeviewtoggle:hover {
+	/*@embed*/
 	background: url(../img/tree_right_hover.png) repeat-x;
 }

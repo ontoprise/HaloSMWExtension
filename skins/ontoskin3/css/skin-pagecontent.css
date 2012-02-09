@@ -199,34 +199,40 @@ div.floatleft, table.floatleft {
 */
 #content a.external,
 #content a[href ^="gopher://"] {
+	/*@embed*/
 	background: url(../external.png) center right no-repeat;
 	padding-right: 13px;
 }
 
 .rtl #content a.external,
 .rtl #content a[href ^="gopher://"] {
+	/*@embed*/
 	background-image: url(../external-rtl.png);
 }
 
 #content a[href ^="https://"],
 .link-https {
+	/*@embed*/
 	background: url(../lock_icon.gif) center right no-repeat;
 	padding-right: 16px;
 }
 
 #content a[href ^="mailto:"],
 .link-mailto {
+	/*@embed*/
 	background: url(../mail_icon.gif) center right no-repeat;
 	padding-right: 18px;
 }
 
 #content a[href ^="news://"] {
+	/*@embed*/
 	background: url(../news_icon.png) center right no-repeat;
 	padding-right: 18px;
 }
 
 #content a[href ^="ftp://"],
 .link-ftp {
+	/*@embed*/
 	background: url(../file_icon.gif) center right no-repeat;
 	padding-right: 18px;
 }
@@ -234,6 +240,7 @@ div.floatleft, table.floatleft {
 #content a[href ^="irc://"],
 #Content a.extiw[href ^="irc://"],
 .link-irc {
+	/*@embed*/
 	background: url(../discussionitem_icon.gif) center right no-repeat;
 	padding-right: 18px;
 }
@@ -251,6 +258,7 @@ div.floatleft, table.floatleft {
 #content a.external[href $=".wma"],
 #content a.external[href $=".WMA"],
 .link-audio {
+	/*@embed*/
 	background: url("../audio.png") center right no-repeat;
 	padding-right: 13px;
 }
@@ -264,6 +272,7 @@ div.floatleft, table.floatleft {
 #content a.external[href $=".mpg"],
 #content a.external[href $=".MPG"],
 .link-video {
+	/*@embed*/
 	background: url("../video.png") center right no-repeat;
 	padding-right: 13px;
 }
@@ -275,6 +284,7 @@ div.floatleft, table.floatleft {
 #content a.external[href *=".pdf?"],
 #content a.external[href *=".PDF?"],
 .link-document {
+	/*@embed*/
 	background: url("../document.png") center right no-repeat;
 	padding-right: 12px;
 }
@@ -339,6 +349,7 @@ div.floatleft, table.floatleft {
 #content h4 .editsection a,
 #content h5 .editsection a,
 #content h6 .editsection a {
+	/*@embed*/
 	background: url(../img/button_edit.gif) no-repeat scroll left transparent;
 	padding: 2px 0px 2px 18px;
 }
