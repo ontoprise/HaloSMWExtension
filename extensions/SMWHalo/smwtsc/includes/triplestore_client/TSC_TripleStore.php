@@ -1276,7 +1276,8 @@ class SMWTripleStore extends SMWStoreAdapter {
 		if (is_null($title)) {
 			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 		}
-		$v->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID(), false, '', $title->getFragment());
+		$dataItem = new SMWDIWikiPage( $title->getDBkey(), $title->getNamespace(), '' ); 
+		$v->setDataItem($dataItem);
 		$di = $v->getDataItem();
 		TSHelper::setMetadata($di, $metadata);
 		return $di;
