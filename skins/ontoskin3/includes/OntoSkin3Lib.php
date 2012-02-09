@@ -304,6 +304,12 @@ class SMWH_Skin {
 				}
 				$tabs .= "\">";
 				$tabs .= $pageName . "</div>";
+				if( $wgTitle->getNamespace() == NS_TALK ) {
+					//provide back to page link
+					$tabs .= '<a class="tab" href="';
+					$tabs .= htmlspecialchars( $tab['href'] ) . '">';
+					$tabs .= wfMsg( 'smw_back_to_article') . '</a>';
+				}
 				$firstTabs = $tabs . $firstTabs;
 				continue;
 			} elseif ( $key == "edit" ) {
