@@ -1136,6 +1136,26 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 	
 	/**
+	 * Invokes the tagging floatbox with the current selection for adding a 
+	 * property annotation.
+	 * 
+	 * @param editor
+	 * 		The CKeditor object
+	 */
+	AddPropertyAnnotation = function (editor) {
+		if (!gEditInterface) {
+			plugin.createEditInterface(editor);
+		}
+        var selection = gEditInterface.getSelectionAsArray();
+        if (selection && selection.length >= 1) {
+            var show = selection[0];
+            var val = show;
+			ShowRelToolbar(plugin.mLastMoveEvent, '', val, show);
+		}
+		
+	}
+
+	/**
 	 * Invokes the tagging floatbox for a property annotation.
 	 * 
 	 * @param editor
@@ -1171,6 +1191,24 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 		
 	}
 	
+	/**
+	 * Invokes the tagging floatbox with the current selection for adding a 
+	 * category annotation.
+	 * 
+	 * @param editor
+	 * 		The CKeditor object
+	 */
+	AddCategoryAnnotation = function (editor) {
+		if (!gEditInterface) {
+			plugin.createEditInterface(editor);
+		}
+        var selection = gEditInterface.getSelectionAsArray();
+        if (selection && selection.length >= 1) {
+			ShowCatToolbar(plugin.mLastMoveEvent,  selection[0], false);
+		}
+		
+	}
+
 	/**
 	 * Invokes the tagging floatbox for a category annotation.
 	 * 
@@ -1382,6 +1420,37 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 				EditCategoryAnnotation(editor, editCategoryCommmand.element);
             }
           };
+          var addPropertyCommmand =
+          {
+        		  preserveState : false,
+        		  editorFocus : true,
+        		  canUndo : true,
+        		  modes : {
+        			  wysiwyg : 1,
+        			  source : 1
+        		  },
+        		  
+        		  exec: function( editor )
+        		  {
+        			  AddPropertyAnnotation(editor);
+        		  }
+          };
+          
+          var addCategoryCommmand =
+          {
+        		  preserveState : false,
+        		  editorFocus : true,
+        		  canUndo : true,
+        		  modes : {
+        			  wysiwyg : 1,
+        			  source : 1
+        		  },
+        		  
+        		  exec: function( editor )
+        		  {
+        			  AddCategoryAnnotation(editor);
+        		  }
+          };
           var removePropertyCommmand =
           {
             preserveState : false,
@@ -1395,6 +1464,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             exec: function( editor )
             {
               removePropertyCommmand.element.remove();
+              plugin.EditorareaChanges();
             }
           };
 			
@@ -1411,6 +1481,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             exec: function( editor )
             {
               removeCategoryCommmand.element.remove();
+              plugin.EditorareaChanges();
             }
           };
           editor.addCommand( 'editProperty', editPropertyCommmand);
@@ -1467,8 +1538,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
         }
 		
-        editor.addCommand( 'SMWtoolbar', commandDefinition);
         if ( editor.ui.addButton ) {
+        editor.addCommand( 'SMWtoolbar', commandDefinition);
+        	
           editor.ui.addButton( 'SMWtoolbar',
           {
             label : 'Semantic Toolbar',
@@ -1477,7 +1549,28 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             title: 'Semantic Toolbar'
           });
           editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF);
+        
+          editor.addCommand( 'SMWAddProperty', addPropertyCommmand);
+          editor.ui.addButton( 'SMWAddProperty',
+        	{
+        		label : 'Add Property',
+        		command : 'SMWAddProperty',
+        		icon: this.path + 'images/icon_property.gif',
+        		title: 'Add Property'
+        	});
+        	editor.getCommand('SMWAddProperty').setState(CKEDITOR.TRISTATE_OFF);
+        	
+        	editor.addCommand( 'SMWAddCategory', addCategoryCommmand);
+			editor.ui.addButton('SMWAddCategory', {
+				label : 'Add Category',
+				command : 'SMWAddCategory',
+				icon : this.path + 'images/icon_category.gif',
+				title : 'Add Category'
+			});
+			editor.getCommand('SMWAddCategory').setState(CKEDITOR.TRISTATE_OFF);
+        	
         }
+        
         
         // disable toolbar when switching mode
         editor.on( 'beforeCommandExec', function( ev ) {

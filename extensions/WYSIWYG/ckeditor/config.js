@@ -32,13 +32,14 @@ CKEDITOR.editorConfig = function( config )
     // var origToolbar = CKEDITOR.config.toolbar_Full
 
     // SMWHalo extension
-    var qiButton, stbButton;
+    var qiButton;
+    var stbToolbarButtons = [];
     if ( ('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
         CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
 //        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
         extraPlugins += ",smw_qi,smwtoolbar";
         qiButton = 'SMWqi';
-        stbButton = 'SMWtoolbar';
+        stbToolbarButtons = ['SMWtoolbar','SMWAddProperty', 'SMWAddCategory'];
     }
     // DataImport extension
     var wsButton;
@@ -69,7 +70,7 @@ CKEDITOR.editorConfig = function( config )
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
         ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
-        [ stbButton ],
+        stbToolbarButtons,
         ['About'],
         '/',
         ['Styles','Format','Font','FontSize'],
