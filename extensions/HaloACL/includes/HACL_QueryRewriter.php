@@ -164,6 +164,7 @@ class  HACLQueryRewriter  {
 		      $descr instanceof SMWDisjunction ||
 		      $descr instanceof SMWSomeProperty)) {
 			// Only conjunctions, disjunctions and properties have to be pruned.
+			$descr->setPrintRequests($printRequests);
 		   	return $descr;
 		}
 		

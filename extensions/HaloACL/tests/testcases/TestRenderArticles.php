@@ -38,6 +38,7 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 		$suite = new TestRenderArticlesSuite();
 		$suite->addTestSuite('TestTransclusion');
 		$suite->addTestSuite('TestMWSpecialPages');
+ 		$suite->addTestSuite('TestQueryPages');
 		return $suite;
 	}
 	
@@ -138,7 +139,14 @@ class TestRenderArticlesSuite extends PHPUnit_Framework_TestSuite
 			'ACL:Category/Super',
 			'IncludedPage',
 			'IncludingPage',
-			'ACL:Page/IncludedPage'
+			'ACL:Page/IncludedPage',
+			'Category:Person',
+			'Daniel',
+			'Manolo',
+			'SimpleQueryWiki',
+			'SimpleQueryTSC',
+			'ComplexQueryWiki',
+			'ComplexQueryTSC',
 		);
 		
 		$this->mArticles = array(
@@ -228,6 +236,49 @@ ACL
 This page includes IncludedPage:
 {{:IncludedPage}}
 
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Category:Person' =>
+<<<ACL
+This is the category for persons. 
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Daniel' =>
+<<<ACL
+Daniel [[owns::Manolo]]. 
+[[Category:Person]]
+ACL
+,
+//------------------------------------------------------------------------------		
+			'Manolo' =>
+<<<ACL
+Manolo is a dog.
+ACL
+,
+//------------------------------------------------------------------------------		
+			'SimpleQueryWiki' =>
+<<<ACL
+{{#ask: [[Category:Person]] |?owns|source=wiki}}
+ACL
+,
+//------------------------------------------------------------------------------		
+			'SimpleQueryTSC' =>
+<<<ACL
+{{#ask: [[Category:Person]] |?owns|source=tsc}}
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ComplexQueryWiki' =>
+<<<ACL
+{{#ask: [[Category:Person]][[Owns::Manolo]] |?owns|source=wiki}}
+ACL
+,
+//------------------------------------------------------------------------------		
+			'ComplexQueryTSC' =>
+<<<ACL
+{{#ask: [[Category:Person]][[Owns::Manolo]] |?owns|source=tsc}}
 ACL
 ,
 );
@@ -407,6 +458,102 @@ class TestMWSpecialPages extends PHPUnit_Framework_TestCase {
     	} else {
     		// We expect the $content to be absent
     		$this->assertTrue($pos === false, "The content was found but supposed to be missing.");
+    	}
+    }
+    
+    
+}
+/**
+ * This class tests if some pages with queries are rendered correctly.
+ * 
+ * It assumes that the HaloACL extension is enabled in LocalSettings.php and that
+ * the triple store is available.
+ * 
+ * @author thsc
+ *
+ */
+class TestQueryPages extends PHPUnit_Framework_TestCase {
+
+	protected $backupGlobals = FALSE;
+	
+	// List of articles that were added during a test.
+	private $mAddedArticles = array();
+	
+    function setUp() {
+    }
+
+    /**
+     * Delete all articles that were created during a test.
+     */
+    function tearDown() {
+   		global $wgUser, $wgOut;
+    	$wgUser = User::newFromName("U1");
+    	
+		foreach ($this->mAddedArticles as $a) {
+		    $t = Title::newFromText($a);
+		    $wgOut->setTitle($t); // otherwise doDelete() will throw an exception
+	    	$article = new Article($t);
+			$article->doDelete("Testing");
+		}
+    }
+
+    /**
+     * Data provider for testRenderQueryPages
+     */
+    function providerRenderQueryPages() {
+    	return array(
+	    	// $user, $queryPage, array(array($contentRegExp, $numOccurrences),...)
+#0 - Check that no columns are duplicated in the result of a simple ask query addressing the SMW store    	
+    		array('U1', 'SimpleQueryWiki', array( 
+    					array('>Owns<', 1),
+    					array('<td>.*?>Daniel<.*?<\/td>', 1),
+    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    				)
+    			  ),
+#1 - Check that no columns are duplicated in the result of a complex ask query addressing the SMW store    	
+    		array('U1', 'ComplexQueryWiki',  array( 
+    					array('>Owns<', 1),
+    					array('<td>.*?>Daniel<.*?<\/td>', 1),
+    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    				)),
+#2 - Check that no columns are duplicated in the result of a simple ask query addressing the TSC   	
+    		array('U1', 'SimpleQueryTSC',  array( 
+    					array('>Owns<', 1),
+    					array('<td>.*?>Daniel<.*?<\/td>', 1),
+    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    				)),
+#3 - Check that no columns are duplicated in the result of a complex ask query addressing the TSC   	
+    		array('U1', 'ComplexQueryTSC',  array( 
+    					array('>Owns<', 1),
+    					array('<td>.*?>Daniel<.*?<\/td>', 1),
+    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    				)),
+    	);
+    }
+
+    /**
+     * Checks if a query returns and renders the expected result.
+     * 
+     * @dataProvider providerRenderQueryPages
+     */
+    function testRenderQueryPages($user, $queryPage, $content) {
+
+    	global $wgUser;
+    	
+    	$wgUser = User::newFromName($user);
+    	
+    	$t = Title::newFromText($queryPage);
+    	$article = new Article($t);
+    	global $wgOut;
+    	$wgOut = new OutputPage();
+    	$article->view();
+    	$html = $wgOut->getHTML();
+    	
+    	foreach ($content as $contAndOcc) {
+    		$contentRegExp = $contAndOcc[0];
+    		$numOccurrences = $contAndOcc[1];
+	    	$numFound = preg_match_all('/'.$contentRegExp.'/', $html, $matches);
+	   		$this->assertEquals($numOccurrences, $numFound, "Expected $numOccurrences occurrence of:\n$contentRegExp\nFound $numFound");
     	}
     }
     
