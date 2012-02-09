@@ -302,7 +302,6 @@ textarea {
 	background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;
 	border: 2px solid #DFDFDC;
 	border-radius: 5px;
-	-webkit-border-radius: 5px;
 	padding: 5px;
 }
 
@@ -423,7 +422,6 @@ textarea {
 	background-color: #AAD1DE;
 	border: 1px solid #116988;
 	border-radius: 3px;
-	-webkit-border-radius: 3px;
 	color: #000000;
 	display: block;
 	float: left;
@@ -514,7 +512,6 @@ textarea {
 	border-style: solid;
 	border-color: #228C9E;
 	border-radius: 5px;
-	-webkit-border-radius: 5px;
 	float: left;
 	height: 20px;
 	margin-right: 10px;
@@ -808,7 +805,6 @@ textarea {
 	border-right: 1px solid #CACAC4;
 	border-bottom: 1px solid #CACAC4;
 	border-radius: 0 5px 5px 0;
-	-webkit-border-radius: 0 5px 5px 0;
 	box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
 	display: none;
 	height: 90%;
@@ -842,19 +838,17 @@ textarea {
 
 #smwh_treeviewtoggle {
 	/* @embed */
-	background: url(../img/tree_right.png) repeat-x;
+/*	background: url(../img/treeview.png) repeat-x;*/
 	cursor: pointer;
-	height: 32px;
-	margin-top: -16px;
-	position: fixed;
-	top: 50%;
-	width: 29px;
+	float: left;
+	height: 30px;
+	margin-top: -1px;
+	padding: 12px 3px 8px;
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;
 }
 
 #smwh_treeviewtoggle:hover {
-	/*@embed*/
-	background: url(../img/tree_right_hover.png) repeat-x;
+	background-color: #AAD1DE;
 }

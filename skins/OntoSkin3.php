@@ -318,6 +318,12 @@ class OntoSkin3Template extends QuickTemplate {
 				<!-- menu -->
 				<div id="smwh_menu" class="clearfix">
 					<div class="smwh_center">
+						<?php global $tvgIP; if ( isset( $tvgIP ) ) { ?>
+							<div id="smwh_treeviewtoggle">
+								<img src="<?php $this->text( 'stylepath' )?>/<?php $this->text( 'stylename' ) ?>/img/treeview.png"
+									alt="<?php wfMsg( 'smw_treeviewright' ) ?>" />
+							</div>
+						<?php } ?>
 						<div id="home">
 							<a href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>"<?php echo $skin->tooltipAndAccesskey( 'p-logo' ); ?>>
 								<img src="<?php $this->text( 'stylepath' ) ?>/<?php $this->text( 'stylename' ) ?>/img/menue_mainpageicon_white.gif" alt="mainpage"/>

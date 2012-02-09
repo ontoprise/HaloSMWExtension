@@ -665,9 +665,6 @@ class SMWH_Skin {
 		//Generate the necessary surrounding html if the return of the treeview
 		//extension is not empty otherwise return an empty string
 		if ( $tree != null && $tree != "" ) {
-			//Add the left treeview button
-			$treeview = '<div id="smwh_treeviewtoggle" title="' . wfMsg( 'smw_treeviewright' ) . '">';
-			$treeview .= '</div>';
 
 			//Add the right treeview button
 //			$treeview .= '<div id="smwh_treeviewtoggleright" style="display:none" title="' . wfMsg( 'smw_treeviewright' ) . '">';

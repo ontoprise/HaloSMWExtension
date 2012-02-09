@@ -137,7 +137,6 @@
 
 			// TreeView
 			base.$tvt.bind( 'click.treeview', base.showTree );
-			base.$tv.bind( 'mouseleave.treeview', base.hideTree );
 			base.$tvHead.find( '.smwh_treeview_close' ).click( function( ev ) {
 				ev.preventDefault();
 				base.hideTree();
