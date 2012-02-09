@@ -49,6 +49,8 @@ class DFBundleTools {
 		$rawparams[] = "source=wiki";
 
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		$query  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
 		$res = smwfGetStore()->getQueryResult( $query );
 			
@@ -58,7 +60,8 @@ class DFBundleTools {
 
 			$object = $field->getNextObject();
 			$fileTitle = $object->getTitle();
-
+			
+			return array(array($fileTitle, "halo"));
 			$field = next($row);
 
 			$object = $field->getNextObject();
