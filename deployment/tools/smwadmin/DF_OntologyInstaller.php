@@ -68,13 +68,13 @@ class OntologyInstaller {
 		$outputfile = $inputfile.".xml";
 		try {
 			// create input file with additional settings
-			global $smwgTripleStoreGraph;
+			global $smwgHaloTripleStoreGraph;
 			$dfgOut->outputln("[Get used prefixes...");
 			$prefixNamespaceMappings = DFBundleTools::getRegisteredPrefixes();
 			$settingsFile = $inputfile.".settings";
 			$settings = new stdClass();
 			$settings->ns_mappings = $prefixNamespaceMappings;
-			$settings->base_uri = $smwgTripleStoreGraph;
+			$settings->base_uri = $smwgHaloTripleStoreGraph;
 			if (!empty($bundleID)) {
 				$settings->bundle_id = $bundleID;
 			}
