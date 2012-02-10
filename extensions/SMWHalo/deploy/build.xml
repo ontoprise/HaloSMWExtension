@@ -290,7 +290,7 @@
 			<arg value="-d" />
 			<arg value="${basedir}/../../../" />
 			<arg value="-p" />
-			<arg value="../patch_for_SMW1.6.1.txt" />
+			<arg value="../patch_for_SMW1.7.0.txt" />
 			<arg value="--patchtool" />
 			<arg value="${patchtool}" />
 		</exec>
