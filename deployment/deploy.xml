@@ -16,7 +16,7 @@
 			setting up restore points, defining repositories and editing the main
 			configuration file of SMW+ (LocalSettings.php).
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Deployment_Framework
+		<helpurl>http://www.smwplus.com/index.php/Deployment_Framework
 		</helpurl>
 		<license>GPL-v2</license>
 		<dependencies>
