@@ -466,7 +466,7 @@ function smwgHaloSetupExtension() {
 		// initialize static members of SMWHaloPredefinedPages
 		new SMWHaloPredefinedPages();
 
-		smwfEnableQueryManagement();
+		//smwfEnableQueryManagement();
 
 		return true;
 }
