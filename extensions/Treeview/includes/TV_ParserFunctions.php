@@ -63,7 +63,7 @@ class TVParserFunctions  {
 		<hr />
 	</div>
 	<!-- The tree is inserted here -->
-	<span id="{treeID}" />
+	<span id="{treeID}"> </span>
 </div>
 
 HTML;
