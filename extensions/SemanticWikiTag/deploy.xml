@@ -10,7 +10,7 @@
         <description>
             The webservice endpoint for office wikitag add-in.
         </description>
-        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:WikiTags</helpurl>
+        <helpurl>http://www.smwplus.com/index.php/Help:WikiTags</helpurl>
         <dependencies>
             <dependency from="1.17.0" to="1.17.9">mw</dependency>
             <dependency from="1.6.1" to="1.6.1">smw</dependency>

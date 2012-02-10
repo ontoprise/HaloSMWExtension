@@ -12,7 +12,7 @@
         <description>
             Additional inputs for SemanticForms
         </description>
-        <helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Forms_Inputs_extension</helpurl>
+        <helpurl>http://www.smwplus.com/index.php/Help:Semantic_Forms_Inputs_extension</helpurl>
         <dependencies>
             <dependency from="2.3.2" to="2.3.2">semanticforms</dependency>
         </dependencies>
