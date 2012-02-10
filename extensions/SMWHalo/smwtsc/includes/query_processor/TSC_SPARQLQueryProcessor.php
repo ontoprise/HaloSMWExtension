@@ -134,7 +134,11 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 
 	static public function getResultFromFunctionParams(array $rawparams, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY, $showmode = false) {
 		SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts,$showmode);
+        if ( !$showmode ) {
+            self::addThisPrintout( $printouts, $params, $showmode );
+        }
 
+        $params = self::getProcessedParams( $params, $printouts );
 		return SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI, $context);
 	}
 
@@ -202,70 +206,35 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 		$query->setExtraPrintouts($extraprintouts);
 		$query->addErrors($qp->getErrors());
 
-		// set query parameters:
-		$query->querymode = $querymode;
-		if ( (array_key_exists('offset',$params)) && (is_int($params['offset'] + 0)) ) {
-			$query->setOffset(max(0,trim($params['offset']) + 0));
-		}
-		if ($query->querymode == SMWQuery::MODE_COUNT) { // largest possible limit for "count", even inline
-			global $smwgQMaxLimit;
-			$query->setOffset(0);
-			$query->setLimit($smwgQMaxLimit, false);
-		} else {
-			if ( (array_key_exists('limit',$params)) && (is_int(trim($params['limit']) + 0)) ) {
-				$query->setLimit(max(0,trim($params['limit']) + 0));
-				if ( (trim($params['limit']) + 0) < 0 ) { // limit < 0: always show further results link only
-					$query->querymode = SMWQuery::MODE_NONE;
-				}
-			} else {
-				global $smwgQDefaultLimit;
-				$query->setLimit($smwgQDefaultLimit);
-			}
-		}
-		// determine sortkeys and ascendings:
-		if ( array_key_exists('order', $params) ) {
-			$orders = explode( ',', $params['order'] );
-			foreach ($orders as $key => $order) { // normalise
-				$order = strtolower(trim($order));
-				if ( ('descending' == $order) || ('reverse' == $order) || ('desc' == $order) ) {
-					$orders[$key] = 'DESC';
-				} elseif ( ('random' == $order) || ('rand' == $order) ) {
-					$orders[$key] = 'RAND()';
-				} else {
-					$orders[$key] = 'ASC';
-				}
-			}
-		} else {
-			$orders = Array();
-		}
-		reset($orders);
-		if ( array_key_exists('sort', $params) ) {
-			$query->sort = true;
-			$query->sortkeys = Array();
-			foreach ( explode( ',', trim($params['sort']) ) as $sort ) {
-				$sort = smwfNormalTitleDBKey( trim($sort) ); // slight normalisation
-				$order = current($orders);
-				if ($order === false) { // default
-					$order = 'ASC';
-				}
-				if (array_key_exists($sort, $query->sortkeys) ) {
-					// maybe throw an error here?
-				} else {
-					$query->sortkeys[$sort] = $order;
-				}
-				next($orders);
-			}
-			if (current($orders) !== false) { // sort key remaining, apply to page name
-				$query->sortkeys[''] = current($orders);
-			}
-		} elseif ($format == 'rss') { // unsorted RSS: use *descending* default order
-			///TODO: the default sort field should be "modification date" (now it is the title, but
-			///likely to be overwritten by printouts with label "date").
-			$query->sortkeys[''] = (current($orders) != false)?current($orders):'DESC';
-		} else { // sort by page title (main column) by default
-			$query->sortkeys[''] = (current($orders) != false)?current($orders):'ASC';
-		} // TODO: check and report if there are further order statements?
+		// set mode, limit, and offset:
+        $query->querymode = $querymode;
+        if ( ( array_key_exists( 'offset', $params ) ) && ( is_int( $params['offset'] + 0 ) ) ) {
+            $query->setOffset( max( 0, trim( $params['offset'] ) + 0 ) );
+        }
 
+        if ( $query->querymode == SMWQuery::MODE_COUNT ) { // largest possible limit for "count", even inline
+            global $smwgQMaxLimit;
+            $query->setOffset( 0 );
+            $query->setLimit( $smwgQMaxLimit, false );
+        } else {
+            if ( ( array_key_exists( 'limit', $params ) ) && ( is_int( trim( $params['limit'] ) + 0 ) ) ) {
+                $query->setLimit( max( 0, trim( $params['limit'] ) + 0 ) );
+                if ( ( trim( $params['limit'] ) + 0 ) < 0 ) { // limit < 0: always show further results link only
+                    $query->querymode = SMWQuery::MODE_NONE;
+                }
+            } else {
+                global $smwgQDefaultLimit;
+                $query->setLimit( $smwgQDefaultLimit );
+            }
+        }
+
+        $defaultSort = $format === 'rss' ? 'DESC' : 'ASC';
+        $sort = self::getSortKeys( $params['sort'], $params['order'], $defaultSort );
+
+        $query->sortkeys = $sort['keys'];
+        $query->addErrors( $sort['errors'] );
+        $query->sort = count( $query->sortkeys ) > 0; // TODO: Why would we do this here?
+        
 		return $query;
 	}
 
