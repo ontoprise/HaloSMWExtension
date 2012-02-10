@@ -128,91 +128,6 @@ class OntoSkin3Template extends QuickTemplate {
 
 		// Suppress warnings to prevent notices about missing indexes in $this->data
 		wfSuppressWarnings();
-		
-		// checks the compatibility of the browser and return a warning
-
-               function getBrowserDetails()
-               {
-                $u_agent = $_SERVER['HTTP_USER_AGENT'];
-                $bname = 'Unknown';
-                $platform = 'Unknown';
-                $version= "";
-
-              //platform
-                if (preg_match('/linux/i', $u_agent)) {
-                   $platform = 'linux';
-                }
-                elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
-                 $platform = 'mac';
-                }
-                elseif (preg_match('/windows|win32/i', $u_agent)) {
-                 $platform = 'windows';
-                }
-   
-              // get the name of the useragent 
-                if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent))
-                {
-                 $bname = 'Internet Explorer';
-                 $ub = "MSIE";
-                }
-                elseif(preg_match('/Firefox/i',$u_agent))
-                {
-                 $bname = 'Mozilla Firefox';
-                 $ub = "Firefox";
-                }
-                elseif(preg_match('/Chrome/i',$u_agent))
-                {
-                $bname = 'Google Chrome';
-                 $ub = "Chrome";
-                }
-                elseif(preg_match('/Safari/i',$u_agent))
-                {
-                $bname = 'Apple Safari';
-                $ub = "Safari";
-                }
-                elseif(preg_match('/Opera/i',$u_agent))
-                {
-                $bname = 'Opera';
-                $ub = "Opera";
-                }
-                elseif(preg_match('/Netscape/i',$u_agent))
-                {
-                $bname = 'Netscape';
-                $ub = "Netscape";
-                }
-   
-              // get the version number
-                $known = array('Version', $ub, 'other');
-                $pattern = '#(?<browser>' . join('|', $known) .
-                ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
-                if (!preg_match_all($pattern, $u_agent, $matches)) {
-                  // no matching number just continue
-                }
-   
-             // how many we have
-                $i = count($matches['browser']);
-                if ($i != 1) {
-                 //see if version is before or after the name
-                  if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){
-                     $version= $matches['version'][0];
-                  }
-                else {
-                   $version= $matches['version'][1];
-                  }
-                }
-                else {
-                   $version= $matches['version'][0];
-                }
-   
-             // check if we have a number
-                if ($version==null || $version=="") {$version="?";}
-   
-                return array(
-                  'userAgent' => $u_agent,
-                  'name'      => $bname,
-                  'version'   => $version,
-                );
-            }
 		?>
 <!DOCTYPE html>
 <html lang="<?php $this->text( 'lang' ) ?>" dir="<?php $this->text( 'dir' ) ?>">
@@ -344,59 +259,54 @@ class OntoSkin3Template extends QuickTemplate {
 						<div id="breadcrumb"></div>
 					</div>
 					
-		<?php
-	    // checks browser's compatibility and return a warning, should the case arise.		 	 
-            $cookie = $_COOKIE["hideBrowserWarning"]; 
+					<?php
+					// checks browser's compatibility and return a warning, should the case arise.		 	 
+					$cookie = $_COOKIE["hideBrowserWarning"];
 
-			if($cookie == 'false'){
-              $ua= getBrowserDetails();
-              $version = explode('.', $ua['version']);
-              $yourbrowser=  $ua['name'] . " " . $version[0] ;
+					if ( $cookie == 'false' ) {
+						$ua = getBrowserDetails();
+						$version = explode( '.', $ua['version'] );
+						$yourbrowser = $ua['name'] . " " . $version[0];
 
-             //valid Browsers 
-              $validBrowser[0][0] = "Internet Explorer";
-              $validBrowser[0][1] = "8";
-              $validBrowser[1][0] = "Mozilla Firefox";
-              $validBrowser[1][1] = "7";
-              $validBrowser[1][2] = "8";
-              $validBrowser[2][0] = "Google Chrome";
-              $validBrowser[2][1] = "15";
-              $valid = false;
-			
-			 // IE8
-              if($ua['name'] == $validBrowser[0][0]){
-			   if($version[0] == $validBrowser[0][1]){
-                 $valid = true;
-			    }
-              }
-			 // FF7/8
-			  if($ua['name'] == $validBrowser[1][0]){
-			   if($version[0] == $validBrowser[1][1] or $version[0] == $validBrowser[1][2]){
-                 $valid = true;
-			    }
-              }
-			 //GC 15
-			 if($ua['name'] == $validBrowser[2][0]){
-			   if($version[0] == $validBrowser[2][1]){
-                 $valid = true;
-			    }
-             }
-			
-             if($valid == false){
-      
-			 ?>
-			 
-			
-			  <div id="smw_browserCheck">
-			  <div style="float:left">Your browser (<?php echo "$yourbrowser" ?>) is not supported, we recommend using: IE8, Firefox 7/8 or Google chrome 15</div>
-			  <a href="#" onclick="hideDiv()"><div id="smw_browserCheckClose"><span>Don't show me again</span><img src="/mediawiki/skins/ontoskin3/img/button_close.PNG"></img></div></a>
-			  </div>
-			
-			 <?php
-			   } // end browser's check
-			} // end coockie's check
-		    ?>
-					
+						//valid Browsers 
+						$validBrowser[0][0] = "Internet Explorer";
+						$validBrowser[0][1] = "8";
+						$validBrowser[1][0] = "Mozilla Firefox";
+						$validBrowser[1][1] = "7";
+						$validBrowser[1][2] = "8";
+						$validBrowser[2][0] = "Google Chrome";
+						$validBrowser[2][1] = "15";
+						$valid = false;
+
+						// IE8
+						if ( $ua['name'] == $validBrowser[0][0] ) {
+							if ( $version[0] == $validBrowser[0][1] ) {
+								$valid = true;
+							}
+						}
+						// FF7/8
+						if ( $ua['name'] == $validBrowser[1][0] ) {
+							if ( $version[0] == $validBrowser[1][1] or $version[0] == $validBrowser[1][2] ) {
+								$valid = true;
+							}
+						}
+						//GC 15
+						if ( $ua['name'] == $validBrowser[2][0] ) {
+							if ( $version[0] == $validBrowser[2][1] ) {
+								$valid = true;
+							}
+						}
+
+						if ( $valid == false ) { ?>
+					<div id="smw_browserCheck">
+						<div style="float:left">Your browser (<?php echo "$yourbrowser" ?>) is not supported, we recommend using: IE8, Firefox 7/8 or Google chrome 15</div>
+						<a href="#" onclick="hideDiv()"><div id="smw_browserCheckClose"><span>Don't show me again</span><img src="/mediawiki/skins/ontoskin3/img/button_close.PNG"></img></div></a>
+					</div>
+					<?php
+						} // end browser's check
+					} // end coockie's check
+					?>
+
 					<div id="mainpage">
 						<div id="smwh_tabs">
 							<?php echo $this->smwh_Skin->buildTabs(); ?>
@@ -609,6 +519,76 @@ class OntoSkin3Template extends QuickTemplate {
 		</div>
 		<!-- /customBox -->
 		<?php
+	}
+	
+	// checks the compatibility of the browser and return a warning
+	function getBrowserDetails() {
+		$u_agent = $_SERVER['HTTP_USER_AGENT'];
+		$bname = 'Unknown';
+		$platform = 'Unknown';
+		$version = "";
+
+		//platform
+		if ( preg_match( '/linux/i', $u_agent ) ) {
+			$platform = 'linux';
+		} elseif ( preg_match( '/macintosh|mac os x/i', $u_agent ) ) {
+			$platform = 'mac';
+		} elseif ( preg_match( '/windows|win32/i', $u_agent ) ) {
+			$platform = 'windows';
+		}
+
+		// get the name of the useragent 
+		if ( preg_match( '/MSIE/i', $u_agent ) && !preg_match( '/Opera/i', $u_agent ) ) {
+			$bname = 'Internet Explorer';
+			$ub = "MSIE";
+		} elseif ( preg_match( '/Firefox/i', $u_agent ) ) {
+			$bname = 'Mozilla Firefox';
+			$ub = "Firefox";
+		} elseif ( preg_match( '/Chrome/i', $u_agent ) ) {
+			$bname = 'Google Chrome';
+			$ub = "Chrome";
+		} elseif ( preg_match( '/Safari/i', $u_agent ) ) {
+			$bname = 'Apple Safari';
+			$ub = "Safari";
+		} elseif ( preg_match( '/Opera/i', $u_agent ) ) {
+			$bname = 'Opera';
+			$ub = "Opera";
+		} elseif ( preg_match( '/Netscape/i', $u_agent ) ) {
+			$bname = 'Netscape';
+			$ub = "Netscape";
+		}
+
+		// get the version number
+		$known = array('Version', $ub, 'other');
+		$pattern = '#(?<browser>' . join( '|', $known ) .
+			')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+		if ( !preg_match_all( $pattern, $u_agent, $matches ) ) {
+			// no matching number just continue
+		}
+
+		// how many we have
+		$i = count( $matches['browser'] );
+		if ( $i != 1 ) {
+			//see if version is before or after the name
+			if ( strripos( $u_agent, "Version" ) < strripos( $u_agent, $ub ) ) {
+				$version = $matches['version'][0];
+			} else {
+				$version = $matches['version'][1];
+			}
+		} else {
+			$version = $matches['version'][0];
+		}
+
+		// check if we have a number
+		if ( $version == null || $version == "" ) {
+			$version = "?";
+		}
+
+		return array(
+			'userAgent' => $u_agent,
+			'name' => $bname,
+			'version' => $version,
+		);
 	}
 
 }

@@ -526,6 +526,7 @@ class SMWH_Skin {
 
 		$iconHTML = '<div id="cat_icons">';
 		foreach ( $pageCats as $pageCat ) {
+			// ----------
 			SMWQueryProcessor::processFunctionParams(
 				array(
 					'[[:' . $pageCat->getFullText() . ']]',
@@ -534,11 +535,25 @@ class SMWH_Skin {
 				),
 				$querystring, $params, $printouts
 			);
-			$queryResult = SMWQueryProcessor::getResultFromQueryString(
+			
+			$params = SMWQueryProcessor::getProcessedParams(
+				$params,
+				$printouts
+			);
+			$query = SMWQueryProcessor::createQuery(
 				$querystring,
 				$params,
+				SMWQueryProcessor::INLINE_QUERY,
+				"",
+				$printouts
+			);
+			$queryResult = SMWQueryProcessor::getResultFromQuery(
+				$query,
+				$params,
 				$printouts,
-				SMW_OUTPUT_HTML
+				$outputmode,
+				SMWQueryProcessor::INLINE_QUERY,
+				""
 			);
 			// "Category has icon" is of type page so the html returned here
 			// can contain links etc - so get only the img tag.
