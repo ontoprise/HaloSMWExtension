@@ -25,6 +25,8 @@ body > #globalWrapper {
 }
 
 #wrapper {
+	height: auto;
+	min-height: 100%;
 	padding-bottom: 240px;
 }
 
@@ -174,15 +176,20 @@ textarea {
 	height: 48px;
 }
 
+#smwh_menu, #smwh_menu * {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 #smwh_menu .editsection {
 	display: none;
 }
 
 #home {
 	float: left;
-	height: 30px;
-	margin-top: -1px;
-	padding: 10px 0;
+	height: 47px;
+	padding-top: 10px;
 }
 
 #home:hover {
@@ -191,7 +198,7 @@ textarea {
 
 .smwh_menudropdown {
 	/*@embed*/
-	/*background: url(../img/menu_arrow.gif) right no-repeat;*/
+	background: url(../img/menu_arrow.gif) right no-repeat;
 }
 
 #smwh_menu .smwh_menulist {
@@ -202,8 +209,8 @@ textarea {
 
 .smwh_menulist .smwh_menuhead {
 	display: inline-block;
-	height: 30px;
-	margin: -1px 3px 0;
+	height: 47px;
+	margin: 0px 3px;
 	padding: 10px;
 }
 
@@ -237,14 +244,12 @@ textarea {
 #smwh_menu .smwh_active .smwh_menuhead {
 	background: #AAD1DE;;
 /*	box-shadow: inset 0 1px 2px #269FB2, inset 0 -1px 2px #269FB2;*/
-	
-	background: linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* W3C */
 	background: -moz-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#269FB2), color-stop(30%,#AAD1DE)); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* Chrome10+,Safari5.1+ */
 	background: -o-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* Opera 11.10+ */
 	background: -ms-linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* IE10+ */
-	
+	background: linear-gradient(top, #269FB2 0%, #AAD1DE 30%); /* W3C */
 	cursor: pointer;
 }
 
@@ -426,8 +431,7 @@ textarea {
 	display: block;
 	float: left;
 	font-size: 75%;
-	height: 18px;
-	margin-top: -2px;
+	height: 27px;
 	padding: 5px 30px 5px 5px;
 	width: 250px;
 }
@@ -447,7 +451,7 @@ textarea {
 	cursor: pointer;
 	float: left;
 	height: 24px;
-	margin-left: -28px;
+	margin: 2px 0 0 -28px;
 	padding: 0;
 	width: 24px;
 }
@@ -841,9 +845,8 @@ textarea {
 /*	background: url(../img/treeview.png) repeat-x;*/
 	cursor: pointer;
 	float: left;
-	height: 30px;
-	margin-top: -1px;
-	padding: 12px 3px 8px;
+	height: 47px;
+	padding: 12px 3px 0;
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;
