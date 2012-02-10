@@ -66,6 +66,9 @@ class DF_Language_De extends DF_Language {
     'df_fatal' => 'FATALER FEHLER',
     'df_failed' => 'FEHLGESCHLAGEN',
     'df_ok' => 'OK',
+	
+	'block_nsmappings_page_title' => 'Fehler beim Speichern der Namespace mappings',
+    'block_nsmappings_error' => 'Es gibt doppelte Präfixe oder doppelte URIs',
 
 	// webadmin
 	'df_webadmin' => 'Wiki Administration Tool',

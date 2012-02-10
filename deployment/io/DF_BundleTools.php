@@ -60,7 +60,7 @@ class DFBundleTools {
 
 			$object = $field->getNextObject();
 			$fileTitle = $object->getTitle();
-			
+				
 			return array(array($fileTitle, "halo"));
 			$field = next($row);
 
@@ -233,6 +233,35 @@ class DFBundleTools {
 		}
 		$article = new Article($nsMappingPageTitle);
 		$article->doEdit($result, "auto-generated namespace mappings");
+	}
+
+	/**
+	 * Checks if there are double prefixes.
+	 *
+	 * @param string $text
+	 *
+	 * @return boolean False if there are doubles.
+	 */
+	public static function checkPrefixList($text) {
+		$lines = explode("\n", $text);
+		$prefixes = array();
+		$uris = array();
+		foreach($lines as $l) {
+			if (strpos($l, ":") !== false) {
+				$prefix = trim(substr($l, 0, strpos($l, ":")));
+				if (substr($prefix,0,1) == '*') $prefix = substr($prefix, 1);
+				$uri = trim(substr($l, strpos($l, ":")+1));
+				if (array_key_exists($prefix,$prefixes)) {
+					return false;
+				}
+			    if (array_key_exists($uri,$uris)) {
+                    return false;
+                }
+				$prefixes[$prefix] = true;
+				$uris[$uri] = true;
+			}
+		}
+		return true;
 	}
 
 	/**

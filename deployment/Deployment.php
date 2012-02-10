@@ -38,6 +38,8 @@ $wgExtensionMessagesFiles['WikiAdminTool'] = $smwgDFIP . '/languages/DF_Messages
 if (!isset(DF_Config::$df_checkForUpdateOnLogin) || DF_Config::$df_checkForUpdateOnLogin !== false) {
 	$wgHooks['UserLoginComplete'][] = 'dfgCheckUpdate';
 }
+$wgHooks['ArticleSave'][]               = 'dffOnArticleSave'; // On article save.
+
 $wgAjaxExportList[] = 'dff_authUser';
 
 
@@ -52,8 +54,8 @@ function dfgSetupExtension() {
 	$wgAutoloadClasses['DFUserInput'] = $smwgDFIP . '/tools/smwadmin/DF_UserInput.php';
 	$wgSpecialPages['CheckInstallation'] = array('SMWCheckInstallation');
 	$wgSpecialPageGroups['CheckInstallation'] = 'smwplus_group';
-	
-    // register javascript
+
+	// register javascript
 	dff_registerScripts();
 	$wgOut->addModules(array('ext.wikiadmintool.language'));
 
@@ -86,7 +88,7 @@ function dffInitializeLanguage() {
 	}
 	require_once("$smwgDFIP/languages/$langClass.php");
 	$dfgLang = new $langClass();
-	
+
 }
 
 function dfgCheckUpdate(&$wgUser, &$injected_html) {
@@ -155,11 +157,31 @@ function dff_registerScripts() {
 
         ),
         'messages' => array( 'df_partofbundle' ),
-        
+
         'dependencies' => array(
 
         )
         );
-
-
 }
+
+
+function dffOnArticleSave( & $article, & $user, & $text, & $summary, $minor, $watch, $sectionanchor, & $flags, & $status ) {
+    
+	global $dfgLang;
+	$nsMappingsTitleString = $dfgLang->getLanguageString('df_namespace_mappings_page');
+	$nsMappingsTitle = Title::newFromText($nsMappingsTitleString, NS_MEDIAWIKI);
+	
+	// ignore, if not MediaWiki:NamespaceMappings
+	if (!$article->getTitle()->equals($nsMappingsTitle)) {
+		return true;
+	}
+
+	// check if namespace mappings are valid (ie. no double prefixes or URIs)
+	if (!DFBundleTools::checkPrefixList($text)) {
+		throw new ErrorPageError( 'block_nsmappings_page_title', 'block_nsmappings_error' );
+	}
+	
+	return true;
+}
+
+

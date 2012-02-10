@@ -68,6 +68,9 @@ class DF_Language_En extends DF_Language {
 	'df_failed' => 'FAILED',
 	'df_ok' => 'OK',
 	
+	'block_nsmappings_page_title' => 'Error on saving namespace mappings',
+	'block_nsmappings_error' => 'There are double prefixes or URIs. Check the list. No prefix or URI may be used twice.',
+	
 	// webadmin
 	'df_webadmin' => 'Wiki Administration Tool',
 	'df_username' => 'Username',
