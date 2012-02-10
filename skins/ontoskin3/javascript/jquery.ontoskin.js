@@ -114,6 +114,7 @@
 			}
 
 			setTimeout( base.hideTree, 1500 );
+			base.initTree();
 			base.registerEventHandler();
 		}
 
@@ -287,6 +288,16 @@
 			});
 		}
 
+		
+		/**
+		 * @brief function initTree
+		 *		Initialize the tree
+		 */
+		base.initTree = function() {
+			var mainOffset = $( '#smwh_menu' ).offset().top;
+
+			base.$tv.css( 'top', mainOffset );
+		}
 		/**
 		 * @brief function showTree
 		 *		Displays the Tree at the page
@@ -308,7 +319,7 @@
 			var tvW = base.$tv.outerWidth( true );
 
 			base.$tv.animate({
-				left: -tvW -2 //box-shadow
+				left: -tvW -17 //box-shadow + close-icon
 			},{
 				queue: false
 			}, 250 );

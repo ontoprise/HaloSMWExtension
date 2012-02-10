@@ -64,7 +64,7 @@ class SMWH_Skin {
 			//Check if submenu exists
 			if ( count( $menuItems ) > 0 ) {
 				//If it's a dropdown menu with items in it, add specific css class for traingle as visualization
-				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">" . $this->parseWikiText( $menuName ) . "</div>";
+				$menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead smwh_menudropdown\">" . $this->parseWikiText( $menuName ) . "</div>";
 				$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody autoW\">";
 				$menu.= "<div class=\"smwh_menubody_visible\">";
 				foreach ( $menuItems as $menuItem ) {
@@ -687,7 +687,7 @@ class SMWH_Skin {
 
 			//Add the treeview itself
 			$treeview .= '<div id="smwh_treeview">';
-			$treeview .= '<div id="smwh_treeview_head">Tree view <a class="smwh_treeview_close" href="#"><img src="' . $wgStylePath . $this->imagepath . '/button_close.png" title="close" alt="close tree"/></a></div>';
+			$treeview .= '<div id="smwh_treeview_head">Tree view <a class="smwh_treeview_close" href="#"></a></div>';
 			$treeview .= '<div id="smwh_treeview_content">';
 			$treeview .= $tree;
 			$treeview .= "</div>";

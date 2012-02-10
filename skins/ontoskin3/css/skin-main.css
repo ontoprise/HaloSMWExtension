@@ -811,7 +811,7 @@ textarea {
 	border-radius: 0 5px 5px 0;
 	box-shadow: 2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
 	display: none;
-	height: 90%;
+	height: 75%;
 	padding: 5px;
 	position: fixed;
 	top: 5%;
@@ -825,8 +825,14 @@ textarea {
 }
 
 .smwh_treeview_close {
+	/*embed*/
+	background: transparent url(../img/fancy_close.png);
+	cursor: pointer;
+	height: 30px;
 	position: absolute;
-	right: 10px;
+	right: -15px;
+	top: -15px;
+	width: 30px;
 }
 
 #smwh_treeview_content {
