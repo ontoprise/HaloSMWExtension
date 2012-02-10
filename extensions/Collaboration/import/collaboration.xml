@@ -1,8 +1,8 @@
 <mediawiki xmlns="http://www.mediawiki.org/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
   <siteinfo>
-    <sitename>Contentwiki</sitename>
-    <base>http://localhost/index.php/Main_Page</base>
-    <generator>MediaWiki 1.16.4</generator>
+    <sitename>Devwiki</sitename>
+    <base>http://localhost/HaloSMWExtension/index.php/Main_Page</base>
+    <generator>MediaWiki 1.17.0</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2" case="first-letter">Media</namespace>
@@ -11,8 +11,8 @@
       <namespace key="1" case="first-letter">Talk</namespace>
       <namespace key="2" case="first-letter">User</namespace>
       <namespace key="3" case="first-letter">User talk</namespace>
-      <namespace key="4" case="first-letter">Contentwiki</namespace>
-      <namespace key="5" case="first-letter">Contentwiki talk</namespace>
+      <namespace key="4" case="first-letter">Devwiki</namespace>
+      <namespace key="5" case="first-letter">Devwiki talk</namespace>
       <namespace key="6" case="first-letter">File</namespace>
       <namespace key="7" case="first-letter">File talk</namespace>
       <namespace key="8" case="first-letter">MediaWiki</namespace>
@@ -25,1103 +25,55 @@
       <namespace key="15" case="first-letter">Category talk</namespace>
       <namespace key="102" case="first-letter">Property</namespace>
       <namespace key="103" case="first-letter">Property talk</namespace>
-      <namespace key="104" case="first-letter">Type</namespace>
-      <namespace key="105" case="first-letter">Type talk</namespace>
       <namespace key="106" case="first-letter">Form</namespace>
       <namespace key="107" case="first-letter">Form talk</namespace>
       <namespace key="108" case="first-letter">Concept</namespace>
       <namespace key="109" case="first-letter">Concept talk</namespace>
-      <namespace key="120" case="first-letter">Document</namespace>
-      <namespace key="121" case="first-letter">Document talk</namespace>
-      <namespace key="122" case="first-letter">Audio</namespace>
-      <namespace key="123" case="first-letter">Audio talk</namespace>
-      <namespace key="124" case="first-letter">Video</namespace>
-      <namespace key="125" case="first-letter">Video talk</namespace>
-      <namespace key="126" case="first-letter">Pdf</namespace>
-      <namespace key="127" case="first-letter">Pdf talk</namespace>
-      <namespace key="128" case="first-letter">ICalendar</namespace>
-      <namespace key="129" case="first-letter">ICalendar talk</namespace>
-      <namespace key="130" case="first-letter">VCard</namespace>
-      <namespace key="131" case="first-letter">VCard talk</namespace>
-      <namespace key="200" case="first-letter">WebService</namespace>
-      <namespace key="201" case="first-letter">WebService talk</namespace>
-      <namespace key="202" case="first-letter">TermImport</namespace>
-      <namespace key="203" case="first-letter">TermImport talk</namespace>
-      <namespace key="220" case="first-letter">E-mail</namespace>
-      <namespace key="221" case="first-letter">E-mail talk</namespace>
       <namespace key="274" case="first-letter">Widget</namespace>
       <namespace key="275" case="first-letter">Widget talk</namespace>
-      <namespace key="300" case="first-letter">ACL</namespace>
-      <namespace key="301" case="first-letter">ACL talk</namespace>
-      <namespace key="400" case="first-letter">IAI</namespace>
-      <namespace key="401" case="first-letter">IAI talk</namespace>
       <namespace key="700" case="first-letter">Comment</namespace>
       <namespace key="701" case="first-letter">Comment talk</namespace>
-      <namespace key="702" case="first-letter">UserManual</namespace>
-      <namespace key="703" case="first-letter">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
-    <title>Category:Comment</title>
-    <id>104</id>
+    <title>Widget:Facebook Like Box</title>
+    <id>606</id>
     <revision>
-      <timestamp>2011-07-06T12:56:29Z</timestamp>
+      <timestamp>2011-08-24T14:28:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Category}} __NOTOC__  __NOEDITSECTION__
+      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
+This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
 
-== Information about this category ==
+Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
 
-[[Rationale::This category contains all comments created by the Collaboration Extension.]] [[Category has icon::File:Smw_plus_comment_icon_2_16x16.gif| ]] [[No automatic formedit::true| ]] {{Part of bundle|value=Collaboration}} {{Content hash|value=}}</text>
-    <hash>dc1bfd73c47293162cbf0c5167ff8a9a</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment rating</title>
-    <id>105</id>
-    <revision>
-      <timestamp>2011-09-28T15:14:07Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
+== Using this widget ==
+For information on how to use this widget, see [http://www.mediawikiwidgets.org/Facebook_Like_Box widget description page on MediaWikiWidgets.org].
 
-== Information about this property ==
-
-[[Rationale::The rating value of a comment.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
-    <hash>c3fe2d6805e948ff12255010393b9327</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment date</title>
-    <id>106</id>
-    <revision>
-      <timestamp>2011-09-28T15:14:33Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::The date of a comment.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::Date| ]]</text>
-    <hash>5f2bab85d628eada3448c892a4ea056a</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment text</title>
-    <id>107</id>
-    <revision>
-      <timestamp>2011-09-28T15:14:59Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Contains a comment text.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::Text| ]]</text>
-    <hash>3bfff841e586a36d738e80dfd3ae38ad</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment person</title>
-    <id>108</id>
-    <revision>
-      <timestamp>2011-09-28T15:12:59Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Contains the commenting person.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
-    <hash>d3b4d57768c923b8882eaa43e274925b</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:CommentResult</title>
-    <id>109</id>
-    <revision>
-      <timestamp>2011-08-16T08:10:58Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Used as result printer template.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
---&gt;{{#vardefine:resID|{{#bin2hex:{{{6}}}}}}}
-{{#vardefine:myID|{{#bin2hex:{{{1}}}}}}}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;div class=&quot;collabComPlain&quot; style=&quot;display:none;&quot;&gt;{{{1}}}&lt;/div&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;&lt;div class=&quot;collabComResInfoSuperPlain&quot; style=&quot;display:none&quot;&gt;{{{6}}}&lt;/div&gt;&lt;!-- end comment information 
---&gt;&lt;!-- start comment person 
---&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} 
-|{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} 
-}}
-{{#if:{{#var:userimage}}
-| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] 
-| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{2}}}]] 
-}}&lt;/div&gt;&lt;!-- start comment rating 
---&gt;{{#if:{{{5}}}
-|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview|link=]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| 
-}}&lt;!-- end comment rating 
---&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person 
---&gt;&lt;!-- start comment date
---&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
---&gt;&lt;!-- start comment content
---&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
---&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
-{{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;!--
-begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileAttach&quot;&gt;Attached article(s): {{#arraymapce:{{{10|}}}|,|x|[[:x]]|&amp;nbsp;}}&lt;/div&gt;&lt;div class=&quot;collabComResFileAttachSaved&quot;&gt;{{{10|}}}&lt;/div&gt;|}}&lt;!-- end attached files --&gt;
-&lt;/div&gt;&lt;!-- end comment 
---&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>0f6d7ba6efdf75c0469bd118786c36c8</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Belongs to article</title>
-    <id>110</id>
-    <revision>
-      <timestamp>2011-09-28T15:16:20Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Used to create a relation between comments and articles.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
-    <hash>379a715212d2ae3e34d1dba50196c4db</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:ShowCommentsIntern</title>
-    <id>111</id>
-    <revision>
-      <timestamp>2011-08-24T11:50:35Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Show all comments incl. form.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
-{{#set:
-|Article has average rating={{#averagerating:}}
-}}
-{{#showcommentform:}}
-&lt;div id=&quot;collabComResults&quot;&gt;
-{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Category:Comment]]
-  | ?Has comment person
-  | ?Has comment date
-  | ?Has comment text
-  | ?Has comment rating
-  | ?Belongs to comment
-  | ?Comment was deleted#true,false
-  | ?Has comment editor
-  | ?Modification date
-  | ?Has attached article
-  | format=template
-  | template=CommentResult
-  | sort=Has comment date
-  | order=asc
-  | link=none
-  | limit=100
-}}
-&lt;/div&gt;
-&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>9c403ad6b46d6ffd44306eab3f9d2185</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Comment was deleted</title>
-    <id>121</id>
-    <revision>
-      <timestamp>2011-09-28T15:15:36Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Flag for comment deletion.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::Boolean| ]]</text>
-    <hash>9019ab70f5b89fe23ffbddeb08f1a538</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Belongs to comment</title>
-    <id>122</id>
-    <revision>
-      <timestamp>2011-09-28T15:18:12Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Used to create a relation between comments and other comments.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
-    <hash>bdb8a3fcf36abd9f50e2c45246f325b5</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Comment icon crystal.png</title>
-    <id>123</id>
-    <revision>
-      <timestamp>2011-04-19T13:00:04Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}</text>
-    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Bad active.png</title>
-    <id>124</id>
-    <revision>
-      <timestamp>2011-04-19T12:59:37Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}</text>
-    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Good active.png</title>
-    <id>125</id>
-    <revision>
-      <timestamp>2011-04-19T12:59:39Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}</text>
-    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Neutral active.png</title>
-    <id>126</id>
-    <revision>
-      <timestamp>2011-04-19T12:58:24Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}</text>
-    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Defaultuser.gif</title>
-    <id>127</id>
-    <revision>
-      <timestamp>2011-04-19T13:14:01Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}</text>
-    <hash>579d346e2ce3c336ea7ccf7cbcec9627</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Comment</title>
-    <id>166</id>
-    <revision>
-      <timestamp>2011-07-04T15:10:51Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Creates a comment.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} 
-| [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
-}}{{#if: {{{CommentRelatedComment|}}} 
-| &amp;nbsp;and a reply to [[Belongs to comment::{{{CommentRelatedComment|}}}]] | 
-}}''&lt;!-- start comment (do not change css-classes)--&gt;
-&lt;!-- start comment person (do not change css-class.) --&gt;
-&lt;div class=&quot;collabComResPerson&quot;&gt;
-{{#if: {{{CommentPerson|}}} 
-| {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} 
-}}
-{{#if:{{#var:userimage}}
-| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] 
-| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{CommentPerson}}}]] 
-}}&lt;/div&gt;&lt;!-- end comment person 
---&gt;&lt;!-- start comment rating 
---&gt;{{#if:{{{CommentRating|}}}
-| [[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;|}}| }}&lt;/div&gt;|}}&lt;!-- end comment rating 
---&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;
-{{#if: {{{CommentPerson|}}} 
-|{{#ifexist:{{{CommentPerson}}}
-|[[{{{CommentPerson|}}}]], 
-|{{{CommentPerson|}}},&amp;nbsp; 
-}}[[Has comment person::{{{CommentPerson|}}}| ]]|
-}}&lt;/div&gt;
-&lt;!-- start comment date
---&gt;{{#if: {{{CommentDatetime|}}} 
-| &lt;div class=&quot;collabComResDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;
-}}&lt;!-- end comment date
---&gt;&lt;!-- start comment content
---&gt;&lt;div class=&quot;collabComResText&quot;&gt;
-{{#if:{{{CommentContent|}}}
-|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
-&lt;!-- end comment content--&gt;&lt;/div&gt;
-[[Comment was deleted::{{{CommentWasDeleted|false}}}]]
-{{#if:{{{AttachedArticles|}}}|{{#arraymapce:{{{AttachedArticles|}}}|,|x|[[Has attached article::x]]}}|no attached articles}}
-&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>defd61e9147dc7ccb44e3f39950241e8</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:ShowComments</title>
-    <id>167</id>
-    <revision>
-      <timestamp>2011-07-04T13:56:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Shows all comments incl. a form entry field for the given article.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{lc:{{{show|}}}}}|true|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>38b0122f095b2e00c357ecf529a0f69f</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Collaboration</title>
-    <id>217</id>
-    <revision>
-      <timestamp>2011-08-24T15:32:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Content bundle}}
-[[Rationale::This content bundle features a set of basic elements that are necessary for the Collaboration extension.| ]] {{Part of bundle|value=Collaboration}} [[Maintainer::ontoprise GmbH| ]] [[Vendor::ontoprise GmbH| ]] [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension | ]] [[Ontology version::140| ]] [[Installation dir::extensions/Collaboration| ]] 
-[[Dependency::Smwplus; 153; 153| ]][[Dependency::Widgets; 092; 092| ]][[Dependency::Richmedia; 152; 152| ]] [[License::GPL v2| ]] 
-
-;This content bundle comprises a set of articles that are necessary to make use of the Collaboration extension.
-
-;How to use
-Simply add the template call &lt;code&gt;&lt;nowiki&gt;{{ShowComments|show=True}}&lt;/nowiki&gt;&lt;/code&gt; into the article(s)  to enable your users to leave comments for. Usually you include this template call at the bottom of the page.
-
-;Sandbox
-We have created a small [[Collaboration_Sandbox|Sandbox of the Collaboration extension]] in this Wiki to give you a smooth start.
-
-;User manual
-More information about the Collaboration extension and how to use it can be found in our [http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension Collaboration extension help article at SMWForum].
-
-;This bundle contains these articles
-:
-
-{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
-|?=Link
-|?Rationale
-|link=subject
-|default=''none''
-|mainlabel=-
-|source=wiki
-}}
-
-[[Category:Content bundle|Content_bundle]]
-{{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
-    <hash>aa547de823b61607a3b49c4ccbe5ba42</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Collaboration Sandbox</title>
-    <id>262</id>
-    <revision>
-      <timestamp>2011-09-27T14:43:03Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">= Collaboration Sandbox =
-Just click on '''&quot;Show comments&quot;''' below to read and add comments.
-
-Have a look at [[User:Collaboration|the article of our sandbox user]] to discover his latest comments powered by [[Template:Show comments infobox for user]]. Feel free to use this template on all your user pages by entering &lt;pre&gt;
-{{Show comments infobox for user
-|show=True
-}}
-&lt;/pre&gt; to these articles.
-
-We also created [[Collaboration_Sandbox/Collaboration_best_articles|a sample article to display the best rated articles]] in this wiki that calls [[Template:Show best rated articles]]. You can use this template call in any other pages, too. &lt;pre&gt;
-{{Show best rated articles
-|show=True
-}}
-&lt;/pre&gt;
-
-Since version 1.4.0 the Collaboration extension recommends to install the [http://www.mediawiki.org/wiki/Extension:Widgets Widgets extensions]. If you accepted this, [[Collaboration_Sandbox/Widget examples|these widget examples]] would make a quick impression about ''how to embed widgets'' to a page.
-
-More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Using_the_Collaboration_extension_1.4&amp;context=Help%3ACollaboration+extension+1.4 Collaboration extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
-
-[[Rationale::A small Sandbox of the Collaboration extension in this Wiki to give you a smooth start.| ]]
-
-{{ShowComments
-|show=True
-}}
-&lt;noinclude&gt;{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}&lt;/noinclude&gt;</text>
-    <hash>f6ece3339f06f10fa9fc7ed97fc7752e</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295602691794</title>
-    <id>263</id>
-    <revision>
-      <timestamp>2011-04-14T12:45:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
+==Copy to your site==
+To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{PAGENAME}}''' article.
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.facebook.com/plugins/likebox.php?href=&lt;!--{$profile}--&gt;&amp;amp;width=&lt;!--{$width|default:300|escape:'urlpathinfo'}--&gt;&amp;amp;colorscheme=&lt;!--{$theme|default:light|escape:'urlpathinfo'}--&gt;&amp;amp;show_faces=&lt;!--{$faces|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;stream=&lt;!--{$stream|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;header=false&amp;amp; height=&lt;!--{$height|default:556|escape:'urlpathinfo'}--&gt;&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:&lt;!--{$width|default:300|escape:'html'}--&gt;px; height:&lt;!--{$height|default:556|escape:'html'}--&gt;px&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;
 &lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+[[Part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;</text>
-    <hash>cb546e04b624a3cb2e1b07ed1067086e</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295602913516</title>
-    <id>264</id>
-    <revision>
-      <timestamp>2011-04-14T12:45:33Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>76c354a3478aa2d2bda1c500b02a69e6</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295602948268</title>
-    <id>265</id>
-    <revision>
-      <timestamp>2011-04-14T12:06:43Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>805daee6005bee77b252ca0ec0b3646f</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295603031029</title>
-    <id>266</id>
-    <revision>
-      <timestamp>2011-04-14T12:05:22Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>363d82900dc5c2f336bb5b2ce8594251</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Comment:Collaboration Sandbox 1295603163565</title>
-    <id>267</id>
-    <revision>
-      <timestamp>2011-04-14T12:05:14Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>cc8a19a41ca12f284ae6865def786843</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment editor</title>
-    <id>276</id>
-    <revision>
-      <timestamp>2011-09-28T15:13:40Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Contains the name of the last editor.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
-    <hash>77394f0fcedcf01846eace884580b8ab</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Article has average rating</title>
-    <id>285</id>
-    <revision>
-      <timestamp>2011-07-04T13:18:11Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::Contains the average rating for the article.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[has type::Type:Number| ]]</text>
-    <hash>9db3cd7a1e32f29c9f743c5a8ffb5574</hash>
-    </revision>
-  </page>
-  <page>
-    <title>File:Smw plus comment icon 2 16x16.gif</title>
-    <id>411</id>
-    <revision>
-      <timestamp>2011-04-14T12:20:57Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">(recovered file, missing upload log entry)
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-[[Rationale::Comment icon of the Collaboration extension used in the Comments infobox for user.| ]]
-&lt;/noinclude&gt;</text>
-    <hash>0b58351f6a4d0ab206ebee3e95f3a1cc</hash>
-    </revision>
-  </page>
-  <page>
-    <title>User:Collaboration</title>
-    <id>483</id>
-    <revision>
-      <timestamp>2011-04-14T12:02:32Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">[[Rationale::A small sample user page in this Wiki to give you an expression of the comment user info box delivered by the Collaboration sandbox.]]
-{{Show comments infobox for user
-|show=True
-}}
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-&lt;/noinclude&gt;</text>
-    <hash>0d19ac3bd08a4308132f61d899b634d3</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Show comments infobox for user</title>
-    <id>484</id>
-    <revision>
-      <timestamp>2011-07-04T13:55:06Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Wrapper template for switching the comments info box on a user page on or off.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Comments infobox for user}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>73b84088440253e08c798c913122de1f</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Comments infobox for user</title>
-    <id>485</id>
-    <revision>
-      <timestamp>2011-07-04T13:51:12Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Shows an infobox of the most recent comments made by a user. This template should be called on a user's page.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Category:Comment]] [[Has comment person::{{FULLPAGENAME}}]] [[Modification date::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
-
-{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
-|-
-! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | Recent Comments ({{#var:resultNumber}})
-|-
-| {{#ask: {{#var:query}} 
-|?Has comment text
-|?Has comment rating
-|?Has comment date
-|?Belongs to article
-| sort=Has comment date
-| order=desc
-| format=template
-| template=Comment row for user
-| limit={{#var:resultLimit}} 
-| searchlabel= 
-| link=none 
-| default=*''no comments made yet''}}
-|-
-| colspan=&quot;2&quot; | {{#ifexpr: {{#var:resultNumber}} &gt; {{#var:resultLimit}} | &lt;small&gt;For all comments of {{FULLPAGENAME}} click [{{fullurl:Template:Comments overview|ofUser={{urlencode:{{FULLPAGENAME}}}}}} here...]&lt;/small&gt;}}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>055ed2364175853f3f087183d77d09cd</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Comments overview</title>
-    <id>486</id>
-    <revision>
-      <timestamp>2011-07-04T13:52:54Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Template for displaying the latest comments of a given user specified by the argument ''ofUser''.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;
-== Comments {{#if:{{#arg:ofUser|}}|made by [[{{#arg:ofUser|}}]]|}} ==
-
-{{#ask: [[Comment:+]] [[Has comment person::{{#arg:ofUser|+}}]]
-  | ?Has comment person
-  | ?Has comment date
-  | ?Has comment text
-  | ?Has comment rating
-  | ?Belongs to article
-  | sort=Has comment date
-  | order=desc
-  | format=template
-  | template=CommentResult
-  | link=none
-  | limit=100
-}}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>0a3902e7e3eb576873ebfa065d556d61</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Comment row for user</title>
-    <id>487</id>
-    <revision>
-      <timestamp>2011-07-04T13:44:44Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Result template to display a comment in a table row for the comment info box.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{|
-|[[File:Smw_plus_comment_icon_2_16x16.gif|link={{{1|}}}]]
-| {{#ifexpr: {{#len:{{{2|}}}}} &gt; 125 | ''{{#sub:{{{2|}}}|0|125}} ...'' | ''{{{2|}}}'' }} &lt;br/&gt; &lt;!--comment rating: {{{3|}}}--&gt; &lt;small&gt;date: {{{4|}}} &lt;br/&gt; to: [[{{{5|}}}]]&lt;/small&gt;
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>f5b3c0ad56a5853ca99ca10c0785f342</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Best rated articles</title>
-    <id>491</id>
-    <revision>
-      <timestamp>2011-07-04T13:41:24Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Shows an info box of the best rated comments in this wiki.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Article has average rating::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
-
-{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
-|-
-! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) best rated articles 
-|-
-| {{#ask: {{#var:query}} 
-|?Article has average rating
-| sort=Article has average rating
-| order=desc
-| format=template
-| template=Article row for comment ratings
-| limit={{#var:resultLimit}} 
-| searchlabel= 
-| link=none 
-| default=*''no article commented yet''
-}}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>9dc82beb138cfc97409749c4b829f91c</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Article row for comment ratings</title>
-    <id>492</id>
-    <revision>
-      <timestamp>2011-07-04T13:40:15Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Result template to display a row with a rated article in an info box.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{|
-| [[{{{1|}}}]]
-| with average rating: {{{2|}}}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>6cdb2bef7dc70324914aa223fd99fb3d</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Show best rated articles</title>
-    <id>493</id>
-    <revision>
-      <timestamp>2011-07-04T13:54:13Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Wrapper template for switching the best rated articles info box on or off.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Best rated articles}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>f04b6d19ce41a4eae88bb9f85f9c44c6</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Collaboration Sandbox/Collaboration best articles</title>
-    <id>498</id>
-    <revision>
-      <timestamp>2011-08-24T16:01:14Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>moved [[Collaboration best articles]] to [[Collaboration Sandbox/Collaboration best articles]]</comment>
-      <text xml:space="preserve">This info box displays the best rated articles in this wiki.
-{{Show best rated articles
-|show=True
-}}
-[[Rationale::A sample article with an info box that displays the best rated articles in this wiki.| ]]
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
-&lt;/noinclude&gt;</text>
-    <hash>6905da8523208160be7e6dcd1d2e21dc</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has attached article</title>
-    <id>651</id>
-    <revision>
-      <timestamp>2011-07-04T13:21:00Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__ 
-
-== Information about this property ==
-
-[[Rationale::An article that is attached to a comment.]]
-
-{{NoteInText|The characteristics of this property are visible in the factbox below.}}
-
-[[Category:Property]]
-
-{{Content hash|value=}} 
-
-{{Part of bundle|value=Collaboration}}
-
-[[Has domain and range::Category:Comment;]]
-[[Has type::Type:Page]]
-[[Category:Property]]</text>
-    <hash>01d24503212f33dea2e06a4171f717ee</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Article row for comment attachments</title>
-    <id>2268</id>
-    <revision>
-      <timestamp>2011-07-06T11:43:05Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;{{Template}}  [[Rationale::Result template to display a row with an article and the latest attachments in its comments in an info box.]] [[Category:Template]] &lt;/noincl...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Result template to display a row with an article and the latest attachments in its comments in an info box.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{|
-| [[{{{2|}}}]]
-| with attached article(s): {{#arraymapce:{{{3|}}}|,|x|[[:x]]|&amp;nbsp;}}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>5a79f03e65097d75e995a1df0e872c20</hash>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Comments with attached articles</title>
-    <id>2269</id>
-    <revision>
-      <timestamp>2011-07-06T11:43:32Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;{{Template}}  [[Rationale::Shows articles in this wiki that have attached articles by comments.]] [[Category:Template]] &lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[C...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
-
-[[Rationale::Shows articles in this wiki that have attached articles by comments.]]
-[[Category:Template]]
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Comment:+]][[Has attached article::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}} 
-
-{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
-|-
-! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) attached articles
-|-
-| {{#ask: {{#var:query}} 
-|?Belongs to article
-|?Has attached article
-| format=template
-| template=Article row for comment attachments
-| limit={{#var:resultLimit}} 
-| searchlabel= 
-| link=none 
-| default=*''no articles with attached articles yet''
-}}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-
-{{Part of bundle|value=Collaboration}}
-
-{{Content hash|value=}}
-
-&lt;/noinclude&gt;</text>
-    <hash>dd3ffcb498fe1901eba39fd62738c55a</hash>
     </revision>
   </page>
   <page>
     <title>Widget:Facebook Like Button</title>
     <id>353</id>
     <revision>
-      <id>495</id>
-      <timestamp>2011-06-27T15:58:58Z</timestamp>
+      <id>1019</id>
+      <timestamp>2011-08-29T09:28:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
+      <text xml:space="preserve" bytes="3053">&lt;noinclude&gt;__NOTOC__
+
+Timestamp test...
+
 This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
 
 Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
@@ -1153,33 +105,596 @@ fb_source - the stream type ('home', 'profile', 'search', 'other') in which the 
     </revision>
   </page>
   <page>
-    <title>Widget:Facebook Like Box</title>
-    <id>444</id>
+    <title>Widget:Google Calendar</title>
+    <id>608</id>
     <revision>
-      <id>489</id>
-      <timestamp>2011-06-27T15:10:51Z</timestamp>
+      <timestamp>2011-08-24T15:01:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with &quot;&lt;noinclude&gt;__NOTOC__ This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wik...&quot;</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
-This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
+      <text xml:space="preserve">&lt;noinclude&gt;
+This widget allows you to add '''[http://www.google.com/calendar/embedhelper Google Calendar]''' widget to your wiki page.
 
-Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
+It was originally created by [http://www.mediawiki.org/wiki/User:Sergey_Chernyshev Sergey Chernyshev] for [http://www.techpresentations.org/Conferences#Current_.26_Upcoming_conferences upcoming conference calendar] on TechPresentations.org
 
 == Using this widget ==
-For information on how to use this widget, see [http://www.mediawikiwidgets.org/Facebook_Like_Box widget description page on MediaWikiWidgets.org].
+For information on how to use this widget, see [http://www.mediawikiwidgets.org/Google_Calendar widget description page on MediaWikiWidgets.org].
 
-==Copy to your site==
-To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{PAGENAME}}''' article.
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.facebook.com/plugins/likebox.php?href=&lt;!--{$profile}--&gt;&amp;amp;width=&lt;!--{$width|default:300|escape:'urlpathinfo'}--&gt;&amp;amp;colorscheme=&lt;!--{$theme|default:light|escape:'urlpathinfo'}--&gt;&amp;amp;show_faces=&lt;!--{$faces|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;stream=&lt;!--{$stream|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;header=false&amp;amp; height=&lt;!--{$height|default:556|escape:'urlpathinfo'}--&gt;&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:&lt;!--{$width|default:300|escape:'html'}--&gt;px; height:&lt;!--{$height|default:556|escape:'html'}--&gt;px&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;</text>
+== Copy to your site ==
+To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{FULLPAGENAME}}''' article.
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.google.com/calendar/&lt;!--{if isset($app)}--&gt;hosted/&lt;!--{$app|escape:'urlpathinfo'}--&gt;/&lt;!--{/if}--&gt;embed?&lt;!--{if isset($title)}--&gt;title=&lt;!--{$title|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if isset($pvttk)}--&gt;pvttk=&lt;!--{$pvttk|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if is_array($id)}--&gt;&lt;!--{foreach from=$id item=i}--&gt;src=&lt;!--{$i|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/foreach}--&gt;&lt;!--{else}--&gt;src=&lt;!--{$id|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if is_array($color)}--&gt;&lt;!--{foreach from=$color item=c}--&gt;color=%23&lt;!--{$c|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/foreach}--&gt;&lt;!--{else}--&gt;color=%23&lt;!--{$color|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;height=&lt;!--{$height|escape:'urlpathinfo'|default:600}--&gt;&amp;amp;showTitle=&lt;!--{if isset($showtitle) and not $showtitle}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showNav=&lt;!--{if isset($shownav) and not $shownav}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showDate=&lt;!--{if isset($showdate) and not $showdate}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showTabs=&lt;!--{if isset($showtabs) and not $showtabs}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showCalendars=&lt;!--{if isset($showcals) and not $showcals}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showPrint=&lt;!--{if isset($showprint) and not $showprint}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showTz=&lt;!--{if isset($showtz) and not $showtz}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;wkst=&lt;!--{$weekstart|escape:'urlpathinfo'|default:1}--&gt;&amp;amp;hl=&lt;!--{$lang|escape:'urlpathinfo'|default:en}--&gt;&amp;amp;mode=&lt;!--{$view|escape:'urlpathinfo'|default:MONTH}--&gt;&amp;amp;&lt;!--{if isset($timezone)}--&gt;ctz=&lt;!--{$timezone|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if isset($bgcolor)}--&gt;bgcolor=%23&lt;!--{$bgcolor|escape:'urlpathinfo'}--&gt;&lt;!--{/if}--&gt;&quot; width=&quot;&lt;!--{$width|escape:'html'|default:'100%'}--&gt;&quot; height=&quot;&lt;!--{$height|escape:'html'|default:600}--&gt;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot;&lt;!--{if isset($border)}--&gt; style=&quot;border: solid 1px #777&quot;&lt;!--{/if}--&gt;&lt;!--{if isset($style)}--&gt; style=&quot;&lt;!--{$style|escape:'html'}--&gt;&quot;&lt;!--{/if}--&gt;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
-=======
+  <page>
+    <title>File:Comment icon crystal.png</title>
+    <id>810</id>
+    <revision>
+      <timestamp>2011-08-15T14:09:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Comment icon crystal.png]]&amp;quot;</comment>
+      <text xml:space="preserve">[[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Bad active.png</title>
+    <id>811</id>
+    <revision>
+      <timestamp>2011-08-15T14:10:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Bad active.png]]&amp;quot;</comment>
+      <text xml:space="preserve">[[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Good active.png</title>
+    <id>812</id>
+    <revision>
+      <timestamp>2011-08-15T14:09:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Good active.png]]&amp;quot;</comment>
+      <text xml:space="preserve">[[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Neutral active.png</title>
+    <id>813</id>
+    <revision>
+      <timestamp>2011-08-15T14:09:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Neutral active.png]]&amp;quot;</comment>
+      <text xml:space="preserve">[[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Defaultuser.gif</title>
+    <id>814</id>
+    <revision>
+      <timestamp>2011-08-15T14:10:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>uploaded a new version of &amp;quot;[[File:Defaultuser.gif]]&amp;quot;</comment>
+      <text xml:space="preserve">[[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration Sandbox</title>
+    <id>815</id>
+    <revision>
+      <timestamp>2012-01-24T12:28:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">= Collaboration Sandbox =
+Just click on '''&quot;Show comments&quot;''' below to read and add comments.
+
+Have a look at [[User:Collaboration|the article of our sandbox user]] to discover his latest comments powered by [[Template:Show comments infobox for user]]. Feel free to use this template on all your user pages by entering &lt;pre&gt;
+{{Show comments infobox for user
+|show=True
+}}
+&lt;/pre&gt; to these articles.
+
+We also created [[Collaboration_Sandbox/Collaboration_best_articles|a sample article to display the best rated articles]] in this wiki that calls [[Template:Show best rated articles]]. You can use this template call in any other pages, too. &lt;pre&gt;
+{{Show best rated articles
+|show=True
+}}
+&lt;/pre&gt;
+
+Since version 1.4.0 the Collaboration extension recommends to install the [http://www.mediawiki.org/wiki/Extension:Widgets Widgets extensions]. If you accepted this, [[Collaboration_Sandbox/Widget examples|these widget examples]] would make a quick impression about ''how to embed widgets'' to a page.
+
+More information can be found also in the [http://smwforum.ontoprise.com/smwforum/index.php?title=Help:Using_the_Collaboration_extension_1.4&amp;context=Help%3ACollaboration+extension+1.4 Collaboration extension help article]. Get this extension on our [http://smwforum.ontoprise.com/smwforum/index.php/Download download page]!
+
+[[Rationale::A small Sandbox of the Collaboration extension in this Wiki to give you a smooth start.| ]]
+
+{{ShowComments
+|show=True
+}}
+&lt;noinclude&gt;[[Part of bundle::Collaboration| ]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Article has average rating</title>
+    <id>816</id>
+    <revision>
+      <timestamp>2011-07-04T13:18:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Contains the average rating for the article.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>File:Smw plus comment icon 2 16x16.gif</title>
+    <id>817</id>
+    <revision>
+      <timestamp>2011-06-27T11:23:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>uploaded &amp;quot;[[File:Smw plus comment icon 2 16x16.gif]]&amp;quot;: auto-inserted image</comment>
+      <text xml:space="preserve">(recovered file, missing upload log entry)
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::Comment icon of the Collaboration extension used in the Comments infobox for user.| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>User:Collaboration</title>
+    <id>818</id>
+    <revision>
+      <timestamp>2011-06-15T08:56:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">[[Rationale::A small sample user page in this Wiki to give you an expression of the comment user info box delivered by the Collaboration sandbox.]]
+{{Show comments infobox for user
+|show=True
+}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration</title>
+    <id>840</id>
+    <revision>
+      <id>2086</id>
+      <timestamp>2012-02-10T12:42:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="1524">{{Content bundle}}
+[[Rationale::This content bundle features a set of basic elements that are necessary for the Collaboration extension.| ]] [[Part of bundle::Collaboration| ]] [[Maintainer::ontoprise GmbH| ]] [[Vendor::ontoprise GmbH| ]] [[Help Url::http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension | ]] [[Ontology version::140| ]] [[Installation dir::extensions/Collaboration| ]]
+[[Dependency::Smwplus; 153; 153| ]][[Dependency::Widgets; 092; 092| ]][[Dependency::Richmedia; 152; 152| ]] [[License::GPL v2| ]]
+
+;This content bundle comprises a set of articles that are necessary to make use of the Collaboration extension.
+
+;How to use
+Simply add the template call &lt;code&gt;&lt;nowiki&gt;{{ShowComments|show=True}}&lt;/nowiki&gt;&lt;/code&gt; into the article(s)  to enable your users to leave comments for. Usually you include this template call at the bottom of the page.
+
+;Sandbox
+We have created a small [[Collaboration_Sandbox|Sandbox of the Collaboration extension]] in this Wiki to give you a smooth start.
+
+;User manual
+More information about the Collaboration extension and how to use it can be found in our [http://smwforum.ontoprise.com/smwforum/index.php/Help:Collaboration_Extension Collaboration extension help article at SMWForum].
+
+;This bundle contains these articles
+:
+
+{{#ask:[[Part of bundle::{{FULLPAGENAME}}]]
+|?=Link
+|?Rationale
+|link=subject
+|default=''none''
+|mainlabel=-
+|source=wiki
+}}
+
+[[Category:Content bundle|Content_bundle]]
+{{Content hash|value=a5b59c7c93de4673e7a007ab705bdafa}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration best articles</title>
+    <id>819</id>
+    <revision>
+      <timestamp>2011-06-15T08:56:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This info box displays the best rated articles in this wiki.
+{{Show best rated articles
+|show=True
+}}
+[[Rationale::A sample article with an info box that displays the best rated articles in this wiki.| ]]
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has attached article</title>
+    <id>820</id>
+    <revision>
+      <timestamp>2011-07-04T13:21:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::An article that is attached to a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+{{Content hash|value=}}
+
+[[Part of bundle::Collaboration| ]]
+
+[[Has domain and range::Category:Comment;]]
+[[Has type::Type:Page]]
+[[Category:Property]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602691794</title>
+    <id>263</id>
+    <revision>
+      <timestamp>2011-04-14T12:45:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:38:11+01:00|CommentContent=Do you want to let your visitors have a say and encourage discussions in your wiki? Then introduce meta talking with the Collaboration extension.|}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>cb546e04b624a3cb2e1b07ed1067086e</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602913516</title>
+    <id>264</id>
+    <revision>
+      <timestamp>2011-04-14T12:45:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRating=1|CommentDatetime=2011-01-21T10:41:52+01:00|CommentContent=Communicating about topics and media is a basic community feature. You can upgrade your wiki essentially if you allow your visitors to present and discuss their opinions about certain articles. Or you would like to set up a conversation focused wiki where commenting is the superordinate and actual objective and therefore always available. You can have it your way and expand the attraction of your wiki in any case. |}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>76c354a3478aa2d2bda1c500b02a69e6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295602948268</title>
+    <id>265</id>
+    <revision>
+      <timestamp>2011-04-14T12:06:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295602913516|CommentDatetime=2011-01-21T10:42:27+01:00|CommentContent=So let people take part and rate contents with the Collaboration extension.|}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>805daee6005bee77b252ca0ec0b3646f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295603031029</title>
+    <id>266</id>
+    <revision>
+      <timestamp>2011-04-14T12:05:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentDatetime=2011-01-21T10:43:50+01:00|CommentContent=The features of the Collaboration extension&amp;#58; &lt;br /&gt;Let your visitors comment and rate articles and contents &lt;br /&gt;Allow discussions about and replies to expressed opinions &lt;br /&gt;Aggregate comments in different ways (e.g. lists of all exisiting comments, the 10 latest comments or all contributions of a certain user)|}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>363d82900dc5c2f336bb5b2ce8594251</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Comment:Collaboration Sandbox 1295603163565</title>
+    <id>267</id>
+    <revision>
+      <timestamp>2011-04-14T12:05:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Comment|CommentPerson=User:Collaboration|CommentRelatedArticle=Collaboration_Sandbox|CommentRelatedComment=Comment:Collaboration_Sandbox_1295603031029|CommentDatetime=2011-01-21T10:46:02+01:00|CommentContent=You can download this extension here&amp;#58; http&amp;#58;&amp;#47;&amp;#47;smwforum.ontoprise.com&amp;#47;smwforum&amp;#47;index.php&amp;#47;Download#SUITE_OF_HALO_EXTENSIONS|}}
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+[[Rationale::A small sample comment for the Sandbox of the Collaboration extension in this Wiki.| ]]
+&lt;/noinclude&gt;</text>
+    <hash>cc8a19a41ca12f284ae6865def786843</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Comment</title>
+    <id>822</id>
+    <revision>
+      <timestamp>2011-07-06T12:56:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Category}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this category ==
+
+[[Rationale::This category contains all comments created by the Collaboration Extension.]] [[Category has icon::File:Smw_plus_comment_icon_2_16x16.gif| ]] [[No automatic formedit::true| ]] [[Part of bundle::Collaboration| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment rating</title>
+    <id>823</id>
+    <revision>
+      <timestamp>2011-09-28T15:14:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::The rating value of a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::Number| ]] [[Allows value::1| ]] [[Allows value::0| ]] [[Allows value::-1| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment date</title>
+    <id>824</id>
+    <revision>
+      <timestamp>2011-09-28T15:14:33Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::The date of a comment.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::Date| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment text</title>
+    <id>825</id>
+    <revision>
+      <timestamp>2011-09-28T15:14:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Contains a comment text.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment person</title>
+    <id>826</id>
+    <revision>
+      <timestamp>2011-09-28T15:12:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Contains the commenting person.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to article</title>
+    <id>827</id>
+    <revision>
+      <timestamp>2011-09-28T15:16:20Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Used to create a relation between comments and articles.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment; | ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Comment was deleted</title>
+    <id>828</id>
+    <revision>
+      <timestamp>2011-09-28T15:15:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Flag for comment deletion.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::Boolean| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to comment</title>
+    <id>829</id>
+    <revision>
+      <timestamp>2011-09-28T15:18:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Used to create a relation between comments and other comments.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has type::Page| ]][[Has max cardinality::1| ]][[Has min cardinality::1| ]][[has domain and range::Category:Comment;Category:Comment | ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has comment editor</title>
+    <id>830</id>
+    <revision>
+      <timestamp>2011-09-28T15:13:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Property}} __NOTOC__  __NOEDITSECTION__
+
+== Information about this property ==
+
+[[Rationale::Contains the name of the last editor.]]
+
+{{NoteInText|The characteristics of this property are visible in the factbox below.}}
+
+[[Category:Property]]
+
+[[Part of bundle::Collaboration| ]]
+
+[[has domain and range::Category:Comment; | ]][[has type::String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Collaboration Sandbox/Collaboration best articles</title>
+    <id>831</id>
+    <revision>
+      <timestamp>2011-08-24T16:01:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[Collaboration best articles]] to [[Collaboration Sandbox/Collaboration best articles]]</comment>
+      <text xml:space="preserve">This info box displays the best rated articles in this wiki.
+{{Show best rated articles
+|show=True
+}}
+[[Rationale::A sample article with an info box that displays the best rated articles in this wiki.| ]]
+&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
   <page>
     <title>Collaboration Sandbox/Widget examples</title>
-    <id>2270</id>
+    <id>832</id>
     <revision>
       <timestamp>2011-09-02T11:29:22Z</timestamp>
       <contributor>
@@ -1187,7 +702,7 @@ To use this widget on your site, just install [http://www.mediawiki.org/wiki/Ext
         <id>1</id>
       </contributor>
       <comment>fixed typo</comment>
-      <text xml:space="preserve">This is a small example page that contains recommended widgets from the '''Widgets extension'''. 
+      <text xml:space="preserve">This is a small example page that contains recommended widgets from the '''Widgets extension'''.
 
 There are a lot of other very interesting widgets that my be worthwhile for you.
 
@@ -1236,89 +751,403 @@ and looks like this:
 }}
 
 &lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+[[Part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;</text>
-    <hash>54131fc84aef2b912dbb537e1cebaa92</hash>
     </revision>
   </page>
   <page>
-    <title>Widget:Facebook Like Box</title>
-    <id>2282</id>
+    <title>Template:Show comments infobox for user</title>
+    <id>44</id>
     <revision>
-      <timestamp>2011-08-24T14:28:17Z</timestamp>
+      <timestamp>2012-02-10T12:01:28Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;__NOTOC__
-This widget allows you to embed a '''[http://developers.facebook.com/docs/reference/plugins/like-box/ Facebook Page Like Box]''' (iframe version) on your wiki page.
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
-Created by [http://www.mediawikiwidgets.org/User:Chris_White Chris White]
-
-== Using this widget ==
-For information on how to use this widget, see [http://www.mediawikiwidgets.org/Facebook_Like_Box widget description page on MediaWikiWidgets.org].
-
-==Copy to your site==
-To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{PAGENAME}}''' article.
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.facebook.com/plugins/likebox.php?href=&lt;!--{$profile}--&gt;&amp;amp;width=&lt;!--{$width|default:300|escape:'urlpathinfo'}--&gt;&amp;amp;colorscheme=&lt;!--{$theme|default:light|escape:'urlpathinfo'}--&gt;&amp;amp;show_faces=&lt;!--{$faces|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;stream=&lt;!--{$stream|default:true|escape:'urlpathinfo'|validate:'boolean'}--&gt;&amp;amp;header=false&amp;amp; height=&lt;!--{$height|default:556|escape:'urlpathinfo'}--&gt;&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:&lt;!--{$width|default:300|escape:'html'}--&gt;px; height:&lt;!--{$height|default:556|escape:'html'}--&gt;px&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;
-&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+[[Rationale::Wrapper template for switching the comments info box on a user page on or off.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Comments infobox for user}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;</text>
-    <hash>6e1bae2ac462c90918d97425fc2e6d24</hash>
     </revision>
   </page>
   <page>
-    <title>Widget:Google Calendar</title>
-    <id>2284</id>
+    <title>Template:Comments infobox for user</title>
+    <id>45</id>
     <revision>
-      <timestamp>2011-08-24T15:01:58Z</timestamp>
+      <timestamp>2012-02-10T11:58:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This widget allows you to add '''[http://www.google.com/calendar/embedhelper Google Calendar]''' widget to your wiki page.
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
 
-It was originally created by [http://www.mediawiki.org/wiki/User:Sergey_Chernyshev Sergey Chernyshev] for [http://www.techpresentations.org/Conferences#Current_.26_Upcoming_conferences upcoming conference calendar] on TechPresentations.org
+[[Rationale::Shows an infobox of the most recent comments made by a user. This template should be called on a user's page.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Category:Comment]] [[Has comment person::{{FULLPAGENAME}}]] [[Modification date::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}}
 
-== Using this widget ==
-For information on how to use this widget, see [http://www.mediawikiwidgets.org/Google_Calendar widget description page on MediaWikiWidgets.org].
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | Recent Comments ({{#var:resultNumber}})
+|-
+| {{#ask: {{#var:query}}
+|?Has comment text
+|?Has comment rating
+|?Has comment date
+|?Belongs to article
+| sort=Has comment date
+| order=desc
+| format=template
+| template=Comment row for user
+| limit={{#var:resultLimit}}
+| searchlabel=
+| link=none
+| default=*''no comments made yet''}}
+|-
+| colspan=&quot;2&quot; | {{#ifexpr: {{#var:resultNumber}} &gt; {{#var:resultLimit}} | &lt;small&gt;For all comments of {{FULLPAGENAME}} click [{{fullurl:Template:Comments overview|ofUser={{urlencode:{{FULLPAGENAME}}}}}} here...]&lt;/small&gt;}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comments overview</title>
+    <id>46</id>
+    <revision>
+      <id>2080</id>
+      <timestamp>2012-02-10T11:58:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="629">&lt;noinclude&gt;{{Template}}
 
-== Copy to your site ==
-To use this widget on your site, just install [http://www.mediawiki.org/wiki/Extension:Widgets MediaWiki Widgets extension] and copy [{{fullurl:{{FULLPAGENAME}}|action=edit}} full source code] of this page to your wiki as '''{{FULLPAGENAME}}''' article.
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;iframe src=&quot;http://www.google.com/calendar/&lt;!--{if isset($app)}--&gt;hosted/&lt;!--{$app|escape:'urlpathinfo'}--&gt;/&lt;!--{/if}--&gt;embed?&lt;!--{if isset($title)}--&gt;title=&lt;!--{$title|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if isset($pvttk)}--&gt;pvttk=&lt;!--{$pvttk|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if is_array($id)}--&gt;&lt;!--{foreach from=$id item=i}--&gt;src=&lt;!--{$i|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/foreach}--&gt;&lt;!--{else}--&gt;src=&lt;!--{$id|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if is_array($color)}--&gt;&lt;!--{foreach from=$color item=c}--&gt;color=%23&lt;!--{$c|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/foreach}--&gt;&lt;!--{else}--&gt;color=%23&lt;!--{$color|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;height=&lt;!--{$height|escape:'urlpathinfo'|default:600}--&gt;&amp;amp;showTitle=&lt;!--{if isset($showtitle) and not $showtitle}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showNav=&lt;!--{if isset($shownav) and not $shownav}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showDate=&lt;!--{if isset($showdate) and not $showdate}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showTabs=&lt;!--{if isset($showtabs) and not $showtabs}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showCalendars=&lt;!--{if isset($showcals) and not $showcals}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showPrint=&lt;!--{if isset($showprint) and not $showprint}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;showTz=&lt;!--{if isset($showtz) and not $showtz}--&gt;0&lt;!--{else}--&gt;1&lt;!--{/if}--&gt;&amp;amp;wkst=&lt;!--{$weekstart|escape:'urlpathinfo'|default:1}--&gt;&amp;amp;hl=&lt;!--{$lang|escape:'urlpathinfo'|default:en}--&gt;&amp;amp;mode=&lt;!--{$view|escape:'urlpathinfo'|default:MONTH}--&gt;&amp;amp;&lt;!--{if isset($timezone)}--&gt;ctz=&lt;!--{$timezone|escape:'urlpathinfo'}--&gt;&amp;amp;&lt;!--{/if}--&gt;&lt;!--{if isset($bgcolor)}--&gt;bgcolor=%23&lt;!--{$bgcolor|escape:'urlpathinfo'}--&gt;&lt;!--{/if}--&gt;&quot; width=&quot;&lt;!--{$width|escape:'html'|default:'100%'}--&gt;&quot; height=&quot;&lt;!--{$height|escape:'html'|default:600}--&gt;&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot;&lt;!--{if isset($border)}--&gt; style=&quot;border: solid 1px #777&quot;&lt;!--{/if}--&gt;&lt;!--{if isset($style)}--&gt; style=&quot;&lt;!--{$style|escape:'html'}--&gt;&quot;&lt;!--{/if}--&gt;&gt;&lt;/iframe&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
-{{Part of bundle|value=Collaboration}}
-{{Content hash|value=}}
+[[Rationale::Template for displaying the latest comments of a given user specified by the argument ''ofUser''.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;
+== Comments {{#if:{{#arg:ofUser|}}|made by [[{{#arg:ofUser|}}]]|}} ==
+
+{{#ask: [[Comment:+]] [[Has comment person::{{#arg:ofUser|+}}]]
+  | ?Has comment person
+  | ?Has comment date
+  | ?Has comment text
+  | ?Has comment rating
+  | ?Belongs to article
+  | sort=Has comment date
+  | order=desc
+  | format=template
+  | template=CommentResult
+  | link=none
+  | limit=100
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
 &lt;/noinclude&gt;</text>
-    <hash>1d29a776bd165351750bf836001ee0e5</hash>
     </revision>
   </page>
   <page>
-    <title>Template:Content hash</title>
-    <id>248</id>
+    <title>Template:CommentResult</title>
+    <id>837</id>
     <revision>
-      <id>257</id>
-      <timestamp>2010-12-21T14:25:49Z</timestamp>
+      <id>2078</id>
+      <timestamp>2012-02-10T11:57:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">[[Content hash::{{{value|}}}| ]]</text>
+      <text xml:space="preserve" bytes="2392">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Used as result printer template.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)
+--&gt;{{#vardefine:resID|{{#bin2hex:{{{6}}}}}}}
+{{#vardefine:myID|{{#bin2hex:{{{1}}}}}}}&lt;div class=&quot;collabComRes&quot; id=&quot;{{#var:myID}}&quot;&gt;&lt;div class=&quot;collabComPlain&quot; style=&quot;display:none;&quot;&gt;{{{1}}}&lt;/div&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfoSuper&quot;&gt;{{#var:resID}}&lt;/div&gt;&lt;div class=&quot;collabComResInfoSuperPlain&quot; style=&quot;display:none&quot;&gt;{{{6}}}&lt;/div&gt;&lt;!-- end comment information
+--&gt;&lt;!-- start comment person
+--&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}}
+|{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | format=list |mainlabel=-| link=none}} }}
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]]
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{2}}}]]
+}}&lt;/div&gt;&lt;!-- start comment rating
+--&gt;{{#if:{{{5}}}
+|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|16px|nopreview|link=]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|16px|nopreview|link=]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;|
+}}&lt;!-- end comment rating
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;!-- end comment person
+--&gt;&lt;!-- start comment date
+--&gt;&lt;div class=&quot;collabComResDate&quot;&gt; {{{3}}}&lt;/div&gt;&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment content
+--&gt;{{#if:{{{7|}}}|&lt;div class=&quot;collabComResDeletion&quot;&gt;{{{7|}}}&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}
+{{#if:{{{8|}}}|&lt;div class=&quot;collabComEditInfo&quot;&gt;&lt;span class=&quot;collabComEditorPre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditor&quot;&gt;{{{8|}}}&lt;/span&gt;&lt;span class=&quot;collabComEditDatePre&quot;&gt;&lt;/span&gt;&lt;span class=&quot;collabComEditDate&quot;&gt;{{{9|}}}&lt;/span&gt;&lt;/div&gt;&lt;!-- end deletion info --&gt;|}}&lt;!--
+begin attached files --&gt;{{#if:{{{10|}}}|&lt;div class=&quot;collabComResFileAttach&quot;&gt;Attached article(s): {{#arraymapce:{{{10|}}}|,|x|[[:x]]|&amp;nbsp;}}&lt;/div&gt;&lt;div class=&quot;collabComResFileAttachSaved&quot;&gt;{{{10|}}}&lt;/div&gt;|}}&lt;!-- end attached files --&gt;
+&lt;/div&gt;&lt;!-- end comment
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
-    <title>Template:Part of bundle</title>
-    <id>247</id>
+    <title>Template:Comment row for user</title>
+    <id>47</id>
     <revision>
-      <id>256</id>
-      <timestamp>2010-12-21T14:25:58Z</timestamp>
+      <timestamp>2012-02-10T11:55:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-    <text xml:space="preserve">[[Part of bundle::{{{value|}}}| ]]</text>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a comment in a table row for the comment info box.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+|[[File:Smw_plus_comment_icon_2_16x16.gif|link={{{1|}}}]]
+| {{#ifexpr: {{#len:{{{2|}}}}} &gt; 125 | ''{{#sub:{{{2|}}}|0|125}} ...'' | ''{{{2|}}}'' }} &lt;br/&gt; &lt;!--comment rating: {{{3|}}}--&gt; &lt;small&gt;date: {{{4|}}} &lt;br/&gt; to: [[{{{5|}}}]]&lt;/small&gt;
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Best rated articles</title>
+    <id>48</id>
+    <revision>
+      <timestamp>2012-02-10T11:54:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows an info box of the best rated comments in this wiki.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Article has average rating::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}}
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) best rated articles
+|-
+| {{#ask: {{#var:query}}
+|?Article has average rating
+| sort=Article has average rating
+| order=desc
+| format=template
+| template=Article row for comment ratings
+| limit={{#var:resultLimit}}
+| searchlabel=
+| link=none
+| default=*''no article commented yet''
+}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comments with attached articles</title>
+    <id>391</id>
+    <revision>
+      <id>2081</id>
+      <timestamp>2012-02-10T11:59:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="1251">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows articles in this wiki that have attached articles by comments.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#vardefine:query|[[Comment:+]][[Has attached article::+]]}} {{#vardefine:resultLimit|5}} {{#vardefine:resultNumber|{{#ask: {{#var:query}} | format=count}}}}
+
+{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;border: 1px solid rgb(170, 170, 170); margin: 0pt 0pt 0.5em 1em; background: rgb(255, 255, 255) none repeat scroll 0% 0%; position: relative; border-collapse: collapse; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; float: right; clear: right; width: 35%;&quot;
+|-
+! style=&quot;background: rgb(237, 244, 252) none repeat scroll 0% 0%; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous; color: black;&quot; colspan=&quot;2&quot; | ({{#var:resultNumber}}) attached articles
+|-
+| {{#ask: {{#var:query}}
+|?Belongs to article
+|?Has attached article
+| format=template
+| template=Article row for comment attachments
+| limit={{#var:resultLimit}}
+| searchlabel=
+| link=none
+| default=*''no articles with attached articles yet''
+}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Article row for comment attachments</title>
+    <id>392</id>
+    <revision>
+      <id>2073</id>
+      <timestamp>2012-02-10T11:51:03Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve" bytes="360">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a row with an article and the latest attachments in its comments in an info box.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+| [[{{{2|}}}]]
+| with attached article(s): {{#arraymapce:{{{3|}}}|,|x|[[:x]]|&amp;nbsp;}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Article row for comment ratings</title>
+    <id>49</id>
+    <revision>
+      <timestamp>2012-02-10T11:53:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Result template to display a row with a rated article in an info box.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{|
+| [[{{{1|}}}]]
+| with average rating: {{{2|}}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show best rated articles</title>
+    <id>50</id>
+    <revision>
+      <timestamp>2012-02-10T12:00:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Wrapper template for switching the best rated articles info box on or off.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{Best rated articles}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Comment</title>
+    <id>835</id>
+    <revision>
+      <timestamp>2012-02-10T11:49:31Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Creates a comment.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}}
+| [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing
+}}{{#if: {{{CommentRelatedComment|}}}
+| &amp;nbsp;and a reply to [[Belongs to comment::{{{CommentRelatedComment|}}}]] |
+}}''&lt;!-- start comment (do not change css-classes)--&gt;
+&lt;!-- start comment person (do not change css-class.) --&gt;
+&lt;div class=&quot;collabComResPerson&quot;&gt;
+{{#if: {{{CommentPerson|}}}
+| {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }}
+}}
+{{#if:{{#var:userimage}}
+| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]]
+| [[File:Defaultuser.gif|frameless|48px|nopreview|link={{{CommentPerson}}}]]
+}}&lt;/div&gt;&lt;!-- end comment person
+--&gt;&lt;!-- start comment rating
+--&gt;{{#if:{{{CommentRating|}}}
+| [[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;|}}| }}&lt;/div&gt;|}}&lt;!-- end comment rating
+--&gt;&lt;div class=&quot;collabComResRight&quot;&gt;&lt;div class=&quot;collabComResUsername&quot;&gt;
+{{#if: {{{CommentPerson|}}}
+|{{#ifexist:{{{CommentPerson}}}
+|[[{{{CommentPerson|}}}]],
+|{{{CommentPerson|}}},&amp;nbsp;
+}}[[Has comment person::{{{CommentPerson|}}}| ]]|
+}}&lt;/div&gt;
+&lt;!-- start comment date
+--&gt;{{#if: {{{CommentDatetime|}}}
+| &lt;div class=&quot;collabComResDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;
+}}&lt;!-- end comment date
+--&gt;&lt;!-- start comment content
+--&gt;&lt;div class=&quot;collabComResText&quot;&gt;
+{{#if:{{{CommentContent|}}}
+|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;
+&lt;!-- end comment content--&gt;&lt;/div&gt;
+[[Comment was deleted::{{{CommentWasDeleted|false}}}]]
+{{#if:{{{AttachedArticles|}}}|{{#arraymapce:{{{AttachedArticles|}}}|,|x|[[Has attached article::x]]}}|no attached articles}}
+&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowCommentsIntern</title>
+    <id>839</id>
+    <revision>
+      <id>2085</id>
+      <timestamp>2012-02-10T12:03:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve" bytes="973">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Show all comments incl. form.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--start surrounding div --&gt;&lt;div class=&quot;collabComInternSurround&quot;&gt;&lt;!-- start header div --&gt;&lt;div class=&quot;collabComInternHeader&quot;&gt;[[File:Comment_icon_crystal.png|text-bottom|nopreview|16px|link=]]&lt;/div&gt;&lt;!-- end header div --&gt;
+{{#set:
+|Article has average rating={{#averagerating:}}
+}}
+{{#showcommentform:}}
+&lt;div id=&quot;collabComResults&quot;&gt;
+{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Category:Comment]]
+  | ?Has comment person
+  | ?Has comment date
+  | ?Has comment text
+  | ?Has comment rating
+  | ?Belongs to comment
+  | ?Comment was deleted#true,false
+  | ?Has comment editor
+  | ?Modification date
+  | ?Has attached article
+  | format=template
+  | template=CommentResult
+  | sort=Has comment date
+  | order=asc
+  | link=none
+  | limit=100
+}}
+&lt;/div&gt;
+&lt;/div&gt;&lt;!-- end surround div --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:ShowComments</title>
+    <id>838</id>
+    <revision>
+      <timestamp>2012-02-10T12:02:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template}}
+
+[[Rationale::Shows all comments incl. a form entry field for the given article.]]
+[[Category:Template]]
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{lc:{{{show|}}}}}|true|{{ShowCommentsIntern}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+[[Part of bundle::Collaboration| ]]
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
 </mediawiki>

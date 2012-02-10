@@ -186,11 +186,37 @@ class CECommentParserFunctions {
 		} else {
 			//user should be saved with Namespace!
 			$ns = MWNamespace::getCanonicalName(NS_USER);
-			SMWQueryProcessor::processFunctionParams(array("[[".$ns.":".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
-				,$querystring,$params,$printouts);
-			$queryResult = explode("|",
-				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-				$printouts, SMW_OUTPUT_WIKI));
+			SMWQueryProcessor::processFunctionParams(
+				array(
+					"[[".$ns.":".$wgUser->getName()."]]",
+					"[[User_image::+]]",
+					"?User_image="
+				),
+				$querystring,
+				$params,
+				$printouts
+			);
+			$params = SMWQueryProcessor::getProcessedParams(
+				$params,
+				$printouts
+			);
+			$query = SMWQueryProcessor::createQuery(
+				$querystring,
+				$params,
+				SMWQueryProcessor::INLINE_QUERY,
+				"",
+				$printouts
+			);
+			$queryResult = explode( "|",
+				SMWQueryProcessor::getResultFromQuery(
+					$query,
+					$params,
+					$printouts,
+					SMW_OUTPUT_WIKI,
+					SMWQueryProcessor::INLINE_QUERY,
+					""
+				)
+			);
 			unset($queryResult[0]);
 			//just get the first property value and use this
 			if(isset($queryResult[1])) {
@@ -342,18 +368,55 @@ class CECommentParserFunctions {
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
 		}
+
 		SMWQueryProcessor::processFunctionParams(
-			array("[[Category:Comment]] [[Belongs to article::" . $title->getFullText() . "]]",
-				"[[Has comment rating::+]]", "[[Comment was deleted::!true]]",
-				"?Has comment rating=", "format=list", "mainlabel=-", "searchlabel="
+			array(
+				"[[Category:Comment]] [[Belongs to article::" . $title->getFullText() . "]]",
+				"[[Has comment rating::+]]",
+				"[[Comment was deleted::!true]]",
+				"?Has comment rating=",
+				"format=list",
+				"mainlabel=-",
+				"searchlabel="
 			),
-			$querystring, $params, $printouts
+			$querystring,
+			$params,
+			$printouts
 		);
-		$queryResult = explode( "," ,
-			SMWQueryProcessor::getResultFromQueryString(
-				$querystring, $params, $printouts, SMW_OUTPUT_WIKI
+		$params = SMWQueryProcessor::getProcessedParams(
+			$params,
+			$printouts
+		);
+		$query = SMWQueryProcessor::createQuery(
+			$querystring,
+			$params,
+			SMWQueryProcessor::INLINE_QUERY,
+			"",
+			$printouts
+		);
+		$queryResult = explode( "|",
+			SMWQueryProcessor::getResultFromQuery(
+				$query,
+				$params,
+				$printouts,
+				SMW_OUTPUT_WIKI,
+				SMWQueryProcessor::INLINE_QUERY,
+				""
 			)
 		);
+		
+//		SMWQueryProcessor::processFunctionParams(
+//			array("[[Category:Comment]] [[Belongs to article::" . $title->getFullText() . "]]",
+//				"[[Has comment rating::+]]", "[[Comment was deleted::!true]]",
+//				"?Has comment rating=", "format=list", "mainlabel=-", "searchlabel="
+//			),
+//			$querystring, $params, $printouts
+//		);
+//		$queryResult = explode( "," ,
+//			SMWQueryProcessor::getResultFromQueryString(
+//				$querystring, $params, $printouts, SMW_OUTPUT_WIKI
+//			)
+//		);
 		$count = count( $queryResult );
 		if( $count == 0 ) {
 			wfProfileOut( __METHOD__ . ' [Collaboration]' );

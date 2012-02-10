@@ -2,6 +2,14 @@ Collaboration extension ChangeLog
 (numbers according to BugZilla entries at smwforum.ontoprise.com/smwbugs)
 =================================
 
+VERSION 1.5.1
+  FEATURES:
+
+  CHANGES:
+    Updated ontology and internal query processings to be compatible with SMW 1.7
+  BUGFIXES:
+
+
 VERSION 1.5.0
   FEATURES:
 

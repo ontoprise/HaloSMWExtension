@@ -3,7 +3,7 @@
 	<global>
 		<id>collaboration</id>
 		<title>Collaboration extension</title>
-		<version>1.6.0</version>
+		<version>1.5.1</version>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
