@@ -12,7 +12,7 @@
 		<description>
 			The Linked Data extension integrates access to data in the Web of Data in SMW+. Data can be imported into the TripleStore and exported via RDF and a SPARQL endpoint.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Linked_Data_extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Linked_Data_extension</helpurl>
 		<dependencies>
 			<dependency from="1.6.0">smwhalo</dependency>
 		</dependencies>

@@ -12,7 +12,7 @@
 		<description>
 			The Access Control List extension provides powerful access control for protecting single wiki pages, articles in categories or namespaces and values of semantic properties. Access can be restricted via a Graphical User Interface for individual users, entire user groups, groups of groups etc. Access rights can also be granted dynamically, i.e. for the duration of certain project.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Access_Control_List_extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Access_Control_List_extension</helpurl>
 		<dependencies>
 			<dependency from="1.17.0" to="1.17.9">mw</dependency>
 			<dependency from="1.6.0">scriptmanager</dependency>

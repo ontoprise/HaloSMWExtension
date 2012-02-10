@@ -11,7 +11,7 @@
         <description>
 			The Script Manager extension organizes JavaScript libraries such that parts of the program code are not stored multiple times. The extension is invisible to common users while improving SMW+ general performance.
         </description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Script_Manager_Extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Script_Manager_Extension</helpurl>
         <dependencies>
             <dependency from="1.17.0">mw</dependency>
         </dependencies>

@@ -11,7 +11,7 @@
 		<description>
 			The Data Import extension integrates external data into the wiki via web services (SOAP or RESTful). Additionally, it allows importing data stored in e.g. CSV files or in email accounts.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Data_Import_Extension</helpurl>
 		<dependencies>
 			<dependency from="1.7.0" to="1.7.0">smwhalo</dependency>
 			<dependency from="1.3.7" to="1.3.7">semanticgardening</dependency>

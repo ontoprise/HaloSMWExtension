@@ -11,7 +11,7 @@
 		<description>
 			Provides RDF support via the ARC2 library to other MW extensions.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:ARCLibrary_extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:ARCLibrary_extension</helpurl>
 		<dependencies>
 			<dependency from="1.17.0" to="1.17.9">mw</dependency>
 		</dependencies>

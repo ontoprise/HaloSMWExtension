@@ -11,7 +11,7 @@
 		<description>
 			Provides utility functionality for wikitext-programming.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Application_Programming_Extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Application_Programming_Extension</helpurl>
 		<dependencies>
             <dependency from="1.15.1">mw</dependency>
         </dependencies>

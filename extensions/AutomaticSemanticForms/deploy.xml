@@ -11,7 +11,7 @@
 		<description>
 			The Automatic Semantic Forms extension automatically creates Semantic Forms based on the current SMW+ ontology. This eases the addition of semantic data to the wiki especially for non expert users.
 		</description>
-		<helpurl>http://smwforum.ontoprise.com/smwforum/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
+		<helpurl>http://www.smwplus.com/index.php/Help:Automatic_Semantic_Forms_Extension</helpurl>
         <license>GPL-v2</license>
 		<dependencies>
 			<dependency from="1.7.0" to="1.7.0">smwhalo</dependency>
