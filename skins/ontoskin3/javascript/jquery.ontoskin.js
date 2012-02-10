@@ -89,8 +89,14 @@
 		 *		initialize function called once on setup
 		 */
 		base.init = function() {
-			var state = $.cookie( 'smwSkinExpanded' );
+			var fPT = $( '#footer' ).position().top,
+				fMB = parseInt( $( '#footer' ).css( 'marginTop' ), 10),
+				mPT = $( '#main' ).position().top,
+				mH = $( '#main' ).outerHeight(),
+				diff = (fPT + fMB - 10) - (mPT + mH),
+				state = $.cookie( 'smwSkinExpanded' );
 
+			$( '#main' ).css( 'height', mH + diff);
 			base.modifyEditLinks();
 
 			if( state === true && expanded === false ) {
