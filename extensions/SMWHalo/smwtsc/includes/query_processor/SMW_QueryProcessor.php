@@ -331,15 +331,6 @@ class SMWQueryProcessor {
 			}
 		}
 
-		/*op-change|start|KK|make sure the TSC source is selected on the Special:Ask page*/
-		global $wgTitle;
-		if ( !is_null($wgTitle) && SpecialPage::getTitleFor('Ask')->equals($wgTitle)) {
-			if (smwfIsTripleStoreConfigured() && !array_key_exists('source', $params)) {
-				$params['source'] = "tsc";
-			}
-		}
-		/*op-change|end*/
-
 		$querystring = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $querystring );
 		if ( $showmode ) {
 			$querystring = "[[:$querystring]]";
@@ -363,19 +354,8 @@ class SMWQueryProcessor {
 			self::addThisPrintout( $printouts, $params, $showmode );
 		}
 
-        $params = self::getProcessedParams( $params, $printouts );
+		$params = self::getProcessedParams( $params, $printouts );
 
-		/*op-change|start|KK|make sure that the TSC is the default source if a triplestore is attached*/
-		if (!array_key_exists("source", $params) && smwfIsTripleStoreConfigured()) {
-			global $smwhgDefaultSource;
-			if (isset($smwhgDefaultSource)) {
-				$params['source'] = $smwhgDefaultSource;
-			} else {
-				$params['source'] = 'tsc';
-			}
-		}
-		/*op-change|end*/
-		
 		return self::getResultFromQueryString( $querystring, $params, $printouts, SMW_OUTPUT_WIKI, $context );
 	}
 
@@ -419,7 +399,7 @@ class SMWQueryProcessor {
 	 */
 	static public function getResultFromQuery( SMWQuery $query, array $params, $extraprintouts, $outputmode, $context = self::INLINE_QUERY, $format = '' ) {
 		wfProfileIn( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
-        
+
 		/*op-change|start|KK*/
 		// Query routing allows extensions to provide alternative stores as data sources
 		// The while feature is experimental and is not properly integrated with most of SMW's architecture. For instance, some query printers just fetch their own store.
@@ -434,7 +414,7 @@ class SMWQueryProcessor {
 		}
 
 		$res = $store->getQueryResult( $query );
-		
+
 		$resultHTML= "";
 		if (!is_array($res)) {
 			$qResults['tsc'] = $res;
@@ -442,7 +422,7 @@ class SMWQueryProcessor {
 			$qResults = $res;
 		}
 		foreach($qResults as $source => $res) {
-			 
+
 			if ($source != 'tsc') {
 				$resultHTML .= "\n==$source==\n";
 			}
@@ -481,8 +461,8 @@ class SMWQueryProcessor {
 				$resultHTML .= $result;
 			}
 		}
-        return $resultHTML;
-        /*op-change|end|KK*/
+		return $resultHTML;
+		/*op-change|end|KK*/
 	}
 
 	/**
@@ -557,12 +537,18 @@ class SMWQueryProcessor {
 		}
 
 		$allowedFormats[] = 'auto';
-		
+
 		/*op-change|start|KK*/
 		$params['source'] = new Parameter( 'source' );
-        $params['source']->setDefault( smwfIsTripleStoreConfigured() ? 'tsc' : 'wiki' );
-        /*op-change|end|KK*/
-        
+		global $smwhgDefaultSource;
+		if (isset($smwhgDefaultSource)) {
+			$defaultSource = $smwhgDefaultSource;
+		} else {
+			$defaultSource = smwfIsTripleStoreConfigured() ? 'tsc' : 'wiki';
+		}
+		$params['source']->setDefault( $defaultSource );
+		/*op-change|end|KK*/
+
 		$params['format'] = new Parameter( 'format' );
 		$params['format']->setDefault( 'auto' );
 		//$params['format']->addCriteria( new CriterionInArray( $allowedFormats ) );
