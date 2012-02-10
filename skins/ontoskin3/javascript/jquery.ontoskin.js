@@ -96,7 +96,9 @@
 				diff = (fPT + fMB - 10) - (mPT + mH),
 				state = $.cookie( 'smwSkinExpanded' );
 
-			$( '#main' ).css( 'height', mH + diff);
+			if( diff > 0 ) {
+				$( '#main' ).css( 'min-height', mH + diff);
+			}
 			base.modifyEditLinks();
 
 			if( state === true && expanded === false ) {
