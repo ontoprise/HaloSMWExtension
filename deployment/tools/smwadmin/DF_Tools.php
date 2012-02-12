@@ -731,8 +731,8 @@ class Tools {
 		if (self::isWindows()) {
 			return self::isProcessRunning(self::translateProcessName($processName));
 		} else {
-			if (strpos($script, "/etc/init.d") !== false) {
-				@exec("$script status", $out, $ret);
+			if (strpos($processScript, "/etc/init.d") !== false) {
+				@exec("$processScript status", $out, $ret);
 			} else {
 				@exec("/sbin/status $processScript", $out, $ret);
 				if (self::inStringArray($out, "$processScript stop")) {
