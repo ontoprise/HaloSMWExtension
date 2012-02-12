@@ -101,6 +101,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_settingstab' => 'Registrierte Paketquellen',
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Server',
+	'df_webadmin_logtab' => 'Logs',
 
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
 	'df_webadmin_creationdate' => 'Datum der Erzeugung',
@@ -122,6 +123,7 @@ class DF_Language_De extends DF_Language {
 	'df_checkextension_heading' => 'Extension-Details',
 	'df_select_extension' => 'Wähle Extension',
 	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt.",
+	'df_webadmin_logtab_description' => 'Diese Seite zeigt Links zu Log-Dateien vorheriger Operationen.',
 	
 	'df_webadmin_configureservers' => 'Hier können Sie die Server ihrer Wiki-Installation neu starten oder stoppen. Bitte warten Sie ein paar Sekunden bis WAT den Status neu geladen hat.',
 	'df_webadmin_process_runs' => 'läuft',
@@ -132,6 +134,9 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'Aktualisieren',
 	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen',
+	'df_webadmin_clearlog' => 'Lösche Log',
+	'df_webadmin_loglink' => 'Link',
+	'df_webadmin_logdate' => 'Datum',
 	
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
     'df_webadmin_repository_link' => 'Repository-Liste',

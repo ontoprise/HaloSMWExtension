@@ -102,6 +102,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_settingstab' => 'Registered repositories',
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Servers',
+	'df_webadmin_logtab' => 'Logs',
 	
 	'df_webadmin_restorepoint' => 'Restore point',
 	'df_webadmin_creationdate' => 'Creation date',
@@ -124,7 +125,8 @@ class DF_Language_En extends DF_Language {
 	'df_inspectextension_heading' => 'Inspect extension',
 	'df_select_extension' => 'Select extension',
 	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes. If you edit LocalSettings.php manually, make sure that you <b>do not remove</b> the extension-tags in LocalSettings.php. Otherwise this view gets messed up.",
-	
+	'df_webadmin_logtab_description' => 'This page lists the log files from previous operations.',
+		
 	'df_webadmin_configureservers' => 'Here you can start/stop the servers of your wiki installation. Please wait a few seconds until the state is refreshed.',
 	'df_webadmin_process_runs' => 'running',
 	'df_webadmin_process_doesnot_run' => 'not running',
@@ -133,6 +135,9 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_server_start' => 'start',
 	'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'refresh',
+	'df_webadmin_clearlog' => 'Clear log',
+	'df_webadmin_loglink' => 'Link',
+	'df_webadmin_logdate' => 'Date',
 	
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	

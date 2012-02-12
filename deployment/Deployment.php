@@ -135,7 +135,9 @@ function dff_authUser($username, $password) {
 
 	// and group membership
 	$groups = $user->getGroups();
-	return $correct && (in_array("sysop", $groups) ||  in_array("administrator", $groups)) ? "wikiadmintool_authorized" : "false";
+	$adminGroupMember = (in_array("sysop", $groups) ||  in_array("administrator", $groups));
+	$adminRight = $user->isAllowed('administrator');
+	return $correct &&  ($adminGroupMember || $adminRight) ? "wikiadmintool_authorized" : "false";
 }
 
 /**

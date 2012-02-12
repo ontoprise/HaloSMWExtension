@@ -594,6 +594,31 @@ class DFCommandInterface {
         fclose($server_settings);
         return "true";
     }
+    
+    public function clearLog() {
+    	$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		
+		$handle = @opendir($logdir);
+		if (!$handle) {
+
+			return;
+		}
+
+		while ($entry = readdir($handle) ){
+			if ($entry[0] == '.'){
+				continue;
+			}
+
+			$file = "$logdir/$entry";
+			if (strpos($entry, "console_out") === false) {
+				continue;
+			}
+			unlink($file);
+		}
+		@closedir($handle);
+		return "true";
+    }
 
     /**
      * Special quoting for cmd /c  ....

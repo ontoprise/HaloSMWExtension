@@ -78,6 +78,7 @@ $smwgDFIP=$rootDir;
 touch("$rootDir/tools/webadmin/sessiondata/userloggedin");
 
 require_once($mwrootDir.'/deployment/languages/DF_Language.php');
+require_once('includes/DF_LogTab.php');
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
@@ -172,6 +173,7 @@ $dfgUploadTab = new DFUploadTab();
 $dfgSettingsTab = new DFSettingsTab();
 $dfgLocalSettingsTab = new DFLocalSettingsTab();
 $dfgServersTab = new DFServersTab();
+$dfgLogTab = new DFLogTab();
 
 // for ajax calls
 if (isset($func_name)) {
@@ -204,6 +206,10 @@ try {
 
 	$dfgServersTabName = $dfgServersTab->getTabName();
 	$dfgServersTabHtml = $dfgServersTab->getHTML();
+	
+	$dfgLogTabName = $dfgLogTab->getTabName();
+	$dfgLogTabHtml = $dfgLogTab->getHTML();
+	
 
 } catch(DF_SettingError $e) {
 	echo $e->getMsg();
@@ -290,7 +296,7 @@ $html .= <<<ENDS
                 <li><a href="#tabs-5">$dfgSettingsTabName</a></li>
                 <li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
                 <li><a href="#tabs-7">$dfgServersTabName</a></li>
-                
+                <li><a href="#tabs-8">$dfgLogTabName</a></li>
             </ul>
             <div id="tabs-1">$statusTabHtml</div>
             <div id="tabs-2">$searchTabHtml</div>
@@ -299,6 +305,7 @@ $html .= <<<ENDS
             <div id="tabs-5">$dfgSettingsTabHtml</div>
             <div id="tabs-6">$dfgLocalSettingsTabHtml</div>
             <div id="tabs-7">$dfgServersTabHtml</div>
+            <div id="tabs-8">$dfgLogTabHtml</div>
 			
 			
 </div>

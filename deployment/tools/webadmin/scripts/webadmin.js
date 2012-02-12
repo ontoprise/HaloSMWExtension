@@ -1204,6 +1204,11 @@ $(function() {
 			$(e.currentTarget).attr('disabled', true);
 		};
 		$('.df_servers_execute').click(executeCommand);
+		
+		$('#df_clearlog').click(function() { 
+			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=clearLog";
+			$.ajax( { url : url, dataType:"json", complete : function() { window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=8"; } });
+		});
 	});
 	
 	
