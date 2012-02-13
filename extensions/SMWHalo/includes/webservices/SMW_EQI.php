@@ -73,7 +73,8 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 		}
 
 		// answer query
-		$query = SMWQueryProcessor::createQuery($queryString, array(), false);
+        $params = SMWQueryProcessor::getProcessedParams(array());
+		$query = SMWQueryProcessor::createQuery($queryString, $params, false);
 		if (count($query->getErrors()) > 0) {
 			throw new Exception(implode("",$query->getErrors()));
 		} else {
@@ -200,9 +201,11 @@ class ExternalQueryInterface {
 				$rawparams[] = $param;
 			}
 		}
-
+ 
 		// parse params and answer query
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+        $params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		$params['format'] = $format;
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 
