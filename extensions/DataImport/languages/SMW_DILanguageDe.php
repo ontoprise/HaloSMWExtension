@@ -77,8 +77,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_fileerror' => 'Die Datei "$1" existiert nicht oder ist leer.',
 	'smw_ti_pop3error' => 'Es war nicht möglich, eine Verbindung zum Server aufzubauen.',
 	'smw_ti_no_article_names' => 'In der angegebenen Datenquelle gibt es keine Artikelnamen.',
-	'smw_ti_termimport' => 'Vokabular importieren',
-	'termimport' => 'Vokabular importieren',
+	'smw_ti_termimport' => 'Daten importieren',
+	'termimport' => 'Daten importieren',
 	
 	'smw_ti_definition_saved_successfully' => 'Die Term Import Definition $1 wurde erfolgreich gespeichert.',
 	'smw_ti_started_successfully' => 'Der Term Import Bot wurde erfolgreich gestartet. Den Verlauf k&ouml;nnen Sie hier verfolgen: $1',
@@ -107,8 +107,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_gardissue_ti_class_system_error' => 'Importsystemfehler',
 	'smw_gardissue_ti_class_update_skipped' => '&Uuml;bersprungene Aktualisierungen',
 	
-	'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
-	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren der Begriffe eines Vokabulars.',
+	'smw_termimportbot' => 'Daten importieren',
+	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren von Daten.',
 	'smw_termimportupdatebot' => 'Update Definierte Term Imports aktualisieren.',
 	'smw_gard_termimportupdatebothelp' => 'Startet den Bot zum aktualisieren von definierten Term Imports',
 	'smw_ti_def_allready_exists' => 'Eine Term Import Definition mit diesem Namen existiert bereits.',
