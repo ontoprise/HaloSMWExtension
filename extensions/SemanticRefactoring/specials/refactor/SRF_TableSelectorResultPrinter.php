@@ -94,6 +94,9 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 
 		return $result;
 	}
+	
+
+    
 	/**
 	 * Gets the contents for a table cell for all values of a property of a subject.
 	 *
@@ -106,13 +109,11 @@ class SRFTableSelectorResultPrinter extends SMWTableResultPrinter {
 	 */
 	protected function getCellContent( array /* of SMWDataValue */ $dataValues, $outputmode, $isSubject ) {
 		$values = array();
-		$isFirst = true;
 		foreach ( $dataValues as $dv ) {
 			$checkbox = "";
-			if ( $isFirst ) {
-				$isFirst = false;
+			if ( $isSubject ) {
 				$sortkey = $dv->getDataItem()->getSortKey();
-				$enc_sortkey = $isSubject ? Sanitizer::encodeAttribute($dv->getDataItem()->getTitle()->getPrefixedDBkey()) : "";
+				$enc_sortkey = Sanitizer::encodeAttribute($dv->getDataItem()->getTitle()->getPrefixedDBkey());
 				$checkbox = '<input class="sref_instance_selector" type="checkbox" checked="true" prefixedTitle="'.$enc_sortkey.'"></input>';
 				
 			}
