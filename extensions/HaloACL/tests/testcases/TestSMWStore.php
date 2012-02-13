@@ -696,10 +696,10 @@ QUERY;
     		'result'	=> array(
 							array("S" => "PageWithProtectedProperties",
 							      "O" => "NormalPage"),
-							array("S" => null,
-							      "O" => "NormalPage"),
-							array("S" => "PageWithProtectedProperties",
-							      "O" => null)
+// 							array("S" => null,
+// 							      "O" => "NormalPage"),
+// 							array("S" => "PageWithProtectedProperties",
+// 							      "O" => null)
 						)
 		));
 		
@@ -815,12 +815,12 @@ QUERY;
 							array("subject"	=> "PageWithProtectedProperties",
 								  "NormalProperty" => "NormalPage",
 							),
-							array("subject"	=> null,
-								  "NormalProperty" => "NormalPage",
-							),
-							array("subject"	=> "PageWithProtectedProperties",
-								  "NormalProperty" => null
-							)
+// 							array("subject"	=> null,
+// 								  "NormalProperty" => "NormalPage",
+// 							),
+// 							array("subject"	=> "PageWithProtectedProperties",
+// 								  "NormalProperty" => null
+// 							)
 						)
 			));
 		
@@ -860,10 +860,10 @@ QUERY;
     		'result'	=> array(
 							array("S" => "PageWithProtectedProperties",
 							      "O" => "NormalPage"),
-							array("S" => null,
-							      "O" => "NormalPage"),
-							array("S" => "PageWithProtectedProperties",
-							      "O" => null)
+// 							array("S" => null,
+// 							      "O" => "NormalPage"),
+// 							array("S" => "PageWithProtectedProperties",
+// 							      "O" => null)
 						)
 		));
 			
@@ -1210,18 +1210,20 @@ QUERY;
 		// Get all used properties as NormalUser
     	$wgUser = User::newFromId(User::idFromName($testConfig['user']));
     	
-		$queryString = $testConfig['query'];
-		$params = array("format" => $testConfig['format'], 
-		                "merge" => "false", 
-		                "mainlabel" => "subject");
-		$printOuts = array();
+		$rawparams = array(
+		$testConfig['query'],
+					"format" => $testConfig['format'],
+					"merge" => "false",
+				    "mainlabel" => "subject"
+		);
 		foreach ($testConfig['printouts'] as $po) {
-			$printOuts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $po, 
-								SMWPropertyValue::makeUserProperty($po)); 
+			$rawparams[] = '?'.$po;
 		}
-		$queryobj = SMWSPARQLQueryProcessor::createQuery(
-						$queryString, $params, SMWQueryProcessor::INLINE_QUERY, 
-						$params['format'], $printOuts);
+		
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
+		$queryobj  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
 		
 		$res = smwfGetStore()->getQueryResult($queryobj);
 
@@ -1260,6 +1262,7 @@ QUERY;
 		$msg = "\nActual result:\n".print_r($result, true).
 		       "\nExpected result:\n".print_r($testConfig['result'], true);
 		
+		$result = $this->unmergeResult($result);
 		// Compare the actual and expected result
 		$expRows = $testConfig['result'];
 		$this->assertEquals(count($expRows), count($result), $errMsg.$msg);
@@ -1289,20 +1292,22 @@ QUERY;
 		// Get all used properties as NormalUser
     	$wgUser = User::newFromId(User::idFromName($testConfig['user']));
     	
-		$queryString = $testConfig['query'];
-		$params = array("format" => $testConfig['format']);
-		$printOuts = array();
+		$rawparams = array(
+			$testConfig['query'],
+			"format" => $testConfig['format'],
+			
+		);
 		foreach ($testConfig['printouts'] as $po) {
-			$printOuts[] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $po, 
-								SMWPropertyValue::makeUserProperty($po)); 
+			$rawparams[] = '?'.$po;
 		}
-		$queryobj = SMWQueryProcessor::createQuery($queryString, $params, 
-													SMWQueryProcessor::INLINE_QUERY , 
-													$params['format'],
-													$printOuts);
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
+		$queryobj  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
+		
 		$res = smwfGetStore()->getQueryResult($queryobj);
 
-		$errMsg = "doTestGetPropertiesSpecial:\n".
+		$errMsg = "doTestGetQueryResult:\n".
 				   "\tUser: {$testConfig['user']}\n";
     	
 		
@@ -1326,9 +1331,15 @@ QUERY;
 					continue;
 				}
 				
-				$cont = array();
+				if (@$result[$subject][$prLabel]) {
+					$cont = $result[$subject][$prLabel];
+				} else {
+					$cont = array();
+				}
 				while ($content = $cell->getNextText(SMW_OUTPUT_WIKI)) {
-					$cont[] = $content;
+					if (!in_array($content, $cont)) {
+						$cont[] = $content;
+					}
 				}
 				$result[$subject][$prLabel] = $cont;
 			}
@@ -1495,5 +1506,42 @@ QUERY;
 			}
 		}
 		return $rows;
+	}
+	
+	private function unmergeResult($result) {
+		$newResult = array();
+		
+		do {
+			$splitRows = false;
+			foreach ($result as $k => $row) {
+				foreach ($row as $key => $cell) {
+					if (count($cell) > 1) {
+						// Found a cell with more than one value
+						// Create a new row for each value in the cell
+						foreach ($cell as $cellContent) {
+							$newRow = array();						
+							reset($row);
+							foreach ($row as $key1 => $cell1) {
+								if ($key !== $key1) {
+									$newRow[$key1] = $cell1;
+									if (count($cell1) > 1) {
+										$splitRows = true;
+									}
+								} else {
+									$newRow[$key1] = array($cellContent);
+								}
+							}
+							$newResult[] = $newRow;
+						}
+						break;
+					}
+				}
+			}
+			if (count($newResult) > count($result)) {
+				$result = $newResult;
+			}
+		} while ($splitRows);
+		
+		return $result;
 	}
 }
