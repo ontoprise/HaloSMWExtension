@@ -156,6 +156,7 @@ class  HACLResultFilter  {
 			foreach ($row as $cell) {
 				// Iterate over all results in a cell
 				$pr = $cell->getPrintRequest();
+				$isSubject = $pr->getMode() === SMWPrintRequest::PRINT_THIS;
 				$isProperty = false;
 				if (is_array($properties) 
 				    && in_array(strtolower($pr->getLabel()), $properties)) {
@@ -182,6 +183,10 @@ class  HACLResultFilter  {
 						wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
 						
 						if (isset($allowed) && $allowed === false) {
+							if ($isSubject) {
+								$deleteRow = true;
+								break;
+							}
 							unset($items[$k]);
 							$valuesRemoved = true;
 							$cellModified = true;
