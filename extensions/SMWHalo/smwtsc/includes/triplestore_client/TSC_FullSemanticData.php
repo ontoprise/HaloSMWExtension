@@ -100,13 +100,14 @@ class SMWFullSemanticData {
 
 		wfRunHooks('BeforeDerivedPropertyQuery', array(&$queryText) );
 		// Ask for all properties of the subject (derived and ground facts)
-		$q = SMWSPARQLQueryProcessor::createQuery($queryText, array());
+		$params = SMWQueryProcessor::getProcessedParams(array(), array());
+		$q = SMWSPARQLQueryProcessor::createQuery($queryText, $params);
 		$q->setLimit(500, false); // restrict the maximum of inferred facts to 500
 		$res = smwfGetStore()->getQueryResult($q); // SMWQueryResult
 		wfRunHooks('AfterDerivedPropertyQuery', array() );
 		wfRunHooks('FilterQueryResults', array(&$res, array('pred')) );
 
-
+      
 		$propVal = array();
 		while ( $row = $res->getNext() ) { //$row: SMWResultArray[]
 				
@@ -155,7 +156,7 @@ class SMWFullSemanticData {
 		$derivedCategories=array();
 		// Check is a property is derived or directly annotated
 		foreach ($propVal as $propName => $derivedValues) {
-
+ 
 			// does the property already exist?
 			if ($propName[0] == '_') {
 				$prop = SMWDIProperty::newFromUserLabel($propName);
