@@ -506,27 +506,27 @@ class TestQueryPages extends PHPUnit_Framework_TestCase {
 #0 - Check that no columns are duplicated in the result of a simple ask query addressing the SMW store    	
     		array('U1', 'SimpleQueryWiki', array( 
     					array('>Owns<', 1),
-    					array('<td>.*?>Daniel<.*?<\/td>', 1),
-    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    					array('<td.*?>Daniel<.*?<\/td>', 1),
+    					array('<td.*?>Manolo<.*?<\/td>', 1),
     				)
     			  ),
 #1 - Check that no columns are duplicated in the result of a complex ask query addressing the SMW store    	
     		array('U1', 'ComplexQueryWiki',  array( 
     					array('>Owns<', 1),
-    					array('<td>.*?>Daniel<.*?<\/td>', 1),
-    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    					array('<td.*?>Daniel<.*?<\/td>', 1),
+    					array('<td.*?>Manolo<.*?<\/td>', 1),
     				)),
 #2 - Check that no columns are duplicated in the result of a simple ask query addressing the TSC   	
     		array('U1', 'SimpleQueryTSC',  array( 
     					array('>Owns<', 1),
-    					array('<td>.*?>Daniel<.*?<\/td>', 1),
-    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    					array('<td.*?>Daniel<.*?<\/td>', 1),
+    					array('<td.*?>Manolo<.*?<\/td>', 1),
     				)),
 #3 - Check that no columns are duplicated in the result of a complex ask query addressing the TSC   	
     		array('U1', 'ComplexQueryTSC',  array( 
     					array('>Owns<', 1),
-    					array('<td>.*?>Daniel<.*?<\/td>', 1),
-    					array('<td>.*?>Manolo<.*?<\/td>', 1),
+    					array('<td.*?>Daniel<.*?<\/td>', 1),
+    					array('<td.*?>Manolo<.*?<\/td>', 1),
     				)),
     	);
     }
