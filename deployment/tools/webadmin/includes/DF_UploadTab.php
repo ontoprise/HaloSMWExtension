@@ -127,7 +127,7 @@ ENDS
 
 					$html .= "<td>";
 					$lastMod = filemtime($filepath);
-					$html .= date ("m/d/Y", $lastMod);
+					$html .= date ("m/d/Y H:i:s", $lastMod);
 
 					$html .= "</td>";
 
