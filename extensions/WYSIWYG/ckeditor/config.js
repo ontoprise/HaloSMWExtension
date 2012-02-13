@@ -70,15 +70,15 @@ CKEDITOR.editorConfig = function( config )
         ['Undo','Redo'],
         ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
         ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
-        stbToolbarButtons,
-        ['About'],
+        stbToolbarButtons,        
         '/',
         ['Styles','Format','Font','FontSize'],
         ['Bold','Italic','Underline','Strike'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
         ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
         ['TextColor','BGColor'],
-        ['Maximize', 'ShowBlocks']
+        ['Maximize', 'ShowBlocks'],
+        ['About']
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
