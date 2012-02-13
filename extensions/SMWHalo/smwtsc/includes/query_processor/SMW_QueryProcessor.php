@@ -438,8 +438,12 @@ class SMWQueryProcessor {
 
 				wfProfileOut( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 				wfProfileOut( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
-
-				$resultHTML .= $result;
+                
+				if (is_array($result)) {
+                    $resultHTML .= reset($result);
+				} else {
+				    $resultHTML .= $result;
+				}
 			} else { // result for counting or debugging is just a string
 				if ( is_string( $res ) ) {
 					if ( array_key_exists( 'intro', $params ) ) {
