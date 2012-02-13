@@ -547,6 +547,9 @@ class SMWQueryProcessor {
 			$defaultSource = smwfIsTripleStoreConfigured() ? 'tsc' : 'wiki';
 		}
 		$params['source']->setDefault( $defaultSource );
+		
+		$params['merge'] = new Parameter( 'merge' );
+		$params['merge']->setDefault("true");
 		/*op-change|end|KK*/
 
 		$params['format'] = new Parameter( 'format' );

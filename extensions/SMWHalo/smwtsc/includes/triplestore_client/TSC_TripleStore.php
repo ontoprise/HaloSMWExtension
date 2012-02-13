@@ -721,11 +721,11 @@ class SMWTripleStore extends SMWStoreAdapter {
 				return $sqr;
 			}
 
-
+       
 			switch ($query->querymode) {
 
 				case SMWQuery::MODE_COUNT:
-					$queryResult = $queryResult->getCount();
+					$queryResult = strval($queryResult->getCount());
 					break;
 				default:
 					if (is_array($queryResult)) {
@@ -742,6 +742,7 @@ class SMWTripleStore extends SMWStoreAdapter {
 					break;
 			}
 			wfProfileOut( "SMWTripleStore::doGetQueryResult (SMWHalo)" );
+			 
 			return $queryResult;
 
 		} else {
