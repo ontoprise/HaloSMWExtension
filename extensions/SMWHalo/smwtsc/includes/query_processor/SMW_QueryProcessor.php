@@ -384,48 +384,91 @@ class SMWQueryProcessor {
 
 		return $result;
 	}
-
+	
 	/**
-	 * TODO: document
-	 *
-	 * @param SMWQuery $query
-	 * @param array $params These need to be the result of a list fed to getProcessedParams
-	 * @param $extraprintouts
-	 * @param $outputmode
-	 * @param $context
-	 * @param $format
-	 *
-	 * @return string
-	 */
-	static public function getResultFromQuery( SMWQuery $query, array $params, $extraprintouts, $outputmode, $context = self::INLINE_QUERY, $format = '' ) {
-		wfProfileIn( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
+     * TODO: document
+     * 
+     * @param SMWQuery $query
+     * @param array $params These need to be the result of a list fed to getProcessedParams
+     * @param $extraprintouts
+     * @param $outputmode
+     * @param $context
+     * @param $format
+     * 
+     * @return string
+     */
+    static public function getResultFromQuery( SMWQuery $query, array $params, $extraprintouts, $outputmode, $context = self::INLINE_QUERY, $format = '' ) {
+        wfProfileIn( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
 
-		/*op-change|start|KK*/
-		// Query routing allows extensions to provide alternative stores as data sources
-		// The while feature is experimental and is not properly integrated with most of SMW's architecture. For instance, some query printers just fetch their own store.
-		// @todo FIXME: case-insensitive
-		global $smwgQuerySources;
+        // Query routing allows extensions to provide alternative stores as data sources
+        // The while feature is experimental and is not properly integrated with most of SMW's architecture. For instance, some query printers just fetch their own store.
+        // @todo FIXME: case-insensitive
+        global $smwgQuerySources;
+        
+         /*op-change|start|KK|exclude tsc as external source*/
+        if ( array_key_exists( 'source', $params ) && array_key_exists( $params['source'], $smwgQuerySources ) && $params['source'] != 'tsc' ) {
+         /*op-change|end|KK*/
+            $store = new $smwgQuerySources[$params['source']]();
+            $query->params = $params; // this is a hack
+        } else {
+            $store = smwfGetStore(); // default store
+        }
 
-		$query->params = $params; // this is a hack
-		if ( array_key_exists( 'source', $params ) && array_key_exists( $params['source'], $smwgQuerySources ) && $params["source"] != 'tsc' ) {
-			$store = new $smwgQuerySources[$params['source']]();
-		} else {
-			$store = smwfGetStore(); // default store
-		}
+        $res = $store->getQueryResult( $query );
+        
+        /*op-change|start|KK|handle LOD results differently*/
+        if (is_array($res)) {
+        	// $res contains LOD results from different sources
+        	return self::getResultFromQueryLOD($res, $query, $params, $extraprintouts, $outputmode, $context, $format);
+        } 
+        /*op-change|end|KK*/
 
-		$res = $store->getQueryResult( $query );
+        if ( ( $query->querymode == SMWQuery::MODE_INSTANCES ) || ( $query->querymode == SMWQuery::MODE_NONE ) ) {
+            wfProfileIn( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 
+            if ( $format === '' ) {
+                $format = self::getResultFormat( $params );
+            }
+
+            $printer = self::getResultPrinter( $format, $context, $res );
+            $result = $printer->getResult( $res, $params, $outputmode );
+
+            wfProfileOut( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
+            wfProfileOut( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
+
+            return $result;
+        } else { // result for counting or debugging is just a string
+            if ( is_string( $res ) ) {
+                if ( array_key_exists( 'intro', $params ) ) {
+                    $res = str_replace( '_', ' ', $params['intro'] ) . $res;
+                }
+                if ( array_key_exists( 'outro', $params ) ) {
+                    $res .= str_replace( '_', ' ', $params['outro'] );
+                }
+                
+                $result = $res . smwfEncodeMessages( $query->getErrors() );
+            }
+            else {
+                // When no valid result was obtained, $res will be a SMWQueryResult.
+                $result = smwfEncodeMessages( $query->getErrors() );
+            }
+            
+            wfProfileOut( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
+            
+            return $result;
+        }
+    }
+	
+
+	/*op-change|start|KK*/
+	static public function getResultFromQueryLOD( $qResults, $query, array $params, $extraprintouts, $outputmode, $context = self::INLINE_QUERY, $format = '' ) {
+		
 		$resultHTML= "";
-		if (!is_array($res)) {
-			$qResults['tsc'] = $res;
-		} else {
-			$qResults = $res;
-		}
+		
 		foreach($qResults as $source => $res) {
-
-			if ($source != 'tsc') {
-				$resultHTML .= "\n==$source==\n";
-			}
+			
+			$resultHTML .= "\n==$source==\n";
+			
 			if ( ( $query->querymode == SMWQuery::MODE_INSTANCES ) || ( $query->querymode == SMWQuery::MODE_NONE ) ) {
 				wfProfileIn( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 
@@ -439,11 +482,7 @@ class SMWQueryProcessor {
 				wfProfileOut( 'SMWQueryProcessor::getResultFromQuery-printout (SMW)' );
 				wfProfileOut( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
                 
-				if (is_array($result)) {
-                    $resultHTML .= reset($result);
-				} else {
-				    $resultHTML .= $result;
-				}
+				$resultHTML .= $result;
 			} else { // result for counting or debugging is just a string
 				if ( is_string( $res ) ) {
 					if ( array_key_exists( 'intro', $params ) ) {
@@ -466,9 +505,10 @@ class SMWQueryProcessor {
 			}
 		}
 		return $resultHTML;
-		/*op-change|end|KK*/
+		
 	}
-
+    /*op-change|end|KK*/
+	
 	/**
 	 * Find suitable SMWResultPrinter for the given format. The context in which the query is to be
 	 * used determines some basic settings of the returned printer object. Possible contexts are
