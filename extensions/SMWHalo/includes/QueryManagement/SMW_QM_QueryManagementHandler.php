@@ -475,20 +475,20 @@ class SMWQMQueryManagementHandler {
 		
 		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString, $params, $printouts);
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		
 		$store = smwfGetStore(); 
-			
+
 		$continue = true;
 		$offset = 0;
 		$queryResults = array();
 		global $smwgQMaxInlineLimit;
 		while($continue){
-			$params = array();
 			$params['limit'] = $smwgQMaxInlineLimit - 1;
-			$params['offset'] = $offset;;
+			$params['offset'] = $offset;
 			
 			$query = 
-				SMWQueryProcessor::createQuery($queryString,$params);
+				SMWQueryProcessor::createQuery($queryString,$params, SMWQueryProcessor::INLINE_QUERY, 'table');
 				
 			$query->params['noquerymanagement'] = 'true';
 			

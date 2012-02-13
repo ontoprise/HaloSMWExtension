@@ -35,13 +35,13 @@ class SMWQueryCallMetadataValue extends SMWDataValue {
 	
 	public function __construct($typeid) {
 		parent::__construct($typeid);
-		global $smwg_qm_metadata_subsubject_names, $wgTitle;
+		global $smwg_qm_metadata_subsubject_names, $wgParser;
 		if(is_null($smwg_qm_metadata_subsubject_names)){
 			$smwg_qm_metadata_subsubject_names = 1;
 		}
 		$smwg_qm_metadata_subsubject_names += 1;
-		$subject = new SMWDIWikiPage( $wgTitle->getDBkey(),
-			$wgTitle->getNamespace(), $wgTitle->getInterwiki(),
+		$subject = new SMWDIWikiPage( $wgParser->getTitle()->getDBkey(),
+			$wgParser->getTitle()->getNamespace(), $wgParser->getTitle()->getInterwiki(),
 			'_qm_'.$smwg_qm_metadata_subsubject_names );
 		$this->m_data = new SMWContainerSemanticData($subject);
 	}
@@ -64,7 +64,7 @@ class SMWQueryCallMetadataValue extends SMWDataValue {
 		$this->m_data->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 	}
 	
-/*
+	/*
 	 * Sets the limit of this query call
 	 */
 	public function setQueryLimit($queryLimit){
@@ -187,13 +187,6 @@ class SMWQueryCallMetadataValue extends SMWDataValue {
 		return new SMWDIContainer($this->m_data);
 	}
 	
-/**
-	 * Containers have one DB key, so the value of this function should be an array with one
-	 * element. This one DB key should consist of an array of arbitrary length where each
-	 * entry encodes one property-value pair. The pairs are encoded as arrays of size two
-	 * that correspond to the input arguments of SMWSemanticData::addPropertyStubValue():
-	 * a property DB key (string), and a value DB key array (array).
-	 */
 	protected function parseDBkeys( $args ) {
 		$this->m_data->clear();
 		if ( count( $args ) > 0 ) {
@@ -205,13 +198,6 @@ class SMWQueryCallMetadataValue extends SMWDataValue {
 		}
 	}
 
-	/**
-	 * Serialize data in the format described for parseDBkeys(). However, it is usually
-	 * expected that callers are aware of containers (this is the main purpose of this
-	 * abstract class) so they can use specific methods for accessing the data in a more
-	 * convenient form that contains the (probably available) information about property
-	 * and data *objects* (not just their plain strings).
-	 */
 	public function getDBkeys() {
 		$data = array();
 		foreach ( $this->m_data->getProperties() as $property ) {
@@ -230,19 +216,6 @@ class SMWQueryCallMetadataValue extends SMWDataValue {
 		}
 	}
 
-	// Methods for parsing, serialisation, and display are not defined in this abstract class:
-		// public function getShortWikiText($linked = null);
-		// public function getShortHTMLText($linker = null);
-		// public function getLongWikiText($linked = null);
-		// public function getLongHTMLText($linker = null);
-		// protected function parseUserValue($value);
-		// public function getWikiValue();
-
-	/**
-	 * Return the stored data as a SMWSemanticData object. This is more conveniently to access than
-	 * what getDBkeys() gives, but intended only for reading. It may not be safe to write to the returned
-	 * object.
-	 */
 	public function getData() {
 		return $this->m_data;
 	}
