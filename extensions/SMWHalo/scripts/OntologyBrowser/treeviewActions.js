@@ -1866,6 +1866,37 @@ OBGlobalActionListener.prototype = {
 
 		selectionProvider.addListener(this, OB_REFRESHLISTENER);
 		selectionProvider.addListener(this, OB_SELECTEDTRIPLELISTENER);
+		
+		
+		var html = gLanguage.getMessage('OB_TOOLTIP_ANNOTATED_CATEGORY');
+		
+		jQuery('#assertedCategoriesSwitch').qtip( {
+			content : html,
+			show : {
+				effect : {
+					length : 500
+				},
+				when : {
+					event : 'mouseover'
+				}
+			},
+			hide : {
+				when : {
+					event : 'mouseout'
+				},
+				fixed : true
+			},
+			position : {
+				corner : {
+					target : 'topLeft',
+					tooltip : 'bottomLeft'
+				}
+			},
+			style : {
+				tip : 'topLeft',
+				width : 300
+			}
+		});
 	},
 
 	selectedTripleChanged : function(s, p, o) {

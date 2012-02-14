@@ -241,6 +241,7 @@ window.wgUserLanguageStrings = {
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Error at renaming',
 	'OB_RENAME_WARNING' 	  : 'Renaming operations do not touch the instance data in any way.\nThat means queries with the TSC may not work as expected after the operation.\n\nWould you like to proceed?',
+	'OB_TOOLTIP_ANNOTATED_CATEGORY' : 'If ticked, the data-explorer will only display facts that are actually annotated. Inherited instances or results of applying rules, such as definition rules, will not be shown.',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta property',

@@ -235,6 +235,7 @@ window.wgUserLanguageStrings = {
 	
 	'ERROR_RENAMING_ARTICLE'  : 'Fehler beim Umbennenen',
 	'OB_RENAME_WARNING' 	  : 'Das Umbenennen von Artikeln verändert keine Annotationen.\nDas bedeutet Queries an den TSC könnten nach dem Umbenennen unerwartete Ergebnisse liefern.\n\nMöchten Sie fortfahren?',
+	'OB_TOOLTIP_ANNOTATED_CATEGORY' : 'Zeigt nur explizit annotierte Instanzen der ausgewählten Kategorie (oder einer ihrer Subkategorien). Zeigt keine Instanzen, die durch Regeln generiert werden. ',
 	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
