@@ -137,6 +137,9 @@ public function getQueryLink($caption = false) {
         if (array_key_exists('mainlabel', $this->mQuery->params)) {
             $params['mainlabel'] = $this->mQuery->params['mainlabel'];
         }
+        if (array_key_exists('source', $this->mQuery->params)) {
+            $params['source'] = $this->mQuery->params['source'];
+        }
         // Note: the initial : prevents SMW from reparsing :: in the query string
         $result = SMWInfolink::newInternalLink($caption,':Special:Ask', false, $params);
         
