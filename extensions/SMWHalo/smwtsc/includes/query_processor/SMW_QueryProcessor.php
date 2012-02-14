@@ -44,14 +44,27 @@ class SMWQueryProcessor {
 		if ( !is_null( $printRequests ) ) {
 			$formatManipulation->setPrintRequests( $printRequests );
 		}
+		
+		/*op-change|start|IS|handle template parameter print requests for tabular forms*/
+		$templatePrintRequests = array();
+		foreach($params as $key => $value){
+			if($key[0] == '#'){
+				$templatePrintRequests[$key] = $value;
+				unset($params[$key]);
+			}
+		}
+		/*op-change|end|IS*/
 
 		$paramDefinitions['format']->addManipulations( $formatManipulation );
 		$validator = new Validator( 'SMW query', $unknownInvalid );
 		$validator->setParameters( $params, $paramDefinitions, false );
 		$validator->validateParameters();
 
-
-		return $validator->getParameterValues();
+		/*op-change|start|IS|handle template parameter print requests for tabular forms*/
+		$params = $validator->getParameterValues();
+		$params = array_merge($templatePrintRequests, $params); 
+		return $params;
+		/*op-change|end|IS*/
 	}
 
 	/**
@@ -320,7 +333,13 @@ class SMWQueryProcessor {
 						$lastprintout->setParameter( trim( $parts[0] ), $parts[1] );
 					}
 				}
-			} else { // parameter or query
+			} /*op-change|start|IS|handle template parameter print requests for tabular forms*/
+			 elseif ( $param[0] == '#' ) { 
+				$parts = explode( '=', $param, 2 );
+				$value = count($parts) == 2 ? trim($parts[1]) : '';
+				$params[$parts[0]] = $value;
+			} /*op-change|end|IS*/ 
+			else { // parameter or query
 				$parts = explode( '=', $param, 2 );
 
 				if ( count( $parts ) >= 2 ) {
