@@ -237,10 +237,11 @@ class TFQueryAnalyser {
 	private static function getQueryObject($querySerialization){
 		SMWQueryProcessor::processFunctionParams( 
 			$querySerialization, $queryString, $queryParams, $printRequests);
+		$queryParams = SMWQueryProcessor::getProcessedParams(
+			$queryParams, $printRequests);
 		$queryFormat = 'table';
 		$queryObject = SMWQueryProcessor::createQuery( 
 			$queryString, $queryParams, 0, $queryFormat, $printRequests );
-			
 		return $queryObject;
 	}
 	

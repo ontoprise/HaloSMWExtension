@@ -20,6 +20,7 @@
 
 define('TF_SHOW_AJAX_LOADER_HTML_PARAM', '__tf_show_ajax_loader');
 define('TF_TABULAR_FORM_ID_PARAM', '__tf_tabular_form_id');
+define('TF_INSTANCENAME_KEYWORD', 'instance name preload value');
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'tff_getTabularForm';
@@ -41,7 +42,7 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 
 	if($isSPARQL){
 		SMWSPARQLQueryProcessor::processFunctionParams(
-		$querySerialization, $queryString, $queryParams, $printRequests);
+			$querySerialization, $queryString, $queryParams, $printRequests);
 
 		//Replace strange encoding
 		$queryString = str_replace('&nbsp;', ' ', $queryString);
@@ -52,19 +53,18 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
 		( $queryString, $queryParams, $printRequests, 0);
 	} else {
-		$querySerialization[] = TF_SHOW_AJAX_LOADER_HTML_PARAM.'=false';
-		$querySerialization[] = TF_TABULAR_FORM_ID_PARAM.'='.$tabularFormId;
-
 		SMWQueryProcessor::processFunctionParams(
-		$querySerialization, $queryString, $queryParams, $printRequests);
+			$querySerialization, $queryString, $queryParams, $printRequests);
 
-		//$queryFormat = SMWQueryProcessor::getResultFormat($queryParams);
-		$queryFormat = 'tabularform';
-		$queryQbject = SMWQueryProcessor::createQuery(
-		$queryString, $queryParams, 0, $queryFormat, $printRequests );
-			
+		SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
+		$params = SMWQueryProcessor::getProcessedParams(
+			$queryParams, $printRequests);	
+
+		$params[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
+		$params[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;
+
 		$result = SMWQueryProcessor::getResultFromQueryString
-		( $queryString, $queryParams, $printRequests, 0);
+			( $queryString, $params, $printRequests, 0);
 	}
 
 	$useSilentAnnotationsTemplate = false;
@@ -247,6 +247,8 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 	$querySerialization[] = 'limit = '.$smwgQMaxInlineLimit;
 	$querySerialization[] = 'offset = '.$offset;
 	$querySerialization[] = 'link = none';
+	//$querySerialization[] = '?dc';
+	
 		
 	if($isSPARQL){
 		$querySerialization[] = 'src = tsc';
@@ -261,13 +263,15 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
 			( $queryString, $queryParams, $printRequests, 0);
 	} else {
-					
+
 		SMWQueryProcessor::processFunctionParams(
 			$querySerialization, $queryString, $queryParams, $printRequests);
+		SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
 
-		$queryFormat = 'ul';
-		$queryQbject = SMWQueryProcessor::createQuery(
-			$queryString, $queryParams, 0, $queryFormat, $printRequests );
+		$queryParams = SMWQueryProcessor::getProcessedParams(
+			$queryParams, $printRequests);	
+			
+		$queryParams['format'] = 'ul';
 			
 		$result = SMWQueryProcessor::getResultFromQueryString
 			( $queryString, $queryParams, $printRequests, 0);
@@ -285,8 +289,8 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 	foreach($instanceNames as $key => $name){
 		$instanceNames[$key] = trim($name);
 	}
-
-	foreach($instanceNames as $key => $name){
+	
+		foreach($instanceNames as $key => $name){
 		if(in_array(ucfirst($name), $result)){
 			unset($instanceNames[$key]);
 		}

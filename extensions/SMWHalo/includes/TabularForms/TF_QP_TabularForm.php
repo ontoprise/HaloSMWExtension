@@ -74,6 +74,21 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
             );
             return $css;
 	}
+	
+	/**
+	 * Reads the parameters and gets the query printers output.
+	 * 
+	 * @param SMWQueryResult $results
+	 * @param array $params
+	 * @param $outputmode
+	 * 
+	 * @return array
+	 */
+	public final function getResult( SMWQueryResult $results, array $params, $outputmode ) {
+		$this->handleParameters( $params, $outputmode );
+		$result = $this->getResultText( $results, SMW_OUTPUT_HTML );
+		return $result;
+	}
 
 
 	/*
@@ -81,28 +96,33 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 */
 	protected function getResultText(SMWQueryResult $queryResult, $outputMode ) {
 		$this->isHTML = true;
-
+		
 		//echo('<pre>'.print_r($queryResult, true).'</pre>');
 
 		$tabularFormData = new TFTabularFormData($queryResult, $this->m_params, $this->mLinker,
-		$this->linkFurtherResults( $queryResult));
+			$this->linkFurtherResults( $queryResult));
+		$this->mShowErrors = false;
 
 		if(array_key_exists(TF_SHOW_AJAX_LOADER_HTML_PARAM, $this->m_params)
-		&& $this->m_params[TF_SHOW_AJAX_LOADER_HTML_PARAM] == 'false'){
+			&& $this->m_params[TF_SHOW_AJAX_LOADER_HTML_PARAM] == 'false'){
 
 			//the tabular form HTML must be displayed
 			$html = $tabularFormData->getTabularFormHTML($this->m_params[TF_TABULAR_FORM_ID_PARAM]);
+			
+			return $html;
 		} else {
 			//the Ajax loader HTML must be displayed
 			$html = $tabularFormData->getAjaxLoaderHTML();
 
 			//Add script
 			SMWOutputs::requireResource('ext.tabularforms.main');
+			
+			return array(
+					$html,
+					'noparse' => true, 
+					'isHTML' => true
+				);
 		}
-
-		$this->mShowErrors = false;
-
-		return $html;
 	}
 
 	public function getParameters() {
@@ -173,12 +193,12 @@ class TFTabularFormData {
 		$this->initializeTemplateParameterPrintRequests();
 
 		if(array_key_exists('enable add', $this->queryParams)
-		&& $this->queryParams['enable add'] == 'true'){
+				&& $this->queryParams['enable add'] == 'true'){
 			$this->enableInstanceAdd = true;
 		}
 
 		if(array_key_exists('enable delete', $this->queryParams)
-		&& $this->queryParams['enable delete'] == 'true'){
+				&& $this->queryParams['enable delete'] == 'true'){
 			$this->enableInstanceDelete = true;
 		}
 
@@ -227,11 +247,16 @@ class TFTabularFormData {
 	private function getQuerySerialization(){
 		$query = array();
 		foreach($this->queryParams as $param => $value){
+			if(is_array($value)){
+				$value = implode(',', $value);
+			}
 			if(!($param == 'mainlabel' && $value == '-')){
 				if(strlen($value) > 0){
 					$param .= '='.$value;
+					$query[] = $param;
+				} else if($param[0] == '#'){
+					$query[] = $param;
 				}
-				$query[] = $param;
 			}
 		}
 
@@ -827,7 +852,7 @@ class TFTabularFormData {
 			$title = $row[0]->getNextObject()->getLongText($this->outputMode, null);
 			unset( $row[0]);
 		} else {
-			$title = $row[0]->getResultSubject()->getLongText();
+			$title = $row[0]->getResultSubject()->getTitle()->getFullText();
 		}
 
 		$formRowData = new TFTabularFormRowData($title);
