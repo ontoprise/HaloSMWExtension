@@ -76,10 +76,7 @@ function tscSetupExtension() {
 		die();
 	}
 
-	if (smwfIsTripleStoreConfigured() && !isset($smwgHaloWebserviceEndpoint)) {
-		trigger_error('$smwgHaloWebserviceEndpoint is required but not set. Example: $smwgHaloWebserviceEndpoint="localhost:8080";');
-		die();
-	}
+	
 
 	global $smwgWebserviceProtocol;
 	$smwgWebserviceProtocol="rest";
