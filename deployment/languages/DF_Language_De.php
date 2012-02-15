@@ -102,7 +102,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Server',
 	'df_webadmin_logtab' => 'Logs',
-
+	'df_webadmin_contentbundletab' => 'Content bundles',
+	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
 	'df_webadmin_creationdate' => 'Datum der Erzeugung',
 	'df_webadmin_version' => 'Version',
@@ -124,6 +125,7 @@ class DF_Language_De extends DF_Language {
 	'df_select_extension' => 'Wähle Extension',
 	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt.",
 	'df_webadmin_logtab_description' => 'Diese Seite zeigt Links zu Log-Dateien vorheriger Operationen.',
+	'df_webadmin_contentbundletab_description' => 'Here you can export and download bundles as zip files.',
 	
 	'df_webadmin_configureservers' => 'Hier können Sie die Server ihrer Wiki-Installation neu starten oder stoppen. Bitte warten Sie ein paar Sekunden bis WAT den Status neu geladen hat.',
 	'df_webadmin_process_runs' => 'läuft',

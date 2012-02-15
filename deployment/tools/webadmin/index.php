@@ -53,8 +53,8 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}}');
-define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '{{$VERSION}} [B{{$BUILDNUMBER}}]');
+define("DF_WEBADMIN_TOOL_VERSION", '1.7.0_0');
+define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '1.7.0_0 [B{{$BUILDNUMBER}}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -78,6 +78,7 @@ $smwgDFIP=$rootDir;
 touch("$rootDir/tools/webadmin/sessiondata/userloggedin");
 
 require_once($mwrootDir.'/deployment/languages/DF_Language.php');
+require_once('includes/DF_ContentBundleTab.php');
 require_once('includes/DF_LogTab.php');
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
@@ -174,6 +175,7 @@ $dfgSettingsTab = new DFSettingsTab();
 $dfgLocalSettingsTab = new DFLocalSettingsTab();
 $dfgServersTab = new DFServersTab();
 $dfgLogTab = new DFLogTab();
+$dfgContentBundlesTab = new DFContentBundleTab();
 
 // for ajax calls
 if (isset($func_name)) {
@@ -209,6 +211,10 @@ try {
 	
 	$dfgLogTabName = $dfgLogTab->getTabName();
 	$dfgLogTabHtml = $dfgLogTab->getHTML();
+	
+	$dfgContentBundlesTabName = $dfgContentBundlesTab->getTabName();
+	$dfgContentBundlesTabHtml = $dfgContentBundlesTab->getHTML();
+	
 	
 
 } catch(DF_SettingError $e) {
@@ -297,6 +303,8 @@ $html .= <<<ENDS
                 <li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
                 <li><a href="#tabs-7">$dfgServersTabName</a></li>
                 <li><a href="#tabs-8">$dfgLogTabName</a></li>
+               
+                
             </ul>
             <div id="tabs-1">$statusTabHtml</div>
             <div id="tabs-2">$searchTabHtml</div>
@@ -306,6 +314,7 @@ $html .= <<<ENDS
             <div id="tabs-6">$dfgLocalSettingsTabHtml</div>
             <div id="tabs-7">$dfgServersTabHtml</div>
             <div id="tabs-8">$dfgLogTabHtml</div>
+            
 			
 			
 </div>
