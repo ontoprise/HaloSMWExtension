@@ -305,7 +305,8 @@ class DALReadFeed implements IDAL {
 		SMWQueryProcessor::processFunctionParams($rawParams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
 		$params['limit'] = 500;
-		
+		SMWQueryProcessor::addThisPrintout($printouts, $params);
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		$xmlResult = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 		
 		$dom = simplexml_load_string($xmlResult);

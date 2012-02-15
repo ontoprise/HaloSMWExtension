@@ -153,6 +153,12 @@ class TermImportBot extends GardeningBot {
 		
 		echo("\r\nGet Terms");
 		$terms = $dam->getTerms($source, $importSet, $inputPolicy, $conflictPolicy);
+		
+		if(!($terms instanceof DITermCollection)){
+			echo("\n".$terms);
+			return $terms;
+		}
+		
 		echo("\r\nTerms in place");
 		
 		try {

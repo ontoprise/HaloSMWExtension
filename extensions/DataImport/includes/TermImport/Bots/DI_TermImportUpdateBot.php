@@ -97,6 +97,9 @@ class TermImportUpdateBot extends GardeningBot {
 		
 		SMWQueryProcessor::processFunctionParams(array($queryString)
 			,$queryString, $params,$printouts);
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+		$params = SMWQueryProcessor::getProcessedParams(
+			$params, $printouts);
 		$queryResult = explode("|",
 			SMWQueryProcessor::getResultFromQueryString($queryString,$params,
 				$printouts, SMW_OUTPUT_WIKI));
@@ -128,6 +131,10 @@ class TermImportUpdateBot extends GardeningBot {
 				,"?HasImportDate", "limit=1", "sort=HasImportDate", "order=descending",
 				"format=list", "mainlabel=-", "searchlabel=") 
 				,$queryString,$params,$printouts);
+			
+			SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+			$params = SMWQueryProcessor::getProcessedParams(
+				$params, $printouts);
 			
 			$queryResult =
 				SMWQueryProcessor::getResultFromQueryString($queryString,$params,

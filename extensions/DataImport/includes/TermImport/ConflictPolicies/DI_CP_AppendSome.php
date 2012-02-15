@@ -40,7 +40,7 @@ class DICPAppendSome extends DIConflictPolicy {
 			DICPHIdentityChecker::getInstance()->getAttributesForIdentityCheck($term, $templateName, $damId, $delimiter);
 
 		global $ditigUseDateAsSuffixOnConflicts;
-		$originalArticleName = $title->getFullText;
+		$originalArticleName = $title->getFullText();
 		$articleNameSuffix = 0;
 		
 		$noIdentityConflict = false;
