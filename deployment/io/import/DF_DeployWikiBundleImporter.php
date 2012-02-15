@@ -780,6 +780,16 @@ class DeployWikiRevision extends WikiRevision {
 
 					}
 				}
+				
+				// read ontology bundles content (if existing)
+				// and add it to the new revision
+				$oldText = $prior->getRawText();
+				$om = new OntologyMerger();
+				$allbundleIDs = $om->getAllBundles($oldText);
+				foreach($allbundleIDs as $bundleID) {
+					$bundleContent = $om->getBundleContent($bundleID, $oldText);
+					$this->text = $om->addBundle($bundleID, $this->text, $bundleContent);
+				}
 
 				// revision already exists.
 				// that means we have to check if the page was changed in the meantime.
