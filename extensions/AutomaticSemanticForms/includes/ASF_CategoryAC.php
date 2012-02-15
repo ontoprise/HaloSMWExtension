@@ -83,6 +83,9 @@ public static function getCategories($userInput, $maxResults = SMW_AC_MAX_RESULT
 		SMWQueryProcessor::processFunctionParams($rawParams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
 		$params['limit'] = $queryLimit;
+		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+		$params = SMWQueryProcessor::getProcessedParams(
+			$params, $printouts);
 		$xmlResult = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 		
 		$dom = simplexml_load_string($xmlResult);
