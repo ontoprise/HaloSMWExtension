@@ -82,7 +82,7 @@ class DeployBackupDumper extends BackupDumper {
 		$this->initProgress( $history );
 
 		$db = $this->backupDb();
-		$exporter = new DeployWikiExporter( $db, $history, WikiExporter::STREAM, $text );
+		$exporter = new DeployWikiExporter( $db, $this->bundleToExport, $history, WikiExporter::STREAM, $text );
 		$exporter->dumpUploads = $this->dumpUploads;
 
 		$wrapper = new ExportProgressFilter( $this->sink, $this );
@@ -132,11 +132,11 @@ class DeployWikiExporter extends WikiExporter {
 	 *                   dir: "asc" or "desc" timestamp order
 	 * @param $buffer Int: one of WikiExporter::BUFFER or WikiExporter::STREAM
 	 */
-	function __construct( &$db, $history = WikiExporter::CURRENT,
+	function __construct( &$db, $bundleID, $history = WikiExporter::CURRENT,
 	$buffer = WikiExporter::BUFFER, $text = WikiExporter::TEXT ) {
 
 		parent::__construct($db, $history, $buffer, $text);
-		$this->writer  = new DeployXmlDumpWriter();
+		$this->writer  = new DeployXmlDumpWriter($bundleID);
 
 
 	}
@@ -307,11 +307,13 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	var $db;
 	var $currentTitle;
 	var $semstore;
+	var $bundleID;
 
-	function __construct() {
+	function __construct($bundleID) {
 
 		$this->db = wfGetDB(DB_SLAVE);
 		$this->semstore = smwfGetStore();
+		$this->bundleID = $bundleID;
 	}
 
 	function schemaVersion() {
@@ -383,6 +385,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		} elseif( isset( $row->old_text ) ) {
 			// Raw text from the database may have invalid chars
 			$text = strval( Revision::getRevisionText( $row ) );
+			$this->removeOtherBundles($text);
 			$out .= "      " . Xml::elementClean( 'text',
 			array( 'xml:space' => 'preserve' ),
 			strval( $text ) ) . "\n";
@@ -399,6 +402,27 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 
 		wfProfileOut( $fname );
 		return $out;
+	}
+	
+	/**
+     * Removes ontology sections from other bundles then the
+     * exported one. 
+     * 
+     * @param $text (out)
+     */
+	protected function removeOtherBundles(& $text) {
+		$om = new OntologyMerger();
+		$allBundles = $om->getAllBundles($text);
+		$keepText = false;
+		if (in_array($this->bundleID, $allBundles)) {
+			$keepText = $om->getBundleContent($this->bundleID, $text);
+		}
+		foreach($allBundles as $id) {
+			$text = $om->removeBundle($id, $text);
+		}
+		if ($keepText !== false) {
+			$text = $om->addBundle($this->bundleID, $text, $keepText);
+		}
 	}
 
 	/**

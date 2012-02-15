@@ -42,6 +42,7 @@ require_once( $rootDir.'/../maintenance/backup.inc' );
 require_once( $rootDir.'/io/export/DF_DeployWikiExporter.php');
 require_once( $rootDir.'/tools/smwadmin/DF_Tools.php');
 require_once( $rootDir.'/io/DF_BundleTools.php');
+require_once( $rootDir.'/io/import/DF_OntologyMerger.php');
 
 
 $langClass = "DF_Language_".ucfirst($wgLanguageCode);

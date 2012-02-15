@@ -266,16 +266,7 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
 ENDS
 	;
 	$xml .= "</notice>";
-	$xml .= "<namespaces>";
 	
-	$prefixedUsedByBundle = DFBundleTools::getPrefixesUsedBy($bundeID, false);
-	$allPrefixes = DFBundleTools::getRegisteredPrefixes();
-	
-	foreach($prefixedUsedByBundle as $prefix) {
-		$uri = str_replace("<", "&lt;", $allPrefixes[$prefix]);
-		$xml .= "\n\t<namespace prefix=\"$prefix\">$uri</namespace>";
-	}
-	$xml .= "</namespaces>";
 	$xml .= "\t".'</global>'."\n";
 	$xml .= "\t".'<wikidumps>'."\n";
 	$xml .= "\t\t".'<file loc="'.$dumpFile.'"/>'."\n";
