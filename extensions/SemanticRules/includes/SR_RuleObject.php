@@ -254,6 +254,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 						$tmp .= $value;
 					} else if ($wikiType == '_num') {
 						$value = $args[$i]->getValue();
+						if (!is_numeric($value)) $value = "?$value";
 						if (is_null($args[$i]->getOperand())) {
 							$operand = "==";
 						} else $operand = $args[$i]->getOperand();
