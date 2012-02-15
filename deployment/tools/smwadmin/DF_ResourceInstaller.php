@@ -121,7 +121,7 @@ class ResourceInstaller {
 		$registeredPrefixes = array_merge($registeredPrefixes, $newPrefixes);
 		$this->logger->info("Insert new namespaces: ".print_r($newPrefixes, true));
 		$dfgOut->outputln("[Insert new namespaces: ".implode(",", array_keys($newPrefixes))."...");
-		DFBundleTools::storeRegisteredPrefixes($registeredPrefixes);
+		DFBundleTools::storeRegisteredPrefixes($registeredPrefixes, $dd->getID());
 		$dfgOut->outputln("done.]");
 	}
 

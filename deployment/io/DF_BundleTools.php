@@ -60,8 +60,7 @@ class DFBundleTools {
 
 			$object = $field->getNextObject();
 			$fileTitle = $object->getTitle();
-				
-			return array(array($fileTitle, "halo"));
+			
 			$field = next($row);
 
 			$object = $field->getNextObject();
@@ -134,46 +133,7 @@ class DFBundleTools {
 		return NULL;
 	}
 
-	/**
-	 * Returns namespace prefixes which are used by $bundleID
-	 *
-	 * @param string $bundleID
-	 * @param boolean $only Find those prefies ONLY used by $bundleID
-	 *
-	 * @return string[]
-	 */
-	public static function getPrefixesUsedBy($bundleID, $only = true) {
-		global $dfgLang;
-
-		// find prefixes used for $bundleID
-		$usesprefixPropertyName = $dfgLang->getLanguageString('df_usesprefix');
-		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle($bundleTitle), SMWDIProperty::newFromUserLabel($usesprefixPropertyName));
-		$results = array();
-		foreach($values as $value) {
-			$prefix = $value->getString();
-			$results[] = strtolower($prefix);
-		}
-
-		if (!$only) return $results;
-
-		// find those ONLY used for $bundleID
-		$prefixesOnlyUsedBy = array();
-		foreach($results as $prefix) {
-			$rawparams = array();
-			$rawparams[] = "[[$usesprefixPropertyName::".$prefix."]]";
-
-			SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-			$query  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
-			$res = smwfGetStore()->getQueryResult( $query );
-			if ($res->getCount() == 1) {
-				$prefixesOnlyUsedBy[] = trim(strtolower($prefix));
-			}
-		}
-		return $prefixesOnlyUsedBy;
-
-
-	}
+	
 
 	/**
 	 * Returns prefix/namespace URI mappings.
@@ -222,17 +182,35 @@ class DFBundleTools {
 	 * @param array($prefix => $namespace URI)
 	 *
 	 */
-	public static function storeRegisteredPrefixes($namespaceMappings) {
+	public static function storeRegisteredPrefixes($namespaceMappings, $bundleID) {
 		$dbw = wfGetDB( DB_SLAVE );
 		global $dfgLang;
+		
+		// read content of Mediawiki:NamespaceMappings 
 		$nsMappingPage = $dfgLang->getLanguageString('df_namespace_mappings_page');
 		$nsMappingPageTitle = Title::newFromText($nsMappingPage, NS_MEDIAWIKI);
-		$result = "";
+		$a = new Article($nsMappingPageTitle);
+		$text = $a->getRawText();
+		
+		// create mappings
+		$mappingsText = "";
 		foreach($namespaceMappings as $prefix => $uri) {
-			$result .= "\n*$prefix : $uri";
+			$mappingsText .= "\n*$prefix : $uri";
 		}
+		
+		// merge mapping into the bundle section
+		$om = new OntologyMerger();
+		$content = $om->getBundleContent($bundleID, $text);
+		if (!is_null($content)) {
+			$text = $om->removeBundle($bundleID, $text);
+		} else {
+			$content = "";
+		}
+		$om->addBundle($bundleID, $text, $content.$mappingsText);
+		
+		// save page
 		$article = new Article($nsMappingPageTitle);
-		$article->doEdit($result, "auto-generated namespace mappings");
+		$article->doEdit($text, "auto-generated namespace mappings");
 	}
 
 	/**

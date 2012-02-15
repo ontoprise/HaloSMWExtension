@@ -74,6 +74,17 @@ class OntologyMerger {
 		$end = preg_match($pattern, $wikiText, $matches) > 0;
 		return $begin && $end;
 	}
+	
+	public function getAllBundles($wikiText) {
+		$pattern = '/<!--\s*BEGIN ontology:\s*(([^-]|-[^-]|--[^>])+)\s*-->/';
+		preg_match_all($pattern, $wikiText, $matches);
+		array_walk($matches[1], array($this, 'trim'));
+		return $matches[1];
+	}
+	
+	private function trim(& $t, $i) {
+		$t = trim($t);
+	}
 
 	public function containsBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
@@ -95,6 +106,15 @@ class OntologyMerger {
 		$wikiText .= "\n<!-- END ontology: $bundleID -->";
 		return $wikiText;
 	}
+	
+    public function getBundleContent($bundleID, $wikiText) {
+        $bundleID = preg_quote($bundleID);
+        $bundleID = str_replace("/","\\/", $bundleID);
+        $pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
+        $res = preg_match($pattern, $wikiText, $match);
+        if ($res == 0) return NULL;
+        return $match[1];
+    }
 
 	public function getSemanticData($bundleID, $wikiText) {
 		if (!$this->containsBundle($bundleID, $wikiText)) {

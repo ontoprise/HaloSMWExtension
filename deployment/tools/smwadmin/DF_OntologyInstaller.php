@@ -135,13 +135,8 @@ class OntologyInstaller {
 			}
 		}
 
-		// update prefixes (comes from onto2mwxml)
-		$dfgOut->outputln("[Update prefixes...");
-
-		DFBundleTools::storeRegisteredPrefixes($outputFromOnto2mwxml->ns_mappings);
 		unlink($settingsFile);
-		$dfgOut->output("done.]");
-
+		
 		// do actual ontology install/update
 		$dfgOut->outputln("[Installing/updating ontology $inputfile...");
 		$this->installOrUpdateOntologyXML($outputfile_rel, $verificationLog, $bundleID);
@@ -166,11 +161,13 @@ class OntologyInstaller {
 	 */
 	public function installOntologies($dd) {
 		$ontologies = $dd->getOntologies();
-		$noBundlePage = false;
-		foreach($ontologies as $loc) {
-			$prefix = $this->installOrUpdateOntology($this->rootDir.$dd->getInstallationDirectory()."/".$loc, $noBundlePage, $dd->getID());
-			$noBundlePage = true; // make sure that only the first ontology creates a bundle page
+		$loc = reset($ontologies);
+		if ($loc === false) return;
+		if (count($ontologies) > 1) {
+			$dfgOut->outputln("More than one ontology found. Ignoring all but the first: $loc", DF_PRINTSTREAM_TYPE_WARN);
 		}
+		$this->installOrUpdateOntology($this->rootDir."/".$dd->getInstallationDirectory()."/".$loc, false, $dd->getID());
+		
 	}
 
 
@@ -184,15 +181,7 @@ class OntologyInstaller {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
 		global $dfgOut;
 
-		// removes used prefixes;
-		$prefixesToRemove = DFBundleTools::getPrefixesUsedBy($bundleID);
-		// remove those ONLY used for $bundleID
-		$nsMappings = DFBundleTools::getRegisteredPrefixes();
-		foreach($prefixesToRemove as $prefix) {
-			unset($nsMappings[$prefix]);
-			$dfgOut->outputln("\t\t[Removed prefix: ".$prefix."]");
-		}
-		DFBundleTools::storeRegisteredPrefixes($nsMappings);
+		
 
 		// process the pages which are part of the bundle
 		// remove the part of the bundle which should be deleted.
