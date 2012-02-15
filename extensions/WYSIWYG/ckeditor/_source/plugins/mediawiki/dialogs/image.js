@@ -47,13 +47,13 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
             CKEDITOR.document.getById( imagePreviewLoaderId ).setStyle( 'display', 'none' );
 
             // New image -> new domensions
-            if ( !this.dontResetSize )
-                resetSize( this );
-
-            if ( this.firstLoad )
-                CKEDITOR.tools.setTimeout( function(){
-                    switchLockRatio( this, 'check' );
-                }, 0, this );
+//            if ( !this.dontResetSize )
+//                resetSize( this );
+//
+//            if ( this.firstLoad )
+//                CKEDITOR.tools.setTimeout( function(){
+//                    switchLockRatio( this, 'check' );
+//                }, 0, this );
 
             this.firstLoad = false;
             this.dontResetSize = false;

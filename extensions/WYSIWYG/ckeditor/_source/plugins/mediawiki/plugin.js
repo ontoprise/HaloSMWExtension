@@ -414,12 +414,11 @@ CKEDITOR.plugins.add( 'mediawiki',
         editor.addCommand( 'MWSignature', signatureCommand);    
         
         // if SMWHalo is installed use smw image and link dialogs
-        if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
-            editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
-            CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
-            editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
-            CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );  
-        }   
+        editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
+        CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
+        editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
+        CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );  
+
         
         if (editor.addMenuItem) {
             // A group menu is required
@@ -459,21 +458,12 @@ CKEDITOR.plugins.add( 'mediawiki',
         editor.on( 'doubleclick', function( evt )
         {
             var element = CKEDITOR.plugins.link.getSelectedLink( editor ) || evt.data.element;
-            if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){
-                if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
-                    evt.data.dialog = 'MWLink';
-                }
-                else{
-                    evt.data.dialog = 'link';
-                }
+            if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){                
+              evt.data.dialog = 'MWLink';
             }
-            else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){
-                if ('SMW_HALO_VERSION'.InArray(window.parent.wgCKeditorUseBuildin4Extensions)){
-                    evt.data.dialog = 'MWImage';
-                }
-                else{
-                    evt.data.dialog = 'image';
-                }
+            else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){                
+              evt.data.dialog = 'MWImage';
+                
             }
             else if ( element.getAttribute( 'class' ) &&
                 element.getAttribute( 'class' ).InArray( [
@@ -547,7 +537,7 @@ CKEDITOR.ajax.loadPost = function( url, params, callback )
 //   the result will be returned by this method. 
 CKEDITOR.ajax.loadHalo = function(func_name, args, target){
     //build url
-    var uri = wgServer + wgScriptPath + "/index.php?action=ajax";
+    var uri = mw.config.get('wgServer') + mw.config.get('wgScriptPath') + "/index.php?action=ajax";
     var params = '&rs=' + encodeURIComponent(func_name);
     for(var i = 0; i < args.length; i++){
         params += '&rsargs[]=' + encodeURIComponent(args[i]);
