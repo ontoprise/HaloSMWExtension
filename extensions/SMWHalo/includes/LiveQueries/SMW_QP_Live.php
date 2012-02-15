@@ -70,6 +70,9 @@ class SMWLiveQueryPrinter extends SMWResultPrinter {
 			} else if($label == 'update frequency'){
 				$updateFrequency = $value;
 			}else {
+				if(is_array($value)){
+					$value = implode(',', $value);
+				}
 				$params[] = $label.'='.$value;
 			}
 		}
