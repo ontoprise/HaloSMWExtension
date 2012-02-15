@@ -61,7 +61,6 @@ class DIWSQueryResult extends SMWQueryResult {
 		
 		foreach ( $this->mQuery->getExtraPrintouts() as $printout ) {
 			$params[] = '?result.'.$printout->wsParamName.'='.$printout->getLabel();
-			
 		}
 		
 		if ( $caption == false ) {

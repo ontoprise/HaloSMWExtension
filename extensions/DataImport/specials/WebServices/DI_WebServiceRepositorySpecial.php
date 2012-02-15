@@ -177,10 +177,13 @@ class DIWebServiceRepositorySpecial extends SpecialPage {
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		SMWQueryProcessor::processFunctionParams(array("[[Category:TermImport]]")
 			,$querystring,$params,$printouts);
+		SMWQueryProcessor::addThisPrintout($printouts, $params);
+		$params = SMWQueryProcessor::getProcessedParams(
+			$params, $printouts);		
 		$queryResult = explode("|",
-		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-			$printouts, SMW_OUTPUT_WIKI));
-
+			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+				$printouts, SMW_OUTPUT_WIKI));
+		
 		unset($queryResult[0]);
 		
 		foreach($queryResult as $tiArticleName){
@@ -192,12 +195,15 @@ class DIWebServiceRepositorySpecial extends SpecialPage {
 			$html .= "<td><a href=\"".$tiUrl."\">".$tiArticleName."</a></td>";
 			
 			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
-			,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
+				,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
 				"format=list", "mainlabel=-") 
-			,$querystring,$params,$printouts);
+				,$querystring,$params,$printouts);
+			SMWQueryProcessor::addThisPrintout($printouts, $params);
+				$params = SMWQueryProcessor::getProcessedParams(
+			$params, $printouts);
 			$queryResult =
-			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-				$printouts, SMW_OUTPUT_WIKI);
+				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+					$printouts, SMW_OUTPUT_WIKI);
 			
 			// timestamp creation depends on property type (page or date)
 			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));

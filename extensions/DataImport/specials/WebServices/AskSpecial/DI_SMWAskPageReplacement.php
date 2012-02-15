@@ -29,15 +29,18 @@
  */
 class DISMWAskPageReplacement extends SMWAskPage {
 
+	/*op-change|start|IS|deal with source=web service*/
 	private $m_isWSCall = false;
-
-	/**
-	 * TODO: document
-	 */
+	/*op-change|end|IS*/
+	
+	
 	protected function makeHTMLResult() {
-		global $wgOut, $smwgAutocompleteInSpecialAsk;
-		
+
+		/*op-change|start|IS|deal with source=web service*/
 		$this->checkIfThisIsAWSCALL();
+		/*op-change|end|IS*/
+		
+		global $wgOut, $smwgAutocompleteInSpecialAsk;
 
 		$delete_msg = wfMsg( 'delete' );
 
@@ -112,20 +115,41 @@ END;
 		$urlArgs['p'] = SMWInfolink::encodeParameters( $tmp_parray );
 		$printoutstring = '';
 
-		foreach ( $this->m_printouts as $printout ) {
+		foreach ( $this->m_printouts as /* SMWPrintRequest */ $printout ) {
 			$printoutstring .= $printout->getSerialisation() . "\n";
 		}
 
-		if ( $printoutstring != '' ) $urlArgs['po'] = $printoutstring;
+		if ( $printoutstring !== '' ) $urlArgs['po'] = $printoutstring;
 		if ( array_key_exists( 'sort', $this->m_params ) )  $urlArgs['sort'] = $this->m_params['sort'];
 		if ( array_key_exists( 'order', $this->m_params ) ) $urlArgs['order'] = $this->m_params['order'];
 
-		if ( $this->m_querystring != '' ) {
-			$queryobj = SMWQueryProcessor::createQuery( $this->m_querystring, $this->m_params, SMWQueryProcessor::SPECIAL_PAGE , $this->m_params['format'], $this->m_printouts );
-			$queryobj->params = $this->m_params;
+		if ( $this->m_querystring !== '' ) {
+			// FIXME: this is a hack
+			SMWQueryProcessor::addThisPrintout( $this->m_printouts, $this->m_params );
+			$params = SMWQueryProcessor::getProcessedParams( $this->m_params, $this->m_printouts );
+			
+			$this->m_params['format'] = $params['format'];
+			
+			foreach($this->m_params as $param => $value){
+				if(!array_key_exists($param, $params)){
+					$params[$param] = $value;
+				}
+			}
+			
+			$queryobj = SMWQueryProcessor::createQuery(
+				$this->m_querystring,
+				$params,
+				SMWQueryProcessor::SPECIAL_PAGE ,
+				$this->m_params['format'],
+				$this->m_printouts
+			);
+
+			/*op-change|start|IS|deal with source=web service*/
+			$queryobj->params = array_merge($queryobj->params, $params);
 			$store = $this->getStore();
 			$res = $store->getQueryResult( $queryobj );
-			
+			/*op-change|end|IS*/
+
 			// Try to be smart for rss/ical if no description/title is given and we have a concept query:
 			if ( $this->m_params['format'] == 'rss' ) {
 				$desckey = 'rssdescription';
@@ -170,13 +194,13 @@ END;
 					if ( $this->m_editquery ) {
 						$urlArgs['eq'] = 'yes';
 					}
-					else if ( $hidequery ) {
+					elseif ( $hidequery ) {
 						$urlArgs['eq'] = 'no';
 					}
 
 					$navigation = $this->getNavigationBar( $res, $urlArgs );
 					$result .= '<div style="text-align: center;">' . "\n" . $navigation . "\n</div>\n";
-					$query_result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_HTML );
+					$query_result = $printer->getResult( $res, $params, SMW_OUTPUT_HTML );
 
 					if ( is_array( $query_result ) ) {
 						$result .= $query_result[0];
@@ -189,7 +213,7 @@ END;
 					$result = '<div style="text-align: center;">' . wfMsgHtml( 'smw_result_noresults' ) . '</div>';
 				}
 			} else { // make a stand-alone file
-				$result = $printer->getResult( $res, $this->m_params, SMW_OUTPUT_FILE );
+				$result = $printer->getResult( $res, $params, SMW_OUTPUT_FILE );
 				$result_name = $printer->getFileName( $res ); // only fetch that after initialising the parameters
 			}
 		}
@@ -201,14 +225,17 @@ END;
 				$wgOut->setHTMLtitle( wfMsg( 'ask' ) );
 			}
 
+			$urlArgs['offset'] = $this->m_params['offset'];
+			$urlArgs['limit'] = $this->m_params['limit'];
+
 			$result = $this->getInputForm(
 				$printoutstring,
-				'offset=' . $this->m_params['offset']
-					. '&limit=' . $this->m_params['limit']
-					. wfArrayToCGI( $urlArgs )
+				wfArrayToCGI( $urlArgs )
 			) . $result;
-			
+
+			/*op-change|start|IS|deal with source=web service*/
 			$result = $this->postProcessHTML($result);
+			/*op-change|end|IS*/
 			
 			$wgOut->addHTML( $result );
 		} else {
@@ -223,8 +250,8 @@ END;
 			echo $result;
 		}
 	}
-
-	/*
+	
+		/*
 	 * Checks if source=webservice
 	 */
 	private function checkIfThisIsAWSCALL(){
@@ -233,6 +260,7 @@ END;
 		}
 	}
 	
+	/*op-change|start|IS|deal with source=web service*/
 	/*
 	 * uses DIWSSMWStore if source = webservice
 	*/
@@ -244,8 +272,9 @@ END;
 		}
 		return $store;
 	}
+	/*op-change|end|IS*/
 	
-	
+	/*op-change|start|IS|deal with source=web service*/
 	/*
 	 * Replaces links for editing the query if source=webservice
 	 */
@@ -259,7 +288,7 @@ END;
 		}
 		return $result;
 	}
-	
+	/*op-change|end|IS*/
 
 }
 	

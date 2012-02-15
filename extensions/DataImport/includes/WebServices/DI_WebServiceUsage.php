@@ -349,9 +349,12 @@ class DIWebServiceUsage {
 			$wsResults, $configArgs, $wsParameters, $wsReturnValues, $smwQueryMode){
 	
 		$format = 'table';
+
 		
+		$queryParams = SMWQueryProcessor::getProcessedParams(
+			array(), array());
 		$query = 	SMWQueryProcessor::createQuery( 
-			'[[WS query]]', array(), SMWQueryProcessor::INLINE_QUERY, $format, array());
+			'[[WS query]]', $queryParams, SMWQueryProcessor::INLINE_QUERY, $format, array());
 		
 		$queryResult = 
 			new DIWSQueryResult(array(), $query, array(), new DIWSSMWStore(), false);
@@ -487,10 +490,8 @@ class DIWebServiceUsage {
 			foreach($values as $key => $value){
 				$queryResultColumnValues = array();
 				
-				$resultInstance = SMWDataValueFactory::newTypeIDValue('_wpg');
 				$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'));
-				$resultInstance->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID(), false, '', $title->getFragment());
-				$resultInstance = $resultInstance->getDataItem();
+				$resultInstance = SMWDIWikiPage::newFromTitle($title);
 				
 				$dataValue = SMWDataValueFactory::newTypeIDValue($typeIds[$columnLabel]);
 				$dataValue->setUserValue($value);
@@ -515,15 +516,21 @@ class DIWebServiceUsage {
 		
 		//translate ws call to SMW ask query
 		$queryParams = array();
-		foreach($wsParameters as $param => $value){
-			$queryParams['_'.$param] = $value;
-		}
 		foreach($configArgs as $param => $value){
 			$queryParams[$param] = $value;
 		}
-		$queryParams['source'] = 'webservice';
-		$queryParams['webservice'] = $configArgs['webservice'];
 		
+		//SMWQueryProcessor::addThisPrintout($printRequests, $queryParams);
+		$queryParams = SMWQueryProcessor::getProcessedParams(
+			$queryParams, $printRequests);	
+		
+		foreach($wsParameters as $param => $value){
+			$queryParams['_'.$param] = $value;
+		}
+		
+		$queryParams['source'] = 'webservice';
+		$queryParams['webservice'] = $configArgs['webservice'];	
+			
 		//create query object
 		$query = 	SMWQueryProcessor::createQuery( 
 			'[[WS Query]]', 
@@ -537,7 +544,7 @@ class DIWebServiceUsage {
 		//create query result object
 		$queryResult = 
 			new DIWSQueryResult($printRequests, $query, $queryResults, new DIWSSMWStore(), $furtherResults);
-		
+			
 		//deal with count mode
 		if($format == 'count'){
 			return count($queryResults);
@@ -548,9 +555,8 @@ class DIWebServiceUsage {
 			return $queryResult;
 		}
 		
-		
 		$printer = SMWQueryProcessor::getResultPrinter( $format, SMWQueryProcessor::INLINE_QUERY);
-		$result = $printer->getResult( $queryResult, $configArgs, SMW_OUTPUT_WIKI);
+		$result = $printer->getResult( $queryResult, $queryParams, SMW_OUTPUT_WIKI);
 		
 		return $result;
 	}

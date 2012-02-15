@@ -43,12 +43,13 @@ class DIWSSMWStore extends SMWSQLStore2 {
 	 */
 	private function parseQueryArgs($query){
 		
-		//echo('<pre>'.print_r($query->params, true).'</pre>');
-		
 		$wsParameters = array();
 		$configParameters = array();
 		$wsName = '';
 		foreach($query->params as $paramName => $paramValue){
+			if(is_array($paramValue)){
+				continue;
+			}
 			if(strpos($paramName, '_') === 0){
 				$wsParameters[] = substr($paramName, 1).'='.$paramValue;
 			} else if ($paramName == 'webservice'){
@@ -63,7 +64,8 @@ class DIWSSMWStore extends SMWSQLStore2 {
 		
 		$resultParts = array();
 		foreach($query->getExtraPrintouts() as $printRequest){
-		$label = $printRequest->getLabel();
+			if(is_null($printRequest->getData())) continue;
+			$label = $printRequest->getLabel();
 			if($label != $printRequest->getData()->getText()){
 				$label = '='.$label;;
 			} else {
