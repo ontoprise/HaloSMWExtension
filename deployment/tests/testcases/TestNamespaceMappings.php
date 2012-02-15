@@ -66,7 +66,7 @@ ENDS
 		;
 		 
 		$namespaceMappings = DFBundleTools::parseRegisteredPrefixes($text);
-		DFBundleTools::storeRegisteredPrefixes($namespaceMappings);
+		DFBundleTools::storeRegisteredPrefixes($namespaceMappings, "testID");
 		$namespaceMappings = DFBundleTools::getRegisteredPrefixes();
 
 		$this->assertEquals($namespaceMappings['foaf'], 'http://foaf.namespace');

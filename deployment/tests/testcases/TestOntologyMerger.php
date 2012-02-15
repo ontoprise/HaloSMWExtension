@@ -82,6 +82,23 @@ ENDS
 		$actual = $om->removeBundle($bundleID, $wikiText);
 		$this->assertNotContains("BEGIN ontology: $bundleID", $actual);
 	}
+	
+    function testGetAllBundle() {
+        $om = new OntologyMerger();
+       
+        $wikiText = <<<ENDS
+=== A wiki text ===
+<!-- BEGIN ontology: bundleA -->some annotations...<!-- END ontology: bundleA -->
+<!-- BEGIN ontology: bundleB-test -->some annotations...<!-- END ontology: bundleB-test -->
+<!-- BEGIN ontology: bundleC test -->some annotations...<!-- END ontology: bundleC test -->
+ENDS
+        ;
+        $actual = $om->getAllBundles($wikiText);
+        
+        $this->assertEquals("bundleA", trim($actual[0]));
+        $this->assertEquals("bundleB-test", $actual[1]);
+        $this->assertEquals("bundleC test", $actual[2]);
+    }
 
 	function testGetSemanticData() {
 		$om = new OntologyMerger();
