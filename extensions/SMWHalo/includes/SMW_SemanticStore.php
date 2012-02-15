@@ -132,10 +132,15 @@ abstract class SMWSemanticStore {
 	 *
 	 * In the case of a cycle in the category inheritance graph, this method has a treshhold
 	 * to stop execution before a stack overflow occurs.
-	 *
+	 * 
+	 * @param Title $category
+     * @param SMWRequestOptions $requestoptions  object.
+     * @param boolean $withCategories (see different result types)
+     * @param string $bundleID Returns only pages which are part of the given bundle. May be empty (ie. no particular bundle)
+     * 
 	 * @return if $withCategories == true array of tuples (Title instance, Title category), otherwise array of Title
 	 */
-	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true);
+	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $bundleID = '');
 
 	/**
 	 * Returns all instances of $categoryTitle including instances of all subcategories of $categoryTitle.
@@ -144,13 +149,19 @@ abstract class SMWSemanticStore {
 	 * In the case of a cycle in the category inheritance graph, this method has a treshhold
 	 * to stop execution before a stack overflow occurs.
 	 *
+	 * @param Title $category
+	 * @param SMWRequestOptions $requestoptions  object.
+	 * @param boolean $withCategories (see different result types)
+     * @param string $bundleID Returns only pages which are part of the given bundle. May be empty (ie. no particular bundle)
+	 * 
 	 * @return if $withCategories == true array of tuples (Title instance, Title category), otherwise array of Title
 	 */
-	public abstract function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true);
+	public abstract function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $bundleID = '');
 
 	/**
 	 * Returns all direct instances of $categoryTitle
-	 *
+	 * 
+	 * @param Title $category
 	 * @param SMWRequestOption $requestOptions
 	 * @return array of Title
 	 */

@@ -170,7 +170,13 @@ class OB_StorageTS extends OB_Storage {
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 			$dataSpace = $this->getDataSourceParameters();
-
+            
+			$bundleCond = "";
+			if ($this->bundleID != '') {
+				global $dfgLang;
+				$bundleCond = "[[".$dfgLang->getLanguageString("df_partofbundle")."::".$this->bundleID."]]";
+			}
+			
 			// query
 			if ($onlyAssertedCategories) {
 				$allSubCategories = smwfGetSemanticStore()->getSubCategories(Title::newFromText($categoryName, NS_CATEGORY));
@@ -179,9 +185,9 @@ class OB_StorageTS extends OB_Storage {
 					list($c, $isLeaf) = $sc;
 					$categoryDisjuction .= '||'.$c->getText();
 				}
-				$response = $client->query("[[Category:$categoryDisjuction]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
+				$response = $client->query("[[Category:$categoryDisjuction]]$bundleCond", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_|infer=false$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
 			} else {
-				$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
+				$response = $client->query("[[Category:$categoryName]]$bundleCond", "?Category|limit=$limit|offset=$offset|merge=false|sort=_X_$dataSpace$metadataRequest", $smwgHaloTripleStoreGraph);
 			}
 
 			$categoryTitle = Title::newFromText($categoryName, NS_CATEGORY);

@@ -114,7 +114,7 @@ class OB_Storage {
         $cat = Title::newFromText($p_array[0], NS_CATEGORY);
 
 
-        $instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
+        $instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter, true, $this->bundleID);
             
 
 

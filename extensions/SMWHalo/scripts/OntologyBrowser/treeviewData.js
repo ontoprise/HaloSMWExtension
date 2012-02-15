@@ -230,7 +230,7 @@ getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBa
 
 getInstances: function(categoryName, partition, onlyAssertedCategories, callback) {
 	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+onlyAssertedCategories+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+onlyAssertedCategories+"##"+requestMetaproperties, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], callback);
 },
 
 getProperties: function(categoryName, onlyDirect, domainOrRange, callback) {

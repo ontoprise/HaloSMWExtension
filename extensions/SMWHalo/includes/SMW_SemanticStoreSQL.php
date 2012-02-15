@@ -420,17 +420,17 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
    
 	}
 
-	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
-		return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, true);
+	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $bundleID = '') {
+		return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, true, $bundleID);
 	}
 
-	function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
-		return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, false);
+	function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $bundleID = '') {
+		return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, false, $bundleID);
 	}
 
-	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $onlyMain = true) {
+	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $onlyMain = true, $bundleID) {
 		$db =& wfGetDB( DB_SLAVE );
-		$this->createVirtualTableWithInstances($categoryTitle, $db, $onlyMain);
+		$this->createVirtualTableWithInstances($categoryTitle, $db, $onlyMain, $bundleID);
 		$sqlCond = DBHelper::getSQLConditions($requestoptions, 'instance', 'instance');
 
 		if ($withCategories) {
@@ -477,13 +477,15 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 	 * @param Title $categoryTitle
 	 * @param & $db DB reference
 	 * @param boolean $onlyMain True, if only articles from NS_MAIN should be returned. False, if all namespaces (except category) should be returned.
+	 * @param string $bundleID Can be null
 	 */
-	protected function createVirtualTableWithInstances($categoryTitle, & $db, $onlyMain = true) {
+	protected function createVirtualTableWithInstances($categoryTitle, & $db, $onlyMain = true, $bundleID) {
 
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
-
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
 
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INT(11), category VARBINARY(255))
@@ -493,7 +495,19 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARBINARY(255) NOT NULL)
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
-
+        
+		$bundleJOINs = "";
+		$bundleSQL = "";
+		if (!empty($bundleID)) {
+			global $dfgLang;
+	        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+	        $bundleID = str_replace(" ","_",ucfirst($bundleID));
+	        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
+	        $bundleJOINs = 'JOIN '.$smw_ids.' ON smw_title = page_title AND smw_namespace = page_namespace '.
+                           'JOIN '.$smw_rels2.' ON smw_id = s_id ';
+	        $bundleSQL = ' AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID; 
+		}
+      
 		// initialize with direct instances
 		if ($onlyMain) {
 			$articleNamespaces = "page_namespace = ".NS_MAIN;
@@ -502,8 +516,9 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		}
 		$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance,page_namespace AS namespace, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
-
+		                $bundleJOINs.
+						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).$bundleSQL.')');
+		
 		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
@@ -517,7 +532,8 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			// insert direct instances of current subcategory level
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace, cl_to AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
+			             $bundleJOINs.
+						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub) '.$bundleSQL.')');
 
 			// copy subcatgegories to supercategories of next iteration
 			$db->query('DELETE FROM smw_ob_instances_super');
