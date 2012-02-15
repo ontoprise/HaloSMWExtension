@@ -1,5 +1,8 @@
 @CHARSET "ISO-8859-1";
 
+.df_notice {
+	background-color: #D88;
+}
 #df_header {
     font-size: 2.5em;
     font-family: "Arial";

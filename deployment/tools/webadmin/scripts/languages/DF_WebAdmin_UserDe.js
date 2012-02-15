@@ -39,7 +39,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_about_desc' : 'Das ist das Wiki Administration Tool',
 	'df_webadmin_about_title' : 'Über',
 
-
+	// extension details
 	'df_webadmin_id' : 'ID',
 	'df_webadmin_patchlevel' : 'Patchlevel',
 	'df_webadmin_dependencies' : 'Abhängigkeiten',
@@ -51,7 +51,9 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_ontologies' : 'Ontologien',
 	'df_webadmin_resources' : 'Resourcen',
 	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen',
+	'df_webadmin_checknotice' : 'Das Bundles enthält zusätzliche Hinweise.',
 
+	// install/de-install/update dialogs
 	'df_webadmin_install_successful' : 'Installation erfolgreich!',
 	'df_webadmin_install_brokenlog' : 'Installationslog wurde nicht gefunden. Installation wahrscheinlich fehlgeschlagen (Rechteproblem?)',
 	'df_webadmin_install_failure' : 'Während der Installation sind Fehler aufgetreten.',

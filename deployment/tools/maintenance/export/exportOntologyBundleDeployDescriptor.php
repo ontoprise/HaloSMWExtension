@@ -243,29 +243,6 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		$xml .= "\t\t\t<dependency $minversion $maxversion>$bundleID</dependency>\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
-	$xml .= "<notice>";
-	$xml .= <<<ENDS
-"Your Wiki contains now new pages. Since existing pages can make
-use of newly imported pages (e.g. templates), it is necessary to
-REFRESH all pages in this Wiki now.
-
-How to refresh all pages in this Wiki?
-* open in this cmd-line the following directory: "[path to SMW]/maintenance"
-  example:
-  cd
-C:\Programme\Ontoprise\SMWplus\htdocs\mediawiki\extensions\SemanticMediaWiki\maintenance
-* call the script "SMW_refreshData.php -v"
-  example:
-  php SMW_refreshData.php -v
-
-NOTE: in some cases it is required to call this script aborts with an error. In
-such cases you have to run the script multiple times. Please read more about
-repairing data here: 
-http://smwforum.ontoprise.com/smwforum/index.php/Help:Repairing_data"
-
-ENDS
-	;
-	$xml .= "</notice>";
 	
 	$xml .= "\t".'</global>'."\n";
 	$xml .= "\t".'<wikidumps>'."\n";

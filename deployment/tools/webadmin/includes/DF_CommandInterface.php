@@ -134,6 +134,7 @@ class DFCommandInterface {
         $result['id'] = $dd->getID();
         $result['version'] = $dd->getVersion()->toVersionString();
         $result['patchlevel'] = $dd->getPatchlevel();
+        $result['dependencies'] = array();
         foreach($dd->getDependencies() as $d) {
             $result['dependencies'][] = array(implode(",",$d->getIDs()),$d->getMinVersion()->toVersionString());
         }
@@ -141,7 +142,8 @@ class DFCommandInterface {
         $result['vendor'] = $dd->getVendor();
         $result['license'] = $dd->getLicense();
         $result['helpurl'] = $dd->getHelpURL();
-
+        $result['notice'] = $dd->getNotice();
+        
         $result['resources'] = $dd->getResources();
         $result['onlycopyresources'] = $dd->getOnlyCopyResources();
 
@@ -154,8 +156,8 @@ class DFCommandInterface {
             $result['error'] = $outText;
         } else {
             $wikidumps = json_decode(trim($outText));
-            $result['wikidumps'] = $wikidumps->wikidumps;
-            $result['ontologies'] = $wikidumps->ontologies;
+            $result['wikidumps'] = isset($wikidumps->wikidumps) ? $wikidumps->wikidumps : array();
+            $result['ontologies'] = isset($wikidumps->ontologies) ? $wikidumps->ontologies : array();
         }
         return json_encode($result);
     }
@@ -176,6 +178,7 @@ class DFCommandInterface {
         $result['id'] = $dd->getID();
         $result['version'] = $dd->getVersion()->toVersionString();
         $result['patchlevel'] = $dd->getPatchlevel();
+        $result['dependencies'] = array();
         foreach($dd->getDependencies() as $d) {
             $result['dependencies'][] = array(implode(",",$d->getIDs()),$d->getMinVersion()->toVersionString());
         }
@@ -183,6 +186,7 @@ class DFCommandInterface {
         $result['vendor'] = $dd->getVendor();
         $result['license'] = $dd->getLicense();
         $result['helpurl'] = $dd->getHelpURL();
+        $result['notice'] = $dd->getNotice();
 
         $result['resources'] = $dd->getResources();
         $result['onlycopyresources'] = $dd->getOnlyCopyResources();

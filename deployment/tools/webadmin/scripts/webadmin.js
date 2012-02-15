@@ -385,6 +385,7 @@ $(function() {
 		var ontologies = dd.ontologies;
 		var resources = dd.resources;
 		var onlycopyresources = dd.onlycopyresources;
+		var notice = dd.notice;
 		
 		var i = 0;
 		var dependenciesHTML = "<ul class=\"df_enumeration\">";
@@ -462,9 +463,16 @@ $(function() {
 		if (i == 0) {
 			resourcesCopyOnlyHTML = "-";
 		}
-	
 		
-		var html = $('#df_extension_details').html('<div><table class="df_extension_details" style="width: 100%;">'
+		var noticeHtml = "";
+		if (notice != '') {
+			noticeHtml = dfgWebAdminLanguage.getMessage('df_webadmin_checknotice') + ':'
+				+ '<pre class="df_notice">'+notice.replace(/\n/g,"<br>")+'</pre>';
+		}
+		
+		var html = $('#df_extension_details').html('<div>'
+					+ noticeHtml
+					+'<table class="df_extension_details" style="width: 100%;">'
 					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_id')+'</td><td value="true">'+id+'-'+version+'</td></tr>'
 					+'<tr class="df_row_1"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_patchlevel')+'</td><td value="true">'+patchlevel+'</td></tr>'
 					+'<tr class="df_row_0"><td description="true">'+dfgWebAdminLanguage.getMessage('df_webadmin_dependencies')+'</td><td value="true">'+dependenciesHTML+'</td></tr>'

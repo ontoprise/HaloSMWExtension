@@ -51,7 +51,9 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_ontologies' : 'Ontologies',
 	'df_webadmin_resources' : 'Resources',
 	'df_webadmin_resourcecopyonly' : 'Copy resources',
+	'df_webadmin_checknotice' : 'The bundle contains a notice. Please check',
 	
+	// install/de-install/update dialogs
 	'df_webadmin_install_successful' : 'Installation successfull!',
 	'df_webadmin_install_brokenlog' : 'Install log is broken. Installation may not have succeeded well (problem with access rights?)',
 	'df_webadmin_install_failure' : 'Errors occured during installation',
