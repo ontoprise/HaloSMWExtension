@@ -568,8 +568,8 @@ if (count($ontologiesToInstall) > 0) {
 
 		try {
 
-			$bundleID = $oInstaller->installOrUpdateOntology($filePath, false, $dfgBundleID);
-
+			$oInstaller->installOrUpdateOntology($filePath, $dfgBundleID);
+            $bundleID = $dfgBundleID;
 			// copy ontology and create ontology bundle
 			$dfgOut->outputln( "[Creating deploy descriptor...");
 			$xml = $oInstaller->createDeployDescriptor($bundleID, $filePath);
