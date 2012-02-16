@@ -81,7 +81,7 @@ class TestLDAPStorageSuite extends PHPUnit_Framework_TestSuite
  * according to the LDAP settings in LocalSettings.php.
  * 
  * See 
- * http://dmwiki.ontoprise.de:8888/dmwiki/index.php/Darkmatter:Software_Design_for_ACL#LDAP_connector 
+ * http://dmwiki.ontoprise.com/index.php/Darkmatter:Software_Design_for_ACL#LDAP_connector 
  * for further information on how to setup OpenLDAP.
  * 
  * @author thsc
