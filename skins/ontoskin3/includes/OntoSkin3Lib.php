@@ -580,7 +580,7 @@ class SMWH_Skin {
 		$quicklinks .= $this->parseWikiText( "[[Imprint|Imprint]]" );
 		$quicklinks .= "<a href='http://smwplus.com/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a>";
 		$quicklinks .= $this->parseWikiText( "[[Contact|Contact]]" );
-		$quicklinks .= $this->parseWikiText( "[[Privacy policy|Privacy policy]]" );
+		//$quicklinks .= $this->parseWikiText( "[[Privacy policy|Privacy policy]]" );
 		$quicklinks .= $this->parseWikiText( "[[Terms and conditions|Terms & Conditions]]" );
 		$quicklinks .= "<a href='http://smwplus.com/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a>";
 		$quicklinks .= "</div>";
