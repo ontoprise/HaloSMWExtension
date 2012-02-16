@@ -53,8 +53,8 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '1.7.0_0');
-define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '1.7.0_0 [B{{$BUILDNUMBER}}]');
+define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}}');
+define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '{{$VERSION}} [B{{$BUILDNUMBER}}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
