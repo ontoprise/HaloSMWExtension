@@ -318,6 +318,7 @@ function smwfDISetupExtension() {
 			case '_ti_' : 
 				require_once($smwgDIIP . '/includes/TermImport/DI_CL.php');
 				break;
+			case '_uws' :
 			case '_wsu' :
 				require_once($smwgDIIP . '/specials/WebServices/DI_UseWebServiceAjaxAccess.php');
 				break;
