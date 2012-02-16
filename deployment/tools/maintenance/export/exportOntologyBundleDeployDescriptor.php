@@ -59,7 +59,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	if ($arg == '-b') {
 		$bundleToExport = next($argv);
 		if ($bundleToExport === false) Tools::exitOnFatalError("No bundle given.");
-		$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
+		$bundleToExport = ucfirst($bundleToExport);
 		continue;
 	} else if ($arg == '-o') {
 		$output = next($argv);
@@ -101,7 +101,6 @@ if (isset($stripBundlename)) {
 		$title = "_".$title;
 	}
 	$title = preg_replace("/\s/", "_", $title);
-	$title = ucfirst(strtolower($title));
 	echo $title;
 	die();
 }

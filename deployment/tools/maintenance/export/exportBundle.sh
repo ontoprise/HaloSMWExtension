@@ -56,5 +56,5 @@ cd $PWD
 # Remove temp files
 rm -rf /tmp/$BUNDLENAME/extensions/
 echo
-echo The bundle is located at /tmp/$BUNDLENAME.zip
+echo The bundle is located at /tmp/$BUNDLENAME/$BUNDLENAME.zip
 echo 

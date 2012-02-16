@@ -49,7 +49,7 @@ REM Remove temp dir
 ECHO Remove temporary directory
 RMDIR /S /Q C:\TEMP\%BUNDLEDIR%\extensions
 
-ECHO The output file is at: C:\TEMP\%BUNDLEDIR%
+ECHO The output file is at: C:\TEMP\%BUNDLEDIR%\%BUNDLEDIR%.zip
 GOTO end
 
 :help
