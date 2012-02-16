@@ -303,7 +303,7 @@ $html .= <<<ENDS
                 <li><a href="#tabs-6">$dfgLocalSettingsTabName</a></li>
                 <li><a href="#tabs-7">$dfgServersTabName</a></li>
                 <li><a href="#tabs-8">$dfgLogTabName</a></li>
-               
+               <li><a href="#tabs-9">$dfgContentBundlesTabName</a></li>
                 
             </ul>
             <div id="tabs-1">$statusTabHtml</div>
@@ -314,7 +314,7 @@ $html .= <<<ENDS
             <div id="tabs-6">$dfgLocalSettingsTabHtml</div>
             <div id="tabs-7">$dfgServersTabHtml</div>
             <div id="tabs-8">$dfgLogTabHtml</div>
-            
+            <div id="tabs-9">$dfgContentBundlesTabHtml</div>
 			
 			
 </div>
