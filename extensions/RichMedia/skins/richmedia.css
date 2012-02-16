@@ -1,7 +1,7 @@
 @CHARSET "UTF-8";
 
-/* 
-    Document   : rm.css
+/*
+    Document   : richmedia.css
     Created on : 17.05.2010
     Author     : langguth
     Description:
@@ -10,13 +10,13 @@
 
 /* for Template:RMMedia */
 .rmMetadataTable {
-	position: relative;
-	margin: 0 0 0.5em 1em;
-	border-collapse: collapse;
-	border: 1px solid #aaa;
 	background: #fff;
-	float: right;
+	border: 1px solid #aaa;
+	border-collapse: collapse;
 	clear: right;
+	float: right;
+	margin: 0 0 0.5em 1em;
+	position: relative;
 	width: 30%
 }
 
@@ -33,139 +33,169 @@
 /* for Template:RMListOuterTable */
 .rmListTable {
 	background-color: rgb(255, 255, 255);
-	empty-cells:show;
-	border-spacing:0px;
+	border-spacing: 0;
+	empty-cells: show;
 }
+
 .rmListInfoText {
-	padding: 7px 2px;
 	background-color: rgb(17, 105, 136);
 	color: white;
+	padding: 7px 2px;
 }
+
 .rmListHeader {
 	border-top: 1px solid rgb(17, 105, 136);
-	height:1px
+	height: 1px
 }
+
 .rmListInnerTable {
 	background-color: rgb(255, 255, 255);
-	border-collapse:collapse;
+	border-collapse: collapse;
 }
+
 .rmListInnerTableHeaderItem {
-	text-align: center;
-	color: rgb(17, 105, 136);
 	border-bottom: 1px solid rgb(17, 105, 136);
+	color: rgb(17, 105, 136);
+	text-align: center;
 }
+
 .rmListRefreshIcon {
-	vertical-align:middle
+	vertical-align: middle
 }
+
 .rmListButton {
-	text-align:right;
+	text-align: right;
 	vertical-align: top;
 }
+
 .rmUploadButton {
 	font-weight: bold;
 }
+
 .rmListTableEnding {
 	border-top: 1px solid rgb(17, 105, 136);
 }
 
 /* Rich Media forms */
 .rmFormField {
-	font-size:100%;
-	font-weight:bold;
+	font-size: 100%;
+	font-weight: bold;
 }
+
 .rmFormImportant {
 	color:red;
 }
+
 .rmFormInfo {
-	padding-bottom:5px;
-	font-size:80%;
-	font-style:italic;
+	font-size: 80%;
+	font-style: italic;
+	padding-bottom: 5px;
 }
 
 /* Rich Media upload form */
 
 #rmUploadHeadline {
-	background-color:#455387;
-	width:100%;
-	padding:0px;
-	margin:0px;
-	text-align:center;
+	background-color: #455387;
+	color: white;
 	font-size:1.2em;
-	color: white
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	width: 100%;
 }
+
 #rmUploadText {
-	width:100%;
-	text-align:center;
-	padding-top:5px
+	padding-top: 5px
+	text-align: center;
+	width: 100%;
 }
+
 .rmUploadHelpImage {
-	padding:5px;
+	padding: 5px;
 }
+
 .rmUploadCollapse {
 	cursor: pointer;
-	font-weight:bold;
+	font-weight: bold;
 }
+
 .rmUploadSize {
 	margin:5px 0px;
 }
+
 #rmUploadPermTypeList {
-	margin-top:0px;
+	margin-top: 0px;
 }
+
 #rmUploadError {
 	padding:5px 10px 10px 10px;
-	border:1px solid red;
+	border: 1px solid red;
 	color: red;
 }
+
 #rmUploadErrorHeader {
 	margin-top: 0;
 }
+
 #rmUploadForm {
-	margin:0px;
+	margin: 0;
 }
+
 #rmUploadTable {
-	width:100%;
-	margin:0px;
+	margin: 0;
+	width: 100%;
 }
+
 #rmUploadTableDescColumn {
-	width:30%
+	width: 30%;
 }
+
 #rmUploadTableInputColumn {
-	width:70%
+	width: 70%;
 }
+
 .rmUploadDesc {
-	font-weight:bold
+	font-weight: bold;
 }
+
 #rmUploadButtonTable {
-	width:100%;
+	width: 100%;
 }
+
 .rmUploadSuccessText {
-	width:auto;
-	padding:0px;
-	text-align:center;
+	padding: 0;
+	text-align: center;
+	width: auto;
 }
+
 #rmUploadSuccessFieldset {
-	border:1px solid lightgrey;
-	line-height:1.5em;
-	margin: 0px 30px;
-	padding-bottom:20px;
+	border: 1px solid lightgrey;
+	line-height: 1.5em;
+	margin: 0 30px;
+	padding-bottom: 20px;
 }
+
 #rmUploadSuccessLegend {
-	font-size:95%;
-	font-weight:bold;
-	padding:0.5em;
+	font-size: 95%;
+	font-weight: bold;
+	padding: 0.5em;
 }
+
 #rmUploadSuccessFilename {
-	text-align:left;
+	text-align: left;
 }
+
 #rmUploadSuccessCloseText {
-	width:auto;
-	padding:10px;
-	text-align:center;
+	padding: 10px;
+	text-align: center;
+	width: auto;
 }
+
 #mw-upload-form > fieldset > legend {
 	font-weight: bold;
 	cursor: pointer;
 }
+
 #mw-upload-form .mw-label {
 	font-weight: bold;
 }
