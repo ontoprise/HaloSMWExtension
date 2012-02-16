@@ -987,6 +987,9 @@ class HACLStorageLDAP extends HACLStorageSQL {
 			//to search as the normal user (which is why we don't return on fail).
 			$wgAuth->printDebug( "Binding as the proxyagent", NONSENSITIVE );
 			$this->mLDAPBound = $wgAuth->bindAs( $wgLDAPProxyAgent[$_SESSION['wsDomain']], $wgLDAPProxyAgentPassword[$_SESSION['wsDomain']] );
+		} else {
+			// This is an anonymous bind
+			$this->mLDAPBound = $wgAuth->bindAs();
 		}
 		return $this->mLDAPBound;
 	}
