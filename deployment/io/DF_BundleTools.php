@@ -645,14 +645,7 @@ class DFBundleTools {
 			$check = false;
 		}
 
-		// Prefix
-		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_usesprefix'), SMW_NS_PROPERTY);
-		$correct = self::checkPropertyType($pTitle->getText(), "_str");
-		if (!$correct) {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pTitle->getPrefixedText()."' is not of type String.");
-			$check = false;
-		}
-
+		
 		// Ontology URI
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
 		$correct = self::checkPropertyType($pTitle->getText(), "_uri");
@@ -815,16 +808,7 @@ class DFBundleTools {
 			print "\n ...created ".$property->getPrefixedText();
 		}
 
-		$property = Title::newFromText($dfgLang->getLanguageString('df_usesprefix'), SMW_NS_PROPERTY);
-		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
-		$article = new Article($property);
-		if ($property->exists()) {
-			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
-			print "\n ...edited ".$property->getPrefixedText();
-		} else {
-			$article->insertNewArticle($text, "", false, false);
-			print "\n ...created ".$property->getPrefixedText();
-		}
+		
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_uri"]."]]";
