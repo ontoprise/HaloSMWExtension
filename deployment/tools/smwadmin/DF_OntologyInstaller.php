@@ -55,15 +55,12 @@ class OntologyInstaller {
 	/**
 	 * Installs an ontology from a file.
 	 *
-	 * @param string $bundleID ID of stub bundle which will be created for the ontology.
 	 * @param string $inputfile Full path of input file
-	 * @param boolean $noBundlePage Should a bundle page be created or not.
-	 * @param int $mode How to deal with conflicts  (see DF_ONOLOGYIMPORT_.. constants)
-	 *
-	 * @return string Prefixed used to make ontology pages unique (can be null)
+	 * @param DeployDescriptor/string $dd DeployDescriptor or 
+	 *            ID of stub bundle which will be created for the ontology.
 	 *
 	 */
-	public function installOrUpdateOntology($inputfile, $noBundlePage = false, $bundleID = '') {
+	public function installOrUpdateOntology($inputfile, $dd = '') {
 		global $dfgOut;
 		$outputfile = $inputfile.".xml";
 		try {
@@ -75,7 +72,30 @@ class OntologyInstaller {
 			$settings = new stdClass();
 			$settings->ns_mappings = $prefixNamespaceMappings;
 			$settings->base_uri = $smwgHaloTripleStoreGraph;
-			if (!empty($bundleID)) {
+			
+			if ($dd instanceof DeployDescriptor) {
+				$settings->bundle_id = $dd->getID();
+				$settings->deploydescriptor = new stdClass();
+				$settings->deploydescriptor->id = $dd->getID();
+				$settings->deploydescriptor->version = $dd->getVersion()->toVersionString();
+				$settings->deploydescriptor->patchlevel = $dd->getPatchlevel();
+				$settings->deploydescriptor->maintainer = $dd->getMaintainer();
+				$settings->deploydescriptor->vendor = $dd->getVendor();
+				$settings->deploydescriptor->instdir = $dd->getInstallationDirectory();
+				$settings->deploydescriptor->description = $dd->getDescription();
+				$settings->deploydescriptor->helpURL = $dd->getHelpURL();
+				$settings->deploydescriptor->license = $dd->getLicense();
+				$settings->deploydescriptor->dependencies = array();
+				foreach($dd->getDependencies() as $dep) {
+					$settings->deploydescriptor->dependencies[] = array(
+					   $dep->id = $dep->getIDs(),
+					   $dep->getMinVersion()->toVersionString(),
+					   $dep->getMaxVersion()->toVersionString(),
+					   $dep->optional = $dep->isOptional()
+					);
+				}
+			} else if (is_string($dd)) {
+				$bundleID = $dd;
 				$settings->bundle_id = $bundleID;
 			}
 
@@ -85,7 +105,7 @@ class OntologyInstaller {
 			$dfgOut->output("done.]");
 
 			// convert ontology file
-			$ret = $this->convertOntology($inputfile, $outputfile, $noBundlePage);
+			$ret = $this->convertOntology($inputfile, $outputfile, false);
 
 			if ($ret != 0) {
 				$dfgOut->outputln("Could not convert ontology.");
@@ -148,9 +168,7 @@ class OntologyInstaller {
 			$this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
 			$dfgOut->output("done.]");
 		}
-
-
-		return $bundleID;
+		
 	}
 
 	/**
@@ -166,7 +184,7 @@ class OntologyInstaller {
 		if (count($ontologies) > 1) {
 			$dfgOut->outputln("More than one ontology found. Ignoring all but the first: $loc", DF_PRINTSTREAM_TYPE_WARN);
 		}
-		$this->installOrUpdateOntology($this->rootDir."/".$dd->getInstallationDirectory()."/".$loc, false, $dd->getID());
+		$this->installOrUpdateOntology($this->rootDir."/".$dd->getInstallationDirectory()."/".$loc, $dd);
 		
 	}
 
