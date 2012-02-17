@@ -94,8 +94,8 @@ class DIWSUpdateBot extends GardeningBot {
 
 		echo("\nbot finished");
 		
-		global $smwgDefaultStore;
-		if($smwgDefaultStore == 'SMWTripleStore' || $smwgDefaultStore == 'SMWTripleStoreQuad'){
+		if(smwfIsTripleStoreConfigured()){
+			echo('\nTSC is used and must be reinitialized');
 			define('SMWH_FORCE_TS_UPDATE', 'TRUE');
 			smwfGetStore()->initialize(true);
 		}
