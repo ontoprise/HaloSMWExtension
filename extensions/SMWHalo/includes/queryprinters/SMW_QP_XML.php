@@ -47,7 +47,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		return $result;
 	}
 
-	private function printVariables($printRequests, & $variables) {
+	protected function printVariables($printRequests, & $variables) {
 
 		$synthVar = "_var";
 		$i = 0;
@@ -70,7 +70,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		return $result;
 	}
 
-	private function printResults($res, $variables) {
+	protected function printResults($res, $variables) {
 		$result = "\t<results>\n";
 		while ( $row = $res->getNext() ) {
 			$result .= "\t\t<result>\n";
@@ -87,15 +87,10 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 				while ( ($object = $field->getNextDataValue()) !== false ) {
 					if ($object->getDataItem()->getDIType() == SMWDataItem::TYPE_WIKIPAGE) {  // print whole title with prefix in this case
 
-						$uri = TSNamespaces::getInstance()->getFullURI($object->getDataItem()->getTitle());
-						$uri_enc = htmlspecialchars($uri);
+						$uri_enc = $this->serializeURI($object);
 						$result .= "<uri>$uri_enc</uri>";
 					} else {
-                        $text = TSHelper::serializeDataItem($object->getDataItem());
-						$text_enc = htmlspecialchars($text);
-						$datatype = WikiTypeToXSD::getXSDType($object->getTypeID());
-						$datatype = str_replace("xsd:", "http://www.w3.org/2001/XMLSchema#", $datatype);
-						$datatype = str_replace("tsctype:", "http://www.ontoprise.de/smwplus/tsc/unittype#", $datatype);
+						list($text_enc,$datatype) = $this->serializeLiteral($object);
 						$result .= "<literal datatype=\"$datatype\">$text_enc</literal>";
 					}
 				}
@@ -107,13 +102,35 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 		$result .= "\t</results>\n";
 		return $result;
 	}
-	
 
-	private function printHeader() {
+	protected function serializeURI($object) {
+		$uri = TSNamespaces::getInstance()->getFullURI($object->getDataItem()->getTitle());
+		$uri_enc = htmlspecialchars($uri);
+		return $uri_enc;
+	}
+
+	protected function serializeLiteral($object) {
+		$text = TSHelper::serializeDataItem($object->getDataItem());
+		$text_enc = htmlspecialchars($text);
+		$datatype = WikiTypeToXSD::getXSDType($object->getTypeID());
+		$datatype = str_replace("xsd:", "http://www.w3.org/2001/XMLSchema#", $datatype);
+		$datatype = str_replace("tsctype:", "http://www.ontoprise.de/smwplus/tsc/unittype#", $datatype);
+		return array($text_enc, $datatype);
+	}
+
+
+	protected function printHeader() {
 		return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";
 	}
 
-	private function printFooter() {
+	protected function printFooter() {
 		return '</sparql>';
+	}
+}
+
+class SMWXMLSimpleResultPrinter extends SMWXMLResultPrinter {
+	protected function serializeURI($object) {
+		$uri_enc = "wiki:".htmlspecialchars($object->getDataItem()->getTitle()->getDBkey());
+		return $uri_enc;
 	}
 }

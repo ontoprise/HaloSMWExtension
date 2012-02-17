@@ -44,11 +44,11 @@ function smwf_ws_callEQI($query) {
 }
 
 # same as smwf_ws_callEQI except that XML is returned
-function smwf_ws_callEQIXML($query) {
+function smwf_ws_callEQIXML($query, $format = 'xml') {
 	
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	$result= new AjaxResponse( smwhExternalQuery($query, "xml") );
+	$result= new AjaxResponse( smwhExternalQuery($query, $format) );
 	$result->setContentType( "application/sparql-xml" );
 	return $result;
 }
