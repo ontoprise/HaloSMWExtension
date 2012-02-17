@@ -145,6 +145,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 	static public function getResultFromQueryString($querystring, array $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY) {
 
 		$format = SMWQueryProcessor::getResultFormat($params);
+		$params = SMWQueryProcessor::getProcessedParams( $params, $extraprintouts );
 		$query  = SMWSPARQLQueryProcessor::createQuery($querystring, $params, $context, $format, $extraprintouts);
 		$result = SMWQueryProcessor::getResultFromQuery($query, $params, $extraprintouts, $outputmode, $context, $format);
 
