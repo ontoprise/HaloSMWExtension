@@ -517,8 +517,8 @@ class HACLSMWStore extends SMWStore {
         return $this->mWrappedStore->getSMWPageID($title, $namespace, $iw, $canonical);
     }
 
-    public function cacheSMWPageID($id, $title, $namespace, $iw) {
-        return $this->mWrappedStore->cacheSMWPageID($id, $title, $namespace, $iw);
+    public function cacheSMWPageID($id, $title, $namespace, $iw, $subobjectName = '') {
+        return $this->mWrappedStore->cacheSMWPageID($id, $title, $namespace, $iw, $subobjectName);
     }
 
 
