@@ -76,6 +76,13 @@ class DF_Config  {
 	public static $df_runas_user = NULL;
 	public static $df_runas_password = NULL;
 	
+	/**
+	 * Indicates if the TSC should be refreshed after a bundle/ontology import.
+	 * 
+	 * @var boolean
+	 */
+	public static $df_refresh_TSC = true;
+	
 	/*
 	 * General settings for smwadmin/webadmin
 	 */
