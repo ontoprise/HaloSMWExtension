@@ -25,10 +25,10 @@
 
 /**
  * Returns query results in the SPARQL XML format.
- *  
- * Serves as entry point for the wiki SOAP server as well as for answering 
+ *
+ * Serves as entry point for the wiki SOAP server as well as for answering
  * queries via ajax interface.
- * 
+ *
  * @param string $queryString in ASK or SPARQL syntax
  * @return XML string
  */
@@ -36,7 +36,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 
 	global $smwgHaloIP;
-    
+
 	require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 
 	global $smwgHaloWebserviceEndpoint;
@@ -54,7 +54,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 		if (smwfIsTripleStoreConfigured()) {
 			global $tscgIP;
 			require_once $tscgIP.'/includes/triplestore_client/SMW_TSConnection.php';
-            require_once "$tscgIP/includes/query_processor/SMW_QueryProcessor.php";
+			require_once "$tscgIP/includes/query_processor/SMW_QueryProcessor.php";
 			return $eqi->answerSPARQL($query, $eqi->serializeParams($params));
 		} else {
 			// fallback, redirect to SMW
@@ -73,7 +73,7 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 		}
 
 		// answer query
-        $params = SMWQueryProcessor::getProcessedParams(array());
+		$params = SMWQueryProcessor::getProcessedParams(array());
 		$query = SMWQueryProcessor::createQuery($queryString, $params, false);
 		if (count($query->getErrors()) > 0) {
 			throw new Exception(implode("",$query->getErrors()));
@@ -84,9 +84,9 @@ function smwhExternalQuery($rawQuery, $format = "xml") {
 }
 
 /**
- * Handles RDF requests to the triplestore.  
- * 
- * @param string $subject prefixed title 
+ * Handles RDF requests to the triplestore.
+ *
+ * @param string $subject prefixed title
  * @return RDF/XML all triples about the subject
  */
 function smwhRDFRequest($subject) {
@@ -94,13 +94,13 @@ function smwhRDFRequest($subject) {
 	smwfHaloInitContentLanguage($wgLanguageCode);
 	if (!smwfIsTripleStoreConfigured()) throw Exception("TS not configured");
 	global $smwgHaloTripleStoreGraph;
-	
+
 	// get wiki URI from prefixed title
 	$title = Title::newFromText($subject);
 	$ts = TSNamespaces::getInstance();
 	$iri = TSHelper::getUriFromTitle($title);
 	$iri = $ts->getFullIRI($title);
-	
+
 	// request RDF/XML via CONSTRUCT query
 	$con = TSConnection::getConnector();
 	$con->connect();
@@ -110,7 +110,7 @@ function smwhRDFRequest($subject) {
 
 /**
  * External query interface which handles the requests
- * 
+ *
  * @author kuehn
  *
  */
@@ -154,12 +154,12 @@ class ExternalQueryInterface {
 		}
 		return $map;
 	}
-    
+
 	/**
 	 * Serializes parameters. Ignores query.
-	 * 
+	 *
 	 * @param $paramMap
-	 * return string. 
+	 * return string.
 	 */
 	function serializeParams($paramMap) {
 		$result = "";
@@ -187,7 +187,15 @@ class ExternalQueryInterface {
 
 		} else { // registration since SMW 1.3.*
 			global $smwgResultFormats;
-			$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+			if ($format == 'xml') {
+				$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+			} else if ($format == 'xmlsimple') {
+				$smwgResultFormats['xmlsimple'] = 'SMWXMLSimpleResultPrinter';
+			} else {
+				// fallback
+				$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+				$format = 'xml';
+			}
 		}
 
 		// add query as first rawparam
@@ -201,11 +209,11 @@ class ExternalQueryInterface {
 				$rawparams[] = $param;
 			}
 		}
- 
+
 		// parse params and answer query
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		SMWQueryProcessor::addThisPrintout(  $printouts, $params );
-        $params = SMWQueryProcessor::getProcessedParams($params, $printouts);
+		$params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		$params['format'] = $format;
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 
@@ -227,7 +235,7 @@ class ExternalQueryInterface {
 			$con = TSConnection::getConnector();
 			$con->connect();
 			return $con->query($query, $params, $smwgHaloTripleStoreGraph);
-			
+				
 		} else {
 			trigger_error("SOAP requests to TSC are not supported anymore.");
 		}
