@@ -50,6 +50,10 @@ if (array_key_exists('d', $options)) {
 	$delay = $options['d'];
 }
 
+if (!defined('SMW_HALO_VERSION') || !smwfIsTripleStoreConfigured()) {
+	print "\nTSC not configured. Nothing to do.\n";
+	exit();
+}
 print "\nSending init commands...";
 smwfGetStore()->initialize(false);
 print "done.";

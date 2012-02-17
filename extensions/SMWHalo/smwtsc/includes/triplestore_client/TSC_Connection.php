@@ -40,6 +40,7 @@ require_once( "TSC_Helper.php" );
  */
 abstract class TSConnection {
 	protected $updateClient;
+	protected $asyncUpdateClient;
 	protected $queryClient;
 	protected $manageClient;
 	protected $ldImportClient;
@@ -68,8 +69,9 @@ abstract class TSConnection {
 	 *
 	 * @param string $topic only relevant for a messagebroker.
 	 * @param string or array of strings $commands
+	 * @param boolean Make an asynchronous update (ie. return immediately)
 	 */
-	public abstract function update($topic, $commands);
+	public abstract function update($topic, $commands, $async = false);
 
 	/**
 	 * Sends query which returns SPARQL/XML. (SELECT or ASK)
@@ -82,17 +84,17 @@ abstract class TSConnection {
 	 * @return string SPARQL-XML result
 	 */
 	public abstract function query($query, $params = "", $graph = "");
-	
+
 	/**
-     * Sends query which returns RDF/XML (CONSTRUCT OR DESRIBE)
-     *
-     * @param string $query text
-     * @param string query parameters
-     * @param string $graph
-     *      The graph to query. If not set, the graph stored in the global variable
-     *      $smwgHaloTripleStoreGraph is queried.
-     * @return string SPARQL-XML result
-     */
+	 * Sends query which returns RDF/XML (CONSTRUCT OR DESRIBE)
+	 *
+	 * @param string $query text
+	 * @param string query parameters
+	 * @param string $graph
+	 *      The graph to query. If not set, the graph stored in the global variable
+	 *      $smwgHaloTripleStoreGraph is queried.
+	 * @return string SPARQL-XML result
+	 */
 	public abstract function queryRDF($query, $params = "", $graph = "");
 
 	/**
@@ -102,17 +104,17 @@ abstract class TSConnection {
 	 * @return String (HTML) or false on an error
 	 */
 	public abstract function getStatus($graph);
-    
+
 	/**
 	 * Run a management command.
-	 * 
+	 *
 	 * @param string $command
 	 * @param array $params
-	 * 
+	 *
 	 * @return string
 	 */
 	public abstract function manage($command, $params = array());
-		
+
 	/**
 	 * Translates an ASK query into SPARQL.
 	 *
@@ -124,13 +126,13 @@ abstract class TSConnection {
 
 
 	/**
-     * Calls a method from the LDImport REST interface
-     *
-     * @param string $method
-     * @param string $payload (application/x-www-form-urlencoded)
-     */
-    public abstract function callLDImporter($method, $payload = "");
-    
+	 * Calls a method from the LDImport REST interface
+	 *
+	 * @param string $method
+	 * @param string $payload (application/x-www-form-urlencoded)
+	 */
+	public abstract function callLDImporter($method, $payload = "");
+
 	/**
 	 * Trigger datasource import/update of LDImporter. Convenience method.
 	 *
@@ -173,6 +175,7 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 	public function connect() {
 		global $smwgMessageBroker;
 		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
+		$this->asyncUpdateClient = $this->updateClient;
 		$this->updateClient->connect();
 
 		global $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgHaloWebserviceEndpoint;
@@ -189,7 +192,7 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 	}
 
 
-	public function update($topic, $commands) {
+	public function update($topic, $commands, $async = false) {
 		global $smwgSPARULUpdateEncoding;
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
@@ -214,12 +217,13 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	public function connect() {
 		global $smwgHaloWebserviceUser, $smwgHaloWebservicePassword, $smwgHaloWebserviceEndpoint;
-	    if (empty($smwgHaloWebserviceEndpoint)) {
-            throw new Exception('Variable $smwgHaloWebserviceEndpoint is not defined for TSC');
-        }
+		if (empty($smwgHaloWebserviceEndpoint)) {
+			throw new Exception('Variable $smwgHaloWebserviceEndpoint is not defined for TSC');
+		}
 		list($host, $port) = explode(":", $smwgHaloWebserviceEndpoint);
 		$credentials = isset($smwgHaloWebserviceUser) ? $smwgHaloWebserviceUser.":".$smwgHaloWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
+		$this->asyncUpdateClient = new RESTWebserviceConnector($host, $port, "sparul/async", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
 		$this->manageClient = new RESTWebserviceConnector($host, $port, "management", $credentials);
 		$this->ldImportClient = new RESTWebserviceConnector($host, $port, "ldimporter", $credentials);
@@ -229,11 +233,15 @@ class TSConnectorRESTWebservice extends TSConnection {
 		// do nothing. webservice calls use stateless HTTP protocol.
 	}
 
-	public function update($topic, $commands) {
+	public function update($topic, $commands, $async = false) {
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
 			$enc_commands = 'command='.urlencode($enc_commands);
-			$this->updateClient->update($enc_commands);
+			if ($async) {
+				$this->asyncUpdateClient->send($enc_commands);
+			} else {
+				$this->updateClient->send($enc_commands);
+			}
 			return;
 		}
 		$enc_commands = "";
@@ -248,13 +256,17 @@ class TSConnectorRESTWebservice extends TSConnection {
 			}
 		}
 
-		$this->updateClient->send($enc_commands);
+		if ($async) {
+			$this->asyncUpdateClient->send($enc_commands);
+		} else {
+			$this->updateClient->send($enc_commands);
+		}
 
 	}
 
 	public function query($query, $params = "", $graph = "") {
 		global $smwgHaloTripleStoreGraph;
-		
+
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
@@ -269,33 +281,33 @@ class TSConnectorRESTWebservice extends TSConnection {
 		}
 		return $result;
 	}
-	
+
 	public function queryRDF($query, $params = "", $graph = "") {
 		global $smwgHaloTripleStoreGraph;
-        
-         // SPARQL, attach common prefixes
-        $query = TSNamespaces::getAllPrefixes().$query;
-        
-        $queryRequest = "query=".urlencode($query);
-        $queryRequest .= "&default-graph-uri=".urlencode($graph);
-        $queryRequest .= "&params=".urlencode($params);
 
-        list($header, $status, $result) = $this->queryClient->send($queryRequest, '', 'application/rdf+xml');
-        if ($status != 200) {
-            throw new Exception(strip_tags($result), $status);
-        }
-        return $result;
+		// SPARQL, attach common prefixes
+		$query = TSNamespaces::getAllPrefixes().$query;
+
+		$queryRequest = "query=".urlencode($query);
+		$queryRequest .= "&default-graph-uri=".urlencode($graph);
+		$queryRequest .= "&params=".urlencode($params);
+
+		list($header, $status, $result) = $this->queryClient->send($queryRequest, '', 'application/rdf+xml');
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return $result;
 	}
-	
-	public function manage($command, $params = array()) {
-       
-        $request = wfArrayToCGI($params);
 
-        list($header, $status, $result) = $this->manageClient->send($request, "/$command");
-        if ($status != 200) {
-            throw new Exception(strip_tags($result), $status);
-        }
-        return $result;
+	public function manage($command, $params = array()) {
+			
+		$request = wfArrayToCGI($params);
+
+		list($header, $status, $result) = $this->manageClient->send($request, "/$command");
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return $result;
 	}
 
 	public function getStatus($graph) {
@@ -314,25 +326,25 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
 		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
 		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
-		
+
 		$resultMap['loadedGraphs'] = array();
 		$graphsLoaded = $xmlDoc->loadedGraphs[0];
 		foreach($graphsLoaded->graph as $gl) {
-		      $resultMap['loadedGraphs'][] = $gl->attributes()->uri;
+			$resultMap['loadedGraphs'][] = $gl->attributes()->uri;
 		}
-        $resultMap['autoloadFolder'] = (string) $xmlDoc->autoloadFolder[0];
-        
-	    $resultMap['startParameters'] = array();
-        $startParameters = $xmlDoc->startParameters[0];
-        foreach($startParameters->param as $p) {
-              $resultMap['startParameters'][] = array($p->attributes()->name, (string) $p);
-        }
-        
-	    $resultMap['syncCommands'] = array();
-        $syncCommands = $xmlDoc->syncCommands[0];
-        foreach($syncCommands->command as $c) {
-              $resultMap['syncCommands'][] = (string) $c;
-        }
+		$resultMap['autoloadFolder'] = (string) $xmlDoc->autoloadFolder[0];
+
+		$resultMap['startParameters'] = array();
+		$startParameters = $xmlDoc->startParameters[0];
+		foreach($startParameters->param as $p) {
+			$resultMap['startParameters'][] = array($p->attributes()->name, (string) $p);
+		}
+
+		$resultMap['syncCommands'] = array();
+		$syncCommands = $xmlDoc->syncCommands[0];
+		foreach($syncCommands->command as $c) {
+			$resultMap['syncCommands'][] = (string) $c;
+		}
 		return $resultMap;
 
 	}
@@ -353,39 +365,39 @@ class TSConnectorRESTWebservice extends TSConnection {
 		}
 		return $result;
 	}
-	
-    public function refactorOblOntology($prefix, $ontologyID, $ontology, $wikiGraph, $lang) {
-        
-        $queryRequest = "prefix=".urlencode($prefix);
-        $queryRequest .= "&ontology=".urlencode($ontology);
-        $queryRequest .= "&ontologyID=".urlencode($ontologyID);
-        $queryRequest .= "&wikiGraph=".urlencode($wikiGraph);
-        $queryRequest .= "&lang=".urlencode($lang);
 
-        list($header, $status, $result) = $this->manageClient->send($queryRequest, "/refactorOblOntology");
-        if ($status != 200) {
-            throw new Exception(strip_tags($result), $status);
-        }
-        return $result;
-    }
+	public function refactorOblOntology($prefix, $ontologyID, $ontology, $wikiGraph, $lang) {
+
+		$queryRequest = "prefix=".urlencode($prefix);
+		$queryRequest .= "&ontology=".urlencode($ontology);
+		$queryRequest .= "&ontologyID=".urlencode($ontologyID);
+		$queryRequest .= "&wikiGraph=".urlencode($wikiGraph);
+		$queryRequest .= "&lang=".urlencode($lang);
+
+		list($header, $status, $result) = $this->manageClient->send($queryRequest, "/refactorOblOntology");
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return $result;
+	}
 
 	public function runImport($datasourceID, $update = false, $synchronous = false, $runSchemaTranslation = true ,$runIdentityResolution = true) {
 		$payload = "dataSourceId=".urlencode($datasourceID)."&update=".urlencode($update)."&synchronous=".urlencode($synchronous)
-                        ."&runSchemaTranslation=".urlencode($runSchemaTranslation)."&runIdentityResolution=".urlencode($runIdentityResolution);
+		."&runSchemaTranslation=".urlencode($runSchemaTranslation)."&runIdentityResolution=".urlencode($runIdentityResolution);
 		list($header, $status, $result) = $this->ldImportClient->send($payload, "/runImport");
 		if ($status != 200) {
 			throw new Exception(strip_tags($result), $status);
 		}
 		return true;
 	}
-	
-    public function callLDImporter($method, $payload = "") {
-        list($header, $status, $result) = $this->ldImportClient->send($payload, "/$method");
-        if ($status != 200) {
-            throw new Exception(strip_tags($result), $status);
-        }
-        return $result;
-    }
+
+	public function callLDImporter($method, $payload = "") {
+		list($header, $status, $result) = $this->ldImportClient->send($payload, "/$method");
+		if ($status != 200) {
+			throw new Exception(strip_tags($result), $status);
+		}
+		return $result;
+	}
 }
 
 
