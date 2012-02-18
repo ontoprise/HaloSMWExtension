@@ -756,13 +756,13 @@ class SMWTripleStore extends SMWStoreAdapter {
 
 	///// Setup store /////
 
-	function initialize($verbose = true) {
+	function initialize($verbose = true, $async = false) {
 
 		try {
 			$con = TSConnection::getConnector();
 			$commandText = smwf_ts_getSyncCommands();
 			$con->connect();
-			$con->update("/topic/WIKI.TS.UPDATE", explode("\n", $commandText), true);
+			$con->update("/topic/WIKI.TS.UPDATE", explode("\n", $commandText), $async);
 			$con->disconnect();
 		} catch(Exception $e) {
 

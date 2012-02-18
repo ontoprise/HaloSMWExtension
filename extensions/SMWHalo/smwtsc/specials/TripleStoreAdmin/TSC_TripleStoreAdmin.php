@@ -91,7 +91,7 @@ class TSCTripleStoreAdmin extends SpecialPage {
 		$html .= wfMsg('smw_tsa_tscversion').": ".$status['tscversion'];
 
 		$html .= "<h2>".wfMsg('smw_tsa_licenseinfo')."</h2>";
-			$html .= wfMsg('smw_tsa_license').": ";
+		$html .= wfMsg('smw_tsa_license').": ";
 		if ($status['licenseState'] != 'VALID' && $status['licenseState'] != 'NOT_AVAILABLE') {
 			$html .= "<span style=\"color:red;font-weight:bold;\">";
 		} else {
@@ -132,15 +132,19 @@ class TSCTripleStoreAdmin extends SpecialPage {
 
 		$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
 		if ($status['isInitialized'] == true) {
-			$html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgHaloWebserviceEndpoint) ? implode(", ", $smwgHaloWebserviceEndpoint) : $smwgHaloWebserviceEndpoint))."</div>";
+			$html .= "<div class=\"tsa_properly_sync_hint\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgHaloWebserviceEndpoint) ? implode(", ", $smwgHaloWebserviceEndpoint) : $smwgHaloWebserviceEndpoint))."</div>";
 			$tsaPage = Title::newFromText("TSA", NS_SPECIAL);
 			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
 		} else {
-			$html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_notinitalized')."</div>".wfMsg('smw_tsa_pressthebutton');
-			$tsaPage = Title::newFromText("TSA", NS_SPECIAL);
-			$html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
+			$html .= "<div class=\"tsa_warning_sync_hint\">".wfMsg('smw_tsa_notinitalized')."</div>";
+			if ($status['pendingAsyncOrUpdateTasks'] == true) {
+				$html .= "<div class=\"tsa_pending_operation_hint\">".wfMsg('smw_tsa_operationpending')."</div>";
+			} else {
+				$tsaPage = Title::newFromText("TSA", NS_SPECIAL);
+				$html .= wfMsg('smw_tsa_pressthebutton')."<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_initialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
+			}
 		}
-
+			
 		$wgOut->addHTML($html);
 	}
 

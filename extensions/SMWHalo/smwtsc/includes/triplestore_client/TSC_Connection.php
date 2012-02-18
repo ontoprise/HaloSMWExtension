@@ -325,6 +325,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$resultMap['licenseState'] = (string) $xmlDoc->licenseState;
 		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
 		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
+		$resultMap['pendingAsyncOrUpdateTasks'] = ((string) $xmlDoc->pendingAsyncOrUpdateTasks) == 'true';
 		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
 
 		$resultMap['loadedGraphs'] = array();

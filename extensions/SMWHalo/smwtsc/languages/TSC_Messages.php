@@ -102,8 +102,9 @@ $messages['en'] = array(
     'smw_tsa_autoloadfolder'=> 'Auto-load folder',
     'smw_tsa_tscparameters'=> 'TSC parameters',
     'smw_tsa_synccommands'=> 'Synchronization commands',
-	'smw_tsa_licenseinfo' => 'License',
-	'smw_tsa_license' => 'License state',
+	'smw_tsa_licenseinfo' => 'License key',
+	'smw_tsa_license' => 'License key state',
+    'smw_tsa_operationpending' => 'There is an update or sync operation pending!',
     // ---- Ask triplestore ----
     'asktsc' => 'Ask triplestore',
 
@@ -201,8 +202,9 @@ $messages['de'] = array(
     'smw_tsa_autoloadfolder'=> 'Automatisch geladenes Verzeichnis',
     'smw_tsa_tscparameters'=> 'TSC-Parameter',
     'smw_tsa_synccommands'=> 'Synchronisationskommandos',
-	'smw_tsa_licenseinfo' => 'Lizenz',
-	'smw_tsa_license' => 'Lizenz-Status',
+	'smw_tsa_licenseinfo' => 'Lizenz-Key',
+	'smw_tsa_license' => 'Status des Lizenz-Keys',
+    'smw_tsa_operationpending' => 'Es läuft eine Update oder Sync-Operation',
 
     // ---- Ask triplestore ----
     'asktsc' => 'Anfrage an Triplestore',

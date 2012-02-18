@@ -42,5 +42,19 @@ table.lod_sp_sources_table td{
     vertical-align: top;
 }
 
+.tsa_properly_sync_hint {
+	color:green;
+	font-weight:bold;
+}
 
+.tsa_warning_sync_hint {
+	color:red;
+    font-weight:bold;
+}
 
+.tsa_pending_operation_hint {
+	color:yellow;font-weight:bold;
+	background-color: orange;
+	text-decoration: blink;
+	text-align: center;
+}
