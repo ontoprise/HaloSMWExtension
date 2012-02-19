@@ -96,6 +96,7 @@ $messages['en'] = array(
 	'sref_misc'=> 'Misc',
 	'sref_save'=> 'save',
     'sref_purge'=> 'purge',
+    'sref_copyarticles' => 'copy page',
 
     'sref_comment' => 'Comment',
     'sref_log' => 'Log',
@@ -125,9 +126,11 @@ $messages['en'] = array(
     'sref_comment_replacetemplatevalue' => 'Replace template value $1: $2=$3 by $2=$4',
     'sref_comment_renametemplateparameter' => 'Replace template parameter $1: $2 by $3',
     'sref_comment_renametemplate' => 'Replace template $1 by $2',
+    'sref_comment_copyarticles' => 'Copied page by replacing $1 by $2 in text and title.',
 
     'sref_help_touchpages' => 'Touch pages (ie. save without changes)',
     'sref_help_purgepages' => 'Purge pages (ie. invalidates in cache)',
+    'sref_help_copyarticles' => 'Copies pages by replacing a text fragment in text and title.',
     'sref_help_addcategory' => 'Add category as new annotation',
     'sref_help_removecategory' => 'Remove an existing category annotation',
     'sref_help_replacecategory' => 'Replace an category annotation by another',
@@ -254,6 +257,7 @@ $messages['de'] = array(
     'sref_misc'=> 'Versch.',
     'sref_save'=> 'speichern',
     'sref_purge'=> 'invalidieren',
+    'sref_copyarticles' => 'Seite kopieren',
 
     'sref_comment' => 'Kommentar',
     'sref_log' => 'Log',
@@ -282,10 +286,12 @@ $messages['de'] = array(
     'sref_comment_setvalueoftemplate' => 'Setze den Wert von $1: $2=$3',
     'sref_comment_replacetemplatevalue' => 'Ersetze Templatewerte $1: $2=$3 by $2=$4',
     'sref_comment_renametemplateparameter' => 'Ersetze Templateparameter $1: $2 by $3',
- 'sref_comment_renametemplate' => 'Replace template $1 by $2',
+    'sref_comment_renametemplate' => 'Replace template $1 by $2',
+    'sref_comment_copyarticles' => 'Copied page by replacing $1 by $2 in text and title.',
 
     'sref_help_touchpages' => 'Fasse Seite an, d.h. speichere ohne Änderung.',
     'sref_help_purgepages' => 'Invalidiere Seite im Cache.',
+    'sref_help_copyarticles' => 'Copies pages by replacing a text fragment in text and title.',
     'sref_help_addcategory' => 'Fügt Kategorie-Annotation hinzu',
     'sref_help_removecategory' => 'Entfernt Kategorie-Annotation',
     'sref_help_replacecategory' => 'Ersetzt Kategorie-Annotation durch eine andere',

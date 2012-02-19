@@ -36,7 +36,7 @@
 			0 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace')],
 			1 : [mw.msg('sref_add'), mw.msg('sref_remove'), mw.msg('sref_replace'), mw.msg('sref_setvalue')],
 			2 : [mw.msg('sref_add'), mw.msg('sref_setvalue'), mw.msg('sref_rename'), mw.msg('sref_replace'), mw.msg('sref_rename_template')],
-			3 : [mw.msg('sref_save'), mw.msg('sref_purge') ]
+			3 : [mw.msg('sref_save'), mw.msg('sref_purge'), mw.msg('sref_copyarticles') ]
 		},
 		
 		operationnames: {
@@ -56,7 +56,8 @@
 			'24' : 'renameTemplate',
 			
 			'30' : 'touchPages',
-			'31' : 'purgePages'
+			'31' : 'purgePages',
+			'32' : 'copyArticles'
 		},
 		
 		
@@ -91,8 +92,9 @@
 			'24' : [  { id : 'old_template', ac : 'namespace: Template' , title :  mw.msg('sref_old_value'), optional : false },
 					 { id : 'new_template', ac : 'namespace: Template', title :  mw.msg('sref_new_value'), optional : false }],
 			'30' : [ ],
-			'31' : [ ]
-		
+			'31' : [ ],
+			'32' : [ { id : 'old_value', title :  mw.msg('sref_old_value'), optional : false },
+					 { id : 'new_value', title :  mw.msg('sref_new_value'), optional : false } ]
 		
 		}
 	

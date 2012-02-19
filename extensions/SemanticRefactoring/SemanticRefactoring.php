@@ -167,6 +167,7 @@ function sreffRegisterJSModules(& $out) {
 			                'sref_misc',
 			                'sref_save',
                             'sref_purge',
+                            'sref_copyarticles',
             
 				            'sref_comment',
                             'sref_log',
@@ -197,6 +198,7 @@ function sreffRegisterJSModules(& $out) {
 						    'sref_help_replacetemplatevalue',
 						    'sref_help_renametemplateparameter',
                             'sref_help_renametemplate',
+                            'sref_help_copyarticles',
             
                             'sref_changedpage',
 				            'sref_changedInstances' ,

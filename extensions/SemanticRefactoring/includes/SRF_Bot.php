@@ -43,6 +43,7 @@ require_once($srefgIP . '/includes/SRF_ApplyOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_InstanceLevelOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_SavepageOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_PurgepageOperation.php');
+require_once($srefgIP . '/includes/operations/SRF_CopyArticleOperation.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeCategoryValue.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplate.php');
 require_once($srefgIP . '/includes/operations/SRF_ChangeTemplateName.php');
@@ -159,6 +160,18 @@ class SRFRefactoringBot extends GardeningBot {
 			case 'purgePages':
 				return wfMsg($msg);
 				break;
+			case 'copyArticles':
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				return wfMsg($msg, $old_value, $new_value);
+				break;
+
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
 					return "Old instance missing";
@@ -390,14 +403,14 @@ class SRFRefactoringBot extends GardeningBot {
 				break;
 		}
 	}
-    
+
 	/**
 	 * Returns SRFRefactoringOperation object.
-	 * 
+	 *
 	 * @param string $operation Operation-ID
 	 * @param string[] $titles Fully-qualified titles
 	 * @param array $paramArray Options for the operation
-	 * 
+	 *
 	 * @return SRFRefactoringOperation
 	 */
 	private function getOperation($operation, $titles, $paramArray) {
@@ -412,6 +425,18 @@ class SRFRefactoringBot extends GardeningBot {
 				$op = new SRFPurgepageOperation();
 
 				break;
+			case 'copyArticles':
+				if (!array_key_exists('old_value', $paramArray)) {
+					return "Old Value missing";
+				}
+				$old_value = $paramArray['old_value'];
+				if (!array_key_exists('new_value', $paramArray)) {
+					return "New Value missing";
+				}
+				$new_value = $paramArray['new_value'];
+				$op = new SRFCopyArticleOperation($old_value, $new_value);
+				break;
+				
 			case 'renameInstance':
 				if (!array_key_exists('oldInstance', $paramArray)) {
 					return "Old instance missing";
@@ -682,13 +707,13 @@ class SRFRefactoringBot extends GardeningBot {
 		}
 		return $op;
 	}
-    
+
 	/**
 	 * Returns preview as a hash array
-	 * 
+	 *
 	 * @param string $operation operation-ID
 	 * @param array $paramArray
-	 * 
+	 *
 	 * @return array (string => int) : Message => Number of pages processed
 	 */
 	public function getPreview($operation, $paramArray) {
@@ -696,7 +721,7 @@ class SRFRefactoringBot extends GardeningBot {
 		$res = $op->preview();
 		return $res;
 	}
-    
+
 	/**
 	 * (non-PHPdoc)
 	 * @see extensions/SemanticGardening/includes/GardeningBot::run()
@@ -742,7 +767,7 @@ class SRFRefactoringBot extends GardeningBot {
 			// create InstanceLevelOperation
 			$op = new SRFInstanceLevelOperation($titles);
 			foreach($ops as $operation) {
-			     $op->addOperation($operation);
+				$op->addOperation($operation);
 			}
 			$num = $op->getWork();
 			$op->setBot($this);
