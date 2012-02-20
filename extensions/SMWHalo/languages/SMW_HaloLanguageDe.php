@@ -30,70 +30,45 @@ include_once($smwgHaloIP . '/languages/SMW_HaloLanguage.php');
 class SMW_HaloLanguageDe extends SMW_HaloLanguage {
 
 protected $smwContentMessages = array(
-    
-    'smw_derived_property'  => 'Das ist ein abgeleitetes Property.',
-    'smw_sparql_disabled'=> 'Keine SPARQL-Unterstützung aktiviert.',
-	'smw_viewinOB' => 'Im Ontology-Browser öffnen',
-    'smw_wysiwyg' => 'WYSIWYG',
 
-	'smw_att_head' => 'Attribute',
-	'smw_rel_head' => 'Relationen zu anderen Seiten',
-	'smw_spec_head' => 'Spezielle Eigenschaften',
-	'smw_predefined_props' => 'Das ist das vordefinierte Attribut "$1"',
-	'smw_predefined_cats' => 'Das ist die vordefinierte Kategorie "$1"',
-
-	'smw_noattribspecial' => 'Die spezielle Eigenschaft „$1“ ist kein Attribut (bitte „::“ anstelle von „:=“ verwenden).',
-	'smw_notype' => 'Dem Attribut wurde kein Datentyp zugewiesen.',
-
-	/*Messages for Autocompletion*/
-	'tog-autotriggering' => 'Manuelle auto-completion',
-	'smw_ac_typehint'=> 'Typ: $1',
-	'smw_ac_typerangehint'=> 'Typ: $1 | Range: $2',
+	// Messages for AC (auto-completion) 
     'smw_ac_datetime_proposal'=>'<Monat> <Tag>, <Jahr>|<Tag>-<Monat>-<Jahr>',
     'smw_ac_geocoord_proposal'=>'<Breitengrad>° N, <Längengrad>° W|<Breitengrad>, <Längengrad>',
     'smw_ac_email_proposal'=>'irgendwer@irgendwo.com',
     'smw_ac_temperature_proposal'=>'<Zahl> K, <Zahl> °C, <Zahl> °F, <Zahl> °R',
     'smw_ac_telephone_proposal'=>'tel:+49-721-5453334',
-    'smw_ac_category_has_icon' => 'Kategorie hat Bild',
-    'smw_ac_tls' => 'Liste von Typen',
+    'smw_ac_category_has_icon' => 'Kategorie hat Bild'
+  
+	
+);
 
-	// Messages for SI unit parsing
-	'smw_no_si_unit' => 'Einheit nicht in SI-Representation. ',
-	'smw_too_many_slashes' => 'Zu viele Slashes in SI-Representation. ',
-	'smw_too_many_asterisks' => '"$1" contains several *\'s in sequence. ',
-	'smw_denominator_is_1' => "The denominator must not be 1.",
-	'smw_no_si_unit_remains' => "There remains no SI unit after optimization.",
-	'smw_invalid_format_of_si_unit' => 'Invalid format of SI unit: $1 ',
-	// Messages for the chemistry parsers
-	'smw_not_a_chem_element' => '"$1" is not a chemical element.',
-	'smw_no_molecule' => 'There is no molecule in the chemical formula "$1".',
-	'smw_chem_unmatched_brackets' => 'The number of opening brackets does not match the closing ones in "$1".',
-	'smw_chem_syntax_error' => 'Syntax error in chemical formula "$1".',
-	'smw_no_chemical_equation' => '"$1" is not a chemical equation.',
-	'smw_no_alternating_formula' => 'There is a missing or needless operator in "$1".',
-	'smw_too_many_elems_for_isotope' => 'Only one element can be given for an isotope. A molecule was provided instead: "$1".',
-	// Messages for attribute pages
-	'smw_attribute_has_type' => 'This attribute has the datatype ',
-	// Messages for help
+protected $smwUserMessages = array(
+    
+    // Messages for AC (auto-completion) 
+	'tog-autotriggering' => 'Manuelle auto-completion',
+    'smw_ac_typehint'=> 'Typ: $1',
+    'smw_ac_typerangehint'=> 'Typ: $1 | Range: $2',
+
+	// Messages for STB 
 	'smw_help_askown' => 'Ask your own question',
 	'smw_help_askownttip' => 'Add your own question to the wiki helppages where it can be answered by other users',
 	'smw_help_pageexists' => "This question is already in our helpsystem.\nClick 'more' to see all questions.",
 	'smw_help_error' => "Oops. An error seems to have occured.\nYour question could not be added to the system. Sorry.",
 	'smw_help_question_added' => "Your question has been added to our help system\nand can now be answered by other wiki users.",
-    // Messages for CSH
-    'smw_csh_icon_tooltip' => 'Klicken Sie hier für Hilfe und wenn Sie Feedback zu den SMW+ Entwicklern senden möchten.'
-);
-
-protected $smwUserMessages = array(
+    'smw_viewinOB' => 'Im Ontology-Browser öffnen',
+    'smw_wysiwyg' => 'WYSIWYG',
+   
+    // General messages   
+    'smw_sparql_disabled'=> 'Keine SPARQL-Unterstützung aktiviert.',
     'specialpages-group-smwplus_group' => 'SMW+',
 	'smw_devel_warning' => 'Diese Funktion befindet sich zur Zeit in Entwicklung und ist eventuell noch nicht voll einsatzfähig. Eventuell ist es ratsam, den Inhalt des Wikis vor der Benutzung dieser Funktion zu sichern.',
 
+    // Messages for pages of types, relations, and attributes
 	'smw_relation_header' => 'Seiten mit der Relation „$1“',
-	
 	'smw_subproperty_header' => 'Sub-Attribute von "$1"',
 	'smw_subpropertyarticlecount' => '<p>Zeige $1 Sub-Attribute.</p>',
 	
-	/*Messages for category pages*/
+	// Messages for category pages
 	'smw_category_schemainfo' => 'Schema-Information für Kategorie "$1"',
 	'smw_category_properties' => 'Attribute',
 	'smw_category_properties_range' => 'Attribute mit Range: "$1"',
@@ -106,28 +81,7 @@ protected $smwUserMessages = array(
 	'smw_category_nrna_range' => 'Seiten mit falsch zugewiesener Range "$1".',
 	'smw_category_nrna_range_expl' => 'Diese Seite hat eine Range, ist aber kein Attribut',
 	
-	'smw_exportrdf_all' => 'Exportiere alle semantischen Daten',
-	
-	/*Messages for Search Triple Special*/
-	'searchtriple' => 'Einfache semantische Suche', //name of this special
-	'smw_searchtriple_header' => '<h1>Suche nach Relationen und Attributen</h1>',
-	'smw_searchtriple_docu' => "<p>Benutzen Sie die Eingabemaske um nach Seiten mit bestimmten Eigenschaften zu suchen. Die obere Zeile dient der Suche nach Relationen, die untere der Suche nach Attributen. Sie können beliebige Felder leer lassen, um nach allen möglichen Belegungen zu suchen. Lediglich bei der Eingabe von Attributwerten (mit den entsprechenden Maßeinheiten) verlangt die Angabe des gewünschten Attributes.</p>\n\n<p>Beachten Sie, dass es zwei Suchknöpfe gibt. Bei Druck der Eingabetaste wird vielleicht nicht die gewünschte Suche durchgeführt.</p>",
-	'smw_searchtriple_subject' => 'Seitenname (Subjekt):',
-	'smw_searchtriple_relation' => 'Name der Relation:',
-	'smw_searchtriple_attribute' => 'Name des Attributs:',
-	'smw_searchtriple_object' => 'Seintenname (Objekt):',
-	'smw_searchtriple_attvalue' => 'Wert des Attributs:',
-	'smw_searchtriple_searchrel' => 'Suche nach Relationen',
-	'smw_searchtriple_searchatt' => 'Suche nach Attributen',
-	'smw_searchtriple_resultrel' => 'Suchergebnisse (Relationen)',
-	'smw_searchtriple_resultatt' => 'Suchergebnisse (Attribute)',
-	/*Messages for Relation Special*/
-	'relations' => 'Relationen',
-	'smw_relations_docu' => 'In diesem Wiki gibt es die folgenden Relationen:',
-	/*Messages for WantedRelations*/
-	'wantedrelations' => 'Gewünschte Relationen',
-	'smw_wanted_relations' => 'Folgende Relationen haben bisher keine erläuterende Seite, obwohl sie bereits für die Beschreibung anderer Seiten verwendet werden.',
-	/*Messages for Attribute Special*/
+	// Messages for Special:Properties
 	'properties' => 'Attribute',
 	'smw_properties_docu' => 'In diesem Wiki gibt es die folgenden Attribute:',
 	'smw_attr_type_join' => ' mit $1',
@@ -138,14 +92,8 @@ protected $smwUserMessages = array(
 	'smw_properties_sortdatatype' => 'Datatype properties',
 	'smw_properties_sortwikipage' => 'Wikipage properties',
 	'smw_properties_sortnary' => 'Record properties',
-	/*Messages for Unused Relations Special*/
-	'unusedrelations' => 'Verwaiste Relationen',
-	'smw_unusedrelations_docu' => 'Die folgenden Relationenseiten existieren, obwohl sie nicht verwendet werden.',
-	/*Messages for Unused Attributes Special*/
-	'unusedattributes' => 'Verwaiste Attribute',
-	'smw_unusedattributes_docu' => 'Die folgenden Attributseiten existieren, obwohl sie nicht verwendet werden.',
-
-	/*Messages for DataExplorer*/
+	
+	// Messages for Special:DataExplorer
 	'dataexplorer' => 'DataExplorer',
 	'smw_ac_hint' => 'Drücken Sie Ctrl+Alt+Space für die Auto-Vervollständigung. (Ctrl+Space im IE)',
 	'smw_ob_categoryTree' => 'Kategorie-Baum',
@@ -185,7 +133,7 @@ protected $smwUserMessages = array(
 	'smw_ob_hasnumoftempuages' => 'Template wurde $1-mal benutzt.',
 	'smw_ob_invalidtitle' => '!!!fehlerhafter Titel!!!',
 	
-	/* Commands for Data Explorer */
+	// Commands for Data Explorer 
 	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Kategorie hinzufügen',
 	'smw_ob_cmd_renamecategory' => 'Umbenennen',
@@ -202,58 +150,15 @@ protected $smwUserMessages = array(
     'smw_ob_cmd_deletecategory' => 'Lösche Kategorie',
     'smw_ob_cmd_deleteproperty' => 'Lösche Property',
 	
-	/* Advanced options in the Data Explorer */
+	// Advanced options in the Data Explorer 
 	'smw_ob_source_wiki' => "-Wiki- (alle Bundles)" ,
 	'smw_ob_advanced_options' => "Einstellungen" ,
 	'smw_ob_select_datasource' => "Zu durchsuchende Datenquellen:" ,
     'smw_ob_select_bundle' => "Zu durchsuchendes Bundle" ,
 	'smw_ob_select_multiple' => "Sie können <b>mehrere</b> Datenquellen auswählen, indem Sie <b>STRG</b> gedückt halten und die Einträge anklicken.",
 	'smw_ob_ts_not_connected' => "Es wurde kein Triple Store gefunden. Bitte fragen Sie Ihren Wikiadministrator!",
-
-
-	/* Combined Search*/
-	'smw_combined_search' => 'Combined Search',
-	'smw_cs_entities_found' => 'Die folgenden Elemente wurden in der Ontologie gefunden:',
-	'smw_cs_attributevalues_found' => 'Die folgenden Instanzen enthalten Attribut-Werte die ihrer Suche entsprechen.',
-	'smw_cs_aksfor_allinstances_with_annotation' => 'Frage nach allen Instanzen von \'$1\' die einen Annoatation von \'$2\' haben.',
-	'smw_cs_askfor_foundproperties_and_values' => 'Frage Instanz \'$1\' nach allen gefunden Attribute.',
-	'smw_cs_ask'=> 'Zeige',
-	'smw_cs_noresults' => 'Kein Element der Ontologie entspricht ihren Suchwörtern',
-	'smw_cs_searchforattributevalues' => 'Suche nach Attributwerten, die ihren Suchwörtern entsprechen',
-	'smw_cs_instances' => 'Artikel',
-	'smw_cs_properties' => 'Attribute',
-	'smw_cs_values' => 'Werte',
-	'smw_cs_openpage' => 'Öffne Seite',
-	'smw_cs_openpage_in_ob' => 'Öffne Seite im Data Explorer',
-	'smw_cs_openpage_in_editmode' => 'Editiere Seite',
-	'smw_cs_no_triples_found' => 'Keine Tripel gefunden!',
-
-	'smw_autogen_mail' => 'Das ist eine automatisch generierte E-Mail. Nicht antworten!',
 	
-
-	/*Messages for ContextSensitiveHelp*/
-	'contextsensitivehelp' => 'Kontext Sensitive Hilfe',
-	'smw_contextsensitivehelp' => 'Kontext Sensitive Hilfe',
-	'smw_csh_newquestion' => 'Dies ist eine neue Hilfeseite. Klicken Sie, um sie zu beantworten!',
-	'smw_csh_nohelp' => 'Dem System wurden noch keine relevanten Hilfeseiten hinzugefügt.',
-	'smw_csh_refine_search_info' => 'Sie k&ouml;nnen Ihre Suche nach Hilfe durch die Angabe eines Seitentyps und/oder einer Aktion weiter verfeinern:',
-	'smw_csh_page_type' => 'Typ der Seite',
-	'smw_csh_action' => 'Aktion',
-	'smw_csh_ns_main' => 'Main (Standard Wikiartikel)',
-	'smw_csh_all' => 'ALLE',
-	'smw_csh_search_special_help' => 'Sie k&ouml;nnen auch nach Hilfe zu bestimmten Funktionen des Wikis suchen:',
-	'smw_csh_show_special_help' => 'Suche nach Hilfe &uuml;ber:',
-	'smw_csh_categories' => 'Kategorien',
-	'smw_csh_properties' => 'Attribute',
-	'smw_csh_mediawiki' => 'MediaWiki Hilfe',
-	/* Messages for the CSH discourse state. Do NOT edit or translate these
-	 * otherwise CSH will NOT work correctly anymore
-	 */
-	'smw_csh_ds_ontologybrowser' => 'DataExplorer',
-	'smw_csh_ds_queryinterface' => 'QueryInterface',
-	'smw_csh_ds_combinedsearch' => 'Search',
-
-	/*Messages for Query Interface*/
+	// Messages for Query Interface
 	'queryinterface' => 'Query Interface',
 	'smw_queryinterface' => 'Query Interface',
 	'smw_qi_add_category' => 'Kategorie hinzuf&uuml;gen',
@@ -344,7 +249,7 @@ protected $smwUserMessages = array(
     'smw_qi_source' => 'Source',
       'smw_qi_graph' => 'Graph',
 
-	/*Tooltips for Query Interface*/
+	// Tooltips for Query Interface
 	'smw_qi_tt_addCategory' => 'Indem man eine Kategorie hinzuf&uuml;gt, werden nur Artikel aus dieser Kategorie ber&uuml;cksichtigt',
 	'smw_qi_tt_addInstance' => 'Indem man ein Instanz hinzuf&uuml;gt, wird nur der ensprechende Artikel ber&uuml;cksichtigt',
 	'smw_qi_tt_addProperty' => 'Indem man ein Attribut hinzuf&uuml;gt, kann man sich die Werte dieses Attribute anzeigen lassen oder erlaubte Werte vorgeben',
@@ -380,36 +285,21 @@ protected $smwUserMessages = array(
       'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
     'smw_qi_tt_parserFunc' => 'View mediawiki parser function for current query',
 
-	/* Annotation */
+	// Annotation 
  	'smw_annotation_tab' => 'Seite annotieren',
 	'smw_annotating'     => 'Annotiere $1',
 	'annotatethispage'   => 'Annotiere diese Seite',
-
-	/* Refactor preview */
- 	'refactorstatistics' => 'Refactor Statistics',
- 	'smw_ob_link_stats' => '&Ouml;ffne refactor statistics',
- 	
- 	
- 	 	
- 	/* Gardening Issue Highlighting in Inline Queries */
-	'smw_iqgi_missing' => 'fehlt',
-	'smw_iqgi_wrongunit' => 'falsche Einheit',
-	
-	
-
-	// SMWHaloAdmin
+ 
+	// Special:SMWHaloAdmin
 	'smwhaloadmin' => 'SMWHalo Administration',
     'smw_haloadmin_databaseinit' => 'Databank-Initialisierung',
 	'smw_haloadmin_description' => 'Diese Spezialseite unterstützt Sie während der Installation und Aktualisierung von SMWHalo.',
     'smw_haloadmin_databaseinit_description' => 'Die folgende Funktion gewährleistet dass die Datenbank korrekt eingerichtet ist. Klicken Sie "Initialisieren" um das Datenbankschema zu aktualisieren und um benötigte Wiki-Seiten für die Metadaten-Nutzung zu erstellen.   Alternativ können Sie auch das Wartungsskript SMW_setup.php ausführen, dieses finden Sie im Ordner SMWHalo maintenance. ',
     'smw_haloadmin_ok' => 'Die SMWHalo-Extension ist korrekt eingerichtet.',
+	'smw_predefined_props' => 'Das ist das vordefinierte Attribut "$1"',
+    'smw_predefined_cats' => 'Das ist die vordefinierte Kategorie "$1"',
 	
-    'smw_ts_notconnected' => 'TSC nicht erreichbar. Prüfe Server unter: $1',
-    'asktsc' => 'Ask triplestore',
-	'smw_tsc_query_not_allowed' => 'Leere Query nicht erlaubt.',
-
-	
-	//skin
+	// Ontoskin
 	'smw_search_this_wiki' => 'Wiki durchsuchen',
 	'smw_last_visited' => 'Zuletzt besucht:',
 	'smw_pagecreation' => 'Erstellt von $1 am $2, um $3 Uhr',
@@ -419,28 +309,13 @@ protected $smwUserMessages = array(
 	'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
 	'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen',
 
-// Geo coord data type
-	'semanticmaps_lonely_unit'     => 'Keine Nummer vor dem "$1" Symbol gefunden.', // $1 is something like Â°
-	'semanticmaps_bad_latlong'     => 'Breitengrad und L&auml;ngengrad d&uuml;rfen nur einmal und mit korrekten Koordinaten angegeben werden',
-	'semanticmaps_abb_north'       => 'N',
-	'semanticmaps_abb_east'        => 'O',
-	'semanticmaps_abb_south'       => 'S',
-	'semanticmaps_abb_west'        => 'W',
-	'semanticmaps_label_latitude'  => 'Latitude:',
-	'semanticmaps_label_longitude' => 'Longitude:',
-
-	
+	// Querylist Special Page
+	'querylist' => "Gespeicherte Queries",
 	
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'Benutzer darf neue Instanzen zum Ergebnis hinzufügen',
 	'smw_tf_paramdesc_delete'	=> 'Benutzer darf Instanzen aus dem Ergebnis löschen',
 	'smw_tf_paramdesc_use_silent_annotation' => "Tabular Forms benutzt das Silent Annotation Template zum Erstellen neuer Annotationen",
-
-
-	//Querylist Special Page
-	'querylist' => "Gespeicherte Queries",
-
-	//tabular forms
 	'tabf_load_msg' => "Tabular forms wird geladen.",
 
 	'tabf_add_label' => "instanz hinzufügen",

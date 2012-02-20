@@ -30,62 +30,39 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
 
 	protected $smwContentMessages = array(
     
-	'smw_derived_property'  => 'Ceci est un attribut dérivé.',
-	'smw_sparql_disabled'=> 'Aucun support SPARQL n\'est actif.',
-	'smw_viewinOB' => 'Ouvrir dans l\'explorateur de données',
-    'smw_wysiwyg' => 'Ce que vous voyez est ce que vous obtenez',
-	'smw_att_head' => 'Valeurs de l\'attribut',
-	'smw_rel_head' => 'Relations aux autres pages',
-	'smw_predefined_props' => 'Ceci est l\'attribut prédéfini "$1"',
-	'smw_predefined_cats' => 'Ceci est la catégorie prédéfinie "$1"',
-
-	'smw_noattribspecial' => 'L\'attribut spécial "$1" n\'est pas un attribut (utilisez "::" à la place de ":=").',
-	'smw_notype' => 'Aucun type n\'a été défini pour l\'attribut.',
-	/*Messages for Autocompletion*/
-	'tog-autotriggering' => 'Auto-complétion déclanché manuellement',
-    'smw_ac_typehint'=> 'Type: $1',
-    'smw_ac_typerangehint'=> 'Type: $1 | Champ de valeurs: $2',
+	// Messages for AC (auto-completion) 
 	'smw_ac_datetime_proposal'=>'<mois> <jour>, <année>|<année>-<mois>-<jour>',
 	'smw_ac_geocoord_proposal'=>'<latitude>° N, <longitude>° W|<latitude>, <longitude>',
 	'smw_ac_email_proposal'=>'somebody@somewhere.com',
 	'smw_ac_temperature_proposal'=>'<nombre> K, <nombre> °C, <nombre> °F, <nombre> °R',
 	'smw_ac_telephone_proposal'=>'tel:+1-201-555-0123',
-	'smw_ac_category_has_icon' => 'La catégorie a l\'icône',
-	'smw_ac_tls' => 'Liste des types',
+	'smw_ac_category_has_icon' => 'La catégorie a l\'icône'
+	
+	);
 
-	// Messages for SI unit parsing
-	'smw_no_si_unit' => 'Aucune unité n\'a été spécifiée dans la représentation du SI. ',
-	'smw_too_many_slashes' => 'Trop de slashs dans la représentation du SI. ',
-	'smw_too_many_asterisks' => '"$1" contient plusieurs * à la suite. ',
-	'smw_denominator_is_1' => "Le dénominateur ne doit pas être 1.",
-	'smw_no_si_unit_remains' => "Il ne reste aucune unité du SI après l\'optimisation.",
-	'smw_invalid_format_of_si_unit' => 'Format invalide pour l\'unité du SI : $1 ',
-	// Messages for the chemistry parsers
-	'smw_not_a_chem_element' => '$1" n\'est pas un élément chimique.',
-	'smw_no_molecule' => 'Il n\'y a aucune molécule dans la formule chimique "$1".',
-	'smw_chem_unmatched_brackets' => 'Le nombre de crochets ouverts ne correspond pas avec le nombre de crochets fermés dans "$1".',
-	'smw_chem_syntax_error' => 'Erreur de syntaxe dans la formule chimique "$1".',
-	'smw_no_chemical_equation' => '"$1" n\'est pas une équation chimique.',
-	'smw_no_alternating_formula' => 'Il y a un opérateur inutile ou un opérateur manquant dans "$1".',
-	'smw_too_many_elems_for_isotope' => 'Un seul élément peut être donné pour un isotope. Une molécule a été fournie à la place : "$1".',
-	// Messages for attribute pages
-	'smw_attribute_has_type' => 'Cet attribut a comme type de donnée ',
-	// Messages for help
+
+	protected $smwUserMessages = array(
+	
+	// Messages for AC (auto-completion) 
+	'tog-autotriggering' => 'Auto-complétion déclanché manuellement',
+    'smw_ac_typehint'=> 'Type: $1',
+    'smw_ac_typerangehint'=> 'Type: $1 | Champ de valeurs: $2',
+	
+	// Messages for STB
 	'smw_help_askown' => 'Posez vos propres questions',
 	'smw_help_askownttip' => 'Ajoutez vos propres questions aux pages d\'aide du wiki où d\'autres utilisateurs pourront y répondre',
 	'smw_help_pageexists' => "Cette question est déjà présente dans notre système d'aide.\nCliquez sur 'plus' pour voir toutes les questions.",
 	'smw_help_error' => "Une erreur semble s'être produite.\nVotre question ne peut pas être ajoutée à notre système. Veuillez nous en excuser.",
 	'smw_help_question_added' => "Votre question a été ajoutée à notre système d'aide\net d'autres utilisateurs du wiki peuvent dès à présent y répondre.",
-    // Messages for CSH
-	'smw_csh_icon_tooltip' => 'Cliquez ici si vous avez besoin d\'aide ou si vous souhaitez envoyer un feedback à l\'équipe de developpeurs SMW+.'
-	);
+    'smw_viewinOB' => 'Ouvrir dans l\'explorateur de données',
+    'smw_wysiwyg' => 'Ce que vous voyez est ce que vous obtenez',
 
-
-	protected $smwUserMessages = array(
+	// General messages
+	'smw_sparql_disabled'=> 'Aucun support SPARQL n\'est actif.',
 	'specialpages-group-smwplus_group' => 'Sémantique Mediawiki+',
 	'smw_devel_warning' => 'Cette caractéristique est actuellement en développement, et peut ne pas être complètement fonctionnelle. Veuillez sauvegarder vos données avant de l\'utiliser.',
+	
 	// Messages for pages of types, relations, and attributes
-
 	'smw_relation_header' => 'Ces pages utilisent l\'attribut "$1"',
 	'smw_subproperty_header' => 'Sous-attribut de "$1"',
 	'smw_subpropertyarticlecount' => '<p>Affichant les sous-attributs de $1.</p>',
@@ -102,29 +79,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
 	'smw_category_nrna_expl' => 'Ces pages contiennent une indication de domaine mais ne sont pas un attribut.',
 	'smw_category_nrna_range' => 'Pages contenant un champ de valeurs mal assigné "$1".',
 	'smw_category_nrna_range_expl' => 'Ces pages contiennent une indication de champ de valeurs mais ne sont pas un attribut.',
-
-
-	'smw_exportrdf_all' => 'Exporter toutes les données sémantiques',
-
-	// Messages for Search Triple Special
-	'searchtriple' => 'Recherche sémantique simple', //name of this special
-	'smw_searchtriple_docu' => "<p>Remplissez respectivement soit la ligne du haut, ou celle du bas, du formulaire pour effectuer une recherche de relations, ou d'attributs. Certains champs peuvent être laissés vides afin d'obtenir plus de résultats. Cependant, si une valeur d'attribut est donnée, le nom de l'attribut doit être spécifié. Comme d'habitude, les valeurs d'attribut peuvent contenir une unité de mesure.</p>\n\n<p>Sachez qu'il vous faut cliquer sur le bouton droit pour obtenir des résultats. En cliquant uniquement sur <i>Return</i>, la recherche désirée ne sera pas effectuée.</p>",
-	'smw_searchtriple_subject' => 'Sujet de la page:',
-	'smw_searchtriple_relation' => 'Nom de la relation:',
-	'smw_searchtriple_attribute' => 'Nom de l\'attribut:',
-	'smw_searchtriple_object' => 'But de la page:',
-	'smw_searchtriple_attvalue' => 'Valeur de l\'attribut:',
-	'smw_searchtriple_searchrel' => 'Recherche de relations',
-	'smw_searchtriple_searchatt' => 'Recherche d\'attributs',
-	'smw_searchtriple_resultrel' => 'Résultat de la recherche (relations)',
-	'smw_searchtriple_resultatt' => 'Résultat de la recherche (attributs)',
-
-	// Messages for Relations Special
-	'relations' => 'Relations',
-	'smw_relations_docu' => 'Les relations suivantes existent dans le wiki.',
-	// Messages for WantedRelations Special
-	'wantedrelations' => 'Relations recherchées',
-	'smw_wanted_relations' => 'Les relations suivantes ne possèdent pas encore de pages explicatives, bien qu\'elles soient déjà utilisées pour décrire d\'autres pages.',
+	
 	// Messages for Properties Special
 	'properties' => 'Attributs',
 	'smw_properties_docu' => 'Les attributs suivants existent dans le wiki.',
@@ -136,14 +91,7 @@ class SMW_HaloLanguageFr extends SMW_HaloLanguage {
 	'smw_properties_sortdatatype' => 'Attributs type de données',
 	'smw_properties_sortwikipage' => 'Attributs page',
 	'smw_properties_sortnary' => 'Attributs enregistrement',
-	// Messages for Unused Relations Special
-	'unusedrelations' => 'Relations inutilisées',
-	'smw_unusedrelations_docu' => 'Les pages de relations suivantes existent, bien qu\'aucune autre page ne les utilise.',
-	// Messages for Unused Attributes Special
-	'unusedattributes' => 'Attributs inutilisés',
-	'smw_unusedattributes_docu' => 'Les pages d\'attributs suivantes existent, bien qu\'aucune autre page ne les utilise.',
-
-
+	
 	/*Messages for DataExplorer*/
 	'dataexplorer' => 'Explorateur de données',
 	'smw_ac_hint' => 'Appuyez sur les touches Ctrl+Alt+Espace pour utiliser l\'auto-complétion. (Ctrl+Espace sous IE)',
@@ -208,50 +156,7 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'smw_ob_select_bundle' => "Sélectionnez le bundle à parcourir:" ,
 	'smw_ob_select_multiple' => "Pour sélectionner <b>plusieurs</b> sources de données, maintenez la touche <b>CTRL</b> appuyée tout en sélectionant des éléments avec un <b>clic de souris</b>.",
 	'smw_ob_ts_not_connected' => "Aucun TripleStore trouvé. Veuillez demander à votre administrateur wiki !",
-	
-
-	/* Combined Search*/
-	'smw_combined_search' => 'Recherche combinée',
-	'smw_cs_entities_found' => 'Les entités suivantes ont été trouvées dans l\'ontologie du wiki:',
-	'smw_cs_attributevalues_found' => 'Les instances suivantes contiennent des valeurs d\'attributs correspondants à votre recherche:',
-	'smw_cs_aksfor_allinstances_with_annotation' => 'Demandez toutes les instances de \'$1\' qui ont une annotation de \'$2\'',
-	'smw_cs_askfor_foundproperties_and_values' => 'Demandez l\'intance \'$1\' pour tous les attributs trouvés.',
-	'smw_cs_ask'=> 'Afficher',
-	'smw_cs_noresults' => 'Désolé, aucune entité dans l\'ontologie ne correspond aux termes de votre recherche.',
-	'smw_cs_searchforattributevalues' => 'Rechercher des valeurs d\'attributs qui correspondent à votre recherche',
-	'smw_cs_instances' => 'Articles',
-	'smw_cs_properties' => 'Attributs',
-	'smw_cs_values' => 'Valeurs',
-	'smw_cs_openpage' => 'Ouvrir la page',
-	'smw_cs_openpage_in_ob' => 'Ouvrir dans l\'explorateur de données',
-	'smw_cs_openpage_in_editmode' => 'Modifier la page',
-	'smw_cs_no_triples_found' => 'Aucun <em>triplet</em> n\'a été trouvé !',
-
-	'smw_autogen_mail' => 'Cet email a été généré automatiquement. Veulliez ne pas y répondre.',
-
-	
-
-	/*Messages for ContextSensitiveHelp*/
-	'contextsensitivehelp' => 'Aide sensible au contexte',
-	'smw_contextsensitivehelp' => 'Aide sensible au contexte',
-	'smw_csh_newquestion' => 'Ceci est une nouvelle question d\'aide. Cliquez pour y répondre !',
-	'smw_csh_nohelp' => 'Aucune question d\'aide pertinente n\'a encore été ajoutée au système.',
-	'smw_csh_refine_search_info' => 'Il vous est possible d\'affiner votre recherche selon le type de page et/ou l\'action sur lequel/laquelle vous désirez avoir plus de détails:',
-	'smw_csh_page_type' => 'Type de page',
-	'smw_csh_action' => 'Action',
-	'smw_csh_ns_main' => 'Principal (page wiki normal)',
-	'smw_csh_all' => 'TOUT',
-	'smw_csh_search_special_help' => 'Vous pouvez aussi chercher de l\'aide sur les caractéristiques spéciales de ce wiki:',
-	'smw_csh_show_special_help' => 'Rechercher de l\'aide sur:',
-	'smw_csh_categories' => 'Catégories',
-	'smw_csh_properties' => 'Attributs',
-	'smw_csh_mediawiki' => 'Aide MediaWiki',
-	/* Messages for the CSH discourse state. Do NOT edit or translate these
-	 * otherwise CSH will NOT work correctly anymore
-	 */
-	'smw_csh_ds_ontologybrowser' => 'Explorateur de données',
-	'smw_csh_ds_queryinterface' => 'Interface de requêtes',
-	'smw_csh_ds_combinedsearch' => 'Recherche',
+		
 
 	/*Messages for Query Interface*/
 	'queryinterface' => 'Interface de requêtes',
@@ -380,22 +285,6 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'annotatethispage'   => 'Annoter cette page',
 
 
-	/* Refactor preview */
- 	'refactorstatistics' => 'Statistiques refactorisées',
- 	'smw_ob_link_stats' => 'Ouvrir les statistiques refactorisées',
-
-	
-
-
-	/* Gardening Issue Highlighting in Inline Queries */
-	'smw_iqgi_missing' => 'manquant',
-	'smw_iqgi_wrongunit' => 'unité incorrecte',
-
-	'smw_deletepage_nolinks' => 'Il n\'existe aucun lien vers cette page !',
-    'smw_deletepage_linkstopage'=> 'Pages contenant des liens vers cette page',
-    'smw_deletepage_prev' => 'Précédent',
-    'smw_deletepage_next' => 'Suivant',
-	
     // Triple Store Admin
     'tsa' => 'Administration TripleStore',
 	'tsc_advertisment' => "'''Cette page spéciale vous aide à administrer ce wiki avec une connexion TripleStore.'''<br><br>''Vous n'avez pas de TripleStore attachés à ce wiki.''<br><br>Vous rendrez ce wiki intelligent en lui connectant un TripleStore !<br><br>Connectez les produits ontoprise '''TripleStoreConnector Basic''' (gratuit) ou '''TripleStoreConnector Professional''' conduit finalement à obtenir de meilleurs résultats de recherche et à rendre possible l'utilisation des données qui résident en dehors de ce wiki.<br><br>'''[http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector Cliquez ici pour lire qu'elles en seront les bénéfices et pour télécharger un TripleStore !]'''",
@@ -432,17 +321,9 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'smw_haloadmin_description' => 'Cette page spéciale vous aide lors de l\'installation et la mise à niveau de SMWHalo.', 
 	'smw_haloadmin_databaseinit_description' => 'La fonction ci-dessous vous assure que votre base de données est correctement configuré. En appuyant sur "Re-Initialiser" vous mettrez à niveau le schéma de la base de données et installerez sur le wiki quelques pages requises pour l\'utilisation des données sémantiques. Alternativement, vous pouvez utiliser le script de maintenance SMW_setup.php qui se trouve dans le répertoire maintenance deSMWHalo.',
 	'smw_haloadmin_ok' => 'L\'extension SMWHalo est correctement installé.',
+	'smw_predefined_props' => 'Ceci est l\'attribut prédéfini "$1"',
+    'smw_predefined_cats' => 'Ceci est la catégorie prédéfinie "$1"',
 	
-	// Derived facts
-	'smw_df_derived_facts_about' => 'Faits dérivés de $1',
-	'smw_df_static_tab'			 => 'Faits statiques',
-	'smw_df_derived_tab'		 => 'Faits dérivés',
-	'smw_df_static_facts_about'  => 'Faits statiques pour cet article',
-	'smw_df_derived_facts_about' => 'Faits dérivés pour cet article',
-	'smw_df_loading_df'			 => 'Chargement des daits dérivés...',
-	'smw_df_invalid_title'		 => 'Article invalide. Pas de faits dérivés disponibles.',
-	'smw_df_no_df_found'		 => 'Aucun faits dérivés trouvés pour cet article.',
-	'smw_df_tsc_advertisment'    => "''Vous n\'avez pas de TripleStore attachés à ce wiki.''\n\nVous rendrez ce wiki intelligent en lui connectant un TripleStore ! Connectez les produits ontoprise '''TripleStoreConnector Basic''' (gratuit) ou '''TripleStoreConnector Professional''' conduit finalement à obtenir de meilleurs résultats de recherche et à rendre possible l\'utilisation des données qui résident en dehors de ce wiki.\nCliquez ici pour lire qu\'elles en seront les bénéfices et pour télécharger un [http://smwforum.ontoprise.com/smwforum/index.php/List_of_Extensions/Triple_store_connector TripleStore] !",
 	
 	//skin
 	'smw_search_this_wiki' => 'Rechercher sur ce wiki',
@@ -454,27 +335,16 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'smw_treeviewleft' => 'Ouvrez l\'arborescence à gauche',
 	'smw_treeviewright' => 'Ouvrez l\'arborescence à droite',
 	
-	// Geo coord data type
-	'semanticmaps_lonely_unit'     => 'Pas de numéro trouvé avant le symbole "$1".', // $1 is something like �?°
-	'semanticmaps_bad_latlong'     => 'Latitude et longitude ne doivent être donnée qu\'une seule fois, et avec des coordonnées valides.',
-	'semanticmaps_abb_north'       => 'N',
-	'semanticmaps_abb_east'        => 'E',
-	'semanticmaps_abb_south'       => 'S',
-	'semanticmaps_abb_west'        => 'W',
-	'semanticmaps_label_latitude'  => 'Latitude:',
-	'semanticmaps_label_longitude' => 'Longitude:',
 	
+	//Querylist Special Page
+	'querylist' => "Requêtes sauvegardées",
 	
 	
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'L\'utilisateur est autorisé à ajouter de nouvelles instances pour le résultat',
 	'smw_tf_paramdesc_delete'	=> 'L\'utilisateur est autorisé à supprimer des instances du résultat',
 	'smw_tf_paramdesc_use_silent_annotation' => "Les formulaires de tableaux utiliseront le modèle d\'annotations silencieuses pour créer de nouvelles annotations.",
-	
-	//Querylist Special Page
-	'querylist' => "Requêtes sauvegardées",
-	
-	//Tabular forms
+
 	'tabf_load_msg' => "Chargement des formulaires de tableaux.",
 
 	'tabf_add_label' => "Ajouter une instance",
