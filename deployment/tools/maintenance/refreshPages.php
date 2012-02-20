@@ -140,8 +140,8 @@ print "\ndone.]";
 if (defined('SMW_HALO_VERSION') && smwfIsTripleStoreConfigured()) {
 	if (isset(DF_Config::$df_refresh_TSC) && DF_Config::$df_refresh_TSC === true) {
 		print "\nSending sync commands to TSC...";
-		smwfGetStore()->initialize(false);
-		print "\nIt may take some time for the TSC to re-sync. It depends on the size of your wiki.";
+		smwfGetStore()->initialize(false, true);
+		print "\nIt may take some time for the TSC to re-sync, check Special:TSA. It depends on the size of your wiki.";
 	}
 }
 
