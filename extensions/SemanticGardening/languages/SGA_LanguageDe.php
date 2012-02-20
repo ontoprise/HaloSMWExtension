@@ -112,6 +112,10 @@ class SGA_LanguageDe {
     'smw_gardissue_class_incomp' => 'Inkompatible Entities',
     'smw_gardissue_class_cycles' => 'Zyklen',
     
+        
+    'smw_iqgi_missing' => 'fehlt',
+    'smw_iqgi_wrongunit' => 'falsche Einheit',
+    
     /* SimilarityBot*/
     'smw_gard_degreeofsimilarity' => 'Limit der Editierdistanz',
     'smw_gard_similarityscore' => 'Ähnlichkeitspunktzahl',

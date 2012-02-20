@@ -116,6 +116,9 @@ of the tools click on this link: $1.',
     'smw_gardissue_class_wrongvalue' => 'Wrong/missing values',
     'smw_gardissue_class_incomp' => 'Incompatible entities',
     'smw_gardissue_class_cycles' => 'Cycles',
+    
+    'smw_iqgi_missing' => 'missing',
+    'smw_iqgi_wrongunit' => 'wrong unit',
 
     /* SimilarityBot*/
     'smw_gard_degreeofsimilarity' => 'Edit distance limit',
