@@ -40,6 +40,7 @@ session_start();
 
 $hostname = $_SERVER['HTTP_HOST'];
 $path = dirname($_SERVER['PHP_SELF']);
+$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
 
 if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 	if (!empty($_GET["rs"]) || !empty($_POST["rs"])) {
@@ -47,7 +48,7 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
         echo "session: time-out";
         exit;
 	} else {
-		header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/login.php');
+		header('Location: '.$proto.'://'.$hostname.($path == '/' ? '' : $path).'/login.php');
 		exit;
 	}
 }

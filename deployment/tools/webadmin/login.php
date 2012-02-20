@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				header('HTTP/1.1 303 See Other');
 			}
 		}
-
-		header('Location: http://'.$hostname.($path == '/' ? '' : $path).'/index.php');
+        $proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
+		header('Location: '.$proto.'://'.$hostname.($path == '/' ? '' : $path).'/index.php');
 		exit;
 	} else {
 		// login failed
