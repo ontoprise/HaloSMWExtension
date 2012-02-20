@@ -75,8 +75,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$showMenuBar = $wgUser->isAllowed("ontologyediting");
 		// display query browser
 		//$spectitle = Title::makeTitle( NS_SPECIAL, wfMsg('ontologybrowser') );
-		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );
-			
+					
 		// add another container
 		$treeContainer = "";
 		$menu = "";
@@ -89,7 +88,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 
 		$html .= "<button type=\"button\" id=\"filterBrowseButton\" name=\"filterBrowsing\" onclick=\"globalActionListener.filterBrowsing(event, true)\">".wfMsg('smw_ob_filterbrowsing')."</button>";
 		$html .= "<button type=\"button\" name=\"refresh\" onclick=\"globalActionListener.reset(event)\">".wfMsg('smw_ob_reset')."</button>";
-		$html .= "<button type=\"button\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";//  <a href=\"".$refactorstatstitle->getFullURL()."\">".wfMsg('smw_ob_link_stats')."</a>";
+		$html .= "<button type=\"button\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";
 
 		$html .= "<div id=\"ontologybrowser\">";
 
