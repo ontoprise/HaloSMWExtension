@@ -108,11 +108,11 @@ OBEventProvider.prototype = {
 	 *            in HTML DOM tree.
 	 * 
 	 */
-	fireSelectionChanged : function(id, title, ns, node) {
+	fireSelectionChanged : function(id, title, ns, node, view) {
 		if (!this.listeners[OB_SELECTIONLISTENER])
 			return;
 		this.listeners[OB_SELECTIONLISTENER].each(function(l) {
-			l.selectionChanged(id, title, ns, node);
+			l.selectionChanged(id, title, ns, node, view);
 		});
 	},
 

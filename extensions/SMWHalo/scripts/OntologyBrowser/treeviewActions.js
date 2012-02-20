@@ -1101,7 +1101,7 @@ OBEditPropertyActionListener.prototype = {
 		this.selectedPropertyRange = range;
 		
 		selectionProvider.fireSelectionChanged(null, attributeName,
-				SMW_PROPERTY_NS, node);
+				SMW_PROPERTY_NS, node, "schemaPropertyView");
 		
 
 		function callbackOnPropertySelectForCategory(request) {
@@ -1614,22 +1614,47 @@ OBSchemaPropertyActionListener.prototype = {
 		this.selectedPropertyRange = "";
 		
 		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+		
+	},
+	
+	setMenuState : function(id, active) {
+		$$('.'+id).each(function (e) { 
+			var tagName = e.tagName.toLowerCase();
+			if (active) {
+				if (tagName == 'span') e.hide();
+				if (tagName == 'a') e.show();	
+			} else {
+				if (tagName == 'span') e.show();
+				if (tagName == 'a') e.hide();	
+			}
+		});
 	},
 
-	selectionChanged : function(id, title, ns, node) {
+	selectionChanged : function(id, title, ns, node, view) {
 		if (ns == SMW_CATEGORY_NS) {
 			this.selectedCategory = title;
 			var anchor = $('currentSelectedCategory');
 			if (anchor != null) {
 				if (title == null) {
+					this.setMenuState('ob_add_schemaproperty', false);
 					anchor.innerHTML = '...';
 				} else {
+					this.setMenuState('ob_add_schemaproperty', true);
 					anchor.innerHTML = "'" + title + "'";
 				}
 			}
 		} else if (ns == SMW_PROPERTY_NS) {
 			this.oldSelectedProperty = GeneralBrowserTools.toggleHighlighting(
 					this.oldSelectedProperty, node);
+			if (view == 'schemaPropertyView') {
+				if (title == null) {
+					this.setMenuState('ob_edit_schemaproperty', false);
+				} else {
+					this.setMenuState('ob_edit_schemaproperty', true);
+				}
+			} else {
+				this.setMenuState('ob_edit_schemaproperty', false);
+			}
 		}
 	},
 
@@ -1661,7 +1686,7 @@ OBSchemaPropertyActionListener.prototype = {
 		this.selectedPropertyRange = range;
 		
 		selectionProvider.fireSelectionChanged(null, attributeName,
-				SMW_PROPERTY_NS, node);
+				SMW_PROPERTY_NS, node, "schemaPropertyView");
 		
 
 		function callbackOnPropertySelectForCategory(request) {
