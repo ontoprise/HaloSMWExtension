@@ -115,11 +115,189 @@ jQuery('.asf-write-protected').parent().each( function (){
 	});
 }
 
+window.asf_FormFieldSyncer = {
+
+	init : function(){
+		
+		jQuery('#asf_category_annotations').click(this.updateForm);
+		jQuery('#asf_category_annotations').css('cursor', 'pointer');
+		
+		this.wtp = new WikiTextParser();
+		window.asfIsShown = true;
+		this.currentCategoryAnnotations = false;
+		this.sync();
+	},
+	
+	sync : function(){
+		this.wtp.initialize();
+		
+		this.handleCategoryAnnotationUpdates(
+				this.wtp.getCategories());
+		
+		var relations = this.wtp.getRelations();
+		for (var i = 0; i < relations.length; ++i) {
+			//alert('name' + relations[i].getName());
+			//alert('name' + relations[i].getValue());
+		}	
+	},
+	
+	handleCategoryAnnotationUpdates : function(newCategoryAnnotations){
+		var updateNecessary = false;
+		if(!this.currentCategoryAnnotations){
+			//we are in initialization phase
+			updateNecessary = true;	
+		} else if(this.currentCategoryAnnotations.length != newCategoryAnnotations.length){
+			updateNecessary = true;
+		}
+		
+		this.currentCategoryString = "";
+		for(var i=0; i<newCategoryAnnotations.length; i++){
+			this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
+			if(!updateNecessary){
+				var found = false;
+				for(var k=0; k<this.currentCategoryAnnotations.length; k++){
+					if(newCategoryAnnotations[i].getName()
+							== this.currentCategoryAnnotations[k].getName()){
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					updateNecessary = true;
+				}
+			}
+		}
+		
+		//remove first comma
+		this.currentCategoryString = this.currentCategoryString.substring(
+				'<span>,</span> '.length);
+		
+		if(updateNecessary && this.currentCategoryAnnotations){
+			//categories have been changed and we are not in initialization phase
+			//alert('update necessary');
+		}
+		
+		this.currentCategoryAnnotations = newCategoryAnnotations;
+		
+		jQuery('#asf_category_string').html(this.currentCategoryString);
+	},
+	
+	updateForm : function(){
+		
+		var currentContainer = '#asf_formfield_container';
+		if(jQuery('#asf_formfield_container').html() == ''){
+			currentContainer = '#asf_formfield_container2';
+		}
+		
+		var inputFieldIds = '';
+		jQuery(currentContainer  +' input').each(function(){
+			if(jQuery(this).attr('value')){
+				if(jQuery(this).attr('type') == 'checkbox'){
+					if(!jQuery(this).attr('checked')){
+						return;
+					}
+				}
+				
+				if(jQuery(this).attr('type') == 'radio'){
+					if(!jQuery(this).attr('checked')){
+						return;
+					} else {
+						jQuery(this).attr('originally-checked', 'true');
+					}
+				}
+				
+				inputFieldIds += '<<<' + jQuery(this).attr('name');
+			}
+		});
+		
+		jQuery(currentContainer  +' select').each(function(){
+			if(jQuery(this).attr('value')){
+				inputFieldIds += '<<<' + jQuery(this).attr('name');
+			}
+		});
+		
+		jQuery(currentContainer  +' textarea').each(function(){
+			if(jQuery(this).attr('value')){
+				inputFieldIds += '<<<' + jQuery(this).attr('name');
+			}
+		});
+		
+		var url = wgServer + wgScriptPath + "/index.php";
+		jQuery.ajax({ url:  url, 
+			data: {
+				'action' : 'ajax',
+				'rs' : 'asff_getNewForm',
+				'rsargs[]' : [asf_FormFieldSyncer.currentCategoryString, inputFieldIds]
+			},
+			success: asf_FormFieldSyncer.updateFormCallBack			
+		});
+	},
+	
+	updateFormCallBack : function(data){
+		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+		data = jQuery.parseJSON(data);
+		
+		var currentContainer = '#asf_formfield_container';
+		var newContainer = '#asf_formfield_container2';
+		if(jQuery('#asf_formfield_container').html() == ''){
+			currentContainer = '#asf_formfield_container2';
+			newContainer = '#asf_formfield_container';
+		}
+		
+		jQuery(newContainer).html(data.html);
+		
+		jQuery(currentContainer + ' input').each(function(){
+			if(jQuery(this).attr('value')){
+				if(jQuery(this).attr('type') == 'checkbox'){
+					jQuery(newContainer + ' input[name="' +
+						jQuery(this).attr('name') + '"]').attr('checked', jQuery(this).attr('checked'));
+				} else if(jQuery(this).attr('type') == 'radio'){
+					if(jQuery(this).attr('originally-checked')){
+						var value = jQuery(this).attr('value');
+						jQuery(newContainer + ' input[name="' +
+								jQuery(this).attr('name') + '"]').each(function (){
+							if(jQuery(this).attr('value') == value){
+								jQuery(this).attr('checked', 'checked');
+							}		
+						});
+					}
+				} else {
+					jQuery(newContainer + ' input[name="' +
+						jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
+				}
+			}
+		});
+		
+		jQuery('#asf_formfield_container select').each(function(){
+			if(jQuery(this).attr('value')){
+				jQuery(newContainer + ' select[name="' +
+						jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
+			}
+		});
+		
+		jQuery('#asf_formfield_container textarea').each(function(){
+			if(jQuery(this).attr('value')){
+				jQuery(newContainer + ' textarea[name="' +
+					jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
+			}
+		});
+		
+		jQuery(currentContainer).html('');
+		
+		//run init methods
+		initializeNiceASFTooltips();
+		asf_makeReadOnly();		
+	}
+	
+	
+};
+
 
 jQuery(document).ready( function($) {
 	initializeNiceASFTooltips();
 	asf_hideFreeText();	
 	asf_makeReadOnly();
+	asf_FormFieldSyncer.init();
 	
 	window.asf_hide_category_section = asf_hide_category_section;
 	window.asf_show_category_section = asf_show_category_section;

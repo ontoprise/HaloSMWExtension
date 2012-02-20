@@ -63,6 +63,10 @@ class ASFFormDefinition {
 
 		$intro .= "}}}\n\n";
 
+		//this is needed for the form field updater so that
+		//he knows which part of the form to replace
+		$intro .= '<div id="asf_formfield_container">';
+		
 		$intro .= "{{{for template| CreateSilentAnnotations:";
 		$intro .= "}}}\n\r";
 
@@ -83,7 +87,16 @@ class ASFFormDefinition {
 		}
 
 		$outro .=  $this->getCategoriesWithNoPropertiesSectionSyntax();
+		
+		//todo: check if this has to be removed in special page for asf creation
+		
+		//end of asf_formfield_container 
+		$outro .= '</div>';
+		$outro .= '<div id="asf_formfield_container2" style="display: "></div>';
 
+		//todo:style this
+		$outro .= '<div id="asf_category_annotations">Categories:<span id="asf_category_string"></span></div><br/>';
+		
 		global $wgUser;
 		$cols = $wgUser->getIntOption('cols');
 		$rows = $wgUser->getIntOption('rows');
@@ -276,7 +289,7 @@ class ASFFormDefinition {
 		}
 	}
 	
-	private function addUnresolvedAnnotationsSection($existingAnnotations){
+	public function addUnresolvedAnnotationsSection($existingAnnotations){
 		$unresolvedAnnotationsSection =
 			new ASFUnresolvedAnnotationsFormData($existingAnnotations, $this->categorySections);
 		$this->categorySections[] = $unresolvedAnnotationsSection;

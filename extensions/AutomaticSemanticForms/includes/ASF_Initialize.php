@@ -132,6 +132,7 @@ function enableAutomaticSemanticForms() {
 			'scripts' => array('/scripts/datapicker.js'),
 			'dependencies' => array('ext.automaticsemanticforms.main')
 		);
+
 }
 
 /*
@@ -154,8 +155,13 @@ function asfSetupExtension(){
 	$sfgFormPrinter = new ASFFormPrinter();
 	
 	ASFFormGeneratorUtils::setupSchemaPropertyConstants();
+
+	//todo: move this
+	global $asfIP;
+	require_once($asfIP.'/includes/ASF_FormUpdaterAjaxAccess.php');
+	//asff_getNewForm(array('Area of research'));
 	
-	return true;
+	return true;	
 }
 
 function asfInitMessages() {
