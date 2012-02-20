@@ -38,23 +38,33 @@ mkdir %OUTPUTDIR%
 REM Export bundle
 ECHO Export bundle %1
 php export.php --current --output=file:%OUTPUTDIR%/dump.xml -b %1 %2 %3 %4 %5
+IF %ERRORLEVEL% NEQ 0 exit 1
 php exportOntologyBundleDeployDescriptor.php -o %OUTPUTDIR%/deploy.xml -b %1 -d dump.xml %2 %3 %4 %5
-IF %ERRORLEVEL% NEQ 0 GOTO end
+IF %ERRORLEVEL% NEQ 0 exit 1
 
 REM Zip bundle
-ECHO Zip bundle
-%ZIP% a -r C:\TEMP\%BUNDLEDIR%\%BUNDLEDIR%.zip C:\TEMP\%BUNDLEDIR%\*
+IF "%~2"=="" goto writeintemp
+SET OUTPUTFILE=%2
+%ZIP% a -r %OUTPUTFILE% C:\TEMP\%BUNDLEDIR%\*
+goto removetempdir
 
+:writeintemp
+SET OUTPUTFILE=C:\TEMP\%BUNDLEDIR%\%BUNDLEDIR%.zip
+echo bundle: %OUTPUTFILE%
+%ZIP% a -r %OUTPUTFILE% C:\TEMP\%BUNDLEDIR%\*
+
+
+:removetempdir
 REM Remove temp dir
 ECHO Remove temporary directory
 RMDIR /S /Q C:\TEMP\%BUNDLEDIR%\extensions
 
-ECHO The output file is at: C:\TEMP\%BUNDLEDIR%\%BUNDLEDIR%.zip
+ECHO The output file is at: %OUTPUTFILE%
 GOTO end
 
 :help
 echo.
-echo Usage: exportBundle.bat bundle-id 
+echo Usage: exportBundle.bat bundle-id [ output file ]
 GOTO end
 
 :install7z

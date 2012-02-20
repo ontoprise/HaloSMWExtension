@@ -65,9 +65,11 @@ class DFContentBundleTab {
 			$html .= "<div class=\"df_notice\">$message</div>";
 			$html .= "<div id=\"df_existingbundles_section\"><input style=\"margin-top:10px;margin-bottom:10px\" size=\"35\" name=\"rsargs[]\"></input></div>";
 		}
-		
+
 		$html .= "<input type=\"submit\" value=\"".$dfgLang->getLanguageString('df_webadmin_download_bundle')."\" id=\"df_downloadBundle\"></input>";
 		$html .= "</form>";
+		
+		$html .= $this->getContentBundleListHTML();
 		return $html;
 	}
 
@@ -79,6 +81,91 @@ class DFContentBundleTab {
 			$html .= "<option value=\"".DFHtmlTools::encodeAttribute($b)."\">".htmlspecialchars($b)."</option>";
 		}
 		return $html;
+	}
+	
+	private function getContentBundleListHTML() {
+		global $dfgLang, $wgServer, $wgScriptPath;
+		$html = "<table id=\"df_bundlelist_table\">";
+         $html .= "<th>";
+        $html .= "File name";//$dfgLang->getLanguageString('df_webadmin_loglink');
+        $html .= "</th>";
+        $html .= "<th>";
+        $html .= "Date of creation";//$dfgLang->getLanguageString('df_webadmin_logdate');
+        $html .= "</th>";
+        $html .= "<th>";
+        $html .= "Link";//$dfgLang->getLanguageString('df_webadmin_loglink');
+        $html .= "</th>";
+        
+        $readLogLinkTemplate = '<a href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
+                        '?action=ajax&rs=downloadBundleFile&rsargs[]=$1">Download</a>';
+        
+        $logs = $this->getBundleList();
+        $i = 0;
+        foreach($logs as $l) {
+            list($name, $date) = $l;
+            $j = $i % 2;
+            $html .= "<tr class=\"df_row_$j\">";
+             $html .= "<td>";
+            $html .= $name;
+            $html .= "</td>";
+            $html .= "<td class=\"df_log_link\">";
+            $html .= date ("F d Y H:i:s.", $date);
+            $html .= "</td>";
+            $html .= "<td class=\"df_log_link\">";
+            $readLogLink = str_replace('$1', $name, $readLogLinkTemplate);
+            $html .= "$readLogLink";
+            $html .= "</td>";
+            $html .= "</tr>";
+            $i++;
+        }
+        $html .= "</table>";
+        return $html;
+	}
+
+	private function getBundleList() {
+		$result=array();
+		$bundleDir = $this->getBundleExportDirectory();
+		$handle = @opendir($bundleDir);
+		if (!$handle) {
+
+			return array();
+		}
+
+		while ($entry = readdir($handle) ){
+			if ($entry[0] == '.'){
+				continue;
+			}
+
+			$file = "$bundleDir/$entry";
+			if (strpos($entry, ".zip") === false) {
+				continue;
+			}
+			$date =  filemtime($file);
+			$result[] = array($entry, $date);
+		}
+		@closedir($handle);
+		usort($result, array($this, "cmpLogEntry"));
+		return $result;
+	}
+
+	private function cmpLogEntry($a, $b) {
+		list($file1, $ts1) = $a;
+		list($file2, $ts2) = $b;
+		return $ts2-$ts1;
+	}
+
+	public function getBundleExportDirectory() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		return "$homeDir/$wikiname/df_bundle_export";
 	}
 
 	private function queryForContentBundles() {

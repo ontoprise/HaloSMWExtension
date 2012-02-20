@@ -52,6 +52,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_resources' : 'Resources',
 	'df_webadmin_resourcecopyonly' : 'Copy resources',
 	'df_webadmin_checknotice' : 'The bundle contains a notice. Please check',
+	'df_webadmin_really_clear_log' : 'Do you really want to clear the log?',
 	
 	// install/de-install/update dialogs
 	'df_webadmin_install_successful' : 'Installation successfull!',

@@ -60,8 +60,10 @@ class DFLogTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_logdate');
 		$html .= "</th>";
 		
+		$logLinkHint = $dfgLang->getLanguageString('df_loglink_hint');
+		
 		$readLogLinkTemplate = '<a target="_blank" href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
-						'?action=ajax&rs=readLog&rsargs[]=$1">Log</a>';
+						'?action=ajax&rs=readLog&rsargs[]=$1" title="'.$logLinkHint.'">Log</a>';
 		
 		$logs = $this->getLogs();
 		$i = 0;
@@ -69,11 +71,11 @@ class DFLogTab {
 			list($name, $date) = $l;
 			$j = $i % 2;
 			$html .= "<tr class=\"df_row_$j\">";
-			$html .= "<td>";
+			$html .= "<td class=\"df_log_link\">";
 			$readLogLink = str_replace('$1', $name, $readLogLinkTemplate);
 			$html .= "$readLogLink";
 			$html .= "</td>";
-			$html .= "<td>";
+			$html .= "<td class=\"df_log_link\">";
 			$html .= date ("F d Y H:i:s.", $date);
 			$html .= "</td>";
 			$html .= "</tr>";

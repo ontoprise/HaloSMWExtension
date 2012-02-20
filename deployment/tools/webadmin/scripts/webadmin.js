@@ -1214,6 +1214,8 @@ $(function() {
 		$('.df_servers_execute').click(executeCommand);
 		
 		$('#df_clearlog').click(function() { 
+			var doClear = confirm(dfgWebAdminLanguage.getMessage('df_webadmin_really_clear_log'));
+			if (!doClear) return;
 			var url = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=clearLog";
 			$.ajax( { url : url, dataType:"json", complete : function() { window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=7"; } });
 		});

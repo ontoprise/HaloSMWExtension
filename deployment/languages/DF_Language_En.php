@@ -143,7 +143,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_refresh' => 'refresh',
 	'df_webadmin_clearlog' => 'Clear log',
 	'df_webadmin_loglink' => 'Link',
-	'df_webadmin_logdate' => 'Date',
+	'df_webadmin_logdate' => 'Date of operation',
+	'df_loglink_hint' => 'Opens a new tab',
 	
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	

@@ -623,38 +623,86 @@ class DFCommandInterface {
 		@closedir($handle);
 		return "true";
 	}
+	
+	public function downloadBundleFile($bundleFile) {
+		
+		global $dfgContentBundlesTab;
+        $bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+        
+        header( 'Content-Encoding: identity' );
+        header( "Content-type: application/zip;" );
+        header( "Content-disposition: attachment;filename={$bundleFile}" );
+        
+        $filePath = $bundleExportDir."/$bundleFile";
+	    // write bundle
+        $handle = fopen($filePath, "rb");
+        while (!feof($handle)) {
+            print fread($handle, 1024*100);
+        }
+        fclose($handle);
+	}
 
-	public function downloadBundle($bundleID) {
-
-		header( 'Content-Encoding: identity' );
-		header( "Content-type: application/zip;" );
-
+	public function downloadBundle($bundleID = '') {
+        
+	   global $wgServer, $wgScriptPath;
+        if (is_null($bundleID) || $bundleID == '') {
+            header('Location: '.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php?tab=8');
+            exit();
+        }
 		// Provide a sane filename suggestion
 		$filename = urlencode( $bundleID . '-' .  date ("Y-m-dTH-i-s", time()) . '.zip' );
-		header( "Content-disposition: attachment;filename={$filename}" );
-
+        
+		// bundle export directory
+		global $dfgContentBundlesTab;
+		$bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+		@mkdir($bundleExportDir);
+		
 		// create bundle
-		$filePath = $this->createBundle($bundleID);
-
+		//FIXME: make sure $bundleID is a valid filename
+		list($ret, $console_out, $filePath) = $this->createBundle($bundleID, $bundleExportDir."/$bundleID.zip");
+        if ($ret != 0) {
+        	global $wgServer,$wgScriptPath;
+        	header( "Content-type: text/html;" );
+        	print "<pre>".file_get_contents($console_out)."</pre>";
+        	print '<br><a href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php?tab=8">Go back</a>';
+        	exit();
+        }
+        
+		header( 'Content-Encoding: identity' );
+		header( "Content-type: application/zip;" );
+		header( "Content-disposition: attachment;filename={$filename}" );
+		
 		// write bundle
 		$handle = fopen($filePath, "rb");
 		while (!feof($handle)) {
 			print fread($handle, 1024*100);
 		}
+		fclose($handle);
 	}
 
-	public function createBundle($bundleID) {
+	public function createBundle($bundleID, $outputFile = "") {
 		global $mwrootDir;
-		$filePath = "";
+		
+		$unique_id = uniqid();
+        $filename = $unique_id.".log";
+        $logger = Logger::getInstance();
+        $logdir = $logger->getLogDir();
+        $console_out = "$logdir/$filename.console_out";
+		
 		chdir($mwrootDir."/deployment/tools/maintenance/export");
+		$outputFile_esc = $outputFile != "" ? '"'.$outputFile.'"' : "";
 		if (Tools::isWindows()) {
-			exec("exportBundle.bat $bundleID 2>&1", $out, $ret );
-			return "c:\\temp\\$bundleID\\$bundleID.zip";
+			$outputFile_esc = str_replace("/", "\\", $outputFile_esc);
+			exec("exportBundle.bat $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
+			$filePath = $outputFile == "" ? "c:\\temp\\$bundleID\\$bundleID.zip" : $outputFile;
 		} else {
-			exec("exportBundle.sh $bundleID 2>&1", $out, $ret );
-			return "/tmp/$bundleID/$bundleID.zip";
+			exec("exportBundle.sh $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
+			$filePath = $outputFile == "" ? "/tmp/$bundleID/$bundleID.zip" : $outputFile;
 		}
+		return array($ret, $console_out, $filePath);
 	}
+	
+	
 
 	/**
 	 * Special quoting for cmd /c  ....

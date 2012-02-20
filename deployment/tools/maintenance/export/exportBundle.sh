@@ -13,7 +13,7 @@
 # check if bundle-id is specified
 if [ -z $1 ]
 then
-echo "Usage: ./exportBundle.sh <bundle-id>"
+echo "Usage: ./exportBundle.sh <bundle-id> [ output file ]"
 exit 0
 fi
 
@@ -48,13 +48,20 @@ exit $?
 fi
 
 # Zip bundle
+if [ -z $2 ]
+then
+OUTPUTFILE=$2
+else
+OUTPUTFILE=/tmp/$BUNDLENAME/$BUNDLENAME.zip
+fi
+
 PWD=pwd
 cd /tmp/$BUNDLENAME/
-zip -r /tmp/$BUNDLENAME/$BUNDLENAME.zip *
+zip -r $OUTPUTFILE *
 cd $PWD
 
 # Remove temp files
 rm -rf /tmp/$BUNDLENAME/extensions/
 echo
-echo The bundle is located at /tmp/$BUNDLENAME/$BUNDLENAME.zip
+echo The bundle is located at $OUTPUTFILE
 echo 
