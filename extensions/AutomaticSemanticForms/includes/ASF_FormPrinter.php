@@ -90,7 +90,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			$existing_page_content .= $formDefinition->getAdditionalFreeText($page_name);
 			
 			if($source_is_page || $form_submitted){
-				list($hack_existing_page_content, $existingAnnotations) = 
+				list($existing_page_content, $existingAnnotations) = 
 					ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
 				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 			}
