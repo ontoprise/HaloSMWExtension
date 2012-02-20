@@ -17,7 +17,7 @@
 		<dependencies>
 		  <dependency from="1.16.0">mw</dependency>
 		</dependencies>
-		<notice></notice>
+		
 	</global>
 
 	<codefiles>
