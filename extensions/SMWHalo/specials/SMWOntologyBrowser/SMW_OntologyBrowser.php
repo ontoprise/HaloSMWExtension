@@ -168,74 +168,180 @@ if(!smwfIsTripleStoreConfigured()) {
 	$showAssertedCategoriesSwitch = 'style="display:none"';
 }
 
+// Category / property tree view 
 
-			$html .= "
-		<!-- Categore Tree hook -->	" .
-		"<div id=\"treeContainer\"><span class=\"OB-header\">	
-			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/concept.gif\" style=\"margin-bottom: -1px\"></img><a class=\"selectedSwitch treeSwitch\" id=\"categoryTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'categoryTree')\">".wfMsg('smw_ob_categoryTree')."</a>
-			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\" style=\"margin-bottom: -1px\"></img><a class=\"treeSwitch\" id=\"propertyTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'propertyTree')\">".wfMsg('smw_ob_attributeTree')."</a>";
-			$html .= $switch;
+$smw_ob_filter = wfMsg('smw_ob_filter');
+$smw_ob_categoryTree  = wfMsg('smw_ob_categoryTree');
+$smw_ob_attributeTree = wfMsg('smw_ob_attributeTree');
+$smw_ob_cmd_createsubcategorysamelevel = wfMsg('smw_ob_cmd_createsubcategorysamelevel');
+$smw_ob_cmd_editcategory = wfMsg('smw_ob_cmd_editcategory');
+$smw_ob_cmd_deletecategory = wfMsg('smw_ob_cmd_deletecategory');
+$smw_ob_cmd_createsubpropertysamelevel = wfMsg('smw_ob_cmd_createsubpropertysamelevel');
+$smw_ob_cmd_editproperty = wfMsg('smw_ob_cmd_editproperty');
+$smw_ob_cmd_deleteproperty = wfMsg('smw_ob_cmd_deleteproperty');
 
-			$html .= "</span>";
-			if ($showMenuBar)
-			{
-				$html .= "<span class=\"menuBar menuBarTree menuBarcategoryTree\" id=\"menuBarcategoryTree\"><a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubcategorysamelevel')."</a> | <a onclick=\"categoryActionListener.showSubMenu(".SMW_OB_COMMAND_CATEGORY_RENAME.")\">".wfMsg('smw_ob_cmd_editcategory')."</a> | <a onclick=\"categoryActionListener.executeCommand(".SMW_OB_COMMAND_CATEGORY_DELETE.")\">".wfMsg('smw_ob_cmd_deletecategory')."</a><div id=\"categoryTreeMenu\"></div></span>
-			<span style=\"display:none;\" class=\"menuBar menuBarTree menuBarpropertyTree\" id=\"menuBarpropertyTree\"><a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL.")\">".wfMsg('smw_ob_cmd_createsubpropertysamelevel')."</a> 
-                        | <a onclick=\"propertyActionListener.showSubMenu(".SMW_OB_COMMAND_PROPERTY_RENAME.")\">".wfMsg('smw_ob_cmd_editproperty')."</a>| <a onclick=\"propertyActionListener.executeCommand(".SMW_OB_COMMAND_PROPERTY_DELETE.")\">".wfMsg('smw_ob_cmd_deleteproperty')."</a><div id=\"propertyTreeMenu\"></div></span>";
-				$html .= $menu;
-			}
+$SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL = SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL;
+$SMW_OB_COMMAND_CATEGORY_RENAME = SMW_OB_COMMAND_CATEGORY_RENAME;
+$SMW_OB_COMMAND_CATEGORY_DELETE = SMW_OB_COMMAND_CATEGORY_DELETE;
 
-			// add containers
-			$html .= "<div id=\"categoryTree\" class=\"categoryTreeColors treeContainer\">
-		   </div>		
-		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors treeContainer\">
-		   </div>";
-			$html .= $treeContainer;
+$SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL = SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL;
+$SMW_OB_COMMAND_PROPERTY_RENAME = SMW_OB_COMMAND_PROPERTY_RENAME;
+$SMW_OB_COMMAND_PROPERTY_DELETE = SMW_OB_COMMAND_PROPERTY_DELETE;
 
-			$html .= "<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"treeFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
-		</div>
-		
-		<!-- Attribute Tree hook -->
-				
-		<div id=\"leftArrow\" class=\"pfeil\">
-			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif\" onclick=\"globalActionListener.toogleCatInstArrow(event)\" />
-		</div>";
+$treeMenuBar = "";
+if ($showMenuBar) {
+    $treeMenuBar = <<<ENDS
+<span class="menuBar menuBarTree menuBarcategoryTree" id="menuBarcategoryTree">
+    <a onclick="categoryActionListener.showSubMenu($SMW_OB_COMMAND_ADDSUBCATEGORY_SAMELEVEL)">$smw_ob_cmd_createsubcategorysamelevel</a>
+  | <a onclick="categoryActionListener.showSubMenu($SMW_OB_COMMAND_CATEGORY_RENAME)">$smw_ob_cmd_editcategory</a> 
+  | <a onclick="categoryActionListener.executeCommand($SMW_OB_COMMAND_CATEGORY_DELETE)">$smw_ob_cmd_deletecategory</a>
+  <div id="categoryTreeMenu"></div>
+</span>
+<span style="display:none;" class="menuBar menuBarTree menuBarpropertyTree" id="menuBarpropertyTree">
+    <a onclick="propertyActionListener.showSubMenu($SMW_OB_COMMAND_ADDSUBPROPERTY_SAMELEVEL)">$smw_ob_cmd_createsubpropertysamelevel</a> 
+  | <a onclick="propertyActionListener.showSubMenu($SMW_OB_COMMAND_PROPERTY_RENAME)">$smw_ob_cmd_editproperty</a>
+  | <a onclick="propertyActionListener.executeCommand($SMW_OB_COMMAND_PROPERTY_DELETE)">$smw_ob_cmd_deleteproperty</a>
+  <div id="propertyTreeMenu"></div>
+</span>
+$menu
+ENDS;
 
-			$html .= $boxContainer;
-
-			$html .= "<!-- Instance List hook -->
-		<div id=\"instanceContainer\">
-		  <span class=\"OB-header\"><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
-		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_CREATE.")\">".wfMsg('smw_ob_cmd_createinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_editinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			
-		  <div id=\"instanceList\" class=\"instanceListColors\">
-		  </div>
-		  <span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"instanceFilter\"><button type=\"button\" name=\"filterInstances\" onclick=\"globalActionListener.filterInstances(event)\">".wfMsg('smw_ob_filter')."</button>
-		  <div $showAssertedCategoriesSwitch><input type=\"checkbox\" id=\"assertedCategoriesSwitch\" checked=\"true\" $showAssertedCategoriesSwitch/>".wfMsg('smw_ob_onlyAssertedCategories')."</input></div></span>
-		</div>
+}
+            
+$html .= <<<ENDS
+<!-- Categore Tree hook -->	
+<div id="treeContainer"><span class="OB-header">	
+<img src="$wgScriptPath/extensions/SMWHalo/skins/concept.gif" style="margin-bottom: -1px"></img>
+<a class="selectedSwitch treeSwitch" id="categoryTreeSwitch" onclick="globalActionListener.switchTreeComponent(event,'categoryTree')">$smw_ob_categoryTree</a>
+<img src="$wgScriptPath/extensions/SMWHalo/skins/property.gif" style="margin-bottom: -1px"></img>
+<a class="treeSwitch" id="propertyTreeSwitch" onclick="globalActionListener.switchTreeComponent(event,'propertyTree')">$smw_ob_attributeTree</a>
+$switch
+</span>
+$treeMenuBar			
+<!-- add containers -->
 			
-		<div id=\"rightArrow\" class=\"pfeil\">
-			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif\" onclick=\"globalActionListener.toogleInstPropArrow(event)\" />
-		</div>
-				
-		<!-- Relation/Attribute Annotation level hook -->
-		<div id=\"relattributesContainer\"><span class=\"OB-header\">
-			<span><img style=\"margin-bottom: -3px\" src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img> ".wfMsg('smw_ob_att')."</span>
-			<span id=\"relattValues\">".wfMsg('smw_ob_relattValues')."</span><span id=\"relattRangeType\" style=\"display:none;\">".wfMsg('smw_ob_relattRangeType')."</span></span>
-			".($showMenuBar ? "<span class=\"menuBar menuBarProperties\" id=\"menuBarProperties\"><span class=\"ob_add_schemaproperty\">".wfMsg('smw_ob_cmd_addpropertytodomain')."</span><a style=\"display:none\" class=\"ob_add_schemaproperty\" onclick=\"schemaActionPropertyListener.showSubMenu(".SMW_OB_COMMAND_ADD_SCHEMAPROPERTY.")\">".wfMsg('smw_ob_cmd_addpropertytodomain')."<span id=\"currentSelectedCategory\">...</span>".
-			"</a> | <a id=\"ob_edit_schemaproperty\" onclick=\"schemaEditPropertyListener.editSelectedProperty(".SMW_OB_COMMAND_EDITPROPERTY.", this)\">".wfMsg('smw_ob_cmd_editproperty')."</a><div id=\"schemaPropertiesMenu\"></div></span>" : "" )."	
-			<div id=\"relattributes\" class=\"propertyTreeListColors\"></div>
-			<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" size=\"22\" id=\"propertyFilter\"><button type=\"button\" name=\"filterProperties\" onclick=\"globalActionListener.filterProperties(event)\">".wfMsg('smw_ob_filter')."</button>
-			<div id=\"propertyRangeSpan\"><div><input type=\"checkbox\" id=\"directPropertySwitch\" checked=\"true\"/>".wfMsg('smw_ob_onlyDirect')."</input></div><div><input type=\"checkbox\" id=\"showForRange\" />".wfMsg('smw_ob_showRange')."</input></div></div></span>		
-		</div>		
-		<div id=\"OB-filters\">
+<div id="categoryTree" class="categoryTreeColors treeContainer">
+</div>
 		
-		</div>" .
-		"<div id=\"OB-footer\">".wfMsg('smw_ob_footer')."
+<div id="propertyTree" style="display:none" class="propertyTreeListColors treeContainer">
+</div>
+$treeContainer
+<span class="OB-filters">
+	<span>$smw_ob_filter</span>
+	<input type="text" id="treeFilter">
+	<button type="button" name="filterCategories" onclick="globalActionListener.filterTree(event)">$smw_ob_filter</button>
+</span>
+</div>
+
+<!-- Attribute Tree hook -->
+<div id="leftArrow" class="pfeil">
+    <img src="$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif" onclick="globalActionListener.toogleCatInstArrow(event)" />
+</div>
+$boxContainer
+ENDS;
 			
-		</div>
-		</div>
-		";
-			$wgOut->addHTML($html);
+// Instance view 
+
+$smw_ob_onlyAssertedCategories = wfMsg('smw_ob_onlyAssertedCategories');
+$smw_ob_cmd_createinstance = wfMsg('smw_ob_cmd_createinstance');
+$smw_ob_cmd_editinstance = wfMsg('smw_ob_cmd_editinstance');
+$smw_ob_instanceList = wfMsg('smw_ob_instanceList');
+
+$SMW_OB_COMMAND_INSTANCE_CREATE = SMW_OB_COMMAND_INSTANCE_CREATE;
+$SMW_OB_COMMAND_INSTANCE_RENAME = SMW_OB_COMMAND_INSTANCE_RENAME;
+
+$instanceMenuBar = "";
+if ($showMenuBar) {
+	$instanceMenuBar = <<<ENDS
+<span class="menuBar menuBarInstance" id="menuBarInstance">
+    <a onclick="instanceActionListener.showSubMenu($SMW_OB_COMMAND_INSTANCE_CREATE)">$smw_ob_cmd_createinstance</a>
+  | <a onclick="instanceActionListener.showSubMenu($SMW_OB_COMMAND_INSTANCE_RENAME)">$smw_ob_cmd_editinstance</a>
+  <div id="instanceListMenu"></div>
+</span>
+ENDS;
+
+}		
+			
+$html .= <<<ENDS
+<!-- Instance List hook -->
+<div id="instanceContainer">
+<span class="OB-header"><img style="margin-bottom: -3px" src="$wgScriptPath/extensions/SMWHalo/skins/instance.gif"></img> $smw_ob_instanceList</span>
+$instanceMenuBar			
+<div id="instanceList" class="instanceListColors">
+</div>
+<span class="OB-filters">
+    <span>$smw_ob_filter</span>
+    <input type="text" id="instanceFilter">
+    <button type="button" name="filterInstances" onclick="globalActionListener.filterInstances(event)">$smw_ob_filter</button>
+	<div $showAssertedCategoriesSwitch>
+	    <input type="checkbox" id="assertedCategoriesSwitch" checked="true" $showAssertedCategoriesSwitch/>$smw_ob_onlyAssertedCategories</input>
+	</div>
+</span>
+</div>
+			
+<div id="rightArrow" class="pfeil">
+	<img src="$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif" onclick="globalActionListener.toogleInstPropArrow(event)" />
+</div>
+ENDS;
+			
+// Schema property / annotation view			
+			
+$smw_ob_cmd_addpropertytodomain = wfMsg('smw_ob_cmd_addpropertytodomain');	
+$smw_ob_cmd_editproperty = wfMsg('smw_ob_cmd_editproperty');		
+$SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = SMW_OB_COMMAND_ADD_SCHEMAPROPERTY;
+$SMW_OB_COMMAND_EDITPROPERTY = SMW_OB_COMMAND_EDITPROPERTY;
+$schemaViewMenuBar = "";			
+if ($showMenuBar) {
+$schemaViewMenuBar = <<<ENDS
+<span class="menuBar menuBarProperties" id="menuBarProperties">
+    <span class="ob_add_schemaproperty">$smw_ob_cmd_addpropertytodomain</span>
+    <a style="display:none" class="ob_add_schemaproperty" onclick="schemaActionPropertyListener.showSubMenu($SMW_OB_COMMAND_ADD_SCHEMAPROPERTY)">$smw_ob_cmd_addpropertytodomain
+        <span id="currentSelectedCategory">...</span>".
+    </a> 
+    | 
+    <span class="ob_edit_schemaproperty">$smw_ob_cmd_editproperty</span>
+    <a style="display:none" class="ob_edit_schemaproperty" onclick="schemaEditPropertyListener.editSelectedProperty($SMW_OB_COMMAND_EDITPROPERTY, this)">$smw_ob_cmd_editproperty
+    </a>
+    <div id="schemaPropertiesMenu"></div></span>
+ENDS;
+            
+} 			
+
+
+$smw_ob_relattValues = wfMsg('smw_ob_relattValues');
+$smw_ob_relattRangeType = wfMsg('smw_ob_relattRangeType');
+$smw_ob_showRange = wfMsg('smw_ob_showRange');
+$smw_ob_footer = wfMsg('smw_ob_footer');
+$smw_ob_att = wfMsg('smw_ob_att');
+$smw_ob_onlyDirect = wfMsg('smw_ob_onlyDirect');
+$html .= <<<ENDS
+<!-- Relation/Attribute Annotation level hook -->
+<div id="relattributesContainer">
+<span class="OB-header">
+    <span><img style="margin-bottom: -3px" src="$wgScriptPath/extensions/SMWHalo/skins/property.gif"></img> $smw_ob_att</span>
+    <span id="relattValues">$smw_ob_relattValues</span>
+    <span id="relattRangeType" style="display:none;">$smw_ob_relattRangeType</span>
+</span>
+$schemaViewMenuBar
+<div id="relattributes" class="propertyTreeListColors"></div>
+<span class="OB-filters">
+<span>$smw_ob_filter</span>
+    <input type="text" size="22" id="propertyFilter"/>
+    <button type="button" name="filterProperties" onclick="globalActionListener.filterProperties(event)">$smw_ob_filter</button>
+	<div id="propertyRangeSpan">
+	    <div><input type="checkbox" id="directPropertySwitch" checked="true"/>$smw_ob_onlyDirect</input></div>
+	    <div><input type="checkbox" id="showForRange" />$smw_ob_showRange</input></div>
+	</div>
+</span>		
+</div>		
+<div id="OB-filters">
+</div>
+    <div id="OB-footer">$smw_ob_footer</div>
+</div>
+ENDS;
+		
+$wgOut->addHTML($html);
+
 	}
 
 }
