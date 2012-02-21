@@ -115,7 +115,7 @@ jQuery('.asf-write-protected').parent().each( function (){
 	});
 }
 
-window.asf_FormFieldSyncer = {
+window.ASFFormSyncer = {
 
 	init : function(){
 		
@@ -131,7 +131,7 @@ window.asf_FormFieldSyncer = {
 	sync : function(){
 		this.wtp.initialize();
 		
-		this.handleCategoryAnnotationUpdates(
+		ASFFormUpdater.handleCategoryAnnotationUpdates(
 				this.wtp.getCategories());
 		
 		var relations = this.wtp.getRelations();
@@ -139,13 +139,18 @@ window.asf_FormFieldSyncer = {
 			//alert('name' + relations[i].getName());
 			//alert('name' + relations[i].getValue());
 		}	
-	},
+	}
+};
+
+window.ASFFormUpdater = {
 	
 	handleCategoryAnnotationUpdates : function(newCategoryAnnotations){
 		var updateNecessary = false;
+		var initPhase = false;
 		if(!this.currentCategoryAnnotations){
 			//we are in initialization phase
 			updateNecessary = true;	
+			initPhase = true;
 		} else if(this.currentCategoryAnnotations.length != newCategoryAnnotations.length){
 			updateNecessary = true;
 		}
@@ -172,17 +177,24 @@ window.asf_FormFieldSyncer = {
 		this.currentCategoryString = this.currentCategoryString.substring(
 				'<span>,</span> '.length);
 		
-		if(updateNecessary && this.currentCategoryAnnotations){
-			//categories have been changed and we are not in initialization phase
-			//alert('update necessary');
-		}
-		
 		this.currentCategoryAnnotations = newCategoryAnnotations;
 		
 		jQuery('#asf_category_string').html(this.currentCategoryString);
+		
+		//do updates if necessary
+		if(updateNecessary && !initPhase){
+			var currentValue = this.currentCategoryString;
+			window.setTimeout(function() {
+				if(currentValue == jQuery('#asf_category_string').html()){
+					ASFFormUpdater.updateForm();
+				}
+			}, 1200);
+		}
 	},
 	
 	updateForm : function(){
+		
+		ASFMultiInputFieldHandler.resetInputFieldNames();
 		
 		var currentContainer = '#asf_formfield_container';
 		if(jQuery('#asf_formfield_container').html() == ''){
@@ -227,9 +239,9 @@ window.asf_FormFieldSyncer = {
 			data: {
 				'action' : 'ajax',
 				'rs' : 'asff_getNewForm',
-				'rsargs[]' : [asf_FormFieldSyncer.currentCategoryString, inputFieldIds]
+				'rsargs[]' : [ASFFormUpdater.currentCategoryString, inputFieldIds]
 			},
-			success: asf_FormFieldSyncer.updateFormCallBack			
+			success: ASFFormUpdater.updateFormCallBack			
 		});
 	},
 	
@@ -288,7 +300,177 @@ window.asf_FormFieldSyncer = {
 		initializeNiceASFTooltips();
 		asf_makeReadOnly();		
 	}
+};
+
+window.ASFMultiInputFieldHandler = {
 	
+	init : function(){
+		jQuery('.asf-multi_values').each(function(){
+			
+			var partOfUnresolvedAnnotationsSection = false;
+			if(jQuery(this).attr('class').indexOf('asf-partOfUnresolvedAnnotationsSection') > 0){
+				partOfUnresolvedAnnotationsSection = true;
+			}
+			
+			var allowsMultipleValues = false;
+			if(jQuery(this).attr('class').indexOf('asf-allowsMultipleValues') > 0){
+				allowsMultipleValues = true;
+			}
+			
+			if(jQuery('.asf-multi_value', this).get().length > 1 ||
+					partOfUnresolvedAnnotationsSection){
+				jQuery('.asf-multi_value', this).each(function(){
+					ASFMultiInputFieldHandler.addDeleteButton(this);
+				});
+			}
+			
+			if(allowsMultipleValues){
+				jQuery('.asf-multi_value:last-child', this).each(function(){
+					ASFMultiInputFieldHandler.addAddButton(this);
+				});
+			}
+		});
+	},
+	
+	addAddButton : function(node){
+		var addButton = '<a class="asf-addbutton" style="cursor: pointer">&nbsp;+</a>';
+		jQuery(node).append(addButton);
+		jQuery('.asf-addbutton:last-child', jQuery(node)).click(ASFMultiInputFieldHandler.addInputField);
+	},
+	
+	addDeleteButton : function(node){
+		var deleteButton = '<a class="asf-deletebutton" style="cursor: pointer">&nbsp;-</a>';
+		jQuery(node).append(deleteButton);
+		jQuery('.asf-deletebutton:last-child', jQuery(node)).click(ASFMultiInputFieldHandler.deleteInputField);
+	},
+	
+	deleteInputField : function(){
+		var parent = jQuery(this).parent().parent();
+		
+		var partOfUnresolvedAnnotationsSection = false;
+		if(jQuery(parent).attr('class').indexOf('asf-partOfUnresolvedAnnotationsSection') > 0){
+			partOfUnresolvedAnnotationsSection = true;
+		}
+		
+		var inputFieldCount = 
+			jQuery('.asf-multi_value', parent).get().length;
+		
+		if(inputFieldCount == 1){
+			//we are in the unresolved annotations section 
+			//and the last input field, respectively the complete row
+			//will be removed
+		
+			jQuery(parent).parent().parent().remove();
+			
+			if(jQuery('.asf-unresolved-section tr').get().length == 0){
+				jQuery('.asf-unresolved-section').css('display', 'none');
+			}
+			
+		} else {
+			jQuery(this).parent().remove();
+			
+			//deal with delete buttons
+			if(inputFieldCount == 2){
+				//outside of the unresolved annotations section it is not possible to delete all elements
+				if(!partOfUnresolvedAnnotationsSection ){
+					jQuery('.asf-deletebutton', parent).remove();
+				}
+			}
+		
+			//deal with add buttons
+			var allowsMultipleValues = false;
+			if(jQuery(parent).attr('class').indexOf('asf-allowsMultipleValues') > 0){
+				allowsMultipleValues = true;
+			}
+			
+			if(allowsMultipleValues){
+				jQuery('.asf-addbutton', jQuery(parent).parent()).remove();
+				jQuery('.asf-multi_value:last-child', jQuery(parent).parent()).each(function(){
+					ASFMultiInputFieldHandler.addAddButton(this);
+				});
+			}
+		}
+	},
+	
+	addInputField : function(){
+		//copy node
+		var parent = jQuery(this).parent();
+		jQuery(parent).parent().append(jQuery(parent).clone());
+		
+		//deal with delete buttons
+		jQuery('.asf-deletebutton', jQuery(parent).parent()).remove();
+		jQuery('.asf-multi_value', jQuery(parent).parent()).each(function(){
+			ASFMultiInputFieldHandler.addDeleteButton(this);
+		});
+		
+		//deal with add buttons
+		jQuery('.asf-addbutton', jQuery(parent).parent()).remove();
+		jQuery('.asf-multi_value:last-child', jQuery(parent).parent()).each(function(){
+			ASFMultiInputFieldHandler.addAddButton(this);
+		});
+		
+		//set name
+		ASFMultiInputFieldHandler.setInputFieldName(
+				jQuery('.asf-multi_value:last-child', jQuery(parent).parent()),
+				jQuery('.asf-multi_value', jQuery(parent).parent()).length);
+		
+		//reset input field value
+		ASFMultiInputFieldHandler.resetInputFieldValue(
+				jQuery('.asf-multi_value:last-child', jQuery(parent).parent()));
+	},
+	
+	resetInputFieldValue : function(node){
+
+		jQuery('input', node).each(function(){
+			if(jQuery(this).attr('type') == 'checkbox'){
+				jQuery(this).removeAttr('checked');
+			} else if(jQuery(this).attr('type') == 'radio'){
+				jQuery(this).removeAttr('checked');
+			} else {
+				jQuery(this).attr('value', '');
+			}
+		});
+		
+		jQuery('select option', node).each(function(){
+			jQuery(this).removeAttr('selected');
+		});
+		
+		jQuery('textarea', node).each(function(){
+			jQuery(this).attr('value', '');
+		});
+	},
+	
+	resetInputFieldNames : function(){
+		
+		jQuery('.asf-multi_values').each(function(){
+			var counter = 1;	
+			jQuery('.asf-multi_value', this).each(function(){
+				ASFMultiInputFieldHandler.setInputFieldName(this, counter);
+				counter++;
+			});
+		});
+	},
+	
+	setInputFieldName : function(node, counter){
+		
+		jQuery('*[name]', node).each(function(){
+			var name = jQuery(this).attr('name');
+			var propNameEnd = name.indexOf('---');
+			if(propNameEnd == -1){
+				propNameEnd = name.indexOf(']');
+			}
+			
+			index = '';
+			if(counter > 1){
+				index = '---' + counter;
+			} 
+			
+			name = name.substr(0,propNameEnd)
+				+ index + name.substr(name.indexOf(']'));
+			
+			jQuery(this).attr('name', name);
+		});
+	}
 	
 };
 
@@ -297,7 +479,8 @@ jQuery(document).ready( function($) {
 	initializeNiceASFTooltips();
 	asf_hideFreeText();	
 	asf_makeReadOnly();
-	asf_FormFieldSyncer.init();
+	ASFFormSyncer.init();
+	ASFMultiInputFieldHandler.init();
 	
 	window.asf_hide_category_section = asf_hide_category_section;
 	window.asf_show_category_section = asf_show_category_section;
@@ -307,5 +490,7 @@ jQuery(document).ready( function($) {
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
 
+//todo: update tabindexes when adding and removeing input fields
 
+//todo: reset names before submitting since the server expects continously numbered names
 

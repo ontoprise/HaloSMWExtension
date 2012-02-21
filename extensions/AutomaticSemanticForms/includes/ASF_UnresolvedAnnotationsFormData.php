@@ -36,7 +36,7 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		
 		$this->initializePropertiesFormData($unresolvedAnnotations);
 		
-		$this->setPropertyFormFieldsInputTypes();
+		$this->setUnresolvedAnnotationsSectionMarkers();
 		
 		$this->sortProperties();
 	}
@@ -115,27 +115,9 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	 * Some form field input types are not allowed in this section,
 	 * since they are not suitable for removing an annotation, i.e. checkbox
 	 */
-	private function setPropertyFormFieldsInputTypes(){
+	private function setUnresolvedAnnotationsSectionMarkers(){
 		foreach($this->propertiesFormData as $name => $data){
-			
-			$setExplicitly = false;
-			
-			if(!$data->explicitInputType){
-				$objectType = '-'.strtolower($data->objectType).'-';
-				if(strpos(DATETIMEDATATYPES, $objectType) !== false 
-						|| strpos(CHECKBOXDATATYPES, $objectType) !== false){
-					
-					$setExplicitly = true;
-				} 
-			} else {
-				if(strpos(ASF_ALLOWED_EXPLICIT_INPUT_TYPES, '-'.strtolower($data->explicitInputType).'-')){
-					$setExplicitly = true;
-				}				
-			}
-			
-			if($setExplicitly){
-				$this->propertiesFormData[$name]->explicitInputType = "text";
-			}
+			$this->propertiesFormData[$name]->setBelongsToUnresolvedAnnotationsSection(true);;
 		}
 	}
 	

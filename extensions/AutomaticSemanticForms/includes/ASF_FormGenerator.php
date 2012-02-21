@@ -55,12 +55,12 @@ class ASFFormGenerator {
 	/*
 	 * Generate form for an instance based on some given category names
 	 */
-	public function generateFormForCategories($categories, $instanceTitle = null){
+	public function generateFormForCategories($categories, $instanceTitle = null, $forceCreation=false){
 		
 		$this->formDefinition = false;
 
 		//check if an automatic form can be created
-		if(count($categories) == 0) return false;
+		if(!$forceCreation && count($categories) == 0) return false;
 
 		//eliminate categories that are super-categories of another annotated category
 		$categories = $this->removeSuperCategories(array_flip($categories));
@@ -68,7 +68,7 @@ class ASFFormGenerator {
 		list($categories, $categoriesWithNoProperties, $categoriesWithNoFormEdit)
 			= $this->initializeCategoryFormData($categories);
 
-		if(count($categories) == 0 && count($categoriesWithNoProperties) == 0){
+		if(!$forceCreation && (count($categories) == 0 && count($categoriesWithNoProperties) == 0)){
 			return false;
 		} else {
 			$this->formDefinition = new ASFFormDefinition($categories, $categoriesWithNoProperties);	

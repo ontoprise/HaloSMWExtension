@@ -156,10 +156,8 @@ function asfSetupExtension(){
 	
 	ASFFormGeneratorUtils::setupSchemaPropertyConstants();
 
-	//todo: move this
 	global $asfIP;
 	require_once($asfIP.'/includes/ASF_FormUpdaterAjaxAccess.php');
-	//asff_getNewForm(array('Area of research'));
 	
 	return true;	
 }

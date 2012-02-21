@@ -385,6 +385,16 @@ class ASFCategoryFormData {
 	}	
 	
 	
+	public function updateNumberOfRequiredInputFields($requiredFields){
+		foreach($requiredFields as $propertyName => $count){
+			foreach($this->propertiesFormData  as $key => $propertyFormData){
+				if($propertyName == $propertyFormData->titleObject->getText()){
+					$this->propertiesFormData[$key]->updateNumberOfRequiredInputFields($count);
+				}
+			}
+		}
+	}
+	
 	
 	
 }

@@ -52,6 +52,10 @@ class ASFPropertyFormData {
 	private $userAutocompletionConstraint;
 	private $useAutogrow;
 	
+	private $numberOfRequiredInputfields = 1;
+	
+	private $belongsToUnresolvedAnnotationsSection = false; 
+	
 	
 	
 	/*
@@ -121,9 +125,7 @@ class ASFPropertyFormData {
 	public function getFormFieldSyntax(){
 		if(!is_null($this->formFieldSyntax)) return $this->formFieldSyntax;
 		
-		$syntax = "{{{field";
-		
-		$syntax .= '|'.$this->titleObject->getText();
+		$syntax = '';
 		
 		//deal with input type
 		list($inputType, $size, $rows, $cols, $autocompletion, $values) = 
@@ -135,7 +137,7 @@ class ASFPropertyFormData {
 				|| $inputType == 'textarea'){
 			$useClass = '| class=asf-complete-width';
 		}
-			
+		
 		//deal with autocompletion
 		global $asfUseHaloAutocompletion;
 		if($this->autocompletionRange && $autocompletion == 'category'){
@@ -214,11 +216,6 @@ class ASFPropertyFormData {
 			$syntax .= ' |delimiter='.$this->delimiter;
 		}
 		
-		//deal with multi value input fields
-		if($this->maxCardinality != 1 || $this->delimiter || $this->forceList()){
-			$syntax .= ' |list';
-		}
-		
 		//deal with mandatory input fields
 		if($this->minCardinality){
 			$syntax .= ' |mandatory';
@@ -236,6 +233,8 @@ class ASFPropertyFormData {
 			$syntax .= '<span class="asf-write-protected"></span>';			
 		}
 		
+		//todo:help text should only be shown once
+		
 		//deal with form input help
 		if($this->helpText){
 			$syntax .= '{{#qTipHelp:';
@@ -243,7 +242,31 @@ class ASFPropertyFormData {
 			$syntax .= '}}';	
 		}
 		
-		$this->formFieldSyntax = $syntax;
+		//the multi form filed feature behaves differently in the unresolved annotations section
+		$unresolvedAnnotationsSection = '';
+		if($this->belongsToUnresolvedAnnotationsSection){
+			$unresolvedAnnotationsSection = ' asf-partOfUnresolvedAnnotationsSection ';
+		}
+		
+		//are several values allowed here
+		$allowsMultipleValues = '';
+		if($this->maxCardinality != 1){
+			$allowsMultipleValues = ' asf-allowsMultipleValues ';
+		}
+		
+		$fullSyntax = '<span class="asf-multi_values'
+			.$unresolvedAnnotationsSection
+			.$allowsMultipleValues.'">';
+		for($i=1; $i <= $this->numberOfRequiredInputfields; $i++){
+			$fieldName = $this->titleObject->getText();
+			if($i > 1) $fieldName .= '---'.$i; 
+			
+			$fullSyntax .= '<div class="asf-multi_value">'
+				.'{{{field |'.$fieldName.$syntax.'</div>';
+		}
+		$fullSyntax .= '</span>';
+		
+		$this->formFieldSyntax = $fullSyntax;
 		return $this->formFieldSyntax;
 	}
 	
@@ -479,6 +502,15 @@ private function getFormFieldInputTypeMetadata($forToolTip = false){
 	public function forceList(){
 		$this->forceList = true;
 	}
+	
+	public function updateNumberOfRequiredInputFields($count){
+		if($this->numberOfRequiredInputfields < $count){
+			$this->numberOfRequiredInputfields = $count;
+		}
+	}
 
+	public function setBelongsToUnresolvedAnnotationsSection($value){
+		$this->belongsToUnresolvedAnnotationsSection = $value;
+	}
 	
 }

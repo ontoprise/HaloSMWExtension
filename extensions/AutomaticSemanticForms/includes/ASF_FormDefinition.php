@@ -287,6 +287,14 @@ class ASFFormDefinition {
 		foreach($this->categorySections as $cs){
 			$cs->updateDueToExistingAnnotations($existingAnnotations);
 		}
+		
+		//update number of required input fields
+		foreach($existingAnnotations as $label => $values){
+			$existingAnnotations[$label] = count($values['values']);
+		}
+		foreach($this->categorySections as $categorySection){
+			$categorySection->updateNumberOfRequiredInputFields($existingAnnotations);
+		}
 	}
 	
 	public function addUnresolvedAnnotationsSection($existingAnnotations){
@@ -297,6 +305,24 @@ class ASFFormDefinition {
 	
 	public function setAdditionalCategoryAnnotations($categoryNames){
 		$this->additionalCategoryAnnotations = $categoryNames;
+	}
+	
+	public function updateNumberOfRequiredInputFields($requestedFormFields){
+		$missingFormFields = array();
+		foreach($requestedFormFields as $field => $dc){
+			if($indexStart = strpos($field, '---')){
+				$field = substr($field, 0, $indexStart);
+			}
+			if(!array_key_exists($field, $missingFormFields)){
+				$missingFormFields[$field] = 1;
+			} else {
+				$missingFormFields[$field] += 1;
+			}
+		}
+		
+		foreach($this->categorySections as $categorySection){
+			$categorySection->updateNumberOfRequiredInputFields($missingFormFields);
+		}
 	}
 	
 }

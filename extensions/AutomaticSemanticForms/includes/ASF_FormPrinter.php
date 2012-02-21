@@ -72,11 +72,6 @@ class ASFFormPrinter extends SFFormPrinter {
 			if(!$form_submitted){
 				global $wgOut;
 				$wgOut->addModules( 'ext.automaticsemanticforms.main' );
-
-				//we have to do this, so that existing page content will not be ignored
-				//we can do this, since all cases in parent::formHTML in which this variable 
-				//occurs do not play a role for ASF
-				//$source_is_page = true;
 			} else {
 				if(!is_null($page_name)){
 					$title = Title::newFromText($page_name);
@@ -94,9 +89,16 @@ class ASFFormPrinter extends SFFormPrinter {
 					ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
 				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 			}
+			
+			if($form_submitted){
+				
+				global $wgRequest;
+				$formDefinition->updateNumberOfRequiredInputFields(
+					$wgRequest->getArray('CreateSilentAnnotations:'));
+			}
 
 			$form_def = $formDefinition->getFormDefinition();
-
+			
 			$page_name_formula = $formDefinition->getPageNameTemplate();
 			
 			$postProcess = true;

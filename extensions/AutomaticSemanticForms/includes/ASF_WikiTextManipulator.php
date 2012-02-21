@@ -38,8 +38,6 @@ class ASFWikiTextManipulator {
 	
 	public function getWikiTextAndAnnotationsForSF($titleString, $text){
 		
-		///todo: maybe add notes for glitches in tooltips
-		
 		if($text == null) $text = '';
 		
 		//deal with ontology imjport conflict sections and other tags 
@@ -73,7 +71,6 @@ class ASFWikiTextManipulator {
 				if($this->isPropertyIgnored($element->getName())){
 					continue;
 				} else {
-					
 					$this->rememberAnnotation($element->getName(), $element->getValue(), $collectedAnnotations);
 						
 					$newElement = new POMSimpleText($this->getWikiTextReplacementForAnnotation(
@@ -81,7 +78,6 @@ class ASFWikiTextManipulator {
 					$newElement->id = $element->id;
 					$pomPage->update($newElement);
 				}
-			
 			} else if ($element instanceof POMExtensionParserFunction){
 				if(strpos($element->nodeText, '{{#set:') === 0){
 					$sets = trim(substr($element->nodeText, strlen('{{#set:')));
@@ -145,9 +141,15 @@ class ASFWikiTextManipulator {
 		
 		$text = '{{CreateSilentAnnotations:';
 		foreach($collectedAnnotations as $label => $annotation){
-			$delimiter = $this->getSilentAnnotationsDelimiter($label);
-			if(!$delimiter) $delimiter = ', ';
-			$text .= '|'.ucfirst($label).'='.implode($delimiter, $annotation['values']);
+			$counter = 1;
+			foreach($annotation['values'] as $value){
+				$text .= '|'.ucfirst($label);
+				if($counter > 1){
+					$text .= '---'.$counter;
+				}
+				$text .= '='.$value;
+				$counter++; 
+			}
 		}
 		$text .= '}}';
 		
@@ -221,6 +223,10 @@ class ASFWikiTextManipulator {
 		
 		$text = '';
 		foreach($collectedAnnotations as $label => $annotation){
+			if($startIndex = strpos($label, '---')) {
+				$label = substr($label, 0, $startIndex);
+			}
+			
 			foreach($annotation['values'] as $value){
 				$text .= '[['.$label.'::'.$value.'| ]]';
 			}

@@ -3,15 +3,21 @@
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'asff_getNewForm';
 
+/*
+ * returns the new form HTML according to thechanged category annotations
+ */
 function asff_getNewForm($categories, $existingAnnotations){
 
 	//init params
 	$categories = explode('<span>,</span> ', $categories);
+	foreach($categories as $key => $cat){
+		if(strlen(trim($cat)) == 0){
+			unset($categories[$key]);
+		}
+	}
 	
 	$existingAnnotations = explode('<<<', $existingAnnotations);
 	unset($existingAnnotations[0]);
-	
-	echo('<pre>'.print_r($existingAnnotations, true).'</pre>');
 	
 	$annotationsToKeep = array();
 	foreach($existingAnnotations as $anno){
@@ -28,6 +34,8 @@ function asff_getNewForm($categories, $existingAnnotations){
 			$annotationsToKeep[$anno[1]][$anno[2]] = true;
 		}
 	}
+	
+	//remove invalid required input fields
 	foreach($annotationsToKeep as $anno => $fields){
 		if(is_array($fields)){
 			if(array_key_exists('year', $fields) && !array_key_exists('day', $fields)){
@@ -43,18 +51,32 @@ function asff_getNewForm($categories, $existingAnnotations){
 		}
 	}
 	
+	//deal with the number of required input fields
+	foreach($annotationsToKeep as $anno => $fields){
+		if($indexStart = strpos($anno, '---')){
+			unset($annotationsToKeep[$anno]);
+			$anno = substr($anno, 0, $indexStart);
+		}
+		
+		if(!array_key_exists($anno, $annotationsToKeep)){
+			$annotationsToKeep[$anno] = array();
+		}
+		if(!is_array($annotationsToKeep[$anno])){
+			$annotationsToKeep[$anno] = array();
+		}
+		if(!array_key_exists('values', $annotationsToKeep[$anno])){
+			$annotationsToKeep[$anno]['values'] = array();;
+		}
+		$annotationsToKeep[$anno]['values'][] = true;
+	}
+	
 	echo('<pre>'.print_r($annotationsToKeep, true).'</pre>');
 	
 	//create the form definition
-	$result = ASFFormGenerator::getInstance()->generateFormForCategories($categories);
-	
-	//No form can be created
-	if(!$result){
-		//todo: deal with this case
-	}
+	ASFFormGenerator::getInstance()->generateFormForCategories($categories, null, true);
 	
 	ASFFormGenerator::getInstance()->getFormDefinition()
-		->addUnresolvedAnnotationsSection($annotationsToKeep);
+		->updateDueToExistingAnnotations($annotationsToKeep);
 	
 	//Get the form HTML
 	global $asfDummyFormName;
@@ -81,95 +103,5 @@ function asff_getNewForm($categories, $existingAnnotations){
 	$result = array('html' => $html);
 	$result = json_encode($result);
 	return '--##starttf##--' . $result . '--##endtf##--';
-	
-	
-	
-	
 }
 
-class ASFFormUpdater {
-	
-	/*
-	 * Get the post processed property value
-	 *
-	 * Code has been copied without any changes from
-	 * SFFormPrinter->formHTML()
-	 */
-	private function getPropertyValue($cur_value){
-		if ( is_array( $cur_value ) ) {
-			// first, check if it's a list
-			if ( array_key_exists( 'is_list', $cur_value ) &&
-					$cur_value['is_list'] == true ) {
-				$cur_value_in_template = "";
-				if ( array_key_exists( 'delimiter', $field_args ) ) {
-					$delimiter = $field_args['delimiter'];
-				} else {
-					$delimiter = ",";
-				}
-				foreach ( $cur_value as $key => $val ) {
-					if ( $key !== "is_list" ) {
-						if ( $cur_value_in_template != "" ) {
-							$cur_value_in_template .= $delimiter . " ";
-						}
-						$cur_value_in_template .= $val;
-					}
-				}
-			} else {
-				// otherwise:
-				// if it has 1 or 2 elements, assume it's a checkbox; if it has
-				// 3 elements, assume it's a date
-				// - this handling will have to get more complex if other
-				// possibilities get added
-				if ( count( $cur_value ) == 1 ) {
-					$cur_value_in_template = SFUtils::getWordForYesOrNo( false );
-				} elseif ( count( $cur_value ) == 2 ) {
-					$cur_value_in_template = SFUtils::getWordForYesOrNo( true );
-					// if it's 3 or greater, assume it's a date or datetime
-				} elseif ( count( $cur_value ) >= 3 ) {
-					$month = $cur_value['month'];
-					$day = $cur_value['day'];
-					if ( $day !== '' ) {
-						global $wgAmericanDates;
-						if ( $wgAmericanDates == false ) {
-							// pad out day to always be two digits
-							$day = str_pad( $day, 2, "0", STR_PAD_LEFT );
-						}
-					}
-					$year = $cur_value['year'];
-					$hour = $minute = $second = $ampm24h = $timezone = null;
-					if ( isset( $cur_value['hour'] ) ) $hour = $cur_value['hour'];
-					if ( isset( $cur_value['minute'] ) ) $minute = $cur_value['minute'];
-					if ( isset( $cur_value['second'] ) ) $second = $cur_value['second'];
-					if ( isset( $cur_value['ampm24h'] ) ) $ampm24h = $cur_value['ampm24h'];
-					if ( isset( $cur_value['timezone'] ) ) $timezone = $cur_value['timezone'];
-					if ( $month !== '' && $day !== '' && $year !== '' ) {
-						// special handling for American dates - otherwise, just
-						// the standard year/month/day (where month is a number)
-						global $wgAmericanDates;
-						if ( $wgAmericanDates == true ) {
-							$cur_value_in_template = "$month $day, $year";
-						} else {
-							$cur_value_in_template = "$year/$month/$day";
-						}
-						// include whatever time information we have
-						if ( ! is_null( $hour ) )
-							$cur_value_in_template .= " " . str_pad( intval( substr( $hour, 0, 2 ) ), 2, '0', STR_PAD_LEFT ) . ":" . str_pad( intval( substr( $minute, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
-						if ( ! is_null( $second ) )
-							$cur_value_in_template .= ":" . str_pad( intval( substr( $second, 0, 2 ) ), 2, '0', STR_PAD_LEFT );
-						if ( ! is_null( $ampm24h ) )
-							$cur_value_in_template .= " $ampm24h";
-						if ( ! is_null( $timezone ) )
-							$cur_value_in_template .= " $timezone";
-					} else {
-						$cur_value_in_template = "";
-					}
-				}
-			}
-		} else { // value is not an array
-			$cur_value_in_template = $cur_value;
-		}
-		
-		return $cur_value_in_template;
-	}
-	
-}
