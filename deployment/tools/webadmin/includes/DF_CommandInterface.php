@@ -67,7 +67,7 @@ class DFCommandInterface {
 		}
 	}
 
-	public function readLog($filename) {
+	public function readLog($filename, $format = 'html') {
 		global $mwrootDir, $dfgOut;
 		$logger = Logger::getInstance();
 		$logdir = $logger->getLogDir();
@@ -76,6 +76,11 @@ class DFCommandInterface {
 		Tools::mkpath(dirname($absoluteFilePath));
 		if (!file_exists($absoluteFilePath)) {
 			return '$$NOTEXISTS$$';
+		}
+		if ($format == 'html') {
+			header( "Content-type: text/html;" );
+		} else if ($format == 'text') {
+			header( "Content-type: text/plain;" );
 		}
 		$log = file_get_contents($absoluteFilePath);
 		return $log;
@@ -642,53 +647,35 @@ class DFCommandInterface {
         fclose($handle);
 	}
 
-	public function downloadBundle($bundleID = '') {
-        
-	   global $wgServer, $wgScriptPath;
-        if (is_null($bundleID) || $bundleID == '') {
-            header('Location: '.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php?tab=8');
-            exit();
-        }
-		// Provide a sane filename suggestion
-		$filename = urlencode( $bundleID . '-' .  date ("Y-m-dTH-i-s", time()) . '.zip' );
-        
-		// bundle export directory
+	
+	
+	public function createBundle($bundleID) {
 		global $dfgContentBundlesTab;
-		$bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
-		@mkdir($bundleExportDir);
-		
-		// create bundle
-		//FIXME: make sure $bundleID is a valid filename
-		list($ret, $console_out, $filePath) = $this->createBundle($bundleID, $bundleExportDir."/$bundleID.zip");
-        if ($ret != 0) {
-        	global $wgServer,$wgScriptPath;
-        	header( "Content-type: text/html;" );
-        	print "<pre>".file_get_contents($console_out)."</pre>";
-        	print '<br><a href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php?tab=8">Go back</a>';
-        	exit();
-        }
-        
-		header( 'Content-Encoding: identity' );
-		header( "Content-type: application/zip;" );
-		header( "Content-disposition: attachment;filename={$filename}" );
-		
-		// write bundle
-		$handle = fopen($filePath, "rb");
-		while (!feof($handle)) {
-			print fread($handle, 1024*100);
-		}
-		fclose($handle);
+        $bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+        $bundleFileName = Tools::makeFileName($bundleID);
+		return json_encode($this->exportBundle($bundleID, $bundleExportDir."/$bundleFileName.zip"));
 	}
 
-	public function createBundle($bundleID, $outputFile = "") {
+	private function exportBundle($bundleID, $outputFile = "") {
 		global $mwrootDir;
 		
 		$unique_id = uniqid();
         $filename = $unique_id.".log";
         $logger = Logger::getInstance();
         $logdir = $logger->getLogDir();
-        $console_out = "$logdir/$filename.console_out";
+        $console_out = "$logdir/$filename.console_out.txt";
 		
+        // check if file already exists and append a number if so
+        if (file_exists($outputFile)) {
+        	$outputDir = dirname($outputFile);
+        	$i = 1;
+            $file_wo_ending = Tools::removeFileEnding($outputFile);
+            $file_ext = Tools::getFileExtension($outputFile);
+        	while(file_exists("$outputDir/$file_wo_ending($i).$file_ext")) $i++;
+            $filename = "$file_wo_ending($i).$file_ext";
+            $outputFile = $filename;
+        }
+        
 		chdir($mwrootDir."/deployment/tools/maintenance/export");
 		$outputFile_esc = $outputFile != "" ? '"'.$outputFile.'"' : "";
 		if (Tools::isWindows()) {
@@ -699,7 +686,11 @@ class DFCommandInterface {
 			exec("exportBundle.sh $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
 			$filePath = $outputFile == "" ? "/tmp/$bundleID/$bundleID.zip" : $outputFile;
 		}
-		return array($ret, $console_out, $filePath);
+		$o = new stdClass();
+		$o->returnCode = $ret;
+		$o->outputFile = "$filename.console_out.txt";
+		$o->bundleFile = $filePath;
+		return $o;
 	}
 	
 	

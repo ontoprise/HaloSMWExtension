@@ -51,7 +51,7 @@ class DFContentBundleTab {
 		global $dfgLang, $wgServer, $wgScriptPath, $mwrootDir;
 
 		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_contentbundletab_description')."</div>";
-		$html .= "<form action=\"$wgServer$wgScriptPath/deployment/tools/webadmin/index.php?action=ajax\" method=\"post\">";
+		//$html .= "<form action=\"$wgServer$wgScriptPath/deployment/tools/webadmin/index.php?action=ajax\" method=\"post\">";
 		$html .= "<input type=\"hidden\" name=\"rs\" value=\"downloadBundle\"></input>";
 		try {
 			$localPackages = PackageRepository::getLocalPackages($mwrootDir);
@@ -63,11 +63,12 @@ class DFContentBundleTab {
 		} catch(Exception $e) {
 			$message = $e->getMessage();
 			$html .= "<div class=\"df_notice\">$message</div>";
-			$html .= "<div id=\"df_existingbundles_section\"><input style=\"margin-top:10px;margin-bottom:10px\" size=\"35\" name=\"rsargs[]\"></input></div>";
+			$html .= "<div id=\"df_existingbundles_section\"><input id=\"df_bundlename\" style=\"margin-top:10px;margin-bottom:10px\" size=\"35\" name=\"rsargs[]\"></input></div>";
 		}
 
-		$html .= "<input type=\"submit\" value=\"".$dfgLang->getLanguageString('df_webadmin_download_bundle')."\" id=\"df_downloadBundle\"></input>";
-		$html .= "</form>";
+		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_export_bundle')."\" id=\"df_createBundle\" disabled=\"true\"></input>";
+		$html .= "<img id=\"df_bundleexport_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none;margin-left: 10px;\"/>";
+		$html .= "<div id=\"df_contentbundle_error\"></div>";
 		
 		$html .= $this->getContentBundleListHTML();
 		return $html;
@@ -87,33 +88,34 @@ class DFContentBundleTab {
 		global $dfgLang, $wgServer, $wgScriptPath;
 		$html = "<table id=\"df_bundlelist_table\">";
          $html .= "<th>";
-        $html .= "File name";//$dfgLang->getLanguageString('df_webadmin_loglink');
+        $html .= $dfgLang->getLanguageString('df_webadmin_contentbundle_file');
         $html .= "</th>";
         $html .= "<th>";
-        $html .= "Date of creation";//$dfgLang->getLanguageString('df_webadmin_logdate');
-        $html .= "</th>";
-        $html .= "<th>";
-        $html .= "Link";//$dfgLang->getLanguageString('df_webadmin_loglink');
+        $html .= $dfgLang->getLanguageString('df_webadmin_contentbundle_creationdate');
         $html .= "</th>";
         
         $readLogLinkTemplate = '<a href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
-                        '?action=ajax&rs=downloadBundleFile&rsargs[]=$1">Download</a>';
+                        '?action=ajax&rs=downloadBundleFile&rsargs[]=$1">$3</a>';
         
         $logs = $this->getBundleList();
+        if (count($logs) == 0) {
+        	$html = $dfgLang->getLanguageString('df_webadmin_contentbundle_nobundles');
+        	return $html;
+        }
         $i = 0;
         foreach($logs as $l) {
             list($name, $date) = $l;
             $j = $i % 2;
             $html .= "<tr class=\"df_row_$j\">";
-             $html .= "<td>";
-            $html .= $name;
+           
+            $html .= "<td class=\"df_log_link\">";
+            $readLogLink = str_replace('$1', $name, $readLogLinkTemplate);
+            $readLogLink = str_replace('$3', $name, $readLogLink);
+            $html .= "$readLogLink";
+           
             $html .= "</td>";
             $html .= "<td class=\"df_log_link\">";
             $html .= date ("F d Y H:i:s.", $date);
-            $html .= "</td>";
-            $html .= "<td class=\"df_log_link\">";
-            $readLogLink = str_replace('$1', $name, $readLogLinkTemplate);
-            $html .= "$readLogLink";
             $html .= "</td>";
             $html .= "</tr>";
             $i++;

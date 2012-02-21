@@ -52,6 +52,7 @@ class DFLogTab {
 		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_logtab_description')."</div>";
 		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_clearlog')."\" id=\"df_clearlog\"></input>";
 		
+		$html .= "<div id=\"df_log_results_table_container\">";
 		$html .= "<table id=\"df_log_results_table\">";
 		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_loglink');
@@ -63,16 +64,17 @@ class DFLogTab {
 		$logLinkHint = $dfgLang->getLanguageString('df_loglink_hint');
 		
 		$readLogLinkTemplate = '<a target="_blank" href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
-						'?action=ajax&rs=readLog&rsargs[]=$1" title="'.$logLinkHint.'">Log</a>';
+						'?action=ajax&rs=readLog&rsargs[]=$1$2" title="'.$logLinkHint.'">Log</a>';
 		
 		$logs = $this->getLogs();
 		$i = 0;
 		foreach($logs as $l) {
-			list($name, $date) = $l;
+			list($name, $date, $type) = $l;
 			$j = $i % 2;
 			$html .= "<tr class=\"df_row_$j\">";
 			$html .= "<td class=\"df_log_link\">";
 			$readLogLink = str_replace('$1', $name, $readLogLinkTemplate);
+			$readLogLink = str_replace('$2', "&rsargs[]=$type", $readLogLink);
 			$html .= "$readLogLink";
 			$html .= "</td>";
 			$html .= "<td class=\"df_log_link\">";
@@ -82,6 +84,7 @@ class DFLogTab {
 			$i++;
 		}
 		$html .= "</table>";
+		$html .= "</div>";
 		return $html;
 	}
 
@@ -110,7 +113,8 @@ class DFLogTab {
 				continue;
 			}
 			$date =  filemtime($file);
-			$result[] = array($entry, $date);
+			$type = strpos($entry, ".txt") !== false ? "text" : "html";
+			$result[] = array($entry, $date, $type);
 		}
 		@closedir($handle);
 		usort($result, array($this, "cmpLogEntry"));
@@ -118,8 +122,8 @@ class DFLogTab {
 	}
 	
 	private function cmpLogEntry($a, $b) {
-		list($file1, $ts1) = $a;
-		list($file2, $ts2) = $b;
+		list($file1, $ts1, $type1) = $a;
+		list($file2, $ts2, $type2) = $b;
 		return $ts2-$ts1;
 	}
 

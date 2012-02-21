@@ -52,7 +52,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_resources' : 'Resources',
 	'df_webadmin_resourcecopyonly' : 'Copy resources',
 	'df_webadmin_checknotice' : 'The bundle contains a notice. Please check',
-	'df_webadmin_really_clear_log' : 'Do you really want to clear the log?',
+	
 	
 	// install/de-install/update dialogs
 	'df_webadmin_install_successful' : 'Installation successfull!',
@@ -71,7 +71,12 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	
 	'df_webadmin_console_log' : 'Click here for console log.',
 	'df_webadmin_finalization_console_log' : 'Click here for finalization console log.',
-	'df_webadmin_searching_in_repository' : 'Searching in repository...'
+	'df_webadmin_searching_in_repository' : 'Searching in repository...',
+		
+	// other tabs
+	'df_webadmin_really_clear_log' : 'Do you really want to clear the log?',
+	'df_webadmin_contentbundle_error' : 'Error occured. Please check the ',
+	'df_webadmin_emptybundlename' : 'Empty bundle name'
 	
 };
 

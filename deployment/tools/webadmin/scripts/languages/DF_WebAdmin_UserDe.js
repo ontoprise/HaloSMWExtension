@@ -52,7 +52,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_resources' : 'Resourcen',
 	'df_webadmin_resourcecopyonly' : 'Kopierte Resourcen',
 	'df_webadmin_checknotice' : 'Das Bundles enthält zusätzliche Hinweise.',
-	'df_webadmin_really_clear_log' : 'Wollen Sie das Log wirklich löschen?',
+	
 
 	// install/de-install/update dialogs
 	'df_webadmin_install_successful' : 'Installation erfolgreich!',
@@ -68,11 +68,15 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_fragment_not_found' : 'Fragment nicht gefunden',
 	'df_webadmin_save_ok' : 'LocalSettings erfolgreich gespeichert.',
 	'df_webadmin_save_failed' : 'Fehler beim Speichern von LocalSettings.php.',
-	
+
 	'df_webadmin_console_log' : 'Klicken Sie hier für das Konsolen-Log.',
-    'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.',
-    'df_webadmin_searching_in_repository' : 'Suche in Repository...'
-	
+	'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.',
+	'df_webadmin_searching_in_repository' : 'Suche in Repository...',
+
+	// other tabs
+	'df_webadmin_really_clear_log' : 'Wollen Sie das Log wirklich löschen?',
+	'df_webadmin_contentbundle_error' : 'Fehler beim Export. Bitte prüfen Sie das ',
+	'df_webadmin_emptybundlename' : 'Leerer Bundlename nicht erlaubt.'
 };
 
 var dfgContDFWebAdmin_LanguageStrings = {};

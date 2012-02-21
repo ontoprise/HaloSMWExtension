@@ -130,7 +130,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_contentbundletab_description' => 'Here you can export and download bundles as zip files. To see a list of bundles you need SMWHalo installed.',
 	'df_webadmin_contentbundle_nosmwhalo' => 'SMWHalo not available, ie. querying for content bundles not possible. Please enter the bundle name manually.',
 	'df_webadmin_querying_contentbundle_failed' => 'Querying content bundles failed.',
-	'df_webadmin_download_bundle' => 'Download bundle',
+	'df_webadmin_export_bundle' => 'Export bundle',
 	
 		
 	'df_webadmin_configureservers' => 'Here you can start/stop the servers of your wiki installation. Please wait a few seconds until the state is refreshed.',
@@ -145,7 +145,10 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_loglink' => 'Link',
 	'df_webadmin_logdate' => 'Date of operation',
 	'df_loglink_hint' => 'Opens a new tab',
-	
+	'df_webadmin_contentbundle_file' => 'Bundle',
+	'df_webadmin_contentbundle_creationdate' => 'Creation date',
+	'df_webadmin_contentbundle_nobundles' => 'No bundles exported.',
+		
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	
 	'df_webadmin_newreleaseavailable' => 'New release available! Check the $1',

@@ -128,7 +128,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_contentbundletab_description' => 'Here you can export and download bundles as zip files. To see a list of bundles you need SMWHalo installed.',
     'df_webadmin_contentbundle_nosmwhalo' => 'SMWHalo not available, ie. querying for content bundles not possible. Please enter the bundle name manually.',
     'df_webadmin_querying_contentbundle_failed' => 'Querying content bundles failed.',
-    'df_webadmin_download_bundle' => 'Download bundle',
+    'df_webadmin_export_bundle' => 'Exportiere Bundle',
 	
 	'df_webadmin_configureservers' => 'Hier können Sie die Server ihrer Wiki-Installation neu starten oder stoppen. Bitte warten Sie ein paar Sekunden bis WAT den Status neu geladen hat.',
 	'df_webadmin_process_runs' => 'läuft',
@@ -143,6 +143,9 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_loglink' => 'Link',
 	'df_webadmin_logdate' => 'Datum der Operation',
 	'df_loglink_hint' => 'Öffnet neues Tab',
+	'df_webadmin_contentbundle_file' => 'Bundle',
+    'df_webadmin_contentbundle_creationdate' => 'Erzeugt am',
+    'df_webadmin_contentbundle_nobundles' => 'Noch keine Bundles exportiert.',
 	
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
     'df_webadmin_repository_link' => 'Repository-Liste',

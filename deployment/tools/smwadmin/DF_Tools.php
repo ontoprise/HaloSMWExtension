@@ -896,6 +896,18 @@ class Tools {
 		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl'
 		|| $ext == 'n3' || $ext == 'nt' || $ext == 'ttl');
 	}
+	
+	/**
+	 * Remove all non-alpanumeric characters to that it 
+	 * suits as a filename.
+	 * 
+	 * @param string $s 
+	 * 
+	 * @return string
+	 */
+	public static function makeFileName($s) {
+		return preg_replace('/[^\w_]/', "", $s);
+	}
 
 	/**
 	 * Escapes XML attribute values

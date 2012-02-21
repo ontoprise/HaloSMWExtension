@@ -5,20 +5,30 @@
 	width: 45%;
 }
 
+#df_contentbundle_error {
+	margin-top: 10px;
+	color: red;
+}
+
 .df_notice {
 	background-color: #D88;
 }
 
 #df_log_results_table {
-	width: 25%;
-	margin-left:30px;
-    margin-top:20px;
+	width: 100%;
+	
 }
+
+#df_log_results_table_container {
+	height: 600px;
+	overflow: auto;
+	width: 40%;
+	margin-top: 20px;
+}
+
 .df_log_link {
 	text-align: center;
 }
-
-
 
 #df_header {
     font-size: 2.5em;
