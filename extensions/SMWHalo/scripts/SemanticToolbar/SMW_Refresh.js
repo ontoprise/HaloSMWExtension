@@ -49,7 +49,6 @@ RefreshSemanticToolBar.prototype = {
             Event.observe(txtarea, 'keyup' ,this.setUserIsTyping.bind(this));
 			this.registerTimer();
 			this.editboxtext = "";
-
 		}
 	},
 
@@ -116,6 +115,10 @@ RefreshSemanticToolBar.prototype = {
 
 		if(window.smwhgASKQuery){
 			smwhgASKQuery.fillList();
+		}
+		
+		if(window.asfIsShown){
+			ASFFormSyncer.sync();
 		}
 
 		// Check for syntax errors in the wiki text
