@@ -27,7 +27,7 @@ class SRFCopyArticleOperation extends SRFApplyOperation {
         $this->newValue = $newValue;
     }
     
-    public function applyOperation($title, $wikitext, & $logMessages) {
+    public function applyOperation(& $title, $wikitext, & $logMessages) {
         
         // replace oldValue by newValue in title
         $newTitleString = str_replace( $this->oldValue,  $this->newValue, $title->getPrefixedText());
@@ -44,6 +44,11 @@ class SRFCopyArticleOperation extends SRFApplyOperation {
         $newArticle->insertNewArticle($text, "inserted by Semantic Refactoring copy operation", false, false);
 
         $logMessages[$title->getPrefixedText()][] = new SRFLog("Copied '$1' to '$2' by replacing $3 by $4", $title, "", array($title, $newTitle, $this->oldValue, $this->newValue));
+        
+        // change title to new title so that all subsequent 
+        // operations take place on the new title.
+        $title = $newTitle;
+        
         return $wikitext;
     }
 

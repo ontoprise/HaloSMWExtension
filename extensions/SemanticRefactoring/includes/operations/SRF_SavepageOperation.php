@@ -19,7 +19,7 @@
 class SRFSavepageOperation extends SRFApplyOperation {
 
 
-	public function applyOperation($title, $wikitext, & $logMessages) {
+	public function applyOperation(& $title, $wikitext, & $logMessages) {
 		$article = new Article($title);
 		// will return warning that nothing changed, nevertheless
 		$status = $article->doEdit($wikitext, $article->getComment());

@@ -50,7 +50,7 @@ class SRFChangeCategoryValueOperation extends SRFApplyOperation {
 		return false;
 	}
 
-	public function applyOperation($title, $wikitext, & $logMessages) {
+	public function applyOperation(& $title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		# iterate trough the annotations
@@ -106,7 +106,7 @@ class SRFChangeCategoryValueOperation extends SRFApplyOperation {
 		$wikitext = $pom->getWikiText();
 
 		// set final wiki text
-		foreach($logMessages as $title => $set) {
+		foreach($logMessages as $t => $set) {
 			foreach($set as $lm) {
 				$lm->setWikiText($wikitext);
 			}

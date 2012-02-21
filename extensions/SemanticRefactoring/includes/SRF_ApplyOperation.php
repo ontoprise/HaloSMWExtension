@@ -28,13 +28,13 @@ abstract class SRFApplyOperation {
 	/**
      * Applies the operation and returns the changed wikitext.
      *
-     * @param Title $title
+     * @param Title $title. Can be changed if an operation modifies the title (e.g. for copying).
      * @param string $wikitext
      * @param array $logMessages
      *
      * @return string
      */
-    public abstract function applyOperation($title, $wikitext, & $logMessages);
+    public abstract function applyOperation(& $title, $wikitext, & $logMessages);
     
     /**
      * Denotes if a save operation is required.

@@ -18,7 +18,7 @@
  */
 class SRFPurgepageOperation extends SRFApplyOperation {
 
-	public function applyOperation($title, $wikitext, & $logMessages) {
+	public function applyOperation(& $title, $wikitext, & $logMessages) {
 		// do not store because nothing changed.
 		// only purge
 

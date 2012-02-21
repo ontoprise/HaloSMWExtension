@@ -44,7 +44,7 @@ class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 	}
 
 
-	public function applyOperation($title, $wikitext, & $logMessages) {
+	public function applyOperation(& $title, $wikitext, & $logMessages) {
 		$pom = WOMProcessor::parseToWOM($wikitext);
 
 		if (is_null($this->oldValue) && is_null($this->newValue)) {
@@ -114,7 +114,7 @@ class SRFChangeTemplateParameterOperation extends SRFApplyOperation {
 		$wikitext = $pom->getWikiText();
 
 		// set final wiki text
-		foreach($logMessages as $title => $set) {
+		foreach($logMessages as $t => $set) {
 			foreach($set as $lm) {
 				$lm->setWikiText($wikitext);
 			}

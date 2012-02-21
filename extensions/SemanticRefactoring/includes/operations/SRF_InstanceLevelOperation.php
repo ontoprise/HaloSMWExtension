@@ -30,7 +30,7 @@ class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 		$this->affectedPages = array();
 		$this->operations = array();
 		foreach($instanceSet as $i) {
-			$this->affectedPages[] = Title::newFromText($i);
+			$this->affectedPages[$i] = Title::newFromText($i);
 		}
 	}
 
@@ -41,8 +41,8 @@ class SRFInstanceLevelOperation extends SRFRefactoringOperation {
 	public function addOperation($operation) {
 		$this->operations[] = $operation;
 	}
-	 
-	/**
+	
+    /**
 	 * Applies and stores the changes of this refactoring operation.
 	 * (not used if several operations are combined, see applyOperation)
 	 *
