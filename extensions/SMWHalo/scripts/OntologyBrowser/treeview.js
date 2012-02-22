@@ -53,7 +53,9 @@ TreeTransformer.prototype = {
 			alert(gLanguage.getMessage('KS_NOT_SUPPORTED'));
 			return;
 		}
-
+		
+		smwh_Skin.addResizeListener(this.onresize.bind(this));
+		
 		if (OB_bd.isGeckoOrOpera) {
 			this.OB_xsltProcessor_gecko = new XSLTProcessor();
 
@@ -77,6 +79,10 @@ TreeTransformer.prototype = {
 					gLanguage.getMessage('CATEGORY_NS_WOC', 'cont'));
 			this.OB_xsltProcessor_gecko.setParameter(null, "param-ns-property",
 					gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'));
+			
+			this.OB_xsltProcessor_gecko.setParameter(null, "maximumEntityLength",
+				this.calculateMaximalLength());
+			
 		} else if (OB_bd.isIE) {
 
 			// create MSIE DOM object
@@ -98,8 +104,42 @@ TreeTransformer.prototype = {
 					.getMessage('CATEGORY_NS_WOC', 'cont'));
 			this.OB_xsltProcessor_ie.addParameter("param-ns-property",
 					gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'));
+			
+			this.OB_xsltProcessor_ie.addParameter(null, "maximumEntityLength",
+					this.calculateMaximalLength());
 		}
 
+	},
+	
+	calculateMaximalLength: function() {
+		var chars = "abcdefghijklmnopqrstuvwxyz";
+		chars += chars.toUpperCase();
+		chars += "0123456789_'!\"§$%&/()=+*;.:-";
+		var widths = {};
+		var sum = 0;
+		for(var i = 0; i < chars.length; i++) {	
+			$('hiddenCharacters').innerHTML = chars.charAt(i);
+			var width = $('hiddenCharacters').getWidth();
+			widths[chars.charCodeAt(i)] = width;
+			sum += width;
+		}
+		// calculate width of whitespace
+		$('hiddenCharacters').innerHTML = "a a";
+		var width = $('hiddenCharacters').getWidth();
+		width -= 2 * widths[chars.charCodeAt(0)];
+		widths[32] = width;
+		
+		var avg = sum / chars.length;
+		widths['avg'] = avg;
+		widths['view'] = $('relattributes').getWidth();
+		
+		return Math.round((widths['view'] / widths['avg']) * 0.65);
+		
+	},
+	
+	onresize: function() {
+		this.OB_xsltProcessor_gecko.setParameter(null, "maximumEntityLength",
+				this.calculateMaximalLength());
 	},
 
 	/**

@@ -117,7 +117,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$bundleOptions="";
 		$contentBundles = smwfGetSemanticStore()->getDirectInstances(Title::newFromText($dfgLang->getLanguageString('df_contentbundle'), NS_CATEGORY));
 		foreach($contentBundles as $cb) {
-			$bundleOptions .= "<option bundleid=\"".$cb->getDBkey()."\" title=\"".$cb->getDBkey()."\">".$cb->getText()."</option>";
+	       $bundleOptions .= "<option bundleid=\"".Sanitizer::encodeAttribute($cb->getDBkey())."\" title=\"".Sanitizer::encodeAttribute($cb->getDBkey())."\">".$cb->getText()."</option>";
 		}		
 		
 		$advancedOptions  = wfMsg("smw_ob_advanced_options");
@@ -337,6 +337,9 @@ $schemaViewMenuBar
 <div id="OB-filters">
 </div>
     <div id="OB-footer">$smw_ob_footer</div>
+</div>
+
+<span id="hiddenCharacters" style="visibility:hidden;overflow:auto"></span>
 </div>
 ENDS;
 		
