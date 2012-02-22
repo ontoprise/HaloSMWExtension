@@ -270,15 +270,15 @@
 					</xsl:choose>
 					<xsl:variable name="escapeSingleQoutesFromTitle"><xsl:call-template name="replace-string"><xsl:with-param
                         name="text" select="@title" /><xsl:with-param name="from"
-                        select="$var-simple-quote" /><xsl:with-param name="to"
-                        select="$var-slash-quote" /></xsl:call-template></xsl:variable>
+                        select="$var-backslash" /><xsl:with-param name="to"
+                        select="$var-backslash-quote" /></xsl:call-template></xsl:variable>
                    
 					
 					<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this, '<xsl:value-of
 						select="@id" />', '<xsl:call-template name="replace-string"><xsl:with-param
                         name="text" select="$escapeSingleQoutesFromTitle" /><xsl:with-param name="from"
-                        select="$var-backslash" /><xsl:with-param name="to"
-                        select="$var-backslash-quote" /></xsl:call-template>', '<xsl:value-of
+                        select="$var-simple-quote" /><xsl:with-param name="to"
+                        select="$var-slash-quote" /></xsl:call-template>', '<xsl:value-of
 						select="@namespace" />')</xsl:attribute>
 					<xsl:attribute name="id"><xsl:value-of
 						select="@id" /></xsl:attribute>
