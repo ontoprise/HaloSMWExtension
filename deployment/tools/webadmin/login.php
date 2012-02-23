@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$path = dirname($_SERVER['PHP_SELF']);
 	
 	// user name and password is checked
-	if (DF_Config::$df_authorizeByWiki) {
+	if (isset(DF_Config::$df_authorizeByWiki) && DF_Config::$df_authorizeByWiki == true) {
 		$isAuthorized = authenticateUser($username, $passwort);
 		if ($isAuthorized === 400) {
 			echo "Authentication by Wiki sysop-users requires Wiki Administration Tool to be included in LocalSettings.php";
@@ -185,7 +185,7 @@ function dffCheckEnvironment() {
 	// check if LocalSettings can be written.
 	@$res = fopen("$mwrootDir/LocalSettings.php", "a");
 	if ($res === false) {
-		$result .= "<li>Could not open LocalSettings.php for writing.</li>";
+		$result .= "<li>Could not open LocalSettings.php for writing. Make sure it is writeable for the webserver. On Linux you use the chmod/chown commands for this purpose.</li>";
 	} else {
 		fclose($res);
 	}
@@ -193,7 +193,7 @@ function dffCheckEnvironment() {
 	// check if the sessiondata folder can be written
 	@$res = fopen("$mwrootDir/deployment/tools/webadmin/sessiondata/test_file_for_webadmin", "a");
 	if ($res === false) {
-		$result .= "<li>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder</li>";
+		$result .= "<li>Could not write into the 'deployment/tools/webadmin/sessiondata' subfolder. Make sure it is writeable for the webserver. On Linux you use the chmod/chown commands for this purpose.</li>";
 	} else {
 		fclose($res);
 	}
@@ -215,7 +215,10 @@ function dffCheckEnvironment() {
 	}
 	@exec("\"$phpExe\" --version", $out, $ret);
 	if ($ret != 0 || stripos($out[0], "PHP") === false) {
-		$result .= "<li>Could not run external processes: <pre>".implode("\n",$out)."</pre></li>";
+		$result .= "<li>Could not run external processes: <pre>".implode("\n",$out)."</pre>";
+		$result .= "<br>Check the setting 'df_php_executable' in deployment/settings.php. It must point to the PHP cli-executable, e.g. /usr/bin/php. You can use the command 'whereis php' to find out the location.";
+		$autodetect = Tools::whereis("php");
+		$result .= "<br>Try to auto-detect location of PHP: ".($autodetect == '' ? "failed" : $autodetect)."</li>";
 	} else if ($ret == 0 && preg_match("/5\\.\\d+\\.\\d+/", $out[0]) === 0) {
 		$result .= "<li>Wrong PHP version: ".$out[0]." (PHP 5.x.x required, except 5.3.1)</li>";
 	}
@@ -224,7 +227,7 @@ function dffCheckEnvironment() {
 	if (!array_key_exists('df_php_executable', DF_Config::$settings) || DF_Config::$settings['df_php_executable'] == 'php') {
 		@exec("php5 --version", $out, $ret);
 		if ($ret == 0) {
-			$result .= "<li>PHP5 executable is available. Please configure in deployment/settings.php: <code>'df_php_executable' => 'php5'</code></li>";
+			$result .= "<li>PHP5 executable is available. Please configure in deployment/settings.php to make sure PHP5 is used: <code>'df_php_executable' => 'php5'</code></li>";
 		}
 	}
 
@@ -232,7 +235,7 @@ function dffCheckEnvironment() {
 	$tempFolder = Tools::getTempDir();
 	@touch("$tempFolder/test_file_for_webadmin");
 	if (!file_exists("$tempFolder/test_file_for_webadmin")) {
-		$result .= "<li>Could not write into the temp folder at $tempFolder.</li>";
+		$result .= "<li>Could not write into the temp folder at $tempFolder.<br>Check if the env-variable \$TMPDIR or \$TEMP is set. If not, make sure that at least /tmp or c:\\temp is writebale.</li>";
 	} else {
 		unlink("$tempFolder/test_file_for_webadmin");
 	}
@@ -240,7 +243,7 @@ function dffCheckEnvironment() {
 	// check if deployment/config/repositories is writeable
 	$repositoryFileWritable = is_writable("$mwrootDir/deployment/config/repositories");
 	if ($repositoryFileWritable === false) {
-		$result .= "<li>Could not open deployment/config/repositories for writing.</li>";
+		$result .= "<li>Could not open deployment/config/repositories for writing. Make sure it is writeable for the webserver. On Linux you use the chmod/chown commands for this purpose.</li>";
 	}
 
 	// check homedir/tempdir
@@ -252,13 +255,14 @@ function dffCheckEnvironment() {
 
 	} catch(DF_SettingError $e) {
 		$msg = $e->getMsg();
-		$result .= "<li>$msg</li>";
+		$result .= "<li>$msg<br>Check the setting df_homedir in deployment/settings.php. It must point to a directory which is writeable by the webserver. On Linux you use the chmod/chown commands for this purpose.</li>";
 	}
 
 	// check for curl (needed for wiki auth)
-	if (DF_Config::$df_authorizeByWiki) {
+	if (isset(DF_Config::$df_authorizeByWiki) && DF_Config::$df_authorizeByWiki == true) {
 		if (!extension_loaded("curl")) {
-			$result .= "<li>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. (DF_Config::\$df_authorizeByWiki=false;)</li>";
+			$result .= "<li>Could not find 'curl'-PHP extension. Install it or deactivate authentication by wiki. To do this set in deployment/settings.php: (\$df_authorizeByWiki=false;)";
+			$result .= "<br>In this case the WAT credentials are defined in DF_Config::\$df_webadmin_user and DF_Config::\$df_webadmin_pass</li>";
 		}
 	}
 
@@ -268,10 +272,11 @@ function dffCheckEnvironment() {
 	if (!array_key_exists('df_http_impl', DF_Config::$settings)) {
 		if (!function_exists("socket_create") && !extension_loaded('curl')) {
 			$result .= "<li>Could neither find socket functions nor 'php_curl' module. At least one is required to run this tool.</li>";
+			$result .= "<br>You can activate modules in php.ini file. Look for 'extension=php_curl.dll/so' and remove the semi-colon in front of it.</li>";
 		}
 	}
 
-	return empty($result) ? true : "<ul>$result</ul>";
+	return empty($result) ? true : "<ul style=\"list-style-position:inside\">$result</ul>";
 }
 
 /**
@@ -301,7 +306,7 @@ function checkWritePriviledgesOnExtensions($ext_dir, & $text) {
 		if (is_dir($ext_dir.$entry)) {
 			// check if there is a init$.ext
 			if (file_exists($ext_dir.$entry.'/deploy.xml') && !is_writable($ext_dir.$entry.'/deploy.xml')) {
-				$text .= "<li>Make ".$ext_dir.$entry." writeable</li>";
+				$text .= "<li>Make ".$ext_dir.$entry." writeable for the webserver.</li>";
 				$result = false;
 
 			}
