@@ -47,13 +47,14 @@ class USStoreSQL extends USStore {
 		if (array_key_exists($categoryTitle->getPrefixedDBkey(), $image_urls)) {
 			return $image_urls[$categoryTitle->getPrefixedDBkey()];
 		}
-		$catHasIconProperty = SMWPropertyValue::makeUserProperty(wfMsg('smw_ac_category_has_icon'));
+		$catHasIconProperty = SMWDIProperty::newFromUserLabel(wfMsg('smw_ac_category_has_icon'));
+		$catWikiPage = SMWDIWikiPage::newFromTitle($categoryTitle);
 
 		global $smwgDefaultStore;
 		if ($smwgDefaultStore == 'SMWTripleStoreQuad') {
-			$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '', true);
+			$iconValues = smwfGetStore()->getPropertyValues($catWikiPage, $catHasIconProperty, NULL, '', true);
 		} else {
-			$iconValues = smwfGetStore()->getPropertyValues($categoryTitle, $catHasIconProperty, NULL, '');
+			$iconValues = smwfGetStore()->getPropertyValues($catWikiPage, $catHasIconProperty, NULL, '');
 		}
 		$iconValue = reset($iconValues); // consider only first
 		if ($iconValue === false) return NULL;
