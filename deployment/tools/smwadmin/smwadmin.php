@@ -440,10 +440,12 @@ if ($dfgCreateRestorePoint) {
 	if (empty($dfgRestorePoint)) {
 		$dfgRestorePoint = "autogen_".uniqid();
 	}
+	$creationDateTime = date ("F d Y H:i:s.", time());
 	$logger->info("Create restore point: $dfgRestorePoint");
 	$rollback->saveInstallation($dfgRestorePoint);
 	$rollback->saveDatabase($dfgRestorePoint);
-	$logger->info("Restore point created");
+	$logger->info("Restore point created at $creationDateTime.");
+	$dfgOut->outputln("Restore point created at $creationDateTime.");
 	if ($dfgShowOKHint) $dfgOut->outputln('__OK__');
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }

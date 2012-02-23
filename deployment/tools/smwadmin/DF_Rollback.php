@@ -102,6 +102,9 @@ class Rollback {
 		$savedInstallation = true;
 		if (!$success) {
 			$logger->error("Could not copy the MW installation.");
+		} else {
+			$logger->info("Software backup file: ".$this->restoreDir."/$name/software.zip");
+			$dfgOut->outputln("Software backup file: ".$this->restoreDir."/$name/software.zip");
 		}
 		return $success;
 	}
@@ -155,6 +158,9 @@ class Rollback {
 		if ($ret != 0) {
 			$dfgOut->outputln("Could not run mysqldump. Skip that. Please set 'df_mysql_dir'. See log for details.");
 			$logger->error("Could not save the database.");
+		} else {
+			$logger->info("Database dump file: ".$this->restoreDir."/$name/dump.sql");
+			$dfgOut->outputln("Database dump file: ".$this->restoreDir."/$name/dump.sql");
 		}
 		return $ret == 0;
 	}
