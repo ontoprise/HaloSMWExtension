@@ -526,7 +526,11 @@ class HACLSMWStore extends SMWStore {
         return $this->mWrappedStore->getSMWPageIDandSort($title, $namespace, $iw, $sort, $canonical);
     }
     
-    public function setLocalRequest($local) {}
+    public function setLocalRequest($local) {
+    	if (method_exists($this->mWrappedStore, setLocalRequest)) {
+    		$this->mWrappedStore->setLocalRequest($local);
+    	}
+    }
 	
 	/**
 	 * Checks if a subject for properties is accessible.
