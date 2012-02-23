@@ -326,6 +326,10 @@ class  HACLSecurityDescriptor  {
 	 */
 	public static function checkCaseForSD($sdName, &$proposal) {
 		list($pe, $peType) = self::nameOfPE($sdName);
+		if ($peType === self::PET_RIGHT) {
+			// There is no restriction on the case of rights.
+			return true;
+		}
 		$proposal = self::nameOfSD($pe, $peType);
 		return ($sdName == $proposal);
 	}
