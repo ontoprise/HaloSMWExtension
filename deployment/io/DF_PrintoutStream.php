@@ -136,7 +136,6 @@ class DFPrintoutStream {
 			$handle = fopen($this->tmpfile, "a");
 			fwrite($handle, $this->formatText($msg, $type));
 			fclose($handle);
-			return;
 		}
 		
 		print $this->formatText($msg, $type);

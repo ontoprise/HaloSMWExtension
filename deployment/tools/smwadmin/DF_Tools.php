@@ -617,7 +617,7 @@ class Tools {
 		$zipExe = empty($mwrootPath) ? 'zip' : self::getZipPath($mwrootPath);
 		if (self::isWindows()) {
 			// we have to make a distinction here because on Windows 7z is used to create archives.
-			$command = "$zipExe a -tzip -r -x!unzip.exe \"$archiveFile\" \"$source\"";
+			$command = "$zipExe a -tzip -r -x!unzip.exe \"$archiveFile\" \"$source/*\"";
 		} else {
 			$command = "$zipExe -r \"$archiveFile\" \"$source\" -x \\*unzip.exe";
 		}

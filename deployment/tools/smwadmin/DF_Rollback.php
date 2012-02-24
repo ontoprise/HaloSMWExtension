@@ -97,7 +97,7 @@ class Rollback {
 		$dfgOut->outputln("[Save installation...");
 		$success = Tools::mkpath($this->restoreDir."/$name");
 		//$success = $success && Tools::copy_dir($this->rootDir, $this->restoreDir."/$name", array($this->rootDir."/deployment"));
-		$success = $success && Tools::makeZip($this->rootDir."/*", $this->restoreDir."/$name/software.zip", $this->rootDir);
+		$success = $success && Tools::makeZip($this->rootDir, $this->restoreDir."/$name/software.zip", $this->rootDir);
 		$dfgOut->output("done.]");
 		$savedInstallation = true;
 		if (!$success) {
