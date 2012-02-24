@@ -7,8 +7,9 @@
 *
 * Needs NSIS 2.35 or higher
 * additional extensions: (see extension folder) 
-*    - FindProcDLL.dll
-*    - KillProcDLL.dll
+*    - UtilProcWMI.dll
+*    - ip.dll
+*    - ShellLink.dll
 */
 
 ;Without files (compiles much faster, for debugging)
@@ -609,15 +610,15 @@ FunctionEnd
 
 Function checkForApacheAndMySQLAndMemcached
  checkagain:
-   FindProcDLL::FindProc "httpd.exe"
+   UtilProcWMI::FindProc "httpd.exe"
    IntOp $0 0 + $R0
-   FindProcDLL::FindProc "mysqld.exe"
+   UtilProcWMI::FindProc "mysqld.exe"
    IntOp $1 0 + $R0
-   FindProcDLL::FindProc "mysqld-nt.exe"
+   UtilProcWMI::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
-   FindProcDLL::FindProc "memcached.exe"
+   UtilProcWMI::FindProc "memcached.exe"
    IntOp $2 0 + $R0
-   FindProcDLL::FindProc "solr.exe"
+   UtilProcWMI::FindProc "solr.exe"
    IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
@@ -636,11 +637,11 @@ Function waitForApacheAndMySQL
    IntOp $2 0 + 10
  checkagain:
    Sleep 1000
-   FindProcDLL::FindProc "httpd.exe"
+   UtilProcWMI::FindProc "httpd.exe"
    IntOp $0 0 + $R0
-   FindProcDLL::FindProc "mysqld.exe"
+   UtilProcWMI::FindProc "mysqld.exe"
    IntOp $1 0 + $R0
-   FindProcDLL::FindProc "mysqld-nt.exe"
+   UtilProcWMI::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
    ${If} $0 == 0
    ${OrIf} $1 == 0
@@ -934,7 +935,7 @@ Function configCustomizationsForUpdate
 FunctionEnd
 
 Function checkForSkype
-    FindProcDLL::FindProc "Skype.exe"
+    UtilProcWMI::FindProc "Skype.exe"
     ${If} $R0 == 1
         MessageBox MB_OKCANCEL  "Seems that Skype is running. Please close it or change its config, so that it does not block TCP port 80." IDOK ok IDABORT abortinstaller 
         abortInstaller:
@@ -942,25 +943,6 @@ Function checkForSkype
         ok:
     ${EndIf}
 FunctionEnd
-
-/*Function startXAMPP
-   SectionGetFlags ${xampp} $0
-   IntOp $0 $0 & ${SF_SELECTED}
-   ${If} $0 == 1
-       FindProcDLL::FindProc "apache.exe"
-       IntOp $0 0 + $R0
-       FindProcDLL::FindProc "mysqld.exe"
-       IntOp $1 0 + $R0
-       FindProcDLL::FindProc "mysqld-nt.exe"
-       IntOp $1 $1 + $R0
-       ${If} $0 == 0
-       ${AndIf} $1 == 0
-        CALL checkForSkype
-        SetOutPath "$INSTDIR"
-        Exec "$INSTDIR\xampp_start.bat"
-       ${EndIf}
-    ${EndIf}
-FunctionEnd*/
 
 
 Function FinishPageShow
@@ -1044,13 +1026,6 @@ Function installMemcached
     Exec "$INSTDIR\installMemcachedAsService.bat"
 FunctionEnd
 
-Function un.uninstallMemcached
-    DetailPrint "Stop and uninstall memcached"
-    SetOutPath "$INSTDIR"
-    Exec "$INSTDIR\uninstallMemcachedAsService.bat"
-    SetOutPath "c:\temp\halo" #dummy to make installation dir removable
-FunctionEnd
-
 Function installAsWindowsService
 	SetOutPath "$INSTDIR"
     DetailPrint "Install Apache and MySQL as service."
@@ -1108,8 +1083,8 @@ FunctionEnd
 
 
 ; Uninstaller
-Function un.uninstallAsWindowsService
-	SetOutPath "$INSTDIR"
+Function un.uninstallApacheAndMySQLAsWindowsService
+    SetOutPath "$INSTDIR"
     DetailPrint "Stop and uninstall Apache and MySQL as service."
     Exec "$INSTDIR\uninstallApacheMySQLAsService.bat"
     
@@ -1119,17 +1094,39 @@ Function un.uninstallAsWindowsService
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
-Function un.checkForApacheAndMySQLAndMemcached
- checkagain:
-   FindProcDLL::FindProc "httpd.exe"
+Function un.stopApacheMySQL
+   # can kill 64-bit processes
+   DetailPrint "Stop Apache and MySQL."
+   UtilProcWMI::FindProc "httpd.exe"
    IntOp $0 0 + $R0
-   FindProcDLL::FindProc "mysqld.exe"
+   UtilProcWMI::FindProc "mysqld.exe"
    IntOp $1 0 + $R0
-   FindProcDLL::FindProc "mysqld-nt.exe"
+   UtilProcWMI::FindProc "mysqld-nt.exe"
+FunctionEnd
+
+Function un.stopSolr
+    # can kill 64-bit processes
+    UtilProcWMI::KillProc "solr.exe"
+FunctionEnd
+
+Function un.uninstallMemcached
+    DetailPrint "Stop and uninstall memcached"
+    SetOutPath "$INSTDIR"
+    Exec "$INSTDIR\uninstallMemcachedAsService.bat"
+    SetOutPath "c:\temp\halo" #dummy to make installation dir removable
+FunctionEnd
+
+Function un.checkForApacheAndMySQLAndMemcachedAndSolr
+ checkagain:
+   UtilProcWMI::FindProc "httpd.exe"
+   IntOp $0 0 + $R0
+   UtilProcWMI::FindProc "mysqld.exe"
+   IntOp $1 0 + $R0
+   UtilProcWMI::FindProc "mysqld-nt.exe"
    IntOp $1 $1 + $R0
-   FindProcDLL::FindProc "memcached.exe"
+   UtilProcWMI::FindProc "memcached.exe"
    IntOp $2 0 + $R0
-   FindProcDLL::FindProc "solr.exe"
+   UtilProcWMI::FindProc "solr.exe"
    IntOp $3 0 + $R0
    ${If} $0 == 1
    ${OrIf} $1 == 1
@@ -1160,10 +1157,12 @@ Section "Uninstall"
 	# MessageBox MB_OK "User said OK!"
     
     ; Un-install services (if installed at all)
-    Call un.uninstallAsWindowsService
+    Call un.uninstallApacheAndMySQLAsWindowsService
     Call un.uninstallMemcached
+    Call un.stopApacheMySQL
+    Call un.stopSolr
     
-    Call un.checkForApacheAndMySQLAndMemcached
+    Call un.checkForApacheAndMySQLAndMemcachedAndSolr
     
     # Delete from PATH variable
     ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\php"
@@ -1698,7 +1697,7 @@ Function checkPorts
   StrCmp $0 "inuse" http_socket_inuse
   Goto http_port_ok
 http_socket_inuse:
-    FindProcDLL::FindProc "Skype.exe"
+    UtilProcWMI::FindProc "Skype.exe"
     ${If} $R0 == 1
         MessageBox MB_OK|MB_ICONEXCLAMATION   "Seems that Skype is blocking TCP port 80. Please close it or change its config."  
         Abort
