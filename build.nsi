@@ -102,6 +102,15 @@ SetCompress off
 !macroend
  
 !define GetWindowsVersion '!insertmacro "GetWindowsVersion"'
+ 
+!macro StrStr ResultVar String SubString
+  Push `${String}`
+  Push `${SubString}`
+  Call StrStr
+  Pop `${ResultVar}`
+!macroend
+
+!define StrStr "!insertmacro StrStr"
 
 ;--------------------------------
 
@@ -140,6 +149,7 @@ Var MUI_TEMP
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_CHECKBOX
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of SMW+ Community Edition and SMW+ Professional"
+!insertmacro MUI_DEFAULT MUI_LICENSEPAGE_BUTTON "I accept the terms of the License aggreement"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\op_license.txt"
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of third party components"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\thirdparty.txt"
@@ -148,6 +158,7 @@ Var MUI_TEMP
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkDirectoryValidity
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
@@ -590,13 +601,15 @@ Function preDirectory
     StrCpy $CHOOSEDIRTEXT $(SELECT_NEWUPDATE_DIR)
   ${EndIf}
   
-  ; Hint for directory. Make sure not to install in 32-bit compatibility dir from Windows 7
-  ; because it contains parantheses.
-  ${GetWindowsVersion} $R0
-  ${If} $R0 == "7"
-  ${OrIf} $R0 == "Vista"
-  ${OrIf} $R0 == "2008"
-    MessageBox MB_OK $(DIRECTORY_HINT) IDOK 0 IDCANCEL 0
+FunctionEnd
+
+Function checkDirectoryValidity
+  ${StrStr} $0 $INSTDIR "("
+  ${StrStr} $1 $INSTDIR ")"
+  ${If} $0 != ""
+  ${OrIf} $1 != ""
+     MessageBox MB_OK $(DIRECTORY_HINT) IDOK 0 IDCANCEL 0
+     Abort
   ${EndIf}
 FunctionEnd
 
@@ -1723,4 +1736,58 @@ mysql_socket_error:
   MessageBox MB_OK|MB_ICONEXCLAMATION "Invalid TCP Port number. It should be an integer between 1 and 65535."
   Abort
 mysql_port_ok:
+FunctionEnd
+ 
+Function StrStr
+/*After this point:
+  ------------------------------------------
+  $R0 = SubString (input)
+  $R1 = String (input)
+  $R2 = SubStringLen (temp)
+  $R3 = StrLen (temp)
+  $R4 = StartCharPos (temp)
+  $R5 = TempStr (temp)*/
+ 
+  ;Get input from user
+  Exch $R0
+  Exch
+  Exch $R1
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+ 
+  ;Get "String" and "SubString" length
+  StrLen $R2 $R0
+  StrLen $R3 $R1
+  ;Start "StartCharPos" counter
+  StrCpy $R4 0
+ 
+  ;Loop until "SubString" is found or "String" reaches its end
+  ${Do}
+    ;Remove everything before and after the searched part ("TempStr")
+    StrCpy $R5 $R1 $R2 $R4
+ 
+    ;Compare "TempStr" with "SubString"
+    ${IfThen} $R5 == $R0 ${|} ${ExitDo} ${|}
+    ;If not "SubString", this could be "String"'s end
+    ${IfThen} $R4 >= $R3 ${|} ${ExitDo} ${|}
+    ;If not, continue the loop
+    IntOp $R4 $R4 + 1
+  ${Loop}
+ 
+/*After this point:
+  ------------------------------------------
+  $R0 = ResultVar (output)*/
+ 
+  ;Remove part before "SubString" on "String" (if there has one)
+  StrCpy $R0 $R1 `` $R4
+ 
+  ;Return output to user
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0
 FunctionEnd
