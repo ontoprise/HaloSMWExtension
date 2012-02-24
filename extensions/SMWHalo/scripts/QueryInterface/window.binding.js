@@ -17,8 +17,9 @@
  */
 
   //when QI is loaded in a dialog iframe then we need the instance of qihelper to be in window.parent
-  window.parent.qihelper = qihelper;
-  window.parent.SPARQL = SPARQL;
+
+  window.top.QIHELPER = QIHELPER;
+  window.top.SPARQL = SPARQL;
   $ = window.$P;
 
   

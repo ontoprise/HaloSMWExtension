@@ -739,13 +739,6 @@ button.btnhov{
   width: 99%;
 }
 
-li[gui="category"] > ul > li[gui="category"], li[gui="category"] > ul > li[gui="category"] > ins{
-  background-image: url("images/or.png");
-  background-position: 0;
-  background-repeat: no-repeat;
-  background: url("images/or.png") no-repeat scroll 0 0 transparent;
-}
-
 .tableSectionTitle{
   font-weight: bold;
   color: gray;

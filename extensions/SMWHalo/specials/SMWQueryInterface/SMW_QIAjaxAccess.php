@@ -275,8 +275,8 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 		$intro_missing = true;
 		$outro_missing = true;
 
-		for ($i = 0; $i < count($params); $i++) {
-			switch ($params[$i]->getName()) {
+    foreach($params as $name => $value){
+			switch ($name) {
 				case "order" :
 					$order_missing = false;
 					break;
@@ -288,53 +288,61 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 					break;
 				case "template" :
 					if ($format != "template")
-					unset($params[$i]);
+					unset($params[$name]);
 					break;
 				case "intro" :
-					if (substr($format, 0, 4) != "ofc-")
-					$intro_missing = false;
+					if (substr($format, 0, 4) != "ofc-"){
+            $intro_missing = false;
+          }
 					break;
 				case "outro" :
-					if (substr($format, 0, 4) != "ofc-")
-					$outro_missing = false;
+					if (substr($format, 0, 4) != "ofc-"){
+            $outro_missing = false;
+          }
 					break;
 				case "headers" :
-					if ($format != "table" && $format != "broadtable")
-					unset($params[$i]);
+					if ($format != "table" && $format != "broadtable"){
+            unset($params[$name]);
+          }
 					break;
 			}
 		}
 		if ($order_missing) {
-			$orderParam = new Parameter('order', Parameter::TYPE_STRING);
+      $name = 'order';
+			$orderParam = new Parameter($name, Parameter::TYPE_STRING);
 			$orderParam->setMessage('smw_qi_tt_order');
 			$orderParam->addCriteria(new CriterionInArray('ascending', 'descending', 'none'));
 			$orderParam->setDefault('none');
 			$orderParam->setDescription(wfMsg('smw_qi_tt_order'));
-			$params[] = $orderParam;
+			$params[$name] = $orderParam;
 		}
 		if ($limit_missing) {
-			$limitParam = new Parameter('limit', Parameter::TYPE_INTEGER);
+      $name = 'limit';
+			$limitParam = new Parameter($name, Parameter::TYPE_INTEGER);
 			$limitParam->setMessage('smw_qi_tt_limit');
 			$limitParam->setDescription(wfMsg('smw_qi_tt_limit'));
-			$params[] = $limitParam;
+			$params[$name] = $limitParam;
 		}
 		if ($offset_missing) {
-			$offsetParam = new Parameter('offset', Parameter::TYPE_INTEGER);
+      $name = 'offset';
+			$offsetParam = new Parameter($name, Parameter::TYPE_INTEGER);
 			$offsetParam->setMessage('smw_qi_tt_offset');
 			$offsetParam->setDescription(wfMsg('smw_qi_tt_offset'));
-			$params[] = $offsetParam;
+			$params[$name] = $offsetParam;
 		}
 		if ($intro_missing) {
-			$introParam = new Parameter('intro', Parameter::TYPE_STRING);
+      $name = 'intro';
+			$introParam = new Parameter($name, Parameter::TYPE_STRING);
 			$introParam->setMessage('smw_qi_tt_intro');
 			$introParam->setDescription(wfMsg('smw_qi_tt_intro'));
-			$params[] = $introParam;
+			$params[$name] = $introParam;
 		}
 		if ($outro_missing) {
-			$outroParam = new Parameter('outro', Parameter::TYPE_STRING);
+      $name = 'outro';
+			$outroParam = new Parameter($name, Parameter::TYPE_STRING);
 			$outroParam->setMessage('smw_qi_tt_outro');
 			$outroParam->setDescription(wfMsg('smw_qi_tt_outro'));
-			$params[] = $outroParam;
+			$params[$name] = $outroParam;
 		}
 		$jsonEnc = new Services_JSON();
 
@@ -548,7 +556,8 @@ function parseQuery($query, $page) {
  */
 function smwf_qi_getPage($args= "") {
 	global $wgServer, $wgScript, $wgContLang, $smwgHaloQueryInterfaceHost4Wysiwyg;
-	$qiScript = $wgScript . '/' . $wgContLang->getNsText(NS_SPECIAL) . ':QueryInterface';
+//	$qiScript = $wgScript . '/' . $wgContLang->getNsText(NS_SPECIAL) . ':QueryInterface';
+  $qiScript = $wgScript . '?title=' . $wgContLang->getNsText(NS_SPECIAL) . ':QueryInterface';
 
 	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page
@@ -556,7 +565,7 @@ function smwf_qi_getPage($args= "") {
 
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = doHttpRequestWithCurl($host, $qiScript);
+		list($httpErr, $page) = doHttpRequestWithCurl($host, $qiScript, true);
 	} else {
 		return "Error: please activate the Curl module in your PHP configuration";
 	}
@@ -718,6 +727,20 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
 	$page = substr($page, $pos - 1);
 }
 
+function dbg_curl_data($curl, $data=null) {
+  static $buffer = '';
+
+  if ( is_null($curl) ) {
+    $r = $buffer;
+    $buffer = '';
+    return $r;
+  }
+  else {
+    $buffer .= $data;
+    return strlen($data);
+  }
+}
+
 /**
  * retrieve a web page via curl
  *
@@ -727,6 +750,9 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
  * @return array(int, string) with httpCode, page
  */
 function doHttpRequestWithCurl($server, $file, $debug = false) {
+  global $wgDisableCookieCheck, $wgSessionsInMemcached, $wgCookiePath, $wgCookieDomain,
+			$wgCookieSecure, $wgCookieHttpOnly, $wgSessionHandler, $wgCookiePrefix;
+
 	if ($file{0} != "/")
 	$file = "/" . $file;
 	// check if a port is give in the URL
@@ -738,29 +764,94 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 	preg_match('/^(\w+):\/\//', $server, $match);
 	$proto = $match[1];
 
-	$c = curl_init();
-	curl_setopt($c, CURLOPT_URL, $server . $file);
-	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+  //////////////////////////////////////
+
+  $curl = curl_init($server . $file);
+
+//curl_setopt($curl, CURLOPT_HEADERFUNCTION, 'dbg_curl_data');
+//curl_setopt($curl, CURLOPT_WRITEFUNCTION, 'dbg_curl_data');
+  curl_setopt($curl, CURLOPT_HEADER, true);
+  curl_setopt($curl, CURLOPT_HTTPHEADER,array (
+        "Content-Type: text/xml; charset=utf-8",
+        "Accept-Language: en-us,en;q=0.8,ru-ru;q=0.5,ru;q=0.3",
+        "Connection: keep-alive",
+        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Keep-Alive: 300"
+    ));
+  curl_setopt ($curl ,CURLOPT_VERBOSE , true);
+  curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+  $cookie = '';
+  $index = 0;
+//  $session = '_session';
+  foreach($_COOKIE as $key => $value){
+//    if(strcasecmp(substr($key, strlen($session) * -1), $session) != 0){
+    if(strcasecmp(substr($key, 0, strlen($wgCookiePrefix)), $wgCookiePrefix) == 0){
+      if($index > 0){
+        $cookie .= '; ';
+      }
+      $cookie .= $key .'='. $value;
+      $index++;
+    }
+  }
+  curl_setopt($curl, CURLOPT_COOKIE, $cookie . '; path=/; domain=localhost');
+  curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+  curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+  curl_setopt ($curl, CURLOPT_COOKIEFILE, '/cookie.txt');
+  curl_setopt ($curl, CURLOPT_COOKIEJAR, '/cookie.txt');
+
+//curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'UserID=' . $_COOKIE[ $wgCookiePrefix . 'UserID' ]);
+//curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'UserName=' . $_COOKIE[ $wgCookiePrefix . 'UserName' ]);
+//  curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . $_COOKIE[ session_name() ] . '; path=/; domain=localhost');
+//curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . $_COOKIE[ session_name() ]);
+//curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . session_id() );
+//if(isset($_COOKIE[ $wgCookiePrefix . 'Token' ])){
+//  curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'Token' . '=' . $_COOKIE[ $wgCookiePrefix . 'Token' ]);
+//}
+
+//$wgDisableCookieCheck = true;
+
+
+  /////////////////////////////////////
+
+//	$curl = curl_init();
+//  curl_setopt($curl, CURLOPT_URL, $server . $file);
+//  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+////  curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+//  curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'UserID=' . $_COOKIE[ $wgCookiePrefix . 'UserID' ]);
+//  curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'UserName=' . $_COOKIE[ $wgCookiePrefix . 'UserName' ]);
+////  curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . $_COOKIE[ session_name() ] . '; path=/; domain=localhost');
+//  curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . $_COOKIE[ session_name() ]);
+//  curl_setopt($curl, CURLOPT_COOKIE, session_name() . '=' . session_id() );
+//  if(isset($_COOKIE[ $wgCookiePrefix . 'Token' ])){
+//    curl_setopt($curl, CURLOPT_COOKIE, $wgCookiePrefix . 'Token' . '=' . $_COOKIE[ $wgCookiePrefix . 'Token' ]);
+//  }
+//  curl_setopt ($curl, CURLOPT_COOKIEFILE, 'c:/dev/tmp/cookie.txt');
+//  curl_setopt ($curl, CURLOPT_COOKIEJAR, 'c:/dev/tmp/cookie.txt');
+  
+
 	if ($proto == "https") {
-		curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0); // don't verify ssl
-		curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0); // don't verify ssl
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 	}
 	if (isset($port))
-	curl_setopt($c, CURLOPT_PORT, $port);
+	curl_setopt($curl, CURLOPT_PORT, $port);
 	// needs authentication?
 	if (isset($_SERVER['AUTH_TYPE'])) {
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-			curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'] . ":" . $_SERVER['PHP_AUTH_PW']);
+			curl_setopt($curl, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'] . ":" . $_SERVER['PHP_AUTH_PW']);
 		} else if (isset($_SERVER['PHP_AUTH_DIGEST'])) {
 			$authData = qiParseHttpDigest($_SERVER['PHP_AUTH_DIGEST']);
 			global $smwgHaloHttpAuthPassword;
-			curl_setopt($c, CURLOPT_USERPWD, $authData['username'] . ':' . $smwgHaloHttpAuthPassword);
-			curl_setopt($c, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+			curl_setopt($curl, CURLOPT_USERPWD, $authData['username'] . ':' . $smwgHaloHttpAuthPassword);
+			curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
 		}
 	}
 	// user agent (important i.e. for Popup in FCK Editor)
-	if (isset($_SERVER['HTTP_USER_AGENT']))
-	curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+	if (isset($_SERVER['HTTP_USER_AGENT'])){
+    curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+  }
 	// if the secret is set, then create some key and hash it with the secret
 	global $smwgHaloQueryInterfaceSecret;
 	if (isset($smwgHaloQueryInterfaceSecret)) {
@@ -768,20 +859,23 @@ function doHttpRequestWithCurl($server, $file, $debug = false) {
 		$token = $wgRequest->getText('s');
 		$hash = $wgRequest->getText('t');
 		$data = array('s' => $token, 't' => $hash);
-		curl_setopt($c, CURLOPT_POST, true);
-		curl_setopt($c, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 	}
 
-	$page = curl_exec($c);
-	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
-	if ($debug) {
-		$contentType = curl_getinfo($c, CURLINFO_CONTENT_TYPE);
-		$curlErr = curl_errno($c);
-		$calledUrl = curl_getinfo($c, CURLINFO_EFFECTIVE_URL);
-		var_dump($httpErr, $contentType, $curlErr, $calledUrl);
-	}
-	curl_close($c);
-	return array($httpErr, $page);
+	
+//	if ($debug) {
+//    curl_setopt($curl, CURLOPT_VERBOSE, true); // Display communication with server
+//    $fp = fopen("c:/dev/tmp/curl.txt", "w");
+//    curl_setopt($curl, CURLOPT_STDERR, $fp); // Display communication with server
+//  }
+  $page = curl_exec($curl);
+	$httpErr = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+  curl_close($curl);
+//  if(isset($fp)){
+//    fclose($fp);
+//  }
+  return array($httpErr, $page);
 }
 
 /**

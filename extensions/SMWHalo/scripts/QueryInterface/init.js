@@ -41,9 +41,6 @@ jQuery(document).ready(function(){
         jQuery(this).css('display', 'none');
       });
     });
-
-    //put qihelper in parent window so is can be used in the dialog script
-    window.parent.qihelper = qihelper;
   }
 });
 
@@ -110,9 +107,45 @@ function initToolTips(){
 
 
 function init(){
-  isInit = true; 
-  initialize_qi();
+  isInit = true;
+  //get query from url string
+  var query = decodeURIComponent(jQuery.query.get('query'));
+  query = jQuery.trim(query).replace(/^{{#[^:]+:/, '').replace(/}}$/, '');
+
+  if(query.length){
+    //if it's sparql then init sparql qi and switch to it
+    if(isSparqlQuery(query)){
+      if(typeof SPARQL !== 'undefined' && SPARQL && SPARQL.smwgHaloWebserviceEndpoint){
+        var q = getQueryParameters(query);
+        SPARQL.init(q.query, q.queryParameters, false);
+        SPARQL.switchToSparqlView();
+      }
+    }
+    //else init ask qi
+    else{
+      window.top.qihelper = window.qihelper = QIHELPER;
+      QIHELPER.initialize();
+      QIHELPER.initFromQueryString(query);      
+    }
+  }
+  else{
+    window.top.qihelper = window.qihelper = new QIHelper();
+  }
+  
   initToolTips();
+}
+
+function isSparqlQuery(query){
+  var regex = /(?:BASE\s+[\s\S]+)*(?:PREFIX\s+[\s\S]+)*SELECT\s+[\s\S]+WHERE\s+{[\u0000-\uFFFF]+}/i;
+  return regex.test(query);
+}
+
+function getQueryParameters(query){
+  var regex = /\|\s*(\w+)\s*=\s*(\w+)\s*/g;
+  var result = {};
+  result.query = query.replace(regex, '');
+  result.queryParameters = {};
+  return result;
 }
   
 

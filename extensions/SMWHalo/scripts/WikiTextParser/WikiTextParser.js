@@ -880,6 +880,7 @@ WikiTextParser.prototype = {
 		// 5 - find <pre> or </pre>
 		// 6 - find <rule or </rule>
 		// 7 - find {{ or }} as well as {{{ or }}}
+    // 8 - find {{#sparql:
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var askCount = 0;  	  // Number of open <ask>-statements
@@ -890,7 +891,7 @@ WikiTextParser.prototype = {
 			switch (state) {
 				case 0:
 					// Search for "[[", "<nowiki>", <pre>, <rule or <ask
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:", "{"]);
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:", "{{#sparql:", "{"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
@@ -914,9 +915,11 @@ WikiTextParser.prototype = {
 						state = 3;
 					} else if (findings[1] == "{{#ask:") {
 						state = 4;
-                    } else if (findings[1] == "{") {
-                        state = 7;
-                    }
+          } else if (findings[1] == "{") {
+            state = 7;
+          } else if (findings[1] == "{{#sparql:") {
+            state = 8;
+          }
 					break;
 				case 1:
 					// we are within an annotation => search for [[ or ]]
@@ -1041,29 +1044,53 @@ WikiTextParser.prototype = {
 					// opening <rule> is closed
 					state = 0;
 					break;
-                case 7:
-                    // we are within an {{ template or other parser function
-                    state = 0;
-                    currentPos++;
-                    // check if this was a template or parameter (another { must follow)
-                    if (this.text.charAt(currentPos -1) != '{')
-                        break;
-                    currentPos++;
-                    var counter = 2; // count all opened {
-                    while (counter > 0) {
-                        var findOpen = this.text.indexOf('{', currentPos);
-                        var findClose = this.text.indexOf('}', currentPos);
-                        if (findClose == -1)
-                            break;
-                        if (findOpen > -1 && findOpen < findClose) {  
-                            currentPos = findOpen + 1;
-                            counter++;
-                        } else {
-                            currentPos = findClose + 1;
-                            counter--;
-                        }
-                    }
-                    break;			
+        case 7:
+            // we are within an {{ template or other parser function
+            state = 0;
+            currentPos++;
+            // check if this was a template or parameter (another { must follow)
+            if (this.text.charAt(currentPos -1) != '{')
+                break;
+            currentPos++;
+            var counter = 2; // count all opened {
+            while (counter > 0) {
+                var findOpen = this.text.indexOf('{', currentPos);
+                var findClose = this.text.indexOf('}', currentPos);
+                if (findClose == -1)
+                    break;
+                if (findOpen > -1 && findOpen < findClose) {  
+                    currentPos = findOpen + 1;
+                    counter++;
+                } else {
+                    currentPos = findClose + 1;
+                    counter--;
+                }
+            }
+            break;
+         case 8:
+//					 we are within an {{#sparql:-template
+					pos = this.parseSparqlTemplate(currentPos);
+					if( pos != -1 ) {
+						querytext = this.text.substring(currentPos - 1, pos);
+						queryName = this.getQueryName(querytext);
+						plainQueryText = this.text.substring(currentPos + 9, pos - 2);
+						plainQueryText = plainQueryText.replace(/\n/g, '');
+						query = new WtpQuery(
+								querytext,
+								currentPos-1,
+								pos,
+								this,
+								queryName,
+								plainQueryText);
+						if (query) {
+							if (query instanceof WtpQuery) {
+								this.askQueries.push(query);
+							}
+						}
+					}
+					currentPos = (pos == -1) ? currentPos+10 : pos;
+          state = 0;
+					break;
 			}
 		}
 		if (bracketCount != 0) {
@@ -1115,6 +1142,55 @@ WikiTextParser.prototype = {
 				return -1;
 			}
 			
+			var action = actionTable[ct];
+			if (!action) {
+				return -1;
+			}
+			action = action[findings[1]];
+			if (!action) {
+				return -1;
+			}
+			if (action[0] === 'push') {
+				stack.push(action[1]);
+			} else if (action[0] === 'pop') {
+				stack.pop();
+			}
+			currentPos = findings[0]+ findings[1].length;
+		}
+		return currentPos;
+	},
+
+  parseSparqlTemplate : function(currentPos) {
+		var parserTable = new Object();
+		parserTable['sparql'] = ["{{#sparql:", "{{{", "{{", "}}"];
+		parserTable['tparam'] = ["}}}"];
+		parserTable['tmplt'] = ["{{#sparql:", "{{{", "}}"];
+
+		var actionTable = new Object();
+		actionTable['sparql'] = new Object();
+		actionTable['sparql']["{{#sparql:"] = ["push", "sparql"];
+		actionTable['sparql']["{{"]      = ["push", "tmplt"];
+		actionTable['sparql']["{{{"]     = ["push", "tparam"];
+		actionTable['sparql']["}}"]      = ["pop"];
+
+		actionTable['tparam'] = new Object();
+		actionTable['tparam']["}}}"] = ["pop"];
+
+		actionTable['tmplt'] = new Object();
+		actionTable['tmplt']["{{#sparql:"] = ["push", "sparql"];
+		actionTable['tmplt']["{{{"]     = ["push", "tparam"];
+		actionTable['tmplt']["}}"]      = ["pop"];
+
+		var stack = new Array();
+		stack.push('sparql'); // the first opening ask is already parsed
+		while (stack.size() > 0) {
+			var ct = stack[stack.size()-1];
+			var findings = this.findFirstOf(currentPos, parserTable[ct]);
+			if (findings[1] == null) {
+				// nothing found
+				return -1;
+			}
+
 			var action = actionTable[ct];
 			if (!action) {
 				return -1;

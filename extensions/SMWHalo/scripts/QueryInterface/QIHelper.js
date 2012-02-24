@@ -32,12 +32,12 @@
  */
 
 
-window.qihelper = null;
+//window.qihelper = null;
 var QIHelperSavedQuery;
 var qiPreviewDialog;
 
 var QIHelper = Class.create();
-QIHelper.prototype = {
+QIHELPER = QIHelper.prototype = {
 
   selectedResultFormat : null,
   /**
@@ -3096,6 +3096,8 @@ QIHelper.prototype = {
       this.initFromQueryString($$('#askQI #fullAskText')[0].value);
     if ($$('#askQI #fullAskText')[0].value.length == 0)
       $$('#askQI #previewcontent')[0].innerHTML = "";
+
+    window.parent.askquery = $$('#askQI #fullAskText')[0].value;
   },
 
   initFromQueryString : function(ask) {

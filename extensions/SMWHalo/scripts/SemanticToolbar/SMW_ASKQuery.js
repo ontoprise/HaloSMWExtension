@@ -147,27 +147,45 @@ ASKQuery.prototype = {
     smwhgLogger.log(selection,"STB-Queries","create_clicked");
     /*ENDLOG*/
 
-    this.openQueryInterfaceDialog(mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE', smwhgASKQuery.setNewAskQuery);
+    this.openQueryInterfaceDialog(null, smwhgASKQuery.setNewAskQuery);
 
   },
 
-  openQueryInterfaceDialog: function(href, onCleanup){
-    jQuery.fancybox({
-      'href' : href,
-      'width' : 977,
-      'height' : 600,
-      'padding': 10,
-      'margin' : 0,
-      'autoScale' : false,
-      'transitionIn' : 'none',
-      'transitionOut' : 'none',
-      'type' : 'iframe',
-      'overlayColor' : '#222',
-      'overlayOpacity' : '0.8',
-      'hideOnContentClick' : false,
-      'scrolling' : 'auto',
-      'onCleanup' : onCleanup      
-    });
+  openQueryInterfaceDialog: function(query, onOk, onCancel){
+    query = query || '';
+    if(query.length){
+      query = '&query=' + encodeURIComponent(query);
+    }
+
+    var url = mw.config.get('wgScript') + '?title=Special:QueryInterface&rsargs[]=CKE' + query;
+
+    var dialog = jQuery('<div/>')
+                .html('<iframe id="qiDialogIframe" src="' + url + '"></iframe>')
+                .dialog({
+                    autoOpen: false,
+                    modal: true,
+                    height: 770,
+                    width: 985,
+                    title: 'Query Interface',                    
+                    close: function(){
+                      jQuery( this ).dialog('destroy');
+                    },
+                    buttons: {
+                      Ok: function() {
+                        if(typeof(onOk) === 'function'){
+                          onOk();
+                        }
+                        jQuery( this ).dialog('close');
+                      },
+                      Calcel: function() {
+                        if(typeof(onCancel) === 'function'){
+                          onCancel();
+                        }
+                        jQuery( this ).dialog('close');
+                      }
+      }
+                });
+    dialog.dialog('open');
   },
 
   /**
@@ -193,59 +211,26 @@ ASKQuery.prototype = {
   
     var query = queries[selindex].getQueryText().replace(/\n|\r/g, '');
 
-    var uri = mw.config.get('wgScript') + '?action=ajax&rs=smwf_qi_getAskPage&rsargs[]=CKE' + encodeURIComponent('&query=' + query);
-    this.openQueryInterfaceDialog(uri, smwhgASKQuery.setUpdatedAskQuery);
+    this.openQueryInterfaceDialog(query, smwhgASKQuery.setUpdatedAskQuery);
   },
-
-  getQIHelper: function(){
-    // some extensions use the YUI lib that adds an additional iframe
-    if(!smwhgASKQuery.qihelper){
-      for (i=0; i<window.top.frames.length; i++) {
-        if (window.top.frames[i].qihelper) {
-          smwhgASKQuery.qihelper = window.top.frames[i].qihelper;
-          break;
-        }
-      }
-    }
-
-    return smwhgASKQuery.qihelper;
-  },
-
-  saveQuery: function(){
-    mw.log('OK clicked');
-    smwhgASKQuery.getQIHelper().querySaved = true;
-    jQuery.fancybox.close();
-    delete smwhgASKQuery.qihelper;
-
-  },
-
-  cancelQuery: function(){
-    mw.log('Cancel clicked');
-    smwhgASKQuery.getQIHelper().querySaved = false;
-    jQuery.fancybox.close();
-    delete smwhgASKQuery.qihelper;
-  },
-
 
   /**
  * replaces existing query annotations
  */
   setUpdatedAskQuery: function() {
-    //	alert('Query Interface is going to be closed! Saving Query now...');
-    var qiHelperObj = smwhgASKQuery.getQIHelper();
-    
-   
-    var newQuery = qiHelperObj.getAskQueryFromGui();
-    if( typeof( qiHelperObj.querySaved) == 'undefined' ||
-      qiHelperObj.querySaved !== true ) {
-      return;
+    var newQuery;
+    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery()){
+      newQuery = SPARQL.getQuery();
     }
-    if( typeof( qiHelperObj.queryFormated ) === 'undefined' ) {
-      // format query if not already done
-      newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
-      newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
-      newQuery = newQuery.replace(/\]\]</g, "]]\n<");
-      newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+    else{
+      newQuery = QIHELPER.getAskQueryFromGui();
+      if( typeof( QIHELPER.queryFormated ) === 'undefined' ) {
+        // format query if not already done
+        newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
+        newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
+        newQuery = newQuery.replace(/\]\]</g, "]]\n<");
+        newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+      }
     }
     smwhgASKQuery.wtp.initialize();
     var queries = smwhgASKQuery.wtp.getAskQueries();
@@ -262,28 +247,26 @@ ASKQuery.prototype = {
     /*ENDLOG*/
     queries[i].replaceAnnotation(newQuery);
     smwhgASKQuery.fillList();
-    delete qiHelperObj;
   },
 
   /**
  * set new query annotations
  */
   setNewAskQuery:function() {
-    var qiHelperObj = smwhgASKQuery.getQIHelper();
-    
-    var newQuery = qiHelperObj.getAskQueryFromGui();
-    if( typeof( qiHelperObj.querySaved) == 'undefined' ||
-      qiHelperObj.querySaved !== true ) {
-      return;
+    var newQuery;
+    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery()){
+      newQuery = SPARQL.getQuery();
     }
-    newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
-    newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
-    newQuery = newQuery.replace(/\]\]</g, "]]\n<");
-    newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+    else{
+      newQuery = QIHELPER.getAskQueryFromGui();
+      newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
+      newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
+      newQuery = newQuery.replace(/\]\]</g, "]]\n<");
+      newQuery = newQuery.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+    }
 	
     smwhgASKQuery.wtp.addAnnotation(newQuery);
     refreshSTB.refreshToolBar();
-    delete qiHelperObj;
   }
 
 

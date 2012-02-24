@@ -17,13 +17,14 @@
  */
 
 (function($){
-  if(!mw.config.get('smwgHaloWebserviceEndpoint')){
-    mw.log('Error: smwgHaloWebserviceEndpoint is not defined. Failed to load SPARQL module.');
+  var smwgHaloWebserviceEndpoint = mw.config.get('smwgHaloWebserviceEndpoint');
+  if(!smwgHaloWebserviceEndpoint){
+    mw.log('Info: smwgHaloWebserviceEndpoint is not defined. Failed to load SPARQL module.');
     return;
   }
   
   SPARQL = {
-    smwgHaloWebserviceEndpoint: 'http://' + mw.config.get('smwgHaloWebserviceEndpoint'),
+    smwgHaloWebserviceEndpoint: 'http://' + smwgHaloWebserviceEndpoint,
     uid: 0,
     iri_delim: '/',
     parserFuncString: '',
@@ -306,8 +307,12 @@
   };
 
 
-  SPARQL.sparqlToTree = function(sparqlQuery){
-    sparqlQuery = sparqlQuery || SPARQL.getNamespaceString() + SPARQL.queryString;
+  SPARQL.sparqlToTree = function(sparqlQuery, addDefaultNamespaces){
+    addDefaultNamespaces = typeof(addDefaultNamespaces) === 'undefined' ? true : addDefaultNamespaces;
+    sparqlQuery = sparqlQuery || SPARQL.queryString;
+    if(addDefaultNamespaces){
+      sparqlQuery = SPARQL.getNamespaceString() + sparqlQuery;
+    }
     if(!SPARQL.validateQueryString(sparqlQuery)){
       return;
     }
@@ -580,9 +585,7 @@
         }
 
         SPARQL.askToSparql(mainQuery, paramString);
-      }
-
-      
+      }      
     };
 
     switchToSparqlBtn.live('click', function(){
@@ -2671,7 +2674,7 @@
     })
   };
 
-  SPARQL.init = function(){
+  SPARQL.init = function(query, queryParameters, addDefaultNamespaces){
     if(!SPARQL.initialized){
       SPARQL.Model.reset();
       SPARQL.getWikiPrefixes();      
@@ -2694,22 +2697,14 @@
       SPARQL.initGraphSelectBox();
       SPARQL.initialized = true;
     }
+
+    if(query){
+      SPARQL.sparqlToTree(query, addDefaultNamespaces);
+    }
   };
 
 
   $(document).ready(function(){
-//    $.ajaxSetup({
-//      xhr: SPARQL.getXHR(),
-//      accepts: {
-//        xml: "application/xml, text/xml",
-//        html: "text/html",
-//        script: "text/javascript, application/javascript",
-//        json: "application/json, text/javascript",
-//        text: "text/plain",
-//        _default: "*/*"
-//      }
-//    });
-    
     SPARQL.activateSwitchToSparqBtn();
   }); 
 

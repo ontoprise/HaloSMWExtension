@@ -1597,6 +1597,7 @@ function smwhfRegisterResourceLoaderModules() {
 		'styles' => array(
 			),
 		'dependencies' => array(
+      'jquery.ui.dialog',
 			'ext.smwhalo.semanticToolbar'
 			)
 			);
@@ -1661,14 +1662,15 @@ function smwhfRegisterResourceLoaderModules() {
 			$dependencies = array(
       'ext.smwhalo.Language',
       'ext.jquery.query',
-      'ext.ScriptManager.prototype',
       'ext.jquery.qtip',
       'ext.jquery.tree',
       'ext.smwhalo.json2',
       'jquery.ui.dialog',
       'jquery.ui.tabs',
       'ext.smwhalo.general',
-      'jquery.ui.combobox'
+      'jquery.ui.combobox',
+      'ext.smw.tooltips',
+      'ext.ScriptManager.prototype'
      );
 
 			$wgResourceModules['ext.smwhalo.queryInterface'] = $moduleTemplate + array(
