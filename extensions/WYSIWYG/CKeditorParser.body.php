@@ -570,13 +570,13 @@ class CKeditorParser extends CKeditorParserWrapper {
 
           if (strlen($fck_mw_template) > 2) {
             if ($opened <= $closed) { // {{template}} is NOT in [] or [[]]
-              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="' . $fck_mw_template . '">' . str_replace(array("\r\n", "\n", "\r"), ' ', $inner) . '</span>';
+              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="' . $fck_mw_template . '">' . str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner) . '</span>';
             } else {
-              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = str_replace(array("\r\n", "\n", "\r"), ' ', $inner);
+              $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner);
             }
           } else if (strlen($fck_mw_template) > 1) { // SF tag
             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="' . $funcName . '" _fck_mw_tagtype="' . $fck_mw_template . '">'
-                    . str_replace(array("\r\n", "\n", "\r"), ' ', $inner) . '</span>';
+                    . str_replace(array("\r\n", "\n", "\r"), 'fckLR', $inner) . '</span>';
           } else {
             $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="' . $funcName . '" _fck_mw_tagtype="' . $fck_mw_template . '">';
             if (strlen($inner) > strlen($funcName) + 5) {
@@ -729,7 +729,8 @@ class CKeditorParser extends CKeditorParserWrapper {
     $parserOutput = parent::parse($text, $title, $options, $linestart, $clearState, $revid);
 
 
-    $parserOutput->setText(strtr($parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>')));
+//    $parserOutput->setText(strtr($parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => '<br fcklr="true"/>')));
+    $parserOutput->setText(strtr($parserOutput->getText(), array('FCKLR_fcklr_FCKLR' => 'fckLR')));
     $parserOutput->setText(strtr($parserOutput->getText(), array('--~~~~' => '<span class="fck_mw_signature">_</span>')));
 
     $categories = $parserOutput->getCategories();

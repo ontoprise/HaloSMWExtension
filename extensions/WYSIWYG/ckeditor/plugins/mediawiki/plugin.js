@@ -566,11 +566,6 @@ CKEDITOR.customprocessor.prototype =
     toHtml : function( data, fixForBody )
     {
         data = CKEDITOR.ajax.loadHalo('wfSajaxWikiToHTML', [data, window.parent.wgPageName]);
-
-        //replace only "fcklr" which are not preceded by "<br "
-        data = data.replace(/(\<br\s+)?fckLR/gi, function($0, $1){
-          return $1 ? $0 : '<br fckLR="true">';
-        });
         
         var fragment = CKEDITOR.htmlParser.fragment.fromHtml( data, fixForBody ),
         writer = new CKEDITOR.htmlParser.basicWriter();
@@ -661,10 +656,10 @@ CKEDITOR.customprocessor.prototype =
             xmlDoc.loadXML(data);
             
             //IE xml validation. Uncomment for debugging purposes
-            //xmlDoc.validateOnParse = true;
-            //if (xmlDoc.parseError.errorCode != 0) {
-                //alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
-            //}  
+          xmlDoc.validateOnParse = true;
+          if (xmlDoc.parseError.errorCode != 0) {
+              alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
+          }  
         }       
         
         return xmlDoc;
@@ -1096,14 +1091,15 @@ CKEDITOR.customprocessor.prototype =
                                     stringBuilder.push( '</math>' );
                                     return;
                                 }
-                                // external image?
+                                
                                 var src = htmlNode.getAttribute( 'src' );
-                                if (src.toLowerCase().match(/^https?:\/\//)) {
+                                var imgName		= htmlNode.getAttribute( '_fck_mw_filename' ) || htmlNode.getAttribute( '_cke_mw_filename' ) || '';
+                                // external image doesn't have a local file name
+                                if (!imgName.length) {
                                     stringBuilder.push( src );
                                     return;
-                                }
-                            
-                                var imgName		= htmlNode.getAttribute( '_fck_mw_filename' ) || htmlNode.getAttribute( '_cke_mw_filename' ) || '';
+                                }                            
+                                
                                 var imgCaption	= htmlNode.getAttribute( 'alt' ) || '';
                                 var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || htmlNode.getAttribute( '_cke_mw_type' ) || '';
                                 var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '';

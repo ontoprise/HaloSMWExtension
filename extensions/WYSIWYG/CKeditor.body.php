@@ -773,19 +773,13 @@ function ToggleCKEditor( mode, objId ){
 	var oToggleLink = document.getElementById( 'toggle_' + objId );
 	var oPopupLink = document.getElementById( 'popup_' + objId );
 
-	if ( firstLoad ){
+  if ( firstLoad ){
 		// firstLoad = true => FCKeditor start invisible
 		if( oToggleLink ) oToggleLink.innerHTML = 'Loading...';
-		sajax_request_type = 'POST';
 		CKEDITOR.ready = false;
-		sajax_do_call('wfSajaxWikiToHTML', [SRCtextarea.value], function( result ){
-			if ( firstLoad ){ //still
-				SRCtextarea.value = result.responseText; // insert parsed text
-				onLoadCKeditor();
-				if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
-				CKEDITOR.ready = true;
-			}
-		});
+    onLoadCKeditor();
+    if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
+    CKEDITOR.ready = true;
 		return true;
 	}
 
@@ -838,7 +832,7 @@ function ToggleCKEditor( mode, objId ){
 		if( oPopupLink ) oPopupLink.style.display = 'none';
         if (typeof AdvancedAnnotation != 'undefined')
             AdvancedAnnotation.unload();
-        if (false && loadSTBonStartup )
+        if (false && loadSTBonStartup)
             CKEDITOR.instances[objId].execCommand('SMWtoolbar');
 	}
 
