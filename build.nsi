@@ -103,14 +103,14 @@ SetCompress off
  
 !define GetWindowsVersion '!insertmacro "GetWindowsVersion"'
  
-!macro StrStr ResultVar String SubString
+!macro StrContains ResultVar String SubString
   Push `${String}`
   Push `${SubString}`
-  Call StrStr
+  Call StrContains
   Pop `${ResultVar}`
 !macroend
 
-!define StrStr "!insertmacro StrStr"
+!define StrContains "!insertmacro StrContains"
 
 ;--------------------------------
 
@@ -604,8 +604,8 @@ Function preDirectory
 FunctionEnd
 
 Function checkDirectoryValidity
-  ${StrStr} $0 $INSTDIR "("
-  ${StrStr} $1 $INSTDIR ")"
+  ${StrContains} $0 $INSTDIR "("
+  ${StrContains} $1 $INSTDIR ")"
   ${If} $0 != ""
   ${OrIf} $1 != ""
      MessageBox MB_OK $(DIRECTORY_HINT) IDOK 0 IDCANCEL 0
@@ -791,6 +791,9 @@ Function changeConfigForFullXAMPP
         
     DetailPrint "Config customizations"
     CALL configCustomizationsForNew
+    
+    DetailPrint "Config external apps"
+    CALL changeExternalApps
 FunctionEnd
 
 ; deprecated
@@ -955,6 +958,28 @@ Function checkForSkype
             Abort
         ok:
     ${EndIf}
+FunctionEnd
+
+Function changeExternalApps
+        # Set SOLR installation path in externalapps
+        IfFileExists "$INSTDIR\htdocs\mediawiki\deployment\config\externalapps" 0 create_externalapps
+        Goto inst_externalapps
+        
+        create_externalapps:
+        ; Check if DF (WAT) is installed
+        IfFileExists "$INSTDIR\htdocs\mediawiki\deployment\config\*.*" 0 nodf
+        ; create file externalapps
+        FileOpen $0 "$INSTDIR\htdocs\mediawiki\deployment\config\externalapps" w
+        FileClose $0
+        
+        inst_externalapps:
+        DetailPrint "Set SOLR path in externalapps"
+        SetOutPath "$INSTDIR\htdocs\mediawiki\deployment\config"
+        StrCpy $R1 "$INSTDIR\htdocs\mediawiki\deployment\config\externalapps"
+       
+        ${ConfigWrite} $R1 "solr=" '$INSTDIR\solr' $R0
+        
+        nodf:
 FunctionEnd
 
 
@@ -1738,7 +1763,7 @@ mysql_socket_error:
 mysql_port_ok:
 FunctionEnd
  
-Function StrStr
+Function StrContains
 /*After this point:
   ------------------------------------------
   $R0 = SubString (input)
