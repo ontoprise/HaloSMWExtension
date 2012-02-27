@@ -54,8 +54,8 @@ CKEDITOR.dialog.add( 'MWTemplate', function( editor ) {
 
       content.Trim();      
       // check for a tag
-      if (content.match(/^{{#?[!\w\d-]+:?[\s\S]*?}}$/)) {
-        content = content.replace(/\r?\n/g, '<br fckLR="true"/>');
+      if (content.match(/^{{#?[!\w\d-]+:?[\s\S]*?}}|{{{\w+}}}$/)) {
+        content = content.replace(/\r?\n/g, 'fckLR');
         tag = '<span class="fck_mw_template">' + content + '</span>';
         className = 'FCK__MWTemplate';      
         var element = CKEDITOR.dom.element.createFromHtml(tag, editor.document),
@@ -89,7 +89,7 @@ CKEDITOR.dialog.add( 'MWTemplate', function( editor ) {
         this.fakeObj = element;
         element = editor.restoreRealElement( this.fakeObj );
         selection.selectElement( this.fakeObj );
-        var content = element.getHtml().replace(/_$/, '').replace(/<br\s+fckLR="true"\/?>/gi, '\r\n');                   
+        var content = element.getHtml().replace(/_$/, '').replace(/fckLR/gi, '\r\n');                   
         var textarea = this.getContentElement( 'mwTemplateTagDef', 'tagDefinition');
         textarea.setValue(content);
       }

@@ -375,7 +375,7 @@ class SMWQueryProcessor {
 
 		$params = self::getProcessedParams( $params, $printouts );
 
-		return self::getResultFromQueryString( $querystring, $params, $printouts, SMW_OUTPUT_WIKI, $context );
+		return self::getResultFromQueryString( $querystring, $params, $printouts, $outputmode, $context );
 	}
 
 	/**

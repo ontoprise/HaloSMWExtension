@@ -36,6 +36,7 @@
     sources: ['tsc', 'http://dbpedia.org/sparql'],
     graphs: ['default', 'any'],
     variables: [],
+    isTSCAccessible: true,
 
     json : {
 
@@ -47,44 +48,12 @@
       TreeQuery : {}
     },
     
-    //View component. Takes care of sparql treeview manipulation
     View: {
       jstreeId: 'qiTreeDiv'
-//      map: {
-//        treeToData: []
-//      }
     }
   };
 
-  
-//  SPARQL.View.map.put = function(nodeId, nodeData){
-//    if(!nodeId || !nodeData){
-//      return;
-//    }
-//    SPARQL.View.map.treeToData[nodeId] = nodeData;
-//  };
-
-
-//  SPARQL.getXHR = function(){
-//    if ($.browser.msie && window.XDomainRequest) {
-//      // Use Microsoft XDR
-//      return function(){
-//        return new XDomainRequest();
-//      }
-//    }
-//    else if(window.XMLHttpRequest && (window.location.protocol !== "file:" || !window.ActiveXObject)){
-//      return function(){
-//        return new window.XMLHttpRequest();
-//      }
-//    }
-//    else{
-//      return function(){
-//        try {
-//          return new window.ActiveXObject("Microsoft.XMLHTTP");
-//        } catch(e) {}
-//      }
-//    }
-//  };
+ 
 
   SPARQL.View.getTree = function(){
     return $.jstree._reference(SPARQL.View.jstreeId);
@@ -131,7 +100,12 @@
   };
 
   SPARQL.getQuery = function(){
-    return SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
+    if(SPARQL.queryString && SPARQL.isTSCAccessible)
+      return SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
+    else{
+      SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'sparqlToTreeMsgDialog');
+      return null;
+    }
   };
 
   SPARQL.View.createCategory = function(categoryRestriction){
@@ -340,6 +314,7 @@
         }
         else{
           //tsc is not reachable
+          SPARQL.isTSCAccessible = false;
           SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'sparqlToTreeMsgDialog');
         }
       },
@@ -349,7 +324,7 @@
         mw.log('errorThrown: ' + errorThrown);        
         var errorJson = $.parseJSON(xhr.responseText);
         var msg = errorJson.error || 'The result is empty'
-        SPARQL.showMessageDialog(errorJson.error, gLanguage.getMessage('QI_INVALID_QUERY'), 'sparqlToTreeMsgDialog');
+        SPARQL.showMessageDialog(msg, gLanguage.getMessage('QI_INVALID_QUERY'), 'sparqlToTreeMsgDialog');
 
       }
     });
@@ -465,16 +440,13 @@
 
 
   SPARQL.treeToSparql = function(treeJsonConfig, getQueryResult){
-    //else proceed with the translation
     treeJsonConfig = treeJsonConfig || SPARQL.Model.data;
       
     var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
     mw.log('tree json:\n' + jsonString);
-    //send ajax post request to localhost:8080/sparql/treeToSPARQL
+
     $.ajax({
       type: 'POST',
-//      dataType: 'jsonp',
-//      jsonp: 'jsonp_callback',
       url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/treeToSPARQL_noNamespaces',
       data: {
         tree: jsonString
@@ -498,6 +470,7 @@
         }
         else{
           //tsc is not reachable
+          SPARQL.isTSCAccessible = false;
           SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'treeToSparqlMsgDialog');
         }
       },
@@ -513,39 +486,6 @@
     });
   };
 
-//  SPARQL.parseSparqlQuery = function(query, callback){
-//    query = query || SPARQL.queryString;
-//    SPARQL.queryString = query;
-//
-//    mw.log('parse query:\n' + query);
-//
-//    $.ajax({
-//      type: 'POST',
-//      url: mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/index.php?action=ajax',
-//      data: {
-//        rs: 'smwf_qi_parseSparqlQuery',
-//        rsargs: [query]
-//      },
-//      success: function(data, textStatus, jqXHR) {
-//        mw.log('data: ' + data);
-//        mw.log('textStatus: ' + textStatus);
-//        mw.log('jqXHR.responseText: ' + jqXHR.responseText);
-//        SPARQL.arc2ParsedQuery = $.parseJSON(data);
-//        SPARQL.initNamespaceFromArray(SPARQL.arc2ParsedQuery.prefixes);
-//        if(callback){
-//          callback();
-//        }
-//      },
-//      error: function(xhr, textStatus, errorThrown) {
-//        mw.log(textStatus);
-//        mw.log('response: ' + xhr.responseText)
-//        mw.log('errorThrown: ' + errorThrown);
-//        var errorJson = $.parseJSON(xhr.responseText);
-//        SPARQL.showMessageDialog(errorJson.error, 'SPARQL parsing error', 'parseSparqlQueryMsgDialog');
-//      }
-//
-//    });
-//  };
 
   SPARQL.stringifyJSON = function(jsonObject){
     var arrayToJsonFunc = Array.prototype.toJSON;
@@ -620,15 +560,11 @@
         if(data && data.length){
           //build parser function string
           SPARQL.queryString = data;
-//          $('#sparqlQueryText').val(SPARQL.queryString);
-//          $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
-          var sparqlString = SPARQL.queryString;
-//          $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(sparqlString));
-          //build the tree
-          SPARQL.sparqlToTree(sparqlString);
+          SPARQL.sparqlToTree(SPARQL.queryString);
         }
         else{
           //tsc is not reachable
+          SPARQL.isTSCAccessible = false;
           SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'saskToSparqlMsgDialog');
         }
       },
@@ -2106,7 +2042,7 @@
       select: function(event, ui) {
         switch(ui.index){
           case 0:
-            SPARQL.sparqlToTree(SPARQL.getNamespaceString() + $('#sparqlQueryText').val());
+            SPARQL.sparqlToTree($('#sparqlQueryText').val());
             break;
 
           case 1:

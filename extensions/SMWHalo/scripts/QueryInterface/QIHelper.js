@@ -953,6 +953,9 @@ QIHELPER = QIHelper.prototype = {
   },
 
   getFullParserAsk : function() {
+    if(!this.queries){
+      return null;
+    }
     var asktext = this.recurseQuery(0, "parser");
     var displays = this.queries[0].getDisplayStatements();
     var fullQuery = '';

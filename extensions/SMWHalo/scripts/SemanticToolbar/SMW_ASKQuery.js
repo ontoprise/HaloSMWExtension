@@ -219,11 +219,14 @@ ASKQuery.prototype = {
  */
   setUpdatedAskQuery: function() {
     var newQuery;
-    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery()){
-      newQuery = SPARQL.getQuery();
+    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery){
+      newQuery = SPARQL.getQuery();      
     }
-    else{
+    if(!newQuery){
       newQuery = QIHELPER.getAskQueryFromGui();
+      if(!newQuery){
+        return;
+      }
       if( typeof( QIHELPER.queryFormated ) === 'undefined' ) {
         // format query if not already done
         newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
@@ -254,11 +257,14 @@ ASKQuery.prototype = {
  */
   setNewAskQuery:function() {
     var newQuery;
-    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery()){
+    if(typeof(SPARQL) !== 'undefined' && SPARQL.getQuery){
       newQuery = SPARQL.getQuery();
     }
-    else{
+    if(!newQuery){
       newQuery = QIHELPER.getAskQueryFromGui();
+      if(!newQuery){
+        return;
+      }
       newQuery = newQuery.replace(/\]\]\[\[/g, "]]\n[[");
       newQuery = newQuery.replace(/>\[\[/g, ">\n[[");
       newQuery = newQuery.replace(/\]\]</g, "]]\n<");

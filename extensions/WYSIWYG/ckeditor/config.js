@@ -20,13 +20,7 @@ CKEDITOR.editorConfig = function( config )
 	// config.uiColor = '#AADC6E';
     var showTbButton = (typeof window.parent.wgCKEditorHideDisabledTbutton == 'undefined');
     
-//    CKEDITOR.plugins.addExternal( 'mediawiki', CKEDITOR.basePath + 'plugins/mediawiki/' );
-//    CKEDITOR.plugins.addExternal( 'mwtemplate', CKEDITOR.basePath + 'plugins/mwtemplate/' );
-    
-    // Remove the link plugin because it's replaced with the mediawiki plugin
-    //CKEDITOR.config.plugins = CKEDITOR.config.plugins.replace( /(?:^|,)link(?=,|$)/, '' );
 	var extraPlugins = "mediawiki,mwtemplate";
-//        var extraPlugins = "mediawiki,mwtemplate,myplugin";
 
 	config.toolbar = 'Wiki';
     // var origToolbar = CKEDITOR.config.toolbar_Full

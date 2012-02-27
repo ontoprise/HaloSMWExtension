@@ -172,30 +172,35 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 
       $useTsc = (strtolower($fixparams['source']) != 'wiki');
       // use SMW classes or TSC classes and parse params and answer query
-      if ($useTsc)
-        SMWSPARQLQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
-      else
-        SMWQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
-      // check if there is any result and if it corresponds to the selected format
-      $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
-      $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
-      if ($invalidRes != 0)
-        return wfMsg('smw_qi_printout_err' . $invalidRes);
 
-			// quickfix: unset conflicting params for maps
-			if (in_array($fixparams['format'], array("map", "googlemaps2", "openlayers", "yahoomaps"))) {
-				if (isset($params['reasoner']))
-				unset($params['reasoner']);
-				if (isset($params['ajaxcall']))
-				unset($params['ajaxcall']);
-				if (isset($params['merge']))
-				unset($params['merge']);
-			}
-			// answer query using the SMW classes or TSC classes
-			if ($useTsc)
-			$result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
-			else
-			$result = SMWQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
+       if ($useTsc)
+        $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_HTML);
+      else
+        $result = SMWQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_HTML);
+//      if ($useTsc)
+//        SMWSPARQLQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
+//      else
+//        SMWQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
+      // check if there is any result and if it corresponds to the selected format
+//      $mainlabel = (isset($rawparams['mainlabel']) && $rawparams['mainlabel'] == '-');
+//      $invalidRes = smwf_qi_CheckValidResult($printouts, $fixparams['format'], $mainlabel);
+//      if ($invalidRes != 0)
+//        return wfMsg('smw_qi_printout_err' . $invalidRes);
+//
+//			// quickfix: unset conflicting params for maps
+//			if (in_array($fixparams['format'], array("map", "googlemaps2", "openlayers", "yahoomaps"))) {
+//				if (isset($params['reasoner']))
+//				unset($params['reasoner']);
+//				if (isset($params['ajaxcall']))
+//				unset($params['ajaxcall']);
+//				if (isset($params['merge']))
+//				unset($params['merge']);
+//			}
+//			// answer query using the SMW classes or TSC classes
+//			if ($useTsc)
+//			$result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
+//			else
+//			$result = SMWQueryProcessor::getResultFromQueryString($querystring, $params, $printouts, SMW_OUTPUT_HTML);
 
 			// check for empty result
 			if (is_array($result) && trim($result[0]) == '' || trim($result == '')) {
@@ -233,6 +238,7 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
 					return wfMsg('smw_qi_printout_notavailable');
 
 				default:
+          break;
 			}
 			 
 			$result = parseWikiText($result);
@@ -478,16 +484,14 @@ function toJsonCompatibleArray($params) {
 }
 
 /**
- * function content copied from SMWResultPrinter::getResult(). Using the constant
- * SMW_OUTPUT_HTML doesn't always work. Details see bug #10494
- * Do not use wgParser because this somehow screws up when another parsing step
- * in parseQuery() is done.
+ * Simulate parsing of wiki page to get the javascript modules loaded by wiki.
+ * Those modules then will be used to render the QI result preview.
  *
- * @param string  wikitext
- * @return string html
+ * @param string wikitext, usually query result
+ * @return string html with script section appended to it for loading the modules
  */
 function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = true) {
-	global $wgOut, $wgParser, $wgAllowImageTag, $wgAllowExternalImages;
+	global $wgOut, $wgParser;
 
 	//  $parser = new Parser();
 	$title = Title::newFromText($page);
@@ -497,7 +501,7 @@ function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = tr
 	//  $pout = $parser->parse($text . '__NOTOC__', $title, $popt);
 	$pout = $wgParser->parse($text . '__NOTOC__', $title, $popt);
 	/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
-	SMWOutputs::requireFromParserOutput($pout);
+//	SMWOutputs::requireFromParserOutput($pout);
 	//  $result = $pout->getText();
 	$result = $text;
 

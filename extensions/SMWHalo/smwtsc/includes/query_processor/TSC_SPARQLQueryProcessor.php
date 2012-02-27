@@ -139,7 +139,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
         }
 
         $params = self::getProcessedParams( $params, $printouts );
-		return SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI, $context);
+		return SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, $outputmode, $context);
 	}
 
 	static public function getResultFromQueryString($querystring, array $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY) {
