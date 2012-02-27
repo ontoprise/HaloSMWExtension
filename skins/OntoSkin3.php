@@ -181,9 +181,9 @@ class OntoSkin3Template extends QuickTemplate {
                  {
                  document.getElementById("smw_browserCheck").style.display = "block";
                  } 
-			    <?php
-                  setcookie("hideBrowserWarning","true",time()+(3600*24));
-                ?>
+			     <?php
+                    setcookie("BrowserWarning","true",time()+(3600*24));
+                   ?>
 			    }
           </script>  
 	</head>
@@ -335,10 +335,11 @@ class OntoSkin3Template extends QuickTemplate {
 					
 					
 					
-					// checks browser's compatibility and return a warning, should the case arise.		 	 
-					$cookie = $_COOKIE["hideBrowserWarning"];
+					// checks browser's compatibility and return a warning, should the case arise.
+                  			
+					$cookie = $_COOKIE["BrowserWarning"];
 
-					if ( $cookie == 'false' ) {
+					if ( $cookie == "NULL" or $cookie == "") {
 						$ua = getBrowserDetails();
 						$version = explode( '.', $ua['version'] );
 						$yourbrowser = $ua['name'] . " " . $version[0];
@@ -374,7 +375,7 @@ class OntoSkin3Template extends QuickTemplate {
                      
 						if ( $valid == false ) { ?>
 					  <div id="smw_browserCheck">
-						<div style="float:left">Your browser (<?php echo "$yourbrowser " ?>) is not supported, we recommend using: IE8, Firefox 7/8 or Google chrome 15</div>
+						<div style="float:left">Your browser (<?php echo "$yourbrowser" ?>) is not supported, we recommend using: IE8, Firefox 7/8 or Google chrome 15</div>
 						<a href="#" onclick="hideDiv()"><div id="smw_browserCheckClose"><span>Don't show me again</span><img src="/mediawiki/skins/ontoskin3/img/button_close.PNG"></img></div></a>
 					  </div>
 					<?php
