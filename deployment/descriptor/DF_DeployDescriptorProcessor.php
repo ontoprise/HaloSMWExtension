@@ -276,8 +276,8 @@ class DeployDescriptionProcessor {
 		$filteredOut = array();
 		foreach($out as $line) {
 			if (!Tools::inStringArray($filesOfNotFoundPatches, $line)) {
-				// if a FAILED patch is not found in $filesOfNotFoundPatches 
-				// it is assumed that is was correctly applied. Then there is 
+				// if a FAILED patch is not found in $filesOfNotFoundPatches
+				// it is assumed that is was correctly applied. Then there is
 				// no need to show the error to the user.
 				continue;
 			}
@@ -319,13 +319,13 @@ class DeployDescriptionProcessor {
 
 	}
 
-	
+
 
 	/**
 	 * Checks the patches in the given patch file by a heuristic.
 	 * Halo patches have markers. If a marker is found in the patched
 	 * file, it is assumed that the patch was successfully applied.
-	 * 
+	 *
 	 * If no marker is found, the patch is ignored.
 	 *
 	 * @param string $patchFile Absolute path
@@ -782,18 +782,72 @@ class RequireConfigElement extends ConfigElement {
  *
  */
 class ReplaceConfigElement extends ConfigElement {
+	
+	// text to search for
 	var $search;
+	
+	// text to replace with
 	var $replacement;
+	// optional attribute parameter for replacement
+	var $proposal;
+	
+	// optional file in which text is replaced
+	// if missing the replacement is done in LocalSettings.php
+	var $file;
+	
+	// DeployDescriptor
+	var $dd;
+	
+	// location of PHP interpreter
+	var $phpExe;
 
-	public function __construct($child) {
+	public function __construct($child, $dd) {
 		parent::__construct("replace");
+		$this->dd = $dd;
 		$this->search = (string) $child[0]->search[0];
 		$this->replacement = (string) $child[0]->replacement[0];
+		$this->proposal = (string) $child[0]->replacement[0]->attributes()->proposal;
+		$this->file = isset($child[0]->file) ? (string) $child[0]->file[0] : '';
+
+		$this->phpExe = 'php';
+		if (array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
+			$this->phpExe = DF_Config::$settings['df_php_executable'];
+		}
 	}
 
 	public function apply(& $ls, $ext_id, $userValues = array()) {
-		$ls = str_replace($this->search, $this->replacement, $ls);
-		return ""; // do not return anything, just change
+		if ($this->file == '') {
+			// replace in LocalSettings.php
+			$ls = str_replace($this->search, $this->replacement, $ls);
+			return ""; // do not return anything, just change
+		} else {
+			// <file> set so replace in a file
+			global $mwrootDir;
+			if ($this->proposal != '') {
+				// if a proposal is given use it
+				// for now only "variable: <name>" is possible
+				$parts = explode(":", $this->proposal);
+				exec("\"$this->phpExe\" \"$mwrootDir/deployment/tools/maintenance/getSettings.php\" -v ".trim($parts[1]), $out, $ret);
+				$this->replacement = $ret == 0 ? trim(reset($out)) : '';
+				
+			}
+            
+			// get file location
+			if ($this->dd->isNonPublic()) {
+				$appPaths = Tools::getNonPublicAppPath($mwrootDir);
+				$filePath = $appPaths[$this->dd->getID()]."/$this->file";
+			} else {
+				$filePath = $mwrootDir."/".$this->dd->getInstallationDirectory()."/$this->file";
+			}
+			
+			// change file
+			$content = file_get_contents($filePath);
+			$content = str_replace($this->search, $this->replacement, $content);
+			$handle = fopen($filePath, "w");
+			fwrite($handle, $content);
+			fclose($handle);
+			return "";
+		}
 	}
 
 }

@@ -522,7 +522,20 @@ class PackageRepository {
 						$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
 						if (!array_key_exists($dd->getID(), self::$localPackages)) {
 							self::$localPackages[$dd->getID()] = $dd;
+							// unset the found external apps
+							unset($nonPublicAppPaths[$dd->getID()]);
 						}
+					}
+				}
+			}
+
+			// add rest of externals
+			foreach($nonPublicAppPaths as $id => $path) {
+				$path = Tools::unquotePath($path);
+				if (file_exists($path.'/deploy.xml')) {
+					$dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+					if (!array_key_exists($dd->getID(), self::$localPackages)) {
+						self::$localPackages[$dd->getID()] = $dd;
 					}
 				}
 			}
@@ -592,7 +605,10 @@ class PackageRepository {
 		self::readDirectoryForDDToInitialize($ext_dir);
 		self::readDirectoryForDDToInitialize($ext_dir."extensions");
 		self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
-
+        
+		// collect external apps
+		self::readExternalAppsForDDToInitialize($ext_dir);
+		
 		// special handling for MW itself
 		if (file_exists($ext_dir.'/init$.ext')) {
 			$init_ext_file = trim(file_get_contents($ext_dir.'/init$.ext'));
@@ -637,6 +653,93 @@ class PackageRepository {
 
 		}
 		@closedir($handle);
+	}
+	
+	/**
+	 * Collects all external apps which must be initialized.
+	 * 
+	 * @param $ext_dir
+	 */
+	private static function readExternalAppsForDDToInitialize($ext_dir) {
+		if (Tools::isWindows()) {
+            // add non public apps for Windows
+            $OPSoftware = Tools::getOntopriseSoftware();
+            if (!is_null($OPSoftware) && count($OPSoftware) > 0) {
+
+                $nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
+                foreach($OPSoftware as $prgname => $arrayOfPaths) {
+                    if (array_key_exists($prgname, Tools::$df_knownPrograms) &&
+                    array_key_exists(Tools::$df_knownPrograms[$prgname], $nonPublicAppPaths)) {
+                        $path = trim($nonPublicAppPaths[Tools::$df_knownPrograms[$prgname]]);
+                    } else {
+                        if (count($arrayOfPaths) > 1) {
+                            // if ambiguous ask user (if --noask, just take first)
+                            $index = DFUserInput::selectElement("Several installations of '$prgname' were found. Please select the one you want to use with DF.", $arrayOfPaths);
+                            $path = trim($arrayOfPaths[$index]);
+                            $res = Tools::setNonPublicAppPath($ext_dir, Tools::$df_knownPrograms[$prgname], $path);
+                            if (!$res) {
+                                throw new RepositoryError("Could not write deployment/config/externalapps", DEPLOY_FRAMEWORK_REPO_COULD_NOT_WRITE_EXT_APP_FILE);
+                            }
+                        } else {
+                            $path = trim(reset($arrayOfPaths));
+                            $res = Tools::setNonPublicAppPath($ext_dir, Tools::$df_knownPrograms[$prgname], $path);
+                        }
+                    }
+                    $path = Tools::unquotePath($path);
+                    if (file_exists($path.'/init$.ext')) {
+                        $init_ext_file = trim(file_get_contents($path.'/init$.ext'));
+                        list($id, $fromVersion) = explode(",", $init_ext_file);
+                        if (!file_exists($path.'/deploy.xml')) {
+                            // this should not happen but you never know.
+                            // anyway do nothing in this case.
+                            continue;
+                        }
+                        $dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+                        if (!array_key_exists($dd->getID(), self::$localPackagesToInitialize)) {
+                            self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+
+                            // unset the found external apps
+                            unset($nonPublicAppPaths[$dd->getID()]);
+                        }
+                    }
+                }
+            }
+
+            // add rest of externals
+            foreach($nonPublicAppPaths as $id => $path) {
+                $path = Tools::unquotePath($path);
+                if (file_exists($path.'/init$.ext')) {
+                    $init_ext_file = trim(file_get_contents($path.'/init$.ext'));
+                    list($id, $fromVersion) = explode(",", $init_ext_file);
+                    if (!file_exists($path.'/deploy.xml')) {
+                        // this should not happen but you never know.
+                        // anyway do nothing in this case.
+                        continue;
+                    }
+                    $dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+                    self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+                }
+            }
+
+        } else {
+            // add non public apps for Linux
+            $nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
+            foreach($nonPublicAppPaths as $id => $path) {
+                $path = Tools::unquotePath($path);
+                if (file_exists($path.'/init$.ext')) {
+                    $init_ext_file = trim(file_get_contents($path.'/init$.ext'));
+                    list($id, $fromVersion) = explode(",", $init_ext_file);
+                    if (!file_exists($path.'/deploy.xml')) {
+                        // this should not happen but you never know.
+                        // anyway do nothing in this case.
+                        continue;
+                    }
+                    $dd = new DeployDescriptor(file_get_contents($path.'/deploy.xml'));
+                    self::$localPackagesToInitialize[$id] = array($dd, $fromVersion);
+                }
+            }
+        }
+		
 	}
 
 	private static function createMWDeployDescriptor($rootDir, $fromVersion = NULL) {
