@@ -377,9 +377,9 @@ class SRFExhibit extends SMWResultPrinter {
 						case '_num':
 							$tmp = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getNumericValue($outputmode,$this->getLinker(0));
 							break;
-						case '_dat':
-							$tmp = $this->getTime($object);
-							break;
+//						case '_dat':
+//							$tmp = $this->getTime($object);
+//							break;
 						case '_uri':
 							$tmp = version_compare(SMW_VERSION, '1.5', '>=') ? $object->getWikiValue() : $object->getXSDValue($outputmode,$this->getLinker(0));
 							break;
@@ -394,10 +394,14 @@ class SRFExhibit extends SMWResultPrinter {
 							}
 							break;
 						default:
-							if(version_compare(SMW_VERSION, '1.5', '>='))
-								$tmp = $object->getLongHTMLText($this->getLinker($outputmode));
-							else
-								$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
+							if($object instanceof SMWTimeValue) {
+								$tmp = $this->getTime($object);
+							} else {
+								if(version_compare(SMW_VERSION, '1.5', '>='))
+									$tmp = $object->getLongHTMLText($this->getLinker($outputmode));
+								else
+									$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
+							}
 					}
 					if($object->getTypeID() == '_num') {
 						$textstack[] = '"' . $colstack[$col] . '": ' . str_replace('"', '\"', $tmp);
@@ -411,7 +415,7 @@ class SRFExhibit extends SMWResultPrinter {
 			}
 //			$idl = $index . '.' . $l;
 //			if(strlen($idl)>30) $idl = substr($idl, 0, 27) . '...';
-			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $index .'", ' . implode(', ', $textstack). '});' . "\n";
+			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $smwgIQRunningNumber . '_' . $index .'", ' . implode(', ', $textstack). '});' . "\n";
 			$index ++;
 		}
 
