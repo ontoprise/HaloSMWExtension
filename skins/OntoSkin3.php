@@ -372,11 +372,11 @@ class OntoSkin3Template extends QuickTemplate {
 								$valid = true;
 							}
 						}
-                     
+
 						if ( $valid == false ) { ?>
 					  <div id="smw_browserCheck">
 						<div style="float:left">Your browser (<?php echo "$yourbrowser" ?>) is not supported, we recommend using: IE8, Firefox 7/8 or Google chrome 15</div>
-						<a href="#" onclick="hideDiv()"><div id="smw_browserCheckClose"><span>Don't show me again</span><img src="/mediawiki/skins/ontoskin3/img/button_close.PNG"></img></div></a>
+						<a href="#" onclick="hideDiv()"><div id="smw_browserCheckClose"><span>Don't show me again</span><img src="<?php $this->text( 'stylepath' )?>/<?php $this->text( 'stylename' ) ?>/img/button_close.png"></img></div></a>
 					  </div>
 					<?php
 						} // end browser's check
