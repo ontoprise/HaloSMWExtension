@@ -104,7 +104,7 @@ class DFBundleTools {
 		$partOfBundle = $dfgLang->getLanguageString('df_partofbundle');
 		$titles = array();
 		$bundleTitle = Title::newFromText($bundleID);
-		$values = smwfGetStore()->getAllPropertySubjects(SMWDIProperty::newFromUserLabel($partOfBundle));
+		$values = smwfGetStore()->getPropertySubjects(SMWDIProperty::newFromUserLabel($partOfBundle), SMWDIWikiPage::newFromTitle($bundleTitle));
 		foreach($values as $title) {
 			$titles[] = $title->getTitle();
 		}

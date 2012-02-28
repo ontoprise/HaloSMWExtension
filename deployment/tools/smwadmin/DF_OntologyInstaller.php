@@ -56,8 +56,10 @@ class OntologyInstaller {
 	 * Installs an ontology from a file.
 	 *
 	 * @param string $inputfile Full path of input file
-	 * @param DeployDescriptor/string $dd DeployDescriptor or 
+	 * @param DeployDescriptor/string $dd DeployDescriptor or
 	 *            ID of stub bundle which will be created for the ontology.
+	 *
+	 * @return DeployDescriptor
 	 *
 	 */
 	public function installOrUpdateOntology($inputfile, $dd = '') {
@@ -72,9 +74,9 @@ class OntologyInstaller {
 			$settings = new stdClass();
 			$settings->ns_mappings = $prefixNamespaceMappings;
 			$settings->base_uri = $smwgHaloTripleStoreGraph;
-			
+
 			if ($dd instanceof DeployDescriptor) {
-				$settings->bundle_id = $dd->getID();
+
 				$settings->deploydescriptor = new stdClass();
 				$settings->deploydescriptor->id = $dd->getID();
 				$settings->deploydescriptor->version = $dd->getVersion()->toVersionString();
@@ -88,15 +90,12 @@ class OntologyInstaller {
 				$settings->deploydescriptor->dependencies = array();
 				foreach($dd->getDependencies() as $dep) {
 					$settings->deploydescriptor->dependencies[] = array(
-					   $dep->id = $dep->getIDs(),
-					   $dep->getMinVersion()->toVersionString(),
-					   $dep->getMaxVersion()->toVersionString(),
-					   $dep->optional = $dep->isOptional()
+					$dep->id = $dep->getIDs(),
+					$dep->getMinVersion()->toVersionString(),
+					$dep->getMaxVersion()->toVersionString(),
+					$dep->optional = $dep->isOptional()
 					);
 				}
-			} else if (is_string($dd)) {
-				$bundleID = $dd;
-				$settings->bundle_id = $bundleID;
 			}
 
 			$handle = fopen($settingsFile, "w");
@@ -128,7 +127,9 @@ class OntologyInstaller {
 		// has only informative character. The only conflicts appearing
 		// now occur if two ontologies use the same entity.
 		$dfgOut->outputln("[Verifying ontology $inputfile...");
-		$bundleID = $outputFromOnto2mwxml->ontology_uri;
+		$outputFromOnto2mwxml->deploydescriptor->ontologies = array(basename($inputfile));
+		$dd = DeployDescriptor::fromJSON($outputFromOnto2mwxml->deploydescriptor);
+		$bundleID = $dd->getID();
 		$verificationLog = $this->verifyOntology($outputfile_rel, $bundleID);
 		$conflict = $this->checkForConflict($verificationLog);
 
@@ -147,16 +148,16 @@ class OntologyInstaller {
 		$ontologyURI = DFBundleTools::getOntologyURI($bundleID);
 
 		if (!is_null($ontologyURI)) {
-			if ($outputFromOnto2mwxml->ontology_uri  == $ontologyURI) {
-				// it is an update,so remove old version first
-				$dfgOut->outputln("[Delete old ontology $ontologyURI...");
-				$this->deinstallAllOntologies($bundleID);
-				$dfgOut->output("done.]");
-			}
+
+			// it is an update,so remove old version first
+			$dfgOut->outputln("[Delete old ontology $ontologyURI...");
+			$this->deinstallAllOntologies($bundleID);
+			$dfgOut->output("done.]");
+
 		}
 
 		unlink($settingsFile);
-		
+
 		// do actual ontology install/update
 		$dfgOut->outputln("[Installing/updating ontology $inputfile...");
 		$this->installOrUpdateOntologyXML($outputfile_rel, $verificationLog, $bundleID);
@@ -168,7 +169,8 @@ class OntologyInstaller {
 			$this->uploadExternalArtifacts($externalArtifactFile, $bundleID);
 			$dfgOut->output("done.]");
 		}
-		
+
+		return $dd;
 	}
 
 	/**
@@ -185,7 +187,7 @@ class OntologyInstaller {
 			$dfgOut->outputln("More than one ontology found. Ignoring all but the first: $loc", DF_PRINTSTREAM_TYPE_WARN);
 		}
 		$this->installOrUpdateOntology($this->rootDir."/".$dd->getInstallationDirectory()."/".$loc, $dd);
-		
+
 	}
 
 
@@ -199,7 +201,7 @@ class OntologyInstaller {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
 		global $dfgOut;
 
-		
+
 
 		// process the pages which are part of the bundle
 		// remove the part of the bundle which should be deleted.
@@ -210,97 +212,46 @@ class OntologyInstaller {
 		global $wgUser;
 		foreach($bundlePages as $title) {
 			$rev = Revision::loadFromTitle( $db, $title);
-
-			if ($om->containsBundle($bundleID, $rev->getRawText())) {
-				$newText = $om->removeBundle($bundleID, $rev->getRawText());
-				if (trim($newText) == '') {
-					$a = new Article($title);
-
-					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
-						if( $a->doDeleteArticle( "article is empty" ) ) {
-							//if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
-							$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
-							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "article is empty", $bundleID));
-							$dfgOut->output("done.]");
-						}
+			if ($title->getNamespace() == NS_FILE) {
+				// external artifact
+				$a = new Article($title);
+				if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+					if( $a->doDeleteArticle( "article is empty" ) ) {
+						//if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+						$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
+						wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "article is empty", $bundleID));
+						$dfgOut->output("done.]");
 					}
-				} else {
-						
-					$dfgOut->outputln("\t\t[Modifying page]: ".$title->getPrefixedText()."...");   
-                    $a = new Article($title);
-                    $a->doEdit($newText, "auto-generated by smwadmin");
-                    $dfgOut->output("done.]");
-					//$parseOutput = $wgParser->parse($rev->getText(), $title, $wgParser->mOptions);
-					//SMWParseData::storeData($parseOutput, $title);
+				}
+			} else {
+				if ($om->containsBundle($bundleID, $rev->getRawText())) {
+					$newText = $om->removeBundle($bundleID, $rev->getRawText());
+					if (trim($newText) == '') {
+						$a = new Article($title);
+
+						if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+							if( $a->doDeleteArticle( "article is empty" ) ) {
+								//if (!is_null($logger)) $logger->info("Removing page: ".$title->getPrefixedText());
+								$dfgOut->outputln("\t\t[Removing page]: ".$title->getPrefixedText()."...");
+								wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, "article is empty", $bundleID));
+								$dfgOut->output("done.]");
+							}
+						}
+					} else {
+
+						$dfgOut->outputln("\t\t[Modifying page]: ".$title->getPrefixedText()."...");
+						$a = new Article($title);
+						$a->doEdit($newText, "auto-generated by smwadmin");
+						$dfgOut->output("done.]");
+						//$parseOutput = $wgParser->parse($rev->getText(), $title, $wgParser->mOptions);
+						//SMWParseData::storeData($parseOutput, $title);
+					}
 				}
 			}
 		}
-		
+
 	}
 
-	/**
-	 * Creates an deploy descriptor for an ontology bundle.
-	 *
-	 * @param string $bundleID
-	 * @param string $inputfile
-	 */
-	public function createDeployDescriptor($bundleID, $inputfile) {
-		global $dfgLang;
-
-		$ontologyBundleTitle = Title::newFromText($bundleID);
-		$ontologyBundleDi = SMWDIWikiPage::newFromTitle($ontologyBundleTitle);
-		$ontologyVersion = smwfGetStore()->getPropertyValues($ontologyBundleDi, SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_ontologyversion')));
-		$installationDir = smwfGetStore()->getPropertyValues($ontologyBundleDi, SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_instdir')));
-		$ontologyVersion = reset($ontologyVersion);
-		$installationDir = reset($installationDir);
-		
-		$version = $ontologyVersion->getString();
-		$installDir = $installationDir->getString();
-		$installDir = strtolower($installDir);
-		$filename = basename($inputfile);
-
-		// set others to defaults
-		$vendor = '';
-		$maintainer= '';
-		$description = '';
-
-		$xml =  <<<ENDS
-<?xml version="1.0" encoding="UTF-8"?>
-<deploydescriptor>
-    <global>
-        <version>$version</version>
-        <patchlevel>0</patchlevel>
-        <id>$bundleID</id>
-        <vendor>$vendor</vendor>
-        <maintainer>$maintainer</maintainer>
-        <instdir>$installDir</instdir>
-        <description>
-        $description
-        </description>
-        <helpurl></helpurl>
-        <dependencies>
-        </dependencies>
-    </global>
-    <codefiles>
-        <!-- empty -->
-    </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
-    <ontologies>
-        <file loc="$filename"/>
-    </ontologies>
-    <configs>
-
-    </configs>
-</deploydescriptor>
-ENDS
-        ;
-        return $xml;
-	}
 
 	/**
 	 * Uploads an external entity containing arbitrary artifacts. Marks this upload
@@ -454,7 +405,7 @@ ENDS
 		$ret = 0;
 		$langCode = dffGetLanguageCode();
 		if (Tools::isWindows()) {
-				
+
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
 			exec("\"$onto2mwxml_dir/onto2mwxml.bat\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
@@ -462,9 +413,9 @@ ENDS
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");
 			}
-				
+
 		} else {
-				
+
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
 			exec("\"$onto2mwxml_dir/onto2mwxml.sh\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
@@ -472,7 +423,7 @@ ENDS
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");
 			}
-				
+
 		}
 		chdir($cwd);
 		$dfgOut->output("done.]");

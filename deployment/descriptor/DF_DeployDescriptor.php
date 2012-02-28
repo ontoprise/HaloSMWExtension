@@ -103,6 +103,74 @@ class DeployDescriptor {
 		$this->createConfigElements($fromVersion, $fromPatchlevel); // assume new config, not update
 	}
 
+    public static function fromJSON($obj) {
+        $obj = is_string($obj) ? json_decode($obj) : $obj;
+        $id = $obj->id;
+        $version = $obj->version;
+        $instdir = $obj->instdir;
+        $maintainer = isset($obj->maintainer) ? $obj->maintainer : '';
+        $vendor = isset($obj->vendor) ? $obj->vendor : '';
+        $patchlevel = isset($obj->patchlevel) ? $obj->patchlevel : '';
+        $description = isset($obj->description) ? $obj->description : '';
+        $helpURL = isset($obj->helpURL) ? $obj->helpURL : '';
+        $license = isset($obj->license) ? $obj->license : '';
+        $title = isset($obj->title) ? $obj->title : '';
+        $depText = "";
+        if (isset($obj->dependencies)) {
+            foreach($obj->dependencies as $dep) {
+                list($ids, $min, $max, $optional) = $dep;
+                $optionalText = $optional ? 'optional="true"' : '';
+                $depText .= "<dependency $optionalText from=\"$min\" to=\"$max\">$ids</dependency>";
+            }
+        }
+        $ontologyFiles = "";
+        if (isset($obj->ontologies)) {
+            foreach($obj->ontologies as $file) {
+                $ontologyFiles .= "<file loc=\"$file\"/>";
+            }
+        }
+         
+        $xml = <<<ENDS
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <id>$id</id>
+        <title>$title</title>
+        <version>1.1.0</version>
+        <vendor>$vendor</vendor>
+        <maintainer>$maintainer</maintainer>
+        <license>$license</license>
+        <instdir>$instdir</instdir>
+        <description>$description</description>
+        <helpurl>$helpURL</helpurl>
+        <dependencies>$depText</dependencies>
+    </global>
+
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <ontologies>
+        $ontologyFiles
+    </ontologies>
+    
+    <configs>
+        <!-- empty -->
+    </configs>
+</deploydescriptor>
+ENDS;
+        return new DeployDescriptor($xml);
+
+    }
+
 
 	/**
 	 * Returns extension IDs which must follow this extension.
@@ -330,8 +398,10 @@ class DeployDescriptor {
 	 * @return string
 	 */
 	function getID() {
-		return strtolower(trim((string) $this->globalElement[0]->id));
+		return trim((string) $this->globalElement[0]->id);
 	}
+	
+	
 
 	/**
 	 * Returns title (has only informal function)
@@ -567,102 +637,102 @@ class DeployDescriptor {
 	}
 
 	/**
-     * Returns locations of files explicitly marked as codefiles in the deploy descriptor (relative paths).
-     * It can be a directory or a single file.
-     *
-     * @return array of string
-     */
-    function getCodefiles() {
-        if (!is_null($this->codefiles)) return $this->codefiles;
-        $this->codefiles = array();
-       if (!is_array($this->codefiles_xml)) return array();
-        foreach($this->codefiles_xml as $file) {
+	 * Returns locations of files explicitly marked as codefiles in the deploy descriptor (relative paths).
+	 * It can be a directory or a single file.
+	 *
+	 * @return array of string
+	 */
+	function getCodefiles() {
+		if (!is_null($this->codefiles)) return $this->codefiles;
+		$this->codefiles = array();
+		if (!is_array($this->codefiles_xml)) return array();
+		foreach($this->codefiles_xml as $file) {
 
-            $this->codefiles[] = (string) $file->attributes()->loc;
-        }
-        return $this->codefiles;
-    }
+			$this->codefiles[] = (string) $file->attributes()->loc;
+		}
+		return $this->codefiles;
+	}
 
-    /**
-     * Returns the location of wiki dump files (relative paths)
-     * @return array of string
-     */
-    function getWikidumps() {
-        if (!is_null($this->wikidumps)) return $this->wikidumps;
-        $this->wikidumps = array();
-        if (!is_array($this->wikidumps_xml)) return array();
-        foreach($this->wikidumps_xml as $file) {
-            $this->wikidumps[] = (string) $file->attributes()->loc;
-        }
-        return $this->wikidumps;
-    }
+	/**
+	 * Returns the location of wiki dump files (relative paths)
+	 * @return array of string
+	 */
+	function getWikidumps() {
+		if (!is_null($this->wikidumps)) return $this->wikidumps;
+		$this->wikidumps = array();
+		if (!is_array($this->wikidumps_xml)) return array();
+		foreach($this->wikidumps_xml as $file) {
+			$this->wikidumps[] = (string) $file->attributes()->loc;
+		}
+		return $this->wikidumps;
+	}
 
-    /**
-     * Returns the location of ontology files (relative paths)
-     * @return array of string
-     */
-    function getOntologies() {
-        if (!is_null($this->ontologies)) return $this->ontologies;
-        $this->ontologies = array();
-        if (!is_array($this->ontologies_xml)) return array();
-        foreach($this->ontologies_xml as $file) {
-            $this->ontologies[] = (string) $file->attributes()->loc;
-        }
-        return $this->ontologies;
-    }
+	/**
+	 * Returns the location of ontology files (relative paths)
+	 * @return array of string
+	 */
+	function getOntologies() {
+		if (!is_null($this->ontologies)) return $this->ontologies;
+		$this->ontologies = array();
+		if (!is_array($this->ontologies_xml)) return array();
+		foreach($this->ontologies_xml as $file) {
+			$this->ontologies[] = (string) $file->attributes()->loc;
+		}
+		return $this->ontologies;
+	}
 
-    /**
-     * Returns the location of mappings (relative paths)
-     * @return array of string
-     */
-    function getMappings() {
-        if (!is_null($this->mappings)) return $this->mappings;
-        $this->mappings = array();
-        if (!is_array($this->mappings)) return array();
-        foreach($this->mappings_xml as $file) {
-            $loc = (string) $file->attributes()->loc;
-            $source = (string) $file->attributes()->source;
-            $target = (string) $file->attributes()->target;
-            if (!isset($this->mappings[$source])) {
-                $this->mappings[$source] = array();
-            }
-            $this->mappings[$source][] = array($loc, $target);
+	/**
+	 * Returns the location of mappings (relative paths)
+	 * @return array of string
+	 */
+	function getMappings() {
+		if (!is_null($this->mappings)) return $this->mappings;
+		$this->mappings = array();
+		if (!is_array($this->mappings)) return array();
+		foreach($this->mappings_xml as $file) {
+			$loc = (string) $file->attributes()->loc;
+			$source = (string) $file->attributes()->source;
+			$target = (string) $file->attributes()->target;
+			if (!isset($this->mappings[$source])) {
+				$this->mappings[$source] = array();
+			}
+			$this->mappings[$source][] = array($loc, $target);
 
-        }
-        return $this->mappings;
-    }
+		}
+		return $this->mappings;
+	}
 
-    /**
-     * Returns the location of resource files (relative paths)
-     * @return array of string
-     */
-    function getResources() {
+	/**
+	 * Returns the location of resource files (relative paths)
+	 * @return array of string
+	 */
+	function getResources() {
 
-        if (!is_null($this->resources)) return $this->resources;
-        $this->resources = array();
-        if (!is_array($this->resources_xml)) return array();    
-        foreach($this->resources_xml as $file) {
-            $this->resources[] = (string) $file->attributes()->loc;
-        }
-        return $this->resources;
-    }
+		if (!is_null($this->resources)) return $this->resources;
+		$this->resources = array();
+		if (!is_array($this->resources_xml)) return array();
+		foreach($this->resources_xml as $file) {
+			$this->resources[] = (string) $file->attributes()->loc;
+		}
+		return $this->resources;
+	}
 
-    /**
-     * Returns the location of resource files (relative paths) which get only copied but not imported.
-     * @return hash array of ($location => $destination)
-     */
-    function getOnlyCopyResources() {
+	/**
+	 * Returns the location of resource files (relative paths) which get only copied but not imported.
+	 * @return hash array of ($location => $destination)
+	 */
+	function getOnlyCopyResources() {
 
-        if (!is_null($this->oc_resources)) return $this->oc_resources;
-        $this->oc_resources = array();
-        if (!is_array($this->resources_onlycopyxml)) return array();
-        foreach($this->resources_onlycopyxml as $file) {
-            $dest = (string) $file->attributes()->dest;
-            $loc = (string) $file->attributes()->loc;
-            $this->oc_resources[$loc] = $dest;
-        }
-        return $this->oc_resources;
-    }
+		if (!is_null($this->oc_resources)) return $this->oc_resources;
+		$this->oc_resources = array();
+		if (!is_array($this->resources_onlycopyxml)) return array();
+		foreach($this->resources_onlycopyxml as $file) {
+			$dest = (string) $file->attributes()->dest;
+			$loc = (string) $file->attributes()->loc;
+			$this->oc_resources[$loc] = $dest;
+		}
+		return $this->oc_resources;
+	}
 
 
 	/**

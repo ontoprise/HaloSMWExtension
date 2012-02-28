@@ -274,7 +274,8 @@ class PackageRepository {
 	public static function getDeployDescriptorFromRange($ext_id, $minversion, $maxversion) {
 		if ($minversion->isHigher($maxversion))  throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_INVALID_DESCRIPTOR, "Invalid range of versions: $minversion-$maxversion");
 		$versions = self::getAllVersions($ext_id);
-		for($i = reset($versions); $i !== false; $i = next($versions)) {
+		for($o = reset($versions); $o !== false; $o = next($versions)) {
+			list($i, $pl) = $o;
 			if ($minversion->isLowerOrEqual($i) && $i->isLowerOrEqual($maxversion)) {
 				return self::getDeployDescriptor($ext_id, $i);
 			}
@@ -338,7 +339,8 @@ class PackageRepository {
 
 			if ($versions !== false) {
 				foreach($versions as $v) {
-					$results[] = new DFVersion((string) $v->attributes()->version);
+					$patchlevel = (string) $v->attributes()->patchlevel;
+					$results[] = array(new DFVersion((string) $v->attributes()->version), $patchlevel == '' ? 0 : $patchlevel);
 				}
 			}
 		}
@@ -447,7 +449,7 @@ class PackageRepository {
 			$download_url = trim((string) $package[0]->attributes()->url);
 			break;
 		}
-		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $packageID-$version. Missing repository?");
+		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find bundle: $packageID-".$version->toVersionString().". Missing repository?");
 
 		return array($download_url, $repo_url);
 	}
