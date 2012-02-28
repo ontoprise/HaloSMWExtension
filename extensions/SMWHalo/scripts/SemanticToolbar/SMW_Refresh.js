@@ -117,10 +117,6 @@ RefreshSemanticToolBar.prototype = {
 			smwhgASKQuery.fillList();
 		}
 		
-		if(window.asfIsShown){
-			ASFFormSyncer.sync();
-		}
-
 		// Check for syntax errors in the wiki text
 		var saveButton = $('wpSave');
 		if (saveButton) {
