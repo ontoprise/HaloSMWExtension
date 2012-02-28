@@ -1,6 +1,13 @@
 Data Import extension ChangeLog
 ===============================
 
+VERSION 1.4.4 PATCHLEVEL 11
+
+	CHANGES
+	* The data source 'CSV file' has been renamed to 'Tabulator-separated text file'.
+	
+	
+
 VERSION 1.4.4
 
 	CHANGES

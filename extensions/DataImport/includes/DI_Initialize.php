@@ -366,7 +366,7 @@ function smwfDISetupExtension() {
 	$bot = new DIWSCacheBot();
 	
 	//register DAMs
-	DIDAMRegistry::registerDAM('DALReadCSV', 'CSV file', 
+	DIDAMRegistry::registerDAM('DALReadCSV', 'Tabulator-separated text file', 
 		wfMsg('smw_ti_damdesc_csv'));
 	DIDAMRegistry::registerDAM('DALReadFeed', 'RSS feed', 
 		wfMsg('smw_ti_damdesc_feed'));
