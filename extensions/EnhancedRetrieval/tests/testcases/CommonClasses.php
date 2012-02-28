@@ -181,7 +181,9 @@ class ArticleManager {
 		}
 		$importer = new WikiImporter($source);
 		$result = $importer->doImport();
-
+		// The WikiImporter forgets some internal cleanup
+		stream_wrapper_unregister('uploadsource');
+		
 		if ($result) {
 			// Import was successful
 			// => get the names of imported articles

@@ -67,6 +67,30 @@ class FSIncrementalUpdater  {
 	}
 	
 	/**
+	 * This function is called after an article was imported via
+	 * Special:Import.
+	 * It starts an update of the index for the given title.
+	 * 
+	 * @param Title $title
+	 * 		Title under which the revisions were imported
+	 * @param Title $origTitle
+	 *		Title provided by the XML file
+	 * @param int $revCount
+	 *		Number of revisions in the XML file
+	 * @param int $sRevCount
+	 *		Number of sucessfully imported revisions
+	 * @param array $pageInfo
+	 *		associative array of page information
+	 * 
+	 */
+	public static function onAfterImportPage($title, $origTitle, $revCount, $sRevCount, $pageInfo) {
+		$indexer = FSIndexerFactory::create();
+		$article = new Article($title);
+		$indexer->updateIndexForArticle($article);
+		return true;
+	}
+	
+	/**
 	 * This function is called after an article was moved.
 	 * It starts an update of the index for the given article.
 	 * 

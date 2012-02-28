@@ -61,6 +61,7 @@ function fsfSetupFacetedSearch() {
 	// Register hooks
 	if ($fsgEnableIncrementalIndexer) {
 		$wgHooks['ArticleSaveComplete'][] = 'FSIncrementalUpdater::onArticleSaveComplete';
+		$wgHooks['AfterImportPage'][]     = 'FSIncrementalUpdater::onAfterImportPage';
 		$wgHooks['TitleMoveComplete'][]   = 'FSIncrementalUpdater::onTitleMoveComplete';
 		$wgHooks['ArticleDelete'][]       = 'FSIncrementalUpdater::onArticleDelete';
 	}

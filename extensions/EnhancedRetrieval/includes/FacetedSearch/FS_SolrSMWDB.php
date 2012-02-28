@@ -62,8 +62,13 @@ class FSSolrSMWDB extends FSSolrIndexer {
 	 * 
 	 * @param Article $article
 	 * 		The article that changed.
+	 * @param User $user
+	 * 		Optional user object
+	 * @param string $text
+	 *		Optional content of the article. If NULL, the content of $article is
+	 *		retrieved in this method.
 	 */
-	public function updateIndexForArticle(Article $article, $user, $text) {
+	public function updateIndexForArticle(Article $article, $user = NULL, $text = NULL) {
 		$doc = array();
 		
 		$db =& wfGetDB( DB_SLAVE );
@@ -73,6 +78,10 @@ class FSSolrSMWDB extends FSSolrIndexer {
 		$pid = $t->getArticleID();
 		$pns = $t->getNamespace();
 		$pt  = $t->getDBkey();
+		
+		if ($text === NULL) {
+			$text = $article->getContent();
+		}
 		
 		$doc['id'] = $pid;
 		$doc['smwh_namespace_id'] = $pns;

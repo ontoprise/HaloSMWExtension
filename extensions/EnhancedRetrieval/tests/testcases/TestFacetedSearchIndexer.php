@@ -49,7 +49,6 @@ class TestFacetedSearchIndexerSuite extends PHPUnit_Framework_TestSuite
         Skin::getSkinNames();
     	
         $this->mArticleManager = new ArticleManager();
-//        $this->mArticleManager->createArticles(ERTestArticles::$mArticles, "U1");
         $this->mArticleManager->importArticles(__DIR__."/ERTestArticlesDump.xml");
    	}
 	
@@ -517,6 +516,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
 /**
  * This class tests the maintenance of an incremental index with SOLR. Each time
  * a document is changed, deleted or moved, the index has to be updated.
+ * The same has to happen when a dump of articles is imported.
  * 
  * It assumes that the SOLR server is running.
  * 
@@ -750,6 +750,7 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
      * 
      * @dataProvider providerForChangePage
      */
+    
     public function testChangePage($actionsAndArticles, $query, $expResults,
                                    $unexpectedResults = null) {
     	foreach ($actionsAndArticles as $action => $articles) {
@@ -778,6 +779,38 @@ class TestSolrIncrementalIndex extends PHPUnit_Framework_TestCase {
 	    	}
     	}
     	
+    }
+
+    /**
+     * Checks if the index is updated if a dump is imported.
+     */
+    public function testImportDump() {
+    	// Import an article
+    	self::$mArticleManager->importArticles(__DIR__."/IncrImportDump.xml");
+    	
+        // Check content of index
+    	$indexer = FSIndexerFactory::create(self::$mSolrConfig);
+    	$query = "q=smwh_title_s:*Imported*&wt=json"; 
+    	$qr = $indexer->sendRawQuery($query);
+    	$expResults = array(
+    	    				'"smwh_namespace_id":0',
+    	    				'"smwh_title":"ImportedTower"',
+    						'"smwh_Located_in_s":["Imported_York","Importtan"]',
+    						'"smwh_Located_in_t":["Imported_York","Importtan"]',
+    						'"smwh_categories":["ImportedBuilding"]',
+    						'"smwh_Description_xsdvalue_t":["This building does not exist but it was imported."]',
+    						'"smwh_Height_stories_numvalue_d":[24.0]',
+    						'"smwh_Height_stories_xsdvalue_d":[24.0]',
+    						'"smwh_attributes":["smwh_Height_stories_xsdvalue_d","smwh_Modification_date_xsdvalue_dt","smwh_Description_xsdvalue_t"]',
+    						'"smwh_properties":["smwh_Located_in_t","smwh_Located_in_state_t"]',
+    						'"smwh_Located_in_state_s":["New_Import"]',
+    						'"smwh_Description_xsdvalue_s":["This building does not exist but it was imported."]',
+    						'"smwh_Located_in_state_t":["New_Import"]'
+    	);
+    	foreach ($expResults as $er) {
+    		$this->assertContains($er, $qr, "Could not find expected string <$er> in result:\n$qr");
+    	}
+    	 
     }
 		    	
 }
