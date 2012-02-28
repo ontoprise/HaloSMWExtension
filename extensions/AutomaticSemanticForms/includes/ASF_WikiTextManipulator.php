@@ -73,10 +73,10 @@ class ASFWikiTextManipulator {
 				} else {
 					$this->rememberAnnotation($element->getName(), $element->getValue(), $collectedAnnotations);
 						
-					$newElement = new POMSimpleText($this->getWikiTextReplacementForAnnotation(
-						$element->getName(), $element->getValue(), $element->getRepresentation()));
-					$newElement->id = $element->id;
-					$pomPage->update($newElement);
+					//$newElement = new POMSimpleText($this->getWikiTextReplacementForAnnotation(
+					//	$element->getName(), $element->getValue(), $element->getRepresentation()));
+					//$newElement->id = $element->id;
+					//$pomPage->update($newElement);
 				}
 			} else if ($element instanceof POMExtensionParserFunction){
 				if(strpos($element->nodeText, '{{#set:') === 0){
@@ -97,11 +97,11 @@ class ASFWikiTextManipulator {
 						}
 					}
 					
-					$newText = ''.implode('| ', $ignoredProperties);
-					if(strlen($newText ) > 0) $newText = '{{#set:'.$newText.'}}';
-					$newElement = new POMSimpleText($newText);
-					$newElement->id = $element->id;
-					$pomPage->update($newElement);
+					//$newText = ''.implode('| ', $ignoredProperties);
+					//if(strlen($newText ) > 0) $newText = '{{#set:'.$newText.'}}';
+					//$newElement = new POMSimpleText($newText);
+					//$newElement->id = $element->id;
+					//$pomPage->update($newElement);
 				} 
 			} else if ($element instanceof POMBuiltInParserFunction){
 				if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){

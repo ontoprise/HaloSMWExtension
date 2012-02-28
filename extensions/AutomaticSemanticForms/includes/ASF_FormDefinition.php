@@ -92,7 +92,7 @@ class ASFFormDefinition {
 		
 		//end of asf_formfield_container 
 		$outro .= '</div>';
-		$outro .= '<div id="asf_formfield_container2" style="display: "></div>';
+		$outro .= '<div id="asf_formfield_container2" style="display: " ></div>';
 
 		//todo:style this
 		$outro .= '<div id="asf_category_annotations">Categories:<span id="asf_category_string"></span></div><br/>';

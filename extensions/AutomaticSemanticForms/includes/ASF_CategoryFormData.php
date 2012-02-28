@@ -368,7 +368,7 @@ class ASFCategoryFormData {
 	
 	public function updateDueToExistingAnnotations($existingAnnotations){
 		foreach($existingAnnotations as $propertyName => $values){
-			if(count($values['values']) > 1){
+			if(count(array_key_exists('values', $values) && $values['values']) > 1){
 				foreach($this->propertiesFormData  as $key => $propertyFormData){
 					if($propertyName == $propertyFormData->titleObject->getText()){
 						if(strlen(implode(' ', $values['values'])) > 80){

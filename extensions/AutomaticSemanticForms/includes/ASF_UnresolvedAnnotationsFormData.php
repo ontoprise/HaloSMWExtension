@@ -104,8 +104,15 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		$intro .= wfMsg('asf_unresolved_annotations');
 		$intro .= "}}";
 		
-		$intro .= "\n\n{|";
+		$intro .= "\n\n".'{| width="100%" align="center"';
+
+		$intro .= ' class="formtable"';
+		
 		$intro .= "\n";
+		$intro .= "|-";
+		$intro .= "\n".'| width="20%" |';
+		$intro .= "\n".'| width="80%" |';
+		$intro .= "\n|";
 		
 		$this->categorySectionIntro = $intro;
 		return $this->categorySectionIntro;

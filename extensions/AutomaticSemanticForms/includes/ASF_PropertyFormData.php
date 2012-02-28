@@ -257,6 +257,13 @@ class ASFPropertyFormData {
 		$fullSyntax = '<span class="asf-multi_values'
 			.$unresolvedAnnotationsSection
 			.$allowsMultipleValues.'">';
+		
+		$fullSyntax .= '<span style="display: none" class="asf-mv_propname">'.
+			$this->titleObject->getText().'</span>';	
+			
+		$fullSyntax .= '<span style="display: none" class="asf-mv_inputtype">'
+			.strtolower(trim($inputType)).'</span>';
+			
 		for($i=1; $i <= $this->numberOfRequiredInputfields; $i++){
 			$fieldName = $this->titleObject->getText();
 			if($i > 1) $fieldName .= '---'.$i; 
