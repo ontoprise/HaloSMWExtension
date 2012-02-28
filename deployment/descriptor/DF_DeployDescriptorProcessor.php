@@ -810,7 +810,7 @@ class ReplaceConfigElement extends ConfigElement {
 		$this->file = isset($child[0]->file) ? (string) $child[0]->file[0] : '';
 
 		$this->phpExe = 'php';
-		if (array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
+		if (class_exists('DF_Config') && array_key_exists('df_php_executable', DF_Config::$settings) && !empty(DF_Config::$settings['df_php_executable'])) {
 			$this->phpExe = DF_Config::$settings['df_php_executable'];
 		}
 	}
