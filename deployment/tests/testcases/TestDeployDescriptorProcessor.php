@@ -21,6 +21,7 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 }
 
 require_once ('deployment/settings.php');
+require_once ('deployment/tools/smwadmin/DF_Tools.php');
 require_once ('deployment/io/DF_Log.php');
 require_once ('deployment/io/DF_PrintoutStream.php');
 require_once ('deployment/descriptor/DF_DeployDescriptor.php');

@@ -22,7 +22,7 @@ if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
 
 require_once ('deployment/tools/smwadmin/DF_Tools.php');
 
-class TestVersions extends PHPUnit_Framework_TestCase {
+class TestTools extends PHPUnit_Framework_TestCase {
 
 
 

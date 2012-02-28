@@ -56,12 +56,12 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 
 	function testGetVersion() {
-		$this->assertNotNull(PackageRepository::getDownloadURL("smwhalo",143));
+		$this->assertNotNull(PackageRepository::getDownloadURL("smwhalo",new DFVersion("1.4.3")));
 	}
 
 	function testGetVersion2() {
 		try {
-			PackageRepository::getDownloadURL("smwhalo",170);
+			PackageRepository::getDownloadURL("smwhalo",new DFVersion("1.7.0"));
 			$this->assertTrue(false);
 		} catch(RepositoryError $e) {
 			$this->assertTrue(true);
@@ -72,8 +72,10 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 		$versions = PackageRepository::getAllVersions("smwhalo");
 
 		$this->assertTrue(count($versions) === 2);
-		$this->assertEquals(144, $versions[0]);
-		$this->assertEquals(143, $versions[1]);
+		list($v, $p) = reset($versions);
+		$this->assertEquals("1.4.4", $v->toVersionString());
+		list($v, $p) = next($versions);
+		$this->assertEquals("1.4.3", $v->toVersionString());
 	}
 
 	function testGetVersion4() {
@@ -82,11 +84,14 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 		$versions = PackageRepository::getAllVersions("smwhalo");
-
+    
 		$this->assertTrue(count($versions) === 3);
-		$this->assertEquals(150, $versions[0]);
-		$this->assertEquals(144, $versions[1]);
-		$this->assertEquals(143, $versions[2]);
+		list($v, $p) = reset($versions);
+		$this->assertEquals("1.5.0", $v->toVersionString());
+		list($v, $p) = next($versions);
+		$this->assertEquals("1.4.4", $v->toVersionString());
+		list($v, $p) = next($versions);
+		$this->assertEquals("1.4.3", $v->toVersionString());
 	}
 
 	
@@ -96,11 +101,11 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testExistsVersion2() {
-		$this->assertTrue(PackageRepository::existsPackage("smwhalo", 143));
+		$this->assertTrue(PackageRepository::existsPackage("smwhalo", new DFVersion("1.4.3")));
 	}
 
 	function testExistsVersion3() {
-		$this->assertFalse(PackageRepository::existsPackage("smwhalo", 170));
+		$this->assertFalse(PackageRepository::existsPackage("smwhalo", new DFVersion("1.7.0")));
 	}
 
 	function testExistsVersion4() {
@@ -109,7 +114,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 
-		$this->assertTrue(PackageRepository::existsPackage("smwhalo", 150));
+		$this->assertTrue(PackageRepository::existsPackage("smwhalo", new DFVersion("1.5.0")));
 	}
 
 	function testGetAllPackages() {
@@ -158,32 +163,5 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 
-	function testGetDeployDescriptor() {
-		$dd = PackageRepository::getDeployDescriptor("smwhalo", 144);
-		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(new DFVersion("1.4.4"), $dd->getVersion());
-	}
-
-	function testGetDeployDescriptor2() {
-
-		//introduce second repository
-		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
-
-
-		$dd = PackageRepository::getDeployDescriptor("smwhalo", 150);
-		$this->assertEquals("smwhalo", $dd->getID());
-		$this->assertEquals(new DFVersion("1.5.0"), $dd->getVersion());
-	}
-
-	function testLocalPackageRepository() {
-		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'mw');
-
-		$packages = PackageRepository::getLocalPackages(self::$instDir);
-
-		$this->assertTrue(count($packages) >= 4);
-
-			
-	}
-
+	
 }

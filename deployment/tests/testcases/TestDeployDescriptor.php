@@ -41,23 +41,24 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGlobals() {
-		$exp_deps = array(array("semanticmediawiki", 100, 140), array("smwhalo", 100, 140));
+		$exp_deps = array(array("semanticmediawiki", "1.0.0", "1.4.0"), array("smwhalo", "1.0.0", "1.4.0"));
 		$this->assertEquals("smwhalo", $this->ddp->getID());
 		$this->assertEquals("Ontoprise GmbH", $this->ddp->getVendor());
 		$this->assertEquals("extensions/SMWHalo", $this->ddp->getInstallationDirectory());
 		$this->assertEquals("Enhances your Semantic Mediawiki", $this->ddp->getDescription());
 		$deps = $this->ddp->getDependencies();
-		$this->assertDependency($deps[0], $exp_deps[0]);
-		$this->assertDependency($deps[1], $exp_deps[1]);
+		$d0 = reset($deps);
+		$d1 = next($deps);
+		$this->assertDependency($d0, $exp_deps[0]);
+		$this->assertDependency($d1, $exp_deps[1]);
 
 	}
 
-	private function assertDependency($exp_dep, $act_dep) {
-		list($depID, $depFrom, $depTo) = $exp_dep;
-		list($depID2, $depFrom2, $depTo2) = $act_dep;
-		$this->assertEquals($depID, $depID2);
-		$this->assertEquals($depFrom, $depFrom2);
-		$this->assertEquals($depTo, $depTo2);
+	private function assertDependency($act_dep, $exp_dep) {
+		
+		$this->assertEquals($exp_dep[0], reset($act_dep->getIDs()));
+		$this->assertEquals($exp_dep[1], $act_dep->getMinVersion()->toVersionString());
+		$this->assertEquals($exp_dep[2], $act_dep->getMaxVersion()->toVersionString());
 	}
 
 	function testCodeFiles() {
@@ -118,13 +119,13 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 		$patches = $this->ddp->getUninstallPatches(array('smwhalo' => $this->ddp));
 
-		$this->assertEquals("patch.txt", $patches[0]);
+		$this->assertEquals("patch.txt", $patches[0]->getPatchfile());
 
 	}
 
 	function testUpdateSection() {
 		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
-		$this->ddp = new DeployDescriptor($xml, 142);
+		$this->ddp = new DeployDescriptor($xml, new DFVersion("1.4.2"));
 			
 		$configs = $this->ddp->getConfigs();
 		$this->assertTrue(count($configs) > 0);
@@ -146,5 +147,45 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 		list($loc, $target) = $mappings['freebase'][0];
 		$this->assertEquals("mappings/mapping3.map", $loc);
 		$this->assertEquals("wiki", $target);
+	}
+	
+	function testFromJSON() {
+		$json = <<<ENDS
+		{
+  "deploydescriptor": {
+    "id": "http://myontology111xxx",
+    "dependencies": [
+      [
+        "smw",
+        "1.6.1",
+        "1.6.2",
+        "true"
+      ],
+      [
+        "smwhalo",
+        "1.6.1",
+        "1.6.2",
+        "true"
+      ]
+    ],
+    "description": "description sample text: 777",
+    "vendor": "555 GmbH",
+    "instdir": "extensions/wiki666xxx",
+    "patchlevel": 333,
+    "license": "GPL-v999",
+    "maintainer": "444 GmbH",
+    "helpURL": "http://smwplus.com/888",
+    "version": "222.0.0xxx"
+  },
+  "ontology_uri": "http://xmlns.com/foaf/0.1/",
+  "bundle_id": "http://myontology111xxx",
+  "base_uri": "http://halowiki/ob"
+}
+ENDS;
+    $o = json_decode($json);
+     
+     $dd = DeployDescriptor::fromJSON($o->deploydescriptor);
+     $this->assertEquals($dd->getID(), "http://myontology111xxx");
+      $this->assertTrue(count($dd->getDependencies()) > 0);
 	}
 }
