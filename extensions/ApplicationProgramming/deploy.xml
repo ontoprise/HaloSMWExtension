@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<id>ApplicationProgramming</id>
+		<id>applicationprogramming</id>
 		<title>Application Programming</title>
 		<version>1.7.0</version>
 		<vendor>ontoprise GmbH</vendor>
