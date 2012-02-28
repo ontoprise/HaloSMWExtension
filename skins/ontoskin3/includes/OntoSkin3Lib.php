@@ -78,8 +78,13 @@ class SMWH_Skin {
 			$menu.= "</li>";
 			$index++;
 		}
-		$menu.= $this->buildMenuMediaWiki();
+//		$menu.= $this->buildMenuMediaWiki();
 //		$menu.= $this->buildTools();
+		$menu .= "<li class=\"smwh_menulistitem smwh_menuoverflow\">";
+		$menu .= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">";
+		$menu .= "<p>>></p></div>";
+		$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody autoW\"><ul></ul></div>";
+		$menu .= "</li>";
 		$menu.= "</ul>";
 
 		return $menu;

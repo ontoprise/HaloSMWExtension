@@ -190,6 +190,7 @@ textarea {
 	float: left;
 	height: 47px;
 	padding-top: 10px;
+	width: 25px;
 }
 
 #home:hover {
@@ -201,10 +202,34 @@ textarea {
 	background: url(../img/menu_arrow.gif) right no-repeat;
 }
 
+.smwh_menudropleft {
+	/*@embed*/
+	background: url(../img/menu_arrow_left.gif) 2% no-repeat;
+}
+
 #smwh_menu .smwh_menulist {
 	float: left;
 	margin: 0;
+	max-height: 47px;
+	overflow: hidden;
 	padding: 0;
+	width: 550px;
+}
+
+.smwh_menuoverflow {
+	cursor: pointer;
+	display: none;
+	float: right;
+}
+
+.smwh_menuoverflow .smwh_menulistitem {
+	background: #269FB2 none;;
+}
+
+.smwh_menuoverflow ul {
+	list-style-type: none;
+	margin: 0;
+	padding:0 ;
 }
 
 .smwh_menulist .smwh_menuhead {
@@ -257,6 +282,12 @@ textarea {
 	display: none;
 	position: absolute;
 	z-index: 20;
+	left: 0;
+}
+
+.smwh_menuoverflow .smwh_menulistitem .smwh_menubody{
+	left: auto;
+	right: 0;
 }
 
 .smwh_menubody.open {
@@ -397,10 +428,6 @@ textarea {
 	background-color:transparent;
 }
 
-.smwh_menubody {
-	left: 0em;
-}
-
 #toolsimage {
 	margin-left: 5px;
 }
@@ -417,6 +444,7 @@ textarea {
 #smwh_search {
 	float: right;
 	margin-top: 10px;
+	max-width: 360px;
 }
 
 #simpleSearch {
@@ -716,9 +744,9 @@ textarea {
 }
 
 #smw_browserCheck{
-    height: 26px;
+	height: 26px;
 	width:auto;
-    margin-top:2.8em;
+	margin-top:2.8em;
 	margin-left: 1.5em;
 	margin-right:1.5em;
 	padding-left:0.5em;
@@ -734,7 +762,7 @@ textarea {
 
 
 #smw_browserCheckClose{
-    height: 19px;
+	height: 19px;
 	width:160px;
 	float:right;
 	border-radius: 2px 2px 2px 2px;
@@ -744,7 +772,7 @@ textarea {
 	color: #116988;
 	background: #F5D0A9;
 	line-height:1.3em;
-    font-size: 0.9em;
+	font-size: 0.9em;
 	line-height:2.2em;
 	font-size:0.8em;
 	background: #fff;
@@ -752,17 +780,17 @@ textarea {
 
 #smw_browserCheckClose span{
 	padding-left: 0.1em;
-    line-height: 1em;
+	line-height: 1em;
 	position:absolute;
 	margin-top:0.4em;
 }
 
 #smw_browserCheck a:visited{
-    color: #116988;
+	color: #116988;
 }
 
 #smw_browserCheckClose img{
-    padding-top: 0.3em;
+	padding-top: 0.3em;
 	padding-left: 12em;
 }
 
@@ -853,6 +881,7 @@ textarea {
 	float: left;
 	height: 47px;
 	padding: 12px 3px 0;
+	width: 25px;
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;

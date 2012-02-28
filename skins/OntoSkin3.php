@@ -36,14 +36,26 @@ class SkinOntoSkin3 extends SkinTemplate {
 		global $wgResourceModules, $wgStylePath, $wgStyleDirectory, $wgHooks;
 
 		$wgHooks['ResourceLoaderGetConfigVars'][] = 'SkinOntoSkin3::setResourceLoaderConfigVars';
-		
+
+		$wgResourceModules['jquery.outsideevents'] = array(
+			'scripts' => array(
+				'ontoskin3/javascript/jquery.ba-outside-events.js'
+			),
+			'remoteBasePath' => $wgStylePath,
+			'localBasePath' => $wgStyleDirectory
+		);
+
 		$wgResourceModules['skins.ontoskin3'] = array(
 			'scripts' => array(
 				'ontoskin3/javascript/jquery.ontoskin.js'
 			),
 			'remoteBasePath' => $wgStylePath,
 			'localBasePath' => $wgStyleDirectory,
-			'dependencies' => array( 'jquery.cookie', 'jquery.placeholder' )
+			'dependencies' => array(
+				'jquery.outsideevents',
+				'jquery.cookie',
+				'jquery.placeholder'
+			)
 		);
 
 		$wgResourceModules['skins.ontoskin3.styles'] = array(
