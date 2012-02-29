@@ -700,7 +700,7 @@ CKEDITOR.customprocessor.prototype =
 
       //get link details
       var href = htmlNode.getAttribute( '_cke_saved_href' ) || htmlNode.getAttribute('href');
-      href = decodeURIComponent(href).replace(/rtecolon/gi, ":").htmlDecode();
+      href = href.replace(/rtecolon/gi, '%3A');
       var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || htmlNode.getAttribute( '_fck_mw_type' );
       var title = htmlNode.getAttribute('title') || '';
       
@@ -908,30 +908,21 @@ CKEDITOR.customprocessor.prototype =
                                 break;
                             }
 
-                            if( stringBuilder.length > 1 ){
-                                var sLastStr = stringBuilder[ stringBuilder.length - 1 ];
-                                if ( sLastStr != ";" && sLastStr != ":" && sLastStr != "#" && sLastStr != "*" )
-                                    stringBuilder.push( '\n' + prefix );
-                            }
+//                            if( stringBuilder.length > 1 ){
+//                                var sLastStr = stringBuilder[ stringBuilder.length - 1 ];
+//                                if ( sLastStr != ";" && sLastStr != ":" && sLastStr != "#" && sLastStr != "*" )
+//                                    stringBuilder.push( '\n' + prefix );
+//                            }
                             var parent = htmlNode.parentNode;
                             var listType = "*";
 
-                            while ( parent ){
-                                if ( parent.nodeName.toLowerCase() == 'ul' ){
-                                    listType = "*";
-                                    break;
-                                } else if ( parent.nodeName.toLowerCase() == 'ol' ){
-                                    listType = "#";
-                                    break;
-                                }
-                                else if ( parent.nodeName.toLowerCase() != 'li' )
-                                    break;
-
-                                parent = parent.parentNode;
+                            if ( parent.nodeName.toLowerCase() === 'ol' ){
+                              listType = "#";
                             }
-
+                           
                             stringBuilder.push( listType );
                             this._AppendChildNodes( htmlNode, stringBuilder, prefix + listType );
+                            stringBuilder.push( '\n' + prefix );
                             break;
 
                         case 'a' :
