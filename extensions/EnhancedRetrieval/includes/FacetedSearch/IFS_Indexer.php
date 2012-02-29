@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the interface for all faceted search indexers.
  * 
  * @author Thomas Schweitzer
@@ -67,6 +70,6 @@ interface IFSIndexer {
 	 * @param Article $article
 	 * 		The article that changed.
 	 */
-	public function updateIndexForArticle(Article $article, $user, $text);
+	public function updateIndexForArticle(Article $article, $user = NULL, $text = NULL);
 	
 }
