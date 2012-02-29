@@ -10,7 +10,7 @@
         <description>Wiki object model.</description>
         <helpurl>http://www.mediawiki.org/wiki/Extension:Wiki_Object_Model</helpurl>
 		<dependencies>
-            <dependency from="1.12.0" to="1.17.9">MW</dependency>
+            <dependency from="1.12.0" to="1.17.9">mw</dependency>
 			<dependency from="1.5.6" to="1.6.1">smw</dependency>
         </dependencies>
         <license>GPL-v2</license>
