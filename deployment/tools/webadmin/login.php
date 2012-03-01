@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		if ($isAuthorized === 400) {
 			echo "Authentication by Wiki sysop-users requires Wiki Administration Tool to be included in LocalSettings.php";
 			echo "<br>please add: <pre>require_once('deployment/Deployment.php');</pre>";
+			echo "<br>Another possible cause is that \$scriptPath is not correctly set in deployment/settings.php. It must be exactly the same as \$wgScriptPath in LocalSettings.php.";
 			exit;
 		} else if ($isAuthorized === 404) {
 			$proto = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != '' ? "https" : "http";
