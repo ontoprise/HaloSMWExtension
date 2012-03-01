@@ -224,7 +224,7 @@ class HttpDownloadSocketImpl extends HttpDownload {
 		$cb = is_null($callback) ? $this : $callback;
 		call_user_func(array($cb,"downloadStart"), basename(dirname($path))."/".basename($path));
 		$out = socket_read($socket, 2048);
-
+        if ($out === false) throw new Exception("\t***Could not connect to '$host'***");
 		do {
 			if (! $this->headerFound) {
 				$this->header .= $out;
