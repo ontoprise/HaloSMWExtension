@@ -117,115 +117,163 @@ jQuery('.asf-write-protected').parent().each( function (){
 
 window.ASFFormSyncer = {
 		
+	/*
+	 * Init the syncer
+	 */	
 	init : function(){
 		
-		this.blockSyncing = false;
-		
+		//todo: implement better widget for triggering updates of the complete form
 		jQuery('#asf_category_annotations').click(this.updateForm);
 		jQuery('#asf_category_annotations').css('cursor', 'pointer');
 		
-		window.asfIsShown = true;
+		this.blockFormUpdates = false;
 		this.currentCategoryAnnotations = false;
+		this.wtp = null;
+		this.currentRelationsCount = 0;
 		
-		this.wtp = new WikiTextParser();
+		//todo:make sure that e.th. also works if freetext is hidden
 		
-		//init refresh mechanism
-//		if(CKEDITOR){
-//			CKEDITOR.on("instanceReady", function(){
-//	        	this.instances.free_text.document.on("keyup", ASFFormSyncer.checkIfSyncIsNecessary);
-//	        	this.instances.free_text.document.on("paste", ASFFormSyncer.checkIfSyncIsNecessary);
-//	        	this.instances.free_text.document.on("change", ASFFormSyncer.checkIfSyncIsNecessary);
-//	        	
-//	        	ASFFormSyncer.sync();
-//	        });
-//		} else {
-			//jQuery('#free_text').change(this.checkIfSyncIsNecessary);
-			jQuery('#free_text').keyup(this.checkIfSyncIsNecessary);
+		//todo. make sure that e.th. also works if the editor type is toggled
 		
-			this.sync();
-//		}
-        
+		//init freetxt content change listeners and do first form update
+		if(typeof CKEDITOR != 'undefined'){
+			CKEDITOR.on("instanceReady", function(){
+	        	this.instances.free_text.document.on("keyup", ASFFormSyncer.checkIfFormUpdateIsNecessary);
+	        	this.instances.free_text.document.on("paste", ASFFormSyncer.checkIfFormUpdateIsNecessary);
+	        	this.instances.free_text.document.on("change", ASFFormSyncer.checkIfFormUpdateIsNecessary);
+
+	        	this.currentFreeTextContent = 
+	    			this.getFreeTextContent();
+	        	
+		    	ASFFormSyncer.updateForm();
+	        });
+		} else {
+			jQuery('#free_text').change(this.checkIfFormUpdateIsNecessary);
+			jQuery('#free_text').keyup(this.checkIfFormUpdateIsNecessary);
+		
+			this.currentFreeTextContent = 
+				this.getFreeTextContent();
+			
+			ASFFormSyncer.updateForm();
+		}
 	},
 	
-	checkIfSyncIsNecessary : function(){
+	/*
+	 * This method is called by the freetext input listeners
+	 * and checks if the form may need an update
+	 */
+	checkIfFormUpdateIsNecessary : function(){
 		
-		//todo: filter some keys that do not change the content in order to gain some performance
+		//todo: filter some keys that do not change the content in order to gain some performance improvements
 		
 		var ts = new Date();
 		var currentTS = ts.getMilliseconds();
 		ASFFormSyncer.lastFreeTextChangeTS = currentTS;
 		window.setTimeout(function() {
+			//only call updateForm() if first s.th. has changed 
+			//and second if nothing else has changed in the meantime
 			if(currentTS == ASFFormSyncer.lastFreeTextChangeTS){
-				ASFFormSyncer.sync();
+				var newFreeTextContent = ASFFormSyncer.getFreeTextContent();
+				if(ASFFormSyncer.currentFreeTextContent
+						!= newFreeTextContent){
+					ASFFormSyncer.currentFreeTextContent = newFreeTextContent;
+					ASFFormSyncer.updateForm();
+				}
 			}
 		}, 750);
 	},
 	
-	sync : function(){
+	/*
+	 * Returns the content of the freetext input field
+	 */
+	getFreeTextContent : function(){
+		if(typeof CKEDITOR != 'undefined' && CKEDITOR.instances && CKEDITOR.instances.free_text){
+			return CKEDITOR.instances.free_text.getData();
+		} else {
+			return jQuery('#free_text').val();
+		}
+	},
+	
+	/*
+	 * Executes form updates if necessary
+	 */
+	updateForm : function(){
 		
-		if(ASFFormSyncer.blockSyncing == true){
-			//syncing is currently blocked, e.g. because the form is currently updated
+		if(this.blockFormUpdates == true){
+			//form updates are currently blocked, i.e. because a new form version 
+			//is currently loaded from the server
+			//form updates will be executed again after form has been loaded completely
 			return;
 		}
 		
-//		if(CKEDITOR && CKEDITOR.instances && CKEDITOR.instances.free_text){
-//			var text = CKEDITOR.instances.free_text.getData();
-//			this.wtp.parserMode = false;;
-//			if(this.wtp.parserMode != 2){
-//				this.wtp.initialize(text);
-//			}
-//		} else {
-			this.wtp.initialize();
-//		}
+		//init WikiTextParser
+		this.wtp = new WikiTextParser();
+		this.wtp.initialize(ASFFormSyncer.currentFreeTextContent);
 		
-		ASFFormUpdater.handleCategoryAnnotationUpdates(
+		this.checkIfFormStructureUpdateIsnecessary(
 			this.wtp.getCategories());
 		
-		var relations = this.wtp.getRelations();
+		this.updateFormFields(this.wtp.getRelations());
+	},
+	
+	/*
+	 * Method is callled if content in freetext has changed and 
+	 * updates the form fields if necessary	 * 
+	 */
+	updateFormFields : function(relations){
 		
 		//first mark all as must be deleted and then remove those 
 		//markers aone after another again if the value is still present
 		jQuery('.asf-multi_value').attr('asf-delete-this', 'true');
 		
+		//todo: deal with invalid values, e.g. black for a boolean property
+		
 		for (var i = 0; i < relations.length; ++i) {
 			
-			var addProperty = true;
+			var addAnnotation = true;
 			
-			//todo: trim and ucfirst ans so on may be necessary
-			jQuery('.asf-multi_values[property-name = "'+ relations[i].getName()+'"]').each(function(){
+			var propName = relations[i].getName();
+			propName = jQuery.trim(propName);
+			propName = propName.charAt(0).toUpperCase() + propName.substr(1);
+			jQuery('.asf-multi_values[property-name = "'+ propName +'"]').each(function(){
 				var type = ASFMultiInputFieldHandler.getInputFieldType(this);
 				
 				var lastChild = null;
 				jQuery('.asf-multi_value', this).each(function(){
-					if(addProperty){
+					if(addAnnotation){ //annotation has not yet been found
 						var currentValue = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
-						if(currentValue  == relations[i].getValue()){
+						if(ASFMultiInputFieldHandler.areValuesEqual(currentValue, relations[i].getValue(), type)){
 							jQuery(this).attr('asf-delete-this', 'false');
-							addProperty = false;
+							jQuery(this).attr('asf-wp-rel-index', i);
+							addAnnotation = false;
 						} 
 					}
 					lastChild = this;
 				});
 				
-				if(addProperty){
+				if(addAnnotation){
 					//add a new form input field
 					var newInputField = ASFMultiInputFieldHandler.doAddInputField(jQuery('> *:first-child', lastChild));
 					ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
 					jQuery(newInputField).attr('asf-delete-this', 'false');
-					addProperty = false;
+					jQuery(newInputField).attr('asf-wp-rel-index', i);
+					addAnnotation = false;
 				}
 			});
 			
-			if(addProperty){
-				
+			if(addAnnotation){
 				//add a new property to the unresolved annotations section
+				
+				//adding the new property to unresolved annotations section
+				//has to be done synchroniously because there may be also
+				//other values for this property in the relations array
 				var url = wgServer + wgScriptPath + "/index.php";
 				jQuery.ajax({ url:  url, 
 					async: false,
 					data: {
 						'action' : 'ajax',
 						'rs' : 'asff_getNewFormRow',
-						'rsargs[]' : [relations[i].getName()]
+						'rsargs[]' : [propName]
 					},
 					success: function(data){
 						data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
@@ -239,34 +287,207 @@ window.ASFFormSyncer = {
 						ASFMultiInputFieldHandler.doInit(jQuery(newInputField).parent());
 						ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
 						jQuery(newInputField).attr('asf-delete-this', 'false');
+						jQuery(newInputField).attr('asf-wp-rel-index', i);
 					}
 				});
 			}
 		}
 			
+		//now delete all form fields that have not been added and that did not match one of the
+		//relations in the freetext input field
 		jQuery('.asf-multi_value:[asf-delete-this = "true"]').each(function(){
-			ASFMultiInputFieldHandler.doDeleteInputField(jQuery('> *:first-child', this)); 
+			ASFMultiInputFieldHandler.doDeleteInputField(jQuery('> *:first-child', this), false); 
 		});
-	}
-};
-
-window.ASFFormUpdater = {
+		
+		this.currentRelationsCount = relations.length;
+	},
 	
-	handleCategoryAnnotationUpdates : function(newCategoryAnnotations){
+	isUpdateFreeTextNecessary : function(){
+		var ts = new Date();
+		var currentTS = ts.getMilliseconds();
+		var node = jQuery(this).get(0);
+		jQuery(node).attr('asf-update-ts', currentTS);
+		window.setTimeout(function() {
+			if(currentTS == jQuery(node).attr('asf-update-ts')){
+				var container = ASFMultiInputFieldHandler.getContainerOfInput(node);
+				ASFFormSyncer.updateFreeText(container);
+			}
+		}, 750);
+	},
+	
+	/*
+	 * This method is called if s.t. has been changed in a form input field
+	 * and it updates the free text if necessary
+	 */
+	updateFreeText : function(node){
+		var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(node).parent());
+		var newValue = ASFMultiInputFieldHandler.getInputFieldValue(node, type);
+		
+		//this is a form input field for which we currently do not support syncronisation
+		if(newValue == undefined){
+			return;
+		}
+		
+		//do last check if update is necessary
+		if(jQuery(node).attr('asf-last-field-value') == newValue){
+			return;
+		}
+		jQuery(node).attr('asf-last-field-value', newValue);
+		
+		var relationIndex = jQuery(node).attr('asf-wp-rel-index');
+		
+		//init WikiTextParser
+		this.wtp = new WikiTextParser();
+		this.wtp.initialize(ASFFormSyncer.getFreeTextContent());
+
+		if(relationIndex == undefined){
+			
+			if(newValue.length == 0){
+				//nothing to do since we do not create or restore
+				//a property for an empty value
+				return;
+			}
+			
+			oldStartPos = jQuery(node).attr('asf-wp-oldstartpos');
+			if(oldStartPos != undefined){
+				this.restorePropertyInFreeText(node, newValue);
+			} else {
+				this.addPropertyToFreeText(node, newValue);
+			}
+		} else {
+			var currentRelation = this.wtp.getRelations();
+			currentRelation = currentRelation[relationIndex];
+			
+			if(newValue.length > 0){
+				this.editPropertyInFreeText(currentRelation, newValue);
+			} else {
+				this.deletePropertyInFreetext(currentRelation, relationIndex, node);
+			}
+		}
+	},
+	
+	addPropertyToFreeText : function(container, newValue){
+		var newAnnotation = '[[';
+		newAnnotation += 
+			jQuery(container).parent().attr('property-name');
+		newAnnotation += '::' + newValue;
+		newAnnotation += '| ]]';
+		
+		this.wtp.addAnnotation(newAnnotation, true);
+		
+		jQuery(container).attr('asf-wp-rel-index', this.currentRelationsCount);
+		this.currentRelationsCount += 1;
+	},
+	
+	restorePropertyInFreeText : function(container, newValue){
+		
+		//fix for really strange error
+		if(this.wtp.relations == null){
+			this.wtp.relations  = new Array();
+			this.wtp.categories  = new Array();
+			this.wtp.links  = new Array();
+			this.wtp.rules  = new Array();
+			this.wtp.askQueries = new Array();
+		}
+		
+		var restoredAnnotation = new WtpAnnotation(
+				'', oldStartPos, oldStartPos, this.wtp);
+		
+		restoredAnnotation.name = 
+			jQuery(container).parent().attr('property-name');
+		restoredAnnotation.representation = 
+			jQuery(container).attr('asf-wp-oldlabel');;
+		
+		this.editPropertyInFreeText(restoredAnnotation, newValue)
+		
+		//noe restore the rel indexes and so on
+		var relationIndex = jQuery(container).attr('asf-wp-temp-rel-index');
+			
+		jQuery('*:[asf-wp-rel-index]').each(function(){
+			var currentIndex = jQuery(this).attr('asf-wp-rel-index');
+			if(currentIndex * 1 >= relationIndex){
+				jQuery(this).attr('asf-wp-rel-index', currentIndex*1+1);
+			}
+		});
+		
+		jQuery(container).attr('asf-wp-rel-index', relationIndex);
+		jQuery(container).removeAttr('asf-wp-temp-rel-index');
+		jQuery(container).removeAttr('asf-wp-oldstartpos');
+		
+		this.currentRelationsCount -= 1;
+	},
+	
+	destroyFreeTextAnnotationBackup : function(){
+		var container = ASFMultiInputFieldHandler.getContainerOfInput(this);
+		jQuery(container).removeAttr('asf-wp-temp-rel-index');
+		jQuery(container).removeAttr('asf-wp-oldstartpos');
+		jQuery(container).removeAttr('asf-wp-oldlabel');
+	},
+	
+	/*
+	 * Edits a property value in the freetext input field
+	 */
+	editPropertyInFreeText : function(currentRelation, newValue){
+		//todo:make this also work with #set
+		var newRelation = '[[';
+		newRelation += currentRelation.getName();
+		newRelation += '::' + newValue;
+		label = currentRelation.getRepresentation();
+		if(label.length > 0){
+			newRelation += '|' + label;
+		}
+		newRelation += ']]';
+		
+		this.wtp.replaceAnnotation(currentRelation, newRelation);
+	},
+	
+	deletePropertyInFreetext : function(currentRelation, relationIndex, container){
+
+		//remove and backup data for later restore
+		jQuery(container).attr('asf-wp-temp-rel-index',
+			jQuery(container).attr('asf-wp-rel-index'));
+		jQuery(container).removeAttr('asf-wp-rel-index');
+		jQuery(container).attr('asf-wp-oldstartpos', currentRelation.getStart());
+		jQuery(container).attr('asf-wp-oldlabel', currentRelation.getRepresentation());
+		
+		this.wtp.replaceAnnotation(currentRelation, '');
+		
+		jQuery('*:[asf-wp-rel-index]').each(function(){
+			var currentIndex = jQuery(this).attr('asf-wp-rel-index');
+			if(currentIndex * 1 > relationIndex){
+				jQuery(this).attr('asf-wp-rel-index', currentIndex*1-1);
+			}
+		});
+		
+		this.currentRelationsCount -= 1;
+	},
+	
+	/*
+	 * Computes the current category annotation string and triggers an update of the form structure
+	 * if category annotations have changed in the freetext editor
+	 */
+	checkIfFormStructureUpdateIsnecessary : function(newCategoryAnnotations){
+		
 		var updateNecessary = false;
 		var initPhase = false;
+		
 		if(!this.currentCategoryAnnotations){
 			//we are in initialization phase
-			updateNecessary = true;	
 			initPhase = true;
-		} else if(this.currentCategoryAnnotations.length != newCategoryAnnotations.length){
+		} 
+
+		if(this.currentCategoryAnnotations.length != newCategoryAnnotations.length){
+			//in this case we can be sure that an update is necessary and
+			//we will not have to do any further checks
 			updateNecessary = true;
 		}
 		
 		this.currentCategoryString = "";
 		for(var i=0; i<newCategoryAnnotations.length; i++){
 			this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
-			if(!updateNecessary){
+			
+			//if we are not in initphase and if we have not yet decided to do an update, we have to check if it might be necessary
+			if(!updateNecessary && !initPhase){
 				var found = false;
 				for(var k=0; k<this.currentCategoryAnnotations.length; k++){
 					if(newCategoryAnnotations[i].getName()
@@ -294,52 +515,22 @@ window.ASFFormUpdater = {
 			var currentValue = this.currentCategoryString;
 			window.setTimeout(function() {
 				if(currentValue == jQuery('#asf_category_string').html()){
-					ASFFormSyncer.blockSyncing = true;
-					ASFFormUpdater.updateForm();
+					ASFFormSyncer.blockFormUpdates = true;
+					ASFFormSyncer.updateFormStructure();
 				}
-			}, 1200);
+			}, 1000);
 		}
 	},
-	
-	updateForm : function(){
 
-		ASFMultiInputFieldHandler.resetInputFieldNames();
-		
-		var currentContainer = '#asf_formfield_container';
-		if(jQuery('#asf_formfield_container').html() == ''){
-			currentContainer = '#asf_formfield_container2';
-		}
-		
+	/*
+	 * Gets a new form from the server because category annotations have changed
+	 */
+	updateFormStructure : function(){
+
 		var inputFieldIds = '';
-		jQuery(currentContainer  +' input').each(function(){
-			if(jQuery(this).attr('value')){
-				if(jQuery(this).attr('type') == 'checkbox'){
-					if(!jQuery(this).attr('checked')){
-						return;
-					}
-				}
-				
-				if(jQuery(this).attr('type') == 'radio'){
-					if(!jQuery(this).attr('checked')){
-						return;
-					} else {
-						jQuery(this).attr('originally-checked', 'true');
-					}
-				}
-				
-				inputFieldIds += '<<<' + jQuery(this).attr('name');
-			}
-		});
-		
-		jQuery(currentContainer  +' select').each(function(){
-			if(jQuery(this).attr('value')){
-				inputFieldIds += '<<<' + jQuery(this).attr('name');
-			}
-		});
-		
-		jQuery(currentContainer  +' textarea').each(function(){
-			if(jQuery(this).attr('value')){
-				inputFieldIds += '<<<' + jQuery(this).attr('name');
+		jQuery('.asf-multi_value').each(function(){
+			if(ASFMultiInputFieldHandler.isInputFieldValueSet(this)){
+				inputFieldIds += '<<<' + jQuery(this).parent().attr('property-name');
 			}
 		});
 		
@@ -348,13 +539,17 @@ window.ASFFormUpdater = {
 			data: {
 				'action' : 'ajax',
 				'rs' : 'asff_getNewForm',
-				'rsargs[]' : [ASFFormUpdater.currentCategoryString, inputFieldIds]
+				'rsargs[]' : [ASFFormSyncer.currentCategoryString, inputFieldIds]
 			},
-			success: ASFFormUpdater.updateFormCallBack			
+			success: this.updateFormStructureCallBack			
 		});
 	},
 	
-	updateFormCallBack : function(data){
+	/*
+	 * Callback for the updateFormStructure method
+	 * adds the new form to the page and initializes it
+	 */
+	updateFormStructureCallBack : function(data){
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = jQuery.parseJSON(data);
 		
@@ -364,54 +559,39 @@ window.ASFFormUpdater = {
 			currentContainer = '#asf_formfield_container2';
 			newContainer = '#asf_formfield_container';
 		}
-		
 		jQuery(newContainer).html(data.html);
 		
-		jQuery(currentContainer + ' input').each(function(){
-			if(jQuery(this).attr('value')){
-				if(jQuery(this).attr('type') == 'checkbox'){
-					jQuery(newContainer + ' input[name="' +
-						jQuery(this).attr('name') + '"]').attr('checked', jQuery(this).attr('checked'));
-				} else if(jQuery(this).attr('type') == 'radio'){
-					if(jQuery(this).attr('originally-checked')){
-						var value = jQuery(this).attr('value');
-						jQuery(newContainer + ' input[name="' +
-								jQuery(this).attr('name') + '"]').each(function (){
-							if(jQuery(this).attr('value') == value){
-								jQuery(this).attr('checked', 'checked');
-							}		
-						});
-					}
-				} else {
-					jQuery(newContainer + ' input[name="' +
-						jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
-				}
-			}
-		});
-		
-		jQuery('#asf_formfield_container select').each(function(){
-			if(jQuery(this).attr('value')){
-				jQuery(newContainer + ' select[name="' +
-						jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
-			}
-		});
-		
-		jQuery('#asf_formfield_container textarea').each(function(){
-			if(jQuery(this).attr('value')){
-				jQuery(newContainer + ' textarea[name="' +
-					jQuery(this).attr('name') + '"]').attr('value', jQuery(this).attr('value'));
+		var missingAnnotations = new Array();
+		jQuery(currentContainer + ' .asf-multi_value').each(function(){
+			if(ASFMultiInputFieldHandler.isInputFieldValueSet(this)){
+				var missingAnnotation = new Object();
+				missingAnnotation.name = jQuery(this).parent().attr('property-name');
+				var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(this).parent());
+				missingAnnotation.value = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
+				missingAnnotations.push(missingAnnotation);
 			}
 		});
 		
 		jQuery(currentContainer).html('');
 		
+		//update form input fields which are not shown in free text
+		ASFMultiInputFieldHandler.init();
+		for(var i=0; i < missingAnnotations.length; i++){
+			jQuery('.asf-multi_values[property-name = "' + missingAnnotations[i].name	+'"]').each(function(){
+				var newInputField = ASFMultiInputFieldHandler.doAddInputField(jQuery('.asf-multi_value:last-child > *:last-child', this));
+				var type = ASFMultiInputFieldHandler.getInputFieldType(this);
+				ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, 
+					missingAnnotations[i].value);
+			});
+		}
+		
 		//run init methods
 		initializeNiceASFTooltips();
 		asf_makeReadOnly();	
-		
-		ASFMultiInputFieldHandler.init();
-		ASFFormSyncer.blockSyncing = false;
-		ASFFormSyncer.sync();
+
+		//sync with freetext input field
+		ASFFormSyncer.blockFormUpdates = false;
+		ASFFormSyncer.updateForm();
 	}
 };
 
@@ -450,6 +630,11 @@ window.ASFMultiInputFieldHandler = {
 				ASFMultiInputFieldHandler.addAddButton(this);
 			});
 		}
+		
+		jQuery('.asf-multi_value', node).each(function(){
+			ASFMultiInputFieldHandler.addValueChangeListeners(this);
+		});
+		
 	},
 	
 	addAddButton : function(node){
@@ -465,11 +650,20 @@ window.ASFMultiInputFieldHandler = {
 	},
 	
 	deleteInputField : function(){
-		ASFMultiInputFieldHandler.doDeleteInputField(this);
+		ASFMultiInputFieldHandler.doDeleteInputField(this, true);
 	},
 	
-	doDeleteInputField : function(node){
+	doDeleteInputField : function(node, updateFreeText){
 		var parent = jQuery(node).parent().parent();
+		
+		//the deletion of this input field has been triggered
+		//by pressing one of the delete buttons and thus the
+		//freetext must be updated
+		if(updateFreeText){
+			var type = this.getInputFieldType(jQuery(node).parent().parent());
+			this.setInputFieldValue(jQuery(node).parent(), type, '');
+			ASFFormSyncer.updateFreeText(jQuery(node).parent());
+		}
 		
 		var partOfUnresolvedAnnotationsSection = false;
 		if(jQuery(parent).attr('class').indexOf('asf-partOfUnresolvedAnnotationsSection') > 0){
@@ -524,7 +718,6 @@ window.ASFMultiInputFieldHandler = {
 	
 	addInputField : function(){
 		ASFMultiInputFieldHandler.doAddInputField(this);
-		//todo: update buttons
 	},
 	
 	doAddInputField : function(node){
@@ -551,31 +744,19 @@ window.ASFMultiInputFieldHandler = {
 				newInputField,
 				jQuery('.asf-multi_value', jQuery(parent).parent()).length);
 		
-		//reset input field value
-		ASFMultiInputFieldHandler.resetInputFieldValue(newInputField);
+		//reset value
+		var type = this.getInputFieldType(jQuery(newInputField).parent());
+		this.setInputFieldValue(newInputField, type, '');
+		
+		//remove all old attributes
+		jQuery(newInputField).removeAttr('asf-wp-rel-index');
+		jQuery(newInputField).removeAttr('asf-wp-temp-rel-index');
+		jQuery(newInputField).removeAttr('asf-wp-oldstartpos');
+		jQuery(newInputField).removeAttr('asf-wp-oldlabel');
+		
+		ASFMultiInputFieldHandler.addValueChangeListeners(newInputField);
 		
 		return newInputField;
-	},
-	
-	resetInputFieldValue : function(node){
-
-		jQuery('input', node).each(function(){
-			if(jQuery(this).attr('type') == 'checkbox'){
-				jQuery(this).removeAttr('checked');
-			} else if(jQuery(this).attr('type') == 'radio'){
-				jQuery(this).removeAttr('checked');
-			} else {
-				jQuery(this).attr('value', '');
-			}
-		});
-		
-		jQuery('select option', node).each(function(){
-			jQuery(this).removeAttr('selected');
-		});
-		
-		jQuery('textarea', node).each(function(){
-			jQuery(this).attr('value', '');
-		});
 	},
 	
 	resetInputFieldNames : function(){
@@ -614,6 +795,37 @@ window.ASFMultiInputFieldHandler = {
 		return jQuery('.asf-mv_inputtype', container).html();
 	},
 	
+	isInputFieldValueSet : function(container){
+		var type = this.getInputFieldType(jQuery(container).parent());
+		var value = this.getInputFieldValue(container, type );
+		
+		if(type == 'text' || type == 'haloactext'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'textarea' || type == 'haloactextarea'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'dropdown'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'checkbox'){
+			if(value == 'true'){
+				//todo: value might have been set explicitly to false
+				return true;
+			}
+		}
+		
+	},
+	
 	getInputFieldValue : function(container, type){
 		if(type == 'text' || type == 'haloactext'){
 			return jQuery('input', container).val();
@@ -640,26 +852,104 @@ window.ASFMultiInputFieldHandler = {
 	
 	setInputFieldValue : function(container, type, value){
 		if(type == 'text' || type == 'haloactext'){
+			value = jQuery.trim(value);
 			jQuery('input', container).val(value);
 			return true;
 		}
 		
 		if(type == 'textarea' || type == 'haloactextarea'){
+			value = jQuery.trim(value);
 			jQuery('textarea', container).val(value);
 			return true;
 		}
 		
 		if(type == 'dropdown'){
+			value = jQuery.trim(value);
 			jQuery('select', container).val(value);
 			return true;
 		}
 		
 		if(type == 'checkbox'){
-			jQuery('input:nth-child(2)', container).attr('checked', value);
+			if(this.normalizeValue(value, type) == 'true'){
+				jQuery('input:nth-child(2)', container).attr('checked', 'true');
+			} else {
+				jQuery('input:nth-child(2)', container).removeAttr('checked');
+			}
 			return true;
 		}
 		
 		return false;
+	},
+	
+	addValueChangeListeners : function(node){
+		jQuery('input', node).each(function(){
+			jQuery(this).keyup(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).change(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).blur(ASFFormSyncer.destroyFreeTextAnnotationBackup);
+		});
+		
+		jQuery('textarea', node).each(function(){
+			jQuery(this).keyup(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).change(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).blur(ASFFormSyncer.destroyFreeTextAnnotationBackup);
+		});
+		
+		jQuery('select', node).each(function(){
+			jQuery(this).keyup(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).change(ASFFormSyncer.isUpdateFreeTextNecessary);
+			jQuery(this).blur(ASFFormSyncer.destroyFreeTextAnnotationBackup);
+		});
+	},
+	
+	getContainerOfInput : function(node){
+		var parent = jQuery(node).parent();
+		var classes = jQuery(parent).attr('class');
+		if(classes != undefined && classes.indexOf('asf-multi_value') >= 0){
+			return parent;
+		} else {
+			return ASFMultiInputFieldHandler.getContainerOfInput(parent);
+		}
+	},
+	
+	areValuesEqual : function(formValue, freeTextValue, type){
+		formValue = this.normalizeValue(formValue, type);
+		freeTextValue = this.normalizeValue(freeTextValue, type);
+		
+		if(formValue == freeTextValue){
+			return true;
+		}
+		
+		return false;
+	},
+	
+	normalizeValue : function(value, type){
+		if(type == 'text' || type == 'haloactext'){
+			value = jQuery.trim(value);
+			value = value.charAt(0).toUpperCase() + value.substr(1);
+		}
+		
+		if(type == 'textarea' || type == 'haloactextarea'){
+			value = jQuery.trim(value);
+			value = value.charAt(0).toUpperCase() + value.substr(1);;
+		}
+		
+		if(type == 'dropdown'){
+			value = jQuery.trim(value);
+		}
+		
+		if(type == 'checkbox'){
+			value = jQuery.trim(value);
+			value = value.charAt(0).toLowerCase() + value.substr(1);;
+			
+			if(value != 'false' && value != 'no' && value != '0'
+					&& value != 'n' && value != 'f'){
+				value = 'true';
+			} else {
+				value = 'false';
+			}
+		}
+		
+		return value;
 	}
 };
 

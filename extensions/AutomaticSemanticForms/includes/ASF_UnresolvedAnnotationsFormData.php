@@ -89,15 +89,14 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 	public function getCategorySectionIntro(){
 		if(!is_null($this->categorySectionIntro)) return $this->categorySectionIntro;
 		
+		$display = "display: ";
 		if(count($this->propertiesFormData) == 0){
-			return '';
+			$display .=  "none";
+		} else if($this->isEmptyCategory()){
+			$display .=  "none";
 		}
 		
-		if($this->isEmptyCategory()){
-			return '';
-		}
-		
-		$intro = '<div class="asf-unresolved-section">';
+		$intro = '<div class="asf-unresolved-section" style="'.$display.'">';
 		
 		//create collapsed version of section
 		$intro .= "\n{{#collapsableFieldSetStart:";
@@ -116,6 +115,19 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		
 		$this->categorySectionIntro = $intro;
 		return $this->categorySectionIntro;
+	}
+	
+	public function getCategorySectionOutro(){
+		if(!is_null($this->categorySectionOutro)) return $this->categorySectionOutro;
+		
+		$outro = "\n|}";
+		
+		$outro .= "{{#collapsableFieldSetEnd:}}";
+		
+		$outro.='</div>';
+		
+		$this->categorySectionOutro = $outro;
+		return $this->categorySectionOutro;
 	}
 	
 	/*
