@@ -37,7 +37,14 @@
 					<xsl:for-each select="extension">
 						<xsl:sort select="@id"/>
 						<xsl:variable name="path">extensions/<xsl:value-of select="@id"/>/deploy.xml</xsl:variable>
-						<tr>
+						<!-- color -->
+						<xsl:variable name="color">
+							<xsl:choose>
+								<xsl:when test="position() mod 2 = 0">#E6E6FA</xsl:when>
+								<xsl:otherwise>#FFFACD</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>
+						<tr bgcolor="{$color}">
 						<!-- Title -->
 							<td>
 								<a>
