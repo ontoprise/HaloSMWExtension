@@ -58,7 +58,8 @@ class ASFFormDefinition {
 
 		global $asfWYSIWYG;
 		if(defined('WYSIWYG_EDITOR_VERSION')){
-			$intro .= "|WYSIWYG";
+			//todo: activate wysiwyg again
+			//$intro .= "|WYSIWYG";
 		}
 
 		$intro .= "}}}\n\n";
