@@ -465,6 +465,8 @@ class AnnotationLevelConsistency {
 	}
 
 	public function checkUnits($type) {
+		return;
+		
 		// get all *used* units for a given datatype
 		$units = smwfGetSemanticStore()->a($type);
 
@@ -515,6 +517,8 @@ class AnnotationLevelConsistency {
 	}
 
 	public function checkUnitForInstance($instance) {
+		
+		return;
 
 		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
@@ -565,6 +569,8 @@ class AnnotationLevelConsistency {
 	}
 
 	public function checkUnitsForProperty($property) {
+		return;
+		
 		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
 		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
