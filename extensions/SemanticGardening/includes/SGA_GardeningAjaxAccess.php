@@ -248,6 +248,10 @@ function smwf_ga_GetGardeningIssueClasses($bot_id) {
 	if ($bot_id == NULL) {
 		return "<span id=\"issueClasses\">unknown bot</span>";
 	} else {
+		
+		global $sgagIP;
+		sgagImportBots("$sgagIP/includes/bots");
+		
 		$className = get_class($registeredBots[$bot_id]).'Filter';
 		$filter = new $className();
 			
