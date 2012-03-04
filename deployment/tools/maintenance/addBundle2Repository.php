@@ -59,6 +59,7 @@ $createSymlinks = true;
 $fileNamecontains = false;
 $transientID=false;
 $recursive=false;
+$mediawiki = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-r => repository directory
@@ -137,6 +138,9 @@ if (isset($bundlePath)) {
 	echo "\nExtract deploy descriptors";
 	$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains, $recursive);
 	echo "..done.";
+	if (count($descriptors) == 0) {
+		echo "\nWARNING: No bundles found in '$bundlePath'";
+	}
 }
 
 // load existing repository
@@ -159,7 +163,7 @@ foreach($descriptors as $tuple) {
 	$id = $dd->getID();
 	$version = $dd->getVersion()->toVersionString();
 	$versionNoDots = str_replace(".","", $version);
-	$id = strtolower($id);
+	
 	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");
 
@@ -325,6 +329,9 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recur
 		}
 		return $result;
 	} else {
+		if (!file_exists($bundlePath)) {
+			return array();
+		}
 		$dd = Tools::unzipDeployDescriptor($bundlePath, $tmpFolder, $mwrootDir);
 
 		if ($transientID !== false) {
