@@ -153,7 +153,11 @@ class HttpDownloadSocketImpl extends HttpDownload {
 		$handle = fopen($filename, "wb");
 		@$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		if ($socket === false) throw new Exception("\t***Could not connect to '$host'***");
-		$this->useProxy($path, $port, $address);
+		if($this->proxy_addr != "" && $this->proxy_port != ""){
+            // use hostname in this case and let proxy decide what to do with it
+            $address = $host; 
+        }
+	    $useproxy = $this->useProxy($path, $port, $address);
 		@$connect_status = socket_connect($socket, $address, $port);
 		if ($connect_status === false) throw new Exception("\t***Could not connect to '$host'***");
 		$in = "GET $path HTTP/1.0\r\n";
