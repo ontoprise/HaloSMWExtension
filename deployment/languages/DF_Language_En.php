@@ -46,6 +46,7 @@ class DF_Language_En extends DF_Language {
 	'df_mwextension' => 'Mwextension',
 	'df_minversion' => 'Minversion',
 	'df_maxversion' => 'Maxversion',
+	'df_isoptional' => 'Isoptional',
 	
 	'category' => 'Category',
 	'is_inverse_of' => 'Is inverse of',

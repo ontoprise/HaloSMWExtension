@@ -214,6 +214,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		$minversion = false;
 		$maxversion = false;
 		$properties = $sd->getProperties();
+		$isoptional = false;
 		foreach($properties as $p) {
 			switch($p->getKey()) {
 				case $dfgLang->getLanguageString('df_mwextension'):
@@ -228,6 +229,10 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 					$maxversionDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_maxversion')));
 					$maxversion = reset($maxversionDi)->getString();
 					break;
+				case $dfgLang->getLanguageString('df_isoptional'):
+                    $isoptionalDi = $sd->getPropertyValues(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString('df_isoptional')));
+                    $isoptional = reset($isoptionalDi)->getBoolean();
+                    break;
 			}
 		}
 		if (is_null($bundleID)) {
@@ -235,11 +240,12 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 		}
 
 		$minversion = $minversion !== false ? 'from="'.$minversion.'"' : "";
-
-
 		$maxversion = $maxversion !== false ? 'to="'.$maxversion.'"' : "";
-
-		$xml .= "\t\t\t<dependency $minversion $maxversion>$bundleID</dependency>\n";
+		$isoptional = $isoptional !== false ? 'optional="true"' : "";
+		
+		$bundleID = str_replace(",","|", $bundleID);
+		$attr = trim("$minversion $maxversion $isoptional");
+		$xml .= "\t\t\t<dependency $attr>$bundleID</dependency>\n";
 	}
 	$xml .= "\t".'</dependencies>'."\n";
 	

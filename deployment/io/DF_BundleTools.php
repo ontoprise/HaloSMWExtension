@@ -544,7 +544,7 @@ class DFBundleTools {
 		if (count($di) > 0) {
 			$list = reset($di)->getString();
 			$typeIDs = explode(";",$list);
-			if (count($typeIDs) != 3) {
+			if (count($typeIDs) < 3 || count($typeIDs) > 4) {
 				if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' wrong number of fields.");
 				$check = false;
 			}
@@ -570,13 +570,20 @@ class DFBundleTools {
 					$partOfBundlePropertyType = reset($subObjectProperties)->findPropertyTypeID();
 					$minversionType = next($subObjectProperties)->findPropertyTypeID();
 					$maxversionType = next($subObjectProperties)->findPropertyTypeID();
+					$optionalPart = next($subObjectProperties);
+					$optionalType = $optionalPart !== false ? $optionalPart->findPropertyTypeID() : NULL;
 				}
 			}
 		}
 
 		if ($partOfBundlePropertyType != '_str' || $minversionType != '_str' || $maxversionType != '_str') {
-			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types [String, String, String]");
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types (String, String, String [, Boolean]). The last is optional.");
 			$check = false;
+		}
+		
+		if (!is_null($optionalType) && $optionalType != '_boo') {
+			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. The 4th type can be a boolean type or empty.");
+            $check = false;
 		}
 
 		// Ontology version
@@ -703,12 +710,23 @@ class DFBundleTools {
 			$article->insertNewArticle($text, "", false, false);
 			print "\n ...created ".$property->getPrefixedText();
 		}
+		
+	    $property = Title::newFromText($dfgLang->getLanguageString('df_isoptional'), SMW_NS_PROPERTY);
+        $text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_boo"]."]]";
+        $article = new Article($property);
+        if ($property->exists()) {
+            $article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+            print "\n ...edited ".$property->getPrefixedText();
+        } else {
+            $article->insertNewArticle($text, "", false, false);
+            print "\n ...created ".$property->getPrefixedText();
+        }
 
 		// Property:Dependecy
 		$property = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_rec"]."]]";
 		$text .= "\n\n[[".$propertyLabels['_LIST']."::".
-		$dfgLang->getLanguageString('df_mwextension')."; ".$dfgLang->getLanguageString('df_minversion')."; ".$dfgLang->getLanguageString('df_maxversion')."]]";
+		$dfgLang->getLanguageString('df_mwextension')."; ".$dfgLang->getLanguageString('df_minversion')."; ".$dfgLang->getLanguageString('df_maxversion')."; ".$dfgLang->getLanguageString('df_isoptional')."]]";
 		$article = new Article($property);
 		if ($property->exists()) {
 			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
