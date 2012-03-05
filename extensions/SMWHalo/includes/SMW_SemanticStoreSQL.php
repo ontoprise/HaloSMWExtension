@@ -363,6 +363,126 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		return $result;
 	}
 
+	function getCompleteCategoryTree($bundleID = '') {
+		$db =& wfGetDB( DB_SLAVE );
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+			
+		$bundleSql = '';
+		if (!empty($bundleID)) {
+			global $dfgLang;
+			$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+			$bundlesIDS = explode(",",$bundleID);
+			$this->getBundleDependencies($bundleID, $bundlesIDS);
+			
+			$bundleSMWIDs = $this->getBundleSMWIDs($bundlesIDS);
+			$bundleSMWIDSql = "false";
+			foreach($bundleSMWIDs as $bID) {
+				$bundleSMWIDSql .= " OR (o_id = $bID)";
+			}
+			$bundleSql = ' AND page_id IN (SELECT pc.page_id pc FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.NS_CATEGORY.' JOIN '.
+			$smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND ('.$bundleSMWIDSql.'))';
+		}
+
+		 // get categories in sub/super-category relation 
+		$result = array();
+		$sql = 'cl_from = page_id  AND page_namespace = '.NS_CATEGORY.' '.$bundleSql;
+		$res = $db->select(  array($page, $categorylinks),
+		array('cl_to','page_title'),
+		$sql, 'SMWHalo::getCompleteCategoryTree');
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				if (smwf_om_userCan($row->cl_to, 'read', NS_CATEGORY) === "true"
+				&& smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+					$result[] = array($row->cl_to, $row->page_title);
+				}
+
+			}
+		}
+		$db->freeResult($res);
+		
+		// get root categories with no sub-categories
+		$sql = 'page_namespace = '.NS_CATEGORY.' AND page_title NOT IN (SELECT cl_to FROM '.$categorylinks.') '.$bundleSql;
+		$res = $db->select(  array($page),
+        array('page_title'),
+        $sql, 'SMWHalo::getCompleteCategoryTree');
+       
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+                    $result[] = array($row->page_title, '');
+                }
+
+            }
+        }
+        $db->freeResult($res);
+        
+		return $result;
+	}
+	
+    function getCompletePropertyTree($bundleID = '') {
+        $db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $smw_subp2 = $db->tableName('smw_subp2');
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+            
+        $bundleSql = '';
+        $bundleSqlOnSMWIds="";
+        $bundleSqlOnPageIDs="";
+        if (!empty($bundleID)) {
+            global $dfgLang;
+            $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+            $bundlesIDS = explode(",",$bundleID);
+            $this->getBundleDependencies($bundleID, $bundlesIDS);
+            $bundleSMWIDs = $this->getBundleSMWIDs($bundlesIDS);
+            $bundleSMWIDSql = "false";
+            foreach($bundleSMWIDs as $bID) {
+                $bundleSMWIDSql .= " OR (o_id = $bID)";
+            }
+            $bundleSqlOnPageIDs = ' AND page_id IN (SELECT pc.page_id pc FROM '.$page.' pc JOIN '.$smw_ids.' ON pc.page_title = smw_title AND pc.page_namespace = '.SMW_NS_PROPERTY.' JOIN '.
+                $smw_rels2.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND ('.$bundleSMWIDSql.'))';
+            $bundleSqlOnSMWIds = ' AND sub.smw_id IN (SELECT s_id FROM '.$smw_rels2.' JOIN '.$smw_ids.' ON s_id = smw_id AND p_id = '.$partOfBundlePropertyID.' AND ('.$bundleSMWIDSql.'))';    
+        }
+        $result = array();
+        
+        // get properties in sub/super-property relation 
+        $sql = 'SELECT sub.smw_title AS subProperty, super.smw_title AS superProperty FROM '.$smw_subp2.' JOIN '.$smw_ids.' sub ON sub.smw_id = s_id JOIN '.$smw_ids.' super ON super.smw_id = o_id'.
+                    ' WHERE sub.smw_namespace = '.SMW_NS_PROPERTY.' AND super.smw_namespace = '.SMW_NS_PROPERTY.' '.$bundleSqlOnSMWIds;
+
+        $res = $db->query( $sql, 'SMWHalo::getCompletePropertyTree');
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                if (smwf_om_userCan($row->cl_to, 'read', NS_CATEGORY) === "true"
+                && smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+                    $result[] = array($row->superProperty, $row->subProperty);
+                }
+
+            }
+        }
+        $db->freeResult($res);
+        
+        // get all other root properties with no subproperties
+        $sql = 'SELECT page_title FROM '.$page.' JOIN '.$smw_ids.'  ON page_namespace = smw_namespace AND page_title = smw_title WHERE page_namespace = '.SMW_NS_PROPERTY.' AND smw_id NOT IN (SELECT s_id FROM '.$smw_subp2.') '.$bundleSqlOnPageIDs;
+        $res = $db->query( $sql, 'SMWHalo::getCompletePropertyTree');
+       
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
+                    $result[] = array($row->page_title, '');
+                }
+
+            }
+        }
+        $db->freeResult($res);
+        
+        return $result;
+    }   
+	
+	
+
 	function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL, $bundleID = '') {
 
 		$db =& wfGetDB( DB_SLAVE );
@@ -399,25 +519,25 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		return $result;
 	}
-	
+
 	function isInCategory(Title $article, Title $category) {
-	
-           
-        $dbr = wfGetDB( DB_SLAVE );
-        $categorylinks = $dbr->tableName( 'categorylinks' );
 
-        # NEW SQL
-        $sql = "SELECT * FROM $categorylinks"
-             . " WHERE cl_from=".$article->getArticleID()
-             . " AND cl_to = ".$dbr->addQuotes($category->getDBkey());
+			
+		$dbr = wfGetDB( DB_SLAVE );
+		$categorylinks = $dbr->tableName( 'categorylinks' );
 
-        $res = $dbr->query( $sql );
-       
-        $contains = $dbr->numRows( $res ) > 0;
-        $dbr->freeResult($res);    
-        
-        return $contains;
-   
+		# NEW SQL
+		$sql = "SELECT * FROM $categorylinks"
+		. " WHERE cl_from=".$article->getArticleID()
+		. " AND cl_to = ".$dbr->addQuotes($category->getDBkey());
+
+		$res = $dbr->query( $sql );
+			
+		$contains = $dbr->numRows( $res ) > 0;
+		$dbr->freeResult($res);
+
+		return $contains;
+			
 	}
 
 	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $bundleID = '') {
@@ -484,8 +604,8 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_rels2 = $db->tableName('smw_rels2');
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
 
 		// create virtual tables
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARBINARY(255), namespace INT(11), category VARBINARY(255))
@@ -495,19 +615,27 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARBINARY(255) NOT NULL)
 		            ENGINE=MEMORY', 'SMW::createVirtualTableWithInstances' );
-        
+
 		$bundleJOINs = "";
 		$bundleSQL = "";
 		if (!empty($bundleID)) {
 			global $dfgLang;
-	        $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
-	        $bundleID = str_replace(" ","_",ucfirst($bundleID));
-	        $bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
-	        $bundleJOINs = 'JOIN '.$smw_ids.' ON smw_title = page_title AND smw_namespace = page_namespace '.
+			$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_partofbundle")));
+						
+		    $bundlesIDS = explode(",",$bundleID);
+            $this->getBundleDependencies($bundleID, $bundlesIDS);
+            $bundleSMWIDs = $this->getBundleSMWIDs($bundlesIDS);
+            $bundleSMWIDSql = "false";
+            foreach($bundleSMWIDs as $bID) {
+                $bundleSMWIDSql .= " OR (o_id = $bID)";
+            }
+			
+			$bundleSMWID = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
+			$bundleJOINs = 'JOIN '.$smw_ids.' ON smw_title = page_title AND smw_namespace = page_namespace '.
                            'JOIN '.$smw_rels2.' ON smw_id = s_id ';
-	        $bundleSQL = ' AND p_id = '.$partOfBundlePropertyID.' AND o_id = '.$bundleSMWID; 
+			$bundleSQL = ' AND p_id = '.$partOfBundlePropertyID.' AND ('.$bundleSMWIDSql.')';
 		}
-      
+
 		// initialize with direct instances
 		if ($onlyMain) {
 			$articleNamespaces = "page_namespace = ".NS_MAIN;
@@ -516,9 +644,9 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 		}
 		$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance,page_namespace AS namespace, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-		                $bundleJOINs.
+		$bundleJOINs.
 						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).$bundleSQL.')');
-		
+
 		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
@@ -532,7 +660,7 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			// insert direct instances of current subcategory level
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace, cl_to AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-			             $bundleJOINs.
+			$bundleJOINs.
 						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub) '.$bundleSQL.')');
 
 			// copy subcatgegories to supercategories of next iteration
@@ -1420,7 +1548,44 @@ abstract class SMWSemanticStoreSQL extends SMWSemanticStore {
 			if ($verbose) echo "done!";
 		}
 	}
-
+    
+	/**
+	 * Converts an array of bundle names into SMW IDs.
+	 * @param string[] $bundleIDs
+	 * 
+	 * @return string[]
+	 */
+	private function getBundleSMWIDs($bundleIDs = array()) {
+		$bundleSMWIDs=array();
+		foreach($bundleIDs as $bundleID) {
+			$bundleID = str_replace(" ","_",ucfirst($bundleID));
+			$bundleSMWIDs[] = smwfGetStore()->getSMWPageID($bundleID, NS_MAIN, "", "");
+		}
+		return $bundleSMWIDs;
+	}
+    
+	/**
+	 * Gets all dependencies of a bundle.
+	 * 
+	 * @param string $bundleID
+	 * @param string[] (out) $bundleIDs
+	 */
+	private function getBundleDependencies($bundleID, & $bundleIDs) {
+		global $dfgLang;
+		$df_dependenciesProperty = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_dependencies"));
+		$df_mwextensionProperty = SMWDIProperty::newFromUserLabel($dfgLang->getLanguageString("df_mwextension"));
+        $dependencies = smwfGetStore()->getPropertyValues(SMWDIWikiPage::newFromTitle(Title::newFromText($bundleID)), $df_dependenciesProperty);
+      
+        foreach($dependencies as $container) {
+        	$semdata = $container->getSemanticData();
+        	$bundle = reset($semdata->getPropertyValues($df_mwextensionProperty));
+        	if ($bundle !== false) {
+        		$id = $bundle->getString();
+        		$this->getBundleDependencies($id,$bundleIDs);
+        		$bundleIDs[] = $id;
+        	}
+        }   
+	}
 
 }
 

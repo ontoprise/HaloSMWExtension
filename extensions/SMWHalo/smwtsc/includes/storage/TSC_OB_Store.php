@@ -174,7 +174,12 @@ class OB_StorageTS extends OB_Storage {
 			$bundleCond = "";
 			if ($this->bundleID != '') {
 				global $dfgLang;
-				$bundleCond = "[[".$dfgLang->getLanguageString("df_partofbundle")."::".$this->bundleID."]]";
+				$bundlesIDs = explode(",",$this->bundleID);
+				$bundlesIDsStr = array();
+				foreach($bundlesIDs as $b) {
+					$bundlesIDsStr[] = str_replace(" ","_",ucfirst($b));
+				}
+				$bundleCond = "[[".$dfgLang->getLanguageString("df_partofbundle")."::".implode("||",$bundlesIDsStr)."]]";
 			}
 			
 			// query

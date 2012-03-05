@@ -69,7 +69,16 @@ abstract class SMWSemanticStore {
 	 */
 	public abstract function getRootCategories($requestoptions = NULL, $bundleID = '');
 
-
+    /**
+     * Returns the complete category tree as a list of tuples (parent, child),
+     * categories with no children have child == ''. If bundleIDs is given,
+     * only categories of the given bundle(s) are returned.
+     * 
+     * @param string $bundleIDs Comma-separated list of bundle names
+     * @return string tuple[] (dbkey, dbkey)
+     */
+    public abstract function getCompleteCategoryTree($bundleIDs = '');
+    
 	/**
 	 * Returns root properties (properties which have no super-property).
 	 *
@@ -79,7 +88,17 @@ abstract class SMWSemanticStore {
 	 * @return array of (Title t, boolean isLeaf)
 	 */
 	public abstract function getRootProperties($requestoptions = NULL, $bundleID = '');
-
+    
+	/**
+     * Returns the complete property tree as a list of tuples (parent, child),
+     * properties with no children have child == ''. If bundleIDs is given,
+     * only properties of the given bundle(s) are returned.
+     * 
+     * @param string $bundleID Comma-separated list of bundle names
+     * @return string tuple[] (dbkey, dbkey)
+     */
+    public abstract function getCompletePropertyTree($bundleIDs = '');
+    
 	/**
 	 * Returns direct subcategories of $categoryTitle.
 	 *

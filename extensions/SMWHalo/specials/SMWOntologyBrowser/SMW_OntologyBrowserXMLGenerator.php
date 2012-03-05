@@ -635,6 +635,7 @@ class XMLTreeObject {
 	public function addChild($childTitle, $hasChild = true) {
 		if (!array_key_exists($childTitle->getText(), $this->children)) {
 			$this->children[$childTitle->getText()] = new XMLTreeObject($childTitle, $hasChild);
+			$this->hasChild = true;
 		}
 		return $this->children[$childTitle->getText()];
 	}
