@@ -408,7 +408,7 @@ ENDS;
 	 * @return string
 	 */
 	function getTitle() {
-		return strtolower(trim((string) $this->globalElement[0]->title));
+		return trim((string) $this->globalElement[0]->title);
 	}
 
 	/**
@@ -522,7 +522,7 @@ ENDS;
 		$dependencies = $this->dom->xpath('/deploydescriptor/global/dependencies/dependency');
 
 		foreach($dependencies as $dep) {
-			$depID = strtolower(trim((string) $dep[0]));
+			$depID = trim((string) $dep[0]);
 			$depFrom = (string) $dep->attributes()->from;
 			$depTo = (string) $dep->attributes()->to;
 			$optional = (string) $dep->attributes()->optional;
@@ -549,7 +549,7 @@ ENDS;
 	 * @return DFDependency or NULL if $ext_id does not occur as dependency.
 	 */
 	function getDependency($ext_id) {
-		$ext_id = strtolower($ext_id);
+		
 		$dependencies = $this->getDependencies();
 		foreach($dependencies as $d) {
 			$id = $d->isContained(array($ext_id));

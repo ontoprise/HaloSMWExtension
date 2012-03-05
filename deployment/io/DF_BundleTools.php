@@ -128,7 +128,7 @@ class DFBundleTools {
 		if (count($values) > 0) {
 			$value = reset($values);
 			$bundleID = $value->getTitle()->getDBkey();
-			return strtolower($bundleID);
+			return $bundleID;
 		}
 		return NULL;
 	}

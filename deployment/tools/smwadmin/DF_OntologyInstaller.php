@@ -90,10 +90,10 @@ class OntologyInstaller {
 				$settings->deploydescriptor->dependencies = array();
 				foreach($dd->getDependencies() as $dep) {
 					$settings->deploydescriptor->dependencies[] = array(
-					$dep->id = $dep->getIDs(),
+					$dep->getIDs(),
 					$dep->getMinVersion()->toVersionString(),
 					$dep->getMaxVersion()->toVersionString(),
-					$dep->optional = $dep->isOptional()
+					$dep->isOptional()
 					);
 				}
 			}
