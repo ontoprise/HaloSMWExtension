@@ -242,12 +242,6 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 	} else if ($arg == '--dep') { // => show dependencies
 		$dfgCheckDep = true;
 		continue;
-	} else if ($arg == '--checkdump') { // => analyze installed dump
-		$checkDump = true;
-		$package = next($args);
-		if ($package === false) dffExitOnFatalError("No package found");
-		$packageToInstall[] = $package;
-		continue;
 	} else if ($arg == '--finalize') { // => finalize installation, ie. run scripts, import pages
 
 		$dfgInstallPackages = true;
@@ -312,10 +306,10 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgCreateProperties = true;
 		continue;
 	} else if ($arg == '--showOKHint') {
-        // ignore
-        $dfgShowOKHint = true;
-        continue;
-    } else {
+		// ignore
+		$dfgShowOKHint = true;
+		continue;
+	} else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
@@ -336,23 +330,27 @@ try {
 $latestVersion = PackageRepository::getLatestRelease();
 if ($latestVersion !== false) {
 	try {
-        $currentVersion = new DFVersion(DFVersion::removePatchlevel(DEPLOY_FRAMEWORK_VERSION));
+		$currentVersion = new DFVersion(DFVersion::removePatchlevel(DEPLOY_FRAMEWORK_VERSION));
 	} catch(Exception $e) {
 		$currentVersion = NULL; // THIS happens only in SVN version
 	}
-    if (!is_null($currentVersion) && $currentVersion->isLower($latestVersion)) {
-        $dfgOut->outputln("\n\n  !!!!!!!!!! NEW release available !!!!!!!!!! Check: ".DF_REPOSITORY_LIST_LINK."\n\n");
-    }
+	if (!is_null($currentVersion) && $currentVersion->isLower($latestVersion)) {
+		$dfgOut->outputln("\n\n  !!!!!!!!!! NEW release available !!!!!!!!!! Check: ".DF_REPOSITORY_LIST_LINK."\n\n");
+	}
 }
 
 if ($dfgCreateProperties) {
-	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-    require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-    $dfgOut->setMode($dfgOutputFormat);
+	try {
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	} catch(DBConnectionError $e) {
+		dffExitOnFatalError("Database is not running. Please start it and try again.");
+	}
+	$dfgOut->setMode($dfgOutputFormat);
 
-    dffInitLanguage();
+	dffInitLanguage();
 	DFBundleTools::createBundleProperties();
-	
+
 	print "\n\nProperties successfully created/updated.\n";
 	die(DF_TERMINATION_WITHOUT_FINALIZE);
 }
@@ -368,9 +366,13 @@ if (!is_null($dfgApplyPatchesFor)) {
 }
 
 if ($dfgInstallPackages) {
-	// include commandLine.inc to be in maintenance mode
-	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	try{
+		// include commandLine.inc to be in maintenance mode
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	} catch(DBConnectionError $e) {
+		dffExitOnFatalError("Database is not running. Please start it and run: smwadmin --finalize");
+	}
 	$dfgOut->setMode($dfgOutputFormat);
 
 	dffInitLanguage();
@@ -534,10 +536,12 @@ foreach($packageToInstall as $toInstall) {
 
 // install/updates ontologies
 if (count($ontologiesToInstall) > 0) {
-
-	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-	require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
+	try {
+		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+	} catch(DBConnectionError $e) {
+		dffExitOnFatalError("Database is not running. Please start it and try again.");
+	}
 	dffInitLanguage();
 
 	// requires a wiki environment, so check and include a few things more
@@ -639,16 +643,22 @@ if (count($packageToDeinstall) > 1) {
 foreach($packageToDeinstall as $toDeInstall) {
 
 	try {
+		// de-install code and settings
 		$dd = $installer->deinstall($toDeInstall);
+		
+		// de-install content
 		if (count($dd->getWikidumps()) > 0
 		|| count($dd->getResources()) >  0
 		|| count($dd->getUninstallScripts()) > 0
 		|| count($dd->getCodefiles()) > 0
 		|| count($dd->getOntologies()) > 0) {
 			// include commandLine.inc to be in maintenance mode
-			$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-			require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
+			try {
+				$mediaWikiLocation = dirname(__FILE__) . '/../../..';
+				require_once "$mediaWikiLocation/maintenance/commandLine.inc";
+			} catch(DBConnectionError $e) {
+				dffExitOnFatalError("Database is not running. Please start it and run: smwadmin --finalize");
+			}
 			dffInitLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
@@ -806,7 +816,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tAdditional options (can only be used with the optional above): ");
 	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
 	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
-	//$dfgOut->outputln( "\t--checkdump <bundle>: Check only dumps for changes but do not install.");
+	
 	$dfgOut->outputln( "\t--nocheck: Skips checks for appropriate rights.");
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional bundles");
 	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
@@ -847,7 +857,7 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
 					$id = $desc->getID();
-                    $dfgOut->outputln("\t*$id-".$min->toVersionString());
+					$dfgOut->outputln("\t*$id-".$min->toVersionString());
 				}
 
 			}
@@ -856,7 +866,7 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 				foreach($contradictions as $etu) {
 					list($dd, $min, $max) = $etu;
 					$id = $dd->getID();
-                    $dfgOut->outputln("\t*$id-".$min->toVersionString());
+					$dfgOut->outputln("\t*$id-".$min->toVersionString());
 				}
 			}
 			$dfgOut->outputln("\n");
@@ -881,25 +891,8 @@ function dffHandleGlobalUpdate($dfgCheckDep) {
 }
 
 function dffHandleInstallOrUpdate($packageID, $version) {
-	global $checkDump, $dfgCheckDep, $installer, $res_installer, $dfgOut;
-	if (isset($checkDump) && $checkDump == true) {
-		// include commandLine.inc to be in maintenance mode
-		$mediaWikiLocation = dirname(__FILE__) . '/../../..';
-		require_once "$mediaWikiLocation/maintenance/commandLine.inc";
-
-		dffInitLanguage();
-
-		// check status of a currently installed wikidump
-		dffCheckWikiContext();
-
-		// include the resource installer
-		require_once('DF_ResourceInstaller.php');
-		$dfgOut->setMode($dfgOutputFormat);
-		$res_installer = ResourceInstaller::getInstance($mwrootDir);
-		$res_installer->checkWikidump($packageID, $version);
-		$dfgOut->outputln("\n");
-
-	} else if ($dfgCheckDep === true) {
+	global $dfgCheckDep, $installer, $res_installer, $dfgOut;
+	if ($dfgCheckDep === true) {
 
 		// check dependencies of a package to install or update
 		list($new_package, $old_package, $extensions_to_update) = $installer->collectPackagesToInstall($packageID, $version);
