@@ -953,6 +953,9 @@ CKEDITOR.customprocessor.prototype =
                          
                             stringBuilder.push( this.listType );
                             this._AppendChildNodes( htmlNode, stringBuilder, prefix );
+                            if(stringBuilder[stringBuilder.length - 1] !== '\n'){
+                              stringBuilder.push('\n');
+                            }
                             break;
 
                         case 'a' :

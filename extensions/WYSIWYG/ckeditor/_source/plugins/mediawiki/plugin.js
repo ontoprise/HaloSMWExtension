@@ -656,10 +656,10 @@ CKEDITOR.customprocessor.prototype =
             xmlDoc.loadXML(data);
             
             //IE xml validation. Uncomment for debugging purposes
-          xmlDoc.validateOnParse = true;
-          if (xmlDoc.parseError.errorCode != 0) {
-              alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
-          }  
+//          xmlDoc.validateOnParse = true;
+//          if (xmlDoc.parseError.errorCode != 0) {
+//              alert(xmlDoc.parseError.errorCode + ':  ' + xmlDoc.parseError.reason + '\nOn line: ' + xmlDoc.parseError.line + '\n-----------\n' + data);
+//          }  
         }       
         
         return xmlDoc;
@@ -953,6 +953,9 @@ CKEDITOR.customprocessor.prototype =
                          
                             stringBuilder.push( this.listType );
                             this._AppendChildNodes( htmlNode, stringBuilder, prefix );
+                            if(stringBuilder[stringBuilder.length - 1] !== '\n'){
+                              stringBuilder.push('\n');
+                            }
                             break;
 
                         case 'a' :
