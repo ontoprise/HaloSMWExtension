@@ -1,0 +1,28 @@
+
+.smwhalo-combobox-button{
+  background-color: transparent;
+  background-image: url(img/sel_win7.gif);
+  background-position: center center;
+  background-repeat: no-repeat;
+  border: medium none;
+  cursor: pointer;
+  float: left;
+  height: 22px;
+  margin: 0 0 0 -2px;
+  padding: 0;
+  width: 17px;
+}
+
+.smwhalo-combobox-container > input{
+  float: left;
+  height: 20px;
+  border: 1px inset silver;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-autocomplete {
+  overflow-y: auto;
+  white-space: nowrap;
+}
+
