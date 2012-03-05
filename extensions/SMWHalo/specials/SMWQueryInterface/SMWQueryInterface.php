@@ -424,7 +424,7 @@ class SMWQueryInterface extends SpecialPage {
             '</tr><tr>' .
             '<td></td><td id="qiPropertyTypeLabel" class="typeLabelTd">&nbsp;</td><td></td>' .
             '</tr></table>' .
-            $this->addPropertyValueDialog(wfMsg('smw_qi_value_name'), 'qiPropertyValueTable', 'qiPropertyValueNameInput', 'qiPropertyValueShowInResultsChkBox', 'qiPropertyValueTypeLabel', 'qiPropertyColumnLabelInput', true, wfMsg('smw_qi_value')) .            $this->addFiltersDialog('qiPropertyFiltersTable');
+            $this->addValueDialog(wfMsg('smw_qi_value_name'), 'qiPropertyValueTable', 'qiPropertyValueNameInput', 'qiPropertyValueShowInResultsChkBox', 'qiPropertyValueTypeLabel', 'qiPropertyColumnLabelInput', true, wfMsg('smw_qi_value')) .            $this->addFiltersDialog('qiPropertyFiltersTable');
   }
 
   private function addResultPartSparql() {
@@ -541,9 +541,9 @@ class SMWQueryInterface extends SpecialPage {
             <table id="qiQueryOptionTable" summary="Layout Manager for query">
             <tr>
                 <td>' . wfMsg('smw_qi_source') . '</td>' .
-                '<td><select id="qiSourceSelect"/></td>
+                '<td><input id="qiSourceInput"/></td>
                  <td>' . wfMsg('smw_qi_graph') . '</td>
-                 <td><select id="qiGraphSelect"/></td>
+                 <td><input id="qiGraphInput"/></td>
            </tr>
             <tr>
                 <td title="' . wfMsg('smw_qi_tt_format') . '">Format</td>

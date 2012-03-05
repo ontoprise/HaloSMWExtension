@@ -107,18 +107,35 @@ function smgSetupExtension() {
         'dependencies' => 'jquery.cookie'
 	);
 
-     $wgResourceModules['ext.jquery.jec'] = $moduleTemplate + array(
-        'scripts' => array(
-            'scripts/jec/jquery.jec-1.3.3.js'
-        )
-	);
+//     $wgResourceModules['ext.jquery.textext'] = $moduleTemplate + array(
+//        'scripts' => array(
+//            'scripts/textext/js/textext.core.js',
+//            'scripts/textext/js/textext.plugin.ajax.js',
+//            'scripts/textext/js/textext.plugin.arrow.js',
+//            'scripts/textext/js/textext.plugin.autocomplete.js',
+//            'scripts/textext/js/textext.plugin.filter.js',
+//            'scripts/textext/js/textext.plugin.filter.js',
+//            'scripts/textext/js/textext.plugin.focus.js',
+//            'scripts/textext/js/textext.plugin.prompt.js',
+//            'scripts/textext/js/textext.plugin.suggestions.js',
+//            'scripts/textext/js/textext.plugin.tags.js'
+//        ),
+//         'styles' => array(
+//            'scripts/textext/css/textext.core.css',
+//            'scripts/textext/css/textext.plugin.arrow.css',
+//            'scripts/textext/css/ttextext.plugin.autocomplete.css',
+//            'scripts/textext/css/textext.plugin.focus.css',
+//            'scripts/textext/css/textext.plugin.prompt.css',
+//            'scripts/textext/css/textext.plugin.tags.css'
+//				)
+//	);
 
-     $wgResourceModules['jquery.ui.combobox'] = $moduleTemplate + array(
+     $wgResourceModules['ext.smwhalo.combobox'] = $moduleTemplate + array(
         'scripts' => array(
-            'scripts/jquery.ui.combobox/jquery.ui.combobox.js'
+            'scripts/combobox/jquery.ui.combobox.js'
         ),
          'styles' => array(
-          'scripts/jquery.ui.combobox/jquery.ui.combobox.css'
+          'scripts/combobox/jquery.ui.combobox.css'
 				),
          'dependencies' => array(
              'jquery.ui.autocomplete',

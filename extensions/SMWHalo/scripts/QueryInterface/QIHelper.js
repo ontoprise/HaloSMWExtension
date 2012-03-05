@@ -2223,8 +2223,11 @@ QIHELPER = QIHelper.prototype = {
       gLanguage.getMessage('TYPE_RECORD') ;
       this.toggleSubquery(false);
     } else {
+      this.propTypename = gLanguage.getMessage('QI_PAGE');
       // get type of property, if it's a subquery then type is page
-      this.propTypename = (selector >= 0) ? gLanguage.getMessage('QI_PAGE') : vals[0][0];
+      if(selector < 0 && vals.length && vals[0].length){
+        this.propTypename = vals[0][0];
+      }
       $$('#askQI #dialoguecontent')[0].rows[typeRow].cells[1].innerHTML =
       gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + this.propTypename;
       if (this.propTypename != gLanguage.getMessage('QI_PAGE'))
@@ -3361,7 +3364,9 @@ QIHELPER = QIHelper.prototype = {
           for (e = 0; e < naryVals.length; e++)
             pgroup.addValue(naryVals[e][0], naryVals[e][1], naryVals[e][2]);
         }
-        pgroup.setUnits(propdef.getUnits());
+        if(propdef){
+          pgroup.setUnits(propdef.getUnits());
+        }
 
         var subqueryIds = propList.getSubqueryIds(propList.getIndex(pchain.join('.')));
         if (!subqueryIds) subqueryIds = new Array();

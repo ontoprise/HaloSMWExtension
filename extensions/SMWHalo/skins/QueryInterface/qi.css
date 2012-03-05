@@ -8,7 +8,7 @@
   font-variant:normal;
   max-width:100%;
   width: 100%;
-  height:750px;
+  height:100%;
 }
 
 #shade{
@@ -644,13 +644,18 @@ button.btnhov{
 }
 
 
-#qiPropertyValueNameInput{
+/*#qiPropertyValueNameInput{
   width: 135px;
-}
+}*/
 
 #qiBoxcontent table td{
   width: 180px;
 }
+
+#qiBoxcontent .ui-autocomplete-input{
+  width: 135px;
+}
+
 
 #qiBoxcontent div{
   vertical-align: top;
@@ -675,10 +680,10 @@ button.btnhov{
   width: 235px;
 }
 
-#qiQueryOptionTable input{
+/*#qiQueryOptionTable input{
   height: 18px;
   width: 214px;
-}
+}*/
 
 /* reduce the font size of qtips */
 .ui-tooltip-qiQtip{
@@ -818,6 +823,6 @@ td input.filterValue{
   padding-left: 5px;
 }
 
-/*.smwtable{
-  white-space: nowrap;
-}*/
+#qiQueryOptionTable .ui-autocomplete-input{
+  width: 217px;
+}

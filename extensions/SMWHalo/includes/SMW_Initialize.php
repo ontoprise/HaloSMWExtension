@@ -1668,7 +1668,7 @@ function smwhfRegisterResourceLoaderModules() {
       'jquery.ui.dialog',
       'jquery.ui.tabs',
       'ext.smwhalo.general',
-      'jquery.ui.combobox',
+      'ext.smwhalo.combobox',
       'ext.smw.tooltips',
       'ext.ScriptManager.prototype'
      );

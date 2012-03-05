@@ -74,9 +74,8 @@ function smwf_qi_getSparqlQueryResult($querystring, $paramstring){
     if (!in_array('format', array_keys($params)))
       $params['format'] = 'table';
 
-    SMWSPARQLQueryProcessor::processFunctionParams($params, $querystring, $resutlParams, $resultPrintouts);
+    $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_HTML);
 
-    $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $params, $resultPrintouts, SMW_OUTPUT_HTML);
     if (is_array($result) && trim($result[0]) == '' || trim($result == '')) {
        return wfMsg('smw_qi_printout_err4');
     }
