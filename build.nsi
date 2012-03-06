@@ -370,7 +370,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
          ${If} $R0 == "7"
          ${OrIf} $R0 == "Vista"
          ${OrIf} $R0 == "2008"
-            DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
+            DetailPrint "Add starts scripts as planned task for Windows 7/2008 Server"
             
             # Apache
             nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
@@ -1082,7 +1082,7 @@ Function installAsWindowsService
     ${If} $R0 == "7"
     ${OrIf} $R0 == "Vista"
     ${OrIf} $R0 == "2008"
-           DetailPrint "Add starts scripts as planned task for Windows 7/Vista/2008 Server"
+           DetailPrint "Add starts scripts as planned task for Windows 7/2008 Server"
             
            # Apache (remove others before)
            nsExec::ExecToLog 'schtasks /delete /tn "start_apache" /F'
