@@ -31,6 +31,7 @@
     graphs: ['default', 'any'],
     variables: [],
     isTSCAccessible: true,
+    isSourceCodeChanged: false,
 
     json : {
 
@@ -250,7 +251,6 @@
 
   SPARQL.activateUpdateSourceBtn = function(){
     $('#qiUpdateSourceBtn').live('click', function(){
-//      SPARQL.sparqlToTree($('#sparqlQueryText').val());
       SPARQL.getQueryResult(SPARQL.getNamespaceString() + $('#sparqlQueryText').val());
       $('#sparqlQueryText').data('initialQuery', $('#sparqlQueryText').val());
     });
@@ -263,6 +263,7 @@
       if(initialQuery && initialQuery.length > 1){
         $('#sparqlQueryText').val($('#sparqlQueryText').data('initialQuery'));
         $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + $('#sparqlQueryText').val()));
+        SPARQL.isSourceCodeChanged = false;
       }
       event.preventDefault();
     });
@@ -305,6 +306,7 @@
 //          $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + sparqlQuery));
           SPARQL.updateSortOptions();
           SPARQL.toTree();
+          SPARQL.isSourceCodeChanged = false;
         }
         else{
           //tsc is not reachable
@@ -375,7 +377,7 @@
 
     return dialogDiv;
   };
-
+  
   SPARQL.showConfirmationDialog = function(message, title, onOkCallback, onOkCallbackArgs, onCancelCallback, onCancelCallbackArgs){
     var dialogDiv = $('<div/>').attr('id', 'qiConfirmationMsgDialog');
     $('body').append(dialogDiv);
@@ -435,49 +437,62 @@
 
   SPARQL.treeToSparql = function(treeJsonConfig, getQueryResult){
     treeJsonConfig = treeJsonConfig || SPARQL.Model.data;
-      
-    var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
-    mw.log('tree json:\n' + jsonString);
 
-    $.ajax({
-      type: 'POST',
-      url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/treeToSPARQL_noNamespaces',
-      data: {
-        tree: jsonString
-      },
-      success: function(data, textStatus, jqXHR) {
-        mw.log('data: ' + data);
-        mw.log('textStatus: ' + textStatus);
-        mw.log('jqXHR.responseText: ' + jqXHR.responseText);
-        if(data && data.query){
-          SPARQL.queryString = data.query;
-          SPARQL.Model.data.namespace = SPARQL.Model.removeNamespaceDuplicates(data.namespace);
-          $('#sparqlQueryText').val(SPARQL.queryString);
-          $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
-          var parserFuncString = SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
-          $('#qiSparqlParserFunction').val(parserFuncString);
-          if(getQueryResult){
-            if(SPARQL.validateQueryTree(treeJsonConfig)){
-              SPARQL.getQueryResult(SPARQL.queryString);
+    var treeToSparqlConversion = function(){
+
+        var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
+        mw.log('tree json:\n' + jsonString);
+
+        $.ajax({
+          type: 'POST',
+          url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/treeToSPARQL_noNamespaces',
+          data: {
+            tree: jsonString
+          },
+          success: function(data, textStatus, jqXHR) {
+            mw.log('data: ' + data);
+            mw.log('textStatus: ' + textStatus);
+            mw.log('jqXHR.responseText: ' + jqXHR.responseText);
+            if(data && data.query){
+              SPARQL.queryString = data.query;
+              SPARQL.Model.data.namespace = SPARQL.Model.removeNamespaceDuplicates(data.namespace);
+              $('#sparqlQueryText').val(SPARQL.queryString);
+              $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
+              var parserFuncString = SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
+              $('#qiSparqlParserFunction').val(parserFuncString);
+              if(getQueryResult){
+                if(SPARQL.validateQueryTree(treeJsonConfig)){
+                  SPARQL.getQueryResult(SPARQL.queryString);
+                }
+              }
             }
-          }         
-        }
-        else{
-          //tsc is not reachable
-          SPARQL.isTSCAccessible = false;
-          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'treeToSparqlMsgDialog');
-        }
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        mw.log(textStatus);
-        mw.log('response: ' + xhr.responseText)
-        mw.log('errorThrown: ' + errorThrown);
-        var errorJson = $.parseJSON(xhr.responseText);
-        var msg = errorJson.error || 'The result is empty'
-        SPARQL.showMessageDialog(msg, 'SPARQL tree to string convertion error', 'treeToSparqlMsgDialog');
-      }
+            else{
+              //tsc is not reachable
+              SPARQL.isTSCAccessible = false;
+              SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'treeToSparqlMsgDialog');
+            }
+          },
+          error: function(xhr, textStatus, errorThrown) {
+            mw.log(textStatus);
+            mw.log('response: ' + xhr.responseText)
+            mw.log('errorThrown: ' + errorThrown);
+            var errorJson = $.parseJSON(xhr.responseText);
+            var msg = errorJson.error || 'The result is empty'
+            SPARQL.showMessageDialog(msg, 'SPARQL tree to string convertion error', 'treeToSparqlMsgDialog');
+          }
 
-    });
+        });
+    };
+
+    if(SPARQL.isSourceCodeChanged){
+      SPARQL.showConfirmationDialog('Override query text changes?', 'Query text was modified', function(){
+        treeToSparqlConversion();
+        SPARQL.isSourceCodeChanged = false;
+      });
+    }
+    else{
+      treeToSparqlConversion();
+    }
   };
 
 
@@ -986,15 +1001,15 @@
 
     $('#qiPropertyNameInput').attr('constraints', SPARQL.getPropertyAutocompleteConstrains(subject));
 
-//    $('#qiPropertyDialog #qiPropertyNameInput').keyup(function(){
-//      SPARQL.getPropertyInfo(SPARQL.Model.assureFullyQualifiedIRI($(this).val(), 'property'));
-//      SPARQL.View.setValidator($(this));
-//
-//      $('#qiPropertyDialog #qiPropertyNameInput').focusout(function(){
-//        SPARQL.getPropertyInfo(SPARQL.Model.assureFullyQualifiedIRI($(this).val(), 'property'));
-//        SPARQL.View.setValidator($(this));
-//      });
-//    });
+    $('#qiPropertyDialog #qiPropertyNameInput').keyup(function(){
+      SPARQL.getPropertyInfo(SPARQL.Model.assureFullyQualifiedIRI($(this).val(), 'property'));
+      SPARQL.View.setValidator($(this));
+
+      $('#qiPropertyDialog #qiPropertyNameInput').focusout(function(){
+        SPARQL.getPropertyInfo(SPARQL.Model.assureFullyQualifiedIRI($(this).val(), 'property'));
+        SPARQL.View.setValidator($(this));
+      });
+    });
     
   };
 
@@ -1051,7 +1066,6 @@
 
     SPARQL.createCombobox($('#qiPropertyValueNameInput'), variables, defaultValue, function(newValue){
         SPARQL.View.showFilters(new SPARQL.Model.Term(newValue), $('#qiPropertyFiltersTable'));
-        SPARQL.getPropertyInfo(SPARQL.Model.assureFullyQualifiedIRI(newValue, 'property'));
         SPARQL.View.setValidator($('#qiPropertyValueNameInput'));
     });
 
@@ -1534,7 +1548,7 @@
     if(value && value.length){
       input.attr('value', value);
     }
-    if($('#qiQuerySourceSelect').val() !== 'tsc' && !$('#qiPropertyTypeLabel').next().html().length){
+    if($('#qiSourceInput').val() !== 'tsc' && !$('#qiPropertyTypeLabel').next().html().length){
       validatorType = typeSelect.val();
       typeSelect.closest('td').show();
     }
@@ -1730,7 +1744,7 @@
 
   SPARQL.updateAllFromTree = function(){
     if(SPARQL.validateQueryTree()){
-      SPARQL.treeToSparql(null, true);
+//      SPARQL.treeToSparql(null, true);
       SPARQL.updateSortOptions();
     }
   };
@@ -1933,9 +1947,9 @@
   SPARQL.activateFormatSelectBox = function(){
     $('#qiQueryFormatContent #layout_format').change(function(){
       var selectedValue = $(this).children(':selected').val();
-      SPARQL.queryParameters['format'] = selectedValue;
+      SPARQL.setQueryParameter('format', selectedValue);
       SPARQL.getQueryParameters(selectedValue);
-      SPARQL.treeToSparql(null, true);
+      SPARQL.getQueryResult($('#sparqlQueryText').val())
     });
   };
 
@@ -2137,7 +2151,7 @@
       SPARQL.Model.reset();
       SPARQL.getWikiPrefixes();
       SPARQL.View.cancel();
-      $('#qiQuerySourceSelect').next().val('tsc').change();
+      $('#qiSourceInput').next().val('tsc').change();
       $('#qiQueryGraphSelect').next().val('default').change();
       $('#sparqlQI #layout_format').val('table').change();
     });
@@ -2180,7 +2194,7 @@
   SPARQL.getPropertyInfo = function(propertyName){    
     window.clearTimeout(window.getPropertyTypeTimeout);
     window.getPropertyTypeTimeout = window.setTimeout(function(){
-      if($('#qiQuerySourceSelect').val() !== 'tsc'){
+      if($('#qiSourceInput').val() !== 'tsc'){
         $('#qiPropertyTypeLabel').html('Type: unknown');
         $('#qiPropertyTypeLabel').next().html('');
         SPARQL.View.updateFilterInput();
@@ -2582,25 +2596,30 @@
           dialog.dialog('option', 'buttons', []);
           dialog.dialog('option', 'show', 'slide');
           dialog.dialog('open');
-          
-          dialog.parent().position({            
-            my: 'left bottom',
-            at: 'right top',
-            of: $('#sparqlQI'),
-            offset: '40 -30',
-            collision: 'none'
+
+          dialog.parent().position({
+            my: 'top right',
+            at: 'top left',
+            of: $('#qiDetailsTable')
+//            offset: '10 -30',
+//            collision: 'none'
           });
+          
           dialog.css({
             'font-family': 'tahoma',
             'font-size': '11px'
-          })
-          
-        }
-        
+          })          
+        }        
       });
 
       $('#qiDefTab').children('ul').append($('<li/>').append(img));
     })
+  };
+
+  SPARQL.activateSourceView = function(){
+    $('#sparqlQueryText').change(function(event){
+      SPARQL.isSourceCodeChanged = true;
+    });
   };
 
   SPARQL.init = function(query, queryParameters, addDefaultNamespaces){
@@ -2629,6 +2648,7 @@
       SPARQL.activateFullPreviewLink();
       SPARQL.initSourceSelectBox();
       SPARQL.initGraphSelectBox();
+      SPARQL.activateSourceView();
       SPARQL.initialized = true;
       SPARQL.smwgHaloWebserviceEndpoint = 'http://' + smwgHaloWebserviceEndpoint;
     }
