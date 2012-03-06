@@ -1126,20 +1126,17 @@ Function un.uninstallApacheAndMySQLAsWindowsService
     DetailPrint "Stop and uninstall Apache and MySQL as service."
     Exec "$INSTDIR\uninstallApacheMySQLAsService.bat"
     
-    DetailPrint "Delete autostart entry for solr"
-    Delete "$SMSTARTUP\SolrForSMWPlus.lnk"
-    
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
 Function un.stopApacheMySQL
    # can kill 64-bit processes
    DetailPrint "Stop Apache and MySQL."
-   UtilProcWMI::FindProc "httpd.exe"
+   UtilProcWMI::KillProc "httpd.exe"
    IntOp $0 0 + $R0
-   UtilProcWMI::FindProc "mysqld.exe"
+   UtilProcWMI::KillProc "mysqld.exe"
    IntOp $1 0 + $R0
-   UtilProcWMI::FindProc "mysqld-nt.exe"
+   UtilProcWMI::KillProc "mysqld-nt.exe"
 FunctionEnd
 
 Function un.stopSolr
@@ -1229,9 +1226,8 @@ Section "Uninstall"
     DeleteRegKey HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
-    nsExec::ExecToLog '"$INSTDIR\xampp_stop.exe"'
-
-    KillProcDLL::KillProc "solr.exe"
+    DetailPrint "Delete autostart entry for solr"
+    Delete "$SMSTARTUP\SolrForSMWPlus.lnk"
 
     Delete "$INSTDIR\*"
    
