@@ -80,7 +80,7 @@ class SMWH_Skin {
 		}
 //		$menu.= $this->buildMenuMediaWiki();
 //		$menu.= $this->buildTools();
-		$menu .= "<li class=\"smwh_menulistitem smwh_menuoverflow\">";
+		$menu .= "<li style=\"display: none;\" class=\"smwh_menulistitem smwh_menuoverflow\">";
 		$menu .= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">";
 		$menu .= "<p>>></p></div>";
 		$menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody autoW\"><ul></ul></div>";
@@ -330,7 +330,7 @@ class SMWH_Skin {
 						$wgTitle->getNamespace() != NS_SPECIAL ) {
 					# check if there are forms available for the current article
 					global $asfAutomaticFormExists;
-					if ( count( SFFormLinker::getDefaultFormsForPage( $this->skintemplate->skin->getTitle() ) ) > 0 
+					if ( count( SFFormLinker::getDefaultFormsForPage( $this->skintemplate->skin->getTitle() ) ) > 0
 							|| isset( $asfAutomaticFormExists ) )
 					{
 						$link = htmlspecialchars(
@@ -342,11 +342,14 @@ class SMWH_Skin {
 				# because there are installations where the include is done only if
 				# action == edit and mode == wysiwyg. Therefore on page view the FCK
 				# might not be included at this moment.
-				if ( !$link && (
-						file_exists( $IP . '/extensions/FCKeditor/FCKeditor.php' ) ||
-						file_exists( $IP . '/extensions/WYSIWYG/WYSIWYG.php' )
-						) )
-					$link = htmlspecialchars( $tab['href'] ) . '&mode=wysiwyg';
+				if ( !$link && ( file_exists( $IP . '/extensions/FCKeditor/FCKeditor.php' ) ||
+					file_exists( $IP . '/extensions/WYSIWYG/WYSIWYG.php' ) ) )
+				{
+					global $wgCKEditorUrlparamMode; // is not set to true
+					if( $wgCKEditorUrlparamMode ) {
+						$link = htmlspecialchars( $tab['href'] ) . '&mode=wysiwyg';
+					}
+				}
 				# none of the conditions above came into action, then use the normal
 				# wiki editor for editing pages.
 				if ( !$link )
@@ -373,7 +376,7 @@ class SMWH_Skin {
 					$tabs .= " " . htmlspecialchars( $tab['class'] );
 				}
 				$tabs .= "\">";
-				
+
 				$tabs.= "<img id=\"editimage\" src=\"" .
 					$wgStylePath . $this->imagepath . "/button_edit.gif\" alt=\"edit\"/>";
 				$tabs .= htmlspecialchars( $tab['text'] ) . "</div></a>";
@@ -460,7 +463,7 @@ class SMWH_Skin {
 
 	/**
 	 * Generates the created by <user> at <date>, on <time> string
-	 * 
+	 *
 	 * @return string
 	 */
 	public function buildCreatedBy() {
@@ -484,7 +487,7 @@ class SMWH_Skin {
 
 	/**
 	 * Generates the Help Icon in the tab bar for the context sensitive help
-	 * 
+	 *
 	 * @return string
 	 */
 	private function buildHelpTab() {
@@ -504,7 +507,7 @@ class SMWH_Skin {
 	 * Generates related category icons for the article
 	 * @param string $pageName
 	 *  Name of the current page
-	 * 
+	 *
 	 * @return string
 	 */
 	private function buildContentIcons( $pageName = '' ) {
@@ -524,8 +527,8 @@ class SMWH_Skin {
 		$pageCats = $store->getCategoriesForInstance( $title );
 		// special case: category pages
 		if( $title->getNamespace() === NS_CATEGORY ) {
-			$pageCats[] = Title::newFromText( 
-				MWNamespace::getCanonicalName(NS_CATEGORY) . ':Category' 
+			$pageCats[] = Title::newFromText(
+				MWNamespace::getCanonicalName(NS_CATEGORY) . ':Category'
 			);
 		}
 
@@ -540,7 +543,7 @@ class SMWH_Skin {
 				),
 				$querystring, $params, $printouts
 			);
-			
+
 			$params = SMWQueryProcessor::getProcessedParams(
 				$params,
 				$printouts
@@ -569,7 +572,7 @@ class SMWH_Skin {
 
 		return $iconHTML;
 	}
-	
+
 	/**
 	 * Generates the quicklinks/footer add the page bottom
 	 *
@@ -608,7 +611,7 @@ class SMWH_Skin {
 
 	/**
 	 * Build the personal quick links
-	 * 
+	 *
 	 * @return string
 	 */
 	public function buildPersonalQuickLinks() {
