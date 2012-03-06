@@ -643,22 +643,36 @@ if (count($packageToDeinstall) > 1) {
 foreach($packageToDeinstall as $toDeInstall) {
 
 	try {
-		// de-install code and settings
-		$dd = $installer->deinstall($toDeInstall);
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		$dd = $localPackages[$toDeInstall];
+		if (is_null($dd)) {
+			Logger::getInstance()->error("Bundle does not exist $toDeInstall");
+			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Bundle does not exist", $toDeInstall);
+		}
 		
-		// de-install content
-		if (count($dd->getWikidumps()) > 0
+		$requiresWiki = count($dd->getWikidumps()) > 0
 		|| count($dd->getResources()) >  0
 		|| count($dd->getUninstallScripts()) > 0
 		|| count($dd->getCodefiles()) > 0
-		|| count($dd->getOntologies()) > 0) {
+		|| count($dd->getOntologies()) > 0;
+
+		if ($requiresWiki) {
+			// if wiki is required include it and check if 
+			// database is available.
 			// include commandLine.inc to be in maintenance mode
 			try {
 				$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 				require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 			} catch(DBConnectionError $e) {
-				dffExitOnFatalError("Database is not running. Please start it and run: smwadmin --finalize");
+				dffExitOnFatalError("Database is not running. Please start it and try again.");
 			}
+		}
+		// de-install code and settings
+		$installer->deinstall($toDeInstall);
+
+		// de-install content
+		if ($requiresWiki) {
+			
 			dffInitLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');
@@ -816,7 +830,7 @@ function dffShowHelp() {
 	$dfgOut->outputln( "\tAdditional options (can only be used with the optional above): ");
 	$dfgOut->outputln( "\t--dep : Check only dependencies but do not install.");
 	$dfgOut->outputln( "\t-f: Force operation (ignore any problems if possible)");
-	
+
 	$dfgOut->outputln( "\t--nocheck: Skips checks for appropriate rights.");
 	$dfgOut->outputln( "\t--noask: Skips all questions (assuming mostly 'yes' except for optional bundles");
 	$dfgOut->outputln( "\t--removereferenced: Removes all templates, images and instances referenced used by a bundle. Used with -d");
