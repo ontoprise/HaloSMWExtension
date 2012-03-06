@@ -52,7 +52,7 @@ class ASFPropertyFormData {
 	private $userAutocompletionConstraint;
 	private $useAutogrow;
 	
-	private $numberOfRequiredInputfields = 1;
+	private $existingValues = array();
 	
 	private $belongsToUnresolvedAnnotationsSection = false; 
 	
@@ -263,14 +263,30 @@ class ASFPropertyFormData {
 			
 		$fullSyntax .= '<span style="display: none" class="asf-mv_inputtype">'
 			.strtolower(trim($inputType)).'</span>';
-			
-		for($i=1; $i <= $this->numberOfRequiredInputfields; $i++){
+
+		if(count($this->existingValues) == 0){
+			//now values exist for this input field
 			$fieldName = $this->titleObject->getText();
-			if($i > 1) $fieldName .= '---'.$i; 
-			
 			$fullSyntax .= '<div class="asf-multi_value">'
-				.'{{{field |'.$fieldName.$syntax.'</div>';
+				.'{{{field |'.$fieldName.$syntax.'</div>';	
+		}else {
+			$i=1;
+			foreach($this->existingValues as $key => $value){
+				$fieldName = $this->titleObject->getText();
+				if($i > 1) $fieldName .= '---'.$i; 
+			
+				$isInSync = '';
+				if($this->existingValues[$key]['insync']){
+					$isInSync = ' asf-syncronized-value ';
+				}
+				
+				$fullSyntax .= '<div class="asf-multi_value'.$isInSync.'">'
+					.'{{{field |'.$fieldName.$syntax.'</div>';
+					
+				$i++;
+			}
 		}
+			
 		$fullSyntax .= '</span>';
 		
 		$this->formFieldSyntax = $fullSyntax;
@@ -510,10 +526,8 @@ private function getFormFieldInputTypeMetadata($forToolTip = false){
 		$this->forceList = true;
 	}
 	
-	public function updateNumberOfRequiredInputFields($count){
-		if($this->numberOfRequiredInputfields < $count){
-			$this->numberOfRequiredInputfields = $count;
-		}
+	public function setExistingValues($existingValues){
+		$this->existingValues = $existingValues;
 	}
 
 	public function setBelongsToUnresolvedAnnotationsSection($value){

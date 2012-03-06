@@ -121,6 +121,17 @@ window.ASFFormSyncer = {
 	 * Init the syncer
 	 */	
 	init : function(){
+
+		//asf postprocessing must be done if form is submitted
+		//and sf validation succeeds 
+		var validateAllTemp = window.validateAll;
+		window.validateAll = function(){
+			if(validateAllTemp()){
+				ASFFormSyncer.doPostProcessingBeforeSubmit();
+				return true;
+			}
+			return false;
+		};
 		
 		//todo: implement better widget for triggering updates of the complete form
 		jQuery('#asf_category_annotations').click(this.updateForm);
@@ -156,6 +167,15 @@ window.ASFFormSyncer = {
 			
 			ASFFormSyncer.updateForm();
 		}
+	},
+	
+	doPostProcessingBeforeSubmit : function(){
+		//all form input fields whose values also van be found in freetext
+		//must be removed to avoid that they are stored twice
+		jQuery('.asf-multi_value[asf-wp-rel-index]').remove();
+		
+		//input field name indexes must be n an order for storing
+		ASFMultiInputFieldHandler.resetInputFieldNames();
 	},
 	
 	/*
@@ -224,7 +244,7 @@ window.ASFFormSyncer = {
 		
 		//first mark all as must be deleted and then remove those 
 		//markers aone after another again if the value is still present
-		jQuery('.asf-multi_value').attr('asf-delete-this', 'true');
+		jQuery('.asf-syncronized-value').attr('asf-delete-this', 'true');
 		
 		//todo: deal with invalid values, e.g. black for a boolean property
 		
@@ -240,13 +260,22 @@ window.ASFFormSyncer = {
 				
 				var lastChild = null;
 				jQuery('.asf-multi_value', this).each(function(){
-					if(addAnnotation){ //annotation has not yet been found
-						var currentValue = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
-						if(ASFMultiInputFieldHandler.areValuesEqual(currentValue, relations[i].getValue(), type)){
-							jQuery(this).attr('asf-delete-this', 'false');
-							jQuery(this).attr('asf-wp-rel-index', i);
-							addAnnotation = false;
-						} 
+					if(addAnnotation){ 
+						
+						//check if this is a syncronized value
+						if(jQuery(this).attr('class').indexOf('asf-syncronized-value') > 0){
+						
+							//annotation has not yet been found
+							if(jQuery(this).attr('asf-delete-this') == 'true'){ 
+								//input field has not already been associated with another annoation in free text
+								var currentValue = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
+								if(ASFMultiInputFieldHandler.areValuesEqual(currentValue, relations[i].getValue(), type)){
+									jQuery(this).attr('asf-delete-this', 'false');
+									jQuery(this).attr('asf-wp-rel-index', i);
+									addAnnotation = false;
+								}
+							}
+						}
 					}
 					lastChild = this;
 				});
@@ -257,7 +286,16 @@ window.ASFFormSyncer = {
 					ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
 					jQuery(newInputField).attr('asf-delete-this', 'false');
 					jQuery(newInputField).attr('asf-wp-rel-index', i);
+					jQuery(newInputField).addClass('asf-syncronized-value');
 					addAnnotation = false;
+					
+					//if last child has not value, then it should be deleted
+					if(!ASFMultiInputFieldHandler.isInputFieldValueSet(
+							jQuery(newInputField).prev())){
+						jQuery(newInputField).prev().attr('asf-delete-this', 'true');						
+					}
+						
+						
 				}
 			});
 			
@@ -288,6 +326,7 @@ window.ASFFormSyncer = {
 						ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
 						jQuery(newInputField).attr('asf-delete-this', 'false');
 						jQuery(newInputField).attr('asf-wp-rel-index', i);
+						jQuery(newInputField).addClass('asf-syncronized-value');
 					}
 				});
 			}
@@ -305,7 +344,7 @@ window.ASFFormSyncer = {
 	isUpdateFreeTextNecessary : function(){
 		var ts = new Date();
 		var currentTS = ts.getMilliseconds();
-		var node = jQuery(this).get(0);
+		var node = jQuery(this);
 		jQuery(node).attr('asf-update-ts', currentTS);
 		window.setTimeout(function() {
 			if(currentTS == jQuery(node).attr('asf-update-ts')){
@@ -328,6 +367,13 @@ window.ASFFormSyncer = {
 			return;
 		}
 		
+		//check if this input field is syncronized to free text
+
+		if(jQuery(node).attr('class').indexOf('asf-syncronized-value') == -1
+				&& jQuery(node).attr('asf-syncronized') != 'true'){
+			return;
+		}
+		
 		//do last check if update is necessary
 		if(jQuery(node).attr('asf-last-field-value') == newValue){
 			return;
@@ -341,7 +387,7 @@ window.ASFFormSyncer = {
 		this.wtp.initialize(ASFFormSyncer.getFreeTextContent());
 
 		if(relationIndex == undefined){
-			
+
 			if(newValue.length == 0){
 				//nothing to do since we do not create or restore
 				//a property for an empty value
@@ -413,6 +459,10 @@ window.ASFFormSyncer = {
 		jQuery(container).attr('asf-wp-rel-index', relationIndex);
 		jQuery(container).removeAttr('asf-wp-temp-rel-index');
 		jQuery(container).removeAttr('asf-wp-oldstartpos');
+		if(jQuery(container).attr('asf-syncronized') == 'true'){
+			jQuery(container).addClass('asf-syncronized-value');
+		}
+		jQuery(container).removeAttr('asf-syncronized');
 		
 		this.currentRelationsCount -= 1;
 	},
@@ -422,6 +472,7 @@ window.ASFFormSyncer = {
 		jQuery(container).removeAttr('asf-wp-temp-rel-index');
 		jQuery(container).removeAttr('asf-wp-oldstartpos');
 		jQuery(container).removeAttr('asf-wp-oldlabel');
+		jQuery(container).removeAttr('asf-syncronized');
 	},
 	
 	/*
@@ -449,7 +500,12 @@ window.ASFFormSyncer = {
 		jQuery(container).removeAttr('asf-wp-rel-index');
 		jQuery(container).attr('asf-wp-oldstartpos', currentRelation.getStart());
 		jQuery(container).attr('asf-wp-oldlabel', currentRelation.getRepresentation());
-		
+
+		if(jQuery(container).attr('class').indexOf('asf-syncronized-value') > -1){
+			jQuery(container).attr('asf-syncronized', 'true');
+		}
+		jQuery(container).removeClass('asf-syncronized-value');
+				
 		this.wtp.replaceAnnotation(currentRelation, '');
 		
 		jQuery('*:[asf-wp-rel-index]').each(function(){
@@ -565,14 +621,26 @@ window.ASFFormSyncer = {
 		jQuery(currentContainer + ' .asf-multi_value').each(function(){
 			if(ASFMultiInputFieldHandler.isInputFieldValueSet(this)){
 				var missingAnnotation = new Object();
+				
 				missingAnnotation.name = jQuery(this).parent().attr('property-name');
+				
 				var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(this).parent());
 				missingAnnotation.value = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
+				
+				var insync = false;
+				if(jQuery(this).attr('class').indexOf('asf-syncronized-value') > 0){
+					insync = true;
+				}
+				missingAnnotation.insync = insync;
+				
 				missingAnnotations.push(missingAnnotation);
 			}
 		});
 		
 		jQuery(currentContainer).html('');
+		
+		//first set all input fields in the new form to be syncronized
+		jQuery('.asf-multi_value').addClass('asf-syncronized-value');
 		
 		//update form input fields which are not shown in free text
 		ASFMultiInputFieldHandler.init();
@@ -582,8 +650,18 @@ window.ASFFormSyncer = {
 				var type = ASFMultiInputFieldHandler.getInputFieldType(this);
 				ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, 
 					missingAnnotations[i].value);
+				if(!missingAnnotations[i].insync){
+					jQuery(newInputField).removeClass('asf-syncronized-value');
+				}
 			});
 		}
+		
+		//now set all input fields which have only one child to be unsyncronized again
+		jQuery('.asf-multi_values').each(function(){
+			if(jQuery('.asf-multi_value', this).get().length == 1)	{
+				jQuery('.asf-multi_value', this).removeClass('asf-syncronized-value');
+			}		
+		});
 		
 		//run init methods
 		initializeNiceASFTooltips();
@@ -673,7 +751,6 @@ window.ASFMultiInputFieldHandler = {
 		var inputFieldCount = 
 			jQuery('.asf-multi_value', parent).get().length;
 		
-		
 		if(inputFieldCount == 1){
 			if(partOfUnresolvedAnnotationsSection){
 				//we are in the unresolved annotations section 
@@ -689,6 +766,15 @@ window.ASFMultiInputFieldHandler = {
 				//we are not in unresolved annotations section and 
 				//instead of deleting this input field we have to set it
 				//to an empty value
+				var type = this.getInputFieldType(jQuery(node).parent().parent());
+				this.setInputFieldValue(jQuery(node).parent(), type, '');
+				jQuery(parentd).removeClass('asf-syncronized-value');
+				
+				//also remove rel-index properties and so on
+				jQuery(node).parent().removeAttr('asf-wp-rel-index');
+				jQuery(node).parent().removeAttr('asf-wp-temp-rel-index');
+				jQuery(node).parent().removeAttr('asf-wp-oldstartpos');
+				jQuery(node).parent().removeAttr('asf-wp-oldlabel');
 			}
 		} else {
 			jQuery(node).parent().remove();
@@ -717,13 +803,25 @@ window.ASFMultiInputFieldHandler = {
 	},
 	
 	addInputField : function(){
-		ASFMultiInputFieldHandler.doAddInputField(this);
+		var newNode = ASFMultiInputFieldHandler.doAddInputField(this);
+		
+		//this input field has been added by pressing the add button
+		//and thus is not syncronized to the free text input field
+		jQuery(newNode).removeClass('asf-syncronized-value');
 	},
 	
 	doAddInputField : function(node){
 		//copy node
 		var parent = jQuery(node).parent();
-		jQuery(parent).parent().append(jQuery(parent).clone());
+		var newNode = jQuery(parent).clone();
+		
+		//set name
+		ASFMultiInputFieldHandler.setInputFieldName(
+				newNode,
+				jQuery('.asf-multi_value', jQuery(parent).parent()).length + 1);
+		
+		//add new input field
+		jQuery(parent).parent().append(newNode);
 		
 		var newInputField = jQuery('.asf-multi_value:last-child', jQuery(parent).parent()).get(0);
 		
@@ -739,11 +837,6 @@ window.ASFMultiInputFieldHandler = {
 			ASFMultiInputFieldHandler.addAddButton(this);
 		});
 		
-		//set name
-		ASFMultiInputFieldHandler.setInputFieldName(
-				newInputField,
-				jQuery('.asf-multi_value', jQuery(parent).parent()).length);
-		
 		//reset value
 		var type = this.getInputFieldType(jQuery(newInputField).parent());
 		this.setInputFieldValue(newInputField, type, '');
@@ -753,6 +846,7 @@ window.ASFMultiInputFieldHandler = {
 		jQuery(newInputField).removeAttr('asf-wp-temp-rel-index');
 		jQuery(newInputField).removeAttr('asf-wp-oldstartpos');
 		jQuery(newInputField).removeAttr('asf-wp-oldlabel');
+
 		
 		ASFMultiInputFieldHandler.addValueChangeListeners(newInputField);
 		
@@ -824,6 +918,25 @@ window.ASFMultiInputFieldHandler = {
 			}
 		}
 		
+		if(type == 'radiobutton'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'date'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'datetime'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		return false;
 	},
 	
 	getInputFieldValue : function(container, type){
@@ -845,6 +958,66 @@ window.ASFMultiInputFieldHandler = {
 			} else {
 				return 'false';
 			}
+		}
+		
+		if(type == 'radiobutton'){
+			value = jQuery('input:radio:checked', container).val();
+			if(value == undefined){
+				return '';
+			} else {
+				return value;
+			}
+		}
+		
+		if(type == 'date'){
+			var day = jQuery.trim(jQuery('.dayInput', container).val());
+			var month = jQuery.trim(jQuery('.monthInput', container).val());
+			var year = jQuery.trim(jQuery('.yearInput', container).val());
+			
+			if(day == '') return ''; //date has not yet been set
+			
+			var date = new Date(year*1, month*1-1, day*1+1, 0, 0, 0);
+			var dateString = date.toGMTString();
+			dateString = dateString.substr(dateString.indexOf(',') + 1);
+			dateString = jQuery.trim(dateString.substr(0, dateString.indexOf(':') - 2));
+			return dateString;
+		}
+		
+		
+		if(type == 'date'){
+			var day = jQuery.trim(jQuery('.dayInput', container).val());
+			var month = jQuery.trim(jQuery('.monthInput', container).val());
+			var year = jQuery.trim(jQuery('.yearInput', container).val());
+			
+			if(day == '') return ''; //date has not yet been set
+			
+			var date = new Date(year*1, month*1-1, day*1+1, 0, 0, 0);
+			var dateString = date.toGMTString();
+			dateString = dateString.substr(dateString.indexOf(',') + 1);
+			dateString = jQuery.trim(dateString.substr(0, dateString.indexOf(':') - 2));
+			return dateString;
+		}
+		
+		if(type == 'datetime'){
+			var day = jQuery.trim(jQuery('.dayInput', container).val());
+			var month = jQuery.trim(jQuery('.monthInput', container).val());
+			var year = jQuery.trim(jQuery('.yearInput', container).val());
+			
+			if(day == '') return ''; //date has not yet been set
+
+			var yearinput = jQuery('.yearInput', container).next();
+			var hours = jQuery.trim(jQuery(yearinput).next().val())
+			var minutes = jQuery.trim(jQuery(yearinput).next().next().val())
+			var seconds = jQuery.trim(jQuery(yearinput).next().next().next().val())
+			var ampm24h = jQuery.trim(jQuery(yearinput).next().next().next().next().val())
+			
+			if(ampm24h == "PM") hours = hours*1 + 12;
+			
+			var date = new Date(year*1, month*1-1, day*1+1, hours*1, minutes*1, seconds*1);
+			var dateString = date.toGMTString();
+			dateString = dateString.substr(dateString.indexOf(',') + 1);
+			//dateString = jQuery.trim(dateString.substr(0, dateString.indexOf(':') - 2));
+			return dateString;
 		}
 		
 		return undefined;
@@ -878,6 +1051,71 @@ window.ASFMultiInputFieldHandler = {
 			return true;
 		}
 		
+		if(type == 'radiobutton'){
+			value = jQuery.trim(value);
+			jQuery('input:[value="' + value + '"]', container).attr('checked', 'checked');
+			return true;
+		}
+		
+		if(type == 'date'){
+			
+			//todo: deal with invalid dates and ones that cannot be parsed by js
+			
+			value = jQuery.trim(value);
+			
+			var day = '';
+			var month = 1;
+			var year = '';
+			if(value.length > 0){
+				var date = new Date(Date.parse(value));
+				day = date.getDate();
+				month = date.getMonth()*1 + 1;
+				year = date.getFullYear();
+			}
+			
+			jQuery('.dayInput', container).val(day);
+			jQuery('.yearInput', container).val(year);
+			jQuery('.monthInput', container).val(
+					jQuery('.monthInput option:nth-child(' + month + ')').val());
+			
+			return true;
+		}
+		
+		
+		if(type == 'datetime'){
+			
+			//todo: deal with invalid dates and ones that cannot be parsed by js
+			
+			value = jQuery.trim(value);
+			
+			var day = '';
+			var month = 1;
+			var year = '';
+			var hours = '';
+			var minutes = '';
+			var seconds = '';
+			
+			if(value.length > 0){
+				var date = new Date(Date.parse(value));
+				day = date.getDate();
+				month = date.getMonth()*1 + 1;
+				year = date.getFullYear();
+				hours = date.getHours();
+				minutes = date.getMinutes();
+				seconds = date.getSeconds();
+			}
+			
+			jQuery('.dayInput', container).val(day);
+			jQuery('.yearInput', container).val(year);
+			jQuery('.monthInput', container).val(
+					jQuery('.monthInput option:nth-child(' + month + ')').val());
+			jQuery('.yearInput', container).next().val(hours);
+			jQuery('.yearInput', container).next().next().val(minutes);
+			jQuery('.yearInput', container).next().next().next().val(seconds);
+			
+			return true;
+		}
+		
 		return false;
 	},
 	
@@ -902,11 +1140,11 @@ window.ASFMultiInputFieldHandler = {
 	},
 	
 	getContainerOfInput : function(node){
-		var parent = jQuery(node).parent();
-		var classes = jQuery(parent).attr('class');
+		var classes = jQuery(node).attr('class');
 		if(classes != undefined && classes.indexOf('asf-multi_value') >= 0){
-			return parent;
+			return node;
 		} else {
+			var parent = jQuery(node).parent();
 			return ASFMultiInputFieldHandler.getContainerOfInput(parent);
 		}
 	},
@@ -942,11 +1180,27 @@ window.ASFMultiInputFieldHandler = {
 			value = value.charAt(0).toLowerCase() + value.substr(1);;
 			
 			if(value != 'false' && value != 'no' && value != '0'
-					&& value != 'n' && value != 'f'){
+					&& value != 'n' && value != 'f' && value != ''){
 				value = 'true';
 			} else {
 				value = 'false';
 			}
+		}
+		
+		if(type == 'radiobutton'){
+			value = jQuery.trim(value);
+		}
+		
+		if(type == 'date'){
+			value = jQuery.trim(value);
+			date = new Date(Date.parse(value));
+			return date.toGMTString();
+		}
+		
+		if(type == 'datetime'){
+			value = jQuery.trim(value);
+			date = new Date(Date.parse(value));
+			return date.toGMTString();
 		}
 		
 		return value;

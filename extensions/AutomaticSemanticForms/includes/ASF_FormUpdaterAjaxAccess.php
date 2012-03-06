@@ -70,6 +70,9 @@ function asff_getNewFormRow($propertyName){
 	
 	ASFFormGenerator::getInstance()->getFormDefinition()
 		->updateDueToExistingAnnotations(array($propertyName => array('values' => array(true))));
+		
+	ASFFormGenerator::getInstance()->getFormDefinition()
+		->setInAjaxUpdateMode();
 	
 	//Get the form HTML
 	global $asfDummyFormName;
@@ -86,17 +89,18 @@ function asff_getNewFormRow($propertyName){
 	$html = $html[0];
 	
 	//Do post processing
-	$startMarker = '<div id="asf_formfield_container';
+	$startMarker = 'asf-unresolved-sectio';
 	$html = substr($html, strpos($html, $startMarker) + strlen($startMarker));
-	$html = substr($html, strpos($html, '">')+2);
+	$endMarker = 'asf-unresolved-sectio';
+	$html = substr($html, 0, strpos($html, $endMarker));
 	
-	$endmarker = '</div><div id="asf_formfield_container2';
-	$html = substr($html, 0, strpos($html, $endmarker));
-	
-	//get the needed row
+	//get the row
+	$html = substr($html, strpos($html, '<tr') + 3);
+	//the first one is the headline
 	$html = substr($html, strpos($html, '<tr'));
 	$html = substr($html, 0, strrpos($html, '</tr'));
 	$html .= '</tr>';
+	
 	
 	//return result
 	$result = array('html' => $html);

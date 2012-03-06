@@ -71,12 +71,13 @@ class ASFWikiTextManipulator {
 				if($this->isPropertyIgnored($element->getName())){
 					continue;
 				} else {
-					$this->rememberAnnotation($element->getName(), $element->getValue(), $collectedAnnotations);
-						
-					//$newElement = new POMSimpleText($this->getWikiTextReplacementForAnnotation(
-					//	$element->getName(), $element->getValue(), $element->getRepresentation()));
-					//$newElement->id = $element->id;
-					//$pomPage->update($newElement);
+					$this->rememberAnnotation($element->getName(), $element->getValue(), $element->getRepresentation(), $collectedAnnotations);
+
+					if(strlen($element->getRepresentation()) > 0 && strlen(trim($element->getRepresentation())) == 0){
+						$newElement = new POMSimpleText('');
+						$newElement->id = $element->id;
+						$pomPage->update($newElement);
+					}
 				}
 			} else if ($element instanceof POMExtensionParserFunction){
 				if(strpos($element->nodeText, '{{#set:') === 0){
@@ -90,18 +91,18 @@ class ASFWikiTextManipulator {
 							if($this->isPropertyIgnored(trim($set[0]))){
 								$ignoredProperties[] = $set[0].'='.$set[1]; 
 							} else {
-								$this->rememberAnnotation(trim($set[0]), trim($set[1]), $collectedAnnotations);
+								$this->rememberAnnotation(trim($set[0]), trim($set[1]), ' ', $collectedAnnotations);
 							}
 						} else {
 							$ignoredProperties[] = $set[0];
 						}
 					}
 					
-					//$newText = ''.implode('| ', $ignoredProperties);
-					//if(strlen($newText ) > 0) $newText = '{{#set:'.$newText.'}}';
-					//$newElement = new POMSimpleText($newText);
-					//$newElement->id = $element->id;
-					//$pomPage->update($newElement);
+					$newText = ''.implode('| ', $ignoredProperties);
+					if(strlen($newText ) > 0) $newText = '{{#set:'.$newText.'}}';
+					$newElement = new POMSimpleText($newText);
+					$newElement->id = $element->id;
+					$pomPage->update($newElement);
 				} 
 			} else if ($element instanceof POMBuiltInParserFunction){
 				if(strpos($element->nodeText, '{{CreateSilentAnnotations:') === 0){
@@ -124,7 +125,7 @@ class ASFWikiTextManipulator {
 								}
 							
 								foreach($values as $val){
-									$this->rememberAnnotation(trim($silent[0]), trim($val), $collectedAnnotations);
+									$this->rememberAnnotation(trim($silent[0]), trim($val), ' ', $collectedAnnotations);
 								}
 							}
 						}
@@ -147,7 +148,7 @@ class ASFWikiTextManipulator {
 				if($counter > 1){
 					$text .= '---'.$counter;
 				}
-				$text .= '='.$value;
+				$text .= '='.$value['value'];
 				$counter++; 
 			}
 		}
@@ -179,7 +180,7 @@ class ASFWikiTextManipulator {
 	}
 	
 	
-	public function getWikiTextForSaving($titleString, $text, $existingAnnotations){
+	public function getWikiTextForSaving($titleString, $text){
 
 		if($text == null) $text = '';
 		
@@ -201,15 +202,10 @@ class ASFWikiTextManipulator {
 						if(strlen($silent) == 0) continue;
 						$silent = explode('=', $silent, 2);
 						if(count($silent) == 2){
-							//check if value must be split with a delimiter
-							if($delimiter = $this->getSilentAnnotationsDelimiter(trim($silent[0]), $existingAnnotations)){
-								$values = explode($delimiter, $silent[1]);
-							} else {
-								$values = array($silent[1]);
-							}
+							$values = array($silent[1]);
 								
 							foreach($values as $val){
-								$this->rememberAnnotation(trim($silent[0]), trim($val), $collectedAnnotations);
+								$this->rememberAnnotation(trim($silent[0]), trim($val), ' ', $collectedAnnotations);
 							}
 						}
 					}
@@ -228,7 +224,7 @@ class ASFWikiTextManipulator {
 			}
 			
 			foreach($annotation['values'] as $value){
-				$text .= '[['.$label.'::'.$value.'| ]]';
+				$text .= '[['.$label.'::'.$value['value'].'| ]]';
 			}
 		}
 		
@@ -238,16 +234,22 @@ class ASFWikiTextManipulator {
 		return $text;
 	}
 	
-	private function rememberAnnotation($name, $value, &$collectedAnnotations){
+	private function rememberAnnotation($name, $value, $representation, &$collectedAnnotations){
 		$name = ucfirst($name);
 		if(!array_key_exists($name, $collectedAnnotations)){
 			$collectedAnnotations[$name] = array();
 			$collectedAnnotations[$name]['values'] = array();
 		}
 
-		if(!in_array($value, $collectedAnnotations[$name]['values'])){
-			$collectedAnnotations[$name]['values'][] = $value;
+		$newValue = array();
+		$newValue['value'] = $value;
+		$insync = true;
+		if(strlen(trim($representation)) == 0 && strlen($representation) > 0){
+			$insync = false;
 		}
+		$newValue['insync'] = $insync;
+		
+		$collectedAnnotations[$name]['values'][] = $newValue;
 	}
 	
 	private function getSilentAnnotationsDelimiter($propertyName, $existingAnnotations = array()){

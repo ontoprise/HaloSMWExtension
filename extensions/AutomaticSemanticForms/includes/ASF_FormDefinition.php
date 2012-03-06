@@ -26,6 +26,8 @@ class ASFFormDefinition {
 	private $categoriesWithNoProperties;
 	private $additionalCategoryAnnotations = array();
 	
+	private $inAjaxUpdateMode = false;
+	
 	public function __construct($categorySections, $categoriesWithNoProperties){
 		$this->categorySections = $categorySections;
 		$this->categoriesWithNoProperties = $categoriesWithNoProperties;
@@ -288,14 +290,6 @@ class ASFFormDefinition {
 		foreach($this->categorySections as $cs){
 			$cs->updateDueToExistingAnnotations($existingAnnotations);
 		}
-		
-		//update number of required input fields
-		foreach($existingAnnotations as $label => $values){
-			$existingAnnotations[$label] = count($values['values']);
-		}
-		foreach($this->categorySections as $categorySection){
-			$categorySection->updateNumberOfRequiredInputFields($existingAnnotations);
-		}
 	}
 	
 	public function addUnresolvedAnnotationsSection($existingAnnotations){
@@ -308,22 +302,38 @@ class ASFFormDefinition {
 		$this->additionalCategoryAnnotations = $categoryNames;
 	}
 	
-	public function updateNumberOfRequiredInputFields($requestedFormFields){
+	/*
+	 *  this method is called by the form printer if we are not in show form mode,
+	 *  i.e. if the form was posted.
+	 */
+	public function prepareFormForStoringData($requestedFormFields){
+		
+		//we are in store form mode and thus only need the unresolved annoations section
+		//todo: gain some performance improvements by not computing this in the first place
+		$this->categorySections = array();
+		
+		//compute how many input fields we will need for eaach property
 		$missingFormFields = array();
 		foreach($requestedFormFields as $field => $dc){
-			if($indexStart = strpos($field, '---')){
+			if($indexStart = strrpos($field, '---')){
 				$field = substr($field, 0, $indexStart);
 			}
 			if(!array_key_exists($field, $missingFormFields)){
-				$missingFormFields[$field] = 1;
-			} else {
-				$missingFormFields[$field] += 1;
+				$missingFormFields[$field] = array('values' => array());
 			}
 		}
 		
-		foreach($this->categorySections as $categorySection){
-			$categorySection->updateNumberOfRequiredInputFields($missingFormFields);
-		}
+		//update the category sections. note that only the unresolved annotations
+		//section is left
+		$this->updateDueToExistingAnnotations($missingFormFields);
+	}
+	
+	public function setInAjaxUpdateMode(){
+		$this->inAjaxUpdateMode = true;
+	}
+	
+	public function isInAjaxUpdateMode(){
+		return $this->inAjaxUpdateMode;
 	}
 	
 }
