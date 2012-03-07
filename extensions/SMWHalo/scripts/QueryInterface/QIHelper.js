@@ -113,7 +113,8 @@ QIHELPER = QIHelper.prototype = {
     }
     else{
       //if query source or query tree is not empty enable "reset query" button
-      if(jQuery('#fullAskText').val().length || jQuery('#treeanchor').children().length){
+      var askText = jQuery('#fullAskText').val();
+      if((askText && askText.length) || jQuery('#treeanchor').children().length){
         jQuery('#askQI #qiResetQueryButton').removeAttr('disabled');
       }
       else{

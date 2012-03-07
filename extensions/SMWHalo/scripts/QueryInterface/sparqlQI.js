@@ -32,6 +32,7 @@
     variables: [],
     isTSCAccessible: true,
     isSourceCodeChanged: false,
+    isTreeChanged: false,
 
     json : {
 
@@ -276,7 +277,7 @@
   };
 
 
-  SPARQL.sparqlToTree = function(sparqlQuery, addDefaultNamespaces){
+  SPARQL.sparqlToTree = function(sparqlQuery, addDefaultNamespaces, getResults){
     addDefaultNamespaces = typeof(addDefaultNamespaces) === 'undefined' ? true : addDefaultNamespaces;
     sparqlQuery = sparqlQuery || SPARQL.queryString;
     if(addDefaultNamespaces){
@@ -286,44 +287,55 @@
       return;
     }
 
-    mw.log('sparql query send:\n' + sparqlQuery);
-    //send ajax post request to localhost:8080/sparql/sparqlToTree
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      cache: false,
-//      jsonp: 'jsonp_callback',
-      url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/sparqlToTree',
-      data: {
-        sparql: sparqlQuery
-      },
-      success: function(data, textStatus, jqXHR) {
-        mw.log('textStatus: ' + textStatus);
-        mw.log('jqXHR.responseText: ' + jqXHR.responseText);
-        SPARQL.queryString = sparqlQuery;        
-        if(data && typeof data === 'object'){
-          SPARQL.Model.init(data);
-//          $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + sparqlQuery));
-          SPARQL.updateSortOptions();
-          SPARQL.toTree();
-          SPARQL.isSourceCodeChanged = false;
-        }
-        else{
-          //tsc is not reachable
-          SPARQL.isTSCAccessible = false;
-          SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'sparqlToTreeMsgDialog');
-        }
-      },
-      error: function(xhr, textStatus, errorThrown) {
-        mw.log(textStatus);
-        mw.log('response: ' + xhr.responseText)
-        mw.log('errorThrown: ' + errorThrown);        
-        var errorJson = $.parseJSON(xhr.responseText);
-        var msg = errorJson.error || 'The result is empty'
-        SPARQL.showMessageDialog(msg, gLanguage.getMessage('QI_INVALID_QUERY'), 'sparqlToTreeMsgDialog');
+    var convertSparqlToTree = function(){
+      mw.log('sparql query send:\n' + sparqlQuery);
+      //send ajax post request to localhost:8080/sparql/sparqlToTree
+      $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        url: SPARQL.smwgHaloWebserviceEndpoint + '/sparql/sparqlToTree',
+        data: {
+          sparql: sparqlQuery
+        },
+        success: function(data, textStatus, jqXHR) {
+          mw.log('textStatus: ' + textStatus);
+          mw.log('jqXHR.responseText: ' + jqXHR.responseText);
+          SPARQL.queryString = sparqlQuery;
+          if(data && typeof data === 'object'){
+            SPARQL.Model.init(data);
+  //          $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + sparqlQuery));
+            SPARQL.updateSortOptions();
+            SPARQL.toTree();
+            SPARQL.isSourceCodeChanged = false;
+          }
+          else{
+            //tsc is not reachable
+            SPARQL.isTSCAccessible = false;
+            SPARQL.showMessageDialog('TSC not accessible. Check server: ' + SPARQL.smwgHaloWebserviceEndpoint, 'Empty response from server', 'sparqlToTreeMsgDialog');
+          }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+          mw.log(textStatus);
+          mw.log('response: ' + xhr.responseText)
+          mw.log('errorThrown: ' + errorThrown);
+          var errorJson = $.parseJSON(xhr.responseText);
+          var msg = errorJson.error || 'The result is empty'
+          SPARQL.showMessageDialog(msg, gLanguage.getMessage('QI_INVALID_QUERY'), 'sparqlToTreeMsgDialog');
 
-      }
-    });
+        }
+      });
+    };
+
+    if(SPARQL.isTreeChanged){
+      SPARQL.showConfirmationDialog('Override query tree changes?', 'Query tree was modified', function(){
+        convertSparqlToTree();
+        SPARQL.isTreeChanged = false;
+      });
+    }
+    else{
+      convertSparqlToTree();
+    }
   };
 
   SPARQL.showMessageDialog = function(message, title, id, onCloseCallback, modal, toggle, autoOpen){
@@ -438,7 +450,7 @@
   SPARQL.treeToSparql = function(treeJsonConfig, getQueryResult){
     treeJsonConfig = treeJsonConfig || SPARQL.Model.data;
 
-    var treeToSparqlConversion = function(){
+    var convertTreeToSparq = function(){
 
         var jsonString = SPARQL.stringifyJSON(treeJsonConfig);
         mw.log('tree json:\n' + jsonString);
@@ -458,13 +470,14 @@
               SPARQL.Model.data.namespace = SPARQL.Model.removeNamespaceDuplicates(data.namespace);
               $('#sparqlQueryText').val(SPARQL.queryString);
               $('#sparqlQueryText').data('initialQuery', SPARQL.queryString);
-              var parserFuncString = SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
-              $('#qiSparqlParserFunction').val(parserFuncString);
+//              var parserFuncString = SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + SPARQL.queryString);
+//              $('#qiSparqlParserFunction').val(parserFuncString);
               if(getQueryResult){
                 if(SPARQL.validateQueryTree(treeJsonConfig)){
                   SPARQL.getQueryResult(SPARQL.queryString);
                 }
               }
+              SPARQL.isTreeChanged = false;
             }
             else{
               //tsc is not reachable
@@ -486,12 +499,12 @@
 
     if(SPARQL.isSourceCodeChanged){
       SPARQL.showConfirmationDialog('Override query text changes?', 'Query text was modified', function(){
-        treeToSparqlConversion();
+        convertTreeToSparq();
         SPARQL.isSourceCodeChanged = false;
       });
     }
     else{
-      treeToSparqlConversion();
+      convertTreeToSparq();
     }
   };
 
@@ -559,8 +572,8 @@
       data: {
         query: query,
         parameters: parameters,
-        baseuri: baseURI,
-        namespaces: SPARQL.getNamespaceString()
+        baseuri: baseURI
+//        namespaces: SPARQL.getNamespaceString()
       },
       success: function(data, textStatus, jqXHR) {
         mw.log('data: ' + data);
@@ -569,7 +582,7 @@
         if(data && data.length){
           //build parser function string
           SPARQL.queryString = data;
-          SPARQL.sparqlToTree(SPARQL.queryString);
+          SPARQL.sparqlToTree(SPARQL.queryString, false);
         }
         else{
           //tsc is not reachable
@@ -1687,6 +1700,7 @@
         //        $(REF_NODE.rslt.obj).attr('id', newId);
 //        REF_NODE.inst.select_node(REF_NODE.rslt.obj, true, false);
         REF_NODE.inst.select_node(REF_NODE.rslt.obj, true);
+        SPARQL.isTreeChanged = true;
       });
     tree.bind('delete_node.jstree',
       function(NODE, REF_NODE){
@@ -1744,22 +1758,16 @@
 
   SPARQL.updateAllFromTree = function(){
     if(SPARQL.validateQueryTree()){
-//      SPARQL.treeToSparql(null, true);
+      //if query text was changed then don't trigger tree-to-sparql conversion, just fetch the results
+      if(SPARQL.isSourceCodeChanged){
+        SPARQL.getQueryResult();
+      }
+      else{
+        SPARQL.treeToSparql(null, true);
+      }
       SPARQL.updateSortOptions();
     }
   };
- 
-
-//  SPARQL.View.deleteProperty = function(dataEntity){
-//    var nodeId = SPARQL.View.getNodeId(dataEntity);
-//
-//    var jstree = $.jstree._reference('qiTreeDiv');
-//    var selectedNode = jstree.get_selected();
-//    if(selectedNode.attr('id') === nodeId){
-//      jstree.delete_node(selectedNode);
-//      SPARQL.View.map.remove(nodeId, dataEntity);
-//    }
-//  };
 
  
 
@@ -1940,7 +1948,7 @@
       else{
         delete SPARQL.Model.data.order;
       }
-      SPARQL.treeToSparql();
+      SPARQL.treeToSparql(null, true);
     });
   };
 
@@ -2054,14 +2062,21 @@
       select: function(event, ui) {
         switch(ui.index){
           case 0:
-            SPARQL.sparqlToTree($('#sparqlQueryText').val());
+            if(SPARQL.isSourceCodeChanged){
+              SPARQL.sparqlToTree($('#sparqlQueryText').val());
+            }
             break;
 
           case 1:
-            SPARQL.treeToSparql();
+            if(SPARQL.isTreeChanged){
+              SPARQL.treeToSparql();
+            }
             break;
 
           case 2:
+            if(SPARQL.isTreeChanged){
+              SPARQL.treeToSparql();
+            }
             $('#qiSparqlParserFunction').val(SPARQL.buildParserFuncString(SPARQL.getNamespaceString() + $('#sparqlQueryText').val()));
             break;
         }

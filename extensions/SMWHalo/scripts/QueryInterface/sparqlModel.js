@@ -72,6 +72,7 @@
     //init static data
     SPARQL.Model.data.projection_var = data.projection_var || [];
     SPARQL.Model.data.order = data.order || [];
+    $.merge(data.namespace, SPARQL.Model.data.namespace);
     SPARQL.Model.data.namespace = SPARQL.Model.removeNamespaceDuplicates(data.namespace);
 
     //init category_restriction
