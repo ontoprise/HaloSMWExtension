@@ -173,13 +173,7 @@ class DFVersion {
 					// DFVersion only
 					$ver1 = $versions[$j];
 					$ver2 = $versions[$j+1];
-					if ($ver1->isEqual($ver2)) {
-						if ($pl1 < $pl2) {
-							$help = $versions[$j];
-							$versions[$j] = $versions[$j+1];
-							$versions[$j+1] = $help;
-						}
-					}
+					
 					if ($ver1->isLower($ver2)) {
 						$help = $versions[$j];
 						$versions[$j] = $versions[$j+1];
@@ -210,7 +204,7 @@ class DFVersion {
 				// DFVersion
 				$ver1 = $last;
 				$ver2 = $versions[$i];
-				if($ver1->isEqual($ver2) && $pl1 === $pl2) {
+				if($ver1->isEqual($ver2)) {
 					$versions[$i] = NULL;
 				} else {
 					$last = $versions[$i];
