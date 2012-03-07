@@ -265,3 +265,10 @@ A: WAT needs the socket function of PHP or the 'curl' module loaded to access fi
    The socket functions are part of the standard PHP release but some webhosters deactivate them.
    If they are missing, WAT can use 'curl' instead. If this is also missing, WAT won't work. Sorry.
    
+   Uncomment one of the following in settings.php:
+   
+   //'df_http_impl' => 'HttpDownloadCurlImpl',
+   //'df_http_impl' => 'HttpDownloadSocketImpl',
+   
+Q: Does my PHP installation have all requirements installed?
+A: Please run checkPHP.php on the command line or go to Special:CheckInstallation.   
