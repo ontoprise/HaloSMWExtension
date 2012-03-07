@@ -99,5 +99,9 @@ class SMWCheckInstallation extends SpecialPage {
 		foreach($out as $o) {
 			$wgOut->addHTML($o);
 		}
+		
+		// (4) show PHP checks
+		require_once("$IP/deployment/maintenance/checkPHP.inc");
+		$wgOut->addHTML(dffDoPHPChecks('html'));
 	}
 }
