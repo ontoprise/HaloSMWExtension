@@ -323,6 +323,10 @@
 }
 
 /* IE6 */
+/*op-patch|BL|2012-03-07|start*/
+/*We removed Alpha Filter methods for IE 7 and 8 (they are not needed)
+and customized all src attributes for IE 6 to match the correct path
+Bug: http://bugs.smwplus.com/show_bug.cgi?id=16689 */
 
 .fancybox-ie6 #fancybox-close { background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='extensions/ScriptManager/scripts/fancybox/fancy_close.png', sizingMethod='scale'); }
 
@@ -344,3 +348,4 @@
 }
 
 #fancybox-loading.fancybox-ie6 div	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='extensions/ScriptManager/scripts/fancybox/fancy_loading.png', sizingMethod='scale'); }
+/*op-patch|BL|2012-03-07|end*/
