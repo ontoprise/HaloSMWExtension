@@ -119,7 +119,7 @@ class ASFFormDefinition {
 			$outro .= "{{{standard input|free text|rows=".$rows."|cols=".$cols."}}}";
 		} else {
 			$outro .= "{{{standard input|free text|rows=".$rows."|cols=".$cols."}}}";
-			$outro .= '<span class="asf-hide-freetext"/>';
+			$outro .= '<span class="asf-hide-freetext"></span>';
 		}
 		
 		$outro .= '<div class="asf-standard-inputs">';
