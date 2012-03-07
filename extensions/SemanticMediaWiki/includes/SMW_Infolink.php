@@ -247,6 +247,7 @@ class SMWInfolink {
 						$link = $this->getLinker( $linker )->link(
 							$title,
 							$this->mCaption,
+							array(),
 							SMWInfolink::encodeParameters( $this->mParams, false )
 						);
 					}
@@ -375,8 +376,8 @@ class SMWInfolink {
 				//      make URLs less readable
 				//
 				$value = str_replace(
-					array( '-', '#', "\n", ' ', '/', '[', ']', '<', '>', '&lt;', '&gt;', '&amp;', '\'\'', '|', '&', '%', '?' ),
-					array( '-2D', '-23', '-0A', '-20', '-2F', '-5B', '-5D', '-3C', '-3E', '-3C', '-3E', '-26', '-27-27', '-7C', '-26', '-25', '-3F' ),
+					array( '-', '#', "\n", ' ', '/', '[', ']', '<', '>', '&lt;', '&gt;', '&amp;', '\'\'', '|', '&', '%', '?', '$' ),
+					array( '-2D', '-23', '-0A', '-20', '-2F', '-5B', '-5D', '-3C', '-3E', '-3C', '-3E', '-26', '-27-27', '-7C', '-26', '-25', '-3F', '-24' ),
 					$value
 				);
 

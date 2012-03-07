@@ -86,11 +86,6 @@ class ApiSMWInfo extends ApiBase {
 			'API module get info about this SMW install.'
 		);
 	}
-	
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-		) );
-	}
 
 	protected function getExamples() {
 		return array(
@@ -99,7 +94,7 @@ class ApiSMWInfo extends ApiBase {
 	}	
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiSMWInfo.php 95796 2011-08-30 17:46:47Z jeroendedauw $';
+		return __CLASS__ . ': $Id: ApiSMWInfo.php 112438 2012-02-26 14:21:22Z nikerabbit $';
 	}		
 	
 }

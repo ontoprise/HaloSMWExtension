@@ -193,21 +193,29 @@ class SMWParseData {
 				}
 				
 				// Calculate property value.
-				$datum = null;
+				$value = null;
 				
 				switch ( $propId ) {
 					case '_MDAT' :
 						$timestamp =  Revision::getTimeStampFromID( $title, $title->getLatestRevID() );
-						$datum = self::getDataItemFromMWTimestamp( $timestamp );
+						$value = self::getDataItemFromMWTimestamp( $timestamp );
 						break;
 					case '_CDAT' :
 						$timestamp = $title->getFirstRevision()->getTimestamp();
-						$datum = self::getDataItemFromMWTimestamp( $timestamp );
+						$value = self::getDataItemFromMWTimestamp( $timestamp );
+						break;
+					case '_NEWP' :
+						$value = new SMWDIBoolean( $title->isNewPage() );
+						break;
+					case '_LEDT' :
+						$revision = Revision::newFromId( $title->getLatestRevID() );
+						$user = User::newFromId( $revision->getUser() );
+						$value = SMWDIWikiPage::newFromTitle( $user->getUserPage() );
 						break;
 				}
 				
-				if ( !is_null( $datum ) ) {
-					$semdata->addPropertyObjectValue( $prop, $datum );    
+				if ( !is_null( $value ) ) {
+					$semdata->addPropertyObjectValue( $prop, $value );    
 				} // Issue error or warning?
 				
 			} // foreach
@@ -405,9 +413,17 @@ class SMWParseData {
 	 * the purpose of adding information there. If the private access ever becomes a problem,
 	 * a global/static variable appears to be the only way to get more article data to
 	 * LinksUpdate.
+	 * 
+	 * @param WikiPage|Article $article WikiPage on 1.19 and later
+	 * @param Revision $rev
+	 * @param integer $baseID
+	 * @param User $user
+	 * 
+	 * @return true
 	 */
-	static public function onNewRevisionFromEditComplete( $article, $rev, $baseID ) {
+	static public function onNewRevisionFromEditComplete( /* WikiPage */ $article, Revision $rev, $baseID, User $user ) {
 		global $smwgPageSpecialProperties;
+		
 		if ( ( $article->mPreparedEdit ) && ( $article->mPreparedEdit->output instanceof ParserOutput ) ) {
 			$output = $article->mPreparedEdit->output;
 			$title = $article->getTitle();
@@ -425,13 +441,27 @@ class SMWParseData {
 		}
 
 		if ( in_array( '_MDAT', $smwgPageSpecialProperties ) ) {
-			$pmdat = new SMWDIProperty( '_MDAT' );
 			$timestamp = $article->getTimestamp();
 			$di = self::getDataItemFromMWTimestamp( $timestamp );
 			
 			if ( !is_null( $di ) ) {
-				$semdata->addPropertyObjectValue( $pmdat, $di );
+				$semdata->addPropertyObjectValue( new SMWDIProperty( '_MDAT' ), $di );
 			}
+		}
+		
+		if ( in_array( '_LEDT', $smwgPageSpecialProperties ) ) {
+			$di = SMWDIWikiPage::newFromTitle( $user->getUserPage() );
+			
+			if ( !is_null( $di ) ) {
+				$semdata->addPropertyObjectValue( new SMWDIProperty( '_LEDT' ), $di );
+			}
+		}
+		
+		if ( in_array( '_NEWP', $smwgPageSpecialProperties ) ) {
+			$semdata->addPropertyObjectValue(
+				new SMWDIProperty( '_NEWP' ), 
+				new SMWDIBoolean( is_null( $rev->getParentId() ) )
+			);
 		}
 
 		return true;

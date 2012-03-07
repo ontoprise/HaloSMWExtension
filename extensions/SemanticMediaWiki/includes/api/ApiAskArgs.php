@@ -18,7 +18,14 @@ class ApiAskArgs extends ApiSMWQuery {
 	public function execute() {
 		$params = $this->extractRequestParams();
 		$this->requireParameters( $params, array( 'conditions' ) );
-		$this->parameters = $params['parameters'];
+		
+		foreach ( $params['parameters'] as $param ) {
+			$parts = explode( '=', $param, 2 );
+			
+			if ( count( $parts ) == 2 ) {
+				$this->parameters[$parts[0]] = $parts[1];
+			}
+		}
 		
 		$query = $this->getQuery( 
 			implode( array_map( array( __CLASS__, 'wrapCondition' ), $params['conditions'] ) ),
@@ -73,11 +80,6 @@ class ApiAskArgs extends ApiSMWQuery {
 			This API module is in alpha stage, and likely to see changes in upcomming versions of SMW.'
 		);
 	}
-	
-	public function getPossibleErrors() {
-		return array_merge( parent::getPossibleErrors(), array(
-		) );
-	}
 
 	protected function getExamples() {
 		return array(
@@ -86,7 +88,7 @@ class ApiAskArgs extends ApiSMWQuery {
 	}	
 	
 	public function getVersion() {
-		return __CLASS__ . ': $Id: ApiAskArgs.php 106447 2011-12-16 17:26:51Z yaron $';
+		return __CLASS__ . ': $Id: ApiAskArgs.php 112438 2012-02-26 14:21:22Z nikerabbit $';
 	}		
 	
 }

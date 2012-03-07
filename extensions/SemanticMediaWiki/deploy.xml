@@ -3,8 +3,8 @@
     <global>
         <id>smw</id>
         <title>Semantic MediaWiki</title>
-        <version>1.7.0</version>
-        <patchlevel>2</patchlevel>
+        <version>1.7.1</version>
+        <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>http://semantic-mediawiki.org/</maintainer>
         <instdir>extensions/SemanticMediaWiki</instdir>

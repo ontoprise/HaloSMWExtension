@@ -36,6 +36,7 @@ class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
 	public function doQuery( $sparql ) {
 		//$result = parent::doQuery( $sparql );
 		curl_setopt( $this->m_curlhandle, CURLOPT_URL, $this->m_queryEndpoint );
+		curl_setopt( $this->m_curlhandle, CURLOPT_HTTPHEADER, array('Accept: application/sparql-results+xml,application/xml;q=0.8' ));
 		curl_setopt( $this->m_curlhandle, CURLOPT_POST, true );
 		$parameterString = "query=" . urlencode( $sparql ) . "&restricted=1" .
 			( ( $this->m_defaultGraph !== '' )? '&default-graph-uri=' . urlencode( $this->m_defaultGraph ) : '' );
@@ -46,7 +47,7 @@ class SMWSparqlDatabase4Store extends SMWSparqlDatabase {
 			$xmlParser = new SMWSparqlResultParser();
 			$result = $xmlParser->makeResultFromXml( $xmlResult );
 		} else {
-			$this->throwSparqlErrors( $this->m_updateEndpoint, $sparql );
+			$this->throwSparqlErrors( $this->m_queryEndpoint, $sparql );
 			$result = new SMWSparqlResultWrapper( array(), array(), array(), SMWSparqlResultWrapper::ERROR_UNREACHABLE );
 		}
 

@@ -408,7 +408,10 @@ class SMWQueryProcessor {
 			wfProfileOut( 'SMWQueryProcessor::getResultFromQuery (SMW)' );
 
 			return $result;
-		} else { // result for counting or debugging is just a string
+		} else { // result for counting or debugging is just a string or number
+			if ( is_numeric( $res ) ) {
+				$res = strval( $res );
+			}
 			if ( is_string( $res ) ) {
 				if ( array_key_exists( 'intro', $params ) ) {
 					$res = str_replace( '_', ' ', $params['intro'] ) . $res;
@@ -418,9 +421,7 @@ class SMWQueryProcessor {
 				}
 				
 				$result = $res . smwfEncodeMessages( $query->getErrors() );
-			}
-			else {
-				// When no valid result was obtained, $res will be a SMWQueryResult.
+			} else { // When no valid result was obtained, $res will be a SMWQueryResult.
 				$result = smwfEncodeMessages( $query->getErrors() );
 			}
 			
@@ -509,7 +510,7 @@ class SMWQueryProcessor {
 		
 		$params['limit'] = new Parameter( 'limit', Parameter::TYPE_INTEGER );
 		$params['limit']->setMessage( 'smw_paramdesc_limit' );
-		$params['limit']->setDefault( 20 );
+		$params['limit']->setDefault( $GLOBALS['smwgQDefaultLimit'] );
 		
 		$params['sort'] = new ListParameter( 'sort' );
 		$params['sort']->setMessage( 'smw-paramdesc-sort' );

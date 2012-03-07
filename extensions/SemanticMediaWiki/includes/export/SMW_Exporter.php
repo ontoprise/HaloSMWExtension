@@ -86,6 +86,11 @@ class SMWExporter {
 			$masterPage = new SMWDIWikiPage( $diWikiPage->getDBkey(), $diWikiPage->getNamespace(), $diWikiPage->getInterwiki() );
 			$masterExpElement = self::getDataItemExpElement( $masterPage );
 			$result->addPropertyObjectValue( self::getSpecialNsResource( 'swivt', 'masterPage' ), $masterExpElement );
+			// Add a sortkey: subobjects do not get this during parsing (they are no pages),
+			// but it is needed to query for them (e.g., to get a defined order for result pages)
+			$subObjectLabel = $diWikiPage->getDBkey() . '#' . $diWikiPage->getSubobjectName();
+			$sortkey = new SMWExpLiteral( str_replace( '_', ' ', $subObjectLabel ) );
+			$result->addPropertyObjectValue( self::getSpecialPropertyResource( '_SKEY' ), $sortkey );
 		} else {
 			$pageTitle = str_replace( '_', ' ', $diWikiPage->getDBkey() );
 			if ( $diWikiPage->getNamespace() !== 0 ) {
@@ -125,6 +130,8 @@ class SMWExporter {
 				$ed = new SMWExpLiteral( $diWikiPage->getNamespace(), 'http://www.w3.org/2001/XMLSchema#integer' );
 				$result->addPropertyObjectValue( self::getSpecialNsResource( 'swivt', 'wikiNamespace' ), $ed );
 				if ( $addStubData ) {
+					// Add a default sort key; for pages that exist in the wiki,
+					// this is set during parsing
 					$defaultSortkey = new SMWExpLiteral( str_replace( '_', ' ', $diWikiPage->getDBkey() ) );
 					$result->addPropertyObjectValue( self::getSpecialPropertyResource( '_SKEY' ), $defaultSortkey );
 				}
@@ -147,36 +154,32 @@ class SMWExporter {
 		if ( $property->isUserDefined() ) {
 			$pe = self::getResourceElementForProperty( $property );
 			$peHelper = self::getResourceElementForProperty( $property, true );
-			
+
 			foreach ( $dataItems as $dataItem ) {
 				$ed = self::getDataItemExpElement( $dataItem );
-				
 				if ( !is_null( $ed ) ) {
 					$expData->addPropertyObjectValue( $pe, $ed );
 				}
-				
+
 				$edHelper = self::getDataItemHelperExpElement( $dataItem );
-				
 				if ( !is_null( $edHelper ) ) {
 					$expData->addPropertyObjectValue( $peHelper, $edHelper );
 				}
 			}
 		} else { // pre-defined property, only exported if known
 			$diSubject = $expData->getSubject()->getDataItem();
-			if ( ( $diSubject == null ) || ( $diSubject->getDIType() != SMWDataItem::TYPE_WIKIPAGE ) ) {
-				return; // subject datavalue (wikipage) required for treating special properties properly
+			// subject wikipage required for disambiguating special properties:
+			if ( is_null( $diSubject ) ||
+			     $diSubject->getDIType() != SMWDataItem::TYPE_WIKIPAGE ) {
+				return;
 			}
 
 			$pe = self::getSpecialPropertyResource( $property->getKey(), $diSubject->getNamespace() );
-			if ( is_null( $pe ) ) return; // unknown special property, not exported 
-			if ( $property->getKey() == '_REDI' || $property->getKey() == '_URI' ) {
-				$filterNamespace = true;
-				if ( $property->getKey() == '_REDI' ) {
-					$pe = array( $pe, self::getSpecialPropertyResource( '_URI' ) );
-				}
-			} else {
-				$filterNamespace = false;
-			}
+			if ( is_null( $pe ) ) return; // unknown special property, not exported
+			// have helper property ready before entering the for loop, even if not needed:
+			$peHelper = self::getResourceElementForProperty( $property, true );
+
+			$filterNamespace = ( $property->getKey() == '_REDI' || $property->getKey() == '_URI' );
 
 			foreach ( $dataItems as $dataItem ) {
 				// Basic namespace filtering to ensure that types match for redirects etc.
@@ -186,11 +189,12 @@ class SMWExporter {
 				        ( $dataItem->getNamespace() != $diSubject->getNamespace() ) ) ) {
 					continue;
 				}
-				
+
 				$ed = self::getDataItemExpElement( $dataItem );
-				
+
 				if ( !is_null( $ed ) ) {
-					if ( ( $property->getKey() == '_CONC' ) && ( $ed->getSubject()->getUri() === '' ) ) {
+					if ( $property->getKey() == '_CONC' &&
+					     $ed->getSubject()->getUri() === '' ) {
 						// equivalent to anonymous class -> simplify description
 						foreach ( $ed->getProperties() as $subp ) {
 							if ( $subp->getUri() != self::getSpecialNsResource( 'rdf', 'type' )->getUri() ) {
@@ -199,13 +203,18 @@ class SMWExporter {
 								}
 							}
 						}
-					} elseif ( is_array( $pe ) ) {
-						foreach ( $pe as $extraPropertyElement ) {
-							$expData->addPropertyObjectValue( $extraPropertyElement, $ed );
-						}
+					} elseif ( $property->getKey() == '_REDI' ) {
+						$expData->addPropertyObjectValue( $pe, $ed );
+						$peUri = self::getSpecialPropertyResource( '_URI' );
+						$expData->addPropertyObjectValue( $peUri, $ed );
 					} else {
 						$expData->addPropertyObjectValue( $pe, $ed );
 					}
+				}
+
+				$edHelper = self::getDataItemHelperExpElement( $dataItem );
+				if ( !is_null( $edHelper ) ) {
+					$expData->addPropertyObjectValue( $peHelper, $edHelper );
 				}
 			}
 		}
@@ -226,7 +235,7 @@ class SMWExporter {
 	static public function getResourceElementForProperty( SMWDIProperty $diProperty, $helperProperty = false ) {
 		$diWikiPage = $diProperty->getDiWikiPage();
 		if ( is_null( $diWikiPage ) ) {
-			throw new Exception( 'SMWExporter::getResourceElementForProperty() can only be used for user-defined properties.' );
+			throw new Exception( 'SMWExporter::getResourceElementForProperty() can only be used for non-inverse, user-defined properties.' );
 		} elseif ( $helperProperty ) {
 			return self::getResourceElementForWikiPage( $diWikiPage, 'aux' );
 		} else {
@@ -415,6 +424,12 @@ class SMWExporter {
 				}
 			case '_MDAT':
 				return self::getSpecialNsResource( 'swivt', 'wikiPageModificationDate' );
+			case '_CDAT':
+				return self::getSpecialNsResource( 'swivt', 'wikiPageCreationDate' );
+			case '_LEDT':
+				return self::getSpecialNsResource( 'swivt', 'wikiPageLastEditor' );
+			case '_NEWP':
+				return self::getSpecialNsResource( 'swivt', 'wikiPageIsNew' );
 			case '_SKEY':
 				return self::getSpecialNsResource( 'swivt', 'wikiPageSortKey' );
 			case '_TYPE':
@@ -613,7 +628,7 @@ class SMWExporter {
 	 *
 	 * For dataitems that do not have such a simplification, the method
 	 * returns null.
-	 * 
+	 *
 	 * @note If a helper element is used, then it must be the same as
 	 * getDataItemHelperExpElement( $dataItem->getSortKeyDataItem() ).
 	 * Query conditions like ">" use sortkeys for values, and helper

@@ -368,7 +368,7 @@ class SMWSparqlDatabase {
 	 * @return boolean stating whether the operations succeeded
 	 */
 	public function deleteContentByValue( $propertyName, $objectName, $extraNamespaces = array() ) {
-		return smwfGetSparqlDatabase()->delete( "?s ?p ?o", "?s $propertyName $objectName . ?s ?p ?o" );
+		return smwfGetSparqlDatabase()->delete( "?s ?p ?o", "?s $propertyName $objectName . ?s ?p ?o", $extraNamespaces );
 	}
 
 	/**
@@ -448,6 +448,7 @@ class SMWSparqlDatabase {
 	public function doQuery( $sparql ) {
 		//debug_zval_dump( $sparql );
 		curl_setopt( $this->m_curlhandle, CURLOPT_URL, $this->m_queryEndpoint );
+		curl_setopt( $this->m_curlhandle, CURLOPT_HTTPHEADER, array('Accept: application/sparql-results+xml,application/xml;q=0.8' ));
 		curl_setopt( $this->m_curlhandle, CURLOPT_POST, true );
 		$parameterString = "query=" . urlencode( $sparql ) .
 			( ( $this->m_defaultGraph !== '' )? '&default-graph-uri=' . urlencode( $this->m_defaultGraph ) : '' );
@@ -459,14 +460,14 @@ class SMWSparqlDatabase {
 			$xmlParser = new SMWSparqlResultParser();
 			return $xmlParser->makeResultFromXml( $xmlResult );
 		} else {
-			$this->throwSparqlErrors( $this->m_updateEndpoint, $sparql );
+			$this->throwSparqlErrors( $this->m_queryEndpoint, $sparql );
 			return new SMWSparqlResultWrapper( array(), array(), array(), SMWSparqlResultWrapper::ERROR_UNREACHABLE );
 		}
 	}
 
 	/**
 	 * Execute a SPARQL update and return a boolean to indicate if the
-	 * operations was sucessfull. The method throws exceptions based on
+	 * operations was successful. The method throws exceptions based on
 	 * SMWSparqlDatabase::throwSparqlErrors(). If errors occur and this
 	 * method does not throw anything, then false is returned.
 	 *
