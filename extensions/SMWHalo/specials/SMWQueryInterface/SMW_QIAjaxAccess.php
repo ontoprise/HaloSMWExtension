@@ -74,7 +74,7 @@ function smwf_qi_getSparqlQueryResult($querystring, $paramstring){
     if (!in_array('format', array_keys($params)))
       $params['format'] = 'table';
 
-    $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_HTML);
+    $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($params, SMW_OUTPUT_WIKI);
 
     if (is_array($result) && trim($result[0]) == '' || trim($result == '')) {
        return wfMsg('smw_qi_printout_err4');
@@ -170,12 +170,12 @@ function smwf_qi_QIAccess($method, $params, $currentPage= null) {
         $fixparams['source'] = 'wiki';
 
       $useTsc = (strtolower($fixparams['source']) != 'wiki');
-      // use SMW classes or TSC classes and parse params and answer query
+      // use SMW classes or TSC classes to parse params and answer query
 
        if ($useTsc)
-        $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_HTML);
+        $result = SMWSPARQLQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_WIKI);
       else
-        $result = SMWQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_HTML);
+        $result = SMWQueryProcessor::getResultFromFunctionParams($rawparams, SMW_OUTPUT_WIKI);
 //      if ($useTsc)
 //        SMWSPARQLQueryProcessor::processFunctionParams($rawparams, $querystring, $params, $printouts);
 //      else
@@ -492,19 +492,18 @@ function toJsonCompatibleArray($params) {
 function parseWikiText($text, $page = '___Dummy_Page___', $addInlineScripts = true) {
 	global $wgOut, $wgParser;
 
-	//  $parser = new Parser();
 	$title = Title::newFromText($page);
 
 	$popt = new ParserOptions();
 	$popt->setEditSection(false);
-	//  $pout = $parser->parse($text . '__NOTOC__', $title, $popt);
-	$pout = $wgParser->parse($text . '__NOTOC__', $title, $popt);
-	/// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
-//	SMWOutputs::requireFromParserOutput($pout);
-	//  $result = $pout->getText();
-	$result = $text;
 
-	$modules = array_merge(array_unique($wgOut->getModules()), array_unique($pout->getModules()));
+	$pout = $wgParser->parse($text . '__NOTOC__', $title, $popt);
+
+	// NOTE: as of MW 1.14SVN, there is apparently no better way to hide the TOC
+  $result = $pout->getText();
+//	$result = $text;
+
+	$modules = array_unique(array_merge($wgOut->getModules(), $pout->getModules()));
 	//add script block which loads the necessary modules
 	//also add to the result all the <script> blocks the page contains
 	if($addInlineScripts){

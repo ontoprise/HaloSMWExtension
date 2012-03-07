@@ -2104,21 +2104,19 @@
     return result;
   };
 
-  //execute init methods of result format modules registered via overriden $(document).ready methosd
+  //execute init methods of result format modules registered via overriden $(document).ready methods
   SPARQL.executeInitMethods = function(){
     var initMethods = SPARQL.srfInitMethods || [];
 
     for(var i = 0; i < initMethods.length; i++){
       try{
-        //method 'smw_sortables_init' when applied more than once causes multiple sort headers to appear
-        //so if there are visible sort headers already then remove them
+        //methods 'smw_sortables_init' and 'ts_makeSortable' when applied more than once causes multiple sort headers to appear
+        //we have to run the script even if there are sortable tables on the page already, so just remove the sort headers
         var method = initMethods[i];
-        if((method.name == 'smw_sortables_init' || method.toString().indexOf('function smw_sortables_init') > -1)
-          && $('.sortheader').filter(':visible').length > 0)
+        if((method.name == 'smw_sortables_init' || method.toString().indexOf('ts_makeSortable') > -1)
+          && $('a.sortheader').filter(':visible').length > 0)
         {
-          $('th a.sortheader').each(function(){
-            $(this).parent().html($(this).siblings('span').eq(0).text());
-          });
+          $('a.sortheader').remove();
         }
         method();
 
@@ -2134,7 +2132,13 @@
   SPARQL.initResultFormatLoading = function(){
     $.fn.ready = SPARQL.documentReady;
     addOnloadHook = SPARQL.documentReady;
+    if(onloadFuncts && onloadFuncts.length){
+     $.each(onloadFuncts, function(index, value){
+       SPARQL.addInitMethod(value);
+     });
+    }
   };
+
 
   SPARQL.documentReady = function(someFunction){
     SPARQL.addInitMethod(someFunction);
@@ -2572,7 +2576,7 @@
 
   SPARQL.buildNamespaceHtmlTable = function(){
     var namespaces = SPARQL.Model.data.namespace;
-    var html = '<table class="smwtable" id="namespaceTable"><tr><th>Prefix</th><th>Namespace</th></tr>';
+    var html = '<table class="sortable wikitable smwtable" id="namespaceTable"><tr><th>Prefix</th><th>Namespace</th></tr>';
 
     $.each(namespaces, function(index, namespace){
       html += '<tr><td>' + namespace.prefix + '</td><td>' + namespace.namespace_iri + '</td></tr>\n';
