@@ -479,8 +479,23 @@ class DFCommandInterface {
 		}
 		$contents = file_get_contents("$rootDir/config/repositories");
 
+		$url = trim($url);
+		$url_trimmed = rtrim($url, '/');
+
+		$lines = explode("\n", $contents);
+
+		$lines = array_filter($lines, function ($item) use ($url, $url_trimmed) {
+			$l = trim($item);
+			if ($l == $url || $l == $url_trimmed) {
+				return false;
+			}
+			return true;
+		});
+
+		$contents = implode("\n", $lines);
+		
 		//FIXME: consider credentials
-		$contents = str_replace($url, "", $contents);
+
 		$handle = fopen("$rootDir/config/repositories", "w");
 		fwrite($handle, $contents);
 		fclose($handle);
@@ -628,54 +643,54 @@ class DFCommandInterface {
 		@closedir($handle);
 		return "true";
 	}
-	
+
 	public function downloadBundleFile($bundleFile) {
-		
+
 		global $dfgContentBundlesTab;
-        $bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
-        
-        header( 'Content-Encoding: identity' );
-        header( "Content-type: application/zip;" );
-        header( "Content-disposition: attachment;filename={$bundleFile}" );
-        
-        $filePath = $bundleExportDir."/$bundleFile";
-	    // write bundle
-        $handle = fopen($filePath, "rb");
-        while (!feof($handle)) {
-            print fread($handle, 1024*100);
-        }
-        fclose($handle);
+		$bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+
+		header( 'Content-Encoding: identity' );
+		header( "Content-type: application/zip;" );
+		header( "Content-disposition: attachment;filename={$bundleFile}" );
+
+		$filePath = $bundleExportDir."/$bundleFile";
+		// write bundle
+		$handle = fopen($filePath, "rb");
+		while (!feof($handle)) {
+			print fread($handle, 1024*100);
+		}
+		fclose($handle);
 	}
 
-	
-	
+
+
 	public function createBundle($bundleID) {
 		global $dfgContentBundlesTab;
-        $bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
-        $bundleFileName = Tools::makeFileName($bundleID);
+		$bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+		$bundleFileName = Tools::makeFileName($bundleID);
 		return json_encode($this->exportBundle($bundleID, $bundleExportDir."/$bundleFileName.zip"));
 	}
 
 	private function exportBundle($bundleID, $outputFile = "") {
 		global $mwrootDir;
-		
+
 		$unique_id = uniqid();
-        $filename = $unique_id.".log";
-        $logger = Logger::getInstance();
-        $logdir = $logger->getLogDir();
-        $console_out = "$logdir/$filename.console_out.txt";
-		
-        // check if file already exists and append a number if so
-        if (file_exists($outputFile)) {
-        	$outputDir = dirname($outputFile);
-        	$i = 1;
-            $file_wo_ending = Tools::removeFileEnding($outputFile);
-            $file_ext = Tools::getFileExtension($outputFile);
-        	while(file_exists("$outputDir/$file_wo_ending($i).$file_ext")) $i++;
-            $filename = "$file_wo_ending($i).$file_ext";
-            $outputFile = $filename;
-        }
-        
+		$filename = $unique_id.".log";
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		$console_out = "$logdir/$filename.console_out.txt";
+
+		// check if file already exists and append a number if so
+		if (file_exists($outputFile)) {
+			$outputDir = dirname($outputFile);
+			$i = 1;
+			$file_wo_ending = Tools::removeFileEnding($outputFile);
+			$file_ext = Tools::getFileExtension($outputFile);
+			while(file_exists("$outputDir/$file_wo_ending($i).$file_ext")) $i++;
+			$filename = "$file_wo_ending($i).$file_ext";
+			$outputFile = $filename;
+		}
+
 		chdir($mwrootDir."/deployment/tools/maintenance/export");
 		$outputFile_esc = $outputFile != "" ? '"'.$outputFile.'"' : "";
 		if (Tools::isWindows()) {
@@ -692,8 +707,8 @@ class DFCommandInterface {
 		$o->bundleFile = $filePath;
 		return $o;
 	}
-	
-	
+
+
 
 	/**
 	 * Special quoting for cmd /c  ....
