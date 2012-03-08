@@ -65,7 +65,7 @@ if (file_exists($mwrootDir."/deployment/checkForWAT.php")) {
 function dffDoPHPChecks($format = 'text') {
 	
     global $mwrootDir, $dfgTestfunctions, $dfgRunFromCommandLine, $dfgRequiredExtensions, 
-           $requiredPHPVersions, $dfgRequiredFunctions;
+           $dfgRequiredPHPVersions, $dfgRequiredFunctions;
     
     $messages = array();
 	// run testfunctions
@@ -76,8 +76,8 @@ function dffDoPHPChecks($format = 'text') {
 	// check version
 	$version = phpversion();
 	$currentPHPVersion = new DFVersion($version);
-	global $requiredPHPVersions;
-	foreach($requiredPHPVersions as $v) {
+	global $dfgRequiredPHPVersions;
+	foreach($dfgRequiredPHPVersions as $v) {
 		$versions[] = new DFVersion($v);
 	}
 	DFVersion::sortVersions($versions);

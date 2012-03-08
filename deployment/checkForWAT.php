@@ -3,9 +3,9 @@ global $dfgTestfunctions;
 $dfgTestfunctions[] = 'df_checkInstallation';
 
 function df_checkInstallation() {
-	global $dfgRequiredExtensions, $requiredPHPVersions, $dfgRequiredFunctions;
+	global $dfgRequiredExtensions, $dfgRequiredPHPVersions, $dfgRequiredFunctions;
 
-	$requiredPHPVersions[] = '5.3.2';
+	$dfgRequiredPHPVersions[] = '5.3.2';
 
 	$dfgRequiredExtensions['xml'][] = "Please install 'php_xml' if you want to use WAT.";
 
