@@ -18,7 +18,7 @@
                <helpurl>http://www.smwplus.com/index.php/Help:Semantic_Forms_Extension</helpurl>
 		<dependencies>
 			<dependency from="1.14.0" to="1.17.9">mw</dependency>
-			<dependency from="1.4.2" to="1.7.0">smw</dependency>
+			<dependency from="1.4.2" to="1.7.1">smw</dependency>
 		</dependencies>
 	</global>
 
