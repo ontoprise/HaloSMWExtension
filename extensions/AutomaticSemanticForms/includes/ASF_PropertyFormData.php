@@ -134,7 +134,7 @@ class ASFPropertyFormData {
 		//add special class, so that width=100% can be applied in JS
 		$useClass = '';
 		if($size == ASF_LONG_TEXT_SIZE && $inputType =='text'
-				|| $inputType == 'textarea'){
+				|| $inputType == 'textarea' || $inputType =='haloactext' || $inputType == 'haloactextarea'){
 			$useClass = '| class=asf-complete-width';
 		}
 		
@@ -264,14 +264,29 @@ class ASFPropertyFormData {
 		$fullSyntax .= '<span style="display: none" class="asf-mv_inputtype">'
 			.strtolower(trim($inputType)).'</span>';
 
+		//note that the asf-multi_values span is closed within if/else	
 		if(count($this->existingValues) == 0){
 			//now values exist for this input field
 			$fieldName = $this->titleObject->getText();
 			$fullSyntax .= '<div class="asf-multi_value">'
-				.'{{{field |'.$fieldName.$syntax.'</div>';	
+				.'{{{field |'.$fieldName.$syntax.'</div>';
+
+			$fullSyntax .= '</span>';
+			
+			$fullSyntax .= '<span class="asf-uneditable_values'.'">';
+			//todo: improve this so that it is not necessary to add this twice anymore
+			$fullSyntax .= '<span style="display: none" class="asf-mv_propname">'.
+				$this->titleObject->getText().'</span>';
+			$fullSyntax .= '</span>';
 		}else {
 			$i=1;
 			foreach($this->existingValues as $key => $value){
+				
+				//don't show an input field if this is a derived value or set within a template 
+				if(!$this->existingValues[$key]['editable']){
+					continue;
+				}
+				
 				$fieldName = $this->titleObject->getText();
 				if($i > 1) $fieldName .= '---'.$i; 
 			
@@ -285,9 +300,28 @@ class ASFPropertyFormData {
 					
 				$i++;
 			}
-		}
+		
+			$fullSyntax .= '</span>';
 			
-		$fullSyntax .= '</span>';
+			$fullSyntax .= '<span class="asf-uneditable_values'.'">';
+			//todo: improve this so that it is not necessary to add this twice anymore
+			$fullSyntax .= '<span style="display: none" class="asf-mv_propname">'.
+				$this->titleObject->getText().'</span>';
+			
+			//now deal with derived values and so on
+			foreach($this->existingValues as $key => $value){
+
+				//only show derived values now 
+				if($this->existingValues[$key]['editable']){
+					continue;
+				}
+				
+				$fullSyntax .= '<p>'.
+					$this->existingValues[$key]['value'].'</p>';
+			}
+			
+			$fullSyntax .= '</span>';
+		}
 		
 		$this->formFieldSyntax = $fullSyntax;
 		return $this->formFieldSyntax;

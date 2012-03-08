@@ -58,7 +58,7 @@
 
 
 #asf_category_input {
-	width: 99%;
+	width: 95%;
 	height: 2em;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .asf-complete-width{
-	width: 95% ! important;
+	width: 94% ! important;
 	
 	border-color: #959595 #CCCCCC #CCCCCC #959595;
     border-style: solid;

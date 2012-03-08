@@ -121,7 +121,7 @@ window.ASFFormSyncer = {
 	 * Init the syncer
 	 */	
 	init : function(){
-
+		
 		//asf postprocessing must be done if form is submitted
 		//and sf validation succeeds 
 		var validateAllTemp = window.validateAll;
@@ -280,7 +280,7 @@ window.ASFFormSyncer = {
 					lastChild = this;
 				});
 				
-				if(addAnnotation){
+				if(addAnnotation && lastChild != null){
 					//add a new form input field
 					var newInputField = ASFMultiInputFieldHandler.doAddInputField(jQuery('> *:first-child', lastChild));
 					ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
@@ -319,6 +319,13 @@ window.ASFFormSyncer = {
 						
 						jQuery('.asf-unresolved-section').css('display', '');
 						
+						//first check if there is already a row for that property with some uneditable values
+						var uneditableSection = '';
+						jQuery('.asf-uneditable_values[property-name = "' + propName + '"]').each(function(){
+							uneditableSection = jQuery(this).html();
+							jQuery(this).parent().parent().remove();
+						});
+
 						jQuery('.asf-unresolved-section table').append(data.html);
 						var newInputField = jQuery('.asf-unresolved-section table tr:last-child .asf-multi_value').get(0);
 						var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(newInputField).parent());
@@ -327,6 +334,10 @@ window.ASFFormSyncer = {
 						jQuery(newInputField).attr('asf-delete-this', 'false');
 						jQuery(newInputField).attr('asf-wp-rel-index', i);
 						jQuery(newInputField).addClass('asf-syncronized-value');
+						
+						//add section again for uneditable values if one is available
+						jQuery(newInputField).parent().next().html(uneditableSection);
+						jQuery(newInputField).parent().next().attr('property-name', propName);
 					}
 				});
 			}
@@ -369,6 +380,8 @@ window.ASFFormSyncer = {
 		
 		//check if this input field is syncronized to free text
 
+		//alert(jQuery(node).attr('class'));
+		
 		if(jQuery(node).attr('class').indexOf('asf-syncronized-value') == -1
 				&& jQuery(node).attr('asf-syncronized') != 'true'){
 			return;
@@ -410,6 +423,8 @@ window.ASFFormSyncer = {
 				this.deletePropertyInFreetext(currentRelation, relationIndex, node);
 			}
 		}
+		
+		//alert('after:  ' + jQuery(node).attr('class'));
 	},
 	
 	addPropertyToFreeText : function(container, newValue){
@@ -590,6 +605,12 @@ window.ASFFormSyncer = {
 			}
 		});
 		
+		jQuery('.asf-uneditable_values').each(function(){
+			if(jQuery(this).html().length > 0){
+				inputFieldIds += '<<<' + jQuery(this).prev().attr('property-name');
+			}
+		});
+		
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
 			data: {
@@ -637,6 +658,16 @@ window.ASFFormSyncer = {
 			}
 		});
 		
+		var uneditableSections = new Array();
+		jQuery(currentContainer + ' .asf-uneditable_values').each(function(){
+			if(jQuery(this).html().length > 0){
+				var uneditableSection = new Object();
+				uneditableSection.name = jQuery(this).prev().attr('property-name');
+				uneditableSection.html = jQuery(this).html();
+				uneditableSections.push(uneditableSection);
+			}
+		});
+		
 		jQuery(currentContainer).html('');
 		
 		//first set all input fields in the new form to be syncronized
@@ -655,10 +686,26 @@ window.ASFFormSyncer = {
 				}
 			});
 		}
+
+		//add sections for unediable values again
+		for(var i=0; i < uneditableSections .length; i++){
+			jQuery('.asf-multi_values[property-name = "' + uneditableSections [i].name	+'"]').each(function(){
+				jQuery(this).next().html(uneditableSections[i].html);
+			})
+		}
 		
-		//now set all input fields which have only one child to be unsyncronized again
+		//input fields in unresolved annotations section that have no value must be removed again
+		jQuery('.asf-unresolved-section .asf-multi_value').each(function(){
+			if(!ASFMultiInputFieldHandler.isInputFieldValueSet(this)){
+				jQuery(this).remove();
+			}		
+		});
+		
+		//now set all input fields which have only one child to be unsyncronized 
+		//again if they are part of unresolved annoations section
 		jQuery('.asf-multi_values').each(function(){
-			if(jQuery('.asf-multi_value', this).get().length == 1)	{
+			if(jQuery('.asf-multi_value', this).get().length == 1 &&
+					jQuery(this).attr('class').indexOf('asf-partOfUnresolvedAnnotationsSection') == -1){
 				jQuery('.asf-multi_value', this).removeClass('asf-syncronized-value');
 			}		
 		});
@@ -679,6 +726,12 @@ window.ASFMultiInputFieldHandler = {
 		jQuery('.asf-multi_values').each(function(){
 			ASFMultiInputFieldHandler.doInit(this);
 		});
+		
+		//init uneditable values section
+		jQuery('.asf-uneditable_values').each(function(){
+			jQuery(this).attr('property-name', jQuery('.asf-mv_propname', this).html());
+		});
+		
 	},	
 		
 	doInit : function(node){
@@ -754,13 +807,18 @@ window.ASFMultiInputFieldHandler = {
 		if(inputFieldCount == 1){
 			if(partOfUnresolvedAnnotationsSection){
 				//we are in the unresolved annotations section 
-				//and the last input field, respectively the complete row
-				//will be removed
-			
-				jQuery(parent).parent().parent().remove();
+				//and the last input field can be removed
 
-				if(jQuery('.asf-unresolved-section tr').get().length == 1){
-					jQuery('.asf-unresolved-section').css('display', 'none');
+				if(jQuery(parent).next().html().length == 0){
+					//we do not show uneditable input fields and
+					//the complete row can be removed
+					jQuery(parent).parent().parent().remove();
+	
+					if(jQuery('.asf-unresolved-section tr').get().length == 1){
+						jQuery('.asf-unresolved-section').css('display', 'none');
+					}
+				} else {
+					jQuery(parent).remove();
 				}
 			} else {
 				//we are not in unresolved annotations section and 
@@ -768,7 +826,7 @@ window.ASFMultiInputFieldHandler = {
 				//to an empty value
 				var type = this.getInputFieldType(jQuery(node).parent().parent());
 				this.setInputFieldValue(jQuery(node).parent(), type, '');
-				jQuery(parentd).removeClass('asf-syncronized-value');
+				jQuery(parent).removeClass('asf-syncronized-value');
 				
 				//also remove rel-index properties and so on
 				jQuery(node).parent().removeAttr('asf-wp-rel-index');

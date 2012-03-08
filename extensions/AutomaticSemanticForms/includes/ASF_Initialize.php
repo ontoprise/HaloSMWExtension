@@ -67,6 +67,7 @@ function enableAutomaticSemanticForms() {
 	$wgAutoloadClasses['ASFCategoryAC'] = $asfIP . '/includes/ASF_CategoryAC.php';
 	$wgAutoloadClasses['ASFWikiTextManipulator'] = $asfIP . '/includes/ASF_WikiTextManipulator.php';
 	$wgAutoloadClasses['ASFFormDefinition'] = $asfIP . '/includes/ASF_FormDefinition.php';
+	$wgAutoloadClasses['ASFUneditableValuesHandler'] = $asfIP . '/includes/ASF_UneditableValuesHandler.php';
 	
 	require_once($asfIP . '/specials/ASF_AdminSpecialAjaxAccess.php');
 	

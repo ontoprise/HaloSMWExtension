@@ -82,6 +82,9 @@ class ASFFormPrinter extends SFFormPrinter {
 				//remove props that will only be shown in the form from free text and update unresolved annotations section
 				list($existing_page_content_temp, $existingAnnotations) = 
 					ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
+
+				$existingAnnotations = ASFUneditableValuesHandler::getUneditableValues($page_name, $existingAnnotations);
+					
 				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 				
 				if($source_is_page){
