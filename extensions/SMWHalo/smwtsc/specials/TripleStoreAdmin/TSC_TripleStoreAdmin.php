@@ -99,6 +99,16 @@ class TSCTripleStoreAdmin extends SpecialPage {
 		}
 		$html .= $status['licenseState'];
 		$html .= "</span>";
+		
+		$html .= "<h2>".wfMsg('smw_tsa_mysqldriver')."</h2>";
+		$html .= wfMsg('smw_tsa_mysqldriver_state').": ";
+        if ($status['mysqlDriver'] == 'missing') {
+            $html .= "<span style=\"color:red;font-weight:bold;\">";
+        } else {
+            $html .= "<span style=\"color:green;font-weight:bold;\">";
+        }
+        $html .= $status['mysqlDriver'];
+        $html .= "</span>";
 
 		if (!in_array('RULES', $status['features']) && $smwgHaloEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";

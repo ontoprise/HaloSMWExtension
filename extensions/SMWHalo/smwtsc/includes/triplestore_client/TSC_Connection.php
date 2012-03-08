@@ -323,6 +323,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$resultMap = array();
 		$resultMap['tscversion'] = (string) $xmlDoc->tscversion;
 		$resultMap['licenseState'] = (string) $xmlDoc->licenseState;
+		$resultMap['mysqlDriver'] = (string) $xmlDoc->mysqlDriver;
 		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
 		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
 		$resultMap['pendingAsyncOrUpdateTasks'] = ((string) $xmlDoc->pendingAsyncOrUpdateTasks) == 'true';

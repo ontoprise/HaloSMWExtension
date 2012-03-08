@@ -105,6 +105,8 @@ $messages['en'] = array(
 	'smw_tsa_licenseinfo' => 'License key',
 	'smw_tsa_license' => 'License key state',
     'smw_tsa_operationpending' => 'There is an update or sync operation pending!',
+    'smw_tsa_mysqldriver' => 'Mysql driver',
+    'smw_tsa_mysqldriver_state' => 'Status',
     // ---- Ask triplestore ----
     'asktsc' => 'Ask triplestore',
 
@@ -205,7 +207,8 @@ $messages['de'] = array(
 	'smw_tsa_licenseinfo' => 'Lizenz-Key',
 	'smw_tsa_license' => 'Status des Lizenz-Keys',
     'smw_tsa_operationpending' => 'Es läuft eine Update oder Sync-Operation',
-
+    'smw_tsa_mysqldriver' => 'Mysql driver',
+    'smw_tsa_mysqldriver_state' => 'Status',
     // ---- Ask triplestore ----
     'asktsc' => 'Anfrage an Triplestore',
     
