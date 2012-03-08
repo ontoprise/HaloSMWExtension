@@ -1230,10 +1230,12 @@ OBOntologyModifier.prototype = {
 		}
 		var partOfBundleProperty = mw.msg('df_partofbundle');
 		var partOfBundleAnnotation = "";
-		if (selectedBundle != '') {
-			partOfBundleAnnotation = "[[" + partOfBundleProperty + "::"
-					+ selectedBundle + "]]";
-		}
+		
+		selectedBundle.each(function(b) { 
+			partOfBundleAnnotation += "\n[[" + partOfBundleProperty + "::"
+			+ b + "]]";
+		});
+		
 		var categoryAnnotation = "";
 		categoryTitles.each(function(title) {
 			categoryAnnotation += "\n[["
@@ -2978,9 +2980,10 @@ OBInstanceSubMenu.prototype = Object
 						case SMW_OB_COMMAND_INSTANCE_CREATE: {
 							// get bundle used
 							var selectedBundle = $F("bundleSelector");
-							selectedBundle = selectedBundle.toLowerCase()
-									.indexOf("-wiki-") == -1 ? selectedBundle
-									: "";
+							if (typeof(selectedBundle) == 'string') {
+								selectedBundle = [ selectedBundle ];
+							}
+							selectedBundle = selectedBundle.without("-wiki-","-Wiki-");
 
 							// get categories to annotate
 							var categoriesToAnnotate = $F(

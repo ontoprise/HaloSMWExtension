@@ -142,7 +142,7 @@ TEXT;
 
 $bundlesHtml = <<<TEXT
 <div><div><b>$selectBundle</b></div>
-        <select id="bundleSelector" name="Bundles" size="5" class="aoDataSourceSelector">
+        <select id="bundleSelector" name="Bundles" size="5" class="aoDataSourceSelector" multiple="multiple">
             <option bundleid="" selected="selected">$fromWiki</option>
             $bundleOptions
         </select>
