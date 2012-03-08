@@ -20,7 +20,7 @@ global $dfgTestfunctions;
 $dfgTestfunctions[] = 'er_checkInstallation';
 
 function er_checkInstallation() {
-	global $dfgRequiredExtensions, $requiredPHPVersions, $dfgRequiredFunctions;
+	global $dfgRequiredExtensions, $dfgRequiredPHPVersions, $dfgRequiredFunctions;
 	
 	$dfgRequiredExtensions['curl'][] = "Please install 'curl'. It is required from Enhanced retrieval";
 	

@@ -20,9 +20,9 @@ global $dfgTestfunctions;
 $dfgTestfunctions[] = 'tv_checkInstallation';
 
 function tv_checkInstallation() {
-	global $dfgRequiredExtensions, $requiredPHPVersions, $dfgRequiredFunctions;
+	global $dfgRequiredExtensions, $dfgRequiredPHPVersions, $dfgRequiredFunctions;
 	
-	$requiredPHPVersions[] = '5.3.2';
+	$dfgRequiredPHPVersions[] = '5.3.2';
 	$dfgRequiredExtensions['curl'][] = "Please install 'curl'. It is required from Treeview";
 
 }

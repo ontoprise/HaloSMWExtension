@@ -20,9 +20,9 @@ global $dfgTestfunctions;
 $dfgTestfunctions[] = 'di_checkInstallation';
 
 function di_checkInstallation() {
-	global $dfgRequiredExtensions, $requiredPHPVersions, $dfgRequiredFunctions;
+	global $dfgRequiredExtensions, $dfgRequiredPHPVersions, $dfgRequiredFunctions;
 	
-	$requiredPHPVersions[] = '5.3.2';
+	$dfgRequiredPHPVersions[] = '5.3.2';
 	$dfgRequiredExtensions['imap'][] = "Please install 'php_imap'. It is required from DataImport";
 	
 	$version = phpversion();
