@@ -456,7 +456,7 @@ class CKeditorParser extends CKeditorParserWrapper {
   }
 
   function replaceInternalLinks($text) {
-    $text = preg_replace("/\[\[([^|\[\]]*?)\]\]/", "[[$1|RTENOTITLE]]", $text); // #2223: [[()]]	=>	[[%1|RTENOTITLE]]
+    $text = preg_replace("/\[\[([^\|\[\]]*?)\|?\]\]/", "[[$1|RTENOTITLE]]", $text); // #2223: [[()]]	=>	[[%1|RTENOTITLE]]
     $text = preg_replace("/\[\[:(.*?)\]\]/", "[[RTECOLON$1]]", $text); // change ':' => 'RTECOLON' in links
     $text = parent::replaceInternalLinks($text);
     $text = preg_replace("/\|RTENOTITLE\]\]/", "]]", $text); // remove unused RTENOTITLE
@@ -809,7 +809,7 @@ class CKeditorParser extends CKeditorParserWrapper {
     $parserOutput->setText(str_replace('<!--FCK_REDIRECT-->', '#REDIRECT', $parserOutput->getText()));
     $parserOutput->setText(preg_replace('/%%%start\-(noinclude|includeonly|onlyinclude)%%%/i', '<span class="fck_mw_$1" _fck_mw_tagname="$1" startTag="true"></span>', $parserOutput->getText()));
     $parserOutput->setText(preg_replace('/%%%end\-(noinclude|includeonly|onlyinclude)%%%/i', 'fckLR<span class="fck_mw_$1" _fck_mw_tagname="$1" endTag="true"></span>', $parserOutput->getText()));
-//echo "<pre>".$parserOutput->getText()."</pre>";
+
     return $parserOutput;
   }
 

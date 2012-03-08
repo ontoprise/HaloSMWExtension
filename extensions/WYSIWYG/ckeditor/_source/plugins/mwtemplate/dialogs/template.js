@@ -54,7 +54,7 @@ CKEDITOR.dialog.add( 'MWTemplate', function( editor ) {
 
       content.Trim();      
       // check for a tag
-      if (content.match(/^{{#?[!\w\d-]+:?[\s\S]*?}}$/)) {
+      if (content.match(/^{{#?[!\w\d-]+:?[\s\S]*?}}|{{{\w+}}}$/)) {
         content = content.replace(/\r?\n/g, 'fckLR');
         tag = '<span class="fck_mw_template">' + content + '</span>';
         className = 'FCK__MWTemplate';      

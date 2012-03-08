@@ -129,7 +129,7 @@ $wgHooks['EditPageBeforeConflictDiff'][]		= 'CKeditor_MediaWiki::onEditPageBefor
 $wgHooks['SanitizerAfterFixTagAttributes'][]	= 'CKeditor_MediaWiki::onSanitizerAfterFixTagAttributes';
 $wgHooks['MakeGlobalVariablesScript'][]			= 'CKeditor_MediaWiki::onMakeGlobalVariablesScript';
 $wgHooks['GetPreferences'][]					= 'CKeditor_MediaWiki::onGetPreferences';
-$wgHooks['DoEditSectionLink'][]					= 'CKeditor_MediaWiki::onDoEditSectionLink';
+//$wgHooks['DoEditSectionLink'][]					= 'CKeditor_MediaWiki::onDoEditSectionLink';
 // bugfix for http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=13511
 $wgHooks['OutputPageParserOutput'][]            = 'CKeditor_MediaWiki::onOutputPageParserOutput';
 $wgHooks['BeforePageDisplay'][]                 = 'CKeditor_MediaWiki::onBeforePageDisplay';
@@ -140,9 +140,11 @@ $wgDefaultUserOptions['riched_start_disabled'] = 0;
 $wgDefaultUserOptions['riched_use_popup'] = 1;
 $wgDefaultUserOptions['riched_toggle_remember_state'] = 1;
 
-// when SMWHalo is used then the QueryInterface opens in an Iframe
-// also add setting that the Semantic toobar is loaded by default
+
+
 if (defined('SMW_HALO_VERSION')) {
+  // when SMWHalo is used then the QueryInterface opens in an Iframe
     $wgEditPageFrameOptions = 'SAMEORIGIN';
+    // Semantic toobar is loaded by default
     $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;       
 }
