@@ -138,6 +138,8 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_server_start' => 'start',
     'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'Aktualisieren',
+	'df_webadmin_finalize_message' => 'Es gibt nicht initialisierte Extensions. Klicken sie hier um die Initialisierung zu starten.',
+	'df_webadmin_finalize' => 'Finalisieren',
 	'df_webadmin_upload_message' => 'Hier können Sie Bundles ($1) und Ontologie-Dateien ($2) hochladen',
 	'df_webadmin_clearlog' => 'Lösche Log',
 	'df_webadmin_loglink' => 'Link',

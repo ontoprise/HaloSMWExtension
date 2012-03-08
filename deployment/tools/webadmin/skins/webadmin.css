@@ -44,6 +44,13 @@
 	padding: 5px;
 }
 
+#df_non_finalized_extensions {
+    margin-top: 20px;
+    border: 5px solid orange;
+    text-align: center;
+    padding: 5px;
+}
+
 #df_statustable {
 	margin-top: 20px;
 }

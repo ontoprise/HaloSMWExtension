@@ -776,8 +776,38 @@ $(function() {
 		smw_makeSortable($('#df_bundlefilelist_table')[0]);
 		smw_makeSortable($('#df_restorepoint_table')[0]);
 		
+		// refresh button
 		$('#df_refresh_status').click(function(e2) {
 			window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+		});
+		
+		// finalize button 
+		$('#df_run_finalize').click(function(e2) {
+			// start finalize
+			var $dialog = $('#df_install_dialog')
+			.dialog( {
+				autoOpen : false,
+				title : dfgWebAdminLanguage.getMessage('df_webadmin_pleasewait'),
+				modal: true,
+				width: 800,
+				height: 500,
+				operation : "finalize",
+				close: function(event, ui) { 
+					window.location.href = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?tab=0";
+
+				}
+			});
+			$dialog.html("<div></div>");				
+			$dialog.dialog('open');
+			$dialog.html('<img src="skins/ajax-loader.gif"/>');
+			$('.ui-dialog-titlebar-close').hide();
+			var finalizeurl = wgServer+wgScriptPath+"/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+			$.ajax( { url : finalizeurl, dataType:"json", complete : function(xhr, status) {
+				$dialog.html('');
+				finalizeStarted(xhr, status); 
+			} });
+
+			
 		});
 		
 		// upload input field

@@ -56,7 +56,14 @@ class DFStatusTab {
 		$html = $dfgLang->getLanguageString('df_webadmin_status_text');
 		$html .= " <input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refresh_status\"></input>";
 		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
-
+        
+		// check for finalize
+		$packagesToInitialize = PackageRepository::getLocalPackagesToInitialize($mwrootDir);
+		if (count($packagesToInitialize) > 0) {
+			$html .= "<div id=\"df_non_finalized_extensions\">".$dfgLang->getLanguageString('df_webadmin_finalize_message');
+			$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_finalize')."\" id=\"df_run_finalize\"></input></div>";
+		}
+		
 		// check for updates
 		$dfgOut->setVerbose(false);
 		$updates = $cc->checksForUpdates();
