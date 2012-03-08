@@ -1127,7 +1127,7 @@ class CKeditorParser extends CKeditorParserWrapper {
         }
       }
       // encode html entities in the value
-      $prop[1] = htmlentities($prop[1]);
+      $prop[1] = htmlentities($prop[1], ENT_COMPAT, "UTF-8");
       // replace an empty value with &nbsp; for IE8
       if (preg_match('/^\s+$/', $prop[1])) {
 		$prop[1] = '&nbsp;';
@@ -1191,11 +1191,11 @@ class CKeditorParser extends CKeditorParserWrapper {
       for ($i = 0; $i < count($matches[0]); $i++) {
         preg_match_all('/<rule\s*(?:name=\"([\w\-\#;]+)\"\s*)?(?:type=\"([\w\-\#;]+)\"\s*)?(?:formula=\"([\w\-\#;]+)\"\s*)?(?:variableSpec=\"([\w\-\#;]+)\"\s*)?[^(?<!\-)>]*>(.*?)<\/rule>/is', $matches[0][$i], $ruleContent);
         if (count($ruleContent) > 1) {
-          $name = count($ruleContent[1]) ? htmlentities($ruleContent[1][0]) : null;
-          $type = count($ruleContent[2]) ? htmlentities($ruleContent[2][0]) : null;
-          $formula = count($ruleContent[3]) ? htmlentities($ruleContent[3][0]) : null;
-          $variableSpec = count($ruleContent[4]) ? htmlentities($ruleContent[4][0]) : null;
-          $rule = count($ruleContent[5]) ? htmlentities($ruleContent[5][0]) : null;
+          $name = count($ruleContent[1]) ? htmlentities($ruleContent[1][0], ENT_COMPAT, "UTF-8") : null;
+          $type = count($ruleContent[2]) ? htmlentities($ruleContent[2][0], ENT_COMPAT, "UTF-8") : null;
+          $formula = count($ruleContent[3]) ? htmlentities($ruleContent[3][0], ENT_COMPAT, "UTF-8") : null;
+          $variableSpec = count($ruleContent[4]) ? htmlentities($ruleContent[4][0], ENT_COMPAT, "UTF-8") : null;
+          $rule = count($ruleContent[5]) ? htmlentities($ruleContent[5][0], ENT_COMPAT, "UTF-8") : null;
           $this->fck_mw_strtr_span['Fckmw' . $this->fck_mw_strtr_span_counter . 'fckmw'] =
                   '<span class="fck_smw_rule"' .
                   ' name="' . $name . '"' .
