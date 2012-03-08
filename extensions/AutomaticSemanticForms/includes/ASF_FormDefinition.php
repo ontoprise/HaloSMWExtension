@@ -293,9 +293,11 @@ class ASFFormDefinition {
 	}
 	
 	public function addUnresolvedAnnotationsSection($existingAnnotations){
-		$unresolvedAnnotationsSection =
-			new ASFUnresolvedAnnotationsFormData($existingAnnotations, $this->categorySections);
-		$this->categorySections[] = $unresolvedAnnotationsSection;
+		if(!array_key_exists('unresolved-annotations', $this->categorySections)){
+			$unresolvedAnnotationsSection =
+				new ASFUnresolvedAnnotationsFormData($existingAnnotations, $this->categorySections);
+			$this->categorySections['unresolved-annotations'] = $unresolvedAnnotationsSection;
+		}
 	}
 	
 	public function setAdditionalCategoryAnnotations($categoryNames){
@@ -321,6 +323,9 @@ class ASFFormDefinition {
 			if(!array_key_exists($field, $missingFormFields)){
 				$missingFormFields[$field] = array('values' => array());
 			}
+			
+			$missingFormFields[$field]['values'][] = 
+				array( 'insync' => true, 'editable' => true);
 		}
 		
 		//update the category sections. note that only the unresolved annotations
