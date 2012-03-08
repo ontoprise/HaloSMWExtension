@@ -33,6 +33,7 @@
 		base.$el = $( el );
 		base.el  = el;
 		base.$el.data( 'Ontoskin', base );
+		base.resizelisteners = [];
 
 		// Default settings, is extended with the hash passed when initializing.
 		base.settings = {
@@ -440,6 +441,27 @@
 				$( doc ).find( '.smwh_megamenu' ).remove();
 				base.makeMegaMenu();
 			}
+			
+			// fire resize event
+			base.fireResizeListener();
+		}
+		
+		/**
+		 * Add a resize event listener. The listener must 
+		 * be a function with no parametes.
+		 */
+		base.addResizeListener = function(listener) {
+			base.resizelisteners.push(listener);
+		}
+		
+		/**
+		 * Fires resize event
+		 */
+		base.fireResizeListener = function(listener) {
+			$.each(this.resizelisteners, function(i, onresizeListener) { 
+				onresizeListener();
+			});
+			
 		}
 
 		
@@ -505,6 +527,10 @@
 				$.error( 'Ontoskin method not found: ' + method );
 			}
 		});
+	};
+	
+	$.fn.getOntoskin = function( ) {
+		return $( this ).data( 'Ontoskin' );
 	};
 
 	$( '#smwh_menu' ).ontoskin();

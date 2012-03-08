@@ -54,7 +54,7 @@ TreeTransformer.prototype = {
 			return;
 		}
 		
-		smwh_Skin.addResizeListener(this.onresize.bind(this));
+		jQuery( '#smwh_menu' ).getOntoskin().addResizeListener(this.onresize.bind(this));
 		
 		if (OB_bd.isGeckoOrOpera) {
 			this.OB_xsltProcessor_gecko = new XSLTProcessor();
