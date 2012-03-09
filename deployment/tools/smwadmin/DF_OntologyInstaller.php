@@ -81,18 +81,29 @@ class OntologyInstaller {
 				$settings->deploydescriptor->id = $dd->getID();
 				$settings->deploydescriptor->version = $dd->getVersion()->toVersionString();
 				$settings->deploydescriptor->patchlevel = $dd->getPatchlevel();
-				$settings->deploydescriptor->maintainer = $dd->getMaintainer();
-				$settings->deploydescriptor->vendor = $dd->getVendor();
 				$settings->deploydescriptor->instdir = $dd->getInstallationDirectory();
-				$settings->deploydescriptor->description = $dd->getDescription();
-				$settings->deploydescriptor->helpURL = $dd->getHelpURL();
-				$settings->deploydescriptor->license = $dd->getLicense();
+				
+				if ($dd->getMaintainer() != '') {
+					$settings->deploydescriptor->maintainer = $dd->getMaintainer();
+				}
+				if ($dd->getVendor() != '') {
+					$settings->deploydescriptor->vendor = $dd->getVendor();
+				}
+				if ($dd->getDescription() != '') {
+					$settings->deploydescriptor->description = $dd->getDescription();
+				}
+				if ($dd->getHelpURL() != '') {
+					$settings->deploydescriptor->helpURL = $dd->getHelpURL();
+				}
+				if ($dd->getLicense() != '') {
+					$settings->deploydescriptor->license = $dd->getLicense();
+				}
 				$settings->deploydescriptor->dependencies = array();
 				foreach($dd->getDependencies() as $dep) {
 					$settings->deploydescriptor->dependencies[] = array(
 					$dep->getIDs(),
-					$dep->getMinVersion()->toVersionString(),
-					$dep->getMaxVersion()->toVersionString(),
+					$dep->getMinVersion()->isEqual(DFVersion::$MINVERSION) ? '' : $dep->getMinVersion()->toVersionString(),
+					$dep->getMaxVersion()->isEqual(DFVersion::$MAXVERSION) ? '' : $dep->getMaxVersion()->toVersionString(),
 					$dep->isOptional()
 					);
 				}
@@ -155,7 +166,7 @@ class OntologyInstaller {
 			$dfgOut->output("done.]");
 
 		}
-
+		
 		unlink($settingsFile);
 
 		// do actual ontology install/update

@@ -168,9 +168,11 @@ class DFBundleTools {
 		foreach($lines as $l) {
 			if (strpos($l, ":") !== false) {
 				$prefix = trim(substr($l, 0, strpos($l, ":")));
-				if (substr($prefix,0,1) == '*') $prefix = substr($prefix, 1);
-				$uri = trim(substr($l, strpos($l, ":")+1));
-				$results[$prefix] = $uri;
+				if (substr($prefix,0,1) == '*') { 
+				    $prefix = substr($prefix, 1);	
+					$uri = trim(substr($l, strpos($l, ":")+1));
+					$results[$prefix] = $uri;
+				}
 			}
 		}
 		return $results;
@@ -206,7 +208,7 @@ class DFBundleTools {
 		} else {
 			$content = "";
 		}
-		$om->addBundle($bundleID, $text, $content.$mappingsText);
+		$text = $om->addBundle($bundleID, $text, $content.$mappingsText);
 		
 		// save page
 		$article = new Article($nsMappingPageTitle);
@@ -227,16 +229,18 @@ class DFBundleTools {
 		foreach($lines as $l) {
 			if (strpos($l, ":") !== false) {
 				$prefix = trim(substr($l, 0, strpos($l, ":")));
-				if (substr($prefix,0,1) == '*') $prefix = substr($prefix, 1);
-				$uri = trim(substr($l, strpos($l, ":")+1));
-				if (array_key_exists($prefix,$prefixes)) {
-					return false;
+				if (substr($prefix,0,1) == '*') { 
+					$prefix = substr($prefix, 1);
+					$uri = trim(substr($l, strpos($l, ":")+1));
+					if (array_key_exists($prefix,$prefixes)) {
+						return false;
+					}
+				    if (array_key_exists($uri,$uris)) {
+	                    return false;
+	                }
+					$prefixes[$prefix] = true;
+					$uris[$uri] = true;
 				}
-			    if (array_key_exists($uri,$uris)) {
-                    return false;
-                }
-				$prefixes[$prefix] = true;
-				$uris[$uri] = true;
 			}
 		}
 		return true;

@@ -31,7 +31,9 @@
  */
 class DFVersion {
 
-
+	public static $MINVERSION;
+    public static $MAXVERSION; 
+    
 	private $major;
 	private $minor;
 	private $subminor;
@@ -256,3 +258,6 @@ class DFVersion {
 		return substr($versionString, 0, strpos($versionString, "_"));
 	}
 }
+
+DFVersion::$MINVERSION = new DFVersion("00.00.00");
+DFVersion::$MAXVERSION = new DFVersion("99.99.99");
