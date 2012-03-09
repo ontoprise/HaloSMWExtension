@@ -95,7 +95,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
     CKeditInterface.prototype = {
 
-		/**
+      /**
 		 * Sets the annotation element (i.e. the span element that contains a
 		 * category or property annotation) that is currently being edited.
 		 * 
@@ -128,28 +128,28 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         return gEerrMsgSelection;
       },
 	  
-	/**
-	 * Get the current selection of the FCKeditor and replace it with the
-	 * annotated value. This works on a category or property annotation only.
-	 * All other input is ignored and nothing will be replaced.
-	 *
-	 * @access public
-	 * @param  string text wikitext
-	 */
-	setSelectedText: function(text) {
-		// get the current editor instance
-		var ckeditor = window.parent.wgCKeditorInstance;
-		// check if start and end are set, then simply replace the selection
-		// in the textarea
-		if (ckeditor.mode != 'wysiwyg' && gEstart != -1 && gEend != -1) {
-			var txtarea = ckeditor.getData();
-			var newtext = txtarea.substr(0, gEstart) + text + txtarea.substr(gEend);
-			this.clearSelection();
-			HideContextPopup();
-			this.setValue(newtext);
-			return;
-		}
-		
+      /**
+       * Get the current selection of the FCKeditor and replace it with the
+       * annotated value. This works on a category or property annotation only.
+       * All other input is ignored and nothing will be replaced.
+       *
+       * @access public
+       * @param  string text wikitext
+       */
+      setSelectedText: function(text) {
+        // get the current editor instance
+        var ckeditor = window.parent.wgCKeditorInstance;
+        // check if start and end are set, then simply replace the selection
+        // in the textarea
+        if (ckeditor.mode != 'wysiwyg' && gEstart != -1 && gEend != -1) {
+          var txtarea = ckeditor.getData();
+          var newtext = txtarea.substr(0, gEstart) + text + txtarea.substr(gEend);
+          this.clearSelection();
+          HideContextPopup();
+          this.setValue(newtext);
+          return;
+        }
+
         // WYSIWYG mode: Replace the existing annotation
 		var oSpan = this.editAnnotation;
 		var replaceElement = false;
@@ -160,49 +160,49 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 			replaceElement = true;
 		}
 		this.editAnnotation = null;
-		
-		// check the param text, if it's valid wiki text for a property or
-		// category information.
-		// check property first
-		var regex = new RegExp('^\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]$');
-		var match = regex.exec(text);
-		if (match) {
-			oSpan.addClass('fck_mw_property');
-			if (match[4]) {
-				oSpan.setAttribute('property', match[1] + '::' + match[2]);
-				oSpan.setHtml(match[4]);
-			}
-			else {
-				oSpan.setAttribute('property', match[1]);
-				oSpan.setHtml(match[2]);
-			}
-			if (oSpan.getHtml().length === 0) 
-				oSpan.setHtml('&nbsp;');
-			// no match for property, check category next
-		}
-		else {
-			regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
-			match = regex.exec(text);
-			
-			if (match) {
-				oSpan.addClass('fck_mw_category');
-				oSpan.setHtml(match[1]);
-			}
-			// no category neighter, something else (probably garbage) was in
-			// the wikitext, then quit and do not modify the edited wiki page
-			else 
-				return;
-		}
+
+        // check the param text, if it's valid wiki text for a property or
+        // category information.
+        // check property first
+        var regex = new RegExp('^\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]$');
+        var match = regex.exec(text);
+        if (match) {
+          oSpan.addClass('fck_mw_property');
+          if (match[4]) {
+            oSpan.setAttribute( 'property',  match[1] + '::' + match[2] );
+            oSpan.setHtml( match[4] );
+          }
+          else {
+            oSpan.setAttribute( 'property',  match[1] );
+            oSpan.setHtml( match[2] );
+          }
+          if (oSpan.getHtml().length === 0)
+            oSpan.setHtml('&nbsp;');
+        // no match for property, check category next
+        }
+        else {
+          regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
+          match = regex.exec(text);
+
+          if (match) {
+            oSpan.addClass('fck_mw_category') ;
+            oSpan.setHtml(match[1]);
+          }
+          // no category neighter, something else (probably garbage) was in
+          // the wikitext, then quit and do not modify the edited wiki page
+          else
+            return;
+        }
 		if (replaceElement) {
 			if (ckeditor.mode == 'wysiwyg') {
 				ckeditor.insertElement(oSpan);
 			} else {
 				ckeditor.insertElement(text);
-		}
+			}
 		}
 		
 //        HideContextPopup();
-	},
+      },
 	
       setEditAreaName: function (ean) {
       // not needed in this implementation
@@ -897,7 +897,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu.showMenu();
     };
 
-  /**
+    /**
    * Create a new context menu for annotating a property.
    * Only the property container will be shown.
    * The selected text is the representation at least. If value and represenation
@@ -1088,7 +1088,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       return frame;
     };
 
-	/**
+    /**
 	 * Invokes the tagging floatbox with the current selection for adding a 
 	 * property annotation.
 	 * 
@@ -1175,7 +1175,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 		if (aclass !== 'fck_mw_category') {
 			// invalid element
 			return;
-		}		
+		}
 		if (!gEditInterface) {
 			plugin.createEditInterface(editor);
 		}
@@ -1296,7 +1296,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 	  createEditInterface : function(editor) {
 		gEditInterface = new CKeditInterface(editor);
 		window.parent.gEditInterface = gEditInterface;
-      }
+	  }
 
     };
 
@@ -1321,16 +1321,15 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
       requires : [ 'mediawiki', 'editingblock' ],
 
-      beforeInit : function( editor ) {
-        // disable STB by default when loading the editor
+		beforeInit : function( editor ) {
+			// disable STB by default when loading the editor
 			if (window.parent.stb_control) {
 				window.parent.stb_control.closeToolbar();
 			}
-      },
+		},
 
       init : function( editor )
       {
-		
         if (editor.contextMenu)
         {
           var editPropertyCommmand =
@@ -1483,14 +1482,14 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         }
 		
         if ( editor.ui.addButton ) {
-       	  editor.addCommand( 'SMWtoolbar', commandDefinition);
+        editor.addCommand( 'SMWtoolbar', commandDefinition);
         	
           editor.ui.addButton( 'SMWtoolbar',
           {
-            label : 'Semantic Toolbar',
+            label : 'Data Toolbar',
             command : 'SMWtoolbar',
             icon: this.path + 'images/icon_STB.gif',
-            title: 'Semantic Toolbar'
+            title: 'Data Toolbar'
           });
           editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF);
         
@@ -1514,7 +1513,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 			editor.getCommand('SMWAddCategory').setState(CKEDITOR.TRISTATE_OFF);
         	
         }
-
+        
         
         // disable toolbar when switching mode
         editor.on( 'beforeCommandExec', function( ev ) {

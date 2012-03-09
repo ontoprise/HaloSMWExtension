@@ -171,16 +171,16 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           if (match[4]) {
             oSpan.setAttribute( 'property',  match[1] + '::' + match[2] );
             oSpan.setHtml( match[4] );
-			}
-			else {
+          }
+          else {
             oSpan.setAttribute( 'property',  match[1] );
             oSpan.setHtml( match[2] );
           }
-			if (oSpan.getHtml().length === 0) 
-				oSpan.setHtml('&nbsp;');
+          if (oSpan.getHtml().length === 0)
+            oSpan.setHtml('&nbsp;');
         // no match for property, check category next
-		}
-		else {
+        }
+        else {
           regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
           match = regex.exec(text);
 
@@ -190,8 +190,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           }
           // no category neighter, something else (probably garbage) was in
           // the wikitext, then quit and do not modify the edited wiki page
-			else 
-				return;
+          else
+            return;
         }
 		if (replaceElement) {
 			if (ckeditor.mode == 'wysiwyg') {
@@ -1486,10 +1486,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         	
           editor.ui.addButton( 'SMWtoolbar',
           {
-            label : 'Semantic Toolbar',
+            label : 'Data Toolbar',
             command : 'SMWtoolbar',
             icon: this.path + 'images/icon_STB.gif',
-            title: 'Semantic Toolbar'
+            title: 'Data Toolbar'
           });
           editor.getCommand('SMWtoolbar').setState(CKEDITOR.TRISTATE_OFF);
         
