@@ -639,7 +639,8 @@ CKEDITOR.customprocessor.prototype =
 
         var stringBuilder = new Array();
         this._AppendNode( rootNode, stringBuilder, '' );
-        return stringBuilder.join( '' ).Trim();
+        //keep leading whitespaces
+        return stringBuilder.join( '' ).RTrim();
     },
     
     loadXMLString: function(data){
@@ -1720,6 +1721,12 @@ if (!String.prototype.Trim) {
     String.prototype.Trim = function()
     {
         return this.replace(/^\s*/, '').replace(/\s*$/, '');
+    };
+}
+if (!String.prototype.RTrim) {
+    String.prototype.RTrim = function()
+    {
+        return this.replace(/\s*$/, '');
     };
 }
 if (!String.prototype.IEquals) {
