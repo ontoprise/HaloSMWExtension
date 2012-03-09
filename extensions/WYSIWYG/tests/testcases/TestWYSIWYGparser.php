@@ -30,6 +30,14 @@
  * description...
 
  */
+if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the WYSIWYG extension. It is not a valid entry point.\n" );
+}
+
 class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
 
     function setUp() {
@@ -64,9 +72,7 @@ class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
 
 [[Category:City]]';
 
-        $expected = '<p>This is the capital of <span class="fck_mw_property" property="Also known as::Germany">Deutschland</span>. We are living in the year <span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="CURRENTYEAR" _fck_mw_tagtype="v">_</span> AC.
-</p><p><span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="#language" _fck_mw_tagtype="p">ar_</span>
-</p><br/><span _fcknotitle="true" class="fck_mw_category" sort="City">City</span> <br/>';
+        $expected = '<p>This is the capital of <span class="fck_mw_property" property="Also known as::Germany">Deutschland</span>. We are living in the year <span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="CURRENTYEAR" _fck_mw_tagtype="v">_</span> AC.</p><p><span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="#language" _fck_mw_tagtype="p">ar_</span></p><br/><span _fcknotitle="true" class="fck_mw_category" sort="City">City</span>';
 
         $res = $this->parsePage($text);
         $this->assertEquals($expected, $res);
@@ -74,8 +80,7 @@ class TestWYSIWYGparser extends PHPUnit_Framework_TestCase {
 
     function testPage2() {
         $text = 'This is empty [[Prop::{{{1}}}| ]]. Param2 comes here: {{{2}}} which is good. Also there is no template.';
-        $expected = '<p>This is empty <span class="fck_mw_property" property="Prop::{{{1}}}">&nbsp;</span>. Param2 comes here: <span class="fck_mw_template">{{{2}}}</span> which is good. Also there is no template.
-</p>';
+        $expected = '<p>This is empty <span class="fck_mw_property" property="Prop::{{{1}}}">&nbsp;</span>. Param2 comes here: <span class="fck_mw_template">{{{2}}}</span> which is good. Also there is no template.</p>';
         $res = $this->parsePage($text);
 //        var_dump($res, $expected);
         $this->assertEquals($expected, $res);
