@@ -252,11 +252,15 @@ class CKeditor_MediaWiki {
     }
     
 	public function onEditPageBeforePreviewText( &$editPage, $previewOnOpen ) {
-		global $wgUser, $wgRequest;
+		global $wgUser, $wgRequest, $wgCKEditorUrlparamMode;
 
 		if( $wgUser->getOption( 'showtoolbar' ) && !$wgUser->getOption( 'riched_disable' ) && !$previewOnOpen ) {
 			$this->oldTextBox1 = $editPage->textbox1;
 			$editPage->importFormData( $wgRequest );
+      //bugfix #16730: workaround to enable WYSIWYG loading on preview in url param mode
+      if($wgCKEditorUrlparamMode){
+        $wgRequest->setVal('mode', 'wysiwyg');
+      }
 		}
 
 		return true;
