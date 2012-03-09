@@ -1,8 +1,8 @@
 Index: extensions/SemanticForms/includes/SF_FormUtils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 12016)
+--- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 13847)
 +++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
-@@ -382,9 +382,16 @@
+@@ -385,9 +385,16 @@
  
  		// Differentiate between FCKeditor and the newer CKeditor,
  		// which isn't handled here
@@ -19,22 +19,20 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  
  		$showFCKEditor = 0;
  		if ( !$wgUser->getOption( 'riched_start_disabled' ) ) {
-@@ -409,10 +416,19 @@
+@@ -412,10 +419,17 @@
  
  	static function prepareTextForFCK( $text ) {
  		global $wgTitle;
 -
 -		$options = new FCKeditorParserOptions();
 +        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+        if (class_exists('FCKeditor')) {
-+            $classParser = 'FCKeditorParser';
-+            $classParserOptions = 'FCKeditorParserOptions';
++		if (class_exists('CKEditor')) {
++            //CKEditor does not need that anymore
++            return $text;
 +        }
-+        else if (class_exists('CKEditor')) {
-+            $classParser = 'CKeditorParser';
-+            $classParserOptions = 'CKeditorParserOptions';
-+        }
-+		$options = new $classParserOptions();
++		$classParser = 'FCKeditorParser';
++        $classParserOptions = 'FCKeditorParserOptions';
++        $options = new $classParserOptions();
  		$options->setTidy( true );
 -		$parser = new FCKeditorParser();
 +		$parser = new $classParser();
@@ -42,19 +40,20 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		$parser->setOutputType( OT_HTML );
  		$text = $parser->parse( $text, $wgTitle, $options )->getText();
  		return $text;
-@@ -456,7 +472,10 @@
+@@ -459,8 +473,10 @@
  		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
  			$wgFCKEditorDir .= '/';
  		}
 -
+-		$javascript_text .= <<<END
 +		/*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
 +        $RichEditor = class_exists('CKEditor') ? 'cke' : 'fck';
 +        if ($RichEditor == 'fck') {
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
- 		$javascript_text .= <<<END
++        $javascript_text .= <<<END
  var oFCKeditor = new FCKeditor( "free_text" );
  
-@@ -469,6 +488,17 @@
+ //Set config
+@@ -472,6 +488,18 @@
  oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet";
  oFCKeditor.ready = true;
  
@@ -68,11 +67,12 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
 +END;
 +
 +        }
++        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
 +        $javascript_text .= <<<END
  //IE hack to call func from popup
  function FCK_sajax(func_name, args, target) {
  	sajax_request_type = 'POST' ;
-@@ -514,14 +544,15 @@
+@@ -517,14 +545,15 @@
  	if ( realTextarea )
  	{
  		// Create the editor instance and replace the textarea.
@@ -95,11 +95,15 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.php
  		oFCKeditor.ReplaceTextarea() ;
  
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -702,6 +733,8 @@
+@@ -705,6 +734,11 @@
  addOnloadHook( initEditor );
  
  END;
-+      
++
++        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
 +        $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
++        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
++        
  		return $javascript_text;
  	}
+ 
