@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <id>ldap</id>
+        <title>LDAP Authentication</title>
+        <version>1.2</version>
+        <patchlevel>0</patchlevel>
+        <vendor>Ryan Lane</vendor>
+        <maintainer>Ryan Lane</maintainer>
+        <instdir>extensions/LdapAuthentication</instdir>
+        <description>
+            This authentication plugin allows MediaWiki to use an LDAP store as its user database for authentication, and some authorization. 
+        </description>
+        <helpurl>http://www.mediawiki.org/wiki/Extension:LDAP_Authentication</helpurl>
+        <dependencies>
+            <dependency from="1.17.0">mw</dependency>
+        </dependencies>
+        <license>GPL</license>
+    </global>
+
+    <codefiles>
+        <!-- empty -->
+    </codefiles>
+
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+        <new>
+            <require name="ldap"
+                file="extensions/LdapAuthentication/LdapAuthentication.php" />
+        </new>
+
+        <uninstall>
+            <!-- empty -->
+        </uninstall>
+    </configs>
+</deploydescriptor>
+
