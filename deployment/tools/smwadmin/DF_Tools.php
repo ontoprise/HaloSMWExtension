@@ -808,6 +808,26 @@ class Tools {
 
 	}
 
+	public static function runProcess($commandLineToStart, $runAsUser = NULL, $password = NULL) {
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			if (!is_null($runAsUser)) {
+				global $mwrootDir;
+				$command = $mwrootDir."/deployment/tools/internal/pcwrunas/pcwRunAs4.exe ";
+				$command .= "/u $runAsUser /p $password /app cmd /arg \"/c $commandLineToStart\"";
+
+				$oExec = $wshShell->Run("$command 2>&1", 7, false);
+
+			} else {
+				@chdir(dirname($commandLineToStart));
+				$oExec = $wshShell->Run("$commandLineToStart 2>&1", 7, false);
+			}
+		} else {
+			$nullResult = `$commandLineToStart 2>&1 &`;
+		}
+		return "true";
+	}
+
 	/**
 	 * Detects if a processes are running.
 	 *
@@ -896,13 +916,13 @@ class Tools {
 		return ($ext == 'owl' || $ext == 'rdf' || $ext == 'obl'
 		|| $ext == 'n3' || $ext == 'nt' || $ext == 'ttl');
 	}
-	
+
 	/**
-	 * Remove all non-alpanumeric characters to that it 
+	 * Remove all non-alpanumeric characters to that it
 	 * suits as a filename.
-	 * 
-	 * @param string $s 
-	 * 
+	 *
+	 * @param string $s
+	 *
 	 * @return string
 	 */
 	public static function makeFileName($s) {
@@ -1097,8 +1117,8 @@ class Tools {
 	}
 
 	/**
-	 * Opens a pipe to a process executed by forking the $command. 
-	 * 
+	 * Opens a pipe to a process executed by forking the $command.
+	 *
 	 * @param string $command
 	 * @param PrintoutStream $out
 	 */

@@ -55,6 +55,7 @@ class DeployDescriptor {
 	var $dependencies; // depending extensions
 	var $install_scripts; // scripts which need to be run during installation
 	var $uninstall_scripts; // scripts which need to be run during de-installation
+	var $run_processes;
 	var $patches; // patches which need to be applied during installation
 	var $uninstallpatches; // patches which need to be unapplied during de-installation
 	var $patchlevel; // patchlevel of an version
@@ -103,34 +104,34 @@ class DeployDescriptor {
 		$this->createConfigElements($fromVersion, $fromPatchlevel); // assume new config, not update
 	}
 
-    public static function fromJSON($obj) {
-        $obj = is_string($obj) ? json_decode($obj) : $obj;
-        $id = $obj->id;
-        $version = $obj->version;
-        $instdir = $obj->instdir;
-        $maintainer = isset($obj->maintainer) ? $obj->maintainer : '';
-        $vendor = isset($obj->vendor) ? $obj->vendor : '';
-        $patchlevel = isset($obj->patchlevel) ? $obj->patchlevel : '';
-        $description = isset($obj->description) ? $obj->description : '';
-        $helpURL = isset($obj->helpURL) ? $obj->helpURL : '';
-        $license = isset($obj->license) ? $obj->license : '';
-        $title = isset($obj->title) ? $obj->title : '';
-        $depText = "";
-        if (isset($obj->dependencies)) {
-            foreach($obj->dependencies as $dep) {
-                list($ids, $min, $max, $optional) = $dep;
-                $optionalText = $optional ? 'optional="true"' : '';
-                $depText .= "<dependency $optionalText from=\"$min\" to=\"$max\">$ids</dependency>";
-            }
-        }
-        $ontologyFiles = "";
-        if (isset($obj->ontologies)) {
-            foreach($obj->ontologies as $file) {
-                $ontologyFiles .= "<file loc=\"$file\"/>";
-            }
-        }
-         
-        $xml = <<<ENDS
+	public static function fromJSON($obj) {
+		$obj = is_string($obj) ? json_decode($obj) : $obj;
+		$id = $obj->id;
+		$version = $obj->version;
+		$instdir = $obj->instdir;
+		$maintainer = isset($obj->maintainer) ? $obj->maintainer : '';
+		$vendor = isset($obj->vendor) ? $obj->vendor : '';
+		$patchlevel = isset($obj->patchlevel) ? $obj->patchlevel : '';
+		$description = isset($obj->description) ? $obj->description : '';
+		$helpURL = isset($obj->helpURL) ? $obj->helpURL : '';
+		$license = isset($obj->license) ? $obj->license : '';
+		$title = isset($obj->title) ? $obj->title : '';
+		$depText = "";
+		if (isset($obj->dependencies)) {
+			foreach($obj->dependencies as $dep) {
+				list($ids, $min, $max, $optional) = $dep;
+				$optionalText = $optional ? 'optional="true"' : '';
+				$depText .= "<dependency $optionalText from=\"$min\" to=\"$max\">$ids</dependency>";
+			}
+		}
+		$ontologyFiles = "";
+		if (isset($obj->ontologies)) {
+			foreach($obj->ontologies as $file) {
+				$ontologyFiles .= "<file loc=\"$file\"/>";
+			}
+		}
+		 
+		$xml = <<<ENDS
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
@@ -159,7 +160,7 @@ class DeployDescriptor {
     </resources>
 
     <ontologies>
-        $ontologyFiles
+    $ontologyFiles
     </ontologies>
     
     <configs>
@@ -167,9 +168,9 @@ class DeployDescriptor {
     </configs>
 </deploydescriptor>
 ENDS;
-        return new DeployDescriptor($xml);
+    return new DeployDescriptor($xml);
 
-    }
+	}
 
 
 	/**
@@ -215,6 +216,15 @@ ENDS;
 	}
 
 	/**
+	 * Returns a list of processes to run.
+	 *
+	 * The paths are relative to the bundle.
+	 */
+	public function getProcessesToRun() {
+		return $this->run_processes;
+	}
+
+	/**
 	 * Returns excluded files.
 	 * @return Array of string (full path of files within zip)
 	 */
@@ -237,6 +247,7 @@ ENDS;
 		$this->successors = array();
 		$this->install_scripts = array();
 		$this->uninstall_scripts = array();
+		$this->run_processes = array();
 		$this->userReqs = array();
 		$this->patches = array();
 		$this->uninstallpatches = array();
@@ -281,6 +292,7 @@ ENDS;
 		$successors = $this->dom->xpath('/deploydescriptor/configs/successor');
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
+		$run_processes = $this->dom->xpath($path.'/runcommand');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/patch");
 		$patches = $this->dom->xpath('/deploydescriptor/configs/patch');
@@ -346,8 +358,8 @@ ENDS;
 
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 
-				if (empty($from)) $from = "0.0.0";
-				if (empty($to)) $to = "99.99.99";
+				if (empty($from)) $from = DFVersion::$MINVERSION->toVersionString();
+				if (empty($to)) $to = DFVersion::$MAXVERSION->toVersionString();
 				$this->patches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, $mayfail);
 			}
 		}
@@ -362,9 +374,23 @@ ENDS;
 				$from = trim((string) $p->attributes()->from);
 				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				if (empty($from)) $from = "0.0.0";
-				if (empty($to)) $to = "99.99.99";
+				if (empty($from)) $from = DFVersion::$MINVERSION->toVersionString();
+				if (empty($to)) $to = DFVersion::$MAXVERSION->toVersionString();
 				$this->uninstallpatches[] = new DFPatch($ext, new DFVersion($from), new DFVersion($to), $patchFile, true); // really mayfail?
+			}
+		}
+
+		// the elements of run process.
+		if (count($run_processes) > 0 && $run_processes != '') {
+
+			foreach($run_processes as $p) {
+				$command = (string) $p[0];
+				if (trim($command) == '') continue;
+				$os = trim((string) $p->attributes()->os);
+				if (!array_key_exists($os, $this->run_processes)) {
+					$this->run_processes[$os] = array();
+				}
+				$this->run_processes[$os][] = $command;
 			}
 		}
 	}
@@ -400,8 +426,8 @@ ENDS;
 	function getID() {
 		return trim((string) $this->globalElement[0]->id);
 	}
-	
-	
+
+
 
 	/**
 	 * Returns title (has only informal function)
@@ -529,12 +555,12 @@ ENDS;
 			$optional = $optional == "true";
 			$message = (string) $dep->attributes()->message;
 			if ($depFrom == '') {
-				$depFrom = new DFVersion("0.0.0");// if "from" attribute is missing
+				$depFrom = DFVersion::$MINVERSION;// if "from" attribute is missing
 			}  else {
 				$depFrom = new DFVersion($depFrom);
 			}
 			if ($depTo == '') {
-				$depTo = new DFVersion("99.99.99"); // if "to" attribute is missing
+				$depTo = DFVersion::$MAXVERSION; // if "to" attribute is missing
 			} else {
 				$depTo = new DFVersion($depTo);
 			}
@@ -549,7 +575,7 @@ ENDS;
 	 * @return DFDependency or NULL if $ext_id does not occur as dependency.
 	 */
 	function getDependency($ext_id) {
-		
+
 		$dependencies = $this->getDependencies();
 		foreach($dependencies as $d) {
 			$id = $d->isContained(array($ext_id));
@@ -878,7 +904,26 @@ ENDS;
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		$dfgOut->output("done.]");
 
+		// execute run commands
+		$nonPublicAppPaths = Tools::getNonPublicAppPath($rootDir);
+		if (count($this->getProcessesToRun()) > 0) {
+			$processes = $this->getProcessesToRun();
+			$dfgOut->outputln("[Running processes...");
+			$os = Tools::isWindows() ? "windows" : "linux";
 
+			foreach($processes[$os] as $p) {
+				if (array_key_exists($this->getID(), $nonPublicAppPaths)) {
+					$root = $nonPublicAppPaths[$this->getID()];
+				} else {
+					$root = $rootDir;
+				}
+				$path = $root."/$p";
+				$dfgOut->outputln("$path");
+				Tools::runProcess($path);
+				 
+			}
+			$dfgOut->output("done.]");
+		}
 
 		$this->lastErrors = $dp->getErrorMessages();
 		return $content; // return for testing purposes.

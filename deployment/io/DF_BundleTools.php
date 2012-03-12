@@ -60,7 +60,7 @@ class DFBundleTools {
 
 			$object = $field->getNextObject();
 			$fileTitle = $object->getTitle();
-			
+				
 			$field = next($row);
 
 			$object = $field->getNextObject();
@@ -133,7 +133,7 @@ class DFBundleTools {
 		return NULL;
 	}
 
-	
+
 
 	/**
 	 * Returns prefix/namespace URI mappings.
@@ -168,8 +168,8 @@ class DFBundleTools {
 		foreach($lines as $l) {
 			if (strpos($l, ":") !== false) {
 				$prefix = trim(substr($l, 0, strpos($l, ":")));
-				if (substr($prefix,0,1) == '*') { 
-				    $prefix = substr($prefix, 1);	
+				if (substr($prefix,0,1) == '*') {
+					$prefix = substr($prefix, 1);
 					$uri = trim(substr($l, strpos($l, ":")+1));
 					$results[$prefix] = $uri;
 				}
@@ -187,19 +187,19 @@ class DFBundleTools {
 	public static function storeRegisteredPrefixes($namespaceMappings, $bundleID) {
 		$dbw = wfGetDB( DB_SLAVE );
 		global $dfgLang;
-		
-		// read content of Mediawiki:NamespaceMappings 
+
+		// read content of Mediawiki:NamespaceMappings
 		$nsMappingPage = $dfgLang->getLanguageString('df_namespace_mappings_page');
 		$nsMappingPageTitle = Title::newFromText($nsMappingPage, NS_MEDIAWIKI);
 		$a = new Article($nsMappingPageTitle);
 		$text = $a->getRawText();
-		
+
 		// create mappings
 		$mappingsText = "";
 		foreach($namespaceMappings as $prefix => $uri) {
 			$mappingsText .= "\n*$prefix : $uri";
 		}
-		
+
 		// merge mapping into the bundle section
 		$om = new OntologyMerger();
 		$content = $om->getBundleContent($bundleID, $text);
@@ -209,7 +209,7 @@ class DFBundleTools {
 			$content = "";
 		}
 		$text = $om->addBundle($bundleID, $text, $content.$mappingsText);
-		
+
 		// save page
 		$article = new Article($nsMappingPageTitle);
 		$article->doEdit($text, "auto-generated namespace mappings");
@@ -229,17 +229,17 @@ class DFBundleTools {
 		foreach($lines as $l) {
 			if (strpos($l, ":") !== false) {
 				$prefix = trim(substr($l, 0, strpos($l, ":")));
-				if (substr($prefix,0,1) == '*') { 
+				if (substr($prefix,0,1) == '*') {
 					$prefix = substr($prefix, 1);
 					$uri = trim(substr($l, strpos($l, ":")+1));
-					if (array_key_exists($prefix,$prefixes)) {
+					if (array_key_exists($prefix,$prefixes) && $prefixes[$prefix] != $uri) {
 						return false;
 					}
-				    if (array_key_exists($uri,$uris)) {
-	                    return false;
-	                }
-					$prefixes[$prefix] = true;
-					$uris[$uri] = true;
+					if (array_key_exists($uri,$uris) && $uris[$uri] != $prefix) {
+						return false;
+					}
+					$prefixes[$prefix] = $uri;
+					$uris[$uri] = $prefix;
 				}
 			}
 		}
@@ -584,10 +584,10 @@ class DFBundleTools {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. They must have the types (String, String, String [, Boolean]). The last is optional.");
 			$check = false;
 		}
-		
+
 		if (!is_null($optionalType) && $optionalType != '_boo') {
 			if (!is_null($dfgOut)) $dfgOut->outputln("'".$pDependencyTitle->getPrefixedText()."' property has wrong field properties. The 4th type can be a boolean type or empty.");
-            $check = false;
+			$check = false;
 		}
 
 		// Ontology version
@@ -655,7 +655,7 @@ class DFBundleTools {
 			$check = false;
 		}
 
-		
+
 		// Ontology URI
 		$pTitle = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
 		$correct = self::checkPropertyType($pTitle->getText(), "_uri");
@@ -714,17 +714,17 @@ class DFBundleTools {
 			$article->insertNewArticle($text, "", false, false);
 			print "\n ...created ".$property->getPrefixedText();
 		}
-		
-	    $property = Title::newFromText($dfgLang->getLanguageString('df_isoptional'), SMW_NS_PROPERTY);
-        $text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_boo"]."]]";
-        $article = new Article($property);
-        if ($property->exists()) {
-            $article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
-            print "\n ...edited ".$property->getPrefixedText();
-        } else {
-            $article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
-        }
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_isoptional'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_boo"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+			print "\n ...created ".$property->getPrefixedText();
+		}
 
 		// Property:Dependecy
 		$property = Title::newFromText($dfgLang->getLanguageString('df_dependencies'), SMW_NS_PROPERTY);
@@ -795,17 +795,17 @@ class DFBundleTools {
 			$article->insertNewArticle($text, "", false, false);
 			print "\n ...created ".$property->getPrefixedText();
 		}
-		
-	    $property = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
-        $text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
-        $article = new Article($property);
-        if ($property->exists()) {
-            $article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
-            print "\n ...edited ".$property->getPrefixedText();
-        } else {
-            $article->insertNewArticle($text, "", false, false);
-            print "\n ...created ".$property->getPrefixedText();
-        }
+
+		$property = Title::newFromText($dfgLang->getLanguageString('df_maintainer'), SMW_NS_PROPERTY);
+		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
+		$article = new Article($property);
+		if ($property->exists()) {
+			$article->doEdit($text, "", EDIT_UPDATE | EDIT_FORCE_BOT);
+			print "\n ...edited ".$property->getPrefixedText();
+		} else {
+			$article->insertNewArticle($text, "", false, false);
+			print "\n ...created ".$property->getPrefixedText();
+		}
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_rationale'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_str"]."]]";
@@ -840,7 +840,7 @@ class DFBundleTools {
 			print "\n ...created ".$property->getPrefixedText();
 		}
 
-		
+
 
 		$property = Title::newFromText($dfgLang->getLanguageString('df_ontologyuri'), SMW_NS_PROPERTY);
 		$text = "\n\n[[".$propertyLabels['_TYPE']."::".$datatypeLabels["_uri"]."]]";
