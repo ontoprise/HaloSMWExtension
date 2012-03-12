@@ -875,13 +875,19 @@ class Installer {
 		$dfgOut->outputln("Extracting into $unzipDirectory");
 		$dfgOut->outputln("[Extracting ".$id."-".$versionStr."zip...");
 		if (Tools::isWindows()) {
-			global $rootDir;
-			exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-		} else {
-			exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-		}
-		$dfgOut->output("done.]");
-		return $unzipDirectory;
+            global $rootDir;
+            $this->logger->info('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
+        } else {
+            $this->logger->info('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+            exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
+        }
+        if ($ret != 0) {
+            $dfgOut->outputln("Error on unzip.");
+            $this->logger->error("Error on unzip.");
+        }
+        $dfgOut->output("done.]");
+        return $unzipDirectory;
 	}
 
 	/**
