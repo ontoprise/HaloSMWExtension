@@ -57,14 +57,20 @@ function lodGetDataSourceTable() {
 function smwf_ts_getSyncCommands() {
     global $smwgMessageBroker, $smwgHaloTripleStoreGraph, $wgDBtype, $wgDBport,
     $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
-    $smwgIgnoreSchema, $smwgNamespaceIndex;
+    $smwgIgnoreSchema, $smwgNamespaceIndex, $smwgHaloTSCKnowsDBCredentials;
 
     $sparulCommands = array();
 
     // sync wiki module
     $sparulCommands[] = "DROP SILENT GRAPH <$smwgHaloTripleStoreGraph>"; // drop may fail. don't worry
     $sparulCommands[] = "CREATE SILENT GRAPH <$smwgHaloTripleStoreGraph>";
-    $sparulCommands[] = "LOAD <smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword).
+    $credentials = "$wgDBuser:$wgDBpassword";
+    
+    // if $smwgHaloTSCKnowsDBCredentials is set then encode MySQL credentials
+    if (isset($smwgHaloTSCKnowsDBCredentials)) {
+    	$credentials = "KNOWN:KNOWN";
+    }
+    $sparulCommands[] = "LOAD <smw://".urlencode($credentials).
     "@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=SMWHaloStore2".
     "&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix).
     "> INTO <$smwgHaloTripleStoreGraph>";

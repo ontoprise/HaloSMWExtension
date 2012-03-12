@@ -4,14 +4,26 @@ Configure a triplestore
 Add to LocalSettings.php:
 
     $smwgHaloWebserviceEndpoint="localhost:8080";  // localhost:8080 is default of TSC
+
+For productive systems, add also:
+
+    $smwgHaloTSCKnowsDBCredentials = true;
+
+This options makes sure that the DB credentials are not sent during sync. Instead 
+you must specify them in the TSC's config file. This is STRONGLY recommended for 
+productive systems. Don't forget the setting TSC.WikiDBCredentials=<user>:<password>
+in tsc.properties.
     
 Optional:
 
+(1) 
     $smwgHaloTripleStoreGraph = 'graph-uri';
 
 graph-uri is an arbitrary URI which works as an identifier for the wiki in the
 TSC. Every URI is possible as long as it does not contain a hash character (#).
 If it is not set 'http://mywiki' is the default.
+
+(2) 
 
 If the webserver requires (Basic) HTTP authorization, add:
 
@@ -20,6 +32,7 @@ If the webserver requires (Basic) HTTP authorization, add:
 
 You may now initialize the TSC on the page Special:TSA. Refer to the triplestore
 documentation for a better way of initialization.
+
 
 Non-existing pages
 ==================
