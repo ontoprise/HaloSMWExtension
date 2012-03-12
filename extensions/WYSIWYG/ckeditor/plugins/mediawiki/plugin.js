@@ -294,10 +294,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         };
 
         var dataProcessor = editor.dataProcessor = new CKEDITOR.customprocessor( editor );
-        dataProcessor.dataFilter.addRules( wikiFilterRules );
-
-        //fix: when this script is minified quotes are stripped from 'SMW_HALO_VERSION' string
-        var SMW_HALO_VERSION = 'SMW_HALO_VERSION';
+        dataProcessor.dataFilter.addRules( wikiFilterRules );       
 
         var signatureCommand =
         {
@@ -392,9 +389,26 @@ CKEDITOR.plugins.add( 'mediawiki',
             editor.lang.mwplugin = MWpluginLang['en'];
 
         // define commands and dialogues
+        editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
+        CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
+
+        editor.addCommand( 'MWSignature', signatureCommand);
+
+        editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
+        CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
+
+        editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
+        CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
+
+        
         //keep the buttons even if some extension is not installed
         if ( editor.ui.addButton )
         {
+            editor.ui.addButton( 'Image',
+            {
+                label : editor.lang.common.image,
+                command : 'image'
+            });
             editor.ui.addButton( 'MWSpecialTags',
             {
                 label : editor.lang.mwplugin.specialTags,
@@ -408,30 +422,27 @@ CKEDITOR.plugins.add( 'mediawiki',
                 icon: this.path + 'images/tb_icon_sig.gif'
             });
 
-        }
-        editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
-        CKEDITOR.dialog.add( 'MWSpecialTags', this.path + 'dialogs/special.js' );
-        editor.addCommand( 'MWSignature', signatureCommand);    
-        
-        // if SMWHalo is installed use smw image and link dialogs
-        editor.addCommand( 'image', new CKEDITOR.dialogCommand( 'MWImage' ) );
-        CKEDITOR.dialog.add( 'MWImage', this.path + 'dialogs/image.js' );
-        editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
-        CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );  
+        }        
 
-        
-        if (editor.addMenuItem) {
-            // A group menu is required
-            // order, as second parameter, is not required
-            editor.addMenuGroup('mediawiki');
-            // Create a menu item
-            editor.addMenuItem('MWSpecialTags', {
+        if ( editor.addMenuItems )
+        {
+          editor.addMenuItems(
+            {
+              image :
+              {
+                label : editor.lang.image.menu,
+                command : 'image',
+                group : 'image'
+              },
+              MWSpecialTags:
+              {
                 label: editor.lang.mwplugin.specialTags,
                 command: 'MWSpecialTags',
-                group: 'mediawiki'
+                group: 'mediawiki',
+                icon: this.path + 'images/tb_icon_special.gif'
+              }
             });
-        }
-            
+        }           
 
         // context menu
         if (editor.contextMenu) {
@@ -444,16 +455,23 @@ CKEDITOR.plugins.add( 'mediawiki',
                         'FCK__MWSpecial',
                         'FCK__MWMagicWord',
                         'FCK__MWNowiki'
-//                        'FCK__MWIncludeonly',
-//                        'FCK__MWNoinclude',
-//                        'FCK__MWOnlyinclude'
                         ])
                         ) 
-				{
-						return { MWSpecialTags: CKEDITOR.TRISTATE_ON };
-				}
+              {
+                  return {MWSpecialTags: CKEDITOR.TRISTATE_ON};
+              }
             });
-        }
+            editor.contextMenu.addListener( function( element, selection )
+            {
+              if (element && element.is('img')
+                && !element.getAttribute( 'data-cke-real-element-type' )
+                && (element.getAttribute('_fck_mw_location')
+                || element.getAttribute('_fck_mw_filename')))
+              {
+                return { image : CKEDITOR.TRISTATE_OFF };
+              }
+            });
+        }        
         
         editor.on( 'doubleclick', function( evt )
         {
@@ -461,30 +479,28 @@ CKEDITOR.plugins.add( 'mediawiki',
             if ( element.is( 'a' ) || ( element.is( 'img' ) && element.getAttribute( 'data-cke-real-element-type' ) == 'anchor' ) ){                
               evt.data.dialog = 'MWLink';
             }
-            else if ( element.is( 'img' ) && !element.getAttribute( 'data-cke-real-element-type' ) ){                
+            //only local images which are not fake objects
+            else if ( element.is( 'img' ) 
+              && !element.getAttribute( 'data-cke-real-element-type' )
+              && element.getAttribute('_fck_mw_location')
+              && element.getAttribute('_fck_mw_filename'))
+            {
               evt.data.dialog = 'MWImage';
-                
             }
             else if ( element.getAttribute( 'class' ) &&
                 element.getAttribute( 'class' ).InArray( [
                     'FCK__MWSpecial',
                     'FCK__MWMagicWord',
                     'FCK__MWNowiki'
-//                    'FCK__MWIncludeonly',
-//                    'FCK__MWNoinclude',
-//                    'FCK__MWOnlyinclude',
-//                    'fck_mw_noinclude',
-//                    'fck_mw_onlyinclude',
-//                    'fck_mw_includeonly'
                     ])
                     )
             {
-                    evt.data.dialog = 'MWSpecialTags';	
+                 evt.data.dialog = 'MWSpecialTags';	
                     
             }                	   
         });
         
-        var createXMLHttpRequest = function()
+  var createXMLHttpRequest = function()
 	{
 		// In IE, using the native XMLHttpRequest for local files may throw
 		// "Access is Denied" errors.
@@ -966,7 +982,7 @@ CKEDITOR.customprocessor.prototype =
                             
                             break;
 
-                            case 'dl' :                                
+                            case 'dl' :
                                 this._AppendChildNodes( htmlNode, stringBuilder, prefix );                             
                                 break;
 
@@ -1748,7 +1764,7 @@ if (!String.prototype.htmlDecode) {
     String.prototype.htmlDecode = function() {
         var entities = new Array ('amp', 'quot', '#039', 'lt', 'gt' );
         var chars = new Array ('&', '"', '\'', '<', '>');
-        string = this;
+        var string = this;
         for (var i = 0; i < entities.length; i++) {
             var myRegExp = new RegExp();
             myRegExp.compile('&' + entities[i]+';','g');
@@ -1807,9 +1823,9 @@ if (!String.prototype.htmlEntities) {
         //                              'sup2','sup3','acute','micro','para','middot','cedil','sup1',
         //                              'ordm','raquo','frac14','frac12','frac34');
 
-        string = this;
+        var string = this;
         for (var i = 0; i < entities.length; i++) {
-            myRegExp = new RegExp();
+            var myRegExp = new RegExp();
             myRegExp.compile('&' + entities[i]+';','g');
             string = string.replace (myRegExp, chars[i]);
         }

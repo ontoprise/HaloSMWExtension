@@ -21,9 +21,9 @@
  */
 
 /*
-  This file is based on CKEditor
-  Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
-  For licensing, see LICENSE.html or http://ckeditor.com/license
+   This file is based on CKEditor.
+   Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
+   For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
 /**
@@ -60,7 +60,8 @@ CKEDITOR.plugins.add( 'mwtemplate',
             editor.addMenuItem('MWTemplate', {
                 label: 'Template',
                 command: 'MWTemplate',
-                group: 'mediawiki'
+                group: 'mediawiki',
+                icon: this.path + 'images/icon_template.gif'
             });
         }
 		if ( editor.ui.addButton )
@@ -69,7 +70,7 @@ CKEDITOR.plugins.add( 'mwtemplate',
 				{
 					label : 'Mediawiki Template',
 					command : 'MWTemplate',
-                    icon: this.path + 'images/icon_template.gif'
+          icon: this.path + 'images/icon_template.gif'
 				});
 
 		}

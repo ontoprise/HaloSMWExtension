@@ -60,7 +60,8 @@ CKEDITOR.plugins.add( 'mwtemplate',
             editor.addMenuItem('MWTemplate', {
                 label: 'Template',
                 command: 'MWTemplate',
-                group: 'mediawiki'
+                group: 'mediawiki',
+                icon: this.path + 'images/icon_template.gif'
             });
         }
 		if ( editor.ui.addButton )
@@ -69,7 +70,7 @@ CKEDITOR.plugins.add( 'mwtemplate',
 				{
 					label : 'Mediawiki Template',
 					command : 'MWTemplate',
-                    icon: this.path + 'images/icon_template.gif'
+          icon: this.path + 'images/icon_template.gif'
 				});
 
 		}

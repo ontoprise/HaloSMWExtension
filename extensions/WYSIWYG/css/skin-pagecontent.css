@@ -1,0 +1,1035 @@
+/*
+	Document   : skin-pagecontent
+	Created on : Sep 14, 2009, 3:21:39 PM
+	Author     : ulrich, langguth
+	Description:
+		Add the style for the page content
+		Always add an #content before, so your
+		styles won't apply to the rest of the skin
+
+	# GENERAL
+	# HEADINGS + EDITSECTIONS
+	# TABLES
+		* smwtable
+		* table_zebra
+		* table_zebra_grid
+		* table_simpleheadlines
+		* table_simplecaption
+		* table_roundedcorners_zebra
+		* table_roundedcorners
+		* table_shadow
+	# SEMANTIC FORMS
+*/
+
+/* ------------------------------------*/
+/* ---------->>> GENERAL <<<-----------*/
+/* ------------------------------------*/
+#mainpage a {
+   color: #116988;
+}
+
+#mainpage a.new {
+   color: #CC2200;
+}
+
+#mainpage a.new:visited {
+   color: #A55858;
+}
+
+#siteSub, #jump-to-nav, .printfooter {
+	display: none;
+}
+
+
+#content{
+	line-height: 1.5em;
+}
+
+/* images */
+#content .floatright {
+	border: 0;
+	clear: right;
+	float: right;
+	margin: 0 0 .5em .5em;
+	position: relative;
+}
+
+div.floatleft, table.floatleft {
+	border: 0;
+	clear: left;
+	float: left;
+	margin: 0 .5em .5em 0;
+	position: relative;
+}
+
+#content .floatright p, #content .floatleft p {
+	font-style: italic;
+}
+
+/* thumbnails */
+#content .thumb {
+	background-color: transparent;
+	border-style: solid;
+	border-color: white;
+	margin-bottom: .5em;
+	width: auto;
+}
+
+#content .thumbinner {
+	background-color: #E5E5E5;
+	border: 1px solid #CCC;
+	font-size: 94%;
+	overflow: hidden;
+	padding: 3px !important;
+	text-align: center;
+}
+
+#content .thumbimage {
+	border: 1px solid #CCC;
+}
+
+#content .thumbcaption {
+	border: none;
+	font-size: 94%;
+	line-height: 1.4em;
+	padding: 3px !important;
+	text-align: left;
+}
+
+#content .thumbborder {
+	border: 1px solid #DDD;
+}
+
+#content .magnify {
+	background: none !important;
+	border: none !important;
+	float: right;
+}
+
+#content .magnify a, #content .magnify img {
+	background: none !important;
+	border: none !important;
+	display: block;
+}
+
+#content .tright {
+	border-width: .5em 0 .8em 1.4em;
+	clear: right;
+	float: right;
+}
+
+#content .tleft {
+	border-width: .5em 1.4em .8em 0;
+	clear: left;
+	margin-right: .5em;
+}
+
+#content .hiddenStructure {
+	display: none;
+}
+
+/* emulate center */
+#content .center {
+	text-align: center;
+	width: 100%;
+}
+
+#content *.center * {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#content pre {
+	background-color: #F9F9F9;
+	border: 1px dashed #2F6FAB;
+	color: black;
+	line-height: 1.1em;
+	padding: 1em;
+	/*@todo: find a better solution for linebreaks*/
+	/* width: 870px; */                    /* specify width so long links won't distort the layout - disabled since it causes problems with tables */
+	white-space: pre-wrap;                 /* CSS3 browsers  */
+	white-space: -moz-pre-wrap !important; /* 1999+ Mozilla  */
+	white-space: -pre-wrap;                /* Opera 4 thru 6 */
+	white-space: -o-pre-wrap;              /* Opera 7 and up */
+	word-wrap: break-word;                 /* IE 5.5+ and up */
+	/* overflow-x: auto; */                /* Firefox 2 only */
+	/*width: 99%; /*/         /* only if needed */
+}
+
+#content hr {
+	background-color:#FFFFFF;
+	border-color:#FFFFFF #FFFFFF #999999;
+	border-style:none none dotted;
+	border-width:medium medium 1px;
+	clear:both;
+	height:1px;
+	margin-bottom:12px;
+}
+
+#content #toc, #content .toc {
+	background-color: #FFF;
+	color: #000;
+	border: 1px solid #AAA;
+}
+
+#content #toc ul, #content .toc ul {
+	list-style-image: none;
+	list-style-type: none;
+}
+
+#content #mw-data-after-content {
+	margin-left: 1px;
+}
+
+#content sup {
+	vertical-align: text-top;
+}
+
+/*@todo: still in use?*/
+#content #smwh_browser {
+	background-color: white;
+	border-color: #CACAC4;
+}
+
+/*
+** Icons for certain href links in the wiki
+**
+** keep the whitespace in front of the ^=, hides rule from konqueror
+** this is css3, the validator doesn't like it when validating as css2
+*/
+#content a.external,
+#content a[href ^="gopher://"] {
+	/*@embed*/
+	background: url(../external.png) center right no-repeat;
+	padding-right: 13px;
+}
+
+.rtl #content a.external,
+.rtl #content a[href ^="gopher://"] {
+	/*@embed*/
+	background-image: url(../external-rtl.png);
+}
+
+#content a[href ^="https://"],
+.link-https {
+	/*@embed*/
+	background: url(../lock_icon.gif) center right no-repeat;
+	padding-right: 16px;
+}
+
+#content a[href ^="mailto:"],
+.link-mailto {
+	/*@embed*/
+	background: url(../mail_icon.gif) center right no-repeat;
+	padding-right: 18px;
+}
+
+#content a[href ^="news://"] {
+	/*@embed*/
+	background: url(../news_icon.png) center right no-repeat;
+	padding-right: 18px;
+}
+
+#content a[href ^="ftp://"],
+.link-ftp {
+	/*@embed*/
+	background: url(../file_icon.gif) center right no-repeat;
+	padding-right: 18px;
+}
+
+#content a[href ^="irc://"],
+#Content a.extiw[href ^="irc://"],
+.link-irc {
+	/*@embed*/
+	background: url(../discussionitem_icon.gif) center right no-repeat;
+	padding-right: 18px;
+}
+
+#content a.external[href $=".ogg"],
+#content a.external[href $=".OGG"],
+#content a.external[href $=".mid"],
+#content a.external[href $=".MID"],
+#content a.external[href $=".midi"],
+#content a.external[href $=".MIDI"],
+#content a.external[href $=".mp3"],
+#content a.external[href $=".MP3"],
+#content a.external[href $=".wav"],
+#content a.external[href $=".WAV"],
+#content a.external[href $=".wma"],
+#content a.external[href $=".WMA"],
+.link-audio {
+	/*@embed*/
+	background: url("../audio.png") center right no-repeat;
+	padding-right: 13px;
+}
+
+#content a.external[href $=".ogm"],
+#content a.external[href $=".OGM"],
+#content a.external[href $=".avi"],
+#content a.external[href $=".AVI"],
+#content a.external[href $=".mpeg"],
+#content a.external[href $=".MPEG"],
+#content a.external[href $=".mpg"],
+#content a.external[href $=".MPG"],
+.link-video {
+	/*@embed*/
+	background: url("../video.png") center right no-repeat;
+	padding-right: 13px;
+}
+
+#content a.external[href $=".pdf"],
+#content a.external[href $=".PDF"],
+#content a.external[href *=".pdf#"],
+#content a.external[href *=".PDF#"],
+#content a.external[href *=".pdf?"],
+#content a.external[href *=".PDF?"],
+.link-document {
+	/*@embed*/
+	background: url("../document.png") center right no-repeat;
+	padding-right: 12px;
+}
+
+/* ----------------------------------------------------*/
+/* ---------->>> HEADINGS + EDITSECTIONS <<<-----------*/
+/* ----------------------------------------------------*/
+#content h1, #content h2,
+#content h3, #content h4,
+#content h5, #content h6 {
+	border-bottom: 1px solid #AAAAAA;
+	font-weight: 500;
+	line-height: 1.5em;
+}
+
+#content h1 {
+	font-size: 150%;
+}
+
+#content h2 {
+	font-size: 130%;
+}
+
+#content h3 {
+	font-size: 115%;
+}
+
+#content h1 .editsection,
+#content h2 .editsection,
+#content h3 .editsection,
+#content h4 .editsection,
+#content h5 .editsection,
+#content h6 .editsection {
+	float: none !important;
+	margin-left: 1em;
+	font-weight: normal;
+}
+
+#content h1 .editsection {
+	font-size: 53%;
+}
+
+#content h2 .editsection {
+	font-size: 67%;
+}
+
+#content h3 .editsection {
+	font-size: 76%;
+}
+
+#content h4 .editsection {
+	font-size: 86%;
+}
+
+#content h6 .editsection {
+	font-size: 125%;
+}
+
+#content h1 .editsection a,
+#content h2 .editsection a,
+#content h3 .editsection a,
+#content h4 .editsection a,
+#content h5 .editsection a,
+#content h6 .editsection a {
+	/*@embed*/
+	background: url(../img/button_edit.gif) no-repeat scroll left transparent;
+	padding: 2px 0px 2px 18px;
+}
+
+/* -----------------------------------*/
+/* ---------->>> TABLES <<<-----------*/
+/* -----------------------------------*/
+/* Definitions for "smwtable" ---------------------------------------------- */
+#content .smwtable {
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	padding: 8px;
+}
+
+#content .smwtable th {
+	background-color: #ffffff;
+	border: 2px solid #116988;
+	color: #116988;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+#content .smwtable td {
+	border-bottom: 1px solid #cccccc;
+	background: #FFFFFF none repeat scroll 0 0;
+}
+
+#content .smwtable tr:hover td {
+	background: #E8EDFF none repeat scroll 0 0;
+}
+
+#content .smwtable caption {
+	background-color:#FFFFFF;
+	color:#116988;
+	font-size: 11pt;
+	font-weight: bold;
+	margin: 5px 0;
+	text-align:center;
+}
+
+/* even and odd in tables*/
+#content .sortable .even, #content .smwtable .even {
+	background-color:#FFF;
+}
+
+#content .sortable .odd, #content .smwtable .odd {
+	background-color:#cde6ea;
+}
+
+/* Definitions for "table_zebra" ---------------------------------------------- */
+#content .table_zebra {
+	background-color: #ffffff;
+	border-bottom: 2px solid #116988;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	margin: 8px 5px 10px 5px;
+}
+
+#content .table_zebra th {
+	background-color: #ffffff;
+	border-bottom: 2px solid #116988;
+	border-top: 1px solid #116988;
+	padding: 3px 3px 2px 8px;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+#content .table_zebra td {
+	background: #FFFFFF none repeat scroll 0 0;
+	border-bottom: 1px solid #98BCC9;
+	padding: 2px 3px 1px 8px;
+	vertical-align: top;
+}
+
+#content .table_zebra tr:nth-child(odd) td {
+	background: white;
+	border-bottom: 1px solid white;
+}
+
+#content .table_zebra tr:nth-child(even) td {
+	background: #EBEEEF;
+	border-bottom: 1px solid #EBEEEF;
+}
+
+#content .table_zebra tr:first-child th:last-child {
+	padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_zebra td:last-child {
+	padding-right: 8px;
+}
+
+/* selects last row */
+#content .table_zebra tr:last-child td {
+	border-bottom: 2px solid #116988;
+}
+
+
+#content .table_zebra caption {
+	background-color:#FFFFFF;
+	color:#116988;
+	font-size: 11pt;
+	font-weight: bold;
+	margin: 5px 0;
+	text-align:center;
+}
+
+/* Definitions for "table_zebra_grid" ---------------------------------------------- */
+#content .table_zebra_grid {
+	border-collapse: collapse;
+	border-bottom: 2px solid #b5bda5;
+	line-height: 1.5em;
+	margin: 8px 5px 8px 5px;
+}
+
+#content .table_zebra_grid th{
+/* background-color: #ffffff; */
+text-align: left;
+border-bottom: 2px solid #b5bda5;
+border-left: 1px solid #dae0cc;
+border-right: 1px solid #dae0cc;
+border-top: 1px solid #b5bda5;
+padding-top: 3px;
+padding-right: 3px;
+padding-bottom: 2px;
+padding-left: 8px;
+vertical-align: bottom;
+}
+
+#content .table_zebra_grid caption {
+background-color:#FFFFFF;
+color:#116988;
+text-align:center;
+font-size: 11pt;
+font-weight: bold;
+margin-bottom: 7px;
+margin-top: 5px;
+}
+
+#content .table_zebra_grid td{
+background: #FFFFFF none repeat scroll 0 0;
+padding: 2px 3px 1px 8px;
+border: 1px solid #dae0cc;
+vertical-align: top;
+}
+
+#content .table_zebra_grid tr:nth-child(odd) td{
+background: white;
+}
+
+#content .table_zebra_grid tr:nth-child(even) td{
+background: #EBF1DE;
+}
+
+#content .table_zebra_grid tr:first-child th:last-child {
+  padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_zebra_grid tr td:last-child {
+	padding-right: 8px;
+}
+
+/* Definitions for "table_simpleheadlines" ---------------------------------------------- */
+
+#content .table_simpleheadlines{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border: 1px solid #D6D6D6;
+	-moz-border-radius:5px 5px 5px 5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border-spacing:0px 0px;
+}
+
+#content .table_simpleheadlines th{
+	border-bottom: 1px solid #C4C4C4;
+		padding: 10px 3px 5px 8px;
+		background-color: #F6F6F6;
+	background: -moz-linear-gradient(top, #FAFAFA, #E3E3E3);      /* FF */
+	filter: progid:DXImageTransform.Microsoft.Gradient(           /* IE */
+				gradientType=0,startColorStr=#FAFAFA,
+				endColorStr=#E3E3E3);
+	background: -webkit-linear-gradient(top, #FAFAFA, #E3E3E3);  /* Safari, Chrome */
+	background: -o-linear-gradient(top, #FAFAFA, #E3E3E3);       /* Opera */
+	vertical-align: bottom;
+	text-align: left;
+}
+
+#content .table_simpleheadlines caption {
+		background-color:#FFFFFF;
+	text-align:center;
+	margin-bottom: 5px;
+	margin-top: 5px;
+		font-size: 1.1em;
+		font-weight: 700;
+}
+
+#content .table_simpleheadlines td{
+	border-bottom: 1px dashed #cccccc;
+	padding: 2px 3px 2px 8px;
+		vertical-align: top;
+}
+
+#content .table_simpleheadlines tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:5px;
+	-webkit-border-bottom-left-radius:5px;
+	border-bottom-left-radius:5px
+}
+
+#content .table_simpleheadlines tr:last-child td:last-child {
+		-moz-border-radius-bottomright:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-right-radius:5px
+}
+
+/* selects first item in the first row */
+#content .table_simpleheadlines tr:first-child th:first-child {
+  -moz-border-radius-topleft:5px;
+  -webkit-border-top-left-radius:5px;
+  border-top-left-radius:5px
+}
+
+/* selects last item in the first row */
+#content .table_simpleheadlines tr:first-child th:last-child {
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-right-radius:5px;
+  padding-right: 8px;
+}
+
+#content .table_simpleheadlines tr:hover td{
+	background: #EAEAEA none repeat scroll 0 0;
+}
+
+/* selects last row */
+#content .table_simpleheadlines tr:last-child td {
+	border: none;
+}
+
+/* selects last column: */
+ #content .table_simpleheadlines tr td:last-child {
+	padding-right: 8px;
+}
+
+
+/* Definitions for "table_simplecaption" ---------------------------------------------- */
+
+#content .table_simplecaption{
+		background: none;
+	line-height: 1.5em;
+	margin: 0 px 3px 3px 3px;
+	border: 1px solid #D6D6D6;
+	-moz-border-radius:0px 0px 5px 5px;
+	-webkit-border-radius:0px 0px 5px p5x;;
+	border-radius:0px 0px 5px 5px;
+	border-spacing:0px 0px;
+		vertical-align: bottom;
+}
+
+#content .table_simplecaption th{
+   border-bottom: 1px dashed #cccccc;
+   padding: 2px 3px 1px 8px;
+   color: #4B4B4B;
+   vertical-align: bottom;
+   text-align: left;
+}
+
+#content .table_simplecaption caption {
+		background-color: #F6F6F6;
+	background: -moz-linear-gradient(top, #FAFAFA, #E3E3E3);      /* FF */
+	filter: progid:DXImageTransform.Microsoft.Gradient(           /* IE */
+				gradientType=0,startColorStr=#FAFAFA,
+				endColorStr=#E3E3E3);
+	background: -webkit-linear-gradient(top, #FAFAFA, #E3E3E3);  /* Safari, Chrome */
+	background: -o-linear-gradient(top, #FAFAFA, #E3E3E3);       /* Opera */
+		color: #191919;
+		text-shadow: 0 1px 0 #FFFFFF;
+	text-align:left;
+	-moz-border-radius:5px 5px 0px 0px;
+	-webkit-border-radius:5px 5px 0px 0px;
+	border-radius:5px 5px 0px 0px;
+	margin-top: 5px;
+	margin-bottom: 0px;
+	padding: 10px 2px 5px 8px;
+	border: 1px solid #D6D6D6;
+	font-size: 1em;
+		font-weight: 700;
+	text-transform: uppercase;
+}
+
+#content .table_simplecaption td{
+	border-bottom: 1px dashed #cccccc;
+	padding: 2px 3px 1px 8px;
+	color: #4B4B4B;
+		vertical-align: top;
+}
+
+#content .table_simplecaption tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:5px;
+	-webkit-border-bottom-left-radius:5px;
+	border-bottom-left-radius:5px
+}
+
+#content .table_simplecaption tr:last-child td:last-child {
+		-moz-border-radius-bottomright:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-right-radius:5px;
+}
+
+#content .table_simplecaption tr:last-child td {
+	border: none;
+}
+
+#content .table_simplecaption tr:first-child th:first-child {
+  -moz-border-radius-topleft:5px;
+  -webkit-border-top-left-radius:5px;
+  border-top-left-radius:5px;
+}
+
+#content .table_simplecaption tr:first-child th:last-child {
+  -moz-border-radius-topright:5px;
+  -webkit-border-top-right-radius:5px;
+  border-top-right-radius:5px;
+  padding-right: 8px;
+}
+
+#content .table_simplecaption tr:hover td{
+	background: #EAEAEA  none repeat scroll 0 0;
+}
+
+/* selects last column: */
+#content .table_simplecaption tr td:last-child {
+	padding-right: 8px;
+}
+
+/* Definitions for "table_roundedcorners_zebra" ---------------------------------------------- */
+#content .table_roundedcorners_zebra{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border:#ccc 1px solid;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border-spacing:0px 0px;
+}
+
+#content .table_roundedcorners_zebra th{
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 3px solid #116988;
+   padding: 4px 3px 2px 8px;
+   vertical-align: bottom;
+}
+
+#content .table_roundedcorners_zebra caption {
+	background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+#content .table_roundedcorners_zebra td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 4px 3px 1px 8px;
+	border-bottom: 1px solid #ccc ;
+		vertical-align: top;
+}
+
+#content .table_roundedcorners_zebra tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:10px;
+	-webkit-border-bottom-left-radius:10px;
+	border-bottom-left-radius:10px
+}
+
+#content .table_roundedcorners_zebra tr:last-child td:last-child {
+   -moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-bottom-right-radius:10px
+}
+
+#content .table_roundedcorners_zebra tr:nth-child(odd) td{
+background: white;
+}
+
+#content .table_roundedcorners_zebra tr:nth-child(even) td{
+background: #EBEEEF;
+}
+
+#content .table_roundedcorners_zebra tr:first-child th:last-child {
+  padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_roundedcorners_zebra tr td:last-child {
+	padding-right: 8px;
+}
+
+/* selects last row: */
+#content .table_roundedcorners_zebra tr:last-child td {
+	border-bottom: none;
+}
+
+
+/* Definitions for "table_roundedcorners" ---------------------------------------------- */
+#content .table_roundedcorners{
+	background: none repeat scroll 0 0 #FFFFFF;
+	line-height: 1.5em;
+	margin: 3px;
+	border:#ccc 1px solid;
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border-spacing:0px 0px;
+}
+
+#content .table_roundedcorners th{
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 3px solid #116988;
+   padding: 4px 3px 2px 8px;
+   vertical-align: bottom;
+}
+
+#content .table_roundedcorners caption {
+	background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+#content .table_roundedcorners td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 4px 3px 1px 8px;
+	border-bottom: 1px solid #ccc ;
+		vertical-align: top;
+}
+
+#content .table_roundedcorners tr:last-child td:first-child {
+	-moz-border-radius-bottomleft:10px;
+	-webkit-border-bottom-left-radius:10px;
+	border-bottom-left-radius:10px
+}
+
+#content .table_roundedcorners tr:last-child td:last-child {
+   -moz-border-radius-bottomright:10px;
+	-webkit-border-bottom-right-radius:10px;
+	border-bottom-right-radius:10px
+}
+
+#content .table_roundedcorners tr:hover td{
+	background: #d2e1e7 none repeat scroll 0 0;
+}
+
+#content .table_roundedcorners tr:first-child th:last-child {
+  padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_roundedcorners tr td:last-child {
+	padding-right: 8px;
+}
+
+/* selects last row: */
+#content .table_roundedcorners tr:last-child td {
+	border-bottom: none;
+}
+
+
+/* Definitions for "table_shadow_zebra" ---------------------------------------------- */
+#content .table_shadow_zebra{
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	margin: 17px 8px 8px 8px;
+	-moz-box-shadow: 0 0 7px 3px #CECECE;
+		-webkit-box-shadow:0 0 7px 3px #CECECE;
+	-khtml-box-shadow: 0 0 7px 3px #CECECE;
+		 box-shadow: 0px 0px 7px 3px #CECECE;
+}
+
+#content .table_shadow_zebra th{
+		vertical-align: bottom;
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 2px solid #116988;
+	padding-top: 4px;
+	padding-right: 3px;
+	padding-bottom: 2px;
+	padding-left: 8px;
+}
+
+#content .table_shadow_zebra caption {
+		background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 8px;
+	margin-top: 5px;
+}
+
+#content .table_shadow_zebra td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 3px 3px 2px 8px;
+	border-bottom: 1px solid #98BCC9;
+		vertical-align: top;
+}
+
+#content .table_shadow_zebra tr:nth-child(odd) td{
+background: white;
+border-bottom: 1px solid white;
+}
+
+#content .table_shadow_zebra tr:nth-child(even) td{
+background: #EBEEEF;
+border-bottom: 1px solid #EBEEEF;
+}
+
+#content .table_shadow_zebra tr:first-child th:last-child {
+  padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_shadow_zebra tr td:last-child {
+	padding-right: 8px;
+}
+
+
+/* Definitions for "table_shadow" ---------------------------------------------- */
+#content .table_shadow{
+	background-color: #ffffff;
+	border-collapse:collapse;
+	line-height: 1.5em;
+	margin: 17px 8px 8px 8px;
+	-moz-box-shadow: 0 0 7px 3px #CECECE;
+		-webkit-box-shadow:0 0 7px 3px #CECECE;
+	-khtml-box-shadow: 0 0 7px 3px #CECECE;
+		 box-shadow: 0px 0px 7px 3px #CECECE;
+}
+
+#content .table_shadow th{
+		vertical-align: bottom;
+	background-color: #ffffff;
+	text-align: left;
+	background: none;
+	border-bottom: 2px solid #116988;
+	padding-top: 4px;
+	padding-right: 3px;
+	padding-bottom: 2px;
+	padding-left: 8px;
+}
+
+#content .table_shadow caption {
+		background-color:#FFFFFF;
+	color:#116988;
+	text-align:center;
+	font-size: 11pt;
+	font-weight: bold;
+	margin-bottom: 8px;
+	margin-top: 5px;
+}
+
+#content .table_shadow td{
+	background: #FFFFFF none repeat scroll 0 0;
+	padding: 3px 3px 2px 8px;
+	border-bottom: 1px solid #cccccc;
+		vertical-align: top;
+}
+
+
+#content .table_shadow tr:hover td{
+	background: #EAEAEA none repeat scroll 0 0;
+}
+
+#content .table_shadow tr:first-child th:last-child {
+  padding-right: 8px;
+}
+
+/* selects last column: */
+#content .table_shadow tr td:last-child {
+	padding-right: 8px;
+}
+
+
+/* -------------------------------------------*/
+/* ---------->>> SEMANTIC FORMS <<<-----------*/
+/* -------------------------------------------*/
+#content .smwhCreateboxInput {
+	background: none no-repeat scroll 0 0 #FFFFFF;
+	border-color: #959595 #CCCCCC #CCCCCC #959595;
+	border-style: solid;
+	border-width: 1px;
+	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+	padding:3px;
+	width: auto;
+}
+
+/* SF: Used in 'create template' page */
+#content .smwhFieldBox {
+	background: #EDF2F6;
+	border: 1px #A9C5D9 solid;
+	margin: 0px 20px 20px 20px;
+	padding: 10px 20px 10px 20px;
+}
+
+/* SF: Used in 'create form' page */
+#content .smwhTemplateForm {
+	background: #EDF2F6;
+	border: 1px #A9C5D9 solid;
+	margin-bottom: 20px;
+	padding: 0px 20px 10px 20px;
+}
+
+#content .formtable {
+	background: #EDF2F6;
+	border: 1px #A9c5d9 solid;
+}
+
+/* SF: Used in 'formedit' mode */
+#content fieldset {
+	background: #FFF;
+	border: 1px #A9C5D9 solid;
+	display: block;
+	margin: 0 2px;
+	padding: 0.35em 0.625em 0.75em;
+}
+
+#content .formtable select,
+#content .formtable .mandatoryField,
+#content table.formtable input {
+	background: none no-repeat scroll 0 0 #FFFFFF;
+	border-color: #959595 #CCCCCC #CCCCCC #959595;
+	border-style: solid;
+	border-width: 1px;
+	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+	padding:3px;
+}
+
+#content .formtable input[type="text"]:active,
+#content .formtable input[type="password"]:active,
+#content .formtable select:active,
+#content .formtable input[type="text"]:focus,
+#content .formtable input[type="password"]:focus,
+#content .formtable select:focus,
+#content .formtable textarea:focus {
+	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+	background: none no-repeat scroll 0 0 #FFFFFF;
+	border-color: #219EB5;
+	border-style: solid;
+	border-width: 1px;
+	padding:3px;
+}
+
+#content .formtable input[type="radio"],
+#content .formtable input[type="checkbox"] {
+	box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2) inset;
+	background: none no-repeat scroll 0 0;
+	border: none;
+}
+
+#content .formtable th {
+	text-align: left;
+	vertical-align: top;
+	padding:3px;
+}

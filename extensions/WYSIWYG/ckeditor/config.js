@@ -3,6 +3,9 @@ Copyright (c) 2003-2010, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
 
+ //fix: when this script is minified quotes are stripped from 'SMW_HALO_VERSION' string
+ SMW_HALO_VERSION = 'SMW_HALO_VERSION';
+
 if (!String.prototype.InArray) {
 	String.prototype.InArray = function(arr) {
             for(var i=0;i<arr.length;i++) {
@@ -83,10 +86,15 @@ CKEDITOR.editorConfig = function( config )
     // remove format: address
     config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre;div';
     // use fontsizes only that do not harm the skin
-    config.fontSize_sizes = 'smaller;larger;xx-small;x-small;small;medium;large;x-large;xx-large';  
+    config.fontSize_sizes = 'smaller;larger;xx-small;x-small;small;medium;large;x-large;xx-large';
+
+    config.contentsCss = 'css/skin-pagecontent.css';
+
+    //the forms plugin requires image plugin, so you need to remove it as well in order to turn the image plugin off:
+    config.removePlugins = 'forms,image';
     
       //don't remove empty format elements when loading HTML
-    CKEDITOR.dtd.$removeEmpty['span'] = 0
+    CKEDITOR.dtd.$removeEmpty['span'] = 0;
 
     
 

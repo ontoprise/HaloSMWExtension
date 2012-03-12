@@ -724,12 +724,12 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                 imageListElement.clear();
                 var pageListElement = this.getContentElement( 'info', 'pageList' );
                 pageListElement.clear();
-              
+
+                var editor = this.getParentEditor();
                 // and set correct label for image list
-                label = document.getElementById(imageListElement.domId).getElementsByTagName('label')[0];
-                var editor = this.getParentEditor(),
-                message = editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping);
-                label.innerHTML = message;
+//                var label = CKEDITOR.document.getById(imageListElement.domId).getElementsByTag('label')[0];
+                var message = editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping);
+                imageListElement.label = message;
 
                 var selection = editor.getSelection(),
                 element = selection.getSelectedElement();
@@ -745,17 +745,16 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                 this.originalElement.setAttribute( 'alt', '' );
                 this.originalElement.setCustomData( 'isReady', 'false' );
 
-                if ( element && element.getName() == 'img' && !element.getAttribute( 'data-cke-realelement' )
-                    || element && element.getName() == 'input' && element.getAttribute( 'type' ) == 'image' )
-                    {
+                //only local images which are not fake objects
+                if ( element
+                  && element.getName() === 'img'
+                  && !element.getAttribute( 'data-cke-realelement' )
+                  && (element.getAttribute('_fck_mw_location') || element.getAttribute('_fck_mw_filename')))
+                {
                     this.imageEditMode = element.getName();
                     this.imageElement = element;
                     SrcInWiki = element.getAttribute( 'src' );
                 }
-//                else {
-//                    OnUrlChange( this );
-//                }
-
                 if ( this.imageEditMode )
                 {
                     // Use the original element as a buffer from  since we don't want
