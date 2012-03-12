@@ -63,7 +63,7 @@ require_once( $smwgHaloIP . "/includes/SMW_Autocomplete_Storage.php");
  * Returns: xml representation with titles and type of entities.
  */
 function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $userContext, $constraints) {
-	global $wgLang;
+	global $wgContLang;
 
 
 	// remove common namespaces from user input
@@ -81,10 +81,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 			// if $namespaceText is a valid namespace prefix
 			// then $namespaceIndex contains the according index.
-			global $wgExtraNamespaces, $wgLang;
+			global $wgExtraNamespaces, $wgContLang;
 			$namespaceIndex=false;
 			if (!is_null($namespaceText)) {
-				$namespaceIndex = $wgLang->getNsIndex($namespaceText);
+				$namespaceIndex = $wgContLang->getNsIndex($namespaceText);
 
 				if ($namespaceIndex === false) {
 					$flippedNamespaces = array_flip($wgExtraNamespaces);
@@ -116,7 +116,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		// ------------------------
 		// 1. category case
 		// ------------------------
-		if (preg_match('/'.strtolower($wgLang->getNsText(NS_CATEGORY)).'\s*:/i', $userContext) > 0) {
+		if (preg_match('/'.strtolower($wgContLang->getNsText(NS_CATEGORY)).'\s*:/i', $userContext) > 0) {
 			$categories = smwfGetAutoCompletionStore()->getPages($userInputToMatch, array(NS_CATEGORY));
 			AutoCompletionRequester::attachCategoryHints($categories);
 			return AutoCompletionRequester::encapsulateAsXML($categories, false);
@@ -239,10 +239,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		if ($separatorIndex == -1) {
 
 			// template name
-			global $wgLang;
+			global $wgContLang;
 			$namespace = NS_TEMPLATE;
 			if (defined('SF_NS_FORM')) {
-				$form_ns_text = $wgLang->getNsText(SF_NS_FORM);
+				$form_ns_text = $wgContLang->getNsText(SF_NS_FORM);
 				if ($namespaceText == $form_ns_text) {
 					$namespace = SF_NS_FORM;
 				}
@@ -456,7 +456,7 @@ class AutoCompletionRequester {
 	public static function getPropertyTargetProposals($userContext, $match) {
 		// special handling for special relations
 
-		global $smwgContLang, $smwgHaloContLang, $wgLang;
+		global $smwgContLang, $smwgHaloContLang, $wgContLang;
 		$specialProperties = $smwgContLang->getPropertyLabels();
 		$specialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
@@ -536,7 +536,7 @@ class AutoCompletionRequester {
 	 * Get property proposals. Consider special properties too.
 	 */
 	public static function getPropertyProposals($articleName, $match) {
-		global $wgLang;
+		global $wgContLang;
 
 		// get domain less properties first, fill with other properties and instances
 		$pages = AutoCompletionHandler::executeCommand("domainless-property: |namespace: ".SMW_NS_PROPERTY.", ".NS_MAIN, $match);
@@ -547,16 +547,16 @@ class AutoCompletionRequester {
 		$specialProperties = $smwgContLang->getPropertyLabels();
 
 		// propose category
-		if (stripos(strtolower($wgLang->getNsText(NS_CATEGORY)), strtolower($match)) !== false) {
-			$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText(NS_CATEGORY)), NS_CATEGORY);
+		if (stripos(strtolower($wgContLang->getNsText(NS_CATEGORY)), strtolower($match)) !== false) {
+			$specialMatches[] = Title::newFromText(strtolower($wgContLang->getNsText(NS_CATEGORY)), NS_CATEGORY);
 		}
 
 		// propose namespaces
 		global $wgExtraNamespaces;
 		$namespaceToPropose = $wgExtraNamespaces;
 		foreach($namespaceToPropose as $ns => $nsText) {
-			if (stripos(strtolower($wgLang->getNsText($ns)), strtolower($match)) !== false) {
-				$specialMatches[] = Title::newFromText(strtolower($wgLang->getNsText($ns)), $ns);
+			if (stripos(strtolower($wgContLang->getNsText($ns)), strtolower($match)) !== false) {
+				$specialMatches[] = Title::newFromText(strtolower($wgContLang->getNsText($ns)), $ns);
 			}
 		}
 
