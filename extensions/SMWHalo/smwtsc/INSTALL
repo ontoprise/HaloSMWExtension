@@ -5,14 +5,8 @@ Add to LocalSettings.php:
 
     $smwgHaloWebserviceEndpoint="localhost:8080";  // localhost:8080 is default of TSC
 
-For productive systems, add also:
-
-    $smwgHaloTSCKnowsDBCredentials = true;
-
-This options makes sure that the DB credentials are not sent during sync. Instead 
-you must specify them in the TSC's config file. This is STRONGLY recommended for 
-productive systems. Don't forget the setting TSC.WikiDBCredentials=<user>:<password>
-in tsc.properties.
+Don't forget the setting TSC.WikiDBCredentials=<user>:<password>
+in tsc.properties on TSC side. The DB credentials are not transmitted anymore.
     
 Optional:
 

@@ -67,7 +67,7 @@ function smwf_ts_getSyncCommands() {
     $credentials = "$wgDBuser:$wgDBpassword";
     
     // if $smwgHaloTSCKnowsDBCredentials is set then encode MySQL credentials
-    if (isset($smwgHaloTSCKnowsDBCredentials)) {
+    if (!isset($smwgHaloTSCKnowsDBCredentials) || $smwgHaloTSCKnowsDBCredentials===true) {
     	$credentials = "KNOWN:KNOWN";
     }
     $sparulCommands[] = "LOAD <smw://".urlencode($credentials).
