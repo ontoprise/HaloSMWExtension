@@ -615,7 +615,7 @@ class PackageRepository {
 	 * @param $ext_dir
 	 */
 	private static function readExternalAppsForDDToInitialize($ext_dir) {
-
+        $nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
 		foreach($nonPublicAppPaths as $id => $path) {
 			if ($path == '') continue;
 			$path = Tools::unquotePath($path);
