@@ -165,7 +165,8 @@ updateTree: function(xmlText, rootElement) {
 initializeRootCategories: function(partition, force) {
 	if (!this.OB_categoriesInitialized || force) {
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootCategories',OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], this.initializeRootCategoriesCallback.bind(this));
+		var methodname = mw.config.get('smwHaloDataExplorer').classic ? "getRootCategories" : "getCompleteCategoryTree";
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', [methodname,OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], this.initializeRootCategoriesCallback.bind(this));
 	} else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
@@ -176,7 +177,8 @@ initializeRootCategories: function(partition, force) {
 initializeRootProperties: function(partition, force) {
 	 if (!this.OB_attributesInitialized || force) {
 	 	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], this.initializeRootPropertyCallback.bind(this));
+		var methodname = mw.config.get('smwHaloDataExplorer').classic ? "getRootProperties" : "getCompletePropertyTree";
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', [methodname,OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource(), obAdvancedOptions.getBundle()], this.initializeRootPropertyCallback.bind(this));
 	 } else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");

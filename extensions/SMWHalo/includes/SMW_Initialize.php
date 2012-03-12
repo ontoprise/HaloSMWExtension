@@ -467,8 +467,17 @@ function smwgHaloSetupExtension() {
 		new SMWHaloPredefinedPages();
 
 		smwfEnableQueryManagement();
+		
+        $wgHooks['ResourceLoaderGetConfigVars'][] = 'smwhfSetResourceLoaderConfigVars';
 
 		return true;
+}
+
+function smwhfSetResourceLoaderConfigVars( &$vars ) {
+	global $smwgHaloDataExplorerClassic;
+	$value = isset($smwgHaloDataExplorerClassic) && $smwgHaloDataExplorerClassic == true;
+	$vars['smwHaloDataExplorer']['classic'] = $value;
+    return true;
 }
 
 function smwfHaloWikiWords( &$magicWords, $langCode ) {
