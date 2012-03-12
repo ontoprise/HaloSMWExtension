@@ -1718,16 +1718,17 @@ function smwfAddStore($store_class) {
 	global $smwgMasterStore;
 	$oldStore = smwfGetStore();
 
-	$qmStorePresent = false;
-	if ($oldStore instanceof HACLSMWStore) {
-		$qmStorePresent = true;
-		$oldStore = $oldStore->getStore();
-	}
+// Fix: Making HACLSMWStore the outmost store is no longer needed
+// 	$qmStorePresent = false;
+// 	if ($oldStore instanceof HACLSMWStore) {
+// 		$qmStorePresent = true;
+// 		$oldStore = $oldStore->getStore();
+// 	}
 	$smwgMasterStore = new $store_class($oldStore);
 
-	if ($qmStorePresent) {
-		$smwgMasterStore = new HACLSMWStore($smwgMasterStore);
-	}
+// 	if ($qmStorePresent) {
+// 		$smwgMasterStore = new HACLSMWStore($smwgMasterStore);
+// 	}
 	return $smwgMasterStore;
 }
 
