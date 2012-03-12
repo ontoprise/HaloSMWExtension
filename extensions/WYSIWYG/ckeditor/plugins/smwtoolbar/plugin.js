@@ -181,7 +181,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         // no match for property, check category next
         }
         else {
-          regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
+          regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY_NS') + '(.*?)(\\|(.*?))?\\]\\]$');
           match = regex.exec(text);
 
           if (match) {
@@ -720,7 +720,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           return null;
         }
         // check for a category
-        regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
+        regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY_NS') + '(.*?)(\\|(.*?))?\\]\\]$');
         match = regex.exec(selection);
         if (match) {
           gEselection[1] = 14;

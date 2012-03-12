@@ -19,8 +19,8 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-if (!('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
+var SMW_HALO_VERSION = 'SMW_HALO_VERSION';
+if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
   // Halo Import extension is not installed, show a teaser only.
   CKEDITOR.plugins.add( 'smw_qi',
   {

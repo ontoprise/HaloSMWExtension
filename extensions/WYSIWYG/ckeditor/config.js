@@ -79,7 +79,7 @@ CKEDITOR.editorConfig = function( config )
     ];
     config.extraPlugins = extraPlugins;
     config.height = '26em';
-    config.language = window.parent.wgUserLanguage || 'en';
+    config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
 
     config.WikiSignature = '--~~~~';
 
@@ -88,7 +88,7 @@ CKEDITOR.editorConfig = function( config )
     // use fontsizes only that do not harm the skin
     config.fontSize_sizes = 'smaller;larger;xx-small;x-small;small;medium;large;x-large;xx-large';
 
-    config.contentsCss = 'css/skin-pagecontent.css';
+    config.contentsCss = '/skins/ontoskin3/css/skin-pagecontent.css';
 
     //the forms plugin requires image plugin, so you need to remove it as well in order to turn the image plugin off:
     config.removePlugins = 'forms,image';
