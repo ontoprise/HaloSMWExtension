@@ -443,6 +443,9 @@ private function getFormFieldInputTypeMetadata($forToolTip = false){
 			if($inputType == 'datepicker' || $inputType == 'datetimepicker'){
 				$size = '';
 			}
+			if($inputType == 'listbox' || $inputType == 'combobox'){
+				$size = '';
+			}
 			$objectType = '-'.strtolower($this->objectType).'-';
 			if(strpos(LONGTEXTDATATYPES, $objectType) !== false
 					|| strpos(SHORTTEXTDATATYPES, $objectType) !== false){

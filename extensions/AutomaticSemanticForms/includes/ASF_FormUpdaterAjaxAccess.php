@@ -21,6 +21,7 @@
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'asff_getNewForm';
 $wgAjaxExportList[] = 'asff_getNewFormRow';
+$wgAjaxExportList[] = 'asff_convertDateString';
 
 /*
  * returns the new form HTML according to thechanged category annotations
@@ -122,6 +123,17 @@ function asff_getNewFormRow($propertyName){
 	
 	//return result
 	$result = array('html' => $html);
+	$result = json_encode($result);
+	return '--##starttf##--' . $result . '--##endtf##--';
+}
+
+
+function asff_convertDateString($dateString){
+	
+	$date = date('M d, yy', strtotime($dateString));
+	
+	//return result
+	$result = array('date' => $date);
 	$result = json_encode($result);
 	return '--##starttf##--' . $result . '--##endtf##--';
 }

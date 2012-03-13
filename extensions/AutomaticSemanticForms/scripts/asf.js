@@ -139,33 +139,25 @@ window.ASFFormSyncer = {
 		
 		this.blockFormUpdates = false;
 		this.currentCategoryAnnotations = false;
-		this.wtp = null;
 		this.currentRelationsCount = 0;
-		
-		//todo:make sure that e.th. also works if freetext is hidden
-		
-		//todo. make sure that e.th. also works if the editor type is toggled
 		
 		//init freetxt content change listeners and do first form update
 		if(typeof CKEDITOR != 'undefined'){
 			CKEDITOR.on("instanceReady", function(){
-	        	this.instances.free_text.document.on("keyup", ASFFormSyncer.checkIfFormUpdateIsNecessary);
-	        	this.instances.free_text.document.on("paste", ASFFormSyncer.checkIfFormUpdateIsNecessary);
-	        	this.instances.free_text.document.on("change", ASFFormSyncer.checkIfFormUpdateIsNecessary);
-
-	        	this.currentFreeTextContent = 
-	    			this.getFreeTextContent();
+	        	ASFFormSyncer.currentFreeTextContent = 
+	        		ASFFormSyncer.getFreeTextContent();
 	        	
 		    	ASFFormSyncer.updateForm();
+		    	
+		    	ASFFormSyncer.checkIfFormUpdateIsNecessary();
 	        });
 		} else {
-			jQuery('#free_text').change(this.checkIfFormUpdateIsNecessary);
-			jQuery('#free_text').keyup(this.checkIfFormUpdateIsNecessary);
-		
 			this.currentFreeTextContent = 
 				this.getFreeTextContent();
 			
 			ASFFormSyncer.updateForm();
+			
+			ASFFormSyncer.checkIfFormUpdateIsNecessary();
 		}
 	},
 	
@@ -177,29 +169,20 @@ window.ASFFormSyncer = {
 		//input field name indexes must be n an order for storing
 		ASFMultiInputFieldHandler.resetInputFieldNames();
 	},
-	
+
 	/*
 	 * This method is called by the freetext input listeners
 	 * and checks if the form may need an update
 	 */
 	checkIfFormUpdateIsNecessary : function(){
-		
-		//todo: filter some keys that do not change the content in order to gain some performance improvements
-		
-		var ts = new Date();
-		var currentTS = ts.getMilliseconds();
-		ASFFormSyncer.lastFreeTextChangeTS = currentTS;
 		window.setTimeout(function() {
-			//only call updateForm() if first s.th. has changed 
-			//and second if nothing else has changed in the meantime
-			if(currentTS == ASFFormSyncer.lastFreeTextChangeTS){
-				var newFreeTextContent = ASFFormSyncer.getFreeTextContent();
-				if(ASFFormSyncer.currentFreeTextContent
-						!= newFreeTextContent){
-					ASFFormSyncer.currentFreeTextContent = newFreeTextContent;
-					ASFFormSyncer.updateForm();
-				}
+			var newFreeTextContent = ASFFormSyncer.getFreeTextContent();
+			if(ASFFormSyncer.currentFreeTextContent
+					!= newFreeTextContent){
+				ASFFormSyncer.currentFreeTextContent = newFreeTextContent;
+				ASFFormSyncer.updateForm();
 			}
+			ASFFormSyncer.checkIfFormUpdateIsNecessary();
 		}, 750);
 	},
 	
@@ -211,6 +194,14 @@ window.ASFFormSyncer = {
 			return CKEDITOR.instances.free_text.getData();
 		} else {
 			return jQuery('#free_text').val();
+		}
+	},
+	
+	setFreeTextContent : function(text){
+		if(typeof CKEDITOR != 'undefined' && CKEDITOR.instances && CKEDITOR.instances.free_text){
+			CKEDITOR.instances.free_text.setData(text);
+		} else {
+			jQuery('#free_text').val(text);
 		}
 	},
 	
@@ -228,7 +219,9 @@ window.ASFFormSyncer = {
 		
 		//init WikiTextParser
 		this.wtp = new WikiTextParser();
-		this.wtp.initialize(ASFFormSyncer.currentFreeTextContent);
+		this.wtp.initialize();
+		this.wtp.text = this.getFreeTextContent();
+		this.wtp.parseAnnotations();
 		
 		this.checkIfFormStructureUpdateIsnecessary(
 			this.wtp.getCategories());
@@ -380,8 +373,6 @@ window.ASFFormSyncer = {
 		
 		//check if this input field is syncronized to free text
 
-		//alert(jQuery(node).attr('class'));
-		
 		if(jQuery(node).attr('class').indexOf('asf-syncronized-value') == -1
 				&& jQuery(node).attr('asf-syncronized') != 'true'){
 			return;
@@ -397,8 +388,10 @@ window.ASFFormSyncer = {
 		
 		//init WikiTextParser
 		this.wtp = new WikiTextParser();
-		this.wtp.initialize(ASFFormSyncer.getFreeTextContent());
-
+		this.wtp.initialize();
+		this.wtp.text = this.getFreeTextContent();
+		this.wtp.parseAnnotations();
+		
 		if(relationIndex == undefined){
 
 			if(newValue.length == 0){
@@ -415,6 +408,7 @@ window.ASFFormSyncer = {
 			}
 		} else {
 			var currentRelation = this.wtp.getRelations();
+			
 			currentRelation = currentRelation[relationIndex];
 			
 			if(newValue.length > 0){
@@ -423,8 +417,6 @@ window.ASFFormSyncer = {
 				this.deletePropertyInFreetext(currentRelation, relationIndex, node);
 			}
 		}
-		
-		//alert('after:  ' + jQuery(node).attr('class'));
 	},
 	
 	addPropertyToFreeText : function(container, newValue){
@@ -435,6 +427,7 @@ window.ASFFormSyncer = {
 		newAnnotation += '| ]]';
 		
 		this.wtp.addAnnotation(newAnnotation, true);
+		this.setFreeTextContent(this.wtp.text);
 		
 		jQuery(container).attr('asf-wp-rel-index', this.currentRelationsCount);
 		this.currentRelationsCount += 1;
@@ -505,6 +498,7 @@ window.ASFFormSyncer = {
 		newRelation += ']]';
 		
 		this.wtp.replaceAnnotation(currentRelation, newRelation);
+		this.setFreeTextContent(this.wtp.text);
 	},
 	
 	deletePropertyInFreetext : function(currentRelation, relationIndex, container){
@@ -522,6 +516,7 @@ window.ASFFormSyncer = {
 		jQuery(container).removeClass('asf-syncronized-value');
 				
 		this.wtp.replaceAnnotation(currentRelation, '');
+		this.setFreeTextContent(this.wtp.text);
 		
 		jQuery('*:[asf-wp-rel-index]').each(function(){
 			var currentIndex = jQuery(this).attr('asf-wp-rel-index');
@@ -809,7 +804,9 @@ window.ASFMultiInputFieldHandler = {
 				//we are in the unresolved annotations section 
 				//and the last input field can be removed
 
-				if(jQuery(parent).next().html().length == 0){
+				//check if this node has a section with visible inherited property values
+				if(jQuery('p', jQuery(node).parent().parent().next()).get().length == 0){
+				
 					//we do not show uneditable input fields and
 					//the complete row can be removed
 					jQuery(parent).parent().parent().remove();
@@ -818,7 +815,7 @@ window.ASFMultiInputFieldHandler = {
 						jQuery('.asf-unresolved-section').css('display', 'none');
 					}
 				} else {
-					jQuery(parent).remove();
+					jQuery(node).parent().remove();
 				}
 			} else {
 				//we are not in unresolved annotations section and 
@@ -1117,18 +1114,20 @@ window.ASFMultiInputFieldHandler = {
 		
 		if(type == 'date'){
 			
-			//todo: deal with invalid dates and ones that cannot be parsed by js
-			
 			value = jQuery.trim(value);
 			
 			var day = '';
 			var month = 1;
 			var year = '';
 			if(value.length > 0){
-				var date = new Date(Date.parse(value));
-				day = date.getDate();
-				month = date.getMonth()*1 + 1;
-				year = date.getFullYear();
+				
+				date = this.parseDateString(value);
+				
+				if(date.toDateString() != 'Invalid Date'){
+					day = date.getDate();
+					month = date.getMonth()*1 + 1;
+					year = date.getFullYear();
+				}
 			}
 			
 			jQuery('.dayInput', container).val(day);
@@ -1154,13 +1153,16 @@ window.ASFMultiInputFieldHandler = {
 			var seconds = '';
 			
 			if(value.length > 0){
-				var date = new Date(Date.parse(value));
-				day = date.getDate();
-				month = date.getMonth()*1 + 1;
-				year = date.getFullYear();
-				hours = date.getHours();
-				minutes = date.getMinutes();
-				seconds = date.getSeconds();
+				date = this.parseDateString(value);
+				
+				if(date.toDateString() != 'Invalid Date'){
+					day = date.getDate();
+					month = date.getMonth()*1 + 1;
+					year = date.getFullYear();
+					hours = date.getHours();
+					minutes = date.getMinutes();
+					seconds = date.getSeconds();
+				}
 			}
 			
 			jQuery('.dayInput', container).val(day);
@@ -1251,19 +1253,51 @@ window.ASFMultiInputFieldHandler = {
 		
 		if(type == 'date'){
 			value = jQuery.trim(value);
-			date = new Date(Date.parse(value));
+			date = this.parseDateString(value);
 			return date.toGMTString();
 		}
 		
 		if(type == 'datetime'){
 			value = jQuery.trim(value);
-			date = new Date(Date.parse(value));
+			date = this.parseDateString(value);
 			return date.toGMTString();
 		}
 		
 		return value;
+	},
+	
+	parseDateString : function(dateString){
+		
+		var date = new Date(Date.parse(dateString));
+		
+		if(date.toDateString() == 'Invalid Date'){
+			var url = wgServer + wgScriptPath + "/index.php";
+			jQuery.ajax({ url:  url, 
+				async: false,
+				data: {
+					'action' : 'ajax',
+					'rs' : 'asff_convertDateString',
+					'rsargs[]' : [dateString]
+				},
+				success: function(data){
+					data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+					data = jQuery.parseJSON(data);
+					
+					alert(data.date);
+				
+					ASFMultiInputFieldHandler .currentAjaxDate
+				}
+			});
+			
+			var date = new Date(Date.parse(
+					ASFMultiInputFieldHandler .currentAjaxDate));
+		}
+		
+		return date;
 	}
 };
+
+
 
 
 jQuery(document).ready( function($) {
@@ -1283,7 +1317,5 @@ jQuery(document).ready( function($) {
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
 
 //todo: update tabindexes when adding and removeing input fields
-
-//todo: reset names before submitting since the server expects continously numbered names
 
 //todo: add type validation to input field values, i.e. validate if input field for property of type number really contains a number

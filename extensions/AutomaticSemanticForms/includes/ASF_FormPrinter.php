@@ -36,6 +36,7 @@ class ASFFormPrinter extends SFFormPrinter {
 			$this->mInputTypeHooks = $sfgFormPrinter->mInputTypeHooks;
 				
 			$this->standardInputsIncluded = $sfgFormPrinter->standardInputsIncluded;
+			$this->mPossibleInputsForPropType = $sfgFormPrinter->mPossibleInputsForPropType;
 			$this->mPageTitle = $sfgFormPrinter->mPageTitle;
 		} else {
 			parent::__construct();
