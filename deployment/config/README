@@ -13,6 +13,14 @@ settings.php: This is a pre-configured template of the setting file. It must be 
                 
 externalapps:  Store paths of external applications (ie. applications which are not 
                 published by the webserver). Usually non-PHP applications.
+                
+                The format is key=value. One per line, e.g.
+                
+                    tsc=c:\Programme\TSC
+                    solr=c:\SMWPLUS\solr
+                    
+                If the external application is not listed here, it can NOT be considered
+                by WAT.
                  
                 Is never overwritten by an update
                 
