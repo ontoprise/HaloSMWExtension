@@ -242,11 +242,13 @@ if (isset($_GET['tab'])) {
 
 $dfVersion = DF_WEBADMIN_TOOL_VERSION_AND_BUILD;
 Tools::isWindows($dfOS);
+$heading = $dfgLang->getLanguageString('df_webadmin');
 
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
 <head>
+<title>$heading</title>
 <link type="text/css" href="skins/ui-lightness/jquery-ui-1.8.13.custom.css" rel="stylesheet" />
 <link type="text/css" href="skins/webadmin.css" rel="stylesheet" />	
 <script type="text/javascript" src="scripts/jquery-1.6.1.min.js"></script>
@@ -272,7 +274,6 @@ $javascriptLang
 ENDS
 ;
 $wikiName = !empty(DF_Config::$df_wikiName) ? "(".DF_Config::$df_wikiName.")" : "";
-$heading = $dfgLang->getLanguageString('df_webadmin');
 $html .= "<body><img src=\"skins/logo.png\" style=\"float:left; margin-right: 30px\" />".
          "<div style=\"float:right\">".
          "<a id=\"df_webadmin_aboutlink\">".$dfgLang->getLanguageString('df_webadmin_about')."</a> | ".
