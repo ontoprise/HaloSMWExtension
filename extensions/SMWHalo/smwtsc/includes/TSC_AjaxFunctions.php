@@ -57,7 +57,7 @@ function lodGetDataSourceTable() {
 function smwf_ts_getSyncCommands() {
     global $smwgMessageBroker, $smwgHaloTripleStoreGraph, $wgDBtype, $wgDBport,
     $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode,
-    $smwgIgnoreSchema, $smwgNamespaceIndex, $smwgHaloTSCKnowsDBCredentials;
+    $smwgIgnoreSchema, $smwgNamespaceIndex, $smwgHaloTSCKnowsDBCredentials, $wgSitename;
 
     $sparulCommands = array();
 
@@ -68,7 +68,7 @@ function smwf_ts_getSyncCommands() {
     
     // if $smwgHaloTSCKnowsDBCredentials is set then encode MySQL credentials
     if (!isset($smwgHaloTSCKnowsDBCredentials) || $smwgHaloTSCKnowsDBCredentials===true) {
-    	$credentials = "KNOWN:KNOWN";
+    	$credentials = "_mysqldb_:$wgSitename";
     }
     $sparulCommands[] = "LOAD <smw://".urlencode($credentials).
     "@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=SMWHaloStore2".
