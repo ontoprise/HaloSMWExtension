@@ -54,8 +54,8 @@ if (!isset($_SESSION['angemeldet']) || !$_SESSION['angemeldet']) {
 }
 
 define("DF_WEBADMIN_TOOL", 1);
-define("DF_WEBADMIN_TOOL_VERSION", '{{$VERSION}}');
-define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '{{$VERSION}} [B{{$BUILDNUMBER}}]');
+define("DF_WEBADMIN_TOOL_VERSION", '1.7.0_0');
+define("DF_WEBADMIN_TOOL_VERSION_AND_BUILD", '1.7.0_0 [B${env.BUILD_NUMBER}]');
 
 $rootDir = dirname(__FILE__);
 $rootDir = str_replace("\\", "/", $rootDir);
@@ -244,6 +244,23 @@ $dfVersion = DF_WEBADMIN_TOOL_VERSION_AND_BUILD;
 Tools::isWindows($dfOS);
 $heading = $dfgLang->getLanguageString('df_webadmin');
 
+if (isset(DF_Config::$df_developerVersion) && DF_Config::$df_developerVersion == true) {
+	$scriptTags = <<<ENDS
+<script type="text/javascript" src="scripts/webadminOperations.js"></script>
+<script type="text/javascript" src="scripts/webadminGlobal.js"></script>
+<script type="text/javascript" src="scripts/webadminSettings.js"></script>
+<script type="text/javascript" src="scripts/webadminMaintenance.js"></script>
+<script type="text/javascript" src="scripts/webadminSearch.js"></script>
+<script type="text/javascript" src="scripts/webadminStatus.js"></script>
+<script type="text/javascript" src="scripts/webadminServers.js"></script>
+<script type="text/javascript" src="scripts/webadminContentBundle.js"></script>
+<script type="text/javascript" src="scripts/webadminUpload.js"></script>
+<script type="text/javascript" src="scripts/webadminLocalSettings.js"></script>
+<script type="text/javascript" src="scripts/webadminLogs.js"></script>	
+ENDS;
+} else {
+	$scriptTags = '<script type="text/javascript" src="scripts/webadmin_all.js"></script>';
+}
 $html = <<<ENDS
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -269,7 +286,7 @@ $html = <<<ENDS
 </script>
 $javascriptLang
 <script type="text/javascript" src="scripts/sorttable.js"></script>
-<script type="text/javascript" src="scripts/webadmin.js"></script>
+$scriptTags
 </head>
 ENDS
 ;

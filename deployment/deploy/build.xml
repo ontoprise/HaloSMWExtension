@@ -75,6 +75,13 @@
         <include name="deploy.xml" />
       </fileset>
     </copy>
+  	
+  	<!-- Pack the scripts -->
+    <concat destfile="bin/zip/deployment/tools/webadmin/scripts/webadmin_all.js">
+      <filelist dir="../tools/webadmin/scripts" files="webadminOperations.js"/>
+      <fileset dir="../tools/webadmin/scripts" includes="webadmin*.js" excludes="webadminOperations.js"/>
+    </concat>
+  	
     <touch file="bin/zip/deployment/config/externalapps" />
     <zip destfile="bin/wikiadmintool.zip" basedir="bin/zip" />
     <delete dir="bin/zip" quiet="true" />
