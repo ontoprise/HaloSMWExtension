@@ -1,5 +1,9 @@
 @CHARSET "ISO-8859-1";
 
+#df_watsettings {
+	margin-top 10px;
+}
+
 #df_bundlelist_table {
 	margin-top: 20px;
 	width: 45%;

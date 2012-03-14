@@ -19,103 +19,101 @@
 /**
  * @file
  * @ingroup WebAdmin
- *
+ * 
  * webadmin scripts for DF_SettingsTab
- * 	
+ * 
  * @author: Kai Kühn
- *
+ * 
  */
-// register repository managment handler
-$.webAdmin.operations.addRepositoryHandler = function() {
-	var newrepositoryURL = $('#df_newrepository_input').val();
-	newrepositoryURL = newrepositoryURL.replace('<', '&lt;');
-	newrepositoryURL = newrepositoryURL.replace('&', '&amp;');
-
-	var addToRepositoryCallack = function(xhr, status) {
-		if (xhr.responseText.indexOf('session: time-out') != -1) {
-			alert("Please login again. Session timed-out");
-			return;
-		}
-		$('#df_settings_progress_indicator').hide();
-		if (xhr.status != 200) {
-			alert(xhr.responseText);
-			return;
-		}
-		$('#df_repository_list').append(
-				$('<option>' + newrepositoryURL + '</option>'));
-		window.location.href = wgServer + wgScriptPath
-				+ "/deployment/tools/webadmin/index.php?tab=4";
+$(document).ready(function(e) {
+	
+	// default settings of WAT options
+	var settings_defaults = { 
+			df_watsettings_overwrite_always : true,
+			df_watsettings_apply_patches : true,
+			df_watsettings_create_restorepoints: false,
+			df_watsettings_hidden_annotations : true,
+			df_watsettings_use_namespaces : true 
 	};
-	$('#df_settings_progress_indicator').show();
-	var url = wgServer
-			+ wgScriptPath
-			+ "/deployment/tools/webadmin/index.php?rs=addToRepository&rsargs[]="
-			+ encodeURIComponent($('#df_newrepository_input').val());
-	$.ajax( {
-		url : url,
-		dataType : "json",
-		complete : addToRepositoryCallack
+	
+	/**
+	 * Applies the settings with the values given from a cookie string.
+	 * 
+	 * @param object with key-value pairs
+	 */
+	var applySettings = function(settings) {
+		var cookies = [];
+		for(id in settings) {
+			var value = $.trim(settings[id]);
+			$("#"+id).attr("checked", value == "true");
+		}
+	}
+	
+	/**
+	 * Returns object with key value pairs from the given cookie.
+	 * 
+	 * @param string cookie 
+	 * 
+	 * @return object
+	 */
+	var getSettingsFromCookie = function(cookie) {
+		var settings = "";
+		var all_settings = cookie.split(";");
+		$.grep(all_settings, function(e) { 
+			if (e.substr(0, 12) == 'df_settings=') {
+				settings = e.substr(12);
+			}
+		});
+		var result = {};
+		var dfSettingsArray = settings.split(",");
+		$(dfSettingsArray).each(function(i, e) { 
+			var keyValue = e.split("=");
+			var id = $.trim(keyValue[0]);
+			var value = $.trim(keyValue[1]);
+			result[id] = value;
+		});
+		return result;
+	}
+	
+	/**
+	 * Serializes the object with as key-value pairs
+	 * 
+	 * key1=value1,key2=value2,...
+	 * 
+	 * @param object with key-value pairs
+	 * 
+	 * @return string
+	 */
+	var serializeSettings = function(settings) {
+		var result=[];
+		for(var s in settings) {
+			var value = settings[s] ? "true" : "false";
+			result.push(s+"="+value);
+		}
+		return result.join(",");
+	}
+	
+	// read cookie and apply the settings 
+	var cookie = document.cookie;
+	if (cookie) {
+		var settings = getSettingsFromCookie(cookie);
+		settings = $.extend(settings_defaults, settings);
+		applySettings(settings);
+		document.cookie = "df_settings=" + serializeSettings(settings);
+	} else {
+		// no cookies available at all, use defaults
+		applySettings(settings_defaults);
+	}
+	
+	// set change listeners
+	$('#df_watsettings input').change(function() {
+		// update cookie
+		var settings = [];
+		$('#df_watsettings input').each(function(i, e) { 
+			var id = $(e).attr("id");
+			var value = e.checked ? "true" : "false";
+			settings.push(id+"="+value);
+		});
+		document.cookie = "df_settings=" + settings.join(",");
 	});
-}
-
-$(document)
-		.ready(
-				function(e) {
-					$('#df_addrepository').click(
-							$.webAdmin.operations.addRepositoryHandler);
-					$('#df_newrepository_input').keypress(function(e) {
-						if (e.keyCode == 13) { // 13 == enter
-							$.webAdmin.operations.addRepositoryHandler();
-						}
-					});
-					$('#df_repository_list').change(
-							function(e) {
-								var selectedURI = $(
-										"#df_repository_list option:selected")
-										.text();
-								$('#df_newrepository_input').val(selectedURI);
-							});
-					$('#df_removerepository')
-							.click(
-									function(e) {
-										$('#df_repository_list option:selected')
-												.each(
-														function() {
-															var entry = $(this);
-															var removeFromRepositoryCallack = function(
-																	xhr, status) {
-																if (xhr.responseText
-																		.indexOf('session: time-out') != -1) {
-																	alert("Please login again. Session timed-out");
-																	return;
-																}
-																$(
-																		'#df_settings_progress_indicator')
-																		.hide();
-																if (xhr.status != 200) {
-																	alert(xhr.responseText);
-																	return;
-																}
-																entry.remove();
-																window.location.href = wgServer
-																		+ wgScriptPath
-																		+ "/deployment/tools/webadmin/index.php?tab=4";
-															};
-															$(
-																	'#df_settings_progress_indicator')
-																	.show();
-															var url = wgServer
-																	+ wgScriptPath
-																	+ "/deployment/tools/webadmin/index.php?rs=removeFromRepository&rsargs[]="
-																	+ encodeURIComponent(entry
-																			.val());
-															$
-																	.ajax( {
-																		url : url,
-																		dataType : "json",
-																		complete : removeFromRepositoryCallack
-																	});
-
-														});
-									});
-				});
+});

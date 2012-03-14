@@ -152,6 +152,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
     'df_webadmin_repository_link' => 'Repository-Liste',
 	
+	'df_webadmin_watsettingstab' => 'Einstellungen',
+    'df_webadmin_watsettingstab_description' => 'Allgemeine Einstellungen von WAT',
 	
 	/*Message for ImportOntologyBot*/
     'smw_importontologybot' => 'Importiere eine Ontologie',

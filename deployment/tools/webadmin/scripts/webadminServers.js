@@ -84,7 +84,7 @@ $(document)
 								timeout : 10000
 							});
 						}
-						setTimeout(periodicProcessPoll, 20000);
+						//setTimeout(periodicProcessPoll, 20000);
 					}
 
 					// server command change listener

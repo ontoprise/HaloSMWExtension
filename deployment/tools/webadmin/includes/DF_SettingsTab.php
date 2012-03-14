@@ -21,50 +21,58 @@
  * @file
  * @ingroup WebAdmin
  *
- * Settings tab
+ * The WAT settings tab allows specifying options the user would be
+ * asked interactively in the command line version.
  *
  * @author: Kai Kühn
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-	die();
+    die();
 }
 
-require_once ( $mwrootDir.'/deployment/tools/smwadmin/DF_PackageRepository.php' );
 
 class DFSettingsTab {
 
-	/**
-	 * Settings tab
-	 *
-	 */
-	public function __construct() {
+    /**
+     * WAT settings tab
+     *
+     */
+    public function __construct() {
 
-	}
+    }
 
-	public function getTabName() {
-		global $dfgLang;
-		return $dfgLang->getLanguageString('df_webadmin_settingstab');
-	}
+    public function getTabName() {
+        global $dfgLang;
+        return $dfgLang->getLanguageString('df_webadmin_watsettingstab');
+    }
 
-	public function getHTML() {
-		global $dfgLang;
-		$addRepositoryText = $dfgLang->getLanguageString('df_webadmin_addrepository');
-		$removeRepositoryText = $dfgLang->getLanguageString('df_webadmin_removerepository');
-		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_settingstext')."</div>";
-		$html .= "<div id=\"df_addrepository_section\">Add new repository: <input type=\"text\" style=\"width: 100%;\" value=\"\" id=\"df_newrepository_input\"></input>";
-		$html .= "<input type=\"button\"  value=\"$addRepositoryText\" id=\"df_addrepository\"></input>'<img id=\"df_settings_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/></div>";
-		$html .= "<div id=\"df_existingrepository_section\">Existing repositories<br/><select size=\"5\" style=\"width: 100%\" id=\"df_repository_list\">".$this->getRepositoriesAsHTMLOptions()."</select></div>";
-		$html .= "<input type=\"button\"  value=\"$removeRepositoryText\" id=\"df_removerepository\"></input>";
-		return $html;
-	}
-	
-	private function getRepositoriesAsHTMLOptions() {
-		$html=""; 
-		$repoURLs = PackageRepository::getRepositoryURLs();
-		foreach($repoURLs as $url) {
-			$html .= "<option>".htmlspecialchars($url)."</option>";
-		}
-		return $html;
-	}
+    public function getHTML() {
+        global $dfgLang, $wgServer, $wgScriptPath;
+        
+        $html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_watsettingstab_description')."</div>";
+               
+        $html .= "<div id=\"df_watsettings\">";
+        $html .= "<table>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_overwrite_always\" type=\"checkbox\">Overwrite bundle pages always</input></td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_apply_patches\" type=\"checkbox\">Apply (partially) failed patches</input></td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_create_restorepoints\" type=\"checkbox\">Create restore points before operation</input></td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_hidden_annotations\" type=\"checkbox\">Hide annotation when converting ontologies</input></td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_use_namespaces\" type=\"checkbox\">Use namespaces</input></td>";
+        $html .= "</tr>";
+        $html .= "</table>";
+        $html .= "</div>";
+        return $html;
+    }
+
+   
 }

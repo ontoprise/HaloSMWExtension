@@ -79,13 +79,14 @@ $smwgDFIP=$rootDir;
 touch("$rootDir/tools/webadmin/sessiondata/userloggedin");
 
 require_once($mwrootDir.'/deployment/languages/DF_Language.php');
+require_once('includes/DF_SettingsTab.php');
 require_once('includes/DF_ContentBundleTab.php');
 require_once('includes/DF_LogTab.php');
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
 require_once('includes/DF_UploadTab.php');
-require_once('includes/DF_SettingsTab.php');
+require_once('includes/DF_RepositoriesTab.php');
 require_once('includes/DF_ServersTab.php');
 require_once('includes/DF_LocalSettingsTab.php');
 require_once('includes/DF_CommandInterface.php');
@@ -172,11 +173,12 @@ $dfgStatusTab = new DFStatusTab();
 $dfgSearchTab = new DFSearchTab();
 $dfgMaintenanceTab = new DFMaintenanceTab();
 $dfgUploadTab = new DFUploadTab();
-$dfgSettingsTab = new DFSettingsTab();
+$dfgSettingsTab = new DFRepositoriesTab();
 $dfgLocalSettingsTab = new DFLocalSettingsTab();
 $dfgServersTab = new DFServersTab();
 $dfgLogTab = new DFLogTab();
 $dfgContentBundlesTab = new DFContentBundleTab();
+$dfgWATSettingsTab = new DFSettingsTab();
 
 // for ajax calls
 if (isset($func_name)) {
@@ -216,6 +218,9 @@ try {
 	$dfgContentBundlesTabName = $dfgContentBundlesTab->getTabName();
 	$dfgContentBundlesTabHtml = $dfgContentBundlesTab->getHTML();
 	
+	$dfgWATSettingsBundlesTabName = $dfgWATSettingsTab->getTabName();
+    $dfgWATSettingsBundlesTabHtml = $dfgWATSettingsTab->getHTML();
+	
 	
 
 } catch(DF_SettingError $e) {
@@ -248,7 +253,7 @@ if (isset(DF_Config::$df_developerVersion) && DF_Config::$df_developerVersion ==
 	$scriptTags = <<<ENDS
 <script type="text/javascript" src="scripts/webadminOperations.js"></script>
 <script type="text/javascript" src="scripts/webadminGlobal.js"></script>
-<script type="text/javascript" src="scripts/webadminSettings.js"></script>
+<script type="text/javascript" src="scripts/webadminRepositories.js"></script>
 <script type="text/javascript" src="scripts/webadminMaintenance.js"></script>
 <script type="text/javascript" src="scripts/webadminSearch.js"></script>
 <script type="text/javascript" src="scripts/webadminStatus.js"></script>
@@ -257,6 +262,7 @@ if (isset(DF_Config::$df_developerVersion) && DF_Config::$df_developerVersion ==
 <script type="text/javascript" src="scripts/webadminUpload.js"></script>
 <script type="text/javascript" src="scripts/webadminLocalSettings.js"></script>
 <script type="text/javascript" src="scripts/webadminLogs.js"></script>	
+<script type="text/javascript" src="scripts/webadminSettings.js"></script>  
 ENDS;
 } else {
 	$scriptTags = '<script type="text/javascript" src="scripts/webadmin_all.js"></script>';
@@ -323,6 +329,7 @@ $html .= <<<ENDS
                 <li><a href="#tabs-7">$dfgServersTabName</a></li>
                 <li><a href="#tabs-8">$dfgLogTabName</a></li>
                <li><a href="#tabs-9">$dfgContentBundlesTabName</a></li>
+                <li><a href="#tabs-10">$dfgWATSettingsBundlesTabName</a></li>
                 
             </ul>
             <div id="tabs-1">$statusTabHtml</div>
@@ -334,7 +341,7 @@ $html .= <<<ENDS
             <div id="tabs-7">$dfgServersTabHtml</div>
             <div id="tabs-8">$dfgLogTabHtml</div>
             <div id="tabs-9">$dfgContentBundlesTabHtml</div>
-			
+			<div id="tabs-10">$dfgWATSettingsBundlesTabHtml</div>
 			
 </div>
 <div id="global-updatedialog-confirm" title="$globalUpdateHeading" style="display:none">
