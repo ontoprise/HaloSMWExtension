@@ -468,7 +468,7 @@ CKEDITOR.plugins.add( 'mediawiki',
                 && (element.getAttribute('_fck_mw_location')
                 || element.getAttribute('_fck_mw_filename')))
               {
-                return { image : CKEDITOR.TRISTATE_OFF };
+                return {image : CKEDITOR.TRISTATE_OFF};
               }
             });
         }        
@@ -482,8 +482,8 @@ CKEDITOR.plugins.add( 'mediawiki',
             //only local images which are not fake objects
             else if ( element.is( 'img' ) 
               && !element.getAttribute( 'data-cke-real-element-type' )
-              && element.getAttribute('_fck_mw_location')
-              && element.getAttribute('_fck_mw_filename'))
+              && (element.getAttribute('_fck_mw_location')
+              || element.getAttribute('_fck_mw_filename')))
             {
               evt.data.dialog = 'MWImage';
             }
@@ -717,6 +717,7 @@ CKEDITOR.customprocessor.prototype =
 
       //get link details
       var href = htmlNode.getAttribute( '_cke_saved_href' ) || htmlNode.getAttribute('href');
+//      href = decodeURIComponent(href);
       href = href.replace(/rtecolon/gi, '%3A');
       var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || htmlNode.getAttribute( '_fck_mw_type' );
       var title = htmlNode.getAttribute('title') || '';
@@ -1128,7 +1129,8 @@ CKEDITOR.customprocessor.prototype =
                                     return;
                                 }                            
                                 
-                                var imgCaption	= htmlNode.getAttribute( 'alt' ) || '';
+                                var imgCaption	= htmlNode.getAttribute( '_fck_mw_caption' ) || '';
+                                var alt	= htmlNode.getAttribute( 'alt' ) || '';
                                 var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || htmlNode.getAttribute( '_cke_mw_type' ) || '';
                                 var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '';
                                 var imgWidth	= htmlNode.getAttribute( '_fck_mw_width' ) || '';
@@ -1171,8 +1173,21 @@ CKEDITOR.customprocessor.prototype =
                                     stringBuilder.push( 'px' );
                                 }
 
-                                if ( imgCaption.length > 0 )
-                                    stringBuilder.push( '|' + imgCaption );
+                                if ( imgCaption ){
+                                  imgCaption = decodeURIComponent(imgCaption);
+                                  var fragment = CKEDITOR.htmlParser.fragment.fromHtml(imgCaption);
+                                    stringBuilder.push( '|');
+                                    
+                                    for(var i = 0; i < fragment.children.length; i++){
+                                      var writer = new CKEDITOR.htmlWriter();
+                                      fragment.children[i].writeHtml(writer);
+                                      var element = CKEDITOR.dom.element.createFromHtml(writer.getHtml());
+                                      this._AppendNode(element.$, stringBuilder);
+                                      delete writer;
+                                    }
+                                }
+                                if ( alt )
+                                    stringBuilder.push( '|alt=' + alt);
                                 if ( imgNolink )
                                     stringBuilder.push( '|link=' );
                                 else if ( imgLink )
@@ -1380,7 +1395,7 @@ CKEDITOR.customprocessor.prototype =
 
                 // Text Node.
                 case 3 :
-                    var parentIsSpecialTag = htmlNode.parentNode.getAttribute( '_fck_mw_customtag' );
+                    var parentIsSpecialTag = htmlNode.parentNode && htmlNode.parentNode.getAttribute( '_fck_mw_customtag' );
                     var textValue = htmlNode.nodeValue;
                     if ( !parentIsSpecialTag ){
                         if ( CKEDITOR.env.ie && this._inLSpace ) {
@@ -1401,15 +1416,15 @@ CKEDITOR.customprocessor.prototype =
                         //textValue = CKEDITOR.tools.htmlEncode( textValue );
                         textValue = textValue.replace( /\u00A0/g, ' ' );
 
-                        if ( ( !htmlNode.previousSibling ||
-                            ( stringBuilder.length > 0 && stringBuilder[ stringBuilder.length - 1 ].EndsWith( '\n' ) ) ) && !this._inLSpace && !this._inPre ){
-                            textValue = textValue.replace(/^\s*/, ''); // Ltrim
-                        }
+//                        if ( ( !htmlNode.previousSibling ||
+//                            ( stringBuilder.length > 0 && stringBuilder[ stringBuilder.length - 1 ].EndsWith( '\n' ) ) ) && !this._inLSpace && !this._inPre ){
+//                            textValue = textValue.replace(/^\s*/, ''); // Ltrim
+//                        }
+//
+//                        if ( !htmlNode.nextSibling && !this._inLSpace && !this._inPre && ( !htmlNode.parentNode || !htmlNode.parentNode.nextSibling ) )
+//                            textValue = textValue.replace(/\s*$/, ''); // rtrim
 
-                        if ( !htmlNode.nextSibling && !this._inLSpace && !this._inPre && ( !htmlNode.parentNode || !htmlNode.parentNode.nextSibling ) )
-                            textValue = textValue.replace(/\s*$/, ''); // rtrim
-
-                        if( !this._inLSpace && !this._inPre && htmlNode.parentNode.tagName.toLowerCase() != 'a' ) {
+                        if( !this._inLSpace && !this._inPre && htmlNode.parentNode && htmlNode.parentNode.tagName.toLowerCase() != 'a' ) {
                             textValue = textValue.replace( / {2,}/g, ' ' );
                             textValue = this._EscapeWikiMarkup(textValue);
                         }

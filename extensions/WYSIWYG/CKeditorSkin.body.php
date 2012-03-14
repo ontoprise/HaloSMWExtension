@@ -134,10 +134,6 @@ class CKeditorSkin {
 				$srcPart = substr( $originalLink, strpos( $originalLink, "src=" ) + 5 );
 				$url = strtok( $srcPart, '"' );
 			}
-      if(strpos( $originalLink, "src=" )){
-        $srcPart = substr( $originalLink, strpos( $originalLink, "src=" ) + 5 );
-        $url = strtok( $srcPart, '"' );
-      }
       else{
         $url = $found;
       }
@@ -212,6 +208,8 @@ class CKeditorSkin {
             $ret .= 'link="'.htmlentities ($fp['link-title']->getFullText(), ENT_COMPAT, "UTF-8").'" ';
         if (isset($fp['link-url']))
             $ret .= 'link="'.$fp['link-url'].'" ';
+        if (isset($fp['caption']))
+            $ret .= '_fck_mw_caption="' .rawurlencode($fp['caption']) . '" ';
 
 		$ret .= '/>';
 

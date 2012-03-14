@@ -467,18 +467,18 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                     
                     setup : function( type, element ) {
                         if ( type == IMAGE )
-                            this.setValue( element.getAttribute( 'alt' ) );
+                            this.setValue( decodeURIComponent(element.getAttribute( '_fck_mw_caption' )));
                     },
                     commit : function( type, element ) {
                         if ( type == IMAGE ) {
                             if ( this.getValue() || this.isChanged() ) {
-                                element.setAttribute( 'alt', this.getValue() );
+                                element.setAttribute( '_fck_mw_caption', encodeURIComponent(this.getValue()));
                             }
                         }
                         else if ( type == PREVIEW )
-                            element.setAttribute( 'alt', this.getValue() );
+                            element.setAttribute( '_fck_mw_caption', encodeURIComponent(this.getValue()));
                         else if ( type == CLEANUP )
-                            element.removeAttribute( 'alt' );
+                            element.removeAttribute( '_fck_mw_caption' );
                     }
 
                 },
@@ -715,7 +715,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
 
             onShow : function()
             {             
-                
+                this.reset();
                 this.imageEditMode = false;
                 this.dontResetSize = false;
                 
@@ -726,8 +726,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                 pageListElement.clear();
 
                 var editor = this.getParentEditor();
-                // and set correct label for image list
-//                var label = CKEDITOR.document.getById(imageListElement.domId).getElementsByTag('label')[0];
+                // set correct label for image list
                 var message = editor.lang.mwplugin.searchLabel.replace(/%s/, editor.lang.mwplugin.startTyping);
                 imageListElement.label = message;
 
@@ -757,7 +756,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                 }
                 if ( this.imageEditMode )
                 {
-                    // Use the original element as a buffer from  since we don't want
+                    // Use the original element as a buffer since we don't want
                     // temporary changes to be committed, e.g. if the dialog is canceled.
                     this.cleanImageElement = this.imageElement;
                     this.imageElement = this.cleanImageElement.clone( true, true );

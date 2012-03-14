@@ -383,13 +383,13 @@ class CKeditor_MediaWiki {
 			'label-message' => 'tog-riched_toggle_remember_state',
 		);
 
-        if (defined('SMW_HALO_VERSION')) {
-            $preferences['riched_load_semantic_toolbar'] = array(
-                'type' => 'toggle',
-    			'section' => 'editing/fckeditor',
-        		'label-message' => 'load-stb-on-startup',
-            );
-        }
+    if (defined('SMW_HALO_VERSION')) {
+        $preferences['riched_load_semantic_toolbar'] = array(
+            'type' => 'toggle',
+            'section' => 'editing/fckeditor',
+            'label-message' => 'load-stb-on-startup',
+        );
+    }
 
 		// Show default options in Special:Preferences
 		if( !array_key_exists( 'riched_disable', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_disable'] ) )
@@ -440,15 +440,14 @@ class CKeditor_MediaWiki {
 				$this->showFCKEditor += RTE_TOGGLE_LINK;
 			}
 		}
-        if (defined('SMW_HALO_VERSION') && !isset( $this->loadSTBonStartup ) ) {
-            $this->loadSTBonStartup = 0;
-            if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
-				$this->loadSTBonStartup = 1;
-			}
+    if (defined('SMW_HALO_VERSION') && !isset( $this->loadSTBonStartup ) ) {
+        $this->loadSTBonStartup = 0;
+        if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
+          $this->loadSTBonStartup = 1;
         }
+    }
 
-		if( ( !empty( $_SESSION['showMyFCKeditor'] ) ) && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
-            $rteSettingsFromSession=true;
+		if( $_SESSION['showMyFCKeditor'] && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
 			// Clear RTE_VISIBLE flag
 			$this->showFCKEditor &= ~RTE_VISIBLE;
 			// Get flag from session
@@ -456,9 +455,9 @@ class CKeditor_MediaWiki {
 		}
 
 		# Don't initialize if we have disabled the toolbar or FCkeditor or have a non-compatible browser
-		if( !$wgUser->getOption( 'showtoolbar' ) ||
-		$wgUser->getOption( 'riched_disable', !empty( $wgDefaultUserOptions['riched_disable'] ) ? $wgDefaultUserOptions['riched_disable'] : false )
-		|| !$wgFCKEditorIsCompatible ) {
+		if( !$wgUser->getOption( 'showtoolbar' ) 
+            || $wgUser->getOption( 'riched_disable', !empty( $wgDefaultUserOptions['riched_disable'] ) ? $wgDefaultUserOptions['riched_disable'] : false )
+            || !$wgFCKEditorIsCompatible ) {
 			return true;
 		}
 
@@ -472,23 +471,14 @@ class CKeditor_MediaWiki {
 			return true;
 		}
 
-        # If $wgCKEditorUrlparamMode is set to true check the url params
-        if ( $wgCKEditorUrlparamMode && !( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' ) ) {
-            return true;
-        }
-        # If mode=wysiwyg is set then start with the WYSIWYG editor
-        if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' && !isset($rteSettingsFromSession)) {
-            $this->showFCKEditor |= RTE_VISIBLE;
-        }
-
-//		$wgFCKWikiTextBeforeParse = $form->textbox1;
-//		if( $this->showFCKEditor & RTE_VISIBLE ){
-//			$options = new CKeditorParserOptions();
-//			$options->setTidy( true );
-//			$parser = new CKeditorParser();
-//			$parser->setOutputType( OT_HTML );
-//			$form->textbox1 = str_replace( '<!-- Tidy found serious XHTML errors -->', '', $parser->parse( $form->textbox1, $wgTitle, $options )->getText() );
-//		}
+    # If $wgCKEditorUrlparamMode is set to true check the url params
+    if ( $wgCKEditorUrlparamMode && !( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' ) ) {
+        return true;
+    }
+    # If mode=wysiwyg is set then start with the WYSIWYG editor
+//    if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' && $_SESSION['showMyFCKeditor']) {
+//        $this->showFCKEditor |= RTE_VISIBLE;
+//    }
 
 		$printsheet = htmlspecialchars( "$wgStylePath/common/wikiprintable.css?$wgStyleVersion" );
 
@@ -506,7 +496,7 @@ class CKeditor_MediaWiki {
 		// End of CSS trick
 
 		$script = <<<HEREDOC
-<!-- <script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script> -->
+<!--<script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor.js"></script>-->
 <script type="text/javascript" src="$wgScriptPath/${wgFCKEditorDir}ckeditor_source.js"></script>
 <script type="text/javascript">
 var sEditorAreaCSS = '$printsheet,/mediawiki/skins/monobook/main.css?{$wgStyleVersion}';
@@ -543,8 +533,8 @@ var loadSTBonStartup = '. $this->loadSTBonStartup . ';
 var popup = false; // pointer to popup document
 var firstLoad = true;
 var editorMsgOn = "' . Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) . '";
-var editorMsgOff = "' . Xml::escapeJsString( wfMsgHtml( 'tog-riched_disable' ) ) . '";
-var editorLink = "' . ( ( $this->showFCKEditor & RTE_VISIBLE ) ? Xml::escapeJsString( wfMsgHtml( 'tog-riched_disable' ) ) : Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) ) . '";
+var editorMsgOff = "' . Xml::escapeJsString( wfMsgHtml( 'tog-show-wikitexteditor' ) ) . '";
+var editorLink = "' . ( ( $this->showFCKEditor & RTE_VISIBLE ) ? Xml::escapeJsString( wfMsgHtml( 'tog-show-wikitexteditor' ) ) : Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) ) . '";
 var saveSetting = ' . ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state']  ) ?  1 : 0 ) . ';
 var RTE_VISIBLE = ' . RTE_VISIBLE . ';
 var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
@@ -639,7 +629,6 @@ function FCK_sajax(func_name, args, target) {
 // qi url tokens
 
 function onLoadCKeditor(){
-        CKEDITOR.mw = mw;
         
 	if( !( showFCKEditor & RTE_VISIBLE ) )
 		showFCKEditor += RTE_VISIBLE;
