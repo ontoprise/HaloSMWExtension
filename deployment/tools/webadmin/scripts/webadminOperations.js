@@ -233,9 +233,10 @@ $.webAdmin.operations.installStarted = function(xhr, status) {
 							clearTimeout(timer);
 							$('#df_progress_indicator').hide();
 							// start finalize
+							var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 							var finalizeurl = wgServer
 									+ wgScriptPath
-									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 							$.ajax( {
 								url : finalizeurl,
 								dataType : "json",
@@ -256,9 +257,10 @@ $.webAdmin.operations.installStarted = function(xhr, status) {
 							$dialog.dialog('option', 'errorstatus', 'true');
 
 							// start finalize
+							var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 							var finalizeurl = wgServer
 									+ wgScriptPath
-									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 							$.ajax( {
 								url : finalizeurl,
 								dataType : "json",
@@ -331,9 +333,10 @@ $.webAdmin.operations.deinstallStarted = function(xhr, status) {
 							clearTimeout(timer);
 							$('#df_progress_indicator').hide();
 							// start finalize
+							var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 							var finalizeurl = wgServer
 									+ wgScriptPath
-									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 							$.ajax( {
 								url : finalizeurl,
 								dataType : "json",
@@ -423,9 +426,10 @@ $.webAdmin.operations.updateStarted = function(xhr, status) {
 							clearTimeout(timer);
 							$('#df_progress_indicator').hide();
 							// start finalize
+							var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 							var finalizeurl = wgServer
 									+ wgScriptPath
-									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 							$.ajax( {
 								url : finalizeurl,
 								dataType : "json",
@@ -516,9 +520,10 @@ $.webAdmin.operations.globalUpdateStarted = function(xhr, status) {
 							clearTimeout(timer);
 							$('#df_progress_indicator').hide();
 							// start finalize
+							var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 							var finalizeurl = wgServer
 									+ wgScriptPath
-									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+									+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 							$.ajax( {
 								url : finalizeurl,
 								dataType : "json",

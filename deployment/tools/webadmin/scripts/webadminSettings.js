@@ -99,14 +99,19 @@ $(document).ready(function(e) {
 		}
 		return result.join(",");
 	}
-	
+
+	// expiration date in 30 days from now on
+	var expirationDate = new Date();
+	var thirtyDays = expirationDate.getTime() + (30 * 24 * 60 * 60 * 1000);
+	expirationDate.setTime(thirtyDays);
+		
 	// read cookie and apply the settings 
 	var cookie = document.cookie;
 	if (cookie) {
 		var settings = getSettingsFromCookie(cookie);
 		settings = $.extend(settings_defaults, settings);
 		applySettings(settings);
-		document.cookie = "df_settings=" + serializeSettings(settings);
+		document.cookie = "df_settings=" + serializeSettings(settings)+"; expires=" + expirationDate.toGMTString();
 	} else {
 		// no cookies available at all, use defaults
 		applySettings(settings_defaults);
@@ -121,6 +126,6 @@ $(document).ready(function(e) {
 			var value = e.checked ? "true" : "false";
 			settings.push(id+"="+value);
 		});
-		document.cookie = "df_settings=" + settings.join(",");
+		document.cookie = "df_settings=" + settings.join(",")+"; expires=" + expirationDate.toGMTString();
 	});
 });

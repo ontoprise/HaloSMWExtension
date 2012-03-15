@@ -241,12 +241,15 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-
+		
+		$settings = json_decode($settings);
+		$optionString = self::getOptions($settings);
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --noask --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --noask --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -267,11 +270,14 @@ class DFCommandInterface {
 
 		$console_out = "$logdir/$filename.console_out";
 
+		$settings = json_decode($settings);
+		$optionString = self::getOptions($settings);
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -d \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask -d \"$extid\" > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -293,7 +299,7 @@ class DFCommandInterface {
 		$console_out = "$logdir/$filename.console_out";
 
 		$settings = json_decode($settings);
-		$optionString = $this->getOptions($settings);
+		$optionString = self::getOptions($settings);
 
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
@@ -308,7 +314,7 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function finalize($extid) {
+	public function finalize($extid, $settings) {
 		global $mwrootDir, $dfgOut;
 
 		$unique_id = uniqid();
@@ -318,12 +324,15 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-
+		
+		$settings = json_decode($settings);
+		$optionString = self::getOptions($settings);
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask --finalize > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask --finalize > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -364,12 +373,15 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-
+		
+		$settings = json_decode($settings);
+		$optionString = self::getOptions($settings);
+		
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -u > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask -u > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
@@ -711,33 +723,25 @@ class DFCommandInterface {
 		return $o;
 	}
 
-	private function getOptions($settings) {
+	private static function getOptions($settings) {
 		$result = array();
-		$on = (isset($settings->df_watsettings_overwrite_always)
-		&& $settings->df_watsettings_overwrite_always == "true") ? "true" : "false";
-		$result[] = "df_watsettings_overwrite_always=$on";
-
-		on = (isset($settings->df_watsettings_contain_to_other_bundle)
-		&& $settings->df_watsettings_contain_to_other_bundle == "true") ? "true" : "false";
-		$result[] = "df_watsettings_contain_to_other_bundle=$on";
-
-		on = (isset($settings->df_watsettings_apply_patches))
-		&& $settings->df_watsettings_apply_patches == "true")? "true" : "false";
-		$result[] = "df_watsettings_apply_patches=$on";
-
-		on =  (isset($settings->df_watsettings_create_restorepoints))
-		&& $settings->df_watsettings_create_restorepoints == "true")? "true" : "false";
-		$result[] = "df_watsettings_create_restorepoints=$on";
-
-		on =  (isset($settings->df_watsettings_hidden_annotations))
-		&& $settings->df_watsettings_hidden_annotations == "true") ? "true" : "false";
-		$result[] = "df_watsettings_hidden_annotations=$on";
-
-		on = (isset($settings->df_watsettings_use_namespaces))
-		&& $settings->df_watsettings_use_namespaces == "true")? "true" : "false";
-		$result[] = "df_watsettings_use_namespaces=$on";
-
+		$result[] = self::getOption('df_watsettings_overwrite_always');
+		$result[] = self::getOption('df_watsettings_contain_to_other_bundle');
+		$result[] = self::getOption('df_watsettings_apply_patches');
+		$result[] = self::getOption('df_watsettings_create_restorepoints');
+		$result[] = self::getOption('df_watsettings_hidden_annotations');
+		$result[] = self::getOption('df_watsettings_use_namespaces');
 		return implode(",", $result);
+	}
+	
+	/**
+	 * Returns state of option as a string.
+	 * 
+	 * @param object $settings Settings object (de-serialized from JSON)
+	 * @param string $option
+	 */
+	private static function getOption($settings, $option) {
+		return (property_exists($settings, $option) && $settings->$option == "true") ? "$option=true" : "$option=false";
 	}
 
 	/**
