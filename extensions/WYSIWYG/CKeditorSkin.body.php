@@ -161,10 +161,10 @@ class CKeditorSkin {
 		}
 		if( !empty( $hp ) ) {
 			if( isset( $hp['width'] ) ) {
-				$ret .= "_fck_mw_width=\"" . $hp['width'] . "\" ";
+				$ret .= "width=\"" . $hp['width'] . "px\" ";
 			}
 			if( isset( $hp['height'] ) ) {
-				$ret .= "_fck_mw_height=\"" . $hp['height'] . "\" ";
+				$ret .= "height=\"" . $hp['height'] . "px\" ";
 			}
 		}
 		$class = '';

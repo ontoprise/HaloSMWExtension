@@ -275,26 +275,37 @@ CKEDITOR.plugins.add( 'mediawiki',
                     }
                     return result;
                 },
-				img : function (element) {
-                    var width = element.attributes['_fck_mw_width'] || '';
-                    var height = element.attributes['_fck_mw_height'] || '';
-					if (width) {
-						width = 'width:' + width + 'px;';
-					}
-					if (height) {
-						height = 'height:' + height + 'px;';
-					}
-					
-					if (width || height) {
-						element.attributes['style'] = width + height;
-					}
-					
-				}
-            }
-        };
+                img : function (element) {
+                    var style = element.attributes.style; 
+                    if ( style )
+                    {
+                      // Get the width from the style.
+                      var match = /(?:^|\s)width\s*:\s*(\d+)px/i.exec( style );
+                      var width = match && match[1];
+
+                      // Get the height from the style.
+                      match = /(?:^|\s)height\s*:\s*(\d+)px/i.exec( style );
+                      var height = match && match[1];
+
+                      if ( width )
+                      {
+                              element.attributes.style = element.attributes.style.replace( /(?:^|\s)width\s*:\s*(\d+)px;?/i , '' );
+                              element.attributes.width = width;
+                      }
+
+                      if ( height )
+                      {
+                              element.attributes.style = element.attributes.style.replace( /(?:^|\s)height\s*:\s*(\d+)px;?/i , '' );
+                              element.attributes.height = height;
+                      }
+                    }
+                    return element;
+                }
+          }
+        };        
 
         var dataProcessor = editor.dataProcessor = new CKEDITOR.customprocessor( editor );
-        dataProcessor.dataFilter.addRules( wikiFilterRules );       
+        dataProcessor.dataFilter.addRules( wikiFilterRules );
 
         var signatureCommand =
         {
@@ -399,6 +410,12 @@ CKEDITOR.plugins.add( 'mediawiki',
 
         editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
         CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
+
+        editor.addCommand( 'enableObjectResizing', {
+          exec: function(editor){
+            mw.log('enableObjectResizing');
+          }
+        });
 
         
         //keep the buttons even if some extension is not installed
@@ -588,7 +605,7 @@ CKEDITOR.customprocessor.prototype =
 
         fragment.writeHtml( writer, this.dataFilter );
         data = writer.getHtml( true );
-       
+
         return data;
      },
 
@@ -703,6 +720,21 @@ CKEDITOR.customprocessor.prototype =
         return rootNode;
     },
 
+    getStyleAttribute: function(htmlNode, regexp){
+      var style = htmlNode.getAttribute('style');
+      var match = regexp.exec(style);
+      var attr = match && match[1];
+      return attr;
+    },
+
+    getStyleHeight: function(htmlNode){
+      return this.getStyleAttribute(htmlNode, /height\s*:\s*(\d+px)\s*/i);
+    },
+
+    getStyleWidth: function(htmlNode){
+      return this.getStyleAttribute(htmlNode, /width\s*:\s*(\d+px)\s*/i);
+    },
+
     getLinkWikiMarkup: function(htmlNode){
       // if there is no inner HTML in the Link, do not add it to the wikitext
       var label = this._GetNodeText(htmlNode).Trim();
@@ -717,7 +749,6 @@ CKEDITOR.customprocessor.prototype =
 
       //get link details
       var href = htmlNode.getAttribute( '_cke_saved_href' ) || htmlNode.getAttribute('href');
-//      href = decodeURIComponent(href);
       href = href.replace(/rtecolon/gi, '%3A');
       var hrefType = htmlNode.getAttribute( '_cke_mw_type' ) || htmlNode.getAttribute( '_fck_mw_type' );
       var title = htmlNode.getAttribute('title') || '';
@@ -1131,47 +1162,43 @@ CKEDITOR.customprocessor.prototype =
                                 
                                 var imgCaption	= htmlNode.getAttribute( '_fck_mw_caption' ) || '';
                                 var alt	= htmlNode.getAttribute( 'alt' ) || '';
-                                var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || htmlNode.getAttribute( '_cke_mw_type' ) || '';
+                                var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || htmlNode.getAttribute( '_cke_mw_type' ) || '';                                
                                 var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '';
-                                var imgWidth	= htmlNode.getAttribute( '_fck_mw_width' ) || '';
-                                var imgHeight	= htmlNode.getAttribute( '_fck_mw_height' ) || '';
-                                var imgStyle    = htmlNode.getAttribute( 'style' ) || '';
-                                var match = /(?:^|\s)width\s*:\s*(\d+)/i.exec( imgStyle ),
-                                imgStyleWidth = match && match[1] || 0;
-                                match = /(?:^|\s)height\s*:\s*(\d+)/i.exec( imgStyle );
-                                var imgStyleHeight = match && match[1] || 0;
-                                var imgRealWidth	= ( htmlNode.getAttribute( 'width' ) || '' ) + '';
-                                var imgRealHeight	= ( htmlNode.getAttribute( 'height' ) || '' ) + '';
-                                var imgNolink = ( htmlNode.getAttribute( 'no-link' ) || '' ) + '';
-                                var imgLink = ( htmlNode.getAttribute( 'link' ) || '' ) + '';
+                                //when image is resized using handles the size is set in "style" attribute, so try to get it first
+                                var imgWidth	= this.getStyleWidth(htmlNode) || htmlNode.getAttribute( 'width' ) || '' ;
+                                var imgHeight	= this.getStyleHeight(htmlNode) || htmlNode.getAttribute( 'height' ) || '' ;
+                                var imgNolink = htmlNode.getAttribute( 'no-link' ) || '' ;
+                                var imgLink = htmlNode.getAttribute( 'link' ) || '' ;
 
                                 stringBuilder.push( '[[File:' );
                                 stringBuilder.push( imgName );
 
-                                if ( imgStyleWidth.length > 0 )
-                                    imgWidth = imgStyleWidth;
-                                else if ( imgWidth.length > 0 && imgRealWidth.length > 0 )
-                                    imgWidth = imgRealWidth;
-
-                                if ( imgStyleHeight.length > 0 )
-                                    imgHeight = imgStyleHeight;
-                                else if ( imgHeight.length > 0 && imgRealHeight.length > 0 )
-                                    imgHeight = imgRealHeight;
-
-                                if ( imgType.length > 0 )
+                                if ( imgType )
                                     stringBuilder.push( '|' + imgType );
 
-                                if ( imgLocation.length > 0 )
+                                if ( imgLocation )
                                     stringBuilder.push( '|' + imgLocation );
 
-                                if ( imgWidth.length > 0 ){
-                                    stringBuilder.push( '|' + imgWidth );
-
-                                    if ( imgHeight.length > 0 )
-                                        stringBuilder.push( 'x' + imgHeight );
-
-                                    stringBuilder.push( 'px' );
+                                if ( imgWidth ){
+                                  if(imgHeight){
+                                    imgWidth = imgWidth.replace('px', '');
+                                  }
+                                  else if(imgWidth.indexOf('px') == -1){
+                                    imgWidth += 'px';
+                                  }
+                                  stringBuilder.push( '|' + imgWidth );
+                                  
+                                }                                
+                                if ( imgHeight ){
+                                  if(!imgWidth){
+                                    stringBuilder.push('|');
+                                  }
+                                  if(imgHeight.indexOf('px') == -1){
+                                    imgHeight += 'px';
+                                  }
+                                  stringBuilder.push( 'x' + imgHeight );
                                 }
+                                  
 
                                 if ( imgCaption ){
                                   imgCaption = decodeURIComponent(imgCaption);
@@ -1568,7 +1595,7 @@ CKEDITOR.customprocessor.prototype =
         },
         // in FF htmlNode.textContent is set, while IE needs htmlNode.text;
         _GetNodeText : function( htmlNode ) {
-            return htmlNode.text || htmlNode.textContent || '';
+            return htmlNode.text || htmlNode.textContent || htmlNode.innerText || '';
         },
 
         // Property and Category values must be of a certain format. Otherwise this will break

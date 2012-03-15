@@ -380,9 +380,7 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
 //                                dialog.originalElement.setAttribute( 'src', newImg );
 
                             }
-                        },
-                                        
-                        ///////Image Link text input definition/////////
+                        },                                       
                         {
                             id   : 'imageLink',
                             title: 'image link',
@@ -409,9 +407,6 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                                 }                                            
                             }                                          
                         },
-
-                        //////////////////////////////////////////////////
-
                         {
                             id: 'pageList',
                             type: 'select',
@@ -582,42 +577,30 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                         type: 'text',
                         label: editor.lang.common.width,                                        
                         setup : function( type, element ) {
-                            var imgStyle = element.getAttribute( 'style') || '',
-                            match = /(?:^|\s)width\s*:\s*(\d+)/i.exec( imgStyle ),
-							imgWidth = match && match[1] || 0;
-                            if(!imgWidth){
-                                imgWidth = element.getAttribute('_fck_mw_width');
-                            }
+                            var imgWidth = element.getAttribute('width');
                             if ( type == IMAGE && imgWidth )
                                 this.setValue( imgWidth );                            
                         },
-                        commit : function( type, element, internalCommit ) {
+                        commit : function( type, element ) {
                             var value = this.getValue();
                             if ( type == IMAGE )
                             {
+                                value = value.replace(/\D/g, '');
                                 if ( value )
-                                    element.setStyle( 'width', CKEDITOR.tools.cssLength( value ) );
-                                else if ( !value && this.isChanged( ) )
-                                    element.removeStyle( 'width' );
-                                                
-                                !internalCommit && element.removeAttribute( 'width' );
+                                    element.setAttribute('width', value + 'px');
+                                else if (this.isChanged())
+                                    element.removeAttribute( 'width' );
                             }
                             else if ( type == PREVIEW )
-                            {
-                                var aMatch = value.match( regexGetSize );
-                                if ( !aMatch )
-                                {
-                                    var oImageOriginal = this.getDialog().originalElement;
-                                    if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
-                                        element.setStyle( 'width',  oImageOriginal.$.width + 'px');
-                                }
-                                else
-                                    element.setStyle( 'width', CKEDITOR.tools.cssLength( value ) );
+                            {                                
+                                var oImageOriginal = this.getDialog().originalElement;
+                                if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
+                                    element.setAttribute('width', oImageOriginal.$.width + 'px');
+                            
                             }
                             else if ( type == CLEANUP )
                             {
                                 element.removeAttribute( 'width' );
-                                element.removeStyle( 'width' );
                             }
                         }
 
@@ -627,44 +610,30 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                         type: 'text',
                         label: editor.lang.common.height,                                        
                         setup : function( type, element ) {
-                            var imgStyle = element.getAttribute( 'style') || '',
-                            match = /(?:^|\s)height\s*:\s*(\d+)/i.exec( imgStyle ),
-							imgHeight = match && match[1] || 0;
-                            if(!imgHeight){
-                                imgHeight = element.getAttribute('_fck_mw_height');
-                            }
+                            var imgHeight = element.getAttribute('height');                           
                             if ( type == IMAGE && imgHeight )
                                 this.setValue( imgHeight );
                         },
-                        commit : function( type, element, internalCommit )
+                        commit : function( type, element )
                         {
                             var value = this.getValue();
                             if ( type == IMAGE )
                             {
+                                value = value.replace(/\D/g, '');
                                 if ( value )
-                                    element.setStyle( 'height', CKEDITOR.tools.cssLength( value ) );
-                                else if ( !value && this.isChanged( ) )
-                                    element.removeStyle( 'height' );
-
-                                if ( !internalCommit && type == IMAGE )
-                                    element.removeAttribute( 'height' );
+                                    element.setAttribute( 'height', value + 'px');
+                                else if (this.isChanged())
+                                    element.removeAttribute( 'height' );                                
                             }
                             else if ( type == PREVIEW )
-                            {
-                                var aMatch = value.match( regexGetSize );
-                                if ( !aMatch )
-                                {
-                                    var oImageOriginal = this.getDialog().originalElement;
-                                    if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
-                                        element.setStyle( 'height', oImageOriginal.$.height + 'px' );
-                                }
-                                else
-                                    element.setStyle( 'height',  CKEDITOR.tools.cssLength( value ) );
+                            {                                
+                                var oImageOriginal = this.getDialog().originalElement;
+                                if ( oImageOriginal.getCustomData( 'isReady' ) == 'true' )
+                                    element.setAttribute( 'height', oImageOriginal.$.height + 'px' );
                             }
                             else if ( type == CLEANUP )
                             {
                                 element.removeAttribute( 'height' );
-                                element.removeStyle( 'height' );
                             }
                         }
 

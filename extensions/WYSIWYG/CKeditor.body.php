@@ -447,7 +447,7 @@ class CKeditor_MediaWiki {
         }
     }
 
-		if( $_SESSION['showMyFCKeditor'] && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
+		if( array_key_exists('showMyFCKeditor', $_SESSION) && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
 			// Clear RTE_VISIBLE flag
 			$this->showFCKEditor &= ~RTE_VISIBLE;
 			// Get flag from session
