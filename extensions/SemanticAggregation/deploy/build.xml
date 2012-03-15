@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="SemanticAggregation">
+  <target name="build" depends="versionhint">
+    <echo>Start building ${ant.project.name}: ${ant.file}</echo>
+    <delete dir="bin/zip" quiet="true" />
+    <delete quiet="true">
+      <fileset dir="bin" includes="semanticaggregation*.zip" />
+    </delete>
+    <mkdir dir="bin/zip" />
+
+    <copy todir="bin/zip/extensions/SemanticAggregation/">
+      <fileset file="../**">
+        <exclude name="**/.svn, **/CVS" />
+        <exclude name="**/deploy/**" />
+        <exclude name="**/tests/**" />
+      </fileset>
+    </copy>
+
+    <zip destfile="bin/semanticaggregation.zip" basedir="bin/zip" />
+    <delete dir="bin/zip" quiet="true" />
+    <exec executable="php">
+      <arg value="../../../buildtools/renameDeployable.php" />
+      <arg value="../deploy.xml" />
+      <arg value="bin/semanticaggregation.zip" />
+    </exec>
+  </target>
+  <target name="versionhint">
+    <!--
+        <property environment="env" />
+        <exec executable="php">
+            <arg value="../../../buildtools/replaceVersionHint.php" />
+            <arg value="../deploy.xml" />
+            <arg value="../ApprovedRevs.php" />
+            <arg value="${env.BUILD_NUMBER}" />
+        </exec>
+-->
+  </target>
+</project>
