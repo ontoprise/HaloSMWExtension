@@ -75,10 +75,11 @@ $.webAdmin.operations.searchHandler = function(e) {
 								}
 								var extensionsToInstall = $
 										.parseJSON(xhr.responseText);
+								var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 								var url = wgServer
 										+ wgScriptPath
 										+ "/deployment/tools/webadmin/index.php?rs=install&rsargs[]="
-										+ encodeURIComponent(id + "-" + version);
+										+ encodeURIComponent(id + "-" + version) + "&rsargs[]="+encodeURIComponent(globalSettings);
 
 								var $dialog = $('#df_install_dialog')
 										.dialog(
@@ -214,12 +215,13 @@ $.webAdmin.operations.searchHandler = function(e) {
 																		.dialog(
 																				"close");
 
+																var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 																var url = wgServer
 																		+ wgScriptPath
 																		+ "/deployment/tools/webadmin/index.php?rs=update&rsargs[]="
 																		+ encodeURIComponent(id
 																				+ "-"
-																				+ version);
+																				+ version) + "&rsargs[]="+encodeURIComponent(globalSettings);
 																var $dialog = $(
 																		'#df_install_dialog')
 																		.dialog(

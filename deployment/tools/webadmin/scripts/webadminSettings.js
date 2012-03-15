@@ -27,9 +27,16 @@
  */
 $(document).ready(function(e) {
 	
+	$.webAdmin.settings = {};
+	$.webAdmin.settings.getSettings = function() {
+		var settings = getSettingsFromCookie(cookie);
+		return $.extend(settings_defaults, settings);
+	}
+	
 	// default settings of WAT options
 	var settings_defaults = { 
 			df_watsettings_overwrite_always : true,
+			df_watsettings_contain_to_other_bundle : true,
 			df_watsettings_apply_patches : true,
 			df_watsettings_create_restorepoints: false,
 			df_watsettings_hidden_annotations : true,

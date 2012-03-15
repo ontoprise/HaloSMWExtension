@@ -157,6 +157,42 @@ class DFUserInput {
 			default: $result = false;
 		}
 	}
+	
+    /**
+     * Callback method which decides what to do on a modified page.
+     * Contains out parameters which is declared by the call_user_func()
+     *
+     * @param DeployWikiRevision $deployRevision
+     * @param int $mode
+     * @param out boolean $result
+     */
+    public function pageToBeMerged($deployRevision, $mode, & $result) {
+        global $dfgOut, $dfgNoAsk;
+        if ((isset($dfgNoAsk) && $dfgNoAsk == true)) {
+            $result = true;
+            return;
+        }
+        static $overwrite = false;
+        switch ($mode) {
+            case DEPLOYWIKIREVISION_FORCE:
+                $result = true;
+                break;
+            case DEPLOYWIKIREVISION_WARN:
+                $result = true;
+                if ($overwrite) break;
+                $dfgOut->outputln("Page '".$deployRevision->title->getText()."' belongs to another bundle.");
+                $dfgOut->output("Merge? [(y)es/(n)o/(a)ll]?");
+                $line = trim(fgets(STDIN));
+                $overwrite = (strtolower($line) == 'a');
+                $result = (strtolower($line) != 'n');
+                break;
+            case DEPLOYWIKIREVISION_INFO:
+                $result = false;
+                $dfgOut->outputln("Page '".$deployRevision->title->getText()."' belongs to another bundle.");
+                break;
+            default: $result = false;
+        }
+    }
 
 	/**
 	 * Asks for a confirmation.

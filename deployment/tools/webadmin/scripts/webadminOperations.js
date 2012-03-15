@@ -182,6 +182,9 @@ $.webAdmin.operations.finalizeStarted = function(xhr, status) {
  *            status HTTP response code
  */
 $.webAdmin.operations.installStarted = function(xhr, status) {
+	
+	var globalSettings = $.webAdmin.settings.getSettings();
+	
 	if (xhr.responseText.indexOf('session: time-out') != -1) {
 		alert("Please login again. Session timed-out");
 		return;
@@ -369,6 +372,9 @@ $.webAdmin.operations.deinstallStarted = function(xhr, status) {
  *            status HTTP response code
  */
 $.webAdmin.operations.updateStarted = function(xhr, status) {
+	
+	var globalSettings = $.webAdmin.settings.getSettings();
+	
 	if (xhr.responseText.indexOf('session: time-out') != -1) {
 		alert("Please login again. Session timed-out");
 		return;
@@ -438,6 +444,11 @@ $.webAdmin.operations.updateStarted = function(xhr, status) {
 											dfgWebAdminLanguage
 													.getMessage('df_webadmin_finished'));
 							$dialog.dialog('option', 'errorstatus', 'true');
+							$dialog.dialog("option", "buttons", {
+								"Ok" : function() {
+									$(this).dialog("close");
+								}
+							});
 						}
 
 					}
@@ -525,6 +536,11 @@ $.webAdmin.operations.globalUpdateStarted = function(xhr, status) {
 											'title',
 											dfgWebAdminLanguage
 													.getMessage('df_webadmin_finished'));
+							$dialog.dialog("option", "buttons", {
+								"Ok" : function() {
+									$(this).dialog("close");
+								}
+							});
 						}
 
 					}

@@ -126,7 +126,7 @@ class Rollback {
 			$wgDBadminuser = $this->getVariableValue("LocalSettings.php", "wgDBadminuser");
 			$wgDBadminpassword = $this->getVariableValue("LocalSettings.php", "wgDBadminpassword");
 			$wgDBserver = $this->getVariableValue("LocalSettings.php", "wgDBserver");
-				
+
 			if (empty($wgDBadminuser) || empty($wgDBadminpassword)) {
 				$dfgOut->outputln('$wgDBadminuser and $wgDBadminpassword is empty! Please set.', DF_PRINTSTREAM_TYPE_WARN);
 			}
@@ -238,9 +238,14 @@ class Rollback {
 
 		if ($calledOnce) return $answer;
 		$calledOnce = true;
-
-		$dfgOut->outputln("Create new restore point (y/n)? ");
-		$line = trim(fgets(STDIN));
+        
+		global $dfgGlobalOptionsValues;
+		if (array_key_exists('df_watsettings_apply_patches', $dfgGlobalOptionsValues)) {
+			$line = $dfgGlobalOptionsValues['df_watsettings_apply_patches'] ? 'y' : 'n';
+		} else {
+			$dfgOut->outputln("Create new restore point (y/n)? ");
+			$line = trim(fgets(STDIN));
+		}
 		if (strtolower($line) == 'n') {
 			$dfgOut->outputln("\nDo not create a restore point.\n\n");
 			$answer = false;
@@ -308,13 +313,13 @@ class Rollback {
 
 		$logger->info("Remove current installation");
 		$dfgOut->outputln("[Remove current installation...");
-		
+
 		Tools::remove_dir($this->rootDir, "unzip.exe");
 		$dfgOut->output("done.]");
 
 		$logger->info("Restore old installation");
 		$dfgOut->outputln("[Restore old installation...");
-		
+
 		$success = Tools::unpackZip($this->restoreDir."/$name/software.zip", $this->rootDir, $this->rootDir);
 		if (!$success) {
 			$logger->error("Restore old installation faild. Could not copy from ".$this->restoreDir."/$name");

@@ -92,8 +92,8 @@ if ($dfgOutputFormat != "text") {
 
 // check PHP version
 $phpver = str_replace(".","",phpversion());
-if ($phpver < 520) {
-	dffExitOnFatalError("PHP version must be >= 5.2\n");
+if ($phpver < 530) {
+	dffExitOnFatalError("PHP version must be >= 5.3 (except 5.3.1)\n");
 }
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
@@ -154,6 +154,7 @@ $dfgNoAsk=false;
 $dfgApplyPatchesFor=NULL;
 $dfgCreateProperties=false;
 $dfgShowOKHint = false;
+$dfgGlobalOptionsValues=array();
 
 $args = $_SERVER['argv'];
 array_shift($args); // remove script name
@@ -309,13 +310,19 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		// ignore
 		$dfgShowOKHint = true;
 		continue;
-	} else {
+	} else if ($arg == '--options') {
+        $temp = next($args);
+        $temp = explode(",", $temp);
+        foreach($temp as $t) {
+        	list($id, $on) = explode("=",$t);
+        	$dfgGlobalOptionsValues[$id] = ($on == "true");
+        }
+        continue;
+    } else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
 }
-
-
 
 
 try {

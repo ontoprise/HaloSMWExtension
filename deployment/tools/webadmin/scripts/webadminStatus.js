@@ -168,11 +168,11 @@ $(document)
 																					this)
 																					.dialog(
 																							"close");
-
+																			var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 																			var url = wgServer
 																					+ wgScriptPath
 																					+ "/deployment/tools/webadmin/index.php?rs=deinstall&rsargs[]="
-																					+ encodeURIComponent(id);
+																					+ encodeURIComponent(id) + "&rsargs[]="+encodeURIComponent(globalSettings);
 																			var $dialog = $(
 																					'#df_install_dialog')
 																					.dialog(
@@ -258,12 +258,13 @@ $(document)
 																					.dialog(
 																							"close");
 
+																			var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 																			var url = wgServer
 																					+ wgScriptPath
 																					+ "/deployment/tools/webadmin/index.php?rs=update&rsargs[]="
 																					+ encodeURIComponent(id
 																							+ "-"
-																							+ version);
+																							+ version) + "&rsargs[]="+encodeURIComponent(globalSettings);
 																			var $dialog = $(
 																					'#df_install_dialog')
 																					.dialog(
@@ -375,9 +376,11 @@ $(document)
 																						this)
 																						.dialog(
 																								"close");
+																				var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 																				var url = wgServer
 																						+ wgScriptPath
-																						+ "/deployment/tools/webadmin/index.php?rs=doGlobalUpdate&rsargs[]=";
+																						+ "/deployment/tools/webadmin/index.php?rs=doGlobalUpdate"
+																						+ "&rsargs[]="+encodeURIComponent(globalSettings);
 																				var $dialog = $(
 																						'#df_install_dialog')
 																						.dialog(

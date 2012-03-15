@@ -294,7 +294,12 @@ class DeployDescriptionProcessor {
 			if (count($filteredOut) > 0) {
 				foreach($filteredOut as $line) $dfgOut->outputln($line); // show failures
 				$dfgOut->outputln();
-				$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
+				global $dfgGlobalOptionsValues;
+				if (array_key_exists('df_watsettings_apply_patches', $dfgGlobalOptionsValues)) {
+					$result = $dfgGlobalOptionsValues['df_watsettings_apply_patches'] ? 'y' : 'n';
+				} else {
+					$userCallback->getUserConfirmation("Some patches failed. Apply anyway?", $result);
+				}
 			}
 		}
 
@@ -782,22 +787,22 @@ class RequireConfigElement extends ConfigElement {
  *
  */
 class ReplaceConfigElement extends ConfigElement {
-	
+
 	// text to search for
 	var $search;
-	
+
 	// text to replace with
 	var $replacement;
 	// optional attribute parameter for replacement
 	var $proposal;
-	
+
 	// optional file in which text is replaced
 	// if missing the replacement is done in LocalSettings.php
 	var $file;
-	
+
 	// DeployDescriptor
 	var $dd;
-	
+
 	// location of PHP interpreter
 	var $phpExe;
 
@@ -829,9 +834,9 @@ class ReplaceConfigElement extends ConfigElement {
 				$parts = explode(":", $this->proposal);
 				exec("\"$this->phpExe\" \"$mwrootDir/deployment/tools/maintenance/getSettings.php\" -v ".trim($parts[1]), $out, $ret);
 				$this->replacement = $ret == 0 ? trim(reset($out)) : '';
-				
+
 			}
-            
+
 			// get file location
 			if ($this->dd->isNonPublic()) {
 				$appPaths = Tools::getNonPublicAppPath($mwrootDir);
@@ -839,7 +844,7 @@ class ReplaceConfigElement extends ConfigElement {
 			} else {
 				$filePath = $mwrootDir."/".$this->dd->getInstallationDirectory()."/$this->file";
 			}
-			
+				
 			// change file
 			$content = file_get_contents($filePath);
 			$content = str_replace($this->search, $this->replacement, $content);
