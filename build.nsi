@@ -142,6 +142,12 @@ RequestExecutionLevel admin
 Var FILE_LIST
 Var STARTMENU_FOLDER
 Var MUI_TEMP
+
+Var JAVA_HOME
+Var JAVA_HOME_SHORT
+Var JAVA_VER
+Var JAVA_INSTALLATION_MSG
+
 ; Pages --------------------------------
 
 !define MUI_ICON "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\images\smwplus_32.ico"
@@ -154,7 +160,7 @@ Var MUI_TEMP
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of third party components"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\thirdparty.txt"
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW initComponentsPage
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkForAlreadyRunningProcess
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE checkEnvironment
 !insertmacro MUI_PAGE_COMPONENTS
 
 !define MUI_PAGE_CUSTOMFUNCTION_PRE preDirectory
@@ -576,7 +582,8 @@ LangString LUCENE_PAGE_SUBTITLE ${LANG_ENGLISH} "Specify the IP address of the W
 
 LangString SELECT_XAMPP_DIR ${LANG_ENGLISH} "Select an empty directory where to install XAMPP and the wiki."
 LangString SELECT_NEWUPDATE_DIR ${LANG_ENGLISH} "Select an existing installation to update."
-LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache, MySQL and/or memcached. You MUST stop them before continuing."
+LangString STARTED_SERVERS ${LANG_ENGLISH} "There are already running instances of Apache, MySQL, SOLR and/or memcached. You MUST stop them before continuing."
+LangString NOJAVAINSTALLED ${LANG_ENGLISH} "No Java found! Please quit the installer and install the latest release of Java 6."
 LangString COULD_NOT_START_SERVERS ${LANG_ENGLISH} "Apache and MySQL could not be started for some reason. Installation may not be complete!"
 LangString FIREWALL_COMPLAIN_INFO ${LANG_ENGLISH} "Windows firewall may block the apache and mySQL processes. $\n If this is the case with your installation, then unblock both processes in the pop-up windows $\n and click on 'OK' to finish the installation process."
 LangString DIRECTORY_HINT ${LANG_ENGLISH} "Please note that SMW+ must not be installed in directories containing parantheses or blanks, like 'Programs (x86)'"
@@ -613,12 +620,25 @@ Function checkDirectoryValidity
   ${EndIf}
 FunctionEnd
 
-Function checkForAlreadyRunningProcess
+Function checkEnvironment
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   ${If} $0 == 1
     CALL checkForApacheAndMySQLAndMemcached
   ${EndIf}
+  
+  ; Check for Java
+  Call LocateJVM
+  StrCmp "" $JAVA_INSTALLATION_MSG Success InstallJava
+
+  Success:
+     Goto JavaInstalled
+        
+  InstallJava:
+    MessageBox MB_ICONEXCLAMATION|MB_OK $(NOJAVAINSTALLED) IDOK 0
+    Abort
+     
+  JavaInstalled: 
 FunctionEnd
 
 Function checkForApacheAndMySQLAndMemcached
@@ -1811,4 +1831,53 @@ Function StrContains
   Pop $R2
   Pop $R1
   Exch $R0
+FunctionEnd
+
+###########################################################################
+# Function for checking Java version and location
+###########################################################################
+Function LocateJVM
+    Push $0
+    Push $1
+    
+    ReadRegStr $JAVA_VER HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+#    MessageBox MB_OK "Detected Java version: $JAVA_VER"
+    DetailPrint "Detected Java version: [$JAVA_VER]."
+    StrCmp "" $JAVA_VER JavaNotPresent CheckJavaVer
+
+    JavaNotPresent:
+        DetailPrint "No Java detected."
+        StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not \
+             installed on your computer. You need version 1.6 or newer to \
+             run this program."
+#        MessageBox MB_OK "$JAVA_INSTALLATION_MSG java_ver:$JAVA_VER"
+        Goto Done
+
+    CheckJavaVer:
+#        MessageBox MB_OK "Java is present, check java version"
+        DetailPrint "Checking Java version ..."
+        ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$JAVA_VER" JavaHome
+        GetFullPathName $JAVA_HOME "$0"
+        GetFullPathName /SHORT $JAVA_HOME_SHORT "$0"
+        StrCpy $0 $JAVA_VER 1 0
+        StrCpy $1 $JAVA_VER 1 2
+        StrCpy $JAVA_VER "$0$1"
+        IntCmp ${REQUIRED_JAVA_VERSION} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
+        
+    FoundCorrectJavaVer:
+#        MessageBox MB_OK "Found valid Java version"
+        DetailPrint "Found valid Java version."
+        IfFileExists "$JAVA_HOME_SHORT\bin\javaw.exe" 0 JavaNotPresent
+        Goto Done
+        
+    JavaVerNotCorrect:
+#        MessageBox MB_OK "Java version not correct"
+        DetailPrint "Found invalid Java version."
+        StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment \
+            installed on your computer is $JAVA_VER. Version ${REQUIRED_JAVA_VERSION} or newer is required to \
+            run this program."
+        
+    Done:
+        Pop $1
+        Pop $0
 FunctionEnd
