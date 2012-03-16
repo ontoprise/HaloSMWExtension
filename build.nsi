@@ -143,6 +143,10 @@ Var FILE_LIST
 Var STARTMENU_FOLDER
 Var MUI_TEMP
 
+Var JAVA_HOME
+Var JAVA_HOME_SHORT
+Var JAVA_VER
+Var JAVA_INSTALLATION_MSG
 
 ; Pages --------------------------------
 
@@ -151,7 +155,6 @@ Var MUI_TEMP
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_LICENSEPAGE_CHECKBOX
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of SMW+ Community Edition and SMW+ Professional"
-!insertmacro MUI_DEFAULT MUI_LICENSEPAGE_BUTTON "I accept the terms of the License aggreement"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\op_license.txt"
 !insertmacro MUI_DEFAULT MUI_LICENSEPAGE_TEXT_TOP "License agreement of third party components"
 !insertmacro MUI_PAGE_LICENSE "..\..\..\Internal__SMWPlusInstaller_and_XAMPP\workspace\SMWPlusInstaller\thirdparty.txt"
@@ -631,7 +634,7 @@ Function checkEnvironment
      Goto JavaInstalled
         
   InstallJava:
-    MessageBox MB_ICONEXCLAMATION|MB_OK $(NOJAVAINSTALLED) IDOK 0
+    MessageBox MB_ICONEXCLAMATION|MB_OK $JAVA_INSTALLATION_MSG IDOK 0
     Abort
      
   JavaInstalled: 
@@ -1020,12 +1023,6 @@ Function FinishPageShow
     ShowWindow $R0 ${SW_HIDE}
   ${Endif}*/
 FunctionEnd
-
-Var JAVA_HOME
-Var JAVA_HOME_SHORT
-Var JAVA_VER
-Var JAVA_INSTALLATION_MSG
-
 
 
 Function LocateJVM
