@@ -659,8 +659,8 @@ ToolbarFramework.prototype = {
 }
 
 window.stb_control = new ToolbarFramework();
-if (typeof FCKeditor == 'undefined' 
-    && (typeof wgHideSemanticToolbar === 'undefined'
-	    ||  wgHideSemanticToolbar !== true)) {
+if (typeof CKEDITOR === 'undefined'
+    && (typeof wgHideSemanticToolbar === 'undefined' ||  wgHideSemanticToolbar !== true))
+{
 	Event.observe(window, 'load', stb_control.initToolbarFramework.bind(stb_control));
 }

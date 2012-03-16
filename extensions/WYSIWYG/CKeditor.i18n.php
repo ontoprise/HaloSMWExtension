@@ -10,11 +10,14 @@ $messages = array();
 
 /** English */
 $messages['en'] = array(
+  'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
 	'fckeditor-desc' => 'Allow editing using the WYSIWYG editor CKEditor',
-	'textrichditor' => 'Show RichTextEditor',
-  'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+	'textrichditor' => 'Show RichTextEditor',  
 	'prefs-fckeditor' => 'Rich Editor',
 	'tog-riched_disable' => 'Disable rich text editor',
+  'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'tog-riched_disable_ns_main' => 'Disable rich editor within the main namespace',
 	'tog-riched_disable_ns_talk' => 'Disable rich editor within the "{{ns:talk}}" namespace',
 	'tog-riched_disable_ns_user' => 'Disable rich editor within the "{{ns:user}}" namespace',
@@ -35,8 +38,8 @@ $messages['en'] = array(
 	'tog-riched_start_disabled' => 'Start with rich editor disabled',
 	'tog-riched_use_popup' => 'Open rich editor in a popup',
 	'tog-riched_use_toggle' => 'Use toggle to switch between wikitext and rich editor (replace textarea with rich editor)',
-	'tog-riched_toggle_remember_state' => 'Remember last toggle state',
-    'load-stb-on-startup' => 'Open Semantic Toolbar automatically',
+	'tog-riched_toggle_remember_state' => 'Remember last toggle state (requires visible toggle link)',
+  'load-stb-on-startup' => 'Open Semantic Toolbar automatically',
 );
 
 /** Message documentation (Message documentation)
@@ -54,6 +57,10 @@ $messages['qqq'] = array(
  * @author OsamaK
  */
 $messages['ar'] = array(
+  'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+  'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'يسمح بالتعديل باستخدام محرر الWYSIWYG CKEditor',
 	'textrichditor' => 'محرر متقدم',
 	'prefs-fckeditor' => 'محرّر غني',
@@ -86,6 +93,10 @@ $messages['ar'] = array(
  * @author Jim-by
  */
 $messages['be-tarask'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Дазваляе рэдагаваньне з дапамогай WYSIWYG рэдактара CKEditor',
 	'textrichditor' => 'Палепшаны рэдактар',
 	'prefs-fckeditor' => 'Палепшаны рэдактар',
@@ -117,6 +128,10 @@ $messages['be-tarask'] = array(
  * @author DCLXVI
  */
 $messages['bg'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => 'Разширен редактор',
 	'tog-riched_disable' => 'Изключване на разширения редактор',
 	'tog-riched_disable_ns_main' => 'Изключване на разширения редактор в основното именно пространство',
@@ -141,6 +156,10 @@ $messages['bg'] = array(
  * @author Fulup
  */
 $messages['br'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Aotren a ra implijout ar skridaozer WYSIWYG CKEditor evit degas kemmoù',
 	'textrichditor' => 'Skridaozer Pinvidikaet',
 	'prefs-fckeditor' => 'Skridaozer Pinvidikaet',
@@ -172,6 +191,10 @@ $messages['br'] = array(
  * @author CERminator
  */
 $messages['bs'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Omogućava uređivanje koristeći WYSIWYG uređivač CKEditor',
 	'textrichditor' => 'Vizuelni uređivač',
 	'prefs-fckeditor' => 'Vizuelni uređivač',
@@ -203,6 +226,10 @@ $messages['bs'] = array(
  * @author Solde
  */
 $messages['ca'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => 'Editor enriquit',
 	'prefs-fckeditor' => 'Editor enriquit',
 	'tog-riched_disable' => "Deshabilita l'editor enriquit",
@@ -228,6 +255,10 @@ $messages['ca'] = array(
  * @author Umherirrender
  */
 $messages['de'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Ermöglicht die Nutzung des WYSIWYG-Editors „CKEditor“',
 	'textrichditor' => 'Mit dem Texteditor öffnen',
 	'prefs-fckeditor' => 'Texteditor',
@@ -260,6 +291,10 @@ $messages['de'] = array(
  * @author Michawiki
  */
 $messages['dsb'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Wobźěłanje z pomocu editora WYSIWYG CKEditor dowóliś',
 	'textrichditor' => 'Rich editor',
 	'prefs-fckeditor' => 'Rich editor',
@@ -291,6 +326,8 @@ $messages['dsb'] = array(
  * @author Omnipaedista
  */
 $messages['el'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
 	'textrichditor' => 'Εμπλουτισμένος Επεξεργαστής',
 	'prefs-fckeditor' => 'Εμπλουτισμένος Επεξεργαστής',
 	'tog-riched_disable' => 'Απενεργοποίηση εμπλουτισμένου επεξεργαστή',
@@ -307,6 +344,10 @@ $messages['eo'] = array(
  * @author Locos epraix
  */
 $messages['es'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permitir edición usando el editor WYSIWYG CKEditor',
 	'textrichditor' => 'Editor enriquecido',
 	'prefs-fckeditor' => 'Editor enriquecido',
@@ -340,6 +381,10 @@ $messages['es'] = array(
  * @author Kobazulo
  */
 $messages['eu'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'CKEditor editoreak eskaintzen duen WYSIWYG edizio modua gaitu',
 	'textrichditor' => 'Aberastutako Editorea',
 	'prefs-fckeditor' => 'Aberastutako Editorea',
@@ -369,6 +414,10 @@ $messages['eu'] = array(
 
 /** Persian (فارسی) */
 $messages['fa'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => 'ويرايشگر پيشرفته',
 	'tog-riched_disable' => 'غيرفعال کردن ويرايشگر پيشرفته',
 	'tog-riched_disable_ns_main' => 'غيرفعال کردن ويرايشگر پيشرفته در فضاي نام اصلي',
@@ -395,6 +444,10 @@ $messages['fa'] = array(
  * @author Jack Phoenix <jack@countervandalism.net>
  */
 $messages['fi'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Mahdollistaa muokkaamisen WYSIWYG-tyylillä käyttäen CKEditoria.',
 	'textrichditor' => 'Rikas editori',
 	'prefs-fckeditor' => 'Rich-editori',
@@ -428,6 +481,10 @@ $messages['fi'] = array(
  * @author Verdy p
  */
 $messages['fr'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permet la modification en utilisant l’éditeur WYSIWYG CKEditor',
 	'textrichditor' => 'Éditeur de texte enrichi',
 	'prefs-fckeditor' => 'Éditeur enrichi',
@@ -459,6 +516,10 @@ $messages['fr'] = array(
  * @author Toliño
  */
 $messages['gl'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permite a edición empregando o editor WYSIWYG CKEditor',
 	'textrichditor' => 'Editor enriquecido',
 	'prefs-fckeditor' => 'Editor enriquecido',
@@ -490,6 +551,10 @@ $messages['gl'] = array(
  * @author Als-Holder
  */
 $messages['gsw'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Bearbeite erlaube mit em WYSIWYG-Editor CKEditor',
 	'textrichditor' => 'Rich Editor',
 	'prefs-fckeditor' => 'Rich Editor',
@@ -522,6 +587,10 @@ $messages['gsw'] = array(
  * @author YaronSh
  */
 $messages['he'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'מתן האפשרות לעריכה באמצעות עורך WYSIWYG בשם CKEditor',
 	'textrichditor' => 'עורך עשיר',
 	'prefs-fckeditor' => 'עורך לטקסט מעוצב',
@@ -552,7 +621,10 @@ $messages['he'] = array(
 /** Upper Sorbian (Hornjoserbsce)
  * @author Michawiki
  */
-$messages['hsb'] = array(
+$messages['hsb'] = array('edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Wobdźěłanje z pomocu editora WYSIWYG CKEditor dowolić',
 	'textrichditor' => 'Rich editor',
 	'prefs-fckeditor' => 'Rich editor',
@@ -584,6 +656,10 @@ $messages['hsb'] = array(
  * @author Glanthor Reviol
  */
 $messages['hu'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => '„Amit látsz, azt kapod” (WYSIWYG) szerkesztő',
 	'textrichditor' => 'Vizuális szerkesztő',
 	'prefs-fckeditor' => 'Vizuális szerkesztő',
@@ -615,6 +691,10 @@ $messages['hu'] = array(
  * @author McDutchie
  */
 $messages['ia'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permitter le modification con le editor WYSIWYG CKEditor',
 	'textrichditor' => 'Editor typographic',
 	'prefs-fckeditor' => 'Editor typographic',
@@ -646,6 +726,10 @@ $messages['ia'] = array(
  * @author Bennylin
  */
 $messages['id'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Mengijinkan penyuntingan menggunakan penyunting WYSIWYG CKEditor',
 	'textrichditor' => 'Penyunting Kaya',
 	'prefs-fckeditor' => 'Penyunting Kaya',
@@ -677,6 +761,10 @@ $messages['id'] = array(
  * @author Pinodd
  */
 $messages['it'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => "Consenti la modifica utilizzando l'editor WYSIWYG CKEditor",
 	'textrichditor' => 'Rich Editor',
 	'prefs-fckeditor' => 'Rich Editor',
@@ -708,6 +796,10 @@ $messages['it'] = array(
  * @author Fryed-peach
  */
 $messages['ja'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'WYSIWYG を実現した CKEditor を使用して編集できるようにする',
 	'textrichditor' => 'リッチエディタ',
 	'prefs-fckeditor' => 'リッチエディタ',
@@ -740,6 +832,10 @@ $messages['ja'] = array(
  * @author Klutzy
  */
 $messages['ko'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => '위지윅 편집기 CKEditor를 이용하여 편집하는것을 허용',
 	'textrichditor' => '리치 에디터',
 	'prefs-fckeditor' => '리치 에디터',
@@ -771,6 +867,10 @@ $messages['ko'] = array(
  * @author Purodha
  */
 $messages['ksh'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Määt es müjjelesch, de Sigge met däm „<i lang="en">Rich Editor</i>“ en dä <i lang="en">WYSIWYG</i>-Mannier ze ändere.',
 	'textrichditor' => '<i lang="en">Rich Editor</i>',
 	'prefs-fckeditor' => '„<i lang="en">Rich Editor</i>“',
@@ -802,6 +902,10 @@ $messages['ksh'] = array(
  * @author Robby
  */
 $messages['lb'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Erlaabt et de WYSIWYG-Editeur CKEditor ze benotzen',
 	'textrichditor' => 'Editeur mat erweiderte Fonctiounen',
 	'prefs-fckeditor' => 'Editeur mat erweiderte Fonctiounen',
@@ -833,6 +937,10 @@ $messages['lb'] = array(
  * @author Bjankuloski06
  */
 $messages['mk'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Овозможува уредување со помош на визуелниот (WYSIWYG) уредник CKEditor',
 	'textrichditor' => 'Визуелен уредувач',
 	'prefs-fckeditor' => 'Визуелен уредувач',
@@ -864,6 +972,10 @@ $messages['mk'] = array(
  * @author Kaustubh
  */
 $messages['mr'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => 'वाढीव संपादक',
 	'tog-riched_disable' => 'वाढीव संपादक रद्द करा',
 	'tog-riched_disable_ns_main' => 'मुख्य नामविश्वात वाढीव संपादक रद्द करा',
@@ -888,6 +1000,10 @@ $messages['mr'] = array(
  * @author Siebrand
  */
 $messages['nl'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Maakt bewerken met de WYSIWYG-editor CKEditor mogelijk',
 	'textrichditor' => 'Uitgebreide editor',
 	'prefs-fckeditor' => 'Uitgebreide editor',
@@ -919,6 +1035,8 @@ $messages['nl'] = array(
  * @author Gunnernett
  */
 $messages['nn'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
 	'tog-riched_disable_ns_main' => 'Slå av rik tekstredigering i hovudnamneromet',
 );
 
@@ -928,6 +1046,10 @@ $messages['nn'] = array(
  * @author Nghtwlkr
  */
 $messages['no'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Tillatt redigeringer med «WYSIWYG»-editoren CKEditor',
 	'textrichditor' => 'Rik tekstredigering',
 	'prefs-fckeditor' => 'Rik editor',
@@ -959,6 +1081,10 @@ $messages['no'] = array(
  * @author Cedric31
  */
 $messages['oc'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permet la modificacion en utilizant l’editor WYSIWYG CKEditor',
 	'textrichditor' => "''Rich Editor''",
 	'prefs-fckeditor' => 'Editor enriquit',
@@ -990,6 +1116,10 @@ $messages['oc'] = array(
  * @author Sp5uhe
  */
 $messages['pl'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Umożliwia korzystanie z edytora WYSIWYG o nazwie CKEditor',
 	'textrichditor' => 'Rozbudowany edytor',
 	'prefs-fckeditor' => 'Rozbudowany edytor',
@@ -1022,6 +1152,10 @@ $messages['pl'] = array(
  * @author Dragonòt
  */
 $messages['pms'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => "A përmëtt ëd modifiché con l'editor WYSIWYG CKEditor",
 	'textrichditor' => 'Editor svicio',
 	'prefs-fckeditor' => 'Editor rich',
@@ -1055,6 +1189,10 @@ $messages['pms'] = array(
  * @author Malafaya
  */
 $messages['pt'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permitir edição através do editor WYSIWYG, CKEditor',
 	'textrichditor' => 'Editor Rico',
 	'prefs-fckeditor' => 'Editor Rico',
@@ -1086,6 +1224,10 @@ $messages['pt'] = array(
  * @author Daemorris
  */
 $messages['pt-br'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Permitir edição usando o editor CKEditor WYSIWYG',
 	'textrichditor' => 'Editor Rico',
 	'prefs-fckeditor' => 'Editor Rico',
@@ -1117,6 +1259,10 @@ $messages['pt-br'] = array(
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Позволяет редактировать с помощью визульного-редактора CKEditor',
 	'textrichditor' => 'Визуальный редактор',
 	'prefs-fckeditor' => 'Визуальный редактор',
@@ -1148,6 +1294,10 @@ $messages['ru'] = array(
  * @author Helix84
  */
 $messages['sk'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Umožniť úpravy pomocou WYSIWYG editora CKEditor',
 	'textrichditor' => 'Editor formátovaného textu',
 	'prefs-fckeditor' => 'Editor obohateného textu',
@@ -1179,6 +1329,10 @@ $messages['sk'] = array(
  * @author Sertion
  */
 $messages['sv'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Skapar möjligheten att redigera med WYSIWYG-redigeraren CKEditor',
 	'textrichditor' => 'Grafiskt läge',
 	'prefs-fckeditor' => 'Grafiskt läge',
@@ -1210,6 +1364,8 @@ $messages['sv'] = array(
  * @author Veeven
  */
 $messages['te'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
 	'textrichditor' => 'సిరి కూర్పరి',
 	'prefs-fckeditor' => 'సిరి కూర్పరి',
 	'tog-riched_disable' => 'సిరి కూర్పరిని అచేతనం చేయండి',
@@ -1219,6 +1375,10 @@ $messages['te'] = array(
  * @author AnakngAraw
  */
 $messages['tl'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Ipahintulot ang pamamatnugot na gamit ang patnugot na FCK ng patnugot na WYSIWYG',
 	'textrichditor' => 'Mayamang Patnugot',
 	'prefs-fckeditor' => 'Mayamang Patnugot',
@@ -1250,6 +1410,10 @@ $messages['tl'] = array(
  * @author Vito Genovese
  */
 $messages['tr'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => 'Zengin Editör',
 	'prefs-fckeditor' => 'Zengin Editör',
 	'tog-riched_disable' => 'Zengin editörü devre dışı bırak',
@@ -1276,6 +1440,10 @@ $messages['uk'] = array(
  * @author Vinhtantran
  */
 $messages['vi'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => 'Cho phép sửa đổi dùng bộ soạn thảo WYSIWYG CKEditor',
 	'textrichditor' => 'Bộ soạn thảo phong phú',
 	'prefs-fckeditor' => 'Bộ soạn thảo phong phú',
@@ -1307,6 +1475,10 @@ $messages['vi'] = array(
  * @author PhiLiP
  */
 $messages['zh-hans'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => '允许在编辑时使用所见即所得工具CKEditor',
 	'textrichditor' => '富文本编辑器',
 	'prefs-fckeditor' => '富文本编辑器',
@@ -1338,6 +1510,10 @@ $messages['zh-hans'] = array(
  * @author Liangent
  */
 $messages['zh-hant'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'fckeditor-desc' => '允許在編輯時使用所見即所得工具CKEditor',
 	'textrichditor' => '富文本編輯器',
 	'prefs-fckeditor' => '富文本編輯器',
@@ -1369,6 +1545,10 @@ $messages['zh-hant'] = array(
  * @author Roc michael
  */
 $messages['zh-tw'] = array(
+    'edit-in-richeditor' => 'Edit using RichTextEditor',
+  'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
+    'tog-show-wikitexteditor' => 'Show WikiTextEditor',
+  'prefs-fckeditor-disable-namespaces' => 'Disable rich editor within the following namespaces',
 	'textrichditor' => '視覺化編輯器(Rich Editor)',
 	'prefs-fckeditor' => '視覺化編輯器',
 	'tog-riched_disable' => '停用視覺化編輯器(rich editor)',

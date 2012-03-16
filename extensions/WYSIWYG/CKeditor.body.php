@@ -17,41 +17,13 @@ define('RTE_POPUP', 4);
 
 class CKeditor_MediaWiki {
 	public $showFCKEditor;
-    public $loadSTBonStartup;
+  public $loadSTBonStartup;
 	private $count = array();
 	private $wgFCKBypassText = '';
 	private $debug = 0;
 	private $excludedNamespaces;
 	private $oldTextBox1;
-	static $nsToggles = array(
-	'riched_disable_ns_main',
-	'riched_disable_ns_talk',
-	'riched_disable_ns_user',
-	'riched_disable_ns_user_talk',
-	'riched_disable_ns_project',
-	'riched_disable_ns_project_talk',
-	'riched_disable_ns_image',
-	'riched_disable_ns_image_talk',
-	'riched_disable_ns_mediawiki',
-	'riched_disable_ns_mediawiki_talk',
-	'riched_disable_ns_template',
-	'riched_disable_ns_template_talk',
-	'riched_disable_ns_help',
-	'riched_disable_ns_help_talk',
-	'riched_disable_ns_category',
-	'riched_disable_ns_category_talk',
-	);
-        
-        private $ckeditorHeadScript;
-
-	function __call( $m, $a ) {
-		print "\n#### " . $m . "\n";
-		if( !isset( $this->count[$m] ) ) {
-			$this->count[$m] = 0;
-		}
-		$this->count[$m]++;
-		return true;
-	}
+  private $ckeditorHeadScript;
 
 	/**
 	 * Gets the namespaces where FCKeditor should be disabled
@@ -62,10 +34,12 @@ class CKeditor_MediaWiki {
 
 		if( is_null( $this->excludedNamespaces ) ) {
 			$this->excludedNamespaces = array();
-			foreach( self::$nsToggles as $toggle ) {
-				$default = isset( $wgDefaultUserOptions[$toggle] ) ? $wgDefaultUserOptions[$toggle] : '';
-				if( $wgUser->getOption( $toggle, $default ) ) {
-					$this->excludedNamespaces[] = constant( strtoupper( str_replace( 'riched_disable_', '', $toggle ) ) );
+      $namespaces = self::buildNamespaceOptions(MWNamespace::getCanonicalNamespaces());
+			foreach( $namespaces as $key => $value ) {
+        $optionValue = 'cke_ns_' . $value;
+        $default = array_key_exists($optionValue, $wgDefaultUserOptions) ? $wgDefaultUserOptions[$optionValue] : '';
+				if( $wgUser->getOption( $optionValue, $default ) ) {
+					$this->excludedNamespaces[] = constant( $value );
 				}
 			}
 			/*
@@ -313,33 +287,33 @@ class CKeditor_MediaWiki {
 		$vars['wgFCKEditorExtDir'] = $wgFCKEditorExtDir;
 		$vars['wgFCKEditorToolbarSet'] = $wgFCKEditorToolbarSet;
 		$vars['wgFCKEditorHeight'] = $wgFCKEditorHeight;
-        $ckParser = new CKeditorParser();
-        $vars['wgCKeditorMagicWords'] = array(
-            'wikitags' => $ckParser->getSpecialTags(),
-            'magicwords' => $ckParser->getMagicWords(),
-            'datevars' => $ckParser->getDateTimeVariables(),
-            'wikivars' => $ckParser->getWikiVariables(),
-            'parserhooks' => $ckParser->getFunctionHooks()
-        );
-        if (defined('SF_VERSION'))
-           $vars['wgCKeditorMagicWords']['sftags'] = $ckParser->getSfSpecialTags();
-        $instExt = array();
-        if (defined('SMW_DI_VERSION'))
-            $instExt[] = 'SMW_DI_VERSION';
-        if (defined('SMW_HALO_VERSION'))
-            $instExt[] = 'SMW_HALO_VERSION';
-        if (defined('SMW_RM_VERSION'))
-            $instExt[] = 'SMW_RM_VERSION';
-        if (defined('SEMANTIC_RULES_VERSION'))
-            $instExt[] = 'SEMANTIC_RULES_VERSION';
-        $vars['wgCKeditorUseBuildin4Extensions'] = $instExt;
-        // check if external images are allowed
-        if ($wgAllowExternalImages)
-            $vars['wgAllowExternalImages'] = true;
-        else if ($wgAllowExternalImagesFrom)
-            $vars['wgAllowExternalImagesFrom'] = $wgAllowExternalImagesFrom;
-        if ($wgCKEditorHideDisabledTbutton)
-            $vars['wgCKEditorHideDisabledTbutton'] = true;
+    $ckParser = new CKeditorParser();
+    $vars['wgCKeditorMagicWords'] = array(
+        'wikitags' => $ckParser->getSpecialTags(),
+        'magicwords' => $ckParser->getMagicWords(),
+        'datevars' => $ckParser->getDateTimeVariables(),
+        'wikivars' => $ckParser->getWikiVariables(),
+        'parserhooks' => $ckParser->getFunctionHooks()
+    );
+    if (defined('SF_VERSION'))
+        $vars['wgCKeditorMagicWords']['sftags'] = $ckParser->getSfSpecialTags();
+    $instExt = array();
+    if (defined('SMW_DI_VERSION'))
+        $instExt[] = 'SMW_DI_VERSION';
+    if (defined('SMW_HALO_VERSION'))
+        $instExt[] = 'SMW_HALO_VERSION';
+    if (defined('SMW_RM_VERSION'))
+        $instExt[] = 'SMW_RM_VERSION';
+    if (defined('SEMANTIC_RULES_VERSION'))
+        $instExt[] = 'SEMANTIC_RULES_VERSION';
+    $vars['wgCKeditorUseBuildin4Extensions'] = $instExt;
+    // check if external images are allowed
+    if ($wgAllowExternalImages)
+        $vars['wgAllowExternalImages'] = true;
+    else if ($wgAllowExternalImagesFrom)
+        $vars['wgAllowExternalImagesFrom'] = $wgAllowExternalImagesFrom;
+    if ($wgCKEditorHideDisabledTbutton)
+        $vars['wgCKEditorHideDisabledTbutton'] = true;
 		return true;
 	}
 
@@ -353,23 +327,33 @@ class CKeditor_MediaWiki {
 		global $wgDefaultUserOptions;
 		wfLoadExtensionMessages( 'CKeditor' );
 
-		$preferences['riched_disable'] = array(
-			'type' => 'toggle',
-			'section' => 'editing/fckeditor',
-			'label-message' => 'tog-riched_disable',
-		);
+    $preferences['cke_show'] = array(
+      'type' => 'radio',
+      'section' => 'editing/fckeditor',
+      'options' => array( 
+          wfMsgHtml('edit-in-richeditor') => 'richeditor',
+          wfMsgHtml('edit-in-wikitexteditor') => 'wikitexteditor',
+          wfMsgHtml('tog-riched_toggle_remember_state') => 'rememberlast'
+      )
+    );
 
-		$preferences['riched_start_disabled'] = array(
-			'type' => 'toggle',
-			'section' => 'editing/fckeditor',
-			'label-message' => 'tog-riched_start_disabled',
-		);
-
-		$preferences['riched_use_popup'] = array(
-			'type' => 'toggle',
-			'section' => 'editing/fckeditor',
-			'label-message' => 'tog-riched_use_popup',
-		);
+//		$preferences['riched_disable'] = array(
+//			'type' => 'toggle',
+//			'section' => 'editing/fckeditor',
+//			'label-message' => 'tog-riched_disable',
+//		);
+//
+//		$preferences['riched_start_disabled'] = array(
+//			'type' => 'toggle',
+//			'section' => 'editing/fckeditor',
+//			'label-message' => 'tog-riched_start_disabled',
+//		);
+//
+//		$preferences['riched_use_popup'] = array(
+//			'type' => 'toggle',
+//			'section' => 'editing/fckeditor',
+//			'label-message' => 'tog-riched_use_popup',
+//		);
 
 		$preferences['riched_use_toggle'] = array(
 			'type' => 'toggle',
@@ -377,11 +361,11 @@ class CKeditor_MediaWiki {
 			'label-message' => 'tog-riched_use_toggle',
 		);
 
-		$preferences['riched_toggle_remember_state'] = array(
-			'type' => 'toggle',
-			'section' => 'editing/fckeditor',
-			'label-message' => 'tog-riched_toggle_remember_state',
-		);
+//		$preferences['riched_toggle_remember_state'] = array(
+//			'type' => 'toggle',
+//			'section' => 'editing/fckeditor',
+//			'label-message' => 'tog-riched_toggle_remember_state',
+//		);
 
     if (defined('SMW_HALO_VERSION')) {
         $preferences['riched_load_semantic_toolbar'] = array(
@@ -392,28 +376,42 @@ class CKeditor_MediaWiki {
     }
 
 		// Show default options in Special:Preferences
-		if( !array_key_exists( 'riched_disable', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_disable'] ) )
-			$user->setOption( 'riched_disable', $wgDefaultUserOptions['riched_disable'] );
-		if( !array_key_exists( 'riched_start_disabled', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_start_disabled'] ) )
-			$user->setOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] );
-		if( !array_key_exists( 'riched_use_popup', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_use_popup'] ) )
-			$user->setOption( 'riched_use_popup', $wgDefaultUserOptions['riched_use_popup'] );
+		if( !array_key_exists( 'cke_show', $user->mOptions ) && !empty( $wgDefaultUserOptions['cke_show'] ) )
+			$user->setOption( 'cke_show', $wgDefaultUserOptions['cke_show'] );
 		if( !array_key_exists( 'riched_use_toggle', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_use_toggle'] ) )
 			$user->setOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] );
-		if( !array_key_exists( 'riched_toggle_remember_state', $user->mOptions ) && !empty( $wgDefaultUserOptions['riched_toggle_remember_state'] ) )
-			$user->setOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] );
 
-		// Add the "disable rich editor on namespace X" toggles too
-		foreach( self::$nsToggles as $newToggle ){
-			$preferences[$newToggle] = array(
-				'type' => 'toggle',
-				'section' => 'editing/fckeditor',
-				'label-message' => 'tog-' . $newToggle
-			);
-		}
+	
+    //the name of multiselect also goes into the selected value and it looks like there is a length limit so keep it short
+    $preferences['cke_ns_'] = array(
+      'type' => 'multiselect',
+      'section' => 'editing/fckeditor-disable-namespaces',
+      'options' => self::buildNamespaceOptions(MWNamespace::getCanonicalNamespaces())
+    );
 
 		return true;
 	}
+
+  /**
+   * Build option array for multiselect control
+   * @param array $canonicalNamespaces array of MW namespaces
+   * @return array array of namespace options e.g. "MediaWiki_talk" => "NS_MEDIAWIKI_TALK"
+   */
+  private static function buildNamespaceOptions($canonicalNamespaces){
+    $result = array();
+    foreach($canonicalNamespaces as $key => $namespace){
+      if(empty($namespace)){
+        $namespace = 'Main';
+      }
+      $constName = strtoupper('ns_' . $namespace);
+      if(!defined($constName)){
+        define($constName, $key);
+      }
+      $result[$namespace] = $constName;
+    }
+
+    return $result;
+  }
 
 	/**
 	 * Add FCK script
@@ -428,36 +426,19 @@ class CKeditor_MediaWiki {
 		global $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorHeight, $wgFCKEditorToolbarSet;
         global $wgCKEditorUrlparamMode, $wgRequest;
 
-		if( !isset( $this->showFCKEditor ) ){
-			$this->showFCKEditor = 0;
-			if ( !$wgUser->getOption( 'riched_start_disabled', $wgDefaultUserOptions['riched_start_disabled'] ) ) {
-				$this->showFCKEditor += RTE_VISIBLE;
-			}
-			if ( $wgUser->getOption( 'riched_use_popup', $wgDefaultUserOptions['riched_use_popup'] ) ) {
-				$this->showFCKEditor += RTE_POPUP;
-			}
-			if ( $wgUser->getOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] ) ) {
-				$this->showFCKEditor += RTE_TOGGLE_LINK;
-			}
-		}
     if (defined('SMW_HALO_VERSION') && !isset( $this->loadSTBonStartup ) ) {
-        $this->loadSTBonStartup = 0;
-        if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
-          $this->loadSTBonStartup = 1;
-        }
+      $this->loadSTBonStartup = 0;
+      if ( $wgUser->getOption( 'riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'] ) ) {
+        $this->loadSTBonStartup = 1;
+
+      }
+    }
+    if ( !$wgRequest->getVal('mode') == 'wysiwyg' ) {
+      return true;
     }
 
-		if( array_key_exists('showMyFCKeditor', $_SESSION) && ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state'] ) ) ){
-			// Clear RTE_VISIBLE flag
-			$this->showFCKEditor &= ~RTE_VISIBLE;
-			// Get flag from session
-			$this->showFCKEditor |= $_SESSION['showMyFCKeditor'];
-		}
-
-		# Don't initialize if we have disabled the toolbar or FCkeditor or have a non-compatible browser
-		if( !$wgUser->getOption( 'showtoolbar' ) 
-            || $wgUser->getOption( 'riched_disable', !empty( $wgDefaultUserOptions['riched_disable'] ) ? $wgDefaultUserOptions['riched_disable'] : false )
-            || !$wgFCKEditorIsCompatible ) {
+    # Don't initialize if we have disabled the toolbar or have a non-compatible browser
+		if( !$wgUser->getOption( 'showtoolbar' ) || !$wgFCKEditorIsCompatible ) {
 			return true;
 		}
 
@@ -470,11 +451,42 @@ class CKeditor_MediaWiki {
 		if( false !== strpos( $form->textbox1, '__NORICHEDITOR__' ) ) {
 			return true;
 		}
+    if( !isset( $this->showFCKEditor ) ){
+			$this->showFCKEditor = 0;
+      $default_cke_show = array_key_exists('cke_show', $wgDefaultUserOptions) ? $wgDefaultUserOptions['cke_show'] : '';
+      //show toggle if configured
+      if ( $wgUser->getOption( 'riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'] ) ) {
+            $this->showFCKEditor += RTE_TOGGLE_LINK;
+      }
+      $cke_show = $wgUser->getOption( 'cke_show', $default_cke_show);
+      if ( $cke_show == 'richeditor' ) {
+        $this->showFCKEditor += RTE_VISIBLE;
+      }
+      //use "remember last toggle state" option only if toggle is visible
+      else if ( $cke_show == 'rememberlast' ) {
+        if($this->showFCKEditor & RTE_TOGGLE_LINK){
+          if(!array_key_exists('showMyFCKeditor', $_SESSION) || $_SESSION['showMyFCKeditor'] == RTE_VISIBLE){
+            $this->showFCKEditor += RTE_VISIBLE;
+          }
+        }//if "remember last toggle state" is set and toggle is not visible then show rich editor
+        else{
+          $this->showFCKEditor += RTE_VISIBLE;
+        }
+      }
+		}
+    
+
+//		if( array_key_exists('showMyFCKeditor', $_SESSION) && ( $wgUser->getOption( 'cke_show', $default_cke_show ) == 'rememberlast' ) ){
+//			// Clear RTE_VISIBLE flag
+//			$this->showFCKEditor &= ~RTE_VISIBLE;
+//			// Get flag from session
+//			$this->showFCKEditor |= $_SESSION['showMyFCKeditor'];
+//		}
+
+		
 
     # If $wgCKEditorUrlparamMode is set to true check the url params
-    if ( $wgCKEditorUrlparamMode && !( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' ) ) {
-        return true;
-    }
+  
     # If mode=wysiwyg is set then start with the WYSIWYG editor
 //    if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' && $_SESSION['showMyFCKeditor']) {
 //        $this->showFCKEditor |= RTE_VISIBLE;
@@ -665,11 +677,11 @@ function onLoadCKeditor(){
 
 	}
     // enable semantic toolbar in the editor after 2s
-    if (false && loadSTBonStartup ) {
-        setTimeout(function() {
-            wgCKeditorInstance.execCommand('SMWtoolbar');
-        }, 2000);
-    }
+    var stbCommand = loadSTBonStartup ? 'SMWtoolbarOpen' : 'SMWtoolbarClose';
+
+    setTimeout(function() {
+        wgCKeditorInstance.execCommand(stbCommand);
+    }, 2000);
 }
 function checkSelected(){
 	if( !selText ) {
@@ -709,21 +721,21 @@ function initCKEditor(){
 	}
     */
 	if( showFCKEditor & RTE_VISIBLE ){
-		if ( toolbar ){	// insert wiki buttons
-			// Remove the mwSetupToolbar onload hook to avoid a JavaScript error with FF.
-			if ( window.removeEventListener )
-				window.removeEventListener( 'load', mwSetupToolbar, false );
-			else if ( window.detachEvent )
-				window.detachEvent( 'onload', mwSetupToolbar );
-			mwSetupToolbar = function(){ return false ; };
+//		if ( toolbar ){	// insert wiki buttons
+//			// Remove the mwSetupToolbar onload hook to avoid a JavaScript error with FF.
+//			if ( window.removeEventListener )
+//				window.removeEventListener( 'load', mwSetupToolbar, false );
+//			else if ( window.detachEvent )
+//				window.detachEvent( 'onload', mwSetupToolbar );
+//			mwSetupToolbar = function(){ return false ; };
 
-			for( var i = 0; i < mwEditButtons.length; i++ ) {
-				mwInsertEditButton(toolbar, mwEditButtons[i]);
-			}
-			for( var i = 0; i < mwCustomEditButtons.length; i++ ) {
-				mwInsertEditButton(toolbar, mwCustomEditButtons[i]);
-			}
-		}
+//			for( var i = 0; i < mwEditButtons.length; i++ ) {
+//				mwInsertEditButton(toolbar, mwEditButtons[i]);
+//			}
+//			for( var i = 0; i < mwCustomEditButtons.length; i++ ) {
+//				mwInsertEditButton(toolbar, mwCustomEditButtons[i]);
+//			}
+//		}
 		onLoadCKeditor();
 	}
 	return true;
@@ -806,27 +818,28 @@ function ToggleCKEditor( mode, objId ){
 		SRCtextarea.style.display = 'inline';
         SRCtextarea.style.visibility = 'visible';
         if (CKEDITOR.plugins.smwtoolbar) {
-            CKEDITOR.plugins.smwtoolbar.DisableAnnotationToolbar(oEditorIns);
-            CKEDITOR.plugins.smwtoolbar.EnableAnnotationToolbar(oEditorIns);
-            window.gEditInterface = new SMWEditInterface();
+            oEditorIns.execCommand('SMWtoolbarClose');
+            oEditorIns.execCommand('SMWtoolbarOpen');
             obContributor.activateTextArea(SRCtextarea);
         }
 	} else {
 		// FCKeditor hidden -> visible
-		//if ( bIsWysiwyg ) oEditorIns.SwitchEditMode(); // switch to plain
 		SRCtextarea.style.display = 'none';
 		// copy from textarea to FCKeditor
 		oEditorIns.setData( SRCtextarea.value );
 		if (toolbar) toolbar.style.display = 'none';
 		oEditorIframe.style.display = '';
-		//if ( !bIsWysiwyg ) oEditorIns.SwitchEditMode();	// switch to WYSIWYG
 		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
 		if( oToggleLink ) oToggleLink.innerHTML = editorMsgOff;
 		if( oPopupLink ) oPopupLink.style.display = 'none';
         if (typeof AdvancedAnnotation != 'undefined')
             AdvancedAnnotation.unload();
-        if (false && loadSTBonStartup)
-            CKEDITOR.instances[objId].execCommand('SMWtoolbar');
+
+        oEditorIns.execCommand('SMWtoolbarClose');
+        if(loadSTBonStartup){
+          oEditorIns.execCommand('SMWtoolbarOpen');
+        }
+
 	}
 
 	return true;
