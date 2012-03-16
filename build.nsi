@@ -143,10 +143,6 @@ Var FILE_LIST
 Var STARTMENU_FOLDER
 Var MUI_TEMP
 
-Var JAVA_HOME
-Var JAVA_HOME_SHORT
-Var JAVA_VER
-Var JAVA_INSTALLATION_MSG
 
 ; Pages --------------------------------
 
@@ -1833,51 +1829,3 @@ Function StrContains
   Exch $R0
 FunctionEnd
 
-###########################################################################
-# Function for checking Java version and location
-###########################################################################
-Function LocateJVM
-    Push $0
-    Push $1
-    
-    ReadRegStr $JAVA_VER HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-#    MessageBox MB_OK "Detected Java version: $JAVA_VER"
-    DetailPrint "Detected Java version: [$JAVA_VER]."
-    StrCmp "" $JAVA_VER JavaNotPresent CheckJavaVer
-
-    JavaNotPresent:
-        DetailPrint "No Java detected."
-        StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not \
-             installed on your computer. You need version 1.6 or newer to \
-             run this program."
-#        MessageBox MB_OK "$JAVA_INSTALLATION_MSG java_ver:$JAVA_VER"
-        Goto Done
-
-    CheckJavaVer:
-#        MessageBox MB_OK "Java is present, check java version"
-        DetailPrint "Checking Java version ..."
-        ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$JAVA_VER" JavaHome
-        GetFullPathName $JAVA_HOME "$0"
-        GetFullPathName /SHORT $JAVA_HOME_SHORT "$0"
-        StrCpy $0 $JAVA_VER 1 0
-        StrCpy $1 $JAVA_VER 1 2
-        StrCpy $JAVA_VER "$0$1"
-        IntCmp ${REQUIRED_JAVA_VERSION} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
-        
-    FoundCorrectJavaVer:
-#        MessageBox MB_OK "Found valid Java version"
-        DetailPrint "Found valid Java version."
-        IfFileExists "$JAVA_HOME_SHORT\bin\javaw.exe" 0 JavaNotPresent
-        Goto Done
-        
-    JavaVerNotCorrect:
-#        MessageBox MB_OK "Java version not correct"
-        DetailPrint "Found invalid Java version."
-        StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment \
-            installed on your computer is $JAVA_VER. Version ${REQUIRED_JAVA_VERSION} or newer is required to \
-            run this program."
-        
-    Done:
-        Pop $1
-        Pop $0
-FunctionEnd
