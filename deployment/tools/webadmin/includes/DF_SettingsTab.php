@@ -28,58 +28,72 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 
 class DFSettingsTab {
 
-    /**
-     * WAT settings tab
-     *
-     */
-    public function __construct() {
+	/**
+	 * WAT settings tab
+	 *
+	 */
+	public function __construct() {
 
-    }
+	}
 
-    public function getTabName() {
-        global $dfgLang;
-        return $dfgLang->getLanguageString('df_webadmin_watsettingstab');
-    }
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_watsettingstab');
+	}
 
-    public function getHTML() {
-        global $dfgLang, $wgServer, $wgScriptPath;
-        
-        $html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_watsettingstab_description')."</div>";
-               
-        $html .= "<div id=\"df_watsettings\">";
-        $html .= "<table>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_overwrite_always\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_overwrite_always')."</input></td>";
-        $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_merge_with_other_bundle\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_merge_with_other_bundle')."</input></td>";
-        $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_install_optionals\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_install_optionals')."</input></td>";
-        $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_apply_patches\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_apply_patches')."</input></td>";
-        $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_create_restorepoints\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_create_restorepoints')."</input></td>";
-        $html .= "</tr>";
-        $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_hidden_annotations\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_hidden_annotations')."</input></td>";
-        $html .= "</tr>";
-        // the last is commented out because this option is not yet available in onto2mwxml
-        /* $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_use_namespaces\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_use_namespaces')."</input></td>";
-        $html .= "</tr>";*/
-        $html .= "</table>";
-        $html .= "</div>";
-        return $html;
-    }
+	public function getHTML() {
+		global $dfgLang, $wgServer, $wgScriptPath;
 
-   
+		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_watsettingstab_description')."</div>";
+			
+		$html .= "<div id=\"df_watsettings\">";
+		
+		$html .= "<h2>".$dfgLang->getLanguageString('df_webadmin_watsettings_bundleimport')."</h2>";
+		$html .= "<table>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_overwrite_always\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_overwrite_always')."</input></td>";
+		$html .= "</tr>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_merge_with_other_bundle\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_merge_with_other_bundle')."</input></td>";
+		$html .= "</tr>";
+		$html .= "</table>";
+
+		$html .= "<h2>".$dfgLang->getLanguageString('df_webadmin_watsettings_installation')."</h2>";
+		$html .= "<table>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_install_optionals\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_install_optionals')."</input></td>";
+		$html .= "</tr>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_apply_patches\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_apply_patches')."</input></td>";
+		$html .= "</tr>";
+		$html .= "</table>";
+
+		$html .= "<h2>".$dfgLang->getLanguageString('df_webadmin_watsettings_restore_points')."</h2>";
+		$html .= "<table>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_create_restorepoints\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_create_restorepoints')."</input></td>";
+		$html .= "</tr>";
+		$html .= "</table>";
+
+		$html .= "<h2>".$dfgLang->getLanguageString('df_webadmin_watsettings_ontologyimport')."</h2>";
+		$html .= "<table>";
+		$html .= "<tr>";
+		$html .= "<td><input id=\"df_watsettings_hidden_annotations\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_hidden_annotations')."</input></td>";
+		$html .= "</tr>";
+		// the last is commented out because this option is not yet available in onto2mwxml
+		$html .= "<tr>";
+		$html .= "<td><input disabled=\"true\" id=\"df_watsettings_use_namespaces\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_use_namespaces')."</input></td>";
+		$html .= "</tr>";
+		$html .= "</table>";
+		$html .= "</div>";
+		return $html;
+	}
+
+
 }

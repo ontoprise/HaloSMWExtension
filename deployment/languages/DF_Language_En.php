@@ -158,8 +158,12 @@ class DF_Language_En extends DF_Language {
     'df_webadmin_repository_link' => 'repository list',
 	
 	'df_webadmin_watsettingstab' => 'Settings',
-	'df_webadmin_watsettingstab_description' => 'General settings for WAT',
+	'df_webadmin_watsettingstab_description' => 'Here you can configure general settings for the WAT administration tool. The settings are kept persistent.',
 	
+	'df_webadmin_watsettings_bundleimport' => 'Bundle import',
+	'df_webadmin_watsettings_installation' => 'Installation',
+	'df_webadmin_watsettings_restore_points' => 'Restore points',
+	'df_webadmin_watsettings_ontologyimport' => 'Ontology import',
 	'df_watsettings_overwrite_always' => 'Overwrite user-modified pages always',
 	'df_watsettings_merge_with_other_bundle' => 'Merge pages of other bundles always',
 	'df_watsettings_apply_patches' => 'Apply (partially) failed patches',

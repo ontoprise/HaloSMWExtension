@@ -225,37 +225,16 @@ class Rollback {
 	 * @return boolean True if a restore point should be created/overwritten.
 	 */
 	protected function acquireNewRestorePoint(& $name) {
-		global $dfgNoAsk;
-		if (isset($dfgNoAsk) && $dfgNoAsk == true) {
-			return false;
-		}
-
-		global $dfgOut;
-		static $calledOnce = false;
-		static $answer;
-		static $namedStored;
-		$name = $namedStored;
-
-		if ($calledOnce) return $answer;
-		$calledOnce = true;
 
 		global $dfgGlobalOptionsValues;
-		if (array_key_exists('df_watsettings_apply_patches', $dfgGlobalOptionsValues)) {
-			if (!$dfgGlobalOptionsValues['df_watsettings_apply_patches']) {
+		if (array_key_exists('df_watsettings_create_restorepoints', $dfgGlobalOptionsValues)) {
+			if (!$dfgGlobalOptionsValues['df_watsettings_create_restorepoints']) {
 				return false;
 			}
-			$name = "autogen_".uniqid();	
+			$name = "auto_generated_".uniqid();
 		} else {
-			$dfgOut->outputln("Create new restore point (y/n)? ");
-			$line = trim(fgets(STDIN));
-			if (strtolower($line) == 'n') {
-				$dfgOut->outputln("\nDo not create a restore point.\n\n");
-				$answer = false;
-				return $answer;
-			}
-
-			$namedStored = $this->getRestorePointName();
-			$name = $namedStored;
+			$create = DFUserInput::getInstance()->askForRestorePoint($name, $this->restoreDir);
+			if (!$create) return false;
 		}
 
 		// clear if it already exists
@@ -268,40 +247,6 @@ class Rollback {
 
 	}
 
-	/**
-	 * Asks for the name of a restore point.
-	 * If it exists it asks for permission to overwrite.
-	 *
-	 * Note: REQUIRES user interaction
-	 *
-	 * @return string Name of restore point directory.
-	 */
-	protected function getRestorePointName() {
-		global $dfgOut;
-		$done = false;
-		do {
-			$dfgOut->outputln("Please enter a name for the restore point: ");
-			$name = trim(fgets(STDIN));
-			$name = str_replace(" ","_", $name);
-
-			if (preg_match('/\w+/', $name, $matches) === false) continue;
-			if ($name !== $matches[0]) {
-				$dfgOut->outputln("Forbidden characters. Please use only alphanumeric chars and spaces");
-				continue;
-			}
-
-			// clear if it already exists
-			if (file_exists($this->restoreDir.$name)) {
-				$dfgOut->outputln("A restore point with this name already exists. Overwrite? (y/n) ");
-				$line = trim(fgets(STDIN));
-				if (strtolower($line) == 'n') {
-					continue;
-				}
-			}
-			$done = true;
-		} while(!$done);
-		return $name;
-	}
 
 
 
