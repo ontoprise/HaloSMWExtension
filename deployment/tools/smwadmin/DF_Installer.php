@@ -590,20 +590,20 @@ class Installer {
 				$desc->createConfigElements($fromVersion, $fromPatchlevel);
 			}
 
-			global $dfgNoAsk;
 
-			if (!$dfgNoAsk) {
-				$success = $this->rollback->saveInstallation();
+
+
+			$success = $this->rollback->saveInstallation();
+			if (!$success) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not copy the installation");
+			}
+			if (count($desc->getInstallScripts()) > 0) {
+				$success = $this->rollback->saveDatabase();
 				if (!$success) {
-					throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not copy the installation");
-				}
-				if (count($desc->getInstallScripts()) > 0) {
-					$success = $this->rollback->saveDatabase();
-					if (!$success) {
-						throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not save the database.");
-					}
+					throw new InstallationError(DEPLOY_FRAMEWORK_CREATING_RESTOREPOINT_FAILED, "Could not save the database.");
 				}
 			}
+
 
 			$dd_fromrange = PackageRepository::getDeployDescriptorFromRange($id, $min, $max );
 			list($url,$repo_url) = PackageRepository::getDownloadURL($id, $dd_fromrange->getVersion() );
@@ -875,19 +875,19 @@ class Installer {
 		$dfgOut->outputln("Extracting into $unzipDirectory");
 		$dfgOut->outputln("[Extracting ".$id."-".$versionStr."zip...");
 		if (Tools::isWindows()) {
-            global $rootDir;
-            $this->logger->info('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-            exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
-        } else {
-            $this->logger->info('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
-            exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
-        }
-        if ($ret != 0) {
-            $dfgOut->outputln("Error on unzip.");
-            $this->logger->error("Error on unzip.");
-        }
-        $dfgOut->output("done.]");
-        return $unzipDirectory;
+			global $rootDir;
+			$this->logger->info('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+			exec('"'.$rootDir.'/tools/unzip.exe" -o "'.$this->tmpFolder."\\".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
+		} else {
+			$this->logger->info('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString);
+			exec('unzip -o "'.$this->tmpFolder."/".$id."-$versionStr.zip\" -d \"".$unzipDirectory.'" '.$excludedFilesString, $out, $ret);
+		}
+		if ($ret != 0) {
+			$dfgOut->outputln("Error on unzip.");
+			$this->logger->error("Error on unzip.");
+		}
+		$dfgOut->output("done.]");
+		return $unzipDirectory;
 	}
 
 	/**
@@ -1038,9 +1038,17 @@ class Installer {
 				$message = $dep->getMessage();
 				$ids = $dep->getIDs();
 				$id = reset($ids); // FIXME: may be alternatives also for optional deps
-				DFUserInput::getInstance()->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
-				if ($globalUpdate || $result != 'y') {
-					continue;
+				global $dfgGlobalOptionsValues;
+				if (array_key_exists('df_watsettings_install_optionals', $dfgGlobalOptionsValues)) {
+					$installOptionals = $dfgGlobalOptionsValues['df_watsettings_install_optionals'];
+					if ($globalUpdate || !$installOptionals) {
+						continue;
+					}
+				} else {
+					DFUserInput::getInstance()->getUserConfirmation("$message\nInstall optional extension '$id'? ", $result);
+					if ($globalUpdate || $result != 'y') {
+						continue;
+					}
 				}
 			}
 			$packageFound = false;
@@ -1056,7 +1064,7 @@ class Installer {
 						if (!$dfgForce) {
 							throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "'".$p->getID()."' must be installed in version ".$dep->getMaxVersion()->toVersionString().
 							             ".\nIf a higher version is already installed please de-install the extension and install ".$dep->getMaxVersion()->toVersionString()." instead.");
-								
+
 						}
 					}
 				}
@@ -1132,7 +1140,7 @@ class Installer {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					$depToUpdate = $ptoUpdate->getDependency($dd->getID());
 					if (is_null($depToUpdate)) continue; // dependency may be removed in the meantime.
-						
+
 					if ($depToUpdate->getMinVersion()->isLowerOrEqual($dd->getVersion()) && $dd->getVersion()->isLowerOrEqual($depToUpdate->getMaxVersion())) {
 
 						$packagesToUpdate[] = array($p, $v, $v);

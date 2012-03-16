@@ -58,7 +58,10 @@ class DFSettingsTab {
         $html .= "<td><input id=\"df_watsettings_overwrite_always\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_overwrite_always')."</input></td>";
         $html .= "</tr>";
         $html .= "<tr>";
-        $html .= "<td><input id=\"df_watsettings_contain_to_other_bundle\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_contain_to_other_bundle')."</input></td>";
+        $html .= "<td><input id=\"df_watsettings_merge_with_other_bundle\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_merge_with_other_bundle')."</input></td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_install_optionals\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_install_optionals')."</input></td>";
         $html .= "</tr>";
         $html .= "<tr>";
         $html .= "<td><input id=\"df_watsettings_apply_patches\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_apply_patches')."</input></td>";
@@ -69,9 +72,10 @@ class DFSettingsTab {
         $html .= "<tr>";
         $html .= "<td><input id=\"df_watsettings_hidden_annotations\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_hidden_annotations')."</input></td>";
         $html .= "</tr>";
-        $html .= "<tr>";
+        // the last is commented out because this option is not yet available in onto2mwxml
+        /* $html .= "<tr>";
         $html .= "<td><input id=\"df_watsettings_use_namespaces\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_use_namespaces')."</input></td>";
-        $html .= "</tr>";
+        $html .= "</tr>";*/
         $html .= "</table>";
         $html .= "</div>";
         return $html;

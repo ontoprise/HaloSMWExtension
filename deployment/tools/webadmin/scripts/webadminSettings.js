@@ -36,7 +36,8 @@ $(document).ready(function(e) {
 	// default settings of WAT options
 	var settings_defaults = { 
 			df_watsettings_overwrite_always : true,
-			df_watsettings_contain_to_other_bundle : true,
+			df_watsettings_merge_with_other_bundle : true,
+			df_watsettings_install_optionals : false,
 			df_watsettings_apply_patches : true,
 			df_watsettings_create_restorepoints: false,
 			df_watsettings_hidden_annotations : true,
@@ -76,7 +77,7 @@ $(document).ready(function(e) {
 		$(dfSettingsArray).each(function(i, e) { 
 			var keyValue = e.split("=");
 			var id = $.trim(keyValue[0]);
-			var value = $.trim(keyValue[1]);
+			var value = $.trim(keyValue[1]) == "true";
 			result[id] = value;
 		});
 		return result;

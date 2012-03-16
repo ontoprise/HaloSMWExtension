@@ -249,11 +249,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --noask --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -i \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --nocheck --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -277,11 +277,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask -d \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint -d \"$extid\" > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -d \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --nocheck --showOKHint -d \"$extid\" > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -305,10 +305,10 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask -u \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint -u \"$extid\" > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -u \"$extid\" > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --nocheck --showOKHint -u \"$extid\" > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -332,11 +332,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask --finalize > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --finalize > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask --finalize > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --nocheck --showOKHint --finalize > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -381,11 +381,11 @@ class DFCommandInterface {
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
 			$wshShell = new COM("WScript.Shell");
-			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint --noask -u > \"$console_out\" 2>&1";
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --outputformat html --nocheck --showOKHint -u > \"$console_out\" 2>&1";
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --nocheck --showOKHint --noask -u > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --nocheck --showOKHint -u > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
@@ -725,12 +725,12 @@ class DFCommandInterface {
 
 	private static function getOptions($settings) {
 		$result = array();
-		$result[] = self::getOption('df_watsettings_overwrite_always');
-		$result[] = self::getOption('df_watsettings_contain_to_other_bundle');
-		$result[] = self::getOption('df_watsettings_apply_patches');
-		$result[] = self::getOption('df_watsettings_create_restorepoints');
-		$result[] = self::getOption('df_watsettings_hidden_annotations');
-		$result[] = self::getOption('df_watsettings_use_namespaces');
+		$result[] = self::getOption($settings, 'df_watsettings_overwrite_always');
+		$result[] = self::getOption($settings, 'df_watsettings_merge_with_other_bundle');
+		$result[] = self::getOption($settings, 'df_watsettings_apply_patches');
+		$result[] = self::getOption($settings, 'df_watsettings_create_restorepoints');
+		$result[] = self::getOption($settings, 'df_watsettings_hidden_annotations');
+		$result[] = self::getOption($settings, 'df_watsettings_use_namespaces');
 		return implode(",", $result);
 	}
 	

@@ -238,22 +238,25 @@ class Rollback {
 
 		if ($calledOnce) return $answer;
 		$calledOnce = true;
-        
+
 		global $dfgGlobalOptionsValues;
 		if (array_key_exists('df_watsettings_apply_patches', $dfgGlobalOptionsValues)) {
-			$line = $dfgGlobalOptionsValues['df_watsettings_apply_patches'] ? 'y' : 'n';
+			if (!$dfgGlobalOptionsValues['df_watsettings_apply_patches']) {
+				return false;
+			}
+			$name = "autogen_".uniqid();	
 		} else {
 			$dfgOut->outputln("Create new restore point (y/n)? ");
 			$line = trim(fgets(STDIN));
-		}
-		if (strtolower($line) == 'n') {
-			$dfgOut->outputln("\nDo not create a restore point.\n\n");
-			$answer = false;
-			return $answer;
-		}
+			if (strtolower($line) == 'n') {
+				$dfgOut->outputln("\nDo not create a restore point.\n\n");
+				$answer = false;
+				return $answer;
+			}
 
-		$namedStored = $this->getRestorePointName();
-		$name = $namedStored;
+			$namedStored = $this->getRestorePointName();
+			$name = $namedStored;
+		}
 
 		// clear if it already exists
 		if (file_exists($this->restoreDir."/".$name)) {

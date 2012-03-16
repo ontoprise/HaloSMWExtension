@@ -82,7 +82,7 @@ class OntologyInstaller {
 				$settings->deploydescriptor->version = $dd->getVersion()->toVersionString();
 				$settings->deploydescriptor->patchlevel = $dd->getPatchlevel();
 				$settings->deploydescriptor->instdir = $dd->getInstallationDirectory();
-				
+
 				if ($dd->getMaintainer() != '') {
 					$settings->deploydescriptor->maintainer = $dd->getMaintainer();
 				}
@@ -166,7 +166,7 @@ class OntologyInstaller {
 			$dfgOut->output("done.]");
 
 		}
-		
+
 		unlink($settingsFile);
 
 		// do actual ontology install/update
@@ -415,11 +415,20 @@ class OntologyInstaller {
 		chdir($onto2mwxml_dir);
 		$ret = 0;
 		$langCode = dffGetLanguageCode();
+
+		$options = "";
+		global $dfgGlobalOptionsValues;
+		if (array_key_exists('df_watsettings_hidden_annotations', $dfgGlobalOptionsValues)) {
+			if (!$dfgGlobalOptionsValues['df_watsettings_hidden_annotations']) {
+				$options .= "--readableannotations";
+			}
+		}
+
 		if (Tools::isWindows()) {
 
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-			exec("\"$onto2mwxml_dir/onto2mwxml.bat\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
+			exec("\"$onto2mwxml_dir/onto2mwxml.bat\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam $options --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
 			if ($ret != 0) {
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");
@@ -429,7 +438,7 @@ class OntologyInstaller {
 
 			if ($noBundlePage) $noBundlePageParam = "--nobundlepage"; else $noBundlePageParam = "";
 			if (!empty($bundleID)) $bundleID ='--bundleid \"$bundleID\"';
-			exec("\"$onto2mwxml_dir/onto2mwxml.sh\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
+			exec("\"$onto2mwxml_dir/onto2mwxml.sh\" -i \"$inputfile\" -o \"$outputfile\" $bundleID $noBundlePageParam $options --outputformat $dfgOutputFormat --lang $langCode", $output, $ret);
 			if ($ret != 0) {
 				foreach($output as $l) $dfgOut->outputln("$l");
 				throw new Exception("Onto2MWXML exited abnormally.");

@@ -156,8 +156,9 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_watsettingstab_description' => 'Allgemeine Einstellungen von WAT',
 	
 	'df_watsettings_overwrite_always' => 'Overwrite user-modified pages always',
-    'df_watsettings_contain_to_other_bundle' => 'Merge pages of other bundles always',
+    'df_watsettings_merge_with_other_bundle' => 'Merge pages of other bundles always',
     'df_watsettings_apply_patches' => 'Apply (partially) failed patches',
+	'df_watsettings_install_optionals' => 'Install optional extensions as well',
     'df_watsettings_create_restorepoints' => 'Always create restore point on install/de-install and update operations',
     'df_watsettings_hidden_annotations' => 'Create hidden annotations on ontology import',
     'df_watsettings_use_namespaces' => 'Use namespace prefixes for imported ontologies',

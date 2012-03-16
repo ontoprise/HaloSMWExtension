@@ -771,8 +771,9 @@ class DeployWikiRevision extends WikiRevision {
 								$dfgOut->outputln($this->title->getText()." belongs to another bundle (".$anotherBundle.")");
 								break;
 							case DEPLOYWIKIREVISION_WARN:
-								if (array_key_exists('df_watsettings_contain_to_other_bundle', $dfgGlobalOptionsValues)) {
-									$result = $dfgGlobalOptionsValues['df_watsettings_contain_to_other_bundle'];
+								global $dfgGlobalOptionsValues;
+								if (array_key_exists('df_watsettings_merge_with_other_bundle', $dfgGlobalOptionsValues)) {
+									$result = $dfgGlobalOptionsValues['df_watsettings_merge_with_other_bundle'];
 								} else {
 									$this->callback->pageToBeMerged($this, $this->mode, $result);
 									if ($result !== true) return false;
