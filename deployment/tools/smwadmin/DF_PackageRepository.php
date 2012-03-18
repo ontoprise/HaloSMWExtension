@@ -615,7 +615,7 @@ class PackageRepository {
 	 * @param $ext_dir
 	 */
 	private static function readExternalAppsForDDToInitialize($ext_dir) {
-        $nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
+		$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
 		foreach($nonPublicAppPaths as $id => $path) {
 			if ($path == '') continue;
 			$path = Tools::unquotePath($path);
@@ -741,19 +741,21 @@ class PackageRepository {
 	 * @param string $rootDir
 	 */
 	private static function getLocalSuperExtensions($extID, & $superExtensions, $rootDir) {
-		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
+		$localPackages = PackageRepository::getLocalPackages($rootDir, false);
 		foreach($localPackages as $p) {
 
 			// check if a local extension has $dd as a dependency
-			$dep = $p->getDependencies();
-			if ($dep == NULL) continue;
+			$deps = $p->getDependencies();
+			foreach($deps as $dep) {
+				if (is_null($dep)) continue;
 
-			if ($dep->isOptional()) continue;
+				if ($dep->isOptional()) continue;
 
-			if ($dep->matchBundle($extID)) {
-				// $p is a super package
-				$superExtensions[$p->getID()] = $p;
-				self::getLocalSuperExtensions($p, $superExtensions, $rootDir);
+				if ($dep->matchBundle($extID)) {
+					// $p is a super package
+					$superExtensions[$p->getID()] = $p;
+					self::getLocalSuperExtensions($p->getID(), $superExtensions, $rootDir);
+				}
 			}
 		}
 	}
