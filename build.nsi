@@ -1138,6 +1138,10 @@ Function un.uninstallApacheAndMySQLAsWindowsService
     DetailPrint "Stop and uninstall Apache and MySQL as service."
     Exec "$INSTDIR\uninstallApacheMySQLAsService.bat"
     
+    SetOutPath "$INSTDIR\solr"
+    DetailPrint "Stop and uninstall SOLR as service."
+    Exec "$INSTDIR\solr\uninstallAsService.bat"
+    
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
 FunctionEnd
 
