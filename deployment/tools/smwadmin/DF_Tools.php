@@ -109,7 +109,7 @@ class Tools {
 		if($dir = @opendir($current_dir)) {
 			while (($f = readdir($dir)) !== false) {
 				if ($f == "." || $f == "..") continue;
-				if (strpos(Tools::normalizePath($current_dir.$f), $excluded) !== false) {
+				if ($excluded != '' && strpos(Tools::normalizePath($current_dir.$f), $excluded) !== false) {
 					print "\nSkip this: ".Tools::normalizePath($current_dir.$f);
 					continue;
 				}

@@ -639,41 +639,7 @@ class PackageRepository {
 		return new DeployDescriptor($xml, $fromVersion);
 	}
 
-	/**
-	 * Returns the top most extensions in a list of extensions, ie.
-	 * extensions which are not already included by others. This method returns
-	 * in effect the least minimal set to install the given set of extensions.
-	 *
-	 * @param string[] $extIDs Extension-IDs
-	 * @param string $rootDir
-	 *         Directory of MW. If given, the top most extensions of
-	 *         the *local* installations are calculated not in the repository.
-	 */
-	public static function getTopMostExtensions($extIDs, $rootDir = NULL) {
-		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
-		$descriptorMap = array();
-		$depCounterMap = array();
-		foreach($extIDs as $id) {
-			if (!array_key_exists($id, $descriptorMap)) {
-				$desc = is_null($rootDir) ? self::getLatestDeployDescriptor($id) : $localpackages[$id];
-				if (is_null($desc)) {
-					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Bundle not found: $id", $id);
-				}
-				$descriptorMap[$id] = $desc;
-				$depCounterMap[$id] = 0;
-			}
-			self::getAllDependencies($descriptorMap[$id], $descriptorMap, $depCounterMap, $rootDir);
-		}
-
-		$resultExtensionIDs = array();
-		foreach($depCounterMap as $id => $freq) {
-			if ($freq == 0) {
-				$resultExtensionIDs[] = $id;
-			}
-		}
-
-		return $resultExtensionIDs;
-	}
+	
 
 	/**
 	 * Takes extension IDs and returns the order in which they have to be deleted. It considers
@@ -702,36 +668,7 @@ class PackageRepository {
 		return $resultExtensionIDs;
 	}
 
-	/**
-	 * Returns all dependencies and their frequency of an extension $dd
-	 *
-	 * @param DeployDescriptor $dd
-	 * @param (out) array $descriptorMap
-	 * @param (out) array $depCounterMap
-	 * @param string $rootDir Directory of MW. If given, the dependencies of
-	 *                        the *local* installations are calculated not in the repository.
-	 *
-	 * @throws RepositoryError
-	 */
-	private static function getAllDependencies($dd, & $descriptorMap, & $depCounterMap, $rootDir) {
-		$localpackages = PackageRepository::getLocalPackages($rootDir, false);
-		foreach($dd->getDependencies() as $dep) {
-
-			if ($dep->isOptional()) continue;
-			$id = $dep->isContained($descriptorMap);
-			if ($id === false) {
-				$desc = is_null($rootDir) ? self::getLatestDeployDescriptor($id) : $localpackages[$id];
-				if (is_null($desc)) {
-					throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Bundle not found: $id", $id);
-				}
-				$descriptorMap[$id] = $desc;
-				$depCounterMap[$id] = 0;
-			}
-			$depCounterMap[$id]++;
-
-			self::getAllDependencies($descriptorMap[$id], $descriptorMap, $depCounterMap, $rootDir);
-		}
-	}
+	
 
 	/**
 	 * Returns the local superextensions of an extension.

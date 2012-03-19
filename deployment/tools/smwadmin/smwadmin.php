@@ -513,19 +513,18 @@ if ($dfgListPackages) {
 
 // if more than one bundle is installed at once,
 // consolidate the bundle list first, ie. remove all redundant bundles.
-if (count($packageToInstall) > 1) {
-	$packageToInstall = PackageRepository::getTopMostExtensions($packageToInstall);
-}
 
 foreach($packageToInstall as $toInstall) {
-	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? new DFVersion($parts[1]) : NULL;
+	$localPackages = PackageRepository::getLocalPackages($mwrootDir, true);
+	if (array_key_exists($packageID,$localPackages)) continue;
 	try {
 		$logger->info("Start install package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
 		dffHandleInstallOrUpdate($packageID, $version);
 		$logger->info("End install package '$packageID'".(is_null($version) ? "" : "-".$version->toVersionString()));
+		
 	} catch(InstallationError $e) {
 		$logger->fatal($e);
 		dffExitOnFatalError($e);
