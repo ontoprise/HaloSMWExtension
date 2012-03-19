@@ -38,6 +38,7 @@ $(document).ready(function(e) {
 			df_watsettings_overwrite_always : true,
 			df_watsettings_merge_with_other_bundle : true,
 			df_watsettings_install_optionals : false,
+			df_watsettings_deinstall_dependant : false,
 			df_watsettings_apply_patches : true,
 			df_watsettings_create_restorepoints: false,
 			df_watsettings_hidden_annotations : true,

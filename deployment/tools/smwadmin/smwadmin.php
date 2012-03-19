@@ -311,14 +311,14 @@ for( $arg = reset( $args ); $arg !== false; $arg = next( $args ) ) {
 		$dfgShowOKHint = true;
 		continue;
 	} else if ($arg == '--options') {
-        $temp = next($args);
-        $temp = explode(",", $temp);
-        foreach($temp as $t) {
-        	list($id, $on) = explode("=",$t);
-        	$dfgGlobalOptionsValues[$id] = ($on == "true");
-        }
-        continue;
-    } else {
+		$temp = next($args);
+		$temp = explode(",", $temp);
+		foreach($temp as $t) {
+			list($id, $on) = explode("=",$t);
+			$dfgGlobalOptionsValues[$id] = ($on == "true");
+		}
+		continue;
+	} else {
 		dffExitOnFatalError("\nUnknown command: $arg. Try --help\n\n");
 	}
 	$params[] = $arg;
@@ -641,22 +641,39 @@ if (count($localBundlesToInstall) > 0) {
 //de-install
 // if more than one bundle is de-installed at once,
 // consolidate the bundle list first, ie. correct the order and add additional extensions if necessary.
-if (count($packageToDeinstall) > 1) {
-	$packageToDeinstall = PackageRepository::getDeletionOrder($packageToDeinstall, $mwrootDir);
+if (count($packageToDeinstall) > 0) {
+	$allBundlesToDelete = PackageRepository::getDeletionOrder($packageToDeinstall, $mwrootDir);
+	if (count($allBundlesToDelete) > count($packageToDeinstall)) {
+		$diff = array_diff($allBundlesToDelete, $packageToDeinstall);
+		$dfgOut->outputln("\nThis command also removes the following extensions: ");
+		foreach($diff as $id) {
+			$dfgOut->outputln("*$id");
+		}
+		$dfgOut->outputln();
+		global $dfgGlobalOptionsValues;
+		if (array_key_exists('df_watsettings_deinstall_dependant', $dfgGlobalOptionsValues)) {
+			$continue = true;
+		} else {
+			$continue = DFUserInput::consoleConfirm("Do you want to continue? (y/n) ");
+		}
+		if (!$continue) {
+			die(DF_TERMINATION_WITHOUT_FINALIZE);
+		}
+		$packageToDeinstall = $allBundlesToDelete;
+	}
 
-	//TODO: ask for confirmation?
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
 
 	try {
-		$localPackages = PackageRepository::getLocalPackages($mwrootDir);
+		$localPackages = PackageRepository::getLocalPackages($mwrootDir, true);
 		$dd = $localPackages[$toDeInstall];
 		if (is_null($dd)) {
 			Logger::getInstance()->error("Bundle does not exist $toDeInstall");
 			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Bundle does not exist", $toDeInstall);
 		}
-		
+
 		$requiresWiki = count($dd->getWikidumps()) > 0
 		|| count($dd->getResources()) >  0
 		|| count($dd->getUninstallScripts()) > 0
@@ -664,7 +681,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 		|| count($dd->getOntologies()) > 0;
 
 		if ($requiresWiki) {
-			// if wiki is required include it and check if 
+			// if wiki is required include it and check if
 			// database is available.
 			// include commandLine.inc to be in maintenance mode
 			try {
@@ -679,7 +696,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 
 		// de-install content
 		if ($requiresWiki) {
-			
+
 			dffInitLanguage();
 			// include the resource installer
 			require_once('DF_ResourceInstaller.php');

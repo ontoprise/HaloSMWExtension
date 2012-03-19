@@ -69,6 +69,9 @@ class DFSettingsTab {
 		$html .= "<tr>";
 		$html .= "<td><input id=\"df_watsettings_install_optionals\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_install_optionals')."</input></td>";
 		$html .= "</tr>";
+		  $html .= "<tr>";
+        $html .= "<td><input id=\"df_watsettings_deinstall_dependant\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_deinstall_dependant')."</input></td>";
+        $html .= "</tr>";
 		$html .= "<tr>";
 		$html .= "<td><input id=\"df_watsettings_apply_patches\" type=\"checkbox\">".$dfgLang->getLanguageString('df_watsettings_apply_patches')."</input></td>";
 		$html .= "</tr>";
