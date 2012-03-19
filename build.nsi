@@ -1081,11 +1081,10 @@ Function installAsWindowsService
 	SetOutPath "$INSTDIR"
     DetailPrint "Install Apache and MySQL as service."
     Exec "$INSTDIR\installApacheMySQLAsService.bat"
-            
-    # Do not install Solr as service (does not work) but register it in Autostart folder
-    DetailPrint "Start Solr automatically via AutoStart folder."
-    SetOutPath "$INSTDIR\solr\wiki"
-    CreateShortCut "$SMSTARTUP\SolrForSMWPlus.lnk" "$INSTDIR\solr\wiki\startSolr.bat"
+    
+    SetOutPath "$INSTDIR\solr"
+    DetailPrint "Install SOLR as service."
+    Exec "$INSTDIR\solr\installAsService.bat"
     
     ; Register scheduled task for services to run them in higher runlevel
     ; remove the above registering by ones which uses apache & mysql as services.
@@ -1239,8 +1238,7 @@ Section "Uninstall"
     DeleteRegKey HKCU "Software\Ontoprise\${PRODUCT} ${VERSION}"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT} ${VERSION}"
 
-    DetailPrint "Delete autostart entry for solr"
-    Delete "$SMSTARTUP\SolrForSMWPlus.lnk"
+    
 
     Delete "$INSTDIR\*"
    
