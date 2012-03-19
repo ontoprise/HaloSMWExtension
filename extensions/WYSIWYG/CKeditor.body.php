@@ -150,8 +150,6 @@ class CKeditor_MediaWiki {
     // The latter causes IE to hang when more than 31 style sheets are processed this way.
     public static function onBeforePageDisplay( &$out, &$text ) {
         global $wgRequest, $wgScriptPath;
-
-//        CKeditor_MediaWiki::addResourceModules($out);
         
         //var_dump($out->styles);
         $action = $wgRequest->getText( 'action' );
@@ -226,13 +224,19 @@ class CKeditor_MediaWiki {
     }
     
 	public function onEditPageBeforePreviewText( &$editPage, $previewOnOpen ) {
-		global $wgUser, $wgRequest, $wgCKEditorUrlparamMode;
+		global $wgUser, $wgRequest;
 
-		if( $wgUser->getOption( 'showtoolbar' ) && !$wgUser->getOption( 'riched_disable' ) && !$previewOnOpen ) {
+		if( $wgUser->getOption( 'showtoolbar' ) && !$previewOnOpen ) {
 			$this->oldTextBox1 = $editPage->textbox1;
 			$editPage->importFormData( $wgRequest );
-      //bugfix #16730: workaround to enable WYSIWYG loading on preview in url param mode
-      if($wgCKEditorUrlparamMode){
+      //bugfix #16730: load WYSIWYG on preview
+      if($wgUser->getOption('cke_show') == 'richeditor'
+              || ($wgUser->getOption('cke_show') == 'remeberlast'
+                && $wgUser->getOption('riched_use_toggle') == 1
+                && $_SESSION['showMyFCKeditor'] & RTE_VISIBLE)
+              || ($wgUser->getOption('cke_show') == 'remeberlast'
+                && $wgUser->getOption('riched_use_toggle') == 0))
+      {
         $wgRequest->setVal('mode', 'wysiwyg');
       }
 		}
@@ -422,9 +426,7 @@ class CKeditor_MediaWiki {
 	public function onEditPageShowEditFormInitial( $form ) {
 		global $wgOut, $wgTitle, $wgScriptPath, $wgContLang, $wgUser;
 		global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
-		global $wgFCKWikiTextBeforeParse, $wgFCKEditorIsCompatible;
-		global $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorHeight, $wgFCKEditorToolbarSet;
-        global $wgCKEditorUrlparamMode, $wgRequest;
+		global $wgFCKEditorIsCompatible, $wgRequest, $wgFCKEditorDir;
 
     if (defined('SMW_HALO_VERSION') && !isset( $this->loadSTBonStartup ) ) {
       $this->loadSTBonStartup = 0;
@@ -433,7 +435,7 @@ class CKeditor_MediaWiki {
 
       }
     }
-    if ( !$wgRequest->getVal('mode') == 'wysiwyg' ) {
+    if ( $wgRequest->getVal('mode') != 'wysiwyg' ) {
       return true;
     }
 
@@ -473,24 +475,7 @@ class CKeditor_MediaWiki {
           $this->showFCKEditor += RTE_VISIBLE;
         }
       }
-		}
-    
-
-//		if( array_key_exists('showMyFCKeditor', $_SESSION) && ( $wgUser->getOption( 'cke_show', $default_cke_show ) == 'rememberlast' ) ){
-//			// Clear RTE_VISIBLE flag
-//			$this->showFCKEditor &= ~RTE_VISIBLE;
-//			// Get flag from session
-//			$this->showFCKEditor |= $_SESSION['showMyFCKeditor'];
-//		}
-
-		
-
-    # If $wgCKEditorUrlparamMode is set to true check the url params
-  
-    # If mode=wysiwyg is set then start with the WYSIWYG editor
-//    if ( $wgRequest->getVal('mode') && $wgRequest->getVal('mode') == 'wysiwyg' && $_SESSION['showMyFCKeditor']) {
-//        $this->showFCKEditor |= RTE_VISIBLE;
-//    }
+		}   
 
 		$printsheet = htmlspecialchars( "$wgStylePath/common/wikiprintable.css?$wgStyleVersion" );
 
@@ -547,7 +532,7 @@ var firstLoad = true;
 var editorMsgOn = "' . Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) . '";
 var editorMsgOff = "' . Xml::escapeJsString( wfMsgHtml( 'tog-show-wikitexteditor' ) ) . '";
 var editorLink = "' . ( ( $this->showFCKEditor & RTE_VISIBLE ) ? Xml::escapeJsString( wfMsgHtml( 'tog-show-wikitexteditor' ) ) : Xml::escapeJsString( wfMsgHtml( 'textrichditor' ) ) ) . '";
-var saveSetting = ' . ( $wgUser->getOption( 'riched_toggle_remember_state', $wgDefaultUserOptions['riched_toggle_remember_state']  ) ?  1 : 0 ) . ';
+var saveSetting = ' . ( $wgUser->getOption( 'cke_show', $wgDefaultUserOptions['cke_show']  ) == 'rememberlast' ? 1 : 0) . ';
 var RTE_VISIBLE = ' . RTE_VISIBLE . ';
 var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
 var RTE_POPUP = ' . RTE_POPUP . ';
@@ -621,6 +606,13 @@ $this->ckeditorHeadScript = $script;
             return $qiUrl.'&s='.$token.'&t='. $hash;
         }
         return $qiUrl;
+    }
+
+    public static function onGetLocalURL($title, $url, $query){
+      if(!strpos($query, 'mode=')){
+        $url = str_replace( 'action=edit', 'action=edit&mode=wysiwyg', $url);
+      }
+      return true;
     }
 
     public static function InitializeScripts($textfield, $newWinMsg) {

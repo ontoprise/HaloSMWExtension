@@ -19,7 +19,7 @@ function wfSajaxGetMathUrl( $term ) {
 function wfSajaxGetImageUrl( $term ) {
 	global $wgExtensionFunctions, $wgTitle;
 
-	$options = new CKeditorParserOptions();
+	$options = new CKeditorParserOptions();    
 	$options->setTidy( true );
 	$parser = new CKeditorParser();
 
@@ -293,10 +293,12 @@ function wfSajaxWikiToHTML( $wiki, $title = '' ) {
 }
 
 function wfSajaxToggleCKeditor( $data ) {
-	if( $data == 'show' ){
+  if( $data == 'show' ){
 		$_SESSION['showMyFCKeditor'] = RTE_VISIBLE;	// visible last time
+//    $wgUser->setOption('cke_last_state', 'richeditor');
 	} else {
 		$_SESSION['showMyFCKeditor'] = 0; // invisible
+//    $wgUser->setOption('cke_last_state', 'wikitexteditor');
 	}
 	return 'SUCCESS';
 }
