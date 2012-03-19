@@ -26,7 +26,7 @@
 #df_log_results_table_container {
 	height: 600px;
 	overflow: auto;
-	width: 40%;
+	width: 100%;
 	margin-top: 20px;
 }
 
