@@ -345,14 +345,15 @@ CKEDITOR.plugins.add( 'mediawiki',
             specialTagTitle : 'Special Tags Dialogue',
             specialTagDef   : 'Define any special tag, magic word or parser function:',
             // link
-            linkTitle       : 'Mediawiki Link',
+            linkTitle       : 'Mediawiki Link',            
             noPagesFound     : 'no articles found',
             invalidTitleFormat : 'The article name contains invalid characters.',
             onePageFound    : 'one article found',
             manyPagesFound   : ' articles found',
             emailLink       : 'e-mail link... no search for it',
             anchorLink      : 'anchor link... no search for it',
-            defineTarget    : 'Define the wiki page for the link target:',
+            defineTarget    : 'Define the wiki page for the link:',
+            defineLabel     : 'Define the label for the link:',
             chooseTarget    : 'Choose an existing wikipage for the link target:',
             imgLinkLabel    : 'Target page or URL'
         };

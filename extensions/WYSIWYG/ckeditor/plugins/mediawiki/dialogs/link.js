@@ -25,113 +25,8 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
   // need this to use the getSelectedLink function from the plugin
   var plugin = CKEDITOR.plugins.link;
   var searchTimer;
-  var OnUrlChange = function() {
-
-    var dialog = this.getDialog();
-
-    var StartSearch = function() {
-      var	e = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ),
-      link = e.getValue().Trim();
-
-      if ( link.length < 1  )
-        return ;
-
-      SetSearchMessage( editor.lang.mwplugin.searching ) ;
-
-      // Make an Ajax search for the pages.
-      window.parent.sajax_request_type = 'GET' ;
-      window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], LoadSearchResults ) ;
-    }
-
-    var LoadSearchResults = function ( result ) {
-      var results = result.responseText.split( '\n' ),
-      select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
-
-      ClearSearch() ;
-
-      var invalidTitle = false;
-      if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
-        SetSearchMessage( editor.lang.mwplugin.noPagesFound ) ;
-      }
-      else {
-        if (results.length == 1) {
-          if (results[0] === '***Title has an invalid format***') {
-            SetSearchMessage(editor.lang.mwplugin.invalidTitleFormat);
-            // hide the OK button
-            dialog.getButton('ok').getElement().hide();
-            invalidTitle = true;
-          } else {
-            SetSearchMessage(editor.lang.mwplugin.onePageFound);
-          }
-        } else {
-          SetSearchMessage(results.length + editor.lang.mwplugin.manyPagesFound);
-        }
-        if (!invalidTitle) {
-          for (var i = 0; i < results.length; i++) {
-            select.add(results[i].replace(/_/g, ' '), results[i]);
-          }
-        }
-      }
-      if (!invalidTitle) {
-        // show the OK button
-        dialog.getButton('ok').getElement().show();
-      }
-    }
-
-    var ClearSearch = function() {
-      var	e = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
-      e.items = [];
-      var div = document.getElementById(e.domId),
-      select = div.getElementsByTagName('select')[0];
-      while ( select.options.length > 0 )
-        select.remove( 0 )
-    }
-
-    var SetSearchMessage = function ( message ) {
-      var	e = dialog.getContentElement( 'mwLinkTab1', 'searchMsg' );
-      e.html = message;
-      document.getElementById(e.domId).innerHTML = message;
-    }
-
-    var e = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ),
-    link = e.getValue().Trim();
-
-    if ( searchTimer )
-      window.clearTimeout( searchTimer ) ;
-        
-    if ( link.StartsWith( '#' ) ) {
-      SetSearchMessage( editor.lang.mwplugin.anchorLink ) ;
-      return ;
-    }
-        
-    if ( link.StartsWith( 'mailto:' ) )	{
-      SetSearchMessage( editor.lang.mwplugin.emailLink ) ;
-      return ;
-    }
-
-    if( /^(http|https|news|ftp):\/\//.test( link ) ) {
-      SetSearchMessage( editor.lang.mwplugin.externalLink ) ;
-      return ;
-    }
-
-    if ( link.length < 1 ) {
-      ClearSearch() ;
-      SetSearchMessage( editor.lang.mwplugin.startTyping ) ;
-      return ;
-    }
-
-    SetSearchMessage( editor.lang.mwplugin.stopTyping ) ;
-    searchTimer = window.setTimeout( StartSearch, 500 ) ;
-
-  }
-  var WikiPageSelected = function() {
-    var dialog = this.getDialog(),
-    target = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ),
-    select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
-    target.setValue(select.getValue().replace(/_/g, ' '));
-  }
-
-  return {
+  var urlProtocolRegex = new RegExp('^' + mw.config.get('wgUrlProtocols'), 'i');
+  var dialogDefinition = {
     title : editor.lang.mwplugin.linkTitle,
     minWidth : 350,
     minHeight : 140,
@@ -144,12 +39,21 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
       elements :
       [
       {
+        id: 'linkLabel',
+        type: 'text',
+        label: editor.lang.mwplugin.defineLabel,
+        title: 'Link label',
+        style: 'border: 1px;'
+      },
+      {
         id: 'linkTarget',
         type: 'text',
         label: editor.lang.mwplugin.defineTarget,
         title: 'Link target',
         style: 'border: 1px;',
-        onKeyUp: OnUrlChange
+        onKeyUp: function(){
+          this.getDialog().definition.onUrlChange(this.getDialog());
+        }
       },
       {
         id: 'searchMsg',
@@ -165,7 +69,9 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         title: 'Page list',
         required: false,
         style: 'border: 1px; width:100%;',
-        onChange: WikiPageSelected,
+        onChange: function(){
+          this.getDialog().definition.wikiPageSelected(this.getDialog());
+        },
         items: [  ]
       }
       ]
@@ -173,119 +79,166 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
     ],
 
     onOk : function() {
-      var e = this.getContentElement( 'mwLinkTab1', 'linkTarget'),
-      link = e.getValue().Trim().replace(/\s/g, '_'),
-      attributes = {
-        href : link,
-        _cke_saved_href : link
-      };
+      var dialog = this;      
+      var linkInput = dialog.getContentElement( 'mwLinkTab1', 'linkTarget');
+      var link = linkInput.getValue().Trim();
 
-      if ( !this._.selectedElement ) {
-        // Create element if current selection is collapsed.
-        var selection = editor.getSelection(),
-        ranges = selection.getRanges( true );
-        if ( ranges.length == 1 ) {
-          if ( ranges[0].collapsed ) {
-            var text = new CKEDITOR.dom.text( attributes.href, editor.document );
-            ranges[0].insertNode( text );
-            ranges[0].selectNodeContents( text );
-            selection.selectRanges( ranges );
-            if (text == link)
-              attributes._fcknotitle=true;
-          }
-          else attributes._fcknotitle=true; // remove this if the else part is fixed
-        /*
-                        else {
-                            var temp = ranges.clone();
-                            try {
-                                var node = temp[0].extractContents().getFirst();
-                                if (node.$.nodeType == 3 && node.$.nodeValue == link)
-                                    attributes._fcknotitle=true;
-                            } catch (e) {}
-                        }
-                        */
-        }
+      var labelInput = dialog.getContentElement( 'mwLinkTab1', 'linkLabel');
+      var label = labelInput.getValue().Trim();
+      var attributes = {};
 
-        // Apply style.
-        var style = new CKEDITOR.style( {
-          element : 'a',
-          attributes : attributes
-        } );
-        style.type = CKEDITOR.STYLE_INLINE;		// need to override... dunno why.
-        style.apply( editor.document );
+      if (!label){
+        attributes._fcknotitle = true;
+        label = urlProtocolRegex.test(link) ? '[n]' : link;
+      }
+      
+      attributes.href = attributes._cke_saved_href = link.replace(/\s/g, '_');
+      
+      var editor = dialog.getParentEditor();
 
+      if ( !dialog._.selectedElement || !dialog._.selectedElement.is('a')) {
+        //create new element if none is selected
+        var linkElement = new CKEDITOR.dom.element('a');
+        linkElement.setAttributes(attributes);
+        linkElement.setHtml(label);
+        editor.insertElement(linkElement);
       }
       else {
         // We're only editing an existing link, so just overwrite the attributes.
-        var element = this._.selectedElement,
-        textView = element.getHtml();
+        linkElement = dialog._.selectedElement;
+        linkElement.setAttributes( attributes );
+        linkElement.setHtml(label);
 
-        if (textView == link)
-          attributes._fcknotitle = 'true';
-        else
-          element.removeAttributes( ['_fcknotitle'] );
-        if ( element.is('img') )
-          element.setAttribute('link', link);
-        else
-          element.setAttributes( attributes );
+        if ( dialog.fakeObj )
+          editor.createFakeElement( linkElement, 'cke_anchor', 'anchor' ).replace( dialog.fakeObj );
 
-        if ( this.fakeObj )
-          editor.createFakeElement( element, 'cke_anchor', 'anchor' ).replace( this.fakeObj );
-
-        delete this._.selectedElement;
+        delete dialog._.selectedElement;
       }
     },
 
     onShow : function()
     {
-      // clear old selection list from a previous call
-      var editor = this.getParentEditor(),
-      e = this.getContentElement( 'mwLinkTab1', 'linkList' );
-      e.items = [];
-      var div = document.getElementById(e.domId),
-      select = div.getElementsByTagName('select')[0];
-      while ( select.options.length > 0 )
-        select.remove( 0 );
-      e = this.getContentElement( 'mwLinkTab1', 'searchMsg' );
-      var message = editor.lang.mwplugin.startTyping;
-      e.html = message;
-      document.getElementById(e.domId).innerHTML = message;
+      var dialogDefinition = this.definition;      
+      var editor = this.getParentEditor();
 
       this.fakeObj = false;
-
-      var selection = editor.getSelection(),
-      element = null;
-
-      // Fill in all the relevant fields if there's already one link selected.
-      if ( ( element = plugin.getSelectedLink( editor ) ) && element.hasAttribute( 'href' ) )
-        selection.selectElement( element );
-      else if ( ( element = selection.getSelectedElement() ) && element.is( 'img' ) )
-      {
-        if ( element.getAttribute( '_cke_real_element_type' ) &&
-          element.getAttribute( '_cke_real_element_type' ) == 'anchor' )
+      var element = plugin.getSelectedLink( editor ) || editor.getSelection().getSelectedElement() || editor.getSelection().getStartElement();
+      if(element){
+        if ( element.getAttribute( '_cke_real_element_type' ) && element.getAttribute( '_cke_real_element_type' ) == 'anchor' )
         {
           this.fakeObj = element;
           element = editor.restoreRealElement( this.fakeObj );
-          selection.selectElement( this.fakeObj );
         }
-        else {
-          selection.selectElement( element );
-        }
-      }
 
-      var href = ( element  && ( element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' ) || element.getAttribute('link') ) ) || '';
-      if (href) {
-        // The link is URL encoded
-        href = decodeURIComponent(href);
-        href = href.replace(/_/g, ' ');
-        e = this.getContentElement( 'mwLinkTab1', 'linkTarget');
-        e.setValue(href);
+        var href = element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' );
+        if (href) {
+          href = decodeURIComponent(href).replace(/_/g, ' ');
+          this.getContentElement( 'mwLinkTab1', 'linkTarget').setValue(href);
+        }
+        var label = element.getHtml().replace('<br>', '');
+        if(label){
+          this.getContentElement( 'mwLinkTab1', 'linkLabel').setValue(label);
+        }
+
+        dialogDefinition.onUrlChange(this);
       }
+  
       this._.selectedElement = element;
 				
-//      this.getButton('ok').getElement().show();
-    }
+    },
+    startSearch: function(dialog) {
+      var dialogDefinition = dialog.definition;
+      var link = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ).getValue().Trim();
+
+      if ( link ){
+        dialogDefinition.setSearchMessage( editor.lang.mwplugin.searching, dialog ) ;
+
+        // Make an Ajax search for the pages.
+        window.parent.sajax_request_type = 'GET' ;
+        window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], function(response){ dialogDefinition.loadSearchResults(response, dialog) }) ;
+      }
+    },
+    clearSearch: function(dialog) {
+      dialog.getContentElement( 'mwLinkTab1', 'linkList' ).clear();
+    },
+    setSearchMessage: function ( message, dialog ) {
+      dialog.getContentElement( 'mwLinkTab1', 'searchMsg' ).getInputElement().setHtml(message);
+    },
+    loadSearchResults: function ( result, dialog ) {
+      var dialogDefinition = dialog.definition;
+      var results = result.responseText.split( '\n' ),
+      select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
+
+      dialogDefinition.clearSearch(dialog) ;
+
+      var invalidTitle = false;
+      if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) ) {
+        dialogDefinition.setSearchMessage( editor.lang.mwplugin.noPagesFound, dialog ) ;
+      }
+      else {
+        if (results.length == 1) {
+          if (results[0] === '***Title has an invalid format***') {
+            dialogDefinition.setSearchMessage(editor.lang.mwplugin.invalidTitleFormat, dialog);
+            // hide the OK button
+            dialog.getButton('ok').getElement().hide();
+            invalidTitle = true;
+          } else {
+            dialogDefinition.setSearchMessage(editor.lang.mwplugin.onePageFound, dialog);
+          }
+        } else {
+          dialogDefinition.setSearchMessage(results.length + editor.lang.mwplugin.manyPagesFound, dialog);
+        }
+        if (!invalidTitle) {
+          for (var i = 0; i < results.length; i++) {
+            select.add(results[i].replace(/_/g, ' '), results[i]);
+          }
+        }
+      }
+      if (!invalidTitle) {
+        // show the OK button
+        dialog.getButton('ok').getElement().show();
+      }
+    },
+    wikiPageSelected: function(dialog) {
+      var target = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' );
+      var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
+      target.setValue(select.getValue().replace(/_/g, ' '));
+    },
+    onUrlChange: function(dialog) {
+      
+      var dialogDefinition = dialog.definition;
+      var link = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ).getValue().Trim();
+      dialogDefinition.clearSearch(dialog) ;
+
+      if ( searchTimer ){
+        window.clearTimeout( searchTimer ) ;
+      }
+
+      if ( !link ) {
+        dialogDefinition.setSearchMessage( editor.lang.mwplugin.startTyping, dialog ) ;
+        return ;
+      }
+
+      if ( link.StartsWith( '#' ) ) {
+        dialogDefinition.setSearchMessage( editor.lang.mwplugin.anchorLink, dialog ) ;
+        return ;
+      }
+
+      if( urlProtocolRegex.test( link ) ) {
+        dialogDefinition.setSearchMessage( editor.lang.mwplugin.externalLink, dialog ) ;
+        return ;
+      }      
+
+      dialogDefinition.setSearchMessage( editor.lang.mwplugin.stopTyping, dialog ) ;
+      searchTimer = window.setTimeout( function(){
+          dialogDefinition.startSearch(dialog);
+        }, 1000 ) ;
+      }
 
   }
-}
-} );
+
+
+  };
+
+  return dialogDefinition;
+});
