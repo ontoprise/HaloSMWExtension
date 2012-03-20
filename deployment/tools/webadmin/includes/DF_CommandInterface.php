@@ -258,6 +258,38 @@ class DFCommandInterface {
 		}
 		return $filename;
 	}
+	
+    public function installAll($extids, $settings) {
+        global $mwrootDir, $dfgOut;
+
+        $unique_id = uniqid();
+        $filename = $unique_id.".log";
+        $logger = Logger::getInstance();
+        $logdir = $logger->getLogDir();
+        touch("$logdir/$filename");
+
+        $console_out = "$logdir/$filename.console_out";
+        
+        $settings = json_decode($settings);
+        $optionString = self::getOptions($settings);
+        
+        $extidsString = implode(" -i ", array_map(function($e) {
+           return "\"$e\"";  
+        }, explode(",",$extids)));
+        
+        chdir($mwrootDir.'/deployment/tools');
+        $php = $this->phpExe;
+        if (Tools::isWindows()) {
+            $wshShell = new COM("WScript.Shell");
+            $runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --noask --outputformat html --nocheck --showOKHint -i $extidsString > \"$console_out\" 2>&1";
+            $oExec = $wshShell->Run("$runCommand", 7, false);
+
+        } else {
+            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --noask --nocheck --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
+            $nullResult = `$runCommand &`;
+        }
+        return $filename;
+    }
 
 	public function deinstall($extid, $settings) {
 		global $mwrootDir, $dfgOut;

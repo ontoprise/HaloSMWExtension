@@ -81,6 +81,7 @@ class DF_Language_En extends DF_Language {
 	'df_logout' => 'Logout',
 	'df_webadmin_login_failed' => 'Login failed',
 	'df_webadmin_findall' => 'Find all',
+	'df_webadmin_installall' => 'Install selected',
 	'df_webadmin_about' => 'About',
 	'df_webadmin_status_text' => 'This table shows all extensions and content bundles that are currently installed in this wiki.',
 	'df_webadmin_updatesavailable' => 'Updates available! Do a ',

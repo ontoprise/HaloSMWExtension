@@ -29,7 +29,7 @@ $(document).ready(function(e) {
 	
 	$.webAdmin.settings = {};
 	$.webAdmin.settings.getSettings = function() {
-		var settings = getSettingsFromCookie(cookie);
+		var settings = getSettingsFromCookie(document.cookie);
 		return $.extend(settings_defaults, settings);
 	}
 	

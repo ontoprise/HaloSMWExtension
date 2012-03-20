@@ -50,6 +50,8 @@ class DFSearchTab {
 		$findall = $dfgLang->getLanguageString('df_webadmin_findall');
 		$html = "<input type=\"text\" value=\"$findall\" onfocus=\"this.value='';\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
+		$installall = $dfgLang->getLanguageString('df_webadmin_installall');
+		$html .= "<input id=\"df_install_all\" type=\"button\" style=\"display:none\" value=\"$installall\"></input>";
 		$html.= "<div id=\"df_search_results_header\"></div>";
 		$html.= "<div id=\"df_search_results\"></div>";
 		return $html;
@@ -66,6 +68,8 @@ class DFSearchTab {
 		}
 		$html = "<table id=\"df_search_results_table\">";
 		$html .= "<th>";
+        $html .= "</th>";
+		$html .= "<th>";
 		$html .= $dfgLang->getLanguageString('df_webadmin_extension');
 		$html .= "</th>";
 		$html .= "<th>";
@@ -78,11 +82,11 @@ class DFSearchTab {
 		$html .= $dfgLang->getLanguageString('df_webadmin_action');
 		$html .= "</th>";
 		$i=0;
-		
+
 		$installText = $dfgLang->getLanguageString('df_webadmin_install');
 		$updateText = $dfgLang->getLanguageString('df_webadmin_update');
 		$checkDependencyText = $dfgLang->getLanguageString('df_webadmin_checkdependency');
-		
+
 		foreach($results as $id => $versions) {
 			$numOfVersion = count($versions);
 			$first = true;
@@ -92,12 +96,14 @@ class DFSearchTab {
 				list($title, $description) = $tuple;
 				$j = $i % 2;
 				$html .= "<tr class=\"df_row_$j\">";
-
+				$html .= "<td style=\"width: 25px;\">";
+				$html .= "<input class=\"df_checkbox\" extid=\"$id\" version=\"$v\" type=\"checkbox\"></input>";
+				$html .= "</td>";
 				if ($first) {
 					$html .= "<td rowspan=\"$numOfVersion\" class=\"df_extension_id\" ext_id=\"$id\">";
 					$html .= !empty($title) ? $title : $id;
 					$html .= "</td>";
-						
+
 				}
 				$html .= "<td class=\"df_version\" extid=\"$id\" version=\"$v\">";
 				$html .= $v;

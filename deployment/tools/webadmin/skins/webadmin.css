@@ -113,6 +113,10 @@
 	margin-left: -20px;
 }
 
+#df_install_all {
+	margin-left: 20px;
+}
+
 .df_extension_id:hover {
 	background-color: yellow;
 	cursor: pointer;

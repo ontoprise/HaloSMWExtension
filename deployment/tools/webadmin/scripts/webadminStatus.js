@@ -66,9 +66,10 @@ $(document)
 										$dialog
 												.html('<img src="skins/ajax-loader.gif"/>');
 										$('.ui-dialog-titlebar-close').hide();
+										var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
 										var finalizeurl = wgServer
 												+ wgScriptPath
-												+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=";
+												+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
 										$.ajax( {
 											url : finalizeurl,
 											dataType : "json",

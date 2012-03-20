@@ -335,6 +335,16 @@ $.webAdmin.operations.searchHandler = function(e) {
 										complete : $.webAdmin.operations.extensionsDetailsStarted
 									});
 						});
+		
+		// register handler for selection checkboxes in search results
+		// this is for multi-install
+		$('.df_checkbox', '#df_search_results').change(function(e) {
+			if ($("input:checked", '#df_search_results').length > 0) {
+				$('#df_install_all').show();
+			} else {
+				$('#df_install_all').hide();
+			}
+		});
 
 	}
 	var searchvalue = $('#df_searchinput').val();
@@ -355,4 +365,53 @@ $(document).ready(function(e) {
 			$.webAdmin.operations.searchHandler(e);
 		}
 	});
+	
+	$('#df_install_all').click(function(e) { 
+
+			var extensionsToInstall = [];
+			$("input:checked", '#df_search_results').each(function(i, e) { 
+				var id = $(e).attr("extid");
+				var version = $(e).attr("version").split("_")[0];
+				extensionsToInstall.push(id+"-"+version);
+			});
+			
+			var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
+			var url = wgServer
+					+ wgScriptPath
+					+ "/deployment/tools/webadmin/index.php?rs=installAll&rsargs[]="
+					+ encodeURIComponent(extensionsToInstall.join(",")) + "&rsargs[]="+encodeURIComponent(globalSettings);
+
+			var $dialog = $('#df_install_dialog')
+					.dialog(
+							{
+								autoOpen : false,
+								title : dfgWebAdminLanguage
+										.getMessage('df_webadmin_pleasewait'),
+								modal : true,
+								width : 800,
+								height : 500,
+								operation : "install",
+								close : function(event, ui) {
+									window.location.href = wgServer
+											+ wgScriptPath
+											+ "/deployment/tools/webadmin/index.php?tab=0";
+
+								}
+							});
+			$dialog.html("<div></div>");
+
+			$dialog.dialog('open');
+			$dialog
+					.html('<img src="skins/ajax-loader.gif"/>');
+			$('.ui-dialog-titlebar-close').hide();
+			$.ajax( {
+						url : url,
+						dataType : "json",
+						complete : $.webAdmin.operations.installStarted
+					});
+		
+		
+	});
+	
+	
 });
