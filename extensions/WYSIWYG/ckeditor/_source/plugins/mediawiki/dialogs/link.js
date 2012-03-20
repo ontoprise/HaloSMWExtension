@@ -150,12 +150,46 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
       var dialogDefinition = dialog.definition;
       var link = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' ).getValue().Trim();
 
-      if ( link ){
+      //get page name part before #
+      var hashIndex = link && link.indexOf('#');
+      if(hashIndex > -1){ //search for anchors
+        if(hashIndex > 0){
+          var pageName = link.substring(0, hashIndex);
+        }
+        else{
+          pageName = mw.config.get('wgPageName');
+        }
+
+        var linkAnchor = encodeURIComponent(link.substring(hashIndex + 1).replace(/\s/g, '_')).toUpperCase();
+        CKEDITOR.ajax.load( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php?action=parse&prop=sections&format=json&page=' + pageName, function( data )
+        {
+            data = $.parseJSON(data);
+            if(data.error){
+              dialogDefinition.setSearchMessage(data.error.info, dialog);
+            }
+            else{
+              var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
+              var count = 0;
+              $.each(data.parse.sections, function(index, value){
+                var valueAnchor = value.anchor.toUpperCase();
+                if(linkAnchor && valueAnchor.indexOf(linkAnchor) !== 0){
+                  return true; //continue
+                }
+                else{
+                  select.add('#' + value.anchor);
+                  count++;
+                }
+              });
+              dialogDefinition.setSearchMessage(count + editor.lang.mwplugin.manyPagesFound, dialog);
+            }
+        } );
+      }
+      else{
         dialogDefinition.setSearchMessage( editor.lang.mwplugin.searching, dialog ) ;
 
         // Make an Ajax search for the pages.
         window.parent.sajax_request_type = 'GET' ;
-        window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], function(response){ dialogDefinition.loadSearchResults(response, dialog) }) ;
+        window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], function(response){dialogDefinition.loadSearchResults(response, dialog)}) ;
       }
     },
     clearSearch: function(dialog) {
@@ -166,8 +200,8 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
     },
     loadSearchResults: function ( result, dialog ) {
       var dialogDefinition = dialog.definition;
-      var results = result.responseText.split( '\n' ),
-      select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
+      var results = result.responseText.split( '\n' );
+      var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
 
       dialogDefinition.clearSearch(dialog) ;
 
@@ -182,10 +216,12 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
             // hide the OK button
             dialog.getButton('ok').getElement().hide();
             invalidTitle = true;
-          } else {
+          }
+          else {
             dialogDefinition.setSearchMessage(editor.lang.mwplugin.onePageFound, dialog);
           }
-        } else {
+        }
+        else {
           dialogDefinition.setSearchMessage(results.length + editor.lang.mwplugin.manyPagesFound, dialog);
         }
         if (!invalidTitle) {
@@ -202,7 +238,15 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
     wikiPageSelected: function(dialog) {
       var target = dialog.getContentElement( 'mwLinkTab1', 'linkTarget' );
       var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
-      target.setValue(select.getValue().replace(/_/g, ' '));
+      var link = target.getValue();
+      var selectedValue = select.getValue().replace(/_/g, ' ');
+      var hashIndex = link.indexOf('#');
+      if(hashIndex > -1){
+        target.setValue(link.replace(link.substr(hashIndex), selectedValue));
+      }
+      else{
+        target.setValue(selectedValue);
+      }
     },
     onUrlChange: function(dialog) {
       
@@ -219,10 +263,10 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         return ;
       }
 
-      if ( link.StartsWith( '#' ) ) {
-        dialogDefinition.setSearchMessage( editor.lang.mwplugin.anchorLink, dialog ) ;
-        return ;
-      }
+//      if ( link.StartsWith( '#' ) ) {
+//        dialogDefinition.setSearchMessage( editor.lang.mwplugin.anchorLink, dialog ) ;
+//        return ;
+//      }
 
       if( urlProtocolRegex.test( link ) ) {
         dialogDefinition.setSearchMessage( editor.lang.mwplugin.externalLink, dialog ) ;
@@ -232,7 +276,7 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
       dialogDefinition.setSearchMessage( editor.lang.mwplugin.stopTyping, dialog ) ;
       searchTimer = window.setTimeout( function(){
           dialogDefinition.startSearch(dialog);
-        }, 1000 ) ;
+        }, 500 ) ;
       }
 
   }
