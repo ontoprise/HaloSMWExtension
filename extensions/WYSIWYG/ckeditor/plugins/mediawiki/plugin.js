@@ -321,6 +321,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         // language logic for additional messages
         var MWpluginLang = [];
         MWpluginLang['en'] = {
+            source          : 'WikiText',
             invalidContent  : 'invalid content',
             searching       : 'searching...',
             externalLink    : 'external link... no search for it',
@@ -360,6 +361,7 @@ CKEDITOR.plugins.add( 'mediawiki',
         };
 
         MWpluginLang['de'] = {
+            source          : 'WikiText',
             invalidContent  : 'invalid content',
             searching       : 'suche...',
             externalLink    : 'externer Link... es wird nicht danach gesucht',
@@ -396,12 +398,11 @@ CKEDITOR.plugins.add( 'mediawiki',
             defineTarget    : 'Definiere eine Wikiseite als Linkziel:',
             defineLabel     : 'Define the label for the link:',
             chooseTarget    : 'Wähle eine existierende Wikiseite als Linkziel:'
-        };
+        };       
         
-        if (typeof MWpluginLang[editor.langCode] != 'undefined' )
-            editor.lang.mwplugin = MWpluginLang[editor.langCode];
-        else
-            editor.lang.mwplugin = MWpluginLang['en'];
+        editor.lang.mwplugin = MWpluginLang[editor.langCode] || MWpluginLang['en'];
+
+        editor.ui._.items.Source.args[0].label = editor.lang.mwplugin.source;
 
         // define commands and dialogues
         editor.addCommand( 'MWSpecialTags', new CKEDITOR.dialogCommand( 'MWSpecialTags' ) );
@@ -415,12 +416,8 @@ CKEDITOR.plugins.add( 'mediawiki',
         editor.addCommand( 'link', new CKEDITOR.dialogCommand( 'MWLink' ) );
         CKEDITOR.dialog.add( 'MWLink', this.path + 'dialogs/link.js' );
 
-        editor.addCommand( 'enableObjectResizing', {
-          exec: function(editor){
-            mw.log('enableObjectResizing');
-          }
-        });
-
+        //override Source button label
+        editor.lang.source = editor.lang.mwplugin.source || editor.lang.source;
         
         //keep the buttons even if some extension is not installed
         if ( editor.ui.addButton )
