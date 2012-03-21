@@ -21,7 +21,7 @@
 
 class ASFUneditableValuesHandler {
 	
-	public static function getUneditableValues($articleName, $existingValues){
+	public static function getUneditableValues($articleName, $existingValues, $editableValues){
 		
 		//echo('<pre>'.print_r($existingValues, true).'</pre>');
 		
@@ -71,13 +71,13 @@ class ASFUneditableValuesHandler {
 		//now detect uneditable property values 
 		foreach($allPropertyValues as $label => $values){
 			$label = str_replace('_', ' ', $label);
-			if(!array_key_exists($label, $existingValues)){
-				$existingValues[$label] =array('values' => array());
+			if(!array_key_exists($label, $editableValues)){
+				$editableValues[$label] =array('values' => array());
 			} 
 				
 			foreach($values['values'] as $value){
 				$found = false;
-				foreach($existingValues[$label]['values'] as $compareValue){
+				foreach($editableValues[$label]['values'] as $compareValue){
 					$compareValue = $compareValue['value'];
 					$compareValue = SMWDataValueFactory::newTypeIDValue(
 						$values['typeid'], $compareValue);
@@ -93,6 +93,11 @@ class ASFUneditableValuesHandler {
 						'value' => $value['value'],
 						'insync' => false,
 						'editable' => false);
+				} else if (!array_key_exists($label, $existingValues)){
+					$existingValues[$label]['values'][] = array(
+						'value' => $value['value'],
+						'insync' => true,
+						'editable' => true);
 				}
 			}
 		}

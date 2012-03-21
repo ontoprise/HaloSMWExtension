@@ -73,6 +73,9 @@ class ASFFormGeneratorUtils {
 		define('TEXTAREADATATYPES', '-text- -ccode-');
 		define('DATETIMEDATATYPES', '-date-');
 		define('CHECKBOXDATATYPES', '-boolean-');
+		
+		define('ASF_ALLOWED_INPUT_FIELD_TYPES',
+			'-checkbox- -date- -datetime- -datepicker- -datetimepicker- -dropdown- -radiobutton- -text- -haloactext- -textarea- -haloactextarea-');
 
 		//define sizes of form input fields
 		define('ASF_LONG_TEXT_SIZE', '110');

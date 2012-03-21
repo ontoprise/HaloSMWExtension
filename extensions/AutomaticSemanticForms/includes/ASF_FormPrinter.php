@@ -52,8 +52,7 @@ class ASFFormPrinter extends SFFormPrinter {
 		
 		//echo('<pre>'.print_r($this->mInputTypeHooks, true).'</pre>');
 	}
-
-
+	
 	/*
 	 * This method is called by the Semantic Forms extension in order to render a form
 	 *
@@ -81,11 +80,23 @@ class ASFFormPrinter extends SFFormPrinter {
 				$existing_page_content .= $formDefinition->getAdditionalFreeText($page_name);
 				
 				//remove props that will only be shown in the form from free text and update unresolved annotations section
-				list($existing_page_content_temp, $existingAnnotations) = 
-					ASFWikiTextManipulator::getInstance()->getWikiTextAndAnnotationsForSF($page_name, $existing_page_content);
+				$existing_page_content_temp = 
+					ASFWikiTextManipulator::getInstance()->getWikiTextForFormPrinter($page_name, $existing_page_content);
+				
+				$existingAnnotations = 
+					ASFWikiTextManipulator::getInstance()->getExistingAnnotations($page_name, $existing_page_content);
 
-				$existingAnnotations = ASFUneditableValuesHandler::getUneditableValues($page_name, $existingAnnotations);
+				$editableAnnotations = 
+					ASFWikiTextManipulator::getInstance()->getEditableAnnotations($page_name, $existing_page_content);	
 					
+				//echo('<pre>'.print_r($existingAnnotations, true).'</pre>');
+				
+				//echo('<pre>'.print_r($editableAnnotations, true).'</pre>');
+				
+				$existingAnnotations = ASFUneditableValuesHandler::getUneditableValues($page_name, $existingAnnotations, $editableAnnotations);
+				
+				//echo('<pre>'.print_r($existingAnnotations, true).'</pre>');
+				
 				$formDefinition->updateDueToExistingAnnotations($existingAnnotations);
 				
 				if($source_is_page){

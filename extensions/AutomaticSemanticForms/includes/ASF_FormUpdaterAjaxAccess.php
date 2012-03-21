@@ -45,12 +45,19 @@ function asff_getNewForm($categories, $existingAnnotations){
 			array('values' => array());
 	}
 	
+	
+	
 	//create the form definition
 	ASFFormGenerator::getInstance()->generateFormForCategories($categories, null, true);
 	
 	ASFFormGenerator::getInstance()->getFormDefinition()
 		->updateDueToExistingAnnotations($annotationsToKeep);
 	
+	//this is necessary since the semantic form inputs input types are otherwise initialized too late
+	if(function_exists('wfSFISetup')){
+		wfSFISetup();
+	}
+		
 	//Get the form HTML
 	global $asfDummyFormName;
 	$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
@@ -71,58 +78,77 @@ function asff_getNewForm($categories, $existingAnnotations){
 	$html = substr($html, strpos($html, '>') + 1);
 	$endmarker = '</div><div id="asf_formfield_container2';
 	$html = substr($html, 0, strpos($html, $endmarker));
-	
 	$html = trim($html);
 	
+	$scripts = asff_getScriptsString();
+	
 	//return result
-	$result = array('html' => $html);
+	$result = array('html' => $html, 'scripts' => $scripts);
 	$result = json_encode($result);
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
 
 function asff_getNewFormRow($propertyName){
-
-	//create the form definition
-	ASFFormGenerator::getInstance()->generateFormForCategories(array(), null, true);
 	
-	ASFFormGenerator::getInstance()->getFormDefinition()
-		->updateDueToExistingAnnotations(array($propertyName => array('values' => array(
-			array('insync' => true, 'editable' => true)))));
+	
+	//first check if thisproperty has a 'no automatic formedit'annotation
+	global $wgLang;
+	$noASF = ASFFormGeneratorUtils::getPropertyValue(
+		ASFFormGeneratorUtils::getSemanticData(Title::newFromText($propertyName, SMW_NS_PROPERTY)), 
+		ASF_PROP_NO_AUTOMATIC_FORMEDIT, false, false);
+	
+	if(strtolower($noASF) != 'true'){
+		//create the form definition
+		ASFFormGenerator::getInstance()->generateFormForCategories(array(), null, true);
 		
-	ASFFormGenerator::getInstance()->getFormDefinition()
-		->setInAjaxUpdateMode();
-	
-	//Get the form HTML
-	global $asfDummyFormName;
-	$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
-	$title = Title::newFromText('Form:'.$asfDummyFormName);
-	$article = new Article($title);
-	
-	global $wgTitle;
-	$wgTitle = $title;
+		ASFFormGenerator::getInstance()->getFormDefinition()
+			->updateDueToExistingAnnotations(array($propertyName => array('values' => array(
+				array('insync' => true, 'editable' => true)))));
 			
-	$formPrinter = new ASFFormPrinter(); 
-	$html = $formPrinter->formHTML(
-		$article->getRawText(), false, false, $article->getID(), '', $asfDummyFormName, null, true);
-	$html = $html[0];
-	
-	//Do post processing
-	$startMarker = 'asf-unresolved-sectio';
-	$html = substr($html, strpos($html, $startMarker) + strlen($startMarker));
-	$endMarker = 'asf_formfield_container2';
-	$html = substr($html, 0, strpos($html, $endMarker));
-	
-	
-	//get the row
-	$html = substr($html, strpos($html, '<tr') + 3);
-	//the first one is the headline
-	$html = substr($html, strpos($html, '<tr'));
-	$html = substr($html, 0, strrpos($html, '</tr'));
-	$html .= '</tr>';
-	
+		ASFFormGenerator::getInstance()->getFormDefinition()
+			->setInAjaxUpdateMode();
+		
+		//Get the form HTML
+		global $asfDummyFormName;
+		$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
+		$title = Title::newFromText('Form:'.$asfDummyFormName);
+		$article = new Article($title);
+		
+		global $wgTitle;
+		$wgTitle = $title;
+				
+		//this is necessary since the semantic form inputs input types are otherwise initialized too late
+		if(function_exists('wfSFISetup')){
+			wfSFISetup();
+		} 
+		
+		$formPrinter = new ASFFormPrinter(); 
+		$html = $formPrinter->formHTML(
+			$article->getRawText(), false, false, $article->getID(), '', $asfDummyFormName, null, true);
+		$html = $html[0];
+		
+		$scripts = asff_getScriptsString();
+		
+		//Do post processing
+		$startMarker = 'asf-unresolved-sectio';
+		$html = substr($html, strpos($html, $startMarker) + strlen($startMarker));
+		$endMarker = 'asf_formfield_container2';
+		$html = substr($html, 0, strpos($html, $endMarker));
+		
+		
+		//get the row
+		$html = substr($html, strpos($html, '<tr') + 3);
+		//the first one is the headline
+		$html = substr($html, strpos($html, '<tr'));
+		$html = substr($html, 0, strrpos($html, '</tr'));
+		$html .= '</tr>';
+		
+		$result = array('html' => $html, 'scripts' => $scripts, 'noasf' => false);
+	} else {
+		$result = array('noasf' => true);
+	}
 	
 	//return result
-	$result = array('html' => $html);
 	$result = json_encode($result);
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
@@ -130,10 +156,22 @@ function asff_getNewFormRow($propertyName){
 
 function asff_convertDateString($dateString){
 	
-	$date = date('M d, yy', strtotime($dateString));
+	//$date = date('M d, yy', strtotime($dateString));
+	$date = new SMWTimeValue();
+	$date->setUserValue($dateString);
+	$date = date('m/d/Y H:i:s', strtotime($date->getISO8601Date()));
 	
 	//return result
 	$result = array('date' => $date);
 	$result = json_encode($result);
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
+
+function asff_getScriptsString(){
+	global $wgOut;
+	$scripts = $wgOut->getScript();
+	
+	return $scripts;
+}
+
+

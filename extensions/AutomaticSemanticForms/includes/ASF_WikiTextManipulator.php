@@ -36,36 +36,89 @@ class ASFWikiTextManipulator {
 	
 	private function __construct(){}
 	
-	public function getWikiTextAndAnnotationsForSF($titleString, $text){
+	public function getWikiTextForFormPrinter($titleString, $text){
 		
 		if($text == null) $text = '';
 		
-		//deal with ontology imjport conflict sections and other tags 
+		//deal with tags 
 		$pattern = array(
 			'/<!--\s*BEGIN ontology:([^>]*)-->([^<]*)<!--\s*END ontology([^>]*)-->/',
 			'/<\s*onlyinclude\s*>/',
 			'/<\s*\/onlyinclude\s*>/',
 			'/<\s*includeonly\s*>/',
-			'/<\s*\/includeonly\s*>/'
+			'/<\s*\/includeonly\s*>/',
+			'/<\s*noinclude\s*>/',
+			'/<\s*\/noinclude\s*>/'
 			);
 		$replacement = array(
 			'<nowiki> <!--asf--> $0 <!--asf--> </nowiki>',
 			'<nowiki><onlyinclude>',
 			'</onlyinclude></nowiki>',
 			'<nowiki><includeonly>',
-			'</includeonly></nowiki>'
+			'</includeonly></nowiki>',
+			'<nowiki><noinclude>',
+			'</noinclude></nowiki>'
 			);
 		$text = preg_replace($pattern, $replacement, $text);
 		
 		POMElement::$elementCounter = 0;
 		$pomPage = new POMPage($titleString, $text);
 		
+		list($pomPage, $collectedAnnotations) =
+			$this->searchAndUpdateAnnotationsInPOMPage($pomPage);	
+		
+		$text = '{{CreateSilentAnnotations:';
+		foreach($collectedAnnotations as $label => $annotation){
+			$counter = 1;
+			foreach($annotation['values'] as $value){
+				$text .= '|'.ucfirst($label);
+				if($counter > 1){
+					$text .= '---'.$counter;
+				}
+				$text .= '='.$value['value'];
+				$counter++; 
+			}
+		}
+		$text .= '}}';
+		
+		$pomPage->sync();
+		$text.= trim($pomPage->text);
+		
+		//deal with ontology imjport conflict sections and other tags again
+		$pattern = array(
+			'/<nowiki> <!--asf--> <!--\s*BEGIN ontology:/',
+			'/--> <!--asf--> <\/nowiki>/',
+			'/<nowiki><onlyinclude>/',
+			'/<\/onlyinclude><\/nowiki>/',
+			'/<nowiki><includeonly>/',
+			'/<\/includeonly><\/nowiki>/',
+			'/<nowiki><noinclude>/',
+			'/<\/noinclude><\/nowiki>/',
+			); 
+		$replacement = array(
+			'<!-- BEGIN ontology:',
+			'-->',
+			'<onlyinclude>',
+			'</onlyinclude>',
+			'<includeonly>',
+			'</includeonly>',
+			'<noinclude>',
+			'</noinclude>',
+			);
+		$text = preg_replace($pattern, $replacement, $text);
+		
+		return $text;
+	}
+	
+	private function searchAndUpdateAnnotationsInPOMPage($pomPage){
+		
 		$collectedAnnotations = array();
 		
 		$elements = $pomPage->getElements()->listIterator();
 		while($elements->hasNext()){
-			$element = $elements->getNext()->getNodeValue();
-				
+			$elementContainer = $elements->getNext();
+			$element = $elementContainer->getNodeValue();
+
 			if($element instanceof POMProperty){
 				
 				if($this->isPropertyIgnored($element->getName())){
@@ -140,45 +193,8 @@ class ASFWikiTextManipulator {
 			}
 		}
 		
-		$text = '{{CreateSilentAnnotations:';
-		foreach($collectedAnnotations as $label => $annotation){
-			$counter = 1;
-			foreach($annotation['values'] as $value){
-				$text .= '|'.ucfirst($label);
-				if($counter > 1){
-					$text .= '---'.$counter;
-				}
-				$text .= '='.$value['value'];
-				$counter++; 
-			}
-		}
-		$text .= '}}';
-		
-		$pomPage->sync();
-		$text.= trim($pomPage->text);
-		
-		//deal with ontology imjport conflict sections and other tags again
-		$pattern = array(
-			'/<nowiki> <!--asf--> <!--\s*BEGIN ontology:/',
-			'/--> <!--asf--> <\/nowiki>/',
-			'/<nowiki><onlyinclude>/',
-			'/<\/onlyinclude><\/nowiki>/',
-			'/<nowiki><includeonly>/',
-			'/<\/includeonly><\/nowiki>/',
-			); 
-		$replacement = array(
-			'<!-- BEGIN ontology:',
-			'-->',
-			'<onlyinclude>',
-			'</onlyinclude>',
-			'<includeonly>',
-			'</includeonly>',
-			);
-		$text = preg_replace($pattern, $replacement, $text);
-		
-		return array($text, $collectedAnnotations );
+		return array($pomPage, $collectedAnnotations);
 	}
-	
 	
 	public function getWikiTextForSaving($titleString, $text){
 
@@ -321,5 +337,60 @@ class ASFWikiTextManipulator {
 		return $res;
 	}
 	
+	public function getExistingAnnotations($titleString, $text){
+		
+		if($text == null) $text = '';
+		
+		//deal with tags 
+		$pattern = array(
+			'/<!--\s*BEGIN ontology:([^>]*)-->([^<]*)<!--\s*END ontology([^>]*)-->/',
+			'/<\s*onlyinclude\s*>/',
+			'/<\s*\/onlyinclude\s*>/',
+			'/<\s*includeonly\s*>/',
+			'/<\s*\/includeonly\s*>/',
+			'/<\s*noinclude\s*>/',
+			'/<\s*\/noinclude\s*>/'
+			);
+		$replacement = array(
+			'<nowiki> <!--asf--> $0 <!--asf--> </nowiki>',
+			'<nowiki><onlyinclude>',
+			'</onlyinclude></nowiki>',
+			'<nowiki><includeonly>',
+			'</includeonly></nowiki>',
+			'<nowiki><noinclude>',
+			'</noinclude></nowiki>'
+			);
+		$text = preg_replace($pattern, $replacement, $text);
+		
+		POMElement::$elementCounter = 0;
+		$pomPage = new POMPage($titleString, $text);
+		
+		list($pomPage, $collectedAnnotations) =
+			$this->searchAndUpdateAnnotationsInPOMPage($pomPage);
+
+		return $collectedAnnotations;
+	}
+	
+	
+	public function getEditableAnnotations($titleString, $text){
+		
+		if($text == null) $text = '';
+		
+		$pattern = array(
+			'/<\s*noinclude\s*>/',
+			'/<\s*\/noinclude\s*>/'
+			);
+		$replacement = array('', '');
+		$text = preg_replace($pattern, $replacement, $text);
+		
+		POMElement::$elementCounter = 0;
+		$pomPage = new POMPage($titleString, $text);
+		
+		list($pomPage, $collectedAnnotations) =
+			$this->searchAndUpdateAnnotationsInPOMPage($pomPage);
+
+		return $collectedAnnotations;
+	}
 	
 }
+

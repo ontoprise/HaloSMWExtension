@@ -95,6 +95,13 @@ class ASFPropertyFormData {
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_FORM_INPUT_LABEL, false, $this->titleObject->getText());
 		$this->explicitInputType = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_USE_INPUT_TYPE);
+
+		if($this->explicitInputType){
+			if(strpos(ASF_ALLOWED_INPUT_FIELD_TYPES, '-'.$this->explicitInputType.'-') === false){
+				$this->explicitInputType = null;
+			}	
+		}
+			
 		$this->isUploadable = 
 			ASFFormGeneratorUtils::getPropertyValue($this->semanticData, ASF_PROP_IS_UPLOADABLE);
 		$this->helpText = 

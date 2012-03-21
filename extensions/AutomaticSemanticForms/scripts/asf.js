@@ -57,8 +57,6 @@ function initializeNiceASFTooltips(){
 			});
 			
 			$('a[title]', this).removeAttr('title');
-			
-			
 		}
 	});
 }
@@ -133,13 +131,13 @@ window.ASFFormSyncer = {
 			return false;
 		};
 		
-		//todo: implement better widget for triggering updates of the complete form
 		jQuery('#asf_category_annotations').click(this.updateForm);
 		jQuery('#asf_category_annotations').css('cursor', 'pointer');
 		
 		this.blockFormUpdates = false;
 		this.currentCategoryAnnotations = false;
 		this.currentRelationsCount = 0;
+		this.propertiesWithNoASF = new Array();
 		
 		//init freetxt content change listeners and do first form update
 		if(typeof CKEDITOR != 'undefined'){
@@ -180,7 +178,13 @@ window.ASFFormSyncer = {
 			if(ASFFormSyncer.currentFreeTextContent
 					!= newFreeTextContent){
 				ASFFormSyncer.currentFreeTextContent = newFreeTextContent;
-				ASFFormSyncer.updateForm();
+				window.setTimeout(function() {
+					var newFreeTextContent = ASFFormSyncer.getFreeTextContent();
+					if(ASFFormSyncer.currentFreeTextContent
+							== newFreeTextContent){
+						ASFFormSyncer.updateForm();
+					}
+				}, 750);
 			}
 			ASFFormSyncer.checkIfFormUpdateIsNecessary();
 		}, 750);
@@ -200,9 +204,9 @@ window.ASFFormSyncer = {
 	setFreeTextContent : function(text){
 		if(typeof CKEDITOR != 'undefined' && CKEDITOR.instances && CKEDITOR.instances.free_text){
 			CKEDITOR.instances.free_text.setData(text);
-		} else {
-			jQuery('#free_text').val(text);
 		}
+		//this always has to be done due to strange behaviour of wysiwyg if toggled to wikitext editor
+		jQuery('#free_text').val(text);
 	},
 	
 	/*
@@ -239,9 +243,14 @@ window.ASFFormSyncer = {
 		//markers aone after another again if the value is still present
 		jQuery('.asf-syncronized-value').attr('asf-delete-this', 'true');
 		
-		//todo: deal with invalid values, e.g. black for a boolean property
-		
+		//console.log('update fields');
 		for (var i = 0; i < relations.length; ++i) {
+			//console.log('update fields for:' + relations[i].getName() + ' : ' + relations[i].getValue());
+			
+			//annotations with an empty value are considered to be deleted
+			if(jQuery.trim(relations[i].getValue()).length == 0){
+				continue;
+			}
 			
 			var addAnnotation = true;
 			
@@ -262,6 +271,7 @@ window.ASFFormSyncer = {
 							if(jQuery(this).attr('asf-delete-this') == 'true'){ 
 								//input field has not already been associated with another annoation in free text
 								var currentValue = ASFMultiInputFieldHandler.getInputFieldValue(this, type);
+								//console.log('update field compare with ' + currentValue);
 								if(ASFMultiInputFieldHandler.areValuesEqual(currentValue, relations[i].getValue(), type)){
 									jQuery(this).attr('asf-delete-this', 'false');
 									jQuery(this).attr('asf-wp-rel-index', i);
@@ -274,6 +284,7 @@ window.ASFFormSyncer = {
 				});
 				
 				if(addAnnotation && lastChild != null){
+					//console.log('update field add new input field');
 					//add a new form input field
 					var newInputField = ASFMultiInputFieldHandler.doAddInputField(jQuery('> *:first-child', lastChild));
 					ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, relations[i].getValue());
@@ -295,6 +306,11 @@ window.ASFFormSyncer = {
 			if(addAnnotation){
 				//add a new property to the unresolved annotations section
 				
+				//first check if we already cached that this prop has a no automatic formedit annotation
+				for(var k=0; k < ASFFormSyncer.propertiesWithNoASF.length; k++){
+					if(propName == ASFFormSyncer.propertiesWithNoASF[k]) continue;
+				}
+				
 				//adding the new property to unresolved annotations section
 				//has to be done synchroniously because there may be also
 				//other values for this property in the relations array
@@ -310,6 +326,14 @@ window.ASFFormSyncer = {
 						data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 						data = jQuery.parseJSON(data);
 						
+						//console.log('update field add new row');
+						
+						//the property has a no automatic formedit annotation and no formfield will be shown
+						if(data.noasf){
+							ASFFormSyncer.propertiesWithNoASF.push(propName);
+							return;
+						}
+						
 						jQuery('.asf-unresolved-section').css('display', '');
 						
 						//first check if there is already a row for that property with some uneditable values
@@ -320,6 +344,24 @@ window.ASFFormSyncer = {
 						});
 
 						jQuery('.asf-unresolved-section table').append(data.html);
+						
+						//the new inputs may have ids that already exist
+						jQuery('.asf-unresolved-section table tr:last-child input[id]').each(function (){
+							//such a id cannot yet exist since then we would not have to add this new row
+							var currentId = jQuery(this).attr('id');
+							jQuery(this).attr('id', currentId + propName.replace(/ /g, '_'));
+							
+							//old id may occur in the javascript string
+							regexp = new RegExp(currentId, "g");
+							data.scripts = data.scripts.replace(regexp, jQuery(this).attr('id'));
+							
+							//may be used if this is a datepicker
+							jQuery(this).attr('oldId', currentId);
+						});
+						
+						//some input field types may have their own custm javascript, that must be executed now
+						jQuery('.asf-unresolved-section table').append(data.scripts);
+						
 						var newInputField = jQuery('.asf-unresolved-section table tr:last-child .asf-multi_value').get(0);
 						var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(newInputField).parent());
 						ASFMultiInputFieldHandler.doInit(jQuery(newInputField).parent());
@@ -366,6 +408,8 @@ window.ASFFormSyncer = {
 		var type = ASFMultiInputFieldHandler.getInputFieldType(jQuery(node).parent());
 		var newValue = ASFMultiInputFieldHandler.getInputFieldValue(node, type);
 		
+		//console.log('update free text');
+		
 		//this is a form input field for which we currently do not support syncronisation
 		if(newValue == undefined){
 			return;
@@ -383,6 +427,8 @@ window.ASFFormSyncer = {
 			return;
 		}
 		jQuery(node).attr('asf-last-field-value', newValue);
+		
+		//console.log('update free text new value: ' + newValue);
 		
 		var relationIndex = jQuery(node).attr('asf-wp-rel-index');
 		
@@ -411,7 +457,7 @@ window.ASFFormSyncer = {
 			
 			currentRelation = currentRelation[relationIndex];
 			
-			if(newValue.length > 0){
+			if(jQuery.trim(newValue).length > 0){
 				this.editPropertyInFreeText(currentRelation, newValue);
 			} else {
 				this.deletePropertyInFreetext(currentRelation, relationIndex, node);
@@ -487,7 +533,6 @@ window.ASFFormSyncer = {
 	 * Edits a property value in the freetext input field
 	 */
 	editPropertyInFreeText : function(currentRelation, newValue){
-		//todo:make this also work with #set
 		var newRelation = '[[';
 		newRelation += currentRelation.getName();
 		newRelation += '::' + newValue;
@@ -514,7 +559,7 @@ window.ASFFormSyncer = {
 			jQuery(container).attr('asf-syncronized', 'true');
 		}
 		jQuery(container).removeClass('asf-syncronized-value');
-				
+		
 		this.wtp.replaceAnnotation(currentRelation, '');
 		this.setFreeTextContent(this.wtp.text);
 		
@@ -601,7 +646,7 @@ window.ASFFormSyncer = {
 		});
 		
 		jQuery('.asf-uneditable_values').each(function(){
-			if(jQuery(this).html().length > 0){
+			if(jQuery('p', this).get().length > 0){
 				inputFieldIds += '<<<' + jQuery(this).prev().attr('property-name');
 			}
 		});
@@ -631,7 +676,6 @@ window.ASFFormSyncer = {
 			currentContainer = '#asf_formfield_container2';
 			newContainer = '#asf_formfield_container';
 		}
-		jQuery(newContainer).html(data.html);
 		
 		var missingAnnotations = new Array();
 		jQuery(currentContainer + ' .asf-multi_value').each(function(){
@@ -649,9 +693,13 @@ window.ASFFormSyncer = {
 				}
 				missingAnnotation.insync = insync;
 				
+				//console.log(missingAnnotation.name + ' ' + missingAnnotation.insync + ' ' + missingAnnotation.value);
+				
 				missingAnnotations.push(missingAnnotation);
 			}
 		});
+		
+		jQuery(newContainer).html(data.html);
 		
 		var uneditableSections = new Array();
 		jQuery(currentContainer + ' .asf-uneditable_values').each(function(){
@@ -665,6 +713,10 @@ window.ASFFormSyncer = {
 		
 		jQuery(currentContainer).html('');
 		
+		//some input field types may have their own custm javascript, that must be executed now
+		jQuery(newContainer).html(
+			jQuery(newContainer).html() + data.scripts);
+		
 		//first set all input fields in the new form to be syncronized
 		jQuery('.asf-multi_value').addClass('asf-syncronized-value');
 		
@@ -677,11 +729,16 @@ window.ASFFormSyncer = {
 				ASFMultiInputFieldHandler.setInputFieldValue(newInputField, type, 
 					missingAnnotations[i].value);
 				if(!missingAnnotations[i].insync){
+					//console.log('not in sync: ' + missingAnnotations[i].name + ' ' + missingAnnotations[i].value);
 					jQuery(newInputField).removeClass('asf-syncronized-value');
+				} else {
+					//this is necessary because if the last input field that was added was
+					//not insync we will not inherit this class
+					jQuery(newInputField).addClass('asf-syncronized-value');
 				}
 			});
 		}
-
+		
 		//add sections for unediable values again
 		for(var i=0; i < uneditableSections .length; i++){
 			jQuery('.asf-multi_values[property-name = "' + uneditableSections [i].name	+'"]').each(function(){
@@ -718,6 +775,17 @@ window.ASFFormSyncer = {
 window.ASFMultiInputFieldHandler = {
 	
 	init : function(){
+		
+		//the following must not be done if init is called after
+		//a form structure update
+		if(this.alreadyInitialized == undefined){
+			this.alreadyInitialized = true;
+			
+			this.cachedDateStringLookups = new Array();
+			
+			this.overwriteSFInputInitMethod();
+		}
+		
 		jQuery('.asf-multi_values').each(function(){
 			ASFMultiInputFieldHandler.doInit(this);
 		});
@@ -726,9 +794,121 @@ window.ASFMultiInputFieldHandler = {
 		jQuery('.asf-uneditable_values').each(function(){
 			jQuery(this).attr('property-name', jQuery('.asf-mv_propname', this).html());
 		});
-		
 	},	
+	
+	overwriteSFInputInitMethod : function(){
+		//console.log('overwrite sf init method');
+		jQuery.fn.SemanticForms_registerInputInit_temp = jQuery.fn.SemanticForms_registerInputInit;
+		jQuery.fn.SemanticForms_registerInputInit = function(initFunction, param, noexecute){
+			//console.log('execute sf init method');
+			if(initFunction == SFI_DP_init){
+				ASFMultiInputFieldHandler.overwriteDatePickerInitMethod();
+				initFunction = window.SFI_DP_init;
+			} else if(initFunction == SFI_DTP_init){
+				ASFMultiInputFieldHandler.overwriteDateTimePickerInitMethod();
+				ASFMultiInputFieldHandler.overwriteDatePickerInitMethod();
+				ASFMultiInputFieldHandler.overwriteTimePickerInitMethod();
+				initFunction = window.SFI_DTP_init;
+			} else if(initFunction == SFI_TP_init){
+				ASFMultiInputFieldHandler.overwriteTimePickerInitMethod();
+				initFunction = window.SFI_TP_init;
+			}
+			return this.SemanticForms_registerInputInit_temp(initFunction, param, noexecute);
+		}
+	},
+	
+	overwriteDatePickerInitMethod : function(){
+		if(typeof SFI_DP_init != 'undefined' && SFI_DP_init.hijacked != true){
+			//console.log('overwrite dp init method');
+			var temp = window.SFI_DP_init;
+			window.SFI_DP_init = function(input_id, params){
+				//console.log('execute dp init for ' + input_id);
+				
+				//check if the id of this datepicker has been changed
+				jQuery('*[oldId="' + input_id + '"]').each(function(){
+					input_id = jQuery(this).attr('id');
+					jQuery(this).removeAttr('oldId');
+				});
+				
+				ASFMultiInputFieldHandler.getContainerOfInput(
+					jQuery('#' + input_id)).parent().get(0).datePickerParams = params;
+				ASFMultiInputFieldHandler.datePickerFormat = params.dateFormat;
+				
+				temp(input_id, params);
+			}
+			window.SFI_DP_init.hijacked = true;
+		}
+	},
 		
+	overwriteDateTimePickerInitMethod : function(){
+		if(typeof SFI_DTP_init != 'undefined' && SFI_DTP_init.hijacked != true){
+			//console.log('overwrite dtp init method');
+			var temp = window.SFI_DTP_init;
+			window.SFI_DTP_init = function(input_id, params){
+				
+				//console.log('execute dtp init for ' + input_id);
+				
+				//check if the id of this datepicker has been changed
+				jQuery('*[oldId="' + input_id + '"]').each(function(){
+					input_id = jQuery(this).attr('id');
+					jQuery(this).removeAttr('oldId');
+				});
+				
+				//updatesubitem ids
+				var currentIdPrefix = input_id.substr(0, input_id.indexOf('input'));
+				var alreadyAddedPrefix = '';
+				if(currentIdPrefix.length > 0){
+					var subinputsInitData = new Object();
+					for (var subinputId in params.subinputsInitData) {
+						alreadyAddedPrefix = subinputId.substr(0, subinputId.indexOf('input'));
+						subinputsInitData[currentIdPrefix + subinputId.substr(subinputId.indexOf('input'))] =
+							params.subinputsInitData[subinputId];
+					}
+					params.subinputsInitData = subinputsInitData;
+					
+					currentIdPrefix = currentIdPrefix.substr(alreadyAddedPrefix.length);
+					params.subinputs = params.subinputs.replace(/id="/g, 'id="' + currentIdPrefix);
+				}
+				
+				//fix bug with prototype
+				var tempParse = JSON.parse;
+				JSON.parse = function(value){
+					if(value != undefined){
+						return tempParse(value);
+					} else {
+						return '';
+					}
+				}
+				
+				ASFMultiInputFieldHandler.getContainerOfInput(
+						jQuery('#' + input_id)).parent().get(0).dateTimePickerParams = params;
+				
+				temp(input_id, params);
+				
+				JSON.parse = tempParse;
+				
+				//console.log('execute dtp init finished');
+			}
+			
+			window.SFI_DTP_init.hijacked = true;
+		}
+	},
+	
+	
+	overwriteTimePickerInitMethod : function(){
+		if(typeof SFI_TP_init != 'undefined' && SFI_TP_init.hijacked != true){
+			//console.log('overwrite tp init method');
+			var temp = window.SFI_TP_init;
+			window.SFI_TP_init = function(input_id, params){
+				//console.log('execute tp init for ' + input_id);
+				
+				temp(input_id, params);
+			}
+			window.SFI_TP_init.hijacked = true;
+		}
+	},
+	
+	
 	doInit : function(node){
 		
 		jQuery(node).attr('property-name',
@@ -761,6 +941,48 @@ window.ASFMultiInputFieldHandler = {
 			ASFMultiInputFieldHandler.addValueChangeListeners(this);
 		});
 		
+	},
+	
+	doIdAndJSInit : function(node){
+		
+		//update ids
+		jQuery('*[id]', node).each(function(){
+			jQuery(this).attr('id', '-' + jQuery(this).attr('id'));
+		});
+		
+		//deal with datepickers and datetimepickers
+		if(jQuery(node).parent().get(0).dateTimePickerParams != undefined){
+			
+			jQuery('input[type="text"]', node).attr('name',
+				jQuery('input[type="hidden"]', node).attr('name'));
+			
+			var oldId = jQuery('input[type="text"]', node).attr('id');
+			oldId = oldId.substr(0, oldId.length - '_dp_show'.length);
+			jQuery('input[type="text"]', node).attr('id', oldId);
+
+			jQuery('.inputSpan *', node).each(function(){
+				if(jQuery(this).attr('class').indexOf('hasDatepicker') == -1){
+					jQuery(this).remove();
+				}
+			});
+			jQuery('input:first-child', node).removeClass('hasDatepicker');
+			
+			SFI_DTP_init(
+					jQuery('input[type="text"]', node).attr('id')
+					, jQuery(node).parent().get(0).dateTimePickerParams);
+		
+		} else if(jQuery(node).parent().get(0).datePickerParams != undefined){
+			
+			jQuery('input[type="text"]', node).removeClass('hasDatepicker');
+			jQuery('input[type="text"]', node).attr('name',
+				jQuery('input[type="hidden"]', node).attr('name'));
+			jQuery('input[type="hidden"]', node).remove();
+			jQuery('button', node).remove();
+			
+			SFI_DP_init(
+				jQuery('input[type="text"]', node).attr('id')
+				, jQuery(node).parent().get(0).datePickerParams);
+		}
 	},
 	
 	addAddButton : function(node){
@@ -886,11 +1108,19 @@ window.ASFMultiInputFieldHandler = {
 			ASFMultiInputFieldHandler.addDeleteButton(this);
 		});
 		
-		//deal with add buttons
+		//deal with add buttons, one has to be added to the new input field
+		//if the property does not have a max cardinality of one, i.e. if there 
+		//already was an add button shown
+		var addAddButton = false;
+		if(jQuery('.asf-addbutton', jQuery(parent).parent()).get().length > 0){
+			addAddButton = true;
+		}
 		jQuery('.asf-addbutton', jQuery(parent).parent()).remove();
-		jQuery(newInputField).each(function(){
-			ASFMultiInputFieldHandler.addAddButton(this);
-		});
+		if(addAddButton){
+			jQuery(newInputField).each(function(){
+				ASFMultiInputFieldHandler.addAddButton(this);
+			});
+		}
 		
 		//reset value
 		var type = this.getInputFieldType(jQuery(newInputField).parent());
@@ -902,6 +1132,7 @@ window.ASFMultiInputFieldHandler = {
 		jQuery(newInputField).removeAttr('asf-wp-oldstartpos');
 		jQuery(newInputField).removeAttr('asf-wp-oldlabel');
 
+		ASFMultiInputFieldHandler.doIdAndJSInit(newInputField);
 		
 		ASFMultiInputFieldHandler.addValueChangeListeners(newInputField);
 		
@@ -946,7 +1177,9 @@ window.ASFMultiInputFieldHandler = {
 	
 	isInputFieldValueSet : function(container){
 		var type = this.getInputFieldType(jQuery(container).parent());
-		var value = this.getInputFieldValue(container, type );
+		var value = jQuery.trim(this.getInputFieldValue(container, type ));
+		
+		if(value == undefined) value = '';
 		
 		if(type == 'text' || type == 'haloactext'){
 			if(value.length > 0){
@@ -986,6 +1219,18 @@ window.ASFMultiInputFieldHandler = {
 		}
 		
 		if(type == 'datetime'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'datepicker'){
+			if(value.length > 0){
+				return true;
+			}
+		}
+		
+		if(type == 'datetimepicker'){
 			if(value.length > 0){
 				return true;
 			}
@@ -1075,6 +1320,55 @@ window.ASFMultiInputFieldHandler = {
 			return dateString;
 		}
 		
+		if(type == 'datepicker'){
+			var date = jQuery.trim(jQuery('input[type="hidden"]', container).val());
+			if(date.length == 0){
+				date = jQuery.trim(jQuery('input[type="text"]', container).val());
+			} else {
+				date = ASFMultiInputFieldHandler.parseDateString(date);
+				if(date.toDateString() != 'Invalid Date'){
+					var day = date.getDate();
+					var month = date.getMonth()*1 + 1;
+					var year = date.getFullYear();
+					var date = day + '/' + month + '/' + year;
+					
+					date = jQuery.datepicker.formatDate(
+						ASFMultiInputFieldHandler.datePickerFormat,
+						jQuery.datepicker.parseDate( "dd/mm/yy", date, null), null);
+				}
+			}
+			return date;
+		}
+		
+		if(type == 'datetimepicker'){
+			var datetime = jQuery.trim(jQuery('input[type="hidden"]', container).val());
+			if(datetime.length == 0){
+				date = jQuery.trim(jQuery('input:nth-child(1)', container).val());
+				time = jQuery.trim(jQuery('input:nth-child(4)', container).val());
+				datetime = date + ' ' + time;
+			} else {
+				date = ASFMultiInputFieldHandler.parseDateString(datetime);
+				if(date.toDateString() != 'Invalid Date'){
+					var day = date.getDate();
+					var month = date.getMonth()*1 + 1;
+					var year = date.getFullYear();
+					var dateString = day + '/' + month + '/' + year;
+					
+					dateString = jQuery.datepicker.formatDate(
+							ASFMultiInputFieldHandler.datePickerFormat,
+							jQuery.datepicker.parseDate( "dd/mm/yy", dateString, null), null);
+					
+					var hours = ''+date.getHours();
+					if(hours.length == 1) hours = '0'+hours;
+					var minutes = ''+(date.getMinutes()*1);
+					if(minutes.length == 1) minutes = '0'+minutes;
+					var timeString = hours + ':' + minutes;
+					datetime = dateString + ' ' + timeString;
+				}
+			}
+			return datetime;
+		}
+
 		return undefined;
 	},
 	
@@ -1141,8 +1435,6 @@ window.ASFMultiInputFieldHandler = {
 		
 		if(type == 'datetime'){
 			
-			//todo: deal with invalid dates and ones that cannot be parsed by js
-			
 			value = jQuery.trim(value);
 			
 			var day = '';
@@ -1173,6 +1465,63 @@ window.ASFMultiInputFieldHandler = {
 			jQuery('.yearInput', container).next().next().val(minutes);
 			jQuery('.yearInput', container).next().next().next().val(seconds);
 			
+			return true;
+		}
+
+		
+		if(type == 'datepicker'){
+			value = jQuery.trim(value);
+			
+			var newDateString = '';
+		
+			if(value.length > 0){
+				date = this.parseDateString(value);
+			
+				if(date.toDateString() != 'Invalid Date'){
+					var day = date.getDate();
+					var month = date.getMonth()*1 + 1;
+					var year = date.getFullYear();
+					newDateString = day + '/' + month + '/' + year;
+					
+					newDateString = jQuery.datepicker.formatDate(
+							ASFMultiInputFieldHandler.datePickerFormat,
+							jQuery.datepicker.parseDate( "dd/mm/yy", newDateString, null), null);
+				}
+			}
+
+			jQuery('input', container).val(newDateString);
+			return true;
+		}
+		
+		if(type == 'datetimepicker'){
+			value = jQuery.trim(value);
+			
+			var newDateString = '';
+		
+			if(value.length > 0){
+				date = this.parseDateString(value);
+			
+				if(date.toDateString() != 'Invalid Date'){
+					var day = date.getDate();
+					var month = date.getMonth()*1 + 1;
+					var year = date.getFullYear();
+					var newDateString = day + '/' + month + '/' + year;
+					
+					newDateString = jQuery.datepicker.formatDate(
+							ASFMultiInputFieldHandler.datePickerFormat,
+							jQuery.datepicker.parseDate( "dd/mm/yy", newDateString, null), null);
+					
+					var hours = ''+date.getHours();
+					if(hours.length == 1) hours = '0'+hours;
+					var minutes = ''+(date.getMinutes()*1);
+					if(minutes.length == 1) minutes = '0'+minutes;
+					var newTimeString = hours + ':' + minutes;
+				}
+			}
+
+			jQuery('input:nth-child(1)', container).val(newDateString);
+			jQuery('input:nth-child(4)', container).val(newTimeString);
+			jQuery('input[type="hidden"]', container).val(newDateString + " " + newTimeString);
 			return true;
 		}
 		
@@ -1209,11 +1558,14 @@ window.ASFMultiInputFieldHandler = {
 		}
 	},
 	
+
 	areValuesEqual : function(formValue, freeTextValue, type){
 		formValue = this.normalizeValue(formValue, type);
 		freeTextValue = this.normalizeValue(freeTextValue, type);
+		//console.log('compare values' + formValue + ' ' + freeTextValue);
 		
 		if(formValue == freeTextValue){
+			//console.log('compare result: equal');
 			return true;
 		}
 		
@@ -1239,11 +1591,11 @@ window.ASFMultiInputFieldHandler = {
 			value = jQuery.trim(value);
 			value = value.charAt(0).toLowerCase() + value.substr(1);;
 			
-			if(value != 'false' && value != 'no' && value != '0'
-					&& value != 'n' && value != 'f' && value != ''){
-				value = 'true';
-			} else {
+			if(value != 'true' && value != 'yes' && value != '1'
+					&& value != 'y' && value != 't'){
 				value = 'false';
+			} else {
+				value = 'true';
 			}
 		}
 		
@@ -1263,14 +1615,40 @@ window.ASFMultiInputFieldHandler = {
 			return date.toGMTString();
 		}
 		
+		if(type == 'datepicker'){
+			value = jQuery.trim(value);
+			date = this.parseDateString(value);
+			return date.toGMTString();
+		}
+		
+		if(type == 'datetimepicker'){
+			value = jQuery.trim(value);
+			date = this.parseDateString(value);
+			return date.toGMTString();
+		}
+		
 		return value;
 	},
 	
 	parseDateString : function(dateString){
 		
-		var date = new Date(Date.parse(dateString));
-		
-		if(date.toDateString() == 'Invalid Date'){
+		//first check if we already have cached this date
+		var cachedValue = false;
+		for(var i= 0; i < this.cachedDateStringLookups.length; i++){
+				
+			//console.log(i + ' ' + this.cachedDateStringLookups[i].dateString + 
+			//		' ' + this.cachedDateStringLookups[i].date);
+				
+			if(this.cachedDateStringLookups[i].dateString == dateString){
+				cachedValue = this.cachedDateStringLookups[i].date
+				break;
+			}
+		}
+			
+		if(cachedValue != false){
+			ASFMultiInputFieldHandler .lookedupDate = cachedValue;
+			//console.log('cached value');
+		} else {
 			var url = wgServer + wgScriptPath + "/index.php";
 			jQuery.ajax({ url:  url, 
 				async: false,
@@ -1282,16 +1660,21 @@ window.ASFMultiInputFieldHandler = {
 				success: function(data){
 					data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 					data = jQuery.parseJSON(data);
-					
-					alert(data.date);
-				
-					ASFMultiInputFieldHandler .currentAjaxDate
+						
+					ASFMultiInputFieldHandler .lookedupDate = data.date;
+						
+					var cachedDate = new Object();
+					cachedDate.dateString = dateString;
+					cachedDate.date = data.date;
+					ASFMultiInputFieldHandler.cachedDateStringLookups.push(cachedDate);
 				}
 			});
-			
-			var date = new Date(Date.parse(
-					ASFMultiInputFieldHandler .currentAjaxDate));
 		}
+
+		//console.log('retrieved date: ' + ASFMultiInputFieldHandler .lookedupDate);
+			
+		var date = new Date(Date.parse(
+			ASFMultiInputFieldHandler .lookedupDate));
 		
 		return date;
 	}
@@ -1316,6 +1699,3 @@ jQuery(document).ready( function($) {
 
 window.onload = asf_initializeCollapsableSectionsTabIndexes;
 
-//todo: update tabindexes when adding and removeing input fields
-
-//todo: add type validation to input field values, i.e. validate if input field for property of type number really contains a number
