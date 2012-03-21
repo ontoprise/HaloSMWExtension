@@ -53,6 +53,13 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         style: 'border: 1px;',
         onKeyUp: function(){
           this.getDialog().definition.onUrlChange(this.getDialog());
+        },
+        validate: function(){
+          if ( !this.getValue() )
+          {
+            alert( 'Link url cannot be empty.' );
+            return false;
+          }
         }
       },
       {
@@ -122,27 +129,27 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
       var editor = this.getParentEditor();
 
       this.fakeObj = false;
-      var element = plugin.getSelectedLink( editor ) || editor.getSelection().getSelectedElement() || editor.getSelection().getStartElement();
+      var element = plugin.getSelectedLink( editor ) || editor.getSelection().getSelectedElement();
       if(element){
-        if ( element.getAttribute( '_cke_real_element_type' ) && element.getAttribute( '_cke_real_element_type' ) == 'anchor' )
-        {
-          this.fakeObj = element;
-          element = editor.restoreRealElement( this.fakeObj );
-        }
-
-        var href = element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' );
-        if (href) {
-          href = decodeURIComponent(href).replace(/_/g, ' ');
-          this.getContentElement( 'mwLinkTab1', 'linkTarget').setValue(href);
-        }
-        var label = element.getHtml().replace('<br>', '');
-        if(label){
-          this.getContentElement( 'mwLinkTab1', 'linkLabel').setValue(label);
-        }
-
-        dialogDefinition.onUrlChange(this);
+        var href = element.getAttribute( '_cke_saved_href' ) || element.getAttribute( 'href' );        
+        var label = element.getHtml().replace('<br>', '');        
       }
-  
+      else{
+        var selection = editor.getSelection();
+        label = selection.getNative();
+        if(CKEDITOR.env.ie){
+          selection.unlock();
+          label = selection.getNative().createRange().text;
+        }
+      }
+      if(href) {
+        href = decodeURIComponent(href).replace(/_/g, ' ');
+        this.getContentElement( 'mwLinkTab1', 'linkTarget').setValue(href);        
+      }
+      if(label){
+        this.getContentElement( 'mwLinkTab1', 'linkLabel').setValue(label);
+      }
+      dialogDefinition.onUrlChange(this);
       this._.selectedElement = element;
 				
     },
@@ -163,25 +170,25 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         var linkAnchor = encodeURIComponent(link.substring(hashIndex + 1).replace(/\s/g, '_')).toUpperCase();
         CKEDITOR.ajax.load( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php?action=parse&prop=sections&format=json&page=' + pageName, function( data )
         {
-            data = $.parseJSON(data);
-            if(data.error){
-              dialogDefinition.setSearchMessage(data.error.info, dialog);
-            }
-            else{
-              var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
-              var count = 0;
-              $.each(data.parse.sections, function(index, value){
-                var valueAnchor = value.anchor.toUpperCase();
-                if(linkAnchor && valueAnchor.indexOf(linkAnchor) !== 0){
-                  return true; //continue
-                }
-                else{
-                  select.add('#' + value.anchor);
-                  count++;
-                }
-              });
-              dialogDefinition.setSearchMessage(count + editor.lang.mwplugin.manyPagesFound, dialog);
-            }
+          data = $.parseJSON(data);
+          if(data.error){
+            dialogDefinition.setSearchMessage(data.error.info, dialog);
+          }
+          else{
+            var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
+            var count = 0;
+            $.each(data.parse.sections, function(index, value){
+              var valueAnchor = value.anchor.toUpperCase();
+              if(linkAnchor && valueAnchor.indexOf(linkAnchor) !== 0){
+                return true; //continue
+              }
+              else{
+                select.add('#' + value.anchor);
+                count++;
+              }
+            });
+            dialogDefinition.setSearchMessage(count + editor.lang.mwplugin.sectionsFound, dialog);
+          }
         } );
       }
       else{
@@ -189,7 +196,9 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
 
         // Make an Ajax search for the pages.
         window.parent.sajax_request_type = 'GET' ;
-        window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], function(response){dialogDefinition.loadSearchResults(response, dialog)}) ;
+        window.parent.sajax_do_call( 'wfSajaxSearchArticleCKeditor', [link], function(response){
+          dialogDefinition.loadSearchResults(response, dialog)
+          }) ;
       }
     },
     clearSearch: function(dialog) {
@@ -263,10 +272,10 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         return ;
       }
 
-//      if ( link.StartsWith( '#' ) ) {
-//        dialogDefinition.setSearchMessage( editor.lang.mwplugin.anchorLink, dialog ) ;
-//        return ;
-//      }
+      //      if ( link.StartsWith( '#' ) ) {
+      //        dialogDefinition.setSearchMessage( editor.lang.mwplugin.anchorLink, dialog ) ;
+      //        return ;
+      //      }
 
       if( urlProtocolRegex.test( link ) ) {
         dialogDefinition.setSearchMessage( editor.lang.mwplugin.externalLink, dialog ) ;
@@ -275,14 +284,14 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
 
       dialogDefinition.setSearchMessage( editor.lang.mwplugin.stopTyping, dialog ) ;
       searchTimer = window.setTimeout( function(){
-          dialogDefinition.startSearch(dialog);
-        }, 500 ) ;
-      }
+        dialogDefinition.startSearch(dialog);
+      }, 500 ) ;
+    }
 
   }
 
 
-  };
+};
 
-  return dialogDefinition;
+return dialogDefinition;
 });
