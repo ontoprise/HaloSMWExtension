@@ -44,7 +44,9 @@ class TSCTripleStoreAdmin extends SpecialPage {
 
 	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgHaloWebserviceEndpoint, $wgUser, $smwgHaloEnableObjectLogicRules;
-
+    
+		$hideParameters = array('TSC.WikiDBCredentials');
+		
 		if ( !$this->userCanExecute( $wgUser ) ) {
 			// If the user is not authorized, show an error.
 			$this->displayRestrictionError();
@@ -127,7 +129,11 @@ class TSCTripleStoreAdmin extends SpecialPage {
 		$html .= "<table>";
 		foreach($status['startParameters'] as $p) {
 			list($name, $value) = $p;
-			$html .= '<tr><td>'.$name.'</td><td>'.$value.'</td></tr>';
+			if (in_array($name, $hideParameters)) {
+				$html .= '<tr><td>'.$name.'</td><td>XXXXXXXXXX</td></tr>';
+			} else {
+				$html .= '<tr><td>'.$name.'</td><td>'.$value.'</td></tr>';
+			}
 		}
 		$html .= "</table>";
 
