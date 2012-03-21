@@ -51,7 +51,7 @@ class DFSettingsTab {
 		global $dfgLang, $wgServer, $wgScriptPath;
 
 		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_watsettingstab_description')."</div>";
-			
+		$html .= "<input type=\"button\"  value=\"Reset defaults\" id=\"df_resetdefault_settings\">";
 		$html .= "<div id=\"df_watsettings\">";
 		
 		$html .= "<h2>".$dfgLang->getLanguageString('df_webadmin_watsettings_bundleimport')."</h2>";

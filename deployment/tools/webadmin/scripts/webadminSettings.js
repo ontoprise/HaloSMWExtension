@@ -130,4 +130,10 @@ $(document).ready(function(e) {
 		});
 		document.cookie = "df_settings=" + settings.join(",")+"; expires=" + expirationDate.toGMTString();
 	});
+	
+	// reset defaults button
+	$('#df_resetdefault_settings').click(function() { 
+		applySettings(settings_defaults);
+		document.cookie = "df_settings=" + serializeSettings(settings)+"; expires=" + expirationDate.toGMTString();
+	});
 });
