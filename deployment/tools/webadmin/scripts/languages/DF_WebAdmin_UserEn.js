@@ -26,6 +26,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 
 	'df_webadmin_globalupdate' : 'Perform global update?',
 	'df_webadmin_doupdate' : 'Do update',
+	'df_webadmin_doinstall' : 'Do install',
 	'df_webadmin_wouldbeinstalled' : 'The following extensions would be installed:',
 	'df_webadmin_want_touninstall' : 'Do you want to uninstall this extension?',
 	'df_webadmin_wouldbeupdated' : 'The following extensions would be updated:',

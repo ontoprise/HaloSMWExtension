@@ -230,6 +230,41 @@ class DFCommandInterface {
 			return json_encode($error);
 		}
 	}
+	
+	public function getAllDependencies($extids) {
+        global $mwrootDir, $dfgOut;
+
+        try {
+            $dfgOut->setVerbose(false);
+            $installer = Installer::getInstance($mwrootDir);
+            $extensionsToInstall = array();
+            $contradictions = array();
+            $extids = explode(",", $extids);
+            foreach($extids as $extid) {
+	            list($id, $version) = explode("-", $extid);
+                $dependencies = $installer->getExtensionsToInstall($id, new DFVersion($version));
+                $extensionsToInstall = array_merge($dependencies['extensions'], $extensionsToInstall);
+                $contradictions = array_merge($dependencies['contradictions'], $contradictions);
+            }
+            
+            $o = new stdClass();
+            $o->extensions = $extensionsToInstall;
+            $o->contradictions = $contradictions;
+            $dfgOut->setVerbose(true);
+            return json_encode($o);
+        } catch(InstallationError $e) {
+            $error = array();
+            $error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+            $dfgOut->setVerbose(true);
+            return json_encode($error);
+        } catch(RepositoryError $e) {
+            $error = array();
+            $error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+            $dfgOut->setVerbose(true);
+            return json_encode($error);
+        }
+    }
+	
 
 	public function install($extid, $settings) {
 		global $mwrootDir, $dfgOut;

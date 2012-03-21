@@ -51,7 +51,7 @@ class DFSearchTab {
 		$html = "<input type=\"text\" value=\"$findall\" onfocus=\"this.value='';\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 		$installall = $dfgLang->getLanguageString('df_webadmin_installall');
-		$html .= "<input id=\"df_install_all\" type=\"button\" style=\"display:none\" value=\"$installall\"></input>";
+		$html .= "<input id=\"df_install_all\" type=\"button\" disabled=\"true\" value=\"$installall\"></input>";
 		$html.= "<div id=\"df_search_results_header\"></div>";
 		$html.= "<div id=\"df_search_results\"></div>";
 		return $html;
