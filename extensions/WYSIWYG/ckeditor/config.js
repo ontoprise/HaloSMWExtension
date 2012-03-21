@@ -97,7 +97,7 @@ CKEDITOR.editorConfig = function( config )
   //        ['About']
   //    ];
   config.extraPlugins = extraPlugins + ',autogrow';
-  config.height = '26em';
+  config.height = config.autoGrow_minHeight = '300px';
   config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
 
   config.WikiSignature = '--~~~~';
@@ -200,8 +200,8 @@ CKEDITOR.editorConfig = function( config )
           '\u25B2' : // BLACK UP-POINTING TRIANGLE
           '\u25C0' ); // BLACK LEFT-POINTING TRIANGLE
 
-        //            var dy = toolboxContainer.$.offsetHeight - previousHeight;
-        //            contents.setStyle( 'height', ( contentHeight - dy ) + 'px' );
+        var dy = toolboxContainer.$.offsetHeight - previousHeight;
+        contents.setStyle( 'height', ( contentHeight - dy ) + 'px' );
 
         editor.fire( 'resize' );
       },
