@@ -1,5 +1,9 @@
 @CHARSET "ISO-8859-1";
 
+.df_install_all {
+	margin-top: 15px;
+}
+
 #df_watsettings {
 	margin-top 10px;
 }

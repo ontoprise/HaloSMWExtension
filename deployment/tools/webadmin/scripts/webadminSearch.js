@@ -52,7 +52,7 @@ $.webAdmin.operations.searchHandler = function(e) {
 
 		$('#df_search_progress_indicator').hide();
 		smw_makeSortable($('#df_search_results_table')[0]);
-
+		$('.df_install_all').show();
 		// register install buttons
 		$('.df_install_button')
 				.click(
@@ -348,9 +348,9 @@ $.webAdmin.operations.searchHandler = function(e) {
 		// this is for multi-install
 		$('.df_checkbox', '#df_search_results').change(function(e) {
 			if ($("input:checked", '#df_search_results').length > 0) {
-				$('#df_install_all').attr('disabled', false);
+				$('.df_install_all').attr('disabled', false);
 			} else {
-				$('#df_install_all').attr('disabled', true);
+				$('.df_install_all').attr('disabled', true);
 			}
 		});
 
@@ -369,17 +369,19 @@ $(document)
 				function(e) {
 
 					// register search handler
-					$('#df_search').click($.webAdmin.operations.searchHandler);
+					$('#df_search').click(function(e) {
+						$.webAdmin.operations.searchHandler(e);
+					});
 					$('#df_searchinput').keypress(function(e) {
 						if (e.keyCode == 13) {
 							$.webAdmin.operations.searchHandler(e);
 						}
 					});
 
-					$('#df_install_all')
+					$('.df_install_all')
 							.click(
 									function(e) {
-
+										$('.df_install_all_progress_indicator').show();
 										var selectedExtensionsToInstall = [];
 										$("input:checked", '#df_search_results')
 												.each(
@@ -404,6 +406,7 @@ $(document)
 
 										var callbackForExtensions = function(
 												xhr, status) {
+											$('.df_install_all_progress_indicator').hide();
 											if (xhr.responseText
 													.indexOf('session: time-out') != -1) {
 												alert("Please login again. Session timed-out");

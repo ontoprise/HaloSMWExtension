@@ -50,10 +50,11 @@ class DFSearchTab {
 		$findall = $dfgLang->getLanguageString('df_webadmin_findall');
 		$html = "<input type=\"text\" value=\"$findall\" onfocus=\"this.value='';\" style=\"width: 450px;\" value=\"\" id=\"df_searchinput\"></input>";
 		$html .= "<input type=\"button\"  value=\"Search\" id=\"df_search\"></input><img id=\"df_search_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
-		$installall = $dfgLang->getLanguageString('df_webadmin_installall');
-		$html .= "<input id=\"df_install_all\" type=\"button\" disabled=\"true\" value=\"$installall\"></input>";
 		$html.= "<div id=\"df_search_results_header\"></div>";
+		$installall = $dfgLang->getLanguageString('df_webadmin_installall');
+		$html .= "<input class=\"df_install_all\" style=\"display:none\" type=\"button\" disabled=\"true\" value=\"$installall\"></input><img class=\"df_install_all_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 		$html.= "<div id=\"df_search_results\"></div>";
+		$html .= "<input class=\"df_install_all\" style=\"display:none\" type=\"button\" disabled=\"true\" value=\"$installall\"></input><img class=\"df_install_all_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
 		return $html;
 	}
 
