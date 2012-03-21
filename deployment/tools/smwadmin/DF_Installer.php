@@ -552,7 +552,7 @@ class Installer {
 	private function installOrUpdatePackages($extensions_to_update) {
 		$d = HttpDownload::getInstance();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir);
-		$num = 0;
+		static $num = 0;
 
 		// check if any external apps are about to be installed
 		// in this case check if the location is writable. This is not checked by default.
