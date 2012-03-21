@@ -21,11 +21,11 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
-  	<copy todir="bin/zip/deployment/maintenance">
-  	          <fileset dir="../maintenance/">
-  	            <exclude name="**/.svn, **/CVS" />
-  	          </fileset>
-  	        </copy>
+    <copy todir="bin/zip/deployment/maintenance">
+      <fileset dir="../maintenance/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
     <copy todir="bin/zip/deployment/io">
       <fileset dir="../io/">
         <exclude name="**/.svn, **/CVS" />
@@ -56,11 +56,11 @@
         <exclude name="**/.svn, **/CVS" />
       </fileset>
     </copy>
-  	 <copy todir="bin/zip/deployment/tests">
-  	      <fileset dir="../tests/">
-  	        <exclude name="**/.svn, **/CVS" />
-  	      </fileset>
-  	 </copy>
+    <copy todir="bin/zip/deployment/tests">
+      <fileset dir="../tests/">
+        <exclude name="**/.svn, **/CVS" />
+      </fileset>
+    </copy>
     <copy file="../tools/smwadmin/smwadmin.php"
           tofile="bin/zip/deployment/tools/smwadmin/smwadmin.php"
           overwrite="true"
@@ -75,13 +75,15 @@
         <include name="deploy.xml" />
       </fileset>
     </copy>
-  	
-  	<!-- Pack the scripts -->
-    <concat destfile="bin/zip/deployment/tools/webadmin/scripts/webadmin_all.js">
-      <filelist dir="../tools/webadmin/scripts" files="webadminOperations.js"/>
-      <fileset dir="../tools/webadmin/scripts" includes="webadmin*.js" excludes="webadminOperations.js"/>
+
+    <!-- Pack the scripts -->
+    <property name="webadmin_all_js" location="bin/zip/deployment/tools/webadmin/scripts/webadmin_all.js" />
+    <echo>### Pack the scripts: ${webadmin_all_js}</echo>
+    <concat destfile="${webadmin_all_js}">
+      <filelist dir="../tools/webadmin/scripts" files="webadminOperations.js" />
+      <fileset dir="../tools/webadmin/scripts" includes="webadmin*.js" excludes="webadminOperations.js" />
     </concat>
-  	
+
     <touch file="bin/zip/deployment/config/externalapps" />
     <zip destfile="bin/wikiadmintool.zip" basedir="bin/zip" />
     <delete dir="bin/zip" quiet="true" />
