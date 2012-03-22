@@ -210,7 +210,7 @@ class SMWExportController {
 						$instance = end( $resarray )->getNextDataValue();
 
 						if ( !array_key_exists( $instance->getHash(), $this->element_done ) ) {
-							$semdata = $this->getSemanticData( $instance, true );
+							$semdata = $this->getSemanticData( $instance->getDataItem(), true );
 							$semdata->addPropertyObjectValue( $pinst, $diWikiPage );
 							$data = SMWExporter::makeExportData( $semdata );
 							$this->serializer->serializeExpData( $data );
