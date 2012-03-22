@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
+        <id>wom</id>
         <version>1.0.1</version>
         <repository>1.7.0</repository>
         <patchlevel>0</patchlevel>
-        <id>wom</id>
         <vendor>Vulcan</vendor>
         <maintainer>Ning Hu; ning@teammersion.com</maintainer>
         <instdir>extensions/WikiObjectModel</instdir>
