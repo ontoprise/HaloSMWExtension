@@ -403,7 +403,7 @@ class Installer {
 		$dfgOut->outputln (" Bundle-ID (title)                                  | Installed | Av. versions  | Repository");
 		$dfgOut->outputln ("--------------------------------------------------------------------------------------------------------\n");
 
-		ksort($allPackages);
+		uksort($allPackages, 'strcasecmp');
 		foreach($allPackages as $p_id => $versions) {
 
 
