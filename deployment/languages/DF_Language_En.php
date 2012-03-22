@@ -159,20 +159,28 @@ class DF_Language_En extends DF_Language {
     'df_webadmin_repository_link' => 'repository list',
 	
 	'df_webadmin_watsettingstab' => 'Settings',
-	'df_webadmin_watsettingstab_description' => 'Here you can configure general settings for the WAT administration tool. The settings are kept persistent.',
+	'df_webadmin_watsettingstab_description' => 'Here you can configure general settings for the WAT administration tool. The settings are kept persistent. Hover over the settings to get an additional explanation.',
 	
 	'df_webadmin_watsettings_bundleimport' => 'Bundle import',
 	'df_webadmin_watsettings_installation' => 'Installation',
 	'df_webadmin_watsettings_restore_points' => 'Restore points',
 	'df_webadmin_watsettings_ontologyimport' => 'Ontology import',
-	'df_watsettings_overwrite_always' => 'Overwrite user-modified pages always',
-	'df_watsettings_merge_with_other_bundle' => 'Merge pages of other bundles always',
+	'df_watsettings_overwrite_always' => 'Always overwrite user-modified pages',
+	'df_watsettings_overwrite_always_help' => 'This settings forces WAT to *always* overwrite a wiki page with the version contained in a bundle that is installed or updated. Otherwise pages modified by the user are skipped.',
+	'df_watsettings_merge_with_other_bundle' => 'Always merge pages of other bundles',
+	'df_watsettings_merge_with_other_bundle_help' => 'Merge an already existing ontology page with the same page of another ontology. Otherwise the page is skipped.',
 	'df_watsettings_apply_patches' => 'Apply (partially) failed patches',
+	'df_watsettings_apply_patches_help' => 'Also apply patches if they could not be applied completely. It is rarely the case that a patch which was not properly applied affects the whole system. In most cases only a particular feature is broken.',
 	'df_watsettings_install_optionals' => 'Install optional extensions as well',
+	'df_watsettings_install_optionals_help' => 'Some extensions have optional "dependencies". They are rather installation suggestions than dependencies. They are *NOT* needed for proper functionality.',
 	'df_watsettings_deinstall_dependant' => 'De-install automatically (super-)extensions which are dependant to the one which is de-installed.',
+	'df_watsettings_deinstall_dependant_help' => 'Be careful: This settings removes everything which depends on the extension to be removed. For example: You have SMW, SMWHalo and SF installed. If you de-install SMW, SMWHalo and SF would be also removed. Otherwise there would be an error.',
 	'df_watsettings_create_restorepoints' => 'Always create restore point on install/de-install and update operations',
+	'df_watsettings_create_restorepoints_help' => 'Create restore points on any operation that is going to change the wiki. Will increase the required installation time.',
 	'df_watsettings_hidden_annotations' => 'Create hidden annotations on ontology import',
+	'df_watsettings_hidden_annotations_help' => 'Semantic data of imported ontologies can be displayed on the rendered page or not.',
 	'df_watsettings_use_namespaces' => 'Use namespace prefixes for imported ontologies',
+	'df_watsettings_use_namespaces_help' => 'Every page imported from an ontology will get a namespace prefix separated with a slash, e.g. MDM/Category:Person. This is not changeable at the moment.',
 		
 	
      /*Message for ImportOntologyBot*/
