@@ -50,9 +50,9 @@ fi
 # Zip bundle
 if [ -z $2 ]
 then
-OUTPUTFILE=$2
-else
 OUTPUTFILE=/tmp/$BUNDLENAME/$BUNDLENAME.zip
+else
+OUTPUTFILE=$2
 fi
 
 PWD=pwd
