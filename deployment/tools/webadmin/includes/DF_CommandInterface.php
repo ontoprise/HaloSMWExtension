@@ -246,7 +246,7 @@ class DFCommandInterface {
                 $extensionsToInstall = array_merge($dependencies['extensions'], $extensionsToInstall);
                 $contradictions = array_merge($dependencies['contradictions'], $contradictions);
             }
-            
+            $extensionsToInstall = self::makeExtensionListUnique($extensionsToInstall);
             $o = new stdClass();
             $o->extensions = $extensionsToInstall;
             $o->contradictions = $contradictions;
@@ -810,6 +810,34 @@ class DFCommandInterface {
 	private static function getOption($settings, $option) {
 		return (property_exists($settings, $option) && $settings->$option == "true") ? "$option=true" : "$option=false";
 	}
+	
+    private static function makeExtensionListUnique($extensionsToInstall) {
+    	
+    	$compareFunction = function($e1, $e2) {
+             list($id1, $version1, $patchlevel1) = $e1;
+             list($id2, $version2, $patchlevel2) = $e2;
+             return strcmp($id1, $id2) 
+                    && strcmp($version1, $version2) 
+                    && strcmp($patchlevel1, $patchlevel2);
+        };
+        
+        usort($extensionsToInstall, $compareFunction);
+        
+        // eliminate doubles
+        $result = array();
+        $last = reset($extensionsToInstall);
+        if ($last !== false) $result[] = $last;
+        for($i = 1, $n = count($extensionsToInstall); $i < $n; $i++ ) {
+            if ($compareFunction($extensionsToInstall[$i], $last)) {
+                $titles[$i] = NULL;
+                continue;
+            }
+            $last = $extensionsToInstall[$i];
+            $result[] = $extensionsToInstall[$i];
+        }
+
+        return $result;
+    }
 
 	/**
 	 * Special quoting for cmd /c  ....
