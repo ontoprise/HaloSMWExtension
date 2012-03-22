@@ -1,5 +1,19 @@
 @CHARSET "ISO-8859-1";
 
+.df_setting div {
+	display:none;
+}
+.df_setting:hover div {
+    display:block;
+}
+
+.df_settings_help {
+	background-color: #CCC;
+	border-radius: 4px 4px 4px 4px;
+	font-size: 0.8em;
+	margin: 5px;
+}
+
 .df_install_all {
 	margin-top: 15px;
 }
