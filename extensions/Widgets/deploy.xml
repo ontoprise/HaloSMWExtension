@@ -4,6 +4,7 @@
 		<id>widgets</id>
 		<title>Widgets</title>
 		<version>0.9.2</version>
+    <repository>1.7.0</repository>
 		<license>GPL</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>[http://www.sergeychernyshev.com Sergey Chernyshev]</maintainer>

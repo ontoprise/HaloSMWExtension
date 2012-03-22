@@ -4,6 +4,7 @@
         <id>semanticresultformats</id>
         <title>Semantic Result Formats</title>
         <version>1.7</version>
+        <repository>1.7.0</repository>
         <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
         <vendor>ontoprise GmbH</vendor>

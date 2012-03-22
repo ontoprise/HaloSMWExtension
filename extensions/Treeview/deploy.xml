@@ -4,7 +4,8 @@
 		<id>treeview</id>
 		<title>Semantic Treeview extension</title>
 		<version>2.1.0</version>
-        <license>GPL-v2</license>
+    <repository>1.7.0</repository>
+    <license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/Treeview</instdir>

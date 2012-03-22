@@ -4,6 +4,7 @@
 		<id>smwusermanual</id>
 		<title>User Manual extension</title>
 		<version>1.0.5</version>
+    <repository>1.7.0</repository>
 		<instdir>extensions/SMWUserManual</instdir>
 		<vendor>ontoprise GmbH</vendor>
 		<description>

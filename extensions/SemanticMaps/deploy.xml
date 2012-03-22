@@ -4,6 +4,7 @@
         <id>semanticmaps</id>
         <title>Semantic Maps</title>
         <version>1.0.5</version>
+        <repository>1.7.0</repository>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>jeroendedauw@gmail.com</maintainer>
         <license>GPL-v2</license>

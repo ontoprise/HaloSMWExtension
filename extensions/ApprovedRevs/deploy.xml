@@ -4,6 +4,7 @@
 		<id>approvedrevs</id>
 		<title>Approved Revs</title>
 		<version>0.6</version>
+    <repository>1.7.0</repository>
 		<patchlevel>0</patchlevel>
         <vendor>Yaron Koren</vendor>
         <maintainer>Yaron Koren</maintainer>

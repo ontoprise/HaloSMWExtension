@@ -4,6 +4,7 @@
 		<id>linkeddata</id>
 		<title>Linked Data</title>
 		<version>1.3.0</version>
+    <repository>1.7.0</repository>
 		<patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>

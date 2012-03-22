@@ -4,7 +4,8 @@
 		<id>semanticgardening</id>
 		<title>Semantic Gardening extension</title>
 		<version>1.3.7</version>
-        <patchlevel>1</patchlevel>
+    <repository>1.7.0</repository>
+    <patchlevel>1</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticGardening</instdir>

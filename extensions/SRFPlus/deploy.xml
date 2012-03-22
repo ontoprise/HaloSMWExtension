@@ -4,6 +4,7 @@
         <id>srfplus</id>
         <title>SRFPlus</title>
         <version>1.0.0</version>
+        <repository>1.7.0</repository>
         <patchlevel>0</patchlevel>
         <license>GPL-v2</license>
         <vendor>Vulcan</vendor>

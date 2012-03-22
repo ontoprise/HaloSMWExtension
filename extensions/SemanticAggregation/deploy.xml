@@ -2,6 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>100</version>
+    <repository>1.7.0</repository>
 		<id>semanticaggregation</id>
 		<vendor>Vulcan</vendor>
 		<maintainer>Vulcan</maintainer>

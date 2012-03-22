@@ -4,6 +4,7 @@
         <id>ldap</id>
         <title>LDAP Authentication</title>
         <version>1.2</version>
+        <repository>1.7.0</repository>
         <patchlevel>0</patchlevel>
         <vendor>Ryan Lane</vendor>
         <maintainer>Ryan Lane</maintainer>

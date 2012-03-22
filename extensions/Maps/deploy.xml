@@ -4,6 +4,7 @@
         <id>maps</id>
         <title>Maps</title>
         <version>1.0.5</version>
+        <repository>1.7.0</repository>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>Jeroen De Dauw</maintainer>
         <license>GPL-v2</license>

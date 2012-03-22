@@ -4,6 +4,7 @@
         <id>semanticformsinputs</id>
         <title>Semantic Forms Inputs</title>
         <version>0.5.0</version>
+        <repository>1.7.0</repository>
         <patchlevel>1</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>Stephan Gambke</maintainer>

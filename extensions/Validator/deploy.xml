@@ -4,6 +4,7 @@
 		<id>validator</id>
 		<title>Validator</title>
 		<version>0.4.13</version>
+    <repository>1.7.0</repository>
 		<license>GPL-v2</license>
 		<vendor>Ontoprise</vendor>
 		<maintainer>Jeroen De Dauw</maintainer>

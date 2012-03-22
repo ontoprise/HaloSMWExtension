@@ -4,6 +4,7 @@
 		<id>richmedia</id>
 		<title>Rich Media extension</title>
 		<version>1.5.4</version>
+    <repository>1.7.0</repository>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
