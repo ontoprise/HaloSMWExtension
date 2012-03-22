@@ -163,6 +163,9 @@ class ASFFormPrinter extends SFFormPrinter {
 					'&lt;span class="asf-hide-freetext"/&gt;',
 					'<span class="asf-hide-freetext" style="display: none"></span>',
 					$form_text);
+					
+				//necessatry so that asf.js can decide whether we are in sf or asf mode	
+				$form_text .= '<script>window.inASFMode = true;</script>';
 			}
 		}
 

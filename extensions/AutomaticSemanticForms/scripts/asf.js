@@ -1687,9 +1687,10 @@ jQuery(document).ready( function($) {
 	initializeNiceASFTooltips();
 	asf_hideFreeText();	
 	asf_makeReadOnly();
-	ASFMultiInputFieldHandler.init();
-	ASFFormSyncer.init();
-	
+	if(window.inASFMode){
+		ASFMultiInputFieldHandler.init();
+		ASFFormSyncer.init();
+	}	
 	
 	window.asf_hide_category_section = asf_hide_category_section;
 	window.asf_show_category_section = asf_show_category_section;
