@@ -44,9 +44,9 @@ class TSCTripleStoreAdmin extends SpecialPage {
 
 	public function execute($par) {
 		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgHaloWebserviceEndpoint, $wgUser, $smwgHaloEnableObjectLogicRules;
-    
+
 		$hideParameters = array('TSC.WikiDBCredentials');
-		
+
 		if ( !$this->userCanExecute( $wgUser ) ) {
 			// If the user is not authorized, show an error.
 			$this->displayRestrictionError();
@@ -101,16 +101,39 @@ class TSCTripleStoreAdmin extends SpecialPage {
 		}
 		$html .= $status['licenseState'];
 		$html .= "</span>";
-		
+        
+		// mysql 
 		$html .= "<h2>".wfMsg('smw_tsa_mysqldriver')."</h2>";
-		$html .= wfMsg('smw_tsa_mysqldriver_state').": ";
-        if ($status['mysqlDriver'] == 'missing') {
-            $html .= "<span style=\"color:red;font-weight:bold;\">";
-        } else {
-            $html .= "<span style=\"color:green;font-weight:bold;\">";
-        }
-        $html .= $status['mysqlDriver'];
-        $html .= "</span>";
+		$html .= "<div>".wfMsg('smw_tsa_mysqldriver_state').": ";
+		if ($status['mysqlDriver'] == 'missing') {
+			$html .= "<span style=\"color:red;font-weight:bold;\">";
+			$html .= $status['mysqlDriver'];
+			$html .= "</span>";
+			$html .= "<span>(Please install MySQL-driver! see README-TSC.TXT)</span>";
+		} else {
+			$html .= "<span style=\"color:green;font-weight:bold;\">";
+			$html .= $status['mysqlDriver'];
+			$html .= "</span>";
+		}
+		$html .= "</div>";
+		$html .= "<div>".wfMsg('smw_tsa_mysqlcredentials_state').": ";
+		if ($status['mysqlCredentials'] == 'missing') {
+			$html .= "<span style=\"color:red;font-weight:bold;\">";
+			$html .= $status['mysqlCredentials'];
+			$html .= "</span>";
+			$html .= "<span>(Please set TSC.WikiDBCredentials in config/tsc.properties)</span>";
+		} else if ($status['mysqlCredentials'] == 'invalid') {
+			$html .= "<span style=\"color:red;font-weight:bold;\">";
+			$html .= $status['mysqlCredentials'];
+			$html .= "</span>";
+			$html .= "<span>(TSC.WikiDBCredentials has wrong credentials)</span>";
+		} else {
+			$html .= "<span style=\"color:green;font-weight:bold;\">";
+			$html .= $status['mysqlCredentials'];
+			$html .= "</span>";
+		}
+		 
+		$html .= "</div>";
 
 		if (!in_array('RULES', $status['features']) && $smwgHaloEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";
