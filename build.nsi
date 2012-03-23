@@ -1109,6 +1109,14 @@ Function installAsWindowsService
            nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /XML "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_start_mysqlservice.txt"'
            nsExec::ExecToLog '"$FART" -- "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_stop_mysqlservice.txt" {{command}} "\"net stop mysql\""'
            nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /XML "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_stop_mysqlservice.txt"'
+           
+            # SOLR (remove others before)
+           nsExec::ExecToLog 'schtasks /delete /tn "start_solr" /F'
+           nsExec::ExecToLog 'schtasks /delete /tn "stop_solr" /F'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_start_solrservice.txt" {{command}} "\"net start SOLR\""'
+           nsExec::ExecToLog 'schtasks /create /tn "start_solr" /XML "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_start_solrservice.txt"'
+           nsExec::ExecToLog '"$FART" -- "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_stop_solrservice.txt" {{command}} "\"net stop SOLR\""'
+           nsExec::ExecToLog 'schtasks /create /tn "stop_solr" /XML "$INSTDIR\htdocs\mediawiki\deployment\tools\internal\scheduled_tasks\runas_template_stop_solrservice.txt"'
             
         
      ${EndIf}
@@ -1124,8 +1132,13 @@ Function installAsWindowsService
               
          nsExec::ExecToLog 'schtasks /delete /tn "start_mysql" /F'
          nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql" /F'
-         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once /st 00:00'
-         nsExec::ExecToLog 'schtasks /create /tn "start_apache" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once /st 00:00'
+         nsExec::ExecToLog 'schtasks /create /tn "start_mysql" /ru "SYSTEM" /tr "\"net start mysql\"" /sc once /st 00:00'
+         nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /ru "SYSTEM" /tr "\"net stop mysql\"" /sc once /st 00:00'
+         
+         nsExec::ExecToLog 'schtasks /delete /tn "start_solr" /F'
+         nsExec::ExecToLog 'schtasks /delete /tn "stop_mysql" /F'
+         nsExec::ExecToLog 'schtasks /create /tn "start_solr" /ru "SYSTEM" /tr "\"net start SOLR\"" /sc once /st 00:00'
+         nsExec::ExecToLog 'schtasks /create /tn "stop_mysql" /ru "SYSTEM" /tr "\"net stop SOLR\"" /sc once /st 00:00'
             
      ${EndIf}
 
