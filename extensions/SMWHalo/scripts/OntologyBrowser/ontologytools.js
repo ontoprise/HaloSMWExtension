@@ -605,7 +605,7 @@ OBOntologyModifier.prototype = {
 		}
 
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
@@ -661,7 +661,7 @@ OBOntologyModifier.prototype = {
 				+ superCategoryTitle + "]]" : "";
 
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
@@ -931,7 +931,7 @@ OBOntologyModifier.prototype = {
 				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]";
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
@@ -987,7 +987,7 @@ OBOntologyModifier.prototype = {
 				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]" : "";
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
@@ -1137,7 +1137,7 @@ OBOntologyModifier.prototype = {
 		}
 
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.toLowerCase().indexOf("-wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
