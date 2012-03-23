@@ -150,42 +150,28 @@
 				);
 			}
 
-			base.$el.delegate( '.smwh_menulistitem:not(.smwh_menuoverflow)',
+			base.$el.delegate( '.smwh_menulistitem',
 				'mouseenter',
-				function() { $( this ).addClass( 'hovering' ); }
+				function() {$( this ).addClass( 'hovering' );}
 			);
-			base.$el.delegate( '.smwh_menulistitem:not(.smwh_menuoverflow)',
+			base.$el.delegate( '.smwh_menulistitem',
 				'mouseleave',
-				function() { $( this ).removeClass( 'hovering' ); }
+				function() {$( this ).removeClass( 'hovering' );}
 			);
 
 			base.$el.delegate( '.smwh_menuoverflow > .smwh_menuhead',
 				'click',
-				function() {
-					var $this = $( this ),
-						$parent = $this.parent();
-
-					if( $parent.find( '> .smwh_menubody:hidden' ).length ) {
-						$parent.find( '> .smwh_menubody' ).show( 1 , function() {
-							var width = $parent.find( '> .smwh_menubody' )
-								.outerWidth() || 0;
-
-							$parent.find( '.smwh_menulistitem .smwh_menubody' )
-								.css({'right' : width, 'top' : 0});
-						});
-						$parent.find( '.smwh_menulistitem' ).show();
-					} else {
-						$parent.find( '> .smwh_menubody' ).hide();
-						$parent.find( '.smwh_menulistitem' ).hide();
-					}
-				}
+				base.toggleSubmenu,
+				true
 			);
-			base.$el.find( '.smwh_menuoverflow' ).bind( 'clickoutside',
-				function(){
-					base.hideSubmenu();
-				}
+			base.$el.delegate( '.smwh_menuoverflow > .smwh_menuhead',
+				'mouseenter',
+				base.toggleSubmenu
 			);
-
+			base.$el.delegate( '.smwh_menuoverflow',
+				'mouseleave',
+				base.hideSubmenu
+			);
 			// the more tab
 			base.$more.hover( base.showMenu, base.hideMenu );
 
@@ -236,7 +222,7 @@
 		 */
 		base.calculateMenuSize = function() {
 			base.menuListSize = base.$menuList && base.$menuList.outerWidth();
-			base.subMenuItemWidth = base.$subMenuItem && base.$subMenuItem.outerWidth();
+			base.subMenuItemWidth = base.$el.find( '.smwh_menuoverflow' ).outerWidth();
 			base.homeRightPosition = base.$home && base.$home.position().left +
 				base.$home.outerWidth();
 			base.searchBoxLeftPosition = base.$searchBox &&
@@ -393,9 +379,34 @@
 			}
 		}
 
+		base.toggleSubmenu = function( click ) {
+			var $this = $( this ),
+				$parent = $this.parent(),
+				timeout = click === true? 0 : 500;
+
+			setTimeout( function() {
+				if( $parent.find( '> .smwh_menubody:hidden' ).length ) {
+					$parent.find( '> .smwh_menubody' ).show( 1 , function() {
+						var width = $parent.find( '> .smwh_menubody' )
+							.outerWidth() || 0;
+
+						$parent.find( '.smwh_menulistitem .smwh_menubody' )
+							.css({'right' : width, 'top' : 0});
+					});
+					$parent.find( '.smwh_menulistitem' ).show();
+					$this.addClass( 'overflow_active' );
+				} else {
+					if( !$this.hasClass('overflow_active') ) {
+						base.hideSubmenu();
+						$this.removeClass( 'overflow_active' );
+					}
+				}
+			}, timeout );
+		}
+
 		/**
 		 * @brief function hideSubmenu
-		 *		THis function hide the submenu items
+		 *		This function hide the submenu items
 		 */
 		base.hideSubmenu = function() {
 			base.$el.find( '.smwh_menuoverflow > .smwh_menubody' ).hide();
@@ -429,7 +440,6 @@
 			});
 
 			base.$menuList.html( base.$menuDump.html() ).css( 'width', 'auto' );
-			base.$el.find( '.smwh_menuoverflow' ).hide();
 			base.calculateMenuSize();
 			if( base.menuListSize > base.maxMenuWidth ) {
 				base.createSubMenus();
