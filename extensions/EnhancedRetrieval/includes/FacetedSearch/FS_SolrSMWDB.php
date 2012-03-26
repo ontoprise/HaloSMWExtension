@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the class FSSolrSMWDB. It creates the index from the database
  * tables of SMW.
  * 

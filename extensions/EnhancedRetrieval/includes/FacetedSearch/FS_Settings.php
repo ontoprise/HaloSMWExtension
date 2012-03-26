@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the settings for Faceted Search
  * 
  * @author Thomas Schweitzer

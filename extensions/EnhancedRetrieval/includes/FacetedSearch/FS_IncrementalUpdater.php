@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the class FSIncrementalUpdater.
  * 
  * @author Thomas Schweitzer

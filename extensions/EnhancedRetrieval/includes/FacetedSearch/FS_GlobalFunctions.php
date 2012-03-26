@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the initialization and global functions for the faceted 
  * search.
  * 

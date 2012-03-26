@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the factory class for the Faceted Search Indexer.
  * 
  * @author Thomas Schweitzer

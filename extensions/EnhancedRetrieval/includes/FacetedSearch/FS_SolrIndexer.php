@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This file contains the class FSSolrIndexer. It encapsulates access to the
  * Apache Solr indexing service.
  * 
