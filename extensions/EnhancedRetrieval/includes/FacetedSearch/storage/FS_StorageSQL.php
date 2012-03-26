@@ -17,6 +17,9 @@
  *
  */
 /**
+ * @file
+ * @ingroup FacetedSearchStorage
+ * 
  * This file provides the access to the SQL database tables that are
  * used by the Faceted Search.
  *

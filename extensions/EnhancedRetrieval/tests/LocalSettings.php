@@ -3,6 +3,18 @@
 include_once('extensions/SemanticMediaWiki/SemanticMediaWiki.php');
 enableSemantics('http://wiki', true);
 
+# Import SMWHalo
+include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+enableSMWHalo();
+
+
+## Shared memory settings
+$wgMainCacheType = CACHE_MEMCACHED;
+$wgMemCachedServers = array('localhost:11211');
+
+include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+enableHaloACL();
+
 #EnhancedRetrieval
 $wgSearchType = 'LuceneSearch';
 $wgLuceneHost = 'localhost';

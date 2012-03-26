@@ -1,48 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="EnhancedRetrieval" tests="29" assertions="131" failures="0" errors="0" time="17.621222">
-    <testsuite name="TestER" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestER.php" tests="1" assertions="1" failures="0" errors="0" time="0.047831">
-      <testcase name="testMeFirst" class="TestER" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestER.php" line="20" assertions="1" time="0.047831"/>
-    </testsuite>
-    <testsuite name="" tests="28" assertions="130" failures="0" errors="0" time="17.573391">
-      <testsuite name="TestSolrIndexer" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" tests="13" assertions="16" failures="0" errors="0" time="4.297796">
-        <testsuite name="TestSolrIndexer::testIndexerFactory" tests="9" assertions="10" failures="0" errors="0" time="0.113153">
-          <testcase name="testIndexerFactory with data set #0" assertions="2" time="0.106533"/>
-          <testcase name="testIndexerFactory with data set #1" assertions="1" time="0.000946"/>
-          <testcase name="testIndexerFactory with data set #2" assertions="1" time="0.001087"/>
-          <testcase name="testIndexerFactory with data set #3" assertions="1" time="0.000867"/>
-          <testcase name="testIndexerFactory with data set #4" assertions="1" time="0.000845"/>
-          <testcase name="testIndexerFactory with data set #5" assertions="1" time="0.000847"/>
-          <testcase name="testIndexerFactory with data set #6" assertions="1" time="0.000852"/>
-          <testcase name="testIndexerFactory with data set #7" assertions="1" time="0.000580"/>
-          <testcase name="testIndexerFactory with data set #8" assertions="1" time="0.000596"/>
-        </testsuite>
-        <testcase name="testSolrPresent" class="TestSolrIndexer" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" line="179" assertions="1" time="0.007070"/>
-        <testcase name="testRawQuery" class="TestSolrIndexer" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" line="188" assertions="1" time="0.004612"/>
-        <testcase name="testCreateFullIndex" class="TestSolrIndexer" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" line="197" assertions="2" time="3.064434"/>
-        <testcase name="testDeleteIndex" class="TestSolrIndexer" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" line="213" assertions="2" time="1.108526"/>
-      </testsuite>
-      <testsuite name="TestSolrFullIndexContent" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" tests="6" assertions="50" failures="0" errors="0" time="0.088712">
-        <testsuite name="TestSolrFullIndexContent::testIndexContent" tests="6" assertions="50" failures="0" errors="0" time="0.088712">
-          <testcase name="testIndexContent with data set #0" assertions="1" time="0.023328"/>
-          <testcase name="testIndexContent with data set #1" assertions="10" time="0.008010"/>
-          <testcase name="testIndexContent with data set #2" assertions="6" time="0.015453"/>
-          <testcase name="testIndexContent with data set #3" assertions="6" time="0.006181"/>
-          <testcase name="testIndexContent with data set #4" assertions="11" time="0.027007"/>
-          <testcase name="testIndexContent with data set #5" assertions="16" time="0.008733"/>
+  <testsuite name="EnhancedRetrieval" tests="46" assertions="251" failures="0" errors="0" time="280.978956">
+    <testsuite name="" tests="46" assertions="251" failures="0" errors="0" time="280.978956">
+      <testsuite name="TestSolrProxyQueries" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestSolrProxy.php" tests="12" assertions="86" failures="0" errors="0" time="0.449256">
+        <testsuite name="TestSolrProxyQueries::testIndexProxy" tests="12" assertions="86" failures="0" errors="0" time="0.449256">
+          <testcase name="testIndexProxy with data set #0" assertions="1" time="0.057027"/>
+          <testcase name="testIndexProxy with data set #1" assertions="10" time="0.028012"/>
+          <testcase name="testIndexProxy with data set #2" assertions="6" time="0.027952"/>
+          <testcase name="testIndexProxy with data set #3" assertions="6" time="0.029599"/>
+          <testcase name="testIndexProxy with data set #4" assertions="11" time="0.054226"/>
+          <testcase name="testIndexProxy with data set #5" assertions="16" time="0.055595"/>
+          <testcase name="testIndexProxy with data set #6" assertions="13" time="0.028928"/>
+          <testcase name="testIndexProxy with data set #7" assertions="3" time="0.039928"/>
+          <testcase name="testIndexProxy with data set #8" assertions="8" time="0.031835"/>
+          <testcase name="testIndexProxy with data set #9" assertions="5" time="0.029832"/>
+          <testcase name="testIndexProxy with data set #10" assertions="5" time="0.027889"/>
+          <testcase name="testIndexProxy with data set #11" assertions="2" time="0.038433"/>
         </testsuite>
       </testsuite>
-      <testsuite name="TestSolrIncrementalIndex" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestFacetedSearchIndexer.php" tests="9" assertions="64" failures="0" errors="0" time="13.186884">
-        <testsuite name="TestSolrIncrementalIndex::testChangePage" tests="9" assertions="64" failures="0" errors="0" time="13.186884">
-          <testcase name="testChangePage with data set #0" assertions="6" time="0.998348"/>
-          <testcase name="testChangePage with data set #1" assertions="7" time="1.102245"/>
-          <testcase name="testChangePage with data set #2" assertions="6" time="0.965161"/>
-          <testcase name="testChangePage with data set #3" assertions="8" time="1.388828"/>
-          <testcase name="testChangePage with data set #4" assertions="7" time="1.447882"/>
-          <testcase name="testChangePage with data set #5" assertions="13" time="1.178370"/>
-          <testcase name="testChangePage with data set #6" assertions="8" time="2.159711"/>
-          <testcase name="testChangePage with data set #7" assertions="1" time="2.231173"/>
-          <testcase name="testChangePage with data set #8" assertions="8" time="1.715166"/>
+      <testsuite name="TestResultFilterClasses" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestSolrProxy.php" tests="3" assertions="28" failures="0" errors="0" time="0.589745">
+        <testcase name="testClassesExist" class="TestResultFilterClasses" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestSolrProxy.php" line="159" assertions="7" time="0.016458"/>
+        <testsuite name="TestResultFilterClasses::testResultParser" tests="2" assertions="21" failures="0" errors="0" time="0.573287">
+          <testcase name="testResultParser with data set #0" assertions="1" time="0.544714"/>
+          <testcase name="testResultParser with data set #1" assertions="20" time="0.028573"/>
+        </testsuite>
+      </testsuite>
+      <testsuite name="TestSolrProxyAccessControl" file="D:\MediaWiki\HaloSMWExtension\extensions\EnhancedRetrieval\tests\testcases\TestSolrProxy.php" tests="31" assertions="137" failures="0" errors="0" time="279.939955">
+        <testsuite name="TestSolrProxyAccessControl::testHaloACLMemcacheFilterAccess" tests="2" assertions="4" failures="0" errors="0" time="0.050654">
+          <testcase name="testHaloACLMemcacheFilterAccess with data set #0" assertions="2" time="0.035429"/>
+          <testcase name="testHaloACLMemcacheFilterAccess with data set #1" assertions="2" time="0.015225"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testSpecialSubjectAccess" tests="10" assertions="40" failures="0" errors="0" time="25.567558">
+          <testcase name="testSpecialSubjectAccess with data set #0" assertions="4" time="2.550231"/>
+          <testcase name="testSpecialSubjectAccess with data set #1" assertions="4" time="2.515231"/>
+          <testcase name="testSpecialSubjectAccess with data set #2" assertions="4" time="2.583313"/>
+          <testcase name="testSpecialSubjectAccess with data set #3" assertions="4" time="2.526306"/>
+          <testcase name="testSpecialSubjectAccess with data set #4" assertions="4" time="2.591129"/>
+          <testcase name="testSpecialSubjectAccess with data set #5" assertions="4" time="2.793719"/>
+          <testcase name="testSpecialSubjectAccess with data set #6" assertions="4" time="2.525387"/>
+          <testcase name="testSpecialSubjectAccess with data set #7" assertions="4" time="2.460844"/>
+          <testcase name="testSpecialSubjectAccess with data set #8" assertions="4" time="2.471946"/>
+          <testcase name="testSpecialSubjectAccess with data set #9" assertions="4" time="2.549452"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testSpecialSubjectAccessMulti" tests="6" assertions="24" failures="0" errors="0" time="15.178517">
+          <testcase name="testSpecialSubjectAccessMulti with data set #0" assertions="4" time="2.550809"/>
+          <testcase name="testSpecialSubjectAccessMulti with data set #1" assertions="4" time="2.482720"/>
+          <testcase name="testSpecialSubjectAccessMulti with data set #2" assertions="4" time="2.528864"/>
+          <testcase name="testSpecialSubjectAccessMulti with data set #3" assertions="4" time="2.552489"/>
+          <testcase name="testSpecialSubjectAccessMulti with data set #4" assertions="4" time="2.527520"/>
+          <testcase name="testSpecialSubjectAccessMulti with data set #5" assertions="4" time="2.536115"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testMWAccessControlFilterAccess" tests="2" assertions="4" failures="0" errors="0" time="5.134514">
+          <testcase name="testMWAccessControlFilterAccess with data set #0" assertions="2" time="2.533563"/>
+          <testcase name="testMWAccessControlFilterAccess with data set #1" assertions="2" time="2.600951"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testResultFilterAccess" tests="2" assertions="4" failures="0" errors="0" time="5.050111">
+          <testcase name="testResultFilterAccess with data set #0" assertions="2" time="2.539553"/>
+          <testcase name="testResultFilterAccess with data set #1" assertions="2" time="2.510558"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testHaloACLMemcacheFilterAccessMulti" tests="2" assertions="10" failures="0" errors="0" time="0.051608">
+          <testcase name="testHaloACLMemcacheFilterAccessMulti with data set #0" assertions="5" time="0.025118"/>
+          <testcase name="testHaloACLMemcacheFilterAccessMulti with data set #1" assertions="5" time="0.026490"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testMWAccessControlFilterAccessMulti" tests="2" assertions="8" failures="0" errors="0" time="5.063537">
+          <testcase name="testMWAccessControlFilterAccessMulti with data set #0" assertions="4" time="2.543062"/>
+          <testcase name="testMWAccessControlFilterAccessMulti with data set #1" assertions="4" time="2.520475"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testResultFilterAccessMulti" tests="2" assertions="0" failures="0" errors="0" time="6.336702">
+          <testcase name="testResultFilterAccessMulti with data set #0" assertions="0" time="3.216005"/>
+          <testcase name="testResultFilterAccessMulti with data set #1" assertions="0" time="3.120697"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testResultFilter" tests="2" assertions="16" failures="0" errors="0" time="5.429163">
+          <testcase name="testResultFilter with data set #0" assertions="8" time="2.667372"/>
+          <testcase name="testResultFilter with data set #1" assertions="8" time="2.761791"/>
+        </testsuite>
+        <testsuite name="TestSolrProxyAccessControl::testFacetFilter" tests="1" assertions="27" failures="0" errors="0" time="212.077591">
+          <testcase name="testFacetFilter with data set #0" assertions="27" time="212.077591"/>
         </testsuite>
       </testsuite>
     </testsuite>

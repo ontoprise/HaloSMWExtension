@@ -48,6 +48,10 @@ class TestFacetedSearchIndexerSuite extends PHPUnit_Framework_TestSuite
 		ERCommon::createUsers(array("U1"));
         Skin::getSkinNames();
     	
+        // Initialize an internal array for properties. Otherwise the import
+        // will fail.
+        SMWDIProperty::newFromUserLabel('foo');
+        
         $this->mArticleManager = new ArticleManager();
         $this->mArticleManager->importArticles(__DIR__."/ERTestArticlesDump.xml");
    	}
@@ -260,7 +264,7 @@ class TestSolrIndexer extends PHPUnit_Framework_TestCase {
     	
     	// Send a query for all documents and asserts that all articles were added.
     	$qr = $indexer->sendRawQuery("q=*:*");
-    	$expResult = 'numFound="168"';
+    	$expResult = 'numFound="169"';
     	$this->assertContains($expResult, $qr, "The index does not contain the expected number of documents.");
     }
 
@@ -326,7 +330,7 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     public function providerForIndexContent() {
     	return array(
     		#0
-    		array("q=*:*", array('numFound="168"')),
+    		array("q=*:*", array('numFound="169"')),
     		#1
     		array("q=*:*&fl=smwh_title&wt=json&indent=on&start=0&sort=smwh_title_s%20asc",
     		      array(
@@ -369,8 +373,8 @@ class TestSolrFullIndexContent extends PHPUnit_Framework_TestCase {
     		      array(
     		      	'"smwh_Located_in_t",34',
     		      	'"smwh_Located_in_state_t",22',
-    		        '"numFound":168',
-    		      	'"smwh_Modification_date_xsdvalue_dt",168',
+    		        '"numFound":169',
+    		      	'"smwh_Modification_date_xsdvalue_dt",169',
     		      	'"smwh_Building_name_xsdvalue_t",34',
     		      	'"smwh_Image_xsdvalue_t",34',
     		      	'"smwh_Height_stories_xsdvalue_d",34',

@@ -18,6 +18,9 @@
  */
 
 /**
+ * @file
+ * @ingroup FacetedSearch
+ * 
  * This is a proxy for SOLR requests that can be invoke via port 80. This is needed
  * in case the standard SOLR port is blocked by a firewall.
  * 
@@ -29,6 +32,7 @@
  *
  */
 
+
 /**
  * Configuration of the SOLR server
  * 
@@ -39,9 +43,39 @@
 $SOLRhost = 'localhost';
 $SOLRport = 8983;
 
+$spgHaloACLConfig = array(
+			'wikiDBprefix'	=> '',
+			'wikiDBname'	=> 'testdb',
+			'cookiePath'	=> '/',		 // must be equal to $wgCookiePath
+			'cookieDomain'	=> '', 		 // must be equal to $wgCookieDomain = "";
+			'cookieSecure'	=> false,	 // must be equal to $wgCookieSecure = false;
+			'cookieHttpOnly'	=> true, // must be equal to $wgCookieHttpOnly = true;
+			'memcacheconfig' => array(
+				'servers' => array('localhost:11211'),
+				'debug'   => false,
+				'compress_threshold' => 10240,
+				'persistant' => true),
+			'mediawikiIndex' => 'http://localhost/mediawiki/index.php',
+			'categoryNS'	=> 14,
+			'propertyNS'	=> 102,
+			'contentlanguage' => 'en'
+
+);
+
+
+// Used to control a valid entry point for some classes that are only used by the
+// solrproxy.
+define('SOLRPROXY', true);
 
 // Include the Apache Solr Client library
 require_once('SolrPhpClient/Apache/Solr/Service.php');
+
+if ($spgHaloACLConfig) {
+	require_once 'Solrproxy/FS_ResultFilter.php';
+	
+// 	$resultFilter = new FSResultFilter();
+// 	$user = $resultFilter->getCurrentUser();
+}
 
 /**
  * This is a sub class of the Apache_Solr_Service. It adds an additional method
@@ -114,6 +148,10 @@ try
 {
 	$results = $solr->rawsearch($query);
 	$response = $results->getRawResponse();
+	if ($spgHaloACLConfig) {
+		$rf = FSResultFilter::getInstance();
+		$response = $rf->filterResult(NULL, 'read', $response);
+	}
 	echo $response;
 }
 catch (Exception $e)

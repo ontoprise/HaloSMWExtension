@@ -17,33 +17,30 @@
  *
  */
 
-if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-	die( "This script must be run from the command line\n" );
-}
-
 /**
  * @file
- * @ingroup EnhancedRetrievalTests
+ * @ingroup FacetedSearch
+ *
+ * This file adds some fake functions for scripts that believe they are running
+ * in the context of MediaWiki.
  * 
- * @defgroup EnhancedRetrievalTests Enhanced Retrieval unit tests
- * @ingroup EnhancedRetrieval
+ * @author Thomas Schweitzer
+ * Date: 05.03.2012
  * 
-
  */
 
-require_once 'testcases/TestER.php';
-require_once 'testcases/TestFacetedSearchIndexer.php';
-require_once 'testcases/TestSolrProxy.php';
+function wfProfileIn() {
+	
+}
 
-class ERTests
-{
-	public static function suite()
-	{
-		$suite = new PHPUnit_Framework_TestSuite('EnhancedRetrieval');
+function wfProfileOut() {
+	
+}
 
-// 		$suite->addTestSuite("TestER");
-//TODO 		$suite->addTestSuite("TestFacetedSearchIndexerSuite");
-		$suite->addTestSuite("TestSolrProxySuite");
-		return $suite;
-	}
+function wfSuppressWarnings() {
+	
+}
+
+function wfRestoreWarnings() {
+	
 }
