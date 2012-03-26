@@ -37,10 +37,32 @@ function wfProfileOut() {
 	
 }
 
-function wfSuppressWarnings() {
-	
+/**
+ * Reference-counted warning suppression
+ */
+function wfSuppressWarnings( $end = false ) {
+	static $suppressCount = 0;
+	static $originalLevel = false;
+
+	if ( $end ) {
+		if ( $suppressCount ) {
+			--$suppressCount;
+			if ( !$suppressCount ) {
+				error_reporting( $originalLevel );
+			}
+		}
+	} else {
+		if ( !$suppressCount ) {
+			$originalLevel = error_reporting( E_ALL & ~( E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE ) );
+		}
+		++$suppressCount;
+	}
 }
 
+/**
+ * Restore error level to previous value
+ */
 function wfRestoreWarnings() {
-	
+	wfSuppressWarnings( true );
 }
+
