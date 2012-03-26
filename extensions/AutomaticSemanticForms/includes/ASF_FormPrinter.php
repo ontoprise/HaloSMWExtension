@@ -105,6 +105,8 @@ class ASFFormPrinter extends SFFormPrinter {
 			
 			} else if($form_submitted && !$formDefinition->isInAjaxUpdateMode()){
 				//the data from the form is stored
+
+				$page_name_formula = $formDefinition->getPageNameTemplate();
 				
 				//add unresolved annotations section and update number of form fields
 				global $wgRequest;
@@ -114,11 +116,9 @@ class ASFFormPrinter extends SFFormPrinter {
 
 			$form_def = $formDefinition->getFormDefinition();
 			
-			$page_name_formula = $formDefinition->getPageNameTemplate();
-			
 			$postProcess = true;
 		}
-
+		
 		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
 			parent::formHTML( $form_def, $form_submitted, $source_is_page, null, $existing_page_content, $page_name, $page_name_formula, $is_query, $embedded);
 
