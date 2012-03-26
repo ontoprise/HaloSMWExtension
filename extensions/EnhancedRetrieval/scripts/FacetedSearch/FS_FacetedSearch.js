@@ -83,6 +83,9 @@ FacetedSearch.classes.FacetedSearch = function () {
 	var RELATION_REGEX = /^smwh_(.*)_(.*)$/;
 	var ATTRIBUTE_REGEX = /smwh_(.*)_xsdvalue_(.*)/;
 	
+	// Wait 500ms for new key presses before the search is executed
+	var KEY_DELAY = 500;
+	
 	//--- Private members ---
 
 	// The instance of this object
@@ -208,7 +211,13 @@ FacetedSearch.classes.FacetedSearch = function () {
 	 * Keyup event handler for the search input field.
 	 */
 	that.onSearchKeyup = function () {
-		updateSearchResults();
+		var timestamp = new Date().getTime();
+		that.timerstamp = timestamp;
+		window.setTimeout(function () {
+			if (that.timerstamp == timestamp) {
+				updateSearchResults();
+			}
+		},KEY_DELAY);
 		return false;
 	};
 	
