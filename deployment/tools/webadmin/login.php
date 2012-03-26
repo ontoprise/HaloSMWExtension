@@ -56,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$lastMod = filemtime("$currentDir/sessiondata/userloggedin");
 		$currenttime = time();
         
-		// timeout is 15 min
-		if ($currenttime - $lastMod < 900) {
+		// timeout is 5 min
+		if ($currenttime - $lastMod < 300) {
 			print "User already logged in. Try again later.";
 			exit();
 		}
