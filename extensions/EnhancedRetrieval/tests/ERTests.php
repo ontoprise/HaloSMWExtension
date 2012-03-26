@@ -41,8 +41,8 @@ class ERTests
 	{
 		$suite = new PHPUnit_Framework_TestSuite('EnhancedRetrieval');
 
-// 		$suite->addTestSuite("TestER");
-//TODO 		$suite->addTestSuite("TestFacetedSearchIndexerSuite");
+ 		$suite->addTestSuite("TestER");
+ 		$suite->addTestSuite("TestFacetedSearchIndexerSuite");
 		$suite->addTestSuite("TestSolrProxySuite");
 		return $suite;
 	}
