@@ -69,6 +69,10 @@ $wgCKEditorUrlparamMode = false;
 // hide toolbar buttons when some extensions are not installed (default show buttons)
 $wgCKEditorHideDisabledTbutton = false;
 
+$wysiwygIP = $IP . '/' . $wgFCKEditorExtDir;
+
+$wysiwygScriptPath = $wgScriptPath . '/' . $wgFCKEditorExtDir;
+
 /**
  * Enable use of AJAX features.
  */
@@ -111,17 +115,16 @@ $ckeditor = new CKEditor('fake');
 $wgFCKEditorIsCompatible = $ckeditor->IsCompatible();
 
 $oCKeditorExtension = new CKeditor_MediaWiki();
-
 // Hooked functions
 $wgHooks['ParserAfterTidy'][]                   = array( $oCKeditorExtension, 'onParserAfterTidy' );
-$wgHooks['SkinAfterBottomScripts'][]            = array( $oCKeditorExtension, 'onSkinAfterBottomScripts');
-$wgHooks['EditPage::showEditForm:initial'][]    = array( $oCKeditorExtension, 'onEditPageShowEditFormInitial' );
-$wgHooks['EditPage::showEditForm:fields'][]		= array( $oCKeditorExtension, 'onEditPageShowEditFormFields' );
+//$wgHooks['SkinAfterBottomScripts'][]            = array( $oCKeditorExtension, 'onSkinAfterBottomScripts');
+//$wgHooks['EditPage::showEditForm:initial'][]    = array( $oCKeditorExtension, 'onEditPageShowEditFormInitial' );
+//$wgHooks['EditPage::showEditForm:fields'][]		= array( $oCKeditorExtension, 'onEditPageShowEditFormFields' );
 $wgHooks['EditPageBeforePreviewText'][]         = array( $oCKeditorExtension, 'onEditPageBeforePreviewText' );
 $wgHooks['EditPagePreviewTextEnd'][]            = array( $oCKeditorExtension, 'onEditPagePreviewTextEnd' );
 $wgHooks['CustomEditor'][]                      = array( $oCKeditorExtension, 'onCustomEditor' );
 // Add javascript files for semantic forms
-$wgHooks['sfAddJavascriptFiles'][]              = array( $oCKeditorExtension, 'onSfAddJavascriptFiles' );
+//$wgHooks['sfAddJavascriptFiles'][]              = array( $oCKeditorExtension, 'onSfAddJavascriptFiles' );
 $wgHooks['LanguageGetMagic'][]					= 'CKeditor_MediaWiki::onLanguageGetMagic';
 $wgHooks['ParserBeforeStrip'][]					= 'CKeditor_MediaWiki::onParserBeforeStrip';
 $wgHooks['ParserBeforeInternalParse'][]			= 'CKeditor_MediaWiki::onParserBeforeInternalParse';

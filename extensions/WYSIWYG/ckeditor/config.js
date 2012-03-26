@@ -19,7 +19,7 @@ if (!String.prototype.InArray) {
 CKEDITOR.editorConfig = function( config )
 {
   // Define changes to default configuration here. For example:
-  // config.language = 'fr';
+//   config.language = 'fr';
   // config.uiColor = '#AADC6E';
   var showTbButton = (typeof window.parent.wgCKEditorHideDisabledTbutton == 'undefined');
     
@@ -97,8 +97,8 @@ CKEDITOR.editorConfig = function( config )
   //        ['About']
   //    ];
   config.extraPlugins = extraPlugins + ',autogrow';
-  config.height = config.autoGrow_minHeight = '300px';
-  config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
+  config.height = config.autoGrow_minHeight = '300';
+//  config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
 
   config.WikiSignature = '--~~~~';
 
@@ -117,6 +117,8 @@ CKEDITOR.editorConfig = function( config )
   config.resize_enabled = false;
 
   config.autoGrow_maxHeight = 0;
+
+  config.toolbarLocation = 'top';
 
 
 
@@ -162,6 +164,7 @@ CKEDITOR.editorConfig = function( config )
     })();
 
     // Copied from editor/_source/plugins/toolbar/plugin.js & modified
+    //this is actually toolbarToggle command. Collapses the toolbar if it's expanded and expands it if it's collapsed.
     editor.addCommand( 'toolbarCollapse',
     {
 
@@ -210,10 +213,61 @@ CKEDITOR.editorConfig = function( config )
         wysiwyg : 1,
         source : 1
       }
-    } )
+    } );
+
+    //real toolbar collapse command. Collapses the toolbar if it's expanded, otherwise does nothing
+    editor.addCommand( '_toolbarCollapse',
+    {
+
+      exec : function( editor )
+      {
+        if (collapser == null){
+          return;
+        }
+
+        var toolbox = collapser.getPrevious(),
+        contents = editor.getThemeSpace( 'contents' ),
+        toolboxContainer = toolbox.getParent(),
+        contentHeight = parseInt( contents.$.style.height, 10 ),
+        previousHeight = toolboxContainer.$.offsetHeight;
+
+        var collapsed = toolbox.hasClass('iterate_tbx_hidden');//!toolbox.isVisible();
+
+        if ( !collapsed )
+        {
+          switchVisibilityAfter1stRow(toolbox, false); // toolbox.hide();
+          toolbox.addClass('iterate_tbx_hidden');
+          if (!toolbox.isVisible()) {
+            toolbox.show(); // necessary 1st time if initially collapsed
+          }
+
+          collapser.addClass( 'cke_toolbox_collapser_min' );
+          collapser.setAttribute( 'title', editor.lang.toolbarExpand );
+
+          // Update collapser symbol.
+          collapser.getFirst().setText( '\u25C0' /*BLACK LEFT-POINTING TRIANGLE */);
+
+          var dy = toolboxContainer.$.offsetHeight - previousHeight;
+          contents.setStyle( 'height', ( contentHeight - dy ) + 'px' );
+
+          editor.fire( 'resize' );
+        }
+        else
+        {
+          return;
+        }
+
+
+      },
+
+      modes : {
+        wysiwyg : 1,
+        source : 1
+      }
+    } );
 
     // Make sure advanced toolbars initially collapsed
-    editor.execCommand( 'toolbarCollapse' );
+    editor.execCommand( '_toolbarCollapse' );
   });
 
 };

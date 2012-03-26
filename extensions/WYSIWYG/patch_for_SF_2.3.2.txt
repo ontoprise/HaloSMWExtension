@@ -1,109 +1,13 @@
-Index: extensions/SemanticForms/includes/SF_FormUtils.php
+
+Index: extensions/SemanticForms/includes/SF_Utils.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.php	(revision 13847)
-+++ extensions/SemanticForms/includes/SF_FormUtils.php	(working copy)
-@@ -385,9 +385,16 @@
- 
- 		// Differentiate between FCKeditor and the newer CKeditor,
- 		// which isn't handled here
-+/*op-patch|TS|2011-11-30|CKeditor|Use CKEditor in semantic forms|start|doc|http://http://dmwiki.ontoprise.com/index.php/articlename*/
-+		if ( !class_exists( 'FCKeditor' ) && !class_exists( 'CKeditor' ) ) {
-+			return false;
-+		}
-+/* Original code		
- 		if ( !class_exists( 'FCKeditor' ) ) {
- 			return false;
- 		}
-+*/		
-+/*op-patch|TS|2011-11-30|end*/
- 
- 		$showFCKEditor = 0;
- 		if ( !$wgUser->getOption( 'riched_start_disabled' ) ) {
-@@ -412,10 +419,17 @@
- 
- 	static function prepareTextForFCK( $text ) {
- 		global $wgTitle;
--
--		$options = new FCKeditorParserOptions();
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+		if (class_exists('CKEditor')) {
-+            //CKEditor does not need that anymore
-+            return $text;
-+        }
-+		$classParser = 'FCKeditorParser';
-+        $classParserOptions = 'FCKeditorParserOptions';
-+        $options = new $classParserOptions();
- 		$options->setTidy( true );
--		$parser = new FCKeditorParser();
-+		$parser = new $classParser();
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
- 		$parser->setOutputType( OT_HTML );
- 		$text = $parser->parse( $text, $wgTitle, $options )->getText();
- 		return $text;
-@@ -459,8 +473,10 @@
- 		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
- 			$wgFCKEditorDir .= '/';
- 		}
--
--		$javascript_text .= <<<END
-+		/*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+        $RichEditor = class_exists('CKEditor') ? 'cke' : 'fck';
-+        if ($RichEditor == 'fck') {
-+        $javascript_text .= <<<END
- var oFCKeditor = new FCKeditor( "free_text" );
- 
- //Set config
-@@ -472,6 +488,18 @@
- oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet";
- oFCKeditor.ready = true;
- 
-+END;
-+        } else {
-+   		$javascript_text .= <<<END
-+var wgCKeditorInstance = null; //CKEDITOR.replace( 'free_text' );
-+var wgCKeditorCurrentMode = "wysiwyg";
-+CKEDITOR.ready=true;
-+
-+END;
-+
-+        }
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|end*/
-+        $javascript_text .= <<<END
- //IE hack to call func from popup
- function FCK_sajax(func_name, args, target) {
- 	sajax_request_type = 'POST' ;
-@@ -517,14 +545,15 @@
- 	if ( realTextarea )
- 	{
- 		// Create the editor instance and replace the textarea.
--		var height = $wgFCKEditorHeight;
--		if (height == 0) {
--			// the original onLoadFCKEditor() has a bunch of
--			// browser-based calculations here, but let's just
--			// keep it simple
--			height = 300;
--		}
-+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-+		var height = getWindowHeight4editor();
-+		// apply caluclations of height from the FCKEditor function itself
-+		// Add the height to the offset of the toolbar.
-+		height += 50;
-+		// Add a small space to be left in the bottom.
-+		height += 20 ;
- 		oFCKeditor.Height = height;
-+		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
- 		oFCKeditor.ReplaceTextarea() ;
- 
- 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-@@ -705,6 +734,11 @@
- addOnloadHook( initEditor );
- 
- END;
-+
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+        $javascript_text .= CKeditor_MediaWiki::InitializeScripts('free_text', $newWinMsg);
-+        /*op-patch|SR|2010-12-06|CKeditor|check for FCK or CK|start*/
-+        
- 		return $javascript_text;
+--- extensions/SemanticForms/includes/SF_Utils.php	(revision 13971)
++++ extensions/SemanticForms/includes/SF_Utils.php	(working copy)
+@@ -289,6 +289,7 @@
+ 		$output->addModules( 'ext.semanticforms.submit' );
+ 		$output->addModules( 'ext.smw.tooltips' );
+ 		$output->addModules( 'ext.smw.sorttable' );
++		$output->addModules( 'ext.wysiwyg.core' );
  	}
  
+ 	/**

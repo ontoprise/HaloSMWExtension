@@ -457,7 +457,8 @@ class CKEditor
 			$out .= $this->script("window.CKEDITOR_BASEPATH='". $ckeditorPath ."';");
 		}
 
-		$out .= "<script type=\"text/javascript\" src=\"" . $ckeditorPath . 'ckeditor.js' . $args . "\"></script>\n";
+//		$out .= "<script type=\"text/javascript\" src=\"" . $ckeditorPath . 'ckeditor.js' . $args . "\"></script>\n";
+//                $out .= "<script type=\"text/javascript\" src=\"" . $ckeditorPath . 'ckeditor_source.js' . $args . "\"></script>\n";
 
 		$extraCode = "";
 		if ($this->timestamp != self::timestamp) {
