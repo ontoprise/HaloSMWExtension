@@ -115,7 +115,7 @@ function enableAutomaticSemanticForms() {
 		array(
 			'scripts' => array('/scripts/asf.js'),
 			'styles' => array('/skins/asf.css'),
-			'dependencies' => array('ext.jquery.qtip'),
+			'dependencies' => array('ext.smwhalo.formedit', 'ext.jquery.qtip'),
 		);
 	
 	$wgResourceModules['ext.automaticsemanticforms.admin'] = 
