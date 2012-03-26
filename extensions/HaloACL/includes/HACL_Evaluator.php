@@ -855,6 +855,71 @@ class HACLEvaluator {
 		
 	}
 	
+	/**
+	 * Checks if instances of the given category can be accessed with the given
+	 * action.
+	 * @param string $category
+	 * 		Name of the category, with or without namespace
+	 * @param string $action
+	 * 		The requested action on the instances of the category
+	 * @return boolean/int
+	 * 		true, the action is permitted
+	 * 		false, the action is denied
+	 * 		-1, nothing can be said about the permission
+	 */
+	public function getCategoryRight($category, $action) {
+		$actionID = HACLRight::getActionID($action);
+		if ($actionID == 0) {
+			// unknown action => nothing can be said about this
+			return -1;
+		}
+		
+		global $wgUser;
+		$userID = $wgUser->getId();
+		list($permitted, $hasSD) = self::hasCategoryRight(array($category), $userID, $actionID);
+		if (!$hasSD) {
+			global $haclgOpenWikiAccess;
+			return $haclgOpenWikiAccess;
+		}
+		return $permitted;
+	}
+	
+	/**
+	 * Checks if instances of the given namespace can be accessed with the given
+	 * action.
+	 * @param int $nsIdx
+	 * 		Index of the namespace
+	 * @param string $action
+	 * 		The requested action on the instances of the namespace
+	 * @return boolean/int
+	 * 		true, the action is permitted
+	 * 		false, the action is denied
+	 * 		-1, nothing can be said about the permission
+	 */
+	public function getNamespaceRight($nsIdx, $action) {
+		$actionID = HACLRight::getActionID($action);
+		if ($actionID == 0) {
+			// unknown action => nothing can be said about this
+			return -1;
+		}
+		
+		global $wgUser;
+		$userID = $wgUser->getId();
+		
+		$hasSD = HACLSecurityDescriptor::getSDForPE($nsIdx, HACLSecurityDescriptor::PET_NAMESPACE) !== false;
+			
+		if (!$hasSD) {
+			global $haclgOpenWikiAccess;
+			// Articles with no SD are not protected if $haclgOpenWikiAccess is
+			// true. Otherwise access is denied
+			return $haclgOpenWikiAccess;
+		}
+		
+		return self::hasRight($nsIdx, HACLSecurityDescriptor::PET_NAMESPACE,
+							  $userID, $actionID);
+		
+	}
+	
 	
 	//--- Private methods ---
 	
@@ -900,7 +965,7 @@ class HACLEvaluator {
 		$parentTitles = array();
 	    $hasSD = false;                   	
 	    foreach ($parents as $p) {
-	    	$parentTitles[] = $t = Title::newFromText($p);
+	    	$parentTitles[] = $t = Title::newFromText($p, NS_CATEGORY);
 	    	
 			if (!$hasSD) {
 				$hasSD = (HACLSecurityDescriptor::getSDForPE($t->getArticleID(), HACLSecurityDescriptor::PET_CATEGORY) !== false);

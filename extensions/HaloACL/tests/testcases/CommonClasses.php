@@ -150,6 +150,35 @@ ACL
 		$this->mAddedArticles = array();
     }
 	
+    /**
+    * Imports the articles that are stored in the wiki dump with the given
+    * $filename.
+    * @param string $filename
+    * 		Name of the file that contains the wiki dump.
+    */
+    public function importArticles($filename) {
+    	$source = ImportStreamSource::newFromFile($filename);
+    	if ($source->isOK()) {
+    		$source = $source->value;
+    	}
+    	$importer = new WikiImporter($source);
+    	$result = $importer->doImport();
+    	// The WikiImporter forgets some internal cleanup
+    	stream_wrapper_unregister('uploadsource');
+    
+    	if ($result) {
+    		// Import was successful
+    		// => get the names of imported articles
+    		$doc = new DOMDocument();
+    		$doc->load($filename);
+    		$entries = $doc->getElementsByTagName('title');
+    		foreach ($entries as $entry) {
+    			$article = $entry->nodeValue;
+    			$this->mAddedArticles[] = $article;
+    		}
+    	}
+    }
+    
 	/**
 	 * Checks if the article with the given name $title exists.
 	 * 
@@ -243,6 +272,42 @@ class HaloACLCommon {
 		foreach ($userNames as $u) {
     		User::createNew($u, array('password' => User::crypt('test')));
 		}
+	}
+	
+	/**
+	 * 
+	 * Renders the article with the given $articleName for the given $user and 
+	 * returns the generated HTML.
+	 * 
+	 * @param String $articleName
+	 * 		Name of the article
+	 * @param String $user
+	 * 		Name of the user
+	 * @return String
+	 * 		HTML of the rendered article
+	 */
+	public static function renderArticle($articleName, $user, $action = 'purge') {
+
+    	global $wgUser, $wgTitle, $wgArticle;
+    	global $wgOut, $wgRequest;
+    	
+    	$wgUser = User::newFromName($user);
+    	
+    	$wgTitle = Title::newFromText($articleName);
+     	$wgOut = new OutputPage();
+     	
+     	$wgRequest = new WebRequest();
+     	$wgRequest->setVal('title', $wgTitle->getDBkey());
+     	$wgRequest->setVal('action', $action);
+     	
+     	$mediaWiki = new MediaWiki();
+     	$mediaWiki->setVal( 'action', $action );
+     	$mediaWiki->setVal( 'Server', $wgServer );
+    	$mediaWiki->performRequestForTitle($wgTitle, $wgArticle, $wgOut, $wgUser, $wgRequest);
+//     	$article->view();
+     	$html = $wgOut->getHTML();
+	
+    	return $html;
 	}
 	
 }

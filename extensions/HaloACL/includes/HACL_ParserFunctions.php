@@ -761,17 +761,22 @@ class HACLParserFunctions {
 	 * @param unknown_type $reason
 	 */
 	public static function articleDelete(&$article, &$user, &$reason) {
-		if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
+		$tacl = $article->getTitle();
+		if ($tacl->getNamespace() == HACL_NS_ACL) {
+			list($pe, $peType) = HACLSecurityDescriptor::nameOfPE($tacl->getText());
 			// The article is in the ACL namespace.
 			// Check if there is some corresponding definition in the ACL database.
 			// The content of the definition has to be deleted.
-			$id = $article->getTitle()->getArticleID();
+			$id = $tacl->getArticleID();
 			try {
 				$group = HACLGroup::newFromID($id);
 				// It is a group
 				// => remove all current members, however the group remains in the
 				//    hierarchy of groups, as it might be "revived"
 				$group->delete();
+				// Notify observers
+				wfRunHooks('HaloACLDeleteGroup', array($tacl));
+				
 			} catch (HACLGroupException $e) {
 				try {
 					$sd = HACLSecurityDescriptor::newFromID($id);
@@ -781,6 +786,10 @@ class HACLParserFunctions {
 					// => remove all current rights, however the right remains in
 					//    the hierarchy of rights, as it might be "revived"
 					$sd->delete();
+					
+					// Notify observers
+					wfRunHooks('HaloACLDeleteSecurityDescriptor', 
+								array($tacl, $pe, $peType));
 
 					// if sd was a template, also remove it from quickacls
 					try {
@@ -792,16 +801,17 @@ class HACLParserFunctions {
 				} catch (HACLSDException  $e) {
 					// Check if it is the whitelist
 					global $haclgContLang;
-					if ($article->getTitle()->getText() == $haclgContLang->getWhitelist(false)) {
+					if ($tacl->getText() == $haclgContLang->getWhitelist(false)) {
 						// Create an empty whitelist and save it.
 						$wl = new HACLWhitelist();
 						$wl->save();
+						wfRunHooks('HaloACLDeleteWhitelist', array());
 					}
 				}
 			}
 		} else {
 			// If a protected article is deleted, its SD will be deleted as well
-			$sd = HACLSecurityDescriptor::getSDForPE($article->getTitle()->getArticleID(),
+			$sd = HACLSecurityDescriptor::getSDForPE($tacl->getArticleID(),
 			                                         HACLSecurityDescriptor::PET_PAGE);
 			if ($sd) {
 				$t = Title::newFromID($sd);
@@ -820,29 +830,31 @@ class HACLParserFunctions {
 	 * @param unknown_type $oldTitle
 	 * @param unknown_type $newTitle
 	 */
-	public static function articleMove(&$specialPage, &$oldTitle, &$newTitle) {
+	public static function articleMove(&$oldTitle, &$newTitle, &$user, $pageid, $redirid) {
 		$newName = $newTitle->getFullText();
-		// Check if the old title has an SD
+		// Check if the old title has an SD. $newTitle is used as the moved article
+		// keeps its ID after moving.
 		$sd = HACLSecurityDescriptor::getSDForPE($newTitle->getArticleID(),
-		HACLSecurityDescriptor::PET_PAGE);
+					HACLSecurityDescriptor::PET_PAGE);
 		if ($sd !== false) {
 			// move SD for page
 			$oldSD = Title::newFromID($sd);
 			$oldSD = $oldSD->getFullText();
 			$newSD = HACLSecurityDescriptor::nameOfSD($newName,
-			HACLSecurityDescriptor::PET_PAGE);
+						HACLSecurityDescriptor::PET_PAGE);
 
+			wfRunHooks('HaloACLMoveArticle', array($oldTitle, $newTitle));
 			self::move($oldSD, $newSD);
 		}
 
 		$sd = HACLSecurityDescriptor::getSDForPE($newTitle->getArticleID(),
-		HACLSecurityDescriptor::PET_PROPERTY);
+						HACLSecurityDescriptor::PET_PROPERTY);
 		if ($sd !== false) {
 			// move SD for property
 			$oldSD = Title::newFromID($sd);
 			$oldSD = $oldSD->getFullText();
 			$newSD = HACLSecurityDescriptor::nameOfSD($newName,
-			HACLSecurityDescriptor::PET_PROPERTY);
+						HACLSecurityDescriptor::PET_PROPERTY);
 			self::move($oldSD, $newSD);
 		}
 		return true;
@@ -1015,6 +1027,12 @@ class HACLParserFunctions {
 	 */
 	private function saveGroup() {
 		$t = $this->mTitle;
+		$groupExists = true;
+		try {
+			HACLGroup::newFromID($t->getArticleID());
+		} catch (HACLGroupException $e) {
+			$groupExists = false;
+		}
 		// group does not exist yet
 		$group = new HACLGroup($t->getArticleID(), $t->getText(),
 								$this->mGroupManagerGroups,
@@ -1028,6 +1046,11 @@ class HACLParserFunctions {
 			$group->addUser($m);
 		}
 		$group->addDynamicMemberQueries($this->mDynamicMemberQueries);
+		
+		// Notify observers
+		$event = $groupExists ? 'HaloACLModifyGroup'
+							  : 'HaloACLAddGroup';
+		wfRunHooks($event, array($t));
 
 		return true;
 	}
@@ -1045,11 +1068,13 @@ class HACLParserFunctions {
 	 * 		false, if not
 	 */
 	private function saveSecurityDescriptor($isRight) {
+		$isNewSD = true;
 		$t = $this->mTitle;
 		try {
 			$sd = HACLSecurityDescriptor::newFromID($t->getArticleID());
 			// The right already exists. => delete the rights it contains
 			$sd->removeAllRights();
+			$isNewSD = false;
 		} catch (HACLSDException $e) {
 		}
 		list($pe, $peType) = HACLSecurityDescriptor::nameOfPE($t->getText());
@@ -1065,6 +1090,11 @@ class HACLParserFunctions {
 		$sd->addInlineRights($this->mPropertyRights);
 		// add all predefined rights
 		$sd->addPredefinedRights($this->mPredefinedRights);
+		
+		// Notify observers
+		$event = $isNewSD ? 'HaloACLAddSecurityDescriptor' 
+						  : 'HaloACLModifySecurityDescriptor';
+		wfRunHooks($event, array($t, $pe, $peType));
 
 		return true;
 	}
@@ -1079,8 +1109,10 @@ class HACLParserFunctions {
 	 */
 	private function saveWhitelist() {
 		try {
-			$wl = new HACLWhitelist($this->mWhitelist);
+ 			$wl = new HACLWhitelist($this->mWhitelist);
 			$wl->save();
+			wfRunHooks('HaloACLModifyWhitelist', array());
+				
 		} catch (HACLWhitelistException $e) {
 			// Some articles could not be added to the whitelist, because they
 			// do not exits

@@ -3,6 +3,10 @@
  * @ingroup HaloACL_Tests
  */
 
+## Shared memory settings
+$wgMainCacheType = CACHE_MEMCACHED;
+$wgMemCachedServers = array('localhost:11211');
+
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 $haclgBaseStore = HACL_STORE_LDAP;
 enableHaloACL();

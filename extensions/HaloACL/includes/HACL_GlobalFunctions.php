@@ -74,6 +74,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
 	$wgAutoloadClasses['HACLLanguageEn'] = $haclgIP . '/languages/HACL_LanguageEn.php';
 	$wgAutoloadClasses['HACLGroupPermissions'] = $haclgIP . '/includes/HACL_GroupPermissions.php';
+	$wgAutoloadClasses['HACLMemcache'] = $haclgIP . '/includes/HACL_Memcache.php';
 
 	// UI
 	$wgAutoloadClasses['HACL_GenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
@@ -132,7 +133,7 @@ function haclfSetupExtension() {
 	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
 	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
-	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
+	$wgHooks['TitleMoveComplete'][]	   = 'HACLParserFunctions::articleMove';
 	$wgHooks['SkinTemplateContentActions'][] = 'haclfRemoveProtectTab';
 	$wgHooks['UserEffectiveGroups'][]  = 'HACLGroupPermissions::onUserEffectiveGroups';
 	$wgHooks['BeforeParserFetchTemplateAndtitle'][] = 'HACLEvaluator::onBeforeParserFetchTemplateAndtitle';
@@ -151,6 +152,9 @@ function haclfSetupExtension() {
 		$wgHooks['AfterDerivedPropertyQuery'][] = 'haclfDisallowVariableForPredicate';
 
 	}
+	
+	// Setup memcache hooks
+	HACLMemcache::setupHooks();
 
 	global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
 	if (isset($haclgNewUserTemplate) ||
@@ -201,6 +205,7 @@ function haclfSetupExtension() {
 		if (strpos($funcName, 'hacl') === 0) {
 			require_once('HACL_Toolbar.php');
 			require_once('HACL_AjaxConnector.php');
+			require_once('HACL_AjaxAccessRights.php');
 		}
 	}
 

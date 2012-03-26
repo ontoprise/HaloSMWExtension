@@ -2731,9 +2731,9 @@ Group members
         Queries for dynamic members
             {{#sparql: SELECT ?p WHERE { ?p property:WorksFor a:ProjectA .} }} 
         Dynamic user members
+            Jane 
             John
             Peter
-            Jane 
 EXP
     		      )),
     		array("ACL:Page/ProjectA", 

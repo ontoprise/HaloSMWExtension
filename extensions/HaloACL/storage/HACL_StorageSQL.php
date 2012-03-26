@@ -472,6 +472,28 @@ class HACLStorageSQL {
 	}
 	
 	/**
+	 * Checks if there are groups in the system that contain dynamic members.
+	 * 
+	 * @access public
+	 * @return boolean
+	 * 		true, if there are groups with dynamic members
+	 * 		false, if not
+	 */
+	public function dynamicGroupMembersUsed() {
+		$db =& wfGetDB( DB_SLAVE );
+		$gt = $db->tableName('halo_acl_group_members');
+		$sql = "SELECT * FROM $gt WHERE dynamic_member_query != '' LIMIT 1;";
+		
+		$res = $db->query($sql);
+		
+		$queryFound = $res->numRows() >= 1;
+		
+		$db->freeResult($res);
+		
+		return $queryFound;
+	}
+	
+	/**
 	 * Removes the user with the ID $userID from the group with the ID $groupID.
 	 *
 	 * @param $groupID
@@ -1354,6 +1376,29 @@ class HACLStorageSQL {
 
 	}
 
+	/**
+	* Checks if there are rights in the system that contain dynamic members.
+	*
+	* @access public
+	* @return boolean
+	* 		true, if there are groups with dynamic members
+	* 		false, if not
+	*/
+	public function dynamicAssigneesUsed() {
+		$db =& wfGetDB( DB_SLAVE );
+		$gt = $db->tableName('halo_acl_rights');
+		$sql = "SELECT * FROM $gt WHERE dynamic_assignees != '' LIMIT 1;";
+	
+		$res = $db->query($sql);
+	
+		$queryFound = $res->numRows() >= 1;
+	
+		$db->freeResult($res);
+	
+		return $queryFound;
+	}
+	
+	
 	/**
 	 * Deletes the inline right with the ID $rightID from the database. All
 	 * references to the right (from protected elements) are deleted as well.

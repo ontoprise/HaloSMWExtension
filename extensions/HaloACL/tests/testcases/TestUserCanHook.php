@@ -40,6 +40,9 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
     		}
     	}
 		
+    	// Disable the HaloACL memcache
+    	HACLMemcache::getInstance()->enableMemcache(false);
+    	
     	HACLStorage::reset(HACL_STORE_SQL);
 		HACLStorage::getDatabase()->dropDatabaseTables(false);
 		HACLStorage::getDatabase()->initDatabaseTables(false);

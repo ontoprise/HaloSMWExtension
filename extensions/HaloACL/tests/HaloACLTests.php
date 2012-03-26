@@ -34,6 +34,7 @@ require_once 'testcases/TestSMWStore.php';
 require_once 'testcases/TestGroupPermissions.php';
 require_once 'testcases/TestDynamicHaloACL.php';
 require_once 'testcases/TestRenderArticles.php';
+require_once 'testcases/TestMemcachedHaloACL.php';
 
 class HaloACLTests
 { 
@@ -43,15 +44,16 @@ class HaloACLTests
 		define('SMWH_FORCE_TS_UPDATE', true);
     	$suite = new PHPUnit_Framework_TestSuite('PHPUnit');
         
-    	$suite->addTestSuite("TestDatabaseSuite");
-    	$suite->addTestSuite("TestParserFunctionsSuite");
-	   	$suite->addTestSuite("TestUserCanHookSuite");
-    	$suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
-    	$suite->addTestSuite("TestLDAPStorageSuite");
-    	$suite->addTestSuite("TestSMWStoreSuite");
+       	$suite->addTestSuite("TestDatabaseSuite");
+        $suite->addTestSuite("TestParserFunctionsSuite");
+ 	   	$suite->addTestSuite("TestUserCanHookSuite");
+       	$suite->addTestSuite("TestDefaultSecurityDescriptorSuite");
+       	$suite->addTestSuite("TestLDAPStorageSuite");
+		$suite->addTestSuite("TestSMWStoreSuite");
     	$suite->addTestSuite("TestGroupPermissionsSuite");
-    	$suite->addTestSuite("TestDynamicHaloACLSuite");
-    	$suite->addTestSuite("TestRenderArticlesSuite");
+     	$suite->addTestSuite("TestDynamicHaloACLSuite");
+      	$suite->addTestSuite("TestRenderArticlesSuite");
+       	$suite->addTestSuite("TestMemcachedHaloACLSuite");
         
         return $suite;
     }
