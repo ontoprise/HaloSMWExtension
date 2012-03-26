@@ -67,7 +67,7 @@ class FSFacetedSearchSpecial extends SpecialPage {
 	<div class="results" id="results">
 		<div id="field_namespaces" class="xfsNamespaces">
 		</div>
-		<div class="search">
+		<div class="search" id="fs_search_fields">
 			<input type="text" id="query" name="query" value="{{searchTerm}}" />
 			<input type="button" id="search_button" name="search" value="{{fs_search}}" />
 			<span class="xfsSortOrder">
@@ -80,7 +80,8 @@ class FSFacetedSearchSpecial extends SpecialPage {
 					<option value="descending">{{fs_title_descending}}</option>
 				</select>
 			</span>
-			<div id="create_article"/>
+			<div id="create_article">
+			</div>
 		</div>
 		<hr class="xfsSeparatorLine">
 		<div id="navigation">
@@ -92,6 +93,8 @@ class FSFacetedSearchSpecial extends SpecialPage {
 		<div id="xfsFooter">
 			<ul id="pager"></ul>
 		</div>
+	</div>
+	<div id="waiting_for_solr">
 	</div>
 </div>
 <div class="xfsCurrentSearchLink">

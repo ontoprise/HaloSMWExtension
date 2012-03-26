@@ -395,15 +395,32 @@ FacetedSearch.classes.FacetedSearch = function () {
 				solrPresent = true;
 			}
 		});
+		var dots = '';
+		var numTries = 0;
 		sm.init();
 		sm.store.addByValue('q', '*:*');		
 		sm.doRequest(0);
-		setTimeout(function () {
+		
+		var lang = FacetedSearch.singleton.Language;
+		$("#waiting_for_solr").text(lang.getMessage('tryConnectSOLR'));
+		$("#results").hide();
+		$("#waiting_for_solr").show();
+		
+		var interval = setInterval(function () {
 			if (!solrPresent) {
-				var lang = FacetedSearch.singleton.Language;
-				$("#results").text(lang.getMessage('solrNotFound'));
+				var msg = (numTries < 3)
+					? lang.getMessage('tryConnectSOLR')
+					: lang.getMessage('solrNotFound') + dots
+				$("#waiting_for_solr").text(msg);
+				dots += '.';
+				++numTries;
+				sm.doRequest(0);
+			} else {
+				clearInterval(interval);
+				$("#waiting_for_solr").hide();
+				$("#results").show();
 			}
-		}, 2000);
+		}, 2500);
 
 	}
 	
