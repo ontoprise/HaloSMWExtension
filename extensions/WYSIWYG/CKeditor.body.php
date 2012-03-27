@@ -369,6 +369,10 @@ class CKeditor_MediaWiki {
     );
 
     $wgResourceModules['ext.wysiwyg.core'] = $moduleTemplate + array(
+        'messages' => array(
+            'wysiwyg-show-richtexteditor',
+            'wysiwyg-show-wikitexteditor'
+         ),
         'scripts' => array(
           'scripts/setBasePath.js', 
           'ckeditor/_source/core/ckeditor_base.js',
@@ -405,7 +409,7 @@ class CKeditor_MediaWiki {
 					'ckeditor/_source/core/htmlparser/element.js',
 					'ckeditor/_source/core/htmlparser/filter.js',
 					'ckeditor/_source/core/htmlparser/basicwriter.js',
-//          'ckeditor/_source/core/loader.js',
+          'ckeditor/_source/core/loader.js',
 					'ckeditor/_source/core/ckeditor.js',
 					'ckeditor/_source/core/dom/comment.js',
 					'ckeditor/_source/core/dom/elementpath.js',

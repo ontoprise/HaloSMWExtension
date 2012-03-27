@@ -31,7 +31,7 @@
       || (mw.user.options.get('cke_show') === 'rememberlast'
         && mw.user.options.get('riched_use_toggle')
         && $.cookie('wysiwygToggleState') === 'visible'))
-        {
+    {
       if(toolbar.length){
         toolbar.hide();
       }
@@ -52,11 +52,11 @@
         wikieditor.before(toggleDiv);
       }
 
-      toggleAnchor.html(mw.config.get('wgCKeditorVisible') ? 'Show WikiTextEditor' : 'Show RichTextEditor');
+      toggleAnchor.html(mw.config.get('wgCKeditorVisible') ? mw.msg('wysiwyg-show-wikitexteditor') : mw.msg('wysiwyg-show-richtexteditor'));
 
       $('#toggleAnchor').live('click', function(event){
-        toggleEditor($(this), wikieditor, toolbar);
         event.preventDefault();
+        toggleEditor($(this), wikieditor, toolbar);
       });
 
       toggleDiv.append('[');
@@ -81,22 +81,17 @@
         toolbar.show();
       }
       if(toggle.length){
-        toggle.html('Show RichTextEditor');
+        toggle.text(mw.msg('wysiwyg-show-richtexteditor'));
       }
       
       if(mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle')){
-        $.cookie('wysiwygToggleState', 'hidden');
+        $.cookie('wysiwygToggleState', 'hidden', {expires: 1000});
       }
     }
     else{
       if(toggle.length){
         toggle.parent().hide();
       }
-      //      CKEDITOR.on('instanceReady', function(event){
-      //        toggle.show();
-      //        toggle.html('Show RichTextEditor');
-      //      });
-      
       if(toolbar.length){
         toolbar.hide();
       }
@@ -104,15 +99,14 @@
         if(toggle.length){
           setTimeout(function(){
             toggle.parent().show();
-            toggle.html('Show WikiTextEditor');
+            toggle.text(mw.msg('wysiwyg-show-wikitexteditor'));
           }, 1000);
         }
       });
       mw.config.set('wgCKeditorVisible', true);
-      //      mw.config.set('wgCKeditorInstance', CKEDITOR.replace(wikieditor.attr('id')));
       mw.config.set('wgCKeditorInstance', wikieditor.ckeditorGet());
       if(mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle')){
-        $.cookie('wysiwygToggleState', 'visible');
+        $.cookie('wysiwygToggleState', 'visible', {expires: 1000});
       }
     }
   }
