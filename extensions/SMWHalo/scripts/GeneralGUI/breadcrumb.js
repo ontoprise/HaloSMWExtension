@@ -114,7 +114,8 @@ Breadcrumb.prototype = {
 			var encURI = encodeURIComponent(breadcrumb.pageName);
 			if (wgArticlePath.indexOf('?title=') != -1) {
 				encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
-				var articlePath = wgArticlePath.replace("$1", encURI) + breadcrumb.queryString;
+				var articlePath = wgArticlePath.replace("$1", encURI) + 
+					breadcrumb.queryString.replace( "?", "&" );
 			} else {
 				encURI = encURI.replace(/%2F/g, "/"); // do not encode slash
 				encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
