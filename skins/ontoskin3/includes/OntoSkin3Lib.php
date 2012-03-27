@@ -309,7 +309,7 @@ class SMWH_Skin {
 				}
 				$tabs .= "\">";
 				$tabs .= $pageName . "</div>";
-				if( $wgTitle->getNamespace() == NS_TALK ) {
+				if( in_array( $this->action, array('edit') ) || $wgTitle->getNamespace() == NS_TALK ) {
 					//provide back to page link
 					$tabs .= '<a class="tab" href="';
 					$tabs .= htmlspecialchars( $tab['href'] ) . '">';
