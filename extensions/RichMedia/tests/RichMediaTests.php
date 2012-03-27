@@ -27,6 +27,11 @@
  * @author Benjamin Langguth
  */
 
+// check if original file was called from command line or Webserver 
+if( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+	die( "This script must be run from the command line\n" );
+}
+
 require_once 'testcases/TestRM.php';
 
 class RichMediaTests
