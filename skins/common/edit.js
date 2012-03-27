@@ -31,8 +31,8 @@ window.mwInsertEditButton = function( parent, item ) {
 	image.onclick = function() {
 		insertTags( item.tagOpen, item.tagClose, item.sampleText );
 		// click tracking
-		if ( ( typeof $ != 'undefined' )  && ( typeof $.trackAction != 'undefined' ) ) {
-			$.trackAction( 'oldedit.' + item.speedTip.replace(/ /g, "-") );
+		if ( ( typeof $j != 'undefined' )  && ( typeof $j.trackAction != 'undefined' ) ) {
+			$j.trackAction( 'oldedit.' + item.speedTip.replace(/ /g, "-") );
 		}
 		return false;
 	};
@@ -78,9 +78,9 @@ window.mwSetupToolbar = function() {
 // apply tagOpen/tagClose to selection in textarea,
 // use sampleText instead of selection if there is none
 window.insertTags = function( tagOpen, tagClose, sampleText ) {
-	if ( typeof $ != 'undefined' && typeof $.fn.textSelection != 'undefined' && currentFocused &&
+	if ( typeof $j != 'undefined' && typeof $j.fn.textSelection != 'undefined' && currentFocused &&
 			( currentFocused.nodeName.toLowerCase() == 'iframe' || currentFocused.id == 'wpTextbox1' ) ) {
-		$( '#wpTextbox1' ).textSelection(
+		$j( '#wpTextbox1' ).textSelection(
 			'encapsulateSelection', { 'pre': tagOpen, 'peri': sampleText, 'post': tagClose }
 		);
 		return;
@@ -217,10 +217,10 @@ hookEvent( 'load', function() {
 	
 	// HACK: make currentFocused work with the usability iframe
 	// With proper focus detection support (HTML 5!) this'll be much cleaner
-	if ( typeof $ != 'undefined' ) {
-		var iframe = $( '.wikiEditor-ui-text iframe' );
+	if ( typeof $j != 'undefined' ) {
+		var iframe = $j( '.wikiEditor-ui-text iframe' );
 		if ( iframe.length > 0 ) {
-			$( iframe.get( 0 ).contentWindow.document )
+			$j( iframe.get( 0 ).contentWindow.document )
 				.add( iframe.get( 0 ).contentWindow.document.body ) // for IE
 				.focus( function() { currentFocused = iframe.get( 0 ); } );
 		}
