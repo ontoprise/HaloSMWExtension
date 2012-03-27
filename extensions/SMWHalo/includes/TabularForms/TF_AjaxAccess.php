@@ -361,27 +361,10 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		}
 		
 		$queryConditions = json_decode($queryConditions, true);
+		
 		foreach($queryConditions as $comparator => $compareValues){
 			
 			foreach($compareValues as $i => $compareValue){
-				
-				if($property != null){
-					$cDV = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $compareValue);
-				} else {
-					$cDV = SMWDataValueFactory::newTypeIdValue('_wpg', $compareValue);
-				}
-				
-				if(!$cDV->isValid()) continue;
-				
-				$cVal = $cDV->getDataItem()->getSortKey();
-				
-				if($cDV instanceof SMWWikiPageValue ){
-					if($annotationName != TF_CATEGORY_KEYWORD){
-						$cVal = $cDV->getNamespace()-':'.$cVal;
-					} 
-				}
-				
-				$getsLost = true;
 				
 				if(count($annotationValues) == 0){
 					
@@ -397,11 +380,30 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 					if(!array_key_exists($comparator, $supportedComparators)){
 						$getsLost = false;	
 					} else {
+						$getsLost = true;
 						$compareId = $supportedComparators[$comparator];
 					}
 				} else {
+					
+					if($property != null){
+						$cDV = SMWDataValueFactory::newPropertyObjectValue($property->getDataItem(), $compareValue);
+					} else {
+						$cDV = SMWDataValueFactory::newTypeIdValue('_wpg', $compareValue);
+					}
+				
+					if(!$cDV->isValid()) continue;
+				
+					$cVal = $cDV->getDataItem()->getSortKey();
+				
+					if($cDV instanceof SMWWikiPageValue ){
+						if($annotationName != TF_CATEGORY_KEYWORD){
+							$cVal = $cDV->getNamespace()-':'.$cVal;
+						} 
+					}
+				
+					$getsLost = true;
+				
 					foreach($annotationValues as $key => $annotationValue){
-						
 						if($property != null){
 							$aDV = SMWDataValueFactory::newPropertyObjectValue(
 								$property->getDataItem(), str_replace('++##/##++', ';', $annotationValue));

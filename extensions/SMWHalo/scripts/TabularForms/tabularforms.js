@@ -148,7 +148,7 @@ var TF = Class.create({
 		jQuery(element).attr('originalValue', jQuery(element).attr('value'));
 		jQuery(element).attr('currentValue', jQuery(element).attr('value'));
 			
-		jQuery(element).change(tf.cellChangeHandler);
+		//jQuery(element).change(tf.cellChangeHandler);
 		jQuery(element).keyup(function(event){
 			tf.cellKeyUpHandler(element, event, tabularFormId);
 		});
@@ -1318,7 +1318,7 @@ var TF = Class.create({
 				data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 				data = jQuery.parseJSON(data);
 					
-				container = jQuery(row).parent().parent();
+				container = jQuery(row).parent().parent().parent();
 				if(data.isValid == false){
 					tf.addNotification(container, 'tabf_invalid_value_warning', data.cssSelector + '-' + data.fieldNr, rowNr, data.invalidValueMsg);
 					jQuery(element).addClass('tabf_invalid_input_filed_value');
@@ -1352,16 +1352,8 @@ var TF = Class.create({
 		});
 	},
 	
-	/*
-	 * Call back for the check annotation value ajax call
-	 */
-	checkAnnotationValueCallBack : function(data){
-		
-		
-	},
-	
 	addNotification : function(container, notificationClass, id, instanceId, message){
-		
+	
 		jQuery("." + notificationClass, container).css('display', '');
 		
 		var found = false;
@@ -1491,7 +1483,10 @@ var TF = Class.create({
 	},
 	
 	expandNotificationSystem : function(event){
-		var container = jQuery(Event.element(event)).parent().parent();
+		var container = jQuery(Event.element(event)).parent();
+		if(jQuery(container).attr('class').indexOf('tabf_notifications_heading') < 0){
+			container = jQuery(container).parent();
+		}
 		
 		jQuery('div:nth-child(1)', container).css('display', 'none');
 		jQuery('div:nth-child(2)', container).css('display', '');
@@ -1502,6 +1497,11 @@ var TF = Class.create({
 	
 	collapseNotificationSystem : function(event){
 		var container = jQuery(Event.element(event)).parent().parent();
+		
+		if(jQuery(container).attr('class').indexOf('tabf_notifications_heading') < 0){
+			container = jQuery(container).parent();
+		}
+		
 		jQuery('div:nth-child(1)', container).css('display', '');
 		jQuery('div:nth-child(2)', container).css('display', 'none');
 		
@@ -1536,9 +1536,6 @@ var TF = Class.create({
 		//todo: instance lost messages should only be displayed in edit mode
 	}	
 });
-
-
-
 
 window.tf = new TF();
 
