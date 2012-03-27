@@ -56,10 +56,8 @@ ASKQuery.prototype = {
     if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" ||
       wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
       wgCanonicalSpecialPageName == 'FormEdit')
-    && typeof stb_control != 'undefined'
-    && stb_control.isToolbarAvailable()
-      && //inline query section should not be visible in wysiwyg mode
-      !(typeof CKEDITOR !== 'undefined' && CKEDITOR.instances.wpTextbox1 && (showFCKEditor & RTE_VISIBLE)))
+    && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()
+      && !mw.config.get('wysiwygVisible')) //inline query section should not be visible in wysiwyg mode
       {
       this.askQueryContainer = stb_control.createDivContainer(ASKQUERYCONTAINER,0);
       this.showToolbar();
@@ -186,6 +184,10 @@ ASKQuery.prototype = {
       }
                 });
     dialog.dialog('open');
+
+//    mw.loader.using('ext.smwhalo.queryInterface', function(){
+//      jQuery('#qiSTBDialog').load(url);
+//    });
   },
 
   /**
