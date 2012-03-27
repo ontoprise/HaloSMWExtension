@@ -1433,7 +1433,9 @@ AutoCompleter.prototype = {
                     this.allInputs[z] = new Array();
                     this.allInputs[z][0] = inputs[x];
                     this.allInputs[z][0].setAttribute("autocomplete", "OFF");
-                    this.allInputs[z][0].setAttribute("class", "wickEnabled");
+                    this.allInputs[z][0].setAttribute("class",
+                        this.allInputs[z][0].getAttribute("class") + " wickEnabled"
+                    );
                     if (i.indexOf("searchInput") != -1 ) {
                         // pasteNS as default for searchInput
                         this.allInputs[z][0].setAttribute("pasteNS", "true");
