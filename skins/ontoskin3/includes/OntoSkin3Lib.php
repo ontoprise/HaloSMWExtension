@@ -603,10 +603,10 @@ class SMWH_Skin {
 	 * @return string
 	 */
 	public function buildPersonalQuickLinks() {
-		global $wgUser;
+		global $wgUser, $wgScriptPath;
 
-		$wikiText = '<div id="quicklinks">[[Special:SpecialPages|Special pages]]' .
-			'| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]';
+		$plainHTML = '<div id="quicklinks"><a href="' .$wgScriptPath . '/index.php/Special:SpecialPages" title="List of all special pages [q]" accesskey="q">Special pages</a>';
+		$wikiText = '| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]';
 		if( $wgUser->isLoggedIn() ) {
 			$wikiText .= '| [[Special:Preferences|Preferences]]';
 			$groups = $wgUser->getEffectiveGroups();
@@ -614,8 +614,9 @@ class SMWH_Skin {
 				$wikiText .= '| [[Mediawiki:Haloadministration|Administration]]';
 			}
 		}
-		$html = $this->parseWikiText( $wikiText . '</div>' );
-
+		$out = $this->parseWikiText( $wikiText );
+		$html = $plainHTML . str_replace( array( '<p>', '</p>'), '', $out ) . '</div>';
+		
 		return '' . $html . '';
 	}
 
