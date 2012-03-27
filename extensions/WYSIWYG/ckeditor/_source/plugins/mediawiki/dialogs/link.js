@@ -170,14 +170,14 @@ CKEDITOR.dialog.add( 'MWLink', function( editor ) {
         var linkAnchor = encodeURIComponent(link.substring(hashIndex + 1).replace(/\s/g, '_')).toUpperCase();
         CKEDITOR.ajax.load( mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php?action=parse&prop=sections&format=json&page=' + pageName, function( data )
         {
-          data = $.parseJSON(data);
+          data = jQuery.parseJSON(data);
           if(data.error){
             dialogDefinition.setSearchMessage(data.error.info, dialog);
           }
           else{
             var select = dialog.getContentElement( 'mwLinkTab1', 'linkList' );
             var count = 0;
-            $.each(data.parse.sections, function(index, value){
+            jQuery.each(data.parse.sections, function(index, value){
               var valueAnchor = value.anchor.toUpperCase();
               if(linkAnchor && valueAnchor.indexOf(linkAnchor) !== 0){
                 return true; //continue
