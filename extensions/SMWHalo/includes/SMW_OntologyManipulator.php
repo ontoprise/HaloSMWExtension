@@ -489,7 +489,7 @@ function smwf_om_MultipleRelationInfo($relations) {
 		list($relSchema, $categories, $recordProperties, $recPropExists)
 		= $relDescr->relationExists === 'true'
 		? smwf_om_getRelationSchema($relDescr->name)
-		: array(array('_wpg'), array(null), array());
+		: array(array('_wpg'), array(null), array(), array());
 		// Store for each value of the property if it is the name of an article
 		// and if it exists. This is encoded as follows:
 		// "exists"  => Value is an existing page
