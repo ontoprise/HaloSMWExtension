@@ -85,7 +85,7 @@ function enableSMWHalo() {
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 
-	
+
 	$smwgOWLFullExport = true;
 
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
@@ -109,11 +109,18 @@ function enableSMWHalo() {
 	}
 
 	smwfInitializeQueryManagement();
-	
+
 	// declare a magic word (LINEFEED)
 	$wgHooks['LanguageGetMagic'][] = 'smwfHaloWikiWords';
 	$wgHooks['ParserGetVariableValueSwitch'][] = 'smwfHaloAssignAValue';
 	$wgHooks['MagicWordwgVariableIDs'][] = 'smwfHaloDeclareVarIds';
+
+	global $wgFooterIcons, $smwgHaloScriptPath;
+	$wgFooterIcons['poweredby']['smwplus'] = array(
+		'src' => "$smwgHaloScriptPath/skins/Powered_by_smwplus.png",
+		'url' => 'http://www.smwplus.com',
+		'alt' => 'Powered by SMW+',
+	);
 }
 
 /**
@@ -248,9 +255,6 @@ function smwgHaloSetupExtension() {
 
 
 
-
-
-
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
 
@@ -334,7 +338,7 @@ function smwgHaloSetupExtension() {
 
 
 	require_once($smwgHaloIP . '/includes/Jobs/SMW_DummyJob.php');
-	
+
 
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
@@ -350,9 +354,9 @@ function smwgHaloSetupExtension() {
 
 	// Register Credits
 	$wgExtensionCredits['semantic'][] = array(
-		'name'=>'SMWHalo&nbsp;Extension', 
+		'name'=>'SMWHalo&nbsp;Extension',
 		'version'=>SMW_HALO_VERSION,
-		'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].", 
+		'author'=>"Maintained by [http://smwplus.com ontoprise GmbH].",
 		'url'=>'http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_User_Manual',
 		'description' => 'Facilitate the use of Semantic Mediawiki for a large community of non-tech-savvy users. [http://smwforum.ontoprise.com/smwforum/index.php/Help:SMW%2B_User_Manual View feature description.]'
 		);
@@ -395,7 +399,7 @@ function smwgHaloSetupExtension() {
 		$wgAutoloadClasses['TFQueryAnalyser'] =
 			$smwgHaloIP.'/includes/TabularForms/TF_QueryAnalyser.php';
 		$smwgResultFormats['tabularform'] = 'TFTabularFormQueryPrinter';
-		
+
 		global $wgResourceModules, $smwgHaloIP;
 		$commonProperties = array(
 			'localBasePath' => $smwgHaloIP,
@@ -413,25 +417,25 @@ function smwgHaloSetupExtension() {
 		define('TF_IS_QC_CMP', 'qc_');
 		define('TF_IS_EXISTS_CMP', 'plus_');
 		define('TF_CATEGORY_KEYWORD', '__Category__');
-		
+
 		//initialize rss2 result printer
 		$wgAutoloadClasses['SMWRSS2QueryPrinter'] =
 			$smwgHaloIP.'/includes/queryprinters/SMW_QP_RSS2.php';
 		$smwgResultFormats['rss2'] = 'SMWRSS2QueryPrinter';
 		$smwgResultFormats['atom'] = 'SMWRSS2QueryPrinter';
-		
+
 		//initialize ajax result printer
 		require_once($smwgHaloIP.'/includes/LiveQueries/SMW_LiveQueriesAjaxAccess.php');
 		$wgAutoloadClasses['SMWLiveQueryPrinter'] =
 			$smwgHaloIP.'/includes/LiveQueries/SMW_QP_Live.php';
 		$smwgResultFormats['live'] = 'SMWLiveQueryPrinter';
-		
+
 		$wgResourceModules['ext.smwhalo.livequeries'] =
 			$commonProperties +
 			array(
 				'scripts' => array('scripts/LiveQueries/livequeries.js'),
 			);
-			
+
 		// Check if qi is called via an curl call and if a token is set
 		if (!is_null($title) && $title->getText() == 'QueryInterface') {
 			global $smwgHaloQueryInterfaceSecret;
@@ -467,7 +471,7 @@ function smwgHaloSetupExtension() {
 		new SMWHaloPredefinedPages();
 
 		smwfEnableQueryManagement();
-		
+
         $wgHooks['ResourceLoaderGetConfigVars'][] = 'smwhfSetResourceLoaderConfigVars';
 
 		return true;
@@ -481,7 +485,7 @@ function smwhfSetResourceLoaderConfigVars( &$vars ) {
 }
 
 function smwfHaloWikiWords( &$magicWords, $langCode ) {
-	
+
 	$magicWords[MAG_LINEFEED] = array( 0, 'Linefeed' );
 
 	// must do this or you will silence every LanguageGetMagic hook after this!
@@ -606,7 +610,7 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// pasteNS attribute prints out namespaces too
 	$pasteNS = 'pasteNS="true"';
 	if (array_key_exists('pasteNS', $other_args) && $other_args['pasteNS'] == 'false') $pasteNS = '';
-	
+
 	$delimiter = "";
 	if (array_key_exists('delimiter', $other_args)) $delimiter = "delimiter=\"$delimiter\"";
 
@@ -908,7 +912,7 @@ function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
 	}
 
 	if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
-			
+
 		$wikipagesToUpdate = $store->getAllPropertySubjects( SMWDIProperty::newFromUserLabel($oldtitle->getDBkey()));
 		foreach ($wikipagesToUpdate as $dv) {
 			$title = $dv->getTitle();
@@ -1180,7 +1184,7 @@ function smwfAutoCompletionToggles( $user, &$preferences ) {
         'type' => 'toggle',
         'label-message' => 'tog-autotriggering', // a system message
         'section' => 'personal/info'
-    
+
         );
 
         // Required return value of a hook function.
@@ -1231,7 +1235,7 @@ function smwfAddHaloMagicWords(&$magicWords, $langCode){
 	$magicWords['ilink']  = array( 0, 'ilink' );
 	$magicWords['ajaxask']	= array ( 0, 'ajaxask' );
 	$magicWords['ajaxsparql']  = array ( 0, 'ajaxsparql' );
-	
+
 	return true;
 }
 
@@ -1438,7 +1442,7 @@ function smwfOnSfSetTargetName($titleName) {
 		$script .= "smwhgSfTargetPageName = '$tfulltext';\n";
 		$script .= "smwhgSfTargetNamespace = $namespace;\n";
 		$script .= "\n/*]]>*/</script>\n";
-			
+
 		$wgOut->addScript($script);
 	}
 	return true;
@@ -1496,7 +1500,7 @@ function smwhfRegisterResourceLoaderModules() {
 				'scripts/GeneralGUI/contentSlider.js',
 				'scripts/GeneralGUI/generalGUI.js',
 				'scripts/Autocompletion/wick.js'
-				
+
 				),
 		'styles' => array(
 				'/skins/smwhalo.css',
@@ -1625,7 +1629,7 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js',
 			'scripts/SemanticToolbar/SMW_Container.js',
 			'scripts/SemanticToolbar/SMW_Marker.js',
-			'scripts/SemanticToolbar/SMW_Category.js',                        
+			'scripts/SemanticToolbar/SMW_Category.js',
 			'scripts/AdvancedAnnotation/SMW_AnnotationHints.js',
 			'scripts/AdvancedAnnotation/SMW_GardeningHints.js',
 			'scripts/SemanticToolbar/SMW_Relation.js',
@@ -1688,7 +1692,7 @@ function smwhfRegisterResourceLoaderModules() {
 			'scripts/Logger/smw_logger.js',
 			'scripts/QueryInterface/Query.js',
 			'scripts/QueryInterface/QueryList.js',
-			'scripts/QueryInterface/QIHelper.js',      
+			'scripts/QueryInterface/QIHelper.js',
       'scripts/QueryInterface/sparqlQI.js',
       'scripts/QueryInterface/sparqlModel.js',
       'scripts/QueryInterface/sparqlValidator.js',
@@ -1707,7 +1711,7 @@ function smwhfRegisterResourceLoaderModules() {
                     'dependencies' => array('ext.smw.sorttable')
 			);
 
-     
+
 			smwfHaloAddJSLanguageScripts();
 
 			return true;
@@ -1758,16 +1762,16 @@ function smwfInitializeQueryManagement(){
  */
 function smwfEnableQueryManagement(){
 	global $smwgHaloIP, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
-	
+
 	$wgAutoloadClasses['SMWQueryCallMetadataValue'] =
 		"$smwgHaloIP/includes/QueryManagement/SMW_QM_DV_QueryCallMetadata.php";
 	$wgAutoloadClasses['SMWQMStore'] =
    		"$smwgHaloIP/includes/QueryManagement/SMW_QM_Store.php";
-	$wgAutoloadClasses['SMWQueryList'] = 
+	$wgAutoloadClasses['SMWQueryList'] =
 		$smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 
 	$wgSpecialPages['QueryList'] = array('SMWQueryList');
-	$wgSpecialPageGroups['QueryList'] = 'smwplus_group';	
-		
-	smwfAddStore('SMWQMStore');	
+	$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
+
+	smwfAddStore('SMWQMStore');
 }
