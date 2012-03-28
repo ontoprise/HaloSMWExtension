@@ -309,9 +309,13 @@ class SMWH_Skin {
 				}
 				$tabs .= "\">";
 				$tabs .= $pageName . "</div>";
-				if( in_array( $this->action, array('edit') ) || $wgTitle->getNamespace() == NS_TALK ) {
+				if( in_array( $this->action, array( 'edit' ) ) ||
+					in_array( $this->action, array( 'annotate' ) ) ||
+					in_array( $this->action, array( 'formedit' ) ) ||
+					$wgTitle->getNamespace() == NS_TALK )
+				{
 					//provide back to page link
-					$tabs .= '<a class="tab" href="';
+					$tabs .= '<a class="tab back" href="';
 					$tabs .= htmlspecialchars( $tab['href'] ) . '">';
 					$tabs .= wfMsg( 'smw_back_to_article') . '</a>';
 				}
@@ -616,7 +620,7 @@ class SMWH_Skin {
 		}
 		$out = $this->parseWikiText( $wikiText );
 		$html = $plainHTML . str_replace( array( '<p>', '</p>'), '', $out ) . '</div>';
-		
+
 		return '' . $html . '';
 	}
 
