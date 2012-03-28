@@ -42,7 +42,7 @@
 
 $SOLRhost = 'localhost';
 $SOLRport = 8983;
-
+/*
 $spgHaloACLConfig = array(
 			'wikiDBprefix'	=> '',
 			'wikiDBname'	=> 'testdb',
@@ -61,7 +61,7 @@ $spgHaloACLConfig = array(
 			'contentlanguage' => 'en'
 
 );
-
+*/
 
 // Used to control a valid entry point for some classes that are only used by the
 // solrproxy.
