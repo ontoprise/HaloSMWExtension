@@ -138,10 +138,10 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
        */
       setSelectedText: function(text) {
         // get the current editor instance
-        var ckeditor = window.parent.wgCKeditorInstance;
+        var ckeditor = mw.config.get('wgCKeditorInstance');
         // check if start and end are set, then simply replace the selection
         // in the textarea
-        if (ckeditor.mode != 'wysiwyg' && gEstart != -1 && gEend != -1) {
+        if (ckeditor && ckeditor.mode != 'wysiwyg' && gEstart != -1 && gEend != -1) {
           var txtarea = ckeditor.getData();
           var newtext = txtarea.substr(0, gEstart) + text + txtarea.substr(gEend);
           this.clearSelection();
@@ -1199,7 +1199,9 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         this.stbIsActive = true;
         window.parent.stb_control.initialize();
         window.parent.stb_control.initToolbarFramework();
-        window.parent.stb_control.onCloseButtonClick('wgCKeditorInstance.execCommand(\'SMWtoolbar\')');
+        window.parent.stb_control.onCloseButtonClick(function(){
+          editor.execCommand('SMWtoolbarClose');
+        });
         // enable draging
         window.parent.smwhg_dragresizetoolbar.draggable=null;
         window.parent.smwhg_dragresizetoolbar.callme();
@@ -1559,21 +1561,29 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         	
         }
         
-        
+//        editor.on('instanceReady' , function(event){
+//          //show semantic toolbar if configured
+//          if(mw.user.options.get('riched_load_semantic_toolbar')){
+//            this.execCommand('SMWtoolbarOpen');
+//          }
+//        });
         // disable toolbar when switching mode
-        editor.on( 'beforeCommandExec', function( ev ) {
-          if ( !plugin.stbIsActive )
-            return;
-				
-          if ( ( ev.data.name == 'source' || ev.data.name == 'newpage' ) && editor.mode == 'wysiwyg' ) {
-            plugin.DisableAnnotationToolbar( editor );
-          }
-          if ( ( ev.data.name == 'wysiwyg' || ev.data.name == 'newpage' ) && editor.mode == 'source' ) {
-            plugin.DisableAnnotationToolbar( editor );
-          }
+//        editor.on( 'mode', function( ev ) {
+//          this.execCommand('SMWtoolbarClose');
+//          if ( ev.editor.mode == 'wysiwyg' && mw.user.options.get('riched_load_semantic_toolbar')){
+//            this.execCommand('SMWtoolbarOpen');
+//          }
+//        });
+        //reinitialize stb in wikitext mode
+        editor.on('destroy', function(event){
+          this.execCommand('SMWtoolbarClose');
+          this.execCommand('SMWtoolbarOpen');
         });
-
-        editor.on("dataReady", function(event) {
+        editor.on("instanceReady", function(event) {
+          this.execCommand('SMWtoolbarClose');
+          if ( mw.user.options.get('riched_load_semantic_toolbar')){
+            this.execCommand('SMWtoolbarOpen');
+          }
           if (plugin.stbIsActive) {
             gEnewText='';
             delete gEditInterface;

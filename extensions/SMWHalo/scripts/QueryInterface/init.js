@@ -111,31 +111,31 @@ function init(){
   //get query from url string
   var query = decodeURIComponent(jQuery.query.get('query'));
   query = jQuery.trim(query).replace(/^{{#[^:]+:/, '').replace(/}}$/, '');
-
-  if(query.length){
-    //if it's sparql then init sparql qi and switch to it
-    if(isSparqlQuery(query)){
-      if(typeof SPARQL !== 'undefined' && SPARQL && SPARQL.smwgHaloWebserviceEndpoint){
-        var q = getQueryParameters(query);
-        SPARQL.init(q.query, q.queryParameters, false);
-        SPARQL.switchToSparqlView();
-      }
-    }
-    //else init ask qi
-    else{
-      window.top.qihelper = window.qihelper = QIHELPER;
-      QIHELPER.initialize();
-      QIHELPER.initFromQueryString(query);      
+  
+  //if it's sparql then init sparql qi and switch to it
+  if(isSparqlQuery(query)){
+    if(typeof SPARQL !== 'undefined' && SPARQL && SPARQL.smwgHaloWebserviceEndpoint){
+      var q = getQueryParameters(query);
+      SPARQL.init(q.query, q.queryParameters, false);
+      SPARQL.switchToSparqlView();
     }
   }
+  //else init ask qi
   else{
-    window.top.qihelper = window.qihelper = new QIHelper();
+    window.top.qihelper = window.qihelper = QIHELPER = new QIHelper();;
+    if(query.length){
+      QIHELPER.initFromQueryString(query); 
+    }
   }
+ 
   
   initToolTips();
 }
 
 function isSparqlQuery(query){
+  if(!query){
+    return false;
+  }
   var regex = /(?:BASE\s+[\s\S]+)*(?:PREFIX\s+[\s\S]+)*SELECT\s+[\s\S]+WHERE\s+{[\u0000-\uFFFF]+}/i;
   return regex.test(query);
 }

@@ -105,16 +105,17 @@ if ( !CKEDITOR.loader )
 			return path;
 		})();
 
-		var timestamp = 'B49E5BQ';
+//		var timestamp = 'B49E5BQ';
 
 		var getUrl = function( resource )
 		{
 			if ( CKEDITOR && CKEDITOR.getUrl )
 				return CKEDITOR.getUrl( resource );
 
-			return basePath + resource +
-				( resource.indexOf( '?' ) >= 0 ? '&' : '?' ) +
-				't=' + timestamp;
+      return basePath + resource;
+//			return basePath + resource +
+//				( resource.indexOf( '?' ) >= 0 ? '&' : '?' ) +
+//				't=' + timestamp;
 		};
 
 		var pendingLoad = [];
@@ -178,7 +179,7 @@ if ( !CKEDITOR.loader )
 					};
 				}
 
-				document.body.appendChild( script );
+//				document.body.appendChild( script );
 			},
 
 			/**
@@ -191,42 +192,42 @@ if ( !CKEDITOR.loader )
 			load : function( scriptName, defer )
 			{
 				// Check if the script has already been loaded.
-//				if ( scriptName in this.loadedScripts )
-//					return;
-//
-//				// Get the script dependencies list.
-//				var dependencies = scripts[ scriptName ];
-//				if ( !dependencies )
-//					throw 'The script name"' + scriptName + '" is not defined.';
-//
-//				// Mark the script as loaded, even before really loading it, to
-//				// avoid cross references recursion.
-//				this.loadedScripts[ scriptName ] = true;
-//
-//				// Load all dependencies first.
-//				for ( var i = 0 ; i < dependencies.length ; i++ )
-//					this.load( dependencies[ i ], true );
-//
-//				var scriptSrc = getUrl( '_source/' + scriptName + '.js' );
-//
-//				// Append the <script> element to the DOM.
-//				// If the page is fully loaded, we can't use document.write
-//				// but if the script is run while the body is loading then it's safe to use it
-//				// Unfortunately, Firefox <3.6 doesn't support document.readyState, so it won't get this improvement
-//				if ( document.body && (!document.readyState || document.readyState == 'complete') )
-//				{
-//					pendingLoad.push( scriptName );
-//
-//					if ( !defer )
-//						this.loadPending();
-//				}
-//				else
-//				{
-//					// Append this script to the list of loaded scripts.
-//					this.loadedScripts.push( scriptName );
-//
+				if ( scriptName in this.loadedScripts )
+					return;
+
+				// Get the script dependencies list.
+				var dependencies = scripts[ scriptName ];
+				if ( !dependencies )
+					throw 'The script name"' + scriptName + '" is not defined.';
+
+				// Mark the script as loaded, even before really loading it, to
+				// avoid cross references recursion.
+				this.loadedScripts[ scriptName ] = true;
+
+				// Load all dependencies first.
+				for ( var i = 0 ; i < dependencies.length ; i++ )
+					this.load( dependencies[ i ], true );
+
+				var scriptSrc = getUrl( '_source/' + scriptName + '.js' );
+
+				// Append the <script> element to the DOM.
+				// If the page is fully loaded, we can't use document.write
+				// but if the script is run while the body is loading then it's safe to use it
+				// Unfortunately, Firefox <3.6 doesn't support document.readyState, so it won't get this improvement
+				if ( document.body && (!document.readyState || document.readyState == 'complete') )
+				{
+					pendingLoad.push( scriptName );
+
+					if ( !defer )
+						this.loadPending();
+				}
+				else
+				{
+					// Append this script to the list of loaded scripts.
+					this.loadedScripts.push( scriptName );
+
 //					document.write( '<script src="' + scriptSrc + '" type="text/javascript"><\/script>' );
-//				}
+				}
 			}
 		};
 	})();

@@ -626,11 +626,6 @@ CKEDITOR.customprocessor.prototype =
 	 *            for human reading. Not all Data Processors may provide it.
 	 */
     toDataFormat : function( data, fixForBody ){
-        if ( (window.parent.showFCKEditor &&
-            !(window.parent.showFCKEditor & window.parent.RTE_VISIBLE)) ){
-                return window.parent.document.getElementById(window.parent.wgCKeditorInstance.name).value;
-            }
-
         if (window.parent.wgCKeditorCurrentMode)
             window.parent.wgCKeditorCurrentMode = 'source';
         else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)

@@ -370,24 +370,20 @@
           //unbind event before bind to prevent duplicate binding
           function setFocusOutEvent(){
             articleTitleTextBox.unbind('focusout').bind('focusout', function(){
-              mw.log('onfocusout');
               CREATENEWARTICLE.articleTitleChange();
             });
           }
           
           articleTitleTextBox.unbind('mouseup').bind('mouseup', function(){
-            mw.log('onmouseup');
             setFocusOutEvent();
           });
 
           articleTitleTextBox.unbind('keyup').bind('keyup', function() {
-            mw.log('onkeyup');
             CREATENEWARTICLE.articleTitleChange();
             articleTitleTextBox.unbind('focusout');
           });
 
           articleTitleTextBox.unbind('input paste').bind('input paste', function(event) {
-            mw.log('onpaste');
             window.setTimeout(function(){
               CREATENEWARTICLE.articleTitleChange();
             }, 0);

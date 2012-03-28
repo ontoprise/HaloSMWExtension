@@ -56,7 +56,11 @@ ToolbarFramework.prototype = {
 	 */
 
 	stbconstructor : function() {
-		if (this.isToolbarAvailable()) {
+		this.var_onto = $("ontomenuanchor");
+		if (!this.var_onto) {
+			this.var_onto = new Element('div', {'id' : 'ontomenuanchor'} )
+			document.body.appendChild(this.var_onto);
+		}
 
 			// get existing cookies
 			this.getCookieTab();
@@ -90,7 +94,8 @@ ToolbarFramework.prototype = {
 					$("stb_cont"+i+"-content").hide();
 				}
 			}
-		}
+
+      this.var_onto.show();
 	},
 
 	isToolbarAvailable: function () {
@@ -633,14 +638,14 @@ ToolbarFramework.prototype = {
 	 * 
 	 */
 	initToolbarFramework: function () {
-		this.addOntoMenuAnchor();
+//		this.addOntoMenuAnchor();
 		this.stbconstructor();
 	    Event.observe(window, 'resize', this.resizeToolbar.bindAsEventListener(this));
 		// The close button in not available in the wiki text mode
-		if (typeof FCKeditor === 'undefined' && typeof CKEDITOR === 'undefined' ||
-		    (typeof CKEDITOR !== 'undefined' && (!$('cke_wpTextbox1') || !$('cke_wpTextbox1').visible() ))) {
+		if (!mw.config.get('wgCKeditorVisible')) {
 			$('semtoolbarclosebtn').hide();
-		} else {
+		}
+    else {
 		    Event.observe('semtoolbarclosebtn', 'click',  this.closeButtonClick.bindAsEventListener(this));
 		}
 	    Event.observe('semtoolbarminimizebtn', 'click',  this.minimizeToolbar.bindAsEventListener(this));
@@ -659,8 +664,7 @@ ToolbarFramework.prototype = {
 }
 
 window.stb_control = new ToolbarFramework();
-if (typeof CKEDITOR === 'undefined'
-    && (typeof wgHideSemanticToolbar === 'undefined' ||  wgHideSemanticToolbar !== true))
+if (!mw.config.get('wgCKeditorVisible'))
 {
-	Event.observe(window, 'load', stb_control.initToolbarFramework.bind(stb_control));
+	Event.observe(window, 'load', stb_control.initToolbarFramework.bind(stb_control));  
 }

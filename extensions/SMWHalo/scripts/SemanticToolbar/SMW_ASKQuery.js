@@ -57,7 +57,7 @@ ASKQuery.prototype = {
       wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
       wgCanonicalSpecialPageName == 'FormEdit')
     && typeof stb_control != 'undefined' && stb_control.isToolbarAvailable()
-      && !mw.config.get('wysiwygVisible')) //inline query section should not be visible in wysiwyg mode
+      && !mw.config.get('wgCKeditorVisible')) //inline query section should not be visible in wysiwyg mode
       {
       this.askQueryContainer = stb_control.createDivContainer(ASKQUERYCONTAINER,0);
       this.showToolbar();

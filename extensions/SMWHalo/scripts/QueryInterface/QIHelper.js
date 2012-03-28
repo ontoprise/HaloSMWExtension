@@ -37,7 +37,7 @@ var QIHelperSavedQuery;
 var qiPreviewDialog;
 
 var QIHelper = Class.create();
-QIHELPER = QIHelper.prototype = {
+QIHelper.prototype = {
 
   selectedResultFormat : null,
   /**

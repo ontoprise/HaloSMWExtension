@@ -30,7 +30,7 @@
     if((mw.user.options.get('cke_show') === 'richeditor')
       || (mw.user.options.get('cke_show') === 'rememberlast'
         && mw.user.options.get('riched_use_toggle')
-        && $.cookie('wysiwygToggleState') === 'visible'))
+        && $.cookie('wgCKeditorToggleState') === 'visible'))
     {
       if(toolbar.length){
         toolbar.hide();
@@ -62,8 +62,7 @@
       toggleDiv.append('[');
       toggleDiv.append(toggleAnchor);
       toggleDiv.append(']');
-    }
-    
+    }    
   }
 
   function removeMediawikiClutter(){
@@ -73,10 +72,10 @@
   }
   
   function toggleEditor(toggle, wikieditor, toolbar){
-    if(mw.config.get('wgCKeditorVisible')){      
-      CKEDITOR.instances[wikieditor.attr('id')].destroy();
-      mw.config.set('wgCKeditorInstance', null);
+    if(mw.config.get('wgCKeditorVisible')){
       mw.config.set('wgCKeditorVisible', false);
+      CKEDITOR.instances[wikieditor.attr('id')].destroy();
+      mw.config.set('wgCKeditorInstance', null);      
       if(mw.user.options.get('showtoolbar') && toolbar.length){
         toolbar.show();
       }
@@ -85,7 +84,7 @@
       }
       
       if(mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle')){
-        $.cookie('wysiwygToggleState', 'hidden', {expires: 1000});
+        $.cookie('wgCKeditorToggleState', 'hidden', {expires: 1000});
       }
     }
     else{
@@ -106,7 +105,7 @@
       mw.config.set('wgCKeditorVisible', true);
       mw.config.set('wgCKeditorInstance', wikieditor.ckeditorGet());
       if(mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle')){
-        $.cookie('wysiwygToggleState', 'visible', {expires: 1000});
+        $.cookie('wgCKeditorToggleState', 'visible', {expires: 1000});
       }
     }
   }
