@@ -59,6 +59,10 @@ a:hover {text-decoration:none; }
 	margin-top: 10px;
 }
 
+#gardening-container #gardening-togglebotlistbutton {
+	cursor: pointer;
+}
+
 #gardening-container #gardening-runningbots{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
@@ -68,6 +72,17 @@ a:hover {text-decoration:none; }
 	width: 805px;
 	height: 300px;	
 }
+
+#gardening-container #gardening-periodicbots{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    border: 1px solid #AAA;
+    float: left;
+    overflow: auto;
+    width: 805px;
+    height: 300px;  
+}
+
 #gardening-container #gardening-tools .entry{
 	padding: 3px 5px 3px 5px;
 	border-bottom: 1px solid #CCC;

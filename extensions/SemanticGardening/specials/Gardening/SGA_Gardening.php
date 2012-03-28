@@ -67,10 +67,49 @@ class SGAGardening extends SpecialPage {
 					"</div>" .
 					"<div id=\"gardening-tooldetails\"><div id=\"gardening-tooldetails-content\">".wfMsg('smw_gard_choose_bot')."</div></div>
 		
-					<div id=\"gardening-runningbots-head\">&nbsp;Current / Recent bot activities:</div>
+					<div id=\"gardening-runningbots-head\">&nbsp;Current / Recent bot activities:
+					<a id=\"gardening-togglebotlistbutton\" onclick=\"gardeningPage.toggleBotList(event)\">Toggle bot list / periodic bots</a></div>
 					<div id=\"gardening-runningbots\">".SGAGardening::getGardeningLogTable()."</div>
+					<div style=\"display:none\" id=\"gardening-periodicbots\">".SGAGardening::getPeriodicBotTable()."</div>
 				 </div>";
 		$wgOut->addHTML($html);
+	}
+
+	static function getPeriodicBotTable() {
+		$pe = SGAPeriodicExecutors::getPeriodicExecutors();
+		$periodicBots = $pe->getAllRegisteredBots();
+		$html = "<table class=\"smwtable\" style=\"width: 100%\">";
+		$html .= "<th>Bot</th>";
+		$html .= "<th>Last run</th>";
+		$html .= "<th>Interval</th>";
+		foreach ($periodicBots as $row) {
+			list($id,$botid,$params,$lastrun,$duration, $runonce) = $row;
+			$html .= "<tr id=\"periodic-bot-entry-$id\">";
+
+			$html .= "<td>".wfMsg($botid)."</td>";
+
+			if ($runonce == 'y') {
+				$html .= "<td>".$lastrun."</td>";
+			} else {
+				$html .= "<td>n/a</td>";
+			}
+
+			if ($duration == 3600 * 24) {
+				$duration = wfMsg('smw_gard_daily');
+			} else  if ($duration == 3600 * 24 * 7) {
+				$duration = wfMsg('smw_gard_weekly');
+			} else  if ($duration == 3600) {
+				$duration = wfMsg('smw_gard_hourly');
+			} else {
+				$duration = $duration." seconds";
+			}
+			$html .= "<td>".$duration."</td>";
+			$html .= "<td><input type=\"button\" onclick=\"gardeningPage.removePeriodicBot(event,$id)\" value=\"".wfMsg('smw_gard_removebot')."\"></input></td>";
+			$html .= "</tr>";
+
+		}
+		$html .= "</table>";
+		return $html;
 	}
 
 	static function getGardeningLogTable() {
@@ -84,12 +123,12 @@ class SGAGardening extends SpecialPage {
 		foreach ($gardeningLog as $row) {
 			$html .= "<tr>";
 			list($user,$gardeningbot,$starttime,$endtime,$log, $progress, $id, $comment) = $row;
-				
+
 			$html .= "<td>".$user."</td>";
 			$html .= "<td>".wfMsg($gardeningbot)."</td>";
 			$html .= "<td>".$starttime."</td>";
 			$html .= "<td>".$endtime."</td>";
-		
+
 			if ($endtime != null) {
 				// check if it points to log page or GardeningLog
 				// FIXME: clean up: GardeningLog links should be simply empty
@@ -103,9 +142,9 @@ class SGAGardening extends SpecialPage {
 				}
 
 			}
-			
-            $html .= "<td>".(number_format(($progress+0)*100))."%</td>";
 				
+			$html .= "<td>".(number_format(($progress+0)*100))."%</td>";
+
 			$runningBot = $endtime == null;
 			$html .= ($runningBot ? "<td class=\"runningBots\">running</td>" : "<td class=\"finishedBots\">finished</td>");
 			$html .= "<td><button type=\"button\" name=\"abort\" ".($runningBot ? "" : "disabled")." onclick=\"gardeningPage.cancel(event, ".$id.")\">".wfMsg('smw_gard_abortbot')."</button></td>";
@@ -196,6 +235,13 @@ class SGAGardening extends SpecialPage {
 			$htmlResult .= "<button id=\"runBotButton\" type=\"button\" name=\"run\" onclick=\"gardeningPage.run(event)\">Run
 
 Bot</button>";
+			$htmlResult .= "<hr>".wfMsg('smw_gard_addperiodicbot_msg')."<div style=\"margin-top: 5px\">".wfMsg('smw_gard_interval')."<select style=\"margin-left: 5px\" id=\"periodic_intervals\">";
+			$htmlResult .= "<option value=\"daily\" name=\"daily\">".wfMsg('smw_gard_daily')."</option>";
+			$htmlResult .= "<option value=\"weekly\" name=\"weekly\">".wfMsg('smw_gard_weekly')."</option>";
+			$htmlResult .= "<option value=\"hourly\" name=\"hourly\">".wfMsg('smw_gard_hourly')."</option>";
+			$htmlResult .= "</select></div>";
+			$htmlResult .= "<div style=\"margin-top: 5px\">".wfMsg('smw_gard_startat')."<br><input id=\"startat\" type=\"text\" /></div>";
+			$htmlResult .= "<div><button style=\"margin-top: 5px\" id=\"addPeriodic\" type=\"button\" name=\"addperiodic\" onclick=\"gardeningPage.addPeriodic(event)\">".wfMsg('smw_gard_addperiodicbot')."</button></div>";
 		}
 
 		return $htmlResult;

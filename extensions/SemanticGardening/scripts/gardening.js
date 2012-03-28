@@ -29,140 +29,240 @@ var SMW_AJAX_GARDLOG = 2;
 
 var GardeningPage = Class.create();
 GardeningPage.prototype = {
-	initialize: function() {
+	initialize : function() {
 		this.currentSelectedBot = null;
-		if (wgCanonicalSpecialPageName != 'Gardening') return;
+		if (wgCanonicalSpecialPageName != 'Gardening')
+			return;
 		Event.observe(window, 'load', function() {
-			this.currentSelectedBot = $('gardening-tools').firstChild; 
+			this.currentSelectedBot = $('gardening-tools').firstChild;
 		});
 		// refresh Gardening log table every 40 seconds.
 		new PeriodicalExecuter(this.getGardeningLog.bind(this), 40);
 		this.pendeningIndicator = null;
 	},
 
-  /**
-   * Called when a bot is run.
-   */	
-  run: function(e) {
-	
-	var gardeningParamForm = $("gardeningParamForm");
-	var params = Form.serialize(gardeningParamForm);
-	params = params.replace(/&/g, ","); // replace & by , because command interpreter (cmd.exe) does not like & as parameter
-	// clear errorTexts
-	$$('span.errorText').each(function(e) { e.innerHTML = ''; });
-	
-	
-	function callBackOnRunBot(request) {
-		
-		var splitText = request.responseText.split(":");
-		
-		// check for errors
-		if (splitText.length == 3 && splitText[0].indexOf('ERROR') != -1) {
-			// ERROR response: [0] == ERROR, [1] == ID of DOM element, [2] == message
-			// check if the id denotes an parameter error (element starting with errorOf_)
-			var errorSpan = $("errorOf_"+splitText[1]);
-			if (errorSpan == null) {
-				// if not it is a general error.
-				errorSpan = $('gardening-tooldetails-content');
-			}
-			// paste error message and highlight it.
-			errorSpan.innerHTML = "\t" + splitText[2];
-			//Effect.Pulsate(errorSpan);
-			var runButton = $('runBotButton');
-			if (runButton != null) runButton.removeAttribute("disabled");
-			return;
-		}
-		$('gardening-tooldetails-content').innerHTML = gLanguage.getMessage('BOT_WAS_STARTED');
-		$('gardening-runningbots').innerHTML = request.responseText;
-	}
-	sajax_do_call('smwf_ga_LaunchGardeningBot', [this.currentSelectedBot.getAttribute('id'), params, null, null], callBackOnRunBot);
-	
-	// disable button to prevent continuous executing
-	$('runBotButton').setAttribute("disabled","disabled");
-  },
-  
-  cancel: function(event, taskid) {
-  	function callBackOnCancelBot(request) {
-  		$('gardening-runningbots').innerHTML = request.responseText;
-  	}
-  	
-  	if (wgUserGroups.indexOf("sysop") != -1 || wgUserGroups.indexOf("gardener") != -1) {
-  		sajax_do_call('smwf_ga_CancelGardeningBot', [taskid, null, null], callBackOnCancelBot);
-  	} else {
-  		alert(gLanguage.getMessage('INVALID_GARDENING_ACCESS'));
-  	}
-  	
-  },
+	/**
+	 * Called when a bot is run.
+	 */
+	run : function(e) {
 
+		var gardeningParamForm = $("gardeningParamForm");
+		var params = Form.serialize(gardeningParamForm);
+		params = params.replace(/&/g, ","); // replace & by , because command
+		// interpreter (cmd.exe) does not
+		// like & as parameter
+		// clear errorTexts
+		$$('span.errorText').each(function(e) {
+			e.innerHTML = '';
+		});
+
+		function callBackOnRunBot(request) {
+
+			var splitText = request.responseText.split(":");
+
+			// check for errors
+			if (splitText.length == 3 && splitText[0].indexOf('ERROR') != -1) {
+				// ERROR response: [0] == ERROR, [1] == ID of DOM element, [2]
+				// == message
+				// check if the id denotes an parameter error (element starting
+				// with errorOf_)
+				var errorSpan = $("errorOf_" + splitText[1]);
+				if (errorSpan == null) {
+					// if not it is a general error.
+					errorSpan = $('gardening-tooldetails-content');
+				}
+				// paste error message and highlight it.
+				errorSpan.innerHTML = "\t" + splitText[2];
+				// Effect.Pulsate(errorSpan);
+				var runButton = $('runBotButton');
+				if (runButton != null)
+					runButton.removeAttribute("disabled");
+				return;
+			}
+			$('gardening-tooldetails-content').innerHTML = gLanguage
+					.getMessage('BOT_WAS_STARTED');
+			$('gardening-runningbots').innerHTML = request.responseText;
+		}
+		sajax_do_call('smwf_ga_LaunchGardeningBot',
+				[ this.currentSelectedBot.getAttribute('id'), params, null,
+						null ], callBackOnRunBot);
+
+		// disable button to prevent continuous executing
+		$('runBotButton').setAttribute("disabled", "disabled");
+	},
+
+	cancel : function(event, taskid) {
+		function callBackOnCancelBot(request) {
+			$('gardening-runningbots').innerHTML = request.responseText;
+		}
+
+		if (wgUserGroups.indexOf("sysop") != -1
+				|| wgUserGroups.indexOf("gardener") != -1) {
+			sajax_do_call('smwf_ga_CancelGardeningBot', [ taskid, null, null ],
+					callBackOnCancelBot);
+		} else {
+			alert(gLanguage.getMessage('INVALID_GARDENING_ACCESS'));
+		}
+
+	},
 
 	/**
 	 * Requests parameters for the given bot and paste them as HTML in the
 	 * gardening-tooldetails-content.
 	 */
- 	showParams: function(e, node, botID) {
-		
+	showParams : function(e, node, botID) {
+
 		if (this.currentSelectedBot) {
-			Element.removeClassName(this.currentSelectedBot,'entry-active');
-			Element.addClassName(this.currentSelectedBot,'entry');
+			Element.removeClassName(this.currentSelectedBot, 'entry-active');
+			Element.addClassName(this.currentSelectedBot, 'entry');
 		}
-		Element.removeClassName(node,'entry'); //.removeClassName('entry');
+		Element.removeClassName(node, 'entry'); // .removeClassName('entry');
 		Element.addClassName(node, 'entry-active');
 		this.currentSelectedBot = node;
 		if (this.pendingIndicator == null) {
-			this.pendingIndicator = new OBPendingIndicator($('gardening-tooldetails-content'));
+			this.pendingIndicator = new OBPendingIndicator(
+					$('gardening-tooldetails-content'));
 		}
 		this.pendingIndicator.show();
-		sajax_do_call('smwf_ga_GetBotParameters', [botID], this.showParamsCallback.bind(this));
+		sajax_do_call('smwf_ga_GetBotParameters', [ botID ],
+				this.showParamsCallback.bind(this));
 	},
-	
-	showParamsCallback: function(request) {
+
+	showParamsCallback : function(request) {
 		this.pendingIndicator.hide();
 		autoCompleter.deregisterAllInputs();
 		$('gardening-tooldetails-content').innerHTML = request.responseText;
 		autoCompleter.registerAllInputs();
 	},
-	
+
 	/**
 	 * Formats the selected bot entry correctly when mouseout
 	 */
- 	showRightClass: function(e, node, botID) {
-		
-		if (this.currentSelectedBot!=node) {
-			Element.removeClassName(node,'entry-over');
-			Element.addClassName(node,'entry');
-		}else{
-			Element.removeClassName(node,'entry-over');
-			Element.addClassName(node,'entry-active');
+	showRightClass : function(e, node, botID) {
+
+		if (this.currentSelectedBot != node) {
+			Element.removeClassName(node, 'entry-over');
+			Element.addClassName(node, 'entry');
+		} else {
+			Element.removeClassName(node, 'entry-over');
+			Element.addClassName(node, 'entry-active');
 		}
 	},
 
 	/**
 	 * Requests gardening log as HTML and pastes it in the log element
 	 */
-	getGardeningLog: function() {
+	getGardeningLog : function() {
 		var gardeningLogElement = $('gardening-runningbots');
 		if (gardeningLogElement) {
 			ajaxRequestManager.stopCalls(SMW_AJAX_GARDLOG);
-			sajax_do_call('smwf_ga_GetGardeningLog', [], gardeningLogElement, SMW_AJAX_GARDLOG);
+			sajax_do_call('smwf_ga_GetGardeningLog', [], gardeningLogElement,
+					SMW_AJAX_GARDLOG);
 		}
+	},
+
+	/**
+	 * Adds a periodic bot execution
+	 */
+	addPeriodic : function(e) {
+		var duration = $F('periodic_intervals');
+		if (duration == 'daily') {
+			durationTime = 3600 * 24;
+		} else if (duration == 'weekly') {
+			durationTime = 3600 * 24 * 7;
+		} else if (duration == 'hourly') {
+			durationTime = 3600;
+		}
+
+		var startAt = $F('startat');
+		var startDate;
+		var lastRunString;
+		if (startAt == '') {
+			startDate = new Date();
+			lastRunString = "none";
+		} else {
+			startDate = new Date(startAt);// "March 10, 1998 22:48:00");
+			var startAtinMillis = startDate.getTime();
+
+			var lastRun = new Date();
+			var lastRuninMillis = startAtinMillis - (durationTime * 1000);
+			lastRun.setTime(lastRuninMillis);
+
+			var day = lastRun.getDate();
+			var month = lastRun.getMonth() + 1;
+			var year = lastRun.getYear() + 1900;
+
+			var seconds = lastRun.getSeconds();
+			var minutes = lastRun.getMinutes();
+			var hours = lastRun.getHours();
+
+			if (seconds < 10)
+				seconds = "0" + seconds;
+			if (minutes < 10)
+				minutes = "0" + minutes;
+			if (hours < 10)
+				hours = "0" + hours;
+
+			lastRunString = year + "-" + month + "-" + day + " " + hours + ":"
+					+ minutes + ":" + seconds;
+		}
+		// convert in millis
+
+		var gardeningParamForm = $("gardeningParamForm");
+		var params = Form.serialize(gardeningParamForm);
+		var botid = this.currentSelectedBot.getAttribute('id');
+
+		var lastRun = sajax_do_call('smwf_ga_addPeriodicBot', [ botid, params,
+				durationTime, lastRunString ], (function(request) {
+			if (request.status == 200) {
+				sajax_do_call('smwf_ga_getPeriodicBotTable', [], (function(
+						request) {
+					// add periodic table
+					if (!$('gardening-periodicbots').visible()) {
+						this.toggleBotList();
+					}
+					var html = request.responseText;
+					$('gardening-periodicbots').firstChild.replace(html);
+				}).bind(this));
+			} else {
+				alert("Error occured on inserting a periodic job.");
+			}
+		}).bind(this));
+	},
+
+	toggleBotList : function(event) {
+		$('gardening-runningbots').toggle();
+		$('gardening-periodicbots').toggle();
+	},
+
+	removePeriodicBot : function(event, id) {
+		sajax_do_call('smwf_ga_removePeriodicBot', [ id ], function(request) {
+			// add periodic table
+			if (request.status == 200) {
+				$('periodic-bot-entry-' + id).remove();
+			} else {
+				alert("Error occured on removing a periodic job.");
+			}
+
+		});
 	}
 
-} 
+}
 
 window.gardeningPage = new GardeningPage();
-
 
 // Gardening Log special page
 
 var GardeningLogPage = Class.create();
 GardeningLogPage.prototype = {
-	
-	initialize: function() {
-		if (wgCanonicalSpecialPageName != 'GardeningLog') return;
+
+	initialize : function() {
+		if (wgCanonicalSpecialPageName != 'GardeningLog')
+			return;
 		this.showAll = false;
 	},
-	
-	selectBot: function(event) {
+
+	selectBot : function(event) {
 		var selectTag = Event.element(event);
 		if (this.pendingIndicator == null) {
 			this.pendingIndicator = new OBPendingIndicator();
@@ -170,26 +270,38 @@ GardeningLogPage.prototype = {
 		this.pendingIndicator.show($('issueClasses'));
 		var selectedIndex = selectTag.selectedIndex;
 		var bot_id = selectTag.options[selectedIndex].value;
-		sajax_do_call('smwf_ga_GetGardeningIssueClasses', [bot_id], this.changeIssueClassesContent.bind(this));
+		sajax_do_call('smwf_ga_GetGardeningIssueClasses', [ bot_id ],
+				this.changeIssueClassesContent.bind(this));
 	},
-	
-	changeIssueClassesContent: function(request) {
+
+	changeIssueClassesContent : function(request) {
 		var selectElement = $('issueClasses');
 		this.pendingIndicator.hide();
-		if (selectElement != null) selectElement.replace(request.responseText);
+		if (selectElement != null)
+			selectElement.replace(request.responseText);
 	},
-	
-	toggle: function(id) {
+
+	toggle : function(id) {
 		var div = $(id);
-		if (div.visible()) div.hide(); else div.show();
+		if (div.visible())
+			div.hide();
+		else
+			div.show();
 	},
-	
-	toggleAll: function() {
+
+	toggleAll : function() {
 		this.showAll = !this.showAll;
 		var showAll = this.showAll;
 		var divs = $$('.gardeningLogPageBox');
-		divs.each(function(d) { if (showAll) d.show(); else d.hide(); });
-		$('showall').innerHTML = showAll ? gLanguage.getMessage('GARDENING_LOG_COLLAPSE_ALL') : gLanguage.getMessage('GARDENING_LOG_EXPAND_ALL'); 
+		divs.each(function(d) {
+			if (showAll)
+				d.show();
+			else
+				d.hide();
+		});
+		$('showall').innerHTML = showAll ? gLanguage
+				.getMessage('GARDENING_LOG_COLLAPSE_ALL') : gLanguage
+				.getMessage('GARDENING_LOG_EXPAND_ALL');
 	}
 };
 

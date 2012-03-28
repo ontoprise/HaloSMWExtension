@@ -30,6 +30,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 require_once("SGA_GardeningLog.php");
+require_once("SGA_PeriodicExecutors.php");
 
 // user groups
 // @deprecated
@@ -358,6 +359,119 @@ abstract class GardeningBot {
 			exec("kill $processID");
 		}
 	}
+	
+	public static function runBotNoAuth($botID, $params = "", $runAsync = true) {
+		
+		global $sgagKeepGardeningConsole;
+        $keepConsoleAfterTermination = isset($sgagKeepGardeningConsole) ? $sgagKeepGardeningConsole : false;
+        
+		// check if bot is registered
+        if (!GardeningBot::isBotKnown($botID)) {
+            return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_unknown_bot');
+        }
+        global $phpInterpreter, $wgUser, $registeredBots, $sgagGardeningBotDelay;
+        $userId = $wgUser->getId();
+        $bot = $registeredBots[$botID];
+            
+            
+            
+        // validate parameters
+        if (strpos($params, '#json:') === false) {
+            $paramObject = GardeningBot::convertParamStringToArray($params);
+            $isValid = GardeningBot::checkParameters($botID, $paramObject);
+            if (gettype($isValid) == 'string') {
+                return "ERROR:$isValid";
+            }
+        }
+
+        // do not ship parameters via commandline if #json: is used.
+    
+        if (strpos($params, '#json:') === 0) {
+            $paramObject = json_decode(substr($params,6));
+            $paramfilename = uniqid().".param";
+            $handle = fopen(self::getWriteableDir()."/$paramfilename", "w");
+            fwrite($handle, $params);
+            fclose($handle);
+            $params = "__PARAM_FILE=".self::getWriteableDir()."/$paramfilename";
+            
+        }
+
+        // ok everything is fine, so add a gardening task
+        $taskid = SGAGardeningLog::getGardeningLogAccess()->addGardeningTask($botID);
+        $IP = realpath( dirname( __FILE__ ) . '/..' );
+            
+            
+        if (!isset($phpInterpreter)) {
+            // if $phpInterpreter is not set, assume it is in search path
+            // if not, starting of bot will FAIL!
+            $phpInterpreter = "php";
+        }
+
+
+        // and start it...
+        global $wgServer, $smwgAbortBotPortRange;
+        $serverNameParam = escapeshellarg($wgServer);
+        if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
+
+            //FIXME: $runCommand must allow whitespaces in paths too
+
+            $runCommand = "$phpInterpreter -q $IP/includes/SGA_AsyncBotStarter.php";
+            if ($runAsync) {
+                //TODO: test async code for linux.
+                //low prio
+                $logRedirect = self::getLogRedirection($taskid);
+
+                $runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
+                wfDebug("$runCommand $logRedirect 2>&1 &", true);
+                $nullResult = `$runCommand $logRedirect 2>&1 &`;
+                    
+
+            } else { // run sync
+                    
+
+                $paramArray = explode(" ", urldecode($params));
+                if ($bot != null) {
+                    $log = $bot->run($paramArray, $runAsync, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
+                    $log .= "\n[[category:GardeningLog]]";
+                    SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+                }
+                if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
+            }
+        }
+        else //windowze
+        {
+            $runCommand = "\"\"$phpInterpreter\" -q \"$IP/includes/SGA_AsyncBotStarter.php\"\"";
+            $wshShell = new COM("WScript.Shell");
+            $clOption = $keepConsoleAfterTermination ? "/K" : "/C";
+            $runCommand = "cmd $clOption ".$runCommand;
+
+            if ($runAsync) { // run async
+
+                $logRedirect = self::getLogRedirection($taskid);
+
+                // botID is first parameter
+                // taskID is second
+                // user defined parameters follow
+                // special escaping for % --> {{percentage}} because escapeshellarg(...) replaces % by blanks
+                $runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
+                wfDebug("$runCommand $logRedirect 2>&1", true);
+                $oExec = $wshShell->Run("$runCommand $logRedirect 2>&1", 7, false);
+                    
+            } else { // run synchron
+                    
+
+                $paramArray = explode(" ", urldecode($params));
+                if ($bot != null) {
+                    $log = $bot->run($paramArray, $runAsync, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
+                    $log .= "\n[[category:GardeningLog]]";
+                    SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+                }
+                if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
+            }
+        }
+        SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($paramObject));
+        return $taskid;
+	}
 
 	/**
 	 * Runs a bot.
@@ -369,120 +483,15 @@ abstract class GardeningBot {
 	 * @param $keepConsoleAfterTermination:
 	 */
 	public static function runBot($botID, $params = "", $user = NULL, $runAsync = true) {
-		global $sgagKeepGardeningConsole;
-		$keepConsoleAfterTermination = isset($sgagKeepGardeningConsole) ? $sgagKeepGardeningConsole : false;
-
-		// check if bot is registered
-		if (!GardeningBot::isBotKnown($botID)) {
-			return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_unknown_bot');
-		}
-		global $phpInterpreter, $wgUser, $registeredBots, $sgagGardeningBotDelay;
-		$userId = $wgUser->getId();
-		$bot = $registeredBots[$botID];
-			
+	
+        global $wgUser;
 		// check if user is allowed to start the bot
 		$user = is_null($user) ? $wgUser : $user;
 		if (is_null($user) || !$user->isAllowed('gardening')) {
 			return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission');
 		}
-			
-			
-		// validate parameters
-		if (strpos($params, '#json:') === false) {
-			$paramObject = GardeningBot::convertParamStringToArray($params);
-			$isValid = GardeningBot::checkParameters($botID, $paramObject);
-			if (gettype($isValid) == 'string') {
-				return "ERROR:$isValid";
-			}
-		}
-
-		// do not ship parameters via commandline if #json: is used.
-	
-		if (strpos($params, '#json:') === 0) {
-			$paramObject = json_decode(substr($params,6));
-			$paramfilename = uniqid().".param";
-			$handle = fopen(self::getWriteableDir()."/$paramfilename", "w");
-			fwrite($handle, $params);
-			fclose($handle);
-			$params = "__PARAM_FILE=".self::getWriteableDir()."/$paramfilename";
-			
-		}
-
-		// ok everything is fine, so add a gardening task
-		$taskid = SGAGardeningLog::getGardeningLogAccess()->addGardeningTask($botID);
-		$IP = realpath( dirname( __FILE__ ) . '/..' );
-			
-			
-		if (!isset($phpInterpreter)) {
-			// if $phpInterpreter is not set, assume it is in search path
-			// if not, starting of bot will FAIL!
-			$phpInterpreter = "php";
-		}
-
-
-		// and start it...
-		global $wgServer, $smwgAbortBotPortRange;
-		$serverNameParam = escapeshellarg($wgServer);
-		if(GardeningBot::isWindows()==false) { //*nix (aka NOT windows)
-
-			//FIXME: $runCommand must allow whitespaces in paths too
-
-			$runCommand = "$phpInterpreter -q $IP/includes/SGA_AsyncBotStarter.php";
-			if ($runAsync) {
-				//TODO: test async code for linux.
-				//low prio
-				$logRedirect = self::getLogRedirection($taskid);
-
-				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
-				wfDebug("$runCommand $logRedirect 2>&1 &", true);
-				$nullResult = `$runCommand $logRedirect 2>&1 &`;
-					
-
-			} else { // run sync
-					
-
-				$paramArray = explode(" ", urldecode($params));
-				if ($bot != null) {
-					$log = $bot->run($paramArray, $runAsync, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
-					$log .= "\n[[category:GardeningLog]]";
-					SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
-				}
-				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
-			}
-		}
-		else //windowze
-		{
-			$runCommand = "\"\"$phpInterpreter\" -q \"$IP/includes/SGA_AsyncBotStarter.php\"\"";
-			$wshShell = new COM("WScript.Shell");
-			$clOption = $keepConsoleAfterTermination ? "/K" : "/C";
-			$runCommand = "cmd $clOption ".$runCommand;
-
-			if ($runAsync) { // run async
-
-				$logRedirect = self::getLogRedirection($taskid);
-
-				// botID is first parameter
-				// taskID is second
-				// user defined parameters follow
-				// special escaping for % --> {{percentage}} because escapeshellarg(...) replaces % by blanks
-				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
-				wfDebug("$runCommand $logRedirect 2>&1", true);
-				$oExec = $wshShell->Run("$runCommand $logRedirect 2>&1", 7, false);
-					
-			} else { // run synchron
-					
-
-				$paramArray = explode(" ", urldecode($params));
-				if ($bot != null) {
-					$log = $bot->run($paramArray, $runAsync, isset($sgagGardeningBotDelay) ? $sgagGardeningBotDelay : 0);
-					$log .= "\n[[category:GardeningLog]]";
-					SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
-				}
-				if (isset($smwgAbortBotPortRange)) socket_close($this->socket);
-			}
-		}
-		SGAGardeningLog::getGardeningLogAccess()->updateComment($taskid, $bot->getComment($paramObject));
-		return $taskid;
+		
+		return self::runBotNoAuth($botID, $params,$runAsync);
 	}
 
 	/**

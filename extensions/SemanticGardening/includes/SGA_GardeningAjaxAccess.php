@@ -44,6 +44,9 @@ $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
 $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssues';
 $wgAjaxExportList[] = 'smwf_ga_LaunchDedicatedGardeningBot';
 $wgAjaxExportList[] = 'smwf_ga_readBotLog';
+$wgAjaxExportList[] = 'smwf_ga_addPeriodicBot';
+$wgAjaxExportList[] = 'smwf_ga_getPeriodicBotTable';
+$wgAjaxExportList[] = 'smwf_ga_removePeriodicBot';
 
 // Gardening ajax calls
 
@@ -365,6 +368,33 @@ function smwfGetPasswordBlob($userID) {
 		$pass_blob = $row->user_password;
 	}
 	return $pass_blob;
+}
+
+function smwf_ga_addPeriodicBot($botID, $params, $duration, $lastRun) {
+	$pe = SGAPeriodicExecutors::getPeriodicExecutors();
+	$pe->addBot($botID, $params, $duration, $lastRun);
+	$response = new AjaxResponse("true");
+    $response->setContentType( "application/text" );
+    $response->setResponseCode(200);
+    return $response;
+}
+
+function smwf_ga_getPeriodicBotTable() {
+    $pe = SGAPeriodicExecutors::getPeriodicExecutors();
+    $pe->getAllRegisteredBots();
+    $response = new AjaxResponse(SGAGardening::getPeriodicBotTable());
+    $response->setContentType( "application/html" );
+    $response->setResponseCode(200);
+    return $response;
+}
+
+function smwf_ga_removePeriodicBot($id) {
+	$pe = SGAPeriodicExecutors::getPeriodicExecutors();
+	$pe->removeBot($id);
+	$response = new AjaxResponse("true");
+    $response->setContentType( "application/text" );
+    $response->setResponseCode(200);
+    return $response;
 }
 
 
