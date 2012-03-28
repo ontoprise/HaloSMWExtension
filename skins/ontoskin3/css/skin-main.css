@@ -334,7 +334,21 @@ textarea {
 .smwh_menubody_visible {
 /*	replace with gradient*/
 	/*@embed*/
-	background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;
+	/*background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;*/
+	background-image: linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
+	background-image: -o-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
+	background-image: -moz-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
+	background-image: -webkit-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
+	background-image: -ms-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
+
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.1, rgb(235,235,235)),
+		color-stop(0.2, rgb(235,235,235)),
+		color-stop(0.5, rgb(255,255,255))
+	);
 	border: 2px solid #DFDFDC;
 	border-radius: 5px;
 	padding: 5px;
