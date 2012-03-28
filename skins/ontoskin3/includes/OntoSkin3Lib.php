@@ -378,7 +378,7 @@ class SMWH_Skin {
 					// no discussion link when on discussion page
 					continue;
 				} elseif ( strstr( $tab['class'], 'new' ) ) {
-					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '" class="tablink" >';
+					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '">';
 					$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
 					$tabs .= " class=\"aggregatedtabelements";
 					if ( $tab['class'] ) {
