@@ -310,10 +310,6 @@ class ASFFormDefinition {
 	 */
 	public function prepareFormForStoringData($requestedFormFields){
 		
-		//we are in store form mode and thus only need the unresolved annoations section
-		//todo: gain some performance improvements by not computing this in the first place
-		$this->categorySections = array();
-		
 		//compute how many input fields we will need for eaach property
 		$missingFormFields = array();
 		foreach($requestedFormFields as $field => $dc){
