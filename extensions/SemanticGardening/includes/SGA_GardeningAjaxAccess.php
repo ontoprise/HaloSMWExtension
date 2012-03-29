@@ -251,10 +251,10 @@ function smwf_ga_GetGardeningIssueClasses($bot_id) {
 	if ($bot_id == NULL) {
 		return "<span id=\"issueClasses\">unknown bot</span>";
 	} else {
-		
+
 		global $sgagIP;
 		sgagImportBots("$sgagIP/includes/bots");
-		
+
 		$className = get_class($registeredBots[$bot_id]).'Filter';
 		$filter = new $className();
 			
@@ -370,31 +370,39 @@ function smwfGetPasswordBlob($userID) {
 	return $pass_blob;
 }
 
-function smwf_ga_addPeriodicBot($botID, $params, $duration, $lastRun) {
+function smwf_ga_addPeriodicBot($botID, $params, $duration, $startDate, $startTime) {
+
 	$pe = SGAPeriodicExecutors::getPeriodicExecutors();
-	$pe->addBot($botID, $params, $duration, $lastRun);
-	$response = new AjaxResponse("true");
-    $response->setContentType( "application/text" );
-    $response->setResponseCode(200);
-    return $response;
+	try {
+		$pe->addBot($botID, $params, $duration, $startDate, $startTime);
+		$response = new AjaxResponse("true");
+		$response->setContentType( "application/text" );
+	 $response->setResponseCode(200);
+	} catch(Exception $e) {
+		$response = new AjaxResponse($e->getMessage());
+		$response->setContentType( "application/text" );
+		$response->setResponseCode(400);
+	}
+
+	return $response;
 }
 
 function smwf_ga_getPeriodicBotTable() {
-    $pe = SGAPeriodicExecutors::getPeriodicExecutors();
-    $pe->getAllRegisteredBots();
-    $response = new AjaxResponse(SGAGardening::getPeriodicBotTable());
-    $response->setContentType( "application/html" );
-    $response->setResponseCode(200);
-    return $response;
+	$pe = SGAPeriodicExecutors::getPeriodicExecutors();
+	$pe->getAllRegisteredBots();
+	$response = new AjaxResponse(SGAGardening::getPeriodicBotTable());
+	$response->setContentType( "application/html" );
+	$response->setResponseCode(200);
+	return $response;
 }
 
 function smwf_ga_removePeriodicBot($id) {
 	$pe = SGAPeriodicExecutors::getPeriodicExecutors();
 	$pe->removeBot($id);
 	$response = new AjaxResponse("true");
-    $response->setContentType( "application/text" );
-    $response->setResponseCode(200);
-    return $response;
+	$response->setContentType( "application/text" );
+	$response->setResponseCode(200);
+	return $response;
 }
 
 

@@ -24,7 +24,7 @@ abstract class SGAPeriodicExecutors {
 	
 	public abstract function getAllRegisteredBots();
 	
-	public abstract function addBot($id, $params, $duration, $lastRun);
+	public abstract function addBot($id, $params, $duration, $startDate, $startTime);
 	
 	public abstract function removeBot($listid);
 	

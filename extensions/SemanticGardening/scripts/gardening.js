@@ -174,46 +174,22 @@ GardeningPage.prototype = {
 			durationTime = 3600;
 		}
 
-		var startAt = $F('startat');
-		var startDate;
-		var lastRunString;
-		if (startAt == '') {
-			startDate = new Date();
-			lastRunString = "none";
-		} else {
-			startDate = new Date(startAt);// "March 10, 1998 22:48:00");
-			var startAtinMillis = startDate.getTime();
-
-			var lastRun = new Date();
-			var lastRuninMillis = startAtinMillis - (durationTime * 1000);
-			lastRun.setTime(lastRuninMillis);
-
-			var day = lastRun.getDate();
-			var month = lastRun.getMonth() + 1;
-			var year = lastRun.getYear() + 1900;
-
-			var seconds = lastRun.getSeconds();
-			var minutes = lastRun.getMinutes();
-			var hours = lastRun.getHours();
-
-			if (seconds < 10)
-				seconds = "0" + seconds;
-			if (minutes < 10)
-				minutes = "0" + minutes;
-			if (hours < 10)
-				hours = "0" + hours;
-
-			lastRunString = year + "-" + month + "-" + day + " " + hours + ":"
-					+ minutes + ":" + seconds;
+		var startAtDate = $F('startatdate').trim();
+		var startAtTime = $F('startattime').trim();
+	
+		if (startAtDate == '') {
+			startAtDate = "none"; // let the server calculate it
 		}
-		// convert in millis
+		if (startAtTime == '') {
+			startAtTime = "none"; // let the server calculate it
+		}
 
 		var gardeningParamForm = $("gardeningParamForm");
 		var params = Form.serialize(gardeningParamForm);
 		var botid = this.currentSelectedBot.getAttribute('id');
 
 		var lastRun = sajax_do_call('smwf_ga_addPeriodicBot', [ botid, params,
-				durationTime, lastRunString ], (function(request) {
+				durationTime, startAtDate, startAtTime ], (function(request) {
 			if (request.status == 200) {
 				sajax_do_call('smwf_ga_getPeriodicBotTable', [], (function(
 						request) {
@@ -225,7 +201,7 @@ GardeningPage.prototype = {
 					$('gardening-periodicbots').firstChild.replace(html);
 				}).bind(this));
 			} else {
-				alert("Error occured on inserting a periodic job.");
+				alert("Error occured on inserting a periodic job: "+request.responseText);
 			}
 		}).bind(this));
 	},

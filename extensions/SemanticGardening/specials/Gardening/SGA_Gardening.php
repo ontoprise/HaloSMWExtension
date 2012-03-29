@@ -240,7 +240,7 @@ Bot</button>";
 			$htmlResult .= "<option value=\"weekly\" name=\"weekly\">".wfMsg('smw_gard_weekly')."</option>";
 			$htmlResult .= "<option value=\"hourly\" name=\"hourly\">".wfMsg('smw_gard_hourly')."</option>";
 			$htmlResult .= "</select></div>";
-			$htmlResult .= "<div style=\"margin-top: 5px\">".wfMsg('smw_gard_startat')."<br><input id=\"startat\" type=\"text\" /></div>";
+			$htmlResult .= "<div style=\"margin-top: 5px\">".wfMsg('smw_gard_startatdate')." <input id=\"startatdate\" type=\"text\" /> ".wfMsg('smw_gard_startattime')." <input id=\"startattime\" type=\"text\" /></div>";
 			$htmlResult .= "<div><button style=\"margin-top: 5px\" id=\"addPeriodic\" type=\"button\" name=\"addperiodic\" onclick=\"gardeningPage.addPeriodic(event)\">".wfMsg('smw_gard_addperiodicbot')."</button></div>";
 		}
 
