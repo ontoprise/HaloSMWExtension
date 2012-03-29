@@ -44,16 +44,16 @@ var TF = Class.create({
 		var querySerialization = jQuery('.tabf_query_serialization', container).html();
 		var tabularFormId = jQuery(container).attr('id');
 		var isSPARQL = jQuery('.tabf_query_serialization', container).attr('isSPARQL');
+		var currentFilterString = tf.getFilterString(container);
 		
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_getTabularForm',
-				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId]
+				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId, currentFilterString]
 			},
 			success: tf.displayLoadedForm
-			
 		});
 	},
 	
@@ -64,37 +64,56 @@ var TF = Class.create({
 		
 		data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
 		data = jQuery.parseJSON(data);
+
+		var container = jQuery('#' + data.tabularFormId);
 		
-		jQuery('#' + data.tabularFormId + ' .tabf_loader').css('display', 'none');
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container').html(data.result);
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container').attr('usesat', data.useSAT);
+		//the complete tf must only be added the first time
+		if(jQuery('.tabf_table_container', container).html().length == 0){
+			jQuery('.tabf_table_container', container).html(data.result);
+		} else  {
+			jQuery('.tabf_table_row', container).attr('delete-row', 'true');
+			
+			jQuery('.tf-table-header').after(jQuery('.tabf_table_row', data.result));
+			
+			jQuery('.tabf_table_row[delete-row="true"]', container).remove();
+	
+			tf.cleanupNotificationSystem(container);
+		}
 		
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container').css('display', 'block');
+		tf.initializeLoadedForm(container);
 		
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container td textarea').each(function(){
-			tf.initializeLoadedCell(this, data.tabularFormId);
+		jQuery('.tabf_loader', container).css('display', 'none');
+		jQuery(' .tabf_table_container', container).css('display', 'block');		
+	},
+	
+	initializeLoadedForm : function(container){
+		
+		jQuery('.tabf_table_container td textarea', container).each(function(){
+			tf.initializeLoadedCell(this, jQuery(container).attr('id'));
 		});
 		
-		jQuery('#' + data.tabularFormId + ' tr td:nth-child(1)').each(tf.initializeDeleteButtons);
+		jQuery('tr td:nth-child(1)', container).each(tf.initializeDeleteButtons);
 		
-		if(jQuery('#' + data.tabularFormId + ' .tabf_new_row').get().length > 0){
-			jQuery('#' + data.tabularFormId + ' .tabf_save_button').removeAttr('disabled');
+		if(jQuery('.tabf_new_row', container).get().length > 0){
+			tf.disableFiltering(container, true);
+			jQuery('.tabf_save_button', container).removeAttr('disabled');
+		} else {
+			tf.disableFiltering(container, false);
 		}
 		
 		//todo: validate subject title textarea values 
 		
 		//store html forr cancel feature
-		data.result = jQuery('#' + data.tabularFormId + ' .tabf_table_container').html();
-		data.result = data.result.replace(/</g, '##--lt--##');
-		data.result = data.result.replace(/>/g, '##--gt--##');
-		jQuery('#' + data.tabularFormId + ' .tabf_table_container_cache').html(data.result);
+		var cache = jQuery(' .tabf_table_container', container).html();
+		cache = cache.replace(/</g, '##--lt--##');
+		cache = cache.replace(/>/g, '##--gt--##');
+		jQuery(' .tabf_table_container_cache', container).html(cache);
 		
 		//display edit mode again if this was the previous mode
-		if(jQuery('#' + data.tabularFormId).attr('isInEditMode') == 'true'){
-			tf.switchToEditMode(data.tabularFormId);
+		if(jQuery(container).attr('isInEditMode') == 'true'){
+			tf.switchToEditMode(jQuery(container).attr('id'));
 		}
 		
-		var container = jQuery('#' + data.tabularFormId);
 		var lostInstances = jQuery(container).get(0).lostInstances;  
 		if(lostInstances != undefined){
 			for(var k=0; k < lostInstances.length; k++){
@@ -102,7 +121,6 @@ var TF = Class.create({
 			}
 		}
 
-		//xyz
 		var instancesWithSaveErrors = jQuery(container).get(0).instancesWithSaveErrors;  
 		if(instancesWithSaveErrors != undefined){
 			jQuery('tr td:nth-child(1) a', container).each( function(){
@@ -118,11 +136,12 @@ var TF = Class.create({
 				tf.addNotification(container, 'tabf_save_error_warning', instancesWithSaveErrors[k], 
 					instancesWithSaveErrors[k], instancesWithSaveErrors[k]);
 			}
-			
+		
 		} else {
 			jQuery(container).get(0).instancesWithSaveErrors = new Array();
 		}
 		
+		tf.initFilterListeners(container);
 	},
 	
 	
@@ -136,6 +155,8 @@ var TF = Class.create({
 		jQuery('#' + tabularFormId).attr('isInEditMode' , 'false');
 		
 		//tf.switchToViewMode(tabularFormId);
+		
+		tf.disableFiltering(jQuery('#' + tabularFormId), false);
 	},
 	
 	/*
@@ -496,6 +517,7 @@ var TF = Class.create({
 				jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).removeAttr('disabled');
 			}
 			
+			tf.disableFiltering(jQuery(parentRow).parent().parent(), true);
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
@@ -515,6 +537,12 @@ var TF = Class.create({
 						&& jQuery('.tabf_deleted_row', jQuery(parentRow).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(parentRow).parent().parent()).length == 0){
 					jQuery('.tabf_save_button', jQuery(parentRow).parent().parent()).attr('disabled', 'disabled');
+				}
+				
+				if(jQuery('.tabf_modified_row', jQuery(parentRow).parent().parent()).length == 0
+						&& jQuery('.tabf_deleted_row', jQuery(parentRow).parent().parent()).length == 0
+						&& jQuery('.tabf_new_row ', jQuery(parentRow).parent().parent()).length == 0){
+					tf.disableFiltering(jQuery(parentRow).parent().parent(), false);
 				}
 			}
 		}
@@ -627,7 +655,6 @@ var TF = Class.create({
 			
 			
 			var revisionId = jQuery('td:nth-child(1) ',this).attr('revision-id');
-			var useSAT = jQuery(this).parent().parent().parent().attr('usesat'); 
 			if(revisionId == '-1'){
 				var articleTitle = jQuery('td:nth-child(1) textarea',this).attr('value');
 			} else {
@@ -641,7 +668,7 @@ var TF = Class.create({
 				data: {
 					'action' : 'ajax',
 					'rs' : 'tff_updateInstanceData',
-					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId, useSAT]
+					'rsargs[]' : [JSON.stringify(modifiedValues), articleTitle, revisionId, rowNr, tabularFormId]
 				},
 				success: tf.saveFormRowDataCallback				
 			});
@@ -782,6 +809,8 @@ var TF = Class.create({
 		
 		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).attr('disabled', 'disabled');
 		
+		tf.disableFiltering(jQuery(newRow).parent().parent(), true);
+		
 		tf.checkNewInstanceName(jQuery('td:nth-child(1) textarea', newRow), 55, tabfId);
 	},
 	
@@ -900,7 +929,13 @@ var TF = Class.create({
 				jQuery('.tabf_save_button', jQuery(rowParent)).removeAttr('disabled');
 			}
 			
-			
+			if(jQuery('.tabf_modified_row', jQuery(rowParent)).length == 0
+					&& jQuery('.tabf_deleted_row', jQuery(rowParent)).length == 0
+					&& jQuery('.tabf_new_row', jQuery(rowParent)).length == 0){
+				tf.disableFiltering(jQuery(rowParent), false);
+			} else {
+				tf.disableFiltering(jQuery(rowParent), true);		
+			}
 			
 		} else {
 			
@@ -925,6 +960,12 @@ var TF = Class.create({
 						&& jQuery('.tabf_new_row .tabf_valid_instance_name', jQuery(row).parent().parent()).length == 0){
 					jQuery('.tabf_save_button', jQuery(row).parent().parent()).attr('disabled', 'disabled');
 				}
+				
+				if(jQuery('.tabf_modified_row', jQuery(row).parent().parent()).length == 0
+						&& jQuery('.tabf_deleted_row', jQuery(row).parent().parent()).length == 0
+						&& jQuery('.tabf_new_row', jQuery(row).parent().parent()).length == 0){
+					tf.disableFiltering(jQuery(row).parent(), false);
+				}
 			} else {
 				tf.hideNotificationsForInstance(jQuery(row).parent().parent().parent().parent(), tf.getChildNumber(row, 1), false);
 				
@@ -941,6 +982,7 @@ var TF = Class.create({
 				if(jQuery('..tabf_erronious_instance_name', jQuery(row).parent().parent()).length == 0){
 					jQuery('.tabf_save_button', jQuery(row).parent().parent()).removeAttr('disabled');
 				}
+				tf.disableFiltering(jQuery(row).parent(), true);
 			}
 		}
 	},
@@ -1265,11 +1307,11 @@ var TF = Class.create({
 			annotationLabel = jQuery('span:nth-child(2) a', headerElement).html();
 		}
 			
-		var queryConditions = jQuery(headerElement ).get();
-		if(queryConditions[0].childNodes.length == 4){
-			queryConditions = queryConditions[0].lastChild.innerHTML;
-		} else {
+		var queryConditions = jQuery('.tabf-query-conditions', headerElement ).html();
+		if(queryConditions == null){
 			queryConditions = '';
+		} else {
+			queryConditions = jQuery.trim(queryConditions);
 		}
 			
 		var annotationValue = jQuery(element).attr('value');
@@ -1534,7 +1576,108 @@ var TF = Class.create({
 		jQuery('.tabf_notification_system', container).css('display', '');
 		
 		//todo: instance lost messages should only be displayed in edit mode
-	}	
+	},
+	
+	initFilterListeners : function(container){
+		jQuery('.tf_filter_input', container).keyup(function(){
+			tf.checkIfFiltersMustBeApplied(container);
+		});
+		jQuery('.tf_filter_input', container).change(function(){
+			tf.checkIfFiltersMustBeApplied(container);
+		});
+		jQuery('.tf_filter_input_helper', container).keyup(function(){
+			tf.checkIfFiltersMustBeApplied(container);
+		});
+		jQuery('.tf_filter_input_helper', container).change(function(){
+			tf.checkIfFiltersMustBeApplied(container);
+		});
+	},
+	
+	checkIfFiltersMustBeApplied : function(container){
+		
+		var currentFilterString = tf.getFilterString(container);
+		
+		if(currentFilterString != tf.filterString){
+			
+			tf.filterString = currentFilterString;
+			
+			window.setTimeout(function() {
+				if(tf.filterString == currentFilterString){
+					tf.applyFilters(container);
+				}
+			}, 750);
+		}
+	},
+	
+	applyFilters : function(container){
+		var querySerialization = jQuery('.tabf_query_serialization', container).html();
+		
+		var url = wgServer + wgScriptPath + "/index.php";
+		jQuery.ajax({ url:  url, 
+			data: {
+				'action' : 'ajax',
+				'rs' : 'tff_getFilteredQueryResult',
+				'rsargs[]' : [tf.filterString, querySerialization]
+			},
+			success: function(data){
+				data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
+				data = jQuery.parseJSON(data);
+				
+				jQuery('.tabf_table_row', container).attr('delete-row', 'true');
+				
+				jQuery('.tf-table-header').after(jQuery('.tabf_table_row', data.filteredQueryResult));
+				
+				jQuery('.tabf_table_row[delete-row="true"]', container).remove();
+				
+				tf.initializeLoadedForm(container);
+			}
+		});	
+	},
+	
+	disableFiltering : function(container, disable){
+		if(disable){
+			jQuery('.tf_filter_input', container).attr('disabled', 'disabled');
+			jQuery('.tf_filter_input_helper', container).attr('disabled', 'disabled');
+		} else {
+			jQuery('.tf_filter_input', container).removeAttr('disabled');
+			jQuery('.tf_filter_input_helper', container).removeAttr('disabled');
+		}
+	},
+	
+	getFilterString : function(container){
+		var currentFilterString = '';
+		jQuery('.tf_filter_input', container).each(function(){
+			val = jQuery(this).val();
+			if(val.length > 0){
+				var type = jQuery(this).attr('cmp-type');
+				if(type == '='){
+					val = ' [[' + jQuery(this).parent().parent().attr('field-address') + '::' + val + ']] ';
+				} else if(type == '~'){
+					val = ' [[' + jQuery(this).parent().parent().attr('field-address') + '::~*' + val + '*]] ';
+				} else if(type == 'choose'){
+					var cmp = jQuery(this).prev().val();
+					if(cmp == '=') cmp = '';
+					val = ' [[' + jQuery(this).parent().parent().parent().attr('field-address') + '::' + cmp + val + ']] ';
+				} else if(type == 'category'){
+					val = ' [[Category:' + val + ']] ';	
+				}
+			}
+			currentFilterString += val;
+		});
+		
+		return currentFilterString;
+	},
+	
+	cleanupNotificationSystem : function(container){
+		
+		jQuery('.tabf-warnings-number', container).html(0);
+		
+		jQuery('.tabf_notifications ol > li', container).css('display', 'none');
+		
+		jQuery('.tabf_notifications ol > li > li', container).remove();		
+
+	}
+	
 });
 
 window.tf = new TF();

@@ -36,6 +36,7 @@
 	background: none repeat scroll 0 0 transparent;
 	text-align: left;
 	vertical-align: bottom;
+	height: 100%;
 }
 
 .tabf_container th > span {
@@ -48,6 +49,7 @@
 
 .tabf_column_header {
 	border-bottom: 2px solid #116988;
+	height: 100%;
 }
 
 .tabf_status_column_header{
@@ -322,3 +324,4 @@ allowed to create new instances. */
 .tabf_rowindex_comparator {
 	
 }
+

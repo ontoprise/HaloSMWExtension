@@ -29,11 +29,13 @@ $wgAjaxExportList[] = 'tff_checkArticleName';
 $wgAjaxExportList[] = 'tff_deleteInstance';
 $wgAjaxExportList[] = 'tff_getLostInstances';
 $wgAjaxExportList[] = 'tff_checkAnnotationValues';
+$wgAjaxExportList[] = 'tff_getFilteredQueryResult';
+
 
 /*
  * Called by UI in order to load a tabular form
  */
-function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
+function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId, $currentFilterString){
 	$querySerialization = json_decode($querySerialization, true);
 
 	$queryString = '';
@@ -53,9 +55,19 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
 		( $queryString, $queryParams, $printRequests, 0);
 	} else {
+		
+		$queryParts = TFQueryAnalyser::getDisjunctivelyConnectedQueryStringParts($querySerialization);
+	
+		$filterQueryString = '';
+		foreach($queryParts as $part){
+			$filterQueryString .= ' '.$part.' '.$currentFilterString;
+		}
+		
 		SMWQueryProcessor::processFunctionParams(
 			$querySerialization, $queryString, $queryParams, $printRequests);
 
+		$queryString = $filterQueryString;	
+			
 		SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
 		$params = SMWQueryProcessor::getProcessedParams(
 			$queryParams, $printRequests);	
@@ -85,7 +97,7 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId){
 /*
  * Called by UI in order to add or modify a particular insatnce
  */
-function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId, $useSAT){
+function tff_updateInstanceData($updates, $articleTitle, $revisionId, $rowNr, $tabularFormId, $useSAT = false){
 
 	//dom't know why, but this has to be done twice
 	$updates = json_decode(print_r($updates, true), true);
@@ -263,7 +275,6 @@ function tff_getLostInstances($querySerialization, $isSPARQL, $tabularFormId, $i
 		$result = SMWSPARQLQueryProcessor::getResultFromQueryString
 			( $queryString, $queryParams, $printRequests, 0);
 	} else {
-
 		SMWQueryProcessor::processFunctionParams(
 			$querySerialization, $queryString, $queryParams, $printRequests);
 		SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
@@ -504,6 +515,47 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 		
 	$result = array('isValid' => $isValid, 'lost' => $getsLost, 'looseWarnings' => $warnings,
 		'cssSelector' => $cssSelector, 'fieldNr' => $fieldNr, 'invalidValueMsg' => $invalidValueMsg);
+	
+	$result = json_encode($result);
+
+	return '--##starttf##--' . $result . '--##endtf##--';
+}
+
+function tff_getFilteredQueryResult($filters, $querySerialization){
+	
+	$querySerialization = json_decode($querySerialization, true);
+	
+	$queryParts = TFQueryAnalyser::getDisjunctivelyConnectedQueryStringParts($querySerialization);
+	
+	$filterQueryString = '';
+	foreach($queryParts as $part){
+		$filterQueryString .= ' '.$part.' '.$filters;
+	}
+	
+	//todo: make sure that filters do not appear for sparql queries
+
+	$queryString = '';
+	$queryParams = array();
+	$printRequests = array();
+
+	SMWQueryProcessor::processFunctionParams(
+		$querySerialization, $queryString, $queryParams, $printRequests);
+		
+	$queryString = $filterQueryString;
+	
+	$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
+		
+	SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
+	$params = SMWQueryProcessor::getProcessedParams(
+		$queryParams, $printRequests);	
+
+	$params[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
+	$params[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;
+
+	$result = SMWQueryProcessor::getResultFromQueryString
+		( $queryString, $params, $printRequests, 0);
+	
+	$result = array('filteredQueryResult' => $result);
 	
 	$result = json_encode($result);
 

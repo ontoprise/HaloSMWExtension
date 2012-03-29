@@ -290,7 +290,7 @@ class TFTabularFormData {
 			unset($this->annotationPrintRequests[0]);
 		}
 
-		$this->initializeAnnotationAutocompletion();
+		$this->initializeAnnotationCharacteristics();
 		
 		list($this->annotationPreloadValues, $this->instanceNamePreloadValue) =
 			TFQueryAnalyser::getPreloadValues($this->getQuerySerialization(), $this->isSPARQLQuery);
@@ -298,7 +298,7 @@ class TFTabularFormData {
 		$this->annotationQueryConditions =
 			TFQueryAnalyser::getQueryConditions($this->getQuerySerialization(), $this->isSPARQLQuery);
 			
-				$this->checkEnableAddInstance();
+		$this->checkEnableAddInstance();
 
 		// process each query result row
 		while ( $row = $this->queryResult->getNext() ) {
@@ -456,16 +456,21 @@ class TFTabularFormData {
 
 
 	/*
-	 * Get range property for annotation print requests
+	 * Get range, type and allows values property for annotation print requests
 	 */
-	private function initializeAnnotationAutocompletion(){
+	private function initializeAnnotationCharacteristics(){
 
 		foreach($this->annotationPrintRequests as $key => $annotation){
+			
+			$this->annotationPrintRequests[$key]['allows value'] = array();
+			
 			if($annotation['title'] == TF_CATEGORY_KEYWORD){
 				$this->annotationPrintRequests[$key]['autocomplete'] = 'ask: [[:Category:+]]';
+				$this->annotationPrintRequests[$key]['type'] = 'category';
 			} else {
 				//default autocompletion for properties is all
 				$this->annotationPrintRequests[$key]['autocomplete'] = 'all';
+				$this->annotationPrintRequests[$key]['type'] = 'page';
 
 				$prop = Title::newFromText($this->annotationPrintRequests[$key]['title'], SMW_NS_PROPERTY);
 				if($prop->exists()){
@@ -474,6 +479,16 @@ class TFTabularFormData {
 					$semanticData = $store->getSemanticData($prop);
 					$annotations = $semanticData->getProperties();
 
+					//get allowed values
+					if(array_key_exists('_PVAL', $annotations)){
+						
+						foreach($semanticData->getPropertyValues($annotations['_PVAL']) as $val){
+							$this->annotationPrintRequests[$key]['allows value'][] = 
+								SMWDataValueFactory::newDataItemValue($val, null)->getShortWikiText();
+						}
+					}
+					
+					
 					//get type
 					$type = null;
 					if(array_key_exists('_TYPE', $annotations)){
@@ -482,8 +497,13 @@ class TFTabularFormData {
 						$idx = $idx[0];
 						$type = SMWDataValueFactory::newDataItemValue($type[$idx], null)
 								->getShortWikiText();
+								
+						global $smwgContLang;
+						$datatypeLabels = $smwgContLang->getDatatypeLabels();
+						$type = $datatypeLabels[substr($type, strpos($type, '#') + 1)];
+						
+						$this->annotationPrintRequests[$key]['type'] = strtolower($type);
 					}
-
 
 					if($type == null || strtolower($type) == 'page'){
 						//check if there is a range defined
@@ -581,7 +601,7 @@ class TFTabularFormData {
 	private function addTableHeaderHTML(){
 		global $smwgScriptPath, $smwgHaloScriptPath;
 
-		$html ='<tr>';
+		$html ='<tr class="tf-table-header">';
 
 		//add subject column
 		$html .= '<th class="tabf_column_header">';
@@ -591,10 +611,12 @@ class TFTabularFormData {
 		$html .= '<span>';
 		$html .= $this->subjectColumnLabel;
 		$html .= '</span>';
+		$html .= '<br/><br/>';
 		$html .= '</th>';
 
 		//add annotation columns
 		foreach($this->annotationPrintRequests as $annotation){
+			
 			$html .= '<th class="tabf_column_header" field-address="'.$annotation['title'].'" is-template="false">';
 			$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 			$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
@@ -602,8 +624,50 @@ class TFTabularFormData {
 			$html .= '<span>';
 			$html .= $annotation['label'];
 			$html .= '</span>';
-
-
+			
+			//add filter input
+			$html .= '<div style="min-width: 100%; max-width: 100%;vertical-align: bottom">';
+			
+			if(count($annotation['allows value']) > 0){
+				$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%; display: inline">';
+				$html .= '<option></option>';
+				foreach($annotation['allows value'] as $val){
+					$html .= '<option>'.$val.'</option>';
+				}
+				$html .= '</select>';
+			} else {
+				$type = $annotation['type'];
+				
+				$autocompletion = 'class="wickEnabled" constraints="annotation-value:'.$annotation['title'].'" ';
+				
+				switch($type){
+					case 'number' :
+					case 'date' :
+						$html .= '<nobr style="width: 100%">';
+						$html .= '<select class="tf_filter_input_helper" style="width: 15%"><option>=</option><option>&lt;</option><option>&gt;</option></select>';
+						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="choose" type="text" style="width: 85%" '.$autocompletion.'/>';
+						$html .= '</nobr>';
+						break;
+					case 'boolean' :
+						$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%"><option></option><option>yes</option><option>no</option>';
+						break;
+					case 'page';
+					case 'string';
+					case 'text';
+					case 'url';
+						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 100%" '.$autocompletion.'/>';
+						break;
+					case 'category';
+						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="category" style="display: inline; width: 100%" constraints="namespace : category"/>';
+						break;
+					default:
+						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="=" style="width: 100%" '.$autocompletion.'/>';
+						break;
+				}
+				
+			}
+			$html .= '</div>';
+			
 			//add query condition data
 			if(array_key_exists($annotation['title'], $this->annotationQueryConditions)){
 				$html .= '<span class="tabf-query-conditions" style="display: none">';
@@ -635,6 +699,7 @@ class TFTabularFormData {
 				$html .= '</nobr>';
 
 				$html .= '</span>';
+				$html .= '<br/><br/>';
 				$html .= '</th>';
 			}
 		}
@@ -644,6 +709,7 @@ class TFTabularFormData {
 		$html .= '<a href="#" class="sortheader" onclick="tf.startRowSort(event);return false;">';
 		$html .= '<span class="sortarrow"><img alt="[&lt;&gt;]" src="'.$smwgScriptPath.'/skins/images/sort_none.gif"/>';
 		$html .= '</span></a>';
+		$html .= '<br/><br/>';
 		$html .= '</th>';
 
 		$html.= '</tr>';
