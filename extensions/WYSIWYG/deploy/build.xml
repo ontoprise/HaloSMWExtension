@@ -49,6 +49,10 @@
        ===================================================================== -->
   <target name="versionhint">
     <property environment="env" />
+    <echo>== Versionhint for ${ant.project.name}: env.BUILD_NUMBER=${env.BUILD_NUMBER} ==</echo>
+    <property name="versionhint.WYSIWYG.file" location="../WYSIWYG.php" />
+    <echo>* Versionhint.WYSIWYG.file: ${versionhint.WYSIWYG.file}</echo>
+
     <exec executable="php">
       <arg value="../../../buildtools/replaceVersionHint.php" />
       <arg value="../deploy.xml" />
