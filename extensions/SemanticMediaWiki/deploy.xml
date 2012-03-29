@@ -12,7 +12,7 @@
         <description>Enhances the wiki with semantic annotations.</description>
         <helpurl>http://semantic-mediawiki.org/wiki/Help:User_manual</helpurl>
 		<dependencies>
-            <dependency from="1.16.0">MW</dependency>
+            <dependency from="1.16.0">mw</dependency>
             <dependency from="0.4.13">validator</dependency>
         </dependencies>
         <license>GPL-v2</license>
