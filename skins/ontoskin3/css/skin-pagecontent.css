@@ -321,26 +321,7 @@ div.floatleft, table.floatleft {
 	float: none !important;
 	margin-left: 1em;
 	font-weight: normal;
-}
-
-#content h1 .editsection {
 	font-size: 53%;
-}
-
-#content h2 .editsection {
-	font-size: 67%;
-}
-
-#content h3 .editsection {
-	font-size: 76%;
-}
-
-#content h4 .editsection {
-	font-size: 86%;
-}
-
-#content h6 .editsection {
-	font-size: 125%;
 }
 
 #content h1 .editsection a,
