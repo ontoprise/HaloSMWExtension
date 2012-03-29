@@ -314,9 +314,21 @@ class SMWH_Skin {
 					in_array( $this->action, array( 'formedit' ) ) ||
 					$wgTitle->getNamespace() == NS_TALK )
 				{
+					if( strstr( $tab['class'], 'new' ) ) {
+						// link to "emtpy" view
+						$link = htmlspecialchars( str_replace(
+							array( '?action=edit', '&action=edit', 'action=edit',
+								'&mode=wysiwyg', '&redlink=1'
+							),
+							'',
+							$tab['href']
+						));
+					} else {
+						$link = htmlspecialchars( $tab['href'] );
+					}
 					//provide back to page link
 					$tabs .= '<a class="tab back" href="';
-					$tabs .= htmlspecialchars( $tab['href'] ) . '">';
+					$tabs .= $link . '">';
 					$tabs .= wfMsg( 'smw_back_to_article') . '</a>';
 				}
 				$firstTabs = $tabs . $firstTabs;
