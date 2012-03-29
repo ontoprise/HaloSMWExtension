@@ -80,7 +80,9 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	// other tabs
 	'df_webadmin_really_clear_log' : 'Wollen Sie das Log wirklich löschen?',
 	'df_webadmin_contentbundle_error' : 'Fehler beim Export. Bitte prüfen Sie das ',
-	'df_webadmin_emptybundlename' : 'Leerer Bundlename nicht erlaubt.'
+	'df_webadmin_emptybundlename' : 'Leerer Bundlename nicht erlaubt.',
+	'df_webadmin_enableprofiling' : 'Aktiviere Profiling',
+	'df_webadmin_disableprofiling' : 'Deaktiviere Profiling'
 };
 
 var dfgContDFWebAdmin_LanguageStrings = {};

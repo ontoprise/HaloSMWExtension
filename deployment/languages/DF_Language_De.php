@@ -103,6 +103,7 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Server',
 	'df_webadmin_logtab' => 'Logs',
+	'df_webadmin_profilertab' => 'Profiler',
 	'df_webadmin_contentbundletab' => 'Content bundles',
 	
 	'df_webadmin_restorepoint' => 'Rücksetzpunkt',
@@ -126,6 +127,7 @@ class DF_Language_De extends DF_Language {
 	'df_select_extension' => 'Wähle Extension',
 	'df_webadmin_localsettings_description' => "Editieren die Konfiguration einer Extension in LocalSettings.php. Nicht vergessen die Änderungen zu speichern. Wenn Sie die Datei LocalSettings.php in irgendeiner Form manuell editieren, verändern Sie nicht die Extension-Tags, sonst geht diese Ansicht kaputt.",
 	'df_webadmin_logtab_description' => 'Diese Seite zeigt Links zu Log-Dateien vorheriger Operationen.',
+	'df_webadmin_profilertab_description' => 'Diese Seite erlaubt Zugriff auf den internen MW profiler',
 	'df_webadmin_contentbundletab_description' => 'Here you can export and download bundles as zip files. To see a list of bundles you need SMWHalo installed.',
     'df_webadmin_contentbundle_nosmwhalo' => 'SMWHalo not available, ie. querying for content bundles not possible. Please enter the bundle name manually.',
     'df_webadmin_querying_contentbundle_failed' => 'Querying content bundles failed.',

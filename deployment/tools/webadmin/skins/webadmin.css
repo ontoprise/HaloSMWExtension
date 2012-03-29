@@ -1,5 +1,14 @@
 @CHARSET "ISO-8859-1";
 
+#df_webadmin_profiler_actions {
+	
+}
+	
+#df_webadmin_profiler_content {
+	margin-top: 10px;
+    border-radius: 4px 4px 4px 4px;
+}
+
 .df_setting div {
 	display:none;
 }

@@ -80,7 +80,9 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	// other tabs
 	'df_webadmin_really_clear_log' : 'Do you really want to clear the log?',
 	'df_webadmin_contentbundle_error' : 'Error occured. Please check the ',
-	'df_webadmin_emptybundlename' : 'Empty bundle name'
+	'df_webadmin_emptybundlename' : 'Empty bundle name',
+	'df_webadmin_enableprofiling' : 'Enable profiling',
+	'df_webadmin_disableprofiling' : 'Disable profiling'
 	
 };
 

@@ -105,6 +105,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_localsettingstab' => 'LocalSettings',
 	'df_webadmin_serverstab' => 'Servers',
 	'df_webadmin_logtab' => 'Logs',
+	'df_webadmin_profilertab' => 'Profiler',
 	'df_webadmin_contentbundletab' => 'Content bundles',
 	
 	'df_webadmin_restorepoint' => 'Restore point',
@@ -129,6 +130,7 @@ class DF_Language_En extends DF_Language {
 	'df_select_extension' => 'Select extension',
 	'df_webadmin_localsettings_description' => "Edit an extensions's section in LocalSettings.php. Don't forget to save your changes. If you edit LocalSettings.php manually, make sure that you <b>do not remove</b> the extension-tags in LocalSettings.php. Otherwise this view gets messed up.",
 	'df_webadmin_logtab_description' => 'This page lists the log files from previous operations.',
+	'df_webadmin_profilertab_description' => 'This page allows to use the internal MW profiler',
 	'df_webadmin_contentbundletab_description' => 'Here you can export and download bundles as zip files. To see a list of bundles you need SMWHalo installed.',
 	'df_webadmin_contentbundle_nosmwhalo' => 'SMWHalo not available, ie. querying for content bundles not possible. Please enter the bundle name manually.',
 	'df_webadmin_querying_contentbundle_failed' => 'Querying content bundles failed.',
@@ -152,7 +154,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_contentbundle_file' => 'Bundle',
 	'df_webadmin_contentbundle_creationdate' => 'Creation date',
 	'df_webadmin_contentbundle_nobundles' => 'No bundles exported.',
-		
+			
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	
 	'df_webadmin_newreleaseavailable' => 'New release available! Check the $1',

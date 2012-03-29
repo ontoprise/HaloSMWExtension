@@ -82,6 +82,7 @@ require_once($mwrootDir.'/deployment/languages/DF_Language.php');
 require_once('includes/DF_SettingsTab.php');
 require_once('includes/DF_ContentBundleTab.php');
 require_once('includes/DF_LogTab.php');
+require_once('includes/DF_ProfilerTab.php');
 require_once('includes/DF_StatusTab.php');
 require_once('includes/DF_SearchTab.php');
 require_once('includes/DF_MaintenanceTab.php');
@@ -177,6 +178,7 @@ $dfgSettingsTab = new DFRepositoriesTab();
 $dfgLocalSettingsTab = new DFLocalSettingsTab();
 $dfgServersTab = new DFServersTab();
 $dfgLogTab = new DFLogTab();
+$dfgProfilerTab = new DFProfilerTab();
 $dfgContentBundlesTab = new DFContentBundleTab();
 $dfgWATSettingsTab = new DFSettingsTab();
 
@@ -221,7 +223,8 @@ try {
 	$dfgWATSettingsBundlesTabName = $dfgWATSettingsTab->getTabName();
     $dfgWATSettingsBundlesTabHtml = $dfgWATSettingsTab->getHTML();
 	
-	
+	$dfgProfilerTabName = $dfgProfilerTab->getTabName();
+    $dfgProfilerTabHtml = $dfgProfilerTab->getHTML();
 
 } catch(DF_SettingError $e) {
 	echo $e->getMsg();
@@ -262,7 +265,8 @@ if (isset(DF_Config::$df_developerVersion) && DF_Config::$df_developerVersion ==
 <script type="text/javascript" src="scripts/webadminUpload.js"></script>
 <script type="text/javascript" src="scripts/webadminLocalSettings.js"></script>
 <script type="text/javascript" src="scripts/webadminLogs.js"></script>	
-<script type="text/javascript" src="scripts/webadminSettings.js"></script>  
+<script type="text/javascript" src="scripts/webadminSettings.js"></script>
+<script type="text/javascript" src="scripts/webadminProfiler.js"></script>    
 ENDS;
 } else {
 	$scriptTags = '<script type="text/javascript" src="scripts/webadmin_all.js"></script>';
@@ -330,6 +334,7 @@ $html .= <<<ENDS
                 <li><a href="#tabs-8">$dfgLogTabName</a></li>
                <li><a href="#tabs-9">$dfgContentBundlesTabName</a></li>
                 <li><a href="#tabs-10">$dfgWATSettingsBundlesTabName</a></li>
+                <li><a href="#tabs-11">$dfgProfilerTabName</a></li>
                 
             </ul>
             <div id="tabs-1">$statusTabHtml</div>
@@ -342,6 +347,7 @@ $html .= <<<ENDS
             <div id="tabs-8">$dfgLogTabHtml</div>
             <div id="tabs-9">$dfgContentBundlesTabHtml</div>
 			<div id="tabs-10">$dfgWATSettingsBundlesTabHtml</div>
+			<div id="tabs-11">$dfgProfilerTabHtml</div>
 			
 </div>
 <div id="global-updatedialog-confirm" title="$globalUpdateHeading" style="display:none">
