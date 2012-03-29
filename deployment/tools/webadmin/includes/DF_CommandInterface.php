@@ -230,41 +230,43 @@ class DFCommandInterface {
 			return json_encode($error);
 		}
 	}
-	
-	public function getAllDependencies($extids) {
-        global $mwrootDir, $dfgOut;
 
-        try {
-            $dfgOut->setVerbose(false);
-            $installer = Installer::getInstance($mwrootDir);
-            $extensionsToInstall = array();
-            $contradictions = array();
-            $extids = explode(",", $extids);
-            foreach($extids as $extid) {
-	            list($id, $version) = explode("-", $extid);
-                $dependencies = $installer->getExtensionsToInstall($id, new DFVersion($version));
-                $extensionsToInstall = array_merge($dependencies['extensions'], $extensionsToInstall);
-                $contradictions = array_merge($dependencies['contradictions'], $contradictions);
-            }
-            $extensionsToInstall = self::makeExtensionListUnique($extensionsToInstall);
-            $o = new stdClass();
-            $o->extensions = $extensionsToInstall;
-            $o->contradictions = $contradictions;
-            $dfgOut->setVerbose(true);
-            return json_encode($o);
-        } catch(InstallationError $e) {
-            $error = array();
-            $error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
-            $dfgOut->setVerbose(true);
-            return json_encode($error);
-        } catch(RepositoryError $e) {
-            $error = array();
-            $error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
-            $dfgOut->setVerbose(true);
-            return json_encode($error);
-        }
-    }
-	
+	public function getAllDependencies($extids, $globalSettings) {
+		global $mwrootDir, $dfgOut;
+
+		try {
+			global $dfgGlobalOptionsValues;
+			$dfgGlobalOptionsValues = self::getOptionsAsArray(json_decode($globalSettings));
+			$dfgOut->setVerbose(false);
+			$installer = Installer::getInstance($mwrootDir);
+			$extensionsToInstall = array();
+			$contradictions = array();
+			$extids = explode(",", $extids);
+			foreach($extids as $extid) {
+				list($id, $version) = explode("-", $extid);
+				$dependencies = $installer->getExtensionsToInstall($id, new DFVersion($version));
+				$extensionsToInstall = array_merge($dependencies['extensions'], $extensionsToInstall);
+				$contradictions = array_merge($dependencies['contradictions'], $contradictions);
+			}
+			$extensionsToInstall = self::makeExtensionListUnique($extensionsToInstall);
+			$o = new stdClass();
+			$o->extensions = $extensionsToInstall;
+			$o->contradictions = $contradictions;
+			$dfgOut->setVerbose(true);
+			return json_encode($o);
+		} catch(InstallationError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			$dfgOut->setVerbose(true);
+			return json_encode($error);
+		} catch(RepositoryError $e) {
+			$error = array();
+			$error['exception'] = array($e->getMsg(), $e->getErrorCode(), $e->getArg1(), $e->getArg2());
+			$dfgOut->setVerbose(true);
+			return json_encode($error);
+		}
+	}
+
 
 	public function install($extid, $settings) {
 		global $mwrootDir, $dfgOut;
@@ -276,10 +278,10 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-		
+
 		$settings = json_decode($settings);
 		$optionString = self::getOptions($settings);
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -293,38 +295,38 @@ class DFCommandInterface {
 		}
 		return $filename;
 	}
-	
-    public function installAll($extids, $settings) {
-        global $mwrootDir, $dfgOut;
 
-        $unique_id = uniqid();
-        $filename = $unique_id.".log";
-        $logger = Logger::getInstance();
-        $logdir = $logger->getLogDir();
-        touch("$logdir/$filename");
+	public function installAll($extids, $settings) {
+		global $mwrootDir, $dfgOut;
 
-        $console_out = "$logdir/$filename.console_out";
-        
-        $settings = json_decode($settings);
-        $optionString = self::getOptions($settings);
-        
-        $extidsString = implode(" -i ", array_map(function($e) {
-           return "\"$e\"";  
-        }, explode(",",$extids)));
-        
-        chdir($mwrootDir.'/deployment/tools');
-        $php = $this->phpExe;
-        if (Tools::isWindows()) {
-            $wshShell = new COM("WScript.Shell");
-            $runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --noask --outputformat html --nocheck --showOKHint -i $extidsString > \"$console_out\" 2>&1";
-            $oExec = $wshShell->Run("$runCommand", 7, false);
+		$unique_id = uniqid();
+		$filename = $unique_id.".log";
+		$logger = Logger::getInstance();
+		$logdir = $logger->getLogDir();
+		touch("$logdir/$filename");
 
-        } else {
-            $runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --noask --nocheck --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
-            $nullResult = `$runCommand &`;
-        }
-        return $filename;
-    }
+		$console_out = "$logdir/$filename.console_out";
+
+		$settings = json_decode($settings);
+		$optionString = self::getOptions($settings);
+
+		$extidsString = implode(" -i ", array_map(function($e) {
+			return "\"$e\"";
+		}, explode(",",$extids)));
+
+		chdir($mwrootDir.'/deployment/tools');
+		$php = $this->phpExe;
+		if (Tools::isWindows()) {
+			$wshShell = new COM("WScript.Shell");
+			$runCommand = "cmd $this->keepCMDWindow  ".$this->quotePathForWindowsCMD($php)." \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --options $optionString --noask --outputformat html --nocheck --showOKHint -i $extidsString > \"$console_out\" 2>&1";
+			$oExec = $wshShell->Run("$runCommand", 7, false);
+
+		} else {
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --noask --nocheck --showOKHint -i \"$extid\" > \"$console_out\" 2>&1";
+			$nullResult = `$runCommand &`;
+		}
+		return $filename;
+	}
 
 	public function deinstall($extid, $settings) {
 		global $mwrootDir, $dfgOut;
@@ -339,7 +341,7 @@ class DFCommandInterface {
 
 		$settings = json_decode($settings);
 		$optionString = self::getOptions($settings);
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -391,10 +393,10 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-		
+
 		$settings = json_decode($settings);
 		$optionString = self::getOptions($settings);
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -440,10 +442,10 @@ class DFCommandInterface {
 		touch("$logdir/$filename");
 
 		$console_out = "$logdir/$filename.console_out";
-		
+
 		$settings = json_decode($settings);
 		$optionString = self::getOptions($settings);
-		
+
 		chdir($mwrootDir.'/deployment/tools');
 		$php = $this->phpExe;
 		if (Tools::isWindows()) {
@@ -795,49 +797,67 @@ class DFCommandInterface {
 		$result[] = self::getOption($settings, 'df_watsettings_overwrite_always');
 		$result[] = self::getOption($settings, 'df_watsettings_merge_with_other_bundle');
 		$result[] = self::getOption($settings, 'df_watsettings_apply_patches');
+		$result[] = self::getOption($settings, 'df_watsettings_install_optionals');
+		$result[] = self::getOption($settings, 'df_watsettings_deinstall_dependant');
 		$result[] = self::getOption($settings, 'df_watsettings_create_restorepoints');
 		$result[] = self::getOption($settings, 'df_watsettings_hidden_annotations');
 		$result[] = self::getOption($settings, 'df_watsettings_use_namespaces');
 		return implode(",", $result);
 	}
-	
+
+	private static function getOptionsAsArray($settings) {
+		$temp = array();
+		$result = array();
+		$temp[] = self::getOption($settings, 'df_watsettings_overwrite_always');
+		$temp[] = self::getOption($settings, 'df_watsettings_merge_with_other_bundle');
+		$temp[] = self::getOption($settings, 'df_watsettings_apply_patches');
+		$temp[] = self::getOption($settings, 'df_watsettings_install_optionals');
+		$temp[] = self::getOption($settings, 'df_watsettings_deinstall_dependant');
+		$temp[] = self::getOption($settings, 'df_watsettings_create_restorepoints');
+		$temp[] = self::getOption($settings, 'df_watsettings_hidden_annotations');
+		$temp[] = self::getOption($settings, 'df_watsettings_use_namespaces');
+		foreach($temp as $option) {
+			$parts = explode("=", $option);
+			 $result[$parts[0]] = ($parts[1] === "true");
+		}
+		return $result;
+	}
+
 	/**
 	 * Returns state of option as a string.
-	 * 
+	 *
 	 * @param object $settings Settings object (de-serialized from JSON)
 	 * @param string $option
 	 */
 	private static function getOption($settings, $option) {
 		return (property_exists($settings, $option) && $settings->$option == "true") ? "$option=true" : "$option=false";
 	}
-	
-    private static function makeExtensionListUnique($extensionsToInstall) {
-    	
-    	$compareFunction = function($e1, $e2) {
-             list($id1, $version1, $patchlevel1) = $e1;
-             list($id2, $version2, $patchlevel2) = $e2;
-             return strcmp($id1, $id2) 
-                    && strcmp($version1, $version2) 
-                    && strcmp($patchlevel1, $patchlevel2);
-        };
-        
-        usort($extensionsToInstall, $compareFunction);
-        
-        // eliminate doubles
-        $result = array();
-        $last = reset($extensionsToInstall);
-        if ($last !== false) $result[] = $last;
-        for($i = 1, $n = count($extensionsToInstall); $i < $n; $i++ ) {
-            if ($compareFunction($extensionsToInstall[$i], $last)) {
-                $titles[$i] = NULL;
-                continue;
-            }
-            $last = $extensionsToInstall[$i];
-            $result[] = $extensionsToInstall[$i];
-        }
 
-        return $result;
-    }
+	private static function makeExtensionListUnique($extensionsToInstall) {
+			
+		$compareFunction = function($e1, $e2) {
+			list($id1, $version1, $patchlevel1) = $e1;
+			list($id2, $version2, $patchlevel2) = $e2;
+			return strcmp($id1.$version1.$patchlevel1, $id2.$version2.$patchlevel2);
+		};
+
+		usort($extensionsToInstall, $compareFunction);
+
+		// eliminate doubles
+		$result = array();
+		$last = reset($extensionsToInstall);
+		if ($last !== false) $result[] = $last;
+		for($i = 1, $n = count($extensionsToInstall); $i < $n; $i++ ) {
+			 if ($compareFunction($extensionsToInstall[$i], $last) === 0) {
+				$titles[$i] = NULL;
+				continue;
+			}
+			$last = $extensionsToInstall[$i];
+			$result[] = $extensionsToInstall[$i];
+		}
+
+		return $result;
+	}
 
 	/**
 	 * Special quoting for cmd /c  ....

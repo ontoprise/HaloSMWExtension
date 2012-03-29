@@ -493,7 +493,7 @@ class PackageRepository {
 		// read root dir and extensions dir for deploy descriptors
 		self::readDirectoryForDD($ext_dir);
 		self::readDirectoryForDD($ext_dir."extensions");
-		self::readDirectoryForDD(Tools::getProgramDir()."/Ontoprise");
+		//self::readDirectoryForDD(Tools::getProgramDir()."/Ontoprise");
 
 		// add non public apps
 		$nonPublicAppPaths = Tools::getNonPublicAppPath($ext_dir);
@@ -558,7 +558,7 @@ class PackageRepository {
 
 		self::readDirectoryForDDToInitialize($ext_dir);
 		self::readDirectoryForDDToInitialize($ext_dir."extensions");
-		self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
+		//self::readDirectoryForDDToInitialize(Tools::getProgramDir()."/Ontoprise");
 
 		// collect external apps
 		self::readExternalAppsForDDToInitialize($ext_dir);

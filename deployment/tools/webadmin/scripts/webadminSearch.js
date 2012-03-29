@@ -397,12 +397,14 @@ $(document)
 																			+ "-"
 																			+ version);
 														});
-
+										var globalSettings = $
+										.toJSON($.webAdmin.settings
+												.getSettings());
 										var url = wgServer
 												+ wgScriptPath
 												+ "/deployment/tools/webadmin/index.php?rs=getAllDependencies&rsargs[]="
 												+ encodeURIComponent(selectedExtensionsToInstall
-														.join(","));
+														.join(","))+"&rsargs[]="+encodeURIComponent(globalSettings);
 
 										var callbackForExtensions = function(
 												xhr, status) {
