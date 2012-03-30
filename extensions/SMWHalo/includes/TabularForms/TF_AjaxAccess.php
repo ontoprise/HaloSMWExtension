@@ -35,7 +35,7 @@ $wgAjaxExportList[] = 'tff_getFilteredQueryResult';
 /*
  * Called by UI in order to load a tabular form
  */
-function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId, $currentFilterString){
+function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId, $currentFilterString, $currentLimit, $currentOffset){
 	$querySerialization = json_decode($querySerialization, true);
 
 	$queryString = '';
@@ -48,7 +48,15 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId, $cur
 
 		//Replace strange encoding
 		$queryString = str_replace('&nbsp;', ' ', $queryString);
-			
+
+		//deal with current limits and offsets
+		if($currentLimit != -1){
+			$queryParams['limit'] = $currentLimit; 
+		}
+		if($currentOffset != -1){
+			$queryParams['offset'] = $currentOffset; 
+		}
+		
 		$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
 		$queryParams[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;
 			
@@ -67,7 +75,15 @@ function tff_getTabularForm($querySerialization, $isSPARQL, $tabularFormId, $cur
 			$querySerialization, $queryString, $queryParams, $printRequests);
 
 		$queryString = $filterQueryString;	
-			
+
+		//deal with current limits and offsets
+		if($currentLimit != -1){
+			$queryParams['limit'] = $currentLimit; 
+		}
+		if($currentOffset != -1){
+			$queryParams['offset'] = $currentOffset; 
+		}
+		
 		SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
 		$params = SMWQueryProcessor::getProcessedParams(
 			$queryParams, $printRequests);	
@@ -520,47 +536,4 @@ function tff_checkAnnotationValues($annotationName, $annotationLabel, $annotatio
 
 	return '--##starttf##--' . $result . '--##endtf##--';
 }
-
-function tff_getFilteredQueryResult($filters, $querySerialization){
-	
-	$querySerialization = json_decode($querySerialization, true);
-	
-	$queryParts = TFQueryAnalyser::getDisjunctivelyConnectedQueryStringParts($querySerialization);
-	
-	$filterQueryString = '';
-	foreach($queryParts as $part){
-		$filterQueryString .= ' '.$part.' '.$filters;
-	}
-	
-	//todo: make sure that filters do not appear for sparql queries
-
-	$queryString = '';
-	$queryParams = array();
-	$printRequests = array();
-
-	SMWQueryProcessor::processFunctionParams(
-		$querySerialization, $queryString, $queryParams, $printRequests);
-		
-	$queryString = $filterQueryString;
-	
-	$queryParams[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
-		
-	SMWQueryProcessor::addThisPrintout(  $printRequests, $queryParams );
-	$params = SMWQueryProcessor::getProcessedParams(
-		$queryParams, $printRequests);	
-
-	$params[TF_SHOW_AJAX_LOADER_HTML_PARAM] = 'false';
-	$params[TF_TABULAR_FORM_ID_PARAM] = $tabularFormId;
-
-	$result = SMWQueryProcessor::getResultFromQueryString
-		( $queryString, $params, $printRequests, 0);
-	
-	$result = array('filteredQueryResult' => $result);
-	
-	$result = json_encode($result);
-
-	return '--##starttf##--' . $result . '--##endtf##--';
-}
-
-
 

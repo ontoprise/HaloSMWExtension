@@ -17,6 +17,8 @@
  *
  */
 
+//todo: filtering should only be available for #ask
+
 
 /*
  * Query printer which displays a tabular form
@@ -173,6 +175,7 @@ class TFTabularFormData {
 	private $writeProtectedAnnotations = array();
 	private $annotationQueryConditions = array();
 	private $addInstanceBlockers = array();
+	private $tabularFormId;
 
 	public function __construct($queryResult, $queryParams, $linker, $hasFurtherResults){
 		$this->queryResult = $queryResult;
@@ -180,7 +183,7 @@ class TFTabularFormData {
 		$this->queryParams = $queryParams;
 		$this->linker = $linker;
 		$this->hasFurtherResults = $hasFurtherResults;
-
+		
 		if($this->queryResult instanceof SMWHaloQueryResult &&
 		$this->queryResult->getQuery() instanceof SMWSPARQLQuery && !$this->queryResult->getQuery()->fromASK){
 			$this->isSPARQLQuery = true;
@@ -284,6 +287,8 @@ class TFTabularFormData {
 	 */
 	public function getTabularFormHTML($tabularFormId){
 
+		$this->tabularFormId = $tabularFormId;
+		
 		//this must be done since we use the first print request as subject column
 		//in the SPARQL case
 		if($this->isSPARQLQuery){
@@ -309,7 +314,20 @@ class TFTabularFormData {
 
 		$html = '';
 
-		$html .= '<table class="tabf_in_view_mode" border="0" cellspacing="0" cellpadding="0" width="100%">';
+		$html .= '<table class="tabf_in_view_mode" border="0" cellspacing="0" cellpadding="0" width="100% "';
+		$offset = 0;
+		if(array_key_exists('offset', $this->queryParams)){
+			$offset = $this->queryParams['offset'];
+		}
+		$html .= ' offset="'.$offset.'" ';
+		
+		//todo: what is the default limit
+		$limit = 20;
+		if(array_key_exists('limit', $this->queryParams)){
+			$limit = $this->queryParams['limit'];
+		}
+		$html .= ' limit="'.$limit.'" ';
+		$html .= '>';
 
 		$html .= $this->addTableHeaderHTML();
 
@@ -851,27 +869,53 @@ class TFTabularFormData {
 
 		$html .= '<td colspan="'.$colSpan.'" style="vertical-align: top">';
 
+		$html .= '<span class="tabf_further_results">';
+		
+		//todo language
+		
+		//show further results widget
+		$offset = 0;
+		if(array_key_exists('offset', $this->queryParams)){
+			$offset = $this->queryParams['offset']*1;
+		}
+		if($offset > 0){
+			$html .= '<a href="javascript:tf.showPrevious(\''.$this->tabularFormId.'\');">Previous</a>';
+		} else {
+			$html .= '<b>Previous</b>';
+		}
+		
+		$html .= '&nbsp;&nbsp;<b>Results '.$offset.' - '.(count($this->formRowsData)+$offset).'</b>&nbsp;&nbsp;';
+			
+		if($this->hasFurtherResults){
+			$html .= '<a href="javascript:tf.showNext(\''.$this->tabularFormId.'\');">Next</a>';
+		} else {
+			$html .= '<b>Next</b>';	
+		}
+			
+		//todo: which is default limit
+		$limit = 20;
+		if(array_key_exists('limit', $this->queryParams)){
+			$limit = $this->queryParams['limit']*1;
+		}
+				
+		$preConfiguredLimits = array(20, 50, 100, 250, 500);
+		$html .= '<span>&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;';
+		foreach($preConfiguredLimits as $key => $pcLimit){
+			if($limit == $pcLimit){
+				$preConfiguredLimits[$key] = '<b>'.$pcLimit.'</b>';
+			} else {
+				$preConfiguredLimits[$key] = '<a href="javascript:tf.changeLimit('.$pcLimit.', \''.$this->tabularFormId.'\');">'.$pcLimit.'</a>';
+			}
+		}
+		$delimiter = '<span>&nbsp;|&nbsp;</span>';
+		$html .= implode($delimiter, $preConfiguredLimits);
+		$html .= '&nbsp;)</span>';
+		
+		$html .= '</span>';
+		
 		$saveColSpan = 0;
 		$html .= '<table style="float: right">';
 		$html .= '<tr>';
-
-		if ( $this->hasFurtherResults){
-			$link = $this->queryResult->getQueryLink();
-			$link->setParameter('tabularform', 'format');
-
-			//add template parameter printrequests
-			foreach($this->queryParams as $param => $label){
-				if($param[0] == '#'){
-					$link->setParameter($label, $param);
-				}
-			}
-
-			$html .= '<td>';
-			$html .= '<span class="tabf_further_results" width="100%">'.$link->getText( $this->outputMode, $this->linker).'</span>';
-			$html .= '</td>';
-
-			$saveColSpan += 1;
-		}
 
 		if($this->enableInstanceAdd){
 			$html .= '<td style="display: none">';

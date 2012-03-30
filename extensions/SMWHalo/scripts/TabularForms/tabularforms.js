@@ -27,7 +27,7 @@ var TF = Class.create({
 	 */
 	loadForms : function(){
 		jQuery('.tabf_container').each( function (){
-			tf.loadForm(this);
+			tf.loadForm(this, true);
 		});
 	},
 	
@@ -37,21 +37,30 @@ var TF = Class.create({
 	 * Method is called on page load and when someone
 	 * presses the refresh button of a tabular form.
 	 */
-	loadForm : function(container){
-		jQuery('.tabf_table_container', container).css('display', 'none');
-		jQuery('.tabf_loader', container).css('display', 'table', container);
+	loadForm : function(container, showPending){
+		if(showPending){
+			jQuery('.tabf_table_container', container).css('display', 'none');
+			jQuery('.tabf_loader', container).css('display', 'table', container);
+		}
 		
 		var querySerialization = jQuery('.tabf_query_serialization', container).html();
 		var tabularFormId = jQuery(container).attr('id');
 		var isSPARQL = jQuery('.tabf_query_serialization', container).attr('isSPARQL');
 		var currentFilterString = tf.getFilterString(container);
 		
+		var currentOffset = -1;
+		var currentLimit = -1;
+		if(jQuery('.tabf_table_container > table', container).html() != null){
+			currentOffset = jQuery('.tabf_table_container > table', container).attr('offset');
+			currentLimit = jQuery('.tabf_table_container > table', container).attr('limit');
+		}
+
 		var url = wgServer + wgScriptPath + "/index.php";
 		jQuery.ajax({ url:  url, 
 			data: {
 				'action' : 'ajax',
 				'rs' : 'tff_getTabularForm',
-				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId, currentFilterString]
+				'rsargs[]' : [querySerialization, isSPARQL, tabularFormId, currentFilterString, currentLimit, currentOffset]
 			},
 			success: tf.displayLoadedForm
 		});
@@ -72,11 +81,13 @@ var TF = Class.create({
 			jQuery('.tabf_table_container', container).html(data.result);
 		} else  {
 			jQuery('.tabf_table_row', container).attr('delete-row', 'true');
-			
-			jQuery('.tf-table-header').after(jQuery('.tabf_table_row', data.result));
-			
+			jQuery('.tf-table-header', container).after(jQuery('.tabf_table_row', data.result));
 			jQuery('.tabf_table_row[delete-row="true"]', container).remove();
-	
+			
+			jQuery('.tabf_further_results', container).attr('delete-row', 'true');
+			jQuery('.tabf_further_results', container).after(jQuery('.tabf_further_results', data.result));
+			jQuery('.tabf_further_results[delete-row = "true"]', container).remove();
+
 			tf.cleanupNotificationSystem(container);
 		}
 		
@@ -154,7 +165,7 @@ var TF = Class.create({
 		
 		jQuery('#' + tabularFormId).attr('isInEditMode' , 'false');
 		
-		//tf.switchToViewMode(tabularFormId);
+		tf.initializeLoadedForm(jQuery('#' + tabularFormId));
 		
 		tf.disableFiltering(jQuery('#' + tabularFormId), false);
 	},
@@ -554,7 +565,7 @@ var TF = Class.create({
 	 */
 	refreshForm : function(containerId){
 		var container = jQuery('#' + containerId);
-		tf.loadForm(container);
+		tf.loadForm(container, true);
 	},
 	
 	/*
@@ -779,7 +790,7 @@ var TF = Class.create({
 		
 		jQuery(container).get(0).lostInstances = data.result;
 		
-		tf.loadForm(container);
+		tf.loadForm(container, true);
 	},
 	
 	/*
@@ -1603,35 +1614,10 @@ var TF = Class.create({
 			
 			window.setTimeout(function() {
 				if(tf.filterString == currentFilterString){
-					tf.applyFilters(container);
+					tf.loadForm(container, false);
 				}
 			}, 750);
 		}
-	},
-	
-	applyFilters : function(container){
-		var querySerialization = jQuery('.tabf_query_serialization', container).html();
-		
-		var url = wgServer + wgScriptPath + "/index.php";
-		jQuery.ajax({ url:  url, 
-			data: {
-				'action' : 'ajax',
-				'rs' : 'tff_getFilteredQueryResult',
-				'rsargs[]' : [tf.filterString, querySerialization]
-			},
-			success: function(data){
-				data = data.substr(data.indexOf('--##starttf##--') + 15, data.indexOf('--##endtf##--') - data.indexOf('--##starttf##--') - 15); 
-				data = jQuery.parseJSON(data);
-				
-				jQuery('.tabf_table_row', container).attr('delete-row', 'true');
-				
-				jQuery('.tf-table-header').after(jQuery('.tabf_table_row', data.filteredQueryResult));
-				
-				jQuery('.tabf_table_row[delete-row="true"]', container).remove();
-				
-				tf.initializeLoadedForm(container);
-			}
-		});	
 	},
 	
 	disableFiltering : function(container, disable){
@@ -1676,7 +1662,32 @@ var TF = Class.create({
 		
 		jQuery('.tabf_notifications ol > li > li', container).remove();		
 
-	}
+	},
+	
+	changeLimit : function(limit, tabfId){
+		var container = jQuery('#' + tabfId);
+		jQuery('.tabf_table_container > table', container).attr('limit', limit);
+		tf.loadForm(container, false);
+	},
+	
+	showNext : function(tabfId){
+		var container = jQuery('#' + tabfId);
+		jQuery('.tabf_table_container > table', container).attr('offset', 
+			1*jQuery('.tabf_table_container > table', container).attr('offset')
+			+ 1*jQuery('.tabf_table_container > table', container).attr('limit'));
+		tf.loadForm(container, false);
+	},
+	
+	showPrevious : function(tabfId){
+		var container = jQuery('#' + tabfId);
+		var newOffset = 1*jQuery('.tabf_table_container > table', container).attr('offset')
+			- 1*jQuery('.tabf_table_container > table', container).attr('limit')
+		if(newOffset < 0){
+			newOffset = 0;
+		}
+		jQuery('.tabf_table_container > table', container).attr('offset', newOffset);
+		tf.loadForm(container, false);
+	},
 	
 });
 
