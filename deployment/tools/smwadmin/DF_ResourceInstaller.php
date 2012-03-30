@@ -21,7 +21,7 @@ global $rootDir;
 require_once($rootDir.'/../maintenance/commandLine.inc' );
 require_once($rootDir.'/io/import/DF_DeployWikiBundleImporter.php');
 require_once($rootDir.'/io/import/DF_BackupReader.php');
-require_once($rootDir.'/io//DF_BundleTools.php');
+require_once($rootDir.'/io/DF_BundleTools.php');
 
 /**
  * @file
