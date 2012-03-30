@@ -59,17 +59,17 @@ CKEDITOR.editorConfig = function( config )
   }
 
   config.toolbar_Wiki = [
-  ['Styles','Format','Font','FontSize'],
+  ['Format','Font','FontSize'],
   ['Bold','Italic','Underline'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
   ['NumberedList','BulletedList'],
+  ['Link','Unlink'],
   ['TextColor','BGColor'],
   ['Maximize'],
   '/',
   ['Source'],
   ['PasteText','PasteFromWord', '-','Find','Replace'],
-  ['Strike', 'Subscript','Superscript', '-', 'Blockquote', 'RemoveFormat'],
-  ['Link','Unlink'],
+  ['Strike', 'Subscript','Superscript', '-', 'Blockquote', 'RemoveFormat'],  
   ['Undo','Redo'],
   ['Image', rmButton, 'Table', 'HorizontalRule', 'SpecialChar'],
   ['MWSpecialTags', 'MWTemplate', 'MWSignature'],
@@ -98,7 +98,8 @@ CKEDITOR.editorConfig = function( config )
   //    ];
   config.extraPlugins = extraPlugins + ',autogrow';
   config.height = config.autoGrow_minHeight = '300';
-//  config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
+  config.autoGrow_onStartup = true;
+  config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
 
   config.WikiSignature = '--~~~~';
 

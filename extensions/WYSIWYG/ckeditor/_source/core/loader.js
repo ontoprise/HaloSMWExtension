@@ -105,7 +105,7 @@ if ( !CKEDITOR.loader )
 			return path;
 		})();
 
-//		var timestamp = 'B49E5BQ';
+		var timestamp = 'B49E5BQ';
 
 		var getUrl = function( resource )
 		{
@@ -113,9 +113,9 @@ if ( !CKEDITOR.loader )
 				return CKEDITOR.getUrl( resource );
 
       return basePath + resource;
-//			return basePath + resource +
-//				( resource.indexOf( '?' ) >= 0 ? '&' : '?' ) +
-//				't=' + timestamp;
+			return basePath + resource +
+				( resource.indexOf( '?' ) >= 0 ? '&' : '?' ) +
+				't=' + timestamp;
 		};
 
 		var pendingLoad = [];

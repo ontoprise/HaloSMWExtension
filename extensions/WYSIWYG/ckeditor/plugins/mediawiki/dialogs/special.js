@@ -56,7 +56,7 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                 wgCKeditorMagicWords = window.parent.wgCKeditorMagicWords || window.parent.parent.wgCKeditorMagicWords;
 
                 content.Trim();
-                content = content.replace(/\r?\n/g, '<br fckLR="true"/>');
+                content = content.replace(/\r?\n/g, 'fckLR');
                 
                 // check for a tag
                 if (el = content.match(/^<([\w-]+)>(.*?)<\/([\w-]+)>$/)) {
@@ -181,7 +181,7 @@ CKEDITOR.dialog.add( 'MWSpecialTags', function( editor ) {
                     element = editor.restoreRealElement( this.fakeObj );
                     selection.selectElement( this.fakeObj );
                     var content = '',
-                    inner = element.getHtml().replace(/_$/, '').replace(/<br\s+fckLR="true"\/?>/gi, '\r\n');
+                    inner = element.getHtml().replace(/_$/, '').replace(/fckLR/gi, '\r\n');
                     if ( element.getAttribute( 'class' ) == 'fck_mw_special' ) {
                         var tagName = element.getAttribute('_fck_mw_tagname') || '',
                         tagType = element.getAttribute('_fck_mw_tagtype') || '';

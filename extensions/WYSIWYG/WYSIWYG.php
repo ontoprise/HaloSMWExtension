@@ -139,7 +139,7 @@ $wgHooks['GetLocalURL'][]                 = 'CKeditor_MediaWiki::onGetLocalURL';
 
 
 // Defaults for new preferences options
-$wgDefaultUserOptions['riched_use_toggle'] = 1;
+$wgDefaultUserOptions['riched_use_toggle'] = 0;
 $wgDefaultUserOptions['cke_show'] = 'richeditor';
 
 if (defined('SMW_HALO_VERSION')) {
