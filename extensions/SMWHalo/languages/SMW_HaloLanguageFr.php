@@ -343,7 +343,8 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	// Tabular Forms
 	'smw_tf_paramdesc_add'		=> 'L\'utilisateur est autorisé à ajouter de nouvelles instances pour le résultat',
 	'smw_tf_paramdesc_delete'	=> 'L\'utilisateur est autorisé à supprimer des instances du résultat',
-	'smw_tf_paramdesc_use_silent_annotation' => "Les formulaires de tableaux utiliseront le modèle d\'annotations silencieuses pour créer de nouvelles annotations.",
+	'smw_tf_paramdesc_filtering'	=> 'Enable filtering.',
+	'smw_tf_paramdesc_expertmode'	=> 'Disable view mode.',
 
 	'tabf_load_msg' => "Chargement des formulaires de tableaux.",
 
