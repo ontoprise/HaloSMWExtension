@@ -754,6 +754,114 @@ class DFCommandInterface {
 		$bundleFileName = Tools::makeFileName($bundleID);
 		return json_encode($this->exportBundle($bundleID, $bundleExportDir."/$bundleFileName.zip"));
 	}
+	
+	public function getProfilingLog() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+            $homeDir = DF_Config::$settings['df_homedir'];
+        } else {
+            $homeDir = Tools::getHomeDir();
+            if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+        }
+        if (!is_writable($homeDir)) {
+            throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+        }
+        $wikiname = DF_Config::$df_wikiName;
+        $loggingdir = "$homeDir/$wikiname/df_profiling";
+        $logFile = "$loggingdir/$wikiname-debug_log.txt";
+        if (!file_exists($logFile)) {
+        	throw new Exception("Log file does not exist");
+        }
+        return file_get_contents($logFile);
+	}
+
+	public function getProfilingState() {
+		global $mwrootDir;
+		return file_exists("$mwrootDir/StartProfiler.php") ? "true" : "false";
+	}
+
+	public function switchProfiling($enable) {
+		global $mwrootDir;
+	 if ($enable === "false") {
+	 	if (file_exists("$mwrootDir/StartProfiler.php")) {
+	 		rename("$mwrootDir/StartProfiler.php", "$mwrootDir/StartProfiler.sample");
+	 		return;
+	 	}
+	 	throw new Exception("Can not disable profiling");
+	 } else
+		if ($enable === "true"){
+			if (file_exists("$mwrootDir/StartProfiler.sample")) {
+				$result = rename("$mwrootDir/StartProfiler.sample", "$mwrootDir/StartProfiler.php");
+				if ($result === false) {
+					throw new Exception("Can not enable profiling. Is StartProfiler.sample renamable?");
+				}
+				// activate profiling
+				$code = <<<ENDS
+<?php
+require_once(  dirname(__FILE__).'/includes/Profiler.php' );
+\$wgProfiler = new Profiler;
+ENDS;
+				$handle = fopen("$mwrootDir/StartProfiler.php", "w");
+				fwrite($handle, $code);
+				fclose($handle);
+				$this->addProfilingConfiguration();
+				return;
+			}
+			throw new Exception("Can not enable profiling");
+		}
+	}
+
+	private function addProfilingConfiguration() {
+		global $mwrootDir;
+		if (!file_exists("$mwrootDir/LocalSettings.php")) {
+			throw new Exception("No LocalSettings.php found!");
+		}
+		$content = file_get_contents("$mwrootDir/LocalSettings.php");
+		if (strpos($content, "/*profiling-conf-start*/") === false) {
+			$content .= "\n".$this->getProfilerConfiguration();
+			$handle = fopen("$mwrootDir/LocalSettings.php", "w");
+			fwrite($handle, $content);
+			fclose($handle);
+		}
+	}
+
+	private function getProfilerConfiguration() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$loggingdir = "$homeDir/$wikiname/df_profiling";
+        Tools::mkpath($loggingdir);
+        
+		$lsData = <<<ENDS
+/*profiling-conf-start*/
+		\$wgDebugLogFile = "$loggingdir/$wikiname-debug_log.txt";
+// Only record profiling info for pages that took longer than this
+		\$wgProfileLimit = 0.0;
+// Don't put non-profiling info into log file
+		\$wgProfileOnly = true;
+// Log sums from profiling into "profiling" table in db
+		\$wgProfileToDatabase = false;
+// If true, print a raw call tree instead of per-function report
+		\$wgProfileCallTree = false;
+// Should application server host be put into profiling table
+		\$wgProfilePerHost = false;
+
+// Detects non-matching wfProfileIn/wfProfileOut calls
+		\$wgDebugProfiling = false;
+// Output debug message on every wfProfileIn/wfProfileOut
+		\$wgDebugFunctionEntry = 0;
+// Lots of debugging output from SquidUpdate.php
+		\$wgDebugSquid = false;
+/*profiling-conf-end*/
+ENDS;
+        return $lsData;
+	}
 
 	private function exportBundle($bundleID, $outputFile = "") {
 		global $mwrootDir;
@@ -818,7 +926,7 @@ class DFCommandInterface {
 		$temp[] = self::getOption($settings, 'df_watsettings_use_namespaces');
 		foreach($temp as $option) {
 			$parts = explode("=", $option);
-			 $result[$parts[0]] = ($parts[1] === "true");
+			$result[$parts[0]] = ($parts[1] === "true");
 		}
 		return $result;
 	}
@@ -848,7 +956,7 @@ class DFCommandInterface {
 		$last = reset($extensionsToInstall);
 		if ($last !== false) $result[] = $last;
 		for($i = 1, $n = count($extensionsToInstall); $i < $n; $i++ ) {
-			 if ($compareFunction($extensionsToInstall[$i], $last) === 0) {
+			if ($compareFunction($extensionsToInstall[$i], $last) === 0) {
 				$titles[$i] = NULL;
 				continue;
 			}

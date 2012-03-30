@@ -29,20 +29,68 @@ $(document).ready(
 		function(e) {
 
 			var profilingEnabled = false;
-			$('#df_enableprofiling').attr(
-					"value",
-					dfgWebAdminLanguage
-							.getMessage('df_webadmin_enableprofiling'));
 			
+			var url = wgServer
+			+ wgScriptPath
+			+ "/deployment/tools/webadmin/index.php?rs=getProfilingState";
+			$.ajax( {
+				url : url,
+				dataType : "json",
+				complete : function(xhr,
+						status) {
+					if (xhr.status == 200) {
+						profilingEnabled = (xhr.responseText == "true");
+						$('#df_enableprofiling').attr("disabled", false);
+						$('#df_enableprofiling').attr("value",
+								profilingEnabled ? dfgWebAdminLanguage
+										.getMessage('df_webadmin_disableprofiling') : dfgWebAdminLanguage
+										.getMessage('df_webadmin_enableprofiling'));
+						$('#df_webadmin_profiler_content textarea').attr("disabled", !profilingEnabled);
+						$('#df_webadmin_profiler_content input').attr("disabled", !profilingEnabled);
+					}
+				}
+			});
 
 			$('#df_enableprofiling').click(
 					function() {
-						$('#df_enableprofiling').attr("value",
-								profilingEnabled ? dfgWebAdminLanguage
-										.getMessage('df_webadmin_enableprofiling') : dfgWebAdminLanguage
-										.getMessage('df_webadmin_disableprofiling'));
-						$('#df_webadmin_profiler_content textarea').attr("disabled", profilingEnabled);
-						$('#df_webadmin_profiler_content input').attr("disabled", profilingEnabled);
-						profilingEnabled = !profilingEnabled;
-					});
-		});
+						
+						$('#df_enableprofiling').attr("disabled", true);
+						var url = wgServer
+						+ wgScriptPath
+						+ "/deployment/tools/webadmin/index.php?rs=switchProfiling&rsargs[]="
+						+ (profilingEnabled ? "false" : "true");
+						$.ajax( {
+							url : url,
+							dataType : "json",
+							complete : function(xhr,
+									status) {
+								$('#df_enableprofiling').attr("disabled", false);
+								if (xhr.status == 200) {
+									$('#df_enableprofiling').attr("value",
+											profilingEnabled ? dfgWebAdminLanguage
+													.getMessage('df_webadmin_enableprofiling') : dfgWebAdminLanguage
+													.getMessage('df_webadmin_disableprofiling'));
+									$('#df_webadmin_profiler_content textarea').attr("disabled", profilingEnabled);
+									$('#df_webadmin_profiler_content input').attr("disabled", profilingEnabled);
+									profilingEnabled = !profilingEnabled;
+								} else {
+									alert(xhr.responseText);
+								}
+						}
+						});
+			});
+			
+			$('#df_refreshprofilinglog').click(function() { 
+				var url = wgServer
+				+ wgScriptPath
+				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLog";
+				$.ajax( {
+					url : url,
+					dataType : "json",
+					complete : function(xhr,
+							status) {
+					$('#df_webadmin_profiler_content textarea').val(xhr.responseText);
+					}
+				});
+			});
+});

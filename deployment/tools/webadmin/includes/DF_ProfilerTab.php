@@ -50,7 +50,7 @@ class DFProfilerTab {
         global $dfgLang, $wgServer, $wgScriptPath;
 
         $html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_profilertab_description')."</div>";
-        $html .= "<input type=\"button\"  id=\"df_enableprofiling\"></input>";
+        $html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
         $html .= "<div id=\"df_webadmin_profiler_content\">";
         $html .= "<table>";
         $html .= "<tr><td>";
