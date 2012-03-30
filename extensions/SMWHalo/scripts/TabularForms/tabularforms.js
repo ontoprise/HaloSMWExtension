@@ -17,6 +17,8 @@
  */
 
 
+//todo: disable paging when tf is modified
+
 var TF = Class.create({
 
 	init: function(){ 
@@ -83,7 +85,8 @@ var TF = Class.create({
 			jQuery('.tabf_table_row', container).attr('delete-row', 'true');
 			jQuery('.tf-table-header', container).after(jQuery('.tabf_table_row', data.result));
 			jQuery('.tabf_table_row[delete-row="true"]', container).remove();
-			
+			jQuery('.tabf_new_row', container).remove();
+						
 			jQuery('.tabf_further_results', container).attr('delete-row', 'true');
 			jQuery('.tabf_further_results', container).after(jQuery('.tabf_further_results', data.result));
 			jQuery('.tabf_further_results[delete-row = "true"]', container).remove();
@@ -121,7 +124,8 @@ var TF = Class.create({
 		jQuery(' .tabf_table_container_cache', container).html(cache);
 		
 		//display edit mode again if this was the previous mode
-		if(jQuery(container).attr('isInEditMode') == 'true'){
+		if(jQuery(container).attr('isInEditMode') == 'true'
+				|| jQuery(container).attr('expertMode') == 'true'){
 			tf.switchToEditMode(jQuery(container).attr('id'));
 		}
 		
@@ -731,7 +735,12 @@ var TF = Class.create({
 		}
 		
 		if(tf.updateJobs == 0){
-			tf.searchForLostInstances(data.tabularFormId);
+			
+			if(jQuery('#' + data.tabularFormId).attr('expertMode') == 'true'){
+				tf.loadForm(jQuery('#' + data.tabularFormId));
+			} else {
+				tf.searchForLostInstances(data.tabularFormId);
+			}
 		}
 	},
 	
@@ -1406,6 +1415,10 @@ var TF = Class.create({
 	},
 	
 	addNotification : function(container, notificationClass, id, instanceId, message){
+		
+		if(jQuery(container).attr('expertMode') == 'true'){
+			return;
+		}
 	
 		jQuery("." + notificationClass, container).css('display', '');
 		
@@ -1427,6 +1440,10 @@ var TF = Class.create({
 	},
 	
 	deleteNotification : function(container, notificationClass, id){
+		
+		if(jQuery(container).attr('expertMode') == 'true'){
+			return;
+		}
 		
 		var found = false;
 		jQuery("." + notificationClass + ' ul li', container).each( function(){
@@ -1454,6 +1471,10 @@ var TF = Class.create({
 	
 	updateInstanceNameInNotifications : function(container, instanceId, newInstanceName){
 		
+		if(jQuery(container).attr('expertMode') == 'true'){
+			return;
+		}
+		
 		jQuery('.tabf_notifications ol > li', container).each(function(){
 			
 			jQuery('li', this).each(function(){
@@ -1477,6 +1498,10 @@ var TF = Class.create({
 	},
 	
 	hideNotificationsForInstance : function(container, instanceId, permanently){
+		
+		if(jQuery(container).attr('expertMode') == 'true'){
+			return;
+		}
 		
 		jQuery('.tabf_notifications ol > li', container).each(function(){
 			
@@ -1510,6 +1535,10 @@ var TF = Class.create({
 	},
 	
 	restoreNotificationsForInstance : function(container, instanceId){
+		
+		if(jQuery(container).attr('expertMode') == 'true'){
+			return;
+		}
 		
 		jQuery('.tabf_notifications ol > li', container).each(function(){
 			
@@ -1572,6 +1601,8 @@ var TF = Class.create({
 		
 		//show butttons
 		jQuery('.tabf_add_button', container).parent().css('display', '');
+		jQuery('.tabf_save_button', container).css('display', '');
+		jQuery('.tabf_save_button', container).parent().css('display', '');
 		jQuery('.tabf_save_button', container).parent().parent().css('display', '');
 		jQuery('.tabf_cancel_button', container).css('display', '');
 		jQuery('.tabf_edit_button', container).css('display', 'none');
@@ -1584,7 +1615,9 @@ var TF = Class.create({
 		jQuery('textarea', container).removeAttr('disabled');
 		
 		//display notification system
-		jQuery('.tabf_notification_system', container).css('display', '');
+		if(jQuery(container).attr('expertMode') != 'true'){
+			jQuery('.tabf_notification_system', container).css('display', '');
+		}
 		
 		//todo: instance lost messages should only be displayed in edit mode
 	},
@@ -1646,6 +1679,8 @@ var TF = Class.create({
 					val = ' [[' + jQuery(this).parent().parent().parent().attr('field-address') + '::' + cmp + val + ']] ';
 				} else if(type == 'category'){
 					val = ' [[Category:' + val + ']] ';	
+				} else if(type == 'instance'){
+					val = ' [[' + val + ']] ';	
 				}
 			}
 			currentFilterString += val;

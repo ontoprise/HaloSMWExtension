@@ -129,20 +129,23 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 
 	public function getParameters() {
 		$params = parent::getParameters();
+		$params[] = array( 'name' => 'enable filtering', 'type' => 'enumeration',
+			'description' => wfMsg( 'smw_tf_paramdesc_filtering' ),
+			'values' => array( 'true', 'false' ) );
+		$params[] = array( 'name' => 'expert mode', 'type' => 'enumeration',
+			'description' => wfMsg( 'smw_tf_paramdesc_expertmode' ),
+			'values' => array( 'true', 'false' ) );
 		$params[] = array( 'name' => 'enable add', 'type' => 'enumeration',
 			'description' => wfMsg( 'smw_tf_paramdesc_add' ),
 			'values' => array( 'true', 'false' ) );
 		$params[] = array( 'name' => 'enable delete', 'type' => 'enumeration',
 			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
 			'values' => array( 'true', 'false' ) );
-		$params[] = array( 'name' => 'use silent annotations template', 'type' => 'enumeration',
-			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
-			'values' => array( 'true', 'false' ) );
 		$params[] = array( 'name' => 'write protected annotations', 'type' => 'string',
 			'description' => wfMsg('tabf_parameter_write_protected_desc'));
 		$params[] = array( 'name' => 'instance name preload value', 'type' => 'string',
 			'description' => wfMsg('tabf_parameter_instance_preload_desc'));
-
+		
 		return $params;
 	}
 
@@ -218,7 +221,11 @@ class TFTabularFormData {
 
 		$html = '';
 
-		$html .= '<div id="tabf_container_'.$tfgTabularFormCount.'" class="tabf_container">';
+		$html .= '<div id="tabf_container_'.$tfgTabularFormCount.'" class="tabf_container" ';
+		if(array_key_exists('expert mode', $this->queryParams) && $this->queryParams['expert mode'] == 'true'){
+			$html .= ' expertMode="true" ';
+		}
+		$html .= '>';
 
 		global $smwgHaloScriptPath;
 		$html .= '<div class="tabf_loader">';
@@ -248,7 +255,7 @@ class TFTabularFormData {
 	 * Returns the query as an array
 	 */
 	private function getQuerySerialization(){
-		$query = array();
+		
 		foreach($this->queryParams as $param => $value){
 			if(is_array($value)){
 				$value = implode(',', $value);
@@ -629,7 +636,10 @@ class TFTabularFormData {
 		$html .= '<span>';
 		$html .= $this->subjectColumnLabel;
 		$html .= '</span>';
-		$html .= '<br/><br/>';
+		$html .= '<br/>';
+		if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){ 
+			$html .= '<input class="tf_filter_input wickEnabled" cmp-type="instance" style="width: 100%" constraints="ask: '.$this->queryResult->getQueryString().'"/>';
+		}
 		$html .= '</th>';
 
 		//add annotation columns
@@ -644,47 +654,49 @@ class TFTabularFormData {
 			$html .= '</span>';
 			
 			//add filter input
-			$html .= '<div style="min-width: 100%; max-width: 100%;vertical-align: bottom">';
-			
-			if(count($annotation['allows value']) > 0){
-				$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%; display: inline">';
-				$html .= '<option></option>';
-				foreach($annotation['allows value'] as $val){
-					$html .= '<option>'.$val.'</option>';
+			if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){
+				$html .= '<div style="min-width: 100%; max-width: 100%;vertical-align: bottom">';
+				
+				if(count($annotation['allows value']) > 0){
+					$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%; display: inline">';
+					$html .= '<option></option>';
+					foreach($annotation['allows value'] as $val){
+						$html .= '<option>'.$val.'</option>';
+					}
+					$html .= '</select>';
+				} else {
+					$type = $annotation['type'];
+					
+					$autocompletion = 'class="wickEnabled" constraints="annotation-value:'.$annotation['title'].'" ';
+					
+					switch($type){
+						case 'number' :
+						case 'date' :
+							$html .= '<nobr style="width: 100%">';
+							$html .= '<select class="tf_filter_input_helper" style="width: 15%; min-width: 35px"><option>=</option><option>&lt;</option><option>&gt;</option></select>';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="choose" type="text" style="width: 85%" '.$autocompletion.'/>';
+							$html .= '</nobr>';
+							break;
+						case 'boolean' :
+							$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%"><option></option><option>yes</option><option>no</option>';
+							break;
+						case 'page';
+						case 'string';
+						case 'text';
+						case 'url';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 100%" '.$autocompletion.'/>';
+							break;
+						case 'category';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="category" style="display: inline; width: 100%" constraints="namespace : category"/>';
+							break;
+						default:
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="=" style="width: 100%" '.$autocompletion.'/>';
+							break;
+					}
+					
 				}
-				$html .= '</select>';
-			} else {
-				$type = $annotation['type'];
-				
-				$autocompletion = 'class="wickEnabled" constraints="annotation-value:'.$annotation['title'].'" ';
-				
-				switch($type){
-					case 'number' :
-					case 'date' :
-						$html .= '<nobr style="width: 100%">';
-						$html .= '<select class="tf_filter_input_helper" style="width: 15%"><option>=</option><option>&lt;</option><option>&gt;</option></select>';
-						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="choose" type="text" style="width: 85%" '.$autocompletion.'/>';
-						$html .= '</nobr>';
-						break;
-					case 'boolean' :
-						$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%"><option></option><option>yes</option><option>no</option>';
-						break;
-					case 'page';
-					case 'string';
-					case 'text';
-					case 'url';
-						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 100%" '.$autocompletion.'/>';
-						break;
-					case 'category';
-						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="category" style="display: inline; width: 100%" constraints="namespace : category"/>';
-						break;
-					default:
-						$html .= '<input class="tf_filter_input wickEnabled" cmp-type="=" style="width: 100%" '.$autocompletion.'/>';
-						break;
-				}
-				
+				$html .= '</div>';
 			}
-			$html .= '</div>';
 			
 			//add query condition data
 			if(array_key_exists($annotation['title'], $this->annotationQueryConditions)){
@@ -717,7 +729,9 @@ class TFTabularFormData {
 				$html .= '</nobr>';
 
 				$html .= '</span>';
-				$html .= '<br/><br/>';
+				if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){
+					$html .= '<br/><br/>';
+				}
 				$html .= '</th>';
 			}
 		}
@@ -929,20 +943,32 @@ class TFTabularFormData {
 		$html .= '<input type="button" value="'.wfMsg('tabf_refresh_label').'" onclick="tf.refreshForm('."'".$tabularFormId."'".')"/>';
 		$html .= '</td>';
 		
+
+		if(!array_key_exists('expert mode', $this->queryParams) || $this->queryParams['expert mode'] != 'true'){
+			$html .= '<td>';
+			$html .= '<input class="tabf_cancel_button" type="button" value="Cancel" onclick="tf.cancelFormEdit('."'".$tabularFormId."'".')"/ style="display: none">';
+			$html .= '<input class="tabf_edit_button" type="button" value="Edit" onclick="tf.switchToEditMode('."'".$tabularFormId."'".')"/>';
+			$html .= '</td>';
+			$html .= '</tr>';
+			
+			$html .= '<tr style="display: none">';
+			$html .= ($saveColSpan > 0) ? '<td colspan="'.$saveColSpan.'"></td>' : '';
+			$html .= '<td style="text-align: right" colspan="2">';
+			
+			$html .= '<input class="tabf_save_button" disabled="disabled" type="button" value="'.wfMsg('tabf_save_label').'" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
 		
-		$html .= '<td>';
-		$html .= '<input class="tabf_cancel_button" type="button" value="Cancel" onclick="tf.cancelFormEdit('."'".$tabularFormId."'".')"/ style="display: none">';
-		$html .= '<input class="tabf_edit_button" type="button" value="Edit" onclick="tf.switchToEditMode('."'".$tabularFormId."'".')"/>';
-		$html .= '</td>';
-		$html .= '</tr>';
+			$html .= '</td>';
+			$html .= '</tr>';
+		
+		}else {
+			$html .= '<td><span>';
+			$html .= '<input class="tabf_save_button" disabled="disabled" type="button" value="'.wfMsg('tabf_save_label').'" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
+		
+			$html .= '</span></td>';
+			$html .= '</tr>';
+		}
 		
 		
-		$html .= '<tr style="display: none">';
-		$html .= ($saveColSpan > 0) ? '<td colspan="'.$saveColSpan.'"></td>' : '';
-		$html .= '<td style="text-align: right" colspan="2">';
-		$html .= '<input class="tabf_save_button" disabled="disabled" type="button" value="'.wfMsg('tabf_save_label').'" onclick="tf.saveFormData(event,'."'".$tabularFormId."'".')"/>';
-		$html .= '</td>';
-		$html .= '</tr>';
 
 		$html .= '</table>';
 
