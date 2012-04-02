@@ -405,6 +405,10 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'tabf_nc_icon_title_invalid_value' => "Certaines valeurs d'annotation de cette instance sont invalides.",
 	'tabf_nc_icon_title_save_error' => "Les changements de cette instance n'ont pas pu être appliqués parce qu'elle a été modifiée par quelqu'un d'autre entre-temps.",
 	
+	'tabf_paging_previous' => 'Previous',
+	'tabf_paging_next' => 'Next',
+	'tabf_paging_results' => 'Results',
+	
 	//--- fancy table result printer
 	'ftrp_warning' => "Des déclarations de remplacement invalides avec des proprétés inconnes ont été trouvées:",
 	);

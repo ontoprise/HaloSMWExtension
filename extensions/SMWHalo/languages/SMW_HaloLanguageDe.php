@@ -377,6 +377,10 @@ protected $smwUserMessages = array(
 	'tabf_nc_icon_title_invalid_value' => "einige Annotations-Werte dieser Instanz sind invalide. ",
 	'tabf_nc_icon_title_save_error' => "&Auml;nderungen an dieser Instanz konnten nicht gespeichert werden, da sie in der Zwischenzeit von jemand anderem ge&auml;ndert wurde.",
 	
+	'tabf_paging_previous' => 'Vorherige',
+	'tabf_paging_next' => 'N&auml;chste',
+	'tabf_paging_results' => 'Ergebnisse',
+
 	//--- fancy table result printer
 	'ftrp_warning' => "Es wurden ungültige replace-Anweisungen mit unbekannten Attributen gefunden:",
 
