@@ -26,6 +26,7 @@
  * Usage: php addBundle2Repository.php
  *                  -r <repository-dir>         The repository root directory
  *                  -b <bundle file or dir>     The bundle file or a directory containing bundle files
+ *                  --list <bundle-list>        Selects bundles from a bundle list 
  *                  --url <repository-url>      The download base URL
  *                  [--latest]                  Latest version?
  *                  [--mediawiki]               Include Mediawiki?
@@ -37,7 +38,7 @@
  *
  */
 if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-    die( "This script must be run from the command line\n" );
+	die( "This script must be run from the command line\n" );
 }
 
 global $rootDir;
@@ -60,6 +61,7 @@ $fileNamecontains = false;
 $transientID=false;
 $recursive=false;
 $mediawiki = false;
+$bundleListFilepath=false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-r => repository directory
@@ -71,6 +73,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	// -b => bundle file or directory containing bundles
 	if ($arg == '-b') {
 		$bundlePath = next($argv);
+		continue;
+	}
+
+	// --list => bundle list
+	if ($arg == '--list') {
+		$bundleListFilepath = next($argv);
 		continue;
 	}
 
@@ -116,8 +124,9 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 }
 
 
-if (!isset($repositoryDir) || (!(isset($bundlePath) || isset($mediawiki))) || !isset($repositoryURL)) {
+if (!isset($repositoryDir) || (!(isset($bundlePath) || isset($mediawiki)))) {
 	echo "\nUsage: php addBundle2Repository.php -r <repository-dir> -b <bundle file or dir> --url <repository-url>\n";
+	echo "\n       php addBundle2Repository.php -r <repository-dir> -b <bundle file or dir> --list <bundle list file> [--url <repository-url>]\n";
 	die(1);
 }
 
@@ -132,15 +141,47 @@ if (Tools::isWindows($os) && $latest) {
 // create binary path
 Tools::mkpath($repositoryDir."/bin");
 
-// read bundles and extract the deploy descriptors
-$descriptors = array();
-if (isset($bundlePath)) {
-	echo "\nExtract deploy descriptors";
-	$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains, $recursive);
-	echo "..done.";
-	if (count($descriptors) == 0) {
-		echo "\nWARNING: No bundles found in '$bundlePath'";
+$descriptors=array();
+// readbundleList
+if ($bundleListFilepath !== false && isset($bundlePath)) {
+	echo "\nRead from a bundle list...";
+	echo "\n$bundleListFilepath";
+	list($url, $bundleList) = getBundleList($bundleListFilepath);
+	if ($url != "" && !isset($repositoryURL)) {
+		$repositoryURL = $url;
 	}
+	foreach($bundleList as $b) {
+		echo "\nSearching deploy descriptor for $b...";
+		$dd = extractDeployDescriptors($bundlePath, $b, false);
+		if (count($dd) > 0) {
+			echo "found!";
+			$descriptors = array_merge($dd, $descriptors);
+		} else {
+			echo "NOT found!";
+		}
+	}
+	echo "...done.";
+
+} else {
+
+	// read bundles and extract the deploy descriptors
+	$descriptors = array();
+	if (isset($bundlePath)) {
+		echo "\nExtract deploy descriptors";
+		$descriptors = extractDeployDescriptors($bundlePath, $fileNamecontains, $recursive);
+		echo "..done.";
+
+	}
+}
+
+if (!isset($repositoryURL)) {
+	echo "\nERROR: No repository URL given.";
+    die(0);
+}
+
+if (count($descriptors) == 0) {
+	echo "\nWARNING: No bundles found in '$bundlePath'. Nothing to do.";
+	die(0);
 }
 
 // load existing repository
@@ -153,17 +194,17 @@ $extensionsNode = $nodeList->item(0);
 
 foreach($descriptors as $tuple) {
 	list($dd, $zipFilepath) = $tuple;
-    
-	// set fixed patchlevel if necessary 
+
+	// set fixed patchlevel if necessary
 	if (isset($fixedpatchlevel)) {
 		$dd = Tools::changeGlobalSection($dd, "patchlevel", $fixedpatchlevel);
 	}
-	
+
 	// 1. create extensions substructure
 	$id = $dd->getID();
 	$version = $dd->getVersion()->toVersionString();
 	$versionNoDots = str_replace(".","", $version);
-	
+
 	echo "\nCreate extension entry for $id";
 	Tools::mkpath($repositoryDir."/extensions/$id");
 
@@ -344,7 +385,7 @@ function extractDeployDescriptors($bundlePath, $fileNamecontains = false, $recur
 
 
 function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
-	
+
 	// find existing extension
 	$nodeList = $repoDoc->getElementsByTagName("extension");
 	$i=0;
@@ -407,5 +448,19 @@ function createRepositoryEntry($repoDoc, $dd, $repositoryURL) {
 	return array($newExt, $extAlreadyExists);
 }
 
-
+function getBundleList($bundleListFilepath) {
+	if (!file_exists($bundleListFilepath)) {
+		print "\nWARNING: $bundleListFilepath does not exist. Stop here.";
+		die(1);
+	}
+	$content = file_get_contents($bundleListFilepath);
+	$dom = simplexml_load_string($content);
+	$bundleNodes = $dom->xpath("//bundle");
+	$repositoryNode = $dom->xpath("//repository");
+	$repository = (string) $repositoryNode[0];
+	foreach($bundleNodes as $bundle) {
+		$bundleList[] = (string) $bundle;
+	}
+	return array($repository, $bundleList);
+}
 
