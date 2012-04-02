@@ -754,9 +754,42 @@ class DFCommandInterface {
 		$bundleFileName = Tools::makeFileName($bundleID);
 		return json_encode($this->exportBundle($bundleID, $bundleExportDir."/$bundleFileName.zip"));
 	}
-	
+
 	public function getProfilingLog() {
 		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$loggingdir = "$homeDir/$wikiname/df_profiling";
+		$logFile = "$loggingdir/$wikiname-debug_log.txt";
+		if (!file_exists($logFile)) {
+			throw new Exception("Log file does not exist");
+		}
+		global $wgScriptPath;
+		$sizeOfLog = filesize($logFile);
+		$handle = fopen($logFile, "r");
+		$i = 0;
+		do {
+			$i++;
+			fseek($handle, -16 * 1024 * $i, SEEK_END);
+			$text = fread($handle, 16 * 1024 * $i);
+		} while(strpos($text, "$wgScriptPath/index.php") === false || 16 * 1024 * $i > $sizeOfLog);
+		if (16 * 1024 * $i < $sizeOfLog) {
+            return substr($text, strpos($text, "$wgScriptPath/index.php"));			
+		} else {
+			return $text;
+		}
+	}
+	
+    public function downloadProfilingLog() {
+
+        if (array_key_exists('df_homedir', DF_Config::$settings)) {
             $homeDir = DF_Config::$settings['df_homedir'];
         } else {
             $homeDir = Tools::getHomeDir();
@@ -769,14 +802,24 @@ class DFCommandInterface {
         $loggingdir = "$homeDir/$wikiname/df_profiling";
         $logFile = "$loggingdir/$wikiname-debug_log.txt";
         if (!file_exists($logFile)) {
-        	throw new Exception("Log file does not exist");
+            throw new Exception("Log file does not exist");
         }
-        return file_get_contents($logFile);
-	}
+
+        header( 'Content-Encoding: identity' );
+        header( "Content-type: application/text;" );
+        header( "Content-disposition: attachment;filename=profilinglog.txt" );
+      
+        // write bundle
+        $handle = fopen($logFile, "rb");
+        while (!feof($handle)) {
+            print fread($handle, 1024*100);
+        }
+        fclose($handle);
+    }
 
 	public function getProfilingState() {
 		global $mwrootDir;
-		return file_exists("$mwrootDir/StartProfiler.php") ? "true" : "false";
+		return file_exists("$mwrootDir/StartProfiler.php") ? $this->getProfilingLog() : "false";
 	}
 
 	public function switchProfiling($enable) {
@@ -804,7 +847,7 @@ ENDS;
 				fwrite($handle, $code);
 				fclose($handle);
 				$this->addProfilingConfiguration();
-				return;
+				return $this->getProfilingLog();
 			}
 			throw new Exception("Can not enable profiling");
 		}
@@ -836,8 +879,8 @@ ENDS;
 		}
 		$wikiname = DF_Config::$df_wikiName;
 		$loggingdir = "$homeDir/$wikiname/df_profiling";
-        Tools::mkpath($loggingdir);
-        
+		Tools::mkpath($loggingdir);
+
 		$lsData = <<<ENDS
 /*profiling-conf-start*/
 		\$wgDebugLogFile = "$loggingdir/$wikiname-debug_log.txt";
@@ -860,7 +903,7 @@ ENDS;
 		\$wgDebugSquid = false;
 /*profiling-conf-end*/
 ENDS;
-        return $lsData;
+		return $lsData;
 	}
 
 	private function exportBundle($bundleID, $outputFile = "") {

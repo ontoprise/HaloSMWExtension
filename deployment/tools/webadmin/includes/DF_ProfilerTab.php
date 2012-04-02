@@ -27,42 +27,47 @@
  *
  */
 if (!defined("DF_WEBADMIN_TOOL")) {
-    die();
+	die();
 }
 
 
 class DFProfilerTab {
 
-    /**
-     * DFProfilerTab 
-     *
-     */
-    public function __construct() {
+	/**
+	 * DFProfilerTab
+	 *
+	 */
+	public function __construct() {
 
-    }
+	}
 
-    public function getTabName() {
-        global $dfgLang;
-        return $dfgLang->getLanguageString('df_webadmin_profilertab');
-    }
+	public function getTabName() {
+		global $dfgLang;
+		return $dfgLang->getLanguageString('df_webadmin_profilertab');
+	}
 
-    public function getHTML() {
-        global $dfgLang, $wgServer, $wgScriptPath;
+	public function getHTML() {
+		global $dfgLang, $wgServer, $wgScriptPath;
 
-        $html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_profilertab_description')."</div>";
-        $html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
-        $html .= "<div id=\"df_webadmin_profiler_content\">";
-        $html .= "<table>";
-        $html .= "<tr><td>";
-        $html .= "<textarea rows=\"20\" cols=\"80\" id=\"df_webadmin_profilerlog\" disabled=\"true\"></textarea>";
-        $html .= "<div><input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input></div>";
-        $html .= "</td><td>TODO: actions and aggregated data</td>";
-        $html .= "</tr>";
-        $html .= "</table>";
-        $html .= "</div>";
-       
-        return $html;
-    }
+		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_profilertab_description')."</div>";
+		$html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
+		$html .= "<div id=\"df_webadmin_profiler_content\">";
+		$html .= "<table>";
+		$html .= "<tr><td>";
+		$html .= "<textarea rows=\"20\" cols=\"160\" id=\"df_webadmin_profilerlog\" disabled=\"true\"></textarea>";
+		$html .= "<div><input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input>";
+		$html .= '<a id="df_profiler_downloadlog" href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
+                        '?action=ajax&rs=downloadProfilingLog">'.$dfgLang->getLanguageString('df_webadmin_download').'</a></div>';
+		$html .= "</td><td>TODO: actions and aggregated data</td>";
+		$html .= "</tr>";
+		$html .= "</table>";
 
-   
+		$html .= "</div>";
+		$html .= "<div id=\"df_webadmin_profiler_filtering\">";
+		$html .= $dfgLang->getLanguageString('df_webadmin_filter').": <input type=\"text\" id=\"df_profiler_filtering\"></input>";
+		$html .= "</div>";
+		return $html;
+	}
+
+	 
 }

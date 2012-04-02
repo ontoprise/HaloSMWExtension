@@ -29,6 +29,7 @@ $(document).ready(
 		function(e) {
 
 			var profilingEnabled = false;
+			var profilingLog = "";
 			
 			var url = wgServer
 			+ wgScriptPath
@@ -39,7 +40,11 @@ $(document).ready(
 				complete : function(xhr,
 						status) {
 					if (xhr.status == 200) {
-						profilingEnabled = (xhr.responseText == "true");
+						profilingEnabled = (xhr.responseText !== "false");
+						if (profilingEnabled) {
+							profilingLog = xhr.responseText;
+							$('#df_webadmin_profiler_content textarea').val(profilingLog);
+						}
 						$('#df_enableprofiling').attr("disabled", false);
 						$('#df_enableprofiling').attr("value",
 								profilingEnabled ? dfgWebAdminLanguage
@@ -66,6 +71,10 @@ $(document).ready(
 									status) {
 								$('#df_enableprofiling').attr("disabled", false);
 								if (xhr.status == 200) {
+									if (!profilingEnabled) {
+										profilingLog = xhr.responseText;
+										$('#df_webadmin_profiler_content textarea').val(profilingLog);
+									}
 									$('#df_enableprofiling').attr("value",
 											profilingEnabled ? dfgWebAdminLanguage
 													.getMessage('df_webadmin_enableprofiling') : dfgWebAdminLanguage
@@ -80,6 +89,7 @@ $(document).ready(
 						});
 			});
 			
+			
 			$('#df_refreshprofilinglog').click(function() { 
 				var url = wgServer
 				+ wgScriptPath
@@ -90,7 +100,21 @@ $(document).ready(
 					complete : function(xhr,
 							status) {
 					$('#df_webadmin_profiler_content textarea').val(xhr.responseText);
+					profilingLog = xhr.responseText;
 					}
 				});
+			});
+			
+			var timeout = null;
+			$('#df_profiler_filtering').keydown(function() {
+				if (timeout != null) clearTimeout(timeout);
+				timeout = setTimeout(function() { 
+					var searchFor = $('#df_profiler_filtering').val().toLowerCase();
+					var lines = profilingLog.split("\n");
+					var selectedLines = $.grep(lines, function(l, i) { 
+						return (l.toLowerCase().indexOf(searchFor) != -1);
+					});
+					$('#df_webadmin_profiler_content textarea').val(selectedLines.join("\n"));
+				}, 500);
 			});
 });

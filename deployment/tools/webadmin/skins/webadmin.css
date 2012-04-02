@@ -1,5 +1,18 @@
 @CHARSET "ISO-8859-1";
 
+#df_profiler_filtering {
+	margin-top: 5px;
+}
+
+#df_profiler_downloadlog {
+	margin-left: 5px;
+}
+	
+#df_webadmin_profilerlog {
+	font-size: 0.8em;
+	font-family: "Courier New", Courier, monospace 
+}
+
 #df_webadmin_profiler_actions {
 	
 }
