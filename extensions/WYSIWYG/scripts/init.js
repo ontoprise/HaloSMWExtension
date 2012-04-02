@@ -115,7 +115,8 @@
   }
 
   function createfloatingToolbar(ckeToolbar, editor){
-    var width = $('#cke_contents_' + editor.name).width() || ckeToolbar.css('width');
+    var textArea = $('#cke_contents_' + editor.name);
+    var width = textArea.width() || ckeToolbar.css('width');
     width += 'px';
     
     var height = parseInt(ckeToolbar.height(), 10) + 'px';
@@ -128,6 +129,10 @@
       'height' : height,
       'width' : width,
       'background-color' : 'white'
+    });
+
+    placeholder.click(function(){
+      textArea.children('iframe').focus();
     });
 
     ckeToolbar.addClass('cke_wrapper').css({

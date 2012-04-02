@@ -626,11 +626,6 @@ CKEDITOR.customprocessor.prototype =
 	 *            for human reading. Not all Data Processors may provide it.
 	 */
     toDataFormat : function( data, fixForBody ){
-        if (window.parent.wgCKeditorCurrentMode)
-            window.parent.wgCKeditorCurrentMode = 'source';
-        else if (window.parent.popup && window.parent.popup.parent.wgCKeditorCurrentMode)
-            window.parent.popup.parent.wgCKeditorCurrentMode = 'source';
-        
         if (CKEDITOR.env.ie) {
             data = this.ieFixHTML(data);
         }  
@@ -1020,6 +1015,9 @@ CKEDITOR.customprocessor.prototype =
                                 }
                                 stringBuilder.push( ';' );
                                 this._AppendChildNodes( htmlNode, stringBuilder, prefix + ";" );
+                                if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName === 'dd' || htmlNode.nextSibling.nodeName === 'dt')){
+                                  stringBuilder.push( '\n' );
+                                }
                                 break;
 
                             case 'dd' :
@@ -1028,6 +1026,9 @@ CKEDITOR.customprocessor.prototype =
                                 }
                                 stringBuilder.push( ':' );
                                 this._AppendChildNodes( htmlNode, stringBuilder, prefix + ":" );
+                                if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName === 'dd' || htmlNode.nextSibling.nodeName === 'dt')){
+                                  stringBuilder.push( '\n' );
+                                }
                                 break;
 
                             case 'table' :
@@ -1478,8 +1479,14 @@ CKEDITOR.customprocessor.prototype =
 
                     stringBuilder.push( textValue );
                     //text node as a list item should end with line break unless <br/> is present
-                    if(this.inList && !(htmlNode.nextSibling && htmlNode.nextSibling.nodeName === 'br')){
-                      stringBuilder.push( '\n' );
+//                    if(this.inList && !(htmlNode.nextSibling && htmlNode.nextSibling.nodeName === 'br')){
+//                      stringBuilder.push( '\n' );
+//                    }
+                    if(this.inList 
+                      && htmlNode.nextSibling
+                      && (htmlNode.nextSibling.nodeName === 'ul' || htmlNode.nextSibling.nodeName === 'ol' || htmlNode.nextSibling.nodeName === 'dl'))
+                    {
+                        stringBuilder.push( '\n' );
                     }
                     return;
 
