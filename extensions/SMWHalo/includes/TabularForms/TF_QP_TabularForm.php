@@ -17,9 +17,6 @@
  *
  */
 
-//todo: filtering should only be available for #ask
-
-
 /*
  * Query printer which displays a tabular form
  */
@@ -47,9 +44,6 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 * Also called by Halo Initialize
 	 */
 	public function getScripts() {
-		
-		//todo:deal with query interface
-		
 		global $smwgHaloScriptPath;
 		$scripts=array();
 		global $smwgHaloStyleVersion;
@@ -62,9 +56,6 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 	 * Also called by Halo Initialize
 	 */
 	function getStylesheets() {
-		
-		//todo:deal with query interface
-		
 		global $smwgHaloScriptPath;
 		global $smwgHaloStyleVersion;
 		$css = array();
@@ -328,8 +319,8 @@ class TFTabularFormData {
 		}
 		$html .= ' offset="'.$offset.'" ';
 		
-		//todo: what is the default limit
-		$limit = 20;
+		global $smwgQDefaultLimit;
+		$limit = $smwgQDefaultLimit;
 		if(array_key_exists('limit', $this->queryParams)){
 			$limit = $this->queryParams['limit'];
 		}
@@ -637,7 +628,7 @@ class TFTabularFormData {
 		$html .= $this->subjectColumnLabel;
 		$html .= '</span>';
 		$html .= '<br/>';
-		if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){ 
+		if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true' && !$this->isSPARQLQuery){ 
 			$html .= '<input class="tf_filter_input wickEnabled" cmp-type="instance" style="width: 100%" constraints="ask: '.$this->queryResult->getQueryString().'"/>';
 		}
 		$html .= '</th>';
@@ -654,7 +645,7 @@ class TFTabularFormData {
 			$html .= '</span>';
 			
 			//add filter input
-			if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){
+			if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'  && !$this->isSPARQLQuery){
 				$html .= '<div style="min-width: 100%; max-width: 100%;vertical-align: bottom">';
 				
 				if(count($annotation['allows value']) > 0){
@@ -719,7 +710,7 @@ class TFTabularFormData {
 
 				$html .= '<nobr>';
 				if(array_key_exists($template, $this->templateParameterPrintRequestLabels)
-				&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
+						&& array_key_exists($param, $this->templateParameterPrintRequestLabels[$template])){
 					$linkLabel = $this->templateParameterPrintRequestLabels[$template][$param];
 				} else {
 					$linkLabel = $template.'#'.$param;
@@ -729,7 +720,7 @@ class TFTabularFormData {
 				$html .= '</nobr>';
 
 				$html .= '</span>';
-				if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'){
+				if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true'  && !$this->isSPARQLQuery){
 					$html .= '<br/><br/>';
 				}
 				$html .= '</th>';
@@ -883,31 +874,29 @@ class TFTabularFormData {
 
 		$html .= '<td colspan="'.$colSpan.'" style="vertical-align: top">';
 
+		//show further results widget
 		$html .= '<span class="tabf_further_results">';
 		
-		//todo language
-		
-		//show further results widget
 		$offset = 0;
 		if(array_key_exists('offset', $this->queryParams)){
 			$offset = $this->queryParams['offset']*1;
 		}
 		if($offset > 0){
-			$html .= '<a href="javascript:tf.showPrevious(\''.$this->tabularFormId.'\');">Previous</a>';
+			$html .= '<a href="javascript:tf.showPrevious(\''.$this->tabularFormId.'\');">'.wfMsg( 'tabf_paging_previous').'</a>';
 		} else {
-			$html .= '<b>Previous</b>';
+			$html .= '<b>'.wfMsg( 'tabf_paging_previous').'</b>';
 		}
 		
-		$html .= '&nbsp;&nbsp;<b>Results '.$offset.' - '.(count($this->formRowsData)+$offset).'</b>&nbsp;&nbsp;';
+		$html .= '&nbsp;&nbsp;<b>'.wfMsg( 'tabf_paging_results').' '.$offset.' - '.(count($this->formRowsData)+$offset).'</b>&nbsp;&nbsp;';
 			
 		if($this->hasFurtherResults){
-			$html .= '<a href="javascript:tf.showNext(\''.$this->tabularFormId.'\');">Next</a>';
+			$html .= '<a href="javascript:tf.showNext(\''.$this->tabularFormId.'\');">'.wfMsg( 'tabf_paging_next').'</a>';
 		} else {
-			$html .= '<b>Next</b>';	
+			$html .= '<b>'.wfMsg( 'tabf_paging_next').'</b>';	
 		}
 			
-		//todo: which is default limit
-		$limit = 20;
+		global $smwgQDefaultLimit;
+		$limit = $smwgQDefaultLimit;
 		if(array_key_exists('limit', $this->queryParams)){
 			$limit = $this->queryParams['limit']*1;
 		}

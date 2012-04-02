@@ -17,8 +17,6 @@
  */
 
 
-//todo: disable paging when tf is modified
-
 var TF = Class.create({
 
 	init: function(){ 
@@ -110,9 +108,11 @@ var TF = Class.create({
 		
 		if(jQuery('.tabf_new_row', container).get().length > 0){
 			tf.disableFiltering(container, true);
+			tf.disablePaging(container, true);
 			jQuery('.tabf_save_button', container).removeAttr('disabled');
 		} else {
 			tf.disableFiltering(container, false);
+			tf.disablePaging(container, false);
 		}
 		
 		//todo: validate subject title textarea values 
@@ -172,6 +172,7 @@ var TF = Class.create({
 		tf.initializeLoadedForm(jQuery('#' + tabularFormId));
 		
 		tf.disableFiltering(jQuery('#' + tabularFormId), false);
+		tf.disablePaging(jQuery('#' + tabularFormId), false);
 	},
 	
 	/*
@@ -533,6 +534,7 @@ var TF = Class.create({
 			}
 			
 			tf.disableFiltering(jQuery(parentRow).parent().parent(), true);
+			tf.disablePaging(jQuery(parentRow).parent().parent().parent(), true);
 		} else {
 			jQuery(node).removeClass('tabf_modified_value');
 			jQuery(node).attr('isModified', false);
@@ -558,6 +560,7 @@ var TF = Class.create({
 						&& jQuery('.tabf_deleted_row', jQuery(parentRow).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row ', jQuery(parentRow).parent().parent()).length == 0){
 					tf.disableFiltering(jQuery(parentRow).parent().parent(), false);
+					tf.disablePaging(jQuery(parentRow).parent().parent().parent(), false);
 				}
 			}
 		}
@@ -830,6 +833,7 @@ var TF = Class.create({
 		jQuery('.tabf_save_button', jQuery(newRow).parent().parent()).attr('disabled', 'disabled');
 		
 		tf.disableFiltering(jQuery(newRow).parent().parent(), true);
+		tf.disablePaging(jQuery(newRow).parent().parent().parent(), true);
 		
 		tf.checkNewInstanceName(jQuery('td:nth-child(1) textarea', newRow), 55, tabfId);
 	},
@@ -953,8 +957,10 @@ var TF = Class.create({
 					&& jQuery('.tabf_deleted_row', jQuery(rowParent)).length == 0
 					&& jQuery('.tabf_new_row', jQuery(rowParent)).length == 0){
 				tf.disableFiltering(jQuery(rowParent), false);
+				tf.disablePaging(jQuery(rowParent), false);
 			} else {
 				tf.disableFiltering(jQuery(rowParent), true);		
+				tf.disablePaging(jQuery(rowParent), true);		
 			}
 			
 		} else {
@@ -985,6 +991,7 @@ var TF = Class.create({
 						&& jQuery('.tabf_deleted_row', jQuery(row).parent().parent()).length == 0
 						&& jQuery('.tabf_new_row', jQuery(row).parent().parent()).length == 0){
 					tf.disableFiltering(jQuery(row).parent(), false);
+					tf.disablePaging(jQuery(row).parent(), false);
 				}
 			} else {
 				tf.hideNotificationsForInstance(jQuery(row).parent().parent().parent().parent(), tf.getChildNumber(row, 1), false);
@@ -1003,6 +1010,7 @@ var TF = Class.create({
 					jQuery('.tabf_save_button', jQuery(row).parent().parent()).removeAttr('disabled');
 				}
 				tf.disableFiltering(jQuery(row).parent(), true);
+				tf.disablePaging(jQuery(row).parent(), true);
 			}
 		}
 	},
@@ -1724,6 +1732,22 @@ var TF = Class.create({
 		tf.loadForm(container, false);
 	},
 	
+	disablePaging : function(container, disable){
+		if(disable){
+			jQuery('.tabf_further_results a', container).each(function(){
+				var html = '<b temporarily="true">';
+				html += jQuery(this).html();
+				html += '</b>';
+				jQuery(this).after(html);
+				jQuery(this).attr('temporarily-disabled', 'true');
+				jQuery(this).css('display', 'none');
+			});
+		} else {
+			jQuery('.tabf_further_results a[temporarily-disabled="true"]', container).css('display', '');
+			jQuery('.tabf_further_results b[temporarily="true"]', container).remove();
+		}
+	},
+
 });
 
 window.tf = new TF();
