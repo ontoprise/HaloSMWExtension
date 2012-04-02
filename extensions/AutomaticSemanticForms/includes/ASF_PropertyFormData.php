@@ -99,6 +99,18 @@ class ASFPropertyFormData {
 		if($this->explicitInputType){
 			if(strpos(ASF_ALLOWED_INPUT_FIELD_TYPES, '-'.$this->explicitInputType.'-') === false){
 				$this->explicitInputType = null;
+			} else {
+				
+				//this is necessary since the semantic form inputs input types are otherwise initialized too late
+				if(function_exists('wfSFISetup')){
+					wfSFISetup();
+				}
+				
+				global $sfgFormPrinter;
+				
+				if(!array_key_exists($this->explicitInputType, $sfgFormPrinter->mInputTypeHooks)){
+					$this->explicitInputType = null;
+				}
 			}	
 		}
 			

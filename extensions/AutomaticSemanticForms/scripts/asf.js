@@ -596,7 +596,9 @@ window.ASFFormSyncer = {
 		
 		this.currentCategoryString = "";
 		for(var i=0; i<newCategoryAnnotations.length; i++){
-			this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
+			if(jQuery.trim(newCategoryAnnotations[i].getName()).length > 0){
+				this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
+			}
 			
 			//if we are not in initphase and if we have not yet decided to do an update, we have to check if it might be necessary
 			if(!updateNecessary && !initPhase){
