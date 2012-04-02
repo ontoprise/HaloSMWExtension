@@ -39,6 +39,7 @@
 	<xsl:param name="param-wiki-path" select="''" />
 	<xsl:param name="param-ns-concept" select="''" />
 	<xsl:param name="param-ns-property" select="''" />
+	<xsl:param name="wgArticlePath" select="''" />
 	<!--
 		************************************ Variables
 		************************************
@@ -337,7 +338,12 @@
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
                                     <xsl:when test="@uri">&amp;action=edit</xsl:when>
-                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                    <xsl:otherwise>
+                                    	<xsl:choose>
+		                   					<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+		                   					<xsl:otherwise>?action=edit</xsl:otherwise>
+		                				</xsl:choose>
+                                    </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
                         </xsl:when>
@@ -348,7 +354,12 @@
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
                                     <xsl:when test="@uri">&amp;action=edit</xsl:when>
-                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                    <xsl:otherwise>
+	                                    <xsl:choose>
+		                   					<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+		                   					<xsl:otherwise>?action=edit</xsl:otherwise>
+		                				</xsl:choose>
+	                				</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
                         </xsl:when>
@@ -359,7 +370,12 @@
                                  <xsl:choose>
                                     <xsl:when test="@uri and @notexists">&amp;action=edit&amp;preloadNEP=true</xsl:when>
                                     <xsl:when test="@uri">&amp;action=edit</xsl:when>
-                                    <xsl:otherwise>?action=edit</xsl:otherwise>
+                                    <xsl:otherwise>
+                                    	<xsl:choose>
+		                   					<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+		                   					<xsl:otherwise>?action=edit</xsl:otherwise>
+		                				</xsl:choose>
+                                    </xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
                         </xsl:otherwise>
@@ -677,7 +693,12 @@
                     <a class="attribute" title="Edit {$title}">
 					<xsl:attribute name="href"><xsl:value-of
                         select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>				
+                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />
+                        <xsl:choose>
+		                 	<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+		                 	<xsl:otherwise>?action=edit</xsl:otherwise>
+		                </xsl:choose>
+                    </xsl:attribute>				
 					{{SMW_OB_EDIT}}
 				</a>
 				</xsl:if>
@@ -695,7 +716,12 @@
 							<xsl:attribute name="href"><xsl:value-of
 								select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
 								select="$param-ns-concept" />:<xsl:value-of
-								select="child::rangeType[1]/@category" />?action=edit</xsl:attribute>
+								select="child::rangeType[1]/@category" />
+								<xsl:choose>
+		                   			<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+		                   			<xsl:otherwise>?action=edit</xsl:otherwise>
+		                		</xsl:choose>
+							</xsl:attribute>
 							<xsl:value-of select="translate(child::rangeType[1]/@category, '_', ' ')" />
 						</a>
 					</xsl:when>
@@ -1044,16 +1070,31 @@
 			   {{SMW_OB_OPEN}}
 		        </a><span class="openEditLink" style="color: #888"> |</span>
 			<a  class="openEditLink" title="Edit to {$title}" style="margin-left:5px;">
+				
+                   		 
+                   		 
+                
+                
                 <xsl:choose>
                 <xsl:when test="$typeOfEntity='concept'">
                     <xsl:attribute name="href"><xsl:value-of
                         select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                        select="$param-ns-concept" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                        select="$param-ns-concept" />:<xsl:value-of select="@title_url" />
+	                    <xsl:choose>
+	                   		<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+	                   		<xsl:otherwise>?action=edit</xsl:otherwise>
+	                	</xsl:choose>
+                    </xsl:attribute>
                 </xsl:when>
                 <xsl:when test="$typeOfEntity='property'">
                     <xsl:attribute name="href"><xsl:value-of
                         select="substring-before($param-wiki-path,'$1')" /><xsl:value-of
-                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />?action=edit</xsl:attribute>
+                        select="$param-ns-property" />:<xsl:value-of select="@title_url" />
+                        <xsl:choose>
+	                   		<xsl:when test="contains($param-wiki-path, '?title')">&amp;action=edit</xsl:when>
+	                   		<xsl:otherwise>?action=edit</xsl:otherwise>
+	                	</xsl:choose>
+					</xsl:attribute>
                 </xsl:when>
                 </xsl:choose>
                {{SMW_OB_EDIT}}
