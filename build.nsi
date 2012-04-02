@@ -1743,8 +1743,10 @@ Function checkOS
     ${OrIf} $R0 == "2008"
         Goto os_ok
     ${EndIf}
+    ;FIXME: hint for OS
+    MessageBox MB_OK|MB_ICONEXCLAMATION $R0
      MessageBox MB_OK|MB_ICONEXCLAMATION  "Non-supported OS detected! Please use Windows 7 or Windows Server 2008 (R2)." 
-     Abort
+    ;Abort (temporarily removed) 
 os_ok:
 FunctionEnd
 ;
