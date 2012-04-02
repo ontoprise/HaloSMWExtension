@@ -28,9 +28,9 @@ class ASFLanguageDe extends ASFLanguage {
 		'asf_free_text' => "Freitext Eingabefeld:",
 		'asf_dummy_article_edit_comment' => "Erzeugt von der Automatic Semantic Forms Extension",
 		'asf_dummy_article_content' => "'''Dieser Artikel wird von der Automatic Semantic Forms Extension ben&ouml;t. Bitte l&ouml;schen, editieren oder verschieben Sie ihn daher nicht.'''",
-		'asf_category_section_label' => "Eingabe von $1 Daten:",
+		'asf_category_section_label' => "Eingaben die f&uuml; Kategorie $1 ben&ouml;tigt werden:",
 		'asf_duplicate_property_placeholder' => "Bitte einen Wert im Eingabefeld oben eingeben.",
-		'asf_unresolved_annotations' => "Bearbeiten von weiteren Annotationen:",
+		'asf_unresolved_annotations' => "Zus&auml;tzliche Eingaben::",
 	
 		'asf_tt_intro' => "Klicken Sie, um $1 zu öffnen.",
 		'asf_tt_type' => "Der <b>Type</b> dieses Properties is $1.",

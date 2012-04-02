@@ -987,13 +987,15 @@ window.ASFMultiInputFieldHandler = {
 	},
 	
 	addAddButton : function(node){
-		var addButton = '<a class="asf-addbutton" style="cursor: pointer">&nbsp;+</a>';
+		var addButton = '<img class="asf-addbutton" style="cursor: pointer" src="' + wgServer + wgScriptPath +
+			'/extensions/AutomaticSemanticForms/skins/plus-act.gif" title="Add input field"></img>'; 
 		jQuery(node).append(addButton);
 		jQuery('.asf-addbutton:last-child', jQuery(node)).click(ASFMultiInputFieldHandler.addInputField);
 	},
 	
 	addDeleteButton : function(node){
-		var deleteButton = '<a class="asf-deletebutton" style="cursor: pointer">&nbsp;-</a>';
+		var deleteButton = '<img class="asf-deletebutton" style="cursor: pointer" src="' + wgServer + wgScriptPath +
+			'/extensions/AutomaticSemanticForms/skins/minus-act.gif" title="Remove input field"></img>'; 
 		jQuery(node).append(deleteButton);
 		jQuery('.asf-deletebutton:last-child', jQuery(node)).click(ASFMultiInputFieldHandler.deleteInputField);
 	},
