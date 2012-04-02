@@ -35,40 +35,40 @@
     articleTimeoutId : 0,
     categoryTimeoutId : 0,
     fancyBoxContent : function(){
-      return '<form action="" method="get" id="createNewArticleForm">\
-			<table id="fancyboxTable">\<tr>\<td colspan="2" class="fancyboxTitleTd">Create New Article</td></tr>\
-		<tr><td colspan="2" class="userInstructionTd"><span>Enter the name for the new article:</span></td></tr>\
-		<tr><td colspan="2"><input type="text" id="newArticleName" class="articleNameInput" autocomplete="OFF"></input></td></tr>\
-		<tr><td id="articleExistTableTd"><table id="articleExistTable"><tr>\
-			<td id="errorImgTd"></td><td class="articleExistsErrorTd"><span id="errorMsg"></span><span id="errorLink"></span></td>\
-		</tr></table></td></tr>\
-		<tr><td colspan="2" class="userInstructionTd"><span>Select the layout of the new article:</span></td></tr>\
-		<tr><td colspan="2"><select id="listOfTemplatesAndCategories" size="10" class="templatesAndCategoriesSelect">\
-					<option>' + this.EMPTY_IN_WYSIWYG + '</option>\
-					<option>' + this.EMPTY_IN_WIKITEXT + '</option>\
-					</select></td>\
-		</tr>\
-		<tr>\
-			<td colspan="2" class="layoutDescriptionTd">\
-			<table><tr>\
-			<td rowspan="2" id="selectedDescImgTd"></td><td id="selectedTitleTd"></td></tr>\
-			<tr><td id="selectedDescTd" class="layoutDescriptionTd"></td>\
-			</tr></table>\
-			</td>\
-		</tr>\
-		<tr>\
-			<td colspan="2" class="btnTableTd">\
-				<table id="btnTable" class="btnTable">\
-					<tr>\
-						<td><input type="submit" value="OK" id="cna_submitBtn"/></td>\
-						<td>|</td>\
-						<td><a id="cna_cancelBtn">Cancel</a></td>\
-					</tr>\
-				</table>\
-			</td>\
-		</tr>\
-	</table>\
-	</form>';
+      return '<form action="" method="get" id="createNewArticleForm">'
+        + '<table id="fancyboxTable"><tr><td colspan="2" class="fancyboxTitleTd">Create New Article</td></tr>'
+        + '<tr><td colspan="2" class="userInstructionTd"><span>Enter the name for the new article:</span></td></tr>'
+        + '<tr><td colspan="2"><input type="text" id="newArticleName" class="articleNameInput" autocomplete="OFF"></input></td></tr>'
+        + '<tr><td id="articleExistTableTd"><table id="articleExistTable"><tr>'
+        + '<td id="errorImgTd"></td><td class="articleExistsErrorTd"><span id="errorMsg"></span><span id="errorLink"></span></td>'
+        + '</tr></table></td></tr>'
+        + '<tr><td colspan="2" class="userInstructionTd"><span>Select the layout of the new article:</span></td></tr>'
+        + '<tr><td colspan="2"><select id="listOfTemplatesAndCategories" size="10" class="templatesAndCategoriesSelect">'
+        + (mw.config.get('WYSIWYG_EDITOR_VERSION') ? '<option>' + this.EMPTY_IN_WYSIWYG + '</option>' : '')
+        + '<option>' + this.EMPTY_IN_WIKITEXT + '</option>'
+        + '</select></td>'
+        + '</tr>'
+        + '<tr>'
+        + '<td colspan="2" class="layoutDescriptionTd">'
+        + '<table><tr>'
+        + '<td rowspan="2" id="selectedDescImgTd"></td><td id="selectedTitleTd"></td></tr>'
+        + '<tr><td id="selectedDescTd" class="layoutDescriptionTd"></td>'
+        + '</tr></table>'
+        + '</td>'
+        + '</tr>'
+        + '<tr>'
+        + '<td colspan="2" class="btnTableTd">'
+				+ '<table id="btnTable" class="btnTable">'
+        + '<tr>'
+        + '<td><input type="submit" value="OK" id="cna_submitBtn"/></td>'
+        + '<td>|</td>'
+        + '<td><a id="cna_cancelBtn">Cancel</a></td>'
+        + '</tr>'
+				+ '</table>'
+        + '</td>'
+        + '</tr>'
+        + '</table>'
+        + '</form>';
     },
 
     /**
@@ -106,6 +106,9 @@
             form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormEdit');
             form.append('<input type="hidden" name="target" value="' + this.encodeHtmlEntities(articleTitle) + '"/>');
             form.append('<input type="hidden" name="categories" value="' + category + '"/>');
+            if(mw.config.get('WYSIWYG_EDITOR_VERSION')){
+              form.append('<input type="hidden" name="mode" value="wysiwyg"/>');
+            }
           }
           else if(creationMathod.indexOf(this.FORM_STR) > 0){
             var formName = $("#listOfTemplatesAndCategories option:selected").val();
@@ -113,6 +116,9 @@
             form.attr('action', wgServer + wgScriptPath + '/index.php/Special:FormStart');
             form.append('<input type="hidden" name="page_name" value="' + this.encodeHtmlEntities(articleTitle) + '"/>');
             form.append('<input type="hidden" name="form" value="' + formName + '"/>');
+            if(mw.config.get('WYSIWYG_EDITOR_VERSION')){
+              form.append('<input type="hidden" name="mode" value="wysiwyg"/>');
+            }
           }
           break;
       }
@@ -400,7 +406,8 @@
           });
 
           $('#cna_submitBtn').unbind('click').bind('click', function() {
-            CREATENEWARTICLE.initForm($('#createNewArticleForm'), $('#newArticleName').val(), $('#listOfTemplatesAndCategories option:selected').val());
+            var form = $('#createNewArticleForm');
+            CREATENEWARTICLE.initForm(form, $('#newArticleName').val(), $('#listOfTemplatesAndCategories option:selected').val());
             return true;
           });
 
