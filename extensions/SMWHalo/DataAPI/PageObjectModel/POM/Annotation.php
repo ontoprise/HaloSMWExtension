@@ -135,8 +135,9 @@ class POMCategory extends POMAnnotation {
 		//		$this->nodeText = $text;
 		global $wgLang;
 		$this->name = $wgLang->getNSText(NS_CATEGORY);
-		$this->value = $this->parseValue($text);
-		$this->representation = '';
+		list($value, $searchKey) = $this->parseValue($text); 
+		$this->value = $value; 
+		$this->representation = $searchKey;
 
 		$this->children = null; // forcefully ignore children
 
@@ -158,13 +159,16 @@ class POMCategory extends POMAnnotation {
 
 	private function parseValue ($text){
 		if(strpos($text, '|')){
-			$__start = strpos($text, ':')+1;
-			$__end = strpos($text, '|');
-			return substr($text, $__start , $__end - $__start);
+			$__startValue = strpos($text, ':')+1;
+			$__endValue = strpos($text, '|');
+			$__startSearchKey = strpos($text, '|') + 1;
+			$__endSearchKey = strpos($text, ']]');
+			return array(substr($text, $__startValue , $__endValue - $__startValue),
+				substr($text, $__startSearchKey , $__endSearchKey - $__startSearchKey));
 		}else{
 			$__start = strpos($text, ':')+1;
 			$__end = strpos($text, ']]');
-			return substr($text, $__start , $__end - $__start);
+			return array(substr($text, $__start , $__end - $__start), '');
 		}
 	}
 
@@ -174,8 +178,12 @@ class POMCategory extends POMAnnotation {
 	 * @return string The markup for the category.
 	 */
 	public function toString(){
-		$__stringValue = '';
-		$__stringValue = '[['.$this->name.':'.$this->value.']]';
+		
+		$__stringValue = '[['.$this->name.':'.$this->value;
+		if(strlen($this->representation) > 0){
+			$__stringValue .= '|'.$this->representation;
+		}
+		$__stringValue .= ']]';
 
 		return $__stringValue;
 	}
