@@ -11,17 +11,17 @@
 
     // Private
     function getMargin($element, $window, minOffset, originalMargin) {
-      var maxOffset = $element.parent().height() - $element.outerHeight();
+//      var maxOffset = $element.parent().height() - $element.outerHeight();
       var margin = originalMargin;
 
       if ($window.scrollTop() >= minOffset){
         margin = margin + opts.top + $window.scrollTop() - minOffset;
       }
-      if (margin > maxOffset){
-        margin = maxOffset;
-      }
+//      if (margin > maxOffset){
+//        margin = maxOffset;
+//      }
       return ({
-        "marginTop": margin + 'px'
+        "paddingTop": margin + 'px'
       });
     }
 

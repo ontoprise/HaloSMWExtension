@@ -115,7 +115,7 @@
   }
 
   function createfloatingToolbar(ckeToolbar, editor){
-    var width = $('#cke_contents_wpTextbox1').width() || ckeToolbar.css('width');
+    var width = $('#cke_contents_' + editor.name).width() || ckeToolbar.css('width');
     width += 'px';
     
     var height = parseInt(ckeToolbar.height(), 10) + 'px';
@@ -140,8 +140,8 @@
       'width' : width
     });
     ckeToolbar.jScroll({
-      top: 1,
-      speed: 0.01
+      top: 5,
+      speed: 0
     });
   }
 
@@ -172,7 +172,8 @@
     CKEDITOR.on('instanceReady', function(){
       var ckeditorInstance = mw.config.get('wgCKeditorInstance');
       if(ckeditorInstance){
-        var ckeToolbar = $('#cke_top_wpTextbox1').parent();
+        var instanceName = ckeditorInstance.name;
+        var ckeToolbar = $('#cke_top_' + instanceName).parent();
         createfloatingToolbar(ckeToolbar, ckeditorInstance);
         //resize the floating toolbar when ckeditor is resized
         ckeditorInstance.on('resize', function(event){
@@ -183,8 +184,8 @@
         //ckeditor is maximize/minimized by "maximize" command. Fire "resize" event after "maximize" command is executed
         ckeditorInstance.on('afterCommandExec', function(event){
           if(event.data.name === 'maximize'){
-            var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_wpTextbox1').width();
-            var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_wpTextbox1').height();
+            var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
+            var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
             ckeditorInstance.fire('resize', {
               width: width,
               height: height,
@@ -194,8 +195,8 @@
         });
         //fire "resize" event when skin is resized
         jQuery( '#smwh_menu' ).getOntoskin().addResizeListener(function(){
-          var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_wpTextbox1').width();
-          var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_wpTextbox1').height();
+          var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
+          var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
           ckeditorInstance.fire('resize', {
             width: width,
             height: height
