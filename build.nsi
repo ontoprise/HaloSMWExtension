@@ -31,7 +31,8 @@
 !define PRODUCT_YEAR "2012"
 #!define VERSION "1.4.3" set by hudson
 #!define BUILD_ID "431" set by hudson
-!define REQUIRED_JAVA_VERSION 16
+!define REQUIRED_JAVA_VERSION16 16
+!define REQUIRED_JAVA_VERSION17 17
 
 !ifdef EXTENSIONS_EDITION
   !define PRODUCT "SMW+"
@@ -1039,11 +1040,11 @@ Function LocateJVM
         StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not \
              installed on your computer. You need version 1.6 or newer to \
              run this program."
-#        MessageBox MB_OK "$JAVA_INSTALLATION_MSG java_ver:$JAVA_VER"
+
         Goto Done
 
     CheckJavaVer:
-#        MessageBox MB_OK "Java is present, check java version"
+
         DetailPrint "Checking Java version ..."
         ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$JAVA_VER" JavaHome
         GetFullPathName $JAVA_HOME "$0"
@@ -1051,19 +1052,20 @@ Function LocateJVM
         StrCpy $0 $JAVA_VER 1 0
         StrCpy $1 $JAVA_VER 1 2
         StrCpy $JAVA_VER "$0$1"
-        IntCmp ${REQUIRED_JAVA_VERSION} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
+        IntCmp ${REQUIRED_JAVA_VERSION16} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer 0
+    	IntCmp ${REQUIRED_JAVA_VERSION17} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
         
     FoundCorrectJavaVer:
-#        MessageBox MB_OK "Found valid Java version"
+
         DetailPrint "Found valid Java version."
         IfFileExists "$JAVA_HOME_SHORT\bin\javaw.exe" 0 JavaNotPresent
         Goto Done
         
     JavaVerNotCorrect:
-#        MessageBox MB_OK "Java version not correct"
+    
         DetailPrint "Found invalid Java version."
         StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment \
-            installed on your computer is $JAVA_VER. Version ${REQUIRED_JAVA_VERSION} or newer is required to \
+            installed on your computer is $JAVA_VER. Version ${REQUIRED_JAVA_VERSION16} or newer is required to \
             run this program."
         
     Done:
