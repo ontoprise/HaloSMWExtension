@@ -125,6 +125,7 @@ window.ASFFormSyncer = {
 		//and sf validation succeeds 
 		var validateAllTemp = window.validateAll;
 		window.validateAll = function(){
+			ASFMultiInputFieldHandler.dealWithMandatoryInputFields();
 			if(validateAllTemp()){
 				ASFFormSyncer.doPostProcessingBeforeSubmit();
 				return true;
@@ -1683,6 +1684,16 @@ window.ASFMultiInputFieldHandler = {
 			ASFMultiInputFieldHandler .lookedupDate));
 		
 		return date;
+	},
+	
+	dealWithMandatoryInputFields : function(){
+		//delete all empty input fields except for the last in order to avoid
+		//invalid behaviour of the mandatory field feature
+		jQuery('.asf-multi_value').each(function(){
+			if(!ASFMultiInputFieldHandler.isInputFieldValueSet(this)){
+				ASFMultiInputFieldHandler.doDeleteInputField(jQuery('> *:first-child', this), false);
+			}
+		});
 	}
 };
 
