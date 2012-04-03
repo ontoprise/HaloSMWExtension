@@ -119,7 +119,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
       {
         label : editor.lang.saveAndContinue,
         command : pluginName,
-        icon: this.path + 'images/saveCont.png'
+        className: 'cke_button_save'
       });
     }
   });

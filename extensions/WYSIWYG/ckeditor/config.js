@@ -59,7 +59,7 @@ CKEDITOR.editorConfig = function( config )
   }
 
   config.toolbar_Wiki = [
-    ['Save', 'SaveAndContinue'],
+    ['SaveAndContinue', 'SaveAndExit'],
   ['Format','Font','FontSize'],
   ['Bold','Italic','Underline'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
@@ -97,7 +97,7 @@ CKEDITOR.editorConfig = function( config )
   //        ['Maximize', 'ShowBlocks'],
   //        ['About']
   //    ];
-  config.extraPlugins = extraPlugins + ',autogrow,save,saveAndContinue';
+  config.extraPlugins = extraPlugins + ',autogrow,saveAndExit,saveAndContinue';
   config.height = config.autoGrow_minHeight = '300';
   config.autoGrow_onStartup = true;
   config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
