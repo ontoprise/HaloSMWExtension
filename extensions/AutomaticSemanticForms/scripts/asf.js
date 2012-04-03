@@ -623,6 +623,7 @@ window.ASFFormSyncer = {
 		this.currentCategoryAnnotations = newCategoryAnnotations;
 		
 		jQuery('#asf_category_string').html(this.currentCategoryString);
+		jQuery('#asf_category_annotations input').val(this.currentCategoryString);
 		
 		//do updates if necessary
 		if(updateNecessary && !initPhase){

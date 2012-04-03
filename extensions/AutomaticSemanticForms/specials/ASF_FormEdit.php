@@ -41,31 +41,31 @@ class ASFFormEdit extends SFFormEdit {
 		global $wgRequest;
 		
 		$categoryParam = $wgRequest->getVal('categories');
-		
+			
 		$targetName = $wgRequest->getVal('target');
-		
+			
 		if(!$categoryParam && !$targetName){
 			$queryparts = str_replace('//','--asf-slash-slash--', $query);
 			$queryparts = explode( '/', $queryparts, 2 );
-			
+				
 			if(isset($queryparts[0]) && strpos($queryparts[0], 'categories=') === 0){
 				$categoryParam = substr($queryparts[0], strlen('categories='));
 				$targetName = isset( $queryparts[1] ) ? $queryparts[1] : '';
 			}
 		}
-		
+			
 		if(!is_null($categoryParam)){
 			$categoryParam = str_replace('--asf-slash-slash--', '/', $categoryParam);
 		}
-		
+			
 		$targetName = str_replace('--asf-slash-slash--', '/', $targetName);
-		
+			
 		$formName = $wgRequest->getVal('form');
-		
+			
 		if(is_null($categoryParam)){
 			$requestURL = $wgRequest->getRequestURL();
 			$requestURL = explode('/', $requestURL);
-			
+				
 			if(strpos($requestURL[count($requestURL)-2], 'categories') === 0){
 				$categoryParam = $requestURL[count($requestURL)-2];
 				$categoryParam = substr($categoryParam, strlen('categories'));
@@ -73,28 +73,54 @@ class ASFFormEdit extends SFFormEdit {
 			}
 		}
 		
-		//Initialize category names array
-		$categoryNames = array();
-		if($categoryParam){
-			$categoryParam = str_replace('_', ' ', $categoryParam);
-			$categoryNames = explode(',', $categoryParam);
-			global $wgLang;
-			foreach($categoryNames as $key => $category){
-				$category = trim($category);
-				if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') !== 0){
-					$category = $wgLang->getNSText(NS_CATEGORY).':'.$category;
+		//if the request was posted, then all category name computation
+		//was wrong and we have to use the categories from the hidden 
+		//form field, since the form is saved
+		if($wgRequest->wasPosted()){
+			
+			if(array_key_exists('asf-categories', $wgRequest->getValues())){
+				
+				$categoryNames = $wgRequest->getText('asf-categories');
+				$categoryNames = explode('<span>,</span>', $categoryNames);
+				
+				global $wgLang;
+				foreach($categoryNames as $key => $cat){
+					if(strlen(trim($cat)) == 0){
+						unset($categoryNames[$key]);
+					} else {
+						$categoryNames[$key] = 
+							$wgLang->getNSText(NS_CATEGORY).':'.trim($cat);
+					}
 				}
-				$categoryNames[$key] = $category;
+			} else {
+				//a normal form and not an asf is saved
+				return parent::execute($query);;
+			}
+		} else {
+		
+			//Initialize category names array
+			$categoryNames = array();
+			if($categoryParam){
+				$categoryParam = str_replace('_', ' ', $categoryParam);
+				$categoryNames = explode(',', $categoryParam);
+				global $wgLang;
+				foreach($categoryNames as $key => $category){
+					$category = trim($category);
+					if(strpos($category, $wgLang->getNSText(NS_CATEGORY).':') !== 0){
+						$category = $wgLang->getNSText(NS_CATEGORY).':'.$category;
+					}
+					$categoryNames[$key] = $category;
+				}
 			}
 		}
 		
-		if(count($categoryNames) == 0 && !is_null($categoryParam)){
+		if(count($categoryNames) == 0 && !is_null($categoryParam) && !$wgRequest->wasPosted()){
 			global $wgOut;
 			$wgOut->addHTML( '<p><b>Error:</b> No category name was passed for automatic form creation</p>');
 			return;
 		}
 		
-		if(count($categoryNames) > 0){ 
+		if(count($categoryNames) > 0 || $wgRequest->wasPosted()){ 
 			//The given instance will be edited with forms for the given categories
 			
 			//first deal with preloading form input fields
@@ -104,7 +130,11 @@ class ASFFormEdit extends SFFormEdit {
 			
 			$targetTitle = Title::newFromText($targetName);
 			
-			$result = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle);
+			$forceFormCreation = false;
+			if($wgRequest->wasPosted()){
+				$forceFormCreation = true;
+			}			
+			$result = ASFFormGenerator::getInstance()->generateFormForCategories($categoryNames, $targetTitle, $forceFormCreation);
 			if($result){
 				//Set the dummy form name to trick the Semantic Forms extension
 				global $asfDummyFormName;

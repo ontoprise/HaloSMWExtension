@@ -97,18 +97,47 @@ class ASFFormEditTab {
 			return true;
 		}
 			
-		//Create form definition
-		$result = ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
-		if($result){
-			global $asfDummyFormName;
-			$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
-			$form_name = $asfDummyFormName;
-			
-			$target_title = $article->getTitle();
-			$target_name = SFUtils::titleString( $target_title );
-			SFFormEdit::printForm( $form_name, $target_name );
+		global $wgRequest;
+		if(!$wgRequest->wasPosted()){
 		
-			return false;
+			//Create form definition
+			$result = ASFFormGenerator::getInstance()->generateFromTitle($article->getTitle());
+			if($result){
+				global $asfDummyFormName;
+				$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
+				$form_name = $asfDummyFormName;
+			
+				$target_title = $article->getTitle();
+				$target_name = SFUtils::titleString( $target_title );
+				SFFormEdit::printForm( $form_name, $target_name );
+			
+				return false;
+			} 
+		} else {
+			if(array_key_exists('asf-categories', $wgRequest->getValues())){
+				
+				$categories = $wgRequest->getText('asf-categories');
+				$categories = explode('<span>,</span>', $categories);
+				foreach($categories as $key => $cat){
+					if(strlen(trim($cat)) == 0){
+						unset($categories[$key]);
+					} else {
+						$categories[$key] = trim($cat);
+					}
+				}
+				
+				ASFFormGenerator::getInstance()->generateFormForCategories($categories, null, true);
+				
+				global $asfDummyFormName;
+				$errors = ASFFormGeneratorUtils::createFormDummyIfNecessary();
+				$form_name = $asfDummyFormName;
+			
+				$target_title = $article->getTitle();
+				$target_name = SFUtils::titleString( $target_title );
+				SFFormEdit::printForm( $form_name, $target_name );
+			
+				return false;
+			}
 		}
 		
 		return true;
