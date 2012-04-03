@@ -503,6 +503,8 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/smwrichmedia/plugin.js',
             'ckeditor/_source/plugins/smwrule/plugin.js',
             'ckeditor/_source/plugins/smwwebservice/plugin.js',
+            'ckeditor/_source/plugins/saveAndExit/plugin.js',
+            'ckeditor/_source/plugins/saveAndContinue/plugin.js',
             'scripts/jquery.jscroll.js',
             'scripts/init.js'
         )
