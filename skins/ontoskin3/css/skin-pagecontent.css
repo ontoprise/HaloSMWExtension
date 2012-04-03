@@ -1014,3 +1014,24 @@ border-bottom: 1px solid #EBEEEF;
 	vertical-align: top;
 	padding:3px;
 }
+
+
+#roundedbox {
+
+-moz-background-clip:border;
+ -moz-background-inline-policy:continuous;
+ -moz-background-origin:padding; 
+-moz-border-radius:8px;
+-webkit-border-radius:8px; border-radius:8px; 
+-moz-box-shadow:2px 2px 4px #BFBFBF; -webkit-box-shadow:2px 2px 4px #BFBFBF;
+box-shadow:2px 2px 4px #BFBFBF; 
+background:#FFFFFF none repeat-x scroll center bottom; 
+border-color:#CCCCCC #CCCCCC #C1C1C1; 
+border-style:solid; 
+border-width:1px; 
+padding-bottom:7px; 
+padding-left:15px; 
+padding-right:15px; 
+text-shadow:0 1px 0 #FFFFFF;
+width:95%;
+}
