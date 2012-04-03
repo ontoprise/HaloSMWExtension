@@ -797,14 +797,18 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		$rawparams[] = $rawquery;
 		if ($column != "_var0") $rawparams[] = "?$column";
-
+        
 		// parse params and answer query
-		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+        SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+        SMWQueryProcessor::addThisPrintout(  $printouts, $params );
+        $params = SMWQueryProcessor::getProcessedParams($params, $printouts);
 		$params['format'] = "xml";
 		$params['limit'] = 400;
 		if ($column != "_var0") $params['sort'] = $column;
 		$querystring = str_replace("{{USERINPUT}}", $userInput, $querystring);
-		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
+        $query  = SMWQueryProcessor::createQuery( $querystring, $params, SMWQueryProcessor::INLINE_QUERY, '', $printouts );
+		return SMWQueryProcessor::getResultFromQuery($query, $params, $printouts, SMW_OUTPUT_FILE, SMWQueryProcessor::INLINE_QUERY, "");
+
 
 	}
 
