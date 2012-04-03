@@ -40,6 +40,12 @@
 		<patch file="patch.txt" />
 		<new>
 			<require name="sf_init" file="extensions/SemanticForms/SemanticForms.php" />
+			<variable name="sfgCacheFormDefinitions">
+				<boolean name="sfgCacheFormDefinitions" description="disable SF cache">false</boolean>
+			</variable>
+			<variable name="sfgFormCacheType">
+				<string name="sfgFormCacheType" description="SF cache type">CACHE_DB</string>
+			</variable>
 		</new>
 	</configs>
 
