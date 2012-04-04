@@ -1284,6 +1284,8 @@ var TF = Class.create({
 	 */
 	unSetAsCurrentlySelectedCellValue : function(){
 		jQuery(this).removeClass('tabf_selected_value');
+		
+		autoCompleter.hideSmartInputFloater();
 	},
 	
 	getPositionForAC : function(element){
@@ -1642,6 +1644,10 @@ var TF = Class.create({
 		});
 		jQuery('.tf_filter_input_helper', container).change(function(){
 			tf.checkIfFiltersMustBeApplied(container);
+		});
+		
+		jQuery('.tf_filter_input', container).blur(function(){
+			autoCompleter.hideSmartInputFloater();
 		});
 	},
 	
