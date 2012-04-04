@@ -8,11 +8,10 @@
 		<mkdir dir="bin/zip" />
 
 		<!-- Pack the scripts -->
-		<property name="webadmin_all_js" location="../tools/webadmin/scripts/webadmin_all.js" />
-		<echo>### Pack the scripts: ${webadmin_all_js}</echo>
-		<concat destfile="${webadmin_all_js}">
+		<echo>### Pack the scripts: ../tools/webadmin/scripts/webadmin_all.js</echo>
+		<concat destfile="../tools/webadmin/scripts/webadmin_all.js">
 			<filelist dir="../tools/webadmin/scripts" files="webadminOperations.js" />
-			<fileset dir="../tools/webadmin/scripts" includes="webadmin*.js" excludes="webadminOperations.js" />
+			<fileset dir="../tools/webadmin/scripts" includes="webadmin*.js" excludes="webadminOperations.js,webadmin_all.js" />
 		</concat>
 
 		<copy todir="bin/zip/deployment/descriptor">
