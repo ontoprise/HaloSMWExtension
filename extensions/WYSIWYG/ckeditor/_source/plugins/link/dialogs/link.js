@@ -5,6 +5,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 CKEDITOR.dialog.add( 'link', function( editor )
 {
+    editor.config.linkShowAdvancedTab = true;
+    
 	var plugin = CKEDITOR.plugins.link;
 	// Handles the event when the "Target" selection box is changed.
 	var targetChanged = function()

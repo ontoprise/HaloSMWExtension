@@ -138,11 +138,11 @@ if ( !CKEDITOR.loader )
 				if ( !scriptName )
 					return;
 
-				var scriptSrc = getUrl( '_source/' + scriptName + '.js' );
+//				var scriptSrc = getUrl( '_source/' + scriptName + '.js' );
 
-				var script = document.createElement( 'script' );
-				script.type = 'text/javascript';
-				script.src = scriptSrc;
+//				var script = document.createElement( 'script' );
+//				script.type = 'text/javascript';
+//				script.src = scriptSrc;
 
 				function onScriptLoaded()
 				{

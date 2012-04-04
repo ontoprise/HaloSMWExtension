@@ -372,7 +372,24 @@ class CKeditor_MediaWiki {
     $wgResourceModules['ext.wysiwyg.core'] = $moduleTemplate + array(
         'messages' => array(
             'wysiwyg-show-richtexteditor',
-            'wysiwyg-show-wikitexteditor'
+            'wysiwyg-show-wikitexteditor',
+            'wysiwyg-save-and-continue',
+            'wysiwyg-save-failed',
+            'wysiwyg-save-failed-unknown-error',
+            'wysiwyg-save-error',
+            'wysiwyg-save-successful',
+            'wysiwyg-move-failed',
+            'wysiwyg-move-failed-unknown-error',
+            'wysiwyg-move-error',
+            'wysiwyg-move-successful',
+            'wysiwyg-last-save',
+            'wysiwyg-never',
+            'wysiwyg-no-changes',
+            'wysiwyg-save-before-rename',
+            'wysiwyg-save-before-exit'
+        ),
+        'dependencies' => array(
+            'ext.jquery.query'
         ),
         'scripts' => array(
             'scripts/setBasePath.js',
@@ -420,6 +437,13 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/range.js',
             'ckeditor/_source/core/dom/rangelist.js',
             'ckeditor/_source/core/_bootstrap.js',
+            'ckeditor/_source/core/imagecacher.js',
+            'ckeditor/_source/core/eventInfo.js',
+            'ckeditor/_source/core/dataprocessor.js',
+            'ckeditor/_source/core/ajax.js',
+            'ckeditor/_source/core/commanddefinition.js',
+            'ckeditor/_source/core/plugindefinition.js',
+            'ckeditor/_source/core/xml.js',
             'ckeditor/_source/skins/kama/skin.js',
             'ckeditor/_source/lang/en.js',
             'ckeditor/_source/adapters/jquery.js',
@@ -504,7 +528,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/smwrule/plugin.js',
             'ckeditor/_source/plugins/smwwebservice/plugin.js',
             'ckeditor/_source/plugins/saveAndExit/plugin.js',
-            'ckeditor/_source/plugins/saveAndContinue/plugin.js',
+            'ckeditor/_source/plugins/mediawiki.api/plugin.js',
             'scripts/jquery.jscroll.js',
             'scripts/init.js'
         )

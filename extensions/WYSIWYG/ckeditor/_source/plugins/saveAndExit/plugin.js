@@ -54,8 +54,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
       CKEDITOR.tools.extend(editor.lang, saveMsgs[editor.langCode] || saveMsgs['en']);
       
-			var command = editor.addCommand( pluginName, saveCmd );
-			command.modes = { wysiwyg : !!( editor.element.$.form ) };
+			editor.addCommand( pluginName, saveCmd );
 
 			editor.ui.addButton( 'SaveAndExit',
 				{

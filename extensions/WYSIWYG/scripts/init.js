@@ -25,19 +25,7 @@
     //if the content contains __NORICHEDITOR__ then return
     if(mw.util.$content.text().indexOf( '__NORICHEDITOR__' ) > -1){
       return;
-    }    
-    //show ckeditor, hide the wikieditor and the wikitoolbar if configured
-    if((mw.user.options.get('cke_show') === 'richeditor')
-      || (mw.user.options.get('cke_show') === 'rememberlast'
-        && mw.user.options.get('riched_use_toggle')
-        && $.cookie('wgCKeditorToggleState') === 'visible'))
-        {
-      if(toolbar.length){
-        toolbar.hide();
-      }
-      mw.config.set('wgCKeditorInstance', CKEDITOR.replace(wikieditor.attr('id')));
-      mw.config.set('wgCKeditorVisible', true);
-    }    
+    }
     //show the toggle if configured
     if(mw.user.options.get('riched_use_toggle')){
       var toggleDiv = $('<div/>').attr('id', 'ckTools');
@@ -62,6 +50,19 @@
       toggleDiv.append('[');
       toggleDiv.append(toggleAnchor);
       toggleDiv.append(']');
+    }
+    //show ckeditor, hide the wikieditor and the wikitoolbar if configured
+    if((mw.user.options.get('cke_show') === 'richeditor')
+      || (mw.user.options.get('cke_show') === 'rememberlast'
+        && mw.user.options.get('riched_use_toggle')
+        && $.cookie('wgCKeditorToggleState') === 'visible'))
+        {
+      if(toolbar.length){
+        toolbar.hide();
+      }
+      var editor = CKEDITOR.replace(wikieditor.attr('id'));
+      mw.config.set('wgCKeditorInstance', editor);
+      mw.config.set('wgCKeditorVisible', true);
     }    
   }
 
@@ -173,7 +174,7 @@
   $(document).ready( function(){
     init();
 
-//create a floating toolbar when ckeditor instance is ready
+    //create a floating toolbar when ckeditor instance is ready
     CKEDITOR.on('instanceReady', function(){
       var ckeditorInstance = mw.config.get('wgCKeditorInstance');
       if(ckeditorInstance){
@@ -210,6 +211,18 @@
         });
       }
     })
+
+    //unset global vars when leaving the page
+    $(window).unload(function(){
+      var editor = mw.config.get('wgCKeditorInstance');
+      if(editor){
+        if(editor.checkDirty() && confirm(mw.msg('wysiwyg-save-before-exit'))){
+          editor.execCommand('saveAndContinue');
+        }
+        mw.config.set('wgCKeditorInstance', null);
+        mw.config.set('wgCKeditorVisible', false);
+      }
+    });
   });
 
 

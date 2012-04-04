@@ -59,7 +59,7 @@ CKEDITOR.editorConfig = function( config )
   }
 
   config.toolbar_Wiki = [
-    ['SaveAndContinue', 'SaveAndExit'],
+    ['SaveAndContinue', 'SaveAndExit', 'MoveWikiPage'],
   ['Format','Font','FontSize'],
   ['Bold','Italic','Underline'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
@@ -97,7 +97,7 @@ CKEDITOR.editorConfig = function( config )
   //        ['Maximize', 'ShowBlocks'],
   //        ['About']
   //    ];
-  config.extraPlugins = extraPlugins + ',autogrow,saveAndExit,saveAndContinue';
+  config.extraPlugins = extraPlugins + ',autogrow,saveAndExit,mediawiki.api';
   config.height = config.autoGrow_minHeight = '300';
   config.autoGrow_onStartup = true;
   config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
