@@ -1,6 +1,28 @@
+Index: extensions/SemanticForms/includes/SF_FormField.php
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormField.php	(revision 14046)
++++ extensions/SemanticForms/includes/SF_FormField.php	(working copy)
+@@ -349,8 +349,15 @@
+ 		global $wgParser;
+ 		foreach ( $other_args as $argname => $argvalue ) {
+ 			if ( is_string( $argvalue ) ) {
+-				$other_args[$argname] =
+-					$wgParser->recursiveTagParse( $argvalue );
++				/*op-patch|IS|2012-04-04|SF|do not parse halo ac constraints|start*/
++				/*op-patch|IS|2012-04-04|SF|do not parse halo ac constraints|doc|http://dmwiki.ontoprise.com/index.php/Do_not_parse_halo_ac_constraint_in_sf*/
++				if($argname != 'constraints'){
++					$other_args[$argname] =
++						$wgParser->recursiveTagParse( $argvalue );
++				} else {
++					$other_args[$argname] = $argvalue;
++				}
++				/*op-patch|IS|2012-04-04|SF|do not parse halo ac constraints|end*/
+ 			}
+ 		}
+ 
 Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_ParserFunctions.php	(revision 13326)
+--- extensions/SemanticForms/includes/SF_ParserFunctions.php	(revision 14046)
 +++ extensions/SemanticForms/includes/SF_ParserFunctions.php	(working copy)
 @@ -320,6 +320,17 @@
  				self::loadScriptsForPopupForm( $parser );
@@ -44,7 +66,7 @@ Index: extensions/SemanticForms/includes/SF_ParserFunctions.php
  			self::$num_autocompletion_inputs++;
 Index: extensions/SemanticForms/skins/SemanticForms.css
 ===================================================================
---- extensions/SemanticForms/skins/SemanticForms.css	(revision 13326)
+--- extensions/SemanticForms/skins/SemanticForms.css	(revision 14046)
 +++ extensions/SemanticForms/skins/SemanticForms.css	(working copy)
 @@ -8,20 +8,33 @@
  }
