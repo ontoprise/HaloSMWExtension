@@ -988,6 +988,19 @@ window.ASFMultiInputFieldHandler = {
 				jQuery('input[type="text"]', node).attr('id')
 				, jQuery(node).parent().get(0).datePickerParams);
 		}
+		
+		//deal with upload feature javascript
+		jQuery('.sfUploadable', node).each(function(){
+			jQuery(this).attr('data-input-id', '-' + jQuery(this).attr('data-input-id'));
+			
+			var newhref = jQuery(this).attr('href');
+			newhref = 
+				newhref.substr(0, newhref.indexOf('sfInputID=') + 'sfInputID='.length)
+				+ '-' + newhref.substr(newhref.indexOf('sfInputID=') + 'sfInputID='.length);
+			jQuery(this).attr('href', newhref);
+		});
+		
+		jQuery(node).initializeJSElements();		
 	},
 	
 	addAddButton : function(node){
