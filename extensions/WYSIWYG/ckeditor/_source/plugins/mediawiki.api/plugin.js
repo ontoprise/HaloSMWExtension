@@ -1,14 +1,11 @@
-﻿/*
-Copyright (c) 2003-2011, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
- */
-
-/**
- * @fileSave plugin.
- */
 
 (function($)
-{  
+{
+  //if mw write api is disabled then return
+  if(!mw.config.get('wgEnableWriteAPI')){
+    return;
+  }
+
   var editor;
 
   var pluginName = 'mediawiki.api';
@@ -29,10 +26,25 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
         editor = mw.config.get('wgCKeditorInstance');
       }
       return editor;
+    },    
+
+    getWikieditor: function(){
+      if(!(util.wikieditor && util.wikieditor.length)){
+        util.wikieditor = $('#toolbar');
+        if(!util.wikieditor.length){
+          util.wikieditor = $('#wpTextbox1');
+          if(!util.wikieditor.length){
+            util.wikieditor = $('#free_text');
+          }
+        }
+      }
+
+      return util.wikieditor;
     },
+    
     showMsg: function(msg, error){
       var msgDivCss = {
-        'color' : 'green'
+        'color' : '#269FB2'
       };
 
       var msgDivErrorCss = {
@@ -55,78 +67,94 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
             msgDiv.css(msgDivCss);
             msgDiv.fadeIn(500);
           });
-        }, 10000);
+        }, 3000);
       });
     },
     setupMsgElement: function(editor){
-      editor = editor || util.getEditor();      
+      if(!$('#' + msgDivId).length){
+        editor = editor || util.getEditor();
       
-      var msgDiv = $('<div/>').attr('id', msgDivId);
-      var css = {
-        'text-align': 'right',
-        'font-family': 'tahoma'
-      };
-      msgDiv.css(css);
-      $(editor.container.$).before(msgDiv);
-      util.showMsg(mw.msg('wysiwyg-last-save') + ': ' + lastSave);
+        var msgDiv = $('<div/>').attr('id', msgDivId);
+        var css = {
+          'font-family': 'tahoma'
+        };
+        msgDiv.css(css);
+        util.getWikieditor().before(msgDiv);
+        util.showMsg(mw.msg('wysiwyg-last-save') + ': ' + lastSave);
+      }
     },
-    setupTitleElement: function(editor){
-      editor = editor || util.getEditor();
-      //rename of Category, Property or Template is not supported
-      var namespaces = mw.config.get('wgFormattedNamespaces');
-      var namespaceId = mw.config.get('wgNamespaceNumber');
-
-      if(namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1){
+    removeTitleElement: function(){
+      var span = $('#rename-title-span');
+      if(span.length){
+        span.remove();
+        $('#rename-title-input').remove();
+        $('#rename-title-save-btn').remove();
+        $('#rename-title-cancel-btn').remove();
+        $('#ca-nstab-main').show();
+      }
+    },
+    setupTitleElement: function(){
+      if(!CKEDITOR.mw.isMoveAllowed()){
         return;
       }
-      
-      var titleDiv = $('#ca-nstab-main');
-      var css = {
-        'float' : 'left'
-      };
-      var linkCss = {
-        'background': 'url("data:image/gif;base64,R0lGODlhDwAQANUlAOWLIOSIG+2JEq5kcu+LFOujT+yoWO2sYe2uZOuGD+umVZOtu70xQZaWlu6LFMeqlPPIoeypW+6udemdRPCzho+quuWxt+WJHae+y+mcQdCYUdSwgOaRLdmRmaxkdO3Lz+qiTJqzw+SGFu6KE+uHEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACUALAAAAAAPABAAAAZFwJJwSBx+ikihh2FJEiuhQccpDGgWGGopQEhstAEHCQEekQ7aizmiBZgNbbMiTiq0BSSQloOfaEsSIhl/DxQQfyUNiEJBADs=") no-repeat scroll left center transparent',
-        'padding': '2px 0 2px 18px'
-      };
-      var spanCSS = {
-        'float': 'left',
-        'font-weight': 'normal',
-        'margin-left': '1em',
-        'margin' : '5px 20px 5px -22px'
-      };
-      var editSpan = $('<span/>').css(spanCSS);
-      var editLink = $('<a/>').attr('href', '#').text('rename').css(linkCss);
-      var input = $('<input/>').css(css).hide();
-      var saveButton = $('<button/>').text('Save Changes').css(css).hide();
-      var cancelButton = $('<button/>').text('Cancel').css(css).hide();
+      if(!$('#rename-title-span').length){
+        //rename of Category, Property or Template is not supported
+        var namespaces = mw.config.get('wgFormattedNamespaces');
+        var namespaceId = mw.config.get('wgNamespaceNumber');
 
-      titleDiv.after(editSpan.append(editLink));
-      titleDiv.after(cancelButton).after(saveButton).after(input);
+        if(namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1){
+          return;
+        }
       
-      editLink.click(function(event){
-        event.preventDefault();
-        editLink.hide();
-        titleDiv.hide();
-        input.show();
-        saveButton.show();
-        cancelButton.show();
-        input.val(mw.config.get('wgTitle'));
-      });
+        var titleDiv = $('#ca-nstab-main');
+        var css = {
+          'float' : 'left'
+        };
+        var linkCss = {
+          'background': 'url("data:image/gif;base64,R0lGODlhDwAQANUlAOWLIOSIG+2JEq5kcu+LFOujT+yoWO2sYe2uZOuGD+umVZOtu70xQZaWlu6LFMeqlPPIoeypW+6udemdRPCzho+quuWxt+WJHae+y+mcQdCYUdSwgOaRLdmRmaxkdO3Lz+qiTJqzw+SGFu6KE+uHEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACUALAAAAAAPABAAAAZFwJJwSBx+ikihh2FJEiuhQccpDGgWGGopQEhstAEHCQEekQ7aizmiBZgNbbMiTiq0BSSQloOfaEsSIhl/DxQQfyUNiEJBADs=") no-repeat scroll left center transparent',
+          'padding': '2px 0 2px 18px'
+        };
+        var spanCSS = {
+          'float': 'left',
+          'font-weight': 'normal',
+          'margin-left': '1em',
+          'margin' : '5px 20px 5px -22px'
+        };
 
-      saveButton.click(function(){       
-        editor.execCommand(moveWikiPageCommand, {
-          toTitle: input.val()
+        var editSpan = $('<span/>').attr('id', 'rename-title-span').css(spanCSS);
+        var editLink = $('<a/>').attr('href', '#').text('rename').css(linkCss);
+        var input = $('<input/>').attr('id', 'rename-title-input').css(css).hide();
+        var saveButton = $('<button/>').text('Save Changes').attr('id', 'rename-title-save-btn').css(css).hide();
+        var cancelButton = $('<button/>').text('Cancel').attr('id', 'rename-title-cancel-btn').css(css).hide();
+
+        titleDiv.after(editSpan.append(editLink));
+        titleDiv.after(cancelButton).after(saveButton).after(input);
+      
+        editLink.click(function(event){
+          event.preventDefault();
+          editLink.hide();
+          titleDiv.hide();
+          input.show();
+          saveButton.show();
+          cancelButton.show();
+          input.val(mw.config.get('wgTitle'));
         });
-      });
 
-      cancelButton.click(function(){
-        input.hide();
-        saveButton.hide();
-        cancelButton.hide();
-        editLink.show();
-        titleDiv.show();
-      });
+        saveButton.click(function(){
+          var editor = util.getEditor();
+          editor.execCommand(moveWikiPageCommand, {
+            toTitle: input.val()
+          });
+        });
 
+        cancelButton.click(function(){
+          input.hide();
+          saveButton.hide();
+          cancelButton.hide();
+          editLink.show();
+          titleDiv.show();
+        });
+      }
     },
     getEditToken: function(callbackFunction, calbackArguments) {
       if(editToken){
@@ -170,14 +198,16 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
           title: title,
           text: text,
           token: editToken,
-          starttimestamp: +new Date
+          recreate: true
+        //          starttimestamp: +new Date
         },
         dataType: 'json',
         type: 'POST',
         success: function(data, textStatus, jqXHR) {
           editor = util.getEditor();
           if ( data && data.edit && data.edit.result === 'Success' ) {
-            lastSave = new Date().toUTCString();
+            lastSave = new Date().toLocaleString();
+            $.cookie('wysiwyg-last-save-' + mw.user.name() + '-' + mw.config.get('wgPageName'), lastSave);
             util.showMsg(mw.msg('wysiwyg-save-successful'));
             util.getEditor().resetDirty();
             callbackFunction && typeof callbackFunction === 'function' && callbackFunction(editToken, args);
@@ -302,9 +332,15 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
       editor.addCommand( moveWikiPageCommand, moveCmd );
 
       editor.on('instanceReady', function(){
-        lastSave = mw.msg('wysiwyg-never');
-        util.setupTitleElement(editor);
-        util.setupMsgElement(editor);
+        if(editor.mode === 'wysiwyg'){
+          lastSave = $.cookie('wysiwyg-last-save-' + mw.user.name() + '-' + mw.config.get('wgPageName')) || mw.msg('wysiwyg-never');
+          util.setupTitleElement(editor);
+          util.setupMsgElement(editor);
+        }
+      });
+
+      editor.on('destroy', function(){
+        util.removeTitleElement();
       });
       
     //      editor.ui.addButton( 'MoveWikiPage',

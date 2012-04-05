@@ -7,19 +7,25 @@
     var $element = $(this);
     var $window = $(window);
     var minOffset = $element.offset().top;
-    var originalMargin = parseInt($element.css("margin-top"), 10) || 0;
+    var margin = parseInt($element.css("margin-top"), 10) || 0;
+
 
     // Private
-    function getMargin($element, $window, minOffset, originalMargin) {
-//      var maxOffset = $element.parent().height() - $element.outerHeight();
-      var margin = originalMargin;
+    function getMargin($element, $window) {
+      var maxOffset = $element.parent().height();
+      var defaultMargin = parseInt($element.css("margin-top"), 10) || 0;
 
-      if ($window.scrollTop() >= minOffset){
-        margin = margin + opts.top + $window.scrollTop() - minOffset;
+      //when starting update the initial margin and offset in case elements were inserted dynamically
+      if ($window.scrollTop() < minOffset){
+        minOffset = $element.offset().top;
+        margin = defaultMargin;
       }
-//      if (margin > maxOffset){
-//        margin = maxOffset;
-//      }
+      else{
+        margin = defaultMargin + opts.top + $window.scrollTop() - $element.offset().top;
+      }      
+      if (margin > maxOffset){
+        margin = maxOffset;
+      }
       return ({
         "paddingTop": margin + 'px'
       });
@@ -27,7 +33,7 @@
 
     return this.each(function() {          
       $window.scroll(function() {
-        $element.stop().animate(getMargin($element, $window, minOffset, originalMargin), opts.speed);
+        $element.stop().animate(getMargin($element, $window), opts.speed);
       });
     });
   };

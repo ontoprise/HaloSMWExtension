@@ -1,21 +1,5 @@
 <?php
 
-/**
- * Options for FCKeditor
- * [start with FCKeditor]
- */
-define('RTE_VISIBLE', 1);
-/**
- * Options for FCKeditor
- * [show toggle link]
- */
-define('RTE_TOGGLE_LINK', 2);
-/**
- * Options for FCKeditor
- * [show popup link]
- */
-define('RTE_POPUP', 4);
-
 class CKeditor_MediaWiki {
 
   private $excludedNamespaces;
@@ -247,8 +231,8 @@ class CKeditor_MediaWiki {
    */
   public static function onMakeGlobalVariablesScript($vars) {
     global $wgFCKEditorDir, $wgFCKEditorExtDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight,
-    $wgAllowExternalImages, $wgAllowExternalImagesFrom, $wgCKEditorHideDisabledTbutton, $wgUser, $wgDefaultUserOptions;
-
+    $wgGroupPermissions;
+    
     $vars['WYSIWYG_EDITOR_VERSION'] = WYSIWYG_EDITOR_VERSION;
     $vars['wgFCKEditorDir'] = $wgFCKEditorDir;
     $vars['wgFCKEditorExtDir'] = $wgFCKEditorExtDir;
@@ -275,13 +259,9 @@ class CKeditor_MediaWiki {
     if (defined('SEMANTIC_RULES_VERSION'))
       $instExt[] = 'SEMANTIC_RULES_VERSION';
     $vars['wgCKeditorUseBuildin4Extensions'] = $instExt;
-    // check if external images are allowed
-    if ($wgAllowExternalImages)
-      $vars['wgAllowExternalImages'] = true;
-    else if ($wgAllowExternalImagesFrom)
-      $vars['wgAllowExternalImagesFrom'] = $wgAllowExternalImagesFrom;
-    if ($wgCKEditorHideDisabledTbutton)
-      $vars['wgCKEditorHideDisabledTbutton'] = true;
+
+    $vars['wgGroupPermissions'] = $wgGroupPermissions;
+    
     return true;
   }
 
@@ -437,13 +417,6 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/range.js',
             'ckeditor/_source/core/dom/rangelist.js',
             'ckeditor/_source/core/_bootstrap.js',
-            'ckeditor/_source/core/imagecacher.js',
-            'ckeditor/_source/core/eventInfo.js',
-            'ckeditor/_source/core/dataprocessor.js',
-            'ckeditor/_source/core/ajax.js',
-            'ckeditor/_source/core/commanddefinition.js',
-            'ckeditor/_source/core/plugindefinition.js',
-            'ckeditor/_source/core/xml.js',
             'ckeditor/_source/skins/kama/skin.js',
             'ckeditor/_source/lang/en.js',
             'ckeditor/_source/adapters/jquery.js',

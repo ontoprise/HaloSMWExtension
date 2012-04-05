@@ -1,4 +1,6 @@
-(function($){  
+(function($){
+
+  CKEDITOR.mw = {};
   
   function init(){
     removeMediawikiClutter();
@@ -28,7 +30,7 @@
     }
     //show the toggle if configured
     if(mw.user.options.get('riched_use_toggle')){
-      var toggleDiv = $('<div/>').attr('id', 'ckTools');
+      var toggleDiv = $('<div/>').attr('id', 'ckTools').css('float', 'right');
       var toggleAnchor = $('<a/>').attr('class', 'fckToogle').attr('id', 'toggleAnchor').attr('href', '');
       
       toggleDiv.append(toggleAnchor);        
@@ -145,6 +147,7 @@
     ckeToolbarTd.css({
       'width' : width
     });
+    
     ckeToolbar.jScroll({
       top: 5,
       speed: 0
@@ -169,9 +172,45 @@
     });
   }
 
+  CKEDITOR.mw.isEditAllowed = function(){
+    var userGroups = mw.config.get('wgUserGroups');
+    var wgGroupPermissions = mw.config.get('wgGroupPermissions');
+
+    var result = false;
+    //if edit=true in one of the user groups then edit is allowed
+    $.each(wgGroupPermissions, function(group, permissions){
+      if($.inArray(group, userGroups) > -1 && permissions.edit){
+        result = true;
+        return false;
+      }
+    });
+
+    return result;
+  };
+
+  CKEDITOR.mw.isMoveAllowed = function(){
+    var userGroups = mw.config.get('wgUserGroups');
+    var wgGroupPermissions = mw.config.get('wgGroupPermissions');
+
+    var result = false;
+    //if edit=true in one of the user groups then edit is allowed
+    $.each(wgGroupPermissions, function(group, permissions){
+      if($.inArray(group, userGroups) > -1 && permissions.move){
+        result = true;
+        return false;
+      }
+    });
+
+    return result;
+  };
+
 
 
   $(document).ready( function(){
+    if(!CKEDITOR.mw.isEditAllowed()){
+      return;
+    }
+    
     init();
 
     //create a floating toolbar when ckeditor instance is ready
