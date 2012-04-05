@@ -43,9 +43,7 @@
 			<variable name="sfgCacheFormDefinitions">
 				<boolean name="sfgCacheFormDefinitions" description="disable SF cache">false</boolean>
 			</variable>
-			<variable name="sfgFormCacheType">
-				<string name="sfgFormCacheType" description="SF cache type">CACHE_DB</string>
-			</variable>
+			<php name="sfgFormCacheType">sfgFormCacheType" description="SF cache type">CACHE_DB</php>
 		</new>
 	</configs>
 
