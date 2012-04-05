@@ -322,7 +322,7 @@ class DFCommandInterface {
 			$oExec = $wshShell->Run("$runCommand", 7, false);
 
 		} else {
-			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --noask --nocheck --showOKHint -i \"$extidsString\" > \"$console_out\" 2>&1";
+			$runCommand = "\"$php\" \"$mwrootDir/deployment/tools/smwadmin/smwadmin.php\" --logtofile $filename --outputformat html --options $optionString --noask --nocheck --showOKHint -i $extidsString > \"$console_out\" 2>&1";
 			$nullResult = `$runCommand &`;
 		}
 		return $filename;
