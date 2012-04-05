@@ -29,7 +29,7 @@ class SMWQueryList extends SpecialPage {
 	 * Constructor
 	 */
 	function __construct() {
-		parent::__construct( 'QueryList' );           
+		parent::__construct( 'querylist' );           
 	}
 
 	/*
@@ -38,10 +38,12 @@ class SMWQueryList extends SpecialPage {
 	function execute( $query ) {
 		global $wgOut, $wgHooks;		
                 
-                //add resource modules
-                $this->addResourceModules();
+        //add resource modules
+        $this->addResourceModules();
                 
 		//todo: Use Language
+		
+        $wgOut->setPageTitle(wfMsg('querylist'));
 		
 		$html = '';
 		
@@ -63,7 +65,7 @@ class SMWQueryList extends SpecialPage {
 		$queryMetadata = new SMWQMQueryMetadata();
 		$results = SMWQMQueryManagementHandler::getInstance()->searchQueries($queryMetadata);
 		
-		$html .= '<table id="ql_list" class="smwtable" width="100%" id="list_of_all_queries">';
+		$html .= '<table id="ql_list" class="sortable wikitable smwtable" width="100%" id="list_of_all_queries">';
 		$html .= '<tr><th>Name</th><th>Page</th><th>Categories</th><th>Properties</th></tr>';
 		
 		$linker = new Linker();
@@ -121,7 +123,7 @@ class SMWQueryList extends SpecialPage {
 		
 		$html .= '</table>';
 		
-                $wgOut->addModules(array('ext.smwhalo.queryList'));
+        $wgOut->addModules(array('ext.smwhalo.queryList'));
 		$wgOut->addHTML($html);
 		
 		return true;

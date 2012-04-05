@@ -1708,7 +1708,6 @@ function smwhfRegisterResourceLoaderModules() {
 
 			$wgResourceModules['ext.smwhalo.queryList'] = $moduleTemplate + array(
                     'scripts' => array('scripts/QueryList/querylist.js'),
-                    'dependencies' => array('ext.smw.sorttable')
 			);
 
 
@@ -1731,17 +1730,14 @@ function smwfAddStore($store_class) {
 	global $smwgMasterStore;
 	$oldStore = smwfGetStore();
 
-// Fix: Making HACLSMWStore the outmost store is no longer needed
-// 	$qmStorePresent = false;
-// 	if ($oldStore instanceof HACLSMWStore) {
-// 		$qmStorePresent = true;
-// 		$oldStore = $oldStore->getStore();
-// 	}
-	$smwgMasterStore = new $store_class($oldStore);
+ 	$smwgMasterStore = new $store_class($oldStore);
+ 	
+ 	//This is necessary, since TSC does not execute getQueryResult()
+ 	//on encapsulated stores
+ 	if ($store_class == 'SMWTripleStore'){
+ 		$smwgMasterStore = smwfAddStore('SMWQMStore');
+ 	}
 
-// 	if ($qmStorePresent) {
-// 		$smwgMasterStore = new HACLSMWStore($smwgMasterStore);
-// 	}
 	return $smwgMasterStore;
 }
 
@@ -1770,8 +1766,8 @@ function smwfEnableQueryManagement(){
 	$wgAutoloadClasses['SMWQueryList'] =
 		$smwgHaloIP . '/specials/SMWQueryList/SMW_QueryList.php';
 
-	$wgSpecialPages['QueryList'] = array('SMWQueryList');
-	$wgSpecialPageGroups['QueryList'] = 'smwplus_group';
+	$wgSpecialPages['querylist'] = array('SMWQueryList');
+	$wgSpecialPageGroups['querylist'] = 'smwplus_group';
 
 	smwfAddStore('SMWQMStore');
 }

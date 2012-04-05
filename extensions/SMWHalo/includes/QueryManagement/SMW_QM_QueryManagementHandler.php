@@ -211,7 +211,6 @@ class SMWQMQueryManagementHandler {
 		}
 		$semanticData->addPropertyObjectValue($propertyValue->getDataItem(), $dataValue->getDataItem());
 		$wgParser->getOutput()->mSMWData = $semanticData;
-		
 	}
 	
 	/*
@@ -486,6 +485,7 @@ class SMWQMQueryManagementHandler {
 		while($continue){
 			$params['limit'] = $smwgQMaxInlineLimit - 1;
 			$params['offset'] = $offset;
+			$params['source'] = 'wiki';
 			
 			$query = 
 				SMWQueryProcessor::createQuery($queryString,$params, SMWQueryProcessor::INLINE_QUERY, 'table');
