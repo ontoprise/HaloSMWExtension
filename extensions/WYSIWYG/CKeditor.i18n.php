@@ -10,6 +10,10 @@ $messages = array();
 
 /** English */
 $messages['en'] = array(
+    'wysiwyg-rename' => 'rename',
+    'wysiwyg-title-empty' => 'Title can not be empty',
+    'wysiwyg-title-invalid' => 'Title conatins invalid characters',
+    'wysiwyg-title-exists' => 'Article with such title already exists',
     'wysiwyg-save-and-continue' => 'Save and Continue',
     'wysiwyg-save-failed' => 'Save request failed',
     'wysiwyg-save-failed-unknown-error' => 'Save request failed with unknown error',

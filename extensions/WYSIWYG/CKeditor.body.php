@@ -351,6 +351,10 @@ class CKeditor_MediaWiki {
 
     $wgResourceModules['ext.wysiwyg.core'] = $moduleTemplate + array(
         'messages' => array(
+            'wysiwyg-rename',
+            'wysiwyg-title-empty',
+            'wysiwyg-title-invalid',
+            'wysiwyg-title-exists',
             'wysiwyg-show-richtexteditor',
             'wysiwyg-show-wikitexteditor',
             'wysiwyg-save-and-continue',
