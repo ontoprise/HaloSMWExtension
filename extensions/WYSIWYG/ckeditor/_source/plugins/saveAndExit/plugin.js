@@ -20,6 +20,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 			if ( $form )
 			{
+        editor.resetDirty();
+        editor.getCommand(pluginName).setState(CKEDITOR.TRISTATE_ON);
 				try
 				{
 					$form.submit();
