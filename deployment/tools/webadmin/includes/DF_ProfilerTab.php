@@ -49,25 +49,76 @@ class DFProfilerTab {
 	public function getHTML() {
 		global $dfgLang, $wgServer, $wgScriptPath;
 
-		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_profilertab_description')."</div>";
-		$html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
-		$html .= "<div id=\"df_webadmin_profiler_content\">";
-		$html .= "<table>";
-		$html .= "<tr><td>";
-		$html .= "<textarea rows=\"20\" cols=\"160\" id=\"df_webadmin_profilerlog\" disabled=\"true\"></textarea>";
-		$html .= "<div><input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input>";
+		$html = "<div style=\"margin-bottom: 10px;\">".$dfgLang->getLanguageString('df_webadmin_profilertab_description');
 		$html .= '<a id="df_profiler_downloadlog" href="'.$wgServer.$wgScriptPath.'/deployment/tools/webadmin/index.php'.
-                        '?action=ajax&rs=downloadProfilingLog">'.$dfgLang->getLanguageString('df_webadmin_download').'</a></div>';
-		$html .= "</td><td>TODO: actions and aggregated data</td>";
-		$html .= "</tr>";
+                        '?action=ajax&rs=downloadProfilingLog">'.$dfgLang->getLanguageString('df_webadmin_download_profilinglog').'</a></div>';
+		$html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
+		$html .= "<div style=\"display:none\" id=\"df_webadmin_profiler_content\">";
+		$indices = $this->getProfilingLogIndices();
+		$html .= $dfgLang->getLanguageString('df_webadmin_profilertab_requests');
+		$html .= "<select id=\"df_webadmin_profiler_selectlog\" size=\"5\">";
+		$old = 0;
+		foreach($indices as $i) {
+			list($index, $logUrl) = $i;
+			if ($logUrl == '') continue;
+			$html .= "<option from=\"$index\" to=\"$old\">".htmlspecialchars($logUrl)."</option>";
+			$old = $index;
+		}
+		$html .= "</select>";
+		$html .= "<div><input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input></div>";
+		
+		$html .= "<div id=\"df_webadmin_profilerlog_container\">";
+		$html .= "<img id=\"df_webadmin_profiler_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
+		$html .= "<table id=\"df_webadmin_profilerlog\">";
 		$html .= "</table>";
-
-		$html .= "</div>";
 		$html .= "<div id=\"df_webadmin_profiler_filtering\">";
-		$html .= $dfgLang->getLanguageString('df_webadmin_filter').": <input type=\"text\" id=\"df_profiler_filtering\"></input>";
+		$html .= $dfgLang->getLanguageString('df_webadmin_filter').": <input size=\"40\" type=\"text\" id=\"df_profiler_filtering\"></input>";
+		$html .= "</div>";
+        $html .= "</div>";
 		$html .= "</div>";
 		return $html;
 	}
+	public function getProfilingLogIndices() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$loggingdir = "$homeDir/$wikiname/df_profiling";
+		$logFile = "$loggingdir/$wikiname-debug_log.txt";
+		if (!file_exists($logFile)) {
+			throw new Exception("Log file does not exist");
+		}
+		global $wgScriptPath;
+		$sizeOfLog = filesize($logFile);
+		$handle = fopen($logFile, "r");
+		$i = 0;
+		$j = 0;
+		$startIndex[0] = array($sizeOfLog, "");
+		while(true) {
+			$j++;
+			do {
+				$i++;
+				fseek($handle, -16 * 1024 * $i, SEEK_END);
+				$text = fread($handle, 16 * 1024);
+			} while(strpos($text, "$wgScriptPath/index.php") === false && 16 * 1024 * $i < $sizeOfLog);
+			if (16 * 1024 * $i > $sizeOfLog) break;
+			$index = strpos($text, "$wgScriptPath/index.php");
+			if (strpos($text, "\n", $index) !== false) {
+				$logurl = substr($text, $index, strpos($text, "\n", $index)-$index);
+			} else {
+				$logurl = substr($text, $index);
+			}
+			$startIndex[$j] = array(-16 * 1024 * $i + $index, $logurl);
+		}
+		fclose($handle);
+		return $startIndex;
 
-	 
+	}
+
 }

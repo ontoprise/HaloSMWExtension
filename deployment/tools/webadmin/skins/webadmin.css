@@ -1,16 +1,26 @@
 @CHARSET "ISO-8859-1";
 
 #df_profiler_filtering {
-	margin-top: 5px;
+	margin-top: 2px;
 }
 
 #df_profiler_downloadlog {
 	margin-left: 5px;
 }
+
+#df_webadmin_profiler_selectlog {
+	width: 100%;
+}
 	
 #df_webadmin_profilerlog {
 	font-size: 0.8em;
-	font-family: "Courier New", Courier, monospace 
+	font-family: "Courier New", Courier, monospace;
+	width: 100%
+}
+
+#df_webadmin_profilerlog_container {
+	height: 400px;
+	overflow: auto;
 }
 
 #df_webadmin_profiler_actions {
@@ -18,8 +28,7 @@
 }
 	
 #df_webadmin_profiler_content {
-	margin-top: 10px;
-    border-radius: 4px 4px 4px 4px;
+	margin-top: 20px;
 }
 
 .df_setting div {

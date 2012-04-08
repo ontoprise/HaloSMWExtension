@@ -4,7 +4,7 @@
 		<echo>Start building ${ant.project.name}: ${ant.file}</echo>
 		<property environment="env" />
 		<delete dir="bin/zip" quiet="true" />
-
+		<delete file="../tools/webadmin/scripts/webadmin_all.js" quiet="true" />
 		<mkdir dir="bin/zip" />
 
 		<!-- Pack the scripts -->

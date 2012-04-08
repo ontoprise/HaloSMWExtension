@@ -145,7 +145,7 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_server_start' => 'start',
 	'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'refresh',
-	'df_webadmin_download' => 'download',
+	'df_webadmin_download_profilinglog' => 'download profiling log',
 	'df_webadmin_filter' => 'filter',
 	'df_webadmin_finalize_message' => 'There are non-initialized extensions. Click here to start finalization.',
 	'df_webadmin_finalize' => 'finalize',
@@ -156,6 +156,8 @@ class DF_Language_En extends DF_Language {
 	'df_webadmin_contentbundle_file' => 'Bundle',
 	'df_webadmin_contentbundle_creationdate' => 'Creation date',
 	'df_webadmin_contentbundle_nobundles' => 'No bundles exported.',
+	
+	'df_webadmin_profilertab_requests' => 'Profiled HTTP requests',
 			
 	'df_webadmin_upload_message' => 'Here you can upload bundles ($1) or ontology files ($2)',
 	

@@ -141,7 +141,7 @@ class DF_Language_De extends DF_Language {
     'df_webadmin_server_start' => 'start',
     'df_webadmin_server_end' => 'stop',
 	'df_webadmin_refresh' => 'Aktualisieren',
-	'df_webadmin_download' => 'Herunterladen',
+	'df_webadmin_download_profilinglog' => 'Herunterladen',
 	'df_webadmin_filter' => 'Filter',
 	'df_webadmin_finalize_message' => 'Es gibt nicht initialisierte Extensions. Klicken sie hier um die Initialisierung zu starten.',
 	'df_webadmin_finalize' => 'Finalisieren',
@@ -153,6 +153,8 @@ class DF_Language_De extends DF_Language {
 	'df_webadmin_contentbundle_file' => 'Bundle',
     'df_webadmin_contentbundle_creationdate' => 'Erzeugt am',
     'df_webadmin_contentbundle_nobundles' => 'Noch keine Bundles exportiert.',
+	
+	'df_webadmin_profilertab_requests' => 'Gemessene HTTP Anfragen',
 	
 	'df_webadmin_newreleaseavailable' => 'Neues Release verfügbar! Sehen Sie in der $1 nach.',
     'df_webadmin_repository_link' => 'Repository-Liste',

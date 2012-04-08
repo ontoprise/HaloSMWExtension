@@ -29,7 +29,8 @@ $(document).ready(
 		function(e) {
 
 			var profilingEnabled = false;
-			var profilingLog = "";
+			var currentLog = [];
+			
 			
 			var url = wgServer
 			+ wgScriptPath
@@ -42,15 +43,16 @@ $(document).ready(
 					if (xhr.status == 200) {
 						profilingEnabled = (xhr.responseText !== "false");
 						if (profilingEnabled) {
-							profilingLog = xhr.responseText;
-							$('#df_webadmin_profiler_content textarea').val(profilingLog);
+							$('#df_webadmin_profiler_content').show();
+						} else {
+							$('#df_webadmin_profiler_content').hide();
 						}
 						$('#df_enableprofiling').attr("disabled", false);
 						$('#df_enableprofiling').attr("value",
 								profilingEnabled ? dfgWebAdminLanguage
 										.getMessage('df_webadmin_disableprofiling') : dfgWebAdminLanguage
 										.getMessage('df_webadmin_enableprofiling'));
-						$('#df_webadmin_profiler_content textarea').attr("disabled", !profilingEnabled);
+						//$('#df_webadmin_profiler_content textarea').attr("disabled", !profilingEnabled);
 						$('#df_webadmin_profiler_content input').attr("disabled", !profilingEnabled);
 					}
 				}
@@ -72,14 +74,16 @@ $(document).ready(
 								$('#df_enableprofiling').attr("disabled", false);
 								if (xhr.status == 200) {
 									if (!profilingEnabled) {
-										profilingLog = xhr.responseText;
-										$('#df_webadmin_profiler_content textarea').val(profilingLog);
+										currentLog = logParser.splitLog(xhr.responseText);
+
+										var html = logParser.createTable(currentLog);
+										$('#df_webadmin_profilerlog').html(html);
 									}
 									$('#df_enableprofiling').attr("value",
 											profilingEnabled ? dfgWebAdminLanguage
 													.getMessage('df_webadmin_enableprofiling') : dfgWebAdminLanguage
 													.getMessage('df_webadmin_disableprofiling'));
-									$('#df_webadmin_profiler_content textarea').attr("disabled", profilingEnabled);
+									//$('#df_webadmin_profiler_content textarea').attr("disabled", profilingEnabled);
 									$('#df_webadmin_profiler_content input').attr("disabled", profilingEnabled);
 									profilingEnabled = !profilingEnabled;
 								} else {
@@ -93,14 +97,25 @@ $(document).ready(
 			$('#df_refreshprofilinglog').click(function() { 
 				var url = wgServer
 				+ wgScriptPath
-				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLog";
+				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLogIndices";
 				$.ajax( {
 					url : url,
 					dataType : "json",
 					complete : function(xhr,
 							status) {
-					$('#df_webadmin_profiler_content textarea').val(xhr.responseText);
-					profilingLog = xhr.responseText;
+					var html = "";
+					var indices = $.parseJSON(xhr.responseText);
+					var oldIndex = 0;
+					$.each(indices, function(i, e) { 
+						var index = e[0];
+						var logUrl = e[1];
+						if (logUrl == '') return;
+						html += "<option from=\""+index+"\" to=\""+oldIndex+"\">"+$('<div/>').text(logUrl).html();+"</option>";
+						oldIndex = index;
+						
+					});
+					$('#df_webadmin_profiler_selectlog').html(html);
+					
 					}
 				});
 			});
@@ -110,11 +125,99 @@ $(document).ready(
 				if (timeout != null) clearTimeout(timeout);
 				timeout = setTimeout(function() { 
 					var searchFor = $('#df_profiler_filtering').val().toLowerCase();
-					var lines = profilingLog.split("\n");
-					var selectedLines = $.grep(lines, function(l, i) { 
-						return (l.toLowerCase().indexOf(searchFor) != -1);
+					
+					var selectedLines = $.grep(currentLog, function(l, i) { 
+						return (l.text.indexOf(searchFor) != -1);
 					});
-					$('#df_webadmin_profiler_content textarea').val(selectedLines.join("\n"));
+				
+					
+					var html = logParser.createTable(selectedLines);
+					var table = $('#df_webadmin_profilerlog');
+					table.empty();
+					table.html(html);
+					
+					$('#df_webadmin_profilerlog').html(html);
+					//$('#df_webadmin_profiler_content textarea').val(selectedLines.join("\n"));
+					//$('#df_profiler_sum_call').text(callSum);
+				
+					
 				}, 500);
 			});
+			
+			
+			$('#df_webadmin_profiler_selectlog').change(function(e) {  
+				var from = $(
+				"#df_webadmin_profiler_selectlog option:selected")
+				.attr("from");
+				var to = $(
+				"#df_webadmin_profiler_selectlog option:selected")
+				.attr("to");
+				var url = wgServer
+				+ wgScriptPath
+				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLog&rsargs[]="+from+"&rsargs[]="+to;
+				$.ajax( {
+					url : url,
+					dataType : "json",
+					complete : function(xhr,
+							status) {
+					currentLog = logParser.splitLog(xhr.responseText);
+					var html = logParser.createTable(currentLog);
+					var table = $('#df_webadmin_profilerlog');
+					table.empty();
+					table.html(html);
+					$('#df_webadmin_profiler_progress_indicator').hide();
+					}
+				});
+				$('#df_webadmin_profiler_progress_indicator').show();
+			});
+			
+			var logParser = {};
+			logParser.parseLine = function(line) {
+				var COLUMN = /\s\s\s/g;
+				var matches = line.split(COLUMN);
+				if (matches == null || matches.length < 6) return { text: null };
+				matches = $.grep(matches, function(e) { 
+					return $.trim(e) != '';
+				});
+				//  Calls         Total          Each             %       Mem
+				return { text: matches[0], calls: parseInt(matches[1]), total: parseFloat(matches[2]), 
+						each : parseFloat(matches[3]), percentage : parseFloat(matches[4]), mem : parseFloat(matches[5]) };
+			}
+			
+			logParser.splitLog = function(log) {
+				var lines = log.split("\n");
+				var logArray = [];
+				$.each(lines, function(i, l) {
+					var nums = logParser.parseLine(l);
+					if (nums.text == null ) return;
+					logArray.push(nums);
+				});
+				return logArray;
+			} 
+			
+					
+			logParser.createTable = function(logArray) {
+			
+				var html = "";
+				html += "<tr>";
+				html += "<th>Function</th>";
+				html += "<th>Calls</th>";
+				html += "<th>Total</th>";
+				html += "<th>Each</th>";
+				html += "<th>Percentage</th>";
+				html += "<th>Mem</th>";
+				html += "</tr>";
+				$.each(logArray, function(i, l) { 
+					
+					html += "<tr>";
+					html += "<td>"+l.text+"</td>";
+					html += "<td>"+l.calls+"</td>";
+					html += "<td>"+l.total+"</td>";
+					html += "<td>"+l.each+"</td>";
+					html += "<td>"+l.percentage+"</td>";
+					html += "<td>"+l.mem+"</td>";
+					html += "</tr>";
+				});
+				return html;
+			}
 });
