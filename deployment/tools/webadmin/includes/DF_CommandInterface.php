@@ -821,6 +821,26 @@ class DFCommandInterface {
 		return file_exists("$mwrootDir/StartProfiler.php") ? "true" : "false";
 	}
 
+	public function clearProfilingLog() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$loggingdir = "$homeDir/$wikiname/df_profiling";
+		$logFile = "$loggingdir/$wikiname-debug_log.txt";
+		if (!file_exists($logFile)) {
+			throw new Exception("Log file does not exist");
+		}
+		$fp = fopen($logFile, "w");
+		fclose($fp);
+	}
+
 	public function switchProfiling($enable) {
 		global $mwrootDir;
 	 if ($enable === "false") {

@@ -31,7 +31,7 @@ $(document).ready(
 			var profilingEnabled = false;
 			var currentLog = [];
 			
-			
+			// intialize, check if profiling is enabled 
 			var url = wgServer
 			+ wgScriptPath
 			+ "/deployment/tools/webadmin/index.php?rs=getProfilingState";
@@ -52,12 +52,13 @@ $(document).ready(
 								profilingEnabled ? dfgWebAdminLanguage
 										.getMessage('df_webadmin_disableprofiling') : dfgWebAdminLanguage
 										.getMessage('df_webadmin_enableprofiling'));
-						//$('#df_webadmin_profiler_content textarea').attr("disabled", !profilingEnabled);
+						
 						$('#df_webadmin_profiler_content input').attr("disabled", !profilingEnabled);
 					}
 				}
 			});
-
+			
+			// enable/disable profiling button
 			$('#df_enableprofiling').click(
 					function() {
 						
@@ -93,7 +94,7 @@ $(document).ready(
 						});
 			});
 			
-			
+			// refresh profiling requests button
 			$('#df_refreshprofilinglog').click(function() { 
 				var url = wgServer
 				+ wgScriptPath
@@ -103,23 +104,26 @@ $(document).ready(
 					dataType : "json",
 					complete : function(xhr,
 							status) {
-					var html = "";
-					var indices = $.parseJSON(xhr.responseText);
-					var oldIndex = 0;
-					$.each(indices, function(i, e) { 
-						var index = e[0];
-						var logUrl = e[1];
-						if (logUrl == '') return;
-						html += "<option from=\""+index+"\" to=\""+oldIndex+"\">"+$('<div/>').text(logUrl).html();+"</option>";
-						oldIndex = index;
+					$('#df_webadmin_profiler_refresh_progress_indicator').hide();
+						var html = "";
+						var indices = $.parseJSON(xhr.responseText);
+						var oldIndex = 0;
+						$.each(indices, function(i, e) { 
+							var index = e[0];
+							var logUrl = e[1];
+							if (logUrl == '') return;
+							html += "<option from=\""+index+"\" to=\""+oldIndex+"\">"+$('<div/>').text(logUrl).html();+"</option>";
+							oldIndex = index;
+							
+						});
+						$('#df_webadmin_profiler_selectlog').html(html);
 						
-					});
-					$('#df_webadmin_profiler_selectlog').html(html);
-					
 					}
 				});
+				$('#df_webadmin_profiler_refresh_progress_indicator').show();
 			});
 			
+			// filter input field
 			var timeout = null;
 			$('#df_profiler_filtering').keydown(function() {
 				if (timeout != null) clearTimeout(timeout);
@@ -127,7 +131,7 @@ $(document).ready(
 					var searchFor = $('#df_profiler_filtering').val().toLowerCase();
 					
 					var selectedLines = $.grep(currentLog, function(l, i) { 
-						return (l.text.indexOf(searchFor) != -1);
+						return (l.text.toLowerCase().indexOf(searchFor) != -1);
 					});
 				
 					
@@ -137,14 +141,11 @@ $(document).ready(
 					table.html(html);
 					
 					$('#df_webadmin_profilerlog').html(html);
-					//$('#df_webadmin_profiler_content textarea').val(selectedLines.join("\n"));
-					//$('#df_profiler_sum_call').text(callSum);
-				
 					
 				}, 500);
 			});
 			
-			
+			// select a request from list
 			$('#df_webadmin_profiler_selectlog').change(function(e) {  
 				var from = $(
 				"#df_webadmin_profiler_selectlog option:selected")
@@ -169,8 +170,32 @@ $(document).ready(
 					}
 				});
 				$('#df_webadmin_profiler_progress_indicator').show();
+				var table = $('#df_webadmin_profilerlog');
+				table.empty();
 			});
 			
+			// clear profiling requests button
+			$('#df_clearprofilinglog').click(function() { 
+				var url = wgServer
+				+ wgScriptPath
+				+ "/deployment/tools/webadmin/index.php?rs=clearProfilingLog";
+				$.ajax( {
+					url : url,
+					dataType : "json",
+					complete : function(xhr,
+							status) {
+					$('#df_webadmin_profiler_refresh_progress_indicator').hide();
+					if (xhr.status == 200) {
+						var table = $('#df_webadmin_profiler_selectlog').empty();
+					} else {
+						alert("Error on clear log");
+					}
+					}
+				});
+				$('#df_webadmin_profiler_refresh_progress_indicator').show();
+			});
+			
+			// logging parser
 			var logParser = {};
 			logParser.parseLine = function(line) {
 				var COLUMN = /\s\s\s/g;

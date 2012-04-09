@@ -56,6 +56,9 @@ class DFProfilerTab {
 		$html .= "<div style=\"display:none\" id=\"df_webadmin_profiler_content\">";
 		$indices = $this->getProfilingLogIndices();
 		$html .= $dfgLang->getLanguageString('df_webadmin_profilertab_requests');
+		$html .= "<div style=\"text-align:center\"><div style=\"margin:auto\">";
+		$html .= "<img id=\"df_webadmin_profiler_refresh_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none;\"/>";
+		$html .= "</div></div>";
 		$html .= "<select id=\"df_webadmin_profiler_selectlog\" size=\"5\">";
 		$old = 0;
 		foreach($indices as $i) {
@@ -65,16 +68,20 @@ class DFProfilerTab {
 			$old = $index;
 		}
 		$html .= "</select>";
-		$html .= "<div><input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input></div>";
-		
+		$html .= "<div>";
+		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input>";
+		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_clearlog')."\" id=\"df_clearprofilinglog\"></input>";
+		$html .= "</div>";
 		$html .= "<div id=\"df_webadmin_profilerlog_container\">";
-		$html .= "<img id=\"df_webadmin_profiler_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none\"/>";
+		$html .= "<div style=\"text-align:center\"><div style=\"margin:auto\">";
+		$html .= "<img id=\"df_webadmin_profiler_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none;\"/>";
+		$html .= "</div></div>";
 		$html .= "<table id=\"df_webadmin_profilerlog\">";
 		$html .= "</table>";
+		$html .= "</div>";
 		$html .= "<div id=\"df_webadmin_profiler_filtering\">";
 		$html .= $dfgLang->getLanguageString('df_webadmin_filter').": <input size=\"40\" type=\"text\" id=\"df_profiler_filtering\"></input>";
 		$html .= "</div>";
-        $html .= "</div>";
 		$html .= "</div>";
 		return $html;
 	}
@@ -98,27 +105,40 @@ class DFProfilerTab {
 		$sizeOfLog = filesize($logFile);
 		$handle = fopen($logFile, "r");
 		$i = 0;
-		$j = 0;
+	
 		$startIndex[0] = array($sizeOfLog, "");
 		while(true) {
-			$j++;
+			
 			do {
 				$i++;
-				fseek($handle, -16 * 1024 * $i, SEEK_END);
-				$text = fread($handle, 16 * 1024);
-			} while(strpos($text, "$wgScriptPath/index.php") === false && 16 * 1024 * $i < $sizeOfLog);
-			if (16 * 1024 * $i > $sizeOfLog) break;
-			$index = strpos($text, "$wgScriptPath/index.php");
+				$lengthToRead = 32 * 1024;
+				if (32 * 1024 * $i > $sizeOfLog) {
+					$lengthToRead = $sizeOfLog % (32 * 1024 );
+				}
+				fseek($handle, max(array(-32 * 1024 * $i, -$sizeOfLog)), SEEK_END);
+				$text = fread($handle, $lengthToRead);
+			} while(strrpos($text, "$wgScriptPath/") === false && 32 * 1024 * $i < $sizeOfLog);
+			$this->addProfilingLog($text, $i, $sizeOfLog, $startIndex);
+			if (32 * 1024 * $i > $sizeOfLog) break;
+		}
+		fclose($handle);
+		return $startIndex;
+
+	}
+
+	private function addProfilingLog($text, $i, $sizeOfLog, & $startIndex) {
+		global $wgScriptPath;
+		$index = strrpos($text, "$wgScriptPath/");
+		while($index !== false) {
 			if (strpos($text, "\n", $index) !== false) {
 				$logurl = substr($text, $index, strpos($text, "\n", $index)-$index);
 			} else {
 				$logurl = substr($text, $index);
 			}
-			$startIndex[$j] = array(-16 * 1024 * $i + $index, $logurl);
+			$startIndex[] = array(max(array(-32 * 1024 * $i + $index, -$sizeOfLog+ $index)), $logurl);
+			$text = substr($text, 0, $index);
+			$index = strrpos($text, "$wgScriptPath/");
 		}
-		fclose($handle);
-		return $startIndex;
-
 	}
 
 }
