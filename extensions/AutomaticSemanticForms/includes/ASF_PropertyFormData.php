@@ -539,11 +539,6 @@ private function getFormFieldInputTypeMetadata($forToolTip = false){
 			$additionalTips .= '<li>'.wfMsg('asf_tt_autocomplete', $this->autocompletionRange).'</li>';
 		}
 
-		if($this->maxCardinality != 1 || $this->delimiter){
-			$delimiter = ($this->delimiter) ? $this->delimiter : ',';
-			$additionalTips .= '<li>'.wfMsg('asf_tt_delimiter', trim($delimiter)).'</li>';
-		}		
-
 		if(strlen($additionalTips) > 0){
 			$additionalTips = '<ul>'.$additionalTips.'</ul>';
 		}
