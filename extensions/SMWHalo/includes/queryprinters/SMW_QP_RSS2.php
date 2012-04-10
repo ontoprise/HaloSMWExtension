@@ -41,14 +41,15 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 	protected $m_description_template = '';
 
 	protected function readParameters( $params, $outputmode ) {
-		parent::readParameters( $params, $outputmode );
 		
 		global $wgSitename;
-		if ( array_key_exists( 'title', $this->m_params ) ) {
-			$this->m_title = trim( $this->m_params['title'] );
+		if ( array_key_exists( 't', $this->m_params ) ) {
+			$this->m_title = trim( $this->m_params['t'] );
 		} elseif ( array_key_exists( 'rsstitle', $this->m_params ) ) { // for backward compatibiliy
 			$this->m_title = trim( $this->m_params['rsstitle'] );
-		}
+		} elseif ( array_key_exists( 'title', $this->m_params ) ) {
+			$this->m_title = trim( $this->m_params['title'] );
+		} 
 		if ( $this->m_title == '' ) {
 			$this->m_title = $wgSitename;
 		}
@@ -58,6 +59,8 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			$this->m_description = trim( $this->m_params['description'] );
 		} elseif ( array_key_exists( 'rssdescription', $this->m_params ) ) { // for backward compatibiliy
 			$this->m_description = trim( $this->m_params['rssdescription'] );
+		} elseif ( array_key_exists( 'd', $this->m_params ) ) { // for backward compatibiliy
+			$this->m_description = trim( $this->m_params['d'] );
 		}
 		if ( $this->m_description == '' ) {
 			smwfLoadExtensionMessages( 'SemanticMediaWiki' );
@@ -66,25 +69,33 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 		
 		if ( array_key_exists( 'editor', $this->m_params ) ) {
 			$this->m_editor= trim( $this->m_params['editor'] );
+		} else if ( array_key_exists( 'e', $this->m_params ) ) {
+			$this->m_editor= trim( $this->m_params['e'] );
 		}
 		
 		if ( array_key_exists( 'copyright', $this->m_params ) ) {
 			$this->m_copyright= trim( $this->m_params['copyright'] );
+		} else if ( array_key_exists( 'c', $this->m_params ) ) {
+			$this->m_copyright= trim( $this->m_params['c'] );
 		}
 		
 		if ( array_key_exists( 'image', $this->m_params ) ) {
 			$this->m_image = trim( $this->m_params['image'] );
+		} else if ( array_key_exists( 'i', $this->m_params ) ) {
+			$this->m_image = trim( $this->m_params['i'] );
 		}
 		
 		if ( array_key_exists('ttl', $this->m_params ) ) {
 			$this->m_ttl = trim( $this->m_params['ttl'] );
 		}
 		
-		if ( !array_key_exists('link to', $this->m_params)){
-			global $wgTitle;
-			$this->m_link_to = $wgTitle->getFullURL(); 
+		if (array_key_exists('link to', $this->m_params)){
+			$this->m_link_to = trim( $this->m_params['link to'] );	 
+		} if (array_key_exists('lt', $this->m_params)){
+			$this->m_link_to = trim( $this->m_params['lt'] );	 
 		} else {
-			$this->m_link_to = trim( $this->m_params['link to'] );
+			global $wgTitle;
+			$this->m_link_to = $wgTitle->getFullURL();
 		}
 		
 		if ( array_key_exists( 'categories', $this->m_params ) ) {
@@ -92,10 +103,17 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			foreach($categories as $c){
 				$this->m_categories[] = trim($c);
 			}
+		} else if ( array_key_exists( 'cs', $this->m_params ) ) {
+			$categories = explode(';', $this->m_params['cs'] );
+			foreach($categories as $c){
+				$this->m_categories[] = trim($c);
+			}
 		}
 		
 		if ( array_key_exists('description template', $this->m_params ) ) {
 			$this->m_description_template = trim( $this->m_params['description template'] );
+		} else if ( array_key_exists('dt', $this->m_params ) ) {
+			$this->m_description_template = trim( $this->m_params['dt'] );
 		}
 	}
 
@@ -117,6 +135,9 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 	}
 
 	protected function getResultText( SMWQueryResult $res, $outputmode ) {
+		
+		$this->readParameters($this->params, $outputmode);
+		
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $smwgRSSEnabled, $wgRequest;
 		
 		$result = '';
@@ -234,15 +255,15 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 				$link->setParameter( 'format=atom' );
 			}
 			if ( $this->m_title !== '' ) {
-				$link->setParameter( 'title='.$this->m_title);
+				$link->setParameter( 't='.$this->m_title);
 			}
 			if ( $this->m_description !== '' ) {
-				$link->setParameter('description='.$this->m_description);
+				$link->setParameter('d='.$this->m_description);
 			}			
 			if ( array_key_exists( 'limit', $this->m_params ) ) {
-				$link->setParameter('limit='.$this->m_params['limit']);
+			//	$link->setParameter('limit='.$this->m_params['limit']);
 			} else { // use a reasonable deafult limit (10 is suggested by RSS)
-				$link->setParameter('limit=20');
+			//	$link->setParameter('limit=20');
 			}
 
 			foreach ( $res->getPrintRequests() as $printout ) { // overwrite given "sort" parameter with printout of label "date"
@@ -252,19 +273,19 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			}
 			
 			if($this->m_editor !== '' ) {
-				$link->setParameter('editor='.$this->m_editor);
+				$link->setParameter('e='.$this->m_editor);
 			}
 			
 			if($this->m_image !== '' ) {
-				$link->setParameter('image='.$this->m_image);
+				$link->setParameter('i='.$this->m_image);
 			}
 			
 			if($this->m_copyright !== '' ) {
-				$link->setParameter('copyright='.$this->m_copyright);
+				$link->setParameter('c='.$this->m_copyright);
 			}
 			
 			if(count($this->m_categories) > 0){
-				$link->setParameter('categories='.implode(';', $this->m_categories));
+				$link->setParameter('cs='.implode(';', $this->m_categories));
 			}
 			
 			if($this->m_ttl !== '' ) {
@@ -272,48 +293,55 @@ class SMWRSS2QueryPrinter extends SMWResultPrinter {
 			}
 			
 			if($this->m_description_template !== '' ) {
-				$link->setParameter('description template='.$this->m_description_template );
+				$link->setParameter('dt='.$this->m_description_template );
 			}
 
 			if($this->m_link_to !== '' ) {
-				$link->setParameter('link to='.$this->m_link_to);
+				$link->setParameter('lt='.$this->m_link_to);
 			}
 			
 			$result .= $link->getText( $outputmode, $this->mLinker );
 			$this->isHTML = ( $outputmode == SMW_OUTPUT_HTML ); // yes, our code can be viewed as HTML if requested, no more parsing needed
 			SMWOutputs::requireHeadItem( 'rss' . $smwgIQRunningNumber, '<link rel="alternate" type="application/rss+xml" title="' . $this->m_title . '" href="' . $link->getURL() . '" />' );
-			
 		}
 
 		return $result;
 	}
 
 	public function getParameters() {
+		
 		//todo:use language file
 		
 		$params = array_merge( parent::getParameters(), $this->exportFormatParameters() );
 		
 		$params['title'] = new Parameter( 'title' );
 		$params['title']->setMessage( 'smw_paramdesc_rsstitle' );
+		$params['title']->addAliases(array('t'));
 		
-		$params['description'] = new Parameter( 'title' );
+		$params['description'] = new Parameter( 'description' );
 		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['description']->addAliases(array('d'));
 		
-		$params['description'] = new Parameter( 'editor' );
+		$params['editor'] = new Parameter( 'editor' );
 		//E-mail adress of the person responsible for editorial content.
-		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['editor']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['editor']->addAliases(array('e'));
 		
-		$params['description'] = new Parameter( 'copyright' );
+		
+		$params['copyright'] = new Parameter( 'copyright' );
 		//Copyright notice for content in the feed.
-		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['copyright']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['copyright']->addAliases(array('c'));
 		
-		$params['description'] = new Parameter( 'categories' );
+		$params['categories'] = new Parameter( 'categories' );
 		//A semicolon separated list of tags for this feed.
-		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['categories']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['categories']->addAliases(array('cs'));
 		
-		$params['description'] = new Parameter( 'description template' );
+		$params['description template'] = new Parameter( 'description template' );
 		//Name of a template which will be used to generate item descriptions. 
-		$params['description']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['description template']->setMessage( 'smw_paramdesc_rssdescription' );
+		$params['description template']->addAliases(array('dt'));
 		
 		return $params;
 	}
@@ -424,7 +452,7 @@ class SMWRSS2Item {
 		$result .= $this->getTagText('categories', 'category', true);
 		$result .= $this->getTagText('link', 'link');
 		$result .= $this->getTagText('id', 'guid');
- 		$result .= $this->getTagText('description', 'description');
+ 	 	$result .= $this->getTagText('description', 'description');
 		
 		// todo: support these fields
  		// source
