@@ -383,7 +383,9 @@ clicking the big arrows between the columns.',
 	
 	'tabf_paging_previous' => 'Previous',
 	'tabf_paging_next' => 'Next',
-	'tabf_paging_results' => 'Results',	
+	'tabf_paging_results' => 'Results',
+
+	'tabf_filter_placeholder' => "Filter...",
 	
 	//--- fancy table result printer
 	'ftrp_warning' => "Found invalid replace statements with unknown properties:",

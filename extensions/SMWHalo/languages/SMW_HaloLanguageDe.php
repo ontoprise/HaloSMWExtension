@@ -381,6 +381,8 @@ protected $smwUserMessages = array(
 	'tabf_paging_next' => 'N&auml;chste',
 	'tabf_paging_results' => 'Ergebnisse',
 
+	'tabf_filter_placeholder' => "Filter...",
+
 	//--- fancy table result printer
 	'ftrp_warning' => "Es wurden ungültige replace-Anweisungen mit unbekannten Attributen gefunden:",
 

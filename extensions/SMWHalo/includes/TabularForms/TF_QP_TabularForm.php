@@ -641,7 +641,7 @@ class TFTabularFormData {
 		$html .= '</span>';
 		$html .= '<br/>';
 		if(array_key_exists('enable filtering', $this->queryParams) && $this->queryParams['enable filtering'] == 'true' && !$this->isSPARQLQuery){ 
-			$html .= '<input class="tf_filter_input wickEnabled" cmp-type="instance" style="width: 100%" constraints="ask: '.$this->queryResult->getQueryString().'"/>';
+			$html .= '<input class="tf_filter_input wickEnabled" cmp-type="instance" style="width: 99%" constraints="ask: '.$this->queryResult->getQueryString().'" placeholder="'.wfMsg('tabf_filter_placeholder').'"></input>';
 		}
 		$html .= '</th>';
 
@@ -661,8 +661,8 @@ class TFTabularFormData {
 				$html .= '<div style="min-width: 100%; max-width: 100%;vertical-align: bottom">';
 				
 				if(count($annotation['allows value']) > 0){
-					$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%; display: inline">';
-					$html .= '<option></option>';
+					$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 99%; display: inline">';
+					$html .= '<option value="">'.wfMsg('tabf_filter_placeholder').'</option>';
 					foreach($annotation['allows value'] as $val){
 						$html .= '<option>'.$val.'</option>';
 					}
@@ -677,23 +677,25 @@ class TFTabularFormData {
 						case 'date' :
 							$html .= '<nobr style="width: 100%">';
 							$html .= '<select class="tf_filter_input_helper" style="width: 15%; min-width: 35px"><option>=</option><option>&lt;</option><option>&gt;</option></select>';
-							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="choose" type="text" style="width: 85%" '.$autocompletion.'/>';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="choose" type="text" style="width: 84%" '.$autocompletion.' placeholder="'.wfMsg('tabf_filter_placeholder').'"/>';
 							$html .= '</nobr>';
 							break;
 						case 'boolean' :
-							$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 100%"><option></option><option>yes</option><option>no</option>';
+							$html .= '<select class="tf_filter_input" cmp-type="=" style="width: 99%">';
+							$html .= '<option value="">'.wfMsg('tabf_filter_placeholder').'</option>';
+							$html .= '<option>yes</option><option>no</option>';
 							break;
 						case 'page';
 						case 'string';
 						case 'text';
 						case 'url';
-							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 100%" '.$autocompletion.'/>';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 99%" '.$autocompletion.' placeholder="'.wfMsg('tabf_filter_placeholder').'"/>';
 							break;
 						case 'category';
-							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="category" style="display: inline; width: 100%" constraints="namespace : category"/>';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="category" style="display: inline; width: 99%" constraints="namespace : category" placeholder="'.wfMsg('tabf_filter_placeholder').'"/>';
 							break;
 						default:
-							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="=" style="width: 100%" '.$autocompletion.'/>';
+							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="=" style="width: 100%" '.$autocompletion.' placeholder="'.wfMsg('tabf_filter_placeholder').'"/>';
 							break;
 					}
 					
@@ -899,7 +901,7 @@ class TFTabularFormData {
 			$html .= '<b>'.wfMsg( 'tabf_paging_previous').'</b>';
 		}
 		
-		$html .= '&nbsp;&nbsp;<b>'.wfMsg( 'tabf_paging_results').' '.$offset.' - '.(count($this->formRowsData)+$offset).'</b>&nbsp;&nbsp;';
+		$html .= '&nbsp;&nbsp;&nbsp;&nbsp;<b>'.wfMsg( 'tabf_paging_results').' '.$offset.' - '.(count($this->formRowsData)+$offset).'</b>&nbsp;&nbsp;&nbsp;&nbsp;';
 			
 		if($this->hasFurtherResults){
 			$html .= '<a href="javascript:tf.showNext(\''.$this->tabularFormId.'\');">'.wfMsg( 'tabf_paging_next').'</a>';

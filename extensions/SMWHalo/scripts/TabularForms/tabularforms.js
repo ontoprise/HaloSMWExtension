@@ -1282,10 +1282,12 @@ var TF = Class.create({
 	/*
 	 * unset class for currently selected cell
 	 */
-	unSetAsCurrentlySelectedCellValue : function(){
+	unSetAsCurrentlySelectedCellValue : function(event){
 		jQuery(this).removeClass('tabf_selected_value');
-		
-		autoCompleter.hideSmartInputFloater();
+
+		window.setTimeout(function() {
+			autoCompleter.hideSmartInputFloater();
+		}, 500);
 	},
 	
 	getPositionForAC : function(element){
@@ -1646,8 +1648,10 @@ var TF = Class.create({
 			tf.checkIfFiltersMustBeApplied(container);
 		});
 		
-		jQuery('.tf_filter_input', container).blur(function(){
-			autoCompleter.hideSmartInputFloater();
+		jQuery('.tf_filter_input', container).blur(function(event){
+			window.setTimeout(function() {
+				autoCompleter.hideSmartInputFloater();
+			}, 500);
 		});
 	},
 	
@@ -1740,6 +1744,7 @@ var TF = Class.create({
 	
 	disablePaging : function(container, disable){
 		if(disable){
+			jQuery('.tabf_further_results b[temporarily="true"]', container).remove();
 			jQuery('.tabf_further_results a', container).each(function(){
 				var html = '<b temporarily="true">';
 				html += jQuery(this).html();

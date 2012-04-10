@@ -409,6 +409,8 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
 	'tabf_paging_next' => 'Next',
 	'tabf_paging_results' => 'Results',
 	
+	'tabf_filter_placeholder' => "Filter...",
+	
 	//--- fancy table result printer
 	'ftrp_warning' => "Des déclarations de remplacement invalides avec des proprétés inconnes ont été trouvées:",
 	);
