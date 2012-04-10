@@ -99,11 +99,11 @@ class ASFUnresolvedAnnotationsFormData extends ASFCategoryFormData {
 		$intro = '<div class="asf-unresolved-section" style="'.$display.'">';
 		
 		//create collapsed version of section
-		$intro .= "\n{{#collapsableFieldSetStart:";
-		$intro .= wfMsg('asf_unresolved_annotations');
-		$intro .= "}}";
+		$intro .= "{{#collapsableFieldSetStart:";
+		$intro .= "\n".wfMsg('asf_unresolved_annotations');
+		$intro .= "\n}}";
 		
-		$intro .= "\n".'{| width="100%" align="center"';
+		$intro .= "\n\n".'{| width="100%" align="center"';
 
 		$intro .= ' class="formtable"';
 		
