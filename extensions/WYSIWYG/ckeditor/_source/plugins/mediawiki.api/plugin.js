@@ -6,8 +6,6 @@
     return;
   }
 
-  var editor;
-
   var pluginName = 'mediawiki.api';
 
   var editToken = '';
@@ -21,12 +19,6 @@
   var lastSave;
 
   var util = {
-    getEditor: function(){
-      if(!editor){
-        editor = mw.config.get('wgCKeditorInstance');
-      }
-      return editor;
-    },    
 
     getWikieditor: function(){
       if(!(util.wikieditor && util.wikieditor.length)){
@@ -71,9 +63,7 @@
       });
     },
     setupMsgElement: function(editor){
-      if(!$('#' + msgDivId).length){        
-        editor = editor || util.getEditor();
-      
+      if(!$('#' + msgDivId).length){              
         var msgDiv = $('<div/>').attr('id', msgDivId);
         var css = {
           'font-family': 'tahoma'
@@ -93,7 +83,7 @@
         $('#ca-nstab-main').show();
       }
     },
-    setupTitleElement: function(){
+    setupTitleElement: function(editor){
       //show "rename" link in ontoskin only
       var smwMenu = $( '#smwh_menu' );
       if(smwMenu.length && smwMenu.getOntoskin){
@@ -174,7 +164,6 @@
           });
 
           saveButton.click(function(){
-            var editor = util.getEditor();
             editor.execCommand(moveWikiPageCommand, {
               toTitle: input.val()
             });
@@ -275,7 +264,7 @@
       }
       else{
         $.getJSON(
-          mw.config.get('wgScriptPath') + '/api.php?',
+          mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php?',
           {
             action: 'query',
             prop: 'info',
@@ -291,19 +280,20 @@
               callbackFunction(editToken, calbackArguments);
             }
           }
-          )
+          );
       }
     },
     saveWikiPage: function(editToken, args, callbackFunction){
-      if(!util.getEditor().checkDirty()){
+      if(!args.editor.checkDirty()){
         util.showMsg(mw.msg('wysiwyg-no-changes'));
-        util.getEditor().getCommand(saveAndContinueCommand).setState( CKEDITOR.TRISTATE_OFF );
+        args.editor.getCommand(saveAndContinueCommand).setState( CKEDITOR.TRISTATE_OFF );
         return;
       }
       var title = args && args.title || mw.config.get('wgPageName');
-      var text = args && args.text || util.getEditor().getData();
+      var text = args && args.text || args.editor.getData();
       
       $.ajax({
+        args: args,
         url: mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php',
         data: {
           format: 'json',
@@ -317,12 +307,12 @@
         dataType: 'json',
         type: 'POST',
         success: function(data, textStatus, jqXHR) {
-          editor = util.getEditor();
+          var editor = args.editor;
           if ( data && data.edit && data.edit.result === 'Success' ) {
             lastSave = new Date().toLocaleString();
             $.cookie('wysiwyg-last-save-' + mw.user.name() + '-' + mw.config.get('wgPageName'), lastSave);
             util.showMsg(mw.msg('wysiwyg-save-successful'));
-            util.getEditor().resetDirty();
+            editor.resetDirty();
             callbackFunction && typeof callbackFunction === 'function' && callbackFunction(editToken, args);
           }
           else if ( data && data.error ) {
@@ -336,19 +326,20 @@
           util.showMsg(mw.msg('wysiwyg-save-failed') + ': ' + errorThrown || textStatus, true);
         },
         complete: function(){
-          util.getEditor().getCommand(saveAndContinueCommand).setState( CKEDITOR.TRISTATE_OFF );
+          args.editor.getCommand(saveAndContinueCommand).setState( CKEDITOR.TRISTATE_OFF );
         }
       });
     },
     moveWikiPage: function(moveToken, args){
       var newTitle = args.toTitle;
-      if(util.getEditor().checkDirty() && confirm(mw.msg('wysiwyg-save-before-rename'))){
+      if(args.editor.checkDirty() && confirm(mw.msg('wysiwyg-save-before-rename'))){
         util.saveWikiPage(moveToken, args, function(){
           util.moveWikiPage(moveToken, args);
         });
         return;
       }
       $.ajax({
+        args: args,
         url: mw.config.get('wgServer') + mw.config.get('wgScriptPath') + '/api.php',
         data: {
           format: 'json',
@@ -363,7 +354,6 @@
         type: 'POST',
         dataType: 'json',
         success: function(data, textStatus, jqXHR) {
-          var editor = util.getEditor();
           if ( data && data.move && textStatus === 'success' ) {
             util.showMsg(mw.msg('wysiwyg-move-successful'));
             var url = mw.util.wikiGetlink( newTitle );
@@ -375,17 +365,17 @@
             location.replace(url);
           }
           else if ( data && data.error ) {
-            util.showMsg(mw.msg('wysiwyg-move-error') + ':\n' + data.error.info, true);
+            util.showMsg(mw.msg('wysiwyg-move-error') + ': ' + data.error.info, true);
           }
           else {
             util.showMsg(mw.msg('wysiwyg-move-failed-unknown-error'), true);
           }
         },
         error: function(xhr, textStatus, errorThrown) {
-          util.showMsg(mw.msg('wysiwyg-move-failed') + '.\n\n' + errorThrown || textStatus, true);
+          util.showMsg(mw.msg('wysiwyg-move-failed') + '. ' + errorThrown || textStatus, true);
         },
         complete: function(){
-          util.getEditor().getCommand(moveWikiPageCommand).setState( CKEDITOR.TRISTATE_OFF );
+          args.editor.getCommand(moveWikiPageCommand).setState( CKEDITOR.TRISTATE_OFF );
         }
       });
     }
@@ -405,7 +395,8 @@
 
       util.getEditToken(util.saveWikiPage, {
         title: mw.config.get( 'wgPageName' ),
-        text: editorInstance.getData()
+        text: editorInstance.getData(),
+        editor: editorInstance
       });
     }
   };
@@ -420,6 +411,7 @@
 
     exec : function( editorInstance, data)
     {
+      data.editor = editorInstance;
       this.setState( CKEDITOR.TRISTATE_ON );
 
       util.getEditToken(util.moveWikiPage, data);

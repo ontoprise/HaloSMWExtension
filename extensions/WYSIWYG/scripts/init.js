@@ -135,7 +135,7 @@
     });
 
     placeholder.click(function(){
-      textArea.children('iframe').focus();
+      textArea.children('iframe').eq(0).focus();
     });
 
     ckeToolbar.addClass('cke_wrapper').css({
@@ -214,55 +214,60 @@
     init();
 
     //create a floating toolbar when ckeditor instance is ready
-    CKEDITOR.on('instanceReady', function(){
-      var ckeditorInstance = mw.config.get('wgCKeditorInstance');
-      if(ckeditorInstance){
-        var instanceName = ckeditorInstance.name;
-        var ckeToolbar = $('#cke_top_' + instanceName).parent();
-        createfloatingToolbar(ckeToolbar, ckeditorInstance);
-        //resize the floating toolbar when ckeditor is resized
-        ckeditorInstance.on('resize', function(event){
-          if(event.data && event.data.width){
-            resizeFloatingToolbar(ckeToolbar, ckeditorInstance, event.data);
-          }
-        });
-        //ckeditor is maximize/minimized by "maximize" command. Fire "resize" event after "maximize" command is executed
-        ckeditorInstance.on('afterCommandExec', function(event){
-          if(event.data.name === 'maximize'){
-            var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
-            var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
-            ckeditorInstance.fire('resize', {
-              width: width,
-              height: height,
-              maximize: event.data.command.state === CKEDITOR.TRISTATE_ON
-            });
-          }
-        });
-        //fire "resize" event when skin is resized
-        var smwMenu = $( '#smwh_menu' );
-        if(smwMenu.length && smwMenu.getOntoskin){
-          smwMenu.getOntoskin().addResizeListener(function(){
-            var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
-            var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
-            ckeditorInstance.fire('resize', {
-              width: width,
-              height: height
-            });
+    CKEDITOR.on('instanceReady', function(event){
+      var ckeditorInstance = event.editor;
+      var instanceName = ckeditorInstance.name;
+      var ckeToolbar = $('#cke_top_' + instanceName).parent();
+      createfloatingToolbar(ckeToolbar, ckeditorInstance);
+      //resize the floating toolbar when ckeditor is resized
+      ckeditorInstance.on('resize', function(event){
+        if(event.data && event.data.width){
+          resizeFloatingToolbar(ckeToolbar, ckeditorInstance, event.data);
+        }
+      });
+      //ckeditor is maximize/minimized by "maximize" command. Fire "resize" event after "maximize" command is executed
+      ckeditorInstance.on('afterCommandExec', function(event){
+        if(event.data.name === 'maximize'){
+          var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
+          var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
+          ckeditorInstance.fire('resize', {
+            width: width,
+            height: height,
+            maximize: event.data.command.state === CKEDITOR.TRISTATE_ON
           });
         }
+      });
+      //fire "resize" event when skin is resized
+      var smwMenu = $( '#smwh_menu' );
+      if(smwMenu.length && smwMenu.getOntoskin){
+        smwMenu.getOntoskin().addResizeListener(function(){
+          var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
+          var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
+          ckeditorInstance.fire('resize', {
+            width: width,
+            height: height
+          });
+        });
       }
-    })
 
-    //unset global vars when leaving the page
-    $(window).unload(function(){
-      var editor = mw.config.get('wgCKeditorInstance');
-      if(editor){
-        if(editor.checkDirty() && confirm(mw.msg('wysiwyg-save-before-exit'))){
-          editor.execCommand('saveAndContinue');
-        }
+      //if "save" button is clicked then reset dirty indicator so the save dilog won't popup
+      $('#wpSave').click(function(){
+        ckeditorInstance.resetDirty();
+      });    
+
+      //clean up when leaving the page
+      $(window).unload(function(){
+        ckeditorInstance.destroy();
         mw.config.set('wgCKeditorInstance', null);
         mw.config.set('wgCKeditorVisible', false);
-      }
+      });
+
+      //show confirmation dialog when there are unsaved changes
+      $(window).bind('beforeunload', function(){
+        if(ckeditorInstance.checkDirty()){
+          return mw.msg('wysiwyg-save-before-exit');
+        }
+      });
     });
   });
 

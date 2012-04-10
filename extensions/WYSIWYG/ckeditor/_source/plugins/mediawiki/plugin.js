@@ -607,6 +607,8 @@ CKEDITOR.customprocessor.prototype =
         fragment.writeHtml( writer, this.dataFilter );
         data = writer.getHtml( true );
 
+        this.editor.execCommand('autogrow');
+
         return data;
      },
 
