@@ -239,15 +239,17 @@
           }
         });
         //fire "resize" event when skin is resized
-        jQuery( '#smwh_menu' ).getOntoskin().addResizeListener(function(){
-          var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
-          var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
-          ckeditorInstance.fire('resize', {
-            width: width,
-            height: height
+        var smwMenu = $( '#smwh_menu' );
+        if(smwMenu.length && smwMenu.getOntoskin){
+          smwMenu.getOntoskin().addResizeListener(function(){
+            var width = ckeditorInstance.getResizable(true).getSize('width', true) || $('#cke_contents_' + instanceName).width();
+            var height = ckeditorInstance.getResizable(true).getSize('height', true) || $('#cke_contents_' + instanceName).height();
+            ckeditorInstance.fire('resize', {
+              width: width,
+              height: height
+            });
           });
-
-        });
+        }
       }
     })
 

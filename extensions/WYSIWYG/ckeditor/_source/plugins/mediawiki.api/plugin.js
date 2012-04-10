@@ -71,7 +71,7 @@
       });
     },
     setupMsgElement: function(editor){
-      if(!$('#' + msgDivId).length){
+      if(!$('#' + msgDivId).length){        
         editor = editor || util.getEditor();
       
         var msgDiv = $('<div/>').attr('id', msgDivId);
@@ -94,115 +94,116 @@
       }
     },
     setupTitleElement: function(){
-      if(!CKEDITOR.mw.isMoveAllowed()){
-        return;
-      }
-      if(!$('#rename-title-span').length){
-        //rename of Category, Property or Template is not supported
-        var namespaces = mw.config.get('wgFormattedNamespaces');
-        var namespaceId = mw.config.get('wgNamespaceNumber');
-
-        if(namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1){
+      //show "rename" link in ontoskin only
+      var smwMenu = $( '#smwh_menu' );
+      if(smwMenu.length && smwMenu.getOntoskin){
+        if(!CKEDITOR.mw.isMoveAllowed()){
           return;
         }
+        if(!$('#rename-title-span').length){
+          //rename of Category, Property or Template is not supported
+          var namespaces = mw.config.get('wgFormattedNamespaces');
+          var namespaceId = mw.config.get('wgNamespaceNumber');
+
+          if(namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1){
+            return;
+          }
       
-        var titleDiv = $('#ca-nstab-main');
-        var css = {
-          'float' : 'left'
-        };
-        var saveBtnCss = {
-          'background': 'transparent',
-          'background-repeat': 'no-repeat',
-          'background-position': 'center center',
-          'background-image': 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAjpJREFUeJy90k1IkwEcx/Hvs2evMt1KJ741Wy0zexMy0US6WHSKgii8pAUZKUEFubSgkjKRQgT1kL0hZNChMpJCi/RQGQll0sBE09wWw5c2c5rbs+fptIgutQ59758//8MP/nNCcsWSm5ajS+8C6qh1con5So+3W3ni6lTiS81XAe1f45QDsXV3JloVT2BC8c57lGZng6LZJVz8+Ub8fpVD0Mri1DVqf8dpZYYLZ6pOOjJi1jDqHyIoS7xwdyMbla1qANNO7fHDx0rrZPV3WufbpOl26iM4/YjuXEXlwdNWvZ3xuY9IssKDT23c6+0l3McjUVfEoe2Vm5vyEwuJ1yVgyRO3jflHfIFBXtvK1dUljt016ZpM/MFJZiUfTyfbed7/Ct9t6hmiRkzeR2Moddo6G5xBJYZJjEkiMUcoIvtrzo7iLeUpOhu+oJcpycPA3DPefXiP6zoN0gAOQBYRyLRslAqmtS7coSF8iguNQVFZs0yrtYIGb2iE0eBb3OFBvMMzOBuk2oV+qgAZQFz8zMvwPGkrc3XZQlyIb4KfsNqPUYhFL6pRqWQMOjULEwJ9l3yXZ/uojmAAEQgFhukKLsq2rLyE9XqTiiTtMuwxWaQb7Cw3ZjDjCtBx1tk41SNX/oojBwBCfiddQUlalVtgX5tqsmHVrWCdKZfxL2M0nXrY4nksnQDCf9pL3IZy/f1m917ljXxD6fCeV+zF2ugWB5gLHcbOFtceZVOZ4RagjwZHSrLkUwHE/guOqh90ld9+870vDgAAAABJRU5ErkJggg==)',
-          'backround-color': 'transparent',
-          'border': 'medium none',
-          'height': '16px',
-          'width': '16px',
-          'float': 'left',
-          'margin': '5px 5px 5px -40px',
-          'cursor': 'pointer'
-        };
-        var cancelBtnCss = {
-          'background': 'transparent',
-          'background-repeat': 'no-repeat',
-          'background-position': 'center center',
-          'background-image': 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHMSURBVHjapFO/S0JRFP4UIUJIqMWgLQzalAyKIN4TxNXJoZaGIPwHXNMt/A+C1pZabKgQQd9kQ4pS0KBUi4MNNgT+ev54nXPeVTRoqQvfu+ee7zvnnnPvfQ7LsvCf4ZLvSZi/ScIpQScYv+g1QoGQEv15zk4wHo0k2BmJYJzNskB3XuTnkoyPQxKsNLwRnJTEycZwOJRgDAbgmdYF82hfmwSzzb4fGkni4DPoHu5K9sVw2I5wu9HNZKDagXDRKNBuy6Kbywm3ePlgSAUD0zQI+tftLdDrAa0WOIB8BYYEk4851rCWY1Qb1IJpYum6bNCsf97f0xZdoNHAUiwmYJt9zLFGaTFNMOj3ZbF882yQrX9ks0CnA9RqNshmH3OsmY1xqRampz21PR6g2bRtr3dOM6ubq+B9b1Uju7AWjwNvb3YVDLLZxxxrZmPkFurbK9NH4kskgHxeyHqpJLMvGLS3DYVQT6cnt2P4HluY3ILGpy3Bd3dy2i/F4uS0dbbldohjjbod+51wBU+bC5Z1dWZZBzsCXhM05hSviUbxrJU1cdJCZcMlTzng96NSrUqJZM89ZfJLizOaVKA2TEqC8rrjTz/T1quq4D/jW4ABAF7lQOO4C9PnAAAAAElFTkSuQmCC)',
-          'backround-color': 'transparent',
-          'border': 'medium none',
-          'height': '16px',
-          'width': '16px',
-          'float': 'left',
-          'margin': '5px 30px 5px -20px',
-          'cursor': 'pointer'
-        };
-        var linkCss = {
-          'background': 'url("data:image/gif;base64,R0lGODlhDwAQANUlAOWLIOSIG+2JEq5kcu+LFOujT+yoWO2sYe2uZOuGD+umVZOtu70xQZaWlu6LFMeqlPPIoeypW+6udemdRPCzho+quuWxt+WJHae+y+mcQdCYUdSwgOaRLdmRmaxkdO3Lz+qiTJqzw+SGFu6KE+uHEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACUALAAAAAAPABAAAAZFwJJwSBx+ikihh2FJEiuhQccpDGgWGGopQEhstAEHCQEekQ7aizmiBZgNbbMiTiq0BSSQloOfaEsSIhl/DxQQfyUNiEJBADs=") no-repeat scroll left center transparent',
-          'padding': '2px 0 2px 18px'
-        };
-        var spanCSS = {
-          'float': 'left',
-          'font-weight': 'normal',
-          'margin-left': '1em',
-          'margin' : '5px 20px 5px -22px'
-        };
-        var inputCss = {
-          'float' : 'left',
-          'padding': '2px 46px 2px 2px',
-          'border': '1px solid #116988',
-          'border-radius': '5px',
-          'height': '20px'
-        };
+          var titleDiv = $('#ca-nstab-main');          
+          var saveBtnCss = {
+            'background': 'transparent',
+            'background-repeat': 'no-repeat',
+            'background-position': 'center center',
+            'background-image': 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAjpJREFUeJy90k1IkwEcx/Hvs2evMt1KJ741Wy0zexMy0US6WHSKgii8pAUZKUEFubSgkjKRQgT1kL0hZNChMpJCi/RQGQll0sBE09wWw5c2c5rbs+fptIgutQ59758//8MP/nNCcsWSm5ajS+8C6qh1con5So+3W3ni6lTiS81XAe1f45QDsXV3JloVT2BC8c57lGZng6LZJVz8+Ub8fpVD0Mri1DVqf8dpZYYLZ6pOOjJi1jDqHyIoS7xwdyMbla1qANNO7fHDx0rrZPV3WufbpOl26iM4/YjuXEXlwdNWvZ3xuY9IssKDT23c6+0l3McjUVfEoe2Vm5vyEwuJ1yVgyRO3jflHfIFBXtvK1dUljt016ZpM/MFJZiUfTyfbed7/Ct9t6hmiRkzeR2Moddo6G5xBJYZJjEkiMUcoIvtrzo7iLeUpOhu+oJcpycPA3DPefXiP6zoN0gAOQBYRyLRslAqmtS7coSF8iguNQVFZs0yrtYIGb2iE0eBb3OFBvMMzOBuk2oV+qgAZQFz8zMvwPGkrc3XZQlyIb4KfsNqPUYhFL6pRqWQMOjULEwJ9l3yXZ/uojmAAEQgFhukKLsq2rLyE9XqTiiTtMuwxWaQb7Cw3ZjDjCtBx1tk41SNX/oojBwBCfiddQUlalVtgX5tqsmHVrWCdKZfxL2M0nXrY4nksnQDCf9pL3IZy/f1m917ljXxD6fCeV+zF2ugWB5gLHcbOFtceZVOZ4RagjwZHSrLkUwHE/guOqh90ld9+870vDgAAAABJRU5ErkJggg==)',
+            'backround-color': 'transparent',
+            'border': 'medium none',
+            'height': '16px',
+            'width': '16px',
+            'float': 'left',
+            'margin': '5px 5px 5px -40px',
+            'cursor': 'pointer'
+          };
+          var cancelBtnCss = {
+            'background': 'transparent',
+            'background-repeat': 'no-repeat',
+            'background-position': 'center center',
+            'background-image': 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHMSURBVHjapFO/S0JRFP4UIUJIqMWgLQzalAyKIN4TxNXJoZaGIPwHXNMt/A+C1pZabKgQQd9kQ4pS0KBUi4MNNgT+ev54nXPeVTRoqQvfu+ee7zvnnnPvfQ7LsvCf4ZLvSZi/ScIpQScYv+g1QoGQEv15zk4wHo0k2BmJYJzNskB3XuTnkoyPQxKsNLwRnJTEycZwOJRgDAbgmdYF82hfmwSzzb4fGkni4DPoHu5K9sVw2I5wu9HNZKDagXDRKNBuy6Kbywm3ePlgSAUD0zQI+tftLdDrAa0WOIB8BYYEk4851rCWY1Qb1IJpYum6bNCsf97f0xZdoNHAUiwmYJt9zLFGaTFNMOj3ZbF882yQrX9ks0CnA9RqNshmH3OsmY1xqRampz21PR6g2bRtr3dOM6ubq+B9b1Uju7AWjwNvb3YVDLLZxxxrZmPkFurbK9NH4kskgHxeyHqpJLMvGLS3DYVQT6cnt2P4HluY3ILGpy3Bd3dy2i/F4uS0dbbldohjjbod+51wBU+bC5Z1dWZZBzsCXhM05hSviUbxrJU1cdJCZcMlTzng96NSrUqJZM89ZfJLizOaVKA2TEqC8rrjTz/T1quq4D/jW4ABAF7lQOO4C9PnAAAAAElFTkSuQmCC)',
+            'backround-color': 'transparent',
+            'border': 'medium none',
+            'height': '16px',
+            'width': '16px',
+            'float': 'left',
+            'margin': '5px 30px 5px -20px',
+            'cursor': 'pointer'
+          };
+          var linkCss = {
+            'background': 'url("data:image/gif;base64,R0lGODlhDwAQANUlAOWLIOSIG+2JEq5kcu+LFOujT+yoWO2sYe2uZOuGD+umVZOtu70xQZaWlu6LFMeqlPPIoeypW+6udemdRPCzho+quuWxt+WJHae+y+mcQdCYUdSwgOaRLdmRmaxkdO3Lz+qiTJqzw+SGFu6KE+uHEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACUALAAAAAAPABAAAAZFwJJwSBx+ikihh2FJEiuhQccpDGgWGGopQEhstAEHCQEekQ7aizmiBZgNbbMiTiq0BSSQloOfaEsSIhl/DxQQfyUNiEJBADs=") no-repeat scroll left center transparent',
+            'padding': '2px 0 2px 18px'
+          };
+          var spanCSS = {
+            'float': 'left',
+            'font-weight': 'normal',
+            'margin-left': '1em',
+            'margin' : '5px 20px 5px -22px'
+          };
+          var inputCss = {
+            'float' : 'left',
+            'padding': '2px 46px 2px 2px',
+            'border': '1px solid #116988',
+            'border-radius': '5px',
+            'height': '20px'
+          };
 
-        var editSpan = $('<span/>').attr('id', 'rename-title-span').css(spanCSS);
-        var editLink = $('<a/>').attr('href', '#').text(mw.msg('wysiwyg-rename')).css(linkCss);
-        var input = $('<input/>').attr('id', 'rename-title-input').css(inputCss).hide();
-        var saveButton = $('<button/>').attr('id', 'rename-title-save-btn').css(saveBtnCss).hide();
-        var cancelButton = $('<button/>').attr('id', 'rename-title-cancel-btn').css(cancelBtnCss).hide();
+          var editSpan = $('<span/>').attr('id', 'rename-title-span').css(spanCSS);
+          var editLink = $('<a/>').attr('href', '#').text(mw.msg('wysiwyg-rename')).css(linkCss);
+          var input = $('<input/>').attr('id', 'rename-title-input').css(inputCss).hide();
+          var saveButton = $('<button/>').attr('id', 'rename-title-save-btn').css(saveBtnCss).hide();
+          var cancelButton = $('<button/>').attr('id', 'rename-title-cancel-btn').css(cancelBtnCss).hide();
 
-        titleDiv.after(editSpan.append(editLink));
-        titleDiv.after(cancelButton).after(saveButton).after(input);
+          titleDiv.after(editSpan.append(editLink));
+          titleDiv.after(cancelButton).after(saveButton).after(input);
       
-        editLink.click(function(event){
-          event.preventDefault();
-          editLink.hide();
-          titleDiv.hide();
-          input.show();
-          cancelButton.show();
-          input.val(mw.config.get('wgTitle'));
-          input.css('background-color', 'white');
-        });
-
-        saveButton.click(function(){
-          var editor = util.getEditor();
-          editor.execCommand(moveWikiPageCommand, {
-            toTitle: input.val()
+          editLink.click(function(event){
+            event.preventDefault();
+            editLink.hide();
+            titleDiv.hide();
+            input.show();
+            cancelButton.show();
+            input.val(mw.config.get('wgTitle'));
+            input.css('background-color', 'white');
           });
-        });
 
-        cancelButton.click(function(){
-          input.hide();
-          saveButton.hide();
-          cancelButton.hide();
-          editLink.show();
-          titleDiv.show();
-        });
+          saveButton.click(function(){
+            var editor = util.getEditor();
+            editor.execCommand(moveWikiPageCommand, {
+              toTitle: input.val()
+            });
+          });
 
-        input.change(function(){
-          util.checkTitleExists($(this).val());
-        });
+          cancelButton.click(function(){
+            input.hide();
+            saveButton.hide();
+            cancelButton.hide();
+            editLink.show();
+            titleDiv.show();
+          });
 
-        input.bind('paste', function(){
-          util.checkTitleExists($(this).val());
-        });
+          input.change(function(){
+            util.checkTitleExists($(this).val());
+          });
 
-        input.bind('keyup', function(){
-          var thisElement = $(this);
-          util.renameTimeout && window.clearTimeout(util.renameTimeout);
-          util.renameTimeout = window.setTimeout(function(){
-            util.checkTitleExists(thisElement.val());
-          }, 500);
-        });
+          input.bind('paste', function(){
+            util.checkTitleExists($(this).val());
+          });
+
+          input.bind('keyup', function(){
+            var thisElement = $(this);
+            util.renameTimeout && window.clearTimeout(util.renameTimeout);
+            util.renameTimeout = window.setTimeout(function(){
+              util.checkTitleExists(thisElement.val());
+            }, 500);
+          });
+        }
       }
     },
     titleInvalid: function(){
