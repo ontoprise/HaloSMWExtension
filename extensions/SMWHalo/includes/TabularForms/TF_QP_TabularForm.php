@@ -120,22 +120,34 @@ class TFTabularFormQueryPrinter extends SMWResultPrinter {
 
 	public function getParameters() {
 		$params = parent::getParameters();
-		$params[] = array( 'name' => 'enable filtering', 'type' => 'enumeration',
-			'description' => wfMsg( 'smw_tf_paramdesc_filtering' ),
-			'values' => array( 'true', 'false' ) );
-		$params[] = array( 'name' => 'expert mode', 'type' => 'enumeration',
-			'description' => wfMsg( 'smw_tf_paramdesc_expertmode' ),
-			'values' => array( 'true', 'false' ) );
-		$params[] = array( 'name' => 'enable add', 'type' => 'enumeration',
-			'description' => wfMsg( 'smw_tf_paramdesc_add' ),
-			'values' => array( 'true', 'false' ) );
-		$params[] = array( 'name' => 'enable delete', 'type' => 'enumeration',
-			'description' => wfMsg( 'smw_tf_paramdesc_delete' ),
-			'values' => array( 'true', 'false' ) );
-		$params[] = array( 'name' => 'write protected annotations', 'type' => 'string',
-			'description' => wfMsg('tabf_parameter_write_protected_desc'));
-		$params[] = array( 'name' => 'instance name preload value', 'type' => 'string',
-			'description' => wfMsg('tabf_parameter_instance_preload_desc'));
+		
+		$params['enable filtering'] = new Parameter('enable filtering'); 
+		$params['enable filtering']->setMessage(wfMsg( 'smw_tf_paramdesc_filtering' ));
+		$params['enable filtering']->addCriteria( new CriterionInArray( 'false', 'true' ) );
+		$params['enable filtering']->setDefault('false');
+		
+		$params['expert mode'] = new Parameter('expert mode'); 
+		$params['expert mode']->setMessage(wfMsg( 'smw_tf_paramdesc_expertmode' ));
+		$params['expert mode']->addCriteria( new CriterionInArray( 'false', 'true' ) );
+		$params['expert mode']->setDefault('false');
+		
+		$params['enable add'] = new Parameter('enable add'); 
+		$params['enable add']->setMessage(wfMsg( 'smw_tf_paramdesc_add' ));
+		$params['enable add']->addCriteria( new CriterionInArray( 'false', 'true' ) );
+		$params['enable add']->setDefault('false');
+		
+		$params['enable delete'] = new Parameter('enable delete'); 
+		$params['enable delete']->setMessage(wfMsg( 'smw_tf_paramdesc_delete' ));
+		$params['enable delete']->addCriteria( new CriterionInArray( 'false', 'true' ) );
+		$params['enable delete']->setDefault('false');
+		
+		$params['write protected annotations'] = new Parameter('write protected annotations'); 
+		$params['write protected annotations']->setMessage(wfMsg('tabf_parameter_write_protected_desc'));
+		$params['write protected annotations']->setDefault('');
+		
+		$params['instance name preload value'] = new Parameter('instance name preload value'); 
+		$params['instance name preload value']->setMessage(wfMsg('tabf_parameter_instance_preload_desc'));
+		$params['instance name preload value']->setDefault('');
 		
 		return $params;
 	}
