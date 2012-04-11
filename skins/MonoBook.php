@@ -125,12 +125,7 @@ class MonoBookTemplate extends QuickTemplate {
 					if( $tab['class'] ) {
 						echo ' class="'.htmlspecialchars($tab['class']).'"';
 					}
-					if(Sanitizer::escapeId( "ca-$key" ) != "ca-edit"){
 					echo '><a href="'.htmlspecialchars($tab['href']).'"';
-					}
-					if(Sanitizer::escapeId( "ca-$key" ) == "ca-edit"){
-					echo '><a href="'.htmlspecialchars($tab['href']).'&mode=wysiwyg"';
-					}
 					# We don't want to give the watch tab an accesskey if the
 					# page is being edited, because that conflicts with the
 					# accesskey on the watch checkbox.  We also don't want to
