@@ -65,7 +65,15 @@
       var editor = CKEDITOR.replace(wikieditor.attr('id'));
       mw.config.set('wgCKeditorInstance', editor);
       mw.config.set('wgCKeditorVisible', true);
-    }    
+
+      //open semantic toolbar if configured
+      if ( mw.user.options.get('riched_load_semantic_toolbar')){
+        editor.on('instanceReady', function(event){
+          event.editor.execCommand('SMWtoolbarClose');
+          event.editor.execCommand('SMWtoolbarOpen');
+        });
+      }
+    }
   }
 
   function removeMediawikiClutter(){
@@ -77,8 +85,11 @@
   function toggleEditor(toggle, wikieditor, toolbar){
     if(mw.config.get('wgCKeditorVisible')){
       mw.config.set('wgCKeditorVisible', false);
-      CKEDITOR.instances[wikieditor.attr('id')].destroy();
-      mw.config.set('wgCKeditorInstance', null);      
+      var editor = CKEDITOR.instances[wikieditor.attr('id')];
+      editor.execCommand('SMWtoolbarClose');
+      editor.execCommand('SMWtoolbarOpen');
+      editor.destroy();
+      mw.config.set('wgCKeditorInstance', null);
       if(mw.user.options.get('showtoolbar') && toolbar.length){
         toolbar.show();
       }
@@ -107,13 +118,19 @@
           }, 1000);
         }
       });
+      editor = wikieditor.ckeditorGet();
       mw.config.set('wgCKeditorVisible', true);
-      mw.config.set('wgCKeditorInstance', wikieditor.ckeditorGet());
+      mw.config.set('wgCKeditorInstance', editor);
       if(mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle')){
         $.cookie('wgCKeditorToggleState', 'visible', {
           expires: 1000
         });
       }
+
+      editor.on('instanceReady', function(event){
+        event.editor.execCommand('SMWtoolbarClose');
+        event.editor.execCommand('SMWtoolbarOpen');
+      });
     }
   }
 
@@ -253,7 +270,7 @@
       //if "save" button is clicked then reset dirty indicator so the save dilog won't popup
       $('#wpSave').click(function(){
         ckeditorInstance.resetDirty();
-      });    
+      });
 
       //clean up when leaving the page
       $(window).unload(function(){

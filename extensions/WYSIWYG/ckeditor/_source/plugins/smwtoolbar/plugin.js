@@ -1197,7 +1197,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       mLastMoveEvent : null,
       EnableAnnotationToolbar : function( editor ) {
         this.stbIsActive = true;
-        window.parent.stb_control.initialize();
+//        window.parent.stb_control.initialize();
         window.parent.stb_control.initToolbarFramework();
         window.parent.stb_control.onCloseButtonClick(function(){
           editor.execCommand('SMWtoolbarClose');
@@ -1561,29 +1561,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         	
         }
         
-//        editor.on('instanceReady' , function(event){
-//          //show semantic toolbar if configured
-//          if(mw.user.options.get('riched_load_semantic_toolbar')){
-//            this.execCommand('SMWtoolbarOpen');
-//          }
-//        });
-        // disable toolbar when switching mode
-//        editor.on( 'mode', function( ev ) {
-//          this.execCommand('SMWtoolbarClose');
-//          if ( ev.editor.mode == 'wysiwyg' && mw.user.options.get('riched_load_semantic_toolbar')){
-//            this.execCommand('SMWtoolbarOpen');
-//          }
-//        });
-        //reinitialize stb in wikitext mode
-        editor.on('destroy', function(event){
-          this.execCommand('SMWtoolbarClose');
-          this.execCommand('SMWtoolbarOpen');
-        });
-        editor.on("instanceReady", function(event) {
-          this.execCommand('SMWtoolbarClose');
-          if ( mw.user.options.get('riched_load_semantic_toolbar')){
-            this.execCommand('SMWtoolbarOpen');
-          }
+        editor.on("instanceReady", function(event) {        
           if (plugin.stbIsActive) {
             gEnewText='';
             delete gEditInterface;

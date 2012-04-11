@@ -48,18 +48,18 @@
       }
       var msgDiv = $('#' + msgDivId);
 
-      msgDiv.fadeOut(500, function(){
+      msgDiv.fadeOut(300, function(){
         msgDiv.text(msg);
         msgDiv.css(error ? msgDivErrorCss : msgDivCss);
-        msgDiv.fadeIn(500);
+        msgDiv.fadeIn(300);
 
         util.showMsgTimeout = window.setTimeout(function(){
-          msgDiv.fadeOut(500, function(){
+          msgDiv.fadeOut(300, function(){
             msgDiv.text(mw.msg('wysiwyg-last-save') + ': ' + lastSave);
             msgDiv.css(msgDivCss);
-            msgDiv.fadeIn(500);
+            msgDiv.fadeIn(300);
           });
-        }, 3000);
+        }, 2000);
       });
     },
     setupMsgElement: function(editor){
@@ -123,7 +123,7 @@
             'height': '16px',
             'width': '16px',
             'float': 'left',
-            'margin': '5px 30px 5px -20px',
+            'margin': '5px 30px 5px -21px',
             'cursor': 'pointer'
           };
           var linkCss = {
@@ -138,10 +138,11 @@
           };
           var inputCss = {
             'float' : 'left',
-            'padding': '2px 46px 2px 2px',
+            'padding': '1px 46px 1px 2px',
             'border': '1px solid #116988',
             'border-radius': '5px',
-            'height': '20px'
+            'height': '20px',
+            'margin': '1px'
           };
 
           var editSpan = $('<span/>').attr('id', 'rename-title-span').css(spanCSS);

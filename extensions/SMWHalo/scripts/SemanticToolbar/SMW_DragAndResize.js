@@ -415,7 +415,9 @@ Resizeable.prototype = {
 
 //Initialize dragging and resizing functions of stb
 window.smwhg_dragresizetoolbar = new DragResizeHandler();
-Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
+
+//bugfix 16889. DragResizeHandler init moved to STB_Framework.js
+//Event.observe(window, 'load', smwhg_dragresizetoolbar.callme.bind(smwhg_dragresizetoolbar));
 
 /*
 setTimeout(function() { 
