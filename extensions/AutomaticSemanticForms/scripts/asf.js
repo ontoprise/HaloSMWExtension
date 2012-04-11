@@ -175,6 +175,7 @@ window.ASFFormSyncer = {
 	 * and checks if the form may need an update
 	 */
 	checkIfFormUpdateIsNecessary : function(){
+		
 		window.setTimeout(function() {
 			var newFreeTextContent = ASFFormSyncer.getFreeTextContent();
 			if(ASFFormSyncer.currentFreeTextContent
@@ -228,6 +229,10 @@ window.ASFFormSyncer = {
 		this.wtp.initialize();
 		this.wtp.text = this.getFreeTextContent();
 		this.wtp.parseAnnotations();
+		
+		if(this.wtp.getError() > 0){
+			return;
+		}
 		
 		this.checkIfFormStructureUpdateIsnecessary(
 			this.wtp.getCategories());
@@ -588,6 +593,8 @@ window.ASFFormSyncer = {
 			//we are in initialization phase
 			initPhase = true;
 			this.currentCategoryAnnotations = new Array();
+			
+			this.staticCategoryAnnotations = new Array();
 		} 
 
 		if(this.currentCategoryAnnotations.length > newCategoryAnnotations.length){
@@ -601,15 +608,19 @@ window.ASFFormSyncer = {
 		for(var i=0; i<newCategoryAnnotations.length; i++){
 			
 			var isSourceAnnotation = false;
-			jQuery('#asf_source_categories span').each(function(){
-				if(jQuery(this).html() == jQuery.trim(newCategoryAnnotations[i].getName())){
-					if(initPhase){
+			if(initPhase){
+				jQuery('#asf_source_categories span').each(function(){
+					if(jQuery(this).html() == jQuery.trim(newCategoryAnnotations[i].getName())){
 						jQuery(this).remove();
-					} else {
+					}
+				});
+			} else {
+				for(var j=0; j < this.staticCategoryAnnotations.length; j++) {
+					if(this.staticCategoryAnnotations[j] == jQuery.trim(newCategoryAnnotations[i].getName())){
 						isSourceAnnotation = true;
 					}
 				}
-			});
+			}
 			
 			if(!isSourceAnnotation && jQuery.trim(newCategoryAnnotations[i].getName()).length > 0){
 				this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
@@ -635,10 +646,16 @@ window.ASFFormSyncer = {
 		}
 		
 		this.currentCategoryAnnotations = newCurrentCategoryAnnotations;
-		jQuery('#asf_source_categories span').each(function(){
-			ASFFormSyncer.currentCategoryString +=
-				'<span>,</span> ' + jQuery(this).html();
-		});
+		if(initPhase){
+			jQuery('#asf_source_categories span').each(function(){
+				ASFFormSyncer.staticCategoryAnnotations.push(jQuery(this).html());
+			});
+		} else {
+			for(var j=0; j < this.staticCategoryAnnotations.length; j++) {
+				ASFFormSyncer.currentCategoryString +=
+					'<span>,</span> ' + this.staticCategoryAnnotations[j];
+			}
+		}
 		
 		//remove first comma
 		this.currentCategoryString = this.currentCategoryString.substring(

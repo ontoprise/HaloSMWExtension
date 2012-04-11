@@ -96,13 +96,15 @@ class ASFFormDefinition {
 		$outro .=  $this->getCategoriesWithNoPropertiesSectionSyntax();
 		
 		//add some info about the original categorxy annotations
-		$outro .= '<span id="asf_source_categories" style="display: none">';
-		foreach($this->sourceCategoryAnnotations as $sourceCategory){
-			if(strpos($sourceCategory, ':') > 0) $sourceCategory = substr($sourceCategory, strpos($sourceCategory, ':') + 1);
-			$sourceCategory = str_replace('_', ' ', $sourceCategory);
-			$outro .= '<span>'.$sourceCategory.'</span>';
+		if(!$this->inAjaxUpdateMode){
+			$outro .= '<span id="asf_source_categories" style="display: none">';
+			foreach($this->sourceCategoryAnnotations as $sourceCategory){
+				if(strpos($sourceCategory, ':') > 0) $sourceCategory = substr($sourceCategory, strpos($sourceCategory, ':') + 1);
+				$sourceCategory = str_replace('_', ' ', $sourceCategory);
+				$outro .= '<span>'.$sourceCategory.'</span>';
+			}
+			$outro .= '</span>'; 
 		}
-		$outro .= '</span>'; 
 		
 		//end of asf_formfield_container 
 		$outro .= '</div>';
