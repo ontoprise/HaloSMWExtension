@@ -97,7 +97,8 @@
 			}
 			base.modifyEditLinks();
 
-			if( state === true && expanded === false ) {
+			if( state === 'true' && expanded === false ) {
+				expanded = true;
 				base.resizePage();
 			}
 
@@ -192,7 +193,10 @@
 			// size of the browser window changes
 			$( win ).resize( base.resizePage.bind( base ) );
 			// "Change view"
-			$( base.settings.elems.personalBar ).click( base.resizePage );
+			$( base.settings.elems.personalBar ).click( function(ev) {
+				expanded = expanded === false ? true : false;
+				base.resizePage( ev );
+			});
 		}
 
 		/**
@@ -418,21 +422,19 @@
 		 *		This function resizes the skin between a fixed width and full width.
 		 */
 		base.resizePage = function( ev ) {
-			ev.preventDefault();
-			if( expanded === false ) {
+			ev && ev.preventDefault();
+			if( expanded ) {
 				//show layout, which uses full browser window size
 				$( base.settings.elems.center ).removeClass( 'smwh_center' );
 				$( base.settings.elems.personalBar )
 					.removeClass( 'limited' )
 					.addClass( 'expanded' );
-				expanded = true;
 			} else {
 				//show layout, which is optimized for 1024x768
 				$( base.settings.elems.center ).addClass( 'smwh_center' );
 				$( base.settings.elems.personalBar )
 					.removeClass( 'expanded' )
 					.addClass( 'limited' );
-				expanded = false;
 			}
 			//store state in a cookie
 			$.cookie( 'smwSkinExpanded', expanded, {
