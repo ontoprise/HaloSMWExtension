@@ -28,16 +28,20 @@ class ASFFormDefinition {
 	
 	private $inAjaxUpdateMode = false;
 	
-	public function __construct($categorySections, $categoriesWithNoProperties){
+	private $sourceCategoryAnnotations = array();
+	
+	public function __construct($categorySections, $categoriesWithNoProperties, $sourceCategoryAnnotations){
 		$this->categorySections = $categorySections;
 		$this->categoriesWithNoProperties = $categoriesWithNoProperties;
+		
+		$this->sourceCategoryAnnotations = $sourceCategoryAnnotations;
 	}
 	
 	public function getFormDefinition(){
 		$formDefinition = $this->getFormDefinitionIntro();
 		$formDefinition .= $this->getFormDefinitionSyntax();
 		$formDefinition .= $this->getFormDefinitionOutro();
-
+		
 		//echo('<pre>'.$formDefinition.'</pre>');
 		
 		return $formDefinition;
@@ -91,7 +95,14 @@ class ASFFormDefinition {
 
 		$outro .=  $this->getCategoriesWithNoPropertiesSectionSyntax();
 		
-		//todo: check if this has to be removed in special page for asf creation
+		//add some info about the original categorxy annotations
+		$outro .= '<span id="asf_source_categories" style="display: none">';
+		foreach($this->sourceCategoryAnnotations as $sourceCategory){
+			if(strpos($sourceCategory, ':') > 0) $sourceCategory = substr($sourceCategory, strpos($sourceCategory, ':') + 1);
+			$sourceCategory = str_replace('_', ' ', $sourceCategory);
+			$outro .= '<span>'.$sourceCategory.'</span>';
+		}
+		$outro .= '</span>'; 
 		
 		//end of asf_formfield_container 
 		$outro .= '</div>';

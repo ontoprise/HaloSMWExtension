@@ -587,26 +587,43 @@ window.ASFFormSyncer = {
 		if(!this.currentCategoryAnnotations){
 			//we are in initialization phase
 			initPhase = true;
+			this.currentCategoryAnnotations = new Array();
 		} 
 
-		if(this.currentCategoryAnnotations.length != newCategoryAnnotations.length){
+		if(this.currentCategoryAnnotations.length > newCategoryAnnotations.length){
 			//in this case we can be sure that an update is necessary and
 			//we will not have to do any further checks
 			updateNecessary = true;
 		}
 		
+		var newCurrentCategoryAnnotations = new Array();
 		this.currentCategoryString = "";
 		for(var i=0; i<newCategoryAnnotations.length; i++){
-			if(jQuery.trim(newCategoryAnnotations[i].getName()).length > 0){
+			
+			var isSourceAnnotation = false;
+			jQuery('#asf_source_categories span').each(function(){
+				if(jQuery(this).html() == jQuery.trim(newCategoryAnnotations[i].getName())){
+					if(initPhase){
+						jQuery(this).remove();
+					} else {
+						isSourceAnnotation = true;
+					}
+				}
+			});
+			
+			if(!isSourceAnnotation && jQuery.trim(newCategoryAnnotations[i].getName()).length > 0){
 				this.currentCategoryString += '<span>,</span> ' + newCategoryAnnotations[i].getName();
 			}
+				
+			newCurrentCategoryAnnotations.push(newCategoryAnnotations[i].getName());
 			
 			//if we are not in initphase and if we have not yet decided to do an update, we have to check if it might be necessary
-			if(!updateNecessary && !initPhase){
+			if(!isSourceAnnotation && !updateNecessary && !initPhase){
 				var found = false;
 				for(var k=0; k<this.currentCategoryAnnotations.length; k++){
+					//alert(newCategoryAnnotations[i].getName() + '  ' + this.currentCategoryAnnotations[k]);
 					if(newCategoryAnnotations[i].getName()
-							== this.currentCategoryAnnotations[k].getName()){
+							== this.currentCategoryAnnotations[k]){
 						found = true;
 						break;
 					}
@@ -617,11 +634,15 @@ window.ASFFormSyncer = {
 			}
 		}
 		
+		this.currentCategoryAnnotations = newCurrentCategoryAnnotations;
+		jQuery('#asf_source_categories span').each(function(){
+			ASFFormSyncer.currentCategoryString +=
+				'<span>,</span> ' + jQuery(this).html();
+		});
+		
 		//remove first comma
 		this.currentCategoryString = this.currentCategoryString.substring(
 				'<span>,</span> '.length);
-		
-		this.currentCategoryAnnotations = newCategoryAnnotations;
 		
 		jQuery('#asf_category_string').html(this.currentCategoryString);
 		jQuery('#asf_category_annotations input').val(this.currentCategoryString);

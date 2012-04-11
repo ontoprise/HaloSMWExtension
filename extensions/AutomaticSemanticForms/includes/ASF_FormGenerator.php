@@ -57,6 +57,9 @@ class ASFFormGenerator {
 	 */
 	public function generateFormForCategories($categories, $instanceTitle = null, $forceCreation=false){
 		
+		//remember this so that it can be passed to the form definition object
+		$sourceCategoryAnnotations = $categories;
+		
 		$this->formDefinition = false;
 
 		//check if an automatic form can be created
@@ -71,7 +74,7 @@ class ASFFormGenerator {
 		if(!$forceCreation && (count($categories) == 0 && count($categoriesWithNoProperties) == 0)){
 			return false;
 		} else {
-			$this->formDefinition = new ASFFormDefinition($categories, $categoriesWithNoProperties);	
+			$this->formDefinition = new ASFFormDefinition($categories, $categoriesWithNoProperties, $sourceCategoryAnnotations);	
 			return true;
 		}
 	}

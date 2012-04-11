@@ -94,18 +94,20 @@ class ASFFormGeneratorUtils {
 		
 		if(array_key_exists($propertyName, $properties)){
 			$values = $semanticData->getPropertyValues($properties[$propertyName]);
-			if(!$getAll){
-				$idx = array_keys($values);
-				$idx = $idx[0];
-				if(!is_null($values[$idx])){						
-					$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
-						->getShortWikiText();
-				}
-			} else {
-				$result = array();
-				foreach($values as $v){
-					$result[] = SMWDataValueFactory::newDataItemValue($v, null)
-						->getShortWikiText();
+			if(count($values) > 0){
+				if(!$getAll){
+					$idx = array_keys($values);
+					$idx = $idx[0];
+					if(!is_null($values[$idx])){						
+						$result = SMWDataValueFactory::newDataItemValue($values[$idx], null)
+							->getShortWikiText();
+					}
+				} else {
+					$result = array();
+					foreach($values as $v){
+						$result[] = SMWDataValueFactory::newDataItemValue($v, null)
+							->getShortWikiText();
+					}
 				}
 			}
 		}
