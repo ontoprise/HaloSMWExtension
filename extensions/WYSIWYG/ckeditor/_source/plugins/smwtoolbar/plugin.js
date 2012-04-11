@@ -178,7 +178,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           }
           if (oSpan.getHtml().length === 0)
             oSpan.setHtml('&nbsp;');
-          // no match for property, check category next
+        // no match for property, check category next
         }
         else {
           regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY_NS') + '(.*?)(\\|(.*?))?\\]\\]$');
@@ -201,11 +201,11 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           }
         }
 		
-        //        HideContextPopup();
+      //        HideContextPopup();
       },
 	
       setEditAreaName: function (ean) {
-        // not needed in this implementation
+      // not needed in this implementation
       },
 
       /**
@@ -368,6 +368,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
               gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
               gEerrMsgSelection = gEerrMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
+              ShowErrorMessage(gEerrMsgSelection);
               return null;
             }
           }
@@ -618,6 +619,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
               gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
               gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
               gEerrMsgSelection = gEerrMsgSelection.replace('$2', tag);
+              ShowErrorMessage(gEerrMsgSelection);
               return this.clearSelection();
             }
           }
@@ -625,6 +627,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           if (currChar == '{' && currPos > 0 && txt.substr(currPos - 1, 1) == '{') {
             gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
             gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
+            ShowErrorMessage(gEerrMsgSelection);
             return null;
           }
           // end of a template or parser function found, stop here
@@ -661,6 +664,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           if (currChar == '}' && currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == '}') {
             gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
             gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
+            ShowErrorMessage(gEerrMsgSelection);
             return null;
           }
           // we are facing the begining of a template or parser function, stop here
@@ -678,6 +682,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
                 gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
                 gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
                 gEerrMsgSelection = gEerrMsgSelection.replace('$2', tag);
+                ShowErrorMessage(gEerrMsgSelection);
                 return this.clearSelection(); // stop looking any further and quit
               }
               else if (tag.match(/\s*>$/)) // it's a <tag />, stop here as well
@@ -694,6 +699,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
               gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
               gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
               gEerrMsgSelection = gEerrMsgSelection.replace('$2', tag);
+              ShowErrorMessage(gEerrMsgSelection);
               return this.clearSelection();
             }
           }
@@ -738,12 +744,14 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         if (selection.match(/.*?(<\/?[\d\w:_-]+(\s+[\d\w:_-]+="[^<>"]*")*\s*(\/\s*)?>)+.*?/)) {
           gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
           gEerrMsgSelection = gEerrMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
+          ShowErrorMessage(gEerrMsgSelection);
           return this.clearSelection();
         }
         // if there are still [[ ]] inside the selection then more that a
         // link was selected making this selection invalid.
         if (selection.indexOf('[[') != -1 || selection.indexOf(']]') != -1 ) {
           gEerrMsgSelection = window.parent.gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION');
+          ShowErrorMessage(gEerrMsgSelection);
           return this.clearSelection();
         }
         // if there are still {{ }} inside the selection then template or parser function
@@ -751,6 +759,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         if (selection.indexOf('{{') != -1 || selection.indexOf('}}') != -1 ) {
           gEerrMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
           gEerrMsgSelection = gEerrMsgSelection.replace('$1', txt.substr(gEstart, gEend - gEstart));
+          ShowErrorMessage(gEerrMsgSelection);
           return this.clearSelection();
         }
 
@@ -855,7 +864,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             gEoutputBuffering = false;
           }
           window.parent.sajax_do_call('wfSajaxWikiToHTML', [gEnewText],
-          ajaxResponseSetHtmlText);
+            ajaxResponseSetHtmlText);
           return;
         }
         gEflushedOnce = true;
@@ -921,18 +930,18 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu.showMenu();
     };
 
-    ShowRelToolbarByOffset = function(element, propertyName, propertyValue, displayedText){
-      var wtp = new window.parent.WikiTextParser();
-      ckePopupContextMenu = new window.parent.ContextMenuFramework();
-      if (!ckePopupContextMenu.wasDragged()) {
-        var pos = CalculateClickPosition(event);
-        ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      }
-      var toolBar = window.parent.relToolBar;
-      toolBar.setWikiTextParser(wtp);
-      toolBar.createContextMenu(ckePopupContextMenu, propertyValue, displayedText, propertyName);
-      ckePopupContextMenu.showMenu();
-    };
+    //    ShowRelToolbarByOffset = function(element, propertyName, propertyValue, displayedText){
+    //      var wtp = new window.parent.WikiTextParser();
+    //      ckePopupContextMenu = new window.parent.ContextMenuFramework();
+    //      if (!ckePopupContextMenu.wasDragged()) {
+    //        var pos = CalculateClickPosition(event);
+    //        ckePopupContextMenu.setPosition(pos[0], pos[1]);
+    //      }
+    //      var toolBar = window.parent.relToolBar;
+    //      toolBar.setWikiTextParser(wtp);
+    //      toolBar.createContextMenu(ckePopupContextMenu, propertyValue, displayedText, propertyName);
+    //      ckePopupContextMenu.showMenu();
+    //    };
 
     /**
      * Create a new context menu for annotating a category.
@@ -957,18 +966,18 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       ckePopupContextMenu.showMenu();
     };
 
-    ShowCatToolbarByOffset = function(element, name) {
-      var wtp = new window.parent.WikiTextParser();
-      ckePopupContextMenu = new window.parent.ContextMenuFramework();
-      if (!ckePopupContextMenu.wasDragged()) {
-        var pos = CalculateClickPosition(event);
-        ckePopupContextMenu.setPosition(pos[0], pos[1]);
-      }
-      var toolBar = window.parent.catToolBar;
-      toolBar.setWikiTextParser(wtp);
-      toolBar.createContextMenu(ckePopupContextMenu, name);
-      ckePopupContextMenu.showMenu();
-    };
+    //    ShowCatToolbarByOffset = function(element, name) {
+    //      var wtp = new window.parent.WikiTextParser();
+    //      ckePopupContextMenu = new window.parent.ContextMenuFramework();
+    //      if (!ckePopupContextMenu.wasDragged()) {
+    //        var pos = CalculateClickPosition(event);
+    //        ckePopupContextMenu.setPosition(pos[0], pos[1]);
+    //      }
+    //      var toolBar = window.parent.catToolBar;
+    //      toolBar.setWikiTextParser(wtp);
+    //      toolBar.createContextMenu(ckePopupContextMenu, name);
+    //      ckePopupContextMenu.showMenu();
+    //    };
 
 
 
@@ -1088,6 +1097,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       return frame;
     };
 
+    ShowErrorMessage = function(msg, event){
+      event = event || plugin.mLastMoveEvent;
+      var pos = CalculateClickPosition(event);
+      window.smwhgAnnotationHints.showMessageAndWikiText(msg, '', pos[0], pos[1]);
+    };
+
     /**
      * Invokes the tagging floatbox with the current selection for adding a
      * property annotation.
@@ -1104,8 +1119,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         var show = selection[0];
         var val = show;
         ShowRelToolbar(plugin.mLastMoveEvent, '', val, show);
-      }
-		
+      }		
     }
 
     /**
@@ -1197,7 +1211,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       mLastMoveEvent : null,
       EnableAnnotationToolbar : function( editor ) {
         this.stbIsActive = true;
-//        window.parent.stb_control.initialize();
+        //        window.parent.stb_control.initialize();
         window.parent.stb_control.initToolbarFramework();
         window.parent.stb_control.onCloseButtonClick(function(){
           editor.execCommand('SMWtoolbarClose');
@@ -1236,7 +1250,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           } else {
             window.parent.Event.observe(frame, 'keyup', this.EditorareaChanges.bind(this));
           }
-          //            window.parent.obContributor.activateTextArea(frame);
+        //            window.parent.obContributor.activateTextArea(frame);
         } else {
           var Textarea = CKEditorTextArea(editor);
           window.parent.Event.observe(Textarea, 'keyup', this.EditorareaChanges.bind(this));
@@ -1345,7 +1359,7 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
     };
 
     var closeCommandDefinition =
-      {
+    {
       preserveState : false,
       editorFocus : false,
       canUndo : false,
@@ -1376,13 +1390,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         if (editor.contextMenu)
         {
           var editPropertyCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
 
             exec: function( editor )
@@ -1392,13 +1405,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           };
 			
           var editCategoryCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
 
             exec: function( editor )
@@ -1407,13 +1419,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             }
           };
           var addPropertyCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
         		  
             exec: function( editor )
@@ -1423,13 +1434,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           };
           
           var addCategoryCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
         		  
             exec: function( editor )
@@ -1438,13 +1448,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             }
           };
           var removePropertyCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
 
             exec: function( editor )
@@ -1455,13 +1464,12 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
           };
 			
           var removeCategoryCommmand =
-            {
+          {
             preserveState : false,
             editorFocus : true,
             canUndo : true,
             modes : {
-              wysiwyg : 1,
-              source : 1
+              wysiwyg : 1
             },
 
             exec: function( editor )
