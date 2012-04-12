@@ -49,8 +49,8 @@ class SMWHaloAdmin extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('smwhaloadmin'));
 		$adminPage = Title::newFromText("SMWHaloAdmin", NS_SPECIAL);
 		
-		$html = "<h1>".wfMsg('smwhaloadmin')."</h1>";
-		$html .= wfMsg('smw_haloadmin_description');
+		//$html = "<h1>".wfMsg('smwhaloadmin')."</h1>";
+		$html = wfMsg('smw_haloadmin_description');
         $html .= "<h2>".wfMsg('smw_haloadmin_databaseinit')."</h2>";
         $html .= wfMsg('smw_haloadmin_databaseinit_description');
         
