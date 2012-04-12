@@ -159,6 +159,18 @@ window.ASFFormSyncer = {
 			
 			ASFFormSyncer.checkIfFormUpdateIsNecessary();
 		}
+		
+		//set focus to first input field and make sure that stb does not set it to free text again
+		ASFFormSyncer.scrollTop = true;
+		var refreshToolBarTmp = window.refreshSTB.refreshToolBar;
+		window.refreshSTB.refreshToolBar = function(){
+			refreshToolBarTmp();
+			if(ASFFormSyncer.scrollTop){
+				jQuery('html').animate({scrollTop : 0},0);
+				ASFFormSyncer.scrollTop = false;
+				jQuery(jQuery('.formtable input').get(0)).focus();
+			}
+		}
 	},
 	
 	doPostProcessingBeforeSubmit : function(){
