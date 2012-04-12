@@ -627,7 +627,7 @@ class SMWH_Skin {
 			$wikiText .= '| [[Special:Preferences|Preferences]]';
 			$groups = $wgUser->getEffectiveGroups();
 			if ( in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1 ) {
-				$wikiText .= '| [[Mediawiki:Haloadministration|Administration]]';
+				$wikiText .= '| [[Administration|Administration]]';
 			}
 		}
 		$out = $this->parseWikiText( $wikiText );
