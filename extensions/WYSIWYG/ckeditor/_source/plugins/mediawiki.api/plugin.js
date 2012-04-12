@@ -65,10 +65,6 @@
     setupMsgElement: function(editor){
       if(!$('#' + msgDivId).length){              
         var msgDiv = $('<div/>').attr('id', msgDivId);
-        var css = {
-          'font-size': 'larger'
-        };
-        msgDiv.css(css);
         msgDiv.addClass('mediawiki');
         util.getWikieditor().before(msgDiv);
         util.showMsg(mw.msg('wysiwyg-last-save') + ': ' + lastSave);

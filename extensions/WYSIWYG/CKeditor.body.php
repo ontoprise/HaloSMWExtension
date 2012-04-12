@@ -378,8 +378,7 @@ class CKeditor_MediaWiki {
         'styles' => array(
             'ckeditor/skins/kama/dialog.css',
             'ckeditor/skins/kama/editor.css',         
-            'ckeditor/skins/kama/templates.css',
-            'ckeditor/contents.css'
+            'ckeditor/skins/kama/templates.css'
         ),
         'scripts' => array(
             'scripts/setBasePath.js',
