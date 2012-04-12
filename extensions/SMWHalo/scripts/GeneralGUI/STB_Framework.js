@@ -79,7 +79,7 @@ ToolbarFramework.prototype = {
     }
     this.isCollapsed = false;
 
-    this.var_onto.innerHTML += this.createToolbarTitle();
+    this.var_onto.innerHTML = this.createToolbarTitle();
 			
     this.var_onto.innerHTML += '<div id="tabcontainer"></div>';
     this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
@@ -495,7 +495,7 @@ ToolbarFramework.prototype = {
               if (this.contarray[i] && this.contarray[i].getTab() == this.curtabShown && this.contarray[i].getContainerNr() != HELPCONTAINER) {
                 this.contarray[i].setContentStyle({
                   maxHeight: maxUsableHeight + 'px'
-                  });
+                });
               }
             }
           }
@@ -506,12 +506,12 @@ ToolbarFramework.prototype = {
               if (this.contarray[i].getNeededHeight() < maxUsableHeight/this.numOfVisibleContainers) {
                 this.contarray[i].setContentStyle({
                   maxHeight: this.contarray[i].getNeededHeight() + 'px'
-                  });
+                });
                 maxUsableHeight -= this.contarray[i].getNeededHeight();
               } else {
                 this.contarray[i].setContentStyle({
                   maxHeight: maxUsableHeight/(this.numOfVisibleContainers) + 'px'
-                  });
+                });
               }
             }
           }
@@ -678,12 +678,16 @@ ToolbarFramework.prototype = {
 window.stb_control = new ToolbarFramework();
 
 jQuery(document).ready(function(){
-  if(mw.util.getParamValue('mode') === 'wysiwyg'
-    && mw.user.options.get('cke_show') === 'richeditor')
-  {
-    return;
-  }
+
   window.stb_control.initToolbarFramework();
-  window.smwhg_dragresizetoolbar && window.smwhg_dragresizetoolbar.callme();
+
+  //enabling dragging makes STB visible, so do this only when WYSIWYG is off.
+  //when WYSIWYG is on it will take care of STB visibility by it self
+  if(!(mw.util.getParamValue('mode') === 'wysiwyg' && mw.user.options.get('cke_show') === 'richeditor'))
+  {
+    window.smwhg_dragresizetoolbar && window.smwhg_dragresizetoolbar.callme();
+  }
+  
+  
 });
 

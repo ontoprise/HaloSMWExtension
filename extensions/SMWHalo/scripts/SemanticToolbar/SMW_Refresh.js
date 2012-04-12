@@ -166,7 +166,7 @@ RefreshSemanticToolBar.prototype = {
 			}				
 			
 			
-			if (!gEditInterface) {
+			if (typeof gEditInterface == 'undefined' || !gEditInterface) {
 				gEditInterface = new SMWEditInterface();
 			}
 			gEditInterface.focus();

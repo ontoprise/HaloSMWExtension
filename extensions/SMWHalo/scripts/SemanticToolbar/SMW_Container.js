@@ -583,16 +583,16 @@ createLink: function(id, functions, attributes ,visibility){
 			if(i<functions.length){
 				switch (functions[i].length) {
 					case 2 :
-						//Function with displayed text
-		  				containercontent += '<a tabindex="'+ this.lastindex+++'" + href="javascript:' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
+						//Function with displayed text      //IE 8 triggers "beforeunload" event when link is clicked. Returning false cancels this event.
+		  				containercontent += '<a tabindex="'+ this.lastindex+++'" + href="javascript:void(0)" onclick="return ' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
 		  				break;
 					case 3 :
 						//Function with id and displayed text
-					  	containercontent += '<a tabindex="'+ this.lastindex+++'" + id="' + functions[i][2] + '" href="javascript:' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
+					  	containercontent += '<a tabindex="'+ this.lastindex+++'" + id="' + functions[i][2] + '" href="javascript:void(0)" onclick="return ' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
 		  				break;
 					case 5 :
 						//Function with id and displayed text
-					  	containercontent += '<a tabindex="'+ this.lastindex+++'" + id="' + functions[i][2] + '" href="javascript:' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
+					  	containercontent += '<a tabindex="'+ this.lastindex+++'" + id="' + functions[i][2] + '" href="javascript:void(0)" onclick="return ' + functions[i][0] + '">'+ functions[i][1]+'&#32</a>';
 						//altnative text with id, which will be shown if functions is disabled 
 						containercontent += '<span id="' + functions[i][4] + '" style="display: none;">' + functions[i][3] + '</span>'
 		  				break;		

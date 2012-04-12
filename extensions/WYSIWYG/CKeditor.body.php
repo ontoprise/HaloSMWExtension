@@ -375,6 +375,12 @@ class CKeditor_MediaWiki {
         'dependencies' => array(
             'ext.jquery.query'
         ),
+        'styles' => array(
+            'ckeditor/skins/kama/dialog.css',
+            'ckeditor/skins/kama/editor.css',         
+            'ckeditor/skins/kama/templates.css',
+            'ckeditor/contents.css'
+        ),
         'scripts' => array(
             'scripts/setBasePath.js',
             'ckeditor/_source/core/ckeditor_base.js',
@@ -392,7 +398,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/node.js',
             'ckeditor/_source/core/dom/nodelist.js',
             'ckeditor/_source/core/dom/element.js',
-            'ckeditor/_source/core/command.js',
+            'ckeditor/_source/core/command.js',            
             'ckeditor/_source/core/config.js',
             'ckeditor/_source/core/focusmanager.js',
             'ckeditor/_source/core/lang.js',
@@ -421,10 +427,11 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/range.js',
             'ckeditor/_source/core/dom/rangelist.js',
             'ckeditor/_source/core/_bootstrap.js',
-            'ckeditor/_source/skins/kama/skin.js',
+            'ckeditor/skins/kama/skin.js',
             'ckeditor/_source/lang/en.js',
             'ckeditor/_source/adapters/jquery.js',
-            'ckeditor/_source/plugins/about/plugin.js',
+            'ckeditor/_source/plugins/about/plugin.js',            
+            'ckeditor/_source/plugins/ajax/plugin.js',
             'ckeditor/_source/plugins/autogrow/plugin.js',
             'ckeditor/_source/plugins/a11yhelp/plugin.js',
             'ckeditor/_source/plugins/basicstyles/plugin.js',
@@ -449,6 +456,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/horizontalrule/plugin.js',
             'ckeditor/_source/plugins/htmldataprocessor/plugin.js',
             'ckeditor/_source/plugins/iframe/plugin.js',
+            'ckeditor/_source/plugins/iframedialog/plugin.js',
 //					'ckeditor/_source/plugins/image/plugin.js',
             'ckeditor/_source/plugins/indent/plugin.js',
             'ckeditor/_source/plugins/justify/plugin.js',
@@ -482,7 +490,9 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/undo/plugin.js',
             'ckeditor/_source/plugins/wysiwygarea/plugin.js',
             'ckeditor/_source/plugins/wsc/plugin.js',
+            'ckeditor/_source/plugins/xml/plugin.js',
             'ckeditor/_source/plugins/styles/plugin.js',
+            'ckeditor/_source/plugins/styles/styles/default.js',
             'ckeditor/_source/plugins/dialog/plugin.js',
             'ckeditor/_source/plugins/domiterator/plugin.js',
             'ckeditor/_source/plugins/panelbutton/plugin.js',
@@ -499,6 +509,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/listblock/plugin.js',
             'ckeditor/_source/themes/default/theme.js',
             'ckeditor/_source/plugins/mediawiki/plugin.js',
+            'ckeditor/_source/plugins/mwtemplate/plugin.js',
             'ckeditor/_source/plugins/smwtoolbar/plugin.js',
             'ckeditor/_source/plugins/smwqueryinterface/plugin.js',
             'ckeditor/_source/plugins/smwrichmedia/plugin.js',
@@ -506,6 +517,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/plugins/smwwebservice/plugin.js',
             'ckeditor/_source/plugins/saveAndExit/plugin.js',
             'ckeditor/_source/plugins/mediawiki.api/plugin.js',
+            'ckeditor/config.js',
             'scripts/jquery.jscroll.js',
             'scripts/init.js'
         )

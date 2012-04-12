@@ -1301,14 +1301,14 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       },
       closeToolbar: function(editor){
         if (this.stbIsActive) {
-          if (CKEDITOR.env.ie) {
-            window.parent.gEditInterface = null;
-            gEditInterface = null;
-          }
-          else {
-            delete gEditInterface;
-            delete window.parent.gEditInterface;
-          }
+//          if (CKEDITOR.env.ie) {
+//            window.parent.gEditInterface = null;
+//            gEditInterface = null;
+//          }
+//          else {
+//            delete gEditInterface;
+//            delete window.parent.gEditInterface;
+//          }
           this.DisableAnnotationToolbar(editor);
         }
       },
@@ -1378,15 +1378,18 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
       requires : [ 'mediawiki', 'editingblock' ],
 
-      beforeInit : function( editor ) {
-        // disable STB by default when loading the editor
-        if (window.parent.stb_control) {
-          window.parent.stb_control.closeToolbar();
-        }
-      },
+//      beforeInit : function( editor ) {
+//        // disable STB by default when loading the editor
+//        if (window.parent.stb_control) {
+//          window.parent.stb_control.closeToolbar();
+//        }
+//      },
 
       init : function( editor )
       {
+        //create edit interface to eanble annotations even before STB is loaded
+        plugin.createEditInterface(editor);
+        
         if (editor.contextMenu)
         {
           var editPropertyCommmand =

@@ -210,7 +210,7 @@ CKEDITOR.editorConfig = function( config )
         var toolbarPlaceholder = CKEDITOR.document.getById('cke-toolbar-placeholder');
         toolbarPlaceholder.setStyle( 'height', toolboxContainer.$.offsetHeight + 'px' );
         editor.fire( 'resize' );
-        editor.execCommand('autogrow');
+        editor.getCommand('maximize').state !== CKEDITOR.TRISTATE_ON && editor.execCommand('autogrow');
       },
 
       modes : {
@@ -256,14 +256,8 @@ CKEDITOR.editorConfig = function( config )
           var toolbarPlaceholder = CKEDITOR.document.getById('cke-toolbar-placeholder');
           toolbarPlaceholder.setStyle( 'height', toolboxContainer.$.offsetHeight + 'px' );
           editor.fire( 'resize' );
-          editor.execCommand('autogrow');
+          editor.getCommand('maximize').state !== CKEDITOR.TRISTATE_ON && editor.execCommand('autogrow');
         }
-        else
-        {
-          return;
-        }
-
-
       },
 
       modes : {

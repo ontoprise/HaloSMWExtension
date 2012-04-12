@@ -449,7 +449,7 @@ addItem: function() {
 	//Check if Inputbox is empty
 	if (name=="" || name == null ){
 		alert(gLanguage.getMessage('INPUT_BOX_EMPTY'));
-		return;
+		return false;
 	}
 	this.wtp.addRelation(name, value, text);
 	this.fillList(true);
@@ -457,7 +457,8 @@ addItem: function() {
 		this.confirmFunction();
 		this.confirmFunction = null;
 	}
-	
+
+  return false;
 },
 
 getRelationValue: function() {
