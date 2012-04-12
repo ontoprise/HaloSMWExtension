@@ -257,12 +257,11 @@ function smwgHaloSetupExtension() {
 
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
-
+    
+	// just in case, if there are still jobs in the queue
 	$wgJobClasses['SMW_UpdateLinksAfterMoveJob'] = 'SMW_DummyJob';
 	$wgJobClasses['SMW_UpdateCategoriesAfterMoveJob'] = 'SMW_DummyJob';
 	$wgJobClasses['SMW_UpdatePropertiesAfterMoveJob'] = 'SMW_DummyJob';
-
-
 
 	// register message system (not for ajax, only by demand)
 	if ($action != 'ajax') {
@@ -343,7 +342,7 @@ function smwgHaloSetupExtension() {
 	// Register MW hooks
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
-	$wgHooks['SpecialMovepageAfterMove'][] = 'smwfGenerateUpdateAfterMoveJob';
+	
 
 	// Register Annotate-Tab
 	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
@@ -893,42 +892,7 @@ function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
 	return true;
 }
 
-/**
- * Called when an article has been moved.
- */
-function smwfGenerateUpdateAfterMoveJob(& $moveform, & $oldtitle, & $newtitle) {
-	$store = smwfGetStore();
 
-	$jobs = array();
-	$titlesToUpdate = $oldtitle->getLinksTo();
-	$params[] = $oldtitle->getText();
-	$params[] = $newtitle->getText();
-
-	$fullparams[] = $oldtitle->getPrefixedText();
-	$fullparams[] = $newtitle->getPrefixedText();
-
-	foreach ($titlesToUpdate as $uptitle) {
-		if ($uptitle !== NULL) $jobs[] = new SMW_UpdateLinksAfterMoveJob($uptitle, $fullparams);
-	}
-
-	if ($oldtitle->getNamespace()==SMW_NS_PROPERTY) {
-
-		$wikipagesToUpdate = $store->getAllPropertySubjects( SMWDIProperty::newFromUserLabel($oldtitle->getDBkey()));
-		foreach ($wikipagesToUpdate as $dv) {
-			$title = $dv->getTitle();
-			if ($title !== NULL) $jobs[] = new SMW_UpdatePropertiesAfterMoveJob($title, $params);
-		}
-	}
-
-	if ($oldtitle->getNamespace()==NS_CATEGORY) {
-		$wikipagesToUpdate = smwfGetSemanticStore()->getDirectInstances($oldtitle);
-		foreach ($wikipagesToUpdate as $inst)
-		if ($inst !== NULL) $jobs[] = new SMW_UpdateCategoriesAfterMoveJob($inst, $params);
-	}
-
-	Job :: batchInsert($jobs);
-	return true;
-}
 
 function smwfAnnotateTab ($content_actions) {
 	global $wgUser, $wgTitle,  $wgRequest;
