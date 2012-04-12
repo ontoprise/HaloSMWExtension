@@ -66,9 +66,10 @@
       if(!$('#' + msgDivId).length){              
         var msgDiv = $('<div/>').attr('id', msgDivId);
         var css = {
-          'font-family': 'tahoma'
+          'font-size': 'larger'
         };
         msgDiv.css(css);
+        msgDiv.addClass('mediawiki');
         util.getWikieditor().before(msgDiv);
         util.showMsg(mw.msg('wysiwyg-last-save') + ': ' + lastSave);
       }
@@ -310,7 +311,7 @@
         success: function(data, textStatus, jqXHR) {
           var editor = args.editor;
           if ( data && data.edit && data.edit.result === 'Success' ) {
-            lastSave = new Date().toLocaleString();
+            lastSave = new Date().toLocaleTimeString();
             $.cookie('wysiwyg-last-save-' + mw.user.name() + '-' + mw.config.get('wgPageName'), lastSave);
             util.showMsg(mw.msg('wysiwyg-save-successful'));
             editor.resetDirty();
