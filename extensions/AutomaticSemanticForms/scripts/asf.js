@@ -140,6 +140,7 @@ window.ASFFormSyncer = {
 		this.currentCategoryAnnotations = false;
 		this.currentRelationsCount = 0;
 		this.propertiesWithNoASF = new Array();
+		this.syntaxErrorCount = 0;
 		
 		//init freetxt content change listeners and do first form update
 		if(typeof CKEDITOR != 'undefined'){
@@ -242,8 +243,16 @@ window.ASFFormSyncer = {
 		this.wtp.text = this.getFreeTextContent();
 		this.wtp.parseAnnotations();
 		
-		if(this.wtp.getError() > 0){
+		//update will not be done immediately if rreetext contains errors
+		//and if free text has focus
+		console.log('focus ' + !jQuery('.formtable *:focus').length);
+		if(this.wtp.getError() > 0 && !jQuery('.formtable *:focus').length
+				&& ASFFormSyncer.syntaxErrorCount < 5){
+			ASFFormSyncer.currentFreeTextContent = -1;	
+			ASFFormSyncer.syntaxErrorCount += 1;
 			return;
+		} else {
+			ASFFormSyncer.syntaxErrorCount = 0;
 		}
 		
 		this.checkIfFormStructureUpdateIsnecessary(
@@ -823,6 +832,11 @@ window.ASFFormSyncer = {
 
 		//sync with freetext input field
 		ASFFormSyncer.blockFormUpdates = false;
+		
+		//make sure that this update is done immediatelly, even if
+		//freetext contains errors
+		ASFFormSyncer.syntaxErrorCount = 99;
+		
 		ASFFormSyncer.updateForm();
 	}
 };
