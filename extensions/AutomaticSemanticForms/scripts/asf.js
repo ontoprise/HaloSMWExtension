@@ -143,7 +143,7 @@ window.ASFFormSyncer = {
 		this.syntaxErrorCount = 0;
 		
 		//init freetxt content change listeners and do first form update
-		if(typeof CKEDITOR != 'undefined'){
+		if(mw.util.getParamValue('mode') == 'wysiwyg'){
 			CKEDITOR.on("instanceReady", function(){
 	        	ASFFormSyncer.currentFreeTextContent = 
 	        		ASFFormSyncer.getFreeTextContent();
@@ -256,7 +256,6 @@ window.ASFFormSyncer = {
 		
 		//update will not be done immediately if rreetext contains errors
 		//and if free text has focus
-		console.log('focus ' + !jQuery('.formtable *:focus').length);
 		if(this.wtp.getError() > 0 && !jQuery('.formtable *:focus').length
 				&& ASFFormSyncer.syntaxErrorCount < 5){
 			ASFFormSyncer.currentFreeTextContent = -1;	
@@ -495,6 +494,10 @@ window.ASFFormSyncer = {
 			}
 		} else {
 			var currentRelation = this.wtp.getRelations();
+			//console.log('current relation ' + relationIndex);
+			//for(i=0; i < currentRelation.length; i++){
+			//	console.log(i + ' ' + currentRelation[i].getName());
+			//}
 			
 			currentRelation = currentRelation[relationIndex];
 			
@@ -666,7 +669,6 @@ window.ASFFormSyncer = {
 			if(!isSourceAnnotation && !updateNecessary && !initPhase){
 				var found = false;
 				for(var k=0; k<this.currentCategoryAnnotations.length; k++){
-					//alert(newCategoryAnnotations[i].getName() + '  ' + this.currentCategoryAnnotations[k]);
 					if(newCategoryAnnotations[i].getName()
 							== this.currentCategoryAnnotations[k]){
 						found = true;
