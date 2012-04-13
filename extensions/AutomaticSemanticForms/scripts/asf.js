@@ -172,6 +172,17 @@ window.ASFFormSyncer = {
 				jQuery(jQuery('.formtable input').get(0)).focus();
 			}
 		}
+		
+		jQuery('#sfForm').mouseenter(ASFFormSyncer.resizeFormFields);
+	},
+	
+	resizeFormFields : function(){
+		//popup detection
+		jQuery('.asf-complete-width').each(function(){
+			if(jQuery(this).width() < 600){
+				jQuery(this).css('width', '90%');
+			}
+		});
 	},
 	
 	doPostProcessingBeforeSubmit : function(){
@@ -413,6 +424,8 @@ window.ASFFormSyncer = {
 		});
 		
 		this.currentRelationsCount = relations.length;
+		
+		ASFFormSyncer.resizeFormFields();
 	},
 	
 	isUpdateFreeTextNecessary : function(){
