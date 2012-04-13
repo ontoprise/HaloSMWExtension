@@ -651,7 +651,7 @@ if (count($packageToDeinstall) > 0) {
 		$dfgOut->outputln();
 		global $dfgGlobalOptionsValues;
 		if (array_key_exists('df_watsettings_deinstall_dependant', $dfgGlobalOptionsValues)) {
-			$continue = true;
+			$continue = $dfgGlobalOptionsValues['df_watsettings_deinstall_dependant'];
 		} else {
 			$continue = DFUserInput::consoleConfirm("Do you want to continue? (y/n) ");
 		}

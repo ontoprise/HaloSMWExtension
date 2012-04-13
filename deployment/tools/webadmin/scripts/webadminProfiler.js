@@ -90,6 +90,11 @@ $(document).ready(
 								} else {
 									alert(xhr.responseText);
 								}
+								if (profilingEnabled) {
+									$('#df_webadmin_profiler_content').show();
+								} else {
+									$('#df_webadmin_profiler_content').hide();
+								}
 						}
 						});
 			});
