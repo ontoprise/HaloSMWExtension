@@ -11,7 +11,7 @@
 		<instdir>extensions/SemanticAggregation</instdir>
 		<dependencies>
 			<dependency from="1.12.0" to="1.17.9">mw</dependency>
-			<dependency from="1.5.6" to="1.6.1">smw</dependency>
+			<dependency from="1.5.6" to="1.7.1">smw</dependency>
 			<dependency from="1.5.6" to="1.7.0" optional="true">smwhalo</dependency>
 		</dependencies>
 		<license>GPL-v2</license>

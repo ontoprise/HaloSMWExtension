@@ -14,7 +14,7 @@
         <helpurl>http://www.smwplus.com/index.php/Help:WikiTags</helpurl>
         <dependencies>
             <dependency from="1.17.0" to="1.17.9">mw</dependency>
-            <dependency from="1.6.1" to="1.6.1">smw</dependency>
+            <dependency from="1.7.1" to="1.7.1">smw</dependency>
         </dependencies>
         <license>GPL-v2</license>
     </global>
