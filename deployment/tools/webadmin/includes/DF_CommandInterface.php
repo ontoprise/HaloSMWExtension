@@ -751,6 +751,7 @@ class DFCommandInterface {
 	public function createBundle($bundleID) {
 		global $dfgContentBundlesTab;
 		$bundleExportDir = $dfgContentBundlesTab->getBundleExportDirectory();
+		Tools::mkpath($bundleExportDir);
 		$bundleFileName = Tools::makeFileName($bundleID);
 		return json_encode($this->exportBundle($bundleID, $bundleExportDir."/$bundleFileName.zip"));
 	}
@@ -952,7 +953,8 @@ ENDS;
 			exec("exportBundle.bat $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
 			$filePath = $outputFile == "" ? "c:\\temp\\$bundleID\\$bundleID.zip" : $outputFile;
 		} else {
-			exec("exportBundle.sh $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
+		
+			exec($mwrootDir."/deployment/tools/maintenance/export/exportBundle.sh $bundleID $outputFile_esc > \"$console_out\" 2>&1", $out, $ret );
 			$filePath = $outputFile == "" ? "/tmp/$bundleID/$bundleID.zip" : $outputFile;
 		}
 		$o = new stdClass();
