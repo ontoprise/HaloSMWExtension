@@ -54,18 +54,22 @@ class DFProfilerTab {
                         '?action=ajax&rs=downloadProfilingLog">'.$dfgLang->getLanguageString('df_webadmin_download_profilinglog').'</a></div>';
 		$html .= "<input type=\"button\" value=\"refreshing...\" disabled=\"true\" id=\"df_enableprofiling\"></input>";
 		$html .= "<div style=\"display:none\" id=\"df_webadmin_profiler_content\">";
-		$indices = $this->getProfilingLogIndices();
 		$html .= $dfgLang->getLanguageString('df_webadmin_profilertab_requests');
 		$html .= "<div style=\"text-align:center\"><div style=\"margin:auto\">";
 		$html .= "<img id=\"df_webadmin_profiler_refresh_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none;\"/>";
 		$html .= "</div></div>";
 		$html .= "<select id=\"df_webadmin_profiler_selectlog\" size=\"5\">";
 		$old = 0;
-		foreach($indices as $i) {
-			list($index, $logUrl) = $i;
-			if ($logUrl == '') continue;
-			$html .= "<option from=\"$index\" to=\"$old\">".htmlspecialchars($logUrl)."</option>";
-			$old = $index;
+		try {
+			$indices = $this->getProfilingLogIndices();
+			foreach($indices as $i) {
+				list($index, $logUrl) = $i;
+				if ($logUrl == '') continue;
+				$html .= "<option from=\"$index\" to=\"$old\">".htmlspecialchars($logUrl)."</option>";
+				$old = $index;
+			}
+		} catch(Exception $e) {
+			// ignore
 		}
 		$html .= "</select>";
 		$html .= "<div>";
@@ -105,10 +109,10 @@ class DFProfilerTab {
 		$sizeOfLog = filesize($logFile);
 		$handle = fopen($logFile, "r");
 		$i = 0;
-	
+
 		$startIndex[0] = array($sizeOfLog, "");
 		while(true) {
-			
+				
 			do {
 				$i++;
 				$lengthToRead = 32 * 1024;
