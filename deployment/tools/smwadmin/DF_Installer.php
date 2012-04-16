@@ -908,7 +908,7 @@ class Installer {
 			$unzipDirectory = $nonPublicAppPaths[$dd->getID()];
 		}
 
-		return $unzipDirectory;
+		return trim($unzipDirectory);
 	}
 
 	/**
