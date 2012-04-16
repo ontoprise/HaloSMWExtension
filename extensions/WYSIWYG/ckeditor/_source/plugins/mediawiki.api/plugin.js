@@ -92,7 +92,9 @@
           var namespaces = mw.config.get('wgFormattedNamespaces');
           var namespaceId = mw.config.get('wgNamespaceNumber');
 
-          if(namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1){
+          if((namespaces && namespaces[namespaceId] && $.inArray(mw.config.get('wgNamespace'), ['Category', 'Property', 'Template']) !== -1)
+            || (mw.config.get('wgAction') === 'formedit'))
+          {
             return;
           }
       
@@ -382,8 +384,9 @@
   var saveCmd =
   {
     modes : {
-      wysiwyg:1,
-      source:1
+      //disable in Special namespace or when action == formedit
+      wysiwyg: (mw.config.get('wgNamespaceNumber') !== -1 && mw.config.get('wgAction') !== 'formedit'),
+      source: (mw.config.get('wgNamespaceNumber') !== -1 && mw.config.get('wgAction') !== 'formedit')
     },
     readOnly : 1,
     

@@ -314,7 +314,7 @@ createContextMenu: function(contextMenuContainer, name, editCategory, confirmFun
 	this.currentAction = "annotate";
 	
 	this.wtp.initialize();
-	var selection = name ? name : this.wtp.getSelection(true);
+	var selection = name || this.wtp.getSelection(true) || '';
 	selection = selection.replace(/'''''/g,''); // replace bold&italic
 	selection = selection.replace(/'''/g,'');   // replace bold
 	selection = selection.replace(/''/g,'');    // replace italic

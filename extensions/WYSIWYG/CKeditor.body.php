@@ -393,9 +393,9 @@ class CKeditor_MediaWiki {
             'ext.jquery.query'
         ),
         'styles' => array(
-            'ckeditor/skins/kama/dialog.css',
-            'ckeditor/skins/kama/editor.css',
-            'ckeditor/skins/kama/templates.css'
+            'ckeditor/_source/skins/kama/editor.css',
+            'ckeditor/_source/skins/kama/dialog.css',
+            'ckeditor/_source/skins/kama/templates.css'
         ),
         'scripts' => array(
             'scripts/setBasePath.js',
@@ -443,7 +443,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/range.js',
             'ckeditor/_source/core/dom/rangelist.js',
             'ckeditor/_source/core/_bootstrap.js',
-            'ckeditor/skins/kama/skin.js',
+            'ckeditor/_source/skins/kama/skin.js',
             'ckeditor/_source/lang/en.js',
             'ckeditor/_source/adapters/jquery.js',
             'ckeditor/_source/plugins/about/plugin.js',            

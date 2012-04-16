@@ -1170,10 +1170,8 @@ if (SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         plugin.createEditInterface(editor);
       }
       var selection = gEditInterface.getSelectionAsArray();
-      if (selection && selection.length >= 1) {
-        ShowCatToolbar(plugin.mLastMoveEvent,  selection[0], false);
-      }
-		
+      var annotationString  = selection && selection.length && selection[0] || '';
+      ShowCatToolbar(plugin.mLastMoveEvent,  annotationString, false);
     }
 
     /**
