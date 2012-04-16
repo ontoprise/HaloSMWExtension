@@ -214,10 +214,11 @@ class ASFWikiTextManipulator {
 					$silents = trim(substr($element->nodeText, strlen('{{CreateSilentAnnotations:')));
 					$silents = substr($silents, 0, strlen($silents)-2);
 					$silents = explode('|', $silents);
+					
 					foreach($silents as $silent){
 						if(strlen($silent) == 0) continue;
 						$silent = explode('=', $silent, 2);
-						if(count($silent) == 2){
+						if(count($silent) == 2 && strlen(trim($silent[1])) > 0){
 							$values = array($silent[1]);
 								
 							foreach($values as $val){

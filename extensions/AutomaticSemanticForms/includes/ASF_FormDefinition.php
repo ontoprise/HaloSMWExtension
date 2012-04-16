@@ -306,6 +306,9 @@ class ASFFormDefinition {
 		foreach($this->categorySections as $cs){
 			$cs->updateDueToExistingAnnotations($existingAnnotations);
 		}
+		
+		//echo('<pre>'.print_r($this->categorySections, true).'</pre>');
+		
 	}
 	
 	public function addUnresolvedAnnotationsSection($existingAnnotations){
