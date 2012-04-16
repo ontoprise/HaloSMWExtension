@@ -181,6 +181,8 @@ window.ASFFormSyncer = {
 		jQuery('.asf-complete-width').each(function(){
 			if(jQuery(this).width() < 600){
 				jQuery(this).css('width', '90%');
+			} else {
+				jQuery(this).css('width', '93%');
 			}
 		});
 	},
