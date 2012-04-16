@@ -76,7 +76,7 @@ class OntologyMerger {
 	}
 	
 	public function getAllBundles($wikiText) {
-		$pattern = '/<!--\s*BEGIN ontology:\s*(([^-]|-[^-]|--[^>])+)\s*-->/';
+		$pattern = '/<!--\s*BEGIN ontology:\s*(([^-]|-[^-]|--[^>])+)\s*-->/i';
 		preg_match_all($pattern, $wikiText, $matches);
 		array_walk($matches[1], array($this, 'trim'));
 		return $matches[1];
@@ -89,14 +89,14 @@ class OntologyMerger {
 	public function containsBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
         $bundleID = str_replace("/","\\/", $bundleID);
-		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
+		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/i';
 		return preg_match($pattern, $wikiText, $matches) > 0;
 	}
 
 	public function removeBundle($bundleID, $wikiText) {
 		$bundleID = preg_quote($bundleID);
 		$bundleID = str_replace("/","\\/", $bundleID);
-		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
+		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/i';
 		return preg_replace($pattern, "", $wikiText);
 	}
 
@@ -110,7 +110,7 @@ class OntologyMerger {
     public function getBundleContent($bundleID, $wikiText) {
         $bundleID = preg_quote($bundleID);
         $bundleID = str_replace("/","\\/", $bundleID);
-        $pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
+        $pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/i';
         $res = preg_match($pattern, $wikiText, $match);
         if ($res == 0) return NULL;
         return $match[1];
@@ -122,7 +122,7 @@ class OntologyMerger {
 		}
 		$bundleID = preg_quote($bundleID);
         $bundleID = str_replace("/","\\/", $bundleID);
-		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/';
+		$pattern = '/<!--\s*BEGIN ontology:\s*'.$bundleID.'\s*-->([^<]*)<!--\s*END ontology:\s*'.$bundleID.'\s*-->/i';
 		preg_match_all($pattern, $wikiText, $matches);
 
 		if (isset($matches[1])) {

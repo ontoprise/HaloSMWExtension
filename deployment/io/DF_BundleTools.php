@@ -561,6 +561,7 @@ class DFBundleTools {
 		$partOfBundlePropertyType=NULL;
 		$minversionType=NULL;
 		$maxversionType=NULL;
+		$optionalType=NULL;
 		if ( !is_null( $propertyDiWikiPage ) ) {
 			$listDiProperty = new SMWDIProperty( '_LIST' );
 			$dataItems = smwfGetStore()->getPropertyValues( $propertyDiWikiPage, $listDiProperty );

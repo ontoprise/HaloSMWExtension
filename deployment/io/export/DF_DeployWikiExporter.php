@@ -414,7 +414,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		$om = new OntologyMerger();
 		$allBundles = $om->getAllBundles($text);
 		$keepText = false;
-		if (in_array($this->bundleID, $allBundles)) {
+		if (in_array($this->bundleID, $allBundles) || in_array(lcfirst($this->bundleID), $allBundles)  || in_array(ucfirst($this->bundleID), $allBundles)) {
 			$keepText = $om->getBundleContent($this->bundleID, $text);
 		}
 		foreach($allBundles as $id) {
