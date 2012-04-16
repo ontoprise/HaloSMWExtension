@@ -59,15 +59,16 @@ if (file_exists($mwrootDir."/deployment/checkForWAT.php")) {
 
 /**
  * Runs the PHP checks.
- * 
- * @param string $format "text" or "html" 
+ *
+ * @param string $format "text" or "html"
  */
 function dffDoPHPChecks($format = 'text') {
-	
-    global $mwrootDir, $dfgTestfunctions, $dfgRunFromCommandLine, $dfgRequiredExtensions, 
-           $dfgRequiredPHPVersions, $dfgRequiredFunctions;
-    
-    $messages = array();
+
+	global $mwrootDir, $dfgTestfunctions, $dfgRunFromCommandLine, $dfgRequiredExtensions,
+	$dfgRequiredPHPVersions, $dfgRequiredFunctions;
+
+	$messages = array();
+	$errorsOccured = false;
 	// run testfunctions
 	foreach($dfgTestfunctions as $tf) {
 		call_user_func($tf);
@@ -75,6 +76,7 @@ function dffDoPHPChecks($format = 'text') {
 
 	// check version
 	$version = phpversion();
+	list($version, $rest) = explode("-", $version);
 	$currentPHPVersion = new DFVersion($version);
 	global $dfgRequiredPHPVersions;
 	foreach($dfgRequiredPHPVersions as $v) {
@@ -84,55 +86,76 @@ function dffDoPHPChecks($format = 'text') {
 	$highestVersion = reset($versions);
 
 	if ($currentPHPVersion->isLower($highestVersion)) {
-		$messages[] = "You need at least PHP ".$highestVersion->toVersionString();
+		$messages[] = array("You need at least PHP ".$highestVersion->toVersionString(), true);
+		$errorsOccured = true;
+	} else {
+		$messages[] = array("PHP version $version is OK.", false);
 	}
 
 	// check PHP extensions
 	foreach($dfgRequiredExtensions as $php_ext => $msgs) {
 		if (!extension_loaded($php_ext)) {
+			$errorsOccured = true;
 			foreach($msgs as $msg) {
-				$messages[] = "$msg";
+				$messages[] = array("$msg", true);
 			}
+		} else {
+			$messages[] = array("$php_ext is installed.", false);
 		}
 	}
 	// check functions
 	foreach($dfgRequiredFunctions as $php_ext => $msgs) {
 		if (!function_exists($php_ext)) {
+			$errorsOccured = true;
 			foreach($msgs as $msg) {
-				$messages[] = "$msg";
+				$messages[] = array("$msg", true);
 			}
+		} else {
+			$messages[] = array("$php_ext is available.", false);
 		}
 	}
-    
+
+	usort($messages, "sortMessages");
 	// create output
 	$ok = true;
 	if ($dfgRunFromCommandLine && $format == 'text') {
-		$text = "\n-- PHP check --";
-
-		if (count($messages) == 0) {
+		$text = "\n-- PHP check for SMW+ --";
+		$text .= "\nThis tool checks if your PHP installation is suitable for the set of installed extensions of SMW+.";
+		if (!$errorsOccured) {
 			$text .= "\n\nEverything is fine with the PHP installation.\n";
 		} else {
-			$text .= "\n\nThe following problems were found:";
-			foreach($messages as $m) {
+			$text .= "\n\nThere a problems:";
+		}
+		foreach($messages as $message) {
+			list($m, $isError) = $message;
+			if ($isError) {
 				$text .= "\n*[FAILED] $m";
+			} else {
+				$text .= "\n*$m";
 			}
-			$ok = false;
 		}
+		$ok = false;
 	} else {
-		$text = "<h1>PHP check</h1>";
+		$text = "<h1>PHP check for SMW+</h1>";
+		$text .= "This tool checks if your PHP installation is suitable for the set of installed extensions of SMW+.";
 
-		if (count($messages) == 0) {
-			$text .= '<span class="df_check_ok">Everything is fine with the PHP installation.<span>';
-
-		} else {
-			$text .= '<span class="df_check_ok">The following problems were found:<span>';
-			$text .= "<ul>";
-			foreach($messages as $m) {
-				$text .= "<li><span class=\"df_checkinst_error\">[FAILED]</span>$m</li>";
+		$text .= "<ul>";
+	
+		foreach($messages as $message) {
+			list($m, $isError) = $message;
+			if ($isError) {
+				$text .= "<li><span style=\"color: red;margin-right: 10px;font-weight:bold\">[FAILED]</span>$m</li>";
+			} else {
+				$text .= "<li><span style=\"color: green;margin-right: 10px;font-weight:bold\">[OK]</span>$m</li>";
 			}
-			$text .= "</ul>";
-			$ok = false;
 		}
+		$text .= "</ul>";
+		$ok = false;
 	}
 	return "$text\n";
+}
+
+function sortMessages($message) {
+	list($m, $isError) = $message;
+	return $isError ? -1 : 1;
 }
