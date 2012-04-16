@@ -76,6 +76,7 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_console_log' : 'Click here for console log.',
 	'df_webadmin_finalization_console_log' : 'Click here for finalization console log.',
 	'df_webadmin_searching_in_repository' : 'Searching in repository...',
+	'df_webadmin_deinstall_not_possible' : 'Can not de-install. There are other dependencies to this bundle.',
 		
 	// other tabs
 	'df_webadmin_really_clear_log' : 'Do you really want to clear the log?',

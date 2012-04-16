@@ -76,7 +76,8 @@ var dfgUserDFWebAdmin_LanguageStrings = {
 	'df_webadmin_console_log' : 'Klicken Sie hier für das Konsolen-Log.',
 	'df_webadmin_finalization_console_log' : 'Klicken Sie hier für das Konsolen-Log der Finalisierung.',
 	'df_webadmin_searching_in_repository' : 'Suche in Repository...',
-
+	'df_webadmin_deinstall_not_possible' : 'De-Installation nicht möglich. Es gibt weitere Abhängigkeiten auf dieses Bundle.',
+	
 	// other tabs
 	'df_webadmin_really_clear_log' : 'Wollen Sie das Log wirklich löschen?',
 	'df_webadmin_contentbundle_error' : 'Fehler beim Export. Bitte prüfen Sie das ',

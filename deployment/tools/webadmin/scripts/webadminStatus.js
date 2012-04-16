@@ -19,11 +19,11 @@
 /**
  * @file
  * @ingroup WebAdmin
- *
+ * 
  * webadmin scripts for DF_StatusTab
- * 	
+ * 
  * @author: Kai Kühn
- *
+ * 
  */
 $(document)
 		.ready(
@@ -66,10 +66,13 @@ $(document)
 										$dialog
 												.html('<img src="skins/ajax-loader.gif"/>');
 										$('.ui-dialog-titlebar-close').hide();
-										var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
+										var globalSettings = $
+												.toJSON($.webAdmin.settings
+														.getSettings());
 										var finalizeurl = wgServer
 												+ wgScriptPath
-												+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="+encodeURIComponent(globalSettings);
+												+ "/deployment/tools/webadmin/index.php?rs=finalize&rsargs[]=&rsargs[]="
+												+ encodeURIComponent(globalSettings);
 										$.ajax( {
 											url : finalizeurl,
 											dataType : "json",
@@ -148,81 +151,129 @@ $(document)
 										var id = $(e2.currentTarget).attr('id');
 										id = id.split("__")[1];
 
-										var text = dfgWebAdminLanguage
-												.getMessage('df_webadmin_want_touninstall');
-										text += "<ul><li>" + id + "</li></ul>";
-										$('#deinstall-dialog-confirm-text')
-												.html(text);
-
-										$("#deinstall-dialog-confirm")
+										var deInstallConfirmDialog = $("#deinstall-dialog-confirm")
 												.dialog(
 														{
 															resizable : false,
 															height : 350,
+															width : 600,
 															modal : true,
-															buttons : [
-																	{
-																		text : dfgWebAdminLanguage
-																				.getMessage('df_yes'),
-																		click : function() {
-																			$(
-																					this)
-																					.dialog(
-																							"close");
-																			var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
-																			var url = wgServer
-																					+ wgScriptPath
-																					+ "/deployment/tools/webadmin/index.php?rs=deinstall&rsargs[]="
-																					+ encodeURIComponent(id) + "&rsargs[]="+encodeURIComponent(globalSettings);
-																			var $dialog = $(
-																					'#df_install_dialog')
-																					.dialog(
-																							{
-																								autoOpen : false,
-																								title : dfgWebAdminLanguage
-																										.getMessage('df_webadmin_pleasewait'),
-																								modal : true,
-																								width : 800,
-																								height : 500,
-																								operation : "deinstall",
-																								close : function(
-																										event,
-																										ui) {
-																									window.location.href = wgServer
-																											+ wgScriptPath
-																											+ "/deployment/tools/webadmin/index.php?tab=0";
-
-																								}
-																							});
-																			$dialog
-																					.html("<div></div>");
-																			$dialog
-																					.dialog('open');
-																			$dialog
-																					.html('<img src="skins/ajax-loader.gif"/>');
-																			$(
-																					'.ui-dialog-titlebar-close')
-																					.hide();
-																			$
-																					.ajax( {
-																						url : url,
-																						dataType : "json",
-																						complete : $.webAdmin.operations.deinstallStarted
-																					});
-																		}
-																	},
-																	{
-																		text : dfgWebAdminLanguage
-																				.getMessage('df_no'),
-																		click : function() {
-																			$(
-																					this)
-																					.dialog(
-																							"close");
-																		}
-																	} ]
+															
 
 														});
+										deInstallConfirmDialog.html('<img src="skins/ajax-loader.gif"/>');
+										var globalSettings = $
+												.toJSON($.webAdmin.settings
+														.getSettings());
+										var url = wgServer
+												+ wgScriptPath
+												+ "/deployment/tools/webadmin/index.php?rs=getDeletionOrder&rsargs[]="
+												+ encodeURIComponent(id)
+												+ "&rsargs[]="
+												+ encodeURIComponent(globalSettings);
+										$
+												.ajax( {
+													url : url,
+													dataType : "json",
+													complete : function(xhr,
+															status) {
+														var extensionsToDeInstall = $
+																.parseJSON(xhr.responseText);
+
+														if ($.webAdmin.settings
+																.getSettings().df_watsettings_deinstall_dependant === false) {
+															if (extensionsToDeInstall.length > 1) {
+																deInstallConfirmDialog.html(dfgWebAdminLanguage
+																		.getMessage('df_webadmin_deinstall_not_possible'));
+																return;
+															}
+														}
+														deInstallConfirmDialog.dialog("option", "buttons", {
+															"Yes" : {
+																	text : dfgWebAdminLanguage
+																			.getMessage('df_yes'),
+																	click : function() {
+																		$(
+																				this)
+																				.dialog(
+																						"close");
+																		var globalSettings = $
+																				.toJSON($.webAdmin.settings
+																						.getSettings());
+																		var url = wgServer
+																				+ wgScriptPath
+																				+ "/deployment/tools/webadmin/index.php?rs=deinstall&rsargs[]="
+																				+ encodeURIComponent(id)
+																				+ "&rsargs[]="
+																				+ encodeURIComponent(globalSettings);
+																		var $dialog = $(
+																				'#df_install_dialog')
+																				.dialog(
+																						{
+																							autoOpen : false,
+																							title : dfgWebAdminLanguage
+																									.getMessage('df_webadmin_pleasewait'),
+																							modal : true,
+																							width : 800,
+																							height : 500,
+																							operation : "deinstall",
+																							close : function(
+																									event,
+																									ui) {
+																								window.location.href = wgServer
+																										+ wgScriptPath
+																										+ "/deployment/tools/webadmin/index.php?tab=0";
+
+																							}
+																						});
+																		$dialog
+																				.html("<div></div>");
+																		$dialog
+																				.dialog('open');
+																		$dialog
+																				.html('<img src="skins/ajax-loader.gif"/>');
+																		$(
+																				'.ui-dialog-titlebar-close')
+																				.hide();
+																		$
+																				.ajax( {
+																					url : url,
+																					dataType : "json",
+																					complete : $.webAdmin.operations.deinstallStarted
+																				});
+																	}
+																},
+																"No": {
+																	text : dfgWebAdminLanguage
+																			.getMessage('df_no'),
+																	click : function() {
+																		$(
+																				this)
+																				.dialog(
+																						"close");
+																	}
+																}
+														
+														});
+														var text = dfgWebAdminLanguage
+																.getMessage('df_webadmin_want_touninstall');
+														text += "<ul>";
+														$
+																.each(
+																		extensionsToDeInstall,
+																		function(
+																				i,
+																				e) {
+																			text += "<ul><li>"
+																					+ e
+																					+ "</li></ul>";
+
+																		});
+														text += "</ul>";
+														deInstallConfirmDialog.html(text);
+
+													}
+												});
 
 									});
 
@@ -259,13 +310,17 @@ $(document)
 																					.dialog(
 																							"close");
 
-																			var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
+																			var globalSettings = $
+																					.toJSON($.webAdmin.settings
+																							.getSettings());
 																			var url = wgServer
 																					+ wgScriptPath
 																					+ "/deployment/tools/webadmin/index.php?rs=update&rsargs[]="
 																					+ encodeURIComponent(id
 																							+ "-"
-																							+ version) + "&rsargs[]="+encodeURIComponent(globalSettings);
+																							+ version)
+																					+ "&rsargs[]="
+																					+ encodeURIComponent(globalSettings);
 																			var $dialog = $(
 																					'#df_install_dialog')
 																					.dialog(
@@ -377,11 +432,14 @@ $(document)
 																						this)
 																						.dialog(
 																								"close");
-																				var globalSettings = $.toJSON($.webAdmin.settings.getSettings());
+																				var globalSettings = $
+																						.toJSON($.webAdmin.settings
+																								.getSettings());
 																				var url = wgServer
 																						+ wgScriptPath
 																						+ "/deployment/tools/webadmin/index.php?rs=doGlobalUpdate"
-																						+ "&rsargs[]="+encodeURIComponent(globalSettings);
+																						+ "&rsargs[]="
+																						+ encodeURIComponent(globalSettings);
 																				var $dialog = $(
 																						'#df_install_dialog')
 																						.dialog(

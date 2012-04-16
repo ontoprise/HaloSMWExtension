@@ -702,6 +702,13 @@ class DFCommandInterface {
 		fclose($server_settings);
 		return "true";
 	}
+	
+	public function getDeletionOrder($bundleID, $globalOptions) {
+		global $mwrootDir;
+		$allBundlesToDelete = PackageRepository::getDeletionOrder(array($bundleID), $mwrootDir);
+		return json_encode($allBundlesToDelete);
+		
+	}
 
 	public function clearLog() {
 		$logger = Logger::getInstance();
