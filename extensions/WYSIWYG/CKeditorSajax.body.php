@@ -287,18 +287,18 @@ function wfSajaxWikiToHTML( $wiki, $title = '' ) {
 	$parser = new CKeditorParser();
 	$parser->setOutputType( OT_HTML );
 
-	wfSajaxToggleCKeditor( 'show' ); // FCKeditor was switched to visible
+//	wfSajaxToggleCKeditor( 'show' ); // FCKeditor was switched to visible
         $resultText = $parser->parse( $wiki, $wgTitle, $options )->getText();
 	return str_replace( '<!-- Tidy found serious XHTML errors -->', '',  $resultText);
 }
 
-function wfSajaxToggleCKeditor( $data ) {
-  if( $data == 'show' ){
-		$_SESSION['showMyFCKeditor'] = RTE_VISIBLE;	// visible last time
-//    $wgUser->setOption('cke_last_state', 'richeditor');
-	} else {
-		$_SESSION['showMyFCKeditor'] = 0; // invisible
-//    $wgUser->setOption('cke_last_state', 'wikitexteditor');
-	}
-	return 'SUCCESS';
-}
+//function wfSajaxToggleCKeditor( $data ) {
+//  if( $data == 'show' ){
+//		$_SESSION['showMyFCKeditor'] = RTE_VISIBLE;	// visible last time
+////    $wgUser->setOption('cke_last_state', 'richeditor');
+//	} else {
+//		$_SESSION['showMyFCKeditor'] = 0; // invisible
+////    $wgUser->setOption('cke_last_state', 'wikitexteditor');
+//	}
+//	return 'SUCCESS';
+//}

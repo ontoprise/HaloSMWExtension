@@ -12,7 +12,7 @@
 
     // Private
     function getMargin($element, $window) {
-      var maxOffset = $element.parent().height();
+      var maxOffset = $element.parent().height() - 70;
       var defaultMargin = parseInt($element.css("margin-top"), 10) || 0;
 
       //when starting update the initial margin and offset in case elements were inserted dynamically

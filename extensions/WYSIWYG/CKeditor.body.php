@@ -1,4 +1,21 @@
 <?php
+//////////////NOT IN USE. Left for backwards compatibility with SemanticForms//////////////////
+/**
+ * Options for FCKeditor
+ * [start with FCKeditor]
+ */
+define('RTE_VISIBLE', 1);
+/**
+ * Options for FCKeditor
+ * [show toggle link]
+ */
+define('RTE_TOGGLE_LINK', 2);
+/**
+ * Options for FCKeditor
+ * [show popup link]
+ */
+define('RTE_POPUP', 4);
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
 class CKeditor_MediaWiki {
 
@@ -377,7 +394,7 @@ class CKeditor_MediaWiki {
         ),
         'styles' => array(
             'ckeditor/skins/kama/dialog.css',
-            'ckeditor/skins/kama/editor.css',         
+            'ckeditor/skins/kama/editor.css',
             'ckeditor/skins/kama/templates.css'
         ),
         'scripts' => array(
@@ -529,74 +546,74 @@ class CKeditor_MediaWiki {
    * @param $form EditPage object
    * @return true
    */
-  public function onEditPageShowEditFormInitial($form) {
-    global $wgOut, $wgTitle, $wgScriptPath, $wgContLang, $wgUser;
-    global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
-    global $wgFCKEditorIsCompatible, $wgRequest, $wgFCKEditorDir;
-
-    if (defined('SMW_HALO_VERSION') && !isset($this->loadSTBonStartup)) {
-      $this->loadSTBonStartup = 0;
-      if ($wgUser->getOption('riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'])) {
-        $this->loadSTBonStartup = 1;
-      }
-    }
-    if ($wgRequest->getVal('mode') != 'wysiwyg') {
-      return true;
-    }
-
-    # Don't initialize if we have disabled the toolbar or have a non-compatible browser
-    if (!$wgUser->getOption('showtoolbar') || !$wgFCKEditorIsCompatible) {
-      return true;
-    }
-
-    # Don't do anything if we're in an excluded namespace
-    if (in_array($wgTitle->getNamespace(), $this->getExcludedNamespaces())) {
-      return true;
-    }
-
-    # Make sure that there's no __NORICHEDITOR__ in the text either
-    if (false !== strpos($form->textbox1, '__NORICHEDITOR__')) {
-      return true;
-    }
-    if (!isset($this->showFCKEditor)) {
-      $this->showFCKEditor = 0;
-      $default_cke_show = array_key_exists('cke_show', $wgDefaultUserOptions) ? $wgDefaultUserOptions['cke_show'] : '';
-      //show toggle if configured
-      if ($wgUser->getOption('riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'])) {
-        $this->showFCKEditor += RTE_TOGGLE_LINK;
-      }
-      $cke_show = $wgUser->getOption('cke_show', $default_cke_show);
-      if ($cke_show == 'richeditor') {
-        $this->showFCKEditor += RTE_VISIBLE;
-      }
-      //use "remember last toggle state" option only if toggle is visible
-      else if ($cke_show == 'rememberlast') {
-        if ($this->showFCKEditor & RTE_TOGGLE_LINK) {
-          if (!array_key_exists('showMyFCKeditor', $_SESSION) || $_SESSION['showMyFCKeditor'] == RTE_VISIBLE) {
-            $this->showFCKEditor += RTE_VISIBLE;
-          }
-        }//if "remember last toggle state" is set and toggle is not visible then show rich editor
-        else {
-          $this->showFCKEditor += RTE_VISIBLE;
-        }
-      }
-    }
-
-    $printsheet = htmlspecialchars("$wgStylePath/common/wikiprintable.css?$wgStyleVersion");
-
-    // CSS trick,  we need to get user CSS stylesheets somehow... it must be done in a different way!
-    $skin = $wgUser->getSkin();
-    $skin->loggedin = $wgUser->isLoggedIn();
-    $skin->mTitle = & $wgTitle;
-    $skin->initPage($wgOut);
-    $skin->userpage = $wgUser->getUserPage()->getPrefixedText();
-    $skin->setupUserCss($wgOut);
-
-    if (!empty($skin->usercss) && preg_match_all('/@import "([^"]+)";/', $skin->usercss, $matches)) {
-      $userStyles = $matches[1];
-    }
-    return true;
-  }
+//  public function onEditPageShowEditFormInitial($form) {
+//    global $wgOut, $wgTitle, $wgScriptPath, $wgContLang, $wgUser;
+//    global $wgStylePath, $wgStyleVersion, $wgDefaultSkin, $wgExtensionFunctions, $wgHooks, $wgDefaultUserOptions;
+//    global $wgFCKEditorIsCompatible, $wgRequest, $wgFCKEditorDir;
+//
+//    if (defined('SMW_HALO_VERSION') && !isset($this->loadSTBonStartup)) {
+//      $this->loadSTBonStartup = 0;
+//      if ($wgUser->getOption('riched_load_semantic_toolbar', $wgDefaultUserOptions['riched_load_semantic_toolbar'])) {
+//        $this->loadSTBonStartup = 1;
+//      }
+//    }
+//    if ($wgRequest->getVal('mode') != 'wysiwyg') {
+//      return true;
+//    }
+//
+//    # Don't initialize if we have disabled the toolbar or have a non-compatible browser
+//    if (!$wgUser->getOption('showtoolbar') || !$wgFCKEditorIsCompatible) {
+//      return true;
+//    }
+//
+//    # Don't do anything if we're in an excluded namespace
+//    if (in_array($wgTitle->getNamespace(), $this->getExcludedNamespaces())) {
+//      return true;
+//    }
+//
+//    # Make sure that there's no __NORICHEDITOR__ in the text either
+//    if (false !== strpos($form->textbox1, '__NORICHEDITOR__')) {
+//      return true;
+//    }
+//    if (!isset($this->showFCKEditor)) {
+//      $this->showFCKEditor = 0;
+//      $default_cke_show = array_key_exists('cke_show', $wgDefaultUserOptions) ? $wgDefaultUserOptions['cke_show'] : '';
+//      //show toggle if configured
+//      if ($wgUser->getOption('riched_use_toggle', $wgDefaultUserOptions['riched_use_toggle'])) {
+//        $this->showFCKEditor += RTE_TOGGLE_LINK;
+//      }
+//      $cke_show = $wgUser->getOption('cke_show', $default_cke_show);
+//      if ($cke_show == 'richeditor') {
+//        $this->showFCKEditor += RTE_VISIBLE;
+//      }
+//      //use "remember last toggle state" option only if toggle is visible
+//      else if ($cke_show == 'rememberlast') {
+//        if ($this->showFCKEditor & RTE_TOGGLE_LINK) {
+//          if (!array_key_exists('showMyFCKeditor', $_SESSION) || $_SESSION['showMyFCKeditor'] == RTE_VISIBLE) {
+//            $this->showFCKEditor += RTE_VISIBLE;
+//          }
+//        }//if "remember last toggle state" is set and toggle is not visible then show rich editor
+//        else {
+//          $this->showFCKEditor += RTE_VISIBLE;
+//        }
+//      }
+//    }
+//
+//    $printsheet = htmlspecialchars("$wgStylePath/common/wikiprintable.css?$wgStyleVersion");
+//
+//    // CSS trick,  we need to get user CSS stylesheets somehow... it must be done in a different way!
+//    $skin = $wgUser->getSkin();
+//    $skin->loggedin = $wgUser->isLoggedIn();
+//    $skin->mTitle = & $wgTitle;
+//    $skin->initPage($wgOut);
+//    $skin->userpage = $wgUser->getUserPage()->getPrefixedText();
+//    $skin->setupUserCss($wgOut);
+//
+//    if (!empty($skin->usercss) && preg_match_all('/@import "([^"]+)";/', $skin->usercss, $matches)) {
+//      $userStyles = $matches[1];
+//    }
+//    return true;
+//  }
 
   public static function onGetLocalURL($title, $url, $query) {
     if (!strpos($query, 'mode=')) {

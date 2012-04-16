@@ -280,7 +280,7 @@
       });
 
       //show confirmation dialog when there are unsaved changes
-      $(window).bind('beforeunload', function(){
+      $(window).bind('beforeunload', function(event){
         if(ckeditorInstance.checkDirty()){
           return mw.msg('wysiwyg-save-before-exit');
         }

@@ -85,7 +85,7 @@ $wgAjaxExportList[] = 'wfSajaxGetImageUrl';
 $wgAjaxExportList[] = 'wfSajaxGetMathUrl';
 $wgAjaxExportList[] = 'wfSajaxSearchTemplateCKeditor';
 $wgAjaxExportList[] = 'wfSajaxSearchSpecialTagCKeditor';
-$wgAjaxExportList[] = 'wfSajaxToggleCKeditor';
+//$wgAjaxExportList[] = 'wfSajaxToggleCKeditor';
 
 // Extension credits that will show up on Special:Version
 $wgExtensionCredits['other'][] = array(
@@ -99,7 +99,7 @@ $wgExtensionCredits['other'][] = array(
 
 // Autoloadable classes
 $dir = dirname( __FILE__ ) . '/';
-$wgAutoloadClasses['CKEditor'] = $dir . 'ckeditor/ckeditor_php5.php';
+//$wgAutoloadClasses['CKEditor'] = $dir . 'ckeditor/ckeditor_php5.php';
 $wgAutoloadClasses['CKeditorParser'] = $dir . 'CKeditorParser.body.php';
 $wgAutoloadClasses['CKeditorParserOptions'] = $dir . 'CKeditorParserOptions.body.php';
 $wgAutoloadClasses['CKeditorParserWrapper'] = $dir . 'CKeditorParserWrapper.body.php';
@@ -111,8 +111,8 @@ $wgAutoloadClasses['CKeditor_MediaWiki'] = $dir . 'CKeditor.body.php';
 $wgExtensionMessagesFiles['CKeditor'] = $dir . 'CKeditor.i18n.php';
 
 // Initialize FCKeditor and the MediaWiki extension
-$ckeditor = new CKEditor('fake');
-$wgFCKEditorIsCompatible = $ckeditor->IsCompatible();
+//$ckeditor = new CKEditor('fake');
+//$wgFCKEditorIsCompatible = $ckeditor->IsCompatible();
 
 $oCKeditorExtension = new CKeditor_MediaWiki();
 // Hooked functions
@@ -146,5 +146,5 @@ if (defined('SMW_HALO_VERSION')) {
   // when SMWHalo is used then the QueryInterface opens in an Iframe
     $wgEditPageFrameOptions = 'SAMEORIGIN';
     // Semantic toobar is loaded by default
-    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;       
+    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;
 }

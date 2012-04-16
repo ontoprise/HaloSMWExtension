@@ -59,7 +59,7 @@
             msgDiv.css(msgDivCss);
             msgDiv.fadeIn(300);
           });
-        }, 2000);
+        }, 4000);
       });
     },
     setupMsgElement: function(editor){
@@ -314,7 +314,7 @@
             callbackFunction && typeof callbackFunction === 'function' && callbackFunction(editToken, args);
           }
           else if ( data && data.error ) {
-            util.showMsg(mw.msg('wysiwyg-save-error') + ':' + data.error.info, true);
+            util.showMsg(mw.msg('wysiwyg-save-error') + ': ' + data.error.info, true);
           }
           else {
             util.showMsg(mw.msg('wysiwyg-failed-unknown-error'), true);
