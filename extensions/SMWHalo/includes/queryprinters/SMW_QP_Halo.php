@@ -33,7 +33,7 @@ class SMWHaloCsvResultPrinter extends SMWCsvResultPrinter {
         return $params;
     }
 
-	protected function getResultText(SMWQueryResult $res, array $params, $outputmode) {
+	protected function getResultText(SMWQueryResult $res, $outputmode) {
 		$result = '';
 		if ($outputmode == SMW_OUTPUT_FILE) { // make CSV file
 			$result .= parent::getResultText($res, $outputmode);
