@@ -67,7 +67,8 @@ class SGAGardening extends SpecialPage {
 					"</div>" .
 					"<div id=\"gardening-tooldetails\"><div id=\"gardening-tooldetails-content\">".wfMsg('smw_gard_choose_bot')."</div></div>
 		
-					<div id=\"gardening-runningbots-head\">&nbsp;Current / Recent bot activities:
+					<div id=\"gardening-runningbots-head\"><span id=\"gardening-runningbots-heading\">".wfMsg('smw_gard_recentbotlist')."</span>
+					<span id=\"gardening-periodicbots-heading\" style=\"display:none\">".wfMsg('smw_gard_periodicbotlist')."</span>
 					<a id=\"gardening-togglebotlistbutton\" onclick=\"gardeningPage.toggleBotList(event)\">Toggle bot list / periodic bots</a></div>
 					<div id=\"gardening-runningbots\">".SGAGardening::getGardeningLogTable()."</div>
 					<div style=\"display:none\" id=\"gardening-periodicbots\">".SGAGardening::getPeriodicBotTable()."</div>

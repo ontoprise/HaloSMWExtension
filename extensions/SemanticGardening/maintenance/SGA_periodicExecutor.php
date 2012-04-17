@@ -51,7 +51,7 @@ if (count($bots) == 0) {
 // execute them
 foreach($bots as $b) {
 	list($id, $botid, $params, $lastrun, $interval) = $b;
-	print "\n*Run $botid";
+	print "\n*Run $botid\n";
 	GardeningBot::runBotNoAuth($botid, $params);
 	$pe->updateLastRun($id);
 }

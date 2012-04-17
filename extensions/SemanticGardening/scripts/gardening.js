@@ -209,6 +209,8 @@ GardeningPage.prototype = {
 	toggleBotList : function(event) {
 		$('gardening-runningbots').toggle();
 		$('gardening-periodicbots').toggle();
+		$('gardening-runningbots-heading').toggle();
+		$('gardening-periodicbots-heading').toggle();
 	},
 
 	removePeriodicBot : function(event, id) {

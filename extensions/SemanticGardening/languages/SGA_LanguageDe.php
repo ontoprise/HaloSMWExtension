@@ -75,6 +75,9 @@ class SGA_LanguageDe {
     'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf�gbar.',
     'smw_gard_issue_local' => 'dieser Artikel',
     
+    'smw_gard_recentbotlist' => 'Kürzlich gelaufene Bots',
+    'smw_gard_periodicbotlist' => 'Periodisch augeführte Bots',
+    
     /* Messages for Gardening Bot: ConsistencyBot */
     'smw_gard_consistency_docu'  => 'Der Konsistenz-Bot prüft auf Zyklen in der Taxonomie und finden Attribute ohne Domäne und Wertebereich. Er prüft außerdem die korrekte Verwendung eines Attribute auf der Instanz-Ebene.',
     'smw_gardissue_domains_not_covariant' => 'Domäne $2 von $1 muss eine Subkategorie der Domäne des Super-Attribute sein.',

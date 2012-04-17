@@ -74,6 +74,8 @@ of the tools click on this link: $1.',
    
     'smw_gardissue_class_all' => 'All',
     
+    'smw_gard_recentbotlist' => 'Current / Recent bot activities:',
+    'smw_gard_periodicbotlist' => 'Registered periodic bots',
     
   
 
