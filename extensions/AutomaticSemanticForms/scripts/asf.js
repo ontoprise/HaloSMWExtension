@@ -509,6 +509,8 @@ window.ASFFormSyncer = {
 				this.deletePropertyInFreetext(currentRelation, relationIndex, node);
 			}
 		}
+		
+		this.currentFreeTextContent = this.getFreeTextContent();
 	},
 	
 	addPropertyToFreeText : function(container, newValue){
