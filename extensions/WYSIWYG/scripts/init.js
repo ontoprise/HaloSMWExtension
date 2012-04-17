@@ -175,7 +175,10 @@
     size = size || {};
     var width = size.width || ckeToolbar.width();
 
-    if(!size.maximize){
+    if(size.maximize){
+      ckeToolbar.css('paddingTop', 1);
+    }
+    else{
       width -= 10;
     }
     width += 'px';
@@ -187,6 +190,8 @@
     ckeToolbarTd.css({
       'width' : width
     });
+
+    
   }
 
   CKEDITOR.mw.isEditAllowed = function(){
