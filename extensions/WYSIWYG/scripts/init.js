@@ -53,12 +53,16 @@
       toggleDiv.append(toggleAnchor);
       toggleDiv.append(']');
     }
+    else{
+      //if toggle is not visible don't remember last state
+      $.cookie('wgCKeditorToggleState', 'visible', {expires: -1});
+    }
     //show ckeditor, hide the wikieditor and the wikitoolbar if configured
-    if((mw.user.options.get('cke_show') === 'richeditor')
-      || (mw.user.options.get('cke_show') === 'rememberlast'
+    if((mw.user.options.get('cke_show') !== 'wikitexteditor')
+      && !(mw.user.options.get('cke_show') === 'rememberlast'
         && mw.user.options.get('riched_use_toggle')
-        && $.cookie('wgCKeditorToggleState') === 'visible'))
-        {
+        && $.cookie('wgCKeditorToggleState') === 'hidden'))
+    {
       if(toolbar.length){
         toolbar.hide();
       }

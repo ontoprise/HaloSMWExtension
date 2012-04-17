@@ -388,10 +388,7 @@ class CKeditor_MediaWiki {
             'wysiwyg-no-changes',
             'wysiwyg-save-before-rename',
             'wysiwyg-save-before-exit'
-        ),
-        'dependencies' => array(
-            'ext.jquery.query'
-        ),
+        ),     
         'styles' => array(
             'ckeditor/_source/skins/kama/editor.css',
             'ckeditor/_source/skins/kama/dialog.css',

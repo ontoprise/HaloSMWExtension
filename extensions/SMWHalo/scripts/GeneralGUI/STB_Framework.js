@@ -683,7 +683,9 @@ jQuery(document).ready(function(){
 
   //enabling dragging makes STB visible, so do this only when WYSIWYG is off.
   //when WYSIWYG is on it will take care of STB visibility by it self
-  if(!(mw.util.getParamValue('mode') === 'wysiwyg' && mw.user.options.get('cke_show') === 'richeditor'))
+  if((mw.util.getParamValue('mode') !== 'wysiwyg')
+    || (mw.user.options.get('cke_show') === 'wikitexteditor')
+      || (mw.user.options.get('cke_show') === 'rememberlast' && mw.user.options.get('riched_use_toggle') && $.cookie('wgCKeditorToggleState') === 'hidden'))
   {
     window.smwhg_dragresizetoolbar && window.smwhg_dragresizetoolbar.callme();
   }

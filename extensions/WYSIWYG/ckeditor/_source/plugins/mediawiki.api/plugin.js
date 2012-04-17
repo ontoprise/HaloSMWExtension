@@ -375,10 +375,7 @@
             util.showMsg(mw.msg('wysiwyg-move-successful'));
             var url = mw.util.wikiGetlink( newTitle );
             url += url.indexOf('?') > 0 ? '&' : '?';
-            url += $.param({
-              action: 'edit',
-              mode: 'wysiwyg'
-            });
+            url += 'action=edit&mode=wysiwyg';
             location.replace(url);
           }
           else if ( data && data.error ) {
