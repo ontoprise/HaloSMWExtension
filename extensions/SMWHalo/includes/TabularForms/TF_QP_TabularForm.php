@@ -687,7 +687,6 @@ class TFTabularFormData {
 							break;
 						case 'page';
 						case 'string';
-						case 'text';
 						case 'url';
 							$html .= '<input class="tf_filter_input wickEnabled" cmp-type="~" style="width: 99%" '.$autocompletion.' placeholder="'.wfMsg('tabf_filter_placeholder').'"/>';
 							break;
