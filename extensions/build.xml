@@ -71,5 +71,6 @@
     <delete dir="Treeview" quiet="true" />
     <delete dir="Ultrapedia" quiet="true" />
     <delete dir="Widgets" quiet="true" />
+  	<delete dir="WikiObjectModel" quiet="true" />
   </target>
 </project>
