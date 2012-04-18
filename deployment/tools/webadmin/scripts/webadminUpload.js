@@ -40,11 +40,17 @@ $(document)
 									function(e2) {
 										var filepath = $(e2.currentTarget)
 												.attr('loc');
-
+										var globalSettings = $
+										.toJSON($.webAdmin.settings
+												.getSettings());
+										
 										var url = wgServer
 												+ wgScriptPath
 												+ "/deployment/tools/webadmin/index.php?rs=install&rsargs[]="
-												+ encodeURIComponent(filepath);
+												+ encodeURIComponent(filepath)
+												+ "&rsargs[]="
+												+ encodeURIComponent(globalSettings);
+										
 										var $dialog = $('#df_install_dialog')
 												.dialog(
 														{
