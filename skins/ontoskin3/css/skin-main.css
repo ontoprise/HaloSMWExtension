@@ -27,7 +27,7 @@ body > #globalWrapper {
 #wrapper {
 	height: auto;
 	min-height: 100%;
-	padding-bottom: 240px;
+	padding-bottom: 160px;
 }
 
 .clearfix:after {
@@ -820,11 +820,15 @@ textarea {
 /* -----------------------------------*/
 #footer {
 	position: relative;
-	margin-top: -230px;
-	height: 230px;
+	margin-top: -150px;
+	height: 150px;
 	clear: both;
 	background-color: #e8edff;
 	box-shadow: inset 0 4px 16px #FFF;
+}
+
+#footer p {
+	margin: 0.8em 0;
 }
 
 #smwh_quicklinks, #smwh_quicklinks a{

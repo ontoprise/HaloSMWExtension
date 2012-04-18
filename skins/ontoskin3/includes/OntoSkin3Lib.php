@@ -590,11 +590,8 @@ class SMWH_Skin {
 		$quicklinks .= "<div class='smwh_quicklinks_static'>";
 		$quicklinks .= "<img src='" . $wgStylePath . $this->imagepath . "/logo_smw+_small_trans.png' title='Powered by SMW+' alt='Powered by SMW+'/>";
 		$quicklinks .= $this->parseWikiText( "[[Imprint|Imprint]]" );
-		$quicklinks .= "<a href='http://smwplus.com/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a>";
-		$quicklinks .= $this->parseWikiText( "[[Contact|Contact]]" );
-		//$quicklinks .= $this->parseWikiText( "[[Privacy policy|Privacy policy]]" );
-		$quicklinks .= $this->parseWikiText( "[[Terms and conditions|Terms & Conditions]]" );
-		$quicklinks .= "<a href='http://smwplus.com/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a>";
+		$quicklinks .= "<p><a href='http://smwplus.com/index.php/About_us' title='About ontoprise (link opens in a new window)' target='_blank'>About ontoprise</a></p>";
+		$quicklinks .= "<p><a href='http://smwplus.com/index.php/FAQ' title='FAQ (link opens in a new window)' target='_blank'>Frequently asked questions</a></p>";
 		$quicklinks .= "</div>";
 
 		//Get the content for the page options from MediaWiki:halopageoptions
@@ -621,8 +618,8 @@ class SMWH_Skin {
 	public function buildPersonalQuickLinks() {
 		global $wgUser, $wgScriptPath;
 
-		$plainHTML = '<div id="quicklinks"><a href="' .$wgScriptPath . '/index.php/Special:SpecialPages" title="List of all special pages [q]" accesskey="q">Special pages</a>';
-		$wikiText = '| [[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]';
+		$plainHTML = '<div id="quicklinks">';
+		$wikiText = '[[Special:DataExplorer|Data Explorer]] | [[Special:QueryInterface|Query Interface]]';
 		if( $wgUser->isLoggedIn() ) {
 			$wikiText .= '| [[Special:Preferences|Preferences]]';
 			$groups = $wgUser->getEffectiveGroups();
