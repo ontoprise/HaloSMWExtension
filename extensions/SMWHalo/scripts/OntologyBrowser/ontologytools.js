@@ -605,18 +605,19 @@ OBOntologyModifier.prototype = {
 		}
 
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.length > 0 && selectedBundle[0].indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
 			superCategoryContent += "\n[[" + partOfBundleProperty + "::"
 					+ selectedBundle + "]]";
 		}
-
+		
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_SUBCATEGORY');
+		
 		articleCreator.createArticle(gLanguage
 				.getMessage('CATEGORY_NS', 'cont')
-				+ subCategoryTitle, superCategoryContent, '', gLanguage
-				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
+				+ subCategoryTitle, superCategoryContent, '', comment, callback.bind(this),
 				$(superCategoryID));
 	},
 
@@ -661,7 +662,7 @@ OBOntologyModifier.prototype = {
 				+ superCategoryTitle + "]]" : "";
 
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.length > 0 && selectedBundle[0].indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
@@ -669,10 +670,11 @@ OBOntologyModifier.prototype = {
 					+ "]]";
 		}
 
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_SUBCATEGORY');
+		
 		articleCreator.createArticle(gLanguage
 				.getMessage('CATEGORY_NS', 'cont')
-				+ newCategoryTitle, content, '', gLanguage
-				.getMessage('CREATE_SUB_CATEGORY'), callback.bind(this),
+				+ newCategoryTitle, content, '', comment, callback.bind(this),
 				sibligCategoryID != null ? $(sibligCategoryID)
 						: $('categoryTree'));
 	},
@@ -931,18 +933,17 @@ OBOntologyModifier.prototype = {
 				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]";
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.length > 0 && selectedBundle[0].indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
 			content += "\n[[" + partOfBundleProperty + "::" + selectedBundle
 					+ "]]";
 		}
-
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_SUBPROPERTY');
 		articleCreator.createArticle(gLanguage
 				.getMessage('PROPERTY_NS', 'cont')
-				+ subPropertyTitle, '', content, gLanguage
-				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
+				+ subPropertyTitle, '', content, comment, callback.bind(this),
 				$(superPropertyID));
 	},
 
@@ -987,18 +988,17 @@ OBOntologyModifier.prototype = {
 				+ gLanguage.getMessage('PROPERTY_NS', 'cont')
 				+ superPropertyTitle + "]]" : "";
 		var selectedBundle = $F("bundleSelector");
-		selectedBundle = selectedBundle.indexOf("-Wiki-") == -1 ? selectedBundle
+		selectedBundle = selectedBundle.length > 0 && selectedBundle[0].indexOf("-Wiki-") == -1 ? selectedBundle
 				: "";
 		if (selectedBundle != '') {
 			var partOfBundleProperty = mw.msg('df_partofbundle');
 			content += "\n[[" + partOfBundleProperty + "::" + selectedBundle
 					+ "]]";
 		}
-
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_SUBPROPERTY');
 		articleCreator.createArticle(gLanguage
 				.getMessage('PROPERTY_NS', 'cont')
-				+ newPropertyTitle, '', content, gLanguage
-				.getMessage('CREATE_SUB_PROPERTY'), callback.bind(this),
+				+ newPropertyTitle, '', content, comment, callback.bind(this),
 				sibligPropertyID != null ? $(sibligPropertyID)
 						: $('propertyTree'));
 	},
