@@ -244,6 +244,11 @@ window.wgUserLanguageStrings = {
 	'OB_RENAME_WARNING' 	  : 'Les opérations de renommage ne touchent en aucune façon les données d\'instance.\nCela signifie que les requêtes effectuées avec le TSC ne pourront plus fonctionner comme prévu après cette opération.\nVoulez-vous quand même continuer ?',
 	'OB_TOOLTIP_ANNOTATED_CATEGORY' : 'If ticked, the data-explorer will only display facts that are actually annotated. Inherited instances or results of applying rules, such as definition rules, will not be shown.',
 	
+	'SMW_OB_COMMENT_SUBCATEGORY' : 'Subcategory created with DataExplorer',
+	'SMW_OB_COMMENT_SUBPROPERTY' : 'Subproperty created with DataExplorer',
+	'SMW_OB_COMMENT_PROPERTY'	 : 'Property created with DataExplorer',
+	'SMW_OB_COMMENT_ARTICLE'  	 : 'Article created with DataExplorer',
+	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-attribut',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Valeur',

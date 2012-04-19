@@ -1144,11 +1144,11 @@ OBOntologyModifier.prototype = {
 			content += "\n[[" + partOfBundleProperty + "::" + selectedBundle
 					+ "]]";
 		}
-
+		
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_PROPERTY');
 		articleCreator.createArticle(gLanguage
 				.getMessage('PROPERTY_NS', 'cont')
-				+ propertyTitle, '', content, gLanguage
-				.getMessage('CREATE_PROPERTY'), callback.bind(this),
+				+ propertyTitle, '', content, comment, callback.bind(this),
 				$(domainCategoryID));
 	},
 
@@ -1242,9 +1242,10 @@ OBOntologyModifier.prototype = {
 					+ gLanguage.getMessage('CATEGORY_NS', 'cont')
 					+ title.strip() + "]]";
 		});
+		var comment = gLanguage.getMessage('SMW_OB_COMMENT_ARTICLE');
+		
 		articleCreator.createArticle(instanceTitle, categoryAnnotation + "\n"
-				+ partOfBundleAnnotation, '', gLanguage
-				.getMessage('CREATE_OB_ARTICLE'), callback.bind(this),
+				+ partOfBundleAnnotation, '', comment, callback.bind(this),
 				$(categoryID));
 	},
 

@@ -237,6 +237,11 @@ window.wgUserLanguageStrings = {
 	'OB_RENAME_WARNING' 	  : 'Das Umbenennen von Artikeln verändert keine Annotationen.\nDas bedeutet Queries an den TSC könnten nach dem Umbenennen unerwartete Ergebnisse liefern.\n\nMöchten Sie fortfahren?',
 	'OB_TOOLTIP_ANNOTATED_CATEGORY' : 'Zeigt nur explizit annotierte Instanzen der ausgewählten Kategorie (oder einer ihrer Subkategorien). Zeigt keine Instanzen, die durch Regeln generiert werden. ',
 	
+	'SMW_OB_COMMENT_SUBCATEGORY' : 'Subkategorie wurde erzeugt mit DataExplorer',
+	'SMW_OB_COMMENT_SUBPROPERTY' : 'Subproperty wurde erzeugt mit DataExplorer',
+	'SMW_OB_COMMENT_PROPERTY'	 : 'Property wurde erzeugt mit DataExplorer',
+	'SMW_OB_COMMENT_ARTICLE'  	 : 'Artikel wurde erzeugt mit DataExplorer',
+	
 	// Data Explorer metadata
 	'SMW_OB_META_PROPERTY'	  : 'Meta-Property',
 	'SMW_OB_META_PROPERTY_VALUE' : 'Wert',
