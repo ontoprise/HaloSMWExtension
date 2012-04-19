@@ -76,7 +76,9 @@ function dffDoPHPChecks($format = 'text') {
 
 	// check version
 	$version = phpversion();
-	list($version, $rest) = explode("-", $version);
+if (strpos($version, "-") !== false) {
+        list($version, $rest) = explode("-", $version);
+    }
 	$currentPHPVersion = new DFVersion($version);
 	global $dfgRequiredPHPVersions;
 	foreach($dfgRequiredPHPVersions as $v) {
