@@ -121,12 +121,17 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 		return $result;
 	}
 
+	/**
+	 * @see SMWResultPrinter::getParameters
+	 */
 	public function getParameters() {
 		$params = parent::getParameters();
+
 		$params = array_merge( $params, parent::textDisplayParameters() );
+		$params['style'] = new Parameter( 'style', Parameter::TYPE_STRING);
 		return $params;
 	}
-	
+
 	//--- Private methods ---
 	
 	/**
@@ -137,7 +142,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	private function createTableHeader() {
 		global $smwgIQRunningNumber;
 		// Get the style for the table
-		$params = $this->m_params;
+		$params = $this->params;
 		$style = array_key_exists('style', $params) ? $params['style'] 
 													: 'smwtable'; 
 		
@@ -151,10 +156,10 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 * Checks if the calculation of the distribution is requested.
 	 */
 	private function checkDistribution() {
-		if (array_key_exists('distribution', $this->m_params)) {
+		if (array_key_exists('distribution', $this->params)) {
 			$this->mCalculateDistribution = 
-				$this->m_params['distribution'] === 'on' || 
-				$this->m_params['distribution'] === 'true';
+				$this->params['distribution'] === 'on' || 
+				$this->params['distribution'] === 'true';
 		} else {
 			$this->mCalculateDistribution = false;
 		}
@@ -172,7 +177,7 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 	 */
 	private function getReplacements() {
 		$replacements = array();
-		$params = $this->m_params;
+		$params = $this->params;
 		foreach ($params as $param => $pValue ) {
 			if (preg_match("/^replace\((.*?)\)$/", $param, $matches)) {
 				$replace = $matches[1];
@@ -333,8 +338,8 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 			}
 			// If a distribution is requested and additional column is added
 			if ($this->mCalculateDistribution) {
-				$t = array_key_exists('distributiontitle', $this->m_params) 
-						? $this->m_params['distributiontitle']
+				$t = array_key_exists('distributiontitle', $this->params) 
+						? $this->params['distributiontitle']
 						: '';
 				$result .= "\t\t<th>$t</th>\n";
 			}
@@ -434,8 +439,8 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 		$hashes = array();
 		$resultRows = array();
 		$hashedResultRows = array();
-		$sort = array_key_exists('distributionsort', $this->m_params)
-				? $this->m_params['distributionsort']
+		$sort = array_key_exists('distributionsort', $this->params)
+				? $this->params['distributionsort']
 				: false;
 		
 		// Calculate the number of occurrences of each row
@@ -452,8 +457,8 @@ class SMWFancyTableResultPrinter extends SMWResultPrinter {
 			}
 		}
 
-		$limit = array_key_exists('distributionlimit', $this->m_params)
-				? $this->m_params['distributionlimit'] * 1
+		$limit = array_key_exists('distributionlimit', $this->params)
+				? $this->params['distributionlimit'] * 1
 				: false;
 		
 		$result = "";
