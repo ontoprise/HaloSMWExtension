@@ -423,77 +423,87 @@ $(document)
 																resizable : false,
 																height : 350,
 																modal : true,
-																buttons : [
-																		{
-																			text : dfgWebAdminLanguage
-																					.getMessage('df_webadmin_doupdate'),
-																			click : function() {
-																				$(
-																						this)
-																						.dialog(
-																								"close");
-																				var globalSettings = $
-																						.toJSON($.webAdmin.settings
-																								.getSettings());
-																				var url = wgServer
-																						+ wgScriptPath
-																						+ "/deployment/tools/webadmin/index.php?rs=doGlobalUpdate"
-																						+ "&rsargs[]="
-																						+ encodeURIComponent(globalSettings);
-																				var $dialog = $(
-																						'#df_install_dialog')
-																						.dialog(
-																								{
-																									autoOpen : false,
-																									title : dfgWebAdminLanguage
-																											.getMessage('df_webadmin_pleasewait'),
-																									modal : true,
-																									width : 800,
-																									height : 500,
-																									operation : "update",
-																									close : function(
-																											event,
-																											ui) {
-																										window.location.href = wgServer
-																												+ wgScriptPath
-																												+ "/deployment/tools/webadmin/index.php?tab=0";
-
-																									}
-																								});
-																				$dialog
-																						.html("<div></div>");
-																				$dialog
-																						.dialog('open');
-																				$dialog
-																						.html('<img src="skins/ajax-loader.gif"/>');
-																				$(
-																						'.ui-dialog-titlebar-close')
-																						.hide();
-																				$
-																						.ajax( {
-																							url : url,
-																							dataType : "json",
-																							complete : $.webAdmin.operations.globalUpdateStarted
-																						});
-																			}
-																		},
-																		{
-																			text : dfgWebAdminLanguage
-																					.getMessage('df_webadmin_cancel'),
-																			click : function() {
-																				$(
-																						this)
-																						.dialog(
-																								"close");
-																			}
-																		} ]
+																buttons : []
 
 															});
+											
+											// show button if there are no exceptions
+											if (!extensionsToInstall['exception']) {
+												$("#global-updatedialog-confirm").dialog("option", "buttons", {
+													doupdate: {
+														text : dfgWebAdminLanguage
+																.getMessage('df_webadmin_doupdate'),
+														click : function() {
+															$(
+																	this)
+																	.dialog(
+																			"close");
+															var globalSettings = $
+																	.toJSON($.webAdmin.settings
+																			.getSettings());
+															var url = wgServer
+																	+ wgScriptPath
+																	+ "/deployment/tools/webadmin/index.php?rs=doGlobalUpdate"
+																	+ "&rsargs[]="
+																	+ encodeURIComponent(globalSettings);
+															var $dialog = $(
+																	'#df_install_dialog')
+																	.dialog(
+																			{
+																				autoOpen : false,
+																				title : dfgWebAdminLanguage
+																						.getMessage('df_webadmin_pleasewait'),
+																				modal : true,
+																				width : 800,
+																				height : 500,
+																				operation : "update",
+																				close : function(
+																						event,
+																						ui) {
+																					window.location.href = wgServer
+																							+ wgScriptPath
+																							+ "/deployment/tools/webadmin/index.php?tab=0";
+
+																				}
+																			});
+															$dialog
+																	.html("<div></div>");
+															$dialog
+																	.dialog('open');
+															$dialog
+																	.html('<img src="skins/ajax-loader.gif"/>');
+															$(
+																	'.ui-dialog-titlebar-close')
+																	.hide();
+															
+															$
+																	.ajax( {
+																		url : url,
+																		dataType : "json",
+																		complete : $.webAdmin.operations.globalUpdateStarted
+																	});
+														}
+													}, cancel:	{
+														text : dfgWebAdminLanguage
+																.getMessage('df_webadmin_cancel'),
+														click : function() {
+															$(
+																	this)
+																	.dialog(
+																			"close");
+														}
+													}
+												});
+											}
 										}
 										$('#df_gu_progress_indicator').show();
+										var globalSettings = $
+										.toJSON($.webAdmin.settings
+												.getSettings());
 										var url = wgServer
 												+ wgScriptPath
-												+ "/deployment/tools/webadmin/index.php?rs=checkforGlobalUpdate&rsargs[]=";
+												+ "/deployment/tools/webadmin/index.php?rs=checkforGlobalUpdate&rsargs[]="
+												+ encodeURIComponent(globalSettings);
 										$.ajax( {
 											url : url,
 											dataType : "json",

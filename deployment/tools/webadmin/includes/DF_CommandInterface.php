@@ -411,11 +411,14 @@ class DFCommandInterface {
 		return $filename;
 	}
 
-	public function checkforGlobalUpdate() {
-		global $mwrootDir, $dfgOut;
+	public function checkforGlobalUpdate($settings) {
+		global $mwrootDir, $dfgOut, $dfgGlobalOptionsValues;
 
 		$dfgOut->setVerbose(false);
 		try {
+			$settings = json_decode($settings);
+			$dfgGlobalOptionsValues = self::getOptionsAsArray($settings);
+			
 			$installer = Installer::getInstance($mwrootDir);
 			$dependencies = $installer->checkforGlobalUpdate();
 			$dfgOut->setVerbose(true);
