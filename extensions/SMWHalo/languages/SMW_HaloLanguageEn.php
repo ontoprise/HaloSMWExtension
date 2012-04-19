@@ -288,6 +288,7 @@ clicking the big arrows between the columns.',
       'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
       'smw_qi_tt_parserFunc' => 'View mediawiki parser function for current query',
 
+	'smw_wikiedit_tab' => 'Edit with wikitext editor',
 	// Annotation 
  	'smw_annotation_tab' => 'annotate',
 	'smw_annotating'     => 'Annotating $1',

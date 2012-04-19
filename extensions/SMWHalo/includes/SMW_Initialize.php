@@ -343,7 +343,8 @@ function smwgHaloSetupExtension() {
 	$wgHooks['ArticleFromTitle'][] = 'smwfHaloShowListPage';
 	$wgHooks['BeforePageDisplay'][]='smwfHaloAddHTMLHeader';
 	
-
+	$wgHooks['SkinTemplateContentActions'][] = 'smwfWikiEditTab';
+	
 	// Register Annotate-Tab
 	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
 	// new right for annotation mode
@@ -892,11 +893,30 @@ function smwfHaloSpecialValues($typeID, $value, $caption, &$result) {
 	return true;
 }
 
+function smwfWikiEditTab( $content_actions ) {
+	global $wgUser, $wgTitle, $wgRequest;
 
+	$allowed = $wgUser->isAllowed('edit');
+	if ($allowed) {
+		// Other extensions may prohibit the edit action
+		wfRunHooks('userCan', array(&$wgTitle, &$wgUser, "edit", &$allowed));
+	}
+	if (!$allowed) {
+		return true;
+	}
+	if ($wgTitle->getNamespace() == NS_SPECIAL) return true; // Special page
+	$action = $wgRequest->getText( 'edit' );
+
+	$content_actions['wikiedit'] = array(
+		'class' => ($action == 'edit') ? 'selected' : false,
+		'text' => wfMsg('smw_wikiedit_tab'),
+		'href' => $wgTitle->getLocalUrl('action=edit&mode=')
+	);
+	return true;
+}
 
 function smwfAnnotateTab ($content_actions) {
-	global $wgUser, $wgTitle,  $wgRequest;
-	global $wgTitle;
+	global $wgUser, $wgTitle, $wgRequest;
 
 	$allowed = $wgUser->isAllowed('annotate');
 	if ($allowed) {
@@ -912,10 +932,10 @@ function smwfAnnotateTab ($content_actions) {
 	//return true;
 	$action = $wgRequest->getText( 'action' );
 	//Build annotate tab
-	$main_action['main'] = array(
-        	'class' => ($action == 'annotate') ? 'selected' : false,
-        	'text' => wfMsg('smw_annotation_tab'), //Title of the tab
-        	'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
+	$main_action['annotate'] = array(
+		'class' => ($action == 'annotate') ? 'selected' : false,
+		'text' => wfMsg('smw_annotation_tab'), //Title of the tab
+		'href' => $wgTitle->getLocalUrl('action=annotate')   //where it links to
 	);
 
 	//Find position of edit button

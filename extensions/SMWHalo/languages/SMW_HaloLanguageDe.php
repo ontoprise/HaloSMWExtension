@@ -285,6 +285,8 @@ protected $smwUserMessages = array(
       'smw_qi_tt_cancel' => 'Cancel all changes, return to the starting point',
     'smw_qi_tt_parserFunc' => 'View mediawiki parser function for current query',
 
+	'smw_wikiedit_tab' => 'Mit Wikitext-Editor bearbeiten',
+
 	// Annotation 
  	'smw_annotation_tab' => 'Seite annotieren',
 	'smw_annotating'     => 'Annotiere $1',

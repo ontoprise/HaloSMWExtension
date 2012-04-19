@@ -279,6 +279,8 @@ en cliquant sur les grosses flèches situées entre les colonnes.',
       'smw_qi_tt_delete' => 'Supprimer le noeud sélectionné dans l\'arborescence',
       'smw_qi_tt_cancel' => 'Annuler tous les changements, retour au point de départ',
 
+	'smw_wikiedit_tab' => 'Edit with wikitext editor',
+
 	/* Annotation */
  	'smw_annotation_tab' => 'annoter',
 	'smw_annotating'     => 'Annotation de $1',

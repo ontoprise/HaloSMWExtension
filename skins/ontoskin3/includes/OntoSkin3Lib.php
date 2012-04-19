@@ -290,6 +290,23 @@ class SMWH_Skin {
 		$tabs = "<!-- Tabs -->";
 		$tabsstart = "<div id=\"tabsleft\">";
 		$firstTabs = "";
+		$sortedLinks = array(
+			'formedit' => null,
+			'wikiedit' => null,
+			'move' => null,
+			'purge' => null,
+			'annotate' => null,
+			'protect' => null,
+			'delete' => null,
+			'line' => true,
+			'talk' => null,
+			'history' => null,
+			'relatedchanges' => null,
+			'whatlinkshere' => null,
+			'line' => true,
+			'mailink' => null,
+			'printableversion' => null
+		);
 		//right tab elements
 		$functionsaggregated = "";
 		$functionsright = $this->buildHelpTab();
@@ -390,16 +407,7 @@ class SMWH_Skin {
 					// no discussion link when on discussion page
 					continue;
 				} elseif ( strstr( $tab['class'], 'new' ) ) {
-					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '">';
-					$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-					$tabs .= " class=\"aggregatedtabelements";
-					if ( $tab['class'] ) {
-						$tabs .= " " . htmlspecialchars( $tab['class'] );
-					}
-					$tabs .= "\">";
-					$tabs .= htmlspecialchars( wfMsg( "smw_start_discussion",
-						$tab['text'] ) ) . "</div></a>";
-					$functionsaggregated .= $tabs;
+					$sortedLinks[$key] = $tab;
 				} else {
 					// discussion bubble only if page exists and we're not already on discussion page
 					$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '" class="tablink" >';
@@ -412,6 +420,30 @@ class SMWH_Skin {
 					$tabs .= htmlspecialchars( $tab['text'] ) . "</div></a>";
 					$tabsleft .= $tabs;
 				}
+			} else {
+				$sortedLinks[$key] = $tab;
+			}
+		}
+		$lineAllowed = false;
+		foreach( $sortedLinks as $key => $tab ) {
+			if( $tab == null ) {
+				continue;
+			}
+			if( $key == "line" && $lineAllowed ) {
+				$functionsaggregated .= "<hr />";
+				$lineAllowed = false;
+				continue;
+			} elseif( $key == "talk" ) {
+				$tabs = '<a href="' . htmlspecialchars( $tab['href'] ) . '">';
+				$tabs .= "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
+				$tabs .= " class=\"aggregatedtabelements";
+				if ( $tab['class'] ) {
+					$tabs .= " " . htmlspecialchars( $tab['class'] );
+				}
+				$tabs .= "\">";
+				$tabs .= htmlspecialchars( wfMsg( "smw_start_discussion",
+				$tab['text'] ) ) . "</div></a>";
+				$lineAllowed = true;
 			} else {
 				$tabs = "<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
 				$tabs .= " class=\"aggregatedtabelements";
@@ -433,9 +465,11 @@ class SMWH_Skin {
 					$tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
 				}
 				$tabs.= ">" . htmlspecialchars( ucfirst( $tab['text'] ) ) . "</a></div>";
-				$functionsaggregated .= $tabs;
+				$lineAllowed = true;
 			}
+			$functionsaggregated .= $tabs;
 		}
+		$functionsaggregated .= '<hr />';
 		$functionsaggregated .= $this->buildPageOptions();
 
 		//Check if there were functions added to the more-tab

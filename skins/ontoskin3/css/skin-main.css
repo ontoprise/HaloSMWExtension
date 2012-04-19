@@ -310,6 +310,14 @@ textarea {
 #smwh_menubody_more a {
 	font-size: 1em;
 	font-weight: normal;
+	white-space: nowrap;
+}
+
+#smwh_menubody_more hr {
+	background-color: #DFDFDC;
+	border: 0;
+	color: #DFDFDC;
+	height: 2px;
 }
 
 .smwh_menubody td a {
