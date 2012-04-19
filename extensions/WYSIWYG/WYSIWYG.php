@@ -145,6 +145,6 @@ $wgDefaultUserOptions['cke_show'] = 'richeditor';
 if (defined('SMW_HALO_VERSION')) {
   // when SMWHalo is used then the QueryInterface opens in an Iframe
     $wgEditPageFrameOptions = 'SAMEORIGIN';
-    // Semantic toobar is loaded by default
-    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 1;
+    // Semantic toobar is NOT loaded by default
+    $wgDefaultUserOptions['riched_load_semantic_toolbar'] = 0;
 }

@@ -30,13 +30,12 @@ CKEDITOR.editorConfig = function( config )
 
   // SMWHalo extension
   var qiButton;
-//  var stbToolbarButtons = [];
+
   if ( ('SMW_HALO_VERSION').InArray(window.parent.wgCKeditorUseBuildin4Extensions) || showTbButton) {
     CKEDITOR.plugins.addExternal( 'smw_qi', CKEDITOR.basePath + 'plugins/smwqueryinterface/' );
-    //        CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
+//    CKEDITOR.plugins.addExternal( 'smw_toolbar', CKEDITOR.basePath + 'plugins/smwtoolbar/' );
     extraPlugins += ",smw_qi,smwtoolbar";
     qiButton = 'SMWqi';
-//    stbToolbarButtons = ['SMWtoolbar','SMWAddProperty', 'SMWAddCategory'];
   }
   // DataImport extension
   var wsButton;
@@ -78,28 +77,12 @@ CKEDITOR.editorConfig = function( config )
   ['About']
   ];
 
-  //    config.toolbar_Wiki = [
-  //        ['Source'], ['Print','SpellChecker','Scayt'],
-  //        ['PasteText','PasteFromWord', '-','Find','Replace'],
-  //        ['SelectAll','RemoveFormat'],
-  //        ['Subscript','Superscript'],
-  //        ['Link','Unlink'],
-  //        ['Undo','Redo'],
-  //        ['Image', 'Table', 'HorizontalRule', 'SpecialChar'],
-  //        ['MWSpecialTags', 'MWTemplate', 'MWSignature', qiButton, wsButton, rmButton ],
-  //        stbToolbarButtons,
-  //        '/',
-  //        ['Styles','Format','Font','FontSize'],
-  //        ['Bold','Italic','Underline','Strike'],
-  //        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-  //        ['NumberedList','BulletedList', '-', 'Outdent','Indent', 'Blockquote'],
-  //        ['TextColor','BGColor'],
-  //        ['Maximize', 'ShowBlocks'],
-  //        ['About']
-  //    ];
+ 
   config.extraPlugins = extraPlugins + ',autogrow,saveAndExit,mediawiki.api';
   config.height = config.autoGrow_minHeight = '300';
+  config.autoGrow_maxHeight = 0;
   config.autoGrow_onStartup = true;
+  
   config.language = mw.user.options.get('language') || window.parent.wgUserLanguage || 'en';
 
   config.WikiSignature = '--~~~~';
@@ -116,12 +99,18 @@ CKEDITOR.editorConfig = function( config )
   //don't remove empty format elements when loading HTML
   CKEDITOR.dtd.$removeEmpty['span'] = 0;
 
-  config.resize_enabled = false;
+  //remove link dialog shortcut
+  var index = -1;
+  for(var i = 0; i < config.keystrokes.length; i++){
+    if(CKEDITOR.tools.indexOf(config.keystrokes[i], 'link') > -1){
+      index = i;
+      break;
+    }
+  }
+  config.keystrokes.splice(index, 1);
 
-  config.autoGrow_maxHeight = 0;
-
-  config.toolbarLocation = 'top';
-
+  //add saveAndContinueShortcut
+  config.keystrokes.push([ CKEDITOR.CTRL + 83 /*S*/, 'saveAndContinue' ]);
 
 
   /**
