@@ -1017,7 +1017,6 @@ border-bottom: 1px solid #EBEEEF;
 
 
 #roundedbox {
-
 -moz-background-clip:border;
  -moz-background-inline-policy:continuous;
  -moz-background-origin:padding; 
@@ -1034,4 +1033,5 @@ padding-left:15px;
 padding-right:15px; 
 text-shadow:0 1px 0 #FFFFFF;
 width:95%;
+margin-bottom: 10px;
 }
