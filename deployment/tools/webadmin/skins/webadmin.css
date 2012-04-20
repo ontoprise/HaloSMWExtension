@@ -12,6 +12,10 @@
 	width: 100%;
 }
 
+#df_profiler_requests_filtering_box {
+	margin-left: 5px;
+}
+
 #df_clearprofilinglog {
 	margin-left: 5px; 
 }
