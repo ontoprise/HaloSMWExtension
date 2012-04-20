@@ -338,7 +338,7 @@ CKEDITOR.plugins.add( 'mediawiki',
       manyImgFound    : ' images found',
       caption         : 'Caption',
       imgType         : 'Special type',
-      alignCenter     : 'Center',
+      alignNone       : 'None',
       // signature
       signature       : 'Signature',
       // special tags
@@ -379,7 +379,7 @@ CKEDITOR.plugins.add( 'mediawiki',
             
       caption         : 'Beschreibung',
       imgType         : 'Bildtyp',
-      alignCenter     : 'Mitte',
+      alignNone       : 'Keine',
       // signature
       signature       : 'Signatur',
       // special tags

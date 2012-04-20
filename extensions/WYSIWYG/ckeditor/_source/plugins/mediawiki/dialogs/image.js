@@ -536,14 +536,15 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                         type: 'select',
                         label: editor.lang.common.align,                       
                         items: [
-                        [ ' ' ],
-                        [ editor.lang.common.alignRight, 'Right' ],
+                          [''],
+                        [ editor.lang.mwplugin.alignNone, 'None' ],
                         [ editor.lang.common.alignLeft , 'Left' ],
+                        [ editor.lang.common.alignRight, 'Right' ],
                         [ editor.lang.common.alignCenter, 'Center' ]
                         ],
                         setup : function( type, element ) {
-                            var className = element.getAttribute( 'class') || '',
-                            align = className.replace(/[\w\s]*fck_mw_(right|left|center)[\w\s]*/, '$1');
+                            var location = element.getAttribute('_fck_mw_location') || '',
+                            align = location.replace(/[\w\s]*fck_mw_(right|left|center|none)[\w\s]*/, '$1');
                             if ( type == IMAGE && align )
                                 this.setValue( align.FirstToUpper() );
                         },
@@ -551,9 +552,9 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                             if ( type == IMAGE ) {
                                 if ( this.getValue() || this.isChanged() ) {
                                     var newVal = this.getValue().toLowerCase().Trim(),
-                                    classes = [ 'right', 'left', 'center' ];
+                                    classes = [ 'right', 'left', 'center', 'none' ];
 
-                                    if ( newVal ) {
+                                    if ( newVal) {
                                         for (var i = 0; i < classes.length; i++ ) {
                                             if ( newVal == classes[i] )
                                                 element.addClass('fck_mw_' + classes[i]);
@@ -563,10 +564,11 @@ CKEDITOR.dialog.add( 'MWImage', function( editor )
                                         element.setAttribute('_fck_mw_location', newVal);
                                     }
                                     else {
-                                        element.setAttribute('_fck_mw_location', 'none');
                                         element.removeClass('fck_mw_right');
                                         element.removeClass('fck_mw_center');
+                                        element.removeClass('fck_mw_none');
                                         element.addClass('fck_mw_left');
+                                        element.removeAttribute('_fck_mw_location');
                                     }
                                 }
                             }
