@@ -1,4 +1,5 @@
 <?php
+
 //////////////NOT IN USE. Left for backwards compatibility with SemanticForms//////////////////
 /**
  * Options for FCKeditor
@@ -15,6 +16,7 @@ define('RTE_TOGGLE_LINK', 2);
  * [show popup link]
  */
 define('RTE_POPUP', 4);
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 class CKeditor_MediaWiki {
@@ -249,7 +251,7 @@ class CKeditor_MediaWiki {
   public static function onMakeGlobalVariablesScript($vars) {
     global $wgFCKEditorDir, $wgFCKEditorExtDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight,
     $wgGroupPermissions;
-    
+
     $vars['WYSIWYG_EDITOR_VERSION'] = WYSIWYG_EDITOR_VERSION;
     $vars['wgFCKEditorDir'] = $wgFCKEditorDir;
     $vars['wgFCKEditorExtDir'] = $wgFCKEditorExtDir;
@@ -278,7 +280,7 @@ class CKeditor_MediaWiki {
     $vars['wgCKeditorUseBuildin4Extensions'] = $instExt;
 
     $vars['wgGroupPermissions'] = $wgGroupPermissions;
-    
+
     return true;
   }
 
@@ -368,6 +370,9 @@ class CKeditor_MediaWiki {
 
     $wgResourceModules['ext.wysiwyg.core'] = $moduleTemplate + array(
         'messages' => array(
+            'wysiwyg-qi-edit-query',
+            'wysiwyg-qi-insert-query',
+            'wysiwyg-qi-insert-new-query',
             'wysiwyg-rename',
             'wysiwyg-title-empty',
             'wysiwyg-title-invalid',
@@ -388,7 +393,7 @@ class CKeditor_MediaWiki {
             'wysiwyg-no-changes',
             'wysiwyg-save-before-rename',
             'wysiwyg-save-before-exit'
-        ),     
+        ),
         'styles' => array(
             'ckeditor/_source/skins/kama/editor.css',
             'ckeditor/_source/skins/kama/dialog.css',
@@ -411,7 +416,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/core/dom/node.js',
             'ckeditor/_source/core/dom/nodelist.js',
             'ckeditor/_source/core/dom/element.js',
-            'ckeditor/_source/core/command.js',            
+            'ckeditor/_source/core/command.js',
             'ckeditor/_source/core/config.js',
             'ckeditor/_source/core/focusmanager.js',
             'ckeditor/_source/core/lang.js',
@@ -443,7 +448,7 @@ class CKeditor_MediaWiki {
             'ckeditor/_source/skins/kama/skin.js',
             'ckeditor/_source/lang/en.js',
             'ckeditor/_source/adapters/jquery.js',
-            'ckeditor/_source/plugins/about/plugin.js',            
+            'ckeditor/_source/plugins/about/plugin.js',
             'ckeditor/_source/plugins/ajax/plugin.js',
             'ckeditor/_source/plugins/autogrow/plugin.js',
             'ckeditor/_source/plugins/a11yhelp/plugin.js',

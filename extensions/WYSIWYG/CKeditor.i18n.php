@@ -10,6 +10,9 @@ $messages = array();
 
 /** English */
 $messages['en'] = array(
+    'wysiwyg-qi-edit-query' => 'Edit Query (with Query Interface)',
+    'wysiwyg-qi-insert-query' => 'Insert Query',
+    'wysiwyg-qi-insert-new-query' => 'Insert a new Query (with Query Interface)',
     'wysiwyg-rename' => 'rename',
     'wysiwyg-title-empty' => 'Title can not be empty',
     'wysiwyg-title-invalid' => 'Title conatins invalid characters',
@@ -278,6 +281,8 @@ $messages['ca'] = array(
  * @author Umherirrender
  */
 $messages['de'] = array(
+    'wysiwyg-qi-insert-query' => 'Abfrage Einfügen',
+    'wysiwyg-qi-insert-new-query' => 'Neue Abfrage Einfügen (mit Query Interface)',
     'edit-in-richeditor' => 'Edit using RichTextEditor',
     'edit-in-wikitexteditor' => 'Edit using WikiTextEditor',
     'wysiwyg-show-richtexteditor' => 'Show RichTextEditor',

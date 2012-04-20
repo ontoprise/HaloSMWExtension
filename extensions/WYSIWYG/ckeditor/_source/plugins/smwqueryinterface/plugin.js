@@ -32,7 +32,7 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
       editor.ui.addButton( 'SMWqi',
       {
-        label : 'Insert a new Query (with Query Interface)',
+        label : mw.msg('wysiwyg-qi-insert-new-query'),
         command : 'SMWqi',
         icon: this.path + 'images/tb_icon_ask.gif'
       });
@@ -93,13 +93,13 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
             delete editor._.storedDialogs['SMWqi'];
           }
 
-          CKEDITOR.dialog.addIframe( 'SMWqi', 'Query Interface', iframeSrc, 976, 570, function(){},
+          CKEDITOR.dialog.addIframe( 'SMWqi', 'Query Interface', iframeSrc, 976, 632, function(){},
           {
             scrolling: 'false',
             frameborder: 'false',
             buttons: [
               CKEDITOR.dialog.okButton(editor, {
-                label: 'Insert Query'
+                label: mw.msg('wysiwyg-qi-insert-query')
               }),
               CKEDITOR.dialog.cancelButton
             ],
@@ -122,7 +122,7 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
 
                 ////////hack for changing query object title in wysiwyg////////
                 var fakeSpanDescription = editor.lang.fakeobjects['span'];
-                editor.lang.fakeobjects['span'] = 'Edit Query (with Query Interface)';
+                editor.lang.fakeobjects['span'] = mw.msg('wysiwyg-qi-edit-query');
                 ///////////////////////////////////////////////////////////////
 
                 var element = CKEDITOR.dom.element.createFromHtml(query, editor.document),
@@ -162,8 +162,8 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         'height: 18px !important;' +				
         '}\n'
     );
-      
-//      editor.addCommand( 'SMWqi',  new CKEDITOR.dialogCommand( 'SMWqi' ));
+
+
       editor.addCommand( 'SMWqi',  new CKEDITOR.command( editor,
       {
           exec : function( editor )
@@ -180,7 +180,7 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
         editor.addMenuGroup('mediawiki');
         // Create a menu item
         editor.addMenuItem('SMWqi', {
-          label : 'Insert a new Query (with Query Interface)',
+          label : mw.msg('wysiwyg-qi-insert-new-query'),
           command: 'SMWqi',
           group: 'mediawiki'
         });
@@ -189,7 +189,7 @@ if (!SMW_HALO_VERSION.InArray(window.parent.wgCKeditorUseBuildin4Extensions)) {
       if ( editor.ui.addButton ) {
         editor.ui.addButton( 'SMWqi',
         {
-          label : 'Insert a new Query (with Query Interface)',
+          label : mw.msg('wysiwyg-qi-insert-new-query'),
           command : 'SMWqi',
           icon: this.path + 'images/tb_icon_ask.gif'
         });
