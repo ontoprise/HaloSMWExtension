@@ -3,6 +3,32 @@ SMWHalo extension ChangeLog
 VERSION 1.7.0
 	Bugfixes:
 		16606 - Recommended properties don't show up on sub-categories
+    15992 	The query interface fails with SSL (HTTPS)
+    13865 	Boxes in GUI are distorted
+    11950 	Improve the aesthetic of the GUI according the mockups
+    15684 	QI should propose properties after choosing category
+    15918 	[SPARQL QI] check boxes "value must be set" and "show in result" should be "ON" by default
+    15919 	[SPARQL QI] the state of the check boxes must be consistent for the same variable in different nodes of the tree
+    16173 	QI goes to fullscreen mode
+    16536 	[sparql qi] Changing a value in "Result format" section should not trigger tree to sparql conversion when in source view
+    16537 	Configure autocompletion on property inputs on ASK and Sparql QI.
+    16539 	[SPARQL QI] Reset Query does not clear all needed values
+    16560 	sparql query can not be inserted from within wysiwyg editor
+    16561 	[sparql qi] Editable comboboxes should look the same as the regular ones
+    16562 	ext.smw.tooltips issues
+    16563 	[sparql qi] prompt the user before overriding changes in source view
+    16569 	sparql qi in wysiwyg dialog: full preview link doesn't work
+    16584 	qi from semantic toolbar: sparql query can not be inserted
+    16705 	Argument 1 passed to SMWQueryProcessor::getSortKeys() must be an array, null given
+    16710 	Opening QI dialog from wysiwyg editor shows the "Login required" page
+    16192 	Cannot add properties to tree
+    16545 	Auto-completion strips namespace
+    16564 	[sparql qi] further results link doesn't work for external endpoints
+    16741 	Filters with values from User-namespace do not work
+    16766 	[Amazon AMI] expand query options hides reset query button
+    16678 	SMW+ 1.5.6 suffers from cross site scripting vulnerability
+    16886 	Wrong link for $wgArticlePath = "$wgScript?title=$1";
+    16764 	[Amazon AMI] create new page lightbox with too many options
 
 VERSION 1.6.1
 	FEATURES:
