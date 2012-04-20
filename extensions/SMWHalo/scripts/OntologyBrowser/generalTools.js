@@ -31,7 +31,10 @@ function BrowserDetectLite() {
 	var ua = navigator.userAgent.toLowerCase();
 
 	// browser name
-	this.isGecko     = (ua.indexOf('gecko') != -1) || (ua.indexOf("safari") != -1); // include Safari in isGecko
+	this.isGecko     = (ua.indexOf('gecko') != -1) || (ua.indexOf("safari") != -1); // include
+																					// Safari
+																					// in
+																					// isGecko
 	this.isMozilla   = (this.isGecko && ua.indexOf("gecko/") + 14 == ua.length);
 	this.isNS        = ( (this.isGecko) ? (ua.indexOf('netscape') != -1) : ( (ua.indexOf('mozilla') != -1) && (ua.indexOf('spoofer') == -1) && (ua.indexOf('compatible') == -1) && (ua.indexOf('opera') == -1) && (ua.indexOf('webtv') == -1) && (ua.indexOf('hotjava') == -1) ) );
 	this.isIE        = ( (ua.indexOf("msie") != -1) && (ua.indexOf("opera") == -1) && (ua.indexOf("webtv") == -1) );
@@ -45,7 +48,7 @@ function BrowserDetectLite() {
 	this.isGeckoOrSafari = this.isGecko || this.isSafari;
 }
 
-// one global instance of Browser detector 
+// one global instance of Browser detector
 window.OB_bd = new BrowserDetectLite();
 
 GeneralBrowserTools = new Object();
@@ -118,8 +121,8 @@ GeneralBrowserTools.isTextSelected = function (inputBox) {
 	return false;
 }
 /**
- * Purge method for removing DOM elements in IE properly 
- * and *without* memory leak. Harmless to Mozilla/FF/Opera
+ * Purge method for removing DOM elements in IE properly and *without* memory
+ * leak. Harmless to Mozilla/FF/Opera
  */
 GeneralBrowserTools.purge = function (d) {
 	if (!OB_bd.isIE) return;
@@ -149,8 +152,7 @@ GeneralBrowserTools.getURLParameter = function (paramName) {
 }
 
 /*
- * ns: namespace, e.g. Category. May be null.
- * name: name of article
+ * ns: namespace, e.g. Category. May be null. name: name of article
  */
 GeneralBrowserTools.navigateToPage = function (ns, name, editmode) {
 	var articlePath = wgArticlePath.replace(/\$1/, ns != null ? ns+":"+name : name);
@@ -243,9 +245,8 @@ GeneralXMLTools.hasChildNodesWithTag = function(node, tagname) {
 
 /*
  * Adds a branch to the current document. Ignoring document node and root node.
- * Removes the expanded attribute for leaf nodes.
- * branch: array of nodes
- * xmlDoc: document to add branch to
+ * Removes the expanded attribute for leaf nodes. branch: array of nodes xmlDoc:
+ * document to add branch to
  */
 GeneralXMLTools.addBranch = function (xmlDoc, branch) {
 	var currentNode = xmlDoc;
@@ -259,9 +260,8 @@ GeneralXMLTools.addBranch = function (xmlDoc, branch) {
 }
 
 /*
- * Add the node if a child with same title does not exist.
- * nodeToAdd: node to add
- * parentNode: node to add it to
+ * Add the node if a child with same title does not exist. nodeToAdd: node to
+ * add parentNode: node to add it to
  */
 GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
 	var a1 = nodeToAdd.getAttribute("title");
@@ -273,7 +273,8 @@ GeneralXMLTools.addNodeIfNecessary = function (nodeToAdd, parentNode) {
 	
 	var appendedChild = GeneralXMLTools.importNode(parentNode, nodeToAdd, false);
 	
-	/// XXX: hack to include gardening issues. They must be firstchild of treeelement
+	// / XXX: hack to include gardening issues. They must be firstchild of
+	// treeelement
 	if (nodeToAdd.firstChild != null && nodeToAdd.firstChild.tagName == 'gissues') {
 		GeneralXMLTools.importNode(appendedChild, nodeToAdd.firstChild, true);
 		
@@ -298,23 +299,28 @@ GeneralXMLTools.importNode = function(parentNode, child, deep) {
 }
 
 
-/* 
- * Search a node in the xml caching
- * node: root where search begins
- * id: id
+/*
+ * Search a node in the xml caching node: root where search begins id: id
  */
 GeneralXMLTools.getNodeById = function (node, id) {
 	if (Prototype.BrowserFeatures.XPath) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
-		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
-		  nodeWithID = xmlDOM.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		if (OB_bd.isSafari) {
+			nodeWithID = node.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+			return nodeWithID.iterateNext(); // there *must* be only one
 		} else {
-	      nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+			
+			if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+			  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+			  nodeWithID = xmlDOM.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
+			} else {
+		      nodeWithID = document.evaluate("//*[@id=\""+id+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+			}
+			return nodeWithID.iterateNext(); // there *must* be only one
 		}
-		return nodeWithID.iterateNext(); // there *must* be only one
+		 
 	} else if (OB_bd.isIE) {
 		// IE supports XPath in a proprietary way
 		return node.selectSingleNode("//*[@id=\""+id+"\"]");
@@ -348,11 +354,15 @@ GeneralXMLTools.getNodeByTitle = function (node, title) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
-		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
-		  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
-		  nodesWithTitle = xmlDOM.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
+		if (OB_bd.isSafari) {
+			nodesWithTitle = node.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
-			nodesWithTitle = document.evaluate("//*[@title=\""+title+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+			if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
+			  var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
+			  nodesWithTitle = xmlDOM.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
+			} else {
+				nodesWithTitle = document.evaluate("//*[@title=\""+title+"\"]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+			}
 		}
 		var result = [];
 		var next = nodesWithTitle.iterateNext();
@@ -396,8 +406,8 @@ GeneralXMLTools.getNodeByTitle = function (node, title) {
 }
 
 /**
- * Returns attribute nodes below node which contains the given text.
- * Does not work with IE at the moment!
+ * Returns attribute nodes below node which contains the given text. Does not
+ * work with IE at the moment!
  * 
  * @param node
  * @param text
@@ -410,11 +420,15 @@ GeneralXMLTools.getAttributeNodeByText = function(node, text) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodesWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
+		if (OB_bd.isSafari) {
+			nodesWithID = node.evaluate("//attribute::*[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
+		} else {
 		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
 			var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
             nodesWithID = xmlDOM.evaluate("//attribute::*[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
             nodesWithID = document.evaluate("//attribute::*[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+		}
 		}
 		var nextnode = nodesWithID.iterateNext();
 		while (nextnode != null) {
@@ -423,7 +437,8 @@ GeneralXMLTools.getAttributeNodeByText = function(node, text) {
 		} 
 		return results; 
 	} else if (OB_bd.isIE) {
-		// this should work, but does not for some reason (IE does not support selectNodes although it should)
+		// this should work, but does not for some reason (IE does not support
+		// selectNodes although it should)
 		var nodeList = node.selectNodes("/descendant::attribute()[contains(string(self::node()), '"+text+"')]");
 		nodeList.moveNext();
 		nextnode = nodeList.current();
@@ -435,8 +450,8 @@ GeneralXMLTools.getAttributeNodeByText = function(node, text) {
 	} 
 }
 /**
- * Returns textnodes below node which contains the given text.
- * Does not work with IE at the moment!
+ * Returns textnodes below node which contains the given text. Does not work
+ * with IE at the moment!
  * 
  * @param node
  * @param text
@@ -448,12 +463,16 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 		var results = new Array();
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodesWithID;
+		if (OB_bd.isSafari) {
+			nodesWithID = node.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
+		} else {
 		// distinguish between XML and HTML content (necessary in FF3)
 		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
 			var xmlDOM = node.documentElement != null ? node.documentElement.ownerDocument : node.ownerDocument;
             nodesWithID = xmlDOM.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
             nodesWithID = document.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", document.documentElement, null, XPathResult.ANY_TYPE,null);
+		}
 		}
 		var nextnode = nodesWithID.iterateNext();
 		while (nextnode != null) {
@@ -462,7 +481,8 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 		} 
 		return results; 
 	} else if (OB_bd.isIE) {
-		// this should work, but does not for some reason (IE does not support selectNodes although it should)
+		// this should work, but does not for some reason (IE does not support
+		// selectNodes although it should)
 		var nodeList = node.selectNodes("/descendant::text()[contains(string(self::node()), '"+text+"')]");
 		nodeList.moveNext();
 		nextnode = nodeList.current();
@@ -500,8 +520,7 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 }
 
 /*
- * Import a subtree
- * nodeToImport: node to which the subtree is appended.
+ * Import a subtree nodeToImport: node to which the subtree is appended.
  * subTree: node which children are imported.
  */ 
 GeneralXMLTools.importSubtree = function (nodeToImport, subTree) {
@@ -518,7 +537,8 @@ GeneralXMLTools.removeAllChildNodes = function (node) {
 		child = node.firstChild;
 		do {
 			nextSibling = child.nextSibling;
-			GeneralBrowserTools.purge(child); // important for IE. Prevents memory leaks.
+			GeneralBrowserTools.purge(child); // important for IE. Prevents
+												// memory leaks.
 			node.removeChild(child);
 			child = nextSibling;
 		} while (child!=null);
@@ -573,7 +593,8 @@ GeneralTools.matchArrayOfRegExp = function (term, regexArray) {
 /**
  * Create a wiki URL from a prefixed title.
  * 
- * @param string Prefixed title (e.g. Property:Name) 
+ * @param string
+ *            Prefixed title (e.g. Property:Name)
  * @return string
  */
 GeneralTools.makeWikiURL = function(prefixedTitle) {
@@ -582,7 +603,9 @@ GeneralTools.makeWikiURL = function(prefixedTitle) {
 
 /**
  * Creates a wiki TSC URI. If no TSC is configured it returns false.
- * @param string Prefixed title (e.g. Property:Name) 
+ * 
+ * @param string
+ *            Prefixed title (e.g. Property:Name)
  * 
  * @return mixed Either a URI as string or false
  */
@@ -619,7 +642,8 @@ GeneralTools.URLEncode = function ( str ) {
     // The histogram is identical to the one in urldecode.
     var histogram = this._URL_Histogram();
      
-    // Begin with encodeURIComponent, which most resembles PHP's encoding functions
+    // Begin with encodeURIComponent, which most resembles PHP's encoding
+	// functions
     ret = encodeURIComponent(ret);
      
     for (search in histogram) {
@@ -694,22 +718,26 @@ OBPendingIndicator.prototype = {
 		var wgServer = window.mediaWiki.config.get('wgServer');
 		var wgScriptPath = window.mediaWiki.config.get('wgScriptPath');
 		this.pendingIndicator.setAttribute("src", wgServer + wgScriptPath + "/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif");
-		//this.pendingIndicator.setAttribute("id", "pendingAjaxIndicator_OB");
-		//this.pendingIndicator.style.left = (Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
-		//this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1])+"px";
-		//this.hide();
-		//Indicator will not be added to the page on creation anymore but on fist time calling show
-		//this is preventing errors during add if contentelement is not yet available  
+		// this.pendingIndicator.setAttribute("id", "pendingAjaxIndicator_OB");
+		// this.pendingIndicator.style.left =
+		// (Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
+		// this.pendingIndicator.style.top =
+		// (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1])+"px";
+		// this.hide();
+		// Indicator will not be added to the page on creation anymore but on
+		// fist time calling show
+		// this is preventing errors during add if contentelement is not yet
+		// available
 		this.contentElement = null;
 	},
 	
 	/**
-	 * Shows pending indicator relative to given container or relative to initial container
-	 * if container is not specified.
+	 * Shows pending indicator relative to given container or relative to
+	 * initial container if container is not specified.
 	 */
 	show: function(container, alignment) {
 		
-		//check if the content element is there
+		// check if the content element is there
 		if($("content") == null){
 			return;
 		}
@@ -730,7 +758,8 @@ OBPendingIndicator.prototype = {
 			}
 		}
 			
-		//if not already done, append the indicator to the content element so it can become visible
+		// if not already done, append the indicator to the content element so
+		// it can become visible
 		if(this.contentElement == null) {
 				this.contentElement = $("content");
 				this.contentElement.appendChild(this.pendingIndicator);
