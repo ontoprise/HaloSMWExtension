@@ -15,7 +15,7 @@
         </description>
 		<helpurl>http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats</helpurl>
         <dependencies>
-            <dependency from="1.7.0" to="1.7.0">smw</dependency>
+            <dependency from="1.7.1" to="1.7.1">smw</dependency>
         </dependencies>
     </global>
     
