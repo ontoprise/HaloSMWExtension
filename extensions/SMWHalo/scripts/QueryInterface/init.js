@@ -15,40 +15,10 @@
  * with this program.If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+(function($){
 var isInit = false;
 
-jQuery(document).ready(function(){
-  //initialize QI script objects and vars
-  isInit || init();
-  //if displayed in dialog hide everything except <div id='qicontent'>
-  var ckeParam = jQuery.query.get('rsargs');
-  var ckeFound = false;
-  jQuery.each(ckeParam, function(index, value){
-    if(value.indexOf('CKE') === 0){
-      ckeFound = true;
-      return false; //break out of jQuery.each loop
-    }
-  });
-
-  if(ckeFound){
-    var qiContentDiv = jQuery('#qicontent');
-    qiContentDiv.siblings().not('[id^="stb-qi"]').each(function(){
-      jQuery(this).css('display', 'none');
-    });
-    qiContentDiv.parents().not('body, html').each(function(){
-      jQuery(this).siblings().not('[id^="stb-qi"]').each(function(){
-        jQuery(this).css('display', 'none');
-      });
-    });
-  }
-});
-
-//document ready somehow is not fired in Special:QueryInterface
-isInit || init();
-
-
-function initToolTips(){
+window.initToolTips = function initToolTips(){
   var qtipConfig = {
     content: {text: ''},
     overwrite: false,
@@ -81,12 +51,12 @@ function initToolTips(){
   };
 
 //get all elements with onmouseover="Tip('...')" attribute or title attribute and attach qTip tooltip to them
-  jQuery('[onmouseover^="Tip("]').not('#qiLoadConditionTerm').each(function(){
-    var element = jQuery(this);
+  $('[onmouseover^="Tip("]').not('#qiLoadConditionTerm').each(function(){
+    var element = $(this);
     var toolTip = element.attr('onmouseover').toString();
     toolTip = /[.\n\r\s]+Tip\(\"([^\"]*?)\"|\'([^\']*?)\'\)[.\n\r\s]*/i.exec(toolTip);
     if ( toolTip && toolTip.length ){
-      if( jQuery.client.profile().name == 'msie' ) {
+      if( $.client.profile().name == 'msie' ) {
         toolTip = toolTip[toolTip.length - 1];
       }
       else{
@@ -97,20 +67,20 @@ function initToolTips(){
     element.removeAttr('onmouseover');
   });
 
-  jQuery('#qicontent [title]').each(function(){
-    qtipConfig.content.text = jQuery(this).attr('title');
-    jQuery(this).qtip(qtipConfig).mouseover(function(e){
+  $('#qicontent [title]').each(function(){
+    qtipConfig.content.text = $(this).attr('title');
+    $(this).qtip(qtipConfig).mouseover(function(e){
       e.stopPropagation();
     });
   });
-}
+};
 
 
 function init(){
   isInit = true;
   //get query from url string
-  var query = decodeURIComponent(jQuery.query.get('query'));
-  query = jQuery.trim(query).replace(/^{{#[^:]+:/, '').replace(/}}$/, '');
+  var query = decodeURIComponent($.query.get('query'));
+  query = $.trim(query).replace(/^{{#[^:]+:/, '').replace(/}}$/, '');
   
   //if it's sparql then init sparql qi and switch to it
   if(isSparqlQuery(query)){
@@ -126,10 +96,7 @@ function init(){
     if(query.length){
       QIHELPER.initFromQueryString(query); 
     }
-  }
- 
-  
-  initToolTips();
+  }  
 }
 
 function isSparqlQuery(query){
@@ -147,6 +114,44 @@ function getQueryParameters(query){
   result.queryParameters = {};
   return result;
 }
+
+$(document).ready(function(){
+  //initialize QI script objects and vars
+  isInit || init();
+  //if displayed in dialog hide everything except <div id='qicontent'>
+  var ckeParam = $.query.get('rsargs');
+  var ckeFound = false;
+  $.each(ckeParam, function(index, value){
+    if(value.indexOf('CKE') === 0){
+      ckeFound = true;
+      return false; //break out of jQuery.each loop
+    }
+  });
+
+  if(ckeFound){
+    var qiContentDiv = $('#qicontent');
+    qiContentDiv.siblings().not('[id^="stb-qi"]').each(function(){
+      $(this).css('display', 'none');
+    });
+    qiContentDiv.parents().not('body, html').each(function(){
+      $(this).siblings().not('[id^="stb-qi"]').each(function(){
+        $(this).css('display', 'none');
+      });
+    });
+    var dialogContent = $('#column-content');
+    var clone = dialogContent.clone();
+    dialogContent.remove();
+    $('body').prepend(clone).css('background-color', 'white');
+    $('#globalWrapper').remove();
+  }
+
+  initToolTips();
+});
+
+//document ready somehow is not fired in Special:QueryInterface
+isInit || init();
+
+})(jQuery);
   
 
  
