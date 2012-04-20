@@ -1,9 +1,106 @@
 WYSIWYG extension ChangeLog
 ===========================
-Version 1.6.1
 
-  Bugfixes>
-	14486 - WYSIWYG doesn't show up in form
+VERSION 1.7.0
+
+  FEATURES:  
+    * "Article rename in edit mode" lets the user easily rename articles which are not in Category, Property or Template namespaces. Cuurrently exists only in Ontoskin3 skin
+    * "Save" and "Save and Continue" buttons let user save his changes on the fly    
+    * Confirmation dialog allows to stop accidental navigation away from a page containing unsaved changes
+    * CKEditor "Autogrow" plugin is enabled by default
+
+  CHANGES:
+    * Reduced size and enhanced usability of the toolbar
+    * Reduced the number and enhanced readability of editing preferences
+    * improved html - wikitext - html conversion
+    * RichTextEditor - WikitextEditor toggle is disabled by default
+    * resizing of editing area is disabled by default
+    * removed bottom html path bar
+    * toolbar is collapsed by default
+    * collapsing the toolbar leaves the top row of buttons visible
+
+  BUGFIXES:
+    * 16061 	Do not show STB per default in WYSIWYG free text field
+    * 14486 	WYSIWYG doesn't show up in form
+    * 16724 	wikitext to html conversion problem
+    * 16686 	wysiwig Template dialog - "invalid content" error
+    * 16445 	Switching between WYSIWYG and wikitext editor destroys file links
+    * 16706 	Optimize appearance of WYSWIYG
+    * 16817 	In German Language Annotation of Category is ignored in wysiwyg editor
+    * 16924 	IE8 & Wysiwyg: Pasting into a table blanks page
+    * 16933 	WYSIWYG prints out PHP Notice
+    * 16672 	Switching between wikitext and wysiwyg breaks images
+    * 16751 	Umlaute in properties are lost
+    * 15965 	Include a P and C icon into WYSIWYG toolset
+    * 16891 	Property and Category buttons in wysiwyg not working when Data Toolbar is disabled
+    * 16913 	Heading in table cell breaks table markup in case of editing heading section
+    * 16102 	WYSIWYG breaks wikitext-code
+    * 16829 	"Edit (wikitext editor)" link opens the page in rich text editor
+    * 15377 	Allow a different name to be displayed in links
+    * 16729 	Button for the data toolbar has to be renamed
+    * 16376 	WYSIWYG Removes Link on page edit
+    * 14574 	Consider all available namespaces in user preferences for editing with WYSIWYG
+    * 16715 	leading white space is removed by rich text editor
+    * 16279    *  	CKeditorParserOptions::getSkin
+    * 16694 	External images should not open in image dialog
+    * 16925 	image aligning fails
+    * 16215 	Preview image scaling can break when selecting multiple images within short time
+    * 16768 	wikitext to html: links processed twice
+    * 16914  	Usability improvements for "Rename page" feature
+    * 16110 	Category annotations with empty Sort Key are broken in Wysiwyg
+    * 16493 	migrate to sf 2.3.2
+    * 16879 	WYSIWYG language is not same as wiki language
+    * 16893 	[wysiwyg-1.6.0_17] Bulletlist edit breaks layout
+    * 16015 	The edit mode shall allow changing the title of an article
+    * 16734 	Wysiwyg mode is brittle, if user clicks quickly
+    * 16422 	standalone WYSIWYG uses the ckeditor original image and link dialogs
+    * 16840 	Implement UI improvements to WYSIWYG editor
+    * 15615 	Ckeditor dataprocessor toHtml() double processing issue
+    * 16730 	Article preview should be also in WYSIWYG mode when edited an article in WYSIWYG
+    * 14720 	[IE9] Adding a Link in WYSIWYG doesn't work correctly
+    * 16935 	"Save" and "Save and Continue" in Semantic Forms
+    * 16818 	Header-Anchor not allowed in RichTextEditor Link
+    * 14277 	Issues with paragraph format "formatted" and ordered lists
+    * 16704 	Bullet Point Data deleted on edit
+    * 16926 	Erroneous font size for body element.
+    * 16224 	Sort label must not be added
+    * 16773 	WYSIWG is throwing an error message from CKeditor.body.php
+    * 16920 	mw.config is undefined
+    * 16157 	WYSIWYG removes caption of image thumbnails
+    * 16757 	Bug with *link;
+    * 16588 	File links with other namespaces than "file" get lost
+    * 16904 	Annotating a category should not require a text selection
+    * 16736 	Certain links are not rendered correctly
+    * 16847 	Create floating toolbar and activate autogrow
+    * 16731 	The "SMW+ toolbar" has to be renamed to "Data toolbar"
+    * 15118 	Template dialog shall use halo autocompletion to list available templates and to paste the template-call into the dialog.
+    * 16726 	Save & Continue-Button for the WYSIWYG-Editor to save the work during editing
+    * 16612 	IE9 Link problem with ckeditor
+    * 16319 	WYSIWYG editor is visible only when selecting the monobook skin
+    * 16819 	autocompletion of internal link should offer all anchors / headers inside the target after typing the hash-symbol
+    * 16930 	ctrl+l already in use
+    * 16274 	can't enter css template
+    * 16776 	Create MW resource module for WYSIWYG scripts
+    * 16693 	image height is lost when switching to wikitext mode and back
+    * 16213 	WYSIWYG breaks svn links
+    * 16760 	user preference "start with rich editor disabled" doesn't work in ontoskin3
+    * 16633 	Invalid link image in rich text mode
+    * 16739 	C button does not consider selected text
+    * 16485 	WYSIWYG breaks MEDIA links
+    * 16873 	WYSIWYG configuration is ignored in Semantic Forms
+    * 16012 	Menu bar is displayed twice for RichTextEditor
+    * 16732 	Support Browser's Back button to go back to Wysiwg editor with proper content
+    * 16288 	WYSIWYG in MediaWiki 1.17.1 returns an error "undefined index"
+    * 16889 	Hide STB from the very beginning
+    
+
+VERSION 1.6.0
+
+  CHANGES:
+    * Update to CKEditor 3.6 codebase
+
+  BUGFIXES:
+    14486 - WYSIWYG doesn't show up in form
 
 VERSION 1.4.1
 
