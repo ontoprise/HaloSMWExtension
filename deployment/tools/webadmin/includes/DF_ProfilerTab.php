@@ -58,10 +58,11 @@ class DFProfilerTab {
 		$html .= "<div style=\"text-align:center\"><div style=\"margin:auto\">";
 		$html .= "<img id=\"df_webadmin_profiler_refresh_progress_indicator\" src=\"skins/ajax-loader.gif\" style=\"display:none;\"/>";
 		$html .= "</div></div>";
-		$html .= "<select id=\"df_webadmin_profiler_selectlog\" size=\"5\">";
-		$old = 0;
 		try {
-			$indices = $this->getProfilingLogIndices();
+			$logFileSize = $this->getLogFileSize();
+			$html .= "<select id=\"df_webadmin_profiler_selectlog\" size=\"5\" logfilesize=\"$logFileSize\">";
+			$old = 0;
+			$indices = $this->getProfilingLogIndices()->indices;
 			foreach($indices as $i) {
 				list($index, $logUrl) = $i;
 				if ($logUrl == '') continue;
@@ -75,6 +76,7 @@ class DFProfilerTab {
 		$html .= "<div>";
 		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_refresh')."\" id=\"df_refreshprofilinglog\"></input>";
 		$html .= "<input type=\"button\" value=\"".$dfgLang->getLanguageString('df_webadmin_clearlog')."\" id=\"df_clearprofilinglog\"></input>";
+		$html .= "<span id=\"df_profiler_requests_filtering_box\">".$dfgLang->getLanguageString('df_webadmin_filter').": <input size=\"40\" type=\"text\" id=\"df_profiler_requests_filtering\"></input></span>";
 		$html .= "</div>";
 		$html .= "<div id=\"df_webadmin_profilerlog_container\">";
 		$html .= "<div style=\"text-align:center\"><div style=\"margin:auto\">";
@@ -112,7 +114,7 @@ class DFProfilerTab {
 
 		$startIndex[0] = array($sizeOfLog, "");
 		while(true) {
-				
+
 			do {
 				$i++;
 				$lengthToRead = 32 * 1024;
@@ -126,8 +128,31 @@ class DFProfilerTab {
 			if (32 * 1024 * $i > $sizeOfLog) break;
 		}
 		fclose($handle);
-		return $startIndex;
+		$o = new stdClass();
+		$o->indices = $startIndex;
+		$o->filesize = $sizeOfLog;
+		
+		return $o;
 
+	}
+
+	public function getLogFileSize() {
+		if (array_key_exists('df_homedir', DF_Config::$settings)) {
+			$homeDir = DF_Config::$settings['df_homedir'];
+		} else {
+			$homeDir = Tools::getHomeDir();
+			if (is_null($homeDir)) throw new DF_SettingError(DEPLOY_FRAMEWORK_NO_HOME_DIR, "No homedir found. Please configure one in settings.php");
+		}
+		if (!is_writable($homeDir)) {
+			throw new DF_SettingError(DF_HOME_DIR_NOT_WRITEABLE, "Homedir not writeable.");
+		}
+		$wikiname = DF_Config::$df_wikiName;
+		$loggingdir = "$homeDir/$wikiname/df_profiling";
+		$logFile = "$loggingdir/$wikiname-debug_log.txt";
+		if (!file_exists($logFile)) {
+			throw new Exception("Log file does not exist");
+		}
+		return filesize($logFile);
 	}
 
 	private function addProfilingLog($text, $i, $sizeOfLog, & $startIndex) {

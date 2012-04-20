@@ -772,7 +772,7 @@ class DFCommandInterface {
 		return json_encode($indices);
 	}
 
-	public function getProfilingLog($from, $to) {
+	public function getProfilingLog($from, $to, $logfilesize) {
 		if (array_key_exists('df_homedir', DF_Config::$settings)) {
 			$homeDir = DF_Config::$settings['df_homedir'];
 		} else {
@@ -788,9 +788,13 @@ class DFCommandInterface {
 		if (!file_exists($logFile)) {
 			throw new Exception("Log file does not exist");
 		}
+		
+		$currentLogFileSize = filesize($logFile);
+		$diff = $currentLogFileSize - intval($logfilesize);
+		
 		$handle = fopen($logFile, "r");
-
-		fseek($handle, $from, SEEK_END);
+        
+		fseek($handle, $from - $diff, SEEK_END);
 		$text = fread($handle, $to-$from);
 		fclose($handle);
 		return $text;

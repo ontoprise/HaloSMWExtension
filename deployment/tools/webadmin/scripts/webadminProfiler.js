@@ -30,6 +30,7 @@ $(document).ready(
 
 			var profilingEnabled = false;
 			var currentLog = [];
+			var currentRequests = null;
 			
 			// intialize, check if profiling is enabled 
 			var url = wgServer
@@ -111,7 +112,9 @@ $(document).ready(
 							status) {
 					$('#df_webadmin_profiler_refresh_progress_indicator').hide();
 						var html = "";
-						var indices = $.parseJSON(xhr.responseText);
+						var result = $.parseJSON(xhr.responseText);
+						var indices = result.indices;
+						var filesize = result.filesize;
 						var oldIndex = 0;
 						$.each(indices, function(i, e) { 
 							var index = e[0];
@@ -121,8 +124,13 @@ $(document).ready(
 							oldIndex = index;
 							
 						});
-						$('#df_webadmin_profiler_selectlog').html(html);
+						$('#df_webadmin_profiler_selectlog').attr("logfilesize", filesize);
 						
+						$('#df_webadmin_profiler_selectlog').html(html);
+						currentRequests = [];
+						$('#df_webadmin_profiler_selectlog option').each(function(e, i) {
+							currentRequests.push($(e));
+						});
 					}
 				});
 				$('#df_webadmin_profiler_refresh_progress_indicator').show();
@@ -150,6 +158,31 @@ $(document).ready(
 				}, 500);
 			});
 			
+			var timeoutRequestFiltering = null;
+			$('#df_profiler_requests_filtering').keydown(function() {
+				if (timeoutRequestFiltering != null) clearTimeout(timeoutRequestFiltering);
+				timeoutRequestFiltering = setTimeout(function() { 
+					var searchFor = $('#df_profiler_requests_filtering').val().toLowerCase();
+					
+					if (currentRequests == null) {
+						// initialize with current set
+						currentRequests = [];
+						$('#df_webadmin_profiler_selectlog option').each(function(i, e) {
+							currentRequests.push($(e));
+						});
+					}
+					var selectBox = $('#df_webadmin_profiler_selectlog');
+					selectBox.empty();
+					var selectedLines = $.each(currentRequests, function(i, l) { 
+						if (l.text().toLowerCase().indexOf(searchFor) != -1) {
+							selectBox.append(l[0]);
+						}
+					});
+					
+				}, 500);
+			});
+			
+			
 			// select a request from list
 			$('#df_webadmin_profiler_selectlog').change(function(e) {  
 				var from = $(
@@ -158,9 +191,12 @@ $(document).ready(
 				var to = $(
 				"#df_webadmin_profiler_selectlog option:selected")
 				.attr("to");
+				var logfilesize = $(
+				"#df_webadmin_profiler_selectlog")
+				.attr("logfilesize");
 				var url = wgServer
 				+ wgScriptPath
-				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLog&rsargs[]="+from+"&rsargs[]="+to;
+				+ "/deployment/tools/webadmin/index.php?rs=getProfilingLog&rsargs[]="+from+"&rsargs[]="+to+"&rsargs[]="+logfilesize;
 				$.ajax( {
 					url : url,
 					dataType : "json",
