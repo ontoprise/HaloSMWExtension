@@ -1,8 +1,8 @@
-[[SMWHalo 1.6.0]]
+[[SMWHalo 1.7.0]]
 
 Install instructions for the latest version of SMWHalo are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.6.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.7.0
 
 For the full manual of the Halo Extension have a look at:
 
@@ -10,7 +10,7 @@ For the full manual of the Halo Extension have a look at:
 
 For further customizing your installation, take a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B_1.6.0
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B_1.7.0
 
 For install instructions and further information on Semantic MediaWiki, please visit
 
@@ -51,25 +51,25 @@ the authors.
 
  * PHP 5.2 or PHP 5.3
  * MediaWiki 1.17.x (see installation guide)
- * ScriptManager 1.6.0 (see installation guide)
- * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
- * ARC Library 1.6.0 (see installation guide)
- * Wiki Admin tool 1.6.0 (see installation guide)
+ * ScriptManager 1.7.0 (see installation guide)
+ * Semantic MediaWiki 1.7.1 (see installation section in SemanticMediaWiki/INSTALL)
+ * ARC Library 1.7.0 (see installation guide)
+ * Wiki Admin tool 1.7.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 == Requirements (bundled) ==
 
  * PHP 5.2.x or PHP 5.3.x
  * MediaWiki 1.17.x (see installation guide)
- * Semantic MediaWiki 1.6.1 (see installation section in SemanticMediaWiki/INSTALL)
- * Wiki Admin tool 1.6.0 (see installation guide)
+ * Semantic MediaWiki 1.7.1 (see installation section in SemanticMediaWiki/INSTALL)
+ * Wiki Admin tool 1.7.0 (see installation guide)
  * Web browser (for clients, recommended Firefox 4/5 or Internet Explorer 8. There might be glitches with other browsers)
 
 == Installation ==
 
 We recommend to install the Halo Extension using the SMW+ Administration tool
 which is part of the Wiki Admin tool (Download: 
-https://sourceforge.net/projects/halo-extension/files/wikiadmintool-1.6.0_0.zip/download). 
+https://sourceforge.net/projects/halo-extension/files/wikiadmintool-1.7.0_0.zip/download). 
 It empowers the convenient administration and automatic setup of extensions for
 MediaWiki and Semantic MediaWiki. If you upgrade an existing installation of
 SMW+, also read the remarks in the section "Notes on Upgrading" below.
