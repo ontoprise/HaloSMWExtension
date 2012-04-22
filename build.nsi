@@ -1084,9 +1084,9 @@ Function installAsWindowsService
     DetailPrint "Install Apache and MySQL as service."
     Exec "$INSTDIR\installApacheMySQLAsService.bat"
     
-    SetOutPath "$INSTDIR\solr"
+    SetOutPath "$INSTDIR\solr\wiki"
     DetailPrint "Install SOLR as service."
-    Exec "$INSTDIR\solr\installAsService.bat"
+    Exec "$INSTDIR\solr\wiki\installAsService.bat"
     
     ; Register scheduled task for services to run them in higher runlevel
     ; remove the above registering by ones which uses apache & mysql as services.
