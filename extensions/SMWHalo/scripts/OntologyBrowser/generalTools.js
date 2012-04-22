@@ -308,6 +308,7 @@ GeneralXMLTools.getNodeById = function (node, id) {
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
 		if (OB_bd.isSafari) {
+			node = node.nodeType == 9 ? node : node.ownerDocument;
 			nodeWithID = node.evaluate("//*[@id=\""+id+"\"]", node, null, XPathResult.ANY_TYPE,null);
 			return nodeWithID.iterateNext(); // there *must* be only one
 		} else {
@@ -355,6 +356,7 @@ GeneralXMLTools.getNodeByTitle = function (node, title) {
 		var nodeWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
 		if (OB_bd.isSafari) {
+			node = node.nodeType == 9 ? node : node.ownerDocument;
 			nodesWithTitle = node.evaluate("//*[@title=\""+title+"\"]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
 			if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
@@ -421,6 +423,7 @@ GeneralXMLTools.getAttributeNodeByText = function(node, text) {
 		var nodesWithID;
 		// distinguish between XML and HTML content (necessary in FF3)
 		if (OB_bd.isSafari) {
+			node = node.nodeType == 9 ? node : node.ownerDocument;
 			nodesWithID = node.evaluate("//attribute::*[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
 		if ((node.contentType == "text/xml") || (node.ownerDocument != null && node.ownerDocument.contentType == "text/xml")) {
@@ -464,6 +467,7 @@ GeneralXMLTools.getNodeByText = function(node, text) {
 		// FF supports DOM 3 XPath. That makes things easy and blazing fast...
 		var nodesWithID;
 		if (OB_bd.isSafari) {
+			node = node.nodeType == 9 ? node : node.ownerDocument;
 			nodesWithID = node.evaluate("/descendant::text()[contains(string(self::node()), '"+text+"')]", node, null, XPathResult.ANY_TYPE,null);
 		} else {
 		// distinguish between XML and HTML content (necessary in FF3)
