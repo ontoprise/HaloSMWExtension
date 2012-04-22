@@ -4,8 +4,7 @@
 		<id>semanticgardening</id>
 		<title>Semantic Gardening extension</title>
 		<version>1.3.7</version>
-    <repository>1.7.0</repository>
-    <patchlevel>1</patchlevel>
+        <patchlevel>0</patchlevel>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/SemanticGardening</instdir>
@@ -17,6 +16,8 @@
 			<dependency from="1.7.0" to="1.7.0">smwhalo</dependency>
 		</dependencies>
 		<license>GPL v2</license>
+		<notice>ONLY LINUX USERS: If you want to use the periodic execution feature for Gardening bots, then please add the following line to /etc/crontab file. Replace $WIKIPATH by the appropriate path of course.
+5 * * * *   root    php $WIKIPATH/extensions/SemanticGardening/maintenance/SGA_periodicExecutor.php > /dev/null 2>&1</notice>
 	</global>
 
 	<codefiles>

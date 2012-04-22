@@ -119,9 +119,9 @@ function registerTask() {
 		print "\nCreate task: smwplus_periodic_executor";
 		exec("schtasks /create /tn smwplus_periodic_executor /XML \"$tempfile\"", $out, $ret);
 	} else {
-		print "If you want to use the periodic execution feature for Gardening bots, then please add the following line to your cron-config file.";
+		print "If you want to use the periodic execution feature for Gardening bots, then please add the following line to your /etc/crontab file. Replace \$WIKIPATH by the appropriate path of course.";
 		print "\n\n----------------------------------------------------------------------------------------------------";
-		print "*\n/5 * * * * php \"\$wiki-dir/extensions/SemanticGardening/maintenance/SGA_periodicExecutor.php\"\n\n";
+		print "*\n5 * * * *   root    php \$WIKIPATH/extensions/SemanticGardening/maintenance/SGA_periodicExecutor.php > /dev/null 2>&1\"\n\n";
 		print "\n----------------------------------------------------------------------------------------------------\n\n";
 	}
 }

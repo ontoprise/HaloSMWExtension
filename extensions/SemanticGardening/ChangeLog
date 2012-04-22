@@ -1,6 +1,13 @@
 Semantic Gardening extension ChangeLog
 ======================================
 
+VERSION 1.3.7
+
+    CHANGES 
+      The Export Ontology Bot has been re-enabled. It is not yet replaced.
+      Feature for periodic exection of all bots
+      (Note: Linux users have to register a cron job to install it properly!) 
+
 VERSION 1.3.6
 
 	CHANGES
