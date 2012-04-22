@@ -1272,7 +1272,7 @@ AutoCompleter.prototype = {
             Event.observe(document, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
         	this.draggable = new Draggable('MWFloater0', {
     			//TODO: replace handle with proper tab if present	
-    			handle: 'mwfloater', 
+    			handle: 'MWFloaterContentHeader', 
     			starteffect: function() {
 	        		//autoCompleter.storePosition();
 	        		//autoCompleter.restorePosition();
