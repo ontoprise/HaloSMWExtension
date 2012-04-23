@@ -21,16 +21,18 @@ $dfgTestfunctions[] = 'di_checkInstallation';
 
 function di_checkInstallation() {
 	global $dfgRequiredExtensions, $dfgRequiredPHPVersions, $dfgRequiredFunctions;
-	
+
 	$dfgRequiredPHPVersions[] = '5.3.2';
 	$dfgRequiredExtensions['imap'][] = "Please install PHP extension 'php_imap'. It is required from DataImport";
-	
-	$version = phpversion();
-	list($version, $rest) = explode("-", $version);
-    $currentPHPVersion = new DFVersion($version);
 
-    if ($currentPHPVersion->isLower(new DFVersion("5.3.3"))) {
-        $dfgRequiredExtensions['mime_magic'][] = "Please install PHP extension 'php_mime_magic'. It is required from DataImport.";
-    }
+	$version = phpversion();
+	if (strpos($version, "-") !== false) {
+		list($version, $rest) = explode("-", $version);
+	}
+	$currentPHPVersion = new DFVersion($version);
+
+	if ($currentPHPVersion->isLower(new DFVersion("5.3.3"))) {
+		$dfgRequiredExtensions['mime_magic'][] = "Please install PHP extension 'php_mime_magic'. It is required from DataImport.";
+	}
 
 }
