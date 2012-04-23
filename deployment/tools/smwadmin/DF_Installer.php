@@ -1150,8 +1150,10 @@ class Installer {
 				}
 				if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
 
-				$this->collectSuperExtensions($ptoUpdate, $packagesToUpdate, $localPackages);
-				$this->collectDependingExtensions($ptoUpdate, $updatesNeeded, $localPackages);
+				if (!$this->checkIfAlreadyContained($packagesToUpdate, $ptoUpdate)) {
+					$this->collectSuperExtensions($ptoUpdate, $packagesToUpdate, $localPackages);
+					$this->collectDependingExtensions($ptoUpdate, $packagesToUpdate, $localPackages);
+				}
 			}
 		}
 
