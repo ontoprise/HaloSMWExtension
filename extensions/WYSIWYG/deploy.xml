@@ -3,8 +3,7 @@
 	<global>
 		<id>wysiwyg</id>
 		<title>WYSIWYG extension</title>
-		<version>1.7.0</version>
-    
+		<version>1.7.0</version>    
 		<patchlevel>0</patchlevel>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>

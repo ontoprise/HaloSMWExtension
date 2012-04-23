@@ -770,7 +770,7 @@ CKEDITOR.customprocessor.prototype =
     // if there is no inner HTML in the Link, do not add it to the wikitext
     var label = this._GetNodeText(htmlNode).Trim();
     if (!label){
-      if(htmlNode.childNodes.length && htmlNode.childNodes[0].nodeName === 'img'){
+      if(htmlNode.childNodes.length && htmlNode.childNodes[0].nodeName.toLowerCase() === 'img'){
         label = htmlNode.childNodes[0].getAttribute('src');
       }
       if(!label){
@@ -957,12 +957,13 @@ CKEDITOR.customprocessor.prototype =
         } else {
           switch ( sNodeName ){
             case 'ol' :
-              var isNestedList = htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' );
+              var isNestedList = htmlNode.parentNode.nodeName.toLowerCase().IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' );
               if(isNestedList){
                 this.listType += '#';
               }
               else{
                 this.listType = '#';
+                this.inList = false;
               }
               var listStyle = htmlNode.getAttribute('style') || '',
               startNum = htmlNode.getAttribute('start') || '';
@@ -976,10 +977,10 @@ CKEDITOR.customprocessor.prototype =
                 stringBuilder.push('>\n');
               }
               this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-              if(!isNestedList){
-                this.inList = false;
-                this.listType = null;
+              if(isNestedList){
+                this.listType = this.listType.substr(0, this.listType.length - 1);
               }
+         
               if (this.preserveLiNode)
                 stringBuilder.push('</' + sNodeName + '>');
 
@@ -988,13 +989,15 @@ CKEDITOR.customprocessor.prototype =
               }
 
               break;
+              
             case 'ul' :
-              isNestedList = htmlNode.parentNode.nodeName.IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' );
+              isNestedList = htmlNode.parentNode.nodeName.toLowerCase().IEquals( 'ul', 'ol', 'li', 'dl', 'dt', 'dd' );
               if(isNestedList){
                 this.listType += '*';
               }
               else{
                 this.listType = '*';
+                this.inList = false;
               }
                             
               listStyle = htmlNode.getAttribute('style') || '',
@@ -1009,10 +1012,10 @@ CKEDITOR.customprocessor.prototype =
                 stringBuilder.push('>\n');
               }
               this._AppendChildNodes( htmlNode, stringBuilder, prefix );
-              if(!isNestedList){
-                this.inList = false;
-                this.listType = null;
+              if(isNestedList){
+                this.listType = this.listType.substr(0, this.listType.length - 1);
               }
+              
               if (this.preserveLiNode)
                 stringBuilder.push('</' + sNodeName + '>');
 
@@ -1055,7 +1058,7 @@ CKEDITOR.customprocessor.prototype =
               }
               stringBuilder.push( ';' );
               this._AppendChildNodes( htmlNode, stringBuilder, prefix + ";" );
-              if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName === 'dd' || htmlNode.nextSibling.nodeName === 'dt')){
+              if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName.toLowerCase() === 'dd' || htmlNode.nextSibling.nodeName.toLowerCase() === 'dt')){
                 stringBuilder.push( '\n' );
               }
               break;
@@ -1066,7 +1069,7 @@ CKEDITOR.customprocessor.prototype =
               }
               stringBuilder.push( ':' );
               this._AppendChildNodes( htmlNode, stringBuilder, prefix + ":" );
-              if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName === 'dd' || htmlNode.nextSibling.nodeName === 'dt')){
+              if(htmlNode.nextSibling && (htmlNode.nextSibling.nodeName.toLowerCase() === 'dd' || htmlNode.nextSibling.nodeName.toLowerCase() === 'dt')){
                 stringBuilder.push( '\n' );
               }
               break;
@@ -1519,12 +1522,12 @@ CKEDITOR.customprocessor.prototype =
 
         stringBuilder.push( textValue );
         //text node as a list item should end with line break unless <br/> is present
-        //                    if(this.inList && !(htmlNode.nextSibling && htmlNode.nextSibling.nodeName === 'br')){
+        //                    if(this.inList && !(htmlNode.nextSibling && htmlNode.nextSibling.nodeName.toLowerCase() === 'br')){
         //                      stringBuilder.push( '\n' );
         //                    }
         if(this.inList
           && htmlNode.nextSibling
-          && (htmlNode.nextSibling.nodeName === 'ul' || htmlNode.nextSibling.nodeName === 'ol' || htmlNode.nextSibling.nodeName === 'dl'))
+          && (htmlNode.nextSibling.nodeName.toLowerCase() === 'ul' || htmlNode.nextSibling.nodeName.toLowerCase() === 'ol' || htmlNode.nextSibling.nodeName.toLowerCase() === 'dl'))
           {
           stringBuilder.push( '\n' );
         }
