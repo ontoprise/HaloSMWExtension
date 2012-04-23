@@ -20,22 +20,33 @@
 
 /**
  * QMStore implementation
- * 
+ *
  * @author kuehn
  *
  */
 class SMWQMStore extends SMWStoreAdapter {
-		
-	
+
+
 	function __construct($basestore) {
 		$this->smwstore = $basestore;
 	}
-	
+
 	function getStore() {
 		return $this->smwstore;
 	}
-
-	
+    
+	/**
+	 * Delegates an initialize call to the embedded store (if the method exists)
+	 * 
+	 */
+	public function initialize() {
+		try {
+			new ReflectionMethod(get_class($this->smwstore), 'initialize');
+			$this->smwstore->initialize();
+		} catch (ReflectionException $e) {
+			//ignore
+		}
+	}
 	/*
 	 * Stores query metadata for QueryManagement
 	 */
@@ -43,7 +54,7 @@ class SMWQMStore extends SMWStoreAdapter {
 		SMWQMQueryManagementHandler::getInstance()->storeQueryMetadata($query);
 		return $this->smwstore->getQueryResult($query);
 	}
-	
+
 }
 
 
