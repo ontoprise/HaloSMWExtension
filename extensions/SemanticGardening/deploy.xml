@@ -17,7 +17,7 @@
 		</dependencies>
 		<license>GPL v2</license>
 		<notice>ONLY LINUX USERS: If you want to use the periodic execution feature for Gardening bots, then please add the following line to /etc/crontab file. Replace $WIKIPATH by the appropriate path of course.
-5 * * * *   root    php $WIKIPATH/extensions/SemanticGardening/maintenance/SGA_periodicExecutor.php > /dev/null 2>&1</notice>
+5 * * * *   root    php $WIKIPATH/extensions/SemanticGardening/maintenance/SGA_periodicExecutor.php &gt; /dev/null 2&gt;&amp;1</notice>
 	</global>
 
 	<codefiles>
