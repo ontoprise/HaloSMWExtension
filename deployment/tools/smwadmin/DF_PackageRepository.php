@@ -511,6 +511,21 @@ class PackageRepository {
 		// create special deploy descriptor for Mediawiki itself
 		self::$localPackages['mw'] = self::createMWDeployDescriptor(realpath($ext_dir));
 
+		// FIX: smwplus has been renamed to Smwplus
+		// so that the bundle ID matches the bundle page's name.
+		// All content bundles now start with an uppercase letter
+		if (array_key_exists('smwplus', self::$localPackages)) {
+			$temp = self::$localPackages['smwplus'];
+			self::$localPackages['Smwplus'] = $temp;
+			unset(self::$localPackages['smwplus']);
+		}
+
+		if (array_key_exists('smwplussandbox', self::$localPackages)) {
+			$temp = self::$localPackages['smwplussandbox'];
+			self::$localPackages['Smwplussandbox'] = $temp;
+			unset(self::$localPackages['smwplussandbox']);
+		}
+
 		return self::$localPackages;
 	}
 
@@ -639,7 +654,7 @@ class PackageRepository {
 		return new DeployDescriptor($xml, $fromVersion);
 	}
 
-	
+
 
 	/**
 	 * Takes extension IDs and returns the order in which they have to be deleted. It considers
@@ -668,7 +683,7 @@ class PackageRepository {
 		return $resultExtensionIDs;
 	}
 
-	
+
 
 	/**
 	 * Returns the local superextensions of an extension.
