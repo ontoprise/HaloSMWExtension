@@ -4,7 +4,6 @@
         <id>scriptmanager</id>
         <title>Script Manager extension</title>
         <version>1.7.0</version>
-        <repository>1.7.0</repository>
         <patchlevel>0</patchlevel>
         <vendor>ontoprise GmbH</vendor>
         <maintainer>ontoprise GmbH</maintainer>

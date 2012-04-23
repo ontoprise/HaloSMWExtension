@@ -3,7 +3,7 @@
     <global>
         <id>wom</id>
         <version>1.0.1</version>
-        <repository>1.7.0</repository>
+        
         <patchlevel>0</patchlevel>
         <vendor>Vulcan</vendor>
         <maintainer>Ning Hu; ning@teammersion.com</maintainer>

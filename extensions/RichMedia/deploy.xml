@@ -4,8 +4,7 @@
 		<id>richmedia</id>
 		<title>Rich Media extension</title>
 		<version>1.5.4</version>
-    <repository>1.7.0</repository>
-		<license>GPL-v2</license>
+    	<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
 		<instdir>extensions/RichMedia</instdir>
@@ -18,7 +17,7 @@
 		<helpurl>http://www.smwplus.com/index.php/Help:Rich_Media_Extension</helpurl>
 		<dependencies>
 			<dependency from="2.3.2" to="2.3.2">semanticforms</dependency>
-			<dependency from="1.6.0" to="1.7.0">smwplus</dependency>
+			<dependency from="1.6.0" to="1.7.0">Smwplus</dependency>
 		</dependencies>
 	</global>
 

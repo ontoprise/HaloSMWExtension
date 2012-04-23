@@ -4,8 +4,7 @@
 		<id>newusermessage</id>
 		<title>New User Message</title>
 		<version>3.0.0</version>
-    <repository>1.7.0</repository>
-		<patchlevel>2</patchlevel>
+   		<patchlevel>2</patchlevel>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH</vendor>
                <maintainer>Siebrand A. Dunkley</maintainer>

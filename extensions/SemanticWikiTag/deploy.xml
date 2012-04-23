@@ -4,7 +4,7 @@
         <id>semanticwikitag</id>
         <title>WikiTags</title>
         <version>2.0.0</version>
-        <repository>1.7.0</repository>
+        
         <vendor>Vulcan</vendor>
         <maintainer>Vulcan</maintainer>
         <instdir>extensions/SemanticWikiTag</instdir>

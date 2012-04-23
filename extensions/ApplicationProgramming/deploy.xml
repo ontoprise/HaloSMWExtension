@@ -4,7 +4,6 @@
 		<id>applicationprogramming</id>
 		<title>Application Programming</title>
 		<version>1.7.0</version>
-    <repository>1.7.0</repository>
 		<vendor>ontoprise GmbH</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
         <license>GPL-v2, MIT, Public Domain</license>

@@ -3,7 +3,6 @@
 	<global>
 		<id>semanticaggregation</id>
 		<version>1.1.0</version>
-		<repository>1.7.0</repository>
 		<vendor>Vulcan</vendor>
 		<maintainer>Vulcan</maintainer>
 		<description>Enable aggregation on specified fields in inline queries.</description>

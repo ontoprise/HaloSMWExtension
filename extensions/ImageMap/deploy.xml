@@ -2,8 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>100</version>
-    <repository>1.7.0</repository>
-		<id>imagemap</id>
+    	<id>imagemap</id>
 		<license>GPL-v2</license>
 		<vendor>ontoprise GmbH / Tim Starling</vendor>
 		<maintainer>ontoprise GmbH</maintainer>
