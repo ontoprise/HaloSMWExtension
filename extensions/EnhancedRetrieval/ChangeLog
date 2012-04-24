@@ -2,6 +2,9 @@ Enhanced Retrieval extension ChangeLog
 ======================================
 
 VERSION 1.7
+  FEATURES:
+  	Added support for the HaloACL extension
+  	
   BUGFIXES:
 	16483 - English is not the fallback language in the UI
 	
