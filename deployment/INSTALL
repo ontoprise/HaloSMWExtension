@@ -13,6 +13,12 @@ the wiki admin tool for the first time, you have to copy settings.php in the roo
 (deployment/settings.php). If something is wrong the tool will tell you when you first access
 it. If you update, take a look in it and check if you need to set additional parameters.
 
+WAT 1.70:
+
+Old restore point must be converted manually. Otherwise they can not be restored. Don't worry,
+this is easy. Just zip the content of a restore point directory in a zip called software.zip. 
+You can delete the files afterwards (EXCEPT: dump.sql)
+
 Third party tools
 ==================
 The Wiki Administration Tool uses:

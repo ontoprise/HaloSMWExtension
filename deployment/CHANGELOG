@@ -1,3 +1,33 @@
+Since Wiki admin tool 1.7.0 
+
+Changes:
+
+    - Old restore point must be converted manually. Otherwise they can not be restored. Don't worry,
+      this is easy. Just zip the content of a restore point directory in a zip called software.zip. 
+      You can delete the files afterwards (EXCEPT: dump.sql)
+      
+    - "smwplus" and "smwplussandbox" have been renamed to "Smwplus" and "Smwplussandbox"
+        If there are still directories extensions/smwplus and extensions/smwplussandbox, then
+        please remove them manually.
+        
+    - All other content bundles also start with an uppercase letter. If you have older versions,
+      please remove them and install newly. 
+    
+New:
+    - Content bundle tab for WAT webadmin. Allows exporting content bundles.
+    
+    - Settings tab for WAT webadmin.  
+    
+    - Profiler tab for WAT webadmin.
+    
+    - Improved patching mechanism (less false warnings about failed patches)
+    
+    - Ontology import / bundle imports are merged (requires latest TSC version!)
+    
+    - Most notices removed because operations are done automaticaly
+    
+    - SOLR support in WAT
+
 #
 # ChangeLog
 #
