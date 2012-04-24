@@ -1,5 +1,10 @@
 HaloACL extension ChangeLog
 ===========================
+Version 1.7
+  FEATURES
+    Evaluated access rights are stored in memcache for quick reuse. This is used
+    by Faceted Search as well.
+
 Version 1.5
 
   FEATURE:
