@@ -526,6 +526,10 @@
   };
 
   SPARQL.activateSwitchToSparqBtn = function(){
+    if(!mw.config.get('smwgHaloWebserviceEndpoint')){
+      return;
+    }
+
     $('#askQI #qimenubar').append('<button id="switchToSparqlBtn">' + gLanguage.getMessage('QI_SWITCH_TO_SPARQL') + '</button>');
     var switchToSparqlBtn = $('#switchToSparqlBtn');
     var onOK = function(argMap){
@@ -2132,6 +2136,7 @@
   SPARQL.initResultFormatLoading = function(){
     $.fn.ready = SPARQL.documentReady;
     addOnloadHook = SPARQL.documentReady;
+    //check wikibits onloadFuncts
     if(onloadFuncts && onloadFuncts.length){
      $.each(onloadFuncts, function(index, value){
        SPARQL.addInitMethod(value);

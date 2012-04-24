@@ -447,7 +447,7 @@ class SMWQueryInterface extends SpecialPage {
 
     global $smwgResultFormats;
 
-    $blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar", "debug", "template", "aggregation",
+    $blacklist = array("tabularform", "rss", "json", "exceltable", "icalendar", "vcard", "calendar", "debug", "template", "aggregation",
         "tixml", "transposed", "simpletable", "gallery", "timeline", "eventline", "live");
 
     $resultoptionshtml = "";
@@ -505,7 +505,7 @@ class SMWQueryInterface extends SpecialPage {
 
     global $smwgResultFormats;
 
-    $blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar", "debug", "template", "aggregation",
+    $blacklist = array("tabularform", "rss", "json", "exceltable", "icalendar", "vcard", "calendar", "debug", "template", "aggregation",
         "tixml", "transposed", "simpletable", "gallery", "timeline", "eventline", "live");
 
     $resultoptionshtml = "";

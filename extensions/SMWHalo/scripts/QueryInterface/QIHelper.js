@@ -748,19 +748,7 @@ QIHelper.prototype = {
 	 * @param request
 	 *            Request of AJAX call
 	 */
-  openPreview : function(request) {
-    //  switch ($$('#askQI #layout_format')[0].value) {
-    //
-    //    // for certain query printer it is
-    //    // necessary to clear content of preview
-    //    case 'ofc-pie':
-    //    case 'ofc-bar':
-    //    case 'ofc-bar_3d':
-    //    case 'ofc-line':
-    //    case 'ofc-scatterline':
-    //      $$('#askQI #previewcontent')[0].innerHTML = '';
-    //      break;
-    //  }
+  openPreview : function(request) {    
     this.pastePreview(request);
   },
 
@@ -783,7 +771,7 @@ QIHelper.prototype = {
         
     // pre-processing
     var resultHTML;
-    var resultCode;
+//    var resultCode;
     switch ($$('#askQI #layout_format')[0].value) {
             
       case 'ofc-pie':
@@ -811,7 +799,7 @@ QIHelper.prototype = {
     else{
       preview.innerHTML = resultHTML;
       SPARQL.appendScripts(preview, SPARQL.srfInitScripts);
-      SPARQL.executeInitMethods();
+//      SPARQL.executeInitMethods();
     }
 
       
@@ -824,14 +812,11 @@ QIHelper.prototype = {
 
         break;
       case "exhibit":
-        if (typeof createExhibit == 'function') createExhibit();
+        if (typeof createExhibit == 'function') {
+          createExhibit();
+        }
         break;
-      case 'ofc-pie':
-      case 'ofc-bar':
-      case 'ofc-bar_3d':
-      case 'ofc-line':
-      case 'ofc-scatterline':
-        break;
+ 
       case 'tabularform':
         break;
     }
