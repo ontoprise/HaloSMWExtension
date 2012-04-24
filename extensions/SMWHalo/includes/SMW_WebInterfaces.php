@@ -20,7 +20,7 @@
 /**
  * @file
  * @ingroup SMWHaloWebservices
- * 
+ *
  * @defgroup SMWHaloWebservices SMWHalo Webservices
  * @ingroup SMWHalo
  */
@@ -39,27 +39,35 @@ function smwf_ws_callEQI($query) {
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
 	$result= new AjaxResponse( smwhExternalQuery($query, "exceltable") );
-    $result->setContentType( "text/html" );
-    return $result;
+	$result->setContentType( "text/html" );
+	return $result;
 }
 
 # same as smwf_ws_callEQI except that XML is returned
 function smwf_ws_callEQIXML($query, $format = 'xml') {
-	
+
 	global $IP;
 	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-	$result= new AjaxResponse( smwhExternalQuery($query, $format) );
+	try {
+		$temp = smwhExternalQuery($query, $format);
+		$responseCode = 200;
+	} catch(Exception $e) {
+		$responseCode = 500;
+		$temp=$e->getMessage();
+	}
+	$result= new AjaxResponse($temp);
+	$result->setResponseCode($responseCode);
 	$result->setContentType( "application/sparql-xml" );
 	return $result;
 }
 
 # RDF request. Requires triple store
 function smwf_ws_RDFRequest($subject) {
-    global $IP;
-    require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
-    $result= new AjaxResponse( smwhRDFRequest($subject) );
-    $result->setContentType( "application/rdf+xml" );
-    return $result;
+	global $IP;
+	require_once( $IP . '/extensions/SMWHalo/includes/webservices/SMW_EQI.php' );
+	$result= new AjaxResponse( smwhRDFRequest($subject) );
+	$result->setContentType( "application/rdf+xml" );
+	return $result;
 }
 
 
@@ -76,7 +84,7 @@ function smwf_ws_getWSDL($wsdlID) {
 		global $wgServer, $wgScript;
 		return str_replace("{{wiki-path}}", $wgServer.$wgScript, $contents);
 
-	} 
+	}
 }
 
 

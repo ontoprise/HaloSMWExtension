@@ -39,6 +39,9 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
 	}
 
 	protected function getResultText(SMWQueryResult $res, $outputmode) {
+		if (count($res->getErrors()) > 0) {
+			throw new Exception(implode(",",$res->getErrors()));
+		}
 		$variables = array();
 		$result = $this->printHeader();
 		$result .= $this->printVariables($res->getPrintRequests(), $variables);
