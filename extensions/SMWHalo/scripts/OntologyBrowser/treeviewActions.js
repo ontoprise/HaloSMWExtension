@@ -1957,7 +1957,7 @@ OBGlobalActionListener.prototype = {
 							}
 						},
 						style : {
-							tip : 'bottomLeft',
+							tip : 'topLeft',
 							width : 300
 						}
 					});
