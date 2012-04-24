@@ -42,6 +42,8 @@
 
 $SOLRhost = 'localhost';
 $SOLRport = 8983;
+
+// Please comment this configuration if your are NOT using HaloACL
 /*
 $spgHaloACLConfig = array(
 			'wikiDBprefix'	=> '',
@@ -72,10 +74,8 @@ require_once('SolrPhpClient/Apache/Solr/Service.php');
 
 if ($spgHaloACLConfig) {
 	require_once 'Solrproxy/FS_ResultFilter.php';
-	
-// 	$resultFilter = new FSResultFilter();
-// 	$user = $resultFilter->getCurrentUser();
 }
+require_once 'Solrproxy/FS_QueryParser.php';
 
 /**
  * This is a sub class of the Apache_Solr_Service. It adds an additional method
@@ -144,17 +144,62 @@ if (get_magic_quotes_gpc() == 1)
 	$query = stripslashes($query);
 }
 
-try
-{
-	$results = $solr->rawsearch($query);
-	$response = $results->getRawResponse();
-	if ($spgHaloACLConfig) {
-		$rf = FSResultFilter::getInstance();
-		$response = $rf->filterResult(NULL, 'read', $response);
+// Is access control enabled?
+$acEnabled = isset($spgHaloACLConfig);
+
+// Get start and number of expected rows from query. Access control might filter
+// results but nevertheless we want to return the expected number of results.
+$queryParser = new FSQueryParser($query);
+$numExpectedResults = $queryParser->get('rows');
+if (!$numExpectedResults) {
+	// 10 results is the default
+	$numExpectedResults = 10;
+}
+$start = $queryParser->get('start');
+
+if ($acEnabled) {
+	$resultFilter = FSResultFilter::getInstance();
+}
+$numPermittedResults = 0;
+$tryNumResults = $numExpectedResults;
+$furtherResultsAvailable = true;
+while ($numPermittedResults < $numExpectedResults && $furtherResultsAvailable) {
+	try
+	{
+		if ($acEnabled) {
+			// Access control is enabled. Ask for more results than necessary
+			// as some of them might be filtered.
+			$tryNumResults += 10;
+			$queryParser->set('rows', $tryNumResults);
+			$query = $queryParser->serialize();
+		}
+		$results = $solr->rawsearch($query);
+		$response = $results->getRawResponse();
+		if ($acEnabled) {
+			list($numPermittedResults, $numNeededResults, $furtherResultsAvailable) =
+				$resultFilter->countPermittedResults($user, 'read', $response, $numExpectedResults);
+			if ($numNeededResults !== -1 && $numNeededResults !== $numPermittedResults) {
+				// There are enough permitted results. Ask the query again to get 
+				// exactly the number of needed results.
+				$queryParser->set('rows', $numNeededResults);
+				$query = $queryParser->serialize();
+				$results = $solr->rawsearch($query);
+				$response = $results->getRawResponse();
+			}
+		} else {
+			// Without access control there is no need searching for further results
+			$numPermittedResults = $numExpectedResults;
+		}
+		
 	}
-	echo $response;
+	catch (Exception $e)
+	{
+		die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
+	}
+}	
+
+
+if ($acEnabled) {
+	$response = $resultFilter->filterResult(NULL, 'read', $response);
 }
-catch (Exception $e)
-{
-	die("<html><head><title>SEARCH EXCEPTION</title><body><pre>{$e->__toString()}</pre></body></html>");
-}
+echo $response;
