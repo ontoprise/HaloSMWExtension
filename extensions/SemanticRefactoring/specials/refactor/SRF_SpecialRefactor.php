@@ -75,7 +75,7 @@ class SemanticRefactoring extends SpecialPage {
 		$html .= '<textarea id="sref_querybox_textarea" name="q">'.$query_val.'</textarea>';
 		$html .= '<input type="submit" id="sref_run_query" value="'.wfMsg('sref_run_query').'"></input>';
 		$html .= '<input type="button" id="sref_clear_query" value="'.wfMsg('sref_clear_query').'"></input>';
-		$html .= '<input type="button" id="sref_open_qi" value="'.wfMsg('sref_open_qi').'"></input>';
+		//$html .= '<input type="button" id="sref_open_qi" value="'.wfMsg('sref_open_qi').'"></input>';
 		$html .= '</div>';
 
 		// result box
