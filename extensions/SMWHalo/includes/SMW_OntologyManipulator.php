@@ -844,46 +844,48 @@ function smwf_om_invalidateAllPages() {
 
 /**
  * Checks if the current user can perform the given $action on the article with
- * the given $titleName.
+ * the given $title.
  *
- * @param string $titleName
+ * @param stringt $title
  * 		Name of the article
  * @param string $action
  * 		Name of the action
  * @param int $namespaceID
  * 		ID of the namespace of the title
  *
- * @return bool
+ * @return bool/int
  * 		<true> if the action is permitted
  * 		<false> otherwise
+ * 		-1 if the title is invalid 
  */
-function smwf_om_userCan($titleName, $action, $namespaceID = 0) {
+function smwf_om_userCan($title, $action, $namespaceID = 0) {
 	// Special handling if the extension HaloACL is present
 	if (defined('HACL_HALOACL_VERSION')) {
 		$etc = haclfDisableTitlePatch();
 	}
-	$title = Title::newFromText($titleName, $namespaceID);
+	$title = Title::newFromText($title, $namespaceID);
 	if (defined('HACL_HALOACL_VERSION')) {
 		haclfRestoreTitlePatch($etc);
 	}
 	global $wgUser;
-	$result = true;
-	wfRunHooks('userCan', array(&$title, &$wgUser, $action, &$result));
-	if (isset($result) && $result == false) {
-		return "false";
-	} else {
-		return "true";
+	if (!$title) {
+		return -1;
 	}
+	$result = $title->userCan($action);
+	return $result ? 'true' : 'false';
 }
 
 /**
  * Checks if the current user can perform the given $action on the articles with
- * the given $titleNames.
+ * the given $titles.
  *
- * @param string $titleName
- * 		Comma separated list of article names
+ * @param string $titles
+ * 		Comma separated list of article names, possibly with namespace number.
+ * 		Commas in the titles are escaped as \,
  * @param string $action
  * 		Name of the action
+ * @param bool $titlesHaveNSID
+ * 		If true, the $titles have a namespace number e.g. 0:Main_Page
  *
  * @return bool
  * 		A JSON encoded array of results:
@@ -892,20 +894,35 @@ function smwf_om_userCan($titleName, $action, $namespaceID = 0) {
  * 			...
  * 		)
  */
-function smwf_om_userCanMultiple($titleNames, $action) {
+function smwf_om_userCanMultiple($titles, $action, $titlesHaveNSID = false) {
 	// Special handling if the extension HaloACL is present
 	global $wgUser;
 
-	$titleNames = explode(',', $titleNames);
+	// Split the titles at commas if they are not escaped
+	$titles = preg_split("#(?<!\\\)\,#", $titles);
+	
+//	$titles = explode(',', $titles);
 	if (defined('HACL_HALOACL_VERSION')) {
 		$etc = haclfDisableTitlePatch();
 	}
 	$results = array();
-	foreach ($titleNames as $t) {
+	foreach ($titles as $t) {
+		// Replace escaped commas
+		$t = str_replace('\,', ',', $t);
 		$result = true;
-		$title = Title::newFromText(trim($t));
-		wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
-		if (isset($result) && $result == false) {
+		if ($titlesHaveNSID) {
+			list($ns, $tname) = explode(':', $t, 2);
+			$title = Title::newFromText(trim($tname), trim($ns)*1);
+		} else {
+			$title = Title::newFromText(trim($t));
+		}
+		if (!$title) {
+			// Invalid ID or name given => try the next title
+			continue;
+		}
+		$result = $title->userCan($action);
+//		wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
+		if (isset($result) && $result === false) {
 			$results[] = array($t, "false");
 		} else {
 			$results[] = array($t, "true");
@@ -917,8 +934,6 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 	}
 	return json_encode($results);
 }
-
-
 
 /**
  * This function retrieves all properties that have one of the given categories as domain
