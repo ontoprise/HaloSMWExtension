@@ -358,7 +358,78 @@ Index: includes/Title.php
  		} else {
  			return null;
  		}
-@@ -4246,4 +4267,96 @@
+@@ -1159,6 +1180,25 @@
+ 		return false;
+ 	}
+ 
++/*op-patch|TS|2012-02-24|HaloACL|HaloACLMemcache|start*/
++// See http://dmwiki.ontoprise.com/index.php/HaloACLMemcache
++
++public function userCan($action, $doExpensiveQueries = true) {
++	if (!defined('HACL_HALOACL_VERSION')) {
++		//HaloACL is disabled
++		return $this->userCanOrig($action, $doExpensiveQueries);
++	}
++
++	global $wgUser;
++	$hmc = HACLMemcache::getInstance();
++	$allowed = $hmc->retrievePermission($wgUser, $this, $action);
++	if ($allowed === -1) {
++		$allowed = $this->userCanOrig($action, $doExpensiveQueries);
++		$hmc->storePermission($wgUser, $this, $action, $allowed);
++	}
++	return $allowed;
++}
++
+ 	/**
+ 	 * Can $wgUser perform $action on this page?
+ 	 *
+@@ -1166,7 +1206,8 @@
+ 	 * @param $doExpensiveQueries \type{\bool} Set this to false to avoid doing unnecessary queries.
+ 	 * @return \type{\bool}
+ 	 */
+-	public function userCan( $action, $doExpensiveQueries = true ) {
++	public function userCanOrig( $action, $doExpensiveQueries = true ) {
++/*op-patch|TS|2012-02-24|end*/
+ 		global $wgUser;
+ 		return ( $this->getUserPermissionsErrorsInternal( $action, $wgUser, $doExpensiveQueries, true ) === array() );
+ 	}
+@@ -1740,14 +1781,33 @@
+ 	public function isMovable() {
+ 		return MWNamespace::isMovable( $this->getNamespace() ) && $this->getInterwiki() == '';
+ 	}
++	
++/*op-patch|TS|2012-02-24|HaloACL|HaloACLMemcache|start*/
++// See http://dmwiki.ontoprise.com/index.php/HaloACLMemcache
+ 
++	public function userCanRead() {
++		if (!defined('HACL_HALOACL_VERSION')) {
++			//HaloACL is disabled
++			return $this->userCanReadOrig();
++		}
++		
++		global $wgUser;
++		$hmc = HACLMemcache::getInstance();
++		$allowed = $hmc->retrievePermission($wgUser, $this, 'read');
++		if ($allowed === -1) {
++			$allowed = $this->userCanReadOrig();
++			$hmc->storePermission($wgUser, $this, 'read', $allowed);
++		}
++		return $allowed;
++	}
+ 	/**
+ 	 * Can $wgUser read this page?
+ 	 *
+ 	 * @return \type{\bool}
+ 	 * @todo fold these checks into userCan()
+ 	 */
+-	public function userCanRead() {
++	public function userCanReadOrig() {
++/*op-patch|TS|2012-02-24|end*/
+ 		global $wgUser, $wgGroupPermissions;
+ 
+ 		static $useShortcut = null;
+@@ -4246,4 +4306,96 @@
  		}
  		return $unprefixed;
  	}
