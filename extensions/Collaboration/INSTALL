@@ -1,11 +1,11 @@
-Installation instructions for Collaboration extension v1.5
-----------------------------------------------------------
+Installation instructions for Collaboration extension v1.5.1
+------------------------------------------------------------
 
 Requirements: 
 =============
 
-	Deployment Framework (optional)
-	SMW Plus ontology bundle 1.5.6
+	Wiki Administration Tool (optional)
+	SMW Plus ontology bundle 1.7.0
 	Rich Media extension (optional)
 	Widgets extension (optional)
 
