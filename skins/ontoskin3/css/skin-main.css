@@ -341,6 +341,7 @@ textarea {
 /*	replace with gradient*/
 	/*@embed*/
 	/*background: url(../img/submenu-background.png) repeat-x scroll bottom #FFFFFF;*/
+	background-color: rgb(255,255,255);
 	background-image: linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
 	background-image: -o-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
 	background-image: -moz-linear-gradient(bottom, rgb(235,235,235) 10%, rgb(235,235,235) 20%, rgb(255,255,255) 50%);
