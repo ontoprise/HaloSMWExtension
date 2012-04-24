@@ -141,6 +141,8 @@ class FSMWAccessControl {
 	 * @param array(string/int $titleID)
 	 * 		The titleIDs consists of the namespace number and the dbkey of the 
 	 * 		title separated by a colon i.e. 0:Main_Page.
+	 * 		There might also be titles without namespace numbers. This is detected
+	 * 		by this method and handled appropriately.
 	 * 		If the $subjectType is FSRF_NAMESPACE, the $titleIDs are namespace
 	 * 		numbers.
 	 * @param string $action
@@ -156,23 +158,30 @@ class FSMWAccessControl {
 	 */
 	public function checkRightsMulti($titleIDs, $action, $subjectType = FSResultFilter::FSRF_ARTICLE) {
 		$ns = "";
+		$namespaces = array(); // Storage for removed namespaces
 		$removeNS = false;
 		if ($subjectType === FSResultFilter::FSRF_CATEGORY || 
 			$subjectType === FSResultFilter::FSRF_PROPERTY) {
 			$removeNS = true;
 		}
 		
-		// Remove namespace prefixes
+		// Remove namespace prefixes or detect if there are namespaced IDs
+		$hasNSIds = $subjectType === FSResultFilter::FSRF_ARTICLE;
 		foreach ($titleIDs as $idx => $t) {
+			list($ns, $tWoNS) = explode(':', $t, 2);
+			if ($hasNSIds) {
+				if (!preg_match("/^\d+$/", $ns)) {
+					// Namespace ID is not a number => No NS IDs given
+					$hasNSIds = false;
+				}
+			}
 			if ($removeNS) {
-				list($ns, $t) = explode(':', $t);
+				$namespaces[$tWoNS] = $ns;
+				$t = $tWoNS;
 			}
 			// Escape all commas in the titles
 			$t = str_replace(',', '\,', $t);
 			$titleIDs[$idx] = $t;
-		}
-		if (!empty($ns)) {
-			$ns .= ':';
 		}
 		
 		$t = implode(',', $titleIDs);
@@ -180,7 +189,7 @@ class FSMWAccessControl {
 		switch ($subjectType) {
 			case FSResultFilter::FSRF_ARTICLE:
 				$response = $this->mwAjaxCall('smwf_om_userCanMultiple',
-								array($t, $action, true));
+								array($t, $action, $hasNSIds));
 				break;
 			case FSResultFilter::FSRF_CATEGORY:
 				$response = $this->mwAjaxCall('haclAarCheckCategoryAccessMulti',
@@ -207,6 +216,8 @@ class FSMWAccessControl {
 		$result = array();
 		foreach ($permissions as $p) {
 			$p1 = $p[1] === 'true' ? true : false;
+			$ns = @$namespaces[$p[0]];
+			$ns = $ns ? "$ns:" : "";
 			$result[] = array($ns.$p[0] => $p1);
 		}
 		return $result;

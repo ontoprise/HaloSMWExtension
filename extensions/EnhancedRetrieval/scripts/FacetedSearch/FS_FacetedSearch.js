@@ -596,14 +596,16 @@ FacetedSearch.classes.FacetedSearch = function () {
 			target : '#pager',
 			prevLabel : lang.getMessage('pagerPrevious'),
 			nextLabel : lang.getMessage('pagerNext'),
-			renderHeader : function(perPage, offset, total) {
+			renderHeader : function(perPage, offset, total, approx) {
 				$('#pager-header').html(
 						$('<span/>').text(
 								lang.getMessage('results') + ' ' 
 								+ Math.min(total, offset + 1)
 								+ ' ' + lang.getMessage('to') + ' '
 								+ Math.min(total, offset + perPage)
-								+ ' '+ lang.getMessage('of') + ' ' + total));
+								+ ' ' 
+								+ lang.getMessage(approx ? 'ofapprox' : 'of') 
+								+ ' ' + total));
 			}
 		}));
 		

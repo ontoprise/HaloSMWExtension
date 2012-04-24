@@ -172,10 +172,10 @@
 //			return longName.substr(0, maxLength-3) + '&hellip;';
 //		}
 //		return false;
-		var className = className ? ' class="' + classname + '" ' : "";
-		var tempItem = '<span id="textWitdhTempItem" ' + className + 'style="display:none;">'+ longName +'</span>';
+		var className = className ? ' class="' + className + '" ' : "";
+		var tempItem = '<span id="textWidthTempItem" ' + className + 'style="display:none;">'+ longName +'</span>';
 	    $(tempItem).appendTo('body');
-		tempItem = $('#textWitdhTempItem');
+		tempItem = $('#textWidthTempItem');
 	    var itemWidth = tempItem.width();
 	    var shortName = longName;
 	

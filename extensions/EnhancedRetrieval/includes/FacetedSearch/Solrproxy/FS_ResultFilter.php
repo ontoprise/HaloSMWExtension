@@ -54,6 +54,8 @@ class FSResultFilter {
 	const FSRF_CATEGORY = 1;	// Check rights for instances of a category
 	const FSRF_PROPERTY = 2;	// Check rights for property values 
 	const FSRF_NAMESPACE = 3;	// Check rights for instances of a namespace
+	
+	const RELATION_REGEX = "/^(smwh_.*_)s$/";
 		
 	//--- Private fields ---
 	
@@ -156,7 +158,7 @@ class FSResultFilter {
 	 * 		-1, if no permission could be retrieved from MediaWiki
 	 *
 	 */
-	public function checkRightsMulti($user, $titleIDs, $action, $subjectType = FSRF_ARTICLE) {
+	public function checkRightsMulti($user, $titleIDs, $action, $subjectType = self::FSRF_ARTICLE) {
 		// First try to find the access rights in memcache
 		$hmc = FSHaloACLMemcache::getInstance();
 		$permissions = $hmc->checkRightsMulti($user, $titleIDs, $action, $subjectType);
@@ -236,27 +238,147 @@ class FSResultFilter {
 			$resultFiltered = true;
 		}
 		
-		// Find titles, categories, properties and namespaces in the facets of
+		// Find categories, properties and namespaces in the facets of
 		// the result.
 		$titleIDs = $this->getTitlesFromResultFacets($resultObjects);
 		if (count($titleIDs) > 0) {
 			// and determine their access rights
- 			$categoryRights = $this->checkRightsMulti($user, $titleIDs['categories'], $action, self::FSRF_CATEGORY);
- 			$propertyRights = $this->checkRightsMulti($user, $titleIDs['properties'], $action, self::FSRF_PROPERTY);
- 			$namespaceRights = $this->checkRightsMulti($user, $titleIDs['namespaces'], $action, self::FSRF_NAMESPACE);
+ 			$categoryRights = count($titleIDs['categories']) === 0
+ 				? array()
+ 				: $this->checkRightsMulti($user, $titleIDs['categories'], $action, self::FSRF_CATEGORY);
+ 			$propertyRights = count($titleIDs['properties']) === 0
+ 				? array()
+ 				: $this->checkRightsMulti($user, $titleIDs['properties'], $action, self::FSRF_PROPERTY);
+ 			$namespaceRights = count($titleIDs['namespaces']) === 0
+ 				? array()
+ 				: $this->checkRightsMulti($user, $titleIDs['namespaces'], $action, self::FSRF_NAMESPACE);
+ 			$relationValueRights = count($titleIDs['relations']) === 0
+ 				? array()
+ 				: $this->checkRightsMulti($user, $titleIDs['relations'], $action, self::FSRF_ARTICLE);
  			
  			// Remove protected elements from the facets.
 			$resultObjects = $this->removeDeniedTitlesInFacets($categoryRights, 
 									$propertyRights, $namespaceRights, 
-									$titleIDs, $resultObjects);
+									$relationValueRights, $titleIDs, $resultObjects);
 			$resultFiltered = true;
 		}
+		
+		// Add index number of first and last actual SOLR document
+		$start   = $resultObjects->response->start;
+		$numRows = @$resultObjects->responseHeader->params->rows;
+		if (!$numRows) {
+			$numRows = 10;
+		}
+		$resultObjects->documentIndices->startDocIdx = $start;
+		$resultObjects->documentIndices->nextDocIdx  = $start + $numRows;
 		
 		if ($resultFiltered) {
 	 		$solrResult = FSResultParser::serialize($resultObjects);
 		}
 		
 		return $solrResult;
+		
+	}
+	
+	/**
+	 * 
+	 * Scans through the $solrResult and counts how many documents are allowed 
+	 * for the $user with the given $action. $numExpectedResults defines how many
+	 * permitted results are expected by a query request.
+	 * @param string $user
+	 * 		Name of a user
+	 * @param string $action
+	 * 		The action to perform on the articles in the result
+	 * @param string $solrResult
+	 * 		JSON-encoded SOLR result
+	 * @param int $numExpectedResults
+	 * 		Number of expected and permitted results in the result set. If fewer
+	 * 		than this number of results are present or permitted in the current
+	 * 		result, a larger result set has to be queried. If the result contains
+	 * 		more than the needed results, the number of actually needed results
+	 * 		is returned (see below).
+	 * 
+	 * @return array(int permittedResults, int numNeededResults, bool furtherResultsAvailable)
+	 * 		permittedResults: Number of permitted results in the result set. -1 if the
+	 * 			result is invalid.
+	 * 		numNeededResults: Number of results that are actually needed to get the
+	 * 			number of expected results. If there are too few permitted results, 
+	 * 			-1 is returned.
+	 * 		furtherResultsAvailable: 
+	 * 			true => there are further results that can be examined
+	 * 			false => The end of the result set was reached.
+	 */
+	public function countPermittedResults($user, $action, $solrResult, $numExpectedResults) {
+		// Convert the result string to objects
+		$resultObjects = FSResultParser::parseResult($solrResult);
+			
+		if (!$resultObjects) {
+			// Parser could not parse the result
+			// => return it as it is.
+			return array(-1, -1, false);
+		}
+			
+		if (!$user) {
+			$user = $this->getCurrentUser();
+		}
+		
+		// Find the titles in the result...
+		$titleIDs = $this->getTitleIDsFromResult($resultObjects);
+		if (count($titleIDs) === 0) {
+			return array(0, -1, false);
+		}
+		
+		// ... and determine their access rights
+		$accessRights = $this->checkRightsMulti($user, $titleIDs, $action);
+		// Is the array of $accessRights valid?
+		if (count($accessRights) === 0) {
+			return array(0, -1, false);
+		}
+		
+		// Now count the permitted results
+		
+		// Create a map from titleIDs to their index in the $solrResult
+		$title2Idx = array();
+		$docs = &$resultObjects->response->docs;
+		if (!$docs) {
+			return array(0, -1, false);
+		}
+		
+		$start = $resultObjects->response->start;
+		$numFound = $resultObjects->response->numFound;
+		$numRows = count($docs);
+		$furtherResultsAvailable = $start + $numRows < $numFound;
+		
+		// Create a map of access rights
+		$arMap = array();
+		foreach ($accessRights as $right) {
+			foreach ($right as $t => $permitted) ;
+			$t = md5($t);
+			$arMap[$t] = $permitted;
+		}
+		// Iterate over all documents and check if they have got the requested
+		// rights
+		$numPermitted = 0;
+		$numNeeded = 0;
+		$allExpectedFound = false;
+		foreach ($docs as $idx => $doc) {
+			$tid = $doc->smwh_namespace_id.':'.$doc->smwh_title;
+			$allowed = $arMap[md5($tid)];
+			if ($allowed) {
+				$numPermitted++;
+			}
+			if (!$allExpectedFound) {
+				$numNeeded++;
+			}
+			if ($numPermitted === $numExpectedResults) {
+				$allExpectedFound = true;
+			}
+		}
+		
+		if ($numPermitted < $numExpectedResults) {
+			$numNeeded = -1;
+		}
+		return array($numPermitted, $numNeeded, $furtherResultsAvailable);
 		
 	}
 	
@@ -319,7 +441,7 @@ class FSResultFilter {
 	
 	/**
 	 * Returns an array of wiki page names and namespace IDs that are present in 
-	 * a SOLR result.
+	 * the facets of a SOLR result.
 	 * 
 	 * 
 	 * @param Object $solrResult
@@ -345,11 +467,18 @@ class FSResultFilter {
 						'smwh_attributes' => 'properties',
 						'smwh_properties' => 'properties',
 						'smwh_namespace_id' => 'namespaces');
+		$this->addRelationsToFieldConfig($solrResult, $config);
+		
 		foreach ($config as $indexField => $key) {
 			$fieldContent = @$fields->$indexField;
 			$results = array();
 			$map = array(); // Map from title IDs to the original title names 
 			if ($fieldContent) {
+if (is_array($fieldContent)) {
+	echo "IndexField: $indexField";
+	echo "Key: $key";
+	var_dump($fieldContent);
+}
 				$wikiElements = get_object_vars($fieldContent);
 				
 				if ($key === 'categories') {
@@ -443,12 +572,16 @@ class FSResultFilter {
 	 * 		Map from property names to the corresponding access right
 	 * @param array(int=>bool) $namespaceRights
 	 * 		Map from namespace indices to the corresponding access right
+	 * @param array(string=>bool) $relationValueRights
+	 * 		Map from article names to the corresponding access right. These
+	 * 		articles are values of relations.
 	 * @param array $titleIDs
 	 * 		Ids of the titles in the facets as returned by getTitlesFromResultFacets
 	 * @param Object $solrResult
 	 * 		A SOLR result with facets
 	 */
-	private function removeDeniedTitlesInFacets($categoryRights, $propertyRights, $namespaceRights, $titleIDs, $solrResult) {
+	private function removeDeniedTitlesInFacets($categoryRights, $propertyRights, 
+			$namespaceRights, $relationValueRights, $titleIDs, $solrResult) {
 	
 		$fields = @$solrResult->facet_counts->facet_fields;
 		if (!$fields) {
@@ -458,8 +591,10 @@ class FSResultFilter {
 		}
 		
 		// Search for rights that are not allowed
-		$deniedCategories = $this->findDeniedElements($categoryRights);
-		$deniedProperties = $this->findDeniedElements($propertyRights);
+		$denied = array();
+		$denied['categories'] = $this->findDeniedElements($categoryRights);
+		$denied['properties'] = $this->findDeniedElements($propertyRights);
+		$denied['relations']  = $this->findDeniedElements($relationValueRights);
 		$deniedNamespaces = $this->findDeniedElements($namespaceRights);
 		
 		global $spgHaloACLConfig;
@@ -468,35 +603,28 @@ class FSResultFilter {
 						'smwh_attributes' => 'properties',
 						'smwh_properties' => 'properties',
 						'smwh_namespace_id' => 'namespaces');
+		$this->addRelationsToFieldConfig($solrResult, $config);
+		
 		foreach ($config as $indexField => $key) {
 			$fieldContent = @$fields->$indexField;
 			$results = array();
 			if ($fieldContent) {
-				if ($key === 'categories') {
-					$titleMap = $titleIDs['categories_map'];
-					// Remove protected categories from the facet
-					foreach ($deniedCategories as $cat) {
-						// The original category name is stored in $titleMap
-						$cat = $titleMap[md5($cat)];
-						if (isset($fieldContent->$cat)) {
-							unset($fieldContent->$cat);
-						}
-					}
-				} else if ($key === 'properties') {
-					$titleMap = $titleIDs['properties_map'];
-					// Remove protected properties from the facet
-					foreach ($deniedProperties as $prop) {
-						// The original property name is stored in $titleMap
-						$prop = $titleMap[md5($prop)];
-						if (isset($fieldContent->$prop)) {
-							unset($fieldContent->$prop);
-						}
-					}
-				} else {
+				if ($key === 'namespaces') {
 					// Remove protected namespaces from the facet
 					foreach ($deniedNamespaces as $ns) {
 						if (isset($fieldContent->$ns)) {
 							unset($fieldContent->$ns);
+						}
+					}
+				} else {
+					// Remove protected categories, properties and relation 
+					// values from the facet
+					$titleMap = $titleIDs[$key.'_map'];
+					foreach ($denied[$key] as $t) {
+						// The original title name is stored in $titleMap
+						$t = $titleMap[md5($t)];
+						if (isset($fieldContent->$t)) {
+							unset($fieldContent->$t);
 						}
 					}
 				}
@@ -505,10 +633,10 @@ class FSResultFilter {
 		
 		// The remaining results may still contain protected properties in their
 		// facets.
-		if (count($deniedProperties) > 0) {
+		if (count($denied['properties']) > 0) {
 			$docs = $solrResult->response->docs;
 			$titleMap = $titleIDs['properties_map'];
-			foreach ($deniedProperties as $prop) {
+			foreach ($denied['properties'] as $prop) {
 				// The original property name is stored in $titleMap
 				$propsToRemove[] = $titleMap[md5($prop)];
 			}
@@ -530,10 +658,12 @@ class FSResultFilter {
 							// => Place a notice in the snippet for the document
 							$docID = $doc->id;
 							$snippet = @$highlights->$docID;
-							$snippetFields = array_keys(get_object_vars($snippet));
-							foreach ($snippetFields as $sf) {
-								foreach ($snippet->$sf as $key => &$value) {
-									$value = FSMessages::msg('snippet_removed');
+							if ($snippet) {
+								$snippetFields = array_keys(get_object_vars($snippet));
+								foreach ($snippetFields as $sf) {
+									foreach ($snippet->$sf as $key => &$value) {
+										$value = FSMessages::msg('snippet_removed');
+									}
 								}
 							}
 						}
@@ -542,8 +672,6 @@ class FSResultFilter {
 			}
 		}
 		
-		// Remove snippets if properties were filtered from the result. 
-				
 		return $solrResult;
 	}
 	
@@ -591,6 +719,36 @@ class FSResultFilter {
 			}
 		}
 		return $denied;
+	}
+	
+	/**
+	 * Finds the relations that are queried as facet query in the $solrResult 
+	 * and adds them to the configuration array $fieldConfig that contains 
+	 * special fields like categories.
+	 * @param Object $solrResult
+	 * 		The result of a SOLR query as object.
+	 * @param array $fieldConfig
+	 * 		The configuration field that is augmented.
+	 */
+	private function addRelationsToFieldConfig($solrResult, &$fieldConfig) {
+		// Add the property facets that are queried in a facet query (parameter fq)
+		$facetField = "facet.field";
+		$facetQuery = @$solrResult->responseHeader->params->$facetField;
+		if ($facetQuery) {
+			if (is_string($facetQuery))	{
+				// Only one facet query
+				$facetQuery = array($facetQuery);
+			}
+			if (is_array($facetQuery)) {
+				foreach ($facetQuery as $fq) {
+					if (preg_match(self::RELATION_REGEX, $fq, $matches)) {
+						$field = $matches[1].'s';
+						$fieldConfig[$field] = 'relations';
+					}
+				}
+			}
+		}
+		
 	}
 	
 }

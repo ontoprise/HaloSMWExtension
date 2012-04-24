@@ -57,6 +57,7 @@ FacetedSearch.classes.FSLanguageDe = function () {
 'results'			: 'Resultate',
 'to'				: 'bis',
 'of'				: 'von',
+'ofapprox'			: 'von ungefähr',
 'inCategory'		: 'ist in Kategorie',
 'show'				: 'Eigenschaften zeigen',
 'hide'				: 'Eigenschaften ausblenden',
