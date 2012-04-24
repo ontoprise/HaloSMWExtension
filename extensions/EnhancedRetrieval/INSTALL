@@ -89,7 +89,86 @@ http://sourceforge.net/projects/halo-extension/files/SMWHalo 1.5.3/SOLR/Solr-ser
 	e.g.'myserver.mycompany.org'
 7. Test Faceted Search in your wiki. Open the page "Special:FacetedSearch"
 
+If you are using Faceted Search together with HaloACL you have to configure 
+solrproxy.php:
 
 
+Configuration of solrproxy.php for HaloACL
+
+As solrproxy.php is not executed in the MediaWiki environment it needs its own
+configuration if HaloACL is active. All settings are stored in an array in 
+variable $spgHaloACLConfig. A typical configuration may look like this:
+
+$spgHaloACLConfig = array(
+	'wikiDBprefix'	=> '',
+	'wikiDBname'	=> 'semwiki_en',
+	'cookiePath'	=> '/',		 // must be equal to $wgCookiePath
+	'cookieDomain'	=> '', 		 // must be equal to $wgCookieDomain = "";
+	'cookieSecure'	=> false,	 // must be equal to $wgCookieSecure = false;
+	'cookieHttpOnly'	=> true, // must be equal to $wgCookieHttpOnly = true;
+	'memcacheconfig' => array(
+		'servers' => array('localhost:11211'),
+		'debug'   => false,
+		'compress_threshold' => 10240,
+		'persistant' => true),
+	'mediawikiIndex' => 'http://localhost/mediawiki/index.php',
+	'categoryNS'	=> 14,
+	'propertyNS'	=> 102,
+	'contentlanguage' => 'en'
+);
+
+
+Several entries in this configuration can be copied from the MediaWiki 
+configuration. Here is a detailed explanation of the settings:
+
+wikiDBprefix
+    This is the prefix of the wiki database. It is used for generating the 
+    memcache key for access rights. It must be equal to $wgDBprefix in MW. 
+wikiDBname
+    This is the name of the wiki database. It is used for generating the memcache
+     key for access rights. It must be equal to $wgDBname in MW. 
+cookiePath
+    The cookie path is used to find out which wiki user makes the SOLR request.
+    It must be equal to $wgCookiePath which can normally be found in DefaultSettings.php. 
+cookieDomain
+    The cookie domain is used to find out which wiki user makes the SOLR request. 
+    It must be equal to $wgCookieDomain which can normally be found in DefaultSettings.php. 
+cookieSecure
+    The cookie secure setting is used to find out which wiki user makes the SOLR 
+    request. It must be equal to $wgCookieSecure which can normally be found in 
+    DefaultSettings.php. 
+cookieHttpOnly
+    The cookie http setting is used to find out which wiki user makes the SOLR
+    request. It must be equal to $wgCookieHttpOnly which can normally be found 
+    in DefaultSettings.php. 
+memcacheconfig
+    This array defines several settings for the memcache:
+
+    servers
+        The list of MemCached servers and port numbers. It must be equal to 
+        $wgMemCachedServers which can normally be found in DefaultSettings.php. 
+    debug
+        If enabled, will send MemCached debugging information to $wgDebugLogFile. 
+        It must be equal to $wgMemCachedDebug which can normally be found in 
+        DefaultSettings.php. 
+    compress_threshold
+        If a block of data has more bytes than this value, the block will be 
+        compressed. 
+    persistant
+        Use persistent connections to MemCached, which are shared across multiple 
+        requests. Find the default value of the corresponding $wgMemCachedPersistent 
+        in DefaultSettings.php. 
+
+mediawikiIndex' => 'http://localhost/mediawiki/index.php'
+    This is the base URL of the wiki as seen from the solrproxy. It is used for 
+    sending Ajax requests. 
+categoryNS
+    This is the index of the category namespace in MediaWiki. It must be equal 
+	to the value of NS_CATEGORY (see Defines.php). 
+propertyNS
+    This is the index of the property namespace in SemanticMediaWiki. It must be 
+    equal to the value of SMW_NS_PROPERTY (see SMW_Setup.php). 
+contentlanguage
+    This is the code of the current content language. It must be equal to $wgLanguageCode. 
 
 
