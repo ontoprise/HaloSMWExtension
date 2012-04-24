@@ -114,7 +114,6 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'includes/EnhancedRetrievalSpecialPage.php';
 	$wgAutoloadClasses['EnhancedRetrievalResultPrinter'] = $dir . 'includes/EnhancedRetrievalResultPrinter.php';
 	$wgAutoloadClasses['EnhancedRetrievalResult'] = $dir . 'includes/EnhancedRetrievalResultPrinter.php';
-	$wgAutoloadClasses['EnhancedRetrievalStatistics'] = $dir . 'includes/EnhancedRetrievalStatistics.php';
 
 	if (file_exists($dir . 'SKOSExpander.php')) {
 		$wgAutoloadClasses['SKOSExpander'] = $dir . 'includes/SKOSExpander.php';
@@ -124,9 +123,6 @@ function wfUSSetupExtension() {
 	$wgAutoloadClasses['LuceneResult'] = $dir . 'MWSearch/MWSearch_body.php';
 	$wgAutoloadClasses['LuceneSearchSet'] = $dir . 'MWSearch/MWSearch_body.php';
 	
-	$wgSpecialPages['EnhancedRetrievalStatistics'] = array('SpecialPage','EnhancedRetrievalStatistics', '', true, 'smwfDoSpecialUSSearch', $dir . 'includes/EnhancedRetrievalStatistics.php');
-	//$wgSpecialPageGroups['EnhancedRetrievalStatistics'] = 'maintenance';
-
 	global $fsgFacetedSearchForMW;
 	if ($fsgFacetedSearchForMW) {
 		$wgSpecialPages['Search'] = array('FSFacetedSearchSpecial');
