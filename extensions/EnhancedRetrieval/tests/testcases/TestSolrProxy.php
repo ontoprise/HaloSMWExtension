@@ -52,8 +52,8 @@ class TestSolrProxySuite extends PHPUnit_Framework_TestSuite
 		
 		$suite = new TestSolrProxySuite();
 		$suite->addTestSuite('TestSolrProxyQueries');
-		$suite->addTestSuite('TestResultFilterClasses');
-		$suite->addTestSuite('TestSolrProxyAccessControl');
+ 		$suite->addTestSuite('TestResultFilterClasses');
+ 		$suite->addTestSuite('TestSolrProxyAccessControl');
 		return $suite;
 	}
 	
@@ -63,6 +63,7 @@ class TestSolrProxySuite extends PHPUnit_Framework_TestSuite
 		require_once $fsgIP.'/includes/FacetedSearch/Solrproxy/FS_ResultFilter.php';
 		require_once $fsgIP.'/includes/FacetedSearch/Solrproxy/FS_HaloACLMemcache.php';
 		require_once $fsgIP.'/includes/FacetedSearch/Solrproxy/FS_MWAccessControl.php';
+		require_once $fsgIP.'/includes/FacetedSearch/Solrproxy/FS_QueryParser.php';
 		
 		global $spgHaloACLConfig;
 		$spgHaloACLConfig = array(
@@ -87,7 +88,7 @@ class TestSolrProxySuite extends PHPUnit_Framework_TestSuite
         SMWDIProperty::newFromUserLabel('foo');
     	
         $this->mArticleManager = new ArticleManager();
-//TODO		 $this->mArticleManager->importArticles(__DIR__."/ERTestArticlesDump.xml");
+		$this->mArticleManager->importArticles(__DIR__."/ERTestArticlesDump.xml");
    	}
    	
    	/**
@@ -117,7 +118,7 @@ class TestSolrProxySuite extends PHPUnit_Framework_TestSuite
 	
 	protected function tearDown() {
 		// Temporarily disabled for speeding up tests
-//TODO		$this->mArticleManager->deleteArticles("U1");
+		$this->mArticleManager->deleteArticles("U1");
 	}
 	
 }
@@ -161,6 +162,7 @@ class TestResultFilterClasses extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(class_exists('FSResultFilter'), "Expected that class 'FSResultFilter' exists.");
 		$this->assertTrue(class_exists('FSHaloACLMemcache'), "Expected that class 'FSHaloACLMemcache' exists.");
 		$this->assertTrue(class_exists('FSMWAccessControl'), "Expected that class 'FSMWAccessControl' exists.");
+		$this->assertTrue(class_exists('FSQueryParser'), "Expected that class 'FSQueryParser' exists.");
 		
 		$rf = FSResultFilter::getInstance();
 		$this->assertTrue($rf instanceof FSResultFilter, "Expected to get an instance of FSResultFilter.");
@@ -241,6 +243,46 @@ class TestResultFilterClasses extends PHPUnit_Framework_TestCase {
     	}
 	}
 	
+	/**
+	 * Data provider for testQueryParser
+	 */
+	public function providerForQueryParser() {
+		return array(
+			// $query, $expectedParameters
+			#0
+			array("q=smwh_search_field%3A(%2Btow*%20)&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&start=10&rows=20&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=", 
+				array(
+					'start' => 10,
+					'rows'	=> 20
+				)
+			),
+		);
+		
+	}
+	
+	/**
+	 * 
+	 * Checks if the query parser retrieves the parameters of a query correctly
+	 * @param string $query
+	 * @param array $expected
+	 * 		Pairs of keys and values
+	 * 
+	 * @dataProvider providerForQueryParser
+	 */
+	public function testQueryParser($query, $expected) {
+		$queryParser = new FSQueryParser($query);
+
+		// Check for expected values
+		foreach ($expected as $parameter => $expValue) {
+			$value = $queryParser->get($parameter);
+			$this->assertEquals($expValue, $value, "Expected the query parameter '$parameter' to have the value '$expValue'.");
+    	}
+    	
+    	// Serialize the query
+    	$serialized = $queryParser->serialize();
+    	$this->assertEquals($query, $serialized, "Serializing the query failed.");
+	}
+	
 }
 
 
@@ -319,23 +361,23 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
     		#4
-    		array("q=*:*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
+    		array("q=*:*&fl=smwh_title&facet=true&json.nl=map&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
     		      array(
-    		      	'"smwh_Located_in_t",34',
-    		      	'"smwh_Located_in_state_t",22',
+    		      	'"smwh_Located_in_t":34',
+    		      	'"smwh_Located_in_state_t":23',
     		        '"numFound":169',
-    		      	'"smwh_Modification_date_xsdvalue_dt",169',
-    		      	'"smwh_Building_name_xsdvalue_t",34',
-    		      	'"smwh_Image_xsdvalue_t",34',
-    		      	'"smwh_Height_stories_xsdvalue_d",34',
-    		      	'"smwh_Year_built_xsdvalue_dt",8',
-    		        '"smwh_Description_xsdvalue_t",152',
-    		      	'"Building",34',
-    		      	'"Bank_of_America_buildings",10',
+    		      	'"smwh_Modification_date_xsdvalue_dt":169',
+    		      	'"smwh_Building_name_xsdvalue_t":34',
+    		      	'"smwh_Image_xsdvalue_t":34',
+    		      	'"smwh_Height_stories_xsdvalue_d":34',
+    		      	'"smwh_Year_built_xsdvalue_dt":8',
+    		        '"smwh_Description_xsdvalue_t";152',
+    		      	'"Building":34',
+    		      	'"Bank_of_America_buildings":10',
     		      )
     		),
     		#5
-    		array("q=smwh_title_s:*Wells*&fl=smwh_title&facet=true&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
+    		array("q=smwh_title_s:*Wells*&fl=smwh_title&facet=true&json.nl=map&wt=json&indent=on&facet.field=smwh_properties&facet.field=smwh_attributes&facet.field=smwh_categories",
     		      array(
     		      	'"smwh_title":"Wells_Fargo_Tower"',
     		      	'"smwh_title":"Wells_Fargo_Plaza_(Houston)"',
@@ -356,7 +398,7 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
     		#6 - Do a search in full text
-    		array("q=smwh_search_field:seattle*&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
+    		array("q=smwh_search_field:seattle*&json.nl=map&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
     		      array(
     		      	"Category:Office_buildings_in_Seattle,_Washington",
     		      	"Category:Skyscrapers_in_Seattle,_Washington",
@@ -374,7 +416,7 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
     		#7 - Search for a category with special characters
-    		array("q=*:*&facet=true&fl=smwh_title&fq=smwh_categories%3A%C3%9Cbung&wt=json&indent=on",
+    		array("q=*:*&facet=true&fl=smwh_title&fq=smwh_categories%3A%C3%9Cbung&json.nl=map&wt=json&indent=on",
     		      array(
     		      	'"smwh_title":"Zweite_Übung"',
     		      	'"smwh_title":"Übung_1"',
@@ -382,7 +424,7 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
    			#8 - Search for a attribute with special characters
-    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_attributes%3Asmwh_Hat_%C3%9Cberschrift_xsdvalue_t&wt=json",
+    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_attributes%3Asmwh_Hat_%C3%9Cberschrift_xsdvalue_t&json.nl=map&wt=json",
     		      array(
 					'"smwh_title":"Zweite_Übung"',
 					'"smwh_categories":["Übung"]',
@@ -395,7 +437,7 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
    			#9 - Search for a relation with special characters
-    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_properties:smwh_Nächste_Übung_t&wt=json",
+    		array("q=*:*&facet=true&fl=smwh_title,smwh_attributes,smwh_properties,smwh_categories&fq=smwh_properties:smwh_Nächste_Übung_t&json.nl=map&wt=json",
     		      array(
 					'"smwh_title":"Übung_1"',
 					'"smwh_categories":["Übung"]',
@@ -405,7 +447,7 @@ class TestSolrProxyQueries extends PHPUnit_Framework_TestCase {
     		      )
     		),
     		#10 - Search for full text with special characters
-    		array("q=smwh_search_field:übung*&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
+    		array("q=smwh_search_field:übung*&json.nl=map&wt=json&indent=on&hl.fl=smwh_search_field&hl.simple.pre=<b>&hl.simple.post=<%2Fb>&hl.fragsize=250&fl=smwh_full_text",
     		      array(
 					'"smwh_full_text":"Dies ist die zweite Übung.\n[[Hat Überschrift::Übung 2]]\n[[Category:Übung]]"',
 					'"smwh_full_text":"Dies ist Übung 1.\n[[Nächste Übung::Zweite Übung]]\n[[Hat Überschrift::Übung 1]]\n[[Category:Übung]]"',
@@ -630,6 +672,21 @@ ACL
 ACL
 ,
 //------------------------------------------------------------------------------
+    		'ACL:Page/Texas' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+    
+{{#access:
+     assigned to=User:U1
+    |actions=read,edit
+    |description= Allow read,edit access U1
+}}
+    
+[[Category:ACL/ACL]]
+   		
+ACL
+,
+//------------------------------------------------------------------------------
 			'Category:Skyscrapers_between_200_and_249_meters' =>
 <<<ACL
 This is the category Skyscrapers_between_200_and_249_meters.
@@ -735,6 +792,8 @@ ACL
      * @dataProvider providerForResultFilterAccess
      */
     public function testHaloACLMemcacheFilterAccess($user, $title, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	// First ask MediaWiki for the permission. This should store the permission
     	// in memcache.
     	global $wgUser;
@@ -792,6 +851,8 @@ ACL
      * @dataProvider providerForSpecialSubjectAccess
      */
     public function testSpecialSubjectAccess($user, $subjectName, $action, $subjectType, $expected) {
+//    	$this->markTestSkipped();
+    	
     	switch ($subjectType) {
     		case 'category':
     			$stype = FSResultFilter::FSRF_CATEGORY;
@@ -889,6 +950,8 @@ ACL
      * @dataProvider providerForSpecialSubjectAccessMulti
      */
     public function testSpecialSubjectAccessMulti($user, $subjectNames, $action, $subjectType, $expected) {
+//    	$this->markTestSkipped();
+    	
     	switch ($subjectType) {
     		case 'category':
     			$stype = FSResultFilter::FSRF_CATEGORY;
@@ -936,6 +999,8 @@ ACL
      * @dataProvider providerForResultFilterAccess
      */
     public function testMWAccessControlFilterAccess($user, $title, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	// First ask MediaWiki directly for the permission.
     	global $wgUser;
     	$wgUser = User::newFromName($user);
@@ -962,6 +1027,8 @@ ACL
      * @dataProvider providerForResultFilterAccess
      */
     public function testResultFilterAccess($user, $title, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	$rf = FSResultFilter::getInstance();
     	
     	// First we have to setup some cookies as the solrproxy would receive them
@@ -1000,6 +1067,8 @@ ACL
      * @dataProvider providerForResultFilterAccessMulti
      */
     public function testHaloACLMemcacheFilterAccessMulti($user, $titles, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	// First ask MediaWiki for the permission. This should store the permission
     	// in memcache.
     	global $wgUser;
@@ -1034,6 +1103,8 @@ ACL
     * @dataProvider providerForResultFilterAccessMulti
     */
     public function testMWAccessControlFilterAccessMulti($user, $titles, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	// First ask MediaWiki directly for the permission.
     	global $wgUser;
     	$wgUser = User::newFromName($user);
@@ -1070,6 +1141,8 @@ ACL
     * @dataProvider providerForResultFilterAccessMulti
     */
     public function testResultFilterAccessMulti($user, $titles, $action, $expected) {
+//    	$this->markTestSkipped();
+    	
     	$rf = FSResultFilter::getInstance();
     	 
     	// First we have to setup some cookies as the solrproxy would receive them
@@ -1163,6 +1236,8 @@ ACL
      */
     public function testResultFilter($user, $query, $expectedBeforeFilter, 
     								 $expectedAfterFilter ) {
+//    	$this->markTestSkipped();
+    	
     	// First we have to setup some cookies as the solrproxy would receive them
     	// from the faceted search page.
     	$this->setupHttpSettingsForMWAccessControl($user);
@@ -1206,7 +1281,7 @@ ACL
 #0 - Ask for all documents that contain "tower".    	
 	    	array(
 	    		'U2', 
-	    		"q=smwh_search_field%3A(%2Btower*%20)&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&wt=json&json.wrf=_jqjsp&_1331909354996=",
+	    		"q=smwh_search_field%3A(%2Btower*%20)&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&json.nl=map&wt=json&json.wrf=_jqjsp&_1331909354996=",
 	    		// Expected facet values
     			array('smwh_categories' => 
     				array('Building',
@@ -1229,8 +1304,7 @@ ACL
     				  'smwh_attributes' =>
     				array('smwh_Building_name_xsdvalue_t',
     					  'smwh_Height_stories_xsdvalue_d',
-    					  'smwh_Year_built_xsdvalue_dt',
-    					  'smwh_Located_in_t'),
+    					  'smwh_Year_built_xsdvalue_dt'),
     				  'smwh_properties' =>
     				array('smwh_Located_in_t'),
     				  'smwh_namespace_id' =>
@@ -1238,7 +1312,26 @@ ACL
     				  'highlight' => 
     				array('Bank_of_America_Tower_(New_York_City)')
     			)
-    		)
+    		),
+#1 - Ask for all documents and the facet property and "Located_in_state"   	
+	    	array(
+	    		'U2', 
+	    		"q=smwh_search_field%3A(%2Bd*%20)&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.field=smwh_Located_in_state_s&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&wt=json&json.wrf=_jqjsp&_1331909354996=",
+	    		// Expected facet values
+     			array('smwh_categories' => 
+    				array('United_States_City'),
+    				  'smwh_properties' =>
+    				array('smwh_Located_in_state_t'),
+    				  'smwh_Located_in_state_s' =>
+    				array('Texas',
+    					  'California'),
+    			),
+    			
+    			// Expected facet values that will be removed
+     			array('smwh_Located_in_state_s' =>
+    				array('Texas'),
+    			),
+   			)
     	);
     }
         
@@ -1262,6 +1355,8 @@ ACL
      */
     public function testFacetFilter($user, $query, $expectedBeforeFilter, 
     								$expectedRemovals) {
+//    	$this->markTestSkipped();
+    	
     	// First we have to setup some cookies as the solrproxy would receive them
     	// from the faceted search page.
     	$this->setupHttpSettingsForMWAccessControl($user);
@@ -1325,7 +1420,7 @@ ACL
     		foreach (array('smwh_attributes', 'smwh_properties') as $field) {
     			$expRemoved = $expectedRemovals[$field];
     			$docField = $doc->$field;
-    			if ($docField) {
+    			if ($docField && $expRemoved) {
 	    			foreach ($expRemoved as $removed) {
 	    				$this->assertNotContains($removed, $docField, 
 	    					"Expected that the value '$removed' is removed from field '$field' in document {$doc->smwh_title}.");
@@ -1343,7 +1438,7 @@ ACL
     	}
     	$removedDocIDs = array_diff($unfilteredDocIDs, $filteredDocIDs);
     	$highlights = @$resultObj->highlighting;
-    	if ($highlights) {
+    	if ($highlights && array_key_exists('highlight', $expectedRemovals)) {
     		$highlightDocIDs = array_keys(get_object_vars($highlights));
     		$intersect = array_intersect($removedDocIDs, $highlightDocIDs);
     		$errMsg = implode(',', $intersect);
@@ -1364,7 +1459,102 @@ ACL
     		}
     	
     	}
+    }
+    
+    
+    /**
+     * Data provider for testFindExpectedNumberOfResults
+     */
+    public function providerForFindExpectedNumberOfResults() {
+    	return array(
+	    	// $user, $action, $query, $expNumPermittedResults, $expNumNeededResults, $expFurtherResultsAvailable
+	    	#0
+	    	array("U1", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=10&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	10, 10, true),
+	    	#1
+	    	array("U1", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=20&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	20, 10, true),
+	    	#2
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=10&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	2, -1, true),
+	    	#3
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=20&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	5, -1, true),
+	    	#4
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=30&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	6, -1, true),
+	    	#5
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=40&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	8, -1, true),
+	    	#6
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Btow*%20)&start=0&rows=50&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	8, -1, false),
+	    	#7
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Bw*%20)&start=0&rows=20&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	6, -1, true),
+	    	#8
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Bw*%20)&start=0&rows=40&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	15, 29, true),
+	    	#9
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Bw*%20)&start=0&rows=29&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	10, 29, true),
+	    	#10
+	    	array("U2", "read", 
+	    		"q=smwh_search_field%3A(%2Bw*%20)&start=0&rows=28&facet=true&facet.field=smwh_categories&facet.field=smwh_attributes&facet.field=smwh_properties&facet.field=smwh_namespace_id&facet.mincount=1&json.nl=map&fl=smwh_Modification_date_xsdvalue_dt%2Csmwh_categories%2Csmwh_attributes%2Csmwh_properties%2Cid%2Csmwh_title%2Csmwh_namespace_id&hl=true&hl.fl=smwh_search_field&hl.simple.pre=%3Cb%3E&hl.simple.post=%3C%2Fb%3E&hl.fragsize=250&sort=smwh_Modification_date_xsdvalue_dt%20desc&wt=json&json.wrf=_jqjsp&_1332827921888=",
+		    	9, -1, true),
+    	);
     	 
+    }
+    
+    /**
+     * When SOLR query results are filtered some document might get lost. However,
+     * the user expects a constant number of results as he is flipping through 
+     * the pages of results. The solrproxy has to make sure that the expected 
+     * number of results is returned for each page if there are enough permitted
+     * results left.
+     * 
+     * @param string $user
+     * 		Name of the user who makes the request
+     * @param string $query
+     * 		A SOLR query
+     * 
+     * @dataProvider providerForFindExpectedNumberOfResults
+     */
+    public function testFindExpectedNumberOfResults($user, $action, $query, 
+    						$expNumPermittedResults, $expNumNeededResults,
+    						$expFurtherResultsAvailable) {
+    	$this->markTestSkipped();
+    	
+    	// First we have to setup some cookies as the solrproxy would receive them
+    	// from the faceted search page.
+    	$this->setupHttpSettingsForMWAccessControl($user);
+    	
+    	// Send the query to SOLR
+    	$indexer = FSIndexerFactory::create(TestSolrProxySuite::$mSolrConfig);
+    	$qr = $indexer->sendRawQuery($query);
+    	
+    	// Now check how many permitted results are present
+    	$resultFilter = FSResultFilter::getInstance();
+    	$numExpectedResults = 10;
+    	list($numPermittedResults, $numNeededResults, $furtherResultsAvailable) =
+	    	$resultFilter->countPermittedResults($user, 'read', $qr, $numExpectedResults);
+    	
+    	$this->assertEquals($expNumPermittedResults, $numPermittedResults, 
+    		"The expected number of permitted results does not match the actual number.");
+    	$this->assertEquals($expNumNeededResults, $numNeededResults, 
+    		"The expected number of needed results does not match the actual number.");
+    	$this->assertEquals($expFurtherResultsAvailable, $furtherResultsAvailable, 
+    		"The evaluation if further results are available failed.");
     	    	
     }
     
