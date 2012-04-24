@@ -4,7 +4,7 @@ Rich Media extension ChangeLog
 VERSION 1.5.4
 
 	CHANGES:
-	 * Provided new patch to let Rich Media extension be compatible with and SF 2.3.2
+	 * Provided new patch to let Rich Media extension be compatible with SF 2.3.2
 	 * FileViewer overlay improvements: Better scaling and less JavaScript overhead
 
 VERSION 1.5.3

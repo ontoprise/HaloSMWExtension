@@ -3,7 +3,7 @@ Installation instructions
 
 Install instructions for the latest version of Rich Media are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.3
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.4
  
 For the full manual of the Rich Media have a look at:
 
@@ -26,7 +26,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 
 	Semantic Forms 2.3.2
 	Deployment Framework (optional)
-	SMW Plus ontology bundle 1.6.0
+	SMW Plus ontology bundle 1.7.0
 
 #
 # Installation
@@ -43,7 +43,7 @@ If you don't use the deployment framework, you can install it manually. See belo
 		* '/extensions/RichMedia/RichMediaPatchForMW1_17_0_Namespace.txt': 
 			This is needed to patch MediaWiki namespace class in version 1.17.0
 	Please find more detailed information about the patches at:
-http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.3#Notes_on_patches
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rich_Media_extension_1.5.4#Notes_on_patches
 
 
 	Note: We can not ensure that this patch works properly for other versions of
