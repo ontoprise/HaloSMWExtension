@@ -28,7 +28,8 @@ if ( !CKEDITOR.env )
 			 * if ( CKEDITOR.env.ie )
 			 *     alert( "I'm on IE!" );
 			 */
-			ie		: /*@cc_on!@*/false,
+//			ie		: /*@cc_on!@*/false,
+      ie		: agent.indexOf('msie') > -1,
 
 			/**
 			 * Indicates that CKEditor is running on Opera.
@@ -228,7 +229,7 @@ if ( !CKEDITOR.env )
 		 * @example
 		 * if ( CKEDITOR.env.isCompatible )
 		 *     alert( "Your browser is pretty cool!" );
-		 */
+		 */  
 		env.isCompatible =
 			!env.mobile && (
 			( env.ie && version >= 6 ) ||
