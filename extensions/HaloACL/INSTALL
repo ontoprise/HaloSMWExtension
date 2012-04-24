@@ -46,9 +46,13 @@ Note: If you use the bundled version of HaloACL, include the following in LocalS
 (1) Include the path to php.bin to the system variable PATH (either Windows or Linux), e.g. C:\xampp\php;
 (2) Download and extract the HaloACL ZIP archive.
 (3) Copy the folder 'HaloACL' into the extensions folder of MediaWiki.
-(4) Activate the HaloACL by adding the following lines to LocalSettings.php:
+(4) Activate the HaloACL and memcache by adding the following lines to LocalSettings.php:
 	include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 	enableHaloACL(); 
+	## Shared memory settings (check if this is already set somewhere else in LocalSettings)
+	$wgMainCacheType = CACHE_MEMCACHED;
+	$wgMemCachedServers = array('localhost:11211');
+	
 (5) Open a command prompt
 (6) Go to the directory of HaloACL 
 (7) Choose the command depending on your MediaWiki installation to patch MediaWiki:
