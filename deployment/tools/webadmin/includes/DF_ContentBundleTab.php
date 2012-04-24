@@ -213,7 +213,7 @@ class DFContentBundleTab {
 
          
         if ($status != 200) {
-        	throw new Exception($dfgLang->getLanguageString('df_webadmin_querying_contentbundle_failed'), $status);
+        	throw new Exception($dfgLang->getLanguageString('df_webadmin_querying_contentbundle_failed')." Reason: ".$res, $status);
         }
          
 
