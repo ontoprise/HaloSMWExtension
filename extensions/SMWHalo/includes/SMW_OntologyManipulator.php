@@ -871,7 +871,12 @@ function smwf_om_userCan($title, $action, $namespaceID = 0) {
 	if (!$title) {
 		return -1;
 	}
-	$result = $title->userCan($action);
+	if ($action === 'propertyread' || $action === 'propertyedit') {
+  		$result = true;
+    	wfRunHooks('userCan', array(&$title, &$wgUser, $action, &$result));
+  	} else {
+		$result = $title->userCan($action);
+	}
 	return $result ? 'true' : 'false';
 }
 
