@@ -370,6 +370,11 @@ abstract class GardeningBot {
             return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_unknown_bot');
         }
         global $phpInterpreter, $wgUser, $registeredBots, $sgagGardeningBotDelay;
+        
+	    if (!isset($phpInterpreter) || trim($phpInterpreter) == '') {
+          return "ERROR:gardening-tooldetails: \$phpInterpreter not set or empty. Check LocalSettings.php";
+        }
+        
         $userId = $wgUser->getId();
         $bot = $registeredBots[$botID];
             
